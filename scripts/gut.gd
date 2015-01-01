@@ -6,24 +6,58 @@
 #
 #Example of running tests:
 #        |-----this script----|                    |-------the test script-------| 
-#	load('res://scripts/gut.gd').new().test_script('res://scripts/sample_tests.gd')
+#   load('res://scripts/gut.gd').new().test_script('res://scripts/sample_tests.gd')
 ################################################################################
-extends Node2D
+extends Panel
 
 const LOG_LEVEL_FAIL_ONLY = 0
 const LOG_LEVEL_TEST_AND_FAILURES = 1
 const LOG_LEVEL_ALL_ASSERTS = 2
 
+#The prefix used to get tests.
 var _test_prefix = "test_"
+#Tests to run for the current script
 var _tests = []
-var _should_print = true
+#all the scripts that should be ran as test scripts
+var _test_scripts = []
+
+var _should_print_to_console = true
 var _current_test = null
 var _log_level = 1
+var _log_text = ""
 
 #various counters
 var _asserts = 0
 var _passed = 0
 var _failed = 0
+
+#controls
+var _text_box = null
+var _run_button = null
+var _copy_button = null
+var _clear_button = null
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func _init():
+	_text_box = TextEdit.new()
+	_run_button = Button.new()
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func _ready():
+	self.set_pos(Vector2(0, 0))
+	self.set_size(Vector2(800, 600))
+	
+	add_child(_text_box)
+	_text_box.set_size(Vector2(800, 500))
+	_text_box.set_pos(Vector2(0, 0))
+	
+	add_child(_run_button)
+	_run_button.set_text("Run Tests")
+	_run_button.set_size(Vector2(100, 50))
+	_run_button.set_pos(Vector2(690, 510))
+	_run_button.connect("pressed", self, "test_scripts")
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -31,7 +65,8 @@ func _init_run():
 	_asserts = 0
 	_passed = 0
 	_failed = 0
-	_tests.clear()
+	_log_text = ""
+	_current_test = 0
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -105,31 +140,19 @@ func get_tests_ran():
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-func set_should_print(should):
-	_should_print = should
+func set_should_print_to_console(should):
+	_should_print_to_console = should
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-func get_should_print():
-	return _should_print
+func get_should_print_to_console():
+	return _should_print_to_console
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 func get_result_text():
-	var to_return = ""
+	return _log_text
 	
-	for i in range(_tests.size()):
-		if(_log_level == LOG_LEVEL_FAIL_ONLY):
-			if(!_tests[i].passed):
-				to_return += _tests[i].name + "\n" + _tests[i].output + "\n"
-		elif(_log_level >= LOG_LEVEL_TEST_AND_FAILURES):
-			to_return += _tests[i].name + "\n"
-			if(!_tests[i].passed or _log_level >= LOG_LEVEL_ALL_ASSERTS):
-				to_return += _tests[i].output + "\n"
-	
-	to_return += "\n" + _get_summary_text()
-	return to_return
-
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 func set_log_level(level):
@@ -146,38 +169,58 @@ func p(text, indent=0):
 	var pad = ""
 	for i in range(0, indent):
 		pad += "  "
+	var to_print = pad + text
 	
-	if(_should_print):
-		if(!_current_test.has_printed_name):
-			print(_current_test.name)
-			_current_test.has_printed_name = true
-		print(pad + text)
+	if(_should_print_to_console):
+		print(to_print)
+
+	_log_text += to_print + "\n"
 	
-	if(_current_test != null):
-		_current_test.output += "\n " + pad + text
+	_text_box.insert_text_at_cursor(to_print + "\n")
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func _test_script(script):
+	_tests.clear()
+	_parse_tests(script)
+	
+	var test_script = load(script).new()
+	test_script.gut = self
+	
+	test_script.prerun_setup()
+	
+	for i in range(_tests.size()):
+		_current_test = _tests[i]
+		test_script.setup()
+		test_script.call(_current_test.name)
+		test_script.teardown()
+
+	_current_test = null
+	test_script.postrun_teardown()
+	
+	p(_get_summary_text())
+	test_script.free()
+	
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func test_scripts():
+	_init_run()
+	self.clear_text()
+	for i in range(_test_scripts.size()):
+		_test_script(_test_scripts[i])
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 func test_script(script):
-	_init_run()
-	_parse_tests(script)
-	
-	var tests = load(script).new()
-	tests.gut = self
-	
-	tests.prerun_setup()
-	
-	for i in range(_tests.size()):
-		_current_test = _tests[i]
-		tests.setup()
-		tests.call(_current_test.name)
-		tests.teardown()
+	_test_scripts.clear()
+	_test_scripts.append(script)
+	test_scripts()
 
-	_current_test = null
-	tests.postrun_teardown()
-	
-	p(_get_summary_text())
-	
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func add_script(script):
+	_test_scripts.append(script)
+
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 func assert_eq(expected, got, text):
@@ -212,7 +255,10 @@ func assert_false(got, text):
 	else:
 		_pass(text)
 
-
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func clear_text():
+	_text_box.set_text("")
 
 
 ################################################################################
@@ -223,6 +269,7 @@ func assert_false(got, text):
 #of a gut instance.
 ################################################################################
 class Tests:
+	extends Node
 	#Need a reference to the instance that is running the tests.  This
 	#is set by the gut class when it runs the tests.  This gets you 
 	#access to the asserts in the tests you write.

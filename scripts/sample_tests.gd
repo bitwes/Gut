@@ -35,6 +35,9 @@ func test_assert_true_with_true():
 func test_assert_true_with_false():
 	gut.assert_true(false, "Should fail")
 
+func test_something_else():
+	gut.assert_true(false, "didn't work")
+
 func test_show_a_gut_print():
 	#This is what you should use to print out stuff if
 	#you want to see it in context of the test that it
