@@ -17,7 +17,7 @@ func _ready():
 	#stop it from printing to console
 	tester.set_should_print_to_console(false)
 	#change the log level to more detail
-	tester.set_log_level(0)#tester.LOG_LEVEL_ALL_ASSERTS)
+	#tester.set_log_level(0)#tester.LOG_LEVEL_ALL_ASSERTS)
 	tester.test_script('res://scripts/another_sample.gd')
 	#test the script
 	tester.add_script('res://scripts/sample_tests.gd')
@@ -29,5 +29,5 @@ func _ready():
 	print(tester.get_result_text())
 	#Insepect the results, put out some more text conditionally.
 	if(tester.get_fail_count() > 0):
-		print("SOMEBODY BROKE SOMETHIN'!!\n")
+		tester.p("SOMEBODY BROKE SOMETHIN'!!\n")
 	

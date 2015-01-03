@@ -1,5 +1,8 @@
 ################################################################################
-#(G)odot (U)nit (T)est
+#(G)odot (U)nit (T)est class
+#
+#How it works
+#	
 #
 #Simple tool for executing unit tests.  There are various asserts that you get
 #access to through this, as well as a way to automate running tests.
@@ -15,6 +18,12 @@
 #	tester.add_script('res://scripts/sample_tests.gd')
 #	tester.add_script('res://scripts/another_set_of_tests.gd')
 #	tester.tester.test_scripts()
+#
+#As long as you don't introduce any compile time errors into the test scripts
+#and the scripts they are testing, you can keep the program running and use
+#the run tests button to re-run all or one of the test scripts.  Currently 
+#I don't know of a way to hanlde the case when a compile time error is introduced
+#into one of the scripts being tested.
 ################################################################################
 extends Panel
 
@@ -87,6 +96,7 @@ func _ready():
 	add_child(log_label)
 	log_label.set_text("Log Level")
 	log_label.set_pos(Vector2(10, 510))
+	
 	add_child(_log_level_slider)
 	_log_level_slider.set_size(Vector2(75, 30))
 	_log_level_slider.set_pos(Vector2(100, 510))
@@ -96,8 +106,8 @@ func _ready():
 	_log_level_slider.set_ticks_on_borders(true)
 	_log_level_slider.set_step(1)
 	_log_level_slider.set_rounded_values(true)
-	_log_level_slider.connect("value_changed", self, "on_log_level_slider_changed")
-	
+	_log_level_slider.connect("value_changed", self, "_on_log_level_slider_changed")
+	_log_level_slider.set_value(_log_level)
 	
 	add_child(_scripts_drop_down)
 	_scripts_drop_down.set_size(Vector2(375, 25))
@@ -105,6 +115,7 @@ func _ready():
 	_scripts_drop_down.add_item("Run All")
 	
 #-------------------------------------------------------------------------------
+#Custom drawing to indicate results.
 #-------------------------------------------------------------------------------
 func _draw():
 	var where = Vector2(430, 565)
@@ -116,7 +127,35 @@ func _draw():
 			draw_circle(where, r, Color(0, 1, 0, 1))
 
 #-------------------------------------------------------------------------------
-#Initialize variables for each run of tests.
+#Run either the selected test or all tests.
+#-------------------------------------------------------------------------------
+func _on_run_button_pressed():
+	clear_text()
+	if(_scripts_drop_down.get_selected() == 0):
+		_test_scripts.clear()
+		for idx in range(1, _scripts_drop_down.get_item_count()):
+			_test_scripts.append(_scripts_drop_down.get_item_text(idx))
+	else:
+		_test_scripts.clear()
+		_test_scripts.append(_scripts_drop_down.get_item_text(_scripts_drop_down.get_selected()))
+	
+	test_scripts()
+
+#-------------------------------------------------------------------------------
+#Send text box text to clipboard
+#-------------------------------------------------------------------------------
+func _copy_button_pressed():
+	_text_box.select_all()
+	_text_box.copy()
+
+#-------------------------------------------------------------------------------
+#Change the log level.  Will be visible the next time tests are run.
+#-------------------------------------------------------------------------------
+func _on_log_level_slider_changed(value):
+	_log_level = _log_level_slider.get_value()
+
+#-------------------------------------------------------------------------------
+#Initialize variables for each run of a single test script.
 #-------------------------------------------------------------------------------
 func _init_run():
 	_summary.asserts = 0
@@ -185,6 +224,7 @@ func _get_summary_text():
 	return to_return
 
 #-------------------------------------------------------------------------------
+#Run all tests in a script.  This is the core logic for running tests.
 #-------------------------------------------------------------------------------
 func _test_script(script):
 	_tests.clear()
@@ -216,6 +256,10 @@ func _test_script(script):
 	p("\n\n")
 
 #-------------------------------------------------------------------------------
+#Conditionally prints the text to the console/results variable based on the
+#current log level and what level is passed in.  Whenever currently in a test,
+#the text will be indented under the test.  It can be further indented if
+#desired.
 #-------------------------------------------------------------------------------
 func p(text, level=0, indent=0):
 	var to_print = ""
@@ -253,6 +297,7 @@ func p(text, level=0, indent=0):
 
 
 #-------------------------------------------------------------------------------
+#Runs all the scripts that were added using add_script
 #-------------------------------------------------------------------------------
 func test_scripts():
 	_init_run()
@@ -262,6 +307,7 @@ func test_scripts():
 	update()
 
 #-------------------------------------------------------------------------------
+#Runs a single script passed in.
 #-------------------------------------------------------------------------------
 func test_script(script):
 	_test_scripts.clear()
@@ -270,12 +316,14 @@ func test_script(script):
 	_test_scripts.clear()
 
 #-------------------------------------------------------------------------------
+#Adds a script to be run when test_scripts called
 #-------------------------------------------------------------------------------
 func add_script(script):
 	_test_scripts.append(script)
 	_scripts_drop_down.add_item(script)
 
 #-------------------------------------------------------------------------------
+#Asserts that the expected value equals the value got.
 #-------------------------------------------------------------------------------
 func assert_eq(expected, got, text=""):
 	var disp = "Expected [" + str(expected) + "] to equal [" + str(got) + "]:  " + text
@@ -285,6 +333,7 @@ func assert_eq(expected, got, text=""):
 		_pass(disp)
 
 #-------------------------------------------------------------------------------
+#Asserts that the value got does not equal the "not expected" value.  
 #-------------------------------------------------------------------------------
 func assert_ne(not_expected, got, text=""):
 	var disp = "Expected [" + str(got) + "] to be anything except [" + str(not_expected) + "]:  " + text
@@ -294,6 +343,7 @@ func assert_ne(not_expected, got, text=""):
 		_pass(disp)
 
 #-------------------------------------------------------------------------------
+#asserts that got is true
 #-------------------------------------------------------------------------------
 func assert_true(got, text=""):
 	if(!got):
@@ -302,6 +352,7 @@ func assert_true(got, text=""):
 		_pass(text)
 
 #-------------------------------------------------------------------------------
+#Asserts that got is false
 #-------------------------------------------------------------------------------
 func assert_false(got, text=""):
 	if(got):
@@ -310,6 +361,7 @@ func assert_false(got, text=""):
 		_pass(text)
 
 #-------------------------------------------------------------------------------
+#Clears the text of the text box.  This resets all counters.
 #-------------------------------------------------------------------------------
 func clear_text():
 	_init_run()
@@ -318,79 +370,63 @@ func clear_text():
 	update()
 
 #-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
-func _on_run_button_pressed():
-	clear_text()
-	if(_scripts_drop_down.get_selected() == 0):
-		_test_scripts.clear()
-		for idx in range(1, _scripts_drop_down.get_item_count()):
-			_test_scripts.append(_scripts_drop_down.get_item_text(idx))
-	else:
-		_test_scripts.clear()
-		_test_scripts.append(_scripts_drop_down.get_item_text(_scripts_drop_down.get_selected()))
-	
-	test_scripts()
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
-func _copy_button_pressed():
-	_text_box.select_all()
-	_text_box.copy()
-
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
-func on_log_level_slider_changed(value):
-	_log_level = _log_level_slider.get_value()
-
-#-------------------------------------------------------------------------------
+#Get the number of tests that were ran
 #-------------------------------------------------------------------------------
 func get_test_count():
 	return _summary.tests
 
 #-------------------------------------------------------------------------------
+#Get the number of assertions that were made
 #-------------------------------------------------------------------------------
 func get_assert_count():
 	return _summary.asserts
 
 #-------------------------------------------------------------------------------
+#Get the number of assertions that passed
 #-------------------------------------------------------------------------------
 func get_pass_count():
 	return _summary.passed
 
 #-------------------------------------------------------------------------------
+#Get the number of assertions that failed
 #-------------------------------------------------------------------------------
 func get_fail_count():
 	return _summary.failed
 
 #-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
-func get_tests_ran():
-	return _summary.tests
-
-#-------------------------------------------------------------------------------
+#Set whether it should print to console or not.  Default is yes.
 #-------------------------------------------------------------------------------
 func set_should_print_to_console(should):
 	_should_print_to_console = should
 
 #-------------------------------------------------------------------------------
+#Get whether it is printing to the console
 #-------------------------------------------------------------------------------
 func get_should_print_to_console():
 	return _should_print_to_console
 
 #-------------------------------------------------------------------------------
+#Get the results of all tests ran as text.  This string is the same as is 
+#displayed in the text box, and simlar to what is printed to the console.
 #-------------------------------------------------------------------------------
 func get_result_text():
 	return _log_text
 	
 #-------------------------------------------------------------------------------
+#Set the log level.  Use one of the various LOG_LEVEL_* constants.
 #-------------------------------------------------------------------------------
 func set_log_level(level):
 	_log_level = level
 	_log_level_slider.set_value(level)
 
 #-------------------------------------------------------------------------------
+#Get the current log level.
 #-------------------------------------------------------------------------------
-func get_log_leve():
+func get_log_level():
 	return _log_level
+
+
+
 
 ################################################################################
 #Class that all test scripts must extend.  Syntax is just a normal extends with
@@ -425,14 +461,12 @@ class Tests:
 
 
 
+
 ################################################################################
 #OneTest (INTERNAL USE ONLY)
 #	Used to keep track of info about each test ran.
 ################################################################################
 class OneTest:
-	#any gut.p statements processed while this test is running
-	#will be channled into this property.
-	var output = ""
 	#indicator if it passed or not.  defaults to true since it takes only
 	#one failure to make it not pass.  _fail in gut will set this.
 	var passed = true
