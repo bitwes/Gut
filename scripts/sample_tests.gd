@@ -12,16 +12,16 @@
 extends "res://scripts/gut.gd".Tests
 
 func setup():
-	print("ran setup")
+	gut.p("ran setup", 2)
 
 func teardown():
-	print("ran teardown")
+	gut.p("ran teardown", 2)
 
 func prerun_setup():
-	print("ran run setup")
+	gut.p("ran run setup", 2)
 
 func postrun_teardown():
-	print("ran run teardown")
+	gut.p("ran run teardown", 2)
 
 func test_assert_eq_number_not_equal():
 	gut.assert_eq(1, 2, "Should fail.  1 != 2")
@@ -43,4 +43,11 @@ func test_show_a_gut_print():
 	#you want to see it in context of the test that it
 	#ran in.
 	gut.p("HELLO WORLD")
-	gut.p("indented", 1)
+	#display different info based on log level.  Default
+	#level is 0, which means it will always show up.
+	#Notice, that since this prints something at level 0
+	#it will always be printed even when the log level
+	#is set to print only failures.
+	gut.p("log 0", 0)
+	gut.p("log 1", 1)
+	gut.p("log 2", 2)

@@ -17,9 +17,14 @@ func _ready():
 	#stop it from printing to console
 	tester.set_should_print_to_console(false)
 	#change the log level to more detail
-	tester.set_log_level(tester.LOG_LEVEL_ALL_ASSERTS)
+	tester.set_log_level(0)#tester.LOG_LEVEL_ALL_ASSERTS)
+	tester.test_script('res://scripts/another_sample.gd')
 	#test the script
-	tester.test_script('res://scripts/sample_tests.gd')
+	tester.add_script('res://scripts/sample_tests.gd')
+	tester.add_script('res://scripts/another_sample.gd')
+	tester.add_script('res://scripts/all_passed.gd')
+	tester.add_script('res://scripts/gut_tests.gd')
+	tester.test_scripts()
 	#get the results out and send them to a text box
 	print(tester.get_result_text())
 	#Insepect the results, put out some more text conditionally.
