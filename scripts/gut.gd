@@ -131,12 +131,11 @@ func _draw():
 #-------------------------------------------------------------------------------
 func _on_run_button_pressed():
 	clear_text()
+	_test_scripts.clear()
 	if(_scripts_drop_down.get_selected() == 0):
-		_test_scripts.clear()
 		for idx in range(1, _scripts_drop_down.get_item_count()):
 			_test_scripts.append(_scripts_drop_down.get_item_text(idx))
 	else:
-		_test_scripts.clear()
 		_test_scripts.append(_scripts_drop_down.get_item_text(_scripts_drop_down.get_selected()))
 	
 	test_scripts()
@@ -341,6 +340,25 @@ func assert_ne(not_expected, got, text=""):
 		_fail(disp)
 	else:
 		_pass(disp)
+#-------------------------------------------------------------------------------
+#Asserts got is greater than expected
+#-------------------------------------------------------------------------------
+func assert_gt(expected, got, text=""):
+	var disp = "Expected [" + str(got) + "] to be > than [" + str(expected) + "]:  " + text
+	if(got > expected):
+		_pass(disp)
+	else:
+		_fail(disp)
+
+#-------------------------------------------------------------------------------
+#Asserts got is less than expected
+#-------------------------------------------------------------------------------
+func assert_lt(expected, got, text=""):
+	var disp = "Expected [" + str(got) + "] to be < than [" + str(expected) + "]:  " + text
+	if(got < expected):
+		_pass(disp)
+	else:
+		_fail(disp)
 
 #-------------------------------------------------------------------------------
 #asserts that got is true
@@ -457,9 +475,6 @@ class Tests:
 	#Overridable method that runs after all tests are run 
 	func postrun_teardown():
 		pass
-
-
-
 
 
 ################################################################################

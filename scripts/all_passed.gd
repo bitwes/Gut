@@ -1,3 +1,5 @@
+#A sample script for illustrating multiple scripts and what it looks like
+#when all tests pass.
 extends "res://scripts/gut.gd".Tests
 
 func test_works():

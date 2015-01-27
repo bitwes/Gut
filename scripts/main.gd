@@ -5,7 +5,6 @@ func _ready():
 #One line, print to console
 #------------------------------------
 	load('res://scripts/gut.gd').new().test_script('res://scripts/sample_tests.gd')
-
 	
 #------------------------------------
 #More lines, get result text out manually.  Can also inspect the results further 

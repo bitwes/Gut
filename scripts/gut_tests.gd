@@ -48,6 +48,20 @@ func test_assert_ne_number_equal():
 	should_fail()
 	gut.assert_ne(1, 1, "Should fail")
 
+func test_assert_gt_number_with_gt():
+	gut.assert_gt(1, 2, "Should Pass")
+
+func test_assert_gt_number_with_lt():
+	should_fail()
+	gut.assert_gt(2, 1, "Should fail")
+
+func test_assert_lt_number_with_lt():
+	gut.assert_lt(2, 1, "Should Pass")
+
+func test_assert_lt_number_with_gt():
+	should_fail()
+	gut.assert_lt(1, 2, "Should fail")
+
 #------------------------------
 #string tests
 #------------------------------
@@ -66,6 +80,19 @@ func test_assert_ne_string_equal():
 	should_fail()
 	gut.assert_ne("one", "one", "Should Fail")
 
+func test_assert_gt_string_with_gt():
+	gut.assert_gt("a", "b", "Should Pass")
+
+func test_assert_gt_string_with_lt():
+	should_fail()
+	gut.assert_gt("b", "a", "Sould Fail")
+
+func test_assert_lt_string_with_lt():
+	gut.assert_lt("b", "a", "Should Pass")
+
+func test_assert_lt_string_with_gt():
+	should_fail()
+	gut.assert_lt("a", "b", "Should Fail")
 #------------------------------
 #boolean tests
 #------------------------------

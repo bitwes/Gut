@@ -1,5 +1,5 @@
 ################################################################################
-#All the magic happens with this extends.  This gets you access to all the gut 
+#All the magic happens with the extends.  This gets you access to all the gut 
 #asserts and the overridable setup and teardown methods.
 #
 #The path to this script is passed to an instance of the gut script when calling

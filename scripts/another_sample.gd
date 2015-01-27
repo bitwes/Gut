@@ -1,3 +1,4 @@
+#Just another sample used for illustrating running multiple scripts.
 extends "res://scripts/gut.gd".Tests
 
 func test_one():
