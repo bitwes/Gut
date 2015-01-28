@@ -129,5 +129,5 @@ func _ready():
 ### Who do I talk to? ###
 You can talk to me, Butch Wesley
 
-* * Bitbucket:  bitwes
-* * Godot forums:  bitwes
+* Bitbucket:  bitwes
+* Godot forums:  bitwes
