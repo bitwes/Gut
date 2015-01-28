@@ -81,9 +81,8 @@ func _ready():
 ...and the GUI looks like:
 ![gut_screenshot.png](https://bitbucket.org/repo/oeKM6G/images/392986662-gut_screenshot.png)
 
-Example of showing the results in the GUI when the scene is run:
-
 ### Who do I talk to? ###
 
-* Repo owner or admin
-* Other community or team contact
+* You can talk to me
+* * Bitbucket:  bitwes
+* * Godot forums:  bitwes
