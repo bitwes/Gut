@@ -12,9 +12,10 @@ func _ready():
 #------------------------------------	
 	#get an instance of gut
 	var tester = load('res://scripts/gut.gd').new()
+	#add as a child so you can see the GUI when run
 	add_child(tester)
 	
-	#stop it from printing to console
+	#stop it from printing to console, just because we can
 	tester.set_should_print_to_console(false)
 	
 	#Run a single test script, this will not appear in the drop

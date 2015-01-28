@@ -9,7 +9,7 @@
 #	DO NOT assign anything to the gut variable.  This is set at runtime by the gut
 #	script.  Setting it to something will cause everything to go crazy go nuts.
 ################################################################################
-extends "res://scripts/gut.gd".Tests
+extends "res://scripts/gut.gd".Test
 
 func setup():
 	gut.p("ran setup", 2)

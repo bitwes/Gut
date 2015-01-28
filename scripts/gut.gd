@@ -5,7 +5,8 @@
 #	
 #
 #Simple tool for executing unit tests.  There are various asserts that you get
-#access to through this, as well as a way to automate running tests.
+#access to through this, as well as a way to automate running tests.  There's more 
+#info in the readme for the project.
 #
 #Example of running a single script.  Output is sent to console
 #        |-----this script----|                    |-------the test script-------| 
@@ -118,6 +119,7 @@ func _ready():
 #Custom drawing to indicate results.
 #-------------------------------------------------------------------------------
 func _draw():
+	return
 	var where = Vector2(430, 565)
 	var r = 25
 	if(_summary.tests > 0):
@@ -453,7 +455,7 @@ func get_log_level():
 #Once a class extends this class it can be passed off to the test_script method
 #of a gut instance.
 ################################################################################
-class Tests:
+class Test:
 	extends Node
 	#Need a reference to the instance that is running the tests.  This
 	#is set by the gut class when it runs the tests.  This gets you 

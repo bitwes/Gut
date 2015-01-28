@@ -1,4 +1,4 @@
-extends "res://scripts/gut.gd".Tests
+extends "res://scripts/gut.gd".Test
 
 var counts = {
 	setup_count = 0,
