@@ -82,7 +82,6 @@ func _ready():
 ![gut_screenshot.png](https://bitbucket.org/repo/oeKM6G/images/392986662-gut_screenshot.png)
 
 ### Who do I talk to? ###
-
-* You can talk to me
+You can talk to me
 * * Bitbucket:  bitwes
 * * Godot forums:  bitwes
