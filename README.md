@@ -124,7 +124,7 @@ func _ready():
 	tester.test_scripts()
 ```
 ...and the GUI looks like:
-![gut_screenshot.png](https://bitbucket.org/repo/oeKM6G/images/392986662-gut_screenshot.png)
+![gut_screenshot.png](https://bitbucket.org/repo/oeKM6G/images/3406082255-gut_screenshot.png)
 
 ### Who do I talk to? ###
 You can talk to me, Butch Wesley
