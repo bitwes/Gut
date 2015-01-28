@@ -13,7 +13,7 @@ GUT has the following asserts, each of which take 3 parameters (except assert_tr
 * func assert_true(got, text=""): #Asserts that got is true
 * func assert_false(got, text=""): #Asserts that got is false
 
-These are called from within the test script by prefixing them with "gut.".  For example:
+These are called from within test scripts (scripts that extend "res://scripts/gut.gd".Test) by prefixing them with "gut.".  For example:
 
 * gut.assert_eq(1, my_number_var, "The number should be 1.")
 * gut.assert_lt("b", my_string_var, "The value should be less than 'b'.")
@@ -42,7 +42,46 @@ To create a test script
 
 ### Running Tests ###
 
+You should create a scene that you can run that will execute all your test scripts for your project.  You can run the scripts one by one and have the output sent to the console or you can add in the scripts, run them together and then use the GUI to rerun or examine the results with handy dandy coloring and buttons.
 
+Example of one line of code to run one test script and send the output to console:
+```
+#!python
+extends Node2d
+func_ready(): 
+    load('res://scripts/gut.gd').new().test_script('res://scripts/sample_tests.gd')
+```
+
+Example where we add the scripts to be tested then call test_scripts().  This will run all the scripts.  Since the tester has been added as a child of the scene, you will see the GUI when you run the scene.
+
+```
+#!python
+
+extends Node2D
+
+func _ready():
+	#get an instance of gut
+	var tester = load('res://scripts/gut.gd').new()
+	add_child(tester)
+	
+	#stop it from printing to console, just because
+	tester.set_should_print_to_console(false)
+	
+	#Add a bunch of test scripts to run.  These will appear in the drop
+	#down and can be rerun.  As long as you don't introduce a runtime
+	#error, you can leave it running, code some more, then rerun the
+	#tests for any or all of the scripts that have been added using
+	#add_script.
+	tester.add_script('res://scripts/gut_tests.gd')
+	tester.add_script('res://scripts/sample_tests.gd')
+	tester.add_script('res://scripts/another_sample.gd')
+	tester.add_script('res://scripts/all_passed.gd')
+	tester.test_scripts()
+```
+...and the GUI looks like:
+![gut_screenshot.png](https://bitbucket.org/repo/oeKM6G/images/392986662-gut_screenshot.png)
+
+Example of showing the results in the GUI when the scene is run:
 
 ### Who do I talk to? ###
 
