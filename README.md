@@ -9,21 +9,23 @@ Sometimes the best tutorial is to dive right in, so to that end you should read 
 * You're done, go write some tests.
 
 ### Creating Tests ###
+
 To create a test script
-*Create a new GDScript
-*extend the Test class in gut.gd (extends "res://scripts/gut.gd".Test)
-*Implement the setup/teardown methods that you may need, there are four.
+
+* Create a new GDScript
+* Extend the Test class in gut.gd (extends "res://scripts/gut.gd".Test).
+* Implement the setup/teardown methods that you may need, there are four, none of which are required.
 * * setup:  Ran before each test
 * * teardown:  Ran after each test
 * * prerun_setup:  Ran before any test is run
 * * postrun_teardown:  Ran after all tests have run
-*Start making test methods
-* * Tests must start with "test_"
+* Start making test functions
+* * Test functions must start with "test_" [func test_some_small_aspect_of_this_cool_thing_i_made():]
 * * Tests cannot have a parameter
 * * Tests should perform at least one assert.  There are many to choose from and come on the form of gut.assert_x and take three parameters
-* * 1. expected:  This is the value expect to get
-* * 2. got:  This is the value you did get
-* * 3. text:  Optional text to display.
+* * * (1) expected:  This is the value expect to get
+* * *  (2) got:  This is the value you did get
+* * *  (3) text:  Optional text to display.
 ### Running Tests ###
 * Deployment instructions
 
