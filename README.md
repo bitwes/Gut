@@ -56,6 +56,17 @@ Here's a sample test script:
 #	script.  Setting it to something will cause everything to go crazy go nuts.
 ################################################################################
 extends "res://scripts/gut.gd".Test
+func setup():
+	gut.p("ran setup", 2)
+
+func teardown():
+	gut.p("ran teardown", 2)
+
+func prerun_setup():
+	gut.p("ran run setup", 2)
+
+func postrun_teardown():
+	gut.p("ran run teardown", 2)
 
 func test_assert_eq_number_not_equal():
 	gut.assert_eq(1, 2, "Should fail.  1 != 2")
