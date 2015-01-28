@@ -40,6 +40,40 @@ To create a test script
 * * Tests cannot have a parameter
 * * Tests should perform at least one assert.  See the summary for a list of asserts.
 
+Here's a sample test script:
+
+```
+#!python
+################################################################################
+#All the magic happens with the extends.  This gets you access to all the gut 
+#asserts and the overridable setup and teardown methods.
+#
+#The path to this script is passed to an instance of the gut script when calling
+#test_script
+#
+#WARNING
+#	DO NOT assign anything to the gut variable.  This is set at runtime by the gut
+#	script.  Setting it to something will cause everything to go crazy go nuts.
+################################################################################
+extends "res://scripts/gut.gd".Test
+
+func test_assert_eq_number_not_equal():
+	gut.assert_eq(1, 2, "Should fail.  1 != 2")
+	
+func test_assert_eq_number_equal():
+	gut.assert_eq('asdf', 'asdf', "Should pass")
+
+func test_assert_true_with_true():
+	gut.assert_true(true, "Should pass, true is true")
+
+func test_assert_true_with_false():
+	gut.assert_true(false, "Should fail")
+
+func test_something_else():
+	gut.assert_true(false, "didn't work")
+
+```
+
 ### Running Tests ###
 
 You should create a scene that you can run that will execute all your test scripts for your project.  You can run the scripts one by one and have the output sent to the console or you can add in the scripts, run them together and then use the GUI to rerun or examine the results with handy dandy coloring and buttons.
