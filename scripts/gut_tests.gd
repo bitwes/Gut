@@ -125,6 +125,16 @@ func test_can_call_true_without_text():
 func test_can_call_false_without_text():
 	gut.assert_false(false)
 
+func test_script_object_added_to_tree():
+	gut.assert_ne(get_tree(), null, "The tree should not be null if we are added to it")
+
+func test_pending_increments_pending_count():
+	gut.pending()
+	gut.assert_eq(gut.get_pending_count(), 1, 'One test should have been marked as pending')
+
+func test_pending_accepts_text():
+	gut.pending("This is a pending test")
+	
 func test_verify_results():
 	gut.p("/*THESE SHOULD ALL PASS, IF NOT THEN SOMETHING IS BROKEN*/")
 	gut.assert_eq(counts.should_fail, gut.get_fail_count(), "The expected number of tests should have failed.")

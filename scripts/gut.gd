@@ -50,7 +50,8 @@ var _summary = {
 	passed = 0,
 	failed = 0,
 	tests = 0,
-	scripts = 0
+	scripts = 0,
+	pending = 0
 }
 
 #controls
@@ -236,7 +237,7 @@ func _test_script(script):
 	p("-----------------------------------------/")
 	var test_script = load(script).new()
 	test_script.gut = self
-	
+	add_child(test_script)
 	test_script.prerun_setup()
 	
 	for i in range(_tests.size()):
@@ -326,7 +327,7 @@ func add_script(script):
 #-------------------------------------------------------------------------------
 #Asserts that the expected value equals the value got.
 #-------------------------------------------------------------------------------
-func assert_eq(expected, got, text=""):
+func assert_eq(got, expected, text=""):
 	var disp = "Expected [" + str(expected) + "] to equal [" + str(got) + "]:  " + text
 	if(expected != got):
 		_fail(disp)
@@ -336,7 +337,7 @@ func assert_eq(expected, got, text=""):
 #-------------------------------------------------------------------------------
 #Asserts that the value got does not equal the "not expected" value.  
 #-------------------------------------------------------------------------------
-func assert_ne(not_expected, got, text=""):
+func assert_ne(got, not_expected, text=""):
 	var disp = "Expected [" + str(got) + "] to be anything except [" + str(not_expected) + "]:  " + text
 	if(got == not_expected):
 		_fail(disp)
@@ -345,7 +346,7 @@ func assert_ne(not_expected, got, text=""):
 #-------------------------------------------------------------------------------
 #Asserts got is greater than expected
 #-------------------------------------------------------------------------------
-func assert_gt(expected, got, text=""):
+func assert_gt(got, expected, text=""):
 	var disp = "Expected [" + str(got) + "] to be > than [" + str(expected) + "]:  " + text
 	if(got > expected):
 		_pass(disp)
@@ -355,7 +356,7 @@ func assert_gt(expected, got, text=""):
 #-------------------------------------------------------------------------------
 #Asserts got is less than expected
 #-------------------------------------------------------------------------------
-func assert_lt(expected, got, text=""):
+func assert_lt(got, expected, text=""):
 	var disp = "Expected [" + str(got) + "] to be < than [" + str(expected) + "]:  " + text
 	if(got < expected):
 		_pass(disp)
@@ -380,6 +381,16 @@ func assert_false(got, text=""):
 	else:
 		_pass(text)
 
+#-------------------------------------------------------------------------------
+#Mark the current test as pending.
+#-------------------------------------------------------------------------------
+func pending(text=""):
+	_summary.pending += 1
+	if(text == ""):
+		p("Pending")
+	else:
+		p("Pending:  " + text)
+	
 #-------------------------------------------------------------------------------
 #Clears the text of the text box.  This resets all counters.
 #-------------------------------------------------------------------------------
@@ -413,6 +424,12 @@ func get_pass_count():
 func get_fail_count():
 	return _summary.failed
 
+#-------------------------------------------------------------------------------
+#Get the number of tests flagged as pending
+#-------------------------------------------------------------------------------
+func get_pending_count():
+	return _summary.pending
+	
 #-------------------------------------------------------------------------------
 #Set whether it should print to console or not.  Default is yes.
 #-------------------------------------------------------------------------------

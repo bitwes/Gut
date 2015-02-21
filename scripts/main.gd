@@ -30,9 +30,9 @@ func _ready():
 	#tests for any or all of the scripts that have been added using
 	#add_script.
 	tester.add_script('res://scripts/gut_tests.gd')
-	tester.add_script('res://scripts/sample_tests.gd')
-	tester.add_script('res://scripts/another_sample.gd')
-	tester.add_script('res://scripts/all_passed.gd')
+#	tester.add_script('res://scripts/sample_tests.gd')
+#	tester.add_script('res://scripts/another_sample.gd')
+#	tester.add_script('res://scripts/all_passed.gd')
 	tester.test_scripts()
 
 	#get the results to the console, just to show you can get them
