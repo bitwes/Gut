@@ -134,7 +134,18 @@ func test_pending_increments_pending_count():
 
 func test_pending_accepts_text():
 	gut.pending("This is a pending test")
-	
+
+func test_wait_for_continue_click():
+	gut.confirm_continue()
+
+
+
+
+
+
+
+
+
 func test_verify_results():
 	gut.p("/*THESE SHOULD ALL PASS, IF NOT THEN SOMETHING IS BROKEN*/")
 	gut.assert_eq(counts.should_fail, gut.get_fail_count(), "The expected number of tests should have failed.")

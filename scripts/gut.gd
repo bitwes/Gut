@@ -59,6 +59,7 @@ var _text_box = TextEdit.new()
 var _run_button = Button.new()
 var _copy_button = Button.new()
 var _clear_button = Button.new()
+var _continue_button = Button.new()
 var _log_level_slider = HSlider.new()
 var _scripts_drop_down = OptionButton.new()
 
@@ -93,6 +94,13 @@ func _ready():
 	_clear_button.set_size(Vector2(100, 50))
 	_clear_button.set_pos(Vector2(470, 510))
 	_clear_button.connect("pressed", self, "clear_text")
+	
+	add_child(_continue_button)
+	_continue_button.set_text("Continue")
+	_continue_button.set_size(Vector2(100, 25))
+	_continue_button.set_pos(Vector2(470, 570))
+	#_continue_button.set_disabled(true)
+	_continue_button.connect("pressed", self, "_on_continue_button_pressed")
 	
 	var log_label = Label.new()
 	add_child(log_label)
@@ -135,6 +143,7 @@ func _draw():
 func _on_run_button_pressed():
 	clear_text()
 	_test_scripts.clear()
+	confirm_continue()
 	if(_scripts_drop_down.get_selected() == 0):
 		for idx in range(1, _scripts_drop_down.get_item_count()):
 			_test_scripts.append(_scripts_drop_down.get_item_text(idx))
@@ -149,6 +158,10 @@ func _on_run_button_pressed():
 func _copy_button_pressed():
 	_text_box.select_all()
 	_text_box.copy()
+
+func _on_continue_button_pressed():
+	p("Continuing")
+	_continue_button.set_disabled(true)
 
 #-------------------------------------------------------------------------------
 #Change the log level.  Will be visible the next time tests are run.
@@ -391,6 +404,16 @@ func pending(text=""):
 	else:
 		p("Pending:  " + text)
 	
+#-------------------------------------------------------------------------------
+#Pauses the test and waits for you to press a confirmation button.  Useful when
+#you want to watch a test play out onscreen or inspect results.
+#-------------------------------------------------------------------------------
+func confirm_continue():
+	p("Click <" + _continue_button.get_text() + "> to continue test...")
+	_continue_button.set_disabled(false)
+	yield(_continue_button, "pressed")
+	#yield( get_node("@Button15"), "pressed")
+
 #-------------------------------------------------------------------------------
 #Clears the text of the text box.  This resets all counters.
 #-------------------------------------------------------------------------------

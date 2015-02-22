@@ -1,11 +1,19 @@
 extends Node2D
 
 func _ready():
+	#_run_test_one_line()
+	#_run_all_tests()
+	_run_gut_tests()
+	
+
+
+func _run_test_one_line():
 #------------------------------------
 #One line, print to console
 #------------------------------------
 	load('res://scripts/gut.gd').new().test_script('res://scripts/sample_tests.gd')
-	
+
+func _run_all_tests():
 #------------------------------------
 #More lines, get result text out manually.  Can also inspect the results further 
 #with a reference to the class.
@@ -30,9 +38,9 @@ func _ready():
 	#tests for any or all of the scripts that have been added using
 	#add_script.
 	tester.add_script('res://scripts/gut_tests.gd')
-#	tester.add_script('res://scripts/sample_tests.gd')
-#	tester.add_script('res://scripts/another_sample.gd')
-#	tester.add_script('res://scripts/all_passed.gd')
+	tester.add_script('res://scripts/sample_tests.gd')
+	tester.add_script('res://scripts/another_sample.gd')
+	tester.add_script('res://scripts/all_passed.gd')
 	tester.test_scripts()
 
 	#get the results to the console, just to show you can get them
@@ -43,3 +51,10 @@ func _ready():
 	if(tester.get_fail_count() > 0):
 		tester.p("SOMEBODY BROKE SOMETHIN'!!\n")
 	
+
+func _run_gut_tests():
+	var tester = load('res://scripts/gut.gd').new()
+	add_child(tester)
+	tester.set_should_print_to_console(false)
+	tester.add_script('res://scripts/gut_tests.gd')
+	tester.test_scripts()
