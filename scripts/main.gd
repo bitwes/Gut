@@ -57,4 +57,6 @@ func _run_gut_tests():
 	add_child(tester)
 	tester.set_should_print_to_console(false)
 	tester.add_script('res://scripts/gut_tests.gd')
+	#tester.add_script('res://scripts/all_passed.gd')
+	#tester.add_script('res://scripts/gut_tests.gd')
 	tester.test_scripts()

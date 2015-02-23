@@ -39,6 +39,10 @@ var _tests = []
 #all the scripts that should be ran as test scripts
 var _test_scripts = []
 
+var _script_result = null
+var _waiting = false
+var _done = false
+
 var _should_print_to_console = true
 var _current_test = null
 var _log_level = 1
@@ -99,7 +103,7 @@ func _ready():
 	_continue_button.set_text("Continue")
 	_continue_button.set_size(Vector2(100, 25))
 	_continue_button.set_pos(Vector2(470, 570))
-	#_continue_button.set_disabled(true)
+	_continue_button.set_disabled(true)
 	_continue_button.connect("pressed", self, "_on_continue_button_pressed")
 	
 	var log_label = Label.new()
@@ -123,7 +127,12 @@ func _ready():
 	_scripts_drop_down.set_size(Vector2(375, 25))
 	_scripts_drop_down.set_pos(Vector2(10, 550))
 	_scripts_drop_down.add_item("Run All")
-	
+
+func _process(delta):
+	if(!_waiting):
+		_script_result = _script_result.resume()
+		set_process(false)
+
 #-------------------------------------------------------------------------------
 #Custom drawing to indicate results.
 #-------------------------------------------------------------------------------
@@ -143,7 +152,7 @@ func _draw():
 func _on_run_button_pressed():
 	clear_text()
 	_test_scripts.clear()
-	confirm_continue()
+	
 	if(_scripts_drop_down.get_selected() == 0):
 		for idx in range(1, _scripts_drop_down.get_item_count()):
 			_test_scripts.append(_scripts_drop_down.get_item_text(idx))
@@ -159,8 +168,9 @@ func _copy_button_pressed():
 	_text_box.select_all()
 	_text_box.copy()
 
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 func _on_continue_button_pressed():
-	p("Continuing")
 	_continue_button.set_disabled(true)
 
 #-------------------------------------------------------------------------------
@@ -178,6 +188,8 @@ func _init_run():
 	_summary.failed = 0
 	_summary.tests = 0
 	_summary.scripts = 0
+	_summary.pending = 0
+	
 	_log_text = ""
 	_text_box.clear_colors()
 	_text_box.add_keyword_color("PASSED", Color(0, 1, 0))
@@ -241,34 +253,46 @@ func _get_summary_text():
 #-------------------------------------------------------------------------------
 #Run all tests in a script.  This is the core logic for running tests.
 #-------------------------------------------------------------------------------
-func _test_script(script):
-	_tests.clear()
-	_parse_tests(script)
-	_summary.scripts += 1
-	p("/-----------------------------------------")
-	p("Testing Script " + script, 0)
-	p("-----------------------------------------/")
-	var test_script = load(script).new()
-	test_script.gut = self
-	add_child(test_script)
-	test_script.prerun_setup()
+func _test_the_scripts():
+	_init_run()
+	for s in range(_test_scripts.size()):
+		_tests.clear()
+		_parse_tests(_test_scripts[s])
+		_summary.scripts += 1
+		p("/-----------------------------------------")
+		p("Testing Script " + _test_scripts[s], 0)
+		p("-----------------------------------------/")
+		var test_script = load(_test_scripts[s]).new()
+		var script_result = null
+		test_script.gut = self
+		add_child(test_script)
+		test_script.prerun_setup()
+		
+		for i in range(_tests.size()):
+			_current_test = _tests[i]
+			p(_current_test.name, 1)
+			test_script.setup()
+			_summary.tests += 1
+			script_result = test_script.call(_current_test.name)
+			if(script_result):
+				_waiting = true
+				set_process(true)
+				_continue_button.set_disabled(false)
+				yield()
+			
+			test_script.teardown()
+			if(_current_test.passed):
+				_text_box.add_keyword_color(_current_test.name, Color(0, 1, 0))
+			else:
+				_text_box.add_keyword_color(_current_test.name, Color(1, 0, 0))
 	
-	for i in range(_tests.size()):
-		_current_test = _tests[i]
-		p(_current_test.name, 1)
-		test_script.setup()
-		_summary.tests += 1
-		test_script.call(_current_test.name)
-		test_script.teardown()
-		if(_current_test.passed):
-			_text_box.add_keyword_color(_current_test.name, Color(0, 1, 0))
-		else:
-			_text_box.add_keyword_color(_current_test.name, Color(1, 0, 0))
-
-	_current_test = null
-	test_script.postrun_teardown()
-	test_script.free()
-	p("\n\n")
+		_current_test = null
+		test_script.postrun_teardown()
+		test_script.free()
+		p("\n\n")
+	
+	p(_get_summary_text(), 0)
+	update()
 
 #-------------------------------------------------------------------------------
 #Conditionally prints the text to the console/results variable based on the
@@ -315,12 +339,7 @@ func p(text, level=0, indent=0):
 #Runs all the scripts that were added using add_script
 #-------------------------------------------------------------------------------
 func test_scripts():
-	_init_run()
-	for i in range(_test_scripts.size()):
-		_test_script(_test_scripts[i])
-	p(_get_summary_text(), 0)
-	update()
-
+	_script_result = _test_the_scripts()
 #-------------------------------------------------------------------------------
 #Runs a single script passed in.
 #-------------------------------------------------------------------------------
@@ -408,11 +427,8 @@ func pending(text=""):
 #Pauses the test and waits for you to press a confirmation button.  Useful when
 #you want to watch a test play out onscreen or inspect results.
 #-------------------------------------------------------------------------------
-func confirm_continue():
-	p("Click <" + _continue_button.get_text() + "> to continue test...")
-	_continue_button.set_disabled(false)
-	yield(_continue_button, "pressed")
-	#yield( get_node("@Button15"), "pressed")
+func ended_yielded_test():
+	_waiting = false
 
 #-------------------------------------------------------------------------------
 #Clears the text of the text box.  This resets all counters.

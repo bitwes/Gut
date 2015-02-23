@@ -136,11 +136,8 @@ func test_pending_accepts_text():
 	gut.pending("This is a pending test")
 
 func test_wait_for_continue_click():
-	gut.confirm_continue()
-
-
-
-
+	yield(gut._continue_button, "pressed")
+	gut.ended_yielded_test()
 
 
 
