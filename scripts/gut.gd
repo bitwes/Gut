@@ -26,7 +26,7 @@
 #I don't know of a way to hanlde the case when a compile time error is introduced
 #into one of the scripts being tested.
 ################################################################################
-extends Panel
+extends WindowDialog
 
 const LOG_LEVEL_FAIL_ONLY = 0
 const LOG_LEVEL_TEST_AND_FAILURES = 1
@@ -48,6 +48,8 @@ var _current_test = null
 var _log_level = 1
 var _log_text = ""
 
+var _pause_before_teardown = false
+
 #various counters
 var _summary = {
 	asserts = 0,
@@ -67,53 +69,86 @@ var _continue_button = Button.new()
 var _log_level_slider = HSlider.new()
 var _scripts_drop_down = OptionButton.new()
 
+var _mouse_down = false
+var _mouse_down_pos = null
+var _mouse_in = false
+
+var min_size = Vector2(650, 400)
+
+func _set_anchor_bottom_right(obj):
+	obj.set_anchor(MARGIN_LEFT, ANCHOR_END)
+	obj.set_anchor(MARGIN_RIGHT, ANCHOR_END)
+	obj.set_anchor(MARGIN_TOP, ANCHOR_END)
+	obj.set_anchor(MARGIN_BOTTOM, ANCHOR_END)
+
+func _set_anchor_bottom_left(obj):
+	obj.set_anchor(MARGIN_LEFT, ANCHOR_BEGIN)
+	obj.set_anchor(MARGIN_TOP, ANCHOR_END)
+	obj.set_anchor(MARGIN_TOP, ANCHOR_END)
 
 #-------------------------------------------------------------------------------
 #Initialize controls
 #-------------------------------------------------------------------------------
 func _ready():
-	self.set_pos(Vector2(0, 0))
-	self.set_size(Vector2(800, 600))
+	set_process(true)
+	set_process_input(true)
+	
+	show()
+	set_pos(get_pos() + Vector2(0, 20))
+	self.set_size(min_size)
+	
+	var button_size = Vector2(75, 35)
+	var button_spacing = Vector2(10, 0)
 	
 	add_child(_text_box)
-	_text_box.set_size(Vector2(800, 500))
-	_text_box.set_pos(Vector2(0, 0))
+	_text_box.set_size(Vector2(get_size().x - 4, 300))
+	_text_box.set_pos(Vector2(2, 0))
 	_text_box.set_readonly(true)
 	_text_box.set_syntax_coloring(true)
+	_text_box.set_anchor(MARGIN_LEFT, ANCHOR_BEGIN)
+	_text_box.set_anchor(MARGIN_RIGHT, ANCHOR_END)
+	_text_box.set_anchor(MARGIN_TOP, ANCHOR_BEGIN)
+	_text_box.set_anchor(MARGIN_BOTTOM, ANCHOR_END)
+	
 	
 	add_child(_run_button)
 	_run_button.set_text("Run Tests")
-	_run_button.set_size(Vector2(100, 50))
-	_run_button.set_pos(Vector2(690, 510))
+	_run_button.set_size(button_size)
+	_run_button.set_pos(Vector2(get_size().x - 5 - button_size.x, _text_box.get_size().y + 10))
 	_run_button.connect("pressed", self, "_on_run_button_pressed")
+	_set_anchor_bottom_right(_run_button)
 
 	add_child(_copy_button)
 	_copy_button.set_text("Copy")
-	_copy_button.set_size(Vector2(100, 50))
-	_copy_button.set_pos(Vector2(580, 510))
+	_copy_button.set_size(button_size)
+	_copy_button.set_pos(_run_button.get_pos() - Vector2(button_size.x, 0) - button_spacing)
 	_copy_button.connect("pressed", self, "_copy_button_pressed")
+	_set_anchor_bottom_right(_copy_button)
 	
 	add_child(_clear_button)
 	_clear_button.set_text("Clear")
-	_clear_button.set_size(Vector2(100, 50))
-	_clear_button.set_pos(Vector2(470, 510))
+	_clear_button.set_size(button_size)
+	_clear_button.set_pos(_copy_button.get_pos() - Vector2(button_size.x, 0) - button_spacing)
 	_clear_button.connect("pressed", self, "clear_text")
+	_set_anchor_bottom_right(_clear_button)
 	
 	add_child(_continue_button)
 	_continue_button.set_text("Continue")
 	_continue_button.set_size(Vector2(100, 25))
-	_continue_button.set_pos(Vector2(470, 570))
+	_continue_button.set_pos(Vector2(_clear_button.get_pos().x, _clear_button.get_pos().y + _clear_button.get_size().y + 10))
 	_continue_button.set_disabled(true)
 	_continue_button.connect("pressed", self, "_on_continue_button_pressed")
+	_set_anchor_bottom_right(_continue_button)
 	
 	var log_label = Label.new()
 	add_child(log_label)
 	log_label.set_text("Log Level")
-	log_label.set_pos(Vector2(10, 510))
+	log_label.set_pos(Vector2(10, _text_box.get_size().y + 20))
+	_set_anchor_bottom_left(log_label)
 	
 	add_child(_log_level_slider)
 	_log_level_slider.set_size(Vector2(75, 30))
-	_log_level_slider.set_pos(Vector2(100, 510))
+	_log_level_slider.set_pos(Vector2(100, log_label.get_pos().y))
 	_log_level_slider.set_min(0)
 	_log_level_slider.set_max(2)
 	_log_level_slider.set_ticks(3)
@@ -122,22 +157,74 @@ func _ready():
 	_log_level_slider.set_rounded_values(true)
 	_log_level_slider.connect("value_changed", self, "_on_log_level_slider_changed")
 	_log_level_slider.set_value(_log_level)
+	_set_anchor_bottom_left(_log_level_slider)
 	
 	add_child(_scripts_drop_down)
 	_scripts_drop_down.set_size(Vector2(375, 25))
-	_scripts_drop_down.set_pos(Vector2(10, 550))
+	_scripts_drop_down.set_pos(Vector2(10, _log_level_slider.get_pos().y + 50))
 	_scripts_drop_down.add_item("Run All")
-
+	_set_anchor_bottom_left(_scripts_drop_down)
+	
+	self.connect("mouse_enter", self, "_on_mouse_enter")
+	self.connect("mouse_exit", self, "_on_mouse_exit")
+	
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 func _process(delta):
-	if(!_waiting):
+	if(_waiting and  !_pause_before_teardown):
+		p("Resuming")
+		_pause_before_teardown = false
+		_waiting = false
 		_script_result = _script_result.resume()
-		set_process(false)
+
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func _input(event):
+	#if the mouse is somewhere within the debug window
+	if(_mouse_in):
+		#Check for mouse click inside the resize handle
+		if(event.type == InputEvent.MOUSE_BUTTON):
+			if (event.button_index == 1):
+				#It's checking a square area for the bottom right corner, but that's close enough.  I'm lazy
+				if(event.pos.x > get_size().x + get_pos().x - 10 and event.pos.y > get_size().y + get_pos().y - 10):
+					if event.pressed:
+						_mouse_down = true
+						_mouse_down_pos = event.pos
+					else:
+						_mouse_down = false
+		#Reszie
+		if(event.type == InputEvent.MOUSE_MOTION):
+			if(_mouse_down):
+				if(get_size() >= min_size):
+					var new_size = get_size() + event.pos - _mouse_down_pos
+					var new_mouse_down_pos = event.pos
+					
+					if(new_size.x < min_size.x):
+						new_size.x = min_size.x
+						new_mouse_down_pos.x = _mouse_down_pos.x
+					
+					if(new_size.y < min_size.y):
+						new_size.y = min_size.y
+						new_mouse_down_pos.y = _mouse_down_pos.y
+						
+					_mouse_down_pos = new_mouse_down_pos
+					set_size(new_size)
 
 #-------------------------------------------------------------------------------
 #Custom drawing to indicate results.
 #-------------------------------------------------------------------------------
 func _draw():
+	#Draw the lines in the corner to show where you can
+	#drag to resize the dialog
+	var grab_margin = 2
+	var line_space = 3
+	var grab_line_color = Color(.4, .4, .4)
+	for i in range(1, 6):
+		draw_line(get_size() - Vector2(i * line_space, grab_margin), get_size() - Vector2(grab_margin, i * line_space), grab_line_color)
+
 	return
+
 	var where = Vector2(430, 565)
 	var r = 25
 	if(_summary.tests > 0):
@@ -146,6 +233,19 @@ func _draw():
 		else:
 			draw_circle(where, r, Color(0, 1, 0, 1))
 
+#-------------------------------------------------------------------------------
+#
+#-------------------------------------------------------------------------------
+func _on_mouse_enter():
+	_mouse_in = true
+
+#-------------------------------------------------------------------------------
+#
+#-------------------------------------------------------------------------------
+func _on_mouse_exit():
+	_mouse_in = false
+	_mouse_down = false
+	
 #-------------------------------------------------------------------------------
 #Run either the selected test or all tests.
 #-------------------------------------------------------------------------------
@@ -171,6 +271,7 @@ func _copy_button_pressed():
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 func _on_continue_button_pressed():
+	_pause_before_teardown = false
 	_continue_button.set_disabled(true)
 
 #-------------------------------------------------------------------------------
@@ -274,9 +375,9 @@ func _test_the_scripts():
 			test_script.setup()
 			_summary.tests += 1
 			script_result = test_script.call(_current_test.name)
-			if(script_result):
+			if(_pause_before_teardown):
+				p("Pausing.  Press continue button...")
 				_waiting = true
-				set_process(true)
 				_continue_button.set_disabled(false)
 				yield()
 			
@@ -501,7 +602,10 @@ func set_log_level(level):
 func get_log_level():
 	return _log_level
 
-
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func pause_before_teardown():
+	_pause_before_teardown = true;
 
 
 ################################################################################

@@ -136,9 +136,12 @@ func test_pending_accepts_text():
 	gut.pending("This is a pending test")
 
 func test_wait_for_continue_click():
-	yield(gut._continue_button, "pressed")
-	gut.ended_yielded_test()
-
+	gut.assert_eq(1, 1, 'some simple assert')
+	gut.pause_before_teardown()
+	
+func test_can_pause_twice():
+	gut.assert_eq(2, 2, 'Another simple assert')
+	gut.pause_before_teardown()
 
 
 

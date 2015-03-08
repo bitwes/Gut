@@ -22,6 +22,9 @@ func _run_all_tests():
 	var tester = load('res://scripts/gut.gd').new()
 	#add as a child so you can see the GUI when run
 	add_child(tester)
+	tester.show()
+	tester.set_size(Vector2(500, 500))
+	tester.set_pos(Vector2(100, 100))
 	
 	#stop it from printing to console, just because we can
 	tester.set_should_print_to_console(false)
@@ -55,6 +58,7 @@ func _run_all_tests():
 func _run_gut_tests():
 	var tester = load('res://scripts/gut.gd').new()
 	add_child(tester)
+	
 	tester.set_should_print_to_console(false)
 	tester.add_script('res://scripts/gut_tests.gd')
 	#tester.add_script('res://scripts/all_passed.gd')
