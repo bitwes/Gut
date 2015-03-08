@@ -1,5 +1,31 @@
 extends "res://scripts/gut.gd".Test
 
+#--------------------------------------
+#Used to test calling the _process method
+#on an object through gut
+#--------------------------------------
+class HasProcessMethod:
+	extends Node
+	var process_called_count = 0
+	var delta_sum = 0.0
+	
+	func _process(delta):
+		process_called_count += 1
+		delta_sum += delta
+
+#--------------------------------------
+#Used to test calling the _fixed_process
+#method on an object through gut
+#--------------------------------------
+class HasFixedProcessMethod:
+	extends Node
+	var fixed_process_called_count = 0
+	var delta_sum = 0.0
+	
+	func _fixed_process(delta):
+		fixed_process_called_count += 1
+		delta_sum += delta
+
 var counts = {
 	setup_count = 0,
 	teardown_count = 0,
@@ -143,7 +169,39 @@ func test_can_pause_twice():
 	gut.assert_eq(2, 2, 'Another simple assert')
 	gut.pause_before_teardown()
 
+func test_simulate_calls_process():
+	var obj = HasProcessMethod.new()
+	gut.simulate(obj, 10, .1)
+	gut.assert_eq(obj.process_called_count, 10, "_process should have been called 10 times")
+	#using just the numbers didn't work, nor using float.  str worked for some reason and 
+	#i'm not sure why.
+	gut.assert_eq(str(obj.delta_sum), str(1), "The delta value should have been passed in and summed")
 
+func test_simulate_calls_process_on_child_objects():
+	var parent = HasProcessMethod.new()
+	var child = HasProcessMethod.new()
+	parent.add_child(child)
+	gut.simulate(parent, 10, .1)
+	gut.assert_eq(child.process_called_count, 10, "_process should have been called on the child object too")
+
+func test_simulate_calls_process_on_child_objects_of_child_objects():
+	var objs = []
+	for i in range(5):
+		objs.append(HasProcessMethod.new())
+		if(i > 0):
+			objs[i - 1].add_child(objs[i])
+	gut.simulate(objs[0], 10, .1)
+	
+	for i in range(objs.size()):
+		gut.assert_eq(objs[i].process_called_count, 10, "_process should have been called on object # " + str(i))
+
+func test_simulate_calls_fixed_process():
+	var obj = HasFixedProcessMethod.new()
+	gut.simulate(obj, 10, .1)
+	gut.assert_eq(obj.fixed_process_called_count, 10, "_process should have been called 10 times")
+	#using just the numbers didn't work, nor using float.  str worked for some reason and 
+	#i'm not sure why.
+	gut.assert_eq(str(obj.delta_sum), str(1), "The delta value should have been passed in and summed")
 
 
 func test_verify_results():

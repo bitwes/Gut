@@ -177,7 +177,6 @@ func _process(delta):
 		_waiting = false
 		_script_result = _script_result.resume()
 
-
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 func _input(event):
@@ -356,6 +355,7 @@ func _get_summary_text():
 #-------------------------------------------------------------------------------
 func _test_the_scripts():
 	_init_run()
+	_run_button.set_disabled(true)
 	for s in range(_test_scripts.size()):
 		_tests.clear()
 		_parse_tests(_test_scripts[s])
@@ -394,6 +394,7 @@ func _test_the_scripts():
 	
 	p(_get_summary_text(), 0)
 	update()
+	_run_button.set_disabled(false)
 
 #-------------------------------------------------------------------------------
 #Conditionally prints the text to the console/results variable based on the
@@ -607,6 +608,17 @@ func get_log_level():
 func pause_before_teardown():
 	_pause_before_teardown = true;
 
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func simulate(obj, times, delta):
+	for i in range(times):
+		if(obj.has_method("_process")):
+			obj._process(delta)
+		if(obj.has_method("_fixed_process")):
+			obj._fixed_process(delta)
+			
+		for kid in obj.get_children():
+			simulate(kid, 1, delta)
 
 ################################################################################
 #Class that all test scripts must extend.  Syntax is just a normal extends with
