@@ -462,7 +462,7 @@ func add_script(script):
 #Asserts that the expected value equals the value got.
 #-------------------------------------------------------------------------------
 func assert_eq(got, expected, text=""):
-	var disp = "Expected [" + str(expected) + "] to equal [" + str(got) + "]:  " + text
+	var disp = "[" + str(got) + "] expected to equal [" + str(expected) + "]:  " + text
 	if(expected != got):
 		_fail(disp)
 	else:
@@ -472,7 +472,7 @@ func assert_eq(got, expected, text=""):
 #Asserts that the value got does not equal the "not expected" value.  
 #-------------------------------------------------------------------------------
 func assert_ne(got, not_expected, text=""):
-	var disp = "Expected [" + str(got) + "] to be anything except [" + str(not_expected) + "]:  " + text
+	var disp = "[" + str(got) + "] expected to be anything except [" + str(not_expected) + "]:  " + text
 	if(got == not_expected):
 		_fail(disp)
 	else:
@@ -481,7 +481,7 @@ func assert_ne(got, not_expected, text=""):
 #Asserts got is greater than expected
 #-------------------------------------------------------------------------------
 func assert_gt(got, expected, text=""):
-	var disp = "Expected [" + str(got) + "] to be > than [" + str(expected) + "]:  " + text
+	var disp = "[" + str(got) + "] expected to be > than [" + str(expected) + "]:  " + text
 	if(got > expected):
 		_pass(disp)
 	else:
@@ -491,7 +491,7 @@ func assert_gt(got, expected, text=""):
 #Asserts got is less than expected
 #-------------------------------------------------------------------------------
 func assert_lt(got, expected, text=""):
-	var disp = "Expected [" + str(got) + "] to be < than [" + str(expected) + "]:  " + text
+	var disp = "[" + str(got) + "] expected to be < than [" + str(expected) + "]:  " + text
 	if(got < expected):
 		_pass(disp)
 	else:
@@ -515,6 +515,19 @@ func assert_false(got, text=""):
 	else:
 		_pass(text)
 
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func assert_between(got, expect_low, expect_high, text=""):
+	var disp = "[" + str(got) + "] expected to be between [" + str(expect_low) + "] and [" + str(expect_high) + "]:  " + text
+	if(expect_low > expect_high):
+		disp = "INVALID range.  [" + str(expect_low) + "] is not less than [" + str(expect_high) + "]"
+		_fail(disp)
+	else:
+		if(got < expect_low or got > expect_high):
+			_fail(disp)
+		else:
+			_pass(disp)
+	
 #-------------------------------------------------------------------------------
 #Mark the current test as pending.
 #-------------------------------------------------------------------------------
@@ -609,6 +622,9 @@ func pause_before_teardown():
 	_pause_before_teardown = true;
 
 #-------------------------------------------------------------------------------
+#Call _process or _fixed_process, if they exist, on obj and all it's children
+#and their children and so and so forth.  Delta will be passed through to all
+#the _process or _fixed_process methods.
 #-------------------------------------------------------------------------------
 func simulate(obj, times, delta):
 	for i in range(times):

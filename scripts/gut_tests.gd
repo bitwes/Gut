@@ -75,19 +75,39 @@ func test_assert_ne_number_equal():
 	gut.assert_ne(1, 1, "Should fail")
 
 func test_assert_gt_number_with_gt():
-	gut.assert_gt(1, 2, "Should Pass")
+	gut.assert_gt(2, 1, "Should Pass")
 
 func test_assert_gt_number_with_lt():
 	should_fail()
-	gut.assert_gt(2, 1, "Should fail")
+	gut.assert_gt(1, 2, "Should fail")
 
 func test_assert_lt_number_with_lt():
-	gut.assert_lt(2, 1, "Should Pass")
+	gut.assert_lt(1, 2, "Should Pass")
 
 func test_assert_lt_number_with_gt():
 	should_fail()
-	gut.assert_lt(1, 2, "Should fail")
+	gut.assert_lt(2, 1, "Should fail")
 
+func test_between_with_number_between():
+	gut.assert_between(2, 1, 3, "Should pass, 2 between 1 and 3")
+
+func test_between_with_number_lt():
+	should_fail()
+	gut.assert_between(0, 1, 3, "Should fail")
+
+func test_between_with_number_gt():
+	should_fail()
+	gut.assert_between(4, 1, 3, "Should fail")
+
+func test_between_with_number_at_high_end():
+	gut.assert_between(3, 1, 3, "Should pass")
+
+func test_between_with_number_at_low_end():
+	gut.assert_between(1, 1, 3, "Should pass")
+
+func test_between_with_invalid_number_range():
+	should_fail()
+	gut.assert_between(4, 8, 0, "Should fail")
 #------------------------------
 #string tests
 #------------------------------
@@ -107,18 +127,39 @@ func test_assert_ne_string_equal():
 	gut.assert_ne("one", "one", "Should Fail")
 
 func test_assert_gt_string_with_gt():
-	gut.assert_gt("a", "b", "Should Pass")
+	gut.assert_gt("b", "a", "Should Pass")
 
 func test_assert_gt_string_with_lt():
 	should_fail()
-	gut.assert_gt("b", "a", "Sould Fail")
+	gut.assert_gt("a", "b", "Sould Fail")
 
 func test_assert_lt_string_with_lt():
-	gut.assert_lt("b", "a", "Should Pass")
+	gut.assert_lt("a", "b", "Should Pass")
 
 func test_assert_lt_string_with_gt():
 	should_fail()
-	gut.assert_lt("a", "b", "Should Fail")
+	gut.assert_lt("b", "a", "Should Fail")
+
+func test_between_with_string_between():
+	gut.assert_between('b', 'a', 'c', "Should pass, 2 between 1 and 3")
+
+func test_between_with_string_lt():
+	should_fail()
+	gut.assert_between('a', 'b', 'd', "Should fail")
+
+func test_between_with_string_gt():
+	should_fail()
+	gut.assert_between('z', 'a', 'c', "Should fail")
+
+func test_between_with_string_at_high_end():
+	gut.assert_between('c', 'a', 'c', "Should pass")
+
+func test_between_with_string_at_low_end():
+	gut.assert_between('a', 'a', 'c', "Should pass")
+
+func test_between_with_invalid_string_range():
+	should_fail()
+	gut.assert_between('q', 'z', 'a', "Should fail")
 #------------------------------
 #boolean tests
 #------------------------------
@@ -210,4 +251,3 @@ func test_verify_results():
 	gut.assert_eq(1, counts.prerun_setup_count, "Prerun setup should have been called once")
 	gut.assert_eq(gut.get_test_count(), counts.setup_count, "Setup should have been called for the number of tests ran")
 	gut.assert_eq(gut.get_test_count() -1, counts.teardown_count, "Teardown should have been called one less time")
-	
