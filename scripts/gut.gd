@@ -249,15 +249,6 @@ func _on_mouse_exit():
 #Run either the selected test or all tests.
 #-------------------------------------------------------------------------------
 func _on_run_button_pressed():
-	clear_text()
-	_test_scripts.clear()
-	
-	if(_scripts_drop_down.get_selected() == 0):
-		for idx in range(1, _scripts_drop_down.get_item_count()):
-			_test_scripts.append(_scripts_drop_down.get_item_text(idx))
-	else:
-		_test_scripts.append(_scripts_drop_down.get_item_text(_scripts_drop_down.get_selected()))
-	
 	test_scripts()
 
 #-------------------------------------------------------------------------------
@@ -441,7 +432,18 @@ func p(text, level=0, indent=0):
 #Runs all the scripts that were added using add_script
 #-------------------------------------------------------------------------------
 func test_scripts():
+	clear_text()
+	_test_scripts.clear()
+	
+	if(_scripts_drop_down.get_selected() == 0):
+		for idx in range(1, _scripts_drop_down.get_item_count()):
+			_test_scripts.append(_scripts_drop_down.get_item_text(idx))
+	else:
+		print("else")
+		_test_scripts.append(_scripts_drop_down.get_item_text(_scripts_drop_down.get_selected()))
+		
 	_script_result = _test_the_scripts()
+	
 #-------------------------------------------------------------------------------
 #Runs a single script passed in.
 #-------------------------------------------------------------------------------
@@ -454,9 +456,11 @@ func test_script(script):
 #-------------------------------------------------------------------------------
 #Adds a script to be run when test_scripts called
 #-------------------------------------------------------------------------------
-func add_script(script):
+func add_script(script, select_this_one=false):
 	_test_scripts.append(script)
 	_scripts_drop_down.add_item(script)
+	if(select_this_one):
+		_scripts_drop_down.select(_scripts_drop_down.get_item_count() -1)
 
 #-------------------------------------------------------------------------------
 #Asserts that the expected value equals the value got.

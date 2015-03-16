@@ -2,8 +2,8 @@ extends Node2D
 
 func _ready():
 	#_run_test_one_line()
-	#_run_all_tests()
-	_run_gut_tests()
+	_run_all_tests()
+	#_run_gut_tests()
 	
 
 
@@ -11,7 +11,7 @@ func _run_test_one_line():
 #------------------------------------
 #One line, print to console
 #------------------------------------
-	load('res://scripts/gut.gd').new().test_script('res://scripts/sample_tests.gd')
+	pass#load('res://scripts/gut.gd').new().test_script('res://scripts/sample_tests.gd')
 
 func _run_all_tests():
 #------------------------------------
@@ -33,7 +33,7 @@ func _run_all_tests():
 	#down in the display, but the first time it runs it will
 	#display the results.
 	tester.p("This is a one time script, notice it's not in the drop down")
-	tester.test_script('res://scripts/another_sample.gd')
+	#tester.test_script('res://scripts/another_sample.gd')
 	
 	#Add a bunch of test scripts to run.  These will appear in the drop
 	#down and can be rerun.  As long as you don't introduce a runtime
@@ -43,7 +43,7 @@ func _run_all_tests():
 	tester.add_script('res://scripts/gut_tests.gd')
 	tester.add_script('res://scripts/sample_tests.gd')
 	tester.add_script('res://scripts/another_sample.gd')
-	tester.add_script('res://scripts/all_passed.gd')
+	tester.add_script('res://scripts/all_passed.gd', true)
 	tester.test_scripts()
 
 	#get the results to the console, just to show you can get them
@@ -61,6 +61,5 @@ func _run_gut_tests():
 	
 	tester.set_should_print_to_console(false)
 	tester.add_script('res://scripts/gut_tests.gd')
-	#tester.add_script('res://scripts/all_passed.gd')
-	#tester.add_script('res://scripts/gut_tests.gd')
+	tester.add_script('res://scripts/all_passed.gd')
 	tester.test_scripts()

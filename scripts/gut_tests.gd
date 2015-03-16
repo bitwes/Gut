@@ -244,7 +244,6 @@ func test_simulate_calls_fixed_process():
 	#i'm not sure why.
 	gut.assert_eq(str(obj.delta_sum), str(1), "The delta value should have been passed in and summed")
 
-
 func test_verify_results():
 	gut.p("/*THESE SHOULD ALL PASS, IF NOT THEN SOMETHING IS BROKEN*/")
 	gut.assert_eq(counts.should_fail, gut.get_fail_count(), "The expected number of tests should have failed.")
