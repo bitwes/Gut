@@ -1,18 +1,20 @@
 ### What is this repository for? ###
+__IMPORTANT NOTE__
+__The ordering of the parameters in the asserts has changed with this version.  After using GUT for awhile I realized that "got" should come first for things to read better.  This change won't break any of your tests but the message will be misleading until you reorder the parameters when you call the various asserts.__
 
 GUT (Godot Unit Test) is a utility for writing unit tests in Godot's scripting language.  The premise is that the gut.gd script will run other scripts that contain tests and asserts and then reports the status of said tests and asserts.  This is all done through godot using a scene you create to run the tests.  Once your scene is in place and you've coded up a GUT instance to run your test scripts, you simply run the scene.  This project illustrates using GUT to run tests, some sample tests, and the one required script, gut.gd, which is located in /scripts/.
 
 Sometimes the best tutorial is to dive right in, so to that end you should read through the main.gd script for illustrations on running scripts and setting the various options available.  There are various test scripts that illustrate performing assertions and printing messages.  There's even the tests that were created to test GUT itself.  They can be found in gut_tests.gd.
 
-GUT has the following asserts, each of which take 3 parameters (except assert_true and assert_false which only take in a value and text).  These asserts should work with just about anything, but it the datatypes must match.  If you pass in a string and a number it will error out.  They have been tested with booleans, numbers and strings.
-
-* assert_eq(got, expected, text="") #Asserts that the expected value equals the value got.
-* assert_ne(got, not_expected, text=""): #Asserts that the value got does not equal the "not expected" value.  
-* assert_gt(got, expected, text=""): #Asserts got is greater than expected
-* assert_lt(got, expected, text=""): #Asserts got is less than expected
-* assert_true(got, text=""): #Asserts that got is true
-* assert_false(got, text=""): #Asserts that got is false
-* assert_between(got, expected_low, expected_high, text="") #Asserts got is between the two expected values (inclusive)
+GUT has the following asserts, each of which take the value you recieved and sometimes expected values.  These asserts should work with just about anything, but it the datatypes must match.  If you pass in a string and a number it will error out.  They have been tested with booleans, numbers and strings.
+__AS I STATED BEFORE...the parameters have been reordered in this version, "got" is now always the first parameter.__
+* __assert_eq(got, expected, text="")__:  #Asserts that the expected value equals the value got.
+* __assert_ne(got, not_expected, text="")__:  #Asserts that the value got does not equal the "not expected" value.  
+* __assert_gt(got, expected, text="")__:  #Asserts got is greater than expected
+* __assert_lt(got, expected, text="")__:  #Asserts got is less than expected
+* __assert_true(got, text="")__:  #Asserts that got is true
+* __assert_false(got, text="")__:  #Asserts that got is false
+* __assert_between(got, expected_low, expected_high, text="")__:  #Asserts got is between the two expected values (inclusive)
 
 These are called from within test scripts (scripts that extend "res://scripts/gut.gd".Test) by prefixing them with "gut.".  For example:
 
