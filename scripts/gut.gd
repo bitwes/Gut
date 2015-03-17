@@ -17,14 +17,13 @@
 #	var tester = load('res://scripts/gut.gd').new()
 #	add_child(tester)
 #	tester.add_script('res://scripts/sample_tests.gd')
-#	tester.add_script('res://scripts/another_set_of_tests.gd')
+#	tester.add_script('res://scripts/another_set_of_tests.gd', true) #see below
 #	tester.tester.test_scripts()
 #
-#As long as you don't introduce any compile time errors into the test scripts
-#and the scripts they are testing, you can keep the program running and use
-#the run tests button to re-run all or one of the test scripts.  Currently 
-#I don't know of a way to hanlde the case when a compile time error is introduced
-#into one of the scripts being tested.
+#Optionally you can pass a true flag as a second parameter to add_script.  This 
+#will cause that script to be the selected script in the drop down and it will 
+#only run that script initially.  You can then run any other script you have
+#loaded or all the scripts using the drop down.  
 ################################################################################
 extends WindowDialog
 
@@ -233,13 +232,13 @@ func _draw():
 			draw_circle(where, r, Color(0, 1, 0, 1))
 
 #-------------------------------------------------------------------------------
-#
+#detect mouse movement
 #-------------------------------------------------------------------------------
 func _on_mouse_enter():
 	_mouse_in = true
 
 #-------------------------------------------------------------------------------
-#
+#detect mouse movement
 #-------------------------------------------------------------------------------
 func _on_mouse_exit():
 	_mouse_in = false
@@ -259,6 +258,7 @@ func _copy_button_pressed():
 	_text_box.copy()
 
 #-------------------------------------------------------------------------------
+#Continue processing after pause.
 #-------------------------------------------------------------------------------
 func _on_continue_button_pressed():
 	_pause_before_teardown = false
@@ -366,11 +366,12 @@ func _test_the_scripts():
 			test_script.setup()
 			_summary.tests += 1
 			script_result = test_script.call(_current_test.name)
-			if(_pause_before_teardown):
-				p("Pausing.  Press continue button...")
-				_waiting = true
-				_continue_button.set_disabled(false)
-				#yield(_continue_button, 'pressed')
+			#removed because yield is buggy in 1.0
+			#if(_pause_before_teardown):
+			#	p("Pausing.  Press continue button...")
+			#	_waiting = true
+			#	_continue_button.set_disabled(false)
+			#	yield(_continue_button, 'pressed')
 			
 			test_script.teardown()
 			if(_current_test.passed):
@@ -520,6 +521,7 @@ func assert_false(got, text=""):
 		_pass(text)
 
 #-------------------------------------------------------------------------------
+#Asserts value is between (inclusive) the two expected values.
 #-------------------------------------------------------------------------------
 func assert_between(got, expect_low, expect_high, text=""):
 	var disp = "[" + str(got) + "] expected to be between [" + str(expect_low) + "] and [" + str(expect_high) + "]:  " + text
@@ -621,6 +623,9 @@ func get_log_level():
 	return _log_level
 
 #-------------------------------------------------------------------------------
+#DISABLED, does not work in 1.0
+#Call this method to make the test pause before teardown so that you can inspect
+#anything that you have rendered to the screen.
 #-------------------------------------------------------------------------------
 func pause_before_teardown():
 	_pause_before_teardown = true;
