@@ -10,12 +10,13 @@ Sometimes the best tutorial is to dive right in, so to that end you should read 
 GUT has the following asserts, each of which take the value you recieved and sometimes expected values.  These asserts should work with just about anything, but it the datatypes must match.  If you pass in a string and a number it will error out.  They have been tested with booleans, numbers and strings.
 
 __AS I STATED BEFORE...the parameters have been reordered in this version, "got" is now always the first parameter.__
-* __assert_eq(got, expected, text="")__:  #Asserts that the expected value equals the value got.
-* __assert_ne(got, not_expected, text="")__:  #Asserts that the value got does not equal the "not expected" value.  
-* __assert_gt(got, expected, text="")__:  #Asserts got is greater than expected
-* __assert_lt(got, expected, text="")__:  #Asserts got is less than expected
-* __assert_true(got, text="")__:  #Asserts that got is true
-* __assert_false(got, text="")__:  #Asserts that got is false
+
+* assert_eq(got, expected, text="")__:  #Asserts that the expected value equals the value got.
+* assert_ne(got, not_expected, text="")__:  #Asserts that the value got does not equal the "not expected" value.  
+* assert_gt(got, expected, text="")__:  #Asserts got is greater than expected
+* assert_lt(got, expected, text="")__:  #Asserts got is less than expected
+* assert_true(got, text="")__:  #Asserts that got is true
+* assert_false(got, text="")__:  #Asserts that got is false
 * __assert_between(got, expected_low, expected_high, text="")__:  #Asserts got is between the two expected values (inclusive)
 
 These are called from within test scripts (scripts that extend "res://scripts/gut.gd".Test) by prefixing them with "gut.".  For example:
