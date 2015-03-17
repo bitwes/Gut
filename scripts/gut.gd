@@ -370,7 +370,7 @@ func _test_the_scripts():
 				p("Pausing.  Press continue button...")
 				_waiting = true
 				_continue_button.set_disabled(false)
-				yield()
+				#yield(_continue_button, 'pressed')
 			
 			test_script.teardown()
 			if(_current_test.passed):
