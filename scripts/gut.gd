@@ -131,7 +131,7 @@ func _ready():
 	_clear_button.connect("pressed", self, "clear_text")
 	_set_anchor_bottom_right(_clear_button)
 	
-	add_child(_continue_button)
+	#add_child(_continue_button)
 	_continue_button.set_text("Continue")
 	_continue_button.set_size(Vector2(100, 25))
 	_continue_button.set_pos(Vector2(_clear_button.get_pos().x, _clear_button.get_pos().y + _clear_button.get_size().y + 10))
