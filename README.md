@@ -6,12 +6,13 @@ Sometimes the best tutorial is to dive right in, so to that end you should read 
 
 GUT has the following asserts, each of which take 3 parameters (except assert_true and assert_false which only take in a value and text).  These asserts should work with just about anything, but it the datatypes must match.  If you pass in a string and a number it will error out.  They have been tested with booleans, numbers and strings.
 
-* func assert_eq(expected, got, text="") #Asserts that the expected value equals the value got.
-* func assert_ne(not_expected, got, text=""): #Asserts that the value got does not equal the "not expected" value.  
-* func assert_gt(expected, got, text=""): #Asserts got is greater than expected
-* func assert_lt(expected, got, text=""): #Asserts got is less than expected
-* func assert_true(got, text=""): #Asserts that got is true
-* func assert_false(got, text=""): #Asserts that got is false
+* assert_eq(got, expected, text="") #Asserts that the expected value equals the value got.
+* assert_ne(got, not_expected, text=""): #Asserts that the value got does not equal the "not expected" value.  
+* assert_gt(got, expected, text=""): #Asserts got is greater than expected
+* assert_lt(got, expected, text=""): #Asserts got is less than expected
+* assert_true(got, text=""): #Asserts that got is true
+* assert_false(got, text=""): #Asserts that got is false
+* assert_between(got, expected_low, expected_high, text="") #Asserts got is between the two expected values (inclusive)
 
 These are called from within test scripts (scripts that extend "res://scripts/gut.gd".Test) by prefixing them with "gut.".  For example:
 
@@ -43,7 +44,6 @@ To create a test script
 Here's a sample test script:
 
 ```
-#!python
 ################################################################################
 #All the magic happens with the extends.  This gets you access to all the gut 
 #asserts and the overridable setup and teardown methods.
@@ -91,7 +91,6 @@ You should create a scene that you can run that will execute all your test scrip
 
 Example of one line of code to run one test script and send the output to console:
 ```
-#!python
 extends Node2d
 func_ready(): 
     load('res://scripts/gut.gd').new().test_script('res://scripts/sample_tests.gd')
@@ -100,26 +99,28 @@ func_ready():
 Example where we add the scripts to be tested then call test_scripts().  This will run all the scripts.  Since the tester has been added as a child of the scene, you will see the GUI when you run the scene.
 
 ```
-#!python
-
 extends Node2D
 
 func _ready():
 	#get an instance of gut
 	var tester = load('res://scripts/gut.gd').new()
+	#Move it down some so you can see the dialog box bar at top
+	tester.set_pos(0, 50)
 	add_child(tester)
 	
 	#stop it from printing to console, just because
 	tester.set_should_print_to_console(false)
 	
 	#Add a bunch of test scripts to run.  These will appear in the drop
-	#down and can be rerun.  As long as you don't introduce a runtime
-	#error, you can leave it running, code some more, then rerun the
-	#tests for any or all of the scripts that have been added using
-	#add_script.
+	#down and can be rerun.
 	tester.add_script('res://scripts/gut_tests.gd')
 	tester.add_script('res://scripts/sample_tests.gd')
-	tester.add_script('res://scripts/another_sample.gd')
+	#by passing true to the optional 2nd parameter, only this script 
+	#will be run when test_scripts() is called and it will be selected
+	#in the GUI dropdown.  All other scripts will still be in the drop
+	#down as well.  Makes it a little easier when trying to run just
+	#one script.
+	tester.add_script('res://scripts/another_sample.gd', true)
 	tester.add_script('res://scripts/all_passed.gd')
 	tester.test_scripts()
 ```
