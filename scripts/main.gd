@@ -23,7 +23,6 @@ func _run_all_tests():
 	#add as a child so you can see the GUI when run
 	add_child(tester)
 	tester.show()
-	tester.set_size(Vector2(500, 500))
 	tester.set_pos(Vector2(100, 100))
 	
 	#stop it from printing to console, just because we can

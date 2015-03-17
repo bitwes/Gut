@@ -1,5 +1,6 @@
 ### What is this repository for? ###
 __IMPORTANT NOTE__
+
 __The ordering of the parameters in the asserts has changed with this version.  After using GUT for awhile I realized that "got" should come first for things to read better.  This change won't break any of your tests but the message will be misleading until you reorder the parameters when you call the various asserts.__
 
 GUT (Godot Unit Test) is a utility for writing unit tests in Godot's scripting language.  The premise is that the gut.gd script will run other scripts that contain tests and asserts and then reports the status of said tests and asserts.  This is all done through godot using a scene you create to run the tests.  Once your scene is in place and you've coded up a GUT instance to run your test scripts, you simply run the scene.  This project illustrates using GUT to run tests, some sample tests, and the one required script, gut.gd, which is located in /scripts/.
@@ -7,6 +8,7 @@ GUT (Godot Unit Test) is a utility for writing unit tests in Godot's scripting l
 Sometimes the best tutorial is to dive right in, so to that end you should read through the main.gd script for illustrations on running scripts and setting the various options available.  There are various test scripts that illustrate performing assertions and printing messages.  There's even the tests that were created to test GUT itself.  They can be found in gut_tests.gd.
 
 GUT has the following asserts, each of which take the value you recieved and sometimes expected values.  These asserts should work with just about anything, but it the datatypes must match.  If you pass in a string and a number it will error out.  They have been tested with booleans, numbers and strings.
+
 __AS I STATED BEFORE...the parameters have been reordered in this version, "got" is now always the first parameter.__
 * __assert_eq(got, expected, text="")__:  #Asserts that the expected value equals the value got.
 * __assert_ne(got, not_expected, text="")__:  #Asserts that the value got does not equal the "not expected" value.  
@@ -22,6 +24,7 @@ These are called from within test scripts (scripts that extend "res://scripts/gu
 * gut.assert_lt("b", my_string_var, "The value should be less than 'b'.")
 * gut.assert_true(my_bool_var, "If this ain't true, then it's false, and that means this test fails")
 
+GUT also provieds a print method [gut.p("some text")] that will print the passed in text indented under the test.  It has an optional 2nd parameter that determines at what log level it should show up.  Currently there are 3 (0, 1, 2).
 ### How do I get set up? ###
 
 * To setup GUT in your own project, simply copy the gut.gd script into your project somewhere.  Probably to /scripts, that's what will be used for the rest of this documentation, but it doesn't have to be there for any specific reason.
