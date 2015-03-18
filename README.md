@@ -9,6 +9,9 @@ Sometimes the best tutorial is to dive right in, so to that end you should read 
 
 GUT has the following asserts, each of which take the value you recieved and sometimes expected values.  These asserts should work with just about anything, but it the datatypes must match.  If you pass in a string and a number it will error out.  They have been tested with booleans, numbers and strings.
 
+###Gut Methods###
+
+####Asserts####
 __AS STATED BEFORE...the parameters have been reordered in this version, "got" is now always the first parameter.__
 
 * __assert_eq(got, expected, text="")__:  #Asserts that the expected value equals the value got.
@@ -25,8 +28,49 @@ These are called from within test scripts (scripts that extend "res://scripts/gu
 * gut.assert_lt("b", my_string_var, "The value should be less than 'b'.")
 * gut.assert_true(my_bool_var, "If this ain't true, then it's false, and that means this test fails")
 
-GUT also provieds a print method [gut.p("some text")] that will print the passed in text indented under the test.  It has an optional 2nd parameter that determines at what log level it should show up.  Currently there are 3 (0, 1, 2).
-### How do I get set up? ###
+####Output Detail####
+The level of detail that is printed to the screen can be changed using the slider on the dialog or by calling set_log_level with one of the following constants defined in Gut
+
+* LOG_LEVEL_FAIL_ONLY (0)
+* LOG_LEVEL_TEST_AND_FAILURES (1)
+* LOG_LEVEL_ALL_ASSERTS (20
+
+####Printing info####
+The "p" method allows you to print information out indented under the test output.  It has an optional 2nd parameter that sets which log level to display it at.  Use one of the constants in the section above to set it.  The default is LOG_LEVEL_FAIL_ONLY which means the output will always be visible.  
+```
+#!python
+
+func p(text, level=0)
+```
+####Simulate####
+The simulate method will call the _process or _fixed_process on a tree of objects.  It takes in the base object, the number of times to call the methods and the delta value to be passed to _process or _fixed_process (if the object has one).  
+Example
+
+```
+#!python
+
+#Given that SomeCoolObj has a _process method that incrments a_number by 1
+#each time _process is called, and that the number starts at 0, this test
+#should pass
+func test_does_something_each_loop():
+	var my_obj = SomeCoolObj.new()
+	gut.simulate(my_obj, 20, .1)
+	gut.assert_eq(my_obj.a_number, 20, 'Since a_number is incremented in _process, it should be 20 now')
+
+#Let us also assume that AnotherObj acts exactly the same way as 
+#but has SomeCoolObj but has a _fixed_process method instead of 
+#_process.  In that case, this test will pass too since all child objects
+#have the _process or _fixed_process method called.
+func test_does_something_each_loop():
+	var my_obj = SomeCoolObj.new()
+	var other_obj = AnotherObj.new()
+	myObj.add_child(other_obj)
+	gut.simulate(my_obj, 20, .1)
+	#We check other_obj, to make sure it was called 20 times too.
+	gut.assert_eq(other_obj.a_number, 20, 'Since a_number is incremented in _process, it should be 20 now')
+
+```
+### Setup ###
 
 * To setup GUT in your own project, simply copy the gut.gd script into your project somewhere.  Probably to /scripts, that's what will be used for the rest of this documentation, but it doesn't have to be there for any specific reason.
 * You're done, go write some tests.
@@ -50,6 +94,7 @@ To create a test script
 Here's a sample test script:
 
 ```
+#!python
 ################################################################################
 #All the magic happens with the extends.  This gets you access to all the gut 
 #asserts and the overridable setup and teardown methods.
@@ -97,6 +142,7 @@ You should create a scene that you can run that will execute all your test scrip
 
 Example of one line of code to run one test script and send the output to console:
 ```
+#!python
 extends Node2d
 func_ready(): 
     load('res://scripts/gut.gd').new().test_script('res://scripts/sample_tests.gd')
@@ -105,6 +151,7 @@ func_ready():
 Example where we add the scripts to be tested then call test_scripts().  This will run all the scripts.  Since the tester has been added as a child of the scene, you will see the GUI when you run the scene.
 
 ```
+#!python
 extends Node2D
 
 func _ready():
@@ -131,7 +178,7 @@ func _ready():
 	tester.test_scripts()
 ```
 ...and the GUI looks like:
-![gut_screenshot.png](https://bitbucket.org/repo/oeKM6G/images/3406082255-gut_screenshot.png)
+![gut.png](https://bitbucket.org/repo/oeKM6G/images/3049099836-gut.png)
 
 ### Who do I talk to? ###
 You can talk to me, Butch Wesley
