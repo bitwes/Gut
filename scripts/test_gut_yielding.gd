@@ -1,0 +1,60 @@
+#-------------------------------------------------------------------------------
+#All of these tests require some amount of user interaction or verifying of the
+#output so they were moved into a different script for testing.  Also the yield
+#functionality does not work in 1.0 so this allows us to test that 1.0 functionality
+#continues to work even with these changes.
+#-------------------------------------------------------------------------------
+extends "res://scripts/gut.gd".Test
+
+var timer = Timer.new()
+
+func prerun_setup():
+	add_child(timer)
+	timer.set_wait_time(1)
+	timer.set_one_shot(true)
+
+func setup():
+	timer.set_wait_time(1)
+
+func test_wait_for_continue_click():
+	gut.assert_eq(1, 1, 'some simple assert')
+	gut.pause_before_teardown()
+
+func test_can_pause_twice():
+	gut.assert_eq(2, 2, 'Another simple assert')
+	gut.pause_before_teardown()
+
+func test_will_wait_when_yielding():
+	timer.set_wait_time(5)
+	gut.p('yielding for 5 seconds')
+	timer.start()
+	yield(timer, 'timeout')
+	gut.p('done yielding')
+	gut.end_yielded_test()
+
+func test_can_pause_after_yielding():
+	gut.p('yielding for 1 second')
+	timer.start()
+	yield(timer, 'timeout')
+	gut.p('done yielding')
+	gut.end_yielded_test()
+	gut.pause_before_teardown()
+
+func test_can_call_pause_before_yielding():
+	gut.pause_before_teardown()
+	gut.p('yielding for 1 second')
+	timer.start()
+	yield(timer, 'timeout')
+	gut.p('done yielding')
+	gut.end_yielded_test()
+
+
+func test_returning_int_does_not_cause_yield():
+	return 9
+
+func test_returning_string_does_not_cause_yield():
+	return 'nine'
+
+func test_returning_object_does_not_cause_yield():
+	var thing = Node2D.new()
+	return thing

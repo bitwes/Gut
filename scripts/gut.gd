@@ -31,6 +31,11 @@ const LOG_LEVEL_FAIL_ONLY = 0
 const LOG_LEVEL_TEST_AND_FAILURES = 1
 const LOG_LEVEL_ALL_ASSERTS = 2
 
+const YIELD_MESSAGE = '/# Yield detected.  Waiting for end_yielded_test to be called. #/'
+const WAITING_MESSAGE = '/# waiting #/'
+const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
+
+
 #The prefix used to get tests.
 var _test_prefix = "test_"
 #Tests to run for the current script
@@ -38,7 +43,6 @@ var _tests = []
 #all the scripts that should be ran as test scripts
 var _test_scripts = []
 
-var _script_result = null
 var _waiting = false
 var _done = false
 
@@ -48,6 +52,7 @@ var _log_level = 1
 var _log_text = ""
 
 var _pause_before_teardown = false
+var _wait_timer = Timer.new()
 
 #various counters
 var _summary = {
@@ -89,7 +94,6 @@ func _set_anchor_bottom_left(obj):
 #Initialize controls
 #-------------------------------------------------------------------------------
 func _ready():
-	set_process(true)
 	set_process_input(true)
 	
 	show()
@@ -108,7 +112,6 @@ func _ready():
 	_text_box.set_anchor(MARGIN_RIGHT, ANCHOR_END)
 	_text_box.set_anchor(MARGIN_TOP, ANCHOR_BEGIN)
 	_text_box.set_anchor(MARGIN_BOTTOM, ANCHOR_END)
-	
 	
 	add_child(_run_button)
 	_run_button.set_text("Run Tests")
@@ -131,7 +134,7 @@ func _ready():
 	_clear_button.connect("pressed", self, "clear_text")
 	_set_anchor_bottom_right(_clear_button)
 	
-	#add_child(_continue_button)
+	add_child(_continue_button)
 	_continue_button.set_text("Continue")
 	_continue_button.set_size(Vector2(100, 25))
 	_continue_button.set_pos(Vector2(_clear_button.get_pos().x, _clear_button.get_pos().y + _clear_button.get_size().y + 10))
@@ -164,18 +167,13 @@ func _ready():
 	_scripts_drop_down.add_item("Run All")
 	_set_anchor_bottom_left(_scripts_drop_down)
 	
+	add_child(_wait_timer)
+	_wait_timer.set_wait_time(1)
+	_wait_timer.set_one_shot(true)
+	
 	self.connect("mouse_enter", self, "_on_mouse_enter")
 	self.connect("mouse_exit", self, "_on_mouse_exit")
 	
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
-func _process(delta):
-	if(_waiting and  !_pause_before_teardown):
-		p("Resuming")
-		_pause_before_teardown = false
-		_waiting = false
-		_script_result = _script_result.resume()
-
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 func _input(event):
@@ -285,6 +283,7 @@ func _init_run():
 	_text_box.clear_colors()
 	_text_box.add_keyword_color("PASSED", Color(0, 1, 0))
 	_text_box.add_keyword_color("FAILED", Color(1, 0, 0))
+	_text_box.add_color_region('/#', '#/', Color(.9, .6, 0))
 	_text_box.add_color_region('/-', '-/', Color(1, 1, 0))
 	_text_box.add_color_region('/*', '*/', Color(.5, .5, 1))
 	_text_box.set_symbol_color(Color(.5, .5, .5))
@@ -338,6 +337,7 @@ func _get_summary_text():
 	to_return += str(_summary.tests) + " Tests\n" 
 	to_return += str(_summary.asserts) + " Asserts\n" 
 	to_return += str(_summary.passed) + " Passed\n" 
+	to_return += str(_summary.pending) + " Pending\n"
 	to_return += str(_summary.failed) + " Failed\n"
 	return to_return
 
@@ -355,6 +355,7 @@ func _test_the_scripts():
 		p("Testing Script " + _test_scripts[s], 0)
 		p("-----------------------------------------/")
 		var test_script = load(_test_scripts[s]).new()
+		add_child(test_script)
 		var script_result = null
 		test_script.gut = self
 		add_child(test_script)
@@ -366,12 +367,21 @@ func _test_the_scripts():
 			test_script.setup()
 			_summary.tests += 1
 			script_result = test_script.call(_current_test.name)
-			#removed because yield is buggy in 1.0
-			#if(_pause_before_teardown):
-			#	p("Pausing.  Press continue button...")
-			#	_waiting = true
-			#	_continue_button.set_disabled(false)
-			#	yield(_continue_button, 'pressed')
+			#When the script yields it will return a GDFunctionState object
+			if(script_result != null and typeof(script_result) == TYPE_OBJECT and script_result.get_type() == 'GDFunctionState'):
+				p(YIELD_MESSAGE, 1)
+				_waiting = true
+				while(_waiting):
+					p(WAITING_MESSAGE, 2)
+					_wait_timer.start()
+					yield(_wait_timer, 'timeout')
+			#if the test called pause_before_teardown then yield until
+			#the continue button is pressed.
+			if(_pause_before_teardown):
+				p(PAUSE_MESSAGE, 1)
+				_waiting = true
+				_continue_button.set_disabled(false)
+				yield(_continue_button, 'pressed')
 			
 			test_script.teardown()
 			if(_current_test.passed):
@@ -443,7 +453,7 @@ func test_scripts():
 		print("else")
 		_test_scripts.append(_scripts_drop_down.get_item_text(_scripts_drop_down.get_selected()))
 		
-	_script_result = _test_the_scripts()
+	_test_the_scripts()
 	
 #-------------------------------------------------------------------------------
 #Runs a single script passed in.
@@ -548,7 +558,7 @@ func pending(text=""):
 #Pauses the test and waits for you to press a confirmation button.  Useful when
 #you want to watch a test play out onscreen or inspect results.
 #-------------------------------------------------------------------------------
-func ended_yielded_test():
+func end_yielded_test():
 	_waiting = false
 
 #-------------------------------------------------------------------------------

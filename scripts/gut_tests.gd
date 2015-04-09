@@ -201,15 +201,7 @@ func test_pending_increments_pending_count():
 
 func test_pending_accepts_text():
 	gut.pending("This is a pending test")
-
-func test_wait_for_continue_click():
-	gut.assert_eq(1, 1, 'some simple assert')
-	gut.pause_before_teardown()
 	
-func test_can_pause_twice():
-	gut.assert_eq(2, 2, 'Another simple assert')
-	gut.pause_before_teardown()
-
 func test_simulate_calls_process():
 	var obj = HasProcessMethod.new()
 	gut.simulate(obj, 10, .1)
@@ -250,3 +242,4 @@ func test_verify_results():
 	gut.assert_eq(1, counts.prerun_setup_count, "Prerun setup should have been called once")
 	gut.assert_eq(gut.get_test_count(), counts.setup_count, "Setup should have been called for the number of tests ran")
 	gut.assert_eq(gut.get_test_count() -1, counts.teardown_count, "Teardown should have been called one less time")
+	gut.assert_eq(gut.get_pending_count(), 2, 'There should have been two pending tests')
