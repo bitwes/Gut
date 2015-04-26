@@ -53,6 +53,9 @@ var _log_text = ""
 
 var _pause_before_teardown = false
 var _wait_timer = Timer.new()
+#The thread to run the tests in
+var _thread = Thread.new()
+var _use_threads = true
 
 #various counters
 var _summary = {
@@ -344,7 +347,7 @@ func _get_summary_text():
 #-------------------------------------------------------------------------------
 #Run all tests in a script.  This is the core logic for running tests.
 #-------------------------------------------------------------------------------
-func _test_the_scripts():
+func _test_the_scripts(no_matter):
 	_init_run()
 	_run_button.set_disabled(true)
 	for s in range(_test_scripts.size()):
@@ -397,6 +400,16 @@ func _test_the_scripts():
 	p(_get_summary_text(), 0)
 	update()
 	_run_button.set_disabled(false)
+	call_deferred("_thread_done")
+
+#-------------------------------------------------------------------------------
+#Based on experimenting with threads, this structure is necessary for the thread
+#to complete correctly.  I don't fully understand why, but this is called by
+#the method that the thread is running via 'call_deferred'
+#-------------------------------------------------------------------------------
+func _thread_done():
+	if(_use_threads):
+		_thread.wait_to_finish()
 
 #-------------------------------------------------------------------------------
 #Conditionally prints the text to the console/results variable based on the
@@ -450,10 +463,19 @@ func test_scripts():
 		for idx in range(1, _scripts_drop_down.get_item_count()):
 			_test_scripts.append(_scripts_drop_down.get_item_text(idx))
 	else:
-		print("else")
 		_test_scripts.append(_scripts_drop_down.get_item_text(_scripts_drop_down.get_selected()))
 		
-	_test_the_scripts()
+	if(_use_threads):
+		_thread = Thread.new()
+		var error = _thread.start(self, '_test_the_scripts', 'a')
+		if(error != 0 or !_thread.is_active()):
+			p("There was an error starting the tests in a thread ")
+			p("or the thread did not become active as expected.  ") 
+			p("I'm not sure what to tell you...the error was:  " + str(error))
+			p("You can disable threading by calling set_use_threads(false).")
+	else:
+		_test_the_scripts('a')
+	
 	
 #-------------------------------------------------------------------------------
 #Runs a single script passed in.
@@ -626,6 +648,12 @@ func set_log_level(level):
 	_log_level = level
 	_log_level_slider.set_value(level)
 
+#-------------------------------------------------------------------------------
+#Enable/disable threading
+#-------------------------------------------------------------------------------
+func set_use_threads(should):
+	_use_threads = should
+	
 #-------------------------------------------------------------------------------
 #Get the current log level.
 #-------------------------------------------------------------------------------
