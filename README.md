@@ -1,5 +1,5 @@
 ### What is this repository for? ###
-__IMPORTANT NOTE__
+__IMPORTANT NOTE 1__
 
 __The ordering of the parameters in the asserts has changed with this version.  After using GUT for awhile I realized that "got" should come first for things to read better.  This change won't break any of your tests but the message will be misleading until you reorder the parameters when you call the various asserts.__
 
@@ -9,6 +9,8 @@ Sometimes the best tutorial is to dive right in, so to that end you should read 
 
 GUT has the following asserts, each of which take the value you recieved and sometimes expected values.  These asserts should work with just about anything, but it the datatypes must match.  If you pass in a string and a number it will error out.  They have been tested with booleans, numbers and strings.
 
+###Godot Version 1.0 and 1.1 Beta###
+As development continues I will try to support the last two releases of Godot.  I have been developing with the 1.1 beta relase.  To use the project in this repo in 1.1 you may have to load the main_1_0.scn instead of the default.  You'll know if you have to load it if you get the "ugh" error.  Remember, this is only for the project, using the gut.gd script doesn't require anything special.
 ###Gut Methods###
 
 ####Asserts####
