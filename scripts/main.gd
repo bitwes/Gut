@@ -14,7 +14,7 @@ func _run_all_tests():
 #------------------------------------
 #More lines, get result text out manually.  Can also inspect the results further 
 #with a reference to the class.
-#------------------------------------	
+#------------------------------------
 	#get an instance of gut
 	var tester = load('res://scripts/gut.gd').new()
 	#add as a child so you can see the GUI when run
@@ -36,7 +36,7 @@ func _run_all_tests():
 	#error, you can leave it running, code some more, then rerun the
 	#tests for any or all of the scripts that have been added using
 	#add_script.
-	tester.set_use_threads(false)
+	
 	tester.add_script('res://scripts/gut_tests.gd')
 	tester.add_script('res://scripts/test_that_take_awhile.gd', true)
 	tester.add_script('res://scripts/test_gut_yielding.gd')
