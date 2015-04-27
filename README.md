@@ -30,6 +30,8 @@ These are called from within test scripts (scripts that extend "res://scripts/gu
 * gut.assert_lt("b", my_string_var, "The value should be less than 'b'.")
 * gut.assert_true(my_bool_var, "If this ain't true, then it's false, and that means this test fails")
 
+####Threads####
+The running of the tests is done in a seperate thread so that you can see the output as the execution progresses.  This should work fine, but if the execution of the unit tests freezes, you may want to try disabling it.  You can do so with the __set_use_threads(bool)__ method.
 ####Output Detail####
 The level of detail that is printed to the screen can be changed using the slider on the dialog or by calling set_log_level with one of the following constants defined in Gut
 
