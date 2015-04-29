@@ -1,5 +1,5 @@
 ### What is this repository for? ###
-__IMPORTANT NOTE 1__
+__IMPORTANT NOTE __
 
 __The ordering of the parameters in the asserts has changed with this version.  After using GUT for awhile I realized that "got" should come first for things to read better.  This change won't break any of your tests but the message will be misleading until you reorder the parameters when you call the various asserts.__
 
