@@ -348,6 +348,9 @@ func _get_summary_text():
 
 #-------------------------------------------------------------------------------
 #Run all tests in a script.  This is the core logic for running tests.
+#
+#Note, this kinda has to stay as a giant monstrosity of a method because of the
+#yields.
 #-------------------------------------------------------------------------------
 func _test_the_scripts():
 	_init_run()
@@ -361,7 +364,7 @@ func _test_the_scripts():
 		p("Testing Script " + _test_scripts[s], 0)
 		p("-----------------------------------------/")
 		if(!file.file_exists(_test_scripts[s])):
-			p("COULD NOT FIND FILE:  " + _test_scripts[s])
+			p("FAILED   COULD NOT FIND FILE:  " + _test_scripts[s])
 		else:
 			_parse_tests(_test_scripts[s])
 			_summary.scripts += 1		
@@ -389,6 +392,7 @@ func _test_the_scripts():
 				p(_current_test.name, 1)
 				test_script.setup()
 				_summary.tests += 1
+				
 				script_result = test_script.call(_current_test.name)
 				#When the script yields it will return a GDFunctionState object
 				if(script_result != null and typeof(script_result) == TYPE_OBJECT and script_result.get_type() == 'GDFunctionState'):
@@ -415,14 +419,16 @@ func _test_the_scripts():
 			
 			test_script.postrun_teardown()
 			test_script.free()
+			#END TESTS IN SCRIPT LOOP
+		
 		_current_test = null
-
 		p("\n\n")
-	
+		#END TEST SCRIPT LOOP
+		
 	p(_get_summary_text(), 0)
-	update()
 	_run_button.set_disabled(false)
 	_scripts_drop_down.set_disabled(false)
+	update()
 
 #-------------------------------------------------------------------------------
 #Conditionally prints the text to the console/results variable based on the
