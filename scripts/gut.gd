@@ -1,29 +1,32 @@
 ################################################################################
 #(G)odot (U)nit (T)est class
 #
-#How it works
-#	
+################################################################################
+#The MIT License (MIT)
+#=====================
 #
-#Simple tool for executing unit tests.  There are various asserts that you get
-#access to through this, as well as a way to automate running tests.  There's more 
-#info in the readme for the project.
+#Copyright (c) 2015 Tom "Butch" Wesley
 #
-#Example of running a single script.  Output is sent to console
-#        |-----this script----|                    |-------the test script-------| 
-#   load('res://scripts/gut.gd').new().test_script('res://scripts/sample_tests.gd')
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
 #
-#Example of running multiple scripts.  Output is sent to console and drawn to 
-#screen.
-#	var tester = load('res://scripts/gut.gd').new()
-#	add_child(tester)
-#	tester.add_script('res://scripts/sample_tests.gd')
-#	tester.add_script('res://scripts/another_set_of_tests.gd', true) #see below
-#	tester.tester.test_scripts()
+#The above copyright notice and this permission notice shall be included in
+#all copies or substantial portions of the Software.
 #
-#Optionally you can pass a true flag as a second parameter to add_script.  This 
-#will cause that script to be the selected script in the drop down and it will 
-#only run that script initially.  You can then run any other script you have
-#loaded or all the scripts using the drop down.  
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#THE SOFTWARE.
+#
+################################################################################
+#View readme for usage details.
 ################################################################################
 extends WindowDialog
 
