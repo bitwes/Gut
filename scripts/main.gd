@@ -37,8 +37,14 @@ func _run_all_tests():
 	#tests for any or all of the scripts that have been added using
 	#add_script.
 	
-	tester.add_script('res://scripts/gut_tests.gd')
-	tester.add_script('res://scripts/test_that_take_awhile.gd', true)
+	# !! --------
+	#Set the yield between tests so that tests print as they complete
+	#instead of having to wait until the end.  Not compatible with
+	#1.0 so disabled by default.
+	#tester.set_yield_between_tests(true) 
+	# !! --------
+	tester.add_script('res://scripts/gut_tests.gd', true)
+	tester.add_script('res://scripts/test_that_take_awhile.gd')
 	tester.add_script('res://scripts/test_gut_yielding.gd')
 	tester.add_script('res://scripts/sample_tests.gd')
 	tester.add_script('res://scripts/another_sample.gd')

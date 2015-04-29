@@ -53,10 +53,9 @@ var _log_text = ""
 
 var _pause_before_teardown = false
 var _wait_timer = Timer.new()
-#The thread to run the tests in
-var _thread = Thread.new()
-var _use_threads = true
 
+var _yield_between_tests = false
+var _yield_between_timer = Timer.new()
 #various counters
 var _summary = {
 	asserts = 0,
@@ -172,6 +171,9 @@ func _ready():
 	
 	add_child(_wait_timer)
 	_wait_timer.set_wait_time(1)
+	_wait_timer.set_one_shot(true)
+	
+	add_child(_yield_between_timer)
 	_wait_timer.set_one_shot(true)
 	
 	self.connect("mouse_enter", self, "_on_mouse_enter")
@@ -347,9 +349,10 @@ func _get_summary_text():
 #-------------------------------------------------------------------------------
 #Run all tests in a script.  This is the core logic for running tests.
 #-------------------------------------------------------------------------------
-func _test_the_scripts(no_matter):
+func _test_the_scripts():
 	_init_run()
 	_run_button.set_disabled(true)
+	_scripts_drop_down.set_disabled(true)
 	for s in range(_test_scripts.size()):
 		_tests.clear()
 		_parse_tests(_test_scripts[s])
@@ -363,8 +366,20 @@ func _test_the_scripts(no_matter):
 		test_script.gut = self
 		add_child(test_script)
 		test_script.prerun_setup()
-		
+
+		#yield so things paint
+		if(_yield_between_tests):
+			_yield_between_timer.set_wait_time(0.001)
+			_yield_between_timer.start()
+			yield(_yield_between_timer, 'timeout')
+
 		for i in range(_tests.size()):
+			#yield so things paint
+			if(_yield_between_tests):
+				_yield_between_timer.set_wait_time(0.001)
+				_yield_between_timer.start()
+				yield(_yield_between_timer, 'timeout')
+
 			_current_test = _tests[i]
 			p(_current_test.name, 1)
 			test_script.setup()
@@ -378,6 +393,7 @@ func _test_the_scripts(no_matter):
 					p(WAITING_MESSAGE, 2)
 					_wait_timer.start()
 					yield(_wait_timer, 'timeout')
+			
 			#if the test called pause_before_teardown then yield until
 			#the continue button is pressed.
 			if(_pause_before_teardown):
@@ -400,16 +416,7 @@ func _test_the_scripts(no_matter):
 	p(_get_summary_text(), 0)
 	update()
 	_run_button.set_disabled(false)
-	call_deferred("_thread_done")
-
-#-------------------------------------------------------------------------------
-#Based on experimenting with threads, this structure is necessary for the thread
-#to complete correctly.  I don't fully understand why, but this is called by
-#the method that the thread is running via 'call_deferred'
-#-------------------------------------------------------------------------------
-func _thread_done():
-	if(_use_threads):
-		_thread.wait_to_finish()
+	_scripts_drop_down.set_disabled(false)
 
 #-------------------------------------------------------------------------------
 #Conditionally prints the text to the console/results variable based on the
@@ -465,16 +472,7 @@ func test_scripts():
 	else:
 		_test_scripts.append(_scripts_drop_down.get_item_text(_scripts_drop_down.get_selected()))
 		
-	if(_use_threads):
-		_thread = Thread.new()
-		var error = _thread.start(self, '_test_the_scripts', 'a')
-		if(error != 0 or !_thread.is_active()):
-			p("There was an error starting the tests in a thread ")
-			p("or the thread did not become active as expected.  ") 
-			p("I'm not sure what to tell you...the error was:  " + str(error))
-			p("You can disable threading by calling set_use_threads(false).")
-	else:
-		_test_the_scripts('a')
+	_test_the_scripts()
 	
 	
 #-------------------------------------------------------------------------------
@@ -647,12 +645,6 @@ func get_result_text():
 func set_log_level(level):
 	_log_level = level
 	_log_level_slider.set_value(level)
-
-#-------------------------------------------------------------------------------
-#Enable/disable threading
-#-------------------------------------------------------------------------------
-func set_use_threads(should):
-	_use_threads = should
 	
 #-------------------------------------------------------------------------------
 #Get the current log level.
@@ -669,9 +661,20 @@ func pause_before_teardown():
 	_pause_before_teardown = true;
 
 #-------------------------------------------------------------------------------
+#Set to true so that painting of the screen will occur between tests.  Allows you
+#to see the output as tests occur.  Especially useful with long running tests that
+#make it appear as though it has humg.
+#
+#NOTE:  not compatible with 1.0 so this is disabled by default.  This will
+#change in future releases.
+#-------------------------------------------------------------------------------
+func set_yield_between_tests(should):
+	_yield_between_tests = should
+
+#-------------------------------------------------------------------------------
 #Call _process or _fixed_process, if they exist, on obj and all it's children
 #and their children and so and so forth.  Delta will be passed through to all
-#the _process or _fixed_process methods.
+#the _process or _fixed_process methods.  
 #-------------------------------------------------------------------------------
 func simulate(obj, times, delta):
 	for i in range(times):
