@@ -353,64 +353,70 @@ func _test_the_scripts():
 	_init_run()
 	_run_button.set_disabled(true)
 	_scripts_drop_down.set_disabled(true)
+	var file = File.new()
+	
 	for s in range(_test_scripts.size()):
 		_tests.clear()
-		_parse_tests(_test_scripts[s])
-		_summary.scripts += 1
 		p("/-----------------------------------------")
 		p("Testing Script " + _test_scripts[s], 0)
 		p("-----------------------------------------/")
-		var test_script = load(_test_scripts[s]).new()
-		add_child(test_script)
-		var script_result = null
-		test_script.gut = self
-		add_child(test_script)
-		test_script.prerun_setup()
-
-		#yield so things paint
-		if(_yield_between_tests):
-			_yield_between_timer.set_wait_time(0.001)
-			_yield_between_timer.start()
-			yield(_yield_between_timer, 'timeout')
-
-		for i in range(_tests.size()):
+		if(!file.file_exists(_test_scripts[s])):
+			p("COULD NOT FIND FILE:  " + _test_scripts[s])
+		else:
+			_parse_tests(_test_scripts[s])
+			_summary.scripts += 1		
+			var test_script = load(_test_scripts[s]).new()
+			add_child(test_script)
+			var script_result = null
+			test_script.gut = self
+			add_child(test_script)
+			test_script.prerun_setup()
+	
 			#yield so things paint
 			if(_yield_between_tests):
 				_yield_between_timer.set_wait_time(0.001)
 				_yield_between_timer.start()
 				yield(_yield_between_timer, 'timeout')
-
-			_current_test = _tests[i]
-			p(_current_test.name, 1)
-			test_script.setup()
-			_summary.tests += 1
-			script_result = test_script.call(_current_test.name)
-			#When the script yields it will return a GDFunctionState object
-			if(script_result != null and typeof(script_result) == TYPE_OBJECT and script_result.get_type() == 'GDFunctionState'):
-				p(YIELD_MESSAGE, 1)
-				_waiting = true
-				while(_waiting):
-					p(WAITING_MESSAGE, 2)
-					_wait_timer.start()
-					yield(_wait_timer, 'timeout')
-			
-			#if the test called pause_before_teardown then yield until
-			#the continue button is pressed.
-			if(_pause_before_teardown):
-				p(PAUSE_MESSAGE, 1)
-				_waiting = true
-				_continue_button.set_disabled(false)
-				yield(_continue_button, 'pressed')
-			
-			test_script.teardown()
-			if(_current_test.passed):
-				_text_box.add_keyword_color(_current_test.name, Color(0, 1, 0))
-			else:
-				_text_box.add_keyword_color(_current_test.name, Color(1, 0, 0))
 	
+			for i in range(_tests.size()):
+				#yield so things paint
+				if(_yield_between_tests):
+					_yield_between_timer.set_wait_time(0.001)
+					_yield_between_timer.start()
+					yield(_yield_between_timer, 'timeout')
+	
+				_current_test = _tests[i]
+				p(_current_test.name, 1)
+				test_script.setup()
+				_summary.tests += 1
+				script_result = test_script.call(_current_test.name)
+				#When the script yields it will return a GDFunctionState object
+				if(script_result != null and typeof(script_result) == TYPE_OBJECT and script_result.get_type() == 'GDFunctionState'):
+					p(YIELD_MESSAGE, 1)
+					_waiting = true
+					while(_waiting):
+						p(WAITING_MESSAGE, 2)
+						_wait_timer.start()
+						yield(_wait_timer, 'timeout')
+				
+				#if the test called pause_before_teardown then yield until
+				#the continue button is pressed.
+				if(_pause_before_teardown):
+					p(PAUSE_MESSAGE, 1)
+					_waiting = true
+					_continue_button.set_disabled(false)
+					yield(_continue_button, 'pressed')
+				
+				test_script.teardown()
+				if(_current_test.passed):
+					_text_box.add_keyword_color(_current_test.name, Color(0, 1, 0))
+				else:
+					_text_box.add_keyword_color(_current_test.name, Color(1, 0, 0))
+			
+			test_script.postrun_teardown()
+			test_script.free()
 		_current_test = null
-		test_script.postrun_teardown()
-		test_script.free()
+
 		p("\n\n")
 	
 	p(_get_summary_text(), 0)

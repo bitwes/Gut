@@ -49,6 +49,7 @@ func _run_all_tests():
 	tester.add_script('res://scripts/sample_tests.gd')
 	tester.add_script('res://scripts/another_sample.gd')
 	tester.add_script('res://scripts/all_passed.gd')
+	tester.add_script('res://script_does_not_exist.gd')
 	tester.test_scripts()
 
 	#get the results to the console, just to show you can get them
