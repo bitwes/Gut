@@ -385,14 +385,15 @@ func _test_the_scripts():
 				yield(_yield_between_timer, 'timeout')
 	
 			for i in range(_tests.size()):
+				_current_test = _tests[i]
+				p(_current_test.name, 1)
+
 				#yield so things paint
 				if(_yield_between_tests):
 					_yield_between_timer.set_wait_time(0.001)
 					_yield_between_timer.start()
 					yield(_yield_between_timer, 'timeout')
 	
-				_current_test = _tests[i]
-				p(_current_test.name, 1)
 				test_script.setup()
 				_summary.tests += 1
 				
