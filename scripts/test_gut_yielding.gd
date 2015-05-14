@@ -16,6 +16,22 @@ func prerun_setup():
 func setup():
 	timer.set_wait_time(1)
 
+func test_can_yield_using_built_in_timer():
+	gut.p('yielding for 1 second')
+	gut.set_yield_time(1)
+	yield(gut, 'timeout')
+	gut.p('done yielding')
+	gut.end_yielded_test()
+
+func test_setting_yield_time_twice_resets_time():
+	gut.p('yielding for 1 second')
+	gut.set_yield_time(10)
+	gut.set_yield_time(1)
+	yield(gut, 'timeout')
+	gut.p('done yielding')
+	gut.end_yielded_test()
+	
+
 func test_wait_for_continue_click():
 	gut.assert_eq(1, 1, 'some simple assert')
 	gut.pause_before_teardown()
@@ -47,7 +63,6 @@ func test_can_call_pause_before_yielding():
 	yield(timer, 'timeout')
 	gut.p('done yielding')
 	gut.end_yielded_test()
-
 
 func test_returning_int_does_not_cause_yield():
 	return 9

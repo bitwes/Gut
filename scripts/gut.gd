@@ -59,6 +59,10 @@ var _wait_timer = Timer.new()
 
 var _yield_between_tests = false
 var _yield_between_timer = Timer.new()
+#used when yielding to gut instead of some other 
+#signal.  Start with set_yield_time()
+var _yield_timer = Timer.new()
+
 #various counters
 var _summary = {
 	asserts = 0,
@@ -96,18 +100,11 @@ func _set_anchor_bottom_left(obj):
 	obj.set_anchor(MARGIN_TOP, ANCHOR_END)
 
 #-------------------------------------------------------------------------------
-#Initialize controls
 #-------------------------------------------------------------------------------
-func _ready():
-	set_process_input(true)
-	
-	show()
-	set_pos(get_pos() + Vector2(0, 20))
-	self.set_size(min_size)
-	
+func setup_controls():
 	var button_size = Vector2(75, 35)
 	var button_spacing = Vector2(10, 0)
-	
+
 	add_child(_text_box)
 	_text_box.set_size(Vector2(get_size().x - 4, 300))
 	_text_box.set_pos(Vector2(2, 0))
@@ -172,12 +169,31 @@ func _ready():
 	_scripts_drop_down.add_item("Run All")
 	_set_anchor_bottom_left(_scripts_drop_down)
 	
+#-------------------------------------------------------------------------------
+#Initialize controls
+#-------------------------------------------------------------------------------
+func _ready():
+	set_process_input(true)
+	
+	show()
+	set_pos(get_pos() + Vector2(0, 20))
+	self.set_size(min_size)
+	
+	
+	setup_controls()
+
+	add_user_signal('timeout')
+	
 	add_child(_wait_timer)
 	_wait_timer.set_wait_time(1)
 	_wait_timer.set_one_shot(true)
 	
 	add_child(_yield_between_timer)
 	_wait_timer.set_one_shot(true)
+	
+	add_child(_yield_timer)
+	_yield_timer.set_one_shot(true)
+	_yield_timer.connect('timeout', self, '_on_yield_timer_timeout')
 	
 	self.connect("mouse_enter", self, "_on_mouse_enter")
 	self.connect("mouse_exit", self, "_on_mouse_exit")
@@ -236,6 +252,13 @@ func _draw():
 			draw_circle(where, r , Color(1, 0, 0, 1))
 		else:
 			draw_circle(where, r, Color(0, 1, 0, 1))
+
+#-------------------------------------------------------------------------------
+#Timeout for the built in timer.  emits the timeout signal.  Start timer
+#with set_yield_time()
+#-------------------------------------------------------------------------------
+func _on_yield_timer_timeout():
+	emit_signal('timeout')
 
 #-------------------------------------------------------------------------------
 #detect mouse movement
@@ -701,6 +724,14 @@ func simulate(obj, times, delta):
 			
 		for kid in obj.get_children():
 			simulate(kid, 1, delta)
+
+#-------------------------------------------------------------------------------
+#Starts an internal timer with a timeout of the passed in time.  A 'timeout' 
+#signal will be sent when the timer ends.
+#-------------------------------------------------------------------------------
+func set_yield_time(time):
+	_yield_timer.set_wait_time(time)
+	_yield_timer.start()
 
 ################################################################################
 #Class that all test scripts must extend.  Syntax is just a normal extends with
