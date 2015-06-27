@@ -220,6 +220,11 @@ func test_assert_file_empty_with_not_empty_file():
 	f.close()
 	gut.assert_file_empty(path)
 
+func test_assert_file_empty_fails_when_file_dne():
+	should_fail()
+	var path = 'user://file_dne.txt'
+	gut.assert_file_empty(path)
+	
 func test_assert_file_not_empty_with_empty_file():
 	should_fail()
 	var path = 'user://gut_test_empty3.txt'
@@ -234,6 +239,11 @@ func test_assert_file_not_empty_with_populated_file():
 	f.open(path, f.WRITE)
 	f.store_8(1)
 	f.close()
+	gut.assert_file_not_empty(path)
+
+func test_assert_file_not_empty_fails_when_file_dne():
+	should_fail()
+	var path = 'user://file_dne.txt'
 	gut.assert_file_not_empty(path)
 	
 #------------------------------

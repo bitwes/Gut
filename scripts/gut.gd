@@ -634,7 +634,8 @@ func assert_file_does_not_exist(file_path):
 #-------------------------------------------------------------------------------
 func assert_file_empty(file_path):
 	var disp = 'expected [' + file_path + '] to be empty'
-	if(is_file_empty(file_path)):
+	var f = File.new()
+	if(f.file_exists(file_path) and is_file_empty(file_path)):
 		_pass(disp)
 	else:
 		_fail(disp)

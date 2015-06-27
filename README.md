@@ -24,6 +24,12 @@ __AS STATED BEFORE...the parameters have been reordered in this version, "got" i
 * __assert_false(got, text="")__:  #Asserts that got is false
 * __assert_between(got, expected_low, expected_high, text="")__:  #Asserts got is between the two expected values (inclusive)
 
+File related asserts
+* __assert_file_exists(file_path)__: #Asserts that a file exists at the given path
+* __assert_file_does_not_exist(file_path)__: #Asserts a file does not exist at the given path
+* __assert_file_empty(file_path)__: #Asserts the file at the path is empty.  Also fails if the file does not exist.
+* __assert_file_not_empty(file_path)__: #Asserts the file at the path is not empty.  Also fails if the file does not exist.
+
 These are called from within test scripts (scripts that extend "res://scripts/gut.gd".Test) by prefixing them with "gut.".  For example:
 
 * gut.assert_eq(1, my_number_var, "The number should be 1.")
@@ -47,8 +53,18 @@ The "p" method allows you to print information out indented under the test outpu
 
 func p(text, level=0)
 ```
+
+####Working with Files####
+GUT contains a few utility methods to ease the testing of file creation/deletion.  
+* __file_touch(path)__ Creates a file at the designated path.
+* __file_delete(path)__ Deletes a file at the disgnated path.
+* __is_file_empty(path)__ Returns true if the file at the path is empty, false if not.
+* __directory_delete_files(path)__ Deletes all files at a given path.  Does not delete sub directories or any files in any sub directories.
+
 ####Simulate####
-The simulate method will call the _process or _fixed_process on a tree of objects.  It takes in the base object, the number of times to call the methods and the delta value to be passed to _process or _fixed_process (if the object has one).  
+The simulate method will call the _process or _fixed_process on a tree of objects.  It takes in the base object, the number of times to call the methods and the delta value to be passed to _process or _fixed_process (if the object has one).  This will only cause code directly related to the _process and _fixed_process methods to run.  Timers will not fire since the main loop of the game is not actually running.  Creating a test that yields is a better solution for testing such things.
+
+GUT also supports yielding to a test, but this does not work very well in 1.0.  See the section on yielding for more information.
 Example
 
 ```
@@ -75,6 +91,36 @@ func test_does_something_each_loop():
 	gut.assert_eq(other_obj.a_number, 20, 'Since a_number is incremented in _process, it should be 20 now')
 
 ```
+
+####Yielding during a test####
+__Note that this fucntionality will not work in Godot 1.0.__
+
+You can yield during a test to allow your objects to run their course as they would during an actual run of the game.  This allows you to test functionality in real time as it would occur during game play.  This does however slow your tests down since you have to wait for the game do what you expect in real time and there is no way of speeding things up.  
+
+Yielding works by calling the Godot built-in __yield__ method which takes in an object to yield to, and a signal which that object will emit.  Execution of the test will pause until that signal is emitted.  For example you could yield to a button's 'pressed' event or a timer's 'timeout' event.
+
+``` python
+func test_yield_to_button_click():
+	my_object = ObjectToTest.new()
+	add_child(my_object)
+	yield(my_object.some_button, 'pressed')
+	gut.assert_true(some_condition, 'After button pressed, this should be true')
+	gut.end_yielded_test()
+```
+Due to the nature of yielding, GUT cannot know when the actual test has finished.  You must notify GUT that a test that contains a yield has completed by calling __gut.end_yielded_test()__.  For this reason, GUT will print out to the screen that it is currently waiting for a the __end_yielded_test__ signal to let you know that it's not just sitting there doing nothing.  If this prints to the screen longer than you expect, then you've either yielded to a signal that may not fire or you forgot to call __gut.end_yielded_test()__ at then end of your test.
+
+In some cases you may not have a signal to wait on, but you do have an idea of how long it will take for a specific test to play out.  To make things easier in this situation GUT provides a timer that you can kick off and yield to.  You tell it how long to wait then yield to the GUT object like so:
+
+``` python
+func test_wait_for_a_bit():
+	my_object = ObjectToTest.new()
+	my_object.do_something()
+	gut.set_yield_time(5) #wait 5 seconds
+	yield(gut, 'timeout')
+	gut.assert_eq(my_object.some_property, 'some value', 'After waiting 5 seconds, this property should be set')
+	gut.end_yielded_test()
+```
+
 ### Setup ###
 
 * To setup GUT in your own project, simply copy the gut.gd script into your project somewhere.  Probably to /scripts, that's what will be used for the rest of this documentation, but it doesn't have to be there for any specific reason.
