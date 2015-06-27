@@ -56,6 +56,7 @@ func p(text, level=0)
 
 ####Working with Files####
 GUT contains a few utility methods to ease the testing of file creation/deletion.  
+
 * __file_touch(path)__ Creates a file at the designated path.
 * __file_delete(path)__ Deletes a file at the disgnated path.
 * __is_file_empty(path)__ Returns true if the file at the path is empty, false if not.
