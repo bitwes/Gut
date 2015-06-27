@@ -37,6 +37,7 @@ var counts = {
 #Used to count the number of tests that should fail so that they
 #can be compared at the end.
 func should_fail():
+	gut.p("/#should fail#/")
 	counts.should_fail += 1
 
 func setup():
@@ -54,6 +55,7 @@ func postrun_teardown():
 	#Asserts in any of the setup/teardown methods
 	#is a bad idea in general.
 	gut.assert_true(true, 'POSTTEARDOWN RAN')
+	gut.directory_delete_files('user://')
 
 
 #------------------------------
@@ -178,6 +180,90 @@ func test_assert_false_with_false():
 	gut.assert_false(false, "Should pass")
 
 #------------------------------
+# File asserts
+#------------------------------
+func test_assert_file_exists_with_file_dne():
+	should_fail()
+	gut.assert_file_exists('user://file_dne.txt')
+
+func test_assert_file_exists_with_file_exists():
+	var path = 'user://gut_test_file.txt'
+	var f = File.new()
+	f.open(path, f.WRITE)
+	f.close()
+	gut.assert_file_exists(path)
+
+func test_assert_file_dne_with_file_dne():
+	gut.assert_file_does_not_exist('user://file_dne.txt')
+	
+func test_assert_file_dne_with_file_exists():
+	should_fail()
+	var path = 'user://gut_test_file2.txt'
+	var f = File.new()
+	f.open(path, f.WRITE)
+	f.close()
+	gut.assert_file_does_not_exist(path)
+
+func test_assert_file_empty_with_empty_file():
+	var path = 'user://gut_test_empty.txt'
+	var f = File.new()
+	f.open(path, f.WRITE)
+	f.close()
+	gut.assert_file_empty(path)
+
+func test_assert_file_empty_with_not_empty_file():
+	should_fail()
+	var path = 'user://gut_test_empty2.txt'
+	var f = File.new()
+	f.open(path, f.WRITE)
+	f.store_8(1)
+	f.close()
+	gut.assert_file_empty(path)
+
+func test_assert_file_not_empty_with_empty_file():
+	should_fail()
+	var path = 'user://gut_test_empty3.txt'
+	var f = File.new()
+	f.open(path, f.WRITE)
+	f.close()
+	gut.assert_file_not_empty(path)
+
+func test_assert_file_not_empty_with_populated_file():
+	var path = 'user://gut_test_empty4.txt'
+	var f = File.new()
+	f.open(path, f.WRITE)
+	f.store_8(1)
+	f.close()
+	gut.assert_file_not_empty(path)
+	
+#------------------------------
+# File utilities
+#------------------------------
+func test_file_touch_creates_file():
+	var path = 'user://gut_test_touch.txt'
+	gut.file_touch(path)
+	gut.assert_file_exists(path)
+
+func test_file_delete_kills_file():
+	var path = 'user://gut_test_file_delete.txt'
+	gut.file_touch(path)
+	gut.file_delete(path)
+	gut.assert_file_does_not_exist(path)
+
+func test_delete_all_files_in_a_directory():
+	var path = 'user://gut_dir_tests'
+	var d = Directory.new()
+	d.open('user://')
+	str(d.make_dir('gut_dir_tests'))
+	
+	gut.file_touch(path + '/helloworld.txt')
+	gut.file_touch(path + '/file2.txt')
+	gut.directory_delete_files(path)
+	gut.assert_file_does_not_exist(path + '/helloworld.txt')
+	gut.assert_file_does_not_exist(path + '/file2.txt')
+	
+	
+#------------------------------
 #Misc tests
 #------------------------------
 func test_can_call_eq_without_text():
@@ -243,3 +329,4 @@ func test_verify_results():
 	gut.assert_eq(gut.get_test_count(), counts.setup_count, "Setup should have been called for the number of tests ran")
 	gut.assert_eq(gut.get_test_count() -1, counts.teardown_count, "Teardown should have been called one less time")
 	gut.assert_eq(gut.get_pending_count(), 2, 'There should have been two pending tests')
+	

@@ -457,6 +457,10 @@ func _test_the_scripts():
 	_scripts_drop_down.set_disabled(false)
 	update()
 
+#########################
+#public
+#########################
+
 #-------------------------------------------------------------------------------
 #Conditionally prints the text to the console/results variable based on the
 #current log level and what level is passed in.  Whenever currently in a test,
@@ -602,7 +606,48 @@ func assert_between(got, expect_low, expect_high, text=""):
 			_fail(disp)
 		else:
 			_pass(disp)
-	
+
+#-------------------------------------------------------------------------------
+#Asserts that a file exists
+#-------------------------------------------------------------------------------
+func assert_file_exists(file_path):
+	var disp = 'expected [' + file_path + '] to exist.'
+	var f = File.new()
+	if(f.file_exists(file_path)):
+		_pass(disp)
+	else:
+		_fail(disp)
+
+#-------------------------------------------------------------------------------
+#Asserts that a file should not exist
+#-------------------------------------------------------------------------------
+func assert_file_does_not_exist(file_path):
+	var disp = 'expected [' + file_path + '] to NOT exist'
+	var f = File.new()
+	if(!f.file_exists(file_path)):
+		_pass(disp)
+	else:
+		_fail(disp)
+
+#-------------------------------------------------------------------------------
+# Asserts the specified file is empty
+#-------------------------------------------------------------------------------
+func assert_file_empty(file_path):
+	var disp = 'expected [' + file_path + '] to be empty'
+	if(is_file_empty(file_path)):
+		_pass(disp)
+	else:
+		_fail(disp)
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func assert_file_not_empty(file_path):
+	var disp = 'expected [' + file_path + '] to contain data'
+	if(!is_file_empty(file_path)):
+		_pass(disp)
+	else:
+		_fail(disp)
+
 #-------------------------------------------------------------------------------
 #Mark the current test as pending.
 #-------------------------------------------------------------------------------
@@ -732,6 +777,53 @@ func simulate(obj, times, delta):
 func set_yield_time(time):
 	_yield_timer.set_wait_time(time)
 	_yield_timer.start()
+
+#-------------------------------------------------------------------------------
+# Creates an empty file at the specified path
+#-------------------------------------------------------------------------------
+func file_touch(path):
+	var f = File.new()
+	f.open(path, f.WRITE)
+	f.close()
+
+#-------------------------------------------------------------------------------
+# deletes the file at the specified path
+#-------------------------------------------------------------------------------
+func file_delete(path):
+	var d = Directory.new()
+	d.open(path.get_base_dir())
+	d.remove(path)
+
+#-------------------------------------------------------------------------------
+# Checks to see if the passed in file has any data in it.
+#-------------------------------------------------------------------------------
+func is_file_empty(path):
+	var f = File.new()
+	f.open(path, f.READ)
+	var empty = f.get_len() == 0
+	f.close()
+	return empty
+
+#-------------------------------------------------------------------------------
+# deletes all files in a given directory
+#-------------------------------------------------------------------------------
+func directory_delete_files(path):
+	var d = Directory.new()
+	d.open(path)
+	d.list_dir_begin()
+	
+	#Traversing a directory is kinda odd.  You have to start the process of listing
+	#the contents of a directory with list_dir_begin then use get_next until it
+	#returns an empty string.  Then I guess you should end it.
+	var thing = d.get_next()
+	var full_path = ''
+	while(thing != ''):
+		full_path = path + "/" + thing
+		#file_exists returns fasle for directories
+		if(d.file_exists(full_path)):
+			d.remove(full_path)
+		thing = d.get_next()
+	d.list_dir_end()
 
 ################################################################################
 #Class that all test scripts must extend.  Syntax is just a normal extends with
