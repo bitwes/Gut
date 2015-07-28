@@ -26,6 +26,31 @@ class HasFixedProcessMethod:
 		fixed_process_called_count += 1
 		delta_sum += delta
 
+#--------------------------------------
+# Classes used to set get/set assert
+#--------------------------------------
+class NoGetNoSet:
+	var _thing = 'nothing'
+
+class HasGetNotSet:
+	func get_thing():
+		pass
+
+class HasGetAndSetThatDontWork:
+	func get_thing():
+		pass
+	func set_thing(new_thing):
+		pass
+
+class HasGetSetThatWorks:
+	var _thing = 'something'
+	
+	func get_thing():
+		return _thing
+	func set_thing(new_thing):
+		_thing = new_thing
+
+
 var counts = {
 	setup_count = 0,
 	teardown_count = 0,
@@ -331,7 +356,40 @@ func test_simulate_calls_fixed_process():
 	#using just the numbers didn't work, nor using float.  str worked for some reason and 
 	#i'm not sure why.
 	gut.assert_eq(str(obj.delta_sum), str(1), "The delta value should have been passed in and summed")
+#------------------------------
+# Get/Set Assert
+#------------------------------
+func test_fail_if_get_set_not_defined():
+	should_fail();should_fail() # set missing and get missing, fail twice
+	var obj = NoGetNoSet.new()
+	gut.assert_get_set_methods(obj, 'thing', 'something', 'another thing')
 
+func test_fail_if_has_get_and_not_set():
+	should_fail()
+	var obj = HasGetNotSet.new()
+	gut.assert_get_set_methods(obj, 'thing', 'something', 'another thing')
+
+func test_fail_if_default_wrong_and_get_dont_work():
+	should_fail();should_fail() #fail twice since set dont work either
+	var obj = HasGetAndSetThatDontWork.new()
+	gut.assert_get_set_methods(obj, 'thing', 'something', 'another thing')
+
+func test_fail_if_default_wrong():
+	should_fail();
+	var obj = HasGetSetThatWorks.new()
+	gut.assert_get_set_methods(obj, 'thing', 'not the right default', 'another thing')
+
+func test_pass_if_all_get_sets_are_aligned():
+	var obj = HasGetSetThatWorks.new()
+	gut.assert_get_set_methods(obj, 'thing', 'something', 'another thing')
+	
+#-------------------------------------------------------------------------------
+#
+#
+# This must be LAST test
+#
+# 
+#-------------------------------------------------------------------------------
 func test_verify_results():
 	gut.p("/*THESE SHOULD ALL PASS, IF NOT THEN SOMETHING IS BROKEN*/")
 	gut.assert_eq(counts.should_fail, gut.get_fail_count(), "The expected number of tests should have failed.")
@@ -339,4 +397,4 @@ func test_verify_results():
 	gut.assert_eq(gut.get_test_count(), counts.setup_count, "Setup should have been called for the number of tests ran")
 	gut.assert_eq(gut.get_test_count() -1, counts.teardown_count, "Teardown should have been called one less time")
 	gut.assert_eq(gut.get_pending_count(), 2, 'There should have been two pending tests')
-	
+

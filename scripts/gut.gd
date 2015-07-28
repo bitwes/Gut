@@ -650,6 +650,24 @@ func assert_file_not_empty(file_path):
 		_fail(disp)
 
 #-------------------------------------------------------------------------------
+# Verifies the object has get and set methods for the property passed in.  The 
+# property isn't tied to anything, just a name to be appended to the end of 
+# get_ and set_.  Asserts the get_ and set_ methods exist, if not, it stops there.
+# If they exist then it asserts get_ returns the expected default then calls
+# set_ and asserts get_ has the value it was set to.
+#-------------------------------------------------------------------------------
+func assert_get_set_methods(obj, property, default, set_to):
+	var fail_count = get_fail_count()
+	var get = 'get_' + property
+	var set = 'set_' + property
+	assert_true(obj.has_method(get), 'Should have get method:  ' + get)
+	assert_true(obj.has_method(set), 'Should have set method:  ' + set)
+	if(get_fail_count() > fail_count):
+		return
+	assert_eq(obj.call(get), default, 'It should have the expected default value.')
+	obj.call(set, set_to)
+	assert_eq(obj.call(get), set_to, 'The set value should have been returned.')
+#-------------------------------------------------------------------------------
 #Mark the current test as pending.
 #-------------------------------------------------------------------------------
 func pending(text=""):
