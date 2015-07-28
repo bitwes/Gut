@@ -1,8 +1,4 @@
 ### What is this repository for? ###
-__IMPORTANT NOTE __
-
-__The ordering of the parameters in the asserts has changed with this version.  After using GUT for awhile I realized that "got" should come first for things to read better.  This change won't break any of your tests but the message will be misleading until you reorder the parameters when you call the various asserts.__
-
 GUT (Godot Unit Test) is a utility for writing unit tests in Godot's scripting language.  The premise is that the gut.gd script will run other scripts that contain tests and asserts and then reports the status of said tests and asserts.  This is all done through godot using a scene you create to run the tests.  Once your scene is in place and you've coded up a GUT instance to run your test scripts, you simply run the scene.  This project illustrates using GUT to run tests, some sample tests, and the one required script, gut.gd, which is located in /scripts/.
 
 Sometimes the best tutorial is to dive right in, so to that end you should read through the main.gd script for illustrations on running scripts and setting the various options available.  There are various test scripts that illustrate performing assertions and printing messages.  There's even the tests that were created to test GUT itself.  They can be found in gut_tests.gd.
@@ -14,17 +10,17 @@ As development continues I will try to support the last two releases of Godot.  
 ###Gut Methods###
 
 ####Asserts####
-__AS STATED BEFORE...the parameters have been reordered in this version, "got" is now always the first parameter.__
-
-* __assert_eq(got, expected, text="")__:  #Asserts that the expected value equals the value got.
-* __assert_ne(got, not_expected, text="")__:  #Asserts that the value got does not equal the "not expected" value.  
-* __assert_gt(got, expected, text="")__:  #Asserts got is greater than expected
-* __assert_lt(got, expected, text="")__:  #Asserts got is less than expected
-* __assert_true(got, text="")__:  #Asserts that got is true
-* __assert_false(got, text="")__:  #Asserts that got is false
-* __assert_between(got, expected_low, expected_high, text="")__:  #Asserts got is between the two expected values (inclusive)
+* __assert_eq(got, expected, text="")__:  Asserts that the expected value equals the value got.
+* __assert_ne(got, not_expected, text="")__:  Asserts that the value got does not equal the "not expected" value.  
+* __assert_gt(got, expected, text="")__:  Asserts got is greater than expected
+* __assert_lt(got, expected, text="")__:  Asserts got is less than expected
+* __assert_true(got, text="")__:  Asserts that got is true
+* __assert_false(got, text="")__:  Asserts that got is false
+* __assert_between(got, expected_low, expected_high, text="")__:  Asserts got is between the two expected values (inclusive)
+* __assert_get_set_methods(obj, property, default, set_to)__:  Verifies some basic get/set accessor behavior.  For example, calling  `gut.assert_get_set_methods(some_obj, 'description', 'default', 'new description')` will verify `some_obj` has a `get_description` and `set_description` method and that the first call to `get_description()` returns 'default' and that a call to `set_description('new description')` then a call to `get_description()` will return 'new_description'.
 
 File related asserts
+
 * __assert_file_exists(file_path)__: #Asserts that a file exists at the given path
 * __assert_file_does_not_exist(file_path)__: #Asserts a file does not exist at the given path
 * __assert_file_empty(file_path)__: #Asserts the file at the path is empty.  Also fails if the file does not exist.
@@ -61,6 +57,8 @@ GUT contains a few utility methods to ease the testing of file creation/deletion
 * __file_delete(path)__ Deletes a file at the disgnated path.
 * __is_file_empty(path)__ Returns true if the file at the path is empty, false if not.
 * __directory_delete_files(path)__ Deletes all files at a given path.  Does not delete sub directories or any files in any sub directories.
+
+There are also asserts for examining files.  See the assert list above.
 
 ####Simulate####
 The simulate method will call the _process or _fixed_process on a tree of objects.  It takes in the base object, the number of times to call the methods and the delta value to be passed to _process or _fixed_process (if the object has one).  This will only cause code directly related to the _process and _fixed_process methods to run.  Timers will not fire since the main loop of the game is not actually running.  Creating a test that yields is a better solution for testing such things.
