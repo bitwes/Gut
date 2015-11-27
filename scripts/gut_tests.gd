@@ -58,6 +58,10 @@ var counts = {
 	postrun_teardown_count = 0,
 	should_fail = 0
 }
+var _test_finished_called = false
+
+func test_finished_callback():
+	_test_finished_called = true
 
 #Used to count the number of tests that should fail so that they
 #can be compared at the end.
@@ -67,6 +71,7 @@ func should_fail():
 
 func setup():
 	counts.setup_count += 1
+	_test_finished_called = false
 
 func teardown():
 	counts.teardown_count += 1
@@ -382,7 +387,7 @@ func test_fail_if_default_wrong():
 func test_pass_if_all_get_sets_are_aligned():
 	var obj = HasGetSetThatWorks.new()
 	gut.assert_get_set_methods(obj, 'thing', 'something', 'another thing')
-	
+
 #-------------------------------------------------------------------------------
 #
 #

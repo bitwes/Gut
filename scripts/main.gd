@@ -1,8 +1,12 @@
 extends Node2D
 
+var tester = null
+
 func _ready():
 	_run_all_tests()
 
+func _on_tests_finished():
+	tester.p("Tests done callback called")
 
 func _run_test_one_line():
 #------------------------------------
@@ -16,9 +20,10 @@ func _run_all_tests():
 #with a reference to the class.
 #------------------------------------
 	#get an instance of gut
-	var tester = load('res://scripts/gut.gd').new()
+	tester = load('res://scripts/gut.gd').new()
 	#add as a child so you can see the GUI when run
 	add_child(tester)
+	tester.connect('tests_finished', self, '_on_tests_finished')
 	tester.show()
 	tester.set_pos(Vector2(100, 100))
 	
@@ -50,6 +55,7 @@ func _run_all_tests():
 	tester.add_script('res://scripts/another_sample.gd')
 	tester.add_script('res://scripts/all_passed.gd')
 	tester.add_script('res://script_does_not_exist.gd')
+	tester.set_yield_between_tests(true)
 	tester.test_scripts()
 
 	#get the results to the console, just to show you can get them

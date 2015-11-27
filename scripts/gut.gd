@@ -88,6 +88,8 @@ var _mouse_in = false
 
 var min_size = Vector2(650, 400)
 
+const SIGNAL_TESTS_FINISHED = 'tests_finished'
+
 func _set_anchor_bottom_right(obj):
 	obj.set_anchor(MARGIN_LEFT, ANCHOR_END)
 	obj.set_anchor(MARGIN_RIGHT, ANCHOR_END)
@@ -168,7 +170,12 @@ func setup_controls():
 	_scripts_drop_down.set_pos(Vector2(10, _log_level_slider.get_pos().y + 50))
 	_scripts_drop_down.add_item("Run All")
 	_set_anchor_bottom_left(_scripts_drop_down)
-	
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func _init():
+	add_user_signal(SIGNAL_TESTS_FINISHED)
+
 #-------------------------------------------------------------------------------
 #Initialize controls
 #-------------------------------------------------------------------------------
@@ -403,7 +410,7 @@ func _test_the_scripts():
 	
 			#yield so things paint
 			if(_yield_between_tests):
-				_yield_between_timer.set_wait_time(0.001)
+				_yield_between_timer.set_wait_time(0.01)
 				_yield_between_timer.start()
 				yield(_yield_between_timer, 'timeout')
 	
@@ -456,6 +463,7 @@ func _test_the_scripts():
 	_run_button.set_disabled(false)
 	_scripts_drop_down.set_disabled(false)
 	update()
+	emit_signal(SIGNAL_TESTS_FINISHED)
 
 #########################
 #public
