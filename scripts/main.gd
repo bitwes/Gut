@@ -27,8 +27,7 @@ func _run_all_tests():
 	tester.show()
 	tester.set_pos(Vector2(100, 100))
 	
-	#stop it from printing to console, just because we can
-	tester.set_should_print_to_console(false)
+	tester.set_should_print_to_console(true)
 	
 	#Run a single test script, this will not appear in the drop
 	#down in the display, but the first time it runs it will

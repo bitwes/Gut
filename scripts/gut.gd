@@ -170,6 +170,7 @@ func setup_controls():
 	_scripts_drop_down.set_pos(Vector2(10, _log_level_slider.get_pos().y + 50))
 	_scripts_drop_down.add_item("Run All")
 	_set_anchor_bottom_left(_scripts_drop_down)
+	p("finished control setup")
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
