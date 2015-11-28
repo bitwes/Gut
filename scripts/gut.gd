@@ -470,7 +470,9 @@ func _test_the_scripts():
 	emit_signal(SIGNAL_TESTS_FINISHED)
 
 #########################
-#public
+#
+# public
+#
 #########################
 
 #-------------------------------------------------------------------------------
@@ -513,6 +515,11 @@ func p(text, level=0, indent=0):
 
 		_text_box.insert_text_at_cursor(to_print + "\n")
 
+################
+#
+# RUN TESTS/ADD SCRIPTS
+#
+################
 
 #-------------------------------------------------------------------------------
 #Runs all the scripts that were added using add_script
@@ -571,6 +578,31 @@ func add_directory(path, prefix='test_', suffix='.gd'):
 				add_script(full_path)
 		thing = d.get_next()
 	d.list_dir_end()
+
+#-------------------------------------------------------------------------------
+# This will try to find a script in the list of scripts to test that contains 
+# the specified script name.  It does not have to be a full match.  It will 
+# select the first matching occurance so that this script will run when run_tests
+# is called.  Works the same as the select_this_one option of add_script.
+#-------------------------------------------------------------------------------	
+func select_test(script_name):
+	var found = false
+	var idx = 0
+	
+	while(idx < _scripts_drop_down.get_item_count() and !found):
+		if(_scripts_drop_down.get_item_text(idx).find(script_name) != -1):
+			_scripts_drop_down.select(idx)
+			found = true
+		else:
+			idx += 1
+	
+################
+#
+# ASSERTS
+# 
+################
+
+
 #-------------------------------------------------------------------------------
 #Asserts that the expected value equals the value got.
 #-------------------------------------------------------------------------------
@@ -711,7 +743,15 @@ func pending(text=""):
 		p("Pending")
 	else:
 		p("Pending:  " + text)
-	
+
+
+################
+#
+# MISC
+#
+################
+
+
 #-------------------------------------------------------------------------------
 #Pauses the test and waits for you to press a confirmation button.  Useful when
 #you want to watch a test play out onscreen or inspect results.
