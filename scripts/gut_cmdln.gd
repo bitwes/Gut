@@ -52,7 +52,7 @@
 # --------
 # Run godot in debug mode (-d), run a test script (-gtest), set log level 
 # to lowest (-glog), exit when done (-gexit)
-# 	godot -s scripts/gut_cmdln.gd -d -gtest=res://scripts/sample_tests.gd -glog=1 -gexit
+# 	godot -s scripts/gut_cmdln.gd -d -gtest=res://unit_tests/sample_tests.gd -glog=1 -gexit
 ################################################################################
 extends SceneTree
 
@@ -64,7 +64,8 @@ var _opts = []
 # options that can be set and their defaults
 var options = {
 	should_exit = false,
-	log_level = 1
+	log_level = 1,
+	ignore_pause_before_teardown = false
 }
 
 # Search _opts for an element that starts with the option name
@@ -137,6 +138,12 @@ func apply_options():
 		options.log_level = get_option_value(_opts[log_loc])
 		_opts.remove(log_loc)
 
+	# ignore pause before teardown calls
+	var ignore_loc = find_option('-gignore_pause')
+	if(ignore_loc != -1):
+		options.ignore_pause_before_teardown = true
+		_opts.remove(ignore_loc)
+		
 # parse option and run Gut
 func _init():
 	_tester = Gut.new()
@@ -148,6 +155,7 @@ func _init():
 	apply_options()
 	
 	_tester.set_log_level(float(options.log_level))
+	_tester.set_ignore_pause_before_teardown(options.ignore_pause_before_teardown)
 	
 	_tester.test_scripts()
 	

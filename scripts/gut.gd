@@ -55,6 +55,9 @@ var _log_level = 1
 var _log_text = ""
 
 var _pause_before_teardown = false
+# when true _pase_before_teardown will be ignored.  useful
+# when batch processing and you don't want to watch.
+var _ignore_pause_before_teardown = false
 var _wait_timer = Timer.new()
 
 var _yield_between_tests = false
@@ -440,7 +443,7 @@ func _test_the_scripts():
 				
 				#if the test called pause_before_teardown then yield until
 				#the continue button is pressed.
-				if(_pause_before_teardown):
+				if(_pause_before_teardown and !_ignore_pause_before_teardown):
 					p(PAUSE_MESSAGE, 1)
 					_waiting = true
 					_continue_button.set_disabled(false)
@@ -772,6 +775,13 @@ func get_log_level():
 func pause_before_teardown():
 	_pause_before_teardown = true;
 
+#-------------------------------------------------------------------------------
+# For batch processing purposes, you may want to ignore any calls to 
+# pause_before_teardown that you forgot to remove.
+#-------------------------------------------------------------------------------
+func set_ignore_pause_before_teardown(should_ignore):
+	_ignore_pause_before_teardown = should_ignore
+	
 #-------------------------------------------------------------------------------
 #Set to true so that painting of the screen will occur between tests.  Allows you
 #to see the output as tests occur.  Especially useful with long running tests that
