@@ -56,6 +56,11 @@ var options = {
 	suffix = '.gd'
 }
 
+# flag to say if we should run the scripts or not.  Is only
+# set to false if you specify a script to run with the -gselect
+# option and it cannot find the script.
+var _auto_run = true
+
 # Search _opts for an element that starts with the option name
 # specified.
 func find_option(name):
@@ -168,7 +173,9 @@ func apply_options():
 		_tester.add_script(options.tests[i])
 
 	if(options.selected != ''):
-		_tester.select_script(options.selected)
+		_auto_run = _tester.select_script(options.selected)
+		if(!_auto_run):
+			_tester.p("Could not find a script that matched:  " + options.selected)
 
 # parse option and run Gut
 func _init():
@@ -181,7 +188,8 @@ func _init():
 	parse_options()
 	apply_options()
 	
-	_tester.test_scripts()
+	if(_auto_run):
+		_tester.test_scripts()
 	
 # exit if option is set.
 func _on_tests_finished():

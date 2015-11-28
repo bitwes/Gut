@@ -173,7 +173,6 @@ func setup_controls():
 	_scripts_drop_down.set_pos(Vector2(10, _log_level_slider.get_pos().y + 50))
 	_scripts_drop_down.add_item("Run All")
 	_set_anchor_bottom_left(_scripts_drop_down)
-	p("finished control setup")
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -584,6 +583,8 @@ func add_directory(path, prefix='test_', suffix='.gd'):
 # the specified script name.  It does not have to be a full match.  It will 
 # select the first matching occurance so that this script will run when run_tests
 # is called.  Works the same as the select_this_one option of add_script.
+#
+# returns whether it found a match or not
 #-------------------------------------------------------------------------------	
 func select_script(script_name):
 	var found = false
@@ -596,6 +597,7 @@ func select_script(script_name):
 		else:
 			idx += 1
 	
+	return found
 ################
 #
 # ASSERTS
