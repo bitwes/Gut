@@ -253,9 +253,9 @@ __Options__
 
 
 __Examples__
- Run godot in debug mode (-d), run a test script (-gtest), set log level
- to lowest (-glog), exit when done (-gexit)
- 	`godot -s scripts/gut_cmdln.gd -d -gtest=res://unit_tests/sample_tests.gd -glog=1 -gexit`
+
+Run godot in debug mode (-d), run a test script (-gtest), set log level to lowest (-glog), exit when done (-gexit)
+* `godot -s scripts/gut_cmdln.gd -d -gtest=res://unit_tests/sample_tests.gd -glog=1 -gexit`
 
 ### Who do I talk to? ###
 You can talk to me, Butch Wesley
