@@ -51,7 +51,9 @@ var options = {
 	ignore_pause_before_teardown = false,
 	tests = [],
 	dirs = [],
-	selected = ''
+	selected = '',
+	prefix = 'test_',
+	suffix = '.gd'
 }
 
 # Search _opts for an element that starts with the option name
@@ -148,6 +150,9 @@ func parse_options():
 	options.log_level = get_value('-glog', options.log_level)
 	options.ignore_pause_before_teardown = was_specified('-gignore_pause')
 	options.selected = get_value('-gselect', options.selected)
+	options.prefix = get_value('-gprefix', options.prefix)
+	options.suffix = get_value('-gsuffix', options.suffix)
+	
 	
 	print(options)
 
@@ -157,7 +162,7 @@ func apply_options():
 	_tester.set_ignore_pause_before_teardown(options.ignore_pause_before_teardown)
 	
 	for i in range(options.dirs.size()):
-		_tester.add_directory(options.dirs[i])
+		_tester.add_directory(options.dirs[i], options.prefix, options.suffix)
 	
 	for i in range(options.tests.size()):
 		_tester.add_script(options.tests[i])
