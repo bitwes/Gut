@@ -191,12 +191,9 @@ func load_auto_load_scripts():
 	f.load('res://engine.cfg')
 	
 	for key in f.get_section_keys('autoload'):
-		print("adding autoload " + key)
 		var obj = load(f.get_value('autoload', key)).new()
 		obj.set_name(key)
 		get_root().add_child(obj)
-
-	print(get_root().get_node("global"))
 
 # parse option and run Gut
 func _init():
