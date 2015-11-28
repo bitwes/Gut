@@ -39,7 +39,6 @@
 ################################################################################
 extends SceneTree
 
-var Gut = load("res://scripts/gut.gd")
 # instance of gut
 var _tester = null
 # array of command line options specified
@@ -53,7 +52,8 @@ var options = {
 	dirs = [],
 	selected = '',
 	prefix = 'test_',
-	suffix = '.gd'
+	suffix = '.gd',
+	gut_location = 'res://scripts/gut.gd'
 }
 
 # flag to say if we should run the scripts or not.  Is only
@@ -157,12 +157,19 @@ func parse_options():
 	options.selected = get_value('-gselect', options.selected)
 	options.prefix = get_value('-gprefix', options.prefix)
 	options.suffix = get_value('-gsuffix', options.suffix)
-	
+	options.gut_location = get_value('-gutloc', options.gut_location)
 	
 	print(options)
 
 # apply all the options specified to _tester
 func apply_options():
+	# setup the tester
+	_tester = load(options.gut_location).new()
+	get_root().add_child(_tester)
+	_tester.connect('tests_finished', self, '_on_tests_finished')
+	_tester.set_yield_between_tests(true)
+	_tester.show()
+	
 	_tester.set_log_level(float(options.log_level))
 	_tester.set_ignore_pause_before_teardown(options.ignore_pause_before_teardown)
 	
@@ -177,14 +184,23 @@ func apply_options():
 		if(!_auto_run):
 			_tester.p("Could not find a script that matched:  " + options.selected)
 
+# Loads any scripts that have been configured to be loaded through the project
+# settings->autoload.
+func load_auto_load_scripts():
+	var f = ConfigFile.new()
+	f.load('res://engine.cfg')
+	
+	for key in f.get_section_keys('autoload'):
+		print("adding autoload " + key)
+		var obj = load(f.get_value('autoload', key)).new()
+		obj.set_name(key)
+		get_root().add_child(obj)
+
+	print(get_root().get_node("global"))
+
 # parse option and run Gut
 func _init():
-	_tester = Gut.new()
-	get_root().add_child(_tester)
-	_tester.connect('tests_finished', self, '_on_tests_finished')
-	_tester.set_yield_between_tests(true)
-	_tester.show()
-	
+	load_auto_load_scripts()
 	parse_options()
 	apply_options()
 	
