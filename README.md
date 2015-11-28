@@ -10,6 +10,7 @@ As development continues I will try to support the last two releases of Godot.  
 ###Gut Methods###
 
 __Setting up the tester__
+
 * __add_script(script, select_this_one=false)__ add a script to be tetsted with test_scripts
 * __add_directory(path, prefix='test_', suffix='.gd')__ add a directory of test scripts that start with prefix and end with suffix.  Subdirectories not included.
 * __test_scripts()__ run all scripts added with add_script or add_directory
@@ -28,6 +29,7 @@ __Setting up the tester__
 * __get/set_log_level(level)__ see section on log level for list of values.
 
 __Asserting things__
+
 * __p(text, level=0, indent=0)__ print info to the gui and console
 * __assert_eq(got, expected, text="")__ assert got == expected and prints optional text
 * __assert_ne(got, not_expected, text="")__ asserts got != expected and prints optional text
@@ -44,13 +46,16 @@ __Asserting things__
 * __pending(text="")__ flag a test as pending
 
 __Yielding during a test__
+
 _See the section on yielding for more information._
+
 * __pause_before_teardown()__ causes the gui to pause before it runs the teardown method.  You must press the "continue" button on the gui to continue testing.  Can be by-passed using the set_ignore_pause_before_teardown method.
 * __set_yield_time(time)__ Sets the amount of time to wait when yielding to gut.  See section on yielding.
 * __end_yielded_test()__ Signifies a test that yielded has ended.  Must be called after yielding during a test or the gui will sit there and do nothing and you will be confused and angry.
 * __simulate(obj, times, delta)__ Runs the \_process and/or \_fixed_process method on the passed in object, along with any of it's children and their children and so on and so forth.  This will call the methods x times and pass them a value of delta each time they are called.
 
 __File manipulation convenience methods__
+
 * __file_touch(path)__ create an empty file if it doesn't exist.
 * __file_delete(path)__ delete a file
 * __is_file_empty(path)__ checks if a file is empty
@@ -220,6 +225,7 @@ There are 3 ways to add scripts to be run, feel free to use any combination of t
 To cut down on clicks, the `add_script` method takes an optional true/false flag that allows you flag a test to be run initially.  You can also use `select_script` method to select a script that was added with add_script or add_directory.  `select_script` will find the first script that contains the string you specify and mark it as the script to be run initially.
 
 __One script at a time__
+
 The test script method will run a single script that you pass it and send the output to the console.  
 
 Example of one line of code to run one test script and send the output to console:
@@ -232,6 +238,7 @@ func_ready():
 
 
 __Multiple Scripts__
+
 Example where we add the scripts to be tested then call test_scripts().  This will run all the scripts.  Since the tester has been added as a child of the scene, you will see the GUI when you run the scene.
 
 ```
