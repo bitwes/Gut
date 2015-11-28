@@ -241,11 +241,12 @@ To run the command line tool, place gut.gd and gut_cmdln.gd in the scripts direc
 The -d option tells godot to run in debug mode which is helpful.  The -s option points to the script to be run.
 
 __Options__
-* gexit:  
+
+* gexit  
 * * Exit when done running tests.  If not specified you have to manually close the window or ctrl+c at command line.
-* glog=<X>:   
+* glog=\<X\>   
 * * Specify the log level after the = (-glog=0).  See above for description of levels.
-* gscript=<comma separated list of scripts>:
+* gscript=\<comma separated list of scripts\>
 * * Add a script or scripts to be tested.  Multiple scripts must be separated by a comma.
 * gignore_pause
 * * Ignore any calls to gut.pause_before_teardown that might exist in your test scripts.  Useful when batch processing and you don't want to worry about babysitting the run.
