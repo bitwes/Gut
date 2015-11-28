@@ -39,6 +39,10 @@
 ################################################################################
 extends SceneTree
 
+#-------------------------------------------------------------------------------
+# Parses the command line arguments supplied into an array that can then be
+# examined and parsed based on how the gut options work.
+#-------------------------------------------------------------------------------
 class CmdLineParser:
 	var _opts = []
 	
@@ -109,6 +113,9 @@ class CmdLineParser:
 		
 		return opt_loc != -1	
 
+#-------------------------------------------------------------------------------
+# Simple class to hold a command line option
+#-------------------------------------------------------------------------------
 class Option:
 	var value = null
 	var option_name = ''
@@ -121,12 +128,25 @@ class Option:
 		description = desc
 		value = default_value
 	
-	func to_s():
+	func pad(value, size, pad_with=' '):
+		var to_return = value
+		for i in range(value.length(), size):
+			to_return += pad_with
+		
+		return to_return
+		
+	func to_s(min_space=0):
 		var subbed_desc = description
 		if(subbed_desc.find('[default]') != -1):
-			subbed_desc = subbed_desc.replace('[default]', default)
-		return option_name + "\t" + "\t" + subbed_desc
+			subbed_desc = subbed_desc.replace('[default]', str(default))
+		return pad(option_name, min_space) + subbed_desc
 		
+		
+#-------------------------------------------------------------------------------
+# The high level interface between this script and the command line options 
+# supplied.  Uses Option class and CmdLineParser to extract information from
+# the command line and make it easily accessible.
+#-------------------------------------------------------------------------------
 class Options:
 	var options = []
 	var _opts = []
@@ -153,17 +173,24 @@ class Options:
 	
 	func set_banner(banner):
 		_banner = banner
-	
+		
 	func print_help():
+		var longest = 0
+		for i in range(options.size()):
+			if(options[i].option_name.length() > longest):
+				longest = options[i].option_name.length()
+	
+		print('---------------------------------------------------------')
 		print(_banner)
 		
+		print("\nOptions\n-------")
 		for i in range(options.size()):
-			print(options[i].to_s())
-		
+			print('  ' + options[i].to_s(longest + 2))
+		print('---------------------------------------------------------')
+	
 	func print_options():
 		for i in range(options.size()):
 			print(options[i].option_name + '=' + str(options[i].value))
-
 
 	func parse():
 		var parser = CmdLineParser.new()
@@ -182,12 +209,20 @@ class Options:
 				print(options[i].option_name + ' cannot be processed, it has a nil datatype')
 			else:
 				print(options[i].option_name + ' cannot be processsed, it has unknown datatype:' + str(t))
-				
+
+
+#-------------------------------------------------------------------------------
+# Here starts the actual script that uses the Options class to kick off Gut 
+# and run your tests.
+#-------------------------------------------------------------------------------
 # instance of gut
 var _tester = null
 # array of command line options specified
 var _opts = []
-# options that can be set and their defaults
+# Hash for easier access to the options in the code.  Options will be 
+# extracted into this hash and then the hash will be used afterwards so
+# that I don't make any dumb typos and get the neat code-sense when I 
+# type a dot.
 var options = {
 	should_exit = false,
 	log_level = 1,
@@ -195,14 +230,25 @@ var options = {
 	tests = [],
 	dirs = [],
 	selected = '',
-	prefix = 'test_',
-	suffix = '.gd',
-	gut_location = 'res://scripts/gut.gd',
+	prefix = '',
+	suffix = '',
+	gut_location = '',
 	show_help = false
 }
 
-func fill_options():
+# flag to say if we should run the scripts or not.  It is only
+# set to false if you specify a script to run with the -gselect
+# option and it cannot find the script.
+var _auto_run = true
+
+func setup_options():
 	var opts = Options.new()
+	opts.set_banner(('This is the command line interface for the unit testing tool Gut.  With this ' + 
+	                'interface you can run one or more test scripts from the command line.  In order ' +
+	                'for the Gut options to not clash with any other godot options, each option starts ' + 
+	                'with a "g".  Also, any option that requires a value will take the form of ' +
+	                '"-g<name>=<value>".  There cannot be any spaces between the option, the "=", or ' +
+	                'inside a specified value or godot will think you are trying to run a scene.'))
 	opts.add('-gtest', [], 'Comma delimited list of tests to run')
 	opts.add('-gdir', [], 'Comma delimited list of directories to add tests from.')
 	opts.add('-gprefix', 'test_', 'Prefix used to find tests when specifying -gdir.  Default "[default]"')
@@ -215,94 +261,13 @@ func fill_options():
 	                          'string will be executed.  You may run others by interacting ' +
                               'with the GUI.'))
 	opts.add('-gutloc', 'res://scripts/gut.gd', 'Full path (including name) of the gut script.  Default [default]')
+	opts.add('-gh', false, 'Print this help')
 	return opts
 	
-# flag to say if we should run the scripts or not.  Is only
-# set to false if you specify a script to run with the -gselect
-# option and it cannot find the script.
-var _auto_run = true
-
-# Search _opts for an element that starts with the option name
-# specified.
-func find_option(name):
-	var found = false
-	var idx = 0
-	
-	while(idx < _opts.size() and !found):
-		if(_opts[idx].find(name) == 0):
-			found = true
-		else:
-			idx += 1
-			
-	if(found):
-		return idx
-	else:
-		return -1
-
-# Parse out the value of an option.  Values are seperated from
-# the option name with "="
-func get_option_value(full_option):
-	var split = full_option.split('=')
-
-	if(split.size() > 1):
-		return split[1]
-	else:
-		return null
-
-# Parse out multiple comma delimited values from a command line
-# option.  Values are separated from option name with "=" and 
-# additional values are comma separated.
-func get_option_array_value(full_option):
-	var value = get_option_value(full_option)
-	var split = value.split(',')
-	return split
-
-# Add tests based on the options in _opts
-func parse_option_tests():
-	var opt_loc = find_option('-gtest')
-	while(opt_loc != -1):
-		var scripts = get_option_array_value(_opts[opt_loc])
-		for i in range(scripts.size()):
-			print('adding script:  ' + scripts[i])
-			options.tests.append(scripts[i])
-		_opts.remove(opt_loc)
-		
-		opt_loc = find_option('-gtest')
-
-# fills the list of directories
-func parse_option_dirs():
-	var opt_loc = find_option('-gdir')
-	while(opt_loc != -1):
-		var dirs = get_option_array_value(_opts[opt_loc])
-		for i in range(dirs.size()):
-			print('adding directory:  ' + dirs[i])
-			options.dirs.append(dirs[i])
-		_opts.remove(opt_loc)
-		
-		opt_loc = find_option('-gdir')
-
-# returns the value of an option if it was specfied, otherwise
-# it returns the default.
-func get_value(option, default):
-	var to_return = default
-	var opt_loc = find_option(option)
-	if(opt_loc != -1):
-		to_return = get_option_value(_opts[opt_loc])
-		_opts.remove(opt_loc)
-
-	return to_return
-
-# returns true if it finds the option, false if not.
-func was_specified(option):
-	var opt_loc = find_option(option)
-	if(opt_loc != -1):
-		_opts.remove(opt_loc)
-	
-	return opt_loc != -1
 	
 # Parses options, applying them to the _tester or setting values
 # in the options struct.
-func parse_options(opt):
+func extract_options(opt):
 	options.tests = opt.get_value('-gtest')
 	options.dirs = opt.get_value('-gdir')
 	options.should_exit = opt.get_value('-gexit')
@@ -312,8 +277,6 @@ func parse_options(opt):
 	options.prefix = opt.get_value('-gprefix')
 	options.suffix = opt.get_value('-gsuffix')
 	options.gut_location = opt.get_value('-gutloc')
-	
-	print(options)
 
 # apply all the options specified to _tester
 func apply_options():
@@ -324,7 +287,7 @@ func apply_options():
 	_tester.set_yield_between_tests(true)
 	_tester.show()
 	
-	_tester.set_log_level(float(options.log_level))
+	_tester.set_log_level(options.log_level)
 	_tester.set_ignore_pause_before_teardown(options.ignore_pause_before_teardown)
 	
 	for i in range(options.dirs.size()):
@@ -351,17 +314,19 @@ func load_auto_load_scripts():
 
 # parse option and run Gut
 func _init():
-	var o = fill_options()
+	var o = setup_options()
 	o.parse()
-	o.print_options()
-	parse_options(o)
+	extract_options(o)
 	
-	load_auto_load_scripts()
-	#parse_options()
-	apply_options()
-	
-	if(_auto_run):
-		_tester.test_scripts()
+	if(o.get_value('-gh')):
+		o.print_help()
+		quit()
+	else:
+		load_auto_load_scripts()
+		apply_options()
+		
+		if(_auto_run):
+			_tester.test_scripts()
 	
 # exit if option is set.
 func _on_tests_finished():
