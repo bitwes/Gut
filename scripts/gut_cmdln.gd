@@ -46,7 +46,10 @@
 #   -gscript=<comma seperated list of scripts>:
 #		Add a script or scripts to be tested.  Multiple scripts must be separated
 #		by a comma.
-#
+#	-gignore_pause
+#		Ignore any calls to gut.pause_before_teardown that might exist in your
+#		test scripts.  useful when batch processing and you don't want to worry
+#		about babysitting the run.
 #
 # Examples
 # --------
