@@ -549,6 +549,29 @@ func add_script(script, select_this_one=false):
 		_scripts_drop_down.select(_scripts_drop_down.get_item_count() -1)
 
 #-------------------------------------------------------------------------------
+# Add all scripts in the specified directory that start with the prefix and end
+# with the suffix.  Does not look in sub directories.  Can be called multiple
+# times.
+#-------------------------------------------------------------------------------
+func add_directory(path, prefix='test_', suffix='.gd'):
+	var d = Directory.new()
+	d.open(path)
+	d.list_dir_begin()
+	
+	#Traversing a directory is kinda odd.  You have to start the process of listing
+	#the contents of a directory with list_dir_begin then use get_next until it
+	#returns an empty string.  Then I guess you should end it.
+	var thing = d.get_next()
+	var full_path = ''
+	while(thing != ''):
+		full_path = path + "/" + thing
+		#file_exists returns fasle for directories
+		if(d.file_exists(full_path)):
+			if(thing.begins_with(prefix) and thing.find(suffix) != -1):
+				add_script(full_path)
+		thing = d.get_next()
+	d.list_dir_end()
+#-------------------------------------------------------------------------------
 #Asserts that the expected value equals the value got.
 #-------------------------------------------------------------------------------
 func assert_eq(got, expected, text=""):
