@@ -585,7 +585,7 @@ func add_directory(path, prefix='test_', suffix='.gd'):
 # select the first matching occurance so that this script will run when run_tests
 # is called.  Works the same as the select_this_one option of add_script.
 #-------------------------------------------------------------------------------	
-func select_test(script_name):
+func select_script(script_name):
 	var found = false
 	var idx = 0
 	

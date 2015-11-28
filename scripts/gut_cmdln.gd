@@ -32,7 +32,7 @@
 # from the command line instead of running a scene.  Place this script along with
 # gut.gd into your scripts directory at the root of your project.  Once there you
 # can run this script (from the root of your project) using the following command:
-# 	godot -s scirpts/gut_cmdln.gd
+# 	alias gut='godot -s -d scirpts/gut_cmdln.gd'
 #
 #See the readme for a list of options and examples.
 #
@@ -48,7 +48,10 @@ var _opts = []
 var options = {
 	should_exit = false,
 	log_level = 1,
-	ignore_pause_before_teardown = false
+	ignore_pause_before_teardown = false,
+	tests = [],
+	dirs = [],
+	selected = ''
 }
 
 # Search _opts for an element that starts with the option name
@@ -91,42 +94,77 @@ func parse_option_tests():
 	var opt_loc = find_option('-gtest')
 	while(opt_loc != -1):
 		var scripts = get_option_array_value(_opts[opt_loc])
-		if(scripts.size() != 0):
-			for i in range(scripts.size()):
-				print('adding script:  ' + scripts[i])
-				_tester.add_script(scripts[i])
+		for i in range(scripts.size()):
+			print('adding script:  ' + scripts[i])
+			options.tests.append(scripts[i])
 		_opts.remove(opt_loc)
 		
 		opt_loc = find_option('-gtest')
+
+# fills the list of directories
+func parse_option_dirs():
+	var opt_loc = find_option('-gdir')
+	while(opt_loc != -1):
+		var dirs = get_option_array_value(_opts[opt_loc])
+		for i in range(dirs.size()):
+			print('adding directory:  ' + dirs[i])
+			options.dirs.append(dirs[i])
+		_opts.remove(opt_loc)
 		
+		opt_loc = find_option('-gdir')
+
+# returns the value of an option if it was specfied, otherwise
+# it returns the default.
+func get_value(option, default):
+	var to_return = default
+	var opt_loc = find_option(option)
+	if(opt_loc != -1):
+		to_return = get_option_value(_opts[opt_loc])
+		_opts.remove(opt_loc)
+
+	return to_return
+
+# returns true if it finds the option, false if not.
+func was_specified(option):
+	var opt_loc = find_option(option)
+	if(opt_loc != -1):
+		_opts.remove(opt_loc)
+	
+	return opt_loc != -1
+	
 # Parses options, applying them to the _tester or setting values
 # in the options struct.
-func apply_options():
+func parse_options():
 	for i in range(OS.get_cmdline_args().size()):
 		_opts.append(OS.get_cmdline_args().get(i))
-	print(_opts)
+
+	# add directories of tests
+	parse_option_dirs()
 	
 	# add tests
 	parse_option_tests()
 	
-	# exit option
-	var e_loc = _opts.find('-gexit')
-	if(e_loc != -1):
-		options.should_exit = true
-		_opts.remove(e_loc)
+	options.should_exit = was_specified('-gexit')
+	options.log_level = get_value('-glog', options.log_level)
+	options.ignore_pause_before_teardown = was_specified('-gignore_pause')
+	options.selected = get_value('-gselect', options.selected)
+	
+	print(options)
 
-	# log level
-	var log_loc = find_option('-glog')
-	if(log_loc != -1):
-		options.log_level = get_option_value(_opts[log_loc])
-		_opts.remove(log_loc)
+# apply all the options specified to _tester
+func apply_options():
+	_tester.set_log_level(float(options.log_level))
+	_tester.set_ignore_pause_before_teardown(options.ignore_pause_before_teardown)
+	
+	for i in range(options.dirs.size()):
+		_tester.add_directory(options.dirs[i])
+	
+	for i in range(options.tests.size()):
+		_tester.add_script(options.tests[i])
 
-	# ignore pause before teardown calls
-	var ignore_loc = find_option('-gignore_pause')
-	if(ignore_loc != -1):
-		options.ignore_pause_before_teardown = true
-		_opts.remove(ignore_loc)
-		
+	if(options.selected != ''):
+		_tester.select_script(options.selected)
+
 # parse option and run Gut
 func _init():
 	_tester = Gut.new()
@@ -135,10 +173,8 @@ func _init():
 	_tester.set_yield_between_tests(true)
 	_tester.show()
 	
+	parse_options()
 	apply_options()
-	
-	_tester.set_log_level(float(options.log_level))
-	_tester.set_ignore_pause_before_teardown(options.ignore_pause_before_teardown)
 	
 	_tester.test_scripts()
 	

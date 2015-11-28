@@ -56,7 +56,7 @@ func _run_all_tests():
 	tester.add_script('res://unit_tests/all_passed.gd')
 	tester.add_script('res://unit_tests/script_does_not_exist.gd')
 	tester.add_directory('res://test_dir_load')
-	#tester.select_test('samples3')
+	#tester.select_script('samples3')
 	tester.set_yield_between_tests(true)
 	tester.test_scripts()
 
