@@ -44,7 +44,7 @@ The level of detail that is printed to the screen can be changed using the slide
 
 * LOG_LEVEL_FAIL_ONLY (0)
 * LOG_LEVEL_TEST_AND_FAILURES (1)
-* LOG_LEVEL_ALL_ASSERTS (20
+* LOG_LEVEL_ALL_ASSERTS (2)
 
 ####Printing info####
 The "p" method allows you to print information out indented under the test output.  It has an optional 2nd parameter that sets which log level to display it at.  Use one of the constants in the section above to set it.  The default is LOG_LEVEL_FAIL_ONLY which means the output will always be visible.  
@@ -63,7 +63,7 @@ GUT contains a few utility methods to ease the testing of file creation/deletion
 * __directory_delete_files(path)__ Deletes all files at a given path.  Does not delete sub directories or any files in any sub directories.
 
 ####Simulate####
-The simulate method will call the _process or _fixed_process on a tree of objects.  It takes in the base object, the number of times to call the methods and the delta value to be passed to _process or _fixed_process (if the object has one).  This will only cause code directly related to the _process and _fixed_process methods to run.  Timers will not fire since the main loop of the game is not actually running.  Creating a test that yields is a better solution for testing such things.
+The simulate method will call the \_process or \_fixed_process on a tree of objects.  It takes in the base object, the number of times to call the methods and the delta value to be passed to \_process or \_fixed_process (if the object has one).  This will only cause code directly related to the \_process and \_fixed_process methods to run.  Timers will not fire since the main loop of the game is not actually running.  Creating a test that yields is a better solution for testing such things.
 
 GUT also supports yielding to a test, but this does not work very well in 1.0.  See the section on yielding for more information.
 Example
@@ -79,8 +79,8 @@ func test_does_something_each_loop():
 	gut.simulate(my_obj, 20, .1)
 	gut.assert_eq(my_obj.a_number, 20, 'Since a_number is incremented in _process, it should be 20 now')
 
-#Let us also assume that AnotherObj acts exactly the same way as 
-#but has SomeCoolObj but has a _fixed_process method instead of 
+#Let us also assume that AnotherObj acts exactly the same way as
+#but has SomeCoolObj but has a _fixed_process method instead of
 #_process.  In that case, this test will pass too since all child objects
 #have the _process or _fixed_process method called.
 func test_does_something_each_loop():
@@ -148,7 +148,7 @@ Here's a sample test script:
 ```
 #!python
 ################################################################################
-#All the magic happens with the extends.  This gets you access to all the gut 
+#All the magic happens with the extends.  This gets you access to all the gut
 #asserts and the overridable setup and teardown methods.
 #
 #The path to this script is passed to an instance of the gut script when calling
@@ -173,7 +173,7 @@ func postrun_teardown():
 
 func test_assert_eq_number_not_equal():
 	gut.assert_eq(1, 2, "Should fail.  1 != 2")
-	
+
 func test_assert_eq_number_equal():
 	gut.assert_eq('asdf', 'asdf', "Should pass")
 
@@ -190,13 +190,14 @@ func test_something_else():
 
 ### Running Tests ###
 
+#### From Godot
 You should create a scene that you can run that will execute all your test scripts for your project.  You can run the scripts one by one and have the output sent to the console or you can add in the scripts, run them together and then use the GUI to rerun or examine the results with handy dandy coloring and buttons.
 
 Example of one line of code to run one test script and send the output to console:
 ```
 #!python
 extends Node2d
-func_ready(): 
+func_ready():
     load('res://scripts/gut.gd').new().test_script('res://scripts/sample_tests.gd')
 ```
 
@@ -212,15 +213,15 @@ func _ready():
 	#Move it down some so you can see the dialog box bar at top
 	tester.set_pos(0, 50)
 	add_child(tester)
-	
+
 	#stop it from printing to console, just because
 	tester.set_should_print_to_console(false)
-	
+
 	#Add a bunch of test scripts to run.  These will appear in the drop
 	#down and can be rerun.
 	tester.add_script('res://scripts/gut_tests.gd')
 	tester.add_script('res://scripts/sample_tests.gd')
-	#by passing true to the optional 2nd parameter, only this script 
+	#by passing true to the optional 2nd parameter, only this script
 	#will be run when test_scripts() is called and it will be selected
 	#in the GUI dropdown.  All other scripts will still be in the drop
 	#down as well.  Makes it a little easier when trying to run just
@@ -231,6 +232,29 @@ func _ready():
 ```
 ...and the GUI looks like:
 ![gut.png](https://bitbucket.org/repo/oeKM6G/images/3049099836-gut.png)
+
+#### From command line
+Also supplied in this repo is the gut_cmdln.gd script that can be run from the command line so that you don't have to create a scene to run your tests.  The upside is that the command line is a lot more fun, and requires less code.  The biggest downside is that debugging your code/tests is more difficult since you won't be able to interact with the editor.  
+
+To run the command line tool, place gut.gd and gut_cmdln.gd in the scripts directory at the root of your project (it has to go there, it assumes that location).  From the command line, at the root of your project, use the following command to run the script.  Use the options below to run tests.
+	`godot -d -s scirpts/gut_cmdln.gd`
+The -d option tells godot to run in debug mode which is helpful.  The -s option points to the script to be run.
+
+__Options__
+* gexit:  
+	* Exit when done running tests.  If not specified you have to manually close the window or ctrl+c at command line.
+* glog=<X>:   
+	* Specify the log level after the = (-glog=0).  See above for description of levels.
+* gscript=<comma separated list of scripts>:
+	* Add a script or scripts to be tested.  Multiple scripts must be separated by a comma.
+* gignore_pause
+	* Ignore any calls to gut.pause_before_teardown that might exist in your test scripts.  Useful when batch processing and you don't want to worry about babysitting the run.
+
+
+__Examples__
+ Run godot in debug mode (-d), run a test script (-gtest), set log level
+ to lowest (-glog), exit when done (-gexit)
+ 	`godot -s scripts/gut_cmdln.gd -d -gtest=res://unit_tests/sample_tests.gd -glog=1 -gexit`
 
 ### Who do I talk to? ###
 You can talk to me, Butch Wesley

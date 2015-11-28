@@ -34,28 +34,8 @@
 # can run this script (from the root of your project) using the following command:
 # 	godot -s scirpts/gut_cmdln.gd
 #
+#See the readme for a list of options and examples.
 #
-# Options
-# -------
-# 	-gexit:  
-#		Exit when done running tests.  If not specified you have to manually
-#       close the window or ctrl+c at command line.
-# 	-glog=<X>:   
-#		Specify the log level after the = (-glog=0).  See Gut readme for description
-#		of levels.
-#   -gscript=<comma seperated list of scripts>:
-#		Add a script or scripts to be tested.  Multiple scripts must be separated
-#		by a comma.
-#	-gignore_pause
-#		Ignore any calls to gut.pause_before_teardown that might exist in your
-#		test scripts.  useful when batch processing and you don't want to worry
-#		about babysitting the run.
-#
-# Examples
-# --------
-# Run godot in debug mode (-d), run a test script (-gtest), set log level 
-# to lowest (-glog), exit when done (-gexit)
-# 	godot -s scripts/gut_cmdln.gd -d -gtest=res://unit_tests/sample_tests.gd -glog=1 -gexit
 ################################################################################
 extends SceneTree
 
