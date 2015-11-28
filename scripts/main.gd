@@ -5,6 +5,7 @@ var tester = null
 func _ready():
 	_run_all_tests()
 
+# Show that the signal is working.
 func _on_tests_finished():
 	tester.p("Tests done callback called")
 
@@ -12,7 +13,7 @@ func _run_test_one_line():
 #------------------------------------
 #One line, print to console
 #------------------------------------
-	load('res://scripts/gut.gd').new().test_script('res://scripts/sample_tests.gd')
+	load('res://scripts/gut.gd').new().test_script('res://unit_tests/sample_tests.gd')
 
 func _run_all_tests():
 #------------------------------------
@@ -47,13 +48,13 @@ func _run_all_tests():
 	#1.0 so disabled by default.
 	#tester.set_yield_between_tests(true) 
 	# !! --------
-	tester.add_script('res://scripts/gut_tests.gd', true)
-	tester.add_script('res://scripts/test_that_take_awhile.gd')
-	tester.add_script('res://scripts/test_gut_yielding.gd')
-	tester.add_script('res://scripts/sample_tests.gd')
-	tester.add_script('res://scripts/another_sample.gd')
-	tester.add_script('res://scripts/all_passed.gd')
-	tester.add_script('res://script_does_not_exist.gd')
+	tester.add_script('res://unit_tests/gut_tests.gd', true)
+	tester.add_script('res://unit_tests/test_that_take_awhile.gd')
+	tester.add_script('res://unit_tests/test_gut_yielding.gd')
+	tester.add_script('res://unit_tests/sample_tests.gd')
+	tester.add_script('res://unit_tests/another_sample.gd')
+	tester.add_script('res://unit_tests/all_passed.gd')
+	tester.add_script('res://unit_tests/script_does_not_exist.gd')
 	tester.set_yield_between_tests(true)
 	tester.test_scripts()
 
@@ -71,6 +72,6 @@ func _run_gut_tests():
 	add_child(tester)
 	
 	tester.set_should_print_to_console(false)
-	tester.add_script('res://scripts/gut_tests.gd')
-	tester.add_script('res://scripts/all_passed.gd')
+	tester.add_script('res://unit_tests/gut_tests.gd')
+	tester.add_script('res://unit_tests/all_passed.gd')
 	tester.test_scripts()
