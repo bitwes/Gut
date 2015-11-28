@@ -408,7 +408,6 @@ func _test_the_scripts():
 			add_child(test_script)
 			var script_result = null
 			test_script.gut = self
-			add_child(test_script)
 			test_script.prerun_setup()
 	
 			#yield so things paint
