@@ -417,6 +417,7 @@ func test_setting_name_matches_partial():
 	gr.gut.set_unit_test_name('two')
 	gr.gut.test_scripts()
 	gut.assert_eq(gr.gut.get_test_count(), 1)
+	gut.pause_before_teardown()
 	
 #-------------------------------------------------------------------------------
 #

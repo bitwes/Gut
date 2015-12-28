@@ -233,6 +233,7 @@ var options = {
 	prefix = '',
 	suffix = '',
 	gut_location = '',
+	unit_test_name = '',
 	show_help = false
 }
 
@@ -249,7 +250,7 @@ func setup_options():
 	                'with a "g".  Also, any option that requires a value will take the form of ' +
 	                '"-g<name>=<value>".  There cannot be any spaces between the option, the "=", or ' +
 	                'inside a specified value or godot will think you are trying to run a scene.'))
-	opts.add('-gtest', [], 'Comma delimited list of tests to run')
+	opts.add('-gtest', [], 'Comma delimited list of test scripts to run')
 	opts.add('-gdir', [], 'Comma delimited list of directories to add tests from.')
 	opts.add('-gprefix', 'test_', 'Prefix used to find tests when specifying -gdir.  Default "[default]"')
 	opts.add('-gsuffix', '.gd', 'Suffix used to find tests when specifying -gdir.  Default "[default]"')
@@ -260,6 +261,8 @@ func setup_options():
 	                          'was loaded using -gtest or -gdir that contains the specified ' + 
 	                          'string will be executed.  You may run others by interacting ' +
                               'with the GUI.'))
+	opts.add('-gunit_test_name', '', ('Name of a test to run.  Any test that contains the specified ' +
+                                 'text will be run, all others will be skipped.'))
 	opts.add('-gutloc', 'res://scripts/gut.gd', 'Full path (including name) of the gut script.  Default [default]')
 	opts.add('-gh', false, 'Print this help')
 	return opts
@@ -277,6 +280,7 @@ func extract_options(opt):
 	options.prefix = opt.get_value('-gprefix')
 	options.suffix = opt.get_value('-gsuffix')
 	options.gut_location = opt.get_value('-gutloc')
+	options.unit_test_name = opt.get_value('-gunit_test_name')
 
 # apply all the options specified to _tester
 func apply_options():
@@ -300,6 +304,8 @@ func apply_options():
 		_auto_run = _tester.select_script(options.selected)
 		if(!_auto_run):
 			_tester.p("Could not find a script that matched:  " + options.selected)
+	
+	_tester.set_unit_test_name(options.unit_test_name)
 
 # Loads any scripts that have been configured to be loaded through the project
 # settings->autoload.

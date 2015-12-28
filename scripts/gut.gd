@@ -398,8 +398,11 @@ func _test_the_scripts():
 	
 	for s in range(_test_scripts.size()):
 		_tests.clear()
+		
 		p("/-----------------------------------------")
 		p("Testing Script " + _test_scripts[s], 0)
+		if(_unit_test_name != ''):
+			p('  Only running tests like: "' + _unit_test_name + '"')
 		p("-----------------------------------------/")
 		if(!file.file_exists(_test_scripts[s])):
 			p("FAILED   COULD NOT FIND FILE:  " + _test_scripts[s])
