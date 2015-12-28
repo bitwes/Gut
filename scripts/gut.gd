@@ -89,6 +89,8 @@ var _mouse_down = false
 var _mouse_down_pos = null
 var _mouse_in = false
 
+var _unit_test_name = ''
+
 var min_size = Vector2(650, 400)
 
 const SIGNAL_TESTS_FINISHED = 'tests_finished'
@@ -385,7 +387,7 @@ func _get_summary_text():
 #-------------------------------------------------------------------------------
 #Run all tests in a script.  This is the core logic for running tests.
 #
-#Note, this kinda has to stay as a giant monstrosity of a method because of the
+#Note, this has to stay as a giant monstrosity of a method because of the
 #yields.
 #-------------------------------------------------------------------------------
 func _test_the_scripts():
@@ -418,40 +420,42 @@ func _test_the_scripts():
 	
 			for i in range(_tests.size()):
 				_current_test = _tests[i]
-				p(_current_test.name, 1)
-
-				#yield so things paint
-				if(_yield_between_tests):
-					_yield_between_timer.set_wait_time(0.001)
-					_yield_between_timer.start()
-					yield(_yield_between_timer, 'timeout')
+				if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or 
+				   (_unit_test_name == '')):
+					p(_current_test.name, 1)
 	
-				test_script.setup()
-				_summary.tests += 1
-				
-				script_result = test_script.call(_current_test.name)
-				#When the script yields it will return a GDFunctionState object
-				if(script_result != null and typeof(script_result) == TYPE_OBJECT and script_result.get_type() == 'GDFunctionState'):
-					p(YIELD_MESSAGE, 1)
-					_waiting = true
-					while(_waiting):
-						p(WAITING_MESSAGE, 2)
-						_wait_timer.start()
-						yield(_wait_timer, 'timeout')
-				
-				#if the test called pause_before_teardown then yield until
-				#the continue button is pressed.
-				if(_pause_before_teardown and !_ignore_pause_before_teardown):
-					p(PAUSE_MESSAGE, 1)
-					_waiting = true
-					_continue_button.set_disabled(false)
-					yield(_continue_button, 'pressed')
-				
-				test_script.teardown()
-				if(_current_test.passed):
-					_text_box.add_keyword_color(_current_test.name, Color(0, 1, 0))
-				else:
-					_text_box.add_keyword_color(_current_test.name, Color(1, 0, 0))
+					#yield so things paint
+					if(_yield_between_tests):
+						_yield_between_timer.set_wait_time(0.001)
+						_yield_between_timer.start()
+						yield(_yield_between_timer, 'timeout')
+		
+					test_script.setup()
+					_summary.tests += 1
+					
+					script_result = test_script.call(_current_test.name)
+					#When the script yields it will return a GDFunctionState object
+					if(script_result != null and typeof(script_result) == TYPE_OBJECT and script_result.get_type() == 'GDFunctionState'):
+						p(YIELD_MESSAGE, 1)
+						_waiting = true
+						while(_waiting):
+							p(WAITING_MESSAGE, 2)
+							_wait_timer.start()
+							yield(_wait_timer, 'timeout')
+					
+					#if the test called pause_before_teardown then yield until
+					#the continue button is pressed.
+					if(_pause_before_teardown and !_ignore_pause_before_teardown):
+						p(PAUSE_MESSAGE, 1)
+						_waiting = true
+						_continue_button.set_disabled(false)
+						yield(_continue_button, 'pressed')
+					
+					test_script.teardown()
+					if(_current_test.passed):
+						_text_box.add_keyword_color(_current_test.name, Color(0, 1, 0))
+					else:
+						_text_box.add_keyword_color(_current_test.name, Color(1, 0, 0))
 			
 			test_script.postrun_teardown()
 			test_script.free()
@@ -880,6 +884,18 @@ func set_yield_time(time):
 	_yield_timer.set_wait_time(time)
 	_yield_timer.start()
 
+#-------------------------------------------------------------------------------
+# get the specific unit test that should be run
+#-------------------------------------------------------------------------------
+func get_unit_test_name():
+	return _unit_test_name
+	
+#-------------------------------------------------------------------------------
+# set the specific unit test that should be run.
+#-------------------------------------------------------------------------------
+func set_unit_test_name(test_name):
+	_unit_test_name = test_name
+	
 #-------------------------------------------------------------------------------
 # Creates an empty file at the specified path
 #-------------------------------------------------------------------------------

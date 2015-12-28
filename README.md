@@ -259,8 +259,8 @@ func _ready():
 	tester.add_directory('res://unit_tests')
 
 	#Add additional scripts one at a time.
-	tester.add_script('res://scripts/gut_tests.gd')
-	tester.add_script('res://scripts/sample_tests.gd')
+	tester.add_script('res://unit_tests/gut_tests.gd')
+	tester.add_script('res://unit_tests/sample_tests.gd')
 	# by passing true to the optional 2nd parameter, only this script
 	# will be run when test_scripts() is called and it will be selected
 	# in the GUI dropdown.  All other scripts will still be in the drop

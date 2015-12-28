@@ -1,5 +1,6 @@
 extends "res://scripts/gut.gd".Test
 
+var Gut = load('res://scripts/gut.gd')
 #--------------------------------------
 #Used to test calling the _process method
 #on an object through gut
@@ -8,7 +9,7 @@ class HasProcessMethod:
 	extends Node
 	var process_called_count = 0
 	var delta_sum = 0.0
-	
+
 	func _process(delta):
 		process_called_count += 1
 		delta_sum += delta
@@ -21,7 +22,7 @@ class HasFixedProcessMethod:
 	extends Node
 	var fixed_process_called_count = 0
 	var delta_sum = 0.0
-	
+
 	func _fixed_process(delta):
 		fixed_process_called_count += 1
 		delta_sum += delta
@@ -44,7 +45,7 @@ class HasGetAndSetThatDontWork:
 
 class HasGetSetThatWorks:
 	var _thing = 'something'
-	
+
 	func get_thing():
 		return _thing
 	func set_thing(new_thing):
@@ -60,6 +61,16 @@ var counts = {
 }
 var _test_finished_called = false
 
+var gr = {
+	gut = null
+}
+
+func get_a_gut():
+	var g = Gut.new()
+	g.set_yield_between_tests(false)
+	add_child(g)
+
+	return g
 func test_finished_callback():
 	_test_finished_called = true
 
@@ -72,9 +83,11 @@ func should_fail():
 func setup():
 	counts.setup_count += 1
 	_test_finished_called = false
+	gr.gut = get_a_gut()
 
 func teardown():
 	counts.teardown_count += 1
+	gr.gut.queue_free()
 
 func prerun_setup():
 	counts.prerun_setup_count += 1
@@ -95,7 +108,7 @@ func postrun_teardown():
 func test_assert_eq_number_not_equal():
 	should_fail()
 	gut.assert_eq(1, 2, "Should fail.  1 != 2")
-	
+
 func test_assert_eq_number_equal():
 	gut.assert_eq('asdf', 'asdf', "Should pass")
 
@@ -225,7 +238,7 @@ func test_assert_file_exists_with_file_exists():
 
 func test_assert_file_dne_with_file_dne():
 	gut.assert_file_does_not_exist('user://file_dne.txt')
-	
+
 func test_assert_file_dne_with_file_exists():
 	should_fail()
 	var path = 'user://gut_test_file2.txt'
@@ -254,7 +267,7 @@ func test_assert_file_empty_fails_when_file_dne():
 	should_fail()
 	var path = 'user://file_dne.txt'
 	gut.assert_file_empty(path)
-	
+
 func test_assert_file_not_empty_with_empty_file():
 	should_fail()
 	var path = 'user://gut_test_empty3.txt'
@@ -275,7 +288,7 @@ func test_assert_file_not_empty_fails_when_file_dne():
 	should_fail()
 	var path = 'user://file_dne.txt'
 	gut.assert_file_not_empty(path)
-	
+
 #------------------------------
 # File utilities
 #------------------------------
@@ -295,14 +308,14 @@ func test_delete_all_files_in_a_directory():
 	var d = Directory.new()
 	d.open('user://')
 	str(d.make_dir('gut_dir_tests'))
-	
+
 	gut.file_touch(path + '/helloworld.txt')
 	gut.file_touch(path + '/file2.txt')
 	gut.directory_delete_files(path)
 	gut.assert_file_does_not_exist(path + '/helloworld.txt')
 	gut.assert_file_does_not_exist(path + '/file2.txt')
-	
-	
+
+
 #------------------------------
 #Misc tests
 #------------------------------
@@ -327,12 +340,12 @@ func test_pending_increments_pending_count():
 
 func test_pending_accepts_text():
 	gut.pending("This is a pending test")
-	
+
 func test_simulate_calls_process():
 	var obj = HasProcessMethod.new()
 	gut.simulate(obj, 10, .1)
 	gut.assert_eq(obj.process_called_count, 10, "_process should have been called 10 times")
-	#using just the numbers didn't work, nor using float.  str worked for some reason and 
+	#using just the numbers didn't work, nor using float.  str worked for some reason and
 	#i'm not sure why.
 	gut.assert_eq(str(obj.delta_sum), str(1), "The delta value should have been passed in and summed")
 
@@ -350,7 +363,7 @@ func test_simulate_calls_process_on_child_objects_of_child_objects():
 		if(i > 0):
 			objs[i - 1].add_child(objs[i])
 	gut.simulate(objs[0], 10, .1)
-	
+
 	for i in range(objs.size()):
 		gut.assert_eq(objs[i].process_called_count, 10, "_process should have been called on object # " + str(i))
 
@@ -358,7 +371,7 @@ func test_simulate_calls_fixed_process():
 	var obj = HasFixedProcessMethod.new()
 	gut.simulate(obj, 10, .1)
 	gut.assert_eq(obj.fixed_process_called_count, 10, "_process should have been called 10 times")
-	#using just the numbers didn't work, nor using float.  str worked for some reason and 
+	#using just the numbers didn't work, nor using float.  str worked for some reason and
 	#i'm not sure why.
 	gut.assert_eq(str(obj.delta_sum), str(1), "The delta value should have been passed in and summed")
 #------------------------------
@@ -387,13 +400,30 @@ func test_fail_if_default_wrong():
 func test_pass_if_all_get_sets_are_aligned():
 	var obj = HasGetSetThatWorks.new()
 	gut.assert_get_set_methods(obj, 'thing', 'something', 'another thing')
+#------------------------------
+# Setting test to run
+#------------------------------
+func test_get_set_test_to_run():
+	gut.assert_get_set_methods(gr.gut, 'unit_test_name', '', 'hello')
 
+func test_setting_name_will_run_only_matching_tests():
+	gr.gut.add_script('res://unit_tests/all_passed.gd')
+	gr.gut.set_unit_test_name('test_works')
+	gr.gut.test_scripts()
+	gut.assert_eq(gr.gut.get_test_count(), 1)
+
+func test_setting_name_matches_partial():
+	gr.gut.add_script('res://unit_tests/all_passed.gd')
+	gr.gut.set_unit_test_name('two')
+	gr.gut.test_scripts()
+	gut.assert_eq(gr.gut.get_test_count(), 1)
+	
 #-------------------------------------------------------------------------------
 #
 #
 # This must be LAST test
 #
-# 
+#
 #-------------------------------------------------------------------------------
 func test_verify_results():
 	gut.p("/*THESE SHOULD ALL PASS, IF NOT THEN SOMETHING IS BROKEN*/")
@@ -402,4 +432,3 @@ func test_verify_results():
 	gut.assert_eq(gut.get_test_count(), counts.setup_count, "Setup should have been called for the number of tests ran")
 	gut.assert_eq(gut.get_test_count() -1, counts.teardown_count, "Teardown should have been called one less time")
 	gut.assert_eq(gut.get_pending_count(), 2, 'There should have been two pending tests')
-

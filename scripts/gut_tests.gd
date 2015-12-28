@@ -1,5 +1,6 @@
 extends "res://scripts/gut.gd".Test
 
+
 #--------------------------------------
 #Used to test calling the _process method
 #on an object through gut
@@ -60,6 +61,8 @@ var counts = {
 }
 var _test_finished_called = false
 
+
+
 func test_finished_callback():
 	_test_finished_called = true
 
@@ -85,6 +88,7 @@ func postrun_teardown():
 	#Asserts in any of the setup/teardown methods
 	#is a bad idea in general.
 	gut.assert_true(true, 'POSTTEARDOWN RAN')
+	# cleanup
 	gut.directory_delete_files('user://')
 
 
@@ -387,6 +391,7 @@ func test_fail_if_default_wrong():
 func test_pass_if_all_get_sets_are_aligned():
 	var obj = HasGetSetThatWorks.new()
 	gut.assert_get_set_methods(obj, 'thing', 'something', 'another thing')
+
 
 #-------------------------------------------------------------------------------
 #
