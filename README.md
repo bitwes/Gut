@@ -218,9 +218,10 @@ This method is a little more involved but when something breaks you have easy ac
 You should create a scene that you can run that will execute all your test scripts for your project.  You can run the scripts one by one and have the output sent to the console or you can add in the scripts, run them together and then use the GUI to rerun or examine the results with handy dandy coloring and buttons.
 
 There are 3 ways to add scripts to be run, feel free to use any combination of these:
-	* __test_script__ runs a single test that has been passed to it.  No frills, prints to the console.
-	* __add_script__ adds a script to the list of scripts to be run.  use `test_scripts` method to run them all in a row.
-	* __add_directory__ Similar to add_script but adds all the test scripts in the specified directory.  This will not add tests found in subdirectories but can be called multiple times.  By default it searches for files that start with 'test_' and end with '.gd'.  This can be changed by specify the option prefix and suffix parameters `add_directory('res://unit_tests', 'some_prefix', '.res')`
+
+* __test_script__ runs a single test that has been passed to it.  No frills, prints to the console.
+* __add_script__ adds a script to the list of scripts to be run.  use `test_scripts` method to run them all in a row.
+* __add_directory__ Similar to add_script but adds all the test scripts in the specified directory.  This will not add tests found in subdirectories but can be called multiple times.  By default it searches for files that start with 'test_' and end with '.gd'.  This can be changed by specify the option prefix and suffix parameters `add_directory('res://unit_tests', 'some_prefix', '.res')`
 
 To cut down on clicks, the `add_script` method takes an optional true/false flag that allows you flag a test to be run initially.  You can also use `select_script` method to select a script that was added with add_script or add_directory.  `select_script` will find the first script that contains the string you specify and mark it as the script to be run initially.
 
