@@ -98,6 +98,7 @@ var _unit_test_name = ''
 var min_size = Vector2(650, 400)
 
 const SIGNAL_TESTS_FINISHED = 'tests_finished'
+const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yeild_before_teardown'
 
 func _set_anchor_bottom_right(obj):
 	obj.set_anchor(MARGIN_LEFT, ANCHOR_END)
@@ -184,7 +185,7 @@ func setup_controls():
 	add_child(_previous_button)
 	_previous_button.set_size(Vector2(50, 25))
 	pos = _scripts_drop_down.get_pos() + Vector2(_scripts_drop_down.get_size().x, -30)
-	pos.x -= 180
+	pos.x -= 240
 	_previous_button.set_pos(pos)
 	_previous_button.set_text("<")
 	_previous_button.connect("pressed", self, '_on_previous_button_pressed')
@@ -195,6 +196,14 @@ func setup_controls():
 	_stop_button.set_pos(pos)
 	_stop_button.set_text('stop')
 	_stop_button.connect("pressed", self, '_on_stop_button_pressed')
+
+#	add_child(_run_button)
+	_run_button.set_text("run")
+	_run_button.set_size(Vector2(50, 25))
+	pos.x += 60
+	_run_button.set_pos(pos)
+	_run_button.connect("pressed", self, "_on_run_button_pressed")
+#	_set_anchor_bottom_right(_run_button)
 	
 	add_child(_next_button)
 	_next_button.set_size(Vector2(50, 25))
@@ -207,6 +216,7 @@ func setup_controls():
 #-------------------------------------------------------------------------------
 func _init():
 	add_user_signal(SIGNAL_TESTS_FINISHED)
+	add_user_signal(SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
 
 #-------------------------------------------------------------------------------
 #Initialize controls
@@ -337,6 +347,7 @@ func _copy_button_pressed():
 func _on_continue_button_pressed():
 	_pause_before_teardown = false
 	_continue_button.set_disabled(true)
+	emit_signal(SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
 
 #-------------------------------------------------------------------------------
 #Change the log level.  Will be visible the next time tests are run.
@@ -364,7 +375,11 @@ func _on_stop_button_pressed():
 	_stop_pressed = true
 	_stop_button.set_disabled(true)
 	# short circuit any yielded tests
-	_waiting = false
+	if(!_continue_button.is_disabled()):
+		_on_continue_button_pressed()
+	else:
+		_waiting = false
+	#_pause_before_teardown = false
 	
 	
 	
@@ -503,14 +518,6 @@ func _test_the_scripts():
 				yield(_yield_between_timer, 'timeout')
 	
 			for i in range(_tests.size()):
-				# !!! STOP BUTTON SHORT CIRCUIT !!!
-				if(_stop_pressed):
-					_is_running = false
-					_update_controls()
-					_stop_pressed = false
-					p("STOPPED")
-					return
-					
 				_current_test = _tests[i]
 				if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or 
 				   (_unit_test_name == '')):
@@ -541,7 +548,7 @@ func _test_the_scripts():
 						p(PAUSE_MESSAGE, 1)
 						_waiting = true
 						_continue_button.set_disabled(false)
-						yield(_continue_button, 'pressed')
+						yield(self, SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
 					
 					test_script.teardown()
 					if(_current_test.passed):
@@ -549,6 +556,14 @@ func _test_the_scripts():
 					else:
 						_text_box.add_keyword_color(_current_test.name, Color(1, 0, 0))
 			
+					# !!! STOP BUTTON SHORT CIRCUIT !!!
+					if(_stop_pressed):
+						_is_running = false
+						_update_controls()
+						_stop_pressed = false
+						p("STOPPED")
+						return
+						
 			test_script.postrun_teardown()
 			test_script.free()
 			#END TESTS IN SCRIPT LOOP
