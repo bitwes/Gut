@@ -128,17 +128,10 @@ func setup_controls():
 	_text_box.set_anchor(MARGIN_TOP, ANCHOR_BEGIN)
 	_text_box.set_anchor(MARGIN_BOTTOM, ANCHOR_END)
 	
-	add_child(_run_button)
-	_run_button.set_text("Run Tests")
-	_run_button.set_size(button_size)
-	_run_button.set_pos(Vector2(get_size().x - 5 - button_size.x, _text_box.get_size().y + 10))
-	_run_button.connect("pressed", self, "_on_run_button_pressed")
-	_set_anchor_bottom_right(_run_button)
-
 	add_child(_copy_button)
 	_copy_button.set_text("Copy")
 	_copy_button.set_size(button_size)
-	_copy_button.set_pos(_run_button.get_pos() - Vector2(button_size.x, 0) - button_spacing)
+	_copy_button.set_pos(Vector2(get_size().x - 5 - button_size.x, _text_box.get_size().y + 10))
 	_copy_button.connect("pressed", self, "_copy_button_pressed")
 	_set_anchor_bottom_right(_copy_button)
 	
@@ -197,13 +190,12 @@ func setup_controls():
 	_stop_button.set_text('stop')
 	_stop_button.connect("pressed", self, '_on_stop_button_pressed')
 
-#	add_child(_run_button)
+	add_child(_run_button)
 	_run_button.set_text("run")
 	_run_button.set_size(Vector2(50, 25))
 	pos.x += 60
 	_run_button.set_pos(pos)
 	_run_button.connect("pressed", self, "_on_run_button_pressed")
-#	_set_anchor_bottom_right(_run_button)
 	
 	add_child(_next_button)
 	_next_button.set_size(Vector2(50, 25))
