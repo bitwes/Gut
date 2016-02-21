@@ -153,6 +153,11 @@ func test_between_with_number_at_low_end():
 func test_between_with_invalid_number_range():
 	should_fail()
 	gut.assert_between(4, 8, 0, "Should fail")
+
+func test_compares_floats_appropriately():
+	var f = 2
+	var f2 = .75 + 1.25
+	gut.assert_eq(f2, 2, 'They are the same, should pass')
 #------------------------------
 #string tests
 #------------------------------
@@ -417,7 +422,6 @@ func test_setting_name_matches_partial():
 	gr.gut.set_unit_test_name('two')
 	gr.gut.test_scripts()
 	gut.assert_eq(gr.gut.get_test_count(), 1)
-	gut.pause_before_teardown()
 	
 #-------------------------------------------------------------------------------
 #
