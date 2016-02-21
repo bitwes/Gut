@@ -88,6 +88,8 @@ var _scripts_drop_down = OptionButton.new()
 var _next_button = Button.new()
 var _previous_button = Button.new()
 var _stop_button = Button.new()
+var _script_progress = ProgressBar.new()
+var _test_progress = ProgressBar.new()
 
 var _mouse_down = false
 var _mouse_down_pos = null
@@ -153,12 +155,12 @@ func setup_controls():
 	var log_label = Label.new()
 	add_child(log_label)
 	log_label.set_text("Log Level")
-	log_label.set_pos(Vector2(10, _text_box.get_size().y + 20))
+	log_label.set_pos(Vector2(10, _text_box.get_size().y + 1))
 	_set_anchor_bottom_left(log_label)
 	
 	add_child(_log_level_slider)
 	_log_level_slider.set_size(Vector2(75, 30))
-	_log_level_slider.set_pos(Vector2(100, log_label.get_pos().y))
+	_log_level_slider.set_pos(Vector2(10, log_label.get_pos().y + 20))
 	_log_level_slider.set_min(0)
 	_log_level_slider.set_max(2)
 	_log_level_slider.set_ticks(3)
@@ -168,6 +170,30 @@ func setup_controls():
 	_log_level_slider.connect("value_changed", self, "_on_log_level_slider_changed")
 	_log_level_slider.set_value(_log_level)
 	_set_anchor_bottom_left(_log_level_slider)
+	
+	var script_prog_label = Label.new()
+	add_child(script_prog_label)
+	script_prog_label.set_pos(Vector2(100, log_label.get_pos().y))
+	script_prog_label.set_text('Scripts:')
+	
+	add_child(_script_progress)
+	_script_progress.set_size(Vector2(200, 10))
+	_script_progress.set_pos(script_prog_label.get_pos() + Vector2(70, 0))
+	_script_progress.set_min(0)
+	_script_progress.set_max(1)
+	_script_progress.set_unit_value(1)
+	
+	var test_prog_label = Label.new()
+	add_child(test_prog_label)
+	test_prog_label.set_pos(Vector2(100, log_label.get_pos().y + 15))
+	test_prog_label.set_text('Tests:')
+	
+	add_child(_test_progress)
+	_test_progress.set_size(Vector2(200, 10))
+	_test_progress.set_pos(test_prog_label.get_pos() + Vector2(70, 0))
+	_test_progress.set_min(0)
+	_test_progress.set_max(1)
+	_test_progress.set_unit_value(1)
 	
 	add_child(_scripts_drop_down)
 	_scripts_drop_down.set_size(Vector2(375, 25))
@@ -219,7 +245,6 @@ func _ready():
 	show()
 	set_pos(get_pos() + Vector2(0, 20))
 	self.set_size(min_size)
-	
 	
 	setup_controls()
 
@@ -483,6 +508,10 @@ func _test_the_scripts():
 	
 	_is_running = true
 	_update_controls()
+	
+	_script_progress.set_max(_test_scripts.size())
+	_script_progress.set_value(0)
+	_test_progress.set_max(1)
 	for s in range(_test_scripts.size()):
 		_tests.clear()
 		
@@ -509,6 +538,7 @@ func _test_the_scripts():
 				_yield_between_timer.start()
 				yield(_yield_between_timer, 'timeout')
 	
+			_test_progress.set_max(_tests.size())
 			for i in range(_tests.size()):
 				_current_test = _tests[i]
 				if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or 
@@ -558,10 +588,12 @@ func _test_the_scripts():
 						
 			test_script.postrun_teardown()
 			test_script.free()
+			_test_progress.set_value(i + 1)
 			#END TESTS IN SCRIPT LOOP
 		
 		_current_test = null
 		p("\n\n")
+		_script_progress.set_value(s + 1)
 		#END TEST SCRIPT LOOP
 		
 	p(_get_summary_text(), 0)
