@@ -391,12 +391,11 @@ func _on_next_button_pressed():
 func _on_stop_button_pressed():
 	_stop_pressed = true
 	_stop_button.set_disabled(true)
-	# short circuit any yielded tests
+	# short circuit any yielding or yielded tests
 	if(!_continue_button.is_disabled()):
 		_on_continue_button_pressed()
 	else:
 		_waiting = false
-	#_pause_before_teardown = false
 	
 	
 	
@@ -406,6 +405,8 @@ func _on_stop_button_pressed():
 # Private
 #
 #####################
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 func _update_controls():
 	if(!_is_running):
 		_previous_button.set_disabled(_scripts_drop_down.get_selected() == 0)
@@ -417,7 +418,6 @@ func _update_controls():
 	# disabled during run
 	_run_button.set_disabled(_is_running)
 	_scripts_drop_down.set_disabled(_is_running)
-	
 	
 	# enabled during run
 	_stop_button.set_disabled(!_is_running)
