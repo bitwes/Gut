@@ -585,10 +585,10 @@ func _test_the_scripts():
 						_stop_pressed = false
 						p("STOPPED")
 						return
-						
+					
+					_test_progress.set_value(i + 1)
 			test_script.postrun_teardown()
 			test_script.free()
-			_test_progress.set_value(i + 1)
 			#END TESTS IN SCRIPT LOOP
 		
 		_current_test = null
