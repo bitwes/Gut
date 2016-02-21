@@ -38,7 +38,8 @@ const YIELD_MESSAGE = '/# Yield detected.  Waiting for end_yielded_test to be ca
 const WAITING_MESSAGE = '/# waiting #/'
 const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
 
-
+var _is_running = false
+var _stop_pressed = false
 #The prefix used to get tests.
 var _test_prefix = "test_"
 #Tests to run for the current script
@@ -84,6 +85,9 @@ var _clear_button = Button.new()
 var _continue_button = Button.new()
 var _log_level_slider = HSlider.new()
 var _scripts_drop_down = OptionButton.new()
+var _next_button = Button.new()
+var _previous_button = Button.new()
+var _stop_button = Button.new()
 
 var _mouse_down = false
 var _mouse_down_pos = null
@@ -111,7 +115,8 @@ func _set_anchor_bottom_left(obj):
 func setup_controls():
 	var button_size = Vector2(75, 35)
 	var button_spacing = Vector2(10, 0)
-
+	var pos = Vector2(0, 0)
+	
 	add_child(_text_box)
 	_text_box.set_size(Vector2(get_size().x - 4, 300))
 	_text_box.set_pos(Vector2(2, 0))
@@ -175,6 +180,28 @@ func setup_controls():
 	_scripts_drop_down.set_pos(Vector2(10, _log_level_slider.get_pos().y + 50))
 	_scripts_drop_down.add_item("Run All")
 	_set_anchor_bottom_left(_scripts_drop_down)
+	
+	add_child(_previous_button)
+	_previous_button.set_size(Vector2(50, 25))
+	pos = _scripts_drop_down.get_pos() + Vector2(_scripts_drop_down.get_size().x, -30)
+	pos.x -= 180
+	_previous_button.set_pos(pos)
+	_previous_button.set_text("<")
+	_previous_button.connect("pressed", self, '_on_previous_button_pressed')
+	
+	add_child(_stop_button)
+	_stop_button.set_size(Vector2(50, 25))
+	pos.x += 60
+	_stop_button.set_pos(pos)
+	_stop_button.set_text('stop')
+	_stop_button.connect("pressed", self, '_on_stop_button_pressed')
+	
+	add_child(_next_button)
+	_next_button.set_size(Vector2(50, 25))
+	pos.x += 60
+	_next_button.set_pos(pos)
+	_next_button.set_text(">")
+	_next_button.connect("pressed", self, '_on_next_button_pressed')
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -265,6 +292,12 @@ func _draw():
 		else:
 			draw_circle(where, r, Color(0, 1, 0, 1))
 
+#####################
+#
+# Events
+#
+#####################
+
 #-------------------------------------------------------------------------------
 #Timeout for the built in timer.  emits the timeout signal.  Start timer
 #with set_yield_time()
@@ -311,6 +344,53 @@ func _on_continue_button_pressed():
 func _on_log_level_slider_changed(value):
 	_log_level = _log_level_slider.get_value()
 
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func _on_previous_button_pressed():
+	if(_scripts_drop_down.get_selected() > 0):
+		_scripts_drop_down.select(_scripts_drop_down.get_selected() -1)
+	_update_controls()
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func _on_next_button_pressed():
+	if(_scripts_drop_down.get_selected() < _scripts_drop_down.get_item_count() -1):
+		_scripts_drop_down.select(_scripts_drop_down.get_selected() +1)
+	_update_controls()
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func _on_stop_button_pressed():
+	_stop_pressed = true
+	_stop_button.set_disabled(true)
+	# short circuit any yielded tests
+	_waiting = false
+	
+	
+	
+	
+#####################
+#
+# Private
+#
+#####################
+func _update_controls():
+	if(!_is_running):
+		_previous_button.set_disabled(_scripts_drop_down.get_selected() == 0)
+		_next_button.set_disabled(_scripts_drop_down.get_selected() == _scripts_drop_down.get_item_count() -1)
+	else:
+		_previous_button.set_disabled(true)
+		_next_button.set_disabled(true)
+	
+	# disabled during run
+	_run_button.set_disabled(_is_running)
+	_scripts_drop_down.set_disabled(_is_running)
+	
+	
+	# enabled during run
+	_stop_button.set_disabled(!_is_running)
+	
+	
 #-------------------------------------------------------------------------------
 #Initialize variables for each run of a single test script.
 #-------------------------------------------------------------------------------
@@ -392,10 +472,10 @@ func _get_summary_text():
 #-------------------------------------------------------------------------------
 func _test_the_scripts():
 	_init_run()
-	_run_button.set_disabled(true)
-	_scripts_drop_down.set_disabled(true)
 	var file = File.new()
 	
+	_is_running = true
+	_update_controls()
 	for s in range(_test_scripts.size()):
 		_tests.clear()
 		
@@ -404,6 +484,7 @@ func _test_the_scripts():
 		if(_unit_test_name != ''):
 			p('  Only running tests like: "' + _unit_test_name + '"')
 		p("-----------------------------------------/")
+		
 		if(!file.file_exists(_test_scripts[s])):
 			p("FAILED   COULD NOT FIND FILE:  " + _test_scripts[s])
 		else:
@@ -422,6 +503,14 @@ func _test_the_scripts():
 				yield(_yield_between_timer, 'timeout')
 	
 			for i in range(_tests.size()):
+				# !!! STOP BUTTON SHORT CIRCUIT !!!
+				if(_stop_pressed):
+					_is_running = false
+					_update_controls()
+					_stop_pressed = false
+					p("STOPPED")
+					return
+					
 				_current_test = _tests[i]
 				if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or 
 				   (_unit_test_name == '')):
@@ -469,9 +558,9 @@ func _test_the_scripts():
 		#END TEST SCRIPT LOOP
 		
 	p(_get_summary_text(), 0)
-	_run_button.set_disabled(false)
-	_scripts_drop_down.set_disabled(false)
+	_is_running = false
 	update()
+	_update_controls()
 	emit_signal(SIGNAL_TESTS_FINISHED)
 
 #########################
