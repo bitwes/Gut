@@ -1008,12 +1008,14 @@ func simulate(obj, times, delta):
 			simulate(kid, 1, delta)
 
 #-------------------------------------------------------------------------------
-#Starts an internal timer with a timeout of the passed in time.  A 'timeout' 
-#signal will be sent when the timer ends.
+# Starts an internal timer with a timeout of the passed in time.  A 'timeout' 
+# signal will be sent when the timer ends.  Returns itself so that it can be 
+# used in a call to yield...cutting down on lines of code.
 #-------------------------------------------------------------------------------
 func set_yield_time(time):
 	_yield_timer.set_wait_time(time)
 	_yield_timer.start()
+	return self
 
 #-------------------------------------------------------------------------------
 # get the specific unit test that should be run
