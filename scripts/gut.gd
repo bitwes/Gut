@@ -517,7 +517,14 @@ func _get_summary_text():
 	to_return += str(_summary.passed) + " Passed\n" 
 	to_return += str(_summary.pending) + " Pending\n"
 	to_return += str(_summary.failed) + " Failed\n"
-	to_return += "Tests finished in:  " + _runtime_label.get_text()
+	to_return += "\n\n"
+	to_return +=  '+++ ' + str(_summary.passed) + ' passed ' + str(_summary.failed) + ' failed.  ' + \
+	              "Tests finished in:  " + _runtime_label.get_text() + ' +++'
+	var c = Color(0, 1, 0)
+	if(_summary.passed != _summary.asserts):
+		c = Color(1, 0, 0)
+	_text_box.add_color_region('+++', '+++', c)
+		
 	return to_return
 
 #-------------------------------------------------------------------------------

@@ -3,8 +3,8 @@ extends Node2D
 var tester = null
 
 func _ready():
-	_run_gut_tests()
-	#_run_all_tests()
+	#_run_gut_tests()
+	_run_all_tests()
 
 # Show that the signal is working.
 func _on_tests_finished():
@@ -58,8 +58,8 @@ func _run_all_tests():
 	tester.add_script('res://unit_tests/script_does_not_exist.gd')
 	tester.add_directory('res://test_dir_load')
 	#tester.select_script('samples3')
-	#tester.set_yield_between_tests(true)
-	tester.test_scripts()
+	tester.set_yield_between_tests(true)
+	#tester.test_scripts()
 
 	#get the results to the console, just to show you can get them
 	#out at the end of the process.
