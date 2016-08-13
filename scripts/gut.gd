@@ -66,6 +66,8 @@ var _yield_between_timer = Timer.new()
 #used when yielding to gut instead of some other 
 #signal.  Start with set_yield_time()
 var _yield_timer = Timer.new()
+var _runtime_timer = Timer.new()
+const RUNTIME_START_TIME = float(20000.0)
 
 #various counters
 var _summary = {
@@ -90,6 +92,7 @@ var _previous_button = Button.new()
 var _stop_button = Button.new()
 var _script_progress = ProgressBar.new()
 var _test_progress = ProgressBar.new()
+var _runtime_label = Label.new()
 
 var _mouse_down = false
 var _mouse_down_pos = null
@@ -143,6 +146,11 @@ func setup_controls():
 	_clear_button.set_pos(_copy_button.get_pos() - Vector2(button_size.x, 0) - button_spacing)
 	_clear_button.connect("pressed", self, "clear_text")
 	_set_anchor_bottom_right(_clear_button)
+	
+	add_child(_runtime_label)
+	_runtime_label.set_text('00:00:00')
+	_runtime_label.set_size(Vector2(50, 30))
+	_runtime_label.set_pos(Vector2(_clear_button.get_pos().x - 60, _clear_button.get_pos().y + 10))
 	
 	add_child(_continue_button)
 	_continue_button.set_text("Continue")
@@ -261,8 +269,22 @@ func _ready():
 	_yield_timer.set_one_shot(true)
 	_yield_timer.connect('timeout', self, '_on_yield_timer_timeout')
 	
+	# This timer is started, but it should never finish.  Used
+	# to determine how long it took to run the tests since
+	# getting the time and doing time math is rediculous in godot.
+	add_child(_runtime_timer)
+	_runtime_timer.set_one_shot(true)
+	_runtime_timer.set_wait_time(RUNTIME_START_TIME)
+	
 	self.connect("mouse_enter", self, "_on_mouse_enter")
 	self.connect("mouse_exit", self, "_on_mouse_exit")
+	set_process(true)
+	
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func _process(delta):
+	if(_is_running):
+		_runtime_label.set_text(str(RUNTIME_START_TIME - _runtime_timer.get_time_left()).pad_decimals(3) + ' s')
 	
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -399,21 +421,21 @@ func _on_stop_button_pressed():
 	
 	
 	
-	
 #####################
 #
 # Private
 #
 #####################
 #-------------------------------------------------------------------------------
+# Updates the display
 #-------------------------------------------------------------------------------
 func _update_controls():
-	if(!_is_running):
-		_previous_button.set_disabled(_scripts_drop_down.get_selected() == 0)
-		_next_button.set_disabled(_scripts_drop_down.get_selected() == _scripts_drop_down.get_item_count() -1)
-	else:
+	if(_is_running):
 		_previous_button.set_disabled(true)
 		_next_button.set_disabled(true)
+	else:
+		_previous_button.set_disabled(_scripts_drop_down.get_selected() == 0)
+		_next_button.set_disabled(_scripts_drop_down.get_selected() == _scripts_drop_down.get_item_count() -1)
 	
 	# disabled during run
 	_run_button.set_disabled(_is_running)
@@ -495,6 +517,7 @@ func _get_summary_text():
 	to_return += str(_summary.passed) + " Passed\n" 
 	to_return += str(_summary.pending) + " Pending\n"
 	to_return += str(_summary.failed) + " Failed\n"
+	to_return += "Tests finished in:  " + _runtime_label.get_text()
 	return to_return
 
 #-------------------------------------------------------------------------------
@@ -513,9 +536,10 @@ func _test_the_scripts():
 	_script_progress.set_max(_test_scripts.size())
 	_script_progress.set_value(0)
 	_test_progress.set_max(1)
+	_runtime_timer.start()
 	for s in range(_test_scripts.size()):
 		_tests.clear()
-		
+		set_title('Running:  ' + _test_scripts[s])
 		p("/-----------------------------------------")
 		p("Testing Script " + _test_scripts[s], 0)
 		if(_unit_test_name != ''):
@@ -597,11 +621,15 @@ func _test_the_scripts():
 		_script_progress.set_value(s + 1)
 		#END TEST SCRIPT LOOP
 		
-	p(_get_summary_text(), 0)
+	p(_get_summary_text(), 0)	
+	_runtime_timer.stop()
 	_is_running = false
 	update()
 	_update_controls()
 	emit_signal(SIGNAL_TESTS_FINISHED)
+	set_title("Finished.  " + str(get_fail_count()) + " failures.")
+	
+	
 
 #########################
 #

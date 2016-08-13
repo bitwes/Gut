@@ -493,3 +493,4 @@ func test_verify_results():
 	gut.assert_eq(gut.get_test_count(), counts.setup_count, "Setup should have been called once for each test")
 	# teardown for this test hasn't been run yet.
 	gut.assert_eq(gut.get_test_count() -1, counts.teardown_count, "Teardown should have been called one less time.")
+
