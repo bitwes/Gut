@@ -52,42 +52,67 @@ class HasGetSetThatWorks:
 		_thing = new_thing
 
 
+#------------------------------
+# Utility methods/variables
+#------------------------------
 var counts = {
 	setup_count = 0,
 	teardown_count = 0,
 	prerun_setup_count = 0,
 	postrun_teardown_count = 0,
-	should_fail = 0
 }
-var _test_finished_called = false
 
+# GlobalReset(gr) variables to be used by tests.
+# The values of these are reset in the setup or
+# teardown methods.
 var gr = {
-	gut = null
+	test_gut = null,
+	test_finished_called = false
 }
 
+func callback_for_test_finished():
+	gr.test_finished_called = true
+	
+# Returns a new gut object, all setup for testing.
 func get_a_gut():
 	var g = Gut.new()
 	g.set_yield_between_tests(false)
+	g.set_log_level(g.LOG_LEVEL_ALL_ASSERTS)
 	add_child(g)
-
 	return g
-func test_finished_callback():
-	_test_finished_called = true
 
-#Used to count the number of tests that should fail so that they
-#can be compared at the end.
-func should_fail():
-	gut.p("/#should fail#/")
-	counts.should_fail += 1
+# Prints out gr.test_gut assert results, used by assert_fail and assert_pass
+func print_test_gut_info():
+	var text_array = gr.test_gut._log_text.split("\n")
+	gut.p('Results of gr.test_gut asserts')
+	gut.p('------------------------------')
+	for i in range(text_array.size()):
+		gut.p(text_array[i])
 
+# convinience method to assert the number of failures on the gr.test_gut object.
+func assert_fail(count=1, msg=''):
+	gut.assert_eq(gr.test_gut.get_fail_count(), count, 'failures:  ' + msg)
+	if(gr.test_gut.get_fail_count() != count):
+		print_test_gut_info()
+
+# convinience method to assert the number of passes on the gr.test_gut object.
+func assert_pass(count=1, msg=''):
+	gut.assert_eq(gr.test_gut.get_pass_count(), count, 'passes:  ' + msg)
+	if(gr.test_gut.get_pass_count() != count):
+		print_test_gut_info()
+
+#------------------------------
+# Setup/Teardown
+#------------------------------
 func setup():
 	counts.setup_count += 1
-	_test_finished_called = false
-	gr.gut = get_a_gut()
+	gr.test_finished_called = false
+	gr.test_gut = get_a_gut()
+	
 
 func teardown():
 	counts.teardown_count += 1
-	gr.gut.queue_free()
+	gr.test_gut.queue_free()
 
 func prerun_setup():
 	counts.prerun_setup_count += 1
@@ -100,181 +125,200 @@ func postrun_teardown():
 	gut.assert_true(true, 'POSTTEARDOWN RAN')
 	gut.directory_delete_files('user://')
 
-
+	
 #------------------------------
 #Number tests
 #------------------------------
 
 func test_assert_eq_number_not_equal():
-	should_fail()
-	gut.assert_eq(1, 2, "Should fail.  1 != 2")
+	gr.test_gut.assert_eq(1, 2)
+	assert_fail(1, "Should fail.  1 != 2")
 
 func test_assert_eq_number_equal():
-	gut.assert_eq('asdf', 'asdf', "Should pass")
+	gr.test_gut.assert_eq('asdf', 'asdf')
+	assert_pass(1, "Should pass")
 
 func test_assert_ne_number_not_equal():
-	gut.assert_ne(1, 2, "Should pass, 1 != 2")
+	gr.test_gut.assert_ne(1, 2)
+	assert_pass(1, "Should pass, 1 != 2")
 
 func test_assert_ne_number_equal():
-	should_fail()
-	gut.assert_ne(1, 1, "Should fail")
+	gr.test_gut.assert_ne(1, 1, "Should fail")
+	assert_fail(1, '1 = 1')
 
 func test_assert_gt_number_with_gt():
-	gut.assert_gt(2, 1, "Should Pass")
+	gr.test_gut.assert_gt(2, 1, "Should Pass")
+	assert_pass(1, '2 > 1')
 
 func test_assert_gt_number_with_lt():
-	should_fail()
-	gut.assert_gt(1, 2, "Should fail")
+	gr.test_gut.assert_gt(1, 2, "Should fail")
+	assert_fail(1, '1 < 2')
 
 func test_assert_lt_number_with_lt():
-	gut.assert_lt(1, 2, "Should Pass")
+	gr.test_gut.assert_lt(1, 2, "Should Pass")
+	assert_pass(1, '1 < 2')
 
 func test_assert_lt_number_with_gt():
-	should_fail()
-	gut.assert_lt(2, 1, "Should fail")
+	gr.test_gut.assert_lt(2, 1, "Should fail")
+	assert_fail(1, '2 > 1')
 
 func test_between_with_number_between():
-	gut.assert_between(2, 1, 3, "Should pass, 2 between 1 and 3")
+	gr.test_gut.assert_between(2, 1, 3, "Should pass, 2 between 1 and 3")
+	assert_pass(1, "Should pass, 2 between 1 and 3")
 
 func test_between_with_number_lt():
-	should_fail()
-	gut.assert_between(0, 1, 3, "Should fail")
+	gr.test_gut.assert_between(0, 1, 3, "Should fail")
+	assert_fail(1, '0 not between 1 and 3')
 
 func test_between_with_number_gt():
-	should_fail()
-	gut.assert_between(4, 1, 3, "Should fail")
+	gr.test_gut.assert_between(4, 1, 3, "Should fail")
+	assert_fail(1, '4 not between 1 and 3')
 
 func test_between_with_number_at_high_end():
-	gut.assert_between(3, 1, 3, "Should pass")
+	gr.test_gut.assert_between(3, 1, 3, "Should pass")
+	assert_pass(1, '3 is between 1 and 3')
 
 func test_between_with_number_at_low_end():
-	gut.assert_between(1, 1, 3, "Should pass")
+	gr.test_gut.assert_between(1, 1, 3, "Should pass")
+	assert_pass(1, '1 between 1 and 3')
 
 func test_between_with_invalid_number_range():
-	should_fail()
-	gut.assert_between(4, 8, 0, "Should fail")
+	gr.test_gut.assert_between(4, 8, 0, "Should fail")
+	assert_fail(1, '8 is starting number and is not less than 0')
 #------------------------------
 #string tests
 #------------------------------
 
 func test_assert_eq_string_not_equal():
-	should_fail()
-	gut.assert_eq("one", "two", "Should Fail")
+	gr.test_gut.assert_eq("one", "two", "Should Fail")
+	assert_fail()
 
 func test_assert_eq_string_equal():
-	gut.assert_eq("one", "one", "Should Pass")
-
+	gr.test_gut.assert_eq("one", "one", "Should Pass")
+	assert_pass()
+	
 func test_assert_ne_string_not_equal():
-	gut.assert_ne("one", "two", "Should Pass")
+	gr.test_gut.assert_ne("one", "two", "Should Pass")
+	assert_pass()
 
 func test_assert_ne_string_equal():
-	should_fail()
-	gut.assert_ne("one", "one", "Should Fail")
+	gr.test_gut.assert_ne("one", "one", "Should Fail")
+	assert_fail()
 
 func test_assert_gt_string_with_gt():
-	gut.assert_gt("b", "a", "Should Pass")
+	gr.test_gut.assert_gt("b", "a", "Should Pass")
+	assert_pass()
 
 func test_assert_gt_string_with_lt():
-	should_fail()
-	gut.assert_gt("a", "b", "Sould Fail")
+	gr.test_gut.assert_gt("a", "b", "Sould Fail")
+	assert_fail()
 
 func test_assert_lt_string_with_lt():
-	gut.assert_lt("a", "b", "Should Pass")
+	gr.test_gut.assert_lt("a", "b", "Should Pass")
+	assert_pass()
 
 func test_assert_lt_string_with_gt():
-	should_fail()
-	gut.assert_lt("b", "a", "Should Fail")
+	gr.test_gut.assert_lt("b", "a", "Should Fail")
+	assert_fail()
 
 func test_between_with_string_between():
-	gut.assert_between('b', 'a', 'c', "Should pass, 2 between 1 and 3")
+	gr.test_gut.assert_between('b', 'a', 'c', "Should pass, 2 between 1 and 3")
+	assert_pass()
 
 func test_between_with_string_lt():
-	should_fail()
-	gut.assert_between('a', 'b', 'd', "Should fail")
+	gr.test_gut.assert_between('a', 'b', 'd', "Should fail")
+	assert_fail()
 
 func test_between_with_string_gt():
-	should_fail()
-	gut.assert_between('z', 'a', 'c', "Should fail")
+	gr.test_gut.assert_between('z', 'a', 'c', "Should fail")
+	assert_fail()
 
 func test_between_with_string_at_high_end():
-	gut.assert_between('c', 'a', 'c', "Should pass")
+	gr.test_gut.assert_between('c', 'a', 'c', "Should pass")
+	assert_pass()
 
 func test_between_with_string_at_low_end():
-	gut.assert_between('a', 'a', 'c', "Should pass")
+	gr.test_gut.assert_between('a', 'a', 'c', "Should pass")
+	assert_pass()
 
 func test_between_with_invalid_string_range():
-	should_fail()
-	gut.assert_between('q', 'z', 'a', "Should fail")
+	gr.test_gut.assert_between('q', 'z', 'a', "Should fail")
+	assert_fail()
 #------------------------------
 #boolean tests
 #------------------------------
 func test_assert_true_with_true():
-	gut.assert_true(true, "Should pass, true is true")
+	gr.test_gut.assert_true(true, "Should pass, true is true")
+	assert_pass()
 
 func test_assert_true_with_false():
-	should_fail()
-	gut.assert_true(false, "Should fail")
+	gr.test_gut.assert_true(false, "Should fail")
+	assert_fail()
 
 func test_assert_flase_with_true():
-	should_fail()
-	gut.assert_false(true, "Should fail")
+	gr.test_gut.assert_false(true, "Should fail")
+	assert_fail()
 
 func test_assert_false_with_false():
-	gut.assert_false(false, "Should pass")
+	gr.test_gut.assert_false(false, "Should pass")
+	assert_pass()
 
 #------------------------------
 # File asserts
 #------------------------------
 func test_assert_file_exists_with_file_dne():
-	should_fail()
-	gut.assert_file_exists('user://file_dne.txt')
+	gr.test_gut.assert_file_exists('user://file_dne.txt')
+	assert_fail()
 
 func test_assert_file_exists_with_file_exists():
 	var path = 'user://gut_test_file.txt'
 	var f = File.new()
 	f.open(path, f.WRITE)
 	f.close()
-	gut.assert_file_exists(path)
+	gr.test_gut.assert_file_exists(path)
+	assert_pass()
 
 func test_assert_file_dne_with_file_dne():
-	gut.assert_file_does_not_exist('user://file_dne.txt')
+	gr.test_gut.assert_file_does_not_exist('user://file_dne.txt')
+	assert_pass()
 
 func test_assert_file_dne_with_file_exists():
-	should_fail()
 	var path = 'user://gut_test_file2.txt'
 	var f = File.new()
 	f.open(path, f.WRITE)
 	f.close()
-	gut.assert_file_does_not_exist(path)
+	gr.test_gut.assert_file_does_not_exist(path)
+	assert_fail()
 
 func test_assert_file_empty_with_empty_file():
 	var path = 'user://gut_test_empty.txt'
 	var f = File.new()
 	f.open(path, f.WRITE)
 	f.close()
-	gut.assert_file_empty(path)
+	gr.test_gut.assert_file_empty(path)
+	assert_pass()
 
 func test_assert_file_empty_with_not_empty_file():
-	should_fail()
 	var path = 'user://gut_test_empty2.txt'
 	var f = File.new()
 	f.open(path, f.WRITE)
 	f.store_8(1)
 	f.close()
-	gut.assert_file_empty(path)
+	gr.test_gut.assert_file_empty(path)
+	assert_fail()
 
 func test_assert_file_empty_fails_when_file_dne():
-	should_fail()
 	var path = 'user://file_dne.txt'
-	gut.assert_file_empty(path)
+	gr.test_gut.assert_file_empty(path)
+	assert_fail()
 
 func test_assert_file_not_empty_with_empty_file():
-	should_fail()
 	var path = 'user://gut_test_empty3.txt'
 	var f = File.new()
 	f.open(path, f.WRITE)
 	f.close()
-	gut.assert_file_not_empty(path)
+	gr.test_gut.assert_file_not_empty(path)
+	assert_fail()
 
 func test_assert_file_not_empty_with_populated_file():
 	var path = 'user://gut_test_empty4.txt'
@@ -282,12 +326,13 @@ func test_assert_file_not_empty_with_populated_file():
 	f.open(path, f.WRITE)
 	f.store_8(1)
 	f.close()
-	gut.assert_file_not_empty(path)
+	gr.test_gut.assert_file_not_empty(path)
+	assert_pass()
 
 func test_assert_file_not_empty_fails_when_file_dne():
-	should_fail()
 	var path = 'user://file_dne.txt'
-	gut.assert_file_not_empty(path)
+	gr.test_gut.assert_file_not_empty(path)
+	assert_fail()
 
 #------------------------------
 # File utilities
@@ -295,13 +340,16 @@ func test_assert_file_not_empty_fails_when_file_dne():
 func test_file_touch_creates_file():
 	var path = 'user://gut_test_touch.txt'
 	gut.file_touch(path)
-	gut.assert_file_exists(path)
+	gr.test_gut.assert_file_exists(path)
+	assert_pass()
+	
 
 func test_file_delete_kills_file():
 	var path = 'user://gut_test_file_delete.txt'
-	gut.file_touch(path)
-	gut.file_delete(path)
-	gut.assert_file_does_not_exist(path)
+	gr.test_gut.file_touch(path)
+	gr.test_gut.file_delete(path)
+	gr.test_gut.assert_file_does_not_exist(path)
+	assert_pass()
 
 func test_delete_all_files_in_a_directory():
 	var path = 'user://gut_dir_tests'
@@ -309,30 +357,37 @@ func test_delete_all_files_in_a_directory():
 	d.open('user://')
 	str(d.make_dir('gut_dir_tests'))
 
-	gut.file_touch(path + '/helloworld.txt')
-	gut.file_touch(path + '/file2.txt')
-	gut.directory_delete_files(path)
-	gut.assert_file_does_not_exist(path + '/helloworld.txt')
-	gut.assert_file_does_not_exist(path + '/file2.txt')
+	gr.test_gut.file_touch(path + '/helloworld.txt')
+	gr.test_gut.file_touch(path + '/file2.txt')
+	gr.test_gut.directory_delete_files(path)
+	gr.test_gut.assert_file_does_not_exist(path + '/helloworld.txt')
+	gr.test_gut.assert_file_does_not_exist(path + '/file2.txt')
+	
+	assert_pass(2, 'both files should not exist')
 
 
 #------------------------------
 #Misc tests
 #------------------------------
 func test_can_call_eq_without_text():
-	gut.assert_eq(1, 1)
+	gr.test_gut.assert_eq(1, 1)
+	assert_pass()
 
 func test_can_call_ne_without_text():
-	gut.assert_ne(1, 2)
+	gr.test_gut.assert_ne(1, 2)
+	assert_pass()
 
 func test_can_call_true_without_text():
-	gut.assert_true(true)
+	gr.test_gut.assert_true(true)
+	assert_pass()
 
 func test_can_call_false_without_text():
-	gut.assert_false(false)
+	gr.test_gut.assert_false(false)
+	assert_pass()
 
 func test_script_object_added_to_tree():
-	gut.assert_ne(get_tree(), null, "The tree should not be null if we are added to it")
+	gr.test_gut.assert_ne(get_tree(), null, "The tree should not be null if we are added to it")
+	assert_pass()
 
 func test_pending_increments_pending_count():
 	gut.pending()
@@ -343,18 +398,20 @@ func test_pending_accepts_text():
 
 func test_simulate_calls_process():
 	var obj = HasProcessMethod.new()
-	gut.simulate(obj, 10, .1)
-	gut.assert_eq(obj.process_called_count, 10, "_process should have been called 10 times")
+	gr.test_gut.simulate(obj, 10, .1)
+	gr.test_gut.assert_eq(obj.process_called_count, 10, "_process should have been called 10 times")
 	#using just the numbers didn't work, nor using float.  str worked for some reason and
 	#i'm not sure why.
-	gut.assert_eq(str(obj.delta_sum), str(1), "The delta value should have been passed in and summed")
+	gr.test_gut.assert_eq(str(obj.delta_sum), str(1), "The delta value should have been passed in and summed")
+	assert_pass(2)
 
 func test_simulate_calls_process_on_child_objects():
 	var parent = HasProcessMethod.new()
 	var child = HasProcessMethod.new()
 	parent.add_child(child)
-	gut.simulate(parent, 10, .1)
-	gut.assert_eq(child.process_called_count, 10, "_process should have been called on the child object too")
+	gr.test_gut.simulate(parent, 10, .1)
+	gr.test_gut.assert_eq(child.process_called_count, 10, "_process should have been called on the child object too")
+	assert_pass()
 
 func test_simulate_calls_process_on_child_objects_of_child_objects():
 	var objs = []
@@ -362,61 +419,66 @@ func test_simulate_calls_process_on_child_objects_of_child_objects():
 		objs.append(HasProcessMethod.new())
 		if(i > 0):
 			objs[i - 1].add_child(objs[i])
-	gut.simulate(objs[0], 10, .1)
+	gr.test_gut.simulate(objs[0], 10, .1)
 
 	for i in range(objs.size()):
-		gut.assert_eq(objs[i].process_called_count, 10, "_process should have been called on object # " + str(i))
+		gr.test_gut.assert_eq(objs[i].process_called_count, 10, "_process should have been called on object # " + str(i))
+	
+	assert_pass(objs.size())
 
 func test_simulate_calls_fixed_process():
 	var obj = HasFixedProcessMethod.new()
-	gut.simulate(obj, 10, .1)
-	gut.assert_eq(obj.fixed_process_called_count, 10, "_process should have been called 10 times")
+	gr.test_gut.simulate(obj, 10, .1)
+	gr.test_gut.assert_eq(obj.fixed_process_called_count, 10, "_process should have been called 10 times")
 	#using just the numbers didn't work, nor using float.  str worked for some reason and
 	#i'm not sure why.
-	gut.assert_eq(str(obj.delta_sum), str(1), "The delta value should have been passed in and summed")
+	gr.test_gut.assert_eq(str(obj.delta_sum), str(1), "The delta value should have been passed in and summed")
+	assert_pass(2)
 #------------------------------
 # Get/Set Assert
 #------------------------------
 func test_fail_if_get_set_not_defined():
-	should_fail();should_fail() # set missing and get missing, fail twice
 	var obj = NoGetNoSet.new()
-	gut.assert_get_set_methods(obj, 'thing', 'something', 'another thing')
+	gr.test_gut.assert_get_set_methods(obj, 'thing', 'something', 'another thing')
+	assert_fail(2)
 
 func test_fail_if_has_get_and_not_set():
-	should_fail()
 	var obj = HasGetNotSet.new()
-	gut.assert_get_set_methods(obj, 'thing', 'something', 'another thing')
+	gr.test_gut.assert_get_set_methods(obj, 'thing', 'something', 'another thing')
+	assert_fail()
 
 func test_fail_if_default_wrong_and_get_dont_work():
-	should_fail();should_fail() #fail twice since set dont work either
 	var obj = HasGetAndSetThatDontWork.new()
-	gut.assert_get_set_methods(obj, 'thing', 'something', 'another thing')
+	gr.test_gut.assert_get_set_methods(obj, 'thing', 'something', 'another thing')
+	assert_fail(2)
 
 func test_fail_if_default_wrong():
-	should_fail();
 	var obj = HasGetSetThatWorks.new()
-	gut.assert_get_set_methods(obj, 'thing', 'not the right default', 'another thing')
+	gr.test_gut.assert_get_set_methods(obj, 'thing', 'not the right default', 'another thing')
+	assert_fail()
 
 func test_pass_if_all_get_sets_are_aligned():
 	var obj = HasGetSetThatWorks.new()
-	gut.assert_get_set_methods(obj, 'thing', 'something', 'another thing')
+	gr.test_gut.assert_get_set_methods(obj, 'thing', 'something', 'another thing')
+	assert_pass(4)
 #------------------------------
 # Setting test to run
 #------------------------------
 func test_get_set_test_to_run():
-	gut.assert_get_set_methods(gr.gut, 'unit_test_name', '', 'hello')
+	gr.test_gut.assert_get_set_methods(gr.test_gut, 'unit_test_name', '', 'hello')
+	assert_pass(4)
 
 func test_setting_name_will_run_only_matching_tests():
-	gr.gut.add_script('res://unit_tests/all_passed.gd')
-	gr.gut.set_unit_test_name('test_works')
-	gr.gut.test_scripts()
-	gut.assert_eq(gr.gut.get_test_count(), 1)
+	gr.test_gut.add_script('res://unit_tests/all_passed.gd')
+	gr.test_gut.set_unit_test_name('test_works')
+	gr.test_gut.test_scripts()
+	gut.assert_eq(gr.test_gut.get_test_count(), 1)
 
 func test_setting_name_matches_partial():
-	gr.gut.add_script('res://unit_tests/all_passed.gd')
-	gr.gut.set_unit_test_name('two')
-	gr.gut.test_scripts()
-	gut.assert_eq(gr.gut.get_test_count(), 1)
+	gr.test_gut.add_script('res://unit_tests/all_passed.gd')
+	gr.test_gut.set_unit_test_name('two')
+	gr.test_gut.test_scripts()
+	gut.assert_eq(gr.test_gut.get_test_count(), 1)
 	gut.pause_before_teardown()
 	
 #-------------------------------------------------------------------------------
@@ -428,7 +490,6 @@ func test_setting_name_matches_partial():
 #-------------------------------------------------------------------------------
 func test_verify_results():
 	gut.p("/*THESE SHOULD ALL PASS, IF NOT THEN SOMETHING IS BROKEN*/")
-	gut.assert_eq(counts.should_fail, gut.get_fail_count(), "The expected number of tests should have failed.")
 	gut.assert_eq(1, counts.prerun_setup_count, "Prerun setup should have been called once")
 	gut.assert_eq(gut.get_test_count(), counts.setup_count, "Setup should have been called for the number of tests ran")
 	gut.assert_eq(gut.get_test_count() -1, counts.teardown_count, "Teardown should have been called one less time")

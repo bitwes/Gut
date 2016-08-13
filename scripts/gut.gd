@@ -471,7 +471,8 @@ func _parse_tests(script):
 func _fail(text):
 	_summary.asserts += 1
 	_summary.failed += 1
-	_current_test.passed = false
+	if(_current_test != null):
+		_current_test.passed = false
 	p("FAILED:  " + text, LOG_LEVEL_FAIL_ONLY)
 
 #-------------------------------------------------------------------------------
