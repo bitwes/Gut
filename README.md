@@ -296,7 +296,7 @@ Options
   -gexit          Exit after running tests.  If not specified you have to manually close the window.                  
   -glog           Log level.  Default 1                                                                               
   -gignore_pause  Ignores any calls to gut.pause_before_teardown.                                                     
-  -gselect        Select a sccript to run initially.  The first script that was loaded using -gtest or -gdir that contains the specified string will be xecuted.  You may run others by interacting with the GUI.                           
+  -gselect        Select a script to run initially.  The first script that was loaded using -gtest or -gdir that contains the specified string will be executed.  You may run others by interacting with the GUI.                           
   -gutloc         Full path (including name) of the gut script.  Default res://scripts/gut.gd                         
   -gh             Print this help                                                                                     
 ---------------------------------------------------------                                                             

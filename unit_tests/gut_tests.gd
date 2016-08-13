@@ -390,11 +390,11 @@ func test_script_object_added_to_tree():
 	assert_pass()
 
 func test_pending_increments_pending_count():
-	gut.pending()
-	gut.assert_eq(gut.get_pending_count(), 1, 'One test should have been marked as pending')
+	gr.test_gut.pending()
+	gut.assert_eq(gr.test_gut.get_pending_count(), 1, 'One test should have been marked as pending')
 
 func test_pending_accepts_text():
-	gut.pending("This is a pending test")
+	gut.pending("This is a pending test.  You should see this text in the results.")
 
 func test_simulate_calls_process():
 	var obj = HasProcessMethod.new()
@@ -479,7 +479,6 @@ func test_setting_name_matches_partial():
 	gr.test_gut.set_unit_test_name('two')
 	gr.test_gut.test_scripts()
 	gut.assert_eq(gr.test_gut.get_test_count(), 1)
-	gut.pause_before_teardown()
 	
 #-------------------------------------------------------------------------------
 #
@@ -491,6 +490,6 @@ func test_setting_name_matches_partial():
 func test_verify_results():
 	gut.p("/*THESE SHOULD ALL PASS, IF NOT THEN SOMETHING IS BROKEN*/")
 	gut.assert_eq(1, counts.prerun_setup_count, "Prerun setup should have been called once")
-	gut.assert_eq(gut.get_test_count(), counts.setup_count, "Setup should have been called for the number of tests ran")
-	gut.assert_eq(gut.get_test_count() -1, counts.teardown_count, "Teardown should have been called one less time")
-	gut.assert_eq(gut.get_pending_count(), 2, 'There should have been two pending tests')
+	gut.assert_eq(gut.get_test_count(), counts.setup_count, "Setup should have been called once for each test")
+	# teardown for this test hasn't been run yet.
+	gut.assert_eq(gut.get_test_count() -1, counts.teardown_count, "Teardown should have been called one less time.")
