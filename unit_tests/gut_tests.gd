@@ -490,11 +490,31 @@ func test_asserts_on_test_object():
 	assert_true(true, 'text')
 	assert_false(false, 'text')
 	assert_between(5, 1, 10, 'text')
-	#assert_file_exists(file_path)
 	assert_file_does_not_exist('res://doesnotexist')
-	#assert_file_empty(file_path)
-	#assert_file_not_empty(file_path)
-	#assert_get_set_methods(obj, property, default, set_to)	
+	
+	var path = 'user://gut_test_file.txt'
+	var f = File.new()
+	f.open(path, f.WRITE)
+	f.close()
+	assert_file_exists(path)
+
+	
+	var path = 'user://gut_test_empty.txt'
+	var f = File.new()
+	f.open(path, f.WRITE)
+	f.close()
+	assert_file_empty(path)
+
+	var path = 'user://gut_test_not_empty3.txt'
+	var f = File.new()
+	f.open(path, f.WRITE)
+	f.store_8(1)
+	f.close()
+	assert_file_not_empty(path)
+
+	var obj = HasGetSetThatWorks.new()
+	assert_get_set_methods(obj, 'thing', 'something', 'another thing')
+
 #-------------------------------------------------------------------------------
 #
 #
