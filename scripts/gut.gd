@@ -458,26 +458,7 @@ func _update_controls():
 	_stop_button.set_disabled(!_is_running)
 	
 	
-#-------------------------------------------------------------------------------
-#Initialize variables for each run of a single test script.
-#-------------------------------------------------------------------------------
-func _init_run():
-	_summary.asserts = 0
-	_summary.passed = 0
-	_summary.failed = 0
-	_summary.tests = 0
-	_summary.scripts = 0
-	_summary.pending = 0
-	
-	_log_text = ""
-	_text_box.clear_colors()
-	_text_box.add_keyword_color("PASSED", Color(0, 1, 0))
-	_text_box.add_keyword_color("FAILED", Color(1, 0, 0))
-	_text_box.add_color_region('/#', '#/', Color(.9, .6, 0))
-	_text_box.add_color_region('/-', '-/', Color(1, 1, 0))
-	_text_box.add_color_region('/*', '*/', Color(.5, .5, 1))
-	_text_box.set_symbol_color(Color(.5, .5, .5))
-	_current_test = null
+
 
 #-------------------------------------------------------------------------------
 #Parses out the tests based on the _test_prefix.  Fills the _tests array with
@@ -544,11 +525,72 @@ func _get_summary_text():
 	return to_return
 
 #-------------------------------------------------------------------------------
+#Initialize variables for each run of a single test script.
+#-------------------------------------------------------------------------------
+func _init_run():
+	_summary.asserts = 0
+	_summary.passed = 0
+	_summary.failed = 0
+	_summary.tests = 0
+	_summary.scripts = 0
+	_summary.pending = 0
+	
+	_log_text = ""
+	_text_box.clear_colors()
+	_text_box.add_keyword_color("PASSED", Color(0, 1, 0))
+	_text_box.add_keyword_color("FAILED", Color(1, 0, 0))
+	_text_box.add_color_region('/#', '#/', Color(.9, .6, 0))
+	_text_box.add_color_region('/-', '-/', Color(1, 1, 0))
+	_text_box.add_color_region('/*', '*/', Color(.5, .5, 1))
+	_text_box.set_symbol_color(Color(.5, .5, .5))
+	_current_test = null
+	
+	_is_running = true
+	_update_controls()
+	
+	_script_progress.set_max(_test_scripts.size())
+	_script_progress.set_value(0)
+	_test_progress.set_max(1)
+	_runtime_timer.start()	
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+
+func _end_run():
+	p(_get_summary_text(), 0)	
+	_runtime_timer.stop()
+	_is_running = false
+	update()
+	_update_controls()
+	emit_signal(SIGNAL_TESTS_FINISHED)
+	set_title("Finished.  " + str(get_fail_count()) + " failures.")
+	
+#-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 func _is_function_state(script_result):
 	return script_result != null and \
 	       typeof(script_result) == TYPE_OBJECT and \
 	       script_result.get_type() == 'GDFunctionState'
+
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func _print_script_heading(script_name):
+	p("/-----------------------------------------")
+	p("Testing Script " + script_name, 0)
+	if(_unit_test_name != ''):
+		p('  Only running tests like: "' + _unit_test_name + '"')
+	p("-----------------------------------------/")
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func _init_test_script(script_path):
+	_parse_tests(script_path)
+	var test_script = load(script_path).new()
+	add_child(test_script)
+	test_script.gut = self
+	
+	return test_script
 
 #-------------------------------------------------------------------------------
 #Run all tests in a script.  This is the core logic for running tests.
@@ -560,31 +602,18 @@ func _test_the_scripts():
 	_init_run()
 	var file = File.new()
 	
-	_is_running = true
-	_update_controls()
-	
-	_script_progress.set_max(_test_scripts.size())
-	_script_progress.set_value(0)
-	_test_progress.set_max(1)
-	_runtime_timer.start()
 	for s in range(_test_scripts.size()):
 		_tests.clear()
 		set_title('Running:  ' + _test_scripts[s])
-		p("/-----------------------------------------")
-		p("Testing Script " + _test_scripts[s], 0)
-		if(_unit_test_name != ''):
-			p('  Only running tests like: "' + _unit_test_name + '"')
-		p("-----------------------------------------/")
+		_print_script_heading(_test_scripts[s])
 		
 		if(!file.file_exists(_test_scripts[s])):
 			p("FAILED   COULD NOT FIND FILE:  " + _test_scripts[s])
 		else:
-			_parse_tests(_test_scripts[s])
-			_summary.scripts += 1		
-			var test_script = load(_test_scripts[s]).new()
-			add_child(test_script)
+			var test_script = _init_test_script(_test_scripts[s])
 			var script_result = null
-			test_script.gut = self
+			_summary.scripts += 1		
+			
 			test_script.prerun_setup()
 	
 			#yield so things paint
@@ -653,14 +682,7 @@ func _test_the_scripts():
 		_script_progress.set_value(s + 1)
 		#END TEST SCRIPT LOOP
 		
-	p(_get_summary_text(), 0)	
-	_runtime_timer.stop()
-	_is_running = false
-	update()
-	_update_controls()
-	emit_signal(SIGNAL_TESTS_FINISHED)
-	set_title("Finished.  " + str(get_fail_count()) + " failures.")
-	
+	_end_run()	
 	
 
 #########################
