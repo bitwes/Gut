@@ -93,6 +93,7 @@ var _stop_button = Button.new()
 var _script_progress = ProgressBar.new()
 var _test_progress = ProgressBar.new()
 var _runtime_label = Label.new()
+var _ignore_continue_checkbox = CheckBox.new()
 
 var _mouse_down = false
 var _mouse_down_pos = null
@@ -159,6 +160,13 @@ func setup_controls():
 	_continue_button.set_disabled(true)
 	_continue_button.connect("pressed", self, "_on_continue_button_pressed")
 	_set_anchor_bottom_right(_continue_button)
+	
+	add_child(_ignore_continue_checkbox)
+	_ignore_continue_checkbox.set_text("Ignore pauses")
+	_ignore_continue_checkbox.set_pressed(_ignore_pause_before_teardown)
+	_ignore_continue_checkbox.connect('pressed', self, '_on_ignore_continue_checkbox_pressed')
+	_ignore_continue_checkbox.set_size(Vector2(50, 30))
+	_ignore_continue_checkbox.set_pos(Vector2(_continue_button.get_pos().x, _continue_button.get_pos().y + _continue_button.get_size().y - 5))
 	
 	var log_label = Label.new()
 	add_child(log_label)
@@ -243,6 +251,7 @@ func setup_controls():
 func _init():
 	add_user_signal(SIGNAL_TESTS_FINISHED)
 	add_user_signal(SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
+	add_user_signal('timeout')
 
 #-------------------------------------------------------------------------------
 #Initialize controls
@@ -255,9 +264,6 @@ func _ready():
 	self.set_size(min_size)
 	
 	setup_controls()
-
-	add_user_signal('timeout')
-	add_user_signal('yield')
 	
 	add_child(_wait_timer)
 	_wait_timer.set_wait_time(1)
@@ -421,7 +427,14 @@ func _on_stop_button_pressed():
 	else:
 		_waiting = false
 	
-	
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func _on_ignore_continue_checkbox_pressed():
+	_ignore_pause_before_teardown = _ignore_continue_checkbox.is_pressed()
+	# If you want to ignore them, then you probably just want to continue
+	# running, so we'll save you a click.
+	if(!_continue_button.is_disabled()):
+		_on_continue_button_pressed()
 	
 #####################
 #
@@ -1130,12 +1143,16 @@ func directory_delete_files(path):
 ################################################################################
 class Test:
 	extends Node
-	const YIELD = 'yield'
+	# constant for signal when calling yeild_for
+	const YIELD = 'timeout'
 	#Need a reference to the instance that is running the tests.  This
 	#is set by the gut class when it runs the tests.  This gets you 
 	#access to the asserts in the tests you write.
 	var gut = null
-	
+
+# #######################
+# Virtual Methods	
+# #######################
 	#Overridable method that runs before each test.
 	func setup():
 		pass
@@ -1152,6 +1169,9 @@ class Test:
 	func postrun_teardown():
 		pass
 
+# #######################
+# Convenience Methods
+# #######################
 	# see gut method
 	func assert_eq(got, expected, text=""):
 		gut.assert_eq(got, expected, text)
@@ -1204,7 +1224,7 @@ class Test:
 	func pending(text=""):
 		gut.pending(text)
 	
-	# I think this reads better.
+	# I think this reads better than set_yield_time
 	func yield_for(time, msg=''):
 		if(msg != ''):
 			gut.p('Yielding:  ' + msg)

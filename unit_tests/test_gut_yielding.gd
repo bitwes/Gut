@@ -75,6 +75,6 @@ func test_returning_object_does_not_cause_yield():
 	return thing
 	
 func test_new_yield():
-	yield(yield_for(1, 'first yield'), 'yield')
+	yield(yield_for(1, 'first yield'), 'timeout')
 	yield(yield_for(1, 'waiting around for stuff'), YIELD)
 	end_test()
