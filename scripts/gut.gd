@@ -759,7 +759,7 @@ func test_scripts():
 func test_script(script):
 	_test_scripts.clear()
 	_test_scripts.append(script)
-	test_scripts()
+	_test_the_scripts()
 	_test_scripts.clear()
 
 #-------------------------------------------------------------------------------
