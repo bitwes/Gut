@@ -59,8 +59,13 @@ var _pause_before_teardown = false
 var _ignore_pause_before_teardown = false
 var _wait_timer = Timer.new()
 
-var _yield_between_tests = false
-var _yield_between_timer = Timer.new()
+var _yield_between = {
+	should = false,
+	timer = Timer.new(),
+	after_x_tests = 1,
+	tests_since_last_yield = 0
+}
+
 var _set_yield_time_called = false
 #used when yielding to gut instead of some other 
 #signal.  Start with set_yield_time()
@@ -268,7 +273,7 @@ func _ready():
 	_wait_timer.set_wait_time(1)
 	_wait_timer.set_one_shot(true)
 	
-	add_child(_yield_between_timer)
+	add_child(_yield_between.timer)
 	_wait_timer.set_one_shot(true)
 	
 	add_child(_yield_timer)
@@ -543,6 +548,9 @@ func _init_run():
 	_text_box.add_color_region('/-', '-/', Color(1, 1, 0))
 	_text_box.add_color_region('/*', '*/', Color(.5, .5, 1))
 	_text_box.set_symbol_color(Color(.5, .5, .5))
+	
+	_runtime_label.set_text('0.0')
+	
 	_current_test = null
 	
 	_is_running = true
@@ -552,6 +560,9 @@ func _init_run():
 	_script_progress.set_value(0)
 	_test_progress.set_max(1)
 	_runtime_timer.start()	
+	
+	_yield_between.tests_since_last_yield = 0
+	
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -616,11 +627,10 @@ func _test_the_scripts():
 			
 			test_script.prerun_setup()
 	
-			#yield so things paint
-			if(_yield_between_tests):
-				_yield_between_timer.set_wait_time(0.01)
-				_yield_between_timer.start()
-				yield(_yield_between_timer, 'timeout')
+			#yield between test scripts so things paint
+			_yield_between.timer.set_wait_time(0.01)
+			_yield_between.timer.start()
+			yield(_yield_between.timer, 'timeout')
 	
 			_test_progress.set_max(_tests.size())
 			for i in range(_tests.size()):
@@ -630,10 +640,13 @@ func _test_the_scripts():
 					p(_current_test.name, 1)
 	
 					#yield so things paint
-					if(_yield_between_tests):
-						_yield_between_timer.set_wait_time(0.001)
-						_yield_between_timer.start()
-						yield(_yield_between_timer, 'timeout')
+					if(_yield_between.should and _yield_between.tests_since_last_yield == _yield_between.after_x_tests):
+						_yield_between.timer.set_wait_time(0.001)
+						_yield_between.timer.start()
+						yield(_yield_between.timer, 'timeout')
+						_yield_between.tests_since_last_yield = 0
+					else:
+						_yield_between.tests_since_last_yield += 1
 		
 					test_script.setup()
 					_summary.tests += 1
@@ -1074,7 +1087,7 @@ func set_ignore_pause_before_teardown(should_ignore):
 #change in future releases.
 #-------------------------------------------------------------------------------
 func set_yield_between_tests(should):
-	_yield_between_tests = should
+	_yield_between.should = should
 
 #-------------------------------------------------------------------------------
 #Call _process or _fixed_process, if they exist, on obj and all it's children

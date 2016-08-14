@@ -76,7 +76,7 @@ func _run_all_tests():
 	# instead of having to wait until the end.  It's a little slower,
 	# but you can tell what's going on.  Because it's slower it's
 	# disabled by default.
-	#tester.set_yield_between_tests(true) 
+	tester.set_yield_between_tests(true) 
 	# !! --------
 	
 	# Add all scripts in two directories.
