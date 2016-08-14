@@ -518,13 +518,16 @@ func _get_summary_text():
 	to_return += str(_summary.pending) + " Pending\n"
 	to_return += str(_summary.failed) + " Failed\n"
 	to_return += "\n\n"
-	to_return +=  '+++ ' + str(_summary.passed) + ' passed ' + str(_summary.failed) + ' failed.  ' + \
-	              "Tests finished in:  " + _runtime_label.get_text() + ' +++'
-	var c = Color(0, 1, 0)
-	if(_summary.passed != _summary.asserts):
-		c = Color(1, 0, 0)
-	_text_box.add_color_region('+++', '+++', c)
-		
+	if(_summary.tests > 0):
+		to_return +=  '+++ ' + str(_summary.passed) + ' passed ' + str(_summary.failed) + ' failed.  ' + \
+		              "Tests finished in:  " + _runtime_label.get_text() + ' +++'
+		var c = Color(0, 1, 0)
+		if(_summary.passed != _summary.asserts):
+			c = Color(1, 0, 0)
+		_text_box.add_color_region('+++', '+++', c)
+	else:
+		to_return += '+++ No tests ran +++'
+		_text_box.add_color_region('+++', '+++', Color(1, 0, 0))
 	return to_return
 
 #-------------------------------------------------------------------------------
@@ -906,6 +909,7 @@ func assert_get_set_methods(obj, property, default, set_to):
 	assert_eq(obj.call(get), default, 'It should have the expected default value.')
 	obj.call(set, set_to)
 	assert_eq(obj.call(get), set_to, 'The set value should have been returned.')
+	
 #-------------------------------------------------------------------------------
 #Mark the current test as pending.
 #-------------------------------------------------------------------------------
@@ -1047,6 +1051,9 @@ func simulate(obj, times, delta):
 # Starts an internal timer with a timeout of the passed in time.  A 'timeout' 
 # signal will be sent when the timer ends.  Returns itself so that it can be 
 # used in a call to yield...cutting down on lines of code.
+#
+# Example, yield to the Gut object for 10 seconds:
+#  yield(gut.set_yield_time(10), 'timeout')
 #-------------------------------------------------------------------------------
 func set_yield_time(time):
 	_yield_timer.set_wait_time(time)
@@ -1193,7 +1200,7 @@ class Test:
 	# see gut method
 	func pending(text=""):
 		gut.pending(text)
-		
+	
 ################################################################################
 #OneTest (INTERNAL USE ONLY)
 #	Used to keep track of info about each test ran.
