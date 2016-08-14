@@ -148,7 +148,7 @@ func setup_controls():
 	_set_anchor_bottom_right(_clear_button)
 	
 	add_child(_runtime_label)
-	_runtime_label.set_text('00:00:00')
+	_runtime_label.set_text('0.0')
 	_runtime_label.set_size(Vector2(50, 30))
 	_runtime_label.set_pos(Vector2(_clear_button.get_pos().x - 60, _clear_button.get_pos().y + 10))
 	
@@ -257,6 +257,7 @@ func _ready():
 	setup_controls()
 
 	add_user_signal('timeout')
+	add_user_signal('yield')
 	
 	add_child(_wait_timer)
 	_wait_timer.set_wait_time(1)
@@ -353,6 +354,7 @@ func _draw():
 #-------------------------------------------------------------------------------
 func _on_yield_timer_timeout():
 	emit_signal('timeout')
+	emit_signal('yield')
 
 #-------------------------------------------------------------------------------
 #detect mouse movement
@@ -667,7 +669,7 @@ func p(text, level=0, indent=0):
 			#Print the name of the current test if we haven't
 			#printed it already.
 			if(!_current_test.has_printed_name):
-				to_print = "*" + _current_test.name
+				to_print = "* " + _current_test.name
 				_current_test.has_printed_name = true
 				printing_test_name = text == _current_test.name
 		
@@ -1128,6 +1130,7 @@ func directory_delete_files(path):
 ################################################################################
 class Test:
 	extends Node
+	const YIELD = 'yield'
 	#Need a reference to the instance that is running the tests.  This
 	#is set by the gut class when it runs the tests.  This gets you 
 	#access to the asserts in the tests you write.
@@ -1201,6 +1204,15 @@ class Test:
 	func pending(text=""):
 		gut.pending(text)
 	
+	# I think this reads better.
+	func yield_for(time, msg=''):
+		if(msg != ''):
+			gut.p('Yielding:  ' + msg)
+		return gut.set_yield_time(time)
+	
+	func end_test():
+		gut.end_yielded_test()
+		
 ################################################################################
 #OneTest (INTERNAL USE ONLY)
 #	Used to keep track of info about each test ran.

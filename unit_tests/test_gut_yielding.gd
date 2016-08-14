@@ -73,3 +73,8 @@ func test_returning_string_does_not_cause_yield():
 func test_returning_object_does_not_cause_yield():
 	var thing = Node2D.new()
 	return thing
+	
+func test_new_yield():
+	yield(yield_for(1, 'first yield'), 'yield')
+	yield(yield_for(1, 'waiting around for stuff'), YIELD)
+	end_test()
