@@ -1142,7 +1142,86 @@ class Test:
 	func postrun_teardown():
 		pass
 
-
+	#-------------------------------------------------------------------------------
+	#Asserts that the expected value equals the value got.
+	#-------------------------------------------------------------------------------
+	func assert_eq(got, expected, text=""):
+		gut.assert_eq(got, expected, text)
+		
+	#-------------------------------------------------------------------------------
+	#Asserts that the value got does not equal the "not expected" value.  
+	#-------------------------------------------------------------------------------
+	func assert_ne(got, not_expected, text=""):
+		gut.assert_ne(got, not_expected, text)
+		
+	#-------------------------------------------------------------------------------
+	#Asserts got is greater than expected
+	#-------------------------------------------------------------------------------
+	func assert_gt(got, expected, text=""):
+		gut.assert_gt(got, expected, text)
+	
+	#-------------------------------------------------------------------------------
+	#Asserts got is less than expected
+	#-------------------------------------------------------------------------------
+	func assert_lt(got, expected, text=""):
+		gut.assert_lt(got, expected, text)
+	
+	#-------------------------------------------------------------------------------
+	#asserts that got is true
+	#-------------------------------------------------------------------------------
+	func assert_true(got, text=""):
+		gut.assert_true(got, text)
+	
+	#-------------------------------------------------------------------------------
+	#Asserts that got is false
+	#-------------------------------------------------------------------------------
+	func assert_false(got, text=""):
+		gut.assert_false(got, text)
+	
+	#-------------------------------------------------------------------------------
+	#Asserts value is between (inclusive) the two expected values.
+	#-------------------------------------------------------------------------------
+	func assert_between(got, expect_low, expect_high, text=""):
+		gut.assert_between(got, expect_low, expect_high, text)
+	
+	#-------------------------------------------------------------------------------
+	#Asserts that a file exists
+	#-------------------------------------------------------------------------------
+	func assert_file_exists(file_path):
+		gut.assert_file_exists(file_path)
+	
+	#-------------------------------------------------------------------------------
+	#Asserts that a file should not exist
+	#-------------------------------------------------------------------------------
+	func assert_file_does_not_exist(file_path):
+		gut.assert_file_does_not_exist(file_path)
+	
+	#-------------------------------------------------------------------------------
+	# Asserts the specified file is empty
+	#-------------------------------------------------------------------------------
+	func assert_file_empty(file_path):
+		gut.assert_file_empty(file_path)
+	
+	#-------------------------------------------------------------------------------
+	#-------------------------------------------------------------------------------
+	func assert_file_not_empty(file_path):
+		gut.assert_file_not_empty(file_path)
+	
+	#-------------------------------------------------------------------------------
+	# Verifies the object has get and set methods for the property passed in.  The 
+	# property isn't tied to anything, just a name to be appended to the end of 
+	# get_ and set_.  Asserts the get_ and set_ methods exist, if not, it stops there.
+	# If they exist then it asserts get_ returns the expected default then calls
+	# set_ and asserts get_ has the value it was set to.
+	#-------------------------------------------------------------------------------
+	func assert_get_set_methods(obj, property, default, set_to):
+		gut.assert_get_set_methods(obj, property, default, set_to)
+	
+	#-------------------------------------------------------------------------------
+	#Mark the current test as pending.
+	#-------------------------------------------------------------------------------
+	func pending(text=""):
+		gut.pending(text)
 ################################################################################
 #OneTest (INTERNAL USE ONLY)
 #	Used to keep track of info about each test ran.

@@ -479,7 +479,22 @@ func test_setting_name_matches_partial():
 	gr.test_gut.set_unit_test_name('two')
 	gr.test_gut.test_scripts()
 	gut.assert_eq(gr.test_gut.get_test_count(), 1)
-	
+
+# These should all pass, just making sure there aren't any syntax errors.
+func test_asserts_on_test_object():
+	pending('This really is not pending')
+	assert_eq(1, 1, 'text')
+	assert_ne(1, 2, 'text')
+	assert_gt(10, 5, 'text')
+	assert_lt(1, 2, 'text')
+	assert_true(true, 'text')
+	assert_false(false, 'text')
+	assert_between(5, 1, 10, 'text')
+	#assert_file_exists(file_path)
+	assert_file_does_not_exist('res://doesnotexist')
+	#assert_file_empty(file_path)
+	#assert_file_not_empty(file_path)
+	#assert_get_set_methods(obj, property, default, set_to)	
 #-------------------------------------------------------------------------------
 #
 #
