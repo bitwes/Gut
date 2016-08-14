@@ -18,8 +18,7 @@ func setup():
 
 func test_can_yield_using_built_in_timer():
 	gut.p('yielding for 1 second')
-	gut.set_yield_time(1)
-	yield(gut, 'timeout')
+	yield(gut.set_yield_time(1), 'timeout')
 	gut.p('done yielding')
 	gut.end_yielded_test()
 
@@ -31,7 +30,6 @@ func test_setting_yield_time_twice_resets_time():
 	gut.p('done yielding')
 	gut.end_yielded_test()
 	
-
 func test_wait_for_continue_click():
 	gut.assert_eq(1, 1, 'some simple assert')
 	gut.pause_before_teardown()
@@ -73,7 +71,7 @@ func test_returning_string_does_not_cause_yield():
 func test_returning_object_does_not_cause_yield():
 	var thing = Node2D.new()
 	return thing
-	
+
 func test_new_yield():
 	yield(yield_for(1, 'first yield'), 'timeout')
 	yield(yield_for(1, 'waiting around for stuff'), YIELD)

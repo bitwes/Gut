@@ -33,8 +33,6 @@ extends WindowDialog
 const LOG_LEVEL_FAIL_ONLY = 0
 const LOG_LEVEL_TEST_AND_FAILURES = 1
 const LOG_LEVEL_ALL_ASSERTS = 2
-
-const YIELD_MESSAGE = '/# Yield detected.  Waiting for end_yielded_test to be called. #/'
 const WAITING_MESSAGE = '/# waiting #/'
 const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
 
@@ -63,6 +61,7 @@ var _wait_timer = Timer.new()
 
 var _yield_between_tests = false
 var _yield_between_timer = Timer.new()
+var _set_yield_time_called = false
 #used when yielding to gut instead of some other 
 #signal.  Start with set_yield_time()
 var _yield_timer = Timer.new()
@@ -360,7 +359,6 @@ func _draw():
 #-------------------------------------------------------------------------------
 func _on_yield_timer_timeout():
 	emit_signal('timeout')
-	emit_signal('yield')
 
 #-------------------------------------------------------------------------------
 #detect mouse movement
@@ -546,6 +544,13 @@ func _get_summary_text():
 	return to_return
 
 #-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func _is_function_state(script_result):
+	return script_result != null and \
+	       typeof(script_result) == TYPE_OBJECT and \
+	       script_result.get_type() == 'GDFunctionState'
+
+#-------------------------------------------------------------------------------
 #Run all tests in a script.  This is the core logic for running tests.
 #
 #Note, this has to stay as a giant monstrosity of a method because of the
@@ -606,8 +611,10 @@ func _test_the_scripts():
 					
 					script_result = test_script.call(_current_test.name)
 					#When the script yields it will return a GDFunctionState object
-					if(script_result != null and typeof(script_result) == TYPE_OBJECT and script_result.get_type() == 'GDFunctionState'):
-						p(YIELD_MESSAGE, 1)
+					if(_is_function_state(script_result)):
+						if(!_set_yield_time_called):
+							p('/# Yield detected, waiting #/')
+						_set_yield_time_called = false
 						_waiting = true
 						while(_waiting):
 							p(WAITING_MESSAGE, 2)
@@ -1070,9 +1077,16 @@ func simulate(obj, times, delta):
 # Example, yield to the Gut object for 10 seconds:
 #  yield(gut.set_yield_time(10), 'timeout')
 #-------------------------------------------------------------------------------
-func set_yield_time(time):
+func set_yield_time(time, text=''):
 	_yield_timer.set_wait_time(time)
 	_yield_timer.start()
+	var msg = '/# Yeilding (' + str(time) + 's)'
+	if(text == ''):
+		msg += ' #/'
+	else:
+		msg +=  ':  ' + text + ' #/'
+	p(msg, 1)
+	_set_yield_time_called = true
 	return self
 
 #-------------------------------------------------------------------------------
@@ -1224,11 +1238,9 @@ class Test:
 	func pending(text=""):
 		gut.pending(text)
 	
-	# I think this reads better than set_yield_time
+	# I think this reads better than set_yield_time, but don't want to break anything
 	func yield_for(time, msg=''):
-		if(msg != ''):
-			gut.p('Yielding:  ' + msg)
-		return gut.set_yield_time(time)
+		return gut.set_yield_time(time, msg)
 	
 	func end_test():
 		gut.end_yielded_test()
