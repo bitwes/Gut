@@ -628,9 +628,10 @@ func _test_the_scripts():
 			test_script.prerun_setup()
 	
 			#yield between test scripts so things paint
-			_yield_between.timer.set_wait_time(0.01)
-			_yield_between.timer.start()
-			yield(_yield_between.timer, 'timeout')
+			if(_yield_between.should):
+				_yield_between.timer.set_wait_time(0.01)
+				_yield_between.timer.start()
+				yield(_yield_between.timer, 'timeout')
 	
 			_test_progress.set_max(_tests.size())
 			for i in range(_tests.size()):
