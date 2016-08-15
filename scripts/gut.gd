@@ -62,7 +62,7 @@ var _wait_timer = Timer.new()
 var _yield_between = {
 	should = false,
 	timer = Timer.new(),
-	after_x_tests = 1,
+	after_x_tests = 5,
 	tests_since_last_yield = 0
 }
 
@@ -604,6 +604,19 @@ func _init_test_script(script_path):
 	return test_script
 
 #-------------------------------------------------------------------------------
+# just gets more logic out of _test_the_scripts.  Decides if we should yield after
+# this test based on flags and counters.
+#-------------------------------------------------------------------------------
+func _should_yield_now():
+	var should = _yield_between.should and \
+	             _yield_between.tests_since_last_yield == _yield_between.after_x_tests
+	if(should):
+		_yield_between.tests_since_last_yield = 0
+	else:
+		_yield_between.tests_since_last_yield += 1
+	return should
+
+#-------------------------------------------------------------------------------
 #Run all tests in a script.  This is the core logic for running tests.
 #
 #Note, this has to stay as a giant monstrosity of a method because of the
@@ -641,13 +654,10 @@ func _test_the_scripts():
 					p(_current_test.name, 1)
 	
 					#yield so things paint
-					if(_yield_between.should and _yield_between.tests_since_last_yield == _yield_between.after_x_tests):
+					if(_should_yield_now()):
 						_yield_between.timer.set_wait_time(0.001)
 						_yield_between.timer.start()
 						yield(_yield_between.timer, 'timeout')
-						_yield_between.tests_since_last_yield = 0
-					else:
-						_yield_between.tests_since_last_yield += 1
 		
 					test_script.setup()
 					_summary.tests += 1
