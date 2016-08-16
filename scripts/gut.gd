@@ -511,9 +511,11 @@ func _update_controls():
 func _parse_tests(script):
 	var file = File.new()
 	var line = ""
-
+	var line_count = 0
+	
 	file.open(script, 1)
 	while(!file.eof_reached()):
+		line_count += 1
 		line = file.get_line()
 		#Add a test
 		if(line.begins_with("func " + _test_prefix)):
@@ -521,6 +523,7 @@ func _parse_tests(script):
 			var len = line.find("(") - from
 			var new_test = OneTest.new()
 			new_test.name = line.substr(from, len)
+			new_test.line_number = line_count
 			_tests.append(new_test)
 
 	file.close()
@@ -533,7 +536,8 @@ func _fail(text):
 	_summary.failed += 1
 	if(_current_test != null):
 		_current_test.passed = false
-	p("FAILED:  " + text, LOG_LEVEL_FAIL_ONLY)
+	p('FAILED:  ' + text, LOG_LEVEL_FAIL_ONLY)
+	p('  at line ' + str(_current_test.line_number), LOG_LEVEL_FAIL_ONLY)
 
 #-------------------------------------------------------------------------------
 #Pass an assertion.
@@ -1342,15 +1346,17 @@ class Test:
 		gut.end_yielded_test()
 		
 ################################################################################
-#OneTest (INTERNAL USE ONLY)
+# OneTest (INTERNAL USE ONLY)
 #	Used to keep track of info about each test ran.
 ################################################################################
 class OneTest:
-	#indicator if it passed or not.  defaults to true since it takes only
-	#one failure to make it not pass.  _fail in gut will set this.
+	# indicator if it passed or not.  defaults to true since it takes only
+	# one failure to make it not pass.  _fail in gut will set this.
 	var passed = true
-	#the name of the function
+	# the name of the function
 	var name = ""
-	#flag to know if the name has been printed yet.
+	# flag to know if the name has been printed yet.
 	var has_printed_name = false
+	# the line number the test is on
+	var line_number = -1
 	
