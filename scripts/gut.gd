@@ -330,6 +330,7 @@ func _ready():
 	self.connect("mouse_exit", self, "_on_mouse_exit")
 	set_process(true)
 	
+	set_pause_mode(PAUSE_MODE_PROCESS)
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 func _process(delta):
