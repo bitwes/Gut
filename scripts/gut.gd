@@ -537,7 +537,8 @@ func _fail(text):
 	if(_current_test != null):
 		_current_test.passed = false
 	p('FAILED:  ' + text, LOG_LEVEL_FAIL_ONLY)
-	p('  at line ' + str(_current_test.line_number), LOG_LEVEL_FAIL_ONLY)
+	if(_current_test != null):
+		p('  at line ' + str(_current_test.line_number), LOG_LEVEL_FAIL_ONLY)
 
 #-------------------------------------------------------------------------------
 #Pass an assertion.
