@@ -66,6 +66,10 @@ var _yield_between = {
 	tests_since_last_yield = 0
 }
 
+var types = {}
+
+
+
 var _set_yield_time_called = false
 # used when yielding to gut instead of some other 
 # signal.  Start with set_yield_time()
@@ -123,6 +127,38 @@ func _set_anchor_bottom_left(obj):
 	obj.set_anchor(MARGIN_TOP, ANCHOR_END)
 	obj.set_anchor(MARGIN_TOP, ANCHOR_END)
 
+func _init_types_dictionary():
+	types[0] = 'TYPE_NIL'
+	types[1] = 'Bool'
+	types[2] = 'Int'
+	types[3] = 'Float/Real'
+	types[4] = 'String'
+	types[5] = 'Vector2'
+	types[6] = 'Rect2'
+	types[7] = 'Vector3'
+	types[8] = 'Matrix32'
+	types[9] = 'Plane'
+	types[10] = 'QUAT'
+	types[11] = 'AABB'
+	types[12] = 'Matrix3'
+	types[13] = 'Transform'
+	types[14] = 'Color'
+	types[15] = 'Image'
+	types[16] = 'Node Path'
+	types[17] = 'RID'
+	types[18] = 'Object'
+	types[19] = 'TYPE_INPUT_EVENT'
+	types[20] = 'Dictionary'
+	types[21] = 'Array'
+	types[22] = 'TYPE_RAW_ARRAY'
+	types[23] = 'TYPE_INT_ARRAY'
+	types[24] = 'TYPE_REAL_ARRAY'
+	types[25] = 'TYPE_STRING_ARRAY'
+	types[26] = 'TYPE_VECTOR2_ARRAY'
+	types[27] = 'TYPE_VECTOR3_ARRAY'
+	types[28] = 'TYPE_COLOR_ARRAY'
+	types[29] = 'TYPE_MAX'
+	
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 func setup_controls():
@@ -258,6 +294,7 @@ func _init():
 	add_user_signal(SIGNAL_TESTS_FINISHED)
 	add_user_signal(SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
 	add_user_signal('timeout')
+	_init_types_dictionary()
 
 #-------------------------------------------------------------------------------
 #Initialize controls
@@ -846,46 +883,55 @@ func select_script(script_name):
 # ASSERTS
 # 
 ################
-
+func _pass_if_datatypes_match(got, expected):
+	var passed = true
+	if(typeof(got) != typeof(expected) and got != null and expected != null):
+		_fail('Cannot compare ' + types[typeof(got)] + '[' + str(got) + '] to ' + types[typeof(expected)] + '[' + str(expected) + '].')
+		passed = false
+	return passed
 
 #-------------------------------------------------------------------------------
 #Asserts that the expected value equals the value got.
 #-------------------------------------------------------------------------------
 func assert_eq(got, expected, text=""):
 	var disp = "[" + str(got) + "] expected to equal [" + str(expected) + "]:  " + text
-	if(expected != got):
-		_fail(disp)
-	else:
-		_pass(disp)
+	if(_pass_if_datatypes_match(got, expected)):
+		if(expected != got):
+			_fail(disp)
+		else:
+			_pass(disp)
 
 #-------------------------------------------------------------------------------
 #Asserts that the value got does not equal the "not expected" value.  
 #-------------------------------------------------------------------------------
 func assert_ne(got, not_expected, text=""):
 	var disp = "[" + str(got) + "] expected to be anything except [" + str(not_expected) + "]:  " + text
-	if(got == not_expected):
-		_fail(disp)
-	else:
-		_pass(disp)
+	if(_pass_if_datatypes_match(got, not_expected)):
+		if(got == not_expected):
+			_fail(disp)
+		else:
+			_pass(disp)
 #-------------------------------------------------------------------------------
 #Asserts got is greater than expected
 #-------------------------------------------------------------------------------
 func assert_gt(got, expected, text=""):
 	var disp = "[" + str(got) + "] expected to be > than [" + str(expected) + "]:  " + text
-	if(got > expected):
-		_pass(disp)
-	else:
-		_fail(disp)
+	if(_pass_if_datatypes_match(got, expected)):
+		if(got > expected):
+			_pass(disp)
+		else:
+			_fail(disp)
 
 #-------------------------------------------------------------------------------
 #Asserts got is less than expected
 #-------------------------------------------------------------------------------
 func assert_lt(got, expected, text=""):
 	var disp = "[" + str(got) + "] expected to be < than [" + str(expected) + "]:  " + text
-	if(got < expected):
-		_pass(disp)
-	else:
-		_fail(disp)
+	if(_pass_if_datatypes_match(got, expected)):
+		if(got < expected):
+			_pass(disp)
+		else:
+			_fail(disp)
 
 #-------------------------------------------------------------------------------
 #asserts that got is true
@@ -910,14 +956,16 @@ func assert_false(got, text=""):
 #-------------------------------------------------------------------------------
 func assert_between(got, expect_low, expect_high, text=""):
 	var disp = "[" + str(got) + "] expected to be between [" + str(expect_low) + "] and [" + str(expect_high) + "]:  " + text
-	if(expect_low > expect_high):
-		disp = "INVALID range.  [" + str(expect_low) + "] is not less than [" + str(expect_high) + "]"
-		_fail(disp)
-	else:
-		if(got < expect_low or got > expect_high):
+	
+	if(_pass_if_datatypes_match(got, expect_low) and _pass_if_datatypes_match(got, expect_high)):
+		if(expect_low > expect_high):
+			disp = "INVALID range.  [" + str(expect_low) + "] is not less than [" + str(expect_high) + "]"
 			_fail(disp)
 		else:
-			_pass(disp)
+			if(got < expect_low or got > expect_high):
+				_fail(disp)
+			else:
+				_pass(disp)
 
 #-------------------------------------------------------------------------------
 #Asserts that a file exists

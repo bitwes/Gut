@@ -197,10 +197,6 @@ func test_float_eq_fail():
 	gr.test_gut.assert_eq(.19, 1.9)
 	assert_fail(1)
 
-func test_float_eq_int():
-	gr.test_gut.assert_eq(int(1), float(1.0))
-	assert_pass(1)
-
 func test_float_ne():
 	gr.test_gut.assert_ne(0.9, .009)
 	assert_pass(1)
@@ -213,11 +209,6 @@ func test_fail_compare_float_cast_as_int():
 	# int cast will make it 0
 	gr.test_gut.assert_eq(int(0.5), 0.5)
 	assert_fail(1)
-	
-func test_int_math_ne_float():
-	var i = 2
-	gr.test_gut.assert_ne(5 / i,  2.5)
-	assert_pass(1)
 	
 func test_cast_int_math_eq_float():
 	var i = 2
@@ -404,6 +395,34 @@ func test_delete_all_files_in_a_directory():
 	
 	assert_pass(2, 'both files should not exist')
 
+#------------------------------
+# Datatype comparison fail.
+#------------------------------
+func test_dt_string_number_eq():
+	gr.test_gut.assert_eq('1', 1)
+	assert_fail(1)
+
+func test_dt_string_number_ne():
+	gr.test_gut.assert_ne('2', 1)
+	assert_fail(1)
+
+func test_dt_string_number_assert_gt():
+	gr.test_gut.assert_gt('3', 1)
+	assert_fail(1)
+
+func test_dt_string_number_func_assert_lt():
+	gr.test_gut.assert_lt('1', 3)
+	assert_fail(1)
+
+func test_dt_string_number_func_assert_between():
+	gr.test_gut.assert_between('a', 5, 6)
+	gr.test_gut.assert_between(1, 2, 'c')
+	assert_fail(2)
+
+func test_dt_can_compare_to_null():
+	gr.test_gut.assert_ne(HasFixedProcessMethod.new(), null)
+	gr.test_gut.assert_ne(null, HasFixedProcessMethod.new())
+	assert_pass(2)
 
 #------------------------------
 #Misc tests
