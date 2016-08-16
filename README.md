@@ -1,9 +1,20 @@
-### What is this repository for? ###
-GUT (Godot Unit Test) is a utility for writing unit tests in Godot's scripting language.  The premise is that the gut.gd script will run other scripts that contain tests and asserts and then reports the status of said tests and asserts.  This is all done through godot using a scene you create to run the tests.  Once your scene is in place and you've coded up a GUT instance to run your test scripts, you simply run the scene.  This project illustrates using GUT to run tests, some sample tests, and the one required script, gut.gd, which is located in /scripts/.
+# What is this repository for? #
+GUT (Godot Unit Test) is a utility for writing unit tests for your Godot Engine game using the built in scripting language gdscript.
 
-Sometimes the best tutorial is to dive right in, so to that end you should read through the main.gd script for illustrations on running scripts and setting the various options available.  There are various test scripts that illustrate performing assertions and printing messages.  There's even the tests that were created to test GUT itself.  They can be found in gut_tests.gd.
+# Quick Start #
+You just want to write some tests, so here you go.
 
-### Gut Methods ###
+1.  Copy the gut.gd script from this project to your `res://scripts` directory.
+2.  Create a directory to store your unit tests, such as `res://unit_tests` or `res://tests/unit` or `res://i_will_call_it_what_i_want`.
+3.  Create a new Scene to run your unit tests and add in a Node2D object to the scene tree.
+4.  Take the unit_tests.gd script from the templates directory in this project and put it into yours and set the script for the Node2D in your scene to be the script.
+5.  Copy the unit_test_template.gd script from the templates directory to whatever you called your unit test directory.
+6.  Make sure the line in the unit_tests.gd that has `add_directory` is pointing to where your unit tests are, and then run the scene.
+7.  Enjoy seeing your first pending test.  No go code you up some more tests and have fun!
+
+Or if you have access to a bash prompt, then just call the gut_init.sh script and tell it where your project is.  It'll put everything where it should be...Man, wouldn't it be great if I made that thing?  Maybe sometime soon.
+
+### Reference Section ###
 
 __Setting up the tester__
 
@@ -20,8 +31,8 @@ __Setting up the tester__
 * `get/set_should_print_to_console(should)` accessors for printing to console
 * `get_result_text()` returns all the text contained in the gui
 * `clear_text()` clears the text in the gui
-* `set_ignore_pause_before_teardown(should_ignore)` causes gui to disregard and calls to pause_before_teardown
-* `set_yield_between_tests(should)` will pause briefly between each test so that you can see progress in the gui.  Should not be used in versions earlier than 1.1
+* `set_ignore_pause_before_teardown(should_ignore)` causes gui to disregard any calls to pause_before_teardown
+* `set_yield_between_tests(should)` will pause briefly between every 5 tests so that you can see progress in the gui.
 * `get/set_log_level(level)` see section on log level for list of values.
 
 __Asserting things__
