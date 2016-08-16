@@ -185,6 +185,45 @@ func test_between_with_number_at_low_end():
 func test_between_with_invalid_number_range():
 	gr.test_gut.assert_between(4, 8, 0, "Should fail")
 	assert_fail(1, '8 is starting number and is not less than 0')
+
+#------------------------------
+# float tests
+#------------------------------
+func test_float_eq():
+	gr.test_gut.assert_eq(1.0, 1.0)
+	assert_pass(1)
+
+func test_float_eq_fail():
+	gr.test_gut.assert_eq(.19, 1.9)
+	assert_fail(1)
+
+func test_float_eq_int():
+	gr.test_gut.assert_eq(int(1), float(1.0))
+	assert_pass(1)
+
+func test_float_ne():
+	gr.test_gut.assert_ne(0.9, .009)
+	assert_pass(1)
+
+func test_cast_float_eq_pass():
+	gr.test_gut.assert_eq(float('0.92'), 0.92)
+	assert_pass(1)
+
+func test_fail_compare_float_cast_as_int():
+	# int cast will make it 0
+	gr.test_gut.assert_eq(int(0.5), 0.5)
+	assert_fail(1)
+	
+func test_int_math_ne_float():
+	var i = 2
+	gr.test_gut.assert_ne(5 / i,  2.5)
+	assert_pass(1)
+	
+func test_cast_int_math_eq_float():
+	var i = 2
+	gr.test_gut.assert_eq(5 / float(i), 2.5)
+	assert_pass(1)
+
 #------------------------------
 #string tests
 #------------------------------
