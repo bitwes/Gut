@@ -86,17 +86,15 @@ The "p" method allows you to print information out indented under the test outpu
 GUT contains a few utility methods to ease the testing of file creation/deletion.  
 
 * `file_touch(path)` Creates a file at the designated path.
-* `file_delete(path)` Deletes a file at the disgnated path.
+* `file_delete(path)` Deletes a file at the desgnated path.
 * `is_file_empty(path)` Returns true if the file at the path is empty, false if not.
 * `directory_delete_files(path)` Deletes all files at a given path.  Does not delete sub directories or any files in any sub directories.
 
 
 #### Simulate ####
-The simulate method will call the \_process or \_fixed_process on a tree of objects.  It takes in the base object, the number of times to call the methods and the delta value to be passed to \_process or \_fixed_process (if the object has one).  This will only cause code directly related to the \_process and \_fixed_process methods to run.  Timers will not fire since the main loop of the game is not actually running.  Creating a test that yields is a better solution for testing such things.
+The simulate method will call the `_process` or `_fixed_process` on a tree of objects.  It takes in the base object, the number of times to call the methods and the delta value to be passed to `_process` or `_fixed_process` (if the object has one).  This will only cause code directly related to the `_process` and `_fixed_process` methods to run.  Timers will not fire since the main loop of the game is not actually running.  Creating a test that yields is a better solution for testing such things.
 
-GUT also supports yielding to a test, but this does not work very well in 1.0.  See the section on yielding for more information.
 Example
-
 ``` python
 
 # Given that SomeCoolObj has a _process method that incrments a_number by 1
