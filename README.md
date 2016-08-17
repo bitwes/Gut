@@ -1,20 +1,18 @@
-# What is this repository for? #
+# What is this repository for?
 GUT (Godot Unit Test) is a utility for writing unit tests for your Godot Engine game using the built in scripting language gdscript.
 
-# Quick Start #
-You just want to write some tests, so here you go.
+For the purposes of this documentation it is assumed that gut.gd and gut_cmdln.gd will be located in res://scripts and that all unit tests will be in res://test/unit.  You can feel free to put them anywhere you want but this makes my typing easier.  It's kinda like how Street Fighter always assumes you are on the left when you look at the moves list.  Also the templates use these directories so it'll be harder to not use them (but it can be done).
 
-1.  Copy the gut.gd script from this project to your `res://scripts` directory.
-2.  Create a directory to store your unit tests, such as `res://unit_tests` or `res://tests/unit` or `res://i_will_call_it_what_i_want`.
-3.  Create a new Scene to run your unit tests and add in a Node2D object to the scene tree.
-4.  Take the unit_tests.gd script from the templates directory in this project and put it into yours and set the script for the Node2D in your scene to be the script.
-5.  Copy the unit_test_template.gd script from the templates directory to whatever you called your unit test directory.
-6.  Make sure the line in the unit_tests.gd that has `add_directory` is pointing to where your unit tests are, and then run the scene.
-7.  Enjoy seeing your first pending test.  No go code you up some more tests and have fun!
+# Install
 
-Or if you have access to a bash prompt, then just call the gut_init.sh script and tell it where your project is.  It'll put everything where it should be...Man, wouldn't it be great if I made that thing?  Maybe sometime soon.
+1.  Copy the `gut.gd` script from this project to your `res://scripts` directory.
+1.  Create a directory to store your unit tests, we're going to use  `res://test/unit`.
+1.  Copy `test.gd` from the templates directory into this directory.
+1.  Create a new Scene to run your unit tests and add in a `Node2D` object to the scene tree.
+1.  Copy `gut_main.gd` out of the templates directory, put it wherever you want and set the script property of the Node2D object to be that script.  Really, for this file I don't care where you put it, but `res://scripts` is as good a place as any.
+1.  Now run the Scene and enjoy seeing your first pending test.
 
-### Creating Tests ###
+# Creating Tests
 
 All test scripts must extend the Test class in gut.gd
 * `extends "res://scripts/gut.gd".Test`
@@ -66,30 +64,11 @@ func test_something_else():
 	assert_true(false, "didn't work")
 
 ```
-### Reference Section ###
+# Method List
 
-__Setting up the tester__
-
-* `add_script(script, select_this_one=false)` add a script to be tetsted with test_scripts
-* `add\_directory(path, prefix='test_', suffix='.gd')` add a directory of test scripts that start with prefix and end with suffix.  Subdirectories not included.
-* `test_scripts()` run all scripts added with add_script or add_directory
-* `test_script(script)` runs a single script immediately.
-* `select_script(script_name)` sets a script added with add_script or add_directory to be initially selected.  This allows you to run one script instead of all the scripts.  This will select the first script it finds that contains the specified string.
-* `get_test_count()` return the number of tests run
-* `get_assert_count()` return the number of assertions that were made
-* `get_pass_count()` return the number of tests that passed
-* `get_fail_count()` return the number of tests that failed
-* `get_pending_count()` return the number of tests that were pending
-* `get/set_should_print_to_console(should)` accessors for printing to console
-* `get_result_text()` returns all the text contained in the gui
-* `clear_text()` clears the text in the gui
-* `set_ignore_pause_before_teardown(should_ignore)` causes gui to disregard any calls to pause_before_teardown
-* `set_yield_between_tests(should)` will pause briefly between every 5 tests so that you can see progress in the gui.
-* `get/set_log_level(level)` see section on log level for list of values.
-
-__Asserting things__
-
-* `p(text, level=0, indent=0)` print info to the gui and console
+### Methods for Use in Tests
+These methods should be used in tests to make assertions about the things being tested.  These methods are available to anything that inherits from the Test class (`extends "res://scripts/gut.gd".Test`)
+* `pending(text="")` flag a test as pending, the optional message is printed in the GUI
 * `assert_eq(got, expected, text="")` assert got == expected and prints optional text
 * `assert_ne(got, not_expected, text="")` asserts got != expected and prints optional text
 * `assert_gt(got, expected, text="")` assserts got > expected
@@ -101,49 +80,66 @@ __Asserting things__
 * `assert_file_does_not_exist(file_path)` asserts a file does not exist at the specified path
 * `assert_file_empty(file_path)` asserts the specified file is empty
 * `assert_file_not_empty(file_path)` asserts the specified file is not empty
-* `assert_get_set_methods(obj, property, default, set_to)` assert that object has get_<property> and set_<property> methods.  Also asserts that the intial call to get_<property> returns the value in default and that calling set_<property> sets the value to set_to and that set_to is returned by a subsequent call to get_<property>.  For example, calling  `assert_get_set_methods(some_obj, 'description', 'default', 'new description')` will verify `some_obj` has a `get_description` and `set_description` method and that the first call to `get_description()` returns 'default' and that a call to `set_description('new description')` then a call to `get_description()` will return 'new_description'.
-* `pending(text="")` flag a test as pending
+* `assert_get_set_methods(obj, property, default, set_to)`
+This guy warrants his own section.  I found that making tests for most getters and setters was repetitious and annoying.  Enter `assert_get_set_methods`.  This assertion handles 80% of your getter and setter testing needs.  Given an object and a property name it will verify:
+ * The object has a method called `get_<PROPERTY_NAME>`
+ * The object has a method called `set_<PROPERTY_NAME>`
+ * The method `get_<PROPERTY_NAME>` returns the expected default value when first called.
+ * Once you set the property, the `get_<PROPERTY_NAME>`will return the value passed in.
+* `gut.p(text, level=0, indent=0)` print info to the GUI and console (if enabled.)
 
-__Yielding during a test__
+* `gut.pause_before_teardown()` This method will cause Gut to pause before it moves on to the next test.  This is useful for debugging, for instance if you want to investigate the screen or anything else after a test has finished executing.  See also `set_ignore_pause_before_teardown`
+* `yield_for(time_in_seconds)` Basically this simplifies the code needed to pause the test execution for a number of seconds.  This is useful if your test requires things to play out in real time before making an assertion.  There are more details in the Yielding section.  It is designed to be used with the `yield` built in.  The following example will pause your test execution (and only the test execution) for 5 seconds before continuing.  You must call `end_test()` in any test that has a yield in it or execution will never move
+  * `yield(yield_for(5), YIELD)`
+past the current test.
+* `end_test()` This must be called in any test that has a `yield` in it so that Gut knows when the test has completed.
 
-_See the section on yielding for more information._
+### Methods for Configuring the Execution of Tests
+These methods would be used inside the Scene's script (`templates/gut_main.gd`) to load and execute scripts as well as inspect the results of a run and change how Gut's behavior.  These methods must all be called on the Gut obect that was created.  In the case of the template, this would be `tester`.
 
-* `pause_before_teardown()` causes the gui to pause before it runs the teardown method.  You must press the "continue" button on the gui to continue testing.  Can be by-passed using the set_ignore_pause_before_teardown method.
-* `set_yield_time(time)` Sets the amount of time to wait when yielding to gut.  See section on yielding.
-* `end_yielded_test()` Signifies a test that yielded has ended.  Must be called after yielding during a test or the gui will sit there and do nothing and you will be confused and angry.
-* `simulate(obj, times, delta)` Runs the \_process and/or \_fixed_process method on the passed in object, along with any of it's children and their children and so on and so forth.  This will call the methods x times and pass them a value of delta each time they are called.
+* `add_script(script, select_this_one=false)` add a script to be tetsted with test_scripts
+* `add_directory(path, prefix='test_', suffix='.gd')` add a directory of test scripts that start with prefix and end with suffix.  Subdirectories not included.
+* `test_scripts()` run all scripts added with add_script or add_directory.  If you leave this out of your script then you can select which script will run, but you must press the "run" button to start the tests.
+* `test_script(script)` runs a single script immediately.
+* `select_script(script_name)` sets a script added with `add_script` or `add_directory` to be initially selected.  This allows you to run one script instead of all the scripts.  This will select the first script it finds that contains the specified string.
+* `get_test_count()` return the number of tests run
+* `get_assert_count()` return the number of assertions that were made
+* `get_pass_count()` return the number of tests that passed
+* `get_fail_count()` return the number of tests that failed
+* `get_pending_count()` return the number of tests that were pending
+* `get/set_should_print_to_console(should)` accessors for printing to console
+* `get_result_text()` returns all the text contained in the GUI
+* `clear_text()` clears the text in the GUI
+* `set_ignore_pause_before_teardown(should_ignore)` causes GUI to disregard any calls to pause_before_teardown.  This is useful when you want to run in a batch mode.
+* `set_yield_between_tests(should)` will pause briefly between every 5 tests so that you can see progress in the GUI.  If this is left out, it  can seem like the program has hung when running longer test sets.
+* `get/set_log_level(level)` see section on log level for list of values.
 
-__File manipulation convenience methods__
+# Extras
 
-* `file_touch(path)` create an empty file if it doesn't exist.
-* `file_delete(path)` delete a file
-* `is_file_empty(path)` checks if a file is empty
-* `directory_delete_files` deletes all files in a directory.  does not delete subdirectories or any files in them.
+## File Manipulation Methods for Tests
+Use these methods in a test or setup/teardown method to make file related testing easier.  These all exist on the Gut object so they must be prefixed with `gut`
+* `gut.file_touch(path)` create an empty file if it doesn't exist.
+* `gut.file_delete(path)` delete a file
+* `gut.is_file_empty(path)` checks if a file is empty
+* `gut.directory_delete_files` deletes all files in a directory.  does not delete subdirectories or any files in them.
 
-#### Watching tests as they execute ####
+## Watching tests as they execute
 When running longer tests it can appear as though the program has hung.  To address this and see the tests as they execute a yield was added between tests.  To enable this feature call `set_yield_between_tests(true)` before running your tests.  This feature is disabled by default since it does add a small amount of time to running your tests (about .01 seconds per 5 tests)
 
-#### Output Detail ####
-The level of detail that is printed to the screen can be changed using the slider on the dialog or by calling set_log_level with one of the following constants defined in Gut
+## Output Detail
+The level of detail that is printed to the screen can be changed using the slider on the dialog or by calling `set_log_level` with one of the following constants defined in Gut
 
 * LOG_LEVEL_FAIL_ONLY (0)
 * LOG_LEVEL_TEST_AND_FAILURES (1)
 * LOG_LEVEL_ALL_ASSERTS (2)
 
-#### Printing info ####
-The "p" method allows you to print information out indented under the test output.  It has an optional 2nd parameter that sets which log level to display it at.  Use one of the constants in the section above to set it.  The default is LOG_LEVEL_FAIL_ONLY which means the output will always be visible.  
+## Printing info
+The `p` method allows you to print information out indented under the test output.  It has an optional 2nd parameter that sets which log level to display it at.  Use one of the constants in the section above to set it.  The default is LOG_LEVEL_FAIL_ONLY which means the output will always be visible.  
 
 
-#### Working with Files ####
-GUT contains a few utility methods to ease the testing of file creation/deletion.  
+# Advanced Testing
 
-* `file_touch(path)` Creates a file at the designated path.
-* `file_delete(path)` Deletes a file at the desgnated path.
-* `is_file_empty(path)` Returns true if the file at the path is empty, false if not.
-* `directory_delete_files(path)` Deletes all files at a given path.  Does not delete sub directories or any files in any sub directories.
-
-
-#### Simulate ####
+## Simulate
 The simulate method will call the `_process` or `_fixed_process` on a tree of objects.  It takes in the base object, the number of times to call the methods and the delta value to be passed to `_process` or `_fixed_process` (if the object has one).  This will only cause code directly related to the `_process` and `_fixed_process` methods to run.  Timers will not fire since the main loop of the game is not actually running.  Creating a test that yields is a better solution for testing such things.
 
 Example
@@ -170,8 +166,16 @@ func test_does_something_each_loop():
 	assert_eq(other_obj.a_number, 20, 'Since a_number is incremented in _process, it should be 20 now')
 
 ```
+__Yielding during a test__
 
-#### Yielding during a test ####
+_See the section on yielding for more information._
+
+* `pause_before_teardown()` causes the GUI to pause before it runs the teardown method.  You must press the "continue" button on the GUI to continue testing.  Can be by-passed using the set_ignore_pause_before_teardown method.
+* `set_yield_time(time)` Sets the amount of time to wait when yielding to gut.  See section on yielding.
+* `end_yielded_test()` Signifies a test that yielded has ended.  Must be called after yielding during a test or the GUI will sit there and do nothing and you will be confused and angry.
+* `simulate(obj, times, delta)` Runs the \_process and/or \_fixed_process method on the passed in object, along with any of it's children and their children and so on and so forth.  This will call the methods x times and pass them a value of delta each time they are called.
+
+## Yielding during a test
 
 You can yield during a test to allow your objects to run their course as they would during an actual run of the game.  This allows you to test functionality in real time as it would occur during game play.  This does however slow your tests down since you have to wait for the game do what you expect in real time and there is no way of speeding things up.  
 
@@ -199,74 +203,8 @@ func test_wait_for_a_bit():
 	gut.end_yielded_test()
 ```
 
-### Setup ###
 
-* To setup GUT in your own project, simply copy the gut.gd script into your project somewhere.  Probably to /scripts, that's what will be used for the rest of this documentation, but it doesn't have to be there for any specific reason.
-* You're done, go write some tests.
-
-### Running Tests ###
-
-#### From Godot
-This method is a little more involved but when something breaks you have easy access to the editor.  To get started faster, skip down to the "From command line" section.
-
-You should create a scene that you can run that will execute all your test scripts for your project.  You can run the scripts one by one and have the output sent to the console or you can add in the scripts, run them together and then use the GUI to rerun or examine the results with handy dandy coloring and buttons.
-
-There are 3 ways to add scripts to be run, feel free to use any combination of these:
-
-* `test_script` runs a single test that has been passed to it.  No frills, prints to the console.
-* `add_script` adds a script to the list of scripts to be run.  use `test_scripts` method to run them all in a row.
-* `add_directory` Similar to add_script but adds all the test scripts in the specified directory.  This will not add tests found in subdirectories but can be called multiple times.  By default it searches for files that start with 'test_' and end with '.gd'.  This can be changed by specify the option prefix and suffix parameters `add_directory('res://unit_tests', 'some_prefix', '.res')`
-
-To cut down on clicks, the `add_script` method takes an optional true/false flag that allows you flag a test to be run initially.  You can also use `select_script` method to select a script that was added with add_script or add_directory.  `select_script` will find the first script that contains the string you specify and mark it as the script to be run initially.
-
-__One script at a time__
-
-The test script method will run a single script that you pass it and send the output to the console.  
-
-Example of one line of code to run one test script and send the output to console:
-``` python
-extends Node2d
-func_ready():
-    load('res://scripts/gut.gd').new().test_script('res://scripts/sample_tests.gd')
-```
-
-
-__Multiple Scripts__
-
-Example where we add the scripts to be tested then call test_scripts().  This will run all the scripts.  Since the tester has been added as a child of the scene, you will see the GUI when you run the scene.
-
-``` python
-extends Node2D
-
-func _ready():
-	# get an instance of gut
-	var tester = load('res://scripts/gut.gd').new()
-	# Move it down some so you can see the dialog box bar at top
-	tester.set_pos(0, 50)
-	add_child(tester)
-
-	# stop it from printing to console, just because
-	tester.set_should_print_to_console(false)
-
-	# Add all the scripts in a directory
-	tester.add_directory('res://unit_tests')
-
-	#Add additional scripts one at a time.
-	tester.add_script('res://unit_tests/gut_tests.gd')
-	tester.add_script('res://unit_tests/sample_tests.gd')
-	# by passing true to the optional 2nd parameter, only this script
-	# will be run when test_scripts() is called and it will be selected
-	# in the GUI dropdown.  All other scripts will still be in the drop
-	# down as well.  Makes it a little easier when trying to run just
-	# one script.
-	tester.add_script('res://scripts/another_sample.gd', true)
-	tester.add_script('res://scripts/all_passed.gd')
-	tester.test_scripts()
-```
-...and the GUI looks like:
-![gut.png](https://bitbucket.org/repo/oeKM6G/images/3049099836-gut.png)
-
-#### From command line
+# Running Gut from the Command Line
 Also supplied in this repo is the gut_cmdln.gd script that can be run from the command line so that you don't have to create a scene to run your tests.  One of the main reasons to use this approach instead of going through the editor is that you get to see error messages generated by Godot in the context of your running tests.  You also see any `print` statements you put in  your code in the context of all the Gut generated output.  It's a bit quicker to get started and is a bit cooler if I do say so.  The biggest downside is that debugging your code/tests is a little more difficult since you won't be able to interact with the editor when something blows up.
 
 To run the command line tool, place gut.gd and gut_cmdln.gd in the scripts directory at the root of your project (if that doesn't work for you, you can put it anywhere else but you have to use the -gutloc option to tell it where it is).  From the command line, at the root of your project, use the following command to run the script.  Use the options below to run tests.
@@ -334,7 +272,7 @@ At:  main\main.cpp:1260
 I got this one when I accidentally put a space instead of an "=" after -gselect.
 
 
-### Who do I talk to? ###
+# Who do I talk to?
 You can talk to me, Butch Wesley
 
 * Bitbucket:  bitwes
