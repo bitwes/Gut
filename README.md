@@ -14,6 +14,58 @@ You just want to write some tests, so here you go.
 
 Or if you have access to a bash prompt, then just call the gut_init.sh script and tell it where your project is.  It'll put everything where it should be...Man, wouldn't it be great if I made that thing?  Maybe sometime soon.
 
+### Creating Tests ###
+
+All test scripts must extend the Test class in gut.gd
+* `extends "res://scripts/gut.gd".Test`
+
+Each test script has optional setup and teardown methods that are called at various stages of execution.  They take no parameters.
+ * `setup()`:  Ran before each test
+ * `teardown()`:  Ran after each test
+ * `prerun_setup()`:  Ran before any test is run
+ * `postrun_teardown()`:  Ran after all tests have run
+
+All tests in the test script must start with the prefix `test_` in order for them to be run.  The methods must not have any parameters.
+* `func test_this_is_only_a_test():`
+
+Each test should perform at least one assert or call `pending` to indicate the test hasn't been implemented yet.
+
+Here's a sample test script:
+
+``` python
+# ##############################################################################
+# This script assumes that gut.gd is located in 'res://scripts'.  Other than
+# that it should be pretty straight forward.
+# ##############################################################################
+extends "res://scripts/gut.gd".Test
+func setup():
+	gut.p("ran setup", 2)
+
+func teardown():
+	gut.p("ran teardown", 2)
+
+func prerun_setup():
+	gut.p("ran run setup", 2)
+
+func postrun_teardown():
+	gut.p("ran run teardown", 2)
+
+func test_assert_eq_number_not_equal():
+	assert_eq(1, 2, "Should fail.  1 != 2")
+
+func test_assert_eq_number_equal():
+	assert_eq('asdf', 'asdf', "Should pass")
+
+func test_assert_true_with_true():
+	assert_true(true, "Should pass, true is true")
+
+func test_assert_true_with_false():
+	assert_true(false, "Should fail")
+
+func test_something_else():
+	assert_true(false, "didn't work")
+
+```
 ### Reference Section ###
 
 __Setting up the tester__
@@ -151,66 +203,6 @@ func test_wait_for_a_bit():
 
 * To setup GUT in your own project, simply copy the gut.gd script into your project somewhere.  Probably to /scripts, that's what will be used for the rest of this documentation, but it doesn't have to be there for any specific reason.
 * You're done, go write some tests.
-
-### Creating Tests ###
-
-To create a test script
-
-* Create a new GDScript
-* Extend the Test class in gut.gd (extends "res://scripts/gut.gd".Test).
-* Implement the setup/teardown methods that you may need, there are four, none of which are required.
-* * setup:  Ran before each test
-* * teardown:  Ran after each test
-* * prerun_setup:  Ran before any test is run
-* * postrun_teardown:  Ran after all tests have run
-* Start making test functions
-* * Test functions must start with "test_" [func test_some_small_aspect_of_this_cool_thing_i_made():]
-* * Tests cannot have a parameter
-* * Tests should perform at least one assert.  See the summary for a list of asserts.
-
-Here's a sample test script:
-
-``` python
-################################################################################
-# All the magic happens with the extends.  This gets you access to all the gut
-# asserts and the overridable setup and teardown methods.
-#
-# The path to this script is passed to an instance of the gut script when calling
-# test_script
-#
-#WARNING
-#	DO NOT assign anything to the gut variable.  This is set at runtime by the gut
-#	script.  Setting it to something will cause everything to go crazy go nuts.
-################################################################################
-extends "res://scripts/gut.gd".Test
-func setup():
-	gut.p("ran setup", 2)
-
-func teardown():
-	gut.p("ran teardown", 2)
-
-func prerun_setup():
-	gut.p("ran run setup", 2)
-
-func postrun_teardown():
-	gut.p("ran run teardown", 2)
-
-func test_assert_eq_number_not_equal():
-	gut.assert_eq(1, 2, "Should fail.  1 != 2")
-
-func test_assert_eq_number_equal():
-	gut.assert_eq('asdf', 'asdf', "Should pass")
-
-func test_assert_true_with_true():
-	gut.assert_true(true, "Should pass, true is true")
-
-func test_assert_true_with_false():
-	gut.assert_true(false, "Should fail")
-
-func test_something_else():
-	gut.assert_true(false, "didn't work")
-
-```
 
 ### Running Tests ###
 
