@@ -1062,7 +1062,6 @@ func end_yielded_test():
 #Clears the text of the text box.  This resets all counters.
 #-------------------------------------------------------------------------------
 func clear_text():
-	_init_run()
 	_ctrls.text_box.set_text("")
 	_ctrls.text_box.clear_colors()
 	update()
