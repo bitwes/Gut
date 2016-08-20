@@ -2,11 +2,21 @@
 GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.  It allows you to write tests for your gdscript in gdscript.
 
 # Table of Contents
- 0. [Install](#install)
- 0. [Creating Tests](#creating_tests)
- 0. [Method List](#Method-List)
-   0.  [Test Methods](#Methods-for-Use-in-Tests)
-   0.  [Methods for Configuring Test Execution](#)
+  0.  [Install](#install)
+  0.  [Creating Tests](#creating_tests)
+  0.  [Method List](#method_list)
+    0.  [Test Methods](#test_methods)
+    0.  [Methods for Configuring Test Execution](#gut_methods)
+  0.  [Extras](#extras)
+    0.  [Strict Type Checking](#strict)
+    0.  [File Manipulation](#files)
+    0.  [Watching Tests](#watch)
+    0.  [Output Detail](#output_detail)
+    0.  [Printing](#printing)
+  0. [Advanced](#advanced)
+    0.  [Simulate](#simulate)
+    0.  [Yielding](#yielding)
+  0. [Command Line Interface](#command_line)
 
 # <a name="install"> Install
 For the purposes of this documentation it is assumed all the Gut pieces will go in `res://test/gut` and that all unit tests will be in `res://test/unit`.  This keeps the test code all in one place and avoids any name clashes.  Who knows, someone probably has a game that has a character that is actually a gut.  It runs around digesting things and...well, that's probably it.  With this structure the testing script gut.gd and their character class gut.gd won't clash.
@@ -92,9 +102,9 @@ func test_something_else():
 	assert_true(false, "didn't work")
 
 ```
-# Method List
+# <a name="method_list"> Method List
 
-### Methods for Use in Tests
+### <a name="test_methods"> Methods for Use in Tests
 These methods should be used in tests to make assertions about the things being tested.  These methods are available to anything that inherits from the Test class (`extends "res://test/gut/gut.gd".Test`)
 * `pending(text="")` flag a test as pending, the optional message is printed in the GUI
 * `assert_eq(got, expected, text="")` assert got == expected and prints optional text
@@ -121,7 +131,7 @@ This guy warrants his own section.  I found that making tests for most getters a
   * `yield(yield_for(5), YIELD)`
 * `end_test()` This must be called in any test that has a `yield` in it (regardless of what is yielded to) so that Gut knows when the test has completed.
 
-### Methods for Configuring the Execution of Tests
+### <a name="gut_methods"> Methods for Configuring the Execution of Tests
 These methods would be used inside the Scene's script (`templates/gut_main.gd`) to load and execute scripts as well as inspect the results of a run and change how Gut behaves.  These methods must all be called on the Gut object that was instantiated.  In the case of the provided template, this would be `tester`.
 
 * `add_script(script, select_this_one=false)` add a script to be tetsted with test_scripts
@@ -142,37 +152,37 @@ These methods would be used inside the Scene's script (`templates/gut_main.gd`) 
 * `get/set_log_level(level)` see section on log level for list of values.
 * `disable_strict_datatype_checks(true)` disables strict datatype checks.  See section on "Strict type checking" before disabling.
 
-# Extras
+# <a name="extras"> Extras
 
-## Strict type checking
+##  <a name="strict"> Strict type checking
 Gut performs type checks in the asserts where it applies.  This is done for a few reasons.  The first is that invalid comparisons can cause runtime errors which will stop your tests from running.  With the type checking enabled your test will fail instead of crashing.  The other reason is that you can get false positives/negatives when comparing things like a Real/Float and an Integer.  With strict type checking enabled these become a lot more obvious.  It's also a sanity check to make sure your classes are using the expected types of values which can save time in the long run.
 
 You can disable this behavior if you like by calling `tester.disable_strict_datatype_checks(true)` inside `gut_main.gd`.
 
-## File Manipulation Methods for Tests
+##  <a name="files"> File Manipulation Methods for Tests
 Use these methods in a test or setup/teardown method to make file related testing easier.  These all exist on the Gut object so they must be prefixed with `gut`
 * `gut.file_touch(path)` create an empty file if it doesn't exist.
 * `gut.file_delete(path)` delete a file
 * `gut.is_file_empty(path)` checks if a file is empty
 * `gut.directory_delete_files` deletes all files in a directory.  does not delete subdirectories or any files in them.
 
-## Watching tests as they execute
+##  <a name="watch"> Watching tests as they execute
 When running longer tests it can appear as though the program has hung.  To address this and see the tests as they execute a yield was added between tests.  To enable this feature call `set_yield_between_tests(true)` before running your tests.  This feature is disabled by default since it does add a small amount of time to running your tests (about .01 seconds per 5 tests)
 
-## Output Detail
+##  <a name="output_detail"> Output Detail
 The level of detail that is printed to the screen can be changed using the slider on the dialog or by calling `set_log_level` with one of the following constants defined in Gut
 
 * LOG_LEVEL_FAIL_ONLY (0)
 * LOG_LEVEL_TEST_AND_FAILURES (1)
 * LOG_LEVEL_ALL_ASSERTS (2)
 
-## Printing info
+##  <a name="printing"> Printing info
 The `p` method allows you to print information out indented under the test output.  It has an optional 2nd parameter that sets which log level to display it at.  Use one of the constants in the section above to set it.  The default is LOG_LEVEL_FAIL_ONLY which means the output will always be visible.  
 
 
-# Advanced Testing
+#  <a name="advanced"> Advanced Testing
 
-## Simulate
+## <a name="simulate"> Simulate
 The simulate method will call the `_process` or `_fixed_process` on a tree of objects.  It takes in the base object, the number of times to call the methods and the delta value to be passed to `_process` or `_fixed_process` (if the object has one).  This will only cause code directly related to the `_process` and `_fixed_process` methods to run.  Signals will be sent, methods will be called but timers, for example, will not fire since the main loop of the game is not actually running.  Creating a test that yields is a better solution for testing such things.
 
 Example
@@ -242,7 +252,7 @@ func test_does_something_each_loop():
                                            _fixed_process then it should be 20 now')
 
 ```
-## Yielding during a test
+##  <a name="yielding"> Yielding during a test
 
 You can yield during a test to allow your objects to run their course as they would during an actual run of the game.  This allows you to test functionality in real time or continue processing until some arbitrary signal is fired.  This does however slow your tests down since you have to wait for the game do what you expect in real time and there is no way of speeding things up.
 
@@ -272,7 +282,7 @@ func test_wait_for_a_bit():
 	end_test()
 ```
 
-# Running Gut from the Command Line
+#  <a name="command_line"> Running Gut from the Command Line
 Also supplied in this repo is the gut_cmdln.gd script that can be run from the command line so that you don't have to create a scene to run your tests.  One of the main reasons to use this approach instead of going through the editor is that you get to see error messages generated by Godot in the context of your running tests.  You also see any `print` statements you put in  your code in the context of all the Gut generated output.  It's a bit quicker to get started and is a bit cooler if I do say so.  The biggest downside is that debugging your code/tests is a little more difficult since you won't be able to interact with the editor when something blows up.
 
 To run the command line tool, place gut.gd and gut_cmdln.gd in the scripts directory at the root of your project (if that doesn't work for you, you can put it anywhere else but you have to use the -gutloc option to tell it where it is).  From the command line, at the root of your project, use the following command to run the script.  Use the options below to run tests.
