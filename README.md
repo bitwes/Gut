@@ -177,7 +177,7 @@ The level of detail that is printed to the screen can be changed using the slide
 * LOG_LEVEL_ALL_ASSERTS (2)
 
 ##  <a name="printing"> Printing info
-The `p` method allows you to print information out indented under the test output.  It has an optional 2nd parameter that sets which log level to display it at.  Use one of the constants in the section above to set it.  The default is LOG_LEVEL_FAIL_ONLY which means the output will always be visible.  
+The `gut.p` method allows you to print information out indented under the test output.  It has an optional 2nd parameter that sets which log level to display it at.  Use one of the constants in the section above to set it.  The default is `LOG_LEVEL_FAIL_ONLY` which means the output will always be visible.  
 
 
 #  <a name="advanced"> Advanced Testing
@@ -254,24 +254,23 @@ func test_does_something_each_loop():
 ```
 ##  <a name="yielding"> Yielding during a test
 
-You can yield during a test to allow your objects to run their course as they would during an actual run of the game.  This allows you to test functionality in real time or continue processing until some arbitrary signal is fired.  This does however slow your tests down since you have to wait for the game do what you expect in real time and there is no way of speeding things up.
+I'm not going to try and explain yielding here.  It's can be a bit confusing and [Godot does a pretty good job of it already](http://docs.godotengine.org/en/latest/reference/gdscript.html#coroutines).  Gut has support for yielding though, so you can yield at anytime in your test.  The one caveat is that you must tell Gut when your test has completed so it can continue running tests.  You do this by calling `end_test()`.  
 
-Yielding works by calling the Godot built-in `yield` method which takes in an object to yield to, and a signal which that object will emit.  Execution of the test will pause until that signal is emitted.  For example you could yield to a button's 'pressed' event, a timer's 'timeout' event, or a custom signal your object emits.
+When might you want to yield?  Yielding is very handy when you want to wait for a signal to occur instead of running for a finite amount of time.  For example, you could have your test yield until your character gets hit by something (`yield(my_char, 'hit')`).  An added bonus of this approach is that you can watch everything happen.  In your test you create your character, the object to hit it, and then watch the interaction play out.
 
-[You can find out more about `yield` on Godot's website](http://docs.godotengine.org/en/latest/reference/gdscript.html#coroutines)
-
+Here's an example of yielding to a custom signal.
 ``` python
 func test_yield_to_custom_signal():
 	my_object = ObjectToTest.new()
 	add_child(my_object)
 	yield(my_object, 'custom_signal')
-	assert_true(some_condition, 'After button pressed, this should be true')
+	assert_true(some_condition, 'After signal fired, this should be true')
 	end_test()
 ```
-Due to the nature of yielding, GUT cannot know when the actual test has finished.  You must notify GUT that a test that contains a yield has completed by calling `end_test()`.  For this reason, GUT will print out to the screen that it is currently waiting for a the `end_test` signal to let you know that it's not just sitting there doing nothing.  If this prints to the screen longer than you expect, then you've either yielded to a signal that may not fire or you forgot to call `end_test()` at then end of your test.
 
-In some cases you may not have a signal to wait on, but you do have an idea of how long it will take for a specific test to play out.  To make things easier in this situation GUT provides a timer that you can kick off and yield to.  You tell it how long to wait then yield to the GUT object like so:
+Another use case I have come across is when creating integration tests and you want to verify that a complex interaction ends with an expected result.  In this case you might have an idea of how long the interaction will take to play out but you don't have a signal that you can attach to.  Instead you want to pause your test execution until that time has elapsed.  For this, Gut has the `yield_for` method.  This method has a little magic in it, but all you really need to know is that the following line will pause your test execution for 5 seconds while the rest of your code executes as expected:  `yield(yield_for(5), YIELD)`.
 
+Here's an example of yielding for 5 seconds.
 ``` python
 func test_wait_for_a_bit():
 	my_object = ObjectToTest.new()
@@ -281,13 +280,22 @@ func test_wait_for_a_bit():
 	gut.assert_eq(my_object.some_property, 'some value', 'After waiting 5 seconds, this property should be set')
 	end_test()
 ```
+Sometimes it's also helpful to just watch things play out.  Yield is great for that, you just create a couple objects, set them to interact and then yield.  You can leave the yields in or take them out if your test passes without them.  You can also use the `pause_before_teardown` method that will pause test execution before it runs `teardown` and moves onto the next test.  This keeps the game loop running after the test has finished and you can see what everything looks like.
+
+### How Yielding and Gut Works
+For those that are interested, Gut is able to detect when a test has called yield because the method returns a special class back.  Gut itself will then `yield` to an internal timer and check to see if `end_test` has been called every second, if not it waits again.  It continues to do this until `end_test` has been called.  
+
+If you only yielded using `yield_for` then Gut would always know when to resume the test and could handle it itself.  You can yield to anything though and Gut cannot tell the difference.  Also, when you yield to something else Gut has no way of knowing when the method has continued so you have to tell it when you are done so it will stop waiting.  One side effect of this is that if you `yield` multiple times in the same test, Gut can't tell.  It continues to wait from the first yield and you won't see any additional "yield detected" outputs in the GUI or console.
+
+The `yield_for()` method and `YIELD` constant are some syntax sugar built into the `Test` object.  `yield` takes in an object and a signal.  The `yield_for` method kicks off a timer inside Gut that will run for however many seconds you passed in.  It also returns the Gut object so that `yield` has an object to yield to.  The `YIELD` constant contains the name of the signal that Gut emits when the timer finishes.
 
 #  <a name="command_line"> Running Gut from the Command Line
 Also supplied in this repo is the gut_cmdln.gd script that can be run from the command line so that you don't have to create a scene to run your tests.  One of the main reasons to use this approach instead of going through the editor is that you get to see error messages generated by Godot in the context of your running tests.  You also see any `print` statements you put in  your code in the context of all the Gut generated output.  It's a bit quicker to get started and is a bit cooler if I do say so.  The biggest downside is that debugging your code/tests is a little more difficult since you won't be able to interact with the editor when something blows up.
 
-To run the command line tool, place gut.gd and gut_cmdln.gd in the scripts directory at the root of your project (if that doesn't work for you, you can put it anywhere else but you have to use the -gutloc option to tell it where it is).  From the command line, at the root of your project, use the following command to run the script.  Use the options below to run tests.
-	`godot -d -s scirpts/gut_cmdln.gd`
-The -d option tells godot to run in debug mode which is helpful.  The -s option tells godot to run a script.
+From the command line, at the root of your project, use the following command to run the script.  Use the options below to run tests.
+	`godot -d -s test/gut/gut_cmdln.gd`
+
+The -d option tells Godot to run in debug mode which is helpful.  The -s option tells Godot to run a script.
 
 ### Options
 _Output from the command line help (-gh)_
@@ -295,8 +303,8 @@ _Output from the command line help (-gh)_
 ---------------------------------------------------------                               
 This is the command line interface for the unit testing tool Gut.  With this
 interface you can run one or more test scipts from the command line.  In order
-for the Gut options to not clash with any other godot options, each option
-start with a "g".  Also, any option that requires a value will take the form of
+for the Gut options to not clash with any other Godot options, each option
+starts with a "g".  Also, any option that requires a value will take the form of
 "-g<name>=<value>".  There cannot be any spces between the option, the "=", or
 inside a specified value or godot will think you are trying to run a scene.       
 
