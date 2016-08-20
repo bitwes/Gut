@@ -195,6 +195,7 @@ func setup_controls():
 	_ctrls.runtime_label.set_text('0.0')
 	_ctrls.runtime_label.set_size(Vector2(50, 30))
 	_ctrls.runtime_label.set_pos(Vector2(_ctrls.clear_button.get_pos().x - 60, _ctrls.clear_button.get_pos().y + 10))
+	_set_anchor_bottom_right(_ctrls.runtime_label)
 	
 	add_child(_ctrls.continue_button)
 	_ctrls.continue_button.set_text("Continue")
@@ -210,6 +211,7 @@ func setup_controls():
 	_ctrls.ignore_continue_checkbox.connect('pressed', self, '_on_ignore_continue_checkbox_pressed')
 	_ctrls.ignore_continue_checkbox.set_size(Vector2(50, 30))
 	_ctrls.ignore_continue_checkbox.set_pos(Vector2(_ctrls.continue_button.get_pos().x, _ctrls.continue_button.get_pos().y + _ctrls.continue_button.get_size().y - 5))
+	_set_anchor_bottom_right(_ctrls.ignore_continue_checkbox)
 	
 	var log_label = Label.new()
 	add_child(log_label)
@@ -234,6 +236,7 @@ func setup_controls():
 	add_child(script_prog_label)
 	script_prog_label.set_pos(Vector2(100, log_label.get_pos().y))
 	script_prog_label.set_text('Scripts:')
+	_set_anchor_bottom_left(script_prog_label)
 	
 	add_child(_ctrls.script_progress)
 	_ctrls.script_progress.set_size(Vector2(200, 10))
@@ -241,11 +244,13 @@ func setup_controls():
 	_ctrls.script_progress.set_min(0)
 	_ctrls.script_progress.set_max(1)
 	_ctrls.script_progress.set_unit_value(1)
+	_set_anchor_bottom_left(_ctrls.script_progress)
 	
 	var test_prog_label = Label.new()
 	add_child(test_prog_label)
 	test_prog_label.set_pos(Vector2(100, log_label.get_pos().y + 15))
 	test_prog_label.set_text('Tests:')
+	_set_anchor_bottom_left(test_prog_label)
 	
 	add_child(_ctrls.test_progress)
 	_ctrls.test_progress.set_size(Vector2(200, 10))
@@ -253,6 +258,7 @@ func setup_controls():
 	_ctrls.test_progress.set_min(0)
 	_ctrls.test_progress.set_max(1)
 	_ctrls.test_progress.set_unit_value(1)
+	_set_anchor_bottom_left(_ctrls.test_progress)
 	
 	add_child(_ctrls.scripts_drop_down)
 	_ctrls.scripts_drop_down.set_size(Vector2(375, 25))
@@ -267,6 +273,7 @@ func setup_controls():
 	_ctrls.previous_button.set_pos(pos)
 	_ctrls.previous_button.set_text("<")
 	_ctrls.previous_button.connect("pressed", self, '_on_previous_button_pressed')
+	_set_anchor_bottom_left(_ctrls.previous_button)
 	
 	add_child(_ctrls.stop_button)
 	_ctrls.stop_button.set_size(Vector2(50, 25))
@@ -274,6 +281,7 @@ func setup_controls():
 	_ctrls.stop_button.set_pos(pos)
 	_ctrls.stop_button.set_text('stop')
 	_ctrls.stop_button.connect("pressed", self, '_on_stop_button_pressed')
+	_set_anchor_bottom_left(_ctrls.stop_button)
 
 	add_child(_ctrls.run_button)
 	_ctrls.run_button.set_text("run")
@@ -281,6 +289,7 @@ func setup_controls():
 	pos.x += 60
 	_ctrls.run_button.set_pos(pos)
 	_ctrls.run_button.connect("pressed", self, "_on_run_button_pressed")
+	_set_anchor_bottom_left(_ctrls.run_button)
 	
 	add_child(_ctrls.next_button)
 	_ctrls.next_button.set_size(Vector2(50, 25))
@@ -288,6 +297,7 @@ func setup_controls():
 	_ctrls.next_button.set_pos(pos)
 	_ctrls.next_button.set_text(">")
 	_ctrls.next_button.connect("pressed", self, '_on_next_button_pressed')
+	_set_anchor_bottom_left(_ctrls.next_button)
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
