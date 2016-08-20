@@ -133,8 +133,14 @@ These methods would be used inside the Scene's script (`templates/gut_main.gd`) 
 * `set_ignore_pause_before_teardown(should_ignore)` causes GUI to disregard any calls to pause_before_teardown.  This is useful when you want to run in a batch mode.
 * `set_yield_between_tests(should)` will pause briefly between every 5 tests so that you can see progress in the GUI.  If this is left out, it  can seem like the program has hung when running longer test sets.
 * `get/set_log_level(level)` see section on log level for list of values.
+* `disable_strict_datatype_checks(true)` disables strict datatype checks.  See section on "Strict type checking" before disabling.
 
 # Extras
+
+## Strict type checking
+Gut performs type checks in the asserts where it applies.  This is done for a few reasons.  The first is that invalid comparisons can cause runtime errors which will stop your tests from running.  With the type checking enabled your test will fail instead of crashing.  The other reason is that you can get false positives/negatives when comparing things like a Real/Float and an Integer.  With strict type checking enabled these become a lot more obvious.  It's also a sanity check to make sure your classes are using the expected types of values which can save time in the long run.
+
+You can disable this behavior if you like by calling `tester.disable_strict_datatype_checks(true)` inside `gut_main.gd`.
 
 ## File Manipulation Methods for Tests
 Use these methods in a test or setup/teardown method to make file related testing easier.  These all exist on the Gut object so they must be prefixed with `gut`

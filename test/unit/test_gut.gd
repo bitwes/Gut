@@ -109,7 +109,6 @@ func setup():
 	gr.test_finished_called = false
 	gr.test_gut = get_a_gut()
 
-
 func teardown():
 	counts.teardown_count += 1
 	gr.test_gut.queue_free()
@@ -292,6 +291,19 @@ func test_assert_flase_with_true():
 func test_assert_false_with_false():
 	gr.test_gut.assert_false(false, "Should pass")
 	assert_pass()
+
+#------------------------------
+# disable strict datatype comparisons
+#------------------------------
+func test_when_strict_enabled_you_cannot_compare_in_and_float():
+	gr.test_gut.assert_eq(1.0, 1)
+	assert_fail()
+
+func test_when_strict_disabled_can_compare_int_and_float():
+	gr.test_gut.disable_strict_datatype_checks(true)
+	gr.test_gut.assert_eq(1.0, 1)
+	assert_pass()
+
 
 #------------------------------
 # File asserts
@@ -527,13 +539,13 @@ func test_get_set_test_to_run():
 	assert_pass(4)
 
 func test_setting_name_will_run_only_matching_tests():
-	gr.test_gut.add_script('res://unit_tests/test_sample_all_passed.gd')
+	gr.test_gut.add_script('res://test/unit/test_sample_all_passed.gd')
 	gr.test_gut.set_unit_test_name('test_works')
 	gr.test_gut.test_scripts()
 	gut.assert_eq(gr.test_gut.get_test_count(), 1)
 
 func test_setting_name_matches_partial():
-	gr.test_gut.add_script('res://unit_tests/test_sample_all_passed.gd')
+	gr.test_gut.add_script('res://test/unit/test_sample_all_passed.gd')
 	gr.test_gut.set_unit_test_name('two')
 	gr.test_gut.test_scripts()
 	gut.assert_eq(gr.test_gut.get_test_count(), 1)

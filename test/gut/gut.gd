@@ -38,6 +38,7 @@ const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
 
 var _is_running = false
 var _stop_pressed = false
+var _disable_strict_datatype_checks = false
 # The prefix used to get tests.
 var _test_prefix = "test_"
 # Tests to run for the current script
@@ -611,7 +612,6 @@ func _init_run():
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-
 func _end_run():
 	p(_get_summary_text(), 0)	
 	_runtime_timer.stop()
@@ -891,9 +891,10 @@ func select_script(script_name):
 ################
 func _pass_if_datatypes_match(got, expected):
 	var passed = true
-	if(typeof(got) != typeof(expected) and got != null and expected != null):
-		_fail('Cannot compare ' + types[typeof(got)] + '[' + str(got) + '] to ' + types[typeof(expected)] + '[' + str(expected) + '].')
-		passed = false
+	if(!_disable_strict_datatype_checks):
+		if(typeof(got) != typeof(expected) and got != null and expected != null):
+			_fail('Cannot compare ' + types[typeof(got)] + '[' + str(got) + '] to ' + types[typeof(expected)] + '[' + str(expected) + '].')
+			passed = false
 	return passed
 
 #-------------------------------------------------------------------------------
@@ -1044,13 +1045,13 @@ func pending(text=""):
 	else:
 		p("Pending:  " + text)
 
-
 ################
 #
 # MISC
 #
 ################
-
+func disable_strict_datatype_checks(should):
+	_disable_strict_datatype_checks = should
 
 #-------------------------------------------------------------------------------
 #Pauses the test and waits for you to press a confirmation button.  Useful when
