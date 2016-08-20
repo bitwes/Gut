@@ -36,8 +36,8 @@ extends Node2D
 var tester = null
 
 func _ready():
-	#_run_gut_tests()
-	_run_all_tests()
+	_run_gut_tests()
+	#_run_all_tests()
 
 # Show that the signal is working.
 func _on_tests_finished():
@@ -92,12 +92,12 @@ func _run_all_tests():
 	
 
 func _run_gut_tests():
-	var tester = load('res://scripts/gut.gd').new()
+	var tester = load('res://test/gut/gut.gd').new()
 	add_child(tester)
 	
 	tester.set_should_print_to_console(false)
 	tester.add_script('res://test/unit/gut_tests.gd')
 	tester.add_script('res://test/unit/test_gut_yielding.gd')
 	tester.set_yield_between_tests(true)
-	tester.test_scripts()
+	#tester.test_scripts()
 	
