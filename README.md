@@ -89,13 +89,12 @@ This guy warrants his own section.  I found that making tests for most getters a
 * `gut.p(text, level=0, indent=0)` print info to the GUI and console (if enabled.)
 
 * `gut.pause_before_teardown()` This method will cause Gut to pause before it moves on to the next test.  This is useful for debugging, for instance if you want to investigate the screen or anything else after a test has finished executing.  See also `set_ignore_pause_before_teardown`
-* `yield_for(time_in_seconds)` Basically this simplifies the code needed to pause the test execution for a number of seconds.  This is useful if your test requires things to play out in real time before making an assertion.  There are more details in the Yielding section.  It is designed to be used with the `yield` built in.  The following example will pause your test execution (and only the test execution) for 5 seconds before continuing.  You must call `end_test()` in any test that has a yield in it or execution will never move
+* `yield_for(time_in_seconds)` Basically this simplifies the code needed to pause the test execution for a number of seconds.  This is useful if your test requires things to play out in real time before making an assertion.  There are more details in the Yielding section.  It is designed to be used with the `yield` built in.  The following example will pause your test execution (and only the test execution) for 5 seconds before continuing.  You must call `end_test()` in any test that has a yield in it or execution will not continue.
   * `yield(yield_for(5), YIELD)`
-past the current test.
-* `end_test()` This must be called in any test that has a `yield` in it so that Gut knows when the test has completed.
+* `end_test()` This must be called in any test that has a `yield` in it (regardless of what is yielded to) so that Gut knows when the test has completed.
 
 ### Methods for Configuring the Execution of Tests
-These methods would be used inside the Scene's script (`templates/gut_main.gd`) to load and execute scripts as well as inspect the results of a run and change how Gut's behavior.  These methods must all be called on the Gut obect that was created.  In the case of the template, this would be `tester`.
+These methods would be used inside the Scene's script (`templates/gut_main.gd`) to load and execute scripts as well as inspect the results of a run and change how Gut behaves.  These methods must all be called on the Gut object that was instantiated.  In the case of the provided template, this would be `tester`.
 
 * `add_script(script, select_this_one=false)` add a script to be tetsted with test_scripts
 * `add_directory(path, prefix='test_', suffix='.gd')` add a directory of test scripts that start with prefix and end with suffix.  Subdirectories not included.
@@ -140,16 +139,50 @@ The `p` method allows you to print information out indented under the test outpu
 # Advanced Testing
 
 ## Simulate
-The simulate method will call the `_process` or `_fixed_process` on a tree of objects.  It takes in the base object, the number of times to call the methods and the delta value to be passed to `_process` or `_fixed_process` (if the object has one).  This will only cause code directly related to the `_process` and `_fixed_process` methods to run.  Timers will not fire since the main loop of the game is not actually running.  Creating a test that yields is a better solution for testing such things.
+The simulate method will call the `_process` or `_fixed_process` on a tree of objects.  It takes in the base object, the number of times to call the methods and the delta value to be passed to `_process` or `_fixed_process` (if the object has one).  This will only cause code directly related to the `_process` and `_fixed_process` methods to run.  Signals will be sent, methods will be called but timers, for example, will not fire since the main loop of the game is not actually running.  Creating a test that yields is a better solution for testing such things.
 
 Example
 ``` python
+
+# --------------------------------
+# res://scripts/my_object.gd
+# --------------------------------
+extends Node2D
+  var a_number = 1
+
+  func _ready():
+    set_process(true)
+
+  func _process(delta):
+    a_number += 1
+
+# --------------------------------
+# res://scripts/another_object.gd
+# --------------------------------
+extends Node2D
+  var another_number = 1
+
+  func _ready():
+    set_fixed_process(true)
+
+  func _fixed_process(delta):
+    another_number += 1
+
+# --------------------------------
+# res://test/unit/test_my_object.gd
+# --------------------------------
+
+# ...
+var MyObject = load('res://scripts/my_object.gd')
+var AnotherObject = load('res://scripts/another_object')
+# ...
 
 # Given that SomeCoolObj has a _process method that incrments a_number by 1
 # each time _process is called, and that the number starts at 0, this test
 # should pass
 func test_does_something_each_loop():
-	var my_obj = SomeCoolObj.new()
+	var my_obj = MyObject.new()
+  add_child(my_obj)
 	gut.simulate(my_obj, 20, .1)
 	assert_eq(my_obj.a_number, 20, 'Since a_number is incremented in _process, it should be 20 now')
 
@@ -158,23 +191,18 @@ func test_does_something_each_loop():
 # _process.  In that case, this test will pass too since all child objects
 # have the _process or _fixed_process method called.
 func test_does_something_each_loop():
-	var my_obj = SomeCoolObj.new()
-	var other_obj = AnotherObj.new()
-	myObj.add_child(other_obj)
+	var my_obj = MyObject.new()
+  var other_obj = AnotherObj.new()
+
+  add_child(my_obj)
+	my_obj.add_child(other_obj)
+
 	gut.simulate(my_obj, 20, .1)
-	#We check other_obj, to make sure it was called 20 times too.
-	assert_eq(other_obj.a_number, 20, 'Since a_number is incremented in _process, it should be 20 now')
+
+	assert_eq(my_obj.a_number, 20, 'Since a_number is incremented in _process, it should be 20 now')
+  assert_eq(other_obj.another_number, 20, 'Since other_obj is a child of my_obj and another_number is incremened in _fixed_process then it should be 20 now')
 
 ```
-__Yielding during a test__
-
-_See the section on yielding for more information._
-
-* `pause_before_teardown()` causes the GUI to pause before it runs the teardown method.  You must press the "continue" button on the GUI to continue testing.  Can be by-passed using the set_ignore_pause_before_teardown method.
-* `set_yield_time(time)` Sets the amount of time to wait when yielding to gut.  See section on yielding.
-* `end_yielded_test()` Signifies a test that yielded has ended.  Must be called after yielding during a test or the GUI will sit there and do nothing and you will be confused and angry.
-* `simulate(obj, times, delta)` Runs the \_process and/or \_fixed_process method on the passed in object, along with any of it's children and their children and so on and so forth.  This will call the methods x times and pass them a value of delta each time they are called.
-
 ## Yielding during a test
 
 You can yield during a test to allow your objects to run their course as they would during an actual run of the game.  This allows you to test functionality in real time as it would occur during game play.  This does however slow your tests down since you have to wait for the game do what you expect in real time and there is no way of speeding things up.  
