@@ -1,9 +1,21 @@
 # What is this repository for?
-GUT (Godot Unit Test) is a utility for writing unit tests for your Godot Engine game using the built in scripting language gdscript.
+GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.  It allows you to write tests for your gdscript in gdscript.
 
 # Install
-For the purposes of this documentation it is assumed all the Gut pieces will go in `res://test/gut` and that all unit tests will be in `res://test/unit`.  This keeps the test code all in one place and avoids any name clashes.  Who knows, someone probably has a game that has a gut character that runs around digesting things.  With this structure this gut.gd and their gut.gd won't clash.
+For the purposes of this documentation it is assumed all the Gut pieces will go in `res://test/gut` and that all unit tests will be in `res://test/unit`.  This keeps the test code all in one place and avoids any name clashes.  Who knows, someone probably has a game that has a character that is actually a gut.  It runs around digesting things and...well, that's probably it.  With this structure the testing script gut.gd and their character class gut.gd won't clash.
 
+This also makes it easy to exclude all the test related code from a release if you so choose.
+
+0.  Create your `res://test`, `res://test/gut`, and `res://test/unit` directories.
+0.  Copy the following into your `res://test/gut` directory
+  * `gut.gd`
+  * `gut_cmdln.gd`
+  * `gut_main.gd` *skip on upgrade*
+  * `gut_main.scn` *skip on upgrade*
+0.  Copy `test_.gd` from the templates directory into `res://test/unit`.
+0.  Open the `gut_main.scn` scene in Godot and run it!  Would you look at that, you have one pending test.  Well done good sir and/or madam.
+
+When you are done with the install it should look like this:
 ```
 ├───scenes                 
 ├───scripts                
@@ -18,13 +30,9 @@ For the purposes of this documentation it is assumed all the Gut pieces will go 
             test_.gd       
 ```
 
-1.  Create your `res://test`, `res://test/gut`, and `res://test/unit` directories.
-1.  Copy `gut.gd` and `gut_cmdln.gd` scripts from this project to `res://test/gut` directory.
-1.  Copy `gut_main.gd` and `gut_main.scn` from the templates directory in this project into `res://test/gut`
-1.  Copy `test_.gd` from the templates directory into `res://test/unit`.
-1.  Open the `gut_main.scn` scene and run it!
+<!-- It should look like this -->
+<!-- TODO insert screenshot here. -->
 
-It should look something like:
 # Creating Tests
 
 All test scripts must extend the Test class in gut.gd
