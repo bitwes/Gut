@@ -35,7 +35,7 @@ func _ready():
 	_run_tests()
 
 func _run_tests():
-	tester = load('res://scripts/gut.gd').new()
+	tester = load('res://test/gut/gut.gd').new()
 	add_child(tester)
 	tester.show()
 	tester.set_pos(Vector2(100, 100))

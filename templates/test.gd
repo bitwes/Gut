@@ -1,4 +1,4 @@
-extends "res://scripts/gut.gd".Test
+extends "res://test/gut/gut.gd".Test
 
 
 # #############
