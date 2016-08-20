@@ -26,7 +26,11 @@ extends Node2D
 ################################################################################
 
 # ##############################################################################
-# With gut.gd in the res://scripts directory and your unit tests in
+# This is a template script to be used as the root script for a scene.  The
+# gut_main.scn scene is already wired up to use this script.  If you use the
+# same directory structure then you can copy these to  your project.
+#
+# With gut.gd in the res://test/gut directory and your unit tests in
 # res://test/unit this script will load up all the tests and run them.
 # ##############################################################################
 var tester = null

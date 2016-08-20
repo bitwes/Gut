@@ -20,4 +20,4 @@ func postrun_teardown():
 # Tests
 # #############
 func test_pending():
-	gut.pending()
+	pending()

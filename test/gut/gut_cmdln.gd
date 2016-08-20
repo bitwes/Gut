@@ -32,7 +32,7 @@
 # from the command line instead of running a scene.  Place this script along with
 # gut.gd into your scripts directory at the root of your project.  Once there you
 # can run this script (from the root of your project) using the following command:
-# 	godot -s -d scirpts/gut_cmdln.gd
+# 	godot -s -d test/gut/gut_cmdln.gd
 #
 # See the readme for a list of options and examples.  You can also use the -gh
 # option to get more information about how to use the command line interface.
