@@ -889,11 +889,11 @@ func select_script(script_name):
 # ASSERTS
 # 
 ################
-func _pass_if_datatypes_match(got, expected):
+func _pass_if_datatypes_match(got, expected, text):
 	var passed = true
 	if(!_disable_strict_datatype_checks):
 		if(typeof(got) != typeof(expected) and got != null and expected != null):
-			_fail('Cannot compare ' + types[typeof(got)] + '[' + str(got) + '] to ' + types[typeof(expected)] + '[' + str(expected) + '].')
+			_fail('Cannot compare ' + types[typeof(got)] + '[' + str(got) + '] to ' + types[typeof(expected)] + '[' + str(expected) + '].  ' + text)
 			passed = false
 	return passed
 
@@ -902,7 +902,7 @@ func _pass_if_datatypes_match(got, expected):
 #-------------------------------------------------------------------------------
 func assert_eq(got, expected, text=""):
 	var disp = "[" + str(got) + "] expected to equal [" + str(expected) + "]:  " + text
-	if(_pass_if_datatypes_match(got, expected)):
+	if(_pass_if_datatypes_match(got, expected, text)):
 		if(expected != got):
 			_fail(disp)
 		else:
@@ -913,7 +913,7 @@ func assert_eq(got, expected, text=""):
 #-------------------------------------------------------------------------------
 func assert_ne(got, not_expected, text=""):
 	var disp = "[" + str(got) + "] expected to be anything except [" + str(not_expected) + "]:  " + text
-	if(_pass_if_datatypes_match(got, not_expected)):
+	if(_pass_if_datatypes_match(got, not_expected, text)):
 		if(got == not_expected):
 			_fail(disp)
 		else:
@@ -923,7 +923,7 @@ func assert_ne(got, not_expected, text=""):
 #-------------------------------------------------------------------------------
 func assert_gt(got, expected, text=""):
 	var disp = "[" + str(got) + "] expected to be > than [" + str(expected) + "]:  " + text
-	if(_pass_if_datatypes_match(got, expected)):
+	if(_pass_if_datatypes_match(got, expected, text)):
 		if(got > expected):
 			_pass(disp)
 		else:
@@ -934,7 +934,7 @@ func assert_gt(got, expected, text=""):
 #-------------------------------------------------------------------------------
 func assert_lt(got, expected, text=""):
 	var disp = "[" + str(got) + "] expected to be < than [" + str(expected) + "]:  " + text
-	if(_pass_if_datatypes_match(got, expected)):
+	if(_pass_if_datatypes_match(got, expected, text)):
 		if(got < expected):
 			_pass(disp)
 		else:
@@ -964,7 +964,7 @@ func assert_false(got, text=""):
 func assert_between(got, expect_low, expect_high, text=""):
 	var disp = "[" + str(got) + "] expected to be between [" + str(expect_low) + "] and [" + str(expect_high) + "]:  " + text
 	
-	if(_pass_if_datatypes_match(got, expect_low) and _pass_if_datatypes_match(got, expect_high)):
+	if(_pass_if_datatypes_match(got, expect_low, text) and _pass_if_datatypes_match(got, expect_high, text)):
 		if(expect_low > expect_high):
 			disp = "INVALID range.  [" + str(expect_low) + "] is not less than [" + str(expect_high) + "]"
 			_fail(disp)

@@ -96,7 +96,7 @@ func _run_gut_tests():
 	add_child(tester)
 	
 	tester.set_should_print_to_console(false)
-	tester.add_script('res://test/unit/gut_tests.gd')
+	tester.add_script('res://test/unit/test_gut.gd')
 	tester.add_script('res://test/unit/test_gut_yielding.gd')
 	tester.set_yield_between_tests(true)
 	#tester.test_scripts()
