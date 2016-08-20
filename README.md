@@ -1,7 +1,14 @@
 # What is this repository for?
 GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.  It allows you to write tests for your gdscript in gdscript.
 
-# Install
+# Table of Contents
+ 0. [Install](#install)
+ 0. [Creating Tests](#creating_tests)
+ 0. [Method List](#Method-List)
+   0.  [Test Methods](#Methods-for-Use-in-Tests)
+   0.  [Methods for Configuring Test Execution](#)
+
+# <a name="install"> Install
 For the purposes of this documentation it is assumed all the Gut pieces will go in `res://test/gut` and that all unit tests will be in `res://test/unit`.  This keeps the test code all in one place and avoids any name clashes.  Who knows, someone probably has a game that has a character that is actually a gut.  It runs around digesting things and...well, that's probably it.  With this structure the testing script gut.gd and their character class gut.gd won't clash.
 
 This also makes it easy to exclude all the test related code from a release if you so choose.
@@ -33,7 +40,7 @@ When you are done with the install it should look like this:
 <!-- It should look like this -->
 <!-- TODO insert screenshot here. -->
 
-# Creating Tests
+# <a name="creating_tests"> Creating Tests
 
 All test scripts must extend the Test class in gut.gd
 * `extends "res://test/gut/gut.gd".Test`
@@ -237,19 +244,21 @@ func test_does_something_each_loop():
 ```
 ## Yielding during a test
 
-You can yield during a test to allow your objects to run their course as they would during an actual run of the game.  This allows you to test functionality in real time as it would occur during game play.  This does however slow your tests down since you have to wait for the game do what you expect in real time and there is no way of speeding things up.  
+You can yield during a test to allow your objects to run their course as they would during an actual run of the game.  This allows you to test functionality in real time or continue processing until some arbitrary signal is fired.  This does however slow your tests down since you have to wait for the game do what you expect in real time and there is no way of speeding things up.
 
-Yielding works by calling the Godot built-in `yield` method which takes in an object to yield to, and a signal which that object will emit.  Execution of the test will pause until that signal is emitted.  For example you could yield to a button's 'pressed' event or a timer's 'timeout' event.
+Yielding works by calling the Godot built-in `yield` method which takes in an object to yield to, and a signal which that object will emit.  Execution of the test will pause until that signal is emitted.  For example you could yield to a button's 'pressed' event, a timer's 'timeout' event, or a custom signal your object emits.
+
+[You can find out more about `yield` on Godot's website](http://docs.godotengine.org/en/latest/reference/gdscript.html#coroutines)
 
 ``` python
-func test_yield_to_button_click():
+func test_yield_to_custom_signal():
 	my_object = ObjectToTest.new()
 	add_child(my_object)
-	yield(my_object.some_button, 'pressed')
+	yield(my_object, 'custom_signal')
 	assert_true(some_condition, 'After button pressed, this should be true')
-	gut.end_yielded_test()
+	end_test()
 ```
-Due to the nature of yielding, GUT cannot know when the actual test has finished.  You must notify GUT that a test that contains a yield has completed by calling `gut.end_yielded_test()`.  For this reason, GUT will print out to the screen that it is currently waiting for a the `end_yielded_test` signal to let you know that it's not just sitting there doing nothing.  If this prints to the screen longer than you expect, then you've either yielded to a signal that may not fire or you forgot to call `gut.end_yielded_test()` at then end of your test.
+Due to the nature of yielding, GUT cannot know when the actual test has finished.  You must notify GUT that a test that contains a yield has completed by calling `end_test()`.  For this reason, GUT will print out to the screen that it is currently waiting for a the `end_test` signal to let you know that it's not just sitting there doing nothing.  If this prints to the screen longer than you expect, then you've either yielded to a signal that may not fire or you forgot to call `end_test()` at then end of your test.
 
 In some cases you may not have a signal to wait on, but you do have an idea of how long it will take for a specific test to play out.  To make things easier in this situation GUT provides a timer that you can kick off and yield to.  You tell it how long to wait then yield to the GUT object like so:
 
@@ -257,10 +266,10 @@ In some cases you may not have a signal to wait on, but you do have an idea of h
 func test_wait_for_a_bit():
 	my_object = ObjectToTest.new()
 	my_object.do_something()
-	gut.set_yield_time(5) #wait 5 seconds
-	yield(gut, 'timeout')
+	#wait 5 seconds
+	yield(yield_for(5), YIELD)
 	gut.assert_eq(my_object.some_property, 'some value', 'After waiting 5 seconds, this property should be set')
-	gut.end_yielded_test()
+	end_test()
 ```
 
 # Running Gut from the Command Line
