@@ -1,4 +1,4 @@
-extends "res://scripts/gut.gd".Test
+extends "res://test/gut/gut.gd".Test
 
 var Gut = load('res://scripts/gut.gd')
 #--------------------------------------
@@ -422,7 +422,7 @@ func test_setting_name_matches_partial():
 	gr.gut.set_unit_test_name('two')
 	gr.gut.test_scripts()
 	gut.assert_eq(gr.gut.get_test_count(), 1)
-	
+
 #-------------------------------------------------------------------------------
 #
 #

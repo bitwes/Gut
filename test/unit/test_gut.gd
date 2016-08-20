@@ -1,6 +1,6 @@
-extends "res://scripts/gut.gd".Test
+extends "res://test/gut/gut.gd".Test
 
-var Gut = load('res://scripts/gut.gd')
+var Gut = load('res://test/gut/gut.gd')
 #--------------------------------------
 #Used to test calling the _process method
 #on an object through gut
@@ -72,7 +72,7 @@ var gr = {
 
 func callback_for_test_finished():
 	gr.test_finished_called = true
-	
+
 # Returns a new gut object, all setup for testing.
 func get_a_gut():
 	var g = Gut.new()
@@ -108,7 +108,7 @@ func setup():
 	counts.setup_count += 1
 	gr.test_finished_called = false
 	gr.test_gut = get_a_gut()
-	
+
 
 func teardown():
 	counts.teardown_count += 1
@@ -125,7 +125,7 @@ func postrun_teardown():
 	gut.assert_true(true, 'POSTTEARDOWN RAN')
 	gut.directory_delete_files('user://')
 
-	
+
 #------------------------------
 #Number tests
 #------------------------------
@@ -209,7 +209,7 @@ func test_fail_compare_float_cast_as_int():
 	# int cast will make it 0
 	gr.test_gut.assert_eq(int(0.5), 0.5)
 	assert_fail(1)
-	
+
 func test_cast_int_math_eq_float():
 	var i = 2
 	gr.test_gut.assert_eq(5 / float(i), 2.5)
@@ -226,7 +226,7 @@ func test_assert_eq_string_not_equal():
 func test_assert_eq_string_equal():
 	gr.test_gut.assert_eq("one", "one", "Should Pass")
 	assert_pass()
-	
+
 func test_assert_ne_string_not_equal():
 	gr.test_gut.assert_ne("one", "two", "Should Pass")
 	assert_pass()
@@ -372,7 +372,7 @@ func test_file_touch_creates_file():
 	gut.file_touch(path)
 	gr.test_gut.assert_file_exists(path)
 	assert_pass()
-	
+
 
 func test_file_delete_kills_file():
 	var path = 'user://gut_test_file_delete.txt'
@@ -392,7 +392,7 @@ func test_delete_all_files_in_a_directory():
 	gr.test_gut.directory_delete_files(path)
 	gr.test_gut.assert_file_does_not_exist(path + '/helloworld.txt')
 	gr.test_gut.assert_file_does_not_exist(path + '/file2.txt')
-	
+
 	assert_pass(2, 'both files should not exist')
 
 #------------------------------
@@ -481,7 +481,7 @@ func test_simulate_calls_process_on_child_objects_of_child_objects():
 
 	for i in range(objs.size()):
 		gr.test_gut.assert_eq(objs[i].process_called_count, 10, "_process should have been called on object # " + str(i))
-	
+
 	assert_pass(objs.size())
 
 func test_simulate_calls_fixed_process():
@@ -549,14 +549,14 @@ func test_asserts_on_test_object():
 	assert_false(false, 'text')
 	assert_between(5, 1, 10, 'text')
 	assert_file_does_not_exist('res://doesnotexist')
-	
+
 	var path = 'user://gut_test_file.txt'
 	var f = File.new()
 	f.open(path, f.WRITE)
 	f.close()
 	assert_file_exists(path)
 
-	
+
 	var path = 'user://gut_test_empty.txt'
 	var f = File.new()
 	f.open(path, f.WRITE)
@@ -586,4 +586,3 @@ func test_verify_results():
 	gut.assert_eq(gut.get_test_count(), counts.setup_count, "Setup should have been called once for each test")
 	# teardown for this test hasn't been run yet.
 	gut.assert_eq(gut.get_test_count() -1, counts.teardown_count, "Teardown should have been called one less time.")
-

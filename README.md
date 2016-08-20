@@ -2,7 +2,7 @@
 GUT (Godot Unit Test) is a utility for writing unit tests for your Godot Engine game using the built in scripting language gdscript.
 
 # Install
-For the purposes of this documentation it is assumed all the Gut pieces will go in `res://test/gut` and that all unit tests will be in `res://test/unit`.  This keeps the test code all in one place and avoids any name clashes.  Who knows, someone probably has a game that has a gut character that runs around digesting things.  With this structure these scripts won't get in the way.
+For the purposes of this documentation it is assumed all the Gut pieces will go in `res://test/gut` and that all unit tests will be in `res://test/unit`.  This keeps the test code all in one place and avoids any name clashes.  Who knows, someone probably has a game that has a gut character that runs around digesting things.  With this structure this gut.gd and their gut.gd won't clash.
 
 ```
 ├───scenes                 
@@ -186,8 +186,10 @@ extends Node2D
 # --------------------------------
 
 # ...
+
 var MyObject = load('res://scripts/my_object.gd')
 var AnotherObject = load('res://scripts/another_object')
+
 # ...
 
 # Given that SomeCoolObj has a _process method that incrments a_number by 1
@@ -212,8 +214,11 @@ func test_does_something_each_loop():
 
 	gut.simulate(my_obj, 20, .1)
 
-	assert_eq(my_obj.a_number, 20, 'Since a_number is incremented in _process, it should be 20 now')
-  assert_eq(other_obj.another_number, 20, 'Since other_obj is a child of my_obj and another_number is incremened in _fixed_process then it should be 20 now')
+	assert_eq(my_obj.a_number, 20, 'Since a_number is incremented in _process, \
+                                  it should be 20 now')
+  assert_eq(other_obj.another_number, 20, 'Since other_obj is a child of my_obj \
+                                           and another_number is incremened in \
+                                           _fixed_process then it should be 20 now')
 
 ```
 ## Yielding during a test

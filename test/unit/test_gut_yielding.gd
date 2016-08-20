@@ -4,7 +4,7 @@
 #functionality does not work in 1.0 so this allows us to test that 1.0 functionality
 #continues to work even with these changes.
 #-------------------------------------------------------------------------------
-extends "res://scripts/gut.gd".Test
+extends "res://test/gut/gut.gd".Test
 
 var timer = Timer.new()
 
@@ -29,7 +29,7 @@ func test_setting_yield_time_twice_resets_time():
 	yield(gut, 'timeout')
 	gut.p('done yielding')
 	gut.end_yielded_test()
-	
+
 func test_wait_for_continue_click():
 	gut.assert_eq(1, 1, 'some simple assert')
 	gut.pause_before_teardown()

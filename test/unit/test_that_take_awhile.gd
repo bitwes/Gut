@@ -1,4 +1,4 @@
-extends "res://scripts/gut.gd".Test
+extends "res://test/gut/gut.gd".Test
 
 
 func test_count_to_1000000():
@@ -15,5 +15,3 @@ func test_count_to_3000000():
 	for i in range(3000000):
 		pass
 	gut.assert_true(true)
-
-

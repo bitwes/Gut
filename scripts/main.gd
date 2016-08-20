@@ -47,7 +47,7 @@ func _run_test_one_line():
 #------------------------------------
 # One line, print to console
 #------------------------------------
-	load('res://scripts/gut.gd').new().test_script('res://unit_tests/sample_tests.gd')
+	load('res://test/gut/gut.gd').new().test_script('res://test/unit/sample_tests.gd')
 
 func _run_all_tests():
 #------------------------------------
@@ -55,7 +55,7 @@ func _run_all_tests():
 # with a reference to the class.
 #------------------------------------
 	# get an instance of gut
-	tester = load('res://scripts/gut.gd').new()
+	tester = load('res://test/gut/gut.gd').new()
 	# add as a child so you can see the GUI when run
 	add_child(tester)
 	tester.connect('tests_finished', self, '_on_tests_finished')
@@ -80,8 +80,8 @@ func _run_all_tests():
 	# !! --------
 	
 	# Add all scripts in two directories.
-	tester.add_directory('res://unit_tests')
-	tester.add_directory('res://integration_tests')
+	tester.add_directory('res://test/unit')
+	tester.add_directory('res://test/integration')
 	
 	# Automatcially run all scripts when loaded.
 	#tester.test_scripts()
@@ -96,8 +96,8 @@ func _run_gut_tests():
 	add_child(tester)
 	
 	tester.set_should_print_to_console(false)
-	tester.add_script('res://unit_tests/gut_tests.gd')
-	tester.add_script('res://unit_tests/test_gut_yielding.gd')
+	tester.add_script('res://test/unit/gut_tests.gd')
+	tester.add_script('res://test/unit/test_gut_yielding.gd')
 	tester.set_yield_between_tests(true)
 	tester.test_scripts()
 	
