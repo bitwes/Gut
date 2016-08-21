@@ -27,6 +27,8 @@
 #
 ################################################################################
 # View readme for usage details.
+#
+# Version 3.0
 ################################################################################
 extends WindowDialog
 
@@ -72,7 +74,7 @@ var types = {}
 
 
 var _set_yield_time_called = false
-# used when yielding to gut instead of some other 
+# used when yielding to gut instead of some other
 # signal.  Start with set_yield_time()
 var _yield_timer = Timer.new()
 var _runtime_timer = Timer.new()
@@ -159,14 +161,14 @@ func _init_types_dictionary():
 	types[27] = 'TYPE_VECTOR3_ARRAY'
 	types[28] = 'TYPE_COLOR_ARRAY'
 	types[29] = 'TYPE_MAX'
-	
+
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 func setup_controls():
 	var button_size = Vector2(75, 35)
 	var button_spacing = Vector2(10, 0)
 	var pos = Vector2(0, 0)
-	
+
 	add_child(_ctrls.text_box)
 	_ctrls.text_box.set_size(Vector2(get_size().x - 4, 300))
 	_ctrls.text_box.set_pos(Vector2(2, 0))
@@ -176,27 +178,27 @@ func setup_controls():
 	_ctrls.text_box.set_anchor(MARGIN_RIGHT, ANCHOR_END)
 	_ctrls.text_box.set_anchor(MARGIN_TOP, ANCHOR_BEGIN)
 	_ctrls.text_box.set_anchor(MARGIN_BOTTOM, ANCHOR_END)
-	
+
 	add_child(_ctrls.copy_button)
 	_ctrls.copy_button.set_text("Copy")
 	_ctrls.copy_button.set_size(button_size)
 	_ctrls.copy_button.set_pos(Vector2(get_size().x - 5 - button_size.x, _ctrls.text_box.get_size().y + 10))
 	_ctrls.copy_button.connect("pressed", self, "_copy_button_pressed")
 	_set_anchor_bottom_right(_ctrls.copy_button)
-	
+
 	add_child(_ctrls.clear_button)
 	_ctrls.clear_button.set_text("Clear")
 	_ctrls.clear_button.set_size(button_size)
 	_ctrls.clear_button.set_pos(_ctrls.copy_button.get_pos() - Vector2(button_size.x, 0) - button_spacing)
 	_ctrls.clear_button.connect("pressed", self, "clear_text")
 	_set_anchor_bottom_right(_ctrls.clear_button)
-	
+
 	add_child(_ctrls.runtime_label)
 	_ctrls.runtime_label.set_text('0.0')
 	_ctrls.runtime_label.set_size(Vector2(50, 30))
 	_ctrls.runtime_label.set_pos(Vector2(_ctrls.clear_button.get_pos().x - 60, _ctrls.clear_button.get_pos().y + 10))
 	_set_anchor_bottom_right(_ctrls.runtime_label)
-	
+
 	add_child(_ctrls.continue_button)
 	_ctrls.continue_button.set_text("Continue")
 	_ctrls.continue_button.set_size(Vector2(100, 25))
@@ -204,7 +206,7 @@ func setup_controls():
 	_ctrls.continue_button.set_disabled(true)
 	_ctrls.continue_button.connect("pressed", self, "_on_continue_button_pressed")
 	_set_anchor_bottom_right(_ctrls.continue_button)
-	
+
 	add_child(_ctrls.ignore_continue_checkbox)
 	_ctrls.ignore_continue_checkbox.set_text("Ignore pauses")
 	_ctrls.ignore_continue_checkbox.set_pressed(_ignore_pause_before_teardown)
@@ -212,13 +214,13 @@ func setup_controls():
 	_ctrls.ignore_continue_checkbox.set_size(Vector2(50, 30))
 	_ctrls.ignore_continue_checkbox.set_pos(Vector2(_ctrls.continue_button.get_pos().x, _ctrls.continue_button.get_pos().y + _ctrls.continue_button.get_size().y - 5))
 	_set_anchor_bottom_right(_ctrls.ignore_continue_checkbox)
-	
+
 	var log_label = Label.new()
 	add_child(log_label)
 	log_label.set_text("Log Level")
 	log_label.set_pos(Vector2(10, _ctrls.text_box.get_size().y + 1))
 	_set_anchor_bottom_left(log_label)
-	
+
 	add_child(_ctrls.log_level_slider)
 	_ctrls.log_level_slider.set_size(Vector2(75, 30))
 	_ctrls.log_level_slider.set_pos(Vector2(10, log_label.get_pos().y + 20))
@@ -231,13 +233,13 @@ func setup_controls():
 	_ctrls.log_level_slider.connect("value_changed", self, "_on_log_level_slider_changed")
 	_ctrls.log_level_slider.set_value(_log_level)
 	_set_anchor_bottom_left(_ctrls.log_level_slider)
-	
+
 	var script_prog_label = Label.new()
 	add_child(script_prog_label)
 	script_prog_label.set_pos(Vector2(100, log_label.get_pos().y))
 	script_prog_label.set_text('Scripts:')
 	_set_anchor_bottom_left(script_prog_label)
-	
+
 	add_child(_ctrls.script_progress)
 	_ctrls.script_progress.set_size(Vector2(200, 10))
 	_ctrls.script_progress.set_pos(script_prog_label.get_pos() + Vector2(70, 0))
@@ -245,13 +247,13 @@ func setup_controls():
 	_ctrls.script_progress.set_max(1)
 	_ctrls.script_progress.set_unit_value(1)
 	_set_anchor_bottom_left(_ctrls.script_progress)
-	
+
 	var test_prog_label = Label.new()
 	add_child(test_prog_label)
 	test_prog_label.set_pos(Vector2(100, log_label.get_pos().y + 15))
 	test_prog_label.set_text('Tests:')
 	_set_anchor_bottom_left(test_prog_label)
-	
+
 	add_child(_ctrls.test_progress)
 	_ctrls.test_progress.set_size(Vector2(200, 10))
 	_ctrls.test_progress.set_pos(test_prog_label.get_pos() + Vector2(70, 0))
@@ -259,13 +261,13 @@ func setup_controls():
 	_ctrls.test_progress.set_max(1)
 	_ctrls.test_progress.set_unit_value(1)
 	_set_anchor_bottom_left(_ctrls.test_progress)
-	
+
 	add_child(_ctrls.scripts_drop_down)
 	_ctrls.scripts_drop_down.set_size(Vector2(375, 25))
 	_ctrls.scripts_drop_down.set_pos(Vector2(10, _ctrls.log_level_slider.get_pos().y + 50))
 	_ctrls.scripts_drop_down.add_item("Run All")
 	_set_anchor_bottom_left(_ctrls.scripts_drop_down)
-	
+
 	add_child(_ctrls.previous_button)
 	_ctrls.previous_button.set_size(Vector2(50, 25))
 	pos = _ctrls.scripts_drop_down.get_pos() + Vector2(_ctrls.scripts_drop_down.get_size().x, -30)
@@ -274,7 +276,7 @@ func setup_controls():
 	_ctrls.previous_button.set_text("<")
 	_ctrls.previous_button.connect("pressed", self, '_on_previous_button_pressed')
 	_set_anchor_bottom_left(_ctrls.previous_button)
-	
+
 	add_child(_ctrls.stop_button)
 	_ctrls.stop_button.set_size(Vector2(50, 25))
 	pos.x += 60
@@ -290,7 +292,7 @@ func setup_controls():
 	_ctrls.run_button.set_pos(pos)
 	_ctrls.run_button.connect("pressed", self, "_on_run_button_pressed")
 	_set_anchor_bottom_left(_ctrls.run_button)
-	
+
 	add_child(_ctrls.next_button)
 	_ctrls.next_button.set_size(Vector2(50, 25))
 	pos.x += 60
@@ -312,42 +314,42 @@ func _init():
 #-------------------------------------------------------------------------------
 func _ready():
 	set_process_input(true)
-	
+
 	show()
 	set_pos(get_pos() + Vector2(0, 20))
 	self.set_size(min_size)
-	
+
 	setup_controls()
-	
+
 	add_child(_wait_timer)
 	_wait_timer.set_wait_time(1)
 	_wait_timer.set_one_shot(true)
-	
+
 	add_child(_yield_between.timer)
 	_wait_timer.set_one_shot(true)
-	
+
 	add_child(_yield_timer)
 	_yield_timer.set_one_shot(true)
 	_yield_timer.connect('timeout', self, '_on_yield_timer_timeout')
-	
+
 	# This timer is started, but it should never finish.  Used
 	# to determine how long it took to run the tests since
 	# getting the time and doing time math is rediculous in godot.
 	add_child(_runtime_timer)
 	_runtime_timer.set_one_shot(true)
 	_runtime_timer.set_wait_time(RUNTIME_START_TIME)
-	
+
 	self.connect("mouse_enter", self, "_on_mouse_enter")
 	self.connect("mouse_exit", self, "_on_mouse_exit")
 	set_process(true)
-	
+
 	set_pause_mode(PAUSE_MODE_PROCESS)
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 func _process(delta):
 	if(_is_running):
 		_ctrls.runtime_label.set_text(str(RUNTIME_START_TIME - _runtime_timer.get_time_left()).pad_decimals(3) + ' s')
-	
+
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 func _input(event):
@@ -369,15 +371,15 @@ func _input(event):
 				if(get_size() >= min_size):
 					var new_size = get_size() + event.pos - _mouse_down_pos
 					var new_mouse_down_pos = event.pos
-					
+
 					if(new_size.x < min_size.x):
 						new_size.x = min_size.x
 						new_mouse_down_pos.x = _mouse_down_pos.x
-					
+
 					if(new_size.y < min_size.y):
 						new_size.y = min_size.y
 						new_mouse_down_pos.y = _mouse_down_pos.y
-						
+
 					_mouse_down_pos = new_mouse_down_pos
 					set_size(new_size)
 
@@ -428,7 +430,7 @@ func _on_mouse_enter():
 func _on_mouse_exit():
 	_mouse_in = false
 	_mouse_down = false
-	
+
 #-------------------------------------------------------------------------------
 #Run either the selected test or all tests.
 #-------------------------------------------------------------------------------
@@ -480,7 +482,7 @@ func _on_stop_button_pressed():
 		_on_continue_button_pressed()
 	else:
 		_waiting = false
-	
+
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 func _on_ignore_continue_checkbox_pressed():
@@ -489,7 +491,7 @@ func _on_ignore_continue_checkbox_pressed():
 	# running, so we'll save you a click.
 	if(!_ctrls.continue_button.is_disabled()):
 		_on_continue_button_pressed()
-	
+
 #####################
 #
 # Private
@@ -505,15 +507,15 @@ func _update_controls():
 	else:
 		_ctrls.previous_button.set_disabled(_ctrls.scripts_drop_down.get_selected() == 0)
 		_ctrls.next_button.set_disabled(_ctrls.scripts_drop_down.get_selected() == _ctrls.scripts_drop_down.get_item_count() -1)
-	
+
 	# disabled during run
 	_ctrls.run_button.set_disabled(_is_running)
 	_ctrls.scripts_drop_down.set_disabled(_is_running)
-	
+
 	# enabled during run
 	_ctrls.stop_button.set_disabled(!_is_running)
-	
-	
+
+
 
 
 #-------------------------------------------------------------------------------
@@ -524,7 +526,7 @@ func _parse_tests(script):
 	var file = File.new()
 	var line = ""
 	var line_count = 0
-	
+
 	file.open(script, 1)
 	while(!file.eof_reached()):
 		line_count += 1
@@ -566,10 +568,10 @@ func _pass(text):
 #-------------------------------------------------------------------------------
 func _get_summary_text():
 	var to_return = "/*****************\nSummary\n*****************/\n"
-	to_return += str(_summary.scripts) + " Scripts\n" 
-	to_return += str(_summary.tests) + " Tests\n" 
-	to_return += str(_summary.asserts) + " Asserts\n" 
-	to_return += str(_summary.passed) + " Passed\n" 
+	to_return += str(_summary.scripts) + " Scripts\n"
+	to_return += str(_summary.tests) + " Tests\n"
+	to_return += str(_summary.asserts) + " Asserts\n"
+	to_return += str(_summary.passed) + " Passed\n"
 	to_return += str(_summary.pending) + " Pending\n"
 	to_return += str(_summary.failed) + " Failed\n"
 	to_return += "\n\n"
@@ -595,7 +597,7 @@ func _init_run():
 	_summary.tests = 0
 	_summary.scripts = 0
 	_summary.pending = 0
-	
+
 	_log_text = ""
 	_ctrls.text_box.clear_colors()
 	_ctrls.text_box.add_keyword_color("PASSED", Color(0, 1, 0))
@@ -604,33 +606,33 @@ func _init_run():
 	_ctrls.text_box.add_color_region('/-', '-/', Color(1, 1, 0))
 	_ctrls.text_box.add_color_region('/*', '*/', Color(.5, .5, 1))
 	_ctrls.text_box.set_symbol_color(Color(.5, .5, .5))
-	
+
 	_ctrls.runtime_label.set_text('0.0')
-	
+
 	_current_test = null
-	
+
 	_is_running = true
 	_update_controls()
-	
+
 	_ctrls.script_progress.set_max(_test_scripts.size())
 	_ctrls.script_progress.set_value(0)
 	_ctrls.test_progress.set_max(1)
-	_runtime_timer.start()	
-	
+	_runtime_timer.start()
+
 	_yield_between.tests_since_last_yield = 0
-	
+
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 func _end_run():
-	p(_get_summary_text(), 0)	
+	p(_get_summary_text(), 0)
 	_runtime_timer.stop()
 	_is_running = false
 	update()
 	_update_controls()
 	emit_signal(SIGNAL_TESTS_FINISHED)
 	set_title("Finished.  " + str(get_fail_count()) + " failures.")
-	
+
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 func _is_function_state(script_result):
@@ -655,7 +657,7 @@ func _init_test_script(script_path):
 	var test_script = load(script_path).new()
 	add_child(test_script)
 	test_script.gut = self
-	
+
 	return test_script
 
 #-------------------------------------------------------------------------------
@@ -680,43 +682,43 @@ func _should_yield_now():
 func _test_the_scripts():
 	_init_run()
 	var file = File.new()
-	
+
 	for s in range(_test_scripts.size()):
 		_tests.clear()
 		set_title('Running:  ' + _test_scripts[s])
 		_print_script_heading(_test_scripts[s])
-		
+
 		if(!file.file_exists(_test_scripts[s])):
 			p("FAILED   COULD NOT FIND FILE:  " + _test_scripts[s])
 		else:
 			var test_script = _init_test_script(_test_scripts[s])
 			var script_result = null
-			_summary.scripts += 1		
-			
+			_summary.scripts += 1
+
 			test_script.prerun_setup()
-	
+
 			#yield between test scripts so things paint
 			if(_yield_between.should):
 				_yield_between.timer.set_wait_time(0.01)
 				_yield_between.timer.start()
 				yield(_yield_between.timer, 'timeout')
-	
+
 			_ctrls.test_progress.set_max(_tests.size())
 			for i in range(_tests.size()):
 				_current_test = _tests[i]
-				if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or 
+				if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
 				   (_unit_test_name == '')):
 					p(_current_test.name, 1)
-	
+
 					#yield so things paint
 					if(_should_yield_now()):
 						_yield_between.timer.set_wait_time(0.001)
 						_yield_between.timer.start()
 						yield(_yield_between.timer, 'timeout')
-		
+
 					test_script.setup()
 					_summary.tests += 1
-					
+
 					script_result = test_script.call(_current_test.name)
 					#When the script yields it will return a GDFunctionState object
 					if(_is_function_state(script_result)):
@@ -728,7 +730,7 @@ func _test_the_scripts():
 							p(WAITING_MESSAGE, 2)
 							_wait_timer.start()
 							yield(_wait_timer, 'timeout')
-					
+
 					#if the test called pause_before_teardown then yield until
 					#the continue button is pressed.
 					if(_pause_before_teardown and !_ignore_pause_before_teardown):
@@ -736,13 +738,13 @@ func _test_the_scripts():
 						_waiting = true
 						_ctrls.continue_button.set_disabled(false)
 						yield(self, SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
-					
+
 					test_script.teardown()
 					if(_current_test.passed):
 						_ctrls.text_box.add_keyword_color(_current_test.name, Color(0, 1, 0))
 					else:
 						_ctrls.text_box.add_keyword_color(_current_test.name, Color(1, 0, 0))
-			
+
 					# !!! STOP BUTTON SHORT CIRCUIT !!!
 					if(_stop_pressed):
 						_is_running = false
@@ -750,19 +752,19 @@ func _test_the_scripts():
 						_stop_pressed = false
 						p("STOPPED")
 						return
-					
+
 					_ctrls.test_progress.set_value(i + 1)
 			test_script.postrun_teardown()
 			test_script.free()
 			#END TESTS IN SCRIPT LOOP
-		
+
 		_current_test = null
 		p("\n\n")
 		_ctrls.script_progress.set_value(s + 1)
 		#END TEST SCRIPT LOOP
-		
-	_end_run()	
-	
+
+	_end_run()
+
 
 #########################
 #
@@ -779,21 +781,21 @@ func _test_the_scripts():
 func p(text, level=0, indent=0):
 	var to_print = ""
 	var printing_test_name = false
-	
+
 	if(level <= _log_level):
 		if(_current_test != null):
 			#make sure everyting printed during the execution
 			#of a test is at least indented once under the test
 			if(indent == 0):
 				indent = 1
-			
+
 			#Print the name of the current test if we haven't
 			#printed it already.
 			if(!_current_test.has_printed_name):
 				to_print = "* " + _current_test.name
 				_current_test.has_printed_name = true
 				printing_test_name = text == _current_test.name
-		
+
 		if(!printing_test_name):
 			if(to_print != ""):
 				to_print += "\n"
@@ -802,10 +804,10 @@ func p(text, level=0, indent=0):
 			for i in range(0, indent):
 				pad += "    "
 			to_print += pad + text
-		
+
 		if(_should_print_to_console):
 			print(to_print)
-	
+
 		_log_text += to_print + "\n"
 
 		_ctrls.text_box.insert_text_at_cursor(to_print + "\n")
@@ -822,16 +824,16 @@ func p(text, level=0, indent=0):
 func test_scripts():
 	clear_text()
 	_test_scripts.clear()
-	
+
 	if(_ctrls.scripts_drop_down.get_selected() == 0):
 		for idx in range(1, _ctrls.scripts_drop_down.get_item_count()):
 			_test_scripts.append(_ctrls.scripts_drop_down.get_item_text(idx))
 	else:
 		_test_scripts.append(_ctrls.scripts_drop_down.get_item_text(_ctrls.scripts_drop_down.get_selected()))
-		
+
 	_test_the_scripts()
-	
-	
+
+
 #-------------------------------------------------------------------------------
 #Runs a single script passed in.
 #-------------------------------------------------------------------------------
@@ -859,7 +861,7 @@ func add_directory(path, prefix='test_', suffix='.gd'):
 	var d = Directory.new()
 	d.open(path)
 	d.list_dir_begin()
-	
+
 	#Traversing a directory is kinda odd.  You have to start the process of listing
 	#the contents of a directory with list_dir_begin then use get_next until it
 	#returns an empty string.  Then I guess you should end it.
@@ -875,29 +877,29 @@ func add_directory(path, prefix='test_', suffix='.gd'):
 	d.list_dir_end()
 
 #-------------------------------------------------------------------------------
-# This will try to find a script in the list of scripts to test that contains 
-# the specified script name.  It does not have to be a full match.  It will 
+# This will try to find a script in the list of scripts to test that contains
+# the specified script name.  It does not have to be a full match.  It will
 # select the first matching occurance so that this script will run when run_tests
 # is called.  Works the same as the select_this_one option of add_script.
 #
 # returns whether it found a match or not
-#-------------------------------------------------------------------------------	
+#-------------------------------------------------------------------------------
 func select_script(script_name):
 	var found = false
 	var idx = 0
-	
+
 	while(idx < _ctrls.scripts_drop_down.get_item_count() and !found):
 		if(_ctrls.scripts_drop_down.get_item_text(idx).find(script_name) != -1):
 			_ctrls.scripts_drop_down.select(idx)
 			found = true
 		else:
 			idx += 1
-	
+
 	return found
 ################
 #
 # ASSERTS
-# 
+#
 ################
 func _pass_if_datatypes_match(got, expected, text):
 	var passed = true
@@ -919,7 +921,7 @@ func assert_eq(got, expected, text=""):
 			_pass(disp)
 
 #-------------------------------------------------------------------------------
-#Asserts that the value got does not equal the "not expected" value.  
+#Asserts that the value got does not equal the "not expected" value.
 #-------------------------------------------------------------------------------
 func assert_ne(got, not_expected, text=""):
 	var disp = "[" + str(got) + "] expected to be anything except [" + str(not_expected) + "]:  " + text
@@ -973,7 +975,7 @@ func assert_false(got, text=""):
 #-------------------------------------------------------------------------------
 func assert_between(got, expect_low, expect_high, text=""):
 	var disp = "[" + str(got) + "] expected to be between [" + str(expect_low) + "] and [" + str(expect_high) + "]:  " + text
-	
+
 	if(_pass_if_datatypes_match(got, expect_low, text) and _pass_if_datatypes_match(got, expect_high, text)):
 		if(expect_low > expect_high):
 			disp = "INVALID range.  [" + str(expect_low) + "] is not less than [" + str(expect_high) + "]"
@@ -1027,8 +1029,8 @@ func assert_file_not_empty(file_path):
 		_fail(disp)
 
 #-------------------------------------------------------------------------------
-# Verifies the object has get and set methods for the property passed in.  The 
-# property isn't tied to anything, just a name to be appended to the end of 
+# Verifies the object has get and set methods for the property passed in.  The
+# property isn't tied to anything, just a name to be appended to the end of
 # get_ and set_.  Asserts the get_ and set_ methods exist, if not, it stops there.
 # If they exist then it asserts get_ returns the expected default then calls
 # set_ and asserts get_ has the value it was set to.
@@ -1044,7 +1046,7 @@ func assert_get_set_methods(obj, property, default, set_to):
 	assert_eq(obj.call(get), default, 'It should have the expected default value.')
 	obj.call(set, set_to)
 	assert_eq(obj.call(get), set_to, 'The set value should have been returned.')
-	
+
 #-------------------------------------------------------------------------------
 #Mark the current test as pending.
 #-------------------------------------------------------------------------------
@@ -1107,7 +1109,7 @@ func get_fail_count():
 #-------------------------------------------------------------------------------
 func get_pending_count():
 	return _summary.pending
-	
+
 #-------------------------------------------------------------------------------
 #Set whether it should print to console or not.  Default is yes.
 #-------------------------------------------------------------------------------
@@ -1121,19 +1123,19 @@ func get_should_print_to_console():
 	return _should_print_to_console
 
 #-------------------------------------------------------------------------------
-#Get the results of all tests ran as text.  This string is the same as is 
+#Get the results of all tests ran as text.  This string is the same as is
 #displayed in the text box, and simlar to what is printed to the console.
 #-------------------------------------------------------------------------------
 func get_result_text():
 	return _log_text
-	
+
 #-------------------------------------------------------------------------------
 #Set the log level.  Use one of the various LOG_LEVEL_* constants.
 #-------------------------------------------------------------------------------
 func set_log_level(level):
 	_log_level = level
 	_ctrls.log_level_slider.set_value(level)
-	
+
 #-------------------------------------------------------------------------------
 #Get the current log level.
 #-------------------------------------------------------------------------------
@@ -1149,12 +1151,12 @@ func pause_before_teardown():
 	_pause_before_teardown = true;
 
 #-------------------------------------------------------------------------------
-# For batch processing purposes, you may want to ignore any calls to 
+# For batch processing purposes, you may want to ignore any calls to
 # pause_before_teardown that you forgot to remove.
 #-------------------------------------------------------------------------------
 func set_ignore_pause_before_teardown(should_ignore):
 	_ignore_pause_before_teardown = should_ignore
-	
+
 #-------------------------------------------------------------------------------
 #Set to true so that painting of the screen will occur between tests.  Allows you
 #to see the output as tests occur.  Especially useful with long running tests that
@@ -1169,7 +1171,7 @@ func set_yield_between_tests(should):
 #-------------------------------------------------------------------------------
 #Call _process or _fixed_process, if they exist, on obj and all it's children
 #and their children and so and so forth.  Delta will be passed through to all
-#the _process or _fixed_process methods.  
+#the _process or _fixed_process methods.
 #-------------------------------------------------------------------------------
 func simulate(obj, times, delta):
 	for i in range(times):
@@ -1177,13 +1179,13 @@ func simulate(obj, times, delta):
 			obj._process(delta)
 		if(obj.has_method("_fixed_process")):
 			obj._fixed_process(delta)
-			
+
 		for kid in obj.get_children():
 			simulate(kid, 1, delta)
 
 #-------------------------------------------------------------------------------
-# Starts an internal timer with a timeout of the passed in time.  A 'timeout' 
-# signal will be sent when the timer ends.  Returns itself so that it can be 
+# Starts an internal timer with a timeout of the passed in time.  A 'timeout'
+# signal will be sent when the timer ends.  Returns itself so that it can be
 # used in a call to yield...cutting down on lines of code.
 #
 # Example, yield to the Gut object for 10 seconds:
@@ -1206,13 +1208,13 @@ func set_yield_time(time, text=''):
 #-------------------------------------------------------------------------------
 func get_unit_test_name():
 	return _unit_test_name
-	
+
 #-------------------------------------------------------------------------------
 # set the specific unit test that should be run.
 #-------------------------------------------------------------------------------
 func set_unit_test_name(test_name):
 	_unit_test_name = test_name
-	
+
 #-------------------------------------------------------------------------------
 # Creates an empty file at the specified path
 #-------------------------------------------------------------------------------
@@ -1246,7 +1248,7 @@ func directory_delete_files(path):
 	var d = Directory.new()
 	d.open(path)
 	d.list_dir_begin()
-	
+
 	#Traversing a directory is kinda odd.  You have to start the process of listing
 	#the contents of a directory with list_dir_begin then use get_next until it
 	#returns an empty string.  Then I guess you should end it.
@@ -1264,7 +1266,7 @@ func directory_delete_files(path):
 # Class that all test scripts must extend.  Syntax is just a normal extends with
 # a .Tests at the end.  Example:  extends "res://scripts/gut.gd".Tests
 #
-# Once a class extends this class it sent (via the numerous script loading 
+# Once a class extends this class it sent (via the numerous script loading
 # methods) to a Gut object to run the tests.
 ################################################################################
 class Test:
@@ -1272,26 +1274,26 @@ class Test:
 	# constant for signal when calling yeild_for
 	const YIELD = 'timeout'
 	#Need a reference to the instance that is running the tests.  This
-	#is set by the gut class when it runs the tests.  This gets you 
+	#is set by the gut class when it runs the tests.  This gets you
 	#access to the asserts in the tests you write.
 	var gut = null
 
 # #######################
-# Virtual Methods	
+# Virtual Methods
 # #######################
 	#Overridable method that runs before each test.
 	func setup():
 		pass
-	
+
 	#Overridable method that runs after each test
 	func teardown():
 		pass
-	
+
 	#Overridable method that runs before any tests are run
 	func prerun_setup():
 		pass
-	
-	#Overridable method that runs after all tests are run 
+
+	#Overridable method that runs after all tests are run
 	func postrun_teardown():
 		pass
 
@@ -1301,62 +1303,62 @@ class Test:
 	# see gut method
 	func assert_eq(got, expected, text=""):
 		gut.assert_eq(got, expected, text)
-		
+
 	# see gut method
 	func assert_ne(got, not_expected, text=""):
 		gut.assert_ne(got, not_expected, text)
-		
+
 	# see gut method
 	func assert_gt(got, expected, text=""):
 		gut.assert_gt(got, expected, text)
-	
+
 	# see gut method
 	func assert_lt(got, expected, text=""):
 		gut.assert_lt(got, expected, text)
-	
+
 	# see gut method
 	func assert_true(got, text=""):
 		gut.assert_true(got, text)
-	
+
 	# see gut method
 	func assert_false(got, text=""):
 		gut.assert_false(got, text)
-	
+
 	# see gut method
 	func assert_between(got, expect_low, expect_high, text=""):
 		gut.assert_between(got, expect_low, expect_high, text)
-	
+
 	# see gut method
 	func assert_file_exists(file_path):
 		gut.assert_file_exists(file_path)
-	
+
 	# see gut method
 	func assert_file_does_not_exist(file_path):
 		gut.assert_file_does_not_exist(file_path)
-	
+
 	# see gut method
 	func assert_file_empty(file_path):
 		gut.assert_file_empty(file_path)
-	
+
 	# see gut method
 	func assert_file_not_empty(file_path):
 		gut.assert_file_not_empty(file_path)
-	
+
 	# see gut method
 	func assert_get_set_methods(obj, property, default, set_to):
 		gut.assert_get_set_methods(obj, property, default, set_to)
-	
+
 	# see gut method
 	func pending(text=""):
 		gut.pending(text)
-	
+
 	# I think this reads better than set_yield_time, but don't want to break anything
 	func yield_for(time, msg=''):
 		return gut.set_yield_time(time, msg)
-	
+
 	func end_test():
 		gut.end_yielded_test()
-		
+
 ################################################################################
 # OneTest (INTERNAL USE ONLY)
 #	Used to keep track of info about each test ran.
@@ -1371,4 +1373,3 @@ class OneTest:
 	var has_printed_name = false
 	# the line number the test is on
 	var line_number = -1
-	
