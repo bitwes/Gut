@@ -69,10 +69,6 @@ Each test should perform at least one assert or call `pending` to indicate the t
 Here's a sample test script:
 
 ``` python
-# ##############################################################################
-# This script assumes that gut.gd is located in 'res://scripts'.  Other than
-# that it should be pretty straight forward.
-# ##############################################################################
 extends "res://test/gut/gut.gd".Test
 func setup():
 	gut.p("ran setup", 2)
