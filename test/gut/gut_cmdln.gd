@@ -50,7 +50,7 @@ class CmdLineParser:
 
 	func _init():
 		for i in range(OS.get_cmdline_args().size()):
-			_opts.append(OS.get_cmdline_args().get(i))
+			_opts.append(OS.get_cmdline_args()[i])
 
 	# Search _opts for an element that starts with the option name
 	# specified.
