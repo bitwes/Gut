@@ -50,7 +50,7 @@ class CmdLineParser:
 
 	func _init():
 		for i in range(OS.get_cmdline_args().size()):
-			_opts.append(OS.get_cmdline_args().get(i))
+			_opts.append(OS.get_cmdline_args()[i])
 
 	# Search _opts for an element that starts with the option name
 	# specified.
@@ -339,4 +339,8 @@ func _init():
 # exit if option is set.
 func _on_tests_finished():
 	if(options.should_exit):
-		quit()
+		if(_tester._summary.failed>0):
+			# kill self => return non-zero exit code
+			OS.kill(OS.get_process_ID())
+		else:
+			quit()
