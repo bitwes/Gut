@@ -301,7 +301,7 @@ This is the command line interface for the unit testing tool Gut.  With this
 interface you can run one or more test scipts from the command line.  In order
 for the Gut options to not clash with any other Godot options, each option
 starts with a "g".  Also, any option that requires a value will take the form of
-"-g<name>=<value>".  There cannot be any spces between the option, the "=", or
+"-g<name>=<value>".  There cannot be any spaces between the option, the "=", or
 inside a specified value or godot will think you are trying to run a scene.       
 
 Options                                                                                                               
