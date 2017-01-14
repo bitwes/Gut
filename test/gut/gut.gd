@@ -267,6 +267,7 @@ func setup_controls():
 	_ctrls.scripts_drop_down.set_pos(Vector2(10, _ctrls.log_level_slider.get_pos().y + 50))
 	_ctrls.scripts_drop_down.add_item("Run All")
 	_set_anchor_bottom_left(_ctrls.scripts_drop_down)
+	_ctrls.scripts_drop_down.connect('item_selected', self, '_on_script_selected')
 
 	add_child(_ctrls.previous_button)
 	_ctrls.previous_button.set_size(Vector2(50, 25))
@@ -492,6 +493,10 @@ func _on_ignore_continue_checkbox_pressed():
 	if(!_ctrls.continue_button.is_disabled()):
 		_on_continue_button_pressed()
 
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func _on_script_selected(id):
+	_update_controls()
 #####################
 #
 # Private
