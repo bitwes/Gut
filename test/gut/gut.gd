@@ -558,6 +558,7 @@ func _fail(text):
 	p('FAILED:  ' + text, LOG_LEVEL_FAIL_ONLY)
 	if(_current_test != null):
 		p('  at line ' + str(_current_test.line_number), LOG_LEVEL_FAIL_ONLY)
+	end_yielded_test()
 
 #-------------------------------------------------------------------------------
 #Pass an assertion.
@@ -567,6 +568,7 @@ func _pass(text):
 	_summary.passed += 1
 	if(_log_level >= LOG_LEVEL_ALL_ASSERTS):
 		p("PASSED:  " + text, LOG_LEVEL_ALL_ASSERTS)
+	end_yielded_test()
 
 #-------------------------------------------------------------------------------
 #Convert the _summary struct into text for display
@@ -1070,7 +1072,7 @@ func pending(text=""):
 		p("Pending")
 	else:
 		p("Pending:  " + text)
-
+	end_yielded_test()
 ################
 #
 # MISC
