@@ -903,10 +903,19 @@ func select_script(script_name):
 ################
 func _pass_if_datatypes_match(got, expected, text):
 	var passed = true
+	
 	if(!_disable_strict_datatype_checks):
-		if(typeof(got) != typeof(expected) and got != null and expected != null):
-			_fail('Cannot compare ' + types[typeof(got)] + '[' + str(got) + '] to ' + types[typeof(expected)] + '[' + str(expected) + '].  ' + text)
-			passed = false
+		var got_type = typeof(got)
+		var expect_type = typeof(expected)
+		if(got_type != expect_type and got != null and expected != null):
+			# If we have a mismatch between float and int (types 2 and 3) then
+			# print out a warning but do not fail.
+			if([2, 3].has(got_type) and [2, 3].has(expect_type)):
+				p(str('Warn:  Float/Int comparison.  Got ', types[got_type], ' but expected ', types[expect_type]), 1)
+			else:
+				_fail('Cannot compare ' + types[got_type] + '[' + str(got) + '] to ' + types[expect_type] + '[' + str(expected) + '].  ' + text)
+				passed = false
+
 	return passed
 
 #-------------------------------------------------------------------------------

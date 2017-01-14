@@ -295,9 +295,9 @@ func test_assert_false_with_false():
 #------------------------------
 # disable strict datatype comparisons
 #------------------------------
-func test_when_strict_enabled_you_cannot_compare_in_and_float():
+func test_when_strict_enabled_you_can_compare_int_and_float():
 	gr.test_gut.assert_eq(1.0, 1)
-	assert_fail()
+	assert_pass()
 
 func test_when_strict_disabled_can_compare_int_and_float():
 	gr.test_gut.disable_strict_datatype_checks(true)
