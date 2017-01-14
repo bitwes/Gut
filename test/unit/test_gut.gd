@@ -594,6 +594,7 @@ func test_asserts_on_test_object():
 #-------------------------------------------------------------------------------
 func test_verify_results():
 	gut.p("/*THESE SHOULD ALL PASS, IF NOT THEN SOMETHING IS BROKEN*/")
+	gut.p("/*These counts will be off if another script was run before this one.*/")
 	gut.assert_eq(1, counts.prerun_setup_count, "Prerun setup should have been called once")
 	gut.assert_eq(gut.get_test_count(), counts.setup_count, "Setup should have been called once for each test")
 	# teardown for this test hasn't been run yet.
