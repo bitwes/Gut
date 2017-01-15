@@ -47,4 +47,4 @@ func _run_tests():
 	tester.set_should_print_to_console(true)
 	tester.set_yield_between_tests(true)
 	tester.add_directory('res://test/unit')
-	tester.test_scripts()
+	#tester.test_scripts()

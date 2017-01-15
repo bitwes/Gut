@@ -1172,6 +1172,10 @@ func pause_before_teardown():
 #-------------------------------------------------------------------------------
 func set_ignore_pause_before_teardown(should_ignore):
 	_ignore_pause_before_teardown = should_ignore
+	_ctrls.ignore_continue_checkbox.set_pressed(should_ignore)
+
+func get_ignore_pause_before_teardown():
+	return _ignore_pause_before_teardown
 
 #-------------------------------------------------------------------------------
 #Set to true so that painting of the screen will occur between tests.  Allows you

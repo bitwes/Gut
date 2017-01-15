@@ -124,7 +124,21 @@ func postrun_teardown():
 	gut.assert_true(true, 'POSTTEARDOWN RAN')
 	gut.directory_delete_files('user://')
 
+#------------------------------
+# Settings
+#------------------------------
+func test_get_set_ingore_pauses():
+	assert_get_set_methods(gr.test_gut, 'ignore_pause_before_teardown', false, true)
 
+func test_when_ignore_pauses_set_it_checks_checkbox():
+	gr.test_gut.set_ignore_pause_before_teardown(true)
+	assert_true(gr.test_gut._ctrls.ignore_continue_checkbox.is_pressed())
+
+func test_when_ignore_pauses_unset_it_unchecks_checkbox():
+	gr.test_gut.set_ignore_pause_before_teardown(true)
+	gr.test_gut.set_ignore_pause_before_teardown(false)
+	assert_false(gr.test_gut._ctrls.ignore_continue_checkbox.is_pressed())
+	
 #------------------------------
 #Number tests
 #------------------------------
