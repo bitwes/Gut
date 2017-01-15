@@ -105,7 +105,8 @@ var _ctrls = {
 	script_progress = ProgressBar.new(),
 	test_progress = ProgressBar.new(),
 	runtime_label = Label.new(),
-	ignore_continue_checkbox = CheckBox.new()
+	ignore_continue_checkbox = CheckBox.new(),
+	pass_count = Label.new()
 }
 
 var _mouse_down = false
@@ -196,8 +197,15 @@ func setup_controls():
 	add_child(_ctrls.runtime_label)
 	_ctrls.runtime_label.set_text('0.0')
 	_ctrls.runtime_label.set_size(Vector2(50, 30))
-	_ctrls.runtime_label.set_pos(Vector2(_ctrls.clear_button.get_pos().x - 60, _ctrls.clear_button.get_pos().y + 10))
+	_ctrls.runtime_label.set_pos(Vector2(_ctrls.clear_button.get_pos().x - 90, _ctrls.clear_button.get_pos().y + 75))
 	_set_anchor_bottom_right(_ctrls.runtime_label)
+	
+	add_child(_ctrls.pass_count)
+	_ctrls.pass_count.set_text('p/f:  0/0')
+	_ctrls.pass_count.set_size(Vector2(50, 30))
+	_ctrls.pass_count.set_pos(Vector2(_ctrls.clear_button.get_pos().x - 90, _ctrls.clear_button.get_pos().y + 50))
+	_set_anchor_bottom_right(_ctrls.pass_count)
+
 
 	add_child(_ctrls.continue_button)
 	_ctrls.continue_button.set_text("Continue")
@@ -519,7 +527,7 @@ func _update_controls():
 
 	# enabled during run
 	_ctrls.stop_button.set_disabled(!_is_running)
-
+	_ctrls.pass_count.set_text(str('p-f:  ', _summary.passed, '-', _summary.failed))
 
 
 
@@ -558,7 +566,9 @@ func _fail(text):
 	p('FAILED:  ' + text, LOG_LEVEL_FAIL_ONLY)
 	if(_current_test != null):
 		p('  at line ' + str(_current_test.line_number), LOG_LEVEL_FAIL_ONLY)
+	_update_controls()
 	end_yielded_test()
+	
 
 #-------------------------------------------------------------------------------
 #Pass an assertion.
@@ -568,7 +578,9 @@ func _pass(text):
 	_summary.passed += 1
 	if(_log_level >= LOG_LEVEL_ALL_ASSERTS):
 		p("PASSED:  " + text, LOG_LEVEL_ALL_ASSERTS)
+	_update_controls()
 	end_yielded_test()
+	
 
 #-------------------------------------------------------------------------------
 #Convert the _summary struct into text for display
