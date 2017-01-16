@@ -123,9 +123,9 @@ This guy warrants his own section.  I found that making tests for most getters a
 * `gut.p(text, level=0, indent=0)` print info to the GUI and console (if enabled.)
 
 * `gut.pause_before_teardown()` This method will cause Gut to pause before it moves on to the next test.  This is useful for debugging, for instance if you want to investigate the screen or anything else after a test has finished executing.  See also `set_ignore_pause_before_teardown`
-* `yield_for(time_in_seconds)` Basically this simplifies the code needed to pause the test execution for a number of seconds.  This is useful if your test requires things to play out in real time before making an assertion.  There are more details in the Yielding section.  It is designed to be used with the `yield` built in.  The following example will pause your test execution (and only the test execution) for 5 seconds before continuing.  You must call `end_test()` in any test that has a yield in it or execution will not continue.
+* `yield_for(time_in_seconds)` Basically this simplifies the code needed to pause the test execution for a number of seconds.  This is useful if your test requires things to play out in real time before making an assertion.  There are more details in the Yielding section.  It is designed to be used with the `yield` built in.  The following example will pause your test execution (and only the test execution) for 5 seconds before continuing.  You must call an assert or `pending` or `end_test()` after a yield or the test will never stop running.
   * `yield(yield_for(5), YIELD)`
-* `end_test()` This must be called in any test that has a `yield` in it (regardless of what is yielded to) so that Gut knows when the test has completed.
+* `end_test()` This can be called instead of an assert or `pending` to end a test that has yielded.
 
 ### <a name="gut_methods"> Methods for Configuring the Execution of Tests
 These methods would be used inside the Scene's script (`templates/gut_main.gd`) to load and execute scripts as well as inspect the results of a run and change how Gut behaves.  These methods must all be called on the Gut object that was instantiated.  In the case of the provided template, this would be `tester`.
@@ -250,7 +250,7 @@ func test_does_something_each_loop():
 ```
 ##  <a name="yielding"> Yielding during a test
 
-I'm not going to try and explain yielding here.  It's can be a bit confusing and [Godot does a pretty good job of it already](http://docs.godotengine.org/en/latest/reference/gdscript.html#coroutines).  Gut has support for yielding though, so you can yield at anytime in your test.  The one caveat is that you must tell Gut when your test has completed so it can continue running tests.  You do this by calling `end_test()`.  
+I'm not going to try and explain yielding here.  It's can be a bit confusing and [Godot does a pretty good job of it already](http://docs.godotengine.org/en/latest/reference/gdscript.html#coroutines).  Gut has support for yielding though, so you can yield at anytime in your test.  The one caveat is that you must use one of the various asserts or `pending()` after the yield.  Otherwise Gut won't know that the yield has finished.  You can optionally use `end_test()` if an assert or `pending` doesn't make sense for some reason.
 
 When might you want to yield?  Yielding is very handy when you want to wait for a signal to occur instead of running for a finite amount of time.  For example, you could have your test yield until your character gets hit by something (`yield(my_char, 'hit')`).  An added bonus of this approach is that you can watch everything happen.  In your test you create your character, the object to hit it, and then watch the interaction play out.
 
@@ -261,7 +261,6 @@ func test_yield_to_custom_signal():
 	add_child(my_object)
 	yield(my_object, 'custom_signal')
 	assert_true(some_condition, 'After signal fired, this should be true')
-	end_test()
 ```
 
 Another use case I have come across is when creating integration tests and you want to verify that a complex interaction ends with an expected result.  In this case you might have an idea of how long the interaction will take to play out but you don't have a signal that you can attach to.  Instead you want to pause your test execution until that time has elapsed.  For this, Gut has the `yield_for` method.  This method has a little magic in it, but all you really need to know is that the following line will pause your test execution for 5 seconds while the rest of your code executes as expected:  `yield(yield_for(5), YIELD)`.
@@ -274,12 +273,11 @@ func test_wait_for_a_bit():
 	#wait 5 seconds
 	yield(yield_for(5), YIELD)
 	gut.assert_eq(my_object.some_property, 'some value', 'After waiting 5 seconds, this property should be set')
-	end_test()
 ```
 Sometimes it's also helpful to just watch things play out.  Yield is great for that, you just create a couple objects, set them to interact and then yield.  You can leave the yields in or take them out if your test passes without them.  You can also use the `pause_before_teardown` method that will pause test execution before it runs `teardown` and moves onto the next test.  This keeps the game loop running after the test has finished and you can see what everything looks like.
 
 ### How Yielding and Gut Works
-For those that are interested, Gut is able to detect when a test has called yield because the method returns a special class back.  Gut itself will then `yield` to an internal timer and check to see if `end_test` has been called every second, if not it waits again.  It continues to do this until `end_test` has been called.  
+For those that are interested, Gut is able to detect when a test has called yield because the method returns a special class back.  Gut itself will then `yield` to an internal timer and check to see if an assertion or `pending()` or `end_test()` has been called every second, if not it waits again.
 
 If you only yielded using `yield_for` then Gut would always know when to resume the test and could handle it itself.  You can yield to anything though and Gut cannot tell the difference.  Also, when you yield to something else Gut has no way of knowing when the method has continued so you have to tell it when you are done so it will stop waiting.  One side effect of this is that if you `yield` multiple times in the same test, Gut can't tell.  It continues to wait from the first yield and you won't see any additional "yield detected" outputs in the GUI or console.
 
