@@ -104,7 +104,8 @@ var _ctrls = {
 	test_progress = ProgressBar.new(),
 	runtime_label = Label.new(),
 	ignore_continue_checkbox = CheckBox.new(),
-	pass_count = Label.new()
+	pass_count = Label.new(),
+	run_rest = Button.new()
 }
 
 var _mouse_down = false
@@ -284,7 +285,7 @@ func setup_controls():
 	add_child(_ctrls.previous_button)
 	_ctrls.previous_button.set_size(Vector2(50, 25))
 	pos = _ctrls.scripts_drop_down.get_pos() + Vector2(_ctrls.scripts_drop_down.get_size().x, -30)
-	pos.x -= 240
+	pos.x -= 300
 	_ctrls.previous_button.set_pos(pos)
 	_ctrls.previous_button.set_text("<")
 	_ctrls.previous_button.connect("pressed", self, '_on_previous_button_pressed')
@@ -305,6 +306,14 @@ func setup_controls():
 	_ctrls.run_button.set_pos(pos)
 	_ctrls.run_button.connect("pressed", self, "_on_run_button_pressed")
 	_set_anchor_bottom_left(_ctrls.run_button)
+
+	add_child(_ctrls.run_rest)
+	_ctrls.run_rest.set_text("rr")
+	_ctrls.run_rest.set_size(Vector2(50, 25))
+	pos.x += 60
+	_ctrls.run_rest.set_pos(pos)
+	_ctrls.run_rest.connect('pressed', self, '_on_run_rest_pressed')
+	_set_anchor_bottom_left(_ctrls.run_rest)
 
 	add_child(_ctrls.next_button)
 	_ctrls.next_button.set_size(Vector2(50, 25))
@@ -509,6 +518,12 @@ func _on_ignore_continue_checkbox_pressed():
 #-------------------------------------------------------------------------------
 func _on_script_selected(id):
 	_update_controls()
+	
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func _on_run_rest_pressed():
+	test_scripts(true)
+
 #####################
 #
 # Private
@@ -844,7 +859,7 @@ func p(text, level=0, indent=0):
 #-------------------------------------------------------------------------------
 #Runs all the scripts that were added using add_script
 #-------------------------------------------------------------------------------
-func test_scripts():
+func test_scripts(run_rest=false):
 	clear_text()
 	_test_scripts.clear()
 
@@ -852,7 +867,11 @@ func test_scripts():
 		for idx in range(1, _ctrls.scripts_drop_down.get_item_count()):
 			_test_scripts.append(_ctrls.scripts_drop_down.get_item_text(idx))
 	else:
-		_test_scripts.append(_ctrls.scripts_drop_down.get_item_text(_ctrls.scripts_drop_down.get_selected()))
+		if(run_rest):
+			for idx in range(_ctrls.scripts_drop_down.get_selected(), _ctrls.scripts_drop_down.get_item_count()):
+				_test_scripts.append(_ctrls.scripts_drop_down.get_item_text(idx))
+		else:
+			_test_scripts.append(_ctrls.scripts_drop_down.get_item_text(_ctrls.scripts_drop_down.get_selected()))
 
 	_test_the_scripts()
 
