@@ -198,19 +198,13 @@ func setup_controls():
 	_ctrls.clear_button.set_pos(_ctrls.copy_button.get_pos() - Vector2(button_size.x, 0) - button_spacing)
 	_ctrls.clear_button.connect("pressed", self, "clear_text")
 	_set_anchor_bottom_right(_ctrls.clear_button)
-
-	add_child(_ctrls.runtime_label)
-	_ctrls.runtime_label.set_text('0.0')
-	_ctrls.runtime_label.set_size(Vector2(50, 30))
-	_ctrls.runtime_label.set_pos(Vector2(_ctrls.clear_button.get_pos().x - 90, _ctrls.clear_button.get_pos().y + 75))
-	_set_anchor_bottom_right(_ctrls.runtime_label)
 	
 	add_child(_ctrls.pass_count)
 	_ctrls.pass_count.set_text('0 - 0')
-	_ctrls.pass_count.set_size(Vector2(50, 30))
+	_ctrls.pass_count.set_size(Vector2(100, 30))
 	_ctrls.pass_count.set_pos(Vector2(550, 0))
+	_ctrls.pass_count.set_align(HALIGN_RIGHT)
 	_set_anchor_top_right(_ctrls.pass_count)
-
 
 	add_child(_ctrls.continue_button)
 	_ctrls.continue_button.set_text("Continue")
@@ -278,9 +272,17 @@ func setup_controls():
 	add_child(_ctrls.scripts_drop_down)
 	_ctrls.scripts_drop_down.set_size(Vector2(375, 25))
 	_ctrls.scripts_drop_down.set_pos(Vector2(10, _ctrls.log_level_slider.get_pos().y + 50))
-	_ctrls.scripts_drop_down.add_item("Run All")
 	_set_anchor_bottom_left(_ctrls.scripts_drop_down)
 	_ctrls.scripts_drop_down.connect('item_selected', self, '_on_script_selected')
+
+	add_child(_ctrls.run_button)
+	_ctrls.run_button.set_text('<- run')
+	_ctrls.run_button.set_size(Vector2(50, 25))
+	#pos.x += 60
+	#_ctrls.run_button.set_pos(pos)
+	_ctrls.run_button.set_pos(_ctrls.scripts_drop_down.get_pos() + Vector2(_ctrls.scripts_drop_down.get_size().x + 5, 0))
+	_ctrls.run_button.connect("pressed", self, "_on_run_button_pressed")
+	_set_anchor_bottom_left(_ctrls.run_button)
 
 	add_child(_ctrls.previous_button)
 	_ctrls.previous_button.set_size(Vector2(50, 25))
@@ -299,16 +301,8 @@ func setup_controls():
 	_ctrls.stop_button.connect("pressed", self, '_on_stop_button_pressed')
 	_set_anchor_bottom_left(_ctrls.stop_button)
 
-	add_child(_ctrls.run_button)
-	_ctrls.run_button.set_text("run")
-	_ctrls.run_button.set_size(Vector2(50, 25))
-	pos.x += 60
-	_ctrls.run_button.set_pos(pos)
-	_ctrls.run_button.connect("pressed", self, "_on_run_button_pressed")
-	_set_anchor_bottom_left(_ctrls.run_button)
-
 	add_child(_ctrls.run_rest)
-	_ctrls.run_rest.set_text("rr")
+	_ctrls.run_rest.set_text('run')
 	_ctrls.run_rest.set_size(Vector2(50, 25))
 	pos.x += 60
 	_ctrls.run_rest.set_pos(pos)
@@ -322,6 +316,12 @@ func setup_controls():
 	_ctrls.next_button.set_text(">")
 	_ctrls.next_button.connect("pressed", self, '_on_next_button_pressed')
 	_set_anchor_bottom_left(_ctrls.next_button)
+
+	add_child(_ctrls.runtime_label)
+	_ctrls.runtime_label.set_text('0.0')
+	_ctrls.runtime_label.set_size(Vector2(50, 30))
+	_ctrls.runtime_label.set_pos(Vector2(_ctrls.clear_button.get_pos().x - 90, _ctrls.next_button.get_pos().y))
+	_set_anchor_bottom_right(_ctrls.runtime_label)
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -542,6 +542,7 @@ func _update_controls():
 
 	# disabled during run
 	_ctrls.run_button.set_disabled(_is_running)
+	_ctrls.run_rest.set_disabled(_is_running)
 	_ctrls.scripts_drop_down.set_disabled(_is_running)
 
 	# enabled during run
@@ -863,15 +864,11 @@ func test_scripts(run_rest=false):
 	clear_text()
 	_test_scripts.clear()
 
-	if(_ctrls.scripts_drop_down.get_selected() == 0):
-		for idx in range(1, _ctrls.scripts_drop_down.get_item_count()):
+	if(run_rest):
+		for idx in range(_ctrls.scripts_drop_down.get_selected(), _ctrls.scripts_drop_down.get_item_count()):
 			_test_scripts.append(_ctrls.scripts_drop_down.get_item_text(idx))
 	else:
-		if(run_rest):
-			for idx in range(_ctrls.scripts_drop_down.get_selected(), _ctrls.scripts_drop_down.get_item_count()):
-				_test_scripts.append(_ctrls.scripts_drop_down.get_item_text(idx))
-		else:
-			_test_scripts.append(_ctrls.scripts_drop_down.get_item_text(_ctrls.scripts_drop_down.get_selected()))
+		_test_scripts.append(_ctrls.scripts_drop_down.get_item_text(_ctrls.scripts_drop_down.get_selected()))
 
 	_test_the_scripts()
 
@@ -891,6 +888,10 @@ func test_script(script):
 func add_script(script, select_this_one=false):
 	_test_scripts.append(script)
 	_ctrls.scripts_drop_down.add_item(script)
+	# Move the run_button in case the size of the path of the script caused the
+	# drop down to resize.
+	_ctrls.run_button.set_pos(_ctrls.scripts_drop_down.get_pos() + \
+	                          Vector2(_ctrls.scripts_drop_down.get_size().x + 5, 0))
 	if(select_this_one):
 		_ctrls.scripts_drop_down.select(_ctrls.scripts_drop_down.get_item_count() -1)
 
