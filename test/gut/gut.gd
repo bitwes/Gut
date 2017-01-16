@@ -120,6 +120,12 @@ var min_size = Vector2(650, 400)
 const SIGNAL_TESTS_FINISHED = 'tests_finished'
 const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yeild_before_teardown'
 
+
+func _set_anchor_top_right(obj):
+	obj.set_anchor(MARGIN_RIGHT, ANCHOR_BEGIN)
+	obj.set_anchor(MARGIN_LEFT, ANCHOR_END)
+	obj.set_anchor(MARGIN_TOP, ANCHOR_BEGIN)
+	
 func _set_anchor_bottom_right(obj):
 	obj.set_anchor(MARGIN_LEFT, ANCHOR_END)
 	obj.set_anchor(MARGIN_RIGHT, ANCHOR_END)
@@ -201,10 +207,10 @@ func setup_controls():
 	_set_anchor_bottom_right(_ctrls.runtime_label)
 	
 	add_child(_ctrls.pass_count)
-	_ctrls.pass_count.set_text('p/f:  0/0')
+	_ctrls.pass_count.set_text('0 - 0')
 	_ctrls.pass_count.set_size(Vector2(50, 30))
-	_ctrls.pass_count.set_pos(Vector2(_ctrls.clear_button.get_pos().x - 90, _ctrls.clear_button.get_pos().y + 50))
-	_set_anchor_bottom_right(_ctrls.pass_count)
+	_ctrls.pass_count.set_pos(Vector2(550, 0))
+	_set_anchor_top_right(_ctrls.pass_count)
 
 
 	add_child(_ctrls.continue_button)
@@ -527,7 +533,7 @@ func _update_controls():
 
 	# enabled during run
 	_ctrls.stop_button.set_disabled(!_is_running)
-	_ctrls.pass_count.set_text(str('p-f:  ', _summary.passed, '-', _summary.failed))
+	_ctrls.pass_count.set_text(str( _summary.passed, ' - ', _summary.failed))
 
 
 
