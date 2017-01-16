@@ -71,8 +71,6 @@ var _yield_between = {
 
 var types = {}
 
-
-
 var _set_yield_time_called = false
 # used when yielding to gut instead of some other
 # signal.  Start with set_yield_time()
