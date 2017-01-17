@@ -369,6 +369,7 @@ func _ready():
 	set_process(true)
 
 	set_pause_mode(PAUSE_MODE_PROCESS)
+	_update_controls()
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -540,9 +541,11 @@ func _update_controls():
 	if(_is_running):
 		_ctrls.previous_button.set_disabled(true)
 		_ctrls.next_button.set_disabled(true)
+		_ctrls.pass_count.show()
 	else:
 		_ctrls.previous_button.set_disabled(_ctrls.scripts_drop_down.get_selected() == 0)
 		_ctrls.next_button.set_disabled(_ctrls.scripts_drop_down.get_selected() == _ctrls.scripts_drop_down.get_item_count() -1)
+		_ctrls.pass_count.hide()
 
 	# disabled during run
 	_ctrls.run_button.set_disabled(_is_running)
@@ -551,7 +554,6 @@ func _update_controls():
 
 	# enabled during run
 	_ctrls.stop_button.set_disabled(!_is_running)
-	_ctrls.pass_count.set_visible(_is_running)
 	_ctrls.pass_count.set_text(str( _summary.passed, ' - ', _summary.failed))
 
 
