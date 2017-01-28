@@ -1,4 +1,4 @@
-extends "res://addons/gut/gut.gd".Test
+extends "res://addons/gut/test.gd"
 
 var Gut = load('res://addons/Gut/gut.gd')
 #--------------------------------------

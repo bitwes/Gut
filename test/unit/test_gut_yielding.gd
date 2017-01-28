@@ -2,7 +2,7 @@
 # All of these tests require some amount of user interaction or verifying of the
 # output so they were moved into a different script for testing.
 #-------------------------------------------------------------------------------
-extends "res://addons/gut/gut.gd".Test
+extends "res://addons/gut/test.gd"
 
 var timer = Timer.new()
 

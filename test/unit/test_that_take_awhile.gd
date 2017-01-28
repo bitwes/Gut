@@ -1,4 +1,4 @@
-extends "res://addons/gut/gut.gd".Test
+extends "res://addons/gut/test.gd"
 
 
 func test_count_to_1000000():

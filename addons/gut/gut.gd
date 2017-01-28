@@ -31,6 +31,7 @@
 # Version 3.1
 ################################################################################
 extends WindowDialog
+tool
 
 const LOG_LEVEL_FAIL_ONLY = 0
 const LOG_LEVEL_TEST_AND_FAILURES = 1
@@ -1317,103 +1318,6 @@ func directory_delete_files(path):
 	d.list_dir_end()
 
 ################################################################################
-# Class that all test scripts must extend.  Syntax is just a normal extends with
-# a .Tests at the end.  Example:  extends "res://scripts/gut.gd".Tests
-#
-# Once a class extends this class it sent (via the numerous script loading
-# methods) to a Gut object to run the tests.
-################################################################################
-class Test:
-	extends Node
-	# constant for signal when calling yeild_for
-	const YIELD = 'timeout'
-	#Need a reference to the instance that is running the tests.  This
-	#is set by the gut class when it runs the tests.  This gets you
-	#access to the asserts in the tests you write.
-	var gut = null
-
-# #######################
-# Virtual Methods
-# #######################
-	#Overridable method that runs before each test.
-	func setup():
-		pass
-
-	#Overridable method that runs after each test
-	func teardown():
-		pass
-
-	#Overridable method that runs before any tests are run
-	func prerun_setup():
-		pass
-
-	#Overridable method that runs after all tests are run
-	func postrun_teardown():
-		pass
-
-# #######################
-# Convenience Methods
-# #######################
-	# see gut method
-	func assert_eq(got, expected, text=""):
-		gut.assert_eq(got, expected, text)
-
-	# see gut method
-	func assert_ne(got, not_expected, text=""):
-		gut.assert_ne(got, not_expected, text)
-
-	# see gut method
-	func assert_gt(got, expected, text=""):
-		gut.assert_gt(got, expected, text)
-
-	# see gut method
-	func assert_lt(got, expected, text=""):
-		gut.assert_lt(got, expected, text)
-
-	# see gut method
-	func assert_true(got, text=""):
-		gut.assert_true(got, text)
-
-	# see gut method
-	func assert_false(got, text=""):
-		gut.assert_false(got, text)
-
-	# see gut method
-	func assert_between(got, expect_low, expect_high, text=""):
-		gut.assert_between(got, expect_low, expect_high, text)
-
-	# see gut method
-	func assert_file_exists(file_path):
-		gut.assert_file_exists(file_path)
-
-	# see gut method
-	func assert_file_does_not_exist(file_path):
-		gut.assert_file_does_not_exist(file_path)
-
-	# see gut method
-	func assert_file_empty(file_path):
-		gut.assert_file_empty(file_path)
-
-	# see gut method
-	func assert_file_not_empty(file_path):
-		gut.assert_file_not_empty(file_path)
-
-	# see gut method
-	func assert_get_set_methods(obj, property, default, set_to):
-		gut.assert_get_set_methods(obj, property, default, set_to)
-
-	# see gut method
-	func pending(text=""):
-		gut.pending(text)
-
-	# I think this reads better than set_yield_time, but don't want to break anything
-	func yield_for(time, msg=''):
-		return gut.set_yield_time(time, msg)
-
-	func end_test():
-		gut.end_yielded_test()
-
-################################################################################
 # OneTest (INTERNAL USE ONLY)
 #	Used to keep track of info about each test ran.
 ################################################################################
@@ -1427,3 +1331,4 @@ class OneTest:
 	var has_printed_name = false
 	# the line number the test is on
 	var line_number = -1
+
