@@ -36,6 +36,7 @@ extends Node2D
 var tester = null
 
 func _ready():
+	#_run_test_one_line():
 	#_run_gut_tests()
 	_run_all_tests()
 
@@ -43,17 +44,17 @@ func _ready():
 func _on_tests_finished():
 	tester.p("Tests done callback called")
 
-func _run_test_one_line():
 #------------------------------------
 # One line, print to console
 #------------------------------------
+func _run_test_one_line():
 	load('res://addons/gut/gut.gd').new().test_script('res://test/unit/sample_tests.gd')
 
-func _run_all_tests():
 #------------------------------------
 # More lines, get result text out manually.  Can also inspect the results further 
 # with a reference to the class.
 #------------------------------------
+func _run_all_tests():
 	# get an instance of gut
 	tester = get_node("Gut")
 	
@@ -83,7 +84,7 @@ func _run_all_tests():
 	tester.add_directory('res://test/integration')
 	
 	# Automatcially run all scripts when loaded.
-	#tester.test_scripts()
+	tester.test_scripts()
 	
 	# Insepect the results, put out some more text conditionally.
 	if(tester.get_fail_count() > 0):
@@ -96,4 +97,5 @@ func _run_gut_tests():
 	tester.add_script('res://test/unit/test_gut.gd')
 	tester.add_script('res://test/unit/test_gut_yielding.gd')
 	tester.set_yield_between_tests(true)
+	
 	
