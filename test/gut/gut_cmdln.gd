@@ -37,7 +37,7 @@
 # See the readme for a list of options and examples.  You can also use the -gh
 # option to get more information about how to use the command line interface.
 #
-# Version 3.0
+# Version 3.1
 ################################################################################
 extends SceneTree
 
@@ -243,6 +243,8 @@ var options = {
 # set to false if you specify a script to run with the -gselect
 # option and it cannot find the script.
 var _auto_run = true
+# flag to indicate if only a single script should be run.
+var _run_single = false
 
 func setup_options():
 	var opts = Options.new()
@@ -304,6 +306,7 @@ func apply_options():
 
 	if(options.selected != ''):
 		_auto_run = _tester.select_script(options.selected)
+		_run_single = true
 		if(!_auto_run):
 			_tester.p("Could not find a script that matched:  " + options.selected)
 
@@ -334,7 +337,7 @@ func _init():
 		apply_options()
 
 		if(_auto_run):
-			_tester.test_scripts()
+			_tester.test_scripts(!_run_single)
 
 # exit if option is set.
 func _on_tests_finished():

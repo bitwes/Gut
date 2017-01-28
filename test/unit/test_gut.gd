@@ -124,7 +124,21 @@ func postrun_teardown():
 	gut.assert_true(true, 'POSTTEARDOWN RAN')
 	gut.directory_delete_files('user://')
 
+#------------------------------
+# Settings
+#------------------------------
+func test_get_set_ingore_pauses():
+	assert_get_set_methods(gr.test_gut, 'ignore_pause_before_teardown', false, true)
 
+func test_when_ignore_pauses_set_it_checks_checkbox():
+	gr.test_gut.set_ignore_pause_before_teardown(true)
+	assert_true(gr.test_gut._ctrls.ignore_continue_checkbox.is_pressed())
+
+func test_when_ignore_pauses_unset_it_unchecks_checkbox():
+	gr.test_gut.set_ignore_pause_before_teardown(true)
+	gr.test_gut.set_ignore_pause_before_teardown(false)
+	assert_false(gr.test_gut._ctrls.ignore_continue_checkbox.is_pressed())
+	
 #------------------------------
 #Number tests
 #------------------------------
@@ -295,9 +309,9 @@ func test_assert_false_with_false():
 #------------------------------
 # disable strict datatype comparisons
 #------------------------------
-func test_when_strict_enabled_you_cannot_compare_in_and_float():
+func test_when_strict_enabled_you_can_compare_int_and_float():
 	gr.test_gut.assert_eq(1.0, 1)
-	assert_fail()
+	assert_pass()
 
 func test_when_strict_disabled_can_compare_int_and_float():
 	gr.test_gut.disable_strict_datatype_checks(true)
@@ -594,6 +608,7 @@ func test_asserts_on_test_object():
 #-------------------------------------------------------------------------------
 func test_verify_results():
 	gut.p("/*THESE SHOULD ALL PASS, IF NOT THEN SOMETHING IS BROKEN*/")
+	gut.p("/*These counts will be off if another script was run before this one.*/")
 	gut.assert_eq(1, counts.prerun_setup_count, "Prerun setup should have been called once")
 	gut.assert_eq(gut.get_test_count(), counts.setup_count, "Setup should have been called once for each test")
 	# teardown for this test hasn't been run yet.
