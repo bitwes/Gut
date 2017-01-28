@@ -36,8 +36,8 @@ extends Node2D
 var tester = null
 
 func _ready():
-	_run_gut_tests()
-	#_run_all_tests()
+	#_run_gut_tests()
+	_run_all_tests()
 
 # Show that the signal is working.
 func _on_tests_finished():
@@ -47,7 +47,7 @@ func _run_test_one_line():
 #------------------------------------
 # One line, print to console
 #------------------------------------
-	load('res://test/gut/gut.gd').new().test_script('res://test/unit/sample_tests.gd')
+	load('res://addons/gut/gut.gd').new().test_script('res://test/unit/sample_tests.gd')
 
 func _run_all_tests():
 #------------------------------------
@@ -55,9 +55,8 @@ func _run_all_tests():
 # with a reference to the class.
 #------------------------------------
 	# get an instance of gut
-	tester = load('res://test/gut/gut.gd').new()
-	# add as a child so you can see the GUI when run
-	add_child(tester)
+	tester = get_node("Gut")
+	
 	tester.connect('tests_finished', self, '_on_tests_finished')
 	tester.show()
 	tester.set_pos(Vector2(100, 100))
@@ -90,14 +89,11 @@ func _run_all_tests():
 	if(tester.get_fail_count() > 0):
 		tester.p("SOMEBODY BROKE SOMETHIN'!!\n")
 	
-
 func _run_gut_tests():
-	var tester = get_node("Gut")#load('res://test/gut/gut.gd').new()
-	#add_child(tester)
+	tester = get_node("Gut")
 	
 	tester.set_should_print_to_console(false)
 	tester.add_script('res://test/unit/test_gut.gd')
 	tester.add_script('res://test/unit/test_gut_yielding.gd')
 	tester.set_yield_between_tests(true)
-	#tester.test_scripts()
 	
