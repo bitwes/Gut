@@ -151,7 +151,7 @@ These methods would be used inside the Scene's script (`templates/gut_main.gd`) 
 # <a name="extras"> Extras
 
 ##  <a name="strict"> Strict type checking
-Gut performs type checks in the asserts where it applies.  This is done for a few reasons.  The first is that invalid comparisons can cause runtime errors which will stop your tests from running.  With the type checking enabled your test will fail instead of crashing.  The other reason is that you can get false positives/negatives when comparing things like a Real/Float and an Integer.  With strict type checking enabled these become a lot more obvious.  It's also a sanity check to make sure your classes are using the expected types of values which can save time in the long run.
+Gut performs type checks in the asserts when comparing two differnt types would normally cause a runtime error.  With the type checking enabled (on be default) your test will fail instead of crashing.  Some types are ok to be compared such as Floats and Integers but if you attempt to compare a String with a Float your test will fail instead of blowing up.
 
 You can disable this behavior if you like by calling `tester.disable_strict_datatype_checks(true)` inside `gut_main.gd`.
 
