@@ -1,8 +1,8 @@
 #-------------------------------------------------------------------------------
 # All of these tests require some amount of user interaction or verifying of the
-# output so they were moved into a different script for testing.  
+# output so they were moved into a different script for testing.
 #-------------------------------------------------------------------------------
-extends "res://addons/Gut/gut.gd".Test
+extends "res://addons/gut/gut.gd".Test
 
 var timer = Timer.new()
 
@@ -74,15 +74,15 @@ func test_new_yield():
 	yield(yield_for(1, 'first yield'), 'timeout')
 	yield(yield_for(1, 'waiting around for stuff'), YIELD)
 	end_test()
-	
+
 func test_passing_assert_ends_yield():
 	yield(yield_for(0.5), YIELD)
 	assert_true(true)
-	
+
 func test_failing_assert_ends_yield():
 	yield(yield_for(0.5), YIELD)
 	assert_false(true, 'This should fail.')
-	
+
 func test_pending_ends_yield():
 	yield(yield_for(0.5), YIELD)
 	pending('this is pending but should end test')

@@ -1,4 +1,4 @@
-extends "res://addons/Gut/gut.gd".Test
+extends "res://addons/gut/gut.gd".Test
 
 var Gut = load('res://addons/Gut/gut.gd')
 #--------------------------------------
@@ -138,7 +138,7 @@ func test_when_ignore_pauses_unset_it_unchecks_checkbox():
 	gr.test_gut.set_ignore_pause_before_teardown(true)
 	gr.test_gut.set_ignore_pause_before_teardown(false)
 	assert_false(gr.test_gut._ctrls.ignore_continue_checkbox.is_pressed())
-	
+
 #------------------------------
 #Number tests
 #------------------------------

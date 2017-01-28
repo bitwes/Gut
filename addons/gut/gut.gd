@@ -422,16 +422,6 @@ func _draw():
 	for i in range(1, 6):
 		draw_line(get_size() - Vector2(i * line_space, grab_margin), get_size() - Vector2(grab_margin, i * line_space), grab_line_color)
 
-	return
-
-	var where = Vector2(430, 565)
-	var r = 25
-	if(_summary.tests > 0):
-		if(_summary.failed > 0):
-			draw_circle(where, r , Color(1, 0, 0, 1))
-		else:
-			draw_circle(where, r, Color(0, 1, 0, 1))
-
 #####################
 #
 # Events
