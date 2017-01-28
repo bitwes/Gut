@@ -1,6 +1,6 @@
-extends "res://test/gut/gut.gd".Test
+extends "res://addons/Gut/gut.gd".Test
 
-var Gut = load('res://test/gut/gut.gd')
+var Gut = load('res://addons/Gut/gut.gd')
 #--------------------------------------
 #Used to test calling the _process method
 #on an object through gut

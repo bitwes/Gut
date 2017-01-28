@@ -92,8 +92,8 @@ func _run_all_tests():
 	
 
 func _run_gut_tests():
-	var tester = load('res://test/gut/gut.gd').new()
-	add_child(tester)
+	var tester = get_node("Gut")#load('res://test/gut/gut.gd').new()
+	#add_child(tester)
 	
 	tester.set_should_print_to_console(false)
 	tester.add_script('res://test/unit/test_gut.gd')
