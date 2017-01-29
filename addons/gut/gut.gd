@@ -37,7 +37,7 @@ extends WindowDialog
 # Editor Variables
 # ###########################
 export var _should_print_to_console = true setget set_should_print_to_console, get_should_print_to_console
-export(int, 0, 2, 1) var _log_level = 1 setget set_log_level, get_log_level
+export(int, 'Failures only', 'Tests and failures', 'Everything') var _log_level = 1 setget set_log_level, get_log_level
 export var _disable_strict_datatype_checks = false setget disable_strict_datatype_checks, is_strict_datatype_checks_disabled
 # This var is JUST used to expose this setting in the editor
 # the var that is used is in the _yield_between hash.
@@ -142,8 +142,8 @@ var _unit_test_name = ''
 var min_size = Vector2(650, 400)
 
 const SIGNAL_TESTS_FINISHED = 'tests_finished'
+signal tests_finished
 const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yeild_before_teardown'
-
 
 func _set_anchor_top_right(obj):
 	obj.set_anchor(MARGIN_RIGHT, ANCHOR_BEGIN)
