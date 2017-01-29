@@ -37,14 +37,20 @@ extends WindowDialog
 # Editor Variables
 # ###########################
 export var _run_on_load = false
+export(String) var _select_script = null 
+export(String) var _tests_like = null
 export var _should_print_to_console = true setget set_should_print_to_console, get_should_print_to_console
 export(int, 'Failures only', 'Tests and failures', 'Everything') var _log_level = 1 setget set_log_level, get_log_level
-export var _disable_strict_datatype_checks = false setget disable_strict_datatype_checks, is_strict_datatype_checks_disabled
+
 # This var is JUST used to expose this setting in the editor
 # the var that is used is in the _yield_between hash.
 export var _yield_between_tests = true setget set_yield_between_tests, get_yield_between_tests
-export(String) var _select_script = null 
-export(String) var _tests_like = null
+export var _disable_strict_datatype_checks = false setget disable_strict_datatype_checks, is_strict_datatype_checks_disabled
+# The prefix used to get tests.
+export var _test_prefix = 'test_'
+export var _file_prefix = 'test_'
+export var _file_extension = '.gd'
+
 
 # Allow user to add test directories via editor.  This is done with strings
 # instead of an array because the interface for editing arrays is really
@@ -71,8 +77,7 @@ const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
 var _is_running = false
 var _stop_pressed = false
 
-# The prefix used to get tests.
-var _test_prefix = "test_"
+
 # Tests to run for the current script
 var _tests = []
 # all the scripts that should be ran as test scripts
@@ -955,7 +960,7 @@ func add_script(script, select_this_one=false):
 # with the suffix.  Does not look in sub directories.  Can be called multiple
 # times.
 #-------------------------------------------------------------------------------
-func add_directory(path, prefix='test_', suffix='.gd'):
+func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
 	var d = Directory.new()
 	if(!d.dir_exists(path)):
 		return
