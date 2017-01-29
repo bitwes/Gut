@@ -36,7 +36,17 @@ extends WindowDialog
 #export var _type = 'generic' setget set_type, get_type
 export var _should_print_to_console = true setget set_should_print_to_console, get_should_print_to_console
 export(int, 0, 2, 1) var _log_level = 1 setget set_log_level, get_log_level
-export var _test_directories = ['res://test/unit']
+
+# Allow user to add test directories via editor.  This is done with strings
+# instead of an array because the interface for editing arrays is really
+# cumbersome and complicates testing because arrays set through the editor
+# apply to ALL instances.  This also allows the user to use the built in
+# dialog to pick a directory.
+export(String, DIR) var _directory1 = ''
+export(String, DIR) var _directory2 = ''
+export(String, DIR) var _directory3 = ''
+export(String, DIR) var _directory4 = ''
+export(String, DIR) var _directory5 = ''
 
 const LOG_LEVEL_FAIL_ONLY = 0
 const LOG_LEVEL_TEST_AND_FAILURES = 1
@@ -373,8 +383,11 @@ func _ready():
 	set_process(true)
 
 	set_pause_mode(PAUSE_MODE_PROCESS)
-	#for i in range(_test_directories.size()):
-	#	add_directory(_test_directories[i])
+	add_directory(_directory1)
+	add_directory(_directory2)
+	add_directory(_directory3)
+	add_directory(_directory4)
+	add_directory(_directory5)
 	_update_controls()
 
 #-------------------------------------------------------------------------------
