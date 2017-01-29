@@ -30,8 +30,111 @@
 #
 # Version 3.1
 ################################################################################
-extends 'gut_gui.gd'
-tool
+extends WindowDialog
+
+const LOG_LEVEL_FAIL_ONLY = 0
+const LOG_LEVEL_TEST_AND_FAILURES = 1
+const LOG_LEVEL_ALL_ASSERTS = 2
+const WAITING_MESSAGE = '/# waiting #/'
+const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
+
+var _is_running = false
+var _stop_pressed = false
+var _disable_strict_datatype_checks = false
+# The prefix used to get tests.
+var _test_prefix = "test_"
+# Tests to run for the current script
+var _tests = []
+# all the scripts that should be ran as test scripts
+var _test_scripts = []
+
+var _waiting = false
+var _done = false
+
+var _should_print_to_console = true
+var _current_test = null
+var _log_level = 1
+var _log_text = ""
+
+var _pause_before_teardown = false
+# when true _pase_before_teardown will be ignored.  useful
+# when batch processing and you don't want to watch.
+var _ignore_pause_before_teardown = false
+var _wait_timer = Timer.new()
+
+var _yield_between = {
+	should = false,
+	timer = Timer.new(),
+	after_x_tests = 5,
+	tests_since_last_yield = 0
+}
+
+var types = {}
+
+var _set_yield_time_called = false
+# used when yielding to gut instead of some other
+# signal.  Start with set_yield_time()
+var _yield_timer = Timer.new()
+var _runtime_timer = Timer.new()
+const RUNTIME_START_TIME = float(20000.0)
+
+# various counters
+var _summary = {
+	asserts = 0,
+	passed = 0,
+	failed = 0,
+	tests = 0,
+	scripts = 0,
+	pending = 0
+}
+
+#controls
+var _ctrls = {
+	text_box = TextEdit.new(),
+	run_button = Button.new(),
+	copy_button = Button.new(),
+	clear_button = Button.new(),
+	continue_button = Button.new(),
+	log_level_slider = HSlider.new(),
+	scripts_drop_down = OptionButton.new(),
+	next_button = Button.new(),
+	previous_button = Button.new(),
+	stop_button = Button.new(),
+	script_progress = ProgressBar.new(),
+	test_progress = ProgressBar.new(),
+	runtime_label = Label.new(),
+	ignore_continue_checkbox = CheckBox.new(),
+	pass_count = Label.new(),
+	run_rest = Button.new()
+}
+
+var _mouse_down = false
+var _mouse_down_pos = null
+var _mouse_in = false
+
+var _unit_test_name = ''
+
+var min_size = Vector2(650, 400)
+
+const SIGNAL_TESTS_FINISHED = 'tests_finished'
+const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yeild_before_teardown'
+
+
+func _set_anchor_top_right(obj):
+	obj.set_anchor(MARGIN_RIGHT, ANCHOR_BEGIN)
+	obj.set_anchor(MARGIN_LEFT, ANCHOR_END)
+	obj.set_anchor(MARGIN_TOP, ANCHOR_BEGIN)
+
+func _set_anchor_bottom_right(obj):
+	obj.set_anchor(MARGIN_LEFT, ANCHOR_END)
+	obj.set_anchor(MARGIN_RIGHT, ANCHOR_END)
+	obj.set_anchor(MARGIN_TOP, ANCHOR_END)
+	obj.set_anchor(MARGIN_BOTTOM, ANCHOR_END)
+
+func _set_anchor_bottom_left(obj):
+	obj.set_anchor(MARGIN_LEFT, ANCHOR_BEGIN)
+	obj.set_anchor(MARGIN_TOP, ANCHOR_END)
+	obj.set_anchor(MARGIN_TOP, ANCHOR_END)
 
 func _init_types_dictionary():
 	types[0] = 'TYPE_NIL'
@@ -64,6 +167,164 @@ func _init_types_dictionary():
 	types[27] = 'TYPE_VECTOR3_ARRAY'
 	types[28] = 'TYPE_COLOR_ARRAY'
 	types[29] = 'TYPE_MAX'
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func setup_controls():
+	var button_size = Vector2(75, 35)
+	var button_spacing = Vector2(10, 0)
+	var pos = Vector2(0, 0)
+
+	add_child(_ctrls.text_box)
+	_ctrls.text_box.set_size(Vector2(get_size().x - 4, 300))
+	_ctrls.text_box.set_pos(Vector2(2, 0))
+	_ctrls.text_box.set_readonly(true)
+	_ctrls.text_box.set_syntax_coloring(true)
+	_ctrls.text_box.set_anchor(MARGIN_LEFT, ANCHOR_BEGIN)
+	_ctrls.text_box.set_anchor(MARGIN_RIGHT, ANCHOR_END)
+	_ctrls.text_box.set_anchor(MARGIN_TOP, ANCHOR_BEGIN)
+	_ctrls.text_box.set_anchor(MARGIN_BOTTOM, ANCHOR_END)
+
+	add_child(_ctrls.copy_button)
+	_ctrls.copy_button.set_text("Copy")
+	_ctrls.copy_button.set_size(button_size)
+	_ctrls.copy_button.set_pos(Vector2(get_size().x - 5 - button_size.x, _ctrls.text_box.get_size().y + 10))
+	_ctrls.copy_button.connect("pressed", self, "_copy_button_pressed")
+	_set_anchor_bottom_right(_ctrls.copy_button)
+
+	add_child(_ctrls.clear_button)
+	_ctrls.clear_button.set_text("Clear")
+	_ctrls.clear_button.set_size(button_size)
+	_ctrls.clear_button.set_pos(_ctrls.copy_button.get_pos() - Vector2(button_size.x, 0) - button_spacing)
+	_ctrls.clear_button.connect("pressed", self, "clear_text")
+	_set_anchor_bottom_right(_ctrls.clear_button)
+
+	add_child(_ctrls.pass_count)
+	_ctrls.pass_count.set_text('0 - 0')
+	_ctrls.pass_count.set_size(Vector2(100, 30))
+	_ctrls.pass_count.set_pos(Vector2(550, 0))
+	_ctrls.pass_count.set_align(HALIGN_RIGHT)
+	_set_anchor_top_right(_ctrls.pass_count)
+
+	add_child(_ctrls.continue_button)
+	_ctrls.continue_button.set_text("Continue")
+	_ctrls.continue_button.set_size(Vector2(100, 25))
+	_ctrls.continue_button.set_pos(Vector2(_ctrls.clear_button.get_pos().x, _ctrls.clear_button.get_pos().y + _ctrls.clear_button.get_size().y + 10))
+	_ctrls.continue_button.set_disabled(true)
+	_ctrls.continue_button.connect("pressed", self, "_on_continue_button_pressed")
+	_set_anchor_bottom_right(_ctrls.continue_button)
+
+	add_child(_ctrls.ignore_continue_checkbox)
+	_ctrls.ignore_continue_checkbox.set_text("Ignore pauses")
+	_ctrls.ignore_continue_checkbox.set_pressed(_ignore_pause_before_teardown)
+	_ctrls.ignore_continue_checkbox.connect('pressed', self, '_on_ignore_continue_checkbox_pressed')
+	_ctrls.ignore_continue_checkbox.set_size(Vector2(50, 30))
+	_ctrls.ignore_continue_checkbox.set_pos(Vector2(_ctrls.continue_button.get_pos().x, _ctrls.continue_button.get_pos().y + _ctrls.continue_button.get_size().y - 5))
+	_set_anchor_bottom_right(_ctrls.ignore_continue_checkbox)
+
+	var log_label = Label.new()
+	add_child(log_label)
+	log_label.set_text("Log Level")
+	log_label.set_pos(Vector2(10, _ctrls.text_box.get_size().y + 1))
+	_set_anchor_bottom_left(log_label)
+
+	add_child(_ctrls.log_level_slider)
+	_ctrls.log_level_slider.set_size(Vector2(75, 30))
+	_ctrls.log_level_slider.set_pos(Vector2(10, log_label.get_pos().y + 20))
+	_ctrls.log_level_slider.set_min(0)
+	_ctrls.log_level_slider.set_max(2)
+	_ctrls.log_level_slider.set_ticks(3)
+	_ctrls.log_level_slider.set_ticks_on_borders(true)
+	_ctrls.log_level_slider.set_step(1)
+	_ctrls.log_level_slider.set_rounded_values(true)
+	_ctrls.log_level_slider.connect("value_changed", self, "_on_log_level_slider_changed")
+	_ctrls.log_level_slider.set_value(_log_level)
+	_set_anchor_bottom_left(_ctrls.log_level_slider)
+
+	var script_prog_label = Label.new()
+	add_child(script_prog_label)
+	script_prog_label.set_pos(Vector2(100, log_label.get_pos().y))
+	script_prog_label.set_text('Scripts:')
+	_set_anchor_bottom_left(script_prog_label)
+
+	add_child(_ctrls.script_progress)
+	_ctrls.script_progress.set_size(Vector2(200, 10))
+	_ctrls.script_progress.set_pos(script_prog_label.get_pos() + Vector2(70, 0))
+	_ctrls.script_progress.set_min(0)
+	_ctrls.script_progress.set_max(1)
+	_ctrls.script_progress.set_unit_value(1)
+	_set_anchor_bottom_left(_ctrls.script_progress)
+
+	var test_prog_label = Label.new()
+	add_child(test_prog_label)
+	test_prog_label.set_pos(Vector2(100, log_label.get_pos().y + 15))
+	test_prog_label.set_text('Tests:')
+	_set_anchor_bottom_left(test_prog_label)
+
+	add_child(_ctrls.test_progress)
+	_ctrls.test_progress.set_size(Vector2(200, 10))
+	_ctrls.test_progress.set_pos(test_prog_label.get_pos() + Vector2(70, 0))
+	_ctrls.test_progress.set_min(0)
+	_ctrls.test_progress.set_max(1)
+	_ctrls.test_progress.set_unit_value(1)
+	_set_anchor_bottom_left(_ctrls.test_progress)
+
+	add_child(_ctrls.previous_button)
+	_ctrls.previous_button.set_size(Vector2(50, 25))
+	pos = _ctrls.test_progress.get_pos() + Vector2(250, 25)
+	pos.x -= 300
+	_ctrls.previous_button.set_pos(pos)
+	_ctrls.previous_button.set_text("<")
+	_ctrls.previous_button.connect("pressed", self, '_on_previous_button_pressed')
+	_set_anchor_bottom_left(_ctrls.previous_button)
+
+	add_child(_ctrls.stop_button)
+	_ctrls.stop_button.set_size(Vector2(50, 25))
+	pos.x += 60
+	_ctrls.stop_button.set_pos(pos)
+	_ctrls.stop_button.set_text('stop')
+	_ctrls.stop_button.connect("pressed", self, '_on_stop_button_pressed')
+	_set_anchor_bottom_left(_ctrls.stop_button)
+
+	add_child(_ctrls.run_rest)
+	_ctrls.run_rest.set_text('run')
+	_ctrls.run_rest.set_size(Vector2(50, 25))
+	pos.x += 60
+	_ctrls.run_rest.set_pos(pos)
+	_ctrls.run_rest.connect('pressed', self, '_on_run_rest_pressed')
+	_set_anchor_bottom_left(_ctrls.run_rest)
+
+	add_child(_ctrls.next_button)
+	_ctrls.next_button.set_size(Vector2(50, 25))
+	pos.x += 60
+	_ctrls.next_button.set_pos(pos)
+	_ctrls.next_button.set_text(">")
+	_ctrls.next_button.connect("pressed", self, '_on_next_button_pressed')
+	_set_anchor_bottom_left(_ctrls.next_button)
+
+	add_child(_ctrls.runtime_label)
+	_ctrls.runtime_label.set_text('0.0')
+	_ctrls.runtime_label.set_size(Vector2(50, 30))
+	_ctrls.runtime_label.set_pos(Vector2(_ctrls.clear_button.get_pos().x - 90, _ctrls.next_button.get_pos().y))
+	_set_anchor_bottom_right(_ctrls.runtime_label)
+
+	# the drop down has to be one of the last added so that when then list of
+	# scripts is displayed, other controls do not get in the way of selecting
+	# an item in the list.
+	add_child(_ctrls.scripts_drop_down)
+	_ctrls.scripts_drop_down.set_size(Vector2(375, 25))
+	_ctrls.scripts_drop_down.set_pos(Vector2(10, _ctrls.log_level_slider.get_pos().y + 50))
+	_set_anchor_bottom_left(_ctrls.scripts_drop_down)
+	_ctrls.scripts_drop_down.connect('item_selected', self, '_on_script_selected')
+	_ctrls.scripts_drop_down.set_clip_text(true)
+
+	add_child(_ctrls.run_button)
+	_ctrls.run_button.set_text('<- run')
+	_ctrls.run_button.set_size(Vector2(50, 25))
+	_ctrls.run_button.set_pos(_ctrls.scripts_drop_down.get_pos() + Vector2(_ctrls.scripts_drop_down.get_size().x + 5, 0))
+	_ctrls.run_button.connect("pressed", self, "_on_run_button_pressed")
+	_set_anchor_bottom_left(_ctrls.run_button)
+
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -161,6 +422,16 @@ func _draw():
 	for i in range(1, 6):
 		draw_line(get_size() - Vector2(i * line_space, grab_margin), get_size() - Vector2(grab_margin, i * line_space), grab_line_color)
 
+	return
+
+	var where = Vector2(430, 565)
+	var r = 25
+	if(_summary.tests > 0):
+		if(_summary.failed > 0):
+			draw_circle(where, r , Color(1, 0, 0, 1))
+		else:
+			draw_circle(where, r, Color(0, 1, 0, 1))
+
 #####################
 #
 # Events
@@ -252,7 +523,7 @@ func _on_ignore_continue_checkbox_pressed():
 #-------------------------------------------------------------------------------
 func _on_script_selected(id):
 	_update_controls()
-	
+
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 func _on_run_rest_pressed():
@@ -263,6 +534,29 @@ func _on_run_rest_pressed():
 # Private
 #
 #####################
+#-------------------------------------------------------------------------------
+# Updates the display
+#-------------------------------------------------------------------------------
+func _update_controls():
+	if(_is_running):
+		_ctrls.previous_button.set_disabled(true)
+		_ctrls.next_button.set_disabled(true)
+		_ctrls.pass_count.show()
+	else:
+		_ctrls.previous_button.set_disabled(_ctrls.scripts_drop_down.get_selected() == 0)
+		_ctrls.next_button.set_disabled(_ctrls.scripts_drop_down.get_selected() == _ctrls.scripts_drop_down.get_item_count() -1)
+		_ctrls.pass_count.hide()
+
+	# disabled during run
+	_ctrls.run_button.set_disabled(_is_running)
+	_ctrls.run_rest.set_disabled(_is_running)
+	_ctrls.scripts_drop_down.set_disabled(_is_running)
+
+	# enabled during run
+	_ctrls.stop_button.set_disabled(!_is_running)
+	_ctrls.pass_count.set_text(str( _summary.passed, ' - ', _summary.failed))
+
+
 
 #-------------------------------------------------------------------------------
 #Parses out the tests based on the _test_prefix.  Fills the _tests array with
@@ -301,7 +595,7 @@ func _fail(text):
 		p('  at line ' + str(_current_test.line_number), LOG_LEVEL_FAIL_ONLY)
 	_update_controls()
 	end_yielded_test()
-	
+
 
 #-------------------------------------------------------------------------------
 #Pass an assertion.
@@ -313,7 +607,7 @@ func _pass(text):
 		p("PASSED:  " + text, LOG_LEVEL_ALL_ASSERTS)
 	_update_controls()
 	end_yielded_test()
-	
+
 
 #-------------------------------------------------------------------------------
 #Convert the _summary struct into text for display
@@ -605,7 +899,7 @@ func add_script(script, select_this_one=false):
 	# drop down to resize.
 	_ctrls.run_button.set_pos(_ctrls.scripts_drop_down.get_pos() + \
 	                          Vector2(_ctrls.scripts_drop_down.get_size().x + 5, 0))
-	
+
 	if(select_this_one):
 		_ctrls.scripts_drop_down.select(_ctrls.scripts_drop_down.get_item_count() -1)
 
@@ -660,7 +954,7 @@ func select_script(script_name):
 ################
 func _pass_if_datatypes_match(got, expected, text):
 	var passed = true
-	
+
 	if(!_disable_strict_datatype_checks):
 		var got_type = typeof(got)
 		var expect_type = typeof(expected)
@@ -1031,3 +1325,18 @@ func directory_delete_files(path):
 			d.remove(full_path)
 		thing = d.get_next()
 	d.list_dir_end()
+
+################################################################################
+# OneTest (INTERNAL USE ONLY)
+#	Used to keep track of info about each test ran.
+################################################################################
+class OneTest:
+	# indicator if it passed or not.  defaults to true since it takes only
+	# one failure to make it not pass.  _fail in gut will set this.
+	var passed = true
+	# the name of the function
+	var name = ""
+	# flag to know if the name has been printed yet.
+	var has_printed_name = false
+	# the line number the test is on
+	var line_number = -1
