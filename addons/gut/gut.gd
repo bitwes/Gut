@@ -33,9 +33,15 @@
 extends WindowDialog
 
 
-#export var _type = 'generic' setget set_type, get_type
+# ###########################
+# Editor Variables
+# ###########################
 export var _should_print_to_console = true setget set_should_print_to_console, get_should_print_to_console
 export(int, 0, 2, 1) var _log_level = 1 setget set_log_level, get_log_level
+export var _disable_strict_datatype_checks = false setget disable_strict_datatype_checks, is_strict_datatype_checks_disabled
+# This var is JUST used to expose this setting in the editor
+# the var that is used is in the _yield_between hash.
+export var _yield_between_tests = true setget set_yield_between_tests, get_yield_between_tests
 
 # Allow user to add test directories via editor.  This is done with strings
 # instead of an array because the interface for editing arrays is really
@@ -47,7 +53,12 @@ export(String, DIR) var _directory2 = ''
 export(String, DIR) var _directory3 = ''
 export(String, DIR) var _directory4 = ''
 export(String, DIR) var _directory5 = ''
+export(String, DIR) var _directory6 = ''
 
+
+# ###########################
+# Other Vars
+# ###########################
 const LOG_LEVEL_FAIL_ONLY = 0
 const LOG_LEVEL_TEST_AND_FAILURES = 1
 const LOG_LEVEL_ALL_ASSERTS = 2
@@ -56,7 +67,7 @@ const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
 
 var _is_running = false
 var _stop_pressed = false
-var _disable_strict_datatype_checks = false
+
 # The prefix used to get tests.
 var _test_prefix = "test_"
 # Tests to run for the current script
@@ -388,6 +399,7 @@ func _ready():
 	add_directory(_directory3)
 	add_directory(_directory4)
 	add_directory(_directory5)
+	add_directory(_directory6)
 	_update_controls()
 
 #-------------------------------------------------------------------------------
@@ -1161,6 +1173,9 @@ func pending(text=""):
 func disable_strict_datatype_checks(should):
 	_disable_strict_datatype_checks = should
 
+func is_strict_datatype_checks_disabled():
+	return _disable_strict_datatype_checks
+	
 #-------------------------------------------------------------------------------
 #Pauses the test and waits for you to press a confirmation button.  Useful when
 #you want to watch a test play out onscreen or inspect results.
@@ -1268,6 +1283,9 @@ func get_ignore_pause_before_teardown():
 func set_yield_between_tests(should):
 	_yield_between.should = should
 
+func get_yield_between_tests():
+	return _yield_between.should
+	
 #-------------------------------------------------------------------------------
 #Call _process or _fixed_process, if they exist, on obj and all it's children
 #and their children and so and so forth.  Delta will be passed through to all
