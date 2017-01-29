@@ -44,7 +44,7 @@ export var _disable_strict_datatype_checks = false setget disable_strict_datatyp
 # the var that is used is in the _yield_between hash.
 export var _yield_between_tests = true setget set_yield_between_tests, get_yield_between_tests
 export(String) var _select_script = null 
-export(String) var _scripts_like = null
+export(String) var _tests_like = null
 
 # Allow user to add test directories via editor.  This is done with strings
 # instead of an array because the interface for editing arrays is really
@@ -403,13 +403,14 @@ func _ready():
 	add_directory(_directory4)
 	add_directory(_directory5)
 	add_directory(_directory6)
+	
 	_update_controls()
 	
 	if(_select_script != null):
 		select_script(_select_script)
 	
-	if(_scripts_like != null):
-		set_unit_test_name(_scripts_like)
+	if(_tests_like != null):
+		set_unit_test_name(_tests_like)
 	
 	if(_run_on_load):
 		test_scripts(_select_script == null)
