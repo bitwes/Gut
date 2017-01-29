@@ -32,6 +32,12 @@
 ################################################################################
 extends WindowDialog
 
+
+#export var _type = 'generic' setget set_type, get_type
+export var _should_print_to_console = true setget set_should_print_to_console, get_should_print_to_console
+export(int, 0, 2, 1) var _log_level = 1 setget set_log_level, get_log_level
+export var _test_directories = ['res://test/unit']
+
 const LOG_LEVEL_FAIL_ONLY = 0
 const LOG_LEVEL_TEST_AND_FAILURES = 1
 const LOG_LEVEL_ALL_ASSERTS = 2
@@ -51,9 +57,7 @@ var _test_scripts = []
 var _waiting = false
 var _done = false
 
-var _should_print_to_console = true
 var _current_test = null
-var _log_level = 1
 var _log_text = ""
 
 var _pause_before_teardown = false
@@ -369,6 +373,8 @@ func _ready():
 	set_process(true)
 
 	set_pause_mode(PAUSE_MODE_PROCESS)
+	#for i in range(_test_directories.size()):
+	#	add_directory(_test_directories[i])
 	_update_controls()
 
 #-------------------------------------------------------------------------------
@@ -1046,6 +1052,23 @@ func assert_between(got, expect_low, expect_high, text=""):
 			else:
 				_pass(disp)
 
+#-------------------------------------------------------------------------------
+# Uses the 'has' method of the object passed in to determine if it contains
+# the passed in element.
+#-------------------------------------------------------------------------------
+func assert_has(obj, element, text=""):
+	var disp = str('Expected [', obj, '] to contain value:  [', element, ']:  ', text)
+	if(obj.has(element)):
+		_pass(disp)
+	else:
+		_fail(disp)
+
+func assert_does_not_have(obj, element, text=""):
+	var disp = str('Expected [', obj, '] to NOT contain value:  [', element, ']:  ', text)
+	if(obj.has(element)):
+		_fail(disp)
+	else:
+		_pass(disp)
 #-------------------------------------------------------------------------------
 #Asserts that a file exists
 #-------------------------------------------------------------------------------

@@ -114,6 +114,12 @@ func assert_file_not_empty(file_path):
 func assert_get_set_methods(obj, property, default, set_to):
 	gut.assert_get_set_methods(obj, property, default, set_to)
 
+func assert_has(obj, element, text=""):
+	gut.assert_has(obj, element, text)
+
+func assert_does_not_have(obj, element, text=""):
+	gut.assert_does_not_have(obj, element, text)
+
 # see gut method
 func pending(text=""):
 	gut.pending(text)
