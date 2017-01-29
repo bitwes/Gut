@@ -36,12 +36,15 @@ extends WindowDialog
 # ###########################
 # Editor Variables
 # ###########################
+export var _run_on_load = false
 export var _should_print_to_console = true setget set_should_print_to_console, get_should_print_to_console
 export(int, 'Failures only', 'Tests and failures', 'Everything') var _log_level = 1 setget set_log_level, get_log_level
 export var _disable_strict_datatype_checks = false setget disable_strict_datatype_checks, is_strict_datatype_checks_disabled
 # This var is JUST used to expose this setting in the editor
 # the var that is used is in the _yield_between hash.
 export var _yield_between_tests = true setget set_yield_between_tests, get_yield_between_tests
+export(String) var _select_script = null 
+export(String) var _scripts_like = null
 
 # Allow user to add test directories via editor.  This is done with strings
 # instead of an array because the interface for editing arrays is really
@@ -401,6 +404,15 @@ func _ready():
 	add_directory(_directory5)
 	add_directory(_directory6)
 	_update_controls()
+	
+	if(_select_script != null):
+		select_script(_select_script)
+	
+	if(_scripts_like != null):
+		set_unit_test_name(_scripts_like)
+	
+	if(_run_on_load):
+		test_scripts(_select_script == null)
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -924,6 +936,9 @@ func test_script(script):
 #Adds a script to be run when test_scripts called
 #-------------------------------------------------------------------------------
 func add_script(script, select_this_one=false):
+	if(_test_scripts.has(script)):
+		return
+	
 	_test_scripts.append(script)
 	_ctrls.scripts_drop_down.add_item(script)
 	# Move the run_button in case the size of the path of the script caused the
@@ -941,6 +956,8 @@ func add_script(script, select_this_one=false):
 #-------------------------------------------------------------------------------
 func add_directory(path, prefix='test_', suffix='.gd'):
 	var d = Directory.new()
+	if(!d.dir_exists(path)):
+		return
 	d.open(path)
 	d.list_dir_begin()
 
