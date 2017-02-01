@@ -19,36 +19,28 @@ GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.
   0. [Command Line Interface](#command_line)
 
 # <a name="install"> Install
-For the purposes of this documentation it is assumed all the Gut pieces will go in `res://test/gut` and that all unit tests will be in `res://test/unit`.  This keeps the test code all in one place and avoids any name clashes.  Who knows, someone probably has a game that has a character that is actually a gut.  It runs around digesting things and...well, that's probably it.  With this structure the testing script gut.gd and their character class gut.gd won't clash.
+Download and extract the zip from <insert link here> or from the Godot Asset Library <insert link here>.  
 
-This also makes it easy to exclude all the test related code from a release if you so choose.
+Place the `gut` directory into your `addons` folder in your project.  If you don't have an `addons` folder at the root of your project, then make one and THEN put the `gut` directory in there.
 
-0.  Create your `res://test`, `res://test/gut`, and `res://test/unit` directories.
-0.  Copy the following into your `res://test/gut` directory
-  * `gut.gd`
-  * `gut_cmdln.gd`
-  * `gut_main.gd` *skip on upgrade*
-  * `gut_main.scn` *skip on upgrade*
-0.  Copy `test_.gd` from the templates directory into `res://test/unit`.
-0.  Open the `gut_main.scn` scene in Godot and run it!  Would you look at that, you have one pending test.  Well done good sir and/or madam.
+From the menu choose Scene->Project Settings, click the plugins tab and activate Gut.
 
-When you are done with the install it should look like this:
-```
-├───scenes                 
-├───scripts                
-└───test                   
-    ├───gut                
-    │       gut.gd         
-    │       gut_cmdln.gd   
-    │       gut_main.gd    
-    │       gut_main.scn   
-    │                      
-    └───unit               
-            test_.gd       
-```
+The next few steps are the suggestion configuration.  Feel free to deviate where you see fit.
 
-<!-- It should look like this -->
-<!-- TODO insert screenshot here. -->
+0.  Create directories to store your tests and test related code
+  * `res://test`
+  * `res://test/unit`
+  * `res://test/integration`
+0.  Create a scene that will use Gut to run your tests at `res://test/tests.tscn`
+  * Add a Gut object the same way you would any other object.
+  * Click "Add/Create Node"
+  * type "Gut"
+  * press enter.
+0.  Configure Gut to find your tests.  Select it in the Scene Tree and set the following settings in the Inspector:
+  * In the `Directory1` setting enter `res://test/unit`
+  * In the `Directory2` setting enter `res://test/integration`
+
+That's it.  The next step is to make some tests.
 
 # <a name="creating_tests"> Creating Tests
 
