@@ -1,11 +1,21 @@
-# What is this repository for?
+# Gut
 GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.  It allows you to write tests for your gdscript in gdscript.
+
+# !! 4.0.0 Breaking changes from 3.0.x !!
+Its a plugin now!  Unfortunately that means some things and paths have changed.
+
+Before upgrading, remove gut.gd and gut_cmdln.gd from your your current project.  That will help ensure that you got everything setup right with the new install location.
+
+0.  The install location has changed to `res://addons/gut`.  So you'll want to clean out wherever you had it previously installed.
+0.  You'll want to update your existing scene to use the new plugin object.  Follow the new install instructions. <br>
+__Note:__  just about everything you had to code to get your main testing scene running can now be configured in the Editor.  Select the Gut node and the options will appear in the Inspector.  Your existing code will work with the new custom node but using the Editor greatly simplifies things.
+0.  The object that all test scripts must extend has changed to `res://addons/gut/test.gd`.
 
 # Table of Contents
   0.  [Install](#install)
   0.  [Creating Tests](#creating_tests)
   0.  [Method List](#method_list)
-    0.  [Test Methods](#test_methods)
+    0.  [Asserting Things](#test_methods)
     0.  [Methods for Configuring Test Execution](#gut_methods)
   0.  [Extras](#extras)
     0.  [Strict Type Checking](#strict)
@@ -17,9 +27,10 @@ GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.
     0.  [Simulate](#simulate)
     0.  [Yielding](#yielding)
   0. [Command Line Interface](#command_line)
+  0. [Contributing](#contributing)
 
 # <a name="install"> Install
-Download and extract the zip from <insert link here> or from the Godot Asset Library <insert link here>.  
+Download and extract the zip from the releases or from the Godot Asset Library https://godotengine.org/asset-library/asset.  
 
 Place the `gut` directory into your `addons` folder in your project.  If you don't have an `addons` folder at the root of your project, then make one and THEN put the `gut` directory in there.
 
@@ -42,26 +53,13 @@ The next few steps are the suggestion configuration.  Feel free to deviate where
 
 That's it.  The next step is to make some tests.
 
-# <a name="creating_tests"> Creating Tests
+# <a name="creating_tests"> Making Tests
 
-All test scripts must extend the Test class in gut.gd
-* `extends "res://test/gut/gut.gd".Test`
-
-Each test script has optional setup and teardown methods that are called at various stages of execution.  They take no parameters.
- * `setup()`:  Ran before each test
- * `teardown()`:  Ran after each test
- * `prerun_setup()`:  Ran before any test is run
- * `postrun_teardown()`:  Ran after all tests have run
-
-All tests in the test script must start with the prefix `test_` in order for them to be run.  The methods must not have any parameters.
-* `func test_this_is_only_a_test():`
-
-Each test should perform at least one assert or call `pending` to indicate the test hasn't been implemented yet.
-
-Here's a sample test script:
+## Sample for Setup
+Here's a sample test script.  Copy the contents into the file `res://test/unit/test_example.gd` then run your scene.  If everything is setup correctly then you'll see some passing and failing tests.  If you don't have "Run on Load" checked in the editor, you'll have to hit the "Run" button on the dialog window.
 
 ``` python
-extends "res://test/gut/gut.gd".Test
+extends "res://addons/gut/test.gd"
 func setup():
 	gut.p("ran setup", 2)
 
@@ -90,10 +88,27 @@ func test_something_else():
 	assert_true(false, "didn't work")
 
 ```
+
+## Creating tests
+All test scripts must extend the test class.
+* `extends "res://addons/gut/test.gd"`
+
+Each test script has optional setup and teardown methods that are called at various stages of execution.  They take no parameters.
+ * `setup()`:  Ran before each test
+ * `teardown()`:  Ran after each test
+ * `prerun_setup()`:  Ran before any test is run
+ * `postrun_teardown()`:  Ran after all tests have run
+
+All tests in the test script must start with the prefix `test_` in order for them to be run.  The methods must not have any parameters.
+* `func test_this_is_only_a_test():`
+
+Each test should perform at least one assert or call `pending` to indicate the test hasn't been implemented yet.
+
+
 # <a name="method_list"> Method List
 
-### <a name="test_methods"> Methods for Use in Tests
-These methods should be used in tests to make assertions about the things being tested.  These methods are available to anything that inherits from the Test class (`extends "res://test/gut/gut.gd".Test`)
+### <a name="test_methods"> Asserting things
+These methods should be used in tests to make assertions.  These methods are available to anything that inherits from the Test class (`extends "res://addons/gut/test.gd"`)
 * `pending(text="")` flag a test as pending, the optional message is printed in the GUI
 * `assert_eq(got, expected, text="")` assert got == expected and prints optional text
 * `assert_ne(got, not_expected, text="")` asserts got != expected and prints optional text
@@ -102,6 +117,8 @@ These methods should be used in tests to make assertions about the things being 
 * `assert_true(got, text="")` asserts got == true
 * `assert_false(got, text="")` asserts got == false
 * `assert_between(got, expect_low, expect_high, text="")` asserts got > expect_low and <= expect_high
+* `assert_has(obj, element, text='')` Asserts that the object passed in "has" the element.  This works with any object that has a `has` method.
+* `assert_does_not_have(obj, element, text='')` The inverse of `assert_has`
 * `assert_file_exists(file_path)` asserts a file exists at the specified path
 * `assert_file_does_not_exist(file_path)` asserts a file does not exist at the specified path
 * `assert_file_empty(file_path)` asserts the specified file is empty
@@ -120,32 +137,33 @@ This guy warrants his own section.  I found that making tests for most getters a
 * `end_test()` This can be called instead of an assert or `pending` to end a test that has yielded.
 
 ### <a name="gut_methods"> Methods for Configuring the Execution of Tests
-These methods would be used inside the Scene's script (`templates/gut_main.gd`) to load and execute scripts as well as inspect the results of a run and change how Gut behaves.  These methods must all be called on the Gut object that was instantiated.  In the case of the provided template, this would be `tester`.
+These methods would be used inside the scene you created at `res://test/tests.tcn`.  These methods can be called against the Gut node you created.  Most of these are not necessary anymore since you can configure Gut in the editor but they are here if you want to use them.  Simply put `get_node('Gut').` in front of any of them.  
 
+<i>__**__ indicates the option can be set via the editor</i>
 * `add_script(script, select_this_one=false)` add a script to be tetsted with test_scripts
-* `add_directory(path, prefix='test_', suffix='.gd')` add a directory of test scripts that start with prefix and end with suffix.  Subdirectories not included.
-* `test_scripts()` run all scripts added with add_script or add_directory.  If you leave this out of your script then you can select which script will run, but you must press the "run" button to start the tests.
+* __**__`add_directory(path, prefix='test_', suffix='.gd')` add a directory of test scripts that start with prefix and end with suffix.  Subdirectories not included.  This method is useful if you have more than the 6 directories the editor allows you to configure.  You can use this to add others.
+* __**__`test_scripts()` run all scripts added with add_script or add_directory.  If you leave this out of your script then you can select which script will run, but you must press the "run" button to start the tests.
 * `test_script(script)` runs a single script immediately.
-* `select_script(script_name)` sets a script added with `add_script` or `add_directory` to be initially selected.  This allows you to run one script instead of all the scripts.  This will select the first script it finds that contains the specified string.
+* __**__`select_script(script_name)` sets a script added with `add_script` or `add_directory` to be initially selected.  This allows you to run one script instead of all the scripts.  This will select the first script it finds that contains the specified string.
 * `get_test_count()` return the number of tests run
 * `get_assert_count()` return the number of assertions that were made
 * `get_pass_count()` return the number of tests that passed
 * `get_fail_count()` return the number of tests that failed
 * `get_pending_count()` return the number of tests that were pending
-* `get/set_should_print_to_console(should)` accessors for printing to console
+* __**__`get/set_should_print_to_console(should)` accessors for printing to console
 * `get_result_text()` returns all the text contained in the GUI
 * `clear_text()` clears the text in the GUI
 * `set_ignore_pause_before_teardown(should_ignore)` causes GUI to disregard any calls to pause_before_teardown.  This is useful when you want to run in a batch mode.
-* `set_yield_between_tests(should)` will pause briefly between every 5 tests so that you can see progress in the GUI.  If this is left out, it  can seem like the program has hung when running longer test sets.
-* `get/set_log_level(level)` see section on log level for list of values.
-* `disable_strict_datatype_checks(true)` disables strict datatype checks.  See section on "Strict type checking" before disabling.
+* __**__`set_yield_between_tests(should)` will pause briefly between every 5 tests so that you can see progress in the GUI.  If this is left out, it  can seem like the program has hung when running longer test sets.
+* __**__`get/set_log_level(level)` see section on log level for list of values.
+* __**__`disable_strict_datatype_checks(true)` disables strict datatype checks.  See section on "Strict type checking" before disabling.
 
 # <a name="extras"> Extras
 
 ##  <a name="strict"> Strict type checking
 Gut performs type checks in the asserts when comparing two differnt types would normally cause a runtime error.  With the type checking enabled (on be default) your test will fail instead of crashing.  Some types are ok to be compared such as Floats and Integers but if you attempt to compare a String with a Float your test will fail instead of blowing up.
 
-You can disable this behavior if you like by calling `tester.disable_strict_datatype_checks(true)` inside `gut_main.gd`.
+You can disable this behavior if you like by calling `disable_strict_datatype_checks(true)` on your Gut node or by clicking the checkbox to "Disable Strict Datatype Checks" in the editor.
 
 ##  <a name="files"> File Manipulation Methods for Tests
 Use these methods in a test or setup/teardown method to make file related testing easier.  These all exist on the Gut object so they must be prefixed with `gut`
@@ -215,25 +233,25 @@ var AnotherObject = load('res://scripts/another_object')
 # each time _process is called, and that the number starts at 0, this test
 # should pass
 func test_does_something_each_loop():
-	var my_obj = MyObject.new()
+  var my_obj = MyObject.new()
   add_child(my_obj)
-	gut.simulate(my_obj, 20, .1)
-	assert_eq(my_obj.a_number, 20, 'Since a_number is incremented in _process, it should be 20 now')
+  gut.simulate(my_obj, 20, .1)
+  assert_eq(my_obj.a_number, 20, 'Since a_number is incremented in _process, it should be 20 now')
 
 # Let us also assume that AnotherObj acts exactly the same way as
 # but has SomeCoolObj but has a _fixed_process method instead of
 # _process.  In that case, this test will pass too since all child objects
 # have the _process or _fixed_process method called.
 func test_does_something_each_loop():
-	var my_obj = MyObject.new()
+  var my_obj = MyObject.new()
   var other_obj = AnotherObj.new()
 
   add_child(my_obj)
-	my_obj.add_child(other_obj)
+  my_obj.add_child(other_obj)
 
-	gut.simulate(my_obj, 20, .1)
+  gut.simulate(my_obj, 20, .1)
 
-	assert_eq(my_obj.a_number, 20, 'Since a_number is incremented in _process, \
+  assert_eq(my_obj.a_number, 20, 'Since a_number is incremented in _process, \
                                   it should be 20 now')
   assert_eq(other_obj.another_number, 20, 'Since other_obj is a child of my_obj \
                                            and another_number is incremened in \
@@ -279,7 +297,7 @@ The `yield_for()` method and `YIELD` constant are some syntax sugar built into t
 Also supplied in this repo is the gut_cmdln.gd script that can be run from the command line so that you don't have to create a scene to run your tests.  One of the main reasons to use this approach instead of going through the editor is that you get to see error messages generated by Godot in the context of your running tests.  You also see any `print` statements you put in  your code in the context of all the Gut generated output.  It's a bit quicker to get started and is a bit cooler if I do say so.  The biggest downside is that debugging your code/tests is a little more difficult since you won't be able to interact with the editor when something blows up.
 
 From the command line, at the root of your project, use the following command to run the script.  Use the options below to run tests.
-	`godot -d -s test/gut/gut_cmdln.gd`
+	`godot -d -s addons/gut/gut_cmdln.gd`
 
 The -d option tells Godot to run in debug mode which is helpful.  The -s option tells Godot to run a script.
 
@@ -288,11 +306,11 @@ _Output from the command line help (-gh)_
 ```
 ---------------------------------------------------------                               
 This is the command line interface for the unit testing tool Gut.  With this
-interface you can run one or more test scipts from the command line.  In order
+interface you can run one or more test scripts from the command line.  In order
 for the Gut options to not clash with any other Godot options, each option
 starts with a "g".  Also, any option that requires a value will take the form of
 "-g<name>=<value>".  There cannot be any spaces between the option, the "=", or
-inside a specified value or godot will think you are trying to run a scene.       
+inside a specified value or Godot will think you are trying to run a scene.       
 
 Options                                                                                                               
 -------                                                                                                               
@@ -320,16 +338,16 @@ Options
 
 Run godot in debug mode (-d), run a test script (-gtest), set log level to lowest (-glog), exit when done (-gexit)
 
-`godot -s test/gut/gut_cmdln.gd -d -gtest=res://test/unit/sample_tests.gd -glog=1 -gexit`
+`godot -s addons/gut/gut_cmdln.gd -d -gtest=res://test/unit/sample_tests.gd -glog=1 -gexit`
 
 Load all test scripts that begin with 'me_' and end in '.res' and run me_only_only_me.res (given that the directory contains the following scripts:  me_and_only_me.res, me_only.res, me_one.res, me_two.res).  I don't specify the -gexit on this one since I might want to run all the scripts using the GUI after I run this one script.
 
-`godot -s test/gut/gut_cmdln.gd -d -gdir=res://test/unit -gprefix=me_ -gsuffix=.res -gselect=only_me`
+`godot -s addons/gut/gut_cmdln.gd -d -gdir=res://test/unit -gprefix=me_ -gsuffix=.res -gselect=only_me`
 
 ### Alias
 Make your life easier by creating an alias that includes your most frequent options.  Here's the one I use in bash:
 
-`alias gut='godot -d -s test/gut/gut_cmdln.gd -gdir=res://test/unit,res://test/integration -gexit -gignore_pause'`
+`alias gut='godot -d -s addons/gut/gut_cmdln.gd -gdir=res://test/unit,res://test/integration -gexit -gignore_pause'`
 
 This alias loads up all the scripts I want from my testing directories and sets some other flags.  With this, if I want to run 'test_one.gd', I just enter `gut -gselect=test_one.gd`.
 
@@ -344,8 +362,12 @@ At:  main\main.cpp:1260
 I got this one when I accidentally put a space instead of an "=" after -gselect.
 
 
+#  <a name="contributing"> Contributing
+Pull requests are welcome but first read the directions in the testing and example repo https://github.com/bitwes/GutTests/.  The core Gut code is separated out into this repo and the linked repo contains all the test and example code.  Any enhancements or bug fixes should have a corresponding pull request with new tests.
+
+
 # Who do I talk to?
 You can talk to me, Butch Wesley
 
-* Bitbucket:  bitwes
+* Github:  bitwes
 * Godot forums:  bitwes
