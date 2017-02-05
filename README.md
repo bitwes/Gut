@@ -10,6 +10,7 @@ Before upgrading, remove gut.gd and gut_cmdln.gd from your your current project.
 0.  You'll want to update your existing scene to use the new plugin object.  Follow the new install instructions. <br>
 __Note:__  just about everything you had to code to get your main testing scene running can now be configured in the Editor.  Select the Gut node and the options will appear in the Inspector.  Your existing code will work with the new custom node but using the Editor greatly simplifies things.
 0.  The object that all test scripts must extend has changed to `res://addons/gut/test.gd`.
+0.  All examples and tests for Gut itself have been moved to the new rep https://github.com/bitwes/GutTests/
 
 # Table of Contents
   0.  [Install](#install)
