@@ -343,7 +343,7 @@ I found that making tests for most getters and setters was repetitious and annoy
  * The method `get_<PROPERTY_NAME>` returns the expected default value when first called.
  * Once you set the property, the `get_<PROPERTY_NAME>`will return the value passed in.
 
-On the inside Gut actually performs up to 4 assertions.  So if everything goes right you will have four passing asserts each time you call `assert_get_set_methods`.  I say "up to 4 assertions" because there are 2 assertions to make sure the object has the methods and then 2 to verify that act correctly.  If the object does not have the methods, it does not bother running the tests for the methods.
+On the inside Gut actually performs up to 4 assertions.  So if everything goes right you will have four passing asserts each time you call `assert_get_set_methods`.  I say "up to 4 assertions" because there are 2 assertions to make sure the object has the methods and then 2 to verify they act correctly.  If the object does not have the methods, it does not bother running the tests for the methods.
 ```
 class SomeClass:
 	var _count = 0
@@ -377,7 +377,7 @@ Print info to the GUI and console (if enabled).  You can see examples if this in
 #### gut.pause_before_teardown()
 This method will cause Gut to pause before it moves on to the next test.  This is useful for debugging, for instance if you want to investigate the screen or anything else after a test has finished executing.  See also `set_ignore_pause_before_teardown`
 #### yield_for(time_in_seconds)
-This simplifies the code needed to pause the test execution for a number of seconds, while the thing that you are testing can run its course in real time.  There are more details in the Yielding section.  It is designed to be used with the `yield` built in.  The following example will pause your test execution (and only the test execution) for 5 seconds before continuing.  You must call an assert or `pending` or `end_test()` after a yield or the test will never stop running.
+This simplifies the code needed to pause the test execution for a number of seconds so the thing that you are testing can run its course in real time.  There are more details in the Yielding section.  It is designed to be used with the `yield` built in.  The following example will pause your test execution (and only the test execution) for 2 seconds before continuing.  You must call an assert or `pending` or `end_test()` after a yield or the test will never stop running.
 ```
 class MovingNode:
 	extends Node2D
@@ -434,7 +434,7 @@ These methods would be used inside the scene you created at `res://test/tests.tc
 # <a name="extras"> Extras
 
 ##  <a name="strict"> Strict type checking
-Gut performs type checks in the asserts when comparing two differnt types would normally cause a runtime error.  With the type checking enabled (on be default) your test will fail instead of crashing.  Some types are ok to be compared such as Floats and Integers but if you attempt to compare a String with a Float your test will fail instead of blowing up.
+Gut performs type checks in the asserts when comparing two different types that would normally cause a runtime error.  With the type checking enabled (on be default) your test will fail instead of crashing.  Some types are ok to be compared such as Floats and Integers but if you attempt to compare a String with a Float your test will fail instead of blowing up.
 
 You can disable this behavior if you like by calling `disable_strict_datatype_checks(true)` on your Gut node or by clicking the checkbox to "Disable Strict Datatype Checks" in the editor.
 
@@ -446,7 +446,7 @@ Use these methods in a test or setup/teardown method to make file related testin
 * `gut.directory_delete_files` deletes all files in a directory.  does not delete subdirectories or any files in them.
 
 ##  <a name="watch"> Watching tests as they execute
-When running longer tests it can appear as though the program has hung.  To address this and see the tests as they execute a yield was added between tests.  To enable this feature call `set_yield_between_tests(true)` before running your tests.  This feature is disabled by default since it does add a small amount of time to running your tests (about .01 seconds per 5 tests)
+When running longer tests it can appear as though the program or Gut has hung.  To address this and see the tests as they execute, a short yield was added between tests.  To enable this feature call `set_yield_between_tests(true)` before running your tests or use the "Yield Between Tests" in the Editor.
 
 ##  <a name="output_detail"> Output Detail
 The level of detail that is printed to the screen can be changed using the slider on the dialog or by calling `set_log_level` with one of the following constants defined in Gut
