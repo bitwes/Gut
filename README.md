@@ -36,7 +36,7 @@ Place the `gut` directory into your `addons` folder in your project.  If you don
 
 From the menu choose Scene->Project Settings, click the plugins tab and activate Gut.
 
-The next few steps are the suggestion configuration.  Feel free to deviate where you see fit.
+The next few steps cover the suggested configuration.  Feel free to deviate where you see fit.
 
 0.  Create directories to store your tests and test related code
   * `res://test`
