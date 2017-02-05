@@ -28,7 +28,7 @@
 ################################################################################
 # View readme for usage details.
 #
-# Version 3.1
+# Version 4.0.0
 ################################################################################
 extends WindowDialog
 
@@ -37,7 +37,7 @@ extends WindowDialog
 # Editor Variables
 # ###########################
 export var _run_on_load = false
-export(String) var _select_script = null 
+export(String) var _select_script = null
 export(String) var _tests_like = null
 export var _should_print_to_console = true setget set_should_print_to_console, get_should_print_to_console
 export(int, 'Failures only', 'Tests and failures', 'Everything') var _log_level = 1 setget set_log_level, get_log_level
@@ -408,15 +408,15 @@ func _ready():
 	add_directory(_directory4)
 	add_directory(_directory5)
 	add_directory(_directory6)
-	
+
 	_update_controls()
-	
+
 	if(_select_script != null):
 		select_script(_select_script)
-	
+
 	if(_tests_like != null):
 		set_unit_test_name(_tests_like)
-	
+
 	if(_run_on_load):
 		test_scripts(_select_script == null)
 
@@ -944,7 +944,7 @@ func test_script(script):
 func add_script(script, select_this_one=false):
 	if(_test_scripts.has(script)):
 		return
-	
+
 	_test_scripts.append(script)
 	_ctrls.scripts_drop_down.add_item(script)
 	# Move the run_button in case the size of the path of the script caused the
@@ -1198,7 +1198,7 @@ func disable_strict_datatype_checks(should):
 
 func is_strict_datatype_checks_disabled():
 	return _disable_strict_datatype_checks
-	
+
 #-------------------------------------------------------------------------------
 #Pauses the test and waits for you to press a confirmation button.  Useful when
 #you want to watch a test play out onscreen or inspect results.
@@ -1308,7 +1308,7 @@ func set_yield_between_tests(should):
 
 func get_yield_between_tests():
 	return _yield_between.should
-	
+
 #-------------------------------------------------------------------------------
 #Call _process or _fixed_process, if they exist, on obj and all it's children
 #and their children and so and so forth.  Delta will be passed through to all
