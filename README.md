@@ -128,13 +128,13 @@ Each test should perform at least one assert or call `pending` to indicate the t
 These methods should be used in tests to make assertions.  These methods are available to anything that inherits from the Test class (`extends "res://addons/gut/test.gd"`).  All sample code listed for the methods can be found here:  https://github.com/bitwes/GutTests/blob/master/test/unit/test_readme_examples.gd.
 #### pending(text="")
 flag a test as pending, the optional message is printed in the GUI
-```
+``` python
 pending('This test is not implemented yet')
 pending()
 ```
 #### assert_eq(got, expected, text="")
 assert got == expected and prints optional text
-```
+``` python
 var one = 1
 var node1 = Node.new()
 var node2 = node1
@@ -150,7 +150,7 @@ assert_eq(self, node1) # FAIL
 ```
 #### assert_ne(got, not_expected, text="")
 asserts got != expected and prints optional text
-```
+``` python
 var two = 2
 var node1 = Node.new()
 
@@ -166,7 +166,7 @@ assert_ne('2', 2) # FAIL
 ```
 #### assert_gt(got, expected, text="")
 assserts got > expected
-```
+``` python
 var bigger = 5
 var smaller = 0
 
@@ -183,7 +183,7 @@ assert_gt(smaller, bigger) # FAIL
 ```
 #### assert_lt(got, expected, text="")
 asserts got < expected
-```
+``` python
 var bigger = 5
 var smaller = 0
 gut.p('-- passing --')
@@ -196,7 +196,7 @@ assert_lt(-5, -5) # FAIL
 ```
 #### assert_true(got, text="")
 asserts got == true
-```
+``` python
 gut.p('-- passing --')
 assert_true(true, 'True should be true') # PASS
 assert_true(5 == 5, 'That expressions should be true') # PASS
@@ -207,7 +207,7 @@ assert_true('a' == 'b') # FAIL
 ```
 #### assert_false(got, text="")
 asserts got == false
-```
+``` python
 gut.p('-- passing --')
 assert_false(false, 'False is false') # PASS
 assert_false(1 == 2) # PASS
@@ -220,7 +220,7 @@ assert_false('ABC' == 'ABC') # FAIL
 ```
 #### assert_between(got, expect_low, expect_high, text="")
 asserts got > expect_low and <= expect_high
-```
+``` python
 gut.p('-- passing --')
 assert_between(5, 0, 10, 'Five should be between 0 and 10') # PASS
 assert_between(10, 0, 10) # PASS
@@ -233,7 +233,7 @@ assert_between(1, 5, 10) # FAIL
 ```
 #### assert_has(obj, element, text='')
 Asserts that the object passed in "has" the element.  This works with any object that has a `has` method.
-```
+``` python
 var an_array = [1, 2, 3, 'four', 'five']
 var a_hash = { 'one':1, 'two':2, '3':'three'}
 
@@ -252,7 +252,7 @@ assert_has(a_hash, 'three') # FAIL
 ```
 #### assert_does_not_have(obj, element, text='')
 The inverse of `assert_has`
-```
+``` python
 var an_array = [1, 2, 3, 'four', 'five']
 var a_hash = { 'one':1, 'two':2, '3':'three'}
 
@@ -271,7 +271,7 @@ assert_does_not_have(a_hash, '3') # FAIL
 ```
 #### assert_file_exists(file_path)
 asserts a file exists at the specified path
-```
+``` python
 func setup():
 	gut.file_touch('user://some_test_file')
 
@@ -289,7 +289,7 @@ func test_assert_file_exists():
 ```
 #### assert_file_does_not_exist(file_path)
 asserts a file does not exist at the specified path
-```
+``` python
 func setup():
 	gut.file_touch('user://some_test_file')
 
@@ -306,7 +306,7 @@ func test_assert_file_does_not_exist():
 ```
 #### assert_file_empty(file_path)
 asserts the specified file is empty
-```
+``` python
 func setup():
 	gut.file_touch('user://some_test_file')
 
@@ -322,7 +322,7 @@ func test_assert_file_empty():
 ```
 #### assert_file_not_empty(file_path)
 asserts the specified file is not empty
-```
+``` python
 func setup():
 	gut.file_touch('user://some_test_file')
 
