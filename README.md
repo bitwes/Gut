@@ -32,9 +32,9 @@ __Note:__  just about everything you had to code to get your main testing scene 
   0. [Contributing](#contributing)
 
 # <a name="install"> Install
-Download and extract the zip from the releases or from the Godot Asset Library https://godotengine.org/asset-library/asset.  
+Download and extract the zip from the [releases](https://github.com/bitwes/Gut/releases) or from the [Godot Asset Library](https://godotengine.org/asset-library/asset/54).  
 
-Place the `gut` directory into your `addons` folder in your project.  If you don't have an `addons` folder at the root of your project, then make one and THEN put the `gut` directory in there.
+Extract the zip and place the `gut` directory into your `addons` directory in your project.  If you don't have an `addons` folder at the root of your project, then make one and THEN put the `gut` directory in there.
 
 From the menu choose Scene->Project Settings, click the plugins tab and activate Gut.
 
