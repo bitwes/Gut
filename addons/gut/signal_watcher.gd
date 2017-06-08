@@ -8,6 +8,8 @@ var _watched_signals = {}
 func _add_watched_signal(obj, name):
 	if(!_watched_signals.has(obj)):
 		_watched_signals[obj] = {name:{'count':0, 'args':[]}}
+	else:
+		_watched_signals[obj][name] = {'count':0, 'args':[]}
 
 # This handles all the signals that are watched.  It supports up to 9 parameters
 # which could be emitted by the signal and the two parameters used when it is
@@ -23,24 +25,27 @@ func _on_watched_signal(arg1=ARG_NOT_SET, arg2=ARG_NOT_SET, arg3=ARG_NOT_SET, \
 						arg7=ARG_NOT_SET, arg8=ARG_NOT_SET, arg9=ARG_NOT_SET, \
 						arg10=ARG_NOT_SET, arg11=ARG_NOT_SET):
 	var args = [arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11]
+
+	# strip off any unused vars.
 	var idx = args.size() -1
 	while(str(args[idx]) == ARG_NOT_SET):
 		args.remove(idx)
 		idx -= 1
 
+	# retrieve object and signal name from the array and remove them.  These
+	# will always be at the end since they are added when the connect happens.
 	var signal_name = args[args.size() -1]
 	args.pop_back()
 	var object = args[args.size() -1]
 	args.pop_back()
 
-	_handle_watched_signal(object, signal_name, args)
-
-
-# Accepts an array of arguments where the last two are the parameters passed
-# when we connect to the signal (signal name and a reference to the object.)
-func _handle_watched_signal(object, signal_name, args=[]):
 	_watched_signals[object][signal_name]['count'] += 1
 	_watched_signals[object][signal_name]['args'].append(args)
+
+func watch_signals(object):
+	var signals = object.get_signal_list()
+	for i in range(signals.size()):
+		watch_signal(object, signals[i]['name'])
 
 func watch_signal(object, signal_name):
 	var did = false
@@ -52,13 +57,13 @@ func watch_signal(object, signal_name):
 
 func get_emit_count(object, signal_name):
 	var to_return = -1
-	if(is_watching_signal(object, signal_name)):
+	if(is_watching(object, signal_name)):
 		to_return = _watched_signals[object][signal_name]['count']
 	return to_return
 
 func did_emit(object, signal_name):
 	var did = false
-	if(is_watching_signal(object, signal_name)):
+	if(is_watching(object, signal_name)):
 		did = get_emit_count(object, signal_name) != 0
 	return did
 
@@ -69,7 +74,7 @@ func print_object_signals(object):
 
 func get_signal_parameters(object, signal_name, index=-1):
 	var params = null
-	if(is_watching_signal(object, signal_name)):
+	if(is_watching(object, signal_name)):
 		var all_params = _watched_signals[object][signal_name]['args']
 		if(all_params.size() > 0):
 			if(index == -1):
@@ -77,5 +82,5 @@ func get_signal_parameters(object, signal_name, index=-1):
 			params = all_params[index]
 	return params
 
-func is_watching_signal(object, signal_name):
+func is_watching(object, signal_name):
 	return _watched_signals.has(object) and _watched_signals[object].has(signal_name)
