@@ -121,6 +121,28 @@ func assert_has(obj, element, text=""):
 func assert_does_not_have(obj, element, text=""):
 	gut.assert_does_not_have(obj, element, text)
 
+func watch_signals(object):
+	gut.watch_signals(object)
+
+func assert_signal_emitted(object, signal_name, text=""):
+	gut.assert_signal_emitted(object, signal_name, text)
+
+func assert_signal_not_emitted(object, signal_name, text=""):
+	gut.assert_signal_not_emitted(object, signal_name, text)
+
+func assert_signal_emit_count(object, signal_name, times, text=""):
+	gut.assert_signal_emit_count(object, signal_name, times, text)
+
+func assert_has_signal(object, signal_name, text=""):
+	gut.assert_has_signal(object, signal_name, text)
+
+#-------------------------------------------------------------------------------
+# Returns the number of times a signal was emitted.  -1 returned if the object
+# is not being watched.
+#-------------------------------------------------------------------------------
+func get_signal_emit_count(object, signal_name):
+	return gut.get_signal_emit_count(object, signal_name)
+
 # see gut method
 func pending(text=""):
 	gut.pending(text)

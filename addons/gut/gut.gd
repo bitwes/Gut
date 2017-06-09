@@ -77,7 +77,7 @@ const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
 var _is_running = false
 var _stop_pressed = false
 
-
+var _signal_watcher = load('res://addons/Gut/signal_watcher.gd').new()
 # Tests to run for the current script
 var _tests = []
 # all the scripts that should be ran as test scripts
@@ -834,6 +834,7 @@ func _test_the_scripts():
 						_ctrls.continue_button.set_disabled(false)
 						yield(self, SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
 
+					_signal_watcher.clear()
 					test_script.teardown()
 					if(_current_test.passed):
 						_ctrls.text_box.add_keyword_color(_current_test.name, Color(0, 1, 0))
@@ -1177,6 +1178,81 @@ func assert_get_set_methods(obj, property, default, set_to):
 	assert_eq(obj.call(get), default, 'It should have the expected default value.')
 	obj.call(set, set_to)
 	assert_eq(obj.call(get), set_to, 'The set value should have been returned.')
+
+
+# TODO move this to the private section?
+func _fail_if_does_not_have_signal(object, signal_name):
+	var did_fail = false
+	if(!object.has_user_signal(signal_name)):
+		_fail(str('Object ', object, ' does not have the signal [', signal_name, ']'))
+		did_fail = true
+	return did_fail
+
+func _fail_if_not_watching(object):
+	var did_fail = false
+	if(!_signal_watcher.is_watching_object(object)):
+		_fail(str('Cannot make signal assertions because the object ', object, \
+		          ' is not being watched.  Call watch_signals(some_object) to be able to make assertions about signals.'))
+		did_fail = true
+	return did_fail
+
+func _can_make_signal_assertions(object, signal_name):
+	return !(_fail_if_not_watching(object) or _fail_if_does_not_have_signal(object, signal_name))
+
+#-------------------------------------------------------------------------------
+# Watch the signals for an object.  This must be called before you can make
+# any assertions about the signals themselves.
+#-------------------------------------------------------------------------------
+func watch_signals(object):
+	_signal_watcher.watch_signals(object)
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func assert_signal_emitted(object, signal_name, text=""):
+	var disp = str('Expected object ', object, ' to emit signal [', signal_name, ']:  ', text)
+	if(_can_make_signal_assertions(object, signal_name)):
+		if(_signal_watcher.did_emit(object, signal_name)):
+			_pass(disp)
+		else:
+			_fail(disp)
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func assert_signal_not_emitted(object, signal_name, text=""):
+	var disp = str('Expected object ', object, ' to NOT emit signal [', signal_name, ']:  ', text)
+	if(_can_make_signal_assertions(object, signal_name)):
+		if(_signal_watcher.did_emit(object, signal_name)):
+			_fail(disp)
+		else:
+			_pass(disp)
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func assert_signal_emit_count(object, signal_name, times, text=""):
+
+	if(_can_make_signal_assertions(object, signal_name)):
+		var count = _signal_watcher.get_emit_count(object, signal_name)
+		var disp = str('Expected the signal [', signal_name, '] emit count of [', count, '] to equal [', times, ']: ', text)
+		if(count== times):
+			_pass(disp)
+		else:
+			_fail(disp)
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+func assert_has_signal(object, signal_name, text=""):
+	var disp = str('Expected object ', object, ' to have signal [', signal_name, ']:  ', text)
+	if(object.has_user_signal(signal_name)):
+		_pass(disp)
+	else:
+		_fail(disp)
+
+#-------------------------------------------------------------------------------
+# Returns the number of times a signal was emitted.  -1 returned if the object
+# is not being watched.
+#-------------------------------------------------------------------------------
+func get_signal_emit_count(object, signal_name):
+	return _signal_watcher.get_emit_count(object, signal_name)
 
 #-------------------------------------------------------------------------------
 #Mark the current test as pending.

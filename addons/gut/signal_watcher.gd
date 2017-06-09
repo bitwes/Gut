@@ -3,13 +3,36 @@
 # shame on  you.
 const ARG_NOT_SET = '_*_argument_*_is_*_not_set_*_'
 
+# This hash holds the objects that are being watched, the signals that are being
+# watched, and an array of arrays that contains arguments that were passed
+# each time the signal was emitted.
+#
+# For example:
+#	_watched_signals => {
+#		ref1 => {
+#			'signal1' => [[], [], []],
+#			'signal2' => [[p1, p2]],
+#			'signal3' => [[p1]]
+#		},
+#		ref2 => {
+#			'some_signal' => [],
+#			'other_signal' => [[p1, p2, p3], [p1, p2, p3], [p1, p2, p3]]
+#		}
+#	}
+#
+# In this sample:
+#	- signal1 on the ref1 object was emitted 3 times and each time, zero
+#	  parameters were passed.
+#	- signal3 on ref1 was emitted once and passed a single parameter
+#	- some_signal on ref2 was never emitted.
+#	- other_signal on ref2 was emitted 3 times, each time with 3 parameters.
 var _watched_signals = {}
 
 func _add_watched_signal(obj, name):
 	if(!_watched_signals.has(obj)):
-		_watched_signals[obj] = {name:{'count':0, 'args':[]}}
+		_watched_signals[obj] = {name:[]}
 	else:
-		_watched_signals[obj][name] = {'count':0, 'args':[]}
+		_watched_signals[obj][name] = []
 
 # This handles all the signals that are watched.  It supports up to 9 parameters
 # which could be emitted by the signal and the two parameters used when it is
@@ -39,8 +62,7 @@ func _on_watched_signal(arg1=ARG_NOT_SET, arg2=ARG_NOT_SET, arg3=ARG_NOT_SET, \
 	var object = args[args.size() -1]
 	args.pop_back()
 
-	_watched_signals[object][signal_name]['count'] += 1
-	_watched_signals[object][signal_name]['args'].append(args)
+	_watched_signals[object][signal_name].append(args)
 
 func watch_signals(object):
 	var signals = object.get_signal_list()
@@ -58,7 +80,7 @@ func watch_signal(object, signal_name):
 func get_emit_count(object, signal_name):
 	var to_return = -1
 	if(is_watching(object, signal_name)):
-		to_return = _watched_signals[object][signal_name]['count']
+		to_return = _watched_signals[object][signal_name].size()
 	return to_return
 
 func did_emit(object, signal_name):
@@ -75,12 +97,21 @@ func print_object_signals(object):
 func get_signal_parameters(object, signal_name, index=-1):
 	var params = null
 	if(is_watching(object, signal_name)):
-		var all_params = _watched_signals[object][signal_name]['args']
+		var all_params = _watched_signals[object][signal_name]
 		if(all_params.size() > 0):
 			if(index == -1):
 				index = all_params.size() -1
 			params = all_params[index]
 	return params
 
+func is_watching_object(object):
+	return _watched_signals.has(object)
+	
 func is_watching(object, signal_name):
 	return _watched_signals.has(object) and _watched_signals[object].has(signal_name)
+
+func clear():
+	for obj in _watched_signals:
+		for signal_name in _watched_signals[obj]:
+			obj.disconnect(signal_name, self, '_on_watched_signal')
+	_watched_signals.clear()
