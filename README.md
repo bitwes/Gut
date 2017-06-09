@@ -1,16 +1,8 @@
 # Gut
 GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.  It allows you to write tests for your gdscript in gdscript.
 
-# !! 4.0.0 Breaking changes from 3.0.x !!
-It is a plugin now!  Unfortunately that means some things and paths have changed.
-
-Before upgrading, remove gut.gd and gut_cmdln.gd from your your current project.  That will help ensure that you got everything setup right with the new install location.
-
-0.  The install location has changed to `res://addons/gut`.  So you'll want to clean out wherever you had it previously installed.
-0.  You'll want to update your existing scene to use the new plugin object.  Follow the new install instructions. <br>
-__Note:__  just about everything you had to code to get your main testing scene running can now be configured in the Editor.  Select the Gut node and the options will appear in the Inspector.  Your existing code will work with the new custom node but using the Editor greatly simplifies things.
-0.  The object that all test scripts must extend has changed to `res://addons/gut/test.gd`.
-0.  All examples and tests for Gut itself have been moved to the new repo https://github.com/bitwes/GutTests/
+## 4.x.x Breaking changes from 3.0.x
+In 4.0.0 Gut was changed to be a plugin.  This has some setup ramifications.  __These changes only apply when upgrading from a version earlier than 4.0.0__.  See the 4.0.0 section in CHANGES.md for upgrade information.
 
 # Table of Contents
   0.  [Install](#install)
@@ -32,10 +24,12 @@ __Note:__  just about everything you had to code to get your main testing scene 
   0. [Contributing](#contributing)
 
 # <a name="install"> Install
+## New Installs and Upgrades
 Download and extract the zip from the [releases](https://github.com/bitwes/Gut/releases) or from the [Godot Asset Library](https://godotengine.org/asset-library/asset/54).  
 
 Extract the zip and place the `gut` directory into your `addons` directory in your project.  If you don't have an `addons` folder at the root of your project, then make one and THEN put the `gut` directory in there.
 
+## New Install Configuration
 From the menu choose Scene->Project Settings, click the plugins tab and activate Gut.
 
 The next few steps cover the suggested configuration.  Feel free to deviate where you see fit.
@@ -400,7 +394,7 @@ func test_illustrate_yield():
 	assert_between(moving_node.get_pos().x, 3.9, 4, 'it should move almost 4 whatevers at speed 2')
 ```
 #### end_test()
-This can be called instead of an assert or `pending` to end a test that has yielded.
+This is a holdover from previous versions.  You should probably use an assert or `pending` to close out a yielded test but you can use this instead if you really really want to.
 ```
 func test_illustrate_end_test():
 	yield(yield_for(1), YIELD)

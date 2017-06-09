@@ -1180,7 +1180,9 @@ func assert_get_set_methods(obj, property, default, set_to):
 	assert_eq(obj.call(get), set_to, 'The set value should have been returned.')
 
 
-# TODO move this to the private section?
+#-------------------------------------------------------------------------------
+# Signal assertion helper.  Do not call directly, use _can_make_signal_assertions
+#-------------------------------------------------------------------------------
 func _fail_if_does_not_have_signal(object, signal_name):
 	var did_fail = false
 	if(!object.has_user_signal(signal_name)):
@@ -1188,14 +1190,25 @@ func _fail_if_does_not_have_signal(object, signal_name):
 		did_fail = true
 	return did_fail
 
+#-------------------------------------------------------------------------------
+# Signal assertion helper.  Do not call directly, use _can_make_signal_assertions
+#-------------------------------------------------------------------------------
 func _fail_if_not_watching(object):
 	var did_fail = false
 	if(!_signal_watcher.is_watching_object(object)):
 		_fail(str('Cannot make signal assertions because the object ', object, \
-		          ' is not being watched.  Call watch_signals(some_object) to be able to make assertions about signals.'))
+		          ' is not being watched.  Call watch_signals(some_object) to be
+				  able to make assertions about signals.'))
 		did_fail = true
 	return did_fail
 
+#-------------------------------------------------------------------------------
+# Signal assertion helper.
+#
+# Verifies that the object and signal are valid for making signal assertions.
+# This will fail with specific messages that indicate why they are not valid.
+# This returns true/false to indicate if the object and signal are valid.
+#-------------------------------------------------------------------------------
 func _can_make_signal_assertions(object, signal_name):
 	return !(_fail_if_not_watching(object) or _fail_if_does_not_have_signal(object, signal_name))
 
@@ -1207,6 +1220,10 @@ func watch_signals(object):
 	_signal_watcher.watch_signals(object)
 
 #-------------------------------------------------------------------------------
+# Asserts that a signal has been emitted at least once.
+#
+# This will fail with specific messages if the object is not being watched or
+# the object does not have the specified signal
 #-------------------------------------------------------------------------------
 func assert_signal_emitted(object, signal_name, text=""):
 	var disp = str('Expected object ', object, ' to emit signal [', signal_name, ']:  ', text)
@@ -1217,6 +1234,10 @@ func assert_signal_emitted(object, signal_name, text=""):
 			_fail(disp)
 
 #-------------------------------------------------------------------------------
+# Asserts that a signal has not been emitted.
+#
+# This will fail with specific messages if the object is not being watched or
+# the object does not have the specified signal
 #-------------------------------------------------------------------------------
 func assert_signal_not_emitted(object, signal_name, text=""):
 	var disp = str('Expected object ', object, ' to NOT emit signal [', signal_name, ']:  ', text)
@@ -1227,9 +1248,12 @@ func assert_signal_not_emitted(object, signal_name, text=""):
 			_pass(disp)
 
 #-------------------------------------------------------------------------------
+# Assert that a signal has been emitted a specific number of times.
+#
+# This will fail with specific messages if the object is not being watched or
+# the object does not have the specified signal
 #-------------------------------------------------------------------------------
 func assert_signal_emit_count(object, signal_name, times, text=""):
-
 	if(_can_make_signal_assertions(object, signal_name)):
 		var count = _signal_watcher.get_emit_count(object, signal_name)
 		var disp = str('Expected the signal [', signal_name, '] emit count of [', count, '] to equal [', times, ']: ', text)
@@ -1239,6 +1263,7 @@ func assert_signal_emit_count(object, signal_name, times, text=""):
 			_fail(disp)
 
 #-------------------------------------------------------------------------------
+# Assert that the passed in object has the specfied signal
 #-------------------------------------------------------------------------------
 func assert_has_signal(object, signal_name, text=""):
 	var disp = str('Expected object ', object, ' to have signal [', signal_name, ']:  ', text)
