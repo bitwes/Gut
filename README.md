@@ -289,7 +289,9 @@ func test_assert_has_signal():
 
 ```
 #### watch_signals(object)
-This must be called in order to make assertions based signals being emitted.  You can call it multiple times with different objects.   This must be called in each test.  The objects that are watched are cleared after each test (technically right before `teardown` is called).  Under the covers, Gut will connect to all the signals an object has and it will track each time they fire.
+This must be called in order to make assertions based on signals being emitted.  __Right now, this only supports signals that are emitted with 9 or less parameters.  This can be extended but nine seemed like enough for now.  The Godot documentation suggests that the limit is four but in my testing I found you can pass more.__
+
+This must be called in each test in which you want to make signal based assertions in.  You can call it multiple times with different objects.   You should not call it multiple times with the same object in the same test.  The objects that are watched are cleared after each test (specifically right before `teardown` is called).  Under the covers, Gut will connect to all the signals an object has and it will track each time they fire.  You can then use the following asserts and methods to verify things are acting correctl
 
 #### assert_signal_emitted(object, signal_name)
 Assert that the specified object emitted the named signal.  You must call `watch_signals` and pass it the object that you are making assertions about.  This will fail if the object is not being watched or if the object does not have the specified signal.  Since this will fail if the signal does not exist, you can often skip using `assert_has_signal`.

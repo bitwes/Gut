@@ -12,7 +12,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 	- `assert_has_signal`
 	- `get_signal_emit_count`
 	- `get_signal_parameters`
-
+- Some minor fixes to `gut.p`
+	- It now performs a `str` on the input.  So if you pass it an object or something that isn't a string it won't blow up.
+	- It now indents multi-line input correctly.
 # 4.0.0
 ### Breaking Changes from 3.0.x and earlier
 
