@@ -875,6 +875,7 @@ func _test_the_scripts():
 #desired.
 #-------------------------------------------------------------------------------
 func p(text, level=0, indent=0):
+	var str_text = str(text)
 	var to_print = ""
 	var printing_test_name = false
 
@@ -890,7 +891,7 @@ func p(text, level=0, indent=0):
 			if(!_current_test.has_printed_name):
 				to_print = "* " + _current_test.name
 				_current_test.has_printed_name = true
-				printing_test_name = text == _current_test.name
+				printing_test_name = str_text == _current_test.name
 
 		if(!printing_test_name):
 			if(to_print != ""):
@@ -899,7 +900,8 @@ func p(text, level=0, indent=0):
 			var pad = ""
 			for i in range(0, indent):
 				pad += "    "
-			to_print += pad + text
+			to_print += pad + str_text
+			to_print = to_print.replace("\n", "\n" + pad)
 
 		if(_should_print_to_console):
 			print(to_print)
