@@ -139,6 +139,8 @@ func assert_signal_emit_count(object, signal_name, times, text=""):
 func assert_has_signal(object, signal_name, text=""):
 	gut.assert_has_signal(object, signal_name, text)
 
+func get_signal_parameters(object, signal_name, index=-1):
+	return gut.get_signal_parameters(object, signal_name, index)
 #-------------------------------------------------------------------------------
 # Returns the number of times a signal was emitted.  -1 returned if the object
 # is not being watched.

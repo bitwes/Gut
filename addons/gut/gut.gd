@@ -1310,6 +1310,7 @@ func get_signal_emit_count(object, signal_name):
 #-------------------------------------------------------------------------------
 func get_signal_parameters(object, signal_name, index=-1):
 	return _signal_watcher.get_signal_parameters(object, signal_name, index)
+	
 #-------------------------------------------------------------------------------
 # Mark the current test as pending.
 #-------------------------------------------------------------------------------
