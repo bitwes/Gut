@@ -127,6 +127,9 @@ func watch_signals(object):
 func assert_signal_emitted(object, signal_name, text=""):
 	gut.assert_signal_emitted(object, signal_name, text)
 
+func assert_signal_emitted_with_parameters(object, signal_name, parameters, index=-1):
+	gut.assert_signal_emitted_with_parameters(object, signal_name, parameters, index)
+
 func assert_signal_not_emitted(object, signal_name, text=""):
 	gut.assert_signal_not_emitted(object, signal_name, text)
 

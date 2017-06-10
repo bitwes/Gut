@@ -1189,7 +1189,6 @@ func _fail_if_does_not_have_signal(object, signal_name):
 		_fail(str('Object ', object, ' does not have the signal [', signal_name, ']'))
 		did_fail = true
 	return did_fail
-
 #-------------------------------------------------------------------------------
 # Signal assertion helper.  Do not call directly, use _can_make_signal_assertions
 #-------------------------------------------------------------------------------
@@ -1197,8 +1196,7 @@ func _fail_if_not_watching(object):
 	var did_fail = false
 	if(!_signal_watcher.is_watching_object(object)):
 		_fail(str('Cannot make signal assertions because the object ', object, \
-		          ' is not being watched.  Call watch_signals(some_object) to be
-				  able to make assertions about signals.'))
+		          ' is not being watched.  Call watch_signals(some_object) to be able to make assertions about signals.'))
 		did_fail = true
 	return did_fail
 
@@ -1248,12 +1246,34 @@ func assert_signal_not_emitted(object, signal_name, text=""):
 			_pass(disp)
 
 #-------------------------------------------------------------------------------
+# Asserts that a signal was fired with the specified parameters.  The expected
+# parameters should be passed in as an array.  An optional index can be passed
+# when a signal has fired more than once.  The default is to retrieve the most
+# recent emission of the signal.
+#
+# This will fail with specific messages if the object is not being watched or
+# the object does not have the specified signal
+#-------------------------------------------------------------------------------
+func assert_signal_emitted_with_parameters(object, signal_name, parameters, index=-1):
+	var disp = str('Expected object ', object, ' to emit signal [', signal_name, '] with parameters ', parameters, ', got ')
+	if(_can_make_signal_assertions(object, signal_name)):
+		if(_signal_watcher.did_emit(object, signal_name)):
+			var parms_got = _signal_watcher.get_signal_parameters(object, signal_name, index)
+			if(parameters == parms_got):
+				_pass(str(disp, parms_got))
+			else:
+				_fail(str(disp, parms_got))
+		else:
+			_fail(str('Object ', object, ' did not emit signal [', signal_name, ']'))
+
+#-------------------------------------------------------------------------------
 # Assert that a signal has been emitted a specific number of times.
 #
 # This will fail with specific messages if the object is not being watched or
 # the object does not have the specified signal
 #-------------------------------------------------------------------------------
 func assert_signal_emit_count(object, signal_name, times, text=""):
+
 	if(_can_make_signal_assertions(object, signal_name)):
 		var count = _signal_watcher.get_emit_count(object, signal_name)
 		var disp = str('Expected the signal [', signal_name, '] emit count of [', count, '] to equal [', times, ']: ', text)
@@ -1280,7 +1300,16 @@ func get_signal_emit_count(object, signal_name):
 	return _signal_watcher.get_emit_count(object, signal_name)
 
 #-------------------------------------------------------------------------------
-#Mark the current test as pending.
+# Get the parmaters of a fired signal.  If the signal was not fired null is
+# returned.  You can specify an optional index (use get_signal_emit_count to
+# determine the number of times it was emitted).  The default index is the
+# latest time the signal was fired (size() -1 insetead of 0).  The parameters
+# returned are in an array.
+#-------------------------------------------------------------------------------
+func get_signal_parameters(object, signal_name, index=-1):
+	return _signal_watcher.get_signal_parameters(object, signal_name, index)
+#-------------------------------------------------------------------------------
+# Mark the current test as pending.
 #-------------------------------------------------------------------------------
 func pending(text=""):
 	_summary.pending += 1

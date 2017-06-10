@@ -263,6 +263,188 @@ assert_does_not_have(an_array, 2) # FAIL
 assert_does_not_have(a_hash, 'one') # FAIL
 assert_does_not_have(a_hash, '3') # FAIL
 ```
+
+#### assert_has_signal(object, signal_name)
+Asserts the passed in object has a signal with the specified name.  It should be noted that all the asserts that verfy a signal was/wasn't emitted will first check that the object has the signal being asserted against.  If it does not, a specific failure message will be given.  This means you can usually skip the step of specifically verifying that the object has a signal and move on to making sure it emits the signal correctly.
+``` python
+class SignalObject:
+	func _init():
+		add_user_signal('some_signal')
+		add_user_signal('other_signal')
+
+func test_assert_has_signal():
+	var obj = SignalObject.new()
+
+	gut.p('-- passing --')
+	assert_has_signal(obj, 'some_signal')
+	assert_has_signal(obj, 'other_signal')
+
+	gut.p('-- failing --')
+	assert_has_signal(obj, 'not_a real SIGNAL')
+	assert_has_signal(obj, 'yea, this one doesnt exist either')
+	# Fails because the signal is not a user signal.  Node2D does have the
+	# specified signal but it can't be checked this way.  It could be watched
+	# and asserted that it fired though.
+	assert_has_signal(Node2D.new(), 'exit_tree')
+
+```
+#### watch_signals(object)
+This must be called in order to make assertions based signals being emitted.  You can call it multiple times with different objects.   This must be called in each test.  The objects that are watched are cleared after each test (technically right before `teardown` is called).  Under the covers, Gut will connect to all the signals an object has and it will track each time they fire.
+
+#### assert_signal_emitted(object, signal_name)
+Assert that the specified object emitted the named signal.  You must call `watch_signals` and pass it the object that you are making assertions about.  This will fail if the object is not being watched or if the object does not have the specified signal.  Since this will fail if the signal does not exist, you can often skip using `assert_has_signal`.
+``` python
+class SignalObject:
+	func _init():
+		add_user_signal('some_signal')
+		add_user_signal('other_signal')
+
+func test_assert_signal_emitted():
+	var obj = SignalObject.new()
+
+	watch_signals(obj)
+	obj.emit_signal('some_signal')
+
+	gut.p('-- passing --')
+	assert_signal_emitted(obj, 'some_signal')
+
+	gut.p('-- failing --')
+	# Fails with specific message that the object does not have the signal
+	assert_signal_emitted(obj, 'signal_does_not_exist')
+	# Fails because the object passed is not being watched
+	assert_signal_emitted(SignalObject.new(), 'some_signal')
+	# Fails because the signal was not emitted
+	assert_signal_emitted(obj, 'other_signal')
+```
+#### assert_signal_not_emitted(object, signal_name)
+This works opposite of `assert_signal_emitted`.  This will fail if the object is not being watched or if the object does not have the signal.
+``` python
+class SignalObject:
+	func _init():
+		add_user_signal('some_signal')
+		add_user_signal('other_signal')
+
+func test_assert_signal_not_emitted():
+	var obj = SignalObject.new()
+
+	watch_signals(obj)
+	obj.emit_signal('some_signal')
+
+	gut.p('-- passing --')
+	assert_signal_not_emitted(obj, 'other_signal')
+
+	gut.p('-- failing --')
+	# Fails with specific message that the object does not have the signal
+	assert_signal_not_emitted(obj, 'signal_does_not_exist')
+	# Fails because the object passed is not being watched
+	assert_signal_not_emitted(SignalObject.new(), 'some_signal')
+	# Fails because the signal was emitted
+	assert_signal_not_emitted(obj, 'some_signal')
+```
+#### assert_signal_emitted_with_parameters(object, signal_name, parameters, index=-1)
+Asserts that a signal was fired with the specified parameters.  The expected parameters should be passed in as an array.  An optional index can be passed when a signal has fired more than once.  The default is to retrieve the most recent emission of the signal.
+
+This will fail with specific messages if the object is not being watched or the object does not have the specified signal
+``` python
+class SignalObject:
+	func _init():
+		add_user_signal('some_signal')
+		add_user_signal('other_signal')
+
+func test_assert_signal_emitted_with_parameters():
+	var obj = SignalObject.new()
+
+	watch_signals(obj)
+	# emit the signal 3 times to illustrate how the index works in
+	# assert_signal_emitted_with_parameters
+	obj.emit_signal('some_signal', 1, 2, 3)
+	obj.emit_signal('some_signal', 'a', 'b', 'c')
+	obj.emit_signal('some_signal', 'one', 'two', 'three')
+
+	gut.p('-- passing --')
+	# Passes b/c the default parameters to check are the last emission of
+	# the signal
+	assert_signal_emitted_with_parameters(obj, 'some_signal', ['one', 'two', 'three'])
+	# Passes because the parameters match the specified emission based on index.
+	assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 0)
+
+	gut.p('-- failing --')
+	# Fails with specific message that the object does not have the signal
+	assert_signal_emitted_with_parameters(obj, 'signal_does_not_exist', [])
+	# Fails because the object passed is not being watched
+	assert_signal_emitted_with_parameters(SignalObject.new(), 'some_signal', [])
+	# Fails because parameters do not match latest emission
+	assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3])
+	# Fails because the parameters for the specified index do not match
+	assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 1)
+```
+#### assert_signal_emit_count(object, signal_name)
+Asserts that a signal fired a specific number of times.
+
+``` python
+class SignalObject:
+	func _init():
+		add_user_signal('some_signal')
+		add_user_signal('other_signal')
+
+func test_assert_signal_emit_count():
+	var obj_a = SignalObject.new()
+	var obj_b = SignalObject.new()
+
+	watch_signals(obj_a)
+	watch_signals(obj_b)
+	obj_a.emit_signal('some_signal')
+	obj_a.emit_signal('some_signal')
+
+	obj_b.emit_signal('some_signal')
+	obj_b.emit_signal('other_signal')
+
+	gut.p('-- passing --')
+	assert_signal_emit_count(obj_a, 'some_signal', 2)
+	assert_signal_emit_count(obj_a, 'other_signal', 0)
+
+	assert_signal_emit_count(obj_b, 'other_signal', 1)
+
+	gut.p('-- failing --')
+	# Fails with specific message that the object does not have the signal
+	assert_signal_emit_count(obj_a, 'signal_does_not_exist', 99)
+	# Fails because the object passed is not being watched
+	assert_signal_emit_count(SignalObject.new(), 'some_signal', 99)
+	# The following fail for obvious reasons
+	assert_signal_emit_count(obj_a, 'some_signal', 0)
+	assert_signal_emit_count(obj_b, 'other_signal', 283)
+```
+#### get_signal_emit_count(object, signal_name)
+This will return the number of times a signal was fired.  This gives you the freedom to make more complicated assertions if the spirit moves you.  This will return -1 if the signal was not fired or the object was not being watched, or if the object does not have the signal.
+
+#### get_signal_parameters(object, signal_name, index=-1)
+If you need to inspect the parameters in order to make more complicate assertions, then this will give you access to the parameters of any watched signal.  This works the same way that `assert_signal_emitted_with_parameters` does.  It takes an object, signal name, and an optional index.  If the index is not specified then the parameters from the most recent emission will be returned.  If the object is not being watched, the signal was not fired, or the object does not have the signal then `null` will be returned.
+``` python
+class SignalObject:
+	func _init():
+		add_user_signal('some_signal')
+		add_user_signal('other_signal')
+
+func test_get_signal_parameters():
+	var obj = SignalObject.new()
+	watch_signals(obj)
+	obj.emit_signal('some_signal', 1, 2, 3)
+	obj.emit_signal('some_signal', 'a', 'b', 'c')
+
+	gut.p('-- passing --')
+	# passes because get_signal_parameters returns the most recent emission
+	# by default
+	assert_eq(get_signal_parameters(obj, 'some_signal'), ['a', 'b', 'c'])
+	assert_eq(get_signal_parameters(obj, 'some_signal', 0), [1, 2, 3])
+	# if the signal was not fired null is returned
+	assert_eq(get_signal_parameters(obj, 'other_signal'), null)
+	# if the signal does not exist or isn't being watched null is returned
+	assert_eq(get_signal_parameters(obj, 'signal_dne'), null)
+
+	gut.p('-- failing --')
+	assert_eq(get_signal_parameters(obj, 'some_signal'), [1, 2, 3])
+	assert_eq(get_signal_parameters(obj, 'some_signal', 0), ['a', 'b', 'c'])
+```
 #### assert_file_exists(file_path)
 asserts a file exists at the specified path
 ``` python
