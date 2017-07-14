@@ -102,8 +102,6 @@ var _yield_between = {
 	tests_since_last_yield = 0
 }
 
-var types = {}
-
 var _set_yield_time_called = false
 # used when yielding to gut instead of some other
 # signal.  Start with set_yield_time()
@@ -117,39 +115,12 @@ var _unit_test_name = ''
 const SIGNAL_TESTS_FINISHED = 'tests_finished'
 const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yeild_before_teardown'
 
-func _init_types_dictionary():
-	types[0] = 'TYPE_NIL'
-	types[1] = 'Bool'
-	types[2] = 'Int'
-	types[3] = 'Float/Real'
-	types[4] = 'String'
-	types[5] = 'Vector2'
-	types[6] = 'Rect2'
-	types[7] = 'Vector3'
-	types[8] = 'Matrix32'
-	types[9] = 'Plane'
-	types[10] = 'QUAT'
-	types[11] = 'AABB'
-	types[12] = 'Matrix3'
-	types[13] = 'Transform'
-	types[14] = 'Color'
-	types[15] = 'Image'
-	types[16] = 'Node Path'
-	types[17] = 'RID'
-	types[18] = 'Object'
-	types[19] = 'TYPE_INPUT_EVENT'
-	types[20] = 'Dictionary'
-	types[21] = 'Array'
-	types[22] = 'TYPE_RAW_ARRAY'
-	types[23] = 'TYPE_INT_ARRAY'
-	types[24] = 'TYPE_REAL_ARRAY'
-	types[25] = 'TYPE_STRING_ARRAY'
-	types[26] = 'TYPE_VECTOR2_ARRAY'
-	types[27] = 'TYPE_VECTOR3_ARRAY'
-	types[28] = 'TYPE_COLOR_ARRAY'
-	types[29] = 'TYPE_MAX'
-
-
+func _add_summaries(test):
+	_summary.asserts += test.get_summary().asserts
+	_summary.passed += test.get_summary().passed
+	_summary.failed += test.get_summary().failed
+	_summary.tests += test.get_summary().tests
+	_summary.pending += test.get_summary().pending
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -157,7 +128,6 @@ func _init():
 	add_user_signal(SIGNAL_TESTS_FINISHED)
 	add_user_signal(SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
 	add_user_signal('timeout')
-	_init_types_dictionary()
 
 func _connect_controls():
 	_ctrls.copy_button.connect("pressed", self, "_copy_button_pressed")
@@ -228,20 +198,20 @@ func _process(delta):
 		_ctrls.runtime_label.set_text(str(RUNTIME_START_TIME - _runtime_timer.get_time_left()).pad_decimals(3) + ' s')
 
 #-------------------------------------------------------------------------------
-#Timeout for the built in timer.  emits the timeout signal.  Start timer
-#with set_yield_time()
+# Timeout for the built in timer.  emits the timeout signal.  Start timer
+# with set_yield_time()
 #-------------------------------------------------------------------------------
 func _on_yield_timer_timeout():
 	emit_signal('timeout')
 
 #-------------------------------------------------------------------------------
-#Run either the selected test or all tests.
+# Run either the selected test or all tests.
 #-------------------------------------------------------------------------------
 func _on_run_button_pressed():
 	test_scripts()
 
 #-------------------------------------------------------------------------------
-#Continue processing after pause.
+# Continue processing after pause.
 #-------------------------------------------------------------------------------
 func _on_continue_button_pressed():
 	_pause_before_teardown = false
@@ -249,7 +219,7 @@ func _on_continue_button_pressed():
 	emit_signal(SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
 
 #-------------------------------------------------------------------------------
-#Change the log level.  Will be visible the next time tests are run.
+# Change the log level.  Will be visible the next time tests are run.
 #-------------------------------------------------------------------------------
 func _on_log_level_slider_changed(value):
 	_log_level = _ctrls.log_level_slider.get_value()
@@ -305,8 +275,8 @@ func _on_run_rest_pressed():
 #####################
 
 #-------------------------------------------------------------------------------
-#Parses out the tests based on the _test_prefix.  Fills the _tests array with
-#instances of OneTest.
+# Parses out the tests based on the _test_prefix.  Fills the _tests array with
+# instances of OneTest.
 #-------------------------------------------------------------------------------
 func _parse_tests(script):
 	var file = File.new()
@@ -328,35 +298,9 @@ func _parse_tests(script):
 
 	file.close()
 
-#-------------------------------------------------------------------------------
-#Fail an assertion.  Causes test and script to fail as well.
-#-------------------------------------------------------------------------------
-func _fail(text):
-	_summary.asserts += 1
-	_summary.failed += 1
-	if(_current_test != null):
-		_current_test.passed = false
-	p('FAILED:  ' + text, LOG_LEVEL_FAIL_ONLY)
-	if(_current_test != null):
-		p('  at line ' + str(_current_test.line_number), LOG_LEVEL_FAIL_ONLY)
-	_update_controls()
-	end_yielded_test()
-
 
 #-------------------------------------------------------------------------------
-#Pass an assertion.
-#-------------------------------------------------------------------------------
-func _pass(text):
-	_summary.asserts += 1
-	_summary.passed += 1
-	if(_log_level >= LOG_LEVEL_ALL_ASSERTS):
-		p("PASSED:  " + text, LOG_LEVEL_ALL_ASSERTS)
-	_update_controls()
-	end_yielded_test()
-
-
-#-------------------------------------------------------------------------------
-#Convert the _summary struct into text for display
+# Convert the _summary struct into text for display
 #-------------------------------------------------------------------------------
 func _get_summary_text():
 	var to_return = "/*****************\nSummary\n*****************/\n"
@@ -380,7 +324,7 @@ func _get_summary_text():
 	return to_return
 
 #-------------------------------------------------------------------------------
-#Initialize variables for each run of a single test script.
+# Initialize variables for each run of a single test script.
 #-------------------------------------------------------------------------------
 func _init_run():
 	_summary.asserts = 0
@@ -442,7 +386,7 @@ func _init_test_script(script_path):
 	return test_script
 
 #-------------------------------------------------------------------------------
-# just gets more logic out of _test_the_scripts.  Decides if we should yield after
+# Just gets more logic out of _test_the_scripts.  Decides if we should yield after
 # this test based on flags and counters.
 #-------------------------------------------------------------------------------
 func _should_yield_now():
@@ -455,10 +399,10 @@ func _should_yield_now():
 	return should
 
 #-------------------------------------------------------------------------------
-#Run all tests in a script.  This is the core logic for running tests.
+# Run all tests in a script.  This is the core logic for running tests.
 #
-#Note, this has to stay as a giant monstrosity of a method because of the
-#yields.
+# Note, this has to stay as a giant monstrosity of a method because of the
+# yields.
 #-------------------------------------------------------------------------------
 func _test_the_scripts():
 	_init_run()
@@ -538,6 +482,7 @@ func _test_the_scripts():
 
 					_ctrls.test_progress.set_value(i + 1)
 			test_script.postrun_teardown()
+			_add_summaries(test_script)
 			test_script.free()
 			#END TESTS IN SCRIPT LOOP
 
@@ -604,7 +549,7 @@ func p(text, level=0, indent=0):
 ################
 
 #-------------------------------------------------------------------------------
-#Runs all the scripts that were added using add_script
+# Runs all the scripts that were added using add_script
 #-------------------------------------------------------------------------------
 func test_scripts(run_rest=false):
 	clear_text()
@@ -620,7 +565,7 @@ func test_scripts(run_rest=false):
 
 
 #-------------------------------------------------------------------------------
-#Runs a single script passed in.
+# Runs a single script passed in.
 #-------------------------------------------------------------------------------
 func test_script(script):
 	_test_scripts.clear()
@@ -629,7 +574,7 @@ func test_script(script):
 	_test_scripts.clear()
 
 #-------------------------------------------------------------------------------
-#Adds a script to be run when test_scripts called
+# Adds a script to be run when test_scripts called
 #-------------------------------------------------------------------------------
 func add_script(script, select_this_one=false):
 	if(_test_scripts.has(script)):
@@ -696,318 +641,7 @@ func select_script(script_name):
 # ASSERTS
 #
 ################
-func _pass_if_datatypes_match(got, expected, text):
-	var passed = true
 
-	if(!_disable_strict_datatype_checks):
-		var got_type = typeof(got)
-		var expect_type = typeof(expected)
-		if(got_type != expect_type and got != null and expected != null):
-			# If we have a mismatch between float and int (types 2 and 3) then
-			# print out a warning but do not fail.
-			if([2, 3].has(got_type) and [2, 3].has(expect_type)):
-				p(str('Warn:  Float/Int comparison.  Got ', types[got_type], ' but expected ', types[expect_type]), 1)
-			else:
-				_fail('Cannot compare ' + types[got_type] + '[' + str(got) + '] to ' + types[expect_type] + '[' + str(expected) + '].  ' + text)
-				passed = false
-
-	return passed
-
-#-------------------------------------------------------------------------------
-#Asserts that the expected value equals the value got.
-#-------------------------------------------------------------------------------
-func assert_eq(got, expected, text=""):
-	var disp = "[" + str(got) + "] expected to equal [" + str(expected) + "]:  " + text
-	if(_pass_if_datatypes_match(got, expected, text)):
-		if(expected != got):
-			_fail(disp)
-		else:
-			_pass(disp)
-
-#-------------------------------------------------------------------------------
-#Asserts that the value got does not equal the "not expected" value.
-#-------------------------------------------------------------------------------
-func assert_ne(got, not_expected, text=""):
-	var disp = "[" + str(got) + "] expected to be anything except [" + str(not_expected) + "]:  " + text
-	if(_pass_if_datatypes_match(got, not_expected, text)):
-		if(got == not_expected):
-			_fail(disp)
-		else:
-			_pass(disp)
-#-------------------------------------------------------------------------------
-#Asserts got is greater than expected
-#-------------------------------------------------------------------------------
-func assert_gt(got, expected, text=""):
-	var disp = "[" + str(got) + "] expected to be > than [" + str(expected) + "]:  " + text
-	if(_pass_if_datatypes_match(got, expected, text)):
-		if(got > expected):
-			_pass(disp)
-		else:
-			_fail(disp)
-
-#-------------------------------------------------------------------------------
-#Asserts got is less than expected
-#-------------------------------------------------------------------------------
-func assert_lt(got, expected, text=""):
-	var disp = "[" + str(got) + "] expected to be < than [" + str(expected) + "]:  " + text
-	if(_pass_if_datatypes_match(got, expected, text)):
-		if(got < expected):
-			_pass(disp)
-		else:
-			_fail(disp)
-
-#-------------------------------------------------------------------------------
-#asserts that got is true
-#-------------------------------------------------------------------------------
-func assert_true(got, text=""):
-	if(!got):
-		_fail(text)
-	else:
-		_pass(text)
-
-#-------------------------------------------------------------------------------
-#Asserts that got is false
-#-------------------------------------------------------------------------------
-func assert_false(got, text=""):
-	if(got):
-		_fail(text)
-	else:
-		_pass(text)
-
-#-------------------------------------------------------------------------------
-#Asserts value is between (inclusive) the two expected values.
-#-------------------------------------------------------------------------------
-func assert_between(got, expect_low, expect_high, text=""):
-	var disp = "[" + str(got) + "] expected to be between [" + str(expect_low) + "] and [" + str(expect_high) + "]:  " + text
-
-	if(_pass_if_datatypes_match(got, expect_low, text) and _pass_if_datatypes_match(got, expect_high, text)):
-		if(expect_low > expect_high):
-			disp = "INVALID range.  [" + str(expect_low) + "] is not less than [" + str(expect_high) + "]"
-			_fail(disp)
-		else:
-			if(got < expect_low or got > expect_high):
-				_fail(disp)
-			else:
-				_pass(disp)
-
-#-------------------------------------------------------------------------------
-# Uses the 'has' method of the object passed in to determine if it contains
-# the passed in element.
-#-------------------------------------------------------------------------------
-func assert_has(obj, element, text=""):
-	var disp = str('Expected [', obj, '] to contain value:  [', element, ']:  ', text)
-	if(obj.has(element)):
-		_pass(disp)
-	else:
-		_fail(disp)
-
-func assert_does_not_have(obj, element, text=""):
-	var disp = str('Expected [', obj, '] to NOT contain value:  [', element, ']:  ', text)
-	if(obj.has(element)):
-		_fail(disp)
-	else:
-		_pass(disp)
-#-------------------------------------------------------------------------------
-#Asserts that a file exists
-#-------------------------------------------------------------------------------
-func assert_file_exists(file_path):
-	var disp = 'expected [' + file_path + '] to exist.'
-	var f = File.new()
-	if(f.file_exists(file_path)):
-		_pass(disp)
-	else:
-		_fail(disp)
-
-#-------------------------------------------------------------------------------
-#Asserts that a file should not exist
-#-------------------------------------------------------------------------------
-func assert_file_does_not_exist(file_path):
-	var disp = 'expected [' + file_path + '] to NOT exist'
-	var f = File.new()
-	if(!f.file_exists(file_path)):
-		_pass(disp)
-	else:
-		_fail(disp)
-
-#-------------------------------------------------------------------------------
-# Asserts the specified file is empty
-#-------------------------------------------------------------------------------
-func assert_file_empty(file_path):
-	var disp = 'expected [' + file_path + '] to be empty'
-	var f = File.new()
-	if(f.file_exists(file_path) and is_file_empty(file_path)):
-		_pass(disp)
-	else:
-		_fail(disp)
-
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
-func assert_file_not_empty(file_path):
-	var disp = 'expected [' + file_path + '] to contain data'
-	if(!is_file_empty(file_path)):
-		_pass(disp)
-	else:
-		_fail(disp)
-
-#-------------------------------------------------------------------------------
-# Verifies the object has get and set methods for the property passed in.  The
-# property isn't tied to anything, just a name to be appended to the end of
-# get_ and set_.  Asserts the get_ and set_ methods exist, if not, it stops there.
-# If they exist then it asserts get_ returns the expected default then calls
-# set_ and asserts get_ has the value it was set to.
-#-------------------------------------------------------------------------------
-func assert_get_set_methods(obj, property, default, set_to):
-	var fail_count = get_fail_count()
-	var get = 'get_' + property
-	var set = 'set_' + property
-	assert_true(obj.has_method(get), 'Should have get method:  ' + get)
-	assert_true(obj.has_method(set), 'Should have set method:  ' + set)
-	if(get_fail_count() > fail_count):
-		return
-	assert_eq(obj.call(get), default, 'It should have the expected default value.')
-	obj.call(set, set_to)
-	assert_eq(obj.call(get), set_to, 'The set value should have been returned.')
-
-
-#-------------------------------------------------------------------------------
-# Signal assertion helper.  Do not call directly, use _can_make_signal_assertions
-#-------------------------------------------------------------------------------
-func _fail_if_does_not_have_signal(object, signal_name):
-	var did_fail = false
-	if(!object.has_user_signal(signal_name)):
-		_fail(str('Object ', object, ' does not have the signal [', signal_name, ']'))
-		did_fail = true
-	return did_fail
-#-------------------------------------------------------------------------------
-# Signal assertion helper.  Do not call directly, use _can_make_signal_assertions
-#-------------------------------------------------------------------------------
-func _fail_if_not_watching(object):
-	var did_fail = false
-	if(!_signal_watcher.is_watching_object(object)):
-		_fail(str('Cannot make signal assertions because the object ', object, \
-		          ' is not being watched.  Call watch_signals(some_object) to be able to make assertions about signals.'))
-		did_fail = true
-	return did_fail
-
-#-------------------------------------------------------------------------------
-# Signal assertion helper.
-#
-# Verifies that the object and signal are valid for making signal assertions.
-# This will fail with specific messages that indicate why they are not valid.
-# This returns true/false to indicate if the object and signal are valid.
-#-------------------------------------------------------------------------------
-func _can_make_signal_assertions(object, signal_name):
-	return !(_fail_if_not_watching(object) or _fail_if_does_not_have_signal(object, signal_name))
-
-#-------------------------------------------------------------------------------
-# Watch the signals for an object.  This must be called before you can make
-# any assertions about the signals themselves.
-#-------------------------------------------------------------------------------
-func watch_signals(object):
-	_signal_watcher.watch_signals(object)
-
-#-------------------------------------------------------------------------------
-# Asserts that a signal has been emitted at least once.
-#
-# This will fail with specific messages if the object is not being watched or
-# the object does not have the specified signal
-#-------------------------------------------------------------------------------
-func assert_signal_emitted(object, signal_name, text=""):
-	var disp = str('Expected object ', object, ' to emit signal [', signal_name, ']:  ', text)
-	if(_can_make_signal_assertions(object, signal_name)):
-		if(_signal_watcher.did_emit(object, signal_name)):
-			_pass(disp)
-		else:
-			_fail(disp)
-
-#-------------------------------------------------------------------------------
-# Asserts that a signal has not been emitted.
-#
-# This will fail with specific messages if the object is not being watched or
-# the object does not have the specified signal
-#-------------------------------------------------------------------------------
-func assert_signal_not_emitted(object, signal_name, text=""):
-	var disp = str('Expected object ', object, ' to NOT emit signal [', signal_name, ']:  ', text)
-	if(_can_make_signal_assertions(object, signal_name)):
-		if(_signal_watcher.did_emit(object, signal_name)):
-			_fail(disp)
-		else:
-			_pass(disp)
-
-#-------------------------------------------------------------------------------
-# Asserts that a signal was fired with the specified parameters.  The expected
-# parameters should be passed in as an array.  An optional index can be passed
-# when a signal has fired more than once.  The default is to retrieve the most
-# recent emission of the signal.
-#
-# This will fail with specific messages if the object is not being watched or
-# the object does not have the specified signal
-#-------------------------------------------------------------------------------
-func assert_signal_emitted_with_parameters(object, signal_name, parameters, index=-1):
-	var disp = str('Expected object ', object, ' to emit signal [', signal_name, '] with parameters ', parameters, ', got ')
-	if(_can_make_signal_assertions(object, signal_name)):
-		if(_signal_watcher.did_emit(object, signal_name)):
-			var parms_got = _signal_watcher.get_signal_parameters(object, signal_name, index)
-			if(parameters == parms_got):
-				_pass(str(disp, parms_got))
-			else:
-				_fail(str(disp, parms_got))
-		else:
-			_fail(str('Object ', object, ' did not emit signal [', signal_name, ']'))
-
-#-------------------------------------------------------------------------------
-# Assert that a signal has been emitted a specific number of times.
-#
-# This will fail with specific messages if the object is not being watched or
-# the object does not have the specified signal
-#-------------------------------------------------------------------------------
-func assert_signal_emit_count(object, signal_name, times, text=""):
-
-	if(_can_make_signal_assertions(object, signal_name)):
-		var count = _signal_watcher.get_emit_count(object, signal_name)
-		var disp = str('Expected the signal [', signal_name, '] emit count of [', count, '] to equal [', times, ']: ', text)
-		if(count== times):
-			_pass(disp)
-		else:
-			_fail(disp)
-
-#-------------------------------------------------------------------------------
-# Assert that the passed in object has the specfied signal
-#-------------------------------------------------------------------------------
-func assert_has_signal(object, signal_name, text=""):
-	var disp = str('Expected object ', object, ' to have signal [', signal_name, ']:  ', text)
-	if(object.has_user_signal(signal_name)):
-		_pass(disp)
-	else:
-		_fail(disp)
-
-#-------------------------------------------------------------------------------
-# Returns the number of times a signal was emitted.  -1 returned if the object
-# is not being watched.
-#-------------------------------------------------------------------------------
-func get_signal_emit_count(object, signal_name):
-	return _signal_watcher.get_emit_count(object, signal_name)
-
-#-------------------------------------------------------------------------------
-# Get the parmaters of a fired signal.  If the signal was not fired null is
-# returned.  You can specify an optional index (use get_signal_emit_count to
-# determine the number of times it was emitted).  The default index is the
-# latest time the signal was fired (size() -1 insetead of 0).  The parameters
-# returned are in an array.
-#-------------------------------------------------------------------------------
-func get_signal_parameters(object, signal_name, index=-1):
-	return _signal_watcher.get_signal_parameters(object, signal_name, index)
-
-#-------------------------------------------------------------------------------
-# Mark the current test as pending.
-#-------------------------------------------------------------------------------
-func pending(text=""):
-	_summary.pending += 1
-	if(text == ""):
-		p("Pending")
-	else:
-		p("Pending:  " + text)
-	end_yielded_test()
 ################
 #
 # MISC
@@ -1020,14 +654,14 @@ func is_strict_datatype_checks_disabled():
 	return _disable_strict_datatype_checks
 
 #-------------------------------------------------------------------------------
-#Pauses the test and waits for you to press a confirmation button.  Useful when
-#you want to watch a test play out onscreen or inspect results.
+# Pauses the test and waits for you to press a confirmation button.  Useful when
+# you want to watch a test play out onscreen or inspect results.
 #-------------------------------------------------------------------------------
 func end_yielded_test():
 	_waiting = false
 
 #-------------------------------------------------------------------------------
-#Clears the text of the text box.  This resets all counters.
+# Clears the text of the text box.  This resets all counters.
 #-------------------------------------------------------------------------------
 func clear_text():
 	pass
@@ -1036,71 +670,70 @@ func clear_text():
 	update()
 
 #-------------------------------------------------------------------------------
-#Get the number of tests that were ran
+#G et the number of tests that were ran
 #-------------------------------------------------------------------------------
 func get_test_count():
 	return _summary.tests
 
 #-------------------------------------------------------------------------------
-#Get the number of assertions that were made
+# Get the number of assertions that were made
 #-------------------------------------------------------------------------------
 func get_assert_count():
 	return _summary.asserts
 
 #-------------------------------------------------------------------------------
-#Get the number of assertions that passed
+# Get the number of assertions that passed
 #-------------------------------------------------------------------------------
 func get_pass_count():
 	return _summary.passed
 
 #-------------------------------------------------------------------------------
-#Get the number of assertions that failed
+# Get the number of assertions that failed
 #-------------------------------------------------------------------------------
 func get_fail_count():
 	return _summary.failed
 
 #-------------------------------------------------------------------------------
-#Get the number of tests flagged as pending
+# Get the number of tests flagged as pending
 #-------------------------------------------------------------------------------
 func get_pending_count():
 	return _summary.pending
 
 #-------------------------------------------------------------------------------
-#Set whether it should print to console or not.  Default is yes.
+# Set whether it should print to console or not.  Default is yes.
 #-------------------------------------------------------------------------------
 func set_should_print_to_console(should):
 	_should_print_to_console = should
 
 #-------------------------------------------------------------------------------
-#Get whether it is printing to the console
+# Get whether it is printing to the console
 #-------------------------------------------------------------------------------
 func get_should_print_to_console():
 	return _should_print_to_console
 
 #-------------------------------------------------------------------------------
-#Get the results of all tests ran as text.  This string is the same as is
-#displayed in the text box, and simlar to what is printed to the console.
+# Get the results of all tests ran as text.  This string is the same as is
+# displayed in the text box, and simlar to what is printed to the console.
 #-------------------------------------------------------------------------------
 func get_result_text():
 	return _log_text
 
 #-------------------------------------------------------------------------------
-#Set the log level.  Use one of the various LOG_LEVEL_* constants.
+# Set the log level.  Use one of the various LOG_LEVEL_* constants.
 #-------------------------------------------------------------------------------
 func set_log_level(level):
 	_log_level = level
 	_ctrls.log_level_slider.set_value(level)
 
 #-------------------------------------------------------------------------------
-#Get the current log level.
+# Get the current log level.
 #-------------------------------------------------------------------------------
 func get_log_level():
 	return _log_level
 
 #-------------------------------------------------------------------------------
-#DISABLED, does not work in 1.0
-#Call this method to make the test pause before teardown so that you can inspect
-#anything that you have rendered to the screen.
+# Call this method to make the test pause before teardown so that you can inspect
+# anything that you have rendered to the screen.
 #-------------------------------------------------------------------------------
 func pause_before_teardown():
 	_pause_before_teardown = true;
@@ -1117,12 +750,12 @@ func get_ignore_pause_before_teardown():
 	return _ignore_pause_before_teardown
 
 #-------------------------------------------------------------------------------
-#Set to true so that painting of the screen will occur between tests.  Allows you
-#to see the output as tests occur.  Especially useful with long running tests that
-#make it appear as though it has humg.
+# Set to true so that painting of the screen will occur between tests.  Allows you
+# to see the output as tests occur.  Especially useful with long running tests that
+# make it appear as though it has humg.
 #
-#NOTE:  not compatible with 1.0 so this is disabled by default.  This will
-#change in future releases.
+# NOTE:  not compatible with 1.0 so this is disabled by default.  This will
+# change in future releases.
 #-------------------------------------------------------------------------------
 func set_yield_between_tests(should):
 	_yield_between.should = should
@@ -1131,9 +764,9 @@ func get_yield_between_tests():
 	return _yield_between.should
 
 #-------------------------------------------------------------------------------
-#Call _process or _fixed_process, if they exist, on obj and all it's children
-#and their children and so and so forth.  Delta will be passed through to all
-#the _process or _fixed_process methods.
+# Call _process or _fixed_process, if they exist, on obj and all it's children
+# and their children and so and so forth.  Delta will be passed through to all
+# the _process or _fixed_process methods.
 #-------------------------------------------------------------------------------
 func simulate(obj, times, delta):
 	for i in range(times):
