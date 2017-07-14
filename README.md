@@ -5,23 +5,23 @@ GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.
 In 4.0.0 Gut was changed to be a plugin.  This has some setup ramifications.  __These changes only apply when upgrading from a version earlier than 4.0.0__.  See the 4.0.0 section in CHANGES.md for upgrade information.
 
 # Table of Contents
-  0.  [Install](#install)
-  0.  [Gut Settings](#gut_settings)
-  0.  [Creating Tests](#creating_tests)
-  0.  [Method List](#method_list)
-    0.  [Asserting Things](#test_methods)
-    0.  [Methods for Configuring Test Execution](#gut_methods)
-  0.  [Extras](#extras)
-    0.  [Strict Type Checking](#strict)
-    0.  [File Manipulation](#files)
-    0.  [Watching Tests](#watch)
-    0.  [Output Detail](#output_detail)
-    0.  [Printing](#printing)
-  0. [Advanced](#advanced)
-    0.  [Simulate](#simulate)
-    0.  [Yielding](#yielding)
-  0. [Command Line Interface](#command_line)
-  0. [Contributing](#contributing)
+  1.  [Install](#install)
+  1.  [Gut Settings](#gut_settings)
+  1.  [Creating Tests](#creating_tests)
+  1.  [Method List](#method_list)
+		1.  [Asserting Things](#test_methods)
+		1.  [Methods for Configuring Test Execution](#gut_methods)
+  1.  [Extras](#extras)
+		1.  [Strict Type Checking](#strict)
+		1.  [File Manipulation](#files)
+		1.  [Watching Tests](#watch)
+		1.  [Output Detail](#output_detail)
+		1.  [Printing](#printing)
+  1. [Advanced](#advanced)
+		1.  [Simulate](#simulate)
+		1.  [Yielding](#yielding)
+  1. [Command Line Interface](#command_line)
+  1. [Contributing](#contributing)
 
 # <a name="install"> Install
 ## New Installs and Upgrades
@@ -34,18 +34,18 @@ From the menu choose Scene->Project Settings, click the plugins tab and activate
 
 The next few steps cover the suggested configuration.  Feel free to deviate where you see fit.
 
-0.  Create directories to store your tests and test related code
-  * `res://test`
-  * `res://test/unit`
-  * `res://test/integration`
-0.  Create a scene that will use Gut to run your tests at `res://test/tests.tscn`
-  * Add a Gut object the same way you would any other object.
-  * Click "Add/Create Node"
-  * type "Gut"
-  * press enter.
-0.  Configure Gut to find your tests.  Select it in the Scene Tree and set the following settings in the Inspector:
-  * In the `Directory1` setting enter `res://test/unit`
-  * In the `Directory2` setting enter `res://test/integration`
+1.  Create directories to store your tests and test related code
+	* `res://test`
+	* `res://test/unit`
+	* `res://test/integration`
+1.  Create a scene that will use Gut to run your tests at `res://test/tests.tscn`
+	* Add a Gut object the same way you would any other object.
+	* Click "Add/Create Node"
+	* type "Gut"
+	* press enter.
+1.  Configure Gut to find your tests.  Select it in the Scene Tree and set the following settings in the Inspector:
+	* In the `Directory1` setting enter `res://test/unit`
+	* In the `Directory2` setting enter `res://test/integration`
 
 That's it.  The next step is to make some tests.
 
