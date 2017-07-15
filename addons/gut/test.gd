@@ -121,11 +121,8 @@ func postrun_teardown():
 func _fail(text):
 	_summary.asserts += 1
 	_summary.failed += 1
-	# if(_current_test != null):
-	# 	_current_test.passed = false
 	gut.p('FAILED:  ' + text, gut.LOG_LEVEL_FAIL_ONLY)
-	# if(_current_test != null):
-	# 	gut.p('  at line ' + str(_current_test.line_number), LOG_LEVEL_FAIL_ONLY)
+	gut._fail()
 	gut.end_yielded_test()
 
 
@@ -135,8 +132,8 @@ func _fail(text):
 func _pass(text):
 	_summary.asserts += 1
 	_summary.passed += 1
-	# if(_log_level >= gut.LOG_LEVEL_ALL_ASSERTS):
-	# 	gut.p("PASSED:  " + text, gut.LOG_LEVEL_ALL_ASSERTS)
+	if(gut.get_log_level() >= gut.LOG_LEVEL_ALL_ASSERTS):
+		gut.p("PASSED:  " + text, gut.LOG_LEVEL_ALL_ASSERTS)
 	gut.end_yielded_test()
 
 # #######################
@@ -469,3 +466,12 @@ func end_test():
 
 func get_summary():
 	return _summary
+
+func get_fail_count():
+	return _summary.failed
+
+func get_pass_count():
+	return _summary.passed
+
+func get_pending_count():
+	return _summary.pending

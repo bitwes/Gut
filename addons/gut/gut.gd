@@ -465,6 +465,7 @@ func _test_the_scripts():
 						yield(self, SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
 
 					_signal_watcher.clear()
+					test_script._signal_watcher.clear()
 					test_script.teardown()
 
 					if(_current_test.passed):
@@ -493,6 +494,15 @@ func _test_the_scripts():
 
 	_end_run()
 
+
+
+func _pass():
+	pass
+
+func _fail():
+	if(_current_test != null):
+		_current_test.passed = false
+		p('  at line ' + str(_current_test.line_number), LOG_LEVEL_FAIL_ONLY)
 
 #########################
 #
