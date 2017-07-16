@@ -5,7 +5,7 @@
 #The MIT License (MIT)
 #=====================
 #
-#Copyright (c) 2015 Tom "Butch" Wesley
+#Copyright (c) 2017 Tom "Butch" Wesley
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -28,12 +28,12 @@
 ################################################################################
 # View readme for usage details.
 #
-# Version 4.0.0
+# Version 4.1.0
 ################################################################################
 # Class that all test scripts must extend.
 #
-# Once a class extends this class it sent (via the numerous script loading
-# methods) to a Gut object to run the tests.
+# This provides all the asserts and other testing features.  Test scripts are
+# run by the Gut class in gut.gd
 ################################################################################
 extends Node
 
@@ -48,6 +48,9 @@ var passed = false
 var failed = false
 var _disable_strict_datatype_checks = false
 
+# Hash containing all the built in types in Godot.  This provides an English
+# name for the types that corosponds with the type constants defined in the
+# engine.  This is used for priting out messages when comparing types fails.
 var types = {}
 
 func _init_types_dictionary():
@@ -82,6 +85,7 @@ func _init_types_dictionary():
 	types[28] = 'TYPE_COLOR_ARRAY'
 	types[29] = 'TYPE_MAX'
 
+# Summary counts for the test.
 var _summary = {
 	asserts = 0,
 	passed = 0,
@@ -90,6 +94,7 @@ var _summary = {
 	pending = 0
 }
 
+# This is used to watch signals so we can make assertions about them.
 var _signal_watcher = load('res://addons/Gut/signal_watcher.gd').new()
 
 func _init():
@@ -138,10 +143,10 @@ func _pass(text):
 			gut.p("PASSED:  " + text, gut.LOG_LEVEL_ALL_ASSERTS)
 		gut.end_yielded_test()
 
-# #######################
-# Convenience Methods
-# #######################
-func _pass_if_datatypes_match(got, expected, text):
+# Checks if the datatypes passed in match.  If they do not then this will cause
+# a fail to occur.  If they match then TRUE is returned, FALSE if not.  This is
+# used in all the assertions that compare values.
+func _do_datatypes_match__fail_if_not(got, expected, text):
 	var passed = true
 
 	if(!_disable_strict_datatype_checks):
@@ -164,7 +169,7 @@ func _pass_if_datatypes_match(got, expected, text):
 #-------------------------------------------------------------------------------
 func assert_eq(got, expected, text=""):
 	var disp = "[" + str(got) + "] expected to equal [" + str(expected) + "]:  " + text
-	if(_pass_if_datatypes_match(got, expected, text)):
+	if(_do_datatypes_match__fail_if_not(got, expected, text)):
 		if(expected != got):
 			_fail(disp)
 		else:
@@ -175,7 +180,7 @@ func assert_eq(got, expected, text=""):
 #-------------------------------------------------------------------------------
 func assert_ne(got, not_expected, text=""):
 	var disp = "[" + str(got) + "] expected to be anything except [" + str(not_expected) + "]:  " + text
-	if(_pass_if_datatypes_match(got, not_expected, text)):
+	if(_do_datatypes_match__fail_if_not(got, not_expected, text)):
 		if(got == not_expected):
 			_fail(disp)
 		else:
@@ -185,7 +190,7 @@ func assert_ne(got, not_expected, text=""):
 #-------------------------------------------------------------------------------
 func assert_gt(got, expected, text=""):
 	var disp = "[" + str(got) + "] expected to be > than [" + str(expected) + "]:  " + text
-	if(_pass_if_datatypes_match(got, expected, text)):
+	if(_do_datatypes_match__fail_if_not(got, expected, text)):
 		if(got > expected):
 			_pass(disp)
 		else:
@@ -196,7 +201,7 @@ func assert_gt(got, expected, text=""):
 #-------------------------------------------------------------------------------
 func assert_lt(got, expected, text=""):
 	var disp = "[" + str(got) + "] expected to be < than [" + str(expected) + "]:  " + text
-	if(_pass_if_datatypes_match(got, expected, text)):
+	if(_do_datatypes_match__fail_if_not(got, expected, text)):
 		if(got < expected):
 			_pass(disp)
 		else:
@@ -226,7 +231,7 @@ func assert_false(got, text=""):
 func assert_between(got, expect_low, expect_high, text=""):
 	var disp = "[" + str(got) + "] expected to be between [" + str(expect_low) + "] and [" + str(expect_high) + "]:  " + text
 
-	if(_pass_if_datatypes_match(got, expect_low, text) and _pass_if_datatypes_match(got, expect_high, text)):
+	if(_do_datatypes_match__fail_if_not(got, expect_low, text) and _do_datatypes_match__fail_if_not(got, expect_high, text)):
 		if(expect_low > expect_high):
 			disp = "INVALID range.  [" + str(expect_low) + "] is not less than [" + str(expect_high) + "]"
 			_fail(disp)
@@ -479,3 +484,18 @@ func get_pass_count():
 
 func get_pending_count():
 	return _summary.pending
+
+func clear_signal_watcher():
+	_signal_watcher.clear()
+
+#-------------------------------------------------------------------------------
+# Convert the _summary dictionary into text
+#-------------------------------------------------------------------------------
+func get_summary_text():
+	var to_return = "Summary\n"
+	to_return += str('  tests:     ', _summary.tests, "\n")
+	to_return += str('  asserts:   ', _summary.asserts, "\n")
+	to_return += str('  passed:    ', _summary.passed, "\n")
+	to_return += str('  pending:   ', _summary.pending)
+	to_return += str('  failed:    ', _summary.failed, "\n")
+	return to_return

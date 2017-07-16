@@ -5,7 +5,7 @@
 #The MIT License (MIT)
 #=====================
 #
-#Copyright (c) 2015 Tom "Butch" Wesley
+#Copyright (c) 2017 Tom "Butch" Wesley
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -77,7 +77,6 @@ const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
 
 var _stop_pressed = false
 
-var _signal_watcher = load('res://addons/Gut/signal_watcher.gd').new()
 # Tests to run for the current script
 var _tests = []
 # all the scripts that should be ran as test scripts
@@ -300,17 +299,18 @@ func _parse_tests(script):
 
 
 #-------------------------------------------------------------------------------
-# Convert the _summary struct into text for display
+# Convert the _summary dictionary into text
 #-------------------------------------------------------------------------------
 func _get_summary_text():
-	var to_return = "/*****************\nSummary\n*****************/\n"
-	to_return += str(_summary.scripts) + " Scripts\n"
-	to_return += str(_summary.tests) + " Tests\n"
-	to_return += str(_summary.asserts) + " Asserts\n"
-	to_return += str(_summary.passed) + " Passed\n"
-	to_return += str(_summary.pending) + " Pending\n"
-	to_return += str(_summary.failed) + " Failed\n"
+	var to_return = "*****************\nRun Summary\n*****************\n"
+	to_return += str('  scripts:   ', _summary.scripts, "\n")
+	to_return += str('  tests:     ', _summary.tests, "\n")
+	to_return += str('  asserts:   ', _summary.asserts, "\n")
+	to_return += str('  passed:    ', _summary.passed, "\n")
+	to_return += str('  pending:   ', _summary.pending, "\n")
+	to_return += str('  failed:    ', _summary.failed, "\n")
 	to_return += "\n\n"
+
 	if(_summary.tests > 0):
 		to_return +=  '+++ ' + str(_summary.passed) + ' passed ' + str(_summary.failed) + ' failed.  ' + \
 		              "Tests finished in:  " + _ctrls.runtime_label.get_text() + ' +++'
@@ -404,6 +404,8 @@ func _should_yield_now():
 # Note, this has to stay as a giant monstrosity of a method because of the
 # yields.
 #-------------------------------------------------------------------------------
+var _test_script_objects = []
+
 func _test_the_scripts():
 	_init_run()
 	var file = File.new()
@@ -417,6 +419,7 @@ func _test_the_scripts():
 			p("FAILED   COULD NOT FIND FILE:  " + _test_scripts[s])
 		else:
 			var test_script = _init_test_script(_test_scripts[s])
+			_test_script_objects.append(test_script)
 			var script_result = null
 			_summary.scripts += 1
 
@@ -464,8 +467,7 @@ func _test_the_scripts():
 						_ctrls.continue_button.set_disabled(false)
 						yield(self, SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
 
-					_signal_watcher.clear()
-					test_script._signal_watcher.clear()
+					test_script.clear_signal_watcher()
 					test_script.teardown()
 
 					if(_current_test.passed):
@@ -866,6 +868,12 @@ func directory_delete_files(path):
 			d.remove(full_path)
 		thing = d.get_next()
 	d.list_dir_end()
+
+func get_current_script_object():
+	var to_return = null
+	if(_test_script_objects.size() > 0):
+		to_return = _test_script_objects[-1]
+	return to_return
 
 ################################################################################
 # OneTest (INTERNAL USE ONLY)
