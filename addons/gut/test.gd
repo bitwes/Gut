@@ -121,9 +121,10 @@ func postrun_teardown():
 func _fail(text):
 	_summary.asserts += 1
 	_summary.failed += 1
-	gut.p('FAILED:  ' + text, gut.LOG_LEVEL_FAIL_ONLY)
-	gut._fail()
-	gut.end_yielded_test()
+	if(gut):
+		gut.p('FAILED:  ' + text, gut.LOG_LEVEL_FAIL_ONLY)
+		gut._fail()
+		gut.end_yielded_test()
 
 
 #-------------------------------------------------------------------------------
@@ -132,9 +133,10 @@ func _fail(text):
 func _pass(text):
 	_summary.asserts += 1
 	_summary.passed += 1
-	if(gut.get_log_level() >= gut.LOG_LEVEL_ALL_ASSERTS):
-		gut.p("PASSED:  " + text, gut.LOG_LEVEL_ALL_ASSERTS)
-	gut.end_yielded_test()
+	if(gut):
+		if(gut.get_log_level() >= gut.LOG_LEVEL_ALL_ASSERTS):
+			gut.p("PASSED:  " + text, gut.LOG_LEVEL_ALL_ASSERTS)
+		gut.end_yielded_test()
 
 # #######################
 # Convenience Methods
@@ -149,7 +151,8 @@ func _pass_if_datatypes_match(got, expected, text):
 			# If we have a mismatch between float and int (types 2 and 3) then
 			# print out a warning but do not fail.
 			if([2, 3].has(got_type) and [2, 3].has(expect_type)):
-				gut.p(str('Warn:  Float/Int comparison.  Got ', types[got_type], ' but expected ', types[expect_type]), 1)
+				if(gut):
+					gut.p(str('Warn:  Float/Int comparison.  Got ', types[got_type], ' but expected ', types[expect_type]), 1)
 			else:
 				_fail('Cannot compare ' + types[got_type] + '[' + str(got) + '] to ' + types[expect_type] + '[' + str(expected) + '].  ' + text)
 				passed = false
@@ -446,11 +449,12 @@ func get_signal_parameters(object, signal_name, index=-1):
 #-------------------------------------------------------------------------------
 func pending(text=""):
 	_summary.pending += 1
-	if(text == ""):
-		gut.p("Pending")
-	else:
-		gut.p("Pending:  " + text)
-	gut.end_yielded_test()
+	if(gut):
+		if(text == ""):
+			gut.p("Pending")
+		else:
+			gut.p("Pending:  " + text)
+		gut.end_yielded_test()
 
 #-------------------------------------------------------------------------------
 # Returns the number of times a signal was emitted.  -1 returned if the object
