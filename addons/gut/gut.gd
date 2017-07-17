@@ -74,13 +74,15 @@ const LOG_LEVEL_ALL_ASSERTS = 2
 const WAITING_MESSAGE = '/# waiting #/'
 const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
 
-
 var _stop_pressed = false
 
 # Tests to run for the current script
 var _tests = []
 # all the scripts that should be ran as test scripts
 var _test_scripts = []
+
+# The instanced scripts.  This is populated as the scripts are run
+var _test_script_objects = []
 
 var _waiting = false
 var _done = false
@@ -114,6 +116,7 @@ var _unit_test_name = ''
 const SIGNAL_TESTS_FINISHED = 'tests_finished'
 const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yeild_before_teardown'
 
+# Add test summaries to the local summary.
 func _add_summaries(test):
 	_summary.asserts += test.get_summary().asserts
 	_summary.passed += test.get_summary().passed
@@ -121,13 +124,16 @@ func _add_summaries(test):
 	_summary.tests += test.get_summary().tests
 	_summary.pending += test.get_summary().pending
 
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func _init():
 	add_user_signal(SIGNAL_TESTS_FINISHED)
 	add_user_signal(SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
 	add_user_signal('timeout')
 
+# ------------------------------------------------------------------------------
+# Connect all the controls created in the parent class to the methods here.
+# ------------------------------------------------------------------------------
 func _connect_controls():
 	_ctrls.copy_button.connect("pressed", self, "_copy_button_pressed")
 	_ctrls.clear_button.connect("pressed", self, "clear_text")
@@ -141,9 +147,9 @@ func _connect_controls():
 	_ctrls.scripts_drop_down.connect('item_selected', self, '_on_script_selected')
 	_ctrls.run_button.connect("pressed", self, "_on_run_button_pressed")
 
-#-------------------------------------------------------------------------------
-#Initialize controls
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# Initialize controls
+# ------------------------------------------------------------------------------
 func _ready():
 	set_it_up()
 	set_process_input(true)
@@ -190,55 +196,56 @@ func _ready():
 # Events
 #
 #####################
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func _process(delta):
 	if(_is_running):
 		_ctrls.runtime_label.set_text(str(RUNTIME_START_TIME - _runtime_timer.get_time_left()).pad_decimals(3) + ' s')
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Timeout for the built in timer.  emits the timeout signal.  Start timer
 # with set_yield_time()
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func _on_yield_timer_timeout():
 	emit_signal('timeout')
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Run either the selected test or all tests.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func _on_run_button_pressed():
 	test_scripts()
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Continue processing after pause.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func _on_continue_button_pressed():
 	_pause_before_teardown = false
 	_ctrls.continue_button.set_disabled(true)
 	emit_signal(SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Change the log level.  Will be visible the next time tests are run.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func _on_log_level_slider_changed(value):
 	_log_level = _ctrls.log_level_slider.get_value()
 
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func _on_previous_button_pressed():
 	if(_ctrls.scripts_drop_down.get_selected() > 0):
 		_ctrls.scripts_drop_down.select(_ctrls.scripts_drop_down.get_selected() -1)
 	_update_controls()
 
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func _on_next_button_pressed():
 	if(_ctrls.scripts_drop_down.get_selected() < _ctrls.scripts_drop_down.get_item_count() -1):
 		_ctrls.scripts_drop_down.select(_ctrls.scripts_drop_down.get_selected() +1)
 	_update_controls()
 
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func _on_stop_button_pressed():
 	_stop_pressed = true
 	_ctrls.stop_button.set_disabled(true)
@@ -248,8 +255,8 @@ func _on_stop_button_pressed():
 	else:
 		_waiting = false
 
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func _on_ignore_continue_checkbox_pressed():
 	_ignore_pause_before_teardown = _ctrls.ignore_continue_checkbox.is_pressed()
 	# If you want to ignore them, then you probably just want to continue
@@ -257,13 +264,13 @@ func _on_ignore_continue_checkbox_pressed():
 	if(!_ctrls.continue_button.is_disabled()):
 		_on_continue_button_pressed()
 
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func _on_script_selected(id):
 	_update_controls()
 
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func _on_run_rest_pressed():
 	test_scripts(true)
 
@@ -273,10 +280,10 @@ func _on_run_rest_pressed():
 #
 #####################
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Parses out the tests based on the _test_prefix.  Fills the _tests array with
 # instances of OneTest.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func _parse_tests(script):
 	var file = File.new()
 	var line = ""
@@ -298,9 +305,9 @@ func _parse_tests(script):
 	file.close()
 
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Convert the _summary dictionary into text
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func _get_summary_text():
 	var to_return = "*****************\nRun Summary\n*****************\n"
 	to_return += str('  scripts:   ', _summary.scripts, "\n")
@@ -323,9 +330,9 @@ func _get_summary_text():
 		_ctrls.text_box.add_color_region('+++', '+++', Color(1, 0, 0))
 	return to_return
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Initialize variables for each run of a single test script.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func _init_run():
 	_summary.asserts = 0
 	_summary.passed = 0
@@ -347,10 +354,18 @@ func _init_run():
 	._init_run()
 
 
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# Print out run information and close out the run.
+# ------------------------------------------------------------------------------
 func _end_run():
-	p(_get_summary_text(), 0)
+	for i in range(_test_script_objects.size()):
+		p(_test_script_objects[i].get_summary_text())
+		_add_summaries(_test_script_objects[i])
+
+	# no need to summarize the run if only one script was run
+	if(_test_script_objects.size() > 1):
+		p(_get_summary_text(), 0)
+
 	_runtime_timer.stop()
 	_is_running = false
 	update()
@@ -358,16 +373,19 @@ func _end_run():
 	emit_signal(SIGNAL_TESTS_FINISHED)
 	set_title("Finished.  " + str(get_fail_count()) + " failures.")
 
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# Checks the passed in thing to see if it is a "function state" object that gets
+# returned when a function yields.
+# ------------------------------------------------------------------------------
 func _is_function_state(script_result):
 	return script_result != null and \
 	       typeof(script_result) == TYPE_OBJECT and \
 	       script_result.get_type() == 'GDFunctionState'
 
 
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# Print out the heading for a new script
+# ------------------------------------------------------------------------------
 func _print_script_heading(script_name):
 	p("/-----------------------------------------")
 	p("Testing Script " + script_name, 0)
@@ -375,8 +393,10 @@ func _print_script_heading(script_name):
 		p('  Only running tests like: "' + _unit_test_name + '"')
 	p("-----------------------------------------/")
 
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# Initialize a new test script object.  The file is loaded from the passed in path
+# and the tests are parsed out.
+# ------------------------------------------------------------------------------
 func _init_test_script(script_path):
 	_parse_tests(script_path)
 	var test_script = load(script_path).new()
@@ -385,10 +405,10 @@ func _init_test_script(script_path):
 
 	return test_script
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Just gets more logic out of _test_the_scripts.  Decides if we should yield after
 # this test based on flags and counters.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func _should_yield_now():
 	var should = _yield_between.should and \
 	             _yield_between.tests_since_last_yield == _yield_between.after_x_tests
@@ -398,14 +418,12 @@ func _should_yield_now():
 		_yield_between.tests_since_last_yield += 1
 	return should
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Run all tests in a script.  This is the core logic for running tests.
 #
 # Note, this has to stay as a giant monstrosity of a method because of the
 # yields.
-#-------------------------------------------------------------------------------
-var _test_script_objects = []
-
+# ------------------------------------------------------------------------------
 func _test_the_scripts():
 	_init_run()
 	var file = File.new()
@@ -485,8 +503,11 @@ func _test_the_scripts():
 
 					_ctrls.test_progress.set_value(i + 1)
 			test_script.postrun_teardown()
-			_add_summaries(test_script)
-			test_script.free()
+			# This might end up being very resource intensive if the scripts
+			# don't clean up after themselves.  Might have to consolidate output
+			# into some other structure and kill the script objects with
+			# test_script.free() instead of remove child.
+			remove_child(test_script)
 			#END TESTS IN SCRIPT LOOP
 
 		_current_test = null
@@ -512,12 +533,12 @@ func _fail():
 #
 #########################
 
-#-------------------------------------------------------------------------------
-#Conditionally prints the text to the console/results variable based on the
-#current log level and what level is passed in.  Whenever currently in a test,
-#the text will be indented under the test.  It can be further indented if
-#desired.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# Conditionally prints the text to the console/results variable based on the
+# current log level and what level is passed in.  Whenever currently in a test,
+# the text will be indented under the test.  It can be further indented if
+# desired.
+# ------------------------------------------------------------------------------
 func p(text, level=0, indent=0):
 	var str_text = str(text)
 	var to_print = ""
@@ -560,9 +581,9 @@ func p(text, level=0, indent=0):
 #
 ################
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Runs all the scripts that were added using add_script
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func test_scripts(run_rest=false):
 	clear_text()
 	_test_scripts.clear()
@@ -576,18 +597,18 @@ func test_scripts(run_rest=false):
 	_test_the_scripts()
 
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Runs a single script passed in.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func test_script(script):
 	_test_scripts.clear()
 	_test_scripts.append(script)
 	_test_the_scripts()
 	_test_scripts.clear()
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Adds a script to be run when test_scripts called
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func add_script(script, select_this_one=false):
 	if(_test_scripts.has(script)):
 		return
@@ -602,11 +623,11 @@ func add_script(script, select_this_one=false):
 	if(select_this_one):
 		_ctrls.scripts_drop_down.select(_ctrls.scripts_drop_down.get_item_count() -1)
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Add all scripts in the specified directory that start with the prefix and end
 # with the suffix.  Does not look in sub directories.  Can be called multiple
 # times.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
 	var d = Directory.new()
 	if(!d.dir_exists(path)):
@@ -614,9 +635,9 @@ func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
 	d.open(path)
 	d.list_dir_begin()
 
-	#Traversing a directory is kinda odd.  You have to start the process of listing
-	#the contents of a directory with list_dir_begin then use get_next until it
-	#returns an empty string.  Then I guess you should end it.
+	# Traversing a directory is kinda odd.  You have to start the process of listing
+	# the contents of a directory with list_dir_begin then use get_next until it
+	# returns an empty string.  Then I guess you should end it.
 	var thing = d.get_next()
 	var full_path = ''
 	while(thing != ''):
@@ -628,14 +649,14 @@ func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
 		thing = d.get_next()
 	d.list_dir_end()
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # This will try to find a script in the list of scripts to test that contains
 # the specified script name.  It does not have to be a full match.  It will
 # select the first matching occurance so that this script will run when run_tests
 # is called.  Works the same as the select_this_one option of add_script.
 #
 # returns whether it found a match or not
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func select_script(script_name):
 	var found = false
 	var idx = 0
@@ -648,11 +669,6 @@ func select_script(script_name):
 			idx += 1
 
 	return found
-################
-#
-# ASSERTS
-#
-################
 
 ################
 #
@@ -665,95 +681,95 @@ func disable_strict_datatype_checks(should):
 func is_strict_datatype_checks_disabled():
 	return _disable_strict_datatype_checks
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Pauses the test and waits for you to press a confirmation button.  Useful when
 # you want to watch a test play out onscreen or inspect results.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func end_yielded_test():
 	_waiting = false
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Clears the text of the text box.  This resets all counters.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func clear_text():
 	pass
 	_ctrls.text_box.set_text("")
 	_ctrls.text_box.clear_colors()
 	update()
 
-#-------------------------------------------------------------------------------
-#G et the number of tests that were ran
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# Get the number of tests that were ran
+# ------------------------------------------------------------------------------
 func get_test_count():
 	return _summary.tests
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Get the number of assertions that were made
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func get_assert_count():
 	return _summary.asserts
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Get the number of assertions that passed
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func get_pass_count():
 	return _summary.passed
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Get the number of assertions that failed
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func get_fail_count():
 	return _summary.failed
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Get the number of tests flagged as pending
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func get_pending_count():
 	return _summary.pending
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Set whether it should print to console or not.  Default is yes.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func set_should_print_to_console(should):
 	_should_print_to_console = should
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Get whether it is printing to the console
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func get_should_print_to_console():
 	return _should_print_to_console
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Get the results of all tests ran as text.  This string is the same as is
 # displayed in the text box, and simlar to what is printed to the console.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func get_result_text():
 	return _log_text
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Set the log level.  Use one of the various LOG_LEVEL_* constants.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func set_log_level(level):
 	_log_level = level
 	_ctrls.log_level_slider.set_value(level)
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Get the current log level.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func get_log_level():
 	return _log_level
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Call this method to make the test pause before teardown so that you can inspect
 # anything that you have rendered to the screen.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func pause_before_teardown():
 	_pause_before_teardown = true;
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # For batch processing purposes, you may want to ignore any calls to
 # pause_before_teardown that you forgot to remove.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func set_ignore_pause_before_teardown(should_ignore):
 	_ignore_pause_before_teardown = should_ignore
 	_ctrls.ignore_continue_checkbox.set_pressed(should_ignore)
@@ -761,25 +777,25 @@ func set_ignore_pause_before_teardown(should_ignore):
 func get_ignore_pause_before_teardown():
 	return _ignore_pause_before_teardown
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Set to true so that painting of the screen will occur between tests.  Allows you
 # to see the output as tests occur.  Especially useful with long running tests that
 # make it appear as though it has humg.
 #
 # NOTE:  not compatible with 1.0 so this is disabled by default.  This will
 # change in future releases.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func set_yield_between_tests(should):
 	_yield_between.should = should
 
 func get_yield_between_tests():
 	return _yield_between.should
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Call _process or _fixed_process, if they exist, on obj and all it's children
 # and their children and so and so forth.  Delta will be passed through to all
 # the _process or _fixed_process methods.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func simulate(obj, times, delta):
 	for i in range(times):
 		if(obj.has_method("_process")):
@@ -790,14 +806,14 @@ func simulate(obj, times, delta):
 		for kid in obj.get_children():
 			simulate(kid, 1, delta)
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Starts an internal timer with a timeout of the passed in time.  A 'timeout'
 # signal will be sent when the timer ends.  Returns itself so that it can be
 # used in a call to yield...cutting down on lines of code.
 #
 # Example, yield to the Gut object for 10 seconds:
 #  yield(gut.set_yield_time(10), 'timeout')
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func set_yield_time(time, text=''):
 	_yield_timer.set_wait_time(time)
 	_yield_timer.start()
@@ -810,37 +826,37 @@ func set_yield_time(time, text=''):
 	_set_yield_time_called = true
 	return self
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # get the specific unit test that should be run
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func get_unit_test_name():
 	return _unit_test_name
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # set the specific unit test that should be run.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func set_unit_test_name(test_name):
 	_unit_test_name = test_name
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Creates an empty file at the specified path
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func file_touch(path):
 	var f = File.new()
 	f.open(path, f.WRITE)
 	f.close()
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # deletes the file at the specified path
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func file_delete(path):
 	var d = Directory.new()
 	d.open(path.get_base_dir())
 	d.remove(path)
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Checks to see if the passed in file has any data in it.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func is_file_empty(path):
 	var f = File.new()
 	f.open(path, f.READ)
@@ -848,9 +864,9 @@ func is_file_empty(path):
 	f.close()
 	return empty
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # deletes all files in a given directory
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func directory_delete_files(path):
 	var d = Directory.new()
 	d.open(path)
@@ -869,6 +885,9 @@ func directory_delete_files(path):
 		thing = d.get_next()
 	d.list_dir_end()
 
+# ------------------------------------------------------------------------------
+# Returns the instantiated script object that is currently being run.
+# ------------------------------------------------------------------------------
 func get_current_script_object():
 	var to_return = null
 	if(_test_script_objects.size() > 0):
