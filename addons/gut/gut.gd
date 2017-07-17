@@ -358,13 +358,13 @@ func _init_run():
 # Print out run information and close out the run.
 # ------------------------------------------------------------------------------
 func _end_run():
+	# no need to summarize the run if only one script was run
 	for i in range(_test_script_objects.size()):
-		p(_test_script_objects[i].get_summary_text())
+		if(_test_script_objects.size() > 1):
+			p(_test_script_objects[i].get_summary_text())
 		_add_summaries(_test_script_objects[i])
 
-	# no need to summarize the run if only one script was run
-	if(_test_script_objects.size() > 1):
-		p(_get_summary_text(), 0)
+	p(_get_summary_text(), 0)
 
 	_runtime_timer.stop()
 	_is_running = false
