@@ -77,7 +77,7 @@ const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
 var _is_running = false
 var _stop_pressed = false
 
-var _signal_watcher = load('res://addons/Gut/signal_watcher.gd').new()
+var _signal_watcher = load('res://addons/gut/signal_watcher.gd').new()
 # Tests to run for the current script
 var _tests = []
 # all the scripts that should be ran as test scripts
