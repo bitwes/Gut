@@ -43,6 +43,10 @@ var _summary = {
 var _is_running = false
 var min_size = Vector2(650, 400)
 
+# VeraMono is an open source fixed width font I found at
+# http://www.dafont.com/bitstream-vera-mono.font
+var font = load('res://addons/gut/VeraMono.fnt')
+
 #controls
 var _ctrls = {
 	text_box = TextEdit.new(),
@@ -99,6 +103,7 @@ func setup_controls():
 	_ctrls.text_box.set_anchor(MARGIN_RIGHT, ANCHOR_END)
 	_ctrls.text_box.set_anchor(MARGIN_TOP, ANCHOR_BEGIN)
 	_ctrls.text_box.set_anchor(MARGIN_BOTTOM, ANCHOR_END)
+	_ctrls.text_box.add_font_override('font', font)
 
 	add_child(_ctrls.copy_button)
 	_ctrls.copy_button.set_text("Copy")

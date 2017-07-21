@@ -81,7 +81,7 @@ var _tests = []
 # all the scripts that should be ran as test scripts
 var _test_scripts = []
 
-# The instanced scripts.  This is populated as the scripts are run
+# The instanced scripts.  This is populated as the scripts are run.
 var _test_script_objects = []
 
 var _waiting = false
@@ -334,6 +334,7 @@ func _get_summary_text():
 # Initialize variables for each run of a single test script.
 # ------------------------------------------------------------------------------
 func _init_run():
+	_test_script_objects = []
 	_summary.asserts = 0
 	_summary.passed = 0
 	_summary.failed = 0
@@ -692,7 +693,6 @@ func end_yielded_test():
 # Clears the text of the text box.  This resets all counters.
 # ------------------------------------------------------------------------------
 func clear_text():
-	pass
 	_ctrls.text_box.set_text("")
 	_ctrls.text_box.clear_colors()
 	update()
@@ -870,12 +870,12 @@ func is_file_empty(path):
 func directory_delete_files(path):
 	var d = Directory.new()
 	d.open(path)
-	d.list_dir_begin()
 
-	#Traversing a directory is kinda odd.  You have to start the process of listing
-	#the contents of a directory with list_dir_begin then use get_next until it
-	#returns an empty string.  Then I guess you should end it.
-	var thing = d.get_next()
+	# Traversing a directory is kinda odd.  You have to start the process of listing
+	# the contents of a directory with list_dir_begin then use get_next until it
+	# returns an empty string.  Then I guess you should end it.
+	d.list_dir_begin()
+	var thing = d.get_next() # could be a dir or a file or something else maybe?
 	var full_path = ''
 	while(thing != ''):
 		full_path = path + "/" + thing
