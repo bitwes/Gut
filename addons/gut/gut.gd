@@ -353,6 +353,9 @@ func _init_run():
 
 	_yield_between.tests_since_last_yield = 0
 	._init_run()
+	_ctrls.script_progress.set_max(_test_scripts.size())
+	_ctrls.script_progress.set_value(0)
+
 
 
 # ------------------------------------------------------------------------------

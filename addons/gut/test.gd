@@ -494,10 +494,13 @@ func clear_signal_watcher():
 # Convert the _summary dictionary into text
 # ------------------------------------------------------------------------------
 func get_summary_text():
-	var to_return = "Summary:  " + get_script().get_path() + "\n"
-	to_return += str('  tests:     ', _summary.tests, "\n")
-	to_return += str('  asserts:   ', _summary.asserts, "\n")
-	to_return += str('  passed:    ', _summary.passed, "\n")
-	to_return += str('  pending:   ', _summary.pending, "\n")
-	to_return += str('  failed:    ', _summary.failed)
+	var to_return = get_script().get_path() + "\n"
+	to_return += str('  ', _summary.passed, ' of ', _summary.asserts, ' passed.')
+	if(_summary.failed > 0):
+		to_return += str("\n  ", _summary.failed, ' failed.')
+	# to_return += str('  tests:     ', _summary.tests, "\n")
+	# to_return += str('  asserts:   ', _summary.asserts, "\n")
+	# to_return += str('  passed:    ', _summary.passed, "\n")
+	# to_return += str('  pending:   ', _summary.pending, "\n")
+	# to_return += str('  failed:    ', _summary.failed)
 	return to_return
