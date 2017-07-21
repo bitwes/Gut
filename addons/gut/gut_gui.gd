@@ -43,8 +43,8 @@ var _summary = {
 var _is_running = false
 var min_size = Vector2(650, 400)
 
-# VeraMono is an open source fixed width font I found at
-# http://www.dafont.com/bitstream-vera-mono.font
+# This is the editor font.  I imported using the font at
+# https://github.com/godotengine/godot/tree/master/thirdparty/fonts
 var _font = load('res://addons/gut/source_code_pro.fnt')
 
 #controls
