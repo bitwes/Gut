@@ -330,6 +330,7 @@ func _get_summary_text():
 	else:
 		to_return += '+++ No tests ran +++'
 		_ctrls.text_box.add_color_region('+++', '+++', Color(1, 0, 0))
+
 	if(_summary.moved_methods > 0):
 		to_return += "\n" + """
 Moved Methods
@@ -339,6 +340,7 @@ moved from the gut object to the test object so that you don't have to prefix
 them with 'gut.'.  This means less typing for you and better organization of
 the code.  I'm sorry for the inconvenience but I promise this will make things
 easier in the future...I'm pretty sure at least.  Thanks for using Gut!"""
+
 	return to_return
 
 # ------------------------------------------------------------------------------
@@ -908,69 +910,42 @@ func get_current_script_object():
 		to_return = _test_script_objects[-1]
 	return to_return
 
-func moved_method(method_name):
-	p('The method [' + method_name + '] has been moved to the Test class.  To fix just remove "gut." from in front of it.')
-	_test_script_objects[-1]._fail('Method has been moved.')
-	_summary.moved_methods += 1
 
 # #######################
 # Moved method warnings.
 # #######################
-# see gut method
+func moved_method(method_name):
+	p('[' + method_name + '] has been moved to the Test class.  To fix, remove "gut." from in front of it.')
+	_test_script_objects[-1]._fail('Method has been moved.')
+	_summary.moved_methods += 1
 func assert_eq(got, expected, text=""):
 	moved_method('assert_eq')
-
-# see gut method
 func assert_ne(got, not_expected, text=""):
 	moved_method('assert_ne')
-
-# see gut method
 func assert_gt(got, expected, text=""):
 	moved_method('assert_gt')
-
-# see gut method
 func assert_lt(got, expected, text=""):
 	moved_method('assert_lt')
-
-# see gut method
 func assert_true(got, text=""):
 	moved_method('assert_true')
-
-# see gut method
 func assert_false(got, text=""):
 	moved_method('assert_false')
-
-# see gut method
 func assert_between(got, expect_low, expect_high, text=""):
 	moved_method('assert_between')
-
-# see gut method
 func assert_file_exists(file_path):
 	moved_method('assert_file_exists')
-
-# see gut method
 func assert_file_does_not_exist(file_path):
 	moved_method('assert_file_does_not_exist')
-
-# see gut method
 func assert_file_empty(file_path):
 	moved_method('assert_file_empty')
-
-# see gut method
 func assert_file_not_empty(file_path):
 	moved_method('assert_file_not_empty')
-
-# see gut method
 func assert_get_set_methods(obj, property, default, set_to):
 	moved_method('assert_get_set_methods')
-
 func assert_has(obj, element, text=""):
 	moved_method('assert_has')
-
 func assert_does_not_have(obj, element, text=""):
 	moved_method('assert_does_not_have')
-
-# see gut method
 func pending(text=""):
 	moved_method('pending')
 
