@@ -47,6 +47,7 @@ var gut = null
 var passed = false
 var failed = false
 var _disable_strict_datatype_checks = false
+var _fail_pass_text = []
 
 # Hash containing all the built in types in Godot.  This provides an English
 # name for the types that corosponds with the type constants defined in the
@@ -119,15 +120,16 @@ func prerun_setup():
 func postrun_teardown():
 	pass
 
-
 # ------------------------------------------------------------------------------
 # Fail an assertion.  Causes test and script to fail as well.
 # ------------------------------------------------------------------------------
 func _fail(text):
 	_summary.asserts += 1
 	_summary.failed += 1
+	var msg = 'FAILED:  ' + text
+	_fail_pass_text.append(msg)
 	if(gut):
-		gut.p('FAILED:  ' + text, gut.LOG_LEVEL_FAIL_ONLY)
+		gut.p(msg, gut.LOG_LEVEL_FAIL_ONLY)
 		gut._fail()
 		gut.end_yielded_test()
 
@@ -137,9 +139,10 @@ func _fail(text):
 func _pass(text):
 	_summary.asserts += 1
 	_summary.passed += 1
+	var msg = "PASSED:  " + text
+	_fail_pass_text.append(msg)
 	if(gut):
-		if(gut.get_log_level() >= gut.LOG_LEVEL_ALL_ASSERTS):
-			gut.p("PASSED:  " + text, gut.LOG_LEVEL_ALL_ASSERTS)
+		gut.p(msg, gut.LOG_LEVEL_ALL_ASSERTS)
 		gut.end_yielded_test()
 
 # Checks if the datatypes passed in match.  If they do not then this will cause
@@ -452,6 +455,33 @@ func get_signal_parameters(object, signal_name, index=-1):
 	return _signal_watcher.get_signal_parameters(object, signal_name, index)
 
 # ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func assert_is_type_of(object, other_thing, text=''):
+	var disp = str('Expected [', object, '] to be type of [', other_thing, ']: ', text)
+	var NATIVE_CLASS = '[GDNativeClass:'
+	var GDSCRIPT_CLASS = '[GDScript:'
+
+	if(typeof(object) != 18 and typeof(other_thing) != 18):
+		disp = str('Expected [', types[typeof(object)], '] to be type of [', types[typeof(other_thing)], ']: ', text)
+		if(typeof(object) == typeof(other_thing)):
+			_pass(disp)
+		else:
+			_fail(disp)
+	elif(typeof(object) != 18):
+		_fail(str(disp))
+	elif(typeof(other_thing) != 18):
+		_fail(str('Parameter 2 must be a Class when checking the type of an object.  ', types[typeof(other_thing)], ' was passed.'))
+	else:
+		disp = str('Expected [', object, '] to extend [', other_thing, ']: ', text)
+		if(str(other_thing).find(NATIVE_CLASS) != 0 and str(other_thing).find(GDSCRIPT_CLASS) != 0):
+			_fail(str('Parameter 2 must be a Class when checking the type of an object.  ', other_thing, ' was passed.'))
+		else:
+			if(object extends other_thing):
+				_pass(disp)
+			else:
+				_fail(disp)
+
+# ------------------------------------------------------------------------------
 # Mark the current test as pending.
 # ------------------------------------------------------------------------------
 func pending(text=""):
@@ -486,6 +516,9 @@ func get_pass_count():
 
 func get_pending_count():
 	return _summary.pending
+
+func get_assert_count():
+	return _summary.asserts
 
 func clear_signal_watcher():
 	_signal_watcher.clear()
