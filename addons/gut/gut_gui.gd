@@ -37,7 +37,8 @@ var _summary = {
 	failed = 0,
 	tests = 0,
 	scripts = 0,
-	pending = 0
+	pending = 0,
+	moved_methods = 0
 }
 
 var _is_running = false
