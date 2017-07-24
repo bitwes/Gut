@@ -4,8 +4,7 @@ GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.
 ### Breaking Changes from 4.1.0
 Due to the restructuring I've completely moved the various `asserts` out of the core gut object and put them in the test object that all unit tests inherit from.  This means that any asserts or pending calls that are prefixed with `gut.` need to have the `gut.` prefix removed.  To cut down on the annoyance level of this change, I've added the methods back into gut but they fail with a message indicating that the method has been moved.
 
-# Asserts
-Here's a quick list of the asserts
+# Method Links
 [assert_eq](#assert_eq)
 [assert_ne](#assert_ne)
 [assert_gt](#assert_gt)
@@ -29,6 +28,7 @@ Here's a quick list of the asserts
 [assert_file_not_empty](#assert_file_not_empty)
 [assert_extends](#assert_extends)
 [assert_get_set_methods](#assert_get_set_methods)
+
 # Table of Contents
   0.  [Install](#install)
   0.  [Gut Settings](#gut_settings)
