@@ -6,7 +6,29 @@ Due to the restructuring I've completely moved the various `asserts` out of the 
 
 # Asserts
 Here's a quick list of the asserts
-[assert_eq](#assert_eq), [assert_ne](#assert_ne), [assert_gt](#assert_gt)
+[assert_eq](#assert_eq)
+[assert_ne](#assert_ne)
+[assert_gt](#assert_gt)
+[assert_lt](#assert_lt)
+[assert_true](#assert_true)
+[assert_false](#assert_false)
+[assert_between](#assert_between)
+[assert_has](#assert_has)
+[assert_does_not_have](#assert_does_not_have)
+[assert_has_signal](#assert_has_signal)
+[watch_signals](#watch_signals)
+[assert_signal_emitted](#assert_signal_emitted)
+[assert_signal_not_emitted](#assert_signal_not_emitted)
+[assert_signal_emitted_with_parameters](#assert_signal_emitted_with_parameters)
+[assert_signal_emit_count](#assert_signal_emit_count)
+[get_signal_emit_count](#get_signal_emit_count)
+[get_signal_parameters](#get_signal_parameters)
+[assert_file_exists](#assert_file_exists)
+[assert_file_does_not_exist](#assert_file_does_not_exist)
+[assert_file_empty](#assert_file_empty)
+[assert_file_not_empty](#assert_file_not_empty)
+[assert_extends](#assert_extends)
+[assert_get_set_methods](#assert_get_set_methods)
 # Table of Contents
   0.  [Install](#install)
   0.  [Gut Settings](#gut_settings)
@@ -178,7 +200,7 @@ assert_gt('a', 'a') # FAIL
 assert_gt(1.0, 1) # FAIL
 assert_gt(smaller, bigger) # FAIL
 ```
-#### assert_lt(got, expected, text="")
+#### <a name="assert_lt"> assert_lt(got, expected, text="")
 asserts got < expected
 ``` python
 var bigger = 5
@@ -191,7 +213,7 @@ gut.p('-- failing --')
 assert_lt('z', 'x') # FAIL
 assert_lt(-5, -5) # FAIL
 ```
-#### assert_true(got, text="")
+#### <a name="assert_true"> assert_true(got, text="")
 asserts got == true
 ``` python
 gut.p('-- passing --')
@@ -202,7 +224,7 @@ gut.p('-- failing --')
 assert_true(false) # FAIL
 assert_true('a' == 'b') # FAIL
 ```
-#### assert_false(got, text="")
+#### <a name="assert_false"> assert_false(got, text="")
 asserts got == false
 ``` python
 gut.p('-- passing --')
@@ -215,7 +237,7 @@ gut.p('-- failing --')
 assert_false(true) # FAIL
 assert_false('ABC' == 'ABC') # FAIL
 ```
-#### assert_between(got, expect_low, expect_high, text="")
+#### <a name="assert_between"> assert_between(got, expect_low, expect_high, text="")
 asserts got > expect_low and <= expect_high
 ``` python
 gut.p('-- passing --')
@@ -228,7 +250,7 @@ gut.p('-- failing --')
 assert_between('a', 'b', 'c') # FAIL
 assert_between(1, 5, 10) # FAIL
 ```
-#### assert_has(obj, element, text='')
+#### <a name="assert_has"> assert_has(obj, element, text='')
 Asserts that the object passed in "has" the element.  This works with any object that has a `has` method.
 ``` python
 var an_array = [1, 2, 3, 'four', 'five']
@@ -247,7 +269,7 @@ assert_has(an_array, self) # FAIL
 assert_has(a_hash, 3) # FAIL
 assert_has(a_hash, 'three') # FAIL
 ```
-#### assert_does_not_have(obj, element, text='')
+#### <a name="assert_does_not_have"> assert_does_not_have(obj, element, text='')
 The inverse of `assert_has`
 ``` python
 var an_array = [1, 2, 3, 'four', 'five']
@@ -267,7 +289,7 @@ assert_does_not_have(a_hash, 'one') # FAIL
 assert_does_not_have(a_hash, '3') # FAIL
 ```
 
-#### assert_has_signal(object, signal_name)
+#### <a name="assert_has_signal"> assert_has_signal(object, signal_name)
 Asserts the passed in object has a signal with the specified name.  It should be noted that all the asserts that verfy a signal was/wasn't emitted will first check that the object has the signal being asserted against.  If it does not, a specific failure message will be given.  This means you can usually skip the step of specifically verifying that the object has a signal and move on to making sure it emits the signal correctly.
 ``` python
 class SignalObject:
@@ -291,12 +313,12 @@ func test_assert_has_signal():
 	assert_has_signal(Node2D.new(), 'exit_tree')
 
 ```
-#### watch_signals(object)
+#### <a name="watch_signals"> watch_signals(object)
 This must be called in order to make assertions based on signals being emitted.  __Right now, this only supports signals that are emitted with 9 or less parameters.  This can be extended but nine seemed like enough for now.  The Godot documentation suggests that the limit is four but in my testing I found you can pass more.__
 
 This must be called in each test in which you want to make signal based assertions in.  You can call it multiple times with different objects.   You should not call it multiple times with the same object in the same test.  The objects that are watched are cleared after each test (specifically right before `teardown` is called).  Under the covers, Gut will connect to all the signals an object has and it will track each time they fire.  You can then use the following asserts and methods to verify things are acting correctl
 
-#### assert_signal_emitted(object, signal_name)
+#### <a name=assert_signal_emitted> assert_signal_emitted(object, signal_name)
 Assert that the specified object emitted the named signal.  You must call `watch_signals` and pass it the object that you are making assertions about.  This will fail if the object is not being watched or if the object does not have the specified signal.  Since this will fail if the signal does not exist, you can often skip using `assert_has_signal`.
 ``` python
 class SignalObject:
@@ -321,7 +343,7 @@ func test_assert_signal_emitted():
 	# Fails because the signal was not emitted
 	assert_signal_emitted(obj, 'other_signal')
 ```
-#### assert_signal_not_emitted(object, signal_name)
+#### <a name="assert_signal_not_emitted"> assert_signal_not_emitted(object, signal_name)
 This works opposite of `assert_signal_emitted`.  This will fail if the object is not being watched or if the object does not have the signal.
 ``` python
 class SignalObject:
@@ -346,7 +368,7 @@ func test_assert_signal_not_emitted():
 	# Fails because the signal was emitted
 	assert_signal_not_emitted(obj, 'some_signal')
 ```
-#### assert_signal_emitted_with_parameters(object, signal_name, parameters, index=-1)
+#### <a name="assert_signal_emitted_with_parameters"> assert_signal_emitted_with_parameters(object, signal_name, parameters, index=-1)
 Asserts that a signal was fired with the specified parameters.  The expected parameters should be passed in as an array.  An optional index can be passed when a signal has fired more than once.  The default is to retrieve the most recent emission of the signal.
 
 This will fail with specific messages if the object is not being watched or the object does not have the specified signal
@@ -383,7 +405,7 @@ func test_assert_signal_emitted_with_parameters():
 	# Fails because the parameters for the specified index do not match
 	assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 1)
 ```
-#### assert_signal_emit_count(object, signal_name)
+#### <a name="assert_signal_emit_count"> assert_signal_emit_count(object, signal_name)
 Asserts that a signal fired a specific number of times.
 
 ``` python
@@ -419,10 +441,10 @@ func test_assert_signal_emit_count():
 	assert_signal_emit_count(obj_a, 'some_signal', 0)
 	assert_signal_emit_count(obj_b, 'other_signal', 283)
 ```
-#### get_signal_emit_count(object, signal_name)
+#### <a name="get_signal_emit_count"> get_signal_emit_count(object, signal_name)
 This will return the number of times a signal was fired.  This gives you the freedom to make more complicated assertions if the spirit moves you.  This will return -1 if the signal was not fired or the object was not being watched, or if the object does not have the signal.
 
-#### get_signal_parameters(object, signal_name, index=-1)
+#### <a name="get_signal_parameters"> get_signal_parameters(object, signal_name, index=-1)
 If you need to inspect the parameters in order to make more complicate assertions, then this will give you access to the parameters of any watched signal.  This works the same way that `assert_signal_emitted_with_parameters` does.  It takes an object, signal name, and an optional index.  If the index is not specified then the parameters from the most recent emission will be returned.  If the object is not being watched, the signal was not fired, or the object does not have the signal then `null` will be returned.
 ``` python
 class SignalObject:
@@ -450,7 +472,7 @@ func test_get_signal_parameters():
 	assert_eq(get_signal_parameters(obj, 'some_signal'), [1, 2, 3])
 	assert_eq(get_signal_parameters(obj, 'some_signal', 0), ['a', 'b', 'c'])
 ```
-#### assert_file_exists(file_path)
+#### <a name="assert_file_exists"> assert_file_exists(file_path)
 asserts a file exists at the specified path
 ``` python
 func setup():
@@ -468,7 +490,7 @@ func test_assert_file_exists():
 	assert_file_exists('user://file_does_not.exist') # FAIL
 	assert_file_exists('res://some_dir/another_dir/file_does_not.exist') # FAIL  
 ```
-#### assert_file_does_not_exist(file_path)
+#### <a name="assert_file_does_not_exist"> assert_file_does_not_exist(file_path)
 asserts a file does not exist at the specified path
 ``` python
 func setup():
@@ -485,7 +507,7 @@ func test_assert_file_does_not_exist():
 	gut.p('-- failing --')
 	assert_file_does_not_exist('res://addons/gut/gut.gd') # FAIL
 ```
-#### assert_file_empty(file_path)
+#### <a name="assert_file_empty"> assert_file_empty(file_path)
 asserts the specified file is empty
 ``` python
 func setup():
@@ -501,7 +523,7 @@ func test_assert_file_empty():
 	gut.p('-- failing --')
 	assert_file_empty('res://addons/gut/gut.gd') # FAIL
 ```
-#### assert_file_not_empty(file_path)
+#### <a name="assert_file_not_empty"> assert_file_not_empty(file_path)
 asserts the specified file is not empty
 ``` python
 func setup():
@@ -517,7 +539,7 @@ func test_assert_file_not_empty():
 	gut.p('-- failing --')
 	assert_file_not_empty('user://some_test_file') # FAIL
 ```
-#### assert_extends(object, a_class, text)
+#### <a name="assert_extends"> assert_extends(object, a_class, text)
 Asserts that "object" extends "a_class".  object must be an instance of an object.  It cannot be any of the built in classes like Array or Int or Float.  a_class must be a class, it can be loaded via load, a GDNative class such as Node or Label or anything else.
 
 ``` python
@@ -541,7 +563,7 @@ func test_assert_extends():
 	assert_extends('a', 'b')
 	assert_extends([], Node)
 ```
-#### assert_get_set_methods(obj, property, default, set_to)
+#### <a name="assert_get_set_methods"> assert_get_set_methods(obj, property, default, set_to)
 I found that making tests for most getters and setters was repetitious and annoying.  Enter `assert_get_set_methods`.  This assertion handles 80% of your getter and setter testing needs.  Given an object and a property name it will verify:
  * The object has a method called `get_<PROPERTY_NAME>`
  * The object has a method called `set_<PROPERTY_NAME>`
