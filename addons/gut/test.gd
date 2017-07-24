@@ -455,28 +455,24 @@ func get_signal_parameters(object, signal_name, index=-1):
 	return _signal_watcher.get_signal_parameters(object, signal_name, index)
 
 # ------------------------------------------------------------------------------
+# Assert that object is an instance of a_class
 # ------------------------------------------------------------------------------
-func assert_is_type_of(object, other_thing, text=''):
-	var disp = str('Expected [', object, '] to be type of [', other_thing, ']: ', text)
-	var NATIVE_CLASS = '[GDNativeClass:'
-	var GDSCRIPT_CLASS = '[GDScript:'
+func assert_extends(object, a_class, text=''):
+	var disp = str('Expected [', object, '] to be type of [', a_class, ']: ', text)
+	var NATIVE_CLASS = 'GDNativeClass'
+	var GDSCRIPT_CLASS = 'GDScript'
+	var bad_param_2 = 'Parameter 2 must be a Class (like Node2D or Label).  You passed '
 
-	if(typeof(object) != 18 and typeof(other_thing) != 18):
-		disp = str('Expected [', types[typeof(object)], '] to be type of [', types[typeof(other_thing)], ']: ', text)
-		if(typeof(object) == typeof(other_thing)):
-			_pass(disp)
-		else:
-			_fail(disp)
-	elif(typeof(object) != 18):
-		_fail(str(disp))
-	elif(typeof(other_thing) != 18):
-		_fail(str('Parameter 2 must be a Class when checking the type of an object.  ', types[typeof(other_thing)], ' was passed.'))
+	if(typeof(object) != 18):
+		_fail(str('Parameter 1 must be an instance of an object.  You passed:  ', types[typeof(object)]))
+	elif(typeof(a_class) != 18):
+		_fail(str(bad_param_2, types[typeof(a_class)]))
 	else:
-		disp = str('Expected [', object, '] to extend [', other_thing, ']: ', text)
-		if(str(other_thing).find(NATIVE_CLASS) != 0 and str(other_thing).find(GDSCRIPT_CLASS) != 0):
-			_fail(str('Parameter 2 must be a Class when checking the type of an object.  ', other_thing, ' was passed.'))
+		disp = str('Expected [', object.get_type(), '] to extend [', a_class.get_type(), ']: ', text)
+		if(a_class.get_type() != NATIVE_CLASS and a_class.get_type() != GDSCRIPT_CLASS):
+			_fail(str(bad_param_2, types[typeof(a_class)]))
 		else:
-			if(object extends other_thing):
+			if(object extends a_class):
 				_pass(disp)
 			else:
 				_fail(disp)

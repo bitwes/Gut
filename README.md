@@ -1,9 +1,12 @@
 # Gut
 GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.  It allows you to write tests for your gdscript in gdscript.
 
-## 4.x.x Breaking changes from 3.0.x
-In 4.0.0 Gut was changed to be a plugin.  This has some setup ramifications.  __These changes only apply when upgrading from a version earlier than 4.0.0__.  See the 4.0.0 section in CHANGES.md for upgrade information.
+### Breaking Changes from 4.1.0
+Due to the restructuring I've completely moved the various `asserts` out of the core gut object and put them in the test object that all unit tests inherit from.  This means that any asserts or pending calls that are prefixed with `gut.` need to have the `gut.` prefix removed.  To cut down on the annoyance level of this change, I've added the methods back into gut but they fail with a message indicating that the method has been moved.
 
+# Asserts
+Here's a quick list of the asserts
+[assert_eq](#assert_eq), [assert_ne](#assert_ne), [assert_gt](#assert_gt)
 # Table of Contents
   0.  [Install](#install)
   0.  [Gut Settings](#gut_settings)
@@ -126,7 +129,7 @@ flag a test as pending, the optional message is printed in the GUI
 pending('This test is not implemented yet')
 pending()
 ```
-#### assert_eq(got, expected, text="")
+#### <a name="assert_eq"> assert_eq(got, expected, text="")
 assert got == expected and prints optional text
 ``` python
 var one = 1
@@ -142,7 +145,7 @@ assert_eq(1, 2) # FAIL
 assert_eq('hello', 'world') # FAIL
 assert_eq(self, node1) # FAIL
 ```
-#### assert_ne(got, not_expected, text="")
+#### <a name="assert_ne"> assert_ne(got, not_expected, text="")
 asserts got != expected and prints optional text
 ``` python
 var two = 2
@@ -158,7 +161,7 @@ assert_ne(two, 2) # FAIL
 assert_ne('one', 'one') # FAIL
 assert_ne('2', 2) # FAIL
 ```
-#### assert_gt(got, expected, text="")
+#### <a name="assert_gt"> assert_gt(got, expected, text="")
 assserts got > expected
 ``` python
 var bigger = 5
@@ -514,6 +517,30 @@ func test_assert_file_not_empty():
 	gut.p('-- failing --')
 	assert_file_not_empty('user://some_test_file') # FAIL
 ```
+#### assert_extends(object, a_class, text)
+Asserts that "object" extends "a_class".  object must be an instance of an object.  It cannot be any of the built in classes like Array or Int or Float.  a_class must be a class, it can be loaded via load, a GDNative class such as Node or Label or anything else.
+
+``` python
+func test_assert_extends():
+	gut.p('-- passing --')
+	assert_extends(Node2D.new(), Node2D)
+	assert_extends(Label.new(), CanvasItem)
+	assert_extends(SubClass.new(), BaseClass)
+	# Since this is a test script that inherits from test.gd, so
+	# this passes.  It's not obvious w/o seeing the whole script
+	# so I'm telling you.  You'll just have to trust me.
+	assert_extends(self, load('res://addons/gut/test.gd'))
+
+	var Gut = load('res://addons/gut/gut.gd')
+	var a_gut = Gut.new()
+	assert_extends(a_gut, Gut)
+
+	gut.p('-- failing --')
+	assert_extends(Node2D.new(), Node2D.new())
+	assert_extends(BaseClass.new(), SubClass)
+	assert_extends('a', 'b')
+	assert_extends([], Node)
+```
 #### assert_get_set_methods(obj, property, default, set_to)
 I found that making tests for most getters and setters was repetitious and annoying.  Enter `assert_get_set_methods`.  This assertion handles 80% of your getter and setter testing needs.  Given an object and a property name it will verify:
  * The object has a method called `get_<PROPERTY_NAME>`
@@ -522,7 +549,7 @@ I found that making tests for most getters and setters was repetitious and annoy
  * Once you set the property, the `get_<PROPERTY_NAME>`will return the value passed in.
 
 On the inside Gut actually performs up to 4 assertions.  So if everything goes right you will have four passing asserts each time you call `assert_get_set_methods`.  I say "up to 4 assertions" because there are 2 assertions to make sure the object has the methods and then 2 to verify they act correctly.  If the object does not have the methods, it does not bother running the tests for the methods.
-```
+``` python
 class SomeClass:
 	var _count = 0
 
@@ -556,7 +583,7 @@ Print info to the GUI and console (if enabled).  You can see examples if this in
 This method will cause Gut to pause before it moves on to the next test.  This is useful for debugging, for instance if you want to investigate the screen or anything else after a test has finished executing.  See also `set_ignore_pause_before_teardown`
 #### yield_for(time_in_seconds)
 This simplifies the code needed to pause the test execution for a number of seconds so the thing that you are testing can run its course in real time.  There are more details in the Yielding section.  It is designed to be used with the `yield` built in.  The following example will pause your test execution (and only the test execution) for 2 seconds before continuing.  You must call an assert or `pending` or `end_test()` after a yield or the test will never stop running.
-```
+``` python
 class MovingNode:
 	extends Node2D
 	var _speed = 2
