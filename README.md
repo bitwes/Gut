@@ -59,18 +59,18 @@ From the menu choose Scene->Project Settings, click the plugins tab and activate
 
 The next few steps cover the suggested configuration.  Feel free to deviate where you see fit.
 
-0.  Create directories to store your tests and test related code
-  * `res://test`
-  * `res://test/unit`
-  * `res://test/integration`
-0.  Create a scene that will use Gut to run your tests at `res://test/tests.tscn`
-  * Add a Gut object the same way you would any other object.
-  * Click "Add/Create Node"
-  * type "Gut"
-  * press enter.
-0.  Configure Gut to find your tests.  Select it in the Scene Tree and set the following settings in the Inspector:
-  * In the `Directory1` setting enter `res://test/unit`
-  * In the `Directory2` setting enter `res://test/integration`
+1.  Create directories to store your tests and test related code
+	* `res://test`
+	* `res://test/unit`
+	* `res://test/integration`
+1.  Create a scene that will use Gut to run your tests at `res://test/tests.tscn`
+	* Add a Gut object the same way you would any other object.
+	* Click "Add/Create Node"
+	* type "Gut"
+	* press enter.
+1.  Configure Gut to find your tests.  Select it in the Scene Tree and set the following settings in the Inspector:
+	* In the `Directory1` setting enter `res://test/unit`
+	* In the `Directory2` setting enter `res://test/integration`
 
 That's it.  The next step is to make some tests.
 
