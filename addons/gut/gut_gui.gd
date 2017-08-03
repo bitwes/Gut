@@ -38,7 +38,12 @@ var _summary = {
 	tests = 0,
 	scripts = 0,
 	pending = 0,
-	moved_methods = 0
+	moved_methods = 0,
+	# these are used to display the tally in the top right corner.  Since the
+	# implementation changed to summing things up at the end, the running
+	# update wasn't showing.  Hack.
+	tally_passed = 0,
+	tally_failed = 0
 }
 
 var _is_running = false
@@ -264,7 +269,7 @@ func _update_controls():
 
 	# enabled during run
 	_ctrls.stop_button.set_disabled(!_is_running)
-	_ctrls.pass_count.set_text(str( _summary.passed, ' - ', _summary.failed))
+	_ctrls.pass_count.set_text(str( _summary.tally_passed, ' - ', _summary.tally_failed))
 
 
 #-------------------------------------------------------------------------------

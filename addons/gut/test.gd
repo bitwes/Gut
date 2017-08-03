@@ -28,7 +28,7 @@
 ################################################################################
 # View readme for usage details.
 #
-# Version 4.1.0
+# Version - see gut.gd
 ################################################################################
 # Class that all test scripts must extend.
 #
@@ -143,6 +143,7 @@ func _pass(text):
 	_fail_pass_text.append(msg)
 	if(gut):
 		gut.p(msg, gut.LOG_LEVEL_ALL_ASSERTS)
+		gut._pass()
 		gut.end_yielded_test()
 
 # Checks if the datatypes passed in match.  If they do not then this will cause

@@ -28,7 +28,7 @@
 ################################################################################
 # View readme for usage details.
 #
-# Version 4.0.0
+# Version 5.0.0
 ################################################################################
 extends "res://addons/gut/gut_gui.gd"
 
@@ -315,6 +315,7 @@ func _get_summary_text():
 	to_return += str('  asserts:   ', _summary.asserts, "\n")
 	to_return += str('  passed:    ', _summary.passed, "\n")
 	to_return += str('  pending:   ', _summary.pending, "\n")
+
 	if(_summary.moved_methods > 0):
 		to_return += str('  moved:     ', _summary.moved_methods, "\n")
 	to_return += str('  failed:    ', _summary.failed, "\n")
@@ -354,6 +355,8 @@ func _init_run():
 	_summary.tests = 0
 	_summary.scripts = 0
 	_summary.pending = 0
+	_summary.tally_passed = 0
+	_summary.tally_failed = 0
 
 	_log_text = ""
 
@@ -375,11 +378,25 @@ func _init_run():
 # Print out run information and close out the run.
 # ------------------------------------------------------------------------------
 func _end_run():
+	var failed_tests = []
+	var more_than_one = _test_script_objects.size() > 1
 	# no need to summarize the run if only one script was run
+	if(more_than_one):
+		p("----\nAll Passing/Pending\n----")
+
 	for i in range(_test_script_objects.size()):
-		if(_test_script_objects.size() > 1):
-			p(_test_script_objects[i].get_summary_text())
+		if(more_than_one):
+			if(_test_script_objects[i].get_fail_count() == 0):
+				p(_test_script_objects[i].get_summary_text())
+			else:
+				failed_tests.append(_test_script_objects[i])
 		_add_summaries(_test_script_objects[i])
+
+	if(more_than_one):
+		p("----\nWith Failures\n----")
+
+	for i in range(failed_tests.size()):
+		p(failed_tests[i].get_summary_text())
 
 	p(_get_summary_text(), 0)
 
@@ -537,12 +554,15 @@ func _test_the_scripts():
 
 
 func _pass():
-	pass
+	_summary.tally_passed += 1
+	_update_controls()
 
 func _fail():
+	_summary.tally_failed += 1
 	if(_current_test != null):
 		_current_test.passed = false
 		p('  at line ' + str(_current_test.line_number), LOG_LEVEL_FAIL_ONLY)
+	_update_controls()
 
 #########################
 #
