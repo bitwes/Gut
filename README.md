@@ -50,7 +50,7 @@ Due to the restructuring I've completely moved the various `asserts` out of the 
 
 # <a name="install"> Install
 ## New Installs and Upgrades
-Download and extract the zip from the [releases](https://github.com/bitwes/Gut/releases) or from the [Godot Asset Library](https://godotengine.org/asset-library/asset/54).  
+Download and extract the zip from the [releases](https://github.com/bitwes/gut/releases) or from the [Godot Asset Library](https://godotengine.org/asset-library/asset/54).  
 
 Extract the zip and place the `gut` directory into your `addons` directory in your project.  If you don't have an `addons` folder at the root of your project, then make one and THEN put the `gut` directory in there.
 

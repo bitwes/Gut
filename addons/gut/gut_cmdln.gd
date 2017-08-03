@@ -267,7 +267,7 @@ func setup_options():
                               'with the GUI.'))
 	opts.add('-gunit_test_name', '', ('Name of a test to run.  Any test that contains the specified ' +
                                  'text will be run, all others will be skipped.'))
-	opts.add('-gutloc', 'res://addons/Gut/gut.gd', 'Full path (including name) of the gut script.  Default [default]')
+	opts.add('-gutloc', 'res://addons/gut/gut.gd', 'Full path (including name) of the gut script.  Default [default]')
 	opts.add('-gh', false, 'Print this help')
 	return opts
 

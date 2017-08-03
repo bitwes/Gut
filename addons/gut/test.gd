@@ -96,7 +96,7 @@ var _summary = {
 }
 
 # This is used to watch signals so we can make assertions about them.
-var _signal_watcher = load('res://addons/Gut/signal_watcher.gd').new()
+var _signal_watcher = load('res://addons/gut/signal_watcher.gd').new()
 
 func _init():
 	_init_types_dictionary()
