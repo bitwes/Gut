@@ -12,9 +12,11 @@ Due to the restructuring I've completely moved the various `asserts` out of the 
 
 - New Methdos
   - `assert_extends` Asserts that an instance of an object inherits from the class passed.
-- Some changes to the log output.  Information about each script is included at the end when more than one test is run.
+- Some changes to the log output.  
+  - Quick summary about each test script is included at the end of the run.
+  - Scripts that had a failing assert are listed together in the quick summary.
 - Changed the GUI to have a fixed width font.  It makes formatting the output easier and I like it more.  Future changes should make customizing the GUI possible, so if you aren't fond of it you'll be able to change it sometime soon.
-- All asserts were moved from the `gut` class to the `test` class so you don't need to prefix them.  Placehoder methods were put back into `gut` so your tests will run but fail with a message indicating the assert has been moved.
+- All asserts were moved from the `gut` class to the `test` class so you don't need to prefix them.  Placeholder methods were put back into `gut` so your tests will run but fail with a message indicating the assert has been moved.
 
 
 
