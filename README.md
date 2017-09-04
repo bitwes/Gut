@@ -5,29 +5,38 @@ GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.
 Due to the restructuring I've completely moved the various `asserts` out of the core gut object and put them in the test object that all unit tests inherit from.  This means that any asserts or pending calls that are prefixed with `gut.` need to have the `gut.` prefix removed.  To cut down on the annoyance level of this change, I've added the methods back into gut but they fail with a message indicating that the method has been moved.
 
 # Method Links
-[assert_eq](#assert_eq)
-[assert_ne](#assert_ne)
-[assert_gt](#assert_gt)
-[assert_lt](#assert_lt)
-[assert_true](#assert_true)
-[assert_false](#assert_false)
-[assert_between](#assert_between)
-[assert_has](#assert_has)
-[assert_does_not_have](#assert_does_not_have)
-[assert_has_signal](#assert_has_signal)
-[watch_signals](#watch_signals)
-[assert_signal_emitted](#assert_signal_emitted)
-[assert_signal_not_emitted](#assert_signal_not_emitted)
-[assert_signal_emitted_with_parameters](#assert_signal_emitted_with_parameters)
-[assert_signal_emit_count](#assert_signal_emit_count)
-[get_signal_emit_count](#get_signal_emit_count)
-[get_signal_parameters](#get_signal_parameters)
-[assert_file_exists](#assert_file_exists)
-[assert_file_does_not_exist](#assert_file_does_not_exist)
-[assert_file_empty](#assert_file_empty)
-[assert_file_not_empty](#assert_file_not_empty)
-[assert_extends](#assert_extends)
-[assert_get_set_methods](#assert_get_set_methods)
+<table><tr>
+<td>
+
+[assert_between](#assert_between)<br/>
+[assert_does_not_have](#assert_does_not_have)<br/>
+[assert_eq](#assert_eq)<br/>
+[assert_extends](#assert_extends)<br/>
+[assert_false](#assert_false)<br/>
+[assert_file_does_not_exist](#assert_file_does_not_exist)<br/>
+[assert_file_empty](#assert_file_empty)<br/>
+[assert_file_exists](#assert_file_exists)<br/>
+[assert_file_not_empty](#assert_file_not_empty)<br/>
+[assert_get_set_methods](#assert_get_set_methods)<br/>
+[assert_gt](#assert_gt)<br/>
+[assert_has_signal](#assert_has_signal)<br/>
+
+</td><td>
+
+[assert_has](#assert_has)<br/>
+[assert_lt](#assert_lt)<br/>
+[assert_ne](#assert_ne)<br/>
+[assert_signal_emit_count](#assert_signal_emit_count)<br/>
+[assert_signal_emitted_with_parameters](#assert_signal_emitted_with_parameters)<br/>
+[assert_signal_emitted](#assert_signal_emitted)<br/>
+[assert_signal_not_emitted](#assert_signal_not_emitted)<br/>
+[assert_true](#assert_true)<br/>
+[get_signal_emit_count](#get_signal_emit_count)<br/>
+[get_signal_parameters](#get_signal_parameters)<br/>
+[watch_signals](#watch_signals)<br/>
+
+</td>
+</tr></table>
 
 # Table of Contents
 1.  [Install](#install)
