@@ -2,7 +2,7 @@
 GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.  It allows you to write tests for your gdscript in gdscript.
 
 ### Breaking Changes from 4.1.0
-Due to the restructuring I've completely moved the various `asserts` out of the core gut object and put them in the test object that all unit tests inherit from.  This means that any asserts or pending calls that are prefixed with `gut.` need to have the `gut.` prefix removed.  To cut down on the annoyance level of this change, I've added the methods back into gut but they fail with a message indicating that the method has been moved.
+Due to the restructuring (see CHANGES.md) I've completely moved the various `asserts` out of the core `gut` object and put them in the `test` object that all unit tests inherit from.  This means that any asserts or pending calls that are prefixed with _`gut.`_ need to have the _`gut.`_ prefix removed.  To cut down on the annoyance level of this change I've added stubs for the removed methods that fail with a message indicating that the method has been moved.
 
 # Method Links
 <table><tr>
@@ -42,9 +42,8 @@ Due to the restructuring I've completely moved the various `asserts` out of the 
 1.  [Install](#install)
 1.  [Gut Settings](#gut_settings)
 1.  [Creating Tests](#creating_tests)
-1.  [Method List](#method_list)
-	1.  [Asserting Things](#test_methods)
-	1.  [Methods for Configuring Test Execution](#gut_methods)
+1.  [Test Related Methods](#method_list)
+1.  [Methods for Configuring Test Execution](#gut_methods)
 1.  [Extras](#extras)
 	1.  [Strict Type Checking](#strict)
 	1.  [File Manipulation](#files)
@@ -150,9 +149,7 @@ All tests in the test script must start with the prefix `test_` in order for the
 Each test should perform at least one assert or call `pending` to indicate the test hasn't been implemented yet.
 
 
-# <a name="method_list"> Method List
-
-### <a name="test_methods"> Asserting things
+# <a name="method_list"> Test Related Methods
 These methods should be used in tests to make assertions.  These methods are available to anything that inherits from the Test class (`extends "res://addons/gut/test.gd"`).  All sample code listed for the methods can be found here:  https://github.com/bitwes/GutTests/blob/master/test/unit/test_readme_examples.gd.
 #### pending(text="")
 flag a test as pending, the optional message is printed in the GUI
@@ -323,9 +320,9 @@ func test_assert_has_signal():
 
 ```
 #### <a name="watch_signals"> watch_signals(object)
-This must be called in order to make assertions based on signals being emitted.  __Right now, this only supports signals that are emitted with 9 or less parameters.  This can be extended but nine seemed like enough for now.  The Godot documentation suggests that the limit is four but in my testing I found you can pass more.__
+This must be called in order to make assertions based on signals being emitted.  __Right now, this only supports signals that are emitted with 9 or less parameters.__  This can be extended but nine seemed like enough for now.  The Godot documentation suggests that the limit is four but in my testing I found you can pass more.
 
-This must be called in each test in which you want to make signal based assertions in.  You can call it multiple times with different objects.   You should not call it multiple times with the same object in the same test.  The objects that are watched are cleared after each test (specifically right before `teardown` is called).  Under the covers, Gut will connect to all the signals an object has and it will track each time they fire.  You can then use the following asserts and methods to verify things are acting correctl
+This must be called in each test in which you want to make signal based assertions in.  You can call it multiple times with different objects.   You should not call it multiple times with the same object in the same test.  The objects that are watched are cleared after each test (specifically right before `teardown` is called).  Under the covers, Gut will connect to all the signals an object has and it will track each time they fire.  You can then use the following asserts and methods to verify things are acting correct.
 
 #### <a name=assert_signal_emitted> assert_signal_emitted(object, signal_name)
 Assert that the specified object emitted the named signal.  You must call `watch_signals` and pass it the object that you are making assertions about.  This will fail if the object is not being watched or if the object does not have the specified signal.  Since this will fail if the signal does not exist, you can often skip using `assert_has_signal`.
@@ -645,7 +642,7 @@ func test_illustrate_end_test():
 	# finished.
 	end_test()
 ```
-### <a name="gut_methods"> Methods for Configuring the Execution of Tests
+## <a name="gut_methods"> Methods for Configuring the Execution of Tests
 These methods would be used inside the scene you created at `res://test/tests.tcn`.  These methods can be called against the Gut node you created.  Most of these are not necessary anymore since you can configure Gut in the editor but they are here if you want to use them.  Simply put `get_node('Gut').` in front of any of them.  
 
 <i>__**__ indicates the option can be set via the editor</i>
@@ -838,7 +835,7 @@ Options
                   string will be executed.  You may run others by interacting
                   with the GUI.
   -gutloc         Full path (including name) of the gut script.  Default
-                  res://test/gut/gut.gd
+                  res://addons/gut/gut.gd
   -gh             Print this help
 ---------------------------------------------------------   
 ```
