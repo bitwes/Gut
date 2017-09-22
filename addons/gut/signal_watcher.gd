@@ -58,6 +58,7 @@ func _add_watched_signal(obj, name):
 		_watched_signals[obj] = {name:[]}
 	else:
 		_watched_signals[obj][name] = []
+	obj.connect(name, self, '_on_watched_signal', [obj, name])
 
 # This handles all the signals that are watched.  It supports up to 9 parameters
 # which could be emitted by the signal and the two parameters used when it is
@@ -89,16 +90,22 @@ func _on_watched_signal(arg1=ARG_NOT_SET, arg2=ARG_NOT_SET, arg3=ARG_NOT_SET, \
 
 	_watched_signals[object][signal_name].append(args)
 
+func _has_signal(object, signal_name):
+	var signals = object.get_signal_list()
+	for i in range(signals.size()):
+		if(signals[i]['name'] == signal_name):
+			return true
+	return false
+
 func watch_signals(object):
 	var signals = object.get_signal_list()
 	for i in range(signals.size()):
-		watch_signal(object, signals[i]['name'])
+		_add_watched_signal(object, signals[i]['name'])
 
 func watch_signal(object, signal_name):
 	var did = false
-	if(object.has_user_signal(signal_name)):
+	if(_has_signal(object, signal_name)):
 		_add_watched_signal(object, signal_name)
-		object.connect(signal_name, self, '_on_watched_signal', [object, signal_name])
 		did = true
 	return did
 
