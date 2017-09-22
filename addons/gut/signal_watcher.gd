@@ -90,7 +90,7 @@ func _on_watched_signal(arg1=ARG_NOT_SET, arg2=ARG_NOT_SET, arg3=ARG_NOT_SET, \
 
 	_watched_signals[object][signal_name].append(args)
 
-func _has_signal(object, signal_name):
+func does_object_have_signal(object, signal_name):
 	var signals = object.get_signal_list()
 	for i in range(signals.size()):
 		if(signals[i]['name'] == signal_name):
@@ -104,7 +104,7 @@ func watch_signals(object):
 
 func watch_signal(object, signal_name):
 	var did = false
-	if(_has_signal(object, signal_name)):
+	if(does_object_have_signal(object, signal_name)):
 		_add_watched_signal(object, signal_name)
 		did = true
 	return did

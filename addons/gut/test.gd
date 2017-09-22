@@ -331,7 +331,7 @@ func assert_get_set_methods(obj, property, default, set_to):
 # ------------------------------------------------------------------------------
 func _fail_if_does_not_have_signal(object, signal_name):
 	var did_fail = false
-	if(!object.has_user_signal(signal_name)):
+	if(!_signal_watcher.does_object_have_signal(object, signal_name)):
 		_fail(str('Object ', object, ' does not have the signal [', signal_name, ']'))
 		did_fail = true
 	return did_fail
@@ -433,7 +433,7 @@ func assert_signal_emit_count(object, signal_name, times, text=""):
 # ------------------------------------------------------------------------------
 func assert_has_signal(object, signal_name, text=""):
 	var disp = str('Expected object ', object, ' to have signal [', signal_name, ']:  ', text)
-	if(object.has_user_signal(signal_name)):
+	if(_signal_watcher.does_object_have_signal(object, signal_name)):
 		_pass(disp)
 	else:
 		_fail(disp)
