@@ -150,7 +150,7 @@ Each test should perform at least one assert or call `pending` to indicate the t
 
 
 # <a name="method_list"> Test Related Methods
-These methods should be used in tests to make assertions.  These methods are available to anything that inherits from the Test class (`extends "res://addons/gut/test.gd"`).  All sample code listed for the methods can be found here:  https://github.com/bitwes/GutTests/blob/master/test/unit/test_readme_examples.gd.
+These methods should be used in tests to make assertions.  These methods are available to anything that inherits from the Test class (`extends "res://addons/gut/test.gd"`).  All sample code listed for the methods can be found here:  https://github.com/bitwes/GutTests/blob/master/test/samples/test_readme_examples.gd.
 #### pending(text="")
 flag a test as pending, the optional message is printed in the GUI
 ``` python
