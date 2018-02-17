@@ -102,7 +102,7 @@ func setup_controls():
 
 	add_child(_ctrls.text_box)
 	_ctrls.text_box.set_size(Vector2(get_size().x - 4, 300))
-	_ctrls.text_box.set_pos(Vector2(2, 0))
+	_ctrls.text_box.set_position(Vector2(2, 0))
 	_ctrls.text_box.set_readonly(true)
 	_ctrls.text_box.set_syntax_coloring(true)
 	_ctrls.text_box.set_anchor(MARGIN_LEFT, ANCHOR_BEGIN)
@@ -114,26 +114,26 @@ func setup_controls():
 	add_child(_ctrls.copy_button)
 	_ctrls.copy_button.set_text("Copy")
 	_ctrls.copy_button.set_size(button_size)
-	_ctrls.copy_button.set_pos(Vector2(get_size().x - 5 - button_size.x, _ctrls.text_box.get_size().y + 10))
+	_ctrls.copy_button.set_position(Vector2(get_size().x - 5 - button_size.x, _ctrls.text_box.get_size().y + 10))
 	_set_anchor_bottom_right(_ctrls.copy_button)
 
 	add_child(_ctrls.clear_button)
 	_ctrls.clear_button.set_text("Clear")
 	_ctrls.clear_button.set_size(button_size)
-	_ctrls.clear_button.set_pos(_ctrls.copy_button.get_pos() - Vector2(button_size.x, 0) - button_spacing)
+	_ctrls.clear_button.set_position(_ctrls.copy_button.get_position() - Vector2(button_size.x, 0) - button_spacing)
 	_set_anchor_bottom_right(_ctrls.clear_button)
 
 	add_child(_ctrls.pass_count)
 	_ctrls.pass_count.set_text('0 - 0')
 	_ctrls.pass_count.set_size(Vector2(100, 30))
-	_ctrls.pass_count.set_pos(Vector2(550, 0))
+	_ctrls.pass_count.set_position(Vector2(550, 0))
 	_ctrls.pass_count.set_align(HALIGN_RIGHT)
 	_set_anchor_top_right(_ctrls.pass_count)
 
 	add_child(_ctrls.continue_button)
 	_ctrls.continue_button.set_text("Continue")
 	_ctrls.continue_button.set_size(Vector2(100, 25))
-	_ctrls.continue_button.set_pos(Vector2(_ctrls.clear_button.get_pos().x, _ctrls.clear_button.get_pos().y + _ctrls.clear_button.get_size().y + 10))
+	_ctrls.continue_button.set_position(Vector2(_ctrls.clear_button.get_position().x, _ctrls.clear_button.get_position().y + _ctrls.clear_button.get_size().y + 10))
 	_ctrls.continue_button.set_disabled(true)
 	_set_anchor_bottom_right(_ctrls.continue_button)
 
@@ -141,67 +141,67 @@ func setup_controls():
 	_ctrls.ignore_continue_checkbox.set_text("Ignore pauses")
 	#_ctrls.ignore_continue_checkbox.set_pressed(_ignore_pause_before_teardown)
 	_ctrls.ignore_continue_checkbox.set_size(Vector2(50, 30))
-	_ctrls.ignore_continue_checkbox.set_pos(Vector2(_ctrls.continue_button.get_pos().x, _ctrls.continue_button.get_pos().y + _ctrls.continue_button.get_size().y - 5))
+	_ctrls.ignore_continue_checkbox.set_position(Vector2(_ctrls.continue_button.get_position().x, _ctrls.continue_button.get_position().y + _ctrls.continue_button.get_size().y - 5))
 	_set_anchor_bottom_right(_ctrls.ignore_continue_checkbox)
 
 	var log_label = Label.new()
 	add_child(log_label)
 	log_label.set_text("Log Level")
-	log_label.set_pos(Vector2(10, _ctrls.text_box.get_size().y + 1))
+	log_label.set_position(Vector2(10, _ctrls.text_box.get_size().y + 1))
 	_set_anchor_bottom_left(log_label)
 
 	add_child(_ctrls.log_level_slider)
 	_ctrls.log_level_slider.set_size(Vector2(75, 30))
-	_ctrls.log_level_slider.set_pos(Vector2(10, log_label.get_pos().y + 20))
+	_ctrls.log_level_slider.set_position(Vector2(10, log_label.get_position().y + 20))
 	_ctrls.log_level_slider.set_min(0)
 	_ctrls.log_level_slider.set_max(2)
 	_ctrls.log_level_slider.set_ticks(3)
 	_ctrls.log_level_slider.set_ticks_on_borders(true)
 	_ctrls.log_level_slider.set_step(1)
-	_ctrls.log_level_slider.set_rounded_values(true)
+	#_ctrls.log_level_slider.set_rounded_values(true)
 	#_ctrls.log_level_slider.set_value(_log_level)
 	_set_anchor_bottom_left(_ctrls.log_level_slider)
 
 	var script_prog_label = Label.new()
 	add_child(script_prog_label)
-	script_prog_label.set_pos(Vector2(100, log_label.get_pos().y))
+	script_prog_label.set_position(Vector2(100, log_label.get_position().y))
 	script_prog_label.set_text('Scripts:')
 	_set_anchor_bottom_left(script_prog_label)
 
 	add_child(_ctrls.script_progress)
 	_ctrls.script_progress.set_size(Vector2(200, 10))
-	_ctrls.script_progress.set_pos(script_prog_label.get_pos() + Vector2(70, 0))
+	_ctrls.script_progress.set_position(script_prog_label.get_position() + Vector2(70, 0))
 	_ctrls.script_progress.set_min(0)
 	_ctrls.script_progress.set_max(1)
-	_ctrls.script_progress.set_unit_value(1)
+	_ctrls.script_progress.set_step(1)
 	_set_anchor_bottom_left(_ctrls.script_progress)
 
 	var test_prog_label = Label.new()
 	add_child(test_prog_label)
-	test_prog_label.set_pos(Vector2(100, log_label.get_pos().y + 15))
+	test_prog_label.set_position(Vector2(100, log_label.get_position().y + 15))
 	test_prog_label.set_text('Tests:')
 	_set_anchor_bottom_left(test_prog_label)
 
 	add_child(_ctrls.test_progress)
 	_ctrls.test_progress.set_size(Vector2(200, 10))
-	_ctrls.test_progress.set_pos(test_prog_label.get_pos() + Vector2(70, 0))
+	_ctrls.test_progress.set_position(test_prog_label.get_position() + Vector2(70, 0))
 	_ctrls.test_progress.set_min(0)
 	_ctrls.test_progress.set_max(1)
-	_ctrls.test_progress.set_unit_value(1)
+	_ctrls.test_progress.set_step(1)
 	_set_anchor_bottom_left(_ctrls.test_progress)
 
 	add_child(_ctrls.previous_button)
 	_ctrls.previous_button.set_size(Vector2(50, 25))
-	pos = _ctrls.test_progress.get_pos() + Vector2(250, 25)
+	pos = _ctrls.test_progress.get_position() + Vector2(250, 25)
 	pos.x -= 300
-	_ctrls.previous_button.set_pos(pos)
+	_ctrls.previous_button.set_position(pos)
 	_ctrls.previous_button.set_text("<")
 	_set_anchor_bottom_left(_ctrls.previous_button)
 
 	add_child(_ctrls.stop_button)
 	_ctrls.stop_button.set_size(Vector2(50, 25))
 	pos.x += 60
-	_ctrls.stop_button.set_pos(pos)
+	_ctrls.stop_button.set_position(pos)
 	_ctrls.stop_button.set_text('stop')
 	_set_anchor_bottom_left(_ctrls.stop_button)
 
@@ -209,20 +209,20 @@ func setup_controls():
 	_ctrls.run_rest.set_text('run')
 	_ctrls.run_rest.set_size(Vector2(50, 25))
 	pos.x += 60
-	_ctrls.run_rest.set_pos(pos)
+	_ctrls.run_rest.set_position(pos)
 	_set_anchor_bottom_left(_ctrls.run_rest)
 
 	add_child(_ctrls.next_button)
 	_ctrls.next_button.set_size(Vector2(50, 25))
 	pos.x += 60
-	_ctrls.next_button.set_pos(pos)
+	_ctrls.next_button.set_position(pos)
 	_ctrls.next_button.set_text(">")
 	_set_anchor_bottom_left(_ctrls.next_button)
 
 	add_child(_ctrls.runtime_label)
 	_ctrls.runtime_label.set_text('0.0')
 	_ctrls.runtime_label.set_size(Vector2(50, 30))
-	_ctrls.runtime_label.set_pos(Vector2(_ctrls.clear_button.get_pos().x - 90, _ctrls.next_button.get_pos().y))
+	_ctrls.runtime_label.set_position(Vector2(_ctrls.clear_button.get_position().x - 90, _ctrls.next_button.get_position().y))
 	_set_anchor_bottom_right(_ctrls.runtime_label)
 
 	# the drop down has to be one of the last added so that when then list of
@@ -230,14 +230,14 @@ func setup_controls():
 	# an item in the list.
 	add_child(_ctrls.scripts_drop_down)
 	_ctrls.scripts_drop_down.set_size(Vector2(375, 25))
-	_ctrls.scripts_drop_down.set_pos(Vector2(10, _ctrls.log_level_slider.get_pos().y + 50))
+	_ctrls.scripts_drop_down.set_position(Vector2(10, _ctrls.log_level_slider.get_position().y + 50))
 	_set_anchor_bottom_left(_ctrls.scripts_drop_down)
 	_ctrls.scripts_drop_down.set_clip_text(true)
 
 	add_child(_ctrls.run_button)
 	_ctrls.run_button.set_text('<- run')
 	_ctrls.run_button.set_size(Vector2(50, 25))
-	_ctrls.run_button.set_pos(_ctrls.scripts_drop_down.get_pos() + Vector2(_ctrls.scripts_drop_down.get_size().x + 5, 0))
+	_ctrls.run_button.set_position(_ctrls.scripts_drop_down.get_position() + Vector2(_ctrls.scripts_drop_down.get_size().x + 5, 0))
 	_set_anchor_bottom_left(_ctrls.run_button)
 
 func set_it_up():
@@ -303,7 +303,7 @@ func _init_run():
 	_ctrls.text_box.add_color_region('/#', '#/', Color(.9, .6, 0))
 	_ctrls.text_box.add_color_region('/-', '-/', Color(1, 1, 0))
 	_ctrls.text_box.add_color_region('/*', '*/', Color(.5, .5, 1))
-	_ctrls.text_box.set_symbol_color(Color(.5, .5, .5))
+	#_ctrls.text_box.set_symbol_color(Color(.5, .5, .5))
 	_ctrls.runtime_label.set_text('0.0')
 	_ctrls.test_progress.set_max(1)
 
@@ -316,7 +316,7 @@ func _input(event):
 		if(event.type == InputEvent.MOUSE_BUTTON):
 			if (event.button_index == 1):
 				#It's checking a square area for the bottom right corner, but that's close enough.  I'm lazy
-				if(event.pos.x > get_size().x + get_pos().x - 10 and event.pos.y > get_size().y + get_pos().y - 10):
+				if(event.pos.x > get_size().x + get_position().x - 10 and event.pos.y > get_size().y + get_position().y - 10):
 					if event.pressed:
 						_mouse_down = true
 						_mouse_down_pos = event.pos
