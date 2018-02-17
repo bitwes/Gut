@@ -473,7 +473,7 @@ func assert_extends(object, a_class, text=''):
 		if(a_class.get_type() != NATIVE_CLASS and a_class.get_type() != GDSCRIPT_CLASS):
 			_fail(str(bad_param_2, types[typeof(a_class)]))
 		else:
-			if(object extends a_class):
+			if(object is a_class):
 				_pass(disp)
 			else:
 				_fail(disp)
