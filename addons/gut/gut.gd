@@ -400,6 +400,14 @@ func _end_run():
 
 	p(_get_summary_text(), 0)
 
+	# For some reason the text edit control isn't scrolling to the bottom after
+	# the summary is printed.  As a workaround, yield for a short time and
+	# then move the cursor.  I found this workaround through trial and error.
+	_yield_between.timer.set_wait_time(0.001)
+	_yield_between.timer.start()
+	yield(_yield_between.timer, 'timeout')
+	_ctrls.text_box.cursor_set_line(_ctrls.text_box.get_line_count())
+
 	_runtime_timer.stop()
 	_is_running = false
 	update()

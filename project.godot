@@ -15,7 +15,7 @@ config/icon="res://icon.png"
 
 [autoload]
 
-global="*res://samples/scripts/global.gd"
+global="*res://scripts/global.gd"
 
 [editor_plugins]
 
