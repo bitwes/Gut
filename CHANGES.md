@@ -1,10 +1,15 @@
 # Release notes
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
+
 # 6.0.0
 * Godot 3.0 compatibility
 * Combined GutTests repo so everything is now in one place.
 * Fixed bug where prev/next were disabled incorrectly on startup.
+* Some house keeping.
+
+### Breaking Changes
+No longer works with Godot 2.x, other than that everything remained the same.
 
 # 5.0.1
 * Fixed issue where `watch_signals` was not working with "Script Signals".  These are signals defined using the syntax `signal SomeSignal` instead of using `add_user_signal` to create them.

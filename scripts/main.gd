@@ -40,10 +40,12 @@ extends Node2D
 var tester = null
 
 func _ready():
+	# -----
 	# Uncomment these lines to see various behaviors
+	# -----
 	#_run_test_one_line()
 	#_run_gut_tests(get_node('Gut'))
-	_run_all_tests()
+	#_run_all_tests()
 	pass
 
 # Show that the signal is working.
