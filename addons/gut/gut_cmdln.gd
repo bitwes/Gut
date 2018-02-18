@@ -342,8 +342,4 @@ func _init():
 # exit if option is set.
 func _on_tests_finished():
 	if(options.should_exit):
-		if(_tester._summary.failed>0):
-			# kill self => return non-zero exit code
-			OS.kill(OS.get_process_ID())
-		else:
-			quit()
+		quit()
