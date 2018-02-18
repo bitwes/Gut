@@ -1,8 +1,8 @@
-# Gut
+# Gut 5.0.0 (Godot 2.x)
 GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.  It allows you to write tests for your gdscript in gdscript.
 
-### Breaking Changes from 4.1.0
-Due to the restructuring (see CHANGES.md) I've completely moved the various `asserts` out of the core `gut` object and put them in the `test` object that all unit tests inherit from.  This means that any asserts or pending calls that are prefixed with _`gut.`_ need to have the _`gut.`_ prefix removed.  To cut down on the annoyance level of this change I've added stubs for the removed methods that fail with a message indicating that the method has been moved.
+# Godot 2.x / Godot 3.0
+The `master` branch contains the version of Gut that is compatible with Godot 3.0.  This branch was created to maintain a version that is 2.x compatible.  This version will get fixes for any serious/fatal/horrible bugs but no new development will be ported to this version.  There are no plans to delete this branch (Maybe it will get deleted when Godot 4.0 comes out or something like that).
 
 # Method Links
 <table><tr>
