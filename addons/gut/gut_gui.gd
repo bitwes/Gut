@@ -248,13 +248,14 @@ func set_it_up():
 # Updates the display
 #-------------------------------------------------------------------------------
 func _update_controls():
+
 	if(_is_running):
 		_ctrls.previous_button.set_disabled(true)
 		_ctrls.next_button.set_disabled(true)
 		_ctrls.pass_count.show()
 	else:
-		_ctrls.previous_button.set_disabled(_ctrls.scripts_drop_down.get_selected() == 0)
-		_ctrls.next_button.set_disabled(_ctrls.scripts_drop_down.get_selected() == _ctrls.scripts_drop_down.get_item_count() -1)
+		_ctrls.previous_button.set_disabled(_ctrls.scripts_drop_down.get_selected() <= 0)
+		_ctrls.next_button.set_disabled(_ctrls.scripts_drop_down.get_selected() != -1 and _ctrls.scripts_drop_down.get_selected() == _ctrls.scripts_drop_down.get_item_count() -1)
 		_ctrls.pass_count.hide()
 
 	# disabled during run
