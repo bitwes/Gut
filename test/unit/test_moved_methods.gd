@@ -1,3 +1,8 @@
+# ------------------------------------------------------------------------------
+# These tests are used to manually verify that the message about "moved"
+# methods is displayed.  Moved methods were part of a refactoring that moved
+# various methods from the Gut object to the Test object.
+# ------------------------------------------------------------------------------
 extends "res://addons/gut/test.gd"
 
 func prerun_setup():

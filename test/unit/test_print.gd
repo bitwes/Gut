@@ -1,3 +1,6 @@
+# ------------------------------------------------------------------------------
+# Run these tests and manually check that the printing occurred as expected
+# ------------------------------------------------------------------------------
 extends "res://addons/gut/test.gd"
 
 func test_print_indent():

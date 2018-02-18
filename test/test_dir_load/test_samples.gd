@@ -24,19 +24,19 @@ func postrun_teardown():
 	gut.p("ran run teardown", 2)
 
 func test_assert_eq_number_not_equal():
-	gut.assert_eq(1, 2, "Should fail.  1 != 2")
+	assert_eq(1, 2, "Should fail.  1 != 2")
 
 func test_assert_eq_number_equal():
-	gut.assert_eq('asdf', 'asdf', "Should pass")
+	assert_eq('asdf', 'asdf', "Should pass")
 
 func test_assert_true_with_true():
-	gut.assert_true(true, "Should pass, true is true")
+	assert_true(true, "Should pass, true is true")
 
 func test_assert_true_with_false():
-	gut.assert_true(false, "Should fail")
+	assert_true(false, "Should fail")
 
 func test_something_else():
-	gut.assert_true(false, "didn't work")
+	assert_true(false, "didn't work")
 
 func test_show_a_gut_print():
 	#This is what you should use to print out stuff if

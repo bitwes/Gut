@@ -1,5 +1,7 @@
-#A sample script for illustrating multiple scripts and what it looks like
-#when all tests pass.
+# ------------------------------------------------------------------------------
+# A sample script for illustrating multiple scripts and what it looks like
+# when all tests pass.
+# ------------------------------------------------------------------------------
 extends "res://addons/gut/test.gd"
 
 func test_auto_load_works():

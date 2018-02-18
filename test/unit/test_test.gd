@@ -1,3 +1,7 @@
+# ------------------------------------------------------------------------------
+# Tests test.gd.  test.gd contains all the asserts is the class that all
+# test scripts inherit from.
+# ------------------------------------------------------------------------------
 extends "res://addons/gut/test.gd"
 
 var Gut = load('res://addons/gut/gut.gd')

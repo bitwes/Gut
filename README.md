@@ -1,8 +1,8 @@
 # Gut
 GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.  It allows you to write tests for your gdscript in gdscript.
 
-### Breaking Changes from 4.1.0
-Due to the restructuring (see CHANGES.md) I've completely moved the various `asserts` out of the core `gut` object and put them in the `test` object that all unit tests inherit from.  This means that any asserts or pending calls that are prefixed with _`gut.`_ need to have the _`gut.`_ prefix removed.  To cut down on the annoyance level of this change I've added stubs for the removed methods that fail with a message indicating that the method has been moved.
+### Godot 3.0 Compatible.
+Version 6.0.0 is Godot 3.0 compatible.  These changes are not compatible with any of the 2.x versions of Godot.  The godot_2x branch has been created to hold the old version of Gut that works with Godot 2.x.  Barring any severe issues, there will not be any more development for Godot 2.x.
 
 # Method Links
 <table><tr>
@@ -150,7 +150,7 @@ Each test should perform at least one assert or call `pending` to indicate the t
 
 
 # <a name="method_list"> Test Related Methods
-These methods should be used in tests to make assertions.  These methods are available to anything that inherits from the Test class (`extends "res://addons/gut/test.gd"`).  All sample code listed for the methods can be found here:  https://github.com/bitwes/GutTests/blob/master/test/samples/test_readme_examples.gd.
+These methods should be used in tests to make assertions.  These methods are available to anything that inherits from the Test class (`extends "res://addons/gut/test.gd"`).  All sample code listed for the methods can be found here in [test_readme_examples.gd](test/samples/test_readme_examples.gd)
 #### pending(text="")
 flag a test as pending, the optional message is printed in the GUI
 ``` python
@@ -869,8 +869,11 @@ I got this one when I accidentally put a space instead of an "=" after -gselect.
 
 
 #  <a name="contributing"> Contributing
-Pull requests are welcome but first read the directions in the testing and example repo https://github.com/bitwes/GutTests/.  The core Gut code is separated out into this repo and the linked repo contains all the test and example code.  Any enhancements or bug fixes should have a corresponding pull request with new tests.
+This testing tool has tests of course.  All Gut related tests are found in the `test/unit` and `test/integration` directories.  Any enhancements or bug fixes should have a corresponding pull request with new tests.
 
+The bulk of the tests for Gut are in [test_gut.gd](test/unit/test_gut.gd) and [test_test.gd](test/unit/test_test.gd).  [test_signal_watcher.gd](test/unit/test_signal_watcher.gd) tests the class used to track the emitting of signals.  The other test scripts in `unit` and `integration` should be run and their output spot checked since they test other parts of Gut that aren't easily testabled.
+
+For convenience, the `main.tscn` includes a handy "Run Gut Unit Tests" button that will kick off all the test scripts.
 
 # Who do I talk to?
 You can talk to me, Butch Wesley

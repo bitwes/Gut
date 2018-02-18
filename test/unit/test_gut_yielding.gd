@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
 # All of these tests require some amount of user interaction or verifying of the
-# output so they were moved into a different script for testing.
+# output.  
 #-------------------------------------------------------------------------------
 extends "res://addons/gut/test.gd"
 

@@ -31,14 +31,19 @@ extends Node2D
 # This file is used to illustrate a couple ways of loading scripts and running
 # them.  This is also the method used to execute the tests of the Gut object
 # itself.
+#
+# The Gut object in the scene has already been configured through the editor
+# to load up various scripts.  You can experiment with the settings in the
+# scene or edit the code in this script.
 ################################################################################
 
 var tester = null
 
 func _ready():
-	#_run_test_one_line():
-	#_run_gut_tests()
-	#_run_all_tests()
+	# Uncomment these lines to see various behaviors
+	#_run_test_one_line()
+	#_run_gut_tests(get_node('Gut'))
+	_run_all_tests()
 	pass
 
 # Show that the signal is working.
@@ -46,10 +51,11 @@ func _on_tests_finished():
 	tester.p("Tests done callback called")
 
 #------------------------------------
-# One line, print to console
+# This creates an instance of Gut and runs a single script.  The output will 
+# be visible in the console, not the Gut instance on the screen.
 #------------------------------------
 func _run_test_one_line():
-	load('res://addons/gut/gut.gd').new().test_script('res://test/unit/sample_tests.gd')
+	load('res://addons/gut/gut.gd').new().test_script('res://test/samples/test_sample_all_passed.gd')
 
 #------------------------------------
 # More lines, get result text out manually.  Can also inspect the results further
@@ -61,16 +67,9 @@ func _run_all_tests():
 
 	tester.connect('tests_finished', self, '_on_tests_finished')
 	tester.show()
-	tester.set_pos(Vector2(100, 100))
+	tester.set_position(Vector2(100, 100))
 
 	tester.set_should_print_to_console(true)
-
-	# Run a single test script, this will not appear in the drop
-	# down in the display, but the first time it runs it will
-	# display the results.
-
-	tester.test_script('res://test/test_dir_load/test_samples3.gd')
-	tester.p("This is the results of running a single script.  Notice it's not in the drop down")
 
 	# !! --------
 	# Set the yield between tests so that tests print as they complete
@@ -85,16 +84,29 @@ func _run_all_tests():
 	tester.add_directory('res://test/integration')
 
 	# Automatcially run all scripts when loaded.
-	tester.test_scripts()
+	tester.test_scripts(true)
 
 	# Insepect the results, put out some more text conditionally.
 	if(tester.get_fail_count() > 0):
 		tester.p("SOMEBODY BROKE SOMETHIN'!!\n")
 
-func _run_gut_tests():
-	tester = get_node("Gut")
+# These are all the tests that MUST be run to verify Gut is working as expected.  
+# Some methods may include tests that are expected to fail.  Closely inspect
+# the resutls.
+func _run_gut_tests(gut):
+	gut.set_should_print_to_console(false)
+	gut.add_script('res://test/unit/test_gut.gd')
+	gut.add_script('res://test/unit/test_gut_yielding.gd')
+	gut.add_script('res://test/unit/test_test.gd')
+	gut.add_script('res://test/unit/test_signal_watcher.gd')
+	gut.set_yield_between_tests(true)
+	# true says to run all the scripts, not just the first or 
+	# the selected script.
+	gut.test_scripts(true) 
 
-	tester.set_should_print_to_console(false)
-	tester.add_script('res://test/unit/test_gut.gd')
-	tester.add_script('res://test/unit/test_gut_yielding.gd')
-	tester.set_yield_between_tests(true)
+# Make a new Gut and run all the Gut specific tests.  
+func _on_RunGutTestsButton_pressed():
+	var gut = load('res://addons/gut/gut.gd').new()
+	add_child(gut)
+	gut.set_position(Vector2(100, 100))
+	_run_gut_tests(gut)

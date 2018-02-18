@@ -13,7 +13,6 @@ __meta__ = {
 
 [node name="Gut" type="WindowDialog" parent="." index="0"]
 
-visible = false
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
@@ -48,5 +47,31 @@ _directory3 = ""
 _directory4 = ""
 _directory5 = ""
 _directory6 = ""
+
+[node name="RunGutTestsButton" type="Button" parent="." index="1"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 727.0
+margin_top = 18.0
+margin_right = 908.0
+margin_bottom = 93.0
+rect_pivot_offset = Vector2( 0, 0 )
+focus_mode = 2
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+group = null
+text = "Run Gut Unit Tests"
+flat = false
+align = 1
+
+[connection signal="pressed" from="RunGutTestsButton" to="." method="_on_RunGutTestsButton_pressed"]
 
 
