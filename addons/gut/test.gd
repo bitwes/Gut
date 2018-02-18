@@ -55,36 +55,36 @@ var _fail_pass_text = []
 var types = {}
 
 func _init_types_dictionary():
-	types[0] = 'TYPE_NIL'
-	types[1] = 'Bool'
-	types[2] = 'Int'
-	types[3] = 'Float/Real'
-	types[4] = 'String'
-	types[5] = 'Vector2'
-	types[6] = 'Rect2'
-	types[7] = 'Vector3'
-	types[8] = 'Matrix32'
-	types[9] = 'Plane'
-	types[10] = 'QUAT'
-	types[11] = 'AABB'
-	types[12] = 'Matrix3'
-	types[13] = 'Transform'
-	types[14] = 'Color'
-	types[15] = 'Image'
-	types[16] = 'Node Path'
-	types[17] = 'RID'
-	types[18] = 'Object'
-	types[19] = 'TYPE_INPUT_EVENT'
-	types[20] = 'Dictionary'
-	types[21] = 'Array'
-	types[22] = 'TYPE_RAW_ARRAY'
-	types[23] = 'TYPE_INT_ARRAY'
-	types[24] = 'TYPE_REAL_ARRAY'
-	types[25] = 'TYPE_STRING_ARRAY'
-	types[26] = 'TYPE_VECTOR2_ARRAY'
-	types[27] = 'TYPE_VECTOR3_ARRAY'
-	types[28] = 'TYPE_COLOR_ARRAY'
-	types[29] = 'TYPE_MAX'
+	types[TYPE_NIL] = 'TYPE_NIL'
+	types[TYPE_BOOL] = 'Bool'
+	types[TYPE_INT] = 'Int'
+	types[TYPE_REAL] = 'Float/Real'
+	types[TYPE_STRING] = 'String'
+	types[TYPE_VECTOR2] = 'Vector2'
+	types[TYPE_RECT2] = 'Rect2'
+	types[TYPE_VECTOR3] = 'Vector3'
+	#types[8] = 'Matrix32'
+	types[TYPE_PLANE] = 'Plane'
+	types[TYPE_QUAT] = 'QUAT'
+	types[TYPE_AABB] = 'AABB'
+	#types[12] = 'Matrix3'
+	types[TYPE_TRANSFORM] = 'Transform'
+	types[TYPE_COLOR] = 'Color'
+	#types[15] = 'Image'
+	types[TYPE_NODE_PATH] = 'Node Path'
+	types[TYPE_RID] = 'RID'
+	types[TYPE_OBJECT] = 'TYPE_OBJECT'
+	#types[19] = 'TYPE_INPUT_EVENT'
+	types[TYPE_DICTIONARY] = 'Dictionary'
+	types[TYPE_ARRAY] = 'Array'
+	types[TYPE_RAW_ARRAY] = 'TYPE_RAW_ARRAY'
+	types[TYPE_INT_ARRAY] = 'TYPE_INT_ARRAY'
+	types[TYPE_REAL_ARRAY] = 'TYPE_REAL_ARRAY'
+	types[TYPE_STRING_ARRAY] = 'TYPE_STRING_ARRAY'
+	types[TYPE_VECTOR2_ARRAY] = 'TYPE_VECTOR2_ARRAY'
+	types[TYPE_VECTOR3_ARRAY] = 'TYPE_VECTOR3_ARRAY'
+	types[TYPE_COLOR_ARRAY] = 'TYPE_COLOR_ARRAY'
+	types[TYPE_MAX] = 'TYPE_MAX'
 
 # Summary counts for the test.
 var _summary = {
@@ -460,18 +460,18 @@ func get_signal_parameters(object, signal_name, index=-1):
 # ------------------------------------------------------------------------------
 func assert_extends(object, a_class, text=''):
 	var disp = str('Expected [', object, '] to be type of [', a_class, ']: ', text)
-	var NATIVE_CLASS = 'GDNativeClass'
+	var NATIVE_CLASS = 'GDScriptNativeClass'
 	var GDSCRIPT_CLASS = 'GDScript'
 	var bad_param_2 = 'Parameter 2 must be a Class (like Node2D or Label).  You passed '
 
-	if(typeof(object) != 18):
+	if(typeof(object) != TYPE_OBJECT):
 		_fail(str('Parameter 1 must be an instance of an object.  You passed:  ', types[typeof(object)]))
-	elif(typeof(a_class) != 18):
+	elif(typeof(a_class) != TYPE_OBJECT):
 		_fail(str(bad_param_2, types[typeof(a_class)]))
 	else:
-		disp = str('Expected [', object.get_type(), '] to extend [', a_class.get_type(), ']: ', text)
-		if(a_class.get_type() != NATIVE_CLASS and a_class.get_type() != GDSCRIPT_CLASS):
-			_fail(str(bad_param_2, types[typeof(a_class)]))
+		disp = str('Expected [', object.get_class(), '] to extend [', a_class.get_class(), ']: ', text)
+		if(a_class.get_class() != NATIVE_CLASS and a_class.get_class() != GDSCRIPT_CLASS):
+			_fail(str(bad_param_2, a_class.get_class(), '  ', types[typeof(a_class)]))
 		else:
 			if(object is a_class):
 				_pass(disp)
