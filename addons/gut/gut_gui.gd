@@ -49,10 +49,6 @@ var _summary = {
 var _is_running = false
 var min_size = Vector2(650, 400)
 
-# This is the editor font.  I imported using the font at
-# https://github.com/godotengine/godot/tree/master/thirdparty/fonts
-var _font = load('res://addons/gut/source_code_pro.fnt')
-
 #controls
 var _ctrls = {
 	text_box = TextEdit.new(),
@@ -109,7 +105,6 @@ func setup_controls():
 	_ctrls.text_box.set_anchor(MARGIN_RIGHT, ANCHOR_END)
 	_ctrls.text_box.set_anchor(MARGIN_TOP, ANCHOR_BEGIN)
 	_ctrls.text_box.set_anchor(MARGIN_BOTTOM, ANCHOR_END)
-	_ctrls.text_box.add_font_override('font', _font)
 
 	add_child(_ctrls.copy_button)
 	_ctrls.copy_button.set_text("Copy")

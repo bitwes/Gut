@@ -415,9 +415,6 @@ func _is_function_state(script_result):
 	return script_result != null and \
 	       typeof(script_result) == TYPE_OBJECT and \
 	       script_result is GDScriptFunctionState
-	       #
-	       #script_result.get_type() == 'GDFunctionState'
-
 
 # ------------------------------------------------------------------------------
 # Print out the heading for a new script
