@@ -1,4 +1,4 @@
-# Gut
+# Gut 6.0.0
 GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.  It allows you to write tests for your gdscript in gdscript.
 
 ### Godot 3.0 Compatible.
@@ -873,7 +873,7 @@ This testing tool has tests of course.  All Gut related tests are found in the `
 
 The bulk of the tests for Gut are in [test_gut.gd](test/unit/test_gut.gd) and [test_test.gd](test/unit/test_test.gd).  [test_signal_watcher.gd](test/unit/test_signal_watcher.gd) tests the class used to track the emitting of signals.  The other test scripts in `unit` and `integration` should be run and their output spot checked since they test other parts of Gut that aren't easily testabled.
 
-For convenience, the `main.tscn` includes a handy "Run Gut Unit Tests" button that will kick off all the test scripts.
+For convenience, the `main.tscn` includes a handy "Run Gut Unit Tests" button that will kick off all the essential test scripts.
 
 # Who do I talk to?
 You can talk to me, Butch Wesley
