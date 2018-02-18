@@ -260,14 +260,14 @@ func test_asserts_on_test_object():
 	f.close()
 	assert_file_exists(path)
 
-	var path = 'user://gut_test_empty.txt'
-	var f = File.new()
+	path = 'user://gut_test_empty.txt'
+	f = File.new()
 	f.open(path, f.WRITE)
 	f.close()
 	assert_file_empty(path)
 
-	var path = 'user://gut_test_not_empty3.txt'
-	var f = File.new()
+	path = 'user://gut_test_not_empty3.txt'
+	f = File.new()
 	f.open(path, f.WRITE)
 	f.store_8(1)
 	f.close()

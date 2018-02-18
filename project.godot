@@ -13,6 +13,14 @@ config_version=3
 config/name="Gut"
 config/icon="res://icon.png"
 
+[autoload]
+
+global="*res://samples/scripts/global.gd"
+
+[editor_plugins]
+
+enabled=PoolStringArray( "gut" )
+
 [rendering]
 
 environment/default_environment="res://default_env.tres"

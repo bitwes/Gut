@@ -1,41 +1,49 @@
-[gd_scene load_steps=4 format=1]
+[gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://scripts/main.gd" type="Script" id=1]
+[ext_resource path="res://samples/scripts/main.gd" type="Script" id=1]
 [ext_resource path="res://addons/gut/gut.gd" type="Script" id=2]
 [ext_resource path="res://addons/gut/icon.png" type="Texture" id=3]
 
-[node name="main" type="Node2D"]
+[node name="main" type="Node2D" index="0"]
 
-script/script = ExtResource( 1 )
-__meta__ = { "__editor_plugin_screen__":"Script" }
+script = ExtResource( 1 )
+__meta__ = {
+"__editor_plugin_screen__": "Script"
+}
 
-[node name="Gut" type="WindowDialog" parent="."]
+[node name="Gut" type="WindowDialog" parent="." index="0"]
 
-visibility/visible = false
-focus/ignore_mouse = false
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 2
-margin/left = 63.0
-margin/top = 25.0
-margin/right = 799.0
-margin/bottom = 589.0
-popup/exclusive = false
-window/title = ""
-script/script = ExtResource( 2 )
-__meta__ = { "_editor_icon":ExtResource( 3 ) }
-_run_on_load = true
-_select_script = "test_reademe_examples.gd"
-_tests_like = ""
+visible = false
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 48.0
+margin_bottom = 40.0
+rect_pivot_offset = Vector2( 0, 0 )
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+popup_exclusive = false
+window_title = ""
+resizable = false
+script = ExtResource( 2 )
+__meta__ = {
+"_editor_icon": ExtResource( 3 )
+}
+_run_on_load = false
+_select_script = null
+_tests_like = null
 _should_print_to_console = true
-_log_level = 2
+_log_level = 1
 _yield_between_tests = true
 _disable_strict_datatype_checks = false
 _test_prefix = "test_"
 _file_prefix = "test_"
 _file_extension = ".gd"
-_directory1 = "res://test/unit"
-_directory2 = "res://test/integration"
+_directory1 = "res://samples/test/unit"
+_directory2 = "res://samples/test/integration"
 _directory3 = ""
 _directory4 = ""
 _directory5 = ""
