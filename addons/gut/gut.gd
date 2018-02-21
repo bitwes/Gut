@@ -37,6 +37,7 @@ extends "res://addons/gut/gut_gui.gd"
 # Editor Variables
 # ###########################
 export var _run_on_load = false
+export var _quit_on_finish = false
 export(String) var _select_script = null
 export(String) var _tests_like = null
 export var _should_print_to_console = true setget set_should_print_to_console, get_should_print_to_console
@@ -414,6 +415,9 @@ func _end_run():
 	_update_controls()
 	emit_signal(SIGNAL_TESTS_FINISHED)
 	set_title("Finished.  " + str(get_fail_count()) + " failures.")
+
+	if _quit_on_finish:
+		get_tree().quit()
 
 # ------------------------------------------------------------------------------
 # Checks the passed in thing to see if it is a "function state" object that gets
