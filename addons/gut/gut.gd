@@ -834,8 +834,8 @@ func simulate(obj, times, delta):
 	for i in range(times):
 		if(obj.has_method("_process")):
 			obj._process(delta)
-		if(obj.has_method("_fixed_process")):
-			obj._fixed_process(delta)
+		if(obj.has_method("_physics_process")):
+			obj._physics_process(delta)
 
 		for kid in obj.get_children():
 			simulate(kid, 1, delta)

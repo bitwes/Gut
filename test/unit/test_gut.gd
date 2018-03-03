@@ -23,13 +23,13 @@ class HasProcessMethod:
 #Used to test calling the _fixed_process
 #method on an object through gut
 #--------------------------------------
-class HasFixedProcessMethod:
+class HasPhysicsProcessMethod:
 	extends Node
-	var fixed_process_called_count = 0
+	var physics_process_called_count = 0
 	var delta_sum = 0.0
 
-	func _fixed_process(delta):
-		fixed_process_called_count += 1
+	func _physics_process(delta):
+		physics_process_called_count += 1
 		delta_sum += delta
 
 #------------------------------
@@ -216,10 +216,10 @@ func test_simulate_calls_process_on_child_objects_of_child_objects():
 
 	assert_pass(objs.size())
 
-func test_simulate_calls_fixed_process():
-	var obj = HasFixedProcessMethod.new()
+func test_simulate_calls_physics_process():
+	var obj = HasPhysicsProcessMethod.new()
 	gr.test_gut.simulate(obj, 10, .1)
-	gr.test.assert_eq(obj.fixed_process_called_count, 10, "_process should have been called 10 times")
+	gr.test.assert_eq(obj.physics_process_called_count, 10, "_process should have been called 10 times")
 	#using just the numbers didn't work, nor using float.  str worked for some reason and
 	#i'm not sure why.
 	gr.test.assert_eq(str(obj.delta_sum), str(1), "The delta value should have been passed in and summed")
