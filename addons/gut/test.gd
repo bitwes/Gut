@@ -132,7 +132,7 @@ func _fail(text):
 	_fail_pass_text.append(msg)
 	if(gut):
 		gut.p(msg, gut.LOG_LEVEL_FAIL_ONLY)
-		gut._fail()
+		gut._fail(text)
 		gut.end_yielded_test()
 
 # ------------------------------------------------------------------------------
@@ -145,7 +145,7 @@ func _pass(text):
 	_fail_pass_text.append(msg)
 	if(gut):
 		gut.p(msg, gut.LOG_LEVEL_ALL_ASSERTS)
-		gut._pass()
+		gut._pass(text)
 		gut.end_yielded_test()
 
 # Checks if the datatypes passed in match.  If they do not then this will cause
@@ -490,6 +490,7 @@ func pending(text=""):
 			gut.p("Pending")
 		else:
 			gut.p("Pending:  " + text)
+		gut._pending(text)
 		gut.end_yielded_test()
 
 # ------------------------------------------------------------------------------

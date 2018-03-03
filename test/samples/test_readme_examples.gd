@@ -199,17 +199,17 @@ class MovingNode:
 		set_process(true)
 
 	func _process(delta):
-		set_pos(get_pos() + Vector2(_speed * delta, 0))
+		set_position(get_position() + Vector2(_speed * delta, 0))
 
 func test_illustrate_yield():
 	var moving_node = MovingNode.new()
 	add_child(moving_node)
-	moving_node.set_pos(Vector2(0, 0))
+	moving_node.set_position(Vector2(0, 0))
 
 	# While the yield happens, the node should move
 	yield(yield_for(2), YIELD)
-	assert_gt(moving_node.get_pos().x, 0)
-	assert_between(moving_node.get_pos().x, 3.9, 4, 'it should move almost 4 whatevers at speed 2')
+	assert_gt(moving_node.get_position().x, 0)
+	assert_between(moving_node.get_position().x, 3.9, 4, 'it should move almost 4 whatevers at speed 2')
 
 func test_illustrate_end_test():
 	yield(yield_for(1), YIELD)

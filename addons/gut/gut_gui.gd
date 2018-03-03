@@ -30,14 +30,8 @@
 ################################################################################
 extends WindowDialog
 
-# various counters
+# various counters.  Most have been moved to the Summary object but not all.
 var _summary = {
-	asserts = 0,
-	passed = 0,
-	failed = 0,
-	tests = 0,
-	scripts = 0,
-	pending = 0,
 	moved_methods = 0,
 	# these are used to display the tally in the top right corner.  Since the
 	# implementation changed to summing things up at the end, the running

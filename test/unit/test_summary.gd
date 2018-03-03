@@ -71,3 +71,4 @@ func test_check_out_this_summary():
 	gr.summary.add_fail('pending_fail', 'fail')
 	gr.summary.add_pending('pending_fail', 'pending')
 	print(gr.summary.get_summary_text())
+	assert_true(true)
