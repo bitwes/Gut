@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 # 6.1.0
 * Fixed resize window handle bug.  It was connecting to wrong signals and didn't work.
 
+
 # 6.0.0
 * Godot 3.0 compatibility
 * Combined GutTests repo so everything is now in one place.

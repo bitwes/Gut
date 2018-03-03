@@ -47,6 +47,8 @@ var gut = null
 var passed = false
 var failed = false
 var _disable_strict_datatype_checks = false
+# Holds all the text for a test's fail/pass.  This is used for testing purposes
+# to see the text of a failed sub-test in test_test.gd
 var _fail_pass_text = []
 
 # Hash containing all the built in types in Godot.  This provides an English
