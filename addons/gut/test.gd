@@ -148,9 +148,11 @@ func _pass(text):
 		gut._pass(text)
 		gut.end_yielded_test()
 
+# ------------------------------------------------------------------------------
 # Checks if the datatypes passed in match.  If they do not then this will cause
 # a fail to occur.  If they match then TRUE is returned, FALSE if not.  This is
 # used in all the assertions that compare values.
+# ------------------------------------------------------------------------------
 func _do_datatypes_match__fail_if_not(got, expected, text):
 	var passed = true
 
@@ -300,6 +302,7 @@ func assert_file_empty(file_path):
 		_fail(disp)
 
 # ------------------------------------------------------------------------------
+# Asserts the specified file is not empty
 # ------------------------------------------------------------------------------
 func assert_file_not_empty(file_path):
 	var disp = 'expected [' + file_path + '] to contain data'
@@ -533,9 +536,4 @@ func get_summary_text():
 		to_return += str("\n  ", _summary.pending, ' pending')
 	if(_summary.failed > 0):
 		to_return += str("\n  ", _summary.failed, ' failed.')
-	# to_return += str('  tests:     ', _summary.tests, "\n")
-	# to_return += str('  asserts:   ', _summary.asserts, "\n")
-	# to_return += str('  passed:    ', _summary.passed, "\n")
-	# to_return += str('  pending:   ', _summary.pending, "\n")
-	# to_return += str('  failed:    ', _summary.failed)
 	return to_return
