@@ -375,7 +375,7 @@ func watch_signals(object):
 # the object does not have the specified signal
 # ------------------------------------------------------------------------------
 func assert_signal_emitted(object, signal_name, text=""):
-	var disp = str('Expected object ', object, ' to emit signal [', signal_name, ']:  ', text)
+	var disp = str('Expected object ', object, ' to have emitted signal [', signal_name, ']:  ', text)
 	if(_can_make_signal_assertions(object, signal_name)):
 		if(_signal_watcher.did_emit(object, signal_name)):
 			_pass(disp)
@@ -504,6 +504,12 @@ func pending(text=""):
 # I think this reads better than set_yield_time, but don't want to break anything
 func yield_for(time, msg=''):
 	return gut.set_yield_time(time, msg)
+
+func yield_to(obj, signal_name, max_wait, msg=''):
+	watch_signals(obj)
+	gut.set_yield_signal_or_time(obj, signal_name, max_wait, msg)
+
+	return gut
 
 func end_test():
 	gut.end_yielded_test()

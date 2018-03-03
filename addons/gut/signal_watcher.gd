@@ -54,6 +54,10 @@ const ARG_NOT_SET = '_*_argument_*_is_*_not_set_*_'
 var _watched_signals = {}
 
 func _add_watched_signal(obj, name):
+	# SHORTCIRCUIT
+	if(_watched_signals.has(obj) and _watched_signals[obj].has(name)):
+		return
+
 	if(!_watched_signals.has(obj)):
 		_watched_signals[obj] = {name:[]}
 	else:

@@ -216,6 +216,12 @@ func test_watch_signals_watches_all_signals_on_an_object():
 	for sig in SIGNALS:
 		assert_true(gr.sw.is_watching(gr.so, SIGNALS[sig]), str('it should be watching: ', SIGNALS[sig]))
 
+func test_watch_signals_ignores_duplicates():
+	gr.sw.watch_signals(gr.so)
+	gr.sw.watch_signals(gr.so)
+	gut.p("-- LOOK FOR RED HERE --")
+	assert_true(true)
+	
 # ####################
 # Clear
 # ####################

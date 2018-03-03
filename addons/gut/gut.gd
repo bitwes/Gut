@@ -91,7 +91,7 @@ var _current_test = null
 var _log_text = ""
 
 var _pause_before_teardown = false
-# when true _pase_before_teardown will be ignored.  useful
+# when true _pause_before_teardown will be ignored.  useful
 # when batch processing and you don't want to watch.
 var _ignore_pause_before_teardown = false
 var _wait_timer = Timer.new()
@@ -103,7 +103,7 @@ var _yield_between = {
 	tests_since_last_yield = 0
 }
 
-var _set_yield_time_called = false
+var _was_yield_method_called = false
 # used when yielding to gut instead of some other
 # signal.  Start with set_yield_time()
 var _yield_timer = Timer.new()
@@ -114,6 +114,10 @@ var _unit_test_name = ''
 var Summary = load('res://addons/gut/summary.gd')
 var _new_summary = null
 
+var _yielding_to = {
+	obj = null,
+	signal_name = ''
+}
 
 const SIGNAL_TESTS_FINISHED = 'tests_finished'
 const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yeild_before_teardown'
@@ -159,7 +163,7 @@ func _ready():
 
 	add_child(_yield_timer)
 	_yield_timer.set_one_shot(true)
-	_yield_timer.connect('timeout', self, '_on_yield_timer_timeout')
+	_yield_timer.connect('timeout', self, '_yielding_callback')
 
 	# This timer is started, but it should never finish.  Used
 	# to determine how long it took to run the tests since
@@ -201,8 +205,24 @@ func _process(delta):
 # Timeout for the built in timer.  emits the timeout signal.  Start timer
 # with set_yield_time()
 # ------------------------------------------------------------------------------
-func _on_yield_timer_timeout():
-	emit_signal('timeout')
+func _yielding_callback(from_obj=false):
+	if(_yielding_to.obj):
+		_yielding_to.obj.disconnect(_yielding_to.signal_name, self, '_yielding_callback')
+		_yielding_to.obj = null
+		_yielding_to.signal_name = ''
+
+	if(from_obj):
+		# we must yiled for a little longer after the signal is emitted so that
+		# the signal can propigate to other objects.  This was discovered trying
+		# to assert that obj/signal_name was emitted.  Without this extra delay
+		# the yield returns and processing finishes before the rest of the
+		# objects can get the signal.  This works b/c the timer will timeout
+		# and come back into this method but the obj and signal_name will be
+		# null
+		_yield_timer.set_wait_time(.1)
+		_yield_timer.start()
+	else:
+		emit_signal('timeout')
 
 # ------------------------------------------------------------------------------
 # Run either the selected test or all tests.
@@ -355,8 +375,6 @@ func _init_run():
 	_ctrls.script_progress.set_max(_test_scripts.size())
 	_ctrls.script_progress.set_value(0)
 
-
-
 # ------------------------------------------------------------------------------
 # Print out run information and close out the run.
 # ------------------------------------------------------------------------------
@@ -475,9 +493,9 @@ func _test_the_scripts():
 					script_result = test_script.call(_current_test.name)
 					#When the script yields it will return a GDFunctionState object
 					if(_is_function_state(script_result)):
-						if(!_set_yield_time_called):
+						if(!_was_yield_method_called):
 							p('/# Yield detected, waiting #/')
-						_set_yield_time_called = false
+						_was_yield_method_called = false
 						_waiting = true
 						while(_waiting):
 							p(WAITING_MESSAGE, 2)
@@ -840,7 +858,20 @@ func set_yield_time(time, text=''):
 	else:
 		msg +=  ':  ' + text + ' #/'
 	p(msg, 1)
-	_set_yield_time_called = true
+	_was_yield_method_called = true
+	return self
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func set_yield_signal_or_time(obj, signal_name, max_wait, text=''):
+	obj.connect(signal_name, self, '_yielding_callback', [true])
+	_yielding_to.obj = obj
+	_yielding_to.signal_name = signal_name
+
+	_yield_timer.set_wait_time(max_wait)
+	_yield_timer.start()
+	_was_yield_method_called = true
+	p(str('/# Yielding to signal "', signal_name, '" or for ', max_wait, ' seconds #/'))
 	return self
 
 # ------------------------------------------------------------------------------
