@@ -4,6 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 # 6.1.0
 * Fixed resize window handle bug.  It was connecting to wrong signals and didn't work.
+* Improved summary.  It now lists all failures and pendings instead of just listing the scripts that have failures or pending tests.
 
 
 # 6.0.0
