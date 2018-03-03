@@ -238,8 +238,8 @@ func setup_controls():
 func set_it_up():
 	self.set_size(min_size)
 	setup_controls()
-	self.connect("mouse_enter", self, "_on_mouse_enter")
-	self.connect("mouse_exit", self, "_on_mouse_exit")
+	self.connect("mouse_entered", self, "_on_mouse_enter")
+	self.connect("mouse_exited", self, "_on_mouse_exit")
 	set_process(true)
 	set_pause_mode(PAUSE_MODE_PROCESS)
 	_update_controls()
@@ -309,21 +309,21 @@ func _input(event):
 	#if the mouse is somewhere within the debug window
 	if(_mouse_in):
 		#Check for mouse click inside the resize handle
-		if(event.type == InputEvent.MOUSE_BUTTON):
+		if(event is InputEventMouseButton):
 			if (event.button_index == 1):
 				#It's checking a square area for the bottom right corner, but that's close enough.  I'm lazy
-				if(event.pos.x > get_size().x + get_position().x - 10 and event.pos.y > get_size().y + get_position().y - 10):
+				if(event.position.x > get_size().x + get_position().x - 10 and event.position.y > get_size().y + get_position().y - 10):
 					if event.pressed:
 						_mouse_down = true
-						_mouse_down_pos = event.pos
+						_mouse_down_pos = event.position
 					else:
 						_mouse_down = false
 		#Reszie
-		if(event.type == InputEvent.MOUSE_MOTION):
+		if(event is InputEventMouseMotion):
 			if(_mouse_down):
 				if(get_size() >= min_size):
-					var new_size = get_size() + event.pos - _mouse_down_pos
-					var new_mouse_down_pos = event.pos
+					var new_size = get_size() + event.position - _mouse_down_pos
+					var new_mouse_down_pos = event.position
 
 					if(new_size.x < min_size.x):
 						new_size.x = min_size.x
