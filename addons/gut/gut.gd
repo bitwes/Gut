@@ -217,8 +217,7 @@ func _yielding_callback(from_obj=false):
 		# to assert that obj/signal_name was emitted.  Without this extra delay
 		# the yield returns and processing finishes before the rest of the
 		# objects can get the signal.  This works b/c the timer will timeout
-		# and come back into this method but the obj and signal_name will be
-		# null
+		# and come back into this method but from_obj will be false.
 		_yield_timer.set_wait_time(.1)
 		_yield_timer.start()
 	else:

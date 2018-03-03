@@ -5,7 +5,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 # 6.1.0
 * Fixed resize window handle bug.  It was connecting to wrong signals and didn't work.
 * Improved summary.  It now lists all failures and pendings instead of just listing the scripts that have failures or pending tests.
-
+* Added `yield_to` which allows you to `yield` to a signal or a maximum amount of time.  This keeps your tests moving along if you yield to a signal that never gets emitted.  Now the test will fail after an amount of time instead of sitting in limbo forever.  This will also watch the signals on the object so you can make asserts about signals after the `yield` and you can save a line of code.  
+Example:
+``` python
+# wait for my_object to emit the signal 'my_signal'
+# or 5 seconds, whichever comes first.
+yield(yield_to(my_object, 'my_signal', 5), YIELD)  
+assert_signal_emitted(my_object, 'my_signal', \
+                     'Maybe it did, maybe it didnt, but we still got here.')
+```
 
 # 6.0.0
 * Godot 3.0 compatibility
