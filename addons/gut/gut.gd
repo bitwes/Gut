@@ -459,12 +459,11 @@ func _test_the_scripts():
 			_ctrls.test_progress.set_max(_tests.size())
 			for i in range(_tests.size()):
 				_current_test = _tests[i]
-				_new_summary.add_test(_current_test.name)
 
 				if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
 				   (_unit_test_name == '')):
 					p(_current_test.name, 1)
-
+					_new_summary.add_test(_current_test.name)
 					#yield so things paint
 					if(_should_yield_now()):
 						_yield_between.timer.set_wait_time(0.001)
