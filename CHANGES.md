@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * Fixed resize window handle bug.  It was connecting to wrong signals and didn't work.
 * Missed changing `simulate` to call `_physics_process` instead of `_fixed_process` in the 3.0 conversion.  Fixed that.
 * Improved summary.  It now lists all failures and pendings instead of just listing the scripts that have failures or pending tests.
+* Fixed issue where the `signal_watcher` could try to disconnect from a freed object.
 * Added `yield_to` which allows you to `yield` to a signal or a maximum amount of time.  This keeps your tests moving along if you yield to a signal that never gets emitted.  Now the test will fail after an amount of time instead of sitting in limbo forever.  This will also watch the signals on the object so you can make asserts about signals after the `yield` and you can save a line of code.  
 Example:
 ``` python
