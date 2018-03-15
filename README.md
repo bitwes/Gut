@@ -153,7 +153,7 @@ Each test should perform at least one assert or call `pending` to indicate the t
 
 
 # <a name="method_list"> Test Related Methods
-These methods should be used in tests to make assertions.  These methods are available to anything that inherits from the Test class (`extends "res://addons/gut/test.gd"`).  All sample code listed for the methods can be found here in [test_readme_examples.gd](test/samples/test_readme_examples.gd)
+These methods should be used in tests to make assertions.  These methods are available to anything that inherits from the Test class (`extends "res://addons/gut/test.gd"`).  All sample code listed for the methods can be found here in [test_readme_examples.gd](gut_tests_and_examples/test/samples/test_readme_examples.gd)
 #### pending(text="")
 flag a test as pending, the optional message is printed in the GUI
 ``` python
@@ -889,7 +889,7 @@ I got this one when I accidentally put a space instead of an "=" after -gselect.
 #  <a name="contributing"> Contributing
 This testing tool has tests of course.  All Gut related tests are found in the `test/unit` and `test/integration` directories.  Any enhancements or bug fixes should have a corresponding pull request with new tests.
 
-The bulk of the tests for Gut are in [test_gut.gd](test/unit/test_gut.gd) and [test_test.gd](test/unit/test_test.gd).  [test_signal_watcher.gd](test/unit/test_signal_watcher.gd) tests the class used to track the emitting of signals.  The other test scripts in `unit` and `integration` should be run and their output spot checked since they test other parts of Gut that aren't easily testabled.
+The bulk of the tests for Gut are in [test_gut.gd](gut_tests_and_examples/test/unit/test_gut.gd) and [test_test.gd](gut_tests_and_examples/test/unit/test_test.gd).  [test_signal_watcher.gd](gut_tests_and_examples/test/unit/test_signal_watcher.gd) tests the class used to track the emitting of signals.  The other test scripts in `unit` and `integration` should be run and their output spot checked since they test other parts of Gut that aren't easily testabled.
 
 For convenience, the `main.tscn` includes a handy "Run Gut Unit Tests" button that will kick off all the essential test scripts.
 
