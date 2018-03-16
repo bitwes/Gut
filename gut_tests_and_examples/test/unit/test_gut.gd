@@ -229,18 +229,19 @@ func test_simulate_calls_physics_process():
 # ------------------------------
 # Setting test to run
 # ------------------------------
+const SAMPLES_DIR = 'res://gut_tests_and_examples/test/samples/'
 func test_get_set_test_to_run():
 	gr.test.assert_get_set_methods(gr.test_gut, 'unit_test_name', '', 'hello')
 	assert_pass(4)
 
 func test_setting_name_will_run_only_matching_tests():
-	gr.test_gut.add_script('res://test/samples/test_sample_all_passed.gd')
+	gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 	gr.test_gut.set_unit_test_name('test_works')
 	gr.test_gut.test_scripts()
 	assert_eq(gr.test_gut.get_test_count(), 1)
 
 func test_setting_name_matches_partial():
-	gr.test_gut.add_script('res://test/samples/test_sample_all_passed.gd')
+	gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 	gr.test_gut.set_unit_test_name('two')
 	gr.test_gut.test_scripts()
 	assert_eq(gr.test_gut.get_test_count(), 1)
@@ -277,7 +278,7 @@ func test_asserts_on_test_object():
 	assert_file_not_empty(path)
 
 func test_gut_clears_test_instances_between_runs():
-	gr.test_gut.add_script('res://test/samples/test_sample_all_passed.gd')
+	gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 	gr.test_gut.test_scripts()
 	gr.test_gut.test_scripts()
 	assert_eq(gr.test_gut._test_script_objects.size(), 1, 'The should only be one test script after a second run')
@@ -285,26 +286,27 @@ func test_gut_clears_test_instances_between_runs():
 # ------------------------------
 # Loading diretories
 # ------------------------------
+const TEST_LOAD_DIR = 'res://gut_tests_and_examples/test/test_dir_load'
 func test_adding_directory_loads_files():
-	gr.test_gut.add_directory('res://test/test_dir_load')
-	assert_has(gr.test_gut._test_scripts, 'res://test/test_dir_load/test_samples.gd')
+	gr.test_gut.add_directory(TEST_LOAD_DIR)
+	assert_has(gr.test_gut._test_scripts, TEST_LOAD_DIR + '/test_samples.gd')
 
 func test_adding_directory_does_not_load_bad_prefixed_files():
-	gr.test_gut.add_directory('res://test/test_dir_load')
-	assert_does_not_have(gr.test_gut._test_scripts, 'res://test/test_dir_load/bad_prefix.gd')
+	gr.test_gut.add_directory(TEST_LOAD_DIR)
+	assert_does_not_have(gr.test_gut._test_scripts, TEST_LOAD_DIR + '/bad_prefix.gd')
 
 func test_adding_directory_skips_files_with_wrong_extension():
-	gr.test_gut.add_directory('res://test/test_dir_load')
-	assert_does_not_have(gr.test_gut._test_scripts, 'res://test/test_dir_load/test_bad_extension.txt')
+	gr.test_gut.add_directory(TEST_LOAD_DIR)
+	assert_does_not_have(gr.test_gut._test_scripts, TEST_LOAD_DIR + '/test_bad_extension.txt')
 
 func test_if_directory_does_not_exist_it_does_not_die():
 	gr.test_gut.add_directory('res://adsf')
 	assert_true(true, 'We should get here')
 
 func test_adding_same_directory_does_not_add_duplicates():
-	gr.test_gut.add_directory('res://test/unit')
+	gr.test_gut.add_directory('res://gut_tests_and_examples/test/unit')
 	var orig = gr.test_gut._test_scripts.size()
-	gr.test_gut.add_directory('res://test/unit')
+	gr.test_gut.add_directory('res://gut_tests_and_examples/test/unit')
 	assert_eq(gr.test_gut._test_scripts.size(), orig)
 
 # We only have 3 directories with tests in them so test 3
@@ -313,13 +315,13 @@ func test_directories123_defined_in_editor_are_loaded_on_ready():
 	var t = Test.new()
 	t.gut = g
 	g.set_yield_between_tests(false)
-	g._directory1 = 'res://test/test_dir_load'
-	g._directory2 = 'res://test/unit'
-	g._directory3 = 'res://test/integration'
+	g._directory1 = 'res://gut_tests_and_examples/test/test_dir_load'
+	g._directory2 = 'res://gut_tests_and_examples/test/unit'
+	g._directory3 = 'res://gut_tests_and_examples/test/integration'
 	add_child(g)
-	t.assert_has(g._test_scripts, 'res://test/test_dir_load/test_samples.gd', 'Should have dir1 script')
-	t.assert_has(g._test_scripts, 'res://test/unit/test_gut.gd', 'Should have dir2 script')
-	t.assert_has(g._test_scripts, 'res://test/integration/test_sample_all_passed_integration.gd', 'Should have dir3 script')
+	t.assert_has(g._test_scripts, 'res://gut_tests_and_examples/test/test_dir_load/test_samples.gd', 'Should have dir1 script')
+	t.assert_has(g._test_scripts, 'res://gut_tests_and_examples/test/unit/test_gut.gd', 'Should have dir2 script')
+	t.assert_has(g._test_scripts, 'res://gut_tests_and_examples/test/integration/test_sample_all_passed_integration.gd', 'Should have dir3 script')
 	assert_eq(t.get_pass_count(), 3, 'they should have passed')
 
 # ^ aaaand then we test 2 more.
@@ -328,20 +330,20 @@ func test_directories456_defined_in_editor_are_loaded_on_ready():
 	var t = Test.new()
 	t.gut = g
 	g.set_yield_between_tests(false)
-	g._directory4 = 'res://test/test_dir_load'
-	g._directory5 = 'res://test/unit'
-	g._directory6 = 'res://test/integration'
+	g._directory4 = 'res://gut_tests_and_examples/test/test_dir_load'
+	g._directory5 = 'res://gut_tests_and_examples/test/unit'
+	g._directory6 = 'res://gut_tests_and_examples/test/integration'
 	add_child(g)
-	t.assert_has(g._test_scripts, 'res://test/test_dir_load/test_samples.gd', 'Should have dir4 script')
-	t.assert_has(g._test_scripts, 'res://test/unit/test_gut.gd', 'Should have dir5 script')
-	t.assert_has(g._test_scripts, 'res://test/integration/test_sample_all_passed_integration.gd', 'Should have dir6 script')
+	t.assert_has(g._test_scripts, 'res://gut_tests_and_examples/test/test_dir_load/test_samples.gd', 'Should have dir4 script')
+	t.assert_has(g._test_scripts, 'res://gut_tests_and_examples/test/unit/test_gut.gd', 'Should have dir5 script')
+	t.assert_has(g._test_scripts, 'res://gut_tests_and_examples/test/integration/test_sample_all_passed_integration.gd', 'Should have dir6 script')
 	assert_eq(t.get_pass_count(), 3, 'they should have passed')
 
 # ------------------------------
 # Signal tests
 # ------------------------------
 func test_when_moving_to_next_test_watched_signals_are_cleared():
-	gr.test_gut.add_script('res://test/unit/verify_signal_watches_are_cleared.gd')
+	gr.test_gut.add_script('res://gut_tests_and_examples/test/unit/verify_signal_watches_are_cleared.gd')
 	gr.test_gut.test_scripts()
 	assert_eq(gr.test_gut.get_pass_count(), 1, 'One test should have passed.')
 	assert_eq(gr.test_gut.get_fail_count(), 1, 'One failure for not watching anymore.')
