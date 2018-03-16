@@ -28,7 +28,7 @@
 ################################################################################
 # View readme for usage details.
 #
-# Version 5.0.0
+# Version 6.1.0
 ################################################################################
 extends "res://addons/gut/gut_gui.gd"
 
@@ -91,7 +91,7 @@ var _current_test = null
 var _log_text = ""
 
 var _pause_before_teardown = false
-# when true _pase_before_teardown will be ignored.  useful
+# when true _pause_before_teardown will be ignored.  useful
 # when batch processing and you don't want to watch.
 var _ignore_pause_before_teardown = false
 var _wait_timer = Timer.new()
@@ -103,7 +103,7 @@ var _yield_between = {
 	tests_since_last_yield = 0
 }
 
-var _set_yield_time_called = false
+var _was_yield_method_called = false
 # used when yielding to gut instead of some other
 # signal.  Start with set_yield_time()
 var _yield_timer = Timer.new()
@@ -111,18 +111,16 @@ var _runtime_timer = Timer.new()
 const RUNTIME_START_TIME = float(20000.0)
 
 var _unit_test_name = ''
+var Summary = load('res://addons/gut/summary.gd')
+var _new_summary = null
 
+var _yielding_to = {
+	obj = null,
+	signal_name = ''
+}
 
 const SIGNAL_TESTS_FINISHED = 'tests_finished'
 const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yeild_before_teardown'
-
-# Add test summaries to the local summary.
-func _add_summaries(test):
-	_summary.asserts += test.get_summary().asserts
-	_summary.passed += test.get_summary().passed
-	_summary.failed += test.get_summary().failed
-	_summary.tests += test.get_summary().tests
-	_summary.pending += test.get_summary().pending
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -165,7 +163,7 @@ func _ready():
 
 	add_child(_yield_timer)
 	_yield_timer.set_one_shot(true)
-	_yield_timer.connect('timeout', self, '_on_yield_timer_timeout')
+	_yield_timer.connect('timeout', self, '_yielding_callback')
 
 	# This timer is started, but it should never finish.  Used
 	# to determine how long it took to run the tests since
@@ -207,8 +205,23 @@ func _process(delta):
 # Timeout for the built in timer.  emits the timeout signal.  Start timer
 # with set_yield_time()
 # ------------------------------------------------------------------------------
-func _on_yield_timer_timeout():
-	emit_signal('timeout')
+func _yielding_callback(from_obj=false):
+	if(_yielding_to.obj):
+		_yielding_to.obj.disconnect(_yielding_to.signal_name, self, '_yielding_callback')
+		_yielding_to.obj = null
+		_yielding_to.signal_name = ''
+
+	if(from_obj):
+		# we must yiled for a little longer after the signal is emitted so that
+		# the signal can propigate to other objects.  This was discovered trying
+		# to assert that obj/signal_name was emitted.  Without this extra delay
+		# the yield returns and processing finishes before the rest of the
+		# objects can get the signal.  This works b/c the timer will timeout
+		# and come back into this method but from_obj will be false.
+		_yield_timer.set_wait_time(.1)
+		_yield_timer.start()
+	else:
+		emit_signal('timeout')
 
 # ------------------------------------------------------------------------------
 # Run either the selected test or all tests.
@@ -310,31 +323,25 @@ func _parse_tests(script):
 # ------------------------------------------------------------------------------
 func _get_summary_text():
 	var to_return = "*****************\nRun Summary\n*****************\n"
-	to_return += str('  scripts:   ', _summary.scripts, "\n")
-	to_return += str('  tests:     ', _summary.tests, "\n")
-	to_return += str('  asserts:   ', _summary.asserts, "\n")
-	to_return += str('  passed:    ', _summary.passed, "\n")
-	to_return += str('  pending:   ', _summary.pending, "\n")
 
-	if(_summary.moved_methods > 0):
-		to_return += str('  moved:     ', _summary.moved_methods, "\n")
-	to_return += str('  failed:    ', _summary.failed, "\n")
-	to_return += "\n\n"
+	to_return += "\n" + _new_summary.get_summary_text() + "\n"
 
-	if(_summary.tests > 0):
-		to_return +=  '+++ ' + str(_summary.passed) + ' passed ' + str(_summary.failed) + ' failed.  ' + \
+	if(_new_summary.get_totals().tests > 0):
+		to_return +=  '+++ ' + str(_new_summary.get_totals().passing) + ' passed ' + str(_new_summary.get_totals().failing) + ' failed.  ' + \
 		              "Tests finished in:  " + _ctrls.runtime_label.get_text() + ' +++'
 		var c = Color(0, 1, 0)
-		if(_summary.passed != _summary.asserts):
+		if(_new_summary.get_totals().failing > 0):
 			c = Color(1, 0, 0)
+		elif(_new_summary.get_totals().pending > 0):
+			c = Color(1, 1, .8)
+
 		_ctrls.text_box.add_color_region('+++', '+++', c)
 	else:
 		to_return += '+++ No tests ran +++'
 		_ctrls.text_box.add_color_region('+++', '+++', Color(1, 0, 0))
 
 	if(_summary.moved_methods > 0):
-		to_return += "\n" + """
-Moved Methods
+		to_return += "\nMoved Methods (" + str(_summary.moved_methods) + ')' + """
 -------------
 It looks like you have some methods that have been moved.  These methods were
 moved from the gut object to the test object so that you don't have to prefix
@@ -342,19 +349,14 @@ them with 'gut.'.  This means less typing for you and better organization of
 the code.  I'm sorry for the inconvenience but I promise this will make things
 easier in the future...I'm pretty sure at least.  Thanks for using Gut!"""
 
-	return to_return
+	return to_return + "\n\n"
 
 # ------------------------------------------------------------------------------
 # Initialize variables for each run of a single test script.
 # ------------------------------------------------------------------------------
 func _init_run():
 	_test_script_objects = []
-	_summary.asserts = 0
-	_summary.passed = 0
-	_summary.failed = 0
-	_summary.tests = 0
-	_summary.scripts = 0
-	_summary.pending = 0
+	_new_summary = Summary.new()
 	_summary.tally_passed = 0
 	_summary.tally_failed = 0
 
@@ -372,31 +374,12 @@ func _init_run():
 	_ctrls.script_progress.set_max(_test_scripts.size())
 	_ctrls.script_progress.set_value(0)
 
-
-
 # ------------------------------------------------------------------------------
 # Print out run information and close out the run.
 # ------------------------------------------------------------------------------
 func _end_run():
 	var failed_tests = []
 	var more_than_one = _test_script_objects.size() > 1
-	# no need to summarize the run if only one script was run
-	if(more_than_one):
-		p("----\nAll Passing/Pending\n----")
-
-	for i in range(_test_script_objects.size()):
-		if(more_than_one):
-			if(_test_script_objects[i].get_fail_count() == 0):
-				p(_test_script_objects[i].get_summary_text())
-			else:
-				failed_tests.append(_test_script_objects[i])
-		_add_summaries(_test_script_objects[i])
-
-	if(more_than_one):
-		p("----\nWith Failures\n----")
-
-	for i in range(failed_tests.size()):
-		p(failed_tests[i].get_summary_text())
 
 	p(_get_summary_text(), 0)
 
@@ -473,6 +456,7 @@ func _test_the_scripts():
 		_tests.clear()
 		set_title('Running:  ' + _test_scripts[s])
 		_print_script_heading(_test_scripts[s])
+		_new_summary.add_script(_test_scripts[s])
 
 		if(!file.file_exists(_test_scripts[s])):
 			p("FAILED   COULD NOT FIND FILE:  " + _test_scripts[s])
@@ -480,7 +464,6 @@ func _test_the_scripts():
 			var test_script = _init_test_script(_test_scripts[s])
 			_test_script_objects.append(test_script)
 			var script_result = null
-			_summary.scripts += 1
 
 			test_script.prerun_setup()
 
@@ -493,10 +476,11 @@ func _test_the_scripts():
 			_ctrls.test_progress.set_max(_tests.size())
 			for i in range(_tests.size()):
 				_current_test = _tests[i]
+
 				if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
 				   (_unit_test_name == '')):
 					p(_current_test.name, 1)
-
+					_new_summary.add_test(_current_test.name)
 					#yield so things paint
 					if(_should_yield_now()):
 						_yield_between.timer.set_wait_time(0.001)
@@ -504,14 +488,13 @@ func _test_the_scripts():
 						yield(_yield_between.timer, 'timeout')
 
 					test_script.setup()
-					_summary.tests += 1
 
 					script_result = test_script.call(_current_test.name)
 					#When the script yields it will return a GDFunctionState object
 					if(_is_function_state(script_result)):
-						if(!_set_yield_time_called):
+						if(!_was_yield_method_called):
 							p('/# Yield detected, waiting #/')
-						_set_yield_time_called = false
+						_was_yield_method_called = false
 						_waiting = true
 						while(_waiting):
 							p(WAITING_MESSAGE, 2)
@@ -560,17 +543,24 @@ func _test_the_scripts():
 
 
 
-func _pass():
+func _pass(text=''):
 	_summary.tally_passed += 1
 	_update_controls()
+	if(_current_test):
+		_new_summary.add_pass(_current_test.name, text)
 
-func _fail():
+func _fail(text=''):
 	_summary.tally_failed += 1
 	if(_current_test != null):
+		var line_text = '  at line ' + str(_current_test.line_number)
+		_new_summary.add_fail(_current_test.name, text + "\n    " + line_text)
 		_current_test.passed = false
-		p('  at line ' + str(_current_test.line_number), LOG_LEVEL_FAIL_ONLY)
+		p(line_text, LOG_LEVEL_FAIL_ONLY)
 	_update_controls()
 
+func _pending(text=''):
+	if(_current_test):
+		_new_summary.add_pending(_current_test.name, text)
 #########################
 #
 # public
@@ -744,31 +734,32 @@ func clear_text():
 # Get the number of tests that were ran
 # ------------------------------------------------------------------------------
 func get_test_count():
-	return _summary.tests
+	return _new_summary.get_totals().tests
 
 # ------------------------------------------------------------------------------
 # Get the number of assertions that were made
 # ------------------------------------------------------------------------------
 func get_assert_count():
-	return _summary.asserts
+	var t = _new_summary.get_totals()
+	return t.passing + t.failing
 
 # ------------------------------------------------------------------------------
 # Get the number of assertions that passed
 # ------------------------------------------------------------------------------
 func get_pass_count():
-	return _summary.passed
+	return _new_summary.get_totals().passing
 
 # ------------------------------------------------------------------------------
 # Get the number of assertions that failed
 # ------------------------------------------------------------------------------
 func get_fail_count():
-	return _summary.failed
+	return _new_summary.get_totals().failing
 
 # ------------------------------------------------------------------------------
 # Get the number of tests flagged as pending
 # ------------------------------------------------------------------------------
 func get_pending_count():
-	return _summary.pending
+	return _new_summary.get_totals().pending
 
 # ------------------------------------------------------------------------------
 # Set whether it should print to console or not.  Default is yes.
@@ -843,8 +834,8 @@ func simulate(obj, times, delta):
 	for i in range(times):
 		if(obj.has_method("_process")):
 			obj._process(delta)
-		if(obj.has_method("_fixed_process")):
-			obj._fixed_process(delta)
+		if(obj.has_method("_physics_process")):
+			obj._physics_process(delta)
 
 		for kid in obj.get_children():
 			simulate(kid, 1, delta)
@@ -866,7 +857,20 @@ func set_yield_time(time, text=''):
 	else:
 		msg +=  ':  ' + text + ' #/'
 	p(msg, 1)
-	_set_yield_time_called = true
+	_was_yield_method_called = true
+	return self
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func set_yield_signal_or_time(obj, signal_name, max_wait, text=''):
+	obj.connect(signal_name, self, '_yielding_callback', [true])
+	_yielding_to.obj = obj
+	_yielding_to.signal_name = signal_name
+
+	_yield_timer.set_wait_time(max_wait)
+	_yield_timer.start()
+	_was_yield_method_called = true
+	p(str('/# Yielding to signal "', signal_name, '" or for ', max_wait, ' seconds #/'))
 	return self
 
 # ------------------------------------------------------------------------------

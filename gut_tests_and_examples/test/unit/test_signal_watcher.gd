@@ -29,6 +29,8 @@ const SIGNALS = {
 # A class that can emit all the signals in SIGNALS
 # ####################
 class SignalObject:
+	extends Node2D
+
 	func _init():
 		add_user_signal(SIGNALS.NO_PARAMETERS)
 		add_user_signal(SIGNALS.ONE_PARAMETER, [
@@ -216,6 +218,12 @@ func test_watch_signals_watches_all_signals_on_an_object():
 	for sig in SIGNALS:
 		assert_true(gr.sw.is_watching(gr.so, SIGNALS[sig]), str('it should be watching: ', SIGNALS[sig]))
 
+func test_watch_signals_ignores_duplicates():
+	gr.sw.watch_signals(gr.so)
+	gr.sw.watch_signals(gr.so)
+	gut.p("-- LOOK FOR RED HERE --")
+	assert_true(true)
+
 # ####################
 # Clear
 # ####################
@@ -230,3 +238,12 @@ func test_when_cleared_it_should_disconnect_from_signals():
 	gr.sw.clear()
 	for sig in SIGNALS:
 		assert_false(gr.so.is_connected(SIGNALS[sig], gr.sw, '_on_watched_signal'), str('it should NOT be connected to: ', SIGNALS[sig]))
+
+func test_clearing_ignores_freed_objecdts():
+	add_child(gr.so)
+	gr.sw.watch_signals(gr.so)
+	gr.so.free()
+	yield(yield_for(0.5), YIELD)
+	gr.sw.clear()
+	end_test()
+	#assert_signal_emitted(gr.so, 'script_signal')

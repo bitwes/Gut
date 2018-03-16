@@ -15,12 +15,8 @@ config/icon="res://icon.png"
 
 [autoload]
 
-global="*res://scripts/global.gd"
+global="*res://gut_tests_and_examples/scripts/global.gd"
 
 [editor_plugins]
 
 enabled=PoolStringArray( "gut" )
-
-[rendering]
-
-environment/default_environment="res://default_env.tres"

@@ -54,6 +54,10 @@ const ARG_NOT_SET = '_*_argument_*_is_*_not_set_*_'
 var _watched_signals = {}
 
 func _add_watched_signal(obj, name):
+	# SHORTCIRCUIT - ignore dupes
+	if(_watched_signals.has(obj) and _watched_signals[obj].has(name)):
+		return
+
 	if(!_watched_signals.has(obj)):
 		_watched_signals[obj] = {name:[]}
 	else:
@@ -145,5 +149,7 @@ func is_watching(object, signal_name):
 func clear():
 	for obj in _watched_signals:
 		for signal_name in _watched_signals[obj]:
-			obj.disconnect(signal_name, self, '_on_watched_signal')
+			var wr = weakref(obj)
+			if(wr.get_ref()):
+				obj.disconnect(signal_name, self, '_on_watched_signal')
 	_watched_signals.clear()

@@ -141,7 +141,6 @@ func test_assert_file_exists():
 	assert_file_exists('user://file_does_not.exist') # FAIL
 	assert_file_exists('res://some_dir/another_dir/file_does_not.exist') # FAIL
 
-
 func test_assert_file_does_not_exist():
 	gut.p('-- passing --')
 	assert_file_does_not_exist('user://file_does_not.exist') # PASS
@@ -165,6 +164,7 @@ func test_assert_file_not_empty():
 	gut.p('-- failing --')
 	assert_file_not_empty('user://some_test_file') # FAIL
 
+# ------------------------------------------------------------------------------
 class SomeClass:
 	var _count = 0
 
@@ -191,6 +191,7 @@ func test_assert_get_set_methods():
 	# 2 FAILING
 	assert_get_set_methods(some_class, 'does_not_exist', 'does_not', 'matter')
 
+# ------------------------------------------------------------------------------
 class MovingNode:
 	extends Node2D
 	var _speed = 2
@@ -199,17 +200,17 @@ class MovingNode:
 		set_process(true)
 
 	func _process(delta):
-		set_pos(get_pos() + Vector2(_speed * delta, 0))
+		set_position(get_position() + Vector2(_speed * delta, 0))
 
 func test_illustrate_yield():
 	var moving_node = MovingNode.new()
 	add_child(moving_node)
-	moving_node.set_pos(Vector2(0, 0))
+	moving_node.set_position(Vector2(0, 0))
 
 	# While the yield happens, the node should move
 	yield(yield_for(2), YIELD)
-	assert_gt(moving_node.get_pos().x, 0)
-	assert_between(moving_node.get_pos().x, 3.9, 4, 'it should move almost 4 whatevers at speed 2')
+	assert_gt(moving_node.get_position().x, 0)
+	assert_between(moving_node.get_position().x, 3.9, 4, 'it should move almost 4 whatevers at speed 2')
 
 func test_illustrate_end_test():
 	yield(yield_for(1), YIELD)
@@ -218,6 +219,44 @@ func test_illustrate_end_test():
 	# finished.
 	end_test()
 
+# ------------------------------------------------------------------------------
+class TimedSignaler:
+	extends Node2D
+	var _time = 0
+
+	signal the_signal
+	func _init(time):
+		_time = time
+
+	func start():
+		var t = Timer.new()
+		add_child(t)
+		t.set_wait_time(_time)
+		t.connect('timeout', self, '_on_timer_timeout')
+		t.set_one_shot(true)
+		t.start()
+
+	func _on_timer_timeout():
+		emit_signal('the_signal')
+
+func test_illustrate_yield_to_with_less_time():
+	var t = TimedSignaler.new(5)
+	add_child(t)
+	t.start()
+	yield(yield_to(t, 'the_signal', 1), YIELD)
+	# since we setup t to emit after 5 seconds, this will fail because we
+	# only yielded for 1 second vail yield_to
+	assert_signal_emitted(t, 'the_signal', 'This will fail')
+
+func test_illustrate_yield_to_with_more_time():
+	var t = TimedSignaler.new(1)
+	add_child(t)
+	t.start()
+	yield(yield_to(t, 'the_signal', 5), YIELD)
+	# since we wait longer than it will take to emit the signal, this assert
+	# will pass
+	assert_signal_emitted(t, 'the_signal', 'This will pass')
+# ------------------------------------------------------------------------------
 class SignalObject:
 	func _init():
 		add_user_signal('some_signal')
@@ -346,6 +385,7 @@ func test_get_signal_parameters():
 	assert_eq(get_signal_parameters(obj, 'some_signal'), [1, 2, 3])
 	assert_eq(get_signal_parameters(obj, 'some_signal', 0), ['a', 'b', 'c'])
 
+# ------------------------------------------------------------------------------
 class BaseClass:
 	var a = 1
 class SubClass:

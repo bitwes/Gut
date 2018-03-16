@@ -1,8 +1,11 @@
-# Gut 6.0.0
+# Gut 6.1.0
 GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.  It allows you to write tests for your gdscript in gdscript.
 
 ### Godot 3.0 Compatible.
 Version 6.0.0 is Godot 3.0 compatible.  These changes are not compatible with any of the 2.x versions of Godot.  The godot_2x branch has been created to hold the old version of Gut that works with Godot 2.x.  Barring any severe issues, there will not be any more development for Godot 2.x.
+
+# License
+Gut is provided under the MIT license.  [The license is distributed with Gut so it is in the `addons/gut` folder](addons/gut/LICENSE.md).  I also didn't want the Gut license to accidentally be copied into another project's root directory when installed through the Godot Asset Library.
 
 # Method Links
 <table><tr>
@@ -57,12 +60,22 @@ Version 6.0.0 is Godot 3.0 compatible.  These changes are not compatible with an
 1. [Contributing](#contributing)
 
 # <a name="install"> Install
-## New Installs and Upgrades
+## Installing from Download
 Download and extract the zip from the [releases](https://github.com/bitwes/gut/releases) or from the [Godot Asset Library](https://godotengine.org/asset-library/asset/54).  
 
 Extract the zip and place the `gut` directory into your `addons` directory in your project.  If you don't have an `addons` folder at the root of your project, then make one and THEN put the `gut` directory in there.
 
-## New Install Configuration
+## Installing from in-editor Godot Asset Lib
+1.  Click the AssetLib button at the top of the editor
+1.  Search for "Gut"
+1.  Click it.
+1.  Click "Install".  This will kick off the download.
+1.  Click the 2nd "Install" button that appears when the download finishes.  It will be in a little dialog at the bottom of the AssetLib window.
+1.  This part is IMPORTANT.  You only need the `addons/gut` directory.  So make sure that directory is checked then uncheck anything that isn't in the `addons/gut` directory.
+1.  Click the 3rd "Install" button.
+1.  You did it!
+
+## New Install Setup
 From the menu choose Scene->Project Settings, click the plugins tab and activate Gut.
 
 The next few steps cover the suggested configuration.  Feel free to deviate where you see fit.
@@ -150,7 +163,7 @@ Each test should perform at least one assert or call `pending` to indicate the t
 
 
 # <a name="method_list"> Test Related Methods
-These methods should be used in tests to make assertions.  These methods are available to anything that inherits from the Test class (`extends "res://addons/gut/test.gd"`).  All sample code listed for the methods can be found here in [test_readme_examples.gd](test/samples/test_readme_examples.gd)
+These methods should be used in tests to make assertions.  These methods are available to anything that inherits from the Test class (`extends "res://addons/gut/test.gd"`).  All sample code listed for the methods can be found here in [test_readme_examples.gd](gut_tests_and_examples/test/samples/test_readme_examples.gd)
 #### pending(text="")
 flag a test as pending, the optional message is printed in the GUI
 ``` python
@@ -609,6 +622,7 @@ Print info to the GUI and console (if enabled).  You can see examples if this in
 
 #### gut.pause_before_teardown()
 This method will cause Gut to pause before it moves on to the next test.  This is useful for debugging, for instance if you want to investigate the screen or anything else after a test has finished executing.  See also `set_ignore_pause_before_teardown`
+
 #### yield_for(time_in_seconds)
 This simplifies the code needed to pause the test execution for a number of seconds so the thing that you are testing can run its course in real time.  There are more details in the Yielding section.  It is designed to be used with the `yield` built in.  The following example will pause your test execution (and only the test execution) for 2 seconds before continuing.  You must call an assert or `pending` or `end_test()` after a yield or the test will never stop running.
 ``` python
@@ -631,6 +645,49 @@ func test_illustrate_yield():
 	yield(yield_for(2), YIELD)
 	assert_gt(moving_node.get_pos().x, 0)
 	assert_between(moving_node.get_pos().x, 3.9, 4, 'it should move almost 4 whatevers at speed 2')
+```
+
+#### yield_to(object, signal_name, max_time)
+`yield_to` allows you to yield to a signal just like `yield` but for a maximum amount of time.  This keeps tests moving along when signals are not emitted.  Just like with any test that has a yield in it, you must call an assert or `pending` or `end_test()` after a yield or the test will never stop running.
+
+As a bonus, `yield_to` does an implicit call to `watch_signals` so you can easily make signal based assertions afterwards.
+``` python
+class TimedSignaler:
+	extends Node2D
+	var _time = 0
+
+	signal the_signal
+	func _init(time):
+		_time = time
+
+	func start():
+		var t = Timer.new()
+		add_child(t)
+		t.set_wait_time(_time)
+		t.connect('timeout', self, '_on_timer_timeout')
+		t.set_one_shot(true)
+		t.start()
+
+	func _on_timer_timeout():
+		emit_signal('the_signal')
+
+func test_illustrate_yield_to_with_less_time():
+	var t = TimedSignaler.new(5)
+	add_child(t)
+	t.start()
+	yield(yield_to(t, 'the_signal', 1), YIELD)
+	# since we setup t to emit after 5 seconds, this will fail because we
+	# only yielded for 1 second vai yield_to
+	assert_signal_emitted(t, 'the_signal', 'This will fail')
+
+func test_illustrate_yield_to_with_more_time():
+	var t = TimedSignaler.new(1)
+	add_child(t)
+	t.start()
+	yield(yield_to(t, 'the_signal', 5), YIELD)
+	# since we wait longer than it will take to emit the signal, this assert
+	# will pass
+	assert_signal_emitted(t, 'the_signal', 'This will pass')
 ```
 #### end_test()
 This is a holdover from previous versions.  You should probably use an assert or `pending` to close out a yielded test but you can use this instead if you really really want to.
@@ -778,8 +835,19 @@ func test_yield_to_custom_signal():
 	yield(my_object, 'custom_signal')
 	assert_true(some_condition, 'After signal fired, this should be true')
 ```
+### yield_to
+Sometimes you need to wait for a signal to be emitted, but you can never really be sure it will, we are making tests after all.  You could `yield` to that signal in your test and hope it gets emitted.  If it doesn't though, your test will just hang forever.  The `yield_to` method addresses this by allowing you to `yield` to a signal or a maximum amount of time, whichever occurs first.  You must make sure the 2nd parameter to `yield` is the `YIELD` constant.  This constant is available to all test scripts.  As an extra bonus, Gut will watch the signals on the object you passed in, so you can save yourself a call to `watch_signals` if you want, but you don't have to.  How all this magic works is covered a couple of sections down.
 
-Another use case I have come across is when creating integration tests and you want to verify that a complex interaction ends with an expected result.  In this case you might have an idea of how long the interaction will take to play out but you don't have a signal that you can attach to.  Instead you want to pause your test execution until that time has elapsed.  For this, Gut has the `yield_for` method.  This method has a little magic in it, but all you really need to know is that the following line will pause your test execution for 5 seconds while the rest of your code executes as expected:  `yield(yield_for(5), YIELD)`.
+``` python
+# wait for my_object to emit the signal 'my_signal'
+# or 5 seconds, whichever comes first.
+yield(yield_to(my_object, 'my_signal', 5), YIELD)  
+assert_signal_emitted(my_object, 'my_signal', \
+                     'Maybe it did, maybe it didnt, but we still got here.')
+```
+
+### yield_for
+Another use case I have come across is when creating integration tests and you want to verify that a complex interaction ends with an expected result.  In this case you might have an idea of how long the interaction will take to play out but you don't have a signal that you can attach to.  Instead you want to pause your test execution until that time has elapsed.  For this, Gut has the `yield_for` method.  For example `yield(yield_for(5), YIELD)` will pause your test execution for 5 seconds while the rest of your code executes as expected.  You must make sure the 2nd parameter to `yield` is the `YIELD` constant.  This constant is available to all test scripts.  How all this magic works is covered a couple of sections down.
 
 Here's an example of yielding for 5 seconds.
 ``` python
@@ -790,6 +858,8 @@ func test_wait_for_a_bit():
 	yield(yield_for(5), YIELD)
 	gut.assert_eq(my_object.some_property, 'some value', 'After waiting 5 seconds, this property should be set')
 ```
+
+### pause_before_teardown
 Sometimes it's also helpful to just watch things play out.  Yield is great for that, you just create a couple objects, set them to interact and then yield.  You can leave the yields in or take them out if your test passes without them.  You can also use the `pause_before_teardown` method that will pause test execution before it runs `teardown` and moves onto the next test.  This keeps the game loop running after the test has finished and you can see what everything looks like.
 
 ### How Yielding and Gut Works
@@ -798,6 +868,8 @@ For those that are interested, Gut is able to detect when a test has called yiel
 If you only yielded using `yield_for` then Gut would always know when to resume the test and could handle it itself.  You can yield to anything though and Gut cannot tell the difference.  Also, when you yield to something else Gut has no way of knowing when the method has continued so you have to tell it when you are done so it will stop waiting.  One side effect of this is that if you `yield` multiple times in the same test, Gut can't tell.  It continues to wait from the first yield and you won't see any additional "yield detected" outputs in the GUI or console.
 
 The `yield_for()` method and `YIELD` constant are some syntax sugar built into the `Test` object.  `yield` takes in an object and a signal.  The `yield_for` method kicks off a timer inside Gut that will run for however many seconds you passed in.  It also returns the Gut object so that `yield` has an object to yield to.  The `YIELD` constant contains the name of the signal that Gut emits when the timer finishes.
+
+`yield_to` works similarly to `yield_for` except it takes the extra step that Gut will watch the signal you pass in.  It will emit the same signal (`YIELD`) when it detects the signal you specified or it will emit the signal when the timer times out.
 
 #  <a name="command_line"> Running Gut from the Command Line
 Also supplied in this repo is the gut_cmdln.gd script that can be run from the command line so that you don't have to create a scene to run your tests.  One of the main reasons to use this approach instead of going through the editor is that you get to see error messages generated by Godot in the context of your running tests.  You also see any `print` statements you put in  your code in the context of all the Gut generated output.  It's a bit quicker to get started and is a bit cooler if I do say so.  The biggest downside is that debugging your code/tests is a little more difficult since you won't be able to interact with the editor when something blows up.
@@ -871,7 +943,7 @@ I got this one when I accidentally put a space instead of an "=" after -gselect.
 #  <a name="contributing"> Contributing
 This testing tool has tests of course.  All Gut related tests are found in the `test/unit` and `test/integration` directories.  Any enhancements or bug fixes should have a corresponding pull request with new tests.
 
-The bulk of the tests for Gut are in [test_gut.gd](test/unit/test_gut.gd) and [test_test.gd](test/unit/test_test.gd).  [test_signal_watcher.gd](test/unit/test_signal_watcher.gd) tests the class used to track the emitting of signals.  The other test scripts in `unit` and `integration` should be run and their output spot checked since they test other parts of Gut that aren't easily testabled.
+The bulk of the tests for Gut are in [test_gut.gd](gut_tests_and_examples/test/unit/test_gut.gd) and [test_test.gd](gut_tests_and_examples/test/unit/test_test.gd).  [test_signal_watcher.gd](gut_tests_and_examples/test/unit/test_signal_watcher.gd) tests the class used to track the emitting of signals.  The other test scripts in `unit` and `integration` should be run and their output spot checked since they test other parts of Gut that aren't easily testabled.
 
 For convenience, the `main.tscn` includes a handy "Run Gut Unit Tests" button that will kick off all the essential test scripts.
 
