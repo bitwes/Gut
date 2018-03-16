@@ -1,4 +1,4 @@
-# Gut 6.0.0
+# Gut 6.1.0
 GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.  It allows you to write tests for your gdscript in gdscript.
 
 ### Godot 3.0 Compatible.
@@ -612,6 +612,7 @@ Print info to the GUI and console (if enabled).  You can see examples if this in
 
 #### gut.pause_before_teardown()
 This method will cause Gut to pause before it moves on to the next test.  This is useful for debugging, for instance if you want to investigate the screen or anything else after a test has finished executing.  See also `set_ignore_pause_before_teardown`
+
 #### yield_for(time_in_seconds)
 This simplifies the code needed to pause the test execution for a number of seconds so the thing that you are testing can run its course in real time.  There are more details in the Yielding section.  It is designed to be used with the `yield` built in.  The following example will pause your test execution (and only the test execution) for 2 seconds before continuing.  You must call an assert or `pending` or `end_test()` after a yield or the test will never stop running.
 ``` python
@@ -634,6 +635,49 @@ func test_illustrate_yield():
 	yield(yield_for(2), YIELD)
 	assert_gt(moving_node.get_pos().x, 0)
 	assert_between(moving_node.get_pos().x, 3.9, 4, 'it should move almost 4 whatevers at speed 2')
+```
+
+#### yield_to(object, signal_name, max_time)
+`yield_to` allows you to yield to a signal just like `yield` but for a maximum amount of time.  This keeps tests moving along when signals are not emitted.  Just like with any test that has a yield in it, you must call an assert or `pending` or `end_test()` after a yield or the test will never stop running.
+
+As a bonus, `yield_to` does an implicit call to `watch_signals` so you can easily make signal based assertions afterwards.
+``` python
+class TimedSignaler:
+	extends Node2D
+	var _time = 0
+
+	signal the_signal
+	func _init(time):
+		_time = time
+
+	func start():
+		var t = Timer.new()
+		add_child(t)
+		t.set_wait_time(_time)
+		t.connect('timeout', self, '_on_timer_timeout')
+		t.set_one_shot(true)
+		t.start()
+
+	func _on_timer_timeout():
+		emit_signal('the_signal')
+
+func test_illustrate_yield_to_with_less_time():
+	var t = TimedSignaler.new(5)
+	add_child(t)
+	t.start()
+	yield(yield_to(t, 'the_signal', 1), YIELD)
+	# since we setup t to emit after 5 seconds, this will fail because we
+	# only yielded for 1 second vai yield_to
+	assert_signal_emitted(t, 'the_signal', 'This will fail')
+
+func test_illustrate_yield_to_with_more_time():
+	var t = TimedSignaler.new(1)
+	add_child(t)
+	t.start()
+	yield(yield_to(t, 'the_signal', 5), YIELD)
+	# since we wait longer than it will take to emit the signal, this assert
+	# will pass
+	assert_signal_emitted(t, 'the_signal', 'This will pass')
 ```
 #### end_test()
 This is a holdover from previous versions.  You should probably use an assert or `pending` to close out a yielded test but you can use this instead if you really really want to.
