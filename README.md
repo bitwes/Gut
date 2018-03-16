@@ -60,12 +60,22 @@ Gut is provided under the MIT license.  [The license is distributed with Gut so 
 1. [Contributing](#contributing)
 
 # <a name="install"> Install
-## New Installs and Upgrades
+## Installing from Download
 Download and extract the zip from the [releases](https://github.com/bitwes/gut/releases) or from the [Godot Asset Library](https://godotengine.org/asset-library/asset/54).  
 
 Extract the zip and place the `gut` directory into your `addons` directory in your project.  If you don't have an `addons` folder at the root of your project, then make one and THEN put the `gut` directory in there.
 
-## New Install Configuration
+## Installing from in-editor Godot Asset Lib
+1.  Click the AssetLib button at the top of the editor
+1.  Search for "Gut"
+1.  Click it.
+1.  Click "Install".  This will kick off the download.
+1.  Click the 2nd "Install" button that appears when the download finishes.  It will be in a little dialog at the bottom of the AssetLib window.
+1.  This part is IMPORTANT.  You only need the `addons/gut` directory.  So make sure that directory is checked then uncheck anything that isn't in the `addons/gut` directory.
+1.  Click the 3rd "Install" button.
+1.  You did it!
+
+## New Install Setup
 From the menu choose Scene->Project Settings, click the plugins tab and activate Gut.
 
 The next few steps cover the suggested configuration.  Feel free to deviate where you see fit.
