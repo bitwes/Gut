@@ -1,6 +1,6 @@
 {
-  "dirs":["res://gut_tests_and_examples/test/samples/"],
+  "dirs":["res://gut_tests_and_examples/test/unit/"],
   "should_exit":true,
   "ignore_pause":true,
-  "log": 0
+  "log": 1
 }
