@@ -1,10 +1,6 @@
 var returns = {}
 
 
-# need to be able to look up based on path and instance
-# when path found, return the path
-# if instance, return instance
-# if instance not found return path
 func _is_instance(obj):
     return typeof(obj) == TYPE_OBJECT and !obj.has_method('new')
 
@@ -31,8 +27,11 @@ func set_return(obj, method, value):
 
 func get_return(obj, method):
     var key = _get_path_from_variant(obj)
-    if(_is_instance(obj) and returns.has(obj)):
-        key = obj
+    if(_is_instance(obj)):
+        if(returns.has(obj) and returns[obj].has(method)):
+            key = obj
+        elif(obj.get('___gut_stubber_metadata')):
+            key = obj.___gut_stubber_metadata.path
     if(returns.has(key) and returns[key].has(method)):
         return returns[key][method]
     else:

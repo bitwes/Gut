@@ -912,6 +912,15 @@ func is_file_empty(path):
 	return empty
 
 # ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_file_as_text(path):
+	var to_return = ''
+	var f = File.new()
+	f.open(path, f.READ)
+	to_return = f.get_as_text()
+	f.close()
+	return to_return
+# ------------------------------------------------------------------------------
 # deletes all files in a given directory
 # ------------------------------------------------------------------------------
 func directory_delete_files(path):
