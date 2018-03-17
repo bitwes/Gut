@@ -1,0 +1,6 @@
+{
+  "dirs":["res://gut_tests_and_examples/test/samples/"],
+  "should_exit":true,
+  "ignore_pause":true,
+  "log": 0
+}
