@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Misc
 * `gut.get_file_as_text(path)` returns the contents of a file as text
+* Config file for command line
 
 # 6.1.0
 * Moved as many files as I could to `gut_tests_and_examples` so that there was less stuff to uncheck when installing via the in-engine Asset Library.  I'm still not 100% happy with the setup.

@@ -1,3 +1,3 @@
-var ___gut_stubber_metadata = {
+var ____gut__metadata = {
     path = ''
 }
