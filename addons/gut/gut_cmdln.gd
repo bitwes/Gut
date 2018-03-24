@@ -316,7 +316,7 @@ func load_options_from_config_file(file_path):
 	options.should_exit = get_value(results.result, 'should_exit', false)
 	options.ignore_pause_before_teardown = get_value(results.result, 'ignore_pause', false)
 	options.log_level = get_value(results.result, 'log', 1)
-	
+
 	return 1
 
 # apply all the options specified to _tester
@@ -362,7 +362,6 @@ func _init():
 	o.parse()
 	extract_options(o)
 	var load_result = load_options_from_config_file(options.config_file)
-
 
 	print(options)
 	if(load_result == -1):

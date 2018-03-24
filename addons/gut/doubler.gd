@@ -1,4 +1,5 @@
 var _output_dir = null
+var _stubber = null
 
 # ###############
 # Private
@@ -49,7 +50,6 @@ func _get_arg_text(args):
 			text += ', '
 	return text
 
-
 # ###############
 # Public
 # ###############
@@ -65,3 +65,9 @@ func double(obj):
 	var temp_path = _output_dir.plus_file(obj.get_file())
 	_write_file(obj, temp_path)
 	return load(temp_path)
+
+func get_stubber():
+	return _stubber
+
+func set_stubber(stubber):
+	_stubber = stubber
