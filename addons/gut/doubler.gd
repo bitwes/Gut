@@ -40,11 +40,24 @@ func _get_stubber_metadata_text(target_path):
 		   "\tstubber=" + stubber_str + "\n" + \
            "}\n"
 
+func _get_callback_parameters(method_hash):
+	var called_with = 'null'
+	if(method_hash['args'].size() > 0):
+		called_with = '['
+		for i in range(method_hash['args'].size()):
+			called_with += method_hash['args'][i]['name']
+			if(i < method_hash['args'].size() - 1):
+				called_with += ', '
+		called_with += ']'
+	return called_with
+
 func _get_func_text(method_hash):
 	var ftxt = str('func ', method_hash['name'], '(')
 	ftxt += str(_get_arg_text(method_hash['args']), "):\n")
+
+	var called_with = _get_callback_parameters(method_hash)
 	if(_stubber):
-		ftxt += "\treturn __gut_metadata_.stubber.get_return(self, '"+method_hash['name']+"')\n"
+		ftxt += "\treturn __gut_metadata_.stubber.get_return(self, '" + method_hash['name'] + "', " + called_with + ")\n"
 	else:
 		ftxt += "\tpass\n"
 

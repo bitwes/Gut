@@ -103,6 +103,25 @@ func test_will_use_instance_instead_of_metadata():
 	gr.stubber.set_return(inst, 'some_method', 100)
 	assert_eq(gr.stubber.get_return(inst, 'some_method'), 100)
 
+func test_can_stub_with_parameters():
+	gr.stubber.set_return('some_path', 'some_method', 7, [1, 2])
+	var val = gr.stubber.get_return('some_path', 'some_method', [1, 2])
+	assert_eq(val, 7)
+
+func test_parameter_stubs_return_different_values():
+	gr.stubber.set_return('some_path', 'some_method', 5)
+	gr.stubber.set_return('some_path', 'some_method', 10, [1, 2])
+	var with_params = gr.stubber.get_return('some_path', 'some_method', [1, 2])
+	var wo_params = gr.stubber.get_return('some_path', 'some_method')
+	assert_eq(with_params, 10, 'With params should give correct value')
+	assert_eq(wo_params, 5, 'Without params should give correct value')
+
+func test_stub_with_nothing_works_with_no_parameters():
+	gr.stubber.set_return('some_path', 'has_one_param', 5)
+	gr.stubber.set_return('some_path', 'has_one_param', 10, [1])
+	assert_eq(gr.stubber.get_return('some_path', 'has_one_param'), 5)
+
+
 func test_inners():
 	# this only works with instances but we can get to the path and all the
 	# neat stuff, this might be the path to stubbing inners

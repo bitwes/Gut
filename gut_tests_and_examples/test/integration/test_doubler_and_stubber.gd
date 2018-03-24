@@ -40,3 +40,17 @@ func test_can_stub_doubled_instance_values():
     gr.stubber.set_return(d1, 'get_value', 10)
     assert_eq(d1.get_value(), 10, 'instance gets right value')
     assert_eq(d2.get_value(), 5, 'other instance gets class value')
+
+func test_stubbed_methods_send_parameters_in_callback():
+    gr.doubler.set_stubber(gr.stubber)
+    gr.stubber.set_return(DOUBLE_ME_PATH, 'has_one_param', 10, [1])
+    var d = gr.doubler.double(DOUBLE_ME_PATH).new()
+    assert_eq(d.has_one_param(1), 10)
+    assert_eq(d.has_one_param('asdf'), null)
+
+func test_stub_with_nothing_works_with_parameters():
+    gr.doubler.set_stubber(gr.stubber)
+    gr.stubber.set_return(DOUBLE_ME_PATH, 'has_one_param', 5)
+    gr.stubber.set_return(DOUBLE_ME_PATH, 'has_one_param', 10, [1])
+    var d = gr.doubler.double(DOUBLE_ME_PATH).new()
+    assert_eq(d.has_one_param(), 5)
