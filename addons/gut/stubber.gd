@@ -30,8 +30,8 @@ func get_return(obj, method):
     if(_is_instance(obj)):
         if(returns.has(obj) and returns[obj].has(method)):
             key = obj
-        elif(obj.get('____gut__metadata')):
-            key = obj.____gut__metadata.path
+        elif(obj.get('__gut_metadata_')):
+            key = obj.__gut_metadata_.path
     if(returns.has(key) and returns[key].has(method)):
         return returns[key][method]
     else:

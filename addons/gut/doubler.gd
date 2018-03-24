@@ -31,14 +31,22 @@ func _get_methods(target_path):
 	return script_methods
 
 func _get_stubber_metadata_text(target_path):
-	return "var ____gut__metadata = {\n" + \
-           "\tpath='" + target_path + "'\n" + \
+	var stubber_str = 'null'
+	if(_stubber):
+		stubber_str = str('instance_from_id(', _stubber.get_instance_id(),')')
+
+	return "var __gut_metadata_ = {\n" + \
+           "\tpath='" + target_path + "',\n" + \
+		   "\tstubber=" + stubber_str + "\n" + \
            "}\n"
 
 func _get_func_text(method_hash):
 	var ftxt = str('func ', method_hash['name'], '(')
 	ftxt += str(_get_arg_text(method_hash['args']), "):\n")
-	ftxt += "\tpass\n"
+	if(_stubber):
+		ftxt += "\treturn __gut_metadata_.stubber.get_return(self, '"+method_hash['name']+"')\n"
+	else:
+		ftxt += "\tpass\n"
 
 	return ftxt
 

@@ -48,11 +48,11 @@ func test_all_parameters_are_defaulted_to_null():
 
 func test_doubled_thing_includes_stubber_metadata():
     var doubled = gr.doubler.double(DOUBLE_ME_PATH).new()
-    assert_ne(doubled.get('____gut__metadata'), null)
+    assert_ne(doubled.get('__gut_metadata_'), null)
 
 func test_doubled_thing_has_original_path_in_metadata():
     var doubled = gr.doubler.double(DOUBLE_ME_PATH).new()
-    assert_eq(doubled.____gut__metadata.path, DOUBLE_ME_PATH)
+    assert_eq(doubled.__gut_metadata_.path, DOUBLE_ME_PATH)
 
 
 

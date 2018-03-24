@@ -33,8 +33,8 @@ __meta__ = {
 "_editor_icon": ExtResource( 3 )
 }
 _run_on_load = false
-_select_script = null
-_tests_like = null
+_select_script = "test_stubber.gd"
+_tests_like = "test_will_use_instance_instead_of_metadata"
 _should_print_to_console = true
 _log_level = 1
 _yield_between_tests = true

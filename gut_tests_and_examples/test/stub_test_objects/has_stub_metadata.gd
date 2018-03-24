@@ -1,3 +1,3 @@
-var ____gut__metadata = {
+var __gut_metadata_ = {
     path = ''
 }
