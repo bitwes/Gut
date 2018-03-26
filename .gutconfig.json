@@ -2,5 +2,5 @@
   "dirs":["res://gut_tests_and_examples/test/unit/", "res://gut_tests_and_examples/test/integration/"],
   "should_exit":true,
   "ignore_pause":true,
-  "log": 3
+  "log": 1
 }

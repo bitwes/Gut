@@ -351,7 +351,7 @@ func test_when_moving_to_next_test_watched_signals_are_cleared():
 #-------------------------------------------------------------------------------
 #
 #
-# This must be LAST test
+# This must be the LAST test
 #
 #
 #-------------------------------------------------------------------------------

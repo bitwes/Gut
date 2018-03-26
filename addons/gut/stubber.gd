@@ -40,6 +40,7 @@ func set_return(obj, method, value, parameters = null):
 func get_return(obj, method, parameters = null):
     var key = _get_path_from_variant(obj)
     var to_return = null
+
     if(_is_instance(obj)):
         if(returns.has(obj) and returns[obj].has(method)):
             key = obj

@@ -33,6 +33,9 @@ func print_info(c):
 func setup():
 	gr.stubber = Stubber.new()
 
+func test_can_get_set_gut():
+	assert_get_set_methods(gr.stubber, 'gut', null, load('res://addons/gut/gut.gd').new())
+
 func test_can_set_return():
 	gr.stubber.set_return('some_path', 'some_method', 7)
 
