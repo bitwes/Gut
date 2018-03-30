@@ -347,6 +347,30 @@ func test_pending_does_not_increment_passed():
 	assert_eq(gr.test.get_pass_count(), 0)
 
 #--------------------------------------
+# Classes used for has method assert
+#--------------------------------------
+class NoWantedMethod:
+	func irrelevant_method():
+		pass
+
+class HasWantedMethod:
+	func wanted_method():
+		pass
+
+#--------------------------------------
+# Has Method Assert
+#--------------------------------------
+func test_fail_if_is_lacking_method():
+	var obj = NoWantedMethod.new()
+	gr.test.assert_has_method(obj, 'wanted_method')
+	assert_fail(gr.test)
+
+func test_pass_if_has_correct_method():
+	var obj = HasWantedMethod.new()
+	gr.test.assert_has_method(obj, 'wanted_method')
+	assert_pass(gr.test)
+
+#--------------------------------------
 # Classes used to set get/set assert
 #--------------------------------------
 class NoGetNoSet:
