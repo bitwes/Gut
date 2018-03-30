@@ -484,6 +484,71 @@ func assert_extends(object, a_class, text=''):
 				_fail(disp)
 
 # ------------------------------------------------------------------------------
+# Assert that text contains given search string.
+# The match_case flag determines case sensitivity.
+# ------------------------------------------------------------------------------
+func assert_string_contains(text, search, match_case=true):
+	var empty_search = 'Expected text and search strings to be non-empty. You passed \'%s\' and \'%s\'.'
+	var disp = 'Expected \'%s\' to contain \'%s\', match_case=%s' % [text, search, match_case]
+	if(text == '' or search == ''):
+		_fail(empty_search % [text, search])
+	elif(match_case):
+		if(text.find(search) == -1):
+			_fail(disp)
+		else:
+			_pass(disp)
+	else:
+		if(text.to_lower().find(search.to_lower()) == -1):
+			_fail(disp)
+		else:
+			_pass(disp)
+
+# ------------------------------------------------------------------------------
+# Assert that text starts with given search string.
+# match_case flag determines case sensitivity.
+# ------------------------------------------------------------------------------
+func assert_string_starts_with(text, search, match_case=true):
+	var empty_search = 'Expected text and search strings to be non-empty. You passed \'%s\' and \'%s\'.'
+	var disp = 'Expected \'%s\' to start with \'%s\', match_case=%s' % [text, search, match_case]
+	if(text == '' or search == ''):
+		_fail(empty_search % [text, search])
+	elif(match_case):
+		if(text.find(search) == 0):
+			_pass(disp)
+		else:
+			_fail(disp)
+	else:
+		if(text.to_lower().find(search.to_lower()) == 0):
+			_pass(disp)
+		else:
+			_fail(disp)
+
+# ------------------------------------------------------------------------------
+# Assert that text ends with given search string.
+# match_case flag determines case sensitivity.
+# ------------------------------------------------------------------------------
+func assert_string_ends_with(text, search, match_case=true):
+	var empty_search = 'Expected text and search strings to be non-empty. You passed \'%s\' and \'%s\'.'
+	var disp = 'Expected \'%s\' to end with \'%s\', match_case=%s' % [text, search, match_case]
+	var required_index = len(text) - len(search)
+	if(text == '' or search == ''):
+		_fail(empty_search % [text, search])
+	elif(match_case):
+		if(text.find(search) == required_index):
+			if(gut):
+				gut.p(text.find(search), required_index)
+			_pass(disp)
+		else:
+			_fail(disp)
+	else:
+		if(text.to_lower().find(search.to_lower()) == required_index):
+			if(gut):
+				gut.p(text.find(search), required_index)
+			_pass(disp)
+		else:
+			_fail(disp)
+
+# ------------------------------------------------------------------------------
 # Mark the current test as pending.
 # ------------------------------------------------------------------------------
 func pending(text=""):

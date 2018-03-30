@@ -655,3 +655,84 @@ func test__assert_extends__fails_when_class_names_match_but_inheritance_does_not
 	var a = HasSubclass1.SubClass.new()
 	gr.test.assert_extends(a, HasSubclass2.SubClass)
 	assert_fail(gr.test)
+
+# ------------------------------
+# String Contains Asserts
+# ------------------------------
+func test__assert_string_contains__fails_when_text_is_empty():
+	gr.test.assert_string_contains('', 'walrus')
+	assert_fail(gr.test)
+
+func test__assert_string_contains__fails_when_search_string_is_empty():
+	gr.test.assert_string_contains('This is a test.', '')
+	assert_fail(gr.test)
+
+func test__assert_string_contains__fails_when_case_sensitive_search_not_found():
+	gr.test.assert_string_contains('This is a test.', 'TeSt', true)
+	assert_fail(gr.test)
+
+func test__assert_string_contains__fails_when_case_insensitive_search_not_found():
+	gr.test.assert_string_contains('This is a test.', 'penguin', false)
+	assert_fail(gr.test)
+
+func test__assert_string_contains__passes_when_case_sensitive_search_is_found():
+	gr.test.assert_string_contains('This is a test.', 'is a ', true)
+	assert_pass(gr.test)
+
+func test__assert_string_contains__passes_when_case_insensitve_search_is_found():
+	gr.test.assert_string_contains('This is a test.', 'this ', false)
+	assert_pass(gr.test)
+
+# ------------------------------
+# String Starts With Asserts
+# ------------------------------
+func test__assert_string_starts_with__fails_when_text_is_empty():
+	gr.test.assert_string_starts_with('', 'The')
+	assert_fail(gr.test)
+
+func test__assert_string_starts_with__fails_when_search_string_is_empty():
+	gr.test.assert_string_starts_with('This is a test.', '')
+	assert_fail(gr.test)
+
+func test__assert_string_starts_with__fails_when_case_sensitive_search_not_at_start():
+	gr.test.assert_string_starts_with('This is a test.', 'thi', true)
+	assert_fail(gr.test)
+
+func test__assert_string_starts_with__fails_when_case_insensitive_search_not_at_start():
+	gr.test.assert_string_starts_with('This is a test.', 'puffin', false)
+	assert_fail(gr.test)
+
+func test__assert_string_starts_with__passes_when_case_sensitive_search_at_start():
+	gr.test.assert_string_starts_with('This is a test.', 'This ', true)
+	assert_pass(gr.test)
+
+func test__assert_string_starts_with__passes_when_case_insensitive_search_at_start():
+	gr.test.assert_string_starts_with('This is a test.', 'tHI', false)
+	assert_pass(gr.test)
+
+# ------------------------------
+# String Ends With Asserts
+# ------------------------------
+func test__assert_string_ends_with__fails_when_text_is_empty():
+	gr.test.assert_string_ends_with('', 'seal')
+	assert_fail(gr.test)
+
+func test__assert_string_ends_with__fails_when_search_string_is_empty():
+	gr.test.assert_string_ends_with('This is a test.', '')
+	assert_fail(gr.test)
+
+func test__assert_string_ends_with__fails_when_case_sensitive_search_not_at_end():
+	gr.test.assert_string_ends_with('This is a test.', 'TEST.', true)
+	assert_fail(gr.test)
+
+func test__assert_string_ends_with__fails_when_case_insensitive_search_not_at_end():
+	gr.test.assert_string_ends_with('This is a test.', 'orca', false)
+	assert_fail(gr.test)
+
+func test__assert_string_ends_with__passes_when_case_sensitive_search_at_end():
+	gr.test.assert_string_ends_with('This is a test.', 'est.', true)
+	assert_pass(gr.test)
+
+func test__assert_string_ends_with__passes_when_case_insensitive_search_at_end():
+	gr.test.assert_string_ends_with('This is a test.', 'A teSt.', false)
+	assert_pass(gr.test)
