@@ -655,3 +655,6 @@ func test__assert_extends__fails_when_class_names_match_but_inheritance_does_not
 	var a = HasSubclass1.SubClass.new()
 	gr.test.assert_extends(a, HasSubclass2.SubClass)
 	assert_fail(gr.test)
+
+# ------------------------------
+# ------------------------------

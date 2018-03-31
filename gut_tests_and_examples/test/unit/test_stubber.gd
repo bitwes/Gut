@@ -1,6 +1,10 @@
 extends "res://addons/gut/test.gd"
 
 var Stubber = load('res://addons/gut/stubber.gd')
+# test.gd has a StubParams variable already so this has to have a
+# different name.  I thought it was too vague to just use the one
+# that test.gd has
+var StubParamsClass = load('res://addons/gut/stub_params.gd')
 
 const TO_STUB_PATH = 'res://gut_tests_and_examples/test/stub_test_objects/to_stub.gd'
 var ToStub = load(TO_STUB_PATH)
@@ -124,7 +128,40 @@ func test_stub_with_nothing_works_with_no_parameters():
 	gr.stubber.set_return('some_path', 'has_one_param', 10, [1])
 	assert_eq(gr.stubber.get_return('some_path', 'has_one_param'), 5)
 
+func test_withStubParams_can_set_return():
+	var sp = StubParamsClass.new('thing', 'method').to_return(10)
+	gr.stubber.add_stub(sp)
+	assert_eq(gr.stubber.get_return('thing', 'method'), 10)
 
+func test_withStubParams_can_get_return_based_on_parameters():
+	var sp = StubParamsClass.new('thing', 'method').to_return(10).when_passed('a')
+	gr.stubber.add_stub(sp)
+	var with_params = gr.stubber.get_return('thing', 'method', ['a'])
+	assert_eq(with_params, 10)
+
+func test_withStubParams_can_get_return_based_on_complex_parameters():
+	var sp = StubParamsClass.new('thing', 'method').to_return(10)
+	sp.when_passed('a', 1, ['a', 1], sp)
+	gr.stubber.add_stub(sp)
+	var with_params = gr.stubber.get_return('thing', 'method', ['a', 1, ['a', 1], sp])
+	assert_eq(with_params, 10)
+
+func test_withStubParams_param_layering_works():
+	var sp1 = StubParamsClass.new('thing', 'method').to_return(10).when_passed(10)
+	var sp2 = StubParamsClass.new('thing', 'method').to_return(5).when_passed(5)
+	var sp3 = StubParamsClass.new('thing', 'method').to_return('nothing')
+
+	gr.stubber.add_stub(sp1)
+	gr.stubber.add_stub(sp2)
+	gr.stubber.add_stub(sp3)
+
+	var sp1_r = gr.stubber.get_return('thing', 'method', [10])
+	var sp2_r = gr.stubber.get_return('thing', 'method', [5])
+	var sp3_r = gr.stubber.get_return('thing', 'method')
+
+	assert_eq(sp1_r, 10, 'When passed 10 it gets 10')
+	assert_eq(sp2_r, 5, 'When passed 5 it gets 5')
+	assert_eq(sp3_r, 'nothing', 'When params do not match it sends default back.')
 func test_inners():
 	# this only works with instances but we can get to the path and all the
 	# neat stuff, this might be the path to stubbing inners

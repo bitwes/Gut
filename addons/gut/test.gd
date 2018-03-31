@@ -39,7 +39,7 @@ extends Node
 
 # constant for signal when calling yeild_for
 const YIELD = 'timeout'
-
+var StubParams = load('res://addons/gut/stub_params.gd')
 # Need a reference to the instance that is running the tests.  This
 # is set by the gut class when it runs the tests.  This gets you
 # access to the asserts in the tests you write.
@@ -543,3 +543,10 @@ func get_summary_text():
 	if(_summary.failed > 0):
 		to_return += str("\n  ", _summary.failed, ' failed.')
 	return to_return
+
+
+func double(thing, method_name):
+	pass
+
+func stub(thing, method_name):
+	return StubParams.new(thing, method_name)
