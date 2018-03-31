@@ -40,6 +40,8 @@ extends Node
 # constant for signal when calling yeild_for
 const YIELD = 'timeout'
 var StubParams = load('res://addons/gut/stub_params.gd')
+var Doubler = load('res://addons/gut/doubler.gd')
+
 # Need a reference to the instance that is running the tests.  This
 # is set by the gut class when it runs the tests.  This gets you
 # access to the asserts in the tests you write.
@@ -544,9 +546,10 @@ func get_summary_text():
 		to_return += str("\n  ", _summary.failed, ' failed.')
 	return to_return
 
-
-func double(thing, method_name):
-	pass
+func double(thing):
+	return gut.get_doubler().double(thing)
 
 func stub(thing, method_name):
-	return StubParams.new(thing, method_name)
+	var sp = StubParams.new(thing, method_name)
+	gut.get_stubber().add_stub(sp)
+	return sp

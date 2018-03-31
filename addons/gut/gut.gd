@@ -118,6 +118,8 @@ var _yielding_to = {
 	obj = null,
 	signal_name = ''
 }
+var _stubber = load('res://addons/gut/stubber.gd').new()
+var _doubler = load('res://addons/gut/doubler.gd').new()
 
 const SIGNAL_TESTS_FINISHED = 'tests_finished'
 const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yeild_before_teardown'
@@ -128,6 +130,8 @@ func _init():
 	add_user_signal(SIGNAL_TESTS_FINISHED)
 	add_user_signal(SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
 	add_user_signal('timeout')
+	_doubler.set_output_dir('user://gut_doubles')
+	_doubler.set_stubber(_stubber)
 
 # ------------------------------------------------------------------------------
 # Connect all the controls created in the parent class to the methods here.
@@ -475,6 +479,7 @@ func _test_the_scripts():
 
 			_ctrls.test_progress.set_max(_tests.size())
 			for i in range(_tests.size()):
+				_stubber.clear()
 				_current_test = _tests[i]
 
 				if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
@@ -950,6 +955,15 @@ func get_current_script_object():
 		to_return = _test_script_objects[-1]
 	return to_return
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_stubber():
+	return _stubber
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_doubler():
+	return _doubler
 
 # #######################
 # Moved method warnings.

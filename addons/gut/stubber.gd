@@ -76,3 +76,6 @@ func get_gut():
 
 func set_gut(gut):
 	_gut = gut
+
+func clear():
+	returns.clear()
