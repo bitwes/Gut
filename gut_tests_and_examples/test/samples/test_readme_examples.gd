@@ -182,7 +182,6 @@ func test_assert_file_does_not_exist():
 	gut.p('-- failing --')
 	assert_file_does_not_exist('res://addons/gut/gut.gd') # FAIL
 
-
 func test_assert_file_empty():
 	gut.p('-- passing --')
 	assert_file_empty('user://some_test_file') # PASS
@@ -223,6 +222,15 @@ func test_assert_get_set_methods():
 	assert_get_set_methods(some_class, 'nothing', 'hello', 22)
 	# 2 FAILING
 	assert_get_set_methods(some_class, 'does_not_exist', 'does_not', 'matter')
+
+func test_assert_has_method():
+	var some_class = SomeClass.new()
+	gut.p('-- passing --')
+	assert_has_method(some_class, 'get_nothing')
+	assert_has_method(some_class, 'set_count')
+
+	gut.p('-- failing --')
+	assert_has_method(some_class, 'method_does_not_exist')
 
 # ------------------------------------------------------------------------------
 class MovingNode:

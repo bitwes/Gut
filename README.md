@@ -38,6 +38,13 @@ Gut is provided under the MIT license.  [The license is distributed with Gut so 
 [get_signal_parameters](#get_signal_parameters)<br/>
 [watch_signals](#watch_signals)<br/>
 
+</td><td>
+
+[assert_string_contains](#assert_string_contains)<br/>
+[assert_string_starts_with](#assert_string_starts_with)<br/>
+[assert_string_ends_with](#assert_string_ends_with)<br/>
+[assert_has_method](#assert_has_method)<br/>
+
 </td>
 </tr></table>
 
@@ -626,6 +633,32 @@ func test_assert_extends():
 	assert_extends(BaseClass.new(), SubClass)
 	assert_extends('a', 'b')
 	assert_extends([], Node)
+```
+
+#### <a name="assert_has_method">assert_has_method(obj, method)
+Asserts that the passed in object has a method named `method`.
+```python
+class SomeClass:
+	var _count = 0
+
+	func get_count():
+		return _count
+	func set_count(number):
+		_count = number
+
+	func get_nothing():
+		pass
+	func set_nothing(val):
+		pass
+
+func test_assert_has_method():
+	var some_class = SomeClass.new()
+	gut.p('-- passing --')
+	assert_has_method(some_class, 'get_nothing')
+	assert_has_method(some_class, 'set_count')
+
+	gut.p('-- failing --')
+	assert_has_method(some_class, 'method_does_not_exist')
 ```
 #### <a name="assert_get_set_methods"> assert_get_set_methods(obj, property, default, set_to)
 I found that making tests for most getters and setters was repetitious and annoying.  Enter `assert_get_set_methods`.  This assertion handles 80% of your getter and setter testing needs.  Given an object and a property name it will verify:
