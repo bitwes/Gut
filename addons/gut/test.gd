@@ -312,6 +312,12 @@ func assert_file_not_empty(file_path):
 		_fail(disp)
 
 # ------------------------------------------------------------------------------
+# Asserts the object has the specified method
+# ------------------------------------------------------------------------------
+func assert_has_method(obj, method):
+	assert_true(obj.has_method(method), 'Should have method: ' + method)
+
+# ------------------------------------------------------------------------------
 # Verifies the object has get and set methods for the property passed in.  The
 # property isn't tied to anything, just a name to be appended to the end of
 # get_ and set_.  Asserts the get_ and set_ methods exist, if not, it stops there.
@@ -322,14 +328,13 @@ func assert_get_set_methods(obj, property, default, set_to):
 	var fail_count = _summary.failed
 	var get = 'get_' + property
 	var set = 'set_' + property
-	assert_true(obj.has_method(get), 'Should have get method:  ' + get)
-	assert_true(obj.has_method(set), 'Should have set method:  ' + set)
+	assert_has_method(obj, get)
+	assert_has_method(obj, set)
 	if(_summary.failed > fail_count):
 		return
 	assert_eq(obj.call(get), default, 'It should have the expected default value.')
 	obj.call(set, set_to)
 	assert_eq(obj.call(get), set_to, 'The set value should have been returned.')
-
 
 # ------------------------------------------------------------------------------
 # Signal assertion helper.  Do not call directly, use _can_make_signal_assertions
