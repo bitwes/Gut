@@ -1,4 +1,4 @@
-# Gut 6.1.0
+# Gut 6.2.0
 GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.  It allows you to write tests for your gdscript in gdscript.
 
 ### Godot 3.0 Compatible.
@@ -22,6 +22,7 @@ Gut is provided under the MIT license.  [The license is distributed with Gut so 
 [assert_file_not_empty](#assert_file_not_empty)<br/>
 [assert_get_set_methods](#assert_get_set_methods)<br/>
 [assert_gt](#assert_gt)<br/>
+[assert_has_method](#assert_has_method)<br/>
 [assert_has_signal](#assert_has_signal)<br/>
 
 </td><td>
@@ -33,17 +34,13 @@ Gut is provided under the MIT license.  [The license is distributed with Gut so 
 [assert_signal_emitted_with_parameters](#assert_signal_emitted_with_parameters)<br/>
 [assert_signal_emitted](#assert_signal_emitted)<br/>
 [assert_signal_not_emitted](#assert_signal_not_emitted)<br/>
+[assert_string_contains](#assert_string_contains)<br/>
+[assert_string_ends_with](#assert_string_ends_with)<br/>
+[assert_string_starts_with](#assert_string_starts_with)<br/>
 [assert_true](#assert_true)<br/>
 [get_signal_emit_count](#get_signal_emit_count)<br/>
 [get_signal_parameters](#get_signal_parameters)<br/>
 [watch_signals](#watch_signals)<br/>
-
-</td><td>
-
-[assert_string_contains](#assert_string_contains)<br/>
-[assert_string_starts_with](#assert_string_starts_with)<br/>
-[assert_string_ends_with](#assert_string_ends_with)<br/>
-[assert_has_method](#assert_has_method)<br/>
 
 </td>
 </tr></table>
