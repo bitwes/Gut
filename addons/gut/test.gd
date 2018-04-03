@@ -314,6 +314,12 @@ func assert_file_not_empty(file_path):
 		_fail(disp)
 
 # ------------------------------------------------------------------------------
+# Asserts the object has the specified method
+# ------------------------------------------------------------------------------
+func assert_has_method(obj, method):
+	assert_true(obj.has_method(method), 'Should have method: ' + method)
+
+# ------------------------------------------------------------------------------
 # Verifies the object has get and set methods for the property passed in.  The
 # property isn't tied to anything, just a name to be appended to the end of
 # get_ and set_.  Asserts the get_ and set_ methods exist, if not, it stops there.
@@ -324,14 +330,13 @@ func assert_get_set_methods(obj, property, default, set_to):
 	var fail_count = _summary.failed
 	var get = 'get_' + property
 	var set = 'set_' + property
-	assert_true(obj.has_method(get), 'Should have get method:  ' + get)
-	assert_true(obj.has_method(set), 'Should have set method:  ' + set)
+	assert_has_method(obj, get)
+	assert_has_method(obj, set)
 	if(_summary.failed > fail_count):
 		return
 	assert_eq(obj.call(get), default, 'It should have the expected default value.')
 	obj.call(set, set_to)
 	assert_eq(obj.call(get), set_to, 'The set value should have been returned.')
-
 
 # ------------------------------------------------------------------------------
 # Signal assertion helper.  Do not call directly, use _can_make_signal_assertions
@@ -484,6 +489,67 @@ func assert_extends(object, a_class, text=''):
 				_pass(disp)
 			else:
 				_fail(disp)
+
+# ------------------------------------------------------------------------------
+# Assert that text contains given search string.
+# The match_case flag determines case sensitivity.
+# ------------------------------------------------------------------------------
+func assert_string_contains(text, search, match_case=true):
+	var empty_search = 'Expected text and search strings to be non-empty. You passed \'%s\' and \'%s\'.'
+	var disp = 'Expected \'%s\' to contain \'%s\', match_case=%s' % [text, search, match_case]
+	if(text == '' or search == ''):
+		_fail(empty_search % [text, search])
+	elif(match_case):
+		if(text.find(search) == -1):
+			_fail(disp)
+		else:
+			_pass(disp)
+	else:
+		if(text.to_lower().find(search.to_lower()) == -1):
+			_fail(disp)
+		else:
+			_pass(disp)
+
+# ------------------------------------------------------------------------------
+# Assert that text starts with given search string.
+# match_case flag determines case sensitivity.
+# ------------------------------------------------------------------------------
+func assert_string_starts_with(text, search, match_case=true):
+	var empty_search = 'Expected text and search strings to be non-empty. You passed \'%s\' and \'%s\'.'
+	var disp = 'Expected \'%s\' to start with \'%s\', match_case=%s' % [text, search, match_case]
+	if(text == '' or search == ''):
+		_fail(empty_search % [text, search])
+	elif(match_case):
+		if(text.find(search) == 0):
+			_pass(disp)
+		else:
+			_fail(disp)
+	else:
+		if(text.to_lower().find(search.to_lower()) == 0):
+			_pass(disp)
+		else:
+			_fail(disp)
+
+# ------------------------------------------------------------------------------
+# Assert that text ends with given search string.
+# match_case flag determines case sensitivity.
+# ------------------------------------------------------------------------------
+func assert_string_ends_with(text, search, match_case=true):
+	var empty_search = 'Expected text and search strings to be non-empty. You passed \'%s\' and \'%s\'.'
+	var disp = 'Expected \'%s\' to end with \'%s\', match_case=%s' % [text, search, match_case]
+	var required_index = len(text) - len(search)
+	if(text == '' or search == ''):
+		_fail(empty_search % [text, search])
+	elif(match_case):
+		if(text.find(search) == required_index):
+			_pass(disp)
+		else:
+			_fail(disp)
+	else:
+		if(text.to_lower().find(search.to_lower()) == required_index):
+			_pass(disp)
+		else:
+			_fail(disp)
 
 # ------------------------------------------------------------------------------
 # Mark the current test as pending.
