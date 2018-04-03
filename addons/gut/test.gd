@@ -540,15 +540,11 @@ func assert_string_ends_with(text, search, match_case=true):
 		_fail(empty_search % [text, search])
 	elif(match_case):
 		if(text.find(search) == required_index):
-			if(gut):
-				gut.p(text.find(search), required_index)
 			_pass(disp)
 		else:
 			_fail(disp)
 	else:
 		if(text.to_lower().find(search.to_lower()) == required_index):
-			if(gut):
-				gut.p(text.find(search), required_index)
 			_pass(disp)
 		else:
 			_fail(disp)

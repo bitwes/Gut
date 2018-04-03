@@ -132,6 +132,39 @@ func test_does_not_have():
 	assert_does_not_have(a_hash, 'one') # FAIL
 	assert_does_not_have(a_hash, '3') # FAIL
 
+func test_string_contains():
+	gut.p('-- passing --')
+	assert_string_contains('abc 123', 'a')
+	assert_string_contains('abc 123', 'BC', false)
+	assert_string_contains('abc 123', '3')
+
+	gut.p('-- failing --')
+	assert_string_contains('abc 123', 'A')
+	assert_string_contains('abc 123', 'BC')
+	assert_string_contains('abc 123', '012')
+
+func test_string_starts_with():
+	gut.p('-- passing --')
+	assert_string_starts_with('abc 123', 'a')
+	assert_string_starts_with('abc 123', 'ABC', false)
+	assert_string_starts_with('abc 123', 'abc 123')
+
+	gut.p('-- failing --')
+	assert_string_starts_with('abc 123', 'z')
+	assert_string_starts_with('abc 123', 'ABC')
+	assert_string_starts_with('abc 123', 'abc 1234')
+
+func test_string_ends_with():
+	gut.p('-- passing --')
+	assert_string_ends_with('abc 123', '123')
+	assert_string_ends_with('abc 123', 'C 123', false)
+	assert_string_ends_with('abc 123', 'abc 123')
+
+	gut.p('-- failing --')
+	assert_string_ends_with('abc 123', '1234')
+	assert_string_ends_with('abc 123', 'C 123')
+	assert_string_ends_with('abc 123', 'nope')
+
 func test_assert_file_exists():
 	gut.p('-- passing --')
 	assert_file_exists('res://addons/gut/gut.gd') # PASS

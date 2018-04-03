@@ -2,6 +2,15 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# 6.2.0
+* Some new asserts courtesy of Myrkrheim
+``` python
+assert_string_contains
+assert_string_starts_with
+assert_string_ends_with
+assert_has_method
+```
+
 # 6.1.0
 * Moved as many files as I could to `gut_tests_and_examples` so that there was less stuff to uncheck when installing via the in-engine Asset Library.  I'm still not 100% happy with the setup.
 * Moved the License to `addons/gut/` so that it is distributed with the addon and doesn't accidently get copied into the root of some other project when installed via the Asset Library.

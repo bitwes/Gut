@@ -34,7 +34,7 @@ __meta__ = {
 }
 _run_on_load = false
 _select_script = null
-_tests_like = null
+_tests_like = "string"
 _should_print_to_console = true
 _log_level = 1
 _yield_between_tests = true
@@ -44,7 +44,7 @@ _file_prefix = "test_"
 _file_extension = ".gd"
 _directory1 = "res://gut_tests_and_examples/test/unit"
 _directory2 = "res://gut_tests_and_examples/test/integration"
-_directory3 = ""
+_directory3 = "res://gut_tests_and_examples/test/samples"
 _directory4 = ""
 _directory5 = ""
 _directory6 = ""

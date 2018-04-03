@@ -308,6 +308,51 @@ assert_does_not_have(a_hash, 'one') # FAIL
 assert_does_not_have(a_hash, '3') # FAIL
 ```
 
+#### <a name="assert_string_contains"> assert_string_contains(text, search, match_case=true)
+Assert that `text` contains `search`.  Can perform case insensitive search by passing false for `match_case`.
+```python
+func test_string_contains():
+	gut.p('-- passing --')
+	assert_string_contains('abc 123', 'a')
+	assert_string_contains('abc 123', 'BC', false)
+	assert_string_contains('abc 123', '3')
+
+	gut.p('-- failing --')
+	assert_string_contains('abc 123', 'A')
+	assert_string_contains('abc 123', 'BC')
+	assert_string_contains('abc 123', '012')
+```
+
+#### <a name="assert_string_starts_with"> assert_string_starts_with(text, search, match_case=true)
+Assert that `text` starts with `search`.  Can perform case insensitive check by passing false for `match_case`
+```python
+func test_string_starts_with():
+	gut.p('-- passing --')
+	assert_string_starts_with('abc 123', 'a')
+	assert_string_starts_with('abc 123', 'ABC', false)
+	assert_string_starts_with('abc 123', 'abc 123')
+
+	gut.p('-- failing --')
+	assert_string_starts_with('abc 123', 'z')
+	assert_string_starts_with('abc 123', 'ABC')
+	assert_string_starts_with('abc 123', 'abc 1234')
+```
+
+#### <a name="assert_string_ends_with"> assert_string_ends_with(text, search, match_case=true)
+Assert that `text` ends with `search`.  Can perform case insensitive check by passing false for `match_case`
+```python
+func test_string_ends_with():
+	gut.p('-- passing --')
+	assert_string_ends_with('abc 123', '123')
+	assert_string_ends_with('abc 123', 'C 123', false)
+	assert_string_ends_with('abc 123', 'abc 123')
+
+	gut.p('-- failing --')
+	assert_string_ends_with('abc 123', '1234')
+	assert_string_ends_with('abc 123', 'C 123')
+	assert_string_ends_with('abc 123', 'nope')
+```
+
 #### <a name="assert_has_signal"> assert_has_signal(object, signal_name)
 Asserts the passed in object has a signal with the specified name.  It should be noted that all the asserts that verfy a signal was/wasn't emitted will first check that the object has the signal being asserted against.  If it does not, a specific failure message will be given.  This means you can usually skip the step of specifically verifying that the object has a signal and move on to making sure it emits the signal correctly.
 ``` python
