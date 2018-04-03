@@ -34,7 +34,7 @@ __meta__ = {
 }
 _run_on_load = false
 _select_script = null
-_tests_like = "has_method"
+_tests_like = null
 _should_print_to_console = true
 _log_level = 1
 _yield_between_tests = true
