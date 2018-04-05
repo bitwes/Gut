@@ -53,11 +53,11 @@ func _on_tests_finished():
 	tester.p("Tests done callback called")
 
 #------------------------------------
-# This creates an instance of Gut and runs a single script.  The output will 
+# This creates an instance of Gut and runs a single script.  The output will
 # be visible in the console, not the Gut instance on the screen.
 #------------------------------------
 func _run_test_one_line():
-	load('res://addons/gut/gut.gd').new().test_script('res://gut_tests_and_examples/test/samples/test_sample_all_passed.gd')
+	load('res://addons/gut/gut.gd').new().test_script('res://test/samples/test_sample_all_passed.gd')
 
 #------------------------------------
 # More lines, get result text out manually.  Can also inspect the results further
@@ -82,8 +82,8 @@ func _run_all_tests():
 	# !! --------
 
 	# Add all scripts in two directories.
-	tester.add_directory('res://gut_tests_and_examples/test/unit')
-	tester.add_directory('res://gut_tests_and_examples/test/integration')
+	tester.add_directory('res://test/unit')
+	tester.add_directory('res://test/integration')
 
 	# Automatcially run all scripts when loaded.
 	tester.test_scripts(true)
@@ -92,21 +92,21 @@ func _run_all_tests():
 	if(tester.get_fail_count() > 0):
 		tester.p("SOMEBODY BROKE SOMETHIN'!!\n")
 
-# These are all the tests that MUST be run to verify Gut is working as expected.  
+# These are all the tests that MUST be run to verify Gut is working as expected.
 # Some methods may include tests that are expected to fail.  Closely inspect
 # the resutls.
 func _run_gut_tests(gut):
 	gut.set_should_print_to_console(false)
-	gut.add_script('res://gut_tests_and_examples/test/unit/test_gut.gd')
-	gut.add_script('res://gut_tests_and_examples/test/unit/test_gut_yielding.gd')
-	gut.add_script('res://gut_tests_and_examples/test/unit/test_test.gd')
-	gut.add_script('res://gut_tests_and_examples/test/unit/test_signal_watcher.gd')
+	gut.add_script('res://test/unit/test_gut.gd')
+	gut.add_script('res://test/unit/test_gut_yielding.gd')
+	gut.add_script('res://test/unit/test_test.gd')
+	gut.add_script('res://test/unit/test_signal_watcher.gd')
 	gut.set_yield_between_tests(true)
-	# true says to run all the scripts, not just the first or 
+	# true says to run all the scripts, not just the first or
 	# the selected script.
-	gut.test_scripts(true) 
+	gut.test_scripts(true)
 
-# Make a new Gut and run all the Gut specific tests.  
+# Make a new Gut and run all the Gut specific tests.
 func _on_RunGutTestsButton_pressed():
 	var gut = load('res://addons/gut/gut.gd').new()
 	add_child(gut)
