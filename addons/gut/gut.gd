@@ -118,6 +118,7 @@ var _yielding_to = {
 	obj = null,
 	signal_name = ''
 }
+var _temp_directory = 'user://gut_temp_directory'
 var _stubber = load('res://addons/gut/stubber.gd').new()
 var _doubler = load('res://addons/gut/doubler.gd').new()
 
@@ -130,7 +131,7 @@ func _init():
 	add_user_signal(SIGNAL_TESTS_FINISHED)
 	add_user_signal(SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
 	add_user_signal('timeout')
-	_doubler.set_output_dir('user://gut_doubles')
+	_doubler.set_output_dir(_temp_directory)
 	_doubler.set_stubber(_stubber)
 
 # ------------------------------------------------------------------------------
@@ -480,6 +481,7 @@ func _test_the_scripts():
 			_ctrls.test_progress.set_max(_tests.size())
 			for i in range(_tests.size()):
 				_stubber.clear()
+				_doubler.clear_output_directory()
 				_current_test = _tests[i]
 
 				if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
@@ -964,6 +966,16 @@ func get_stubber():
 # ------------------------------------------------------------------------------
 func get_doubler():
 	return _doubler
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_temp_directory():
+	return _temp_directory
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func set_temp_directory(temp_directory):
+	_temp_directory = temp_directory
 
 # #######################
 # Moved method warnings.

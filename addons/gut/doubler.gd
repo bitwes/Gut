@@ -8,12 +8,10 @@ func _write_file(target_path, dest_path):
 	var script_methods = _get_methods(target_path)
 	var f = File.new()
 	f.open(dest_path, f.WRITE)
+	f.store_string(str("extends '", target_path, "'\n"))
 	f.store_string(_get_stubber_metadata_text(target_path))
-	#f.store_string(str('var mocker = instance_from_id(', get_instance_id(),")\n"))
-	#f.store_string(str('var testable = ', testable.dyn_ref(), "\n"))
 	for i in range(script_methods.size()):
 		f.store_string(_get_func_text(script_methods[i]))
-		# var body = str('func ', name, '(', get_arg_text(method_hash['args']), "):\n")
 	f.close()
 
 func _get_methods(target_path):
@@ -92,3 +90,18 @@ func get_stubber():
 
 func set_stubber(stubber):
 	_stubber = stubber
+
+func clear_output_directory():
+	var d = Directory.new()
+	d.open(_output_dir)
+	d.list_dir_begin(true)
+	var files = []
+	var f = d.get_next()
+	while(f != ''):
+		d.remove(f)
+		f = d.get_next()
+
+func delete_output_directory():
+	clear_directory()
+	var d = Directory.new()
+	d.remove(_output_dir)

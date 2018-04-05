@@ -1,9 +1,11 @@
 extends "res://addons/gut/test.gd"
 
-var Doubler = load('res://addons/gut/doubler.gd')
+#var Doubler = load('res://addons/gut/doubler.gd')
 const TEMP_FILES = 'user://test_doubler_temp_file'
 
 const DOUBLE_ME_PATH = 'res://gut_tests_and_examples/test/doubler_test_objects/double_me.gd'
+const DOUBLE_EXTENDS_NODE2D = 'res://gut_tests_and_examples/test/doubler_test_objects/double_extends_node2d.gd'
+
 var gr = {
     doubler = null
 }
@@ -54,10 +56,26 @@ func test_doubled_thing_has_original_path_in_metadata():
     var doubled = gr.doubler.double(DOUBLE_ME_PATH).new()
     assert_eq(doubled.__gut_metadata_.path, DOUBLE_ME_PATH)
 
+func test_keeps_extends():
+    var doubled = gr.doubler.double(DOUBLE_EXTENDS_NODE2D).new()
+    assert_extends(doubled, Node2D)
 
+func test_can_clear_output_directory():
+    gr.doubler.double(DOUBLE_ME_PATH)
+    gr.doubler.double(DOUBLE_EXTENDS_NODE2D)
+    assert_file_exists(TEMP_FILES + '/double_me.gd')
+    assert_file_exists(TEMP_FILES + '/double_extends_node2d.gd')
+    gr.doubler.clear_output_directory()
+    assert_file_does_not_exist(TEMP_FILES + '/double_me.gd')
+    assert_file_does_not_exist(TEMP_FILES + '/double_extends_node2d.gd')
 
-
-
+func test_can_delete_output_directory():
+    var d = Directory.new()
+    d.open('user://')
+    gr.doubler.double(DOUBLE_ME_PATH)
+    assert_true(d.dir_exists(TEMP_FILES))
+    gr.doubler.delete_output_directory()
+    assert_false(d.dir_exists(TEMP_FILES))
 
 
 

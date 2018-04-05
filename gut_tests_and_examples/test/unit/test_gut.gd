@@ -140,6 +140,8 @@ func test_get_current_script_object_returns_null_by_default():
 	assert_eq(gr.test_gut.get_current_script_object(), null)
 	# I don't know how to test this in other situations
 
+func test_get_set_temp_directory():
+	assert_get_set_methods(gr.test_gut, 'temp_directory', 'user://gut_temp_directory', 'user://blahblah')
 # ------------------------------
 # disable strict datatype comparisons
 # ------------------------------
