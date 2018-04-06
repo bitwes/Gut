@@ -32,7 +32,6 @@
 ################################################################################
 extends "res://addons/gut/gut_gui.gd"
 
-
 # ###########################
 # Editor Variables
 # ###########################
@@ -50,7 +49,7 @@ export var _disable_strict_datatype_checks = false setget disable_strict_datatyp
 export var _test_prefix = 'test_'
 export var _file_prefix = 'test_'
 export var _file_extension = '.gd'
-
+export(String) var _temp_directory = 'user://gut_temp_directory'
 
 # Allow user to add test directories via editor.  This is done with strings
 # instead of an array because the interface for editing arrays is really
@@ -118,7 +117,6 @@ var _yielding_to = {
 	obj = null,
 	signal_name = ''
 }
-var _temp_directory = 'user://gut_temp_directory'
 var _stubber = load('res://addons/gut/stubber.gd').new()
 var _doubler = load('res://addons/gut/doubler.gd').new()
 
@@ -472,7 +470,7 @@ func _test_the_scripts():
 
 			test_script.prerun_setup()
 
-			#yield between test scripts so things paint
+			# yield between test scripts so things paint
 			if(_yield_between.should):
 				_yield_between.timer.set_wait_time(0.01)
 				_yield_between.timer.start()
@@ -488,7 +486,7 @@ func _test_the_scripts():
 				   (_unit_test_name == '')):
 					p(_current_test.name, 1)
 					_new_summary.add_test(_current_test.name)
-					#yield so things paint
+					# yield so things paint
 					if(_should_yield_now()):
 						_yield_between.timer.set_wait_time(0.001)
 						_yield_between.timer.start()
