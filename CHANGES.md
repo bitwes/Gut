@@ -10,6 +10,7 @@ assert_string_starts_with
 assert_string_ends_with
 assert_has_method
 ```
+* Added .gitattributes which might make for less un-checkboxing when installing from Asset Library and less extra files when downloading the addon.  If this works out, then the next release will undo moving everything into `gut_tests_and_examples` and everything will be right in the world.  Thanks cmfcmf.
 
 # 6.1.0
 * Moved as many files as I could to `gut_tests_and_examples` so that there was less stuff to uncheck when installing via the in-engine Asset Library.  I'm still not 100% happy with the setup.
