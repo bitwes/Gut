@@ -56,8 +56,6 @@ class Script:
 		var t = get_test_obj(test_name)
 		t.pending_texts.append(reason)
 
-
-
 var _scripts = []
 
 func add_script(name):
@@ -123,12 +121,3 @@ func get_summary_text():
 	header += str('  pending:          ', _totals.pending, "\n")
 
 	return to_return + "\n" + header
-
-
-
-
-	# to_return += str('  scripts:   ', _summary.scripts, "\n")
-	# to_return += str('  tests:     ', _summary.tests, "\n")
-	# to_return += str('  asserts:   ', _summary.asserts, "\n")
-	# to_return += str('  passed:    ', _summary.passed, "\n")
-	# to_return += str('  pending:   ', _summary.pending, "\n")

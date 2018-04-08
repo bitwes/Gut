@@ -386,7 +386,7 @@ func _is_function_state(script_result):
 # ------------------------------------------------------------------------------
 func _print_script_heading(script):
 	if(script.class_name == null):
-		p("/-----------------------------------------")
+		p("\n/-----------------------------------------")
 		p("Testing Script " + script.path, 0)
 		if(_unit_test_name != ''):
 			p('  Only running tests like: "' + _unit_test_name + '"')
@@ -503,9 +503,7 @@ func _test_the_scripts():
 		# test_script.free() instead of remove child.
 		remove_child(test_script)
 		#END TESTS IN SCRIPT LOOP
-
 		_current_test = null
-		p("\n\n")
 		_ctrls.script_progress.set_value(s + 1)
 		#END TEST SCRIPT LOOP
 

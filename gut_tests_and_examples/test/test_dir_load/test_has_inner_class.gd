@@ -27,10 +27,13 @@ class TestClass1:
 
 	func test_context1_one():
 		assert_true(true)
+
 	func test_context1_two():
 		pending()
+
 	func test_failing():
 		assert_eq(2, 1)
+
 	func print_something():
 		print('hello world')
 
