@@ -43,7 +43,7 @@ class TestScript:
 		if(class_name != null):
 			to_return += '.' + class_name
 		return to_return
-		
+
 ################################################################################
 ################################################################################
 var scripts = []
@@ -123,3 +123,13 @@ func set_test_class_prefix(test_class_prefix):
 
 func clear():
 	scripts.clear()
+
+func has_script(path):
+	var found = false
+	var idx = 0
+	while(idx < scripts.size() and !found):
+		if(scripts[idx].path == path):
+			found = true
+		else:
+			idx += 1
+	return found

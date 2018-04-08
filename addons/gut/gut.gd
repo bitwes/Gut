@@ -293,31 +293,6 @@ func _on_run_rest_pressed():
 #####################
 
 # ------------------------------------------------------------------------------
-# Parses out the tests based on the _test_prefix.  Fills the _tests array with
-# instances of OneTest.
-# ------------------------------------------------------------------------------
-# func _parse_tests(script):
-# 	var file = File.new()
-# 	var line = ""
-# 	var line_count = 0
-#
-# 	file.open(script, 1)
-# 	while(!file.eof_reached()):
-# 		line_count += 1
-# 		line = file.get_line()
-# 		#Add a test
-# 		if(line.begins_with("func " + _test_prefix)):
-# 			var from = line.find(_test_prefix)
-# 			var line_len = line.find("(") - from
-# 			var new_test = OneTest.new()
-# 			new_test.name = line.substr(from, line_len)
-# 			new_test.line_number = line_count
-# 			_tests.append(new_test)
-#
-# 	file.close()
-
-
-# ------------------------------------------------------------------------------
 # Convert the _summary dictionary into text
 # ------------------------------------------------------------------------------
 func _get_summary_text():
@@ -409,24 +384,19 @@ func _is_function_state(script_result):
 # ------------------------------------------------------------------------------
 # Print out the heading for a new script
 # ------------------------------------------------------------------------------
-func _print_script_heading(script_name):
-	p("/-----------------------------------------")
-	p("Testing Script " + script_name, 0)
-	if(_unit_test_name != ''):
-		p('  Only running tests like: "' + _unit_test_name + '"')
-	p("-----------------------------------------/")
-
-# ------------------------------------------------------------------------------
-# Initialize a new test script object.  The file is loaded from the passed in path
-# and the tests are parsed out.
-# ------------------------------------------------------------------------------
-# func _init_test_script(script_path):
-# 	_parse_tests(script_path)
-# 	var test_script = load(script_path).new()
-# 	add_child(test_script)
-# 	test_script.gut = self
-#
-# 	return test_script
+func _print_script_heading(script):
+	if(script.class_name == null):
+		p("/-----------------------------------------")
+		p("Testing Script " + script.path, 0)
+		if(_unit_test_name != ''):
+			p('  Only running tests like: "' + _unit_test_name + '"')
+		p("-----------------------------------------/")
+	else:
+		p("/----")
+		p("Testing Inner Class " + script.class_name, 0)
+		if(_unit_test_name != ''):
+			p('  Only running tests like: "' + _unit_test_name + '"')
+		p("----/")
 
 # ------------------------------------------------------------------------------
 # Just gets more logic out of _test_the_scripts.  Decides if we should yield after
@@ -454,7 +424,7 @@ func _test_the_scripts():
 	for s in range(_test_collector.scripts.size()):
 		var the_script = _test_collector.scripts[s]
 		set_title('Running:  ' + the_script.get_full_name())
-		_print_script_heading(the_script.get_full_name())
+		_print_script_heading(the_script)
 		_new_summary.add_script(the_script.get_full_name())
 
 		var test_script = the_script.get_new()
@@ -471,12 +441,11 @@ func _test_the_scripts():
 			_yield_between.timer.start()
 			yield(_yield_between.timer, 'timeout')
 
-		var _tests = the_script.tests
-		_ctrls.test_progress.set_max(_tests.size())
-		for i in range(_tests.size()):
+		_ctrls.test_progress.set_max(the_script.tests.size())
+		for i in range(the_script.tests.size()):
 			_stubber.clear()
 			_doubler.clear_output_directory()
-			_current_test = _tests[i]
+			_current_test = the_script.tests[i]
 
 			if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
 			   (_unit_test_name == '')):

@@ -102,6 +102,6 @@ func clear_output_directory():
 		f = d.get_next()
 
 func delete_output_directory():
-	clear_directory()
+	clear_output_directory()
 	var d = Directory.new()
 	d.remove(_output_dir)
