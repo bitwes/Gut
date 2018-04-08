@@ -38,6 +38,12 @@ class TestScript:
 			inst = Script.new()
 		return inst
 
+	func get_full_name():
+		var to_return = path
+		if(class_name != null):
+			to_return += '.' + class_name
+		return to_return
+		
 ################################################################################
 ################################################################################
 var scripts = []
@@ -114,3 +120,6 @@ func get_test_class_prefix():
 
 func set_test_class_prefix(test_class_prefix):
 	_test_class_prefix = test_class_prefix
+
+func clear():
+	scripts.clear()
