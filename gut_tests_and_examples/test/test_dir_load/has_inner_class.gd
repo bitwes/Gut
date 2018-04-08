@@ -5,7 +5,7 @@ func test_soemthing():
 func test_nothing():
 	pass
 
-class Context1:
+class TestClass1:
 	extends "res://addons/gut/test.gd"
 	func test_context1_one():
 		pass
@@ -13,3 +13,9 @@ class Context1:
 		pass
 	func print_something():
 		print('hello world')
+
+class NotTestClass:
+	func test_something():
+		pass
+	func not_a_test():
+		pass

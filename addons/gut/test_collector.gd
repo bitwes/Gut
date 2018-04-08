@@ -13,6 +13,8 @@ class Test:
 	# the line number the test is on
 	var line_number = -1
 
+################################################################################
+################################################################################
 class TestScript:
 	var class_name = null
 	var tests = []
@@ -36,15 +38,11 @@ class TestScript:
 			inst = Script.new()
 		return inst
 
+################################################################################
+################################################################################
 var scripts = []
 var _test_prefix = 'test_'
-var _inner_class_prefix = 'Context'
-
-func add_script(path):
-	var ts = TestScript.new()
-	ts.path = path
-	scripts.append(ts)
-	_parse_script(ts)
+var _test_class_prefix = 'Test'
 
 func _parse_script(script):
 	var file = File.new()
@@ -68,7 +66,7 @@ func _parse_script(script):
 		if(line.begins_with('class ')):
 			var class_name = line.replace('class ', '')
 			class_name = class_name.replace(':', '')
-			if(class_name.begins_with(_inner_class_prefix)):
+			if(class_name.begins_with(_test_class_prefix)):
 				inner_classes.append(class_name)
 
 	for i in range(inner_classes.size()):
@@ -82,15 +80,37 @@ func _parse_script(script):
 
 func _parse_inner_class_tests(script):
 	var inst = script.get_new()
-	for i in range(inst.get_method_list().size()):
-		var name = inst.get_method_list()[i]['name']
-		if(name.begins_with(_test_prefix)):
+	var methods = inst.get_method_list()
+	for i in range(methods.size()):
+		var name = methods[i]['name']
+		if(name.begins_with(_test_prefix) and methods[i]['flags'] == 65):
 			var t = Test.new()
 			t.name = name
 			script.tests.append(t)
+
+# #################
+# Public
+# #################
+func add_script(path):
+	var ts = TestScript.new()
+	ts.path = path
+	scripts.append(ts)
+	_parse_script(ts)
 
 func to_s():
 	var to_return = ''
 	for i in range(scripts.size()):
 		to_return += scripts[i].to_s() + "\n"
 	return to_return
+
+func get_test_prefix():
+	return _test_prefix
+
+func set_test_prefix(test_prefix):
+	_test_prefix = test_prefix
+
+func get_test_class_prefix():
+	return _test_class_prefix
+
+func set_test_class_prefix(test_class_prefix):
+	_test_class_prefix = test_class_prefix
