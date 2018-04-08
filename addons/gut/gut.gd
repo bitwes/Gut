@@ -76,11 +76,6 @@ const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
 var _stop_pressed = false
 var _test_collector = load('res://addons/gut/test_collector.gd').new()
 
-# Tests to run for the current script
-var _tests = []
-# all the scripts that should be ran as test scripts
-var _test_scripts = []
-
 # The instanced scripts.  This is populated as the scripts are run.
 var _test_script_objects = []
 
@@ -301,25 +296,25 @@ func _on_run_rest_pressed():
 # Parses out the tests based on the _test_prefix.  Fills the _tests array with
 # instances of OneTest.
 # ------------------------------------------------------------------------------
-func _parse_tests(script):
-	var file = File.new()
-	var line = ""
-	var line_count = 0
-
-	file.open(script, 1)
-	while(!file.eof_reached()):
-		line_count += 1
-		line = file.get_line()
-		#Add a test
-		if(line.begins_with("func " + _test_prefix)):
-			var from = line.find(_test_prefix)
-			var line_len = line.find("(") - from
-			var new_test = OneTest.new()
-			new_test.name = line.substr(from, line_len)
-			new_test.line_number = line_count
-			_tests.append(new_test)
-
-	file.close()
+# func _parse_tests(script):
+# 	var file = File.new()
+# 	var line = ""
+# 	var line_count = 0
+#
+# 	file.open(script, 1)
+# 	while(!file.eof_reached()):
+# 		line_count += 1
+# 		line = file.get_line()
+# 		#Add a test
+# 		if(line.begins_with("func " + _test_prefix)):
+# 			var from = line.find(_test_prefix)
+# 			var line_len = line.find("(") - from
+# 			var new_test = OneTest.new()
+# 			new_test.name = line.substr(from, line_len)
+# 			new_test.line_number = line_count
+# 			_tests.append(new_test)
+#
+# 	file.close()
 
 
 # ------------------------------------------------------------------------------
@@ -375,7 +370,7 @@ func _init_run():
 
 	_yield_between.tests_since_last_yield = 0
 	._init_run()
-	_ctrls.script_progress.set_max(_test_scripts.size())
+	_ctrls.script_progress.set_max(_test_collector.scripts.size())
 	_ctrls.script_progress.set_value(0)
 
 # ------------------------------------------------------------------------------
@@ -425,13 +420,13 @@ func _print_script_heading(script_name):
 # Initialize a new test script object.  The file is loaded from the passed in path
 # and the tests are parsed out.
 # ------------------------------------------------------------------------------
-func _init_test_script(script_path):
-	_parse_tests(script_path)
-	var test_script = load(script_path).new()
-	add_child(test_script)
-	test_script.gut = self
-
-	return test_script
+# func _init_test_script(script_path):
+# 	_parse_tests(script_path)
+# 	var test_script = load(script_path).new()
+# 	add_child(test_script)
+# 	test_script.gut = self
+#
+# 	return test_script
 
 # ------------------------------------------------------------------------------
 # Just gets more logic out of _test_the_scripts.  Decides if we should yield after
@@ -456,89 +451,89 @@ func _test_the_scripts():
 	_init_run()
 	var file = File.new()
 
-	for s in range(_test_scripts.size()):
-		_tests.clear()
-		set_title('Running:  ' + _test_scripts[s])
-		_print_script_heading(_test_scripts[s])
-		_new_summary.add_script(_test_scripts[s])
+	for s in range(_test_collector.scripts.size()):
+		var the_script = _test_collector.scripts[s]
+		set_title('Running:  ' + the_script.get_full_name())
+		_print_script_heading(the_script.get_full_name())
+		_new_summary.add_script(the_script.get_full_name())
 
-		if(!file.file_exists(_test_scripts[s])):
-			p("FAILED   COULD NOT FIND FILE:  " + _test_scripts[s])
-		else:
-			var test_script = _init_test_script(_test_scripts[s])
-			_test_script_objects.append(test_script)
-			var script_result = null
+		var test_script = the_script.get_new()
+		test_script.gut = self
+		add_child(test_script)
+		_test_script_objects.append(test_script)
+		var script_result = null
 
-			test_script.prerun_setup()
+		test_script.prerun_setup()
 
-			# yield between test scripts so things paint
-			if(_yield_between.should):
-				_yield_between.timer.set_wait_time(0.01)
-				_yield_between.timer.start()
-				yield(_yield_between.timer, 'timeout')
+		# yield between test scripts so things paint
+		if(_yield_between.should):
+			_yield_between.timer.set_wait_time(0.01)
+			_yield_between.timer.start()
+			yield(_yield_between.timer, 'timeout')
 
-			_ctrls.test_progress.set_max(_tests.size())
-			for i in range(_tests.size()):
-				_stubber.clear()
-				_doubler.clear_output_directory()
-				_current_test = _tests[i]
+		var _tests = the_script.tests
+		_ctrls.test_progress.set_max(_tests.size())
+		for i in range(_tests.size()):
+			_stubber.clear()
+			_doubler.clear_output_directory()
+			_current_test = _tests[i]
 
-				if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
-				   (_unit_test_name == '')):
-					p(_current_test.name, 1)
-					_new_summary.add_test(_current_test.name)
-					# yield so things paint
-					if(_should_yield_now()):
-						_yield_between.timer.set_wait_time(0.001)
-						_yield_between.timer.start()
-						yield(_yield_between.timer, 'timeout')
+			if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
+			   (_unit_test_name == '')):
+				p(_current_test.name, 1)
+				_new_summary.add_test(_current_test.name)
+				# yield so things paint
+				if(_should_yield_now()):
+					_yield_between.timer.set_wait_time(0.001)
+					_yield_between.timer.start()
+					yield(_yield_between.timer, 'timeout')
 
-					test_script.setup()
+				test_script.setup()
 
-					script_result = test_script.call(_current_test.name)
-					#When the script yields it will return a GDFunctionState object
-					if(_is_function_state(script_result)):
-						if(!_was_yield_method_called):
-							p('/# Yield detected, waiting #/')
-						_was_yield_method_called = false
-						_waiting = true
-						while(_waiting):
-							p(WAITING_MESSAGE, 2)
-							_wait_timer.start()
-							yield(_wait_timer, 'timeout')
+				script_result = test_script.call(_current_test.name)
+				#When the script yields it will return a GDFunctionState object
+				if(_is_function_state(script_result)):
+					if(!_was_yield_method_called):
+						p('/# Yield detected, waiting #/')
+					_was_yield_method_called = false
+					_waiting = true
+					while(_waiting):
+						p(WAITING_MESSAGE, 2)
+						_wait_timer.start()
+						yield(_wait_timer, 'timeout')
 
-					#if the test called pause_before_teardown then yield until
-					#the continue button is pressed.
-					if(_pause_before_teardown and !_ignore_pause_before_teardown):
-						p(PAUSE_MESSAGE, 1)
-						_waiting = true
-						_ctrls.continue_button.set_disabled(false)
-						yield(self, SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
+				#if the test called pause_before_teardown then yield until
+				#the continue button is pressed.
+				if(_pause_before_teardown and !_ignore_pause_before_teardown):
+					p(PAUSE_MESSAGE, 1)
+					_waiting = true
+					_ctrls.continue_button.set_disabled(false)
+					yield(self, SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
 
-					test_script.clear_signal_watcher()
-					test_script.teardown()
+				test_script.clear_signal_watcher()
+				test_script.teardown()
 
-					if(_current_test.passed):
-						_ctrls.text_box.add_keyword_color(_current_test.name, Color(0, 1, 0))
-					else:
-						_ctrls.text_box.add_keyword_color(_current_test.name, Color(1, 0, 0))
+				if(_current_test.passed):
+					_ctrls.text_box.add_keyword_color(_current_test.name, Color(0, 1, 0))
+				else:
+					_ctrls.text_box.add_keyword_color(_current_test.name, Color(1, 0, 0))
 
-					# !!! STOP BUTTON SHORT CIRCUIT !!!
-					if(_stop_pressed):
-						_is_running = false
-						_update_controls()
-						_stop_pressed = false
-						p("STOPPED")
-						return
+				# !!! STOP BUTTON SHORT CIRCUIT !!!
+				if(_stop_pressed):
+					_is_running = false
+					_update_controls()
+					_stop_pressed = false
+					p("STOPPED")
+					return
 
-					_ctrls.test_progress.set_value(i + 1)
-			test_script.postrun_teardown()
-			# This might end up being very resource intensive if the scripts
-			# don't clean up after themselves.  Might have to consolidate output
-			# into some other structure and kill the script objects with
-			# test_script.free() instead of remove child.
-			remove_child(test_script)
-			#END TESTS IN SCRIPT LOOP
+				_ctrls.test_progress.set_value(i + 1)
+		test_script.postrun_teardown()
+		# This might end up being very resource intensive if the scripts
+		# don't clean up after themselves.  Might have to consolidate output
+		# into some other structure and kill the script objects with
+		# test_script.free() instead of remove child.
+		remove_child(test_script)
+		#END TESTS IN SCRIPT LOOP
 
 		_current_test = null
 		p("\n\n")
@@ -626,13 +621,13 @@ func p(text, level=0, indent=0):
 # ------------------------------------------------------------------------------
 func test_scripts(run_rest=false):
 	clear_text()
-	_test_scripts.clear()
+	_test_collector.clear()
 
 	if(run_rest):
 		for idx in range(_ctrls.scripts_drop_down.get_selected(), _ctrls.scripts_drop_down.get_item_count()):
-			_test_scripts.append(_ctrls.scripts_drop_down.get_item_text(idx))
+			_test_collector.add_script(_ctrls.scripts_drop_down.get_item_text(idx))
 	else:
-		_test_scripts.append(_ctrls.scripts_drop_down.get_item_text(_ctrls.scripts_drop_down.get_selected()))
+		_test_collector.add_script(_ctrls.scripts_drop_down.get_item_text(_ctrls.scripts_drop_down.get_selected()))
 
 	_test_the_scripts()
 
@@ -641,19 +636,15 @@ func test_scripts(run_rest=false):
 # Runs a single script passed in.
 # ------------------------------------------------------------------------------
 func test_script(script):
-	_test_scripts.clear()
-	_test_scripts.append(script)
+	_test_collector.clear()
+	_test_collector.add_script(script)
 	_test_the_scripts()
-	_test_scripts.clear()
 
 # ------------------------------------------------------------------------------
 # Adds a script to be run when test_scripts called
 # ------------------------------------------------------------------------------
 func add_script(script, select_this_one=false):
-	if(_test_scripts.has(script)):
-		return
-
-	_test_scripts.append(script)
+	_test_collector.add_script(script)
 	_ctrls.scripts_drop_down.add_item(script)
 	# Move the run_button in case the size of the path of the script caused the
 	# drop down to resize.
