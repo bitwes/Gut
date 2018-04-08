@@ -7,7 +7,12 @@
 /.gitattributes   export-ignore
 /.gitignore       export-ignore
 /CHANGES.md       export-ignore
-/README.md        export-ignore
+/default_env.tres export-ignore
+/icon.png         export-ignore
 /project.godot    export-ignore
+/README.md        export-ignore
 
-/gut_tests_and_examples           export-ignore
+/scenes           export-ignore
+/scripts          export-ignore
+/templates        export-ignore
+/test             export-ignore
