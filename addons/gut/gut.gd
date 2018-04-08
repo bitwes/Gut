@@ -74,6 +74,7 @@ const WAITING_MESSAGE = '/# waiting #/'
 const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
 
 var _stop_pressed = false
+var _test_collector = load('res://addons/gut/test_collector.gd').new()
 
 # Tests to run for the current script
 var _tests = []

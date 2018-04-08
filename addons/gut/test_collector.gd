@@ -1,0 +1,96 @@
+################################################################################
+# Test (INTERNAL USE ONLY)
+#	Used to keep track of info about each test ran.
+################################################################################
+class Test:
+	# indicator if it passed or not.  defaults to true since it takes only
+	# one failure to make it not pass.  _fail in gut will set this.
+	var passed = true
+	# the name of the function
+	var name = ""
+	# flag to know if the name has been printed yet.
+	var has_printed_name = false
+	# the line number the test is on
+	var line_number = -1
+
+class TestScript:
+	var class_name = null
+	var tests = []
+	var path = null
+
+	func to_s():
+		var to_return = path
+		if(class_name != null):
+			to_return += str('.', class_name)
+		to_return += "\n"
+		for i in range(tests.size()):
+			to_return += str('  ', tests[i].name, "\n")
+		return to_return
+
+	func get_new():
+		var Script = load(path)
+		var inst = null
+		if(class_name != null):
+			inst = Script.get(class_name).new()
+		else:
+			inst = Script.new()
+		return inst
+
+var scripts = []
+var _test_prefix = 'test_'
+var _inner_class_prefix = 'Context'
+
+func add_script(path):
+	var ts = TestScript.new()
+	ts.path = path
+	scripts.append(ts)
+	_parse_script(ts)
+
+func _parse_script(script):
+	var file = File.new()
+	var line = ""
+	var line_count = 0
+	var inner_classes = []
+
+	file.open(script.path, 1)
+	while(!file.eof_reached()):
+		line_count += 1
+		line = file.get_line()
+		#Add a test
+		if(line.begins_with("func " + _test_prefix)):
+			var from = line.find(_test_prefix)
+			var line_len = line.find("(") - from
+			var new_test = Test.new()
+			new_test.name = line.substr(from, line_len)
+			new_test.line_number = line_count
+			script.tests.append(new_test)
+
+		if(line.begins_with('class ')):
+			var class_name = line.replace('class ', '')
+			class_name = class_name.replace(':', '')
+			if(class_name.begins_with(_inner_class_prefix)):
+				inner_classes.append(class_name)
+
+	for i in range(inner_classes.size()):
+		var ts = TestScript.new()
+		ts.path = script.path
+		ts.class_name = inner_classes[i]
+		scripts.append(ts)
+		_parse_inner_class_tests(ts)
+
+	file.close()
+
+func _parse_inner_class_tests(script):
+	var inst = script.get_new()
+	for i in range(inst.get_method_list().size()):
+		var name = inst.get_method_list()[i]['name']
+		if(name.begins_with(_test_prefix)):
+			var t = Test.new()
+			t.name = name
+			script.tests.append(t)
+
+func to_s():
+	var to_return = ''
+	for i in range(scripts.size()):
+		to_return += scripts[i].to_s() + "\n"
+	return to_return
