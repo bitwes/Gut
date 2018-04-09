@@ -298,7 +298,8 @@ func load_options_from_config_file(file_path):
 	# SHORTCIRCUIT
 	var f = File.new()
 	if(!f.file_exists(file_path)):
-		return 0
+		print('ERROR:  Config File "', file_path, '" does not exist.')
+		return -1
 
 	f.open(file_path, f.READ)
 	var json = f.get_as_text()
@@ -358,12 +359,12 @@ func load_auto_load_scripts():
 
 # parse option and run Gut
 func _init():
+	print("\n\n", ' ---  Gut  ---')
 	var o = setup_options()
 	o.parse()
 	extract_options(o)
 	var load_result = load_options_from_config_file(options.config_file)
 
-	print(options)
 	if(load_result == -1):
 		quit()
 	else:

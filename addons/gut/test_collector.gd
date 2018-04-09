@@ -98,6 +98,16 @@ func _parse_inner_class_tests(script):
 # Public
 # #################
 func add_script(path):
+	# SHORTCIRCUIT
+	if(has_script(path)):
+		return
+
+	var f = File.new()
+	# SHORTCIRCUIT
+	if(!f.file_exists(path)):
+		print('ERROR:  Could not find script:  ', path)
+		return
+
 	var ts = TestScript.new()
 	ts.path = path
 	scripts.append(ts)

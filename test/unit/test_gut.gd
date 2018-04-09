@@ -288,7 +288,7 @@ func test_gut_clears_test_instances_between_runs():
 # ------------------------------
 # Loading diretories
 # ------------------------------
-const TEST_LOAD_DIR = 'res://test/test_dir_load'
+const TEST_LOAD_DIR = 'res://test/parsing_and_loading_samples'
 func test_adding_directory_loads_files():
 	gr.test_gut.add_directory(TEST_LOAD_DIR)
 	assert_true(gr.test_gut._test_collector.has_script(TEST_LOAD_DIR + '/test_samples.gd'))
@@ -307,9 +307,9 @@ func test_if_directory_does_not_exist_it_does_not_die():
 
 func test_adding_same_directory_does_not_add_duplicates():
 	gr.test_gut.add_directory('res://test/unit')
-	var orig = gr.test_gut._test_scripts.size()
+	var orig = gr.test_gut._test_collector.scripts.size()
 	gr.test_gut.add_directory('res://test/unit')
-	assert_eq(gr.test_gut._test_scripts.size(), orig)
+	assert_eq(gr.test_gut._test_collector.scripts.size(), orig)
 
 # We only have 3 directories with tests in them so test 3
 func test_directories123_defined_in_editor_are_loaded_on_ready():
@@ -317,13 +317,13 @@ func test_directories123_defined_in_editor_are_loaded_on_ready():
 	var t = Test.new()
 	t.gut = g
 	g.set_yield_between_tests(false)
-	g._directory1 = 'res://test/test_dir_load'
+	g._directory1 = 'res://test/parsing_and_loading_samples'
 	g._directory2 = 'res://test/unit'
 	g._directory3 = 'res://test/integration'
 	add_child(g)
-	t.assert_true(g._test_collector.has_script('res://gut_tests_and_examples/test/test_dir_load/test_samples.gd'), 'Should have dir1 script')
-	t.assert_true(g._test_collector.has_script('res://gut_tests_and_examples/test/unit/test_gut.gd'), 'Should have dir2 script')
-	t.assert_true(g._test_collector.has_script('res://gut_tests_and_examples/test/integration/test_sample_all_passed_integration.gd'), 'Should have dir3 script')
+	t.assert_true(g._test_collector.has_script('res://test/parsing_and_loading_samples/test_samples.gd'), 'Should have dir1 script')
+	t.assert_true(g._test_collector.has_script('res://test/unit/test_gut.gd'), 'Should have dir2 script')
+	t.assert_true(g._test_collector.has_script('res://test/integration/test_sample_all_passed_integration.gd'), 'Should have dir3 script')
 	assert_eq(t.get_pass_count(), 3, 'they should have passed')
 
 # ^ aaaand then we test 2 more.
@@ -332,13 +332,13 @@ func test_directories456_defined_in_editor_are_loaded_on_ready():
 	var t = Test.new()
 	t.gut = g
 	g.set_yield_between_tests(false)
-	g._directory4 = 'res://test/test_dir_load'
+	g._directory4 = 'res://test/parsing_and_loading_samples'
 	g._directory5 = 'res://test/unit'
 	g._directory6 = 'res://test/integration'
 	add_child(g)
-	t.assert_true(g._test_collector.has_script('res://gut_tests_and_examples/test/test_dir_load/test_samples.gd'), 'Should have dir4 script')
-	t.assert_true(g._test_collector.has_script('res://gut_tests_and_examples/test/unit/test_gut.gd'), 'Should have dir5 script')
-	t.assert_true(g._test_collector.has_script('res://gut_tests_and_examples/test/integration/test_sample_all_passed_integration.gd'), 'Should have dir6 script')
+	t.assert_true(g._test_collector.has_script('res://test/parsing_and_loading_samples/test_samples.gd'), 'Should have dir4 script')
+	t.assert_true(g._test_collector.has_script('res://test/unit/test_gut.gd'), 'Should have dir5 script')
+	t.assert_true(g._test_collector.has_script('res://test/integration/test_sample_all_passed_integration.gd'), 'Should have dir6 script')
 	assert_eq(t.get_pass_count(), 3, 'they should have passed')
 
 # ------------------------------

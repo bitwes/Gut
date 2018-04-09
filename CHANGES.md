@@ -4,6 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 # ?.?.?
 Experimental Stubs
+.gutconfig.json
 
 # 6.2.0
 * Some new asserts courtesy of Myrkrheim

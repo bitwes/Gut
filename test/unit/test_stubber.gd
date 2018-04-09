@@ -6,10 +6,10 @@ var Stubber = load('res://addons/gut/stubber.gd')
 # that test.gd has
 var StubParamsClass = load('res://addons/gut/stub_params.gd')
 
-const TO_STUB_PATH = 'res://gut_tests_and_examples/test/stub_test_objects/to_stub.gd'
+const TO_STUB_PATH = 'res://test/stub_test_objects/to_stub.gd'
 var ToStub = load(TO_STUB_PATH)
 
-const HAS_STUB_METADATA_PATH = 'res://gut_tests_and_examples/test/stub_test_objects/has_stub_metadata.gd'
+const HAS_STUB_METADATA_PATH = 'res://test/stub_test_objects/has_stub_metadata.gd'
 var HasStubMetadata = load(HAS_STUB_METADATA_PATH)
 
 

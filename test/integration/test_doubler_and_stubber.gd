@@ -1,9 +1,9 @@
 extends "res://addons/gut/test.gd"
 
-var Doubler = load('res://addons/gut/doubler.gd')
+# var Doubler = load('res://addons/gut/doubler.gd')
 var Stubber = load('res://addons/gut/stubber.gd')
 
-const DOUBLE_ME_PATH = 'res://gut_tests_and_examples/test/doubler_test_objects/double_me.gd'
+const DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_me.gd'
 const TEMP_FILES = 'user://test_doubler_temp_file'
 
 var gr = {

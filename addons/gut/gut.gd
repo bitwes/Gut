@@ -423,9 +423,10 @@ func _test_the_scripts():
 
 	for s in range(_test_collector.scripts.size()):
 		var the_script = _test_collector.scripts[s]
-		set_title('Running:  ' + the_script.get_full_name())
-		_print_script_heading(the_script)
-		_new_summary.add_script(the_script.get_full_name())
+		if(the_script.tests.size() > 0):
+			set_title('Running:  ' + the_script.get_full_name())
+			_print_script_heading(the_script)
+			_new_summary.add_script(the_script.get_full_name())
 
 		var test_script = the_script.get_new()
 		test_script.gut = self

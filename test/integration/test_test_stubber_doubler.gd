@@ -5,7 +5,7 @@ var Test = load('res://addons/gut/test.gd')
 
 const TEMP_FILES = 'user://test_doubler_temp_file'
 
-const DOUBLE_ME_PATH = 'res://gut_tests_and_examples/test/doubler_test_objects/double_me.gd'
+const DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_me.gd'
 
 var gr = {
     gut = null,

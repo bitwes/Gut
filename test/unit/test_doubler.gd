@@ -3,8 +3,8 @@ extends "res://addons/gut/test.gd"
 #var Doubler = load('res://addons/gut/doubler.gd')
 const TEMP_FILES = 'user://test_doubler_temp_file'
 
-const DOUBLE_ME_PATH = 'res://gut_tests_and_examples/test/doubler_test_objects/double_me.gd'
-const DOUBLE_EXTENDS_NODE2D = 'res://gut_tests_and_examples/test/doubler_test_objects/double_extends_node2d.gd'
+const DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_me.gd'
+const DOUBLE_EXTENDS_NODE2D = 'res://test/doubler_test_objects/double_extends_node2d.gd'
 
 var gr = {
     doubler = null
