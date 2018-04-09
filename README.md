@@ -5,7 +5,7 @@ GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.
 Version 6.0.0 is Godot 3.0 compatible.  These changes are not compatible with any of the 2.x versions of Godot.  The godot_2x branch has been created to hold the old version of Gut that works with Godot 2.x.  Barring any severe issues, there will not be any more development for Godot 2.x.
 
 # License
-Gut is provided under the MIT license.  [The license is distributed with Gut so it is in the `addons/gut` folder](addons/gut/LICENSE.md).  I also didn't want the Gut license to accidentally be copied into another project's root directory when installed through the Godot Asset Library.
+Gut is provided under the MIT license.
 
 # Method Links
 <table><tr>
@@ -65,7 +65,7 @@ Gut is provided under the MIT license.  [The license is distributed with Gut so 
 
 # <a name="install"> Install
 ## Installing from Download
-Download and extract the zip from the [releases](https://github.com/bitwes/gut/releases) or from the [Godot Asset Library](https://godotengine.org/asset-library/asset/54).  
+Download and extract the zip from the [releases](https://github.com/bitwes/gut/releases) or from the [Godot Asset Library](https://godotengine.org/asset-library/asset/54).
 
 Extract the zip and place the `gut` directory into your `addons` directory in your project.  If you don't have an `addons` folder at the root of your project, then make one and THEN put the `gut` directory in there.
 
@@ -111,7 +111,7 @@ The following settings are accessible in the Editor under "Script Variables"
 * <b>Disable Strict Datatype Checks</b>:  Disables the verifying of datatypes before comparisons are done.  You can disable this if you want.  See the section on datatype checks for more details.
 * <b>Test Prefix</b>:  The prefix used on all test functions.  This prefixed will be used by Gut to find tests inside your test scripts.
 * <b>File Prefix</b>:  The prefix used on all test files.  This is used in conjunction with the Directory settings to find tests.
-* <b>File Extension</b>:  This is the suffix it will use to find test files.  
+* <b>File Extension</b>:  This is the suffix it will use to find test files.
 * <b>Directory(1-6)</b>:  The path to the directories where your test scripts are located.  Subdirectories are not included.  If you need more than six directories you can use the `add_directory` method to add more.
 
 # <a name="creating_tests"> Making Tests
@@ -167,7 +167,7 @@ Each test should perform at least one assert or call `pending` to indicate the t
 
 
 # <a name="method_list"> Test Related Methods
-These methods should be used in tests to make assertions.  These methods are available to anything that inherits from the Test class (`extends "res://addons/gut/test.gd"`).  All sample code listed for the methods can be found here in [test_readme_examples.gd](gut_tests_and_examples/test/samples/test_readme_examples.gd)
+These methods should be used in tests to make assertions.  These methods are available to anything that inherits from the Test class (`extends "res://addons/gut/test.gd"`).  All sample code listed for the methods can be found here in [test_readme_examples.gd](test/samples/test_readme_examples.gd)
 #### pending(text="")
 flag a test as pending, the optional message is printed in the GUI
 ``` python
@@ -556,7 +556,7 @@ func test_assert_file_exists():
 
 	gut.p('-- failing --')
 	assert_file_exists('user://file_does_not.exist') # FAIL
-	assert_file_exists('res://some_dir/another_dir/file_does_not.exist') # FAIL  
+	assert_file_exists('res://some_dir/another_dir/file_does_not.exist') # FAIL
 ```
 #### <a name="assert_file_does_not_exist"> assert_file_does_not_exist(file_path)
 asserts a file does not exist at the specified path
@@ -686,7 +686,7 @@ func test_assert_get_set_methods():
 
   gut.p('-- failing --')
   # 1 FAILING, 3 PASSING
-  assert_get_set_methods(some_class, 'count', 'not_default', 20)  
+  assert_get_set_methods(some_class, 'count', 'not_default', 20)
   # 2 FAILING, 2 PASSING
   assert_get_set_methods(some_class, 'nothing', 'hello', 22)
   # 2 FAILING
@@ -775,7 +775,7 @@ func test_illustrate_end_test():
 	end_test()
 ```
 ## <a name="gut_methods"> Methods for Configuring the Execution of Tests
-These methods would be used inside the scene you created at `res://test/tests.tcn`.  These methods can be called against the Gut node you created.  Most of these are not necessary anymore since you can configure Gut in the editor but they are here if you want to use them.  Simply put `get_node('Gut').` in front of any of them.  
+These methods would be used inside the scene you created at `res://test/tests.tcn`.  These methods can be called against the Gut node you created.  Most of these are not necessary anymore since you can configure Gut in the editor but they are here if you want to use them.  Simply put `get_node('Gut').` in front of any of them.
 
 <i>__**__ indicates the option can be set via the editor</i>
 * `add_script(script, select_this_one=false)` add a script to be tetsted with test_scripts
@@ -821,7 +821,7 @@ The level of detail that is printed to the screen can be changed using the slide
 * LOG_LEVEL_ALL_ASSERTS (2)
 
 ##  <a name="printing"> Printing info
-The `gut.p` method allows you to print information out indented under the test output.  It has an optional 2nd parameter that sets which log level to display it at.  Use one of the constants in the section above to set it.  The default is `LOG_LEVEL_FAIL_ONLY` which means the output will always be visible.  
+The `gut.p` method allows you to print information out indented under the test output.  It has an optional 2nd parameter that sets which log level to display it at.  Use one of the constants in the section above to set it.  The default is `LOG_LEVEL_FAIL_ONLY` which means the output will always be visible.
 
 
 #  <a name="advanced"> Advanced Testing
@@ -916,7 +916,7 @@ Sometimes you need to wait for a signal to be emitted, but you can never really 
 ``` python
 # wait for my_object to emit the signal 'my_signal'
 # or 5 seconds, whichever comes first.
-yield(yield_to(my_object, 'my_signal', 5), YIELD)  
+yield(yield_to(my_object, 'my_signal', 5), YIELD)
 assert_signal_emitted(my_object, 'my_signal', \
                      'Maybe it did, maybe it didnt, but we still got here.')
 ```
@@ -957,16 +957,16 @@ The -d option tells Godot to run in debug mode which is helpful.  The -s option 
 ### Options
 _Output from the command line help (-gh)_
 ```
----------------------------------------------------------                               
+---------------------------------------------------------
 This is the command line interface for the unit testing tool Gut.  With this
 interface you can run one or more test scripts from the command line.  In order
 for the Gut options to not clash with any other Godot options, each option
 starts with a "g".  Also, any option that requires a value will take the form of
 "-g<name>=<value>".  There cannot be any spaces between the option, the "=", or
-inside a specified value or Godot will think you are trying to run a scene.       
+inside a specified value or Godot will think you are trying to run a scene.
 
-Options                                                                                                               
--------                                                                                                               
+Options
+-------
   -gtest          Comma delimited list of tests to run
   -gdir           Comma delimited list of directories to add tests from.
   -gprefix        Prefix used to find tests when specifying -gdir.  Default
@@ -984,7 +984,7 @@ Options
   -gutloc         Full path (including name) of the gut script.  Default
                   res://addons/gut/gut.gd
   -gh             Print this help
----------------------------------------------------------   
+---------------------------------------------------------
 ```
 
 ### Examples
@@ -1018,7 +1018,7 @@ I got this one when I accidentally put a space instead of an "=" after -gselect.
 #  <a name="contributing"> Contributing
 This testing tool has tests of course.  All Gut related tests are found in the `test/unit` and `test/integration` directories.  Any enhancements or bug fixes should have a corresponding pull request with new tests.
 
-The bulk of the tests for Gut are in [test_gut.gd](gut_tests_and_examples/test/unit/test_gut.gd) and [test_test.gd](gut_tests_and_examples/test/unit/test_test.gd).  [test_signal_watcher.gd](gut_tests_and_examples/test/unit/test_signal_watcher.gd) tests the class used to track the emitting of signals.  The other test scripts in `unit` and `integration` should be run and their output spot checked since they test other parts of Gut that aren't easily testabled.
+The bulk of the tests for Gut are in [test_gut.gd](test/unit/test_gut.gd) and [test_test.gd](test/unit/test_test.gd).  [test_signal_watcher.gd](test/unit/test_signal_watcher.gd) tests the class used to track the emitting of signals.  The other test scripts in `unit` and `integration` should be run and their output spot checked since they test other parts of Gut that aren't easily testabled.
 
 For convenience, the `main.tscn` includes a handy "Run Gut Unit Tests" button that will kick off all the essential test scripts.
 

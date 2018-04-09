@@ -1,0 +1,18 @@
+# Exclude all top-level files and directories
+# (except addons) from zip downloads.
+# This makes installing Gut through the AssetLib
+# easier, because no files and folders need to
+# be unchecked.
+
+/.gitattributes   export-ignore
+/.gitignore       export-ignore
+/CHANGES.md       export-ignore
+/default_env.tres export-ignore
+/icon.png         export-ignore
+/project.godot    export-ignore
+/README.md        export-ignore
+
+/scenes           export-ignore
+/scripts          export-ignore
+/templates        export-ignore
+/test             export-ignore

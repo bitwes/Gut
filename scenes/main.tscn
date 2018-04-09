@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://gut_tests_and_examples/scripts/main.gd" type="Script" id=1]
+[ext_resource path="res://scripts/main.gd" type="Script" id=1]
 [ext_resource path="res://addons/gut/gut.gd" type="Script" id=2]
 [ext_resource path="res://addons/gut/icon.png" type="Texture" id=3]
 
@@ -21,6 +21,7 @@ anchor_bottom = 0.0
 margin_right = 48.0
 margin_bottom = 40.0
 rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
 mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
@@ -33,8 +34,8 @@ __meta__ = {
 "_editor_icon": ExtResource( 3 )
 }
 _run_on_load = false
-_select_script = ""
-_tests_like = ""
+_select_script = null
+_tests_like = null
 _should_print_to_console = true
 _log_level = 1
 _yield_between_tests = true
@@ -42,10 +43,9 @@ _disable_strict_datatype_checks = false
 _test_prefix = "test_"
 _file_prefix = "test_"
 _file_extension = ".gd"
-_temp_directory = "user://gut_temp_directory"
-_directory1 = "res://gut_tests_and_examples/test/unit"
-_directory2 = "res://gut_tests_and_examples/test/integration"
-_directory3 = "res://gut_tests_and_examples/test/samples"
+_directory1 = "res://test/unit"
+_directory2 = "res://test/integration"
+_directory3 = "res://test/samples"
 _directory4 = ""
 _directory5 = ""
 _directory6 = ""
@@ -61,6 +61,7 @@ margin_top = 18.0
 margin_right = 908.0
 margin_bottom = 93.0
 rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
 focus_mode = 2
 mouse_filter = 0
 mouse_default_cursor_shape = 0
@@ -75,5 +76,3 @@ flat = false
 align = 1
 
 [connection signal="pressed" from="RunGutTestsButton" to="." method="_on_RunGutTestsButton_pressed"]
-
-

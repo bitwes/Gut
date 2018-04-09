@@ -231,7 +231,7 @@ func test_simulate_calls_physics_process():
 # ------------------------------
 # Setting test to run
 # ------------------------------
-const SAMPLES_DIR = 'res://gut_tests_and_examples/test/samples/'
+const SAMPLES_DIR = 'res://test/samples/'
 func test_get_set_test_to_run():
 	gr.test.assert_get_set_methods(gr.test_gut, 'unit_test_name', '', 'hello')
 	assert_pass(4)
@@ -288,7 +288,7 @@ func test_gut_clears_test_instances_between_runs():
 # ------------------------------
 # Loading diretories
 # ------------------------------
-const TEST_LOAD_DIR = 'res://gut_tests_and_examples/test/test_dir_load'
+const TEST_LOAD_DIR = 'res://test/test_dir_load'
 func test_adding_directory_loads_files():
 	gr.test_gut.add_directory(TEST_LOAD_DIR)
 	assert_true(gr.test_gut._test_collector.has_script(TEST_LOAD_DIR + '/test_samples.gd'))
@@ -305,11 +305,11 @@ func test_if_directory_does_not_exist_it_does_not_die():
 	gr.test_gut.add_directory('res://adsf')
 	assert_true(true, 'We should get here')
 
-#func test_adding_same_directory_does_not_add_duplicates():
-#	gr.test_gut.add_directory('res://gut_tests_and_examples/test/unit')
-#	var orig = gr.test_gut._test_scripts.size()
-#	gr.test_gut.add_directory('res://gut_tests_and_examples/test/unit')
-#	assert_eq(gr.test_gut._test_scripts.size(), orig)
+func test_adding_same_directory_does_not_add_duplicates():
+	gr.test_gut.add_directory('res://test/unit')
+	var orig = gr.test_gut._test_scripts.size()
+	gr.test_gut.add_directory('res://test/unit')
+	assert_eq(gr.test_gut._test_scripts.size(), orig)
 
 # We only have 3 directories with tests in them so test 3
 func test_directories123_defined_in_editor_are_loaded_on_ready():
@@ -317,9 +317,9 @@ func test_directories123_defined_in_editor_are_loaded_on_ready():
 	var t = Test.new()
 	t.gut = g
 	g.set_yield_between_tests(false)
-	g._directory1 = 'res://gut_tests_and_examples/test/test_dir_load'
-	g._directory2 = 'res://gut_tests_and_examples/test/unit'
-	g._directory3 = 'res://gut_tests_and_examples/test/integration'
+	g._directory1 = 'res://test/test_dir_load'
+	g._directory2 = 'res://test/unit'
+	g._directory3 = 'res://test/integration'
 	add_child(g)
 	t.assert_true(g._test_collector.has_script('res://gut_tests_and_examples/test/test_dir_load/test_samples.gd'), 'Should have dir1 script')
 	t.assert_true(g._test_collector.has_script('res://gut_tests_and_examples/test/unit/test_gut.gd'), 'Should have dir2 script')
@@ -332,9 +332,9 @@ func test_directories456_defined_in_editor_are_loaded_on_ready():
 	var t = Test.new()
 	t.gut = g
 	g.set_yield_between_tests(false)
-	g._directory4 = 'res://gut_tests_and_examples/test/test_dir_load'
-	g._directory5 = 'res://gut_tests_and_examples/test/unit'
-	g._directory6 = 'res://gut_tests_and_examples/test/integration'
+	g._directory4 = 'res://test/test_dir_load'
+	g._directory5 = 'res://test/unit'
+	g._directory6 = 'res://test/integration'
 	add_child(g)
 	t.assert_true(g._test_collector.has_script('res://gut_tests_and_examples/test/test_dir_load/test_samples.gd'), 'Should have dir4 script')
 	t.assert_true(g._test_collector.has_script('res://gut_tests_and_examples/test/unit/test_gut.gd'), 'Should have dir5 script')
@@ -345,7 +345,7 @@ func test_directories456_defined_in_editor_are_loaded_on_ready():
 # Signal tests
 # ------------------------------
 func test_when_moving_to_next_test_watched_signals_are_cleared():
-	gr.test_gut.add_script('res://gut_tests_and_examples/test/unit/verify_signal_watches_are_cleared.gd')
+	gr.test_gut.add_script('res://test/unit/verify_signal_watches_are_cleared.gd')
 	gr.test_gut.test_scripts()
 	assert_eq(gr.test_gut.get_pass_count(), 1, 'One test should have passed.')
 	assert_eq(gr.test_gut.get_fail_count(), 1, 'One failure for not watching anymore.')
