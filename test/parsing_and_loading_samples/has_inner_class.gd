@@ -19,3 +19,7 @@ class NotTestClass:
 		pass
 	func not_a_test():
 		pass
+
+class TestDoesNotExtendTest:
+	func test_something():
+		pass

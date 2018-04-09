@@ -61,3 +61,8 @@ func test_inner_tests_are_found_using_test_prefix():
 	for i in range(gr.tc.scripts.size()):
 		if(gr.tc.scripts[i].class_name == 'TestClass1'):
 			assert_eq(gr.tc.scripts[i].tests.size(), 1)
+
+func test_inner_tests_must_extend_test_to_be_used():
+	gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')
+	for i in range(gr.tc.scripts.size()):
+		assert_ne(gr.tc.scripts[i].class_name, 'TestDoesNotExtendTest')
