@@ -294,6 +294,7 @@ func get_value(dict, index, default):
 		return dict[index]
 	else:
 		return default
+
 func load_options_from_config_file(file_path):
 	# SHORTCIRCUIT
 	var f = File.new()
@@ -350,10 +351,12 @@ func apply_options():
 # settings->autoload.
 func load_auto_load_scripts():
 	var f = ConfigFile.new()
-	f.load('res://engine.cfg')
+	f.load('res://project.godot')
 
 	for key in f.get_section_keys('autoload'):
-		var obj = load(f.get_value('autoload', key)).new()
+		# There's an * in my autoload path, at the start, idk why.  It breaks
+		# things so I'm removing all * from the value.
+		var obj = load(f.get_value('autoload', key).replace('*', '')).new()
 		obj.set_name(key)
 		get_root().add_child(obj)
 

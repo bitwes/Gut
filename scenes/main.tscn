@@ -21,7 +21,6 @@ anchor_bottom = 0.0
 margin_right = 48.0
 margin_bottom = 40.0
 rect_pivot_offset = Vector2( 0, 0 )
-rect_clip_content = false
 mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
@@ -43,6 +42,7 @@ _disable_strict_datatype_checks = false
 _test_prefix = "test_"
 _file_prefix = "test_"
 _file_extension = ".gd"
+_temp_directory = "user://gut_temp_directory"
 _directory1 = "res://test/unit"
 _directory2 = "res://test/integration"
 _directory3 = "res://test/samples"
@@ -61,7 +61,6 @@ margin_top = 18.0
 margin_right = 908.0
 margin_bottom = 93.0
 rect_pivot_offset = Vector2( 0, 0 )
-rect_clip_content = false
 focus_mode = 2
 mouse_filter = 0
 mouse_default_cursor_shape = 0
@@ -76,3 +75,5 @@ flat = false
 align = 1
 
 [connection signal="pressed" from="RunGutTestsButton" to="." method="_on_RunGutTestsButton_pressed"]
+
+

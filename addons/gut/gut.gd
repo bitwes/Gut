@@ -385,18 +385,14 @@ func _is_function_state(script_result):
 # Print out the heading for a new script
 # ------------------------------------------------------------------------------
 func _print_script_heading(script):
+	p("\n/-----------------------------------------")
 	if(script.class_name == null):
-		p("\n/-----------------------------------------")
-		p("Testing Script " + script.path, 0)
-		if(_unit_test_name != ''):
-			p('  Only running tests like: "' + _unit_test_name + '"')
-		p("-----------------------------------------/")
+		p("Running Script " + script.path, 0)
 	else:
-		p("/----")
-		p("Testing Inner Class " + script.class_name, 0)
-		if(_unit_test_name != ''):
-			p('  Only running tests like: "' + _unit_test_name + '"')
-		p("----/")
+		p("Running Class [" + script.class_name + "] in " + script.path, 0)
+	if(_unit_test_name != ''):
+		p('  Only running tests like: "' + _unit_test_name + '"')
+	p("-----------------------------------------/")
 
 # ------------------------------------------------------------------------------
 # Just gets more logic out of _test_the_scripts.  Decides if we should yield after
@@ -521,10 +517,18 @@ func _pass(text=''):
 func _fail(text=''):
 	_summary.tally_failed += 1
 	if(_current_test != null):
-		var line_text = '  at line ' + str(_current_test.line_number)
-		_new_summary.add_fail(_current_test.name, text + "\n    " + line_text)
+		var line_text = ''
+		# Inner classes don't get the line number set so don't print it
+		# since -1 isn't helpful
+		if(_current_test.line_number != -1):
+			line_text = '  at line ' + str(_current_test.line_number)
+			p(line_text, LOG_LEVEL_FAIL_ONLY)
+			# format for summary
+			line_text =  "\n    " + line_text
+
+		_new_summary.add_fail(_current_test.name, text + line_text)
 		_current_test.passed = false
-		p(line_text, LOG_LEVEL_FAIL_ONLY)
+
 	_update_controls()
 
 func _pending(text=''):
