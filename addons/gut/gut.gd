@@ -28,7 +28,7 @@
 ################################################################################
 # View readme for usage details.
 #
-# Version 6.2.0
+# Version 6.3.0
 ################################################################################
 extends "res://addons/gut/gut_gui.gd"
 
@@ -49,6 +49,7 @@ export var _disable_strict_datatype_checks = false setget disable_strict_datatyp
 export var _test_prefix = 'test_'
 export var _file_prefix = 'test_'
 export var _file_extension = '.gd'
+export var _inner_class_prefix = 'Test'
 export(String) var _temp_directory = 'user://gut_temp_directory'
 
 # Allow user to add test directories via editor.  This is done with strings
@@ -329,6 +330,7 @@ easier in the future...I'm pretty sure at least.  Thanks for using Gut!"""
 # Initialize variables for each run of a single test script.
 # ------------------------------------------------------------------------------
 func _init_run():
+	_test_collector.set_test_class_prefix(_inner_class_prefix)
 	_test_script_objects = []
 	_new_summary = Summary.new()
 	_summary.tally_passed = 0
@@ -592,6 +594,7 @@ func p(text, level=0, indent=0):
 # Runs all the scripts that were added using add_script
 # ------------------------------------------------------------------------------
 func test_scripts(run_rest=false):
+	_test_collector.set_test_class_prefix(_inner_class_prefix)
 	clear_text()
 	_test_collector.clear()
 
@@ -608,6 +611,7 @@ func test_scripts(run_rest=false):
 # Runs a single script passed in.
 # ------------------------------------------------------------------------------
 func test_script(script):
+	_test_collector.set_test_class_prefix(_inner_class_prefix)
 	_test_collector.clear()
 	_test_collector.add_script(script)
 	_test_the_scripts()
@@ -616,6 +620,7 @@ func test_script(script):
 # Adds a script to be run when test_scripts called
 # ------------------------------------------------------------------------------
 func add_script(script, select_this_one=false):
+	_test_collector.set_test_class_prefix(_inner_class_prefix)
 	_test_collector.add_script(script)
 	_ctrls.scripts_drop_down.add_item(script)
 	# Move the run_button in case the size of the path of the script caused the

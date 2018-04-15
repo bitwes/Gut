@@ -11,6 +11,7 @@
 /icon.png         export-ignore
 /project.godot    export-ignore
 /README.md        export-ignore
+/.gutconfig.json  export-ignore
 
 /scenes           export-ignore
 /scripts          export-ignore

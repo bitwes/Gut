@@ -2,7 +2,7 @@
 
 [ext_resource path="res://test/doubler_test_objects/double_me_scene.gd" type="Script" id=1]
 
-[node name="Node2D" type="Node2D" index="0"]
+[node name="Node2D" type="Node2D"]
 
 script = ExtResource( 1 )
 

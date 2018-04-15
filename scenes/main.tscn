@@ -42,11 +42,12 @@ _disable_strict_datatype_checks = false
 _test_prefix = "test_"
 _file_prefix = "test_"
 _file_extension = ".gd"
+_inner_class_prefix = "Test"
 _temp_directory = "user://gut_temp_directory"
 _directory1 = "res://test/unit"
 _directory2 = "res://test/integration"
 _directory3 = "res://test/samples"
-_directory4 = ""
+_directory4 = "res://test/parsing_and_loading_samples"
 _directory5 = ""
 _directory6 = ""
 
