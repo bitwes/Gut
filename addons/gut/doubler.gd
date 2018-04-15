@@ -14,6 +14,30 @@ func _write_file(target_path, dest_path):
 		f.store_string(_get_func_text(script_methods[i]))
 	f.close()
 
+func _copy_scene(target_path, dest_path):
+	var dir = Directory.new()
+	dir.copy(target_path, dest_path)
+	var inst = load(target_path).instance()
+
+	var script_path = null
+	if(inst.get_script()):
+		script_path = inst.get_script().get_path()
+
+	if(script_path):
+		var dq = '"'
+		var f = File.new()
+		f.open(dest_path, f.READ)
+		var source = f.get_as_text()
+		f.close()
+
+		source = source.replace(dq + script_path + dq, dq + _get_temp_path(script_path) + dq)
+
+		f.open(dest_path, f.WRITE)
+		f.store_string(source)
+		f.close()
+
+	return script_path
+
 func _get_methods(target_path):
 	var obj = load(target_path).new()
 
@@ -69,6 +93,9 @@ func _get_arg_text(args):
 			text += ', '
 	return text
 
+func _get_temp_path(path):
+	return _output_dir.plus_file(path.get_file())
+
 # ###############
 # Public
 # ###############
@@ -80,8 +107,15 @@ func set_output_dir(output_dir):
 	var d = Directory.new()
 	d.make_dir_recursive(output_dir)
 
+func double_scene(path):
+	var temp_path = _get_temp_path(path)
+	var script_path = _copy_scene(path, temp_path)
+	if(script_path):
+		double(script_path)
+	return load(temp_path)
+
 func double(obj):
-	var temp_path = _output_dir.plus_file(obj.get_file())
+	var temp_path = _get_temp_path(obj)
 	_write_file(obj, temp_path)
 	return load(temp_path)
 

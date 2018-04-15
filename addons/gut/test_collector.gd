@@ -88,9 +88,11 @@ func _parse_script(script):
 
 func _parse_inner_class_tests(script):
 	var inst = script.get_new()
+
 	if(!inst is load('res://addons/gut/test.gd')):
 		print('WARNING Ignoring ' + script.class_name + ' because it does not extend test.gd')
 		return false
+
 	var methods = inst.get_method_list()
 	for i in range(methods.size()):
 		var name = methods[i]['name']
@@ -98,6 +100,7 @@ func _parse_inner_class_tests(script):
 			var t = Test.new()
 			t.name = name
 			script.tests.append(t)
+
 	return true
 # #################
 # Public
