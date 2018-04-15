@@ -1,36 +1,45 @@
 var _output_dir = null
 var _stubber = null
+var _double_count = 0
+var _use_unique_names = true
 
 # ###############
 # Private
 # ###############
-func _write_file(target_path, dest_path):
+func _write_file(target_path, dest_path, override_path=null):
 	var script_methods = _get_methods(target_path)
+
+	var metadata = _get_stubber_metadata_text(target_path)
+	if(override_path):
+		metadata = _get_stubber_metadata_text(override_path)
+
 	var f = File.new()
 	f.open(dest_path, f.WRITE)
 	f.store_string(str("extends '", target_path, "'\n"))
-	f.store_string(_get_stubber_metadata_text(target_path))
+	f.store_string(metadata)
 	for i in range(script_methods.size()):
 		f.store_string(_get_func_text(script_methods[i]))
 	f.close()
 
-func _copy_scene(target_path, dest_path):
+func _double_scene_and_script(target_path, dest_path):
 	var dir = Directory.new()
 	dir.copy(target_path, dest_path)
-	var inst = load(target_path).instance()
 
+	var inst = load(target_path).instance()
 	var script_path = null
 	if(inst.get_script()):
 		script_path = inst.get_script().get_path()
+	inst.free()
 
 	if(script_path):
+		var double_path = _double(script_path, target_path)
 		var dq = '"'
 		var f = File.new()
 		f.open(dest_path, f.READ)
 		var source = f.get_as_text()
 		f.close()
 
-		source = source.replace(dq + script_path + dq, dq + _get_temp_path(script_path) + dq)
+		source = source.replace(dq + script_path + dq, dq + double_path + dq)
 
 		f.open(dest_path, f.WRITE)
 		f.store_string(source)
@@ -94,7 +103,18 @@ func _get_arg_text(args):
 	return text
 
 func _get_temp_path(path):
-	return _output_dir.plus_file(path.get_file())
+	var file_name = path.get_file()
+	if(_use_unique_names):
+		file_name = file_name.get_basename() + \
+		            str('__dbl', _double_count, '__.') + file_name.get_extension()
+	var to_return = _output_dir.plus_file(file_name)
+	return to_return
+
+func _double(obj, override_path=null):
+	var temp_path = _get_temp_path(obj)
+	_write_file(obj, temp_path, override_path)
+	_double_count += 1
+	return temp_path
 
 # ###############
 # Public
@@ -109,15 +129,11 @@ func set_output_dir(output_dir):
 
 func double_scene(path):
 	var temp_path = _get_temp_path(path)
-	var script_path = _copy_scene(path, temp_path)
-	if(script_path):
-		double(script_path)
+	_double_scene_and_script(path, temp_path)
 	return load(temp_path)
 
 func double(obj):
-	var temp_path = _get_temp_path(obj)
-	_write_file(obj, temp_path)
-	return load(temp_path)
+	return load(_double(obj))
 
 func get_stubber():
 	return _stubber
@@ -139,3 +155,6 @@ func delete_output_directory():
 	clear_output_directory()
 	var d = Directory.new()
 	d.remove(_output_dir)
+
+func set_use_unique_names(should):
+	_use_unique_names = should

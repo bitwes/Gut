@@ -1,9 +1,14 @@
+# NOTE about set_use_unique_names
+#   Since a new doubler is made for each test, this cannot use the unique names
+#   or things do not load properly.  This also means that everything is
+#   essentially using the same doubles.  Since the body of the doubles isn't
+#   changing over the course of this test script, that is ok.
 extends "res://addons/gut/test.gd"
 
-# var Doubler = load('res://addons/gut/doubler.gd')
 var Stubber = load('res://addons/gut/stubber.gd')
 
 const DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_me.gd'
+const DOUBLE_ME_SCENE_PATH = 'res://test/doubler_test_objects/double_me_scene.tscn'
 const TEMP_FILES = 'user://test_doubler_temp_file'
 
 var gr = {
@@ -15,6 +20,7 @@ func setup():
     gr.doubler = Doubler.new()
     gr.doubler.set_output_dir(TEMP_FILES)
     gr.stubber = Stubber.new()
+    gr.doubler.clear_output_directory()
 
 func test_doubled_has_null_stubber_by_default():
     var d = gr.doubler.double(DOUBLE_ME_PATH).new()
@@ -54,3 +60,9 @@ func test_stub_with_nothing_works_with_parameters():
     gr.stubber.set_return(DOUBLE_ME_PATH, 'has_one_param', 10, [1])
     var d = gr.doubler.double(DOUBLE_ME_PATH).new()
     assert_eq(d.has_one_param(), 5)
+
+func test_can_stub_doubled_scenes():
+    gr.doubler.set_stubber(gr.stubber)
+    gr.stubber.set_return(DOUBLE_ME_SCENE_PATH, 'return_hello', 'world')
+    var inst = gr.doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
+    assert_eq(inst.return_hello(), 'world')

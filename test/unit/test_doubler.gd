@@ -13,6 +13,7 @@ var gr = {
 
 func setup():
 	gr.doubler = Doubler.new()
+	gr.doubler.set_use_unique_names(false)
 	gr.doubler.set_output_dir(TEMP_FILES)
 
 func test_get_set_output_dir():
@@ -89,6 +90,9 @@ func test_can_add_doubled_scene_to_tree():
 	assert_ne(inst.label, null)
 	remove_child(inst)
 
+func test_metadata_for_scenes_script_points_to_scene_not_script():
+	var inst = gr.doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
+	assert_eq(inst.__gut_metadata_.path, DOUBLE_ME_SCENE_PATH)
 
 
 # Keep this last so other tests fail before instantiation fails

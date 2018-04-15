@@ -615,6 +615,9 @@ func get_summary_text():
 func double(thing):
 	return gut.get_doubler().double(thing)
 
+func double_scene(thing):
+	return gut.get_doubler().double_scene(thing)
+
 func stub(thing, method_name):
 	var sp = StubParams.new(thing, method_name)
 	gut.get_stubber().add_stub(sp)
