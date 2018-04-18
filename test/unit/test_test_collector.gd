@@ -39,13 +39,22 @@ func test_finds_inner_classes():
 	assert_eq(gr.tc.scripts.size(), 2)
 
 func test_can_change_test_class_prefix():
-	gr.tc.set_test_class_prefix('NotTest')
+	gr.tc.set_test_class_prefix('DifferentPrefix')
 	gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')
 	var found = false
 	for i in range(gr.tc.scripts.size()):
-		if(gr.tc.scripts[i].class_name == 'NotTestClass'):
+		if(gr.tc.scripts[i].class_name == 'DifferentPrefixClass'):
 			found = true
 	assert_true(found, 'Should have the inner class in there')
+
+func test_ignores_classes_that_match_but_do_not_extend_test():
+	gr.tc.set_test_class_prefix('DoesNotExtend')
+	gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')
+	var found = false
+	for i in range(gr.tc.scripts.size()):
+		if(gr.tc.scripts[i].class_name == 'DoesNot'):
+			found = true
+	assert_false(found, 'Should have skipped, should see warning.')
 
 func test_inner_classes_have_tests():
 	gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')

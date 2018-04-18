@@ -83,7 +83,6 @@ func _parse_script(script):
 		if(_parse_inner_class_tests(ts)):
 			scripts.append(ts)
 
-
 	file.close()
 
 func _parse_inner_class_tests(script):

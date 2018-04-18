@@ -169,7 +169,7 @@ func test_float_ne():
 
 func test_cast_float_eq_pass():
 	gr.test.assert_eq(float('0.92'), 0.92)
-	assert_pass(gr.test, 'I suspect this is failing due to an engine bug.')
+	assert_pass(gr.test, 1, 'I suspect this is failing due to an engine bug.')
 
 func test_fail_compare_float_cast_as_int():
 	# int cast will make it 0

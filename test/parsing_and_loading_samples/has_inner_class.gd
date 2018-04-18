@@ -14,10 +14,15 @@ class TestClass1:
 	func print_something():
 		print('hello world')
 
-class NotTestClass:
+class DifferentPrefixClass:
+	extends "res://addons/gut/test.gd"
 	func test_something():
 		pass
 	func not_a_test():
+		pass
+
+class DoesNotExtend:
+	func test_something_not_extended():
 		pass
 
 class TestDoesNotExtendTest:
