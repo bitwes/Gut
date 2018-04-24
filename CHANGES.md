@@ -2,6 +2,50 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# 6.3.0
+
+### Wiki
+First, the [Readme has been broken up into a Github wiki](https://github.com/bitwes/Gut/wiki).  I think this will make consuming the help easier.  There is probably some room for improvement in the documentation and organization.  Create issues for anything that could be done better.
+
+### Inner Test Classes
+You can now create "Inner Classes" that run tests.  This allows you to breakup your tests and create multiple setup/teardown scopes in a single script.
+
+Example:
+``` python
+extends "res://addons/gut/test.gd"
+
+class TestInnerClass:
+  extends "res://addons/gut/test.gd"
+
+  func setup():
+    pass
+
+class TestInnerClass2:
+  extends "res://addons/gut/test.gd"
+
+  func setup():
+    pass
+```
+
+### Command line config file
+There is now support for a config file for the command line tool.  It only supports some options right now, but that will be expanded in the future.
+``` json
+{
+  "dirs":["res://test/unit/", "res://test/integration/"],
+  "should_exit":true,
+  "ignore_pause":true,
+  "log": 3
+}
+```
+
+### Experimental Doubles and Stubs
+There are also two new experimental features in this release.  Doubling and Stubbing.  These are experimental because their implementation could change a lot.  I hope not, but they might.  I fought with how these should work a lot, and honestly, I might have gotten it wrong.  So I'm going to put it out there and see how they get used in the wild.  I'm dedicated to keeping these features and improving on them, but they might be a little rough around the edges.
+
+[You can find out more about Stubbing and Doubling in the Wiki.](https://github.com/bitwes/Gut/wiki)
+
+### Yet another repo reorg
+Big thanks to [cmfcmf](https://github.com/cmfcmf) for introducing me to `.gitattributes` and creating a PR to put the old repo structure back.  Now that I can easily exclude files from the exported zip file, this should be the last reorg or the repo.
+
 # 6.2.0
 * Some new asserts courtesy of Myrkrheim
 ``` python

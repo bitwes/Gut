@@ -37,7 +37,7 @@
 # See the readme for a list of options and examples.  You can also use the -gh
 # option to get more information about how to use the command line interface.
 #
-# Version 6.2.0
+# Version 6.3.0
 ################################################################################
 extends SceneTree
 
@@ -236,7 +236,8 @@ var options = {
 	suffix = '',
 	gut_location = '',
 	unit_test_name = '',
-	show_help = false
+	show_help = false,
+	config_file = ''
 }
 
 # flag to say if we should run the scripts or not.  It is only
@@ -269,6 +270,7 @@ func setup_options():
                                  'text will be run, all others will be skipped.'))
 	opts.add('-gutloc', 'res://addons/gut/gut.gd', 'Full path (including name) of the gut script.  Default [default]')
 	opts.add('-gh', false, 'Print this help')
+	opts.add('-gconfig', 'res://.gutconfig.json', 'A config file that contains configuration information.  Default is res://.gutconfig.json')
 	return opts
 
 
@@ -285,6 +287,39 @@ func extract_options(opt):
 	options.suffix = opt.get_value('-gsuffix')
 	options.gut_location = opt.get_value('-gutloc')
 	options.unit_test_name = opt.get_value('-gunit_test_name')
+	options.config_file = opt.get_value('-gconfig')
+
+func get_value(dict, index, default):
+	if(dict.has(index)):
+		return dict[index]
+	else:
+		return default
+
+func load_options_from_config_file(file_path):
+	# SHORTCIRCUIT
+	var f = File.new()
+	if(!f.file_exists(file_path)):
+		print('ERROR:  Config File "', file_path, '" does not exist.')
+		return -1
+
+	f.open(file_path, f.READ)
+	var json = f.get_as_text()
+	f.close()
+
+	var results = JSON.parse(json)
+	# SHORTCIRCUIT
+	if(results.error != OK):
+		print("\n\n",'!! ERROR parsing file:  ', file_path)
+		print('    at line ', results.error_line, ':')
+		print('    ', results.error_string)
+		return -1
+
+	options.dirs = get_value(results.result, 'dirs', [])
+	options.should_exit = get_value(results.result, 'should_exit', false)
+	options.ignore_pause_before_teardown = get_value(results.result, 'ignore_pause', false)
+	options.log_level = get_value(results.result, 'log', 1)
+
+	return 1
 
 # apply all the options specified to _tester
 func apply_options():
@@ -316,28 +351,35 @@ func apply_options():
 # settings->autoload.
 func load_auto_load_scripts():
 	var f = ConfigFile.new()
-	f.load('res://engine.cfg')
+	f.load('res://project.godot')
 
 	for key in f.get_section_keys('autoload'):
-		var obj = load(f.get_value('autoload', key)).new()
+		# There's an * in my autoload path, at the start, idk why.  It breaks
+		# things so I'm removing all * from the value.
+		var obj = load(f.get_value('autoload', key).replace('*', '')).new()
 		obj.set_name(key)
 		get_root().add_child(obj)
 
 # parse option and run Gut
 func _init():
+	print("\n\n", ' ---  Gut  ---')
 	var o = setup_options()
 	o.parse()
 	extract_options(o)
+	var load_result = load_options_from_config_file(options.config_file)
 
-	if(o.get_value('-gh')):
-		o.print_help()
+	if(load_result == -1):
 		quit()
 	else:
-		load_auto_load_scripts()
-		apply_options()
+		if(o.get_value('-gh')):
+			o.print_help()
+			quit()
+		else:
+			load_auto_load_scripts()
+			apply_options()
 
-		if(_auto_run):
-			_tester.test_scripts(!_run_single)
+			if(_auto_run):
+				_tester.test_scripts(!_run_single)
 
 # exit if option is set.
 func _on_tests_finished():

@@ -97,10 +97,18 @@ func _run_all_tests():
 # the resutls.
 func _run_gut_tests(gut):
 	gut.set_should_print_to_console(false)
-	gut.add_script('res://test/unit/test_gut.gd')
+	gut.add_script('res://test/unit/test_doubler.gd')
 	gut.add_script('res://test/unit/test_gut_yielding.gd')
-	gut.add_script('res://test/unit/test_test.gd')
+	gut.add_script('res://test/unit/test_gut.gd')
 	gut.add_script('res://test/unit/test_signal_watcher.gd')
+	gut.add_script('res://test/unit/test_stubber.gd')
+	gut.add_script('res://test/unit/test_summary.gd')
+	gut.add_script('res://test/unit/test_test_collector.gd')
+	gut.add_script('res://test/unit/test_test.gd')
+
+	gut.add_script('res://test/integration/test_test_stubber_doubler.gd')
+	gut.add_script('res://test/integration/test_doubler_and_stubber.gd')
+	gut.add_script('res://test/integration/test_gut_and_stubber.gd')
 	gut.set_yield_between_tests(true)
 	# true says to run all the scripts, not just the first or
 	# the selected script.

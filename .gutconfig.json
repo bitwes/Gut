@@ -1,0 +1,6 @@
+{
+  "dirs":["res://test/unit/", "res://test/integration/", "res://test/parsing_and_loading_samples/"],
+  "should_exit":true,
+  "ignore_pause":true,
+  "log": 3
+}
