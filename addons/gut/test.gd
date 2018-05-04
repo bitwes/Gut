@@ -350,13 +350,17 @@ func assert_get_set_methods(obj, property, default, set_to):
 # VARIABLE_PROPERTY for properties definded as: var another_value
 # ---------------------------------------------------------------------------
 func _find_object_property(obj, property_name, property_usage=null):
-	for property in obj.get_property_list():
+	var result = null
+	var found = false
+	var properties = obj.get_property_list()
+
+	while !found and !properties.empty():
+		var property = properties.pop_back()
 		if property['name'] == property_name:
 			if property_usage == null or property['usage'] == property_usage:
-				return property
-			# No duplicate property names possible.
-			break
-	return null
+				result = property
+				found = true
+	return result
 
 # ------------------------------------------------------------------------------
 # Asserts the object has the specified editor property

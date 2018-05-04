@@ -472,7 +472,7 @@ func test_fail_if_editor_property_present_with_incorrect_type():
 	gr.test.assert_has_editor_property(obj, "bool_property", TYPE_REAL)
 	assert_fail(gr.test)
 
-func test__object_derived_type__editored_as_object_type():
+func test__object_derived_type__exported_as_object_type():
 	var obj = HasObjectDerivedPropertyType.new()
 	gr.test.assert_has_editor_property(obj, "scene_property", TYPE_OBJECT)
 	assert_pass(gr.test)
