@@ -12,7 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * assert_exports
 
 ## Fixes
-*
+* Fixed issue with duplicate methods in doubled classes.
 
 # 6.3.0
 

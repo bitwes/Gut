@@ -446,7 +446,7 @@ func _test_the_scripts():
 		# for the current test.
 		if(_inner_class_name != null and (the_script.class_name == null or the_script.class_name.find(_inner_class_name) == -1)):
 			the_script.tests = []
-			print('Skipping, inner class name does not match [', _inner_class_name, ']')
+			p(str('Skipping, inner class name does not match [', _inner_class_name, ']'))
 
 		_ctrls.test_progress.set_max(the_script.tests.size())
 		for i in range(the_script.tests.size()):
