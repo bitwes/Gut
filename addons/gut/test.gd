@@ -90,6 +90,9 @@ func _init_types_dictionary():
 	types[TYPE_COLOR_ARRAY] = 'TYPE_COLOR_ARRAY'
 	types[TYPE_MAX] = 'TYPE_MAX'
 
+const EDITOR_PROPERTY = PROPERTY_USAGE_SCRIPT_VARIABLE | PROPERTY_USAGE_DEFAULT
+const VARIABLE_PROPERTY = PROPERTY_USAGE_SCRIPT_VARIABLE
+
 # Summary counts for the test.
 var _summary = {
 	asserts = 0,
@@ -337,6 +340,42 @@ func assert_get_set_methods(obj, property, default, set_to):
 	assert_eq(obj.call(get), default, 'It should have the expected default value.')
 	obj.call(set, set_to)
 	assert_eq(obj.call(get), set_to, 'The set value should have been returned.')
+
+# ---------------------------------------------------------------------------
+# Property search helper.  Used to retrieve Dictionary of specified property
+# from passed object. Returns null if not found.
+# If provided, property_usage constrains the type of property returned by
+# passing either:
+# EDITOR_PROPERTY for properties defined as: export(int) var some_value
+# VARIABLE_PROPERTY for properties definded as: var another_value
+# ---------------------------------------------------------------------------
+func _find_object_property(obj, property_name, property_usage=null):
+	var result = null
+	var found = false
+	var properties = obj.get_property_list()
+
+	while !found and !properties.empty():
+		var property = properties.pop_back()
+		if property['name'] == property_name:
+			if property_usage == null or property['usage'] == property_usage:
+				result = property
+				found = true
+	return result
+
+# ------------------------------------------------------------------------------
+# Asserts the object has the specified editor property
+# ------------------------------------------------------------------------------
+func assert_has_editor_property(obj, property_name, type):
+	var disp = 'expected %s to have editor property [%s]' % [obj, property_name]
+	var property = _find_object_property(obj, property_name, EDITOR_PROPERTY)
+	if property != null:
+		disp += ' of type [%s]. Got type [%s].' % [types[type], types[property['type']]]
+		if property['type'] == type:
+			_pass(disp)
+		else:
+			_fail(disp)
+	else:
+		_fail(disp)
 
 # ------------------------------------------------------------------------------
 # Signal assertion helper.  Do not call directly, use _can_make_signal_assertions

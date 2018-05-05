@@ -422,6 +422,60 @@ func test_pass_if_all_get_sets_are_aligned():
 	gr.test.assert_get_set_methods(obj, 'thing', 'something', 'another thing')
 	assert_pass(gr.test, 4)
 
+# -----------------------------------------------
+# Classes used for has editor property assert
+# -----------------------------------------------
+class NoProperty:
+	func _unused():
+		pass
+
+class NotEditorProperty:
+	var some_property = 1
+
+class HasCorrectEditorPropertyAndExplicitType:
+	export(int) var int_property
+
+class HasCorrectEditorPropertyAndImplicitType:
+	export var vec2_property = Vector2(0.0, 0.0)
+
+class HasCorrectEditorPropertyNotType:
+	export(bool) var bool_property
+
+class HasObjectDerivedPropertyType:
+	export(PackedScene) var scene_property
+
+# ------------------------------
+# Has Editor Property Assert
+# ------------------------------
+func test_fail_if_property_not_found():
+	var obj = NoProperty.new()
+	gr.test.assert_has_editor_property(obj, "some_property", TYPE_BOOL)
+	assert_fail(gr.test)
+
+func test_fail_if_not_editor_property():
+	var obj = NotEditorProperty.new()
+	gr.test.assert_has_editor_property(obj, "some_property", TYPE_INT)
+	assert_fail(gr.test)
+
+func test_pass_if_editor_property_present_with_correct_explicit_type():
+	var obj = HasCorrectEditorPropertyAndExplicitType.new()
+	gr.test.assert_has_editor_property(obj, "int_property", TYPE_INT)
+	assert_pass(gr.test)
+
+func test_pass_if_editor_property_present_with_correct_implicit_type():
+	var obj = HasCorrectEditorPropertyAndImplicitType.new()
+	gr.test.assert_has_editor_property(obj, "vec2_property", TYPE_VECTOR2)
+	assert_pass(gr.test)
+
+func test_fail_if_editor_property_present_with_incorrect_type():
+	var obj = HasCorrectEditorPropertyNotType.new()
+	gr.test.assert_has_editor_property(obj, "bool_property", TYPE_REAL)
+	assert_fail(gr.test)
+
+func test__object_derived_type__exported_as_object_type():
+	var obj = HasObjectDerivedPropertyType.new()
+	gr.test.assert_has_editor_property(obj, "scene_property", TYPE_OBJECT)
+	assert_pass(gr.test)
 
 # ------------------------------
 # File asserts

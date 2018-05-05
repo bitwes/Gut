@@ -233,6 +233,24 @@ func test_assert_has_method():
 	assert_has_method(some_class, 'method_does_not_exist')
 
 # ------------------------------------------------------------------------------
+class ExportClass:
+	export var some_number = 5
+	export(PackedScene) var some_scene
+	var some_variable = 1
+
+func test_assert_has_editor_property():
+	var obj = ExportClass.new()
+
+	gut.p('-- passing --')
+	assert_has_editor_property(obj, "some_number", TYPE_INT)
+	assert_has_editor_property(obj, "some_scene", TYPE_OBJECT)
+
+	gut.p('-- failing --')
+	assert_has_editor_property(obj, 'some_number', TYPE_VECTOR2)
+	assert_has_editor_property(obj, 'some_scene', TYPE_AABB)
+	assert_has_editor_property(obj, 'some_variable', TYPE_INT)
+# ------------------------------------------------------------------------------
+
 class MovingNode:
 	extends Node2D
 	var _speed = 2
