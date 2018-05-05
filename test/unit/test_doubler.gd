@@ -94,7 +94,10 @@ func test_metadata_for_scenes_script_points_to_scene_not_script():
 	var inst = gr.doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
 	assert_eq(inst.__gut_metadata_.path, DOUBLE_ME_SCENE_PATH)
 
-
+func test_does_not_add_duplicate_methods():
+	gr.doubler.double('res://test/parsing_and_loading_samples/extends_another_thing.gd')
+	assert_true(true, 'If we get here then the duplicates were removed.')
+	
 # Keep this last so other tests fail before instantiation fails
 func test_returns_class_that_can_be_instanced():
 	var Doubled = gr.doubler.double(DOUBLE_ME_PATH)

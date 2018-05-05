@@ -1,6 +1,18 @@
 # Release notes
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
+# 6.4.0
+## TODO
+* (wiki) Update methods with assert_exports
+* (wiki) add inner_class_name to setup page
+* (wiki) re-export cmdline help
+
+## Features
+* inner_class_name option for editor and command line
+* assert_exports
+
+## Fixes
+*
 
 # 6.3.0
 

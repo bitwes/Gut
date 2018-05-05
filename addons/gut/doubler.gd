@@ -49,15 +49,20 @@ func _double_scene_and_script(target_path, dest_path):
 
 func _get_methods(target_path):
 	var obj = load(target_path).new()
-
-	var script_methods = [] # any mehtod in the script or super script
+	# any mehtod in the script or super script
+	var script_methods = []
+	# hold just the names so we can avoid duplicates.
+	var method_names = []
 
 	var methods = obj.get_method_list()
+
 	for i in range(methods.size()):
 		# 65 is a magic number for methods in script, though documentation
 		# says 64.  This picks up local overloads of base class methods too.
 		if(methods[i]['flags'] == 65):
-			script_methods.append(methods[i])
+			if(!method_names.has(methods[i]['name'])):
+				method_names.append(methods[i]['name'])
+				script_methods.append(methods[i])
 
 	return script_methods
 
