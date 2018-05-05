@@ -51,6 +51,7 @@ export var _file_prefix = 'test_'
 export var _file_extension = '.gd'
 export var _inner_class_prefix = 'Test'
 export(String) var _temp_directory = 'user://gut_temp_directory'
+export(String) var _inner_class_name = null
 
 # Allow user to add test directories via editor.  This is done with strings
 # instead of an array because the interface for editing arrays is really
@@ -439,6 +440,13 @@ func _test_the_scripts():
 			_yield_between.timer.set_wait_time(0.01)
 			_yield_between.timer.start()
 			yield(_yield_between.timer, 'timeout')
+
+		# Hack so there isn't another indent to this monster of a method.  if
+		# inner class is set and we do not have a match then empty the tests
+		# for the current test.
+		if(_inner_class_name != null and (the_script.class_name == null or the_script.class_name.find(_inner_class_name) == -1)):
+			the_script.tests = []
+			print('Skipping, inner class name does not match.')
 
 		_ctrls.test_progress.set_max(the_script.tests.size())
 		for i in range(the_script.tests.size()):
@@ -943,6 +951,21 @@ func get_temp_directory():
 # ------------------------------------------------------------------------------
 func set_temp_directory(temp_directory):
 	_temp_directory = temp_directory
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_inner_class_name():
+	return _inner_class_name
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func set_inner_class_name(inner_class_name):
+	_inner_class_name = inner_class_name
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_summary():
+	return _new_summary
 
 # #######################
 # Moved method warnings.

@@ -237,7 +237,8 @@ var options = {
 	gut_location = '',
 	unit_test_name = '',
 	show_help = false,
-	config_file = ''
+	config_file = '',
+	inner_class = ''
 }
 
 # flag to say if we should run the scripts or not.  It is only
@@ -271,6 +272,7 @@ func setup_options():
 	opts.add('-gutloc', 'res://addons/gut/gut.gd', 'Full path (including name) of the gut script.  Default [default]')
 	opts.add('-gh', false, 'Print this help')
 	opts.add('-gconfig', 'res://.gutconfig.json', 'A config file that contains configuration information.  Default is res://.gutconfig.json')
+	opts.add('-ginner_class', '', 'Only run inner classes that contain this string')
 	return opts
 
 
@@ -288,6 +290,7 @@ func extract_options(opt):
 	options.gut_location = opt.get_value('-gutloc')
 	options.unit_test_name = opt.get_value('-gunit_test_name')
 	options.config_file = opt.get_value('-gconfig')
+	options.inner_class = opt.get_value('-ginner_class')
 
 func get_value(dict, index, default):
 	if(dict.has(index)):
@@ -299,8 +302,11 @@ func load_options_from_config_file(file_path):
 	# SHORTCIRCUIT
 	var f = File.new()
 	if(!f.file_exists(file_path)):
-		print('ERROR:  Config File "', file_path, '" does not exist.')
-		return -1
+		if(file_path != 'res://.gutconfig.json'):
+			print('ERROR:  Config File "', file_path, '" does not exist.')
+			return -1
+		else:
+			return 1
 
 	f.open(file_path, f.READ)
 	var json = f.get_as_text()
@@ -318,6 +324,7 @@ func load_options_from_config_file(file_path):
 	options.should_exit = get_value(results.result, 'should_exit', false)
 	options.ignore_pause_before_teardown = get_value(results.result, 'ignore_pause', false)
 	options.log_level = get_value(results.result, 'log', 1)
+	options.inner_class = get_value(results.result, 'inner_class', '')
 
 	return 1
 
@@ -329,7 +336,8 @@ func apply_options():
 	_tester.connect('tests_finished', self, '_on_tests_finished')
 	_tester.set_yield_between_tests(true)
 	_tester.show()
-
+	if(options.inner_class != ''):
+		_tester.set_inner_class_name(options.inner_class)
 	_tester.set_log_level(options.log_level)
 	_tester.set_ignore_pause_before_teardown(options.ignore_pause_before_teardown)
 
