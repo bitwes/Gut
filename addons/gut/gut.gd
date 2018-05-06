@@ -516,8 +516,6 @@ func _test_the_scripts():
 
 	_end_run()
 
-
-
 func _pass(text=''):
 	_summary.tally_passed += 1
 	_update_controls()
