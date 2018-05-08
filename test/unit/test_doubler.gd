@@ -22,6 +22,9 @@ func test_get_set_output_dir():
 func test_get_set_stubber():
 	assert_get_set_methods(Doubler.new(), 'stubber', null, GDScript.new())
 
+func test_can_get_set_spy():
+	assert_get_set_methods(Doubler.new(), 'spy', null, GDScript.new())
+
 func test_setting_output_dir_creates_directory_if_it_does_not_exist():
 	var d = Doubler.new()
 	d.set_output_dir('user://doubler_temp_files/')
@@ -97,7 +100,7 @@ func test_metadata_for_scenes_script_points_to_scene_not_script():
 func test_does_not_add_duplicate_methods():
 	gr.doubler.double('res://test/parsing_and_loading_samples/extends_another_thing.gd')
 	assert_true(true, 'If we get here then the duplicates were removed.')
-	
+
 # Keep this last so other tests fail before instantiation fails
 func test_returns_class_that_can_be_instanced():
 	var Doubled = gr.doubler.double(DOUBLE_ME_PATH)

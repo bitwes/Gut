@@ -39,3 +39,6 @@ func call_count(instance, method_name, parameters=null):
 		else:
 			to_return = _calls[instance][method_name].size()
 	return to_return
+
+func clear():
+	_calls = {}

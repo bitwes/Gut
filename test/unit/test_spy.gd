@@ -1,7 +1,5 @@
 extends 'res://addons/gut/test.gd'
 
-
-
 class TestSpy:
 	extends 'res://addons/gut/test.gd'
 
@@ -45,6 +43,20 @@ class TestSpy:
 		_spy.add_call(simple, 'method1', [2])
 		_spy.add_call(simple, 'method1', [3])
 		assert_true(_spy.was_called(simple, 'method1'))
+
+	func test_can_clear_spies():
+		var simple1 = Simple.new()
+		var simple2 = Simple.new()
+
+		_spy.add_call(simple1, 'method1', [1])
+		_spy.add_call(simple1, 'method2', [2])
+
+		_spy.add_call(simple2, 'method1', [1])
+		_spy.add_call(simple2, 'method2', [2])
+
+		assert_eq(_spy._calls.keys().size(), 2, 'pre count')
+		_spy.clear()
+		assert_eq(_spy._calls.keys().size(), 0, 'post count')
 
 class TestAddingCallsWithParameters:
 	extends 'res://addons/gut/test.gd'

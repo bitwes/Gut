@@ -2,6 +2,7 @@ var _output_dir = null
 var _stubber = null
 var _double_count = 0
 var _use_unique_names = true
+var _spy = null
 
 # ###############
 # Private
@@ -66,14 +67,17 @@ func _get_methods(target_path):
 
 	return script_methods
 
-func _get_stubber_metadata_text(target_path):
-	var stubber_str = 'null'
-	if(_stubber):
-		stubber_str = str('instance_from_id(', _stubber.get_instance_id(),')')
+func _get_inst_id_ref_str(inst):
+	var ref_str = 'null'
+	if(inst):
+		ref_str = str('instance_from_id(', inst.get_instance_id(),')')
+	return ref_str
 
+func _get_stubber_metadata_text(target_path):
 	return "var __gut_metadata_ = {\n" + \
            "\tpath='" + target_path + "',\n" + \
-		   "\tstubber=" + stubber_str + "\n" + \
+		   "\tstubber=" + _get_inst_id_ref_str(_stubber) + ",\n" + \
+		   "\tspy=" + _get_inst_id_ref_str(_spy) + "\n" + \
            "}\n"
 
 func _get_callback_parameters(method_hash):
@@ -92,6 +96,8 @@ func _get_func_text(method_hash):
 	ftxt += str(_get_arg_text(method_hash['args']), "):\n")
 
 	var called_with = _get_callback_parameters(method_hash)
+	if(_spy):
+		ftxt += "\t__gut_metadata_.spy.add_call(self, '" + method_hash['name'] + "', " + called_with + ")\n"
 	if(_stubber):
 		ftxt += "\treturn __gut_metadata_.stubber.get_return(self, '" + method_hash['name'] + "', " + called_with + ")\n"
 	else:
@@ -132,6 +138,18 @@ func set_output_dir(output_dir):
 	var d = Directory.new()
 	d.make_dir_recursive(output_dir)
 
+func get_spy():
+	return _spy
+
+func set_spy(spy):
+	_spy = spy
+
+func get_stubber():
+	return _stubber
+
+func set_stubber(stubber):
+	_stubber = stubber
+
 func double_scene(path):
 	var temp_path = _get_temp_path(path)
 	_double_scene_and_script(path, temp_path)
@@ -139,12 +157,6 @@ func double_scene(path):
 
 func double(obj):
 	return load(_double(obj))
-
-func get_stubber():
-	return _stubber
-
-func set_stubber(stubber):
-	_stubber = stubber
 
 func clear_output_directory():
 	var d = Directory.new()
