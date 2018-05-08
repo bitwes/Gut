@@ -49,7 +49,7 @@ _inner_class_name = null
 _directory1 = "res://test/unit"
 _directory2 = "res://test/integration"
 _directory3 = "res://test/samples"
-_directory4 = "res://test/parsing_and_loading_samples"
+_directory4 = ""
 _directory5 = ""
 _directory6 = ""
 

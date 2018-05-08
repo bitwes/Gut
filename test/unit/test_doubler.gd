@@ -6,7 +6,7 @@ const TEMP_FILES = 'user://test_doubler_temp_file'
 const DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_me.gd'
 const DOUBLE_ME_SCENE_PATH = 'res://test/doubler_test_objects/double_me_scene.tscn'
 const DOUBLE_EXTENDS_NODE2D = 'res://test/doubler_test_objects/double_extends_node2d.gd'
-
+var Doubler = load('res://addons/gut/doubler.gd')
 var gr = {
 	doubler = null
 }

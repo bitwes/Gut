@@ -393,8 +393,12 @@ func _print_script_heading(script):
 		p("Running Script " + script.path, 0)
 	else:
 		p("Running Class [" + script.class_name + "] in " + script.path, 0)
-	if(_unit_test_name != ''):
+
+	if(!_does_class_name_match(_inner_class_name, script.class_name)):
+		p(str('  Skipping because class [',script.class_name, '] does not match [', _inner_class_name, ']'))
+	elif(_unit_test_name != ''):
 		p('  Only running tests like: "' + _unit_test_name + '"')
+
 	p("-----------------------------------------/")
 
 # ------------------------------------------------------------------------------
@@ -410,6 +414,8 @@ func _should_yield_now():
 		_yield_between.tests_since_last_yield += 1
 	return should
 
+func _does_class_name_match(class_name, script_class_name):
+	return class_name == null or (script_class_name != null and script_class_name.find(class_name) != -1)
 # ------------------------------------------------------------------------------
 # Run all tests in a script.  This is the core logic for running tests.
 #
@@ -441,12 +447,13 @@ func _test_the_scripts():
 			_yield_between.timer.start()
 			yield(_yield_between.timer, 'timeout')
 
+		# !!!
 		# Hack so there isn't another indent to this monster of a method.  if
 		# inner class is set and we do not have a match then empty the tests
 		# for the current test.
-		if(_inner_class_name != null and (the_script.class_name == null or the_script.class_name.find(_inner_class_name) == -1)):
+		# !!!
+		if(!_does_class_name_match(_inner_class_name, the_script.class_name)):
 			the_script.tests = []
-			p(str('Skipping, inner class name does not match [', _inner_class_name, ']'))
 
 		_ctrls.test_progress.set_max(the_script.tests.size())
 		for i in range(the_script.tests.size()):

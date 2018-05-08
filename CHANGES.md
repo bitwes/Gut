@@ -8,8 +8,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * (wiki) re-export cmdline help
 
 ## Features
-* inner_class_name option for editor and command line
-* assert_exports
+* `inner_class_name` option for editor, command line, and .gutconfig.json.
+* `assert_exports`:  Assert that script exports a variable with a specific type.
 
 ## Fixes
 * Fixed issue with duplicate methods in doubled classes.

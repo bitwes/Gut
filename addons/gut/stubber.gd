@@ -1,3 +1,13 @@
+# {
+# 	inst_id_or_path1:{
+# 		method_name1: [StubParams, StubParams],
+# 		method_name2: [StubParams, StubParams]
+# 	},
+# 	inst_id_or_path2:{
+# 		method_name1: [StubParams, StubParams],
+# 		method_name2: [StubParams, StubParams]
+# 	}
+# }
 var returns = {}
 var StubParams = load('res://addons/gut/stub_params.gd')
 var _gut = null
