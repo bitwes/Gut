@@ -117,6 +117,7 @@ var _yielding_to = {
 }
 var _stubber = load('res://addons/gut/stubber.gd').new()
 var _doubler = load('res://addons/gut/doubler.gd').new()
+var _spy = load('res://addons/gut/spy.gd').new()
 
 const SIGNAL_TESTS_FINISHED = 'tests_finished'
 const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yeild_before_teardown'
@@ -129,6 +130,7 @@ func _init():
 	add_user_signal('timeout')
 	_doubler.set_output_dir(_temp_directory)
 	_doubler.set_stubber(_stubber)
+	_doubler.set_spy(_spy)
 
 # ------------------------------------------------------------------------------
 # Connect all the controls created in the parent class to the methods here.
@@ -458,6 +460,7 @@ func _test_the_scripts():
 		_ctrls.test_progress.set_max(the_script.tests.size())
 		for i in range(the_script.tests.size()):
 			_stubber.clear()
+			_spy.clear()
 			_doubler.clear_output_directory()
 			_current_test = the_script.tests[i]
 
@@ -946,6 +949,11 @@ func get_stubber():
 # ------------------------------------------------------------------------------
 func get_doubler():
 	return _doubler
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_spy():
+	return _spy
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------

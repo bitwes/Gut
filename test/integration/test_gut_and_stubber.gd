@@ -6,13 +6,6 @@ var Test = load('res://addons/gut/test.gd')
 const DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_me.gd'
 const DOUBLE_ME_SCENE_PATH = 'res://test/doubler_test_objects/double_me_scene.tscn'
 
-var gr = {
-	gut = null
-}
-
-func setup():
-	pass
-
 func test_can_get_stubber():
 	var g = Gut.new()
 	assert_ne(g.get_stubber(), null)

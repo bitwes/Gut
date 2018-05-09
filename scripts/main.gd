@@ -111,6 +111,7 @@ func _run_gut_tests(gut):
 	gut.add_script('res://test/integration/test_doubler_and_stubber.gd')
 	gut.add_script('res://test/integration/test_gut_and_stubber.gd')
 	gut.add_script('res://test/integration/test_doubler_and_spy.gd')
+	gut.add_script('res://test/integration/test_gut_and_spy.gd')
 	
 	gut.set_yield_between_tests(true)
 	# true says to run all the scripts, not just the first or
