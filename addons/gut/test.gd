@@ -107,25 +107,6 @@ var _signal_watcher = load('res://addons/gut/signal_watcher.gd').new()
 func _init():
 	_init_types_dictionary()
 
-# #######################
-# Virtual Methods
-# #######################
-# Overridable method that runs before each test.
-func setup():
-	pass
-
-# Overridable method that runs after each test
-func teardown():
-	pass
-
-# Overridable method that runs before any tests are run
-func prerun_setup():
-	pass
-
-# Overridable method that runs after all tests are run
-func postrun_teardown():
-	pass
-
 # ------------------------------------------------------------------------------
 # Fail an assertion.  Causes test and script to fail as well.
 # ------------------------------------------------------------------------------
@@ -174,6 +155,46 @@ func _do_datatypes_match__fail_if_not(got, expected, text):
 				passed = false
 
 	return passed
+
+# ------------------------------------------------------------------------------
+# Create a string that lists all the methods that were called on an spied
+# instance.
+# ------------------------------------------------------------------------------
+func _get_desc_of_calls_to_instance(inst):
+	var BULLET = '  - '
+	var calls = gut.get_spy().get_call_list_as_string(inst)
+	# indent all the calls
+	calls = BULLET + calls.replace("\n", "\n" + BULLET)
+	# remove trailing newline and bullet
+	calls = calls.substr(0, calls.length() - BULLET.length() - 1)
+	return "Calls made on " + str(inst) + "\n" + calls
+
+# #######################
+# Virtual Methods
+# #######################
+
+
+# Overridable method that runs before each test.
+func setup():
+	pass
+
+# Overridable method that runs after each test
+func teardown():
+	pass
+
+# Overridable method that runs before any tests are run
+func prerun_setup():
+	pass
+
+# Overridable method that runs after all tests are run
+func postrun_teardown():
+	pass
+
+
+# #######################
+# Public
+# #######################
+
 
 # ------------------------------------------------------------------------------
 # Asserts that the expected value equals the value got.
@@ -588,6 +609,63 @@ func assert_string_ends_with(text, search, match_case=true):
 			_pass(disp)
 		else:
 			_fail(disp)
+
+# ------------------------------------------------------------------------------
+# Assert that a method was called on an instance of a doubled class.  If
+# parameters are supplied then the params passed in when called must match.
+# ------------------------------------------------------------------------------
+func assert_called(inst, method_name, parameters=null):
+	var disp = str('Expected [',method_name,'] to have been called on ',inst)
+
+	if(!inst.get('__gut_metadata_')):
+		_fail('You must pass a doubled instance to assert_called.  Check the wiki for info on using double.')
+	else:
+		if(gut.get_spy().was_called(inst, method_name, parameters)):
+			_pass(disp)
+		else:
+			if(parameters != null):
+				disp += str(' with parameters ', parameters)
+			_fail(str(disp, "\n", _get_desc_of_calls_to_instance(inst)))
+
+# ------------------------------------------------------------------------------
+# Assert that a method was not called on an instance of a doubled class.  If
+# parameters are specified then this will only fail if it finds a call that was
+# sent matching parameters.
+# ------------------------------------------------------------------------------
+func assert_not_called(inst, method_name, parameters=null):
+	var disp = str('Expected [', method_name, '] to NOT hvae been called on ', inst)
+
+	if(!inst.get('__gut_metadata_')):
+		_fail('You must pass a doubled instance to assert_not_called.  Check the wiki for info on using double.')
+	else:
+		if(gut.get_spy().was_called(inst, method_name, parameters)):
+			if(parameters != null):
+				disp += str(' with parameters ', parameters)
+			_fail(str(disp, "\n", _get_desc_of_calls_to_instance(inst)))
+		else:
+			_pass(disp)
+
+# ------------------------------------------------------------------------------
+# Assert that a method on an instance of a doubled class was called a number
+# of times.  If parameters are specified then only calls with matching
+# parameter values will be counted.
+# ------------------------------------------------------------------------------
+func assert_call_count(inst, method_name, expected_count, parameters=null):
+	var count = gut.get_spy().call_count(inst, method_name, parameters)
+
+	var param_text = ''
+	if(parameters):
+		param_text = ' with parameters ' + str(parameters)
+	var disp = 'Expected [%s] on %s to be called [%s] times%s.  It was called [%s] times.'
+	disp = disp % [method_name, inst, expected_count, param_text, count]
+
+	if(!inst.get('__gut_metadata_')):
+		_fail('You must pass a doubled instance to assert_call_count.  Check the wiki for info on using double.')
+	else:
+		if(count == expected_count):
+			_pass(disp)
+		else:
+			_fail(str(disp, "\n", _get_desc_of_calls_to_instance(inst)))
 
 # ------------------------------------------------------------------------------
 # Mark the current test as pending.

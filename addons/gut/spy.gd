@@ -10,6 +10,23 @@
 # }
 var _calls = {}
 
+func _get_params_as_string(params):
+	var to_return = ''
+	if(params == null):
+		return ''
+
+	for i in range(params.size()):
+		if(params[i] == null):
+			to_return += 'null'
+		else:
+			if(typeof(params[i]) == TYPE_STRING):
+				to_return += str('"', params[i], '"')
+			else:
+				to_return += str(params[i])
+		if(i != params.size() -1):
+			to_return += ', '
+	return to_return
+
 func add_call(variant, method_name, parameters=null):
 	if(!_calls.has(variant)):
 		_calls[variant] = {}
@@ -21,7 +38,7 @@ func add_call(variant, method_name, parameters=null):
 
 func was_called(variant, method_name, parameters=null):
 	var to_return = false
-	if(_calls.has(variant) and _calls[variant][method_name]):
+	if(_calls.has(variant) and _calls[variant].has(method_name)):
 		if(parameters):
 			to_return =  _calls[variant][method_name].has(parameters)
 		else:
@@ -42,3 +59,11 @@ func call_count(instance, method_name, parameters=null):
 
 func clear():
 	_calls = {}
+
+func get_call_list_as_string(instance):
+	var to_return = ''
+	if(_calls.has(instance)):
+		for method in _calls[instance]:
+			for i in range(_calls[instance][method].size()):
+				to_return += str(method, '(', _get_params_as_string(_calls[instance][method][i]), ")\n")
+	return to_return

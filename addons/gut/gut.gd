@@ -390,18 +390,20 @@ func _is_function_state(script_result):
 # Print out the heading for a new script
 # ------------------------------------------------------------------------------
 func _print_script_heading(script):
-	p("\n/-----------------------------------------")
-	if(script.class_name == null):
-		p("Running Script " + script.path, 0)
-	else:
-		p("Running Class [" + script.class_name + "] in " + script.path, 0)
+	if(_does_class_name_match(_inner_class_name, script.class_name)):
+		p("\n/-----------------------------------------")
+		if(script.class_name == null):
+			p("Running Script " + script.path, 0)
+		else:
+			p("Running Class [" + script.class_name + "] in " + script.path, 0)
 
-	if(!_does_class_name_match(_inner_class_name, script.class_name)):
-		p(str('  Skipping because class [',script.class_name, '] does not match [', _inner_class_name, ']'))
-	elif(_unit_test_name != ''):
-		p('  Only running tests like: "' + _unit_test_name + '"')
+		if(_inner_class_name != null and _does_class_name_match(_inner_class_name, script.class_name)):
+			p(str('  [',script.class_name, '] matches [', _inner_class_name, ']'))
 
-	p("-----------------------------------------/")
+		if(_unit_test_name != ''):
+			p('  Only running tests like: "' + _unit_test_name + '"')
+
+		p("-----------------------------------------/")
 
 # ------------------------------------------------------------------------------
 # Just gets more logic out of _test_the_scripts.  Decides if we should yield after

@@ -61,8 +61,13 @@ class BaseTestClass:
 		gr.test_with_gut.gut = Gut.new()
 
 	func teardown():
+		gr.test_with_gut.gut.get_doubler().clear_output_directory()
+		#gr.test_with_gut.gut.get_doubler().clear()
+		gr.test_with_gut.gut.get_spy().clear()
+
 		gr.test.free()
 		gr.test = null
+		gr.test_with_gut.free()
 
 class TestInts:
 	extends BaseTestClass
@@ -811,3 +816,126 @@ class TestStringEndsWith:
 	func test__assert_string_ends_with__passes_when_case_insensitive_search_at_end():
 		gr.test.assert_string_ends_with('This is a test.', 'A teSt.', false)
 		assert_pass(gr.test)
+
+class TestAssertCalled:
+	extends BaseTestClass
+
+	const DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_me.gd'
+
+	func test_assert_called_fails_with_message_if_non_doubled_passed():
+		var obj = GDScript.new()
+		gr.test_with_gut.gut.get_spy().add_call(obj, 'method')
+		gr.test_with_gut.assert_called(obj, 'method1')
+		gut.p('!! Check output !!')
+		assert_fail(gr.test_with_gut)
+
+	func test_assert_called_passes_when_call_occured():
+		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		doubled.get_value()
+		gr.test_with_gut.assert_called(doubled, 'get_value')
+		assert_pass(gr.test_with_gut)
+
+	func test_assert_called_passes_with_parameters():
+		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		doubled.set_value(5)
+		gr.test_with_gut.assert_called(doubled, 'set_value', [5])
+		assert_pass(gr.test_with_gut)
+
+	func test_fails_when_parameters_do_not_match():
+		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		doubled.set_value('a')
+		gr.test_with_gut.assert_called(doubled, 'set_value', [5])
+		assert_fail(gr.test_with_gut)
+
+	func test_assert_called_works_with_defaults():
+		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		doubled.has_two_params_one_default(10)
+		gr.test_with_gut.assert_called(doubled, 'has_two_params_one_default', [10, null])
+		assert_pass(gr.test_with_gut)
+
+
+class TestAssertNotCalled:
+	extends BaseTestClass
+
+	const DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_me.gd'
+
+	func test_passes_when_no_calls_have_been_made():
+		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		gr.test_with_gut.assert_not_called(doubled, 'get_value')
+		assert_pass(gr.test_with_gut)
+
+	func test_fails_when_a_call_has_been_made():
+		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		doubled.get_value()
+		gr.test_with_gut.assert_not_called(doubled, 'get_value')
+		assert_fail(gr.test_with_gut)
+
+	func test_fails_when_passed_a_non_doubled_instance():
+		gr.test_with_gut.assert_not_called(GDScript.new(), 'method')
+		assert_fail(gr.test_with_gut)
+
+	func test_passes_if_parameters_do_not_match():
+		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		doubled.set_value(4)
+		gr.test_with_gut.assert_not_called(doubled, 'set_value', [5])
+		assert_pass(gr.test_with_gut)
+
+	func test_fails_if_parameters_do_match():
+		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		doubled.set_value('a')
+		gr.test_with_gut.assert_not_called(doubled, 'set_value', ['a'])
+		assert_fail(gr.test_with_gut)
+
+	func test_fails_if_no_params_specified_and_a_call_was_made():
+		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		doubled.set_value('a')
+		gr.test_with_gut.assert_not_called(doubled, 'set_value')
+		assert_fail(gr.test_with_gut)
+
+class TestAssertCallCount:
+	extends BaseTestClass
+
+	const DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_me.gd'
+
+	func test_passes_when_nothing_called_and_expected_count_zero():
+		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		gr.test_with_gut.assert_call_count(doubled, 'set_value', 0)
+		assert_pass(gr.test_with_gut)
+
+	func test_fails_when_count_does_not_match():
+		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		doubled.set_value(5)
+		doubled.set_value(10)
+		gr.test_with_gut.assert_call_count(doubled, 'set_value', 1)
+		assert_fail(gr.test_with_gut)
+
+	func test_fails_if_object_is_not_a_double():
+		var obj = GDScript.new()
+		gr.test_with_gut.gut.get_spy().add_call(obj, '_init')
+		gr.test_with_gut.assert_call_count(obj, '_init', 1)
+		assert_fail(gr.test_with_gut)
+
+	func test_fails_if_parameters_do_not_match():
+		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		doubled.set_value(5)
+		doubled.set_value(10)
+		gr.test_with_gut.assert_call_count(doubled, 'set_value', 2, [5])
+		assert_fail(gr.test_with_gut)
+
+	func test_it_passes_if_parameters_do_match():
+		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		doubled.set_value(5)
+		doubled.set_value(10)
+		doubled.set_value(5)
+		doubled.set_value(5)
+		gr.test_with_gut.assert_call_count(doubled, 'set_value', 3, [5])
+		assert_pass(gr.test_with_gut)
+
+	func test_when_parameters_not_sent_all_calls_count():
+		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		doubled.set_value(5)
+		doubled.set_value(10)
+		doubled.set_value(6)
+		doubled.set_value(12)
+		gr.test_with_gut.assert_call_count(doubled, 'set_value', 4)
+		assert_pass(gr.test_with_gut)
