@@ -69,7 +69,14 @@ class BaseTestClass:
 		gr.test = null
 		gr.test_with_gut.free()
 
-class TestInts:
+class TestMiscTests:
+	extends BaseTestClass
+
+	func test_script_object_added_to_tree():
+		gr.test.assert_ne(get_tree(), null, "The tree should not be null if we are added to it")
+		assert_pass(gr.test)
+
+class TestAssertEq:
 	extends BaseTestClass
 
 	func test_assert_eq_number_not_equal():
@@ -80,6 +87,47 @@ class TestInts:
 		gr.test.assert_eq('asdf', 'asdf')
 		assert_pass(gr.test, 1, "Should pass")
 
+	func test_float_eq():
+		gr.test.assert_eq(1.0, 1.0)
+		assert_pass(gr.test)
+
+	func test_float_eq_fail():
+		gr.test.assert_eq(.19, 1.9)
+		assert_fail(gr.test)
+
+	func test_cast_float_eq_pass():
+		gr.test.assert_eq(float('0.92'), 0.92)
+		assert_pass(gr.test, 1, 'I suspect this is failing due to an engine bug.')
+
+	func test_fail_compare_float_cast_as_int():
+		# int cast will make it 0
+		gr.test.assert_eq(int(0.5), 0.5)
+		assert_fail(gr.test)
+
+	func test_cast_int_math_eq_float():
+		var i = 2
+		gr.test.assert_eq(5 / float(i), 2.5)
+		assert_pass(gr.test)
+
+	func test_assert_eq_string_not_equal():
+		gr.test.assert_eq("one", "two", "Should Fail")
+		assert_fail(gr.test)
+
+	func test_assert_eq_string_equal():
+		gr.test.assert_eq("one", "one", "Should Pass")
+		assert_pass(gr.test)
+
+	func test_can_call_eq_without_text():
+		gr.test.assert_eq(1, 1)
+		assert_pass(gr.test)
+
+class TestAssertNe:
+	extends BaseTestClass
+
+	func test_can_call_ne_without_text():
+		gr.test.assert_ne(1, 2)
+		assert_pass(gr.test)
+
 	func test_assert_ne_number_not_equal():
 		gr.test.assert_ne(1, 2)
 		assert_pass(gr.test, 1, "Should pass, 1 != 2")
@@ -87,6 +135,21 @@ class TestInts:
 	func test_assert_ne_number_equal():
 		gr.test.assert_ne(1, 1, "Should fail")
 		assert_fail(gr.test, 1, '1 = 1')
+
+	func test_float_ne():
+		gr.test.assert_ne(0.9, .009)
+		assert_pass(gr.test)
+
+	func test_assert_ne_string_not_equal():
+		gr.test.assert_ne("one", "two", "Should Pass")
+		assert_pass(gr.test)
+
+	func test_assert_ne_string_equal():
+		gr.test.assert_ne("one", "one", "Should Fail")
+		assert_fail(gr.test)
+
+class TestAssertGt:
+	extends BaseTestClass
 
 	func test_assert_gt_number_with_gt():
 		gr.test.assert_gt(2, 1, "Should Pass")
@@ -96,6 +159,17 @@ class TestInts:
 		gr.test.assert_gt(1, 2, "Should fail")
 		assert_fail(gr.test, 1, '1 < 2')
 
+	func test_assert_gt_string_with_gt():
+		gr.test.assert_gt("b", "a", "Should Pass")
+		assert_pass(gr.test)
+
+	func test_assert_gt_string_with_lt():
+		gr.test.assert_gt("a", "b", "Sould Fail")
+		assert_fail(gr.test)
+
+class TestAssertLt:
+	extends BaseTestClass
+
 	func test_assert_lt_number_with_lt():
 		gr.test.assert_lt(1, 2, "Should Pass")
 		assert_pass(gr.test, 1, '1 < 2')
@@ -103,6 +177,17 @@ class TestInts:
 	func test_assert_lt_number_with_gt():
 		gr.test.assert_lt(2, 1, "Should fail")
 		assert_fail(gr.test, 1, '2 > 1')
+
+	func test_assert_lt_string_with_lt():
+		gr.test.assert_lt("a", "b", "Should Pass")
+		assert_pass(gr.test)
+
+	func test_assert_lt_string_with_gt():
+		gr.test.assert_lt("b", "a", "Should Fail")
+		assert_fail(gr.test)
+
+class TestAssertBetween:
+	extends BaseTestClass
 
 	func test_between_with_number_between():
 		gr.test.assert_between(2, 1, 3, "Should pass, 2 between 1 and 3")
@@ -128,70 +213,6 @@ class TestInts:
 		gr.test.assert_between(4, 8, 0, "Should fail")
 		assert_fail(gr.test, 1, '8 is starting number and is not less than 0')
 
-class TestFloats:
-	extends BaseTestClass
-	func test_float_eq():
-		gr.test.assert_eq(1.0, 1.0)
-		assert_pass(gr.test)
-
-	func test_float_eq_fail():
-		gr.test.assert_eq(.19, 1.9)
-		assert_fail(gr.test)
-
-	func test_float_ne():
-		gr.test.assert_ne(0.9, .009)
-		assert_pass(gr.test)
-
-	func test_cast_float_eq_pass():
-		gr.test.assert_eq(float('0.92'), 0.92)
-		assert_pass(gr.test, 1, 'I suspect this is failing due to an engine bug.')
-
-	func test_fail_compare_float_cast_as_int():
-		# int cast will make it 0
-		gr.test.assert_eq(int(0.5), 0.5)
-		assert_fail(gr.test)
-
-	func test_cast_int_math_eq_float():
-		var i = 2
-		gr.test.assert_eq(5 / float(i), 2.5)
-		assert_pass(gr.test)
-
-
-class TestStrings:
-	extends BaseTestClass
-
-	func test_assert_eq_string_not_equal():
-		gr.test.assert_eq("one", "two", "Should Fail")
-		assert_fail(gr.test)
-
-	func test_assert_eq_string_equal():
-		gr.test.assert_eq("one", "one", "Should Pass")
-		assert_pass(gr.test)
-
-	func test_assert_ne_string_not_equal():
-		gr.test.assert_ne("one", "two", "Should Pass")
-		assert_pass(gr.test)
-
-	func test_assert_ne_string_equal():
-		gr.test.assert_ne("one", "one", "Should Fail")
-		assert_fail(gr.test)
-
-	func test_assert_gt_string_with_gt():
-		gr.test.assert_gt("b", "a", "Should Pass")
-		assert_pass(gr.test)
-
-	func test_assert_gt_string_with_lt():
-		gr.test.assert_gt("a", "b", "Sould Fail")
-		assert_fail(gr.test)
-
-	func test_assert_lt_string_with_lt():
-		gr.test.assert_lt("a", "b", "Should Pass")
-		assert_pass(gr.test)
-
-	func test_assert_lt_string_with_gt():
-		gr.test.assert_lt("b", "a", "Should Fail")
-		assert_fail(gr.test)
-
 	func test_between_with_string_between():
 		gr.test.assert_between('b', 'a', 'c', "Should pass, 2 between 1 and 3")
 		assert_pass(gr.test)
@@ -216,7 +237,7 @@ class TestStrings:
 		gr.test.assert_between('q', 'z', 'a', "Should fail")
 		assert_fail(gr.test)
 
-class TestBools:
+class TestAssertTrue:
 	extends BaseTestClass
 
 	func test_assert_true_with_true():
@@ -226,6 +247,18 @@ class TestBools:
 	func test_assert_true_with_false():
 		gr.test.assert_true(false, "Should fail")
 		assert_fail(gr.test)
+
+	func test_can_call_true_without_text():
+		gr.test.assert_true(true)
+		assert_pass(gr.test)
+
+
+class TestAssertTrueFalse:
+	extends BaseTestClass
+
+	func test_can_call_false_without_text():
+		gr.test.assert_false(false)
+		assert_pass(gr.test)
 
 	func test_assert_flase_with_true():
 		gr.test.assert_false(true, "Should fail")
@@ -287,28 +320,8 @@ class testFailingDatatypeChecks:
 		gr.test.assert_ne(null, Node2D.new())
 		assert_pass(gr.test, 2)
 
-class TestMiscTests:
+class TestPending:
 	extends BaseTestClass
-
-	func test_can_call_eq_without_text():
-		gr.test.assert_eq(1, 1)
-		assert_pass(gr.test)
-
-	func test_can_call_ne_without_text():
-		gr.test.assert_ne(1, 2)
-		assert_pass(gr.test)
-
-	func test_can_call_true_without_text():
-		gr.test.assert_true(true)
-		assert_pass(gr.test)
-
-	func test_can_call_false_without_text():
-		gr.test.assert_false(false)
-		assert_pass(gr.test)
-
-	func test_script_object_added_to_tree():
-		gr.test.assert_ne(get_tree(), null, "The tree should not be null if we are added to it")
-		assert_pass(gr.test)
 
 	func test_pending_increments_pending_count():
 		gr.test.pending()
@@ -321,7 +334,7 @@ class TestMiscTests:
 		gr.test.pending()
 		assert_eq(gr.test.get_pass_count(), 0)
 
-class TestHasMethodAsserts:
+class TestAssertHasMethod:
 	extends BaseTestClass
 
 	class NoWantedMethod:
@@ -443,7 +456,7 @@ class TestExportAsserts:
 		gr.test.assert_has_editor_property(obj, "scene_property", TYPE_OBJECT)
 		assert_pass(gr.test)
 
-class TestFileAsserts:
+class TestAssertFileExists:
 	extends BaseTestClass
 
 	func test__assert_file_exists__with_file_dne():
@@ -458,6 +471,9 @@ class TestFileAsserts:
 		gr.test_with_gut.assert_file_exists(path)
 		assert_pass(gr.test_with_gut)
 
+class TestAssertFileDne:
+	extends BaseTestClass
+
 	func test__assert_file_dne__with_file_dne():
 		gr.test_with_gut.assert_file_does_not_exist('user://file_dne.txt')
 		assert_pass(gr.test_with_gut)
@@ -469,6 +485,9 @@ class TestFileAsserts:
 		f.close()
 		gr.test_with_gut.assert_file_does_not_exist(path)
 		assert_fail(gr.test_with_gut)
+
+class TestAssertFileEmpty:
+	extends BaseTestClass
 
 	func test__assert_file_empty__with_empty_file():
 		var path = 'user://gut_test_empty.txt'
@@ -491,6 +510,9 @@ class TestFileAsserts:
 		var path = 'user://file_dne.txt'
 		gr.test_with_gut.assert_file_empty(path)
 		assert_fail(gr.test_with_gut)
+
+class TestAssertFileNotEmpty:
+	extends BaseTestClass
 
 	func test__assert_file_not_empty__with_empty_file():
 		var path = 'user://gut_test_empty3.txt'

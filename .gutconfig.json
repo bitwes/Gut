@@ -3,5 +3,5 @@
   "should_exit":true,
   "ignore_pause":true,
   "log": 1,
-  "inner_class":"AssertCallCount"
+  "_inner_class":"AssertCallCount"
 }
