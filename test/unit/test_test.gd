@@ -253,7 +253,7 @@ class TestAssertTrue:
 		assert_pass(gr.test)
 
 
-class TestAssertTrueFalse:
+class TestAssertFalse:
 	extends BaseTestClass
 
 	func test_can_call_false_without_text():

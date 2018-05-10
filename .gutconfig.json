@@ -2,6 +2,6 @@
   "dirs":["res://test/unit/", "res://test/integration/", "res://test/samples/"],
   "should_exit":true,
   "ignore_pause":true,
-  "log": 3,
+  "log": 1,
   "_inner_class":"AssertCallCount"
 }
