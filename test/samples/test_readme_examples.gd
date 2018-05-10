@@ -238,17 +238,17 @@ class ExportClass:
 	export(PackedScene) var some_scene
 	var some_variable = 1
 
-func test_assert_has_editor_property():
+func test_assert_exports():
 	var obj = ExportClass.new()
 
 	gut.p('-- passing --')
-	assert_has_editor_property(obj, "some_number", TYPE_INT)
-	assert_has_editor_property(obj, "some_scene", TYPE_OBJECT)
+	assert_exports(obj, "some_number", TYPE_INT)
+	assert_exports(obj, "some_scene", TYPE_OBJECT)
 
 	gut.p('-- failing --')
-	assert_has_editor_property(obj, 'some_number', TYPE_VECTOR2)
-	assert_has_editor_property(obj, 'some_scene', TYPE_AABB)
-	assert_has_editor_property(obj, 'some_variable', TYPE_INT)
+	assert_exports(obj, 'some_number', TYPE_VECTOR2)
+	assert_exports(obj, 'some_scene', TYPE_AABB)
+	assert_exports(obj, 'some_variable', TYPE_INT)
 # ------------------------------------------------------------------------------
 
 class MovingNode:
@@ -315,6 +315,7 @@ func test_illustrate_yield_to_with_more_time():
 	# since we wait longer than it will take to emit the signal, this assert
 	# will pass
 	assert_signal_emitted(t, 'the_signal', 'This will pass')
+
 # ------------------------------------------------------------------------------
 class SignalObject:
 	func _init():
@@ -470,3 +471,63 @@ func test_assert_extends():
 	assert_extends(BaseClass.new(), SubClass)
 	assert_extends('a', 'b')
 	assert_extends([], Node)
+
+# ------------------------------------------------------------------------------
+func test_assert_called():
+	var DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_extends_node2d.gd'
+
+	var doubled = double(DOUBLE_ME_PATH).new()
+	doubled.set_value(4)
+	doubled.set_value(5)
+	doubled.has_two_params_one_default('a')
+	doubled.has_two_params_one_default('a', 'b')
+	doubled.get_position()
+	doubled.set_position(Vector2(100, 100))
+
+	gut.p('-- passing --')
+	assert_called(doubled, 'set_value')
+	assert_called(doubled, 'set_value', [5])
+	assert_called(doubled, 'has_two_params_one_default', ['a', null])
+	assert_called(doubled, 'has_two_params_one_default', ['a', 'b'])
+	assert_called(doubled, 'get_position')
+
+	gut.p('-- failing --')
+	assert_called(doubled, 'get_value')
+	assert_called(doubled, 'set_value', ['nope'])
+	# This fails b/c double_me.gd does not implement a version of this method and
+	# is not yet being tracked by gut.  This should change in future.
+	assert_called(doubled, 'set_position')
+	# This fails b/c Gut isn't smart enough to fill in default values for you...
+	# ast least not yet.
+	assert_called(doubled, 'has_two_params_one_default', ['a'])
+	# This fails with a specific message indicating that you have to pass an
+	# instance of a doubled class.
+	assert_called(GDScript.new(), 'some_method')
+
+func test_assert_call_count():
+	var DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_extends_node2d.gd'
+
+	var doubled = double(DOUBLE_ME_PATH).new()
+	doubled.set_value(4)
+	doubled.set_value(5)
+	doubled.has_two_params_one_default('a')
+	doubled.has_two_params_one_default('a', 'b')
+	doubled.set_position(Vector2(100, 100))
+
+	gut.p('-- passing --')
+	assert_call_count(doubled, 'set_value', 2)
+	assert_call_count(doubled, 'set_value', 1, [4])
+	assert_call_count(doubled, 'has_two_params_one_default', 1, ['a', null])
+	assert_call_count(doubled, 'get_value', 0)
+
+	gut.p('-- failing --')
+	assert_call_count(doubled, 'set_value', 5)
+	assert_call_count(doubled, 'set_value', 2, [4])
+	assert_call_count(doubled, 'get_value', 1)
+	# This fails with a specific message indicating that you have to pass an
+	# instance of a doubled class even though technically the method was called.
+	assert_call_count(GDScript.new(), 'some_method', 0)
+	# This fails b/c double_extends_node2d does not have it's own implementation
+	# of set_position.  The function is supplied by the parent class and these
+	# methods are not yet being recorded.
+	assert_call_count(doubled, 'set_position', 1)

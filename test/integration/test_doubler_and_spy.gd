@@ -23,6 +23,7 @@ class TestBoth:
 
 	func teardown():
 		_doubler.clear_output_directory()
+		_spy.clear()
 
 	func test_spy_is_set_in_metadata():
 		var inst = _doubler.double(DOUBLE_ME_PATH).new()

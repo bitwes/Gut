@@ -17,6 +17,10 @@ func setup():
 	gr.test = Test.new()
 	gr.test.gut = gr.gut
 
+func teardown():
+	gr.gut.get_doubler().clear_output_directory()
+	gr.gut.get_spy().clear()
+
 func test_double_returns_a_class():
 	var D = gr.test.double(DOUBLE_ME_PATH)
 	assert_ne(D.new(), null)

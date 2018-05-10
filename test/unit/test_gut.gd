@@ -357,7 +357,7 @@ func test_can_get_set_inner_class_name():
 	assert_get_set_methods(gr.test_gut, 'inner_class_name', null, 'something')
 
 func test_assert_exports_inner_class_name():
-	assert_has_editor_property(gr.test_gut, '_inner_class_name', TYPE_STRING)
+	assert_exports(gr.test_gut, '_inner_class_name', TYPE_STRING)
 
 func test_when_set_only_inner_class_tests_run():
 	gr.test_gut.set_inner_class_name('TestClass1')

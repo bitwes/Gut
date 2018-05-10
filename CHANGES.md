@@ -3,7 +3,6 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 # 6.4.0
 ## TODO
-* (wiki) Update methods with assert_exports
 * (wiki) add inner_class_name to setup page
 * (wiki) re-export cmdline help
 * (wiki) assert_called requires you pass defaulted param values in order to get a match with parameters.  Add an example.
@@ -11,6 +10,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Features
 * `inner_class_name` option for editor, command line, and .gutconfig.json.
 * `assert_exports`:  Assert that script exports a variable with a specific type.
+* Spies (experimental)
+  * You can make assertions now about method calls on doubled objects.
+  * `assert_called`
+  * `assert_not_called`
+  * `assert_call_count`
 
 ## Fixes
 * Fixed issue with duplicate methods in doubled classes.

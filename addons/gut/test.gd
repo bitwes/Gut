@@ -169,6 +169,26 @@ func _get_desc_of_calls_to_instance(inst):
 	calls = calls.substr(0, calls.length() - BULLET.length() - 1)
 	return "Calls made on " + str(inst) + "\n" + calls
 
+# ------------------------------------------------------------------------------
+# Signal assertion helper.  Do not call directly, use _can_make_signal_assertions
+# ------------------------------------------------------------------------------
+func _fail_if_does_not_have_signal(object, signal_name):
+	var did_fail = false
+	if(!_signal_watcher.does_object_have_signal(object, signal_name)):
+		_fail(str('Object ', object, ' does not have the signal [', signal_name, ']'))
+		did_fail = true
+	return did_fail
+# ------------------------------------------------------------------------------
+# Signal assertion helper.  Do not call directly, use _can_make_signal_assertions
+# ------------------------------------------------------------------------------
+func _fail_if_not_watching(object):
+	var did_fail = false
+	if(!_signal_watcher.is_watching_object(object)):
+		_fail(str('Cannot make signal assertions because the object ', object, \
+		          ' is not being watched.  Call watch_signals(some_object) to be able to make assertions about signals.'))
+		did_fail = true
+	return did_fail
+
 # #######################
 # Virtual Methods
 # #######################
@@ -383,9 +403,9 @@ func _find_object_property(obj, property_name, property_usage=null):
 	return result
 
 # ------------------------------------------------------------------------------
-# Asserts the object has the specified editor property
+# Asserts a class exports a variable.
 # ------------------------------------------------------------------------------
-func assert_has_editor_property(obj, property_name, type):
+func assert_exports(obj, property_name, type):
 	var disp = 'expected %s to have editor property [%s]' % [obj, property_name]
 	var property = _find_object_property(obj, property_name, EDITOR_PROPERTY)
 	if property != null:
@@ -396,26 +416,6 @@ func assert_has_editor_property(obj, property_name, type):
 			_fail(disp)
 	else:
 		_fail(disp)
-
-# ------------------------------------------------------------------------------
-# Signal assertion helper.  Do not call directly, use _can_make_signal_assertions
-# ------------------------------------------------------------------------------
-func _fail_if_does_not_have_signal(object, signal_name):
-	var did_fail = false
-	if(!_signal_watcher.does_object_have_signal(object, signal_name)):
-		_fail(str('Object ', object, ' does not have the signal [', signal_name, ']'))
-		did_fail = true
-	return did_fail
-# ------------------------------------------------------------------------------
-# Signal assertion helper.  Do not call directly, use _can_make_signal_assertions
-# ------------------------------------------------------------------------------
-func _fail_if_not_watching(object):
-	var did_fail = false
-	if(!_signal_watcher.is_watching_object(object)):
-		_fail(str('Cannot make signal assertions because the object ', object, \
-		          ' is not being watched.  Call watch_signals(some_object) to be able to make assertions about signals.'))
-		did_fail = true
-	return did_fail
 
 # ------------------------------------------------------------------------------
 # Signal assertion helper.

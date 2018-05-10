@@ -7,3 +7,12 @@ func get_value():
 
 func set_value(val):
     _value = val
+
+func has_one_param(one):
+    pass
+
+func has_two_params_one_default(one, two=null):
+    pass
+
+func get_position():
+    return .get_position()

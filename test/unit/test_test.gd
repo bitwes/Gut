@@ -404,7 +404,7 @@ class TestGetSetAsserts:
 		gr.test.assert_get_set_methods(obj, 'thing', 'something', 'another thing')
 		assert_pass(gr.test, 4)
 
-class TestExportAsserts:
+class TestAssertExports:
 	extends BaseTestClass
 
 	class NoProperty:
@@ -428,32 +428,32 @@ class TestExportAsserts:
 
 	func test_fail_if_property_not_found():
 		var obj = NoProperty.new()
-		gr.test.assert_has_editor_property(obj, "some_property", TYPE_BOOL)
+		gr.test.assert_exports(obj, "some_property", TYPE_BOOL)
 		assert_fail(gr.test)
 
 	func test_fail_if_not_editor_property():
 		var obj = NotEditorProperty.new()
-		gr.test.assert_has_editor_property(obj, "some_property", TYPE_INT)
+		gr.test.assert_exports(obj, "some_property", TYPE_INT)
 		assert_fail(gr.test)
 
 	func test_pass_if_editor_property_present_with_correct_explicit_type():
 		var obj = HasCorrectEditorPropertyAndExplicitType.new()
-		gr.test.assert_has_editor_property(obj, "int_property", TYPE_INT)
+		gr.test.assert_exports(obj, "int_property", TYPE_INT)
 		assert_pass(gr.test)
 
 	func test_pass_if_editor_property_present_with_correct_implicit_type():
 		var obj = HasCorrectEditorPropertyAndImplicitType.new()
-		gr.test.assert_has_editor_property(obj, "vec2_property", TYPE_VECTOR2)
+		gr.test.assert_exports(obj, "vec2_property", TYPE_VECTOR2)
 		assert_pass(gr.test)
 
 	func test_fail_if_editor_property_present_with_incorrect_type():
 		var obj = HasCorrectEditorPropertyNotType.new()
-		gr.test.assert_has_editor_property(obj, "bool_property", TYPE_REAL)
+		gr.test.assert_exports(obj, "bool_property", TYPE_REAL)
 		assert_fail(gr.test)
 
 	func test__object_derived_type__exported_as_object_type():
 		var obj = HasObjectDerivedPropertyType.new()
-		gr.test.assert_has_editor_property(obj, "scene_property", TYPE_OBJECT)
+		gr.test.assert_exports(obj, "scene_property", TYPE_OBJECT)
 		assert_pass(gr.test)
 
 class TestAssertFileExists:
