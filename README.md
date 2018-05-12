@@ -1,6 +1,6 @@
 # [The readme has moved to a wiki.](https://github.com/bitwes/Gut/wiki)
 
-# Gut 6.3.0
+# Gut 6.4.0
 GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.  It allows you to write tests for your gdscript in gdscript.
 
 More info can be found in the [wiki](https://github.com/bitwes/Gut/wiki).

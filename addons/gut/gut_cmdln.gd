@@ -37,7 +37,7 @@
 # See the readme for a list of options and examples.  You can also use the -gh
 # option to get more information about how to use the command line interface.
 #
-# Version 6.3.0
+# Version 6.4.0
 ################################################################################
 extends SceneTree
 
