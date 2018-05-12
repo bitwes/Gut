@@ -256,7 +256,7 @@ func setup_options():
 	                'with a "g".  Also, any option that requires a value will take the form of ' +
 	                '"-g<name>=<value>".  There cannot be any spaces between the option, the "=", or ' +
 	                'inside a specified value or godot will think you are trying to run a scene.'))
-	opts.add('-gtest', [], 'Comma delimited list of test scripts to run')
+	opts.add('-gtest', [], 'Comma delimited list of full paths to test scripts to run.')
 	opts.add('-gdir', [], 'Comma delimited list of directories to add tests from.')
 	opts.add('-gprefix', 'test_', 'Prefix used to find tests when specifying -gdir.  Default "[default]"')
 	opts.add('-gsuffix', '.gd', 'Suffix used to find tests when specifying -gdir.  Default "[default]"')
