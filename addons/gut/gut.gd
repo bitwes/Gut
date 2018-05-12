@@ -38,9 +38,9 @@ extends "res://addons/gut/gut_gui.gd"
 export var _run_on_load = false
 export(String) var _select_script = null
 export(String) var _tests_like = null
+export(String) var _inner_class_name = null
 export var _should_print_to_console = true setget set_should_print_to_console, get_should_print_to_console
 export(int, 'Failures only', 'Tests and failures', 'Everything') var _log_level = 1 setget set_log_level, get_log_level
-
 # This var is JUST used to expose this setting in the editor
 # the var that is used is in the _yield_between hash.
 export var _yield_between_tests = true setget set_yield_between_tests, get_yield_between_tests
@@ -51,7 +51,7 @@ export var _file_prefix = 'test_'
 export var _file_extension = '.gd'
 export var _inner_class_prefix = 'Test'
 export(String) var _temp_directory = 'user://gut_temp_directory'
-export(String) var _inner_class_name = null
+
 
 # Allow user to add test directories via editor.  This is done with strings
 # instead of an array because the interface for editing arrays is really
