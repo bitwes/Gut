@@ -238,7 +238,8 @@ var options = {
 	unit_test_name = '',
 	show_help = false,
 	config_file = '',
-	inner_class = ''
+	inner_class = '',
+        opacity = 100
 }
 
 # flag to say if we should run the scripts or not.  It is only
@@ -273,6 +274,7 @@ func setup_options():
 	opts.add('-gh', false, 'Print this help')
 	opts.add('-gconfig', 'res://.gutconfig.json', 'A config file that contains configuration information.  Default is res://.gutconfig.json')
 	opts.add('-ginner_class', '', 'Only run inner classes that contain this string')
+	opts.add('-gopacity', 100, 'Set opacity of test runner window. Use range 0 - 100. 0 = transparent, 100 = opaque.')
 	return opts
 
 
@@ -291,6 +293,7 @@ func extract_options(opt):
 	options.unit_test_name = opt.get_value('-gunit_test_name')
 	options.config_file = opt.get_value('-gconfig')
 	options.inner_class = opt.get_value('-ginner_class')
+	options.opacity = opt.get_value('-gopacity')
 
 func get_value(dict, index, default):
 	if(dict.has(index)):
@@ -325,6 +328,7 @@ func load_options_from_config_file(file_path):
 	options.ignore_pause_before_teardown = get_value(results.result, 'ignore_pause', false)
 	options.log_level = get_value(results.result, 'log', 1)
 	options.inner_class = get_value(results.result, 'inner_class', '')
+	options.opacity = get_value(results.result, 'opacity', 100)
 
 	return 1
 
@@ -335,6 +339,7 @@ func apply_options():
 	get_root().add_child(_tester)
 	_tester.connect('tests_finished', self, '_on_tests_finished')
 	_tester.set_yield_between_tests(true)
+	_tester.set_modulate(Color(1.0, 1.0, 1.0, min(1.0, float(options.opacity) / 100)))
 	_tester.show()
 	if(options.inner_class != ''):
 		_tester.set_inner_class_name(options.inner_class)
