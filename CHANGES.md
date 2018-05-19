@@ -1,17 +1,20 @@
 # Release notes
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
+
 # 6.4.0
+I've "dog food"ed the doubles, stubs, and spies more in my own game and I think they are pretty stable.  This release contains some tweaks to doubles and stubs and the introduction of spies as well as some other testing goodness.  
 
 ## Features
 * `inner_class_name` option for editor node, command line, and .gutconfig.json.
-* `assert_exports`:  Assert that script exports a variable with a specific type.  Thanks Myrkrheim.
+* `assert_exports`:  Assert that script exports a variable with a specific type.  __Thanks Myrkrheim__
+* Command line now returns `0` when all tests pass and `1` if there are any failures.  __Thanks cmfcmf.__
+* You can now set the opacity for the GUI through a command line option or the `.gutconfig.json` file.  __That one is also thanks to Myrkheim__.
 * Spies (experimental)
   * You can make assertions now about method calls on doubled objects.
   * `assert_called`
   * `assert_not_called`
   * `assert_call_count`
-* Command line now returns `0` when all tests pass and `1` if there are any failures.  Thanks cmfcmf.
 
 ## Fixes
 * Fixed issue with duplicate methods in doubled classes.
