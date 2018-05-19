@@ -161,7 +161,7 @@ func _do_datatypes_match__fail_if_not(got, expected, text):
 # instance.
 # ------------------------------------------------------------------------------
 func _get_desc_of_calls_to_instance(inst):
-	var BULLET = '  - '
+	var BULLET = '  * '
 	var calls = gut.get_spy().get_call_list_as_string(inst)
 	# indent all the calls
 	calls = BULLET + calls.replace("\n", "\n" + BULLET)
