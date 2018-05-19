@@ -14,7 +14,7 @@ Gut is provided under the MIT license.  License is in `addons/gut/LICENSE.md`
 # Getting Started
 Here's a couple [wiki](https://github.com/bitwes/Gut/wiki) links to get you started.
 * [Install](https://github.com/bitwes/Gut/wiki/Install)
-* [Setup](https://github.com/bitwes/Gut/wiki/Setup)
+* [Creating Tests](https://github.com/bitwes/Gut/wiki/Creating-Tests)
 * [Methods](https://github.com/bitwes/Gut/wiki/Methods)
 
 # [The readme has moved to a wiki.](https://github.com/bitwes/Gut/wiki)
