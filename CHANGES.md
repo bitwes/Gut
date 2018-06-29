@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# 6.4.1
+
+## Fixes
+* Bug fix by Xrayez to ensure that the command line tool always sets the return code properly.  Before it was only setting it if Gut was configured to exit when done.
+
+
+
 # 6.4.0
 I've "dog food"ed the doubles, stubs, and spies more in my own game and I think they are pretty stable.  This release contains some tweaks to doubles and stubs and the introduction of spies as well as some other testing goodness.  
 
