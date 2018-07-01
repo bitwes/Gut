@@ -148,6 +148,89 @@ class TestAssertNe:
 		gr.test.assert_ne("one", "one", "Should Fail")
 		assert_fail(gr.test)
 
+class TestAssertAlmostEq:
+	extends BaseTestClass
+
+	func test_almost_eq_with_integers_eq():
+		gr.test.assert_almost_eq(2, 2, 0, "Should pass, 2 == 2 +/- 0")
+		assert_pass(gr.test)
+
+	func test_almost_eq_with_integers_ne():
+		gr.test.assert_almost_eq(1, 2, 0, "Should fail, 1 != 2 +/- 0")
+		assert_fail(gr.test)
+
+	func test_almost_eq_with_integers_almost_eq():
+		gr.test.assert_almost_eq(1, 2, 1, "Should pass, 1 == 2 +/- 1")
+		assert_pass(gr.test)
+
+	func test_almost_eq_with_floats_eq():
+		gr.test.assert_almost_eq(1.000, 1.000, 0.001, "Should pass, 1.000 == 1.000 +/- 0.001")
+		assert_pass(gr.test)
+
+	func test_almost_eq_with_floats_ne():
+		gr.test.assert_almost_eq(1.000, 2.000, 0.001, "Should fail, 1.000 == 2.000 +/- 0.001")
+		assert_fail(gr.test)
+
+	func test_almost_eq_with_floats_almost_eq():
+		gr.test.assert_almost_eq(1.000, 2.000, 1.000, "Should pass, 1.000 == 2.000 +/- 1.000")
+		assert_pass(gr.test)
+
+	func test_almost_eq_with_vector2s_eq():
+		gr.test.assert_almost_eq(Vector2(1.0, 1.0), Vector2(1.0, 1.0), Vector2(0.0, 0.0), "Should pass, Vector2(1.0, 1.0) == Vector2(1.0, 1.0) +/- Vector2(0.0, 0.0)")
+		assert_pass(gr.test)
+
+	func test_almost_eq_with_vector2s_ne():
+		gr.test.assert_almost_eq(Vector2(1.0, 1.0), Vector2(2.0, 2.0), Vector2(0.0, 0.0), "Should fail, Vector2(1.0, 1.0) == Vector2(2.0, 2.0) +/- Vector2(0.0, 0.0)")
+		assert_fail(gr.test)
+
+	func test_almost_eq_with_vector2s_almost_eq():
+		gr.test.assert_almost_eq(Vector2(1.0, 1.0), Vector2(2.0, 2.0), Vector2(1.0, 1.0), "Should pass, Vector2(1.0, 1.0) == Vector2(2.0, 2.0) +/- Vector2(1.0, 1.0)")
+		assert_pass(gr.test)
+
+class TestAssertAlmostNe:
+	extends BaseTestClass
+
+	func test_almost_ne_with_integers_ne():
+		gr.test.assert_almost_ne(1, 2, 0, "Should pass, 1 != 2 +/- 0")
+		assert_pass(gr.test)
+
+	func test_almost_ne_with_integers_eq():
+		gr.test.assert_almost_ne(2, 2, 0, "Should fail, 2 == 2 +/- 0")
+		assert_fail(gr.test)
+
+	func test_almost_ne_with_integers_almost_ne():
+		gr.test.assert_almost_ne(1, 3, 1, "Should pass, 1 != 3 +/- 1")
+		assert_pass(gr.test)
+
+	func test_almost_ne_with_integers_almost_eq():
+		gr.test.assert_almost_ne(2, 3, 1, "Should fail, 2 == 3 +/- 1")
+		assert_fail(gr.test)
+
+	func test_almost_ne_with_floats_ne():
+		gr.test.assert_almost_ne(1.000, 2.000, 0.001, "Should pass, 1.000 != 2.000 +/- 0.001")
+		assert_pass(gr.test)
+
+	func test_almost_ne_with_floats_eq():
+		gr.test.assert_almost_ne(1.000, 1.000, 0.001, "Should fail, 1.000 == 1.000 +/- 0.001")
+		assert_fail(gr.test)
+
+	func test_almost_ne_with_floats_almost_ne():
+		gr.test.assert_almost_ne(1.000, 2.000, 1.000, "Should fail, 1.000 == 2.000 +/- 1.000")
+		assert_fail(gr.test)
+
+	func test_almost_ne_with_vector2s_ne():
+		gr.test.assert_almost_ne(Vector2(1.0, 1.0), Vector2(2.0, 2.0), Vector2(0.0, 0.0), "Should pass, Vector2(1.0, 1.0) != Vector2(2.0, 2.0) +/- Vector2(0.0, 0.0)")
+		assert_pass(gr.test)
+
+	func test_almost_ne_with_vector2s_eq():
+		gr.test.assert_almost_ne(Vector2(1.0, 1.0), Vector2(1.0, 1.0), Vector2(0.0, 0.0), "Should fail, Vector2(1.0, 1.0) == Vector2(1.0, 1.0) +/- Vector2(0.0, 0.0)")
+		assert_fail(gr.test)
+
+	func test_almost_ne_with_vector2s_almost_ne():
+		gr.test.assert_almost_ne(Vector2(1.0, 1.0), Vector2(2.0, 2.0), Vector2(0.9, 0.9), "Should pass, Vector2(1.0, 1.0) == Vector2(2.0, 2.0) +/- Vector2(0.9, 0.9)")
+		assert_pass(gr.test)
+
+
 class TestAssertGt:
 	extends BaseTestClass
 
