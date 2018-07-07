@@ -241,7 +241,7 @@ func assert_ne(got, not_expected, text=""):
 # ------------------------------------------------------------------------------
 # Asserts that the expected value almost equals the value got.
 # ------------------------------------------------------------------------------
-func assert_almost_eq(got, expected, error_interval, text=""):
+func assert_almost_eq(got, expected, error_interval, text=''):
 	var disp = "[" + str(got) + "] expected to equal [" + str(expected) + "] +/- [" + str(error_interval) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, expected, text) and _do_datatypes_match__fail_if_not(got, error_interval, text)):
 		if(got < (expected - error_interval) or got > (expected + error_interval)):
@@ -252,7 +252,7 @@ func assert_almost_eq(got, expected, error_interval, text=""):
 # ------------------------------------------------------------------------------
 # Asserts that the expected value does not almost equal the value got.
 # ------------------------------------------------------------------------------
-func assert_almost_ne(got, not_expected, error_interval, text=""):
+func assert_almost_ne(got, not_expected, error_interval, text=''):
 	var disp = "[" + str(got) + "] expected to not equal [" + str(not_expected) + "] +/- [" + str(error_interval) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, not_expected, text) and _do_datatypes_match__fail_if_not(got, error_interval, text)):
 		if(got < (not_expected - error_interval) or got > (not_expected + error_interval)):

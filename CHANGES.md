@@ -5,12 +5,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 # 6.5.0
 
 ## Fixes
-* Bug fix by Xrayez to ensure that the command line tool always sets the return code properly.  Before it was only setting it if Gut was configured to exit when done.
+* Bug fix by __Xrayez__ to ensure that the command line tool always sets the return code properly.  Before it was only setting it if Gut was configured to exit when done.
 
 ## Features
-We have two new asserts thanks to hbergren.  These asserts make it easier to assert if a method is within or outside of a +/- range of a value.  These are especially useful when comparing floats that the engine insists aren't equal due to rounding errors.
-* `assert_almost_eq`
-* `assert_almost_ne`
+We have two new asserts thanks to __hbergren__.  These asserts make it easier to assert if a value is within or outside of a +/- range of a value.  These are especially useful when comparing floats that the engine insists aren't equal due to rounding errors.
+* `assert_almost_eq(got, expected, error_interval, text='')` - Asserts that `got` is within the range of `expected` +/- `error_interval`.  The upper and lower bounds are included in the check.  Verified to work with integers, floats, and Vector2.  Should work with anything that can be added/subtracted.  <a href="https://github.com/bitwes/Gut/wiki/Methods#assert_almost_eq">  Examples</a>
+* `assert_almost_ne(got, expected, error_interval, text='')` - This is the inverse of `assert_almost_eq`.  This will pass if `got` is outside the range of `expected` +/- `error_interval`.<a href="https://github.com/bitwes/Gut/wiki/Methods#assert_almost_ne">  Examples</a>
+
 
 ## Other
 Some housekeeping.  Removed some commented out and unreachable code.  Renamed a lot of tests in `test_test.gd` since it now uses Inner Test Classes which allows for better names.  They were setting a bad example for PRs.
