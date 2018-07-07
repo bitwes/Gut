@@ -3,6 +3,5 @@
   "should_exit":true,
   "ignore_pause":true,
   "log": 1,
-  "opacity":100,
-  "_inner_class":"TestAssertAlmostEq"
+  "opacity":100
 }
