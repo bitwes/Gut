@@ -2,12 +2,18 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-# 6.4.1
+# 6.5.0
 
 ## Fixes
 * Bug fix by Xrayez to ensure that the command line tool always sets the return code properly.  Before it was only setting it if Gut was configured to exit when done.
 
+## Features
+We have two new asserts thanks to hbergren.  These asserts make it easier to assert if a method is within or outside of a +/- range of a value.  These are especially useful when comparing floats that the engine insists aren't equal due to rounding errors.
+* `assert_almost_eq`
+* `assert_almost_ne`
 
+## Other
+Some housekeeping.  Removed some commented out and unreachable code.  Renamed a lot of tests in `test_test.gd` since it now uses Inner Test Classes which allows for better names.  They were setting a bad example for PRs.
 
 # 6.4.0
 I've "dog food"ed the doubles, stubs, and spies more in my own game and I think they are pretty stable.  This release contains some tweaks to doubles and stubs and the introduction of spies as well as some other testing goodness.  

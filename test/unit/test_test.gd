@@ -1,6 +1,14 @@
 # ------------------------------------------------------------------------------
 # Tests test.gd.  test.gd contains all the asserts is the class that all
 # test scripts inherit from.
+#
+# NOTE on naming tests.  Most of these tests were made before Inner Test Classes
+# were supported.  To that end a lot of tests should be renamed.  All new tests
+# should be in an Inner Test Class and follow a convention similar to:
+#   * test_passes_when...
+#   * test_passes_if...
+#   * test_fails_when...
+#   * etc
 # ------------------------------------------------------------------------------
 extends "res://addons/gut/test.gd"
 
@@ -12,7 +20,7 @@ class BaseTestClass:
 	# !! Use this for debugging to see the results of all the subtests that
 	# are run using assert_fail_pass, assert_fail and assert_pass that are
 	# built into this class
-	var _print_all_subtests = false
+	var _print_all_subtests = true
 
 	# GlobalReset(gr) variables to be used by tests.
 	# The values of these are reset in the setup or
@@ -62,7 +70,6 @@ class BaseTestClass:
 
 	func teardown():
 		gr.test_with_gut.gut.get_doubler().clear_output_directory()
-		#gr.test_with_gut.gut.get_doubler().clear()
 		gr.test_with_gut.gut.get_spy().clear()
 
 		gr.test.free()
@@ -79,177 +86,179 @@ class TestMiscTests:
 class TestAssertEq:
 	extends BaseTestClass
 
-	func test_assert_eq_number_not_equal():
+	func test_passes_when_integer_equal():
+		gr.test.assert_eq(1, 1)
+		assert_pass(gr.test)
+
+	func test_fails_when_number_not_equal():
 		gr.test.assert_eq(1, 2)
 		assert_fail(gr.test, 1, "Should fail.  1 != 2")
 
-	func test_assert_eq_number_equal():
-		gr.test.assert_eq('asdf', 'asdf')
-		assert_pass(gr.test, 1, "Should pass")
-
-	func test_float_eq():
+	func test_passes_when_float_eq():
 		gr.test.assert_eq(1.0, 1.0)
 		assert_pass(gr.test)
 
-	func test_float_eq_fail():
+	func test_fails_when_float_eq_fail():
 		gr.test.assert_eq(.19, 1.9)
 		assert_fail(gr.test)
 
-	func test_cast_float_eq_pass():
+	func test_passes_when_cast_char_to_float():
 		gr.test.assert_eq(float('0.92'), 0.92)
 		assert_pass(gr.test, 1, 'I suspect this is failing due to an engine bug.')
 
-	func test_fail_compare_float_cast_as_int():
+	func test_fails_when_comparing_float_cast_as_int():
 		# int cast will make it 0
 		gr.test.assert_eq(int(0.5), 0.5)
 		assert_fail(gr.test)
 
-	func test_cast_int_math_eq_float():
+	func test_passes_when_cast_int_expression_to_float():
 		var i = 2
 		gr.test.assert_eq(5 / float(i), 2.5)
 		assert_pass(gr.test)
 
-	func test_assert_eq_string_not_equal():
+	func test_fails_when_string_not_equal():
 		gr.test.assert_eq("one", "two", "Should Fail")
 		assert_fail(gr.test)
 
-	func test_assert_eq_string_equal():
+	func test_passes_when_string_equal():
 		gr.test.assert_eq("one", "one", "Should Pass")
 		assert_pass(gr.test)
 
-	func test_can_call_eq_without_text():
-		gr.test.assert_eq(1, 1)
-		assert_pass(gr.test)
 
 class TestAssertNe:
 	extends BaseTestClass
 
-	func test_can_call_ne_without_text():
+	func test_passes_with_integers_not_equal():
 		gr.test.assert_ne(1, 2)
 		assert_pass(gr.test)
 
-	func test_assert_ne_number_not_equal():
-		gr.test.assert_ne(1, 2)
-		assert_pass(gr.test, 1, "Should pass, 1 != 2")
-
-	func test_assert_ne_number_equal():
+	func test_fails_with_integers_equal():
 		gr.test.assert_ne(1, 1, "Should fail")
 		assert_fail(gr.test, 1, '1 = 1')
 
-	func test_float_ne():
+	func test_passes_with_floats_not_equal():
 		gr.test.assert_ne(0.9, .009)
 		assert_pass(gr.test)
 
-	func test_assert_ne_string_not_equal():
+	func test_passes_with_strings_not_equal():
 		gr.test.assert_ne("one", "two", "Should Pass")
 		assert_pass(gr.test)
 
-	func test_assert_ne_string_equal():
+	func test_fails_with_strings_equal():
 		gr.test.assert_ne("one", "one", "Should Fail")
 		assert_fail(gr.test)
 
 class TestAssertAlmostEq:
 	extends BaseTestClass
 
-	func test_almost_eq_with_integers_eq():
+	func test_passes_with_integers_equal():
 		gr.test.assert_almost_eq(2, 2, 0, "Should pass, 2 == 2 +/- 0")
 		assert_pass(gr.test)
 
-	func test_almost_eq_with_integers_ne():
-		gr.test.assert_almost_eq(1, 2, 0, "Should fail, 1 != 2 +/- 0")
-		assert_fail(gr.test)
-
-	func test_almost_eq_with_integers_almost_eq():
+	func test_passes_with_integers_almost_within_range():
 		gr.test.assert_almost_eq(1, 2, 1, "Should pass, 1 == 2 +/- 1")
-		assert_pass(gr.test)
+		gr.test.assert_almost_eq(3, 2, 1, "Should pass, 3 == 2 +/- 1")
+		assert_pass(gr.test, 2)
 
-	func test_almost_eq_with_floats_eq():
+	func test_fails_with_integers_outside_range():
+		gr.test.assert_almost_eq(0, 2, 1, "Should fail, 0 != 2 +/- 1")
+		gr.test.assert_almost_eq(4, 2, 1, "Should fail, 4 != 2 +/- 1")
+		assert_fail(gr.test, 2)
+
+	func test_passes_with_floats_within_range():
 		gr.test.assert_almost_eq(1.000, 1.000, 0.001, "Should pass, 1.000 == 1.000 +/- 0.001")
+		gr.test.assert_almost_eq(1.001, 1.000, 0.001, "Should pass, 1.001 == 1.000 +/- 0.001")
+		gr.test.assert_almost_eq(.999, 1.000, 0.001, "Should pass, .999 == 1.000 +/- 0.001")
+		assert_pass(gr.test, 3)
+
+	func test_fails_with_floats_outside_range():
+		gr.test.assert_almost_eq(2.002, 2.000, 0.001, "Should fail, 2.002 == 2.000 +/- 0.001")
+		gr.test.assert_almost_eq(1.998, 2.000, 0.001, "Should fail, 1.998 == 2.000 +/- 0.001")
+		assert_fail(gr.test, 2)
+
+	func test_passes_with_integers_within_float_range():
+		gr.test.assert_almost_eq(2, 1.9, .5, 'Should pass, 1.5 < 2 < 2.4')
 		assert_pass(gr.test)
 
-	func test_almost_eq_with_floats_ne():
-		gr.test.assert_almost_eq(1.000, 2.000, 0.001, "Should fail, 1.000 == 2.000 +/- 0.001")
-		assert_fail(gr.test)
-
-	func test_almost_eq_with_floats_almost_eq():
-		gr.test.assert_almost_eq(1.000, 2.000, 1.000, "Should pass, 1.000 == 2.000 +/- 1.000")
+	func test_passes_with_float_within_integer_range():
+		gr.test.assert_almost_eq(2.5, 2, 1, 'Should pass, 1 < 2.5 < 3')
 		assert_pass(gr.test)
 
-	func test_almost_eq_with_vector2s_eq():
+	func test_passes_with_vector2s_eq():
 		gr.test.assert_almost_eq(Vector2(1.0, 1.0), Vector2(1.0, 1.0), Vector2(0.0, 0.0), "Should pass, Vector2(1.0, 1.0) == Vector2(1.0, 1.0) +/- Vector2(0.0, 0.0)")
 		assert_pass(gr.test)
 
-	func test_almost_eq_with_vector2s_ne():
+	func test_fails_with_vector2s_ne():
 		gr.test.assert_almost_eq(Vector2(1.0, 1.0), Vector2(2.0, 2.0), Vector2(0.0, 0.0), "Should fail, Vector2(1.0, 1.0) == Vector2(2.0, 2.0) +/- Vector2(0.0, 0.0)")
 		assert_fail(gr.test)
 
-	func test_almost_eq_with_vector2s_almost_eq():
+	func test_passes_with_vector2s_almost_eq():
 		gr.test.assert_almost_eq(Vector2(1.0, 1.0), Vector2(2.0, 2.0), Vector2(1.0, 1.0), "Should pass, Vector2(1.0, 1.0) == Vector2(2.0, 2.0) +/- Vector2(1.0, 1.0)")
 		assert_pass(gr.test)
 
 class TestAssertAlmostNe:
 	extends BaseTestClass
 
-	func test_almost_ne_with_integers_ne():
+	func test_pass_with_integers_not_equal():
 		gr.test.assert_almost_ne(1, 2, 0, "Should pass, 1 != 2 +/- 0")
 		assert_pass(gr.test)
 
-	func test_almost_ne_with_integers_eq():
+	func test_fails_with_integers_equal():
 		gr.test.assert_almost_ne(2, 2, 0, "Should fail, 2 == 2 +/- 0")
 		assert_fail(gr.test)
 
-	func test_almost_ne_with_integers_almost_ne():
+	func test_passes_with_integers_outside_range():
 		gr.test.assert_almost_ne(1, 3, 1, "Should pass, 1 != 3 +/- 1")
 		assert_pass(gr.test)
 
-	func test_almost_ne_with_integers_almost_eq():
+	func test_fails_with_integers_within_range():
 		gr.test.assert_almost_ne(2, 3, 1, "Should fail, 2 == 3 +/- 1")
 		assert_fail(gr.test)
 
-	func test_almost_ne_with_floats_ne():
+	func test_passes_with_floats_outside_range():
 		gr.test.assert_almost_ne(1.000, 2.000, 0.001, "Should pass, 1.000 != 2.000 +/- 0.001")
 		assert_pass(gr.test)
 
-	func test_almost_ne_with_floats_eq():
+	func test_fails_with_floats_eq():
 		gr.test.assert_almost_ne(1.000, 1.000, 0.001, "Should fail, 1.000 == 1.000 +/- 0.001")
 		assert_fail(gr.test)
 
-	func test_almost_ne_with_floats_almost_ne():
+	func test_fails_with_floats_within_range():
 		gr.test.assert_almost_ne(1.000, 2.000, 1.000, "Should fail, 1.000 == 2.000 +/- 1.000")
 		assert_fail(gr.test)
 
-	func test_almost_ne_with_vector2s_ne():
+	func test_passes_with_vector2s_outside_range():
 		gr.test.assert_almost_ne(Vector2(1.0, 1.0), Vector2(2.0, 2.0), Vector2(0.0, 0.0), "Should pass, Vector2(1.0, 1.0) != Vector2(2.0, 2.0) +/- Vector2(0.0, 0.0)")
 		assert_pass(gr.test)
 
-	func test_almost_ne_with_vector2s_eq():
+	func test_fails_with_vector2s_eq():
 		gr.test.assert_almost_ne(Vector2(1.0, 1.0), Vector2(1.0, 1.0), Vector2(0.0, 0.0), "Should fail, Vector2(1.0, 1.0) == Vector2(1.0, 1.0) +/- Vector2(0.0, 0.0)")
 		assert_fail(gr.test)
 
-	func test_almost_ne_with_vector2s_almost_ne():
+	func test_passes_with_vector2s_almost_outside_range():
 		gr.test.assert_almost_ne(Vector2(1.0, 1.0), Vector2(2.0, 2.0), Vector2(0.9, 0.9), "Should pass, Vector2(1.0, 1.0) == Vector2(2.0, 2.0) +/- Vector2(0.9, 0.9)")
 		assert_pass(gr.test)
-
 
 class TestAssertGt:
 	extends BaseTestClass
 
-	func test_assert_gt_number_with_gt():
+	func test_passes_with_greater_integer():
 		gr.test.assert_gt(2, 1, "Should Pass")
 		assert_pass(gr.test, 1, '2 > 1')
 
-	func test_assert_gt_number_with_lt():
+	func test_fails_with_less_than_integer():
 		gr.test.assert_gt(1, 2, "Should fail")
 		assert_fail(gr.test, 1, '1 < 2')
 
-	func test_assert_gt_string_with_gt():
+	func test_passes_with_greater_string():
 		gr.test.assert_gt("b", "a", "Should Pass")
 		assert_pass(gr.test)
 
-	func test_assert_gt_string_with_lt():
+	func test_fails_with_less_than_string():
 		gr.test.assert_gt("a", "b", "Sould Fail")
 		assert_fail(gr.test)
 
+# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestAssertLt:
 	extends BaseTestClass
 
@@ -269,6 +278,7 @@ class TestAssertLt:
 		gr.test.assert_lt("b", "a", "Should Fail")
 		assert_fail(gr.test)
 
+# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestAssertBetween:
 	extends BaseTestClass
 
@@ -320,6 +330,7 @@ class TestAssertBetween:
 		gr.test.assert_between('q', 'z', 'a', "Should fail")
 		assert_fail(gr.test)
 
+# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestAssertTrue:
 	extends BaseTestClass
 
@@ -335,7 +346,7 @@ class TestAssertTrue:
 		gr.test.assert_true(true)
 		assert_pass(gr.test)
 
-
+# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestAssertFalse:
 	extends BaseTestClass
 
@@ -351,6 +362,7 @@ class TestAssertFalse:
 		gr.test.assert_false(false, "Should pass")
 		assert_pass(gr.test)
 
+# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestAssertHas:
 	extends BaseTestClass
 
@@ -374,6 +386,7 @@ class TestAssertHas:
 		gr.test.assert_does_not_have(array, 20, 'Should not have it.')
 		assert_fail(gr.test)
 
+# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class testFailingDatatypeChecks:
 	extends BaseTestClass
 
@@ -403,6 +416,7 @@ class testFailingDatatypeChecks:
 		gr.test.assert_ne(null, Node2D.new())
 		assert_pass(gr.test, 2)
 
+# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestPending:
 	extends BaseTestClass
 
@@ -539,6 +553,7 @@ class TestAssertExports:
 		gr.test.assert_exports(obj, "scene_property", TYPE_OBJECT)
 		assert_pass(gr.test)
 
+# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestAssertFileExists:
 	extends BaseTestClass
 
@@ -554,6 +569,7 @@ class TestAssertFileExists:
 		gr.test_with_gut.assert_file_exists(path)
 		assert_pass(gr.test_with_gut)
 
+# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestAssertFileDne:
 	extends BaseTestClass
 
@@ -569,6 +585,7 @@ class TestAssertFileDne:
 		gr.test_with_gut.assert_file_does_not_exist(path)
 		assert_fail(gr.test_with_gut)
 
+# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestAssertFileEmpty:
 	extends BaseTestClass
 
@@ -594,6 +611,7 @@ class TestAssertFileEmpty:
 		gr.test_with_gut.assert_file_empty(path)
 		assert_fail(gr.test_with_gut)
 
+# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestAssertFileNotEmpty:
 	extends BaseTestClass
 
@@ -619,6 +637,7 @@ class TestAssertFileNotEmpty:
 		gr.test_with_gut.assert_file_not_empty(path)
 		assert_fail(gr.test_with_gut)
 
+# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestSignalAsserts:
 	extends BaseTestClass
 
@@ -783,6 +802,7 @@ class TestSignalAsserts:
 		gr.test.assert_has_signal(gr.signal_object, SIGNALS.SCRIPT_SIGNAL)
 		assert_pass(gr.test)
 
+# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestExtendAsserts:
 	extends BaseTestClass
 
@@ -841,6 +861,7 @@ class TestExtendAsserts:
 		gr.test.assert_extends(a, HasSubclass2.SubClass)
 		assert_fail(gr.test)
 
+# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestStringContains:
 	extends BaseTestClass
 
@@ -868,6 +889,7 @@ class TestStringContains:
 		gr.test.assert_string_contains('This is a test.', 'this ', false)
 		assert_pass(gr.test)
 
+# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestStringStartsWith:
 	extends BaseTestClass
 
@@ -895,6 +917,7 @@ class TestStringStartsWith:
 		gr.test.assert_string_starts_with('This is a test.', 'tHI', false)
 		assert_pass(gr.test)
 
+# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestStringEndsWith:
 	extends BaseTestClass
 
@@ -922,6 +945,7 @@ class TestStringEndsWith:
 		gr.test.assert_string_ends_with('This is a test.', 'A teSt.', false)
 		assert_pass(gr.test)
 
+# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestAssertCalled:
 	extends BaseTestClass
 
@@ -957,7 +981,6 @@ class TestAssertCalled:
 		doubled.has_two_params_one_default(10)
 		gr.test_with_gut.assert_called(doubled, 'has_two_params_one_default', [10, null])
 		assert_pass(gr.test_with_gut)
-
 
 class TestAssertNotCalled:
 	extends BaseTestClass

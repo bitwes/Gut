@@ -43,7 +43,7 @@ var _summary = {
 var _is_running = false
 var min_size = Vector2(650, 400)
 
-#controls
+# controls
 var _ctrls = {
 	text_box = TextEdit.new(),
 	run_button = Button.new(),
@@ -84,6 +84,7 @@ func _set_anchor_bottom_left(obj):
 	obj.set_anchor(MARGIN_TOP, ANCHOR_END)
 
 #-------------------------------------------------------------------------------
+# Adds all controls to the window, sizes and poisitions them.
 #-------------------------------------------------------------------------------
 func setup_controls():
 	var button_size = Vector2(75, 35)
@@ -128,7 +129,6 @@ func setup_controls():
 
 	add_child(_ctrls.ignore_continue_checkbox)
 	_ctrls.ignore_continue_checkbox.set_text("Ignore pauses")
-	#_ctrls.ignore_continue_checkbox.set_pressed(_ignore_pause_before_teardown)
 	_ctrls.ignore_continue_checkbox.set_size(Vector2(50, 30))
 	_ctrls.ignore_continue_checkbox.set_position(Vector2(_ctrls.continue_button.get_position().x, _ctrls.continue_button.get_position().y + _ctrls.continue_button.get_size().y - 5))
 	_set_anchor_bottom_right(_ctrls.ignore_continue_checkbox)
@@ -147,8 +147,6 @@ func setup_controls():
 	_ctrls.log_level_slider.set_ticks(3)
 	_ctrls.log_level_slider.set_ticks_on_borders(true)
 	_ctrls.log_level_slider.set_step(1)
-	#_ctrls.log_level_slider.set_rounded_values(true)
-	#_ctrls.log_level_slider.set_value(_log_level)
 	_set_anchor_bottom_left(_ctrls.log_level_slider)
 
 	var script_prog_label = Label.new()
@@ -263,13 +261,13 @@ func _update_controls():
 
 
 #-------------------------------------------------------------------------------
-#detect mouse movement
+# detect mouse movement
 #-------------------------------------------------------------------------------
 func _on_mouse_enter():
 	_mouse_in = true
 
 #-------------------------------------------------------------------------------
-#detect mouse movement
+# detect mouse movement
 #-------------------------------------------------------------------------------
 func _on_mouse_exit():
 	_mouse_in = false
@@ -277,7 +275,7 @@ func _on_mouse_exit():
 
 
 #-------------------------------------------------------------------------------
-#Send text box text to clipboard
+# Send text box text to clipboard
 #-------------------------------------------------------------------------------
 func _copy_button_pressed():
 	_ctrls.text_box.select_all()
@@ -293,26 +291,25 @@ func _init_run():
 	_ctrls.text_box.add_color_region('/#', '#/', Color(.9, .6, 0))
 	_ctrls.text_box.add_color_region('/-', '-/', Color(1, 1, 0))
 	_ctrls.text_box.add_color_region('/*', '*/', Color(.5, .5, 1))
-	#_ctrls.text_box.set_symbol_color(Color(.5, .5, .5))
 	_ctrls.runtime_label.set_text('0.0')
 	_ctrls.test_progress.set_max(1)
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 func _input(event):
-	#if the mouse is somewhere within the debug window
+	# if the mouse is somewhere within the debug window
 	if(_mouse_in):
-		#Check for mouse click inside the resize handle
+		# Check for mouse click inside the resize handle
 		if(event is InputEventMouseButton):
 			if (event.button_index == 1):
-				#It's checking a square area for the bottom right corner, but that's close enough.  I'm lazy
+				# It's checking a square area for the bottom right corner, but that's close enough.  I'm lazy
 				if(event.position.x > get_size().x + get_position().x - 10 and event.position.y > get_size().y + get_position().y - 10):
 					if event.pressed:
 						_mouse_down = true
 						_mouse_down_pos = event.position
 					else:
 						_mouse_down = false
-		#Reszie
+		# Reszie
 		if(event is InputEventMouseMotion):
 			if(_mouse_down):
 				if(get_size() >= min_size):
@@ -334,20 +331,10 @@ func _input(event):
 #Custom drawing to indicate results.
 #-------------------------------------------------------------------------------
 func _draw():
-	#Draw the lines in the corner to show where you can
-	#drag to resize the dialog
+	# Draw the lines in the corner to show where you can
+	# drag to resize the dialog
 	var grab_margin = 2
 	var line_space = 3
 	var grab_line_color = Color(.4, .4, .4)
 	for i in range(1, 6):
 		draw_line(get_size() - Vector2(i * line_space, grab_margin), get_size() - Vector2(grab_margin, i * line_space), grab_line_color)
-
-	return
-
-	var where = Vector2(430, 565)
-	var r = 25
-	if(_summary.tests > 0):
-		if(_summary.failed > 0):
-			draw_circle(where, r , Color(1, 0, 0, 1))
-		else:
-			draw_circle(where, r, Color(0, 1, 0, 1))
