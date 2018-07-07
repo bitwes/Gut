@@ -39,6 +39,29 @@ func test_not_equal():
 	assert_ne('one', 'one') # FAIL
 	assert_ne('2', 2) # FAIL
 
+func test_almost_equals():
+	var one = 1
+	var error_interval = 1
+
+	gut.p('-- passing --')
+	assert_almost_eq(one, 1, error_interval, 'one should equal one +/- one') # PASS
+	assert_almost_eq(one, 2, error_interval, 'one should equal two +/- one') # PASS
+
+	gut.p('-- failing --')
+	assert_almost_eq(one, 3, error_interval, 'one should not equal three +/- one') # FAIL
+
+func test_almost_not_equals():
+	var one = 1
+	var error_interval = 1
+
+	gut.p('-- passing --')
+	assert_almost_ne(one, 3, error_interval, 'one should not equal three +/- one') # PASS
+
+	gut.p('-- failing --')
+	assert_almost_ne(one, 1, error_interval, 'one should equal one +/- one') # FAIL
+	assert_almost_ne(one, 2, error_interval, 'one should equal two +/- one') # FAIL
+
+
 func test_greater_than():
 	var bigger = 5
 	var smaller = 0

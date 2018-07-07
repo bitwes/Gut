@@ -253,6 +253,8 @@ func test_asserts_on_test_object():
 	pending('This really is not pending')
 	assert_eq(1, 1, 'text')
 	assert_ne(1, 2, 'text')
+	assert_almost_eq(5, 5, 0, 'text')
+	assert_almost_ne(5, 6, 0, 'text')
 	assert_gt(10, 5, 'text')
 	assert_lt(1, 2, 'text')
 	assert_true(true, 'text')
