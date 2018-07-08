@@ -35,6 +35,7 @@ extends "res://addons/gut/gut_gui.gd"
 # ###########################
 # Editor Variables
 # ###########################
+export var _should_maximize = false setget set_should_maximize, get_should_maximize
 export var _run_on_load = false
 export(String) var _select_script = null
 export(String) var _tests_like = null
@@ -155,7 +156,7 @@ func _ready():
 	set_it_up()
 	set_process_input(true)
 	_connect_controls()
-	set_position(get_position() + Vector2(0, 20))
+	set_position(get_position() + title_offset)
 
 	add_child(_wait_timer)
 	_wait_timer.set_wait_time(1)
@@ -190,6 +191,10 @@ func _ready():
 
 	if(_run_on_load):
 		test_scripts(_select_script == null)
+
+	if(_should_maximize):
+		maximize()
+
 	show()
 
 #####################
@@ -701,6 +706,21 @@ func select_script(script_name):
 # MISC
 #
 ################
+# ------------------------------------------------------------------------------
+# Maximize test runner window to fit the viewport.
+# ------------------------------------------------------------------------------
+func set_should_maximize(should):
+	_should_maximize = should
+
+func get_should_maximize():
+	return _should_maximize
+
+func maximize():
+	if(is_inside_tree()):
+		set_position(title_offset)
+		var vp_size_offset = get_viewport().size - title_offset
+		set_size(vp_size_offset)
+
 func disable_strict_datatype_checks(should):
 	_disable_strict_datatype_checks = should
 
