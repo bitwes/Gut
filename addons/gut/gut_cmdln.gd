@@ -37,7 +37,7 @@
 # See the readme for a list of options and examples.  You can also use the -gh
 # option to get more information about how to use the command line interface.
 #
-# Version 6.4.0
+# Version 6.5.0
 ################################################################################
 extends SceneTree
 
@@ -96,10 +96,11 @@ class CmdLineParser:
 
 		return to_return
 
-	# returns the value of an option if it was specfied, otherwise
-	# it returns the default.
-	func get_value(option, default):
-		var to_return = default
+	# returns the value of an option if it was specfied, null otherwise.  This
+	# used to return the default but that became problemnatic when trying to
+	# punch layer the different places where values could be specified.
+	func get_value(option):
+		var to_return = null
 		var opt_loc = find_option(option)
 		if(opt_loc != -1):
 			to_return = get_option_value(_opts[opt_loc])
@@ -109,11 +110,7 @@ class CmdLineParser:
 
 	# returns true if it finds the option, false if not.
 	func was_specified(option):
-		var opt_loc = find_option(option)
-		if(opt_loc != -1):
-			_opts.remove(opt_loc)
-
-		return opt_loc != -1
+		return find_option(option) != -1
 
 #-------------------------------------------------------------------------------
 # Simple class to hold a command line option
@@ -128,7 +125,7 @@ class Option:
 		option_name = name
 		default = default_value
 		description = desc
-		value = default_value
+		value = null#default_value
 
 	func pad(value, size, pad_with=' '):
 		var to_return = value
@@ -142,7 +139,6 @@ class Option:
 		if(subbed_desc.find('[default]') != -1):
 			subbed_desc = subbed_desc.replace('[default]', str(default))
 		return pad(option_name, min_space) + subbed_desc
-
 
 #-------------------------------------------------------------------------------
 # The high level interface between this script and the command line options
@@ -199,19 +195,90 @@ class Options:
 
 		for i in range(options.size()):
 			var t = typeof(options[i].default)
-			if(t == TYPE_INT):
-				options[i].value = int(parser.get_value(options[i].option_name, options[i].default))
-			elif(t == TYPE_STRING):
-				options[i].value = parser.get_value(options[i].option_name, options[i].default)
-			elif(t == TYPE_ARRAY):
-				options[i].value = parser.get_array_value(options[i].option_name)
-			elif(t == TYPE_BOOL):
-				options[i].value = parser.was_specified(options[i].option_name)
-			elif(t == TYPE_NIL):
-				print(options[i].option_name + ' cannot be processed, it has a nil datatype')
-			else:
-				print(options[i].option_name + ' cannot be processsed, it has unknown datatype:' + str(t))
+			# only set values that were specified at the command line so that
+			# we can punch through default and config values correctly later.
+			# Without this check, you can't tell the difference between the
+			# defaults and what was specified, so you can't punch through
+			# higher level options.
+			if(parser.was_specified(options[i].option_name)):
+				if(t == TYPE_INT):
+					options[i].value = int(parser.get_value(options[i].option_name))
+				elif(t == TYPE_STRING):
+					options[i].value = parser.get_value(options[i].option_name)
+				elif(t == TYPE_ARRAY):
+					options[i].value = parser.get_array_value(options[i].option_name)
+				elif(t == TYPE_BOOL):
+					options[i].value = parser.was_specified(options[i].option_name)
+				elif(t == TYPE_NIL):
+					print(options[i].option_name + ' cannot be processed, it has a nil datatype')
+				else:
+					print(options[i].option_name + ' cannot be processsed, it has unknown datatype:' + str(t))
 
+#-------------------------------------------------------------------------------
+# Helper class to resolve the various different places where an option can
+# be set.  Using the get_value method will enforce the order of precedence of:
+# 	1.  command line value
+#	2.  config file value
+#	3.  default value
+#
+# The idea is that you set the base_opts.  That will get you a copies of the
+# hash with null values for the other types of values.  Lower precendeted hashes
+# will punch through null values of higher precedednted hashes.
+#-------------------------------------------------------------------------------
+class OptionResolver:
+	var base_opts = null
+	var cmd_opts = null
+	var config_opts = null
+
+
+	func get_value(key):
+		return _nvl(cmd_opts[key], _nvl(config_opts[key], base_opts[key]))
+
+	func set_base_opts(opts):
+		base_opts = opts
+		cmd_opts = _null_copy(opts)
+		config_opts = _null_copy(opts)
+
+	func _null_copy(h):
+		var new_hash = {}
+		for key in h:
+			new_hash[key] = null
+		return new_hash
+
+	func _nvl(a, b):
+		if(a == null):
+			return b
+		else:
+			return a
+	func _string_it(h):
+		var to_return = ''
+		for key in h:
+			to_return += str('(',key, ':', _nvl(h[key], 'NULL'), ')')
+		return to_return
+
+	func to_s():
+		return str("base:\n", _string_it(base_opts), "\n", \
+		           "config:\n", _string_it(config_opts), "\n", \
+				   "cmd:\n", _string_it(cmd_opts), "\n", \
+				   "resolved:\n", _string_it(get_resolved_values()))
+
+	func get_resolved_values():
+		var to_return = {}
+		for key in base_opts:
+			to_return[key] = get_value(key)
+		return to_return
+
+	func to_s_verbose():
+		var to_return = ''
+		var resolved = get_resolved_values()
+		for key in base_opts:
+			to_return += str(key, "\n")
+			to_return += str('  default: ', _nvl(base_opts[key], 'NULL'), "\n")
+			to_return += str('  config:  ', _nvl(config_opts[key], 'NULL'), "\n")
+			to_return += str('  cmd:     ', _nvl(cmd_opts[key], 'NULL'), "\n")
+			to_return += str('  final:   ', _nvl(resolved[key], 'NULL'), "\n")
+
+		return to_return
 
 #-------------------------------------------------------------------------------
 # Here starts the actual script that uses the Options class to kick off Gut
@@ -233,12 +300,12 @@ var options = {
 	tests = [],
 	dirs = [],
 	selected = '',
-	prefix = '',
-	suffix = '',
-	gut_location = '',
+	prefix = 'test_',
+	suffix = '.gd',
+	gut_location = 'res://addons/gut/gut.gd',
 	unit_test_name = '',
 	show_help = false,
-	config_file = '',
+	config_file = 'res://.gutconfig.json',
 	inner_class = '',
 	opacity = 100
 }
@@ -277,26 +344,28 @@ func setup_options():
 	opts.add('-gconfig', 'res://.gutconfig.json', 'A config file that contains configuration information.  Default is res://.gutconfig.json')
 	opts.add('-ginner_class', '', 'Only run inner classes that contain this string')
 	opts.add('-gopacity', 100, 'Set opacity of test runner window. Use range 0 - 100. 0 = transparent, 100 = opaque.')
+	opts.add('-gpo', false, 'Print option values from all sources and the value used, then quit.')
 	return opts
 
 
 # Parses options, applying them to the _tester or setting values
 # in the options struct.
-func extract_options(opt):
-	options.tests = opt.get_value('-gtest')
-	options.dirs = opt.get_value('-gdir')
-	options.should_maximize = opt.get_value('-gmaximize')
-	options.should_exit = opt.get_value('-gexit')
-	options.log_level = opt.get_value('-glog')
-	options.ignore_pause_before_teardown = opt.get_value('-gignore_pause')
-	options.selected = opt.get_value('-gselect')
-	options.prefix = opt.get_value('-gprefix')
-	options.suffix = opt.get_value('-gsuffix')
-	options.gut_location = opt.get_value('-gutloc')
-	options.unit_test_name = opt.get_value('-gunit_test_name')
-	options.config_file = opt.get_value('-gconfig')
-	options.inner_class = opt.get_value('-ginner_class')
-	options.opacity = opt.get_value('-gopacity')
+
+func extract_command_line_options(from, to):
+	to.tests = from.get_value('-gtest')
+	to.dirs = from.get_value('-gdir')
+	to.should_exit = from.get_value('-gexit')
+	to.should_maximize = from.get_value('-gmaximize')
+	to.log_level = from.get_value('-glog')
+	to.ignore_pause_before_teardown = from.get_value('-gignore_pause')
+	to.selected = from.get_value('-gselect')
+	to.prefix = from.get_value('-gprefix')
+	to.suffix = from.get_value('-gsuffix')
+	to.gut_location = from.get_value('-gutloc')
+	to.unit_test_name = from.get_value('-gunit_test_name')
+	to.config_file = from.get_value('-gconfig')
+	to.inner_class = from.get_value('-ginner_class')
+	to.opacity = from.get_value('-gopacity')
 
 func get_value(dict, index, default):
 	if(dict.has(index)):
@@ -304,7 +373,7 @@ func get_value(dict, index, default):
 	else:
 		return default
 
-func load_options_from_config_file(file_path):
+func load_options_from_config_file(file_path, into):
 	# SHORTCIRCUIT
 	var f = File.new()
 	if(!f.file_exists(file_path)):
@@ -326,47 +395,46 @@ func load_options_from_config_file(file_path):
 		print('    ', results.error_string)
 		return -1
 
-	options.dirs = get_value(results.result, 'dirs', [])
-	options.should_maximize = get_value(results.result, 'should_maximize', false)
-	options.should_exit = get_value(results.result, 'should_exit', false)
-	options.ignore_pause_before_teardown = get_value(results.result, 'ignore_pause', false)
-	options.log_level = get_value(results.result, 'log', 1)
-	options.inner_class = get_value(results.result, 'inner_class', '')
-	options.opacity = get_value(results.result, 'opacity', 100)
+	into.dirs = get_value(results.result, 'dirs', [])
+	into.should_maximize = get_value(results.result, 'should_maximize', false)
+	into.should_exit = get_value(results.result, 'should_exit', false)
+	into.ignore_pause_before_teardown = get_value(results.result, 'ignore_pause', false)
+	into.log_level = get_value(results.result, 'log', 1)
+	into.inner_class = get_value(results.result, 'inner_class', '')
+	into.opacity = get_value(results.result, 'opacity', 100)
 
 	return 1
 
 # apply all the options specified to _tester
-func apply_options():
-	# setup the tester
-	_tester = load(options.gut_location).new()
+func apply_options(opts):
+	_tester = load(opts.gut_location).new()
 	get_root().add_child(_tester)
-	_tester.connect('tests_finished', self, '_on_tests_finished')
+	_tester.connect('tests_finished', self, '_on_tests_finished', [opts.should_exit])
 	_tester.set_yield_between_tests(true)
-	_tester.set_modulate(Color(1.0, 1.0, 1.0, min(1.0, float(options.opacity) / 100)))
+	_tester.set_modulate(Color(1.0, 1.0, 1.0, min(1.0, float(opts.opacity) / 100)))
 	_tester.show()
 
-	if(options.should_maximize):
+	if(opts.should_maximize):
 		_tester.maximize()
 
-	if(options.inner_class != ''):
-		_tester.set_inner_class_name(options.inner_class)
-	_tester.set_log_level(options.log_level)
-	_tester.set_ignore_pause_before_teardown(options.ignore_pause_before_teardown)
+	if(opts.inner_class != ''):
+		_tester.set_inner_class_name(opts.inner_class)
+	_tester.set_log_level(opts.log_level)
+	_tester.set_ignore_pause_before_teardown(opts.ignore_pause_before_teardown)
 
-	for i in range(options.dirs.size()):
-		_tester.add_directory(options.dirs[i], options.prefix, options.suffix)
+	for i in range(opts.dirs.size()):
+		_tester.add_directory(opts.dirs[i], opts.prefix, opts.suffix)
 
-	for i in range(options.tests.size()):
-		_tester.add_script(options.tests[i])
+	for i in range(opts.tests.size()):
+		_tester.add_script(opts.tests[i])
 
-	if(options.selected != ''):
-		_auto_run = _tester.select_script(options.selected)
+	if(opts.selected != ''):
+		_auto_run = _tester.select_script(opts.selected)
 		_run_single = true
 		if(!_auto_run):
-			_tester.p("Could not find a script that matched:  " + options.selected)
+			_tester.p("Could not find a script that matched:  " + opts.selected)
 
-	_tester.set_unit_test_name(options.unit_test_name)
+	_tester.set_unit_test_name(opts.unit_test_name)
 
 # Loads any scripts that have been configured to be loaded through the project
 # settings->autoload.
@@ -381,32 +449,40 @@ func load_auto_load_scripts():
 		obj.set_name(key)
 		get_root().add_child(obj)
 
-# parse option and run Gut
+# parse options and run Gut
 func _init():
+	var opt_resolver = OptionResolver.new()
+	opt_resolver.set_base_opts(options)
+
 	print("\n\n", ' ---  Gut  ---')
 	var o = setup_options()
 	o.parse()
-	extract_options(o)
-	var load_result = load_options_from_config_file(options.config_file)
+	extract_command_line_options(o, opt_resolver.cmd_opts)
+	var load_result = \
+		load_options_from_config_file(options.config_file, opt_resolver.config_opts)
 
-	if(load_result == -1):
+	if(load_result == -1): # -1 indicates json parse error
 		quit()
 	else:
 		if(o.get_value('-gh')):
 			o.print_help()
 			quit()
+		elif(o.get_value('-gpo')):
+			print('All command line options and where they are specified.  ' +
+			      'The "final" value shows which value will actually be used ' +
+				  'based on order of precedence (default < .gutconfig < cmd line).' + "\n")
+			print(opt_resolver.to_s_verbose())
+			quit()
 		else:
 			load_auto_load_scripts()
-			apply_options()
+			apply_options(opt_resolver.get_resolved_values())
 
 			if(_auto_run):
 				_tester.test_scripts(!_run_single)
 
 # exit if option is set.
-func _on_tests_finished():
-	if(options.should_exit):
-		if _tester.get_fail_count() == 0:
-			OS.exit_code = 0
-		else:
-			OS.exit_code = 1
+func _on_tests_finished(should_exit):
+	if(_tester.get_fail_count()):
+		OS.exit_code = 1
+	if(should_exit):
 		quit()

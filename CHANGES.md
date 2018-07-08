@@ -2,6 +2,23 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# 6.5.0
+
+## Fixes
+* Bug fix by __Xrayez__ to ensure that the command line tool always sets the return code properly.  Before it was only setting it if Gut was configured to exit when done.
+* Fixed an issue where the command line tool wasn't setting options correctly when the .gutconfig.json file was present.  All options are now applied correctly based on order of precedence (default < gutconfig < cmd line).  I also added the `-gpo` command line option to print out all option values from all sources and what value would be used when running Gut.  This will make debugging theses issues easier later.
+
+## Features
+* We have two new asserts thanks to __hbergren__.  These asserts make it easier to assert if a value is within or outside of a +/- range of a value.  These are especially useful when comparing floats that the engine insists aren't equal due to rounding errors.
+  * `assert_almost_eq(got, expected, error_interval, text='')` - Asserts that `got` is within the range of `expected` +/- `error_interval`.  The upper and lower bounds are included in the check.  Verified to work with integers, floats, and Vector2.  Should work with anything that can be added/subtracted.  <a href="https://github.com/bitwes/Gut/wiki/Methods#assert_almost_eq">  Examples</a>
+  * `assert_almost_ne(got, expected, error_interval, text='')` - This is the inverse of `assert_almost_eq`.  This will pass if `got` is outside the range of `expected` +/- `error_interval`.<a href="https://github.com/bitwes/Gut/wiki/Methods#assert_almost_ne">  Examples</a>
+* __Xrayez__ contributed a new option to maximize the Gut window upon launch.  The option can be set in the editor, .gutconfig, or at the command line.
+* Added the `-gpo` command line option to print out all option values from all sources and what value would be used when running Gut.  This will make debugging option issues much easier.
+
+
+## Other
+Some housekeeping.  Removed some commented out and unreachable code.  Renamed a lot of tests in `test_test.gd` since it now uses Inner Test Classes which allows for better names.  They were setting a bad example for PRs.
+
 # 6.4.0
 I've "dog food"ed the doubles, stubs, and spies more in my own game and I think they are pretty stable.  This release contains some tweaks to doubles and stubs and the introduction of spies as well as some other testing goodness.  
 

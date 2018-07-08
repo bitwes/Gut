@@ -39,6 +39,39 @@ func test_not_equal():
 	assert_ne('one', 'one') # FAIL
 	assert_ne('2', 2) # FAIL
 
+func test_almost_equals():
+
+	gut.p('-- passing --')
+	assert_almost_eq(0, 1, 1, '0 within range of 1 +/- 1') # PASS
+	assert_almost_eq(2, 1, 1, '2 within range of 1 +/- 1') # PASS
+
+	assert_almost_eq(1.2, 1.0, .5, '1.2 within range of 1 +/- .5') # PASS
+	assert_almost_eq(.5, 1.0, .5, '.5 within range of 1 +/- .5') # PASS
+
+	assert_almost_eq(Vector2(.5, 1.5), Vector2(1.0, 1.0), Vector2(.5, .5))  # PASS
+
+	gut.p('-- failing --')
+	assert_almost_eq(1, 3, 1, '1 outside range of 3 +/- 1') # FAIL
+	assert_almost_eq(2.6, 3.0, .2, '2.6 outside range of 3 +/- .2') # FAIL
+
+	assert_almost_eq(Vector2(.5, 1.5), Vector2(1.0, 1.0), Vector2(.25, .25))  # PASS
+
+func test_almost_not_equals():
+	gut.p('-- passing --')
+	assert_almost_ne(1, 3, 1, '1 outside range of 3 +/- 1') # PASS
+	assert_almost_ne(2.6, 3.0, .2, '2.6 outside range of 3 +/- .2') # PASS
+
+	assert_almost_ne(Vector2(.5, 1.5), Vector2(1.0, 1.0), Vector2(.25, .25))  # PASS
+
+	gut.p('-- failing --')
+	assert_almost_ne(0, 1, 1, '0 within range of 1 +/- 1') # FAIL
+	assert_almost_ne(2, 1, 1, '2 within range of 1 +/- 1') # FAIL
+
+	assert_almost_ne(1.2, 1.0, .5, '1.2 within range of 1 +/- .5') # FAIL
+	assert_almost_ne(.5, 1.0, .5, '.5 within range of 1 +/- .5') # FAIL
+
+	assert_almost_ne(Vector2(.5, 1.5), Vector2(1.0, 1.0), Vector2(.5, .5))  # FAIL
+
 func test_greater_than():
 	var bigger = 5
 	var smaller = 0
