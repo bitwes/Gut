@@ -96,10 +96,11 @@ class CmdLineParser:
 
 		return to_return
 
-	# returns the value of an option if it was specfied, otherwise
-	# it returns the default.
-	func get_value(option, default):
-		var to_return = null # hack this default
+	# returns the value of an option if it was specfied, null otherwise.  This
+	# used to return the default but that became problemnatic when trying to
+	# punch layer the different places where values could be specified.
+	func get_value(option):
+		var to_return = null
 		var opt_loc = find_option(option)
 		if(opt_loc != -1):
 			to_return = get_option_value(_opts[opt_loc])
@@ -194,11 +195,16 @@ class Options:
 
 		for i in range(options.size()):
 			var t = typeof(options[i].default)
+			# only set values that were specified at the command line so that
+			# we can punch through default and config values correctly later.
+			# Without this check, you can't tell the difference between the
+			# defaults and what was specified, so you can't punch through
+			# higher level options.
 			if(parser.was_specified(options[i].option_name)):
 				if(t == TYPE_INT):
-					options[i].value = int(parser.get_value(options[i].option_name, options[i].default))
+					options[i].value = int(parser.get_value(options[i].option_name))
 				elif(t == TYPE_STRING):
-					options[i].value = parser.get_value(options[i].option_name, options[i].default)
+					options[i].value = parser.get_value(options[i].option_name)
 				elif(t == TYPE_ARRAY):
 					options[i].value = parser.get_array_value(options[i].option_name)
 				elif(t == TYPE_BOOL):
@@ -336,7 +342,7 @@ func setup_options():
 	opts.add('-gconfig', 'res://.gutconfig.json', 'A config file that contains configuration information.  Default is res://.gutconfig.json')
 	opts.add('-ginner_class', '', 'Only run inner classes that contain this string')
 	opts.add('-gopacity', 100, 'Set opacity of test runner window. Use range 0 - 100. 0 = transparent, 100 = opaque.')
-	opts.add('-gpo', false, 'Print option values from all sources and the value uesd then quit.')
+	opts.add('-gpo', false, 'Print option values from all sources and the value used, then quit.')
 	return opts
 
 
@@ -402,6 +408,7 @@ func apply_options(opts):
 	_tester.set_yield_between_tests(true)
 	_tester.set_modulate(Color(1.0, 1.0, 1.0, min(1.0, float(opts.opacity) / 100)))
 	_tester.show()
+
 	if(opts.inner_class != ''):
 		_tester.set_inner_class_name(opts.inner_class)
 	_tester.set_log_level(opts.log_level)
@@ -434,7 +441,7 @@ func load_auto_load_scripts():
 		obj.set_name(key)
 		get_root().add_child(obj)
 
-# parse option and run Gut
+# parse options and run Gut
 func _init():
 	var opt_resolver = OptionResolver.new()
 	opt_resolver.set_base_opts(options)
@@ -453,6 +460,9 @@ func _init():
 			o.print_help()
 			quit()
 		elif(o.get_value('-gpo')):
+			print('All command line options and where they are specified.  ' +
+			      'The "final" value shows which value will actually be used ' +
+				  'based on order of precedence (default < .gutconfig < cmd line).' + "\n")
 			print(opt_resolver.to_s_verbose())
 			quit()
 		else:
