@@ -226,7 +226,6 @@ var _opts = []
 # that I don't make any dumb typos and get the neat code-sense when I
 # type a dot.
 var options = {
-	should_maximize = false,
 	should_exit = false,
 	log_level = 1,
 	ignore_pause_before_teardown = false,
@@ -240,7 +239,7 @@ var options = {
 	show_help = false,
 	config_file = '',
 	inner_class = '',
-	opacity = 100
+        opacity = 100
 }
 
 # flag to say if we should run the scripts or not.  It is only
@@ -262,7 +261,6 @@ func setup_options():
 	opts.add('-gdir', [], 'Comma delimited list of directories to add tests from.')
 	opts.add('-gprefix', 'test_', 'Prefix used to find tests when specifying -gdir.  Default "[default]"')
 	opts.add('-gsuffix', '.gd', 'Suffix used to find tests when specifying -gdir.  Default "[default]"')
-	opts.add('-gmaximize', false, 'Maximizes test runner window to fit the viewport.')
 	opts.add('-gexit', false, 'Exit after running tests.  If not specified you have to manually close the window.')
 	opts.add('-glog', 1, 'Log level.  Default [default]')
 	opts.add('-gignore_pause', false, 'Ignores any calls to gut.pause_before_teardown.')
@@ -285,7 +283,6 @@ func setup_options():
 func extract_options(opt):
 	options.tests = opt.get_value('-gtest')
 	options.dirs = opt.get_value('-gdir')
-	options.should_maximize = opt.get_value('-gmaximize')
 	options.should_exit = opt.get_value('-gexit')
 	options.log_level = opt.get_value('-glog')
 	options.ignore_pause_before_teardown = opt.get_value('-gignore_pause')
@@ -327,7 +324,6 @@ func load_options_from_config_file(file_path):
 		return -1
 
 	options.dirs = get_value(results.result, 'dirs', [])
-	options.should_maximize = get_value(results.result, 'should_maximize', false)
 	options.should_exit = get_value(results.result, 'should_exit', false)
 	options.ignore_pause_before_teardown = get_value(results.result, 'ignore_pause', false)
 	options.log_level = get_value(results.result, 'log', 1)
@@ -345,10 +341,6 @@ func apply_options():
 	_tester.set_yield_between_tests(true)
 	_tester.set_modulate(Color(1.0, 1.0, 1.0, min(1.0, float(options.opacity) / 100)))
 	_tester.show()
-
-	if(options.should_maximize):
-		_tester.maximize()
-
 	if(options.inner_class != ''):
 		_tester.set_inner_class_name(options.inner_class)
 	_tester.set_log_level(options.log_level)
