@@ -42,6 +42,7 @@ var _summary = {
 
 var _is_running = false
 var min_size = Vector2(650, 400)
+var title_offset = Vector2(0, get_constant("title_height"))
 
 # controls
 var _ctrls = {

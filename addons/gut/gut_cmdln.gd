@@ -293,6 +293,7 @@ var _opts = []
 # that I don't make any dumb typos and get the neat code-sense when I
 # type a dot.
 var options = {
+	should_maximize = false,
 	should_exit = false,
 	log_level = 1,
 	ignore_pause_before_teardown = false,
@@ -328,6 +329,7 @@ func setup_options():
 	opts.add('-gdir', [], 'Comma delimited list of directories to add tests from.')
 	opts.add('-gprefix', 'test_', 'Prefix used to find tests when specifying -gdir.  Default "[default]"')
 	opts.add('-gsuffix', '.gd', 'Suffix used to find tests when specifying -gdir.  Default "[default]"')
+	opts.add('-gmaximize', false, 'Maximizes test runner window to fit the viewport.')
 	opts.add('-gexit', false, 'Exit after running tests.  If not specified you have to manually close the window.')
 	opts.add('-glog', 1, 'Log level.  Default [default]')
 	opts.add('-gignore_pause', false, 'Ignores any calls to gut.pause_before_teardown.')
@@ -348,10 +350,12 @@ func setup_options():
 
 # Parses options, applying them to the _tester or setting values
 # in the options struct.
+
 func extract_command_line_options(from, to):
 	to.tests = from.get_value('-gtest')
 	to.dirs = from.get_value('-gdir')
 	to.should_exit = from.get_value('-gexit')
+	to.should_maximize = from.get_value('-gmaximize')
 	to.log_level = from.get_value('-glog')
 	to.ignore_pause_before_teardown = from.get_value('-gignore_pause')
 	to.selected = from.get_value('-gselect')
@@ -392,6 +396,7 @@ func load_options_from_config_file(file_path, into):
 		return -1
 
 	into.dirs = get_value(results.result, 'dirs', [])
+	into.should_maximize = get_value(results.result, 'should_maximize', false)
 	into.should_exit = get_value(results.result, 'should_exit', false)
 	into.ignore_pause_before_teardown = get_value(results.result, 'ignore_pause', false)
 	into.log_level = get_value(results.result, 'log', 1)
@@ -408,6 +413,9 @@ func apply_options(opts):
 	_tester.set_yield_between_tests(true)
 	_tester.set_modulate(Color(1.0, 1.0, 1.0, min(1.0, float(opts.opacity) / 100)))
 	_tester.show()
+
+	if(options.should_maximize):
+		_tester.maximize()
 
 	if(opts.inner_class != ''):
 		_tester.set_inner_class_name(opts.inner_class)

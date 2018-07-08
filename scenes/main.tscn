@@ -5,14 +5,12 @@
 [ext_resource path="res://addons/gut/icon.png" type="Texture" id=3]
 
 [node name="main" type="Node2D" index="0"]
-
 script = ExtResource( 1 )
 __meta__ = {
 "__editor_plugin_screen__": "Script"
 }
 
 [node name="Gut" type="WindowDialog" parent="." index="0"]
-
 visible = false
 anchor_left = 0.0
 anchor_top = 0.0
@@ -33,6 +31,7 @@ script = ExtResource( 2 )
 __meta__ = {
 "_editor_icon": ExtResource( 3 )
 }
+_should_maximize = false
 _run_on_load = false
 _select_script = null
 _tests_like = null
@@ -54,7 +53,6 @@ _directory5 = ""
 _directory6 = ""
 
 [node name="RunGutTestsButton" type="Button" parent="." index="1"]
-
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
@@ -79,5 +77,3 @@ flat = false
 align = 1
 
 [connection signal="pressed" from="RunGutTestsButton" to="." method="_on_RunGutTestsButton_pressed"]
-
-
