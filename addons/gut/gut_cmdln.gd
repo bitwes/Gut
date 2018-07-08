@@ -267,10 +267,10 @@ class OptionResolver:
 		var resolved = get_resolved_values()
 		for key in base_opts:
 			to_return += str(key, "\n")
-			to_return += str('  base:   ', _nvl(base_opts[key], 'NULL'), "\n")
-			to_return += str('  config: ', _nvl(config_opts[key], 'NULL'), "\n")
-			to_return += str('  cmd:    ', _nvl(cmd_opts[key], 'NULL'), "\n")
-			to_return += str('  final:  ', _nvl(resolved[key], 'NULL'), "\n")
+			to_return += str('  default: ', _nvl(base_opts[key], 'NULL'), "\n")
+			to_return += str('  config:  ', _nvl(config_opts[key], 'NULL'), "\n")
+			to_return += str('  cmd:     ', _nvl(cmd_opts[key], 'NULL'), "\n")
+			to_return += str('  final:   ', _nvl(resolved[key], 'NULL'), "\n")
 
 		return to_return
 
@@ -336,7 +336,7 @@ func setup_options():
 	opts.add('-gconfig', 'res://.gutconfig.json', 'A config file that contains configuration information.  Default is res://.gutconfig.json')
 	opts.add('-ginner_class', '', 'Only run inner classes that contain this string')
 	opts.add('-gopacity', 100, 'Set opacity of test runner window. Use range 0 - 100. 0 = transparent, 100 = opaque.')
-	opts.add('-gpo', false, 'Print option values and quit.')
+	opts.add('-gpo', false, 'Print option values from all sources and the value uesd then quit.')
 	return opts
 
 

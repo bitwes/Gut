@@ -1,6 +1,6 @@
 {
-  "dirs":["res://test/unit/", "res://test/integration/", "res://test/samples"],
+  "dirs":["res://test/unit/", "res://test/integration/"],
   "ignore_pause":true,
   "log": 2,
-  "opacity":80
+  "opacity":100
 }
