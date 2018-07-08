@@ -414,7 +414,7 @@ func apply_options(opts):
 	_tester.set_modulate(Color(1.0, 1.0, 1.0, min(1.0, float(opts.opacity) / 100)))
 	_tester.show()
 
-	if(options.should_maximize):
+	if(opts.should_maximize):
 		_tester.maximize()
 
 	if(opts.inner_class != ''):
