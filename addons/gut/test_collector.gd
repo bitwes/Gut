@@ -52,6 +52,20 @@ var _test_prefix = 'test_'
 var _test_class_prefix = 'Test'
 
 func _parse_script(script):
+	if script.path.ends_with(".gdc"):
+		_parse_gdc_script(script)
+	elif script.path.ends_with(".gd"):
+		_parse_gd_script(script)
+
+func _parse_gdc_script(script):
+	var test = load(script.path).new()
+	for method in test.get_method_list():
+		if(method["name"].begins_with(_test_prefix)):
+			var new_test = Test.new()
+			new_test.name = method["name"]
+			script.tests.append(new_test)
+
+func _parse_gd_script(script):
 	var file = File.new()
 	var line = ""
 	var line_count = 0

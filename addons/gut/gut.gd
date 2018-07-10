@@ -661,9 +661,8 @@ func add_script(script, select_this_one=false):
 # ------------------------------------------------------------------------------
 func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
 	var d = Directory.new()
-	if(!d.dir_exists(path)):
+	if d.open(path) != OK:
 		return
-	d.open(path)
 	d.list_dir_begin()
 
 	# Traversing a directory is kinda odd.  You have to start the process of listing
@@ -675,7 +674,7 @@ func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
 		full_path = path + "/" + thing
 		#file_exists returns fasle for directories
 		if(d.file_exists(full_path)):
-			if(thing.begins_with(prefix) and thing.find(suffix) != -1):
+			if(thing.begins_with(prefix) and thing.find(suffix) != -1 and thing.find(".remap") == -1):
 				add_script(full_path)
 		thing = d.get_next()
 	d.list_dir_end()
