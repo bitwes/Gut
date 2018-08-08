@@ -295,6 +295,10 @@ func test_adding_directory_loads_files():
 	gr.test_gut.add_directory(TEST_LOAD_DIR)
 	assert_true(gr.test_gut._test_collector.has_script(TEST_LOAD_DIR + '/test_samples.gd'))
 
+func test_adding_directory_adds_subdirs():
+	gr.test_gut.add_directory(TEST_LOAD_DIR)
+	assert_true(gr.test_gut._test_collector.has_script(TEST_LOAD_DIR + '/subdir/test_in_subdir.gd'))
+
 func test_adding_directory_does_not_load_bad_prefixed_files():
 	gr.test_gut.add_directory(TEST_LOAD_DIR)
 	assert_false(gr.test_gut._test_collector.has_script(TEST_LOAD_DIR + '/bad_prefix.gd'))
