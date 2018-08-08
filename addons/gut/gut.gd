@@ -656,7 +656,7 @@ func add_script(script, select_this_one=false):
 
 # ------------------------------------------------------------------------------
 # Add all scripts in the specified directory that start with the prefix and end
-# with the suffix.  Does not look in sub directories.  Can be called multiple
+# with the suffix.  Correctly processes sub directories.  Can be called multiple
 # times.
 # ------------------------------------------------------------------------------
 func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
@@ -664,7 +664,9 @@ func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
 	if(!d.dir_exists(path)):
 		return
 	d.open(path)
-	d.list_dir_begin()
+	# pass true for skip_navigational, so it doesn't pass . and ..
+	# which break recursion
+	d.list_dir_begin(true)
 
 	# Traversing a directory is kinda odd.  You have to start the process of listing
 	# the contents of a directory with list_dir_begin then use get_next until it
@@ -673,10 +675,12 @@ func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
 	var full_path = ''
 	while(thing != ''):
 		full_path = path + "/" + thing
-		#file_exists returns fasle for directories
+		#file_exists returns false for directories
 		if(d.file_exists(full_path)):
 			if(thing.begins_with(prefix) and thing.find(suffix) != -1):
 				add_script(full_path)
+		elif d.dir_exists(full_path):
+			add_directory(full_path, prefix, suffix)
 		thing = d.get_next()
 	d.list_dir_end()
 
