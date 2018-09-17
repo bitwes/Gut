@@ -52,6 +52,7 @@ export var _file_prefix = 'test_'
 export var _file_extension = '.gd'
 export var _inner_class_prefix = 'Test'
 export(String) var _temp_directory = 'user://gut_temp_directory'
+export var _include_subdirectories = false setget set_include_subdirectories, get_include_subdirectories
 
 
 # Allow user to add test directories via editor.  This is done with strings
@@ -661,23 +662,31 @@ func add_script(script, select_this_one=false):
 # ------------------------------------------------------------------------------
 func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
 	var d = Directory.new()
-	if(!d.dir_exists(path)):
+	# check for '' b/c the calls to addin the exported directories 1-6 will pass
+	# '' if the field has not been populated.  This will cause res:// to be
+	# processed which will include all files if include_subdirectories is true.
+	if(path == '' or !d.dir_exists(path)):
 		return
 	d.open(path)
-	d.list_dir_begin()
+	# true parameter tells list_dir_begin not to include "." and ".." diretories.
+	d.list_dir_begin(true)
 
 	# Traversing a directory is kinda odd.  You have to start the process of listing
 	# the contents of a directory with list_dir_begin then use get_next until it
 	# returns an empty string.  Then I guess you should end it.
-	var thing = d.get_next()
+	var fs_item = d.get_next()
 	var full_path = ''
-	while(thing != ''):
-		full_path = path + "/" + thing
+	while(fs_item != ''):
+		full_path = path.plus_file(fs_item)
+
 		#file_exists returns fasle for directories
 		if(d.file_exists(full_path)):
-			if(thing.begins_with(prefix) and thing.find(suffix) != -1):
+			if(fs_item.begins_with(prefix) and fs_item.find(suffix) != -1):
 				add_script(full_path)
-		thing = d.get_next()
+		elif(get_include_subdirectories() and d.dir_exists(full_path)):
+			add_directory(full_path, prefix, suffix)
+
+		fs_item = d.get_next()
 	d.list_dir_end()
 
 # ------------------------------------------------------------------------------
@@ -1001,6 +1010,16 @@ func set_inner_class_name(inner_class_name):
 # ------------------------------------------------------------------------------
 func get_summary():
 	return _new_summary
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_include_subdirectories():
+	return _include_subdirectories
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func set_include_subdirectories(include_subdirectories):
+	_include_subdirectories = include_subdirectories
 
 # #######################
 # Moved method warnings.

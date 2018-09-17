@@ -4,5 +4,6 @@
   "should_exit":true,
   "ignore_pause":true,
   "log": 2,
-  "opacity":100
+  "opacity":100,
+  "include_subdirs":false
 }

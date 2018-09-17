@@ -142,6 +142,7 @@ func test_get_current_script_object_returns_null_by_default():
 
 func test_get_set_temp_directory():
 	assert_get_set_methods(gr.test_gut, 'temp_directory', 'user://gut_temp_directory', 'user://blahblah')
+
 # ------------------------------
 # disable strict datatype comparisons
 # ------------------------------
@@ -153,7 +154,6 @@ func test_when_strict_disabled_can_compare_int_and_float():
 	gr.test_gut.disable_strict_datatype_checks(true)
 	gr.test.assert_eq(1.0, 1)
 	assert_pass()
-
 
 # ------------------------------
 # File utilities
@@ -287,61 +287,6 @@ func test_gut_clears_test_instances_between_runs():
 	gr.test_gut.test_scripts()
 	assert_eq(gr.test_gut._test_script_objects.size(), 1, 'The should only be one test script after a second run')
 
-# ------------------------------
-# Loading diretories
-# ------------------------------
-const TEST_LOAD_DIR = 'res://test/parsing_and_loading_samples'
-func test_adding_directory_loads_files():
-	gr.test_gut.add_directory(TEST_LOAD_DIR)
-	assert_true(gr.test_gut._test_collector.has_script(TEST_LOAD_DIR + '/test_samples.gd'))
-
-func test_adding_directory_does_not_load_bad_prefixed_files():
-	gr.test_gut.add_directory(TEST_LOAD_DIR)
-	assert_false(gr.test_gut._test_collector.has_script(TEST_LOAD_DIR + '/bad_prefix.gd'))
-
-func test_adding_directory_skips_files_with_wrong_extension():
-	gr.test_gut.add_directory(TEST_LOAD_DIR)
-	assert_false(gr.test_gut._test_collector.has_script(TEST_LOAD_DIR + '/test_bad_extension.txt'))
-
-func test_if_directory_does_not_exist_it_does_not_die():
-	gr.test_gut.add_directory('res://adsf')
-	assert_true(true, 'We should get here')
-
-func test_adding_same_directory_does_not_add_duplicates():
-	gr.test_gut.add_directory('res://test/unit')
-	var orig = gr.test_gut._test_collector.scripts.size()
-	gr.test_gut.add_directory('res://test/unit')
-	assert_eq(gr.test_gut._test_collector.scripts.size(), orig)
-
-# We only have 3 directories with tests in them so test 3
-func test_directories123_defined_in_editor_are_loaded_on_ready():
-	var g = Gut.new()
-	var t = Test.new()
-	t.gut = g
-	g.set_yield_between_tests(false)
-	g._directory1 = 'res://test/parsing_and_loading_samples'
-	g._directory2 = 'res://test/unit'
-	g._directory3 = 'res://test/integration'
-	add_child(g)
-	t.assert_true(g._test_collector.has_script('res://test/parsing_and_loading_samples/test_samples.gd'), 'Should have dir1 script')
-	t.assert_true(g._test_collector.has_script('res://test/unit/test_gut.gd'), 'Should have dir2 script')
-	t.assert_true(g._test_collector.has_script('res://test/integration/test_sample_all_passed_integration.gd'), 'Should have dir3 script')
-	assert_eq(t.get_pass_count(), 3, 'they should have passed')
-
-# ^ aaaand then we test 2 more.
-func test_directories456_defined_in_editor_are_loaded_on_ready():
-	var g = Gut.new()
-	var t = Test.new()
-	t.gut = g
-	g.set_yield_between_tests(false)
-	g._directory4 = 'res://test/parsing_and_loading_samples'
-	g._directory5 = 'res://test/unit'
-	g._directory6 = 'res://test/integration'
-	add_child(g)
-	t.assert_true(g._test_collector.has_script('res://test/parsing_and_loading_samples/test_samples.gd'), 'Should have dir4 script')
-	t.assert_true(g._test_collector.has_script('res://test/unit/test_gut.gd'), 'Should have dir5 script')
-	t.assert_true(g._test_collector.has_script('res://test/integration/test_sample_all_passed_integration.gd'), 'Should have dir6 script')
-	assert_eq(t.get_pass_count(), 3, 'they should have passed')
 
 # ------------------------------
 # Signal tests

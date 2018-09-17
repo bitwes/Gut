@@ -307,7 +307,8 @@ var options = {
 	show_help = false,
 	config_file = 'res://.gutconfig.json',
 	inner_class = '',
-	opacity = 100
+	opacity = 100,
+	include_subdirs = false
 }
 
 # flag to say if we should run the scripts or not.  It is only
@@ -345,6 +346,7 @@ func setup_options():
 	opts.add('-ginner_class', '', 'Only run inner classes that contain this string')
 	opts.add('-gopacity', 100, 'Set opacity of test runner window. Use range 0 - 100. 0 = transparent, 100 = opaque.')
 	opts.add('-gpo', false, 'Print option values from all sources and the value used, then quit.')
+	opts.add('-ginclude_subdirs', false, 'Include subdirectories of -gdir.')
 	return opts
 
 
@@ -366,6 +368,7 @@ func extract_command_line_options(from, to):
 	to.config_file = from.get_value('-gconfig')
 	to.inner_class = from.get_value('-ginner_class')
 	to.opacity = from.get_value('-gopacity')
+	to.include_subdirs = from.get_value('-ginclude_subdirs')
 
 func get_value(dict, index, default):
 	if(dict.has(index)):
@@ -402,6 +405,7 @@ func load_options_from_config_file(file_path, into):
 	into.log_level = get_value(results.result, 'log', 1)
 	into.inner_class = get_value(results.result, 'inner_class', '')
 	into.opacity = get_value(results.result, 'opacity', 100)
+	#into.include_subdirs = get_value(results.result, 'include_subdirs', false)
 
 	return 1
 
@@ -413,6 +417,8 @@ func apply_options(opts):
 	_tester.set_yield_between_tests(true)
 	_tester.set_modulate(Color(1.0, 1.0, 1.0, min(1.0, float(opts.opacity) / 100)))
 	_tester.show()
+
+	_tester.set_include_subdirectories(opts.include_subdirs)
 
 	if(opts.should_maximize):
 		_tester.maximize()
@@ -435,6 +441,7 @@ func apply_options(opts):
 			_tester.p("Could not find a script that matched:  " + opts.selected)
 
 	_tester.set_unit_test_name(opts.unit_test_name)
+
 
 # Loads any scripts that have been configured to be loaded through the project
 # settings->autoload.
@@ -476,7 +483,7 @@ func _init():
 		else:
 			load_auto_load_scripts()
 			apply_options(opt_resolver.get_resolved_values())
-
+			
 			if(_auto_run):
 				_tester.test_scripts(!_run_single)
 
