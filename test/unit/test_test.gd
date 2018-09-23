@@ -820,45 +820,45 @@ class TestExtendAsserts:
 		class SubClass:
 			var a = 2
 
-	func test__assert_extends__passes_when_class_extends_parent():
+	func test_passes_when_class_extends_parent():
 		var node2d = Node2D.new()
-		gr.test.assert_extends(node2d, Node2D)
+		gr.test.assert_is(node2d, Node2D)
 		assert_pass(gr.test)
 
-	func test__assert_extends__fails_when_class_does_not_extend_parent():
+	func test_fails_when_class_does_not_extend_parent():
 		var lbl = Label.new()
-		gr.test.assert_extends(lbl, TextEdit)
+		gr.test.assert_is(lbl, TextEdit)
 		assert_fail(gr.test)
 
-	func test__assert_extends__fails_with_primitves_and_classes():
-		gr.test.assert_extends([], Node2D)
+	func test_fails_with_primitves_and_classes():
+		gr.test.assert_is([], Node2D)
 		assert_fail(gr.test)
 
-	func test__assert_extends__fails_when_compareing_object_to_primitives():
-		gr.test.assert_extends(Node2D.new(), [])
-		gr.test.assert_extends(TextEdit.new(), {})
+	func test_fails_when_compareing_object_to_primitives():
+		gr.test.assert_is(Node2D.new(), [])
+		gr.test.assert_is(TextEdit.new(), {})
 		assert_fail(gr.test, 2)
 
-	func test__assert_extends__fails_with_another_instance():
+	func test_fails_with_another_instance():
 		var node1 = Node2D.new()
 		var node2 = Node2D.new()
-		gr.test.assert_extends(node1, node2)
+		gr.test.assert_is(node1, node2)
 		assert_fail(gr.test)
 
-	func test__assert_extends__passes_with_deeper_inheritance():
+	func test_passes_with_deeper_inheritance():
 		var eb = ExtendsBaseClass.new()
-		gr.test.assert_extends(eb, Node2D)
+		gr.test.assert_is(eb, Node2D)
 		assert_pass(gr.test)
 
-	func test__assert_extends__fails_when_class_names_match_but_inheritance_does_not():
+	func test_fails_when_class_names_match_but_inheritance_does_not():
 		var a = HasSubclass1.SubClass.new()
 		var b = HasSubclass2.SubClass.new()
-		gr.test.assert_extends(a, b)
+		gr.test.assert_is(a, b)
 		assert_fail(gr.test)
 
-	func test__assert_extends__fails_when_class_names_match_but_inheritance_does_not__with_class():
+	func test_fails_when_class_names_match_but_inheritance_does_not__with_class():
 		var a = HasSubclass1.SubClass.new()
-		gr.test.assert_extends(a, HasSubclass2.SubClass)
+		gr.test.assert_is(a, HasSubclass2.SubClass)
 		assert_fail(gr.test)
 
 # TODO rename tests since they are now in an inner class.  See NOTE at top about naming.

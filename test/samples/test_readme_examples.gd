@@ -485,25 +485,25 @@ class SubClass:
 	extends BaseClass
 
 
-func test_assert_extends():
+func test_assert_is():
 	gut.p('-- passing --')
-	assert_extends(Node2D.new(), Node2D)
-	assert_extends(Label.new(), CanvasItem)
-	assert_extends(SubClass.new(), BaseClass)
+	assert_is(Node2D.new(), Node2D)
+	assert_is(Label.new(), CanvasItem)
+	assert_is(SubClass.new(), BaseClass)
 	# Since this is a test script that inherits from test.gd, so
 	# this passes.  It's not obvious w/o seeing the whole script
 	# so I'm telling you.  You'll just have to trust me.
-	assert_extends(self, load('res://addons/gut/test.gd'))
+	assert_is(self, load('res://addons/gut/test.gd'))
 
 	var Gut = load('res://addons/gut/gut.gd')
 	var a_gut = Gut.new()
-	assert_extends(a_gut, Gut)
+	assert_is(a_gut, Gut)
 
 	gut.p('-- failing --')
-	assert_extends(Node2D.new(), Node2D.new())
-	assert_extends(BaseClass.new(), SubClass)
-	assert_extends('a', 'b')
-	assert_extends([], Node)
+	assert_is(Node2D.new(), Node2D.new())
+	assert_is(BaseClass.new(), SubClass)
+	assert_is('a', 'b')
+	assert_is([], Node)
 
 # ------------------------------------------------------------------------------
 func test_assert_called():

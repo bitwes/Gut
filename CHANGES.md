@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   * Gut instance:  set/get_include_subdirectories()
 * Renamed some methods.  The old names will remain but the documentation has been updated to reflect the new names.  If I ever end up removing the old names they will become deprecated for a release and then removed in some later release.
   * `assert_get_set_methods` renamed to `assert_accessors`
+  * `assert_extends` renamed to `assert_is` because the keyword changed in gut 3.0
 
 # 6.5.0
 

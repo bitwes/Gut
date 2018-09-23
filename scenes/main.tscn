@@ -34,7 +34,7 @@ __meta__ = {
 "_editor_icon": ExtResource( 3 )
 }
 _should_maximize = false
-_run_on_load = true
+_run_on_load = false
 _select_script = null
 _tests_like = null
 _inner_class_name = null

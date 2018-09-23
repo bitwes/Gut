@@ -404,6 +404,7 @@ func assert_get_set_methods(obj, property, default, set_to):
 	obj.call(set, set_to)
 	assert_eq(obj.call(get), set_to, 'The set value should have been returned.')
 
+# Alias for assert_get_set_methods
 func assert_accessors(obj, property, default, set_to):
 	assert_get_set_methods(obj, property, default, set_to)
 
@@ -574,6 +575,10 @@ func assert_extends(object, a_class, text=''):
 				_pass(disp)
 			else:
 				_fail(disp)
+
+# Alias for assert_extends
+func assert_is(object, a_class, text=''):
+	assert_extends(object, a_class, text)
 
 # ------------------------------------------------------------------------------
 # Assert that text contains given search string.

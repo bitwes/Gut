@@ -63,7 +63,7 @@ func test_doubled_thing_has_original_path_in_metadata():
 
 func test_keeps_extends():
 	var doubled = gr.doubler.double(DOUBLE_EXTENDS_NODE2D).new()
-	assert_extends(doubled, Node2D)
+	assert_is(doubled, Node2D)
 
 func test_can_clear_output_directory():
 	gr.doubler.double(DOUBLE_ME_PATH)
