@@ -739,7 +739,7 @@ func maximize():
 	if(is_inside_tree()):
 		set_position(title_offset)
 		var vp_size_offset = get_viewport().size - title_offset
-		set_size(vp_size_offset)
+		set_size(vp_size_offset / get_scale())
 
 func disable_strict_datatype_checks(should):
 	_disable_strict_datatype_checks = should

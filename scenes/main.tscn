@@ -30,6 +30,7 @@ popup_exclusive = false
 window_title = ""
 resizable = false
 script = ExtResource( 2 )
+_sections_unfolded = [ "Rect" ]
 __meta__ = {
 "_editor_icon": ExtResource( 3 )
 }
@@ -50,7 +51,7 @@ _temp_directory = "user://gut_temp_directory"
 _include_subdirectories = false
 _directory1 = "res://test/unit"
 _directory2 = "res://test/integration"
-_directory3 = "res://test/samples"
+_directory3 = ""
 _directory4 = ""
 _directory5 = ""
 _directory6 = ""
