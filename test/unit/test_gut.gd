@@ -311,13 +311,14 @@ func test_when_set_only_inner_class_tests_run():
 	gr.test_gut.add_script('res://test/parsing_and_loading_samples/has_inner_class.gd')
 	gr.test_gut.test_scripts()
 	assert_eq(gr.test_gut.get_summary().get_totals().tests, 2)
-#-------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 #
 #
 # This must be the LAST test
 #
 #
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func test_verify_results():
 	gut.p("/*THESE SHOULD ALL PASS, IF NOT THEN SOMETHING IS BROKEN*/")
 	gut.p("/*These counts will be off if another script was run before this one.*/")

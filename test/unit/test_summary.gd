@@ -55,6 +55,32 @@ func test_get_test_text_returns_test_name():
 	gr.summary.add_pass('test_name', 'reason')
 	assert_ne(gr.summary.get_test_text('test_name').find('test_name'), -1)
 
+func test_get_non_inner_claas_script_count_excludes_inner_classes():
+	gr.summary.add_script('res://script.gd.InnerClass')
+	gr.summary.add_script('res://script.gd.Other_inner')
+	assert_eq(gr.summary.get_non_inner_class_script_count(), 1)
+
+func test_get_non_inner_claas_script_count_includes_other_scripts():
+	gr.summary.add_script('res://one.gd')
+	gr.summary.add_script('res://two.gd')
+	assert_eq(gr.summary.get_non_inner_class_script_count(), 2)
+
+func test_get_non_inner_claas_script_count_handles_mixed_scripts():
+	gr.summary.add_script('res://script.gd.InnerClass')
+	gr.summary.add_script('res://script.gd.InnerClass2')
+	gr.summary.add_script('res://one.gd')
+	gr.summary.add_script('res://two.gd')
+	assert_eq(gr.summary.get_non_inner_class_script_count(), 3)
+
+func test_printed_summary_uses_non_inncer_class_as_script_count():
+	gr.summary.add_script('res://script.gd.InnerClass')
+	gr.summary.add_script('res://script.gd.InnerClass2')
+	gr.summary.add_script('res://one.gd')
+	gr.summary.add_script('res://two.gd')
+	var correct_count_check = gr.summary.get_summary_text().find('  scripts:          3')
+	assert_true(correct_count_check != -1)
+
+
 func test_check_out_this_summary():
 	gr.summary.add_script('script_all_pass')
 	gr.summary.add_pass('test_pass1')

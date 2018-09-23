@@ -1,7 +1,6 @@
-################################################################################
-# Test (INTERNAL USE ONLY)
-#	Used to keep track of info about each test ran.
-################################################################################
+# ------------------------------------------------------------------------------
+# Used to keep track of info about each test ran.
+# ------------------------------------------------------------------------------
 class Test:
 	# indicator if it passed or not.  defaults to true since it takes only
 	# one failure to make it not pass.  _fail in gut will set this.
@@ -13,8 +12,8 @@ class Test:
 	# the line number the test is on
 	var line_number = -1
 
-################################################################################
-################################################################################
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 class TestScript:
 	var class_name = null
 	var tests = []
@@ -44,9 +43,9 @@ class TestScript:
 			to_return += '.' + class_name
 		return to_return
 
-################################################################################
+# ------------------------------------------------------------------------------
 # start test_collector, I don't think I like the name.
-################################################################################
+# ------------------------------------------------------------------------------
 var scripts = []
 var _test_prefix = 'test_'
 var _test_class_prefix = 'Test'
@@ -101,9 +100,9 @@ func _parse_inner_class_tests(script):
 			script.tests.append(t)
 
 	return true
-# #################
+# -----------------
 # Public
-# #################
+# -----------------
 func add_script(path):
 	# SHORTCIRCUIT
 	if(has_script(path)):
