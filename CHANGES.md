@@ -2,12 +2,16 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 # 6.6.0
+
+## Fixes
+* Bug 80:  Inner classes are no longer included in the count of scripts that were ran.
+
+## Features
 * Added option to include subdirectories.  Thanks to ChemicalInk for doing the initial work to implement the traversals.  The option is off by default so that it doesn't break anything.  This will probably change in later releases.  
   * gutconfig:  include_subdirs
   * command line:  -ginclude_subdirs
   * editor: Include Subdirectories
   * Gut instance:  set/get_include_subdirectories()
-
 
 # 6.5.0
 
