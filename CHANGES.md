@@ -8,22 +8,25 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * __Issue 80__:  Inner classes are no longer included in the count of scripts that were ran.
 
 ## Features
-* __Issue 83__: Added option to include subdirectories.  Thanks to __ChemicalInk__ for doing the initial work to implement the traversals.  The option is off by default so that it doesn't break anything.  This will probably change in later releases.  
+__Issue 83__: Added option to include subdirectories.  Thanks to __ChemicalInk__ for doing the initial work to implement the traversals.  The option is off by default so that it doesn't break anything.  This will probably change in later releases.  
   * gutconfig:  include_subdirs
   * command line:  -ginclude_subdirs
   * editor: Include Subdirectories
   * Gut instance:  set/get_include_subdirectories()
-* __Issue 69__:  Renamed some methods.  The old names will remain but the documentation has been updated to reflect the new names.  If I ever end up removing the old names they will become deprecated for awhile and then removed in some later release.
+
+__Issue 69__:  Renamed some methods.  The old names will remain but the documentation has been updated to reflect the new names.  If I ever end up removing the old names they will become deprecated for awhile and then removed in some later release.
   * `assert_get_set_methods` renamed to `assert_accessors` b/c it is easier to say
   * `assert_extends` renamed to `assert_is` b/c the keyword changed in gut 3.0
-  * The setup/teardown methods got a rename so they are a little easier to understand.  You should use the new names going forward, but refactoring existing tests can be messy (see note below).
-    * `prerun_setup` renamed to `before_all`
-    * `setup` renamed to `before_each`
-    * `postrun_teardown` renamed to `after_all`
-    * `teardown` renamed to `after_each`
-    * __Special note about these:__
-      * The new methods could not be actual aliases due to how they are used internally.  They exist side by side with the old names and are called after the old methods.  __DO NOT USE BOTH in the same script.__
-      * If you refactor your tests to use the new names, be careful wherever you have a test class that extends another test class and it calls `super`'s setup/teardown methods.  For example, if you rename `super`'s `setup` to `before_each` but all the test classes that inherit from it are still calling `.setup` then you'll have problem on your hands.  
+
+The setup/teardown methods got a rename so they are a little easier to understand.  You should use the new names going forward, but refactoring existing tests can be messy (see note below).
+  * `prerun_setup` renamed to `before_all`
+  * `setup` renamed to `before_each`
+  * `postrun_teardown` renamed to `after_all`
+  * `teardown` renamed to `after_each`
+
+__Note about setup/teardown rename:__
+  * The new methods could not be actual aliases due to how they are used internally.  They exist side by side with the old names and are called after the old methods.  __DO NOT use both in the same script.__
+  * If you refactor your tests to use the new names, be careful wherever you have a test class that extends another test class and it calls `super`'s setup/teardown methods.  For example, if you rename `super`'s `setup` to `before_each` but all the test classes that inherit from it are still calling `.setup` then you'll have problem on your hands.  
 
 # 6.5.0
 
