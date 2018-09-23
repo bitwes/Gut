@@ -117,10 +117,8 @@ func get_totals():
 		totals.pending += _scripts[s].get_pending_count()
 		totals.failing += _scripts[s].get_fail_count()
 		totals.tests += _scripts[s]._test_order.size()
-		if(_scripts[s].name.find('.gd.') == -1):
-			totals.scripts += 1
 
-	#totals.scripts = _scripts.size()
+	totals.scripts = get_non_inner_class_script_count()
 
 	return totals
 

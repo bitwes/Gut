@@ -405,7 +405,6 @@ func load_options_from_config_file(file_path, into):
 	into.log_level = get_value(results.result, 'log', 1)
 	into.inner_class = get_value(results.result, 'inner_class', '')
 	into.opacity = get_value(results.result, 'opacity', 100)
-	#into.include_subdirs = get_value(results.result, 'include_subdirs', false)
 
 	return 1
 
@@ -483,7 +482,7 @@ func _init():
 		else:
 			load_auto_load_scripts()
 			apply_options(opt_resolver.get_resolved_values())
-			
+
 			if(_auto_run):
 				_tester.test_scripts(!_run_single)
 

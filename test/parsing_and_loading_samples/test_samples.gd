@@ -14,7 +14,7 @@ extends "res://addons/gut/test.gd"
 func before_each():
 	gut.p("ran setup", 2)
 
-func after_all():
+func after_each():
 	gut.p("ran teardown", 2)
 
 func before_all():
