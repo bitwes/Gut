@@ -96,12 +96,12 @@ func assert_pass(count=1, msg=''):
 # ------------------------------
 # Setup/Teardown
 # ------------------------------
-func prerun_setup():
+func before_all():
 	starting_counts.setup_count = gut.get_test_count()
 	starting_counts.teardown_count = gut.get_test_count()
 	counts.prerun_setup_count += 1
 
-func setup():
+func before_each():
 	counts.setup_count += 1
 	gr.test_finished_called = false
 	gr.test_gut = get_a_gut()
@@ -109,15 +109,15 @@ func setup():
 	gr.test = Test.new()
 	gr.test.gut = gr.test_gut
 
-func teardown():
+func after_each():
 	counts.teardown_count += 1
 	gr.test_gut.queue_free()
 
-func postrun_teardown():
+func after_all():
 	counts.postrun_teardown_count += 1
-	#can't verify that this ran, so do an assert.
-	#Asserts in any of the setup/teardown methods
-	#is a bad idea in general.
+	# can't verify that this ran, so do an assert.
+	# Asserts in any of the setup/teardown methods
+	# is a bad idea in general.
 	assert_true(true, 'POSTTEARDOWN RAN')
 	gut.directory_delete_files('user://')
 
@@ -311,6 +311,25 @@ func test_when_set_only_inner_class_tests_run():
 	gr.test_gut.add_script('res://test/parsing_and_loading_samples/has_inner_class.gd')
 	gr.test_gut.test_scripts()
 	assert_eq(gr.test_gut.get_summary().get_totals().tests, 2)
+
+
+# ------------------------------
+# Setup/before and teardown/after
+# ------------------------------
+func test_after_running_script_everything_checks_out():
+	gr.test_gut.add_script('res://test/samples/test_before_after.gd')
+	gr.test_gut.test_scripts()
+	var instance = gr.test_gut.get_current_script_object()
+	assert_eq(instance.counts.before_all, 1, 'before_all')
+	assert_eq(instance.counts.before_each, 3, 'before_each')
+	assert_eq(instance.counts.after_all, 1, 'after_all')
+	assert_eq(instance.counts.after_each, 3, 'after_each')
+
+	assert_eq(instance.counts.prerun_setup, 1, 'prerun_setup')
+	assert_eq(instance.counts.setup, 3, 'setup')
+	assert_eq(instance.counts.postrun_teardown, 1, 'postrun_teardown')
+	assert_eq(instance.counts.teardown, 3, 'teardown')
+
 
 # ------------------------------------------------------------------------------
 #

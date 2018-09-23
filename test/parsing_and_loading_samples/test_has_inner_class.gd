@@ -1,11 +1,11 @@
 extends "res://addons/gut/test.gd"
-func prerun_setup():
+func before_all():
 	gut.p('script:  pre-run')
-func setup():
+func before_each():
 	gut.p('script:  setup')
-func teardown():
+func after_each():
 	gut.p('script:  teardown')
-func postrun_teardown():
+func after_all():
 	gut.p('script:  post-run')
 
 func test_soemthing():
@@ -16,13 +16,13 @@ func test_nothing():
 
 class TestClass1:
 	extends "res://addons/gut/test.gd"
-	func prerun_setup():
+	func before_all():
 		gut.p('TestClass1:  pre-run')
-	func setup():
+	func before_each():
 		gut.p('TestClass1:  setup')
-	func teardown():
+	func after_each():
 		gut.p('TestClass1:  teardown')
-	func postrun_teardown():
+	func after_all():
 		gut.p('TestClass1:  post-run')
 
 	func test_context1_one():

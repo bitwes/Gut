@@ -35,7 +35,7 @@ class TestUsingResDirs:
 		gut = null
 	}
 
-	func setup():
+	func before_each():
 		gr.gut = get_a_gut()
 
 	func test_adding_directory_loads_files():
@@ -143,11 +143,11 @@ class TestUsingDynamicDirs:
 		_create_test_dir('other_root/three')
 		_create_test_script('other_root/three/test_script.gd')
 
-	func setup():
+	func before_each():
 		gr.gut = get_a_gut()
 		_create_all_dirs_and_files()
 
-	func teardown():
+	func after_each():
 		var dir = Directory.new()
 		var i = _test_dirs.size() -1
 		# delete the directories in reverse order since it is easier than

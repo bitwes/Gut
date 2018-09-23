@@ -193,7 +193,6 @@ func _fail_if_not_watching(object):
 # Virtual Methods
 # #######################
 
-
 # Overridable method that runs before each test.
 func setup():
 	pass
@@ -210,6 +209,21 @@ func prerun_setup():
 func postrun_teardown():
 	pass
 
+# alias for prerun_setup
+func before_all():
+	pass
+
+# alias for setup
+func before_each():
+	pass
+
+# alias for postrun_teardown
+func after_all():
+	pass
+
+# alias for teardown
+func after_each():
+	pass
 
 # #######################
 # Public

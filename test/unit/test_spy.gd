@@ -8,7 +8,7 @@ class TestSpy:
 
 	var _spy = null
 
-	func setup():
+	func before_each():
 		_spy = Spy.new()
 
 	func test_can_add_call_to_method_on_path():
@@ -66,7 +66,7 @@ class TestAddingCallsWithParameters:
 
 	var _spy = null
 
-	func setup():
+	func before_each():
 		_spy = Spy.new()
 
 	func test_can_add_call_with_parameters():
@@ -89,7 +89,7 @@ class TestGetCallCount:
 	var Simple = load('res://test/spy_test_objects/simple.gd')
 	var _spy = null
 
-	func setup():
+	func before_each():
 		_spy = Spy.new()
 
 	func test_when_no_calls_found_call_count_returns_0():

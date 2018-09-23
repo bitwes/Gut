@@ -9,7 +9,7 @@ var gr = {
 	stub_params = null
 }
 
-func setup():
+func before_each():
 	gr.stub_params = StubParamsClass.new()
 
 func test_to_return_sets_return_value():

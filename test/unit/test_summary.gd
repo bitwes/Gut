@@ -7,7 +7,7 @@ var gr = {
 }
 
 
-func setup():
+func before_each():
 	gr.summary = Summary.new()
 
 func test_can_add_script():

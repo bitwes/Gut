@@ -45,11 +45,11 @@ class SignalObject:
 # ####################
 # Setup/Teardown
 # ####################
-func setup():
+func before_each():
 	gr.sw = SignalWatcher.new()
 	gr.so = SignalObject.new()
 
-func teardown():
+func after_each():
 	gr.sw = null
 	gr.so = null
 

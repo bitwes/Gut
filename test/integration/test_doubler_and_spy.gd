@@ -15,13 +15,13 @@ class TestBoth:
 	var _spy = null
 	var _doubler = null
 
-	func setup():
+	func before_each():
 		_spy = Spy.new()
 		_doubler = Doubler.new()
 		_doubler.set_output_dir(TEMP_FILES)
 		_doubler.set_spy(_spy)
 
-	func teardown():
+	func after_each():
 		_doubler.clear_output_directory()
 		_spy.clear()
 

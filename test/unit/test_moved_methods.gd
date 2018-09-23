@@ -5,7 +5,7 @@
 # ------------------------------------------------------------------------------
 extends "res://addons/gut/test.gd"
 
-func prerun_setup():
+func before_all():
 	gut.p("""
 !!! These tests are used to veify the output when a test includes a call to a
 !!! moved assert.  These tests will all fail.

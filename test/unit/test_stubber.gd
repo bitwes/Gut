@@ -34,7 +34,7 @@ func print_info(c):
 	print('class = ', c.get_class())
 	print('script of inst = ', c.new().get_script().get_path())
 
-func setup():
+func before_each():
 	gr.stubber = Stubber.new()
 
 func test_can_get_set_gut():

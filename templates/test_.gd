@@ -4,16 +4,16 @@ extends "res://addons/gut/test.gd"
 # #############
 # Seutp/Teardown
 # #############
-func prerun_setup():
+func before_all():
 	pass
 
-func setup():
+func before_each():
 	pass
 
-func teardown():
+func after_each():
 	pass
 
-func postrun_teardown():
+func after_all():
 	pass
 
 # #############

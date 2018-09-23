@@ -24,12 +24,12 @@ class TimedSignaler:
 		_timer.set_wait_time(time)
 		_timer.start()
 
-func prerun_setup():
+func before_all():
 	add_child(timer)
 	timer.set_wait_time(1)
 	timer.set_one_shot(true)
 
-func setup():
+func before_each():
 	timer.set_wait_time(1)
 
 func test_can_yield_using_built_in_timer():

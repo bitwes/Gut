@@ -11,7 +11,7 @@ var gr = {
 	doubler = null
 }
 
-func setup():
+func before_each():
 	gr.doubler = Doubler.new()
 	gr.doubler.set_use_unique_names(false)
 	gr.doubler.set_output_dir(TEMP_FILES)

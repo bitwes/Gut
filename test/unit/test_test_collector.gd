@@ -6,7 +6,7 @@ var SCRIPTS_ROOT = 'res://test/parsing_and_loading_samples/'
 var gr = {
 	tc = null
 }
-func setup():
+func before_each():
 	gr.tc = TestCollector.new()
 
 func test_has_test_one():

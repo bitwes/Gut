@@ -17,7 +17,7 @@ var gr = {
     stubber = null
 }
 
-func setup():
+func before_each():
     gr.doubler = Doubler.new()
     gr.doubler.set_output_dir(TEMP_FILES)
     gr.stubber = Stubber.new()

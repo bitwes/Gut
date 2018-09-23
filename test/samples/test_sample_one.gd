@@ -11,16 +11,16 @@
 ################################################################################
 extends "res://addons/gut/test.gd"
 
-func setup():
+func before_each():
 	gut.p("ran setup", 2)
 
-func teardown():
+func after_each():
 	gut.p("ran teardown", 2)
 
-func prerun_setup():
+func before_all():
 	gut.p("ran run setup", 2)
 
-func postrun_teardown():
+func after_all():
 	gut.p("ran run teardown", 2)
 
 func test_assert_eq_number_not_equal():

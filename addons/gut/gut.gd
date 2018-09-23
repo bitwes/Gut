@@ -449,7 +449,9 @@ func _test_the_scripts():
 		_test_script_objects.append(test_script)
 		var script_result = null
 
+		# call both pre-all-tests methods until prerun_setup is removed
 		test_script.prerun_setup()
+		test_script.before_all()
 
 		# yield between test scripts so things paint
 		if(_yield_between.should):
@@ -482,7 +484,9 @@ func _test_the_scripts():
 					_yield_between.timer.start()
 					yield(_yield_between.timer, 'timeout')
 
+				# call both pre-each-test method until setup is removed
 				test_script.setup()
+				test_script.before_each()
 
 				script_result = test_script.call(_current_test.name)
 				#When the script yields it will return a GDFunctionState object
@@ -505,7 +509,10 @@ func _test_the_scripts():
 					yield(self, SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
 
 				test_script.clear_signal_watcher()
+
+				# call each post-each-test method until teardown is removed.
 				test_script.teardown()
+				test_script.after_each()
 
 				if(_current_test.passed):
 					_ctrls.text_box.add_keyword_color(_current_test.name, Color(0, 1, 0))
@@ -521,7 +528,11 @@ func _test_the_scripts():
 					return
 
 				_ctrls.test_progress.set_value(i + 1)
+
+		# call both post-all-tests methods until postrun_teardown is removed.
 		test_script.postrun_teardown()
+		test_script.after_all()
+
 		# This might end up being very resource intensive if the scripts
 		# don't clean up after themselves.  Might have to consolidate output
 		# into some other structure and kill the script objects with

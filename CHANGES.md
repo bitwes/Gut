@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 # 6.6.0
 
 ## Fixes
-* Bug 80:  Inner classes are no longer included in the count of scripts that were ran.
+* Issue 80:  Inner classes are no longer included in the count of scripts that were ran.
 
 ## Features
 * Added option to include subdirectories.  Thanks to ChemicalInk for doing the initial work to implement the traversals.  The option is off by default so that it doesn't break anything.  This will probably change in later releases.  
@@ -12,9 +12,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   * command line:  -ginclude_subdirs
   * editor: Include Subdirectories
   * Gut instance:  set/get_include_subdirectories()
-* Renamed some methods.  The old names will remain but the documentation has been updated to reflect the new names.  If I ever end up removing the old names they will become deprecated for a release and then removed in some later release.
-  * `assert_get_set_methods` renamed to `assert_accessors`
-  * `assert_extends` renamed to `assert_is` because the keyword changed in gut 3.0
+* Issue 69:  Renamed some methods.  The old names will remain but the documentation has been updated to reflect the new names.  If I ever end up removing the old names they will become deprecated for a release and then removed in some later release.
+  * `assert_get_set_methods` renamed to `assert_accessors` b/c it is easier to say
+  * `assert_extends` renamed to `assert_is` b/c the keyword changed in gut 3.0
+  * The setup/teardown methods got a rename so they are a little easier to understand.  The new methods are called after the old methods due to how these methods are called.  There is nothing to prevent you from using both but you shouldn't.  These methods will probably be deprecated sooner than the others.
+    * `prerun_setup` renamed to `before_all`
+    * `setup` renamed to `before_each`
+    * `postrun_teardown` renamed to `after_all`
+    * `teardown` renamed to `after_each`
 
 # 6.5.0
 

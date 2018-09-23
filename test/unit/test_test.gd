@@ -63,12 +63,12 @@ class BaseTestClass:
 	# #############
 	# Seutp/Teardown
 	# #############
-	func setup():
+	func before_each():
 		gr.test = Test.new()
 		gr.test_with_gut = Test.new()
 		gr.test_with_gut.gut = Gut.new()
 
-	func teardown():
+	func after_each():
 		gr.test_with_gut.gut.get_doubler().clear_output_directory()
 		gr.test_with_gut.gut.get_spy().clear()
 
@@ -667,12 +667,12 @@ class TestSignalAsserts:
 			])
 			add_user_signal(SIGNALS.SOME_SIGNAL)
 
-	func setup():
-		.setup()
+	func before_each():
+		.before_each()
 		gr.signal_object = SignalObject.new()
 
-	func teardown():
-		.teardown()
+	func after_each():
+		.after_each()
 		gr.signal_object = null
 
 	func test_when_object_not_being_watched__assert_signal_emitted__fails():

@@ -12,12 +12,12 @@ var gr = {
 	test = null
 }
 
-func setup():
+func before_each():
 	gr.gut = Gut.new()
 	gr.test = Test.new()
 	gr.test.gut = gr.gut
 
-func teardown():
+func after_each():
 	gr.gut.get_doubler().clear_output_directory()
 	gr.gut.get_spy().clear()
 

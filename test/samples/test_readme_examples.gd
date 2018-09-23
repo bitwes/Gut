@@ -1,9 +1,9 @@
 extends "res://addons/gut/test.gd"
 
-func setup():
+func before_each():
 	gut.file_touch('user://some_test_file')
 
-func teardown():
+func after_each():
 	gut.file_delete('user://some_test_file')
 
 
