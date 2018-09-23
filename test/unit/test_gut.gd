@@ -125,7 +125,7 @@ func postrun_teardown():
 # Settings
 # ------------------------------
 func test_get_set_ingore_pauses():
-	assert_get_set_methods(gr.test_gut, 'ignore_pause_before_teardown', false, true)
+	assert_accessors(gr.test_gut, 'ignore_pause_before_teardown', false, true)
 
 func test_when_ignore_pauses_set_it_checks_checkbox():
 	gr.test_gut.set_ignore_pause_before_teardown(true)
@@ -141,7 +141,7 @@ func test_get_current_script_object_returns_null_by_default():
 	# I don't know how to test this in other situations
 
 func test_get_set_temp_directory():
-	assert_get_set_methods(gr.test_gut, 'temp_directory', 'user://gut_temp_directory', 'user://blahblah')
+	assert_accessors(gr.test_gut, 'temp_directory', 'user://gut_temp_directory', 'user://blahblah')
 
 # ------------------------------
 # disable strict datatype comparisons
@@ -233,7 +233,7 @@ func test_simulate_calls_physics_process():
 # ------------------------------
 const SAMPLES_DIR = 'res://test/samples/'
 func test_get_set_test_to_run():
-	gr.test.assert_get_set_methods(gr.test_gut, 'unit_test_name', '', 'hello')
+	gr.test.assert_accessors(gr.test_gut, 'unit_test_name', '', 'hello')
 	assert_pass(4)
 
 func test_setting_name_will_run_only_matching_tests():
@@ -301,7 +301,7 @@ func test_when_moving_to_next_test_watched_signals_are_cleared():
 # Inner Class
 # ------------------------------
 func test_can_get_set_inner_class_name():
-	assert_get_set_methods(gr.test_gut, 'inner_class_name', null, 'something')
+	assert_accessors(gr.test_gut, 'inner_class_name', null, 'something')
 
 func test_assert_exports_inner_class_name():
 	assert_exports(gr.test_gut, '_inner_class_name', TYPE_STRING)

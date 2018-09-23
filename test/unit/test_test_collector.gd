@@ -19,7 +19,7 @@ func test_does_not_have_not_prefixed():
 		assert_ne(gr.tc.scripts[0].tests[i].name, 'not_prefixed')
 
 func test_get_set_test_prefix():
-	assert_get_set_methods(gr.tc, 'test_prefix', 'test_', 'soemthing')
+	assert_accessors(gr.tc, 'test_prefix', 'test_', 'soemthing')
 
 func test_can_change_test_prefix():
 	gr.tc.set_test_prefix('diff_prefix_')
@@ -27,7 +27,7 @@ func test_can_change_test_prefix():
 	assert_eq(gr.tc.scripts[0].tests[0].name, 'diff_prefix_something')
 
 func test_get_set_test_class_prefix():
-	assert_get_set_methods(gr.tc, 'test_class_prefix', 'Test', 'Something')
+	assert_accessors(gr.tc, 'test_class_prefix', 'Test', 'Something')
 
 func test_finds_inner_classes():
 	gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')

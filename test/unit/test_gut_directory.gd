@@ -167,7 +167,7 @@ class TestUsingDynamicDirs:
 		assert_exports(gr.gut, '_include_subdirectories', TYPE_BOOL)
 
 	func test_include_subdirectories_accessors():
-		assert_get_set_methods(gr.gut, 'include_subdirectories', false, true)
+		assert_accessors(gr.gut, 'include_subdirectories', false, true)
 
 	func test_when_subdir_true_it_finds_subdirectories():
 		gr.gut.set_include_subdirectories(true)

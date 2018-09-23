@@ -17,13 +17,13 @@ func setup():
 	gr.doubler.set_output_dir(TEMP_FILES)
 
 func test_get_set_output_dir():
-	assert_get_set_methods(Doubler.new(), 'output_dir', null, 'somewhere')
+	assert_accessors(Doubler.new(), 'output_dir', null, 'somewhere')
 
 func test_get_set_stubber():
-	assert_get_set_methods(Doubler.new(), 'stubber', null, GDScript.new())
+	assert_accessors(Doubler.new(), 'stubber', null, GDScript.new())
 
 func test_can_get_set_spy():
-	assert_get_set_methods(Doubler.new(), 'spy', null, GDScript.new())
+	assert_accessors(Doubler.new(), 'spy', null, GDScript.new())
 
 func test_setting_output_dir_creates_directory_if_it_does_not_exist():
 	var d = Doubler.new()

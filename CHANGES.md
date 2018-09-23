@@ -12,6 +12,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   * command line:  -ginclude_subdirs
   * editor: Include Subdirectories
   * Gut instance:  set/get_include_subdirectories()
+* Renamed some methods.  The old names will remain but the documentation has been updated to reflect the new names.  If I ever end up removing the old names they will become deprecated for a release and then removed in some later release.
+  * `assert_get_set_methods` renamed to `assert_accessors`
 
 # 6.5.0
 

@@ -478,27 +478,27 @@ class TestGetSetAsserts:
 
 	func test_fail_if_get_set_not_defined():
 		var obj = NoGetNoSet.new()
-		gr.test.assert_get_set_methods(obj, 'thing', 'something', 'another thing')
+		gr.test.assert_accessors(obj, 'thing', 'something', 'another thing')
 		assert_fail(gr.test, 2)
 
 	func test_fail_if_has_get_and_not_set():
 		var obj = HasGetNotSet.new()
-		gr.test.assert_get_set_methods(obj, 'thing', 'something', 'another thing')
+		gr.test.assert_accessors(obj, 'thing', 'something', 'another thing')
 		assert_fail_pass(gr.test, 1, 1)
 
 	func test_fail_if_default_wrong_and_get_dont_work():
 		var obj = HasGetAndSetThatDontWork.new()
-		gr.test.assert_get_set_methods(obj, 'thing', 'something', 'another thing')
+		gr.test.assert_accessors(obj, 'thing', 'something', 'another thing')
 		assert_fail_pass(gr.test, 2, 2)
 
 	func test_fail_if_default_wrong():
 		var obj = HasGetSetThatWorks.new()
-		gr.test.assert_get_set_methods(obj, 'thing', 'not the right default', 'another thing')
+		gr.test.assert_accessors(obj, 'thing', 'not the right default', 'another thing')
 		assert_fail_pass(gr.test, 1, 3)
 
 	func test_pass_if_all_get_sets_are_aligned():
 		var obj = HasGetSetThatWorks.new()
-		gr.test.assert_get_set_methods(obj, 'thing', 'something', 'another thing')
+		gr.test.assert_accessors(obj, 'thing', 'something', 'another thing')
 		assert_pass(gr.test, 4)
 
 class TestAssertExports:

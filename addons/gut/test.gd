@@ -404,6 +404,9 @@ func assert_get_set_methods(obj, property, default, set_to):
 	obj.call(set, set_to)
 	assert_eq(obj.call(get), set_to, 'The set value should have been returned.')
 
+func assert_accessors(obj, property, default, set_to):
+	assert_get_set_methods(obj, property, default, set_to)
+
 # ---------------------------------------------------------------------------
 # Property search helper.  Used to retrieve Dictionary of specified property
 # from passed object. Returns null if not found.

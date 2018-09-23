@@ -243,18 +243,18 @@ class SomeClass:
 	func set_nothing(val):
 		pass
 
-func test_assert_get_set_methods():
+func test_assert_accessors():
 	var some_class = SomeClass.new()
 	gut.p('-- passing --')
-	assert_get_set_methods(some_class, 'count', 0, 20) # 4 PASSING
+	assert_accessors(some_class, 'count', 0, 20) # 4 PASSING
 
 	gut.p('-- failing --')
 	# 1 FAILING, 3 PASSING
-	assert_get_set_methods(some_class, 'count', 'not_default', 20)
+	assert_accessors(some_class, 'count', 'not_default', 20)
 	# 2 FAILING, 2 PASSING
-	assert_get_set_methods(some_class, 'nothing', 'hello', 22)
+	assert_accessors(some_class, 'nothing', 'hello', 22)
 	# 2 FAILING
-	assert_get_set_methods(some_class, 'does_not_exist', 'does_not', 'matter')
+	assert_accessors(some_class, 'does_not_exist', 'does_not', 'matter')
 
 func test_assert_has_method():
 	var some_class = SomeClass.new()
