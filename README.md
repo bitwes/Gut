@@ -1,5 +1,8 @@
 # [The readme has moved to a wiki.](https://github.com/bitwes/Gut/wiki)
 
+### Godot 3.1
+I've started a [3.1 branch](https://github.com/bitwes/Gut/tree/godot_3_1) that I will be keeping inline with master.  I've gotten it to run but there are issues.  Check open issues and the [3.1 wiki page](https://github.com/bitwes/Gut/wiki/Godot-3.1-Alpha/_edit).
+
 # Gut 6.6.0
 GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.  It allows you to write tests for your gdscript in gdscript.
 
