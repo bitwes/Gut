@@ -246,4 +246,18 @@ func test_clearing_ignores_freed_objecdts():
 	yield(yield_for(0.5), YIELD)
 	gr.sw.clear()
 	end_test()
-	#assert_signal_emitted(gr.so, 'script_signal')
+
+# ####################
+# Get signals emitted
+# ####################
+func test_when_signal_emitted_it_exists_in_list_of_signals_emitted():
+	gr.sw.watch_signals(gr.so)
+	gr.so.emit_signal(SIGNALS.NO_PARAMETERS)
+	gr.so.emit_signal(SIGNALS.SOME_SIGNAL)
+	assert_has(gr.sw.get_signals_emitted(gr.so), SIGNALS.NO_PARAMETERS)
+	assert_has(gr.sw.get_signals_emitted(gr.so), SIGNALS.SOME_SIGNAL)
+	assert_eq(gr.sw.get_signals_emitted(gr.so).size(), 2)
+
+func test_when_passed_non_watched_obj_emitted_signals_is_empty():
+	gr.so.emit_signal(SIGNALS.NO_PARAMETERS)
+	assert_eq(gr.sw.get_signals_emitted(gr.so).size(), 0)

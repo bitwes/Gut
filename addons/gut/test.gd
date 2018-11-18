@@ -189,6 +189,13 @@ func _fail_if_not_watching(object):
 		did_fail = true
 	return did_fail
 
+# ------------------------------------------------------------------------------
+# Returns text that contains original text and a list of all the signals that
+# were emitted for the passed in object.
+# ------------------------------------------------------------------------------
+func _get_fail_msg_including_emitted_signals(text, object):
+	return str(text," (Signals emitted: ", _signal_watcher.get_signals_emitted(object), ")")
+
 # #######################
 # Virtual Methods
 # #######################
@@ -487,7 +494,7 @@ func assert_signal_emitted(object, signal_name, text=""):
 		if(_signal_watcher.did_emit(object, signal_name)):
 			_pass(disp)
 		else:
-			_fail(disp)
+			_fail(_get_fail_msg_including_emitted_signals(disp, object))
 
 # ------------------------------------------------------------------------------
 # Asserts that a signal has not been emitted.
@@ -522,7 +529,8 @@ func assert_signal_emitted_with_parameters(object, signal_name, parameters, inde
 			else:
 				_fail(str(disp, parms_got))
 		else:
-			_fail(str('Object ', object, ' did not emit signal [', signal_name, ']'))
+			var text = str('Object ', object, ' did not emit signal [', signal_name, ']')
+			_fail(_get_fail_msg_including_emitted_signals(text, object))
 
 # ------------------------------------------------------------------------------
 # Assert that a signal has been emitted a specific number of times.
@@ -538,7 +546,7 @@ func assert_signal_emit_count(object, signal_name, times, text=""):
 		if(count== times):
 			_pass(disp)
 		else:
-			_fail(disp)
+			_fail(_get_fail_msg_including_emitted_signals(disp, object))
 
 # ------------------------------------------------------------------------------
 # Assert that the passed in object has the specfied signal

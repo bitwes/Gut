@@ -1,6 +1,13 @@
 # Release notes
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
+
+
+# 6.6.1
+* __Issue 60__:  Improved signal assert failure messages in some cases by having them include a list of signals that were emitted for the object.
+* __Issue 88__:  Fixed issue where you couldn't specify the config_file from the command line.
+
+
 # 6.6.0
 
 ## Fixes
