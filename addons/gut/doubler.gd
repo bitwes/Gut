@@ -155,8 +155,8 @@ func double_scene(path):
 	_double_scene_and_script(path, temp_path)
 	return load(temp_path)
 
-func double(obj):
-	return load(_double(obj))
+func double(path):
+	return load(_double(path))
 
 func clear_output_directory():
 	var d = Directory.new()
