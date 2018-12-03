@@ -162,6 +162,7 @@ func test_withStubParams_param_layering_works():
 	assert_eq(sp1_r, 10, 'When passed 10 it gets 10')
 	assert_eq(sp2_r, 5, 'When passed 5 it gets 5')
 	assert_eq(sp3_r, 'nothing', 'When params do not match it sends default back.')
+
 func test_inners():
 	# this only works with instances but we can get to the path and all the
 	# neat stuff, this might be the path to stubbing inners

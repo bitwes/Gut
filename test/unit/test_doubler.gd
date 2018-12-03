@@ -44,14 +44,14 @@ func test_doubling_object_includes_methods():
 func test_doubling_methods_have_parameters_1():
 	gr.doubler.double(DOUBLE_ME_PATH)
 	var text = gut.get_file_as_text(TEMP_FILES.plus_file('double_me.gd'))
-	assert_true(text.match('*param(arg0*:*'))
+	assert_true(text.match('*param(p_arg0*:*'))
 
 # Don't see a way to see which have defaults and which do not, so we default
 # everything.
 func test_all_parameters_are_defaulted_to_null():
 	gr.doubler.double(DOUBLE_ME_PATH)
 	var text = gut.get_file_as_text(TEMP_FILES.plus_file('double_me.gd'))
-	assert_true(text.match('*one_default(arg0 = null, arg1 = null)*'))
+	assert_true(text.match('*one_default(p_arg0 = null, p_arg1 = null)*'))
 
 func test_doubled_thing_includes_stubber_metadata():
 	var doubled = gr.doubler.double(DOUBLE_ME_PATH).new()
@@ -92,6 +92,7 @@ func test_can_add_doubled_scene_to_tree():
 	add_child(inst)
 	assert_ne(inst.label, null)
 	remove_child(inst)
+	#print(gr.doubler.get_spy().get_call_list_as_string(inst))
 
 func test_metadata_for_scenes_script_points_to_scene_not_script():
 	var inst = gr.doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
