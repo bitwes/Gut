@@ -16,6 +16,9 @@ func before_each():
 	gr.doubler.set_use_unique_names(false)
 	gr.doubler.set_output_dir(TEMP_FILES)
 
+func after_all():
+	gr.doubler.clear_output_directory()
+
 func test_get_set_output_dir():
 	assert_accessors(Doubler.new(), 'output_dir', null, 'somewhere')
 
@@ -44,7 +47,7 @@ func test_doubling_object_includes_methods():
 func test_doubling_methods_have_parameters_1():
 	gr.doubler.double(DOUBLE_ME_PATH)
 	var text = gut.get_file_as_text(TEMP_FILES.plus_file('double_me.gd'))
-	assert_true(text.match('*param(p_arg0*:*'))
+	assert_true(text.match('*param(p_arg0*:*'), text)
 
 # Don't see a way to see which have defaults and which do not, so we default
 # everything.
@@ -107,3 +110,22 @@ func test_returns_class_that_can_be_instanced():
 	var Doubled = gr.doubler.double(DOUBLE_ME_PATH)
 	var doubled = Doubled.new()
 	assert_ne(doubled, null)
+
+class TestDefaultParameters:
+	const TEMP_FILES = 'user://test_doubler_temp_file'
+
+	const DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_me.gd'
+	const DOUBLE_ME_SCENE_PATH = 'res://test/doubler_test_objects/double_me_scene.tscn'
+	const DOUBLE_EXTENDS_NODE2D = 'res://test/doubler_test_objects/double_extends_node2d.gd'
+	var Doubler = load('res://addons/gut/doubler.gd')
+	var gr = {
+		doubler = null
+	}
+
+	func before_each():
+		gr.doubler = Doubler.new()
+		gr.doubler.set_use_unique_names(false)
+		gr.doubler.set_output_dir(TEMP_FILES)
+
+	func after_all():
+		gr.doubler.clear_output_directory()

@@ -3,6 +3,7 @@ var _stubber = null
 var _double_count = 0
 var _use_unique_names = true
 var _spy = null
+const PARAM_PREFIX = 'p_'
 
 # ###############
 # Private
@@ -108,7 +109,7 @@ func _get_func_text(method_hash):
 func _get_arg_text(args):
 	var text = ''
 	for i in range(args.size()):
-		text += args[i]['name'] + ' = null'
+		text += PARAM_PREFIX + args[i]['name'] + ' = null'
 		if(i != args.size() -1):
 			text += ', '
 	return text

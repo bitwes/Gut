@@ -1,4 +1,13 @@
+# ##############################################################################
+# This is a script I used to poke around script and method properties.  It's
+# not supposed to be a "real" tool but it has a lot of examples in it and has
+# come in handy numerous times.
+#
+# Feel free to use whatever you find in here for your own purposes.
+# ##############################################################################
 extends SceneTree
+
+
 
 class ExtendsNode2D:
 	extends Node2D
@@ -55,6 +64,9 @@ func print_method_info(obj):
 
 	for i in range(methods.size()):
 		print(methods[i]['name'])
+		if(methods[i]['default_args'].size() > 0):
+			print(" *** here be defaults ***")
+
 		for key in methods[i]:
 			if(key == 'args'):
 				print('  args:')
@@ -79,8 +91,14 @@ func print_a_bunch_of_methods_by_flags():
 	e.print_stray_nodes()
 
 func _init():
-	print_a_bunch_of_methods_by_flags()
-	var obj = ExtendsNode2D.new()
-	print_method_info(obj)
+	var double_me = load('res://test/doubler_test_objects/double_me.gd').new()
+	print_method_info(double_me)
+	print("-------------\n-\n-\n-\n-------------")
+	var methods = get_methods_by_flag(double_me)
+	print_methods_by_flags(methods)
+
+	#print_a_bunch_of_methods_by_flags()
+	# var obj = ExtendsNode2D.new()
+	# print_method_info(obj)
 
 	quit()
