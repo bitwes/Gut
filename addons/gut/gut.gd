@@ -154,6 +154,7 @@ func _connect_controls():
 # Initialize controls
 # ------------------------------------------------------------------------------
 func _ready():
+	print ('using [', OS.get_user_data_dir(), '] for temporary output.')
 	set_it_up()
 	set_process_input(true)
 	_connect_controls()
