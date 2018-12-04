@@ -6,7 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 # 6.6.1
 * __Issue 60__:  Improved signal assert failure messages in some cases by having them include a list of signals that were emitted for the object.
 * __Issue 88__:  Fixed issue where you couldn't specify the config_file from the command line.
-
+* __Issue 95__:  Fixed issue where sometimes Gut can end up clearing files from `res:\\` when using doubling.
 
 # 6.6.0
 
