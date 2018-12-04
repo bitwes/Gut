@@ -163,16 +163,19 @@ func clear_output_directory():
 	var did = false
 	if(_output_dir.find('user://') == 0):
 		var d = Directory.new()
-		d.open(_output_dir)
-		d.list_dir_begin(true)
-		var files = []
-		var f = d.get_next()
-		while(f != ''):
-			d.remove(f)
-			f = d.get_next()
-		did = true
-	else:
-		print("!! Warning !!\nNot deleting directory b/c it does not start with user://:  ", _output_dir)
+		var result = d.open(_output_dir)
+		# BIG GOTCHA HERE.  If it cannot open the dir w/ erro 31, then the
+		# directory becomes res:// and things go on normally and gut clears out
+		# out res:// which is SUPER BAD.
+		if(result == OK):
+			d.list_dir_begin(true)
+			var files = []
+			var f = d.get_next()
+			while(f != ''):
+				print('deleting ', f)
+				d.remove(f)
+				f = d.get_next()
+				did = true
 	return did
 
 func delete_output_directory():
