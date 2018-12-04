@@ -1,5 +1,8 @@
 # [The readme has moved to a wiki.](https://github.com/bitwes/Gut/wiki)
 
+# 6.1.0 has a potentially bad bug, please install 6.1.1
+6.1.0 has a bug that can, if everything goes wrong just right, delete files in the root of the project.  I only saw it happen when running the test suite for Gut and only the `test_doubler.gd` test script.  I don't recall ever seeing it happen in my own game, but just to be safe you should upgrade.
+
 ### Godot 3.1
 I've started a [3.1 branch](https://github.com/bitwes/Gut/tree/godot_3_1) that I will be keeping inline with master.  I've gotten it to run but there are issues.  Check open issues and the [3.1 wiki page](https://github.com/bitwes/Gut/wiki/Godot-3.1-Alpha).
 
