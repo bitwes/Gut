@@ -153,3 +153,14 @@ func clear():
 			if(wr.get_ref()):
 				obj.disconnect(signal_name, self, '_on_watched_signal')
 	_watched_signals.clear()
+
+# Returns a list of all the signal names that were emitted by the object.
+# If the object is not being watched then an empty list is returned.
+func get_signals_emitted(obj):
+	var emitted = []
+	if(is_watching_object(obj)):
+		for signal_name in _watched_signals[obj]:
+			if(_watched_signals[obj][signal_name].size() > 0):
+				emitted.append(signal_name)
+
+	return emitted

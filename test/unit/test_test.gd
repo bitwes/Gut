@@ -802,6 +802,35 @@ class TestSignalAsserts:
 		gr.test.assert_has_signal(gr.signal_object, SIGNALS.SCRIPT_SIGNAL)
 		assert_pass(gr.test)
 
+	func test_when_signal_emitted_fails_emitted_signals_are_listed():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.emit_signal(SIGNALS.NO_PARAMETERS)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
+		gr.test.assert_signal_emitted(gr.signal_object, SIGNALS.SCRIPT_SIGNAL)
+		var text = gr.test._fail_pass_text[0]
+		assert_string_contains(text, SIGNALS.NO_PARAMETERS)
+		assert_string_contains(text, SIGNALS.SOME_SIGNAL)
+
+	func test_when_signal_count_fails_then_emitted_signals_are_listed():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.emit_signal(SIGNALS.NO_PARAMETERS)
+		gr.signal_object.emit_signal(SIGNALS.SCRIPT_SIGNAL)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
+		gr.test.assert_signal_emit_count(gr.signal_object, SIGNALS.SCRIPT_SIGNAL, 2)
+		var text = gr.test._fail_pass_text[0]
+		assert_string_contains(text, SIGNALS.NO_PARAMETERS)
+		assert_string_contains(text, SIGNALS.SOME_SIGNAL)
+
+	func test_when_signal_emit_with_parameters_fails_because_signal_was_not_emitted_then_signals_are_listed():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.emit_signal(SIGNALS.NO_PARAMETERS)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
+		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SCRIPT_SIGNAL, [0])
+		var text = gr.test._fail_pass_text[0]
+		assert_string_contains(text, SIGNALS.NO_PARAMETERS)
+		assert_string_contains(text, SIGNALS.SOME_SIGNAL)
+
+
 # TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestExtendAsserts:
 	extends BaseTestClass

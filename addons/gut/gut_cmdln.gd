@@ -37,7 +37,7 @@
 # See the readme for a list of options and examples.  You can also use the -gh
 # option to get more information about how to use the command line interface.
 #
-# Version 6.6.0
+# Version 6.6.1
 ################################################################################
 extends SceneTree
 
@@ -465,8 +465,7 @@ func _init():
 	o.parse()
 	extract_command_line_options(o, opt_resolver.cmd_opts)
 	var load_result = \
-		load_options_from_config_file(options.config_file, opt_resolver.config_opts)
-
+			load_options_from_config_file(opt_resolver.get_value('config_file'), opt_resolver.config_opts)
 	if(load_result == -1): # -1 indicates json parse error
 		quit()
 	else:
