@@ -160,19 +160,26 @@ func double(path):
 	return load(_double(path))
 
 func clear_output_directory():
-	var d = Directory.new()
-	d.open(_output_dir)
-	d.list_dir_begin(true)
-	var files = []
-	var f = d.get_next()
-	while(f != ''):
-		d.remove(f)
-		f = d.get_next()
+	var did = false
+	if(_output_dir.find('user://') == 0):
+		var d = Directory.new()
+		d.open(_output_dir)
+		d.list_dir_begin(true)
+		var files = []
+		var f = d.get_next()
+		while(f != ''):
+			d.remove(f)
+			f = d.get_next()
+		did = true
+	else:
+		print("!! Warning !!\nNot deleting directory b/c it does not start with user://:  ", _output_dir)
+	return did
 
 func delete_output_directory():
-	clear_output_directory()
-	var d = Directory.new()
-	d.remove(_output_dir)
+	var did = clear_output_directory()
+	if(did):
+		var d = Directory.new()
+		d.remove(_output_dir)
 
 func set_use_unique_names(should):
 	_use_unique_names = should
