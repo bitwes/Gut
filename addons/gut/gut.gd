@@ -425,8 +425,12 @@ func _should_yield_now():
 		_yield_between.tests_since_last_yield += 1
 	return should
 
+# ------------------------------------------------------------------------------
+# Yes if the class name is null or the script's class name includes class_name
+# ------------------------------------------------------------------------------
 func _does_class_name_match(class_name, script_class_name):
 	return class_name == null or (script_class_name != null and script_class_name.find(class_name) != -1)
+
 # ------------------------------------------------------------------------------
 # Run all tests in a script.  This is the core logic for running tests.
 #
@@ -450,10 +454,6 @@ func _test_the_scripts():
 		_test_script_objects.append(test_script)
 		var script_result = null
 
-		# call both pre-all-tests methods until prerun_setup is removed
-		test_script.prerun_setup()
-		test_script.before_all()
-
 		# yield between test scripts so things paint
 		if(_yield_between.should):
 			_yield_between.timer.set_wait_time(0.01)
@@ -467,6 +467,10 @@ func _test_the_scripts():
 		# !!!
 		if(!_does_class_name_match(_inner_class_name, the_script.class_name)):
 			the_script.tests = []
+		else:
+			# call both pre-all-tests methods until prerun_setup is removed
+			test_script.prerun_setup()
+			test_script.before_all()
 
 		_ctrls.test_progress.set_max(the_script.tests.size())
 		for i in range(the_script.tests.size()):
@@ -531,8 +535,9 @@ func _test_the_scripts():
 				_ctrls.test_progress.set_value(i + 1)
 
 		# call both post-all-tests methods until postrun_teardown is removed.
-		test_script.postrun_teardown()
-		test_script.after_all()
+		if(_does_class_name_match(_inner_class_name, the_script.class_name)):
+			test_script.postrun_teardown()
+			test_script.after_all()
 
 		# This might end up being very resource intensive if the scripts
 		# don't clean up after themselves.  Might have to consolidate output
