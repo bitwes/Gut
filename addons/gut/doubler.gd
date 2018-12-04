@@ -171,7 +171,6 @@ func clear_output_directory():
 			var files = []
 			var f = d.get_next()
 			while(f != ''):
-				print('deleting ', f)
 				d.remove(f)
 				f = d.get_next()
 				did = true

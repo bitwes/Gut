@@ -931,8 +931,9 @@ func file_touch(path):
 # ------------------------------------------------------------------------------
 func file_delete(path):
 	var d = Directory.new()
-	d.open(path.get_base_dir())
-	d.remove(path)
+	var result = d.open(path.get_base_dir())
+	if(result == OK):
+		d.remove(path)
 
 # ------------------------------------------------------------------------------
 # Checks to see if the passed in file has any data in it.
@@ -958,7 +959,11 @@ func get_file_as_text(path):
 # ------------------------------------------------------------------------------
 func directory_delete_files(path):
 	var d = Directory.new()
-	d.open(path)
+	var result = d.open(path)
+
+	# SHORTCIRCUIT
+	if(result != OK):
+		return
 
 	# Traversing a directory is kinda odd.  You have to start the process of listing
 	# the contents of a directory with list_dir_begin then use get_next until it
