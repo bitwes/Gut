@@ -17,7 +17,7 @@ func before_each():
 	gr.doubler.set_output_dir(TEMP_FILES)
 
 func test_get_set_output_dir():
-	assert_accessors(Doubler.new(), 'output_dir', null, 'somewhere')
+	assert_accessors(Doubler.new(), 'output_dir', null, 'user://somewhere')
 
 func test_get_set_stubber():
 	assert_accessors(Doubler.new(), 'stubber', null, GDScript.new())
