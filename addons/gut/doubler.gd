@@ -4,10 +4,86 @@ var _double_count = 0
 var _use_unique_names = true
 var _spy = null
 const PARAM_PREFIX = 'p_'
+const NAME = 'name'
+const ARGS = 'args'
+const FLAGS = 'flags'
+
+
+# Utility class to hold the local and built in methods seperately.  Add all local
+# methods FIRST, then add built ins.
+class ScriptMethods:
+
+	var _blacklist = [
+		# # from Object
+		# 'add_user_signal',
+		# 'has_user_signal',
+		# 'emit_signal',
+		# 'get_signal_connection_list',
+		# 'connect',
+		# 'disconnect',
+		# 'is_connected',
+		#
+		# # from Node2D
+		# 'draw_char',
+		#
+		# # found during other testing.
+		# 'call',
+		# '_ready',
+
+		'has_method',
+		'get_script',
+		'get',
+		'_notification',
+		'get_path',
+		'_enter_tree',
+		'_exit_tree',
+	]
+
+	var built_ins = []
+	var local_methods = []
+	var _method_names = []
+	const NAME = 'name'
+
+	func _add_name_if_does_not_have(method_name):
+		var has = _method_names.find(method_name) != -1
+		if(!has):
+			_method_names.append(method_name)
+		return has
+
+	func add_built_in_method(method_meta):
+		var has = _add_name_if_does_not_have(method_meta[NAME])
+		if(!has and _blacklist.find(method_meta[NAME]) == -1):
+			built_ins.append(method_meta)
+
+	func add_local_method(method_meta):
+		# add to the list of names so that when we add built-ins we do not get
+		# duplicates.
+		_add_name_if_does_not_have(method_meta[NAME])
+		# do not check if we have it, because we shouldn't if we add the locals
+		# first.  We only check builts-ins b/c they can appear in multiple lists
+		# but there shouldn't be any locals that have beend duplciated (again,
+		# if we add all the locals first)
+		local_methods.append(method_meta)
+
+	func to_s():
+		var text = "Locals\n"
+		for i in range(local_methods.size()):
+			text += str("  ", local_methods[i][NAME], "\n")
+		text += "Built-Ins\n"
+		for i in range(built_ins.size()):
+			text += str("  ", built_ins[i][NAME], "\n")
+		return text
 
 # ###############
 # Private
 # ###############
+
+func _get_indented_line(indents, text):
+	var to_return = ''
+	for i in range(indents):
+		to_return += "\t"
+	return str(to_return, text, "\n")
+
 func _write_file(target_path, dest_path, override_path=null):
 	var script_methods = _get_methods(target_path)
 
@@ -19,8 +95,10 @@ func _write_file(target_path, dest_path, override_path=null):
 	f.open(dest_path, f.WRITE)
 	f.store_string(str("extends '", target_path, "'\n"))
 	f.store_string(metadata)
-	for i in range(script_methods.size()):
-		f.store_string(_get_func_text(script_methods[i]))
+	for i in range(script_methods.local_methods.size()):
+		f.store_string(_get_func_text(script_methods.local_methods[i]))
+	for i in range(script_methods.built_ins.size()):
+		f.store_string(_get_super_func_text(script_methods.built_ins[i]))
 	f.close()
 
 func _double_scene_and_script(target_path, dest_path):
@@ -52,19 +130,22 @@ func _double_scene_and_script(target_path, dest_path):
 func _get_methods(target_path):
 	var obj = load(target_path).new()
 	# any mehtod in the script or super script
-	var script_methods = []
-	# hold just the names so we can avoid duplicates.
-	var method_names = []
-
+	var script_methods = ScriptMethods.new()
 	var methods = obj.get_method_list()
 
+	# first pass is for local mehtods only
 	for i in range(methods.size()):
 		# 65 is a magic number for methods in script, though documentation
 		# says 64.  This picks up local overloads of base class methods too.
-		if(methods[i]['flags'] == 65):
-			if(!method_names.has(methods[i]['name'])):
-				method_names.append(methods[i]['name'])
-				script_methods.append(methods[i])
+		if(methods[i][FLAGS] == 65):
+			script_methods.add_local_method(methods[i])
+
+	# second pass is for anything not local
+	for i in range(methods.size()):
+		# 65 is a magic number for methods in script, though documentation
+		# says 64.  This picks up local overloads of base class methods too.
+		if(methods[i][FLAGS] != 65):
+			script_methods.add_built_in_method(methods[i])
 
 	return script_methods
 
@@ -83,33 +164,54 @@ func _get_stubber_metadata_text(target_path):
 
 func _get_callback_parameters(method_hash):
 	var called_with = 'null'
-	if(method_hash['args'].size() > 0):
+	if(method_hash[ARGS].size() > 0):
 		called_with = '['
-		for i in range(method_hash['args'].size()):
-			called_with += method_hash['args'][i]['name']
-			if(i < method_hash['args'].size() - 1):
+		for i in range(method_hash[ARGS].size()):
+			called_with += method_hash[ARGS][i][NAME]
+			if(i < method_hash[ARGS].size() - 1):
 				called_with += ', '
 		called_with += ']'
 	return called_with
 
 func _get_func_text(method_hash):
-	var ftxt = str('func ', method_hash['name'], '(')
-	ftxt += str(_get_arg_text(method_hash['args']), "):\n")
+	var ftxt = str('func ', method_hash[NAME], '(')
+	ftxt += str(_get_arg_text(method_hash[ARGS]), "):\n")
 
 	var called_with = _get_callback_parameters(method_hash)
 	if(_spy):
-		ftxt += "\t__gut_metadata_.spy.add_call(self, '" + method_hash['name'] + "', " + called_with + ")\n"
+		ftxt += "\t__gut_metadata_.spy.add_call(self, '" + method_hash[NAME] + "', " + called_with + ")\n"
 	if(_stubber):
-		ftxt += "\treturn __gut_metadata_.stubber.get_return(self, '" + method_hash['name'] + "', " + called_with + ")\n"
+		ftxt += "\treturn __gut_metadata_.stubber.get_return(self, '" + method_hash[NAME] + "', " + called_with + ")\n"
 	else:
 		ftxt += "\tpass\n"
+
+	return ftxt
+
+func _get_super_call_parameters(method_hash):
+	var params = ''
+	for i in range(method_hash[ARGS].size()):
+		params += PARAM_PREFIX + method_hash[ARGS][i][NAME]
+		if(method_hash[ARGS].size() > 1 and i != method_hash[ARGS].size() -1):
+			params += ', '
+	return params
+
+func _get_super_func_text(method_hash):
+	var call_super_text = str(
+		"return .",
+		method_hash[NAME],
+		"(",
+		_get_super_call_parameters(method_hash),
+		")\n")
+	var ftxt = str('func ', method_hash[NAME], '(')
+	ftxt += str(_get_arg_text(method_hash[ARGS]), "):\n")
+	ftxt += _get_indented_line(1, call_super_text)
 
 	return ftxt
 
 func _get_arg_text(args):
 	var text = ''
 	for i in range(args.size()):
-		text += PARAM_PREFIX + args[i]['name'] + ' = null'
+		text += PARAM_PREFIX + args[i][NAME] + ' = null'
 		if(i != args.size() -1):
 			text += ', '
 	return text

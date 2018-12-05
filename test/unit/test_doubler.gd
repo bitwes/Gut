@@ -122,7 +122,7 @@ class TestTheBasics:
 		assert_ne(doubled, null)
 
 
-class TestBuiltInOverlaoding:
+class TestBuiltInOverloading:
 	extends BaseTest
 
 	var doubler = null
@@ -151,7 +151,9 @@ class TestBuiltInOverlaoding:
 	func test_when_everything_included_you_can_still_double_a_scene():
 		var inst = doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
 		add_child(inst)
-		assert_ne(inst, null)
+		assert_ne(inst, null, "instance isnot null")
+		assert_ne(inst.label, null, "Can get to a label on the instance")
+
 
 
 
