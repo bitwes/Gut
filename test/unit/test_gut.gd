@@ -330,6 +330,26 @@ func test_after_running_script_everything_checks_out():
 	assert_eq(instance.counts.postrun_teardown, 1, 'postrun_teardown')
 	assert_eq(instance.counts.teardown, 3, 'teardown')
 
+func test_when_inner_class_skipped_none_of_the_before_after_are_called():
+	gr.test_gut.add_script('res://test/parsing_and_loading_samples/inner_classes_check_before_after.gd')
+	gr.test_gut.set_inner_class_name('Inner1')
+	gr.test_gut.test_scripts()
+	var instances = gr.test_gut._test_script_objects
+
+	# instances[0] is the outer script
+
+	assert_eq(instances[1].before_all_calls, 1, 'TestInner1 before_all calls')
+	assert_eq(instances[1].after_all_calls, 1, 'TestInner1 after_all calls')
+	assert_eq(instances[1].before_each_calls, 1, 'TestInner1 before_each_calls')
+	assert_eq(instances[1].after_each_calls, 1, 'TestInner1 after_each calls')
+
+	assert_eq(instances[2].before_all_calls, 0, 'TestInner2 before_all calls')
+	assert_eq(instances[2].after_all_calls, 0, 'TestInner2 after_all calls')
+	assert_eq(instances[2].before_each_calls, 0, 'TestInner2 before_each_calls')
+	assert_eq(instances[2].after_each_calls, 0, 'TestInner2 after_each calls')
+
+
+
 
 # ------------------------------------------------------------------------------
 #

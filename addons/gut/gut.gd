@@ -28,7 +28,7 @@
 ################################################################################
 # View readme for usage details.
 #
-# Version 6.6.1
+# Version 6.6.2
 ################################################################################
 extends "res://addons/gut/gut_gui.gd"
 
@@ -154,6 +154,7 @@ func _connect_controls():
 # Initialize controls
 # ------------------------------------------------------------------------------
 func _ready():
+	print ('using [', OS.get_user_data_dir(), '] for temporary output.')
 	set_it_up()
 	set_process_input(true)
 	_connect_controls()
@@ -424,8 +425,12 @@ func _should_yield_now():
 		_yield_between.tests_since_last_yield += 1
 	return should
 
+# ------------------------------------------------------------------------------
+# Yes if the class name is null or the script's class name includes class_name
+# ------------------------------------------------------------------------------
 func _does_class_name_match(class_name, script_class_name):
 	return class_name == null or (script_class_name != null and script_class_name.find(class_name) != -1)
+
 # ------------------------------------------------------------------------------
 # Run all tests in a script.  This is the core logic for running tests.
 #
@@ -449,10 +454,6 @@ func _test_the_scripts():
 		_test_script_objects.append(test_script)
 		var script_result = null
 
-		# call both pre-all-tests methods until prerun_setup is removed
-		test_script.prerun_setup()
-		test_script.before_all()
-
 		# yield between test scripts so things paint
 		if(_yield_between.should):
 			_yield_between.timer.set_wait_time(0.01)
@@ -466,6 +467,10 @@ func _test_the_scripts():
 		# !!!
 		if(!_does_class_name_match(_inner_class_name, the_script.class_name)):
 			the_script.tests = []
+		else:
+			# call both pre-all-tests methods until prerun_setup is removed
+			test_script.prerun_setup()
+			test_script.before_all()
 
 		_ctrls.test_progress.set_max(the_script.tests.size())
 		for i in range(the_script.tests.size()):
@@ -530,8 +535,9 @@ func _test_the_scripts():
 				_ctrls.test_progress.set_value(i + 1)
 
 		# call both post-all-tests methods until postrun_teardown is removed.
-		test_script.postrun_teardown()
-		test_script.after_all()
+		if(_does_class_name_match(_inner_class_name, the_script.class_name)):
+			test_script.postrun_teardown()
+			test_script.after_all()
 
 		# This might end up being very resource intensive if the scripts
 		# don't clean up after themselves.  Might have to consolidate output
@@ -930,8 +936,9 @@ func file_touch(path):
 # ------------------------------------------------------------------------------
 func file_delete(path):
 	var d = Directory.new()
-	d.open(path.get_base_dir())
-	d.remove(path)
+	var result = d.open(path.get_base_dir())
+	if(result == OK):
+		d.remove(path)
 
 # ------------------------------------------------------------------------------
 # Checks to see if the passed in file has any data in it.
@@ -957,7 +964,11 @@ func get_file_as_text(path):
 # ------------------------------------------------------------------------------
 func directory_delete_files(path):
 	var d = Directory.new()
-	d.open(path)
+	var result = d.open(path)
+
+	# SHORTCIRCUIT
+	if(result != OK):
+		return
 
 	# Traversing a directory is kinda odd.  You have to start the process of listing
 	# the contents of a directory with list_dir_begin then use get_next until it

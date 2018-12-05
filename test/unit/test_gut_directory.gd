@@ -154,7 +154,9 @@ class TestUsingDynamicDirs:
 		# recursively deleting a directory and everyting in it.
 		while(i > 0):
 			gut.directory_delete_files(_test_dirs[i])
-			dir.remove(_test_dirs[i])
+			var result = dir.open(_test_dirs[i])
+			if(result == OK):
+				dir.remove(_test_dirs[i])
 			i -= 1
 
 		_test_dirs.clear()
