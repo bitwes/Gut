@@ -44,26 +44,24 @@ class ScriptMethods:
 	var _method_names = []
 	const NAME = 'name'
 
+	func is_blacklisted(method_meta):
+		return _blacklist.find(method_meta[NAME]) != -1
+
 	func _add_name_if_does_not_have(method_name):
-		var has = _method_names.find(method_name) != -1
-		if(!has):
+		var should_add = _method_names.find(method_name) == -1
+		if(should_add):
 			_method_names.append(method_name)
-		return has
+		return should_add
 
 	func add_built_in_method(method_meta):
-		var has = _add_name_if_does_not_have(method_meta[NAME])
-		if(!has and _blacklist.find(method_meta[NAME]) == -1):
+		var did_add = _add_name_if_does_not_have(method_meta[NAME])
+		if(did_add and !is_blacklisted(method_meta)):
 			built_ins.append(method_meta)
 
 	func add_local_method(method_meta):
-		# add to the list of names so that when we add built-ins we do not get
-		# duplicates.
-		_add_name_if_does_not_have(method_meta[NAME])
-		# do not check if we have it, because we shouldn't if we add the locals
-		# first.  We only check builts-ins b/c they can appear in multiple lists
-		# but there shouldn't be any locals that have beend duplciated (again,
-		# if we add all the locals first)
-		local_methods.append(method_meta)
+		var did_add = _add_name_if_does_not_have(method_meta[NAME])
+		if(did_add):
+			local_methods.append(method_meta)
 
 	func to_s():
 		var text = "Locals\n"
@@ -167,7 +165,7 @@ func _get_callback_parameters(method_hash):
 	if(method_hash[ARGS].size() > 0):
 		called_with = '['
 		for i in range(method_hash[ARGS].size()):
-			called_with += method_hash[ARGS][i][NAME]
+			called_with += str(PARAM_PREFIX, method_hash[ARGS][i][NAME])
 			if(i < method_hash[ARGS].size() - 1):
 				called_with += ', '
 		called_with += ']'
