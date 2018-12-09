@@ -9,6 +9,38 @@ const ARGS = 'args'
 const FLAGS = 'flags'
 
 
+# TYPE_NIL = 0 — Variable is of type nil (only applied for null).
+	# TYPE_BOOL = 1 — Variable is of type bool.
+	# TYPE_INT = 2 — Variable is of type int.
+	# TYPE_REAL = 3 — Variable is of type float/real.
+# TYPE_STRING = 4 — Variable is of type String.
+# TYPE_VECTOR2 = 5 — Variable is of type Vector2.
+# TYPE_RECT2 = 6 — Variable is of type Rect2.
+# TYPE_VECTOR3 = 7 — Variable is of type Vector3.
+# TYPE_TRANSFORM2D = 8 — Variable is of type Transform2D.
+# TYPE_PLANE = 9 — Variable is of type Plane.
+# TYPE_QUAT = 10 — Variable is of type Quat.
+# TYPE_AABB = 11 — Variable is of type AABB.
+# TYPE_BASIS = 12 — Variable is of type Basis.
+# TYPE_TRANSFORM = 13 — Variable is of type Transform.
+# TYPE_COLOR = 14 — Variable is of type Color.
+# TYPE_NODE_PATH = 15 — Variable is of type NodePath.
+# TYPE_RID = 16 — Variable is of type RID.
+	# TYPE_OBJECT = 17 — Variable is of type Object.
+# TYPE_DICTIONARY = 18 — Variable is of type Dictionary.
+# TYPE_ARRAY = 19 — Variable is of type Array.
+# TYPE_RAW_ARRAY = 20 — Variable is of type PoolByteArray.
+# TYPE_INT_ARRAY = 21 — Variable is of type PoolIntArray.
+# TYPE_REAL_ARRAY = 22 — Variable is of type PoolRealArray.
+# TYPE_STRING_ARRAY = 23 — Variable is of type PoolStringArray.
+# TYPE_VECTOR2_ARRAY = 24 — Variable is of type PoolVector2Array.
+# TYPE_VECTOR3_ARRAY = 25 — Variable is of type PoolVector3Array.
+# TYPE_COLOR_ARRAY = 26 — Variable is of type PoolColorArray.
+# TYPE_MAX = 27 — Marker for end of type constants.
+
+
+
+
 # Utility class to hold the local and built in methods seperately.  Add all local
 # methods FIRST, then add built ins.
 class ScriptMethods:
@@ -173,7 +205,7 @@ func _get_callback_parameters(method_hash):
 
 func _get_func_text(method_hash):
 	var ftxt = str('func ', method_hash[NAME], '(')
-	ftxt += str(_get_arg_text(method_hash[ARGS]), "):\n")
+	ftxt += str(_get_arg_text(method_hash), "):\n")
 
 	var called_with = _get_callback_parameters(method_hash)
 	if(_spy):
@@ -201,15 +233,31 @@ func _get_super_func_text(method_hash):
 		_get_super_call_parameters(method_hash),
 		")\n")
 	var ftxt = str('func ', method_hash[NAME], '(')
-	ftxt += str(_get_arg_text(method_hash[ARGS]), "):\n")
+	ftxt += str(_get_arg_text(method_hash), "):\n")
 	ftxt += _get_indented_line(1, call_super_text)
 
 	return ftxt
 
-func _get_arg_text(args):
+func _get_arg_text(method_meta):
 	var text = ''
+	var args = method_meta[ARGS]
+	var defaults = []
+
+	# fill up the defaults with null defaults for everything that doesn't have
+	# a default in the meta data
+	for i in range(args.size() - method_meta['default_args'].size()):
+		defaults.append('null')
+
+	# Add meta-data defaults.
+	for i in range(method_meta['default_args'].size()):
+		if(args[defaults.size()]['type'] != 14):
+			defaults.append(str(method_meta['default_args'][i]).to_lower())
+		else:
+			defaults.append(str('Color(', method_meta['default_args'][i], ')'))
+
+	# construct the string of parameters
 	for i in range(args.size()):
-		text += PARAM_PREFIX + args[i][NAME] + ' = null'
+		text += str(PARAM_PREFIX, args[i][NAME], ' = ', defaults[i])
 		if(i != args.size() -1):
 			text += ', '
 	return text

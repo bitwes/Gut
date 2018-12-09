@@ -154,22 +154,40 @@ class TestBuiltInOverloading:
 		assert_ne(inst, null, "instance isnot null")
 		assert_ne(inst.label, null, "Can get to a label on the instance")
 
+	func test_can_call_a_built_in_that_has_default_parameters():
+		var inst = doubler.double('res://addons/gut/gut.gd').new()
+		inst.connect('tests_finished', self, '_thing_does_not_exist')
 
 
-
-
-
+# Since defaults are only available for built-in methods these tests verify
+# specific method parameters that were found to cause a problem.
 class TestDefaultParameters:
 	extends BaseTest
 
-	var gr = {
-		doubler = null
-	}
-
+	var doubler = null
+# True and False
+#func set_anchor(p_margin = null, p_anchor = null, p_keep_margin = False, p_push_opposite_anchor = True):
+# Vector2 (i think)
+#func popup_centered(p_size = (0, 0)):
+# Transform?
+#func popup(p_bounds = (0, 0, 0, 0)):
+# Null and Color
+#func draw_texture(p_texture = null, p_position = null, p_modulate = Color(1,1,1,1), p_normal_map = Null):
+# True, False, Null, Color
+#func draw_texture_rect_region(p_texture = null, p_rect = null, p_src_rect = null, p_modulate = Color(1,1,1,1), p_transpose = False, p_normal_map = Null, p_clip_uv = True):
 	func before_each():
-		gr.doubler = Doubler.new()
-		gr.doubler.set_use_unique_names(false)
-		gr.doubler.set_output_dir(TEMP_FILES)
+		doubler = Doubler.new()
+		doubler.set_use_unique_names(false)
+		doubler.set_output_dir(TEMP_FILES)
 
-	# func after_all():
-	# 	gr.doubler.clear_output_directory()
+	func test_parameters_are_doubled_for_connect():
+		var inst = doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
+		var text = _get_temp_file_as_text('double_me_scene.gd')
+		var sig = 'func connect(p_signal = null, p_target = null, p_method = null, p_binds = [], p_flags = 0):'
+		assert_string_contains(text, sig)
+
+	func test_parameters_are_doubled_for_draw_char():
+		var inst = doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
+		var text = _get_temp_file_as_text('double_me_scene.gd')
+		var sig = 'func draw_char(p_font = null, p_position = null, p_char = null, p_next = null, p_modulate = Color(1,1,1,1)):'
+		assert_string_contains(text, sig)

@@ -7,6 +7,9 @@
 # ##############################################################################
 extends SceneTree
 
+const DEFAULT_ARGS = 'default_args'
+const NAME = 'name'
+const ARGS = 'args'
 
 
 class ExtendsNode2D:
@@ -90,15 +93,33 @@ func print_a_bunch_of_methods_by_flags():
 	print("strays  ")
 	e.print_stray_nodes()
 
+func get_defaults_and_types(method_meta):
+	var text = ""
+	text += method_meta[NAME] + "\n"
+	for i in range(method_meta[DEFAULT_ARGS].size()):
+		var arg_index = method_meta[ARGS].size() - (method_meta[DEFAULT_ARGS].size() - i)
+		text += str('  ', method_meta[ARGS][arg_index][NAME])
+		text += str('(', method_meta[ARGS][arg_index]['type'], ")")
+		text += str(' = ', method_meta[DEFAULT_ARGS][i], "\n")
+		# text += str('  ', method_meta[ARGS][arg_index]['usage'], "\n")
+	return text
+
+
 func _init():
-	var double_me = load('res://test/doubler_test_objects/double_me.gd').new()
-	print_method_info(double_me)
-	print("-------------\n-\n-\n-\n-------------")
-	var methods = get_methods_by_flag(double_me)
-	print_methods_by_flags(methods)
+	# var double_me = load('res://test/doubler_test_objects/double_me.gd').new()
+	# print_method_info(double_me)
+	# print("-------------\n-\n-\n-\n-------------")
+	# var methods = get_methods_by_flag(double_me)
+	# print_methods_by_flags(methods)
 
 	#print_a_bunch_of_methods_by_flags()
-	# var obj = ExtendsNode2D.new()
-	# print_method_info(obj)
+	#var obj = ExtendsNode2D.new()
+	var obj = load('res://addons/gut/gut_gui.gd').new()
+	#print_method_info(obj)
 
+	var methods = obj.get_method_list()
+
+	for i in range(methods.size()):
+		if(methods[i][DEFAULT_ARGS].size() > 0):
+			print(get_defaults_and_types(methods[i]))
 	quit()
