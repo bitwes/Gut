@@ -99,7 +99,7 @@ func get_defaults_and_types(method_meta):
 	for i in range(method_meta[DEFAULT_ARGS].size()):
 		var arg_index = method_meta[ARGS].size() - (method_meta[DEFAULT_ARGS].size() - i)
 		text += str('  ', method_meta[ARGS][arg_index][NAME])
-		text += str('(', method_meta[ARGS][arg_index]['type'], ")")
+		text += str('(type=', method_meta[ARGS][arg_index]['type'], ")")
 		text += str(' = ', method_meta[DEFAULT_ARGS][i], "\n")
 		# text += str('  ', method_meta[ARGS][arg_index]['usage'], "\n")
 	return text
@@ -114,7 +114,8 @@ func _init():
 
 	#print_a_bunch_of_methods_by_flags()
 	#var obj = ExtendsNode2D.new()
-	var obj = load('res://addons/gut/gut_gui.gd').new()
+	#var obj = load('res://addons/gut/gut.gd').new()
+	var obj = load('res://test/doubler_test_objects/double_extends_window_dialog.gd').new()
 	#print_method_info(obj)
 
 	var methods = obj.get_method_list()

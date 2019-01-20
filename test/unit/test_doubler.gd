@@ -9,6 +9,7 @@ class BaseTest:
 	const DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_me.gd'
 	const DOUBLE_ME_SCENE_PATH = 'res://test/doubler_test_objects/double_me_scene.tscn'
 	const DOUBLE_EXTENDS_NODE2D = 'res://test/doubler_test_objects/double_extends_node2d.gd'
+	const DOUBLE_EXTENDS_WINDOW_DIALOG = 'res://test/doubler_test_objects/double_extends_window_dialog.gd'
 	var Doubler = load('res://addons/gut/doubler.gd')
 
 	func _get_temp_file_as_text(filename):
@@ -121,9 +122,21 @@ class TestTheBasics:
 		var doubled = Doubled.new()
 		assert_ne(doubled, null)
 
+	func test_get_set_logger():
+		assert_ne(gr.doubler.get_logger(), null)
+		var l = load('res://addons/gut/logger.gd').new()
+		gr.doubler.set_logger(l)
+		assert_eq(gr.doubler.get_logger(), l)
+
+
 
 class TestBuiltInOverloading:
 	extends BaseTest
+
+	var _dbl_win_dia_text = ''
+
+	func _hide_call_back():
+		pass
 
 	var doubler = null
 	func before_each():
@@ -131,14 +144,13 @@ class TestBuiltInOverloading:
 		doubler.set_use_unique_names(false)
 		doubler.set_output_dir(TEMP_FILES)
 
+		doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG)
+		_dbl_win_dia_text = _get_temp_file_as_text('double_extends_window_dialog.gd')
+
+
 	func after_all():
 		pass
 		#doubler.clear_output_directory()
-
-	func test_double_includes_methods_in_super():
-		doubler.double(DOUBLE_ME_PATH)
-		var text = _get_temp_file_as_text('double_me.gd')
-		assert_string_contains(text, 'connect(')
 
 	func test_when_everything_included_you_can_still_make_an_a_new_object():
 		var inst = doubler.double(DOUBLE_ME_PATH).new()
@@ -151,13 +163,22 @@ class TestBuiltInOverloading:
 	func test_when_everything_included_you_can_still_double_a_scene():
 		var inst = doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
 		add_child(inst)
-		assert_ne(inst, null, "instance isnot null")
+		assert_ne(inst, null, "instance is not null")
 		assert_ne(inst.label, null, "Can get to a label on the instance")
+		# pause so _process gets called
+		yield(yield_for(3), YIELD)
+		end_test()
+
+	func test_double_includes_methods_in_super():
+		assert_string_contains(_dbl_win_dia_text, 'connect(')
 
 	func test_can_call_a_built_in_that_has_default_parameters():
-		var inst = doubler.double('res://addons/gut/gut.gd').new()
-		inst.connect('tests_finished', self, '_thing_does_not_exist')
+		var inst = doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG).new()
+		inst.connect('hide', self, '_hide_call_back')
 
+	func test_all_types_supported():
+		assert_string_contains(_dbl_win_dia_text, 'popup_centered(p_size = Vector2(0, 0)):', 'Vector2')
+		assert_string_contains(_dbl_win_dia_text, 'bounds = Rect2(0, 0, 0, 0)', 'Rect2')
 
 # Since defaults are only available for built-in methods these tests verify
 # specific method parameters that were found to cause a problem.

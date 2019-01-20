@@ -3,11 +3,28 @@ var _stubber = null
 var _double_count = 0
 var _use_unique_names = true
 var _spy = null
+var _lgr = load('res://addons/gut/logger.gd').new()
+
 const PARAM_PREFIX = 'p_'
 const NAME = 'name'
 const ARGS = 'args'
 const FLAGS = 'flags'
+const TYPE = 'type'
+const DEFAULT_ARGS = 'default_args'
+const NOT_SUPPORTED_PARAMS = '__not_supported_param_types_found__'
 
+
+var supported_types = {
+	TYPE_BOOL=null,
+	TYPE_INT=null,
+	TYPE_REAL=null,
+	TYPE_OBJECT=null,
+	TYPE_ARRAY=null,
+
+	TYPE_VECTOR2 = 'Vector2',
+	TYPE_RECT2 = 'Rect2',
+
+}
 
 # TYPE_NIL = 0 — Variable is of type nil (only applied for null).
 	# TYPE_BOOL = 1 — Variable is of type bool.
@@ -15,7 +32,7 @@ const FLAGS = 'flags'
 	# TYPE_REAL = 3 — Variable is of type float/real.
 # TYPE_STRING = 4 — Variable is of type String.
 # TYPE_VECTOR2 = 5 — Variable is of type Vector2.
-# TYPE_RECT2 = 6 — Variable is of type Rect2.
+	# TYPE_RECT2 = 6 — Variable is of type Rect2.
 # TYPE_VECTOR3 = 7 — Variable is of type Vector3.
 # TYPE_TRANSFORM2D = 8 — Variable is of type Transform2D.
 # TYPE_PLANE = 9 — Variable is of type Plane.
@@ -69,6 +86,12 @@ class ScriptMethods:
 		'get_path',
 		'_enter_tree',
 		'_exit_tree',
+		'_process',
+		'_draw',
+		'_physics_process',
+		'_input',
+		'_unhandled_input',
+		'_unhandled_key_input'
 	]
 
 	var built_ins = []
@@ -107,6 +130,8 @@ class ScriptMethods:
 # ###############
 # Private
 # ###############
+func _supports_type(type_flag):
+	return supported_types.keys().has(type_flag)
 
 func _get_indented_line(indents, text):
 	var to_return = ''
@@ -210,6 +235,7 @@ func _get_func_text(method_hash):
 	var called_with = _get_callback_parameters(method_hash)
 	if(_spy):
 		ftxt += "\t__gut_metadata_.spy.add_call(self, '" + method_hash[NAME] + "', " + called_with + ")\n"
+
 	if(_stubber):
 		ftxt += "\treturn __gut_metadata_.stubber.get_return(self, '" + method_hash[NAME] + "', " + called_with + ")\n"
 	else:
@@ -219,13 +245,24 @@ func _get_func_text(method_hash):
 
 func _get_super_call_parameters(method_hash):
 	var params = ''
+	var all_supported = true
+
 	for i in range(method_hash[ARGS].size()):
 		params += PARAM_PREFIX + method_hash[ARGS][i][NAME]
+		# if(!_supports_type(method_hash[ARGS][i][TYPE])):
+		# 	_lgr.warn(str('Unsupported type ', method_hash[ARGS][i][TYPE]))
+		# 	all_supported = false
+
 		if(method_hash[ARGS].size() > 1 and i != method_hash[ARGS].size() -1):
 			params += ', '
-	return params
+	if(all_supported):
+		return params
+	else:
+		return NOT_SUPPORTED_PARAMS
 
 func _get_super_func_text(method_hash):
+	var params = _get_super_call_parameters(method_hash)
+
 	var call_super_text = str(
 		"return .",
 		method_hash[NAME],
@@ -236,7 +273,10 @@ func _get_super_func_text(method_hash):
 	ftxt += str(_get_arg_text(method_hash), "):\n")
 	ftxt += _get_indented_line(1, call_super_text)
 
-	return ftxt
+	if(params == NOT_SUPPORTED_PARAMS):
+		return ''
+	else:
+		return ftxt
 
 func _get_arg_text(method_meta):
 	var text = ''
@@ -245,15 +285,22 @@ func _get_arg_text(method_meta):
 
 	# fill up the defaults with null defaults for everything that doesn't have
 	# a default in the meta data
-	for i in range(args.size() - method_meta['default_args'].size()):
+	for i in range(args.size() - method_meta[DEFAULT_ARGS].size()):
 		defaults.append('null')
 
 	# Add meta-data defaults.
-	for i in range(method_meta['default_args'].size()):
-		if(args[defaults.size()]['type'] != 14):
-			defaults.append(str(method_meta['default_args'][i]).to_lower())
+	for i in range(method_meta[DEFAULT_ARGS].size()):
+		var t = args[defaults.size()]['type']
+		if([TYPE_BOOL, TYPE_INT, TYPE_REAL, TYPE_OBJECT, TYPE_ARRAY].has(t)):
+			defaults.append(str(method_meta[DEFAULT_ARGS][i]).to_lower())
+		elif(t == TYPE_VECTOR2):
+			defaults.append(str('Vector2', method_meta[DEFAULT_ARGS][i]))
+		elif(t == TYPE_RECT2):
+			defaults.append(str('Rect2', method_meta[DEFAULT_ARGS][i]))
 		else:
-			defaults.append(str('Color(', method_meta['default_args'][i], ')'))
+			_lgr.warn(str(
+				'Unsupported default parameter type:  ',method_meta[NAME], ' ', args[defaults.size()][NAME], ' ', t, ' = ', method_meta[DEFAULT_ARGS][i]))
+			defaults.append(str('dunno=',t))
 
 	# construct the string of parameters
 	for i in range(args.size()):
@@ -333,3 +380,9 @@ func delete_output_directory():
 
 func set_use_unique_names(should):
 	_use_unique_names = should
+
+func get_logger():
+	return _lgr
+
+func set_logger(logger):
+	_lgr = logger
