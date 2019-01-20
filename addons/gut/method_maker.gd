@@ -46,24 +46,17 @@ func _get_arg_text(method_meta):
 	# Add meta-data defaults.
 	for i in range(method_meta.default_args.size()):
 		var t = args[defaults.size()]['type']
+		var value = ''
 		if(_is_type_supported(t)):
-			defaults.append(str(_supported_types[t], str(method_meta.default_args[i]).to_lower()))
+			if(t == TYPE_STRING):
+				value = str("'", str(method_meta.default_args[i]), "'")
+			else:
+				value = str(_supported_types[t], str(method_meta.default_args[i]).to_lower())
 		else:
 			_lgr.warn(str(
-				'Unsupported default parameter type:  ',method_meta[NAME], ' ', args[defaults.size()][NAME], ' ', t, ' = ', method_meta[DEFAULT_ARGS][i]))
-			defaults.append(str('unsupported=',t))
-
-
-		# if([TYPE_BOOL, TYPE_INT, TYPE_REAL, TYPE_OBJECT, TYPE_ARRAY].has(t)):
-		# 	defaults.append(str(method_meta.default_args[i]).to_lower())
-		# elif(t == TYPE_VECTOR2):
-		# 	defaults.append(str('Vector2', method_meta[DEFAULT_ARGS][i]))
-		# elif(t == TYPE_RECT2):
-		# 	defaults.append(str('Rect2', method_meta[DEFAULT_ARGS][i]))
-		# else:
-		# 	_lgr.warn(str(
-		# 		'Unsupported default parameter type:  ',method_meta[NAME], ' ', args[defaults.size()][NAME], ' ', t, ' = ', method_meta[DEFAULT_ARGS][i]))
-		# 	defaults.append(str('unsupported=',t))
+				'Unsupported default:  ',method_meta.name, ' ', args[defaults.size()].name, ' ', t, ' = ', method_meta.default_args[i]))
+			value = str('unsupported=',t)
+		defaults.append(value)
 
 	# construct the string of parameters
 	for i in range(args.size()):
@@ -116,6 +109,7 @@ func _init():
 	_supported_types[TYPE_REAL] = ''
 	_supported_types[TYPE_OBJECT] = ''
 	_supported_types[TYPE_ARRAY] = ''
+	_supported_types[TYPE_STRING] = ''
 
 	_supported_types[TYPE_VECTOR2] = 'Vector2'
 	_supported_types[TYPE_RECT2] = 'Rect2'
@@ -124,7 +118,7 @@ func _init():
 # Private
 # ###############
 func _is_type_supported(type_flag):
-	return _supported_types[type_flag] != null
+	return type_flag >= 0 and type_flag < _supported_types.size() and [type_flag] != null
 
 
 # func _get_methods(target_path):

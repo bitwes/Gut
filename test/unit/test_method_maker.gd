@@ -27,6 +27,14 @@ class TestBasics:
 	func test_get_decleration_no_params():
 		assert_eq(_mm.get_decleration(make_meta('dummy')), 'func dummy():')
 
+	func test_if_unknown_param_type_specified_it_does_not_blow_up():
+		var params = [make_param('value1', 999)]
+		var meta = make_meta('dummy', params)
+		meta.default_args.append(1)
+		var txt = _mm.get_decleration(meta)
+		assert_ne(txt, null)
+
+
 	func test_parameters_get_prefix_and_default_null():
 		var params = []
 		params.append(make_param('value1', TYPE_INT))
@@ -62,3 +70,10 @@ class TestBasics:
 		meta.default_args.append('(0,0,0,0)')
 		var txt = _mm.get_decleration(meta)
 		assert_eq(txt, 'func dummy(p_value1=Rect2(0,0,0,0)):')
+
+	func test_string_default():
+		var params = [make_param('value1', TYPE_STRING)]
+		var meta = make_meta('dummy', params)
+		meta.default_args.append('aSDf')
+		var txt = _mm.get_decleration(meta)
+		assert_eq(txt, 'func dummy(p_value1=\'aSDf\'):')
