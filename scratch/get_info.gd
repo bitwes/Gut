@@ -117,10 +117,11 @@ func _init():
 	#var obj = load('res://addons/gut/gut.gd').new()
 	var obj = load('res://test/doubler_test_objects/double_extends_window_dialog.gd').new()
 	#print_method_info(obj)
-
+	print_method_info(obj)
 	var methods = obj.get_method_list()
 
 	for i in range(methods.size()):
 		if(methods[i][DEFAULT_ARGS].size() > 0):
-			print(get_defaults_and_types(methods[i]))
+			pass#print(get_defaults_and_types(methods[i]))
+
 	quit()

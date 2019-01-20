@@ -249,9 +249,9 @@ func _get_super_call_parameters(method_hash):
 
 	for i in range(method_hash[ARGS].size()):
 		params += PARAM_PREFIX + method_hash[ARGS][i][NAME]
-		# if(!_supports_type(method_hash[ARGS][i][TYPE])):
-		# 	_lgr.warn(str('Unsupported type ', method_hash[ARGS][i][TYPE]))
-		# 	all_supported = false
+		if(!_supports_type(method_hash[ARGS][i][TYPE])):
+			_lgr.warn(str('Unsupported type ', method_hash[ARGS][i][TYPE]))
+			all_supported = false
 
 		if(method_hash[ARGS].size() > 1 and i != method_hash[ARGS].size() -1):
 			params += ', '
