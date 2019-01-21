@@ -275,6 +275,9 @@ func double(path, strategy=_strategy):
 	_strategy = old_strat
 	return to_return
 
+func double_inner(path, inner_class_name, strategy=_strategy):
+	pass
+
 func clear_output_directory():
 	var did = false
 	if(_output_dir.find('user://') == 0):

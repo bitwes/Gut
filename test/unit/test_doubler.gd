@@ -235,3 +235,16 @@ class TestDefaultParameters:
 		var text = _get_temp_file_as_text('double_me_scene.gd')
 		var sig = 'func draw_char(p_font=null, p_position=null, p_char=null, p_next=null, p_modulate=Color(1,1,1,1)):'
 		assert_string_contains(text, sig)
+
+class TestDoubleInnerClasses:
+	extends BaseTest
+
+	class InnerClass:
+		func return_seven():
+			return 7
+
+	func test_inners():
+		# this only works with instances but we can get to the path and all the
+		# neat stuff, this might be the path to stubbing inners
+		var i = InnerClass.new()
+		print(inst2dict(i))
