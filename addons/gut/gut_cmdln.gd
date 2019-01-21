@@ -422,7 +422,7 @@ func apply_options(opts):
 	if(opts.should_maximize):
 		_tester.maximize()
 
-	if(opts.inner_class != ''):
+	if(opts.inner_class != '' and opts.inner_class != 'all'):
 		_tester.set_inner_class_name(opts.inner_class)
 	_tester.set_log_level(opts.log_level)
 	_tester.set_ignore_pause_before_teardown(opts.ignore_pause_before_teardown)
