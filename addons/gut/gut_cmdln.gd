@@ -5,7 +5,7 @@
 #The MIT License (MIT)
 #=====================
 #
-#Copyright (c) 2017 Tom "Butch" Wesley
+#Copyright (c) 2019 Tom "Butch" Wesley
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -284,6 +284,7 @@ class OptionResolver:
 # Here starts the actual script that uses the Options class to kick off Gut
 # and run your tests.
 #-------------------------------------------------------------------------------
+var _utils = load('res://addons/gut/utils.gd').new()
 # instance of gut
 var _tester = null
 # array of command line options specified
@@ -308,7 +309,8 @@ var options = {
 	config_file = 'res://.gutconfig.json',
 	inner_class = '',
 	opacity = 100,
-	include_subdirs = false
+	include_subdirs = false,
+	double_strategy = 'partial'
 }
 
 # flag to say if we should run the scripts or not.  It is only
@@ -347,6 +349,7 @@ func setup_options():
 	opts.add('-gopacity', 100, 'Set opacity of test runner window. Use range 0 - 100. 0 = transparent, 100 = opaque.')
 	opts.add('-gpo', false, 'Print option values from all sources and the value used, then quit.')
 	opts.add('-ginclude_subdirs', false, 'Include subdirectories of -gdir.')
+	opts.add('-gdouble_strategy', 'partial', 'Default strategy to use when doubling.  Valid values are [partial, full].  Default "[default]"')
 	return opts
 
 
@@ -369,6 +372,7 @@ func extract_command_line_options(from, to):
 	to.inner_class = from.get_value('-ginner_class')
 	to.opacity = from.get_value('-gopacity')
 	to.include_subdirs = from.get_value('-ginclude_subdirs')
+	to.double_strategy = from.get_value('-gdouble_strategy')
 
 func get_value(dict, index, default):
 	if(dict.has(index)):
@@ -438,6 +442,11 @@ func apply_options(opts):
 		_run_single = true
 		if(!_auto_run):
 			_tester.p("Could not find a script that matched:  " + opts.selected)
+
+	if(opts.double_strategy == 'full'):
+		_tester.set_double_strategy(_utils.DOUBLE_STRATEGY.FULL)
+	elif(opts.double_strategy == 'partial'):
+		_tester.set_double_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
 
 	_tester.set_unit_test_name(opts.unit_test_name)
 

@@ -5,7 +5,7 @@
 #The MIT License (MIT)
 #=====================
 #
-#Copyright (c) 2017 Tom "Butch" Wesley
+#Copyright (c) 2019 Tom "Butch" Wesley
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,8 @@
 ################################################################################
 extends "res://addons/gut/gut_gui.gd"
 
+var _utils = load('res://addons/gut/utils.gd').new()
+
 # ###########################
 # Editor Variables
 # ###########################
@@ -53,7 +55,7 @@ export var _file_extension = '.gd'
 export var _inner_class_prefix = 'Test'
 export(String) var _temp_directory = 'user://gut_temp_directory'
 export var _include_subdirectories = false setget set_include_subdirectories, get_include_subdirectories
-
+export(int, 'FULL', 'PARTIAL') var _double_strategy = _utils.DOUBLE_STRATEGY.PARTIAL setget set_double_strategy, get_double_strategy
 
 # Allow user to add test directories via editor.  This is done with strings
 # instead of an array because the interface for editing arrays is really
@@ -117,9 +119,10 @@ var _yielding_to = {
 	obj = null,
 	signal_name = ''
 }
-var _stubber = load('res://addons/gut/stubber.gd').new()
-var _doubler = load('res://addons/gut/doubler.gd').new()
-var _spy = load('res://addons/gut/spy.gd').new()
+
+var _stubber = _utils.Stubber.new()
+var _doubler = _utils.Doubler.new()
+var _spy = _utils.Spy.new()
 
 const SIGNAL_TESTS_FINISHED = 'tests_finished'
 const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yeild_before_teardown'
@@ -441,6 +444,7 @@ func _test_the_scripts():
 	_init_run()
 	var file = File.new()
 
+	# loop through scripts
 	for s in range(_test_collector.scripts.size()):
 		var the_script = _test_collector.scripts[s]
 		if(the_script.tests.size() > 0):
@@ -453,6 +457,7 @@ func _test_the_scripts():
 		add_child(test_script)
 		_test_script_objects.append(test_script)
 		var script_result = null
+		_doubler.set_strategy(_double_strategy)
 
 		# yield between test scripts so things paint
 		if(_yield_between.should):
@@ -473,6 +478,8 @@ func _test_the_scripts():
 			test_script.before_all()
 
 		_ctrls.test_progress.set_max(the_script.tests.size())
+
+		# Each test in the script
 		for i in range(the_script.tests.size()):
 			_stubber.clear()
 			_spy.clear()
@@ -1032,6 +1039,17 @@ func set_inner_class_name(inner_class_name):
 # ------------------------------------------------------------------------------
 func get_summary():
 	return _new_summary
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_double_strategy():
+	return _double_strategy
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func set_double_strategy(double_strategy):
+	_double_strategy = double_strategy
+	_doubler.set_strategy(double_strategy)
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------

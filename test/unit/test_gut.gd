@@ -144,6 +144,22 @@ func test_get_set_temp_directory():
 	assert_accessors(gr.test_gut, 'temp_directory', 'user://gut_temp_directory', 'user://blahblah')
 
 # ------------------------------
+# Double Strategy
+# ------------------------------
+func test_get_set_double_strategy():
+	assert_accessors(gr.test_gut, 'double_strategy', 1, 2)
+
+func test_when_test_overrides_strategy_it_is_reset_after_test_finishes():
+	gr.test_gut.set_double_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
+	gr.test_gut.add_script('res://test/samples/test_before_after.gd')
+	gr.test_gut.get_doubler().set_strategy(_utils.DOUBLE_STRATEGY.FULL)
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_double_strategy(), _utils.DOUBLE_STRATEGY.PARTIAL)
+
+
+
+
+# ------------------------------
 # disable strict datatype comparisons
 # ------------------------------
 func test_when_strict_enabled_you_can_compare_int_and_float():

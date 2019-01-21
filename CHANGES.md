@@ -11,7 +11,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * __Issue 95__:  Fixed issue where sometimes Gut can end up clearing files from `res:\\` when using doubling.
 
 # 6.6.0
-
 ## Fixes
 * __Issue 79__:  Scaling wasn't being accounted for by the `maximize` method.
 * __Issue 80__:  Inner classes are no longer included in the count of scripts that were ran.
