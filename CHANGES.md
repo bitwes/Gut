@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 # 6.6.2
-
+* Full/Partial doubling:  default is PARTIAL.  Can set globall via `set_double_strategy` and specify an override on a per double basis when calling `double` and `double_scene`.
 
 # 6.6.1
 * __Issue 60__:  Improved signal assert failure messages in some cases by having them include a list of signals that were emitted for the object.

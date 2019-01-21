@@ -104,8 +104,13 @@ var _summary = {
 # This is used to watch signals so we can make assertions about them.
 var _signal_watcher = load('res://addons/gut/signal_watcher.gd').new()
 
+# Convenience copy of _utils.DOUBLE_STRATEGY
+var DOUBLE_STRATEGY = null
+
+var _utils = load('res://addons/gut/utils.gd')
 func _init():
 	_init_types_dictionary()
+	DOUBLE_STRATEGY = _utils.DOUBLE_STRATEGY
 
 # ------------------------------------------------------------------------------
 # Fail an assertion.  Causes test and script to fail as well.
@@ -772,6 +777,12 @@ func get_assert_count():
 func clear_signal_watcher():
 	_signal_watcher.clear()
 
+func get_double_strategy():
+	return gut.get_doubler().get_strategy()
+
+func set_double_strategy(double_strategy):
+	gut.get_doubler().set_strategy(double_strategy)
+
 # ------------------------------------------------------------------------------
 # Convert the _summary dictionary into text
 # ------------------------------------------------------------------------------
@@ -784,11 +795,17 @@ func get_summary_text():
 		to_return += str("\n  ", _summary.failed, ' failed.')
 	return to_return
 
-func double(thing):
-	return gut.get_doubler().double(thing)
+func double(thing, strategy=null):
+	var override_strat = strategy
+	if(override_strat == null):
+		override_strat = gut.get_doubler().get_strategy()
+	return gut.get_doubler().double(thing, override_strat)
 
-func double_scene(thing):
-	return gut.get_doubler().double_scene(thing)
+func double_scene(thing, strategy=null):
+	var override_strat = strategy
+	if(override_strat == null):
+		override_strat = gut.get_doubler().get_strategy()
+	return gut.get_doubler().double_scene(thing, override_strat)
 
 func stub(thing, method_name):
 	var sp = StubParams.new(thing, method_name)

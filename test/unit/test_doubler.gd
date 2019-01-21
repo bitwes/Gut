@@ -11,7 +11,6 @@ class BaseTest:
 	const DOUBLE_EXTENDS_NODE2D = 'res://test/doubler_test_objects/double_extends_node2d.gd'
 	const DOUBLE_EXTENDS_WINDOW_DIALOG = 'res://test/doubler_test_objects/double_extends_window_dialog.gd'
 	var Doubler = load('res://addons/gut/doubler.gd')
-	var _utils = load('res://addons/gut/utils.gd').new()
 
 	func _get_temp_file_as_text(filename):
 		return gut.get_file_as_text(TEMP_FILES.plus_file(filename))
@@ -174,13 +173,13 @@ class TestBuiltInOverloading:
 
 	func test_can_override_strategy_when_doubling_script():
 		doubler.set_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
-		doubler.double(DOUBLE_ME_PATH, _utils.DOUBLE_STRATEGY.FULL)
+		doubler.double(DOUBLE_ME_PATH, DOUBLE_STRATEGY.FULL)
 		var txt = _get_temp_file_as_text('double_me.gd')
 		assert_ne(txt.find('func is_blocking_signals'), -1, 'HAS non-overloaded methods')
 
 	func test_can_override_strategy_when_doubling_scene():
 		doubler.set_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
-		doubler.double_scene(DOUBLE_ME_SCENE_PATH, _utils.DOUBLE_STRATEGY.FULL)
+		doubler.double_scene(DOUBLE_ME_SCENE_PATH, DOUBLE_STRATEGY.FULL)
 		var txt = _get_temp_file_as_text('double_me_scene.gd')
 		assert_ne(txt.find('func is_blocking_signals'), -1, 'HAS non-overloaded methods')
 

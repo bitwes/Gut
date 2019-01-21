@@ -178,12 +178,18 @@ func _get_stubber_metadata_text(target_path):
 		   "\tspy=" + _get_inst_id_ref_str(_spy) + "\n" + \
            "}\n"
 
+func _get_spy_text(method_hash):
+	var txt = ''
+	if(_spy):
+		var called_with = _method_maker.get_spy_call_parameters_text(method_hash)
+		txt += "\t__gut_metadata_.spy.add_call(self, '" + method_hash.name + "', " + called_with + ")\n"
+	return txt
+
 func _get_func_text(method_hash):
 	var ftxt = _method_maker.get_decleration_text(method_hash) + "\n"
 
 	var called_with = _method_maker.get_spy_call_parameters_text(method_hash)
-	if(_spy):
-		ftxt += "\t__gut_metadata_.spy.add_call(self, '" + method_hash.name + "', " + called_with + ")\n"
+	ftxt += _get_spy_text(method_hash)
 
 	if(_stubber):
 		ftxt += "\treturn __gut_metadata_.stubber.get_return(self, '" + method_hash.name + "', " + called_with + ")\n"
@@ -198,6 +204,8 @@ func _get_super_func_text(method_hash):
 	var call_super_text = str("return ", call_method, "\n")
 
 	var ftxt = _method_maker.get_decleration_text(method_hash) + "\n"
+	ftxt += _get_spy_text(method_hash)
+
 	ftxt += _get_indented_line(1, call_super_text)
 
 	return ftxt
