@@ -69,14 +69,14 @@ class TestGetDecleration:
 	func test_vector2_default():
 		var params = [make_param('value1', TYPE_VECTOR2)]
 		var meta = make_meta('dummy', params)
-		meta.default_args.append('0,0')
+		meta.default_args.append('(0,0)')
 		var txt = _mm.get_decleration_text(meta)
 		assert_eq(txt, 'func dummy(p_value1=Vector2(0,0)):')
 
 	func test_rect2_default():
 		var params = [make_param('value1', TYPE_RECT2)]
 		var meta = make_meta('dummy', params)
-		meta.default_args.append('0,0,0,0')
+		meta.default_args.append('(0,0,0,0)')
 		var txt = _mm.get_decleration_text(meta)
 		assert_eq(txt, 'func dummy(p_value1=Rect2(0,0,0,0)):')
 
@@ -90,7 +90,7 @@ class TestGetDecleration:
 	func test_vector3_default():
 		var params = [make_param('value1', TYPE_VECTOR3)]
 		var meta = make_meta('dummy', params)
-		meta.default_args.append('0,0,0')
+		meta.default_args.append('(0,0,0)')
 		var txt = _mm.get_decleration_text(meta)
 		assert_eq(txt, 'func dummy(p_value1=Vector3(0,0,0)):')
 

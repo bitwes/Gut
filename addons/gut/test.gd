@@ -666,6 +666,9 @@ func assert_string_ends_with(text, search, match_case=true):
 # ------------------------------------------------------------------------------
 # Assert that a method was called on an instance of a doubled class.  If
 # parameters are supplied then the params passed in when called must match.
+# TODO make 3rd paramter "param_or_text" and add fourth parameter of "text" and
+#      then work some magic so this can have a "text" parameter without being
+#      annoying.
 # ------------------------------------------------------------------------------
 func assert_called(inst, method_name, parameters=null):
 	var disp = str('Expected [',method_name,'] to have been called on ',inst)

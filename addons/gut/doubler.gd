@@ -1,28 +1,13 @@
-var _output_dir = null
-var _stubber = null
-var _double_count = 0
-var _use_unique_names = true
-var _spy = null
-var _lgr = load('res://addons/gut/logger.gd').new()
-var _method_maker = load('res://addons/gut/method_maker.gd').new()
-
-const PARAM_PREFIX = 'p_'
-const NAME = 'name'
-const ARGS = 'args'
-const FLAGS = 'flags'
-const TYPE = 'type'
-const DEFAULT_ARGS = 'default_args'
-const NOT_SUPPORTED_PARAMS = '__not_supported_param_types_found__'
-
-
-func _init():
-	_method_maker.set_logger(_lgr)
-
-
+# ------------------------------------------------------------------------------
 # Utility class to hold the local and built in methods seperately.  Add all local
 # methods FIRST, then add built ins.
+# ------------------------------------------------------------------------------
 class ScriptMethods:
 
+	# List of methods that should not be overloaded when they are not defined
+	# in the class being doubled.  These either break things if they are
+	# overloaded or do not have a "super" equivalent so we can't just pass
+	# through.
 	var _blacklist = [
 		# # from Object
 		# 'add_user_signal',
@@ -61,7 +46,7 @@ class ScriptMethods:
 	const NAME = 'name'
 
 	func is_blacklisted(method_meta):
-		return _blacklist.find(method_meta[NAME]) != -1
+		return _blacklist.find(method_meta.name) != -1
 
 	func _add_name_if_does_not_have(method_name):
 		var should_add = _method_names.find(method_name) == -1
@@ -70,23 +55,38 @@ class ScriptMethods:
 		return should_add
 
 	func add_built_in_method(method_meta):
-		var did_add = _add_name_if_does_not_have(method_meta[NAME])
+		var did_add = _add_name_if_does_not_have(method_meta.name)
 		if(did_add and !is_blacklisted(method_meta)):
 			built_ins.append(method_meta)
 
 	func add_local_method(method_meta):
-		var did_add = _add_name_if_does_not_have(method_meta[NAME])
+		var did_add = _add_name_if_does_not_have(method_meta.name)
 		if(did_add):
 			local_methods.append(method_meta)
 
 	func to_s():
 		var text = "Locals\n"
 		for i in range(local_methods.size()):
-			text += str("  ", local_methods[i][NAME], "\n")
+			text += str("  ", local_methods[i].name, "\n")
 		text += "Built-Ins\n"
 		for i in range(built_ins.size()):
-			text += str("  ", built_ins[i][NAME], "\n")
+			text += str("  ", built_ins[i].name, "\n")
 		return text
+
+# ------------------------------------------------------------------------------
+# START Doubler
+# ------------------------------------------------------------------------------
+var _output_dir = null
+var _stubber = null
+var _double_count = 0
+var _use_unique_names = true
+var _spy = null
+var _lgr = null
+var _method_maker = load('res://addons/gut/method_maker.gd').new()
+
+func _init():
+	# make sure _method_maker gets logger too
+	set_logger(load('res://addons/gut/logger.gd').new())
 
 # ###############
 # Private
@@ -150,14 +150,14 @@ func _get_methods(target_path):
 	for i in range(methods.size()):
 		# 65 is a magic number for methods in script, though documentation
 		# says 64.  This picks up local overloads of base class methods too.
-		if(methods[i][FLAGS] == 65):
+		if(methods[i].flags == 65):
 			script_methods.add_local_method(methods[i])
 
 	# second pass is for anything not local
 	for i in range(methods.size()):
 		# 65 is a magic number for methods in script, though documentation
 		# says 64.  This picks up local overloads of base class methods too.
-		if(methods[i][FLAGS] != 65):
+		if(methods[i].flags != 65):
 			script_methods.add_built_in_method(methods[i])
 
 	return script_methods
@@ -180,10 +180,10 @@ func _get_func_text(method_hash):
 
 	var called_with = _method_maker.get_spy_call_parameters_text(method_hash)
 	if(_spy):
-		ftxt += "\t__gut_metadata_.spy.add_call(self, '" + method_hash[NAME] + "', " + called_with + ")\n"
+		ftxt += "\t__gut_metadata_.spy.add_call(self, '" + method_hash.name + "', " + called_with + ")\n"
 
 	if(_stubber):
-		ftxt += "\treturn __gut_metadata_.stubber.get_return(self, '" + method_hash[NAME] + "', " + called_with + ")\n"
+		ftxt += "\treturn __gut_metadata_.stubber.get_return(self, '" + method_hash.name + "', " + called_with + ")\n"
 	else:
 		ftxt += "\tpass\n"
 
@@ -236,6 +236,13 @@ func get_stubber():
 func set_stubber(stubber):
 	_stubber = stubber
 
+func get_logger():
+	return _lgr
+
+func set_logger(logger):
+	_lgr = logger
+	_method_maker.set_logger(logger)
+
 func double_scene(path):
 	var temp_path = _get_temp_path(path)
 	_double_scene_and_script(path, temp_path)
@@ -268,12 +275,8 @@ func delete_output_directory():
 		var d = Directory.new()
 		d.remove(_output_dir)
 
+# When creating doubles a unique name is used that each double can be its own
+# thing.  Sometimes, for testing, we do not want to do this so this allows
+# you to turn off creating unique names for each double class.
 func set_use_unique_names(should):
 	_use_unique_names = should
-
-func get_logger():
-	return _lgr
-
-func set_logger(logger):
-	_lgr = logger
-	_method_maker.set_logger(logger)

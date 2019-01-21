@@ -184,8 +184,8 @@ class TestBuiltInOverloading:
 		inst.connect('hide', self, '_hide_call_back')
 
 	func test_all_types_supported():
-		assert_string_contains(_dbl_win_dia_text, 'popup_centered(p_size = Vector2(0, 0)):', 'Vector2')
-		assert_string_contains(_dbl_win_dia_text, 'bounds = Rect2(0, 0, 0, 0)', 'Rect2')
+		assert_string_contains(_dbl_win_dia_text, 'popup_centered(p_size=Vector2(0, 0)):', 'Vector2')
+		assert_string_contains(_dbl_win_dia_text, 'bounds=Rect2(0, 0, 0, 0)', 'Rect2')
 
 # Since defaults are only available for built-in methods these tests verify
 # specific method parameters that were found to cause a problem.
@@ -211,11 +211,11 @@ class TestDefaultParameters:
 	func test_parameters_are_doubled_for_connect():
 		var inst = doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
 		var text = _get_temp_file_as_text('double_me_scene.gd')
-		var sig = 'func connect(p_signal = null, p_target = null, p_method = null, p_binds = [], p_flags = 0):'
+		var sig = 'func connect(p_signal=null, p_target=null, p_method=null, p_binds=[], p_flags=0):'
 		assert_string_contains(text, sig)
 
 	func test_parameters_are_doubled_for_draw_char():
 		var inst = doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
 		var text = _get_temp_file_as_text('double_me_scene.gd')
-		var sig = 'func draw_char(p_font = null, p_position = null, p_char = null, p_next = null, p_modulate = Color(1,1,1,1)):'
+		var sig = 'func draw_char(p_font=null, p_position=null, p_char=null, p_next=null, p_modulate=Color(1,1,1,1)):'
 		assert_string_contains(text, sig)

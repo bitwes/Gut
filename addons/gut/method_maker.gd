@@ -20,7 +20,7 @@ var _lgr = load('res://addons/gut/logger.gd').new()
 const PARAM_PREFIX = 'p_'
 
 # ------------------------------------------------------
-# _supported_types
+# _supported_defaults
 #
 # This array contains all the data types that are supported for default values.
 # If a value is supported it will contain either an empty string or a prefix
@@ -29,6 +29,7 @@ const PARAM_PREFIX = 'p_'
 # but things like Vectors and Colors do since only the parameters to create a
 # new Vecotr or Color are included in the metadata.
 # ------------------------------------------------------
+	# TYPE_NIL = 0 — Variable is of type nil (only applied for null).
 	# TYPE_BOOL = 1 — Variable is of type bool.
 	# TYPE_INT = 2 — Variable is of type int.
 	# TYPE_REAL = 3 — Variable is of type float/real.
@@ -43,7 +44,7 @@ const PARAM_PREFIX = 'p_'
 	# TYPE_VECTOR2_ARRAY = 24 — Variable is of type PoolVector2Array.
 
 
-# TYPE_NIL = 0 — Variable is of type nil (only applied for null).
+
 # TYPE_TRANSFORM2D = 8 — Variable is of type Transform2D.
 # TYPE_PLANE = 9 — Variable is of type Plane.
 # TYPE_QUAT = 10 — Variable is of type Quat.
@@ -60,34 +61,42 @@ const PARAM_PREFIX = 'p_'
 # TYPE_COLOR_ARRAY = 26 — Variable is of type PoolColorArray.
 # TYPE_MAX = 27 — Marker for end of type constants.
 # ------------------------------------------------------
-var _supported_types = []
+var _supported_defaults = []
 
 func _init():
 	for i in range(TYPE_MAX):
-		_supported_types.append(null)
+		_supported_defaults.append(null)
 
 	# These types do not require a prefix for defaults
-	_supported_types[TYPE_BOOL] = ''
-	_supported_types[TYPE_INT] = ''
-	_supported_types[TYPE_REAL] = ''
-	_supported_types[TYPE_OBJECT] = ''
-	_supported_types[TYPE_ARRAY] = ''
-	_supported_types[TYPE_STRING] = ''
-	_supported_types[TYPE_DICTIONARY] = ''
-	_supported_types[TYPE_VECTOR2_ARRAY] = ''
+	_supported_defaults[TYPE_NIL] = ''
+	_supported_defaults[TYPE_BOOL] = ''
+	_supported_defaults[TYPE_INT] = ''
+	_supported_defaults[TYPE_REAL] = ''
+	_supported_defaults[TYPE_OBJECT] = ''
+	_supported_defaults[TYPE_ARRAY] = ''
+	_supported_defaults[TYPE_STRING] = ''
+	_supported_defaults[TYPE_DICTIONARY] = ''
+	_supported_defaults[TYPE_VECTOR2_ARRAY] = ''
 
 	# These require a prefix for whatever default is provided
-	_supported_types[TYPE_VECTOR2] = 'Vector2'
-	_supported_types[TYPE_RECT2] = 'Rect2'
-	_supported_types[TYPE_VECTOR3] = 'Vector3'
-	_supported_types[TYPE_COLOR] = 'Color'
+	_supported_defaults[TYPE_VECTOR2] = 'Vector2'
+	_supported_defaults[TYPE_RECT2] = 'Rect2'
+	_supported_defaults[TYPE_VECTOR3] = 'Vector3'
+	_supported_defaults[TYPE_COLOR] = 'Color'
 
 # ###############
 # Private
 # ###############
-func _is_type_supported(type_flag):
-	return type_flag >= 0 and type_flag < _supported_types.size() and [type_flag] != null
 
+func _is_supported_default(type_flag):
+	return type_flag >= 0 and type_flag < _supported_defaults.size() and [type_flag] != null
+
+# Creates a list of paramters with defaults of null unless a default value is
+# found in the metadata.  If a default is found in the meta then it is used if
+# it is one we know how support.
+#
+# If a default is found that we don't know how to handle then this method will
+# return null.
 func _get_arg_text(method_meta):
 	var text = ''
 	var args = method_meta.args
@@ -95,7 +104,9 @@ func _get_arg_text(method_meta):
 	var has_unsupported_defaults = false
 
 	# fill up the defaults with null defaults for everything that doesn't have
-	# a default in the meta data
+	# a default in the meta data.  default_args is an array of default values
+	# for the last n parameters where n is the size of default_args so we only
+	# add nulls for everything up to the first parameter with a default.
 	for i in range(args.size() - method_meta.default_args.size()):
 		defaults.append('null')
 
@@ -103,21 +114,24 @@ func _get_arg_text(method_meta):
 	for i in range(method_meta.default_args.size()):
 		var t = args[defaults.size()]['type']
 		var value = ''
-		if(_is_type_supported(t)):
+		if(_is_supported_default(t)):
 			# strings are special, they need quotes around the value
 			if(t == TYPE_STRING):
 				value = str("'", str(method_meta.default_args[i]), "'")
+			# Colors need the parens but things like Vector2 and Rect2 don't
 			elif(t == TYPE_COLOR):
-				value = str(_supported_types[t], '(', str(method_meta.default_args[i]).to_lower(), ')')
-			# Everything else puts the prefix (if one is there) fomr _supported_types
-			# in front.
+				value = str(_supported_defaults[t], '(', str(method_meta.default_args[i]), ')')
+			# Everything else puts the prefix (if one is there) fomr _supported_defaults
+			# in front.  The to_lower is used b/c for some reason the defaults for
+			# null, true, false are all "Null", "True", "False".
 			else:
-				value = str(_supported_types[t], str(method_meta.default_args[i]).to_lower())
+				value = str(_supported_defaults[t], str(method_meta.default_args[i]).to_lower())
 		else:
 			_lgr.warn(str(
 				'Unsupported default param type:  ',method_meta.name, '-', args[defaults.size()].name, ' ', t, ' = ', method_meta.default_args[i]))
 			value = str('unsupported=',t)
 			has_unsupported_defaults = true
+
 		defaults.append(value)
 
 	# construct the string of parameters
@@ -126,8 +140,12 @@ func _get_arg_text(method_meta):
 		if(i != args.size() -1):
 			text += ', '
 
+	# if we don't know how to make a default then we have to return null b/c
+	# it will cause a runtime error and it's one thing we could return to let
+	# callers know it didn't work.
 	if(has_unsupported_defaults):
 		text = null
+
 	return text
 
 # ###############
