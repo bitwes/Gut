@@ -1,4 +1,4 @@
-var Logger = load('res://addons/gut/logger.gd')
+var _Logger = load('res://addons/gut/logger.gd')
 var Stubber = load('res://addons/gut/stubber.gd')
 var Doubler = load('res://addons/gut/doubler.gd')
 var Spy = load('res://addons/gut/spy.gd')
@@ -17,4 +17,4 @@ enum DOUBLE_STRATEGY{
 # and loading them in the _init for this.
 # ------------------------------------------------------------------------------
 func get_logger():
-	return Logger.new()
+	return _Logger.new()
