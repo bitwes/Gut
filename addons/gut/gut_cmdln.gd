@@ -355,7 +355,6 @@ func setup_options():
 
 # Parses options, applying them to the _tester or setting values
 # in the options struct.
-
 func extract_command_line_options(from, to):
 	to.tests = from.get_value('-gtest')
 	to.dirs = from.get_value('-gdir')

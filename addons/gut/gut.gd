@@ -33,6 +33,7 @@
 extends "res://addons/gut/gut_gui.gd"
 
 var _utils = load('res://addons/gut/utils.gd').new()
+var _lgr = _utils.get_logger()
 
 # ###########################
 # Editor Variables
@@ -136,6 +137,10 @@ func _init():
 	_doubler.set_output_dir(_temp_directory)
 	_doubler.set_stubber(_stubber)
 	_doubler.set_spy(_spy)
+	_doubler.set_logger(_lgr)
+
+	#_stubber.set_logger(_lgr)
+	#_spy.set_logger(_lgr)
 
 # ------------------------------------------------------------------------------
 # Connect all the controls created in the parent class to the methods here.
@@ -157,7 +162,7 @@ func _connect_controls():
 # Initialize controls
 # ------------------------------------------------------------------------------
 func _ready():
-	print ('using [', OS.get_user_data_dir(), '] for temporary output.')
+	_lgr.info(str('using [', OS.get_user_data_dir(), '] for temporary output.'))
 	set_it_up()
 	set_process_input(true)
 	_connect_controls()
@@ -1055,6 +1060,16 @@ func set_double_strategy(double_strategy):
 # ------------------------------------------------------------------------------
 func get_include_subdirectories():
 	return _include_subdirectories
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_logger():
+	return _lgr
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func set_logger(logger):
+	_lgr = logger
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------

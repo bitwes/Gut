@@ -87,7 +87,7 @@ var _strategy = null
 
 func _init(strategy=_utils.DOUBLE_STRATEGY.PARTIAL):
 	# make sure _method_maker gets logger too
-	set_logger(load('res://addons/gut/logger.gd').new())
+	set_logger(_utils.get_logger())
 	_strategy = strategy
 
 # ###############

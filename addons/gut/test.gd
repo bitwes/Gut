@@ -154,7 +154,7 @@ func _do_datatypes_match__fail_if_not(got, expected, text):
 			# print out a warning but do not fail.
 			if([2, 3].has(got_type) and [2, 3].has(expect_type)):
 				if(gut):
-					gut.p(str('Warn:  Float/Int comparison.  Got ', types[got_type], ' but expected ', types[expect_type]), 1)
+					gut.get_logger().warn(str('Warn:  Float/Int comparison.  Got ', types[got_type], ' but expected ', types[expect_type]))
 			else:
 				_fail('Cannot compare ' + types[got_type] + '[' + str(got) + '] to ' + types[expect_type] + '[' + str(expected) + '].  ' + text)
 				passed = false
