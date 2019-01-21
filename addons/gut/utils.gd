@@ -1,0 +1,4 @@
+enum DOUBLE_STRATEGY{
+    FULL,
+    PARTIAL
+}

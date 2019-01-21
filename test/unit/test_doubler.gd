@@ -11,6 +11,7 @@ class BaseTest:
 	const DOUBLE_EXTENDS_NODE2D = 'res://test/doubler_test_objects/double_extends_node2d.gd'
 	const DOUBLE_EXTENDS_WINDOW_DIALOG = 'res://test/doubler_test_objects/double_extends_window_dialog.gd'
 	var Doubler = load('res://addons/gut/doubler.gd')
+	var _utils = load('res://addons/gut/utils.gd').new()
 
 	func _get_temp_file_as_text(filename):
 		return gut.get_file_as_text(TEMP_FILES.plus_file(filename))
@@ -136,6 +137,12 @@ class TestTheBasics:
 		gr.doubler.set_logger(l)
 		assert_eq(gr.doubler.get_logger(), gr.doubler._method_maker.get_logger())
 
+	func test_get_set_strategy():
+		assert_accessors(gr.doubler, 'strategy', _utils.DOUBLE_STRATEGY.PARTIAL,  _utils.DOUBLE_STRATEGY.FULL)
+
+	func test_can_set_strategy_in_constructor():
+		var d = Doubler.new(_utils.DOUBLE_STRATEGY.FULL)
+		assert_eq(d.get_strategy(), _utils.DOUBLE_STRATEGY.FULL)
 
 class TestBuiltInOverloading:
 	extends BaseTest
@@ -147,17 +154,36 @@ class TestBuiltInOverloading:
 
 	var doubler = null
 	func before_each():
-		doubler = Doubler.new()
+		doubler = Doubler.new(_utils.DOUBLE_STRATEGY.FULL)
 		doubler.set_use_unique_names(false)
 		doubler.set_output_dir(TEMP_FILES)
 
+		# WindowDialog has A LOT of the edge cases we need to check so it is used
+		# as the default.
 		doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG)
 		_dbl_win_dia_text = _get_temp_file_as_text('double_extends_window_dialog.gd')
 
-
 	func after_all():
-		pass
-		#doubler.clear_output_directory()
+		pass#doubler.clear_output_directory()
+
+	func test_built_in_overloading_ony_happens_on_full_strategy():
+		doubler.set_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
+		doubler.double(DOUBLE_ME_PATH)
+		var txt = _get_temp_file_as_text('double_me.gd')
+		assert_eq(txt.find('func is_blocking_signals'), -1, 'does not have non-overloaded methods')
+
+	func test_can_override_strategy_when_doubling_script():
+		doubler.set_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
+		doubler.double(DOUBLE_ME_PATH, _utils.DOUBLE_STRATEGY.FULL)
+		var txt = _get_temp_file_as_text('double_me.gd')
+		assert_ne(txt.find('func is_blocking_signals'), -1, 'HAS non-overloaded methods')
+
+	func test_can_override_strategy_when_doubling_scene():
+		doubler.set_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
+		doubler.double_scene(DOUBLE_ME_SCENE_PATH, _utils.DOUBLE_STRATEGY.FULL)
+		var txt = _get_temp_file_as_text('double_me_scene.gd')
+		assert_ne(txt.find('func is_blocking_signals'), -1, 'HAS non-overloaded methods')
+
 
 	func test_when_everything_included_you_can_still_make_an_a_new_object():
 		var inst = doubler.double(DOUBLE_ME_PATH).new()
@@ -193,18 +219,9 @@ class TestDefaultParameters:
 	extends BaseTest
 
 	var doubler = null
-# True and False
-#func set_anchor(p_margin = null, p_anchor = null, p_keep_margin = False, p_push_opposite_anchor = True):
-# Vector2 (i think)
-#func popup_centered(p_size = (0, 0)):
-# Transform?
-#func popup(p_bounds = (0, 0, 0, 0)):
-# Null and Color
-#func draw_texture(p_texture = null, p_position = null, p_modulate = Color(1,1,1,1), p_normal_map = Null):
-# True, False, Null, Color
-#func draw_texture_rect_region(p_texture = null, p_rect = null, p_src_rect = null, p_modulate = Color(1,1,1,1), p_transpose = False, p_normal_map = Null, p_clip_uv = True):
+
 	func before_each():
-		doubler = Doubler.new()
+		doubler = Doubler.new(_utils.DOUBLE_STRATEGY.FULL)
 		doubler.set_use_unique_names(false)
 		doubler.set_output_dir(TEMP_FILES)
 

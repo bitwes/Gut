@@ -3,7 +3,6 @@
 # methods FIRST, then add built ins.
 # ------------------------------------------------------------------------------
 class ScriptMethods:
-
 	# List of methods that should not be overloaded when they are not defined
 	# in the class being doubled.  These either break things if they are
 	# overloaded or do not have a "super" equivalent so we can't just pass
@@ -82,11 +81,14 @@ var _double_count = 0
 var _use_unique_names = true
 var _spy = null
 var _lgr = null
+var _utils = load('res://addons/gut/utils.gd').new()
 var _method_maker = load('res://addons/gut/method_maker.gd').new()
+var _strategy = null
 
-func _init():
+func _init(strategy=_utils.DOUBLE_STRATEGY.PARTIAL):
 	# make sure _method_maker gets logger too
 	set_logger(load('res://addons/gut/logger.gd').new())
+	_strategy = strategy
 
 # ###############
 # Private
@@ -153,12 +155,13 @@ func _get_methods(target_path):
 		if(methods[i].flags == 65):
 			script_methods.add_local_method(methods[i])
 
-	# second pass is for anything not local
-	for i in range(methods.size()):
-		# 65 is a magic number for methods in script, though documentation
-		# says 64.  This picks up local overloads of base class methods too.
-		if(methods[i].flags != 65):
-			script_methods.add_built_in_method(methods[i])
+	if(_strategy == _utils.DOUBLE_STRATEGY.FULL):
+		# second pass is for anything not local
+		for i in range(methods.size()):
+			# 65 is a magic number for methods in script, though documentation
+			# says 64.  This picks up local overloads of base class methods too.
+			if(methods[i].flags != 65):
+				script_methods.add_built_in_method(methods[i])
 
 	return script_methods
 
@@ -243,13 +246,26 @@ func set_logger(logger):
 	_lgr = logger
 	_method_maker.set_logger(logger)
 
-func double_scene(path):
+func get_strategy():
+	return _strategy
+
+func set_strategy(strategy):
+	_strategy = strategy
+
+func double_scene(path, strategy=_strategy):
+	var old_strat = _strategy
+	_strategy = strategy
 	var temp_path = _get_temp_path(path)
 	_double_scene_and_script(path, temp_path)
+	_strategy = old_strat
 	return load(temp_path)
 
-func double(path):
-	return load(_double(path))
+func double(path, strategy=_strategy):
+	var old_strat = _strategy
+	_strategy = strategy
+	var to_return = load(_double(path))
+	_strategy = old_strat
+	return to_return
 
 func clear_output_directory():
 	var did = false
