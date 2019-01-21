@@ -16,16 +16,7 @@
 # }]
 # default_args []
 
-
 var _lgr = load('res://addons/gut/logger.gd').new()
-const NOT_SUPPORTED_PARAMS = '__not_supported_param_types_found__'
-
-const NAME = 'name'
-const ARGS = 'args'
-const FLAGS = 'flags'
-const TYPE = 'type'
-const DEFAULT_ARGS = 'default_args'
-
 const PARAM_PREFIX = 'p_'
 
 # ------------------------------------------------------
@@ -49,6 +40,9 @@ const PARAM_PREFIX = 'p_'
 	# TYPE_OBJECT = 17 — Variable is of type Object.
 	# TYPE_DICTIONARY = 18 — Variable is of type Dictionary.
 	# TYPE_ARRAY = 19 — Variable is of type Array.
+	# TYPE_VECTOR2_ARRAY = 24 — Variable is of type PoolVector2Array.
+
+
 # TYPE_NIL = 0 — Variable is of type nil (only applied for null).
 # TYPE_TRANSFORM2D = 8 — Variable is of type Transform2D.
 # TYPE_PLANE = 9 — Variable is of type Plane.
@@ -62,7 +56,6 @@ const PARAM_PREFIX = 'p_'
 # TYPE_INT_ARRAY = 21 — Variable is of type PoolIntArray.
 # TYPE_REAL_ARRAY = 22 — Variable is of type PoolRealArray.
 # TYPE_STRING_ARRAY = 23 — Variable is of type PoolStringArray.
-# TYPE_VECTOR2_ARRAY = 24 — Variable is of type PoolVector2Array.
 # TYPE_VECTOR3_ARRAY = 25 — Variable is of type PoolVector3Array.
 # TYPE_COLOR_ARRAY = 26 — Variable is of type PoolColorArray.
 # TYPE_MAX = 27 — Marker for end of type constants.
@@ -81,6 +74,7 @@ func _init():
 	_supported_types[TYPE_ARRAY] = ''
 	_supported_types[TYPE_STRING] = ''
 	_supported_types[TYPE_DICTIONARY] = ''
+	_supported_types[TYPE_VECTOR2_ARRAY] = ''
 
 	# These require a prefix for whatever default is provided
 	_supported_types[TYPE_VECTOR2] = 'Vector2'
@@ -113,6 +107,8 @@ func _get_arg_text(method_meta):
 			# strings are special, they need quotes around the value
 			if(t == TYPE_STRING):
 				value = str("'", str(method_meta.default_args[i]), "'")
+			elif(t == TYPE_COLOR):
+				value = str(_supported_types[t], '(', str(method_meta.default_args[i]).to_lower(), ')')
 			# Everything else puts the prefix (if one is there) fomr _supported_types
 			# in front.
 			else:
@@ -142,99 +138,35 @@ func _get_arg_text(method_meta):
 # types whose defaults are supported will have their values.  If a datatype
 # is not supported and the paramter has a default, a warning message will be
 # printed and the decleration will return null.
-func get_decleration(meta):
+func get_decleration_text(meta):
 	var param_text = _get_arg_text(meta)
 	var text = null
 	if(param_text != null):
 		text = str('func ', meta.name, '(', param_text, '):')
 	return text
 
-
-func _get_callback_parameters(method_hash):
-	var called_with = 'null'
-	if(method_hash[ARGS].size() > 0):
-		called_with = '['
-		for i in range(method_hash[ARGS].size()):
-			called_with += str(PARAM_PREFIX, method_hash[ARGS][i][NAME])
-			if(i < method_hash[ARGS].size() - 1):
-				called_with += ', '
-		called_with += ']'
-	return called_with
-
-# func _get_methods(target_path):
-# 	var obj = load(target_path).new()
-# 	# any mehtod in the script or super script
-# 	var script_methods = ScriptMethods.new()
-# 	var methods = obj.get_method_list()
-#
-# 	# first pass is for local mehtods only
-# 	for i in range(methods.size()):
-# 		# 65 is a magic number for methods in script, though documentation
-# 		# says 64.  This picks up local overloads of base class methods too.
-# 		if(methods[i][FLAGS] == 65):
-# 			script_methods.add_local_method(methods[i])
-#
-# 	# second pass is for anything not local
-# 	for i in range(methods.size()):
-# 		# 65 is a magic number for methods in script, though documentation
-# 		# says 64.  This picks up local overloads of base class methods too.
-# 		if(methods[i][FLAGS] != 65):
-# 			script_methods.add_built_in_method(methods[i])
-#
-# 	return script_methods
-
-
-# func _get_func_text(method_hash):
-# 	var ftxt = str('func ', method_hash[NAME], '(')
-# 	ftxt += str(_get_arg_text(method_hash), "):\n")
-#
-# 	var called_with = _get_callback_parameters(method_hash)
-# 	if(_spy):
-# 		ftxt += "\t__gut_metadata_.spy.add_call(self, '" + method_hash[NAME] + "', " + called_with + ")\n"
-#
-# 	if(_stubber):
-# 		ftxt += "\treturn __gut_metadata_.stubber.get_return(self, '" + method_hash[NAME] + "', " + called_with + ")\n"
-# 	else:
-# 		ftxt += "\tpass\n"
-#
-# 	return ftxt
-
-
-func _get_super_call_parameters(method_hash):
+# creates a call to the function in meta in the super's class.
+func get_super_call_text(meta):
 	var params = ''
 	var all_supported = true
 
-	for i in range(method_hash[ARGS].size()):
-		params += PARAM_PREFIX + method_hash[ARGS][i][NAME]
-		if(!_supports_type(method_hash[ARGS][i][TYPE])):
-			_lgr.warn(str('Unsupported type ', method_hash[ARGS][i][TYPE]))
-			all_supported = false
-
-		if(method_hash[ARGS].size() > 1 and i != method_hash[ARGS].size() -1):
+	for i in range(meta.args.size()):
+		params += PARAM_PREFIX + meta.args[i].name
+		if(meta.args.size() > 1 and i != meta.args.size() -1):
 			params += ', '
-	if(all_supported):
-		return params
-	else:
-		return NOT_SUPPORTED_PARAMS
 
-func _get_super_func_text(method_hash):
-	var params = _get_super_call_parameters(method_hash)
+	return str('.', meta.name, '(', params, ')')
 
-	var call_super_text = str(
-		"return .",
-		method_hash[NAME],
-		"(",
-		_get_super_call_parameters(method_hash),
-		")\n")
-	var ftxt = str('func ', method_hash[NAME], '(')
-	ftxt += str(_get_arg_text(method_hash), "):\n")
-	ftxt += _get_indented_line(1, call_super_text)
-
-	if(params == NOT_SUPPORTED_PARAMS):
-		return ''
-	else:
-		return ftxt
-
+func get_spy_call_parameters_text(meta):
+	var called_with = 'null'
+	if(meta.args.size() > 0):
+		called_with = '['
+		for i in range(meta.args.size()):
+			called_with += str(PARAM_PREFIX, meta.args[i].name)
+			if(i < meta.args.size() - 1):
+				called_with += ', '
+		called_with += ']'
+	return called_with
 
 func get_logger():
 	return _lgr

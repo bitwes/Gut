@@ -65,7 +65,7 @@ class TestTheBasics:
 	func test_all_parameters_are_defaulted_to_null():
 		gr.doubler.double(DOUBLE_ME_PATH)
 		var text = gut.get_file_as_text(TEMP_FILES.plus_file('double_me.gd'))
-		assert_true(text.match('*one_default(p_arg0 = null, p_arg1 = null)*'))
+		assert_true(text.match('*one_default(p_arg0=null, p_arg1=null)*'))
 
 	func test_doubled_thing_includes_stubber_metadata():
 		var doubled = gr.doubler.double(DOUBLE_ME_PATH).new()
@@ -128,6 +128,13 @@ class TestTheBasics:
 		gr.doubler.set_logger(l)
 		assert_eq(gr.doubler.get_logger(), l)
 
+	func test_doubler_sets_logger_of_method_maker():
+		assert_eq(gr.doubler.get_logger(), gr.doubler._method_maker.get_logger())
+
+	func test_setting_logger_sets_it_on_method_maker():
+		var l = load('res://addons/gut/logger.gd').new()
+		gr.doubler.set_logger(l)
+		assert_eq(gr.doubler.get_logger(), gr.doubler._method_maker.get_logger())
 
 
 class TestBuiltInOverloading:
