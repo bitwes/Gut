@@ -1,4 +1,4 @@
-var _Logger = load('res://addons/gut/logger.gd')
+var _Logger = load('res://addons/gut/logger.gd') # everything should use get_logger
 var Stubber = load('res://addons/gut/stubber.gd')
 var Doubler = load('res://addons/gut/doubler.gd')
 var Spy = load('res://addons/gut/spy.gd')
@@ -18,3 +18,28 @@ enum DOUBLE_STRATEGY{
 # ------------------------------------------------------------------------------
 func get_logger():
 	return _Logger.new()
+
+# ------------------------------------------------------------------------------
+# Returns an array created by splitting the string by the delimiter
+# ------------------------------------------------------------------------------
+func split_string(to_split, delim):
+	var to_return = []
+
+	var loc = to_split.find(delim)
+	while(loc != -1):
+		to_return.append(to_split.substr(0, loc))
+		to_split = to_split.substr(loc + 1, to_split.length() - loc)
+		loc = to_split.find(delim)
+	to_return.append(to_split)
+	return to_return
+
+# ------------------------------------------------------------------------------
+# Returns a string containing all the elements in the array seperated by delim
+# ------------------------------------------------------------------------------
+func join_array(a, delim):
+	var to_return = ''
+	for i in range(a.size()):
+		to_return += str(a[i])
+		if(i != a.size() -1):
+			to_return += str(delim)
+	return to_return

@@ -72,6 +72,37 @@ class ScriptMethods:
 			text += str("  ", built_ins[i].name, "\n")
 		return text
 
+
+class ObjectInfo:
+	var _path = null
+	var _subpaths = []
+	var _utils = load('res://addons/gut/utils.gd').new()
+
+	func _init(path, subpath=null):
+		_path = path
+		if(subpath != null):
+			_subpaths = _utils.split_string(subpath, '/')
+
+	# Returns an instance of the class/inner class
+	func instantiate():
+		return get_loaded_class().new()
+
+	# Can't call it get_class.  Loads up the class and then any inner classes
+	# to give back a reference to the desired Inner class (if ther eis any)
+	func get_loaded_class():
+		var LoadedClass = load(_path)
+		for i in range(_subpaths.size()):
+			LoadedClass = LoadedClass.get(_subpaths[i])
+		return LoadedClass
+
+	func to_s():
+		return str(_path, '[', get_subpath(), ']')
+
+	func get_path():
+		return _path
+
+	func get_subpath():
+		return _utils.join_array(_subpaths, '/')
 # ------------------------------------------------------------------------------
 # START Doubler
 # ------------------------------------------------------------------------------
@@ -99,16 +130,16 @@ func _get_indented_line(indents, text):
 		to_return += "\t"
 	return str(to_return, text, "\n")
 
-func _write_file(target_path, dest_path, override_path=null):
-	var script_methods = _get_methods(target_path)
+func _write_file(obj_info, dest_path, override_path=null):
+	var script_methods = _get_methods(obj_info.get_path())
 
-	var metadata = _get_stubber_metadata_text(target_path)
+	var metadata = _get_stubber_metadata_text(obj_info.get_path())
 	if(override_path):
 		metadata = _get_stubber_metadata_text(override_path)
 
 	var f = File.new()
 	f.open(dest_path, f.WRITE)
-	f.store_string(str("extends '", target_path, "'\n"))
+	f.store_string(str("extends '", obj_info.get_path(), "'\n"))
 	f.store_string(metadata)
 	for i in range(script_methods.local_methods.size()):
 		f.store_string(_get_func_text(script_methods.local_methods[i]))
@@ -127,7 +158,8 @@ func _double_scene_and_script(target_path, dest_path):
 	inst.free()
 
 	if(script_path):
-		var double_path = _double(script_path, target_path)
+		var oi = ObjectInfo.new(script_path)
+		var double_path = _double(oi, target_path)
 		var dq = '"'
 		var f = File.new()
 		f.open(dest_path, f.READ)
@@ -218,9 +250,9 @@ func _get_temp_path(path):
 	var to_return = _output_dir.plus_file(file_name)
 	return to_return
 
-func _double(obj, override_path=null):
-	var temp_path = _get_temp_path(obj)
-	_write_file(obj, temp_path, override_path)
+func _double(obj_info, override_path=null):
+	var temp_path = _get_temp_path(obj_info.get_path())
+	_write_file(obj_info, temp_path, override_path)
 	_double_count += 1
 	return temp_path
 
@@ -269,14 +301,21 @@ func double_scene(path, strategy=_strategy):
 	return load(temp_path)
 
 func double(path, strategy=_strategy):
+	var oi = ObjectInfo.new(path)
 	var old_strat = _strategy
 	_strategy = strategy
-	var to_return = load(_double(path))
+	var to_return = load(_double(oi))
 	_strategy = old_strat
 	return to_return
 
-func double_inner(path, inner_class_name, strategy=_strategy):
-	pass
+func double_inner(path, subpath, strategy=_strategy):
+	var oi = ObjectInfo.new(path, subpath)
+	return oi.get_loaded_class()
+	# var temp_path = _get_temp_path(obj)
+	# _write_file(obj, temp_path, override_path)
+	# _double_count += 1
+	# return temp_path
+
 
 func clear_output_directory():
 	var did = false

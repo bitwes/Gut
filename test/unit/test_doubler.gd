@@ -239,12 +239,24 @@ class TestDefaultParameters:
 class TestDoubleInnerClasses:
 	extends BaseTest
 
-	class InnerClass:
-		func return_seven():
-			return 7
+	var doubler = null
+	const INNER_CLASSES_PATH = 'res://test/doubler_test_objects/inner_classes.gd'
 
-	func test_inners():
-		# this only works with instances but we can get to the path and all the
-		# neat stuff, this might be the path to stubbing inners
-		var i = InnerClass.new()
-		print(inst2dict(i))
+	func before_each():
+		doubler = Doubler.new()
+		doubler.set_use_unique_names(false)
+		doubler.set_output_dir(TEMP_FILES)
+
+	func test_can_instantiate_inner_double():
+		var Doubled = doubler.double_inner(INNER_CLASSES_PATH, 'InnerB/InnerB1')
+		assert_has_method(Doubled.new(), 'get_b1')
+
+
+
+
+	# func test_inners_thing():
+	# 	# this only works with instances but we can get to the path and all the
+	# 	# neat stuff, this might be the path to stubbing inners
+	# 	var i = InnerClass.new()
+	# 	print(inst2dict(i))
+	# 	pending()
