@@ -122,7 +122,7 @@ var _doubler = load('res://addons/gut/doubler.gd').new()
 var _spy = load('res://addons/gut/spy.gd').new()
 
 const SIGNAL_TESTS_FINISHED = 'tests_finished'
-const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yeild_before_teardown'
+const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yield_before_teardown'
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -172,7 +172,7 @@ func _ready():
 
 	# This timer is started, but it should never finish.  Used
 	# to determine how long it took to run the tests since
-	# getting the time and doing time math is rediculous in godot.
+	# getting the time and doing time math is ridiculous in godot.
 	add_child(_runtime_timer)
 	_runtime_timer.set_one_shot(true)
 	_runtime_timer.set_wait_time(RUNTIME_START_TIME)
@@ -590,7 +590,7 @@ func p(text, level=0, indent=0):
 
 	if(level <= _log_level):
 		if(_current_test != null):
-			#make sure everyting printed during the execution
+			#make sure everything printed during the execution
 			#of a test is at least indented once under the test
 			if(indent == 0):
 				indent = 1
@@ -703,7 +703,7 @@ func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
 # ------------------------------------------------------------------------------
 # This will try to find a script in the list of scripts to test that contains
 # the specified script name.  It does not have to be a full match.  It will
-# select the first matching occurance so that this script will run when run_tests
+# select the first matching occurrence so that this script will run when run_tests
 # is called.  Works the same as the select_this_one option of add_script.
 #
 # returns whether it found a match or not
@@ -883,7 +883,7 @@ func simulate(obj, times, delta):
 func set_yield_time(time, text=''):
 	_yield_timer.set_wait_time(time)
 	_yield_timer.start()
-	var msg = '/# Yeilding (' + str(time) + 's)'
+	var msg = '/# Yielding (' + str(time) + 's)'
 	if(text == ''):
 		msg += ' #/'
 	else:

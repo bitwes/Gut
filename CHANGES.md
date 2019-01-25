@@ -125,7 +125,7 @@ assert_has_method
 
 # 6.1.0
 * Moved as many files as I could to `gut_tests_and_examples` so that there was less stuff to uncheck when installing via the in-engine Asset Library.  I'm still not 100% happy with the setup.
-* Moved the License to `addons/gut/` so that it is distributed with the addon and doesn't accidently get copied into the root of some other project when installed via the Asset Library.
+* Moved the License to `addons/gut/` so that it is distributed with the addon and doesn't accidentally get copied into the root of some other project when installed via the Asset Library.
 * Some README tweaks.
 * Fixed resize window handle bug.  It was connecting to wrong signals and didn't work.
 * Missed changing `simulate` to call `_physics_process` instead of `_fixed_process` in the 3.0 conversion.  Fixed that.

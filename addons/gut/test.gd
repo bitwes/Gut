@@ -37,7 +37,7 @@
 ################################################################################
 extends Node
 
-# constant for signal when calling yeild_for
+# constant for signal when calling yield_for
 const YIELD = 'timeout'
 var StubParams = load('res://addons/gut/stub_params.gd')
 
@@ -686,7 +686,7 @@ func assert_called(inst, method_name, parameters=null):
 # sent matching parameters.
 # ------------------------------------------------------------------------------
 func assert_not_called(inst, method_name, parameters=null):
-	var disp = str('Expected [', method_name, '] to NOT hvae been called on ', inst)
+	var disp = str('Expected [', method_name, '] to NOT have been called on ', inst)
 
 	if(!inst.get('__gut_metadata_')):
 		_fail('You must pass a doubled instance to assert_not_called.  Check the wiki for info on using double.')
