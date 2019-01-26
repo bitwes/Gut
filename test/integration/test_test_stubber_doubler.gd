@@ -29,7 +29,6 @@ func after_each():
 	gr.gut.get_doubler().clear_output_directory()
 	gr.gut.get_spy().clear()
 
-
 func test_double_returns_a_class():
 	var D = gr.test.double(DOUBLE_ME_PATH)
 	assert_ne(D.new(), null)
@@ -83,8 +82,6 @@ func test_can_stub_multiple_inner_classes():
 	assert_eq(a.get_a(), 10)
 	assert_eq(anotherA.get_a(), 20)
 
-# We cannot stub inner classes at the path level because dict2inst does not
-# work on instances that were not created from scripts in the res:// directory.
 func test_can_stub_multiple_inners_using_class_path_and_inner_names():
 	var a = gr.gut.get_doubler().double_inner(INNER_CLASSES_PATH, 'InnerA').new()
 	var anotherA = gr.gut.get_doubler().double_inner(INNER_CLASSES_PATH, 'AnotherInnerA').new()
