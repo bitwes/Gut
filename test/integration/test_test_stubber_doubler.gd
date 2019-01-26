@@ -7,6 +7,7 @@ const TEMP_FILES = 'user://test_doubler_temp_file'
 
 const DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_me.gd'
 const DOUBLE_ME_SCENE_PATH = 'res://test/doubler_test_objects/double_me_scene.tscn'
+const INNER_CLASSES_PATH = 'res://test/doubler_test_objects/inner_classes.gd'
 
 
 var gr = {
@@ -62,3 +63,24 @@ func test_when_strategy_is_partial_then_supers_are_NOT_spied_in_scenes():
 	doubled.is_blocking_signals()
 	gr.test.assert_not_called(doubled, 'is_blocking_signals')
 	assert_eq(gr.test.get_pass_count(), 1)
+
+func test_can_stub_inner_class_methods():
+	var d = gr.gut.get_doubler().double_inner(INNER_CLASSES_PATH, 'InnerA').new()
+	gr.test.stub(INNER_CLASSES_PATH, 'get_a').to_return(10)
+	assert_eq(d.get_a(), 10)
+
+func test_can_stub_multiple_inner_classes():
+	var a = gr.gut.get_doubler().double_inner(INNER_CLASSES_PATH, 'InnerA').new()
+	var anotherA = gr.gut.get_doubler().double_inner(INNER_CLASSES_PATH, 'AnotherInnerA').new()
+	gr.test.stub(a, 'get_a').to_return(10)
+	gr.test.stub(anotherA, 'get_a').to_return(20)
+	assert_eq(a.get_a(), 10)
+	assert_eq(anotherA.get_a(), 20)
+
+func test_can_stub_multiple_inners_using_class_path_and_inner_names():
+	var a = gr.gut.get_doubler().double_inner(INNER_CLASSES_PATH, 'InnerA').new()
+	var anotherA = gr.gut.get_doubler().double_inner(INNER_CLASSES_PATH, 'AnotherInnerA').new()
+	gr.test.stub(INNER_CLASSES_PATH, 'InnerA', 'get_a').to_return(10)
+	gr.test.stub(anotherA, 'AnotherInnerA', 'get_a').to_return(20)
+	assert_eq(a.get_a(), 10)
+	assert_eq(anotherA.get_a(), 20)

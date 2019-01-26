@@ -38,6 +38,7 @@ func _do_stuff():
 	print(to_json(i))
 	print(i.get_b1())
 	print(inst2dict(i))
+	print(inst2dict(i)['@path'])
 	print(inst2dict(t.new()))
 
 

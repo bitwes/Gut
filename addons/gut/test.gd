@@ -39,7 +39,6 @@ extends Node
 
 # constant for signal when calling yeild_for
 const YIELD = 'timeout'
-var StubParams = load('res://addons/gut/stub_params.gd')
 
 # Need a reference to the instance that is running the tests.  This
 # is set by the gut class when it runs the tests.  This gets you
@@ -107,7 +106,7 @@ var _signal_watcher = load('res://addons/gut/signal_watcher.gd').new()
 # Convenience copy of _utils.DOUBLE_STRATEGY
 var DOUBLE_STRATEGY = null
 
-var _utils = load('res://addons/gut/utils.gd')
+var _utils = load('res://addons/gut/utils.gd').new()
 func _init():
 	_init_types_dictionary()
 	DOUBLE_STRATEGY = _utils.DOUBLE_STRATEGY
@@ -827,7 +826,16 @@ func double_scene(thing, strategy=null):
 		override_strat = gut.get_doubler().get_strategy()
 	return gut.get_doubler().double_scene(thing, override_strat)
 
-func stub(thing, method_name):
-	var sp = StubParams.new(thing, method_name)
+# Parameters
+# 1: the thing to stub, a file path or a instance or a class
+# 2: either an inner class subpath or the method name
+# 3: the method name if an inner class subpath was specified
+func stub(thing, p2, p3=null):
+	var method_name = p2
+	var subpath = null
+	if(p3 != null):
+		subpath = p2
+		method_name = p3
+	var sp = _utils.StubParams.new(thing, method_name, subpath)
 	gut.get_stubber().add_stub(sp)
 	return sp

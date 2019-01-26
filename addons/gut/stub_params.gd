@@ -1,12 +1,14 @@
 var return_val = null
 var stub_target = null
+var target_subpath = null
 var parameters = null
 var stub_method = null
 const NOT_SET = '|_1_this_is_not_set_1_|'
 
-func _init(target=null, method=null):
+func _init(target=null, method=null, subpath=null):
 	stub_target = target
 	stub_method = method
+	target_subpath = subpath
 
 func to_return(val):
 	return_val = val

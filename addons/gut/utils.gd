@@ -2,6 +2,7 @@ var _Logger = load('res://addons/gut/logger.gd') # everything should use get_log
 var Stubber = load('res://addons/gut/stubber.gd')
 var Doubler = load('res://addons/gut/doubler.gd')
 var Spy = load('res://addons/gut/spy.gd')
+var StubParams = load('res://addons/gut/stub_params.gd')
 
 enum DOUBLE_STRATEGY{
 	FULL,

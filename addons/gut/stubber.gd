@@ -9,8 +9,8 @@
 # 	}
 # }
 var returns = {}
-var StubParams = load('res://addons/gut/stub_params.gd')
 var _gut = null
+var _utils = load('res://addons/gut/utils.gd').new()
 
 func _is_instance(obj):
 	return typeof(obj) == TYPE_OBJECT and !obj.has_method('new')
@@ -23,7 +23,9 @@ func _get_path_from_variant(obj):
 			to_return = obj
 		TYPE_OBJECT:
 			if(_is_instance(obj)):
-				to_return = obj.get_script().get_path()
+				print(obj)
+				var d = inst2dict(obj)
+				to_return = d['@path']#obj.get_script().get_path()
 			else:
 				to_return = obj.resource_path
 	return to_return
@@ -45,7 +47,7 @@ func _add_obj_method(obj, method):
 # ##############
 func set_return(obj, method, value, parameters = null):
 	var key = _add_obj_method(obj, method)
-	var sp = StubParams.new(key, method)
+	var sp = _utils.StubParams.new(key, method)
 	sp.parameters = parameters
 	sp.return_val = value
 	returns[key][method].append(sp)

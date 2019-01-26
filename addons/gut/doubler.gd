@@ -144,9 +144,9 @@ func _get_indented_line(indents, text):
 func _write_file(obj_info, dest_path, override_path=null):
 	var script_methods = _get_methods(obj_info)
 
-	var metadata = _get_stubber_metadata_text(obj_info.get_path())
+	var metadata = _get_stubber_metadata_text(obj_info)
 	if(override_path):
-		metadata = _get_stubber_metadata_text(override_path)
+		metadata = _get_stubber_metadata_text(obj_info, override_path)
 
 	var f = File.new()
 	f.open(dest_path, f.WRITE)
@@ -216,9 +216,13 @@ func _get_inst_id_ref_str(inst):
 		ref_str = str('instance_from_id(', inst.get_instance_id(),')')
 	return ref_str
 
-func _get_stubber_metadata_text(target_path):
+func _get_stubber_metadata_text(obj_info, override_path = null):
+	var path = obj_info.get_path()
+	if(override_path != null):
+		path = override_path
 	return "var __gut_metadata_ = {\n" + \
-           "\tpath='" + target_path + "',\n" + \
+           "\tpath='" + path + "',\n" + \
+		   "\tsubpath='" + obj_info.get_subpath() + "',\n" + \
 		   "\tstubber=" + _get_inst_id_ref_str(_stubber) + ",\n" + \
 		   "\tspy=" + _get_inst_id_ref_str(_spy) + "\n" + \
            "}\n"

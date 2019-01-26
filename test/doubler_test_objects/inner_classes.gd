@@ -3,6 +3,11 @@ var _value = 1
 class InnerA:
 	func get_a():
 		return 'a'
+# Needed another class with same method as an inner class to test
+# stubbing.
+class AnotherInnerA:
+	func get_a():
+		return 'aia'
 
 class InnerB:
 	func get_b():

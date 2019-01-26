@@ -269,11 +269,10 @@ class TestDoubleInnerClasses:
 		assert_has_method(inst, 'get_a')
 		assert_has_method(inst, 'get_ca')
 
+	func test_doubled_inners_have_subpath_set_in_metadata():
+		var inst = doubler.double_inner(INNER_CLASSES_PATH, 'InnerCA').new()
+		assert_eq(inst.__gut_metadata_.subpath, 'InnerCA')
 
-
-	# func test_inners_thing():
-	# 	# this only works with instances but we can get to the path and all the
-	# 	# neat stuff, this might be the path to stubbing inners
-	# 	var i = InnerClass.new()
-	# 	print(inst2dict(i))
-	# 	pending()
+	func test_non_inners_have_empty_subpath():
+		var inst = doubler.double(INNER_CLASSES_PATH).new()
+		assert_eq(inst.__gut_metadata_.subpath, '')

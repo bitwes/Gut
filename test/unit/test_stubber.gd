@@ -12,6 +12,8 @@ var ToStub = load(TO_STUB_PATH)
 const HAS_STUB_METADATA_PATH = 'res://test/stub_test_objects/has_stub_metadata.gd'
 var HasStubMetadata = load(HAS_STUB_METADATA_PATH)
 
+const INNER_CLASSES_PATH = 'res://test/doubler_test_objects/inner_classes.gd'
+var InnerClasses = load(INNER_CLASSES_PATH)
 
 var gr = {
 	stubber = null
