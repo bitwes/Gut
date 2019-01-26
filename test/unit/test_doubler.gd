@@ -241,6 +241,7 @@ class TestDoubleInnerClasses:
 
 	var doubler = null
 	const INNER_CLASSES_PATH = 'res://test/doubler_test_objects/inner_classes.gd'
+	var InnerClasses = load(INNER_CLASSES_PATH)
 
 	func before_each():
 		doubler = Doubler.new()
@@ -258,6 +259,15 @@ class TestDoubleInnerClasses:
 	func test_double_file_contains_source_file_and_inner_classes_in_the_name():
 		doubler.double_inner(INNER_CLASSES_PATH, 'InnerB/InnerB1')
 		assert_file_exists(TEMP_FILES + '/inner_classes__InnerB__InnerB1.gd')
+
+	func test_doubled_instances_extend_the_inner_class():
+		var inst = doubler.double_inner(INNER_CLASSES_PATH, 'InnerA').new()
+		assert_extends(inst, InnerClasses.InnerA)
+
+	func test_doubled_inners_that_extend_inners_get_full_inheritance():
+		var inst = doubler.double_inner(INNER_CLASSES_PATH, 'InnerCA').new()
+		assert_has_method(inst, 'get_a')
+		assert_has_method(inst, 'get_ca')
 
 
 

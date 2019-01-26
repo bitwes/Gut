@@ -3,7 +3,7 @@
   "should_maximize":true,
   "should_exit":true,
   "ignore_pause":true,
-  "log": 0,
+  "log": 2,
   "opacity":100,
   "inner_class":""
 }

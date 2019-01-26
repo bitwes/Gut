@@ -103,6 +103,17 @@ class ObjectInfo:
 
 	func get_subpath():
 		return _utils.join_array(_subpaths, '/')
+
+	func has_subpath():
+		return _subpaths.size() != 0
+
+	func get_extends_text():
+		var extend = str("extends '", get_path(), '\'')
+		if(has_subpath()):
+			extend += str('.', get_subpath().replace('/', '.'))
+		return extend
+
+
 # ------------------------------------------------------------------------------
 # START Doubler
 # ------------------------------------------------------------------------------
@@ -139,7 +150,9 @@ func _write_file(obj_info, dest_path, override_path=null):
 
 	var f = File.new()
 	f.open(dest_path, f.WRITE)
-	f.store_string(str("extends '", obj_info.get_path(), "'\n"))
+
+
+	f.store_string(str(obj_info.get_extends_text(), "\n"))
 	f.store_string(metadata)
 	for i in range(script_methods.local_methods.size()):
 		f.store_string(_get_func_text(script_methods.local_methods[i]))
@@ -242,11 +255,12 @@ func _get_super_func_text(method_hash):
 
 	return ftxt
 
+# returns the path to write the double file to
 func _get_temp_path(object_info):
 	var file_name = object_info.get_path().get_file().get_basename()
 	var extension = object_info.get_path().get_extension()
 
-	if(object_info.get_subpath()):
+	if(object_info.has_subpath()):
 		file_name += '__' + object_info.get_subpath().replace('/', '__')
 
 	if(_use_unique_names):
