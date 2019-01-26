@@ -829,11 +829,32 @@ func get_summary_text():
 # ------------------------------------------------------------------------------
 # double a script or inner class
 # ------------------------------------------------------------------------------
-func double(thing, strategy=null):
-	var override_strat = strategy
-	if(override_strat == null):
-		override_strat = gut.get_doubler().get_strategy()
-	return gut.get_doubler().double(thing, override_strat)
+func double(thing, p2=null, p3=null):
+	var strategy = p2
+	var subpath = null
+
+	if(typeof(p2) == TYPE_STRING):
+		strategy = p3
+		subpath = p2
+
+	var path = null
+	if(typeof(thing) == TYPE_OBJECT):
+		path = thing.resource_path
+	else:
+		path = thing
+
+	var extension = path.get_extension()
+	var to_return = null
+
+	if(extension == 'tscn'):
+		to_return =  double_scene(path, strategy)
+	elif(extension == 'gd'):
+		if(subpath == null):
+			to_return = double_script(path, strategy)
+		else:
+			to_return = double_inner(path, subpath, strategy)
+
+	return to_return
 
 # ------------------------------------------------------------------------------
 # Double a scene
@@ -843,6 +864,18 @@ func double_scene(thing, strategy=null):
 	if(override_strat == null):
 		override_strat = gut.get_doubler().get_strategy()
 	return gut.get_doubler().double_scene(thing, override_strat)
+
+func double_script(thing, strategy=null):
+	var override_strat = strategy
+	if(override_strat == null):
+		override_strat = gut.get_doubler().get_strategy()
+	return gut.get_doubler().double(thing, override_strat)
+
+func double_inner(thing, subpath, strategy=null):
+	var override_strat = strategy
+	if(override_strat == null):
+		override_strat = gut.get_doubler().get_strategy()
+	return gut.get_doubler().double_inner(thing, subpath, override_strat)
 
 # ------------------------------------------------------------------------------
 # Stub something.

@@ -87,8 +87,9 @@ class ObjectInfo:
 	func instantiate():
 		return get_loaded_class().new()
 
-	# Can't call it get_class.  Loads up the class and then any inner classes
-	# to give back a reference to the desired Inner class (if ther eis any)
+	# Can't call it get_class because that is reserved so it gets this ugly name.
+	# Loads up the class and then any inner classes to give back a reference to
+	# the desired Inner class (if there is any)
 	func get_loaded_class():
 		var LoadedClass = load(_path)
 		for i in range(_subpaths.size()):
@@ -317,6 +318,7 @@ func get_strategy():
 func set_strategy(strategy):
 	_strategy = strategy
 
+# double a scene
 func double_scene(path, strategy=_strategy):
 	var oi = ObjectInfo.new(path)
 	var old_strat = _strategy
@@ -326,6 +328,7 @@ func double_scene(path, strategy=_strategy):
 	_strategy = old_strat
 	return load(temp_path)
 
+# double a script
 func double(path, strategy=_strategy):
 	var oi = ObjectInfo.new(path)
 	var old_strat = _strategy
@@ -334,6 +337,7 @@ func double(path, strategy=_strategy):
 	_strategy = old_strat
 	return to_return
 
+# double an inner class in a script
 func double_inner(path, subpath, strategy=_strategy):
 	var oi = ObjectInfo.new(path, subpath)
 	var old_strat = _strategy
@@ -369,5 +373,8 @@ func delete_output_directory():
 # When creating doubles a unique name is used that each double can be its own
 # thing.  Sometimes, for testing, we do not want to do this so this allows
 # you to turn off creating unique names for each double class.
+#
+# THIS SHOULD NEVER BE USED OUTSIDE OF INTERNAL GUT TESTING.  It can cause
+# weird, hard to track down problems.
 func set_use_unique_names(should):
 	_use_unique_names = should

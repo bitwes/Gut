@@ -13,10 +13,7 @@
 extends "res://addons/gut/test.gd"
 
 class BaseTestClass:
-	extends "res://addons/gut/test.gd"
-
-	var Gut = load('res://addons/gut/gut.gd')
-	var Test = load('res://addons/gut/test.gd')
+	extends "res://test/gut_test.gd"
 	# !! Use this for debugging to see the results of all the subtests that
 	# are run using assert_fail_pass, assert_fail and assert_pass that are
 	# built into this class
