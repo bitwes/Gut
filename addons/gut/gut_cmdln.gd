@@ -408,6 +408,7 @@ func load_options_from_config_file(file_path, into):
 	into.log_level = get_value(results.result, 'log', 1)
 	into.inner_class = get_value(results.result, 'inner_class', '')
 	into.opacity = get_value(results.result, 'opacity', 100)
+	into.double_strategy = get_value(results.result, 'double_strategy', 'partial')
 
 	return 1
 

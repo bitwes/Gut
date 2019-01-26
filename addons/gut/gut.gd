@@ -448,6 +448,8 @@ func _does_class_name_match(class_name, script_class_name):
 func _test_the_scripts():
 	_init_run()
 	var file = File.new()
+	if(_doubler.get_strategy() == _utils.DOUBLE_STRATEGY.FULL):
+		_lgr.info("Using Double Strategy FULL as default strategy.  Keep an eye out for weirdness, this is still experimental.")
 
 	# loop through scripts
 	for s in range(_test_collector.scripts.size()):

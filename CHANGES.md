@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * double inner classes
 * assert_null
 * assert_not_null
+* smart double method
 
 # 6.6.1
 * __Issue 60__:  Improved signal assert failure messages in some cases by having them include a list of signals that were emitted for the object.
