@@ -44,3 +44,12 @@ func join_array(a, delim):
 		if(i != a.size() -1):
 			to_return += str(delim)
 	return to_return
+
+# ------------------------------------------------------------------------------
+# return if_null if value is null otherwise return value
+# ------------------------------------------------------------------------------
+func nvl(value, if_null):
+	if(value == null):
+		return if_null
+	else:
+		return value

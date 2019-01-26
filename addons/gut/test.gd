@@ -827,7 +827,9 @@ func get_summary_text():
 	return to_return
 
 # ------------------------------------------------------------------------------
-# double a script or inner class
+# Double a script, inner class, or scene using a path or a loaded script/scene.
+#
+#
 # ------------------------------------------------------------------------------
 func double(thing, p2=null, p3=null):
 	var strategy = p2
@@ -857,25 +859,25 @@ func double(thing, p2=null, p3=null):
 	return to_return
 
 # ------------------------------------------------------------------------------
-# Double a scene
+# Specifically double a scene
 # ------------------------------------------------------------------------------
-func double_scene(thing, strategy=null):
-	var override_strat = strategy
-	if(override_strat == null):
-		override_strat = gut.get_doubler().get_strategy()
-	return gut.get_doubler().double_scene(thing, override_strat)
+func double_scene(path, strategy=null):
+	var override_strat = _utils.nvl(strategy, gut.get_doubler().get_strategy())
+	return gut.get_doubler().double_scene(path, override_strat)
 
-func double_script(thing, strategy=null):
-	var override_strat = strategy
-	if(override_strat == null):
-		override_strat = gut.get_doubler().get_strategy()
-	return gut.get_doubler().double(thing, override_strat)
+# ------------------------------------------------------------------------------
+# Specifically double a script
+# ------------------------------------------------------------------------------
+func double_script(path, strategy=null):
+	var override_strat = _utils.nvl(strategy, gut.get_doubler().get_strategy())
+	return gut.get_doubler().double(path, override_strat)
 
-func double_inner(thing, subpath, strategy=null):
-	var override_strat = strategy
-	if(override_strat == null):
-		override_strat = gut.get_doubler().get_strategy()
-	return gut.get_doubler().double_inner(thing, subpath, override_strat)
+# ------------------------------------------------------------------------------
+# Specifically double an Inner class in a a script
+# ------------------------------------------------------------------------------
+func double_inner(path, subpath, strategy=null):
+	var override_strat = _utils.nvl(strategy, gut.get_doubler().get_strategy())
+	return gut.get_doubler().double_inner(path, subpath, override_strat)
 
 # ------------------------------------------------------------------------------
 # Stub something.
