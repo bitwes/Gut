@@ -765,16 +765,28 @@ func pending(text=""):
 # is not being watched.
 # ------------------------------------------------------------------------------
 
-# I think this reads better than set_yield_time, but don't want to break anything
+# ------------------------------------------------------------------------------
+# Yield for the time sent in.  The optional message will be printed when
+# Gut detects the yeild.  When the time expires the YIELD signal will be
+# emitted.
+# ------------------------------------------------------------------------------
 func yield_for(time, msg=''):
 	return gut.set_yield_time(time, msg)
 
+# ------------------------------------------------------------------------------
+# Yield to a signal or a maximum amount of time, whichever comes first.  When
+# the conditions are met the YIELD signal will be emitted.
+# ------------------------------------------------------------------------------
 func yield_to(obj, signal_name, max_wait, msg=''):
 	watch_signals(obj)
 	gut.set_yield_signal_or_time(obj, signal_name, max_wait, msg)
 
 	return gut
 
+# ------------------------------------------------------------------------------
+# Ends a test that had a yield in it.  You only need to use this if you do
+# not make assertions after a yield.
+# ------------------------------------------------------------------------------
 func end_test():
 	gut.end_yielded_test()
 
@@ -814,22 +826,35 @@ func get_summary_text():
 		to_return += str("\n  ", _summary.failed, ' failed.')
 	return to_return
 
+# ------------------------------------------------------------------------------
+# double a script or inner class
+# ------------------------------------------------------------------------------
 func double(thing, strategy=null):
 	var override_strat = strategy
 	if(override_strat == null):
 		override_strat = gut.get_doubler().get_strategy()
 	return gut.get_doubler().double(thing, override_strat)
 
+# ------------------------------------------------------------------------------
+# Double a scene
+# ------------------------------------------------------------------------------
 func double_scene(thing, strategy=null):
 	var override_strat = strategy
 	if(override_strat == null):
 		override_strat = gut.get_doubler().get_strategy()
 	return gut.get_doubler().double_scene(thing, override_strat)
 
+# ------------------------------------------------------------------------------
+# Stub something.
+#
 # Parameters
 # 1: the thing to stub, a file path or a instance or a class
 # 2: either an inner class subpath or the method name
 # 3: the method name if an inner class subpath was specified
+# NOTE:  right now we cannot stub inner classes at the path level so this should
+#        only be called with two parameters.  I did the work though so I'm going
+#        to leave it but not update the wiki.
+# ------------------------------------------------------------------------------
 func stub(thing, p2, p3=null):
 	var method_name = p2
 	var subpath = null

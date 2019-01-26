@@ -23,9 +23,14 @@ func _get_path_from_variant(obj):
 			to_return = obj
 		TYPE_OBJECT:
 			if(_is_instance(obj)):
-				print(obj)
-				var d = inst2dict(obj)
-				to_return = d['@path']#obj.get_script().get_path()
+				# these next two lines would work if godot allowed us to call
+				# inst2dict on an instance that didn't come from res://
+				# but since we can't do that, there doesn't appear to be a way
+				# to get the subpath from an instance so we cannot stub at the
+				# class level for inner classes, only at the instance level.
+				#		var d = inst2dict(obj)
+				#		to_return = d['@path']
+				to_return = obj.get_script().get_path()
 			else:
 				to_return = obj.resource_path
 	return to_return

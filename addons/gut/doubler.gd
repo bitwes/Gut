@@ -336,7 +336,10 @@ func double(path, strategy=_strategy):
 
 func double_inner(path, subpath, strategy=_strategy):
 	var oi = ObjectInfo.new(path, subpath)
+	var old_strat = _strategy
+	_strategy = strategy
 	var to_return = load(_double(oi))
+	_strategy = old_strat
 	return to_return
 	# var temp_path = _get_temp_path(obj)
 	# _write_file(obj, temp_path, override_path)

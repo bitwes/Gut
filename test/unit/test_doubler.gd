@@ -183,7 +183,6 @@ class TestBuiltInOverloading:
 		var txt = _get_temp_file_as_text('double_me_scene.gd')
 		assert_ne(txt.find('func is_blocking_signals'), -1, 'HAS non-overloaded methods')
 
-
 	func test_when_everything_included_you_can_still_make_an_a_new_object():
 		var inst = doubler.double(DOUBLE_ME_PATH).new()
 		assert_ne(inst, null)
@@ -211,6 +210,16 @@ class TestBuiltInOverloading:
 	func test_all_types_supported():
 		assert_string_contains(_dbl_win_dia_text, 'popup_centered(p_size=Vector2(0, 0)):', 'Vector2')
 		assert_string_contains(_dbl_win_dia_text, 'bounds=Rect2(0, 0, 0, 0)', 'Rect2')
+
+	func test_doubled_builtins_call_super():
+		var inst = doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG).new()
+		# Make sure the function is in the doubled class definition
+		assert_string_contains(_dbl_win_dia_text, 'func add_user_signal(p_signal')
+		# Make sure that when called it retains old functionality.
+		inst.add_user_signal('new_one')
+		inst.add_user_signal('new_two', ['a', 'b'])
+		assert_has_signal(inst, 'new_one')
+		assert_has_signal(inst, 'new_two')
 
 # Since defaults are only available for built-in methods these tests verify
 # specific method parameters that were found to cause a problem.
@@ -269,12 +278,6 @@ class TestDoubleInnerClasses:
 		assert_has_method(inst, 'get_a')
 		assert_has_method(inst, 'get_ca')
 
-
-	func test_doubled_inners_that_extend_inners_get_full_inheritance():
-		var inst = doubler.double_inner(INNER_CLASSES_PATH, 'InnerCA').new()
-		assert_has_method(inst, 'get_a')
-		assert_has_method(inst, 'get_ca')
-
 	func test_doubled_inners_have_subpath_set_in_metadata():
 		var inst = doubler.double_inner(INNER_CLASSES_PATH, 'InnerCA').new()
 		assert_eq(inst.__gut_metadata_.subpath, 'InnerCA')
@@ -282,3 +285,11 @@ class TestDoubleInnerClasses:
 	func test_non_inners_have_empty_subpath():
 		var inst = doubler.double(INNER_CLASSES_PATH).new()
 		assert_eq(inst.__gut_metadata_.subpath, '')
+
+	func test_can_override_strategy_when_doubling():
+		#doubler.set_strategy(DOUBLE_STRATEGY.FULL)
+		var d = doubler.double_inner(INNER_CLASSES_PATH, 'InnerA', DOUBLE_STRATEGY.FULL)
+		var text = _get_temp_file_as_text('inner_classes__InnerA.gd')
+		# make sure it has something from Object that isn't implemented
+		assert_string_contains(text, 'func disconnect(p_signal')
+		assert_eq(doubler.get_strategy(), DOUBLE_STRATEGY.PARTIAL, 'strategy should have been reset')

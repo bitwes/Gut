@@ -5,5 +5,5 @@
   "ignore_pause":true,
   "log": 2,
   "opacity":100,
-  "inner_class":"TestDoubleInnerClasses"
+  "inner_class":""
 }
