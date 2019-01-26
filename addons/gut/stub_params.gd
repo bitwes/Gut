@@ -23,3 +23,6 @@ func when_passed(p1=NOT_SET,p2=NOT_SET,p3=NOT_SET,p4=NOT_SET,p5=NOT_SET,p6=NOT_S
 		else:
 			idx += 1
 	return self
+
+func to_s():
+	return str(stub_target, '(', target_subpath, ').', stub_method, ' with (', parameters, ') = ', return_val) 

@@ -341,11 +341,6 @@ func double_inner(path, subpath, strategy=_strategy):
 	var to_return = load(_double(oi))
 	_strategy = old_strat
 	return to_return
-	# var temp_path = _get_temp_path(obj)
-	# _write_file(obj, temp_path, override_path)
-	# _double_count += 1
-	# return temp_path
-
 
 func clear_output_directory():
 	var did = false

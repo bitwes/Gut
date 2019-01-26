@@ -49,8 +49,7 @@ class TestBoth:
 		_doubler.set_strategy(DOUBLE_STRATEGY.FULL)
 		var inst = _doubler.double(DOUBLE_ME_PATH).new()
 		# add_user_signal is a function on Object that isn't in our subclass.
-		var signal_list = inst.add_user_signal('new_signal')
-		assert_true(_spy.was_called(inst, 'add_user_signal'))
-		# Makes sure that super was called.  Doesn't necessarily belong here but
-		# I wanted to be sure so it stays.
-		assert_has_signal(inst, 'new_signal')
+		inst.add_user_signal('new_signal')
+		inst.add_user_signal('signal_with_params', ['a', 'b'])
+		assert_true(_spy.was_called(inst, 'add_user_signal'), 'added first signal')
+		assert_true(_spy.was_called(inst, 'add_user_signal', ['signal_with_params', ['a', 'b']]), 'second signal added')

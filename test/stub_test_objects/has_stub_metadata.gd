@@ -1,3 +1,4 @@
 var __gut_metadata_ = {
-    path = ''
+    path = '',
+    subpath=''
 }
