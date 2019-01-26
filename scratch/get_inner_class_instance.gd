@@ -1,4 +1,8 @@
 extends SceneTree
+# ##############################################################################
+# Proof of concept of loading an inner class given the name of the file where
+# the class is and the name of the class in the file.
+# ##############################################################################
 
 class TestClass:
 	func test_context1_one():

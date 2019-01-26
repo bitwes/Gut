@@ -1096,3 +1096,49 @@ class TestAssertCallCount:
 		doubled.set_value(12)
 		gr.test_with_gut.assert_call_count(doubled, 'set_value', 4)
 		assert_pass(gr.test_with_gut)
+
+class TestAssertNull:
+	extends BaseTestClass
+
+	func test_when_null_assert_passes():
+		gr.test.assert_null(null)
+		assert_pass(gr.test)
+
+	func test_when_not_null_assert_fails():
+		gr.test.assert_null('a')
+		assert_fail(gr.test)
+
+	func test_accepts_text():
+		gr.test.assert_null('a', 'a is not null')
+		assert_fail(gr.test)
+
+	func test_does_not_blow_up_on_different_kinds_of_input():
+		gr.test.assert_null(Node2D.new())
+		gr.test.assert_null(1)
+		gr.test.assert_null([])
+		gr.test.assert_null({})
+		gr.test.assert_null(Color(1,1,1,1))
+		assert_fail(gr.test, 5)
+
+class TestAssertNotNull:
+	extends BaseTestClass
+
+	func test_when_null_assert_fails():
+		gr.test.assert_not_null(null)
+		assert_fail(gr.test)
+
+	func test_when_not_null_assert_passes():
+		gr.test.assert_not_null('a')
+		assert_pass(gr.test)
+
+	func test_accepts_text():
+		gr.test.assert_not_null('a', 'a is not null')
+		assert_pass(gr.test)
+
+	func test_does_not_blow_up_on_different_kinds_of_input():
+		gr.test.assert_not_null(Node2D.new())
+		gr.test.assert_not_null(1)
+		gr.test.assert_not_null([])
+		gr.test.assert_not_null({})
+		gr.test.assert_not_null(Color(1,1,1,1))
+		assert_pass(gr.test, 5)

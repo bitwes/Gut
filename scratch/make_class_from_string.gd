@@ -1,4 +1,13 @@
 extends SceneTree
+# ##############################################################################
+# Proof of concept to create a class from a string instead of writing it to a
+# file and then loading it.
+#
+# I hope to use this to create doubles in the future, though it will make
+# debugging the generated code a little  harder, it always bothered me that I
+# was writing and reading files.  It's slower and wastes cycles on the HD.
+# Probably shouldn't bother me that much, but it does..
+# ##############################################################################
 
 func make_class():
 	var text = ""

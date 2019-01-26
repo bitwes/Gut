@@ -251,7 +251,9 @@ class TestDoubleInnerClasses:
 		var Doubled = doubler.double_inner(INNER_CLASSES_PATH, 'InnerB/InnerB1')
 		assert_has_method(Doubled.new(), 'get_b1')
 
-
+	func test_doubled_instance_returns_null_for_get_b1():
+		var dbld = doubler.double_inner(INNER_CLASSES_PATH, 'InnerB/InnerB1')
+		assert_null(dbld.get_b1())
 
 
 	# func test_inners_thing():

@@ -729,6 +729,26 @@ func assert_call_count(inst, method_name, expected_count, parameters=null):
 			_fail(str(disp, "\n", _get_desc_of_calls_to_instance(inst)))
 
 # ------------------------------------------------------------------------------
+# Asserts the passed in value is null
+# ------------------------------------------------------------------------------
+func assert_null(got, text=''):
+	var disp = str('Expected [', got, '] to be NULL:  ', text)
+	if(got == null):
+		_pass(disp)
+	else:
+		_fail(disp)
+
+# ------------------------------------------------------------------------------
+# Asserts the passed in value is null
+# ------------------------------------------------------------------------------
+func assert_not_null(got, text=''):
+	var disp = str('Expected [', got, '] to be anything but NULL:  ', text)
+	if(got == null):
+		_fail(disp)
+	else:
+		_pass(disp)
+
+# ------------------------------------------------------------------------------
 # Mark the current test as pending.
 # ------------------------------------------------------------------------------
 func pending(text=""):
