@@ -1,4 +1,8 @@
 extends SceneTree
+# ##############################################################################
+# I used to this to try and find all the built-in methods that I shouldn't
+# double.  it has some useful examples in it so I'll keep it around for a bit.
+# ##############################################################################
 
 var Doubler = load('res://addons/gut/doubler.gd')
 
