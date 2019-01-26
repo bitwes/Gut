@@ -269,6 +269,12 @@ class TestDoubleInnerClasses:
 		assert_has_method(inst, 'get_a')
 		assert_has_method(inst, 'get_ca')
 
+
+	func test_doubled_inners_that_extend_inners_get_full_inheritance():
+		var inst = doubler.double_inner(INNER_CLASSES_PATH, 'InnerCA').new()
+		assert_has_method(inst, 'get_a')
+		assert_has_method(inst, 'get_ca')
+
 	func test_doubled_inners_have_subpath_set_in_metadata():
 		var inst = doubler.double_inner(INNER_CLASSES_PATH, 'InnerCA').new()
 		assert_eq(inst.__gut_metadata_.subpath, 'InnerCA')
