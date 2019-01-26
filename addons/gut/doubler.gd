@@ -103,6 +103,9 @@ class ObjectInfo:
 
 	func get_subpath():
 		return _utils.join_array(_subpaths, '/')
+
+	func has_subpath():
+		return _subpaths.size() != 0
 # ------------------------------------------------------------------------------
 # START Doubler
 # ------------------------------------------------------------------------------
@@ -139,7 +142,12 @@ func _write_file(obj_info, dest_path, override_path=null):
 
 	var f = File.new()
 	f.open(dest_path, f.WRITE)
-	f.store_string(str("extends '", obj_info.get_path(), "'\n"))
+
+	var extend = str("extends '", obj_info.get_path(), '\'')
+	if(obj_info.has_subpath()):
+		extend += str('.', obj_info.get_subpath().replace('/', '.'))
+
+	f.store_string(str(extend, "\n"))
 	f.store_string(metadata)
 	for i in range(script_methods.local_methods.size()):
 		f.store_string(_get_func_text(script_methods.local_methods[i]))
