@@ -131,7 +131,7 @@ func _get_indented_line(indents, text):
 	return str(to_return, text, "\n")
 
 func _write_file(obj_info, dest_path, override_path=null):
-	var script_methods = _get_methods(obj_info.get_path())
+	var script_methods = _get_methods(obj_info)
 
 	var metadata = _get_stubber_metadata_text(obj_info.get_path())
 	if(override_path):
@@ -174,8 +174,8 @@ func _double_scene_and_script(target_path, dest_path):
 
 	return script_path
 
-func _get_methods(target_path):
-	var obj = load(target_path).new()
+func _get_methods(object_info):
+	var obj = object_info.instantiate()
 	# any mehtod in the script or super script
 	var script_methods = ScriptMethods.new()
 	var methods = obj.get_method_list()
@@ -242,16 +242,23 @@ func _get_super_func_text(method_hash):
 
 	return ftxt
 
-func _get_temp_path(path):
-	var file_name = path.get_file()
+func _get_temp_path(object_info):
+	var file_name = object_info.get_path().get_file().get_basename()
+	var extension = object_info.get_path().get_extension()
+
+	if(object_info.get_subpath()):
+		file_name += '__' + object_info.get_subpath().replace('/', '__')
+
 	if(_use_unique_names):
-		file_name = file_name.get_basename() + \
-		            str('__dbl', _double_count, '__.') + file_name.get_extension()
+		file_name += str('__dbl', _double_count, '__.', extension)
+	else:
+		file_name += '.' + extension
+
 	var to_return = _output_dir.plus_file(file_name)
 	return to_return
 
 func _double(obj_info, override_path=null):
-	var temp_path = _get_temp_path(obj_info.get_path())
+	var temp_path = _get_temp_path(obj_info)
 	_write_file(obj_info, temp_path, override_path)
 	_double_count += 1
 	return temp_path
@@ -293,9 +300,10 @@ func set_strategy(strategy):
 	_strategy = strategy
 
 func double_scene(path, strategy=_strategy):
+	var oi = ObjectInfo.new(path)
 	var old_strat = _strategy
 	_strategy = strategy
-	var temp_path = _get_temp_path(path)
+	var temp_path = _get_temp_path(oi)
 	_double_scene_and_script(path, temp_path)
 	_strategy = old_strat
 	return load(temp_path)
@@ -310,7 +318,8 @@ func double(path, strategy=_strategy):
 
 func double_inner(path, subpath, strategy=_strategy):
 	var oi = ObjectInfo.new(path, subpath)
-	return oi.get_loaded_class()
+	var to_return = load(_double(oi))
+	return to_return
 	# var temp_path = _get_temp_path(obj)
 	# _write_file(obj, temp_path, override_path)
 	# _double_count += 1

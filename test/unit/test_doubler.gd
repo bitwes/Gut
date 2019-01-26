@@ -252,8 +252,13 @@ class TestDoubleInnerClasses:
 		assert_has_method(Doubled.new(), 'get_b1')
 
 	func test_doubled_instance_returns_null_for_get_b1():
-		var dbld = doubler.double_inner(INNER_CLASSES_PATH, 'InnerB/InnerB1')
+		var dbld = doubler.double_inner(INNER_CLASSES_PATH, 'InnerB/InnerB1').new()
 		assert_null(dbld.get_b1())
+
+	func test_double_file_contains_source_file_and_inner_classes_in_the_name():
+		doubler.double_inner(INNER_CLASSES_PATH, 'InnerB/InnerB1')
+		assert_file_exists(TEMP_FILES + '/inner_classes__InnerB__InnerB1.gd')
+
 
 
 	# func test_inners_thing():
