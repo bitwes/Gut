@@ -814,6 +814,8 @@ func get_double_strategy():
 func set_double_strategy(double_strategy):
 	gut.get_doubler().set_strategy(double_strategy)
 
+func pause_before_teardown():
+	gut.pause_before_teardown()
 # ------------------------------------------------------------------------------
 # Convert the _summary dictionary into text
 # ------------------------------------------------------------------------------
