@@ -69,7 +69,7 @@ class CmdLineParser:
 		else:
 			return -1
 
-	# Parse out the value of an option.  Values are seperated from
+	# Parse out the value of an option.  Values are separated from
 	# the option name with "="
 	func get_option_value(full_option):
 		var split = full_option.split('=')
@@ -222,8 +222,8 @@ class Options:
 #	3.  default value
 #
 # The idea is that you set the base_opts.  That will get you a copies of the
-# hash with null values for the other types of values.  Lower precendeted hashes
-# will punch through null values of higher precedednted hashes.
+# hash with null values for the other types of values.  Lower precedented hashes
+# will punch through null values of higher precedented hashes.
 #-------------------------------------------------------------------------------
 class OptionResolver:
 	var base_opts = null

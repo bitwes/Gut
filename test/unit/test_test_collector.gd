@@ -19,7 +19,7 @@ func test_does_not_have_not_prefixed():
 		assert_ne(gr.tc.scripts[0].tests[i].name, 'not_prefixed')
 
 func test_get_set_test_prefix():
-	assert_accessors(gr.tc, 'test_prefix', 'test_', 'soemthing')
+	assert_accessors(gr.tc, 'test_prefix', 'test_', 'something')
 
 func test_can_change_test_prefix():
 	gr.tc.set_test_prefix('diff_prefix_')
