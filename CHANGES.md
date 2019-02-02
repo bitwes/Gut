@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 # 6.6.2
 ## Features
 * `assert_null` and `assert_not_null`
+* added `simulate` to the test object so you no longer have to use `gut` when calling it.  It is fine if you still do though.  Sorry if this breaks something.
 * Doubling, Stubbing, and Spies are no longer considered experimental.
 * The `double` method is now smart:
   * It knows when you pass it a scene or a script, no need for `double_scene` anymore but it remains.
@@ -17,10 +18,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   ```
   double('res://my_script.gd', 'Inner1/InnerInInner1/AndSoOn')
   ```
-* Experimental Full doubling allows you to spy on most Built-in methods.  You still cannot Stub them though.  This must be enabled, details in the Double Wiki page.
+* The start of an internal Gut logger to make better messages down the road.
+* Experimental Full doubling allows you to Spy on most Built-in methods.  You still cannot Stub them though.  This must be enabled, details in the Double Wiki page.
+* Added link to [Rainware's setup tutorial on youtube](https://www.youtube.com/watch?v=vBbqlfmcAlc) to the README
 
 ## Fixes
 * __Issue 94__ Gut runs `after_all` on inner classes that are skipped.
+* Rawsyntax fixed a bunch of misspellings so that we can erock on with less bad speligs fo wrds.
 
 
 # 6.6.1

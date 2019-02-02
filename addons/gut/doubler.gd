@@ -20,7 +20,7 @@ class ScriptMethods:
 		'_physics_process',
 		'_input',
 		'_unhandled_input',
-		'_unhandled_key_input'
+		'_unhandled_key_input',
 		'_set',
 		'_get', # probably
 		'emit_signal', # can't handle extra parameters to be sent with signal.
@@ -29,7 +29,6 @@ class ScriptMethods:
 	var built_ins = []
 	var local_methods = []
 	var _method_names = []
-	const NAME = 'name'
 
 	func is_blacklisted(method_meta):
 		return _blacklist.find(method_meta.name) != -1

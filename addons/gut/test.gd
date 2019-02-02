@@ -901,3 +901,9 @@ func stub(thing, p2, p3=null):
 	var sp = _utils.StubParams.new(thing, method_name, subpath)
 	gut.get_stubber().add_stub(sp)
 	return sp
+
+# ------------------------------------------------------------------------------
+# convenience wrapper.
+# ------------------------------------------------------------------------------
+func simulate(obj, times, delta):
+	gut.simulate(obj, times, delta)
