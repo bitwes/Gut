@@ -1,8 +1,10 @@
 {
   "dirs":["res://test/unit/", "res://test/integration/"],
-  "should_maximize":false,
+  "should_maximize":true,
   "should_exit":true,
   "ignore_pause":true,
   "log": 2,
-  "opacity":100
+  "opacity":100,
+  "inner_class":"",
+  "double_strategy":"partial"
 }

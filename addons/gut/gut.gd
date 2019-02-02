@@ -5,7 +5,7 @@
 #The MIT License (MIT)
 #=====================
 #
-#Copyright (c) 2017 Tom "Butch" Wesley
+#Copyright (c) 2019 Tom "Butch" Wesley
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -28,9 +28,12 @@
 ################################################################################
 # View readme for usage details.
 #
-# Version 6.6.1
+# Version 6.6.2
 ################################################################################
 extends "res://addons/gut/gut_gui.gd"
+
+var _utils = load('res://addons/gut/utils.gd').new()
+var _lgr = _utils.get_logger()
 
 # ###########################
 # Editor Variables
@@ -53,7 +56,7 @@ export var _file_extension = '.gd'
 export var _inner_class_prefix = 'Test'
 export(String) var _temp_directory = 'user://gut_temp_directory'
 export var _include_subdirectories = false setget set_include_subdirectories, get_include_subdirectories
-
+export(int, 'FULL', 'PARTIAL') var _double_strategy = _utils.DOUBLE_STRATEGY.PARTIAL setget set_double_strategy, get_double_strategy
 
 # Allow user to add test directories via editor.  This is done with strings
 # instead of an array because the interface for editing arrays is really
@@ -117,12 +120,13 @@ var _yielding_to = {
 	obj = null,
 	signal_name = ''
 }
-var _stubber = load('res://addons/gut/stubber.gd').new()
-var _doubler = load('res://addons/gut/doubler.gd').new()
-var _spy = load('res://addons/gut/spy.gd').new()
+
+var _stubber = _utils.Stubber.new()
+var _doubler = _utils.Doubler.new()
+var _spy = _utils.Spy.new()
 
 const SIGNAL_TESTS_FINISHED = 'tests_finished'
-const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yeild_before_teardown'
+const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yield_before_teardown'
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -133,6 +137,10 @@ func _init():
 	_doubler.set_output_dir(_temp_directory)
 	_doubler.set_stubber(_stubber)
 	_doubler.set_spy(_spy)
+	_doubler.set_logger(_lgr)
+
+	#_stubber.set_logger(_lgr)
+	#_spy.set_logger(_lgr)
 
 # ------------------------------------------------------------------------------
 # Connect all the controls created in the parent class to the methods here.
@@ -154,6 +162,7 @@ func _connect_controls():
 # Initialize controls
 # ------------------------------------------------------------------------------
 func _ready():
+	_lgr.info(str('using [', OS.get_user_data_dir(), '] for temporary output.'))
 	set_it_up()
 	set_process_input(true)
 	_connect_controls()
@@ -172,7 +181,7 @@ func _ready():
 
 	# This timer is started, but it should never finish.  Used
 	# to determine how long it took to run the tests since
-	# getting the time and doing time math is rediculous in godot.
+	# getting the time and doing time math is ridiculous in godot.
 	add_child(_runtime_timer)
 	_runtime_timer.set_one_shot(true)
 	_runtime_timer.set_wait_time(RUNTIME_START_TIME)
@@ -424,8 +433,12 @@ func _should_yield_now():
 		_yield_between.tests_since_last_yield += 1
 	return should
 
+# ------------------------------------------------------------------------------
+# Yes if the class name is null or the script's class name includes class_name
+# ------------------------------------------------------------------------------
 func _does_class_name_match(class_name, script_class_name):
 	return class_name == null or (script_class_name != null and script_class_name.find(class_name) != -1)
+
 # ------------------------------------------------------------------------------
 # Run all tests in a script.  This is the core logic for running tests.
 #
@@ -435,7 +448,10 @@ func _does_class_name_match(class_name, script_class_name):
 func _test_the_scripts():
 	_init_run()
 	var file = File.new()
+	if(_doubler.get_strategy() == _utils.DOUBLE_STRATEGY.FULL):
+		_lgr.info("Using Double Strategy FULL as default strategy.  Keep an eye out for weirdness, this is still experimental.")
 
+	# loop through scripts
 	for s in range(_test_collector.scripts.size()):
 		var the_script = _test_collector.scripts[s]
 		if(the_script.tests.size() > 0):
@@ -448,10 +464,7 @@ func _test_the_scripts():
 		add_child(test_script)
 		_test_script_objects.append(test_script)
 		var script_result = null
-
-		# call both pre-all-tests methods until prerun_setup is removed
-		test_script.prerun_setup()
-		test_script.before_all()
+		_doubler.set_strategy(_double_strategy)
 
 		# yield between test scripts so things paint
 		if(_yield_between.should):
@@ -466,8 +479,14 @@ func _test_the_scripts():
 		# !!!
 		if(!_does_class_name_match(_inner_class_name, the_script.class_name)):
 			the_script.tests = []
+		else:
+			# call both pre-all-tests methods until prerun_setup is removed
+			test_script.prerun_setup()
+			test_script.before_all()
 
 		_ctrls.test_progress.set_max(the_script.tests.size())
+
+		# Each test in the script
 		for i in range(the_script.tests.size()):
 			_stubber.clear()
 			_spy.clear()
@@ -530,8 +549,9 @@ func _test_the_scripts():
 				_ctrls.test_progress.set_value(i + 1)
 
 		# call both post-all-tests methods until postrun_teardown is removed.
-		test_script.postrun_teardown()
-		test_script.after_all()
+		if(_does_class_name_match(_inner_class_name, the_script.class_name)):
+			test_script.postrun_teardown()
+			test_script.after_all()
 
 		# This might end up being very resource intensive if the scripts
 		# don't clean up after themselves.  Might have to consolidate output
@@ -590,7 +610,7 @@ func p(text, level=0, indent=0):
 
 	if(level <= _log_level):
 		if(_current_test != null):
-			#make sure everyting printed during the execution
+			#make sure everything printed during the execution
 			#of a test is at least indented once under the test
 			if(indent == 0):
 				indent = 1
@@ -703,7 +723,7 @@ func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
 # ------------------------------------------------------------------------------
 # This will try to find a script in the list of scripts to test that contains
 # the specified script name.  It does not have to be a full match.  It will
-# select the first matching occurance so that this script will run when run_tests
+# select the first matching occurrence so that this script will run when run_tests
 # is called.  Works the same as the select_this_one option of add_script.
 #
 # returns whether it found a match or not
@@ -883,7 +903,7 @@ func simulate(obj, times, delta):
 func set_yield_time(time, text=''):
 	_yield_timer.set_wait_time(time)
 	_yield_timer.start()
-	var msg = '/# Yeilding (' + str(time) + 's)'
+	var msg = '/# Yielding (' + str(time) + 's)'
 	if(text == ''):
 		msg += ' #/'
 	else:
@@ -930,8 +950,9 @@ func file_touch(path):
 # ------------------------------------------------------------------------------
 func file_delete(path):
 	var d = Directory.new()
-	d.open(path.get_base_dir())
-	d.remove(path)
+	var result = d.open(path.get_base_dir())
+	if(result == OK):
+		d.remove(path)
 
 # ------------------------------------------------------------------------------
 # Checks to see if the passed in file has any data in it.
@@ -957,7 +978,11 @@ func get_file_as_text(path):
 # ------------------------------------------------------------------------------
 func directory_delete_files(path):
 	var d = Directory.new()
-	d.open(path)
+	var result = d.open(path)
+
+	# SHORTCIRCUIT
+	if(result != OK):
+		return
 
 	# Traversing a directory is kinda odd.  You have to start the process of listing
 	# the contents of a directory with list_dir_begin then use get_next until it
@@ -1024,8 +1049,29 @@ func get_summary():
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
+func get_double_strategy():
+	return _double_strategy
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func set_double_strategy(double_strategy):
+	_double_strategy = double_strategy
+	_doubler.set_strategy(double_strategy)
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func get_include_subdirectories():
 	return _include_subdirectories
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_logger():
+	return _lgr
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func set_logger(logger):
+	_lgr = logger
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------

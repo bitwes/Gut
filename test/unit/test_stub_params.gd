@@ -24,6 +24,10 @@ func test_init_sets_stub_target():
     var s = StubParamsClass.new('thing')
     assert_eq(s.stub_target, 'thing')
 
+func test_init_sets_subpath():
+	var s = StubParamsClass.new('thing', 'method', 'inner1/inner2')
+	assert_eq(s.target_subpath, 'inner1/inner2')
+	
 func test_init_sets_method():
 	var s = StubParamsClass.new('thing', 'method')
 	assert_eq(s.stub_method, 'method')

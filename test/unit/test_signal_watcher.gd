@@ -1,7 +1,7 @@
 extends "res://addons/gut/test.gd"
 # ##############################################################################
 # Some notes about signals:
-# 	* The paramters appear to be completely optional when defined via
+# 	* The parameters appear to be completely optional when defined via
 #		add_user_signal.
 #	* As long as you have enough parameters defined (defaulted of course) on
 #		your handler, then it be notified of the signal when it is emitted.

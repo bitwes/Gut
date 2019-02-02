@@ -12,11 +12,8 @@ var ToStub = load(TO_STUB_PATH)
 const HAS_STUB_METADATA_PATH = 'res://test/stub_test_objects/has_stub_metadata.gd'
 var HasStubMetadata = load(HAS_STUB_METADATA_PATH)
 
-
-class InnerClass:
-	func return_seven():
-		return 7
-
+const INNER_CLASSES_PATH = 'res://test/doubler_test_objects/inner_classes.gd'
+var InnerClasses = load(INNER_CLASSES_PATH)
 
 var gr = {
 	stubber = null
@@ -162,8 +159,3 @@ func test_withStubParams_param_layering_works():
 	assert_eq(sp1_r, 10, 'When passed 10 it gets 10')
 	assert_eq(sp2_r, 5, 'When passed 5 it gets 5')
 	assert_eq(sp3_r, 'nothing', 'When params do not match it sends default back.')
-func test_inners():
-	# this only works with instances but we can get to the path and all the
-	# neat stuff, this might be the path to stubbing inners
-	var i = InnerClass.new()
-	print(inst2dict(i))

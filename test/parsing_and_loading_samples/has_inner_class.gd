@@ -1,5 +1,5 @@
 extends "res://addons/gut/test.gd"
-func test_soemthing():
+func test_something():
 	pass
 
 func test_nothing():

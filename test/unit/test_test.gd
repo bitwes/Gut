@@ -13,10 +13,7 @@
 extends "res://addons/gut/test.gd"
 
 class BaseTestClass:
-	extends "res://addons/gut/test.gd"
-
-	var Gut = load('res://addons/gut/gut.gd')
-	var Test = load('res://addons/gut/test.gd')
+	extends "res://test/gut_test.gd"
 	# !! Use this for debugging to see the results of all the subtests that
 	# are run using assert_fail_pass, assert_fail and assert_pass that are
 	# built into this class
@@ -255,7 +252,7 @@ class TestAssertGt:
 		assert_pass(gr.test)
 
 	func test_fails_with_less_than_string():
-		gr.test.assert_gt("a", "b", "Sould Fail")
+		gr.test.assert_gt("a", "b", "Should Fail")
 		assert_fail(gr.test)
 
 # TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
@@ -743,17 +740,17 @@ class TestSignalAsserts:
 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
 		assert_eq(gr.test.get_signal_emit_count(gr.signal_object, SIGNALS.SOME_SIGNAL), 2)
 
-	func test__assert_signal_emitted_with_paramters__fails_when_object_not_watched():
+	func test__assert_signal_emitted_with_parameters__fails_when_object_not_watched():
 		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [])
 		assert_fail(gr.test)
 
-	func test__assert_signal_emitted_with_parameters__passes_when_paramters_match():
+	func test__assert_signal_emitted_with_parameters__passes_when_parameters_match():
 		gr.test.watch_signals(gr.signal_object)
 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1)
 		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1])
 		assert_pass(gr.test)
 
-	func test__assert_signal_emitted_with_parameters__passes_when_all_paramters_match():
+	func test__assert_signal_emitted_with_parameters__passes_when_all_parameters_match():
 		gr.test.watch_signals(gr.signal_object)
 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1, 2, 3)
 		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1, 2, 3])
@@ -764,13 +761,13 @@ class TestSignalAsserts:
 		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [2])
 		assert_fail(gr.test)
 
-	func test__assert_signal_emitted_with_parameters__fails_when_paramters_dont_match():
+	func test__assert_signal_emitted_with_parameters__fails_when_parameters_dont_match():
 		gr.test.watch_signals(gr.signal_object)
 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1)
 		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [2])
 		assert_fail(gr.test)
 
-	func test__assert_signal_emitted_with_parameters__fails_when_not_all_paramters_match():
+	func test__assert_signal_emitted_with_parameters__fails_when_not_all_parameters_match():
 		gr.test.watch_signals(gr.signal_object)
 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1, 2, 3)
 		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1, 0, 3])
@@ -914,7 +911,7 @@ class TestStringContains:
 		gr.test.assert_string_contains('This is a test.', 'is a ', true)
 		assert_pass(gr.test)
 
-	func test__assert_string_contains__passes_when_case_insensitve_search_is_found():
+	func test__assert_string_contains__passes_when_case_insensitive_search_is_found():
 		gr.test.assert_string_contains('This is a test.', 'this ', false)
 		assert_pass(gr.test)
 
@@ -987,7 +984,7 @@ class TestAssertCalled:
 		gut.p('!! Check output !!')
 		assert_fail(gr.test_with_gut)
 
-	func test_assert_called_passes_when_call_occured():
+	func test_assert_called_passes_when_call_occurred():
 		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
 		doubled.get_value()
 		gr.test_with_gut.assert_called(doubled, 'get_value')
@@ -1096,3 +1093,49 @@ class TestAssertCallCount:
 		doubled.set_value(12)
 		gr.test_with_gut.assert_call_count(doubled, 'set_value', 4)
 		assert_pass(gr.test_with_gut)
+
+class TestAssertNull:
+	extends BaseTestClass
+
+	func test_when_null_assert_passes():
+		gr.test.assert_null(null)
+		assert_pass(gr.test)
+
+	func test_when_not_null_assert_fails():
+		gr.test.assert_null('a')
+		assert_fail(gr.test)
+
+	func test_accepts_text():
+		gr.test.assert_null('a', 'a is not null')
+		assert_fail(gr.test)
+
+	func test_does_not_blow_up_on_different_kinds_of_input():
+		gr.test.assert_null(Node2D.new())
+		gr.test.assert_null(1)
+		gr.test.assert_null([])
+		gr.test.assert_null({})
+		gr.test.assert_null(Color(1,1,1,1))
+		assert_fail(gr.test, 5)
+
+class TestAssertNotNull:
+	extends BaseTestClass
+
+	func test_when_null_assert_fails():
+		gr.test.assert_not_null(null)
+		assert_fail(gr.test)
+
+	func test_when_not_null_assert_passes():
+		gr.test.assert_not_null('a')
+		assert_pass(gr.test)
+
+	func test_accepts_text():
+		gr.test.assert_not_null('a', 'a is not null')
+		assert_pass(gr.test)
+
+	func test_does_not_blow_up_on_different_kinds_of_input():
+		gr.test.assert_not_null(Node2D.new())
+		gr.test.assert_not_null(1)
+		gr.test.assert_not_null([])
+		gr.test.assert_not_null({})
+		gr.test.assert_not_null(Color(1,1,1,1))
+		assert_pass(gr.test, 5)

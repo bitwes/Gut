@@ -2,6 +2,30 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# 6.6.2
+## Features
+* `assert_null` and `assert_not_null`
+* added `simulate` to the test object so you no longer have to use `gut` when calling it.  It is fine if you still do though.  Sorry if this breaks something.
+* Doubling, Stubbing, and Spies are no longer considered experimental.
+* The `double` method is now smart:
+  * It knows when you pass it a scene or a script, no need for `double_scene` anymore but it remains.
+  * You can pass it a loaded class or scene like this:
+  ```
+  var MyClass = load('res://my_class.gd')
+  var MyClassDouble = double(MyClass)
+  ```
+* You can now `double` Inner Classes by passing an Inner Class path like so:  
+  ```
+  double('res://my_script.gd', 'Inner1/InnerInInner1/AndSoOn')
+  ```
+* The start of an internal Gut logger to make better messages down the road.
+* Experimental Full doubling allows you to Spy on most Built-in methods.  You still cannot Stub them though.  This must be enabled, details in the Double Wiki page.
+* Added link to [Rainware's setup tutorial on youtube](https://www.youtube.com/watch?v=vBbqlfmcAlc) to the README
+
+## Fixes
+* __Issue 94__ Gut runs `after_all` on inner classes that are skipped.
+* Rawsyntax fixed a bunch of misspellings so that we can erock on with less bad speligs fo wrds.
+
 
 # 6.6.1
 * __Issue 60__:  Improved signal assert failure messages in some cases by having them include a list of signals that were emitted for the object.
@@ -9,7 +33,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * __Issue 95__:  Fixed issue where sometimes Gut can end up clearing files from `res:\\` when using doubling.
 
 # 6.6.0
-
 ## Fixes
 * __Issue 79__:  Scaling wasn't being accounted for by the `maximize` method.
 * __Issue 80__:  Inner classes are no longer included in the count of scripts that were ran.
@@ -125,7 +148,7 @@ assert_has_method
 
 # 6.1.0
 * Moved as many files as I could to `gut_tests_and_examples` so that there was less stuff to uncheck when installing via the in-engine Asset Library.  I'm still not 100% happy with the setup.
-* Moved the License to `addons/gut/` so that it is distributed with the addon and doesn't accidently get copied into the root of some other project when installed via the Asset Library.
+* Moved the License to `addons/gut/` so that it is distributed with the addon and doesn't accidentally get copied into the root of some other project when installed via the Asset Library.
 * Some README tweaks.
 * Fixed resize window handle bug.  It was connecting to wrong signals and didn't work.
 * Missed changing `simulate` to call `_physics_process` instead of `_fixed_process` in the 3.0 conversion.  Fixed that.

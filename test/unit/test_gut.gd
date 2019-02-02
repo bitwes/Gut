@@ -144,6 +144,22 @@ func test_get_set_temp_directory():
 	assert_accessors(gr.test_gut, 'temp_directory', 'user://gut_temp_directory', 'user://blahblah')
 
 # ------------------------------
+# Double Strategy
+# ------------------------------
+func test_get_set_double_strategy():
+	assert_accessors(gr.test_gut, 'double_strategy', 1, 2)
+
+func test_when_test_overrides_strategy_it_is_reset_after_test_finishes():
+	gr.test_gut.set_double_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
+	gr.test_gut.add_script('res://test/samples/test_before_after.gd')
+	gr.test_gut.get_doubler().set_strategy(_utils.DOUBLE_STRATEGY.FULL)
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_double_strategy(), _utils.DOUBLE_STRATEGY.PARTIAL)
+
+
+
+
+# ------------------------------
 # disable strict datatype comparisons
 # ------------------------------
 func test_when_strict_enabled_you_can_compare_int_and_float():
@@ -329,6 +345,26 @@ func test_after_running_script_everything_checks_out():
 	assert_eq(instance.counts.setup, 3, 'setup')
 	assert_eq(instance.counts.postrun_teardown, 1, 'postrun_teardown')
 	assert_eq(instance.counts.teardown, 3, 'teardown')
+
+func test_when_inner_class_skipped_none_of_the_before_after_are_called():
+	gr.test_gut.add_script('res://test/parsing_and_loading_samples/inner_classes_check_before_after.gd')
+	gr.test_gut.set_inner_class_name('Inner1')
+	gr.test_gut.test_scripts()
+	var instances = gr.test_gut._test_script_objects
+
+	# instances[0] is the outer script
+
+	assert_eq(instances[1].before_all_calls, 1, 'TestInner1 before_all calls')
+	assert_eq(instances[1].after_all_calls, 1, 'TestInner1 after_all calls')
+	assert_eq(instances[1].before_each_calls, 1, 'TestInner1 before_each_calls')
+	assert_eq(instances[1].after_each_calls, 1, 'TestInner1 after_each calls')
+
+	assert_eq(instances[2].before_all_calls, 0, 'TestInner2 before_all calls')
+	assert_eq(instances[2].after_all_calls, 0, 'TestInner2 after_all calls')
+	assert_eq(instances[2].before_each_calls, 0, 'TestInner2 before_each_calls')
+	assert_eq(instances[2].after_each_calls, 0, 'TestInner2 after_each calls')
+
+
 
 
 # ------------------------------------------------------------------------------

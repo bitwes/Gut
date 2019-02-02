@@ -44,3 +44,12 @@ class TestBoth:
 		inst.has_two_params_one_default('a', 'b')
 		assert_false(_spy.was_called(inst, 'has_two_params_one_default', ['c', 'd']), 'should not match')
 		assert_true(_spy.was_called(inst, 'has_two_params_one_default', ['a', 'b']), 'should match')
+
+	func test_can_spy_on_built_ins_when_doing_a_full_double():
+		_doubler.set_strategy(DOUBLE_STRATEGY.FULL)
+		var inst = _doubler.double(DOUBLE_ME_PATH).new()
+		# add_user_signal is a function on Object that isn't in our subclass.
+		inst.add_user_signal('new_signal')
+		inst.add_user_signal('signal_with_params', ['a', 'b'])
+		assert_true(_spy.was_called(inst, 'add_user_signal'), 'added first signal')
+		assert_true(_spy.was_called(inst, 'add_user_signal', ['signal_with_params', ['a', 'b']]), 'second signal added')

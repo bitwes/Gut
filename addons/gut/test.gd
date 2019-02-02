@@ -5,7 +5,7 @@
 #The MIT License (MIT)
 #=====================
 #
-#Copyright (c) 2017 Tom "Butch" Wesley
+#Copyright (c) 2019 Tom "Butch" Wesley
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -37,9 +37,8 @@
 ################################################################################
 extends Node
 
-# constant for signal when calling yeild_for
+# constant for signal when calling yield_for
 const YIELD = 'timeout'
-var StubParams = load('res://addons/gut/stub_params.gd')
 
 # Need a reference to the instance that is running the tests.  This
 # is set by the gut class when it runs the tests.  This gets you
@@ -104,8 +103,13 @@ var _summary = {
 # This is used to watch signals so we can make assertions about them.
 var _signal_watcher = load('res://addons/gut/signal_watcher.gd').new()
 
+# Convenience copy of _utils.DOUBLE_STRATEGY
+var DOUBLE_STRATEGY = null
+
+var _utils = load('res://addons/gut/utils.gd').new()
 func _init():
 	_init_types_dictionary()
+	DOUBLE_STRATEGY = _utils.DOUBLE_STRATEGY
 
 # ------------------------------------------------------------------------------
 # Fail an assertion.  Causes test and script to fail as well.
@@ -149,7 +153,7 @@ func _do_datatypes_match__fail_if_not(got, expected, text):
 			# print out a warning but do not fail.
 			if([2, 3].has(got_type) and [2, 3].has(expect_type)):
 				if(gut):
-					gut.p(str('Warn:  Float/Int comparison.  Got ', types[got_type], ' but expected ', types[expect_type]), 1)
+					gut.get_logger().warn(str('Warn:  Float/Int comparison.  Got ', types[got_type], ' but expected ', types[expect_type]))
 			else:
 				_fail('Cannot compare ' + types[got_type] + '[' + str(got) + '] to ' + types[expect_type] + '[' + str(expected) + '].  ' + text)
 				passed = false
@@ -666,6 +670,9 @@ func assert_string_ends_with(text, search, match_case=true):
 # ------------------------------------------------------------------------------
 # Assert that a method was called on an instance of a doubled class.  If
 # parameters are supplied then the params passed in when called must match.
+# TODO make 3rd paramter "param_or_text" and add fourth parameter of "text" and
+#      then work some magic so this can have a "text" parameter without being
+#      annoying.
 # ------------------------------------------------------------------------------
 func assert_called(inst, method_name, parameters=null):
 	var disp = str('Expected [',method_name,'] to have been called on ',inst)
@@ -686,7 +693,7 @@ func assert_called(inst, method_name, parameters=null):
 # sent matching parameters.
 # ------------------------------------------------------------------------------
 func assert_not_called(inst, method_name, parameters=null):
-	var disp = str('Expected [', method_name, '] to NOT hvae been called on ', inst)
+	var disp = str('Expected [', method_name, '] to NOT have been called on ', inst)
 
 	if(!inst.get('__gut_metadata_')):
 		_fail('You must pass a doubled instance to assert_not_called.  Check the wiki for info on using double.')
@@ -721,6 +728,26 @@ func assert_call_count(inst, method_name, expected_count, parameters=null):
 			_fail(str(disp, "\n", _get_desc_of_calls_to_instance(inst)))
 
 # ------------------------------------------------------------------------------
+# Asserts the passed in value is null
+# ------------------------------------------------------------------------------
+func assert_null(got, text=''):
+	var disp = str('Expected [', got, '] to be NULL:  ', text)
+	if(got == null):
+		_pass(disp)
+	else:
+		_fail(disp)
+
+# ------------------------------------------------------------------------------
+# Asserts the passed in value is null
+# ------------------------------------------------------------------------------
+func assert_not_null(got, text=''):
+	var disp = str('Expected [', got, '] to be anything but NULL:  ', text)
+	if(got == null):
+		_fail(disp)
+	else:
+		_pass(disp)
+
+# ------------------------------------------------------------------------------
 # Mark the current test as pending.
 # ------------------------------------------------------------------------------
 func pending(text=""):
@@ -738,16 +765,28 @@ func pending(text=""):
 # is not being watched.
 # ------------------------------------------------------------------------------
 
-# I think this reads better than set_yield_time, but don't want to break anything
+# ------------------------------------------------------------------------------
+# Yield for the time sent in.  The optional message will be printed when
+# Gut detects the yeild.  When the time expires the YIELD signal will be
+# emitted.
+# ------------------------------------------------------------------------------
 func yield_for(time, msg=''):
 	return gut.set_yield_time(time, msg)
 
+# ------------------------------------------------------------------------------
+# Yield to a signal or a maximum amount of time, whichever comes first.  When
+# the conditions are met the YIELD signal will be emitted.
+# ------------------------------------------------------------------------------
 func yield_to(obj, signal_name, max_wait, msg=''):
 	watch_signals(obj)
 	gut.set_yield_signal_or_time(obj, signal_name, max_wait, msg)
 
 	return gut
 
+# ------------------------------------------------------------------------------
+# Ends a test that had a yield in it.  You only need to use this if you do
+# not make assertions after a yield.
+# ------------------------------------------------------------------------------
 func end_test():
 	gut.end_yielded_test()
 
@@ -769,6 +808,14 @@ func get_assert_count():
 func clear_signal_watcher():
 	_signal_watcher.clear()
 
+func get_double_strategy():
+	return gut.get_doubler().get_strategy()
+
+func set_double_strategy(double_strategy):
+	gut.get_doubler().set_strategy(double_strategy)
+
+func pause_before_teardown():
+	gut.pause_before_teardown()
 # ------------------------------------------------------------------------------
 # Convert the _summary dictionary into text
 # ------------------------------------------------------------------------------
@@ -781,13 +828,82 @@ func get_summary_text():
 		to_return += str("\n  ", _summary.failed, ' failed.')
 	return to_return
 
-func double(thing):
-	return gut.get_doubler().double(thing)
+# ------------------------------------------------------------------------------
+# Double a script, inner class, or scene using a path or a loaded script/scene.
+#
+#
+# ------------------------------------------------------------------------------
+func double(thing, p2=null, p3=null):
+	var strategy = p2
+	var subpath = null
 
-func double_scene(thing):
-	return gut.get_doubler().double_scene(thing)
+	if(typeof(p2) == TYPE_STRING):
+		strategy = p3
+		subpath = p2
 
-func stub(thing, method_name):
-	var sp = StubParams.new(thing, method_name)
+	var path = null
+	if(typeof(thing) == TYPE_OBJECT):
+		path = thing.resource_path
+	else:
+		path = thing
+
+	var extension = path.get_extension()
+	var to_return = null
+
+	if(extension == 'tscn'):
+		to_return =  double_scene(path, strategy)
+	elif(extension == 'gd'):
+		if(subpath == null):
+			to_return = double_script(path, strategy)
+		else:
+			to_return = double_inner(path, subpath, strategy)
+
+	return to_return
+
+# ------------------------------------------------------------------------------
+# Specifically double a scene
+# ------------------------------------------------------------------------------
+func double_scene(path, strategy=null):
+	var override_strat = _utils.nvl(strategy, gut.get_doubler().get_strategy())
+	return gut.get_doubler().double_scene(path, override_strat)
+
+# ------------------------------------------------------------------------------
+# Specifically double a script
+# ------------------------------------------------------------------------------
+func double_script(path, strategy=null):
+	var override_strat = _utils.nvl(strategy, gut.get_doubler().get_strategy())
+	return gut.get_doubler().double(path, override_strat)
+
+# ------------------------------------------------------------------------------
+# Specifically double an Inner class in a a script
+# ------------------------------------------------------------------------------
+func double_inner(path, subpath, strategy=null):
+	var override_strat = _utils.nvl(strategy, gut.get_doubler().get_strategy())
+	return gut.get_doubler().double_inner(path, subpath, override_strat)
+
+# ------------------------------------------------------------------------------
+# Stub something.
+#
+# Parameters
+# 1: the thing to stub, a file path or a instance or a class
+# 2: either an inner class subpath or the method name
+# 3: the method name if an inner class subpath was specified
+# NOTE:  right now we cannot stub inner classes at the path level so this should
+#        only be called with two parameters.  I did the work though so I'm going
+#        to leave it but not update the wiki.
+# ------------------------------------------------------------------------------
+func stub(thing, p2, p3=null):
+	var method_name = p2
+	var subpath = null
+	if(p3 != null):
+		subpath = p2
+		method_name = p3
+	var sp = _utils.StubParams.new(thing, method_name, subpath)
 	gut.get_stubber().add_stub(sp)
 	return sp
+
+# ------------------------------------------------------------------------------
+# convenience wrapper.
+# ------------------------------------------------------------------------------
+func simulate(obj, times, delta):
+	gut.simulate(obj, times, delta)

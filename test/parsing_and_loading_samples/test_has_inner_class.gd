@@ -8,7 +8,7 @@ func after_each():
 func after_all():
 	gut.p('script:  post-run')
 
-func test_soemthing():
+func test_something():
 	assert_true(true)
 
 func test_nothing():

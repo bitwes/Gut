@@ -5,7 +5,7 @@
 #The MIT License (MIT)
 #=====================
 #
-#Copyright (c) 2017 Tom "Butch" Wesley
+#Copyright (c) 2019 Tom "Butch" Wesley
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -37,7 +37,7 @@
 # See the readme for a list of options and examples.  You can also use the -gh
 # option to get more information about how to use the command line interface.
 #
-# Version 6.6.1
+# Version 6.6.2
 ################################################################################
 extends SceneTree
 
@@ -69,7 +69,7 @@ class CmdLineParser:
 		else:
 			return -1
 
-	# Parse out the value of an option.  Values are seperated from
+	# Parse out the value of an option.  Values are separated from
 	# the option name with "="
 	func get_option_value(full_option):
 		var split = full_option.split('=')
@@ -222,8 +222,8 @@ class Options:
 #	3.  default value
 #
 # The idea is that you set the base_opts.  That will get you a copies of the
-# hash with null values for the other types of values.  Lower precendeted hashes
-# will punch through null values of higher precedednted hashes.
+# hash with null values for the other types of values.  Lower precedented hashes
+# will punch through null values of higher precedented hashes.
 #-------------------------------------------------------------------------------
 class OptionResolver:
 	var base_opts = null
@@ -284,6 +284,7 @@ class OptionResolver:
 # Here starts the actual script that uses the Options class to kick off Gut
 # and run your tests.
 #-------------------------------------------------------------------------------
+var _utils = load('res://addons/gut/utils.gd').new()
 # instance of gut
 var _tester = null
 # array of command line options specified
@@ -308,7 +309,8 @@ var options = {
 	config_file = 'res://.gutconfig.json',
 	inner_class = '',
 	opacity = 100,
-	include_subdirs = false
+	include_subdirs = false,
+	double_strategy = 'partial'
 }
 
 # flag to say if we should run the scripts or not.  It is only
@@ -347,12 +349,12 @@ func setup_options():
 	opts.add('-gopacity', 100, 'Set opacity of test runner window. Use range 0 - 100. 0 = transparent, 100 = opaque.')
 	opts.add('-gpo', false, 'Print option values from all sources and the value used, then quit.')
 	opts.add('-ginclude_subdirs', false, 'Include subdirectories of -gdir.')
+	opts.add('-gdouble_strategy', 'partial', 'Default strategy to use when doubling.  Valid values are [partial, full].  Default "[default]"')
 	return opts
 
 
 # Parses options, applying them to the _tester or setting values
 # in the options struct.
-
 func extract_command_line_options(from, to):
 	to.tests = from.get_value('-gtest')
 	to.dirs = from.get_value('-gdir')
@@ -369,6 +371,7 @@ func extract_command_line_options(from, to):
 	to.inner_class = from.get_value('-ginner_class')
 	to.opacity = from.get_value('-gopacity')
 	to.include_subdirs = from.get_value('-ginclude_subdirs')
+	to.double_strategy = from.get_value('-gdouble_strategy')
 
 func get_value(dict, index, default):
 	if(dict.has(index)):
@@ -405,6 +408,7 @@ func load_options_from_config_file(file_path, into):
 	into.log_level = get_value(results.result, 'log', 1)
 	into.inner_class = get_value(results.result, 'inner_class', '')
 	into.opacity = get_value(results.result, 'opacity', 100)
+	into.double_strategy = get_value(results.result, 'double_strategy', 'partial')
 
 	return 1
 
@@ -438,6 +442,11 @@ func apply_options(opts):
 		_run_single = true
 		if(!_auto_run):
 			_tester.p("Could not find a script that matched:  " + opts.selected)
+
+	if(opts.double_strategy == 'full'):
+		_tester.set_double_strategy(_utils.DOUBLE_STRATEGY.FULL)
+	elif(opts.double_strategy == 'partial'):
+		_tester.set_double_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
 
 	_tester.set_unit_test_name(opts.unit_test_name)
 
