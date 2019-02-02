@@ -8,22 +8,6 @@ class ScriptMethods:
 	# overloaded or do not have a "super" equivalent so we can't just pass
 	# through.
 	var _blacklist = [
-		# # from Object
-		# 'add_user_signal',
-		# 'has_user_signal',
-		# 'emit_signal',
-		# 'get_signal_connection_list',
-		# 'connect',
-		# 'disconnect',
-		# 'is_connected',
-		#
-		# # from Node2D
-		# 'draw_char',
-		#
-		# # found during other testing.
-		# 'call',
-		# '_ready',
-
 		'has_method',
 		'get_script',
 		'get',
@@ -37,6 +21,9 @@ class ScriptMethods:
 		'_input',
 		'_unhandled_input',
 		'_unhandled_key_input'
+		'_set',
+		'_get', # probably
+		'emit_signal', # can't handle extra parameters to be sent with signal.
 	]
 
 	var built_ins = []

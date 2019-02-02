@@ -3,11 +3,25 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 # 6.6.2
-* Full/Partial doubling:  default is PARTIAL.  Can set globall via `set_double_strategy` and specify an override on a per double basis when calling `double` and `double_scene`.  Value can be set at gut level, test level, and per double.  There is a new "double_strategy" setting for command line and in editor.
-* double inner classes
-* assert_null
-* assert_not_null
-* smart double method
+## Features
+* `assert_null` and `assert_not_null`
+* Doubling, Stubbing, and Spies are no longer considered experimental.
+* The `double` method is now smart:
+  * It knows when you pass it a scene or a script, no need for `double_scene` anymore but it remains.
+  * You can pass it a loaded class or scene like this:
+  ```
+  var MyClass = load('res://my_class.gd')
+  var MyClassDouble = double(MyClass)
+  ```
+* You can now `double` Inner Classes by passing an Inner Class path like so:  
+  ```
+  double('res://my_script.gd', 'Inner1/InnerInInner1/AndSoOn')
+  ```
+* Experimental Full doubling allows you to spy on most Built-in methods.  You still cannot Stub them though.  This must be enabled, details in the Double Wiki page.
+
+## Fixes
+* __Issue 94__ Gut runs `after_all` on inner classes that are skipped.
+
 
 # 6.6.1
 * __Issue 60__:  Improved signal assert failure messages in some cases by having them include a list of signals that were emitted for the object.
