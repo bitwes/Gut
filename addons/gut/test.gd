@@ -124,7 +124,6 @@ func _fail(text):
 	if(gut):
 		gut.p(msg, gut.LOG_LEVEL_FAIL_ONLY)
 		gut._fail(text)
-		gut.end_yielded_test()
 
 # ------------------------------------------------------------------------------
 # Pass an assertion.
@@ -137,7 +136,6 @@ func _pass(text):
 	if(gut):
 		gut.p(msg, gut.LOG_LEVEL_ALL_ASSERTS)
 		gut._pass(text)
-		gut.end_yielded_test()
 
 # ------------------------------------------------------------------------------
 # Checks if the datatypes passed in match.  If they do not then this will cause
@@ -753,7 +751,6 @@ func pending(text=""):
 		else:
 			gut.p("Pending:  " + text)
 		gut._pending(text)
-		gut.end_yielded_test()
 
 # ------------------------------------------------------------------------------
 # Returns the number of times a signal was emitted.  -1 returned if the object
@@ -783,7 +780,8 @@ func yield_to(obj, signal_name, max_wait, msg=''):
 # not make assertions after a yield.
 # ------------------------------------------------------------------------------
 func end_test():
-	gut.end_yielded_test()
+	_lgr.deprecated('end_test is no longer necessary, you can remove it.')
+	#gut.end_yielded_test()
 
 func get_summary():
 	return _summary

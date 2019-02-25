@@ -336,7 +336,7 @@ func setup_options():
 	opts.add('-gexit', false, 'Exit after running tests.  If not specified you have to manually close the window.')
 	opts.add('-glog', 1, 'Log level.  Default [default]')
 	opts.add('-gignore_pause', false, 'Ignores any calls to gut.pause_before_teardown.')
-	opts.add('-gselect', '', ('Select a sccript to run initially.  The first script that ' +
+	opts.add('-gselect', '', ('Select a script to run initially.  The first script that ' +
 	                          'was loaded using -gtest or -gdir that contains the specified ' +
 	                          'string will be executed.  You may run others by interacting ' +
                               'with the GUI.'))

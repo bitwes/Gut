@@ -325,9 +325,16 @@ func _on_test_script_yield_completed():
 # Convert the _summary dictionary into text
 # ------------------------------------------------------------------------------
 func _get_summary_text():
-	var to_return = "*****************\nRun Summary\n*****************\n"
+	var to_return = "\n\n*****************\nRun Summary\n*****************"
 
 	to_return += "\n" + _new_summary.get_summary_text() + "\n"
+
+	var logger_text = ''
+	if(_lgr.get_deprecated().size() > 0):
+		logger_text += str("\n  * ", _lgr.get_deprecated().size(), ' Deprecated calls.')
+	if(logger_text != ''):
+		logger_text = "\nWarnings/Errors:" + logger_text + "\n\n"
+	to_return += logger_text
 
 	if(_new_summary.get_totals().tests > 0):
 		to_return +=  '+++ ' + str(_new_summary.get_totals().passing) + ' passed ' + str(_new_summary.get_totals().failing) + ' failed.  ' + \
@@ -829,7 +836,8 @@ func is_strict_datatype_checks_disabled():
 # you want to watch a test play out onscreen or inspect results.
 # ------------------------------------------------------------------------------
 func end_yielded_test():
-	_waiting = false
+	_lgr.deprecated('end_yielded_test is no longer necessary, you can remove it.')
+	#_waiting = false
 
 # ------------------------------------------------------------------------------
 # Clears the text of the text box.  This resets all counters.

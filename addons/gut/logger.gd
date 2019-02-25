@@ -67,8 +67,11 @@ func info(text):
 func debug(text):
 	return _log(types.debug, text)
 
-func deprecated(text):
-	return _log(types.deprecated, text)
+func deprecated(text, alt_method=null):
+	var msg = text
+	if(alt_method):
+		msg = str('The method ', text, ' is deprecated, use ', alt_method , ' instead.')
+	return _log(types.deprecated, msg)
 
 func get_gut():
 	return _gut
