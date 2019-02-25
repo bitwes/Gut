@@ -36,7 +36,6 @@ func test_can_yield_using_built_in_timer():
 	gut.p('yielding for 1 second')
 	yield(gut.set_yield_time(1), 'timeout')
 	gut.p('done yielding')
-	gut.end_yielded_test()
 
 func test_setting_yield_time_twice_resets_time():
 	gut.p('yielding for 1 second')
@@ -44,7 +43,6 @@ func test_setting_yield_time_twice_resets_time():
 	gut.set_yield_time(1)
 	yield(gut, 'timeout')
 	gut.p('done yielding')
-	gut.end_yielded_test()
 
 func test_wait_for_continue_click():
 	assert_eq(1, 1, 'some simple assert')
@@ -60,14 +58,12 @@ func test_will_wait_when_yielding():
 	timer.start()
 	yield(timer, 'timeout')
 	gut.p('done yielding')
-	gut.end_yielded_test()
 
 func test_can_pause_after_yielding():
 	gut.p('yielding for 1 second')
 	timer.start()
 	yield(timer, 'timeout')
 	gut.p('done yielding')
-	gut.end_yielded_test()
 	gut.pause_before_teardown()
 
 func test_can_call_pause_before_yielding():
@@ -76,7 +72,6 @@ func test_can_call_pause_before_yielding():
 	timer.start()
 	yield(timer, 'timeout')
 	gut.p('done yielding')
-	gut.end_yielded_test()
 
 func test_returning_int_does_not_cause_yield():
 	return 9
@@ -91,7 +86,6 @@ func test_returning_object_does_not_cause_yield():
 func test_new_yield():
 	yield(yield_for(1, 'first yield'), 'timeout')
 	yield(yield_for(1, 'waiting around for stuff'), YIELD)
-	#end_test()
 
 func test_passing_assert_ends_yield():
 	yield(yield_for(0.5), YIELD)

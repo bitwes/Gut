@@ -34,6 +34,7 @@ extends "res://addons/gut/gut_gui.gd"
 
 var _utils = load('res://addons/gut/utils.gd').new()
 var _lgr = _utils.get_logger()
+var _deprecated_tracker = _utils.ThingCounter.new()
 
 # ###########################
 # Editor Variables
@@ -330,6 +331,10 @@ func _get_summary_text():
 	to_return += "\n" + _new_summary.get_summary_text() + "\n"
 
 	var logger_text = ''
+	if(_lgr.get_errors().size() > 0):
+		logger_text += str("\n  * ", _lgr.get_errors().size(), ' Errors.')
+	if(_lgr.get_warnings().size() > 0):
+		logger_text += str("\n  * ", _lgr.get_warnings().size(), ' Warnings.')
 	if(_lgr.get_deprecated().size() > 0):
 		logger_text += str("\n  * ", _lgr.get_deprecated().size(), ' Deprecated calls.')
 	if(logger_text != ''):
@@ -502,7 +507,7 @@ func _wait_for_done(result):
 # returns self so it can be integrated into the yield call.
 # ------------------------------------------------------------------------------
 func _wait_for_continue_button():
-	p(PAUSE_MESSAGE, 1)
+	p(PAUSE_MESSAGE, 0)
 	_waiting = true
 	_ctrls.continue_button.set_disabled(false)
 	return self
@@ -511,7 +516,10 @@ func _wait_for_continue_button():
 # ------------------------------------------------------------------------------
 func _call_deprecated_script_method(script, method, alt):
 	if(script.has_method(method)):
-		_lgr.deprecated(str('The method ', method, ' has been deprecated, use ', alt, ' instead.'))
+		var txt = str(script, '-', method)
+		if(!_deprecated_tracker.has(txt)):
+			_lgr.deprecated(str('The method ', method, ' has been deprecated, use ', alt, ' instead.'))
+			_deprecated_tracker.add(txt)
 		script.call(method)
 
 # ------------------------------------------------------------------------------

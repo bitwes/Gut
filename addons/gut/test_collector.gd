@@ -114,7 +114,7 @@ func add_script(path):
 	var f = File.new()
 	# SHORTCIRCUIT
 	if(!f.file_exists(path)):
-		print('ERROR:  Could not find script:  ', path)
+		_lgr.error('Could not find script:  ', path)
 		return
 
 	var ts = TestScript.new()
@@ -132,7 +132,7 @@ func get_logger():
 
 func set_logger(logger):
 	_lgr = logger
-	
+
 func get_test_prefix():
 	return _test_prefix
 
