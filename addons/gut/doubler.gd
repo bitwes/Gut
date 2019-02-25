@@ -106,11 +106,12 @@ class ObjectInfo:
 # ------------------------------------------------------------------------------
 var _output_dir = null
 var _stubber = null
-var _double_count = 0
+var _double_count = 0 # used in making files names unique
 var _use_unique_names = true
 var _spy = null
-var _lgr = null
+
 var _utils = load('res://addons/gut/utils.gd').new()
+var _lgr = _utils.get_logger()
 var _method_maker = load('res://addons/gut/method_maker.gd').new()
 var _strategy = null
 

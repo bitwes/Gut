@@ -204,6 +204,9 @@ func test_delete_all_files_in_a_directory():
 # ------------------------------
 # Misc tests
 # ------------------------------
+func test_gut_sets_self_on_logger():
+	assert_eq(gr.test_gut.get_logger().get_gut(), gr.test_gut)
+
 func test_simulate_calls_process():
 	var obj = HasProcessMethod.new()
 	gr.test_gut.simulate(obj, 10, .1)

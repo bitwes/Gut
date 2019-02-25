@@ -91,7 +91,7 @@ func test_returning_object_does_not_cause_yield():
 func test_new_yield():
 	yield(yield_for(1, 'first yield'), 'timeout')
 	yield(yield_for(1, 'waiting around for stuff'), YIELD)
-	end_test()
+	#end_test()
 
 func test_passing_assert_ends_yield():
 	yield(yield_for(0.5), YIELD)

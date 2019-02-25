@@ -80,6 +80,12 @@ class TestMiscTests:
 		gr.test.assert_ne(get_tree(), null, "The tree should not be null if we are added to it")
 		assert_pass(gr.test)
 
+	func test_get_set_logger():
+		assert_ne(gr.test.get_logger(), null)
+		var dlog = double(Logger).new()
+		gr.test.set_logger(dlog)
+		assert_eq(gr.test.get_logger(), dlog)
+
 class TestAssertEq:
 	extends BaseTestClass
 
@@ -121,6 +127,9 @@ class TestAssertEq:
 		gr.test.assert_eq("one", "one", "Should Pass")
 		assert_pass(gr.test)
 
+	func test_warns_when_comparing_float_and_int():
+		gr.test.assert_eq(1.0, 1, 'Should pass and warn')
+		assert_warn(gr.test)
 
 class TestAssertNe:
 	extends BaseTestClass
@@ -826,7 +835,6 @@ class TestSignalAsserts:
 		var text = gr.test._fail_pass_text[0]
 		assert_string_contains(text, SIGNALS.NO_PARAMETERS)
 		assert_string_contains(text, SIGNALS.SOME_SIGNAL)
-
 
 # TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestExtendAsserts:

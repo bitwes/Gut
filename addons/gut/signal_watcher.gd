@@ -52,6 +52,7 @@ const ARG_NOT_SET = '_*_argument_*_is_*_not_set_*_'
 #	- some_signal on ref2 was never emitted.
 #	- other_signal on ref2 was emitted 3 times, each time with 3 parameters.
 var _watched_signals = {}
+var _utils = load('res://addons/gut/utils.gd').new()
 
 func _add_watched_signal(obj, name):
 	# SHORTCIRCUIT - ignore dupes
@@ -149,8 +150,7 @@ func is_watching(object, signal_name):
 func clear():
 	for obj in _watched_signals:
 		for signal_name in _watched_signals[obj]:
-			var wr = weakref(obj)
-			if(wr.get_ref()):
+			if(_utils.is_not_freed(obj)):
 				obj.disconnect(signal_name, self, '_on_watched_signal')
 	_watched_signals.clear()
 

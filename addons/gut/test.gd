@@ -107,9 +107,11 @@ var _signal_watcher = load('res://addons/gut/signal_watcher.gd').new()
 var DOUBLE_STRATEGY = null
 
 var _utils = load('res://addons/gut/utils.gd').new()
+var _lgr = _utils.get_logger()
+
 func _init():
 	_init_types_dictionary()
-	DOUBLE_STRATEGY = _utils.DOUBLE_STRATEGY
+	DOUBLE_STRATEGY = _utils.DOUBLE_STRATEGY # yes, this is right
 
 # ------------------------------------------------------------------------------
 # Fail an assertion.  Causes test and script to fail as well.
@@ -152,8 +154,7 @@ func _do_datatypes_match__fail_if_not(got, expected, text):
 			# If we have a mismatch between float and int (types 2 and 3) then
 			# print out a warning but do not fail.
 			if([2, 3].has(got_type) and [2, 3].has(expect_type)):
-				if(gut):
-					gut.get_logger().warn(str('Warn:  Float/Int comparison.  Got ', types[got_type], ' but expected ', types[expect_type]))
+				_lgr.warn(str('Warn:  Float/Int comparison.  Got ', types[got_type], ' but expected ', types[expect_type]))
 			else:
 				_fail('Cannot compare ' + types[got_type] + '[' + str(got) + '] to ' + types[expect_type] + '[' + str(expected) + '].  ' + text)
 				passed = false
@@ -204,22 +205,6 @@ func _get_fail_msg_including_emitted_signals(text, object):
 # Virtual Methods
 # #######################
 
-# Overridable method that runs before each test.
-func setup():
-	pass
-
-# Overridable method that runs after each test
-func teardown():
-	pass
-
-# Overridable method that runs before any tests are run
-func prerun_setup():
-	pass
-
-# Overridable method that runs after all tests are run
-func postrun_teardown():
-	pass
-
 # alias for prerun_setup
 func before_all():
 	pass
@@ -240,6 +225,16 @@ func after_each():
 # Public
 # #######################
 
+func get_logger():
+	return _lgr
+
+func set_logger(logger):
+	_lgr = logger
+
+
+# #######################
+# Asserts
+# #######################
 
 # ------------------------------------------------------------------------------
 # Asserts that the expected value equals the value got.

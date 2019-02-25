@@ -1,4 +1,4 @@
-extends "res://addons/gut/test.gd"
+extends "res://test/gut_test.gd"
 # ##############################################################################
 # Some notes about signals:
 # 	* The parameters appear to be completely optional when defined via
@@ -59,7 +59,6 @@ func after_each():
 # ####################
 func test_print_signals():
 	gr.sw.print_object_signals(gr.so)
-
 
 # ####################
 # Watch one signal

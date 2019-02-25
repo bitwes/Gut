@@ -17,3 +17,13 @@ var InnerClasses = load(INNER_CLASSES_PATH)
 
 var Gut = load('res://addons/gut/gut.gd')
 var Test = load('res://addons/gut/test.gd')
+var Logger = load('res://addons/gut/logger.gd')
+
+
+
+func assert_warn(obj, times=1):
+	if(obj.has_method('get_logger')):
+		var msg = str('Should have ', times, ' warnings.')
+		assert_eq(obj.get_logger().get_warnings().size(), times, msg)
+	else:
+		_fail('Does not have get_logger method')

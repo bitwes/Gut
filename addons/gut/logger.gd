@@ -1,18 +1,84 @@
+extends Node2D
 
+var _warnings = []
+var _errors = []
+var _infos = []
+var _debugs = []
+var _deprecated = []
+var _gut = null
 
+var types = {
+	warn = 'WARNING',
+	error = 'ERROR',
+	info = 'INFO',
+	debug = 'DEBUG',
+	deprecated = 'DEPRECATED'
+}
 
+var _suppress_output = false
 
+func append_to(type, msg):
+	if(type == types.warn):
+		_warnings.append(msg)
+	if(type == types.error):
+		_errors.append(msg)
+	if(type == types.info):
+		_infos.append(msg)
+	if(type == types.debug):
+		_debugs.append(msg)
+	if(type == types.deprecated):
+		_deprecated.append(msg)
+
+func _log(type, text):
+	append_to(type, text)
+	var formatted = str('[', type, ']  ', text)
+	if(!_suppress_output):
+		if(_gut):
+			# this will keep the text indented under test for readability
+			_gut.p(formatted)
+		else:
+			print(formatted)
+	return formatted
+
+func get_warnings():
+	return _warnings
+
+func get_errors():
+	return _errors
+
+func get_infos():
+	return _infos
+
+func get_debugs():
+	return _debugs
+
+func get_deprecated():
+	return _deprecated
 
 func warn(text):
-	print('WARNING:  ', text)
+	return _log(types.warn, text)
 
 func error(text):
-	print('ERROR:  ', text)
+	return _log(types.error, text)
 
 func info(text):
-	print('INFO:  ', text)
+	return _log(types.info, text)
 
 func debug(text):
-	print('DEBUG:  ', text)
+	return _log(types.debug, text)
 
-# TODO deprecated
+func deprecated(text):
+	return _log(types.deprecated, text)
+
+func get_gut():
+	return _gut
+
+func set_gut(gut):
+	_gut = gut
+
+func clear():
+	_warnings.clear()
+	_errors.clear()
+	_infos.clear()
+	_debugs.clear()
+	_deprecated.clear()
