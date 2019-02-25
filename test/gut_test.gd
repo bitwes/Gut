@@ -20,10 +20,19 @@ var Test = load('res://addons/gut/test.gd')
 var Logger = load('res://addons/gut/logger.gd')
 
 
-
 func assert_warn(obj, times=1):
 	if(obj.has_method('get_logger')):
 		var msg = str('Should have ', times, ' warnings.')
 		assert_eq(obj.get_logger().get_warnings().size(), times, msg)
 	else:
 		_fail('Does not have get_logger method')
+
+func assert_has_logger(obj):
+	assert_has_method(obj, 'get_logger')
+	assert_has_method(obj, 'set_logger')
+	if(obj.has_method('get_logger')):
+		assert_not_null(obj.get_logger(), 'Default logger not null.')
+		if(obj.has_method('set_logger')):
+			var l = double(Logger).new()
+			obj.set_logger(l)
+			assert_eq(obj.get_logger(), l, 'Set/get works')

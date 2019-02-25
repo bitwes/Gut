@@ -50,6 +50,9 @@ var scripts = []
 var _test_prefix = 'test_'
 var _test_class_prefix = 'Test'
 
+var _utils = load('res://addons/gut/utils.gd').new()
+var _lgr = _utils.get_logger()
+
 func _parse_script(script):
 	var file = File.new()
 	var line = ""
@@ -88,7 +91,7 @@ func _parse_inner_class_tests(script):
 	var inst = script.get_new()
 
 	if(!inst is load('res://addons/gut/test.gd')):
-		print('WARNING Ignoring ' + script.class_name + ' because it does not extend test.gd')
+		_lgr.warn('Ignoring ' + script.class_name + ' because it starts with "' + _test_class_prefix + '" but does not extend addons/gut/test.gd')
 		return false
 
 	var methods = inst.get_method_list()
@@ -124,7 +127,12 @@ func to_s():
 	for i in range(scripts.size()):
 		to_return += scripts[i].to_s() + "\n"
 	return to_return
+func get_logger():
+	return _lgr
 
+func set_logger(logger):
+	_lgr = logger
+	
 func get_test_prefix():
 	return _test_prefix
 

@@ -1,4 +1,4 @@
-extends "res://addons/gut/test.gd"
+extends "res://test/gut_test.gd"
 
 var TestCollector = load('res://addons/gut/test_collector.gd')
 var SCRIPTS_ROOT = 'res://test/parsing_and_loading_samples/'
@@ -8,6 +8,9 @@ var gr = {
 }
 func before_each():
 	gr.tc = TestCollector.new()
+
+func test_has_logger():
+	assert_has_logger(gr.tc)
 
 func test_has_test_one():
 	gr.tc.add_script(SCRIPTS_ROOT + 'parse_samples.gd')
