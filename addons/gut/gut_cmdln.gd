@@ -441,7 +441,7 @@ func apply_options(opts):
 		_auto_run = _tester.select_script(opts.selected)
 		_run_single = true
 		if(!_auto_run):
-			_tester.p("Could not find a script that matched:  " + opts.selected)
+			_tester.get_logger().error("Could not find a script that matched:  " + opts.selected)
 
 	if(opts.double_strategy == 'full'):
 		_tester.set_double_strategy(_utils.DOUBLE_STRATEGY.FULL)
@@ -493,6 +493,7 @@ func _init():
 
 			if(_auto_run):
 				_tester.test_scripts(!_run_single)
+
 
 # exit if option is set.
 func _on_tests_finished(should_exit):

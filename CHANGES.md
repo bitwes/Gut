@@ -2,6 +2,17 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# 6.7.0
+# Fixes/Improvements
+* Some housekeeping.
+* Improved logging.  The number of Gut related errors, warnings, and deprecated methods are listed in the summary.
+* Deprecated the following methods:
+  * `setup`, `teardown`, `prerun_setup`, `postrun_teardown`.  These are replaced with the methods `before_all`, `before_each`, `after_all`, `after_each` for easier reading.  They will continue to work for the foreseeable future.
+  * `end_test` and the old `gut.end_yielded_test`.  These no longer need to be called.
+
+# 6.6.3
+Was exporting a directory that I shouldn't, added it to the .gitattributes
+
 # 6.6.2
 ## Features
 * `assert_null` and `assert_not_null`

@@ -64,3 +64,20 @@ func test_uses_gut_print_if_it_has_a_gut():
 	l.set_gut(gut)
 	l.info('something')
 	assert_called(gut, 'p')
+
+func test_can_get_count_using_type():
+	var l = Logger.new()
+	l.warn('somethng')
+	l.debug('something 2')
+	l.debug('something else')
+	assert_eq(l.get_count(l.types.debug), 2, 'count debug')
+	assert_eq(l.get_count(l.types.warn), 1, 'count warnings')
+
+func test_get_count_with_no_parameter_returns_count_of_all_logs():
+	var l = Logger.new()
+	l.warn('a')
+	l.debug('b')
+	l.error('c')
+	l.deprecated('d')
+	l.info('e')
+	assert_eq(l.get_count(), 5)

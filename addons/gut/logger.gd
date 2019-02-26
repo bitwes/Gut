@@ -15,46 +15,62 @@ var types = {
 	deprecated = 'DEPRECATED'
 }
 
+var _logs = {
+	types.warn: [],
+	types.error: [],
+	types.info: [],
+	types.debug: [],
+	types.deprecated: []
+}
+
 var _suppress_output = false
 
-func append_to(type, msg):
-	if(type == types.warn):
-		_warnings.append(msg)
-	if(type == types.error):
-		_errors.append(msg)
-	if(type == types.info):
-		_infos.append(msg)
-	if(type == types.debug):
-		_debugs.append(msg)
-	if(type == types.deprecated):
-		_deprecated.append(msg)
-
 func _log(type, text):
-	append_to(type, text)
+	_logs[type].append(text)
 	var formatted = str('[', type, ']  ', text)
 	if(!_suppress_output):
 		if(_gut):
 			# this will keep the text indented under test for readability
 			_gut.p(formatted)
+			# IDEA!  We could store the current script and test that generated
+			# this output, which could be useful later if we printed out a summary.
 		else:
 			print(formatted)
 	return formatted
 
+# ---------------
+# Get Methods
+# ---------------
 func get_warnings():
-	return _warnings
+	return get_log_entries(types.warn)
 
 func get_errors():
-	return _errors
+	return get_log_entries(types.error)
 
 func get_infos():
-	return _infos
+	return get_log_entries(types.info)
 
 func get_debugs():
-	return _debugs
+	return get_log_entries(types.debug)
 
 func get_deprecated():
-	return _deprecated
+	return get_log_entries(types.deprecated)
 
+func get_count(log_type=null):
+	var count = 0
+	if(log_type == null):
+		for key in _logs:
+			count += _logs[key].size()
+	else:
+		count = _logs[log_type].size()
+	return count
+
+func get_log_entries(log_type):
+	return _logs[log_type]
+
+# ---------------
+# Log methods
+# ---------------
 func warn(text):
 	return _log(types.warn, text)
 
@@ -73,6 +89,9 @@ func deprecated(text, alt_method=null):
 		msg = str('The method ', text, ' is deprecated, use ', alt_method , ' instead.')
 	return _log(types.deprecated, msg)
 
+# ---------------
+# Misc
+# ---------------
 func get_gut():
 	return _gut
 
@@ -80,8 +99,5 @@ func set_gut(gut):
 	_gut = gut
 
 func clear():
-	_warnings.clear()
-	_errors.clear()
-	_infos.clear()
-	_debugs.clear()
-	_deprecated.clear()
+	for key in _logs:
+		_logs[key].clear()

@@ -586,7 +586,6 @@ func _test_the_scripts():
 				test_script.before_each()
 
 
-
 				#When the script yields it will return a GDScriptFunctionState object
 				script_result = test_script.call(_current_test.name)
 				if(_is_function_state(script_result)):
@@ -1079,6 +1078,11 @@ func get_current_script_object():
 	if(_test_script_objects.size() > 0):
 		to_return = _test_script_objects[-1]
 	return to_return
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_current_test_object():
+	return _current_test
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------

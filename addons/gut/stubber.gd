@@ -11,6 +11,7 @@
 var returns = {}
 var _gut = null
 var _utils = load('res://addons/gut/utils.gd').new()
+var _lgr = _utils.get_logger()
 
 func _is_instance(obj):
 	return typeof(obj) == TYPE_OBJECT and !obj.has_method('new')
@@ -74,7 +75,7 @@ func add_stub(stub_params):
 # subpath of the object to try to find a value.
 #
 # It will also use the optional list of parameter values to find a value.  If
-# the objet was stubbed with no parameters than any parameters will match.
+# the objet was stubbed with no parameters then any parameters will match.
 # If it was stubbed with specific paramter values then it will try to match.
 # If the parameters do not match BUT there was also an empty paramter list stub
 # then it will return those.
@@ -104,10 +105,18 @@ func get_return(obj, method, parameters=null):
 			if(returns[key][method][i].parameters == null):
 				null_idx = i
 
+		# We have matching parameter values so return the stub value for that
 		if(param_idx != -1):
 			to_return = returns[key][method][param_idx].return_val
+		# We found a case where the parameters were not specified so return
+		# parameters for that
 		elif(null_idx != -1):
 			to_return = returns[key][method][null_idx].return_val
+		else:
+			_lgr.warn(str('Call to [', method, '] was not stubbed for the supplied parameters ', parameters, '.  Null was returned.'))
+	else:
+		_lgr.info('Unstubbed call to ' + method)
+
 
 	return to_return
 
@@ -116,9 +125,16 @@ func get_gut():
 
 func set_gut(gut):
 	_gut = gut
+	set_logger(gut.get_logger())
 
 func clear():
 	returns.clear()
+
+func get_logger():
+	return _lgr
+
+func set_logger(logger):
+	_lgr = logger
 
 func to_s():
 	var text = ''

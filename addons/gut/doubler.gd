@@ -114,6 +114,15 @@ var _utils = load('res://addons/gut/utils.gd').new()
 var _lgr = _utils.get_logger()
 var _method_maker = load('res://addons/gut/method_maker.gd').new()
 var _strategy = null
+var _swapped_out_strategy = null
+
+func _temp_strategy(strat):
+	_swapped_out_strategy = _strategy
+	_strategy = strat
+
+func _restore_strategy():
+	_strategy = _swapped_out_strategy
+
 
 func _init(strategy=_utils.DOUBLE_STRATEGY.PARTIAL):
 	# make sure _method_maker gets logger too
@@ -228,7 +237,7 @@ func _get_func_text(method_hash):
 	var called_with = _method_maker.get_spy_call_parameters_text(method_hash)
 	ftxt += _get_spy_text(method_hash)
 
-	if(_stubber):
+	if(_stubber and method_hash.name != '_init'):
 		ftxt += "\treturn __gut_metadata_.stubber.get_return(self, '" + method_hash.name + "', " + called_with + ")\n"
 	else:
 		ftxt += "\tpass\n"
@@ -307,30 +316,33 @@ func set_strategy(strategy):
 
 # double a scene
 func double_scene(path, strategy=_strategy):
+	_temp_strategy(strategy)
+
 	var oi = ObjectInfo.new(path)
-	var old_strat = _strategy
-	_strategy = strategy
 	var temp_path = _get_temp_path(oi)
 	_double_scene_and_script(path, temp_path)
-	_strategy = old_strat
+
+	_restore_strategy()
 	return load(temp_path)
 
 # double a script
 func double(path, strategy=_strategy):
+	_temp_strategy(strategy)
+
 	var oi = ObjectInfo.new(path)
-	var old_strat = _strategy
-	_strategy = strategy
 	var to_return = load(_double(oi))
-	_strategy = old_strat
+
+	_restore_strategy()
 	return to_return
 
 # double an inner class in a script
 func double_inner(path, subpath, strategy=_strategy):
+	_temp_strategy(strategy)
+
 	var oi = ObjectInfo.new(path, subpath)
-	var old_strat = _strategy
-	_strategy = strategy
 	var to_return = load(_double(oi))
-	_strategy = old_strat
+
+	_restore_strategy()
 	return to_return
 
 func clear_output_directory():

@@ -1,4 +1,4 @@
-extends "res://addons/gut/test.gd"
+extends "res://test/gut_test.gd"
 
 var Stubber = load('res://addons/gut/stubber.gd')
 # test.gd has a StubParams variable already so this has to have a
@@ -11,9 +11,6 @@ var ToStub = load(TO_STUB_PATH)
 
 const HAS_STUB_METADATA_PATH = 'res://test/stub_test_objects/has_stub_metadata.gd'
 var HasStubMetadata = load(HAS_STUB_METADATA_PATH)
-
-const INNER_CLASSES_PATH = 'res://test/doubler_test_objects/inner_classes.gd'
-var InnerClasses = load(INNER_CLASSES_PATH)
 
 var gr = {
 	stubber = null
@@ -37,6 +34,14 @@ func before_each():
 func test_can_get_set_gut():
 	assert_accessors(gr.stubber, 'gut', null, load('res://addons/gut/gut.gd').new())
 
+func test_has_logger():
+	assert_has_logger(gr.stubber)
+
+func test_setting_gut_sets_logger():
+	var gut = Gut.new()
+	gr.stubber.set_gut(gut)
+	assert_eq(gr.stubber.get_logger(), gut.get_logger())
+
 func test_can_set_return():
 	gr.stubber.set_return('some_path', 'some_method', 7)
 
@@ -58,6 +63,10 @@ func test_can_set_return_with_class():
 func test_getting_return_for_thing_that_does_not_exist_returns_null():
 	var value = gr.stubber.get_return('nothing', 'something')
 	assert_eq(value, null)
+
+func test_getting_return_for_thing_that_does_not_exist_generates_warning():
+	var value = gr.stubber.get_return('nothing', 'something')
+	assert_eq(gr.stubber.get_logger().get_infos().size(), 1)
 
 func test_can_get_return_value_for_class_using_path():
 	gr.stubber.set_return(ToStub, 'get_value', 0)
@@ -142,6 +151,12 @@ func test_withStubParams_can_get_return_based_on_complex_parameters():
 	gr.stubber.add_stub(sp)
 	var with_params = gr.stubber.get_return('thing', 'method', ['a', 1, ['a', 1], sp])
 	assert_eq(with_params, 10)
+
+func test_when_parameters_do_not_match_any_stub_then_warning_generated():
+	var sp = StubParamsClass.new('thing', 'method').to_return(10).when_passed('a')
+	gr.stubber.add_stub(sp)
+	var result = gr.stubber.get_return('thing', 'method', ['b'])
+	assert_eq(gr.stubber.get_logger().get_warnings().size(), 1)
 
 func test_withStubParams_param_layering_works():
 	var sp1 = StubParamsClass.new('thing', 'method').to_return(10).when_passed(10)

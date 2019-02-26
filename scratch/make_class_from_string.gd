@@ -50,4 +50,5 @@ func create_instance():
 func _init():
 	print("hello world")
 	create_node2d()
+	create_instance()
 	quit()

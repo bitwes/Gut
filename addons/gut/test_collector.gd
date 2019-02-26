@@ -114,7 +114,7 @@ func add_script(path):
 	var f = File.new()
 	# SHORTCIRCUIT
 	if(!f.file_exists(path)):
-		_lgr.error('Could not find script:  ', path)
+		_lgr.error('Could not find script:  ' + path)
 		return
 
 	var ts = TestScript.new()
