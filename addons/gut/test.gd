@@ -573,6 +573,24 @@ func get_signal_parameters(object, signal_name, index=-1):
 	return _signal_watcher.get_signal_parameters(object, signal_name, index)
 
 # ------------------------------------------------------------------------------
+# Get the parameters for a method call to a doubled object.  By default it will
+# return the most recent call.  You can optionally specify an index.
+#
+# Returns:
+# * an array of parameter values if a call the method was found
+# * null when a call to the method was not found or the index specified was
+#   invalid.
+# ------------------------------------------------------------------------------
+func get_call_parameters(object, method_name, index=-1):
+	var to_return = null
+	if(_utils.is_double(object)):
+		to_return = gut.get_spy().get_call_parameters(object, method_name, index)
+	else:
+		_lgr.error('You must pass a doulbed object to get_call_parameters.')
+
+	return to_return
+
+# ------------------------------------------------------------------------------
 # Assert that object is an instance of a_class
 # ------------------------------------------------------------------------------
 func assert_extends(object, a_class, text=''):
@@ -670,7 +688,7 @@ func assert_string_ends_with(text, search, match_case=true):
 func assert_called(inst, method_name, parameters=null):
 	var disp = str('Expected [',method_name,'] to have been called on ',inst)
 
-	if(!inst.get('__gut_metadata_')):
+	if(!_utils.is_double(inst)):
 		_fail('You must pass a doubled instance to assert_called.  Check the wiki for info on using double.')
 	else:
 		if(gut.get_spy().was_called(inst, method_name, parameters)):
@@ -688,7 +706,7 @@ func assert_called(inst, method_name, parameters=null):
 func assert_not_called(inst, method_name, parameters=null):
 	var disp = str('Expected [', method_name, '] to NOT have been called on ', inst)
 
-	if(!inst.get('__gut_metadata_')):
+	if(!_utils.is_double(inst)):
 		_fail('You must pass a doubled instance to assert_not_called.  Check the wiki for info on using double.')
 	else:
 		if(gut.get_spy().was_called(inst, method_name, parameters)):
@@ -712,7 +730,7 @@ func assert_call_count(inst, method_name, expected_count, parameters=null):
 	var disp = 'Expected [%s] on %s to be called [%s] times%s.  It was called [%s] times.'
 	disp = disp % [method_name, inst, expected_count, param_text, count]
 
-	if(!inst.get('__gut_metadata_')):
+	if(!_utils.is_double(inst)):
 		_fail('You must pass a doubled instance to assert_call_count.  Check the wiki for info on using double.')
 	else:
 		if(count == expected_count):

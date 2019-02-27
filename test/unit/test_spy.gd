@@ -1,15 +1,17 @@
 extends 'res://addons/gut/test.gd'
 
 class TestSpy:
-	extends 'res://addons/gut/test.gd'
+	extends 'res://test/gut_test.gd'
 
-	var Spy = load('res://addons/gut/spy.gd')
 	var Simple = load('res://test/spy_test_objects/simple.gd')
 
 	var _spy = null
 
 	func before_each():
 		_spy = Spy.new()
+
+	func test_has_logger():
+		assert_has_logger(_spy)
 
 	func test_can_add_call_to_method_on_path():
 		_spy.add_call('nothing', 'method_name')
@@ -81,6 +83,33 @@ class TestAddingCallsWithParameters:
 		var simple = Simple.new()
 		_spy.add_call(simple, 'method1', [1])
 		assert_false(_spy.was_called(simple, 'method1', [2]))
+
+	func test_can_get_parameters_for_first_call():
+		var simple = Simple.new()
+		_spy.add_call(simple, 'method1', [1])
+		assert_eq(_spy.get_call_parameters(simple, 'method1'), [1])
+
+	func test_can_get_parameters_for_second_call():
+		var simple = Simple.new()
+		_spy.add_call(simple, 'method1', [1])
+		_spy.add_call(simple, 'method1', [2])
+		assert_eq(_spy.get_call_parameters(simple, 'method1'), [2])
+
+	func test_when_method_was_not_called_get_call_parameters_returns_null():
+		assert_eq(_spy.get_call_parameters(Simple.new(), 'method1'), null)
+
+	func test_can_get_second_call_parameters_when_there_are_multiple_calls():
+		var simple = Simple.new()
+		for i in range(20):
+			_spy.add_call(simple, 'method1', [i])
+		assert_eq(_spy.get_call_parameters(simple, 'method1', 10), [10])
+
+	func test_when_index_out_of_range_then_error_generated_and_null_returned():
+		var simple = Simple.new()
+		_spy.add_call(simple, 'method1')
+		var p = _spy.get_call_parameters(simple, 'method1', 10)
+		assert_eq(p, null, 'The returned parameters should be null')
+		assert_eq(_spy.get_logger().get_errors().size(), 1, 'generates error')
 
 class TestGetCallCount:
 	extends 'res://addons/gut/test.gd'

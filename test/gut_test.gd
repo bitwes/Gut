@@ -18,6 +18,7 @@ var InnerClasses = load(INNER_CLASSES_PATH)
 var Gut = load('res://addons/gut/gut.gd')
 var Test = load('res://addons/gut/test.gd')
 var Logger = load('res://addons/gut/logger.gd')
+var Spy = load('res://addons/gut/spy.gd')
 
 
 func assert_warn(obj, times=1):

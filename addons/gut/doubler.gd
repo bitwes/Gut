@@ -58,7 +58,9 @@ class ScriptMethods:
 			text += str("  ", built_ins[i].name, "\n")
 		return text
 
-
+# ------------------------------------------------------------------------------
+# Helper class to deal with objects and inner classes.
+# ------------------------------------------------------------------------------
 class ObjectInfo:
 	var _path = null
 	var _subpaths = []

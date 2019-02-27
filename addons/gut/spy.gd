@@ -9,6 +9,8 @@
 #   },
 # }
 var _calls = {}
+var _utils = load('res://addons/gut/utils.gd').new()
+var _lgr = _utils.get_logger()
 
 func _get_params_as_string(params):
 	var to_return = ''
@@ -45,6 +47,25 @@ func was_called(variant, method_name, parameters=null):
 			to_return = true
 	return to_return
 
+func get_call_parameters(variant, method_name, index=-1):
+	var to_return = null
+	var get_index = -1
+
+	if(_calls.has(variant) and _calls[variant].has(method_name)):
+		var call_size = _calls[variant][method_name].size()
+		if(index == -1):
+			# get the most recent call by default
+			get_index =  call_size -1
+		else:
+			get_index = index
+
+		if(get_index < call_size):
+			to_return = _calls[variant][method_name][get_index]
+		else:
+			_lgr.error(str('Specified index ', index, ' is outside range of the number of registered calls:  ', call_size))
+			
+	return to_return
+
 func call_count(instance, method_name, parameters=null):
 	var to_return = 0
 
@@ -67,3 +88,9 @@ func get_call_list_as_string(instance):
 			for i in range(_calls[instance][method].size()):
 				to_return += str(method, '(', _get_params_as_string(_calls[instance][method][i]), ")\n")
 	return to_return
+
+func get_logger():
+	return _lgr
+
+func set_logger(logger):
+	_lgr = logger

@@ -264,23 +264,22 @@ class TestAssertGt:
 		gr.test.assert_gt("a", "b", "Should Fail")
 		assert_fail(gr.test)
 
-# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestAssertLt:
 	extends BaseTestClass
 
-	func test_assert_lt_number_with_lt():
+	func test_number_with_lt():
 		gr.test.assert_lt(1, 2, "Should Pass")
 		assert_pass(gr.test, 1, '1 < 2')
 
-	func test_assert_lt_number_with_gt():
+	func test_number_with_gt():
 		gr.test.assert_lt(2, 1, "Should fail")
 		assert_fail(gr.test, 1, '2 > 1')
 
-	func test_assert_lt_string_with_lt():
+	func test_string_with_lt():
 		gr.test.assert_lt("a", "b", "Should Pass")
 		assert_pass(gr.test)
 
-	func test_assert_lt_string_with_gt():
+	func test_string_with_gt():
 		gr.test.assert_lt("b", "a", "Should Fail")
 		assert_fail(gr.test)
 
@@ -368,16 +367,15 @@ class TestAssertFalse:
 		gr.test.assert_false(false, "Should pass")
 		assert_pass(gr.test)
 
-# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestAssertHas:
 	extends BaseTestClass
 
-	func test_assert_has_passes_when_array_has_element():
+	func test_passes_when_array_has_element():
 		var array = [0]
 		gr.test.assert_has(array, 0, 'It should have zero')
 		assert_pass(gr.test)
 
-	func test_assert_has_fails_when_it_does_not_have_element():
+	func test_fails_when_it_does_not_have_element():
 		var array = [0]
 		gr.test.assert_has(array, 1, 'Should not have it')
 		assert_fail(gr.test)
@@ -1101,6 +1099,22 @@ class TestAssertCallCount:
 		doubled.set_value(12)
 		gr.test_with_gut.assert_call_count(doubled, 'set_value', 4)
 		assert_pass(gr.test_with_gut)
+
+class TestGetCallParameters:
+	extends BaseTestClass
+
+	func test_it_works():
+		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		doubled.set_value(5)
+		assert_eq(gr.test_with_gut.get_call_parameters(doubled, 'set_value'), [5])
+		gr.test_with_gut.assert_called(doubled, 'set_value')
+		assert_pass(gr.test_with_gut)
+
+	func test_generates_error_if_you_do_not_pass_a_doubled_object():
+		var thing = Node2D.new()
+		var p = gr.test_with_gut.get_call_parameters(thing, 'something')
+		assert_eq(gr.test_with_gut.get_logger().get_errors().size(), 1)
+
 
 class TestAssertNull:
 	extends BaseTestClass
