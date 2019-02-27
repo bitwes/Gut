@@ -25,13 +25,19 @@ var _logs = {
 
 var _suppress_output = false
 
+func _gut_log_level_for_type(log_type):
+	if(log_type == types.warn or log_type == types.error):
+		return 0
+	else:
+		return 2
+
 func _log(type, text):
 	_logs[type].append(text)
 	var formatted = str('[', type, ']  ', text)
 	if(!_suppress_output):
 		if(_gut):
 			# this will keep the text indented under test for readability
-			_gut.p(formatted)
+			_gut.p(formatted, _gut_log_level_for_type(type))
 			# IDEA!  We could store the current script and test that generated
 			# this output, which could be useful later if we printed out a summary.
 		else:
@@ -83,6 +89,7 @@ func info(text):
 func debug(text):
 	return _log(types.debug, text)
 
+# supply some text or the name of the deprecated method and the replacement.
 func deprecated(text, alt_method=null):
 	var msg = text
 	if(alt_method):

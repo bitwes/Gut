@@ -9,7 +9,6 @@
 # 	}
 # }
 var returns = {}
-var _gut = null
 var _utils = load('res://addons/gut/utils.gd').new()
 var _lgr = _utils.get_logger()
 
@@ -119,13 +118,6 @@ func get_return(obj, method, parameters=null):
 
 
 	return to_return
-
-func get_gut():
-	return _gut
-
-func set_gut(gut):
-	_gut = gut
-	set_logger(gut.get_logger())
 
 func clear():
 	returns.clear()

@@ -31,16 +31,8 @@ func print_info(c):
 func before_each():
 	gr.stubber = Stubber.new()
 
-func test_can_get_set_gut():
-	assert_accessors(gr.stubber, 'gut', null, load('res://addons/gut/gut.gd').new())
-
 func test_has_logger():
 	assert_has_logger(gr.stubber)
-
-func test_setting_gut_sets_logger():
-	var gut = Gut.new()
-	gr.stubber.set_gut(gut)
-	assert_eq(gr.stubber.get_logger(), gut.get_logger())
 
 func test_can_set_return():
 	gr.stubber.set_return('some_path', 'some_method', 7)

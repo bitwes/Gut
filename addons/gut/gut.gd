@@ -142,8 +142,8 @@ func _init():
 	_doubler.set_logger(_lgr)
 	_lgr.set_gut(self)
 
-	#_stubber.set_logger(_lgr)
-	#_spy.set_logger(_lgr)
+	_stubber.set_logger(_lgr)
+	_test_collector.set_logger(_lgr)
 
 # ------------------------------------------------------------------------------
 # Connect all the controls created in the parent class to the methods here.
