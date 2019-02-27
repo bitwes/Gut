@@ -26,7 +26,7 @@ var _logs = {
 var _suppress_output = false
 
 func _gut_log_level_for_type(log_type):
-	if(log_type == types.warn or log_type == types.error):
+	if(log_type == types.warn or log_type == types.error or log_type == types.deprecated):
 		return 0
 	else:
 		return 2
