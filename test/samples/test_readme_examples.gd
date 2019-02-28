@@ -118,6 +118,22 @@ func test_false():
 	assert_false(true) # FAIL
 	assert_false('ABC' == 'ABC') # FAIL
 
+func test_null():
+	gut.p('-- passing --')
+	assert_null(null)
+
+	gut.p('-- failing --')
+	assert_null('a')
+	assert_null(1)
+
+func test_not_null():
+	gut.p('-- passing --')
+	assert_not_null('a')
+	assert_not_null(1)
+
+	gut.p('-- failing --')
+	assert_not_null(null)
+
 
 func test_assert_between():
 	gut.p('-- passing --')

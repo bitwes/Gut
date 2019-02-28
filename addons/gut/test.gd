@@ -403,6 +403,11 @@ func assert_file_not_empty(file_path):
 func assert_has_method(obj, method):
 	assert_true(obj.has_method(method), 'Should have method: ' + method)
 
+# Old deprecated method name
+func assert_get_set_methods(obj, property, default, set_to):
+	_lgr.deprecated('assert_get_set_methods', 'assert_accessors')
+	assert_accessors(obj, property, default, set_to)
+
 # ------------------------------------------------------------------------------
 # Verifies the object has get and set methods for the property passed in.  The
 # property isn't tied to anything, just a name to be appended to the end of
@@ -410,21 +415,19 @@ func assert_has_method(obj, method):
 # If they exist then it asserts get_ returns the expected default then calls
 # set_ and asserts get_ has the value it was set to.
 # ------------------------------------------------------------------------------
-func assert_get_set_methods(obj, property, default, set_to):
+func assert_accessors(obj, property, default, set_to):
 	var fail_count = _summary.failed
 	var get = 'get_' + property
 	var set = 'set_' + property
 	assert_has_method(obj, get)
 	assert_has_method(obj, set)
+	# SHORT CIRCUIT
 	if(_summary.failed > fail_count):
 		return
 	assert_eq(obj.call(get), default, 'It should have the expected default value.')
 	obj.call(set, set_to)
 	assert_eq(obj.call(get), set_to, 'The set value should have been returned.')
 
-# Alias for assert_get_set_methods
-func assert_accessors(obj, property, default, set_to):
-	assert_get_set_methods(obj, property, default, set_to)
 
 # ---------------------------------------------------------------------------
 # Property search helper.  Used to retrieve Dictionary of specified property
