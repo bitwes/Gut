@@ -3,8 +3,8 @@
   "should_maximize":true,
   "should_exit":true,
   "ignore_pause":false,
-  "log": 3,
+  "log_level": 3,
   "opacity":100,
-  "inner_class":"",
-  "double_strategy":"partial"
+  "double_strategy":"partial",
+  "include_subdirs":true
 }

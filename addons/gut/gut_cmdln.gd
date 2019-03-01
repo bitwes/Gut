@@ -46,11 +46,30 @@ extends SceneTree
 # examined and parsed based on how the gut options work.
 #-------------------------------------------------------------------------------
 class CmdLineParser:
+	var _used_options = []
 	var _opts = []
 
 	func _init():
 		for i in range(OS.get_cmdline_args().size()):
 			_opts.append(OS.get_cmdline_args()[i])
+
+	# Parse out multiple comma delimited values from a command line
+	# option.  Values are separated from option name with "=" and
+	# additional values are comma separated.
+	func _parse_array_value(full_option):
+		var value = _parse_option_value(full_option)
+		var split = value.split(',')
+		return split
+
+	# Parse out the value of an option.  Values are separated from
+	# the option name with "="
+	func _parse_option_value(full_option):
+		var split = full_option.split('=')
+
+		if(split.size() > 1):
+			return split[1]
+		else:
+			return null
 
 	# Search _opts for an element that starts with the option name
 	# specified.
@@ -69,48 +88,55 @@ class CmdLineParser:
 		else:
 			return -1
 
-	# Parse out the value of an option.  Values are separated from
-	# the option name with "="
-	func get_option_value(full_option):
-		var split = full_option.split('=')
-
-		if(split.size() > 1):
-			return split[1]
-		else:
-			return null
-
-	# Parse out multiple comma delimited values from a command line
-	# option.  Values are separated from option name with "=" and
-	# additional values are comma separated.
-	func get_option_array_value(full_option):
-		var value = get_option_value(full_option)
-		var split = value.split(',')
-		return split
-
 	func get_array_value(option):
+		_used_options.append(option)
 		var to_return = []
 		var opt_loc = find_option(option)
 		if(opt_loc != -1):
-			to_return = get_option_array_value(_opts[opt_loc])
+			to_return = _parse_array_value(_opts[opt_loc])
 			_opts.remove(opt_loc)
 
 		return to_return
 
 	# returns the value of an option if it was specfied, null otherwise.  This
 	# used to return the default but that became problemnatic when trying to
-	# punch layer the different places where values could be specified.
+	# punch through the different places where values could be specified.
 	func get_value(option):
+		_used_options.append(option)
 		var to_return = null
 		var opt_loc = find_option(option)
 		if(opt_loc != -1):
-			to_return = get_option_value(_opts[opt_loc])
+			to_return = _parse_option_value(_opts[opt_loc])
 			_opts.remove(opt_loc)
 
 		return to_return
 
 	# returns true if it finds the option, false if not.
 	func was_specified(option):
+		_used_options.append(option)
 		return find_option(option) != -1
+
+	# Returns any unused command line options.  I found that only the -s and
+	# script name come through from godot, all other options that godot uses
+	# are not sent through OS.get_cmdline_args().
+	#
+	# This is a onetime thing b/c i kill all items in _used_options
+	func get_unused_options():
+		var to_return = []
+		for i in range(_opts.size()):
+			to_return.append(_opts[i])
+
+		var script_option = to_return.find('-s')
+		to_return.remove(script_option + 1)
+		to_return.remove(script_option)
+
+		while(_used_options.size() > 0):
+			var index = to_return.find(_used_options[0])
+			if(index != -1):
+				to_return.remove(index)
+			_used_options.remove(0)
+
+		return to_return
 
 #-------------------------------------------------------------------------------
 # Simple class to hold a command line option
@@ -214,6 +240,13 @@ class Options:
 				else:
 					print(options[i].option_name + ' cannot be processsed, it has unknown datatype:' + str(t))
 
+		var unused = parser.get_unused_options()
+		if(unused.size() > 0):
+			print("Unrecognized options:  ", unused)
+			return false
+
+		return true
+
 #-------------------------------------------------------------------------------
 # Helper class to resolve the various different places where an option can
 # be set.  Using the get_value method will enforce the order of precedence of:
@@ -239,6 +272,7 @@ class OptionResolver:
 		cmd_opts = _null_copy(opts)
 		config_opts = _null_copy(opts)
 
+	# creates a copy of a hash with all values null.
 	func _null_copy(h):
 		var new_hash = {}
 		for key in h:
@@ -274,8 +308,8 @@ class OptionResolver:
 		for key in base_opts:
 			to_return += str(key, "\n")
 			to_return += str('  default: ', _nvl(base_opts[key], 'NULL'), "\n")
-			to_return += str('  config:  ', _nvl(config_opts[key], 'NULL'), "\n")
-			to_return += str('  cmd:     ', _nvl(cmd_opts[key], 'NULL'), "\n")
+			to_return += str('  config:  ', _nvl(config_opts[key], ' --'), "\n")
+			to_return += str('  cmd:     ', _nvl(cmd_opts[key], ' --'), "\n")
 			to_return += str('  final:   ', _nvl(resolved[key], 'NULL'), "\n")
 
 		return to_return
@@ -294,23 +328,23 @@ var _opts = []
 # that I don't make any dumb typos and get the neat code-sense when I
 # type a dot.
 var options = {
-	should_maximize = false,
-	should_exit = false,
-	log_level = 1,
-	ignore_pause_before_teardown = false,
-	tests = [],
-	dirs = [],
-	selected = '',
-	prefix = 'test_',
-	suffix = '.gd',
-	gut_location = 'res://addons/gut/gut.gd',
-	unit_test_name = '',
-	show_help = false,
 	config_file = 'res://.gutconfig.json',
-	inner_class = '',
-	opacity = 100,
+	dirs = [],
+	double_strategy = 'partial',
+	gut_location = 'res://addons/gut/gut.gd', # this can't be a settable option b/c all the loads are absolute paths
+	ignore_pause = false,
 	include_subdirs = false,
-	double_strategy = 'partial'
+	inner_class = '',
+	log_level = 1,
+	opacity = 100,
+	prefix = 'test_',
+	selected = '',
+	should_exit = false,
+	should_maximize = false,
+	show_help = false,
+	suffix = '.gd',
+	tests = [],
+	unit_test_name = '',
 }
 
 # flag to say if we should run the scripts or not.  It is only
@@ -342,14 +376,14 @@ func setup_options():
                               'with the GUI.'))
 	opts.add('-gunit_test_name', '', ('Name of a test to run.  Any test that contains the specified ' +
                                  'text will be run, all others will be skipped.'))
-	opts.add('-gutloc', 'res://addons/gut/gut.gd', 'Full path (including name) of the gut script.  Default [default]')
-	opts.add('-gh', false, 'Print this help')
+	opts.add('-gh', false, 'Print this help, then quit')
 	opts.add('-gconfig', 'res://.gutconfig.json', 'A config file that contains configuration information.  Default is res://.gutconfig.json')
 	opts.add('-ginner_class', '', 'Only run inner classes that contain this string')
 	opts.add('-gopacity', 100, 'Set opacity of test runner window. Use range 0 - 100. 0 = transparent, 100 = opaque.')
 	opts.add('-gpo', false, 'Print option values from all sources and the value used, then quit.')
 	opts.add('-ginclude_subdirs', false, 'Include subdirectories of -gdir.')
 	opts.add('-gdouble_strategy', 'partial', 'Default strategy to use when doubling.  Valid values are [partial, full].  Default "[default]"')
+	opts.add('-gprint_gutconfig_sample', false, 'Print out json that can be used to make a gutconfig file then quit.')
 	return opts
 
 
@@ -361,11 +395,10 @@ func extract_command_line_options(from, to):
 	to.should_exit = from.get_value('-gexit')
 	to.should_maximize = from.get_value('-gmaximize')
 	to.log_level = from.get_value('-glog')
-	to.ignore_pause_before_teardown = from.get_value('-gignore_pause')
+	to.ignore_pause = from.get_value('-gignore_pause')
 	to.selected = from.get_value('-gselect')
 	to.prefix = from.get_value('-gprefix')
 	to.suffix = from.get_value('-gsuffix')
-	to.gut_location = from.get_value('-gutloc')
 	to.unit_test_name = from.get_value('-gunit_test_name')
 	to.config_file = from.get_value('-gconfig')
 	to.inner_class = from.get_value('-ginner_class')
@@ -373,11 +406,6 @@ func extract_command_line_options(from, to):
 	to.include_subdirs = from.get_value('-ginclude_subdirs')
 	to.double_strategy = from.get_value('-gdouble_strategy')
 
-func get_value(dict, index, default):
-	if(dict.has(index)):
-		return dict[index]
-	else:
-		return default
 
 func load_options_from_config_file(file_path, into):
 	# SHORTCIRCUIT
@@ -401,18 +429,16 @@ func load_options_from_config_file(file_path, into):
 		print('    ', results.error_string)
 		return -1
 
-	into.dirs = get_value(results.result, 'dirs', [])
-	into.should_maximize = get_value(results.result, 'should_maximize', false)
-	into.should_exit = get_value(results.result, 'should_exit', false)
-	into.ignore_pause_before_teardown = get_value(results.result, 'ignore_pause', false)
-	into.log_level = get_value(results.result, 'log', 1)
-	into.inner_class = get_value(results.result, 'inner_class', '')
-	into.opacity = get_value(results.result, 'opacity', 100)
-	into.double_strategy = get_value(results.result, 'double_strategy', 'partial')
+	# Get all the options out of the config file using the option name.  The
+	# options hash is now the default source of truth for the name of an option.
+	for key in into:
+		if(results.result.has(key)):
+			into[key] = results.result[key]
 
 	return 1
 
-# apply all the options specified to _tester
+# Apply all the options specified to _tester.  This is where the rubber meets
+# the road.
 func apply_options(opts):
 	_tester = load(opts.gut_location).new()
 	get_root().add_child(_tester)
@@ -429,7 +455,7 @@ func apply_options(opts):
 	if(opts.inner_class != ''):
 		_tester.set_inner_class_name(opts.inner_class)
 	_tester.set_log_level(opts.log_level)
-	_tester.set_ignore_pause_before_teardown(opts.ignore_pause_before_teardown)
+	_tester.set_ignore_pause_before_teardown(opts.ignore_pause)
 
 	for i in range(opts.dirs.size()):
 		_tester.add_directory(opts.dirs[i], opts.prefix, opts.suffix)
@@ -471,14 +497,19 @@ func _init():
 
 	print("\n\n", ' ---  Gut  ---')
 	var o = setup_options()
-	o.parse()
+
+	var all_options_valid = o.parse()
 	extract_command_line_options(o, opt_resolver.cmd_opts)
 	var load_result = \
 			load_options_from_config_file(opt_resolver.get_value('config_file'), opt_resolver.config_opts)
+
+
 	if(load_result == -1): # -1 indicates json parse error
 		quit()
 	else:
-		if(o.get_value('-gh')):
+		if(!all_options_valid):
+			quit()
+		elif(o.get_value('-gh')):
 			o.print_help()
 			quit()
 		elif(o.get_value('-gpo')):
@@ -486,6 +517,23 @@ func _init():
 			      'The "final" value shows which value will actually be used ' +
 				  'based on order of precedence (default < .gutconfig < cmd line).' + "\n")
 			print(opt_resolver.to_s_verbose())
+			quit()
+		elif(o.get_value('-gprint_gutconfig_sample')):
+			var header = """Here is a sample of a full .gutconfig.json file.
+You do not need to specify all values in your own file.  The values supplied in
+this sample are what would be used if you ran gut w/o the -gprint_gutconfig_sample
+option (the resolved values where default < .gutconfig < command line)."""
+			print("\n", header.replace("\n", ' '), "\n\n")
+			var resolved = opt_resolver.get_resolved_values()
+
+			# remove some options that don't make sense or I don't think should
+			# be in the config file by default.
+			resolved.erase("config_file")
+			resolved.erase("show_help")
+			resolved.erase("gut_location")
+
+			var text = JSON.print(resolved)
+			print(text.replace(',', ",\n"))
 			quit()
 		else:
 			load_auto_load_scripts()
