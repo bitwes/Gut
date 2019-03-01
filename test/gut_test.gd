@@ -28,6 +28,13 @@ func assert_warn(obj, times=1):
 	else:
 		_fail('Does not have get_logger method')
 
+func assert_errored(obj, times=1):
+	if(obj.has_method('get_logger')):
+		var msg = str('Should have ', times, ' errors.')
+		assert_eq(obj.get_logger().get_errors().size(), times, msg)
+	else:
+		_fail('Does not have get_logger method')
+
 func assert_has_logger(obj):
 	assert_has_method(obj, 'get_logger')
 	assert_has_method(obj, 'set_logger')

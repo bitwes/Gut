@@ -1161,3 +1161,66 @@ class TestAssertNotNull:
 		gr.test.assert_not_null({})
 		gr.test.assert_not_null(Color(1,1,1,1))
 		assert_pass(gr.test, 5)
+
+class TestReplaceNode:
+	extends BaseTestClass
+
+	# The get methods in this scene use paths and $ to get to various resources
+	# in the scene and return them.
+	var Arena = load('res://test/resources/replace_node_scenes/Arena.tscn')
+	var _arena = null
+
+	func before_each():
+		.before_each()
+		_arena = Arena.instance()
+
+	func after_each():
+		.after_each()
+		_arena.queue_free()
+
+	func test_can_replace_node():
+		var replacement = Node2D.new()
+		gr.test.replace_node(_arena, 'Player1/Sword', replacement)
+		assert_eq(_arena.get_sword(), replacement)
+
+	func test_when_node_does_not_exist_error_is_generated():
+		var replacement = Node2D.new()
+		gr.test.replace_node(_arena, 'DoesNotExist', replacement)
+		assert_errored(gr.test)
+
+	func test_replacement_works_with_dollar_sign_references():
+		var replacement = Node2D.new()
+		gr.test.replace_node(_arena, 'Player1', replacement)
+		assert_eq(_arena.get_player1_ds(), replacement)
+
+	func test_replacement_works_with_dollar_sign_references_2():
+		var replacement = Node2D.new()
+		gr.test.replace_node(_arena, 'Player1/Sword', replacement)
+		assert_eq(_arena.get_sword_ds(), replacement)
+
+	func test_replaced_node_is_freed():
+		var replacement = Node2D.new()
+		var old = _arena.get_sword()
+		gr.test.replace_node(_arena, 'Player1/Sword', replacement)
+		# object is freed using queue_free, so we have to wait for it to go away
+		yield(yield_for(0.5), YIELD)
+		assert_true(_utils.is_freed(old))
+
+	func test_replaced_node_retains_groups():
+		var replacement = Node2D.new()
+		var old = _arena.get_sword()
+		old.add_to_group('Swords')
+		gr.test.replace_node(_arena, 'Player1/Sword', replacement)
+		assert_true(replacement.is_in_group('Swords'))
+
+	func test_works_with_node_and_not_path():
+		var replacement = Node2D.new()
+		var old = _arena.get_sword_ds()
+		gr.test.replace_node(_arena, old, replacement)
+		assert_eq(_arena.get_sword(), replacement)
+
+	func test_generates_error_if_base_node_does_not_have_node_to_replace():
+		var replacement = Node2D.new()
+		var old = Node2D.new()
+		gr.test.replace_node(_arena, old, replacement)
+		assert_errored(gr.test)

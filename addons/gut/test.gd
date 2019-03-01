@@ -188,7 +188,7 @@ func _fail_if_not_watching(object):
 	var did_fail = false
 	if(!_signal_watcher.is_watching_object(object)):
 		_fail(str('Cannot make signal assertions because the object ', object, \
-		          ' is not being watched.  Call watch_signals(some_object) to be able to make assertions about signals.'))
+				  ' is not being watched.  Call watch_signals(some_object) to be able to make assertions about signals.'))
 		did_fail = true
 	return did_fail
 
@@ -921,3 +921,42 @@ func stub(thing, p2, p3=null):
 # ------------------------------------------------------------------------------
 func simulate(obj, times, delta):
 	gut.simulate(obj, times, delta)
+
+# ------------------------------------------------------------------------------
+# Replace the node at base_node.get_node(path) with with_this.  All refrences
+# to the node via $ and get_node(...) will now return with_this.  with_this will
+# get all the groups that the node that was replaced had.
+#
+# The node that was replaced is queued to be freed.
+# ------------------------------------------------------------------------------
+func replace_node(base_node, path_or_node, with_this):
+	var path = path_or_node
+
+	if(typeof(path_or_node) != TYPE_STRING):
+		# This will cause an engine error if it fails.  It always returns a
+		# NodePath, even if it fails.  Checking the name count is the only way
+		# I found to check if it found something or not (after it worked I
+		# didn't look any farther).
+		path = base_node.get_path_to(path_or_node)
+		if(path.get_name_count() == 0):
+			_lgr.error('You passed an objet that base_node does not have.  Cannot replace node.')
+			return
+
+	if(!base_node.has_node(path)):
+		_lgr.error(str('Could not find node at path [', path, ']'))
+		return
+
+	var to_replace = base_node.get_node(path)
+	var parent = to_replace.get_parent()
+	var replace_name = to_replace.get_name()
+
+	parent.remove_child(to_replace)
+	parent.add_child(with_this)
+	with_this.set_name(replace_name)
+	with_this.set_owner(parent)
+
+	var groups = to_replace.get_groups()
+	for i in range(groups.size()):
+		with_this.add_to_group(groups[i])
+
+	to_replace.queue_free()

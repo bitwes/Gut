@@ -4,6 +4,8 @@ var Doubler = load('res://addons/gut/doubler.gd')
 var Spy = load('res://addons/gut/spy.gd')
 var StubParams = load('res://addons/gut/stub_params.gd')
 var ThingCounter = load('res://addons/gut/thing_counter.gd')
+var MethodMaker = load('res://addons/gut/method_maker.gd')
+
 const GUT_METADATA = '__gut_metadata_'
 
 enum DOUBLE_STRATEGY{

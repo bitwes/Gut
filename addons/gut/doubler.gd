@@ -114,7 +114,7 @@ var _spy = null
 
 var _utils = load('res://addons/gut/utils.gd').new()
 var _lgr = _utils.get_logger()
-var _method_maker = load('res://addons/gut/method_maker.gd').new()
+var _method_maker = _utils.MethodMaker.new()
 var _strategy = null
 var _swapped_out_strategy = null
 
@@ -327,7 +327,7 @@ func double_scene(path, strategy=_strategy):
 	_restore_strategy()
 	return load(temp_path)
 
-# double a script
+# double a script/object
 func double(path, strategy=_strategy):
 	_temp_strategy(strategy)
 
