@@ -24,7 +24,7 @@ class TestScript:
 	func _init(utils=null, logger=null):
 		_utils = utils
 		_lgr = logger
-		
+
 	func to_s():
 		var to_return = path
 		if(class_name != null):
@@ -103,6 +103,7 @@ func _parse_script(script):
 	var line = ""
 	var line_count = 0
 	var inner_classes = []
+	var scripts_found = []
 
 	file.open(script.path, 1)
 	while(!file.eof_reached()):
@@ -123,14 +124,18 @@ func _parse_script(script):
 			if(class_name.begins_with(_test_class_prefix)):
 				inner_classes.append(class_name)
 
+	scripts_found.append(script.path)
+
 	for i in range(inner_classes.size()):
 		var ts = TestScript.new(_utils, _lgr)
 		ts.path = script.path
 		ts.class_name = inner_classes[i]
 		if(_parse_inner_class_tests(ts)):
 			scripts.append(ts)
+			scripts_found.append(script.path + '[' + inner_classes[i] +']')
 
 	file.close()
+	return scripts_found
 
 func _parse_inner_class_tests(script):
 	var inst = script.get_new()
@@ -154,7 +159,7 @@ func _parse_inner_class_tests(script):
 func add_script(path):
 	# SHORTCIRCUIT
 	if(has_script(path)):
-		return
+		return []
 
 	var f = File.new()
 	# SHORTCIRCUIT
@@ -165,7 +170,7 @@ func add_script(path):
 	var ts = TestScript.new(_utils, _lgr)
 	ts.path = path
 	scripts.append(ts)
-	_parse_script(ts)
+	return _parse_script(ts)
 
 func to_s():
 	var to_return = ''
