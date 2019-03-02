@@ -3,7 +3,7 @@ extends 'res://addons/gut/test.gd'
 class TestSpy:
 	extends 'res://test/gut_test.gd'
 
-	var Simple = load('res://test/spy_test_objects/simple.gd')
+	var Simple = load('res://test/resources/spy_test_objects/simple.gd')
 
 	var _spy = null
 
@@ -64,7 +64,7 @@ class TestAddingCallsWithParameters:
 	extends 'res://addons/gut/test.gd'
 
 	var Spy = load('res://addons/gut/spy.gd')
-	var Simple = load('res://test/spy_test_objects/simple.gd')
+	var Simple = load('res://test/resources/spy_test_objects/simple.gd')
 
 	var _spy = null
 
@@ -115,7 +115,7 @@ class TestGetCallCount:
 	extends 'res://addons/gut/test.gd'
 
 	var Spy = load('res://addons/gut/spy.gd')
-	var Simple = load('res://test/spy_test_objects/simple.gd')
+	var Simple = load('res://test/resources/spy_test_objects/simple.gd')
 	var _spy = null
 
 	func before_each():
