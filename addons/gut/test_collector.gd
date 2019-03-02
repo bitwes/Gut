@@ -43,6 +43,31 @@ class TestScript:
 			to_return += '.' + class_name
 		return to_return
 
+	func export_to(config_file, section):
+		config_file.set_value(section, 'path', path)
+		config_file.set_value(section, 'inner_class', class_name)
+		var names = []
+		for i in range(tests.size()):
+			names.append(tests[i].name)
+		config_file.set_value(section, 'tests', names)
+
+	func import_from(config_file, section):
+		path = config_file.get_value(section, 'path')
+		var test_names = config_file.get_value(section, 'tests')
+		for i in range(test_names.size()):
+			var t = Test.new()
+			t.name = test_names[i]
+			tests.append(t)
+		# Null is an acceptable value, but you can't pass null as a default to
+		# get_value since it thinks you didn't send a default...then it spits
+		# out red text.  This works around that.
+		var inner_name = config_file.get_value(section, 'inner_class', 'Placeholder')
+		if(inner_name != 'Placeholder'):
+			class_name = inner_name
+		else: # just being explicit
+			class_name = null
+
+
 # ------------------------------------------------------------------------------
 # start test_collector, I don't think I like the name.
 # ------------------------------------------------------------------------------
@@ -157,3 +182,18 @@ func has_script(path):
 		else:
 			idx += 1
 	return found
+
+func export_tests(path):
+	var f = ConfigFile.new()
+	for i in range(scripts.size()):
+		scripts[i].export_to(f, str('TestScript-', i))
+	f.save(path)
+
+func import_tests(path):
+	var f = ConfigFile.new()
+	f.load(path)
+	var sections = f.get_sections()
+	for key in sections:
+		var s = TestScript.new()
+		s.import_from(f, key)
+		scripts.append(s)

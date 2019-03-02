@@ -5,6 +5,7 @@ var Spy = load('res://addons/gut/spy.gd')
 var StubParams = load('res://addons/gut/stub_params.gd')
 var ThingCounter = load('res://addons/gut/thing_counter.gd')
 var MethodMaker = load('res://addons/gut/method_maker.gd')
+var TestCollector = load('res://addons/gut/test_collector.gd')
 
 const GUT_METADATA = '__gut_metadata_'
 
@@ -74,3 +75,9 @@ func is_not_freed(obj):
 
 func is_double(obj):
 	return obj.get(GUT_METADATA) != null
+
+func extract_property_from_array(source, property):
+	var to_return = []
+	for i in (source.size()):
+		to_return.append(source[i].get(property))
+	return to_return
