@@ -20,6 +20,7 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 margin_right = 48.0
 margin_bottom = 40.0
+rect_scale = Vector2( 1.25, 1.25 )
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
@@ -50,6 +51,7 @@ _inner_class_prefix = "Test"
 _temp_directory = "user://gut_temp_directory"
 _include_subdirectories = false
 _double_strategy = 0
+_export_path = "res://test/main_scene_export.cfg"
 _directory1 = "res://test/unit"
 _directory2 = "res://test/integration"
 _directory3 = ""
@@ -63,10 +65,10 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 727.0
-margin_top = 18.0
-margin_right = 908.0
-margin_bottom = 93.0
+margin_left = 839.0
+margin_top = 4.0
+margin_right = 1020.0
+margin_bottom = 79.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 focus_mode = 2
@@ -82,6 +84,60 @@ text = "Run Gut Unit Tests"
 flat = false
 align = 1
 
+[node name="ExportTests" type="Button" parent="." index="2"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 852.0
+margin_top = 211.0
+margin_right = 1020.0
+margin_bottom = 279.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+focus_mode = 2
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+group = null
+text = "Export Tests"
+flat = false
+align = 1
+
+[node name="ImportTests" type="Button" parent="." index="3"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 857.0
+margin_top = 104.0
+margin_right = 1020.0
+margin_bottom = 165.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+focus_mode = 2
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+group = null
+text = "Import Tests"
+flat = false
+align = 1
+
 [connection signal="pressed" from="RunGutTestsButton" to="." method="_on_RunGutTestsButton_pressed"]
+
+[connection signal="pressed" from="ExportTests" to="." method="_on_ExportTests_pressed"]
+
+[connection signal="pressed" from="ImportTests" to="." method="_on_ImportTests_pressed"]
 
 

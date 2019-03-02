@@ -58,6 +58,7 @@ export var _inner_class_prefix = 'Test'
 export(String) var _temp_directory = 'user://gut_temp_directory'
 export var _include_subdirectories = false setget set_include_subdirectories, get_include_subdirectories
 export(int, 'FULL', 'PARTIAL') var _double_strategy = _utils.DOUBLE_STRATEGY.PARTIAL setget set_double_strategy, get_double_strategy
+export(String) var _export_path = '' setget set_export_path, get_export_path
 
 # Allow user to add test directories via editor.  This is done with strings
 # instead of an array because the interface for editing arrays is really
@@ -70,7 +71,6 @@ export(String, DIR) var _directory3 = ''
 export(String, DIR) var _directory4 = ''
 export(String, DIR) var _directory5 = ''
 export(String, DIR) var _directory6 = ''
-
 
 # ###########################
 # Other Vars
@@ -768,6 +768,8 @@ func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
 	# '' if the field has not been populated.  This will cause res:// to be
 	# processed which will include all files if include_subdirectories is true.
 	if(path == '' or !d.dir_exists(path)):
+		if(path != ''):
+			_lgr.error(str('The path [', path, '] does not exist.'))
 		return
 	d.open(path)
 	# true parameter tells list_dir_begin not to include "." and ".." diretories.
@@ -811,6 +813,36 @@ func select_script(script_name):
 			idx += 1
 
 	return found
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func export_tests(path=_export_path):
+	if(path == null):
+		_lgr.error('You must pass a path or set the export_path before calling export_tests')
+	else:
+		_test_collector.export_tests(path)
+		p(_test_collector.to_s())
+		p("Exported to " + path)
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func import_tests(path=_export_path):
+	if(!_utils.file_exists(path)):
+		_lgr.error(str('Cannot import tests:  the path [', path, '] does not exist.'))
+	else:
+		_ctrls.scripts_drop_down.clear()
+		_test_collector.clear()
+		_test_collector.import_tests(path)
+		p(_test_collector.to_s())
+		p("Imported from " + path)
+
+		var paths = _utils.extract_property_from_array(_test_collector.scripts, 'path')
+		var seen = _utils.ThingCounter.new()
+
+		for i in range(paths.size()):
+			if(!seen.has(paths[i])):
+				_ctrls.scripts_drop_down.add_item(paths[i])
+				seen.add(paths[i])
+
 
 ################
 #
@@ -1159,6 +1191,16 @@ func set_include_subdirectories(include_subdirectories):
 # ------------------------------------------------------------------------------
 func get_test_collector():
 	return _test_collector
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_export_path():
+	return _export_path
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func set_export_path(export_path):
+	_export_path = export_path
 
 # #######################
 # Moved method warnings.

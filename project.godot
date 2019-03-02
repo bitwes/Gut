@@ -11,11 +11,17 @@ config_version=3
 [application]
 
 config/name="Gut"
+run/main_scene="res://scenes/main.tscn"
 config/icon="res://icon.png"
 
 [autoload]
 
 global="*res://scripts/global.gd"
+
+[display]
+
+window/stretch/mode="viewport"
+window/stretch/aspect="keep_width"
 
 [editor_plugins]
 

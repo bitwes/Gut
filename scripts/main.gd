@@ -124,3 +124,11 @@ func _on_RunGutTestsButton_pressed():
 	add_child(gut)
 	gut.set_position(Vector2(100, 100))
 	_run_gut_tests(gut)
+
+
+func _on_ImportTests_pressed():
+	$Gut.import_tests()
+
+
+func _on_ExportTests_pressed():
+	$Gut.export_tests()

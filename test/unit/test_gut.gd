@@ -143,6 +143,9 @@ func test_get_current_script_object_returns_null_by_default():
 func test_get_set_temp_directory():
 	assert_accessors(gr.test_gut, 'temp_directory', 'user://gut_temp_directory', 'user://blahblah')
 
+func test_get_set_export_path():
+	assert_accessors(gr.test_gut, 'export_path', null, 'res://somewhere')
+
 # ------------------------------
 # Double Strategy
 # ------------------------------
@@ -155,9 +158,6 @@ func test_when_test_overrides_strategy_it_is_reset_after_test_finishes():
 	gr.test_gut.get_doubler().set_strategy(_utils.DOUBLE_STRATEGY.FULL)
 	gr.test_gut.test_scripts()
 	assert_eq(gr.test_gut.get_double_strategy(), _utils.DOUBLE_STRATEGY.PARTIAL)
-
-
-
 
 # ------------------------------
 # disable strict datatype comparisons
