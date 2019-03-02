@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://test/doubler_test_objects/double_me_scene.gd" type="Script" id=1]
+[ext_resource path="res://test/resources/doubler_test_objects/double_me_scene.gd" type="Script" id=1]
 
 [node name="Node2D" type="Node2D"]
 
@@ -23,5 +23,3 @@ text = "This is a label"
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
-
-

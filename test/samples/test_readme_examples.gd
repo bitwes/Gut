@@ -523,7 +523,7 @@ func test_assert_is():
 
 # ------------------------------------------------------------------------------
 func test_assert_called():
-	var DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_extends_node2d.gd'
+	var DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_extends_node2d.gd'
 
 	var doubled = double(DOUBLE_ME_PATH).new()
 	doubled.set_value(4)
@@ -554,7 +554,7 @@ func test_assert_called():
 	assert_called(GDScript.new(), 'some_method')
 
 func test_assert_call_count():
-	var DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_extends_node2d.gd'
+	var DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_extends_node2d.gd'
 
 	var doubled = double(DOUBLE_ME_PATH).new()
 	doubled.set_value(4)

@@ -8,9 +8,9 @@ extends "res://addons/gut/test.gd"
 var Stubber = load('res://addons/gut/stubber.gd')
 var Doubler = load('res://addons/gut/doubler.gd')
 
-const DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_me.gd'
-const DOUBLE_ME_SCENE_PATH = 'res://test/doubler_test_objects/double_me_scene.tscn'
-const DOUBLE_EXTENDS_NODE2D = 'res://test/doubler_test_objects/double_extends_node2d.gd'
+const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
+const DOUBLE_ME_SCENE_PATH = 'res://test/resources/doubler_test_objects/double_me_scene.tscn'
+const DOUBLE_EXTENDS_NODE2D = 'res://test/resources/doubler_test_objects/double_extends_node2d.gd'
 const TEMP_FILES = 'user://test_doubler_temp_file'
 
 var gr = {

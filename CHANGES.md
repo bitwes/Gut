@@ -7,6 +7,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * added `get_call_parameters` which allows you to get the parameters sent to a call to a doubled method.  It returns the most recent call by default but you can specify an optional index as well.
 
 ## Fixes/Improvements
+* Added all missing settings to the gutconfig file.
+  * log -> log_level
 * Improved logging.  The number of Gut related errors, warnings, and deprecated methods are listed in the summary.
 * Some housekeeping and Boy Scouting.
 * Deprecated the following methods:

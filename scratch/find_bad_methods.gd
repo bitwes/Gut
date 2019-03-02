@@ -6,10 +6,10 @@ extends SceneTree
 
 var Doubler = load('res://addons/gut/doubler.gd')
 
-var DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_me.gd'
+var DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
 var DoubleMe = load(DOUBLE_ME_PATH)
 
-var DOUBLE_EXTENDS_NODE2D = 'res://test/doubler_test_objects/double_extends_node2d.gd'
+var DOUBLE_EXTENDS_NODE2D = 'res://test/resources/doubler_test_objects/double_extends_node2d.gd'
 var DoubleExtendsNode2d = load(DOUBLE_EXTENDS_NODE2D)
 
 var ARGS = 'args'

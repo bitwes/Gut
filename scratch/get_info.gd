@@ -106,7 +106,7 @@ func get_defaults_and_types(method_meta):
 
 
 func _init():
-	# var double_me = load('res://test/doubler_test_objects/double_me.gd').new()
+	# var double_me = load('res://test/resources/doubler_test_objects/double_me.gd').new()
 	# print_method_info(double_me)
 	# print("-------------\n-\n-\n-\n-------------")
 	# var methods = get_methods_by_flag(double_me)
@@ -115,7 +115,7 @@ func _init():
 	#print_a_bunch_of_methods_by_flags()
 	#var obj = ExtendsNode2D.new()
 	#var obj = load('res://addons/gut/gut.gd').new()
-	var obj = load('res://test/doubler_test_objects/double_extends_window_dialog.gd').new()
+	var obj = load('res://test/resources/doubler_test_objects/double_extends_window_dialog.gd').new()
 	#print_method_info(obj)
 	print_method_info(obj)
 	var methods = obj.get_method_list()

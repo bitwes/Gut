@@ -981,7 +981,7 @@ class TestStringEndsWith:
 class TestAssertCalled:
 	extends BaseTestClass
 
-	const DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_me.gd'
+	const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
 
 	func test_assert_called_fails_with_message_if_non_doubled_passed():
 		var obj = GDScript.new()
@@ -1017,7 +1017,7 @@ class TestAssertCalled:
 class TestAssertNotCalled:
 	extends BaseTestClass
 
-	const DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_me.gd'
+	const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
 
 	func test_passes_when_no_calls_have_been_made():
 		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
@@ -1055,7 +1055,7 @@ class TestAssertNotCalled:
 class TestAssertCallCount:
 	extends BaseTestClass
 
-	const DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_me.gd'
+	const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
 
 	func test_passes_when_nothing_called_and_expected_count_zero():
 		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()

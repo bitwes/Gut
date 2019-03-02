@@ -2,7 +2,7 @@ extends 'res://addons/gut/test.gd'
 
 var Gut = load('res://addons/gut/gut.gd')
 
-const DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_me.gd'
+const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
 
 func test_can_get_spy():
 	var g = Gut.new()

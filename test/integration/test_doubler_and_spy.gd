@@ -1,10 +1,10 @@
-extends 'res://addons/gut/test.gd'
+extends 'res://test/gut_test.gd'
 
 const TEMP_FILES = 'user://test_doubler_and_spy'
 
-const DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_me.gd'
-const DOUBLE_ME_SCENE_PATH = 'res://test/doubler_test_objects/double_me_scene.tscn'
-const DOUBLE_EXTENDS_NODE2D = 'res://test/doubler_test_objects/double_extends_node2d.gd'
+#const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
+#Aconst DOUBLE_ME_SCENE_PATH = 'res://test/resources/doubler_test_objects/double_me_scene.tscn'
+#const DOUBLE_EXTENDS_NODE2D = 'res://test/resources/doubler_test_objects/double_extends_node2d.gd'
 
 class TestBoth:
 	extends 'res://addons/gut/test.gd'

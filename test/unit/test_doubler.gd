@@ -6,10 +6,10 @@ class BaseTest:
 	#var Doubler = load('res://addons/gut/doubler.gd')
 	const TEMP_FILES = 'user://test_doubler_temp_file'
 
-	const DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_me.gd'
-	const DOUBLE_ME_SCENE_PATH = 'res://test/doubler_test_objects/double_me_scene.tscn'
-	const DOUBLE_EXTENDS_NODE2D = 'res://test/doubler_test_objects/double_extends_node2d.gd'
-	const DOUBLE_EXTENDS_WINDOW_DIALOG = 'res://test/doubler_test_objects/double_extends_window_dialog.gd'
+	const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
+	const DOUBLE_ME_SCENE_PATH = 'res://test/resources/doubler_test_objects/double_me_scene.tscn'
+	const DOUBLE_EXTENDS_NODE2D = 'res://test/resources/doubler_test_objects/double_extends_node2d.gd'
+	const DOUBLE_EXTENDS_WINDOW_DIALOG = 'res://test/resources/doubler_test_objects/double_extends_window_dialog.gd'
 	var Doubler = load('res://addons/gut/doubler.gd')
 
 	func _get_temp_file_as_text(filename):
@@ -249,7 +249,7 @@ class TestDoubleInnerClasses:
 	extends BaseTest
 
 	var doubler = null
-	const INNER_CLASSES_PATH = 'res://test/doubler_test_objects/inner_classes.gd'
+	const INNER_CLASSES_PATH = 'res://test/resources/doubler_test_objects/inner_classes.gd'
 	var InnerClasses = load(INNER_CLASSES_PATH)
 
 	func before_each():
