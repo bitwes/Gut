@@ -1,7 +1,7 @@
 extends "res://test/gut_test.gd"
 
 var TestCollector = load('res://addons/gut/test_collector.gd')
-var SCRIPTS_ROOT = 'res://test/parsing_and_loading_samples/'
+var SCRIPTS_ROOT = 'res://test/resources/parsing_and_loading_samples/'
 
 var gr = {
 	tc = null

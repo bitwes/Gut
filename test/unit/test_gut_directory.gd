@@ -10,7 +10,7 @@ class BaseTest:
 	var Gut = load('res://addons/gut/gut.gd')
 	var Test = load('res://addons/gut/test.gd')
 
-	const TEST_LOAD_DIR = 'res://test/parsing_and_loading_samples'
+	const TEST_LOAD_DIR = 'res://test/resources/parsing_and_loading_samples'
 	const TEST_BASE_DIR = 'user://test_directories/'
 
 	# Returns a new gut object, all setup for testing.
@@ -66,11 +66,11 @@ class TestUsingResDirs:
 		var t = Test.new()
 		t.gut = g
 		g.set_yield_between_tests(false)
-		g._directory1 = 'res://test/parsing_and_loading_samples'
+		g._directory1 = 'res://test/resources/parsing_and_loading_samples'
 		g._directory2 = 'res://test/unit'
 		g._directory3 = 'res://test/integration'
 		add_child(g)
-		t.assert_true(g._test_collector.has_script('res://test/parsing_and_loading_samples/test_samples.gd'), 'Should have dir1 script')
+		t.assert_true(g._test_collector.has_script('res://test/resources/parsing_and_loading_samples/test_samples.gd'), 'Should have dir1 script')
 		t.assert_true(g._test_collector.has_script('res://test/unit/test_gut.gd'), 'Should have dir2 script')
 		t.assert_true(g._test_collector.has_script('res://test/integration/test_sample_all_passed_integration.gd'), 'Should have dir3 script')
 		assert_eq(t.get_pass_count(), 3, 'they should have passed')
@@ -81,11 +81,11 @@ class TestUsingResDirs:
 		var t = Test.new()
 		t.gut = g
 		g.set_yield_between_tests(false)
-		g._directory4 = 'res://test/parsing_and_loading_samples'
+		g._directory4 = 'res://test/resources/parsing_and_loading_samples'
 		g._directory5 = 'res://test/unit'
 		g._directory6 = 'res://test/integration'
 		add_child(g)
-		t.assert_true(g._test_collector.has_script('res://test/parsing_and_loading_samples/test_samples.gd'), 'Should have dir4 script')
+		t.assert_true(g._test_collector.has_script('res://test/resources/parsing_and_loading_samples/test_samples.gd'), 'Should have dir4 script')
 		t.assert_true(g._test_collector.has_script('res://test/unit/test_gut.gd'), 'Should have dir5 script')
 		t.assert_true(g._test_collector.has_script('res://test/integration/test_sample_all_passed_integration.gd'), 'Should have dir6 script')
 		assert_eq(t.get_pass_count(), 3, 'they should have passed')

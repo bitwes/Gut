@@ -113,7 +113,7 @@ class TestTheBasics:
 		assert_eq(inst.__gut_metadata_.path, DOUBLE_ME_SCENE_PATH)
 
 	func test_does_not_add_duplicate_methods():
-		gr.doubler.double('res://test/parsing_and_loading_samples/extends_another_thing.gd')
+		gr.doubler.double('res://test/resources/parsing_and_loading_samples/extends_another_thing.gd')
 		assert_true(true, 'If we get here then the duplicates were removed.')
 
 	# Keep this last so other tests fail before instantiation fails

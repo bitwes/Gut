@@ -327,7 +327,7 @@ func test_assert_exports_inner_class_name():
 
 func test_when_set_only_inner_class_tests_run():
 	gr.test_gut.set_inner_class_name('TestClass1')
-	gr.test_gut.add_script('res://test/parsing_and_loading_samples/has_inner_class.gd')
+	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/has_inner_class.gd')
 	gr.test_gut.test_scripts()
 	assert_eq(gr.test_gut.get_summary().get_totals().tests, 2)
 
@@ -350,7 +350,7 @@ func test_after_running_script_everything_checks_out():
 	assert_eq(instance.counts.teardown, 3, 'teardown')
 
 func test_when_inner_class_skipped_none_of_the_before_after_are_called():
-	gr.test_gut.add_script('res://test/parsing_and_loading_samples/inner_classes_check_before_after.gd')
+	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/inner_classes_check_before_after.gd')
 	gr.test_gut.set_inner_class_name('Inner1')
 	gr.test_gut.test_scripts()
 	var instances = gr.test_gut._test_script_objects
