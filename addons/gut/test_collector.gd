@@ -18,7 +18,13 @@ class TestScript:
 	var class_name = null
 	var tests = []
 	var path = null
+	var _utils = null
+	var _lgr = null
 
+	func _init(utils=null, logger=null):
+		_utils = utils
+		_lgr = logger
+		
 	func to_s():
 		var to_return = path
 		if(class_name != null):
@@ -51,8 +57,22 @@ class TestScript:
 			names.append(tests[i].name)
 		config_file.set_value(section, 'tests', names)
 
+	func _remap_path(path):
+		var to_return = path
+		if(!_utils.file_exists(path)):
+			_lgr.debug('Checking for remap for:  ' + path)
+			var remap_path = path.get_basename() + '.gd.remap'
+			if(_utils.file_exists(remap_path)):
+				var cf = ConfigFile.new()
+				cf.load(remap_path)
+				to_return = cf.get_value('remap', 'path')
+			else:
+				_lgr.warn('Could not find remap file ' + remap_path)
+		return to_return
+
 	func import_from(config_file, section):
 		path = config_file.get_value(section, 'path')
+		path = _remap_path(path)
 		var test_names = config_file.get_value(section, 'tests')
 		for i in range(test_names.size()):
 			var t = Test.new()
@@ -104,7 +124,7 @@ func _parse_script(script):
 				inner_classes.append(class_name)
 
 	for i in range(inner_classes.size()):
-		var ts = TestScript.new()
+		var ts = TestScript.new(_utils, _lgr)
 		ts.path = script.path
 		ts.class_name = inner_classes[i]
 		if(_parse_inner_class_tests(ts)):
@@ -142,7 +162,7 @@ func add_script(path):
 		_lgr.error('Could not find script:  ' + path)
 		return
 
-	var ts = TestScript.new()
+	var ts = TestScript.new(_utils, _lgr)
 	ts.path = path
 	scripts.append(ts)
 	_parse_script(ts)
@@ -194,6 +214,6 @@ func import_tests(path):
 	f.load(path)
 	var sections = f.get_sections()
 	for key in sections:
-		var s = TestScript.new()
-		s.import_from(f, key)
-		scripts.append(s)
+		var ts = TestScript.new(_utils, _lgr)
+		ts.import_from(f, key)
+		scripts.append(ts)

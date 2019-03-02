@@ -1155,6 +1155,11 @@ func set_logger(logger):
 func set_include_subdirectories(include_subdirectories):
 	_include_subdirectories = include_subdirectories
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_test_collector():
+	return _test_collector
+
 # #######################
 # Moved method warnings.
 # #######################
@@ -1192,19 +1197,3 @@ func assert_does_not_have(obj, element, text=""):
 	moved_method('assert_does_not_have')
 func pending(text=""):
 	moved_method('pending')
-
-
-################################################################################
-# OneTest (INTERNAL USE ONLY)
-#	Used to keep track of info about each test ran.
-################################################################################
-class OneTest:
-	# indicator if it passed or not.  defaults to true since it takes only
-	# one failure to make it not pass.  _fail in gut will set this.
-	var passed = true
-	# the name of the function
-	var name = ""
-	# flag to know if the name has been printed yet.
-	var has_printed_name = false
-	# the line number the test is on
-	var line_number = -1

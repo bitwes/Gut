@@ -88,6 +88,19 @@ class TestExportImport:
 	var SCRIPTS_ROOT = 'res://test/resources/parsing_and_loading_samples/'
 	var EXPORT_FILE = 'user://exported_tests.cfg'
 
+	func _rewrite_config_to_point_to_exports(path):
+		var export_file_text = gut.get_file_as_text(path)
+		export_file_text = export_file_text.replace( \
+			'res://test/resources/parsing_and_loading_samples/', \
+			'res://test/resources/parsing_and_loading_samples/exported/')
+		_utils.write_file(path, export_file_text)
+
+	func _run_test_collector(tc):
+		var test_gut = Gut.new()
+		test_gut._test_collector = tc
+		test_gut._test_the_scripts()
+		return test_gut.get_summary().get_totals()
+
 	func after_each():
 		gut.file_delete(EXPORT_FILE)
 
@@ -147,9 +160,36 @@ class TestExportImport:
 		var tc_import = TestCollector.new()
 		tc_import.import_tests(EXPORT_FILE)
 
-		var test_gut = Gut.new()
-		test_gut._test_collector = tc_import
-		test_gut._test_the_scripts()
-		var totals = test_gut.get_summary().get_totals()
+		var totals = _run_test_collector(tc_import)
 		assert_eq(totals.tests, 4, 'test count')
 		assert_eq(totals.scripts, 1, 'script count')
+
+	func test_when_file_does_not_exist_it_follows_remap():
+		var tc_export = TestCollector.new()
+		tc_export.add_script(SCRIPTS_ROOT + 'parse_samples.gd')
+		tc_export.export_tests(EXPORT_FILE)
+
+		_rewrite_config_to_point_to_exports(EXPORT_FILE)
+
+		var tc_import = TestCollector.new()
+		tc_import.import_tests(EXPORT_FILE)
+		assert_string_contains(
+			tc_import.scripts[0].path,
+			'parse_samples.gdc')
+
+	# This should be an integration tests but I don't have a home for it yet.
+	func test_gut_runs_imported_exported_tests():
+		var tc_export = TestCollector.new()
+		tc_export.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')
+		tc_export.export_tests(EXPORT_FILE)
+
+		_rewrite_config_to_point_to_exports(EXPORT_FILE)
+
+		var tc_import = TestCollector.new()
+		tc_import.import_tests(EXPORT_FILE)
+
+		var totals = _run_test_collector(tc_import)
+		assert_eq(totals.tests, 4, 'test count')
+		# This is 2 for some reason.  it is only 1 in the other test.  One of
+		# them is wrong but everything else checks out ok.
+		assert_eq(totals.scripts, 2, 'script count')

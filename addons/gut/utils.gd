@@ -14,6 +14,9 @@ enum DOUBLE_STRATEGY{
 	PARTIAL
 }
 
+var _file_checker = File.new()
+
+
 # ------------------------------------------------------------------------------
 # Everything should get a logger through this.
 #
@@ -81,3 +84,12 @@ func extract_property_from_array(source, property):
 	for i in (source.size()):
 		to_return.append(source[i].get(property))
 	return to_return
+
+func file_exists(path):
+	return _file_checker.file_exists(path)
+
+func write_file(path, content):
+	var f = File.new()
+	f.open(path, f.WRITE)
+	f.store_string(content)
+	f.close()
