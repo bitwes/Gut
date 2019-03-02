@@ -2,7 +2,7 @@
 # which is why we have __gut_metadata_ in here.
 var value = 4
 var __gut_metadata_ = {
-	path='res://test/stub_test_objects/to_stub.gd',
+	path='res://test/resources/stub_test_objects/to_stub.gd',
 	subpath='',
 	stubber=null,
 	spy=null

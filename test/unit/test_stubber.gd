@@ -6,10 +6,10 @@ var Stubber = load('res://addons/gut/stubber.gd')
 # that test.gd has
 var StubParamsClass = load('res://addons/gut/stub_params.gd')
 
-const TO_STUB_PATH = 'res://test/stub_test_objects/to_stub.gd'
+const TO_STUB_PATH = 'res://test/resources/stub_test_objects/to_stub.gd'
 var ToStub = load(TO_STUB_PATH)
 
-const HAS_STUB_METADATA_PATH = 'res://test/stub_test_objects/has_stub_metadata.gd'
+const HAS_STUB_METADATA_PATH = 'res://test/resources/stub_test_objects/has_stub_metadata.gd'
 var HasStubMetadata = load(HAS_STUB_METADATA_PATH)
 
 var gr = {
@@ -56,7 +56,7 @@ func test_getting_return_for_thing_that_does_not_exist_returns_null():
 	var value = gr.stubber.get_return('nothing', 'something')
 	assert_eq(value, null)
 
-func test_getting_return_for_thing_that_does_not_exist_generates_warning():
+func test_getting_return_for_thing_that_does_not_exist_generates_info():
 	var value = gr.stubber.get_return('nothing', 'something')
 	assert_eq(gr.stubber.get_logger().get_infos().size(), 1)
 
