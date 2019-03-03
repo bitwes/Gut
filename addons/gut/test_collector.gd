@@ -49,6 +49,9 @@ class TestScript:
 			to_return += '.' + class_name
 		return to_return
 
+	func get_filename():
+		return path.get_file()
+
 	func export_to(config_file, section):
 		config_file.set_value(section, 'path', path)
 		config_file.set_value(section, 'inner_class', class_name)

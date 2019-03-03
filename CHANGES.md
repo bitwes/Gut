@@ -6,6 +6,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Features
 * added `get_call_parameters` which allows you to get the parameters sent to a call to a doubled method.  It returns the most recent call by default but you can specify an optional index as well.
 
+
+* can no longer set the selected script when adding scripts one by one via `add_script`
 ## Fixes/Improvements
 * Added all missing settings to the gutconfig file.
   * log -> log_level

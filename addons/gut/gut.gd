@@ -44,6 +44,8 @@ export var _run_on_load = false
 export(String) var _select_script = null
 export(String) var _tests_like = null
 export(String) var _inner_class_name = null
+var _script_name = null
+
 export var _should_print_to_console = true setget set_should_print_to_console, get_should_print_to_console
 export(int, 'Failures only', 'Tests and failures', 'Everything') var _log_level = 1 setget set_log_level, get_log_level
 # This var is JUST used to expose this setting in the editor
@@ -249,7 +251,24 @@ func _yielding_callback(from_obj=false):
 # Run either the selected test or all tests.
 # ------------------------------------------------------------------------------
 func _on_run_button_pressed():
-	test_scripts()
+	clear_text()
+
+	var indexes = []
+	var selected_index = _ctrls.scripts_drop_down.get_selected()
+	if(_test_collector.scripts[selected_index].class_name == null):
+		name = _test_collector.scripts[selected_index].get_filename()
+		_test_the_scripts(_get_indexes_matching_script_name(name))
+	else:
+		_test_the_scripts([selected_index])
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func _on_run_rest_pressed():
+	clear_text()
+	var indexes = []
+	for i in range(_ctrls.scripts_drop_down.get_selected(), _ctrls.scripts_drop_down.get_item_count()):
+		indexes.append(i)
+	_test_the_scripts(indexes)
 
 # ------------------------------------------------------------------------------
 # Continue processing after pause.
@@ -303,11 +322,6 @@ func _on_ignore_continue_checkbox_pressed():
 # ------------------------------------------------------------------------------
 func _on_script_selected(id):
 	_update_controls()
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func _on_run_rest_pressed():
-	test_scripts(true)
 
 # ------------------------------------------------------------------------------
 # completed signal for GDScriptFucntionState returned from a test script that
@@ -387,8 +401,6 @@ func _init_run():
 
 	_yield_between.tests_since_last_yield = 0
 	._init_run()
-	_ctrls.script_progress.set_max(_test_collector.scripts.size())
-	_ctrls.script_progress.set_value(0)
 
 # ------------------------------------------------------------------------------
 # Print out run information and close out the run.
@@ -523,20 +535,40 @@ func _call_deprecated_script_method(script, method, alt):
 		script.call(method)
 
 # ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func _get_indexes_matching_script_name(name):
+	var indexes = [] # empty runs all
+	for i in range(_test_collector.scripts.size()):
+		if(_test_collector.scripts[i].get_filename().find(name) != -1):
+			indexes.append(i)
+	return indexes
+
+# ------------------------------------------------------------------------------
 # Run all tests in a script.  This is the core logic for running tests.
 #
 # Note, this has to stay as a giant monstrosity of a method because of the
 # yields.
 # ------------------------------------------------------------------------------
-func _test_the_scripts():
+func _test_the_scripts(indexes=[]):
 	_init_run()
+
+	var indexes_to_run = []
+	if(indexes.size()==0):
+		for i in range(_test_collector.scripts.size()):
+			indexes_to_run.append(i)
+	else:
+		indexes_to_run = indexes
+
+	_ctrls.script_progress.set_max(indexes_to_run.size())
+	_ctrls.script_progress.set_value(0)
+
 	var file = File.new()
 	if(_doubler.get_strategy() == _utils.DOUBLE_STRATEGY.FULL):
 		_lgr.info("Using Double Strategy FULL as default strategy.  Keep an eye out for weirdness, this is still experimental.")
 
 	# loop through scripts
-	for s in range(_test_collector.scripts.size()):
-		var the_script = _test_collector.scripts[s]
+	for test_indexes in range(indexes_to_run.size()):
+		var the_script = _test_collector.scripts[indexes_to_run[test_indexes]]
 
 		if(the_script.tests.size() > 0):
 			set_title('Running:  ' + the_script.get_full_name())
@@ -631,7 +663,7 @@ func _test_the_scripts():
 		remove_child(test_script)
 		#END TESTS IN SCRIPT LOOP
 		_current_test = null
-		_ctrls.script_progress.set_value(s + 1)
+		_ctrls.script_progress.set_value(test_indexes + 1)
 		#END TEST SCRIPT LOOP
 
 	_end_run()
@@ -720,17 +752,13 @@ func p(text, level=0, indent=0):
 # Runs all the scripts that were added using add_script
 # ------------------------------------------------------------------------------
 func test_scripts(run_rest=false):
-	_test_collector.set_test_class_prefix(_inner_class_prefix)
+	# _test_collector.set_test_class_prefix(_inner_class_prefix)
 	clear_text()
-	_test_collector.clear()
+	var indexes = [] # empty runs all
+	if(_script_name != null):
+		indexes = _get_indexes_matching_script_name(_script_name)
 
-	if(run_rest):
-		for idx in range(_ctrls.scripts_drop_down.get_selected(), _ctrls.scripts_drop_down.get_item_count()):
-			_test_collector.add_script(_ctrls.scripts_drop_down.get_item_text(idx))
-	else:
-		_test_collector.add_script(_ctrls.scripts_drop_down.get_item_text(_ctrls.scripts_drop_down.get_selected()))
-
-	_test_the_scripts()
+	_test_the_scripts(indexes)
 
 
 # ------------------------------------------------------------------------------
@@ -743,19 +771,26 @@ func test_script(script):
 	_test_the_scripts()
 
 # ------------------------------------------------------------------------------
-# Adds a script to be run when test_scripts called
 # ------------------------------------------------------------------------------
-func add_script(script, select_this_one=false):
-	_test_collector.set_test_class_prefix(_inner_class_prefix)
-	_test_collector.add_script(script)
-	_ctrls.scripts_drop_down.add_item(script)
+func _refresh_dropdown():
+	_ctrls.scripts_drop_down.clear()
+	for i in range(_test_collector.scripts.size()):
+		_ctrls.scripts_drop_down.add_item(
+			str(_test_collector.scripts[i].get_full_name(), '  (', _test_collector.scripts[i].tests.size(), ')'))
+
 	# Move the run_button in case the size of the path of the script caused the
 	# drop down to resize.
 	_ctrls.run_button.set_position(_ctrls.scripts_drop_down.get_position() + \
 	                           Vector2(_ctrls.scripts_drop_down.get_size().x + 5, 0))
-
-	if(select_this_one):
-		_ctrls.scripts_drop_down.select(_ctrls.scripts_drop_down.get_item_count() -1)
+# ------------------------------------------------------------------------------
+# Adds a script to be run when test_scripts called
+#
+# No longer supports selecting a script via this method.
+# ------------------------------------------------------------------------------
+func add_script(script, was_select_this_one=false):
+	_test_collector.set_test_class_prefix(_inner_class_prefix)
+	_test_collector.add_script(script)
+	_refresh_dropdown()
 
 # ------------------------------------------------------------------------------
 # Add all scripts in the specified directory that start with the prefix and end
@@ -802,6 +837,7 @@ func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
 # returns whether it found a match or not
 # ------------------------------------------------------------------------------
 func select_script(script_name):
+	_script_name = script_name
 	var found = false
 	var idx = 0
 
