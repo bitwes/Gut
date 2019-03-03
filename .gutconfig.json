@@ -7,5 +7,5 @@
   "opacity":100,
   "double_strategy":"partial",
   "include_subdirs":true,
-  "inner_class":"Replace"
+  "inner_class":""
 }
