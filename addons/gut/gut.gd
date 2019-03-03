@@ -624,7 +624,6 @@ func _test_the_scripts(indexes=[]):
 					_wait_for_done(script_result)
 					yield(self, 'done_waiting')
 
-
 				#if the test called pause_before_teardown then yield until
 				#the continue button is pressed.
 				if(_pause_before_teardown and !_ignore_pause_before_teardown):
@@ -820,7 +819,7 @@ func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
 
 		#file_exists returns fasle for directories
 		if(d.file_exists(full_path)):
-			if(fs_item.begins_with(prefix) and fs_item.find(suffix) != -1):
+			if(fs_item.begins_with(prefix) and fs_item.ends_with(suffix)):
 				add_script(full_path)
 		elif(get_include_subdirectories() and d.dir_exists(full_path)):
 			add_directory(full_path, prefix, suffix)
@@ -871,13 +870,14 @@ func import_tests(path=_export_path):
 		p(_test_collector.to_s())
 		p("Imported from " + path)
 
-		var paths = _utils.extract_property_from_array(_test_collector.scripts, 'path')
-		var seen = _utils.ThingCounter.new()
-
-		for i in range(paths.size()):
-			if(!seen.has(paths[i])):
-				_ctrls.scripts_drop_down.add_item(paths[i])
-				seen.add(paths[i])
+		# var paths = _utils.extract_property_from_array(_test_collector.scripts, 'path')
+		# var seen = _utils.ThingCounter.new()
+		#
+		# for i in range(paths.size()):
+		# 	if(!seen.has(paths[i])):
+		# 		_ctrls.scripts_drop_down.add_item(paths[i])
+		# 		seen.add(paths[i])
+	_refresh_dropdown()
 
 
 ################
