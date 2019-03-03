@@ -879,6 +879,9 @@ func import_tests(path=_export_path):
 		# 		seen.add(paths[i])
 	_refresh_dropdown()
 
+func import_tests_if_none_found():
+	if(_test_collector.scripts.size() == 0):
+		import_tests()
 
 ################
 #

@@ -40,6 +40,18 @@ extends Node2D
 var tester = null
 
 func _ready():
+	# This line makes Gut use the export_path to load up the exported list 
+	# of tests if it didn't find any tests.  This will occur after it has tried
+	# to load up all the configured directories.
+	#
+	# Using this line, you won't have to do anything to your test scene when 
+	# running after being exported.
+	# 
+	# You must have set export_path on the Gut object, exported your tests, and 
+	# changed your project's export settings to include whatever file extension
+	# you gave your export file name.
+	$Gut.import_tests_if_none_found()
+	
 	# -----
 	# Uncomment these lines to see various behaviors
 	# -----
@@ -116,7 +128,7 @@ func _run_gut_tests(gut):
 	gut.set_yield_between_tests(true)
 	# true says to run all the scripts, not just the first or
 	# the selected script.
-	gut.test_scripts(true)
+	gut.test_scripts()
 
 # Make a new Gut and run all the Gut specific tests.
 func _on_RunGutTestsButton_pressed():
@@ -124,11 +136,6 @@ func _on_RunGutTestsButton_pressed():
 	add_child(gut)
 	gut.set_position(Vector2(100, 100))
 	_run_gut_tests(gut)
-
-
-func _on_ImportTests_pressed():
-	$Gut.import_tests()
-
 
 func _on_ExportTests_pressed():
 	$Gut.export_tests()
