@@ -127,6 +127,7 @@ var _yielding_to = {
 var _stubber = _utils.Stubber.new()
 var _doubler = _utils.Doubler.new()
 var _spy = _utils.Spy.new()
+var _gui = null
 
 const SIGNAL_TESTS_FINISHED = 'tests_finished'
 const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yield_before_teardown'
@@ -146,6 +147,7 @@ func _init():
 
 	_stubber.set_logger(_lgr)
 	_test_collector.set_logger(_lgr)
+	_gui = load('res://addons/gut/GutScene.tscn').instance() # new way
 
 # ------------------------------------------------------------------------------
 # Connect all the controls created in the parent class to the methods here.
@@ -192,6 +194,8 @@ func _ready():
 	_runtime_timer.set_one_shot(true)
 	_runtime_timer.set_wait_time(RUNTIME_START_TIME)
 
+	_hijack_old_wiring()
+
 	add_directory(_directory1)
 	add_directory(_directory2)
 	add_directory(_directory3)
@@ -212,7 +216,44 @@ func _ready():
 		maximize()
 
 	show()
+################################################################################
+#
+# NEW WIRING
+#
+################################################################################
+func _hijack_old_wiring():
+	add_child(_gui)
+	_ctrls.text_box = _gui.get_rich_text_label()
+	_gui.connect('run_single_script', self, '_on_run_one')
+	_gui.connect('run_script', self, '_on_new_gui_run_script')
+	_gui.connect('end_pause', self, '_on_new_gui_end_pause')
+	_gui.connect('ignore_pause', self, '_on_new_gui_ignore_pause')
 
+	connect('tests_finished', _gui, 'end_run')
+
+func _NW_add_scripts_to_gui():
+	var scripts = []
+	for i in range(_test_collector.scripts.size()):
+		scripts.append(str(_test_collector.scripts[i].get_full_name(), '  (', _test_collector.scripts[i].tests.size(), ')'))
+	_gui.set_scripts(scripts)
+
+func _on_run_one(index):
+	p('running one:  ' + str(index))
+	clear_text()
+	_test_the_scripts([index])
+
+func _on_new_gui_run_script(index):
+	var indexes = []
+	clear_text()
+	for i in range(index, _test_collector.scripts.size()):
+		indexes.append(i)
+	_test_the_scripts(indexes)
+
+func _on_new_gui_end_pause():
+	_on_continue_button_pressed()
+
+func _on_new_gui_ignore_pause(should):
+	_ignore_pause_before_teardown = should
 #####################
 #
 # Events
@@ -522,6 +563,7 @@ func _wait_for_continue_button():
 	p(PAUSE_MESSAGE, 0)
 	_waiting = true
 	_ctrls.continue_button.set_disabled(false)
+	_gui.pause() # NEW WAY (# two yields in a row caused problem.)
 	return self
 
 # ------------------------------------------------------------------------------
@@ -561,6 +603,8 @@ func _test_the_scripts(indexes=[]):
 
 	_ctrls.script_progress.set_max(indexes_to_run.size())
 	_ctrls.script_progress.set_value(0)
+	_gui.set_progress_script_max(indexes_to_run.size()) # New way
+	_gui.set_progress_script_value(0)
 
 	var file = File.new()
 	if(_doubler.get_strategy() == _utils.DOUBLE_STRATEGY.FULL):
@@ -597,6 +641,8 @@ func _test_the_scripts(indexes=[]):
 			test_script.before_all()
 
 		_ctrls.test_progress.set_max(the_script.tests.size())
+		_gui.set_progress_test_max(the_script.tests.size()) # New way
+
 
 		# Each test in the script
 		for i in range(the_script.tests.size()):
@@ -649,6 +695,7 @@ func _test_the_scripts(indexes=[]):
 					return
 
 				_ctrls.test_progress.set_value(i + 1)
+				_gui.set_progress_test_value(i + 1)
 
 		# call both post-all-tests methods until postrun_teardown is removed.
 		if(_does_class_name_match(_inner_class_name, the_script.class_name)):
@@ -663,6 +710,7 @@ func _test_the_scripts(indexes=[]):
 		#END TESTS IN SCRIPT LOOP
 		_current_test = null
 		_ctrls.script_progress.set_value(test_indexes + 1)
+		_gui.set_progress_script_value(test_indexes + 1) # new way
 		#END TEST SCRIPT LOOP
 
 	_end_run()
@@ -790,6 +838,7 @@ func add_script(script, was_select_this_one=false):
 	_test_collector.set_test_class_prefix(_inner_class_prefix)
 	_test_collector.add_script(script)
 	_refresh_dropdown()
+	_NW_add_scripts_to_gui()
 
 # ------------------------------------------------------------------------------
 # Add all scripts in the specified directory that start with the prefix and end
@@ -884,7 +933,7 @@ func import_tests_if_none_found():
 		import_tests()
 
 func export_if_tests_found():
-	if(_test_collector.scripts.size() > ):
+	if(_test_collector.scripts.size() > 0):
 		export_tests()
 ################
 #

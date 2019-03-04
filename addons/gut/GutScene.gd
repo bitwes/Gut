@@ -222,7 +222,7 @@ func set_title(title=null):
 func add_passing(amount=1):
 	_summary.passing.set_text(str(_summary.passing.get_text().to_int() + amount))
 	$Summary.show()
-	
+
 func add_failing(amount=1):
 	_summary.failing.set_text(str(_summary.failing.get_text().to_int() + amount))
 	$Summary.show()
@@ -231,4 +231,3 @@ func clear_summary():
 	_summary.passing.set_text("0")
 	_summary.failing.set_text("0")
 	$Summary.hide()
-	

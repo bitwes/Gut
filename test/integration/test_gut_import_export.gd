@@ -59,8 +59,10 @@ func test_gut_runs_the_imported_tests():
 	_test_gut.export_tests(EXPORT_FILE)
 
 	var _import_gut = Gut.new()
+	add_child(_import_gut)
 	_import_gut.set_export_path(EXPORT_FILE)
 	_import_gut.import_tests()
 	_import_gut.test_scripts()
+	remove_child(_import_gut)
 
 	assert_eq(_import_gut.get_summary().get_totals().scripts, 8)

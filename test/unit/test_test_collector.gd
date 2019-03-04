@@ -97,8 +97,10 @@ class TestExportImport:
 
 	func _run_test_collector(tc):
 		var test_gut = Gut.new()
+		add_child(test_gut)
 		test_gut._test_collector = tc
 		test_gut._test_the_scripts()
+		remove_child(test_gut)
 		return test_gut.get_summary().get_totals()
 
 	func after_each():
