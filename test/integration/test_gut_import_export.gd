@@ -32,23 +32,27 @@ func test_importing_tests_populates_test_collector():
 	_test_gut.export_tests(EXPORT_FILE)
 
 	var _import_gut = Gut.new()
+	add_child(_import_gut)
 	_import_gut.import_tests(EXPORT_FILE)
 
 	assert_eq(
 	_import_gut.get_test_collector().scripts.size(),
 	_test_gut.get_test_collector().scripts.size())
+	remove_child(_import_gut)
 
 func test_import_tests_uses_export_path_by_default():
 	_test_gut.add_directory('res://test/resources/parsing_and_loading_samples')
 	_test_gut.export_tests(EXPORT_FILE)
 
 	var _import_gut = Gut.new()
+	add_child(_import_gut)
 	_import_gut.set_export_path(EXPORT_FILE)
 	_import_gut.import_tests()
 
 	assert_eq(
 	_import_gut.get_test_collector().scripts.size(),
 	_test_gut.get_test_collector().scripts.size())
+	remove_child(_import_gut)
 
 func test_import_errors_if_file_does_not_exist():
 	_test_gut.import_tests('res://file_does_not_exist.txt')

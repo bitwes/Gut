@@ -112,8 +112,6 @@ var _was_yield_method_called = false
 # used when yielding to gut instead of some other
 # signal.  Start with set_yield_time()
 var _yield_timer = Timer.new()
-var _runtime_timer = Timer.new()
-const RUNTIME_START_TIME = float(20000.0)
 
 var _unit_test_name = ''
 var Summary = load('res://addons/gut/summary.gd')
@@ -154,16 +152,14 @@ func _init():
 # ------------------------------------------------------------------------------
 func _connect_controls():
 	_ctrls.copy_button.connect("pressed", self, "_copy_button_pressed")
-	_ctrls.clear_button.connect("pressed", self, "clear_text")
-	_ctrls.continue_button.connect("pressed", self, "_on_continue_button_pressed")
-	_ctrls.ignore_continue_checkbox.connect('pressed', self, '_on_ignore_continue_checkbox_pressed')
+	#_ctrls.continue_button.connect("pressed", self, "_on_continue_button_pressed")
 	_ctrls.log_level_slider.connect("value_changed", self, "_on_log_level_slider_changed")
 	_ctrls.stop_button.connect("pressed", self, '_on_stop_button_pressed')
-	_ctrls.run_rest.connect('pressed', self, '_on_run_rest_pressed')
-	_ctrls.previous_button.connect("pressed", self, '_on_previous_button_pressed')
-	_ctrls.next_button.connect("pressed", self, '_on_next_button_pressed')
+	#_ctrls.run_rest.connect('pressed', self, '_on_run_rest_pressed')
+	#_ctrls.previous_button.connect("pressed", self, '_on_previous_button_pressed')
+	#_ctrls.next_button.connect("pressed", self, '_on_next_button_pressed')
 	_ctrls.scripts_drop_down.connect('item_selected', self, '_on_script_selected')
-	_ctrls.run_button.connect("pressed", self, "_on_run_button_pressed")
+	#_ctrls.run_button.connect("pressed", self, "_on_run_button_pressed")
 
 # ------------------------------------------------------------------------------
 # Initialize controls
@@ -187,13 +183,6 @@ func _ready():
 	_yield_timer.set_one_shot(true)
 	_yield_timer.connect('timeout', self, '_yielding_callback')
 
-	# This timer is started, but it should never finish.  Used
-	# to determine how long it took to run the tests since
-	# getting the time and doing time math is ridiculous in godot.
-	add_child(_runtime_timer)
-	_runtime_timer.set_one_shot(true)
-	_runtime_timer.set_wait_time(RUNTIME_START_TIME)
-
 	_hijack_old_wiring()
 
 	add_directory(_directory1)
@@ -216,6 +205,7 @@ func _ready():
 		maximize()
 
 	show()
+
 ################################################################################
 #
 # NEW WIRING
@@ -250,7 +240,8 @@ func _on_new_gui_run_script(index):
 	_test_the_scripts(indexes)
 
 func _on_new_gui_end_pause():
-	_on_continue_button_pressed()
+	_pause_before_teardown = false
+	emit_signal(SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
 
 func _on_new_gui_ignore_pause(should):
 	_ignore_pause_before_teardown = should
@@ -259,12 +250,6 @@ func _on_new_gui_ignore_pause(should):
 # Events
 #
 #####################
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func _process(delta):
-	if(_is_running):
-		_ctrls.runtime_label.set_text(str(RUNTIME_START_TIME - _runtime_timer.get_time_left()).pad_decimals(3) + ' s')
 
 # ------------------------------------------------------------------------------
 # Timeout for the built in timer.  emits the timeout signal.  Start timer
@@ -289,37 +274,6 @@ func _yielding_callback(from_obj=false):
 		emit_signal('timeout')
 
 # ------------------------------------------------------------------------------
-# Run either the selected test or all tests.
-# ------------------------------------------------------------------------------
-func _on_run_button_pressed():
-	clear_text()
-
-	var indexes = []
-	var selected_index = _ctrls.scripts_drop_down.get_selected()
-	if(_test_collector.scripts[selected_index].class_name == null):
-		name = _test_collector.scripts[selected_index].get_filename()
-		_test_the_scripts(_get_indexes_matching_script_name(name))
-	else:
-		_test_the_scripts([selected_index])
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func _on_run_rest_pressed():
-	clear_text()
-	var indexes = []
-	for i in range(_ctrls.scripts_drop_down.get_selected(), _ctrls.scripts_drop_down.get_item_count()):
-		indexes.append(i)
-	_test_the_scripts(indexes)
-
-# ------------------------------------------------------------------------------
-# Continue processing after pause.
-# ------------------------------------------------------------------------------
-func _on_continue_button_pressed():
-	_pause_before_teardown = false
-	_ctrls.continue_button.set_disabled(true)
-	emit_signal(SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
-
-# ------------------------------------------------------------------------------
 # Change the log level.  Will be visible the next time tests are run.
 # ------------------------------------------------------------------------------
 func _on_log_level_slider_changed(value):
@@ -327,37 +281,15 @@ func _on_log_level_slider_changed(value):
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-func _on_previous_button_pressed():
-	if(_ctrls.scripts_drop_down.get_selected() > 0):
-		_ctrls.scripts_drop_down.select(_ctrls.scripts_drop_down.get_selected() -1)
-	_update_controls()
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func _on_next_button_pressed():
-	if(_ctrls.scripts_drop_down.get_selected() < _ctrls.scripts_drop_down.get_item_count() -1):
-		_ctrls.scripts_drop_down.select(_ctrls.scripts_drop_down.get_selected() +1)
-	_update_controls()
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
 func _on_stop_button_pressed():
 	_stop_pressed = true
 	_ctrls.stop_button.set_disabled(true)
 	# short circuit any yielding or yielded tests
-	if(!_ctrls.continue_button.is_disabled()):
-		_on_continue_button_pressed()
-	else:
-		_waiting = false
+	# if(!_ctrls.continue_button.is_disabled()):
+	# 	_on_continue_button_pressed()
+	# else:
+	# 	_waiting = false
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func _on_ignore_continue_checkbox_pressed():
-	_ignore_pause_before_teardown = _ctrls.ignore_continue_checkbox.is_pressed()
-	# If you want to ignore them, then you probably just want to continue
-	# running, so we'll save you a click.
-	if(!_ctrls.continue_button.is_disabled()):
-		_on_continue_button_pressed()
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -438,10 +370,16 @@ func _init_run():
 	_is_running = true
 	_update_controls()
 
-	_runtime_timer.start()
-
 	_yield_between.tests_since_last_yield = 0
-	._init_run()
+
+	_ctrls.text_box.clear_colors()
+	_ctrls.text_box.add_keyword_color("PASSED", Color(0, 1, 0))
+	_ctrls.text_box.add_keyword_color("FAILED", Color(1, 0, 0))
+	_ctrls.text_box.add_color_region('/#', '#/', Color(.9, .6, 0))
+	_ctrls.text_box.add_color_region('/-', '-/', Color(1, 1, 0))
+	_ctrls.text_box.add_color_region('/*', '*/', Color(.5, .5, 1))
+
+
 
 # ------------------------------------------------------------------------------
 # Print out run information and close out the run.
@@ -460,7 +398,6 @@ func _end_run():
 	yield(_yield_between.timer, 'timeout')
 	_ctrls.text_box.cursor_set_line(_ctrls.text_box.get_line_count())
 
-	_runtime_timer.stop()
 	_is_running = false
 	update()
 	_update_controls()
@@ -563,7 +500,6 @@ func _wait_for_done(result):
 func _wait_for_continue_button():
 	p(PAUSE_MESSAGE, 0)
 	_waiting = true
-	_ctrls.continue_button.set_disabled(false)
 	_gui.pause() # NEW WAY (# two yields in a row caused problem.)
 	return self
 
@@ -603,8 +539,6 @@ func _test_the_scripts(indexes=[]):
 	else:
 		indexes_to_run = indexes
 
-	_ctrls.script_progress.set_max(indexes_to_run.size())
-	_ctrls.script_progress.set_value(0)
 	_gui.set_progress_script_max(indexes_to_run.size()) # New way
 	_gui.set_progress_script_value(0)
 
@@ -643,9 +577,7 @@ func _test_the_scripts(indexes=[]):
 			_call_deprecated_script_method(test_script, 'prerun_setup', 'before_all')
 			test_script.before_all()
 
-		_ctrls.test_progress.set_max(the_script.tests.size())
 		_gui.set_progress_test_max(the_script.tests.size()) # New way
-
 
 		# Each test in the script
 		for i in range(the_script.tests.size()):
@@ -697,7 +629,6 @@ func _test_the_scripts(indexes=[]):
 					p("STOPPED")
 					return
 
-				_ctrls.test_progress.set_value(i + 1)
 				_gui.set_progress_test_value(i + 1)
 
 		# call both post-all-tests methods until postrun_teardown is removed.
@@ -712,7 +643,6 @@ func _test_the_scripts(indexes=[]):
 		remove_child(test_script)
 		#END TESTS IN SCRIPT LOOP
 		_current_test = null
-		_ctrls.script_progress.set_value(test_indexes + 1)
 		_gui.set_progress_script_value(test_indexes + 1) # new way
 		#END TEST SCRIPT LOOP
 
@@ -804,13 +734,16 @@ func p(text, level=0, indent=0):
 # Runs all the scripts that were added using add_script
 # ------------------------------------------------------------------------------
 func test_scripts(run_rest=false):
-	# _test_collector.set_test_class_prefix(_inner_class_prefix)
 	clear_text()
-	var indexes = [] # empty runs all
-	if(_script_name != null):
-		indexes = _get_indexes_matching_script_name(_script_name)
 
-	_test_the_scripts(indexes)
+	if(_script_name != null):
+		var indexes = _get_indexes_matching_script_name(_script_name)
+		if(indexes == []):
+			_lgr.error('Could not find script matching ' + _script_name)
+		else:
+			_test_the_scripts(indexes)
+	else:
+		_test_the_scripts([])
 
 
 # ------------------------------------------------------------------------------
@@ -823,18 +756,6 @@ func test_script(script):
 	_test_the_scripts()
 
 # ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func _refresh_dropdown():
-	_ctrls.scripts_drop_down.clear()
-	for i in range(_test_collector.scripts.size()):
-		_ctrls.scripts_drop_down.add_item(
-			str(_test_collector.scripts[i].get_full_name(), '  (', _test_collector.scripts[i].tests.size(), ')'))
-
-	# Move the run_button in case the size of the path of the script caused the
-	# drop down to resize.
-	_ctrls.run_button.set_position(_ctrls.scripts_drop_down.get_position() + \
-	                           Vector2(_ctrls.scripts_drop_down.get_size().x + 5, 0))
-# ------------------------------------------------------------------------------
 # Adds a script to be run when test_scripts called
 #
 # No longer supports selecting a script via this method.
@@ -842,7 +763,6 @@ func _refresh_dropdown():
 func add_script(script, was_select_this_one=false):
 	_test_collector.set_test_class_prefix(_inner_class_prefix)
 	_test_collector.add_script(script)
-	_refresh_dropdown()
 	_NW_add_scripts_to_gui()
 
 # ------------------------------------------------------------------------------
@@ -891,17 +811,7 @@ func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
 # ------------------------------------------------------------------------------
 func select_script(script_name):
 	_script_name = script_name
-	var found = false
-	var idx = 0
 
-	while(idx < _ctrls.scripts_drop_down.get_item_count() and !found):
-		if(_ctrls.scripts_drop_down.get_item_text(idx).find(script_name) != -1):
-			_ctrls.scripts_drop_down.select(idx)
-			found = true
-		else:
-			idx += 1
-
-	return found
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func export_tests(path=_export_path):
@@ -918,20 +828,12 @@ func import_tests(path=_export_path):
 	if(!_utils.file_exists(path)):
 		_lgr.error(str('Cannot import tests:  the path [', path, '] does not exist.'))
 	else:
-		_ctrls.scripts_drop_down.clear()
 		_test_collector.clear()
 		_test_collector.import_tests(path)
 		p(_test_collector.to_s())
 		p("Imported from " + path)
 
-		# var paths = _utils.extract_property_from_array(_test_collector.scripts, 'path')
-		# var seen = _utils.ThingCounter.new()
-		#
-		# for i in range(paths.size()):
-		# 	if(!seen.has(paths[i])):
-		# 		_ctrls.scripts_drop_down.add_item(paths[i])
-		# 		seen.add(paths[i])
-	_refresh_dropdown()
+	_NW_add_scripts_to_gui()
 
 func import_tests_if_none_found():
 	if(_test_collector.scripts.size() == 0):
@@ -1037,7 +939,7 @@ func get_result_text():
 # ------------------------------------------------------------------------------
 func set_log_level(level):
 	_log_level = level
-	_ctrls.log_level_slider.set_value(level)
+	# TODO set log level in _gui
 
 # ------------------------------------------------------------------------------
 # Get the current log level.
@@ -1058,7 +960,7 @@ func pause_before_teardown():
 # ------------------------------------------------------------------------------
 func set_ignore_pause_before_teardown(should_ignore):
 	_ignore_pause_before_teardown = should_ignore
-	_ctrls.ignore_continue_checkbox.set_pressed(should_ignore)
+	# TODO new way set it.
 
 func get_ignore_pause_before_teardown():
 	return _ignore_pause_before_teardown

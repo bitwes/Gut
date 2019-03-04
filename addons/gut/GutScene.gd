@@ -47,6 +47,15 @@ func _process(delta):
 		var disp_time = round(_time * 100)/100
 		$Main/TitleBar/Time.set_text(str(disp_time))
 
+# func _draw(): # needs get_size()
+# 	# Draw the lines in the corner to show where you can
+# 	# drag to resize the dialog
+# 	var grab_margin = 2
+# 	var line_space = 3
+# 	var grab_line_color = Color(.4, .4, .4)
+# 	for i in range(1, 6):
+# 		draw_line(get_size() - Vector2(i * line_space, grab_margin), get_size() - Vector2(grab_margin, i * line_space), grab_line_color)
+
 # ####################
 # GUI Events
 # ####################

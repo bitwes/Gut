@@ -347,10 +347,6 @@ var options = {
 	unit_test_name = '',
 }
 
-# flag to say if we should run the scripts or not.  It is only
-# set to false if you specify a script to run with the -gselect
-# option and it cannot find the script.
-var _auto_run = true
 # flag to indicate if only a single script should be run.
 var _run_single = false
 
@@ -464,10 +460,8 @@ func apply_options(opts):
 		_tester.add_script(opts.tests[i])
 
 	if(opts.selected != ''):
-		_auto_run = _tester.select_script(opts.selected)
+		_tester.select_script(opts.selected)
 		_run_single = true
-		if(!_auto_run):
-			_tester.get_logger().error("Could not find a script that matched:  " + opts.selected)
 
 	if(opts.double_strategy == 'full'):
 		_tester.set_double_strategy(_utils.DOUBLE_STRATEGY.FULL)
@@ -538,10 +532,7 @@ option (the resolved values where default < .gutconfig < command line)."""
 		else:
 			load_auto_load_scripts()
 			apply_options(opt_resolver.get_resolved_values())
-
-			if(_auto_run):
-				_tester.test_scripts(!_run_single)
-
+			_tester.test_scripts(!_run_single)
 
 # exit if option is set.
 func _on_tests_finished(should_exit):
