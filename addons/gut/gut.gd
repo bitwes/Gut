@@ -466,6 +466,7 @@ func _end_run():
 	_update_controls()
 	emit_signal(SIGNAL_TESTS_FINISHED)
 	set_title("Finished.  " + str(get_fail_count()) + " failures.")
+	_gui.set_title("Finished.  " + str(get_fail_count()) + " failures.")
 
 # ------------------------------------------------------------------------------
 # Checks the passed in thing to see if it is a "function state" object that gets
@@ -593,6 +594,7 @@ func _get_indexes_matching_script_name(name):
 # ------------------------------------------------------------------------------
 func _test_the_scripts(indexes=[]):
 	_init_run()
+	_gui.run_mode()
 
 	var indexes_to_run = []
 	if(indexes.size()==0):
@@ -616,6 +618,7 @@ func _test_the_scripts(indexes=[]):
 
 		if(the_script.tests.size() > 0):
 			set_title('Running:  ' + the_script.get_full_name())
+			_gui.set_title('Running:  ' + the_script.get_full_name())
 			_print_script_heading(the_script)
 			_new_summary.add_script(the_script.get_full_name())
 
@@ -717,12 +720,14 @@ func _test_the_scripts(indexes=[]):
 
 func _pass(text=''):
 	_summary.tally_passed += 1
+	_gui.add_passing()
 	_update_controls()
 	if(_current_test):
 		_new_summary.add_pass(_current_test.name, text)
 
 func _fail(text=''):
 	_summary.tally_failed += 1
+	_gui.add_failing()
 	if(_current_test != null):
 		var line_text = ''
 		# Inner classes don't get the line number set so don't print it

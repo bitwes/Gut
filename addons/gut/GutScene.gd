@@ -23,6 +23,8 @@ var _mouse = {
 	down_pos = null
 }
 
+var _is_running = false
+var _time = 0
 const DEFAULT_TITLE = 'Gut: The Godot Unit Testing tool.'
 
 signal run_script
@@ -38,6 +40,12 @@ func _ready():
 	_nav.current_script.set_text("No scripts available")
 	set_title()
 	clear_summary()
+
+func _process(delta):
+	if(_is_running):
+		_time += delta
+		var disp_time = round(_time * 100)/100
+		$Main/TitleBar/Time.set_text(str(disp_time))
 
 # ####################
 # GUI Events
@@ -128,6 +136,10 @@ func _input(event):
 # Private
 # ####################
 func _run_mode(is_running=true):
+	if(is_running):
+		_time = 0
+	_is_running = is_running
+
 	_hide_scripts()
 	var ctrls = $Main/Navigation.get_children()
 	for i in range(ctrls.size()):
@@ -168,6 +180,9 @@ func _update_controls():
 # ####################
 # Public
 # ####################
+func run_mode(is_running=true):
+	_run_mode(is_running)
+
 func set_scripts(scripts):
 	_script_list.clear()
 	for i in range(scripts.size()):
@@ -220,10 +235,14 @@ func set_title(title=null):
 		$Main/TitleBar/Title.set_text(title)
 
 func add_passing(amount=1):
+	if(!_summary):
+		return
 	_summary.passing.set_text(str(_summary.passing.get_text().to_int() + amount))
 	$Summary.show()
 
 func add_failing(amount=1):
+	if(!_summary):
+		return
 	_summary.failing.set_text(str(_summary.failing.get_text().to_int() + amount))
 	$Summary.show()
 
