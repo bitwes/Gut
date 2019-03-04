@@ -4,18 +4,22 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 # 6.7.0
 ## Features
+* You can now export your tests and run them in your exported game.  This means you can run your tests on all the platforms that Godot supports through the executable...no editor, no nothing!  Check out the Export Tests wiki page for more information.
 * added `get_call_parameters` which allows you to get the parameters sent to a call to a doubled method.  It returns the most recent call by default but you can specify an optional index as well.
 
-
-* can no longer set the selected script when adding scripts one by one via `add_script`
 ## Fixes/Improvements
 * Added all missing settings to the gutconfig file.
   * log -> log_level
-* Improved logging.  The number of Gut related errors, warnings, and deprecated methods are listed in the summary.
+* Improved logging.  More warnings and errors have been added to help when something goes wrong inside Gut.  The number of Gut related errors, warnings, and deprecated methods are listed in the summary.  If you don't see any listed, there aren't any.
 * Some housekeeping and Boy Scouting.
+
+## Removals
+* You can no longer set the selected script when adding scripts one by one via `add_script`.  Doing it won't cause an error but it won't do anything.
 * Deprecated the following methods:
-  * `setup`, `teardown`, `prerun_setup`, `postrun_teardown`.  These are replaced with the methods `before_all`, `before_each`, `after_all`, `after_each` for easier reading.  They will continue to work for the foreseeable future.
+  * `setup`, `teardown`, `prerun_setup`, `postrun_teardown`.  These were replaced with the methods `before_all`, `before_each`, `after_all`, `after_each` for easier reading.  They will continue to work for the foreseeable future but will generate a deprecation message for each script they are used in.
   * `end_test` and the old `gut.end_yielded_test`.  These no longer need to be called.
+
+
 
 # 6.6.3
 Was exporting a directory that I shouldn't, added it to the .gitattributes

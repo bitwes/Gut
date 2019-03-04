@@ -883,6 +883,9 @@ func import_tests_if_none_found():
 	if(_test_collector.scripts.size() == 0):
 		import_tests()
 
+func export_if_tests_found():
+	if(_test_collector.scripts.size() > ):
+		export_tests()
 ################
 #
 # MISC
