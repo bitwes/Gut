@@ -30,11 +30,17 @@
 #
 # Version 6.6.2
 ################################################################################
-extends "res://addons/gut/gut_gui.gd"
+#extends "res://addons/gut/gut_gui.gd"
+extends WindowDialog
 
 var _utils = load('res://addons/gut/utils.gd').new()
 var _lgr = _utils.get_logger()
+# Used to prevent multiple messages for deprecated setup/teardown messages
 var _deprecated_tracker = _utils.ThingCounter.new()
+
+
+var min_size = Vector2(650, 400)
+var title_offset = Vector2(0, get_constant("title_height"))
 
 # ###########################
 # Editor Variables
@@ -91,6 +97,7 @@ var _test_script_objects = []
 
 var _waiting = false
 var _done = false
+var _is_running = false
 
 var _current_test = null
 var _log_text = ""
@@ -148,28 +155,13 @@ func _init():
 	_gui = load('res://addons/gut/GutScene.tscn').instance() # new way
 
 # ------------------------------------------------------------------------------
-# Connect all the controls created in the parent class to the methods here.
-# ------------------------------------------------------------------------------
-func _connect_controls():
-	_ctrls.copy_button.connect("pressed", self, "_copy_button_pressed")
-	#_ctrls.continue_button.connect("pressed", self, "_on_continue_button_pressed")
-	_ctrls.log_level_slider.connect("value_changed", self, "_on_log_level_slider_changed")
-	_ctrls.stop_button.connect("pressed", self, '_on_stop_button_pressed')
-	#_ctrls.run_rest.connect('pressed', self, '_on_run_rest_pressed')
-	#_ctrls.previous_button.connect("pressed", self, '_on_previous_button_pressed')
-	#_ctrls.next_button.connect("pressed", self, '_on_next_button_pressed')
-	_ctrls.scripts_drop_down.connect('item_selected', self, '_on_script_selected')
-	#_ctrls.run_button.connect("pressed", self, "_on_run_button_pressed")
-
-# ------------------------------------------------------------------------------
 # Initialize controls
 # ------------------------------------------------------------------------------
 func _ready():
 	_lgr.info(str('using [', OS.get_user_data_dir(), '] for temporary output.'))
 
-	set_it_up()
+	#set_it_up()
 	set_process_input(true)
-	_connect_controls()
 	set_position(get_position() + title_offset)
 
 	add_child(_wait_timer)
@@ -213,15 +205,15 @@ func _ready():
 ################################################################################
 func _hijack_old_wiring():
 	add_child(_gui)
-	_ctrls.text_box = _gui.get_rich_text_label()
 	_gui.connect('run_single_script', self, '_on_run_one')
 	_gui.connect('run_script', self, '_on_new_gui_run_script')
 	_gui.connect('end_pause', self, '_on_new_gui_end_pause')
 	_gui.connect('ignore_pause', self, '_on_new_gui_ignore_pause')
+	_gui.connect('log_level_changed', self, '_on_log_level_changed')
 
 	connect('tests_finished', _gui, 'end_run')
 
-func _NW_add_scripts_to_gui():
+func _add_scripts_to_gui():
 	var scripts = []
 	for i in range(_test_collector.scripts.size()):
 		scripts.append(str(_test_collector.scripts[i].get_full_name(), '  (', _test_collector.scripts[i].tests.size(), ')'))
@@ -245,6 +237,10 @@ func _on_new_gui_end_pause():
 
 func _on_new_gui_ignore_pause(should):
 	_ignore_pause_before_teardown = should
+
+func _on_log_level_changed(value):
+	_log_level = value
+
 #####################
 #
 # Events
@@ -272,29 +268,6 @@ func _yielding_callback(from_obj=false):
 		_yield_timer.start()
 	else:
 		emit_signal('timeout')
-
-# ------------------------------------------------------------------------------
-# Change the log level.  Will be visible the next time tests are run.
-# ------------------------------------------------------------------------------
-func _on_log_level_slider_changed(value):
-	_log_level = _ctrls.log_level_slider.get_value()
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func _on_stop_button_pressed():
-	_stop_pressed = true
-	_ctrls.stop_button.set_disabled(true)
-	# short circuit any yielding or yielded tests
-	# if(!_ctrls.continue_button.is_disabled()):
-	# 	_on_continue_button_pressed()
-	# else:
-	# 	_waiting = false
-
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func _on_script_selected(id):
-	_update_controls()
 
 # ------------------------------------------------------------------------------
 # completed signal for GDScriptFucntionState returned from a test script that
@@ -330,26 +303,17 @@ func _get_summary_text():
 
 	if(_new_summary.get_totals().tests > 0):
 		to_return +=  '+++ ' + str(_new_summary.get_totals().passing) + ' passed ' + str(_new_summary.get_totals().failing) + ' failed.  ' + \
-		              "Tests finished in:  " + _ctrls.runtime_label.get_text() + ' +++'
+		              "Tests finished in:  " + str(_gui.get_run_duration()) + ' +++'
 		var c = Color(0, 1, 0)
 		if(_new_summary.get_totals().failing > 0):
 			c = Color(1, 0, 0)
 		elif(_new_summary.get_totals().pending > 0):
 			c = Color(1, 1, .8)
 
-		_ctrls.text_box.add_color_region('+++', '+++', c)
+		_gui.get_text_box().add_color_region('+++', '+++', c)
 	else:
 		to_return += '+++ No tests ran +++'
-		_ctrls.text_box.add_color_region('+++', '+++', Color(1, 0, 0))
-
-	if(_summary.moved_methods > 0):
-		to_return += "\nMoved Methods (" + str(_summary.moved_methods) + ')' + """
--------------
-It looks like you have some methods that have been moved.  These methods were
-moved from the gut object to the test object so that you don't have to prefix
-them with 'gut.'.  This means less typing for you and better organization of
-the code.  I'm sorry for the inconvenience but I promise this will make things
-easier in the future...I'm pretty sure at least.  Thanks for using Gut!"""
+		_gui.get_text_box().add_color_region('+++', '+++', Color(1, 0, 0))
 
 	return to_return + "\n\n"
 
@@ -360,24 +324,21 @@ func _init_run():
 	_test_collector.set_test_class_prefix(_inner_class_prefix)
 	_test_script_objects = []
 	_new_summary = Summary.new()
-	_summary.tally_passed = 0
-	_summary.tally_failed = 0
 
 	_log_text = ""
 
 	_current_test = null
 
 	_is_running = true
-	_update_controls()
 
 	_yield_between.tests_since_last_yield = 0
 
-	_ctrls.text_box.clear_colors()
-	_ctrls.text_box.add_keyword_color("PASSED", Color(0, 1, 0))
-	_ctrls.text_box.add_keyword_color("FAILED", Color(1, 0, 0))
-	_ctrls.text_box.add_color_region('/#', '#/', Color(.9, .6, 0))
-	_ctrls.text_box.add_color_region('/-', '-/', Color(1, 1, 0))
-	_ctrls.text_box.add_color_region('/*', '*/', Color(.5, .5, 1))
+	_gui.get_text_box().clear_colors()
+	_gui.get_text_box().add_keyword_color("PASSED", Color(0, 1, 0))
+	_gui.get_text_box().add_keyword_color("FAILED", Color(1, 0, 0))
+	_gui.get_text_box().add_color_region('/#', '#/', Color(.9, .6, 0))
+	_gui.get_text_box().add_color_region('/-', '-/', Color(1, 1, 0))
+	_gui.get_text_box().add_color_region('/*', '*/', Color(.5, .5, 1))
 
 
 
@@ -396,11 +357,10 @@ func _end_run():
 	_yield_between.timer.set_wait_time(0.001)
 	_yield_between.timer.start()
 	yield(_yield_between.timer, 'timeout')
-	_ctrls.text_box.cursor_set_line(_ctrls.text_box.get_line_count())
+	_gui.get_text_box().cursor_set_line(_gui.get_text_box().get_line_count())
 
 	_is_running = false
 	update()
-	_update_controls()
 	emit_signal(SIGNAL_TESTS_FINISHED)
 	set_title("Finished.  " + str(get_fail_count()) + " failures.")
 	_gui.set_title("Finished.  " + str(get_fail_count()) + " failures.")
@@ -617,14 +577,13 @@ func _test_the_scripts(indexes=[]):
 				test_script.after_each()
 
 				if(_current_test.passed):
-					_ctrls.text_box.add_keyword_color(_current_test.name, Color(0, 1, 0))
+					_gui.get_text_box().add_keyword_color(_current_test.name, Color(0, 1, 0))
 				else:
-					_ctrls.text_box.add_keyword_color(_current_test.name, Color(1, 0, 0))
+					_gui.get_text_box().add_keyword_color(_current_test.name, Color(1, 0, 0))
 
 				# !!! STOP BUTTON SHORT CIRCUIT !!!
 				if(_stop_pressed):
 					_is_running = false
-					_update_controls()
 					_stop_pressed = false
 					p("STOPPED")
 					return
@@ -649,14 +608,11 @@ func _test_the_scripts(indexes=[]):
 	_end_run()
 
 func _pass(text=''):
-	_summary.tally_passed += 1
 	_gui.add_passing()
-	_update_controls()
 	if(_current_test):
 		_new_summary.add_pass(_current_test.name, text)
 
 func _fail(text=''):
-	_summary.tally_failed += 1
 	_gui.add_failing()
 	if(_current_test != null):
 		var line_text = ''
@@ -670,8 +626,6 @@ func _fail(text=''):
 
 		_new_summary.add_fail(_current_test.name, text + line_text)
 		_current_test.passed = false
-
-	_update_controls()
 
 func _pending(text=''):
 	if(_current_test):
@@ -722,7 +676,7 @@ func p(text, level=0, indent=0):
 
 		_log_text += to_print + "\n"
 
-		_ctrls.text_box.insert_text_at_cursor(to_print + "\n")
+		_gui.get_text_box().insert_text_at_cursor(to_print + "\n")
 
 ################
 #
@@ -763,7 +717,7 @@ func test_script(script):
 func add_script(script, was_select_this_one=false):
 	_test_collector.set_test_class_prefix(_inner_class_prefix)
 	_test_collector.add_script(script)
-	_NW_add_scripts_to_gui()
+	_add_scripts_to_gui()
 
 # ------------------------------------------------------------------------------
 # Add all scripts in the specified directory that start with the prefix and end
@@ -833,12 +787,16 @@ func import_tests(path=_export_path):
 		p(_test_collector.to_s())
 		p("Imported from " + path)
 
-	_NW_add_scripts_to_gui()
+	_add_scripts_to_gui()
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func import_tests_if_none_found():
 	if(_test_collector.scripts.size() == 0):
 		import_tests()
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func export_if_tests_found():
 	if(_test_collector.scripts.size() > 0):
 		export_tests()
@@ -847,24 +805,33 @@ func export_if_tests_found():
 # MISC
 #
 ################
+
 # ------------------------------------------------------------------------------
 # Maximize test runner window to fit the viewport.
 # ------------------------------------------------------------------------------
 func set_should_maximize(should):
 	_should_maximize = should
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func get_should_maximize():
 	return _should_maximize
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func maximize():
 	if(is_inside_tree()):
 		set_position(title_offset)
 		var vp_size_offset = get_viewport().size - title_offset
 		set_size(vp_size_offset / get_scale())
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func disable_strict_datatype_checks(should):
 	_disable_strict_datatype_checks = should
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func is_strict_datatype_checks_disabled():
 	return _disable_strict_datatype_checks
 
@@ -874,14 +841,13 @@ func is_strict_datatype_checks_disabled():
 # ------------------------------------------------------------------------------
 func end_yielded_test():
 	_lgr.deprecated('end_yielded_test is no longer necessary, you can remove it.')
-	#_waiting = false
 
 # ------------------------------------------------------------------------------
 # Clears the text of the text box.  This resets all counters.
 # ------------------------------------------------------------------------------
 func clear_text():
-	_ctrls.text_box.set_text("")
-	_ctrls.text_box.clear_colors()
+	_gui.get_text_box().set_text("")
+	_gui.get_text_box().clear_colors()
 	update()
 
 # ------------------------------------------------------------------------------
@@ -939,7 +905,7 @@ func get_result_text():
 # ------------------------------------------------------------------------------
 func set_log_level(level):
 	_log_level = level
-	# TODO set log level in _gui
+	_gui.set_log_level(level)
 
 # ------------------------------------------------------------------------------
 # Get the current log level.
@@ -960,7 +926,7 @@ func pause_before_teardown():
 # ------------------------------------------------------------------------------
 func set_ignore_pause_before_teardown(should_ignore):
 	_ignore_pause_before_teardown = should_ignore
-	# TODO new way set it.
+	_gui.set_ignore_pause(should_ignore)
 
 func get_ignore_pause_before_teardown():
 	return _ignore_pause_before_teardown
@@ -1199,41 +1165,3 @@ func get_export_path():
 # ------------------------------------------------------------------------------
 func set_export_path(export_path):
 	_export_path = export_path
-
-# #######################
-# Moved method warnings.
-# #######################
-func moved_method(method_name):
-	_lgr.deprecated('[' + method_name + '] has been moved to the Test class.  To fix, remove "gut." from in front of it.')
-	_test_script_objects[-1]._fail('Method has been moved.')
-	_summary.moved_methods += 1
-func assert_eq(got, expected, text=""):
-	moved_method('assert_eq')
-func assert_ne(got, not_expected, text=""):
-	moved_method('assert_ne')
-func assert_gt(got, expected, text=""):
-	moved_method('assert_gt')
-func assert_lt(got, expected, text=""):
-	moved_method('assert_lt')
-func assert_true(got, text=""):
-	moved_method('assert_true')
-func assert_false(got, text=""):
-	moved_method('assert_false')
-func assert_between(got, expect_low, expect_high, text=""):
-	moved_method('assert_between')
-func assert_file_exists(file_path):
-	moved_method('assert_file_exists')
-func assert_file_does_not_exist(file_path):
-	moved_method('assert_file_does_not_exist')
-func assert_file_empty(file_path):
-	moved_method('assert_file_empty')
-func assert_file_not_empty(file_path):
-	moved_method('assert_file_not_empty')
-func assert_get_set_methods(obj, property, default, set_to):
-	moved_method('assert_get_set_methods')
-func assert_has(obj, element, text=""):
-	moved_method('assert_has')
-func assert_does_not_have(obj, element, text=""):
-	moved_method('assert_does_not_have')
-func pending(text=""):
-	moved_method('pending')

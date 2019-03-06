@@ -40,6 +40,7 @@ func _ready():
 	_nav.current_script.set_text("No scripts available")
 	set_title()
 	clear_summary()
+	$Main/TitleBar/Time.set_text("")
 
 func _process(delta):
 	if(_is_running):
@@ -206,12 +207,18 @@ func get_selected_index():
 	return _script_list.get_selected_items()[0]
 
 func get_log_level():
-	pass
+	return $Main/LogLevelSlider.value
 
-func set_log_level():
-	pass
+func set_log_level(value):
+	$Main/LogLevelSlider.value = value
 
-func get_rich_text_label():
+func set_ignore_pause(should):
+	$Main/Continue/CheckBox.pressed = should
+
+func get_ignore_pause():
+	return $Main/Continue/CheckBox.pressed
+
+func get_text_box():
 	return $Main/TextDisplay/RichTextLabel
 
 func end_run():
@@ -242,6 +249,9 @@ func set_title(title=null):
 		$Main/TitleBar/Title.set_text(DEFAULT_TITLE)
 	else:
 		$Main/TitleBar/Title.set_text(title)
+
+func get_run_duration():
+	return $Main/TitleBar/Time.text.to_float()
 
 func add_passing(amount=1):
 	if(!_summary):

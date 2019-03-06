@@ -50,7 +50,7 @@ func _ready():
 	# You must have set export_path on the Gut object, exported your tests, and 
 	# changed your project's export settings to include whatever file extension
 	# you gave your export file name.
-	$Gut.import_tests_if_none_found()
+#	$Gut.import_tests_if_none_found()
 	
 	# -----
 	# Uncomment these lines to see various behaviors
