@@ -105,7 +105,6 @@ func before_each():
 	counts.setup_count += 1
 	gr.test_finished_called = false
 	gr.test_gut = get_a_gut()
-	#gr.signal_object = SignalObject.new()
 	gr.test = Test.new()
 	gr.test.gut = gr.test_gut
 

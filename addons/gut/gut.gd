@@ -31,7 +31,8 @@
 # Version 6.6.2
 ################################################################################
 #extends "res://addons/gut/gut_gui.gd"
-extends WindowDialog
+tool
+extends Node2D
 
 var _utils = load('res://addons/gut/utils.gd').new()
 var _lgr = _utils.get_logger()
@@ -40,7 +41,7 @@ var _deprecated_tracker = _utils.ThingCounter.new()
 
 
 var min_size = Vector2(650, 400)
-var title_offset = Vector2(0, get_constant("title_height"))
+var title_offset = Vector2(0, 0)#get_constant("title_height"))
 
 # ###########################
 # Editor Variables
@@ -362,7 +363,6 @@ func _end_run():
 	_is_running = false
 	update()
 	emit_signal(SIGNAL_TESTS_FINISHED)
-	set_title("Finished.  " + str(get_fail_count()) + " failures.")
 	_gui.set_title("Finished.  " + str(get_fail_count()) + " failures.")
 
 # ------------------------------------------------------------------------------
@@ -511,7 +511,6 @@ func _test_the_scripts(indexes=[]):
 		var the_script = _test_collector.scripts[indexes_to_run[test_indexes]]
 
 		if(the_script.tests.size() > 0):
-			set_title('Running:  ' + the_script.get_full_name())
 			_gui.set_title('Running:  ' + the_script.get_full_name())
 			_print_script_heading(the_script)
 			_new_summary.add_script(the_script.get_full_name())
@@ -647,7 +646,7 @@ func p(text, level=0, indent=0):
 	var to_print = ""
 	var printing_test_name = false
 
-	if(level <= _log_level):
+	if(level <= _utils.nvl(_log_level, 0)):
 		if(_current_test != null):
 			#make sure everything printed during the execution
 			#of a test is at least indented once under the test
@@ -772,9 +771,10 @@ func export_tests(path=_export_path):
 	if(path == null):
 		_lgr.error('You must pass a path or set the export_path before calling export_tests')
 	else:
-		_test_collector.export_tests(path)
-		p(_test_collector.to_s())
-		p("Exported to " + path)
+		var result = _test_collector.export_tests(path)
+		if(result):
+			p(_test_collector.to_s())
+			p("Exported to " + path)
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -783,11 +783,11 @@ func import_tests(path=_export_path):
 		_lgr.error(str('Cannot import tests:  the path [', path, '] does not exist.'))
 	else:
 		_test_collector.clear()
-		_test_collector.import_tests(path)
-		p(_test_collector.to_s())
-		p("Imported from " + path)
-
-	_add_scripts_to_gui()
+		var result = _test_collector.import_tests(path)
+		if(result):
+			p(_test_collector.to_s())
+			p("Imported from " + path)
+			_add_scripts_to_gui()
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -823,7 +823,7 @@ func maximize():
 	if(is_inside_tree()):
 		set_position(title_offset)
 		var vp_size_offset = get_viewport().size - title_offset
-		set_size(vp_size_offset / get_scale())
+		#set_size(vp_size_offset / get_scale()) TODO implement size
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -905,6 +905,7 @@ func get_result_text():
 # ------------------------------------------------------------------------------
 func set_log_level(level):
 	_log_level = level
+	
 	_gui.set_log_level(level)
 
 # ------------------------------------------------------------------------------

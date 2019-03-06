@@ -26,6 +26,7 @@ var _mouse = {
 var _is_running = false
 var _time = 0
 const DEFAULT_TITLE = 'Gut: The Godot Unit Testing tool.'
+var _utils = load('res://addons/gut/utils.gd').new()
 
 signal run_script
 signal run_single_script
@@ -210,7 +211,7 @@ func get_log_level():
 	return $Main/LogLevelSlider.value
 
 func set_log_level(value):
-	$Main/LogLevelSlider.value = value
+	$Main/LogLevelSlider.value = _utils.nvl(value, 0)
 
 func set_ignore_pause(should):
 	$Main/Continue/CheckBox.pressed = should

@@ -212,16 +212,27 @@ func has_script(path):
 	return found
 
 func export_tests(path):
+	var success = true
 	var f = ConfigFile.new()
 	for i in range(scripts.size()):
 		scripts[i].export_to(f, str('TestScript-', i))
-	f.save(path)
+	var result = f.save(path)
+	if(result != OK):
+		_lgr.error(str('Could not save exported tests to [', path, '].  Error code:  ', result))
+		success = false
+	return success
 
 func import_tests(path):
+	var success = false
 	var f = ConfigFile.new()
-	f.load(path)
-	var sections = f.get_sections()
-	for key in sections:
-		var ts = TestScript.new(_utils, _lgr)
-		ts.import_from(f, key)
-		scripts.append(ts)
+	var result = f.load(path)
+	if(result != OK):
+		_lgr.error(str('Could not load exported tests from [', path, '].  Error code:  ', result))
+	else:
+		var sections = f.get_sections()
+		for key in sections:
+			var ts = TestScript.new(_utils, _lgr)
+			ts.import_from(f, key)
+			scripts.append(ts)
+		success = true
+	return success
