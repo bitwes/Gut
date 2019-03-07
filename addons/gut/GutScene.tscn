@@ -39,27 +39,37 @@ Panel/styles/panelf = null
 Panel/styles/panelnc = null
 _sections_unfolded = [ "Panel", "Panel/colors", "Panel/styles", "Resource" ]
 
-[node name="Gut" type="Node2D" index="0"]
-
-script = ExtResource( 1 )
-_sections_unfolded = [ "Transform", "Z Index" ]
-
-[node name="Main" type="Panel" parent="." index="0"]
+[node name="Gut" type="Control" index="0"]
 
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 40.0
-margin_right = 830.0
-margin_bottom = 440.0
+margin_right = 860.0
+margin_bottom = 430.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-_sections_unfolded = [ "Visibility" ]
+script = ExtResource( 1 )
+_sections_unfolded = [ "Transform", "Visibility", "Z Index" ]
+
+[node name="Main" type="Panel" parent="." index="0"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 40.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+_sections_unfolded = [ "Anchor", "Rect", "Visibility" ]
 
 [node name="TitleBar" type="Panel" parent="Main" index="0"]
 
@@ -75,7 +85,7 @@ mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
 theme = SubResource( 2 )
-_sections_unfolded = [ "Theme" ]
+_sections_unfolded = [ "Rect", "Theme" ]
 
 [node name="Title" type="Label" parent="Main/TitleBar" index="0"]
 
@@ -233,7 +243,7 @@ mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-_sections_unfolded = [ "Anchor", "Grow Direction" ]
+_sections_unfolded = [ "Anchor", "Grow Direction", "Visibility" ]
 __meta__ = {
 "_edit_group_": true
 }
@@ -267,7 +277,23 @@ caret_block_mode = false
 caret_blink = false
 caret_blink_speed = 0.65
 caret_moving_by_right_click = true
-_sections_unfolded = [ "Anchor", "Caret", "Grow Direction", "Visibility", "custom_colors" ]
+_sections_unfolded = [ "Anchor", "Caret", "Grow Direction", "Margin", "Visibility", "custom_colors" ]
+
+[node name="FocusBlocker" type="Panel" parent="Main/TextDisplay" index="1"]
+
+self_modulate = Color( 1, 1, 1, 0 )
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -10.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+_sections_unfolded = [ "Anchor", "Visibility" ]
 
 [node name="Navigation" type="Panel" parent="Main" index="4"]
 
@@ -369,9 +395,9 @@ anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 10.0
-margin_top = 55.0
+margin_top = 54.0
 margin_right = 350.0
-margin_bottom = 95.0
+margin_bottom = 94.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 focus_mode = 2
@@ -472,13 +498,15 @@ _sections_unfolded = [ "Rect" ]
 
 [node name="Continue" type="Panel" parent="Main" index="6"]
 
+editor/display_folded = true
+self_modulate = Color( 1, 1, 1, 0 )
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -190.0
+margin_left = -210.0
 margin_top = -100.0
-margin_right = -10.0
+margin_right = -30.0
 margin_bottom = -10.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
@@ -486,7 +514,7 @@ mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-_sections_unfolded = [ "Anchor" ]
+_sections_unfolded = [ "Anchor", "Visibility" ]
 
 [node name="Continue" type="Button" parent="Main/Continue" index="0"]
 
@@ -494,10 +522,10 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 11.0
-margin_top = 1.0
-margin_right = 171.0
-margin_bottom = 41.0
+margin_left = 60.0
+margin_top = 50.0
+margin_right = 179.0
+margin_bottom = 90.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 focus_mode = 2
@@ -514,17 +542,15 @@ text = "Continue"
 flat = false
 align = 1
 
-[node name="CheckBox" type="CheckBox" parent="Main/Continue" index="1"]
+[node name="ShowExtras" type="Button" parent="Main/Continue" index="1"]
 
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 1.0
-margin_top = 51.0
-margin_right = 119.0
-margin_bottom = 75.0
-rect_scale = Vector2( 1.5, 1.5 )
+margin_left = 110.0
+margin_right = 180.0
+margin_bottom = 40.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 focus_mode = 2
@@ -536,10 +562,9 @@ toggle_mode = true
 enabled_focus_mode = 2
 shortcut = null
 group = null
-text = "Ignore Pauses"
+text = "___"
 flat = false
-align = 0
-_sections_unfolded = [ "Rect" ]
+align = 1
 
 [node name="ScriptsList" type="ItemList" parent="Main" index="7"]
 
@@ -564,7 +589,123 @@ icon_mode = 1
 fixed_icon_size = Vector2( 0, 0 )
 _sections_unfolded = [ "Anchor", "Columns", "Grow Direction", "Icon", "Margin", "Mouse", "Size Flags", "Theme", "Visibility", "custom_colors", "custom_constants" ]
 
+[node name="ExtraOptions" type="Panel" parent="Main" index="8"]
+
+editor/display_folded = true
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -210.0
+margin_top = -250.0
+margin_bottom = -110.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+_sections_unfolded = [ "Anchor" ]
+
+[node name="IgnorePause" type="CheckBox" parent="Main/ExtraOptions" index="0"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 128.0
+margin_bottom = 34.0
+rect_scale = Vector2( 1.5, 1.5 )
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+focus_mode = 2
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+toggle_mode = true
+enabled_focus_mode = 2
+shortcut = null
+group = null
+text = "Ignore Pauses"
+flat = false
+align = 0
+_sections_unfolded = [ "Rect" ]
+
+[node name="DisableBlocker" type="CheckBox" parent="Main/ExtraOptions" index="1"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 10.0
+margin_top = 50.0
+margin_right = 130.0
+margin_bottom = 74.0
+rect_scale = Vector2( 1.5, 1.5 )
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+focus_mode = 2
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+toggle_mode = true
+enabled_focus_mode = 2
+shortcut = null
+group = null
+text = "Selectable"
+flat = false
+align = 0
+_sections_unfolded = [ "Rect", "Size Flags" ]
+
+[node name="Copy" type="Button" parent="Main/ExtraOptions" index="2"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 20.0
+margin_top = 90.0
+margin_right = 200.0
+margin_bottom = 130.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+focus_mode = 2
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+group = null
+text = "Copy"
+flat = false
+align = 1
+
+[node name="ResizeHandle" type="Control" parent="Main" index="9"]
+
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -40.0
+margin_top = -40.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+_sections_unfolded = [ "Anchor", "Grow Direction", "Material", "Visibility" ]
+
 [node name="Summary" type="Node2D" parent="." index="1"]
+
+editor/display_folded = true
+_sections_unfolded = [ "Transform" ]
 
 [node name="Passing" type="Label" parent="Summary" index="0"]
 
@@ -617,6 +758,10 @@ max_lines_visible = -1
 
 [connection signal="mouse_exited" from="Main/TitleBar" to="." method="_on_TitleBar_mouse_exited"]
 
+[connection signal="gui_input" from="Main/TextDisplay/RichTextLabel" to="." method="_on_RichTextLabel_gui_input"]
+
+[connection signal="gui_input" from="Main/TextDisplay/FocusBlocker" to="." method="_on_FocusBlocker_gui_input"]
+
 [connection signal="pressed" from="Main/Navigation/Previous" to="." method="_on_Previous_pressed"]
 
 [connection signal="pressed" from="Main/Navigation/Next" to="." method="_on_Next_pressed"]
@@ -631,8 +776,18 @@ max_lines_visible = -1
 
 [connection signal="pressed" from="Main/Continue/Continue" to="." method="_on_Continue_pressed"]
 
-[connection signal="pressed" from="Main/Continue/CheckBox" to="." method="_on_CheckBox_pressed"]
+[connection signal="toggled" from="Main/Continue/ShowExtras" to="." method="_on_ShowExtras_toggled"]
 
 [connection signal="item_selected" from="Main/ScriptsList" to="." method="_on_ScriptsList_item_selected"]
+
+[connection signal="pressed" from="Main/ExtraOptions/IgnorePause" to="." method="_on_IgnorePause_pressed"]
+
+[connection signal="toggled" from="Main/ExtraOptions/DisableBlocker" to="." method="_on_DisableBlocker_toggled"]
+
+[connection signal="pressed" from="Main/ExtraOptions/Copy" to="." method="_on_Copy_pressed"]
+
+[connection signal="mouse_entered" from="Main/ResizeHandle" to="." method="_on_ResizeHandle_mouse_entered"]
+
+[connection signal="mouse_exited" from="Main/ResizeHandle" to="." method="_on_ResizeHandle_mouse_exited"]
 
 

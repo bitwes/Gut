@@ -32,7 +32,7 @@
 ################################################################################
 #extends "res://addons/gut/gut_gui.gd"
 tool
-extends Node2D
+extends Control
 
 var _utils = load('res://addons/gut/utils.gd').new()
 var _lgr = _utils.get_logger()
@@ -46,12 +46,12 @@ var title_offset = Vector2(0, 0)#get_constant("title_height"))
 # ###########################
 # Editor Variables
 # ###########################
-export var _should_maximize = false setget set_should_maximize, get_should_maximize
-export var _run_on_load = false
 export(String) var _select_script = null
 export(String) var _tests_like = null
 export(String) var _inner_class_name = null
-var _script_name = null
+
+export var _run_on_load = false
+export var _should_maximize = false setget set_should_maximize, get_should_maximize
 
 export var _should_print_to_console = true setget set_should_print_to_console, get_should_print_to_console
 export(int, 'Failures only', 'Tests and failures', 'Everything') var _log_level = 1 setget set_log_level, get_log_level
@@ -64,11 +64,11 @@ export var _test_prefix = 'test_'
 export var _file_prefix = 'test_'
 export var _file_extension = '.gd'
 export var _inner_class_prefix = 'Test'
+
 export(String) var _temp_directory = 'user://gut_temp_directory'
-export var _include_subdirectories = false setget set_include_subdirectories, get_include_subdirectories
-export(int, 'FULL', 'PARTIAL') var _double_strategy = _utils.DOUBLE_STRATEGY.PARTIAL setget set_double_strategy, get_double_strategy
 export(String) var _export_path = '' setget set_export_path, get_export_path
 
+export var _include_subdirectories = false setget set_include_subdirectories, get_include_subdirectories
 # Allow user to add test directories via editor.  This is done with strings
 # instead of an array because the interface for editing arrays is really
 # cumbersome and complicates testing because arrays set through the editor
@@ -80,7 +80,7 @@ export(String, DIR) var _directory3 = ''
 export(String, DIR) var _directory4 = ''
 export(String, DIR) var _directory5 = ''
 export(String, DIR) var _directory6 = ''
-
+export(int, 'FULL', 'PARTIAL') var _double_strategy = _utils.DOUBLE_STRATEGY.PARTIAL setget set_double_strategy, get_double_strategy
 # ###########################
 # Other Vars
 # ###########################
@@ -90,6 +90,7 @@ const LOG_LEVEL_ALL_ASSERTS = 2
 const WAITING_MESSAGE = '/# waiting #/'
 const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
 
+var _script_name = null
 var _stop_pressed = false
 var _test_collector = load('res://addons/gut/test_collector.gd').new()
 
@@ -206,12 +207,13 @@ func _ready():
 ################################################################################
 func _hijack_old_wiring():
 	add_child(_gui)
+	_gui.set_anchor(MARGIN_RIGHT, ANCHOR_END)
+	_gui.set_anchor(MARGIN_BOTTOM, ANCHOR_END)
 	_gui.connect('run_single_script', self, '_on_run_one')
 	_gui.connect('run_script', self, '_on_new_gui_run_script')
 	_gui.connect('end_pause', self, '_on_new_gui_end_pause')
 	_gui.connect('ignore_pause', self, '_on_new_gui_ignore_pause')
 	_gui.connect('log_level_changed', self, '_on_log_level_changed')
-
 	connect('tests_finished', _gui, 'end_run')
 
 func _add_scripts_to_gui():
@@ -460,7 +462,6 @@ func _wait_for_done(result):
 func _wait_for_continue_button():
 	p(PAUSE_MESSAGE, 0)
 	_waiting = true
-	_gui.pause() # NEW WAY (# two yields in a row caused problem.)
 	return self
 
 # ------------------------------------------------------------------------------
@@ -567,6 +568,7 @@ func _test_the_scripts(indexes=[]):
 				#if the test called pause_before_teardown then yield until
 				#the continue button is pressed.
 				if(_pause_before_teardown and !_ignore_pause_before_teardown):
+					_gui.pause()
 					yield(_wait_for_continue_button(), SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
 
 				test_script.clear_signal_watcher()
@@ -682,6 +684,8 @@ func p(text, level=0, indent=0):
 # RUN TESTS/ADD SCRIPTS
 #
 ################
+func get_minimum_size():
+	return Vector2(810, 380)
 
 # ------------------------------------------------------------------------------
 # Runs all the scripts that were added using add_script
@@ -714,9 +718,10 @@ func test_script(script):
 # No longer supports selecting a script via this method.
 # ------------------------------------------------------------------------------
 func add_script(script, was_select_this_one=false):
-	_test_collector.set_test_class_prefix(_inner_class_prefix)
-	_test_collector.add_script(script)
-	_add_scripts_to_gui()
+	if(!Engine.is_editor_hint()):
+		_test_collector.set_test_class_prefix(_inner_class_prefix)
+		_test_collector.add_script(script)
+		_add_scripts_to_gui()
 
 # ------------------------------------------------------------------------------
 # Add all scripts in the specified directory that start with the prefix and end
@@ -905,8 +910,8 @@ func get_result_text():
 # ------------------------------------------------------------------------------
 func set_log_level(level):
 	_log_level = level
-	
-	_gui.set_log_level(level)
+	if(!Engine.is_editor_hint()):
+		_gui.set_log_level(level)
 
 # ------------------------------------------------------------------------------
 # Get the current log level.
