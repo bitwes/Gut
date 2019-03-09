@@ -154,7 +154,7 @@ func _init():
 
 	_stubber.set_logger(_lgr)
 	_test_collector.set_logger(_lgr)
-	_gui = load('res://addons/gut/GutScene.tscn').instance() # new way
+	_gui = load('res://addons/gut/GutScene.tscn').instance()
 
 # ------------------------------------------------------------------------------
 # Initialize controls
@@ -223,7 +223,6 @@ func _add_scripts_to_gui():
 	_gui.set_scripts(scripts)
 
 func _on_run_one(index):
-	p('running one:  ' + str(index))
 	clear_text()
 	_test_the_scripts([index])
 
@@ -357,7 +356,7 @@ func _end_run():
 	# For some reason the text edit control isn't scrolling to the bottom after
 	# the summary is printed.  As a workaround, yield for a short time and
 	# then move the cursor.  I found this workaround through trial and error.
-	_yield_between.timer.set_wait_time(0.001)
+	_yield_between.timer.set_wait_time(0.1)
 	_yield_between.timer.start()
 	yield(_yield_between.timer, 'timeout')
 	_gui.get_text_box().cursor_set_line(_gui.get_text_box().get_line_count())
