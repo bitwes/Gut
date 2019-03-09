@@ -435,7 +435,7 @@ func assert_accessors(obj, property, default, set_to):
 # If provided, property_usage constrains the type of property returned by
 # passing either:
 # EDITOR_PROPERTY for properties defined as: export(int) var some_value
-# VARIABLE_PROPERTY for properties definded as: var another_value
+# VARIABLE_PROPERTY for properties defunded as: var another_value
 # ---------------------------------------------------------------------------
 func _find_object_property(obj, property_name, property_usage=null):
 	var result = null
@@ -549,7 +549,7 @@ func assert_signal_emit_count(object, signal_name, times, text=""):
 			_fail(_get_fail_msg_including_emitted_signals(disp, object))
 
 # ------------------------------------------------------------------------------
-# Assert that the passed in object has the specfied signal
+# Assert that the passed in object has the specified signal
 # ------------------------------------------------------------------------------
 func assert_has_signal(object, signal_name, text=""):
 	var disp = str('Expected object ', object, ' to have signal [', signal_name, ']:  ', text)
@@ -686,7 +686,7 @@ func assert_string_ends_with(text, search, match_case=true):
 # ------------------------------------------------------------------------------
 # Assert that a method was called on an instance of a doubled class.  If
 # parameters are supplied then the params passed in when called must match.
-# TODO make 3rd paramter "param_or_text" and add fourth parameter of "text" and
+# TODO make 3rd parameter "param_or_text" and add fourth parameter of "text" and
 #      then work some magic so this can have a "text" parameter without being
 #      annoying.
 # ------------------------------------------------------------------------------
@@ -782,7 +782,7 @@ func pending(text=""):
 
 # ------------------------------------------------------------------------------
 # Yield for the time sent in.  The optional message will be printed when
-# Gut detects the yeild.  When the time expires the YIELD signal will be
+# Gut detects the yield.  When the time expires the YIELD signal will be
 # emitted.
 # ------------------------------------------------------------------------------
 func yield_for(time, msg=''):
@@ -925,7 +925,7 @@ func simulate(obj, times, delta):
 	gut.simulate(obj, times, delta)
 
 # ------------------------------------------------------------------------------
-# Replace the node at base_node.get_node(path) with with_this.  All refrences
+# Replace the node at base_node.get_node(path) with with_this.  All references
 # to the node via $ and get_node(...) will now return with_this.  with_this will
 # get all the groups that the node that was replaced had.
 #
@@ -941,7 +941,7 @@ func replace_node(base_node, path_or_node, with_this):
 		# didn't look any farther).
 		path = base_node.get_path_to(path_or_node)
 		if(path.get_name_count() == 0):
-			_lgr.error('You passed an objet that base_node does not have.  Cannot replace node.')
+			_lgr.error('You passed an object that base_node does not have.  Cannot replace node.')
 			return
 
 	if(!base_node.has_node(path)):

@@ -154,7 +154,7 @@ func test_has():
 	gut.p('-- passing --')
 	assert_has(an_array, 'four') # PASS
 	assert_has(an_array, 2) # PASS
-	# the hash's has method checkes indexes not values
+	# the hash's has method checks indexes not values
 	assert_has(a_hash, 'one') # PASS
 	assert_has(a_hash, '3') # PASS
 
@@ -177,7 +177,7 @@ func test_does_not_have():
 	gut.p('-- failing --')
 	assert_does_not_have(an_array, 'four') # FAIL
 	assert_does_not_have(an_array, 2) # FAIL
-	# the hash's has method checkes indexes not values
+	# the hash's has method checks indexes not values
 	assert_does_not_have(a_hash, 'one') # FAIL
 	assert_does_not_have(a_hash, '3') # FAIL
 
@@ -468,7 +468,7 @@ func test_assert_has_signal():
 
 	gut.p('-- failing --')
 	assert_has_signal(obj, 'not_a real SIGNAL')
-	assert_has_signal(obj, 'yea, this one doesnt exist either')
+	assert_has_signal(obj, 'yea, this one doesn\'t exist either')
 	# Fails because the signal is not a user signal.  Node2D does have the
 	# specified signal but it can't be checked this way.  It could be watched
 	# and asserted that it fired though.

@@ -74,16 +74,16 @@ func add_stub(stub_params):
 # subpath of the object to try to find a value.
 #
 # It will also use the optional list of parameter values to find a value.  If
-# the objet was stubbed with no parameters then any parameters will match.
-# If it was stubbed with specific paramter values then it will try to match.
-# If the parameters do not match BUT there was also an empty paramter list stub
+# the object was stubbed with no parameters than any parameters will match.
+# If it was stubbed with specific parameter values then it will try to match.
+# If the parameters do not match BUT there was also an empty parameter list stub
 # then it will return those.
 # If it cannot find anything that matches then null is returned.for
 #
 # Parameters
 # obj:  this should be an instance of a doubled object.
 # method:  the method called
-# paramters:  optional array of paramter vales to find a return value for.
+# parameters:  optional array of parameter vales to find a return value for.
 func get_return(obj, method, parameters=null):
 	var key = _make_key_from_variant(obj)
 	var to_return = null

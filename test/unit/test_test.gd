@@ -39,7 +39,7 @@ class BaseTestClass:
 		if(get_fail_count() != self_fail_count or _print_all_subtests):
 			print_fail_pass_text(t)
 
-	# convinience method to assert the number of failures on the gr.test_gut object.
+	# convenience method to assert the number of failures on the gr.test_gut object.
 	func assert_fail(t, count=1, msg=''):
 		var self_fail_count = get_fail_count()
 		assert_eq(t.get_fail_count(), count, 'Bad FAIL COUNT:  ' + msg)
@@ -48,7 +48,7 @@ class BaseTestClass:
 		if(get_fail_count() != self_fail_count or _print_all_subtests):
 			print_fail_pass_text(t)
 
-	# convinience method to assert the number of passes on the gr.test_gut object.
+	# convenience method to assert the number of passes on the gr.test_gut object.
 	func assert_pass(t, count=1, msg=''):
 		var self_fail_count = get_fail_count()
 		assert_eq(t.get_pass_count(), count, 'Bad PASS COUNT:  ' + msg)
