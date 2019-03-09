@@ -1,31 +1,31 @@
-extends Control
+extends Panel
 
-onready var _script_list = $Main/ScriptsList
+onready var _script_list = $ScriptsList
 onready var _nav = {
-	prev = $Main/Navigation/Previous,
-	next = $Main/Navigation/Next,
-	run = $Main/Navigation/Run,
-	current_script = $Main/Navigation/CurrentScript,
-	show_scripts = $Main/Navigation/ShowScripts
+	prev = $Navigation/Previous,
+	next = $Navigation/Next,
+	run = $Navigation/Run,
+	current_script = $Navigation/CurrentScript,
+	show_scripts = $Navigation/ShowScripts
 }
 onready var _progress = {
-	script = $Main/ScriptProgress,
-	test = $Main/TestProgress
+	script = $ScriptProgress,
+	test = $TestProgress
 }
 onready var _summary = {
 	failing = $Summary/Failing,
 	passing = $Summary/Passing
 }
 
-onready var _extras = $Main/ExtraOptions
-onready var _ignore_pauses = $Main/ExtraOptions/IgnorePause
-onready var _continue_button = $Main/Continue/Continue
-onready var _text_box = $Main/TextDisplay/RichTextLabel
+onready var _extras = $ExtraOptions
+onready var _ignore_pauses = $ExtraOptions/IgnorePause
+onready var _continue_button = $Continue/Continue
+onready var _text_box = $TextDisplay/RichTextLabel
 
 onready var _titlebar = {
-	bar = $Main/TitleBar,
-	time = $Main/TitleBar/Time,
-	label = $Main/TitleBar/Title
+	bar = $TitleBar,
+	time = $TitleBar/Time,
+	label = $TitleBar/Title
 }
 
 var _mouse = {
@@ -54,9 +54,8 @@ func _ready():
 	_nav.current_script.set_text("No scripts available")
 	set_title()
 	clear_summary()
-	$Main/TitleBar/Time.set_text("")
-	$Main.connect('draw', self, '_on_main_draw')
-	$Main/ExtraOptions/DisableBlocker.pressed = !_text_box_blocker_enabled
+	$TitleBar/Time.set_text("")
+	$ExtraOptions/DisableBlocker.pressed = !_text_box_blocker_enabled
 	_extras.visible = false
 	update()
 
@@ -64,19 +63,19 @@ func _process(delta):
 	if(_is_running):
 		_time += delta
 		var disp_time = round(_time * 100)/100
-		$Main/TitleBar/Time.set_text(str(disp_time))
+		$TitleBar/Time.set_text(str(disp_time))
 
 
-func _on_main_draw(): # needs get_size()
+func _draw(): # needs get_size()
 	# Draw the lines in the corner to show where you can
 	# drag to resize the dialog
 	var grab_margin = 3
 	var line_space = 3
 	var grab_line_color = Color(.4, .4, .4)
 	for i in range(1, 10):
-		var x = $Main.rect_size - Vector2(i * line_space, grab_margin)
-		var y = $Main.rect_size - Vector2(grab_margin, i * line_space)
-		$Main.draw_line(x, y, grab_line_color)
+		var x = rect_size - Vector2(i * line_space, grab_margin)
+		var y = rect_size - Vector2(grab_margin, i * line_space)
+		draw_line(x, y, grab_line_color)
 
 # ####################
 # GUI Events
@@ -96,7 +95,7 @@ func _on_Next_pressed():
 	_select_script(get_selected_index() + 1)
 
 func _on_LogLevelSlider_value_changed(value):
-	emit_signal('log_level_changed', $Main/LogLevelSlider.value)
+	emit_signal('log_level_changed', $LogLevelSlider.value)
 
 func _on_Continue_pressed():
 	_continue_button.disabled = true
@@ -182,12 +181,12 @@ func _run_mode(is_running=true):
 	_is_running = is_running
 
 	_hide_scripts()
-	var ctrls = $Main/Navigation.get_children()
+	var ctrls = $Navigation.get_children()
 	for i in range(ctrls.size()):
 		ctrls[i].disabled = is_running
 
 func _select_script(index):
-	$Main/Navigation/CurrentScript.set_text(_script_list.get_item_text(index))
+	$Navigation/CurrentScript.set_text(_script_list.get_item_text(index))
 	_script_list.select(index)
 	_update_controls()
 
@@ -238,10 +237,10 @@ func get_selected_index():
 	return _script_list.get_selected_items()[0]
 
 func get_log_level():
-	return $Main/LogLevelSlider.value
+	return $LogLevelSlider.value
 
 func set_log_level(value):
-	$Main/LogLevelSlider.value = _utils.nvl(value, 0)
+	$LogLevelSlider.value = _utils.nvl(value, 0)
 
 func set_ignore_pause(should):
 	_ignore_pauses.pressed = should
@@ -250,7 +249,7 @@ func get_ignore_pause():
 	return _ignore_pauses.pressed
 
 func get_text_box():
-	return $Main/TextDisplay/RichTextLabel
+	return $TextDisplay/RichTextLabel
 
 func end_run():
 	_run_mode(false)
@@ -278,12 +277,12 @@ func pause():
 
 func set_title(title=null):
 	if(title == null):
-		$Main/TitleBar/Title.set_text(DEFAULT_TITLE)
+		$TitleBar/Title.set_text(DEFAULT_TITLE)
 	else:
-		$Main/TitleBar/Title.set_text(title)
+		$TitleBar/Title.set_text(title)
 
 func get_run_duration():
-	return $Main/TitleBar/Time.text.to_float()
+	return $TitleBar/Time.text.to_float()
 
 func add_passing(amount=1):
 	if(!_summary):

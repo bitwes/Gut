@@ -1,8 +1,37 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://addons/gut/GutScene.gd" type="Script" id=1]
 
 [sub_resource type="StyleBoxFlat" id=1]
+
+content_margin_left = -1.0
+content_margin_right = -1.0
+content_margin_top = -1.0
+content_margin_bottom = -1.0
+bg_color = Color( 0.193863, 0.205501, 0.214844, 1 )
+draw_center = true
+border_width_left = 0
+border_width_top = 0
+border_width_right = 0
+border_width_bottom = 0
+border_color = Color( 0.8, 0.8, 0.8, 1 )
+border_blend = false
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 0
+corner_radius_bottom_left = 0
+corner_detail = 8
+expand_margin_left = 0.0
+expand_margin_right = 0.0
+expand_margin_top = 0.0
+expand_margin_bottom = 0.0
+shadow_color = Color( 0, 0, 0, 0.6 )
+shadow_size = 0
+anti_aliasing = true
+anti_aliasing_size = 1
+_sections_unfolded = [ "Corner Radius" ]
+
+[sub_resource type="StyleBoxFlat" id=2]
 
 content_margin_left = -1.0
 content_margin_right = -1.0
@@ -31,70 +60,59 @@ anti_aliasing = true
 anti_aliasing_size = 1
 _sections_unfolded = [ "Border", "Corner Radius" ]
 
-[sub_resource type="Theme" id=2]
+[sub_resource type="Theme" id=3]
 
 resource_local_to_scene = true
-Panel/styles/panel = SubResource( 1 )
+Panel/styles/panel = SubResource( 2 )
 Panel/styles/panelf = null
 Panel/styles/panelnc = null
 _sections_unfolded = [ "Panel", "Panel/colors", "Panel/styles", "Resource" ]
 
-[node name="Gut" type="Control" index="0"]
+[node name="Gut" type="Panel" index="0"]
 
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_right = 740.0
-margin_bottom = 300.0
-rect_min_size = Vector2( 740, 300 )
+margin_bottom = 320.0
+rect_min_size = Vector2( 740, 250 )
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
+custom_styles/panel = SubResource( 1 )
 script = ExtResource( 1 )
-_sections_unfolded = [ "Rect", "Transform", "Visibility", "Z Index" ]
+_sections_unfolded = [ "Theme", "Transform", "Z Index", "custom_styles" ]
 
-[node name="Main" type="Panel" parent="." index="0"]
+[node name="TitleBar" type="Panel" parent="." index="0"]
 
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_top = 40.0
-rect_pivot_offset = Vector2( 0, 0 )
-rect_clip_content = false
-mouse_filter = 0
-mouse_default_cursor_shape = 0
-size_flags_horizontal = 1
-size_flags_vertical = 1
-_sections_unfolded = [ "Anchor", "Rect", "Visibility" ]
-
-[node name="TitleBar" type="Panel" parent="Main" index="0"]
-
+editor/display_folded = true
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 0.0
-margin_top = -40.0
+margin_bottom = 40.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-theme = SubResource( 2 )
+theme = SubResource( 3 )
 _sections_unfolded = [ "Rect", "Theme" ]
+__meta__ = {
+"_edit_group_": true
+}
 
-[node name="Title" type="Label" parent="Main/TitleBar" index="0"]
+[node name="Title" type="Label" parent="TitleBar" index="0"]
 
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 0.0
-margin_top = 10.0
 margin_bottom = 40.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
@@ -111,7 +129,7 @@ lines_skipped = 0
 max_lines_visible = -1
 _sections_unfolded = [ "Anchor", "custom_colors", "custom_fonts" ]
 
-[node name="Time" type="Label" parent="Main/TitleBar" index="1"]
+[node name="Time" type="Label" parent="TitleBar" index="1"]
 
 anchor_left = 1.0
 anchor_top = 0.0
@@ -134,7 +152,7 @@ lines_skipped = 0
 max_lines_visible = -1
 _sections_unfolded = [ "Anchor", "custom_colors" ]
 
-[node name="ScriptProgress" type="ProgressBar" parent="Main" index="1"]
+[node name="ScriptProgress" type="ProgressBar" parent="." index="1"]
 
 editor/display_folded = true
 anchor_left = 0.0
@@ -160,7 +178,7 @@ exp_edit = false
 rounded = false
 percent_visible = true
 
-[node name="Label" type="Label" parent="Main/ScriptProgress" index="0"]
+[node name="Label" type="Label" parent="ScriptProgress" index="0"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -182,7 +200,7 @@ percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
-[node name="TestProgress" type="ProgressBar" parent="Main" index="2"]
+[node name="TestProgress" type="ProgressBar" parent="." index="2"]
 
 editor/display_folded = true
 anchor_left = 0.0
@@ -208,7 +226,7 @@ exp_edit = false
 rounded = false
 percent_visible = true
 
-[node name="Label" type="Label" parent="Main/TestProgress" index="0"]
+[node name="Label" type="Label" parent="TestProgress" index="0"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -230,13 +248,14 @@ percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
-[node name="TextDisplay" type="Panel" parent="Main" index="3"]
+[node name="TextDisplay" type="Panel" parent="." index="3"]
 
 editor/display_folded = true
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
+margin_top = 37.0
 margin_bottom = -110.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
@@ -249,7 +268,7 @@ __meta__ = {
 "_edit_group_": true
 }
 
-[node name="RichTextLabel" type="TextEdit" parent="Main/TextDisplay" index="0"]
+[node name="RichTextLabel" type="TextEdit" parent="TextDisplay" index="0"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -280,7 +299,7 @@ caret_blink_speed = 0.65
 caret_moving_by_right_click = true
 _sections_unfolded = [ "Anchor", "Caret", "Grow Direction", "Margin", "Visibility", "custom_colors" ]
 
-[node name="FocusBlocker" type="Panel" parent="Main/TextDisplay" index="1"]
+[node name="FocusBlocker" type="Panel" parent="TextDisplay" index="1"]
 
 self_modulate = Color( 1, 1, 1, 0 )
 anchor_left = 0.0
@@ -296,33 +315,34 @@ size_flags_horizontal = 1
 size_flags_vertical = 1
 _sections_unfolded = [ "Anchor", "Visibility" ]
 
-[node name="Navigation" type="Panel" parent="Main" index="4"]
+[node name="Navigation" type="Panel" parent="." index="4"]
 
+editor/display_folded = true
+self_modulate = Color( 1, 1, 1, 0 )
 anchor_left = 0.0
 anchor_top = 1.0
 anchor_right = 0.0
 anchor_bottom = 1.0
 margin_left = 220.0
-margin_top = -104.0
-margin_right = 630.0
-margin_bottom = -4.0
+margin_top = -100.0
+margin_right = 580.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
+_sections_unfolded = [ "Visibility" ]
 
-[node name="Previous" type="Button" parent="Main/Navigation" index="0"]
+[node name="Previous" type="Button" parent="Navigation" index="0"]
 
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = -30.0
-margin_top = 4.0
 margin_right = 50.0
-margin_bottom = 44.0
+margin_bottom = 40.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 focus_mode = 2
@@ -338,16 +358,15 @@ text = "<"
 flat = false
 align = 1
 
-[node name="Next" type="Button" parent="Main/Navigation" index="1"]
+[node name="Next" type="Button" parent="Navigation" index="1"]
 
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 230.0
-margin_top = 4.0
 margin_right = 310.0
-margin_bottom = 44.0
+margin_bottom = 40.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 focus_mode = 2
@@ -363,16 +382,15 @@ text = ">"
 flat = false
 align = 1
 
-[node name="Run" type="Button" parent="Main/Navigation" index="2"]
+[node name="Run" type="Button" parent="Navigation" index="2"]
 
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 60.0
-margin_top = 4.0
 margin_right = 220.0
-margin_bottom = 44.0
+margin_bottom = 40.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 focus_mode = 2
@@ -388,16 +406,16 @@ text = "Run"
 flat = false
 align = 1
 
-[node name="CurrentScript" type="Button" parent="Main/Navigation" index="3"]
+[node name="CurrentScript" type="Button" parent="Navigation" index="3"]
 
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = -30.0
-margin_top = 54.0
+margin_top = 50.0
 margin_right = 310.0
-margin_bottom = 94.0
+margin_bottom = 90.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 focus_mode = 2
@@ -414,16 +432,16 @@ flat = false
 clip_text = true
 align = 1
 
-[node name="ShowScripts" type="Button" parent="Main/Navigation" index="4"]
+[node name="ShowScripts" type="Button" parent="Navigation" index="4"]
 
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 320.0
-margin_top = 54.0
+margin_top = 50.0
 margin_right = 360.0
-margin_bottom = 94.0
+margin_bottom = 90.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 focus_mode = 2
@@ -439,7 +457,7 @@ text = "..."
 flat = false
 align = 1
 
-[node name="LogLevelSlider" type="HSlider" parent="Main" index="5"]
+[node name="LogLevelSlider" type="HSlider" parent="." index="5"]
 
 editor/display_folded = true
 anchor_left = 0.0
@@ -471,7 +489,7 @@ ticks_on_borders = true
 focus_mode = 2
 _sections_unfolded = [ "Rect" ]
 
-[node name="Label" type="Label" parent="Main/LogLevelSlider" index="0"]
+[node name="Label" type="Label" parent="LogLevelSlider" index="0"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -496,8 +514,9 @@ lines_skipped = 0
 max_lines_visible = -1
 _sections_unfolded = [ "Rect" ]
 
-[node name="Continue" type="Panel" parent="Main" index="6"]
+[node name="Continue" type="Panel" parent="." index="6"]
 
+editor/display_folded = true
 self_modulate = Color( 1, 1, 1, 0 )
 anchor_left = 1.0
 anchor_top = 1.0
@@ -515,7 +534,7 @@ size_flags_horizontal = 1
 size_flags_vertical = 1
 _sections_unfolded = [ "Anchor", "Visibility" ]
 
-[node name="Continue" type="Button" parent="Main/Continue" index="0"]
+[node name="Continue" type="Button" parent="Continue" index="0"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -540,14 +559,14 @@ text = "Continue"
 flat = false
 align = 1
 
-[node name="ShowExtras" type="Button" parent="Main/Continue" index="1"]
+[node name="ShowExtras" type="Button" parent="Continue" index="1"]
 
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 30.0
-margin_right = 100.0
+margin_left = 50.0
+margin_right = 120.0
 margin_bottom = 40.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
@@ -564,13 +583,15 @@ text = "___"
 flat = false
 align = 1
 
-[node name="ScriptsList" type="ItemList" parent="Main" index="7"]
+[node name="ScriptsList" type="ItemList" parent="." index="7"]
 
+visible = false
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 1.0
 margin_left = 180.0
+margin_top = 40.0
 margin_right = 620.0
 margin_bottom = -110.0
 rect_pivot_offset = Vector2( 0, 0 )
@@ -587,7 +608,7 @@ icon_mode = 1
 fixed_icon_size = Vector2( 0, 0 )
 _sections_unfolded = [ "Anchor", "Columns", "Grow Direction", "Icon", "Margin", "Mouse", "Size Flags", "Theme", "Visibility", "custom_colors", "custom_constants" ]
 
-[node name="ExtraOptions" type="Panel" parent="Main" index="8"]
+[node name="ExtraOptions" type="Panel" parent="." index="8"]
 
 editor/display_folded = true
 anchor_left = 1.0
@@ -595,17 +616,18 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = -210.0
-margin_top = -250.0
-margin_bottom = -110.0
+margin_top = -249.0
+margin_bottom = -109.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-_sections_unfolded = [ "Anchor" ]
+custom_styles/panel = SubResource( 1 )
+_sections_unfolded = [ "Anchor", "custom_styles" ]
 
-[node name="IgnorePause" type="CheckBox" parent="Main/ExtraOptions" index="0"]
+[node name="IgnorePause" type="CheckBox" parent="ExtraOptions" index="0"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -632,7 +654,7 @@ flat = false
 align = 0
 _sections_unfolded = [ "Rect" ]
 
-[node name="DisableBlocker" type="CheckBox" parent="Main/ExtraOptions" index="1"]
+[node name="DisableBlocker" type="CheckBox" parent="ExtraOptions" index="1"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -659,7 +681,7 @@ flat = false
 align = 0
 _sections_unfolded = [ "Rect", "Size Flags" ]
 
-[node name="Copy" type="Button" parent="Main/ExtraOptions" index="2"]
+[node name="Copy" type="Button" parent="ExtraOptions" index="2"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -684,7 +706,7 @@ text = "Copy"
 flat = false
 align = 1
 
-[node name="ResizeHandle" type="Control" parent="Main" index="9"]
+[node name="ResizeHandle" type="Control" parent="." index="9"]
 
 anchor_left = 1.0
 anchor_top = 1.0
@@ -700,9 +722,10 @@ size_flags_horizontal = 1
 size_flags_vertical = 1
 _sections_unfolded = [ "Anchor", "Grow Direction", "Material", "Visibility" ]
 
-[node name="Summary" type="Node2D" parent="." index="1"]
+[node name="Summary" type="Node2D" parent="." index="10"]
 
 editor/display_folded = true
+position = Vector2( 0, 3 )
 _sections_unfolded = [ "Transform" ]
 
 [node name="Passing" type="Label" parent="Summary" index="0"]
@@ -752,40 +775,40 @@ percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
-[connection signal="mouse_entered" from="Main/TitleBar" to="." method="_on_TitleBar_mouse_entered"]
+[connection signal="mouse_entered" from="TitleBar" to="." method="_on_TitleBar_mouse_entered"]
 
-[connection signal="mouse_exited" from="Main/TitleBar" to="." method="_on_TitleBar_mouse_exited"]
+[connection signal="mouse_exited" from="TitleBar" to="." method="_on_TitleBar_mouse_exited"]
 
-[connection signal="gui_input" from="Main/TextDisplay/RichTextLabel" to="." method="_on_RichTextLabel_gui_input"]
+[connection signal="gui_input" from="TextDisplay/RichTextLabel" to="." method="_on_RichTextLabel_gui_input"]
 
-[connection signal="gui_input" from="Main/TextDisplay/FocusBlocker" to="." method="_on_FocusBlocker_gui_input"]
+[connection signal="gui_input" from="TextDisplay/FocusBlocker" to="." method="_on_FocusBlocker_gui_input"]
 
-[connection signal="pressed" from="Main/Navigation/Previous" to="." method="_on_Previous_pressed"]
+[connection signal="pressed" from="Navigation/Previous" to="." method="_on_Previous_pressed"]
 
-[connection signal="pressed" from="Main/Navigation/Next" to="." method="_on_Next_pressed"]
+[connection signal="pressed" from="Navigation/Next" to="." method="_on_Next_pressed"]
 
-[connection signal="pressed" from="Main/Navigation/Run" to="." method="_on_Run_pressed"]
+[connection signal="pressed" from="Navigation/Run" to="." method="_on_Run_pressed"]
 
-[connection signal="pressed" from="Main/Navigation/CurrentScript" to="." method="_on_CurrentScript_pressed"]
+[connection signal="pressed" from="Navigation/CurrentScript" to="." method="_on_CurrentScript_pressed"]
 
-[connection signal="pressed" from="Main/Navigation/ShowScripts" to="." method="_on_ShowScripts_pressed"]
+[connection signal="pressed" from="Navigation/ShowScripts" to="." method="_on_ShowScripts_pressed"]
 
-[connection signal="value_changed" from="Main/LogLevelSlider" to="." method="_on_LogLevelSlider_value_changed"]
+[connection signal="value_changed" from="LogLevelSlider" to="." method="_on_LogLevelSlider_value_changed"]
 
-[connection signal="pressed" from="Main/Continue/Continue" to="." method="_on_Continue_pressed"]
+[connection signal="pressed" from="Continue/Continue" to="." method="_on_Continue_pressed"]
 
-[connection signal="toggled" from="Main/Continue/ShowExtras" to="." method="_on_ShowExtras_toggled"]
+[connection signal="toggled" from="Continue/ShowExtras" to="." method="_on_ShowExtras_toggled"]
 
-[connection signal="item_selected" from="Main/ScriptsList" to="." method="_on_ScriptsList_item_selected"]
+[connection signal="item_selected" from="ScriptsList" to="." method="_on_ScriptsList_item_selected"]
 
-[connection signal="pressed" from="Main/ExtraOptions/IgnorePause" to="." method="_on_IgnorePause_pressed"]
+[connection signal="pressed" from="ExtraOptions/IgnorePause" to="." method="_on_IgnorePause_pressed"]
 
-[connection signal="toggled" from="Main/ExtraOptions/DisableBlocker" to="." method="_on_DisableBlocker_toggled"]
+[connection signal="toggled" from="ExtraOptions/DisableBlocker" to="." method="_on_DisableBlocker_toggled"]
 
-[connection signal="pressed" from="Main/ExtraOptions/Copy" to="." method="_on_Copy_pressed"]
+[connection signal="pressed" from="ExtraOptions/Copy" to="." method="_on_Copy_pressed"]
 
-[connection signal="mouse_entered" from="Main/ResizeHandle" to="." method="_on_ResizeHandle_mouse_entered"]
+[connection signal="mouse_entered" from="ResizeHandle" to="." method="_on_ResizeHandle_mouse_entered"]
 
-[connection signal="mouse_exited" from="Main/ResizeHandle" to="." method="_on_ResizeHandle_mouse_exited"]
+[connection signal="mouse_exited" from="ResizeHandle" to="." method="_on_ResizeHandle_mouse_exited"]
 
 

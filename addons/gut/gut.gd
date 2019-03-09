@@ -32,15 +32,13 @@
 ################################################################################
 #extends "res://addons/gut/gut_gui.gd"
 tool
-extends Control
+extends Panel
 
 var _utils = load('res://addons/gut/utils.gd').new()
 var _lgr = _utils.get_logger()
 # Used to prevent multiple messages for deprecated setup/teardown messages
 var _deprecated_tracker = _utils.ThingCounter.new()
 
-
-var min_size = Vector2(650, 400)
 var title_offset = Vector2(0, 0)#get_constant("title_height"))
 
 # ###########################
@@ -142,6 +140,10 @@ const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yield_before_teardown'
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func _init():
+	# This min size has to be what the min size of the GutScene's min size is
+	# but it has to be set here and not inferred i think.
+	rect_min_size =Vector2(740, 250)
+	
 	add_user_signal(SIGNAL_TESTS_FINISHED)
 	add_user_signal(SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
 	add_user_signal('timeout')
@@ -197,7 +199,9 @@ func _ready():
 
 	if(_should_maximize):
 		maximize()
-
+	
+	# hide the panel that IS gut so that only the GUI is seen	
+	self.self_modulate = Color(1,1,1,0)
 	show()
 
 ################################################################################
@@ -206,6 +210,7 @@ func _ready():
 #
 ################################################################################
 func _hijack_old_wiring():
+	_gui.rect_size = self.rect_size
 	add_child(_gui)
 	_gui.set_anchor(MARGIN_RIGHT, ANCHOR_END)
 	_gui.set_anchor(MARGIN_BOTTOM, ANCHOR_END)
