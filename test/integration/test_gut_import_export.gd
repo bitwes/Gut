@@ -69,4 +69,4 @@ func test_gut_runs_the_imported_tests():
 	_import_gut.test_scripts()
 	remove_child(_import_gut)
 
-	assert_eq(_import_gut.get_summary().get_totals().scripts, 8)
+	assert_eq(_import_gut.get_summary().get_totals().scripts, 5)

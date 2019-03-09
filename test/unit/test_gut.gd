@@ -134,7 +134,7 @@ func test_get_set_temp_directory():
 	assert_accessors(gr.test_gut, 'temp_directory', 'user://gut_temp_directory', 'user://blahblah')
 
 func test_get_set_export_path():
-	assert_accessors(gr.test_gut, 'export_path', null, 'res://somewhere')
+	assert_accessors(gr.test_gut, 'export_path', '', 'res://somewhere')
 
 # ------------------------------
 # Double Strategy
