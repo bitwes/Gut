@@ -35,12 +35,12 @@ class TestScript:
 		return to_return
 
 	func get_new():
-		var Script = load(path)
+		var TheScript = load(path)
 		var inst = null
 		if(inner_class_name != null):
-			inst = Script.get(inner_class_name).new()
+			inst = TheScript.get(inner_class_name).new()
 		else:
-			inst = Script.new()
+			inst = TheScript.new()
 		return inst
 
 	func get_full_name():
@@ -146,7 +146,7 @@ func _parse_script(script):
 func _parse_inner_class_tests(script):
 	var inst = script.get_new()
 
-	if(!inst is load('res://addons/gut/test.gd')):
+	if(!inst is _utils.Test):
 		_lgr.warn('Ignoring ' + script.inner_class_name + ' because it starts with "' + _test_class_prefix + '" but does not extend addons/gut/test.gd')
 		return false
 

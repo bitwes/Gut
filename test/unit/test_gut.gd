@@ -310,7 +310,7 @@ func test_when_moving_to_next_test_watched_signals_are_cleared():
 # Inner Class
 # ------------------------------
 func test_can_get_set_inner_class_name():
-	assert_accessors(gr.test_gut, 'inner_class_name', null, 'something')
+	assert_accessors(gr.test_gut, 'inner_class_name', '', 'something')
 
 func test_assert_exports_inner_class_name():
 	assert_exports(gr.test_gut, '_inner_class_name', TYPE_STRING)

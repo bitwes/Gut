@@ -16,7 +16,7 @@ class Test:
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-class Script:
+class TestScript:
 	var name = 'NOT_SET'
 	var _tests = {}
 	var _test_order = []
@@ -66,7 +66,7 @@ class Script:
 var _scripts = []
 
 func add_script(name):
-	_scripts.append(Script.new(name))
+	_scripts.append(TestScript.new(name))
 
 func get_scripts():
 	return _scripts
