@@ -34,7 +34,7 @@ var _mouse = {
 	down_pos = null,
 	in_handle = false
 }
-
+onready var _animation_player = $AnimationPlayer
 var _is_running = false
 var _time = 0
 const DEFAULT_TITLE = 'Gut: The Godot Unit Testing tool.'
@@ -186,7 +186,12 @@ func _on_DisableBlocker_toggled(button_pressed):
 	_text_box_blocker_enabled = !button_pressed
 
 func _on_ShowExtras_toggled(button_pressed):
-	_extras.visible = button_pressed
+	if(button_pressed):
+		_animation_player.play('spin_button')
+	else:
+		_animation_player.play_backwards('spin_button')
+
+	#_extras.visible = button_pressed
 
 func _on_Maximize_pressed():
 	if(rect_size == _pre_maximize_size):
