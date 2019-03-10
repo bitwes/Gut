@@ -127,7 +127,6 @@ var options = {
 	config_file = 'res://.gutconfig.json',
 	dirs = [],
 	double_strategy = 'partial',
-	gut_location = 'res://addons/gut/gut.gd', # this can't be a settable option b/c all the loads are absolute paths
 	ignore_pause = false,
 	include_subdirs = false,
 	inner_class = '',
@@ -232,7 +231,7 @@ func load_options_from_config_file(file_path, into):
 # Apply all the options specified to _tester.  This is where the rubber meets
 # the road.
 func apply_options(opts):
-	_tester = load(opts.gut_location).new()
+	_tester = load('res://addons/gut/gut.gd').new()
 	get_root().add_child(_tester)
 	_tester.connect('tests_finished', self, '_on_tests_finished', [opts.should_exit])
 	_tester.set_yield_between_tests(true)
@@ -270,15 +269,47 @@ func apply_options(opts):
 # Loads any scripts that have been configured to be loaded through the project
 # settings->autoload.
 func load_auto_load_scripts():
-	var f = ConfigFile.new()
-	f.load('res://project.godot')
+	return
+	# ##########################################################################
+	# I don't believe this is needed anymore.  I think the loading of globals
+	# has changed.  The test_command_line_auto_load.gd passes without this.
+	# I'm leaving the code here until I'm 100% sure it is not needed.  So,
+	# next time you are in here, maybe delete this if everything seems to be
+	# working.  Also kill test_command_line_auto_load.gd when you do.
+	# ##########################################################################
+	# var f = ConfigFile.new()
+	# f.load('res://project.godot')
+	#
+	# for key in f.get_section_keys('autoload'):
+	# 	# There's an * in my autoload path, at the start, idk why.  It breaks
+	# 	# things so I'm removing all * from the value.
+	# 	var obj = load(f.get_value('autoload', key).replace('*', '')).new()
+	# 	obj.set_name(key)
+	# 	get_root().add_child(obj)
 
-	for key in f.get_section_keys('autoload'):
-		# There's an * in my autoload path, at the start, idk why.  It breaks
-		# things so I'm removing all * from the value.
-		var obj = load(f.get_value('autoload', key).replace('*', '')).new()
-		obj.set_name(key)
-		get_root().add_child(obj)
+func _print_gutconfigs(values):
+	var header = """Here is a sample of a full .gutconfig.json file.
+You do not need to specify all values in your own file.  The values supplied in
+this sample are what would be used if you ran gut w/o the -gprint_gutconfig_sample
+option (the resolved values where default < .gutconfig < command line)."""
+	print("\n", header.replace("\n", ' '), "\n\n")
+	var resolved = values
+
+	# remove some options that don't make sense to be in config
+	resolved.erase("config_file")
+	resolved.erase("show_help")
+
+	print("Here's a config with all the properties set based off of your current command and config.")
+	var text = JSON.print(resolved)
+	print(text.replace(',', ",\n"))
+
+	for key in resolved:
+		resolved[key] = null
+
+	print("\n\nAnd here's an empty config for you fill in what you want.")
+	text = JSON.print(resolved)
+	print(text.replace(',', ",\n"))
+
 
 # parse options and run Gut
 func _init():
@@ -292,7 +323,6 @@ func _init():
 	extract_command_line_options(o, opt_resolver.cmd_opts)
 	var load_result = \
 			load_options_from_config_file(opt_resolver.get_value('config_file'), opt_resolver.config_opts)
-
 
 	if(load_result == -1): # -1 indicates json parse error
 		quit()
@@ -309,21 +339,7 @@ func _init():
 			print(opt_resolver.to_s_verbose())
 			quit()
 		elif(o.get_value('-gprint_gutconfig_sample')):
-			var header = """Here is a sample of a full .gutconfig.json file.
-You do not need to specify all values in your own file.  The values supplied in
-this sample are what would be used if you ran gut w/o the -gprint_gutconfig_sample
-option (the resolved values where default < .gutconfig < command line)."""
-			print("\n", header.replace("\n", ' '), "\n\n")
-			var resolved = opt_resolver.get_resolved_values()
-
-			# remove some options that don't make sense or I don't think should
-			# be in the config file by default.
-			resolved.erase("config_file")
-			resolved.erase("show_help")
-			resolved.erase("gut_location")
-
-			var text = JSON.print(resolved)
-			print(text.replace(',', ",\n"))
+			_print_gutconfigs(opt_resolver.get_resolved_values())
 			quit()
 		else:
 			load_auto_load_scripts()
@@ -334,5 +350,6 @@ option (the resolved values where default < .gutconfig < command line)."""
 func _on_tests_finished(should_exit):
 	if(_tester.get_fail_count()):
 		OS.exit_code = 1
+
 	if(should_exit):
 		quit()
