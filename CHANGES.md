@@ -20,6 +20,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * You can no longer set the selected script when adding scripts one by one via `add_script`.  Doing it won't cause an error but it won't do anything and will generate a deprecated call in the output.
 * Deprecated the following methods:
   * `end_test` and the old `gut.end_yielded_test`.  These no longer need to be called.
+  * `assert_get_set_methods` was replaced with `assert_accessors` awhile ago, added deprecation messages for this method.
 * Stop button was removed.  It didn't really work that well anyhow.  I could be convinced to put it back.
 
 

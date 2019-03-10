@@ -404,10 +404,10 @@ func _print_script_heading(script):
 		else:
 			p("Running Class [" + script.inner_class_name + "] in " + script.path, 0)
 
-		if(_inner_class_name != null and _does_class_name_match(_inner_class_name, script.inner_class_name)):
+		if(!_utils.is_null_or_empty(_inner_class_name) and _does_class_name_match(_inner_class_name, script.inner_class_name)):
 			p(str('  [',script.inner_class_name, '] matches [', _inner_class_name, ']'))
 
-		if(_unit_test_name != ''):
+		if(!_utils.is_null_or_empty(_unit_test_name)):
 			p('  Only running tests like: "' + _unit_test_name + '"')
 
 		p("-----------------------------------------/")

@@ -34,7 +34,6 @@ var _mouse = {
 	down_pos = null,
 	in_handle = false
 }
-onready var _animation_player = $AnimationPlayer
 var _is_running = false
 var _time = 0
 const DEFAULT_TITLE = 'Gut: The Godot Unit Testing tool.'
