@@ -52,6 +52,9 @@ class TestScript:
 	func get_filename():
 		return path.get_file()
 
+	func has_inner_class():
+		return inner_class_name != null
+
 	func export_to(config_file, section):
 		config_file.set_value(section, 'path', path)
 		config_file.set_value(section, 'inner_class', inner_class_name)

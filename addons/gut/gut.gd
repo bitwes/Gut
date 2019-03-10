@@ -221,12 +221,21 @@ func _setup_gui():
 func _add_scripts_to_gui():
 	var scripts = []
 	for i in range(_test_collector.scripts.size()):
-		scripts.append(str(_test_collector.scripts[i].get_full_name(), '  (', _test_collector.scripts[i].tests.size(), ')'))
+		var s = _test_collector.scripts[i]
+		var txt = ''
+		if(s.has_inner_class()):
+			txt = str(' - ', s.inner_class_name, ' (', s.tests.size(), ')')
+		else:
+			txt = str(s.get_full_name(), '  (', s.tests.size(), ')')
+		scripts.append(txt)
 	_gui.set_scripts(scripts)
 
 func _on_run_one(index):
 	clear_text()
-	_test_the_scripts([index])
+	var indexes = [index]
+	if(!_test_collector.scripts[index].has_inner_class()):
+		indexes = _get_indexes_matching_path(_test_collector.scripts[index].path)
+	_test_the_scripts(indexes)
 
 func _on_new_gui_run_script(index):
 	var indexes = []
@@ -488,6 +497,15 @@ func _get_indexes_matching_script_name(name):
 	return indexes
 
 # ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func _get_indexes_matching_path(path):
+	var indexes = []
+	for i in range(_test_collector.scripts.size()):
+		if(_test_collector.scripts[i].path == path):
+			indexes.append(i)
+	return indexes
+
+# ------------------------------------------------------------------------------
 # Run all tests in a script.  This is the core logic for running tests.
 #
 # Note, this has to stay as a giant monstrosity of a method because of the
@@ -510,6 +528,12 @@ func _test_the_scripts(indexes=[]):
 	var file = File.new()
 	if(_doubler.get_strategy() == _utils.DOUBLE_STRATEGY.FULL):
 		_lgr.info("Using Double Strategy FULL as default strategy.  Keep an eye out for weirdness, this is still experimental.")
+
+	# If we aren't yielding between then throw a quick yield in so that the
+	# gui can repaint itself so that all the disabled/hidden controls appear
+	# as they should.
+	if(!_yield_between.should):
+		yield(_do_yield_between(0.1), 'timeout')
 
 	# loop through scripts
 	for test_indexes in range(indexes_to_run.size()):
