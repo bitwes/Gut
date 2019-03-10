@@ -39,7 +39,7 @@ class TestTestCollector:
 		gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')
 		var found = false
 		for i in range(gr.tc.scripts.size()):
-			if(gr.tc.scripts[i].class_name == 'TestClass1'):
+			if(gr.tc.scripts[i].inner_class_name == 'TestClass1'):
 				found = true
 		assert_true(found, 'Should have the inner class in there')
 		assert_eq(gr.tc.scripts.size(), 2)
@@ -49,7 +49,7 @@ class TestTestCollector:
 		gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')
 		var found = false
 		for i in range(gr.tc.scripts.size()):
-			if(gr.tc.scripts[i].class_name == 'DifferentPrefixClass'):
+			if(gr.tc.scripts[i].inner_class_name == 'DifferentPrefixClass'):
 				found = true
 		assert_true(found, 'Should have the inner class in there')
 
@@ -58,14 +58,14 @@ class TestTestCollector:
 		gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')
 		var found = false
 		for i in range(gr.tc.scripts.size()):
-			if(gr.tc.scripts[i].class_name == 'DoesNot'):
+			if(gr.tc.scripts[i].inner_class_name == 'DoesNot'):
 				found = true
 		assert_false(found, 'Should have skipped, should see warning.')
 
 	func test_inner_classes_have_tests():
 		gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')
 		for i in range(gr.tc.scripts.size()):
-			if(gr.tc.scripts[i].class_name == 'TestClass1'):
+			if(gr.tc.scripts[i].inner_class_name == 'TestClass1'):
 				assert_eq(gr.tc.scripts[i].tests.size(), 2)
 
 	# also checks that only local methods are found since there is some extra
@@ -74,13 +74,13 @@ class TestTestCollector:
 		gr.tc.set_test_prefix('print_')
 		gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')
 		for i in range(gr.tc.scripts.size()):
-			if(gr.tc.scripts[i].class_name == 'TestClass1'):
+			if(gr.tc.scripts[i].inner_class_name == 'TestClass1'):
 				assert_eq(gr.tc.scripts[i].tests.size(), 1)
 
 	func test_inner_tests_must_extend_test_to_be_used():
 		gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')
 		for i in range(gr.tc.scripts.size()):
-			assert_ne(gr.tc.scripts[i].class_name, 'TestDoesNotExtendTest')
+			assert_ne(gr.tc.scripts[i].inner_class_name, 'TestDoesNotExtendTest')
 
 class TestExportImport:
 	extends "res://test/gut_test.gd"
@@ -142,7 +142,7 @@ class TestExportImport:
 		var tc_import = TestCollector.new()
 		tc_import.import_tests(EXPORT_FILE)
 		assert_eq(tc_import.scripts.size(), 2, 'one for the tests in the base and one for the inner class')
-		assert_eq(tc_import.scripts[1].class_name, 'TestClass1')
+		assert_eq(tc_import.scripts[1].inner_class_name, 'TestClass1')
 
 	func test_imported_tests_are_test_classes():
 		var tc_export = TestCollector.new()

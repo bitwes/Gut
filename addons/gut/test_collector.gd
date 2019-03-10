@@ -15,7 +15,7 @@ class Test:
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 class TestScript:
-	var class_name = null
+	var inner_class_name = null
 	var tests = []
 	var path = null
 	var _utils = null
@@ -27,8 +27,8 @@ class TestScript:
 
 	func to_s():
 		var to_return = path
-		if(class_name != null):
-			to_return += str('.', class_name)
+		if(inner_class_name != null):
+			to_return += str('.', inner_class_name)
 		to_return += "\n"
 		for i in range(tests.size()):
 			to_return += str('  ', tests[i].name, "\n")
@@ -37,16 +37,16 @@ class TestScript:
 	func get_new():
 		var Script = load(path)
 		var inst = null
-		if(class_name != null):
-			inst = Script.get(class_name).new()
+		if(inner_class_name != null):
+			inst = Script.get(inner_class_name).new()
 		else:
 			inst = Script.new()
 		return inst
 
 	func get_full_name():
 		var to_return = path
-		if(class_name != null):
-			to_return += '.' + class_name
+		if(inner_class_name != null):
+			to_return += '.' + inner_class_name
 		return to_return
 
 	func get_filename():
@@ -54,7 +54,7 @@ class TestScript:
 
 	func export_to(config_file, section):
 		config_file.set_value(section, 'path', path)
-		config_file.set_value(section, 'inner_class', class_name)
+		config_file.set_value(section, 'inner_class', inner_class_name)
 		var names = []
 		for i in range(tests.size()):
 			names.append(tests[i].name)
@@ -86,9 +86,9 @@ class TestScript:
 		# out red text.  This works around that.
 		var inner_name = config_file.get_value(section, 'inner_class', 'Placeholder')
 		if(inner_name != 'Placeholder'):
-			class_name = inner_name
+			inner_class_name = inner_name
 		else: # just being explicit
-			class_name = null
+			inner_class_name = null
 
 
 # ------------------------------------------------------------------------------
@@ -122,17 +122,17 @@ func _parse_script(script):
 			script.tests.append(new_test)
 
 		if(line.begins_with('class ')):
-			var class_name = line.replace('class ', '')
-			class_name = class_name.replace(':', '')
-			if(class_name.begins_with(_test_class_prefix)):
-				inner_classes.append(class_name)
+			var iclass_name = line.replace('class ', '')
+			iclass_name = iclass_name.replace(':', '')
+			if(iclass_name.begins_with(_test_class_prefix)):
+				inner_classes.append(iclass_name)
 
 	scripts_found.append(script.path)
 
 	for i in range(inner_classes.size()):
 		var ts = TestScript.new(_utils, _lgr)
 		ts.path = script.path
-		ts.class_name = inner_classes[i]
+		ts.inner_class_name = inner_classes[i]
 		if(_parse_inner_class_tests(ts)):
 			scripts.append(ts)
 			scripts_found.append(script.path + '[' + inner_classes[i] +']')
@@ -144,7 +144,7 @@ func _parse_inner_class_tests(script):
 	var inst = script.get_new()
 
 	if(!inst is load('res://addons/gut/test.gd')):
-		_lgr.warn('Ignoring ' + script.class_name + ' because it starts with "' + _test_class_prefix + '" but does not extend addons/gut/test.gd')
+		_lgr.warn('Ignoring ' + script.inner_class_name + ' because it starts with "' + _test_class_prefix + '" but does not extend addons/gut/test.gd')
 		return false
 
 	var methods = inst.get_method_list()
