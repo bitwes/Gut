@@ -32,7 +32,7 @@
 ################################################################################
 #extends "res://addons/gut/gut_gui.gd"
 tool
-extends Panel
+extends Control
 
 var _utils = load('res://addons/gut/utils.gd').new()
 var _lgr = _utils.get_logger()
@@ -143,7 +143,7 @@ func _init():
 	# This min size has to be what the min size of the GutScene's min size is
 	# but it has to be set here and not inferred i think.
 	rect_min_size =Vector2(740, 250)
-	
+
 	add_user_signal(SIGNAL_TESTS_FINISHED)
 	add_user_signal(SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
 	add_user_signal('timeout')
@@ -199,8 +199,8 @@ func _ready():
 
 	if(_should_maximize):
 		maximize()
-	
-	# hide the panel that IS gut so that only the GUI is seen	
+
+	# hide the panel that IS gut so that only the GUI is seen
 	self.self_modulate = Color(1,1,1,0)
 	show()
 
