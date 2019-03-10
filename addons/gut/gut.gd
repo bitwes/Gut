@@ -529,12 +529,6 @@ func _test_the_scripts(indexes=[]):
 	if(_doubler.get_strategy() == _utils.DOUBLE_STRATEGY.FULL):
 		_lgr.info("Using Double Strategy FULL as default strategy.  Keep an eye out for weirdness, this is still experimental.")
 
-	# If we aren't yielding between then throw a quick yield in so that the
-	# gui can repaint itself so that all the disabled/hidden controls appear
-	# as they should.
-	if(!_yield_between.should):
-		yield(_do_yield_between(0.1), 'timeout')
-
 	# loop through scripts
 	for test_indexes in range(indexes_to_run.size()):
 		var the_script = _test_collector.scripts[indexes_to_run[test_indexes]]
