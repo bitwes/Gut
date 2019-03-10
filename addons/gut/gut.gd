@@ -89,8 +89,7 @@ const WAITING_MESSAGE = '/# waiting #/'
 const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
 
 var _script_name = null
-var _stop_pressed = false
-var _test_collector = load('res://addons/gut/test_collector.gd').new()
+var _test_collector = _utils.TestCollector.new()
 
 # The instanced scripts.  This is populated as the scripts are run.
 var _test_script_objects = []
@@ -121,7 +120,6 @@ var _was_yield_method_called = false
 var _yield_timer = Timer.new()
 
 var _unit_test_name = ''
-var Summary = load('res://addons/gut/summary.gd')
 var _new_summary = null
 
 var _yielding_to = {
@@ -179,7 +177,7 @@ func _ready():
 	_yield_timer.set_one_shot(true)
 	_yield_timer.connect('timeout', self, '_yielding_callback')
 
-	_hijack_old_wiring()
+	_setup_gui()
 
 	add_directory(_directory1)
 	add_directory(_directory2)
@@ -206,10 +204,13 @@ func _ready():
 
 ################################################################################
 #
-# NEW WIRING
+# GUI Events and setup
 #
 ################################################################################
-func _hijack_old_wiring():
+func _setup_gui():
+	# This is how we get the size of the control to translate to the gui when
+	# the scene is run.  This is also another reason why the min_rect_size
+	# must match between both gut and the gui.
 	_gui.rect_size = self.rect_size
 	add_child(_gui)
 	_gui.set_anchor(MARGIN_RIGHT, ANCHOR_END)
@@ -330,7 +331,7 @@ func _get_summary_text():
 func _init_run():
 	_test_collector.set_test_class_prefix(_inner_class_prefix)
 	_test_script_objects = []
-	_new_summary = Summary.new()
+	_new_summary = _utils.Summary.new()
 
 	_log_text = ""
 
@@ -474,7 +475,10 @@ func _call_deprecated_script_method(script, method, alt):
 	if(script.has_method(method)):
 		var txt = str(script, '-', method)
 		if(!_deprecated_tracker.has(txt)):
-			_lgr.deprecated(str('The method ', method, ' has been deprecated, use ', alt, ' instead.'))
+			# Removing the deprectated line.  I think it's still too early to
+			# start bothering people with this.  Left everything here though
+			# because I don't want to remember how I did this last time.
+			#_lgr.deprecated(str('The method ', method, ' has been deprecated, use ', alt, ' instead.'))
 			_deprecated_tracker.add(txt)
 		script.call(method)
 
@@ -585,13 +589,6 @@ func _test_the_scripts(indexes=[]):
 					_gui.get_text_box().add_keyword_color(_current_test.name, Color(0, 1, 0))
 				else:
 					_gui.get_text_box().add_keyword_color(_current_test.name, Color(1, 0, 0))
-
-				# !!! STOP BUTTON SHORT CIRCUIT !!!
-				if(_stop_pressed):
-					_is_running = false
-					_stop_pressed = false
-					p("STOPPED")
-					return
 
 				_gui.set_progress_test_value(i + 1)
 
@@ -721,7 +718,10 @@ func test_script(script):
 #
 # No longer supports selecting a script via this method.
 # ------------------------------------------------------------------------------
-func add_script(script, was_select_this_one=false):
+func add_script(script, was_select_this_one=null):
+	if(was_select_this_one != null):
+		_lgr.deprecated('The option to select a script when using add_script has been removed.  Calling add_script with 2 parameters will be removed in a later release.')
+
 	if(!Engine.is_editor_hint()):
 		_test_collector.set_test_class_prefix(_inner_class_prefix)
 		_test_collector.add_script(script)

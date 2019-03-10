@@ -4,20 +4,23 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 # 6.7.0
 ## Features
-* You can now export your tests and run them in your exported game.  This means you can run your tests on all the platforms that Godot supports through the executable...no editor, no nothing!  Check out the Export Tests wiki page for more information.
+* You can now export your tests and run them in your exported game!  This means you can run your tests on all the platforms that Godot supports through the executable...no editor, no nothing!  Check out the Export Tests wiki page for more information.
+* A BRAND NEW GUI.  It looks a lot like the old GUI but it is new.  With the ability to export tests I wanted the GUI to be more mobile friendly.  So I threw the old one out (which was a relic of the days when Gut was one script...the old GUI was made entirely with code) and created a scene which will make GUI changes soooo much easier going forward.
 * added `get_call_parameters` which allows you to get the parameters sent to a call to a doubled method.  It returns the most recent call by default but you can specify an optional index as well.
+* added `replace_node` which allows you to replace a node in a scene with another node by specifying the node path.  This makes testing scenes that use the `$` syntax to get a reference to a child node easier to test by giving you a quick way to inject a double of any child node.  The node that was replaced is freed with `queue_free`
+* `-gprint_gutconfig_sample` command line option will print you a full config file that you can start using.
 
 ## Fixes/Improvements
 * Added all missing settings to the gutconfig file.
   * log -> log_level
 * Improved logging.  More warnings and errors have been added to help when something goes wrong inside Gut.  The number of Gut related errors, warnings, and deprecated methods are listed in the summary.  If you don't see any listed, there aren't any.
-* Some housekeeping and Boy Scouting.
+* A lot of housekeeping and Boy Scouting.
 
 ## Removals
-* You can no longer set the selected script when adding scripts one by one via `add_script`.  Doing it won't cause an error but it won't do anything.
+* You can no longer set the selected script when adding scripts one by one via `add_script`.  Doing it won't cause an error but it won't do anything and will generate a deprecated call in the output.
 * Deprecated the following methods:
-  * `setup`, `teardown`, `prerun_setup`, `postrun_teardown`.  These were replaced with the methods `before_all`, `before_each`, `after_all`, `after_each` for easier reading.  They will continue to work for the foreseeable future but will generate a deprecation message for each script they are used in.
   * `end_test` and the old `gut.end_yielded_test`.  These no longer need to be called.
+* Stop button was removed.  It didn't really work that well anyhow.  I could be convinced to put it back.
 
 
 

@@ -1,11 +1,13 @@
 var _Logger = load('res://addons/gut/logger.gd') # everything should use get_logger
-var Stubber = load('res://addons/gut/stubber.gd')
+
 var Doubler = load('res://addons/gut/doubler.gd')
-var Spy = load('res://addons/gut/spy.gd')
-var StubParams = load('res://addons/gut/stub_params.gd')
-var ThingCounter = load('res://addons/gut/thing_counter.gd')
 var MethodMaker = load('res://addons/gut/method_maker.gd')
+var Spy = load('res://addons/gut/spy.gd')
+var Stubber = load('res://addons/gut/stubber.gd')
+var StubParams = load('res://addons/gut/stub_params.gd')
+var Summary = load('res://addons/gut/summary.gd')
 var TestCollector = load('res://addons/gut/test_collector.gd')
+var ThingCounter = load('res://addons/gut/thing_counter.gd')
 
 const GUT_METADATA = '__gut_metadata_'
 
