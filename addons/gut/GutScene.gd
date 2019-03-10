@@ -40,15 +40,17 @@ var _time = 0
 const DEFAULT_TITLE = 'Gut: The Godot Unit Testing tool.'
 var _utils = load('res://addons/gut/utils.gd').new()
 var _text_box_blocker_enabled = true
+var _pre_maximize_size = null
 
-signal run_script
-signal run_single_script
-signal log_level_changed
-signal script_selected
 signal end_pause
 signal ignore_pause
+signal log_level_changed
+signal run_script
+signal run_single_script
+signal script_selected
 
 func _ready():
+	_pre_maximize_size = rect_size
 	_hide_scripts()
 	_update_controls()
 	_nav.current_script.set_text("No scripts available")
@@ -65,7 +67,6 @@ func _process(delta):
 		var disp_time = round(_time * 100)/100
 		$TitleBar/Time.set_text(str(disp_time))
 
-
 func _draw(): # needs get_size()
 	# Draw the lines in the corner to show where you can
 	# drag to resize the dialog
@@ -76,6 +77,16 @@ func _draw(): # needs get_size()
 		var x = rect_size - Vector2(i * line_space, grab_margin)
 		var y = rect_size - Vector2(grab_margin, i * line_space)
 		draw_line(x, y, grab_line_color)
+
+func _on_Maximize_draw():
+	# draw the maximize square thing.
+	var btn = $TitleBar/Maximize
+	btn.set_text('')
+	var w = btn.get_size().x
+	var h = btn.get_size().y
+	btn.draw_rect(Rect2(0, 0, w, h), Color(0, 0, 0, 1))
+	btn.draw_rect(Rect2(2, 4, w - 4, h - 6), Color(1,1,1,1))
+	pass # replace with function body
 
 # ####################
 # GUI Events
@@ -138,6 +149,7 @@ func _input(event):
 			var new_mouse_down_pos = event.position
 			rect_size = new_size
 			_mouse.down_pos = new_mouse_down_pos
+			_pre_maximize_size = rect_size
 
 func _on_ResizeHandle_mouse_entered():
 	_mouse.in_handle = true
@@ -170,6 +182,17 @@ func _on_Copy_pressed():
 	_text_box.copy()
 	_text_box.deselect()
 
+func _on_DisableBlocker_toggled(button_pressed):
+	_text_box_blocker_enabled = !button_pressed
+
+func _on_ShowExtras_toggled(button_pressed):
+	_extras.visible = button_pressed
+
+func _on_Maximize_pressed():
+	if(rect_size == _pre_maximize_size):
+		maximize()
+	else:
+		rect_size = _pre_maximize_size
 # ####################
 # Private
 # ####################
@@ -301,10 +324,7 @@ func clear_summary():
 	_summary.failing.set_text("0")
 	$Summary.hide()
 
-
-func _on_DisableBlocker_toggled(button_pressed):
-	_text_box_blocker_enabled = !button_pressed
-
-
-func _on_ShowExtras_toggled(button_pressed):
-	_extras.visible = button_pressed
+func maximize():
+	if(is_inside_tree()):
+		var vp_size_offset = get_viewport().size
+		rect_size = vp_size_offset / get_scale()

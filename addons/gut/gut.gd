@@ -39,8 +39,6 @@ var _lgr = _utils.get_logger()
 # Used to prevent multiple messages for deprecated setup/teardown messages
 var _deprecated_tracker = _utils.ThingCounter.new()
 
-var title_offset = Vector2(0, 0)#get_constant("title_height"))
-
 # ###########################
 # Editor Variables
 # ###########################
@@ -162,9 +160,7 @@ func _init():
 func _ready():
 	_lgr.info(str('using [', OS.get_user_data_dir(), '] for temporary output.'))
 
-	#set_it_up()
 	set_process_input(true)
-	set_position(get_position() + title_offset)
 
 	add_child(_wait_timer)
 	_wait_timer.set_wait_time(1)
@@ -829,11 +825,8 @@ func get_should_maximize():
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func maximize():
-	if(is_inside_tree()):
-		set_position(title_offset)
-		var vp_size_offset = get_viewport().size - title_offset
-		#set_size(vp_size_offset / get_scale()) TODO implement size
-
+	_gui.maximize()
+	
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func disable_strict_datatype_checks(should):

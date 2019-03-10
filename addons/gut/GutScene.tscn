@@ -89,7 +89,6 @@ _sections_unfolded = [ "Theme", "Transform", "Z Index", "custom_styles" ]
 
 [node name="TitleBar" type="Panel" parent="." index="0"]
 
-editor/display_folded = true
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 1.0
@@ -103,9 +102,6 @@ size_flags_horizontal = 1
 size_flags_vertical = 1
 theme = SubResource( 3 )
 _sections_unfolded = [ "Rect", "Theme" ]
-__meta__ = {
-"_edit_group_": true
-}
 
 [node name="Title" type="Label" parent="TitleBar" index="0"]
 
@@ -135,8 +131,8 @@ anchor_left = 1.0
 anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 0.0
-margin_left = -59.0
-margin_right = 2.0
+margin_left = -114.0
+margin_right = -53.0
 margin_bottom = 40.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
@@ -150,6 +146,33 @@ valign = 1
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
+_sections_unfolded = [ "Anchor", "custom_colors" ]
+
+[node name="Maximize" type="Button" parent="TitleBar" index="2"]
+
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+margin_left = -30.0
+margin_top = 10.0
+margin_right = -6.0
+margin_bottom = 30.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+focus_mode = 2
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+group = null
+text = "M"
+flat = true
+align = 1
 _sections_unfolded = [ "Anchor", "custom_colors" ]
 
 [node name="ScriptProgress" type="ProgressBar" parent="." index="1"]
@@ -255,8 +278,8 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_top = 37.0
-margin_bottom = -110.0
+margin_top = 40.0
+margin_bottom = -107.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
@@ -778,6 +801,10 @@ max_lines_visible = -1
 [connection signal="mouse_entered" from="TitleBar" to="." method="_on_TitleBar_mouse_entered"]
 
 [connection signal="mouse_exited" from="TitleBar" to="." method="_on_TitleBar_mouse_exited"]
+
+[connection signal="draw" from="TitleBar/Maximize" to="." method="_on_Maximize_draw"]
+
+[connection signal="pressed" from="TitleBar/Maximize" to="." method="_on_Maximize_pressed"]
 
 [connection signal="gui_input" from="TextDisplay/RichTextLabel" to="." method="_on_RichTextLabel_gui_input"]
 
