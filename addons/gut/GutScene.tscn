@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://addons/gut/GutScene.gd" type="Script" id=1]
 
@@ -67,49 +67,6 @@ Panel/styles/panel = SubResource( 2 )
 Panel/styles/panelf = null
 Panel/styles/panelnc = null
 _sections_unfolded = [ "Panel", "Panel/colors", "Panel/styles", "Resource" ]
-
-[sub_resource type="Animation" id=4]
-
-resource_name = "spin_button"
-length = 0.3
-loop = false
-step = 0.1
-tracks/0/type = "value"
-tracks/0/path = NodePath("Continue/ShowExtras:rect_rotation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/keys = {
-"times": PoolRealArray( 0, 0.3 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 0,
-"values": [ 0.0, 180.0 ]
-}
-tracks/1/type = "value"
-tracks/1/path = NodePath("ExtraOptions:visible")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/keys = {
-"times": PoolRealArray( 0, 0.3 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 1,
-"values": [ true, true ]
-}
-tracks/2/type = "value"
-tracks/2/path = NodePath("ExtraOptions:modulate")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/keys = {
-"times": PoolRealArray( 0, 0.3 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 0,
-"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
-}
 
 [node name="Gut" type="Panel" index="0"]
 
@@ -583,7 +540,6 @@ _sections_unfolded = [ "Rect" ]
 
 [node name="ScriptsList" type="ItemList" parent="." index="6"]
 
-visible = false
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
@@ -591,7 +547,7 @@ anchor_bottom = 1.0
 margin_left = 180.0
 margin_top = 40.0
 margin_right = 620.0
-margin_bottom = -110.0
+margin_bottom = -108.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = true
 focus_mode = 2
@@ -604,19 +560,17 @@ select_mode = 0
 allow_reselect = true
 icon_mode = 1
 fixed_icon_size = Vector2( 0, 0 )
-_sections_unfolded = [ "Anchor", "Columns", "Grow Direction", "Icon", "Margin", "Mouse", "Size Flags", "Theme", "Visibility", "custom_colors", "custom_constants" ]
+_sections_unfolded = [ "Anchor", "Columns", "Grow Direction", "Icon", "Margin", "Mouse", "Rect", "Size Flags", "Theme", "Visibility", "custom_colors", "custom_constants" ]
 
 [node name="ExtraOptions" type="Panel" parent="." index="7"]
 
-editor/display_folded = true
-modulate = Color( 1, 1, 1, 0 )
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = -210.0
-margin_top = -249.0
-margin_bottom = -109.0
+margin_top = -246.0
+margin_bottom = -106.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
@@ -772,9 +726,8 @@ anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 50.0
-margin_top = -10.0
 margin_right = 120.0
-margin_bottom = 30.0
+margin_bottom = 40.0
 rect_pivot_offset = Vector2( 35, 20 )
 rect_clip_content = false
 focus_mode = 2
@@ -786,7 +739,7 @@ toggle_mode = true
 enabled_focus_mode = 2
 shortcut = null
 group = null
-text = "^"
+text = "_"
 flat = false
 align = 1
 _sections_unfolded = [ "Rect" ]
@@ -844,16 +797,6 @@ percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="11"]
-
-root_node = NodePath("..")
-autoplay = ""
-playback_process_mode = 1
-playback_default_blend_time = 0.0
-playback_speed = 1.0
-anims/spin_button = SubResource( 4 )
-blend_times = [  ]
-
 [connection signal="mouse_entered" from="TitleBar" to="." method="_on_TitleBar_mouse_entered"]
 
 [connection signal="mouse_exited" from="TitleBar" to="." method="_on_TitleBar_mouse_exited"]
@@ -891,6 +834,8 @@ blend_times = [  ]
 [connection signal="mouse_exited" from="ResizeHandle" to="." method="_on_ResizeHandle_mouse_exited"]
 
 [connection signal="pressed" from="Continue/Continue" to="." method="_on_Continue_pressed"]
+
+[connection signal="draw" from="Continue/ShowExtras" to="." method="_on_ShowExtras_draw"]
 
 [connection signal="toggled" from="Continue/ShowExtras" to="." method="_on_ShowExtras_toggled"]
 

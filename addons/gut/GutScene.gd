@@ -76,7 +76,7 @@ func _draw(): # needs get_size()
 	for i in range(1, 10):
 		var x = rect_size - Vector2(i * line_space, grab_margin)
 		var y = rect_size - Vector2(grab_margin, i * line_space)
-		draw_line(x, y, grab_line_color)
+		draw_line(x, y, grab_line_color, 1, true)
 
 func _on_Maximize_draw():
 	# draw the maximize square thing.
@@ -86,7 +86,18 @@ func _on_Maximize_draw():
 	var h = btn.get_size().y
 	btn.draw_rect(Rect2(0, 0, w, h), Color(0, 0, 0, 1))
 	btn.draw_rect(Rect2(2, 4, w - 4, h - 6), Color(1,1,1,1))
-	pass # replace with function body
+
+func _on_ShowExtras_draw():
+	var btn = $Continue/ShowExtras
+	btn.set_text('')
+	var start_x = 20
+	var start_y = 15
+	var pad = 5
+	var color = Color(.1, .1, .1, 1)
+	var width = 2
+	for i in range(3):
+		var y = start_y + pad * i
+		btn.draw_line(Vector2(start_x, y), Vector2(btn.get_size().x - start_x, y), color, width, true)
 
 # ####################
 # GUI Events
@@ -186,12 +197,7 @@ func _on_DisableBlocker_toggled(button_pressed):
 	_text_box_blocker_enabled = !button_pressed
 
 func _on_ShowExtras_toggled(button_pressed):
-	if(button_pressed):
-		_animation_player.play('spin_button')
-	else:
-		_animation_player.play_backwards('spin_button')
-
-	#_extras.visible = button_pressed
+	_extras.visible = button_pressed
 
 func _on_Maximize_pressed():
 	if(rect_size == _pre_maximize_size):

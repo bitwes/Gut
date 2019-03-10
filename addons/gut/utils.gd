@@ -95,3 +95,6 @@ func write_file(path, content):
 	f.open(path, f.WRITE)
 	f.store_string(content)
 	f.close()
+
+func is_null_or_empty(text):
+	return text == null or text == ''

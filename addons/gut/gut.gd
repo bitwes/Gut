@@ -328,7 +328,7 @@ func _get_summary_text():
 		to_return += '+++ No tests ran +++'
 		_gui.get_text_box().add_color_region('+++', '+++', Color(1, 0, 0))
 
-	return to_return + "\n\n"
+	return to_return
 
 # ------------------------------------------------------------------------------
 # Initialize variables for each run of a single test script.
@@ -363,6 +363,13 @@ func _end_run():
 	var more_than_one = _test_script_objects.size() > 1
 
 	p(_get_summary_text(), 0)
+	p("\n")
+	if(!_utils.is_null_or_empty(_select_script)):
+		p('Ran Scripts matching ' + _select_script)
+	if(!_utils.is_null_or_empty(_unit_test_name)):
+		p('Ran Tests matching ' + _unit_test_name)
+	if(!_utils.is_null_or_empty(_inner_class_name)):
+		p('Ran Inner Classes matching ' + _inner_class_name)
 
 	# For some reason the text edit control isn't scrolling to the bottom after
 	# the summary is printed.  As a workaround, yield for a short time and
