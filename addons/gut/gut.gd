@@ -28,7 +28,7 @@
 ################################################################################
 # View readme for usage details.
 #
-# Version 6.6.2
+# Version 6.7.0
 ################################################################################
 #extends "res://addons/gut/gut_gui.gd"
 tool
@@ -741,7 +741,7 @@ func test_script(script):
 # ------------------------------------------------------------------------------
 func add_script(script, was_select_this_one=null):
 	if(was_select_this_one != null):
-		_lgr.deprecated('The option to select a script when using add_script has been removed.  Calling add_script with 2 parameters will be removed in a later release.')
+		_lgr.error('The option to select a script when using add_script has been removed.  Calling add_script with 2 parameters will be removed in a later release.')
 
 	if(!Engine.is_editor_hint()):
 		_test_collector.set_test_class_prefix(_inner_class_prefix)

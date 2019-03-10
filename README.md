@@ -1,18 +1,33 @@
 # [See the Wiki for Details](https://github.com/bitwes/Gut/wiki)
 
-# 6.6.0 has a potentially bad bug, please install 6.6.2
-6.1.0 has a bug that can, if everything goes wrong just right, delete files in the root of the project.  I only saw it happen when running the test suite for Gut and only the `test_doubler.gd` test script.  I don't recall ever seeing it happen in my own game, but just to be safe you should upgrade.
+# 6.6.0 has a potentially bad bug
+__Please upgrade to the latest version.__
+
+6.6.0 has a bug that can, if everything goes wrong just right, delete files in the root of the project.  I only saw it happen when running the test suite for Gut and only the `test_doubler.gd` test script.  I don't recall ever seeing it happen in my own game, but just to be safe you should upgrade.
 
 ### Godot 3.1
 I've started a [3.1 branch](https://github.com/bitwes/Gut/tree/godot_3_1) that I will be keeping inline with master.  Check open issues (they will have the 3.1 tag) and the [3.1 wiki page](https://github.com/bitwes/Gut/wiki/Godot-3.1-Alpha) for any known issues.
 
-# Gut 6.6.2
+# Gut 6.7.0
 GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.  It allows you to write tests for your gdscript in gdscript.
 
 More info can be found in the [wiki](https://github.com/bitwes/Gut/wiki).
 
-### Godot 3.0 Compatible.
-Version 6.0.0 is Godot 3.0 compatible.  These changes are not compatible with any of the 2.x versions of Godot.  The godot_2x branch has been created to hold the old version of Gut that works with Godot 2.x.  Barring any severe issues, there will not be any more development for Godot 2.x.
+## Features
+* Write test scripts for your `gdscript` in `gdscript`.
+* [Simple install via the Asset Library.](https://github.com/bitwes/Gut/wiki/Install)
+* [Doubling](https://github.com/bitwes/Gut/wiki/Doubles)
+* [Stubbing](https://github.com/bitwes/Gut/wiki/Stubbing)
+* [Spying](https://github.com/bitwes/Gut/wiki/Spies)
+* [A plethora of asserts and utility methods to help make your tests simple and concise.](https://github.com/bitwes/Gut/wiki/Methods)
+* [Export tests with your project and run them on any platform Godot supports.](https://github.com/bitwes/Gut/wiki/Exporting-Tests)
+* [Command Line Interface (CLI)](https://github.com/bitwes/Gut/wiki/Command-Line)
+* [Support for Inner Test Classes to give your tests some extra context and maintainability.](https://github.com/bitwes/Gut/wiki/Inner-Test-Classes)
+* [Integration testing made easier with `yield`s](https://github.com/bitwes/Gut/wiki/Yielding)
+
+## Upgrading to 6.7.0 from any 6.x version
+* It is not required, but you should remove the existing Gut node for any scenes you have that use it and then re-add it and re-configure it.  Re-adding will get rid of the caution symbol next to the control (this is due to changes in inheritance, Gut changed from a `WindowDialog` to a `Control`)
+* For the command line, note that the `log` option in the `.gutconfig.json` file has changed to `log_level` for consistency.
 
 # License
 Gut is provided under the MIT license.  License is in `addons/gut/LICENSE.md`

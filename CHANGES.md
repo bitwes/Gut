@@ -3,27 +3,29 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 # 6.7.0
+## Upgrade Instructions
+* It is not required, but you should remove the existing Gut node for any scenes you have that use it and then re-add it and re-configure it.  Re-adding will get rid of the caution symbol next to the control (this is due to changes in inheritance, Gut changed from a `WindowDialog` to a `Control`)
+* For the command line, note that the `log` option in the `.gutconfig.json` file has changed to `log_level` for consistency.
+
 ## Features
-* You can now export your tests and run them in your exported game!  This means you can run your tests on all the platforms that Godot supports through the executable...no editor, no nothing!  Check out the Export Tests wiki page for more information.
-* A BRAND NEW GUI.  It looks a lot like the old GUI but it is new.  With the ability to export tests I wanted the GUI to be more mobile friendly.  So I threw the old one out (which was a relic of the days when Gut was one script...the old GUI was made entirely with code) and created a scene which will make GUI changes soooo much easier going forward.
-* added `get_call_parameters` which allows you to get the parameters sent to a call to a doubled method.  It returns the most recent call by default but you can specify an optional index as well.
-* added `replace_node` which allows you to replace a node in a scene with another node by specifying the node path.  This makes testing scenes that use the `$` syntax to get a reference to a child node easier to test by giving you a quick way to inject a double of any child node.  The node that was replaced is freed with `queue_free`
+* __Issue 73__ <u>You can now export your tests</u> and run them in your exported game!  This means you can run your tests on all the platforms that Godot supports through the executable...no editor, no nothing!  Check out the Export Tests wiki page for more information.
+* __Issue 102__ Added `get_call_parameters` which allows you to get the parameters sent to a call to a doubled method.  It returns the most recent call by default but you can specify an optional index as well.
+* __Issue 103__ Added `replace_node` which allows you to replace a node in a scene with another node by specifying the node path.  This makes testing scenes that use the `$` syntax to get a reference to a child node easier to test by giving you a quick way to inject a double of any child node.  The node that was replaced is freed with `queue_free`
+* <u>A brand new GUI</u>.  It looks a lot like the old GUI but it is new.  With the ability to export tests I wanted the GUI to be more mobile friendly.  So I threw the old one out (which was a relic of the days when Gut was one script...the old GUI was made entirely with code) and created a scene which will make GUI changes soooo much easier going forward.
 * `-gprint_gutconfig_sample` command line option will print you a full config file that you can start using.
 
 ## Fixes/Improvements
-* Added all missing settings to the gutconfig file.
-  * log -> log_level
+* __Issue 104__ Added all missing settings to the gutconfig file.
+  * For consistency the `log` option in the .gutconfig changed to `log_level`.
 * Improved logging.  More warnings and errors have been added to help when something goes wrong inside Gut.  The number of Gut related errors, warnings, and deprecated methods are listed in the summary.  If you don't see any listed, there aren't any.
 * A lot of housekeeping and Boy Scouting.
 
 ## Removals
-* You can no longer set the selected script when adding scripts one by one via `add_script`.  Doing it won't cause an error but it won't do anything and will generate a deprecated call in the output.
+* You can no longer set the selected script when adding scripts one by one via `add_script`.  If you pass a 2nd parameter an error is generated, but everything will continue to run.
 * Deprecated the following methods:
   * `end_test` and the old `gut.end_yielded_test`.  These no longer need to be called.
-  * `assert_get_set_methods` was replaced with `assert_accessors` awhile ago, added deprecation messages for this method.
+  * `assert_get_set_methods` was replaced with `assert_accessors` awhile ago.  In this release I added deprecation messages for this method.  It still works, but wanted to start getting the message out.
 * Stop button was removed.  It didn't really work that well anyhow.  I could be convinced to put it back.
-
-
 
 # 6.6.3
 Was exporting a directory that I shouldn't, added it to the .gitattributes
