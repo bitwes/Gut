@@ -81,14 +81,14 @@ script = ExtResource( 2 )
 __meta__ = {
 "_editor_icon": ExtResource( 3 )
 }
-_select_script = "test_gut.gd"
-_tests_like = "test_after_running_script_everything_checks_out"
-_inner_class_name = null
+_select_script = ""
+_tests_like = ""
+_inner_class_name = ""
 _run_on_load = true
 _should_maximize = true
 _should_print_to_console = true
 _log_level = 1
-_yield_between_tests = false
+_yield_between_tests = true
 _disable_strict_datatype_checks = true
 _test_prefix = "test_"
 _file_prefix = "test_"

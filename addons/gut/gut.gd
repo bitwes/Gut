@@ -42,9 +42,9 @@ var _deprecated_tracker = _utils.ThingCounter.new()
 # ###########################
 # Editor Variables
 # ###########################
-export(String) var _select_script = null
-export(String) var _tests_like = null
-export(String) var _inner_class_name = null
+export(String) var _select_script = ''
+export(String) var _tests_like = ''
+export(String) var _inner_class_name = ''
 
 export var _run_on_load = false
 export var _should_maximize = false setget set_should_maximize, get_should_maximize
@@ -422,7 +422,7 @@ func _should_yield_now():
 # Yes if the class name is null or the script's class name includes class_name
 # ------------------------------------------------------------------------------
 func _does_class_name_match(the_class_name, script_class_name):
-	return the_class_name == null or (script_class_name != null and script_class_name.find(the_class_name) != -1)
+	return (the_class_name == null or the_class_name == '') or (script_class_name != null and script_class_name.find(the_class_name) != -1)
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -708,7 +708,7 @@ func get_minimum_size():
 func test_scripts(run_rest=false):
 	clear_text()
 
-	if(_script_name != null):
+	if(_script_name != null and _script_name != ''):
 		var indexes = _get_indexes_matching_script_name(_script_name)
 		if(indexes == []):
 			_lgr.error('Could not find script matching ' + _script_name)
