@@ -580,3 +580,58 @@ func test_assert_call_count():
 	# of set_position.  The function is supplied by the parent class and these
 	# methods are not yet being recorded.
 	assert_call_count(doubled, 'set_position', 1)
+
+func test_get_call_parameters():
+	var DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_extends_node2d.gd'
+
+	var doubled = double(DOUBLE_ME_PATH).new()
+	doubled.set_value(5)
+	doubled.has_two_params_one_default('a')
+	doubled.has_two_params_one_default('x', 'y')
+
+	# prints [5]
+	print(get_call_parameters(doubled, 'set_value'))
+	# prints [x, y]
+	print(get_call_parameters(doubled, 'has_two_params_one_default'))
+	# prints [a, Null]
+	print(get_call_parameters(doubled, 'has_two_params_one_default', 0))
+
+func test_replace_node():
+	# This scene has:
+	# Node2D
+	#   - Label
+	#   - MyPanel
+	#     - MyButton
+	#
+	# And code:
+	#
+	# double_me_scene.gd:
+	# extends Node2D
+	#
+	# onready var label = get_node('Label')
+	#
+	# func return_hello():
+	# 	return 'hello'
+	#
+	# func set_label_text(text):
+	# 	$Label.set_text(text)
+	#
+	# func get_button():
+	# 	return $MyPanel/MyButton
+	var DOUBLE_ME_SCENE = 'res://test/resources/doubler_test_objects/double_me_scene.tscn'
+
+	var scene = load(DOUBLE_ME_SCENE).instance()
+	add_child(scene)
+	var replace_label = Label.new()
+	replace_node(scene, 'Label', replace_label)
+
+	# Passing
+	scene.set_label_text('asdf')
+	assert_eq(replace_label.get_text(), 'asdf', "Since set_label_text references the label using $ this will point to the new one.")
+
+	var replace_button = Button.new()
+	replace_node(scene, 'MyPanel/MyButton', replace_button)
+	assert_eq(scene.get_button(), replace_button, 'Get button uses $ so this will work.')
+
+	# Failing
+	assert_eq(scene.label, replace_label, 'The variable "label" was set as onready so it will not be updated')
