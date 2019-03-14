@@ -4,7 +4,7 @@
 [ext_resource path="res://addons/gut/gut.gd" type="Script" id=2]
 [ext_resource path="res://addons/gut/icon.png" type="Texture" id=3]
 
-[node name="main" type="Node2D" index="0"]
+[node name="main" type="Node2D"]
 
 script = ExtResource( 1 )
 __meta__ = {

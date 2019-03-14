@@ -178,14 +178,17 @@ func _on_FocusBlocker_gui_input(ev):
 			converted.delta = Vector2(0, ev.relative.y)
 			converted.position = Vector2(0, 0)
 			get_text_box()._gui_input(converted)
+		elif(ev is InputEventMouseButton and (ev.button_index == BUTTON_WHEEL_DOWN or ev.button_index == BUTTON_WHEEL_UP)):
+			get_text_box()._gui_input(ev)
 	else:
 		get_text_box()._gui_input(ev)
+		print(ev)
 
 func _on_RichTextLabel_gui_input(ev):
 	pass
 	# leaving this b/c it is wired up and might have to send
 	# more signals through
-	#print(ev)
+	print(ev)
 
 func _on_Copy_pressed():
 	_text_box.select_all()
