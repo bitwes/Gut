@@ -53,7 +53,7 @@ func split_string(to_split, delim):
 	return to_return
 
 # ------------------------------------------------------------------------------
-# Returns a string containing all the elements in the array seperated by delim
+# Returns a string containing all the elements in the array separated by delim
 # ------------------------------------------------------------------------------
 func join_array(a, delim):
 	var to_return = ''

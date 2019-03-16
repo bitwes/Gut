@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------------------
-# Loading diretories
+# Loading directories
 # ------------------------------------------------------------------------------
 extends "res://addons/gut/test.gd"
 
@@ -103,7 +103,7 @@ class TestUsingDynamicDirs:
 		gut = null
 	}
 
-	# holds directories that are created with _create_test_dir.  These diretories
+	# holds directories that are created with _create_test_dir.  These directories
 	# are deleted after each test in the teardown.
 	var _test_dirs = []
 

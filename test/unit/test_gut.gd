@@ -80,13 +80,13 @@ func print_test_gut_info():
 	for i in range(text_array.size()):
 		gut.p(text_array[i])
 
-# convinience method to assert the number of failures on the gr.test_gut object.
+# convenience method to assert the number of failures on the gr.test_gut object.
 func assert_fail(count=1, msg=''):
 	assert_eq(gr.test.get_fail_count(), count, 'failures:  ' + msg)
 	if(gr.test.get_fail_count() != count):
 		print_test_gut_info()
 
-# convinience method to assert the number of passes on the gr.test_gut object.
+# convenience method to assert the number of passes on the gr.test_gut object.
 func assert_pass(count=1, msg=''):
 	assert_eq(gr.test.get_pass_count(), count, 'passes:  ' + msg)
 	if(gr.test.get_pass_count() != count):

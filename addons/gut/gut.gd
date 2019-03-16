@@ -272,7 +272,7 @@ func _yielding_callback(from_obj=false):
 
 	if(from_obj):
 		# we must yiled for a little longer after the signal is emitted so that
-		# the signal can propigate to other objects.  This was discovered trying
+		# the signal can propagate to other objects.  This was discovered trying
 		# to assert that obj/signal_name was emitted.  Without this extra delay
 		# the yield returns and processing finishes before the rest of the
 		# objects can get the signal.  This works b/c the timer will timeout
@@ -487,7 +487,7 @@ func _call_deprecated_script_method(script, method, alt):
 	if(script.has_method(method)):
 		var txt = str(script, '-', method)
 		if(!_deprecated_tracker.has(txt)):
-			# Removing the deprectated line.  I think it's still too early to
+			# Removing the deprecated line.  I think it's still too early to
 			# start bothering people with this.  Left everything here though
 			# because I don't want to remember how I did this last time.
 			#_lgr.deprecated(str('The method ', method, ' has been deprecated, use ', alt, ' instead.'))
@@ -763,7 +763,7 @@ func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
 			_lgr.error(str('The path [', path, '] does not exist.'))
 		return
 	d.open(path)
-	# true parameter tells list_dir_begin not to include "." and ".." diretories.
+	# true parameter tells list_dir_begin not to include "." and ".." directories.
 	d.list_dir_begin(true)
 
 	# Traversing a directory is kinda odd.  You have to start the process of listing
@@ -922,7 +922,7 @@ func get_should_print_to_console():
 
 # ------------------------------------------------------------------------------
 # Get the results of all tests ran as text.  This string is the same as is
-# displayed in the text box, and simlar to what is printed to the console.
+# displayed in the text box, and similar to what is printed to the console.
 # ------------------------------------------------------------------------------
 func get_result_text():
 	return _log_text

@@ -1,4 +1,4 @@
-# This class will generate method decleration lines based on method meta
+# This class will generate method declaration lines based on method meta
 # data.  It will create defaults that match the method data.
 #
 # --------------------
@@ -28,7 +28,7 @@ const PARAM_PREFIX = 'p_'
 # that should be used when setting the parameter default value.
 # For example int, real, bool do not need anything func(p1=1, p2=2.2, p3=false)
 # but things like Vectors and Colors do since only the parameters to create a
-# new Vecotr or Color are included in the metadata.
+# new Vector or Color are included in the metadata.
 # ------------------------------------------------------
 	# TYPE_NIL = 0 — Variable is of type nil (only applied for null).
 	# TYPE_BOOL = 1 — Variable is of type bool.
@@ -92,7 +92,7 @@ func _init():
 func _is_supported_default(type_flag):
 	return type_flag >= 0 and type_flag < _supported_defaults.size() and [type_flag] != null
 
-# Creates a list of paramters with defaults of null unless a default value is
+# Creates a list of parameters with defaults of null unless a default value is
 # found in the metadata.  If a default is found in the meta then it is used if
 # it is one we know how support.
 #
@@ -122,7 +122,7 @@ func _get_arg_text(method_meta):
 			# Colors need the parens but things like Vector2 and Rect2 don't
 			elif(t == TYPE_COLOR):
 				value = str(_supported_defaults[t], '(', str(method_meta.default_args[i]), ')')
-			# Everything else puts the prefix (if one is there) fomr _supported_defaults
+			# Everything else puts the prefix (if one is there) form _supported_defaults
 			# in front.  The to_lower is used b/c for some reason the defaults for
 			# null, true, false are all "Null", "True", "False".
 			else:
@@ -155,8 +155,8 @@ func _get_arg_text(method_meta):
 
 # Creates a delceration for a function based off of function metadata.  All
 # types whose defaults are supported will have their values.  If a datatype
-# is not supported and the paramter has a default, a warning message will be
-# printed and the decleration will return null.
+# is not supported and the parameter has a default, a warning message will be
+# printed and the declaration will return null.
 func get_decleration_text(meta):
 	var param_text = _get_arg_text(meta)
 	var text = null

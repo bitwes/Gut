@@ -44,7 +44,7 @@ Was exporting a directory that I shouldn't, added it to the .gitattributes
   var MyClass = load('res://my_class.gd')
   var MyClassDouble = double(MyClass)
   ```
-* You can now `double` Inner Classes by passing an Inner Class path like so:  
+* You can now `double` Inner Classes by passing an Inner Class path like so:
   ```
   double('res://my_script.gd', 'Inner1/InnerInInner1/AndSoOn')
   ```
@@ -68,7 +68,7 @@ Was exporting a directory that I shouldn't, added it to the .gitattributes
 * __Issue 80__:  Inner classes are no longer included in the count of scripts that were ran.
 
 ## Features
-__Issue 83__: Added option to include subdirectories.  Thanks to __ChemicalInk__ for doing the initial work to implement the traversals.  The option is off by default so that it doesn't break anything.  This will probably change in later releases.  
+__Issue 83__: Added option to include subdirectories.  Thanks to __ChemicalInk__ for doing the initial work to implement the traversals.  The option is off by default so that it doesn't break anything.  This will probably change in later releases.
   * gutconfig:  include_subdirs
   * command line:  -ginclude_subdirs
   * editor: Include Subdirectories
@@ -86,7 +86,7 @@ The setup/teardown methods got a rename so they are a little easier to understan
 
 __Note about setup/teardown rename:__
   * The new methods could not be actual aliases due to how they are used internally.  They exist side by side with the old names and are called after the old methods.  __DO NOT use both in the same script.__
-  * If you refactor your tests to use the new names, be careful wherever you have a test class that extends another test class and it calls `super`'s setup/teardown methods.  For example, if you rename `super`'s `setup` to `before_each` but all the test classes that inherit from it are still calling `.setup` then you'll have problem on your hands.  
+  * If you refactor your tests to use the new names, be careful wherever you have a test class that extends another test class and it calls `super`'s setup/teardown methods.  For example, if you rename `super`'s `setup` to `before_each` but all the test classes that inherit from it are still calling `.setup` then you'll have problem on your hands.
 
 # 6.5.0
 
@@ -106,7 +106,7 @@ __Note about setup/teardown rename:__
 Some housekeeping.  Removed some commented out and unreachable code.  Renamed a lot of tests in `test_test.gd` since it now uses Inner Test Classes which allows for better names.  They were setting a bad example for PRs.
 
 # 6.4.0
-I've "dog food"ed the doubles, stubs, and spies more in my own game and I think they are pretty stable.  This release contains some tweaks to doubles and stubs and the introduction of spies as well as some other testing goodness.  
+I've "dog food"ed the doubles, stubs, and spies more in my own game and I think they are pretty stable.  This release contains some tweaks to doubles and stubs and the introduction of spies as well as some other testing goodness.
 
 ## Features
 * `inner_class_name` option for editor node, command line, and .gutconfig.json.
@@ -191,7 +191,7 @@ Example:
 # or 5 seconds, whichever comes first.
 yield(yield_to(my_object, 'my_signal', 5), YIELD)
 assert_signal_emitted(my_object, 'my_signal', \
-                     'Maybe it did, maybe it didnt, but we still got here.')
+                     'Maybe it did, maybe it didn\'t, but we still got here.')
 ```
 
 # 6.0.0

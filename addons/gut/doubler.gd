@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------------------
-# Utility class to hold the local and built in methods seperately.  Add all local
+# Utility class to hold the local and built in methods separately.  Add all local
 # methods FIRST, then add built ins.
 # ------------------------------------------------------------------------------
 class ScriptMethods:
@@ -188,11 +188,11 @@ func _double_scene_and_script(target_path, dest_path):
 
 func _get_methods(object_info):
 	var obj = object_info.instantiate()
-	# any mehtod in the script or super script
+	# any method in the script or super script
 	var script_methods = ScriptMethods.new()
 	var methods = obj.get_method_list()
 
-	# first pass is for local mehtods only
+	# first pass is for local methods only
 	for i in range(methods.size()):
 		# 65 is a magic number for methods in script, though documentation
 		# says 64.  This picks up local overloads of base class methods too.
