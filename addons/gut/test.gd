@@ -597,6 +597,11 @@ func get_call_parameters(object, method_name, index=-1):
 # Assert that object is an instance of a_class
 # ------------------------------------------------------------------------------
 func assert_extends(object, a_class, text=''):
+	_lgr.deprecated('assert_extends', 'assert_is')
+	assert_is(object, a_class, text)
+
+# Alias for assert_extends
+func assert_is(object, a_class, text=''):
 	var disp = str('Expected [', object, '] to be type of [', a_class, ']: ', text)
 	var NATIVE_CLASS = 'GDScriptNativeClass'
 	var GDSCRIPT_CLASS = 'GDScript'
@@ -616,9 +621,6 @@ func assert_extends(object, a_class, text=''):
 			else:
 				_fail(disp)
 
-# Alias for assert_extends
-func assert_is(object, a_class, text=''):
-	assert_extends(object, a_class, text)
 
 # ------------------------------------------------------------------------------
 # Assert that text contains given search string.

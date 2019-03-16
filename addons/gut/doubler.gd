@@ -199,13 +199,17 @@ func _get_methods(object_info):
 		if(methods[i].flags == 65):
 			script_methods.add_local_method(methods[i])
 
+
 	if(_strategy == _utils.DOUBLE_STRATEGY.FULL):
-		# second pass is for anything not local
-		for i in range(methods.size()):
-			# 65 is a magic number for methods in script, though documentation
-			# says 64.  This picks up local overloads of base class methods too.
-			if(methods[i].flags != 65):
-				script_methods.add_built_in_method(methods[i])
+		if(_utils.is_version_30()):
+			# second pass is for anything not local
+			for i in range(methods.size()):
+				# 65 is a magic number for methods in script, though documentation
+				# says 64.  This picks up local overloads of base class methods too.
+				if(methods[i].flags != 65):
+					script_methods.add_built_in_method(methods[i])
+		else:
+			_lgr.warn('Full doubling is disabled in 3.1')
 
 	return script_methods
 

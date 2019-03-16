@@ -19,6 +19,13 @@ enum DOUBLE_STRATEGY{
 
 var _file_checker = File.new()
 
+func is_version_30():
+	var info = Engine.get_version_info()
+	return info.major == 3 and info.minor == 0
+
+func is_version_31():
+	var info = Engine.get_version_info()
+	return info.major == 3 and info.minor == 1
 
 # ------------------------------------------------------------------------------
 # Everything should get a logger through this.

@@ -82,7 +82,7 @@ class TestTestCollector:
 		for i in range(gr.tc.scripts.size()):
 			assert_ne(gr.tc.scripts[i].inner_class_name, 'TestDoesNotExtendTest')
 
-class TestExportImport:
+class __TestExportImport:
 	extends "res://test/gut_test.gd"
 
 	var SCRIPTS_ROOT = 'res://test/resources/parsing_and_loading_samples/'
@@ -128,7 +128,8 @@ class TestExportImport:
 		tc_export.export_tests(EXPORT_FILE)
 
 		var tc_import = TestCollector.new()
-		tc_import.import_tests(EXPORT_FILE)
+		var worked = tc_import.import_tests(EXPORT_FILE)
+
 		assert_eq(tc_import.scripts[0].tests.size(), 2, 'has correct size')
 		var names = _utils.extract_property_from_array(tc_import.scripts[0].tests, 'name')
 		assert_has(names, 'test_one')

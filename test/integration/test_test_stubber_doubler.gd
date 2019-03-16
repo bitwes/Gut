@@ -106,17 +106,17 @@ class TestTestsSmartDoubleMethod:
 		assert_eq(inst.__gut_metadata_.path, INNER_CLASSES_PATH, 'check path')
 		assert_eq(inst.__gut_metadata_.subpath, 'InnerA', 'check subpath')
 
-	func test_strategy_used_for_scripts():
+	func test_full_strategy_used_for_scripts():
 		var inst = _test.double(DOUBLE_ME_PATH, DOUBLE_STRATEGY.FULL).new()
 		inst.get_instance_id()
 		assert_called(inst, 'get_instance_id')
 
-	func test_strategy_used_with_scenes():
+	func test_full_strategy_used_with_scenes():
 		var inst = _test.double(DOUBLE_ME_SCENE_PATH, DOUBLE_STRATEGY.FULL).instance()
 		inst.get_instance_id()
 		assert_called(inst, 'get_instance_id')
 
-	func test_strategy_used_with_inners():
+	func test_full_strategy_used_with_inners():
 		var inst = _test.double(INNER_CLASSES_PATH, 'InnerA', DOUBLE_STRATEGY.FULL).new()
 		inst.get_instance_id()
 		assert_called(inst, 'get_instance_id')

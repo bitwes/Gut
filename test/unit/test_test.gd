@@ -891,7 +891,8 @@ class TestExtendAsserts:
 	func test_fails_when_class_names_match_but_inheritance_does_not__with_class():
 		var a = HasSubclass1.SubClass.new()
 		gr.test.assert_is(a, HasSubclass2.SubClass)
-		assert_fail(gr.test)
+		# created bug https://github.com/godotengine/godot/issues/27111 for 3.1
+		assert_fail(gr.test, 1, 'Fails in 3.1, bug has been created.')
 
 # TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestStringContains:

@@ -1,10 +1,5 @@
 extends Node2D
 
-var _warnings = []
-var _errors = []
-var _infos = []
-var _debugs = []
-var _deprecated = []
 var _gut = null
 
 var types = {

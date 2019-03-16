@@ -25,6 +25,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * Deprecated the following methods:
   * `end_test` and the old `gut.end_yielded_test`.  These no longer need to be called.
   * `assert_get_set_methods` was replaced with `assert_accessors` awhile ago.  In this release I added deprecation messages for this method.  It still works, but wanted to start getting the message out.
+  * `assert_extends` has been replaced with `assert_is` to match the 3.0 names.
 * Stop button was removed.  It didn't really work that well anyhow.  I could be convinced to put it back.
 
 # 6.6.3

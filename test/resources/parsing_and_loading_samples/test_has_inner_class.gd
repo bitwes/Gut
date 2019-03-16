@@ -39,6 +39,6 @@ class TestClass1:
 
 class NotTestClass:
 	func test_something():
-		assert_true(true)
+		pass
 	func not_a_test():
 		pass
