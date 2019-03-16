@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * For the command line, note that the `log` option in the `.gutconfig.json` file has changed to `log_level` for consistency.
 
 ## Features
+* 3.1 Compatible (with a few very minor issues, [check them out here](https://github.com/bitwes/Gut/wiki/Godot-3.1-Issues).)
 * __Issue 73__ <u>You can now export your tests</u> and run them in your exported game!  This means you can run your tests on all the platforms that Godot supports through the executable...no editor, no nothing!  Check out the Export Tests wiki page for more information.
 * __Issue 102__ Added `get_call_parameters` which allows you to get the parameters sent to a call to a doubled method.  It returns the most recent call by default but you can specify an optional index as well.
 * __Issue 103__ Added `replace_node` which allows you to replace a node in a scene with another node by specifying the node path.  This makes testing scenes that use the `$` syntax to get a reference to a child node easier to test by giving you a quick way to inject a double of any child node.  The node that was replaced is freed with `queue_free`
