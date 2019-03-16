@@ -265,28 +265,6 @@ func apply_options(opts):
 
 	_tester.set_unit_test_name(opts.unit_test_name)
 
-
-# Loads any scripts that have been configured to be loaded through the project
-# settings->autoload.
-func load_auto_load_scripts():
-	return
-	# ##########################################################################
-	# I don't believe this is needed anymore.  I think the loading of globals
-	# has changed.  The test_command_line_auto_load.gd passes without this.
-	# I'm leaving the code here until I'm 100% sure it is not needed.  So,
-	# next time you are in here, maybe delete this if everything seems to be
-	# working.  Also kill test_command_line_auto_load.gd when you do.
-	# ##########################################################################
-	# var f = ConfigFile.new()
-	# f.load('res://project.godot')
-	#
-	# for key in f.get_section_keys('autoload'):
-	# 	# There's an * in my autoload path, at the start, idk why.  It breaks
-	# 	# things so I'm removing all * from the value.
-	# 	var obj = load(f.get_value('autoload', key).replace('*', '')).new()
-	# 	obj.set_name(key)
-	# 	get_root().add_child(obj)
-
 func _print_gutconfigs(values):
 	var header = """Here is a sample of a full .gutconfig.json file.
 You do not need to specify all values in your own file.  The values supplied in
@@ -342,7 +320,6 @@ func _init():
 			_print_gutconfigs(opt_resolver.get_resolved_values())
 			quit()
 		else:
-			load_auto_load_scripts()
 			apply_options(opt_resolver.get_resolved_values())
 			_tester.test_scripts(!_run_single)
 
