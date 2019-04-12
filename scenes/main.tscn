@@ -5,108 +5,39 @@
 [ext_resource path="res://addons/gut/icon.png" type="Texture" id=3]
 
 [node name="main" type="Node2D"]
-
 script = ExtResource( 1 )
 __meta__ = {
 "__editor_plugin_screen__": "Script"
 }
 
-[node name="RunGutTestsButton" type="Button" parent="." index="0"]
-
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
+[node name="RunGutTestsButton" type="Button" parent="."]
 margin_left = 839.0
 margin_top = 4.0
 margin_right = 1020.0
 margin_bottom = 79.0
-rect_pivot_offset = Vector2( 0, 0 )
-rect_clip_content = false
-focus_mode = 2
-mouse_filter = 0
-mouse_default_cursor_shape = 0
-size_flags_horizontal = 1
-size_flags_vertical = 1
-toggle_mode = false
-enabled_focus_mode = 2
-shortcut = null
-group = null
 text = "Run Gut Unit Tests"
-flat = false
-align = 1
 
-[node name="ExportTests" type="Button" parent="." index="1"]
-
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
+[node name="ExportTests" type="Button" parent="."]
 margin_left = 853.0
 margin_top = 102.0
 margin_right = 1021.0
 margin_bottom = 170.0
-rect_pivot_offset = Vector2( 0, 0 )
-rect_clip_content = false
-focus_mode = 2
-mouse_filter = 0
-mouse_default_cursor_shape = 0
-size_flags_horizontal = 1
-size_flags_vertical = 1
-toggle_mode = false
-enabled_focus_mode = 2
-shortcut = null
-group = null
 text = "Export Tests"
-flat = false
-align = 1
 
-[node name="Gut" type="Control" parent="." index="2"]
-
+[node name="Gut" type="Control" parent="."]
 self_modulate = Color( 1, 1, 1, 0 )
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
 margin_right = 810.0
 margin_bottom = 372.0
 rect_min_size = Vector2( 740, 250 )
-rect_pivot_offset = Vector2( 0, 0 )
-rect_clip_content = false
-mouse_filter = 0
-mouse_default_cursor_shape = 0
-size_flags_horizontal = 1
-size_flags_vertical = 1
 script = ExtResource( 2 )
 __meta__ = {
 "_editor_icon": ExtResource( 3 )
 }
-_select_script = ""
-_tests_like = ""
-_inner_class_name = ""
-_run_on_load = false
 _should_maximize = true
-_should_print_to_console = true
-_log_level = 1
-_yield_between_tests = true
 _disable_strict_datatype_checks = true
-_test_prefix = "test_"
-_file_prefix = "test_"
-_file_extension = ".gd"
-_inner_class_prefix = "Test"
-_temp_directory = "user://gut_temp_directory"
-_export_path = ""
-_include_subdirectories = false
 _directory1 = "res://test/unit"
 _directory2 = "res://test/integration"
-_directory3 = ""
-_directory4 = ""
-_directory5 = ""
-_directory6 = ""
 _double_strategy = 1
 
 [connection signal="pressed" from="RunGutTestsButton" to="." method="_on_RunGutTestsButton_pressed"]
-
 [connection signal="pressed" from="ExportTests" to="." method="_on_ExportTests_pressed"]
-
-

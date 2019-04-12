@@ -1,6 +1,10 @@
 # Release notes
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
+# 6.7.1
+* Housekeeping, typos and some unused variables.
+* __Issue 108__ Maximize doesn't move back to 0,0.
+
 
 # 6.7.0
 ## Upgrade Instructions

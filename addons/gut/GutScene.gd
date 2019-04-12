@@ -341,3 +341,4 @@ func maximize():
 	if(is_inside_tree()):
 		var vp_size_offset = get_viewport().size
 		rect_size = vp_size_offset / get_scale()
+		set_position(Vector2(0, 0))
