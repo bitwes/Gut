@@ -1,5 +1,11 @@
 var _value = 0
 
+
+signal signal_signal
+
+func _init():
+	add_user_signal("user_signal")
+
 func get_value():
 	return _value
 

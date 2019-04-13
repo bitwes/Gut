@@ -143,6 +143,13 @@ class TestTheBasics:
 		var d = Doubler.new(_utils.DOUBLE_STRATEGY.FULL)
 		assert_eq(d.get_strategy(), _utils.DOUBLE_STRATEGY.FULL)
 
+	func test_doubles_retain_signals():
+		var d = gr.doubler.double(DOUBLE_ME_PATH).new()
+		assert_has_signal(d, 'signal_signal')
+		assert_has_signal(d, 'user_signal')
+
+
+
 class TestBuiltInOverloading:
 	extends BaseTest
 
@@ -293,3 +300,8 @@ class TestDoubleInnerClasses:
 		# make sure it has something from Object that isn't implemented
 		assert_string_contains(text, 'func disconnect(p_signal')
 		assert_eq(doubler.get_strategy(), DOUBLE_STRATEGY.PARTIAL, 'strategy should have been reset')
+
+	func test_doubled_inners_retain_signals():
+		var inst = doubler.double_inner(INNER_CLASSES_PATH, 'InnerWithSignals').new()
+		assert_has_signal(inst, 'signal_signal')
+		assert_has_signal(inst, 'user_signal')

@@ -28,3 +28,9 @@ func get_value():
 
 func set_value(val):
 	_value = val
+
+class InnerWithSignals:
+	signal signal_signal
+
+	func _init():
+		add_user_signal('user_signal')
