@@ -361,7 +361,6 @@ func clear_output_directory():
 		# out res:// which is SUPER BAD.
 		if(result == OK):
 			d.list_dir_begin(true)
-			var files = []
 			var f = d.get_next()
 			while(f != ''):
 				d.remove(f)
