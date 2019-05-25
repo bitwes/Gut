@@ -12,6 +12,7 @@ const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
 const DOUBLE_ME_SCENE_PATH = 'res://test/resources/doubler_test_objects/double_me_scene.tscn'
 const DOUBLE_EXTENDS_NODE2D = 'res://test/resources/doubler_test_objects/double_extends_node2d.gd'
 const TEMP_FILES = 'user://test_doubler_temp_file'
+const TO_STUB_PATH = 'res://test/resources/stub_test_objects/to_stub.gd'
 
 var gr = {
 	doubler = null,
@@ -80,3 +81,11 @@ func test_can_stub_doubled_scenes():
 	gr.stubber.set_return(DOUBLE_ME_SCENE_PATH, 'return_hello', 'world')
 	var inst = gr.doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
 	assert_eq(inst.return_hello(), 'world')
+
+func test_when_stubbed_to_call_super_then_super_is_called():
+	gr.doubler.set_stubber(gr.stubber)
+	var doubled = gr.doubler.double(DOUBLE_ME_PATH).new()
+	var params = _utils.StubParams.new(doubled, 'set_value').to_call_super()
+	gr.stubber.add_stub(params)
+	doubled.set_value(99)
+	assert_eq(doubled._value, 99)
