@@ -244,7 +244,11 @@ func _get_func_text(method_hash):
 	ftxt += _get_spy_text(method_hash)
 
 	if(_stubber and method_hash.name != '_init'):
-		ftxt += "\treturn __gut_metadata_.stubber.get_return(self, '" + method_hash.name + "', " + called_with + ")\n"
+		var call_method = _method_maker.get_super_call_text(method_hash)
+		ftxt += "\tif(__gut_metadata_.stubber.should_call_super(self, '" + method_hash.name + "', " + called_with + ")):\n"
+		ftxt += "\t\treturn " + call_method + "\n"
+		ftxt += "\telse:\n"
+		ftxt += "\t\treturn __gut_metadata_.stubber.get_return(self, '" + method_hash.name + "', " + called_with + ")\n"
 	else:
 		ftxt += "\tpass\n"
 
