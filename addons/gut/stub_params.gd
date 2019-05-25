@@ -3,6 +3,8 @@ var stub_target = null
 var target_subpath = null
 var parameters = null
 var stub_method = null
+var call_super = false
+
 const NOT_SET = '|_1_this_is_not_set_1_|'
 
 func _init(target=null, method=null, subpath=null):
@@ -12,6 +14,10 @@ func _init(target=null, method=null, subpath=null):
 
 func to_return(val):
 	return_val = val
+	return self
+
+func to_call_super():
+	call_super = true
 	return self
 
 func when_passed(p1=NOT_SET,p2=NOT_SET,p3=NOT_SET,p4=NOT_SET,p5=NOT_SET,p6=NOT_SET,p7=NOT_SET,p8=NOT_SET,p9=NOT_SET,p10=NOT_SET):
@@ -25,4 +31,4 @@ func when_passed(p1=NOT_SET,p2=NOT_SET,p3=NOT_SET,p4=NOT_SET,p5=NOT_SET,p6=NOT_S
 	return self
 
 func to_s():
-	return str(stub_target, '(', target_subpath, ').', stub_method, ' with (', parameters, ') = ', return_val) 
+	return str(stub_target, '(', target_subpath, ').', stub_method, ' with (', parameters, ') = ', return_val)

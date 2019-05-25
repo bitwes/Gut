@@ -8,4 +8,7 @@ var __gut_metadata_ = {
 	spy=null
 }
 func get_value():
-    return value
+	return value
+
+func set_value(val):
+	value = val

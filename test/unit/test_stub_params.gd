@@ -27,7 +27,7 @@ func test_init_sets_stub_target():
 func test_init_sets_subpath():
 	var s = StubParamsClass.new('thing', 'method', 'inner1/inner2')
 	assert_eq(s.target_subpath, 'inner1/inner2')
-	
+
 func test_init_sets_method():
 	var s = StubParamsClass.new('thing', 'method')
 	assert_eq(s.stub_method, 'method')
@@ -47,3 +47,11 @@ func test_parameters_turn_values_into_array():
 func test_can_take_up_to_10_parameters():
 	gr.stub_params.when_passed(1,2,3,4,5,6,7,8,9,10)
 	assert_eq(gr.stub_params.parameters.size(), 10)
+
+func test_can_set_to_call_super():
+	gr.stub_params.to_call_super()
+	assert_eq(gr.stub_params.call_super, true)
+
+func test_to_call_super_returns_self():
+	var val = gr.stub_params.to_call_super()
+	assert_eq(val, gr.stub_params)
