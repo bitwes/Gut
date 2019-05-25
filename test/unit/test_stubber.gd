@@ -174,3 +174,13 @@ func test_should_call_super_returns_true_when_stubbed_to_do_so():
 	var sp = StubParamsClass.new('thing', 'method').to_call_super()
 	gr.stubber.add_stub(sp)
 	assert_true(gr.stubber.should_call_super('thing', 'method'))
+
+func test_should_call_super_overriden_by_setting_return():
+	var sp = StubParamsClass.new('thing', 'method').to_call_super()
+	sp.to_return(null)
+	gr.stubber.add_stub(sp)
+	assert_false(gr.stubber.should_call_super('thing', 'method'))
+
+func test_to_do_nothing_returns_self():
+	var sp = StubParamsClass.new('thing', 'method')
+	assert_eq(sp.to_do_nothing(), sp)

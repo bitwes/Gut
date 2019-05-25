@@ -14,7 +14,11 @@ func _init(target=null, method=null, subpath=null):
 
 func to_return(val):
 	return_val = val
+	call_super = false
 	return self
+
+func to_do_nothing():
+	return to_return(null)
 
 func to_call_super():
 	call_super = true
