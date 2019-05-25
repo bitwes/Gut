@@ -22,8 +22,12 @@ class TestTheBasics:
 		doubler = null
 	}
 
+	var stubber = _utils.Stubber.new()
 	func before_each():
+		stubber.clear()
 		gr.doubler = Doubler.new()
+		gr.doubler.set_stubber(stubber)
+		#gr.doubler.set_stubber(_utils.Stubber.new())
 		gr.doubler.set_use_unique_names(false)
 		gr.doubler.set_output_dir(TEMP_FILES)
 
@@ -34,7 +38,9 @@ class TestTheBasics:
 		assert_accessors(Doubler.new(), 'output_dir', null, 'user://somewhere')
 
 	func test_get_set_stubber():
-		assert_accessors(Doubler.new(), 'stubber', null, GDScript.new())
+		var dblr = Doubler.new()
+		var default_stubber = dblr.get_stubber()
+		assert_accessors(dblr, 'stubber', default_stubber, GDScript.new())
 
 	func test_can_get_set_spy():
 		assert_accessors(Doubler.new(), 'spy', null, GDScript.new())
@@ -159,8 +165,12 @@ class TestBuiltInOverloading:
 		pass
 
 	var doubler = null
+	var stubber = _utils.Stubber.new()
+
 	func before_each():
+		stubber.clear()
 		doubler = Doubler.new(_utils.DOUBLE_STRATEGY.FULL)
+		doubler.set_stubber(stubber)
 		doubler.set_use_unique_names(false)
 		doubler.set_output_dir(TEMP_FILES)
 
@@ -170,7 +180,7 @@ class TestBuiltInOverloading:
 		_dbl_win_dia_text = _get_temp_file_as_text('double_extends_window_dialog.gd')
 
 	func after_all():
-		pass#doubler.clear_output_directory()
+		doubler.clear_output_directory()
 
 	func test_built_in_overloading_ony_happens_on_full_strategy():
 		doubler.set_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
@@ -228,6 +238,14 @@ class TestBuiltInOverloading:
 		assert_has_signal(inst, 'new_one')
 		assert_has_signal(inst, 'new_two')
 
+	func test_doubled_builtins_are_added_as_stubs_to_call_super():
+		#doubler.set_stubber(_utils.Stubber.new())
+		var inst = doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG).new()
+		assert_true(doubler.get_stubber().should_call_super(inst, 'add_user_signal'))
+
+
+
+
 # Since defaults are only available for built-in methods these tests verify
 # specific method parameters that were found to cause a problem.
 class TestDefaultParameters:
@@ -237,6 +255,7 @@ class TestDefaultParameters:
 
 	func before_each():
 		doubler = Doubler.new(_utils.DOUBLE_STRATEGY.FULL)
+		doubler.set_stubber(_utils.Stubber.new())
 		doubler.set_use_unique_names(false)
 		doubler.set_output_dir(TEMP_FILES)
 
@@ -252,6 +271,12 @@ class TestDefaultParameters:
 		var sig = 'func draw_char(p_font=null, p_position=null, p_char=null, p_next=null, p_modulate=Color(1,1,1,1)):'
 		assert_string_contains(text, sig)
 
+	func test_parameters_are_doubled_for_draw_multimesh():
+		var inst = doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG).new()
+		var text = _get_temp_file_as_text('double_extends_window_dialog.gd')
+		var sig = 'func draw_multimesh(p_multimesh=null, p_texture=null, p_normal_map=null):'
+		assert_string_contains(text, sig)
+
 class TestDoubleInnerClasses:
 	extends BaseTest
 
@@ -261,6 +286,7 @@ class TestDoubleInnerClasses:
 
 	func before_each():
 		doubler = Doubler.new()
+		doubler.set_stubber(_utils.Stubber.new())
 		doubler.set_use_unique_names(false)
 		doubler.set_output_dir(TEMP_FILES)
 

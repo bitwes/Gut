@@ -23,6 +23,10 @@ config/icon="res://icon.png"
 
 global="*res://scripts/global.gd"
 
+[debug]
+
+gdscript/warnings/enable=false
+
 [display]
 
 window/stretch/mode="viewport"

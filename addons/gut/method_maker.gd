@@ -122,6 +122,12 @@ func _get_arg_text(method_meta):
 			# Colors need the parens but things like Vector2 and Rect2 don't
 			elif(t == TYPE_COLOR):
 				value = str(_supported_defaults[t], '(', str(method_meta.default_args[i]), ')')
+			elif(t == TYPE_OBJECT):
+				if(str(method_meta.default_args[i]) == "[Object:null]"):
+					value = str(_supported_defaults[t], 'null')
+				else:
+					value = str(_supported_defaults[t], str(method_meta.default_args[i]).to_lower())
+
 			# Everything else puts the prefix (if one is there) form _supported_defaults
 			# in front.  The to_lower is used b/c for some reason the defaults for
 			# null, true, false are all "Null", "True", "False".

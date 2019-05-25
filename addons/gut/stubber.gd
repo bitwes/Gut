@@ -69,7 +69,10 @@ func add_stub(stub_params):
 	var key = _add_obj_method(stub_params.stub_target, stub_params.stub_method, stub_params.target_subpath)
 	returns[key][stub_params.stub_method].append(stub_params)
 
-
+# Searches returns for an entry that matches the instance or the class that
+# passed in obj is.
+#
+# obj can be an instance, class, or a path.
 func _find_stub(obj, method, parameters=null):
 	var key = _make_key_from_variant(obj)
 	var to_return = null
@@ -120,16 +123,16 @@ func _find_stub(obj, method, parameters=null):
 # method:  the method called
 # parameters:  optional array of parameter vales to find a return value for.
 func get_return(obj, method, parameters=null):
-	var params = _find_stub(obj, method, parameters)
-	if(params != null):
-		return params.return_val
+	var stub_info = _find_stub(obj, method, parameters)
+	if(stub_info != null):
+		return stub_info.return_val
 	else:
 		return null
 
 func should_call_super(obj, method, parameters=null):
-	var params = _find_stub(obj, method, parameters)
-	if(params != null):
-		return params.call_super
+	var stub_info = _find_stub(obj, method, parameters)
+	if(stub_info != null):
+		return stub_info.call_super
 	else:
 		return false
 

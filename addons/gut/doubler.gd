@@ -107,12 +107,12 @@ class ObjectInfo:
 # START Doubler
 # ------------------------------------------------------------------------------
 var _output_dir = null
-var _stubber = null
 var _double_count = 0 # used in making files names unique
 var _use_unique_names = true
 var _spy = null
 
 var _utils = load('res://addons/gut/utils.gd').new()
+var _stubber = _utils.Stubber.new()
 var _lgr = _utils.get_logger()
 var _method_maker = _utils.MethodMaker.new()
 var _strategy = null
@@ -153,10 +153,15 @@ func _write_file(obj_info, dest_path, override_path=null):
 
 	f.store_string(str(obj_info.get_extends_text(), "\n"))
 	f.store_string(metadata)
+
 	for i in range(script_methods.local_methods.size()):
 		f.store_string(_get_func_text(script_methods.local_methods[i]))
+
 	for i in range(script_methods.built_ins.size()):
-		f.store_string(_get_super_func_text(script_methods.built_ins[i]))
+		var params = _utils.StubParams.new(obj_info.get_loaded_class(), script_methods.built_ins[i].name, obj_info.get_subpath())
+		params.to_call_super()
+		_stubber.add_stub(params)
+		f.store_string(_get_func_text(script_methods.built_ins[i]))
 	f.close()
 
 func _double_scene_and_script(target_path, dest_path):
@@ -201,15 +206,12 @@ func _get_methods(object_info):
 
 
 	if(_strategy == _utils.DOUBLE_STRATEGY.FULL):
-		if(_utils.is_version_30()):
-			# second pass is for anything not local
-			for i in range(methods.size()):
-				# 65 is a magic number for methods in script, though documentation
-				# says 64.  This picks up local overloads of base class methods too.
-				if(methods[i].flags != 65):
-					script_methods.add_built_in_method(methods[i])
-		else:
-			_lgr.warn('Full doubling is disabled in 3.1')
+		# second pass is for anything not local
+		for i in range(methods.size()):
+			# 65 is a magic number for methods in script, though documentation
+			# says 64.  This picks up local overloads of base class methods too.
+			if(methods[i].flags != 65):
+				script_methods.add_built_in_method(methods[i])
 
 	return script_methods
 
