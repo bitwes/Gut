@@ -126,8 +126,9 @@ class CmdLineParser:
 			to_return.append(_opts[i].split('=')[0])
 
 		var script_option = to_return.find('-s')
-		to_return.remove(script_option + 1)
-		to_return.remove(script_option)
+		if script_option != -1:
+			to_return.remove(script_option + 1)
+			to_return.remove(script_option)
 
 		while(_used_options.size() > 0):
 			var index = to_return.find(_used_options[0].split("=")[0])
