@@ -4,6 +4,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 # 6.7.1
 * Housekeeping, typos and some unused variables.
 * __Issue 108__ Maximize doesn't move back to 0,0.
+* __Issue 98__ Added Stubbing method `to_call_super` so that you can force a doubled object to call its super method instead of being stubbed out.
+* Added Stubbing method `to_do_nothing`.  This allows you to be a little more deliberate in your stubbing and is more readable than `to_return(null)` which is bascially all it does.  It also suppresses unstubbed method messages.
 
 
 # 6.7.0
