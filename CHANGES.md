@@ -7,7 +7,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * __Issue 98__ Added Stubbing method `to_call_super` so that you can force a doubled object to call its super method instead of being stubbed out.
 * Added Stubbing method `to_do_nothing`.  This allows you to be a little more deliberate in your stubbing and is more readable than `to_return(null)` which is bascially all it does.  It also suppresses unstubbed method messages.
 * __Issue 115__ Partial doubles can now be created with the `partial_double` method.  This will give you an object that has all of its methods stubbed `to_call_super`.  So it will act the same as a normal object, but you can spy and stub methods on it as well.
-
+* Experimental FULL doubling is now working in Godot 3.1.
+* Experimental FULL doubling now stubs all supported built-ins `to_call_super` under the covers.  This means you can stub methods you haven't overloaded in your class (before you could only spy on them).
 
 # 6.7.0
 ## Upgrade Instructions
