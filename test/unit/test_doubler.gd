@@ -331,3 +331,47 @@ class TestDoubleInnerClasses:
 		var inst = doubler.double_inner(INNER_CLASSES_PATH, 'InnerWithSignals').new()
 		assert_has_signal(inst, 'signal_signal')
 		assert_has_signal(inst, 'user_signal')
+
+class TestPartialDoubles:
+	extends BaseTest
+
+	const INNER_CLASSES_PATH = 'res://test/resources/doubler_test_objects/inner_classes.gd'
+
+	var doubler = null
+	var stubber = _utils.Stubber.new()
+
+	func before_each():
+		stubber.clear()
+		doubler = Doubler.new()
+		doubler.set_output_dir(TEMP_FILES)
+		doubler.set_stubber(stubber)
+
+	func after_each():
+		doubler.clear_output_directory()
+
+	func test_can_make_partial_of_script():
+		var inst = doubler.partial_double(DOUBLE_ME_PATH).new()
+		inst.set_value(10)
+		assert_eq(inst.get_value(), 10)
+
+	func test_double_script_does_not_make_partials():
+		var inst = doubler.double(DOUBLE_ME_PATH).new()
+		assert_eq(inst.get_value(), null)
+
+	func test_can_make_partial_of_inner_script():
+		var inst = doubler.partial_double_inner(INNER_CLASSES_PATH, 'InnerA').new()
+		assert_eq(inst.get_a(), 'a')
+
+	func test_double_inner_does_not_call_supers():
+		var inst = doubler.double_inner(INNER_CLASSES_PATH, 'InnerA').new()
+		assert_eq(inst.get_a(), null)
+
+	func test_can_make_partial_of_scene():
+		var inst = doubler.partial_double_scene(DOUBLE_ME_SCENE_PATH).instance()
+		assert_eq(inst.return_hello(), 'hello')
+
+	func test_double_scene_does_not_call_supers():
+		print(doubler.get_stubber().get_instance_id())
+		var inst = doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
+		assert_eq(inst.return_hello(), null)
+		pause_before_teardown()

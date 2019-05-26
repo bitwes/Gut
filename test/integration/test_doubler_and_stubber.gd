@@ -25,10 +25,6 @@ func before_each():
 	gr.stubber = Stubber.new()
 	gr.doubler.clear_output_directory()
 
-func test_doubled_has_null_stubber_by_default():
-	var d = gr.doubler.double(DOUBLE_ME_PATH).new()
-	assert_eq(d.__gut_metadata_.stubber, null)
-
 func test_doubled_have_ref_to_stubber():
 	gr.doubler.set_stubber(gr.stubber)
 	var d = gr.doubler.double(DOUBLE_ME_PATH).new()

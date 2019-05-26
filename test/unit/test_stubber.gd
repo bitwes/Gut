@@ -56,8 +56,8 @@ func test_getting_return_for_thing_that_does_not_exist_returns_null():
 	var value = gr.stubber.get_return('nothing', 'something')
 	assert_eq(value, null)
 
-func test_getting_return_for_thing_that_does_not_exist_generates_info():
-	var value = gr.stubber.get_return('nothing', 'something')
+func test_can_call_super_for_dne_generates_info():
+	var value = gr.stubber.should_call_super('nothing', 'something')
 	assert_eq(gr.stubber.get_logger().get_infos().size(), 1)
 
 func test_can_get_return_value_for_class_using_path():

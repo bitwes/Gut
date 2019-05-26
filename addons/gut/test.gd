@@ -106,6 +106,27 @@ var _signal_watcher = load('res://addons/gut/signal_watcher.gd').new()
 # Convenience copy of _utils.DOUBLE_STRATEGY
 var DOUBLE_STRATEGY = null
 
+class DoubleInfo:
+	var path
+	var subpath
+	var strategy
+	var make_partial
+	var extension
+
+	func _init(thing, p2=null, p3=null):
+		strategy = p2
+
+		if(typeof(p2) == TYPE_STRING):
+			strategy = p3
+			subpath = p2
+
+		if(typeof(thing) == TYPE_OBJECT):
+			path = thing.resource_path
+		else:
+			path = thing
+
+		extension = path.get_extension()
+
 var _utils = load('res://addons/gut/utils.gd').new()
 var _lgr = _utils.get_logger()
 
@@ -849,32 +870,47 @@ func get_summary_text():
 #
 #
 # ------------------------------------------------------------------------------
-func double(thing, p2=null, p3=null):
-	var strategy = p2
-	var subpath = null
 
-	if(typeof(p2) == TYPE_STRING):
-		strategy = p3
-		subpath = p2
-
-	var path = null
-	if(typeof(thing) == TYPE_OBJECT):
-		path = thing.resource_path
-	else:
-		path = thing
-
-	var extension = path.get_extension()
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func _smart_double(double_info):
+	var override_strat = _utils.nvl(double_info.strategy, gut.get_doubler().get_strategy())
 	var to_return = null
 
-	if(extension == 'tscn'):
-		to_return =  double_scene(path, strategy)
-	elif(extension == 'gd'):
-		if(subpath == null):
-			to_return = double_script(path, strategy)
+	if(double_info.extension == 'tscn'):
+		if(double_info.make_partial):
+			to_return =  gut.get_doubler().partial_double_scene(double_info.path, override_strat)
 		else:
-			to_return = double_inner(path, subpath, strategy)
-
+			to_return =  gut.get_doubler().double_scene(double_info.path, override_strat)
+	elif(double_info.extension == 'gd'):
+		if(double_info.subpath == null):
+			if(double_info.make_partial):
+				to_return = gut.get_doubler().partial_double(double_info.path, override_strat)
+			else:
+				to_return = gut.get_doubler().double(double_info.path, override_strat)
+		else:
+			if(double_info.make_partial):
+				to_return = gut.get_doubler().partial_double_inner(double_info.path, double_info.subpath, override_strat)
+			else:
+				to_return = gut.get_doubler().double_inner(double_info.path, double_info.subpath, override_strat)
 	return to_return
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func double(thing, p2=null, p3=null):
+	var double_info = DoubleInfo.new(thing, p2, p3)
+	double_info.make_partial = false
+
+	return _smart_double(double_info)
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func partial_double(thing, p2=null, p3=null):
+	var double_info = DoubleInfo.new(thing, p2, p3)
+	double_info.make_partial = true
+
+	return _smart_double(double_info)
+
 
 # ------------------------------------------------------------------------------
 # Specifically double a scene
