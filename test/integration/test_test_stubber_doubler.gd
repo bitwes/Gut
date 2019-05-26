@@ -93,6 +93,9 @@ class TestTestsSmartDoubleMethod:
 		_test = Test.new()
 		_test.gut = gut
 
+	func after_each():
+		_gut.get_stubber().clear()
+
 	func test_when_passed_a_script_it_doubles_script():
 		var inst = _test.double(DOUBLE_ME_PATH).new()
 		assert_eq(inst.__gut_metadata_.path, DOUBLE_ME_PATH)
@@ -133,3 +136,43 @@ class TestTestsSmartDoubleMethod:
 		var inst = _test.double(InnerClasses, 'InnerA').new()
 		assert_eq(inst.__gut_metadata_.path, INNER_CLASSES_PATH, 'check path')
 		assert_eq(inst.__gut_metadata_.subpath, 'InnerA', 'check subpath')
+
+class TestPartialDoubleMethod:
+	extends "res://test/gut_test.gd"
+
+	var _gut = null
+	var _test = null
+
+	func before_all():
+		_gut = Gut.new()
+		_test = Test.new()
+		_test.gut = gut
+
+	func after_each():
+		_gut.get_stubber().clear()
+
+	func test_parital_double_script():
+		var inst = _test.partial_double(DOUBLE_ME_PATH).new()
+		inst.set_value(10)
+		assert_eq(inst.get_value(), 10)
+
+	func test_partial_double_scene():
+		var inst = _test.partial_double(DOUBLE_ME_SCENE_PATH).instance()
+		assert_eq(inst.return_hello(), 'hello')
+
+	func test_partial_double_inner():
+		var inst = _test.partial_double(INNER_CLASSES_PATH, 'InnerA').new()
+		assert_eq(inst.get_a(), 'a')
+
+	func test_double_script_not_a_partial():
+		var inst = _test.double(DOUBLE_ME_PATH).new()
+		inst.set_value(10)
+		assert_eq(inst.get_value(), null)
+
+	func test_double_scene_not_a_partial():
+		var inst = _test.double(DOUBLE_ME_SCENE_PATH).instance()
+		assert_eq(inst.return_hello(), null)
+
+	func test_double_inner_not_a_partial():
+		var inst = _test.double(INNER_CLASSES_PATH, 'InnerA').new()
+		assert_eq(inst.get_a(), null)
