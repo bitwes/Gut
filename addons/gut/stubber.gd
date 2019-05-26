@@ -31,7 +31,7 @@ func _make_key_from_variant(obj, subpath=null):
 		TYPE_STRING:
 			# this has to match what is done in _make_key_from_metadata
 			to_return = obj
-			if(subpath != null):
+			if(subpath != null and subpath != ''):
 				to_return += str('-', subpath)
 		TYPE_OBJECT:
 			if(_is_instance(obj)):
@@ -102,8 +102,6 @@ func _find_stub(obj, method, parameters=null):
 			to_return = returns[key][method][null_idx]
 		else:
 			_lgr.warn(str('Call to [', method, '] was not stubbed for the supplied parameters ', parameters, '.  Null was returned.'))
-	else:
-		_lgr.info('Unstubbed call to ' + method)
 
 	return to_return
 
@@ -124,6 +122,7 @@ func _find_stub(obj, method, parameters=null):
 # parameters:  optional array of parameter vales to find a return value for.
 func get_return(obj, method, parameters=null):
 	var stub_info = _find_stub(obj, method, parameters)
+
 	if(stub_info != null):
 		return stub_info.return_val
 	else:
@@ -134,6 +133,10 @@ func should_call_super(obj, method, parameters=null):
 	if(stub_info != null):
 		return stub_info.call_super
 	else:
+		# this log message is here because of how the generated doubled scripts
+		# are structured.  With this log msg here, you will only see one
+		# "unstubbed" info instead of multiple.
+		_lgr.info('Unstubbed call to ' + method + '::' + str(obj))
 		return false
 
 

@@ -65,6 +65,9 @@ class ObjectInfo:
 	var _path = null
 	var _subpaths = []
 	var _utils = load('res://addons/gut/utils.gd').new()
+	var _method_strategy = null
+	var make_partial_double = false
+	var scene_path = null
 
 	func _init(path, subpath=null):
 		_path = path
@@ -102,6 +105,11 @@ class ObjectInfo:
 			extend += str('.', get_subpath().replace('/', '.'))
 		return extend
 
+	func get_method_strategy():
+		return _method_strategy
+
+	func set_method_strategy(method_strategy):
+		_method_strategy = method_strategy
 
 # ------------------------------------------------------------------------------
 # START Doubler
@@ -116,14 +124,6 @@ var _stubber = _utils.Stubber.new()
 var _lgr = _utils.get_logger()
 var _method_maker = _utils.MethodMaker.new()
 var _strategy = null
-var _swapped_out_strategy = null
-
-func _temp_strategy(strat):
-	_swapped_out_strategy = _strategy
-	_strategy = strat
-
-func _restore_strategy():
-	_strategy = _swapped_out_strategy
 
 
 func _init(strategy=_utils.DOUBLE_STRATEGY.PARTIAL):
@@ -140,6 +140,16 @@ func _get_indented_line(indents, text):
 		to_return += "\t"
 	return str(to_return, text, "\n")
 
+
+func _stub_to_call_super(obj_info, method_name):
+	var path = obj_info.get_path()
+	if(obj_info.scene_path != null):
+		path = obj_info.scene_path
+	var params = _utils.StubParams.new(path, method_name, obj_info.get_subpath())
+	params.to_call_super()
+	_stubber.add_stub(params)
+
+
 func _write_file(obj_info, dest_path, override_path=null):
 	var script_methods = _get_methods(obj_info)
 
@@ -150,25 +160,26 @@ func _write_file(obj_info, dest_path, override_path=null):
 	var f = File.new()
 	f.open(dest_path, f.WRITE)
 
-
 	f.store_string(str(obj_info.get_extends_text(), "\n"))
 	f.store_string(metadata)
 
 	for i in range(script_methods.local_methods.size()):
+		if(obj_info.make_partial_double):
+			_stub_to_call_super(obj_info, script_methods.local_methods[i].name)
 		f.store_string(_get_func_text(script_methods.local_methods[i]))
 
 	for i in range(script_methods.built_ins.size()):
-		var params = _utils.StubParams.new(obj_info.get_loaded_class(), script_methods.built_ins[i].name, obj_info.get_subpath())
-		params.to_call_super()
-		_stubber.add_stub(params)
+		_stub_to_call_super(obj_info, script_methods.built_ins[i].name)
 		f.store_string(_get_func_text(script_methods.built_ins[i]))
+
 	f.close()
 
-func _double_scene_and_script(target_path, dest_path):
-	var dir = Directory.new()
-	dir.copy(target_path, dest_path)
 
-	var inst = load(target_path).instance()
+func _double_scene_and_script(scene_info, dest_path):
+	var dir = Directory.new()
+	dir.copy(scene_info.get_path(), dest_path)
+
+	var inst = load(scene_info.get_path()).instance()
 	var script_path = null
 	if(inst.get_script()):
 		script_path = inst.get_script().get_path()
@@ -176,8 +187,12 @@ func _double_scene_and_script(target_path, dest_path):
 
 	if(script_path):
 		var oi = ObjectInfo.new(script_path)
-		var double_path = _double(oi, target_path)
+		oi.set_method_strategy(scene_info.get_method_strategy())
+		oi.make_partial_double = scene_info.make_partial_double
+		oi.scene_path = scene_info.get_path()
+		var double_path = _double(oi, scene_info.get_path())
 		var dq = '"'
+
 		var f = File.new()
 		f.open(dest_path, f.READ)
 		var source = f.get_as_text()
@@ -205,7 +220,7 @@ func _get_methods(object_info):
 			script_methods.add_local_method(methods[i])
 
 
-	if(_strategy == _utils.DOUBLE_STRATEGY.FULL):
+	if(object_info.get_method_strategy() == _utils.DOUBLE_STRATEGY.FULL):
 		# second pass is for anything not local
 		for i in range(methods.size()):
 			# 65 is a magic number for methods in script, though documentation
@@ -290,6 +305,32 @@ func _double(obj_info, override_path=null):
 	_double_count += 1
 	return temp_path
 
+
+func _double_script(path, make_partial, strategy):
+	var oi = ObjectInfo.new(path)
+	oi.make_partial_double = make_partial
+	oi.set_method_strategy(strategy)
+	var to_return = load(_double(oi))
+
+	return to_return
+
+func _double_inner(path, subpath, make_partial, strategy):
+	var oi = ObjectInfo.new(path, subpath)
+	oi.set_method_strategy(strategy)
+	oi.make_partial_double = make_partial
+	var to_return = load(_double(oi))
+
+	return to_return
+
+func _double_scene(path, make_partial, strategy):
+	var oi = ObjectInfo.new(path)
+	oi.set_method_strategy(strategy)
+	oi.make_partial_double = make_partial
+	var temp_path = _get_temp_path(oi)
+	_double_scene_and_script(oi, temp_path)
+
+	return load(temp_path)
+
 # ###############
 # Public
 # ###############
@@ -326,36 +367,26 @@ func get_strategy():
 func set_strategy(strategy):
 	_strategy = strategy
 
+func partial_double_scene(path, strategy=_strategy):
+	return _double_scene(path, true, strategy)
+
 # double a scene
 func double_scene(path, strategy=_strategy):
-	_temp_strategy(strategy)
-
-	var oi = ObjectInfo.new(path)
-	var temp_path = _get_temp_path(oi)
-	_double_scene_and_script(path, temp_path)
-
-	_restore_strategy()
-	return load(temp_path)
+	return _double_scene(path, false, strategy)
 
 # double a script/object
 func double(path, strategy=_strategy):
-	_temp_strategy(strategy)
+	return _double_script(path, false, strategy)
 
-	var oi = ObjectInfo.new(path)
-	var to_return = load(_double(oi))
+func partial_double(path, strategy=_strategy):
+	return _double_script(path, true, strategy)
 
-	_restore_strategy()
-	return to_return
+func partial_double_inner(path, subpath, strategy=_strategy):
+	return _double_inner(path, subpath, true, strategy)
 
 # double an inner class in a script
 func double_inner(path, subpath, strategy=_strategy):
-	_temp_strategy(strategy)
-
-	var oi = ObjectInfo.new(path, subpath)
-	var to_return = load(_double(oi))
-
-	_restore_strategy()
-	return to_return
+	return _double_inner(path, subpath, false, strategy)
 
 func clear_output_directory():
 	var did = false
