@@ -875,6 +875,7 @@ func double(thing, p2=null, p3=null):
 			to_return = double_inner(path, subpath, strategy)
 
 	return to_return
+	
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func partial_double(thing, p2=null, p3=null):
