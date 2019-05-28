@@ -146,10 +146,11 @@ class TestPartialDoubleMethod:
 	func before_all():
 		_gut = Gut.new()
 		_test = Test.new()
-		_test.gut = gut
+		_test.gut = _gut
 
 	func after_each():
 		_gut.get_stubber().clear()
+		_gut.get_doubler().clear_output_directory()
 
 	func test_parital_double_script():
 		var inst = _test.partial_double(DOUBLE_ME_PATH).new()
@@ -176,3 +177,10 @@ class TestPartialDoubleMethod:
 	func test_double_inner_not_a_partial():
 		var inst = _test.double(INNER_CLASSES_PATH, 'InnerA').new()
 		assert_eq(inst.get_a(), null)
+
+	func test_can_spy_on_partial_doubles():
+		var inst = _test.partial_double(DOUBLE_ME_PATH).new()
+		inst.set_value(10)
+		_test.assert_called(inst, 'set_value')
+		_test.assert_called(inst, 'set_value', [10])
+		assert_eq(_test.get_pass_count(), 2)
