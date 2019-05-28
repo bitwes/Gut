@@ -220,6 +220,16 @@ func _fail_if_not_watching(object):
 func _get_fail_msg_including_emitted_signals(text, object):
 	return str(text," (Signals emitted: ", _signal_watcher.get_signals_emitted(object), ")")
 
+# ------------------------------------------------------------------------------
+# This validates that parameters is an array and generates a specific error
+# and a failure with a specific message
+# ------------------------------------------------------------------------------
+func _fail_if_parameters_not_array(parameters):
+	var invalid = parameters != null and typeof(parameters) != TYPE_ARRAY
+	if(invalid):
+		_lgr.error('The "parameters" parameter must be an array of expected parameter values.')
+		_fail('Cannot compare paramter values because an array was not passed.')
+	return invalid
 # #######################
 # Virtual Methods
 # #######################
@@ -714,6 +724,9 @@ func assert_string_ends_with(text, search, match_case=true):
 func assert_called(inst, method_name, parameters=null):
 	var disp = str('Expected [',method_name,'] to have been called on ',inst)
 
+	if(_fail_if_parameters_not_array(parameters)):
+		return
+
 	if(!_utils.is_double(inst)):
 		_fail('You must pass a doubled instance to assert_called.  Check the wiki for info on using double.')
 	else:
@@ -732,6 +745,9 @@ func assert_called(inst, method_name, parameters=null):
 func assert_not_called(inst, method_name, parameters=null):
 	var disp = str('Expected [', method_name, '] to NOT have been called on ', inst)
 
+	if(_fail_if_parameters_not_array(parameters)):
+		return
+
 	if(!_utils.is_double(inst)):
 		_fail('You must pass a doubled instance to assert_not_called.  Check the wiki for info on using double.')
 	else:
@@ -749,6 +765,9 @@ func assert_not_called(inst, method_name, parameters=null):
 # ------------------------------------------------------------------------------
 func assert_call_count(inst, method_name, expected_count, parameters=null):
 	var count = gut.get_spy().call_count(inst, method_name, parameters)
+
+	if(_fail_if_parameters_not_array(parameters)):
+		return
 
 	var param_text = ''
 	if(parameters):

@@ -1015,6 +1015,15 @@ class TestAssertCalled:
 		gr.test_with_gut.assert_called(doubled, 'has_two_params_one_default', [10, null])
 		assert_pass(gr.test_with_gut)
 
+	func test_assert_called_generates_error_if_third_parameter_not_an_array():
+		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		doubled.set_value(5)
+		gr.test_with_gut.assert_called(doubled, 'set_value', 5)
+		assert_fail(gr.test_with_gut)
+		assert_eq(gr.test_with_gut.get_logger().get_errors().size(), 1, 'Generates error')
+
+
+
 class TestAssertNotCalled:
 	extends BaseTestClass
 
