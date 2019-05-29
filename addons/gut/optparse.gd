@@ -46,11 +46,18 @@
 #-------------------------------------------------------------------------------
 class CmdLineParser:
 	var _used_options = []
+	# an array of arrays.  Each element in this array will contain an option
+	# name and if that option contains a value then it will have a sedond
+	# element.  For example:
+	# 	[[-gselect, test.gd], [-gexit]]
 	var _opts = []
 
 	func _init():
 		for i in range(OS.get_cmdline_args().size()):
-			_opts.append(OS.get_cmdline_args()[i])
+			var opt_val = OS.get_cmdline_args()[i].split('=')
+
+			_opts.append(opt_val)
+			print(opt_val)
 
 	# Parse out multiple comma delimited values from a command line
 	# option.  Values are separated from option name with "=" and
@@ -63,10 +70,8 @@ class CmdLineParser:
 	# Parse out the value of an option.  Values are separated from
 	# the option name with "="
 	func _parse_option_value(full_option):
-		var split = full_option.split('=')
-
-		if(split.size() > 1):
-			return split[1]
+		if(full_option.size() > 1):
+			return full_option[1]
 		else:
 			return null
 
@@ -77,7 +82,7 @@ class CmdLineParser:
 		var idx = 0
 
 		while(idx < _opts.size() and !found):
-			if(_opts[idx].find(name) == 0):
+			if(_opts[idx][0] == name):
 				found = true
 			else:
 				idx += 1
@@ -123,7 +128,7 @@ class CmdLineParser:
 	func get_unused_options():
 		var to_return = []
 		for i in range(_opts.size()):
-			to_return.append(_opts[i].split('=')[0])
+			to_return.append(_opts[i][0])
 
 		var script_option = to_return.find('-s')
 		if script_option != -1:

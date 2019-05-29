@@ -135,6 +135,7 @@ var options = {
 	prefix = 'test_',
 	selected = '',
 	should_exit = false,
+	should_exit_on_success = false,
 	should_maximize = false,
 	show_help = false,
 	suffix = '.gd',
@@ -159,6 +160,7 @@ func setup_options():
 	opts.add('-gsuffix', '.gd', 'Suffix used to find tests when specifying -gdir.  Default "[default]"')
 	opts.add('-gmaximize', false, 'Maximizes test runner window to fit the viewport.')
 	opts.add('-gexit', false, 'Exit after running tests.  If not specified you have to manually close the window.')
+	opts.add('-gexit_on_success', false, 'Only exit if all tests pass.')
 	opts.add('-glog', 1, 'Log level.  Default [default]')
 	opts.add('-gignore_pause', false, 'Ignores any calls to gut.pause_before_teardown.')
 	opts.add('-gselect', '', ('Select a script to run initially.  The first script that ' +
@@ -184,6 +186,7 @@ func extract_command_line_options(from, to):
 	to.tests = from.get_value('-gtest')
 	to.dirs = from.get_value('-gdir')
 	to.should_exit = from.get_value('-gexit')
+	to.should_exit_on_success = from.get_value('-gexit_on_success')
 	to.should_maximize = from.get_value('-gmaximize')
 	to.log_level = from.get_value('-glog')
 	to.ignore_pause = from.get_value('-gignore_pause')
@@ -233,7 +236,7 @@ func load_options_from_config_file(file_path, into):
 func apply_options(opts):
 	_tester = load('res://addons/gut/gut.gd').new()
 	get_root().add_child(_tester)
-	_tester.connect('tests_finished', self, '_on_tests_finished', [opts.should_exit])
+	_tester.connect('tests_finished', self, '_on_tests_finished', [opts.should_exit, opts.should_exit_on_success])
 	_tester.set_yield_between_tests(true)
 	_tester.set_modulate(Color(1.0, 1.0, 1.0, min(1.0, float(opts.opacity) / 100)))
 	_tester.show()
@@ -324,9 +327,11 @@ func _init():
 			_tester.test_scripts(!_run_single)
 
 # exit if option is set.
-func _on_tests_finished(should_exit):
+func _on_tests_finished(should_exit, should_exit_on_success):
 	if(_tester.get_fail_count()):
 		OS.exit_code = 1
 
-	if(should_exit):
+	if(should_exit or (should_exit_on_success and _tester.get_fail_count() == 0)):
 		quit()
+	else:
+		print("Tests finished, exit manually")
