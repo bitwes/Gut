@@ -55,9 +55,7 @@ class CmdLineParser:
 	func _init():
 		for i in range(OS.get_cmdline_args().size()):
 			var opt_val = OS.get_cmdline_args()[i].split('=')
-
 			_opts.append(opt_val)
-			print(opt_val)
 
 	# Parse out multiple comma delimited values from a command line
 	# option.  Values are separated from option name with "=" and
