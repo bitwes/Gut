@@ -35,7 +35,9 @@ var _mouse = {
 	in_handle = false
 }
 var _is_running = false
-var _time = 0
+var _start_time = 0.0
+var _time = 0.0
+
 const DEFAULT_TITLE = 'Gut: The Godot Unit Testing tool.'
 var _utils = load('res://addons/gut/utils.gd').new()
 var _text_box_blocker_enabled = true
@@ -62,7 +64,7 @@ func _ready():
 
 func _process(delta):
 	if(_is_running):
-		_time += delta
+		_time = OS.get_unix_time() - _start_time
 		var disp_time = round(_time * 100)/100
 		$TitleBar/Time.set_text(str(disp_time))
 
@@ -211,7 +213,8 @@ func _on_Maximize_pressed():
 # ####################
 func _run_mode(is_running=true):
 	if(is_running):
-		_time = 0
+		_start_time = OS.get_unix_time()
+		_time = _start_time
 		_summary.failing.set_text("0")
 		_summary.passing.set_text("0")
 	_is_running = is_running
@@ -342,3 +345,4 @@ func maximize():
 		var vp_size_offset = get_viewport().size
 		rect_size = vp_size_offset / get_scale()
 		set_position(Vector2(0, 0))
+
