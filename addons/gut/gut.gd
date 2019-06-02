@@ -33,6 +33,7 @@
 #extends "res://addons/gut/gut_gui.gd"
 tool
 extends Control
+var _version = '6.7.0'
 
 var _utils = load('res://addons/gut/utils.gd').new()
 var _lgr = _utils.get_logger()
@@ -197,6 +198,10 @@ func _ready():
 	# hide the panel that IS gut so that only the GUI is seen
 	self.self_modulate = Color(1,1,1,0)
 	show()
+	var v_info = Engine.get_version_info()
+	p(str('Godot version:  ', v_info.major,  '.',  v_info.minor,  '.',  v_info.patch))
+	p(str('GUT version:  ', get_version()))
+
 
 ################################################################################
 #
@@ -1193,3 +1198,8 @@ func get_export_path():
 # ------------------------------------------------------------------------------
 func set_export_path(export_path):
 	_export_path = export_path
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_version():
+	return _version

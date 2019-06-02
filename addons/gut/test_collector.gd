@@ -215,10 +215,6 @@ func has_script(path):
 	return found
 
 func export_tests(path):
-	if(_utils.is_version_31()):
-		_lgr.error("Exporting and importing not supported in 3.1 yet.  There is a workaround, check the wiki.")
-		return false
-		
 	var success = true
 	var f = ConfigFile.new()
 	for i in range(scripts.size()):
@@ -230,9 +226,6 @@ func export_tests(path):
 	return success
 
 func import_tests(path):
-	if(_utils.is_version_31()):
-		_lgr.error("Exporting and importing not supported in 3.1 yet.  There is a workaround, check the wiki.")
-		return false
 	var success = false
 	var f = ConfigFile.new()
 	var result = f.load(path)
