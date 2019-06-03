@@ -1,7 +1,7 @@
 # Release notes
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
-# 6.7.1
+# 6.8.0
 ## Features
 * __Issue 98__ Added Stubbing method `to_call_super` so that you can force a doubled object to call its super method instead of being stubbed out.
 * Added Stubbing method `to_do_nothing`.  This allows you to be a little more deliberate in your stubbing and is more readable than `to_return(null)` which is basically all it does.  It also suppresses un-stubbed method messages.
