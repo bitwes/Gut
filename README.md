@@ -7,11 +7,11 @@ __Please upgrade to the latest version.__
 GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.  It allows you to write tests for your gdscript in gdscript.
 
 ## Features
-* Godot 3.0 and 3.1 compatible (There are some minor issues with 3.1 though, [check them out here](https://github.com/bitwes/Gut/wiki/Godot-3.1-Issues).)
+* Godot 3.0 and 3.1 compatible (There are some minor issues with 3.1 though, [check them out here](https://github.com/bitwes/Gut/wiki/Godot-3.1-Issues).
 * [Simple install via the Asset Library.](https://github.com/bitwes/Gut/wiki/Install)
 * [A plethora of asserts and utility methods to help make your tests simple and concise.](https://github.com/bitwes/Gut/wiki/Methods)
 * [Support for Inner Test Classes to give your tests some extra context and maintainability.](https://github.com/bitwes/Gut/wiki/Inner-Test-Classes)
-* [Doubling](https://github.com/bitwes/Gut/wiki/Doubles)
+* Doubling:  [Full](https://github.com/bitwes/Gut/wiki/Doubles) and [Partial](https://github.com/bitwes/Gut/wiki/Partial-Doubles)
 * [Stubbing](https://github.com/bitwes/Gut/wiki/Stubbing)
 * [Spying](https://github.com/bitwes/Gut/wiki/Spies)
 * [Export tests with your project and run them on any platform Godot supports.](https://github.com/bitwes/Gut/wiki/Exporting-Tests)
