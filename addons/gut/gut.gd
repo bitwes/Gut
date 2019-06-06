@@ -658,6 +658,43 @@ func _fail(text=''):
 func _pending(text=''):
 	if(_current_test):
 		_new_summary.add_pending(_current_test.name, text)
+
+# Gets all the files in a directory and all subdirectories if get_include_subdirectories
+# is true.  The files returned are all sorted by name.
+func _get_files(path, prefix, suffix):
+	var files = []
+	var directories = []
+
+	var d = Directory.new()
+	d.open(path)
+	# true parameter tells list_dir_begin not to include "." and ".." directories.
+	d.list_dir_begin(true)
+
+	# Traversing a directory is kinda odd.  You have to start the process of listing
+	# the contents of a directory with list_dir_begin then use get_next until it
+	# returns an empty string.  Then I guess you should end it.
+	var fs_item = d.get_next()
+	var full_path = ''
+	while(fs_item != ''):
+		full_path = path.plus_file(fs_item)
+
+		#file_exists returns fasle for directories
+		if(d.file_exists(full_path)):
+			if(fs_item.begins_with(prefix) and fs_item.ends_with(suffix)):
+				files.append(full_path)
+		elif(get_include_subdirectories() and d.dir_exists(full_path)):
+			directories.append(full_path)
+
+		fs_item = d.get_next()
+	d.list_dir_end()
+
+	for dir in range(directories.size()):
+		var dir_files = _get_files(directories[dir], prefix, suffix)
+		for i in range(dir_files.size()):
+			files.append(dir_files[i])
+
+	files.sort()
+	return files
 #########################
 #
 # public
@@ -767,27 +804,10 @@ func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
 		if(path != ''):
 			_lgr.error(str('The path [', path, '] does not exist.'))
 		return
-	d.open(path)
-	# true parameter tells list_dir_begin not to include "." and ".." directories.
-	d.list_dir_begin(true)
 
-	# Traversing a directory is kinda odd.  You have to start the process of listing
-	# the contents of a directory with list_dir_begin then use get_next until it
-	# returns an empty string.  Then I guess you should end it.
-	var fs_item = d.get_next()
-	var full_path = ''
-	while(fs_item != ''):
-		full_path = path.plus_file(fs_item)
-
-		#file_exists returns fasle for directories
-		if(d.file_exists(full_path)):
-			if(fs_item.begins_with(prefix) and fs_item.ends_with(suffix)):
-				add_script(full_path)
-		elif(get_include_subdirectories() and d.dir_exists(full_path)):
-			add_directory(full_path, prefix, suffix)
-
-		fs_item = d.get_next()
-	d.list_dir_end()
+	var files = _get_files(path, prefix, suffix)
+	for i in range(files.size()):
+		add_script(files[i])
 
 # ------------------------------------------------------------------------------
 # This will try to find a script in the list of scripts to test that contains
