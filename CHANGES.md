@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * Xrayez fixed __Issue 109__.
 * __Issue 117__ The Spying related methods now fail if you don't pass an array for the list of expected parameters.  Something I forgot about when making "TDD and P O N G" episode 2.  You can watch it and enjoy me forgetting how to use my own tool.
 * Exporting tests in 3.1 appears to be working now.  Could not reproduce original issue.
+* __Issue 111__ Tests are now sorted.
 
 
 # 6.7.0
