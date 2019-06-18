@@ -10,3 +10,4 @@ func test_two():
 
 func test_3():
 	assert_ne("one", "two", "This is yet again true")
+	

@@ -811,6 +811,12 @@ func assert_freed(obj, title):
 	assert_true(not is_instance_valid(obj), "Object %s is freed" % title)
 
 # ------------------------------------------------------------------------------
+# Asserts Object has not been freed from memory
+# -----------------------------------------------------------------------------
+func assert_not_freed(obj, title):
+	assert_true(is_instance_valid(obj), "Object %s is not freed" % title)
+	
+# ------------------------------------------------------------------------------
 # Mark the current test as pending.
 # ------------------------------------------------------------------------------
 func pending(text=""):
