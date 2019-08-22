@@ -34,7 +34,7 @@ Gut is provided under the MIT license.  License is in `addons/gut/LICENSE.md`
 * [Creating Tests](https://github.com/bitwes/Gut/wiki/Creating-Tests)
 * [Methods](https://github.com/bitwes/Gut/wiki/Methods)
 
-## [Tutorials](https://github.com/bitwes/Gut/wiki/Methods)
+## [Tutorials](https://github.com/bitwes/Gut/wiki/Tutorials)
 * [Here's a short setup tutorial provided by Rainware](https://www.youtube.com/watch?v=vBbqlfmcAlc)
 * [TDD and P O N G Episode 1](https://www.youtube.com/watch?v=nF2gPF69Dc4&t=3s)
 * [TDD and P O N G Episode 2](https://www.youtube.com/watch?v=rNN0Xw1R_1E&t=2s)

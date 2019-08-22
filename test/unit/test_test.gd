@@ -1234,3 +1234,32 @@ class TestReplaceNode:
 		var old = Node2D.new()
 		gr.test.replace_node(_arena, old, replacement)
 		assert_errored(gr.test)
+
+class TestIsFreed:
+	extends BaseTestClass
+
+	func test_object_is_freed_should_pass():
+		var obj = Node.new()
+		obj.free()
+		gr.test.assert_freed(obj, "Object1")
+		assert_pass(gr.test)
+
+	func test_object_is_freed_should_fail():
+		var obj = Node.new()
+		gr.test.assert_freed(obj, "Object2")
+		# free after test
+		obj.queue_free()
+		assert_fail(gr.test)
+
+	func test_object_is_not_freed_should_pass():
+		var obj = Node.new()
+		gr.test.assert_not_freed(obj, "Object3")
+		# free after test
+		obj.queue_free()
+		assert_pass(gr.test)
+
+	func test_object_is_not_freed_should_fail():
+		var obj = Node.new()
+		obj.free()
+		gr.test.assert_not_freed(obj, "Object4")
+		assert_fail(gr.test)
