@@ -13,16 +13,16 @@ func before_each():
 	gr.stub_params = StubParamsClass.new()
 
 func test_to_return_sets_return_value():
-    gr.stub_params.to_return(7)
-    assert_eq(gr.stub_params.return_val, 7)
+	gr.stub_params.to_return(7)
+	assert_eq(gr.stub_params.return_val, 7)
 
 func test_to_return_returns_self():
-    var thing = gr.stub_params.to_return(7)
-    assert_eq(thing, gr.stub_params)
+	var thing = gr.stub_params.to_return(7)
+	assert_eq(thing, gr.stub_params)
 
 func test_init_sets_stub_target():
-    var s = StubParamsClass.new('thing')
-    assert_eq(s.stub_target, 'thing')
+	var s = StubParamsClass.new('thing')
+	assert_eq(s.stub_target, 'thing')
 
 func test_init_sets_subpath():
 	var s = StubParamsClass.new('thing', 'method', 'inner1/inner2')
@@ -33,12 +33,12 @@ func test_init_sets_method():
 	assert_eq(s.stub_method, 'method')
 
 func test_when_passed_returns_self():
-    var thing = gr.stub_params.when_passed(7)
-    assert_eq(thing, gr.stub_params)
+	var thing = gr.stub_params.when_passed(7)
+	assert_eq(thing, gr.stub_params)
 
 func test_when_passed_sets_parameters():
-    gr.stub_params.when_passed(1)
-    assert_eq(gr.stub_params.parameters, [1])
+	gr.stub_params.when_passed(1)
+	assert_eq(gr.stub_params.parameters, [1])
 
 func test_parameters_turn_values_into_array():
 	gr.stub_params.when_passed(1,2,3)
