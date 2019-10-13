@@ -11,9 +11,9 @@ __meta__ = {
 }
 
 [node name="RunGutTestsButton" type="Button" parent="."]
-margin_left = 839.0
+margin_left = 838.0
 margin_top = 4.0
-margin_right = 1020.0
+margin_right = 1019.0
 margin_bottom = 79.0
 text = "Run Gut Unit Tests"
 
@@ -31,10 +31,9 @@ margin_bottom = 372.0
 rect_min_size = Vector2( 740, 250 )
 script = ExtResource( 2 )
 __meta__ = {
+"_edit_use_anchors_": false,
 "_editor_icon": ExtResource( 3 )
 }
-_should_maximize = true
-_yield_between_tests = false
 _disable_strict_datatype_checks = true
 _export_path = "res://exported_tests.cfg"
 _directory1 = "res://test/unit"

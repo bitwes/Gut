@@ -581,7 +581,7 @@ func _test_the_scripts(indexes=[]):
 			_current_test = the_script.tests[i]
 
 			if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
-			   (_unit_test_name == '')):
+				(_unit_test_name == '')):
 				p(_current_test.name, 1)
 				_new_summary.add_test(_current_test.name)
 

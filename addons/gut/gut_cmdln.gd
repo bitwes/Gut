@@ -88,7 +88,7 @@ class OptionResolver:
 
 	func to_s():
 		return str("base:\n", _string_it(base_opts), "\n", \
-		           "config:\n", _string_it(config_opts), "\n", \
+				   "config:\n", _string_it(config_opts), "\n", \
 				   "cmd:\n", _string_it(cmd_opts), "\n", \
 				   "resolved:\n", _string_it(get_resolved_values()))
 
@@ -149,11 +149,11 @@ var _run_single = false
 func setup_options():
 	var opts = Optparse.new()
 	opts.set_banner(('This is the command line interface for the unit testing tool Gut.  With this ' +
-	                'interface you can run one or more test scripts from the command line.  In order ' +
-	                'for the Gut options to not clash with any other godot options, each option starts ' +
-	                'with a "g".  Also, any option that requires a value will take the form of ' +
-	                '"-g<name>=<value>".  There cannot be any spaces between the option, the "=", or ' +
-	                'inside a specified value or godot will think you are trying to run a scene.'))
+					'interface you can run one or more test scripts from the command line.  In order ' +
+					'for the Gut options to not clash with any other godot options, each option starts ' +
+					'with a "g".  Also, any option that requires a value will take the form of ' +
+					'"-g<name>=<value>".  There cannot be any spaces between the option, the "=", or ' +
+					'inside a specified value or godot will think you are trying to run a scene.'))
 	opts.add('-gtest', [], 'Comma delimited list of full paths to test scripts to run.')
 	opts.add('-gdir', [], 'Comma delimited list of directories to add tests from.')
 	opts.add('-gprefix', 'test_', 'Prefix used to find tests when specifying -gdir.  Default "[default]"')
@@ -164,11 +164,11 @@ func setup_options():
 	opts.add('-glog', 1, 'Log level.  Default [default]')
 	opts.add('-gignore_pause', false, 'Ignores any calls to gut.pause_before_teardown.')
 	opts.add('-gselect', '', ('Select a script to run initially.  The first script that ' +
-	                          'was loaded using -gtest or -gdir that contains the specified ' +
-	                          'string will be executed.  You may run others by interacting ' +
-                              'with the GUI.'))
+							'was loaded using -gtest or -gdir that contains the specified ' +
+							'string will be executed.  You may run others by interacting ' +
+							'with the GUI.'))
 	opts.add('-gunit_test_name', '', ('Name of a test to run.  Any test that contains the specified ' +
-                                 'text will be run, all others will be skipped.'))
+								'text will be run, all others will be skipped.'))
 	opts.add('-gh', false, 'Print this help, then quit')
 	opts.add('-gconfig', 'res://.gutconfig.json', 'A config file that contains configuration information.  Default is res://.gutconfig.json')
 	opts.add('-ginner_class', '', 'Only run inner classes that contain this string')
@@ -315,8 +315,8 @@ func _init():
 			quit()
 		elif(o.get_value('-gpo')):
 			print('All command line options and where they are specified.  ' +
-			      'The "final" value shows which value will actually be used ' +
-				  'based on order of precedence (default < .gutconfig < cmd line).' + "\n")
+				'The "final" value shows which value will actually be used ' +
+				'based on order of precedence (default < .gutconfig < cmd line).' + "\n")
 			print(opt_resolver.to_s_verbose())
 			quit()
 		elif(o.get_value('-gprint_gutconfig_sample')):
