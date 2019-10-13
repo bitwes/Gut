@@ -24,7 +24,7 @@ class BaseTestClass:
 	# teardown methods.
 	var gr = {
 		test = null,
-	    signal_object = null,
+		signal_object = null,
 		test_with_gut = null
 	}
 

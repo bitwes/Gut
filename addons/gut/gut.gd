@@ -581,7 +581,7 @@ func _test_the_scripts(indexes=[]):
 			_current_test = the_script.tests[i]
 
 			if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
-			   (_unit_test_name == '')):
+				(_unit_test_name == '')):
 				p(_current_test.name, 1)
 				_new_summary.add_test(_current_test.name)
 
@@ -643,17 +643,26 @@ func _pass(text=''):
 func _fail(text=''):
 	_gui.add_failing()
 	if(_current_test != null):
-		var line_text = ''
-		# Inner classes don't get the line number set so don't print it
-		# since -1 isn't helpful
-		if(_current_test.line_number != -1):
-			line_text = '  at line ' + str(_current_test.line_number)
-			p(line_text, LOG_LEVEL_FAIL_ONLY)
-			# format for summary
-			line_text =  "\n    " + line_text
+		var line_text = '  at line ' + str(_extractLineNumber( _current_test))
+		p(line_text, LOG_LEVEL_FAIL_ONLY)
+		# format for summary
+		line_text =  "\n    " + line_text
 
 		_new_summary.add_fail(_current_test.name, text + line_text)
 		_current_test.passed = false
+
+# Extracts the line number from curren stacktrace by matching the test case name
+func _extractLineNumber(current_test):
+	var line_number = current_test.line_number
+	# if stack trace available than extraxt the test case line number
+	var stackTrace = get_stack()
+	if(stackTrace!=null):
+		for index in stackTrace.size():
+			var line = stackTrace[index]
+			var function = line.get("function")
+			if function == current_test.name:
+				line_number = line.get("line")
+	return line_number
 
 func _pending(text=''):
 	if(_current_test):
