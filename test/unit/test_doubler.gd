@@ -10,6 +10,8 @@ class BaseTest:
 	const DOUBLE_ME_SCENE_PATH = 'res://test/resources/doubler_test_objects/double_me_scene.tscn'
 	const DOUBLE_EXTENDS_NODE2D = 'res://test/resources/doubler_test_objects/double_extends_node2d.gd'
 	const DOUBLE_EXTENDS_WINDOW_DIALOG = 'res://test/resources/doubler_test_objects/double_extends_window_dialog.gd'
+	const DOUBLE_WITH_STATIC = 'res://test/resources/doubler_test_objects/has_static_method.gd'
+
 	var Doubler = load('res://addons/gut/doubler.gd')
 
 	func _get_temp_file_as_text(filename):
@@ -154,7 +156,9 @@ class TestTheBasics:
 		assert_has_signal(d, 'signal_signal')
 		assert_has_signal(d, 'user_signal')
 
-
+	func test_can_double_classes_with_static_methods():
+		var d = gr.doubler.double(DOUBLE_WITH_STATIC).new()
+		assert_null(d.this_is_not_static())
 
 class TestBuiltInOverloading:
 	extends BaseTest

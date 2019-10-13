@@ -15,6 +15,9 @@ const ARGS = 'args'
 class ExtendsNode2D:
 	extends Node2D
 
+	static func a_static_func():
+		return true
+
 	func my_function():
 		return 7
 
@@ -113,15 +116,17 @@ func _init():
 	# print_methods_by_flags(methods)
 
 	#print_a_bunch_of_methods_by_flags()
-	#var obj = ExtendsNode2D.new()
+	var obj = ExtendsNode2D.new()
 	#var obj = load('res://addons/gut/gut.gd').new()
-	var obj = load('res://test/resources/doubler_test_objects/double_extends_window_dialog.gd').new()
-	#print_method_info(obj)
-	print_method_info(obj)
-	var methods = obj.get_method_list()
+	#var obj = load('res://test/resources/doubler_test_objects/double_extends_window_dialog.gd').new()
 
-	for i in range(methods.size()):
-		if(methods[i][DEFAULT_ARGS].size() > 0):
-			pass#print(get_defaults_and_types(methods[i]))
+	print_method_info(obj)
+	print(obj.get_meta_list())
+	#print_method_info(ExtendsNode2D)
+
+	var methods = obj.get_method_list()
+	# for i in range(methods.size()):
+	# 	if(methods[i][DEFAULT_ARGS].size() > 0):
+	# 		pass#print(get_defaults_and_types(methods[i]))
 
 	quit()
