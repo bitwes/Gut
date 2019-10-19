@@ -30,3 +30,9 @@ func has(one, many_item):
 	if(_items.has(one)):
 		to_return = _items[one].has(many_item)
 	return to_return
+
+func to_s():
+	var to_return = ''
+	for key in _items:
+		to_return += str(key, ":  ", _items[key], "\n")
+	return to_return
