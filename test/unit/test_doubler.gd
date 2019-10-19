@@ -156,9 +156,19 @@ class TestTheBasics:
 		assert_has_signal(d, 'signal_signal')
 		assert_has_signal(d, 'user_signal')
 
+
+	func test_can_add_to_ignore_list():
+		assert_eq(gr.doubler.get_ignored_methods().size(), 0, 'initial size')
+		gr.doubler.add_ignored_method(DOUBLE_WITH_STATIC, 'some_method')
+		assert_eq(gr.doubler.get_ignored_methods().size(), 1, 'after add')
+
+
+
 	func test_can_double_classes_with_static_methods():
+		pending('must do ignores first');return
 		var d = gr.doubler.double(DOUBLE_WITH_STATIC).new()
 		assert_null(d.this_is_not_static())
+
 
 class TestBuiltInOverloading:
 	extends BaseTest

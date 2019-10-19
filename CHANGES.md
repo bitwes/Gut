@@ -1,6 +1,13 @@
 # Release notes
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
+# 6.8.1
+## Features
+* Godot 3.2 compatible.
+* __Issue 124__ CodeDarigan added the `assert_freed` and `assert_not_freed` methods.
+* __Issue 130__ GUT now lists the exact line number of a failing test in all cases instead of just the method number in non-inner classes.  Thanks to mschulzeLpz for adding `get_stack` magic.
+*
+
 # 6.8.0
 ## Features
 * __Issue 98__ Added Stubbing method `to_call_super` so that you can force a doubled object to call its super method instead of being stubbed out.

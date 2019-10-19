@@ -114,12 +114,14 @@ class ObjectInfo:
 # ------------------------------------------------------------------------------
 # START Doubler
 # ------------------------------------------------------------------------------
+var _utils = load('res://addons/gut/utils.gd').new()
+
 var _output_dir = null
 var _double_count = 0 # used in making files names unique
 var _use_unique_names = true
 var _spy = null
+var  _ignored_methods = {}
 
-var _utils = load('res://addons/gut/utils.gd').new()
 var _stubber = _utils.Stubber.new()
 var _lgr = _utils.get_logger()
 var _method_maker = _utils.MethodMaker.new()
@@ -419,3 +421,9 @@ func delete_output_directory():
 # weird, hard to track down problems.
 func set_use_unique_names(should):
 	_use_unique_names = should
+
+func add_ignored_method(path, method_name):
+	pass
+
+func get_ignored_methods():
+	return []

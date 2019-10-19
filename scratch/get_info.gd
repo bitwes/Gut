@@ -74,6 +74,7 @@ func print_method_info(obj):
 			print(" *** here be defaults ***")
 
 		for key in methods[i]:
+
 			if(key == 'args'):
 				print('  args:')
 				for argname in range(methods[i][key].size()):
@@ -108,7 +109,15 @@ func get_defaults_and_types(method_meta):
 	return text
 
 
+func class_db_stuff():
+	print(ClassDB.class_exists('Node2D'))
+	print('category = ',  ClassDB.class_get_category('Node2D'))
+	#print(str(JSON.print(ClassDB.class_get_method_list('Node2D'), ' ')))
+	# print(ClassDB.class_get_integer_constant_list('Node2D'))
+	# print(ClassDB.get_class_list())
+
 func _init():
+
 	# var double_me = load('res://test/resources/doubler_test_objects/double_me.gd').new()
 	# print_method_info(double_me)
 	# print("-------------\n-\n-\n-\n-------------")
@@ -119,12 +128,15 @@ func _init():
 	var obj = ExtendsNode2D.new()
 	#var obj = load('res://addons/gut/gut.gd').new()
 	#var obj = load('res://test/resources/doubler_test_objects/double_extends_window_dialog.gd').new()
-
+	ExtendsNode2D.set_meta('gut_ignore', 'something')
 	print_method_info(obj)
+	#print_method_info(ExtendsNode2D)
 	print(obj.get_meta_list())
+	print(ExtendsNode2D.get_meta_list())
 	#print_method_info(ExtendsNode2D)
 
 	var methods = obj.get_method_list()
+	#print(str(JSON.print(methods, ' ')))
 	# for i in range(methods.size()):
 	# 	if(methods[i][DEFAULT_ARGS].size() > 0):
 	# 		pass#print(get_defaults_and_types(methods[i]))
