@@ -127,6 +127,12 @@ class DoubleInfo:
 
 		extension = path.get_extension()
 
+	func is_scene():
+		return extension == 'tscn'
+
+	func is_script():
+		return extension == 'gd'
+
 var _utils = load('res://addons/gut/utils.gd').new()
 var _lgr = _utils.get_logger()
 
@@ -909,12 +915,12 @@ func _smart_double(double_info):
 	var override_strat = _utils.nvl(double_info.strategy, gut.get_doubler().get_strategy())
 	var to_return = null
 
-	if(double_info.extension == 'tscn'):
+	if(double_info.is_scene()):
 		if(double_info.make_partial):
 			to_return =  gut.get_doubler().partial_double_scene(double_info.path, override_strat)
 		else:
 			to_return =  gut.get_doubler().double_scene(double_info.path, override_strat)
-	elif(double_info.extension == 'gd'):
+	elif(double_info.is_script()):
 		if(double_info.subpath == null):
 			if(double_info.make_partial):
 				to_return = gut.get_doubler().partial_double(double_info.path, override_strat)
@@ -974,7 +980,7 @@ func ignore_method_when_doubling(thing, method_name):
 	var double_info = DoubleInfo.new(thing)
 	var path = double_info.path
 
-	if(double_info.extension == 'tscn'):
+	if(double_info.is_scene()):
 		var inst = thing.instance()
 		if(inst.get_script()):
 			path = inst.get_script().get_path()
