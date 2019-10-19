@@ -815,7 +815,7 @@ func assert_freed(obj, title):
 # -----------------------------------------------------------------------------
 func assert_not_freed(obj, title):
 	assert_true(is_instance_valid(obj), "Object %s is not freed" % title)
-	
+
 # ------------------------------------------------------------------------------
 # Mark the current test as pending.
 # ------------------------------------------------------------------------------
@@ -964,6 +964,22 @@ func double_script(path, strategy=null):
 func double_inner(path, subpath, strategy=null):
 	var override_strat = _utils.nvl(strategy, gut.get_doubler().get_strategy())
 	return gut.get_doubler().double_inner(path, subpath, override_strat)
+
+# ------------------------------------------------------------------------------
+# Add a method that the doubler will ignore.  You can pass this the path to a
+# script or scene or a loaded script or scene.  When running tests, these
+# ignores are cleared after every test.
+# ------------------------------------------------------------------------------
+func ignore_method_when_doubling(thing, method_name):
+	var double_info = DoubleInfo.new(thing)
+	var path = double_info.path
+
+	if(double_info.extension == 'tscn'):
+		var inst = thing.instance()
+		if(inst.get_script()):
+			path = inst.get_script().get_path()
+
+	gut.get_doubler().add_ignored_method(path, method_name)
 
 # ------------------------------------------------------------------------------
 # Stub something.

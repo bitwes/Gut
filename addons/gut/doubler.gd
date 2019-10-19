@@ -116,12 +116,14 @@ class ObjectInfo:
 # ------------------------------------------------------------------------------
 # START Doubler
 # ------------------------------------------------------------------------------
+var _utils = load('res://addons/gut/utils.gd').new()
+
 var _output_dir = null
 var _double_count = 0 # used in making files names unique
 var _use_unique_names = true
 var _spy = null
+var  _ignored_methods = _utils.OneToMany.new()
 
-var _utils = load('res://addons/gut/utils.gd').new()
 var _stubber = _utils.Stubber.new()
 var _lgr = _utils.get_logger()
 var _method_maker = _utils.MethodMaker.new()
@@ -218,7 +220,7 @@ func _get_methods(object_info):
 	for i in range(methods.size()):
 		# 65 is a magic number for methods in script, though documentation
 		# says 64.  This picks up local overloads of base class methods too.
-		if(methods[i].flags == 65):
+		if(methods[i].flags == 65 and !_ignored_methods.has(object_info.get_path(), methods[i]['name'])):
 			script_methods.add_local_method(methods[i])
 
 
@@ -227,7 +229,7 @@ func _get_methods(object_info):
 		for i in range(methods.size()):
 			# 65 is a magic number for methods in script, though documentation
 			# says 64.  This picks up local overloads of base class methods too.
-			if(methods[i].flags != 65):
+			if(methods[i].flags != 65 and !_ignored_methods.has(object_info.get_path(), methods[i]['name'])):
 				script_methods.add_built_in_method(methods[i])
 
 	return script_methods
@@ -421,3 +423,9 @@ func delete_output_directory():
 # weird, hard to track down problems.
 func set_use_unique_names(should):
 	_use_unique_names = should
+
+func add_ignored_method(path, method_name):
+	_ignored_methods.add(path, method_name)
+
+func get_ignored_methods():
+	return _ignored_methods

@@ -1,3 +1,6 @@
+# Godot 3.2
+There is the `godot_3_2` branch which is now working with 3.2 alpha 2.  Any 3.2 related bugs will be fixed here then double checked for backwards compatibility with 3.1.  I'll merge the branch into master when 3.2 is live.
+
 # 6.6.0 has a potentially bad bug
 __Please upgrade to the latest version.__
 

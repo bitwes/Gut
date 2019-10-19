@@ -137,7 +137,7 @@ func test_get_set_export_path():
 	assert_accessors(gr.test_gut, 'export_path', '', 'res://somewhere')
 
 # ------------------------------
-# Double Strategy
+# Doubler
 # ------------------------------
 func test_get_set_double_strategy():
 	assert_accessors(gr.test_gut, 'double_strategy', 1, 2)
@@ -148,6 +148,14 @@ func test_when_test_overrides_strategy_it_is_reset_after_test_finishes():
 	gr.test_gut.get_doubler().set_strategy(_utils.DOUBLE_STRATEGY.FULL)
 	gr.test_gut.test_scripts()
 	assert_eq(gr.test_gut.get_double_strategy(), _utils.DOUBLE_STRATEGY.PARTIAL)
+
+func test_clears_ignored_methods_between_tests():
+	gr.test_gut.get_doubler().add_ignored_method('ignore_script', 'ignore_method')
+	gr.test_gut.add_script('res://test/samples/test_sample_one.gd')
+	gr.test_gut._tests_like = 'test_assert_eq_number_not_equal'
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_doubler().get_ignored_methods().size(), 0)
+
 
 # ------------------------------
 # disable strict datatype comparisons

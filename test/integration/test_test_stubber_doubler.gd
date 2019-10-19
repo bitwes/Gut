@@ -82,19 +82,52 @@ class TestBasics:
 		assert_eq(a.get_a(), 10)
 		assert_eq(anotherA.get_a(), null)
 
-class TestTestsSmartDoubleMethod:
+class TestIgnoreMethodsWhenDoubling:
 	extends "res://test/gut_test.gd"
 
-	var _gut = null
+	var _test_gut = null
+	var _test = null
+
+	func before_each():
+		_test_gut = Gut.new()
+		_test = Test.new()
+		_test.gut = _test_gut
+
+	func test_when_calling_with_path_it_sends_path_to_doubler():
+		var m_doubler = double(_utils.Doubler).new()
+		_test_gut._doubler = m_doubler
+		_test.ignore_method_when_doubling('one', 'two')
+		assert_called(m_doubler, 'add_ignored_method', ['one', 'two'])
+
+	func test_when_calling_with_loaded_script_the_path_is_sent_to_doubler():
+		var m_doubler = double(_utils.Doubler).new()
+		_test_gut._doubler = m_doubler
+		_test.ignore_method_when_doubling(load(DOUBLE_ME_PATH), 'two')
+		assert_called(m_doubler, 'add_ignored_method', [DOUBLE_ME_PATH, 'two'])
+
+	func test_when_calling_with_scene_the_script_path_is_sent_to_doubler():
+		var m_doubler = double(_utils.Doubler).new()
+		_test_gut._doubler = m_doubler
+		_test.ignore_method_when_doubling(load(DOUBLE_ME_SCENE_PATH), 'two')
+		assert_called(m_doubler, 'add_ignored_method', ['res://test/resources/doubler_test_objects/double_me_scene.gd', 'two'])
+
+	func test_when_ignoring_scene_methods_they_are_not_doubled():
+		_test.ignore_method_when_doubling(load(DOUBLE_ME_SCENE_PATH), 'return_hello')
+		var m_inst = _test.double(DOUBLE_ME_SCENE_PATH).instance()
+		m_inst.return_hello()
+		# since it is ignored it should not have been caught by the stubber
+		_test.assert_not_called(m_inst, 'return_hello')
+
+class TestTestsSmartDoubleMethod:
+	extends "res://test/gut_test.gd"
 	var _test = null
 
 	func before_all():
-		_gut = Gut.new()
 		_test = Test.new()
 		_test.gut = gut
 
 	func after_each():
-		_gut.get_stubber().clear()
+		gut.get_stubber().clear()
 
 	func test_when_passed_a_script_it_doubles_script():
 		var inst = _test.double(DOUBLE_ME_PATH).new()

@@ -10,6 +10,8 @@ class BaseTest:
 	const DOUBLE_ME_SCENE_PATH = 'res://test/resources/doubler_test_objects/double_me_scene.tscn'
 	const DOUBLE_EXTENDS_NODE2D = 'res://test/resources/doubler_test_objects/double_extends_node2d.gd'
 	const DOUBLE_EXTENDS_WINDOW_DIALOG = 'res://test/resources/doubler_test_objects/double_extends_window_dialog.gd'
+	const DOUBLE_WITH_STATIC = 'res://test/resources/doubler_test_objects/has_static_method.gd'
+
 	var Doubler = load('res://addons/gut/doubler.gd')
 
 	func _get_temp_file_as_text(filename):
@@ -112,7 +114,6 @@ class TestTheBasics:
 		add_child(inst)
 		assert_ne(inst.label, null)
 		remove_child(inst)
-		#print(gr.doubler.get_spy().get_call_list_as_string(inst))
 
 	func test_metadata_for_scenes_script_points_to_scene_not_script():
 		var inst = gr.doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
@@ -154,6 +155,27 @@ class TestTheBasics:
 		assert_has_signal(d, 'signal_signal')
 		assert_has_signal(d, 'user_signal')
 
+	func test_can_add_to_ignore_list():
+		assert_eq(gr.doubler.get_ignored_methods().size(), 0, 'initial size')
+		gr.doubler.add_ignored_method(DOUBLE_WITH_STATIC, 'some_method')
+		assert_eq(gr.doubler.get_ignored_methods().size(), 1, 'after add')
+
+	func test_when_ignored_methods_are_a_local_method_mthey_are_not_present_in_double_code():
+		gr.doubler.add_ignored_method(DOUBLE_ME_PATH, 'has_one_param')
+		gr.doubler.double(DOUBLE_ME_PATH)
+		var text = gut.get_file_as_text(TEMP_FILES.plus_file('double_me.gd'))
+		assert_eq(text.find('has_one_param'), -1)
+
+	func test_when_ignored_methods_are_a_super_method_mthey_are_not_present_in_double_code():
+		gr.doubler.add_ignored_method(DOUBLE_ME_PATH, 'is_connected')
+		gr.doubler.double(DOUBLE_ME_PATH, _utils.DOUBLE_STRATEGY.FULL)
+		var text = gut.get_file_as_text(TEMP_FILES.plus_file('double_me.gd'))
+		assert_eq(text.find('is_connected'), -1)
+
+	func test_can_double_classes_with_static_methods():
+		gr.doubler.add_ignored_method(DOUBLE_WITH_STATIC, 'this_is_a_static_method')
+		var d = gr.doubler.double(DOUBLE_WITH_STATIC).new()
+		assert_null(d.this_is_not_static())
 
 
 class TestBuiltInOverloading:
@@ -371,7 +393,6 @@ class TestPartialDoubles:
 		assert_eq(inst.return_hello(), 'hello')
 
 	func test_double_scene_does_not_call_supers():
-		print(doubler.get_stubber().get_instance_id())
 		var inst = doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
 		assert_eq(inst.return_hello(), null)
 		pause_before_teardown()
