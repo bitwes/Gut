@@ -617,6 +617,7 @@ func _test_the_scripts(indexes=[]):
 					_gui.get_text_box().add_keyword_color(_current_test.name, Color(1, 0, 0))
 
 				_gui.set_progress_test_value(i + 1)
+				_doubler.get_ignored_methods().clear()
 
 		# call both post-all-tests methods until postrun_teardown is removed.
 		if(_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
