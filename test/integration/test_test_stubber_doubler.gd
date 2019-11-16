@@ -194,9 +194,11 @@ class TestPartialDoubleMethod:
 		inst.set_value(10)
 		assert_eq(inst.get_value(), 10)
 
+	# TODO this test is tempramental.  It has something to do with the loading
+	# of the doubles I think.  Should be fixed.
 	func test_partial_double_scene():
 		var inst = _test.partial_double(DOUBLE_ME_SCENE_PATH).instance()
-		assert_eq(inst.return_hello(), 'hello')
+		assert_eq(inst.return_hello(), 'hello', 'sometimes fails, should be fixed.')
 
 	func test_partial_double_inner():
 		var inst = _test.partial_double(INNER_CLASSES_PATH, 'InnerA').new()
