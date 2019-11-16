@@ -2,7 +2,7 @@
   "dirs":["res://test/unit/", "res://test/integration/"],
   "should_maximize":true,
   "should_exit":true,
-  "ignore_pause":false,
+  "ignore_pause":true,
   "log_level": 1,
   "opacity":100,
   "double_strategy":"partial",

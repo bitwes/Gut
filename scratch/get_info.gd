@@ -117,41 +117,6 @@ func class_db_stuff():
 	# print(ClassDB.get_class_list())
 
 func _init():
-	var obj2 = RayCast2D.new()
-	print(typeof(obj2))
-	print(RayCast2D)
-	print(str(RayCast2D))
-	print(ExtendsNode2D)
-
-	print(obj2.get_class())
-	var obj3 = ExtendsNode2D.new()
-	print(typeof(obj3))
-	print(typeof(ExtendsNode2D))
-	print(ExtendsNode2D.new().get_class())
-	#print(obj2.get_meta_list())
-	var meta = obj2.get_meta_list()
-	# for key in meta:
-	# 	print(key)
-
-	quit()
-	return
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	# var double_me = load('res://test/resources/doubler_test_objects/double_me.gd').new()
 	# print_method_info(double_me)
 	# print("-------------\n-\n-\n-\n-------------")
