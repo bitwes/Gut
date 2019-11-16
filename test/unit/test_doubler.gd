@@ -396,3 +396,34 @@ class TestPartialDoubles:
 		var inst = doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
 		assert_eq(inst.return_hello(), null)
 		pause_before_teardown()
+
+class TestDoubleGDNaviteClasses:
+	extends BaseTest
+
+	var _doubler = null
+	var _stubber = _utils.Stubber.new()
+
+	func before_each():
+		_stubber.clear()
+		_doubler = Doubler.new()
+		_doubler.set_output_dir(TEMP_FILES)
+		_doubler.set_stubber(_stubber)
+
+	func after_each():
+		_doubler.clear_output_directory()
+
+	func test_can_double_Node2D():
+		var d_node_2d = _doubler.double_gdnative(Node2D)
+		assert_not_null(d_node_2d)
+
+	func test_can_partial_double_Node2D():
+		var pd_node_2d  = _doubler.partial_double_gdnative(Node2D)
+		assert_not_null(pd_node_2d)
+
+	func test_can_double_Node2D_with_FULL_strategy():
+		var d_node_2d = _doubler.double_gdnative(Node2D, DOUBLE_STRATEGY.FULL)
+		assert_not_null(d_node_2d)
+
+	func test_can_partial_double_Node2D_with_FULL_strategy():
+		var pd_node_2d  = _doubler.partial_double_gdnative(Node2D, DOUBLE_STRATEGY.FULL)
+		assert_not_null(pd_node_2d)

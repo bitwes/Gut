@@ -85,3 +85,19 @@ func test_when_stubbed_to_call_super_then_super_is_called():
 	gr.stubber.add_stub(params)
 	doubled.set_value(99)
 	assert_eq(doubled._value, 99)
+
+func test_can_stub_native_methods():
+	gr.doubler.set_stubber(gr.stubber)
+	var d_node2d = gr.doubler.double_gdnative(Node2D, DOUBLE_STRATEGY.FULL).new()
+	var params = _utils.StubParams.new(d_node2d, 'get_position').to_return(-1)
+	gr.stubber.add_stub(params)
+	assert_eq(d_node2d.get_position(), -1)
+
+func test_can_stub_all_Node2D_doubles():
+	gr.doubler.set_stubber(gr.stubber)
+	var d_node2d_1 = gr.doubler.double_gdnative(Node2D, DOUBLE_STRATEGY.FULL).new()
+	var d_node2d_2 = gr.doubler.double_gdnative(Node2D, DOUBLE_STRATEGY.FULL).new()
+	var params = _utils.StubParams.new(Node2D, 'get_position').to_return(-1)
+	gr.stubber.add_stub(params)
+	assert_eq(d_node2d_1.get_position(), -1)
+	assert_eq(d_node2d_2.get_position(), -1)

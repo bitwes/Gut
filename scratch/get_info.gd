@@ -117,6 +117,40 @@ func class_db_stuff():
 	# print(ClassDB.get_class_list())
 
 func _init():
+	var obj2 = RayCast2D.new()
+	print(typeof(obj2))
+	print(RayCast2D)
+	print(str(RayCast2D))
+	print(ExtendsNode2D)
+
+	print(obj2.get_class())
+	var obj3 = ExtendsNode2D.new()
+	print(typeof(obj3))
+	print(typeof(ExtendsNode2D))
+	print(ExtendsNode2D.new().get_class())
+	#print(obj2.get_meta_list())
+	var meta = obj2.get_meta_list()
+	# for key in meta:
+	# 	print(key)
+
+	quit()
+	return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	# var double_me = load('res://test/resources/doubler_test_objects/double_me.gd').new()
 	# print_method_info(double_me)
@@ -125,7 +159,7 @@ func _init():
 	# print_methods_by_flags(methods)
 
 	#print_a_bunch_of_methods_by_flags()
-	var obj = ExtendsNode2D.new()
+	var obj = RayCast2D.new() #ExtendsNode2D.new()
 	#var obj = load('res://addons/gut/gut.gd').new()
 	#var obj = load('res://test/resources/doubler_test_objects/double_extends_window_dialog.gd').new()
 	ExtendsNode2D.set_meta('gut_ignore', 'something')

@@ -68,6 +68,8 @@ class ObjectInfo:
 	var _method_strategy = null
 	var make_partial_double = false
 	var scene_path = null
+	var _native_class = null
+	var _native_class_instance = null
 
 	func _init(path, subpath=null):
 		_path = path
@@ -76,7 +78,12 @@ class ObjectInfo:
 
 	# Returns an instance of the class/inner class
 	func instantiate():
-		return get_loaded_class().new()
+		var to_return = null
+		if(is_native()):
+			to_return = _native_class.new()
+		else:
+			to_return = get_loaded_class().new()
+		return to_return
 
 	# Can't call it get_class because that is reserved so it gets this ugly name.
 	# Loads up the class and then any inner classes to give back a reference to
@@ -100,9 +107,15 @@ class ObjectInfo:
 		return _subpaths.size() != 0
 
 	func get_extends_text():
-		var extend = str("extends '", get_path(), '\'')
+		var extend = null
+		if(is_native()):
+			extend = str("extends ", get_native_class_name())
+		else:
+			extend = str("extends '", get_path(), '\'')
+
 		if(has_subpath()):
 			extend += str('.', get_subpath().replace('/', '.'))
+
 		return extend
 
 	func get_method_strategy():
@@ -110,6 +123,17 @@ class ObjectInfo:
 
 	func set_method_strategy(method_strategy):
 		_method_strategy = method_strategy
+
+	func is_native():
+		return _native_class != null
+
+	func set_native_class(native_class):
+		_native_class = native_class
+		_native_class_instance = native_class.new()
+		_path = _native_class_instance.get_class()
+
+	func get_native_class_name():
+		return _native_class_instance.get_class()
 
 # ------------------------------------------------------------------------------
 # START Doubler
@@ -160,7 +184,12 @@ func _write_file(obj_info, dest_path, override_path=null):
 		metadata = _get_stubber_metadata_text(obj_info, override_path)
 
 	var f = File.new()
-	f.open(dest_path, f.WRITE)
+	var f_result = f.open(dest_path, f.WRITE)
+
+	if(f_result != OK):
+		print('Error creating file ', dest_path)
+		print('Could not create double for :', obj_info.to_s())
+		return
 
 	f.store_string(str(obj_info.get_extends_text(), "\n"))
 	f.store_string(metadata)
@@ -287,8 +316,14 @@ func _get_super_func_text(method_hash):
 
 # returns the path to write the double file to
 func _get_temp_path(object_info):
-	var file_name = object_info.get_path().get_file().get_basename()
-	var extension = object_info.get_path().get_extension()
+	var file_name = null
+	var extension = null
+	if(object_info.is_native()):
+		file_name = object_info.get_native_class_name()
+		extension = '.gd'
+	else:
+		file_name = object_info.get_path().get_file().get_basename()
+		extension = object_info.get_path().get_extension()
 
 	if(object_info.has_subpath()):
 		file_name += '__' + object_info.get_subpath().replace('/', '__')
@@ -332,6 +367,17 @@ func _double_scene(path, make_partial, strategy):
 	_double_scene_and_script(oi, temp_path)
 
 	return load(temp_path)
+
+func _double_gdnative(native_class, make_partial, strategy):
+	var oi = ObjectInfo.new(null)
+	oi.set_native_class(native_class)
+	oi.set_method_strategy(strategy)
+	oi.make_partial_double = make_partial
+	var to_return = load(_double(oi))
+
+	return to_return
+
+
 
 # ###############
 # Public
@@ -389,6 +435,12 @@ func partial_double_inner(path, subpath, strategy=_strategy):
 # double an inner class in a script
 func double_inner(path, subpath, strategy=_strategy):
 	return _double_inner(path, subpath, false, strategy)
+
+func double_gdnative(native_class, strategy=_strategy):
+	return _double_gdnative(native_class, false, strategy)
+
+func partial_double_gdnative(native_class, strategy=_strategy):
+	return _double_gdnative(native_class, true, strategy)
 
 func clear_output_directory():
 	var did = false
