@@ -419,11 +419,3 @@ class TestDoubleGDNaviteClasses:
 	func test_can_partial_double_Node2D():
 		var pd_node_2d  = _doubler.partial_double_gdnative(Node2D)
 		assert_not_null(pd_node_2d)
-
-	func test_can_double_Node2D_with_FULL_strategy():
-		var d_node_2d = _doubler.double_gdnative(Node2D, DOUBLE_STRATEGY.FULL)
-		assert_not_null(d_node_2d)
-
-	func test_can_partial_double_Node2D_with_FULL_strategy():
-		var pd_node_2d  = _doubler.partial_double_gdnative(Node2D, DOUBLE_STRATEGY.FULL)
-		assert_not_null(pd_node_2d)

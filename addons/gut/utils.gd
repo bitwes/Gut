@@ -107,3 +107,15 @@ func write_file(path, content):
 
 func is_null_or_empty(text):
 	return text == null or text == ''
+
+func get_native_class_name(thing):
+	var to_return = null
+	if(is_native_class(thing)):
+		to_return = thing.new().get_class()
+	return to_return
+
+func is_native_class(thing):
+	var it_is = false
+	if(typeof(thing) == TYPE_OBJECT):
+		it_is = str(thing).begins_with("[GDScriptNativeClass:")
+	return it_is

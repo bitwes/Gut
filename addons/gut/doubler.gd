@@ -320,7 +320,7 @@ func _get_temp_path(object_info):
 	var extension = null
 	if(object_info.is_native()):
 		file_name = object_info.get_native_class_name()
-		extension = '.gd'
+		extension = 'gd'
 	else:
 		file_name = object_info.get_path().get_file().get_basename()
 		extension = object_info.get_path().get_extension()
@@ -436,11 +436,15 @@ func partial_double_inner(path, subpath, strategy=_strategy):
 func double_inner(path, subpath, strategy=_strategy):
 	return _double_inner(path, subpath, false, strategy)
 
-func double_gdnative(native_class, strategy=_strategy):
-	return _double_gdnative(native_class, false, strategy)
+# must always use FULL strategy since this is a native class and you won't get
+# any methods if you don't use FULL
+func double_gdnative(native_class):
+	return _double_gdnative(native_class, false, _utils.DOUBLE_STRATEGY.FULL)
 
-func partial_double_gdnative(native_class, strategy=_strategy):
-	return _double_gdnative(native_class, true, strategy)
+# must always use FULL strategy since this is a native class and you won't get
+# any methods if you don't use FULL
+func partial_double_gdnative(native_class):
+	return _double_gdnative(native_class, true, _utils.DOUBLE_STRATEGY.FULL)
 
 func clear_output_directory():
 	var did = false
