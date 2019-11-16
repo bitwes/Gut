@@ -48,6 +48,8 @@ class DoubleInfo:
 	var strategy
 	var make_partial
 	var extension
+	var _utils = load('res://addons/gut/utils.gd').new()
+	var _is_native = false
 
 	# Flexible init method.  p2 can be subpath or stategy unless p3 is
 	# specified, then p2 must be subpath and p3 is strategy.
@@ -65,17 +67,26 @@ class DoubleInfo:
 			subpath = p2
 
 		if(typeof(thing) == TYPE_OBJECT):
-			path = thing.resource_path
+			if(_utils.is_native_class(thing)):
+				path = thing
+				_is_native = true
+				extension = 'native_class_not_used'
+			else:
+				path = thing.resource_path
 		else:
 			path = thing
 
-		extension = path.get_extension()
+		if(!_is_native):
+			extension = path.get_extension()
 
 	func is_scene():
 		return extension == 'tscn'
 
 	func is_script():
 		return extension == 'gd'
+
+	func is_native():
+		return _is_native
 
 # ------------------------------------------------------------------------------
 # Begin test.gd
@@ -936,6 +947,13 @@ func _smart_double(double_info):
 			to_return =  gut.get_doubler().partial_double_scene(double_info.path, override_strat)
 		else:
 			to_return =  gut.get_doubler().double_scene(double_info.path, override_strat)
+
+	elif(double_info.is_native()):
+		if(double_info.make_partial):
+			to_return = gut.get_doubler().partial_double_gdnative(double_info.path)
+		else:
+			to_return = gut.get_doubler().double_gdnative(double_info.path)
+
 	elif(double_info.is_script()):
 		if(double_info.subpath == null):
 			if(double_info.make_partial):

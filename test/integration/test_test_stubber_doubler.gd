@@ -170,6 +170,10 @@ class TestTestsSmartDoubleMethod:
 		assert_eq(inst.__gut_metadata_.path, INNER_CLASSES_PATH, 'check path')
 		assert_eq(inst.__gut_metadata_.subpath, 'InnerA', 'check subpath')
 
+	func test_can_double_native_classes():
+		var inst = _test.double(Node2D).new()
+		assert_not_null(inst)
+
 class TestPartialDoubleMethod:
 	extends "res://test/gut_test.gd"
 
@@ -212,8 +216,21 @@ class TestPartialDoubleMethod:
 		assert_eq(inst.get_a(), null)
 
 	func test_can_spy_on_partial_doubles():
+		var pass_count = _test.get_pass_count()
 		var inst = _test.partial_double(DOUBLE_ME_PATH).new()
 		inst.set_value(10)
 		_test.assert_called(inst, 'set_value')
 		_test.assert_called(inst, 'set_value', [10])
-		assert_eq(_test.get_pass_count(), 2)
+		assert_eq(_test.get_pass_count(), pass_count + 2)
+
+	func test_can_stub_partial_doubled_native_class():
+		var inst = _test.partial_double(Node2D).new()
+		_test.stub(inst, 'get_position').to_return(-1)
+		assert_eq(inst.get_position(), -1)
+
+	func test_can_spy_on_partial_doubled_native_class():
+		var pass_count = _test.get_pass_count()
+		var inst = _test.partial_double(Node2D).new()
+		inst.set_position(Vector2(100, 100))
+		_test.assert_called(inst, 'set_position', [Vector2(100, 100)])
+		assert_eq(_test.get_pass_count(), pass_count + 1, 'tests have passed')
