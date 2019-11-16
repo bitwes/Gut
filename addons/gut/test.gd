@@ -37,6 +37,50 @@
 ################################################################################
 extends Node
 
+# ------------------------------------------------------------------------------
+# Helper class to hold info for objects to double.  This extracts info and has
+# some convenience methods.  This is key in being able to make the "smart double"
+# method which makes doubling much easier for the user.
+# ------------------------------------------------------------------------------
+class DoubleInfo:
+	var path
+	var subpath
+	var strategy
+	var make_partial
+	var extension
+
+	# Flexible init method.  p2 can be subpath or stategy unless p3 is
+	# specified, then p2 must be subpath and p3 is strategy.
+	#
+	# Examples:
+	#   (object_to_double)
+	#   (object_to_double, subpath)
+	#   (object_to_double, strategy)
+	#   (object_to_double, subpath, strategy)
+	func _init(thing, p2=null, p3=null):
+		strategy = p2
+
+		if(typeof(p2) == TYPE_STRING):
+			strategy = p3
+			subpath = p2
+
+		if(typeof(thing) == TYPE_OBJECT):
+			path = thing.resource_path
+		else:
+			path = thing
+
+		extension = path.get_extension()
+
+	func is_scene():
+		return extension == 'tscn'
+
+	func is_script():
+		return extension == 'gd'
+
+# ------------------------------------------------------------------------------
+# Begin test.gd
+# ------------------------------------------------------------------------------
+
 # constant for signal when calling yield_for
 const YIELD = 'timeout'
 
@@ -105,34 +149,6 @@ var _signal_watcher = load('res://addons/gut/signal_watcher.gd').new()
 
 # Convenience copy of _utils.DOUBLE_STRATEGY
 var DOUBLE_STRATEGY = null
-
-class DoubleInfo:
-	var path
-	var subpath
-	var strategy
-	var make_partial
-	var extension
-
-	func _init(thing, p2=null, p3=null):
-		strategy = p2
-
-		if(typeof(p2) == TYPE_STRING):
-			strategy = p3
-			subpath = p2
-
-		if(typeof(thing) == TYPE_OBJECT):
-			path = thing.resource_path
-		else:
-			path = thing
-
-		extension = path.get_extension()
-
-	func is_scene():
-		return extension == 'tscn'
-
-	func is_script():
-		return extension == 'gd'
-
 var _utils = load('res://addons/gut/utils.gd').new()
 var _lgr = _utils.get_logger()
 
