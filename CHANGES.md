@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * Godot 3.2 compatible.
 * __Issue 124__ CodeDarigan added the `assert_freed` and `assert_not_freed` methods.
 * __Issue 130__ GUT now lists the exact line number of a failing test in all cases instead of just the method number in non-inner classes.  Thanks to mschulzeLpz for adding `get_stack` magic.
+* __Issue 133__ You can now double/partial_double/stub/spy Native classes like `Node2D` and `Raycast2D`.  Syntax is the same.
 
 ## Bug Fixes
 * __Issue 127__ The method `ignore_method_when_doubling` was added as a workaround for doubling scripts that have static methods.  The "Doubles" wiki page has more info about this method.
