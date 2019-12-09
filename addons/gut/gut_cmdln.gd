@@ -43,6 +43,8 @@ extends SceneTree
 
 
 var Optparse = load('res://addons/gut/optparse.gd')
+var Gut = load('res://addons/gut/gut.gd')
+
 #-------------------------------------------------------------------------------
 # Helper class to resolve the various different places where an option can
 # be set.  Using the get_value method will enforce the order of precedence of:
@@ -234,7 +236,7 @@ func load_options_from_config_file(file_path, into):
 # Apply all the options specified to _tester.  This is where the rubber meets
 # the road.
 func apply_options(opts):
-	_tester = load('res://addons/gut/gut.gd').new()
+	_tester = Gut.new()
 	get_root().add_child(_tester)
 	_tester.connect('tests_finished', self, '_on_tests_finished', [opts.should_exit, opts.should_exit_on_success])
 	_tester.set_yield_between_tests(true)
@@ -311,6 +313,10 @@ func _init():
 		if(!all_options_valid):
 			quit()
 		elif(o.get_value('-gh')):
+			var v_info = Engine.get_version_info()
+			print(str('Godot version:  ', v_info.major,  '.',  v_info.minor,  '.',  v_info.patch))
+			print(str('GUT version:  ', Gut.new().get_version()))
+
 			o.print_help()
 			quit()
 		elif(o.get_value('-gpo')):
