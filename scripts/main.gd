@@ -40,7 +40,6 @@ extends Node2D
 var tester = null
 
 func _ready():
-	$Gut.import_tests_if_none_found()
 	# This line makes Gut use the export_path to load up the exported list 
 	# of tests if it didn't find any tests.  This will occur after it has tried
 	# to load up all the configured directories.
@@ -66,6 +65,7 @@ func _on_tests_finished():
 	tester.p("Tests done callback called")
 
 #------------------------------------
+# Example:
 # This creates an instance of Gut and runs a single script.  The output will
 # be visible in the console, not the Gut instance on the screen.
 #------------------------------------
@@ -73,6 +73,7 @@ func _run_test_one_line():
 	load('res://addons/gut/gut.gd').new().test_script('res://test/samples/test_sample_all_passed.gd')
 
 #------------------------------------
+# Example:
 # More lines, get result text out manually.  Can also inspect the results further
 # with a reference to the class.
 #------------------------------------
@@ -135,7 +136,7 @@ func _run_gut_tests(gut):
 func _on_RunGutTestsButton_pressed():
 	var gut = load('res://addons/gut/gut.gd').new()
 	add_child(gut)
-	gut.set_position(Vector2(100, 100))
+	gut.set_position(Vector2(0, 0))
 	_run_gut_tests(gut)
 
 func _on_ExportTests_pressed():
