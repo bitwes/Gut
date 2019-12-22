@@ -271,7 +271,10 @@ func _on_log_level_changed(value):
 # ------------------------------------------------------------------------------
 func _yielding_callback(from_obj=false):
 	if(_yielding_to.obj):
-		_yielding_to.obj.disconnect(_yielding_to.signal_name, self, '_yielding_callback')
+		_yielding_to.obj.call_deferred(
+			"disconnect",
+			_yielding_to.signal_name, self,
+			'_yielding_callback')
 		_yielding_to.obj = null
 		_yielding_to.signal_name = ''
 
