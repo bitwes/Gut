@@ -1263,3 +1263,10 @@ class TestIsFreed:
 		obj.free()
 		gr.test.assert_not_freed(obj, "Object4")
 		assert_fail(gr.test)
+
+	func test_queued_free_is_not_freed():
+		var obj = Node.new()
+		add_child(obj)
+		obj.queue_free()
+		gr.test.assert_not_freed(obj, "Object4")
+		assert_pass(gr.test)
