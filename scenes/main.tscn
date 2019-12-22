@@ -56,6 +56,5 @@ _directory4 = ""
 _directory5 = ""
 _directory6 = ""
 _double_strategy = 1
-
 [connection signal="pressed" from="RunGutTestsButton" to="." method="_on_RunGutTestsButton_pressed"]
 [connection signal="pressed" from="ExportTests" to="." method="_on_ExportTests_pressed"]

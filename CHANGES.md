@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Bug Fixes
 * __Issue 127__ The method `ignore_method_when_doubling` was added as a workaround for doubling scripts that have static methods.  The "Doubles" wiki page has more info about this method.
+* __Issue 136__ Bug can happen when yielding where a `attempt to disconnect signal...while emitting` can occur.  Disconnecting from signals is now done via `call_deferred`.
 
 # 6.8.0
 ## Features
