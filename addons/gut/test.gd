@@ -514,6 +514,30 @@ func watch_signals(object):
 	_signal_watcher.watch_signals(object)
 
 # ------------------------------------------------------------------------------
+# Asserts that an object is connected to a signal on another object
+# 
+# This will fail with specific messages if the target object is not connected
+# to the specified signal on the source object.
+# ------------------------------------------------------------------------------
+func assert_connected(target_object, source_object, signal_name, text="", method_name=""):
+	var method_disp = ''
+	if (method_name != ""):
+		method_disp = str(' using method: [', method_name, '] ')
+	var disp = str('Expected object ', target_object,\
+		' to be connected to signal: [', signal_name, '] on ',\
+		source_object, method_disp, ':', text)
+	if(method_name != ""):
+		if(source_object.is_connected(signal_name, target_object, method_name)):
+			_pass(disp)
+		else:
+			_fail(disp)
+	else:
+		var connections = source_object.get_signal_connection_list(signal_name)
+		if(connections.has(target_object)):
+			_pass(disp)
+		else:
+			_fail(disp)
+# ------------------------------------------------------------------------------
 # Asserts that a signal has been emitted at least once.
 #
 # This will fail with specific messages if the object is not being watched or
