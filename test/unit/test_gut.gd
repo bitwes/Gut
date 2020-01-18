@@ -402,6 +402,16 @@ func test_pre_hook_does_not_accept_non_hook_scripts():
 	assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test should not be run')
 	assert_gt(gr.test_gut.get_logger().get_errors().size(), 0, 'there should be errors')
 
+func test_post_hook_is_run_after_tests():
+	var PostRunScript = load('res://test/resources/post_run_script.gd')
+	gr.test_gut.set_post_run_script('res://test/resources/post_run_script.gd')
+	gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
+	gr.test_gut.test_scripts()
+	yield(yield_for(1), YIELD)
+	assert_is(gr.test_gut._post_run_script_instance, PostRunScript, 'Instance is set')
+	assert_true(gr.test_gut._post_run_script_instance.run_called, 'run was called')
+
+
 
 
 # ------------------------------------------------------------------------------

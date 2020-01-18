@@ -81,6 +81,8 @@ export(int, 'FULL', 'PARTIAL') var _double_strategy = _utils.DOUBLE_STRATEGY.PAR
 export(String, FILE) var _pre_run_script = '' setget set_pre_run_script, get_pre_run_script
 export(String, FILE) var _post_run_script = '' setget set_post_run_script, get_post_run_script
 var _pre_run_script_instance = null
+var _post_run_script_instance = null
+
 # ###########################
 # Other Vars
 # ###########################
@@ -341,6 +343,10 @@ func _get_summary_text():
 
 	return to_return
 
+# ------------------------------------------------------------------------------
+# Runs a hook script.  Script must exist, and must extend
+# res://addons/gut/hook_script.gd
+# ------------------------------------------------------------------------------
 func _run_hook_script(path):
 	if(path == ''):
 		return
@@ -418,7 +424,7 @@ func _end_run():
 
 	_is_running = false
 	update()
-	_run_hook_script(_post_run_script)
+	_post_run_script_instance = _run_hook_script(_post_run_script)
 	emit_signal(SIGNAL_TESTS_FINISHED)
 	_gui.set_title("Finished.  " + str(get_fail_count()) + " failures.")
 
