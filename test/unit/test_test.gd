@@ -42,7 +42,7 @@ class BaseTestClass:
 	# convenience method to assert the number of failures on the gr.test_gut object.
 	func assert_fail(t, count=1, msg=''):
 		var self_fail_count = get_fail_count()
-		assert_eq(t.get_fail_count(), count, 'Bad FAIL COUNT:  ' + msg)
+		assert_eq(t.get_fail_count(), count, 'Expected FAIL COUNT:  ' + msg)
 		if(t.get_pass_count() > 0 and count != t.get_assert_count()):
 			assert_eq(t.get_pass_count(), 0, 'When checking for failures there should be no passing')
 		if(get_fail_count() != self_fail_count or _print_all_subtests):
@@ -51,7 +51,7 @@ class BaseTestClass:
 	# convenience method to assert the number of passes on the gr.test_gut object.
 	func assert_pass(t, count=1, msg=''):
 		var self_fail_count = get_fail_count()
-		assert_eq(t.get_pass_count(), count, 'Bad PASS COUNT:  ' + msg)
+		assert_eq(t.get_pass_count(), count, 'Expected PASS COUNT:  ' + msg)
 		if(t.get_fail_count() != 0 and count != t.get_assert_count()):
 			assert_eq(t.get_fail_count(), 0, 'When checking for passes there should be no failures.')
 		if(get_fail_count() != self_fail_count or _print_all_subtests):
@@ -1263,3 +1263,10 @@ class TestIsFreed:
 		obj.free()
 		gr.test.assert_not_freed(obj, "Object4")
 		assert_fail(gr.test)
+
+	func test_queued_free_is_not_freed():
+		var obj = Node.new()
+		add_child(obj)
+		obj.queue_free()
+		gr.test.assert_not_freed(obj, "Object4")
+		assert_pass(gr.test)

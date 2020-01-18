@@ -1,6 +1,7 @@
 var _Logger = load('res://addons/gut/logger.gd') # everything should use get_logger
 
 var Doubler = load('res://addons/gut/doubler.gd')
+var HookScript = load('res://addons/gut/hook_script.gd')
 var MethodMaker = load('res://addons/gut/method_maker.gd')
 var Spy = load('res://addons/gut/spy.gd')
 var Stubber = load('res://addons/gut/stubber.gd')
