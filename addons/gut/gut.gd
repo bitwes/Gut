@@ -78,6 +78,9 @@ export(String, DIR) var _directory4 = ''
 export(String, DIR) var _directory5 = ''
 export(String, DIR) var _directory6 = ''
 export(int, 'FULL', 'PARTIAL') var _double_strategy = _utils.DOUBLE_STRATEGY.PARTIAL setget set_double_strategy, get_double_strategy
+export(String, FILE) var _pre_run_script = '' setget set_pre_run_script, get_pre_run_script
+export(String, FILE) var _post_run_script = '' setget set_post_run_script, get_post_run_script
+var _pre_run_script_instance = null
 # ###########################
 # Other Vars
 # ###########################
@@ -338,6 +341,16 @@ func _get_summary_text():
 
 	return to_return
 
+func _run_hook_script(path):
+	if(path == ''):
+		return
+
+	var inst = load(path).new()
+	if(inst.has_method('run')):
+		inst.run()
+
+	return inst
+
 # ------------------------------------------------------------------------------
 # Initialize variables for each run of a single test script.
 # ------------------------------------------------------------------------------
@@ -360,6 +373,9 @@ func _init_run():
 	_gui.get_text_box().add_color_region('/#', '#/', Color(.9, .6, 0))
 	_gui.get_text_box().add_color_region('/-', '-/', Color(1, 1, 0))
 	_gui.get_text_box().add_color_region('/*', '*/', Color(.5, .5, 1))
+
+	_run_hook_script(_pre_run_script)
+
 
 
 
@@ -389,6 +405,7 @@ func _end_run():
 
 	_is_running = false
 	update()
+	_run_hook_script(_post_run_script)
 	emit_signal(SIGNAL_TESTS_FINISHED)
 	_gui.set_title("Finished.  " + str(get_fail_count()) + " failures.")
 
@@ -1236,3 +1253,18 @@ func set_export_path(export_path):
 # ------------------------------------------------------------------------------
 func get_version():
 	return _version
+
+func get_pre_run_script():
+	return _pre_run_script
+
+func set_pre_run_script(pre_run_script):
+	_pre_run_script = pre_run_script
+
+func get_post_run_script():
+	return _post_run_script
+
+func set_post_run_script(post_run_script):
+	_post_run_script = post_run_script
+
+func get_pre_run_script_instance():
+	return _pre_run_script_instance
