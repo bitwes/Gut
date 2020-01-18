@@ -78,6 +78,13 @@ export(String, DIR) var _directory4 = ''
 export(String, DIR) var _directory5 = ''
 export(String, DIR) var _directory6 = ''
 export(int, 'FULL', 'PARTIAL') var _double_strategy = _utils.DOUBLE_STRATEGY.PARTIAL setget set_double_strategy, get_double_strategy
+export(String, FILE) var _pre_run_script = '' setget set_pre_run_script, get_pre_run_script
+export(String, FILE) var _post_run_script = '' setget set_post_run_script, get_post_run_script
+# The instance that is created from _pre_run_script.  Accessible from
+# get_pre_run_script_instance.
+var _pre_run_script_instance = null
+var _post_run_script_instance = null # This is not used except in tests.
+
 # ###########################
 # Other Vars
 # ###########################
@@ -338,10 +345,47 @@ func _get_summary_text():
 
 	return to_return
 
+func _validate_hook_script(path):
+	var result = {
+		valid = true,
+		instance = null
+	}
+
+	# empty path is valid but will have a null instance
+	if(path == ''):
+		return result
+
+	var f = File.new()
+	if(f.file_exists(path)):
+		var inst = load(path).new()
+		if(inst and inst is _utils.HookScript):
+			result.instance = inst
+			result.valid = true
+		else:
+			result.valid = false
+			_lgr.error('The hook script [' + path + '] does not extend res://addons/gut/hook_script.gd')
+	else:
+		result.valid = false
+		_lgr.error('The hook script [' + path + '] does not exist.')
+
+	return result
+
+
+# ------------------------------------------------------------------------------
+# Runs a hook script.  Script must exist, and must extend
+# res://addons/gut/hook_script.gd
+# ------------------------------------------------------------------------------
+func _run_hook_script(inst):
+	if(inst != null):
+		inst.gut = self
+		inst.run()
+	return inst
+
 # ------------------------------------------------------------------------------
 # Initialize variables for each run of a single test script.
 # ------------------------------------------------------------------------------
 func _init_run():
+	var valid = true
 	_test_collector.set_test_class_prefix(_inner_class_prefix)
 	_test_script_objects = []
 	_new_summary = _utils.Summary.new()
@@ -360,6 +404,16 @@ func _init_run():
 	_gui.get_text_box().add_color_region('/#', '#/', Color(.9, .6, 0))
 	_gui.get_text_box().add_color_region('/-', '-/', Color(1, 1, 0))
 	_gui.get_text_box().add_color_region('/*', '*/', Color(.5, .5, 1))
+
+	var  pre_hook_result = _validate_hook_script(_pre_run_script)
+	_pre_run_script_instance = pre_hook_result.instance
+	var post_hook_result = _validate_hook_script(_post_run_script)
+	_post_run_script_instance  = post_hook_result.instance
+
+	valid = pre_hook_result.valid and  post_hook_result.valid
+
+	return valid
+
 
 
 
@@ -389,6 +443,7 @@ func _end_run():
 
 	_is_running = false
 	update()
+	_run_hook_script(_post_run_script_instance)
 	emit_signal(SIGNAL_TESTS_FINISHED)
 	_gui.set_title("Finished.  " + str(get_fail_count()) + " failures.")
 
@@ -527,7 +582,11 @@ func _get_indexes_matching_path(path):
 # yields.
 # ------------------------------------------------------------------------------
 func _test_the_scripts(indexes=[]):
-	_init_run()
+	var is_valid = _init_run()
+	if(!is_valid):
+		_lgr.error('Something went wrong and the run was aborted.')
+		return
+	_run_hook_script(_pre_run_script_instance)
 	_gui.run_mode()
 
 	var indexes_to_run = []
@@ -1236,3 +1295,18 @@ func set_export_path(export_path):
 # ------------------------------------------------------------------------------
 func get_version():
 	return _version
+
+func get_pre_run_script():
+	return _pre_run_script
+
+func set_pre_run_script(pre_run_script):
+	_pre_run_script = pre_run_script
+
+func get_post_run_script():
+	return _post_run_script
+
+func set_post_run_script(post_run_script):
+	_post_run_script = post_run_script
+
+func get_pre_run_script_instance():
+	return _pre_run_script_instance
