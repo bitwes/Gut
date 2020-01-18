@@ -365,6 +365,42 @@ func test_when_inner_class_skipped_none_of_the_before_after_are_called():
 	assert_eq(instances[2].before_each_calls, 0, 'TestInner2 before_each_calls')
 	assert_eq(instances[2].after_each_calls, 0, 'TestInner2 after_each calls')
 
+# ------------------------------
+# Pre and post hook tests
+# ------------------------------
+func test_when_pre_hook_set_script_instance_is_is_retrievable():
+	var  PreRunScript = load('res://test/resources/pre_run_script.gd')
+	gr.test_gut.set_pre_run_script('res://test/resources/pre_run_script.gd')
+	gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
+	gr.test_gut.test_scripts()
+	assert_is(gr.test_gut.get_pre_run_script_instance(), PreRunScript)
+
+func test_when_pre_hook_set_run_method_is_called():
+	var  PreRunScript = load('res://test/resources/pre_run_script.gd')
+	gr.test_gut.set_pre_run_script('res://test/resources/pre_run_script.gd')
+	gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
+	gr.test_gut.test_scripts()
+	assert_true(gr.test_gut.get_pre_run_script_instance().run_called)
+
+func test_when_pre_hook_set_to_invalid_script_no_tests_are_ran():
+	gr.test_gut.set_pre_run_script('res://does_not_exist.gd')
+	gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test should not be run')
+	assert_gt(gr.test_gut.get_logger().get_errors().size(), 0, 'there should be errors')
+
+func test_pre_hook_sets_gut_instance():
+	gr.test_gut.set_pre_run_script('res://test/resources/pre_run_script.gd')
+	gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_pre_run_script_instance().gut, gr.test_gut)
+
+func test_pre_hook_does_not_accept_non_hook_scripts():
+	gr.test_gut.set_pre_run_script('res://test/resources/non_hook_script.gd')
+	gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test should not be run')
+	assert_gt(gr.test_gut.get_logger().get_errors().size(), 0, 'there should be errors')
 
 
 

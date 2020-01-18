@@ -345,9 +345,18 @@ func _run_hook_script(path):
 	if(path == ''):
 		return
 
-	var inst = load(path).new()
-	if(inst.has_method('run')):
-		inst.run()
+	var inst  = null
+	var f = File.new()
+	if(f.file_exists(path)):
+		inst = load(path).new()
+		if(inst and inst is _utils.HookScript):
+			inst.gut = self
+			inst.run()
+		else:
+			inst =  null
+			_lgr.error('The hook script [' + path + '] does not extend res://addons/gut/hook_script.gd')
+	else:
+		_lgr.error('The hook script [' + path + '] does not exist.')
 
 	return inst
 
@@ -355,6 +364,7 @@ func _run_hook_script(path):
 # Initialize variables for each run of a single test script.
 # ------------------------------------------------------------------------------
 func _init_run():
+	var valid = true
 	_test_collector.set_test_class_prefix(_inner_class_prefix)
 	_test_script_objects = []
 	_new_summary = _utils.Summary.new()
@@ -374,7 +384,10 @@ func _init_run():
 	_gui.get_text_box().add_color_region('/-', '-/', Color(1, 1, 0))
 	_gui.get_text_box().add_color_region('/*', '*/', Color(.5, .5, 1))
 
-	_run_hook_script(_pre_run_script)
+	_pre_run_script_instance = _run_hook_script(_pre_run_script)
+	if(_pre_run_script_instance == null and _pre_run_script != ''):
+		valid = false
+	return valid
 
 
 
@@ -544,7 +557,10 @@ func _get_indexes_matching_path(path):
 # yields.
 # ------------------------------------------------------------------------------
 func _test_the_scripts(indexes=[]):
-	_init_run()
+	var is_valid = _init_run()
+	if(!is_valid):
+		_lgr.error('Something went wrong and the run was aborted.')
+		return
 	_gui.run_mode()
 
 	var indexes_to_run = []
