@@ -1270,3 +1270,30 @@ class TestIsFreed:
 		obj.queue_free()
 		gr.test.assert_not_freed(obj, "Object4")
 		assert_pass(gr.test)
+
+class TestConnectionAsserts:
+	extends BaseTestClass
+
+	const SIGNAL_NAME = 'test_signal'
+	const METHOD_NAME = 'test_signal_connctor'
+
+	class Signaler:
+		signal test_signal
+
+	class ConnectTo:
+		func test_signal_connector():
+			pass
+
+	func test_when_target_connected_to_source_connected_passes_with_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		s.connect(SIGNAL_NAME, c, METHOD_NAME)
+		gr.test.assert_connected(s, c, SIGNAL_NAME, METHOD_NAME)
+		assert_pass(gr.test)
+
+	func test_when_target_connected_to_source_connected_passes_without_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		s.connect(SIGNAL_NAME, c, METHOD_NAME)
+		gr.test.assert_connected(s, c, SIGNAL_NAME)
+		assert_pass(gr.test)
