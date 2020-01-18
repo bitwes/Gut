@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * __Issue 124__ CodeDarigan added the `assert_freed` and `assert_not_freed` methods.
 * __Issue 130__ GUT now lists the exact line number of a failing test in all cases instead of just the method number in non-inner classes.  Thanks to mschulzeLpz for adding `get_stack` magic.
 * __Issue 133__ You can now double/partial_double/stub/spy Native classes like `Node2D` and `Raycast2D`.  Syntax is the same.
+* __Issue 139__ There are now `pre` and `post` run script hooks that allow you to run your own code before any tests are run and after all tests are run.  This can be useful in setting global values before a run or investigating the results of the run for CICD pipelines and  the like.  [Check the wiki for more info](https://github.com/bitwes/Gut/wiki/Hooks)
 
 ## Bug Fixes
 * __Issue 127__ The method `ignore_method_when_doubling` was added as a workaround for doubling scripts that have static methods.  The "Doubles" wiki page has more info about this method.
