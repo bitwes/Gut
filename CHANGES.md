@@ -1,6 +1,19 @@
 # Release notes
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
+
+# 6.8.1
+## Features
+* Godot 3.2 compatible.
+* __Issue 124__ CodeDarigan added the `assert_freed` and `assert_not_freed` methods.
+* __Issue 130__ GUT now lists the exact line number of a failing test in all cases instead of just the method number in non-inner classes.  Thanks to mschulzeLpz for adding `get_stack` magic.
+* __Issue 133__ You can now double/partial_double/stub/spy Native classes like `Node2D` and `Raycast2D`.  Syntax is the same.
+* __Issue 139__ There are now `pre` and `post` run script hooks that allow you to run your own code before any tests are run and after all tests are run.  This can be useful in setting global values before a run or investigating the results of the run for CICD pipelines and  the like.  [Check the wiki for more info](https://github.com/bitwes/Gut/wiki/Hooks)
+
+## Bug Fixes
+* __Issue 127__ The method `ignore_method_when_doubling` was added as a workaround for doubling scripts that have static methods.  The "Doubles" wiki page has more info about this method.
+* __Issue 136__ Bug can happen when yielding where a `attempt to disconnect signal...while emitting` can occur.  Disconnecting from signals is now done via `call_deferred`.
+
 # 6.8.0
 ## Features
 * __Issue 98__ Added Stubbing method `to_call_super` so that you can force a doubled object to call its super method instead of being stubbed out.

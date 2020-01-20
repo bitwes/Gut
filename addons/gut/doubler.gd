@@ -24,6 +24,8 @@ class ScriptMethods:
 		'_set',
 		'_get', # probably
 		'emit_signal', # can't handle extra parameters to be sent with signal.
+		'draw_mesh', # issue with one parameter, value is `Null((..), (..), (..))``
+		'_to_string', # nonexistant function ._to_string
 	]
 
 	var built_ins = []
@@ -68,6 +70,8 @@ class ObjectInfo:
 	var _method_strategy = null
 	var make_partial_double = false
 	var scene_path = null
+	var _native_class = null
+	var _native_class_instance = null
 
 	func _init(path, subpath=null):
 		_path = path
@@ -76,7 +80,12 @@ class ObjectInfo:
 
 	# Returns an instance of the class/inner class
 	func instantiate():
-		return get_loaded_class().new()
+		var to_return = null
+		if(is_native()):
+			to_return = _native_class.new()
+		else:
+			to_return = get_loaded_class().new()
+		return to_return
 
 	# Can't call it get_class because that is reserved so it gets this ugly name.
 	# Loads up the class and then any inner classes to give back a reference to
@@ -100,9 +109,15 @@ class ObjectInfo:
 		return _subpaths.size() != 0
 
 	func get_extends_text():
-		var extend = str("extends '", get_path(), '\'')
+		var extend = null
+		if(is_native()):
+			extend = str("extends ", get_native_class_name())
+		else:
+			extend = str("extends '", get_path(), '\'')
+
 		if(has_subpath()):
 			extend += str('.', get_subpath().replace('/', '.'))
+
 		return extend
 
 	func get_method_strategy():
@@ -111,15 +126,28 @@ class ObjectInfo:
 	func set_method_strategy(method_strategy):
 		_method_strategy = method_strategy
 
+	func is_native():
+		return _native_class != null
+
+	func set_native_class(native_class):
+		_native_class = native_class
+		_native_class_instance = native_class.new()
+		_path = _native_class_instance.get_class()
+
+	func get_native_class_name():
+		return _native_class_instance.get_class()
+
 # ------------------------------------------------------------------------------
 # START Doubler
 # ------------------------------------------------------------------------------
+var _utils = load('res://addons/gut/utils.gd').new()
+
 var _output_dir = null
 var _double_count = 0 # used in making files names unique
 var _use_unique_names = true
 var _spy = null
+var  _ignored_methods = _utils.OneToMany.new()
 
-var _utils = load('res://addons/gut/utils.gd').new()
 var _stubber = _utils.Stubber.new()
 var _lgr = _utils.get_logger()
 var _method_maker = _utils.MethodMaker.new()
@@ -158,7 +186,12 @@ func _write_file(obj_info, dest_path, override_path=null):
 		metadata = _get_stubber_metadata_text(obj_info, override_path)
 
 	var f = File.new()
-	f.open(dest_path, f.WRITE)
+	var f_result = f.open(dest_path, f.WRITE)
+
+	if(f_result != OK):
+		print('Error creating file ', dest_path)
+		print('Could not create double for :', obj_info.to_s())
+		return
 
 	f.store_string(str(obj_info.get_extends_text(), "\n"))
 	f.store_string(metadata)
@@ -216,7 +249,7 @@ func _get_methods(object_info):
 	for i in range(methods.size()):
 		# 65 is a magic number for methods in script, though documentation
 		# says 64.  This picks up local overloads of base class methods too.
-		if(methods[i].flags == 65):
+		if(methods[i].flags == 65 and !_ignored_methods.has(object_info.get_path(), methods[i]['name'])):
 			script_methods.add_local_method(methods[i])
 
 
@@ -225,7 +258,7 @@ func _get_methods(object_info):
 		for i in range(methods.size()):
 			# 65 is a magic number for methods in script, though documentation
 			# says 64.  This picks up local overloads of base class methods too.
-			if(methods[i].flags != 65):
+			if(methods[i].flags != 65 and !_ignored_methods.has(object_info.get_path(), methods[i]['name'])):
 				script_methods.add_built_in_method(methods[i])
 
 	return script_methods
@@ -285,8 +318,14 @@ func _get_super_func_text(method_hash):
 
 # returns the path to write the double file to
 func _get_temp_path(object_info):
-	var file_name = object_info.get_path().get_file().get_basename()
-	var extension = object_info.get_path().get_extension()
+	var file_name = null
+	var extension = null
+	if(object_info.is_native()):
+		file_name = object_info.get_native_class_name()
+		extension = 'gd'
+	else:
+		file_name = object_info.get_path().get_file().get_basename()
+		extension = object_info.get_path().get_extension()
 
 	if(object_info.has_subpath()):
 		file_name += '__' + object_info.get_subpath().replace('/', '__')
@@ -330,6 +369,17 @@ func _double_scene(path, make_partial, strategy):
 	_double_scene_and_script(oi, temp_path)
 
 	return load(temp_path)
+
+func _double_gdnative(native_class, make_partial, strategy):
+	var oi = ObjectInfo.new(null)
+	oi.set_native_class(native_class)
+	oi.set_method_strategy(strategy)
+	oi.make_partial_double = make_partial
+	var to_return = load(_double(oi))
+
+	return to_return
+
+
 
 # ###############
 # Public
@@ -388,6 +438,16 @@ func partial_double_inner(path, subpath, strategy=_strategy):
 func double_inner(path, subpath, strategy=_strategy):
 	return _double_inner(path, subpath, false, strategy)
 
+# must always use FULL strategy since this is a native class and you won't get
+# any methods if you don't use FULL
+func double_gdnative(native_class):
+	return _double_gdnative(native_class, false, _utils.DOUBLE_STRATEGY.FULL)
+
+# must always use FULL strategy since this is a native class and you won't get
+# any methods if you don't use FULL
+func partial_double_gdnative(native_class):
+	return _double_gdnative(native_class, true, _utils.DOUBLE_STRATEGY.FULL)
+
 func clear_output_directory():
 	var did = false
 	if(_output_dir.find('user://') == 0):
@@ -419,3 +479,9 @@ func delete_output_directory():
 # weird, hard to track down problems.
 func set_use_unique_names(should):
 	_use_unique_names = should
+
+func add_ignored_method(path, method_name):
+	_ignored_methods.add(path, method_name)
+
+func get_ignored_methods():
+	return _ignored_methods

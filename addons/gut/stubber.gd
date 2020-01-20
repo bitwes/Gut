@@ -36,6 +36,8 @@ func _make_key_from_variant(obj, subpath=null):
 		TYPE_OBJECT:
 			if(_is_instance(obj)):
 				to_return = _make_key_from_metadata(obj)
+			elif(_utils.is_native_class(obj)):
+				to_return = _utils.get_native_class_name(obj)
 			else:
 				to_return = obj.resource_path
 	return to_return

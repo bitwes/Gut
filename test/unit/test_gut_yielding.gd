@@ -118,6 +118,9 @@ func test_yield_to__will_disconnect_after_yield_finishes_and_signal_wasnt_emitte
 	var signaler = TimedSignaler.new()
 	add_child(signaler)
 	yield(yield_to(signaler, 'the_signal', 1), YIELD)
+	# Changing the yield to be deferred means that we have to wait again for
+	# the deferred to kick in before checking this.
+	yield(yield_for(.1), YIELD)
 	assert_false(signaler.is_connected('the_signal', gut, '_yielding_callback'))
 	remove_child(signaler)
 

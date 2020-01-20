@@ -37,6 +37,61 @@
 ################################################################################
 extends Node
 
+# ------------------------------------------------------------------------------
+# Helper class to hold info for objects to double.  This extracts info and has
+# some convenience methods.  This is key in being able to make the "smart double"
+# method which makes doubling much easier for the user.
+# ------------------------------------------------------------------------------
+class DoubleInfo:
+	var path
+	var subpath
+	var strategy
+	var make_partial
+	var extension
+	var _utils = load('res://addons/gut/utils.gd').new()
+	var _is_native = false
+
+	# Flexible init method.  p2 can be subpath or stategy unless p3 is
+	# specified, then p2 must be subpath and p3 is strategy.
+	#
+	# Examples:
+	#   (object_to_double)
+	#   (object_to_double, subpath)
+	#   (object_to_double, strategy)
+	#   (object_to_double, subpath, strategy)
+	func _init(thing, p2=null, p3=null):
+		strategy = p2
+
+		if(typeof(p2) == TYPE_STRING):
+			strategy = p3
+			subpath = p2
+
+		if(typeof(thing) == TYPE_OBJECT):
+			if(_utils.is_native_class(thing)):
+				path = thing
+				_is_native = true
+				extension = 'native_class_not_used'
+			else:
+				path = thing.resource_path
+		else:
+			path = thing
+
+		if(!_is_native):
+			extension = path.get_extension()
+
+	func is_scene():
+		return extension == 'tscn'
+
+	func is_script():
+		return extension == 'gd'
+
+	func is_native():
+		return _is_native
+
+# ------------------------------------------------------------------------------
+# Begin test.gd
+# ------------------------------------------------------------------------------
+
 # constant for signal when calling yield_for
 const YIELD = 'timeout'
 
@@ -105,28 +160,6 @@ var _signal_watcher = load('res://addons/gut/signal_watcher.gd').new()
 
 # Convenience copy of _utils.DOUBLE_STRATEGY
 var DOUBLE_STRATEGY = null
-
-class DoubleInfo:
-	var path
-	var subpath
-	var strategy
-	var make_partial
-	var extension
-
-	func _init(thing, p2=null, p3=null):
-		strategy = p2
-
-		if(typeof(p2) == TYPE_STRING):
-			strategy = p3
-			subpath = p2
-
-		if(typeof(thing) == TYPE_OBJECT):
-			path = thing.resource_path
-		else:
-			path = thing
-
-		extension = path.get_extension()
-
 var _utils = load('res://addons/gut/utils.gd').new()
 var _lgr = _utils.get_logger()
 
@@ -803,6 +836,19 @@ func assert_not_null(got, text=''):
 	else:
 		_pass(disp)
 
+# -----------------------------------------------------------------------------
+# Asserts object has been freed from memory
+# We pass in a title (since if it is freed, we lost all identity data)
+# -----------------------------------------------------------------------------
+func assert_freed(obj, title):
+	assert_true(not is_instance_valid(obj), "Object %s is freed" % title)
+
+# ------------------------------------------------------------------------------
+# Asserts Object has not been freed from memory
+# -----------------------------------------------------------------------------
+func assert_not_freed(obj, title):
+	assert_true(is_instance_valid(obj), "Object %s is not freed" % title)
+
 # ------------------------------------------------------------------------------
 # Mark the current test as pending.
 # ------------------------------------------------------------------------------
@@ -896,12 +942,19 @@ func _smart_double(double_info):
 	var override_strat = _utils.nvl(double_info.strategy, gut.get_doubler().get_strategy())
 	var to_return = null
 
-	if(double_info.extension == 'tscn'):
+	if(double_info.is_scene()):
 		if(double_info.make_partial):
 			to_return =  gut.get_doubler().partial_double_scene(double_info.path, override_strat)
 		else:
 			to_return =  gut.get_doubler().double_scene(double_info.path, override_strat)
-	elif(double_info.extension == 'gd'):
+
+	elif(double_info.is_native()):
+		if(double_info.make_partial):
+			to_return = gut.get_doubler().partial_double_gdnative(double_info.path)
+		else:
+			to_return = gut.get_doubler().double_gdnative(double_info.path)
+
+	elif(double_info.is_script()):
 		if(double_info.subpath == null):
 			if(double_info.make_partial):
 				to_return = gut.get_doubler().partial_double(double_info.path, override_strat)
@@ -951,6 +1004,22 @@ func double_script(path, strategy=null):
 func double_inner(path, subpath, strategy=null):
 	var override_strat = _utils.nvl(strategy, gut.get_doubler().get_strategy())
 	return gut.get_doubler().double_inner(path, subpath, override_strat)
+
+# ------------------------------------------------------------------------------
+# Add a method that the doubler will ignore.  You can pass this the path to a
+# script or scene or a loaded script or scene.  When running tests, these
+# ignores are cleared after every test.
+# ------------------------------------------------------------------------------
+func ignore_method_when_doubling(thing, method_name):
+	var double_info = DoubleInfo.new(thing)
+	var path = double_info.path
+
+	if(double_info.is_scene()):
+		var inst = thing.instance()
+		if(inst.get_script()):
+			path = inst.get_script().get_path()
+
+	gut.get_doubler().add_ignored_method(path, method_name)
 
 # ------------------------------------------------------------------------------
 # Stub something.

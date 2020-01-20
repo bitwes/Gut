@@ -137,7 +137,7 @@ func test_get_set_export_path():
 	assert_accessors(gr.test_gut, 'export_path', '', 'res://somewhere')
 
 # ------------------------------
-# Double Strategy
+# Doubler
 # ------------------------------
 func test_get_set_double_strategy():
 	assert_accessors(gr.test_gut, 'double_strategy', 1, 2)
@@ -148,6 +148,14 @@ func test_when_test_overrides_strategy_it_is_reset_after_test_finishes():
 	gr.test_gut.get_doubler().set_strategy(_utils.DOUBLE_STRATEGY.FULL)
 	gr.test_gut.test_scripts()
 	assert_eq(gr.test_gut.get_double_strategy(), _utils.DOUBLE_STRATEGY.PARTIAL)
+
+func test_clears_ignored_methods_between_tests():
+	gr.test_gut.get_doubler().add_ignored_method('ignore_script', 'ignore_method')
+	gr.test_gut.add_script('res://test/samples/test_sample_one.gd')
+	gr.test_gut._tests_like = 'test_assert_eq_number_not_equal'
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_doubler().get_ignored_methods().size(), 0)
+
 
 # ------------------------------
 # disable strict datatype comparisons
@@ -357,7 +365,60 @@ func test_when_inner_class_skipped_none_of_the_before_after_are_called():
 	assert_eq(instances[2].before_each_calls, 0, 'TestInner2 before_each_calls')
 	assert_eq(instances[2].after_each_calls, 0, 'TestInner2 after_each calls')
 
+# ------------------------------
+# Pre and post hook tests
+# ------------------------------
+func test_when_pre_hook_set_script_instance_is_is_retrievable():
+	var  PreRunScript = load('res://test/resources/pre_run_script.gd')
+	gr.test_gut.set_pre_run_script('res://test/resources/pre_run_script.gd')
+	gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
+	gr.test_gut.test_scripts()
+	assert_is(gr.test_gut.get_pre_run_script_instance(), PreRunScript)
 
+func test_when_pre_hook_set_run_method_is_called():
+	var  PreRunScript = load('res://test/resources/pre_run_script.gd')
+	gr.test_gut.set_pre_run_script('res://test/resources/pre_run_script.gd')
+	gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
+	gr.test_gut.test_scripts()
+	assert_true(gr.test_gut.get_pre_run_script_instance().run_called)
+
+func test_when_pre_hook_set_to_invalid_script_no_tests_are_ran():
+	gr.test_gut.set_pre_run_script('res://does_not_exist.gd')
+	gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test should not be run')
+	assert_gt(gr.test_gut.get_logger().get_errors().size(), 0, 'there should be errors')
+
+func test_pre_hook_sets_gut_instance():
+	gr.test_gut.set_pre_run_script('res://test/resources/pre_run_script.gd')
+	gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_pre_run_script_instance().gut, gr.test_gut)
+
+func test_pre_hook_does_not_accept_non_hook_scripts():
+	gr.test_gut.set_pre_run_script('res://test/resources/non_hook_script.gd')
+	gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test should not be run')
+	assert_gt(gr.test_gut.get_logger().get_errors().size(), 0, 'there should be errors')
+
+func test_post_hook_is_run_after_tests():
+	var PostRunScript = load('res://test/resources/post_run_script.gd')
+	gr.test_gut.set_post_run_script('res://test/resources/post_run_script.gd')
+	gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
+	gr.test_gut.test_scripts()
+	yield(yield_for(1), YIELD)
+	assert_is(gr.test_gut._post_run_script_instance, PostRunScript, 'Instance is set')
+	assert_true(gr.test_gut._post_run_script_instance.run_called, 'run was called')
+
+func test_when_post_hook_set_to_invalid_script_no_tests_are_ran():
+	watch_signals(gr.test_gut)
+	gr.test_gut.set_post_run_script('res://does_not_exist.gd')
+	gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test should not be run')
+	assert_gt(gr.test_gut.get_logger().get_errors().size(), 0, 'there should be errors')
+	assert_signal_emitted(gr.test_gut, 'tests_finished')
 
 
 # ------------------------------------------------------------------------------

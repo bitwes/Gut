@@ -22,8 +22,12 @@ var gr = {
 func before_each():
 	gr.doubler = Doubler.new()
 	gr.doubler.set_output_dir(TEMP_FILES)
-	gr.stubber = Stubber.new()
 	gr.doubler.clear_output_directory()
+
+	gr.stubber = Stubber.new()
+
+# func after_each():
+# 	gr.doubler.clear_output_directory()
 
 func test_doubled_have_ref_to_stubber():
 	gr.doubler.set_stubber(gr.stubber)
@@ -85,3 +89,41 @@ func test_when_stubbed_to_call_super_then_super_is_called():
 	gr.stubber.add_stub(params)
 	doubled.set_value(99)
 	assert_eq(doubled._value, 99)
+
+func test_can_stub_native_methods():
+	gr.doubler.set_stubber(gr.stubber)
+	var d_node2d = gr.doubler.double_gdnative(Node2D).new()
+	print(d_node2d.__gut_metadata_.stubber)
+	var params = _utils.StubParams.new(d_node2d, 'get_position').to_return(-1)
+	gr.stubber.add_stub(params)
+	assert_eq(d_node2d.get_position(), -1)
+
+func test_partial_double_of_Node2D_returns_super_values():
+	gr.doubler.set_stubber(gr.stubber)
+	var pd_node_2d  = gr.doubler.partial_double_gdnative(Node2D).new()
+	# see big ass comment in next test.
+	pd_node_2d  = gr.doubler.partial_double_gdnative(Node2D).new()
+	assert_eq(pd_node_2d.is_blocking_signals(), false)
+
+func test_can_stub_all_Node2D_doubles():
+	gr.doubler.set_stubber(gr.stubber)
+	var d_node2d = gr.doubler.double_gdnative(Node2D).new()
+	# !!!!!!!!!!!!!!!
+	# TODO figure this mystery out.  Probably has something to do with the
+	# comment at the top of this file.
+	#
+	# I don't know why this does not work if we don't do it twice.  If it isn't
+	# done twice then it  will fail w/ a null stubber.  If you swap this method
+	# with the previous one, then that one will fail and this will pass w/o
+	# having to do it twice.  If  you run this test by itself it passes w/o
+	# doing it twice.  I'm not sure what is going on.
+	#
+	# The stubber instances match up (via  print statements) but d_node2d always
+	# has a null stubber after the first call and the real one after the 2nd.
+	# !!!!!!!!!!!!!!!
+	d_node2d = gr.doubler.double_gdnative(Node2D).new()
+	d_node2d = gr.doubler.double_gdnative(Node2D).new()
+	print(d_node2d.__gut_metadata_.stubber)
+	var params = _utils.StubParams.new(Node2D, 'get_position').to_return(-1)
+	gr.stubber.add_stub(params)
+	assert_eq(d_node2d.get_position(), -1)

@@ -1,6 +1,7 @@
 var _Logger = load('res://addons/gut/logger.gd') # everything should use get_logger
 
 var Doubler = load('res://addons/gut/doubler.gd')
+var HookScript = load('res://addons/gut/hook_script.gd')
 var MethodMaker = load('res://addons/gut/method_maker.gd')
 var Spy = load('res://addons/gut/spy.gd')
 var Stubber = load('res://addons/gut/stubber.gd')
@@ -9,6 +10,7 @@ var Summary = load('res://addons/gut/summary.gd')
 var Test = load('res://addons/gut/test.gd')
 var TestCollector = load('res://addons/gut/test_collector.gd')
 var ThingCounter = load('res://addons/gut/thing_counter.gd')
+var OneToMany = load('res://addons/gut/one_to_many.gd')
 
 const GUT_METADATA = '__gut_metadata_'
 
@@ -106,3 +108,15 @@ func write_file(path, content):
 
 func is_null_or_empty(text):
 	return text == null or text == ''
+
+func get_native_class_name(thing):
+	var to_return = null
+	if(is_native_class(thing)):
+		to_return = thing.new().get_class()
+	return to_return
+
+func is_native_class(thing):
+	var it_is = false
+	if(typeof(thing) == TYPE_OBJECT):
+		it_is = str(thing).begins_with("[GDScriptNativeClass:")
+	return it_is

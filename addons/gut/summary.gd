@@ -1,4 +1,6 @@
 # ------------------------------------------------------------------------------
+# Contains all the results of a single test.  Allows for multiple asserts results
+# and pending calls.
 # ------------------------------------------------------------------------------
 class Test:
 	var pass_texts = []
@@ -15,9 +17,12 @@ class Test:
 		return to_return
 
 # ------------------------------------------------------------------------------
+# Contains all the results for a single test-script/inner class.  Persists the
+# names of the tests and results and the order in which  the tests were run.
 # ------------------------------------------------------------------------------
 class TestScript:
 	var name = 'NOT_SET'
+	#
 	var _tests = {}
 	var _test_order = []
 
@@ -61,8 +66,11 @@ class TestScript:
 		t.pending_texts.append(reason)
 
 # ------------------------------------------------------------------------------
-# Main class
-# ------------------------------------------------------------------------------
+# Summary Class
+#
+# This class holds the results of all the test scripts and Inner Classes that
+# were run.
+# -------------------------------------------d-----------------------------------
 var _scripts = []
 
 func add_script(name):

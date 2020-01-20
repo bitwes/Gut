@@ -28,12 +28,12 @@
 ################################################################################
 # View readme for usage details.
 #
-# Version 6.8.0
+# Version 6.8.1
 ################################################################################
 #extends "res://addons/gut/gut_gui.gd"
 tool
 extends Control
-var _version = '6.8.0'
+var _version = '6.8.1'
 
 var _utils = load('res://addons/gut/utils.gd').new()
 var _lgr = _utils.get_logger()
@@ -78,6 +78,13 @@ export(String, DIR) var _directory4 = ''
 export(String, DIR) var _directory5 = ''
 export(String, DIR) var _directory6 = ''
 export(int, 'FULL', 'PARTIAL') var _double_strategy = _utils.DOUBLE_STRATEGY.PARTIAL setget set_double_strategy, get_double_strategy
+export(String, FILE) var _pre_run_script = '' setget set_pre_run_script, get_pre_run_script
+export(String, FILE) var _post_run_script = '' setget set_post_run_script, get_post_run_script
+# The instance that is created from _pre_run_script.  Accessible from
+# get_pre_run_script_instance.
+var _pre_run_script_instance = null
+var _post_run_script_instance = null # This is not used except in tests.
+
 # ###########################
 # Other Vars
 # ###########################
@@ -271,7 +278,10 @@ func _on_log_level_changed(value):
 # ------------------------------------------------------------------------------
 func _yielding_callback(from_obj=false):
 	if(_yielding_to.obj):
-		_yielding_to.obj.disconnect(_yielding_to.signal_name, self, '_yielding_callback')
+		_yielding_to.obj.call_deferred(
+			"disconnect",
+			_yielding_to.signal_name, self,
+			'_yielding_callback')
 		_yielding_to.obj = null
 		_yielding_to.signal_name = ''
 
@@ -321,7 +331,7 @@ func _get_summary_text():
 
 	if(_new_summary.get_totals().tests > 0):
 		to_return +=  '+++ ' + str(_new_summary.get_totals().passing) + ' passed ' + str(_new_summary.get_totals().failing) + ' failed.  ' + \
-		              "Tests finished in:  " + str(_gui.get_run_duration()) + ' +++'
+					  "Tests finished in:  " + str(_gui.get_run_duration()) + ' +++'
 		var c = Color(0, 1, 0)
 		if(_new_summary.get_totals().failing > 0):
 			c = Color(1, 0, 0)
@@ -335,10 +345,47 @@ func _get_summary_text():
 
 	return to_return
 
+func _validate_hook_script(path):
+	var result = {
+		valid = true,
+		instance = null
+	}
+
+	# empty path is valid but will have a null instance
+	if(path == ''):
+		return result
+
+	var f = File.new()
+	if(f.file_exists(path)):
+		var inst = load(path).new()
+		if(inst and inst is _utils.HookScript):
+			result.instance = inst
+			result.valid = true
+		else:
+			result.valid = false
+			_lgr.error('The hook script [' + path + '] does not extend res://addons/gut/hook_script.gd')
+	else:
+		result.valid = false
+		_lgr.error('The hook script [' + path + '] does not exist.')
+
+	return result
+
+
+# ------------------------------------------------------------------------------
+# Runs a hook script.  Script must exist, and must extend
+# res://addons/gut/hook_script.gd
+# ------------------------------------------------------------------------------
+func _run_hook_script(inst):
+	if(inst != null):
+		inst.gut = self
+		inst.run()
+	return inst
+
 # ------------------------------------------------------------------------------
 # Initialize variables for each run of a single test script.
 # ------------------------------------------------------------------------------
 func _init_run():
+	var valid = true
 	_test_collector.set_test_class_prefix(_inner_class_prefix)
 	_test_script_objects = []
 	_new_summary = _utils.Summary.new()
@@ -357,6 +404,16 @@ func _init_run():
 	_gui.get_text_box().add_color_region('/#', '#/', Color(.9, .6, 0))
 	_gui.get_text_box().add_color_region('/-', '-/', Color(1, 1, 0))
 	_gui.get_text_box().add_color_region('/*', '*/', Color(.5, .5, 1))
+
+	var  pre_hook_result = _validate_hook_script(_pre_run_script)
+	_pre_run_script_instance = pre_hook_result.instance
+	var post_hook_result = _validate_hook_script(_post_run_script)
+	_post_run_script_instance  = post_hook_result.instance
+
+	valid = pre_hook_result.valid and  post_hook_result.valid
+
+	return valid
+
 
 
 
@@ -386,6 +443,7 @@ func _end_run():
 
 	_is_running = false
 	update()
+	_run_hook_script(_post_run_script_instance)
 	emit_signal(SIGNAL_TESTS_FINISHED)
 	_gui.set_title("Finished.  " + str(get_fail_count()) + " failures.")
 
@@ -395,8 +453,8 @@ func _end_run():
 # ------------------------------------------------------------------------------
 func _is_function_state(script_result):
 	return script_result != null and \
-	       typeof(script_result) == TYPE_OBJECT and \
-	       script_result is GDScriptFunctionState
+		   typeof(script_result) == TYPE_OBJECT and \
+		   script_result is GDScriptFunctionState
 
 # ------------------------------------------------------------------------------
 # Print out the heading for a new script
@@ -423,7 +481,7 @@ func _print_script_heading(script):
 # ------------------------------------------------------------------------------
 func _should_yield_now():
 	var should = _yield_between.should and \
-	             _yield_between.tests_since_last_yield == _yield_between.after_x_tests
+				 _yield_between.tests_since_last_yield == _yield_between.after_x_tests
 	if(should):
 		_yield_between.tests_since_last_yield = 0
 	else:
@@ -524,7 +582,18 @@ func _get_indexes_matching_path(path):
 # yields.
 # ------------------------------------------------------------------------------
 func _test_the_scripts(indexes=[]):
-	_init_run()
+	var is_valid = _init_run()
+	if(!is_valid):
+		_lgr.error('Something went wrong and the run was aborted.')
+		emit_signal(SIGNAL_TESTS_FINISHED)
+		return
+
+	_run_hook_script(_pre_run_script_instance)
+	if(_pre_run_script_instance!= null and _pre_run_script_instance.should_abort()):
+		_lgr.error('pre-run abort')
+		emit_signal(SIGNAL_TESTS_FINISHED)
+		return
+
 	_gui.run_mode()
 
 	var indexes_to_run = []
@@ -581,7 +650,7 @@ func _test_the_scripts(indexes=[]):
 			_current_test = the_script.tests[i]
 
 			if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
-			   (_unit_test_name == '')):
+				(_unit_test_name == '')):
 				p(_current_test.name, 1)
 				_new_summary.add_test(_current_test.name)
 
@@ -617,6 +686,7 @@ func _test_the_scripts(indexes=[]):
 					_gui.get_text_box().add_keyword_color(_current_test.name, Color(1, 0, 0))
 
 				_gui.set_progress_test_value(i + 1)
+				_doubler.get_ignored_methods().clear()
 
 		# call both post-all-tests methods until postrun_teardown is removed.
 		if(_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
@@ -643,17 +713,26 @@ func _pass(text=''):
 func _fail(text=''):
 	_gui.add_failing()
 	if(_current_test != null):
-		var line_text = ''
-		# Inner classes don't get the line number set so don't print it
-		# since -1 isn't helpful
-		if(_current_test.line_number != -1):
-			line_text = '  at line ' + str(_current_test.line_number)
-			p(line_text, LOG_LEVEL_FAIL_ONLY)
-			# format for summary
-			line_text =  "\n    " + line_text
+		var line_text = '  at line ' + str(_extractLineNumber( _current_test))
+		p(line_text, LOG_LEVEL_FAIL_ONLY)
+		# format for summary
+		line_text =  "\n    " + line_text
 
 		_new_summary.add_fail(_current_test.name, text + line_text)
 		_current_test.passed = false
+
+# Extracts the line number from curren stacktrace by matching the test case name
+func _extractLineNumber(current_test):
+	var line_number = current_test.line_number
+	# if stack trace available than extraxt the test case line number
+	var stackTrace = get_stack()
+	if(stackTrace!=null):
+		for index in stackTrace.size():
+			var line = stackTrace[index]
+			var function = line.get("function")
+			if function == current_test.name:
+				line_number = line.get("line")
+	return line_number
 
 func _pending(text=''):
 	if(_current_test):
@@ -1223,3 +1302,33 @@ func set_export_path(export_path):
 # ------------------------------------------------------------------------------
 func get_version():
 	return _version
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_pre_run_script():
+	return _pre_run_script
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func set_pre_run_script(pre_run_script):
+	_pre_run_script = pre_run_script
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_post_run_script():
+	return _post_run_script
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func set_post_run_script(post_run_script):
+	_post_run_script = post_run_script
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_pre_run_script_instance():
+	return _pre_run_script_instance
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_post_run_script_instance():
+	return _post_run_script_instance
