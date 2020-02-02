@@ -345,6 +345,11 @@ func _on_tests_finished(should_exit, should_exit_on_success):
 	if(_tester.get_fail_count()):
 		OS.exit_code = 1
 
+	# Overwrite the exit code with the post_script
+	var post_inst = _tester.get_post_run_script_instance()
+	if(post_inst != null and post_inst.get_exit_code() != null):
+		OS.exit_code = post_inst.get_exit_code()
+
 	if(should_exit or (should_exit_on_success and _tester.get_fail_count() == 0)):
 		quit()
 	else:

@@ -331,7 +331,7 @@ func _get_summary_text():
 
 	if(_new_summary.get_totals().tests > 0):
 		to_return +=  '+++ ' + str(_new_summary.get_totals().passing) + ' passed ' + str(_new_summary.get_totals().failing) + ' failed.  ' + \
-		              "Tests finished in:  " + str(_gui.get_run_duration()) + ' +++'
+					  "Tests finished in:  " + str(_gui.get_run_duration()) + ' +++'
 		var c = Color(0, 1, 0)
 		if(_new_summary.get_totals().failing > 0):
 			c = Color(1, 0, 0)
@@ -453,8 +453,8 @@ func _end_run():
 # ------------------------------------------------------------------------------
 func _is_function_state(script_result):
 	return script_result != null and \
-	       typeof(script_result) == TYPE_OBJECT and \
-	       script_result is GDScriptFunctionState
+		   typeof(script_result) == TYPE_OBJECT and \
+		   script_result is GDScriptFunctionState
 
 # ------------------------------------------------------------------------------
 # Print out the heading for a new script
@@ -481,7 +481,7 @@ func _print_script_heading(script):
 # ------------------------------------------------------------------------------
 func _should_yield_now():
 	var should = _yield_between.should and \
-	             _yield_between.tests_since_last_yield == _yield_between.after_x_tests
+				 _yield_between.tests_since_last_yield == _yield_between.after_x_tests
 	if(should):
 		_yield_between.tests_since_last_yield = 0
 	else:
@@ -585,8 +585,20 @@ func _test_the_scripts(indexes=[]):
 	var is_valid = _init_run()
 	if(!is_valid):
 		_lgr.error('Something went wrong and the run was aborted.')
+<<<<<<< HEAD
 		return
 	_run_hook_script(_pre_run_script_instance)
+=======
+		emit_signal(SIGNAL_TESTS_FINISHED)
+		return
+
+	_run_hook_script(_pre_run_script_instance)
+	if(_pre_run_script_instance!= null and _pre_run_script_instance.should_abort()):
+		_lgr.error('pre-run abort')
+		emit_signal(SIGNAL_TESTS_FINISHED)
+		return
+
+>>>>>>> cfe68b3299df5ad5d1d4ffc16abd793556de81f0
 	_gui.run_mode()
 
 	var indexes_to_run = []
@@ -1296,6 +1308,7 @@ func set_export_path(export_path):
 func get_version():
 	return _version
 
+<<<<<<< HEAD
 func get_pre_run_script():
 	return _pre_run_script
 
@@ -1310,3 +1323,34 @@ func set_post_run_script(post_run_script):
 
 func get_pre_run_script_instance():
 	return _pre_run_script_instance
+=======
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_pre_run_script():
+	return _pre_run_script
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func set_pre_run_script(pre_run_script):
+	_pre_run_script = pre_run_script
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_post_run_script():
+	return _post_run_script
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func set_post_run_script(post_run_script):
+	_post_run_script = post_run_script
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_pre_run_script_instance():
+	return _pre_run_script_instance
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_post_run_script_instance():
+	return _post_run_script_instance
+>>>>>>> cfe68b3299df5ad5d1d4ffc16abd793556de81f0

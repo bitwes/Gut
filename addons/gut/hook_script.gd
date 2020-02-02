@@ -8,7 +8,34 @@
 # script is instantiated.
 var gut  = null
 
+<<<<<<< HEAD
+=======
+# the exit code to be used by gut_cmdln.  See set method.
+var _exit_code = null
+
+var _should_abort =  false
+>>>>>>> cfe68b3299df5ad5d1d4ffc16abd793556de81f0
 # Virtual method that will be called by GUT after instantiating
 # this script.
 func run():
 	pass
+<<<<<<< HEAD
+=======
+
+# Set the exit code when running from the command line.  If not set then the
+# default exit code will be returned (0 when no tests fail, 1 when any tests
+# fail).
+func set_exit_code(code):
+	_exit_code  = code
+
+func get_exit_code():
+	return _exit_code
+
+# Usable by pre-run script to cause the run to end AFTER the run() method
+# finishes.  post-run script will not be ran.
+func abort():
+	_should_abort = true
+
+func should_abort():
+	return _should_abort
+>>>>>>> cfe68b3299df5ad5d1d4ffc16abd793556de81f0
