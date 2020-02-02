@@ -548,9 +548,10 @@ func _is_connected(signaler_obj, connect_to_obj, signal_name, method_name=""):
 		return signaler_obj.is_connected(signal_name, connect_to_obj, method_name)
 	else:
 		var connections = signaler_obj.get_signal_connection_list(signal_name)
-		# connections = [{binds, flags, method, signal, source, target}, ...]
-		print(connections)
-		return connections.has(connect_to_obj)
+		for conn in connections:
+			if((conn.source == signaler_obj) and (conn.target == connect_to_obj)):
+				return true
+		return false
 # ------------------------------------------------------------------------------
 # Watch the signals for an object.  This must be called before you can make
 # any assertions about the signals themselves.

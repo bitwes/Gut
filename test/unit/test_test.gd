@@ -1275,7 +1275,7 @@ class TestConnectionAsserts:
 	extends BaseTestClass
 
 	const SIGNAL_NAME = 'test_signal'
-	const METHOD_NAME = 'test_signal_connctor'
+	const METHOD_NAME = 'test_signal_connector'
 
 	class Signaler:
 		signal test_signal
@@ -1296,4 +1296,42 @@ class TestConnectionAsserts:
 		var c = ConnectTo.new()
 		s.connect(SIGNAL_NAME, c, METHOD_NAME)
 		gr.test.assert_connected(s, c, SIGNAL_NAME)
+		assert_pass(gr.test)
+	
+	func test_when_target_not_connected_to_source_connected_fails_with_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		gr.test.assert_connected(s, c, SIGNAL_NAME, METHOD_NAME)
+		assert_fail(gr.test)
+	
+	func test_when_target_not_connected_to_source_connected_fails_without_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		gr.test.assert_connected(s, c, SIGNAL_NAME)
+		assert_fail(gr.test)
+
+	func test_when_target_connected_to_source_not_connected_fails_with_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		s.connect(SIGNAL_NAME, c, METHOD_NAME)
+		gr.test.assert_not_connected(s, c, SIGNAL_NAME, METHOD_NAME)
+		assert_fail(gr.test)
+
+	func test_when_target_connected_to_source_not_connected_fails_without_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		s.connect(SIGNAL_NAME, c, METHOD_NAME)
+		gr.test.assert_not_connected(s, c, SIGNAL_NAME)
+		assert_fail(gr.test)
+	
+	func test_when_target_not_connected_to_source_not_connected_passes_with_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		gr.test.assert_not_connected(s, c, SIGNAL_NAME, METHOD_NAME)
+		assert_pass(gr.test)
+	
+	func test_when_target_not_connected_to_source_not_connected_passes_without_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		gr.test.assert_not_connected(s, c, SIGNAL_NAME)
 		assert_pass(gr.test)
