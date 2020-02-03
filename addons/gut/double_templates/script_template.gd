@@ -7,11 +7,11 @@ var __gut_metadata_ = {
 	spy = __gut_instance_from_id({spy_id}),
 }
 
-func __gut_instance_from_id(thing_id):
-	if(thing_id ==  -1):
+func __gut_instance_from_id(inst_id):
+	if(inst_id ==  -1):
 		return null
 	else:
-		return instance_from_id(thing_id)
+		return instance_from_id(inst_id)
 
 func __gut_should_call_super(method_name, called_with):
 	if(__gut_metadata_.stubber != null):

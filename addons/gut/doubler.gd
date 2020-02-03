@@ -137,6 +137,33 @@ class ObjectInfo:
 	func get_native_class_name():
 		return _native_class_instance.get_class()
 
+class FileOrString:
+	extends File
+
+	var _do_file = true
+	var _contents  = ''
+
+	func open(path, mode):
+		if(_do_file):
+			return .open(path, mode)
+		else:
+			return OK
+
+	func close():
+		if(_do_file):
+			return .close()
+
+	func store_string(s):
+		if(_do_file):
+			.store_string(s)
+		_contents += s
+
+	func get_contents():
+		return _contents
+
+
+
+
 # ------------------------------------------------------------------------------
 # START Doubler
 # ------------------------------------------------------------------------------
@@ -204,11 +231,7 @@ func _write_file(obj_info, dest_path, override_path=null):
 	var base_script = _get_base_script_text(obj_info, override_path)
 	var script_methods = _get_methods(obj_info)
 
-	# var metadata = _get_stubber_metadata_text(obj_info)
-	# if(override_path):
-	# 	metadata = _get_stubber_metadata_text(obj_info, override_path)
-
-	var f = File.new()
+	var f = FileOrString.new()
 	var f_result = f.open(dest_path, f.WRITE)
 
 	if(f_result != OK):
@@ -216,9 +239,7 @@ func _write_file(obj_info, dest_path, override_path=null):
 		_lgr.error(str('Could not create double for :', obj_info.to_s()))
 		return
 
-	#f.store_string(str(obj_info.get_extends_text(), "\n"))
 	f.store_string(base_script)
-	# f.store_string(metadata)
 
 	for i in range(script_methods.local_methods.size()):
 		if(obj_info.make_partial_double):
@@ -230,6 +251,7 @@ func _write_file(obj_info, dest_path, override_path=null):
 		f.store_string(_get_func_text(script_methods.built_ins[i]))
 
 	f.close()
+	return f
 
 
 func _double_scene_and_script(scene_info, dest_path):
@@ -294,8 +316,7 @@ func _get_inst_id_ref_str(inst):
 	return ref_str
 
 func _get_func_text(method_hash):
-	var ftxt = _method_maker.get_function_text(method_hash) + "\n"
-	return ftxt
+	return _method_maker.get_function_text(method_hash) + "\n"
 
 # returns the path to write the double file to
 func _get_temp_path(object_info):
@@ -319,18 +340,26 @@ func _get_temp_path(object_info):
 	var to_return = _output_dir.plus_file(file_name)
 	return to_return
 
+func _load_double(double_info):
+	var script = GDScript.new()
+	script.set_source_code(double_info.get_contents())
+	script.reload()
+	return script
+
+	#return load(double_info)
+
 func _double(obj_info, override_path=null):
 	var temp_path = _get_temp_path(obj_info)
-	_write_file(obj_info, temp_path, override_path)
+	var result = _write_file(obj_info, temp_path, override_path)
 	_double_count += 1
-	return temp_path
+	return result
 
 
 func _double_script(path, make_partial, strategy):
 	var oi = ObjectInfo.new(path)
 	oi.make_partial_double = make_partial
 	oi.set_method_strategy(strategy)
-	var to_return = load(_double(oi))
+	var to_return = _load_double(_double(oi))
 
 	return to_return
 
@@ -338,7 +367,7 @@ func _double_inner(path, subpath, make_partial, strategy):
 	var oi = ObjectInfo.new(path, subpath)
 	oi.set_method_strategy(strategy)
 	oi.make_partial_double = make_partial
-	var to_return = load(_double(oi))
+	var to_return = _load_double(_double(oi))
 
 	return to_return
 
@@ -349,14 +378,14 @@ func _double_scene(path, make_partial, strategy):
 	var temp_path = _get_temp_path(oi)
 	_double_scene_and_script(oi, temp_path)
 
-	return load(temp_path)
+	return load(path)#load(temp_path)
 
 func _double_gdnative(native_class, make_partial, strategy):
 	var oi = ObjectInfo.new(null)
 	oi.set_native_class(native_class)
 	oi.set_method_strategy(strategy)
 	oi.make_partial_double = make_partial
-	var to_return = load(_double(oi))
+	var to_return = _load_double(_double(oi))
 
 	return to_return
 
