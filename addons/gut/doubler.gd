@@ -152,7 +152,7 @@ var _stubber = _utils.Stubber.new()
 var _lgr = _utils.get_logger()
 var _method_maker = _utils.MethodMaker.new()
 var _strategy = null
-var _base_script_text = _utils.get_file_as_text('res://addons/gut/double_template.gd')
+var _base_script_text = _utils.get_file_as_text('res://addons/gut/double_templates/script_template.gd')
 
 
 func _init(strategy=_utils.DOUBLE_STRATEGY.PARTIAL):
@@ -202,7 +202,6 @@ func _get_base_script_text(obj_info, override_path):
 
 func _write_file(obj_info, dest_path, override_path=null):
 	var base_script = _get_base_script_text(obj_info, override_path)
-	print(base_script)
 	var script_methods = _get_methods(obj_info)
 
 	# var metadata = _get_stubber_metadata_text(obj_info)
@@ -294,52 +293,8 @@ func _get_inst_id_ref_str(inst):
 		ref_str = str('instance_from_id(', inst.get_instance_id(),')')
 	return ref_str
 
-func _get_stubber_metadata_text(obj_info, override_path = null):
-	var path = obj_info.get_path()
-	if(override_path != null):
-		path = override_path
-	return "var __gut_metadata_ = {\n" + \
-           "\tpath='" + path + "',\n" + \
-		   "\tsubpath='" + obj_info.get_subpath() + "',\n" + \
-		   "\tstubber=" + _get_inst_id_ref_str(_stubber) + ",\n" + \
-		   "\tspy=" + _get_inst_id_ref_str(_spy) + "\n" + \
-           "}\n"
-
-func _get_spy_text(method_hash):
-	var txt = ''
-	if(_spy):
-		var called_with = _method_maker.get_spy_call_parameters_text(method_hash)
-		txt += "\t__gut_metadata_.spy.add_call(self, '" + method_hash.name + "', " + called_with + ")\n"
-	return txt
-
 func _get_func_text(method_hash):
-	var ftxt = _method_maker.get_decleration_text(method_hash) + "\n"
-	return ftxt
-
-	var called_with = _method_maker.get_spy_call_parameters_text(method_hash)
-	ftxt += _get_spy_text(method_hash)
-
-	if(_stubber and method_hash.name != '_init'):
-		var call_method = _method_maker.get_super_call_text(method_hash)
-		ftxt += "\tif(__gut_metadata_.stubber.should_call_super(self, '" + method_hash.name + "', " + called_with + ")):\n"
-		ftxt += "\t\treturn " + call_method + "\n"
-		ftxt += "\telse:\n"
-		ftxt += "\t\treturn __gut_metadata_.stubber.get_return(self, '" + method_hash.name + "', " + called_with + ")\n"
-	else:
-		ftxt += "\tpass\n"
-
-	return ftxt
-
-func _get_super_func_text(method_hash):
-	var call_method = _method_maker.get_super_call_text(method_hash)
-
-	var call_super_text = str("return ", call_method, "\n")
-
-	var ftxt = _method_maker.get_decleration_text(method_hash) + "\n"
-	ftxt += _get_spy_text(method_hash)
-
-	ftxt += _get_indented_line(1, call_super_text)
-
+	var ftxt = _method_maker.get_function_text(method_hash) + "\n"
 	return ftxt
 
 # returns the path to write the double file to

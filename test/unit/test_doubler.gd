@@ -29,7 +29,6 @@ class TestTheBasics:
 		stubber.clear()
 		gr.doubler = Doubler.new()
 		gr.doubler.set_stubber(stubber)
-		#gr.doubler.set_stubber(_utils.Stubber.new())
 		gr.doubler.set_use_unique_names(false)
 		gr.doubler.set_output_dir(TEMP_FILES)
 
