@@ -66,6 +66,7 @@ func create_instance():
 func create_scene():
 	var s2 = SuperPack.new()
 	s2.load_scene('res://test/resources/doubler_test_objects/double_me_scene.tscn')
+	print(s2._scene._bundled)
 	s2.set_script_obj(get_script_for_text(make_node()))
 
 	var inst = s2.instance()

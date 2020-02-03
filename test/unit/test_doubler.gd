@@ -104,20 +104,17 @@ class TestTheBasics:
 		assert_false(d.dir_exists(TEMP_FILES))
 
 	func test_can_double_scene():
-		pending('scene'); return
 		var obj = gr.doubler.double_scene(DOUBLE_ME_SCENE_PATH)
 		var inst = obj.instance()
 		assert_eq(inst.return_hello(), null)
 
 	func test_can_add_doubled_scene_to_tree():
-		pending('scene'); return
 		var inst = gr.doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
 		add_child(inst)
 		assert_ne(inst.label, null)
 		remove_child(inst)
 
 	func test_metadata_for_scenes_script_points_to_scene_not_script():
-		pending('scene'); return
 		var inst = gr.doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
 		assert_eq(inst.__gut_metadata_.path, DOUBLE_ME_SCENE_PATH)
 
@@ -205,7 +202,8 @@ class TestBuiltInOverloading:
 		_dbl_win_dia_text = _dbl_win_dia.new().get_script().get_source_code()
 
 	func after_all():
-		doubler.clear_output_directory()
+		if(doubler):
+			doubler.clear_output_directory()
 
 	func test_built_in_overloading_ony_happens_on_full_strategy():
 		doubler.set_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
@@ -220,10 +218,9 @@ class TestBuiltInOverloading:
 		assert_ne(txt.find('func is_blocking_signals'), -1, 'HAS non-overloaded methods')
 
 	func test_can_override_strategy_when_doubling_scene():
-		pending('scene'); return
 		doubler.set_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
-		doubler.double_scene(DOUBLE_ME_SCENE_PATH, DOUBLE_STRATEGY.FULL)
-		var txt = _get_temp_file_as_text('double_me_scene.gd')
+		var inst = doubler.double_scene(DOUBLE_ME_SCENE_PATH, DOUBLE_STRATEGY.FULL).instance()
+		var txt = inst.get_script().get_source_code()
 		assert_ne(txt.find('func is_blocking_signals'), -1, 'HAS non-overloaded methods')
 
 	func test_when_everything_included_you_can_still_make_an_a_new_object():
@@ -235,7 +232,6 @@ class TestBuiltInOverloading:
 		assert_ne(inst, null)
 
 	func test_when_everything_included_you_can_still_double_a_scene():
-		pending('scene'); return
 		var inst = doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
 		add_child(inst)
 		assert_ne(inst, null, "instance is not null")
@@ -287,16 +283,14 @@ class TestDefaultParameters:
 		doubler.set_output_dir(TEMP_FILES)
 
 	func test_parameters_are_doubled_for_connect():
-		pending('scene'); return
 		var inst = doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
-		var text = _get_temp_file_as_text('double_me_scene.gd')
+		var text = inst.get_script().get_source_code()
 		var sig = 'func connect(p_signal=null, p_target=null, p_method=null, p_binds=[], p_flags=0):'
 		assert_string_contains(text, sig)
 
 	func test_parameters_are_doubled_for_draw_char():
-		pending('scene'); return
 		var inst = doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
-		var text = _get_temp_file_as_text('double_me_scene.gd')
+		var text = inst.get_script().get_source_code()#_get_temp_file_as_text('double_me_scene.gd')
 		var sig = 'func draw_char(p_font=null, p_position=null, p_char=null, p_next=null, p_modulate=Color(1,1,1,1)):'
 		assert_string_contains(text, sig)
 
@@ -394,12 +388,10 @@ class TestPartialDoubles:
 		assert_eq(inst.get_a(), null)
 
 	func test_can_make_partial_of_scene():
-		pending('scene'); return
 		var inst = doubler.partial_double_scene(DOUBLE_ME_SCENE_PATH).instance()
 		assert_eq(inst.return_hello(), 'hello')
 
 	func test_double_scene_does_not_call_supers():
-		pending('scene'); return
 		var inst = doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
 		assert_eq(inst.return_hello(), null)
 		pause_before_teardown()

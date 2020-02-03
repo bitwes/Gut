@@ -181,6 +181,23 @@ class FileOrString:
 		else:
 			return load(_path)
 
+class PackedSceneDouble:
+	extends PackedScene
+	var _script =  null
+	var _scene = null
+
+	func set_script_obj(obj):
+		_script = obj
+
+	func instance(edit_state=0):
+		var inst = _scene.instance(edit_state)
+		if(_script !=  null):
+			inst.set_script(_script)
+		return inst
+
+	func load_scene(path):
+		_scene = load(path)
+
 
 
 
@@ -276,6 +293,8 @@ func _write_file(obj_info, dest_path, override_path=null):
 func _double_scene_and_script(scene_info, dest_path):
 	var dir = Directory.new()
 	dir.copy(scene_info.get_path(), dest_path)
+	var to_return = PackedSceneDouble.new()
+	to_return.load_scene(scene_info.get_path())
 
 	var inst = load(scene_info.get_path()).instance()
 	var script_path = null
@@ -288,23 +307,9 @@ func _double_scene_and_script(scene_info, dest_path):
 		oi.set_method_strategy(scene_info.get_method_strategy())
 		oi.make_partial_double = scene_info.make_partial_double
 		oi.scene_path = scene_info.get_path()
-		var double_path = _double(oi, scene_info.get_path())
-		var dq = '"'
+		to_return.set_script_obj(_double(oi, scene_info.get_path()).load_it())
 
-		var f = File.new()
-		f.open(dest_path, f.READ)
-		var source = f.get_as_text()
-		f.close()
-
-		source = source.replace(dq + script_path + dq, dq + double_path + dq)
-
-		f.open(dest_path, f.WRITE)
-		f.store_string(source)
-		f.close()
-
-
-
-	return script_path
+	return to_return
 
 func _get_methods(object_info):
 	var obj = object_info.instantiate()
@@ -387,9 +392,7 @@ func _double_scene(path, make_partial, strategy):
 	oi.set_method_strategy(strategy)
 	oi.make_partial_double = make_partial
 	var temp_path = _get_temp_path(oi)
-	_double_scene_and_script(oi, temp_path)
-
-	return load(temp_path)
+	return _double_scene_and_script(oi, temp_path)
 
 func _double_gdnative(native_class, make_partial, strategy):
 	var oi = ObjectInfo.new(null)
