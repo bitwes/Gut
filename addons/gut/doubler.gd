@@ -137,13 +137,21 @@ class ObjectInfo:
 	func get_native_class_name():
 		return _native_class_instance.get_class()
 
+# ------------------------------------------------------------------------------
+# Allows for interacting with a file but only creating a string.  This was done
+# to ease the transition from files being created for doubles to loading
+# doubles from a string.  This allows the files to be created for debugging
+# purposes since reading a file is easier than reading a dumped out string.
+# ------------------------------------------------------------------------------
 class FileOrString:
 	extends File
 
-	var _do_file = true
+	var _do_file = false
 	var _contents  = ''
+	var _path = null
 
 	func open(path, mode):
+		_path = path
 		if(_do_file):
 			return .open(path, mode)
 		else:
@@ -160,6 +168,18 @@ class FileOrString:
 
 	func get_contents():
 		return _contents
+
+	func get_path():
+		return _path
+
+	func load_it():
+		if(_contents != ''):
+			var script = GDScript.new()
+			script.set_source_code(get_contents())
+			script.reload()
+			return script
+		else:
+			return load(_path)
 
 
 
@@ -253,7 +273,6 @@ func _write_file(obj_info, dest_path, override_path=null):
 	f.close()
 	return f
 
-
 func _double_scene_and_script(scene_info, dest_path):
 	var dir = Directory.new()
 	dir.copy(scene_info.get_path(), dest_path)
@@ -282,6 +301,8 @@ func _double_scene_and_script(scene_info, dest_path):
 		f.open(dest_path, f.WRITE)
 		f.store_string(source)
 		f.close()
+
+
 
 	return script_path
 
@@ -340,13 +361,8 @@ func _get_temp_path(object_info):
 	var to_return = _output_dir.plus_file(file_name)
 	return to_return
 
-func _load_double(double_info):
-	var script = GDScript.new()
-	script.set_source_code(double_info.get_contents())
-	script.reload()
-	return script
-
-	#return load(double_info)
+func _load_double(fileOrString):
+	return fileOrString.load_it()
 
 func _double(obj_info, override_path=null):
 	var temp_path = _get_temp_path(obj_info)
@@ -354,22 +370,17 @@ func _double(obj_info, override_path=null):
 	_double_count += 1
 	return result
 
-
 func _double_script(path, make_partial, strategy):
 	var oi = ObjectInfo.new(path)
 	oi.make_partial_double = make_partial
 	oi.set_method_strategy(strategy)
-	var to_return = _load_double(_double(oi))
-
-	return to_return
+	return _double(oi).load_it()
 
 func _double_inner(path, subpath, make_partial, strategy):
 	var oi = ObjectInfo.new(path, subpath)
 	oi.set_method_strategy(strategy)
 	oi.make_partial_double = make_partial
-	var to_return = _load_double(_double(oi))
-
-	return to_return
+	return _double(oi).load_it()
 
 func _double_scene(path, make_partial, strategy):
 	var oi = ObjectInfo.new(path)
@@ -378,18 +389,14 @@ func _double_scene(path, make_partial, strategy):
 	var temp_path = _get_temp_path(oi)
 	_double_scene_and_script(oi, temp_path)
 
-	return load(path)#load(temp_path)
+	return load(temp_path)
 
 func _double_gdnative(native_class, make_partial, strategy):
 	var oi = ObjectInfo.new(null)
 	oi.set_native_class(native_class)
 	oi.set_method_strategy(strategy)
 	oi.make_partial_double = make_partial
-	var to_return = _load_double(_double(oi))
-
-	return to_return
-
-
+	return _double(oi).load_it()
 
 # ###############
 # Public

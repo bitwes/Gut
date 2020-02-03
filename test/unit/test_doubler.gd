@@ -57,21 +57,21 @@ class TestTheBasics:
 		assert_file_exists(TEMP_FILES + '/double_me.gd')
 
 	func test_doubling_object_includes_methods():
-		gr.doubler.double(DOUBLE_ME_PATH)
-		var text = gut.get_file_as_text(TEMP_FILES.plus_file('double_me.gd'))
+		var inst = gr.doubler.double(DOUBLE_ME_PATH).new()
+		var text = inst.get_script().get_source_code()
 		assert_true(text.match('*func get_value(*:\n*'), 'should have get method')
 		assert_true(text.match('*func set_value(*:\n*'), 'should have set method')
 
 	func test_doubling_methods_have_parameters_1():
-		gr.doubler.double(DOUBLE_ME_PATH)
-		var text = gut.get_file_as_text(TEMP_FILES.plus_file('double_me.gd'))
+		var inst = gr.doubler.double(DOUBLE_ME_PATH).new()
+		var text = inst.get_script().get_source_code()
 		assert_true(text.match('*param(p_arg0*:*'), text)
 
 	# Don't see a way to see which have defaults and which do not, so we default
 	# everything.
 	func test_all_parameters_are_defaulted_to_null():
-		gr.doubler.double(DOUBLE_ME_PATH)
-		var text = gut.get_file_as_text(TEMP_FILES.plus_file('double_me.gd'))
+		var inst = gr.doubler.double(DOUBLE_ME_PATH).new()
+		var text = inst.get_script().get_source_code()
 		assert_true(text.match('*one_default(p_arg0=null, p_arg1=null)*'))
 
 	func test_doubled_thing_includes_stubber_metadata():
@@ -184,6 +184,7 @@ class TestBuiltInOverloading:
 	extends BaseTest
 
 	var _dbl_win_dia_text = ''
+	var _dbl_win_dia = null
 
 	func _hide_call_back():
 		pass
@@ -200,8 +201,8 @@ class TestBuiltInOverloading:
 
 		# WindowDialog has A LOT of the edge cases we need to check so it is used
 		# as the default.
-		doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG)
-		_dbl_win_dia_text = _get_temp_file_as_text('double_extends_window_dialog.gd')
+		_dbl_win_dia = doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG)
+		_dbl_win_dia_text = _dbl_win_dia.new().get_script().get_source_code()
 
 	func after_all():
 		doubler.clear_output_directory()
@@ -214,8 +215,8 @@ class TestBuiltInOverloading:
 
 	func test_can_override_strategy_when_doubling_script():
 		doubler.set_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
-		doubler.double(DOUBLE_ME_PATH, DOUBLE_STRATEGY.FULL)
-		var txt = _get_temp_file_as_text('double_me.gd')
+		var inst = doubler.double(DOUBLE_ME_PATH, DOUBLE_STRATEGY.FULL).new()
+		var txt = inst.get_script().get_source_code()
 		assert_ne(txt.find('func is_blocking_signals'), -1, 'HAS non-overloaded methods')
 
 	func test_can_override_strategy_when_doubling_scene():
@@ -257,7 +258,7 @@ class TestBuiltInOverloading:
 	func test_doubled_builtins_call_super():
 		var inst = doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG).new()
 		# Make sure the function is in the doubled class definition
-		assert_string_contains(_dbl_win_dia_text, 'func add_user_signal(p_signal')
+		assert_string_contains(inst.get_script().get_source_code(), 'func add_user_signal(p_signal')
 		# Make sure that when called it retains old functionality.
 		inst.add_user_signal('new_one')
 		inst.add_user_signal('new_two', ['a', 'b'])
@@ -301,9 +302,8 @@ class TestDefaultParameters:
 
 	func test_parameters_are_doubled_for_draw_multimesh():
 		var inst = doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG).new()
-		var text = _get_temp_file_as_text('double_extends_window_dialog.gd')
 		var sig = 'func draw_multimesh(p_multimesh=null, p_texture=null, p_normal_map=null):'
-		assert_string_contains(text, sig)
+		assert_string_contains(inst.get_script().get_source_code(), sig)
 
 class TestDoubleInnerClasses:
 	extends BaseTest
@@ -350,9 +350,8 @@ class TestDoubleInnerClasses:
 	func test_can_override_strategy_when_doubling():
 		#doubler.set_strategy(DOUBLE_STRATEGY.FULL)
 		var d = doubler.double_inner(INNER_CLASSES_PATH, 'InnerA', DOUBLE_STRATEGY.FULL)
-		var text = _get_temp_file_as_text('inner_classes__InnerA.gd')
 		# make sure it has something from Object that isn't implemented
-		assert_string_contains(text, 'func disconnect(p_signal')
+		assert_string_contains(d.new().get_script().get_source_code(), 'func disconnect(p_signal')
 		assert_eq(doubler.get_strategy(), DOUBLE_STRATEGY.PARTIAL, 'strategy should have been reset')
 
 	func test_doubled_inners_retain_signals():
