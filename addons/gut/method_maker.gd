@@ -159,6 +159,13 @@ func _get_arg_text(method_meta):
 # Public
 # ###############
 
+func  _get_implementation(meta):
+	var params = get_spy_call_parameters_text(meta)
+	if(params == 'null'):
+		params = '[]'
+	return str("\treturn __gut_run_method('", meta.name, "', ", params, ")\n")
+
+
 # Creates a delceration for a function based off of function metadata.  All
 # types whose defaults are supported will have their values.  If a datatype
 # is not supported and the parameter has a default, a warning message will be
@@ -168,6 +175,7 @@ func get_decleration_text(meta):
 	var text = null
 	if(param_text != null):
 		text = str('func ', meta.name, '(', param_text, '):')
+		text += str("\n", _get_implementation(meta))
 	return text
 
 # creates a call to the function in meta in the super's class.

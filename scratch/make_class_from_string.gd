@@ -45,10 +45,12 @@ func create_instance():
 	var inner_class = obj.MadeIt.new()
 	print(inner_class.do_something())
 
-
+func with_parameters(p1, p2):
+	print(p1, '--', p2)
 
 func _init():
 	print("hello world")
 	create_node2d()
 	create_instance()
+	callv('with_parameters', ['one', 'two'])
 	quit()

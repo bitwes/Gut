@@ -152,6 +152,7 @@ var _stubber = _utils.Stubber.new()
 var _lgr = _utils.get_logger()
 var _method_maker = _utils.MethodMaker.new()
 var _strategy = null
+var _base_script_text = _utils.get_file_as_text('res://addons/gut/double_template.gd')
 
 
 func _init(strategy=_utils.DOUBLE_STRATEGY.PARTIAL):
@@ -177,24 +178,48 @@ func _stub_to_call_super(obj_info, method_name):
 	params.to_call_super()
 	_stubber.add_stub(params)
 
+func _get_base_script_text(obj_info, override_path):
+	var path = obj_info.get_path()
+	if(override_path != null):
+		path = override_path
+
+	var stubber_id = -1
+	if(_stubber != null):
+		stubber_id = _stubber.get_instance_id()
+
+	var spy_id = -1
+	if(_spy != null):
+		spy_id = _spy.get_instance_id()
+
+	var values = {
+		"path":path,
+		"subpath":obj_info.get_subpath(),
+		"stubber_id":stubber_id,
+		"spy_id":spy_id,
+		"extends":obj_info.get_extends_text()
+	}
+	return _base_script_text.format(values)
 
 func _write_file(obj_info, dest_path, override_path=null):
+	var base_script = _get_base_script_text(obj_info, override_path)
+	print(base_script)
 	var script_methods = _get_methods(obj_info)
 
-	var metadata = _get_stubber_metadata_text(obj_info)
-	if(override_path):
-		metadata = _get_stubber_metadata_text(obj_info, override_path)
+	# var metadata = _get_stubber_metadata_text(obj_info)
+	# if(override_path):
+	# 	metadata = _get_stubber_metadata_text(obj_info, override_path)
 
 	var f = File.new()
 	var f_result = f.open(dest_path, f.WRITE)
 
 	if(f_result != OK):
-		print('Error creating file ', dest_path)
-		print('Could not create double for :', obj_info.to_s())
+		_lgr.error(str('Error creating file ', dest_path))
+		_lgr.error(str('Could not create double for :', obj_info.to_s()))
 		return
 
-	f.store_string(str(obj_info.get_extends_text(), "\n"))
-	f.store_string(metadata)
+	#f.store_string(str(obj_info.get_extends_text(), "\n"))
+	f.store_string(base_script)
+	# f.store_string(metadata)
 
 	for i in range(script_methods.local_methods.size()):
 		if(obj_info.make_partial_double):
@@ -289,6 +314,7 @@ func _get_spy_text(method_hash):
 
 func _get_func_text(method_hash):
 	var ftxt = _method_maker.get_decleration_text(method_hash) + "\n"
+	return ftxt
 
 	var called_with = _method_maker.get_spy_call_parameters_text(method_hash)
 	ftxt += _get_spy_text(method_hash)

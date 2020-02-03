@@ -412,19 +412,13 @@ func test_post_hook_is_run_after_tests():
 	assert_true(gr.test_gut._post_run_script_instance.run_called, 'run was called')
 
 func test_when_post_hook_set_to_invalid_script_no_tests_are_ran():
-<<<<<<< HEAD
-=======
 	watch_signals(gr.test_gut)
->>>>>>> cfe68b3299df5ad5d1d4ffc16abd793556de81f0
 	gr.test_gut.set_post_run_script('res://does_not_exist.gd')
 	gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 	gr.test_gut.test_scripts()
 	assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test should not be run')
 	assert_gt(gr.test_gut.get_logger().get_errors().size(), 0, 'there should be errors')
-<<<<<<< HEAD
-=======
 	assert_signal_emitted(gr.test_gut, 'tests_finished')
->>>>>>> cfe68b3299df5ad5d1d4ffc16abd793556de81f0
 
 
 # ------------------------------------------------------------------------------

@@ -120,3 +120,13 @@ func is_native_class(thing):
 	if(typeof(thing) == TYPE_OBJECT):
 		it_is = str(thing).begins_with("[GDScriptNativeClass:")
 	return it_is
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_file_as_text(path):
+	var to_return = ''
+	var f = File.new()
+	f.open(path, f.READ)
+	to_return = f.get_as_text()
+	f.close()
+	return to_return

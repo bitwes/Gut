@@ -585,11 +585,6 @@ func _test_the_scripts(indexes=[]):
 	var is_valid = _init_run()
 	if(!is_valid):
 		_lgr.error('Something went wrong and the run was aborted.')
-<<<<<<< HEAD
-		return
-	_run_hook_script(_pre_run_script_instance)
-=======
-		emit_signal(SIGNAL_TESTS_FINISHED)
 		return
 
 	_run_hook_script(_pre_run_script_instance)
@@ -598,7 +593,6 @@ func _test_the_scripts(indexes=[]):
 		emit_signal(SIGNAL_TESTS_FINISHED)
 		return
 
->>>>>>> cfe68b3299df5ad5d1d4ffc16abd793556de81f0
 	_gui.run_mode()
 
 	var indexes_to_run = []
@@ -1172,12 +1166,8 @@ func is_file_empty(path):
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func get_file_as_text(path):
-	var to_return = ''
-	var f = File.new()
-	f.open(path, f.READ)
-	to_return = f.get_as_text()
-	f.close()
-	return to_return
+	return _utils.get_file_as_text(path)
+
 # ------------------------------------------------------------------------------
 # deletes all files in a given directory
 # ------------------------------------------------------------------------------
@@ -1308,22 +1298,6 @@ func set_export_path(export_path):
 func get_version():
 	return _version
 
-<<<<<<< HEAD
-func get_pre_run_script():
-	return _pre_run_script
-
-func set_pre_run_script(pre_run_script):
-	_pre_run_script = pre_run_script
-
-func get_post_run_script():
-	return _post_run_script
-
-func set_post_run_script(post_run_script):
-	_post_run_script = post_run_script
-
-func get_pre_run_script_instance():
-	return _pre_run_script_instance
-=======
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func get_pre_run_script():
@@ -1353,4 +1327,3 @@ func get_pre_run_script_instance():
 # ------------------------------------------------------------------------------
 func get_post_run_script_instance():
 	return _post_run_script_instance
->>>>>>> cfe68b3299df5ad5d1d4ffc16abd793556de81f0
