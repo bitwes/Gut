@@ -9,6 +9,24 @@ extends SceneTree
 # Probably shouldn't bother me that much, but it does..
 # ##############################################################################
 
+class SuperPack:
+	extends PackedScene
+	var _script =  null
+	var _scene = null
+
+	func set_script_obj(obj):
+		_script = obj
+
+	func instance(edit_state=0):
+		var inst = _scene.instance(edit_state)
+		inst.set_script(_script)
+		return inst
+
+	func load_scene(path):
+		_scene = load(path)
+
+var _utils = load('res://addons/gut/utils.gd').new()
+
 func make_class():
 	var text = ""
 
@@ -22,7 +40,7 @@ func make_class():
 func make_node():
 	var text = "extends Node2D\n" + \
 	           "func do_something():\n" + \
-			   "\treturn 'did it'"
+			   "\treturn 'did it!!'"
 	return text
 
 
@@ -35,7 +53,7 @@ func get_script_for_text(text):
 func create_node2d():
 	var n = Node2D.new()
 	n.set_script(get_script_for_text(make_node()))
-	print(n.do_something())
+	print('create node2d = ', n.do_something())
 	n.free()
 
 func create_instance():
@@ -43,14 +61,19 @@ func create_instance():
 	obj.set_script(get_script_for_text(make_class()))
 
 	var inner_class = obj.MadeIt.new()
-	print(inner_class.do_something())
+	print('create instance  = ', inner_class.do_something())
 
-func with_parameters(p1, p2):
-	print(p1, '--', p2)
+func create_scene():
+	var s2 = SuperPack.new()
+	s2.load_scene('res://test/resources/doubler_test_objects/double_me_scene.tscn')
+	s2.set_script_obj(get_script_for_text(make_node()))
+
+	var inst = s2.instance()
+	print('create scene = ', inst.do_something())
+
 
 func _init():
-	print("hello world")
 	create_node2d()
 	create_instance()
-	callv('with_parameters', ['one', 'two'])
+	create_scene()
 	quit()
