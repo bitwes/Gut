@@ -34,7 +34,6 @@ __meta__ = {
 "_edit_use_anchors_": false,
 "_editor_icon": ExtResource( 3 )
 }
-_select_script = "test_doubler.gd"
 _run_on_load = true
 _should_maximize = true
 _yield_between_tests = false

@@ -181,6 +181,11 @@ class FileOrString:
 		else:
 			return load(_path)
 
+# ------------------------------------------------------------------------------
+# A stroke of genius if I do say so.  This allows for doubling a scene without
+# having  to write any files.  By overloading instance we can make whatever
+# we want.
+# ------------------------------------------------------------------------------
 class PackedSceneDouble:
 	extends PackedScene
 	var _script =  null
@@ -217,6 +222,7 @@ var _lgr = _utils.get_logger()
 var _method_maker = _utils.MethodMaker.new()
 var _strategy = null
 var _base_script_text = _utils.get_file_as_text('res://addons/gut/double_templates/script_template.gd')
+var _make_files = false
 
 
 func _init(strategy=_utils.DOUBLE_STRATEGY.PARTIAL):
@@ -269,6 +275,7 @@ func _write_file(obj_info, dest_path, override_path=null):
 	var script_methods = _get_methods(obj_info)
 
 	var f = FileOrString.new()
+	f._do_file = _make_files
 	var f_result = f.open(dest_path, f.WRITE)
 
 	if(f_result != OK):
@@ -469,6 +476,8 @@ func partial_double_gdnative(native_class):
 	return _double_gdnative(native_class, true, _utils.DOUBLE_STRATEGY.FULL)
 
 func clear_output_directory():
+	if(!_make_files):
+		return
 	var did = false
 	if(_output_dir.find('user://') == 0):
 		var d = Directory.new()
@@ -491,12 +500,15 @@ func delete_output_directory():
 		var d = Directory.new()
 		d.remove(_output_dir)
 
-# When creating doubles a unique name is used that each double can be its own
-# thing.  Sometimes, for testing, we do not want to do this so this allows
-# you to turn off creating unique names for each double class.
+# When creating doubles and creating files is enabled then a unique name for
+# each file is used that each double can be its own thing.  Sometimes, for
+# testing, we do not want to do this so this allows you to turn off creating
+# unique names for each double class.
 #
 # THIS SHOULD NEVER BE USED OUTSIDE OF INTERNAL GUT TESTING.  It can cause
 # weird, hard to track down problems.
+#
+# This does nothing when files are not being  created.
 func set_use_unique_names(should):
 	_use_unique_names = should
 
@@ -505,3 +517,9 @@ func add_ignored_method(path, method_name):
 
 func get_ignored_methods():
 	return _ignored_methods
+
+func get_make_files():
+	return _make_files
+
+func set_make_files(make_files):
+	_make_files = make_files

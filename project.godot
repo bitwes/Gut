@@ -26,6 +26,7 @@ global="*res://scripts/global.gd"
 [debug]
 
 gdscript/warnings/enable=false
+gdscript/warnings/exclude_addons=false
 
 [display]
 

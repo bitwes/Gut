@@ -46,6 +46,9 @@ class TestTheBasics:
 	func test_can_get_set_spy():
 		assert_accessors(Doubler.new(), 'spy', null, GDScript.new())
 
+	func test_get_set_make_files():
+		assert_accessors(Doubler.new(), 'make_files', false, true)
+
 	func test_setting_output_dir_creates_directory_if_it_does_not_exist():
 		var d = Doubler.new()
 		d.set_output_dir('user://doubler_temp_files/')
@@ -53,6 +56,7 @@ class TestTheBasics:
 		assert_true(dir.dir_exists('user://doubler_temp_files/'))
 
 	func test_doubling_object_creates_temp_file():
+		gr.doubler.set_make_files(true)
 		gr.doubler.double(DOUBLE_ME_PATH)
 		assert_file_exists(TEMP_FILES + '/double_me.gd')
 
@@ -87,6 +91,7 @@ class TestTheBasics:
 		assert_is(doubled, Node2D)
 
 	func test_can_clear_output_directory():
+		gr.doubler.set_make_files(true)
 		gr.doubler.double(DOUBLE_ME_PATH)
 		gr.doubler.double(DOUBLE_EXTENDS_NODE2D)
 		assert_file_exists(TEMP_FILES + '/double_me.gd')
@@ -98,6 +103,7 @@ class TestTheBasics:
 	func test_can_delete_output_directory():
 		var d = Directory.new()
 		d.open('user://')
+		gr.doubler.set_make_files(true)
 		gr.doubler.double(DOUBLE_ME_PATH)
 		assert_true(d.dir_exists(TEMP_FILES))
 		gr.doubler.delete_output_directory()
@@ -321,6 +327,7 @@ class TestDoubleInnerClasses:
 		assert_null(dbld.get_b1())
 
 	func test_double_file_contains_source_file_and_inner_classes_in_the_name():
+		doubler.set_make_files(true)
 		doubler.double_inner(INNER_CLASSES_PATH, 'InnerB/InnerB1')
 		assert_file_exists(TEMP_FILES + '/inner_classes__InnerB__InnerB1.gd')
 
