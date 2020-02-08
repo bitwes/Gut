@@ -474,7 +474,7 @@ func partial_double_gdnative(native_class):
 func clear_output_directory():
 	if(!_make_files):
 		return false
-		
+
 	var did = false
 	if(_output_dir.find('user://') == 0):
 		var d = Directory.new()

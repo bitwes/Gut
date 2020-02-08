@@ -784,6 +784,9 @@ func _get_files(path, prefix, suffix):
 # current log level and what level is passed in.  Whenever currently in a test,
 # the text will be indented under the test.  It can be further indented if
 # desired.
+#
+# The first time output is generated when in a test, the test name will be
+# printed.
 # ------------------------------------------------------------------------------
 func p(text, level=0, indent=0):
 	var str_text = str(text)
@@ -792,13 +795,13 @@ func p(text, level=0, indent=0):
 
 	if(level <= _utils.nvl(_log_level, 0)):
 		if(_current_test != null):
-			#make sure everything printed during the execution
-			#of a test is at least indented once under the test
+			# make sure everything printed during the execution
+			# of a test is at least indented once under the test
 			if(indent == 0):
 				indent = 1
 
-			#Print the name of the current test if we haven't
-			#printed it already.
+			# Print the name of the current test if we haven't
+			# printed it already.
 			if(!_current_test.has_printed_name):
 				to_print = "* " + _current_test.name
 				_current_test.has_printed_name = true
@@ -807,7 +810,7 @@ func p(text, level=0, indent=0):
 		if(!printing_test_name):
 			if(to_print != ""):
 				to_print += "\n"
-			#Make the indent
+			# Make the indent
 			var pad = ""
 			for i in range(0, indent):
 				pad += "    "
@@ -815,7 +818,8 @@ func p(text, level=0, indent=0):
 			to_print = to_print.replace("\n", "\n" + pad)
 
 		if(_should_print_to_console):
-			print(to_print)
+			var formatted =  to_print
+			print(formatted)
 
 		_log_text += to_print + "\n"
 

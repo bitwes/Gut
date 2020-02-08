@@ -1,6 +1,7 @@
 var _Logger = load('res://addons/gut/logger.gd') # everything should use get_logger
 
 var Doubler = load('res://addons/gut/doubler.gd')
+var Gut = load('res://addons/gut/gut.gd')
 var HookScript = load('res://addons/gut/hook_script.gd')
 var MethodMaker = load('res://addons/gut/method_maker.gd')
 var Spy = load('res://addons/gut/spy.gd')
@@ -18,6 +19,19 @@ enum DOUBLE_STRATEGY{
 	FULL,
 	PARTIAL
 }
+
+var escape = PoolByteArray([0x1b]).get_string_from_ascii()
+var CMD_COLORS  = {
+	RED = escape + '[31m',
+	YELLOW = escape + '[33m',
+	DEFAULT = escape + '[0m',
+	GREEN = escape + '[32m',
+	UNDERLINE = escape + '[4m'
+}
+
+func colorize_word(source, word, c):
+	var new_word  = c + word + CMD_COLORS.DEFAULT
+	return source.replacen(word, new_word)
 
 var _file_checker = File.new()
 
