@@ -29,7 +29,6 @@ class TestTheBasics:
 		stubber.clear()
 		gr.doubler = Doubler.new()
 		gr.doubler.set_stubber(stubber)
-		gr.doubler.set_use_unique_names(false)
 		gr.doubler.set_output_dir(TEMP_FILES)
 
 	func after_each():
@@ -54,11 +53,6 @@ class TestTheBasics:
 		d.set_output_dir('user://doubler_temp_files/')
 		var dir = Directory.new()
 		assert_true(dir.dir_exists('user://doubler_temp_files/'))
-
-	func test_doubling_object_creates_temp_file():
-		gr.doubler.set_make_files(true)
-		gr.doubler.double(DOUBLE_ME_PATH)
-		assert_file_exists(TEMP_FILES + '/double_me.gd')
 
 	func test_doubling_object_includes_methods():
 		var inst = gr.doubler.double(DOUBLE_ME_PATH).new()
@@ -92,18 +86,13 @@ class TestTheBasics:
 
 	func test_can_clear_output_directory():
 		gr.doubler.set_make_files(true)
-		gr.doubler.double(DOUBLE_ME_PATH)
-		gr.doubler.double(DOUBLE_EXTENDS_NODE2D)
-		assert_file_exists(TEMP_FILES + '/double_me.gd')
-		assert_file_exists(TEMP_FILES + '/double_extends_node2d.gd')
+		gut.file_touch(TEMP_FILES  + '/test_file.txt')
 		gr.doubler.clear_output_directory()
-		assert_file_does_not_exist(TEMP_FILES + '/double_me.gd')
-		assert_file_does_not_exist(TEMP_FILES + '/double_extends_node2d.gd')
+		assert_file_does_not_exist(TEMP_FILES  + '/test_file.txt')
 
 	func test_can_delete_output_directory():
 		var d = Directory.new()
 		d.open('user://')
-		gr.doubler.set_make_files(true)
 		gr.doubler.double(DOUBLE_ME_PATH)
 		assert_true(d.dir_exists(TEMP_FILES))
 		gr.doubler.delete_output_directory()
@@ -199,7 +188,6 @@ class TestBuiltInOverloading:
 		stubber.clear()
 		doubler = Doubler.new(_utils.DOUBLE_STRATEGY.FULL)
 		doubler.set_stubber(stubber)
-		doubler.set_use_unique_names(false)
 		doubler.set_output_dir(TEMP_FILES)
 
 		# WindowDialog has A LOT of the edge cases we need to check so it is used
@@ -285,7 +273,6 @@ class TestDefaultParameters:
 	func before_each():
 		doubler = Doubler.new(_utils.DOUBLE_STRATEGY.FULL)
 		doubler.set_stubber(_utils.Stubber.new())
-		doubler.set_use_unique_names(false)
 		doubler.set_output_dir(TEMP_FILES)
 
 	func test_parameters_are_doubled_for_connect():
@@ -315,7 +302,6 @@ class TestDoubleInnerClasses:
 	func before_each():
 		doubler = Doubler.new()
 		doubler.set_stubber(_utils.Stubber.new())
-		doubler.set_use_unique_names(false)
 		doubler.set_output_dir(TEMP_FILES)
 
 	func test_can_instantiate_inner_double():
@@ -325,11 +311,6 @@ class TestDoubleInnerClasses:
 	func test_doubled_instance_returns_null_for_get_b1():
 		var dbld = doubler.double_inner(INNER_CLASSES_PATH, 'InnerB/InnerB1').new()
 		assert_null(dbld.get_b1())
-
-	func test_double_file_contains_source_file_and_inner_classes_in_the_name():
-		doubler.set_make_files(true)
-		doubler.double_inner(INNER_CLASSES_PATH, 'InnerB/InnerB1')
-		assert_file_exists(TEMP_FILES + '/inner_classes__InnerB__InnerB1.gd')
 
 	func test_doubled_instances_extend_the_inner_class():
 		var inst = doubler.double_inner(INNER_CLASSES_PATH, 'InnerA').new()

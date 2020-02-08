@@ -211,15 +211,14 @@ class PackedSceneDouble:
 # ------------------------------------------------------------------------------
 var _utils = load('res://addons/gut/utils.gd').new()
 
-var _output_dir = null
-var _double_count = 0 # used in making files names unique
-var _use_unique_names = true
-var _spy = null
 var  _ignored_methods = _utils.OneToMany.new()
-
 var _stubber = _utils.Stubber.new()
 var _lgr = _utils.get_logger()
 var _method_maker = _utils.MethodMaker.new()
+
+var _output_dir = null
+var _double_count = 0 # used in making files names unique
+var _spy = null
 var _strategy = null
 var _base_script_text = _utils.get_file_as_text('res://addons/gut/double_templates/script_template.gd')
 var _make_files = false
@@ -499,18 +498,6 @@ func delete_output_directory():
 	if(did):
 		var d = Directory.new()
 		d.remove(_output_dir)
-
-# When creating doubles and creating files is enabled then a unique name for
-# each file is used that each double can be its own thing.  Sometimes, for
-# testing, we do not want to do this so this allows you to turn off creating
-# unique names for each double class.
-#
-# THIS SHOULD NEVER BE USED OUTSIDE OF INTERNAL GUT TESTING.  It can cause
-# weird, hard to track down problems.
-#
-# This does nothing when files are not being  created.
-func set_use_unique_names(should):
-	_use_unique_names = should
 
 func add_ignored_method(path, method_name):
 	_ignored_methods.add(path, method_name)

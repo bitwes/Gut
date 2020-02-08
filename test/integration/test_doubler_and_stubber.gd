@@ -1,8 +1,3 @@
-# NOTE about set_use_unique_names
-#   Since a new doubler is made for each test, this cannot use the unique names
-#   or things do not load properly.  This also means that everything is
-#   essentially using the same doubles.  Since the body of the doubles isn't
-#   changing over the course of this test script, that is ok.
 extends "res://addons/gut/test.gd"
 
 var Stubber = load('res://addons/gut/stubber.gd')
