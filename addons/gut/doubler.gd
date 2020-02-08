@@ -298,7 +298,7 @@ func _write_file(obj_info, dest_path, override_path=null):
 
 func _double_scene_and_script(scene_info, dest_path):
 	var dir = Directory.new()
-	dir.copy(scene_info.get_path(), dest_path)
+	# dir.copy(scene_info.get_path(), dest_path)
 	var to_return = PackedSceneDouble.new()
 	to_return.load_scene(scene_info.get_path())
 
@@ -364,10 +364,7 @@ func _get_temp_path(object_info):
 	if(object_info.has_subpath()):
 		file_name += '__' + object_info.get_subpath().replace('/', '__')
 
-	if(_use_unique_names):
-		file_name += str('__dbl', _double_count, '__.', extension)
-	else:
-		file_name += '.' + extension
+	file_name += str('__dbl', _double_count, '__.', extension)
 
 	var to_return = _output_dir.plus_file(file_name)
 	return to_return
