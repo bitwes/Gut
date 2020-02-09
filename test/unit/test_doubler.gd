@@ -35,7 +35,8 @@ class TestTheBasics:
 		gr.doubler.clear_output_directory()
 
 	func test_get_set_output_dir():
-		assert_accessors(Doubler.new(), 'output_dir', null, 'user://somewhere')
+		assert_accessors(Doubler.new(), 'output_dir', 'user://gut_temp_directory', 'user://somewhere')
+		gut.file_delete('user://somewhere')
 
 	func test_get_set_stubber():
 		var dblr = Doubler.new()
@@ -50,9 +51,12 @@ class TestTheBasics:
 
 	func test_setting_output_dir_creates_directory_if_it_does_not_exist():
 		var d = Doubler.new()
-		d.set_output_dir('user://doubler_temp_files/')
+		d.set_make_files(true)
+		var path = 'user://doubler_temp_files/'
+		d.set_output_dir(path)
 		var dir = Directory.new()
-		assert_true(dir.dir_exists('user://doubler_temp_files/'))
+		assert_true(dir.dir_exists(path))
+		gut.file_delete(path)
 
 	func test_doubling_object_includes_methods():
 		var inst = gr.doubler.double(DOUBLE_ME_PATH).new()
@@ -93,6 +97,7 @@ class TestTheBasics:
 	func test_can_delete_output_directory():
 		var d = Directory.new()
 		d.open('user://')
+		gr.doubler.set_make_files(true)
 		gr.doubler.double(DOUBLE_ME_PATH)
 		assert_true(d.dir_exists(TEMP_FILES))
 		gr.doubler.delete_output_directory()
@@ -362,6 +367,7 @@ class TestPartialDoubles:
 		var inst = doubler.partial_double(DOUBLE_ME_PATH).new()
 		inst.set_value(10)
 		assert_eq(inst.get_value(), 10)
+		print(inst.get_script().get_source_code())
 
 	func test_double_script_does_not_make_partials():
 		var inst = doubler.double(DOUBLE_ME_PATH).new()

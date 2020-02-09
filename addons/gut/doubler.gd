@@ -216,16 +216,28 @@ var _stubber = _utils.Stubber.new()
 var _lgr = _utils.get_logger()
 var _method_maker = _utils.MethodMaker.new()
 
-var _output_dir = null
+var _output_dir = 'user://gut_temp_directory'
 var _double_count = 0 # used in making files names unique
 var _spy = null
 var _strategy = null
 var _base_script_text = _utils.get_file_as_text('res://addons/gut/double_templates/script_template.gd')
 var _make_files = false
 
+# These methods all call super implicitly.  Stubbing them to call super causes
+# super to be called twice.
+var _non_super_methods = [
+	"_init",
+	"_ready",
+	"_notification",
+	"_enter_world",
+	"_exit_world",
+	"_process",
+	"_physics_process",
+	"_exit_tree",
+	"_gui_input	",
+]
 
 func _init(strategy=_utils.DOUBLE_STRATEGY.PARTIAL):
-	# make sure _method_maker gets logger too
 	set_logger(_utils.get_logger())
 	_strategy = strategy
 
@@ -240,6 +252,8 @@ func _get_indented_line(indents, text):
 
 
 func _stub_to_call_super(obj_info, method_name):
+	if(_non_super_methods.has(method_name)):
+		return
 	var path = obj_info.get_path()
 	if(obj_info.scene_path != null):
 		path = obj_info.scene_path
@@ -411,9 +425,11 @@ func get_output_dir():
 	return _output_dir
 
 func set_output_dir(output_dir):
-	_output_dir = output_dir
-	var d = Directory.new()
-	d.make_dir_recursive(output_dir)
+	if(output_dir !=  null):
+		_output_dir = output_dir
+		if(_make_files):
+			var d = Directory.new()
+			d.make_dir_recursive(output_dir)
 
 func get_spy():
 	return _spy
@@ -508,3 +524,4 @@ func get_make_files():
 
 func set_make_files(make_files):
 	_make_files = make_files
+	set_output_dir(_output_dir)

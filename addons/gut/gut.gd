@@ -405,7 +405,7 @@ func _init_run():
 	_gui.get_text_box().add_color_region('/-', '-/', Color(1, 1, 0))
 	_gui.get_text_box().add_color_region('/*', '*/', Color(.5, .5, 1))
 
-	var  pre_hook_result = _validate_hook_script(_pre_run_script)
+	var pre_hook_result = _validate_hook_script(_pre_run_script)
 	_pre_run_script_instance = pre_hook_result.instance
 	var post_hook_result = _validate_hook_script(_post_run_script)
 	_post_run_script_instance  = post_hook_result.instance

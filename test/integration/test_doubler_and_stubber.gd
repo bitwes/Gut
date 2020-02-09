@@ -21,6 +21,9 @@ func before_each():
 
 	gr.stubber = Stubber.new()
 
+func after_all():
+	gut.file_delete(TEMP_FILES)
+
 # func after_each():
 # 	gr.doubler.clear_output_directory()
 
@@ -122,3 +125,13 @@ func test_can_stub_all_Node2D_doubles():
 	var params = _utils.StubParams.new(Node2D, 'get_position').to_return(-1)
 	gr.stubber.add_stub(params)
 	assert_eq(d_node2d.get_position(), -1)
+
+func test_init_is_never_stubbed_to_all_super():
+	gr.doubler.set_stubber(gr.stubber)
+	var inst =  gr.doubler.partial_double(DOUBLE_ME_PATH).new()
+	assert_false(gr.stubber.should_call_super(inst, '_init', []))
+
+func test_ready_is_never_stubbed_to_all_super():
+	gr.doubler.set_stubber(gr.stubber)
+	var inst =  gr.doubler.partial_double(DOUBLE_ME_PATH).new()
+	assert_false(gr.stubber.should_call_super(inst, '_ready', []))
