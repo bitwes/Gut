@@ -28,3 +28,13 @@ class TestLogging:
 
 	func test_gut_sets_logger_on_test_collector():
 		assert_eq(_gut._test_collector.get_logger(), _gut.get_logger())
+	
+	func test_gut_sets_logger_on_spy():
+		assert_eq(_gut.get_spy().get_logger(), _gut.get_logger())
+	
+	func test_method_maker_has_same_logger():
+		var mm = _gut.get_doubler()._method_maker
+		assert_eq(mm.get_logger(), _gut.get_logger())
+
+	func test_test_colledtor_has_same_logger():
+		assert_eq(_gut.get_test_collector().get_logger(), _gut.get_logger())

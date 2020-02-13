@@ -26,12 +26,25 @@ var CMD_COLORS  = {
 	YELLOW = escape + '[33m',
 	DEFAULT = escape + '[0m',
 	GREEN = escape + '[32m',
-	UNDERLINE = escape + '[4m'
+	UNDERLINE = escape + '[4m',
+	BOLD = escape + '[1m'
 }
 
 func colorize_word(source, word, c):
 	var new_word  = c + word + CMD_COLORS.DEFAULT
-	return source.replacen(word, new_word)
+	return source.replace(word, new_word)
+
+func colorize_text(text):
+	var t = colorize_word(text, 'FAILED', CMD_COLORS.RED)
+	t = colorize_word(t, 'PASSED', CMD_COLORS.GREEN)
+	t = colorize_word(t, 'PENDING', CMD_COLORS.YELLOW)
+	t = colorize_word(t, '[ERROR]', CMD_COLORS.RED)
+	t = colorize_word(t, '[WARNING]', CMD_COLORS.YELLOW)
+	t = colorize_word(t, '[DEBUG]', CMD_COLORS.BOLD)
+	t = colorize_word(t, '[DEPRECATED]', CMD_COLORS.BOLD)
+	t = colorize_word(t, '[INFO]', CMD_COLORS.BOLD)
+	return t
+	
 
 var _file_checker = File.new()
 
@@ -140,7 +153,8 @@ func is_native_class(thing):
 func get_file_as_text(path):
 	var to_return = ''
 	var f = File.new()
-	f.open(path, f.READ)
-	to_return = f.get_as_text()
-	f.close()
+	var result = f.open(path, f.READ)
+	if(result == OK):
+		to_return = f.get_as_text()
+		f.close()
 	return to_return

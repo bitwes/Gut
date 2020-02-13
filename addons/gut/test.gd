@@ -906,9 +906,9 @@ func pending(text=""):
 	_summary.pending += 1
 	if(gut):
 		if(text == ""):
-			gut.p("Pending")
+			gut.p("PENDING")
 		else:
-			gut.p("Pending:  " + text)
+			gut.p("PENDING:  " + text)
 		gut._pending(text)
 
 # ------------------------------------------------------------------------------

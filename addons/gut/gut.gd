@@ -80,6 +80,8 @@ export(String, DIR) var _directory6 = ''
 export(int, 'FULL', 'PARTIAL') var _double_strategy = _utils.DOUBLE_STRATEGY.PARTIAL setget set_double_strategy, get_double_strategy
 export(String, FILE) var _pre_run_script = '' setget set_pre_run_script, get_pre_run_script
 export(String, FILE) var _post_run_script = '' setget set_post_run_script, get_post_run_script
+export(bool) var _color_output = true setget set_color_output, get_color_output
+
 # The instance that is created from _pre_run_script.  Accessible from
 # get_pre_run_script_instance.
 var _pre_run_script_instance = null
@@ -155,8 +157,11 @@ func _init():
 	_doubler.set_output_dir(_temp_directory)
 	_doubler.set_stubber(_stubber)
 	_doubler.set_spy(_spy)
-	_doubler.set_logger(_lgr)
+	
 	_lgr.set_gut(self)
+	_doubler.set_logger(_lgr)
+	_spy.set_logger(_lgr)
+	
 
 	_stubber.set_logger(_lgr)
 	_test_collector.set_logger(_lgr)
@@ -818,7 +823,9 @@ func p(text, level=0, indent=0):
 			to_print = to_print.replace("\n", "\n" + pad)
 
 		if(_should_print_to_console):
-			var formatted =  to_print
+			var formatted = to_print
+			if(_color_output):
+				formatted =  _utils.colorize_text(to_print)
 			print(formatted)
 
 		_log_text += to_print + "\n"
@@ -1331,3 +1338,10 @@ func get_pre_run_script_instance():
 # ------------------------------------------------------------------------------
 func get_post_run_script_instance():
 	return _post_run_script_instance
+
+func get_color_output():
+	return _color_output
+
+func set_color_output(color_output):
+	_color_output = color_output
+	

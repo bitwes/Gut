@@ -113,7 +113,7 @@ class ObjectInfo:
 		if(is_native()):
 			extend = str("extends ", get_native_class_name())
 		else:
-			extend = str("extends '", get_path(), '\'')
+			extend = str("extends '", get_path(), "'")
 
 		if(has_subpath()):
 			extend += str('.', get_subpath().replace('/', '.'))
