@@ -2,9 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-#6.X.X
+# 6.X.X
 ## Features
 * __Issue 113__ ssd71 added asserts `assert_connected` and  `assert_not_connected` which allow you to assert an object is connected to a signal.
+* Added some colors to the console output.  This is disabled by default in the editor and enabled by default at the command line.   The colors don't work in the Godot console.
 
 # 6.8.1
 ## Features

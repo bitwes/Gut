@@ -128,12 +128,15 @@ var _opts = []
 var options = {
 	config_file = 'res://.gutconfig.json',
 	dirs = [],
+	disable_colors = false,
 	double_strategy = 'partial',
 	ignore_pause = false,
 	include_subdirs = false,
 	inner_class = '',
 	log_level = 1,
 	opacity = 100,
+	post_run_script = '',
+	pre_run_script = '',
 	prefix = 'test_',
 	selected = '',
 	should_exit = false,
@@ -143,8 +146,6 @@ var options = {
 	suffix = '.gd',
 	tests = [],
 	unit_test_name = '',
-	pre_run_script = '',
-	post_run_script = ''
 }
 
 # flag to indicate if only a single script should be run.
@@ -180,6 +181,7 @@ func setup_options():
 	opts.add('-gpo', false, 'Print option values from all sources and the value used, then quit.')
 	opts.add('-ginclude_subdirs', false, 'Include subdirectories of -gdir.')
 	opts.add('-gdouble_strategy', 'partial', 'Default strategy to use when doubling.  Valid values are [partial, full].  Default "[default]"')
+	opts.add('-gdisable_colors', false, 'Disable command line colors.')
 	opts.add('-gpre_run_script', '', 'pre-run hook script path')
 	opts.add('-gpost_run_script', '', 'post-run hook script path')
 	opts.add('-gprint_gutconfig_sample', false, 'Print out json that can be used to make a gutconfig file then quit.')
@@ -189,24 +191,25 @@ func setup_options():
 # Parses options, applying them to the _tester or setting values
 # in the options struct.
 func extract_command_line_options(from, to):
-	to.tests = from.get_value('-gtest')
+	to.config_file = from.get_value('-gconfig')
 	to.dirs = from.get_value('-gdir')
+	to.disable_colors =  from.get_value('-gdisable_colors')
+	to.double_strategy = from.get_value('-gdouble_strategy')
+	to.ignore_pause = from.get_value('-gignore_pause')
+	to.include_subdirs = from.get_value('-ginclude_subdirs')
+	to.inner_class = from.get_value('-ginner_class')
+	to.log_level = from.get_value('-glog')
+	to.opacity = from.get_value('-gopacity')
+	to.post_run_script = from.get_value('-gpost_run_script')
+	to.pre_run_script = from.get_value('-gpre_run_script')
+	to.prefix = from.get_value('-gprefix')
+	to.selected = from.get_value('-gselect')
 	to.should_exit = from.get_value('-gexit')
 	to.should_exit_on_success = from.get_value('-gexit_on_success')
 	to.should_maximize = from.get_value('-gmaximize')
-	to.log_level = from.get_value('-glog')
-	to.ignore_pause = from.get_value('-gignore_pause')
-	to.selected = from.get_value('-gselect')
-	to.prefix = from.get_value('-gprefix')
 	to.suffix = from.get_value('-gsuffix')
+	to.tests = from.get_value('-gtest')
 	to.unit_test_name = from.get_value('-gunit_test_name')
-	to.config_file = from.get_value('-gconfig')
-	to.inner_class = from.get_value('-ginner_class')
-	to.opacity = from.get_value('-gopacity')
-	to.include_subdirs = from.get_value('-ginclude_subdirs')
-	to.double_strategy = from.get_value('-gdouble_strategy')
-	to.pre_run_script = from.get_value('-gpre_run_script')
-	to.post_run_script = from.get_value('-gpost_run_script')
 
 
 func load_options_from_config_file(file_path, into):
@@ -277,6 +280,7 @@ func apply_options(opts):
 	_tester.set_unit_test_name(opts.unit_test_name)
 	_tester.set_pre_run_script(opts.pre_run_script)
 	_tester.set_post_run_script(opts.post_run_script)
+	_tester.set_color_output(!opts.disable_colors)
 
 func _print_gutconfigs(values):
 	var header = """Here is a sample of a full .gutconfig.json file.

@@ -136,6 +136,8 @@ func test_get_set_temp_directory():
 func test_get_set_export_path():
 	assert_accessors(gr.test_gut, 'export_path', '', 'res://somewhere')
 
+func test_get_set_color_output():
+	assert_accessors(gr.test_gut, 'color_output', false, true)
 # ------------------------------
 # Doubler
 # ------------------------------

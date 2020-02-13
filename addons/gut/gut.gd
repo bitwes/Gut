@@ -80,7 +80,7 @@ export(String, DIR) var _directory6 = ''
 export(int, 'FULL', 'PARTIAL') var _double_strategy = _utils.DOUBLE_STRATEGY.PARTIAL setget set_double_strategy, get_double_strategy
 export(String, FILE) var _pre_run_script = '' setget set_pre_run_script, get_pre_run_script
 export(String, FILE) var _post_run_script = '' setget set_post_run_script, get_post_run_script
-export(bool) var _color_output = true setget set_color_output, get_color_output
+export(bool) var _color_output = false setget set_color_output, get_color_output
 
 # The instance that is created from _pre_run_script.  Accessible from
 # get_pre_run_script_instance.
