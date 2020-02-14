@@ -635,3 +635,27 @@ func test_replace_node():
 
 	# Failing
 	assert_eq(scene.label, replace_label, 'The variable "label" was set as onready so it will not be updated')
+
+class Signaler:
+	signal the_signal
+
+class Connector:
+	func connect_this():
+		pass	
+	func  other_method():
+		pass
+
+func test_assert_connected():
+	var signaler = Signaler.new()
+	var connector  = Connector.new()
+	signaler.connect('the_signal', connector, 'connect_this')
+
+	# Passing
+	assert_connected(signaler, connector, 'the_signal')
+	assert_connected(signaler, connector, 'the_signal', 'connect_this')
+	
+	# Failing
+	var foo = Connector.new()
+	assert_connected(signaler,  connector, 'the_signal', 'other_method')
+	assert_connected(signaler, connector, 'other_signal')
+	assert_connected(signaler, foo, 'the_signal')
