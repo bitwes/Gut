@@ -47,11 +47,11 @@ class TestScript:
 			count += _tests[key].pending_texts.size()
 		return count
 
-	func get_test_obj(name):
-		if(!_tests.has(name)):
-			_tests[name] = Test.new()
-			_test_order.append(name)
-		return _tests[name]
+	func get_test_obj(obj_name):
+		if(!_tests.has(obj_name)):
+			_tests[obj_name] = Test.new()
+			_test_order.append(obj_name)
+		return _tests[obj_name]
 
 	func add_pass(test_name, reason):
 		var t = get_test_obj(test_name)
@@ -101,7 +101,6 @@ func get_test_text(test_name):
 # end.  Used for displaying the number of scripts without including all the
 # Inner Classes.
 func get_non_inner_class_script_count():
-	var count = 0
 	var unique_scripts = {}
 	for i in range(_scripts.size()):
 		var ext_loc = _scripts[i].name.find_last('.gd.')

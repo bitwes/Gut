@@ -63,11 +63,11 @@ class TestScript:
 			names.append(tests[i].name)
 		config_file.set_value(section, 'tests', names)
 
-	func _remap_path(path):
-		var to_return = path
-		if(!_utils.file_exists(path)):
-			_lgr.debug('Checking for remap for:  ' + path)
-			var remap_path = path.get_basename() + '.gd.remap'
+	func _remap_path(source_path):
+		var to_return = source_path
+		if(!_utils.file_exists(source_path)):
+			_lgr.debug('Checking for remap for:  ' + source_path)
+			var remap_path = source_path.get_basename() + '.gd.remap'
 			if(_utils.file_exists(remap_path)):
 				var cf = ConfigFile.new()
 				cf.load(remap_path)

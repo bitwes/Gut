@@ -233,7 +233,7 @@ func _setup_gui():
 	_gui.connect('end_pause', self, '_on_new_gui_end_pause')
 	_gui.connect('ignore_pause', self, '_on_new_gui_ignore_pause')
 	_gui.connect('log_level_changed', self, '_on_log_level_changed')
-	connect('tests_finished', _gui, 'end_run')
+	var _foo = connect('tests_finished', _gui, 'end_run')
 
 func _add_scripts_to_gui():
 	var scripts = []
@@ -426,9 +426,6 @@ func _init_run():
 # Print out run information and close out the run.
 # ------------------------------------------------------------------------------
 func _end_run():
-	var failed_tests = []
-	var more_than_one = _test_script_objects.size() > 1
-
 	p(_get_summary_text(), 0)
 	p("\n")
 	if(!_utils.is_null_or_empty(_select_script)):
@@ -451,6 +448,7 @@ func _end_run():
 	_run_hook_script(_post_run_script_instance)
 	emit_signal(SIGNAL_TESTS_FINISHED)
 	_gui.set_title("Finished.  " + str(get_fail_count()) + " failures.")
+
 
 # ------------------------------------------------------------------------------
 # Checks the passed in thing to see if it is a "function state" object that gets
@@ -610,7 +608,6 @@ func _test_the_scripts(indexes=[]):
 	_gui.set_progress_script_max(indexes_to_run.size()) # New way
 	_gui.set_progress_script_value(0)
 
-	var file = File.new()
 	if(_doubler.get_strategy() == _utils.DOUBLE_STRATEGY.FULL):
 		_lgr.info("Using Double Strategy FULL as default strategy.  Keep an eye out for weirdness, this is still experimental.")
 
@@ -817,7 +814,7 @@ func p(text, level=0, indent=0):
 				to_print += "\n"
 			# Make the indent
 			var pad = ""
-			for i in range(0, indent):
+			for _i in range(0, indent):
 				pad += "    "
 			to_print += pad + str_text
 			to_print = to_print.replace("\n", "\n" + pad)
@@ -1093,7 +1090,7 @@ func get_yield_between_tests():
 # the _process or _fixed_process methods.
 # ------------------------------------------------------------------------------
 func simulate(obj, times, delta):
-	for i in range(times):
+	for _i in range(times):
 		if(obj.has_method("_process")):
 			obj._process(delta)
 		if(obj.has_method("_physics_process")):
@@ -1132,7 +1129,7 @@ func set_yield_signal_or_time(obj, signal_name, max_wait, text=''):
 	_yield_timer.set_wait_time(max_wait)
 	_yield_timer.start()
 	_was_yield_method_called = true
-	p(str('/# Yielding to signal "', signal_name, '" or for ', max_wait, ' seconds #/'))
+	p(str('/# Yielding to signal "', signal_name, '" or for ', max_wait, ' seconds #/ ', text))
 	return self
 
 # ------------------------------------------------------------------------------

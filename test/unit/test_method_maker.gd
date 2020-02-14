@@ -6,7 +6,7 @@ class BaseTest:
 
 	var MethodMaker = load('res://addons/gut/method_maker.gd')
 
-	func make_meta(fname, params = [], flags = 65):
+	func make_meta(fname, params = [], _flags = 65):
 		var to_return = {
 			name = fname,
 			args = params,
@@ -36,7 +36,7 @@ class TestGetDecleration:
 		var params = [make_param('value1', 999)]
 		var meta = make_meta('dummy', params)
 		meta.default_args.append(1)
-		var txt = _mm.get_function_text(meta)
+		var _txt = _mm.get_function_text(meta)
 		assert_true(true, 'we got here')
 
 	func test_if_unknonw_param_type_function_text_is_null():

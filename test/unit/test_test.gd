@@ -1122,7 +1122,7 @@ class TestGetCallParameters:
 
 	func test_generates_error_if_you_do_not_pass_a_doubled_object():
 		var thing = Node2D.new()
-		var p = gr.test_with_gut.get_call_parameters(thing, 'something')
+		var _p = gr.test_with_gut.get_call_parameters(thing, 'something')
 		assert_eq(gr.test_with_gut.get_logger().get_errors().size(), 1)
 
 

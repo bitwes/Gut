@@ -246,7 +246,7 @@ func _init(strategy=_utils.DOUBLE_STRATEGY.PARTIAL):
 # ###############
 func _get_indented_line(indents, text):
 	var to_return = ''
-	for i in range(indents):
+	for _i in range(indents):
 		to_return += "\t"
 	return str(to_return, text, "\n")
 
@@ -310,9 +310,7 @@ func _write_file(obj_info, dest_path, override_path=null):
 	f.close()
 	return f
 
-func _double_scene_and_script(scene_info, dest_path):
-	var dir = Directory.new()
-	# dir.copy(scene_info.get_path(), dest_path)
+func _double_scene_and_script(scene_info):
 	var to_return = PackedSceneDouble.new()
 	to_return.load_scene(scene_info.get_path())
 
@@ -408,8 +406,7 @@ func _double_scene(path, make_partial, strategy):
 	var oi = ObjectInfo.new(path)
 	oi.set_method_strategy(strategy)
 	oi.make_partial_double = make_partial
-	var temp_path = _get_temp_path(oi)
-	return _double_scene_and_script(oi, temp_path)
+	return _double_scene_and_script(oi)
 
 func _double_gdnative(native_class, make_partial, strategy):
 	var oi = ObjectInfo.new(null)

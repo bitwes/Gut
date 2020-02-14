@@ -61,7 +61,7 @@ func remove_methods_from_blacklist_one_by_one(obj, path):
 	var doubler = new_doubler()
 	doubler._blacklist = get_full_blacklist(obj)
 
-	for i in range(doubler._blacklist.size()):
+	for _i in range(doubler._blacklist.size()):
 
 		var removed = doubler._blacklist[0]
 		doubler._blacklist.remove(0)

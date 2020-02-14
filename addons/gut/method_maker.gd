@@ -65,7 +65,7 @@ const PARAM_PREFIX = 'p_'
 var _supported_defaults = []
 
 func _init():
-	for i in range(TYPE_MAX):
+	for _i in range(TYPE_MAX):
 		_supported_defaults.append(null)
 
 	# These types do not require a prefix for defaults
@@ -109,7 +109,7 @@ func _get_arg_text(method_meta):
 	# a default in the meta data.  default_args is an array of default values
 	# for the last n parameters where n is the size of default_args so we only
 	# add nulls for everything up to the first parameter with a default.
-	for i in range(args.size() - method_meta.default_args.size()):
+	for _i in range(args.size() - method_meta.default_args.size()):
 		defaults.append('null')
 
 	# Add meta-data defaults.
@@ -185,7 +185,6 @@ func get_function_text(meta):
 # creates a call to the function in meta in the super's class.
 func get_super_call_text(meta):
 	var params = ''
-	var all_supported = true
 
 	for i in range(meta.args.size()):
 		params += PARAM_PREFIX + meta.args[i].name

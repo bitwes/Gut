@@ -134,7 +134,7 @@ func _init():
 	print(ExtendsNode2D.get_meta_list())
 	#print_method_info(ExtendsNode2D)
 
-	var methods = obj.get_method_list()
+	var _methods = obj.get_method_list()
 	#print(str(JSON.print(methods, ' ')))
 	# for i in range(methods.size()):
 	# 	if(methods[i][DEFAULT_ARGS].size() > 0):

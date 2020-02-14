@@ -346,6 +346,7 @@ func _init():
 
 # exit if option is set.
 func _on_tests_finished(should_exit, should_exit_on_success):
+	
 	if(_tester.get_fail_count()):
 		OS.exit_code = 1
 

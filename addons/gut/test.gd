@@ -197,7 +197,7 @@ func _pass(text):
 # used in all the assertions that compare values.
 # ------------------------------------------------------------------------------
 func _do_datatypes_match__fail_if_not(got, expected, text):
-	var passed = true
+	var did_pass = true
 
 	if(!_disable_strict_datatype_checks):
 		var got_type = typeof(got)
@@ -209,9 +209,9 @@ func _do_datatypes_match__fail_if_not(got, expected, text):
 				_lgr.warn(str('Warn:  Float/Int comparison.  Got ', types[got_type], ' but expected ', types[expect_type]))
 			else:
 				_fail('Cannot compare ' + types[got_type] + '[' + str(got) + '] to ' + types[expect_type] + '[' + str(expected) + '].  ' + text)
-				passed = false
+				did_pass = false
 
-	return passed
+	return did_pass
 
 # ------------------------------------------------------------------------------
 # Create a string that lists all the methods that were called on an spied
