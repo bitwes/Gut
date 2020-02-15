@@ -894,6 +894,31 @@ class TestExtendAsserts:
 		# created bug https://github.com/godotengine/godot/issues/27111 for 3.1
 		assert_fail(gr.test, 1, 'Fails in 3.1, bug has been created.')
 
+class TestAssertTypeOf:
+	extends BaseTestClass
+	func before_all():
+		_print_all_subtests  =  true
+
+	func test_passes_when_object_is_of_type():
+		var c = Color(1, 1, 1, 1)
+		gr.test.assert_typeof(c, TYPE_COLOR)
+		assert_pass(gr.test)
+
+	func test_fails_when_it_is_not():
+		var c = Color(1, 1, 1, 1)
+		gr.test.assert_typeof(c, TYPE_INT)
+		assert_fail(gr.test)
+
+	func test_not_fails_when_object_is_of_type():
+		var c = Color(1, 1, 1, 1)
+		gr.test.assert_not_typeof(c, TYPE_COLOR)
+		assert_fail(gr.test)
+
+	func test_not_passes_when_it_is_not():
+		var c = Color(1, 1, 1, 1)
+		gr.test.assert_not_typeof(c, TYPE_INT)
+		assert_pass(gr.test)
+	
 # TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestStringContains:
 	extends BaseTestClass

@@ -735,6 +735,39 @@ func assert_is(object, a_class, text=''):
 			else:
 				_fail(disp)
 
+func _get_typeof_string(the_type):
+	var to_return = ""
+	if(types.has(the_type)):
+		to_return += str(the_type, '(',  types[the_type], ')')
+	else:
+		to_return += str(the_type)
+	return to_return
+
+	# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func assert_typeof(object, type, text=''):
+	var disp = str('Expected [typeof(', object, ') = ')
+	disp += _get_typeof_string(typeof(object))
+	disp += '] to equal ['
+	disp += _get_typeof_string(type) +  ']'
+	disp += '.  ' + text
+	if(typeof(object) == type):
+		_pass(disp)
+	else:
+		_fail(disp)
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func assert_not_typeof(object, type, text=''):
+	var disp = str('Expected [typeof(', object, ') = ')
+	disp += _get_typeof_string(typeof(object))
+	disp += '] to not equal ['
+	disp += _get_typeof_string(type) +  ']'
+	disp += '.  ' + text
+	if(typeof(object) != type):
+		_pass(disp)
+	else:
+		_fail(disp)
 
 # ------------------------------------------------------------------------------
 # Assert that text contains given search string.
@@ -1104,6 +1137,8 @@ func simulate(obj, times, delta):
 # get all the groups that the node that was replaced had.
 #
 # The node that was replaced is queued to be freed.
+#
+# TODO see replace_by method, this could simplify the logic here.
 # ------------------------------------------------------------------------------
 func replace_node(base_node, path_or_node, with_this):
 	var path = path_or_node

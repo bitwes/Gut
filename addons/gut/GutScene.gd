@@ -294,13 +294,13 @@ func end_run():
 	_update_controls()
 
 func set_progress_script_max(value):
-	_progress.script.set_max(value)
+	_progress.script.set_max(max(value, 1))
 
 func set_progress_script_value(value):
 	_progress.script.set_value(value)
 
 func set_progress_test_max(value):
-	_progress.test.set_max(value)
+	_progress.test.set_max(max(value, 1))
 
 func set_progress_test_value(value):
 	_progress.test.set_value(value)
