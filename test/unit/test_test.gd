@@ -892,6 +892,7 @@ class TestExtendAsserts:
 		var a = HasSubclass1.SubClass.new()
 		gr.test.assert_is(a, HasSubclass2.SubClass)
 		# created bug https://github.com/godotengine/godot/issues/27111 for 3.1
+		# TODO remove comment after awhile, this appears fixed in 3.2
 		assert_fail(gr.test, 1, 'Fails in 3.1, bug has been created.')
 
 class TestAssertTypeOf:
