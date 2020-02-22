@@ -120,7 +120,7 @@ var _utils = load('res://addons/gut/utils.gd').new()
 # instance of gut
 var _tester = null
 # array of command line options specified
-var _opts = []
+var _final_opts = []
 # Hash for easier access to the options in the code.  Options will be
 # extracted into this hash and then the hash will be used afterwards so
 # that I don't make any dumb typos and get the neat code-sense when I
@@ -341,12 +341,17 @@ func _init():
 			_print_gutconfigs(opt_resolver.get_resolved_values())
 			quit()
 		else:
-			apply_options(opt_resolver.get_resolved_values())
+			_final_opts = opt_resolver.get_resolved_values();
+			apply_options(_final_opts)
 			_tester.test_scripts(!_run_single)
 
 # exit if option is set.
 func _on_tests_finished(should_exit, should_exit_on_success):
-	
+	if(_final_opts.dirs.size() == 0):
+		if(_tester.get_summary().get_totals().scripts == 0):
+			var lgr = _tester.get_logger()
+			lgr.error('No directories configured.  Add directories with options or a .gutconfig.json file.  Use the -gh option for more information.')
+
 	if(_tester.get_fail_count()):
 		OS.exit_code = 1
 
