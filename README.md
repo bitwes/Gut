@@ -15,6 +15,12 @@ GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.
 
 More info can be found in the [wiki](https://github.com/bitwes/Gut/wiki).
 
+## VSCode Extension
+Run your tests directly from the VSCode Editor.  Search VSCode extensions for "gut-extension".
+* https://marketplace.visualstudio.com/items?itemName=bitwes.gut-extension
+* https://github.com/bitwes/gut-extension
+
+
 # License
 Gut is provided under the MIT license.  License is in `addons/gut/LICENSE.md`
 
