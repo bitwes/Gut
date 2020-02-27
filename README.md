@@ -17,8 +17,9 @@ More info can be found in the [wiki](https://github.com/bitwes/Gut/wiki).
 
 ## VSCode Extension
 Run your tests directly from the VSCode Editor.  Search VSCode extensions for "gut-extension".
-* https://marketplace.visualstudio.com/items?itemName=bitwes.gut-extension
-* https://github.com/bitwes/gut-extension
+* [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=bitwes.gut-extension)
+* [Github repo](https://github.com/bitwes/gut-extension)
+* [Quick tutorial on setup and use](https://youtu.be/pqcA8A52CMs)
 
 
 # License
