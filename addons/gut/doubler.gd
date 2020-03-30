@@ -26,6 +26,7 @@ class ScriptMethods:
 		'emit_signal', # can't handle extra parameters to be sent with signal.
 		'draw_mesh', # issue with one parameter, value is `Null((..), (..), (..))``
 		'_to_string', # nonexistant function ._to_string
+		'_get_minimum_size', # Nonexistent function _get_minimum_size
 	]
 
 	var built_ins = []

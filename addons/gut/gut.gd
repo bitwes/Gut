@@ -33,7 +33,7 @@
 #extends "res://addons/gut/gut_gui.gd"
 tool
 extends Control
-var _version = '6.8.1'
+var _version = '6.8.2'
 
 var _utils = load('res://addons/gut/utils.gd').new()
 var _lgr = _utils.get_logger()
@@ -157,11 +157,11 @@ func _init():
 	_doubler.set_output_dir(_temp_directory)
 	_doubler.set_stubber(_stubber)
 	_doubler.set_spy(_spy)
-	
+
 	_lgr.set_gut(self)
 	_doubler.set_logger(_lgr)
 	_spy.set_logger(_lgr)
-	
+
 
 	_stubber.set_logger(_lgr)
 	_test_collector.set_logger(_lgr)
@@ -1341,4 +1341,3 @@ func get_color_output():
 
 func set_color_output(color_output):
 	_color_output = color_output
-	

@@ -77,7 +77,7 @@ func test_printed_summary_uses_non_inncer_class_as_script_count():
 	gr.summary.add_script('res://script.gd.InnerClass2')
 	gr.summary.add_script('res://one.gd')
 	gr.summary.add_script('res://two.gd')
-	var correct_count_check = gr.summary.get_summary_text().find('  scripts:          3')
+	var correct_count_check = gr.summary.get_summary_text().find('Scripts:          3')
 	assert_true(correct_count_check != -1)
 
 
