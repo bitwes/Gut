@@ -13,7 +13,7 @@ class Test:
 		for i in range(fail_texts.size()):
 			to_return += str(pad, 'FAILED:  ', fail_texts[i], "\n")
 		for i in range(pending_texts.size()):
-			to_return += str(pad, 'Pending:  ', pending_texts[i], "\n")
+			to_return += str(pad, 'PENDING:  ', pending_texts[i], "\n")
 		return to_return
 
 # ------------------------------------------------------------------------------
@@ -47,11 +47,11 @@ class TestScript:
 			count += _tests[key].pending_texts.size()
 		return count
 
-	func get_test_obj(name):
-		if(!_tests.has(name)):
-			_tests[name] = Test.new()
-			_test_order.append(name)
-		return _tests[name]
+	func get_test_obj(obj_name):
+		if(!_tests.has(obj_name)):
+			_tests[obj_name] = Test.new()
+			_test_order.append(obj_name)
+		return _tests[obj_name]
 
 	func add_pass(test_name, reason):
 		var t = get_test_obj(test_name)
@@ -101,7 +101,6 @@ func get_test_text(test_name):
 # end.  Used for displaying the number of scripts without including all the
 # Inner Classes.
 func get_non_inner_class_script_count():
-	var count = 0
 	var unique_scripts = {}
 	for i in range(_scripts.size()):
 		var ext_loc = _scripts[i].name.find_last('.gd.')
@@ -144,10 +143,10 @@ func get_summary_text():
 				to_return += str('  - ', tname, "\n", test.to_s())
 
 	var header = "***  Totals  ***\n"
-	header += str('  scripts:          ', get_non_inner_class_script_count(), "\n")
-	header += str('  tests:            ', _totals.tests, "\n")
-	header += str('  passing asserts:  ', _totals.passing, "\n")
-	header += str('  failing asserts:  ',_totals.failing, "\n")
-	header += str('  pending:          ', _totals.pending, "\n")
+	header += str('  Scripts:          ', get_non_inner_class_script_count(), "\n")
+	header += str('  Tests:            ', _totals.tests, "\n")
+	header += str('  Passing asserts:  ', _totals.passing, "\n")
+	header += str('  Failing asserts:  ',_totals.failing, "\n")
+	header += str('  Pending:          ', _totals.pending, "\n")
 
 	return to_return + "\n" + header

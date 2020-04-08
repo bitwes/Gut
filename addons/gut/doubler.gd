@@ -26,6 +26,7 @@ class ScriptMethods:
 		'emit_signal', # can't handle extra parameters to be sent with signal.
 		'draw_mesh', # issue with one parameter, value is `Null((..), (..), (..))``
 		'_to_string', # nonexistant function ._to_string
+		'_get_minimum_size', # Nonexistent function _get_minimum_size
 	]
 
 	var built_ins = []
@@ -113,7 +114,7 @@ class ObjectInfo:
 		if(is_native()):
 			extend = str("extends ", get_native_class_name())
 		else:
-			extend = str("extends '", get_path(), '\'')
+			extend = str("extends '", get_path(), "'")
 
 		if(has_subpath()):
 			extend += str('.', get_subpath().replace('/', '.'))
@@ -138,24 +139,106 @@ class ObjectInfo:
 		return _native_class_instance.get_class()
 
 # ------------------------------------------------------------------------------
+# Allows for interacting with a file but only creating a string.  This was done
+# to ease the transition from files being created for doubles to loading
+# doubles from a string.  This allows the files to be created for debugging
+# purposes since reading a file is easier than reading a dumped out string.
+# ------------------------------------------------------------------------------
+class FileOrString:
+	extends File
+
+	var _do_file = false
+	var _contents  = ''
+	var _path = null
+
+	func open(path, mode):
+		_path = path
+		if(_do_file):
+			return .open(path, mode)
+		else:
+			return OK
+
+	func close():
+		if(_do_file):
+			return .close()
+
+	func store_string(s):
+		if(_do_file):
+			.store_string(s)
+		_contents += s
+
+	func get_contents():
+		return _contents
+
+	func get_path():
+		return _path
+
+	func load_it():
+		if(_contents != ''):
+			var script = GDScript.new()
+			script.set_source_code(get_contents())
+			script.reload()
+			return script
+		else:
+			return load(_path)
+
+# ------------------------------------------------------------------------------
+# A stroke of genius if I do say so.  This allows for doubling a scene without
+# having  to write any files.  By overloading instance we can make whatever
+# we want.
+# ------------------------------------------------------------------------------
+class PackedSceneDouble:
+	extends PackedScene
+	var _script =  null
+	var _scene = null
+
+	func set_script_obj(obj):
+		_script = obj
+
+	func instance(edit_state=0):
+		var inst = _scene.instance(edit_state)
+		if(_script !=  null):
+			inst.set_script(_script)
+		return inst
+
+	func load_scene(path):
+		_scene = load(path)
+
+
+
+
+# ------------------------------------------------------------------------------
 # START Doubler
 # ------------------------------------------------------------------------------
 var _utils = load('res://addons/gut/utils.gd').new()
 
-var _output_dir = null
-var _double_count = 0 # used in making files names unique
-var _use_unique_names = true
-var _spy = null
 var  _ignored_methods = _utils.OneToMany.new()
-
 var _stubber = _utils.Stubber.new()
 var _lgr = _utils.get_logger()
 var _method_maker = _utils.MethodMaker.new()
-var _strategy = null
 
+var _output_dir = 'user://gut_temp_directory'
+var _double_count = 0 # used in making files names unique
+var _spy = null
+var _strategy = null
+var _base_script_text = _utils.get_file_as_text('res://addons/gut/double_templates/script_template.gd')
+var _make_files = false
+
+# These methods all call super implicitly.  Stubbing them to call super causes
+# super to be called twice.
+var _non_super_methods = [
+	"_init",
+	"_ready",
+	"_notification",
+	"_enter_world",
+	"_exit_world",
+	"_process",
+	"_physics_process",
+	"_exit_tree",
+	"_gui_input	",
+]
 
 func _init(strategy=_utils.DOUBLE_STRATEGY.PARTIAL):
-	# make sure _method_maker gets logger too
 	set_logger(_utils.get_logger())
 	_strategy = strategy
 
@@ -164,12 +247,14 @@ func _init(strategy=_utils.DOUBLE_STRATEGY.PARTIAL):
 # ###############
 func _get_indented_line(indents, text):
 	var to_return = ''
-	for i in range(indents):
+	for _i in range(indents):
 		to_return += "\t"
 	return str(to_return, text, "\n")
 
 
 func _stub_to_call_super(obj_info, method_name):
+	if(_non_super_methods.has(method_name)):
+		return
 	var path = obj_info.get_path()
 	if(obj_info.scene_path != null):
 		path = obj_info.scene_path
@@ -177,24 +262,42 @@ func _stub_to_call_super(obj_info, method_name):
 	params.to_call_super()
 	_stubber.add_stub(params)
 
+func _get_base_script_text(obj_info, override_path):
+	var path = obj_info.get_path()
+	if(override_path != null):
+		path = override_path
+
+	var stubber_id = -1
+	if(_stubber != null):
+		stubber_id = _stubber.get_instance_id()
+
+	var spy_id = -1
+	if(_spy != null):
+		spy_id = _spy.get_instance_id()
+
+	var values = {
+		"path":path,
+		"subpath":obj_info.get_subpath(),
+		"stubber_id":stubber_id,
+		"spy_id":spy_id,
+		"extends":obj_info.get_extends_text()
+	}
+	return _base_script_text.format(values)
 
 func _write_file(obj_info, dest_path, override_path=null):
+	var base_script = _get_base_script_text(obj_info, override_path)
 	var script_methods = _get_methods(obj_info)
 
-	var metadata = _get_stubber_metadata_text(obj_info)
-	if(override_path):
-		metadata = _get_stubber_metadata_text(obj_info, override_path)
-
-	var f = File.new()
+	var f = FileOrString.new()
+	f._do_file = _make_files
 	var f_result = f.open(dest_path, f.WRITE)
 
 	if(f_result != OK):
-		print('Error creating file ', dest_path)
-		print('Could not create double for :', obj_info.to_s())
+		_lgr.error(str('Error creating file ', dest_path))
+		_lgr.error(str('Could not create double for :', obj_info.to_s()))
 		return
 
-	f.store_string(str(obj_info.get_extends_text(), "\n"))
-	f.store_string(metadata)
+	f.store_string(base_script)
 
 	for i in range(script_methods.local_methods.size()):
 		if(obj_info.make_partial_double):
@@ -206,11 +309,11 @@ func _write_file(obj_info, dest_path, override_path=null):
 		f.store_string(_get_func_text(script_methods.built_ins[i]))
 
 	f.close()
+	return f
 
-
-func _double_scene_and_script(scene_info, dest_path):
-	var dir = Directory.new()
-	dir.copy(scene_info.get_path(), dest_path)
+func _double_scene_and_script(scene_info):
+	var to_return = PackedSceneDouble.new()
+	to_return.load_scene(scene_info.get_path())
 
 	var inst = load(scene_info.get_path()).instance()
 	var script_path = null
@@ -223,21 +326,9 @@ func _double_scene_and_script(scene_info, dest_path):
 		oi.set_method_strategy(scene_info.get_method_strategy())
 		oi.make_partial_double = scene_info.make_partial_double
 		oi.scene_path = scene_info.get_path()
-		var double_path = _double(oi, scene_info.get_path())
-		var dq = '"'
+		to_return.set_script_obj(_double(oi, scene_info.get_path()).load_it())
 
-		var f = File.new()
-		f.open(dest_path, f.READ)
-		var source = f.get_as_text()
-		f.close()
-
-		source = source.replace(dq + script_path + dq, dq + double_path + dq)
-
-		f.open(dest_path, f.WRITE)
-		f.store_string(source)
-		f.close()
-
-	return script_path
+	return to_return
 
 func _get_methods(object_info):
 	var obj = object_info.instantiate()
@@ -269,52 +360,8 @@ func _get_inst_id_ref_str(inst):
 		ref_str = str('instance_from_id(', inst.get_instance_id(),')')
 	return ref_str
 
-func _get_stubber_metadata_text(obj_info, override_path = null):
-	var path = obj_info.get_path()
-	if(override_path != null):
-		path = override_path
-	return "var __gut_metadata_ = {\n" + \
-           "\tpath='" + path + "',\n" + \
-		   "\tsubpath='" + obj_info.get_subpath() + "',\n" + \
-		   "\tstubber=" + _get_inst_id_ref_str(_stubber) + ",\n" + \
-		   "\tspy=" + _get_inst_id_ref_str(_spy) + "\n" + \
-           "}\n"
-
-func _get_spy_text(method_hash):
-	var txt = ''
-	if(_spy):
-		var called_with = _method_maker.get_spy_call_parameters_text(method_hash)
-		txt += "\t__gut_metadata_.spy.add_call(self, '" + method_hash.name + "', " + called_with + ")\n"
-	return txt
-
 func _get_func_text(method_hash):
-	var ftxt = _method_maker.get_decleration_text(method_hash) + "\n"
-
-	var called_with = _method_maker.get_spy_call_parameters_text(method_hash)
-	ftxt += _get_spy_text(method_hash)
-
-	if(_stubber and method_hash.name != '_init'):
-		var call_method = _method_maker.get_super_call_text(method_hash)
-		ftxt += "\tif(__gut_metadata_.stubber.should_call_super(self, '" + method_hash.name + "', " + called_with + ")):\n"
-		ftxt += "\t\treturn " + call_method + "\n"
-		ftxt += "\telse:\n"
-		ftxt += "\t\treturn __gut_metadata_.stubber.get_return(self, '" + method_hash.name + "', " + called_with + ")\n"
-	else:
-		ftxt += "\tpass\n"
-
-	return ftxt
-
-func _get_super_func_text(method_hash):
-	var call_method = _method_maker.get_super_call_text(method_hash)
-
-	var call_super_text = str("return ", call_method, "\n")
-
-	var ftxt = _method_maker.get_decleration_text(method_hash) + "\n"
-	ftxt += _get_spy_text(method_hash)
-
-	ftxt += _get_indented_line(1, call_super_text)
-
-	return ftxt
+	return _method_maker.get_function_text(method_hash) + "\n"
 
 # returns the path to write the double file to
 func _get_temp_path(object_info):
@@ -330,56 +377,44 @@ func _get_temp_path(object_info):
 	if(object_info.has_subpath()):
 		file_name += '__' + object_info.get_subpath().replace('/', '__')
 
-	if(_use_unique_names):
-		file_name += str('__dbl', _double_count, '__.', extension)
-	else:
-		file_name += '.' + extension
+	file_name += str('__dbl', _double_count, '__.', extension)
 
 	var to_return = _output_dir.plus_file(file_name)
 	return to_return
 
+func _load_double(fileOrString):
+	return fileOrString.load_it()
+
 func _double(obj_info, override_path=null):
 	var temp_path = _get_temp_path(obj_info)
-	_write_file(obj_info, temp_path, override_path)
+	var result = _write_file(obj_info, temp_path, override_path)
 	_double_count += 1
-	return temp_path
-
+	return result
 
 func _double_script(path, make_partial, strategy):
 	var oi = ObjectInfo.new(path)
 	oi.make_partial_double = make_partial
 	oi.set_method_strategy(strategy)
-	var to_return = load(_double(oi))
-
-	return to_return
+	return _double(oi).load_it()
 
 func _double_inner(path, subpath, make_partial, strategy):
 	var oi = ObjectInfo.new(path, subpath)
 	oi.set_method_strategy(strategy)
 	oi.make_partial_double = make_partial
-	var to_return = load(_double(oi))
-
-	return to_return
+	return _double(oi).load_it()
 
 func _double_scene(path, make_partial, strategy):
 	var oi = ObjectInfo.new(path)
 	oi.set_method_strategy(strategy)
 	oi.make_partial_double = make_partial
-	var temp_path = _get_temp_path(oi)
-	_double_scene_and_script(oi, temp_path)
-
-	return load(temp_path)
+	return _double_scene_and_script(oi)
 
 func _double_gdnative(native_class, make_partial, strategy):
 	var oi = ObjectInfo.new(null)
 	oi.set_native_class(native_class)
 	oi.set_method_strategy(strategy)
 	oi.make_partial_double = make_partial
-	var to_return = load(_double(oi))
-
-	return to_return
-
-
+	return _double(oi).load_it()
 
 # ###############
 # Public
@@ -388,9 +423,11 @@ func get_output_dir():
 	return _output_dir
 
 func set_output_dir(output_dir):
-	_output_dir = output_dir
-	var d = Directory.new()
-	d.make_dir_recursive(output_dir)
+	if(output_dir !=  null):
+		_output_dir = output_dir
+		if(_make_files):
+			var d = Directory.new()
+			d.make_dir_recursive(output_dir)
 
 func get_spy():
 	return _spy
@@ -449,6 +486,9 @@ func partial_double_gdnative(native_class):
 	return _double_gdnative(native_class, true, _utils.DOUBLE_STRATEGY.FULL)
 
 func clear_output_directory():
+	if(!_make_files):
+		return false
+
 	var did = false
 	if(_output_dir.find('user://') == 0):
 		var d = Directory.new()
@@ -471,17 +511,15 @@ func delete_output_directory():
 		var d = Directory.new()
 		d.remove(_output_dir)
 
-# When creating doubles a unique name is used that each double can be its own
-# thing.  Sometimes, for testing, we do not want to do this so this allows
-# you to turn off creating unique names for each double class.
-#
-# THIS SHOULD NEVER BE USED OUTSIDE OF INTERNAL GUT TESTING.  It can cause
-# weird, hard to track down problems.
-func set_use_unique_names(should):
-	_use_unique_names = should
-
 func add_ignored_method(path, method_name):
 	_ignored_methods.add(path, method_name)
 
 func get_ignored_methods():
 	return _ignored_methods
+
+func get_make_files():
+	return _make_files
+
+func set_make_files(make_files):
+	_make_files = make_files
+	set_output_dir(_output_dir)

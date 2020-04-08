@@ -197,7 +197,7 @@ func _pass(text):
 # used in all the assertions that compare values.
 # ------------------------------------------------------------------------------
 func _do_datatypes_match__fail_if_not(got, expected, text):
-	var passed = true
+	var did_pass = true
 
 	if(!_disable_strict_datatype_checks):
 		var got_type = typeof(got)
@@ -209,9 +209,9 @@ func _do_datatypes_match__fail_if_not(got, expected, text):
 				_lgr.warn(str('Warn:  Float/Int comparison.  Got ', types[got_type], ' but expected ', types[expect_type]))
 			else:
 				_fail('Cannot compare ' + types[got_type] + '[' + str(got) + '] to ' + types[expect_type] + '[' + str(expected) + '].  ' + text)
-				passed = false
+				did_pass = false
 
-	return passed
+	return did_pass
 
 # ------------------------------------------------------------------------------
 # Create a string that lists all the methods that were called on an spied
@@ -540,11 +540,61 @@ func _can_make_signal_assertions(object, signal_name):
 	return !(_fail_if_not_watching(object) or _fail_if_does_not_have_signal(object, signal_name))
 
 # ------------------------------------------------------------------------------
+# Check if an object is connected to a signal on another object. Returns True
+# if it is and false otherwise
+# ------------------------------------------------------------------------------
+func _is_connected(signaler_obj, connect_to_obj, signal_name, method_name=""):
+	if(method_name != ""):
+		return signaler_obj.is_connected(signal_name, connect_to_obj, method_name)
+	else:
+		var connections = signaler_obj.get_signal_connection_list(signal_name)
+		for conn in connections:
+			if((conn.source == signaler_obj) and (conn.target == connect_to_obj)):
+				return true
+		return false
+# ------------------------------------------------------------------------------
 # Watch the signals for an object.  This must be called before you can make
 # any assertions about the signals themselves.
 # ------------------------------------------------------------------------------
 func watch_signals(object):
 	_signal_watcher.watch_signals(object)
+
+# ------------------------------------------------------------------------------
+# Asserts that an object is connected to a signal on another object
+#
+# This will fail with specific messages if the target object is not connected
+# to the specified signal on the source object.
+# ------------------------------------------------------------------------------
+func assert_connected(signaler_obj, connect_to_obj, signal_name, method_name=""):
+	pass
+	var method_disp = ''
+	if (method_name != ""):
+		method_disp = str(' using method: [', method_name, '] ')
+	var disp = str('Expected object ', signaler_obj,\
+		' to be connected to signal: [', signal_name, '] on ',\
+		connect_to_obj, method_disp)
+	if(_is_connected(signaler_obj, connect_to_obj, signal_name, method_name)):
+		_pass(disp)
+	else:
+		_fail(disp)
+
+# ------------------------------------------------------------------------------
+# Asserts that an object is not connected to a signal on another object
+#
+# This will fail with specific messages if the target object is connected
+# to the specified signal on the source object.
+# ------------------------------------------------------------------------------
+func assert_not_connected(signaler_obj, connect_to_obj, signal_name, method_name=""):
+	var method_disp = ''
+	if (method_name != ""):
+		method_disp = str(' using method: [', method_name, '] ')
+	var disp = str('Expected object ', signaler_obj,\
+		' to not be connected to signal: [', signal_name, '] on ',\
+		connect_to_obj, method_disp)
+	if(_is_connected(signaler_obj, connect_to_obj, signal_name, method_name)):
+		_fail(disp)
+	else:
+		_pass(disp)
 
 # ------------------------------------------------------------------------------
 # Asserts that a signal has been emitted at least once.
@@ -685,6 +735,39 @@ func assert_is(object, a_class, text=''):
 			else:
 				_fail(disp)
 
+func _get_typeof_string(the_type):
+	var to_return = ""
+	if(types.has(the_type)):
+		to_return += str(the_type, '(',  types[the_type], ')')
+	else:
+		to_return += str(the_type)
+	return to_return
+
+	# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func assert_typeof(object, type, text=''):
+	var disp = str('Expected [typeof(', object, ') = ')
+	disp += _get_typeof_string(typeof(object))
+	disp += '] to equal ['
+	disp += _get_typeof_string(type) +  ']'
+	disp += '.  ' + text
+	if(typeof(object) == type):
+		_pass(disp)
+	else:
+		_fail(disp)
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func assert_not_typeof(object, type, text=''):
+	var disp = str('Expected [typeof(', object, ') = ')
+	disp += _get_typeof_string(typeof(object))
+	disp += '] to not equal ['
+	disp += _get_typeof_string(type) +  ']'
+	disp += '.  ' + text
+	if(typeof(object) != type):
+		_pass(disp)
+	else:
+		_fail(disp)
 
 # ------------------------------------------------------------------------------
 # Assert that text contains given search string.
@@ -856,9 +939,9 @@ func pending(text=""):
 	_summary.pending += 1
 	if(gut):
 		if(text == ""):
-			gut.p("Pending")
+			gut.p("PENDING")
 		else:
-			gut.p("Pending:  " + text)
+			gut.p("PENDING:  " + text)
 		gut._pending(text)
 
 # ------------------------------------------------------------------------------
@@ -1054,6 +1137,8 @@ func simulate(obj, times, delta):
 # get all the groups that the node that was replaced had.
 #
 # The node that was replaced is queued to be freed.
+#
+# TODO see replace_by method, this could simplify the logic here.
 # ------------------------------------------------------------------------------
 func replace_node(base_node, path_or_node, with_this):
 	var path = path_or_node

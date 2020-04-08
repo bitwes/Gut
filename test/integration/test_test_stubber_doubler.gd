@@ -55,6 +55,7 @@ class TestBasics:
 		doubled.is_blocking_signals()
 		gr.test.assert_called(doubled, 'is_blocking_signals')
 		assert_eq(gr.test.get_pass_count(), 1)
+		pause_before_teardown()
 
 	func test_when_strategy_is_partial_then_supers_are_NOT_spied_in_scenes():
 		var doubled = gr.test.double_scene(DOUBLE_ME_SCENE_PATH, DOUBLE_STRATEGY.PARTIAL).instance()
@@ -236,3 +237,10 @@ class TestPartialDoubleMethod:
 		inst.set_position(Vector2(100, 100))
 		_test.assert_called(inst, 'set_position', [Vector2(100, 100)])
 		assert_eq(_test.get_pass_count(), pass_count + 1, 'tests have passed')
+	
+	# TODO this test reproduces Issue 147
+	# func test_can_double_file():
+	# 	var f = File.new()
+	# 	print(f.get_class())
+	# 	var inst = _test.partial_double(File)
+	# 	assert_not_null(inst)

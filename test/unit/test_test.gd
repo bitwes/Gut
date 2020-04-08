@@ -892,8 +892,34 @@ class TestExtendAsserts:
 		var a = HasSubclass1.SubClass.new()
 		gr.test.assert_is(a, HasSubclass2.SubClass)
 		# created bug https://github.com/godotengine/godot/issues/27111 for 3.1
+		# TODO remove comment after awhile, this appears fixed in 3.2
 		assert_fail(gr.test, 1, 'Fails in 3.1, bug has been created.')
 
+class TestAssertTypeOf:
+	extends BaseTestClass
+	func before_all():
+		_print_all_subtests  =  true
+
+	func test_passes_when_object_is_of_type():
+		var c = Color(1, 1, 1, 1)
+		gr.test.assert_typeof(c, TYPE_COLOR)
+		assert_pass(gr.test)
+
+	func test_fails_when_it_is_not():
+		var c = Color(1, 1, 1, 1)
+		gr.test.assert_typeof(c, TYPE_INT)
+		assert_fail(gr.test)
+
+	func test_not_fails_when_object_is_of_type():
+		var c = Color(1, 1, 1, 1)
+		gr.test.assert_not_typeof(c, TYPE_COLOR)
+		assert_fail(gr.test)
+
+	func test_not_passes_when_it_is_not():
+		var c = Color(1, 1, 1, 1)
+		gr.test.assert_not_typeof(c, TYPE_INT)
+		assert_pass(gr.test)
+	
 # TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestStringContains:
 	extends BaseTestClass
@@ -1122,7 +1148,7 @@ class TestGetCallParameters:
 
 	func test_generates_error_if_you_do_not_pass_a_doubled_object():
 		var thing = Node2D.new()
-		var p = gr.test_with_gut.get_call_parameters(thing, 'something')
+		var _p = gr.test_with_gut.get_call_parameters(thing, 'something')
 		assert_eq(gr.test_with_gut.get_logger().get_errors().size(), 1)
 
 
@@ -1269,4 +1295,69 @@ class TestIsFreed:
 		add_child(obj)
 		obj.queue_free()
 		gr.test.assert_not_freed(obj, "Object4")
+		assert_pass(gr.test)
+
+class TestConnectionAsserts:
+	extends BaseTestClass
+
+	const SIGNAL_NAME = 'test_signal'
+	const METHOD_NAME = 'test_signal_connector'
+
+	class Signaler:
+		signal test_signal
+
+	class ConnectTo:
+		func test_signal_connector():
+			pass
+
+	func test_when_target_connected_to_source_connected_passes_with_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		s.connect(SIGNAL_NAME, c, METHOD_NAME)
+		gr.test.assert_connected(s, c, SIGNAL_NAME, METHOD_NAME)
+		assert_pass(gr.test)
+
+	func test_when_target_connected_to_source_connected_passes_without_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		s.connect(SIGNAL_NAME, c, METHOD_NAME)
+		gr.test.assert_connected(s, c, SIGNAL_NAME)
+		assert_pass(gr.test)
+
+	func test_when_target_not_connected_to_source_connected_fails_with_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		gr.test.assert_connected(s, c, SIGNAL_NAME, METHOD_NAME)
+		assert_fail(gr.test)
+
+	func test_when_target_not_connected_to_source_connected_fails_without_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		gr.test.assert_connected(s, c, SIGNAL_NAME)
+		assert_fail(gr.test)
+
+	func test_when_target_connected_to_source_not_connected_fails_with_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		s.connect(SIGNAL_NAME, c, METHOD_NAME)
+		gr.test.assert_not_connected(s, c, SIGNAL_NAME, METHOD_NAME)
+		assert_fail(gr.test)
+
+	func test_when_target_connected_to_source_not_connected_fails_without_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		s.connect(SIGNAL_NAME, c, METHOD_NAME)
+		gr.test.assert_not_connected(s, c, SIGNAL_NAME)
+		assert_fail(gr.test)
+
+	func test_when_target_not_connected_to_source_not_connected_passes_with_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		gr.test.assert_not_connected(s, c, SIGNAL_NAME, METHOD_NAME)
+		assert_pass(gr.test)
+
+	func test_when_target_not_connected_to_source_not_connected_passes_without_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		gr.test.assert_not_connected(s, c, SIGNAL_NAME)
 		assert_pass(gr.test)

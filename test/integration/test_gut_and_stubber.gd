@@ -22,21 +22,6 @@ func test_stubber_cleared_between_tests():
 	assert_eq(gut.get_stubber().get_return('thing', 'method'), null)
 # ---------------------------------
 
-
-# ---------------------------------
-# these two tests use the gut instance that is passed to THIS test.  This isn't
-# PURE testing but it appears to cover the bases ok.
-# ------
-func test_doubler_directory_cleared_between_tests_setup():
-	gut.get_doubler().set_use_unique_names(false)
-	double(DOUBLE_ME_PATH)
-	assert_file_exists(gut.get_temp_directory() + '/double_me.gd')
-	gut.get_doubler().set_use_unique_names(true)
-
-func test_doubler_directory_cleared_between_tests():
-	assert_file_does_not_exist(gut.get_temp_directory() + '/double_me.gd')
-# ---------------------------------
-
 func test_can_get_doubler():
 	var g = Gut.new()
 	assert_ne(g.get_doubler(), null)

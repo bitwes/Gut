@@ -136,6 +136,8 @@ func test_get_set_temp_directory():
 func test_get_set_export_path():
 	assert_accessors(gr.test_gut, 'export_path', '', 'res://somewhere')
 
+func test_get_set_color_output():
+	assert_accessors(gr.test_gut, 'color_output', false, true)
 # ------------------------------
 # Doubler
 # ------------------------------
@@ -188,14 +190,16 @@ func test_file_delete_kills_file():
 func test_delete_all_files_in_a_directory():
 	var path = 'user://gut_dir_tests'
 	var d = Directory.new()
-	d.open('user://')
-	str(d.make_dir('gut_dir_tests'))
-
-	gr.test_gut.file_touch(path + '/helloworld.txt')
-	gr.test_gut.file_touch(path + '/file2.txt')
-	gr.test_gut.directory_delete_files(path)
-	gr.test.assert_file_does_not_exist(path + '/helloworld.txt')
-	gr.test.assert_file_does_not_exist(path + '/file2.txt')
+	var result = d.open('user://')
+	if(result ==  OK):
+		d.make_dir('gut_dir_tests')
+		gr.test_gut.file_touch(path + '/helloworld.txt')
+		gr.test_gut.file_touch(path + '/file2.txt')
+		gr.test_gut.directory_delete_files(path)
+		gr.test.assert_file_does_not_exist(path + '/helloworld.txt')
+		gr.test.assert_file_does_not_exist(path + '/file2.txt')
+		gut.directory_delete_files('user://gut_dir_tests')
+		gut.file_delete('user://gut_dir_tests')
 
 	assert_pass(2, 'both files should not exist')
 
@@ -418,7 +422,6 @@ func test_when_post_hook_set_to_invalid_script_no_tests_are_ran():
 	gr.test_gut.test_scripts()
 	assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test should not be run')
 	assert_gt(gr.test_gut.get_logger().get_errors().size(), 0, 'there should be errors')
-	assert_signal_emitted(gr.test_gut, 'tests_finished')
 
 
 # ------------------------------------------------------------------------------

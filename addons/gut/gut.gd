@@ -28,12 +28,12 @@
 ################################################################################
 # View readme for usage details.
 #
-# Version 6.8.1
+# Version 6.8.2
 ################################################################################
 #extends "res://addons/gut/gut_gui.gd"
 tool
 extends Control
-var _version = '6.8.1'
+var _version = '6.8.2'
 
 var _utils = load('res://addons/gut/utils.gd').new()
 var _lgr = _utils.get_logger()
@@ -80,6 +80,8 @@ export(String, DIR) var _directory6 = ''
 export(int, 'FULL', 'PARTIAL') var _double_strategy = _utils.DOUBLE_STRATEGY.PARTIAL setget set_double_strategy, get_double_strategy
 export(String, FILE) var _pre_run_script = '' setget set_pre_run_script, get_pre_run_script
 export(String, FILE) var _post_run_script = '' setget set_post_run_script, get_post_run_script
+export(bool) var _color_output = false setget set_color_output, get_color_output
+
 # The instance that is created from _pre_run_script.  Accessible from
 # get_pre_run_script_instance.
 var _pre_run_script_instance = null
@@ -155,8 +157,11 @@ func _init():
 	_doubler.set_output_dir(_temp_directory)
 	_doubler.set_stubber(_stubber)
 	_doubler.set_spy(_spy)
-	_doubler.set_logger(_lgr)
+
 	_lgr.set_gut(self)
+	_doubler.set_logger(_lgr)
+	_spy.set_logger(_lgr)
+
 
 	_stubber.set_logger(_lgr)
 	_test_collector.set_logger(_lgr)
@@ -228,7 +233,7 @@ func _setup_gui():
 	_gui.connect('end_pause', self, '_on_new_gui_end_pause')
 	_gui.connect('ignore_pause', self, '_on_new_gui_ignore_pause')
 	_gui.connect('log_level_changed', self, '_on_log_level_changed')
-	connect('tests_finished', _gui, 'end_run')
+	var _foo = connect('tests_finished', _gui, 'end_run')
 
 func _add_scripts_to_gui():
 	var scripts = []
@@ -405,7 +410,7 @@ func _init_run():
 	_gui.get_text_box().add_color_region('/-', '-/', Color(1, 1, 0))
 	_gui.get_text_box().add_color_region('/*', '*/', Color(.5, .5, 1))
 
-	var  pre_hook_result = _validate_hook_script(_pre_run_script)
+	var pre_hook_result = _validate_hook_script(_pre_run_script)
 	_pre_run_script_instance = pre_hook_result.instance
 	var post_hook_result = _validate_hook_script(_post_run_script)
 	_post_run_script_instance  = post_hook_result.instance
@@ -421,9 +426,6 @@ func _init_run():
 # Print out run information and close out the run.
 # ------------------------------------------------------------------------------
 func _end_run():
-	var failed_tests = []
-	var more_than_one = _test_script_objects.size() > 1
-
 	p(_get_summary_text(), 0)
 	p("\n")
 	if(!_utils.is_null_or_empty(_select_script)):
@@ -446,6 +448,7 @@ func _end_run():
 	_run_hook_script(_post_run_script_instance)
 	emit_signal(SIGNAL_TESTS_FINISHED)
 	_gui.set_title("Finished.  " + str(get_fail_count()) + " failures.")
+
 
 # ------------------------------------------------------------------------------
 # Checks the passed in thing to see if it is a "function state" object that gets
@@ -585,7 +588,6 @@ func _test_the_scripts(indexes=[]):
 	var is_valid = _init_run()
 	if(!is_valid):
 		_lgr.error('Something went wrong and the run was aborted.')
-		emit_signal(SIGNAL_TESTS_FINISHED)
 		return
 
 	_run_hook_script(_pre_run_script_instance)
@@ -606,7 +608,6 @@ func _test_the_scripts(indexes=[]):
 	_gui.set_progress_script_max(indexes_to_run.size()) # New way
 	_gui.set_progress_script_value(0)
 
-	var file = File.new()
 	if(_doubler.get_strategy() == _utils.DOUBLE_STRATEGY.FULL):
 		_lgr.info("Using Double Strategy FULL as default strategy.  Keep an eye out for weirdness, this is still experimental.")
 
@@ -785,6 +786,9 @@ func _get_files(path, prefix, suffix):
 # current log level and what level is passed in.  Whenever currently in a test,
 # the text will be indented under the test.  It can be further indented if
 # desired.
+#
+# The first time output is generated when in a test, the test name will be
+# printed.
 # ------------------------------------------------------------------------------
 func p(text, level=0, indent=0):
 	var str_text = str(text)
@@ -793,13 +797,13 @@ func p(text, level=0, indent=0):
 
 	if(level <= _utils.nvl(_log_level, 0)):
 		if(_current_test != null):
-			#make sure everything printed during the execution
-			#of a test is at least indented once under the test
+			# make sure everything printed during the execution
+			# of a test is at least indented once under the test
 			if(indent == 0):
 				indent = 1
 
-			#Print the name of the current test if we haven't
-			#printed it already.
+			# Print the name of the current test if we haven't
+			# printed it already.
 			if(!_current_test.has_printed_name):
 				to_print = "* " + _current_test.name
 				_current_test.has_printed_name = true
@@ -808,15 +812,18 @@ func p(text, level=0, indent=0):
 		if(!printing_test_name):
 			if(to_print != ""):
 				to_print += "\n"
-			#Make the indent
+			# Make the indent
 			var pad = ""
-			for i in range(0, indent):
+			for _i in range(0, indent):
 				pad += "    "
 			to_print += pad + str_text
 			to_print = to_print.replace("\n", "\n" + pad)
 
 		if(_should_print_to_console):
-			print(to_print)
+			var formatted = to_print
+			if(_color_output):
+				formatted =  _utils.colorize_text(to_print)
+			print(formatted)
 
 		_log_text += to_print + "\n"
 
@@ -1083,7 +1090,7 @@ func get_yield_between_tests():
 # the _process or _fixed_process methods.
 # ------------------------------------------------------------------------------
 func simulate(obj, times, delta):
-	for i in range(times):
+	for _i in range(times):
 		if(obj.has_method("_process")):
 			obj._process(delta)
 		if(obj.has_method("_physics_process")):
@@ -1122,7 +1129,7 @@ func set_yield_signal_or_time(obj, signal_name, max_wait, text=''):
 	_yield_timer.set_wait_time(max_wait)
 	_yield_timer.start()
 	_was_yield_method_called = true
-	p(str('/# Yielding to signal "', signal_name, '" or for ', max_wait, ' seconds #/'))
+	p(str('/# Yielding to signal "', signal_name, '" or for ', max_wait, ' seconds #/ ', text))
 	return self
 
 # ------------------------------------------------------------------------------
@@ -1167,12 +1174,8 @@ func is_file_empty(path):
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func get_file_as_text(path):
-	var to_return = ''
-	var f = File.new()
-	f.open(path, f.READ)
-	to_return = f.get_as_text()
-	f.close()
-	return to_return
+	return _utils.get_file_as_text(path)
+
 # ------------------------------------------------------------------------------
 # deletes all files in a given directory
 # ------------------------------------------------------------------------------
@@ -1332,3 +1335,9 @@ func get_pre_run_script_instance():
 # ------------------------------------------------------------------------------
 func get_post_run_script_instance():
 	return _post_run_script_instance
+
+func get_color_output():
+	return _color_output
+
+func set_color_output(color_output):
+	_color_output = color_output

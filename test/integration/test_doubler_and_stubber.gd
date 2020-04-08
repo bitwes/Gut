@@ -1,8 +1,3 @@
-# NOTE about set_use_unique_names
-#   Since a new doubler is made for each test, this cannot use the unique names
-#   or things do not load properly.  This also means that everything is
-#   essentially using the same doubles.  Since the body of the doubles isn't
-#   changing over the course of this test script, that is ok.
 extends "res://addons/gut/test.gd"
 
 var Stubber = load('res://addons/gut/stubber.gd')
@@ -25,6 +20,9 @@ func before_each():
 	gr.doubler.clear_output_directory()
 
 	gr.stubber = Stubber.new()
+
+func after_all():
+	gut.file_delete(TEMP_FILES)
 
 # func after_each():
 # 	gr.doubler.clear_output_directory()
@@ -127,3 +125,13 @@ func test_can_stub_all_Node2D_doubles():
 	var params = _utils.StubParams.new(Node2D, 'get_position').to_return(-1)
 	gr.stubber.add_stub(params)
 	assert_eq(d_node2d.get_position(), -1)
+
+func test_init_is_never_stubbed_to_all_super():
+	gr.doubler.set_stubber(gr.stubber)
+	var inst =  gr.doubler.partial_double(DOUBLE_ME_PATH).new()
+	assert_false(gr.stubber.should_call_super(inst, '_init', []))
+
+func test_ready_is_never_stubbed_to_all_super():
+	gr.doubler.set_stubber(gr.stubber)
+	var inst =  gr.doubler.partial_double(DOUBLE_ME_PATH).new()
+	assert_false(gr.stubber.should_call_super(inst, '_ready', []))

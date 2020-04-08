@@ -29,15 +29,14 @@ class TestTheBasics:
 		stubber.clear()
 		gr.doubler = Doubler.new()
 		gr.doubler.set_stubber(stubber)
-		#gr.doubler.set_stubber(_utils.Stubber.new())
-		gr.doubler.set_use_unique_names(false)
 		gr.doubler.set_output_dir(TEMP_FILES)
 
 	func after_each():
 		gr.doubler.clear_output_directory()
 
 	func test_get_set_output_dir():
-		assert_accessors(Doubler.new(), 'output_dir', null, 'user://somewhere')
+		assert_accessors(Doubler.new(), 'output_dir', 'user://gut_temp_directory', 'user://somewhere')
+		gut.file_delete('user://somewhere')
 
 	func test_get_set_stubber():
 		var dblr = Doubler.new()
@@ -47,32 +46,34 @@ class TestTheBasics:
 	func test_can_get_set_spy():
 		assert_accessors(Doubler.new(), 'spy', null, GDScript.new())
 
+	func test_get_set_make_files():
+		assert_accessors(Doubler.new(), 'make_files', false, true)
+
 	func test_setting_output_dir_creates_directory_if_it_does_not_exist():
 		var d = Doubler.new()
-		d.set_output_dir('user://doubler_temp_files/')
+		d.set_make_files(true)
+		var path = 'user://doubler_temp_files/'
+		d.set_output_dir(path)
 		var dir = Directory.new()
-		assert_true(dir.dir_exists('user://doubler_temp_files/'))
-
-	func test_doubling_object_creates_temp_file():
-		gr.doubler.double(DOUBLE_ME_PATH)
-		assert_file_exists(TEMP_FILES + '/double_me.gd')
+		assert_true(dir.dir_exists(path))
+		gut.file_delete(path)
 
 	func test_doubling_object_includes_methods():
-		gr.doubler.double(DOUBLE_ME_PATH)
-		var text = gut.get_file_as_text(TEMP_FILES.plus_file('double_me.gd'))
+		var inst = gr.doubler.double(DOUBLE_ME_PATH).new()
+		var text = inst.get_script().get_source_code()
 		assert_true(text.match('*func get_value(*:\n*'), 'should have get method')
 		assert_true(text.match('*func set_value(*:\n*'), 'should have set method')
 
 	func test_doubling_methods_have_parameters_1():
-		gr.doubler.double(DOUBLE_ME_PATH)
-		var text = gut.get_file_as_text(TEMP_FILES.plus_file('double_me.gd'))
+		var inst = gr.doubler.double(DOUBLE_ME_PATH).new()
+		var text = inst.get_script().get_source_code()
 		assert_true(text.match('*param(p_arg0*:*'), text)
 
 	# Don't see a way to see which have defaults and which do not, so we default
 	# everything.
 	func test_all_parameters_are_defaulted_to_null():
-		gr.doubler.double(DOUBLE_ME_PATH)
-		var text = gut.get_file_as_text(TEMP_FILES.plus_file('double_me.gd'))
+		var inst = gr.doubler.double(DOUBLE_ME_PATH).new()
+		var text = inst.get_script().get_source_code()
 		assert_true(text.match('*one_default(p_arg0=null, p_arg1=null)*'))
 
 	func test_doubled_thing_includes_stubber_metadata():
@@ -88,17 +89,15 @@ class TestTheBasics:
 		assert_is(doubled, Node2D)
 
 	func test_can_clear_output_directory():
-		gr.doubler.double(DOUBLE_ME_PATH)
-		gr.doubler.double(DOUBLE_EXTENDS_NODE2D)
-		assert_file_exists(TEMP_FILES + '/double_me.gd')
-		assert_file_exists(TEMP_FILES + '/double_extends_node2d.gd')
+		gr.doubler.set_make_files(true)
+		gut.file_touch(TEMP_FILES  + '/test_file.txt')
 		gr.doubler.clear_output_directory()
-		assert_file_does_not_exist(TEMP_FILES + '/double_me.gd')
-		assert_file_does_not_exist(TEMP_FILES + '/double_extends_node2d.gd')
+		assert_file_does_not_exist(TEMP_FILES  + '/test_file.txt')
 
 	func test_can_delete_output_directory():
 		var d = Directory.new()
 		d.open('user://')
+		gr.doubler.set_make_files(true)
 		gr.doubler.double(DOUBLE_ME_PATH)
 		assert_true(d.dir_exists(TEMP_FILES))
 		gr.doubler.delete_output_directory()
@@ -182,6 +181,7 @@ class TestBuiltInOverloading:
 	extends BaseTest
 
 	var _dbl_win_dia_text = ''
+	var _dbl_win_dia = null
 
 	func _hide_call_back():
 		pass
@@ -193,16 +193,16 @@ class TestBuiltInOverloading:
 		stubber.clear()
 		doubler = Doubler.new(_utils.DOUBLE_STRATEGY.FULL)
 		doubler.set_stubber(stubber)
-		doubler.set_use_unique_names(false)
 		doubler.set_output_dir(TEMP_FILES)
 
 		# WindowDialog has A LOT of the edge cases we need to check so it is used
 		# as the default.
-		doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG)
-		_dbl_win_dia_text = _get_temp_file_as_text('double_extends_window_dialog.gd')
+		_dbl_win_dia = doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG)
+		_dbl_win_dia_text = _dbl_win_dia.new().get_script().get_source_code()
 
 	func after_all():
-		doubler.clear_output_directory()
+		if(doubler):
+			doubler.clear_output_directory()
 
 	func test_built_in_overloading_ony_happens_on_full_strategy():
 		doubler.set_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
@@ -212,14 +212,14 @@ class TestBuiltInOverloading:
 
 	func test_can_override_strategy_when_doubling_script():
 		doubler.set_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
-		doubler.double(DOUBLE_ME_PATH, DOUBLE_STRATEGY.FULL)
-		var txt = _get_temp_file_as_text('double_me.gd')
+		var inst = doubler.double(DOUBLE_ME_PATH, DOUBLE_STRATEGY.FULL).new()
+		var txt = inst.get_script().get_source_code()
 		assert_ne(txt.find('func is_blocking_signals'), -1, 'HAS non-overloaded methods')
 
 	func test_can_override_strategy_when_doubling_scene():
 		doubler.set_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
-		doubler.double_scene(DOUBLE_ME_SCENE_PATH, DOUBLE_STRATEGY.FULL)
-		var txt = _get_temp_file_as_text('double_me_scene.gd')
+		var inst = doubler.double_scene(DOUBLE_ME_SCENE_PATH, DOUBLE_STRATEGY.FULL).instance()
+		var txt = inst.get_script().get_source_code()
 		assert_ne(txt.find('func is_blocking_signals'), -1, 'HAS non-overloaded methods')
 
 	func test_when_everything_included_you_can_still_make_an_a_new_object():
@@ -253,7 +253,7 @@ class TestBuiltInOverloading:
 	func test_doubled_builtins_call_super():
 		var inst = doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG).new()
 		# Make sure the function is in the doubled class definition
-		assert_string_contains(_dbl_win_dia_text, 'func add_user_signal(p_signal')
+		assert_string_contains(inst.get_script().get_source_code(), 'func add_user_signal(p_signal')
 		# Make sure that when called it retains old functionality.
 		inst.add_user_signal('new_one')
 		inst.add_user_signal('new_two', ['a', 'b'])
@@ -278,26 +278,24 @@ class TestDefaultParameters:
 	func before_each():
 		doubler = Doubler.new(_utils.DOUBLE_STRATEGY.FULL)
 		doubler.set_stubber(_utils.Stubber.new())
-		doubler.set_use_unique_names(false)
 		doubler.set_output_dir(TEMP_FILES)
 
 	func test_parameters_are_doubled_for_connect():
 		var inst = doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
-		var text = _get_temp_file_as_text('double_me_scene.gd')
+		var text = inst.get_script().get_source_code()
 		var sig = 'func connect(p_signal=null, p_target=null, p_method=null, p_binds=[], p_flags=0):'
 		assert_string_contains(text, sig)
 
 	func test_parameters_are_doubled_for_draw_char():
 		var inst = doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
-		var text = _get_temp_file_as_text('double_me_scene.gd')
+		var text = inst.get_script().get_source_code()#_get_temp_file_as_text('double_me_scene.gd')
 		var sig = 'func draw_char(p_font=null, p_position=null, p_char=null, p_next=null, p_modulate=Color(1,1,1,1)):'
 		assert_string_contains(text, sig)
 
 	func test_parameters_are_doubled_for_draw_multimesh():
 		var inst = doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG).new()
-		var text = _get_temp_file_as_text('double_extends_window_dialog.gd')
 		var sig = 'func draw_multimesh(p_multimesh=null, p_texture=null, p_normal_map=null):'
-		assert_string_contains(text, sig)
+		assert_string_contains(inst.get_script().get_source_code(), sig)
 
 class TestDoubleInnerClasses:
 	extends BaseTest
@@ -309,7 +307,6 @@ class TestDoubleInnerClasses:
 	func before_each():
 		doubler = Doubler.new()
 		doubler.set_stubber(_utils.Stubber.new())
-		doubler.set_use_unique_names(false)
 		doubler.set_output_dir(TEMP_FILES)
 
 	func test_can_instantiate_inner_double():
@@ -319,10 +316,6 @@ class TestDoubleInnerClasses:
 	func test_doubled_instance_returns_null_for_get_b1():
 		var dbld = doubler.double_inner(INNER_CLASSES_PATH, 'InnerB/InnerB1').new()
 		assert_null(dbld.get_b1())
-
-	func test_double_file_contains_source_file_and_inner_classes_in_the_name():
-		doubler.double_inner(INNER_CLASSES_PATH, 'InnerB/InnerB1')
-		assert_file_exists(TEMP_FILES + '/inner_classes__InnerB__InnerB1.gd')
 
 	func test_doubled_instances_extend_the_inner_class():
 		var inst = doubler.double_inner(INNER_CLASSES_PATH, 'InnerA').new()
@@ -344,9 +337,8 @@ class TestDoubleInnerClasses:
 	func test_can_override_strategy_when_doubling():
 		#doubler.set_strategy(DOUBLE_STRATEGY.FULL)
 		var d = doubler.double_inner(INNER_CLASSES_PATH, 'InnerA', DOUBLE_STRATEGY.FULL)
-		var text = _get_temp_file_as_text('inner_classes__InnerA.gd')
 		# make sure it has something from Object that isn't implemented
-		assert_string_contains(text, 'func disconnect(p_signal')
+		assert_string_contains(d.new().get_script().get_source_code(), 'func disconnect(p_signal')
 		assert_eq(doubler.get_strategy(), DOUBLE_STRATEGY.PARTIAL, 'strategy should have been reset')
 
 	func test_doubled_inners_retain_signals():
@@ -375,6 +367,7 @@ class TestPartialDoubles:
 		var inst = doubler.partial_double(DOUBLE_ME_PATH).new()
 		inst.set_value(10)
 		assert_eq(inst.get_value(), 10)
+		print(inst.get_script().get_source_code())
 
 	func test_double_script_does_not_make_partials():
 		var inst = doubler.double(DOUBLE_ME_PATH).new()

@@ -48,7 +48,6 @@ signal ignore_pause
 signal log_level_changed
 signal run_script
 signal run_single_script
-signal script_selected
 
 func _ready():
 	_pre_maximize_size = rect_size
@@ -62,7 +61,7 @@ func _ready():
 	_extras.visible = false
 	update()
 
-func _process(delta):
+func _process(_delta):
 	if(_is_running):
 		_time = OS.get_unix_time() - _start_time
 		var disp_time = round(_time * 100)/100
@@ -117,7 +116,7 @@ func _on_Previous_pressed():
 func _on_Next_pressed():
 	_select_script(get_selected_index() + 1)
 
-func _on_LogLevelSlider_value_changed(value):
+func _on_LogLevelSlider_value_changed(_value):
 	emit_signal('log_level_changed', $LogLevelSlider.value)
 
 func _on_Continue_pressed():
@@ -295,13 +294,13 @@ func end_run():
 	_update_controls()
 
 func set_progress_script_max(value):
-	_progress.script.set_max(value)
+	_progress.script.set_max(max(value, 1))
 
 func set_progress_script_value(value):
 	_progress.script.set_value(value)
 
 func set_progress_test_max(value):
-	_progress.test.set_max(value)
+	_progress.test.set_max(max(value, 1))
 
 func set_progress_test_value(value):
 	_progress.test.set_value(value)

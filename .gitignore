@@ -3,3 +3,4 @@
 *.import
 export_presets.cfg
 exported_tests.cfg
+.vscode

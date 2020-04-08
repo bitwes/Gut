@@ -37,7 +37,7 @@
 # See the readme for a list of options and examples.  You can also use the -gh
 # option to get more information about how to use the command line interface.
 #
-# Version 6.8.1
+# Version 6.8.2
 ################################################################################
 
 #-------------------------------------------------------------------------------
@@ -156,9 +156,9 @@ class Option:
 		description = desc
 		value = null#default_value
 
-	func pad(value, size, pad_with=' '):
-		var to_return = value
-		for i in range(value.length(), size):
+	func pad(to_pad, size, pad_with=' '):
+		var to_return = to_pad
+		for _i in range(to_pad.length(), size):
 			to_return += pad_with
 
 		return to_return

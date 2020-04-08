@@ -75,7 +75,7 @@ func _add_watched_signal(obj, name):
 # to 4 parameters when firing a signal.  I haven't verified this, but this should
 # future proof this some if the value ever grows.
 func _on_watched_signal(arg1=ARG_NOT_SET, arg2=ARG_NOT_SET, arg3=ARG_NOT_SET, \
-                        arg4=ARG_NOT_SET, arg5=ARG_NOT_SET, arg6=ARG_NOT_SET, \
+						arg4=ARG_NOT_SET, arg5=ARG_NOT_SET, arg6=ARG_NOT_SET, \
 						arg7=ARG_NOT_SET, arg8=ARG_NOT_SET, arg9=ARG_NOT_SET, \
 						arg10=ARG_NOT_SET, arg11=ARG_NOT_SET):
 	var args = [arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11]

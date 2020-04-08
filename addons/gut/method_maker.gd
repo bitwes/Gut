@@ -65,7 +65,7 @@ const PARAM_PREFIX = 'p_'
 var _supported_defaults = []
 
 func _init():
-	for i in range(TYPE_MAX):
+	for _i in range(TYPE_MAX):
 		_supported_defaults.append(null)
 
 	# These types do not require a prefix for defaults
@@ -88,6 +88,7 @@ func _init():
 # ###############
 # Private
 # ###############
+var _func_text = _utils.get_file_as_text('res://addons/gut/double_templates/function_template.gd')
 
 func _is_supported_default(type_flag):
 	return type_flag >= 0 and type_flag < _supported_defaults.size() and [type_flag] != null
@@ -108,7 +109,7 @@ func _get_arg_text(method_meta):
 	# a default in the meta data.  default_args is an array of default values
 	# for the last n parameters where n is the size of default_args so we only
 	# add nulls for everything up to the first parameter with a default.
-	for i in range(args.size() - method_meta.default_args.size()):
+	for _i in range(args.size() - method_meta.default_args.size()):
 		defaults.append('null')
 
 	# Add meta-data defaults.
@@ -163,17 +164,27 @@ func _get_arg_text(method_meta):
 # types whose defaults are supported will have their values.  If a datatype
 # is not supported and the parameter has a default, a warning message will be
 # printed and the declaration will return null.
-func get_decleration_text(meta):
-	var param_text = _get_arg_text(meta)
+func get_function_text(meta):
+	var method_params = _get_arg_text(meta)
 	var text = null
-	if(param_text != null):
-		text = str('func ', meta.name, '(', param_text, '):')
+
+	var param_array = get_spy_call_parameters_text(meta)
+	if(param_array == 'null'):
+		param_array = '[]'
+
+	if(method_params != null):
+		var decleration = str('func ', meta.name, '(', method_params, '):')
+		text = _func_text.format({
+			"func_decleration":decleration,
+			"method_name":meta.name,
+			"param_array":param_array,
+			"super_call":get_super_call_text(meta)
+		})
 	return text
 
 # creates a call to the function in meta in the super's class.
 func get_super_call_text(meta):
 	var params = ''
-	var all_supported = true
 
 	for i in range(meta.args.size()):
 		params += PARAM_PREFIX + meta.args[i].name

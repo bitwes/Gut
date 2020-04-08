@@ -61,7 +61,6 @@ text = "M"
 flat = true
 
 [node name="ScriptProgress" type="ProgressBar" parent="."]
-editor/display_folded = true
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_left = 70.0
@@ -74,12 +73,11 @@ step = 1.0
 margin_left = -70.0
 margin_right = -10.0
 margin_bottom = 24.0
-text = "Script"
+text = "Scripts"
 align = 1
 valign = 1
 
 [node name="TestProgress" type="ProgressBar" parent="."]
-editor/display_folded = true
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_left = 70.0
@@ -97,7 +95,6 @@ align = 1
 valign = 1
 
 [node name="TextDisplay" type="Panel" parent="."]
-editor/display_folded = true
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 40.0
@@ -121,7 +118,6 @@ anchor_bottom = 1.0
 margin_right = -10.0
 
 [node name="Navigation" type="Panel" parent="."]
-editor/display_folded = true
 self_modulate = Color( 1, 1, 1, 0 )
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -163,7 +159,6 @@ margin_bottom = 90.0
 text = "..."
 
 [node name="LogLevelSlider" type="HSlider" parent="."]
-editor/display_folded = true
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_left = 80.0
@@ -261,7 +256,6 @@ toggle_mode = true
 text = "_"
 
 [node name="Summary" type="Node2D" parent="."]
-editor/display_folded = true
 position = Vector2( 0, 3 )
 
 [node name="Passing" type="Label" parent="Summary"]
@@ -282,7 +276,6 @@ custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "0"
 align = 1
 valign = 1
-
 [connection signal="mouse_entered" from="TitleBar" to="." method="_on_TitleBar_mouse_entered"]
 [connection signal="mouse_exited" from="TitleBar" to="." method="_on_TitleBar_mouse_exited"]
 [connection signal="draw" from="TitleBar/Maximize" to="." method="_on_Maximize_draw"]

@@ -1,6 +1,7 @@
 var _Logger = load('res://addons/gut/logger.gd') # everything should use get_logger
 
 var Doubler = load('res://addons/gut/doubler.gd')
+var Gut = load('res://addons/gut/gut.gd')
 var HookScript = load('res://addons/gut/hook_script.gd')
 var MethodMaker = load('res://addons/gut/method_maker.gd')
 var Spy = load('res://addons/gut/spy.gd')
@@ -18,6 +19,32 @@ enum DOUBLE_STRATEGY{
 	FULL,
 	PARTIAL
 }
+
+var escape = PoolByteArray([0x1b]).get_string_from_ascii()
+var CMD_COLORS  = {
+	RED = escape + '[31m',
+	YELLOW = escape + '[33m',
+	DEFAULT = escape + '[0m',
+	GREEN = escape + '[32m',
+	UNDERLINE = escape + '[4m',
+	BOLD = escape + '[1m'
+}
+
+func colorize_word(source, word, c):
+	var new_word  = c + word + CMD_COLORS.DEFAULT
+	return source.replace(word, new_word)
+
+func colorize_text(text):
+	var t = colorize_word(text, 'FAILED', CMD_COLORS.RED)
+	t = colorize_word(t, 'PASSED', CMD_COLORS.GREEN)
+	t = colorize_word(t, 'PENDING', CMD_COLORS.YELLOW)
+	t = colorize_word(t, '[ERROR]', CMD_COLORS.RED)
+	t = colorize_word(t, '[WARNING]', CMD_COLORS.YELLOW)
+	t = colorize_word(t, '[DEBUG]', CMD_COLORS.BOLD)
+	t = colorize_word(t, '[DEPRECATED]', CMD_COLORS.BOLD)
+	t = colorize_word(t, '[INFO]', CMD_COLORS.BOLD)
+	return t
+	
 
 var _file_checker = File.new()
 
@@ -120,3 +147,14 @@ func is_native_class(thing):
 	if(typeof(thing) == TYPE_OBJECT):
 		it_is = str(thing).begins_with("[GDScriptNativeClass:")
 	return it_is
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_file_as_text(path):
+	var to_return = ''
+	var f = File.new()
+	var result = f.open(path, f.READ)
+	if(result == OK):
+		to_return = f.get_as_text()
+		f.close()
+	return to_return

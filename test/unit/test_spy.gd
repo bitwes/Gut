@@ -132,7 +132,7 @@ class TestGetCallCount:
 
 	func test_when_called_multiple_times_the_right_count_is_returned():
 		var simple = Simple.new()
-		for i in range(10):
+		for _i in range(10):
 			_spy.add_call(simple, 'method1')
 		assert_eq(_spy.call_count(simple, 'method1'), 10)
 
