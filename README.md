@@ -30,7 +30,7 @@ Gut is provided under the MIT license.  License is in `addons/gut/LICENSE.md`
 ## [Wiki](https://github.com/bitwes/Gut/wiki)
 * [Install](https://github.com/bitwes/Gut/wiki/Install)
 * [Creating Tests](https://github.com/bitwes/Gut/wiki/Creating-Tests)
-* [Methods](https://github.com/bitwes/Gut/wiki/Methods)
+* [Asserts and Methods](https://github.com/bitwes/Gut/wiki/Asserts-and-Methods)
 
 ## [Tutorials](https://github.com/bitwes/Gut/wiki/Tutorials)
 * [Here's a short setup tutorial provided by Rainware](https://www.youtube.com/watch?v=vBbqlfmcAlc)
