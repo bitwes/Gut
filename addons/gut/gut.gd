@@ -791,7 +791,18 @@ func _get_files(path, prefix, suffix):
 # printed.
 # ------------------------------------------------------------------------------
 func p(text, level=0, indent=0):
-	var str_text = str(text)
+	var str_text = var2str(text) if typeof(text) in [\
+			TYPE_ARRAY,
+			TYPE_DICTIONARY,
+			TYPE_COLOR_ARRAY,
+			TYPE_INT_ARRAY,
+			TYPE_VECTOR2_ARRAY,
+			TYPE_VECTOR3_ARRAY,
+			TYPE_RAW_ARRAY,
+			TYPE_REAL_ARRAY,
+			] \
+		else str(text)
+			
 	var to_print = ""
 	var printing_test_name = false
 
