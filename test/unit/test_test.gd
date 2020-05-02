@@ -76,6 +76,8 @@ class BaseTestClass:
 class TestInternalStr:
 	extends BaseTestClass
 
+	var LoadedScene = load('res://test/resources/doubler_test_objects/double_me_scene.tscn')
+
 	func test_string():
 		assert_eq(_str('this'), 'this')
 
@@ -86,13 +88,13 @@ class TestInternalStr:
 		assert_eq(_str(1.234), '1.234')
 
 	func test_script():
-		assert_eq(_str(self), str(self, ' test_test.gd'))
+		assert_eq(_str(self), str(self, 'test_test.gd'))
 
 	func test_scene():
-		var scene = load('res://test/resources/doubler_test_objects/double_me_scene.tscn').instance()
-		assert_eq(_str(scene),  str(scene, ' double_me_scene.gd'))
+		var scene = LoadedScene.instance()
+		assert_eq(_str(scene),  str(scene, 'double_me_scene.gd'))
 
-	func test_gdnative_class():
+	func test_file_instance():
 		var f = File.new()
 		assert_eq(_str(f), str(f))
 
@@ -110,6 +112,12 @@ class TestInternalStr:
 	func test_color():
 		var c  = Color(.1, .2, .3)
 		assert_eq(_str(c), 'Color(0.1,0.2,0.3,1)')
+
+	func test_gdnative():
+		assert_eq(_str(Node2D), 'Node2D')
+
+	func test_loaded_scene():
+		assert_eq(_str(LoadedScene), str(LoadedScene) + 'double_me_scene.tscn')
 
 class TestMiscTests:
 	extends BaseTestClass

@@ -172,22 +172,33 @@ var _str_ignore_types = [
 	TYPE_NIL, TYPE_BOOL
 ]
 
+func _get_filename(path):
+	return path.split('/')[-1]
+
 func _str(thing):
 	var to_return = str(thing)
+
 	if(typeof(thing) in _str_ignore_types):
-		to_return = str(thing)
+		# do nothing b/c we already have str(thing) in
+		# to_return.  I think this just reads a little
+		# better this way.
+		pass
 	elif(typeof(thing) ==  TYPE_OBJECT):
-		if(thing.get_script() == null):
-			to_return = str(thing)
+		if(_utils.is_native_class(thing)):
+			to_return = _utils.get_native_class_name(thing)
+		elif(thing.get_script() == null):
+			if(thing is PackedScene):
+				to_return = str(thing) + _get_filename(thing.resource_path)
+			else:
+				to_return = str(thing)
 		else:
-			var filename = inst2dict(thing)['@path'].split('/')[-1]
-			to_return = str(to_return, ' ', filename)
+			var filename = _get_filename(inst2dict(thing)['@path'])
+			to_return = str(to_return, filename)
 	elif(types.has(typeof(thing))):
 		var str_thing = str(thing)
 		if(!str_thing.begins_with('(')):
 			str_thing = '(' + str_thing + ')'
 		to_return = str(types[typeof(thing)], str_thing)
-
 
 	return to_return
 
