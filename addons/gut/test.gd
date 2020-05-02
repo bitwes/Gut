@@ -167,6 +167,30 @@ func _init():
 	_init_types_dictionary()
 	DOUBLE_STRATEGY = _utils.DOUBLE_STRATEGY # yes, this is right
 
+var _str_ignore_types = [
+	TYPE_INT, TYPE_REAL, TYPE_STRING,
+	TYPE_NIL, TYPE_BOOL
+]
+
+func _str(thing):
+	var to_return = str(thing)
+	if(typeof(thing) in _str_ignore_types):
+		to_return = str(thing)
+	elif(typeof(thing) ==  TYPE_OBJECT):
+		if(thing.get_script() == null):
+			to_return = str(thing)
+		else:
+			var filename = inst2dict(thing)['@path'].split('/')[-1]
+			to_return = str(to_return, ' ', filename)
+	elif(types.has(typeof(thing))):
+		var str_thing = str(thing)
+		if(!str_thing.begins_with('(')):
+			str_thing = '(' + str_thing + ')'
+		to_return = str(types[typeof(thing)], str_thing)
+
+
+	return to_return
+
 # ------------------------------------------------------------------------------
 # Fail an assertion.  Causes test and script to fail as well.
 # ------------------------------------------------------------------------------

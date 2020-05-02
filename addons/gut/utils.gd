@@ -44,7 +44,7 @@ func colorize_text(text):
 	t = colorize_word(t, '[DEPRECATED]', CMD_COLORS.BOLD)
 	t = colorize_word(t, '[INFO]', CMD_COLORS.BOLD)
 	return t
-	
+
 
 var _file_checker = File.new()
 

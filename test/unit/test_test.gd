@@ -73,6 +73,44 @@ class BaseTestClass:
 		gr.test = null
 		gr.test_with_gut.free()
 
+class TestInternalStr:
+	extends BaseTestClass
+
+	func test_string():
+		assert_eq(_str('this'), 'this')
+
+	func test_int():
+		assert_eq(_str(1234), '1234')
+
+	func test_float():
+		assert_eq(_str(1.234), '1.234')
+
+	func test_script():
+		assert_eq(_str(self), str(self, ' test_test.gd'))
+
+	func test_scene():
+		var scene = load('res://test/resources/doubler_test_objects/double_me_scene.tscn').instance()
+		assert_eq(_str(scene),  str(scene, ' double_me_scene.gd'))
+
+	func test_gdnative_class():
+		var f = File.new()
+		assert_eq(_str(f), str(f))
+
+	func test_vector2():
+		var v2 = Vector2(20, 30)
+		assert_eq(_str(v2), 'Vector2(20, 30)')
+
+	func test_null():
+		assert_eq(_str(null), str(null))
+
+	func test_boolean():
+		assert_eq(_str(true), str(true))
+		assert_eq(_str(false), str(false))
+
+	func test_color():
+		var c  = Color(.1, .2, .3)
+		assert_eq(_str(c), 'Color(0.1,0.2,0.3,1)')
+
 class TestMiscTests:
 	extends BaseTestClass
 
@@ -919,7 +957,7 @@ class TestAssertTypeOf:
 		var c = Color(1, 1, 1, 1)
 		gr.test.assert_not_typeof(c, TYPE_INT)
 		assert_pass(gr.test)
-	
+
 # TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestStringContains:
 	extends BaseTestClass
