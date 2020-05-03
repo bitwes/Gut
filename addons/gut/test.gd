@@ -180,11 +180,41 @@ func _get_filename(path):
 # Better object/thing to string conversion.  Includes extra details about
 # whatever is passed in when it can/should.
 # ------------------------------------------------------------------------------
-func _str(thing):
-	var to_return = str(thing)
+func _get_obj_filename(thing):
+	var filename = null
 
-	if(str(thing) == '[Object:null]'):
-		to_return = str(null)
+	if(thing == null or
+		str(thing) == '[Object:null]' or
+		typeof(thing) != TYPE_OBJECT or
+		thing.has_method('__gut_instance_from_id')):
+		return
+
+	if(thing.get_script() == null):
+		if(thing is PackedScene):
+			filename = _get_filename(thing.resource_path)
+		else:
+			# If it isn't a packed scene and it doesn't have a script then
+			# we do nothing.  This just read better.
+			pass
+	elif(!_utils.is_native_class(thing)):
+		var dict = inst2dict(thing)
+		filename = _get_filename(dict['@path'])
+		if(dict['@subpath'] != ''):
+			filename += str('/', dict['@subpath'])
+
+	return filename
+
+func _str(thing):
+	var filename = _get_obj_filename(thing)
+	var str_thing = str(thing)
+
+	if(thing == null):
+		# According to str there is a difference between null and an Object
+		# that is somehow null.  To avoid getting '[Object:null]' as output
+		# always set it to str(null) instead of str(thing).  A null object
+		# will pass typeof(thing) == TYPE_OBJECT check so this has to be
+		# before that.
+		str_thing = str(null)
 	elif(typeof(thing) in _str_ignore_types):
 		# do nothing b/c we already have str(thing) in
 		# to_return.  I think this just reads a little
@@ -192,27 +222,22 @@ func _str(thing):
 		pass
 	elif(typeof(thing) ==  TYPE_OBJECT):
 		if(_utils.is_native_class(thing)):
-			to_return = _utils.get_native_class_name(thing)
-		elif(thing.get_script() == null):
-			if(thing is PackedScene):
-				to_return = str(thing) + _get_filename(thing.resource_path)
-			else:
-				to_return = str(thing)
-		# TODO this might be able to be improved.
-		elif(thing.get_script().get_path() ==  null):
-			to_return = str(thing)
+			str_thing = _utils.get_native_class_name(thing)
 		elif(thing.has_method('__gut_instance_from_id')):
-			to_return = str(thing) + '<double of ' + _get_filename(thing.__gut_metadata_.path) + '>'
-		else:
-			var filename = _get_filename(inst2dict(thing)['@path'])
-			to_return = str(to_return).replace(']', ':' + filename + ']')
+			var double_path = _get_filename(thing.__gut_metadata_.path)
+			if(thing.__gut_metadata_.subpath != ''):
+				double_path += str('/', thing.__gut_metadata_.subpath)
+
+			str_thing += '(double of ' + double_path + ')'
+			filename = null
 	elif(types.has(typeof(thing))):
-		var str_thing = str(thing)
 		if(!str_thing.begins_with('(')):
 			str_thing = '(' + str_thing + ')'
-		to_return = str(types[typeof(thing)], str_thing)
+		str_thing = str(types[typeof(thing)], str_thing)
 
-	return to_return
+	if(filename != null):
+		str_thing += str('(', filename, ')')
+	return str_thing
 
 # ------------------------------------------------------------------------------
 # Fail an assertion.  Causes test and script to fail as well.

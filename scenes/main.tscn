@@ -16,6 +16,9 @@ margin_top = 4.0
 margin_right = 1019.0
 margin_bottom = 79.0
 text = "Run Gut Unit Tests"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="ExportTests" type="Button" parent="."]
 margin_left = 853.0
@@ -34,10 +37,10 @@ __meta__ = {
 "_edit_use_anchors_": false,
 "_editor_icon": ExtResource( 3 )
 }
-_select_script = "test_test.gd"
+_select_script = ""
 _tests_like = ""
-_inner_class_name = "TestReplaceNode"
-_run_on_load = true
+_inner_class_name = ""
+_run_on_load = false
 _should_maximize = true
 _should_print_to_console = true
 _log_level = 1
