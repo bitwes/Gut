@@ -167,6 +167,7 @@ func _init():
 	_init_types_dictionary()
 	DOUBLE_STRATEGY = _utils.DOUBLE_STRATEGY # yes, this is right
 
+# Types to not be formatted when using _str
 var _str_ignore_types = [
 	TYPE_INT, TYPE_REAL, TYPE_STRING,
 	TYPE_NIL, TYPE_BOOL
@@ -175,10 +176,16 @@ var _str_ignore_types = [
 func _get_filename(path):
 	return path.split('/')[-1]
 
+# ------------------------------------------------------------------------------
+# Better object/thing to string conversion.  Includes extra details about
+# whatever is passed in when it can/should.
+# ------------------------------------------------------------------------------
 func _str(thing):
 	var to_return = str(thing)
 
-	if(typeof(thing) in _str_ignore_types):
+	if(str(thing) == '[Object:null]'):
+		to_return = str(null)
+	elif(typeof(thing) in _str_ignore_types):
 		# do nothing b/c we already have str(thing) in
 		# to_return.  I think this just reads a little
 		# better this way.
@@ -192,13 +199,13 @@ func _str(thing):
 			else:
 				to_return = str(thing)
 		# TODO this might be able to be improved.
-		elif(thing is Reference):
+		elif(thing.get_script().get_path() ==  null):
 			to_return = str(thing)
 		elif(thing.has_method('__gut_instance_from_id')):
 			to_return = str(thing) + '<double of ' + _get_filename(thing.__gut_metadata_.path) + '>'
 		else:
 			var filename = _get_filename(inst2dict(thing)['@path'])
-			to_return = str(to_return, filename)
+			to_return = str(to_return).replace(']', ':' + filename + ']')
 	elif(types.has(typeof(thing))):
 		var str_thing = str(thing)
 		if(!str_thing.begins_with('(')):

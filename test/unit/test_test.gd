@@ -77,6 +77,11 @@ class TestInternalStr:
 	extends BaseTestClass
 
 	var LoadedScene = load('res://test/resources/doubler_test_objects/double_me_scene.tscn')
+	class ExtendsControl:
+		extends Control
+
+		func do_something():
+			pass # does nothing, heh
 
 	func test_string():
 		assert_eq(_str('this'), 'this')
@@ -89,6 +94,10 @@ class TestInternalStr:
 
 	func test_script():
 		assert_eq(_str(self), str(self, 'test_test.gd'))
+
+	func test_script_2():
+		var dm = DoubleMe.new()
+		assert_eq(_str(dm), str(dm) + 'double_me.gd')
 
 	func test_scene():
 		var scene = LoadedScene.instance()
@@ -121,11 +130,30 @@ class TestInternalStr:
 
 	func test_doubles():
 		var d = double(DOUBLE_ME_PATH).new()
-		assert_eq(_str(d), str(d))
+		assert_eq(_str(d), str(d) + '<double of double_me.gd>')
 
 	func test_another_double():
 		var d = double(DOUBLE_EXTENDS_NODE2D).new()
 		assert_eq(_str(d), str(d) + '<double of double_extends_node2d.gd>')
+
+	func test_assert_null():
+		assert_eq(_str(null), str(null))
+
+	func test_object_null():
+		var scene = load(DOUBLE_ME_SCENE_PATH).instance()
+		assert_eq(_str(scene.get_parent()), 'Null')
+
+	# currently does not print the inner class, maybe later.
+	func test_inner_class():
+		var ec = ExtendsControl.new()
+		assert_eq(_str(ec), str(ec) + 'test_test.gd')
+
+	class ExtendsNothing:
+		var foo = 'bar'
+
+	func test_simple_class():
+		var en = ExtendsNothing.new()
+		assert_eq(_str(en), str(en) + 'test_test.gd')
 
 class TestMiscTests:
 	extends BaseTestClass
