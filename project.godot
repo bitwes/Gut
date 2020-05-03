@@ -37,6 +37,10 @@ window/stretch/aspect="keep_width"
 
 enabled=PoolStringArray( "gut" )
 
+[network]
+
+limits/debugger_stdout/max_chars_per_second=8192
+
 [rendering]
 
 environment/default_environment="res://default_env.tres"
