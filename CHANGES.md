@@ -8,6 +8,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Bug Fixes
 * [Xrayez found an issue with the signal watcher](https://github.com/bitwes/Gut/pull/158) in 3.2.2 and fixed it.
+* __Issue 157/160__ GDScript templates used for doubling now have a `.txt` extension instead of `.gd` which was causing issues with warnings and exporting tests.  If you want to export your tests you must now include `*.txt` files.  A warning was added if the templates are missing.
+* Text is now wrapped in the display.  If you hate it, let me know and I'll add a flag.
 
 # 6.8.2
 ## Features
