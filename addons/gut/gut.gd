@@ -417,7 +417,7 @@ func _init_run():
 	_gui.get_text_box().add_keyword_color("PASSED", Color(0, 1, 0))
 	_gui.get_text_box().add_keyword_color("FAILED", Color(1, 0, 0))
 	_gui.get_text_box().add_color_region('/#', '#/', Color(.9, .6, 0))
-	_gui.get_text_box().add_color_region('/-', '-/', Color(1, 1, 0))
+	_gui.get_text_box().add_color_region('/---', '---/', Color(1, 1, 0))
 	_gui.get_text_box().add_color_region('/*', '*/', Color(.5, .5, 1))
 
 	var pre_hook_result = _validate_hook_script(_pre_run_script)
