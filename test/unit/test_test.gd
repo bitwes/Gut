@@ -17,7 +17,7 @@ class BaseTestClass:
 	# !! Use this for debugging to see the results of all the subtests that
 	# are run using assert_fail_pass, assert_fail and assert_pass that are
 	# built into this class
-	var _print_all_subtests = false
+	var _print_all_subtests = true
 
 	# GlobalReset(gr) variables to be used by tests.
 	# The values of these are reset in the setup or
@@ -118,6 +118,14 @@ class TestInternalStr:
 
 	func test_loaded_scene():
 		assert_eq(_str(LoadedScene), str(LoadedScene) + 'double_me_scene.tscn')
+
+	func test_doubles():
+		var d = double(DOUBLE_ME_PATH).new()
+		assert_eq(_str(d), str(d))
+
+	func test_another_double():
+		var d = double(DOUBLE_EXTENDS_NODE2D).new()
+		assert_eq(_str(d), str(d) + '<double of double_extends_node2d.gd>')
 
 class TestMiscTests:
 	extends BaseTestClass
