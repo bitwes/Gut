@@ -115,7 +115,6 @@ class ObjectInfo:
 			var native = get_native_class_name()
 			if(native.begins_with('_')):
 				native = native.substr(1)
-				print('modified native = ', native)
 			extend = str("extends ", native)
 		else:
 			extend = str("extends '", get_path(), "'")

@@ -241,6 +241,5 @@ class TestPartialDoubleMethod:
 	# Test issue 147
 	func test_can_double_file():
 		var f = File.new()
-		print(f.get_class())
 		var inst = _test.partial_double(File)
 		assert_not_null(inst)
