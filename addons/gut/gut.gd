@@ -28,12 +28,12 @@
 ################################################################################
 # View readme for usage details.
 #
-# Version 6.8.2
+# Version 6.8.3
 ################################################################################
 #extends "res://addons/gut/gut_gui.gd"
 tool
 extends Control
-var _version = '6.8.2'
+var _version = '6.8.3'
 
 var _utils = load('res://addons/gut/utils.gd').new()
 var _lgr = _utils.get_logger()

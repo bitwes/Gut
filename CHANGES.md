@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# 6.8.3
+## Features
+* Added filename and inner class paths to "expected" and "got" values in asserts.  For example you'll see `[Node:1234](my_script.gd)` now instead of just `[Node:1234]`
+
+## Bug Fixes
+* [Xrayez found an issue with the signal watcher](https://github.com/bitwes/Gut/pull/158) in 3.2.2 and fixed it.
+
 # 6.8.2
 ## Features
 * __Issue 113__ ssd71 added asserts `assert_connected` and  `assert_not_connected` which allow you to assert an object is connected to a signal.
@@ -33,7 +40,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * Experimental FULL doubling is now working in Godot 3.1.
 * Experimental FULL doubling now stubs all supported built-ins `to_call_super` under the covers.  This means you can stub methods you haven't overloaded in your class (before you could only spy on them).
 * __Issue 105__ Added `-gexit_on_success` option to the command line to only exit if all tests passed.
-* Added `get_version` method to `Gut.gd`.  
+* Added `get_version` method to `Gut.gd`.
 
 ## Bug Fixes
 * Housekeeping, typos and some unused variables.
