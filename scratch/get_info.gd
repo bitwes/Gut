@@ -7,6 +7,9 @@
 # ##############################################################################
 extends SceneTree
 
+const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
+var DoubleMe = load(DOUBLE_ME_PATH)
+
 const DEFAULT_ARGS = 'default_args'
 const NAME = 'name'
 const ARGS = 'args'
@@ -116,7 +119,19 @@ func class_db_stuff():
 	# print(ClassDB.class_get_integer_constant_list('Node2D'))
 	# print(ClassDB.get_class_list())
 
+
 func _init():
+	var  dm   = DoubleMe.new()
+	var props = dm.get_property_list()
+	print(var2str(props))
+	print(var2str(dm.get_meta_list()))
+	print('class = ', dm.get_class())
+	print('script = ', dm.get_script())
+	print(dm.get_script().get_path())
+	print(dm)
+	quit()
+
+func _init2():
 	# var double_me = load('res://test/resources/doubler_test_objects/double_me.gd').new()
 	# print_method_info(double_me)
 	# print("-------------\n-\n-\n-\n-------------")

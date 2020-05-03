@@ -167,6 +167,78 @@ func _init():
 	_init_types_dictionary()
 	DOUBLE_STRATEGY = _utils.DOUBLE_STRATEGY # yes, this is right
 
+# Types to not be formatted when using _str
+var _str_ignore_types = [
+	TYPE_INT, TYPE_REAL, TYPE_STRING,
+	TYPE_NIL, TYPE_BOOL
+]
+
+func _get_filename(path):
+	return path.split('/')[-1]
+
+# ------------------------------------------------------------------------------
+# Better object/thing to string conversion.  Includes extra details about
+# whatever is passed in when it can/should.
+# ------------------------------------------------------------------------------
+func _get_obj_filename(thing):
+	var filename = null
+
+	if(thing == null or
+		str(thing) == '[Object:null]' or
+		typeof(thing) != TYPE_OBJECT or
+		thing.has_method('__gut_instance_from_id')):
+		return
+
+	if(thing.get_script() == null):
+		if(thing is PackedScene):
+			filename = _get_filename(thing.resource_path)
+		else:
+			# If it isn't a packed scene and it doesn't have a script then
+			# we do nothing.  This just read better.
+			pass
+	elif(!_utils.is_native_class(thing)):
+		var dict = inst2dict(thing)
+		filename = _get_filename(dict['@path'])
+		if(dict['@subpath'] != ''):
+			filename += str('/', dict['@subpath'])
+
+	return filename
+
+func _str(thing):
+	var filename = _get_obj_filename(thing)
+	var str_thing = str(thing)
+
+	if(thing == null):
+		# According to str there is a difference between null and an Object
+		# that is somehow null.  To avoid getting '[Object:null]' as output
+		# always set it to str(null) instead of str(thing).  A null object
+		# will pass typeof(thing) == TYPE_OBJECT check so this has to be
+		# before that.
+		str_thing = str(null)
+	elif(typeof(thing) in _str_ignore_types):
+		# do nothing b/c we already have str(thing) in
+		# to_return.  I think this just reads a little
+		# better this way.
+		pass
+	elif(typeof(thing) ==  TYPE_OBJECT):
+		if(_utils.is_native_class(thing)):
+			str_thing = _utils.get_native_class_name(thing)
+		elif(thing.has_method('__gut_instance_from_id')):
+			var double_path = _get_filename(thing.__gut_metadata_.path)
+			if(thing.__gut_metadata_.subpath != ''):
+				double_path += str('/', thing.__gut_metadata_.subpath)
+
+			str_thing += '(double of ' + double_path + ')'
+			filename = null
+	elif(types.has(typeof(thing))):
+		if(!str_thing.begins_with('(')):
+			str_thing = '(' + str_thing + ')'
+		str_thing = str(types[typeof(thing)], str_thing)
+
+	if(filename != null):
+		str_thing += str('(', filename, ')')
+	return str_thing
+
 # ------------------------------------------------------------------------------
 # Fail an assertion.  Causes test and script to fail as well.
 # ------------------------------------------------------------------------------
@@ -208,7 +280,7 @@ func _do_datatypes_match__fail_if_not(got, expected, text):
 			if([2, 3].has(got_type) and [2, 3].has(expect_type)):
 				_lgr.warn(str('Warn:  Float/Int comparison.  Got ', types[got_type], ' but expected ', types[expect_type]))
 			else:
-				_fail('Cannot compare ' + types[got_type] + '[' + str(got) + '] to ' + types[expect_type] + '[' + str(expected) + '].  ' + text)
+				_fail('Cannot compare ' + types[got_type] + '[' + _str(got) + '] to ' + types[expect_type] + '[' + _str(expected) + '].  ' + text)
 				did_pass = false
 
 	return did_pass
@@ -302,7 +374,7 @@ func set_logger(logger):
 # Asserts that the expected value equals the value got.
 # ------------------------------------------------------------------------------
 func assert_eq(got, expected, text=""):
-	var disp = "[" + str(got) + "] expected to equal [" + str(expected) + "]:  " + text
+	var disp = "[" + _str(got) + "] expected to equal [" + _str(expected) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, expected, text)):
 		if(expected != got):
 			_fail(disp)
@@ -313,7 +385,7 @@ func assert_eq(got, expected, text=""):
 # Asserts that the value got does not equal the "not expected" value.
 # ------------------------------------------------------------------------------
 func assert_ne(got, not_expected, text=""):
-	var disp = "[" + str(got) + "] expected to be anything except [" + str(not_expected) + "]:  " + text
+	var disp = "[" + _str(got) + "] expected to be anything except [" + _str(not_expected) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, not_expected, text)):
 		if(got == not_expected):
 			_fail(disp)
@@ -324,7 +396,7 @@ func assert_ne(got, not_expected, text=""):
 # Asserts that the expected value almost equals the value got.
 # ------------------------------------------------------------------------------
 func assert_almost_eq(got, expected, error_interval, text=''):
-	var disp = "[" + str(got) + "] expected to equal [" + str(expected) + "] +/- [" + str(error_interval) + "]:  " + text
+	var disp = "[" + _str(got) + "] expected to equal [" + _str(expected) + "] +/- [" + str(error_interval) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, expected, text) and _do_datatypes_match__fail_if_not(got, error_interval, text)):
 		if(got < (expected - error_interval) or got > (expected + error_interval)):
 			_fail(disp)
@@ -335,7 +407,7 @@ func assert_almost_eq(got, expected, error_interval, text=''):
 # Asserts that the expected value does not almost equal the value got.
 # ------------------------------------------------------------------------------
 func assert_almost_ne(got, not_expected, error_interval, text=''):
-	var disp = "[" + str(got) + "] expected to not equal [" + str(not_expected) + "] +/- [" + str(error_interval) + "]:  " + text
+	var disp = "[" + _str(got) + "] expected to not equal [" + _str(not_expected) + "] +/- [" + str(error_interval) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, not_expected, text) and _do_datatypes_match__fail_if_not(got, error_interval, text)):
 		if(got < (not_expected - error_interval) or got > (not_expected + error_interval)):
 			_pass(disp)
@@ -346,7 +418,7 @@ func assert_almost_ne(got, not_expected, error_interval, text=''):
 # Asserts got is greater than expected
 # ------------------------------------------------------------------------------
 func assert_gt(got, expected, text=""):
-	var disp = "[" + str(got) + "] expected to be > than [" + str(expected) + "]:  " + text
+	var disp = "[" + _str(got) + "] expected to be > than [" + _str(expected) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, expected, text)):
 		if(got > expected):
 			_pass(disp)
@@ -357,7 +429,7 @@ func assert_gt(got, expected, text=""):
 # Asserts got is less than expected
 # ------------------------------------------------------------------------------
 func assert_lt(got, expected, text=""):
-	var disp = "[" + str(got) + "] expected to be < than [" + str(expected) + "]:  " + text
+	var disp = "[" + _str(got) + "] expected to be < than [" + _str(expected) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, expected, text)):
 		if(got < expected):
 			_pass(disp)
@@ -386,7 +458,7 @@ func assert_false(got, text=""):
 # Asserts value is between (inclusive) the two expected values.
 # ------------------------------------------------------------------------------
 func assert_between(got, expect_low, expect_high, text=""):
-	var disp = "[" + str(got) + "] expected to be between [" + str(expect_low) + "] and [" + str(expect_high) + "]:  " + text
+	var disp = "[" + _str(got) + "] expected to be between [" + _str(expect_low) + "] and [" + str(expect_high) + "]:  " + text
 
 	if(_do_datatypes_match__fail_if_not(got, expect_low, text) and _do_datatypes_match__fail_if_not(got, expect_high, text)):
 		if(expect_low > expect_high):
@@ -403,7 +475,7 @@ func assert_between(got, expect_low, expect_high, text=""):
 # the passed in element.
 # ------------------------------------------------------------------------------
 func assert_has(obj, element, text=""):
-	var disp = str('Expected [', obj, '] to contain value:  [', element, ']:  ', text)
+	var disp = str('Expected [', _str(obj), '] to contain value:  [', _str(element), ']:  ', text)
 	if(obj.has(element)):
 		_pass(disp)
 	else:
@@ -412,7 +484,7 @@ func assert_has(obj, element, text=""):
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func assert_does_not_have(obj, element, text=""):
-	var disp = str('Expected [', obj, '] to NOT contain value:  [', element, ']:  ', text)
+	var disp = str('Expected [', _str(obj), '] to NOT contain value:  [', _str(element), ']:  ', text)
 	if(obj.has(element)):
 		_fail(disp)
 	else:
@@ -465,7 +537,7 @@ func assert_file_not_empty(file_path):
 # Asserts the object has the specified method
 # ------------------------------------------------------------------------------
 func assert_has_method(obj, method):
-	assert_true(obj.has_method(method), 'Should have method: ' + method)
+	assert_true(obj.has_method(method), _str(obj) + ' should have method: ' + method)
 
 # Old deprecated method name
 func assert_get_set_methods(obj, property, default, set_to):
@@ -518,7 +590,7 @@ func _find_object_property(obj, property_name, property_usage=null):
 # Asserts a class exports a variable.
 # ------------------------------------------------------------------------------
 func assert_exports(obj, property_name, type):
-	var disp = 'expected %s to have editor property [%s]' % [obj, property_name]
+	var disp = 'expected %s to have editor property [%s]' % [_str(obj), property_name]
 	var property = _find_object_property(obj, property_name, EDITOR_PROPERTY)
 	if property != null:
 		disp += ' of type [%s]. Got type [%s].' % [types[type], types[property['type']]]
@@ -570,9 +642,9 @@ func assert_connected(signaler_obj, connect_to_obj, signal_name, method_name="")
 	var method_disp = ''
 	if (method_name != ""):
 		method_disp = str(' using method: [', method_name, '] ')
-	var disp = str('Expected object ', signaler_obj,\
+	var disp = str('Expected object ', _str(signaler_obj),\
 		' to be connected to signal: [', signal_name, '] on ',\
-		connect_to_obj, method_disp)
+		_str(connect_to_obj), method_disp)
 	if(_is_connected(signaler_obj, connect_to_obj, signal_name, method_name)):
 		_pass(disp)
 	else:
@@ -588,9 +660,9 @@ func assert_not_connected(signaler_obj, connect_to_obj, signal_name, method_name
 	var method_disp = ''
 	if (method_name != ""):
 		method_disp = str(' using method: [', method_name, '] ')
-	var disp = str('Expected object ', signaler_obj,\
+	var disp = str('Expected object ', _str(signaler_obj),\
 		' to not be connected to signal: [', signal_name, '] on ',\
-		connect_to_obj, method_disp)
+		_str(connect_to_obj), method_disp)
 	if(_is_connected(signaler_obj, connect_to_obj, signal_name, method_name)):
 		_fail(disp)
 	else:
@@ -603,7 +675,7 @@ func assert_not_connected(signaler_obj, connect_to_obj, signal_name, method_name
 # the object does not have the specified signal
 # ------------------------------------------------------------------------------
 func assert_signal_emitted(object, signal_name, text=""):
-	var disp = str('Expected object ', object, ' to have emitted signal [', signal_name, ']:  ', text)
+	var disp = str('Expected object ', _str(object), ' to have emitted signal [', signal_name, ']:  ', text)
 	if(_can_make_signal_assertions(object, signal_name)):
 		if(_signal_watcher.did_emit(object, signal_name)):
 			_pass(disp)
@@ -617,7 +689,7 @@ func assert_signal_emitted(object, signal_name, text=""):
 # the object does not have the specified signal
 # ------------------------------------------------------------------------------
 func assert_signal_not_emitted(object, signal_name, text=""):
-	var disp = str('Expected object ', object, ' to NOT emit signal [', signal_name, ']:  ', text)
+	var disp = str('Expected object ', _str(object), ' to NOT emit signal [', signal_name, ']:  ', text)
 	if(_can_make_signal_assertions(object, signal_name)):
 		if(_signal_watcher.did_emit(object, signal_name)):
 			_fail(disp)
@@ -634,7 +706,7 @@ func assert_signal_not_emitted(object, signal_name, text=""):
 # the object does not have the specified signal
 # ------------------------------------------------------------------------------
 func assert_signal_emitted_with_parameters(object, signal_name, parameters, index=-1):
-	var disp = str('Expected object ', object, ' to emit signal [', signal_name, '] with parameters ', parameters, ', got ')
+	var disp = str('Expected object ', _str(object), ' to emit signal [', signal_name, '] with parameters ', parameters, ', got ')
 	if(_can_make_signal_assertions(object, signal_name)):
 		if(_signal_watcher.did_emit(object, signal_name)):
 			var parms_got = _signal_watcher.get_signal_parameters(object, signal_name, index)
@@ -666,7 +738,7 @@ func assert_signal_emit_count(object, signal_name, times, text=""):
 # Assert that the passed in object has the specified signal
 # ------------------------------------------------------------------------------
 func assert_has_signal(object, signal_name, text=""):
-	var disp = str('Expected object ', object, ' to have signal [', signal_name, ']:  ', text)
+	var disp = str('Expected object ', _str(object), ' to have signal [', signal_name, ']:  ', text)
 	if(_signal_watcher.does_object_have_signal(object, signal_name)):
 		_pass(disp)
 	else:
@@ -716,7 +788,7 @@ func assert_extends(object, a_class, text=''):
 
 # Alias for assert_extends
 func assert_is(object, a_class, text=''):
-	var disp = str('Expected [', object, '] to be type of [', a_class, ']: ', text)
+	var disp = str('Expected [', _str(object), '] to be type of [', a_class, ']: ', text)
 	var NATIVE_CLASS = 'GDScriptNativeClass'
 	var GDSCRIPT_CLASS = 'GDScript'
 	var bad_param_2 = 'Parameter 2 must be a Class (like Node2D or Label).  You passed '
@@ -743,7 +815,7 @@ func _get_typeof_string(the_type):
 		to_return += str(the_type)
 	return to_return
 
-	# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func assert_typeof(object, type, text=''):
 	var disp = str('Expected [typeof(', object, ') = ')
@@ -838,7 +910,7 @@ func assert_string_ends_with(text, search, match_case=true):
 #      annoying.
 # ------------------------------------------------------------------------------
 func assert_called(inst, method_name, parameters=null):
-	var disp = str('Expected [',method_name,'] to have been called on ',inst)
+	var disp = str('Expected [',method_name,'] to have been called on ',_str(inst))
 
 	if(_fail_if_parameters_not_array(parameters)):
 		return
@@ -859,7 +931,7 @@ func assert_called(inst, method_name, parameters=null):
 # sent matching parameters.
 # ------------------------------------------------------------------------------
 func assert_not_called(inst, method_name, parameters=null):
-	var disp = str('Expected [', method_name, '] to NOT have been called on ', inst)
+	var disp = str('Expected [', method_name, '] to NOT have been called on ', _str(inst))
 
 	if(_fail_if_parameters_not_array(parameters)):
 		return
@@ -889,7 +961,7 @@ func assert_call_count(inst, method_name, expected_count, parameters=null):
 	if(parameters):
 		param_text = ' with parameters ' + str(parameters)
 	var disp = 'Expected [%s] on %s to be called [%s] times%s.  It was called [%s] times.'
-	disp = disp % [method_name, inst, expected_count, param_text, count]
+	disp = disp % [method_name, _str(inst), expected_count, param_text, count]
 
 	if(!_utils.is_double(inst)):
 		_fail('You must pass a doubled instance to assert_call_count.  Check the wiki for info on using double.')
@@ -903,7 +975,7 @@ func assert_call_count(inst, method_name, expected_count, parameters=null):
 # Asserts the passed in value is null
 # ------------------------------------------------------------------------------
 func assert_null(got, text=''):
-	var disp = str('Expected [', got, '] to be NULL:  ', text)
+	var disp = str('Expected [', _str(got), '] to be NULL:  ', text)
 	if(got == null):
 		_pass(disp)
 	else:
@@ -913,7 +985,7 @@ func assert_null(got, text=''):
 # Asserts the passed in value is null
 # ------------------------------------------------------------------------------
 func assert_not_null(got, text=''):
-	var disp = str('Expected [', got, '] to be anything but NULL:  ', text)
+	var disp = str('Expected [', _str(got), '] to be anything but NULL:  ', text)
 	if(got == null):
 		_fail(disp)
 	else:
