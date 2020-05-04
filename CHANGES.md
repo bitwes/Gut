@@ -4,14 +4,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 # 6.8.3
 ## Features
-* Added filename and inner class paths to "expected" and "got" values in asserts.  For example you'll see `[Node:1234](my_script.gd)` now instead of just `[Node:1234]`
+* Added filename and inner class paths to "expected" and "got" values in asserts.  For example you'll see `[Node:1234](my_script.gd)` now instead of just `[Node:1234]`.  Types are also included where appropriate.  For example `Color(1,1,1,1)` instead of `(1,1,1,1)` but a strings and numbers aren't changed.
+* Text is now wrapped in the display.  If you hate it let me know and I'll add a flag.
 
 ## Bug Fixes
 * [Xrayez found an issue with the signal watcher](https://github.com/bitwes/Gut/pull/158) in 3.2.2 and fixed it.
 * __Issue 147__ Some built-ins could not be doubled because the underlying class starts with an underscore.  This was discovered for `File`.  These are now detected and handled.
 * __Issue 149__ Using `assert_almost_eq` no longer breaks all the beautiful colors in the display.
-* __Issue 157/160__ GDScript templates used for doubling now have a `.txt` extension instead of `.gd` which was causing issues with warnings and exporting tests.  If you want to export your tests you must now include `*.txt` files.  A warning was added if the templates are missing.
-* Text is now wrapped in the display.  If you hate it, let me know and I'll add a flag.
+* __Issue 157/160__ GDScript templates used for doubling now have a `.txt` extension instead of `.gd`.  This was causing issues with warnings and exporting tests.  If you want to export your tests you must now include `*.txt` files.  A warning was added if the templates are missing.
 
 # 6.8.2
 ## Features
