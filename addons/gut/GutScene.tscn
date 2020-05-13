@@ -110,6 +110,10 @@ mouse_default_cursor_shape = 0
 readonly = true
 syntax_highlighting = true
 smooth_scrolling = true
+wrap_enabled = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="FocusBlocker" type="Panel" parent="TextDisplay"]
 self_modulate = Color( 1, 1, 1, 0 )
@@ -187,6 +191,9 @@ margin_top = 40.0
 margin_right = 620.0
 margin_bottom = -108.0
 allow_reselect = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="ExtraOptions" type="Panel" parent="."]
 anchor_left = 1.0

@@ -88,7 +88,7 @@ func _init():
 # ###############
 # Private
 # ###############
-var _func_text = _utils.get_file_as_text('res://addons/gut/double_templates/function_template.gd')
+var _func_text = _utils.get_file_as_text('res://addons/gut/double_templates/function_template.txt')
 
 func _is_supported_default(type_flag):
 	return type_flag >= 0 and type_flag < _supported_defaults.size() and [type_flag] != null

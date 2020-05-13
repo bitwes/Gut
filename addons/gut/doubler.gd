@@ -112,7 +112,10 @@ class ObjectInfo:
 	func get_extends_text():
 		var extend = null
 		if(is_native()):
-			extend = str("extends ", get_native_class_name())
+			var native = get_native_class_name()
+			if(native.begins_with('_')):
+				native = native.substr(1)
+			extend = str("extends ", native)
 		else:
 			extend = str("extends '", get_path(), "'")
 
@@ -221,7 +224,7 @@ var _output_dir = 'user://gut_temp_directory'
 var _double_count = 0 # used in making files names unique
 var _spy = null
 var _strategy = null
-var _base_script_text = _utils.get_file_as_text('res://addons/gut/double_templates/script_template.gd')
+var _base_script_text = _utils.get_file_as_text('res://addons/gut/double_templates/script_template.txt')
 var _make_files = false
 
 # These methods all call super implicitly.  Stubbing them to call super causes

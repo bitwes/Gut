@@ -28,12 +28,12 @@
 ################################################################################
 # View readme for usage details.
 #
-# Version 6.8.2
+# Version 6.8.3
 ################################################################################
 #extends "res://addons/gut/gut_gui.gd"
 tool
 extends Control
-var _version = '6.8.2'
+var _version = '6.8.3'
 
 var _utils = load('res://addons/gut/utils.gd').new()
 var _lgr = _utils.get_logger()
@@ -140,6 +140,11 @@ var _doubler = _utils.Doubler.new()
 var _spy = _utils.Spy.new()
 var _gui = null
 
+# Used to cancel importing scripts if an error has occurred in the setup.  This
+# prevents tests from being run if they were exported and ensures that the
+# error displayed is seen since importing generates a lot of text.
+var _cancel_import = false
+
 const SIGNAL_TESTS_FINISHED = 'tests_finished'
 const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yield_before_teardown'
 
@@ -172,6 +177,11 @@ func _init():
 # ------------------------------------------------------------------------------
 func _ready():
 	_lgr.info(str('using [', OS.get_user_data_dir(), '] for temporary output.'))
+	var f = File.new()
+	if(!f.file_exists('res://addons/gut/double_templates/function_template.txt')):
+		_lgr.error('Templates are missing.  Make sure you are exporting "*.txt" or "addons/gut/double_templates/*.txt".')
+		_run_on_load = false
+		_cancel_import = true
 
 	set_process_input(true)
 
@@ -407,7 +417,7 @@ func _init_run():
 	_gui.get_text_box().add_keyword_color("PASSED", Color(0, 1, 0))
 	_gui.get_text_box().add_keyword_color("FAILED", Color(1, 0, 0))
 	_gui.get_text_box().add_color_region('/#', '#/', Color(.9, .6, 0))
-	_gui.get_text_box().add_color_region('/-', '-/', Color(1, 1, 0))
+	_gui.get_text_box().add_color_region('/---', '---/', Color(1, 1, 0))
 	_gui.get_text_box().add_color_region('/*', '*/', Color(.5, .5, 1))
 
 	var pre_hook_result = _validate_hook_script(_pre_run_script)
@@ -933,7 +943,7 @@ func import_tests(path=_export_path):
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func import_tests_if_none_found():
-	if(_test_collector.scripts.size() == 0):
+	if(!_cancel_import and _test_collector.scripts.size() == 0):
 		import_tests()
 
 # ------------------------------------------------------------------------------
