@@ -70,7 +70,7 @@ func subtract_dictionary(sub_this, from_this):
 
 func print_method_info(obj):
 	var methods = obj.get_method_list()
-
+	print('methods = ',   methods)
 	for i in range(methods.size()):
 		print(methods[i]['name'])
 		if(methods[i]['default_args'].size() > 0):
@@ -120,7 +120,7 @@ func class_db_stuff():
 	# print(ClassDB.get_class_list())
 
 
-func _init():
+func _init_other():
 	var  dm   = DoubleMe.new()
 	var props = dm.get_property_list()
 	print(var2str(props))
@@ -131,7 +131,11 @@ func _init():
 	print(dm)
 	quit()
 
-func _init2():
+func _init():
+	var test = load('res://addons/gut/test.gd').new()
+	print_method_info(test)
+
+
 	# var double_me = load('res://test/resources/doubler_test_objects/double_me.gd').new()
 	# print_method_info(double_me)
 	# print("-------------\n-\n-\n-\n-------------")
@@ -139,17 +143,17 @@ func _init2():
 	# print_methods_by_flags(methods)
 
 	#print_a_bunch_of_methods_by_flags()
-	var obj = RayCast2D.new() #ExtendsNode2D.new()
+	#var obj = RayCast2D.new() #ExtendsNode2D.new()
 	#var obj = load('res://addons/gut/gut.gd').new()
 	#var obj = load('res://test/resources/doubler_test_objects/double_extends_window_dialog.gd').new()
-	ExtendsNode2D.set_meta('gut_ignore', 'something')
-	print_method_info(obj)
+	#ExtendsNode2D.set_meta('gut_ignore', 'something')
+	#print_method_info(obj)
 	#print_method_info(ExtendsNode2D)
-	print(obj.get_meta_list())
-	print(ExtendsNode2D.get_meta_list())
+	#print(obj.get_meta_list())
+	#print(ExtendsNode2D.get_meta_list())
 	#print_method_info(ExtendsNode2D)
 
-	var _methods = obj.get_method_list()
+	#var _methods = obj.get_method_list()
 	#print(str(JSON.print(methods, ' ')))
 	# for i in range(methods.size()):
 	# 	if(methods[i][DEFAULT_ARGS].size() > 0):
