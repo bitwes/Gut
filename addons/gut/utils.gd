@@ -4,6 +4,8 @@ var Doubler = load('res://addons/gut/doubler.gd')
 var Gut = load('res://addons/gut/gut.gd')
 var HookScript = load('res://addons/gut/hook_script.gd')
 var MethodMaker = load('res://addons/gut/method_maker.gd')
+var OneToMany = load('res://addons/gut/one_to_many.gd')
+var ParameterHandler = load('res://addons/gut/parameter_handler.gd')
 var Spy = load('res://addons/gut/spy.gd')
 var Stubber = load('res://addons/gut/stubber.gd')
 var StubParams = load('res://addons/gut/stub_params.gd')
@@ -11,7 +13,6 @@ var Summary = load('res://addons/gut/summary.gd')
 var Test = load('res://addons/gut/test.gd')
 var TestCollector = load('res://addons/gut/test_collector.gd')
 var ThingCounter = load('res://addons/gut/thing_counter.gd')
-var OneToMany = load('res://addons/gut/one_to_many.gd')
 
 const GUT_METADATA = '__gut_metadata_'
 
@@ -158,3 +159,26 @@ func get_file_as_text(path):
 		to_return = f.get_as_text()
 		f.close()
 	return to_return
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func search_array(ar, prop_method, value):
+	var found = false
+	var idx = 0
+
+	while(idx < ar.size() and !found):
+		var item = ar[idx]
+		if(item.get(prop_method) != null):
+			if(item.get(prop_method) == value):
+				found = true
+		elif(item.has_method(prop_method)):
+			if(item.call(prop_method) == value):
+				found = true
+
+		if(!found):
+			idx += 1
+
+	if(found):
+		return ar[idx]
+	else:
+		return null

@@ -82,6 +82,33 @@ class TestTestCollector:
 		for i in range(gr.tc.scripts.size()):
 			assert_ne(gr.tc.scripts[i].inner_class_name, 'TestDoesNotExtendTest')
 
+class TestTestsWithParameters:
+	extends "res://test/gut_test.gd"
+
+	var SCRIPTS_ROOT = 'res://test/resources/parsing_and_loading_samples/'
+
+	var _tc = null
+
+	func before_each():
+		_tc = TestCollector.new()
+
+	func test_populates_arg_count_for_script():
+		_tc.add_script(SCRIPTS_ROOT + 'test_with_parameters.gd')
+		var script = _tc.get_script_named('test_with_parameters.gd')
+
+		assert_eq(script.get_test_named('test_has_one_defaulted_parameter').arg_count, 1)
+		assert_eq(script.get_test_named('test_has_two_parameters').arg_count, 2)
+		assert_eq(script.get_test_named('test_no_parameters').arg_count, 0)
+
+	func test_populates_arg_count_for_inner_classes():
+		var script_name = 'test_with_parameters.gd'
+		_tc.add_script(SCRIPTS_ROOT + script_name)
+		var script = _tc.get_script_named(script_name + '.TestInnerClass')
+
+		assert_eq(script.get_test_named('test_inner_has_one_defaulted_parameter').arg_count, 1)
+		assert_eq(script.get_test_named('test_inner_has_two_parameters').arg_count, 2)
+		assert_eq(script.get_test_named('test_inner_no_parameters').arg_count, 0)
+
 class __TestExportImport:
 	extends "res://test/gut_test.gd"
 

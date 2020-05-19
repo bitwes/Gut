@@ -1243,3 +1243,14 @@ func replace_node(base_node, path_or_node, with_this):
 		with_this.add_to_group(groups[i])
 
 	to_replace.queue_free()
+
+
+# ------------------------------------------------------------------------------
+# This method does a soemwhat complicated dance with Gut.  It assumes that Gut
+# will clear its parameter handler after it finishes calling a parameterized test
+# enough times.
+# ------------------------------------------------------------------------------
+func use_parameters(params):
+	if(gut.get_parameter_handler() == null):
+		gut.set_parameter_handler(_utils.ParameterHandler.new(params))
+	return gut.get_parameter_handler().get_current_parameters()

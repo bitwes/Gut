@@ -138,6 +138,9 @@ func test_get_set_export_path():
 
 func test_get_set_color_output():
 	assert_accessors(gr.test_gut, 'color_output', false, true)
+
+func test_get_set_parameter_handler():
+	assert_accessors(gr.test_gut, 'parameter_handler', null, _utils.ParameterHandler.new())
 # ------------------------------
 # Doubler
 # ------------------------------
@@ -422,6 +425,10 @@ func test_when_post_hook_set_to_invalid_script_no_tests_are_ran():
 	gr.test_gut.test_scripts()
 	assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test should not be run')
 	assert_gt(gr.test_gut.get_logger().get_errors().size(), 0, 'there should be errors')
+
+# ------------------------------
+# Parameterized Test Tests
+# ------------------------------
 
 
 # ------------------------------------------------------------------------------

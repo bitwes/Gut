@@ -1446,3 +1446,23 @@ class TestConnectionAsserts:
 		var c = ConnectTo.new()
 		gr.test.assert_not_connected(s, c, SIGNAL_NAME)
 		assert_pass(gr.test)
+
+
+class TestParameterizedTests:
+	extends BaseTestClass
+
+	func test_first_call_to_use_parameters_returns_first_index_of_params():
+		var result = gr.test_with_gut.use_parameters([1, 2, 3])
+		assert_eq(result, 1)
+
+	func test_when_use_parameters_is_called_it_populates_guts_parameter_handler():
+		gr.test_with_gut.use_parameters(['a'])
+		assert_not_null(gr.test_with_gut.gut.get_parameter_handler())
+
+	func test_when_gut_already_has_parameter_handler_it_does_not_make_a_new_one():
+		gr.test_with_gut.use_parameters(['a', 'b', 'c', 'd'])
+		var ph = gr.test_with_gut.gut.get_parameter_handler()
+		gr.test_with_gut.use_parameters(['a', 'b', 'c', 'd'])
+		assert_eq(gr.test_with_gut.gut.get_parameter_handler(), ph)
+
+

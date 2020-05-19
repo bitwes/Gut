@@ -139,6 +139,9 @@ var _stubber = _utils.Stubber.new()
 var _doubler = _utils.Doubler.new()
 var _spy = _utils.Spy.new()
 var _gui = null
+# This is populated by test.gd each time a paramterized test is encountered
+# for the first time.
+var _parameter_handler = null
 
 # Used to cancel importing scripts if an error has occurred in the setup.  This
 # prevents tests from being run if they were exported and ensures that the
@@ -673,8 +676,19 @@ func _test_the_scripts(indexes=[]):
 				test_script.before_each()
 
 
-				#When the script yields it will return a GDScriptFunctionState object
+				# When the script yields it will return a GDScriptFunctionState object
+				# if(_current_test.arg_count == 1):
+				#   Call multiple times(yields could be a problem but if
+				#   they are then they should be detectable by checking
+				#   if we have a paramhandler that is not done in the check
+				#   of _is_function_state below)
+				# elif(_current_test.arg_count > 1):
+				#   error out
+				# else:
 				script_result = test_script.call(_current_test.name)
+
+
+
 				if(_is_function_state(script_result)):
 					_wait_for_done(script_result)
 					yield(self, 'done_waiting')
@@ -1351,3 +1365,9 @@ func get_color_output():
 
 func set_color_output(color_output):
 	_color_output = color_output
+
+func get_parameter_handler():
+	return _parameter_handler
+
+func set_parameter_handler(parameter_handler):
+	_parameter_handler = parameter_handler

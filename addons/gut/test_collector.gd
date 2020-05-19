@@ -11,6 +11,8 @@ class Test:
 	var has_printed_name = false
 	# the line number the test is on
 	var line_number = -1
+	# the number of arguments the method has
+	var arg_count = 0
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -42,6 +44,13 @@ class TestScript:
 		else:
 			inst = TheScript.new()
 		return inst
+
+	func get_filename_and_inner():
+		var to_return = get_filename()
+		if(inner_class_name != null):
+			to_return += '.' + inner_class_name
+		return to_return
+
 
 	func get_full_name():
 		var to_return = path
@@ -93,6 +102,8 @@ class TestScript:
 		else: # just being explicit
 			inner_class_name = null
 
+	func get_test_named(name):
+		return _utils.search_array(tests, 'name', name)
 
 # ------------------------------------------------------------------------------
 # start test_collector, I don't think I like the name.
@@ -104,12 +115,28 @@ var _test_class_prefix = 'Test'
 var _utils = load('res://addons/gut/utils.gd').new()
 var _lgr = _utils.get_logger()
 
+func _get_info_for_method(list, method_name):
+	var idx = 0
+	var found = false
+	while(idx < list.size() and !found):
+		if(list[idx]['name'] == method_name):
+			found = true
+		else:
+			idx += 1
+
+	if(found):
+		return list[idx]
+	else:
+		return null
+
 func _parse_script(script):
 	var file = File.new()
 	var line = ""
 	var line_count = 0
 	var inner_classes = []
 	var scripts_found = []
+	var script_inst = script.get_new()
+	var script_methods = script_inst.get_method_list()
 
 	file.open(script.path, 1)
 	while(!file.eof_reached()):
@@ -122,6 +149,8 @@ func _parse_script(script):
 			var new_test = Test.new()
 			new_test.name = line.substr(from, line_len)
 			new_test.line_number = line_count
+			new_test.arg_count = _get_info_for_method(
+				script_methods, new_test.name)['args'].size()
 			script.tests.append(new_test)
 
 		if(line.begins_with('class ')):
@@ -156,6 +185,7 @@ func _parse_inner_class_tests(script):
 		if(name.begins_with(_test_prefix) and methods[i]['flags'] == 65):
 			var t = Test.new()
 			t.name = name
+			t.arg_count = methods[i]['args'].size()
 			script.tests.append(t)
 
 	return true
@@ -239,3 +269,13 @@ func import_tests(path):
 			scripts.append(ts)
 		success = true
 	return success
+
+func get_script_named(name):
+	return _utils.search_array(scripts, 'get_filename_and_inner', name)
+
+func get_test_named(script_name, test_name):
+	var s = get_script_named(script_name)
+	if(s != null):
+		return s.get_test_named(test_name)
+	else:
+		return null
