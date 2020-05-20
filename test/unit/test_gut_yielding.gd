@@ -155,3 +155,7 @@ func test_what_is_wrong():
 	signaler.emit_after(0.5)
 	yield(yield_for(1), YIELD)
 	assert_signal_emitted(signaler, 'the_signal')
+
+func test_with_parameters(p=use_parameters([['a', 'a'], ['b', 'b'], ['c', 'c']])):
+	yield(yield_for(1), YIELD)
+	assert_eq(p[0], p[1])

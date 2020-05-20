@@ -666,7 +666,7 @@ func _test_the_scripts(indexes=[]):
 			if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
 				(_unit_test_name == '')):
 				p(_current_test.name, 1)
-				_new_summary.add_test(_current_test.name)
+
 
 				# yield so things paint
 				if(_should_yield_now()):
@@ -685,7 +685,28 @@ func _test_the_scripts(indexes=[]):
 				# elif(_current_test.arg_count > 1):
 				#   error out
 				# else:
-				script_result = test_script.call(_current_test.name)
+				if(_current_test.arg_count > 1):
+					_lgr.error(str('Parameterized test ', _current_test.name, ' has too many parameters:  ', _current_test.arg_count, '.'))
+				elif(_current_test.arg_count == 1):
+					_parameter_handler = null
+					script_result = test_script.call(_current_test.name)
+					if(_is_function_state(script_result)):
+						_wait_for_done(script_result)
+						yield(self, 'done_waiting')
+
+					if(_parameter_handler == null):
+						_lgr.error(str('Parameterized test ', _current_test.name, ' did not call use_parameters for the default value of the parameter.'))
+						_fail(str('Parameterized test ', _current_test.name, ' did not call use_parameters for the default value of the parameter.'))
+					else:
+						while(!_parameter_handler.is_done()):
+							script_result = test_script.call(_current_test.name)
+							if(_is_function_state(script_result)):
+								_wait_for_done(script_result)
+								yield(self, 'done_waiting')
+						script_result = null
+				else:
+					script_result = test_script.call(_current_test.name)
+					_new_summary.add_test(_current_test.name)
 
 
 

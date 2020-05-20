@@ -429,6 +429,42 @@ func test_when_post_hook_set_to_invalid_script_no_tests_are_ran():
 # ------------------------------
 # Parameterized Test Tests
 # ------------------------------
+func test_can_run_tests_with_parameters():
+	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/test_with_parameters.gd')
+	gr.test_gut.set_unit_test_name('test_has_one_defaulted_parameter')
+	gr.test_gut.test_scripts()
+	var totals = gr.test_gut.get_summary().get_totals()
+	assert_eq(totals.passing, 1, 'pass count')
+	assert_eq(totals.tests, 1, 'test count')
+
+func test_too_many_parameters_generates_an_error():
+	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/test_with_parameters.gd')
+	gr.test_gut.set_unit_test_name('test_has_two_parameters')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_logger().get_errors().size(), 1, 'error size')
+	assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test count')
+
+func test_parameterized_tests_are_called_multiple_times():
+	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/test_with_parameters.gd')
+	gr.test_gut.set_unit_test_name('test_has_three_values_for_parameters')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_pass_count(), 3)
+
+func test_when_use_parameters_is_not_called_then_error_is_generated():
+	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/test_with_parameters.gd')
+	gr.test_gut.set_unit_test_name('test_does_not_use_use_parameters')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_logger().get_errors().size(), 1, 'error size')
+	assert_eq(gr.test_gut.get_fail_count(), 1)
+
+func test_can_yield_with_parameterized_tests():
+	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/test_with_parameters.gd')
+	gr.test_gut.set_unit_test_name('test_three_values_and_a_yield')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_pass_count(), 3)
+
+
+
 
 
 # ------------------------------------------------------------------------------
