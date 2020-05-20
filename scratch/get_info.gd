@@ -15,6 +15,15 @@ const NAME = 'name'
 const ARGS = 'args'
 
 
+class HasSomeInners:
+
+	class Inner1:
+		extends 'res://addons/gut/test.gd'
+		var a = 'b'
+
+	class Inner2:
+		var b = 'a'
+
 class ExtendsNode2D:
 	extends Node2D
 
@@ -77,7 +86,6 @@ func print_method_info(obj):
 			print(" *** here be defaults ***")
 
 		for key in methods[i]:
-
 			if(key == 'args'):
 				print('  args:')
 				for argname in range(methods[i][key].size()):
@@ -131,9 +139,81 @@ func _init_other():
 	print(dm)
 	quit()
 
+func does_inherit_from_test(thing):
+	var base_script = thing.get_base_script()
+	var to_return = false
+	if(base_script != null):
+		var base_path = base_script.get_path()
+		if(base_path == 'res://addons/gut/test.gd'):
+			to_return = true
+		else:
+			to_return = does_inherit_from_test(load(base_path))
+	return to_return
+
+func print_other_info(loaded):
+	var TestScript = load('res://addons/gut/test.gd')
+	print('---------------------------------')
+	print(loaded.get_path())
+	print(loaded.get_base_script().get_path())
+	print('class = ', loaded.get_class())
+	var const_map = loaded.new().get_script().get_script_constant_map()
+	for key in const_map:
+		var thing = const_map[key]
+		print(key, ' = ', thing)
+		if(typeof(thing) == TYPE_OBJECT):
+			print('  ', 'meta         ', thing.get_meta_list())
+			print('  ', 'class        ', thing.get_class())
+			var base_script = thing.get_base_script()
+			print('  ', 'base script  ', base_script)
+			if(base_script != null):
+				print('  ', 'base id      ', base_script.get_instance_id())
+				print('  ', 'base path    ', base_script.get_path() )
+			print('  ', 'base type    ', thing.get_instance_base_type())
+			print('  ', 'can instance ', thing.can_instance())
+			print('  ', 'id           ', thing.get_instance_id())
+			print('  ', 'is test      ', does_inherit_from_test(thing))
+
+func print_inner_test_classes(loaded, from=null):
+	print('path = ', loaded.get_path())
+	if(loaded.get_base_script() != null):
+		print('base = ', loaded.get_base_script().get_path())
+	else:
+		print('base = ')
+	var const_map = loaded.get_script_constant_map()
+	for key in const_map:
+		var thing = const_map[key]
+		if(from != null):
+			print(from, '/', key, ':')
+		else:
+			print(key, ':')
+		if(typeof(thing) == TYPE_OBJECT):
+			if(does_inherit_from_test(thing)):
+				print('  is a test class')
+			else:
+				print('  noooooooooope')
+			print_inner_test_classes(thing, key)
+
+
+
+
+
+
 func _init():
-	var test = load('res://addons/gut/test.gd').new()
-	print_method_info(test)
+	#var test = load('res://addons/gut/test.gd').new()
+	#print_method_info(test)
+
+	# var inners = load('res://test/resources/parsing_and_loading_samples/test_only_inner_classes.gd')
+	# print_other_info(inners)
+	# print('-----')
+	# print_other_info(HasSomeInners)
+	# print_other_info(load('res://test/gut_test.gd'))
+	#print_other_info(load('res://test/unit/test_test_collector.gd'))
+
+	print_inner_test_classes(load('res://test/unit/test_test_collector.gd'))
+	print("\n\n\n")
+	print_inner_test_classes(HasSomeInners)
+	print("\n\n\n")
+	print_inner_test_classes(load('res://scratch/get_info.gd'))
 
 
 	# var double_me = load('res://test/resources/doubler_test_objects/double_me.gd').new()
