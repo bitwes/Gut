@@ -457,16 +457,6 @@ func test_when_use_parameters_is_not_called_then_error_is_generated():
 	assert_eq(gr.test_gut.get_logger().get_errors().size(), 1, 'error size')
 	assert_eq(gr.test_gut.get_fail_count(), 1)
 
-func test_can_yield_with_parameterized_tests():
-	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/test_with_parameters.gd')
-	gr.test_gut.set_unit_test_name('test_three_values_and_a_yield')
-	gr.test_gut.test_scripts()
-	assert_eq(gr.test_gut.get_pass_count(), 3)
-
-
-
-
-
 # ------------------------------------------------------------------------------
 #
 #

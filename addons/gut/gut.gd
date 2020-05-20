@@ -150,6 +150,7 @@ var _cancel_import = false
 
 const SIGNAL_TESTS_FINISHED = 'tests_finished'
 const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yield_before_teardown'
+const SIGNAL_PRAMETERIZED_YIELD_DONE = 'parameterized_yield_done'
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -162,6 +163,7 @@ func _init():
 	add_user_signal(SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
 	add_user_signal('timeout')
 	add_user_signal('done_waiting')
+	add_user_signal(SIGNAL_PRAMETERIZED_YIELD_DONE)
 	_doubler.set_output_dir(_temp_directory)
 	_doubler.set_stubber(_stubber)
 	_doubler.set_spy(_spy)
@@ -591,6 +593,25 @@ func _get_indexes_matching_path(path):
 			indexes.append(i)
 	return indexes
 
+func _parameterized_call(test_script):
+	_parameter_handler = null
+	var script_result = test_script.call(_current_test.name)
+	if(_is_function_state(script_result)):
+		_wait_for_done(script_result)
+		yield(self, 'done_waiting')
+
+	if(_parameter_handler == null):
+		_lgr.error(str('Parameterized test ', _current_test.name, ' did not call use_parameters for the default value of the parameter.'))
+		_fail(str('Parameterized test ', _current_test.name, ' did not call use_parameters for the default value of the parameter.'))
+	else:
+		while(!_parameter_handler.is_done()):
+			script_result = test_script.call(_current_test.name)
+			if(_is_function_state(script_result)):
+				_wait_for_done(script_result)
+				yield(self, 'done_waiting')
+		script_result = null
+	emit_signal(SIGNAL_PRAMETERIZED_YIELD_DONE)
+
 # ------------------------------------------------------------------------------
 # Run all tests in a script.  This is the core logic for running tests.
 #
@@ -675,39 +696,17 @@ func _test_the_scripts(indexes=[]):
 				_call_deprecated_script_method(test_script, 'setup', 'before_each')
 				test_script.before_each()
 
-
 				# When the script yields it will return a GDScriptFunctionState object
-				# if(_current_test.arg_count == 1):
-				#   Call multiple times(yields could be a problem but if
-				#   they are then they should be detectable by checking
-				#   if we have a paramhandler that is not done in the check
-				#   of _is_function_state below)
-				# elif(_current_test.arg_count > 1):
-				#   error out
-				# else:
 				if(_current_test.arg_count > 1):
 					_lgr.error(str('Parameterized test ', _current_test.name, ' has too many parameters:  ', _current_test.arg_count, '.'))
 				elif(_current_test.arg_count == 1):
-					_parameter_handler = null
-					script_result = test_script.call(_current_test.name)
+					script_result = _parameterized_call(test_script)
 					if(_is_function_state(script_result)):
-						_wait_for_done(script_result)
-						yield(self, 'done_waiting')
-
-					if(_parameter_handler == null):
-						_lgr.error(str('Parameterized test ', _current_test.name, ' did not call use_parameters for the default value of the parameter.'))
-						_fail(str('Parameterized test ', _current_test.name, ' did not call use_parameters for the default value of the parameter.'))
-					else:
-						while(!_parameter_handler.is_done()):
-							script_result = test_script.call(_current_test.name)
-							if(_is_function_state(script_result)):
-								_wait_for_done(script_result)
-								yield(self, 'done_waiting')
-						script_result = null
+						yield(self, SIGNAL_PRAMETERIZED_YIELD_DONE)
+					script_result = null
 				else:
 					script_result = test_script.call(_current_test.name)
 					_new_summary.add_test(_current_test.name)
-
 
 
 				if(_is_function_state(script_result)):
@@ -1381,14 +1380,23 @@ func get_pre_run_script_instance():
 func get_post_run_script_instance():
 	return _post_run_script_instance
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func get_color_output():
 	return _color_output
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func set_color_output(color_output):
 	_color_output = color_output
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func get_parameter_handler():
 	return _parameter_handler
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func set_parameter_handler(parameter_handler):
 	_parameter_handler = parameter_handler
+	_parameter_handler.set_logger(_lgr)

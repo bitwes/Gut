@@ -1246,11 +1246,12 @@ func replace_node(base_node, path_or_node, with_this):
 
 
 # ------------------------------------------------------------------------------
-# This method does a soemwhat complicated dance with Gut.  It assumes that Gut
+# This method does a somewhat complicated dance with Gut.  It assumes that Gut
 # will clear its parameter handler after it finishes calling a parameterized test
 # enough times.
 # ------------------------------------------------------------------------------
 func use_parameters(params):
 	if(gut.get_parameter_handler() == null):
 		gut.set_parameter_handler(_utils.ParameterHandler.new(params))
+
 	return gut.get_parameter_handler().get_current_parameters()
