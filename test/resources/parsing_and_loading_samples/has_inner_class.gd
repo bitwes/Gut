@@ -28,3 +28,6 @@ class DoesNotExtend:
 class TestDoesNotExtendTest:
 	func test_something():
 		pass
+
+class TestExtendsTestClass1:
+	extends TestClass1

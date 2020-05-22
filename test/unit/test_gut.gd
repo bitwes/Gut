@@ -334,7 +334,9 @@ func test_when_set_only_inner_class_tests_run():
 	gr.test_gut.set_inner_class_name('TestClass1')
 	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/has_inner_class.gd')
 	gr.test_gut.test_scripts()
-	assert_eq(gr.test_gut.get_summary().get_totals().tests, 2)
+	# count should be 4, 2 from TestClass1 and 2 from TestExtendsTestClass1
+	# which extends TestClass1 so it gets its two tests as well.
+	assert_eq(gr.test_gut.get_summary().get_totals().tests, 4)
 
 
 # ------------------------------

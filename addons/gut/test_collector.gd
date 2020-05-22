@@ -15,6 +15,10 @@ class Test:
 	var arg_count = 0
 
 # ------------------------------------------------------------------------------
+# This holds all the meta information for a test script.  It contains the
+# name of the inner class and an array of Test "structs".
+#
+# This class also facilitates all the exporting and importing of tests.
 # ------------------------------------------------------------------------------
 class TestScript:
 	var inner_class_name = null
@@ -36,10 +40,17 @@ class TestScript:
 			to_return += str('  ', tests[i].name, "\n")
 		return to_return
 
+	# TODO anywhere this is called within this file probably causes a memory
+	# leak since test.gd extends Node.  These instances should all be freed.
 	func get_new():
 		var TheScript = load(path)
 		var inst = null
 		if(inner_class_name != null):
+			# If we wanted to do inner classes in inner classses
+			# then this would have to become some kind of loop or recursive
+			# call to go all the way down the chain or this class would
+			# have to change to hold onto the loaded class instead of
+			# just path information.
 			inst = TheScript.get(inner_class_name).new()
 		else:
 			inst = TheScript.new()
@@ -50,7 +61,6 @@ class TestScript:
 		if(inner_class_name != null):
 			to_return += '.' + inner_class_name
 		return to_return
-
 
 	func get_full_name():
 		var to_return = path
@@ -115,69 +125,21 @@ var _test_class_prefix = 'Test'
 var _utils = load('res://addons/gut/utils.gd').new()
 var _lgr = _utils.get_logger()
 
-func _get_info_for_method(list, method_name):
-	var idx = 0
-	var found = false
-	while(idx < list.size() and !found):
-		if(list[idx]['name'] == method_name):
-			found = true
+func _does_inherit_from_test(thing):
+	var base_script = thing.get_base_script()
+	var to_return = false
+	if(base_script != null):
+		var base_path = base_script.get_path()
+		if(base_path == 'res://addons/gut/test.gd'):
+			to_return = true
 		else:
-			idx += 1
+			to_return = _does_inherit_from_test(base_script)
+	return to_return
 
-	if(found):
-		return list[idx]
-	else:
-		return null
-
-func _parse_script(script):
-	var file = File.new()
-	var line = ""
-	var line_count = 0
-	var inner_classes = []
-	var scripts_found = []
-	var script_inst = script.get_new()
-	var script_methods = script_inst.get_method_list()
-
-	file.open(script.path, 1)
-	while(!file.eof_reached()):
-		line_count += 1
-		line = file.get_line()
-		#Add a test
-		if(line.begins_with("func " + _test_prefix)):
-			var from = line.find(_test_prefix)
-			var line_len = line.find("(") - from
-			var new_test = Test.new()
-			new_test.name = line.substr(from, line_len)
-			new_test.line_number = line_count
-			new_test.arg_count = _get_info_for_method(
-				script_methods, new_test.name)['args'].size()
-			script.tests.append(new_test)
-
-		if(line.begins_with('class ')):
-			var iclass_name = line.replace('class ', '')
-			iclass_name = iclass_name.replace(':', '')
-			if(iclass_name.begins_with(_test_class_prefix)):
-				inner_classes.append(iclass_name)
-
-	scripts_found.append(script.path)
-
-	for i in range(inner_classes.size()):
-		var ts = TestScript.new(_utils, _lgr)
-		ts.path = script.path
-		ts.inner_class_name = inner_classes[i]
-		if(_parse_inner_class_tests(ts)):
-			scripts.append(ts)
-			scripts_found.append(script.path + '[' + inner_classes[i] +']')
-
-	file.close()
-	return scripts_found
-
-func _parse_inner_class_tests(script):
-	var inst = script.get_new()
-
-	if(!inst is _utils.Test):
-		_lgr.warn('Ignoring ' + script.inner_class_name + ' because it starts with "' + _test_class_prefix + '" but does not extend addons/gut/test.gd')
-		return false
+func _populate_tests(test_script):
+	# creates an instance of test_script which takes the
+	# inner class into account.
+	var inst = test_script.get_new()
 
 	var methods = inst.get_method_list()
 	for i in range(methods.size()):
@@ -186,9 +148,49 @@ func _parse_inner_class_tests(script):
 			var t = Test.new()
 			t.name = name
 			t.arg_count = methods[i]['args'].size()
-			script.tests.append(t)
+			test_script.tests.append(t)
 
-	return true
+func _get_inner_test_class_names(loaded):
+	var inner_classes = []
+	var const_map = loaded.get_script_constant_map()
+	for key in const_map:
+		var thing = const_map[key]
+		if(typeof(thing) == TYPE_OBJECT):
+			if(key.begins_with(_test_class_prefix)):
+				if(_does_inherit_from_test(thing)):
+					inner_classes.append(key)
+				else:
+					_lgr.warn(str('Ignoring Inner Class ', key,
+						' because it does not extend res://addons/gut/test.gd'))
+
+			# This could go deeper and find inner classes within inner classes
+			# but requires more experimentation.  Right now I'm keeping it at
+			# one level since that is what the previous version did.
+			# _populate_inner_test_classes(thing)
+	return inner_classes
+
+func _parse_script(test_script):
+	var inner_classes = []
+	var scripts_found = []
+
+	var loaded = load(test_script.path)
+	if(_does_inherit_from_test(loaded)):
+		_populate_tests(test_script)
+		scripts_found.append(test_script.path)
+		inner_classes = _get_inner_test_class_names(loaded)
+
+	for i in range(inner_classes.size()):
+		var loaded_inner = loaded.get(inner_classes[i])
+		if(_does_inherit_from_test(loaded_inner)):
+			var ts = TestScript.new(_utils, _lgr)
+			ts.path = test_script.path
+			ts.inner_class_name = inner_classes[i]
+			_populate_tests(ts)
+			scripts.append(ts)
+			scripts_found.append(test_script.path + '[' + inner_classes[i] +']')
+
+	return scripts_found
+
 # -----------------
 # Public
 # -----------------
@@ -208,29 +210,6 @@ func add_script(path):
 	scripts.append(ts)
 	return _parse_script(ts)
 
-func to_s():
-	var to_return = ''
-	for i in range(scripts.size()):
-		to_return += scripts[i].to_s() + "\n"
-	return to_return
-func get_logger():
-	return _lgr
-
-func set_logger(logger):
-	_lgr = logger
-
-func get_test_prefix():
-	return _test_prefix
-
-func set_test_prefix(test_prefix):
-	_test_prefix = test_prefix
-
-func get_test_class_prefix():
-	return _test_class_prefix
-
-func set_test_class_prefix(test_class_prefix):
-	_test_class_prefix = test_class_prefix
-
 func clear():
 	scripts.clear()
 
@@ -238,7 +217,8 @@ func has_script(path):
 	var found = false
 	var idx = 0
 	while(idx < scripts.size() and !found):
-		if(scripts[idx].path == path):
+		if(scripts[idx].path == path or
+			str(scripts[idx].path, '.', scripts[idx].inner_class_name) == path):
 			found = true
 		else:
 			idx += 1
@@ -279,3 +259,30 @@ func get_test_named(script_name, test_name):
 		return s.get_test_named(test_name)
 	else:
 		return null
+
+func to_s():
+	var to_return = ''
+	for i in range(scripts.size()):
+		to_return += scripts[i].to_s() + "\n"
+	return to_return
+
+# ---------------------
+# Accessors
+# ---------------------
+func get_logger():
+	return _lgr
+
+func set_logger(logger):
+	_lgr = logger
+
+func get_test_prefix():
+	return _test_prefix
+
+func set_test_prefix(test_prefix):
+	_test_prefix = test_prefix
+
+func get_test_class_prefix():
+	return _test_class_prefix
+
+func set_test_class_prefix(test_class_prefix):
+	_test_class_prefix = test_class_prefix

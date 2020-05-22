@@ -24,6 +24,18 @@ class HasSomeInners:
 	class Inner2:
 		var b = 'a'
 
+		class Inner2_a:
+			extends 'res://addons/gut/test.gd'
+
+		class Inner2_b:
+			var foo = 'bar'
+
+	class Inner3:
+		extends 'res://test/gut_test.gd'
+
+	class ExtendsInner1:
+		extends Inner1
+
 class ExtendsNode2D:
 	extends Node2D
 
@@ -85,13 +97,14 @@ func print_method_info(obj):
 		if(methods[i]['default_args'].size() > 0):
 			print(" *** here be defaults ***")
 
-		for key in methods[i]:
-			if(key == 'args'):
-				print('  args:')
-				for argname in range(methods[i][key].size()):
-					print('    ',  methods[i][key][argname]['name'], ':  ', methods[i][key][argname])
-			else:
-				print('  ', key, ':  ', methods[i][key])
+		if(methods[i]['flags'] == 65):
+			for key in methods[i]:
+				if(key == 'args'):
+					print('  args:')
+					for argname in range(methods[i][key].size()):
+						print('    ',  methods[i][key][argname]['name'], ':  ', methods[i][key][argname])
+				else:
+					print('  ', key, ':  ', methods[i][key])
 
 func print_a_bunch_of_methods_by_flags():
 	var e = ExtendsNode2D.new()
@@ -142,19 +155,24 @@ func _init_other():
 func does_inherit_from_test(thing):
 	var base_script = thing.get_base_script()
 	var to_return = false
+	print('  *base_script = ', base_script)
 	if(base_script != null):
 		var base_path = base_script.get_path()
+		print('  *base_path = ', base_path)
 		if(base_path == 'res://addons/gut/test.gd'):
 			to_return = true
 		else:
-			to_return = does_inherit_from_test(load(base_path))
+			to_return = does_inherit_from_test(base_script)
 	return to_return
 
 func print_other_info(loaded):
-	var TestScript = load('res://addons/gut/test.gd')
 	print('---------------------------------')
-	print(loaded.get_path())
-	print(loaded.get_base_script().get_path())
+	print(loaded)
+	print('path = ', loaded.get_path())
+	if(loaded.get_base_script() != null):
+		print('base script path = ', loaded.get_base_script().get_path())
+	else:
+		print('NO base_script')
 	print('class = ', loaded.get_class())
 	var const_map = loaded.new().get_script().get_script_constant_map()
 	for key in const_map:
@@ -163,6 +181,7 @@ func print_other_info(loaded):
 		if(typeof(thing) == TYPE_OBJECT):
 			print('  ', 'meta         ', thing.get_meta_list())
 			print('  ', 'class        ', thing.get_class())
+			print('  ', 'path         ', thing.get_path())
 			var base_script = thing.get_base_script()
 			print('  ', 'base script  ', base_script)
 			if(base_script != null):
@@ -191,7 +210,12 @@ func print_inner_test_classes(loaded, from=null):
 				print('  is a test class')
 			else:
 				print('  noooooooooope')
-			print_inner_test_classes(thing, key)
+			var next_from
+			if(from == null):
+				next_from = key
+			else:
+				next_from = str(from, '/', key)
+			print_inner_test_classes(thing, next_from)
 
 
 
@@ -209,15 +233,20 @@ func _init():
 	# print_other_info(load('res://test/gut_test.gd'))
 	#print_other_info(load('res://test/unit/test_test_collector.gd'))
 
-	print_inner_test_classes(load('res://test/unit/test_test_collector.gd'))
-	print("\n\n\n")
-	print_inner_test_classes(HasSomeInners)
-	print("\n\n\n")
-	print_inner_test_classes(load('res://scratch/get_info.gd'))
+	# print_inner_test_classes(load('res://test/unit/test_test_collector.gd'))
+	# print("\n\n\n")
+	# print_inner_test_classes(HasSomeInners)
+	# print("\n\n\n")
+	# print_inner_test_classes(load('res://scratch/get_info.gd'))
 
+	#print_inner_test_classes(load('res://test/unit/test_doubler.gd'))
+	#print_inner_test_classes(HasSomeInners)
+	print_other_info(HasSomeInners)
+	print_other_info(HasSomeInners.ExtendsInner1)
 
-	# var double_me = load('res://test/resources/doubler_test_objects/double_me.gd').new()
+	# var double_me = load('res://test/resources/doubler_test_objects/double_me.gd')
 	# print_method_info(double_me)
+	# print_method_info(double_me.new())
 	# print("-------------\n-\n-\n-\n-------------")
 	# var methods = get_methods_by_flag(double_me)
 	# print_methods_by_flags(methods)
