@@ -35,7 +35,7 @@ tool
 extends Control
 var _version = '6.8.3'
 
-var _utils = load('res://addons/gut/utils.gd').new()
+var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
 # Used to prevent multiple messages for deprecated setup/teardown messages
 var _deprecated_tracker = _utils.ThingCounter.new()
@@ -155,6 +155,7 @@ const SIGNAL_PRAMETERIZED_YIELD_DONE = 'parameterized_yield_done'
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func _init():
+	_lgr.set_gut(self)
 	# This min size has to be what the min size of the GutScene's min size is
 	# but it has to be set here and not inferred i think.
 	rect_min_size =Vector2(740, 250)

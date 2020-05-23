@@ -48,7 +48,7 @@ class DoubleInfo:
 	var strategy
 	var make_partial
 	var extension
-	var _utils = load('res://addons/gut/utils.gd').new()
+	var _utils = load('res://addons/gut/utils.gd').get_instance()
 	var _is_native = false
 
 	# Flexible init method.  p2 can be subpath or stategy unless p3 is
@@ -160,7 +160,7 @@ var _signal_watcher = load('res://addons/gut/signal_watcher.gd').new()
 
 # Convenience copy of _utils.DOUBLE_STRATEGY
 var DOUBLE_STRATEGY = null
-var _utils = load('res://addons/gut/utils.gd').new()
+var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
 
 func _init():

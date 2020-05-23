@@ -1,5 +1,21 @@
-var _Logger = load('res://addons/gut/logger.gd') # everything should use get_logger
+extends Node
 
+static func INSTANCE_NAME():
+	return '__GutUtilsInstName__'
+
+static func get_instance():
+	var inst = Engine.get_main_loop().root.get_node(INSTANCE_NAME())
+	if(inst == null):
+		inst = load('res://addons/gut/utils.gd').new()
+		inst.set_name(INSTANCE_NAME())
+		Engine.get_main_loop().root.add_child(inst)
+	return inst
+
+
+var _Logger = load('res://addons/gut/logger.gd') # everything should use get_logger
+var _lgr = _Logger.new()
+
+var _test_mode = false
 var Doubler = load('res://addons/gut/doubler.gd')
 var Gut = load('res://addons/gut/gut.gd')
 var HookScript = load('res://addons/gut/hook_script.gd')
@@ -66,7 +82,10 @@ func is_version_31():
 # and loading them in the _init for this.
 # ------------------------------------------------------------------------------
 func get_logger():
-	return _Logger.new()
+	if(_test_mode):
+		return _Logger.new()
+	else:
+		return _lgr
 
 # ------------------------------------------------------------------------------
 # Returns an array created by splitting the string by the delimiter

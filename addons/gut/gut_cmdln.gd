@@ -116,7 +116,7 @@ class OptionResolver:
 # Here starts the actual script that uses the Options class to kick off Gut
 # and run your tests.
 #-------------------------------------------------------------------------------
-var _utils = load('res://addons/gut/utils.gd').new()
+var _utils = load('res://addons/gut/utils.gd').get_instance()
 # instance of gut
 var _tester = null
 # array of command line options specified

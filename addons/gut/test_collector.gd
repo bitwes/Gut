@@ -122,7 +122,7 @@ var scripts = []
 var _test_prefix = 'test_'
 var _test_class_prefix = 'Test'
 
-var _utils = load('res://addons/gut/utils.gd').new()
+var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
 
 func _does_inherit_from_test(thing):

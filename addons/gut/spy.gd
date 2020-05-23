@@ -9,7 +9,7 @@
 #   },
 # }
 var _calls = {}
-var _utils = load('res://addons/gut/utils.gd').new()
+var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
 
 func _get_params_as_string(params):
@@ -63,7 +63,7 @@ func get_call_parameters(variant, method_name, index=-1):
 			to_return = _calls[variant][method_name][get_index]
 		else:
 			_lgr.error(str('Specified index ', index, ' is outside range of the number of registered calls:  ', call_size))
-			
+
 	return to_return
 
 func call_count(instance, method_name, parameters=null):

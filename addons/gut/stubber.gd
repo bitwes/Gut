@@ -9,7 +9,7 @@
 # 	}
 # }
 var returns = {}
-var _utils = load('res://addons/gut/utils.gd').new()
+var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
 
 func _is_instance(obj):
@@ -149,7 +149,8 @@ func get_logger():
 	return _lgr
 
 func set_logger(logger):
-	_lgr = logger
+	pass
+	#_lgr = logger
 
 func to_s():
 	var text = ''

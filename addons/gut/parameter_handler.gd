@@ -1,4 +1,4 @@
-var _utils = load('res://addons/gut/utils.gd').new()
+var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _params = null
 var _call_count = 0
 var _logger = null

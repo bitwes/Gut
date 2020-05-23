@@ -21,6 +21,9 @@ var Logger = load('res://addons/gut/logger.gd')
 var Spy = load('res://addons/gut/spy.gd')
 var TestCollector = load('res://addons/gut/test_collector.gd')
 
+func _init():
+	load('res://addons/gut/utils.gd').get_instance()._test_mode = true
+
 func assert_warn(obj, times=1):
 	if(obj.has_method('get_logger')):
 		var msg = str('Should have ', times, ' warnings.')

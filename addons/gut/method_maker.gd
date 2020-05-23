@@ -16,7 +16,7 @@
 # }]
 # default_args []
 
-var _utils = load('res://addons/gut/utils.gd').new()
+var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
 const PARAM_PREFIX = 'p_'
 

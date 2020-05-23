@@ -1,7 +1,7 @@
 extends SceneTree
 
 
-var _utils = load('res://addons/gut/utils.gd').new()
+var _utils = load('res://addons/gut/utils.gd').get_instance()
 
 class TestNode2D:
     extends Node2D
