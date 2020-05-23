@@ -217,8 +217,7 @@ func has_script(path):
 	var found = false
 	var idx = 0
 	while(idx < scripts.size() and !found):
-		if(scripts[idx].path == path or
-			str(scripts[idx].path, '.', scripts[idx].inner_class_name) == path):
+		if(scripts[idx].get_full_name() == path):
 			found = true
 		else:
 			idx += 1
