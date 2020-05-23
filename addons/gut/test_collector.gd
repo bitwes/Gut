@@ -74,6 +74,9 @@ class TestScript:
 	func has_inner_class():
 		return inner_class_name != null
 
+	# Note:  although this no longer needs to export the inner_class names since
+	#        they are pulled from metadata now, it is easier to leave that in
+	#        so we don't have to cut the export down to unique script names.
 	func export_to(config_file, section):
 		config_file.set_value(section, 'path', path)
 		config_file.set_value(section, 'inner_class', inner_class_name)
@@ -98,11 +101,6 @@ class TestScript:
 	func import_from(config_file, section):
 		path = config_file.get_value(section, 'path')
 		path = _remap_path(path)
-		var test_names = config_file.get_value(section, 'tests')
-		for i in range(test_names.size()):
-			var t = Test.new()
-			t.name = test_names[i]
-			tests.append(t)
 		# Null is an acceptable value, but you can't pass null as a default to
 		# get_value since it thinks you didn't send a default...then it spits
 		# out red text.  This works around that.
@@ -165,7 +163,8 @@ func _get_inner_test_class_names(loaded):
 
 			# This could go deeper and find inner classes within inner classes
 			# but requires more experimentation.  Right now I'm keeping it at
-			# one level since that is what the previous version did.
+			# one level since that is what the previous version did and there
+			# has been no demand for deeper nesting.
 			# _populate_inner_test_classes(thing)
 	return inner_classes
 
@@ -245,6 +244,7 @@ func import_tests(path):
 		for key in sections:
 			var ts = TestScript.new(_utils, _lgr)
 			ts.import_from(f, key)
+			_populate_tests(ts)
 			scripts.append(ts)
 		success = true
 	return success
