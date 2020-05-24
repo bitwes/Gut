@@ -72,6 +72,8 @@ func test_gut_runs_the_imported_tests():
 	var totals = _import_gut.get_summary().get_totals()
 	assert_eq(totals.scripts, 6)
 	# picked some arbitrary number since these assert counts could change
-	# over time.  Last run was 16 passing.
+	# over time.  Last run was 16 passing.  This is probably a sign that this
+	# shouldn't be reusing parsing_and_loading_samples but the world isn't
+	# perfect alright?  I'm trying here, but lay off a bit why dontcha.
 	assert_gt(totals.passing, 10)
 	pause_before_teardown()

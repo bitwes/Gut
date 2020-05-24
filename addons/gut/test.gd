@@ -177,8 +177,8 @@ func _get_filename(path):
 	return path.split('/')[-1]
 
 # ------------------------------------------------------------------------------
-# Better object/thing to string conversion.  Includes extra details about
-# whatever is passed in when it can/should.
+# Gets the filename of an object passed in.  This does not return the
+# full path to the object, just the filename.
 # ------------------------------------------------------------------------------
 func _get_obj_filename(thing):
 	var filename = null
@@ -204,6 +204,10 @@ func _get_obj_filename(thing):
 
 	return filename
 
+# ------------------------------------------------------------------------------
+# Better object/thing to string conversion.  Includes extra details about
+# whatever is passed in when it can/should.
+# ------------------------------------------------------------------------------
 func _str(thing):
 	var filename = _get_obj_filename(thing)
 	var str_thing = str(thing)
@@ -1251,7 +1255,11 @@ func replace_node(base_node, path_or_node, with_this):
 # enough times.
 # ------------------------------------------------------------------------------
 func use_parameters(params):
-	if(gut.get_parameter_handler() == null):
-		gut.set_parameter_handler(_utils.ParameterHandler.new(params))
+	var ph = gut.get_parameter_handler()
+	if(ph == null):
+		ph = _utils.ParameterHandler.new(params)
+		gut.set_parameter_handler(ph)
 
-	return gut.get_parameter_handler().get_current_parameters()
+	var output = str('(call #', ph.get_call_count() + 1, ') with paramters:  ', ph.get_current_parameters())
+	gut.p(output, 0, 0)
+	return ph.next_parameters()
