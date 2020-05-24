@@ -149,8 +149,7 @@ func get_logger():
 	return _lgr
 
 func set_logger(logger):
-	pass
-	#_lgr = logger
+	_lgr = logger
 
 func to_s():
 	var text = ''
