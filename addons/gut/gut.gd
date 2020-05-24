@@ -155,6 +155,9 @@ const SIGNAL_PRAMETERIZED_YIELD_DONE = 'parameterized_yield_done'
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func _init():
+	# When running tests for GUT itself, _utils has been setup to always return
+	# a new logger so this does not set the gut instance on the base logger
+	# when creating test instances of GUT.
 	_lgr.set_gut(self)
 	# This min size has to be what the min size of the GutScene's min size is
 	# but it has to be set here and not inferred i think.
@@ -652,6 +655,7 @@ func _test_the_scripts(indexes=[]):
 
 		if(the_script.tests.size() > 0):
 			_gui.set_title('Running:  ' + the_script.get_full_name())
+			_lgr.set_indent_level(0)
 			_print_script_heading(the_script)
 			_new_summary.add_script(the_script.get_full_name())
 
@@ -687,8 +691,8 @@ func _test_the_scripts(indexes=[]):
 
 			if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
 				(_unit_test_name == '')):
-				p(_current_test.name, 1)
-
+				_lgr.log(_current_test.name)
+				_lgr.set_indent_level(1)
 
 				# yield so things paint
 				if(_should_yield_now()):
@@ -745,11 +749,12 @@ func _test_the_scripts(indexes=[]):
 		# into some other structure and kill the script objects with
 		# test_script.free() instead of remove child.
 		remove_child(test_script)
-		#END TESTS IN SCRIPT LOOP
+		# END TESTS IN SCRIPT LOOP
 		_current_test = null
 		_gui.set_progress_script_value(test_indexes + 1) # new way
-		#END TEST SCRIPT LOOP
+		# END TEST SCRIPT LOOP
 
+	_lgr.set_indent_level(0)
 	_end_run()
 
 func _pass(text=''):
@@ -844,7 +849,6 @@ func p(text, level=0, indent=0):
 	var printing_test_name = false
 
 	if(level <= _utils.nvl(_log_level, 0)):
-		var test_name = ''
 		if(_current_test != null):
 			# make sure everything printed during the execution
 			# of a test is at least indented once under the test
@@ -852,34 +856,18 @@ func p(text, level=0, indent=0):
 				indent = 1
 
 			# Print the name of the current test if we haven't
-			# printed it already.
-			if(!_current_test.has_printed_name):
-				test_name = "* " + _current_test.name
-				_current_test.has_printed_name = true
-				if(str_text == _current_test.name):
-					str_text = ''
+			# printed it already.  Also detect if we are trying to print
+			# the name of the test if it hasn't been printed yet.
+			#if(!_current_test.has_printed_name):
 				#printing_test_name = str_text == _current_test.name
+				#_current_test.has_printed_name = true
 
-		if(true):#!printing_test_name):
-			# Make the indent
-			var pad = ""
-			for _i in range(0, indent):
-				pad += "    "
-			to_print += pad + str_text
-			to_print = to_print.replace("\n", "\n" + pad)
-			if(test_name != ''):
-				to_print = test_name + "\n" + to_print
+				# _lgr.set_indent_level(0)
+				# _lgr.log("* " + _current_test.name)
+				# _lgr.inc_indent()
 
-
-		if(_should_print_to_console):
-			var formatted = to_print
-			if(_color_output):
-				formatted = _utils.colorize_text(to_print)
-			print(formatted)
-
-		_log_text += to_print + "\n"
-
-		_gui.get_text_box().insert_text_at_cursor(to_print + "\n")
+		#if(!printing_test_name):
+		_lgr.log(str_text)
 
 ################
 #
@@ -1094,7 +1082,20 @@ func get_result_text():
 # Set the log level.  Use one of the various LOG_LEVEL_* constants.
 # ------------------------------------------------------------------------------
 func set_log_level(level):
-	_log_level = level
+	_log_level = max(level, 0)
+
+	# Level 1 types
+	_lgr.set_type_enabled(_lgr.types.warn, level > 0)
+	_lgr.set_type_enabled(_lgr.types.deprecated, level > 0)
+
+	# Level 2 types
+	_lgr.set_type_enabled(_lgr.types.info, level > 1)
+	_lgr.set_type_enabled(_lgr.types.debug, level > 1)
+
+	# Explicitly always enabled
+	_lgr.set_type_enabled(_lgr.types.normal, true)
+	_lgr.set_type_enabled(_lgr.types.error, true)
+
 	if(!Engine.is_editor_hint()):
 		_gui.set_log_level(level)
 
@@ -1408,3 +1409,6 @@ func get_parameter_handler():
 func set_parameter_handler(parameter_handler):
 	_parameter_handler = parameter_handler
 	_parameter_handler.set_logger(_lgr)
+
+func get_gui():
+	return _gui

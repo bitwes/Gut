@@ -12,8 +12,8 @@ static func get_instance():
 	return inst
 
 
-var _Logger = load('res://addons/gut/logger.gd') # everything should use get_logger
-var _lgr = _Logger.new()
+var Logger = load('res://addons/gut/logger.gd') # everything should use get_logger
+var _lgr = Logger.new()
 
 var _test_mode = false
 var Doubler = load('res://addons/gut/doubler.gd')
@@ -37,31 +37,8 @@ enum DOUBLE_STRATEGY{
 	PARTIAL
 }
 
-var escape = PoolByteArray([0x1b]).get_string_from_ascii()
-var CMD_COLORS  = {
-	RED = escape + '[31m',
-	YELLOW = escape + '[33m',
-	DEFAULT = escape + '[0m',
-	GREEN = escape + '[32m',
-	UNDERLINE = escape + '[4m',
-	BOLD = escape + '[1m'
-}
-
-func colorize_word(source, word, c):
-	var new_word  = c + word + CMD_COLORS.DEFAULT
-	return source.replace(word, new_word)
-
-func colorize_text(text):
-	var t = colorize_word(text, 'FAILED', CMD_COLORS.RED)
-	t = colorize_word(t, 'PASSED', CMD_COLORS.GREEN)
-	t = colorize_word(t, 'PENDING', CMD_COLORS.YELLOW)
-	t = colorize_word(t, '[ERROR]', CMD_COLORS.RED)
-	t = colorize_word(t, '[WARNING]', CMD_COLORS.YELLOW)
-	t = colorize_word(t, '[DEBUG]', CMD_COLORS.BOLD)
-	t = colorize_word(t, '[DEPRECATED]', CMD_COLORS.BOLD)
-	t = colorize_word(t, '[INFO]', CMD_COLORS.BOLD)
-	return t
-
+func _init():
+	print('!!!!!!!!!!!!!! New Utils ', self, ' !!!!!!!!!!!!!!')
 
 var _file_checker = File.new()
 
@@ -76,14 +53,12 @@ func is_version_31():
 # ------------------------------------------------------------------------------
 # Everything should get a logger through this.
 #
-# Eventually I want to make this get a single instance of a logger but I'm not
-# sure how to do that without everything having to be in the tree which I
-# DO NOT want to to do.  I'm thinking of writings some instance ids to a file
-# and loading them in the _init for this.
+# When running in test mode this will always return a new logger so that errors
+# are not caused by getting bad warn/error/etc counts.
 # ------------------------------------------------------------------------------
 func get_logger():
 	if(_test_mode):
-		return _Logger.new()
+		return Logger.new()
 	else:
 		return _lgr
 

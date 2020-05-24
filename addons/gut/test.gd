@@ -1259,7 +1259,10 @@ func use_parameters(params):
 	if(ph == null):
 		ph = _utils.ParameterHandler.new(params)
 		gut.set_parameter_handler(ph)
+	else:
+		_lgr.dec_indent()
 
 	var output = str('(call #', ph.get_call_count() + 1, ') with paramters:  ', ph.get_current_parameters())
 	gut.p(output, 0, 0)
+	_lgr.inc_indent()
 	return ph.next_parameters()

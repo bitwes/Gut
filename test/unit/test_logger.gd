@@ -58,12 +58,6 @@ func test_correct_prefix_used():
 func test_get_set_gut():
 	assert_accessors(Logger.new(), 'gut', null, double(Gut).new())
 
-func test_uses_gut_print_if_it_has_a_gut():
-	var gut = double(Gut).new()
-	var l = Logger.new()
-	l.set_gut(gut)
-	l.info('something')
-	assert_called(gut, 'p')
 
 func test_can_get_count_using_type():
 	var l = Logger.new()
@@ -81,3 +75,44 @@ func test_get_count_with_no_parameter_returns_count_of_all_logs():
 	l.deprecated('d')
 	l.info('e')
 	assert_eq(l.get_count(), 5)
+
+func test_normal_output_does_not_contain_type():
+	var l = Logger.new()
+	var result = l._log(l.types.normal, 'hello')
+	assert_eq(result, 'hello')
+
+func test_get_set_indent_level():
+	var l = Logger.new()
+	assert_accessors(l, 'indent_level', 0, 10)
+
+func test_inc_indent():
+	var l = Logger.new()
+	l.inc_indent()
+	l.inc_indent()
+	assert_eq(l.get_indent_level(), 2)
+
+func test_dec_indent_does_not_go_below_0():
+	var l = Logger.new()
+	l.dec_indent()
+	l.dec_indent()
+	assert_eq(l.get_indent_level(), 0, 'does not go below 0')
+
+func test_dec_indent_decreases():
+	var l = Logger.new()
+	l.set_indent_level(10)
+	l.dec_indent()
+	l.dec_indent()
+	l.dec_indent()
+	assert_eq(l.get_indent_level(), 7)
+
+func test_get_set_indent_string():
+	var l = Logger.new()
+	assert_accessors(l, 'indent_string', '    ', "\t")
+
+var log_types = Logger.new().types.keys()
+func test_can_enable_disable_types(log_type_key = use_parameters(log_types)):
+	var l = Logger.new()
+	var log_type = l.types[log_type_key]
+	assert_true(l.is_type_enabled(log_type), log_type + ' should be enabled by default')
+	l.set_type_enabled(log_type, false)
+	assert_false(l.is_type_enabled(log_type), log_type + ' should now be disabled')
