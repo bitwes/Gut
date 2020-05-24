@@ -1,7 +1,5 @@
 extends Node2D
 
-var _gut = null
-
 var types = {
 	warn = 'WARNING',
 	error = 'ERROR',
@@ -28,19 +26,21 @@ var _logs = {
 	types.deprecated: [],
 }
 
+var _gut = null
+var _utils = null
+
 var _indent_level = 0
 var _indent_string = '    '
 var _skip_test_name_for_testing = false
 
-var escape = PoolByteArray([0x1b]).get_string_from_ascii()
-var CMD_COLORS  = {
-	RED = escape + '[31m',
-	YELLOW = escape + '[33m',
-	DEFAULT = escape + '[0m',
-	GREEN = escape + '[32m',
-	UNDERLINE = escape + '[4m',
-	BOLD = escape + '[1m'
+var _printers = {
+	terminal = null,
+	gui = null
 }
+
+func _init():
+	_utils = load('res://addons/gut/utils.gd').get_instance()
+	_printers.terminal = _utils.Printers.TerminalPrinter.new()
 
 func _format_for_type(type, text):
 	if(!_types_enabled[type]):
@@ -93,16 +93,9 @@ func _print_test_name(text):
 	return to_return
 
 func _output(text):
-	if(_gut):
-		# this will keep the text indented under test for readability
-		_gut.get_gui().get_text_box().insert_text_at_cursor(text)
-		# IDEA!  We could store the current script and test that generated
-		# this output, which could be useful later if we printed out a summary.
-
-	if(_gut == null or _gut.get_should_print_to_console()):
-		printraw(colorize_text(text))
-
-
+	for key in _printers:
+		if(_printers[key] != null):
+			_printers[key].send(text)
 
 func _log(type, text):
 	var formatted = _format_for_type(type, text)
@@ -182,6 +175,12 @@ func get_gut():
 
 func set_gut(gut):
 	_gut = gut
+	if(_gut == null):
+		_printers.gui = null
+	else:
+		if(_printers.gui == null):
+			_printers.gui = _utils.Printers.GutGuiPrinter.new()
+		_printers.gui.set_gut(gut)
 
 func get_indent_level():
 	return _indent_level
@@ -198,21 +197,6 @@ func set_indent_string(indent_string):
 func clear():
 	for key in _logs:
 		_logs[key].clear()
-
-func colorize_word(source, word, c):
-	var new_word  = c + word + CMD_COLORS.DEFAULT
-	return source.replace(word, new_word)
-
-func colorize_text(text):
-	var t = colorize_word(text, 'FAILED', CMD_COLORS.RED)
-	t = colorize_word(t, 'PASSED', CMD_COLORS.GREEN)
-	t = colorize_word(t, 'PENDING', CMD_COLORS.YELLOW)
-	t = colorize_word(t, '[ERROR]', CMD_COLORS.RED)
-	t = colorize_word(t, '[WARNING]', CMD_COLORS.YELLOW)
-	t = colorize_word(t, '[DEBUG]', CMD_COLORS.BOLD)
-	t = colorize_word(t, '[DEPRECATED]', CMD_COLORS.BOLD)
-	t = colorize_word(t, '[INFO]', CMD_COLORS.BOLD)
-	return t
 
 func inc_indent():
 	_indent_level += 1

@@ -459,6 +459,14 @@ func test_when_use_parameters_is_not_called_then_error_is_generated():
 	assert_eq(gr.test_gut.get_logger().get_errors().size(), 1, 'error size')
 	assert_eq(gr.test_gut.get_fail_count(), 1)
 
+# if you really think about this is a very very inception like test.
+func test_parameterized_test_that_yield_are_called_correctly():
+	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/test_with_parameters.gd')
+	gr.test_gut.set_unit_test_name('test_three_values_and_a_yield')
+	gr.test_gut.test_scripts()
+	yield(yield_to(gr.test_gut, gr.test_gut.SIGNAL_PRAMETERIZED_YIELD_DONE, 10), YIELD)
+	assert_eq(gr.test_gut.get_pass_count(), 3)
+
 # ------------------------------------------------------------------------------
 #
 #

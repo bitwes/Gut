@@ -13,7 +13,7 @@ static func get_instance():
 
 
 var Logger = load('res://addons/gut/logger.gd') # everything should use get_logger
-var _lgr = Logger.new()
+var _lgr = null
 
 var _test_mode = false
 var Doubler = load('res://addons/gut/doubler.gd')
@@ -22,6 +22,7 @@ var HookScript = load('res://addons/gut/hook_script.gd')
 var MethodMaker = load('res://addons/gut/method_maker.gd')
 var OneToMany = load('res://addons/gut/one_to_many.gd')
 var ParameterHandler = load('res://addons/gut/parameter_handler.gd')
+var Printers = load('res://addons/gut/printers.gd')
 var Spy = load('res://addons/gut/spy.gd')
 var Stubber = load('res://addons/gut/stubber.gd')
 var StubParams = load('res://addons/gut/stub_params.gd')
@@ -60,6 +61,8 @@ func get_logger():
 	if(_test_mode):
 		return Logger.new()
 	else:
+		if(_lgr == null):
+			_lgr = Logger.new()
 		return _lgr
 
 # ------------------------------------------------------------------------------
