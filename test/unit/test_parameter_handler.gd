@@ -7,14 +7,14 @@ func test_can_make_one():
 
 func test_can_get_parsed_parameters():
 	var ph = ParameterHandler.new([1, 2, 3])
-	var results = ph.get_current_parameters()
+	var results = ph.next_parameters()
 	assert_eq(results, 1)
 
 func test_subsequent_calls_moves_through_array():
 	var ph = ParameterHandler.new([1, 2, 3])
-	var results = ph.get_current_parameters()
-	results = ph.get_current_parameters()
-	results = ph.get_current_parameters()
+	var results = ph.next_parameters()
+	results = ph.next_parameters()
+	results = ph.next_parameters()
 	assert_eq(results, 3)
 
 func test_is_done_is_false_by_default():
@@ -23,15 +23,15 @@ func test_is_done_is_false_by_default():
 
 func test_is_done_is_false_when_parameters_remain():
 	var ph = ParameterHandler.new([1, 2, 3])
-	var results = ph.get_current_parameters()
-	results = ph.get_current_parameters()
+	var results = ph.next_parameters()
+	results = ph.next_parameters()
 	assert_false(ph.is_done())
 
 func test_is_done_is_true_when_parameters_exhaused():
 	var ph = ParameterHandler.new([1, 2, 3])
-	var results = ph.get_current_parameters()
-	results = ph.get_current_parameters()
-	results = ph.get_current_parameters()
+	var results = ph.next_parameters()
+	results = ph.next_parameters()
+	results = ph.next_parameters()
 	assert_true(ph.is_done())
 
 func test_has_logger():

@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# x.x.x
+## Features
+* By somewhat popular demand Parameterized Tests have been added.  You can now create a tests that will be run multiple times and fed a list of parameters.  [See the wiki](https:/github.com/bitwes/Gut/wiki/ParameterizedTests) for more information.
+
 # 6.8.3
 ## Features
 * Added filename and inner class paths to "expected" and "got" values in asserts.  For example you'll see `[Node:1234](my_script.gd)` now instead of just `[Node:1234]`.  Types are also included where appropriate.  For example `Color(1,1,1,1)` instead of `(1,1,1,1)` but a strings and numbers aren't changed.

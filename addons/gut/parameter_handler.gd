@@ -10,9 +10,12 @@ func _init(params=null):
 		_logger.error('You must pass an array to parameter_handler constructor.')
 		_params = null
 
-func get_current_parameters():
+func next_parameters():
 	_call_count += 1
 	return _params[_call_count -1]
+
+func get_current_parameters():
+	return _params[_call_count]
 
 func is_done():
 	var done = true
@@ -25,3 +28,9 @@ func get_logger():
 
 func set_logger(logger):
 	_logger = logger
+
+func get_call_count():
+	return _call_count
+
+func get_parameter_count():
+	return _params.size()

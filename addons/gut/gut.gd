@@ -595,7 +595,6 @@ func _get_indexes_matching_path(path):
 	return indexes
 
 func _parameterized_call(test_script):
-	_parameter_handler = null
 	var script_result = test_script.call(_current_test.name)
 	if(_is_function_state(script_result)):
 		_wait_for_done(script_result)
@@ -611,6 +610,7 @@ func _parameterized_call(test_script):
 				_wait_for_done(script_result)
 				yield(self, 'done_waiting')
 		script_result = null
+	_parameter_handler = null
 	emit_signal(SIGNAL_PRAMETERIZED_YIELD_DONE)
 
 # ------------------------------------------------------------------------------
@@ -721,6 +721,7 @@ func _test_the_scripts(indexes=[]):
 					yield(_wait_for_continue_button(), SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
 
 				test_script.clear_signal_watcher()
+				_current_test.has_printed_name = false
 
 				# call each post-each-test method until teardown is removed.
 				_call_deprecated_script_method(test_script, 'teardown', 'after_each')
@@ -752,19 +753,21 @@ func _test_the_scripts(indexes=[]):
 	_end_run()
 
 func _pass(text=''):
-	_gui.add_passing()
+	_gui.add_passing() # increments counters
 	if(_current_test):
 		_new_summary.add_pass(_current_test.name, text)
 
 func _fail(text=''):
-	_gui.add_failing()
+	_gui.add_failing() # increments counters
 	if(_current_test != null):
 		var line_text = '  at line ' + str(_extractLineNumber( _current_test))
 		p(line_text, LOG_LEVEL_FAIL_ONLY)
 		# format for summary
 		line_text =  "\n    " + line_text
-
-		_new_summary.add_fail(_current_test.name, text + line_text)
+		var call_count_text = ''
+		if(_parameter_handler != null):
+			call_count_text = str('(call #', _parameter_handler.get_call_count(), ') ')
+		_new_summary.add_fail(_current_test.name, call_count_text + text + line_text)
 		_current_test.passed = false
 
 # Extracts the line number from curren stacktrace by matching the test case name
@@ -841,6 +844,7 @@ func p(text, level=0, indent=0):
 	var printing_test_name = false
 
 	if(level <= _utils.nvl(_log_level, 0)):
+		var test_name = ''
 		if(_current_test != null):
 			# make sure everything printed during the execution
 			# of a test is at least indented once under the test
@@ -850,24 +854,27 @@ func p(text, level=0, indent=0):
 			# Print the name of the current test if we haven't
 			# printed it already.
 			if(!_current_test.has_printed_name):
-				to_print = "* " + _current_test.name
+				test_name = "* " + _current_test.name
 				_current_test.has_printed_name = true
-				printing_test_name = str_text == _current_test.name
+				if(str_text == _current_test.name):
+					str_text = ''
+				#printing_test_name = str_text == _current_test.name
 
-		if(!printing_test_name):
-			if(to_print != ""):
-				to_print += "\n"
+		if(true):#!printing_test_name):
 			# Make the indent
 			var pad = ""
 			for _i in range(0, indent):
 				pad += "    "
 			to_print += pad + str_text
 			to_print = to_print.replace("\n", "\n" + pad)
+			if(test_name != ''):
+				to_print = test_name + "\n" + to_print
+
 
 		if(_should_print_to_console):
 			var formatted = to_print
 			if(_color_output):
-				formatted =  _utils.colorize_text(to_print)
+				formatted = _utils.colorize_text(to_print)
 			print(formatted)
 
 		_log_text += to_print + "\n"
