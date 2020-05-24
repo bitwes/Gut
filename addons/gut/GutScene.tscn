@@ -25,6 +25,9 @@ margin_bottom = 320.0
 rect_min_size = Vector2( 740, 250 )
 custom_styles/panel = SubResource( 1 )
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="TitleBar" type="Panel" parent="."]
 anchor_right = 1.0
@@ -95,6 +98,7 @@ align = 1
 valign = 1
 
 [node name="TextDisplay" type="Panel" parent="."]
+self_modulate = Color( 0, 0, 0, 1 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 40.0
@@ -109,6 +113,7 @@ anchor_bottom = 1.0
 mouse_default_cursor_shape = 0
 readonly = true
 syntax_highlighting = true
+show_line_numbers = true
 smooth_scrolling = true
 wrap_enabled = true
 __meta__ = {
@@ -120,6 +125,9 @@ self_modulate = Color( 1, 1, 1, 0 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_right = -10.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Navigation" type="Panel" parent="."]
 self_modulate = Color( 1, 1, 1, 0 )
@@ -165,9 +173,9 @@ text = "..."
 [node name="LogLevelSlider" type="HSlider" parent="."]
 anchor_top = 1.0
 anchor_bottom = 1.0
-margin_left = 80.0
+margin_left = 81.0
 margin_top = -40.0
-margin_right = 130.0
+margin_right = 131.0
 margin_bottom = -20.0
 rect_scale = Vector2( 2, 2 )
 max_value = 2.0

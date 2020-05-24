@@ -32,6 +32,7 @@ var _utils = null
 var _indent_level = 0
 var _indent_string = '    '
 var _skip_test_name_for_testing = false
+var _less_test_names = false
 
 var _printers = {
 	terminal = null,
@@ -75,7 +76,6 @@ func _indent_text(text):
 # returns bool indicating if the passed in text was the test name so we can
 # avoid printing the name multiple times.
 func _print_test_name(text):
-
 	if(text == '' or _gut == null or _skip_test_name_for_testing):
 		return false
 
@@ -85,12 +85,13 @@ func _print_test_name(text):
 
 	# suppress output if we haven't printed the test name yet and
 	# what to print is the test name.
-	var to_return = text == cur_test.name + "\n" && !cur_test.has_printed_name
-	if(!cur_test.has_printed_name):
-		_output("* " + cur_test.name + "\n")
-		cur_test.has_printed_name = true
+	var was_test_name = text == cur_test.name + "\n" && !cur_test.has_printed_name
+	if(was_test_name and !_less_test_names or !was_test_name):
+		if(!cur_test.has_printed_name):
+			_output("* " + cur_test.name + "\n")
+			cur_test.has_printed_name = true
 
-	return to_return
+	return was_test_name
 
 func _output(text):
 	for key in _printers:
@@ -101,6 +102,7 @@ func _log(type, text):
 	var formatted = _format_for_type(type, text)
 	if(formatted == null):
 		return null
+
 	var was_test_name = _print_test_name(text)
 	formatted = _indent_text(formatted)
 
@@ -209,3 +211,9 @@ func is_type_enabled(type):
 
 func set_type_enabled(type, is_enabled):
 	_types_enabled[type] = is_enabled
+
+func get_less_test_names():
+	return _less_test_names
+
+func set_less_test_names(less_test_names):
+	_less_test_names = less_test_names

@@ -3,12 +3,22 @@ extends Node
 static func INSTANCE_NAME():
 	return '__GutUtilsInstName__'
 
+static func get_root_node():
+	var to_return = null
+	var main_loop = Engine.get_main_loop()
+	print(main_loop)
+	if(main_loop != null):
+		return main_loop.root
+	else:
+		return SceneTree.new().root
+
 static func get_instance():
-	var inst = Engine.get_main_loop().root.get_node(INSTANCE_NAME())
+	var the_root = get_root_node()
+	var inst = the_root.get_node(INSTANCE_NAME())
 	if(inst == null):
 		inst = load('res://addons/gut/utils.gd').new()
 		inst.set_name(INSTANCE_NAME())
-		Engine.get_main_loop().root.add_child(inst)
+		the_root.add_child(inst)
 	return inst
 
 

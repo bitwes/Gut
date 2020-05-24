@@ -39,7 +39,7 @@ var _start_time = 0.0
 var _time = 0.0
 
 const DEFAULT_TITLE = 'Gut: The Godot Unit Testing tool.'
-var _utils = load('res://addons/gut/utils.gd').get_instance()
+onready var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _text_box_blocker_enabled = true
 var _pre_maximize_size = null
 
