@@ -73,41 +73,30 @@ func _indent_text(text):
 
 	return pad + to_return
 
-# returns bool indicating if the passed in text was the test name so we can
-# avoid printing the name multiple times.
-func _print_test_name(text):
-	if(text == '' or _gut == null or _skip_test_name_for_testing):
-		return false
-
+func _print_test_name():
 	var cur_test = _gut.get_current_test_object()
 	if(cur_test == null):
 		return false
 
-	# suppress output if we haven't printed the test name yet and
-	# what to print is the test name.
-	var was_test_name = text == cur_test.name + "\n" && !cur_test.has_printed_name
-	if(was_test_name and !_less_test_names or !was_test_name):
-		if(!cur_test.has_printed_name):
-			_output("* " + cur_test.name + "\n")
-			cur_test.has_printed_name = true
+	if(!cur_test.has_printed_name):
+		_output('* ' + cur_test.name + "\n")
+		cur_test.has_printed_name = true
 
-	return was_test_name
 
 func _output(text):
 	for key in _printers:
 		if(_printers[key] != null):
-			_printers[key].send(text)
+			var info = ''#str(self, ':', key, ':', _printers[key], '|  ')
+			_printers[key].send(info + text)
 
 func _log(type, text):
 	var formatted = _format_for_type(type, text)
 	if(formatted == null):
 		return null
 
-	var was_test_name = _print_test_name(text)
+	_print_test_name()
 	formatted = _indent_text(formatted)
-
-	if(!was_test_name):
-		_output(formatted)
+	_output(formatted)
 
 	return formatted
 
@@ -169,6 +158,14 @@ func deprecated(text, alt_method=null):
 		msg = str('The method ', text, ' is deprecated, use ', alt_method , ' instead.')
 	return _log(types.deprecated, msg)
 
+# Print the test name if we aren't skipping names of tests that pass (basically
+# what _less_test_names means))
+func log_test_name():
+	# suppress output if we haven't printed the test name yet and
+	# what to print is the test name.
+	if(!_less_test_names):
+		_print_test_name()
+
 # ---------------
 # Misc
 # ---------------
@@ -216,4 +213,5 @@ func get_less_test_names():
 	return _less_test_names
 
 func set_less_test_names(less_test_names):
+	print('** setting less test names to ', less_test_names)
 	_less_test_names = less_test_names

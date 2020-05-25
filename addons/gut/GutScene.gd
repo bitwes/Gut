@@ -39,7 +39,6 @@ var _start_time = 0.0
 var _time = 0.0
 
 const DEFAULT_TITLE = 'Gut: The Godot Unit Testing tool.'
-onready var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _text_box_blocker_enabled = true
 var _pre_maximize_size = null
 
@@ -183,13 +182,11 @@ func _on_FocusBlocker_gui_input(ev):
 			get_text_box()._gui_input(ev)
 	else:
 		get_text_box()._gui_input(ev)
-		print(ev)
 
 func _on_RichTextLabel_gui_input(ev):
 	pass
 	# leaving this b/c it is wired up and might have to send
 	# more signals through
-	print(ev)
 
 func _on_Copy_pressed():
 	_text_box.select_all()
@@ -278,7 +275,10 @@ func get_log_level():
 	return $LogLevelSlider.value
 
 func set_log_level(value):
-	$LogLevelSlider.value = _utils.nvl(value, 0)
+	var new_value = value
+	if(new_value == null):
+		new_value = 0
+	$LogLevelSlider.value = new_value
 
 func set_ignore_pause(should):
 	_ignore_pauses.pressed = should
@@ -310,7 +310,6 @@ func clear_progress():
 	_progress.script.set_value(0)
 
 func pause():
-	print('we got here')
 	_continue_button.disabled = false
 
 func set_title(title=null):

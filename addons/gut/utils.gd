@@ -6,21 +6,22 @@ static func INSTANCE_NAME():
 static func get_root_node():
 	var to_return = null
 	var main_loop = Engine.get_main_loop()
-	print(main_loop)
 	if(main_loop != null):
 		return main_loop.root
 	else:
-		return SceneTree.new().root
+		push_error('No Main Loop Yet')
+		return null
 
 static func get_instance():
 	var the_root = get_root_node()
-	var inst = the_root.get_node(INSTANCE_NAME())
-	if(inst == null):
+	var inst = null
+	if(the_root.has_node(INSTANCE_NAME())):
+		inst = the_root.get_node(INSTANCE_NAME())
+	else:
 		inst = load('res://addons/gut/utils.gd').new()
 		inst.set_name(INSTANCE_NAME())
 		the_root.add_child(inst)
 	return inst
-
 
 var Logger = load('res://addons/gut/logger.gd') # everything should use get_logger
 var _lgr = null

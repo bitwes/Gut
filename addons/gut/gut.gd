@@ -33,7 +33,80 @@
 #extends "res://addons/gut/gut_gui.gd"
 tool
 extends Control
+
 var _version = '6.8.3'
+
+
+
+
+
+
+# --------------- old exports ---------------
+var _select_script = ''
+var _tests_like = ''
+var _inner_class_name = ''
+
+var _run_on_load = false
+var _should_maximize = false
+var _should_print_to_console = true
+var _log_level = 1 setget set_log_level, get_log_level
+# This var is JUST used to expose this setting in the editor
+# the var that is used is in the _yield_between hash.
+var _yield_between_tests = true
+var _disable_strict_datatype_checks = false
+# The prefix used to get tests.
+var _test_prefix = 'test_'
+var _file_prefix = 'test_'
+var _file_extension = '.gd'
+var _inner_class_prefix = 'Test'
+
+var _temp_directory = 'user://gut_temp_directory'
+var _export_path = ''
+
+var _include_subdirectories = false
+# Allow user to add test directories via editor.  This is done with strings
+# instead of an array because the interface for editing arrays is really
+# cumbersome and complicates testing because arrays set through the editor
+# apply to ALL instances.  This also allows the user to use the built in
+# dialog to pick a directory.
+var _directory1 = ''
+var _directory2 = ''
+var _directory3 = ''
+var _directory4 = ''
+var _directory5 = ''
+var _directory6 = ''
+var _double_strategy = 1
+var _pre_run_script = ''
+var _post_run_script = ''
+var _color_output = false
+# --------------- old exports ---------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
@@ -43,44 +116,6 @@ var _deprecated_tracker = _utils.ThingCounter.new()
 # ###########################
 # Editor Variables
 # ###########################
-export(String) var _select_script = ''
-export(String) var _tests_like = ''
-export(String) var _inner_class_name = ''
-
-export var _run_on_load = false
-export var _should_maximize = false setget set_should_maximize, get_should_maximize
-
-export var _should_print_to_console = true setget set_should_print_to_console, get_should_print_to_console
-export(int, 'Failures only', 'Tests and failures', 'Everything') var _log_level = 1 setget set_log_level, get_log_level
-# This var is JUST used to expose this setting in the editor
-# the var that is used is in the _yield_between hash.
-export var _yield_between_tests = true setget set_yield_between_tests, get_yield_between_tests
-export var _disable_strict_datatype_checks = false setget disable_strict_datatype_checks, is_strict_datatype_checks_disabled
-# The prefix used to get tests.
-export var _test_prefix = 'test_'
-export var _file_prefix = 'test_'
-export var _file_extension = '.gd'
-export var _inner_class_prefix = 'Test'
-
-export(String) var _temp_directory = 'user://gut_temp_directory'
-export(String) var _export_path = '' setget set_export_path, get_export_path
-
-export var _include_subdirectories = false setget set_include_subdirectories, get_include_subdirectories
-# Allow user to add test directories via editor.  This is done with strings
-# instead of an array because the interface for editing arrays is really
-# cumbersome and complicates testing because arrays set through the editor
-# apply to ALL instances.  This also allows the user to use the built in
-# dialog to pick a directory.
-export(String, DIR) var _directory1 = ''
-export(String, DIR) var _directory2 = ''
-export(String, DIR) var _directory3 = ''
-export(String, DIR) var _directory4 = ''
-export(String, DIR) var _directory5 = ''
-export(String, DIR) var _directory6 = ''
-export(int, 'FULL', 'PARTIAL') var _double_strategy = _utils.DOUBLE_STRATEGY.PARTIAL setget set_double_strategy, get_double_strategy
-export(String, FILE) var _pre_run_script = '' setget set_pre_run_script, get_pre_run_script
-export(String, FILE) var _post_run_script = '' setget set_post_run_script, get_post_run_script
-export(bool) var _color_output = false setget set_color_output, get_color_output
 
 # The instance that is created from _pre_run_script.  Accessible from
 # get_pre_run_script_instance.
@@ -288,7 +323,7 @@ func _on_new_gui_ignore_pause(should):
 	_ignore_pause_before_teardown = should
 
 func _on_log_level_changed(value):
-	_log_level = value
+	set_log_level(value)
 
 #####################
 #
@@ -691,7 +726,7 @@ func _test_the_scripts(indexes=[]):
 
 			if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
 				(_unit_test_name == '')):
-				_lgr.log(_current_test.name)
+				_lgr.log_test_name()
 				_lgr.set_indent_level(1)
 
 				# yield so things paint
@@ -1084,6 +1119,12 @@ func get_result_text():
 func set_log_level(level):
 	_log_level = max(level, 0)
 
+	# Level 0 settings
+	_lgr.set_less_test_names(level == 0)
+	# Explicitly always enabled
+	_lgr.set_type_enabled(_lgr.types.normal, true)
+	_lgr.set_type_enabled(_lgr.types.error, true)
+
 	# Level 1 types
 	_lgr.set_type_enabled(_lgr.types.warn, level > 0)
 	_lgr.set_type_enabled(_lgr.types.deprecated, level > 0)
@@ -1091,10 +1132,6 @@ func set_log_level(level):
 	# Level 2 types
 	_lgr.set_type_enabled(_lgr.types.info, level > 1)
 	_lgr.set_type_enabled(_lgr.types.debug, level > 1)
-
-	# Explicitly always enabled
-	_lgr.set_type_enabled(_lgr.types.normal, true)
-	_lgr.set_type_enabled(_lgr.types.error, true)
 
 	if(!Engine.is_editor_hint()):
 		_gui.set_log_level(level)

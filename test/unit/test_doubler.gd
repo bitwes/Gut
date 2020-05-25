@@ -367,7 +367,6 @@ class TestPartialDoubles:
 		var inst = doubler.partial_double(DOUBLE_ME_PATH).new()
 		inst.set_value(10)
 		assert_eq(inst.get_value(), 10)
-		print(inst.get_script().get_source_code())
 
 	func test_double_script_does_not_make_partials():
 		var inst = doubler.double(DOUBLE_ME_PATH).new()

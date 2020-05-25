@@ -17,7 +17,6 @@ class SignalReporter:
 			idx -= 1
 		var signal_name = args[args.size() -1]
 		args.pop_back()
-		print('Emitted:  ', signal_name, ':  ', args)
 
 
 

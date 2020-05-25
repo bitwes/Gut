@@ -40,8 +40,10 @@ extends Node2D
 var tester = null
 
 func _ready():
-	$Gut.export_if_tests_found()
-	$Gut.import_tests_if_none_found()
+	
+	
+#	$Gut.export_if_tests_found()
+#	$Gut.import_tests_if_none_found()
 
 	# This line makes Gut use the export_path to load up the exported list 
 	# of tests if it didn't find any tests.  This will occur after it has tried

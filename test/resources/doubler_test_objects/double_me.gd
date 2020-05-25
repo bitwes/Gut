@@ -4,7 +4,7 @@ var _value = 0
 signal signal_signal
 
 func _ready():
-	print('ready')
+	pass
 
 func _init():
 	add_user_signal("user_signal")
