@@ -30,97 +30,31 @@
 #
 # Version 6.8.3
 ################################################################################
-#extends "res://addons/gut/gut_gui.gd"
-tool
 extends Control
-
 var _version = '6.8.3'
 
-
-
-
-
-
-# --------------- old exports ---------------
+# -- Settings --
 var _select_script = ''
 var _tests_like = ''
 var _inner_class_name = ''
-
 var _run_on_load = false
-var _should_maximize = false
-var _should_print_to_console = true
+var _should_maximize = false setget set_should_maximize, get_should_maximize
+var _should_print_to_console = true setget set_should_print_to_console, get_should_print_to_console
 var _log_level = 1 setget set_log_level, get_log_level
-# This var is JUST used to expose this setting in the editor
-# the var that is used is in the _yield_between hash.
-var _yield_between_tests = true
-var _disable_strict_datatype_checks = false
-# The prefix used to get tests.
+var _disable_strict_datatype_checks = false setget disable_strict_datatype_checks, is_strict_datatype_checks_disabled
 var _test_prefix = 'test_'
 var _file_prefix = 'test_'
 var _file_extension = '.gd'
 var _inner_class_prefix = 'Test'
-
 var _temp_directory = 'user://gut_temp_directory'
-var _export_path = ''
+var _export_path = '' setget set_export_path, get_export_path
+var _include_subdirectories = false setget set_include_subdirectories, get_include_subdirectories
+var _double_strategy = 1  setget set_double_strategy, get_double_strategy
+var _pre_run_script = '' setget set_pre_run_script, get_pre_run_script
+var _post_run_script = '' setget set_post_run_script, get_post_run_script
+var _color_output = false setget set_color_output, get_color_output
+# -- End Settings --
 
-var _include_subdirectories = false
-# Allow user to add test directories via editor.  This is done with strings
-# instead of an array because the interface for editing arrays is really
-# cumbersome and complicates testing because arrays set through the editor
-# apply to ALL instances.  This also allows the user to use the built in
-# dialog to pick a directory.
-var _directory1 = ''
-var _directory2 = ''
-var _directory3 = ''
-var _directory4 = ''
-var _directory5 = ''
-var _directory6 = ''
-var _double_strategy = 1
-var _pre_run_script = ''
-var _post_run_script = ''
-var _color_output = false
-# --------------- old exports ---------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var _utils = load('res://addons/gut/utils.gd').get_instance()
-var _lgr = _utils.get_logger()
-# Used to prevent multiple messages for deprecated setup/teardown messages
-var _deprecated_tracker = _utils.ThingCounter.new()
-
-# ###########################
-# Editor Variables
-# ###########################
-
-# The instance that is created from _pre_run_script.  Accessible from
-# get_pre_run_script_instance.
-var _pre_run_script_instance = null
-var _post_run_script_instance = null # This is not used except in tests.
 
 # ###########################
 # Other Vars
@@ -130,6 +64,17 @@ const LOG_LEVEL_TEST_AND_FAILURES = 1
 const LOG_LEVEL_ALL_ASSERTS = 2
 const WAITING_MESSAGE = '/# waiting #/'
 const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
+
+var _utils = load('res://addons/gut/utils.gd').get_instance()
+var _lgr = _utils.get_logger()
+# Used to prevent multiple messages for deprecated setup/teardown messages
+var _deprecated_tracker = _utils.ThingCounter.new()
+
+# The instance that is created from _pre_run_script.  Accessible from
+# get_pre_run_script_instance.
+var _pre_run_script_instance = null
+var _post_run_script_instance = null # This is not used except in tests.
+
 
 var _script_name = null
 var _test_collector = _utils.TestCollector.new()
@@ -241,13 +186,6 @@ func _ready():
 	_yield_timer.connect('timeout', self, '_yielding_callback')
 
 	_setup_gui()
-
-	add_directory(_directory1)
-	add_directory(_directory2)
-	add_directory(_directory3)
-	add_directory(_directory4)
-	add_directory(_directory5)
-	add_directory(_directory6)
 
 	if(_select_script != null):
 		select_script(_select_script)
@@ -957,18 +895,19 @@ func add_script(script, was_select_this_one=null):
 # times.
 # ------------------------------------------------------------------------------
 func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
-	var d = Directory.new()
 	# check for '' b/c the calls to addin the exported directories 1-6 will pass
 	# '' if the field has not been populated.  This will cause res:// to be
 	# processed which will include all files if include_subdirectories is true.
-	if(path == '' or !d.dir_exists(path)):
-		if(path != ''):
-			_lgr.error(str('The path [', path, '] does not exist.'))
+	if(path == '' or path == null):
 		return
 
-	var files = _get_files(path, prefix, suffix)
-	for i in range(files.size()):
-		add_script(files[i])
+	var d = Directory.new()
+	if(!d.dir_exists(path)):
+		_lgr.error(str('The path [', path, '] does not exist.'))
+	else:
+		var files = _get_files(path, prefix, suffix)
+		for i in range(files.size()):
+			add_script(files[i])
 
 # ------------------------------------------------------------------------------
 # This will try to find a script in the list of scripts to test that contains

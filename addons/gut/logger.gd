@@ -74,6 +74,8 @@ func _indent_text(text):
 	return pad + to_return
 
 func _print_test_name():
+	if(_gut == null):
+		return
 	var cur_test = _gut.get_current_test_object()
 	if(cur_test == null):
 		return false
