@@ -38,6 +38,7 @@ script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+_should_print_to_console = false
 _export_path = "res://exported_tests.cfg"
 _directory1 = "res://test/unit"
 _directory2 = "res://test/integration"

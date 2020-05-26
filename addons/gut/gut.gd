@@ -5,7 +5,7 @@
 #The MIT License (MIT)
 #=====================
 #
-#Copyright (c) 2019 Tom "Butch" Wesley
+#Copyright (c) 2020 Tom "Butch" Wesley
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -38,7 +38,6 @@ var _select_script = ''
 var _tests_like = ''
 var _inner_class_name = ''
 var _should_maximize = false setget set_should_maximize, get_should_maximize
-var _should_print_to_console = true setget set_should_print_to_console, get_should_print_to_console
 var _log_level = 1 setget set_log_level, get_log_level
 var _disable_strict_datatype_checks = false setget disable_strict_datatype_checks, is_strict_datatype_checks_disabled
 var _test_prefix = 'test_'
@@ -711,6 +710,10 @@ func _test_the_scripts(indexes=[]):
 		remove_child(test_script)
 		# END TESTS IN SCRIPT LOOP
 		_current_test = null
+		_lgr.set_indent_level(0)
+		if(test_script.get_assert_count() > 0):
+			_lgr.log(str(test_script.get_pass_count(), '/', test_script.get_assert_count(), ' passed.'))
+
 		_gui.set_progress_script_value(test_indexes + 1) # new way
 		# END TEST SCRIPT LOOP
 
@@ -803,30 +806,10 @@ func _get_files(path, prefix, suffix):
 # The first time output is generated when in a test, the test name will be
 # printed.
 # ------------------------------------------------------------------------------
-func p(text, level=0, indent=0):
+func p(text, level=0, NOT_USED_ANYMORE=0):
 	var str_text = str(text)
-	var to_print = ""
-	var printing_test_name = false
 
 	if(level <= _utils.nvl(_log_level, 0)):
-		if(_current_test != null):
-			# make sure everything printed during the execution
-			# of a test is at least indented once under the test
-			if(indent == 0):
-				indent = 1
-
-			# Print the name of the current test if we haven't
-			# printed it already.  Also detect if we are trying to print
-			# the name of the test if it hasn't been printed yet.
-			#if(!_current_test.has_printed_name):
-				#printing_test_name = str_text == _current_test.name
-				#_current_test.has_printed_name = true
-
-				# _lgr.set_indent_level(0)
-				# _lgr.log("* " + _current_test.name)
-				# _lgr.inc_indent()
-
-		#if(!printing_test_name):
 		_lgr.log(str_text)
 
 ################
@@ -1019,18 +1002,6 @@ func get_fail_count():
 # ------------------------------------------------------------------------------
 func get_pending_count():
 	return _new_summary.get_totals().pending
-
-# ------------------------------------------------------------------------------
-# Set whether it should print to console or not.  Default is yes.
-# ------------------------------------------------------------------------------
-func set_should_print_to_console(should):
-	_should_print_to_console = should
-
-# ------------------------------------------------------------------------------
-# Get whether it is printing to the console
-# ------------------------------------------------------------------------------
-func get_should_print_to_console():
-	return _should_print_to_console
 
 # ------------------------------------------------------------------------------
 # Get the results of all tests ran as text.  This string is the same as is

@@ -36,12 +36,19 @@ var _less_test_names = false
 
 var _printers = {
 	terminal = null,
-	gui = null
+	gui = null,
+	console = null
 }
 
 func _init():
+	#print('!!!!!!!!! new logger ', self, ' !!!!!!!!!')
 	_utils = load('res://addons/gut/utils.gd').get_instance()
 	_printers.terminal = _utils.Printers.TerminalPrinter.new()
+	_printers.console = _utils.Printers.ConsolePrinter.new()
+	# There were some problems in the timing of disabling this at the right
+	# time in gut_cmdln so it is disabled by default.  This is enabled
+	# by plugin_control.gd based on settings.
+	_printers.console.set_disabled(true)
 
 func _format_for_type(type, text):
 	if(!_types_enabled[type]):
@@ -216,3 +223,6 @@ func get_less_test_names():
 
 func set_less_test_names(less_test_names):
 	_less_test_names = less_test_names
+
+func disable_printer(name, is_disabled):
+	_printers[name].set_disabled(is_disabled)

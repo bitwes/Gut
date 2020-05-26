@@ -5,7 +5,7 @@
 #The MIT License (MIT)
 #=====================
 #
-#Copyright (c) 2019 Tom "Butch" Wesley
+#Copyright (c) 2020 Tom "Butch" Wesley
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -137,8 +137,8 @@ func _ready():
 # sure GUT does not blow up and that the error is not lost in all the import
 # output that is generated as well as ensuring that no tests are run.
 #
-# This is only a concern when running from the scene since you cannot run from
-# the command line on a device.
+# Assumption:  This is only a concern when running from the scene since you
+# cannot run GUT from the command line in an exported game.
 func _check_for_templates():
 	var f = File.new()
 	if(!f.file_exists('res://addons/gut/double_templates/function_template.txt')):
@@ -167,9 +167,6 @@ func _setup_gut():
 	_gut._temp_directory = _temp_directory
 
 	_gut.set_should_maximize(_should_maximize)
-
-	_gut.set_should_print_to_console(_should_print_to_console)
-
 	_gut.set_yield_between_tests(_yield_between_tests)
 	_gut.disable_strict_datatype_checks(_disable_strict_datatype_checks)
 	_gut.set_export_path(_export_path)
@@ -190,16 +187,19 @@ func _setup_gut():
 	_gut.add_directory(_directory5)
 	_gut.add_directory(_directory6)
 
+	_gut.get_logger().disable_printer('console', !_should_print_to_console)
+
 	emit_signal('gut_ready')
 
 	if(_run_on_load):
-		# Run the test scripts.
+		# Run the test scripts.  If one has been selected then only run that one
+		# otherwise all tests will be run.
 		var run_rest_of_scripts = _select_script == null
 		_gut.test_scripts(run_rest_of_scripts)
 
 func _is_ready_to_go(action):
 	if(_gut == null):
-		push_error(str('GUT is not ready to go yet.  Perform actions on GUT in the gut_ready signal.'))
+		push_error(str('GUT is not ready for ', action, ' yet.  Perform actions on GUT in/after the gut_ready signal.'))
 	return _gut != null
 
 func _on_tests_finished():
