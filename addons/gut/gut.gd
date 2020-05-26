@@ -37,7 +37,6 @@ var _version = '6.8.3'
 var _select_script = ''
 var _tests_like = ''
 var _inner_class_name = ''
-var _run_on_load = false
 var _should_maximize = false setget set_should_maximize, get_should_maximize
 var _should_print_to_console = true setget set_should_print_to_console, get_should_print_to_console
 var _log_level = 1 setget set_log_level, get_log_level
@@ -139,9 +138,6 @@ func _init():
 	# a new logger so this does not set the gut instance on the base logger
 	# when creating test instances of GUT.
 	_lgr.set_gut(self)
-	# This min size has to be what the min size of the GutScene's min size is
-	# but it has to be set here and not inferred i think.
-	rect_min_size =Vector2(740, 250)
 
 	add_user_signal(SIGNAL_TESTS_FINISHED)
 	add_user_signal(SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
@@ -152,13 +148,12 @@ func _init():
 	_doubler.set_stubber(_stubber)
 	_doubler.set_spy(_spy)
 
-	_lgr.set_gut(self)
+	# TODO remove these, universal logger should fix this.
 	_doubler.set_logger(_lgr)
 	_spy.set_logger(_lgr)
-
-
 	_stubber.set_logger(_lgr)
 	_test_collector.set_logger(_lgr)
+
 	_gui = load('res://addons/gut/GutScene.tscn').instance()
 
 # ------------------------------------------------------------------------------
@@ -166,11 +161,6 @@ func _init():
 # ------------------------------------------------------------------------------
 func _ready():
 	_lgr.info(str('using [', OS.get_user_data_dir(), '] for temporary output.'))
-	var f = File.new()
-	if(!f.file_exists('res://addons/gut/double_templates/function_template.txt')):
-		_lgr.error('Templates are missing.  Make sure you are exporting "*.txt" or "addons/gut/double_templates/*.txt".')
-		_run_on_load = false
-		_cancel_import = true
 
 	set_process_input(true)
 
@@ -192,9 +182,6 @@ func _ready():
 
 	if(_tests_like != null):
 		set_unit_test_name(_tests_like)
-
-	if(_run_on_load):
-		test_scripts(_select_script == null)
 
 	if(_should_maximize):
 		maximize()

@@ -33,11 +33,15 @@ __meta__ = {
 margin_left = -1.0
 margin_right = 40.0
 margin_bottom = 40.0
+rect_min_size = Vector2( 740, 250 )
 script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+_export_path = "res://exported_tests.cfg"
 _directory1 = "res://test/unit"
 _directory2 = "res://test/integration"
+_color_output = false
 [connection signal="pressed" from="RunGutTestsButton" to="." method="_on_RunGutTestsButton_pressed"]
 [connection signal="pressed" from="ExportTests" to="." method="_on_ExportTests_pressed"]
+[connection signal="gut_ready" from="Gut" to="." method="_on_Gut_gut_ready"]

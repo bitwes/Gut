@@ -215,5 +215,4 @@ func get_less_test_names():
 	return _less_test_names
 
 func set_less_test_names(less_test_names):
-	print('** setting less test names to ', less_test_names)
 	_less_test_names = less_test_names

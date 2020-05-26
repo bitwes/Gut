@@ -33,25 +33,51 @@
 tool
 extends Control
 
+# ------------------------------------------------------------------------------
+# GUT Settings
+# ------------------------------------------------------------------------------
+# The full/partial name of a script to select upon startup
 export(String) var _select_script = ''
+# The full/partial name of a test.  All tests that contain the string will be
+# run
 export(String) var _tests_like = ''
+# The full/partial name of an Inner Class to be run.  All Inner Classes that
+# contain the string will be run.
 export(String) var _inner_class_name = ''
-
+# Start running tests when the scene finishes loading
 export var _run_on_load = false
+# Maximize the GUT control on startup
 export var _should_maximize = false
-
+# Print output to the consol as well
 export var _should_print_to_console = true
-export(int, 'Failures only', 'Tests and failures', 'Everything') var _log_level = 1
+# The log level.
+export(int, 'Fail/Errors', 'Errors/Warnings/Test Names', 'Everything') var _log_level = 1
+# When enabled GUT will yield between tests to give the GUI time to paint.
+# Disabling this can make the program appear to hang and can have some
+# unwanted consequences with the timing of freeing objects
 export var _yield_between_tests = true
+# When GUT compares values it first checks the types to prevent runtime errors.
+# This behavior can be disabled if desired.  This flag was added early in
+# development to prevent any breaking changes and will likely be removed in
+# the future.
 export var _disable_strict_datatype_checks = false
+# The prefix used to find test methods.
 export var _test_prefix = 'test_'
+# The prefix used to find test scripts.
 export var _file_prefix = 'test_'
+# The file extension for test scripts (I don't think you can change this and
+# everythign work).
 export var _file_extension = '.gd'
+# The prefix used to find Inner Test Classes.
 export var _inner_class_prefix = 'Test'
-
+# The directory GUT will use to write any temporary files.  This isn't used
+# much anymore since there was a change to the double creation implementation.
+# This will be removed in a later release.
 export(String) var _temp_directory = 'user://gut_temp_directory'
+# The path and filename for exported test information.
 export(String) var _export_path = ''
-
+# When enabled, any directory added will also include its subdirectories when
+# GUT looks for test scripts.
 export var _include_subdirectories = false
 # Allow user to add test directories via editor.  This is done with strings
 # instead of an array because the interface for editing arrays is really
@@ -66,31 +92,73 @@ export(String, DIR) var _directory5 = ''
 export(String, DIR) var _directory6 = ''
 # Must match the types in _utils for double strategy
 export(int, 'FULL', 'PARTIAL') var _double_strategy = 1
+# Path and filename to the script to run before all tests are run.
 export(String, FILE) var _pre_run_script = ''
+# Path and filename to the script to run after all tests are run.
 export(String, FILE) var _post_run_script = ''
-export(bool) var _color_output = false
+# Enable/Disable coloring of output.
+export(bool) var _color_output = true
+# ------------------------------------------------------------------------------
 
+
+# ------------------------------------------------------------------------------
+# Signals
+# ------------------------------------------------------------------------------
+# Emitted when all the tests have finished running.
+signal tests_finished
+# Emitted when GUT is ready to be interacted with, and before any tests are run.
+signal gut_ready
+
+
+# ------------------------------------------------------------------------------
+# Private stuff.
+# ------------------------------------------------------------------------------
 var _gut = null
+var _lgr = null
+var _cancel_import = false
+
+func _init():
+	# This min size has to be what the min size of the GutScene's min size is
+	# but it has to be set here and not inferred i think.
+	rect_min_size = Vector2(740, 250)
+
 func _ready():
 	# Must call this deferred so that there is enough time for
 	# Engine.get_main_loop() is populated and the psuedo singleton utils.gd
 	# can be setup correctly.
-	call_deferred('_deferred_ready')
+	if(Engine.editor_hint):
+		var gui_placeholder = load('res://addons/gut/GutScene.tscn').instance()
+		call_deferred('add_child', gui_placeholder)
+	else:
+		call_deferred('_setup_gut')
 
-func _deferred_ready():
+# Templates can be missing if tests are exported and the export config for the
+# project does not include '*.txt' files.  This check and related flags make
+# sure GUT does not blow up and that the error is not lost in all the import
+# output that is generated as well as ensuring that no tests are run.
+#
+# This is only a concern when running from the scene since you cannot run from
+# the command line on a device.
+func _check_for_templates():
+	var f = File.new()
+	if(!f.file_exists('res://addons/gut/double_templates/function_template.txt')):
+		_lgr.error('Templates are missing.  Make sure you are exporting "*.txt" or "addons/gut/double_templates/*.txt".')
+		_run_on_load = false
+		_cancel_import = true
+		return false
+	return true
+
+func _setup_gut():
+	_lgr = load('res://addons/gut/utils.gd').get_instance().get_logger()
 	_gut = load('res://addons/gut/gut.gd').new()
+	_gut.connect('tests_finished', self, '_on_tests_finished')
 
-	_gut.add_directory(_directory1)
-	_gut.add_directory(_directory2)
-	_gut.add_directory(_directory3)
-	_gut.add_directory(_directory4)
-	_gut.add_directory(_directory5)
-	_gut.add_directory(_directory6)
+	if(!_check_for_templates()):
+		return
 
 	_gut._select_script = _select_script
 	_gut._tests_like = _tests_like
 	_gut._inner_class_name = _inner_class_name
-	_gut._run_on_load = _run_on_load
 
 	_gut._test_prefix = _test_prefix
 	_gut._file_prefix = _file_prefix
@@ -111,7 +179,39 @@ func _deferred_ready():
 	_gut.set_post_run_script(_post_run_script)
 	_gut.set_color_output(_color_output)
 
-	#get_tree().root.add_child(_gut)
 	get_parent().add_child(_gut)
 
 	_gut.set_log_level(_log_level)
+
+	_gut.add_directory(_directory1)
+	_gut.add_directory(_directory2)
+	_gut.add_directory(_directory3)
+	_gut.add_directory(_directory4)
+	_gut.add_directory(_directory5)
+	_gut.add_directory(_directory6)
+
+	emit_signal('gut_ready')
+
+	if(_run_on_load):
+		# Run the test scripts.
+		var run_rest_of_scripts = _select_script == null
+		_gut.test_scripts(run_rest_of_scripts)
+
+func _is_ready_to_go(action):
+	if(_gut == null):
+		push_error(str('GUT is not ready to go yet.  Perform actions on GUT in the gut_ready signal.'))
+	return _gut != null
+
+func _on_tests_finished():
+	emit_signal('tests_finished')
+
+func get_gut():
+	return _gut
+
+func export_if_tests_found():
+	if(_is_ready_to_go('export_if_tests_found')):
+		_gut.export_if_tests_found()
+
+func import_tests_if_none_found():
+	if(_is_ready_to_go('import_tests_if_none_found') and !_cancel_import):
+		_gut.import_tests_if_none_found()

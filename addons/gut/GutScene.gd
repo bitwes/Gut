@@ -49,6 +49,9 @@ signal run_script
 signal run_single_script
 
 func _ready():
+	if(Engine.editor_hint):
+		return
+
 	_pre_maximize_size = rect_size
 	_hide_scripts()
 	_update_controls()

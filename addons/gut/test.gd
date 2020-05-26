@@ -227,7 +227,7 @@ func _str(thing):
 	elif(typeof(thing) ==  TYPE_OBJECT):
 		if(_utils.is_native_class(thing)):
 			str_thing = _utils.get_native_class_name(thing)
-		elif(thing.has_method('__gut_instance_from_id')):
+		elif(_utils.is_double(thing)):
 			var double_path = _get_filename(thing.__gut_metadata_.path)
 			if(thing.__gut_metadata_.subpath != ''):
 				double_path += str('/', thing.__gut_metadata_.subpath)
