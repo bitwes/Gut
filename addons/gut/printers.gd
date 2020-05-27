@@ -44,20 +44,17 @@ class GutGuiPrinter:
 	extends Printer
 	var _gut = null
 
-	func _bold(source, word):
-		var new_word = '[b]' + word + '[/b]'
-		return source.replace(word, new_word)
-
-	func _underline(source, word):
-		var new_word = '[u]' + word + '[/u]'
-		return source.replace(word, new_word)
+	func _wrap_with_tag(text, tag):
+		return str('[', tag, ']', text, '[/', tag, ']')
 
 	func _color_text(text, c_word):
 		return '[color=' + c_word + ']' + text + '[/color]'
 
 	func format_text(text, fmt):
-		if(fmt == 'bold' or fmt == 'underline'):
-			return text
+		if(fmt == 'bold'):
+			return _wrap_with_tag(text, 'b')
+		elif(fmt == 'underline'):
+			return _wrap_with_tag(text, 'u')
 		else:
 			return _color_text(text, fmt)
 

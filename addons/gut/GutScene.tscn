@@ -1,6 +1,10 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://addons/gut/GutScene.gd" type="Script" id=1]
+[ext_resource path="res://addons/gut/fonts/AnonymousPro-Italic.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://addons/gut/fonts/AnonymousPro-Regular.ttf" type="DynamicFontData" id=3]
+[ext_resource path="res://addons/gut/fonts/AnonymousPro-BoldItalic.ttf" type="DynamicFontData" id=4]
+[ext_resource path="res://addons/gut/fonts/AnonymousPro-Bold.ttf" type="DynamicFontData" id=5]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.193863, 0.205501, 0.214844, 1 )
@@ -18,6 +22,18 @@ resource_local_to_scene = true
 Panel/styles/panel = SubResource( 2 )
 Panel/styles/panelf = null
 Panel/styles/panelnc = null
+
+[sub_resource type="DynamicFont" id=4]
+font_data = ExtResource( 4 )
+
+[sub_resource type="DynamicFont" id=5]
+font_data = ExtResource( 2 )
+
+[sub_resource type="DynamicFont" id=6]
+font_data = ExtResource( 5 )
+
+[sub_resource type="DynamicFont" id=7]
+font_data = ExtResource( 3 )
 
 [node name="Gut" type="Panel"]
 margin_right = 740.0
@@ -111,6 +127,10 @@ __meta__ = {
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
+custom_fonts/bold_italics_font = SubResource( 4 )
+custom_fonts/italics_font = SubResource( 5 )
+custom_fonts/bold_font = SubResource( 6 )
+custom_fonts/normal_font = SubResource( 7 )
 bbcode_enabled = true
 scroll_following = true
 __meta__ = {

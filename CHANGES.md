@@ -4,6 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 # x.x.x
 ## Features
+* Redesigned logging to be more consistent across control, terminal, and Godot console.  Added fonts back in.
 * By somewhat popular demand Parameterized Tests have been added.  You can now create a tests that will be run multiple times and fed a list of parameters.  [See the wiki](https:/github.com/bitwes/Gut/wiki/ParameterizedTests) for more information.
 
 # 6.8.3
