@@ -11,12 +11,12 @@ class Printer:
 	func set_format_enabled(format_enabled):
 		_format_enabled = format_enabled
 
-	func send(text):
+	func send(text, fmt=null):
 		if(_disabled):
 			return
 
-		if(_format_enabled):
-			_output(format_text(text))
+		if(fmt != null and _format_enabled):
+			_output(format_text(text, fmt))
 		else:
 			_output(text)
 
@@ -26,13 +26,15 @@ class Printer:
 	func set_disabled(disabled):
 		_disabled = disabled
 
+	func raw_color(text, color_name):
+		return text
 	# --------------------
 	# Virtual Methods (some have some default behavior)
 	# --------------------
 	func _output(text):
 		pass
 
-	func format_text(text):
+	func format_text(text, fmt):
 		return text
 
 # ------------------------------------------------------------------------------
@@ -42,8 +44,26 @@ class GutGuiPrinter:
 	extends Printer
 	var _gut = null
 
+	func _bold(source, word):
+		var new_word = '[b]' + word + '[/b]'
+		return source.replace(word, new_word)
+
+	func _underline(source, word):
+		var new_word = '[u]' + word + '[/u]'
+		return source.replace(word, new_word)
+
+	func _color_text(text, c_word):
+		return '[color=' + c_word + ']' + text + '[/color]'
+
+	func format_text(text, fmt):
+		if(fmt == 'bold' or fmt == 'underline'):
+			return text
+		else:
+			return _color_text(text, fmt)
+
 	func _output(text):
-		_gut.get_gui().get_text_box().insert_text_at_cursor(text)
+		#_gut.get_gui().get_text_box().insert_text_at_cursor(text)
+		_gut.get_gui().get_text_box().append_bbcode(text)
 
 	func get_gut():
 		return _gut
@@ -54,15 +74,20 @@ class GutGuiPrinter:
 # ------------------------------------------------------------------------------
 # This AND TerminalPrinter should not be enabled at the same time since it will
 # result in duplicate output.  printraw does not print to the console so i had
-# to make another one.  This will result in some extra newlines.
+# to make another one.
 # ------------------------------------------------------------------------------
 class ConsolePrinter:
 	extends Printer
+	var _buffer = ''
 
+	# suppresses output until it encounters a newline to keep things
+	# inline as much as possible.
 	func _output(text):
-		# Could probably strip the last newline char here to keep things more
-		# in line with the other printers.
-		print(text)
+		if(text.ends_with("\n")):
+			print(_buffer + text.left(text.length() -1), '(console)')
+			_buffer = ''
+		else:
+			_buffer += text
 
 # ------------------------------------------------------------------------------
 # Prints text to terminal, formats some words.
@@ -71,33 +96,20 @@ class TerminalPrinter:
 	extends Printer
 
 	var escape = PoolByteArray([0x1b]).get_string_from_ascii()
-	var CMD_COLORS  = {
-		RED = escape + '[31m',
-		YELLOW = escape + '[33m',
-		DEFAULT = escape + '[0m',
-		GREEN = escape + '[32m',
-		UNDERLINE = escape + '[4m',
-		BOLD = escape + '[1m'
+	var cmd_colors  = {
+		red = escape + '[31m',
+		yellow = escape + '[33m',
+		green = escape + '[32m',
+
+		underline = escape + '[4m',
+		bold = escape + '[1m',
+
+		default = escape + '[0m',
 	}
 
 	func _output(text):
 		# Note, printraw does not print to the console.
 		printraw(text)
 
-	func _colorize_word(source, word, c):
-		var new_word  = c + word + CMD_COLORS.DEFAULT
-		return source.replace(word, new_word)
-
-	func _colorize_text(text):
-		var t = _colorize_word(text, 'FAILED', CMD_COLORS.RED)
-		t = _colorize_word(t, 'PASSED', CMD_COLORS.GREEN)
-		t = _colorize_word(t, 'PENDING', CMD_COLORS.YELLOW)
-		t = _colorize_word(t, '[ERROR]', CMD_COLORS.RED)
-		t = _colorize_word(t, '[WARNING]', CMD_COLORS.YELLOW)
-		t = _colorize_word(t, '[DEBUG]', CMD_COLORS.BOLD)
-		t = _colorize_word(t, '[DEPRECATED]', CMD_COLORS.BOLD)
-		t = _colorize_word(t, '[INFO]', CMD_COLORS.BOLD)
-		return t
-
-	func format_text(text):
-		return _colorize_text(text)
+	func format_text(text, fmt):
+		return cmd_colors[fmt] + text + cmd_colors.default

@@ -49,6 +49,7 @@ signal run_script
 signal run_single_script
 
 func _ready():
+
 	if(Engine.editor_hint):
 		return
 
@@ -172,7 +173,7 @@ func _on_ResizeHandle_mouse_exited():
 
 # Send scroll type events through to the text box
 func _on_FocusBlocker_gui_input(ev):
-	if(_text_box_blocker_enabled):
+	if(false):#_text_box_blocker_enabled):
 		if(ev is InputEventPanGesture):
 			get_text_box()._gui_input(ev)
 		# convert a drag into a pan gesture so it scrolls.
@@ -290,6 +291,8 @@ func get_ignore_pause():
 	return _ignore_pauses.pressed
 
 func get_text_box():
+	# due to some timing issue, this cannot return _text_box but can return
+	# this.
 	return $TextDisplay/RichTextLabel
 
 func end_run():
@@ -347,3 +350,21 @@ func maximize():
 		rect_size = vp_size_offset / get_scale()
 		set_position(Vector2(0, 0))
 
+func clear_text():
+	_text_box.bbcode_text = ''
+
+func clear_text_colors():
+	pass
+	#_text_box.clear_colors()
+
+func add_color_region(start, end, c):
+	pass
+	#_text_box.add_color_region(start, end, c)
+
+func add_keyword_color(word, color):
+	pass
+	#_text_box.add_keyword_color(word, color)
+
+func scroll_to_bottom():
+	pass
+	#_text_box.cursor_set_line(_gui.get_text_box().get_line_count())

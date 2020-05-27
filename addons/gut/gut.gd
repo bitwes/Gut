@@ -321,10 +321,10 @@ func _get_summary_text():
 		elif(_new_summary.get_totals().pending > 0):
 			c = Color(1, 1, .8)
 
-		_gui.get_text_box().add_color_region('+++', '+++', c)
+		_gui.add_color_region('+++', '+++', c)
 	else:
 		to_return += '+++ No tests ran +++'
-		_gui.get_text_box().add_color_region('+++', '+++', Color(1, 0, 0))
+		_gui.add_color_region('+++', '+++', Color(1, 0, 0))
 
 	return to_return
 
@@ -381,12 +381,12 @@ func _init_run():
 
 	_yield_between.tests_since_last_yield = 0
 
-	_gui.get_text_box().clear_colors()
-	_gui.get_text_box().add_keyword_color("PASSED", Color(0, 1, 0))
-	_gui.get_text_box().add_keyword_color("FAILED", Color(1, 0, 0))
-	_gui.get_text_box().add_color_region('/#', '#/', Color(.9, .6, 0))
-	_gui.get_text_box().add_color_region('/---', '---/', Color(1, 1, 0))
-	_gui.get_text_box().add_color_region('/*', '*/', Color(.5, .5, 1))
+	_gui.clear_text_colors()
+	_gui.add_keyword_color("PASSED", Color(0, 1, 0))
+	_gui.add_keyword_color("FAILED", Color(1, 0, 0))
+	_gui.add_color_region('/#', '#/', Color(.9, .6, 0))
+	_gui.add_color_region('/---', '---/', Color(1, 1, 0))
+	_gui.add_color_region('/*', '*/', Color(.5, .5, 1))
 
 	var pre_hook_result = _validate_hook_script(_pre_run_script)
 	_pre_run_script_instance = pre_hook_result.instance
@@ -419,7 +419,7 @@ func _end_run():
 	_yield_between.timer.set_wait_time(0.1)
 	_yield_between.timer.start()
 	yield(_yield_between.timer, 'timeout')
-	_gui.get_text_box().cursor_set_line(_gui.get_text_box().get_line_count())
+	_gui.scroll_to_bottom()
 
 	_is_running = false
 	update()
@@ -691,9 +691,9 @@ func _test_the_scripts(indexes=[]):
 				test_script.after_each()
 
 				if(_current_test.passed):
-					_gui.get_text_box().add_keyword_color(_current_test.name, Color(0, 1, 0))
+					_gui.add_keyword_color(_current_test.name, Color(0, 1, 0))
 				else:
-					_gui.get_text_box().add_keyword_color(_current_test.name, Color(1, 0, 0))
+					_gui.add_keyword_color(_current_test.name, Color(1, 0, 0))
 
 				_gui.set_progress_test_value(i + 1)
 				_doubler.get_ignored_methods().clear()
@@ -968,8 +968,8 @@ func end_yielded_test():
 # Clears the text of the text box.  This resets all counters.
 # ------------------------------------------------------------------------------
 func clear_text():
-	_gui.get_text_box().set_text("")
-	_gui.get_text_box().clear_colors()
+	_gui.clear_text()
+	_gui.clear_text_colors()
 	update()
 
 # ------------------------------------------------------------------------------
@@ -1027,6 +1027,7 @@ func set_log_level(level):
 	_lgr.set_type_enabled(_lgr.types.deprecated, level > 0)
 
 	# Level 2 types
+	_lgr.set_type_enabled(_lgr.types.passed, level > 1)
 	_lgr.set_type_enabled(_lgr.types.info, level > 1)
 	_lgr.set_type_enabled(_lgr.types.debug, level > 1)
 
@@ -1267,6 +1268,7 @@ func get_logger():
 # ------------------------------------------------------------------------------
 func set_logger(logger):
 	_lgr = logger
+	_lgr.set_gut(self)
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------

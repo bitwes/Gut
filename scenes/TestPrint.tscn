@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://addons/gut/plugin_control.gd" type="Script" id=1]
+[ext_resource path="res://scenes/TestPrint.gd" type="Script" id=2]
+
+[node name="TestPrint" type="Node2D"]
+script = ExtResource( 2 )
+
+[node name="Gut" type="Control" parent="."]
+margin_right = 740.0
+margin_bottom = 250.0
+rect_min_size = Vector2( 740, 250 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="gut_ready" from="Gut" to="." method="_on_Gut_gut_ready"]

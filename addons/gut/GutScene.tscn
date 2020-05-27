@@ -107,21 +107,19 @@ __meta__ = {
 "_edit_group_": true
 }
 
-[node name="RichTextLabel" type="TextEdit" parent="TextDisplay"]
+[node name="RichTextLabel" type="RichTextLabel" parent="TextDisplay"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-mouse_default_cursor_shape = 0
-readonly = true
-syntax_highlighting = true
-show_line_numbers = true
-smooth_scrolling = true
-wrap_enabled = true
+margin_left = 10.0
+bbcode_enabled = true
+scroll_following = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="FocusBlocker" type="Panel" parent="TextDisplay"]
-self_modulate = Color( 1, 1, 1, 0 )
+visible = false
+self_modulate = Color( 0.937255, 0.054902, 0.054902, 0.698039 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_right = -10.0

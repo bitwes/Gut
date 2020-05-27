@@ -28,11 +28,6 @@ global="*res://scripts/global.gd"
 gdscript/warnings/enable=false
 gdscript/warnings/exclude_addons=false
 
-[display]
-
-window/stretch/mode="viewport"
-window/stretch/aspect="keep_width"
-
 [editor_plugins]
 
 enabled=PoolStringArray( "gut" )

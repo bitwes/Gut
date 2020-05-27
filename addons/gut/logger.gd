@@ -1,21 +1,36 @@
 extends Node2D
 
 var types = {
-	warn = 'WARNING',
-	error = 'ERROR',
-	info = 'INFO',
-	debug = 'DEBUG',
-	deprecated = 'DEPRECATED',
-	normal = 'NORMAL'
+	warn ='warn',
+	error = 'error',
+	info = 'info',
+	debug = 'debug',
+	deprecated = 'deprecated',
+	normal = 'normal',
+	passed = 'passed',
+	failed = 'failed',
 }
 
-var _types_enabled = {
-	types.warn: true,
-	types.error: true,
-	types.info: true,
-	types.debug: true,
-	types.deprecated: true,
-	types.normal: true
+var fmts = {
+	red = 'red',
+	yellow = 'yellow',
+	green = 'green',
+
+	bold = 'bold',
+	underline = 'underline',
+
+	none = null
+}
+
+var _type_data = {
+	types.warn:			{disp='WARNING', 	enabled=true, fmt=fmts.yellow},
+	types.error:		{disp='ERROR', 		enabled=true, fmt=fmts.red},
+	types.info:			{disp='INFO', 		enabled=true, fmt=fmts.bold},
+	types.debug:		{disp='DEBUG', 		enabled=true, fmt=fmts.none},
+	types.deprecated:	{disp='DEPRECATED', enabled=true, fmt=fmts.none},
+	types.normal:		{disp='NORMAL', 	enabled=true, fmt=fmts.none},
+	types.passed:		{disp='Passed', 	enabled=true, fmt=fmts.green},
+	types.failed:		{disp='Failed', 	enabled=true, fmt=fmts.red},
 }
 
 var _logs = {
@@ -50,18 +65,12 @@ func _init():
 	# by plugin_control.gd based on settings.
 	_printers.console.set_disabled(true)
 
-func _format_for_type(type, text):
-	if(!_types_enabled[type]):
-		return null
+func get_indent_text():
+	var pad = ''
+	for i in range(_indent_level):
+		pad += _indent_string
 
-	var to_return = text
-	if(type != types.normal):
-		_logs[type].append(text)
-		# normal output line edings are decided by log and lograw but the other
-		# types must have a newline added.
-		to_return = str('[', type, ']  ', text, "\n")
-
-	return to_return
+	return pad
 
 func _indent_text(text):
 	var to_return = text
@@ -71,10 +80,7 @@ func _indent_text(text):
 		ending_newline = "\n"
 		to_return = to_return.left(to_return.length() -1)
 
-	var pad = ''
-	for i in range(_indent_level):
-		pad += _indent_string
-
+	var pad = get_indent_text()
 	to_return = to_return.replace("\n", "\n" + pad)
 	to_return += ending_newline
 
@@ -92,22 +98,16 @@ func _print_test_name():
 		cur_test.has_printed_name = true
 
 
-func _output(text):
+func _output(text, fmt=null):
 	for key in _printers:
 		if(_printers[key] != null):
 			var info = ''#str(self, ':', key, ':', _printers[key], '|  ')
-			_printers[key].send(info + text)
+			_printers[key].send(info + text, fmt)
 
-func _log(type, text):
-	var formatted = _format_for_type(type, text)
-	if(formatted == null):
-		return null
-
+func _log(text, fmt=fmts.none):
 	_print_test_name()
-	formatted = _indent_text(formatted)
-	_output(formatted)
-
-	return formatted
+	var indented = _indent_text(text)
+	_output(indented, fmt)
 
 # ---------------
 # Get Methods
@@ -142,30 +142,56 @@ func get_log_entries(log_type):
 # ---------------
 # Log methods
 # ---------------
+func _output_type(type, text):
+	var td = _type_data[type]
+	if(!td.enabled):
+		return
+
+	_print_test_name()
+	if(type != types.normal):
+		if(_logs.has(type)):
+			_logs[type].append(text)
+		# normal output line edings are decided by log and lograw but the other
+		# types must have a newline added.
+		var start = str('[', td.disp, ']')
+		var indented = _indent_text(start)
+		_output(indented, td.fmt)
+		_output(text + "\n")
+
 func warn(text):
-	return _log(types.warn, text)
+	_output_type(types.warn, text)
 
 func error(text):
-	return _log(types.error, text)
+	_output_type(types.error, text)
 
 func info(text):
-	return _log(types.info, text)
+	_output_type(types.info, text)
 
 func debug(text):
-	return _log(types.debug, text)
+	_output_type(types.debug, text)
 
-func log(text):
-	return _log(types.normal, text + "\n")
+func passed(text):
+	_output_type(types.passed, text)
 
-func lograw(text):
-	return _log(types.normal, text)
+func failed(text):
+	_output_type(types.failed, text)
 
 # supply some text or the name of the deprecated method and the replacement.
 func deprecated(text, alt_method=null):
 	var msg = text
 	if(alt_method):
 		msg = str('The method ', text, ' is deprecated, use ', alt_method , ' instead.')
-	return _log(types.deprecated, msg)
+	return _output_type(types.deprecated, msg)
+
+func log(text='', fmt=fmts.none):
+	if(text == ''):
+		_output("\n")
+	else:
+		_log(text + "\n", fmt)
+	return null
+
+func lograw(text, fmt=fmts.none):
+	return _output(text, fmt)
 
 # Print the test name if we aren't skipping names of tests that pass (basically
 # what _less_test_names means))
@@ -213,10 +239,10 @@ func dec_indent():
 	_indent_level = max(0, _indent_level -1)
 
 func is_type_enabled(type):
-	return _types_enabled[type]
+	return _type_data[type].enabled
 
 func set_type_enabled(type, is_enabled):
-	_types_enabled[type] = is_enabled
+	_type_data[type].enabled = is_enabled
 
 func get_less_test_names():
 	return _less_test_names

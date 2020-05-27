@@ -249,10 +249,10 @@ func _str(thing):
 func _fail(text):
 	_summary.asserts += 1
 	_summary.failed += 1
-	var msg = 'FAILED:  ' + text
-	_fail_pass_text.append(msg)
+	_fail_pass_text.append('failed:  ' + text)
 	if(gut):
-		gut.p(msg, gut.LOG_LEVEL_FAIL_ONLY)
+		_lgr.failed(text)
+		#gut.p(msg, gut.LOG_LEVEL_FAIL_ONLY)
 		gut._fail(text)
 
 # ------------------------------------------------------------------------------
@@ -261,10 +261,10 @@ func _fail(text):
 func _pass(text):
 	_summary.asserts += 1
 	_summary.passed += 1
-	var msg = "PASSED:  " + text
-	_fail_pass_text.append(msg)
+	_fail_pass_text.append('passed:  ' + text)
 	if(gut):
-		gut.p(msg, gut.LOG_LEVEL_ALL_ASSERTS)
+		_lgr.passed(text)
+		#gut.p(msg, gut.LOG_LEVEL_ALL_ASSERTS)
 		gut._pass(text)
 
 # ------------------------------------------------------------------------------
