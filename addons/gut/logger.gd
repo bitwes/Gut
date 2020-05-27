@@ -1,14 +1,15 @@
 extends Node2D
 
 var types = {
-	warn ='warn',
-	error = 'error',
-	info = 'info',
 	debug = 'debug',
 	deprecated = 'deprecated',
+	error = 'error',
+	failed = 'failed',
+	info = 'info',
 	normal = 'normal',
 	passed = 'passed',
-	failed = 'failed',
+	pending = 'pending',
+	warn ='warn',
 }
 
 var fmts = {
@@ -23,14 +24,15 @@ var fmts = {
 }
 
 var _type_data = {
-	types.warn:			{disp='WARNING', 	enabled=true, fmt=fmts.yellow},
-	types.error:		{disp='ERROR', 		enabled=true, fmt=fmts.red},
-	types.info:			{disp='INFO', 		enabled=true, fmt=fmts.bold},
 	types.debug:		{disp='DEBUG', 		enabled=true, fmt=fmts.none},
 	types.deprecated:	{disp='DEPRECATED', enabled=true, fmt=fmts.none},
+	types.error:		{disp='ERROR', 		enabled=true, fmt=fmts.red},
+	types.failed:		{disp='Failed', 	enabled=true, fmt=fmts.red},
+	types.info:			{disp='INFO', 		enabled=true, fmt=fmts.bold},
 	types.normal:		{disp='NORMAL', 	enabled=true, fmt=fmts.none},
 	types.passed:		{disp='Passed', 	enabled=true, fmt=fmts.green},
-	types.failed:		{disp='Failed', 	enabled=true, fmt=fmts.red},
+	types.pending:		{disp='Pending',	enabled=true, fmt=fmts.yellow},
+	types.warn:			{disp='WARNING', 	enabled=true, fmt=fmts.yellow},
 }
 
 var _logs = {
@@ -158,23 +160,8 @@ func _output_type(type, text):
 		_output(indented, td.fmt)
 		_output(text + "\n")
 
-func warn(text):
-	_output_type(types.warn, text)
-
-func error(text):
-	_output_type(types.error, text)
-
-func info(text):
-	_output_type(types.info, text)
-
 func debug(text):
 	_output_type(types.debug, text)
-
-func passed(text):
-	_output_type(types.passed, text)
-
-func failed(text):
-	_output_type(types.failed, text)
 
 # supply some text or the name of the deprecated method and the replacement.
 func deprecated(text, alt_method=null):
@@ -182,6 +169,24 @@ func deprecated(text, alt_method=null):
 	if(alt_method):
 		msg = str('The method ', text, ' is deprecated, use ', alt_method , ' instead.')
 	return _output_type(types.deprecated, msg)
+
+func error(text):
+	_output_type(types.error, text)
+
+func failed(text):
+	_output_type(types.failed, text)
+
+func info(text):
+	_output_type(types.info, text)
+
+func passed(text):
+	_output_type(types.passed, text)
+
+func pending(text):
+	_output_type(types.pending, text)
+
+func warn(text):
+	_output_type(types.warn, text)
 
 func log(text='', fmt=fmts.none):
 	if(text == ''):

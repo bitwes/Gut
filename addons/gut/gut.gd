@@ -442,19 +442,23 @@ func _is_function_state(script_result):
 # ------------------------------------------------------------------------------
 func _print_script_heading(script):
 	if(_does_class_name_match(_inner_class_name, script.inner_class_name)):
-		p("\n/-----------------------------------------")
+		var divider = '-----------------------------------------'
+		_lgr.log("\n" + divider, _lgr.fmts.yellow)
+
+		var text = ''
 		if(script.inner_class_name == null):
-			p("Running Script " + script.path, 0)
+			text = "Running Script " + script.path
 		else:
-			p("Running Class [" + script.inner_class_name + "] in " + script.path, 0)
+			text = "Running Class [" + script.inner_class_name + "] in " + script.path
+		_lgr.log(text, _lgr.fmts.yellow)
 
 		if(!_utils.is_null_or_empty(_inner_class_name) and _does_class_name_match(_inner_class_name, script.inner_class_name)):
-			p(str('  [',script.inner_class_name, '] matches [', _inner_class_name, ']'))
+			_lgr.log(str('  [',script.inner_class_name, '] matches [', _inner_class_name, ']'), _lgr.fmts.yellow)
 
 		if(!_utils.is_null_or_empty(_unit_test_name)):
-			p('  Only running tests like: "' + _unit_test_name + '"')
+			_lgr.log('  Only running tests like: "' + _unit_test_name + '"', _lgr.fmts.yellow)
 
-		p("-----------------------------------------/")
+		_lgr.log(divider, _lgr.fmts.yellow)
 
 # ------------------------------------------------------------------------------
 # Just gets more logic out of _test_the_scripts.  Decides if we should yield after
@@ -712,7 +716,8 @@ func _test_the_scripts(indexes=[]):
 		_current_test = null
 		_lgr.set_indent_level(0)
 		if(test_script.get_assert_count() > 0):
-			_lgr.log(str(test_script.get_pass_count(), '/', test_script.get_assert_count(), ' passed.'))
+			var script_sum = str(test_script.get_pass_count(), '/', test_script.get_assert_count(), ' passed.')
+			_lgr.log(script_sum, _lgr.fmts.bold)
 
 		_gui.set_progress_script_value(test_indexes + 1) # new way
 		# END TEST SCRIPT LOOP
@@ -1021,6 +1026,7 @@ func set_log_level(level):
 	# Explicitly always enabled
 	_lgr.set_type_enabled(_lgr.types.normal, true)
 	_lgr.set_type_enabled(_lgr.types.error, true)
+	_lgr.set_type_enabled(_lgr.types.pending, true)
 
 	# Level 1 types
 	_lgr.set_type_enabled(_lgr.types.warn, level > 0)

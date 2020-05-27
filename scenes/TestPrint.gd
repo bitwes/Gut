@@ -25,6 +25,7 @@ func _print_some_things():
 	_lgr.info('infoing')
 	_lgr.warn('warning')
 	_lgr.error('erroring')
+	_lgr.pending('pending')
 	_lgr.deprecated('you do not need this anymore')
 	_lgr.deprecated('deprecated', 'use me')
 	_lgr.log()
