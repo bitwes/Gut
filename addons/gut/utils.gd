@@ -125,7 +125,10 @@ func is_not_freed(obj):
 	return !is_freed(obj)
 
 func is_double(obj):
-	return obj.get(GUT_METADATA) != null
+	var to_return = false
+	if(typeof(obj) == TYPE_OBJECT):
+		to_return = obj.get(GUT_METADATA) != null
+	return to_return
 
 func extract_property_from_array(source, property):
 	var to_return = []
