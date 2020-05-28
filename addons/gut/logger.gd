@@ -257,3 +257,7 @@ func set_less_test_names(less_test_names):
 
 func disable_printer(name, is_disabled):
 	_printers[name].set_disabled(is_disabled)
+
+func disable_formatting(is_disabled):
+	for key in _printers:
+		_printers[key].set_format_enabled(!is_disabled)

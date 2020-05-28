@@ -36,6 +36,15 @@ extends Control
 # ------------------------------------------------------------------------------
 # GUT Settings
 # ------------------------------------------------------------------------------
+export(int) var _font_size = 20
+export(String, 'AnonymousPro', 'CourierPrime', 'LobsterTwo') var _font_name = 0
+export(Color) var _font_color = Color(1, 1, 1, 1)
+export(Color) var _background_color = Color(0, 0, 0, 1)
+# Enable/Disable coloring of output.
+export(bool) var _color_output = true
+
+
+
 # The full/partial name of a script to select upon startup
 export(String) var _select_script = ''
 # The full/partial name of a test.  All tests that contain the string will be
@@ -96,8 +105,6 @@ export(int, 'FULL', 'PARTIAL') var _double_strategy = 1
 export(String, FILE) var _pre_run_script = ''
 # Path and filename to the script to run after all tests are run.
 export(String, FILE) var _post_run_script = ''
-# Enable/Disable coloring of output.
-export(bool) var _color_output = true
 # ------------------------------------------------------------------------------
 
 
@@ -188,7 +195,10 @@ func _setup_gut():
 	_gut.add_directory(_directory6)
 
 	_gut.get_logger().disable_printer('console', !_should_print_to_console)
-
+	_gut.get_gui().set_font_size(_font_size)
+	_gut.get_gui().change_font(_font_name)
+	_gut.get_gui().set_default_font_color(_font_color)
+	_gut.get_gui().set_background_color(_background_color)
 	emit_signal('gut_ready')
 
 	if(_run_on_load):

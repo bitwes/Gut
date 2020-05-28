@@ -41,6 +41,7 @@ var _time = 0.0
 const DEFAULT_TITLE = 'Gut: The Godot Unit Testing tool.'
 var _text_box_blocker_enabled = true
 var _pre_maximize_size = null
+var _font_size = 20
 
 signal end_pause
 signal ignore_pause
@@ -63,6 +64,9 @@ func _ready():
 	$ExtraOptions/DisableBlocker.pressed = !_text_box_blocker_enabled
 	_extras.visible = false
 	update()
+
+	set_font_size(_font_size)
+	change_font('CourierPrime')
 
 func _process(_delta):
 	if(_is_running):
@@ -368,3 +372,33 @@ func add_keyword_color(word, color):
 func scroll_to_bottom():
 	pass
 	#_text_box.cursor_set_line(_gui.get_text_box().get_line_count())
+
+func set_font_size(new_size):
+	_font_size = new_size
+	_text_box.get('custom_fonts/bold_italics_font').size = new_size
+	_text_box.get('custom_fonts/bold_font').size = new_size
+	_text_box.get('custom_fonts/italics_font').size = new_size
+	_text_box.get('custom_fonts/normal_font').size = new_size
+
+
+func _set_font(font_name, custom_name):
+	var dyn_font = DynamicFont.new()
+	var font_data = DynamicFontData.new()
+	font_data.font_path = 'res://addons/gut/fonts/' + font_name + '.ttf'
+	font_data.antialiased = true
+	dyn_font.font_data = font_data
+	_text_box.set('custom_fonts/' + custom_name, dyn_font)
+
+
+func change_font(base_name):
+	_set_font(base_name + '-Regular', 'normal_font')
+	_set_font(base_name + '-Bold', 'bold_font')
+	_set_font(base_name + '-Italic', 'italics_font')
+	_set_font(base_name + '-BoldItalic', 'bold_italics_font')
+	set_font_size(_font_size)
+
+func set_default_font_color(color):
+	_text_box.set('custom_colors/default_color', color)
+
+func set_background_color(color):
+	$TextDisplay.color = color

@@ -104,6 +104,9 @@ margin_top = -70.0
 margin_right = 180.0
 margin_bottom = -40.0
 step = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Label" type="Label" parent="TestProgress"]
 margin_left = -70.0
@@ -113,15 +116,12 @@ text = "Tests"
 align = 1
 valign = 1
 
-[node name="TextDisplay" type="Panel" parent="."]
-self_modulate = Color( 0, 0, 0, 1 )
+[node name="TextDisplay" type="ColorRect" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 40.0
 margin_bottom = -107.0
-__meta__ = {
-"_edit_group_": true
-}
+color = Color( 0, 0, 0, 1 )
 
 [node name="RichTextLabel" type="RichTextLabel" parent="TextDisplay"]
 anchor_right = 1.0
