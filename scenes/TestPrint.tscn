@@ -14,4 +14,34 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+_font_size = 20
+_font_name = "CourierPrime"
+_font_color = Color( 1, 1, 1, 1 )
+_background_color = Color( 0, 0, 0, 1 )
+_color_output = true
+_select_script = ""
+_tests_like = ""
+_inner_class_name = ""
+_run_on_load = false
+_should_maximize = false
+_should_print_to_console = true
+_log_level = 1
+_yield_between_tests = true
+_disable_strict_datatype_checks = false
+_test_prefix = "test_"
+_file_prefix = "test_"
+_file_extension = ".gd"
+_inner_class_prefix = "Test"
+_temp_directory = "user://gut_temp_directory"
+_export_path = ""
+_include_subdirectories = false
+_directory1 = ""
+_directory2 = ""
+_directory3 = ""
+_directory4 = ""
+_directory5 = ""
+_directory6 = ""
+_double_strategy = 1
+_pre_run_script = ""
+_post_run_script = ""
 [connection signal="gut_ready" from="Gut" to="." method="_on_Gut_gut_ready"]

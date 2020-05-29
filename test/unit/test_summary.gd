@@ -72,13 +72,13 @@ func test_get_non_inner_claas_script_count_handles_mixed_scripts():
 	gr.summary.add_script('res://two.gd')
 	assert_eq(gr.summary.get_non_inner_class_script_count(), 3)
 
-func test_printed_summary_uses_non_inncer_class_as_script_count():
-	gr.summary.add_script('res://script.gd.InnerClass')
-	gr.summary.add_script('res://script.gd.InnerClass2')
-	gr.summary.add_script('res://one.gd')
-	gr.summary.add_script('res://two.gd')
-	var correct_count_check = gr.summary.get_summary_text().find('Scripts:          3')
-	assert_true(correct_count_check != -1)
+# func test_printed_summary_uses_non_inncer_class_as_script_count():
+# 	gr.summary.add_script('res://script.gd.InnerClass')
+# 	gr.summary.add_script('res://script.gd.InnerClass2')
+# 	gr.summary.add_script('res://one.gd')
+# 	gr.summary.add_script('res://two.gd')
+# 	var correct_count_check = gr.summary.get_summary_text().find('Scripts:          3')
+# 	assert_true(correct_count_check != -1)
 
 
 func test_check_out_this_summary():

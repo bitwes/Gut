@@ -39,12 +39,12 @@ script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-_font_size = 20
-_font_name = "AnonymousPro"
+_font_size = 15
+_font_name = "Default"
 _font_color = Color( 1, 0.956863, 0.956863, 1 )
-_background_color = Color( 0.168627, 0.235294, 0.14902, 1 )
+_background_color = Color( 0.14902, 0.14902, 0.14902, 1 )
 _color_output = true
-_select_script = ""
+_select_script = "test_test"
 _tests_like = ""
 _inner_class_name = ""
 _run_on_load = false

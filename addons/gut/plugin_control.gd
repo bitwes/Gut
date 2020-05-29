@@ -37,7 +37,7 @@ extends Control
 # GUT Settings
 # ------------------------------------------------------------------------------
 export(int) var _font_size = 20
-export(String, 'AnonymousPro', 'CourierPrime', 'LobsterTwo') var _font_name = 0
+export(String, 'AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default') var _font_name = 0
 export(Color) var _font_color = Color(1, 1, 1, 1)
 export(Color) var _background_color = Color(0, 0, 0, 1)
 # Enable/Disable coloring of output.
@@ -196,7 +196,7 @@ func _setup_gut():
 
 	_gut.get_logger().disable_printer('console', !_should_print_to_console)
 	_gut.get_gui().set_font_size(_font_size)
-	_gut.get_gui().change_font(_font_name)
+	_gut.get_gui().set_font(_font_name)
 	_gut.get_gui().set_default_font_color(_font_color)
 	_gut.get_gui().set_background_color(_background_color)
 	emit_signal('gut_ready')

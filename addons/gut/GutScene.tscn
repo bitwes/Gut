@@ -36,8 +36,8 @@ font_data = ExtResource( 5 )
 font_data = ExtResource( 3 )
 
 [node name="Gut" type="Panel"]
-margin_right = 740.0
-margin_bottom = 320.0
+margin_right = 877.0
+margin_bottom = 360.0
 rect_min_size = Vector2( 740, 250 )
 custom_styles/panel = SubResource( 1 )
 script = ExtResource( 1 )
@@ -83,9 +83,9 @@ flat = true
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_left = 70.0
-margin_top = -100.0
+margin_top = -70.0
 margin_right = 180.0
-margin_bottom = -70.0
+margin_bottom = -40.0
 step = 1.0
 
 [node name="Label" type="Label" parent="ScriptProgress"]
@@ -100,17 +100,17 @@ valign = 1
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_left = 70.0
-margin_top = -70.0
+margin_top = -105.0
 margin_right = 180.0
-margin_bottom = -40.0
+margin_bottom = -75.0
 step = 1.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Label" type="Label" parent="TestProgress"]
-margin_left = -70.0
-margin_right = -10.0
+margin_left = -75.0
+margin_right = -15.0
 margin_bottom = 24.0
 text = "Tests"
 align = 1
@@ -120,7 +120,7 @@ valign = 1
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 40.0
-margin_bottom = -107.0
+margin_bottom = -110.0
 color = Color( 0, 0, 0, 1 )
 
 [node name="RichTextLabel" type="RichTextLabel" parent="TextDisplay"]
@@ -152,8 +152,12 @@ self_modulate = Color( 1, 1, 1, 0 )
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_left = 220.0
-margin_top = -100.0
+margin_top = -99.0
 margin_right = 580.0
+margin_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Previous" type="Button" parent="Navigation"]
 margin_left = -30.0
@@ -168,37 +172,48 @@ margin_bottom = 40.0
 text = ">"
 
 [node name="Run" type="Button" parent="Navigation"]
-margin_left = 60.0
-margin_right = 220.0
+margin_left = 321.0
+margin_right = 481.0
 margin_bottom = 40.0
 text = "Run"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="CurrentScript" type="Button" parent="Navigation"]
+anchor_top = -0.01
+anchor_bottom = -0.01
 margin_left = -30.0
 margin_top = 50.0
 margin_right = 310.0
 margin_bottom = 90.0
 text = "res://test/unit/test_gut.gd"
 clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="ShowScripts" type="Button" parent="Navigation"]
 margin_left = 320.0
 margin_top = 50.0
-margin_right = 360.0
+margin_right = 483.0
 margin_bottom = 90.0
-text = "..."
+text = "Run Selected"
 
 [node name="LogLevelSlider" type="HSlider" parent="."]
 anchor_top = 1.0
 anchor_bottom = 1.0
-margin_left = 81.0
+margin_left = 80.0
 margin_top = -40.0
-margin_right = 131.0
+margin_right = 130.0
 margin_bottom = -20.0
 rect_scale = Vector2( 2, 2 )
 max_value = 2.0
 tick_count = 3
 ticks_on_borders = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Label" type="Label" parent="LogLevelSlider"]
 margin_left = -35.0
@@ -212,10 +227,10 @@ valign = 1
 
 [node name="ScriptsList" type="ItemList" parent="."]
 anchor_bottom = 1.0
-margin_left = 180.0
-margin_top = 40.0
-margin_right = 620.0
-margin_bottom = -108.0
+margin_left = 179.0
+margin_top = 41.0
+margin_right = 619.0
+margin_bottom = -110.0
 allow_reselect = true
 __meta__ = {
 "_edit_use_anchors_": false

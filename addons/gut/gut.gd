@@ -296,10 +296,10 @@ func _on_test_script_yield_completed():
 # ------------------------------------------------------------------------------
 # Convert the _summary dictionary into text
 # ------------------------------------------------------------------------------
-func _get_summary_text():
-	var to_return = "\n\n*****************\nRun Summary\n*****************"
+func _print_summary():
+	_lgr.log("\n\n*** Run Summary ***", _lgr.fmts.yellow)
 
-	to_return += "\n" + _new_summary.get_summary_text() + "\n"
+	_new_summary.log_summary_text(_lgr)
 
 	var logger_text = ''
 	if(_lgr.get_errors().size() > 0):
@@ -310,23 +310,21 @@ func _get_summary_text():
 		logger_text += str("\n  * ", _lgr.get_deprecated().size(), ' Deprecated calls.')
 	if(logger_text != ''):
 		logger_text = "\nWarnings/Errors:" + logger_text + "\n\n"
-	to_return += logger_text
+	_lgr.log(logger_text)
 
 	if(_new_summary.get_totals().tests > 0):
-		to_return +=  '+++ ' + str(_new_summary.get_totals().passing) + ' passed ' + str(_new_summary.get_totals().failing) + ' failed.  ' + \
-					  "Tests finished in:  " + str(_gui.get_run_duration()) + ' +++'
-		var c = Color(0, 1, 0)
+		var fmt = _lgr.fmts.green
+		var msg = str(_new_summary.get_totals().passing) + ' passed ' + str(_new_summary.get_totals().failing) + ' failed.  ' + \
+		str("Tests finished in ", _gui.get_run_duration(), 's')
 		if(_new_summary.get_totals().failing > 0):
-			c = Color(1, 0, 0)
+			fmt = _lgr.fmts.red
 		elif(_new_summary.get_totals().pending > 0):
-			c = Color(1, 1, .8)
+			fmt = _lgr.fmts.yellow
 
-		_gui.add_color_region('+++', '+++', c)
+		_lgr.log(msg, fmt)
 	else:
-		to_return += '+++ No tests ran +++'
-		_gui.add_color_region('+++', '+++', Color(1, 0, 0))
+		_lgr.log('No tests ran', _lgr.fmts.red)
 
-	return to_return
 
 func _validate_hook_script(path):
 	var result = {
@@ -404,7 +402,8 @@ func _init_run():
 # Print out run information and close out the run.
 # ------------------------------------------------------------------------------
 func _end_run():
-	p(_get_summary_text(), 0)
+	_print_summary()
+
 	p("\n")
 	if(!_utils.is_null_or_empty(_select_script)):
 		p('Ran Scripts matching ' + _select_script)
@@ -442,23 +441,24 @@ func _is_function_state(script_result):
 # ------------------------------------------------------------------------------
 func _print_script_heading(script):
 	if(_does_class_name_match(_inner_class_name, script.inner_class_name)):
+		var fmt = _lgr.fmts.underline
 		var divider = '-----------------------------------------'
-		_lgr.log("\n" + divider, _lgr.fmts.yellow)
+		#_lgr.log("\n" + divider, _lgr.fmts.yellow)
 
 		var text = ''
 		if(script.inner_class_name == null):
-			text = "Running Script " + script.path
+			text = script.path
 		else:
-			text = "Running Class [" + script.inner_class_name + "] in " + script.path
-		_lgr.log(text, _lgr.fmts.yellow)
+			text = script.path + '.' + script.inner_class_name
+		_lgr.log("\n\n" + text, fmt)
 
 		if(!_utils.is_null_or_empty(_inner_class_name) and _does_class_name_match(_inner_class_name, script.inner_class_name)):
-			_lgr.log(str('  [',script.inner_class_name, '] matches [', _inner_class_name, ']'), _lgr.fmts.yellow)
+			_lgr.log(str('  [',script.inner_class_name, '] matches [', _inner_class_name, ']'), fmt)
 
 		if(!_utils.is_null_or_empty(_unit_test_name)):
-			_lgr.log('  Only running tests like: "' + _unit_test_name + '"', _lgr.fmts.yellow)
+			_lgr.log('  Only running tests like: "' + _unit_test_name + '"', fmt)
 
-		_lgr.log(divider, _lgr.fmts.yellow)
+		#_lgr.log(divider, _lgr.fmts.yellow)
 
 # ------------------------------------------------------------------------------
 # Just gets more logic out of _test_the_scripts.  Decides if we should yield after

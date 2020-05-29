@@ -1014,10 +1014,7 @@ func assert_not_freed(obj, title):
 func pending(text=""):
 	_summary.pending += 1
 	if(gut):
-		if(text == ""):
-			gut.p("PENDING")
-		else:
-			gut.p("PENDING:  " + text)
+		_lgr.pending(text)
 		gut._pending(text)
 
 # ------------------------------------------------------------------------------

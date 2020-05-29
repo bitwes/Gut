@@ -88,6 +88,9 @@ func _indent_text(text):
 
 	return pad + to_return
 
+func _should_print_to_printer(key_name):
+	return _printers[key_name] != null and !_printers[key_name].get_disabled()
+
 func _print_test_name():
 	if(_gut == null):
 		return
@@ -99,10 +102,9 @@ func _print_test_name():
 		_output('* ' + cur_test.name + "\n")
 		cur_test.has_printed_name = true
 
-
 func _output(text, fmt=null):
 	for key in _printers:
-		if(_printers[key] != null):
+		if(_should_print_to_printer(key)):
 			var info = ''#str(self, ':', key, ':', _printers[key], '|  ')
 			_printers[key].send(info + text, fmt)
 
@@ -153,12 +155,13 @@ func _output_type(type, text):
 	if(type != types.normal):
 		if(_logs.has(type)):
 			_logs[type].append(text)
-		# normal output line edings are decided by log and lograw but the other
-		# types must have a newline added.
+
 		var start = str('[', td.disp, ']')
-		var indented = _indent_text(start)
-		_output(indented, td.fmt)
-		_output(text + "\n")
+		var indented_start = _indent_text(start)
+		var indented_end = _indent_text(text)
+		indented_end = indented_end.lstrip(_indent_string)
+		_output(indented_start, td.fmt)
+		_output(indented_end + "\n")
 
 func debug(text):
 	_output_type(types.debug, text)
@@ -174,16 +177,19 @@ func error(text):
 	_output_type(types.error, text)
 
 func failed(text):
-	_output_type(types.failed, text)
+	_output_type(types.failed, ':  ' + text)
 
 func info(text):
 	_output_type(types.info, text)
 
 func passed(text):
-	_output_type(types.passed, text)
+	_output_type(types.passed, ':  ' + text)
 
 func pending(text):
-	_output_type(types.pending, text)
+	var sep = ''
+	if(text != null and text != ''):
+		sep = ':  '
+	_output_type(types.pending, sep + text)
 
 func warn(text):
 	_output_type(types.warn, text)
@@ -205,6 +211,12 @@ func log_test_name():
 	# what to print is the test name.
 	if(!_less_test_names):
 		_print_test_name()
+
+func log_multi_format(text):
+	for key in _printers:
+		if(_should_print_to_printer(key)):
+			var indented = _indent_text(text)
+			_printers[key].send_format_multiple(indented, _type_data)
 
 # ---------------
 # Misc

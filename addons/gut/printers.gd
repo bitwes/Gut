@@ -26,8 +26,20 @@ class Printer:
 	func set_disabled(disabled):
 		_disabled = disabled
 
-	func raw_color(text, color_name):
-		return text
+	func format_multiple(text, type_data):
+		var to_return = text
+		for key in type_data:
+			if(type_data[key].fmt != null):
+				var word = str('[', type_data[key].disp, ']')
+				to_return = to_return.replace(word,
+					format_text(word, type_data[key].fmt))
+		return to_return
+
+	func send_format_multiple(text, type_data):
+		if(_disabled):
+			return
+
+		_output(format_multiple(text, type_data))
 	# --------------------
 	# Virtual Methods (some have some default behavior)
 	# --------------------
@@ -81,7 +93,7 @@ class ConsolePrinter:
 	# inline as much as possible.
 	func _output(text):
 		if(text.ends_with("\n")):
-			print(_buffer + text.left(text.length() -1), '(console)')
+			print(_buffer + text.left(text.length() -1))
 			_buffer = ''
 		else:
 			_buffer += text
