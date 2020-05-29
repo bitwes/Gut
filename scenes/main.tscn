@@ -30,21 +30,21 @@ __meta__ = {
 }
 
 [node name="Gut" type="Control" parent="."]
-margin_left = -1.0
-margin_top = -1.0
-margin_right = 739.0
-margin_bottom = 249.0
+margin_left = 6.0
+margin_top = 5.0
+margin_right = 746.0
+margin_bottom = 255.0
 rect_min_size = Vector2( 740, 250 )
 script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-_font_size = 15
-_font_name = "Default"
+_font_size = 16
+_font_name = "CourierPrime"
 _font_color = Color( 1, 0.956863, 0.956863, 1 )
 _background_color = Color( 0.14902, 0.14902, 0.14902, 1 )
 _color_output = true
-_select_script = "test_test"
+_select_script = ""
 _tests_like = ""
 _inner_class_name = ""
 _run_on_load = false

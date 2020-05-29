@@ -101,7 +101,6 @@ func _print_test_name():
 	if(!cur_test.has_printed_name):
 		_output('* ' + cur_test.name + "\n")
 		cur_test.has_printed_name = true
-
 func _output(text, fmt=null):
 	for key in _printers:
 		if(_should_print_to_printer(key)):
@@ -156,7 +155,7 @@ func _output_type(type, text):
 		if(_logs.has(type)):
 			_logs[type].append(text)
 
-		var start = str('[', td.disp, ']')
+		var start = str('[', td.disp, '] ')
 		var indented_start = _indent_text(start)
 		var indented_end = _indent_text(text)
 		indented_end = indented_end.lstrip(_indent_string)

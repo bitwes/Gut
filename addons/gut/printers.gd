@@ -27,6 +27,9 @@ class Printer:
 		_disabled = disabled
 
 	func format_multiple(text, type_data):
+		if(!_format_enabled):
+			return text
+
 		var to_return = text
 		for key in type_data:
 			if(type_data[key].fmt != null):

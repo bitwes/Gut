@@ -188,6 +188,10 @@ func _ready():
 	# hide the panel that IS gut so that only the GUI is seen
 	self.self_modulate = Color(1,1,1,0)
 	show()
+	_print_versions()
+
+
+func _print_versions():
 	var v_info = Engine.get_version_info()
 	p(str('Godot version:  ', v_info.major,  '.',  v_info.minor,  '.',  v_info.patch))
 	p(str('GUT version:  ', get_version()))
@@ -315,7 +319,7 @@ func _print_summary():
 	if(_new_summary.get_totals().tests > 0):
 		var fmt = _lgr.fmts.green
 		var msg = str(_new_summary.get_totals().passing) + ' passed ' + str(_new_summary.get_totals().failing) + ' failed.  ' + \
-		str("Tests finished in ", _gui.get_run_duration(), 's')
+			str("Tests finished in ", _gui.elapsed_time_as_str())
 		if(_new_summary.get_totals().failing > 0):
 			fmt = _lgr.fmts.red
 		elif(_new_summary.get_totals().pending > 0):
@@ -402,15 +406,16 @@ func _init_run():
 # Print out run information and close out the run.
 # ------------------------------------------------------------------------------
 func _end_run():
+	_gui.end_run()
 	_print_summary()
 
 	p("\n")
 	if(!_utils.is_null_or_empty(_select_script)):
-		p('Ran Scripts matching ' + _select_script)
+		p('Ran Scripts matching "' + _select_script + '"')
 	if(!_utils.is_null_or_empty(_unit_test_name)):
-		p('Ran Tests matching ' + _unit_test_name)
+		p('Ran Tests matching "' + _unit_test_name + '"')
 	if(!_utils.is_null_or_empty(_inner_class_name)):
-		p('Ran Inner Classes matching ' + _inner_class_name)
+		p('Ran Inner Classes matching "' + _inner_class_name + '"')
 
 	# For some reason the text edit control isn't scrolling to the bottom after
 	# the summary is printed.  As a workaround, yield for a short time and
@@ -477,7 +482,7 @@ func _should_yield_now():
 # Yes if the class name is null or the script's class name includes class_name
 # ------------------------------------------------------------------------------
 func _does_class_name_match(the_class_name, script_class_name):
-	return (the_class_name == null or the_class_name == '') or (script_class_name != null and script_class_name.find(the_class_name) != -1)
+	return (the_class_name == null or the_class_name == '') or (script_class_name != null and script_class_name.findn(the_class_name) != -1)
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -586,6 +591,7 @@ func _parameterized_call(test_script):
 # yields.
 # ------------------------------------------------------------------------------
 func _test_the_scripts(indexes=[]):
+	_print_versions()
 	var is_valid = _init_run()
 	if(!is_valid):
 		_lgr.error('Something went wrong and the run was aborted.')
@@ -617,7 +623,7 @@ func _test_the_scripts(indexes=[]):
 		var the_script = _test_collector.scripts[indexes_to_run[test_indexes]]
 
 		if(the_script.tests.size() > 0):
-			_gui.set_title('Running:  ' + the_script.get_full_name())
+			_gui.set_title(the_script.get_full_name())
 			_lgr.set_indent_level(0)
 			_print_script_heading(the_script)
 			_new_summary.add_script(the_script.get_full_name())
