@@ -264,6 +264,7 @@ func _on_log_level_changed(value):
 # with set_yield_time()
 # ------------------------------------------------------------------------------
 func _yielding_callback(from_obj=false):
+	_lgr.end_yield()
 	if(_yielding_to.obj):
 		_yielding_to.obj.call_deferred(
 			"disconnect",
@@ -307,11 +308,11 @@ func _print_summary():
 
 	var logger_text = ''
 	if(_lgr.get_errors().size() > 0):
-		logger_text += str("\n  * ", _lgr.get_errors().size(), ' Errors.')
+		logger_text += str("\n* ", _lgr.get_errors().size(), ' Errors.')
 	if(_lgr.get_warnings().size() > 0):
-		logger_text += str("\n  * ", _lgr.get_warnings().size(), ' Warnings.')
+		logger_text += str("\n* ", _lgr.get_warnings().size(), ' Warnings.')
 	if(_lgr.get_deprecated().size() > 0):
-		logger_text += str("\n  * ", _lgr.get_deprecated().size(), ' Deprecated calls.')
+		logger_text += str("\n* ", _lgr.get_deprecated().size(), ' Deprecated calls.')
 	if(logger_text != ''):
 		logger_text = "\nWarnings/Errors:" + logger_text + "\n\n"
 	_lgr.log(logger_text)
@@ -382,13 +383,6 @@ func _init_run():
 	_is_running = true
 
 	_yield_between.tests_since_last_yield = 0
-
-	_gui.clear_text_colors()
-	_gui.add_keyword_color("PASSED", Color(0, 1, 0))
-	_gui.add_keyword_color("FAILED", Color(1, 0, 0))
-	_gui.add_color_region('/#', '#/', Color(.9, .6, 0))
-	_gui.add_color_region('/---', '---/', Color(1, 1, 0))
-	_gui.add_color_region('/*', '*/', Color(.5, .5, 1))
 
 	var pre_hook_result = _validate_hook_script(_pre_run_script)
 	_pre_run_script_instance = pre_hook_result.instance
@@ -510,20 +504,23 @@ func _wait_for_done(result):
 	result.connect('completed', self, '_on_test_script_yield_completed')
 
 	if(!_was_yield_method_called):
-		p('/# Yield detected, waiting #/')
+		_lgr.log('-- Yield detected, waiting --', _lgr.fmts.yellow)
 
 	_was_yield_method_called = false
 	_waiting = true
-	_wait_timer.set_wait_time(0.25)
+	_wait_timer.set_wait_time(0.4)
 
+	var dots = ''
 	while(_waiting):
 		iter_counter += 1
-		if(iter_counter > print_after):
-			p(WAITING_MESSAGE, 2)
-			iter_counter = 0
+		_lgr.yield_text('waiting' + dots)
 		_wait_timer.start()
 		yield(_wait_timer, 'timeout')
+		dots += '.'
+		if(dots.length() > 5):
+			dots = ''
 
+	_lgr.end_yield()
 	emit_signal('done_waiting')
 
 # ------------------------------------------------------------------------------
@@ -565,6 +562,8 @@ func _get_indexes_matching_path(path):
 			indexes.append(i)
 	return indexes
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func _parameterized_call(test_script):
 	var script_result = test_script.call(_current_test.name)
 	if(_is_function_state(script_result)):
@@ -685,7 +684,8 @@ func _test_the_scripts(indexes=[]):
 
 				if(_is_function_state(script_result)):
 					_wait_for_done(script_result)
-					yield(self, 'done_waiting')
+					yield(script_result, 'completed')
+					_lgr.end_yield()
 
 				#if the test called pause_before_teardown then yield until
 				#the continue button is pressed.
@@ -694,21 +694,20 @@ func _test_the_scripts(indexes=[]):
 					yield(_wait_for_continue_button(), SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
 
 				test_script.clear_signal_watcher()
-				_current_test.has_printed_name = false
+
 
 				# call each post-each-test method until teardown is removed.
 				_call_deprecated_script_method(test_script, 'teardown', 'after_each')
 				test_script.after_each()
 
-				if(_current_test.passed):
-					_gui.add_keyword_color(_current_test.name, Color(0, 1, 0))
-				else:
-					_gui.add_keyword_color(_current_test.name, Color(1, 0, 0))
+				_current_test.has_printed_name = false
 
 				_gui.set_progress_test_value(i + 1)
 				_doubler.get_ignored_methods().clear()
 
+		_lgr.dec_indent()
 		# call both post-all-tests methods until postrun_teardown is removed.
+		_current_test = null
 		if(_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
 			_call_deprecated_script_method(test_script, 'postrun_teardown', 'after_all')
 			test_script.after_all()
@@ -719,7 +718,7 @@ func _test_the_scripts(indexes=[]):
 		# test_script.free() instead of remove child.
 		remove_child(test_script)
 		# END TESTS IN SCRIPT LOOP
-		_current_test = null
+
 		_lgr.set_indent_level(0)
 		if(test_script.get_assert_count() > 0):
 			var script_sum = str(test_script.get_pass_count(), '/', test_script.get_assert_count(), ' passed.')
@@ -731,11 +730,15 @@ func _test_the_scripts(indexes=[]):
 	_lgr.set_indent_level(0)
 	_end_run()
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func _pass(text=''):
 	_gui.add_passing() # increments counters
 	if(_current_test):
 		_new_summary.add_pass(_current_test.name, text)
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func _fail(text=''):
 	_gui.add_failing() # increments counters
 	if(_current_test != null):
@@ -749,7 +752,10 @@ func _fail(text=''):
 		_new_summary.add_fail(_current_test.name, call_count_text + text + line_text)
 		_current_test.passed = false
 
+
+# ------------------------------------------------------------------------------
 # Extracts the line number from curren stacktrace by matching the test case name
+# ------------------------------------------------------------------------------
 func _extractLineNumber(current_test):
 	var line_number = current_test.line_number
 	# if stack trace available than extraxt the test case line number
@@ -762,12 +768,16 @@ func _extractLineNumber(current_test):
 				line_number = line.get("line")
 	return line_number
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func _pending(text=''):
 	if(_current_test):
 		_new_summary.add_pending(_current_test.name, text)
 
+# ------------------------------------------------------------------------------
 # Gets all the files in a directory and all subdirectories if get_include_subdirectories
 # is true.  The files returned are all sorted by name.
+# ------------------------------------------------------------------------------
 func _get_files(path, prefix, suffix):
 	var files = []
 	var directories = []
@@ -980,7 +990,6 @@ func end_yielded_test():
 # ------------------------------------------------------------------------------
 func clear_text():
 	_gui.clear_text()
-	_gui.clear_text_colors()
 	update()
 
 # ------------------------------------------------------------------------------
@@ -1115,7 +1124,7 @@ func set_yield_time(time, text=''):
 		msg += ' #/'
 	else:
 		msg +=  ':  ' + text + ' #/'
-	p(msg, 1)
+	_lgr.log(msg, _lgr.fmts.yellow)
 	_was_yield_method_called = true
 	return self
 
@@ -1129,7 +1138,7 @@ func set_yield_signal_or_time(obj, signal_name, max_wait, text=''):
 	_yield_timer.set_wait_time(max_wait)
 	_yield_timer.start()
 	_was_yield_method_called = true
-	p(str('/# Yielding to signal "', signal_name, '" or for ', max_wait, ' seconds #/ ', text))
+	_lgr.log(str('/# Yielding to signal "', signal_name, '" or for ', max_wait, ' seconds #/ ', text), _lgr.fmts.yellow)
 	return self
 
 # ------------------------------------------------------------------------------
@@ -1359,5 +1368,7 @@ func set_parameter_handler(parameter_handler):
 	_parameter_handler = parameter_handler
 	_parameter_handler.set_logger(_lgr)
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func get_gui():
 	return _gui

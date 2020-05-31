@@ -7,11 +7,19 @@ extends "res://addons/gut/test.gd"
 var _old_indent_string = ''
 
 func before_all():
+	gut.p('[before all]')
 	_old_indent_string = gut.get_logger().get_indent_string()
-	gut.get_logger().set_indent_string('--->')
+	#gut.get_logger().set_indent_string('|---')
 
 func after_all():
+	gut.p('[after all]')
 	gut.get_logger().set_indent_string(_old_indent_string)
+
+func before_each():
+	gut.p('[before each]')
+
+func after_each():
+	gut.p('[after each]')
 
 func test_print_indent():
 	gut.p('one')
@@ -57,6 +65,10 @@ func test_show_info():
 	_lgr.info('Something happened')
 	assert_true(true)
 
+func test_yield():
+	gut.p('starting yield')
+	yield(yield_for(2), YIELD)
+	gut.p('end yield')
 
 class TestBasicLoggerOutput:
 	extends 'res://test/gut_test.gd'

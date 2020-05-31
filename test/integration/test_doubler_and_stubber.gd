@@ -102,6 +102,7 @@ func test_partial_double_of_Node2D_returns_super_values():
 	pd_node_2d  = gr.doubler.partial_double_gdnative(Node2D).new()
 	assert_eq(pd_node_2d.is_blocking_signals(), false)
 
+
 func test_can_stub_all_Node2D_doubles():
 	gr.doubler.set_stubber(gr.stubber)
 	var d_node2d = gr.doubler.double_gdnative(Node2D).new()

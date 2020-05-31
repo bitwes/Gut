@@ -43,6 +43,12 @@ var _logs = {
 	types.deprecated: [],
 }
 
+var _printers = {
+	terminal = null,
+	gui = null,
+	console = null
+}
+
 var _gut = null
 var _utils = null
 
@@ -50,12 +56,6 @@ var _indent_level = 0
 var _indent_string = '    '
 var _skip_test_name_for_testing = false
 var _less_test_names = false
-
-var _printers = {
-	terminal = null,
-	gui = null,
-	console = null
-}
 
 func _init():
 	#print('!!!!!!!!! new logger ', self, ' !!!!!!!!!')
@@ -194,6 +194,7 @@ func warn(text):
 	_output_type(types.warn, text)
 
 func log(text='', fmt=fmts.none):
+	end_yield()
 	if(text == ''):
 		_output("\n")
 	else:
@@ -272,3 +273,44 @@ func disable_printer(name, is_disabled):
 func disable_formatting(is_disabled):
 	for key in _printers:
 		_printers[key].set_format_enabled(!is_disabled)
+
+func get_printer(printer_key):
+	return _printers[printer_key]
+
+var yield_calls = 0
+var last_yield_text = ''
+
+func _yield_text_terminal(text):
+	var printer = _printers['terminal']
+	if(yield_calls != 0):
+		printer.clear_line()
+		printer.back(last_yield_text.length())
+	printer.send(text, fmts.yellow)
+
+func _end_yield_terminal():
+	var printer = _printers['terminal']
+	printer.clear_line()
+	printer.back(last_yield_text.length())
+
+func _yield_text_gui(text):
+	var printer = _printers['gui']
+	if(yield_calls != 0):
+		printer.clear_line()
+		printer.send("\n")
+	printer.send(text, fmts.yellow)
+
+func _end_yield_gui():
+	_printers['gui'].clear_line()
+	_printers['gui'].send("\n")
+
+func yield_text(text):
+	_yield_text_terminal(text)
+	_yield_text_gui(text)
+	last_yield_text = text
+	yield_calls += 1
+
+func end_yield():
+	_end_yield_terminal()
+	_end_yield_gui()
+	yield_calls = 0
+	last_yield_text = ''

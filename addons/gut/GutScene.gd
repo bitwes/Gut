@@ -363,18 +363,6 @@ func maximize():
 func clear_text():
 	_text_box.bbcode_text = ''
 
-func clear_text_colors():
-	pass
-	#_text_box.clear_colors()
-
-func add_color_region(start, end, c):
-	pass
-	#_text_box.add_color_region(start, end, c)
-
-func add_keyword_color(word, color):
-	pass
-	#_text_box.add_keyword_color(word, color)
-
 func scroll_to_bottom():
 	pass
 	#_text_box.cursor_set_line(_gui.get_text_box().get_line_count())

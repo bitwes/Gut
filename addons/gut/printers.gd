@@ -4,6 +4,8 @@
 class Printer:
 	var _format_enabled = true
 	var _disabled = false
+	var _printer_name = 'NOT SET'
+	var _show_name = false # used for debugging, set manually
 
 	func get_format_enabled():
 		return _format_enabled
@@ -15,10 +17,14 @@ class Printer:
 		if(_disabled):
 			return
 
+		var formatted = text
 		if(fmt != null and _format_enabled):
-			_output(format_text(text, fmt))
-		else:
-			_output(text)
+			formatted = format_text(text, fmt)
+
+		if(_show_name):
+			formatted = str('(', _printer_name, ')') + formatted
+
+		_output(formatted)
 
 	func get_disabled():
 		return _disabled
@@ -59,6 +65,9 @@ class GutGuiPrinter:
 	extends Printer
 	var _gut = null
 
+	func _init():
+		_printer_name = 'gui'
+
 	func _wrap_with_tag(text, tag):
 		return str('[', tag, ']', text, '[/', tag, ']')
 
@@ -83,6 +92,10 @@ class GutGuiPrinter:
 	func set_gut(gut):
 		_gut = gut
 
+	func clear_line():
+		var box = _gut.get_gui().get_text_box()
+		box.remove_line(box.get_line_count() - 1)
+		box.update()
 # ------------------------------------------------------------------------------
 # This AND TerminalPrinter should not be enabled at the same time since it will
 # result in duplicate output.  printraw does not print to the console so i had
@@ -91,6 +104,9 @@ class GutGuiPrinter:
 class ConsolePrinter:
 	extends Printer
 	var _buffer = ''
+
+	func _init():
+		_printer_name = 'console'
 
 	# suppresses output until it encounters a newline to keep things
 	# inline as much as possible.
@@ -117,7 +133,12 @@ class TerminalPrinter:
 		bold = escape + '[1m',
 
 		default = escape + '[0m',
+
+		clear_line = escape + '[2K'
 	}
+
+	func _init():
+		_printer_name = 'terminal'
 
 	func _output(text):
 		# Note, printraw does not print to the console.
@@ -125,3 +146,12 @@ class TerminalPrinter:
 
 	func format_text(text, fmt):
 		return cmd_colors[fmt] + text + cmd_colors.default
+
+	func clear_line():
+		printraw(cmd_colors.clear_line)
+
+	func back(n):
+		printraw(escape + str('[', n, 'D'))
+
+	func forward(n):
+		printraw(escape + str('[', n, 'C'))
