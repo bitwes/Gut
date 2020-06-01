@@ -36,15 +36,12 @@ extends Control
 # ------------------------------------------------------------------------------
 # GUT Settings
 # ------------------------------------------------------------------------------
-export(int) var _font_size = 20
 export(String, 'AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default') var _font_name = 0
+export(int) var _font_size = 20
 export(Color) var _font_color = Color(1, 1, 1, 1)
 export(Color) var _background_color = Color(0, 0, 0, 1)
 # Enable/Disable coloring of output.
 export(bool) var _color_output = true
-
-
-
 # The full/partial name of a script to select upon startup
 export(String) var _select_script = ''
 # The full/partial name of a test.  All tests that contain the string will be
@@ -123,6 +120,7 @@ signal gut_ready
 var _gut = null
 var _lgr = null
 var _cancel_import = false
+var _placeholder = null
 
 func _init():
 	# This min size has to be what the min size of the GutScene's min size is
@@ -134,10 +132,18 @@ func _ready():
 	# Engine.get_main_loop() is populated and the psuedo singleton utils.gd
 	# can be setup correctly.
 	if(Engine.editor_hint):
-		var gui_placeholder = load('res://addons/gut/GutScene.tscn').instance()
-		call_deferred('add_child', gui_placeholder)
+		_placeholder = load('res://addons/gut/GutScene.tscn').instance()
+		call_deferred('add_child', _placeholder)
+		_placeholder.rect_size = rect_size
 	else:
 		call_deferred('_setup_gut')
+
+	connect('resized', self,  '_on_resized')
+
+func _on_resized():
+	if(_placeholder != null):
+		_placeholder.rect_size = rect_size
+
 
 # Templates can be missing if tests are exported and the export config for the
 # project does not include '*.txt' files.  This check and related flags make
@@ -199,6 +205,7 @@ func _setup_gut():
 	_gut.get_gui().set_font(_font_name)
 	_gut.get_gui().set_default_font_color(_font_color)
 	_gut.get_gui().set_background_color(_background_color)
+	_gut.get_gui().rect_size =  rect_size
 	emit_signal('gut_ready')
 
 	if(_run_on_load):
