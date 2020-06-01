@@ -126,10 +126,14 @@ var _final_opts = []
 # that I don't make any dumb typos and get the neat code-sense when I
 # type a dot.
 var options = {
+	background_color = Color(0, 0, 0).to_html(),
 	config_file = 'res://.gutconfig.json',
 	dirs = [],
 	disable_colors = false,
 	double_strategy = 'partial',
+	font_color = Color(1, 1, 1).to_html(),
+	font_name = 'CourierPrime',
+	font_size = 16,
 	ignore_pause = false,
 	include_subdirs = false,
 	inner_class = '',
@@ -147,6 +151,7 @@ var options = {
 	tests = [],
 	unit_test_name = '',
 }
+var valid_fonts = ['AnonymousPro', 'CourierPro', 'LobsterTwo', 'Default']
 
 # flag to indicate if only a single script should be run.
 var _run_single = false
@@ -160,13 +165,13 @@ func setup_options():
 					'"-g<name>=<value>".  There cannot be any spaces between the option, the "=", or ' +
 					'inside a specified value or godot will think you are trying to run a scene.'))
 	opts.add('-gtest', [], 'Comma delimited list of full paths to test scripts to run.')
-	opts.add('-gdir', [], 'Comma delimited list of directories to add tests from.')
-	opts.add('-gprefix', 'test_', 'Prefix used to find tests when specifying -gdir.  Default "[default]"')
-	opts.add('-gsuffix', '.gd', 'Suffix used to find tests when specifying -gdir.  Default "[default]"')
+	opts.add('-gdir', options.dirs, 'Comma delimited list of directories to add tests from.')
+	opts.add('-gprefix', options.prefix, 'Prefix used to find tests when specifying -gdir.  Default "[default]"')
+	opts.add('-gsuffix', options.suffix, 'Suffix used to find tests when specifying -gdir.  Default "[default]"')
 	opts.add('-gmaximize', false, 'Maximizes test runner window to fit the viewport.')
 	opts.add('-gexit', false, 'Exit after running tests.  If not specified you have to manually close the window.')
 	opts.add('-gexit_on_success', false, 'Only exit if all tests pass.')
-	opts.add('-glog', 1, 'Log level.  Default [default]')
+	opts.add('-glog', options.log_level, 'Log level.  Default [default]')
 	opts.add('-gignore_pause', false, 'Ignores any calls to gut.pause_before_teardown.')
 	opts.add('-gselect', '', ('Select a script to run initially.  The first script that ' +
 							'was loaded using -gtest or -gdir that contains the specified ' +
@@ -177,7 +182,7 @@ func setup_options():
 	opts.add('-gh', false, 'Print this help, then quit')
 	opts.add('-gconfig', 'res://.gutconfig.json', 'A config file that contains configuration information.  Default is res://.gutconfig.json')
 	opts.add('-ginner_class', '', 'Only run inner classes that contain this string')
-	opts.add('-gopacity', 100, 'Set opacity of test runner window. Use range 0 - 100. 0 = transparent, 100 = opaque.')
+	opts.add('-gopacity', options.opacity, 'Set opacity of test runner window. Use range 0 - 100. 0 = transparent, 100 = opaque.')
 	opts.add('-gpo', false, 'Print option values from all sources and the value used, then quit.')
 	opts.add('-ginclude_subdirs', false, 'Include subdirectories of -gdir.')
 	opts.add('-gdouble_strategy', 'partial', 'Default strategy to use when doubling.  Valid values are [partial, full].  Default "[default]"')
@@ -185,6 +190,11 @@ func setup_options():
 	opts.add('-gpre_run_script', '', 'pre-run hook script path')
 	opts.add('-gpost_run_script', '', 'post-run hook script path')
 	opts.add('-gprint_gutconfig_sample', false, 'Print out json that can be used to make a gutconfig file then quit.')
+
+	opts.add('-gfont_name', options.font_name, str('Valid values are:  ', valid_fonts, '.  Default "[default]"'))
+	opts.add('-gfont_size', options.font_size, 'Font size, default "[default]"')
+	opts.add('-gbackground_color', options.background_color, 'Background color as an html color, default "[default]"')
+	opts.add('-gfont_color',options.font_color, 'Font color as an html color, default "[default]"')
 	return opts
 
 
@@ -210,6 +220,11 @@ func extract_command_line_options(from, to):
 	to.suffix = from.get_value('-gsuffix')
 	to.tests = from.get_value('-gtest')
 	to.unit_test_name = from.get_value('-gunit_test_name')
+
+	to.font_size = from.get_value('-gfont_size')
+	to.font_name = from.get_value('-gfont_name')
+	to.background_color = from.get_value('-gbackground_color')
+	to.font_color = from.get_value('-gfont_color')
 
 
 func load_options_from_config_file(file_path, into):
@@ -281,6 +296,14 @@ func apply_options(opts):
 	_tester.set_pre_run_script(opts.pre_run_script)
 	_tester.set_post_run_script(opts.post_run_script)
 	_tester.set_color_output(!opts.disable_colors)
+
+	_tester.get_gui().set_font_size(opts.font_size)
+	_tester.get_gui().set_font(opts.font_name)
+	if(opts.font_color != null and opts.font_color.is_valid_html_color()):
+		_tester.get_gui().set_default_font_color(Color(opts.font_color))
+	if(opts.background_color != null and opts.background_color.is_valid_html_color()):
+		_tester.get_gui().set_background_color(Color(opts.background_color))
+
 
 func _print_gutconfigs(values):
 	var header = """Here is a sample of a full .gutconfig.json file.
