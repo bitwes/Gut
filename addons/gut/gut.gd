@@ -191,10 +191,18 @@ func _ready():
 	_print_versions()
 
 
-func _print_versions():
+func _print_versions(send_all = true):
 	var v_info = Engine.get_version_info()
-	p(str('Godot version:  ', v_info.major,  '.',  v_info.minor,  '.',  v_info.patch))
-	p(str('GUT version:  ', get_version()))
+	var gut_version_info =  str('GUT version:  ', get_version())
+	var godot_version_info  = str('Godot version:  ', v_info.major,  '.',  v_info.minor,  '.',  v_info.patch)
+
+	if(send_all):
+		p(godot_version_info)
+		p(gut_version_info)
+	else:
+		var printer = _lgr.get_printer('gui')
+		printer.send(godot_version_info  + "\n")
+		printer.send(gut_version_info +  "\n")
 
 
 ################################################################################
@@ -590,7 +598,7 @@ func _parameterized_call(test_script):
 # yields.
 # ------------------------------------------------------------------------------
 func _test_the_scripts(indexes=[]):
-	_print_versions()
+	_print_versions(false)
 	var is_valid = _init_run()
 	if(!is_valid):
 		_lgr.error('Something went wrong and the run was aborted.')
