@@ -49,3 +49,7 @@ func _on_Home_pressed():
 
 func _on_End_pressed():
 	rtl.scroll_to_line(rtl.get_line_count() -1)
+
+
+func _on_Copy_pressed():
+	OS.clipboard = rtl.text
