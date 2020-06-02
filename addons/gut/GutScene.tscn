@@ -183,6 +183,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = -25.0
 bbcode_enabled = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Navigation" type="Panel" parent="."]
 self_modulate = Color( 1, 1, 1, 0 )

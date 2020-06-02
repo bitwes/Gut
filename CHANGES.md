@@ -4,10 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 # 7.0.0
 ## Features
-* By somewhat popular demand Parameterized Tests have been added.  You can now create a tests that will be run multiple times and fed a list of parameters.  [See the wiki](https:/github.com/bitwes/Gut/wiki/ParameterizedTests) for more information. (This feature opened up a giant can of worms for logging which led to more cans and more worms.)
-* Redesigned logging to be more consistent across control, terminal, and Godot console.  Added fonts back in.
+* __Issue 114__ By popular demand Parameterized Tests have been added.  You can now create a tests that will be run multiple times and fed a list of parameters.  [See the wiki](https:/github.com/bitwes/Gut/wiki/ParameterizedTests) for more information. (This feature opened up a giant can of worms for logging which led to more cans and more worms.)
+* __Issue 168__ Added user directory file viewer to additional options for viewing logs on a device.
+* __Issue 167__ Added more areas where filenames are printed when printing objects.
+* Redesigned logging to be more consistent across control, terminal, and Godot console (here be the cans and worms).
 * Can now set the font (from a few choices), font size, font color, and the background color!
-* Added user directory file viewer to additional options for viewing logs on a device.
 
 # 6.8.3
 ## Features

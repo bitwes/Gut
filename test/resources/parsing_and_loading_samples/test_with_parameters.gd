@@ -19,6 +19,10 @@ func test_three_values_and_a_yield(p=use_parameters([['a', 'a'], ['b', 'b'], ['c
 	yield(yield_for(.2), YIELD)
 	assert_eq(p[0], p[1])
 
+func test_with_named_params(p=use_named_parameters(['a', 'b'], [[1, 2], [3, 4]])):
+	assert_eq(p.a, p.b)
+
+
 class TestInnerClass:
 	extends "res://addons/gut/test.gd"
 	func test_inner_has_one_defaulted_parameter(p=null):

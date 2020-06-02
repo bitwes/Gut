@@ -91,6 +91,7 @@ class GutGuiPrinter:
 	func set_gut(gut):
 		_gut = gut
 
+	# This can be very very slow when the box has a lot of text.
 	func clear_line():
 		var box = _gut.get_gui().get_text_box()
 		box.remove_line(box.get_line_count() - 1)

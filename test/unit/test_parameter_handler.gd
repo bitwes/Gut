@@ -45,3 +45,5 @@ func test_when_invalid_constructor_parameter_object_is_setup_correctly():
 	var ph = ParameterHandler.new('asdf')
 	assert_null(ph._params)
 	assert_true(ph.is_done(), 'is_done should be true')
+
+

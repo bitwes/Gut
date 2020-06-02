@@ -467,6 +467,12 @@ func test_parameterized_test_that_yield_are_called_correctly():
 	yield(yield_to(gr.test_gut, gr.test_gut.SIGNAL_PRAMETERIZED_YIELD_DONE, 10), YIELD)
 	assert_eq(gr.test_gut.get_pass_count(), 3)
 
+func test_named_parameters():
+	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/test_with_parameters.gd')
+	gr.test_gut.set_unit_test_name('test_with_named_params')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_fail_count(), 2)
+
 # ------------------------------------------------------------------------------
 #
 #

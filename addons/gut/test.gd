@@ -127,6 +127,8 @@ var DOUBLE_STRATEGY = null
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
 var _strutils = _utils.Strutils.new()
+# syntax sugar
+var ParameterFactory = _utils.ParameterFactory
 
 func _init():
 	DOUBLE_STRATEGY = _utils.DOUBLE_STRATEGY # yes, this is right
