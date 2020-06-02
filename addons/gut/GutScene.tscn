@@ -157,6 +157,9 @@ anchor_bottom = 1.0
 margin_top = 40.0
 margin_bottom = -110.0
 color = Color( 0, 0, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="RichTextLabel" type="RichTextLabel" parent="TextDisplay"]
 anchor_right = 1.0
@@ -173,6 +176,13 @@ selection_enabled = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="WaitingLabel" type="RichTextLabel" parent="TextDisplay"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -25.0
+bbcode_enabled = true
 
 [node name="Navigation" type="Panel" parent="."]
 self_modulate = Color( 1, 1, 1, 0 )

@@ -293,15 +293,14 @@ func _end_yield_terminal():
 	printer.back(last_yield_text.length())
 
 func _yield_text_gui(text):
-	var printer = _printers['gui']
-	if(yield_calls != 0):
-		printer.clear_line()
-		printer.send("\n")
-	printer.send(text, fmts.yellow)
+	var lbl = _gut.get_gui().get_waiting_label()
+	lbl.visible = true
+	lbl.set_bbcode('[color=yellow]' + text + '[/color]')
 
 func _end_yield_gui():
-	_printers['gui'].clear_line()
-	_printers['gui'].send("\n")
+	var lbl = _gut.get_gui().get_waiting_label()
+	lbl.visible = false
+	lbl.set_text('')
 
 func yield_text(text):
 	_yield_text_terminal(text)
@@ -310,6 +309,8 @@ func yield_text(text):
 	yield_calls += 1
 
 func end_yield():
+	if(yield_calls == 0):
+		return
 	_end_yield_terminal()
 	_end_yield_gui()
 	yield_calls = 0

@@ -426,3 +426,6 @@ func set_background_color(color):
 
 func _on_UserFiles_pressed():
 	_user_files.show_open()
+
+func get_waiting_label():
+	return $TextDisplay/WaitingLabel

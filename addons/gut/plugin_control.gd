@@ -202,8 +202,8 @@ func _setup_gut():
 
 	_gut.get_logger().disable_printer('console', !_should_print_to_console)
 	# When file logging enabled then the log will contain terminal escape
-	# strings.  So when running the scene this is disabled.
-	_gut.get_logger().get_printer('terminal').set_format_enabled(false)
+	# strings.  So when running the scene this is disabled.  Also if enabled
+	# this may cause duplicate entries into the logs.
 	_gut.get_logger().disable_printer('terminal', true)
 
 	_gut.get_gui().set_font_size(_font_size)

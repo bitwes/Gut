@@ -83,7 +83,6 @@ class GutGuiPrinter:
 			return _color_text(text, fmt)
 
 	func _output(text):
-		#_gut.get_gui().get_text_box().insert_text_at_cursor(text)
 		_gut.get_gui().get_text_box().append_bbcode(text)
 
 	func get_gut():
