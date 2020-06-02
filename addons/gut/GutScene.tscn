@@ -293,8 +293,9 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -210.0
-margin_top = -200.0
+margin_left = -212.0
+margin_top = -260.0
+margin_right = -2.0
 margin_bottom = -106.0
 custom_styles/panel = SubResource( 1 )
 __meta__ = {
@@ -313,12 +314,23 @@ __meta__ = {
 }
 
 [node name="Copy" type="Button" parent="ExtraOptions"]
-margin_left = 18.0
+margin_left = 15.0
 margin_top = 40.0
-margin_right = 198.0
+margin_right = 195.0
 margin_bottom = 80.0
 hint_tooltip = "Copy all output to the clipboard."
 text = "Copy to Clipboard"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="UserFiles" type="Button" parent="ExtraOptions"]
+margin_left = 15.0
+margin_top = 90.0
+margin_right = 195.0
+margin_bottom = 130.0
+hint_tooltip = "Copy all output to the clipboard."
+text = "View User Files"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -421,6 +433,7 @@ __meta__ = {
 [connection signal="item_selected" from="ScriptsList" to="." method="_on_ScriptsList_item_selected"]
 [connection signal="pressed" from="ExtraOptions/IgnorePause" to="." method="_on_IgnorePause_pressed"]
 [connection signal="pressed" from="ExtraOptions/Copy" to="." method="_on_Copy_pressed"]
+[connection signal="pressed" from="ExtraOptions/UserFiles" to="." method="_on_UserFiles_pressed"]
 [connection signal="mouse_entered" from="ResizeHandle" to="." method="_on_ResizeHandle_mouse_entered"]
 [connection signal="mouse_exited" from="ResizeHandle" to="." method="_on_ResizeHandle_mouse_exited"]
 [connection signal="pressed" from="Continue/Continue" to="." method="_on_Continue_pressed"]

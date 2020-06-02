@@ -32,6 +32,8 @@ onready var _titlebar = {
 	label = $TitleBar/Title
 }
 
+var _user_files = load('res://addons/gut/UserFileViewer.tscn').instance()
+
 var _mouse = {
 	down = false,
 	in_title = false,
@@ -70,6 +72,9 @@ func _ready():
 
 	set_font_size(_font_size)
 	set_font('CourierPrime')
+	
+	add_child(_user_files)
+	_user_files.set_position(Vector2(10, 30))
 
 func elapsed_time_as_str():
 	return str("%.1f" % (_time / 1000.0), 's')
@@ -367,42 +372,57 @@ func scroll_to_bottom():
 	pass
 	#_text_box.cursor_set_line(_gui.get_text_box().get_line_count())
 
+func _set_font_size_for_rtl(rtl, new_size):
+	if(rtl.get('custom_fonts/normal_font') != null):
+		rtl.get('custom_fonts/bold_italics_font').size = new_size
+		rtl.get('custom_fonts/bold_font').size = new_size
+		rtl.get('custom_fonts/italics_font').size = new_size
+		rtl.get('custom_fonts/normal_font').size = new_size
+	
+
+func _set_fonts_for_rtl(rtl, base_font_name):
+	pass
+
+
 func set_font_size(new_size):
-	if(_text_box.get('custom_fonts/normal_font') != null):
-		_font_size = new_size
-		_text_box.get('custom_fonts/bold_italics_font').size = new_size
-		_text_box.get('custom_fonts/bold_font').size = new_size
-		_text_box.get('custom_fonts/italics_font').size = new_size
-		_text_box.get('custom_fonts/normal_font').size = new_size
+	_font_size = new_size
+	_set_font_size_for_rtl(_text_box, new_size)
+	_set_font_size_for_rtl(_user_files.get_rich_text_label(), new_size)
 
 
-func _set_font(font_name, custom_name):
+func _set_font(rtl, font_name, custom_name):
 	if(font_name == null):
-		_text_box.set('custom_fonts/' + custom_name, null)
+		rtl.set('custom_fonts/' + custom_name, null)
 	else:
 		var dyn_font = DynamicFont.new()
 		var font_data = DynamicFontData.new()
 		font_data.font_path = 'res://addons/gut/fonts/' + font_name + '.ttf'
 		font_data.antialiased = true
 		dyn_font.font_data = font_data
-		_text_box.set('custom_fonts/' + custom_name, dyn_font)
+		rtl.set('custom_fonts/' + custom_name, dyn_font)
 
-
-func set_font(base_name):
+func _set_all_fonts_in_ftl(ftl, base_name):
 	if(base_name == 'Default'):
-		_set_font(null, 'normal_font')
-		_set_font(null, 'bold_font')
-		_set_font(null, 'italics_font')
-		_set_font(null, 'bold_italics_font')
+		_set_font(ftl, null, 'normal_font')
+		_set_font(ftl, null, 'bold_font')
+		_set_font(ftl, null, 'italics_font')
+		_set_font(ftl, null, 'bold_italics_font')
 	else:
-		_set_font(base_name + '-Regular', 'normal_font')
-		_set_font(base_name + '-Bold', 'bold_font')
-		_set_font(base_name + '-Italic', 'italics_font')
-		_set_font(base_name + '-BoldItalic', 'bold_italics_font')
+		_set_font(ftl, base_name + '-Regular', 'normal_font')
+		_set_font(ftl, base_name + '-Bold', 'bold_font')
+		_set_font(ftl, base_name + '-Italic', 'italics_font')
+		_set_font(ftl, base_name + '-BoldItalic', 'bold_italics_font')
 	set_font_size(_font_size)
 
+func set_font(base_name):
+	_set_all_fonts_in_ftl(_text_box, base_name)
+	_set_all_fonts_in_ftl(_user_files.get_rich_text_label(), base_name)
+	
 func set_default_font_color(color):
 	_text_box.set('custom_colors/default_color', color)
 
 func set_background_color(color):
 	$TextDisplay.color = color
+
+func _on_UserFiles_pressed():
+	_user_files.show_open()

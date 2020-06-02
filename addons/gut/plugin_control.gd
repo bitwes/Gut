@@ -201,6 +201,11 @@ func _setup_gut():
 	_gut.add_directory(_directory6)
 
 	_gut.get_logger().disable_printer('console', !_should_print_to_console)
+	# When file logging enabled then the log will contain terminal escape
+	# strings.  So when running the scene this is disabled.
+	_gut.get_logger().get_printer('terminal').set_format_enabled(false)
+	_gut.get_logger().disable_printer('terminal', true)
+
 	_gut.get_gui().set_font_size(_font_size)
 	_gut.get_gui().set_font(_font_name)
 	_gut.get_gui().set_default_font_color(_font_color)

@@ -32,6 +32,10 @@ gdscript/warnings/exclude_addons=false
 
 enabled=PoolStringArray( "gut" )
 
+[logging]
+
+file_logging/enable_file_logging=true
+
 [network]
 
 limits/debugger_stdout/max_chars_per_second=8192

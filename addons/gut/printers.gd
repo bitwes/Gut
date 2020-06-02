@@ -117,6 +117,9 @@ class ConsolePrinter:
 		else:
 			_buffer += text
 
+	func format_multiple(text, type_data):
+		return text
+
 # ------------------------------------------------------------------------------
 # Prints text to terminal, formats some words.
 # ------------------------------------------------------------------------------
@@ -148,10 +151,10 @@ class TerminalPrinter:
 		return cmd_colors[fmt] + text + cmd_colors.default
 
 	func clear_line():
-		printraw(cmd_colors.clear_line)
+		send(cmd_colors.clear_line)
 
 	func back(n):
-		printraw(escape + str('[', n, 'D'))
+		send(escape + str('[', n, 'D'))
 
 	func forward(n):
-		printraw(escape + str('[', n, 'C'))
+		send(escape + str('[', n, 'C'))
