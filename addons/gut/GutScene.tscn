@@ -162,12 +162,14 @@ color = Color( 0, 0, 0, 1 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
+focus_mode = 2
 custom_fonts/bold_italics_font = SubResource( 4 )
 custom_fonts/italics_font = SubResource( 5 )
 custom_fonts/bold_font = SubResource( 6 )
 custom_fonts/normal_font = SubResource( 7 )
 bbcode_enabled = true
 scroll_following = true
+selection_enabled = true
 __meta__ = {
 "_edit_use_anchors_": false
 }

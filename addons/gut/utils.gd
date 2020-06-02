@@ -35,6 +35,7 @@ var OneToMany = load('res://addons/gut/one_to_many.gd')
 var ParameterHandler = load('res://addons/gut/parameter_handler.gd')
 var Printers = load('res://addons/gut/printers.gd')
 var Spy = load('res://addons/gut/spy.gd')
+var Stringer = load('res://addons/gut/stringer.gd')
 var Stubber = load('res://addons/gut/stubber.gd')
 var StubParams = load('res://addons/gut/stub_params.gd')
 var Summary = load('res://addons/gut/summary.gd')
@@ -193,3 +194,9 @@ func search_array(ar, prop_method, value):
 		return ar[idx]
 	else:
 		return null
+
+
+
+
+
+

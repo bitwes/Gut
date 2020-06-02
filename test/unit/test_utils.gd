@@ -22,3 +22,5 @@ func test_is_double_returns_false_for_primitives():
 	assert_false(utils.is_double([]), 'array')
 	assert_false(utils.is_double({}), 'dictionary')
 	# that's probably enough spot checking
+
+
