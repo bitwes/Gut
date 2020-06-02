@@ -106,42 +106,6 @@ var _disable_strict_datatype_checks = false
 # to see the text of a failed sub-test in test_test.gd
 var _fail_pass_text = []
 
-# Hash containing all the built in types in Godot.  This provides an English
-# name for the types that corosponds with the type constants defined in the
-# engine.  This is used for priting out messages when comparing types fails.
-var types = {}
-
-func _init_types_dictionary():
-	types[TYPE_NIL] = 'TYPE_NIL'
-	types[TYPE_BOOL] = 'Bool'
-	types[TYPE_INT] = 'Int'
-	types[TYPE_REAL] = 'Float/Real'
-	types[TYPE_STRING] = 'String'
-	types[TYPE_VECTOR2] = 'Vector2'
-	types[TYPE_RECT2] = 'Rect2'
-	types[TYPE_VECTOR3] = 'Vector3'
-	#types[8] = 'Matrix32'
-	types[TYPE_PLANE] = 'Plane'
-	types[TYPE_QUAT] = 'QUAT'
-	types[TYPE_AABB] = 'AABB'
-	#types[12] = 'Matrix3'
-	types[TYPE_TRANSFORM] = 'Transform'
-	types[TYPE_COLOR] = 'Color'
-	#types[15] = 'Image'
-	types[TYPE_NODE_PATH] = 'Node Path'
-	types[TYPE_RID] = 'RID'
-	types[TYPE_OBJECT] = 'TYPE_OBJECT'
-	#types[19] = 'TYPE_INPUT_EVENT'
-	types[TYPE_DICTIONARY] = 'Dictionary'
-	types[TYPE_ARRAY] = 'Array'
-	types[TYPE_RAW_ARRAY] = 'TYPE_RAW_ARRAY'
-	types[TYPE_INT_ARRAY] = 'TYPE_INT_ARRAY'
-	types[TYPE_REAL_ARRAY] = 'TYPE_REAL_ARRAY'
-	types[TYPE_STRING_ARRAY] = 'TYPE_STRING_ARRAY'
-	types[TYPE_VECTOR2_ARRAY] = 'TYPE_VECTOR2_ARRAY'
-	types[TYPE_VECTOR3_ARRAY] = 'TYPE_VECTOR3_ARRAY'
-	types[TYPE_COLOR_ARRAY] = 'TYPE_COLOR_ARRAY'
-	types[TYPE_MAX] = 'TYPE_MAX'
 
 const EDITOR_PROPERTY = PROPERTY_USAGE_SCRIPT_VARIABLE | PROPERTY_USAGE_DEFAULT
 const VARIABLE_PROPERTY = PROPERTY_USAGE_SCRIPT_VARIABLE
@@ -162,14 +126,13 @@ var _signal_watcher = load('res://addons/gut/signal_watcher.gd').new()
 var DOUBLE_STRATEGY = null
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
-var _stringer = load('res://addons/gut/stringer.gd').new()
+var _strutils = _utils.Strutils.new()
 
 func _init():
-	_init_types_dictionary()
 	DOUBLE_STRATEGY = _utils.DOUBLE_STRATEGY # yes, this is right
 
 func _str(thing):
-	return _stringer.type2str(thing)
+	return _strutils.type2str(thing)
 
 # ------------------------------------------------------------------------------
 # Fail an assertion.  Causes test and script to fail as well.
@@ -210,9 +173,11 @@ func _do_datatypes_match__fail_if_not(got, expected, text):
 			# If we have a mismatch between float and int (types 2 and 3) then
 			# print out a warning but do not fail.
 			if([2, 3].has(got_type) and [2, 3].has(expect_type)):
-				_lgr.warn(str('Warn:  Float/Int comparison.  Got ', types[got_type], ' but expected ', types[expect_type]))
+				_lgr.warn(str('Warn:  Float/Int comparison.  Got ', _strutils.types[got_type],
+					' but expected ', _strutils.types[expect_type]))
 			else:
-				_fail('Cannot compare ' + types[got_type] + '[' + _str(got) + '] to ' + types[expect_type] + '[' + _str(expected) + '].  ' + text)
+				_fail('Cannot compare ' + _strutils.types[got_type] + '[' + _str(got) + '] to ' + \
+					_strutils.types[expect_type] + '[' + _str(expected) + '].  ' + text)
 				did_pass = false
 
 	return did_pass
@@ -525,7 +490,7 @@ func assert_exports(obj, property_name, type):
 	var disp = 'expected %s to have editor property [%s]' % [_str(obj), property_name]
 	var property = _find_object_property(obj, property_name, EDITOR_PROPERTY)
 	if property != null:
-		disp += ' of type [%s]. Got type [%s].' % [types[type], types[property['type']]]
+		disp += ' of type [%s]. Got type [%s].' % [_strutils.types[type], _strutils.types[property['type']]]
 		if property['type'] == type:
 			_pass(disp)
 		else:
@@ -726,13 +691,13 @@ func assert_is(object, a_class, text=''):
 	var bad_param_2 = 'Parameter 2 must be a Class (like Node2D or Label).  You passed '
 
 	if(typeof(object) != TYPE_OBJECT):
-		_fail(str('Parameter 1 must be an instance of an object.  You passed:  ', types[typeof(object)]))
+		_fail(str('Parameter 1 must be an instance of an object.  You passed:  ', _str(object)))
 	elif(typeof(a_class) != TYPE_OBJECT):
-		_fail(str(bad_param_2, types[typeof(a_class)]))
+		_fail(str(bad_param_2, _str(a_class)))
 	else:
-		disp = str('Expected [', object.get_class(), '] to extend [', a_class.get_class(), ']: ', text)
+		disp = str('Expected [', _str(object), '] to extend [', _str(a_class), ']: ', text)
 		if(a_class.get_class() != NATIVE_CLASS and a_class.get_class() != GDSCRIPT_CLASS):
-			_fail(str(bad_param_2, a_class.get_class(), '  ', types[typeof(a_class)]))
+			_fail(str(bad_param_2, _str(a_class)))
 		else:
 			if(object is a_class):
 				_pass(disp)
@@ -741,8 +706,8 @@ func assert_is(object, a_class, text=''):
 
 func _get_typeof_string(the_type):
 	var to_return = ""
-	if(types.has(the_type)):
-		to_return += str(the_type, '(',  types[the_type], ')')
+	if(_strutils.types.has(the_type)):
+		to_return += str(the_type, '(',  _strutils.types[the_type], ')')
 	else:
 		to_return += str(the_type)
 	return to_return

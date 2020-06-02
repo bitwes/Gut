@@ -2,7 +2,7 @@
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 # Hash containing all the built in types in Godot.  This provides an English
 # name for the types that corosponds with the type constants defined in the
-# engine.  This is used for priting out messages when comparing types fails.
+# engine.
 var types = {}
 
 func _init_types_dictionary():
@@ -44,7 +44,8 @@ var _str_ignore_types = [
 ]
 
 func _init():
-    _init_types_dictionary()
+	_init_types_dictionary()
+
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func _get_filename(path):
@@ -77,6 +78,7 @@ func _get_obj_filename(thing):
 			filename += str('/', dict['@subpath'])
 
 	return filename
+
 # ------------------------------------------------------------------------------
 # Better object/thing to string conversion.  Includes extra details about
 # whatever is passed in when it can/should.

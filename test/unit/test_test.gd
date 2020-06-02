@@ -17,7 +17,7 @@ class BaseTestClass:
 	# !! Use this for debugging to see the results of all the subtests that
 	# are run using assert_fail_pass, assert_fail and assert_pass that are
 	# built into this class
-	var _print_all_subtests = false
+	var _print_all_subtests = true
 
 	# GlobalReset(gr) variables to be used by tests.
 	# The values of these are reset in the setup or
@@ -392,7 +392,7 @@ class TestAssertHas:
 		assert_fail(gr.test)
 
 # TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
-class testFailingDatatypeChecks:
+class TestFailingDatatypeChecks:
 	extends BaseTestClass
 
 	func test_dt_string_number_eq():

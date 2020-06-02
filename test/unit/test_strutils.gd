@@ -3,10 +3,10 @@ extends 'res://test/gut_test.gd'
 class TestInternalStr:
 	extends 'res://test/gut_test.gd'
 
-	var Stringer = load('res://addons/gut/stringer.gd')
+	var Strutils = load('res://addons/gut/strutils.gd')
 
 	func _str(thing):
-		return Stringer.new().type2str(thing)
+		return Strutils.new().type2str(thing)
 
 	class ExtendsControl:
 		extends Control
@@ -27,7 +27,7 @@ class TestInternalStr:
 		assert_eq(_str(1.234), '1.234')
 
 	func test_script():
-		assert_eq(_str(self), str(self, '(test_stringer.gd/TestInternalStr)'))
+		assert_eq(_str(self), str(self, '(test_strutils.gd/TestInternalStr)'))
 
 	func test_script_2():
 		var dm = DoubleMe.new()
@@ -84,8 +84,8 @@ class TestInternalStr:
 	# currently does not print the inner class, maybe later.
 	func test_inner_class():
 		var ec = ExtendsControl.new()
-		assert_eq(_str(ec), str(ec) + '(test_stringer.gd/TestInternalStr/ExtendsControl)')
+		assert_eq(_str(ec), str(ec) + '(test_strutils.gd/TestInternalStr/ExtendsControl)')
 
 	func test_simple_class():
 		var en = ExtendsNothing.new()
-		assert_eq(_str(en), str(en) + '(test_stringer.gd/TestInternalStr/ExtendsNothing)')
+		assert_eq(_str(en), str(en) + '(test_strutils.gd/TestInternalStr/ExtendsNothing)')
