@@ -1,4 +1,4 @@
-extends Node2D
+extends Reference
 
 var _gut = null
 

@@ -453,6 +453,12 @@ func _end_run():
 	yield(_yield_between.timer, 'timeout')
 	_gui.get_text_box().cursor_set_line(_gui.get_text_box().get_line_count())
 
+	for test_script in _test_script_objects:
+		assert(not test_script.is_inside_tree())
+		test_script.free()
+
+	_test_script_objects = []
+
 	_is_running = false
 	update()
 	_run_hook_script(_post_run_script_instance)

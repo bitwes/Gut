@@ -158,6 +158,7 @@ func _parse_inner_class_tests(script):
 			t.name = name
 			script.tests.append(t)
 
+	inst.free()
 	return true
 # -----------------
 # Public
