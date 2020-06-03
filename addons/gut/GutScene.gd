@@ -32,7 +32,7 @@ onready var _titlebar = {
 	label = $TitleBar/Title
 }
 
-var _user_files = load('res://addons/gut/UserFileViewer.tscn').instance()
+onready var _user_files = $UserFileViewer
 
 var _mouse = {
 	down = false,
@@ -73,7 +73,6 @@ func _ready():
 	set_font_size(_font_size)
 	set_font('CourierPrime')
 	
-	add_child(_user_files)
 	_user_files.set_position(Vector2(10, 30))
 
 func elapsed_time_as_str():

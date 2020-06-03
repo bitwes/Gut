@@ -349,9 +349,9 @@ func _init():
 			quit()
 		elif(o.get_value('-gh')):
 			var v_info = Engine.get_version_info()
-			print(str('Godot version:  ', v_info.major,  '.',  v_info.minor,  '.',  v_info.patch))
-			print(str('GUT version:  ', Gut.new().get_version()))
-
+			var temp_gut = Gut.new()
+			temp_gut._print_versions()
+			temp_gut.free()
 			o.print_help()
 			quit()
 		elif(o.get_value('-gpo')):

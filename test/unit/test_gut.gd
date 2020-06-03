@@ -110,7 +110,7 @@ func before_each():
 
 func after_each():
 	counts.teardown_count += 1
-	gr.test_gut.queue_free()
+	gr.test_gut.free()
 
 func after_all():
 	counts.postrun_teardown_count += 1
@@ -357,12 +357,12 @@ func test_after_running_script_everything_checks_out():
 	assert_eq(instance.counts.teardown, 3, 'teardown')
 
 func test_when_inner_class_skipped_none_of_the_before_after_are_called():
+	gut.p('these tests sometimes fail.  Will have to add inner class names to test objects to make sure it passes.  GUT no longer guarantees the order in which the inner test classes are run so sometimes it works and sometimes it doesnt.')
 	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/inner_classes_check_before_after.gd')
 	gr.test_gut.set_inner_class_name('Inner1')
 	gr.test_gut.test_scripts()
 	var instances = gr.test_gut._test_script_objects
 
-	# instances[0] is the outer script
 
 	assert_eq(instances[1].before_all_calls, 1, 'TestInner1 before_all calls')
 	assert_eq(instances[1].after_all_calls, 1, 'TestInner1 after_all calls')

@@ -190,6 +190,19 @@ func _ready():
 	show()
 	_print_versions()
 
+# ------------------------------------------------------------------------------
+# Runs right before free is called I think.  Can't override `free`
+# ------------------------------------------------------------------------------
+func _notification(what):
+	if(what == NOTIFICATION_PREDELETE):
+		for test_script in _test_script_objects:
+			assert(not test_script.is_inside_tree())
+			test_script.free()
+
+		_test_script_objects = []
+
+		if(is_instance_valid(_gui)):
+			_gui.free()
 
 func _print_versions(send_all = true):
 	var v_info = Engine.get_version_info()
@@ -701,7 +714,6 @@ func _test_the_scripts(indexes=[]):
 					yield(script_result, 'completed')
 					_lgr.end_yield()
 
-				orphan_counter.print_orphans('test', _lgr)
 				#if the test called pause_before_teardown then yield until
 				#the continue button is pressed.
 				if(_pause_before_teardown and !_ignore_pause_before_teardown):
@@ -714,16 +726,17 @@ func _test_the_scripts(indexes=[]):
 				# call each post-each-test method until teardown is removed.
 				_call_deprecated_script_method(test_script, 'teardown', 'after_each')
 				test_script.after_each()
+				orphan_counter.print_orphans('test', _lgr)
 
 				_current_test.has_printed_name = false
 
 				_gui.set_progress_test_value(i + 1)
 				_doubler.get_ignored_methods().clear()
 
+		_current_test = null
 		_lgr.dec_indent()
 		orphan_counter.print_orphans('script', _lgr)
 		# call both post-all-tests methods until postrun_teardown is removed.
-		_current_test = null
 		if(_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
 			_call_deprecated_script_method(test_script, 'postrun_teardown', 'after_all')
 			test_script.after_all()
@@ -743,9 +756,11 @@ func _test_the_scripts(indexes=[]):
 		_gui.set_progress_script_value(test_indexes + 1) # new way
 		# END TEST SCRIPT LOOP
 
+
 	_lgr.set_indent_level(0)
-	orphan_counter.print_orphans('total', _lgr)
 	_end_run()
+	orphan_counter.print_orphans('total', _lgr)
+	_lgr.log(str('Total orphans ', orphan_counter.orphan_count()))
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------

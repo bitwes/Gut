@@ -1,10 +1,11 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://addons/gut/GutScene.gd" type="Script" id=1]
 [ext_resource path="res://addons/gut/fonts/AnonymousPro-Italic.ttf" type="DynamicFontData" id=2]
 [ext_resource path="res://addons/gut/fonts/AnonymousPro-Regular.ttf" type="DynamicFontData" id=3]
 [ext_resource path="res://addons/gut/fonts/AnonymousPro-BoldItalic.ttf" type="DynamicFontData" id=4]
 [ext_resource path="res://addons/gut/fonts/AnonymousPro-Bold.ttf" type="DynamicFontData" id=5]
+[ext_resource path="res://addons/gut/UserFileViewer.tscn" type="PackedScene" id=6]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.193863, 0.205501, 0.214844, 1 )
@@ -44,6 +45,11 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="UserFileViewer" parent="." instance=ExtResource( 6 )]
+visible = false
+margin_top = 388.0
+margin_bottom = 818.0
 
 [node name="TitleBar" type="Panel" parent="."]
 anchor_right = 1.0

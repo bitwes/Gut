@@ -147,6 +147,7 @@ func _populate_tests(test_script):
 			t.name = name
 			t.arg_count = methods[i]['args'].size()
 			test_script.tests.append(t)
+	inst.free()
 
 func _get_inner_test_class_names(loaded):
 	var inner_classes = []
