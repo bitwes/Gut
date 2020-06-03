@@ -3,7 +3,13 @@ extends Node2D
 var _lgr = null
 var _gut = null
 
-var yield_timer = Timer.new()
+var yield_timer = null
+
+func before_all():
+	yield_timer = Timer.new()
+
+func after_all():
+	yield_timer.free()
 
 func _on_Gut_gut_ready():
 	yield_timer.wait_time = .5
