@@ -76,7 +76,7 @@ class BaseTestClass:
 
 class TestMiscTests:
 	extends BaseTestClass
-
+#
 	func test_script_object_added_to_tree():
 		gr.test.assert_ne(get_tree(), null, "The tree should not be null if we are added to it")
 		assert_pass(gr.test)
@@ -86,6 +86,7 @@ class TestMiscTests:
 		var dlog = double(Logger).new()
 		gr.test.set_logger(dlog)
 		assert_eq(gr.test.get_logger(), dlog)
+
 
 class TestAssertEq:
 	extends BaseTestClass

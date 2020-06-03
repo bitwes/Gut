@@ -609,6 +609,10 @@ func _parameterized_call(test_script):
 func _test_the_scripts(indexes=[]):
 	var orphan_counter =  _utils.OrphanCounter.new()
 	orphan_counter.add_counter('total')
+	# brute force this.  At the end, there will be one orphan that will be
+	# freed.  In order to prevent misleading orphan messages this line was
+	# added.
+	orphan_counter._counters.total += 1
 
 	_print_versions(false)
 	var is_valid = _init_run()

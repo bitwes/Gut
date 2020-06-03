@@ -200,9 +200,13 @@ class TestBuiltInOverloading:
 		_dbl_win_dia = doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG)
 		_dbl_win_dia_text = _dbl_win_dia.new().get_script().get_source_code()
 
+	func after_each():
+		_dbl_win_dia.free()
+
 	func after_all():
 		if(doubler):
 			doubler.clear_output_directory()
+
 
 	func test_built_in_overloading_ony_happens_on_full_strategy():
 		doubler.set_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
