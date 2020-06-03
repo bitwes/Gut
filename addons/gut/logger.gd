@@ -1,5 +1,3 @@
-extends Node2D
-
 var types = {
 	debug = 'debug',
 	deprecated = 'deprecated',

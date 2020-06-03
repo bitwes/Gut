@@ -591,6 +591,7 @@ func _parameterized_call(test_script):
 	_parameter_handler = null
 	emit_signal(SIGNAL_PRAMETERIZED_YIELD_DONE)
 
+
 # ------------------------------------------------------------------------------
 # Run all tests in a script.  This is the core logic for running tests.
 #
@@ -598,6 +599,9 @@ func _parameterized_call(test_script):
 # yields.
 # ------------------------------------------------------------------------------
 func _test_the_scripts(indexes=[]):
+	var orphan_counter =  _utils.OrphanCounter.new()
+	orphan_counter.add_counter('total')
+
 	_print_versions(false)
 	var is_valid = _init_run()
 	if(!is_valid):
@@ -628,6 +632,7 @@ func _test_the_scripts(indexes=[]):
 	# loop through scripts
 	for test_indexes in range(indexes_to_run.size()):
 		var the_script = _test_collector.scripts[indexes_to_run[test_indexes]]
+		orphan_counter.add_counter('script')
 
 		if(the_script.tests.size() > 0):
 			_gui.set_title(the_script.get_full_name())
@@ -669,6 +674,7 @@ func _test_the_scripts(indexes=[]):
 				(_unit_test_name == '')):
 				_lgr.log_test_name()
 				_lgr.set_indent_level(1)
+				orphan_counter.add_counter('test')
 
 				# yield so things paint
 				if(_should_yield_now()):
@@ -695,6 +701,7 @@ func _test_the_scripts(indexes=[]):
 					yield(script_result, 'completed')
 					_lgr.end_yield()
 
+				orphan_counter.print_orphans('test', _lgr)
 				#if the test called pause_before_teardown then yield until
 				#the continue button is pressed.
 				if(_pause_before_teardown and !_ignore_pause_before_teardown):
@@ -714,6 +721,7 @@ func _test_the_scripts(indexes=[]):
 				_doubler.get_ignored_methods().clear()
 
 		_lgr.dec_indent()
+		orphan_counter.print_orphans('script', _lgr)
 		# call both post-all-tests methods until postrun_teardown is removed.
 		_current_test = null
 		if(_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
@@ -736,6 +744,7 @@ func _test_the_scripts(indexes=[]):
 		# END TEST SCRIPT LOOP
 
 	_lgr.set_indent_level(0)
+	orphan_counter.print_orphans('total', _lgr)
 	_end_run()
 
 # ------------------------------------------------------------------------------
