@@ -31,7 +31,6 @@
 # Version 6.8.3
 ################################################################################
 extends Control
-var _version = '6.8.3'
 
 # -- Settings --
 var _select_script = ''
@@ -205,17 +204,13 @@ func _notification(what):
 			_gui.free()
 
 func _print_versions(send_all = true):
-	var v_info = Engine.get_version_info()
-	var gut_version_info =  str('GUT version:  ', get_version())
-	var godot_version_info  = str('Godot version:  ', v_info.major,  '.',  v_info.minor,  '.',  v_info.patch)
+	var info = _utils.get_version_text()
 
 	if(send_all):
-		p(godot_version_info)
-		p(gut_version_info)
+		p(info)
 	else:
 		var printer = _lgr.get_printer('gui')
-		printer.send(godot_version_info  + "\n")
-		printer.send(gut_version_info +  "\n")
+		printer.send(info + "\n")
 
 
 ################################################################################
@@ -1346,7 +1341,7 @@ func set_export_path(export_path):
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func get_version():
-	return _version
+	return _utils.version
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------

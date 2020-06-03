@@ -348,10 +348,7 @@ func _init():
 		if(!all_options_valid):
 			quit()
 		elif(o.get_value('-gh')):
-			var v_info = Engine.get_version_info()
-			var temp_gut = Gut.new()
-			temp_gut._print_versions()
-			temp_gut.free()
+			print(_utils.get_version_text())
 			o.print_help()
 			quit()
 		elif(o.get_value('-gpo')):
