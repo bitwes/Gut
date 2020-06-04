@@ -609,10 +609,6 @@ func _parameterized_call(test_script):
 func _test_the_scripts(indexes=[]):
 	var orphan_counter =  _utils.OrphanCounter.new()
 	orphan_counter.add_counter('total')
-	# brute force this.  At the end, there will be one orphan that will be
-	# freed.  In order to prevent misleading orphan messages this line was
-	# added.
-	orphan_counter._counters.total += 1
 
 	_print_versions(false)
 	var is_valid = _init_run()
@@ -725,7 +721,9 @@ func _test_the_scripts(indexes=[]):
 				# call each post-each-test method until teardown is removed.
 				_call_deprecated_script_method(test_script, 'teardown', 'after_each')
 				test_script.after_each()
-				orphan_counter.print_orphans('test', _lgr)
+
+				if(_log_level > 0):
+					orphan_counter.print_orphans('test', _lgr)
 
 				_current_test.has_printed_name = false
 
@@ -758,6 +756,9 @@ func _test_the_scripts(indexes=[]):
 
 	_lgr.set_indent_level(0)
 	_end_run()
+	# Do not count any of the _test_script_objects since these will be released
+	# when GUT is released.
+	orphan_counter._counters.total += _test_script_objects.size()
 	orphan_counter.print_orphans('total', _lgr)
 	_lgr.log(str('Total orphans ', orphan_counter.orphan_count()))
 
@@ -977,6 +978,7 @@ func import_tests_if_none_found():
 func export_if_tests_found():
 	if(_test_collector.scripts.size() > 0):
 		export_tests()
+
 ################
 #
 # MISC

@@ -29,7 +29,9 @@ func test_print_indent():
 
 func test_print_non_strings():
 	gut.p([1, 2, 3])
-	gut.p(Node2D.new())
+	var n2d = Node2D.new()
+	gut.p(n2d)
+	n2d.free()
 
 func test_print_multiple_lines():
 	var lines = "hello\nworld\nhow\nare\nyou?"

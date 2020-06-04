@@ -5,6 +5,7 @@ var types = {
 	failed = 'failed',
 	info = 'info',
 	normal = 'normal',
+	orphan = 'orphan',
 	passed = 'passed',
 	pending = 'pending',
 	warn ='warn',
@@ -28,6 +29,7 @@ var _type_data = {
 	types.failed:		{disp='Failed', 	enabled=true, fmt=fmts.red},
 	types.info:			{disp='INFO', 		enabled=true, fmt=fmts.bold},
 	types.normal:		{disp='NORMAL', 	enabled=true, fmt=fmts.none},
+	types.orphan:		{disp='Orphans',	enabled=true, fmt=fmts.yellow},
 	types.passed:		{disp='Passed', 	enabled=true, fmt=fmts.green},
 	types.pending:		{disp='Pending',	enabled=true, fmt=fmts.yellow},
 	types.warn:			{disp='WARNING', 	enabled=true, fmt=fmts.yellow},
@@ -177,6 +179,9 @@ func failed(text):
 
 func info(text):
 	_output_type(types.info, text)
+
+func orphan(text):
+	_output_type(types.orphan, text)
 
 func passed(text):
 	_output_type(types.passed, ':  ' + text)

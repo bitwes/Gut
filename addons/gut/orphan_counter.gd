@@ -22,4 +22,4 @@ func print_orphans(name, lgr):
 		var o = 'orphan'
 		if(count > 1):
 			o = 'orphans'
-		lgr.log(str(count, ' new ', o, '(', name, ').'), lgr.fmts.yellow)
+		lgr.orphan(str(count, ' new ', o, '(', name, ').'))
