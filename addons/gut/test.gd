@@ -207,6 +207,7 @@ func _fail_if_does_not_have_signal(object, signal_name):
 		_fail(str('Object ', object, ' does not have the signal [', signal_name, ']'))
 		did_fail = true
 	return did_fail
+
 # ------------------------------------------------------------------------------
 # Signal assertion helper.  Do not call directly, use _can_make_signal_assertions
 # ------------------------------------------------------------------------------
@@ -903,6 +904,21 @@ func assert_freed(obj, title):
 # -----------------------------------------------------------------------------
 func assert_not_freed(obj, title):
 	assert_true(is_instance_valid(obj), "Object %s is not freed" % title)
+
+# ------------------------------------------------------------------------------
+# Asserts that the current test has not introduced any new orphans.  This only
+# applies to the test code that preceedes a call to this method so it should be
+# the last thing your test does.
+# ------------------------------------------------------------------------------
+func assert_no_new_orphans(text=''):
+	var count = gut.get_orphan_counter().get_counter('test')
+	var msg = ''
+	if(text != ''):
+		msg = ':  ' + text
+	if(count > 0):
+		_fail(str('Expected no orphans, but found ', count, msg))
+	else:
+		_pass('No new orphans found.' + msg)
 
 # ------------------------------------------------------------------------------
 # Mark the current test as pending.

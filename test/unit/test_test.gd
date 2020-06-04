@@ -1368,7 +1368,6 @@ class TestConnectionAsserts:
 class TestParameterizedTests:
 	extends BaseTestClass
 
-
 	func test_first_call_to_use_parameters_returns_first_index_of_params():
 		var result = gr.test_with_gut.use_parameters([1, 2, 3])
 		assert_eq(result, 1)
@@ -1389,4 +1388,28 @@ class TestParameterizedTests:
 		gr.test_with_gut.use_parameters(['a', 'b', 'c', 'd'])
 		assert_eq(gr.test_with_gut.gut.get_parameter_handler(), ph)
 
+class TestAssertOrphans:
+	extends 'res://addons/gut/test.gd'
 
+	func test_passes_when_no_orphans_introduced():
+		assert_no_new_orphans()
+		assert_true(gut._current_test.passed, 'test should be passing')
+
+	func test_fails_when_orphans_introduced():
+		var n2d = Node2D.new()
+		assert_no_new_orphans('this should fail')
+		assert_false(gut._current_test.passed, 'test should be failing')
+		n2d.free()
+
+	func test_passes_when_orphans_released():
+		var n2d = Node2D.new()
+		n2d.free()
+		assert_no_new_orphans()
+		assert_true(gut._current_test.passed, 'this should be passing')
+
+	func test_passes_with_queue_free():
+		var n2d = Node2D.new()
+		n2d.queue_free()
+		yield(yield_for(.5, 'must yield for queue_free to take hold'), YIELD)
+		assert_no_new_orphans()
+		assert_true(gut._current_test.passed, 'this should be passing')

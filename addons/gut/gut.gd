@@ -116,6 +116,7 @@ var _stubber = _utils.Stubber.new()
 var _doubler = _utils.Doubler.new()
 var _spy = _utils.Spy.new()
 var _gui = null
+var _orphan_counter =  _utils.OrphanCounter.new()
 # This is populated by test.gd each time a paramterized test is encountered
 # for the first time.
 var _parameter_handler = null
@@ -607,8 +608,7 @@ func _parameterized_call(test_script):
 # yields.
 # ------------------------------------------------------------------------------
 func _test_the_scripts(indexes=[]):
-	var orphan_counter =  _utils.OrphanCounter.new()
-	orphan_counter.add_counter('total')
+	_orphan_counter.add_counter('total')
 
 	_print_versions(false)
 	var is_valid = _init_run()
@@ -640,7 +640,7 @@ func _test_the_scripts(indexes=[]):
 	# loop through scripts
 	for test_indexes in range(indexes_to_run.size()):
 		var the_script = _test_collector.scripts[indexes_to_run[test_indexes]]
-		orphan_counter.add_counter('script')
+		_orphan_counter.add_counter('script')
 
 		if(the_script.tests.size() > 0):
 			_gui.set_title(the_script.get_full_name())
@@ -682,7 +682,7 @@ func _test_the_scripts(indexes=[]):
 				(_unit_test_name == '')):
 				_lgr.log_test_name()
 				_lgr.set_indent_level(1)
-				orphan_counter.add_counter('test')
+				_orphan_counter.add_counter('test')
 
 				# yield so things paint
 				if(_should_yield_now()):
@@ -723,7 +723,7 @@ func _test_the_scripts(indexes=[]):
 				test_script.after_each()
 
 				if(_log_level > 0):
-					orphan_counter.print_orphans('test', _lgr)
+					_orphan_counter.print_orphans('test', _lgr)
 
 				_current_test.has_printed_name = false
 
@@ -732,7 +732,7 @@ func _test_the_scripts(indexes=[]):
 
 		_current_test = null
 		_lgr.dec_indent()
-		orphan_counter.print_orphans('script', _lgr)
+		_orphan_counter.print_orphans('script', _lgr)
 		# call both post-all-tests methods until postrun_teardown is removed.
 		if(_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
 			_call_deprecated_script_method(test_script, 'postrun_teardown', 'after_all')
@@ -758,9 +758,9 @@ func _test_the_scripts(indexes=[]):
 	_end_run()
 	# Do not count any of the _test_script_objects since these will be released
 	# when GUT is released.
-	orphan_counter._counters.total += _test_script_objects.size()
-	orphan_counter.print_orphans('total', _lgr)
-	_lgr.log(str('Total orphans ', orphan_counter.orphan_count()))
+	_orphan_counter._counters.total += _test_script_objects.size()
+	_orphan_counter.print_orphans('total', _lgr)
+	_lgr.log(str('Total orphans ', _orphan_counter.orphan_count()))
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -1405,3 +1405,6 @@ func set_parameter_handler(parameter_handler):
 # ------------------------------------------------------------------------------
 func get_gui():
 	return _gui
+
+func get_orphan_counter():
+	return _orphan_counter
