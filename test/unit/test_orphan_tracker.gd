@@ -19,7 +19,7 @@ func test_print_singular_orphan():
 	oc.add_counter('one')
 	stub(oc, 'orphan_count').to_return(2)
 	oc.print_orphans('one', d_logger)
-	var msg = get_call_parameters(d_logger, 'log')[0]
+	var msg = get_call_parameters(d_logger, 'orphan')[0]
 	assert_string_contains(msg, 'orphan(')
 
 func test_print_plural_orphans():
@@ -31,7 +31,7 @@ func test_print_plural_orphans():
 	oc.add_counter('one')
 	stub(oc, 'orphan_count').to_return(5)
 	oc.print_orphans('one', d_logger)
-	var msg = get_call_parameters(d_logger, 'log')[0]
+	var msg = get_call_parameters(d_logger, 'orphan')[0]
 	assert_string_contains(msg, 'orphans(')
 
 func test_adding_same_name_overwrites_prev_start_val():

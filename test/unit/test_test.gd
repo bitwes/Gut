@@ -1381,7 +1381,6 @@ class TestParameterizedTests:
 		var ph = gr.test_with_gut.gut.get_parameter_handler()
 		assert_eq(ph.get_logger(), gr.test_with_gut.gut.get_logger())
 
-
 	func test_when_gut_already_has_parameter_handler_it_does_not_make_a_new_one():
 		gr.test_with_gut.use_parameters(['a', 'b', 'c', 'd'])
 		var ph = gr.test_with_gut.gut.get_parameter_handler()

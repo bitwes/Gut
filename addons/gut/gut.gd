@@ -419,8 +419,16 @@ func _init_run():
 func _end_run():
 	_gui.end_run()
 	_print_summary()
-
 	p("\n")
+
+	# Do not count any of the _test_script_objects since these will be released
+	# when GUT is released.
+	_orphan_counter._counters.total += _test_script_objects.size()
+	if(_orphan_counter.get_counter('total') > 0):
+		_orphan_counter.print_orphans('total', _lgr)
+		p("  Note that this count does not include GUT objects that will be freed upon exit.")
+		p(str("  Total orphans = ", _orphan_counter.orphan_count()))
+
 	if(!_utils.is_null_or_empty(_select_script)):
 		p('Ran Scripts matching "' + _select_script + '"')
 	if(!_utils.is_null_or_empty(_unit_test_name)):
@@ -440,6 +448,7 @@ func _end_run():
 	update()
 	_run_hook_script(_post_run_script_instance)
 	emit_signal(SIGNAL_TESTS_FINISHED)
+
 	_gui.set_title("Finished.  " + str(get_fail_count()) + " failures.")
 
 
@@ -756,11 +765,6 @@ func _test_the_scripts(indexes=[]):
 
 	_lgr.set_indent_level(0)
 	_end_run()
-	# Do not count any of the _test_script_objects since these will be released
-	# when GUT is released.
-	_orphan_counter._counters.total += _test_script_objects.size()
-	_orphan_counter.print_orphans('total', _lgr)
-	_lgr.log(str('Total orphans ', _orphan_counter.orphan_count()))
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
