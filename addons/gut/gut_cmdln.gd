@@ -134,6 +134,7 @@ var options = {
 	font_color = Color(1, 1, 1).to_html(),
 	font_name = 'CourierPrime',
 	font_size = 16,
+	hide_orphans = false,
 	ignore_pause = false,
 	include_subdirs = false,
 	inner_class = '',
@@ -166,8 +167,9 @@ func setup_options():
 					'inside a specified value or godot will think you are trying to run a scene.'))
 	opts.add('-gtest', [], 'Comma delimited list of full paths to test scripts to run.')
 	opts.add('-gdir', options.dirs, 'Comma delimited list of directories to add tests from.')
-	opts.add('-gprefix', options.prefix, 'Prefix used to find tests when specifying -gdir.  Default "[default]"')
-	opts.add('-gsuffix', options.suffix, 'Suffix used to find tests when specifying -gdir.  Default "[default]"')
+	opts.add('-gprefix', options.prefix, 'Prefix used to find tests when specifying -gdir.  Default "[default]".')
+	opts.add('-gsuffix', options.suffix, 'Suffix used to find tests when specifying -gdir.  Default "[default]".')
+	opts.add('-ghide_orphans', false, 'Display orphan counts for tests and scripts.  Default "[default]".')
 	opts.add('-gmaximize', false, 'Maximizes test runner window to fit the viewport.')
 	opts.add('-gexit', false, 'Exit after running tests.  If not specified you have to manually close the window.')
 	opts.add('-gexit_on_success', false, 'Only exit if all tests pass.')
@@ -217,6 +219,7 @@ func extract_command_line_options(from, to):
 	to.should_exit = from.get_value('-gexit')
 	to.should_exit_on_success = from.get_value('-gexit_on_success')
 	to.should_maximize = from.get_value('-gmaximize')
+	to.hide_orphans = from.get_value('-ghide_orphans')
 	to.suffix = from.get_value('-gsuffix')
 	to.tests = from.get_value('-gtest')
 	to.unit_test_name = from.get_value('-gunit_test_name')
@@ -296,6 +299,7 @@ func apply_options(opts):
 	_tester.set_pre_run_script(opts.pre_run_script)
 	_tester.set_post_run_script(opts.post_run_script)
 	_tester.set_color_output(!opts.disable_colors)
+	_tester.show_orphans(!opts.hide_orphans)
 
 	_tester.get_gui().set_font_size(opts.font_size)
 	_tester.get_gui().set_font(opts.font_name)

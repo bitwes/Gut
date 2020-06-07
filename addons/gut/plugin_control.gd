@@ -56,6 +56,8 @@ export var _run_on_load = false
 export var _should_maximize = false
 # Print output to the consol as well
 export var _should_print_to_console = true
+# Display orphan counts at the end of tests/scripts.
+export var _show_orphans = true
 # The log level.
 export(int, 'Fail/Errors', 'Errors/Warnings/Test Names', 'Everything') var _log_level = 1
 # When enabled GUT will yield between tests to give the GUI time to paint.
@@ -188,6 +190,7 @@ func _setup_gut():
 	_gut.set_pre_run_script(_pre_run_script)
 	_gut.set_post_run_script(_post_run_script)
 	_gut.set_color_output(_color_output)
+	_gut.show_orphans(_show_orphans)
 
 	get_parent().add_child(_gut)
 

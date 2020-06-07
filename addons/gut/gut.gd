@@ -411,8 +411,6 @@ func _init_run():
 	return valid
 
 
-
-
 # ------------------------------------------------------------------------------
 # Print out run information and close out the run.
 # ------------------------------------------------------------------------------
@@ -424,7 +422,7 @@ func _end_run():
 	# Do not count any of the _test_script_objects since these will be released
 	# when GUT is released.
 	_orphan_counter._counters.total += _test_script_objects.size()
-	if(_orphan_counter.get_counter('total') > 0):
+	if(_orphan_counter.get_counter('total') > 0 and _lgr.is_type_enabled('orphan')):
 		_orphan_counter.print_orphans('total', _lgr)
 		p("  Note that this count does not include GUT objects that will be freed upon exit.")
 		p(str("  Total orphans = ", _orphan_counter.orphan_count()))
@@ -892,6 +890,9 @@ func test_scripts(run_rest=false):
 	else:
 		_test_the_scripts([])
 
+# alias
+func run_tests(run_rest=false):
+	test_scripts(run_rest)
 
 # ------------------------------------------------------------------------------
 # Runs a single script passed in.
@@ -1410,5 +1411,12 @@ func set_parameter_handler(parameter_handler):
 func get_gui():
 	return _gui
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func get_orphan_counter():
 	return _orphan_counter
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func show_orphans(should):
+	_lgr.set_type_enabled(_lgr.types.orphan, should)
