@@ -55,6 +55,9 @@ var _indent_level = 0
 var _indent_string = '    '
 var _skip_test_name_for_testing = false
 var _less_test_names = false
+var _yield_calls = 0
+var _last_yield_text = ''
+
 
 func _init():
 	#print('!!!!!!!!! new logger ', self, ' !!!!!!!!!')
@@ -100,6 +103,7 @@ func _print_test_name():
 	if(!cur_test.has_printed_name):
 		_output('* ' + cur_test.name + "\n")
 		cur_test.has_printed_name = true
+
 func _output(text, fmt=null):
 	for key in _printers:
 		if(_should_print_to_printer(key)):
@@ -154,7 +158,11 @@ func _output_type(type, text):
 		if(_logs.has(type)):
 			_logs[type].append(text)
 
-		var start = str('[', td.disp, '] ')
+		var start = str('[', td.disp, ']')
+		if(text != null and text != ''):
+			start += ':  '
+		else:
+			start += ' '
 		var indented_start = _indent_text(start)
 		var indented_end = _indent_text(text)
 		indented_end = indented_end.lstrip(_indent_string)
@@ -175,7 +183,7 @@ func error(text):
 	_output_type(types.error, text)
 
 func failed(text):
-	_output_type(types.failed, ':  ' + text)
+	_output_type(types.failed, text)
 
 func info(text):
 	_output_type(types.info, text)
@@ -184,13 +192,10 @@ func orphan(text):
 	_output_type(types.orphan, text)
 
 func passed(text):
-	_output_type(types.passed, ':  ' + text)
+	_output_type(types.passed, text)
 
 func pending(text):
-	var sep = ''
-	if(text != null and text != ''):
-		sep = ':  '
-	_output_type(types.pending, sep + text)
+	_output_type(types.pending, text)
 
 func warn(text):
 	_output_type(types.warn, text)
@@ -213,12 +218,6 @@ func log_test_name():
 	# what to print is the test name.
 	if(!_less_test_names):
 		_print_test_name()
-
-func log_multi_format(text):
-	for key in _printers:
-		if(_should_print_to_printer(key)):
-			var indented = _indent_text(text)
-			_printers[key].send_format_multiple(indented, _type_data)
 
 # ---------------
 # Misc
@@ -279,20 +278,17 @@ func disable_formatting(is_disabled):
 func get_printer(printer_key):
 	return _printers[printer_key]
 
-var yield_calls = 0
-var last_yield_text = ''
-
 func _yield_text_terminal(text):
 	var printer = _printers['terminal']
-	if(yield_calls != 0):
+	if(_yield_calls != 0):
 		printer.clear_line()
-		printer.back(last_yield_text.length())
+		printer.back(_last_yield_text.length())
 	printer.send(text, fmts.yellow)
 
 func _end_yield_terminal():
 	var printer = _printers['terminal']
 	printer.clear_line()
-	printer.back(last_yield_text.length())
+	printer.back(_last_yield_text.length())
 
 func _yield_text_gui(text):
 	var lbl = _gut.get_gui().get_waiting_label()
@@ -307,13 +303,13 @@ func _end_yield_gui():
 func yield_text(text):
 	_yield_text_terminal(text)
 	_yield_text_gui(text)
-	last_yield_text = text
-	yield_calls += 1
+	_last_yield_text = text
+	_yield_calls += 1
 
 func end_yield():
-	if(yield_calls == 0):
+	if(_yield_calls == 0):
 		return
 	_end_yield_terminal()
 	_end_yield_gui()
-	yield_calls = 0
-	last_yield_text = ''
+	_yield_calls = 0
+	_last_yield_text = ''

@@ -76,8 +76,8 @@ func _print_all_formats():
 
 
 func on_yield_timer_timeout():
-	_lgr.yield_text(str('yielding ', _lgr.yield_calls))
-	if(_lgr.yield_calls > 5):
+	_lgr.yield_text(str('yielding ', _lgr._yield_calls))
+	if(_lgr._yield_calls > 5):
 		yield_timer.stop()
 		_lgr.end_yield()
 		_lgr.log('done')

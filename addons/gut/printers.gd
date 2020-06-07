@@ -32,23 +32,6 @@ class Printer:
 	func set_disabled(disabled):
 		_disabled = disabled
 
-	func format_multiple(text, type_data):
-		if(!_format_enabled):
-			return text
-
-		var to_return = text
-		for key in type_data:
-			if(type_data[key].fmt != null):
-				var word = str('[', type_data[key].disp, ']')
-				to_return = to_return.replace(word,
-					format_text(word, type_data[key].fmt))
-		return to_return
-
-	func send_format_multiple(text, type_data):
-		if(_disabled):
-			return
-
-		_output(format_multiple(text, type_data))
 	# --------------------
 	# Virtual Methods (some have some default behavior)
 	# --------------------
@@ -65,6 +48,12 @@ class GutGuiPrinter:
 	extends Printer
 	var _gut = null
 
+	var _colors = {
+			red = Color.red,
+			yellow = Color.yellow,
+			green = Color.green
+	}
+
 	func _init():
 		_printer_name = 'gui'
 
@@ -75,15 +64,25 @@ class GutGuiPrinter:
 		return '[color=' + c_word + ']' + text + '[/color]'
 
 	func format_text(text, fmt):
+		var box = _gut.get_gui().get_text_box()
+
 		if(fmt == 'bold'):
-			return _wrap_with_tag(text, 'b')
+			box.push_bold()
 		elif(fmt == 'underline'):
-			return _wrap_with_tag(text, 'u')
+			box.push_underline()
+		elif(_colors.has(fmt)):
+			box.push_color(_colors[fmt])
 		else:
-			return _color_text(text, fmt)
+			# just pushing something to pop.
+			box.push_normal()
+
+		box.add_text(text)
+		box.pop()
+
+		return ''
 
 	func _output(text):
-		_gut.get_gui().get_text_box().append_bbcode(text)
+		_gut.get_gui().get_text_box().add_text(text)
 
 	func get_gut():
 		return _gut
@@ -96,6 +95,7 @@ class GutGuiPrinter:
 		var box = _gut.get_gui().get_text_box()
 		box.remove_line(box.get_line_count() - 1)
 		box.update()
+
 # ------------------------------------------------------------------------------
 # This AND TerminalPrinter should not be enabled at the same time since it will
 # result in duplicate output.  printraw does not print to the console so i had
@@ -116,9 +116,6 @@ class ConsolePrinter:
 			_buffer = ''
 		else:
 			_buffer += text
-
-	func format_multiple(text, type_data):
-		return text
 
 # ------------------------------------------------------------------------------
 # Prints text to terminal, formats some words.

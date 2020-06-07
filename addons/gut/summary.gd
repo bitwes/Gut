@@ -142,7 +142,6 @@ func log_summary_text(lgr):
 
 
 		for t in range(_scripts[s]._test_order.size()):
-			#lgr.inc_indent()
 			var tname = _scripts[s]._test_order[t]
 			var test = _scripts[s].get_test_obj(tname)
 			if(test.fail_texts.size() > 0 or test.pending_texts.size() > 0):
@@ -151,9 +150,9 @@ func log_summary_text(lgr):
 				lgr.inc_indent()
 
 				for i in range(test.fail_texts.size()):
-					lgr.log_multi_format(str('[Failed]:  ', test.fail_texts[i], "\n"))
+					lgr.failed(test.fail_texts[i])
 				for i in range(test.pending_texts.size()):
-					lgr.log_multi_format(str('[Pending]:  ', test.pending_texts[i], "\n"))
+					lgr.pending(test.pending_texts[i])
 				lgr.dec_indent()
 
 	lgr.set_indent_level(0)

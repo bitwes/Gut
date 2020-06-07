@@ -72,6 +72,17 @@ func test_yield():
 	yield(yield_for(2), YIELD)
 	gut.p('end yield')
 
+class TestGuiOutput:
+	extends 'res://addons/gut/test.gd'
+
+	func test_embedded_bbcode():
+		_lgr.log('[u]this should not be underlined')
+		assert_string_contains(gut.get_gui().get_text_box().get_text(), '[u]this should')
+
+	func test_embedded_bbcode_with_format():
+		_lgr.log('[i]this should not be italic', _lgr.fmts.yellow)
+		assert_string_contains(gut.get_gui().get_text_box().get_text(), '[i]this should')
+
 class TestBasicLoggerOutput:
 	extends 'res://test/gut_test.gd'
 
