@@ -148,6 +148,7 @@ func _init():
 	_doubler.set_output_dir(_temp_directory)
 	_doubler.set_stubber(_stubber)
 	_doubler.set_spy(_spy)
+	_doubler.set_gut(self)
 
 	# TODO remove these, universal logger should fix this.
 	_doubler.set_logger(_lgr)

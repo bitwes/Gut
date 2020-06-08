@@ -6,8 +6,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Breaking changes from 6.x.x
 * You must replace the GUT node in your scenes.  Take notes on your GUT settings in the editor then delete GUT from the tree and add it back in.  Then repopulate your settings.
 * A new signal `gut_ready` should be used instead of `_ready` when performing any actions on the GUT object.  You should avoid interacting with GUT until this signal has been emitted.
+
+### Possibly Breaking changes
 * The order the tests are run is no longer guaranteed.  This has been the case with Inner Test cases but it's now true for all tests.
 * The order that Inner Test classes are run is no longer guaranteed.
+* All Doubles and Partial Doubles are freed after each test.
+* All children added with `add_child` are freed after each test.
 
 ## Features
 * __Issue 114__ By popular demand Parameterized Tests have been added.  You can now create a tests that will be run multiple times and fed a list of parameters.  [See the wiki](https:/github.com/bitwes/Gut/wiki/ParameterizedTests) for more information. (This feature opened up a giant can of worms for logging which led to more cans and more worms.)

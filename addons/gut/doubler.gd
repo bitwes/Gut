@@ -29,6 +29,14 @@ class ScriptMethods:
 		'_get_minimum_size', # Nonexistent function _get_minimum_size
 	]
 
+	# These methods should not be included in the double.
+	var _skip = [
+		# There is an init in the template.  There is also no real reason
+		# to include this method since it will always be called, it has no
+		# return value, and you cannot prevent super from being called.
+		'_init'
+	]
+
 	var built_ins = []
 	var local_methods = []
 	var _method_names = []
@@ -37,6 +45,8 @@ class ScriptMethods:
 		return _blacklist.find(method_meta.name) != -1
 
 	func _add_name_if_does_not_have(method_name):
+		if(_skip.has(method_name)):
+			return false
 		var should_add = _method_names.find(method_name) == -1
 		if(should_add):
 			_method_names.append(method_name)
@@ -215,7 +225,7 @@ class PackedSceneDouble:
 # ------------------------------------------------------------------------------
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 
-var  _ignored_methods = _utils.OneToMany.new()
+var _ignored_methods = _utils.OneToMany.new()
 var _stubber = _utils.Stubber.new()
 var _lgr = _utils.get_logger()
 var _method_maker = _utils.MethodMaker.new()
@@ -223,6 +233,7 @@ var _method_maker = _utils.MethodMaker.new()
 var _output_dir = 'user://gut_temp_directory'
 var _double_count = 0 # used in making files names unique
 var _spy = null
+var _gut = null
 var _strategy = null
 var _base_script_text = _utils.get_file_as_text('res://addons/gut/double_templates/script_template.txt')
 var _make_files = false
@@ -278,13 +289,19 @@ func _get_base_script_text(obj_info, override_path):
 	if(_spy != null):
 		spy_id = _spy.get_instance_id()
 
+	var gut_id = -1
+	if(_gut != null):
+		gut_id = _gut.get_instance_id()
+
 	var values = {
 		"path":path,
 		"subpath":obj_info.get_subpath(),
 		"stubber_id":stubber_id,
 		"spy_id":spy_id,
-		"extends":obj_info.get_extends_text()
+		"extends":obj_info.get_extends_text(),
+		"gut_id":gut_id
 	}
+
 	return _base_script_text.format(values)
 
 func _write_file(obj_info, dest_path, override_path=null):
@@ -458,6 +475,12 @@ func get_strategy():
 
 func set_strategy(strategy):
 	_strategy = strategy
+
+func get_gut():
+	return _gut
+
+func set_gut(gut):
+	_gut = gut
 
 func partial_double_scene(path, strategy=_strategy):
 	return _double_scene(path, true, strategy)

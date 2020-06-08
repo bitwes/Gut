@@ -5,6 +5,7 @@ var __gut_metadata_ = {
 	subpath = '{subpath}',
 	stubber = __gut_instance_from_id({stubber_id}),
 	spy = __gut_instance_from_id({spy_id}),
+	gut = __gut_instance_from_id({gut_id}),
 }
 
 func __gut_instance_from_id(inst_id):
@@ -30,6 +31,10 @@ func __gut_get_stubbed_return(method_name, called_with):
 		return __gut_metadata_.stubber.get_return(self, method_name, called_with)
 	else:
 		return null
+
+func  _init():
+	if(__gut_metadata_.gut != null):
+		__gut_metadata_.gut.get_autofree().add_free(self)
 
 # ------------------------------------------------------------------------------
 # Methods start here
