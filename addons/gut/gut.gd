@@ -117,6 +117,8 @@ var _doubler = _utils.Doubler.new()
 var _spy = _utils.Spy.new()
 var _gui = null
 var _orphan_counter =  _utils.OrphanCounter.new()
+var _autofree = _utils.AutoFree.new()
+
 # This is populated by test.gd each time a paramterized test is encountered
 # for the first time.
 var _parameter_handler = null
@@ -424,8 +426,10 @@ func _end_run():
 	_orphan_counter._counters.total += _test_script_objects.size()
 	if(_orphan_counter.get_counter('total') > 0 and _lgr.is_type_enabled('orphan')):
 		_orphan_counter.print_orphans('total', _lgr)
-		p("  Note that this count does not include GUT objects that will be freed upon exit.")
-		p(str("  Total orphans = ", _orphan_counter.orphan_count()))
+		p("Note:  This count does not include GUT objects that will be freed upon exit.")
+		p("       It also does not include any orphans created by global scripts")
+		p("       loaded before tests were ran.")
+		p(str("Total orphans = ", _orphan_counter.orphan_count()))
 
 	if(!_utils.is_null_or_empty(_select_script)):
 		p('Ran Scripts matching "' + _select_script + '"')
@@ -729,11 +733,19 @@ func _test_the_scripts(indexes=[]):
 				_call_deprecated_script_method(test_script, 'teardown', 'after_each')
 				test_script.after_each()
 
+				# -- Free up everything in the _autofree.  Yield for a bit if we
+				# have anything with a queue_free so that they have time to
+				# free and are not found by the orphan counter.
+				var afq_count = _autofree.get_queue_free_count()
+				_autofree.free_all()
+				if(afq_count > 0):
+					yield(_do_yield_between(0.001), 'timeout')
+				# ------
+
 				if(_log_level > 0):
 					_orphan_counter.print_orphans('test', _lgr)
 
 				_current_test.has_printed_name = false
-
 				_gui.set_progress_test_value(i + 1)
 				_doubler.get_ignored_methods().clear()
 
@@ -1420,3 +1432,8 @@ func get_orphan_counter():
 # ------------------------------------------------------------------------------
 func show_orphans(should):
 	_lgr.set_type_enabled(_lgr.types.orphan, should)
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_autofree():
+	return _autofree

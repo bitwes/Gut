@@ -338,6 +338,8 @@ func _get_methods(object_info):
 	# any method in the script or super script
 	var script_methods = ScriptMethods.new()
 	var methods = obj.get_method_list()
+	if(!(obj is Reference)):
+		obj.free()
 
 	# first pass is for local methods only
 	for i in range(methods.size()):

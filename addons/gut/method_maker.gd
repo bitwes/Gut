@@ -190,8 +190,10 @@ func get_super_call_text(meta):
 		params += PARAM_PREFIX + meta.args[i].name
 		if(meta.args.size() > 1 and i != meta.args.size() -1):
 			params += ', '
-
-	return str('.', meta.name, '(', params, ')')
+	if(meta.name == '_init'):
+		return 'null'
+	else:
+		return str('.', meta.name, '(', params, ')')
 
 func get_spy_call_parameters_text(meta):
 	var called_with = 'null'

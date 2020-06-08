@@ -1041,7 +1041,7 @@ func double(thing, p2=null, p3=null):
 	var double_info = DoubleInfo.new(thing, p2, p3)
 	double_info.make_partial = false
 
-	return _smart_double(double_info)
+	return autofree(_smart_double(double_info))
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -1049,7 +1049,7 @@ func partial_double(thing, p2=null, p3=null):
 	var double_info = DoubleInfo.new(thing, p2, p3)
 	double_info.make_partial = true
 
-	return _smart_double(double_info)
+	return autofree(_smart_double(double_info))
 
 
 # ------------------------------------------------------------------------------
@@ -1175,3 +1175,13 @@ func use_parameters(params):
 	gut.p(output, 0, 0)
 	_lgr.inc_indent()
 	return ph.next_parameters()
+
+
+var _autofree = load('res://addons/gut/autofree.gd').new()
+func autofree(thing):
+	gut.get_autofree().add_free(thing)
+	return thing
+
+func autoqfree(thing):
+	gut.get_autofree().add_queue_free(thing)
+	return thing
