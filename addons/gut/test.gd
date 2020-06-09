@@ -1176,8 +1176,6 @@ func use_parameters(params):
 	_lgr.inc_indent()
 	return ph.next_parameters()
 
-
-var _autofree = load('res://addons/gut/autofree.gd').new()
 func autofree(thing):
 	gut.get_autofree().add_free(thing)
 	return thing
@@ -1185,3 +1183,10 @@ func autofree(thing):
 func autoqfree(thing):
 	gut.get_autofree().add_queue_free(thing)
 	return thing
+
+func add_child(node, legible_unique_name = false):
+	gut.get_autofree().add_free(node)
+	.add_child(node, legible_unique_name)
+
+func add_persistant_child(node, legible_unique_name=false):
+	.add_child(node, legible_unique_name)

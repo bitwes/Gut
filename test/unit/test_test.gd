@@ -1412,3 +1412,16 @@ class TestAssertOrphans:
 		yield(yield_for(.5, 'must yield for queue_free to take hold'), YIELD)
 		assert_no_new_orphans()
 		assert_true(gut._current_test.passed, 'this should be passing')
+
+	func test_autofree_children():
+		var n = Node.new()
+		add_child(n)
+		gut.get_autofree().free_all()
+		assert_freed(n, 'node')
+
+	func test_add_persistant_child():
+		var n = Node.new()
+		add_persistant_child(n)
+		gut.get_autofree().free_all()
+		assert_not_freed(n, 'node')
+		assert_eq(n.get_parent(), self, 'self is parent')
