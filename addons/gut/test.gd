@@ -1176,17 +1176,29 @@ func use_parameters(params):
 	_lgr.inc_indent()
 	return ph.next_parameters()
 
+# ------------------------------------------------------------------------------
+# Marks whatever is passed in to be freed after the test finishes.  It also
+# returns what is passed in so you can save a line of code.
+#   var thing = autofree(Thing.new())
+# ------------------------------------------------------------------------------
 func autofree(thing):
 	gut.get_autofree().add_free(thing)
 	return thing
 
+# ------------------------------------------------------------------------------
+# Works the same as autofree except queue_free will be called on the object
+# instead.  This also imparts a brief pause after the test finishes so that
+# the queued object has time to free.
+# ------------------------------------------------------------------------------
 func autoqfree(thing):
 	gut.get_autofree().add_queue_free(thing)
 	return thing
 
-func add_child(node, legible_unique_name = false):
+# ------------------------------------------------------------------------------
+# The same as autofree but it also adds the object as a child of the test.
+# ------------------------------------------------------------------------------
+func add_child_autofree(node, legible_unique_name = false):
 	gut.get_autofree().add_free(node)
-	.add_child(node, legible_unique_name)
-
-func add_persistant_child(node, legible_unique_name=false):
+	# Explicitly calling super here b/c add_child MIGHT change and I don't want
+	# a bug sneaking its way in here.
 	.add_child(node, legible_unique_name)
