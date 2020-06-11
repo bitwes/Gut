@@ -43,9 +43,9 @@ class TestScript:
 	# TODO anywhere this is called within this file probably causes a memory
 	# leak since test.gd extends Node.  These instances should all be freed.
 	func get_new():
-		return get_loaded_script().new()
+		return load_script().new()
 
-	func get_loaded_script():
+	func load_script():
 		#print('loading:  ', get_full_name())
 		var to_return = load(path)
 		if(inner_class_name != null):
@@ -136,12 +136,7 @@ func _does_inherit_from_test(thing):
 	return to_return
 
 func _populate_tests(test_script):
-	# creates an instance of test_script which takes the
-	# inner class into account.
-	#var inst = test_script.get_new()
-
-	var methods = test_script.get_loaded_script().get_script_method_list()#inst.get_method_list()
-	#print('  found ', methods.size(), ' methods')
+	var methods = test_script.load_script().get_script_method_list()#inst.get_method_list()
 	for i in range(methods.size()):
 		var name = methods[i]['name']
 		if(name.begins_with(_test_prefix)):
@@ -149,7 +144,6 @@ func _populate_tests(test_script):
 			t.name = name
 			t.arg_count = methods[i]['args'].size()
 			test_script.tests.append(t)
-	#inst.free()
 
 func _get_inner_test_class_names(loaded):
 	var inner_classes = []
