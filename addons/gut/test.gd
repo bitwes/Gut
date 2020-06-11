@@ -1202,3 +1202,4 @@ func add_child_autofree(node, legible_unique_name = false):
 	# Explicitly calling super here b/c add_child MIGHT change and I don't want
 	# a bug sneaking its way in here.
 	.add_child(node, legible_unique_name)
+	return node
