@@ -220,9 +220,15 @@ func print_inner_test_classes(loaded, from=null):
 
 
 
+func print_script_methods():
+	var script = load('res://test/unit/test_print.gd')
 
+	var methods = script.get_script_method_list()
+	for i in range(methods.size()):
+		print(methods[i]['name'])
 
 func _init():
+	print_script_methods()
 	#var test = load('res://addons/gut/test.gd').new()
 	#print_method_info(test)
 
@@ -241,8 +247,8 @@ func _init():
 
 	#print_inner_test_classes(load('res://test/unit/test_doubler.gd'))
 	#print_inner_test_classes(HasSomeInners)
-	print_other_info(HasSomeInners)
-	print_other_info(HasSomeInners.ExtendsInner1)
+	#print_other_info(HasSomeInners)
+	#print_other_info(HasSomeInners.ExtendsInner1)
 
 	# var double_me = load('res://test/resources/doubler_test_objects/double_me.gd')
 	# print_method_info(double_me)

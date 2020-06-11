@@ -1418,10 +1418,3 @@ class TestAssertOrphans:
 		add_child(n)
 		gut.get_autofree().free_all()
 		assert_freed(n, 'node')
-
-	func test_add_persistant_child():
-		var n = Node.new()
-		add_persistant_child(n)
-		gut.get_autofree().free_all()
-		assert_not_freed(n, 'node')
-		assert_eq(n.get_parent(), self, 'self is parent')

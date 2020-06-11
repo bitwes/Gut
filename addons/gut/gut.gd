@@ -917,14 +917,9 @@ func test_script(script):
 	_test_the_scripts()
 
 # ------------------------------------------------------------------------------
-# Adds a script to be run when test_scripts called
-#
-# No longer supports selecting a script via this method.
+# Adds a script to be run when test_scripts called.
 # ------------------------------------------------------------------------------
-func add_script(script, was_select_this_one=null):
-	if(was_select_this_one != null):
-		_lgr.error('The option to select a script when using add_script has been removed.  Calling add_script with 2 parameters will be removed in a later release.')
-
+func add_script(script):
 	if(!Engine.is_editor_hint()):
 		_test_collector.set_test_class_prefix(_inner_class_prefix)
 		_test_collector.add_script(script)
