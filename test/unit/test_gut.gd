@@ -69,7 +69,6 @@ func get_a_gut():
 	var g = Gut.new()
 	g.set_yield_between_tests(false)
 	g.set_log_level(g.LOG_LEVEL_ALL_ASSERTS)
-	add_child(g)
 	return g
 
 # Prints out gr.test_gut assert results, used by assert_fail and assert_pass
@@ -92,11 +91,11 @@ func assert_pass(count=1, msg=''):
 	if(gr.test.get_pass_count() != count):
 		print_test_gut_info()
 
-
 # ------------------------------
 # Setup/Teardown
 # ------------------------------
 func before_all():
+	_utils._test_mode = true
 	starting_counts.setup_count = gut.get_test_count()
 	starting_counts.teardown_count = gut.get_test_count()
 	counts.prerun_setup_count += 1
@@ -105,12 +104,12 @@ func before_each():
 	counts.setup_count += 1
 	gr.test_finished_called = false
 	gr.test_gut = get_a_gut()
+	add_child_autoqfree(gr.test_gut)
 	gr.test = Test.new()
 	gr.test.gut = gr.test_gut
 
 func after_each():
 	counts.teardown_count += 1
-	gr.test_gut.free()
 
 func after_all():
 	counts.postrun_teardown_count += 1

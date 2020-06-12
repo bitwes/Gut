@@ -40,8 +40,6 @@ class TestScript:
 			to_return += str('  ', tests[i].name, "\n")
 		return to_return
 
-	# TODO anywhere this is called within this file probably causes a memory
-	# leak since test.gd extends Node.  These instances should all be freed.
 	func get_new():
 		return load_script().new()
 

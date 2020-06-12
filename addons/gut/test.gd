@@ -897,13 +897,19 @@ func assert_not_null(got, text=''):
 # We pass in a title (since if it is freed, we lost all identity data)
 # -----------------------------------------------------------------------------
 func assert_freed(obj, title):
-	assert_true(not is_instance_valid(obj), "Object %s is freed" % title)
+	var disp = title
+	if(is_instance_valid(obj)):
+		disp = _strutils.type2str(obj) + title
+	assert_true(not is_instance_valid(obj), "Expected [%s] to be freed" % disp)
 
 # ------------------------------------------------------------------------------
 # Asserts Object has not been freed from memory
 # -----------------------------------------------------------------------------
 func assert_not_freed(obj, title):
-	assert_true(is_instance_valid(obj), "Object %s is not freed" % title)
+	var disp = title
+	if(is_instance_valid(obj)):
+		disp = _strutils.type2str(obj) + title
+	assert_true(is_instance_valid(obj), "Expected [%s] to not be freed" % disp)
 
 # ------------------------------------------------------------------------------
 # Asserts that the current test has not introduced any new orphans.  This only
@@ -1199,6 +1205,13 @@ func autoqfree(thing):
 # ------------------------------------------------------------------------------
 func add_child_autofree(node, legible_unique_name = false):
 	gut.get_autofree().add_free(node)
+	# Explicitly calling super here b/c add_child MIGHT change and I don't want
+	# a bug sneaking its way in here.
+	.add_child(node, legible_unique_name)
+	return node
+
+func add_child_autoqfree(node, legible_unique_name=false):
+	gut.get_autofree().add_queue_free(node)
 	# Explicitly calling super here b/c add_child MIGHT change and I don't want
 	# a bug sneaking its way in here.
 	.add_child(node, legible_unique_name)

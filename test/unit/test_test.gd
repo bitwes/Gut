@@ -1415,6 +1415,16 @@ class TestAssertOrphans:
 
 	func test_autofree_children():
 		var n = Node.new()
-		add_child(n)
+		add_child_autofree(n)
+		assert_eq(n.get_parent(), self, 'added as child')
 		gut.get_autofree().free_all()
+		assert_freed(n, 'node')
+
+	func test_autoqfree_children():
+		var n = Node.new()
+		add_child_autoqfree(n)
+		assert_eq(n.get_parent(), self, 'added as child')
+		gut.get_autofree().free_all()
+		assert_not_freed(n, 'node') # should not be freed until yield
+		yield(yield_for(.5), YIELD)
 		assert_freed(n, 'node')
