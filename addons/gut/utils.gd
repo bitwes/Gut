@@ -55,7 +55,8 @@ enum DOUBLE_STRATEGY{
 }
 
 func _init():
-	print('!!!!!!!!!!!!!! New Utils ', self, ' !!!!!!!!!!!!!!')
+	pass
+	#print('!!!!!!!!!!!!!! New Utils ', self, ' !!!!!!!!!!!!!!')
 
 var _file_checker = File.new()
 

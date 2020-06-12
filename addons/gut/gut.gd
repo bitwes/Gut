@@ -64,6 +64,7 @@ const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
 
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
+var _strutils = _utils.Strutils.new()
 # Used to prevent multiple messages for deprecated setup/teardown messages
 var _deprecated_tracker = _utils.ThingCounter.new()
 
@@ -317,6 +318,23 @@ func _on_test_script_yield_completed():
 # Private
 #
 #####################
+func _log_test_children_warning(test_script):
+	if(!_lgr.is_type_enabled(_lgr.types.orphan)):
+		return
+
+	var kids = test_script.get_children()
+	if(kids.size() > 0):
+		var msg = ''
+		if(_log_level == 2):
+			msg = "Test script still has children when all tests finisehd.\n"
+			for i in range(kids.size()):
+				msg += str("  ", _strutils.type2str(kids[i]), "\n")
+			msg += "You can use autofree, autoqfree, add_child_autofree, or add_child_autoqfree to automatically free objects."
+		else:
+			msg = str("Test script has ", kids.size(), " unfreed children.  Increase log level for more details.")
+
+
+		_lgr.warn(msg)
 
 # ------------------------------------------------------------------------------
 # Convert the _summary dictionary into text
@@ -758,6 +776,7 @@ func _test_the_scripts(indexes=[]):
 			_call_deprecated_script_method(test_script, 'postrun_teardown', 'after_all')
 			test_script.after_all()
 
+		_log_test_children_warning(test_script)
 		# This might end up being very resource intensive if the scripts
 		# don't clean up after themselves.  Might have to consolidate output
 		# into some other structure and kill the script objects with

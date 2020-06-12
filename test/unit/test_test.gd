@@ -71,12 +71,14 @@ class BaseTestClass:
 
 		gr.test.free()
 		gr.test = null
+		gr.test_with_gut.gut.free()
 		gr.test_with_gut.free()
+
 
 
 class TestMiscTests:
 	extends BaseTestClass
-#
+
 	func test_script_object_added_to_tree():
 		gr.test.assert_ne(get_tree(), null, "The tree should not be null if we are added to it")
 		assert_pass(gr.test)
@@ -86,6 +88,12 @@ class TestMiscTests:
 		var dlog = double(Logger).new()
 		gr.test.set_logger(dlog)
 		assert_eq(gr.test.get_logger(), dlog)
+
+	func test_not_freeing_children_generates_warning():
+		pass
+		# I cannot think of a way to test this without some giant amount of
+		# testing legwork.
+
 
 
 class TestAssertEq:
@@ -1387,7 +1395,7 @@ class TestParameterizedTests:
 		gr.test_with_gut.use_parameters(['a', 'b', 'c', 'd'])
 		assert_eq(gr.test_with_gut.gut.get_parameter_handler(), ph)
 
-class TestAssertOrphans:
+class TestMemoryMgmt:
 	extends 'res://addons/gut/test.gd'
 
 	func test_passes_when_no_orphans_introduced():
@@ -1419,6 +1427,7 @@ class TestAssertOrphans:
 		assert_eq(n.get_parent(), self, 'added as child')
 		gut.get_autofree().free_all()
 		assert_freed(n, 'node')
+		assert_no_new_orphans()
 
 	func test_autoqfree_children():
 		var n = Node.new()
@@ -1428,3 +1437,10 @@ class TestAssertOrphans:
 		assert_not_freed(n, 'node') # should not be freed until yield
 		yield(yield_for(.5), YIELD)
 		assert_freed(n, 'node')
+		assert_no_new_orphans()
+
+	func test_children_warning():
+		var TestClass = load('res://addons/gut/test.gd')
+		for i in range(3):
+			var extra_test = TestClass.new()
+			add_child(extra_test)
