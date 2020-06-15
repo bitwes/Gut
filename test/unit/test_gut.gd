@@ -469,8 +469,8 @@ func test_parameterized_test_that_yield_are_called_correctly():
 # ------------------------------------------------------------------------------
 #
 #
-# This must be the LAST test
-#
+# This must be the LAST test (but i don't think it always will be anymore)
+# TODO Is this still valid and is it always the last test?  It will not be.
 #
 # ------------------------------------------------------------------------------
 func test_verify_results():

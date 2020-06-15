@@ -217,9 +217,6 @@ func print_inner_test_classes(loaded, from=null):
 				next_from = str(from, '/', key)
 			print_inner_test_classes(thing, next_from)
 
-
-
-
 func print_script_methods():
 	var script = load('res://test/unit/test_print.gd')
 
@@ -227,8 +224,26 @@ func print_script_methods():
 	for i in range(methods.size()):
 		print(methods[i]['name'])
 
+
+func print_all_info(thing):
+	print('Methods')
+	var methods = thing.get_method_list()
+	for i in range(methods.size()):
+		print('  ', methods[i].name)
+
+	print('Properties')
+	var props = thing.get_property_list()
+	for i in range(props.size()):
+		print('  ', props[i].name)
+
 func _init():
-	print_script_methods()
+	var r = Reference.new()
+	var r2 = r
+	var r3 = r
+	var r4 = r
+	print_all_info(r)
+	print(r.get('Reference'))
+	#print_script_methods()
 	#var test = load('res://addons/gut/test.gd').new()
 	#print_method_info(test)
 

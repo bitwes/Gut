@@ -205,9 +205,3 @@ func search_array(ar, prop_method, value):
 		return ar[idx]
 	else:
 		return null
-
-
-
-
-
-

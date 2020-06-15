@@ -17,3 +17,4 @@ func _init():
 
     ref.call_func('from ref')
     quit()
+
