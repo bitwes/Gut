@@ -3,7 +3,6 @@
 [ext_resource path="res://addons/gut/UserFileViewer.gd" type="Script" id=1]
 
 [node name="UserFileViewer" type="WindowDialog"]
-visible = true
 margin_top = 20.0
 margin_right = 800.0
 margin_bottom = 450.0
@@ -23,6 +22,7 @@ rect_min_size = Vector2( 400, 140 )
 rect_scale = Vector2( 2, 2 )
 popup_exclusive = true
 window_title = "Open a File"
+resizable = true
 mode = 0
 access = 1
 show_hidden_files = true

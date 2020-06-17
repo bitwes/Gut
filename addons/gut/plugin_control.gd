@@ -36,7 +36,7 @@ extends Control
 # ------------------------------------------------------------------------------
 # GUT Settings
 # ------------------------------------------------------------------------------
-export(String, 'AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default') var _font_name = 0
+export(String, 'AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default') var _font_name = 'AnonymousPro'
 export(int) var _font_size = 20
 export(Color) var _font_color = Color(1, 1, 1, 1)
 export(Color) var _background_color = Color(0, 0, 0, 1)
