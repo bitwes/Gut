@@ -18,7 +18,6 @@ func get_free_count():
 func free_all():
 	for i in range(_to_free.size()):
 		if(is_instance_valid(_to_free[i])):
-			print('freeing ', _to_free[i])
 			_to_free[i].free()
 	_to_free.clear()
 

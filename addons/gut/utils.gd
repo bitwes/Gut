@@ -138,7 +138,7 @@ func is_not_freed(obj):
 
 func is_double(obj):
 	var to_return = false
-	if(typeof(obj) == TYPE_OBJECT):
+	if(typeof(obj) == TYPE_OBJECT and is_instance_valid(obj)):
 		to_return = obj.has_method('__gut_instance_from_id')
 	return to_return
 

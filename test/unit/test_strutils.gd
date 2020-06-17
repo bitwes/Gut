@@ -89,3 +89,8 @@ class TestInternalStr:
 	func test_simple_class():
 		var en = ExtendsNothing.new()
 		assert_eq(_str(en), str(en) + '(test_strutils.gd/TestInternalStr/ExtendsNothing)')
+
+	func test_returns_null_for_just_freed_objects():
+		var n = Node.new()
+		n.free()
+		assert_eq(_str(n), '[Deleted Object]', 'sometimes fails based on timing.')

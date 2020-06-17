@@ -59,6 +59,7 @@ func _get_obj_filename(thing):
 	var filename = null
 
 	if(thing == null or
+		!is_instance_valid(thing) or
 		str(thing) == '[Object:null]' or
 		typeof(thing) != TYPE_OBJECT or
 		thing.has_method('__gut_instance_from_id')):
