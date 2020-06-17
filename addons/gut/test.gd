@@ -1047,7 +1047,7 @@ func double(thing, p2=null, p3=null):
 	var double_info = DoubleInfo.new(thing, p2, p3)
 	double_info.make_partial = false
 
-	return autofree(_smart_double(double_info))
+	return _smart_double(double_info)
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -1055,7 +1055,7 @@ func partial_double(thing, p2=null, p3=null):
 	var double_info = DoubleInfo.new(thing, p2, p3)
 	double_info.make_partial = true
 
-	return autofree(_smart_double(double_info))
+	return _smart_double(double_info)
 
 
 # ------------------------------------------------------------------------------

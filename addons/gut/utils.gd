@@ -139,7 +139,7 @@ func is_not_freed(obj):
 func is_double(obj):
 	var to_return = false
 	if(typeof(obj) == TYPE_OBJECT):
-		to_return = obj.get(GUT_METADATA) != null
+		to_return = obj.has_method('__gut_instance_from_id')
 	return to_return
 
 func extract_property_from_array(source, property):

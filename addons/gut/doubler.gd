@@ -82,7 +82,7 @@ class ObjectInfo:
 	var make_partial_double = false
 	var scene_path = null
 	var _native_class = null
-	var _native_class_instance = null
+	var _native_class_name = null
 
 	func _init(path, subpath=null):
 		_path = path
@@ -145,11 +145,14 @@ class ObjectInfo:
 
 	func set_native_class(native_class):
 		_native_class = native_class
-		_native_class_instance = native_class.new()
-		_path = _native_class_instance.get_class()
+		var inst = native_class.new()
+		_native_class_name = inst.get_class()
+		_path = _native_class_name
+		if(!inst is Reference):
+			inst.free()
 
 	func get_native_class_name():
-		return _native_class_instance.get_class()
+		return _native_class_name
 
 # ------------------------------------------------------------------------------
 # Allows for interacting with a file but only creating a string.  This was done
