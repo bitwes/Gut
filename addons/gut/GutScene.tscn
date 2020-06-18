@@ -8,7 +8,7 @@
 [ext_resource path="res://addons/gut/UserFileViewer.tscn" type="PackedScene" id=6]
 
 [sub_resource type="StyleBoxFlat" id=8]
-bg_color = Color( 0.14902, 0.14902, 0.14902, 1 )
+bg_color = Color( 0.192157, 0.192157, 0.227451, 1 )
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 
@@ -37,7 +37,7 @@ font_data = ExtResource( 5 )
 font_data = ExtResource( 3 )
 
 [sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0.14902, 0.14902, 0.14902, 1 )
+bg_color = Color( 0.192157, 0.192157, 0.227451, 1 )
 corner_radius_top_left = 20
 corner_radius_top_right = 20
 
