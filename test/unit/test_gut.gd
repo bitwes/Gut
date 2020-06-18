@@ -326,9 +326,6 @@ func test_when_moving_to_next_test_watched_signals_are_cleared():
 func test_can_get_set_inner_class_name():
 	assert_accessors(gr.test_gut, 'inner_class_name', '', 'something')
 
-func test_assert_exports_inner_class_name():
-	assert_exports(gr.test_gut, '_inner_class_name', TYPE_STRING)
-
 func test_when_set_only_inner_class_tests_run():
 	gr.test_gut.set_inner_class_name('TestClass1')
 	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/has_inner_class.gd')

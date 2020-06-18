@@ -3,11 +3,11 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 # 7.0.0
-## Breaking Changes from 6.x.x
+## Breaking Changes
 * You must replace the GUT node in your scenes.  Take notes on your GUT settings in the editor then delete GUT from the tree and add it back in.  Then repopulate your settings.
 * A new signal `gut_ready` should be used instead of `_ready` when performing any actions on the GUT object.  You should avoid interacting with GUT until this signal has been emitted.
 
-### Possibly Breaking Changes
+### Potentially Breaking Changes
 * The order the tests are run is no longer guaranteed.  This has been the case with Inner Test cases but it's now true for all tests.
 * The order that Inner Test classes are run is no longer guaranteed.
 * All Doubles and Partial Doubles are freed after each test.
