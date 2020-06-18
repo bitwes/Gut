@@ -14,11 +14,17 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Features
 * __Issue 114__ By popular demand Parameterized Tests have been added.  You can now create a tests that will be run multiple times and fed a list of parameters.  [See the wiki](https:/github.com/bitwes/Gut/wiki/ParameterizedTests) for more information. (This feature opened up a giant can of worms for logging which led to more cans and more worms.)
-* Settings, an assert, methods, and underlying changes to aid in preventing and tracking down memory leaks in your tests and application.  View the [Memory Management](https:/github.com/bitwes/Gut/wiki/Memory-Management) wiki page for more details.
+* A bunch of [Memory Management](https:/github.com/bitwes/Gut/wiki/Memory-Management) tools.
+  * Logging of orphan counts.
+  * Warnings for children added to tests that are not freed.
+  * `assert_no_new_orphans`
+  * `autofree`, `autoqfree`, `add_child_autofree`, `add_child_autoqfree`.
 * __Issue 168__ Added "user directory" file viewer to additional options for viewing logs on a device.
 * __Issue 167__ Added more areas where filenames are printed when printing objects.
 * Redesigned logging to be more consistent across control, terminal, and Godot console (here be the cans and worms).
 * Can now set the font (from a few choices), font size, font color, and the background color!
+* Some GUI tweaks.
+* Added a [Quick-Start wiki page](https:/github.com/bitwes/Gut/wiki/Quick-Start)
 
 ## Bug Fixes
 * Thanks to hilfazer for contributing a PR that addressed most of the memory leaks in GUT.  This PR also inspired a bunch of new tools for dealing with leaks.

@@ -185,7 +185,8 @@ func _ready():
 		set_unit_test_name(_tests_like)
 
 	if(_should_maximize):
-		maximize()
+		# GUI checks for is_in_tree will not pass yet.
+		call_deferred('maximize')
 
 	# hide the panel that IS gut so that only the GUI is seen
 	self.self_modulate = Color(1,1,1,0)
@@ -198,8 +199,8 @@ func _ready():
 func _notification(what):
 	if(what == NOTIFICATION_PREDELETE):
 		for test_script in _test_script_objects:
-			assert(not test_script.is_inside_tree())
-			test_script.free()
+			if(is_instance_valid(test_script)):
+				test_script.free()
 
 		_test_script_objects = []
 

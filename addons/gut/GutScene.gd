@@ -45,7 +45,7 @@ var _start_time = 0.0
 var _time = 0.0
 
 const DEFAULT_TITLE = 'Gut: The Godot Unit Testing tool.'
-var _pre_maximize_size = null
+var _pre_maximize_rect = null
 var _font_size = 20
 
 signal end_pause
@@ -59,7 +59,7 @@ func _ready():
 	if(Engine.editor_hint):
 		return
 
-	_pre_maximize_size = rect_size
+	_pre_maximize_rect = get_rect()
 	_hide_scripts()
 	_update_controls()
 	_nav.current_script.set_text("No scripts available")
@@ -72,7 +72,7 @@ func _ready():
 
 	set_font_size(_font_size)
 	set_font('CourierPrime')
-	
+
 	_user_files.set_position(Vector2(10, 30))
 
 func elapsed_time_as_str():
@@ -177,6 +177,7 @@ func _input(event):
 		if(event is InputEventMouseMotion and _mouse.down):
 			set_position(get_position() + (event.position - _mouse.down_pos))
 			_mouse.down_pos = event.position
+			_pre_maximize_rect = get_rect()
 
 	if(_mouse.in_handle):
 		if(event is InputEventMouseMotion and _mouse.down):
@@ -184,7 +185,7 @@ func _input(event):
 			var new_mouse_down_pos = event.position
 			rect_size = new_size
 			_mouse.down_pos = new_mouse_down_pos
-			_pre_maximize_size = rect_size
+			_pre_maximize_rect = get_rect()
 
 func _on_ResizeHandle_mouse_entered():
 	_mouse.in_handle = true
@@ -204,10 +205,11 @@ func _on_ShowExtras_toggled(button_pressed):
 	_extras.visible = button_pressed
 
 func _on_Maximize_pressed():
-	if(rect_size == _pre_maximize_size):
+	if(get_rect() == _pre_maximize_rect):
 		maximize()
 	else:
-		rect_size = _pre_maximize_size
+		rect_size = _pre_maximize_rect.size
+		rect_position = _pre_maximize_rect.position
 # ####################
 # Private
 # ####################
@@ -377,7 +379,7 @@ func _set_font_size_for_rtl(rtl, new_size):
 		rtl.get('custom_fonts/bold_font').size = new_size
 		rtl.get('custom_fonts/italics_font').size = new_size
 		rtl.get('custom_fonts/normal_font').size = new_size
-	
+
 
 func _set_fonts_for_rtl(rtl, base_font_name):
 	pass
@@ -416,7 +418,7 @@ func _set_all_fonts_in_ftl(ftl, base_name):
 func set_font(base_name):
 	_set_all_fonts_in_ftl(_text_box, base_name)
 	_set_all_fonts_in_ftl(_user_files.get_rich_text_label(), base_name)
-	
+
 func set_default_font_color(color):
 	_text_box.set('custom_colors/default_color', color)
 
