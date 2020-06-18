@@ -36,8 +36,6 @@
 #
 # See the readme for a list of options and examples.  You can also use the -gh
 # option to get more information about how to use the command line interface.
-#
-# Version 6.8.3
 ################################################################################
 
 #-------------------------------------------------------------------------------

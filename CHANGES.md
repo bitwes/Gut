@@ -11,11 +11,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * The order the tests are run is no longer guaranteed.  This has been the case with Inner Test cases but it's now true for all tests.
 * The order that Inner Test classes are run is no longer guaranteed.
 * All Doubles and Partial Doubles are freed after each test.
-* All children added to the test `add_child` are freed after each test.
 
 ## Features
 * __Issue 114__ By popular demand Parameterized Tests have been added.  You can now create a tests that will be run multiple times and fed a list of parameters.  [See the wiki](https:/github.com/bitwes/Gut/wiki/ParameterizedTests) for more information. (This feature opened up a giant can of worms for logging which led to more cans and more worms.)
-* Settings, an assert, methods, and underlying changes to aid in preventing and tracking down memory leaks in your tests and application.  View the [Memory Management]() wiki page for more details.
+* Settings, an assert, methods, and underlying changes to aid in preventing and tracking down memory leaks in your tests and application.  View the [Memory Management](https:/github.com/bitwes/Gut/wiki/Memory-Management) wiki page for more details.
 * __Issue 168__ Added "user directory" file viewer to additional options for viewing logs on a device.
 * __Issue 167__ Added more areas where filenames are printed when printing objects.
 * Redesigned logging to be more consistent across control, terminal, and Godot console (here be the cans and worms).

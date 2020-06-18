@@ -45,7 +45,7 @@ var Summary = load('res://addons/gut/summary.gd')
 var Test = load('res://addons/gut/test.gd')
 var TestCollector = load('res://addons/gut/test_collector.gd')
 var ThingCounter = load('res://addons/gut/thing_counter.gd')
-var version = '6.8.3'
+var version = '7.0.0'
 
 const GUT_METADATA = '__gut_metadata_'
 
