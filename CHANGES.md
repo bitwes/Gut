@@ -4,13 +4,19 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 # 7.0.0
 ## Breaking Changes
-* You must replace the GUT node in your scenes.  Take notes on your GUT settings in the editor then delete GUT from the tree and add it back in.  Then repopulate your settings.
-* A new signal `gut_ready` should be used instead of `_ready` when performing any actions on the GUT object.  You should avoid interacting with GUT until this signal has been emitted.
+* Not compatible with 3.1 or earlier releases.
+* You must replace the GUT node in your scenes.  Take notes on your GUT settings in the editor then delete GUT from the tree and add it back in.  You may have to restart Godot after this change.  Then repopulate your settings.
+* All Doubles and Partial Doubles are freed automatically after each test.  Doubles and Partial Doubles created in `before_all` will no longer be around for all tests.
+* A new signal `gut_ready` should be used instead of `_ready` when performing any actions on the GUT object in your test runner scene.  You should avoid interacting with GUT until this signal has been emitted.
 
 ### Potentially Breaking Changes
 * The order the tests are run is no longer guaranteed.  This has been the case with Inner Test cases but it's now true for all tests.
 * The order that Inner Test classes are run is no longer guaranteed.
-* All Doubles and Partial Doubles are freed after each test.
+<!--  -->
+### Relevant Wiki Links
+* Added a [Quick-Start wiki page](https:/github.com/bitwes/Gut/wiki/Quick-Start).
+* [Memory Management page](https:/github.com/bitwes/Gut/wiki/Memory-Management) for all your memory management needs and questions.
+* [Parameterized Tests](https:/github.com/bitwes/Gut/wiki/Parameterized-Tests).
 
 ## Features
 * __Issue 114__ By popular demand Parameterized Tests have been added.  You can now create a tests that will be run multiple times and fed a list of parameters.  [See the wiki](https:/github.com/bitwes/Gut/wiki/ParameterizedTests) for more information. (This feature opened up a giant can of worms for logging which led to more cans and more worms.)
@@ -27,11 +33,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Bug Fixes
 * Thanks to hilfazer for contributing a PR that addressed most of the memory leaks in GUT.  This PR also inspired a bunch of new tools for dealing with leaks.
-
-### Wiki Changes
-* Some pages were renamed/cosolidated.
-* Added a [Quick-Start wiki page](https:/github.com/bitwes/Gut/wiki/Quick-Start)
-* Added [Memory Management page](https:/github.com/bitwes/Gut/wiki/Memory-Management)
 
 # 6.8.3
 ## Features

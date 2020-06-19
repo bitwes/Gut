@@ -134,7 +134,7 @@ func _does_inherit_from_test(thing):
 	return to_return
 
 func _populate_tests(test_script):
-	var methods = test_script.load_script().get_script_method_list()#inst.get_method_list()
+	var methods = test_script.load_script().get_script_method_list()
 	for i in range(methods.size()):
 		var name = methods[i]['name']
 		if(name.begins_with(_test_prefix)):

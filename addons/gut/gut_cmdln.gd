@@ -330,9 +330,8 @@ option (the resolved values where default < .gutconfig < command line)."""
 	text = JSON.print(resolved)
 	print(text.replace(',', ",\n"))
 
-
 # parse options and run Gut
-func _init():
+func _run_gut():
 	var opt_resolver = OptionResolver.new()
 	opt_resolver.set_base_opts(options)
 
@@ -366,6 +365,16 @@ func _init():
 			_final_opts = opt_resolver.get_resolved_values();
 			apply_options(_final_opts)
 			_tester.test_scripts(!_run_single)
+
+func _init():
+	if(!_utils.is_version_ok()):
+		print("\n\n", _utils.get_version_text())
+		push_error(_utils.get_bad_version_text())
+		OS.exit_code = 1
+		quit()
+	else:
+		_run_gut()
+
 
 # exit if option is set.
 func _on_tests_finished(should_exit, should_exit_on_success):

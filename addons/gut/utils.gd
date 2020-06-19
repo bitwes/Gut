@@ -46,6 +46,7 @@ var Test = load('res://addons/gut/test.gd')
 var TestCollector = load('res://addons/gut/test_collector.gd')
 var ThingCounter = load('res://addons/gut/thing_counter.gd')
 var version = '7.0.0'
+var req_godot = [3, 2, 0]
 
 const GUT_METADATA = '__gut_metadata_'
 
@@ -73,6 +74,20 @@ func get_version_text():
 	var gut_version_info =  str('GUT version:  ', version)
 	var godot_version_info  = str('Godot version:  ', v_info.major,  '.',  v_info.minor,  '.',  v_info.patch)
 	return godot_version_info + "\n" + gut_version_info
+
+func get_bad_version_text():
+	var ver = join_array(req_godot, '.')
+	var info = Engine.get_version_info()
+	var gd_version = str(info.major, '.', info.minor, '.', info.patch)
+	return 'GUT ' + version + ' requires Godot ' + ver + ' or greater.  Godot version is ' + gd_version
+
+func is_version_ok():
+	var info = Engine.get_version_info()
+	var is_ok = info.major >= req_godot[0] and \
+			info.minor >= req_godot[1] and \
+			info.patch >= req_godot[2]
+	return is_ok
+
 
 # ------------------------------------------------------------------------------
 # Everything should get a logger through this.

@@ -161,6 +161,13 @@ func _init():
 # Initialize controls
 # ------------------------------------------------------------------------------
 func _ready():
+	if(!_utils.is_version_ok()):
+		_print_versions()
+		push_error(_utils.get_bad_version_text())
+		print('Error:  ', _utils.get_bad_version_text())
+		get_tree().quit()
+		return
+		
 	_lgr.info(str('using [', OS.get_user_data_dir(), '] for temporary output.'))
 
 	set_process_input(true)

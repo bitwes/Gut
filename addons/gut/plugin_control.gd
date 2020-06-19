@@ -164,10 +164,12 @@ func _check_for_templates():
 	return true
 
 func _setup_gut():
-	_lgr = load('res://addons/gut/utils.gd').get_instance().get_logger()
+	var _utils = load('res://addons/gut/utils.gd').get_instance()
+
+	_lgr = _utils.get_logger()
 	_gut = load('res://addons/gut/gut.gd').new()
 	_gut.connect('tests_finished', self, '_on_tests_finished')
-
+	
 	if(!_check_for_templates()):
 		return
 
@@ -193,6 +195,9 @@ func _setup_gut():
 	_gut.show_orphans(_show_orphans)
 
 	get_parent().add_child(_gut)
+
+	if(!_utils.is_version_ok()):
+		return
 
 	_gut.set_log_level(_log_level)
 
