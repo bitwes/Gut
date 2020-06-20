@@ -167,7 +167,7 @@ func _ready():
 		print('Error:  ', _utils.get_bad_version_text())
 		get_tree().quit()
 		return
-		
+
 	_lgr.info(str('using [', OS.get_user_data_dir(), '] for temporary output.'))
 
 	set_process_input(true)
@@ -476,7 +476,7 @@ func _end_run():
 	_run_hook_script(_post_run_script_instance)
 	emit_signal(SIGNAL_TESTS_FINISHED)
 
-	_gui.set_title("Finished.  " + str(get_fail_count()) + " failures.")
+	_gui.set_title("Finished.")
 
 
 # ------------------------------------------------------------------------------
