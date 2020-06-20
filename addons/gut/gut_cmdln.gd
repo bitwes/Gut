@@ -39,11 +39,10 @@
 ################################################################################
 extends SceneTree
 
-
 var Optparse = load('res://addons/gut/optparse.gd')
 var Gut = load('res://addons/gut/gut.gd')
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Helper class to resolve the various different places where an option can
 # be set.  Using the get_value method will enforce the order of precedence of:
 # 	1.  command line value
@@ -53,7 +52,7 @@ var Gut = load('res://addons/gut/gut.gd')
 # The idea is that you set the base_opts.  That will get you a copies of the
 # hash with null values for the other types of values.  Lower precedented hashes
 # will punch through null values of higher precedented hashes.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 class OptionResolver:
 	var base_opts = null
 	var cmd_opts = null
@@ -110,10 +109,10 @@ class OptionResolver:
 
 		return to_return
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Here starts the actual script that uses the Options class to kick off Gut
 # and run your tests.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 # instance of gut
 var _tester = null
@@ -154,6 +153,7 @@ var valid_fonts = ['AnonymousPro', 'CourierPro', 'LobsterTwo', 'Default']
 
 # flag to indicate if only a single script should be run.
 var _run_single = false
+
 
 func setup_options():
 	var opts = Optparse.new()
@@ -258,6 +258,7 @@ func load_options_from_config_file(file_path, into):
 
 	return 1
 
+
 # Apply all the options specified to _tester.  This is where the rubber meets
 # the road.
 func apply_options(opts):
@@ -330,6 +331,7 @@ option (the resolved values where default < .gutconfig < command line)."""
 	text = JSON.print(resolved)
 	print(text.replace(',', ",\n"))
 
+
 # parse options and run Gut
 func _run_gut():
 	var opt_resolver = OptionResolver.new()
@@ -366,15 +368,6 @@ func _run_gut():
 			apply_options(_final_opts)
 			_tester.test_scripts(!_run_single)
 
-func _init():
-	if(!_utils.is_version_ok()):
-		print("\n\n", _utils.get_version_text())
-		push_error(_utils.get_bad_version_text())
-		OS.exit_code = 1
-		quit()
-	else:
-		_run_gut()
-
 
 # exit if option is set.
 func _on_tests_finished(should_exit, should_exit_on_success):
@@ -395,3 +388,15 @@ func _on_tests_finished(should_exit, should_exit_on_success):
 		quit()
 	else:
 		print("Tests finished, exit manually")
+
+# ------------------------------------------------------------------------------
+# MAIN
+# ------------------------------------------------------------------------------
+func _init():
+	if(!_utils.is_version_ok()):
+		print("\n\n", _utils.get_version_text())
+		push_error(_utils.get_bad_version_text())
+		OS.exit_code = 1
+		quit()
+	else:
+		_run_gut()
