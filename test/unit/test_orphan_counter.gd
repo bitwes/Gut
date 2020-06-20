@@ -43,6 +43,6 @@ func test_adding_same_name_overwrites_prev_start_val():
 	stub(oc, 'orphan_count').to_return(10)
 	assert_eq(oc.get_counter('one'), 8)
 
-func test_getting_count_for_names_that_dne_returns_zero():
+func test_getting_count_for_names_that_dne_returns_neg_1():
 	var oc = _utils.OrphanCounter.new()
-	assert_eq(oc.get_counter('dne'), 0)
+	assert_eq(oc.get_counter('dne'), -1)

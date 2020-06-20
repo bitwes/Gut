@@ -921,6 +921,9 @@ func assert_no_new_orphans(text=''):
 	var msg = ''
 	if(text != ''):
 		msg = ':  ' + text
+	# Note that get_counter will return -1 if the counter does not exist.  This
+	# can happen with a misplaced assert_no_new_orphans.  Checking for > 0
+	# ensures this will not cause some weird failure.
 	if(count > 0):
 		_fail(str('Expected no orphans, but found ', count, msg))
 	else:
