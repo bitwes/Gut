@@ -13,7 +13,7 @@ func add_counter(name):
 	_counters[name] = orphan_count()
 
 func get_counter(name):
-	return orphan_count() - _counters[name]
+	return orphan_count() - _counters[name] if _counters.has(name) else 0
 
 func print_orphans(name, lgr):
 	var count = get_counter(name)
