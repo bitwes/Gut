@@ -38,8 +38,8 @@ extends Control
 # ------------------------------------------------------------------------------
 export(String, 'AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default') var _font_name = 'AnonymousPro'
 export(int) var _font_size = 20
-export(Color) var _font_color = Color(1, 1, 1, 1)
-export(Color) var _background_color = Color(0, 0, 0, 1)
+export(Color) var _font_color = Color(.8, .8, .8, 1)
+export(Color) var _background_color = Color(.15, .15, .15, 1)
 # Enable/Disable coloring of output.
 export(bool) var _color_output = true
 # The full/partial name of a script to select upon startup
@@ -169,7 +169,7 @@ func _setup_gut():
 	_lgr = _utils.get_logger()
 	_gut = load('res://addons/gut/gut.gd').new()
 	_gut.connect('tests_finished', self, '_on_tests_finished')
-	
+
 	if(!_check_for_templates()):
 		return
 

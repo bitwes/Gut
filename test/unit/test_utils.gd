@@ -13,7 +13,6 @@ func test_is_double_returns_true_for_doubles():
 	var utils = autofree(Utils.new())
 	var d = double(Node).new()
 	assert_true(utils.is_double(d))
-	print_stray_nodes()
 
 func test_is_double_returns_false_for_primitives():
 	var utils = autofree(Utils.new())

@@ -123,12 +123,12 @@ var _final_opts = []
 # that I don't make any dumb typos and get the neat code-sense when I
 # type a dot.
 var options = {
-	background_color = Color(0, 0, 0).to_html(),
+	background_color = Color(.15, .15, .15, 1).to_html(),
 	config_file = 'res://.gutconfig.json',
 	dirs = [],
 	disable_colors = false,
 	double_strategy = 'partial',
-	font_color = Color(1, 1, 1).to_html(),
+	font_color = Color(.8, .8, .8, 1).to_html(),
 	font_name = 'CourierPrime',
 	font_size = 16,
 	hide_orphans = false,

@@ -40,7 +40,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 _font_name = "CourierPrime"
-_font_color = Color( 1, 0.956863, 0.956863, 1 )
+_font_color = Color( 0.733333, 0.733333, 0.733333, 1 )
 _background_color = Color( 0.14902, 0.14902, 0.14902, 1 )
 _should_maximize = true
 _log_level = 2

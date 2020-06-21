@@ -7,7 +7,7 @@
 [ext_resource path="res://addons/gut/fonts/AnonymousPro-Bold.ttf" type="DynamicFontData" id=5]
 [ext_resource path="res://addons/gut/UserFileViewer.tscn" type="PackedScene" id=6]
 
-[sub_resource type="StyleBoxFlat" id=8]
+[sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.192157, 0.192157, 0.227451, 1 )
 corner_radius_top_left = 10
 corner_radius_top_right = 10
@@ -36,7 +36,7 @@ font_data = ExtResource( 5 )
 [sub_resource type="DynamicFont" id=7]
 font_data = ExtResource( 3 )
 
-[sub_resource type="StyleBoxFlat" id=1]
+[sub_resource type="StyleBoxFlat" id=8]
 bg_color = Color( 0.192157, 0.192157, 0.227451, 1 )
 corner_radius_top_left = 20
 corner_radius_top_right = 20
@@ -45,7 +45,7 @@ corner_radius_top_right = 20
 margin_right = 880.0
 margin_bottom = 360.0
 rect_min_size = Vector2( 740, 250 )
-custom_styles/panel = SubResource( 8 )
+custom_styles/panel = SubResource( 1 )
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -327,7 +327,7 @@ margin_left = -212.0
 margin_top = -260.0
 margin_right = -2.0
 margin_bottom = -106.0
-custom_styles/panel = SubResource( 1 )
+custom_styles/panel = SubResource( 8 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
