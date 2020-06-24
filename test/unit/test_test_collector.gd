@@ -1,6 +1,5 @@
 extends "res://test/gut_test.gd"
 
-
 class TestTestCollector:
 	extends "res://test/gut_test.gd"
 
@@ -16,8 +15,9 @@ class TestTestCollector:
 		assert_has_logger(gr.tc)
 
 	func test_has_test_one():
-		gr.tc.add_script(SCRIPTS_ROOT + 'parse_samples.gd')
-		assert_eq(gr.tc.scripts[0].tests[0].name, 'test_one')
+		var path = SCRIPTS_ROOT + 'parse_samples.gd'
+		gr.tc.add_script(path)
+		assert_not_null(gr.tc.get_test_named('parse_samples.gd', 'test_one'))
 
 	func test_does_not_have_not_prefixed():
 		gr.tc.add_script(SCRIPTS_ROOT + 'parse_samples.gd')
@@ -38,29 +38,31 @@ class TestTestCollector:
 	func test_finds_inner_classes():
 		gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')
 		var found = false
-		for i in range(gr.tc.scripts.size()):
-			if(gr.tc.scripts[i].inner_class_name == 'TestClass1'):
-				found = true
-		assert_true(found, 'Should have the inner class in there')
-		assert_eq(gr.tc.scripts.size(), 2)
+
+		var inner_path = SCRIPTS_ROOT + 'has_inner_class.gd.TestClass1'
+		assert_true(gr.tc.has_script(inner_path), 'should have ' + inner_path)
+
+		inner_path = SCRIPTS_ROOT + 'has_inner_class.gd.DifferentPrefixClass'
+		assert_false(gr.tc.has_script(inner_path), 'should not have ' + inner_path)
+
+		inner_path = SCRIPTS_ROOT + 'has_inner_class.gd.TestExtendsTestClass1'
+		assert_true(gr.tc.has_script(inner_path), 'should have ' + inner_path)
+
+		assert_eq(gr.tc.scripts.size(), 3)
+
 
 	func test_can_change_test_class_prefix():
 		gr.tc.set_test_class_prefix('DifferentPrefix')
 		gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')
-		var found = false
-		for i in range(gr.tc.scripts.size()):
-			if(gr.tc.scripts[i].inner_class_name == 'DifferentPrefixClass'):
-				found = true
-		assert_true(found, 'Should have the inner class in there')
+		assert_true(gr.tc.has_script(SCRIPTS_ROOT + 'has_inner_class.gd.DifferentPrefixClass'),
+		 'shold have DifferentPrefixClass')
 
 	func test_ignores_classes_that_match_but_do_not_extend_test():
 		gr.tc.set_test_class_prefix('DoesNotExtend')
 		gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')
-		var found = false
-		for i in range(gr.tc.scripts.size()):
-			if(gr.tc.scripts[i].inner_class_name == 'DoesNot'):
-				found = true
-		assert_false(found, 'Should have skipped, should see warning.')
+		assert_false(gr.tc.has_script(SCRIPTS_ROOT + 'has_inner_class.gd.DoesNotExtend')
+			, 'should not have DoesNotExtend')
+		assert_warn(gr.tc)
 
 	func test_inner_classes_have_tests():
 		gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')
@@ -81,6 +83,33 @@ class TestTestCollector:
 		gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')
 		for i in range(gr.tc.scripts.size()):
 			assert_ne(gr.tc.scripts[i].inner_class_name, 'TestDoesNotExtendTest')
+
+class TestTestsWithParameters:
+	extends "res://test/gut_test.gd"
+
+	var SCRIPTS_ROOT = 'res://test/resources/parsing_and_loading_samples/'
+
+	var _tc = null
+
+	func before_each():
+		_tc = TestCollector.new()
+
+	func test_populates_arg_count_for_script():
+		_tc.add_script(SCRIPTS_ROOT + 'test_with_parameters.gd')
+		var script = _tc.get_script_named('test_with_parameters.gd')
+
+		assert_eq(script.get_test_named('test_has_one_defaulted_parameter').arg_count, 1)
+		assert_eq(script.get_test_named('test_has_two_parameters').arg_count, 2)
+		assert_eq(script.get_test_named('test_no_parameters').arg_count, 0)
+
+	func test_populates_arg_count_for_inner_classes():
+		var script_name = 'test_with_parameters.gd'
+		_tc.add_script(SCRIPTS_ROOT + script_name)
+		var script = _tc.get_script_named(script_name + '.TestInnerClass')
+
+		assert_eq(script.get_test_named('test_inner_has_one_defaulted_parameter').arg_count, 1)
+		assert_eq(script.get_test_named('test_inner_has_two_parameters').arg_count, 2)
+		assert_eq(script.get_test_named('test_inner_no_parameters').arg_count, 0)
 
 class __TestExportImport:
 	extends "res://test/gut_test.gd"

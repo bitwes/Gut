@@ -1,5 +1,5 @@
 extends Node2D
-################################################################################
+# ##############################################################################
 #The MIT License (MIT)
 #=====================
 #
@@ -23,9 +23,9 @@ extends Node2D
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #THE SOFTWARE.
 #
-################################################################################
+# ##############################################################################
 
-################################################################################
+# ##############################################################################
 # Description:
 # ------------
 # This file is used to illustrate a couple ways of loading scripts and running
@@ -35,26 +35,30 @@ extends Node2D
 # The Gut object in the scene has already been configured through the editor
 # to load up various scripts.  You can experiment with the settings in the
 # scene or edit the code in this script.
-################################################################################
+# ##############################################################################
 
 var tester = null
 
 func _ready():
+	# DO NOTHING HERE, connect to gut_ready instead.
+	pass
+
+func _on_Gut_gut_ready():
 	$Gut.export_if_tests_found()
 	$Gut.import_tests_if_none_found()
 
-	# This line makes Gut use the export_path to load up the exported list 
+	# This line makes Gut use the export_path to load up the exported list
 	# of tests if it didn't find any tests.  This will occur after it has tried
 	# to load up all the configured directories.
 	#
-	# Using this line, you won't have to do anything to your test scene when 
+	# Using this line, you won't have to do anything to your test scene when
 	# running after being exported.
-	# 
-	# You must have set export_path on the Gut object, exported your tests, and 
+	#
+	# You must have set export_path on the Gut object, exported your tests, and
 	# changed your project's export settings to include whatever file extension
 	# you gave your export file name.
 #	$Gut.import_tests_if_none_found()
-	
+
 	# -----
 	# Uncomment these lines to see various behaviors
 	# -----
@@ -129,7 +133,7 @@ func _run_gut_tests(gut):
 	gut.add_script('res://test/integration/test_gut_and_stubber.gd')
 	gut.add_script('res://test/integration/test_doubler_and_spy.gd')
 	gut.add_script('res://test/integration/test_gut_and_spy.gd')
-	
+
 	gut.set_yield_between_tests(true)
 	# true says to run all the scripts, not just the first or
 	# the selected script.
@@ -144,3 +148,5 @@ func _on_RunGutTestsButton_pressed():
 
 func _on_ExportTests_pressed():
 	$Gut.export_tests()
+
+

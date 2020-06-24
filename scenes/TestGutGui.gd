@@ -5,7 +5,7 @@ class SignalReporter:
 
 
 	func _on_watched_signal(arg1=ARG_NOT_SET, arg2=ARG_NOT_SET, arg3=ARG_NOT_SET, \
-	                        arg4=ARG_NOT_SET, arg5=ARG_NOT_SET, arg6=ARG_NOT_SET, \
+							arg4=ARG_NOT_SET, arg5=ARG_NOT_SET, arg6=ARG_NOT_SET, \
 							arg7=ARG_NOT_SET, arg8=ARG_NOT_SET, arg9=ARG_NOT_SET, \
 							arg10=ARG_NOT_SET, arg11=ARG_NOT_SET):
 		var args = [arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11]
@@ -17,12 +17,11 @@ class SignalReporter:
 			idx -= 1
 		var signal_name = args[args.size() -1]
 		args.pop_back()
-		print('Emitted:  ', signal_name, ':  ', args)
 
 
 
 		._on_watched_signal(arg1, arg2, arg3, \
-            arg4,  arg5, arg6, \
+			arg4,  arg5, arg6, \
 			arg7,  arg8, arg9, \
 			arg10, arg11)
 

@@ -65,29 +65,15 @@ class TestUsingResDirs:
 		var g = Gut.new()
 		var t = Test.new()
 		t.gut = g
-		g.set_yield_between_tests(false)
-		g._directory1 = 'res://test/resources/parsing_and_loading_samples'
-		g._directory2 = 'res://test/unit'
-		g._directory3 = 'res://test/integration'
 		add_child(g)
+		g.set_yield_between_tests(false)
+		g.add_directory('res://test/resources/parsing_and_loading_samples')
+		g.add_directory('res://test/unit')
+		g.add_directory('res://test/integration')
+
 		t.assert_true(g._test_collector.has_script('res://test/resources/parsing_and_loading_samples/test_samples.gd'), 'Should have dir1 script')
 		t.assert_true(g._test_collector.has_script('res://test/unit/test_gut.gd'), 'Should have dir2 script')
 		t.assert_true(g._test_collector.has_script('res://test/integration/test_sample_all_passed_integration.gd'), 'Should have dir3 script')
-		assert_eq(t.get_pass_count(), 3, 'they should have passed')
-
-	# ^ aaaand then we test 2 more.
-	func test_directories456_defined_in_editor_are_loaded_on_ready():
-		var g = Gut.new()
-		var t = Test.new()
-		t.gut = g
-		g.set_yield_between_tests(false)
-		g._directory4 = 'res://test/resources/parsing_and_loading_samples'
-		g._directory5 = 'res://test/unit'
-		g._directory6 = 'res://test/integration'
-		add_child(g)
-		t.assert_true(g._test_collector.has_script('res://test/resources/parsing_and_loading_samples/test_samples.gd'), 'Should have dir4 script')
-		t.assert_true(g._test_collector.has_script('res://test/unit/test_gut.gd'), 'Should have dir5 script')
-		t.assert_true(g._test_collector.has_script('res://test/integration/test_sample_all_passed_integration.gd'), 'Should have dir6 script')
 		assert_eq(t.get_pass_count(), 3, 'they should have passed')
 
 # ------------------------------------------------------------------------------
@@ -164,9 +150,6 @@ class TestUsingDynamicDirs:
 	func test_test_data_looks_ok():
 		gr.gut.add_directory(_test_dirs[0])
 		assert_true(gr.gut._test_collector.has_script(TEST_BASE_DIR + 'root/test_script.gd'))
-
-	func test_exports_subdir_flag():
-		assert_exports(gr.gut, '_include_subdirectories', TYPE_BOOL)
 
 	func test_include_subdirectories_accessors():
 		assert_accessors(gr.gut, 'include_subdirectories', false, true)

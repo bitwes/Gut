@@ -25,7 +25,7 @@ class SuperPack:
 	func load_scene(path):
 		_scene = load(path)
 
-var _utils = load('res://addons/gut/utils.gd').new()
+var _utils = load('res://addons/gut/utils.gd').get_instance()
 
 func make_class():
 	var text = ""

@@ -71,92 +71,10 @@ class BaseTestClass:
 
 		gr.test.free()
 		gr.test = null
+		gr.test_with_gut.gut.free()
 		gr.test_with_gut.free()
 
-class TestInternalStr:
-	extends BaseTestClass
 
-	class ExtendsControl:
-		extends Control
-
-		func do_something():
-			pass # does nothing, heh
-
-	class ExtendsNothing:
-		var foo = 'bar'
-
-	func test_string():
-		assert_eq(_str('this'), 'this')
-
-	func test_int():
-		assert_eq(_str(1234), '1234')
-
-	func test_float():
-		assert_eq(_str(1.234), '1.234')
-
-	func test_script():
-		assert_eq(_str(self), str(self, '(test_test.gd/TestInternalStr)'))
-
-	func test_script_2():
-		var dm = DoubleMe.new()
-		assert_eq(_str(dm), str(dm) + '(double_me.gd)')
-
-	func test_scene():
-		var scene = DoubleMeScene.instance()
-		assert_eq(_str(scene),  str(scene, '(double_me_scene.gd)'))
-
-	func test_file_instance():
-		var f = File.new()
-		assert_eq(_str(f), str(f))
-
-	func test_vector2():
-		var v2 = Vector2(20, 30)
-		assert_eq(_str(v2), 'Vector2(20, 30)')
-
-	func test_null():
-		assert_eq(_str(null), str(null))
-
-	func test_boolean():
-		assert_eq(_str(true), str(true))
-		assert_eq(_str(false), str(false))
-
-	func test_color():
-		var c  = Color(.1, .2, .3)
-		assert_eq(_str(c), 'Color(0.1,0.2,0.3,1)')
-
-	func test_gdnative():
-		assert_eq(_str(Node2D), 'Node2D')
-
-	func test_loaded_scene():
-		assert_eq(_str(DoubleMeScene), str(DoubleMeScene) + '(double_me_scene.tscn)')
-
-	func test_doubles():
-		var d = double(DOUBLE_ME_PATH).new()
-		assert_eq(_str(d), str(d) + '(double of double_me.gd)')
-
-	func test_another_double():
-		var d = double(DOUBLE_EXTENDS_NODE2D).new()
-		assert_eq(_str(d), str(d) + '(double of double_extends_node2d.gd)')
-
-	func test_double_inner():
-		var d = double(InnerClasses, 'InnerA').new()
-		assert_eq(_str(d), str(d) + '(double of inner_classes.gd/InnerA)')
-
-	func test_assert_null():
-		assert_eq(_str(null), str(null))
-
-	func test_object_null():
-		var scene = load(DOUBLE_ME_SCENE_PATH).instance()
-		assert_eq(_str(scene.get_parent()), 'Null')
-
-	# currently does not print the inner class, maybe later.
-	func test_inner_class():
-		var ec = ExtendsControl.new()
-		assert_eq(_str(ec), str(ec) + '(test_test.gd/TestInternalStr/ExtendsControl)')
-
-	func test_simple_class():
-		var en = ExtendsNothing.new()
-		assert_eq(_str(en), str(en) + '(test_test.gd/TestInternalStr/ExtendsNothing)')
 
 class TestMiscTests:
 	extends BaseTestClass
@@ -170,6 +88,13 @@ class TestMiscTests:
 		var dlog = double(Logger).new()
 		gr.test.set_logger(dlog)
 		assert_eq(gr.test.get_logger(), dlog)
+
+	func test_not_freeing_children_generates_warning():
+		pass
+		# I cannot think of a way to test this without some giant amount of
+		# testing legwork.
+
+
 
 class TestAssertEq:
 	extends BaseTestClass
@@ -190,9 +115,13 @@ class TestAssertEq:
 		gr.test.assert_eq(.19, 1.9)
 		assert_fail(gr.test)
 
-	func test_passes_when_cast_char_to_float():
-		gr.test.assert_eq(float('0.92'), 0.92)
-		assert_pass(gr.test, 1, 'I suspect this is failing due to an engine bug.')
+	var _float_vals = [['0.92', 0.92], ['1', 1.0], ['1.5', 1.5], ['1.92', 1.92], ['1.9', 1.9]]
+	func test_passes_when_cast_char_to_float(vals=use_parameters(_float_vals)):
+		var sval = vals[0]
+		var fval = vals[1]
+
+		assert_eq(float(sval), fval, 'float(string)')
+		assert_eq(sval.to_float(), fval, '.to_float()')
 
 	func test_fails_when_comparing_float_cast_as_int():
 		# int cast will make it 0
@@ -476,7 +405,7 @@ class TestAssertHas:
 		assert_fail(gr.test)
 
 # TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
-class testFailingDatatypeChecks:
+class TestFailingDatatypeChecks:
 	extends BaseTestClass
 
 	func test_dt_string_number_eq():
@@ -1446,3 +1375,76 @@ class TestConnectionAsserts:
 		var c = ConnectTo.new()
 		gr.test.assert_not_connected(s, c, SIGNAL_NAME)
 		assert_pass(gr.test)
+
+
+class TestParameterizedTests:
+	extends BaseTestClass
+
+	func test_first_call_to_use_parameters_returns_first_index_of_params():
+		var result = gr.test_with_gut.use_parameters([1, 2, 3])
+		assert_eq(result, 1)
+
+	func test_when_use_parameters_is_called_it_populates_guts_parameter_handler():
+		gr.test_with_gut.use_parameters(['a'])
+		assert_not_null(gr.test_with_gut.gut.get_parameter_handler())
+
+	func test_prameter_handler_has_logger_set_to_guts_logger():
+		gr.test_with_gut.use_parameters(['a'])
+		var ph = gr.test_with_gut.gut.get_parameter_handler()
+		assert_eq(ph.get_logger(), gr.test_with_gut.gut.get_logger())
+
+	func test_when_gut_already_has_parameter_handler_it_does_not_make_a_new_one():
+		gr.test_with_gut.use_parameters(['a', 'b', 'c', 'd'])
+		var ph = gr.test_with_gut.gut.get_parameter_handler()
+		gr.test_with_gut.use_parameters(['a', 'b', 'c', 'd'])
+		assert_eq(gr.test_with_gut.gut.get_parameter_handler(), ph)
+
+class TestMemoryMgmt:
+	extends 'res://addons/gut/test.gd'
+
+	func test_passes_when_no_orphans_introduced():
+		assert_no_new_orphans()
+		assert_true(gut._current_test.passed, 'test should be passing')
+
+	func test_fails_when_orphans_introduced():
+		var n2d = Node2D.new()
+		assert_no_new_orphans('this should fail')
+		assert_false(gut._current_test.passed, 'test should be failing')
+		n2d.free()
+
+	func test_passes_when_orphans_released():
+		var n2d = Node2D.new()
+		n2d.free()
+		assert_no_new_orphans()
+		assert_true(gut._current_test.passed, 'this should be passing')
+
+	func test_passes_with_queue_free():
+		var n2d = Node2D.new()
+		n2d.queue_free()
+		yield(yield_for(.5, 'must yield for queue_free to take hold'), YIELD)
+		assert_no_new_orphans()
+		assert_true(gut._current_test.passed, 'this should be passing')
+
+	func test_autofree_children():
+		var n = Node.new()
+		add_child_autofree(n)
+		assert_eq(n.get_parent(), self, 'added as child')
+		gut.get_autofree().free_all()
+		assert_freed(n, 'node')
+		assert_no_new_orphans()
+
+	func test_autoqfree_children():
+		var n = Node.new()
+		add_child_autoqfree(n)
+		assert_eq(n.get_parent(), self, 'added as child')
+		gut.get_autofree().free_all()
+		assert_not_freed(n, 'node') # should not be freed until yield
+		yield(yield_for(.5), YIELD)
+		assert_freed(n, 'node')
+		assert_no_new_orphans()
+
+	func test_children_warning():
+		var TestClass = load('res://addons/gut/test.gd')
+		for i in range(3):
+			var extra_test = TestClass.new()
+			add_child(extra_test)

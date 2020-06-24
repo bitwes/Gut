@@ -4,15 +4,14 @@
 #-------------------------------------------------------------------------------
 extends "res://addons/gut/test.gd"
 
-var timer = Timer.new()
-
 class TimedSignaler:
 	extends Node2D
 
 	signal the_signal
-	var _timer = Timer.new()
+	var _timer = null
 
 	func _ready():
+		_timer = Timer.new()
 		add_child(_timer)
 		_timer.connect('timeout', self, '_on_timer_timeout')
 		_timer.one_shot = true
@@ -24,7 +23,11 @@ class TimedSignaler:
 		_timer.set_wait_time(time)
 		_timer.start()
 
+var timer = null
+
+
 func before_all():
+	timer = Timer.new()
 	add_child(timer)
 	timer.set_wait_time(1)
 	timer.set_one_shot(true)
@@ -155,3 +158,7 @@ func test_what_is_wrong():
 	signaler.emit_after(0.5)
 	yield(yield_for(1), YIELD)
 	assert_signal_emitted(signaler, 'the_signal')
+
+func test_with_parameters(p=use_parameters([['a', 'a'], ['b', 'b'], ['c', 'c']])):
+	yield(yield_for(1), YIELD)
+	assert_eq(p[0], p[1])

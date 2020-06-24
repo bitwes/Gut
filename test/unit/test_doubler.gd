@@ -30,6 +30,7 @@ class TestTheBasics:
 		gr.doubler = Doubler.new()
 		gr.doubler.set_stubber(stubber)
 		gr.doubler.set_output_dir(TEMP_FILES)
+		gr.doubler.set_gut(gut)
 
 	func after_each():
 		gr.doubler.clear_output_directory()
@@ -48,6 +49,9 @@ class TestTheBasics:
 
 	func test_get_set_make_files():
 		assert_accessors(Doubler.new(), 'make_files', false, true)
+
+	func test_get_set_gut():
+		assert_accessors(Doubler.new(), 'gut', null, GDScript.new())
 
 	func test_setting_output_dir_creates_directory_if_it_does_not_exist():
 		var d = Doubler.new()
@@ -83,6 +87,10 @@ class TestTheBasics:
 	func test_doubled_thing_has_original_path_in_metadata():
 		var doubled = gr.doubler.double(DOUBLE_ME_PATH).new()
 		assert_eq(doubled.__gut_metadata_.path, DOUBLE_ME_PATH)
+
+	func test_doublecd_thing_has_gut_metadata():
+		var doubled = gr.doubler.double(DOUBLE_ME_PATH).new()
+		assert_eq(doubled.__gut_metadata_.gut, gut)
 
 	func test_keeps_extends():
 		var doubled = gr.doubler.double(DOUBLE_EXTENDS_NODE2D).new()
@@ -200,9 +208,13 @@ class TestBuiltInOverloading:
 		_dbl_win_dia = doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG)
 		_dbl_win_dia_text = _dbl_win_dia.new().get_script().get_source_code()
 
+	func after_each():
+		_dbl_win_dia.free()
+
 	func after_all():
 		if(doubler):
 			doubler.clear_output_directory()
+
 
 	func test_built_in_overloading_ony_happens_on_full_strategy():
 		doubler.set_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
@@ -367,7 +379,6 @@ class TestPartialDoubles:
 		var inst = doubler.partial_double(DOUBLE_ME_PATH).new()
 		inst.set_value(10)
 		assert_eq(inst.get_value(), 10)
-		print(inst.get_script().get_source_code())
 
 	func test_double_script_does_not_make_partials():
 		var inst = doubler.double(DOUBLE_ME_PATH).new()
@@ -412,3 +423,30 @@ class TestDoubleGDNaviteClasses:
 	func test_can_partial_double_Node2D():
 		var pd_node_2d  = _doubler.partial_double_gdnative(Node2D)
 		assert_not_null(pd_node_2d)
+
+class TestAutofree:
+	extends BaseTest
+
+	class InitHasDefaultParams:
+		var a = 'b'
+
+		func _init(value='asdf'):
+			a = value
+
+	func test_doubles_are_autofreed():
+		var doubled = double(DOUBLE_EXTENDS_NODE2D).new()
+		gut.get_autofree().free_all()
+		assert_no_new_orphans()
+
+	func test_partial_doubles_are_autofreed():
+		var doubled = partial_double(DOUBLE_EXTENDS_NODE2D).new()
+		gut.get_autofree().free_all()
+		assert_no_new_orphans()
+
+	func test_double_default_init_params():
+		var doubled = double('res://test/unit/test_doubler.gd', 'TestAutofree/InitHasDefaultParams').new()
+		assert_eq(doubled.a, 'asdf')
+
+	func test_partial_double_default_init_params():
+		var doubled = partial_double('res://test/unit/test_doubler.gd', 'TestAutofree/InitHasDefaultParams').new()
+		assert_eq(doubled.a, 'asdf')

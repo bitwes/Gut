@@ -1,40 +1,40 @@
-################################################################################
+# ##############################################################################
 #(G)odot (U)nit (T)est class
 #
-################################################################################
-#The MIT License (MIT)
-#=====================
+# ##############################################################################
+# The MIT License (MIT)
+# =====================
 #
-#Copyright (c) 2019 Tom "Butch" Wesley
+# Copyright (c) 2020 Tom "Butch" Wesley
 #
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-#The above copyright notice and this permission notice shall be included in
-#all copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-#THE SOFTWARE.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
 #
-################################################################################
+# ##############################################################################
 # View readme for usage details.
 #
 # Version - see gut.gd
-################################################################################
+# ##############################################################################
 # Class that all test scripts must extend.
 #
 # This provides all the asserts and other testing features.  Test scripts are
 # run by the Gut class in gut.gd
-################################################################################
+# ##############################################################################
 extends Node
 
 # ------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ class DoubleInfo:
 	var strategy
 	var make_partial
 	var extension
-	var _utils = load('res://addons/gut/utils.gd').new()
+	var _utils = load('res://addons/gut/utils.gd').get_instance()
 	var _is_native = false
 
 	# Flexible init method.  p2 can be subpath or stategy unless p3 is
@@ -99,49 +99,14 @@ const YIELD = 'timeout'
 # is set by the gut class when it runs the tests.  This gets you
 # access to the asserts in the tests you write.
 var gut = null
-var passed = false
-var failed = false
+
+var passed = false # idk if this does anything TODO remove or document
+var failed = false # idk if this does anything TODO remove or document
 var _disable_strict_datatype_checks = false
 # Holds all the text for a test's fail/pass.  This is used for testing purposes
 # to see the text of a failed sub-test in test_test.gd
 var _fail_pass_text = []
 
-# Hash containing all the built in types in Godot.  This provides an English
-# name for the types that corosponds with the type constants defined in the
-# engine.  This is used for priting out messages when comparing types fails.
-var types = {}
-
-func _init_types_dictionary():
-	types[TYPE_NIL] = 'TYPE_NIL'
-	types[TYPE_BOOL] = 'Bool'
-	types[TYPE_INT] = 'Int'
-	types[TYPE_REAL] = 'Float/Real'
-	types[TYPE_STRING] = 'String'
-	types[TYPE_VECTOR2] = 'Vector2'
-	types[TYPE_RECT2] = 'Rect2'
-	types[TYPE_VECTOR3] = 'Vector3'
-	#types[8] = 'Matrix32'
-	types[TYPE_PLANE] = 'Plane'
-	types[TYPE_QUAT] = 'QUAT'
-	types[TYPE_AABB] = 'AABB'
-	#types[12] = 'Matrix3'
-	types[TYPE_TRANSFORM] = 'Transform'
-	types[TYPE_COLOR] = 'Color'
-	#types[15] = 'Image'
-	types[TYPE_NODE_PATH] = 'Node Path'
-	types[TYPE_RID] = 'RID'
-	types[TYPE_OBJECT] = 'TYPE_OBJECT'
-	#types[19] = 'TYPE_INPUT_EVENT'
-	types[TYPE_DICTIONARY] = 'Dictionary'
-	types[TYPE_ARRAY] = 'Array'
-	types[TYPE_RAW_ARRAY] = 'TYPE_RAW_ARRAY'
-	types[TYPE_INT_ARRAY] = 'TYPE_INT_ARRAY'
-	types[TYPE_REAL_ARRAY] = 'TYPE_REAL_ARRAY'
-	types[TYPE_STRING_ARRAY] = 'TYPE_STRING_ARRAY'
-	types[TYPE_VECTOR2_ARRAY] = 'TYPE_VECTOR2_ARRAY'
-	types[TYPE_VECTOR3_ARRAY] = 'TYPE_VECTOR3_ARRAY'
-	types[TYPE_COLOR_ARRAY] = 'TYPE_COLOR_ARRAY'
-	types[TYPE_MAX] = 'TYPE_MAX'
 
 const EDITOR_PROPERTY = PROPERTY_USAGE_SCRIPT_VARIABLE | PROPERTY_USAGE_DEFAULT
 const VARIABLE_PROPERTY = PROPERTY_USAGE_SCRIPT_VARIABLE
@@ -160,84 +125,17 @@ var _signal_watcher = load('res://addons/gut/signal_watcher.gd').new()
 
 # Convenience copy of _utils.DOUBLE_STRATEGY
 var DOUBLE_STRATEGY = null
-var _utils = load('res://addons/gut/utils.gd').new()
+var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
+var _strutils = _utils.Strutils.new()
+# syntax sugar
+var ParameterFactory = _utils.ParameterFactory
 
 func _init():
-	_init_types_dictionary()
 	DOUBLE_STRATEGY = _utils.DOUBLE_STRATEGY # yes, this is right
 
-# Types to not be formatted when using _str
-var _str_ignore_types = [
-	TYPE_INT, TYPE_REAL, TYPE_STRING,
-	TYPE_NIL, TYPE_BOOL
-]
-
-func _get_filename(path):
-	return path.split('/')[-1]
-
-# ------------------------------------------------------------------------------
-# Better object/thing to string conversion.  Includes extra details about
-# whatever is passed in when it can/should.
-# ------------------------------------------------------------------------------
-func _get_obj_filename(thing):
-	var filename = null
-
-	if(thing == null or
-		str(thing) == '[Object:null]' or
-		typeof(thing) != TYPE_OBJECT or
-		thing.has_method('__gut_instance_from_id')):
-		return
-
-	if(thing.get_script() == null):
-		if(thing is PackedScene):
-			filename = _get_filename(thing.resource_path)
-		else:
-			# If it isn't a packed scene and it doesn't have a script then
-			# we do nothing.  This just read better.
-			pass
-	elif(!_utils.is_native_class(thing)):
-		var dict = inst2dict(thing)
-		filename = _get_filename(dict['@path'])
-		if(dict['@subpath'] != ''):
-			filename += str('/', dict['@subpath'])
-
-	return filename
-
 func _str(thing):
-	var filename = _get_obj_filename(thing)
-	var str_thing = str(thing)
-
-	if(thing == null):
-		# According to str there is a difference between null and an Object
-		# that is somehow null.  To avoid getting '[Object:null]' as output
-		# always set it to str(null) instead of str(thing).  A null object
-		# will pass typeof(thing) == TYPE_OBJECT check so this has to be
-		# before that.
-		str_thing = str(null)
-	elif(typeof(thing) in _str_ignore_types):
-		# do nothing b/c we already have str(thing) in
-		# to_return.  I think this just reads a little
-		# better this way.
-		pass
-	elif(typeof(thing) ==  TYPE_OBJECT):
-		if(_utils.is_native_class(thing)):
-			str_thing = _utils.get_native_class_name(thing)
-		elif(thing.has_method('__gut_instance_from_id')):
-			var double_path = _get_filename(thing.__gut_metadata_.path)
-			if(thing.__gut_metadata_.subpath != ''):
-				double_path += str('/', thing.__gut_metadata_.subpath)
-
-			str_thing += '(double of ' + double_path + ')'
-			filename = null
-	elif(types.has(typeof(thing))):
-		if(!str_thing.begins_with('(')):
-			str_thing = '(' + str_thing + ')'
-		str_thing = str(types[typeof(thing)], str_thing)
-
-	if(filename != null):
-		str_thing += str('(', filename, ')')
-	return str_thing
+	return _strutils.type2str(thing)
 
 # ------------------------------------------------------------------------------
 # Fail an assertion.  Causes test and script to fail as well.
@@ -245,10 +143,9 @@ func _str(thing):
 func _fail(text):
 	_summary.asserts += 1
 	_summary.failed += 1
-	var msg = 'FAILED:  ' + text
-	_fail_pass_text.append(msg)
+	_fail_pass_text.append('failed:  ' + text)
 	if(gut):
-		gut.p(msg, gut.LOG_LEVEL_FAIL_ONLY)
+		_lgr.failed(text)
 		gut._fail(text)
 
 # ------------------------------------------------------------------------------
@@ -257,10 +154,9 @@ func _fail(text):
 func _pass(text):
 	_summary.asserts += 1
 	_summary.passed += 1
-	var msg = "PASSED:  " + text
-	_fail_pass_text.append(msg)
+	_fail_pass_text.append('passed:  ' + text)
 	if(gut):
-		gut.p(msg, gut.LOG_LEVEL_ALL_ASSERTS)
+		_lgr.passed(text)
 		gut._pass(text)
 
 # ------------------------------------------------------------------------------
@@ -278,9 +174,11 @@ func _do_datatypes_match__fail_if_not(got, expected, text):
 			# If we have a mismatch between float and int (types 2 and 3) then
 			# print out a warning but do not fail.
 			if([2, 3].has(got_type) and [2, 3].has(expect_type)):
-				_lgr.warn(str('Warn:  Float/Int comparison.  Got ', types[got_type], ' but expected ', types[expect_type]))
+				_lgr.warn(str('Warn:  Float/Int comparison.  Got ', _strutils.types[got_type],
+					' but expected ', _strutils.types[expect_type]))
 			else:
-				_fail('Cannot compare ' + types[got_type] + '[' + _str(got) + '] to ' + types[expect_type] + '[' + _str(expected) + '].  ' + text)
+				_fail('Cannot compare ' + _strutils.types[got_type] + '[' + _str(got) + '] to ' + \
+					_strutils.types[expect_type] + '[' + _str(expected) + '].  ' + text)
 				did_pass = false
 
 	return did_pass
@@ -307,6 +205,7 @@ func _fail_if_does_not_have_signal(object, signal_name):
 		_fail(str('Object ', object, ' does not have the signal [', signal_name, ']'))
 		did_fail = true
 	return did_fail
+
 # ------------------------------------------------------------------------------
 # Signal assertion helper.  Do not call directly, use _can_make_signal_assertions
 # ------------------------------------------------------------------------------
@@ -593,7 +492,7 @@ func assert_exports(obj, property_name, type):
 	var disp = 'expected %s to have editor property [%s]' % [_str(obj), property_name]
 	var property = _find_object_property(obj, property_name, EDITOR_PROPERTY)
 	if property != null:
-		disp += ' of type [%s]. Got type [%s].' % [types[type], types[property['type']]]
+		disp += ' of type [%s]. Got type [%s].' % [_strutils.types[type], _strutils.types[property['type']]]
 		if property['type'] == type:
 			_pass(disp)
 		else:
@@ -794,13 +693,13 @@ func assert_is(object, a_class, text=''):
 	var bad_param_2 = 'Parameter 2 must be a Class (like Node2D or Label).  You passed '
 
 	if(typeof(object) != TYPE_OBJECT):
-		_fail(str('Parameter 1 must be an instance of an object.  You passed:  ', types[typeof(object)]))
+		_fail(str('Parameter 1 must be an instance of an object.  You passed:  ', _str(object)))
 	elif(typeof(a_class) != TYPE_OBJECT):
-		_fail(str(bad_param_2, types[typeof(a_class)]))
+		_fail(str(bad_param_2, _str(a_class)))
 	else:
-		disp = str('Expected [', object.get_class(), '] to extend [', a_class.get_class(), ']: ', text)
+		disp = str('Expected [', _str(object), '] to extend [', _str(a_class), ']: ', text)
 		if(a_class.get_class() != NATIVE_CLASS and a_class.get_class() != GDSCRIPT_CLASS):
-			_fail(str(bad_param_2, a_class.get_class(), '  ', types[typeof(a_class)]))
+			_fail(str(bad_param_2, _str(a_class)))
 		else:
 			if(object is a_class):
 				_pass(disp)
@@ -809,8 +708,8 @@ func assert_is(object, a_class, text=''):
 
 func _get_typeof_string(the_type):
 	var to_return = ""
-	if(types.has(the_type)):
-		to_return += str(the_type, '(',  types[the_type], ')')
+	if(_strutils.types.has(the_type)):
+		to_return += str(the_type, '(',  _strutils.types[the_type], ')')
 	else:
 		to_return += str(the_type)
 	return to_return
@@ -996,13 +895,37 @@ func assert_not_null(got, text=''):
 # We pass in a title (since if it is freed, we lost all identity data)
 # -----------------------------------------------------------------------------
 func assert_freed(obj, title):
-	assert_true(not is_instance_valid(obj), "Object %s is freed" % title)
+	var disp = title
+	if(is_instance_valid(obj)):
+		disp = _strutils.type2str(obj) + title
+	assert_true(not is_instance_valid(obj), "Expected [%s] to be freed" % disp)
 
 # ------------------------------------------------------------------------------
 # Asserts Object has not been freed from memory
 # -----------------------------------------------------------------------------
 func assert_not_freed(obj, title):
-	assert_true(is_instance_valid(obj), "Object %s is not freed" % title)
+	var disp = title
+	if(is_instance_valid(obj)):
+		disp = _strutils.type2str(obj) + title
+	assert_true(is_instance_valid(obj), "Expected [%s] to not be freed" % disp)
+
+# ------------------------------------------------------------------------------
+# Asserts that the current test has not introduced any new orphans.  This only
+# applies to the test code that preceedes a call to this method so it should be
+# the last thing your test does.
+# ------------------------------------------------------------------------------
+func assert_no_new_orphans(text=''):
+	var count = gut.get_orphan_counter().get_counter('test')
+	var msg = ''
+	if(text != ''):
+		msg = ':  ' + text
+	# Note that get_counter will return -1 if the counter does not exist.  This
+	# can happen with a misplaced assert_no_new_orphans.  Checking for > 0
+	# ensures this will not cause some weird failure.
+	if(count > 0):
+		_fail(str('Expected no orphans, but found ', count, msg))
+	else:
+		_pass('No new orphans found.' + msg)
 
 # ------------------------------------------------------------------------------
 # Mark the current test as pending.
@@ -1010,10 +933,7 @@ func assert_not_freed(obj, title):
 func pending(text=""):
 	_summary.pending += 1
 	if(gut):
-		if(text == ""):
-			gut.p("PENDING")
-		else:
-			gut.p("PENDING:  " + text)
+		_lgr.pending(text)
 		gut._pending(text)
 
 # ------------------------------------------------------------------------------
@@ -1243,3 +1163,57 @@ func replace_node(base_node, path_or_node, with_this):
 		with_this.add_to_group(groups[i])
 
 	to_replace.queue_free()
+
+
+# ------------------------------------------------------------------------------
+# This method does a somewhat complicated dance with Gut.  It assumes that Gut
+# will clear its parameter handler after it finishes calling a parameterized test
+# enough times.
+# ------------------------------------------------------------------------------
+func use_parameters(params):
+	var ph = gut.get_parameter_handler()
+	if(ph == null):
+		ph = _utils.ParameterHandler.new(params)
+		gut.set_parameter_handler(ph)
+	else:
+		_lgr.dec_indent()
+
+	var output = str('(call #', ph.get_call_count() + 1, ') with paramters:  ', ph.get_current_parameters())
+	gut.p(output, 0, 0)
+	_lgr.inc_indent()
+	return ph.next_parameters()
+
+# ------------------------------------------------------------------------------
+# Marks whatever is passed in to be freed after the test finishes.  It also
+# returns what is passed in so you can save a line of code.
+#   var thing = autofree(Thing.new())
+# ------------------------------------------------------------------------------
+func autofree(thing):
+	gut.get_autofree().add_free(thing)
+	return thing
+
+# ------------------------------------------------------------------------------
+# Works the same as autofree except queue_free will be called on the object
+# instead.  This also imparts a brief pause after the test finishes so that
+# the queued object has time to free.
+# ------------------------------------------------------------------------------
+func autoqfree(thing):
+	gut.get_autofree().add_queue_free(thing)
+	return thing
+
+# ------------------------------------------------------------------------------
+# The same as autofree but it also adds the object as a child of the test.
+# ------------------------------------------------------------------------------
+func add_child_autofree(node, legible_unique_name = false):
+	gut.get_autofree().add_free(node)
+	# Explicitly calling super here b/c add_child MIGHT change and I don't want
+	# a bug sneaking its way in here.
+	.add_child(node, legible_unique_name)
+	return node
+
+func add_child_autoqfree(node, legible_unique_name=false):
+	gut.get_autofree().add_queue_free(node)
+	# Explicitly calling super here b/c add_child MIGHT change and I don't want
+	# a bug sneaking its way in here.
+	.add_child(node, legible_unique_name)
+	return node

@@ -11,8 +11,14 @@ class Test:
 	var has_printed_name = false
 	# the line number the test is on
 	var line_number = -1
+	# the number of arguments the method has
+	var arg_count = 0
 
 # ------------------------------------------------------------------------------
+# This holds all the meta information for a test script.  It contains the
+# name of the inner class and an array of Test "structs".
+#
+# This class also facilitates all the exporting and importing of tests.
 # ------------------------------------------------------------------------------
 class TestScript:
 	var inner_class_name = null
@@ -35,13 +41,25 @@ class TestScript:
 		return to_return
 
 	func get_new():
-		var TheScript = load(path)
-		var inst = null
+		return load_script().new()
+
+	func load_script():
+		#print('loading:  ', get_full_name())
+		var to_return = load(path)
 		if(inner_class_name != null):
-			inst = TheScript.get(inner_class_name).new()
-		else:
-			inst = TheScript.new()
-		return inst
+			# If we wanted to do inner classes in inner classses
+			# then this would have to become some kind of loop or recursive
+			# call to go all the way down the chain or this class would
+			# have to change to hold onto the loaded class instead of
+			# just path information.
+			to_return = to_return.get(inner_class_name)
+		return to_return
+
+	func get_filename_and_inner():
+		var to_return = get_filename()
+		if(inner_class_name != null):
+			to_return += '.' + inner_class_name
+		return to_return
 
 	func get_full_name():
 		var to_return = path
@@ -55,6 +73,9 @@ class TestScript:
 	func has_inner_class():
 		return inner_class_name != null
 
+	# Note:  although this no longer needs to export the inner_class names since
+	#        they are pulled from metadata now, it is easier to leave that in
+	#        so we don't have to cut the export down to unique script names.
 	func export_to(config_file, section):
 		config_file.set_value(section, 'path', path)
 		config_file.set_value(section, 'inner_class', inner_class_name)
@@ -79,11 +100,6 @@ class TestScript:
 	func import_from(config_file, section):
 		path = config_file.get_value(section, 'path')
 		path = _remap_path(path)
-		var test_names = config_file.get_value(section, 'tests')
-		for i in range(test_names.size()):
-			var t = Test.new()
-			t.name = test_names[i]
-			tests.append(t)
 		# Null is an acceptable value, but you can't pass null as a default to
 		# get_value since it thinks you didn't send a default...then it spits
 		# out red text.  This works around that.
@@ -93,6 +109,8 @@ class TestScript:
 		else: # just being explicit
 			inner_class_name = null
 
+	func get_test_named(name):
+		return _utils.search_array(tests, 'name', name)
 
 # ------------------------------------------------------------------------------
 # start test_collector, I don't think I like the name.
@@ -101,64 +119,72 @@ var scripts = []
 var _test_prefix = 'test_'
 var _test_class_prefix = 'Test'
 
-var _utils = load('res://addons/gut/utils.gd').new()
+var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
 
-func _parse_script(script):
-	var file = File.new()
-	var line = ""
-	var line_count = 0
+func _does_inherit_from_test(thing):
+	var base_script = thing.get_base_script()
+	var to_return = false
+	if(base_script != null):
+		var base_path = base_script.get_path()
+		if(base_path == 'res://addons/gut/test.gd'):
+			to_return = true
+		else:
+			to_return = _does_inherit_from_test(base_script)
+	return to_return
+
+func _populate_tests(test_script):
+	var methods = test_script.load_script().get_script_method_list()
+	for i in range(methods.size()):
+		var name = methods[i]['name']
+		if(name.begins_with(_test_prefix)):
+			var t = Test.new()
+			t.name = name
+			t.arg_count = methods[i]['args'].size()
+			test_script.tests.append(t)
+
+func _get_inner_test_class_names(loaded):
+	var inner_classes = []
+	var const_map = loaded.get_script_constant_map()
+	for key in const_map:
+		var thing = const_map[key]
+		if(typeof(thing) == TYPE_OBJECT):
+			if(key.begins_with(_test_class_prefix)):
+				if(_does_inherit_from_test(thing)):
+					inner_classes.append(key)
+				else:
+					_lgr.warn(str('Ignoring Inner Class ', key,
+						' because it does not extend res://addons/gut/test.gd'))
+
+			# This could go deeper and find inner classes within inner classes
+			# but requires more experimentation.  Right now I'm keeping it at
+			# one level since that is what the previous version did and there
+			# has been no demand for deeper nesting.
+			# _populate_inner_test_classes(thing)
+	return inner_classes
+
+func _parse_script(test_script):
 	var inner_classes = []
 	var scripts_found = []
 
-	file.open(script.path, 1)
-	while(!file.eof_reached()):
-		line_count += 1
-		line = file.get_line()
-		#Add a test
-		if(line.begins_with("func " + _test_prefix)):
-			var from = line.find(_test_prefix)
-			var line_len = line.find("(") - from
-			var new_test = Test.new()
-			new_test.name = line.substr(from, line_len)
-			new_test.line_number = line_count
-			script.tests.append(new_test)
-
-		if(line.begins_with('class ')):
-			var iclass_name = line.replace('class ', '')
-			iclass_name = iclass_name.replace(':', '')
-			if(iclass_name.begins_with(_test_class_prefix)):
-				inner_classes.append(iclass_name)
-
-	scripts_found.append(script.path)
+	var loaded = load(test_script.path)
+	if(_does_inherit_from_test(loaded)):
+		_populate_tests(test_script)
+		scripts_found.append(test_script.path)
+		inner_classes = _get_inner_test_class_names(loaded)
 
 	for i in range(inner_classes.size()):
-		var ts = TestScript.new(_utils, _lgr)
-		ts.path = script.path
-		ts.inner_class_name = inner_classes[i]
-		if(_parse_inner_class_tests(ts)):
+		var loaded_inner = loaded.get(inner_classes[i])
+		if(_does_inherit_from_test(loaded_inner)):
+			var ts = TestScript.new(_utils, _lgr)
+			ts.path = test_script.path
+			ts.inner_class_name = inner_classes[i]
+			_populate_tests(ts)
 			scripts.append(ts)
-			scripts_found.append(script.path + '[' + inner_classes[i] +']')
+			scripts_found.append(test_script.path + '[' + inner_classes[i] +']')
 
-	file.close()
 	return scripts_found
 
-func _parse_inner_class_tests(script):
-	var inst = script.get_new()
-
-	if(!inst is _utils.Test):
-		_lgr.warn('Ignoring ' + script.inner_class_name + ' because it starts with "' + _test_class_prefix + '" but does not extend addons/gut/test.gd')
-		return false
-
-	var methods = inst.get_method_list()
-	for i in range(methods.size()):
-		var name = methods[i]['name']
-		if(name.begins_with(_test_prefix) and methods[i]['flags'] == 65):
-			var t = Test.new()
-			t.name = name
-			script.tests.append(t)
-
-	return true
 # -----------------
 # Public
 # -----------------
@@ -178,29 +204,6 @@ func add_script(path):
 	scripts.append(ts)
 	return _parse_script(ts)
 
-func to_s():
-	var to_return = ''
-	for i in range(scripts.size()):
-		to_return += scripts[i].to_s() + "\n"
-	return to_return
-func get_logger():
-	return _lgr
-
-func set_logger(logger):
-	_lgr = logger
-
-func get_test_prefix():
-	return _test_prefix
-
-func set_test_prefix(test_prefix):
-	_test_prefix = test_prefix
-
-func get_test_class_prefix():
-	return _test_class_prefix
-
-func set_test_class_prefix(test_class_prefix):
-	_test_class_prefix = test_class_prefix
-
 func clear():
 	scripts.clear()
 
@@ -208,7 +211,7 @@ func has_script(path):
 	var found = false
 	var idx = 0
 	while(idx < scripts.size() and !found):
-		if(scripts[idx].path == path):
+		if(scripts[idx].get_full_name() == path):
 			found = true
 		else:
 			idx += 1
@@ -236,6 +239,44 @@ func import_tests(path):
 		for key in sections:
 			var ts = TestScript.new(_utils, _lgr)
 			ts.import_from(f, key)
+			_populate_tests(ts)
 			scripts.append(ts)
 		success = true
 	return success
+
+func get_script_named(name):
+	return _utils.search_array(scripts, 'get_filename_and_inner', name)
+
+func get_test_named(script_name, test_name):
+	var s = get_script_named(script_name)
+	if(s != null):
+		return s.get_test_named(test_name)
+	else:
+		return null
+
+func to_s():
+	var to_return = ''
+	for i in range(scripts.size()):
+		to_return += scripts[i].to_s() + "\n"
+	return to_return
+
+# ---------------------
+# Accessors
+# ---------------------
+func get_logger():
+	return _lgr
+
+func set_logger(logger):
+	_lgr = logger
+
+func get_test_prefix():
+	return _test_prefix
+
+func set_test_prefix(test_prefix):
+	_test_prefix = test_prefix
+
+func get_test_class_prefix():
+	return _test_class_prefix
+
+func set_test_class_prefix(test_class_prefix):
+	_test_class_prefix = test_class_prefix

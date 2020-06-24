@@ -9,8 +9,9 @@
 # 	}
 # }
 var returns = {}
-var _utils = load('res://addons/gut/utils.gd').new()
+var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
+var _strutils = _utils.Strutils.new()
 
 func _is_instance(obj):
 	return typeof(obj) == TYPE_OBJECT and !obj.has_method('new')
@@ -138,7 +139,7 @@ func should_call_super(obj, method, parameters=null):
 		# this log message is here because of how the generated doubled scripts
 		# are structured.  With this log msg here, you will only see one
 		# "unstubbed" info instead of multiple.
-		_lgr.info('Unstubbed call to ' + method + '::' + str(obj))
+		_lgr.info('Unstubbed call to ' + method + '::' + _strutils.type2str(obj))
 		return false
 
 

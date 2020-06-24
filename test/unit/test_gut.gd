@@ -69,7 +69,6 @@ func get_a_gut():
 	var g = Gut.new()
 	g.set_yield_between_tests(false)
 	g.set_log_level(g.LOG_LEVEL_ALL_ASSERTS)
-	add_child(g)
 	return g
 
 # Prints out gr.test_gut assert results, used by assert_fail and assert_pass
@@ -92,11 +91,11 @@ func assert_pass(count=1, msg=''):
 	if(gr.test.get_pass_count() != count):
 		print_test_gut_info()
 
-
 # ------------------------------
 # Setup/Teardown
 # ------------------------------
 func before_all():
+	_utils._test_mode = true
 	starting_counts.setup_count = gut.get_test_count()
 	starting_counts.teardown_count = gut.get_test_count()
 	counts.prerun_setup_count += 1
@@ -105,12 +104,12 @@ func before_each():
 	counts.setup_count += 1
 	gr.test_finished_called = false
 	gr.test_gut = get_a_gut()
+	add_child_autoqfree(gr.test_gut)
 	gr.test = Test.new()
 	gr.test.gut = gr.test_gut
 
 func after_each():
 	counts.teardown_count += 1
-	gr.test_gut.queue_free()
 
 func after_all():
 	counts.postrun_teardown_count += 1
@@ -138,6 +137,9 @@ func test_get_set_export_path():
 
 func test_get_set_color_output():
 	assert_accessors(gr.test_gut, 'color_output', false, true)
+
+func test_get_set_parameter_handler():
+	assert_accessors(gr.test_gut, 'parameter_handler', null, _utils.ParameterHandler.new())
 # ------------------------------
 # Doubler
 # ------------------------------
@@ -324,14 +326,13 @@ func test_when_moving_to_next_test_watched_signals_are_cleared():
 func test_can_get_set_inner_class_name():
 	assert_accessors(gr.test_gut, 'inner_class_name', '', 'something')
 
-func test_assert_exports_inner_class_name():
-	assert_exports(gr.test_gut, '_inner_class_name', TYPE_STRING)
-
 func test_when_set_only_inner_class_tests_run():
 	gr.test_gut.set_inner_class_name('TestClass1')
 	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/has_inner_class.gd')
 	gr.test_gut.test_scripts()
-	assert_eq(gr.test_gut.get_summary().get_totals().tests, 2)
+	# count should be 4, 2 from TestClass1 and 2 from TestExtendsTestClass1
+	# which extends TestClass1 so it gets its two tests as well.
+	assert_eq(gr.test_gut.get_summary().get_totals().tests, 4)
 
 
 # ------------------------------
@@ -352,12 +353,12 @@ func test_after_running_script_everything_checks_out():
 	assert_eq(instance.counts.teardown, 3, 'teardown')
 
 func test_when_inner_class_skipped_none_of_the_before_after_are_called():
+	gut.p('these tests sometimes fail.  Will have to add inner class names to test objects to make sure it passes.  GUT no longer guarantees the order in which the inner test classes are run so sometimes it works and sometimes it doesnt.')
 	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/inner_classes_check_before_after.gd')
 	gr.test_gut.set_inner_class_name('Inner1')
 	gr.test_gut.test_scripts()
 	var instances = gr.test_gut._test_script_objects
 
-	# instances[0] is the outer script
 
 	assert_eq(instances[1].before_all_calls, 1, 'TestInner1 before_all calls')
 	assert_eq(instances[1].after_all_calls, 1, 'TestInner1 after_all calls')
@@ -423,12 +424,50 @@ func test_when_post_hook_set_to_invalid_script_no_tests_are_ran():
 	assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test should not be run')
 	assert_gt(gr.test_gut.get_logger().get_errors().size(), 0, 'there should be errors')
 
+# ------------------------------
+# Parameterized Test Tests
+# ------------------------------
+func test_can_run_tests_with_parameters():
+	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/test_with_parameters.gd')
+	gr.test_gut.set_unit_test_name('test_has_one_defaulted_parameter')
+	gr.test_gut.test_scripts()
+	var totals = gr.test_gut.get_summary().get_totals()
+	assert_eq(totals.passing, 1, 'pass count')
+	assert_eq(totals.tests, 1, 'test count')
+
+func test_too_many_parameters_generates_an_error():
+	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/test_with_parameters.gd')
+	gr.test_gut.set_unit_test_name('test_has_two_parameters')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_logger().get_errors().size(), 1, 'error size')
+	assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test count')
+
+func test_parameterized_tests_are_called_multiple_times():
+	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/test_with_parameters.gd')
+	gr.test_gut.set_unit_test_name('test_has_three_values_for_parameters')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_pass_count(), 3)
+
+func test_when_use_parameters_is_not_called_then_error_is_generated():
+	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/test_with_parameters.gd')
+	gr.test_gut.set_unit_test_name('test_does_not_use_use_parameters')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_logger().get_errors().size(), 1, 'error size')
+	assert_eq(gr.test_gut.get_fail_count(), 1)
+
+# if you really think about this is a very very inception like test.
+func test_parameterized_test_that_yield_are_called_correctly():
+	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/test_with_parameters.gd')
+	gr.test_gut.set_unit_test_name('test_three_values_and_a_yield')
+	gr.test_gut.test_scripts()
+	yield(yield_to(gr.test_gut, gr.test_gut.SIGNAL_PRAMETERIZED_YIELD_DONE, 10), YIELD)
+	assert_eq(gr.test_gut.get_pass_count(), 3)
 
 # ------------------------------------------------------------------------------
 #
 #
-# This must be the LAST test
-#
+# This must be the LAST test (but i don't think it always will be anymore)
+# TODO Is this still valid and is it always the last test?  It will not be.
 #
 # ------------------------------------------------------------------------------
 func test_verify_results():

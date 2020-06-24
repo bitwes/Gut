@@ -91,7 +91,6 @@ func test_when_stubbed_to_call_super_then_super_is_called():
 func test_can_stub_native_methods():
 	gr.doubler.set_stubber(gr.stubber)
 	var d_node2d = gr.doubler.double_gdnative(Node2D).new()
-	print(d_node2d.__gut_metadata_.stubber)
 	var params = _utils.StubParams.new(d_node2d, 'get_position').to_return(-1)
 	gr.stubber.add_stub(params)
 	assert_eq(d_node2d.get_position(), -1)
@@ -102,6 +101,7 @@ func test_partial_double_of_Node2D_returns_super_values():
 	# see big ass comment in next test.
 	pd_node_2d  = gr.doubler.partial_double_gdnative(Node2D).new()
 	assert_eq(pd_node_2d.is_blocking_signals(), false)
+
 
 func test_can_stub_all_Node2D_doubles():
 	gr.doubler.set_stubber(gr.stubber)
@@ -121,7 +121,6 @@ func test_can_stub_all_Node2D_doubles():
 	# !!!!!!!!!!!!!!!
 	d_node2d = gr.doubler.double_gdnative(Node2D).new()
 	d_node2d = gr.doubler.double_gdnative(Node2D).new()
-	print(d_node2d.__gut_metadata_.stubber)
 	var params = _utils.StubParams.new(Node2D, 'get_position').to_return(-1)
 	gr.stubber.add_stub(params)
 	assert_eq(d_node2d.get_position(), -1)
