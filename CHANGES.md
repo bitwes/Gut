@@ -5,7 +5,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 # 7.0.0
 ## Breaking Changes
 * Requires Godot 3.2.  Versions 3.1 and earlier are no longer supported.
-* You must replace the GUT node in your scenes.  Take notes on your GUT settings in the editor then delete GUT from the tree and add it back in.  You may have to restart Godot after this change.  Then repopulate your settings.
+* You must recreate the GUT node in your test runner scene.
+  * Take notes on your GUT settings in the editor.
+  * Delete GUT from the tree and add it back in.
+  * You may have to restart Godot after this change.
+  * Repopulate your settings.
 * All Doubles and Partial Doubles are freed automatically after each test.  Doubles and Partial Doubles created in `before_all` will no longer be around for all tests.
 * A new signal `gut_ready` should be used instead of `_ready` when performing any actions on the GUT object in your test runner scene.  You should avoid interacting with GUT until this signal has been emitted.
 
@@ -13,8 +17,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * The order the tests are run is no longer guaranteed.  This has been the case with Inner Test cases but it's now true for all tests.
 * The order that Inner Test classes are run is no longer guaranteed.
 
+
 ## Features
-* __Issue 114__ By popular demand Parameterized Tests have been added.  You can now create a tests that will be run multiple times and fed a list of parameters.  [See the wiki](https:/github.com/bitwes/Gut/wiki/ParameterizedTests) for more information. (This feature opened up a giant can of worms for logging which led to more cans and more worms.)
+* __Issue 114__ By popular demand [Parameterized Tests](https:/github.com/bitwes/Gut/wiki/ParameterizedTests) have been added.  You can now create a tests that will be run multiple times and fed a list of parameters.  (This feature opened up a giant can of worms for logging which led to more cans and more worms.)
 * Added [Memory Management](https:/github.com/bitwes/Gut/wiki/Memory-Management) tools.
   * Logging of orphan counts.
   * Warnings for children added to tests that are not freed.
@@ -22,12 +27,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   * New utility methods:  `autofree`, `autoqfree`, `add_child_autofree`, `add_child_autoqfree`.
 * __Issue 168__ Added "user directory" file viewer to additional options for viewing logs on a device.  See [Running on Devices](https://github.com/bitwes/Gut/wiki/Running-On-Devices#logging)
 * __Issue 167__ Added more areas where filenames are printed when printing objects.
-* Redesigned logging to be more consistent across control, terminal, and Godot console (here be the cans and worms).
+* Redesigned logging to be more consistent across the GUT control, terminal, and Godot console (here be the cans and worms).
 * Can now set the font (from a few choices), font size, font color, and the background color!
 * Some GUI tweaks.
 
 ## Bug Fixes
-* Thanks to hilfazer for contributing a PR that addressed most of the memory leaks in GUT.  This PR also inspired a bunch of new tools for dealing with leaks.
+* Thanks to hilfazer for contributing a PR that addressed most of the memory leaks in GUT.  This PR also inspired most of the new Memory Management features.
 
 ### Relevant Wiki Links
 * Added a [Quick-Start wiki page](https:/github.com/bitwes/Gut/wiki/Quick-Start).
