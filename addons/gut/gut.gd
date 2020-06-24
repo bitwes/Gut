@@ -1,33 +1,33 @@
-################################################################################
+# ##############################################################################
 #(G)odot (U)nit (T)est class
 #
-################################################################################
-#The MIT License (MIT)
-#=====================
+# ##############################################################################
+# The MIT License (MIT)
+# =====================
 #
-#Copyright (c) 2020 Tom "Butch" Wesley
+# Copyright (c) 2020 Tom "Butch" Wesley
 #
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-#The above copyright notice and this permission notice shall be included in
-#all copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-#THE SOFTWARE.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
 #
-################################################################################
+# ##############################################################################
 # View readme for usage details.
-################################################################################
+# ##############################################################################
 extends Control
 
 # -- Settings --
@@ -201,7 +201,7 @@ func _ready():
 	_print_versions()
 
 # ------------------------------------------------------------------------------
-# Runs right before free is called I think.  Can't override `free`
+# Runs right before free is called.  Can't override `free`.
 # ------------------------------------------------------------------------------
 func _notification(what):
 	if(what == NOTIFICATION_PREDELETE):
@@ -224,11 +224,11 @@ func _print_versions(send_all = true):
 		printer.send(info + "\n")
 
 
-################################################################################
+# ##############################################################################
 #
 # GUI Events and setup
 #
-################################################################################
+# ##############################################################################
 func _setup_gui():
 	# This is how we get the size of the control to translate to the gui when
 	# the scene is run.  This is also another reason why the min_rect_size
@@ -495,7 +495,6 @@ func _print_script_heading(script):
 	if(_does_class_name_match(_inner_class_name, script.inner_class_name)):
 		var fmt = _lgr.fmts.underline
 		var divider = '-----------------------------------------'
-		#_lgr.log("\n" + divider, _lgr.fmts.yellow)
 
 		var text = ''
 		if(script.inner_class_name == null):
@@ -510,7 +509,6 @@ func _print_script_heading(script):
 		if(!_utils.is_null_or_empty(_unit_test_name)):
 			_lgr.log('  Only running tests like: "' + _unit_test_name + '"', fmt)
 
-		#_lgr.log(divider, _lgr.fmts.yellow)
 
 # ------------------------------------------------------------------------------
 # Just gets more logic out of _test_the_scripts.  Decides if we should yield after
@@ -616,6 +614,7 @@ func _get_indexes_matching_path(path):
 	return indexes
 
 # ------------------------------------------------------------------------------
+# Execute all calls of a parameterized test.
 # ------------------------------------------------------------------------------
 func _parameterized_call(test_script):
 	var script_result = test_script.call(_current_test.name)
@@ -758,13 +757,13 @@ func _test_the_scripts(indexes=[]):
 				_call_deprecated_script_method(test_script, 'teardown', 'after_each')
 				test_script.after_each()
 
-				# -- Free up everything in the _autofree.  Yield for a bit if we
+				# Free up everything in the _autofree.  Yield for a bit if we
 				# have anything with a queue_free so that they have time to
 				# free and are not found by the orphan counter.
-				var afq_count = _autofree.get_queue_free_count()
+				var aqf_count = _autofree.get_queue_free_count()
 				_autofree.free_all()
-				if(afq_count > 0):
-					yield(_do_yield_between(0.001), 'timeout')
+				if(aqf_count > 0):
+					yield(_do_yield_between(0.01), 'timeout')
 				# ------
 
 				if(_log_level > 0):
@@ -898,8 +897,12 @@ func _get_files(path, prefix, suffix):
 #
 # The first time output is generated when in a test, the test name will be
 # printed.
+#
+# NOT_USED_ANYMORE was indent level.  This was deprecated in 7.0.0.
 # ------------------------------------------------------------------------------
-func p(text, level=0, NOT_USED_ANYMORE=0):
+func p(text, level=0, NOT_USED_ANYMORE=-123):
+	if(NOT_USED_ANYMORE != -123):
+		_lgr.deprecated('gut.p no longer supports the optional 3rd parameter for indent_level parameter.')
 	var str_text = str(text)
 
 	if(level <= _utils.nvl(_log_level, 0)):

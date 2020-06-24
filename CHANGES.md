@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   * Repopulate your settings.
 * All Doubles and Partial Doubles are freed automatically after each test.  Doubles and Partial Doubles created in `before_all` will no longer be around for all tests.
 * A new signal `gut_ready` should be used instead of `_ready` when performing any actions on the GUT object in your test runner scene.  You should avoid interacting with GUT until this signal has been emitted.
+* `gut.p` no longer supports the 3rd optional parameter for indent level.  The parameter still exists but does nothing and generates a deprecation warning.
 
 ### Potentially Breaking Changes
 * The order the tests are run is no longer guaranteed.  This has been the case with Inner Test cases but it's now true for all tests.

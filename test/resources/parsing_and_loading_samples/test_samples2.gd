@@ -1,4 +1,4 @@
-################################################################################
+# ##############################################################################
 #All the magic happens with the extends.  This gets you access to all the gut
 #asserts and the overridable setup and teardown methods.
 #
@@ -8,7 +8,7 @@
 #WARNING
 #	DO NOT assign anything to the gut variable.  This is set at runtime by the gut
 #	script.  Setting it to something will cause everything to go crazy go nuts.
-################################################################################
+# ##############################################################################
 extends "res://addons/gut/test.gd"
 
 func before_each():
