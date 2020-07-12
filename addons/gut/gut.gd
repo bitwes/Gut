@@ -968,6 +968,7 @@ func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
 	var d = Directory.new()
 	if(!d.dir_exists(path)):
 		_lgr.error(str('The path [', path, '] does not exist.'))
+		OS.exit_code = 1
 	else:
 		var files = _get_files(path, prefix, suffix)
 		for i in range(files.size()):
