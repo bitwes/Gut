@@ -346,10 +346,10 @@ func _run_gut():
 			load_options_from_config_file(opt_resolver.get_value('config_file'), opt_resolver.config_opts)
 
 	if(load_result == -1): # -1 indicates json parse error
-		quit()
+		quit(1)
 	else:
 		if(!all_options_valid):
-			quit()
+			quit(1)
 		elif(o.get_value('-gh')):
 			print(_utils.get_version_text())
 			o.print_help()
