@@ -4,8 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 # x.x.x
 ## Features
+
+
 ## Bug Fixes
 * Command Line now returns 1 if no sripts could be loaded.
+* __Issue 195__ Parameterized tests generated deprecated warnings.
 
 
 # 7.0.0
