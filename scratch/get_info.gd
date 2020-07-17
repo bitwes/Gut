@@ -9,6 +9,7 @@ extends SceneTree
 
 const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
 var DoubleMe = load(DOUBLE_ME_PATH)
+var DoubleMeScene = load('res://test/resources/doubler_test_objects/double_me_scene.tscn')
 
 const DEFAULT_ARGS = 'default_args'
 const NAME = 'name'
@@ -234,15 +235,21 @@ func print_all_info(thing):
 	print('Properties')
 	var props = thing.get_property_list()
 	for i in range(props.size()):
-		print('  ', props[i].name)
+		print('  ', props[i].name, props[i])
 
 func _init():
 	var r = Reference.new()
 	var r2 = r
 	var r3 = r
 	var r4 = r
-	print_all_info(r)
-	print(r.get('Reference'))
+	#print_all_info(r)
+	#print(r.get('Reference'))
+
+	print_all_info(DoubleMeScene)
+	print(DoubleMeScene.script)
+	print(DoubleMeScene.resource_name)
+	print(DoubleMeScene.get_meta_list())
+
 	#print_script_methods()
 	#var test = load('res://addons/gut/test.gd').new()
 	#print_method_info(test)

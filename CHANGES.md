@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# x.x.x
+## Features
+## Bug Fixes
+* Command Line now returns 1 if no sripts could be loaded.
+
+
 # 7.0.0
 ## Breaking Changes
 * Requires Godot 3.2.  Versions 3.1 and earlier are no longer supported.
