@@ -1179,7 +1179,7 @@ func use_parameters(params):
 		_lgr.dec_indent()
 
 	var output = str('(call #', ph.get_call_count() + 1, ') with paramters:  ', ph.get_current_parameters())
-	gut.p(output, 0, 0)
+	gut.p(output, 0)
 	_lgr.inc_indent()
 	return ph.next_parameters()
 
