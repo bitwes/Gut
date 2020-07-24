@@ -659,3 +659,57 @@ func test_assert_connected():
 	assert_connected(signaler,  connector, 'the_signal', 'other_method')
 	assert_connected(signaler, connector, 'other_signal')
 	assert_connected(signaler, foo, 'the_signal')
+
+
+# >>> Issue 70
+const Health = preload("res://test/resources/test_assert_setget_test_objects/health.gd")
+const HealthBar = preload("res://test/resources/test_assert_setget_test_objects/HealthBar.tscn")
+
+func test_assert_setget_called():
+	gut.p('-- passing --')
+	assert_setget_called(Health, 'current_hp', 'set_current_hp', 'get_current_hp') # PASS
+	assert_setget_called(Health, 'current_hp', 'set_current_hp') # PASS
+	assert_setget_called(Health, 'current_hp', '', 'get_current_hp') # PASS
+	
+	
+	gut.p('-- failing --')
+	assert_setget_called(Health, 'max_hp', 'set_max_hp') # FAIL
+	assert_setget_called(Health, 'max_hp') # FAIL => out of scope
+	assert_setget_called(Health, 'current_hp') # FAIL => setter or getter name must be specified
+	assert_setget_called(Health, 'current_hp', 'set_curent_hp', 'get_current_hp') # FAIL => typo...
+	var health = Health.new()
+	assert_setget_called(health, 'current_hp', 'set_current_hp') # FAIL => type has to be a Resource
+	health.free()
+	
+	
+	gut.p('-- run time error --')
+	#assert_setget_called(Health, max_hp, null, null) # RTE
+	#assert_setget_called(Health, max_hp, 1, 1) # RTE
+
+
+func test_assert_setget():
+	gut.p('-- passing --')
+	assert_setget(HealthBar, 'health', true) # PASS
+	var health_bar = HealthBar.instance()
+	assert_setget(health_bar, 'health', true) # PASS
+	health_bar.queue_free()
+
+	gut.p('-- failing --')
+	assert_setget(HealthBar, 'label') # FAIL => setter or getter has to be specified
+	assert_setget(HealthBar, 'label', true) # FAIL => setter does not exist
+
+
+func test_assert_property():
+	gut.p('-- passing --')
+	assert_property(Health, 'current_hp', 0, 0) # PASS
+	var health = Health.new()
+	health.max_hp = 10
+	assert_property(health, 'current_hp', 0, 5) # PASS
+	health.free()
+	
+	gut.p('-- failing --')
+	assert_property(Health, 'max_hp', 0, 5) # FAIL => no setget keyword
+	assert_property(Health, 'current_hp', 0, 5) # FAIL => method will clamp current_hp to max_hp which is 0 by default
+	var directory = Directory.new()
+	assert_property(directory, 'current_dir', '', 'new_dir') # FAIL => directory is not a Resource nor a Node
+# <<< Issue 70
