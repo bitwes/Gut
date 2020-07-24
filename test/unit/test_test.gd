@@ -1462,15 +1462,10 @@ class TestAssertSetgetCalled:
 	
 	func before_each() -> void:
 		.before_each()
-		#orphans hunting
+		#orphans hunting => ask butch how to handle this
 		gr.test_with_gut.gut.add_child(gr.test_with_gut.gut._yield_timer)
 		gr.test_with_gut.gut.add_child(gr.test_with_gut.gut._yield_between.timer)
 		gr.test_with_gut.gut.add_child(gr.test_with_gut.gut._wait_timer)
-	
-	
-	func after_all() -> void:
-		self.queue_free()
-		print_stray_nodes()
 	
 	
 	func test_passes_has_assert_setget_method() -> void:
@@ -1549,15 +1544,10 @@ class TestAssertProperty:
 	
 	func before_each() -> void:
 		.before_each()
-		#orphans hunting
+		#orphans hunting => ask butch how to handle this
 		gr.test_with_gut.gut.add_child(gr.test_with_gut.gut._yield_timer)
 		gr.test_with_gut.gut.add_child(gr.test_with_gut.gut._yield_between.timer)
 		gr.test_with_gut.gut.add_child(gr.test_with_gut.gut._wait_timer)
-	
-	
-	func after_all() -> void:
-		self.queue_free()
-		print_stray_nodes()
 	
 	
 	# omit the double check on passed asserts
@@ -1634,15 +1624,10 @@ class TestAssertSetget:
 	
 	func before_each() -> void:
 		.before_each()
-		#orphans hunting
+		#orphans hunting => ask butch how to handle this
 		gr.test_with_gut.gut.add_child(gr.test_with_gut.gut._yield_timer)
 		gr.test_with_gut.gut.add_child(gr.test_with_gut.gut._yield_between.timer)
 		gr.test_with_gut.gut.add_child(gr.test_with_gut.gut._wait_timer)
-	
-	
-	func after_all() -> void:
-		self.queue_free()
-		print_stray_nodes()
 	
 	
 	func test_passes_has_assert_setget_method() -> void:
