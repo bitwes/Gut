@@ -662,8 +662,8 @@ func test_assert_connected():
 
 
 # >>> Issue 70
-const Health = preload("res://test/resources/test_assert_setget_test_objects/health.gd")
-const HealthBar = preload("res://test/resources/test_assert_setget_test_objects/HealthBar.tscn")
+const Health = preload("res://test/resources/test_assert_setget_test_objects/readme_examples/health.gd")
+const HealthBar = preload("res://test/resources/test_assert_setget_test_objects/readme_examples/HealthBar.tscn")
 
 func test_assert_setget_called():
 	gut.p('-- passing --')

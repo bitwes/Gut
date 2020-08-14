@@ -1,8 +1,8 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://test/resources/test_assert_setget_test_objects/health_bar.gd" type="Script" id=1]
+[ext_resource path="res://test/resources/test_assert_setget_test_objects/control_child_mock.gd" type="Script" id=1]
 
-[node name="HealthBar" type="Control"]
+[node name="ControlChildMock" type="Control"]
 margin_right = 130.0
 margin_bottom = 46.0
 script = ExtResource( 1 )

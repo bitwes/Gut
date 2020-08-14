@@ -931,71 +931,87 @@ func assert_no_new_orphans(text=''):
 # Asserts the given setter and getter methods are called when the given property
 # is accessed.
 # ------------------------------------------------------------------------------
-func assert_setget_called(type: Resource, name_property: String
-			, name_setter: String = '', name_getter: String = '') -> void:
-	# arrange
-	var input = {
-			"type": type
-			, "name_property": name_property
-			, "name_setter": name_setter
-			, "name_getter": name_getter
-	}
-	var validation = _validate_assert_setget_called_input(input)
+func assert_setget_called(type, name_property, name_setter  = "", name_getter  = ""):
+	var validation = _validate_assert_setget_called_input(type, name_property, str(name_setter), str(name_getter))
 	if not validation.is_valid:
 		_fail(validation.msg)
 		return
 	
-	var amount_failed_tests = get_fail_count()
+	var message = ""
+	var amount_calls_setter = 0
+	var amount_calls_getter = 0
+	var expected_calls_setter = 0
+	var expected_calls_getter = 0
 	var obj = _create_obj_from_type(double(type))
 	
-	# action
-	obj.set(name_property, null)
-	var new_property = obj.get(name_property)
-	
 	if name_setter != '':
-		assert_called(obj, name_setter)
+		expected_calls_setter = 1
+		stub(obj, name_setter).to_do_nothing()
+		obj.set(name_property, null)
+		amount_calls_setter = gut.get_spy().call_count(obj, str(name_setter))
+	
 	if name_getter != '':
-		assert_called(obj, name_getter)
+		expected_calls_getter = 1
+		stub(obj, name_getter).to_do_nothing()
+		var new_property = obj.get(name_property)
+		amount_calls_getter = gut.get_spy().call_count(obj, str(name_getter))
 	
 	obj.free()
 	
 	# assert
-	if get_fail_count() == amount_failed_tests:
-		_pass(str('The setget keyword is set up as expected.'))
+	if amount_calls_setter == expected_calls_setter and amount_calls_getter == expected_calls_getter:
+		_pass(str("For property %s the setget keyword is set up as expected." % _str(name_property)))
 	else:
-		_fail(str('The setget keyword is not set up as expected. Examine subtests to see what failed.'))
+		if amount_calls_setter < expected_calls_setter:
+			message += " The setter was not called."
+		elif amount_calls_setter > expected_calls_setter:
+			message += " The setter was called but should not have been."
+		if amount_calls_getter < expected_calls_getter:
+			message += " The getter was not called."
+		elif amount_calls_getter > expected_calls_getter:
+			message += " The getter was called but should not have been."
+		_fail(str(message))
 
 
-func _validate_assert_setget_called_input(input: Dictionary) -> Dictionary:
+# Returns a dictionary that contains 
+# - an is_valid flag whether validation was successful or not and
+# - a message that gives some information about the validation errors.
+func _validate_assert_setget_called_input(type, name_property
+			, name_setter, name_getter):
 	var obj = null
-	var result = {"is_valid": true, "msg": ''}
+	var result = {"is_valid": true, "msg": ""}
 	
-	if typeof(input.type) != TYPE_OBJECT:
+	if null == type or typeof(type) != TYPE_OBJECT or not type.is_class("Resource"):
 		result.is_valid = false
-		result.msg = str('The type parameter should be a class, input is ', str(input.type))
+		result.msg = str("The type parameter should be a ressource, input is ", _str(type))
 		return result
 	
-	obj = _create_obj_from_type(input.type)
-	var property = _find_object_property(obj, input.name_property)
+	if null == double(type):
+		result.is_valid = false
+		result.msg = str("Attempt to double the type parameter failed. The type parameter should be a ressource that can be doubled.")
+		return result
+	
+	obj = _create_obj_from_type(type)
+	var property = _find_object_property(obj, str(name_property))
 	
 	if null == property:
 		result.is_valid = false
-		result.msg += str('The property %s doesn\'t exist.' % input.name_property)
-	if input.name_setter == '' and input.name_getter == '':
+		result.msg += str("The property %s doesn\'t exist." % _str(name_property))
+	if name_setter == "" and name_getter == "":
 		result.is_valid = false
-		result.msg += str('Either setter or getter method must be specified.')
-	if input.name_setter != '' and not obj.has_method(input.name_setter):
+		result.msg += str("Either setter or getter method must be specified.")
+	if name_setter != "" and not obj.has_method(str(name_setter)):
 		result.is_valid = false
-		result.msg += str('Method %s doesn\'t exist.' % input.name_setter)
-	if input.name_getter != '' and not obj.has_method((input.name_getter)):
+		result.msg += str("Method %s doesn\'t exist." % _str(name_setter))
+	if name_getter != "" and not obj.has_method(str(name_getter)):
 		result.is_valid = false
-		result.msg += str('Method %s doesn\'t exist.' % input.name_getter)
+		result.msg += str("Method %s doesn\'t exist." %_str(name_getter))
 	
 	obj.free()
 	return result
 
 
-func _create_obj_from_type(type: Resource) -> Object:
+func _create_obj_from_type(type):
 	var obj = null
 	if type.is_class("PackedScene"):
 		obj = type.instance()
@@ -1005,7 +1021,7 @@ func _create_obj_from_type(type: Resource) -> Object:
 	return obj
 
 
-func _get_type_from_obj(obj: Object) -> Resource:
+func _get_type_from_obj(obj):
 	var type = null
 	if obj.has_method(get_filename()):
 			type = load(obj.get_filename())
@@ -1017,32 +1033,32 @@ func _get_type_from_obj(obj: Object) -> Resource:
 # Wrapper: invokes assert_setget_called but provides a slightly more convenient
 # signature
 # ------------------------------------------------------------------------------
-func assert_setget(instance: Object, name_property, has_setter: bool = false, has_getter: bool = false) -> void:
+func assert_setget(instance, name_property, has_setter = false, has_getter = false) -> void:
 	
 	var name_setter = ""
 	var name_getter = ""
 	var resource = null
-	if instance.is_class('Resource'):
+	if instance.is_class("Resource"):
 		resource = instance
 	else:
-		resource = _get_type_from_obj(instance)	
+		resource = _get_type_from_obj(instance)
 	
 	if has_setter:
-		name_setter = str("set_", name_property)
+		name_setter = str("set_", _str(name_property))
 	if has_getter:
-		name_getter = str("get_", name_property)
+		name_getter = str("get_", _str(name_property))
 	
-	assert_setget_called(resource, name_property, name_setter, name_getter)
+	assert_setget_called(resource, str(name_property), name_setter, name_getter)
 
 # ------------------------------------------------------------------------------
 # Wrapper: asserts if the property exists, the accessor methods exist and the 
 # setget keyword is set for accessor methods
 # ------------------------------------------------------------------------------
-func assert_property(instance: Object, name_property: String, default_value, new_value) -> void:
+func assert_property(instance, name_property, default_value, new_value) -> void:
 	var free_me = []
 	var resource = null
 	var obj = null
-	if instance.is_class('Resource'):
+	if instance.is_class("Resource"):
 		resource = instance
 		obj = _create_obj_from_type(resource)
 		free_me.append(obj)
@@ -1050,20 +1066,20 @@ func assert_property(instance: Object, name_property: String, default_value, new
 		resource = _get_type_from_obj(instance)
 		obj = instance
 	
-	var name_setter = str('set_', name_property)
-	var name_getter = str('get_', name_property)
+	var name_setter = str("set_", _str(name_property))
+	var name_getter = str("get_", _str(name_property))
 	
-	assert_accessors(obj, name_property, default_value, new_value)
-	assert_setget_called(resource, name_property, name_setter, name_getter)
+	assert_accessors(obj, str(name_property), default_value, new_value)
+	assert_setget_called(resource, str(name_property), name_setter, name_getter)
 	
 	for entry in free_me:
 		entry.free()
 	
 	# assert
 	if get_fail_count() == 0:
-		_pass(str('The property is set up as expected.'))
+		_pass(str("The property is set up as expected."))
 	else:
-		_fail(str('The property is not set up as expected. Examine subtests to see what failed.'))
+		_fail(str("The property is not set up as expected. Examine subtests to see what failed."))
 
 # ------------------------------------------------------------------------------
 # Mark the current test as pending.
