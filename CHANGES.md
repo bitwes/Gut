@@ -8,8 +8,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Bug Fixes
 * Command Line now returns 1 if no sripts could be loaded.
-* __Issue 195__ Parameterized tests generated deprecated warnings.
-
+* __Issue 195__ Parameterized Tests generated deprecated warnings.
+* __Issue 202__ `before_each` and `after_each` now work as expected with Parameterized Tests.
 
 # 7.0.0
 ## Breaking Changes

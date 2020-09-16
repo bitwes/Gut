@@ -427,8 +427,18 @@ func test_when_post_hook_set_to_invalid_script_no_tests_are_ran():
 # ------------------------------
 # Parameterized Test Tests
 # ------------------------------
+const TEST_WITH_PARAMETERS = 'res://test/resources/parsing_and_loading_samples/test_with_parameters.gd'
+func _get_test_script_object_of_type(the_gut, the_type):
+	var objs = gr.test_gut._test_script_objects
+	var obj = null
+	for i in range(objs.size()):
+		if(objs[i] is the_type):
+			obj = objs[i]
+		print('- ', _str(objs[i]))
+	return obj
+
 func test_can_run_tests_with_parameters():
-	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/test_with_parameters.gd')
+	gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 	gr.test_gut.set_unit_test_name('test_has_one_defaulted_parameter')
 	gr.test_gut.test_scripts()
 	var totals = gr.test_gut.get_summary().get_totals()
@@ -436,20 +446,20 @@ func test_can_run_tests_with_parameters():
 	assert_eq(totals.tests, 1, 'test count')
 
 func test_too_many_parameters_generates_an_error():
-	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/test_with_parameters.gd')
+	gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 	gr.test_gut.set_unit_test_name('test_has_two_parameters')
 	gr.test_gut.test_scripts()
 	assert_eq(gr.test_gut.get_logger().get_errors().size(), 1, 'error size')
 	assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test count')
 
 func test_parameterized_tests_are_called_multiple_times():
-	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/test_with_parameters.gd')
+	gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 	gr.test_gut.set_unit_test_name('test_has_three_values_for_parameters')
 	gr.test_gut.test_scripts()
 	assert_eq(gr.test_gut.get_pass_count(), 3)
 
 func test_when_use_parameters_is_not_called_then_error_is_generated():
-	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/test_with_parameters.gd')
+	gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 	gr.test_gut.set_unit_test_name('test_does_not_use_use_parameters')
 	gr.test_gut.test_scripts()
 	assert_eq(gr.test_gut.get_logger().get_errors().size(), 1, 'error size')
@@ -457,11 +467,27 @@ func test_when_use_parameters_is_not_called_then_error_is_generated():
 
 # if you really think about this is a very very inception like test.
 func test_parameterized_test_that_yield_are_called_correctly():
-	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/test_with_parameters.gd')
+	gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 	gr.test_gut.set_unit_test_name('test_three_values_and_a_yield')
 	gr.test_gut.test_scripts()
 	yield(yield_to(gr.test_gut, gr.test_gut.SIGNAL_PRAMETERIZED_YIELD_DONE, 10), YIELD)
 	assert_eq(gr.test_gut.get_pass_count(), 3)
+
+func test_parameterized_test_calls_before_each_before_each_test():
+	gr.test_gut.add_script(TEST_WITH_PARAMETERS)
+	gr.test_gut.set_inner_class_name('TestWithBeforeEach')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_pass_count(), 3)
+	var obj = _get_test_script_object_of_type(gr.test_gut, load(TEST_WITH_PARAMETERS).TestWithBeforeEach)
+	assert_eq(obj.before_count, 3, 'test class:  before_count')
+
+func test_parameterized_test_calls_after_each_after_each_test():
+	gr.test_gut.add_script(TEST_WITH_PARAMETERS)
+	gr.test_gut.set_inner_class_name('TestWithAfterEach')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_pass_count(), 3)
+	var obj = _get_test_script_object_of_type(gr.test_gut, load(TEST_WITH_PARAMETERS).TestWithAfterEach)
+	assert_eq(obj.after_count, 3, 'test class:  after_count')
 
 # ------------------------------------------------------------------------------
 #
