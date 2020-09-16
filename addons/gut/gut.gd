@@ -627,10 +627,13 @@ func _parameterized_call(test_script):
 		_fail(str('Parameterized test ', _current_test.name, ' did not call use_parameters for the default value of the parameter.'))
 	else:
 		while(!_parameter_handler.is_done()):
+			test_script.after_each() # after first call, caller of this will do  ast  call
+			test_script.before_each()
 			script_result = test_script.call(_current_test.name)
 			if(_is_function_state(script_result)):
 				_wait_for_done(script_result)
 				yield(self, 'done_waiting')
+
 		script_result = null
 	_parameter_handler = null
 	emit_signal(SIGNAL_PRAMETERIZED_YIELD_DONE)
