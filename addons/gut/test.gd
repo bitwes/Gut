@@ -370,6 +370,22 @@ func assert_between(got, expect_low, expect_high, text=""):
 				_pass(disp)
 
 # ------------------------------------------------------------------------------
+# Asserts value is not between (inclusive) the two expected values.
+# ------------------------------------------------------------------------------
+func assert_not_between(got, expect_low, expect_high, text=""):
+	var disp = "[" + _str(got) + "] expected not to be between [" + _str(expect_low) + "] and [" + str(expect_high) + "]:  " + text
+
+	if(_do_datatypes_match__fail_if_not(got, expect_low, text) and _do_datatypes_match__fail_if_not(got, expect_high, text)):
+		if(expect_low > expect_high):
+			disp = "INVALID range.  [" + str(expect_low) + "] is not less than [" + str(expect_high) + "]"
+			_fail(disp)
+		else:
+			if(got >= expect_low and got <= expect_high):
+				_fail(disp)
+			else:
+				_pass(disp)
+
+# ------------------------------------------------------------------------------
 # Uses the 'has' method of the object passed in to determine if it contains
 # the passed in element.
 # ------------------------------------------------------------------------------
