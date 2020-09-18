@@ -32,6 +32,9 @@ func before_all():
 	timer.set_wait_time(1)
 	timer.set_one_shot(true)
 
+func after_all():
+	timer.free()
+
 func before_each():
 	timer.set_wait_time(1)
 
