@@ -616,8 +616,8 @@ func _get_indexes_matching_path(path):
 # ------------------------------------------------------------------------------
 # Execute all calls of a parameterized test.
 # ------------------------------------------------------------------------------
-func _parameterized_call(test_script):
-	var script_result = test_script.call(_current_test.name)
+func _parameterized_call(test_script, test_name):
+	var script_result = _run_test(test_script, test_name)
 	if(_is_function_state(script_result)):
 		_wait_for_done(script_result)
 		yield(self, 'done_waiting')
@@ -627,18 +627,65 @@ func _parameterized_call(test_script):
 		_fail(str('Parameterized test ', _current_test.name, ' did not call use_parameters for the default value of the parameter.'))
 	else:
 		while(!_parameter_handler.is_done()):
-			test_script.after_each() # after first call, caller of this will do last call
-			test_script.before_each()
-			script_result = test_script.call(_current_test.name)
+			script_result = _run_test(test_script, test_name)
 			if(_is_function_state(script_result)):
 				_wait_for_done(script_result)
 				yield(self, 'done_waiting')
 
-		script_result = null
 	_parameter_handler = null
 	emit_signal(SIGNAL_PRAMETERIZED_YIELD_DONE)
 
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func _run_test(script_inst, test_name):
+	_lgr.log_test_name()
+	_lgr.set_indent_level(1)
+	_orphan_counter.add_counter('test')
+	var script_result = null
+
+	# yield so things paint
+	if(_should_yield_now()):
+		yield(_do_yield_between(0.001), 'timeout')
+
+	_call_deprecated_script_method(script_inst, 'setup', 'before_each')
+	script_inst.before_each()
+
+	# When the script yields it will return a GDScriptFunctionState object
+	script_result = script_inst.call(test_name)
+	_new_summary.add_test(_current_test.name)
+
+	if(_is_function_state(script_result)):
+		_wait_for_done(script_result)
+		yield(script_result, 'completed')
+		_lgr.end_yield()
+
+	#if the test called pause_before_teardown then yield until
+	#the continue button is pressed.
+	if(_pause_before_teardown and !_ignore_pause_before_teardown):
+		_gui.pause()
+		yield(_wait_for_continue_button(), SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
+
+	script_inst.clear_signal_watcher()
+
+
+	# call each post-each-test method until teardown is removed.
+	_call_deprecated_script_method(script_inst, 'teardown', 'after_each')
+	script_inst.after_each()
+
+	# Free up everything in the _autofree.  Yield for a bit if we
+	# have anything with a queue_free so that they have time to
+	# free and are not found by the orphan counter.
+	var aqf_count = _autofree.get_queue_free_count()
+	_autofree.free_all()
+	if(aqf_count > 0):
+		yield(_do_yield_between(0.01), 'timeout')
+	# ------
+
+	if(_log_level > 0):
+		_orphan_counter.print_orphans('test', _lgr)
+
+	_doubler.get_ignored_methods().clear()
 # ------------------------------------------------------------------------------
 # Run all tests in a script.  This is the core logic for running tests.
 #
@@ -718,63 +765,81 @@ func _test_the_scripts(indexes=[]):
 
 			if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
 				(_unit_test_name == '')):
-				_lgr.log_test_name()
-				_lgr.set_indent_level(1)
-				_orphan_counter.add_counter('test')
 
-				# yield so things paint
-				if(_should_yield_now()):
-					yield(_do_yield_between(0.001), 'timeout')
-
-				_call_deprecated_script_method(test_script, 'setup', 'before_each')
-				test_script.before_each()
-
-				# When the script yields it will return a GDScriptFunctionState object
 				if(_current_test.arg_count > 1):
 					_lgr.error(str('Parameterized test ', _current_test.name, ' has too many parameters:  ', _current_test.arg_count, '.'))
 				elif(_current_test.arg_count == 1):
-					script_result = _parameterized_call(test_script)
+					script_result = _parameterized_call(test_script, _current_test.name)
 					if(_is_function_state(script_result)):
 						yield(self, SIGNAL_PRAMETERIZED_YIELD_DONE)
 					script_result = null
 				else:
-					script_result = test_script.call(_current_test.name)
-					_new_summary.add_test(_current_test.name)
-
+					script_result = _run_test(test_script, _current_test.name)
 
 				if(_is_function_state(script_result)):
-					_wait_for_done(script_result)
 					yield(script_result, 'completed')
-					_lgr.end_yield()
-
-				#if the test called pause_before_teardown then yield until
-				#the continue button is pressed.
-				if(_pause_before_teardown and !_ignore_pause_before_teardown):
-					_gui.pause()
-					yield(_wait_for_continue_button(), SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
-
-				test_script.clear_signal_watcher()
-
-
-				# call each post-each-test method until teardown is removed.
-				_call_deprecated_script_method(test_script, 'teardown', 'after_each')
-				test_script.after_each()
-
-				# Free up everything in the _autofree.  Yield for a bit if we
-				# have anything with a queue_free so that they have time to
-				# free and are not found by the orphan counter.
-				var aqf_count = _autofree.get_queue_free_count()
-				_autofree.free_all()
-				if(aqf_count > 0):
-					yield(_do_yield_between(0.01), 'timeout')
-				# ------
-
-				if(_log_level > 0):
-					_orphan_counter.print_orphans('test', _lgr)
 
 				_current_test.has_printed_name = false
 				_gui.set_progress_test_value(i + 1)
-				_doubler.get_ignored_methods().clear()
+
+
+				# _lgr.log_test_name()
+				# _lgr.set_indent_level(1)
+				# _orphan_counter.add_counter('test')
+
+				# # yield so things paint
+				# if(_should_yield_now()):
+				# 	yield(_do_yield_between(0.001), 'timeout')
+
+				# _call_deprecated_script_method(test_script, 'setup', 'before_each')
+				# test_script.before_each()
+
+				# # When the script yields it will return a GDScriptFunctionState object
+				# if(_current_test.arg_count > 1):
+				# 	_lgr.error(str('Parameterized test ', _current_test.name, ' has too many parameters:  ', _current_test.arg_count, '.'))
+				# elif(_current_test.arg_count == 1):
+				# 	script_result = _parameterized_call(test_script)
+				# 	if(_is_function_state(script_result)):
+				# 		yield(self, SIGNAL_PRAMETERIZED_YIELD_DONE)
+				# 	script_result = null
+				# else:
+				# 	script_result = test_script.call(_current_test.name)
+				# 	_new_summary.add_test(_current_test.name)
+
+
+				# if(_is_function_state(script_result)):
+				# 	_wait_for_done(script_result)
+				# 	yield(script_result, 'completed')
+				# 	_lgr.end_yield()
+
+				# #if the test called pause_before_teardown then yield until
+				# #the continue button is pressed.
+				# if(_pause_before_teardown and !_ignore_pause_before_teardown):
+				# 	_gui.pause()
+				# 	yield(_wait_for_continue_button(), SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
+
+				# test_script.clear_signal_watcher()
+
+
+				# # call each post-each-test method until teardown is removed.
+				# _call_deprecated_script_method(test_script, 'teardown', 'after_each')
+				# test_script.after_each()
+
+				# # Free up everything in the _autofree.  Yield for a bit if we
+				# # have anything with a queue_free so that they have time to
+				# # free and are not found by the orphan counter.
+				# var aqf_count = _autofree.get_queue_free_count()
+				# _autofree.free_all()
+				# if(aqf_count > 0):
+				# 	yield(_do_yield_between(0.01), 'timeout')
+				# # ------
+
+				# if(_log_level > 0):
+				# 	_orphan_counter.print_orphans('test', _lgr)
+
+				# _current_test.has_printed_name = false
+				# _gui.set_progress_test_value(i + 1)
+				# _doubler.get_ignored_methods().clear()
 
 		_current_test = null
 		_lgr.dec_indent()
