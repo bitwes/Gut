@@ -162,3 +162,7 @@ func test_what_is_wrong():
 func test_with_parameters(p=use_parameters([['a', 'a'], ['b', 'b'], ['c', 'c']])):
 	yield(yield_for(1), YIELD)
 	assert_eq(p[0], p[1])
+
+func test_can_pause_between_each_parameterized_test(p=use_parameters([1, 2, 3])):
+	assert_between(p, -10, 10)
+	pause_before_teardown()
