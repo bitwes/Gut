@@ -678,7 +678,6 @@ func _run_test(script_inst, test_name):
 	_autofree.free_all()
 	if(aqf_count > 0):
 		yield(_do_yield_between(0.1), 'timeout')
-	# ------
 
 	if(_log_level > 0):
 		_orphan_counter.print_orphans('test', _lgr)
@@ -759,6 +758,7 @@ func _test_the_scripts(indexes=[]):
 			_spy.clear()
 			_doubler.clear_output_directory()
 			_current_test = the_script.tests[i]
+			script_result = null
 
 			if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
 				(_unit_test_name == '')):
