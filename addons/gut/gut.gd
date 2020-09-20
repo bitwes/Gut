@@ -59,6 +59,7 @@ const LOG_LEVEL_TEST_AND_FAILURES = 1
 const LOG_LEVEL_ALL_ASSERTS = 2
 const WAITING_MESSAGE = '/# waiting #/'
 const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
+const COMPLETED = 'completed'
 
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
@@ -129,7 +130,6 @@ var _cancel_import = false
 
 const SIGNAL_TESTS_FINISHED = 'tests_finished'
 const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yield_before_teardown'
-const SIGNAL_PRAMETERIZED_YIELD_DONE = 'parameterized_yield_done'
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -140,10 +140,10 @@ func _init():
 	_lgr.set_gut(self)
 
 	add_user_signal(SIGNAL_TESTS_FINISHED)
+	add_user_signal('test_finished')
 	add_user_signal(SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
 	add_user_signal('timeout')
-	add_user_signal('done_waiting')
-	add_user_signal(SIGNAL_PRAMETERIZED_YIELD_DONE)
+
 	_doubler.set_output_dir(_temp_directory)
 	_doubler.set_stubber(_stubber)
 	_doubler.set_spy(_spy)
@@ -552,8 +552,8 @@ func _wait_for_done(result):
 	var iter_counter = 0
 	var print_after = 3
 
-	# sets waiting to false.
-	result.connect('completed', self, '_on_test_script_yield_completed')
+	# callback method sets waiting to false.
+	result.connect(COMPLETED, self, '_on_test_script_yield_completed')
 
 	if(!_was_yield_method_called):
 		_lgr.log('-- Yield detected, waiting --', _lgr.fmts.yellow)
@@ -573,7 +573,6 @@ func _wait_for_done(result):
 			dots = ''
 
 	_lgr.end_yield()
-	emit_signal('done_waiting')
 
 # ------------------------------------------------------------------------------
 # returns self so it can be integrated into the yield call.
@@ -621,7 +620,7 @@ func _run_parameterized_test(test_script, test_name):
 	var script_result = _run_test(test_script, test_name)
 	if(_is_function_state(script_result)):
 		_wait_for_done(script_result)
-		yield(self, 'done_waiting')
+		yield(script_result, COMPLETED)
 
 	if(_parameter_handler == null):
 		_lgr.error(str('Parameterized test ', _current_test.name, ' did not call use_parameters for the default value of the parameter.'))
@@ -631,10 +630,9 @@ func _run_parameterized_test(test_script, test_name):
 			script_result = _run_test(test_script, test_name)
 			if(_is_function_state(script_result)):
 				_wait_for_done(script_result)
-				yield(self, 'done_waiting')
+				yield(script_result, COMPLETED)
 
 	_parameter_handler = null
-	emit_signal(SIGNAL_PRAMETERIZED_YIELD_DONE)
 
 
 # ------------------------------------------------------------------------------
@@ -646,20 +644,19 @@ func _run_test(script_inst, test_name):
 	_orphan_counter.add_counter('test')
 	var script_result = null
 
-	# yield so things paint
-	if(_should_yield_now()):
-		yield(_do_yield_between(0.001), 'timeout')
-
 	_call_deprecated_script_method(script_inst, 'setup', 'before_each')
 	script_inst.before_each()
 
 	# When the script yields it will return a GDScriptFunctionState object
 	script_result = script_inst.call(test_name)
-	_new_summary.add_test(_current_test.name)
+	_new_summary.add_test(test_name)
 
+	# TODO I think this could be made into a while loop checking for a
+	# function state return, this way additional yields in a test could be
+	# treated the same.
 	if(_is_function_state(script_result)):
 		_wait_for_done(script_result)
-		yield(script_result, 'completed')
+		yield(script_result, COMPLETED)
 		_lgr.end_yield()
 
 	#if the test called pause_before_teardown then yield until
@@ -766,22 +763,24 @@ func _test_the_scripts(indexes=[]):
 			if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
 				(_unit_test_name == '')):
 
+				# yield so things paint
+				if(_should_yield_now()):
+					yield(_do_yield_between(0.001), 'timeout')
+
 				if(_current_test.arg_count > 1):
 					_lgr.error(str('Parameterized test ', _current_test.name,
 						' has too many parameters:  ', _current_test.arg_count, '.'))
 				elif(_current_test.arg_count == 1):
 					script_result = _run_parameterized_test(test_script, _current_test.name)
-					if(_is_function_state(script_result)):
-						yield(self, SIGNAL_PRAMETERIZED_YIELD_DONE)
-					script_result = null
 				else:
 					script_result = _run_test(test_script, _current_test.name)
 
 				if(_is_function_state(script_result)):
-					yield(script_result, 'completed')
+					yield(script_result, COMPLETED)
 
 				_current_test.has_printed_name = false
 				_gui.set_progress_test_value(i + 1)
+				emit_signal('test_finished')
 
 
 		_current_test = null
@@ -798,7 +797,6 @@ func _test_the_scripts(indexes=[]):
 		# into some other structure and kill the script objects with
 		# test_script.free() instead of remove child.
 		remove_child(test_script)
-		# END TESTS IN SCRIPT LOOP
 
 		_lgr.set_indent_level(0)
 		if(test_script.get_assert_count() > 0):
