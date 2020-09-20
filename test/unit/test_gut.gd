@@ -470,7 +470,7 @@ func test_parameterized_test_that_yield_are_called_correctly():
 	gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 	gr.test_gut.set_unit_test_name('test_three_values_and_a_yield')
 	gr.test_gut.test_scripts()
-	yield(yield_to(gr.test_gut, gr.test_gut.SIGNAL_PRAMETERIZED_YIELD_DONE, 10), YIELD)
+	yield(yield_to(gr.test_gut, 'test_finished', 10), YIELD)
 	assert_eq(gr.test_gut.get_pass_count(), 3)
 
 func test_parameterized_test_calls_before_each_before_each_test():

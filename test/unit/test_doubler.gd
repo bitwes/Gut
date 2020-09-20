@@ -208,8 +208,6 @@ class TestBuiltInOverloading:
 		_dbl_win_dia = doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG)
 		_dbl_win_dia_text = _dbl_win_dia.new().get_script().get_source_code()
 
-	func after_each():
-		_dbl_win_dia.free()
 
 	func after_all():
 		if(doubler):

@@ -2,14 +2,15 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-# x.x.x
+# 7.0.1
 ## Features
 
 
 ## Bug Fixes
 * Command Line now returns 1 if no sripts could be loaded.
 * __Issue 195__ Parameterized Tests generated deprecated warnings.
-* __Issue 202__ `before_each` and `after_each` now work as expected with Parameterized Tests.
+* Fixed various issues with parameterized tests.  All  test execution is now treated exactly the same (__Issue 196__, __Issue 197__, __Issue 202__)
+
 
 # 7.0.0
 ## Breaking Changes
