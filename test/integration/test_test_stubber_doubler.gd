@@ -3,22 +3,20 @@ extends "res://test/gut_test.gd"
 class TestBasics:
 	extends "res://test/gut_test.gd"
 	const TEMP_FILES = 'user://test_doubler_temp_file'
+
 	var gr = {
 		gut = null,
 		test = null
 	}
 
-	var _last_double_count = 0
-
 	func before_each():
 		gr.gut = Gut.new()
 		gr.test = Test.new()
 		gr.test.gut = gr.gut
-		# forces everything to have a unique name across tests
-		gr.gut.get_doubler()._double_count = _last_double_count
+		add_child_autofree(gr.gut)
+		add_child_autofree(gr.test)
 
 	func after_each():
-		_last_double_count = gr.gut.get_doubler()._double_count
 		gr.gut.get_doubler().clear_output_directory()
 		gr.gut.get_spy().clear()
 
@@ -52,6 +50,7 @@ class TestBasics:
 
 	func test_can_override_strategy_when_doubling_scene():
 		var doubled = gr.test.double_scene(DOUBLE_ME_SCENE_PATH, DOUBLE_STRATEGY.FULL).instance()
+		autofree(doubled)
 		doubled.is_blocking_signals()
 		gr.test.assert_called(doubled, 'is_blocking_signals')
 		assert_eq(gr.test.get_pass_count(), 1)
@@ -59,6 +58,7 @@ class TestBasics:
 
 	func test_when_strategy_is_partial_then_supers_are_NOT_spied_in_scenes():
 		var doubled = gr.test.double_scene(DOUBLE_ME_SCENE_PATH, DOUBLE_STRATEGY.PARTIAL).instance()
+		autofree(doubled)
 		doubled.is_blocking_signals()
 		gr.test.assert_not_called(doubled, 'is_blocking_signals')
 		assert_eq(gr.test.get_pass_count(), 1)
@@ -83,6 +83,11 @@ class TestBasics:
 		assert_eq(a.get_a(), 10)
 		assert_eq(anotherA.get_a(), null)
 
+	func test_when_stub_passed_a_non_doubled_instance_it_generates_an_error():
+		var n = autofree(Node.new())
+		gr.test.stub(n, 'something').to_return(3)
+		assert_eq(gr.test.get_logger().get_errors().size(), 1)
+
 class TestIgnoreMethodsWhenDoubling:
 	extends "res://test/gut_test.gd"
 
@@ -93,6 +98,9 @@ class TestIgnoreMethodsWhenDoubling:
 		_test_gut = Gut.new()
 		_test = Test.new()
 		_test.gut = _test_gut
+
+		add_child_autofree(_test_gut)
+		add_child_autofree(_test)
 
 	func test_when_calling_with_path_it_sends_path_to_doubler():
 		var m_doubler = double(_utils.Doubler).new()
@@ -115,6 +123,7 @@ class TestIgnoreMethodsWhenDoubling:
 	func test_when_ignoring_scene_methods_they_are_not_doubled():
 		_test.ignore_method_when_doubling(load(DOUBLE_ME_SCENE_PATH), 'return_hello')
 		var m_inst = _test.double(DOUBLE_ME_SCENE_PATH).instance()
+		autofree(m_inst)
 		m_inst.return_hello()
 		# since it is ignored it should not have been caught by the stubber
 		_test.assert_not_called(m_inst, 'return_hello')
@@ -186,9 +195,16 @@ class TestPartialDoubleMethod:
 		_test = Test.new()
 		_test.gut = _gut
 
+		add_child(_gut)
+		add_child(_test)
+
 	func after_each():
 		_gut.get_stubber().clear()
 		_gut.get_doubler().clear_output_directory()
+
+	func after_all():
+		_gut.free()
+		_test.free()
 
 	func test_parital_double_script():
 		var inst = _test.partial_double(DOUBLE_ME_PATH).new()
@@ -199,6 +215,7 @@ class TestPartialDoubleMethod:
 	# of the doubles I think.  Should be fixed.
 	func test_partial_double_scene():
 		var inst = _test.partial_double(DOUBLE_ME_SCENE_PATH).instance()
+		autofree(inst)
 		assert_eq(inst.return_hello(), 'hello', 'sometimes fails, should be fixed.')
 
 	func test_partial_double_inner():
@@ -212,6 +229,7 @@ class TestPartialDoubleMethod:
 
 	func test_double_scene_not_a_partial():
 		var inst = _test.double(DOUBLE_ME_SCENE_PATH).instance()
+		autofree(inst)
 		assert_eq(inst.return_hello(), null)
 
 	func test_double_inner_not_a_partial():
@@ -228,12 +246,13 @@ class TestPartialDoubleMethod:
 
 	func test_can_stub_partial_doubled_native_class():
 		var inst = _test.partial_double(Node2D).new()
+		autofree(inst)
 		_test.stub(inst, 'get_position').to_return(-1)
 		assert_eq(inst.get_position(), -1)
 
 	func test_can_spy_on_partial_doubled_native_class():
 		var pass_count = _test.get_pass_count()
-		var inst = _test.partial_double(Node2D).new()
+		var inst = autofree(_test.partial_double(Node2D).new())
 		inst.set_position(Vector2(100, 100))
 		_test.assert_called(inst, 'set_position', [Vector2(100, 100)])
 		assert_eq(_test.get_pass_count(), pass_count + 1, 'tests have passed')

@@ -217,6 +217,13 @@ func is_double(obj):
 
 
 # ------------------------------------------------------------------------------
+# Checks if the passed in is an instance of a class
+# ------------------------------------------------------------------------------
+func is_instance(obj):
+	return typeof(obj) == TYPE_OBJECT and !obj.has_method('new')
+
+
+# ------------------------------------------------------------------------------
 # Returns an array of values by calling get(property) on each element in source
 # ------------------------------------------------------------------------------
 func extract_property_from_array(source, property):

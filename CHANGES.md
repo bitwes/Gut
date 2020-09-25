@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * Command Line now returns 1 if no sripts could be loaded.
 * __Issue 195__ Parameterized Tests generated deprecated warnings.
 * Fixed various issues with parameterized tests.  All  test execution is now treated exactly the same (__Issue 196__, __Issue 197__, __Issue 202__)
+* __Issue 200__ If you pass a non-doubled instance to `stub` and error is generated.
 
 
 # 7.0.0

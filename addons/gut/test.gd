@@ -1108,11 +1108,16 @@ func ignore_method_when_doubling(thing, method_name):
 #        to leave it but not update the wiki.
 # ------------------------------------------------------------------------------
 func stub(thing, p2, p3=null):
+	if(_utils.is_instance(thing) and !_utils.is_double(thing)):
+		_lgr.error(str('You cannot use stub on ', _str(thing), ' because it is not a double.'))
+		return _utils.StubParams.new()
+
 	var method_name = p2
 	var subpath = null
 	if(p3 != null):
 		subpath = p2
 		method_name = p3
+
 	var sp = _utils.StubParams.new(thing, method_name, subpath)
 	gut.get_stubber().add_stub(sp)
 	return sp
