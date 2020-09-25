@@ -13,9 +13,6 @@ var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
 var _strutils = _utils.Strutils.new()
 
-func _is_instance(obj):
-	return typeof(obj) == TYPE_OBJECT and !obj.has_method('new')
-
 func _make_key_from_metadata(doubled):
 	var to_return = doubled.__gut_metadata_.path
 	if(doubled.__gut_metadata_.subpath != ''):
@@ -35,7 +32,7 @@ func _make_key_from_variant(obj, subpath=null):
 			if(subpath != null and subpath != ''):
 				to_return += str('-', subpath)
 		TYPE_OBJECT:
-			if(_is_instance(obj)):
+			if(_utils.is_instance(obj)):
 				to_return = _make_key_from_metadata(obj)
 			elif(_utils.is_native_class(obj)):
 				to_return = _utils.get_native_class_name(obj)
@@ -45,7 +42,7 @@ func _make_key_from_variant(obj, subpath=null):
 
 func _add_obj_method(obj, method, subpath=null):
 	var key = _make_key_from_variant(obj, subpath)
-	if(_is_instance(obj)):
+	if(_utils.is_instance(obj)):
 		key = obj
 
 	if(!returns.has(key)):
@@ -80,7 +77,7 @@ func _find_stub(obj, method, parameters=null):
 	var key = _make_key_from_variant(obj)
 	var to_return = null
 
-	if(_is_instance(obj)):
+	if(_utils.is_instance(obj)):
 		if(returns.has(obj) and returns[obj].has(method)):
 			key = obj
 		elif(obj.get('__gut_metadata_')):
