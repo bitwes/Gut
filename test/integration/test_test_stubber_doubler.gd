@@ -119,7 +119,6 @@ class TestIgnoreMethodsWhenDoubling:
 		_test_gut._doubler = m_doubler
 		_test.ignore_method_when_doubling(load(DOUBLE_ME_SCENE_PATH), 'two')
 		assert_called(m_doubler, 'add_ignored_method', ['res://test/resources/doubler_test_objects/double_me_scene.gd', 'two'])
-		print_stray_nodes()
 
 	func test_when_ignoring_scene_methods_they_are_not_doubled():
 		_test.ignore_method_when_doubling(load(DOUBLE_ME_SCENE_PATH), 'return_hello')
