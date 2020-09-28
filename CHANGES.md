@@ -11,7 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * __Issue 195__ Parameterized Tests generated deprecated warnings.
 * Fixed various issues with parameterized tests.  All  test execution is now treated exactly the same (__Issue 196__, __Issue 197__, __Issue 202__)
 * __Issue 200__ If you pass a non-doubled instance to `stub` an error is generated and nothing is stubbed.
-
+* __Issue 211__ GDNative scripts cause `Error calling built-in function 'inst2dict': Not a script with an instance` when used in assertions
 
 # 7.0.0
 ## Breaking Changes
