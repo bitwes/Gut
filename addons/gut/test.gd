@@ -50,6 +50,7 @@ class DoubleInfo:
 	var extension
 	var _utils = load('res://addons/gut/utils.gd').get_instance()
 	var _is_native = false
+	var is_valid = false
 
 	# Flexible init method.  p2 can be subpath or stategy unless p3 is
 	# specified, then p2 must be subpath and p3 is strategy.
@@ -61,6 +62,11 @@ class DoubleInfo:
 	#   (object_to_double, subpath, strategy)
 	func _init(thing, p2=null, p3=null):
 		strategy = p2
+
+		# short-circuit and ensure that is_valid
+		# is not set to true.
+		if(_utils.is_instance(thing)):
+			return
 
 		if(typeof(p2) == TYPE_STRING):
 			strategy = p3
@@ -78,6 +84,8 @@ class DoubleInfo:
 
 		if(!_is_native):
 			extension = path.get_extension()
+
+		is_valid = true
 
 	func is_scene():
 		return extension == 'tscn'
@@ -1046,6 +1054,10 @@ func _smart_double(double_info):
 # ------------------------------------------------------------------------------
 func double(thing, p2=null, p3=null):
 	var double_info = DoubleInfo.new(thing, p2, p3)
+	if(!double_info.is_valid):
+		_lgr.error('double requires a class or path, you passed an instance:  ' + _str(thing))
+		return null
+
 	double_info.make_partial = false
 
 	return _smart_double(double_info)
@@ -1054,6 +1066,10 @@ func double(thing, p2=null, p3=null):
 # ------------------------------------------------------------------------------
 func partial_double(thing, p2=null, p3=null):
 	var double_info = DoubleInfo.new(thing, p2, p3)
+	if(!double_info.is_valid):
+		_lgr.error('partial_double requires a class or path, you passed an instance:  ' + _str(thing))
+		return null
+
 	double_info.make_partial = true
 
 	return _smart_double(double_info)

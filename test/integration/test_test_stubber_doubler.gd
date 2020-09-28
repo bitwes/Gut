@@ -184,6 +184,13 @@ class TestTestsSmartDoubleMethod:
 		var inst = _test.double(Node2D).new()
 		assert_not_null(inst)
 
+	func test_when_an_instance_is_passed_null_is_returned_and_an_error_is_generated():
+		var inst = autofree(Node2D.new())
+		var d = _test.double(inst)
+		assert_null(d, 'double is null')
+		assert_eq(_test.get_logger().get_errors().size(), 1, 'generates error')
+
+
 class TestPartialDoubleMethod:
 	extends "res://test/gut_test.gd"
 
@@ -262,3 +269,9 @@ class TestPartialDoubleMethod:
 		var f = File.new()
 		var inst = _test.partial_double(File)
 		assert_not_null(inst)
+
+	func test_when_an_instance_is_passed_null_is_returned_and_an_error_is_generated():
+		var inst = autofree(Node2D.new())
+		var d = _test.partial_double(inst)
+		assert_null(d, 'double is null')
+		assert_eq(_test.get_logger().get_errors().size(), 1, 'generates error')

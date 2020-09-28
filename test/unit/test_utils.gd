@@ -34,4 +34,16 @@ func test_is_double_works_with_classes_that_overload_get():
 	var utils = autofree(Utils.new())
 	assert_false(utils.is_double(og))
 
+func test_is_instance_false_for_classes():
+	var utils = autofree(Utils.new())
+	assert_false(utils.is_instance(Node2D))
 
+func test_is_instance_true_for_new():
+	var utils = autofree(Utils.new())
+	var n = Node.new()
+	assert_true(utils.is_instance(n))
+
+func test_is_instance_false_for_instanced_things():
+	var utils = autofree(Utils.new())
+	var i = load('res://test/resources/SceneNoScript.tscn')
+	assert_false(utils.is_instance(i))
