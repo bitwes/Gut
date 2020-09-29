@@ -370,7 +370,7 @@ func assert_between(got, expect_low, expect_high, text=""):
 				_pass(disp)
 
 # ------------------------------------------------------------------------------
-# Asserts value is not between (inclusive) the two expected values.
+# Asserts value is not between (exclusive) the two expected values.
 # ------------------------------------------------------------------------------
 func assert_not_between(got, expect_low, expect_high, text=""):
 	var disp = "[" + _str(got) + "] expected not to be between [" + _str(expect_low) + "] and [" + str(expect_high) + "]:  " + text
@@ -380,7 +380,7 @@ func assert_not_between(got, expect_low, expect_high, text=""):
 			disp = "INVALID range.  [" + str(expect_low) + "] is not less than [" + str(expect_high) + "]"
 			_fail(disp)
 		else:
-			if(got >= expect_low and got <= expect_high):
+			if(got > expect_low and got < expect_high):
 				_fail(disp)
 			else:
 				_pass(disp)

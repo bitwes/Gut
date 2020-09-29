@@ -349,6 +349,54 @@ class TestAssertBetween:
 		gr.test.assert_between('q', 'z', 'a', "Should fail")
 		assert_fail(gr.test)
 
+
+class TestAssertNotBetween:
+	extends BaseTestClass
+
+	func test_with_number_lt():
+		gr.test.assert_not_between(1, 2, 3, "Should pass, 1 not between 2 and 3")
+		assert_pass(gr.test)
+
+	func test_with_number_gt():
+		gr.test.assert_not_between(4, 1, 3, "Should pass, 4 not between 1 and 3")
+		assert_pass(gr.test, 1, '4 not between 1 and 3')
+
+	func test_with_number_at_low_end():
+		gr.test.assert_not_between(1, 1, 3, "Should pass: exclusive not between")
+		assert_pass(gr.test, 1, '1 not between 1 and 3, exclusively')
+
+	func test_with_number_at_high_end():
+		gr.test.assert_not_between(3, 1, 3, "Should pass: exclusive not between")
+		assert_pass(gr.test, 1, '3 not between 1 and 3, exclusively')
+
+	func test_with_invalid_number_range():
+		gr.test.assert_not_between(4, 8, 0, "Should fail")
+		assert_fail(gr.test, 1, '8 is starting number and is not less than 0')
+
+	func test_with_string_between():
+		gr.test.assert_not_between('b', 'a', 'c', "Should fail, 2 is between 1 and 3")
+		assert_fail(gr.test)
+
+	func test_with_string_lt():
+		gr.test.assert_not_between('a', 'b', 'd', "Should pass")
+		assert_pass(gr.test)
+
+	func test_with_string_gt():
+		gr.test.assert_not_between('z', 'a', 'c', "Should pass")
+		assert_pass(gr.test)
+
+	func test_with_string_at_high_end():
+		gr.test.assert_not_between('c', 'a', 'c', "Should pass: exclusive not between")
+		assert_pass(gr.test)
+
+	func test_with_string_at_low_end():
+		gr.test.assert_not_between('a', 'a', 'c', "Should pass: exclusive not between")
+		assert_pass(gr.test)
+
+	func test_with_invalid_string_range():
+		gr.test.assert_not_between('q', 'z', 'a', "Should fail")
+		assert_fail(gr.test)
+
 # TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestAssertTrue:
 	extends BaseTestClass

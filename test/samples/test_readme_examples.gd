@@ -147,6 +147,18 @@ func test_assert_between():
 	assert_between(1, 5, 10) # FAIL
 
 
+func test_assert_not_between():
+	gut.p('-- passing --')
+	assert_not_between(1, 5, 10) # PASS
+	assert_not_between('a', 'b', 'd') # PASS
+	assert_not_between(10, 0, 10) # PASS
+	assert_not_between(0, 0, 10) # PASS
+	assert_not_between(2.25, 2, 4.0) # PASS
+	
+	gut.p('-- failing --')
+	assert_not_between(5, 0, 10, 'Five shouldnt be between 0 and 10') # FAIL
+
+
 func test_has():
 	var an_array = [1, 2, 3, 'four', 'five']
 	var a_hash = { 'one':1, 'two':2, '3':'three'}
