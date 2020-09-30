@@ -399,6 +399,12 @@ class TestPartialDoubles:
 		assert_eq(inst.return_hello(), null)
 		pause_before_teardown()
 
+	func test_init_is_not_stubbed_to_call_super():
+		var inst = doubler.partial_double(DOUBLE_ME_PATH).new()
+		var text = inst.get_script().get_source_code()
+		assert_false(text.match("*__gut_should_call_super('_init'*"), 'should not call super _init')
+
+
 class TestDoubleGDNaviteClasses:
 	extends BaseTest
 

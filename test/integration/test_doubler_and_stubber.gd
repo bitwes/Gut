@@ -47,7 +47,7 @@ func test_can_stub_non_local_methods():
 func test_when_non_local_methods_not_stubbed_super_is_returned():
 	gr.doubler.set_stubber(gr.stubber)
 	var D = gr.doubler.double(DOUBLE_EXTENDS_NODE2D)
-	var d = D.new()
+	var d = autofree(D.new())
 	assert_eq(d.get_rotation(), 0.0)
 
 func test_can_stub_doubled_instance_values():
@@ -77,7 +77,7 @@ func test_stub_with_nothing_works_with_parameters():
 func test_can_stub_doubled_scenes():
 	gr.doubler.set_stubber(gr.stubber)
 	gr.stubber.set_return(DOUBLE_ME_SCENE_PATH, 'return_hello', 'world')
-	var inst = gr.doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
+	var inst = autofree(gr.doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance())
 	assert_eq(inst.return_hello(), 'world')
 
 func test_when_stubbed_to_call_super_then_super_is_called():
@@ -90,47 +90,56 @@ func test_when_stubbed_to_call_super_then_super_is_called():
 
 func test_can_stub_native_methods():
 	gr.doubler.set_stubber(gr.stubber)
-	var d_node2d = gr.doubler.double_gdnative(Node2D).new()
+	var d_node2d = autofree(gr.doubler.double_gdnative(Node2D).new())
 	var params = _utils.StubParams.new(d_node2d, 'get_position').to_return(-1)
 	gr.stubber.add_stub(params)
 	assert_eq(d_node2d.get_position(), -1)
 
 func test_partial_double_of_Node2D_returns_super_values():
 	gr.doubler.set_stubber(gr.stubber)
-	var pd_node_2d  = gr.doubler.partial_double_gdnative(Node2D).new()
-	# see big ass comment in next test.
-	pd_node_2d  = gr.doubler.partial_double_gdnative(Node2D).new()
+	var pd_node_2d  = autofree(gr.doubler.partial_double_gdnative(Node2D).new())
+	#pd_node_2d  = gr.doubler.partial_double_gdnative(Node2D).new()
 	assert_eq(pd_node_2d.is_blocking_signals(), false)
-
 
 func test_can_stub_all_Node2D_doubles():
 	gr.doubler.set_stubber(gr.stubber)
-	var d_node2d = gr.doubler.double_gdnative(Node2D).new()
-	# !!!!!!!!!!!!!!!
-	# TODO figure this mystery out.  Probably has something to do with the
-	# comment at the top of this file.
-	#
-	# I don't know why this does not work if we don't do it twice.  If it isn't
-	# done twice then it  will fail w/ a null stubber.  If you swap this method
-	# with the previous one, then that one will fail and this will pass w/o
-	# having to do it twice.  If  you run this test by itself it passes w/o
-	# doing it twice.  I'm not sure what is going on.
-	#
-	# The stubber instances match up (via  print statements) but d_node2d always
-	# has a null stubber after the first call and the real one after the 2nd.
-	# !!!!!!!!!!!!!!!
-	d_node2d = gr.doubler.double_gdnative(Node2D).new()
-	d_node2d = gr.doubler.double_gdnative(Node2D).new()
+	var d_node2d = autofree(gr.doubler.double_gdnative(Node2D).new())
 	var params = _utils.StubParams.new(Node2D, 'get_position').to_return(-1)
 	gr.stubber.add_stub(params)
 	assert_eq(d_node2d.get_position(), -1)
 
-func test_init_is_never_stubbed_to_all_super():
+func test_init_is_never_stubbed_to_call_super():
 	gr.doubler.set_stubber(gr.stubber)
 	var inst =  gr.doubler.partial_double(DOUBLE_ME_PATH).new()
 	assert_false(gr.stubber.should_call_super(inst, '_init', []))
 
-func test_ready_is_never_stubbed_to_all_super():
+func test_ready_is_never_stubbed_to_call_super():
 	gr.doubler.set_stubber(gr.stubber)
 	var inst =  gr.doubler.partial_double(DOUBLE_ME_PATH).new()
 	assert_false(gr.stubber.should_call_super(inst, '_ready', []))
+
+func test_stubbing_init_to_call_super_generates_error():
+	var err_count = gr.stubber.get_logger().get_errors().size()
+	gr.doubler.set_stubber(gr.stubber)
+	var inst =  gr.doubler.partial_double(DOUBLE_ME_PATH).new()
+	var params = _utils.StubParams.new(inst, '_init').to_call_super()
+	gr.stubber.add_stub(params)
+	assert_eq(gr.stubber.get_logger().get_errors().size(), err_count + 1)
+
+func test_stubbing_init_to_call_super_does_not_generate_stub():
+	gr.doubler.set_stubber(gr.stubber)
+	var inst =  gr.doubler.partial_double(DOUBLE_ME_PATH).new()
+	var params = _utils.StubParams.new(inst, '_init').to_call_super()
+	gr.stubber.add_stub(params)
+	assert_false(gr.stubber.should_call_super(inst, '_init'))
+
+func  test_you_cannot_stub_init_to_do_nothing():
+	var err_count = gr.stubber.get_logger().get_errors().size()
+	gr.doubler.set_stubber(gr.stubber)
+	var inst =  gr.doubler.partial_double(DOUBLE_ME_PATH).new()
+	var params = _utils.StubParams.new(inst, '_init').to_do_nothing()
+	gr.stubber.add_stub(params)
+	assert_false(gr.stubber.should_call_super(inst, '_init'), 'stub not created')
+	assert_eq(gr.stubber.get_logger().get_errors().size(), err_count + 1, 'error generated')
+
+
