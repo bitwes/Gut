@@ -15,6 +15,9 @@ class Test:
 	var arg_count = 0
 	# The number of asserts in the test
 	var assert_count = 0
+	# if the test has been marked pending at anypont during
+	# execution.
+	var pending = false
 
 
 # ------------------------------------------------------------------------------

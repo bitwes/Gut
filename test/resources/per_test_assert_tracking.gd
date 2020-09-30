@@ -14,3 +14,6 @@ func test_use_pass_test():
 
 func  test_use_fail_test():
 	fail_test('this test fails')
+
+func test_use_pending():
+	pending('this is pending')

@@ -284,6 +284,13 @@ func test_with_fail_test_call_no_assert_warning_is_not_generated():
 	gr.test_gut.test_scripts()
 	assert_eq(gr.test_gut.get_logger().get_warnings().size(), 0)
 
+func test_with_pending_call_no_assert_warning_is_no_generated():
+	gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
+	gr.test_gut.set_unit_test_name('test_use_pending')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_logger().get_warnings().size(), 0)
+
+
 # ------------------------------
 # Setting test to run
 # ------------------------------
@@ -392,16 +399,28 @@ func test_when_inner_class_skipped_none_of_the_before_after_are_called():
 	gr.test_gut.test_scripts()
 	var instances = gr.test_gut._test_script_objects
 
+	var inner1_inst = null
+	var inner2_inst = null
 
-	assert_eq(instances[1].before_all_calls, 1, 'TestInner1 before_all calls')
-	assert_eq(instances[1].after_all_calls, 1, 'TestInner1 after_all calls')
-	assert_eq(instances[1].before_each_calls, 1, 'TestInner1 before_each_calls')
-	assert_eq(instances[1].after_each_calls, 1, 'TestInner1 after_each calls')
+	# order in which the inner classes will be run is unknown  so  we
+	# have to go looking for them.
+	for i in range(instances.size()):
+		var dict = inst2dict(instances[i])
+		print('subpath  = ', dict['@subpath'])
+		if(dict['@subpath'] == 'TestInner1'):
+			inner1_inst = instances[i]
+		elif(dict['@subpath'] == 'TestInner2'):
+			inner2_inst = instances[i]
 
-	assert_eq(instances[2].before_all_calls, 0, 'TestInner2 before_all calls')
-	assert_eq(instances[2].after_all_calls, 0, 'TestInner2 after_all calls')
-	assert_eq(instances[2].before_each_calls, 0, 'TestInner2 before_each_calls')
-	assert_eq(instances[2].after_each_calls, 0, 'TestInner2 after_each calls')
+	assert_eq(inner1_inst.before_all_calls, 1, 'TestInner1 before_all calls')
+	assert_eq(inner1_inst.after_all_calls, 1, 'TestInner1 after_all calls')
+	assert_eq(inner1_inst.before_each_calls, 1, 'TestInner1 before_each_calls')
+	assert_eq(inner1_inst.after_each_calls, 1, 'TestInner1 after_each calls')
+
+	assert_eq(inner2_inst.before_all_calls, 0, 'TestInner2 before_all calls')
+	assert_eq(inner2_inst.after_all_calls, 0, 'TestInner2 after_all calls')
+	assert_eq(inner2_inst.before_each_calls, 0, 'TestInner2 before_each_calls')
+	assert_eq(inner2_inst.after_each_calls, 0, 'TestInner2 after_each calls')
 
 # ------------------------------
 # Pre and post hook tests

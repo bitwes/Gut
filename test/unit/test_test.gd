@@ -1,6 +1,6 @@
 # ------------------------------------------------------------------------------
-# Contains tests that are not directly related to asserts.  All assert tests
-# go in res://test/unit/test_test_asserts.gd
+# Tests test.gd.  test.gd contains all the asserts and is the class that all
+# test scripts inherit from.
 # ------------------------------------------------------------------------------
 extends "res://addons/gut/test.gd"
 
