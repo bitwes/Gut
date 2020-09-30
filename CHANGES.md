@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Bug Fixes
 * Command Line now returns 1 if no sripts could be loaded.
+* __Issue 173__ An error is generated if try to `stub` the `_init` method.  Documentation has been updated.
 * __Issue 195__ Parameterized Tests generated deprecated warnings.
 * Fixed various issues with parameterized tests.  All  test execution is now treated exactly the same (__Issue 196__, __Issue 197__, __Issue 202__)
 * __Issue 199__ If you pass an instance of something to `double` or `partial_double` a GUT error is generated and `null` is returned.

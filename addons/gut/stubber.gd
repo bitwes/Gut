@@ -66,8 +66,11 @@ func set_return(obj, method, value, parameters=null):
 	returns[key][method].append(sp)
 
 func add_stub(stub_params):
-	var key = _add_obj_method(stub_params.stub_target, stub_params.stub_method, stub_params.target_subpath)
-	returns[key][stub_params.stub_method].append(stub_params)
+	if(stub_params.stub_method == '_init'):
+		_lgr.error("You cannot stub _init.  Super's _init is ALWAYS called.")
+	else:
+		var key = _add_obj_method(stub_params.stub_target, stub_params.stub_method, stub_params.target_subpath)
+		returns[key][stub_params.stub_method].append(stub_params)
 
 # Searches returns for an entry that matches the instance or the class that
 # passed in obj is.
