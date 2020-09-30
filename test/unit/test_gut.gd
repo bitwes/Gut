@@ -252,6 +252,39 @@ func test_simulate_calls_physics_process():
 
 
 # ------------------------------
+# No Assert Warning
+# ------------------------------
+func test_when_a_test_has_no_asserts_a_warning_is_generated():
+	gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
+	gr.test_gut.set_unit_test_name('test_no_asserts')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_logger().get_warnings().size(), 1)
+
+func test_with_passing_assert_no_assert_warning_is_not_generated():
+	gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
+	gr.test_gut.set_unit_test_name('test_passing_assert')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_logger().get_warnings().size(), 0)
+
+func test_with_failing_assert_no_assert_warning_is_not_generated():
+	gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
+	gr.test_gut.set_unit_test_name('test_failing_assert')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_logger().get_warnings().size(), 0)
+
+func test_with_pass_test_call_no_assert_warning_is_not_generated():
+	gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
+	gr.test_gut.set_unit_test_name('test_use_pass_test')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_logger().get_warnings().size(), 0)
+
+func test_with_fail_test_call_no_assert_warning_is_not_generated():
+	gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
+	gr.test_gut.set_unit_test_name('test_use_fail_test')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_logger().get_warnings().size(), 0)
+
+# ------------------------------
 # Setting test to run
 # ------------------------------
 const SAMPLES_DIR = 'res://test/samples/'

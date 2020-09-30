@@ -281,7 +281,8 @@ class TestTestStateChecking:
 	func _same_name():
 		return gut.get_current_test_object().name
 
-	func _run_test(name=_same_name()):
+	func _run_test(inner_class, name=_same_name()):
+		_gut.set_inner_class_name(inner_class)
 		_gut.set_unit_test_name(name)
 		_gut.test_scripts()
 
@@ -290,36 +291,52 @@ class TestTestStateChecking:
 		assert_eq(_gut.get_fail_count(), failing, 'Failing count does not match')
 
 	func test_is_passing_returns_true_when_test_is_passing():
-		_run_test()
+		_run_test('TestIsPassing')
 		_assert_pass_fail_count(2, 0)
 
 	func test_is_passing_returns_false_when_test_is_failing():
-		_run_test()
+		_run_test('TestIsPassing')
 		_assert_pass_fail_count(1, 1)
 
 	func test_is_passing_false_by_default():
-		_run_test()
+		_run_test('TestIsPassing')
 		_assert_pass_fail_count(1, 0)
 
 	func  test_is_passing_returns_true_before_test_fails():
-		_run_test()
+		_run_test('TestIsPassing')
 		_assert_pass_fail_count(2, 1)
 
 	func test_is_failing_returns_true_when_failing():
-		_run_test()
+		_run_test('TestIsFailing')
 		_assert_pass_fail_count(1, 1)
 
 	func test_is_failing_returns_false_when_passing():
-		_run_test()
+		_run_test('TestIsFailing')
 		_assert_pass_fail_count(2, 0)
 
 	func test_is_failing_returns_false_by_default():
-		_run_test()
+		_run_test('TestIsFailing')
 		_assert_pass_fail_count(1, 0)
 
 	func test_is_failing_returns_false_before_test_passes():
-		_run_test()
+		_run_test('TestIsFailing')
 		_assert_pass_fail_count(2, 0)
+
+	func test_error_generated_when_using_is_passing_in_before_all():
+		_run_test('TestUseIsPassingInBeforeAll', 'test_nothing')
+		assert_eq(_gut.get_logger().get_errors().size(), 1)
+
+	func test_error_generated_when_using_is_passing_in_after_all():
+		_run_test('TestUseIsPassingInAfterAll', 'test_nothing')
+		assert_eq(_gut.get_logger().get_errors().size(), 1)
+
+	func test_error_generated_when_using_is_failing_in_before_all():
+		_run_test('TestUseIsFailingInBeforeAll', 'test_nothing')
+		assert_eq(_gut.get_logger().get_errors().size(), 1)
+
+	func test_error_generated_when_using_is_failing_in_after_all():
+		_run_test('TestUseIsFailingInAfterAll', 'test_nothing')
+		assert_eq(_gut.get_logger().get_errors().size(), 1)
 
 class TestPassFailTestMethods:
 	extends BaseTestClass

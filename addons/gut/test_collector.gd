@@ -13,6 +13,9 @@ class Test:
 	var line_number = -1
 	# the number of arguments the method has
 	var arg_count = 0
+	# The number of asserts in the test
+	var assert_count = 0
+
 
 # ------------------------------------------------------------------------------
 # This holds all the meta information for a test script.  It contains the
