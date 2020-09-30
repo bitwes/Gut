@@ -108,8 +108,6 @@ const YIELD = 'timeout'
 # access to the asserts in the tests you write.
 var gut = null
 
-var passed = false # idk if this does anything TODO remove or document
-var failed = false # idk if this does anything TODO remove or document
 var _disable_strict_datatype_checks = false
 # Holds all the text for a test's fail/pass.  This is used for testing purposes
 # to see the text of a failed sub-test in test_test.gd
@@ -1230,9 +1228,37 @@ func add_child_autofree(node, legible_unique_name = false):
 	.add_child(node, legible_unique_name)
 	return node
 
+# ------------------------------------------------------------------------------
+# The same as autoqfree but it also adds the object as a child of the test.
+# ------------------------------------------------------------------------------
 func add_child_autoqfree(node, legible_unique_name=false):
 	gut.get_autofree().add_queue_free(node)
 	# Explicitly calling super here b/c add_child MIGHT change and I don't want
 	# a bug sneaking its way in here.
 	.add_child(node, legible_unique_name)
 	return node
+
+# ------------------------------------------------------------------------------
+# Returns true if the test is passing as of the time of this call.  False if not.
+# ------------------------------------------------------------------------------
+func is_passing():
+	return gut.get_current_test_object().passed
+
+# ------------------------------------------------------------------------------
+# Returns true if the test is failing as of the time of this call.  False if not.
+# ------------------------------------------------------------------------------
+func is_failing():
+	return !is_passing()
+
+# ------------------------------------------------------------------------------
+# Marks the test as passing.  Does not override any failing asserts or calls to
+# fail_test.  Same as a passing assert.
+# ------------------------------------------------------------------------------
+func pass_test(text):
+	_pass(text)
+
+# ------------------------------------------------------------------------------
+# Marks the test as failing.  Same as a failing assert.
+# ------------------------------------------------------------------------------
+func fail_test(text):
+	_fail(text)
