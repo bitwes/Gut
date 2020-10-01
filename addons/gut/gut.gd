@@ -652,7 +652,9 @@ func _run_test(script_inst, test_name):
 	var script_result = null
 
 	_call_deprecated_script_method(script_inst, 'setup', 'before_each')
-	script_inst.before_each()
+	var before_each_result = script_inst.before_each()
+	if(_is_function_state(before_each_result)):
+		yield(before_each_result, COMPLETED)
 
 	# When the script yields it will return a GDScriptFunctionState object
 	script_result = script_inst.call(test_name)
@@ -676,7 +678,9 @@ func _run_test(script_inst, test_name):
 
 	# call each post-each-test method until teardown is removed.
 	_call_deprecated_script_method(script_inst, 'teardown', 'after_each')
-	script_inst.after_each()
+	var after_each_result = script_inst.after_each()
+	if(_is_function_state(after_each_result)):
+		yield(after_each_result, COMPLETED)
 
 	# Free up everything in the _autofree.  Yield for a bit if we
 	# have anything with a queue_free so that they have time to
@@ -707,7 +711,9 @@ func _call_before_all(test_script):
 	_call_deprecated_script_method(test_script, 'prerun_setup', 'before_all')
 	_current_test.name = 'before_all'
 
-	test_script.before_all()
+	var result = test_script.before_all()
+	if(_is_function_state(result)):
+		yield(result, COMPLETED)
 
 	_lgr.dec_indent()
 	_current_test = null
@@ -728,7 +734,10 @@ func _call_after_all(test_script):
 	_call_deprecated_script_method(test_script, 'postrun_teardown', 'after_all')
 	_current_test.name = 'after_all'
 
-	test_script.after_all()
+	var result = test_script.after_all()
+	if(_is_function_state(result)):
+		yield(result, COMPLETED)
+
 
 	_lgr.dec_indent()
 	_current_test = null
@@ -794,7 +803,10 @@ func _test_the_scripts(indexes=[]):
 		if(!_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
 			the_script.tests = []
 		else:
-			_call_before_all(test_script)
+			var before_all_result = _call_before_all(test_script)
+			if(_is_function_state(before_all_result)):
+				yield(before_all_result, COMPLETED)
+
 
 		_gui.set_progress_test_max(the_script.tests.size()) # New way
 
@@ -836,7 +848,10 @@ func _test_the_scripts(indexes=[]):
 		_orphan_counter.print_orphans('script', _lgr)
 
 		if(_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
-			_call_after_all(test_script)
+			var after_all_result = _call_after_all(test_script)
+			if(_is_function_state(after_all_result)):
+				yield(after_all_result, COMPLETED)
+
 
 		_log_test_children_warning(test_script)
 		# This might end up being very resource intensive if the scripts
