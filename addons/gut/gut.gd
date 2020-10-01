@@ -659,8 +659,8 @@ func _run_test(script_inst, test_name):
 		yield(script_result, COMPLETED)
 		_lgr.end_yield()
 
-	#if the test called pause_before_teardown then yield until
-	#the continue button is pressed.
+	# if the test called pause_before_teardown then yield until
+	# the continue button is pressed.
 	if(_pause_before_teardown and !_ignore_pause_before_teardown):
 		_gui.pause()
 		yield(_wait_for_continue_button(), SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
@@ -727,7 +727,7 @@ func _test_the_scripts(indexes=[]):
 			_gui.set_title(the_script.get_full_name())
 			_lgr.set_indent_level(0)
 			_print_script_heading(the_script)
-			_new_summary.add_script(the_script.get_full_name())
+		_new_summary.add_script(the_script.get_full_name())
 
 		var test_script = the_script.get_new()
 		var script_result = null
@@ -819,6 +819,9 @@ func _pass(text=''):
 	if(_current_test):
 		_current_test.assert_count += 1
 		_new_summary.add_pass(_current_test.name, text)
+	else:
+		if(_new_summary != null): # b/c of tests.
+			_new_summary.add_pass('script level', text)
 
 
 # ------------------------------------------------------------------------------
@@ -826,7 +829,7 @@ func _pass(text=''):
 func _fail(text=''):
 	_gui.add_failing() # increments counters
 	if(_current_test != null):
-		var line_text = '  at line ' + str(_extractLineNumber( _current_test))
+		var line_text = '  at line ' + str(_extract_line_number( _current_test))
 		p(line_text, LOG_LEVEL_FAIL_ONLY)
 		# format for summary
 		line_text =  "\n    " + line_text
@@ -836,13 +839,16 @@ func _fail(text=''):
 		_new_summary.add_fail(_current_test.name, call_count_text + text + line_text)
 		_current_test.passed = false
 		_current_test.assert_count += 1
+	else:
+		if(_new_summary != null): # b/c of tests.
+			_new_summary.add_fail('script level', text)
 
 
 # ------------------------------------------------------------------------------
 # Extracts the line number from curren stacktrace by matching the test case name
 # ------------------------------------------------------------------------------
-func _extractLineNumber(current_test):
-	var line_number = current_test.line_number
+func _extract_line_number(current_test):
+	var line_number = -1
 	# if stack trace available than extraxt the test case line number
 	var stackTrace = get_stack()
 	if(stackTrace!=null):

@@ -24,7 +24,6 @@ class Test:
 # ------------------------------------------------------------------------------
 class TestScript:
 	var name = 'NOT_SET'
-	#
 	var _tests = {}
 	var _test_order = []
 

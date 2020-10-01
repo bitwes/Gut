@@ -9,8 +9,6 @@ class Test:
 	var name = ""
 	# flag to know if the name has been printed yet.
 	var has_printed_name = false
-	# the line number the test is on
-	var line_number = -1
 	# the number of arguments the method has
 	var arg_count = 0
 	# The number of asserts in the test
