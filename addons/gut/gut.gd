@@ -128,12 +128,17 @@ var _parameter_handler = null
 # error displayed is seen since importing generates a lot of text.
 var _cancel_import = false
 
+var _before_all_test_obj = load('res://addons/gut/test_collector.gd').Test.new()
+var _after_all_test_obj = load('res://addons/gut/test_collector.gd').Test.new()
+
 const SIGNAL_TESTS_FINISHED = 'tests_finished'
 const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yield_before_teardown'
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func _init():
+	_before_all_test_obj.name = 'before_all'
+	_after_all_test_obj.name = 'after_all'
 	# When running tests for GUT itself, _utils has been setup to always return
 	# a new logger so this does not set the gut instance on the base logger
 	# when creating test instances of GUT.
@@ -684,6 +689,29 @@ func _run_test(script_inst, test_name):
 
 	_doubler.get_ignored_methods().clear()
 
+# ------------------------------------------------------------------------------
+# Calls before_all on the passedin test script and takes care of settings so all
+# logger output appears indented witha proper heading
+# ------------------------------------------------------------------------------
+func _call_before_all(test_script):
+	_current_test = _before_all_test_obj
+	_current_test.has_printed_name = false
+	_lgr.inc_indent()
+	test_script.before_all()
+	_lgr.dec_indent()
+	_current_test = null
+
+# ------------------------------------------------------------------------------
+# Calls after_all on the passedin test script and takes care of settings so all
+# logger output appears indented witha proper heading
+# ------------------------------------------------------------------------------
+func _call_after_all(test_script):
+	_current_test = _after_all_test_obj
+	_current_test.has_printed_name = false
+	_lgr.inc_indent()
+	test_script.after_all()
+	_lgr.dec_indent()
+	_current_test = null
 
 # ------------------------------------------------------------------------------
 # Run all tests in a script.  This is the core logic for running tests.
@@ -748,7 +776,7 @@ func _test_the_scripts(indexes=[]):
 		else:
 			# call both pre-all-tests methods until prerun_setup is removed
 			_call_deprecated_script_method(test_script, 'prerun_setup', 'before_all')
-			test_script.before_all()
+			_call_before_all(test_script)
 
 		_gui.set_progress_test_max(the_script.tests.size()) # New way
 
@@ -791,7 +819,7 @@ func _test_the_scripts(indexes=[]):
 		# call both post-all-tests methods until postrun_teardown is removed.
 		if(_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
 			_call_deprecated_script_method(test_script, 'postrun_teardown', 'after_all')
-			test_script.after_all()
+			_call_after_all(test_script)
 
 		_log_test_children_warning(test_script)
 		# This might end up being very resource intensive if the scripts

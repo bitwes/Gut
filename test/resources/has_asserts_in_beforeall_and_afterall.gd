@@ -48,3 +48,7 @@ class TestHasBeforeAllAfterAllAndSomeTests:
 
 	func test_this_fails():
 		fail_test('this fails')
+
+
+class TestAnotherOneWithSomeTests:
+	extends TestHasBeforeAllAfterAllAndSomeTests

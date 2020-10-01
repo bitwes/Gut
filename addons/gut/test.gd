@@ -1242,7 +1242,8 @@ func add_child_autoqfree(node, legible_unique_name=false):
 # Returns true if the test is passing as of the time of this call.  False if not.
 # ------------------------------------------------------------------------------
 func is_passing():
-	if(gut.get_current_test_object() != null):
+	if(gut.get_current_test_object() != null and
+		!['before_all', 'after_all'].has(gut.get_current_test_object().name)):
 		return gut.get_current_test_object().passed and \
 			gut.get_current_test_object().assert_count > 0
 	else:
@@ -1253,7 +1254,8 @@ func is_passing():
 # Returns true if the test is failing as of the time of this call.  False if not.
 # ------------------------------------------------------------------------------
 func is_failing():
-	if(gut.get_current_test_object() != null):
+	if(gut.get_current_test_object() != null and
+		!['before_all', 'after_all'].has(gut.get_current_test_object().name)):
 		return !gut.get_current_test_object().passed
 	else:
 		_lgr.error('No current test object found.  is_passing must be called inside a test.')
