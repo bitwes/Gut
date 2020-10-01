@@ -128,7 +128,9 @@ var _parameter_handler = null
 # error displayed is seen since importing generates a lot of text.
 var _cancel_import = false
 
+# Used for proper assert tracking and printing during before_all
 var _before_all_test_obj = load('res://addons/gut/test_collector.gd').Test.new()
+# Used for proper assert tracking and printing during after_all
 var _after_all_test_obj = load('res://addons/gut/test_collector.gd').Test.new()
 
 const SIGNAL_TESTS_FINISHED = 'tests_finished'
@@ -596,7 +598,7 @@ func _call_deprecated_script_method(script, method, alt):
 			# Removing the deprecated line.  I think it's still too early to
 			# start bothering people with this.  Left everything here though
 			# because I don't want to remember how I did this last time.
-			#_lgr.deprecated(str('The method ', method, ' has been deprecated, use ', alt, ' instead.'))
+			_lgr.deprecated(str('The method ', method, ' has been deprecated, use ', alt, ' instead.'))
 			_deprecated_tracker.add(txt)
 		script.call(method)
 
@@ -690,26 +692,44 @@ func _run_test(script_inst, test_name):
 	_doubler.get_ignored_methods().clear()
 
 # ------------------------------------------------------------------------------
-# Calls before_all on the passedin test script and takes care of settings so all
-# logger output appears indented witha proper heading
+# Calls after_all on the passed in test script and takes care of settings so all
+# logger output appears indented and with a proper heading
+#
+# Calls both pre-all-tests methods until prerun_setup is removed
 # ------------------------------------------------------------------------------
 func _call_before_all(test_script):
 	_current_test = _before_all_test_obj
 	_current_test.has_printed_name = false
 	_lgr.inc_indent()
+
+	# Next 3 lines can be removed when prerun_setup removed.
+	_current_test.name = 'prerun_setup'
+	_call_deprecated_script_method(test_script, 'prerun_setup', 'before_all')
+	_current_test.name = 'before_all'
+
 	test_script.before_all()
+
 	_lgr.dec_indent()
 	_current_test = null
 
 # ------------------------------------------------------------------------------
-# Calls after_all on the passedin test script and takes care of settings so all
-# logger output appears indented witha proper heading
+# Calls after_all on the passed in test script and takes care of settings so all
+# logger output appears indented and with a proper heading
+#
+# Calls both post-all-tests methods until postrun_teardown is removed.
 # ------------------------------------------------------------------------------
 func _call_after_all(test_script):
 	_current_test = _after_all_test_obj
 	_current_test.has_printed_name = false
 	_lgr.inc_indent()
+
+	# Next 3 lines can be removed when postrun_teardown removed.
+	_current_test.name = 'postrun_teardown'
+	_call_deprecated_script_method(test_script, 'postrun_teardown', 'after_all')
+	_current_test.name = 'after_all'
+
 	test_script.after_all()
+
 	_lgr.dec_indent()
 	_current_test = null
 
@@ -774,8 +794,6 @@ func _test_the_scripts(indexes=[]):
 		if(!_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
 			the_script.tests = []
 		else:
-			# call both pre-all-tests methods until prerun_setup is removed
-			_call_deprecated_script_method(test_script, 'prerun_setup', 'before_all')
 			_call_before_all(test_script)
 
 		_gui.set_progress_test_max(the_script.tests.size()) # New way
@@ -816,9 +834,8 @@ func _test_the_scripts(indexes=[]):
 		_current_test = null
 		_lgr.dec_indent()
 		_orphan_counter.print_orphans('script', _lgr)
-		# call both post-all-tests methods until postrun_teardown is removed.
+
 		if(_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
-			_call_deprecated_script_method(test_script, 'postrun_teardown', 'after_all')
 			_call_after_all(test_script)
 
 		_log_test_children_warning(test_script)

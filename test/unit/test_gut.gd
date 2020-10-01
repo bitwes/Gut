@@ -584,9 +584,9 @@ func test_before_all_after_all_printing():
 func test_before_all_after_all_printing_all_classes_in_script():
 	gr.test_gut.add_script('res://test/resources/has_asserts_in_beforeall_and_afterall.gd')
 	gr.test_gut.test_scripts()
-	assert_eq(gr.test_gut.get_pass_count(), 10, 'pass count')
-	assert_eq(gr.test_gut.get_fail_count(), 10, 'fail count')
-	assert_eq(gr.test_gut.get_assert_count(), 20, 'assert count`')
+	assert_eq(gr.test_gut.get_pass_count(), 11, 'pass count')
+	assert_eq(gr.test_gut.get_fail_count(), 11, 'fail count')
+	assert_eq(gr.test_gut.get_assert_count(), 22, 'assert count`')
 
 
 # ------------------------------------------------------------------------------
