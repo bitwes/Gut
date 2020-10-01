@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 # 7.0.1
 ## Features
-
+* __Issue 201__ Added `pass_test(text)`, `fail_test(text)`, `is_passing()`, `is_failing()` methods to `test.gd`.
 
 ## Bug Fixes
 * Command Line now returns 1 if no sripts could be loaded.

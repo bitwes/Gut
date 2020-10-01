@@ -778,6 +778,8 @@ func _test_the_scripts(indexes=[]):
 				if(_is_function_state(script_result)):
 					yield(script_result, COMPLETED)
 
+				if(_current_test.assert_count == 0 and !_current_test.pending):
+					_lgr.warn('Test did not assert')
 				_current_test.has_printed_name = false
 				_gui.set_progress_test_value(i + 1)
 				emit_signal('test_finished')
@@ -815,6 +817,7 @@ func _test_the_scripts(indexes=[]):
 func _pass(text=''):
 	_gui.add_passing() # increments counters
 	if(_current_test):
+		_current_test.assert_count += 1
 		_new_summary.add_pass(_current_test.name, text)
 
 
@@ -832,6 +835,7 @@ func _fail(text=''):
 			call_count_text = str('(call #', _parameter_handler.get_call_count(), ') ')
 		_new_summary.add_fail(_current_test.name, call_count_text + text + line_text)
 		_current_test.passed = false
+		_current_test.assert_count += 1
 
 
 # ------------------------------------------------------------------------------
@@ -854,6 +858,7 @@ func _extractLineNumber(current_test):
 # ------------------------------------------------------------------------------
 func _pending(text=''):
 	if(_current_test):
+		_current_test.pending = true
 		_new_summary.add_pending(_current_test.name, text)
 
 
