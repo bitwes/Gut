@@ -128,12 +128,19 @@ var _parameter_handler = null
 # error displayed is seen since importing generates a lot of text.
 var _cancel_import = false
 
+# Used for proper assert tracking and printing during before_all
+var _before_all_test_obj = load('res://addons/gut/test_collector.gd').Test.new()
+# Used for proper assert tracking and printing during after_all
+var _after_all_test_obj = load('res://addons/gut/test_collector.gd').Test.new()
+
 const SIGNAL_TESTS_FINISHED = 'tests_finished'
 const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yield_before_teardown'
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func _init():
+	_before_all_test_obj.name = 'before_all'
+	_after_all_test_obj.name = 'after_all'
 	# When running tests for GUT itself, _utils has been setup to always return
 	# a new logger so this does not set the gut instance on the base logger
 	# when creating test instances of GUT.
@@ -591,7 +598,7 @@ func _call_deprecated_script_method(script, method, alt):
 			# Removing the deprecated line.  I think it's still too early to
 			# start bothering people with this.  Left everything here though
 			# because I don't want to remember how I did this last time.
-			#_lgr.deprecated(str('The method ', method, ' has been deprecated, use ', alt, ' instead.'))
+			_lgr.deprecated(str('The method ', method, ' has been deprecated, use ', alt, ' instead.'))
 			_deprecated_tracker.add(txt)
 		script.call(method)
 
@@ -659,8 +666,8 @@ func _run_test(script_inst, test_name):
 		yield(script_result, COMPLETED)
 		_lgr.end_yield()
 
-	#if the test called pause_before_teardown then yield until
-	#the continue button is pressed.
+	# if the test called pause_before_teardown then yield until
+	# the continue button is pressed.
 	if(_pause_before_teardown and !_ignore_pause_before_teardown):
 		_gui.pause()
 		yield(_wait_for_continue_button(), SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
@@ -684,6 +691,47 @@ func _run_test(script_inst, test_name):
 
 	_doubler.get_ignored_methods().clear()
 
+# ------------------------------------------------------------------------------
+# Calls after_all on the passed in test script and takes care of settings so all
+# logger output appears indented and with a proper heading
+#
+# Calls both pre-all-tests methods until prerun_setup is removed
+# ------------------------------------------------------------------------------
+func _call_before_all(test_script):
+	_current_test = _before_all_test_obj
+	_current_test.has_printed_name = false
+	_lgr.inc_indent()
+
+	# Next 3 lines can be removed when prerun_setup removed.
+	_current_test.name = 'prerun_setup'
+	_call_deprecated_script_method(test_script, 'prerun_setup', 'before_all')
+	_current_test.name = 'before_all'
+
+	test_script.before_all()
+
+	_lgr.dec_indent()
+	_current_test = null
+
+# ------------------------------------------------------------------------------
+# Calls after_all on the passed in test script and takes care of settings so all
+# logger output appears indented and with a proper heading
+#
+# Calls both post-all-tests methods until postrun_teardown is removed.
+# ------------------------------------------------------------------------------
+func _call_after_all(test_script):
+	_current_test = _after_all_test_obj
+	_current_test.has_printed_name = false
+	_lgr.inc_indent()
+
+	# Next 3 lines can be removed when postrun_teardown removed.
+	_current_test.name = 'postrun_teardown'
+	_call_deprecated_script_method(test_script, 'postrun_teardown', 'after_all')
+	_current_test.name = 'after_all'
+
+	test_script.after_all()
+
+	_lgr.dec_indent()
+	_current_test = null
 
 # ------------------------------------------------------------------------------
 # Run all tests in a script.  This is the core logic for running tests.
@@ -727,7 +775,7 @@ func _test_the_scripts(indexes=[]):
 			_gui.set_title(the_script.get_full_name())
 			_lgr.set_indent_level(0)
 			_print_script_heading(the_script)
-			_new_summary.add_script(the_script.get_full_name())
+		_new_summary.add_script(the_script.get_full_name())
 
 		var test_script = the_script.get_new()
 		var script_result = null
@@ -746,9 +794,7 @@ func _test_the_scripts(indexes=[]):
 		if(!_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
 			the_script.tests = []
 		else:
-			# call both pre-all-tests methods until prerun_setup is removed
-			_call_deprecated_script_method(test_script, 'prerun_setup', 'before_all')
-			test_script.before_all()
+			_call_before_all(test_script)
 
 		_gui.set_progress_test_max(the_script.tests.size()) # New way
 
@@ -788,10 +834,9 @@ func _test_the_scripts(indexes=[]):
 		_current_test = null
 		_lgr.dec_indent()
 		_orphan_counter.print_orphans('script', _lgr)
-		# call both post-all-tests methods until postrun_teardown is removed.
+
 		if(_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
-			_call_deprecated_script_method(test_script, 'postrun_teardown', 'after_all')
-			test_script.after_all()
+			_call_after_all(test_script)
 
 		_log_test_children_warning(test_script)
 		# This might end up being very resource intensive if the scripts
@@ -819,6 +864,9 @@ func _pass(text=''):
 	if(_current_test):
 		_current_test.assert_count += 1
 		_new_summary.add_pass(_current_test.name, text)
+	else:
+		if(_new_summary != null): # b/c of tests.
+			_new_summary.add_pass('script level', text)
 
 
 # ------------------------------------------------------------------------------
@@ -826,7 +874,7 @@ func _pass(text=''):
 func _fail(text=''):
 	_gui.add_failing() # increments counters
 	if(_current_test != null):
-		var line_text = '  at line ' + str(_extractLineNumber( _current_test))
+		var line_text = '  at line ' + str(_extract_line_number( _current_test))
 		p(line_text, LOG_LEVEL_FAIL_ONLY)
 		# format for summary
 		line_text =  "\n    " + line_text
@@ -836,13 +884,16 @@ func _fail(text=''):
 		_new_summary.add_fail(_current_test.name, call_count_text + text + line_text)
 		_current_test.passed = false
 		_current_test.assert_count += 1
+	else:
+		if(_new_summary != null): # b/c of tests.
+			_new_summary.add_fail('script level', text)
 
 
 # ------------------------------------------------------------------------------
 # Extracts the line number from curren stacktrace by matching the test case name
 # ------------------------------------------------------------------------------
-func _extractLineNumber(current_test):
-	var line_number = current_test.line_number
+func _extract_line_number(current_test):
+	var line_number = -1
 	# if stack trace available than extraxt the test case line number
 	var stackTrace = get_stack()
 	if(stackTrace!=null):

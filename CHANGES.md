@@ -2,9 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-# 7.0.1
+# 7.1.0
+## Misc
+* `prerun_setup`, `setup`, `teardown`, `postrun_teardown` deprecation warnings have been enabled.  These were removed from the documentation over 2 years ago (6.6.0) and replaced with `before_all`, `before_each`, `after_each`, and `after_all`.  Having to make additional changes for these in order to implement __Issue 184__ annoyed me, so there will now be depracation warnings for these.  Earliest they could be removed is 8.0.0.
+
 ## Features
 * __Issue 201__ Added `pass_test(text)`, `fail_test(text)`, `is_passing()`, `is_failing()` methods to `test.gd`.
+* __Issue 184__ Asserts in `before_all` and `after_all` are now formally supported.  They will appear correctly in the output and asserts will be tracked in the summary.
 
 ## Bug Fixes
 * Command Line now returns 1 if no sripts could be loaded.
