@@ -50,6 +50,7 @@ class DoubleInfo:
 	var extension
 	var _utils = load('res://addons/gut/utils.gd').get_instance()
 	var _is_native = false
+	var is_valid = false
 
 	# Flexible init method.  p2 can be subpath or stategy unless p3 is
 	# specified, then p2 must be subpath and p3 is strategy.
@@ -61,6 +62,11 @@ class DoubleInfo:
 	#   (object_to_double, subpath, strategy)
 	func _init(thing, p2=null, p3=null):
 		strategy = p2
+
+		# short-circuit and ensure that is_valid
+		# is not set to true.
+		if(_utils.is_instance(thing)):
+			return
 
 		if(typeof(p2) == TYPE_STRING):
 			strategy = p3
@@ -78,6 +84,8 @@ class DoubleInfo:
 
 		if(!_is_native):
 			extension = path.get_extension()
+
+		is_valid = true
 
 	func is_scene():
 		return extension == 'tscn'
@@ -100,8 +108,6 @@ const YIELD = 'timeout'
 # access to the asserts in the tests you write.
 var gut = null
 
-var passed = false # idk if this does anything TODO remove or document
-var failed = false # idk if this does anything TODO remove or document
 var _disable_strict_datatype_checks = false
 # Holds all the text for a test's fail/pass.  This is used for testing purposes
 # to see the text of a failed sub-test in test_test.gd
@@ -1062,6 +1068,10 @@ func _smart_double(double_info):
 # ------------------------------------------------------------------------------
 func double(thing, p2=null, p3=null):
 	var double_info = DoubleInfo.new(thing, p2, p3)
+	if(!double_info.is_valid):
+		_lgr.error('double requires a class or path, you passed an instance:  ' + _str(thing))
+		return null
+
 	double_info.make_partial = false
 
 	return _smart_double(double_info)
@@ -1070,6 +1080,10 @@ func double(thing, p2=null, p3=null):
 # ------------------------------------------------------------------------------
 func partial_double(thing, p2=null, p3=null):
 	var double_info = DoubleInfo.new(thing, p2, p3)
+	if(!double_info.is_valid):
+		_lgr.error('partial_double requires a class or path, you passed an instance:  ' + _str(thing))
+		return null
+
 	double_info.make_partial = true
 
 	return _smart_double(double_info)
@@ -1124,11 +1138,16 @@ func ignore_method_when_doubling(thing, method_name):
 #        to leave it but not update the wiki.
 # ------------------------------------------------------------------------------
 func stub(thing, p2, p3=null):
+	if(_utils.is_instance(thing) and !_utils.is_double(thing)):
+		_lgr.error(str('You cannot use stub on ', _str(thing), ' because it is not a double.'))
+		return _utils.StubParams.new()
+
 	var method_name = p2
 	var subpath = null
 	if(p3 != null):
 		subpath = p2
 		method_name = p3
+
 	var sp = _utils.StubParams.new(thing, method_name, subpath)
 	gut.get_stubber().add_stub(sp)
 	return sp
@@ -1191,11 +1210,9 @@ func use_parameters(params):
 	if(ph == null):
 		ph = _utils.ParameterHandler.new(params)
 		gut.set_parameter_handler(ph)
-	else:
-		_lgr.dec_indent()
 
 	var output = str('(call #', ph.get_call_count() + 1, ') with paramters:  ', ph.get_current_parameters())
-	gut.p(output, 0)
+	_lgr.log(output)
 	_lgr.inc_indent()
 	return ph.next_parameters()
 
@@ -1227,9 +1244,49 @@ func add_child_autofree(node, legible_unique_name = false):
 	.add_child(node, legible_unique_name)
 	return node
 
+# ------------------------------------------------------------------------------
+# The same as autoqfree but it also adds the object as a child of the test.
+# ------------------------------------------------------------------------------
 func add_child_autoqfree(node, legible_unique_name=false):
 	gut.get_autofree().add_queue_free(node)
 	# Explicitly calling super here b/c add_child MIGHT change and I don't want
 	# a bug sneaking its way in here.
 	.add_child(node, legible_unique_name)
 	return node
+
+# ------------------------------------------------------------------------------
+# Returns true if the test is passing as of the time of this call.  False if not.
+# ------------------------------------------------------------------------------
+func is_passing():
+	if(gut.get_current_test_object() != null and
+		!['before_all', 'after_all'].has(gut.get_current_test_object().name)):
+		return gut.get_current_test_object().passed and \
+			gut.get_current_test_object().assert_count > 0
+	else:
+		_lgr.error('No current test object found.  is_passing must be called inside a test.')
+		return null
+
+# ------------------------------------------------------------------------------
+# Returns true if the test is failing as of the time of this call.  False if not.
+# ------------------------------------------------------------------------------
+func is_failing():
+	if(gut.get_current_test_object() != null and
+		!['before_all', 'after_all'].has(gut.get_current_test_object().name)):
+		return !gut.get_current_test_object().passed
+	else:
+		_lgr.error('No current test object found.  is_passing must be called inside a test.')
+		return null
+
+
+# ------------------------------------------------------------------------------
+# Marks the test as passing.  Does not override any failing asserts or calls to
+# fail_test.  Same as a passing assert.
+# ------------------------------------------------------------------------------
+func pass_test(text):
+	_pass(text)
+
+# ------------------------------------------------------------------------------
+# Marks the test as failing.  Same as a failing assert.
+# ------------------------------------------------------------------------------
+func fail_test(text):
+	_fail(text)

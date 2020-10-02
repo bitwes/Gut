@@ -1,14 +1,6 @@
 # ------------------------------------------------------------------------------
-# Tests test.gd.  test.gd contains all the asserts is the class that all
+# Tests test.gd.  test.gd contains all the asserts and is the class that all
 # test scripts inherit from.
-#
-# NOTE on naming tests.  Most of these tests were made before Inner Test Classes
-# were supported.  To that end a lot of tests should be renamed.  All new tests
-# should be in an Inner Test Class and follow a convention similar to:
-#   * test_passes_when...
-#   * test_passes_if...
-#   * test_fails_when...
-#   * etc
 # ------------------------------------------------------------------------------
 extends "res://addons/gut/test.gd"
 
@@ -63,7 +55,7 @@ class BaseTestClass:
 	func before_each():
 		gr.test = Test.new()
 		gr.test_with_gut = Test.new()
-		gr.test_with_gut.gut = Gut.new()
+		gr.test_with_gut.gut = autofree(Gut.new())
 
 	func after_each():
 		gr.test_with_gut.gut.get_doubler().clear_output_directory()
@@ -73,8 +65,6 @@ class BaseTestClass:
 		gr.test = null
 		gr.test_with_gut.gut.free()
 		gr.test_with_gut.free()
-
-
 
 class TestMiscTests:
 	extends BaseTestClass
@@ -93,8 +83,6 @@ class TestMiscTests:
 		pass
 		# I cannot think of a way to test this without some giant amount of
 		# testing legwork.
-
-
 
 class TestAssertEq:
 	extends BaseTestClass
@@ -452,7 +440,7 @@ class TestAssertHas:
 		gr.test.assert_does_not_have(array, 20, 'Should not have it.')
 		assert_fail(gr.test)
 
-# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
+
 class TestFailingDatatypeChecks:
 	extends BaseTestClass
 
@@ -482,7 +470,7 @@ class TestFailingDatatypeChecks:
 		gr.test.assert_ne(null, Node2D.new())
 		assert_pass(gr.test, 2)
 
-# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
+
 class TestPending:
 	extends BaseTestClass
 
@@ -896,7 +884,7 @@ class TestSignalAsserts:
 		assert_string_contains(text, SIGNALS.NO_PARAMETERS)
 		assert_string_contains(text, SIGNALS.SOME_SIGNAL)
 
-# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
+
 class TestExtendAsserts:
 	extends BaseTestClass
 
@@ -1323,7 +1311,7 @@ class TestReplaceNode:
 		gr.test.replace_node(_arena, old, replacement)
 		assert_errored(gr.test)
 
-class TestIsFreed:
+class TestAssertIsFreed:
 	extends BaseTestClass
 
 	func test_object_is_freed_should_pass():
@@ -1496,3 +1484,87 @@ class TestMemoryMgmt:
 		for i in range(3):
 			var extra_test = TestClass.new()
 			add_child(extra_test)
+
+class TestTestStateChecking:
+	extends 'res://addons/gut/test.gd'
+
+	var _gut = null
+
+	func before_each():
+		.before_each()
+		_gut = _utils.Gut.new()
+		add_child_autoqfree(_gut)
+		_gut.add_script('res://test/resources/state_check_tests.gd')
+
+	func _same_name():
+		return gut.get_current_test_object().name
+
+	func _run_test(inner_class, name=_same_name()):
+		_gut.set_inner_class_name(inner_class)
+		_gut.set_unit_test_name(name)
+		_gut.test_scripts()
+
+	func _assert_pass_fail_count(passing, failing):
+		assert_eq(_gut.get_pass_count(), passing, 'Pass count does not match')
+		assert_eq(_gut.get_fail_count(), failing, 'Failing count does not match')
+
+	func test_is_passing_returns_true_when_test_is_passing():
+		_run_test('TestIsPassing')
+		_assert_pass_fail_count(2, 0)
+
+	func test_is_passing_returns_false_when_test_is_failing():
+		_run_test('TestIsPassing')
+		_assert_pass_fail_count(1, 1)
+
+	func test_is_passing_false_by_default():
+		_run_test('TestIsPassing')
+		_assert_pass_fail_count(1, 0)
+
+	func  test_is_passing_returns_true_before_test_fails():
+		_run_test('TestIsPassing')
+		_assert_pass_fail_count(2, 1)
+
+	func test_is_failing_returns_true_when_failing():
+		_run_test('TestIsFailing')
+		_assert_pass_fail_count(1, 1)
+
+	func test_is_failing_returns_false_when_passing():
+		_run_test('TestIsFailing')
+		_assert_pass_fail_count(2, 0)
+
+	func test_is_failing_returns_false_by_default():
+		_run_test('TestIsFailing')
+		_assert_pass_fail_count(1, 0)
+
+	func test_is_failing_returns_false_before_test_passes():
+		_run_test('TestIsFailing')
+		_assert_pass_fail_count(2, 0)
+
+	func test_error_generated_when_using_is_passing_in_before_all():
+		_run_test('TestUseIsPassingInBeforeAll', 'test_nothing')
+		assert_eq(_gut.get_logger().get_errors().size(), 1)
+
+	func test_error_generated_when_using_is_passing_in_after_all():
+		_run_test('TestUseIsPassingInAfterAll', 'test_nothing')
+		assert_eq(_gut.get_logger().get_errors().size(), 1)
+
+	func test_error_generated_when_using_is_failing_in_before_all():
+		_run_test('TestUseIsFailingInBeforeAll', 'test_nothing')
+		assert_eq(_gut.get_logger().get_errors().size(), 1)
+
+	func test_error_generated_when_using_is_failing_in_after_all():
+		_run_test('TestUseIsFailingInAfterAll', 'test_nothing')
+		assert_eq(_gut.get_logger().get_errors().size(), 1)
+
+class TestPassFailTestMethods:
+	extends BaseTestClass
+
+	func test_pass_test_passes_ups_pass_count():
+		gr.test_with_gut.pass_test('pass this')
+		assert_eq(gr.test_with_gut.get_pass_count(), 1, 'test count')
+
+	func test_fail_test_ups_fail_count():
+		gr.test_with_gut.fail_test('fail this')
+		assert_eq(gr.test_with_gut.get_fail_count(), 1, 'test count')
+
+

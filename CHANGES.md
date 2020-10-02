@@ -2,14 +2,22 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-# x.x.x
-## Features
+# 7.1.0
+## Misc
+* `prerun_setup`, `setup`, `teardown`, `postrun_teardown` deprecation warnings have been enabled.  These were removed from the documentation over 2 years ago (6.6.0) and replaced with `before_all`, `before_each`, `after_each`, and `after_all`.  Having to make additional changes for these in order to implement __Issue 184__ annoyed me, so there will now be depracation warnings for these.  Earliest they could be removed is 8.0.0.
 
+## Features
+* __Issue 201__ Added `pass_test(text)`, `fail_test(text)`, `is_passing()`, `is_failing()` methods to `test.gd`.
+* __Issue 184__ Asserts in `before_all` and `after_all` are now formally supported.  They will appear correctly in the output and asserts will be tracked in the summary.
 
 ## Bug Fixes
 * Command Line now returns 1 if no sripts could be loaded.
+* __Issue 173__ An error is generated if try to `stub` the `_init` method.  Documentation has been updated.
 * __Issue 195__ Parameterized Tests generated deprecated warnings.
-* __Issue 202__ `before_each` and `after_each` now work as expected with Parameterized Tests.
+* Fixed various issues with parameterized tests.  All  test execution is now treated exactly the same (__Issue 196__, __Issue 197__, __Issue 202__)
+* __Issue 199__ If you pass an instance of something to `double` or `partial_double` a GUT error is generated and `null` is returned.
+* __Issue 200__ If you pass a non-doubled instance to `stub` a GUT error is generated and nothing is stubbed.
+* __Issue 211__ GDNative scripts cause `Error calling built-in function 'inst2dict': Not a script with an instance` when used in assertions
 
 # 7.0.0
 ## Breaking Changes

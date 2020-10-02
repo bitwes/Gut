@@ -208,8 +208,6 @@ class TestBuiltInOverloading:
 		_dbl_win_dia = doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG)
 		_dbl_win_dia_text = _dbl_win_dia.new().get_script().get_source_code()
 
-	func after_each():
-		_dbl_win_dia.free()
 
 	func after_all():
 		if(doubler):
@@ -400,6 +398,12 @@ class TestPartialDoubles:
 		var inst = doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
 		assert_eq(inst.return_hello(), null)
 		pause_before_teardown()
+
+	func test_init_is_not_stubbed_to_call_super():
+		var inst = doubler.partial_double(DOUBLE_ME_PATH).new()
+		var text = inst.get_script().get_source_code()
+		assert_false(text.match("*__gut_should_call_super('_init'*"), 'should not call super _init')
+
 
 class TestDoubleGDNaviteClasses:
 	extends BaseTest

@@ -30,11 +30,11 @@ class TestInternalStr:
 		assert_eq(_str(self), str(self, '(test_strutils.gd/TestInternalStr)'))
 
 	func test_script_2():
-		var dm = DoubleMe.new()
+		var dm = autofree(DoubleMe.new())
 		assert_eq(_str(dm), str(dm) + '(double_me.gd)')
 
 	func test_scene():
-		var scene = DoubleMeScene.instance()
+		var scene = autofree(DoubleMeScene.instance())
 		assert_eq(_str(scene),  str(scene, '(double_me_scene.gd)'))
 
 	func test_file_instance():
@@ -78,19 +78,19 @@ class TestInternalStr:
 		assert_eq(_str(null), str(null))
 
 	func test_object_null():
-		var scene = load(DOUBLE_ME_SCENE_PATH).instance()
+		var scene = autofree(load(DOUBLE_ME_SCENE_PATH).instance())
 		assert_eq(_str(scene.get_parent()), 'Null')
 
 	# currently does not print the inner class, maybe later.
 	func test_inner_class():
-		var ec = ExtendsControl.new()
+		var ec = autofree(ExtendsControl.new())
 		assert_eq(_str(ec), str(ec) + '(test_strutils.gd/TestInternalStr/ExtendsControl)')
 
 	func test_simple_class():
-		var en = ExtendsNothing.new()
+		var en = autofree(ExtendsNothing.new())
 		assert_eq(_str(en), str(en) + '(test_strutils.gd/TestInternalStr/ExtendsNothing)')
 
 	func test_returns_null_for_just_freed_objects():
-		var n = Node.new()
+		var n = autofree(Node.new())
 		n.free()
 		assert_eq(_str(n), '[Deleted Object]', 'sometimes fails based on timing.')
