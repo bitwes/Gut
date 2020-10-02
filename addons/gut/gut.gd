@@ -561,7 +561,6 @@ func _wait_for_done(result):
 
 	# callback method sets waiting to false.
 	result.connect(COMPLETED, self, '_on_test_script_yield_completed')
-
 	if(!_was_yield_method_called):
 		_lgr.log('-- Yield detected, waiting --', _lgr.fmts.yellow)
 
@@ -626,7 +625,7 @@ func _get_indexes_matching_path(path):
 func _run_parameterized_test(test_script, test_name):
 	var script_result = _run_test(test_script, test_name)
 	if(_is_function_state(script_result)):
-		_wait_for_done(script_result)
+		# _run_tests does _wait_for_done so just wait on it to  complete
 		yield(script_result, COMPLETED)
 
 	if(_parameter_handler == null):
@@ -636,7 +635,7 @@ func _run_parameterized_test(test_script, test_name):
 		while(!_parameter_handler.is_done()):
 			script_result = _run_test(test_script, test_name)
 			if(_is_function_state(script_result)):
-				_wait_for_done(script_result)
+				# _run_tests does _wait_for_done so just wait on it to  complete
 				yield(script_result, COMPLETED)
 
 	_parameter_handler = null
@@ -652,19 +651,21 @@ func _run_test(script_inst, test_name):
 	var script_result = null
 
 	_call_deprecated_script_method(script_inst, 'setup', 'before_each')
-	script_inst.before_each()
+	var before_each_result = script_inst.before_each()
+	if(_is_function_state(before_each_result)):
+		yield(_wait_for_done(before_each_result), COMPLETED)
 
 	# When the script yields it will return a GDScriptFunctionState object
 	script_result = script_inst.call(test_name)
 	_new_summary.add_test(test_name)
 
-	# TODO I think this could be made into a while loop checking for a
-	# function state return, this way additional yields in a test could be
-	# treated the same.
+	# Cannot detect future yields since we never tell the method to resume.  If
+	# there was some way to tell the method to resume we could use what comes
+	# back from that to detect additional yields.  I don't think this is
+	# possible since we only know what the yield was for except when yield_for
+	# and yield_to are used.
 	if(_is_function_state(script_result)):
-		_wait_for_done(script_result)
-		yield(script_result, COMPLETED)
-		_lgr.end_yield()
+		yield(_wait_for_done(script_result), COMPLETED)
 
 	# if the test called pause_before_teardown then yield until
 	# the continue button is pressed.
@@ -676,7 +677,9 @@ func _run_test(script_inst, test_name):
 
 	# call each post-each-test method until teardown is removed.
 	_call_deprecated_script_method(script_inst, 'teardown', 'after_each')
-	script_inst.after_each()
+	var after_each_result = script_inst.after_each()
+	if(_is_function_state(after_each_result)):
+		yield(_wait_for_done(after_each_result), COMPLETED)
 
 	# Free up everything in the _autofree.  Yield for a bit if we
 	# have anything with a queue_free so that they have time to
@@ -707,7 +710,9 @@ func _call_before_all(test_script):
 	_call_deprecated_script_method(test_script, 'prerun_setup', 'before_all')
 	_current_test.name = 'before_all'
 
-	test_script.before_all()
+	var result = test_script.before_all()
+	if(_is_function_state(result)):
+		yield(_wait_for_done(result), COMPLETED)
 
 	_lgr.dec_indent()
 	_current_test = null
@@ -728,7 +733,10 @@ func _call_after_all(test_script):
 	_call_deprecated_script_method(test_script, 'postrun_teardown', 'after_all')
 	_current_test.name = 'after_all'
 
-	test_script.after_all()
+	var result = test_script.after_all()
+	if(_is_function_state(result)):
+		yield(_wait_for_done(result), COMPLETED)
+
 
 	_lgr.dec_indent()
 	_current_test = null
@@ -794,7 +802,11 @@ func _test_the_scripts(indexes=[]):
 		if(!_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
 			the_script.tests = []
 		else:
-			_call_before_all(test_script)
+			var before_all_result = _call_before_all(test_script)
+			if(_is_function_state(before_all_result)):
+				# _call_before_all calls _wait for done, just wait for that to finish
+				yield(before_all_result, COMPLETED)
+
 
 		_gui.set_progress_test_max(the_script.tests.size()) # New way
 
@@ -822,6 +834,7 @@ func _test_the_scripts(indexes=[]):
 					script_result = _run_test(test_script, _current_test.name)
 
 				if(_is_function_state(script_result)):
+					# _run_test calls _wait for done, just wait for that to finish
 					yield(script_result, COMPLETED)
 
 				if(_current_test.assert_count == 0 and !_current_test.pending):
@@ -836,7 +849,11 @@ func _test_the_scripts(indexes=[]):
 		_orphan_counter.print_orphans('script', _lgr)
 
 		if(_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
-			_call_after_all(test_script)
+			var after_all_result = _call_after_all(test_script)
+			if(_is_function_state(after_all_result)):
+				# _call_after_all calls _wait for done, just wait for that to finish
+				yield(after_all_result, COMPLETED)
+
 
 		_log_test_children_warning(test_script)
 		# This might end up being very resource intensive if the scripts
@@ -1274,11 +1291,11 @@ func simulate(obj, times, delta):
 func set_yield_time(time, text=''):
 	_yield_timer.set_wait_time(time)
 	_yield_timer.start()
-	var msg = '/# Yielding (' + str(time) + 's)'
+	var msg = '-- Yielding (' + str(time) + 's)'
 	if(text == ''):
-		msg += ' #/'
+		msg += ' --'
 	else:
-		msg +=  ':  ' + text + ' #/'
+		msg +=  ':  ' + text + ' --'
 	_lgr.log(msg, _lgr.fmts.yellow)
 	_was_yield_method_called = true
 	return self
@@ -1293,7 +1310,7 @@ func set_yield_signal_or_time(obj, signal_name, max_wait, text=''):
 	_yield_timer.set_wait_time(max_wait)
 	_yield_timer.start()
 	_was_yield_method_called = true
-	_lgr.log(str('/# Yielding to signal "', signal_name, '" or for ', max_wait, ' seconds #/ ', text), _lgr.fmts.yellow)
+	_lgr.log(str('-- Yielding to signal "', signal_name, '" or for ', max_wait, ' seconds -- ', text), _lgr.fmts.yellow)
 	return self
 
 # ------------------------------------------------------------------------------

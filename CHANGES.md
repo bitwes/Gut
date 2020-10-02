@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Features
 * __Issue 201__ Added `pass_test(text)`, `fail_test(text)`, `is_passing()`, `is_failing()` methods to `test.gd`.
+   * No more `assert_true(true, 'we got here')`!  Long live `pass_test('we got here')`!
 * __Issue 184__ Asserts in `before_all` and `after_all` are now formally supported.  They will appear correctly in the output and asserts will be tracked in the summary.
 
 ## Bug Fixes
