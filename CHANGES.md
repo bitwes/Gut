@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * `prerun_setup`, `setup`, `teardown`, `postrun_teardown` deprecation warnings have been enabled.  These were removed from the documentation over 2 years ago (6.6.0) and replaced with `before_all`, `before_each`, `after_each`, and `after_all`.  Having to make additional changes for these in order to implement __Issue 184__ annoyed me, so there will now be depracation warnings for these.  Earliest they could be removed is 8.0.0.
 
 ## Features
+* __Issue 66__ Thanks to nilold for adding `assert_not_between`.
 * __Issue 201__ Added `pass_test(text)`, `fail_test(text)`, `is_passing()`, `is_failing()` methods to `test.gd`.
    * No more `assert_true(true, 'we got here')`!  Long live `pass_test('we got here')`!
 * __Issue 184__ Asserts in `before_all` and `after_all` are now formally supported.  They will appear correctly in the output and asserts will be tracked in the summary.
@@ -19,6 +20,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * __Issue 199__ If you pass an instance of something to `double` or `partial_double` a GUT error is generated and `null` is returned.
 * __Issue 200__ If you pass a non-doubled instance to `stub` a GUT error is generated and nothing is stubbed.
 * __Issue 211__ GDNative scripts cause `Error calling built-in function 'inst2dict': Not a script with an instance` when used in assertions
+
 
 # 7.0.0
 ## Breaking Changes
