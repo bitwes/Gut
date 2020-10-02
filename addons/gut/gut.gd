@@ -561,7 +561,6 @@ func _wait_for_done(result):
 
 	# callback method sets waiting to false.
 	result.connect(COMPLETED, self, '_on_test_script_yield_completed')
-
 	if(!_was_yield_method_called):
 		_lgr.log('-- Yield detected, waiting --', _lgr.fmts.yellow)
 
@@ -626,7 +625,8 @@ func _get_indexes_matching_path(path):
 func _run_parameterized_test(test_script, test_name):
 	var script_result = _run_test(test_script, test_name)
 	if(_is_function_state(script_result)):
-		yield(_wait_for_done(script_result), COMPLETED)
+		# _run_tests does _wait_for_done so just wait on it to  complete
+		yield(script_result, COMPLETED)
 
 	if(_parameter_handler == null):
 		_lgr.error(str('Parameterized test ', _current_test.name, ' did not call use_parameters for the default value of the parameter.'))
@@ -635,7 +635,8 @@ func _run_parameterized_test(test_script, test_name):
 		while(!_parameter_handler.is_done()):
 			script_result = _run_test(test_script, test_name)
 			if(_is_function_state(script_result)):
-				yield(_wait_for_done(script_result), COMPLETED)
+				# _run_tests does _wait_for_done so just wait on it to  complete
+				yield(script_result, COMPLETED)
 
 	_parameter_handler = null
 
@@ -1290,11 +1291,11 @@ func simulate(obj, times, delta):
 func set_yield_time(time, text=''):
 	_yield_timer.set_wait_time(time)
 	_yield_timer.start()
-	var msg = '/# Yielding (' + str(time) + 's)'
+	var msg = '-- Yielding (' + str(time) + 's)'
 	if(text == ''):
-		msg += ' #/'
+		msg += ' --'
 	else:
-		msg +=  ':  ' + text + ' #/'
+		msg +=  ':  ' + text + ' --'
 	_lgr.log(msg, _lgr.fmts.yellow)
 	_was_yield_method_called = true
 	return self
@@ -1309,7 +1310,7 @@ func set_yield_signal_or_time(obj, signal_name, max_wait, text=''):
 	_yield_timer.set_wait_time(max_wait)
 	_yield_timer.start()
 	_was_yield_method_called = true
-	_lgr.log(str('/# Yielding to signal "', signal_name, '" or for ', max_wait, ' seconds #/ ', text), _lgr.fmts.yellow)
+	_lgr.log(str('-- Yielding to signal "', signal_name, '" or for ', max_wait, ' seconds -- ', text), _lgr.fmts.yellow)
 	return self
 
 # ------------------------------------------------------------------------------
