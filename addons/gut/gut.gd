@@ -626,8 +626,7 @@ func _get_indexes_matching_path(path):
 func _run_parameterized_test(test_script, test_name):
 	var script_result = _run_test(test_script, test_name)
 	if(_is_function_state(script_result)):
-		_wait_for_done(script_result)
-		yield(script_result, COMPLETED)
+		yield(_wait_for_done(script_result), COMPLETED)
 
 	if(_parameter_handler == null):
 		_lgr.error(str('Parameterized test ', _current_test.name, ' did not call use_parameters for the default value of the parameter.'))
@@ -636,8 +635,7 @@ func _run_parameterized_test(test_script, test_name):
 		while(!_parameter_handler.is_done()):
 			script_result = _run_test(test_script, test_name)
 			if(_is_function_state(script_result)):
-				_wait_for_done(script_result)
-				yield(script_result, COMPLETED)
+				yield(_wait_for_done(script_result), COMPLETED)
 
 	_parameter_handler = null
 
@@ -654,7 +652,7 @@ func _run_test(script_inst, test_name):
 	_call_deprecated_script_method(script_inst, 'setup', 'before_each')
 	var before_each_result = script_inst.before_each()
 	if(_is_function_state(before_each_result)):
-		yield(before_each_result, COMPLETED)
+		yield(_wait_for_done(before_each_result), COMPLETED)
 
 	# When the script yields it will return a GDScriptFunctionState object
 	script_result = script_inst.call(test_name)
@@ -664,9 +662,7 @@ func _run_test(script_inst, test_name):
 	# function state return, this way additional yields in a test could be
 	# treated the same.
 	if(_is_function_state(script_result)):
-		_wait_for_done(script_result)
-		yield(script_result, COMPLETED)
-		_lgr.end_yield()
+		yield(_wait_for_done(script_result), COMPLETED)
 
 	# if the test called pause_before_teardown then yield until
 	# the continue button is pressed.
@@ -680,7 +676,7 @@ func _run_test(script_inst, test_name):
 	_call_deprecated_script_method(script_inst, 'teardown', 'after_each')
 	var after_each_result = script_inst.after_each()
 	if(_is_function_state(after_each_result)):
-		yield(after_each_result, COMPLETED)
+		yield(_wait_for_done(after_each_result), COMPLETED)
 
 	# Free up everything in the _autofree.  Yield for a bit if we
 	# have anything with a queue_free so that they have time to
@@ -713,7 +709,7 @@ func _call_before_all(test_script):
 
 	var result = test_script.before_all()
 	if(_is_function_state(result)):
-		yield(result, COMPLETED)
+		yield(_wait_for_done(result), COMPLETED)
 
 	_lgr.dec_indent()
 	_current_test = null
@@ -736,7 +732,7 @@ func _call_after_all(test_script):
 
 	var result = test_script.after_all()
 	if(_is_function_state(result)):
-		yield(result, COMPLETED)
+		yield(_wait_for_done(result), COMPLETED)
 
 
 	_lgr.dec_indent()
@@ -805,6 +801,7 @@ func _test_the_scripts(indexes=[]):
 		else:
 			var before_all_result = _call_before_all(test_script)
 			if(_is_function_state(before_all_result)):
+				# _call_before_all calls _wait for done, just wait for that to finish
 				yield(before_all_result, COMPLETED)
 
 
@@ -834,6 +831,7 @@ func _test_the_scripts(indexes=[]):
 					script_result = _run_test(test_script, _current_test.name)
 
 				if(_is_function_state(script_result)):
+					# _run_test calls _wait for done, just wait for that to finish
 					yield(script_result, COMPLETED)
 
 				if(_current_test.assert_count == 0 and !_current_test.pending):
@@ -850,6 +848,7 @@ func _test_the_scripts(indexes=[]):
 		if(_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
 			var after_all_result = _call_after_all(test_script)
 			if(_is_function_state(after_all_result)):
+				# _call_after_all calls _wait for done, just wait for that to finish
 				yield(after_all_result, COMPLETED)
 
 

@@ -41,19 +41,20 @@ class TestYieldInAfterEach:
 		if(after_each_called):
 			assert_eq(value, 'set')
 		else:
-			assert_false(true, 'fails, not called yet')
+			fail_test('fails, not called yet')
 
 	func test_value_set_in_after_all_2():
 		if(after_each_called):
 			assert_eq(value, 'set')
 		else:
-			assert_false(true, 'fails, not called yet')
+			fail_test('fails, not called yet')
 
 
 class TestYieldInBeforeEach:
 	extends 'res://addons/gut/test.gd'
 
 	var value = 'NOT_SET'
+
 	func before_each():
 		yield(yield_for(1), YIELD)
 		value = 'set'
