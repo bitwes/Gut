@@ -151,12 +151,13 @@ func test_assert_not_between():
 	gut.p('-- passing --')
 	assert_not_between(1, 5, 10) # PASS
 	assert_not_between('a', 'b', 'd') # PASS
+	assert_not_between('d', 'b', 'd') # PASS
 	assert_not_between(10, 0, 10) # PASS
-	assert_not_between(0, 0, 10) # PASS
-	assert_not_between(2.25, 2, 4.0) # PASS
+	assert_not_between(-2, -2, 10) # PASS
 	
 	gut.p('-- failing --')
 	assert_not_between(5, 0, 10, 'Five shouldnt be between 0 and 10') # FAIL
+	assert_not_between(0.25, -2.0, 4.0) # FAIL
 
 
 func test_has():
