@@ -658,9 +658,11 @@ func _run_test(script_inst, test_name):
 	script_result = script_inst.call(test_name)
 	_new_summary.add_test(test_name)
 
-	# TODO I think this could be made into a while loop checking for a
-	# function state return, this way additional yields in a test could be
-	# treated the same.
+	# Cannot detect future yields since we never tell the method to resume.  If
+	# there was some way to tell the method to resume we could use what comes
+	# back from that to detect additional yields.  I don't think this is
+	# possible since we only know what the yield was for except when yield_for
+	# and yield_to are used.
 	if(_is_function_state(script_result)):
 		yield(_wait_for_done(script_result), COMPLETED)
 
