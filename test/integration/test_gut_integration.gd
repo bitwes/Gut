@@ -48,9 +48,6 @@ class TestYieldInBeforeAfterMethods:
 
 	const SCRIPT_PATH = 'res://test/resources/yield_in_before_after_methods.gd'
 
-	func after_all():
-		gut.p('something')
-
 	func test_gut_waits_for_yield_in_before_all():
 		_run_tests(SCRIPT_PATH, 'TestYieldInBeforeAll', null)
 		yield(yield_to(_gut, 'tests_finished', 10), YIELD)
