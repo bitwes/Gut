@@ -374,7 +374,7 @@ class TestAssertNotBetween:
 		assert_fail(gr.test, 1, '8 is starting number and is not less than 0')
 
 	func test_with_string_between():
-		gr.test.assert_not_between('b', 'a', 'c', "Should fail, 2 is between 1 and 3")
+		gr.test.assert_not_between('b', 'a', 'c', "Should fail, b is between a and c")
 		assert_fail(gr.test)
 
 	func test_with_string_lt():
@@ -394,7 +394,7 @@ class TestAssertNotBetween:
 		assert_pass(gr.test)
 
 	func test_with_invalid_string_range():
-		gr.test.assert_not_between('q', 'z', 'a', "Should fail")
+		gr.test.assert_not_between('q', 'z', 'a', "Should fail: Invalid range")
 		assert_fail(gr.test)
 
 # TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
