@@ -1,7 +1,8 @@
 var _a1 = null
 var _a2 =  null
-var _size_diff_threshold = 10
+var _size_diff_threshold = 30
 var strutils = load('res://addons/gut/utils.gd').get_instance().Strutils.new()
+var _max_string_length = 100
 
 var _different_indexes = null
 
@@ -9,12 +10,10 @@ func _init(a1 = null, a2=null):
 	_a1 = a1
 	_a2 = a2
 
-
 func _do_datatypes_match(got, expected):
 	var got_type = typeof(got)
 	var expect_type = typeof(expected)
 	return !(got_type != expect_type and got != null and expected != null)
-
 
 func _populate_diff_indexes():
 	_different_indexes = []
@@ -29,7 +28,7 @@ func _populate_diff_indexes():
 		for i in range(_a1.size(), _a2.size()):
 			_different_indexes.append(i)
 
-func _make_diff_description(max_differences=20):
+func _make_diff_description(max_differences=_size_diff_threshold):
 	var to_return = ''
 	var limit = min(_different_indexes.size(), max_differences)
 
@@ -70,12 +69,21 @@ func get_different_indexes():
 	_populate_diff_indexes()
 	return _different_indexes
 
+# ------------------------------------------------------------------------------
+# Generates a summary of the differences in two arrays.
+# * When arrays and diff is small enough then  both arrays  and all differences
+#   are listed.
+# * Each array is trunated to 100 chars
+# * Up to _size_diff_threshold different indexes will be listed.
+# * If the difference in sizes is > _size_diff_threshold then the arrays are
+# ------------------------------------------------------------------------------
 func summarize():
-	if(abs(_a1.size() - _a2.size()) > _size_diff_threshold):
-		return str('Arrays are different sizes:  a1(', _a1.size(), ') a2(', _a2.size(), ')')
 	_populate_diff_indexes()
-	var a1_str = strutils.truncate_string(str(_a1), 100)
-	var a2_str = strutils.truncate_string(str(_a2), 100)
+	var a1_str = strutils.truncate_string(str(_a1), _max_string_length)
+	var a2_str = strutils.truncate_string(str(_a2), _max_string_length)
 	var diff_str = _make_diff_description()
+
+	if(abs(_a1.size() - _a2.size()) > _size_diff_threshold):
+		return str(a1_str, ' != ', a2_str, "\n",  'Arrays sizes are too different to diff:  a1(', _a1.size(), ') a2(', _a2.size(), ')')
 
 	return str(a1_str, ' != ', a2_str, ".\nDifferent indexes = \n", diff_str)

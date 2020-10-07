@@ -41,6 +41,11 @@ func test_get_different_indexes_works_when_a1_smaller():
 	var ad = ArrayDiff.new([1, 2, 3], [3, 2, 1, 98, 99])
 	assert_eq(ad.get_different_indexes(), [0, 2, 3 ,4])
 
+
+func test_lists_indexes_as_missing_in_first_array():
+	var ad = ArrayDiff.new([1, 2, 3], [1, 2, 3, 4, 5])
+	assert_string_contains(ad.summarize(), '[missing] !=')
+
 func test_get_different_indexes_works_when_a2_smaller():
 	var ad = ArrayDiff.new([3, 2, 1, 98, 99], [1, 2, 3])
 	assert_eq(ad.get_different_indexes(), [0, 2, 3, 4])
@@ -51,12 +56,12 @@ func test_get_summary_text_lists_both_arrays():
 
 func test_get_summary_text_lists_differences():
 	var ad = ArrayDiff.new([3, 2, 1, 98, 99], [1, 2, 3])
-	assert_string_contains(ad.summarize(), '[0, 2, 3, 4]')
+	assert_string_contains(ad.summarize(), '0: 3 !=')
 
 func test_when_sizes_do_not_match_and_threshold_exceeded_then_summarize_tells_you():
 	var ad = ArrayDiff.new([3, 2, 1, 98, 99], [1, 2, 3])
 	ad._size_diff_threshold = 1
-	assert_string_contains(ad.summarize(), 'are different sizes')
+	assert_string_contains(ad.summarize(), 'Arrays sizes are')
 	assert_string_contains(ad.summarize(), '(5)', 'a1 size')
 	assert_string_contains(ad.summarize(), '(3)', 'a2 size')
 
@@ -69,7 +74,7 @@ func test_when_arrays_are_large_then_summarize_truncates():
 
 	var ad = ArrayDiff.new(a1, a2)
 	var summary = ad.summarize()
-	assert_lt(summary.length(), 500, summary)
+	assert_lt(summary.length(), 700, summary)
 
 
 func test_works_with_strings_and_numbers():

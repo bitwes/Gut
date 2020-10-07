@@ -104,5 +104,9 @@ class TestTruncateString:
 
 	func test_when_more_than_max_then_string_is_smaller():
 		var result = strutils.truncate_string('123456789012345678901234567890', 20)
-		print(result)
 		assert_lt(result.length(), 30)
+
+	func test_when_neg_one_passed_whole_string_is_returned():
+		var s = 'this is some text that I have  typed into here for you to read.'
+		var result = strutils.truncate_string(s, -1)
+		assert_eq(result, s)
