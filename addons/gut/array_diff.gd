@@ -83,6 +83,9 @@ func summarize():
 	var a2_str = strutils.truncate_string(str(_a2), _max_string_length)
 	var diff_str = _make_diff_description()
 
+	if(are_equal()):
+		return str(a1_str, ' == ', a2_str)
+
 	if(abs(_a1.size() - _a2.size()) > _size_diff_threshold):
 		return str(a1_str, ' != ', a2_str, "\n",  'Arrays sizes are too different to diff:  a1(', _a1.size(), ') a2(', _a2.size(), ')')
 

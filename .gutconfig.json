@@ -3,7 +3,7 @@
   "should_maximize":true,
   "should_exit":true,
   "ignore_pause":true,
-  "log_level":3,
+  "log_level":1,
   "opacity":100,
   "double_strategy":"partial",
   "include_subdirs":true,

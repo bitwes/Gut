@@ -21,8 +21,9 @@ class TestType2Str:
 	func test_int():
 		assert_eq(strutils.type2str(1234), '1234')
 
-	func test_float():
-		assert_eq(strutils.type2str(1.234), '1.234')
+	var float_params = [[1.234, '1.234'], [1.0, '1.0'], [.1, '0.1'], [9.87000, '9.87']]
+	func test_float(p = use_parameters(float_params)):
+		assert_eq(strutils.type2str(p[0]), p[1])
 
 	func test_script():
 		assert_eq(strutils.type2str(self), str(self, '(test_strutils.gd/TestType2Str)'))
@@ -92,6 +93,7 @@ class TestType2Str:
 		var n = autofree(Node.new())
 		n.free()
 		assert_eq(strutils.type2str(n), '[Deleted Object]', 'sometimes fails based on timing.')
+
 
 class TestTruncateString:
 	extends 'res://addons/gut/test.gd'

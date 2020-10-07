@@ -281,10 +281,17 @@ func set_logger(logger):
 func assert_eq(got, expected, text=""):
 	var disp = "[" + _str(got) + "] expected to equal [" + _str(expected) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, expected, text)):
-		if(expected != got):
-			_fail(disp)
+		if(typeof(got) == TYPE_ARRAY):
+			var ad = load('res://addons/gut/array_diff.gd').new(got,  expected)
+			if(ad.are_equal()):
+				_pass(str(ad.summarize()))
+			else:
+				_fail(str(ad.summarize()))
 		else:
-			_pass(disp)
+			if(expected != got):
+				_fail(disp)
+			else:
+				_pass(disp)
 
 # ------------------------------------------------------------------------------
 # Asserts that the value got does not equal the "not expected" value.
@@ -292,10 +299,17 @@ func assert_eq(got, expected, text=""):
 func assert_ne(got, not_expected, text=""):
 	var disp = "[" + _str(got) + "] expected to be anything except [" + _str(not_expected) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, not_expected, text)):
-		if(got == not_expected):
-			_fail(disp)
+		if(typeof(got) == TYPE_ARRAY):
+			var ad = load('res://addons/gut/array_diff.gd').new(got, not_expected)
+			if(!ad.are_equal()):
+				_pass(str(ad.summarize()))
+			else:
+				_fail(str(ad.summarize()))
 		else:
-			_pass(disp)
+			if(got == not_expected):
+				_fail(disp)
+			else:
+				_pass(disp)
 
 # ------------------------------------------------------------------------------
 # Asserts that the expected value almost equals the value got.
@@ -631,10 +645,11 @@ func assert_signal_emitted_with_parameters(object, signal_name, parameters, inde
 	if(_can_make_signal_assertions(object, signal_name)):
 		if(_signal_watcher.did_emit(object, signal_name)):
 			var parms_got = _signal_watcher.get_signal_parameters(object, signal_name, index)
-			if(parameters == parms_got):
+			var ad = load('res://addons/gut/array_diff.gd').new(parameters,  parms_got)
+			if(ad.are_equal()):
 				_pass(str(disp, parms_got))
 			else:
-				_fail(str(disp, parms_got))
+				_fail(str('Expected object ', _str(object), ' to emit signal [', signal_name, '] with parameters ', ad.summarize()))
 		else:
 			var text = str('Object ', object, ' did not emit signal [', signal_name, ']')
 			_fail(_get_fail_msg_including_emitted_signals(text, object))

@@ -99,6 +99,9 @@ func type2str(thing):
 		# will pass typeof(thing) == TYPE_OBJECT check so this has to be
 		# before that.
 		str_thing = str(null)
+	elif(typeof(thing) == TYPE_REAL):
+		if(!'.' in str_thing):
+			str_thing += '.0'
 	elif(typeof(thing) == TYPE_STRING):
 		str_thing = str('"', thing, '"')
 	elif(typeof(thing) in _str_ignore_types):
