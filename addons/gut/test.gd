@@ -99,6 +99,7 @@ class DoubleInfo:
 # ------------------------------------------------------------------------------
 # Begin test.gd
 # ------------------------------------------------------------------------------
+var ArrayDiff = load('res://addons/gut/array_diff.gd')
 
 # constant for signal when calling yield_for
 const YIELD = 'timeout'
@@ -282,7 +283,7 @@ func assert_eq(got, expected, text=""):
 	var disp = "[" + _str(got) + "] expected to equal [" + _str(expected) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, expected, text)):
 		if(typeof(got) == TYPE_ARRAY):
-			var ad = load('res://addons/gut/array_diff.gd').new(got,  expected)
+			var ad = ArrayDiff.new(got,  expected)
 			if(ad.are_equal()):
 				_pass(str(ad.summarize()))
 			else:
@@ -300,7 +301,7 @@ func assert_ne(got, not_expected, text=""):
 	var disp = "[" + _str(got) + "] expected to be anything except [" + _str(not_expected) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, not_expected, text)):
 		if(typeof(got) == TYPE_ARRAY):
-			var ad = load('res://addons/gut/array_diff.gd').new(got, not_expected)
+			var ad = ArrayDiff.new(got, not_expected)
 			if(!ad.are_equal()):
 				_pass(str(ad.summarize()))
 			else:
@@ -645,7 +646,7 @@ func assert_signal_emitted_with_parameters(object, signal_name, parameters, inde
 	if(_can_make_signal_assertions(object, signal_name)):
 		if(_signal_watcher.did_emit(object, signal_name)):
 			var parms_got = _signal_watcher.get_signal_parameters(object, signal_name, index)
-			var ad = load('res://addons/gut/array_diff.gd').new(parameters,  parms_got)
+			var ad = ArrayDiff.new(parameters,  parms_got)
 			if(ad.are_equal()):
 				_pass(str(disp, parms_got))
 			else:
@@ -1292,7 +1293,6 @@ func is_failing():
 		_lgr.error('No current test object found.  is_passing must be called inside a test.')
 		return null
 
-
 # ------------------------------------------------------------------------------
 # Marks the test as passing.  Does not override any failing asserts or calls to
 # fail_test.  Same as a passing assert.
@@ -1305,3 +1305,12 @@ func pass_test(text):
 # ------------------------------------------------------------------------------
 func fail_test(text):
 	_fail(text)
+
+# ------------------------------------------------------------------------------
+# Returns an array of indexes that == returns false for.  All indexes that do not
+# exist in the other array are included so be careful when using this data to
+# access elements in the source arrays.
+# ------------------------------------------------------------------------------
+func get_non_matching_array_indexes(array_1, array_2):
+	var ad = ArrayDiff.new(array_1, array_2)
+	return ad.get_different_indexes()

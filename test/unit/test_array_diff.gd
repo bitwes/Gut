@@ -1,7 +1,5 @@
 extends 'res://addons/gut/test.gd'
 
-var ArrayDiff = load('res://addons/gut/array_diff.gd')
-
 func test_can_make_one():
 	var ad = ArrayDiff.new()
 	assert_not_null(ad)
@@ -76,10 +74,29 @@ func test_when_arrays_are_large_then_summarize_truncates():
 	var summary = ad.summarize()
 	assert_lt(summary.length(), 700, summary)
 
-
 func test_works_with_strings_and_numbers():
 	var a1 = [0, 1, 2, 3, 4]
 	var a2 = [0, 'one', 'two', 'three', '4']
 	var ad = ArrayDiff.new(a1, a2)
 	gut.p(ad.summarize())
 	pass_test('we got here')
+
+func test_when_arrays_are_equal_summarize_says_so():
+	var ad = ArrayDiff.new(['a', 'b', 'c'], ['a', 'b', 'c'])
+	assert_string_contains(ad.summarize(), ' == ')
+
+func test_diff_display_with_classes():
+	var d_test = double('res://addons/gut/test.gd').new()
+	var a1 = [gut, d_test]
+	var a2 = [d_test, gut]
+	var ad  = ArrayDiff.new(a1, a2)
+	assert_string_contains(ad.summarize(), '(gut.gd)')
+	assert_string_contains(ad.summarize(), 'double of test.gd')
+
+func test_diff_display_with_classes2():
+	var d_test_1 = double('res://addons/gut/test.gd').new()
+	var d_test_2 = double('res://addons/gut/test.gd').new()
+	var a1 = [d_test_1, d_test_2]
+	var a2 = [d_test_2, d_test_1]
+	var ad  = ArrayDiff.new(a1, a2)
+	assert_string_contains(ad.summarize(), 'double of test.gd')

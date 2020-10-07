@@ -167,7 +167,6 @@ class TestAssertNe:
 		gr.test.assert_ne("one", "one", "Should Fail")
 		assert_fail(gr.test)
 
-
 	var array_vals = [
 		[[1, 2, 3], ['1', '2', '3'], true],
 		[[1, 2, 3], [1, 2, 3], false],
@@ -1596,4 +1595,31 @@ class TestPassFailTestMethods:
 		gr.test_with_gut.fail_test('fail this')
 		assert_eq(gr.test_with_gut.get_fail_count(), 1, 'test count')
 
+
+class TestNonMatchingArrayIndexes:
+	extends BaseTestClass
+
+	func test_empty_when_matching():
+		var a1 = [1, 2, 3]
+		var a2 = [1, 2, 3]
+		var result = gr.test.get_non_matching_array_indexes(a1, a2)
+		assert_eq(result, [])
+
+	func test_lists_missing_indexes_in_1():
+		var a1 = [1, 2, 3]
+		var a2 = [1, 2, 3, 4]
+		var result = gr.test.get_non_matching_array_indexes(a1, a2)
+		assert_eq(result, [3])
+
+	func test_lists_missing_indexes_in_2():
+		var a1 = [1, 2, 3, 4]
+		var a2 = [1, 2, 3]
+		var result = gr.test.get_non_matching_array_indexes(a1, a2)
+		assert_eq(result, [3])
+
+	func test_includes_non_equal_ones():
+		var a1 = [1.0, 2, [], 4]
+		var a2 = [1, 'two', autofree(Node2D.new()), '4']
+		var result = gr.test.get_non_matching_array_indexes(a1, a2)
+		assert_eq(result, [0, 1, 2, 3])
 
