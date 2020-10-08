@@ -8,14 +8,6 @@ func test_can_instantiate_with_two_arrays():
 	var ad  = ArrayDiff.new([], [])
 	assert_not_null(ad)
 
-func test_a1_accessors():
-	var ad  = ArrayDiff.new()
-	assert_accessors(ad, 'a1', null, [1, 2,  3])
-
-func test_a2_accessors():
-	var ad  = ArrayDiff.new()
-	assert_accessors(ad, 'a2', null, [1, 2,  3])
-
 func test_two_array_constructor_sets_a1_and_a2():
 	var a1 = [1, 2, 3]
 	var a2 = [3, 4, 5]
@@ -38,7 +30,6 @@ func test_can_get_list_of_different_indexes():
 func test_get_different_indexes_works_when_a1_smaller():
 	var ad = ArrayDiff.new([1, 2, 3], [3, 2, 1, 98, 99])
 	assert_eq(ad.get_different_indexes(), [0, 2, 3 ,4])
-
 
 func test_lists_indexes_as_missing_in_first_array():
 	var ad = ArrayDiff.new([1, 2, 3], [1, 2, 3, 4, 5])

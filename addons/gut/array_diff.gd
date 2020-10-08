@@ -1,10 +1,17 @@
+# ------------------------------------------------------------------------------
+# This class will diff two arrays.  It provides a text summary of the differences
+# or you can use get_different_indexes to get an array of the indexes that are
+# different between the two arrays.
+# ------------------------------------------------------------------------------
 var _a1 = null
 var _a2 =  null
 var _size_diff_threshold = 30
 var strutils = load('res://addons/gut/utils.gd').get_instance().Strutils.new()
 var _max_string_length = 100
 
-
+# -------------------------
+# Private
+# -------------------------
 func _init(a1 = null, a2=null):
 	_a1 = a1
 	_a2 = a2
@@ -52,21 +59,21 @@ func _make_diff_description(max_differences=_size_diff_threshold):
 
 	return to_return
 
-func get_a1():
-	return _a1
+# -------------------------
+# Public
+# -------------------------
 
-func set_a1(a1):
-	_a1 = a1
-
-func get_a2():
-	return _a2
-
-func set_a2(a2):
-	_a2 = a2
-
+# ------------------------------------------------------------------------------
+# I thought this was going to be more complicated originally.  Still could
+# maybe.  Just returns result of ==
+# ------------------------------------------------------------------------------
 func are_equal():
 	return _a1 == _a2
 
+# ------------------------------------------------------------------------------
+# Returns all the indexes that are different between the two arrays.  Includes
+# indexes that are missing from one of the arrays.
+# ------------------------------------------------------------------------------
 func get_different_indexes():
 	return _get_diff_indexes()
 
@@ -93,3 +100,12 @@ func summarize():
 			summary = str(a1_str, ' != ', a2_str, ".\nDifferent indexes = \n", diff_str)
 
 	return summary
+
+# -------------------------
+# Accessors
+# -------------------------
+func get_a1():
+	return _a1
+
+func get_a2():
+	return _a2

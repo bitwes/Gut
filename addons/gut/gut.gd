@@ -891,7 +891,7 @@ func _pass(text=''):
 func _fail(text=''):
 	_gui.add_failing() # increments counters
 	if(_current_test != null):
-		var line_text = '  at line ' + str(_extract_line_number( _current_test))
+		var line_text = '  at line ' + str(_extract_line_number(_current_test))
 		p(line_text, LOG_LEVEL_FAIL_ONLY)
 		# format for summary
 		line_text =  "\n    " + line_text
