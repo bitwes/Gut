@@ -136,7 +136,10 @@ class TestAssertEq:
 	var array_vals = [
 		[[1, 2, 3], ['1', '2', '3'], false],
 		[[1, 2, 3], [1, 2, 3], true],
-		[[1, 2.0, 3], [1.0, 2, 3.0], false]]
+		[[1, 2.0, 3], [1.0, 2, 3.0], false],
+		[[1, 2], [1, 2, 3, 4, 5], false],
+		[[1, 2, 3, 4, 5], [1, 2], false]
+	]
 	func test_with_array(p = use_parameters(array_vals)):
 		gr.test.assert_eq(p[0], p[1])
 		if(p[2]):

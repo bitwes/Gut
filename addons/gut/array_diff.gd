@@ -12,14 +12,16 @@ var _max_string_length = 100
 # -------------------------
 # Private
 # -------------------------
-func _init(a1 = null, a2=null):
-	_a1 = a1
-	_a2 = a2
+func _init(array_1, array_2):
+	_a1 = array_1
+	_a2 = array_2
+
 
 func _do_datatypes_match(got, expected):
 	var got_type = typeof(got)
 	var expect_type = typeof(expected)
 	return !(got_type != expect_type and got != null and expected != null)
+
 
 func _get_diff_indexes():
 	var different_indexes = []
@@ -36,26 +38,30 @@ func _get_diff_indexes():
 
 	return  different_indexes
 
+
 func _make_diff_description(max_differences=_size_diff_threshold):
-	var to_return = ''
 	var diff_indexes = _get_diff_indexes()
 	var limit = min(diff_indexes.size(), max_differences)
+
+	var to_return = str(diff_indexes.size(), ' different indexes')
+	if(diff_indexes.size() > limit):
+		to_return += str(" (", limit, ' shown)')
+	to_return += ":\n"
 
 	for i in range(limit):
 		var idx = diff_indexes[i]
 
-		var a1_str = '[missing]'
+		var a1_str = '<index missing>'
 		if(idx < _a1.size()):
 			a1_str = strutils.type2str(_a1[idx])
 
-		var a2_str = '[missing]'
+		var a2_str = '<index missing>'
 		if(idx < _a2.size()):
 			a2_str = strutils.type2str(_a2[idx])
 
-		to_return += str('  ', idx, ': ', a1_str, ' != ', a2_str, "\n")
-
-	if(diff_indexes.size() > limit):
-		to_return += str(limit, ' of  ', diff_indexes.size(), ' differences shown.')
+		to_return += str('  ', idx, ': ', a1_str, ' != ', a2_str)
+		if(i != limit -1):
+			to_return += "\n"
 
 	return to_return
 
@@ -77,6 +83,7 @@ func are_equal():
 func get_different_indexes():
 	return _get_diff_indexes()
 
+
 # ------------------------------------------------------------------------------
 # Generates a summary of the differences in two arrays.
 # * When arrays and diff is small enough then  both arrays  and all differences
@@ -94,10 +101,13 @@ func summarize():
 		summary = str(a1_str, ' == ', a2_str)
 	else:
 		if(abs(_a1.size() - _a2.size()) > _size_diff_threshold):
-			summary =  str(a1_str, ' != ', a2_str, "\n",  'Arrays sizes are too different to diff:  a1(', _a1.size(), ') a2(', _a2.size(), ')')
+			summary =  str(a1_str, ' != ', a2_str, "\n",  'Array sizes are too different to compare:  array_1.size = ', _a1.size(), ', array_2.size = ', _a2.size())
 		else:
 			var diff_str = _make_diff_description()
-			summary = str(a1_str, ' != ', a2_str, ".\nDifferent indexes = \n", diff_str)
+			var size_compare = str("- Arrays are the same size:  ", _a1.size(), ".")
+			if(_a1.size() != _a2.size()):
+				size_compare = str("- Array sizes are different:  ", _a1.size(), "/", _a2.size())
+			summary = str(a1_str, ' != ', a2_str, "\n", size_compare, "\n- ", diff_str)
 
 	return summary
 
@@ -106,6 +116,7 @@ func summarize():
 # -------------------------
 func get_a1():
 	return _a1
+
 
 func get_a2():
 	return _a2
