@@ -99,6 +99,7 @@ class DoubleInfo:
 # ------------------------------------------------------------------------------
 # Begin test.gd
 # ------------------------------------------------------------------------------
+var ArrayDiff = load('res://addons/gut/array_diff.gd')
 
 # constant for signal when calling yield_for
 const YIELD = 'timeout'
@@ -281,10 +282,17 @@ func set_logger(logger):
 func assert_eq(got, expected, text=""):
 	var disp = "[" + _str(got) + "] expected to equal [" + _str(expected) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, expected, text)):
-		if(expected != got):
-			_fail(disp)
+		if(typeof(got) == TYPE_ARRAY):
+			var ad = ArrayDiff.new(got,  expected)
+			if(ad.are_equal()):
+				_pass(str(ad.summarize()))
+			else:
+				_fail(str(ad.summarize()))
 		else:
-			_pass(disp)
+			if(expected != got):
+				_fail(disp)
+			else:
+				_pass(disp)
 
 # ------------------------------------------------------------------------------
 # Asserts that the value got does not equal the "not expected" value.
@@ -292,10 +300,17 @@ func assert_eq(got, expected, text=""):
 func assert_ne(got, not_expected, text=""):
 	var disp = "[" + _str(got) + "] expected to be anything except [" + _str(not_expected) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, not_expected, text)):
-		if(got == not_expected):
-			_fail(disp)
+		if(typeof(got) == TYPE_ARRAY):
+			var ad = ArrayDiff.new(got, not_expected)
+			if(!ad.are_equal()):
+				_pass(str(ad.summarize()))
+			else:
+				_fail(str(ad.summarize()))
 		else:
-			_pass(disp)
+			if(got == not_expected):
+				_fail(disp)
+			else:
+				_pass(disp)
 
 # ------------------------------------------------------------------------------
 # Asserts that the expected value almost equals the value got.
@@ -631,10 +646,11 @@ func assert_signal_emitted_with_parameters(object, signal_name, parameters, inde
 	if(_can_make_signal_assertions(object, signal_name)):
 		if(_signal_watcher.did_emit(object, signal_name)):
 			var parms_got = _signal_watcher.get_signal_parameters(object, signal_name, index)
-			if(parameters == parms_got):
+			var ad = ArrayDiff.new(parameters,  parms_got)
+			if(ad.are_equal()):
 				_pass(str(disp, parms_got))
 			else:
-				_fail(str(disp, parms_got))
+				_fail(str('Expected object ', _str(object), ' to emit signal [', signal_name, '] with parameters ', ad.summarize()))
 		else:
 			var text = str('Object ', object, ' did not emit signal [', signal_name, ']')
 			_fail(_get_fail_msg_including_emitted_signals(text, object))
@@ -1277,7 +1293,6 @@ func is_failing():
 		_lgr.error('No current test object found.  is_passing must be called inside a test.')
 		return null
 
-
 # ------------------------------------------------------------------------------
 # Marks the test as passing.  Does not override any failing asserts or calls to
 # fail_test.  Same as a passing assert.
@@ -1290,3 +1305,12 @@ func pass_test(text):
 # ------------------------------------------------------------------------------
 func fail_test(text):
 	_fail(text)
+
+# ------------------------------------------------------------------------------
+# Returns an array of indexes that == returns false for.  All indexes that do not
+# exist in the other array are included so be careful when using this data to
+# access elements in the source arrays.
+# ------------------------------------------------------------------------------
+func get_non_matching_array_indexes(array_1, array_2):
+	var ad = ArrayDiff.new(array_1, array_2)
+	return ad.get_different_indexes()

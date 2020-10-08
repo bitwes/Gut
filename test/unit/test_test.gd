@@ -133,6 +133,20 @@ class TestAssertEq:
 		gr.test.assert_eq(1.0, 1, 'Should pass and warn')
 		assert_warn(gr.test)
 
+	var array_vals = [
+		[[1, 2, 3], ['1', '2', '3'], false],
+		[[1, 2, 3], [1, 2, 3], true],
+		[[1, 2.0, 3], [1.0, 2, 3.0], false],
+		[[1, 2], [1, 2, 3, 4, 5], false],
+		[[1, 2, 3, 4, 5], [1, 2], false]
+	]
+	func test_with_array(p = use_parameters(array_vals)):
+		gr.test.assert_eq(p[0], p[1])
+		if(p[2]):
+			assert_pass(gr.test)
+		else:
+			assert_fail(gr.test)
+
 class TestAssertNe:
 	extends BaseTestClass
 
@@ -155,6 +169,17 @@ class TestAssertNe:
 	func test_fails_with_strings_equal():
 		gr.test.assert_ne("one", "one", "Should Fail")
 		assert_fail(gr.test)
+
+	var array_vals = [
+		[[1, 2, 3], ['1', '2', '3'], true],
+		[[1, 2, 3], [1, 2, 3], false],
+		[[1, 2.0, 3], [1.0, 2, 3.0], true]]
+	func test_with_array(p = use_parameters(array_vals)):
+		gr.test.assert_ne(p[0], p[1])
+		if(p[2]):
+			assert_pass(gr.test)
+		else:
+			assert_fail(gr.test)
 
 class TestAssertAlmostEq:
 	extends BaseTestClass
@@ -884,6 +909,12 @@ class TestSignalAsserts:
 		assert_string_contains(text, SIGNALS.NO_PARAMETERS)
 		assert_string_contains(text, SIGNALS.SOME_SIGNAL)
 
+	func test_issue_152():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1.0, 2, 3.0)
+		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1, 2.0, 3])
+		assert_fail(gr.test)
+
 
 class TestExtendAsserts:
 	extends BaseTestClass
@@ -1442,10 +1473,10 @@ class TestMemoryMgmt:
 		assert_no_new_orphans()
 		assert_true(gut._current_test.passed, 'test should be passing')
 
-	func test_fails_when_orphans_introduced():
+	func test_failing_orphan_assert_marks_test_as_failing():
 		var n2d = Node2D.new()
 		assert_no_new_orphans('this should fail')
-		assert_false(gut._current_test.passed, 'test should be failing')
+		assert_true(is_failing(), 'test should be failing')
 		n2d.free()
 
 	func test_passes_when_orphans_released():
@@ -1567,4 +1598,31 @@ class TestPassFailTestMethods:
 		gr.test_with_gut.fail_test('fail this')
 		assert_eq(gr.test_with_gut.get_fail_count(), 1, 'test count')
 
+
+class TestNonMatchingArrayIndexes:
+	extends BaseTestClass
+
+	func test_empty_when_matching():
+		var a1 = [1, 2, 3]
+		var a2 = [1, 2, 3]
+		var result = gr.test.get_non_matching_array_indexes(a1, a2)
+		assert_eq(result, [])
+
+	func test_lists_missing_indexes_in_1():
+		var a1 = [1, 2, 3]
+		var a2 = [1, 2, 3, 4]
+		var result = gr.test.get_non_matching_array_indexes(a1, a2)
+		assert_eq(result, [3])
+
+	func test_lists_missing_indexes_in_2():
+		var a1 = [1, 2, 3, 4]
+		var a2 = [1, 2, 3]
+		var result = gr.test.get_non_matching_array_indexes(a1, a2)
+		assert_eq(result, [3])
+
+	func test_includes_non_equal_ones():
+		var a1 = [1.0, 2, [], 4]
+		var a2 = [1, 'two', autofree(Node2D.new()), '4']
+		var result = gr.test.get_non_matching_array_indexes(a1, a2)
+		assert_eq(result, [0, 1, 2, 3])
 

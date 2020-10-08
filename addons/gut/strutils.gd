@@ -99,6 +99,11 @@ func type2str(thing):
 		# will pass typeof(thing) == TYPE_OBJECT check so this has to be
 		# before that.
 		str_thing = str(null)
+	elif(typeof(thing) == TYPE_REAL):
+		if(!'.' in str_thing):
+			str_thing += '.0'
+	elif(typeof(thing) == TYPE_STRING):
+		str_thing = str('"', thing, '"')
 	elif(typeof(thing) in _str_ignore_types):
 		# do nothing b/c we already have str(thing) in
 		# to_return.  I think this just reads a little
@@ -122,3 +127,14 @@ func type2str(thing):
 	if(filename != null):
 		str_thing += str('(', filename, ')')
 	return str_thing
+
+# ------------------------------------------------------------------------------
+# Returns the string truncated with an '...' in it.  Shows the start and last
+# 10 chars.  If the string is  smaller than max_size the entire string is
+# returned.  If max_size is -1 then truncation is skipped.
+# ------------------------------------------------------------------------------
+func truncate_string(src, max_size):
+	var to_return = src
+	if(src.length() > max_size - 10 and max_size != -1):
+		to_return = str(src.substr(0, max_size - 10), '...',  src.substr(src.length() - 10, src.length()))
+	return to_return
