@@ -101,7 +101,9 @@ func summarize():
 		summary = str(a1_str, ' == ', a2_str)
 	else:
 		if(abs(_a1.size() - _a2.size()) > _size_diff_threshold):
-			summary =  str(a1_str, ' != ', a2_str, "\n",  'Array sizes are too different to compare:  array_1.size = ', _a1.size(), ', array_2.size = ', _a2.size())
+			summary =  str(a1_str, ' != ', a2_str, "\n",  \
+				'Array sizes are too different to compare:  array_1.size = ', \
+				_a1.size(), ', array_2.size = ', _a2.size())
 		else:
 			var diff_str = _make_diff_description()
 			var size_compare = str("- Arrays are the same size:  ", _a1.size(), ".")
