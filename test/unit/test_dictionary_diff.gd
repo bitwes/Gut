@@ -1,6 +1,5 @@
 extends 'res://addons/gut/test.gd'
 
-var DictionaryDiff = load('res://addons/gut/dictionary_diff.gd')
 
 func test_can_init_with_two_dictionaries():
 	var dd = DictionaryDiff.new({}, {})
@@ -53,6 +52,38 @@ func test_large_dictionary_summary():
 
 	var dd = DictionaryDiff.new(d1, d2)
 	gut.p(dd.summarize())
+
+func test_with_obj_as_keys():
+	var d1 = {}
+	var d2 = {}
+	var node_1 = autofree(Node2D.new())
+	var node_2 = autofree(Node2D.new())
+	var other_1 = autofree(_utils.Strutils.new())
+	var other_2 = autofree(_utils.Strutils.new())
+	for i in range(6):
+		var key = autofree(_utils.Strutils.new())
+
+		if(i%2 == 0):
+			d1[key] = node_1
+			d2[key] = node_2
+		else:
+			d1[key] = other_1
+			d2[key] = other_2
+
+	var dd =  DictionaryDiff.new(d1, d2)
+	gut.p(dd.summarize())
+
+func test_sub_dictionary_compare_when_equal():
+	var d1 = {'a':1, 'b':{'a':99}}
+	var d2 = {'a':1, 'b':{'a':99}}
+	var dd = DictionaryDiff.new(d1, d2)
+	assert_true(dd.are_equal(), dd.summarize())
+
+func test_sub_dictionary_compare_when_not_equal():
+	var d1 = {'a':1, 'dne':'asdf', 'b':{'c':88, 'd':22,                 'f':{'g':1, 'h':200}}}
+	var d2 = {'a':1, 'b':{'c':99,         'e':'letter e', 'f':{'g':1, 'h':2}}}
+	var dd = DictionaryDiff.new(d1, d2)
+	assert_false(dd.are_equal(), dd.summarize())
 
 func test_get_different_keys_returns_a_copy_of_the_keys():
 	var dd = DictionaryDiff.new({'a':1}, {})

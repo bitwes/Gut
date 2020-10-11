@@ -18,9 +18,7 @@ func _init(array_1, array_2):
 
 
 func _do_datatypes_match(got, expected):
-	var got_type = typeof(got)
-	var expect_type = typeof(expected)
-	return !(got_type != expect_type and got != null and expected != null)
+	return !(typeof(got) != typeof(expected) and got != null and expected != null)
 
 
 func _get_diff_indexes():

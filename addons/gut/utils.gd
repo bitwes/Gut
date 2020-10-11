@@ -70,7 +70,9 @@ var Logger = load('res://addons/gut/logger.gd') # everything should use get_logg
 var _lgr = null
 
 var _test_mode = false
+var ArrayDiff = load('res://addons/gut/array_diff.gd')
 var AutoFree = load('res://addons/gut/autofree.gd')
+var DictionaryDiff = load('res://addons/gut/dictionary_diff.gd')
 var Doubler = load('res://addons/gut/doubler.gd')
 var Gut = load('res://addons/gut/gut.gd')
 var HookScript = load('res://addons/gut/hook_script.gd')

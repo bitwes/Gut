@@ -99,7 +99,9 @@ class DoubleInfo:
 # ------------------------------------------------------------------------------
 # Begin test.gd
 # ------------------------------------------------------------------------------
-var ArrayDiff = load('res://addons/gut/array_diff.gd')
+var _utils = load('res://addons/gut/utils.gd').get_instance()
+var ArrayDiff = _utils.ArrayDiff
+var DictionaryDiff = _utils.DictionaryDiff
 
 # constant for signal when calling yield_for
 const YIELD = 'timeout'
@@ -117,6 +119,7 @@ var _fail_pass_text = []
 
 const EDITOR_PROPERTY = PROPERTY_USAGE_SCRIPT_VARIABLE | PROPERTY_USAGE_DEFAULT
 const VARIABLE_PROPERTY = PROPERTY_USAGE_SCRIPT_VARIABLE
+const DICTIONARY_DISCLAIMER = "Use DictionaryDiff class to compare values.  See GUT wiki for more information."
 
 # Summary counts for the test.
 var _summary = {
@@ -132,7 +135,6 @@ var _signal_watcher = load('res://addons/gut/signal_watcher.gd').new()
 
 # Convenience copy of _utils.DOUBLE_STRATEGY
 var DOUBLE_STRATEGY = null
-var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
 var _strutils = _utils.Strutils.new()
 # syntax sugar
@@ -288,6 +290,11 @@ func assert_eq(got, expected, text=""):
 				_pass(str(ad.summarize()))
 			else:
 				_fail(str(ad.summarize()))
+		elif(typeof(got) == TYPE_DICTIONARY):
+			if(expected != got):
+				_fail("Values do not point to the same dictionary.  " + DICTIONARY_DISCLAIMER + "  " + text)
+			else:
+				_pass("Values point to the same dictionary.  " + DICTIONARY_DISCLAIMER + "  " + text)
 		else:
 			if(expected != got):
 				_fail(disp)
@@ -306,6 +313,11 @@ func assert_ne(got, not_expected, text=""):
 				_pass(str(ad.summarize()))
 			else:
 				_fail(str(ad.summarize()))
+		elif(typeof(got) == TYPE_DICTIONARY):
+			if(not_expected != got):
+				_pass("Values do not point to the same dictionary.  " + DICTIONARY_DISCLAIMER + "  " + text)
+			else:
+				_fail("Values point to the same dictionary.  " + DICTIONARY_DISCLAIMER + "  " + text)
 		else:
 			if(got == not_expected):
 				_fail(disp)

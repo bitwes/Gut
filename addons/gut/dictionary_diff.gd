@@ -1,21 +1,21 @@
+var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _d1 = null
 var _d2 = null
 var _size_diff_threshold = 30
-var strutils = load('res://addons/gut/utils.gd').get_instance().Strutils.new()
+var strutils = _utils.Strutils.new()
 var _max_string_length = 100
 var _different_keys = null
+var _pad_level = 0
 
 
 func _init(d1, d2):
 	_d1 = d1
 	_d2 = d2
-	_different_keys = _generate_different_keys()
+	_different_keys = _find_different_keys()
 
 
 func _do_datatypes_match(got, expected):
-	var got_type = typeof(got)
-	var expect_type = typeof(expected)
-	return !(got_type != expect_type and got != null and expected != null)
+	return !(typeof(got) != typeof(expected) and got != null and expected != null)
 
 
 func _make_diff_description(max_differences=_size_diff_threshold):
@@ -27,15 +27,19 @@ func _make_diff_description(max_differences=_size_diff_threshold):
 	to_return += ":\n"
 
 	for key in _different_keys:
-		var d1_str = '<key missing>'
-		if(_d1.has(key)):
-			d1_str = strutils.type2str(_d1[key])
 
-		var d2_str = '<key missing>'
-		if(_d2.has(key)):
-			d2_str = strutils.type2str(_d2[key])
+		if(typeof(key) == TYPE_DICTIONARY):
+			to_return = str('  Dictionaries in key ', strutils.type2str(key.keys()[0]), " are not the same:\n", key.values()[0].summarize(), "\n")
+		else:
+			var d1_str = '<key missing>'
+			if(_d1.has(key)):
+				d1_str = strutils.type2str(_d1[key])
 
-		to_return += str('  ', strutils.type2str(key), ': ', d1_str, ' != ', d2_str, "\n")
+			var d2_str = '<key missing>'
+			if(_d2.has(key)):
+				d2_str = strutils.type2str(_d2[key])
+
+			to_return += str('  ', strutils.type2str(key), ': ', d1_str, ' != ', d2_str, "\n")
 
 	to_return = to_return.substr(0, to_return.length() -1)
 
@@ -50,7 +54,7 @@ func get_different_keys():
 	return _different_keys.duplicate()
 
 
-func _generate_different_keys():
+func _find_different_keys():
 	var diff_keys = []
 	var d1_keys = _d1.keys()
 	d1_keys.sort()
@@ -62,7 +66,13 @@ func _generate_different_keys():
 			diff_keys.append(key)
 		else:
 			if(!_do_datatypes_match(_d1[key], _d2[key]) or _d1[key] != _d2[key]):
-				diff_keys.append(key)
+				if(typeof(_d1[key]) == TYPE_DICTIONARY):
+					var diff = _utils.DictionaryDiff.new(_d1[key], _d2[key])
+					diff._pad_level  = _pad_level +  1
+					if(!diff.are_equal()):
+						diff_keys.append({key:diff})
+				else:
+					diff_keys.append(key)
 			d2_keys.remove(d2_keys.find(key))
 
 	for i in range(d2_keys.size()):
@@ -89,5 +99,9 @@ func summarize():
 			if(_d1.size() != _d2.size()):
 				size_compare = str("- Dictionary sizes are different:  ", _d1.size(), "/", _d2.size())
 			summary = str(d1_str, ' != ', d2_str, "\n", size_compare, "\n- ", diff_str)
-
+	summary = strutils.indent_text(summary, _pad_level, '    ')
 	return summary
+
+
+func _to_string():
+	return summarize()

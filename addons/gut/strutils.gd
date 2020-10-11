@@ -138,3 +138,28 @@ func truncate_string(src, max_size):
 	if(src.length() > max_size - 10 and max_size != -1):
 		to_return = str(src.substr(0, max_size - 10), '...',  src.substr(src.length() - 10, src.length()))
 	return to_return
+
+
+func _get_indent_text(times, pad):
+	var to_return = ''
+	for i in range(times):
+		to_return += pad
+
+	return to_return
+
+func indent_text(text, times, pad):
+	if(times == 0):
+		return text
+
+	var to_return = text
+	var ending_newline = ''
+
+	if(text.ends_with("\n")):
+		ending_newline = "\n"
+		to_return = to_return.left(to_return.length() -1)
+
+	var padding = _get_indent_text(times, pad)
+	to_return = to_return.replace("\n", "\n" + padding)
+	to_return += ending_newline
+
+	return padding + to_return
