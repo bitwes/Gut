@@ -7,6 +7,7 @@ enum {
 
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var strutils = _utils.Strutils.new()
+var compare = _utils.Compare.new()
 
 var _d1 = null
 var _d2 = null
@@ -26,20 +27,13 @@ func _init(d1, d2, diff_type=DEEP):
 	_d1 = d1
 	_d2 = d2
 	_diff_type = diff_type
+	compare._compare_float_to_int = false
 	_different_keys = _find_different_keys()
+
 
 
 func _do_datatypes_match(got, expected):
 	return !(typeof(got) != typeof(expected) and got != null and expected != null)
-
-func _diff_sub_dictionaries(key, diff_keys):
-	var diff = _utils.DictionaryDiff.new(_d1[key], _d2[key])
-	_total_key_count += diff.get_total_key_count()
-	_total_different += diff.get_total_different_count()
-	if(!diff.are_equal()):
-		_total_different += 1
-		# access directly b/c get_different_keys() calls duplicate()
-		diff_keys[key] = diff._different_keys
 
 
 func _find_different_keys():
@@ -56,27 +50,27 @@ func _find_different_keys():
 		else:
 			d2_keys.remove(d2_keys.find(key))
 
-			if(_do_datatypes_match(_d1[key], _d2[key])):
-				if(_diff_type == DEEP and typeof(_d1[key]) == TYPE_DICTIONARY):
-					_diff_sub_dictionaries(key, diff_keys)
-				elif(_diff_type == DEEP and typeof(_d1[key]) == TYPE_ARRAY):
-					var diff = _utils.ArrayDiff.new(_d1[key], _d2[key], DEEP)
-					if(!diff.are_equal()):
-						diff_keys[key] = str(strutils.type2str(_d1[key]), ' != ', strutils.type2str(_d2[key]))
-						_total_different += 1
-				else:
-					if(_d1[key] != _d2[key]):
-						diff_keys[key] = str(strutils.type2str(_d1[key]), ' != ', strutils.type2str(_d2[key]))
-						_total_different += 1
+			var result = compare.simple(_d1[key], _d2[key])
+			if(_diff_type == DEEP):
+				result = compare.deep(_d1[key], _d2[key])
+
+			if(result.diff_object is _utils.DictionaryDiff):
+				_total_key_count += result.diff_object.get_total_key_count()
+				_total_different += result.diff_object.get_total_different_count()
+				if(!result.are_equal):
+					_total_different += 1
+					# access directly b/c get_different_keys() calls duplicate()
+					diff_keys[key] = result.diff_object._different_keys
 			else:
-				diff_keys[key] = str(strutils.type2str(_d1[key]), ' != ', strutils.type2str(_d2[key]))
-				_total_different += 1
+				if(!result.are_equal):
+					_total_different += 1
+					diff_keys[key] = result.summary
 
 	# Process all the keys in d2 that didn't exist in d1
 	_total_key_count += d2_keys.size()
 	_total_different += d2_keys.size()
 	for i in range(d2_keys.size()):
-		diff_keys[d2_keys[i]] = str(MISSING_KEY, ' != ', strutils.type2str(_d2[d2_keys[i]]))
+		diff_keys[d2_keys[i]] = str(MISSING_KEY, ' != ', compare.format_value(_d2[d2_keys[i]]))
 
 	return diff_keys
 

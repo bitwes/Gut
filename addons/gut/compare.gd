@@ -75,6 +75,7 @@ func simple(v1, v2):
 		if(_compare_float_to_int and [2, 3].has(v1_type) and [2, 3].has(v2_type)):
 			if(v1 != v2):
 				to_return.summary = str(_format_value(v1), ' != ', _format_value(v2))
+				to_return.are_equal = false
 		else:
 			to_return.summary = str(_format_value(v1), ' != ', _format_value(v2))
 			to_return.are_equal = false
@@ -104,3 +105,7 @@ func deep(v1, v2):
 			result = _compare_array_deep(v1, v2)
 
 	return result
+
+
+func format_value(val):
+	return _format_value(val)
