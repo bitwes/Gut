@@ -90,6 +90,7 @@ var Summary = load('res://addons/gut/summary.gd')
 var Test = load('res://addons/gut/test.gd')
 var TestCollector = load('res://addons/gut/test_collector.gd')
 var ThingCounter = load('res://addons/gut/thing_counter.gd')
+var Compare = load('res://addons/gut/compare.gd')
 
 # Source of truth for the GUT version
 var version = '7.0.0'
@@ -319,3 +320,7 @@ func search_array(ar, prop_method, value):
 		return ar[idx]
 	else:
 		return null
+
+
+func are_datatypes_same(got, expected):
+	return !(typeof(got) != typeof(expected) and got != null and expected != null)

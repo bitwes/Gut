@@ -291,7 +291,7 @@ func assert_eq(got, expected, text=""):
 	var disp = "[" + _str(got) + "] expected to equal [" + _str(expected) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, expected, text)):
 		if(typeof(got) == TYPE_ARRAY):
-			var ad = ArrayDiff.new(got,  expected)
+			var ad = ArrayDiff.new(got, expected)
 			if(ad.are_equal()):
 				_pass(str(ad.summarize()))
 			else:
