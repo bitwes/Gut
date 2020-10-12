@@ -4,6 +4,14 @@ func test_can_instantiate_with_two_arrays():
 	var ad  = ArrayDiff.new([], [])
 	assert_not_null(ad)
 
+func test_constructor_defaults_diff_type_to_shallow():
+	var diff = ArrayDiff.new([], [])
+	assert_eq(diff.get_diff_type(), DIFF_TYPE.SHALLOW)
+
+func test_constructor_sets_diff_type():
+	var diff = ArrayDiff.new([], [], DIFF_TYPE.DEEP)
+	assert_eq(diff.get_diff_type(), DIFF_TYPE.DEEP)
+
 func test_two_array_constructor_sets_a1_and_a2():
 	var a1 = [1, 2, 3]
 	var a2 = [3, 4, 5]
@@ -105,6 +113,7 @@ func test_dictionaries_in_sub_arrays():
 	var a2 = [[{'a': 1}]]
 	var diff = ArrayDiff.new(a1, a2)
 	assert_false(diff.are_equal(), diff.summarize())
+
 
 class TestDeepDiff:
 	extends 'res://addons/gut/test.gd'

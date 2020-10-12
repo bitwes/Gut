@@ -30,6 +30,7 @@ func _init(array_1, array_2, diff_type=SHALLOW):
 func _do_datatypes_match(got, expected):
 	return !(typeof(got) != typeof(expected) and got != null and expected != null)
 
+
 func _are_indexes_equal(i):
 	var to_return = true
 	if(_do_datatypes_match(_a1[i], _a2[i])):
@@ -94,8 +95,6 @@ func _make_diff_description(max_differences=_size_diff_threshold):
 # -------------------------
 
 # ------------------------------------------------------------------------------
-# I thought this was going to be more complicated originally.  Still could
-# maybe.  Just returns result of ==
 # ------------------------------------------------------------------------------
 func are_equal():
 	return _different_indexes.size() == 0
@@ -146,3 +145,6 @@ func get_a1():
 
 func get_a2():
 	return _a2
+
+func get_diff_type():
+	return _diff_type

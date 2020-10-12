@@ -19,10 +19,13 @@ var _num_shown = 0
 var _total_key_count = 0
 var _total_different = 0
 
+var _diff_type = SHALLOW
 
-func _init(d1, d2):
+
+func _init(d1, d2, diff_type=DEEP):
 	_d1 = d1
 	_d2 = d2
+	_diff_type = diff_type
 	_different_keys = _find_different_keys()
 
 
@@ -51,9 +54,15 @@ func _find_different_keys():
 			_total_different += 1
 		else:
 			d2_keys.remove(d2_keys.find(key))
+
 			if(_do_datatypes_match(_d1[key], _d2[key])):
-				if(typeof(_d1[key]) == TYPE_DICTIONARY):
+				if(_diff_type == DEEP and typeof(_d1[key]) == TYPE_DICTIONARY):
 					_diff_sub_dictionaries(key, diff_keys)
+				elif(_diff_type == DEEP and typeof(_d1[key]) == TYPE_ARRAY):
+					var diff = _utils.ArrayDiff.new(_d1[key], _d2[key], DEEP)
+					if(!diff.are_equal()):
+						diff_keys[key] = str(strutils.type2str(_d1[key]), ' != ', strutils.type2str(_d2[key]))
+						_total_different += 1
 				else:
 					if(_d1[key] != _d2[key]):
 						diff_keys[key] = str(strutils.type2str(_d1[key]), ' != ', strutils.type2str(_d2[key]))
@@ -79,7 +88,7 @@ func _dictionary_to_s(d, depth):
 		var key = keys[idx]
 		if(typeof(d[key]) == TYPE_DICTIONARY):
 			var open = str(strutils.type2str(key), ':', "{\n")
-			var sub_desc = str(_dictionary_to_s(d[key], depth + 1))
+			var sub_desc = _dictionary_to_s(d[key], depth + 1)
 			if(_total_key_count > _size_diff_threshold):
 				sub_desc += "...\n"
 			var close = "}\n"
@@ -106,7 +115,7 @@ func summarize():
 	var d1_str = strutils.truncate_string(str(_d1), _max_string_length)
 	var d2_str = strutils.truncate_string(str(_d2), _max_string_length)
 
-	if(_d1 == _d2):
+	if(are_equal()):
 		summary = str(d1_str, ' == ', d2_str)
 	else:
 		if(abs(_d1.size() - _d2.size()) > _size_diff_threshold):
@@ -136,3 +145,7 @@ func  get_total_key_count():
 
 func get_total_different_count():
 	return _total_different
+
+
+func get_diff_type():
+	return _diff_type

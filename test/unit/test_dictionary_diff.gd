@@ -5,6 +5,14 @@ func test_can_init_with_two_dictionaries():
 	var dd = DictionaryDiff.new({}, {})
 	assert_not_null(dd)
 
+func test_constructor_defaults_diff_type_to_shallow():
+	var diff = DictionaryDiff.new({}, {})
+	assert_eq(diff.get_diff_type(), DIFF_TYPE.DEEP)
+
+func test_constructor_sets_diff_type():
+	var diff = DictionaryDiff.new({}, {}, DIFF_TYPE.SHALLOW)
+	assert_eq(diff.get_diff_type(), DIFF_TYPE.SHALLOW)
+
 func test_get_different_keys_returns_empty_array_when_matching():
 	var dd = DictionaryDiff.new({'a':'asdf'}, {'a':'asdf'})
 	assert_eq(dd.get_different_keys().keys(), [])
@@ -116,4 +124,22 @@ func test_dictionary_key_and_non_dictionary_key():
 	var d1 = {'a':1, 'b':{'c':1}}
 	var d2 = {'a':1, 'b':22}
 	var diff = DictionaryDiff.new(d1, d2)
+	assert_false(diff.are_equal(), diff.summarize())
+
+func test_ditionaries_in_arrays():
+	var d1 = {'a':[{'b':1}]}
+	var d2 = {'a':[{'b':1}]}
+	var diff = DictionaryDiff.new(d1, d2)
+	assert_true(diff.are_equal(), diff.summarize())
+
+func test_when_shallow_sub_dictionaries_are_not_checked_for_values():
+	var d1 = {'a':1, 'b':{'a':99}}
+	var d2 = {'a':1, 'b':{'a':99}}
+	var diff = DictionaryDiff.new(d1, d2, DIFF_TYPE.SHALLOW)
+	assert_false(diff.are_equal(), diff.summarize())
+
+func test_when_shallow_ditionaries_in_arrays_are_not_checked_for_values():
+	var d1 = {'a':[{'b':1}]}
+	var d2 = {'a':[{'b':1}]}
+	var diff = DictionaryDiff.new(d1, d2, DIFF_TYPE.SHALLOW)
 	assert_false(diff.are_equal(), diff.summarize())
