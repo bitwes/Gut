@@ -7,25 +7,25 @@ func test_can_init_with_two_dictionaries():
 
 func test_get_different_keys_returns_empty_array_when_matching():
 	var dd = DictionaryDiff.new({'a':'asdf'}, {'a':'asdf'})
-	assert_eq(dd.get_different_keys(), [])
+	assert_eq(dd.get_different_keys().keys(), [])
 
 func test_get_different_keys_returns_non_matching_keys():
 	var dd = DictionaryDiff.new({'a':'asdf', 'b':1}, {'a':'asdf', 'b':2})
-	assert_eq(dd.get_different_keys(), ['b'])
+	assert_eq(dd.get_different_keys().keys(), ['b'])
 
 func test_get_differetn_keys_returns_missing_indexes_in_d2():
 	var dd = DictionaryDiff.new({'a':'asdf', 'b':1}, {'a':'asdf'})
-	assert_eq(dd.get_different_keys(), ['b'])
+	assert_eq(dd.get_different_keys().keys(), ['b'])
 
 func test_get_differetn_keys_returns_missing_indexes_in_d1():
 	var dd = DictionaryDiff.new({'a':'asdf'}, {'a':'asdf', 'b':1})
-	assert_eq(dd.get_different_keys(), ['b'])
+	assert_eq(dd.get_different_keys().keys(), ['b'])
 
 func test_get_different_keys_works_with_different_datatypes():
 	var d1 = {'a':1, 'b':'two', 'c':autofree(Node2D.new())}
 	var d2 = {'a':1.0, 'b':2, 'c':_utils.Strutils.new()}
 	var dd = DictionaryDiff.new(d1, d2)
-	assert_eq(dd.get_different_keys(), ['a', 'b', 'c'])
+	assert_eq(dd.get_different_keys().keys(), ['a', 'b', 'c'])
 
 func test_are_equal_true_for_matching_dictionaries():
 	assert_true(DictionaryDiff.new({}, {}).are_equal(), 'empty')
@@ -47,11 +47,16 @@ func test_large_dictionary_summary():
 			var key = ''
 			for x in range(i + 1):
 				key += one_char
-			d1[key] = (i + 1) * j
-			d2[key] = one_char
+			if(key == 'BB'):
+				d1[key] = d1.duplicate()
+				d2[key] = d2.duplicate()
+			else:
+				d1[key] = (i + 1) * j
+				d2[key] = one_char
 
 	var dd = DictionaryDiff.new(d1, d2)
 	gut.p(dd.summarize())
+	assert_lt(dd.summarize().split("\n").size(), 40)
 
 func test_with_obj_as_keys():
 	var d1 = {}
@@ -80,13 +85,30 @@ func test_sub_dictionary_compare_when_equal():
 	assert_true(dd.are_equal(), dd.summarize())
 
 func test_sub_dictionary_compare_when_not_equal():
-	var d1 = {'a':1, 'dne':'asdf', 'b':{'c':88, 'd':22,                 'f':{'g':1, 'h':200}}}
-	var d2 = {'a':1, 'b':{'c':99,         'e':'letter e', 'f':{'g':1, 'h':2}}}
+	var d1 = {'a':1, 'dne_in_d2':'asdf', 'b':{'c':88, 'd':22, 'f':{'g':1, 'h':200}}, 'z':{}}
+	var d2 = {'a':1, 'b':{'c':99, 'e':'letter e', 'f':{'g':1, 'h':2}}, 'z':{}}
 	var dd = DictionaryDiff.new(d1, d2)
 	assert_false(dd.are_equal(), dd.summarize())
+	assert_eq(dd.get_total_key_count(), 10, 'total key count')
+	assert_eq(dd.get_total_different_count(), 7, 'total different count')
+
+func test_sub_dictionary_missing_in_other():
+	var d1 = {'a': 1, 'dne_in_d2':{'x':'x', 'y':'y', 'z':'z'}, 'r':1}
+	var d2 = {'a': 2, 'dne_in_d1':{'xx':'x', 'yy':'y', 'zz':'z'}, 'r':2}
+	var diff = DictionaryDiff.new(d1, d2)
+	var summary = diff.summarize()
+	assert_string_contains(summary, diff.MISSING_KEY + ' !=')
+	assert_string_contains(summary, ' != ' + diff.MISSING_KEY)
 
 func test_get_different_keys_returns_a_copy_of_the_keys():
 	var dd = DictionaryDiff.new({'a':1}, {})
 	var keys = dd.get_different_keys()
-	keys.remove(0)
+	keys.erase('a')
 	assert_eq(dd.get_different_keys().size(), 1)
+
+
+func test_complex_real_use_output():
+	var d1 = {'a':1, 'dne_in_d2':'asdf', 'b':{'c':88, 'd':22, 'f':{'g':1, 'h':200}}, 'z':{}}
+	var d2 = {'a':1, 'b':{'c':99, 'e':'letter e', 'f':{'g':1, 'h':2}}, 'z':{}}
+	var dd = DictionaryDiff.new(d1, d2)
+	assert_true(dd.are_equal(), dd.summarize() + "\n\n this should fail")
