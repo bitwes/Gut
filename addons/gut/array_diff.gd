@@ -99,6 +99,7 @@ func _make_diff_description(max_differences=_size_diff_threshold):
 func are_equal():
 	return _different_indexes.size() == 0
 
+
 # ------------------------------------------------------------------------------
 # Returns all the indexes that are different between the two arrays.  Includes
 # indexes that are missing from one of the arrays.
@@ -109,11 +110,6 @@ func get_different_indexes():
 
 # ------------------------------------------------------------------------------
 # Generates a summary of the differences in two arrays.
-# * When arrays and diff is small enough then  both arrays  and all differences
-#   are listed.
-# * Each array is trunated to 100 chars
-# * Up to _size_diff_threshold different indexes will be listed.
-# * If the difference in sizes is > _size_diff_threshold then the arrays are
 # ------------------------------------------------------------------------------
 func summarize():
 	var summary = ''
@@ -145,6 +141,7 @@ func get_a1():
 
 func get_a2():
 	return _a2
+
 
 func get_diff_type():
 	return _diff_type

@@ -38,7 +38,8 @@ func _diff_sub_dictionaries(key, diff_keys):
 	_total_different += diff.get_total_different_count()
 	if(!diff.are_equal()):
 		_total_different += 1
-		diff_keys[key] = diff._different_keys # access directly to avoid duplication.
+		# access directly b/c get_different_keys() calls duplicate()
+		diff_keys[key] = diff._different_keys
 
 
 func _find_different_keys():
