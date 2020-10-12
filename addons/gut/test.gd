@@ -108,7 +108,8 @@ const YIELD = 'timeout'
 
 enum DIFF_TYPE{
 	DEEP,
-	SHALLOW
+	SHALLOW,
+	SIMPLE
 }
 
 
@@ -290,6 +291,19 @@ func set_logger(logger):
 func assert_eq(got, expected, text=""):
 	var disp = "[" + _str(got) + "] expected to equal [" + _str(expected) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, expected, text)):
+		var compare = _utils.Compare.new()
+		var result = compare.simple(got, expected)
+
+		if(typeof(got) == TYPE_ARRAY):
+			result = compare.shallow(got, expected)
+
+		if(result.are_equal):
+			_pass(result.summary + str(':  ', text))
+		else:
+			_fail(result.summary + str(':  ', text))
+	return
+
+	if(_do_datatypes_match__fail_if_not(got, expected, text)):
 		if(typeof(got) == TYPE_ARRAY):
 			var ad = ArrayDiff.new(got, expected)
 			if(ad.are_equal()):
@@ -312,6 +326,19 @@ func assert_eq(got, expected, text=""):
 # ------------------------------------------------------------------------------
 func assert_ne(got, not_expected, text=""):
 	var disp = "[" + _str(got) + "] expected to be anything except [" + _str(not_expected) + "]:  " + text
+	if(_do_datatypes_match__fail_if_not(got, not_expected, text)):
+		var compare = _utils.Compare.new()
+		var result = compare.simple(got, not_expected)
+
+		if(typeof(got) == TYPE_ARRAY):
+			result = compare.shallow(got, not_expected)
+
+		if(result.are_equal):
+			_fail(result.summary + str(':  ', text))
+		else:
+			_pass(result.summary + str(':  ', text))
+	return
+
 	if(_do_datatypes_match__fail_if_not(got, not_expected, text)):
 		if(typeof(got) == TYPE_ARRAY):
 			var ad = ArrayDiff.new(got, not_expected)

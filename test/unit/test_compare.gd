@@ -2,17 +2,17 @@ extends 'res://addons/gut/test.gd'
 
 
 var Compare = load('res://addons/gut/compare.gd')
-
+var _compare = Compare.new()
 var SIMPLE = 2
 
 func p_simple_compare(v1, v2):
-	gut.p(Compare.new(v1, v2, SIMPLE).summary())
+	gut.p(_compare.simple(v1, v2).summary)
 
 func p_shallow_compare(v1, v2):
-	gut.p(Compare.new(v1, v2, DIFF_TYPE.SHALLOW).summary())
+	gut.p(_compare.shallow(v1, v2).summary)
 
 func p_deep_compare(v1, v2):
-	gut.p(Compare.new(v1, v2, DIFF_TYPE.DEEP).summary())
+	gut.p(_compare.deep(v1, v2).summary)
 
 func repeat_str(text, times):
 	var to_return = ''
@@ -23,6 +23,7 @@ func repeat_str(text, times):
 
 func test_simple():
 	p_simple_compare(1, 1)
+	p_simple_compare(5.0, 5)
 	p_simple_compare(1, 2)
 	p_simple_compare('a', 'a')
 	p_simple_compare('a', 'b')
