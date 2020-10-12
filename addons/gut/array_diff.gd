@@ -3,30 +3,56 @@
 # or you can use get_different_indexes to get an array of the indexes that are
 # different between the two arrays.
 # ------------------------------------------------------------------------------
+var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _a1 = null
 var _a2 =  null
 var _size_diff_threshold = 30
-var strutils = load('res://addons/gut/utils.gd').get_instance().Strutils.new()
+var strutils = _utils.Strutils.new()
 var _max_string_length = 100
+var _diff_type = null
+var _different_indexes = null
+
+enum {
+	DEEP,
+	SHALLOW
+}
 
 # -------------------------
 # Private
 # -------------------------
-func _init(array_1, array_2):
+func _init(array_1, array_2, diff_type=SHALLOW):
 	_a1 = array_1
 	_a2 = array_2
+	_diff_type = diff_type
+	_different_indexes = _find_diff_indexes()
 
 
 func _do_datatypes_match(got, expected):
 	return !(typeof(got) != typeof(expected) and got != null and expected != null)
 
+func _are_indexes_equal(i):
+	var to_return = true
+	if(_do_datatypes_match(_a1[i], _a2[i])):
+		if(_diff_type == DEEP and typeof(_a1[i]) == TYPE_DICTIONARY):
+			var diff = _utils.DictionaryDiff.new(_a1[i], _a2[i])
+			to_return = diff.are_equal()
+		elif(_diff_type == DEEP and typeof(_a1[i]) == TYPE_ARRAY):
+			var diff = _utils.ArrayDiff.new(_a1[i], _a2[i], DEEP)
+			to_return = diff.are_equal()
+		else:
+			to_return = _a1[i] == _a2[i]
+	else:
+		to_return = false
 
-func _get_diff_indexes():
+	return to_return
+
+
+func _find_diff_indexes():
 	var different_indexes = []
 	for i in range(_a1.size()):
 		if(i < _a2.size()):
-			if(!_do_datatypes_match(_a1[i], _a2[i]) or _a1[i] != _a2[i]):
-					different_indexes.append(i)
+			if(!_are_indexes_equal(i)):
+				different_indexes.append(i)
 		else:
 			different_indexes.append(i)
 
@@ -38,7 +64,7 @@ func _get_diff_indexes():
 
 
 func _make_diff_description(max_differences=_size_diff_threshold):
-	var diff_indexes = _get_diff_indexes()
+	var diff_indexes = _different_indexes
 	var limit = min(diff_indexes.size(), max_differences)
 
 	var to_return = str(diff_indexes.size(), ' different indexes')
@@ -72,14 +98,14 @@ func _make_diff_description(max_differences=_size_diff_threshold):
 # maybe.  Just returns result of ==
 # ------------------------------------------------------------------------------
 func are_equal():
-	return _a1 == _a2
+	return _different_indexes.size() == 0
 
 # ------------------------------------------------------------------------------
 # Returns all the indexes that are different between the two arrays.  Includes
 # indexes that are missing from one of the arrays.
 # ------------------------------------------------------------------------------
 func get_different_indexes():
-	return _get_diff_indexes()
+	return  _different_indexes
 
 
 # ------------------------------------------------------------------------------

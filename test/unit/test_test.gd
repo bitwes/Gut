@@ -84,6 +84,17 @@ class TestMiscTests:
 		# I cannot think of a way to test this without some giant amount of
 		# testing legwork.
 
+	func test_diff_types_match():
+		var a_diff = ArrayDiff.new([],[])
+		var d_diff = DictionaryDiff.new({},{})
+
+		assert_eq(DIFF_TYPE.DEEP, a_diff.DEEP, 'ArrayDiff DEEP')
+		assert_eq(DIFF_TYPE.DEEP, d_diff.DEEP, 'DictionaryDiff DEEP')
+
+		assert_eq(DIFF_TYPE.SHALLOW, a_diff.SHALLOW, 'ArrayDiff SHALLOW')
+		assert_eq(DIFF_TYPE.SHALLOW, d_diff.SHALLOW, 'DictionaryDiff SHALLOW')
+
+
 class TestAssertEq:
 	extends BaseTestClass
 
@@ -135,8 +146,8 @@ class TestAssertEq:
 
 	var array_vals = [
 		[[1, 2, 3], ['1', '2', '3'], false],
-		[[1, 2, 3], [1, 2, 3], true],
-		[[1, 2.0, 3], [1.0, 2, 3.0], false],
+		[[4, 5, 6], [4, 5, 6], true],
+		[[10, 20.0, 30], [10.0, 20, 30.0], false],
 		[[1, 2], [1, 2, 3, 4, 5], false],
 		[[1, 2, 3, 4, 5], [1, 2], false]
 	]

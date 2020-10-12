@@ -106,9 +106,14 @@ func test_get_different_keys_returns_a_copy_of_the_keys():
 	keys.erase('a')
 	assert_eq(dd.get_different_keys().size(), 1)
 
-
 func test_complex_real_use_output():
 	var d1 = {'a':1, 'dne_in_d2':'asdf', 'b':{'c':88, 'd':22, 'f':{'g':1, 'h':200}}, 'z':{}}
 	var d2 = {'a':1, 'b':{'c':99, 'e':'letter e', 'f':{'g':1, 'h':2}}, 'z':{}}
 	var dd = DictionaryDiff.new(d1, d2)
 	assert_true(dd.are_equal(), dd.summarize() + "\n\n this should fail")
+
+func test_dictionary_key_and_non_dictionary_key():
+	var d1 = {'a':1, 'b':{'c':1}}
+	var d2 = {'a':1, 'b':22}
+	var diff = DictionaryDiff.new(d1, d2)
+	assert_false(diff.are_equal(), diff.summarize())

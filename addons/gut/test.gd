@@ -106,6 +106,12 @@ var DictionaryDiff = _utils.DictionaryDiff
 # constant for signal when calling yield_for
 const YIELD = 'timeout'
 
+enum DIFF_TYPE{
+	DEEP,
+	SHALLOW
+}
+
+
 # Need a reference to the instance that is running the tests.  This
 # is set by the gut class when it runs the tests.  This gets you
 # access to the asserts in the tests you write.

@@ -1,5 +1,9 @@
 const MISSING_KEY = '<key missing>'
 const INDENT = '    '
+enum {
+	DEEP,
+	SHALLOW
+}
 
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var strutils = _utils.Strutils.new()
@@ -25,6 +29,14 @@ func _init(d1, d2):
 func _do_datatypes_match(got, expected):
 	return !(typeof(got) != typeof(expected) and got != null and expected != null)
 
+func _diff_sub_dictionaries(key, diff_keys):
+	var diff = _utils.DictionaryDiff.new(_d1[key], _d2[key])
+	_total_key_count += diff.get_total_key_count()
+	_total_different += diff.get_total_different_count()
+	if(!diff.are_equal()):
+		_total_different += 1
+		diff_keys[key] = diff._different_keys # access directly to avoid duplication.
+
 
 func _find_different_keys():
 	var diff_keys = {}
@@ -39,18 +51,16 @@ func _find_different_keys():
 			_total_different += 1
 		else:
 			d2_keys.remove(d2_keys.find(key))
-
-			if(!_do_datatypes_match(_d1[key], _d2[key]) or _d1[key] != _d2[key]):
+			if(_do_datatypes_match(_d1[key], _d2[key])):
 				if(typeof(_d1[key]) == TYPE_DICTIONARY):
-					var diff = _utils.DictionaryDiff.new(_d1[key], _d2[key])
-					_total_key_count += diff.get_total_key_count()
-					_total_different += diff.get_total_different_count()
-					if(!diff.are_equal()):
-						_total_different += 1
-						diff_keys[key] = diff._different_keys # access directly to avoid duplication.
+					_diff_sub_dictionaries(key, diff_keys)
 				else:
-					diff_keys[key] = str(strutils.type2str(_d1[key]), ' != ', strutils.type2str(_d2[key]))
-					_total_different += 1
+					if(_d1[key] != _d2[key]):
+						diff_keys[key] = str(strutils.type2str(_d1[key]), ' != ', strutils.type2str(_d2[key]))
+						_total_different += 1
+			else:
+				diff_keys[key] = str(strutils.type2str(_d1[key]), ' != ', strutils.type2str(_d2[key]))
+				_total_different += 1
 
 	# Process all the keys in d2 that didn't exist in d1
 	_total_key_count += d2_keys.size()

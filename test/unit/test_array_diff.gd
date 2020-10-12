@@ -91,3 +91,44 @@ func test_diff_display_with_classes2():
 	var a2 = [d_test_2, d_test_1]
 	var ad  = ArrayDiff.new(a1, a2)
 	assert_string_contains(ad.summarize(), 'double of test.gd')
+
+
+func test_diff_with_dictionaries_fails_when_not_same_reference_but_same_values():
+	var a1 = [{'a':1}, {'b':2}]
+	var a2 = [{'a':1}, {'b':2}]
+	var diff = ArrayDiff.new(a1, a2)
+	assert_false(diff.are_equal(), diff.summarize())
+
+
+func test_dictionaries_in_sub_arrays():
+	var a1 = [[{'a': 1}]]
+	var a2 = [[{'a': 1}]]
+	var diff = ArrayDiff.new(a1, a2)
+	assert_false(diff.are_equal(), diff.summarize())
+
+class TestDeepDiff:
+	extends 'res://addons/gut/test.gd'
+
+	func test_diff_with_dictionaries_passes_when_not_same_reference_but_same_values():
+		var a1 = [{'a':1}, {'b':2}]
+		var a2 = [{'a':1}, {'b':2}]
+		var diff = ArrayDiff.new(a1, a2, DIFF_TYPE.DEEP)
+		assert_true(diff.are_equal(), diff.summarize())
+
+	func test_diff_with_dictionaries_fails_when_different_values():
+		var a1 = [{'a':1}, {'b':1}, {'c':1}, {'d':1}]
+		var a2 = [{'a':1}, {'b':2}, {'c':2}, {'d':2}]
+		var diff = ArrayDiff.new(a1, a2, DIFF_TYPE.DEEP)
+		assert_false(diff.are_equal(), diff.summarize())
+
+	func test_matching_dictionaries_in_sub_arrays():
+		var a1 = [[{'a': 1}]]
+		var a2 = [[{'a': 1}]]
+		var diff = ArrayDiff.new(a1, a2, DIFF_TYPE.DEEP)
+		assert_true(diff.are_equal(), diff.summarize())
+
+	func test_non_matching_dictionaries_in_sub_arrays():
+		var a1 = [[{'a': 1}], [{'b': 1}], [{'c': 1}]]
+		var a2 = [[{'a': 1}], [{'b': 2}], [{'c': 2}]]
+		var diff = ArrayDiff.new(a1, a2, DIFF_TYPE.DEEP)
+		assert_false(diff.are_equal(), diff.summarize())
