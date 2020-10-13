@@ -50,9 +50,11 @@ func _find_different_keys():
 		else:
 			d2_keys.remove(d2_keys.find(key))
 
-			var result = compare.simple(_d1[key], _d2[key])
+			var result = null
 			if(_diff_type == DEEP):
 				result = compare.deep(_d1[key], _d2[key])
+			else:
+				result = compare.simple(_d1[key], _d2[key])
 
 			if(result.diff_object is _utils.DictionaryDiff):
 				_total_key_count += result.diff_object.get_total_key_count()

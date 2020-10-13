@@ -691,7 +691,7 @@ func assert_signal_emitted_with_parameters(object, signal_name, parameters, inde
 	if(_can_make_signal_assertions(object, signal_name)):
 		if(_signal_watcher.did_emit(object, signal_name)):
 			var parms_got = _signal_watcher.get_signal_parameters(object, signal_name, index)
-			var ad = ArrayDiff.new(parameters,  parms_got)
+			var ad = ArrayDiff.new(parameters,  parms_got, DIFF_TYPE.DEEP)
 			if(ad.are_equal()):
 				_pass(str(disp, parms_got))
 			else:
