@@ -102,6 +102,7 @@ class DoubleInfo:
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var ArrayDiff = _utils.ArrayDiff
 var DictionaryDiff = _utils.DictionaryDiff
+var _diff_tool = _utils.Compare.new()
 
 # constant for signal when calling yield_for
 const YIELD = 'timeout'
@@ -289,73 +290,82 @@ func set_logger(logger):
 # Asserts that the expected value equals the value got.
 # ------------------------------------------------------------------------------
 func assert_eq(got, expected, text=""):
-	var disp = "[" + _str(got) + "] expected to equal [" + _str(expected) + "]:  " + text
+
 	if(_do_datatypes_match__fail_if_not(got, expected, text)):
-		var compare = _utils.Compare.new()
-		var result = compare.simple(got, expected)
+		var disp = "[" + _str(got) + "] expected to equal [" + _str(expected) + "]:  " + text
+		var result = null
 
 		if(typeof(got) == TYPE_ARRAY):
-			result = compare.shallow(got, expected)
+			result = _diff_tool.shallow(got, expected)
+		else:
+			result = _diff_tool.simple(got, expected)
+
+		if(typeof(got) in [TYPE_ARRAY, TYPE_DICTIONARY]):
+			disp = str(result.summary, '  ', text)
 
 		if(result.are_equal):
-			_pass(result.summary + str(':  ', text))
+			_pass(disp)
 		else:
-			_fail(result.summary + str(':  ', text))
-	return
+			_fail(disp)
+	# return
 
-	if(_do_datatypes_match__fail_if_not(got, expected, text)):
-		if(typeof(got) == TYPE_ARRAY):
-			var ad = ArrayDiff.new(got, expected)
-			if(ad.are_equal()):
-				_pass(str(ad.summarize()))
-			else:
-				_fail(str(ad.summarize()))
-		elif(typeof(got) == TYPE_DICTIONARY):
-			if(expected != got):
-				_fail("Values do not point to the same dictionary.  " + DICTIONARY_DISCLAIMER + "  " + text)
-			else:
-				_pass("Values point to the same dictionary.  " + DICTIONARY_DISCLAIMER + "  " + text)
-		else:
-			if(expected != got):
-				_fail(disp)
-			else:
-				_pass(disp)
+	# if(_do_datatypes_match__fail_if_not(got, expected, text)):
+	# 	if(typeof(got) == TYPE_ARRAY):
+	# 		var ad = ArrayDiff.new(got, expected)
+	# 		if(ad.are_equal()):
+	# 			_pass(str(ad.summarize()))
+	# 		else:
+	# 			_fail(str(ad.summarize()))
+	# 	elif(typeof(got) == TYPE_DICTIONARY):
+	# 		if(expected != got):
+	# 			_fail("Values do not point to the same dictionary.  " + DICTIONARY_DISCLAIMER + "  " + text)
+	# 		else:
+	# 			_pass("Values point to the same dictionary.  " + DICTIONARY_DISCLAIMER + "  " + text)
+	# 	else:
+	# 		if(expected != got):
+	# 			_fail(disp)
+	# 		else:
+	# 			_pass(disp)
 
 # ------------------------------------------------------------------------------
 # Asserts that the value got does not equal the "not expected" value.
 # ------------------------------------------------------------------------------
 func assert_ne(got, not_expected, text=""):
-	var disp = "[" + _str(got) + "] expected to be anything except [" + _str(not_expected) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, not_expected, text)):
-		var compare = _utils.Compare.new()
-		var result = compare.simple(got, not_expected)
+		var disp = "[" + _str(got) + "] expected to not equal [" + _str(not_expected) + "]:  " + text
+		var result = null
 
 		if(typeof(got) == TYPE_ARRAY):
-			result = compare.shallow(got, not_expected)
+			result = _diff_tool.shallow(got, not_expected)
+		else:
+			result = _diff_tool.simple(got, not_expected)
+
+		if(typeof(got) in [TYPE_ARRAY, TYPE_DICTIONARY]):
+			disp = str(result.summary, '  ', text)
 
 		if(result.are_equal):
-			_fail(result.summary + str(':  ', text))
+			_fail(disp)
 		else:
-			_pass(result.summary + str(':  ', text))
-	return
+			_pass(disp)
+	# return
 
-	if(_do_datatypes_match__fail_if_not(got, not_expected, text)):
-		if(typeof(got) == TYPE_ARRAY):
-			var ad = ArrayDiff.new(got, not_expected)
-			if(!ad.are_equal()):
-				_pass(str(ad.summarize()))
-			else:
-				_fail(str(ad.summarize()))
-		elif(typeof(got) == TYPE_DICTIONARY):
-			if(not_expected != got):
-				_pass("Values do not point to the same dictionary.  " + DICTIONARY_DISCLAIMER + "  " + text)
-			else:
-				_fail("Values point to the same dictionary.  " + DICTIONARY_DISCLAIMER + "  " + text)
-		else:
-			if(got == not_expected):
-				_fail(disp)
-			else:
-				_pass(disp)
+	# if(_do_datatypes_match__fail_if_not(got, not_expected, text)):
+	# 	if(typeof(got) == TYPE_ARRAY):
+	# 		var ad = ArrayDiff.new(got, not_expected)
+	# 		if(!ad.are_equal()):
+	# 			_pass(str(ad.summarize()))
+	# 		else:
+	# 			_fail(str(ad.summarize()))
+	# 	elif(typeof(got) == TYPE_DICTIONARY):
+	# 		if(not_expected != got):
+	# 			_pass("Values do not point to the same dictionary.  " + DICTIONARY_DISCLAIMER + "  " + text)
+	# 		else:
+	# 			_fail("Values point to the same dictionary.  " + DICTIONARY_DISCLAIMER + "  " + text)
+	# 	else:
+	# 		if(got == not_expected):
+	# 			_fail(disp)
+	# 		else:
+	# 			_pass(disp)
 
 # ------------------------------------------------------------------------------
 # Asserts that the expected value almost equals the value got.
