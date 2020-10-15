@@ -165,7 +165,6 @@ class TestAssertEq:
 		assert_pass(gr.test)
 		assert_string_contains(gr.test._fail_pass_text[0], DICTIONARY_DISCLAIMER)
 
-
 	func test_dictionary_not_compared_by_value():
 		var d  = {'a':1}
 		var d2 = {'a':1}

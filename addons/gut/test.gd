@@ -124,7 +124,6 @@ var _disable_strict_datatype_checks = false
 # to see the text of a failed sub-test in test_test.gd
 var _fail_pass_text = []
 
-
 const EDITOR_PROPERTY = PROPERTY_USAGE_SCRIPT_VARIABLE | PROPERTY_USAGE_DEFAULT
 const VARIABLE_PROPERTY = PROPERTY_USAGE_SCRIPT_VARIABLE
 const DICTIONARY_DISCLAIMER = "Use DictionaryDiff class to compare values.  See GUT wiki for more information."
@@ -307,25 +306,7 @@ func assert_eq(got, expected, text=""):
 			_pass(disp)
 		else:
 			_fail(disp)
-	# return
 
-	# if(_do_datatypes_match__fail_if_not(got, expected, text)):
-	# 	if(typeof(got) == TYPE_ARRAY):
-	# 		var ad = ArrayDiff.new(got, expected)
-	# 		if(ad.are_equal()):
-	# 			_pass(str(ad.summarize()))
-	# 		else:
-	# 			_fail(str(ad.summarize()))
-	# 	elif(typeof(got) == TYPE_DICTIONARY):
-	# 		if(expected != got):
-	# 			_fail("Values do not point to the same dictionary.  " + DICTIONARY_DISCLAIMER + "  " + text)
-	# 		else:
-	# 			_pass("Values point to the same dictionary.  " + DICTIONARY_DISCLAIMER + "  " + text)
-	# 	else:
-	# 		if(expected != got):
-	# 			_fail(disp)
-	# 		else:
-	# 			_pass(disp)
 
 # ------------------------------------------------------------------------------
 # Asserts that the value got does not equal the "not expected" value.
@@ -347,25 +328,7 @@ func assert_ne(got, not_expected, text=""):
 			_fail(disp)
 		else:
 			_pass(disp)
-	# return
 
-	# if(_do_datatypes_match__fail_if_not(got, not_expected, text)):
-	# 	if(typeof(got) == TYPE_ARRAY):
-	# 		var ad = ArrayDiff.new(got, not_expected)
-	# 		if(!ad.are_equal()):
-	# 			_pass(str(ad.summarize()))
-	# 		else:
-	# 			_fail(str(ad.summarize()))
-	# 	elif(typeof(got) == TYPE_DICTIONARY):
-	# 		if(not_expected != got):
-	# 			_pass("Values do not point to the same dictionary.  " + DICTIONARY_DISCLAIMER + "  " + text)
-	# 		else:
-	# 			_fail("Values point to the same dictionary.  " + DICTIONARY_DISCLAIMER + "  " + text)
-	# 	else:
-	# 		if(got == not_expected):
-	# 			_fail(disp)
-	# 		else:
-	# 			_pass(disp)
 
 # ------------------------------------------------------------------------------
 # Asserts that the expected value almost equals the value got.
@@ -416,9 +379,9 @@ func assert_lt(got, expected, text=""):
 # ------------------------------------------------------------------------------
 func assert_true(got, text=""):
 	if(!got):
-		_fail(text)
+		_fail(str(text))
 	else:
-		_pass(text)
+		_pass(str(text))
 
 # ------------------------------------------------------------------------------
 # Asserts that got is false
