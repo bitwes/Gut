@@ -11,6 +11,15 @@ var strutils = _utils.Strutils.new()
 var _max_string_length = 100
 var _diff_type = null
 var _different_indexes = null
+var _diff_index_descriptions = []
+
+var _compare = _utils.Comparator.new()
+
+# -------- comapre_result.gd "interface" ---------------------
+var are_equal = null setget ,are_equal
+var different_indexes = null setget ,get_different_indexes
+var summary = null setget ,summarize
+var different_keys = null
 
 enum {
 	DEEP,
@@ -25,10 +34,6 @@ func _init(array_1, array_2, diff_type=SHALLOW):
 	_a2 = array_2
 	_diff_type = diff_type
 	_different_indexes = _find_diff_indexes()
-
-
-func _do_datatypes_match(got, expected):
-	return !(typeof(got) != typeof(expected) and got != null and expected != null)
 
 
 func _are_indexes_equal(i):

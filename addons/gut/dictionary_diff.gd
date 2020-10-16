@@ -22,6 +22,11 @@ var _total_different = 0
 
 var _diff_type = SHALLOW
 
+# -------- comapre_result.gd "interface" ---------------------
+var are_equal = null setget ,are_equal
+var different_indexes = null
+var summary = null setget ,summarize
+var different_keys = null setget ,get_different_keys
 
 func _init(d1, d2, diff_type=DEEP):
 	_d1 = d1

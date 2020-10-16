@@ -25,6 +25,12 @@ func simple(v1, v2):
 				extra = '.  Values point to different dictionaries.  '
 			extra += 'Dictionaries are compared by reference.'
 
+		if(typeof(v1) == TYPE_ARRAY):
+			var array_result = _utils.ArrayDiff.new(v1, v2)
+			if(!array_result.are_equal()):
+				extra = ".\n" + array_result.summarize()
+
+
 		if(result.are_equal):
 			cmp_str = '=='
 		else:
@@ -38,3 +44,33 @@ func simple(v1, v2):
 
 	return result
 
+
+func shallow(v1, v2):
+	var result =  null
+
+	if(_utils.are_datatypes_same(v1, v2)):
+		if(typeof(v1) == TYPE_ARRAY):
+			result = _utils.ArrayDiff.new(v1, v2)
+		elif(typeof(v2) == TYPE_DICTIONARY):
+			result = _utils.DictionaryDiff.new(v1, v2, _utils.DIFF.SHALLOW)
+		else:
+			result = simple(v1, v2)
+	else:
+		result = simple(v1, v2)
+
+	return result
+
+func deep(v1, v2):
+	var result =  null
+
+	if(_utils.are_datatypes_same(v1, v2)):
+		if(typeof(v1) == TYPE_ARRAY):
+			result = _utils.ArrayDiff.new(v1, v2, _utils.DIFF.DEEP)
+		elif(typeof(v2) == TYPE_DICTIONARY):
+			result = _utils.DictionaryDiff.new(v1, v2, _utils.DIFF.DEEP)
+		else:
+			result = simple(v1, v2)
+	else:
+		result = simple(v1, v2)
+
+	return result

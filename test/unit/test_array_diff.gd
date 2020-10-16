@@ -1,5 +1,13 @@
 extends 'res://addons/gut/test.gd'
 
+
+func test_something():
+	var diff =  ArrayDiff.new([], [])
+	print(diff.are_equal)
+	print(diff.are_equal())
+	diff.are_equal = 'poop'
+	print(diff.are_equal)
+
 func test_can_instantiate_with_two_arrays():
 	var ad  = ArrayDiff.new([], [])
 	assert_not_null(ad)

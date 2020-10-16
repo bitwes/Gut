@@ -57,3 +57,102 @@ class TestSimpleCompare:
 		var result = _compare.simple({}, {})
 		assert_false(result.are_equal, result.summary)
 		assert_string_contains(result.summary, 'reference')
+
+	func test_comparing_arrays_returns_array_diff_summary():
+		var result = _compare.simple([1, 2], [3, 4])
+		assert_string_contains(result.summary, '1 != 3')
+
+
+class TestShallowCompare:
+	extends 'res://addons/gut/test.gd'
+
+	var _compare  = _utils.Comparator.new()
+
+	func test_comparing_arrays_populates_different_indexes():
+		var a1  = [1, 2, 3]
+		var a2  = ['a', 2, 'c']
+		var result = _compare.shallow(a1, a2)
+		assert_true(result.different_indexes == [0, 2])
+
+	func test_comparing_arrays_are_equal_true_when_equal():
+		var result = _compare.shallow([1], [1])
+		assert_true(result.are_equal)
+
+	func test_comparing_arrays_sets_summary():
+		var result = _compare.shallow([2], [3])
+		assert_not_null(result.summary)
+
+	func test_comparing_dictionaries_populates_different_keys():
+		var result = _compare.shallow({'a':1}, {'b':2})
+		assert_true(result.different_keys.size() == 2)
+
+	func test_comparing_dictionaries_populates_are_equal():
+		var result = _compare.shallow({}, {})
+		assert_true(result.are_equal)
+
+	func test_comparing_dictionaries_populates_summary():
+		var result = _compare.shallow({}, {'a':1})
+		assert_not_null(result.summary)
+
+	func test_comparing_dictionaries_does_not_include_sub_dictionaries():
+		var result = _compare.shallow({'a':{}}, {'a':{}})
+		assert_false(result.are_equal)
+
+	func test_comparing_arrays_does_not_include_sub_dictionaries():
+		var result = _compare.shallow([{'a':1}], [{'a':1}])
+		assert_false(result.are_equal)
+
+	func test_works_with_different_datatypes():
+		var result = _compare.shallow({}, [])
+		assert_false(result.are_equal)
+
+	func test_works_with_primitives():
+		var result =  _compare.shallow(1, 1)
+		assert_true(result.are_equal)
+
+class TestDeepCompare:
+	extends 'res://addons/gut/test.gd'
+
+	var _compare  = _utils.Comparator.new()
+
+	func test_comparing_arrays_populates_different_indexes():
+		var a1  = [1, 2, 3]
+		var a2  = ['a', 2, 'c']
+		var result = _compare.deep(a1, a2)
+		assert_true(result.different_indexes == [0, 2])
+
+	func test_comparing_arrays_are_equal_true_when_equal():
+		var result = _compare.deep([1], [1])
+		assert_true(result.are_equal)
+
+	func test_comparing_arrays_sets_summary():
+		var result = _compare.deep([2], [3])
+		assert_not_null(result.summary)
+
+	func test_comparing_dictionaries_populates_different_keys():
+		var result = _compare.deep({'a':1}, {'b':2})
+		assert_true(result.different_keys.size() == 2)
+
+	func test_comparing_dictionaries_populates_are_equal():
+		var result = _compare.deep({}, {})
+		assert_true(result.are_equal)
+
+	func test_comparing_dictionaries_populates_summary():
+		var result = _compare.deep({}, {'a':1})
+		assert_not_null(result.summary)
+
+	func test_comparing_dictionaries_does_not_include_sub_dictionaries():
+		var result = _compare.deep({'a':{}}, {'a':{}})
+		assert_true(result.are_equal)
+
+	func test_comparing_arrays_does_not_include_sub_dictionaries():
+		var result = _compare.deep([{'a':1}], [{'a':1}])
+		assert_true(result.are_equal)
+
+	func test_works_with_different_datatypes():
+		var result = _compare.deep({}, [])
+		assert_false(result.are_equal)
+
+	func test_works_with_primitives():
+		var result =  _compare.deep(1, 1)
+		assert_true(result.are_equal)

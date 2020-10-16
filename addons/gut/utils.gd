@@ -110,6 +110,12 @@ enum DOUBLE_STRATEGY{
 	PARTIAL
 }
 
+enum DIFF {
+	DEEP,
+	SHALLOW,
+	SIMPLE
+}
+
 # ------------------------------------------------------------------------------
 # Blurb of text with GUT and Godot versions.
 # ------------------------------------------------------------------------------
