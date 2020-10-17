@@ -1,4 +1,4 @@
-const MISSING_KEY = '<key missing>'
+
 const INDENT = '    '
 enum {
 	DEEP,
@@ -8,6 +8,8 @@ enum {
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var strutils = _utils.Strutils.new()
 var compare = _utils.Comparator.new()
+
+var MISSING_KEY = compare.MISSING
 
 var _d1 = null
 var _d2 = null
@@ -35,11 +37,6 @@ func _init(d1, d2, diff_type=DEEP):
 	_different_keys = _find_different_keys()
 
 
-
-func _do_datatypes_match(got, expected):
-	return !(typeof(got) != typeof(expected) and got != null and expected != null)
-
-
 func _find_different_keys():
 	var diff_keys = {}
 	var d1_keys = _d1.keys()
@@ -49,7 +46,7 @@ func _find_different_keys():
 	_total_key_count += d1_keys.size()
 	for key in d1_keys:
 		if(!_d2.has(key)):
-			diff_keys[key] = str(strutils.type2str(_d1[key]), ' != ', MISSING_KEY)
+			diff_keys[key] = compare.simple(_d1[key], compare.MISSING, 'key').summary
 			_total_different += 1
 		else:
 			d2_keys.remove(d2_keys.find(key))
@@ -76,7 +73,7 @@ func _find_different_keys():
 	_total_key_count += d2_keys.size()
 	_total_different += d2_keys.size()
 	for i in range(d2_keys.size()):
-		diff_keys[d2_keys[i]] = str(MISSING_KEY, ' != ', compare.format_value(_d2[d2_keys[i]]))
+		diff_keys[d2_keys[i]] = compare.simple(compare.MISSING, _d2[d2_keys[i]], 'key').summary
 
 	return diff_keys
 

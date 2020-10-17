@@ -105,8 +105,8 @@ func test_sub_dictionary_missing_in_other():
 	var d2 = {'a': 2, 'dne_in_d1':{'xx':'x', 'yy':'y', 'zz':'z'}, 'r':2}
 	var diff = DictionaryDiff.new(d1, d2)
 	var summary = diff.summarize()
-	assert_string_contains(summary, diff.MISSING_KEY + ' !=')
-	assert_string_contains(summary, ' != ' + diff.MISSING_KEY)
+	assert_string_contains(summary, 'key>' + ' !=')
+	assert_string_contains(summary, ' != ' + '<missing')
 
 func test_get_different_keys_returns_a_copy_of_the_keys():
 	var dd = DictionaryDiff.new({'a':1}, {})
