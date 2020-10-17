@@ -62,9 +62,7 @@ func test_get_summary_text_lists_differences():
 func test_when_sizes_do_not_match_and_threshold_exceeded_then_summarize_tells_you():
 	var ad = ArrayDiff.new([3, 2, 1, 98, 99], [1, 2, 3])
 	ad._size_diff_threshold = 1
-	assert_string_contains(ad.summarize(), 'Array sizes are')
-	assert_string_contains(ad.summarize(), 'array_1.size = 5', 'a1 size')
-	assert_string_contains(ad.summarize(), 'array_2.size = 3', 'a2 size')
+	assert_string_contains(ad.summarize(), 'Showing')
 
 func test_when_arrays_are_large_then_summarize_truncates():
 	var a1 = []

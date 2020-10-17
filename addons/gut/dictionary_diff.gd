@@ -7,7 +7,7 @@ enum {
 
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var strutils = _utils.Strutils.new()
-var compare = _utils.Compare.new()
+var compare = _utils.Comparator.new()
 
 var _d1 = null
 var _d2 = null
@@ -32,7 +32,6 @@ func _init(d1, d2, diff_type=DEEP):
 	_d1 = d1
 	_d2 = d2
 	_diff_type = diff_type
-	compare._compare_float_to_int = false
 	_different_keys = _find_different_keys()
 
 
@@ -61,13 +60,13 @@ func _find_different_keys():
 			else:
 				result = compare.simple(_d1[key], _d2[key])
 
-			if(result.diff_object is _utils.DictionaryDiff):
-				_total_key_count += result.diff_object.get_total_key_count()
-				_total_different += result.diff_object.get_total_different_count()
+			if(result is _utils.DictionaryDiff):
+				_total_key_count += result.get_total_key_count()
+				_total_different += result.get_total_different_count()
 				if(!result.are_equal):
 					_total_different += 1
 					# access directly b/c get_different_keys() calls duplicate()
-					diff_keys[key] = result.diff_object._different_keys
+					diff_keys[key] = result._different_keys
 			else:
 				if(!result.are_equal):
 					_total_different += 1

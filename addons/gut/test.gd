@@ -102,7 +102,7 @@ class DoubleInfo:
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var ArrayDiff = _utils.ArrayDiff
 var DictionaryDiff = _utils.DictionaryDiff
-var _diff_tool = _utils.Compare.new()
+var _diff_tool = _utils.Comparator.new()
 
 # constant for signal when calling yield_for
 const YIELD = 'timeout'

@@ -1,17 +1,41 @@
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _strutils = _utils.Strutils.new()
+var _max_length = 100
 
-
+const MISSING = '|__missing__gut__compare__value__|'
 func _format_value(value):
-	return _strutils.truncate_string(_strutils.type2str(value), 100)
-
+	return _strutils.truncate_string(_strutils.type2str(value), _max_length)
 
 func _cannot_comapre_text(v1, v2):
 	return str('Cannot compare ', _strutils.types[typeof(v1)], ' with ',
 		_strutils.types[typeof(v2)], '.')
 
+func _make_missing_string(text):
+	return '<missing ' + text + '>'
 
-func simple(v1, v2):
+func _create_missing_result(v1, v2, text):
+	var to_return =  null
+	var v1_str = _format_value(v1)
+	var v2_str = _format_value(v2)
+
+	if(typeof(v1) == TYPE_STRING and v1 == MISSING):
+		v1_str = _make_missing_string(text)
+		to_return = _utils.CompareResult.new()
+	elif(typeof(v2) == TYPE_STRING and v2 == MISSING):
+		v2_str = _make_missing_string(text)
+		to_return = _utils.CompareResult.new()
+
+	if(to_return != null):
+		to_return.summary = str(v1_str, ' != ', v2_str)
+		to_return.are_equal = false
+
+	return to_return
+
+func simple(v1, v2, missing_string=''):
+	var missing_result = _create_missing_result(v1, v2, missing_string)
+	if(missing_result != null):
+		return missing_result
+
 	var result = _utils.CompareResult.new()
 	var cmp_str = null
 	var extra = ''
@@ -29,7 +53,6 @@ func simple(v1, v2):
 			var array_result = _utils.ArrayDiff.new(v1, v2)
 			if(!array_result.are_equal()):
 				extra = ".\n" + array_result.summarize()
-
 
 		if(result.are_equal):
 			cmp_str = '=='
@@ -74,3 +97,7 @@ func deep(v1, v2):
 		result = simple(v1, v2)
 
 	return result
+
+
+func format_value(val):
+	return _strutils.truncate_string(_strutils.type2str(val), _max_length)

@@ -9,6 +9,36 @@ class TestTheBasics:
 		assert_not_null(c)
 
 
+class TestMissing:
+	extends 'res://addons/gut/test.gd'
+
+	func test_when_first_value_is_missing_it_uses_missing_string_in_summary():
+		var c = _utils.Comparator.new()
+		var other = 'asdf'
+		var result = c.simple(c.MISSING, other, 'not here')
+		assert_string_contains(result.summary, 'not here')
+		assert_string_contains(result.summary, '!=')
+		assert_string_contains(result.summary, other)
+		assert_not_null(result.are_equal)
+		assert_false(result.are_equal)
+
+	func test_when_second_value_is_missing_it_uses_missing_string_in_summary():
+		var c = _utils.Comparator.new()
+		var other  = 'asdf'
+		var result = c.simple(other, c.MISSING, 'not here')
+		assert_string_contains(result.summary, 'not here')
+		assert_string_contains(result.summary, '!=')
+		assert_string_contains(result.summary, other)
+		assert_not_null(result.are_equal)
+		assert_false(result.are_equal)
+
+	func test_missing_code_works_with_non_strings():
+		var c = _utils.Comparator.new()
+		var result = c.simple(1, 1)
+		assert_true(result.are_equal)
+
+
+
 class TestSimpleCompare:
 	extends 'res://addons/gut/test.gd'
 
