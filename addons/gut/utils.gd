@@ -91,7 +91,6 @@ var Test = load('res://addons/gut/test.gd')
 var TestCollector = load('res://addons/gut/test_collector.gd')
 var ThingCounter = load('res://addons/gut/thing_counter.gd')
 
-var Compare = load('res://addons/gut/compare.gd')
 var Comparator = load('res://addons/gut/comparator.gd')
 var CompareResult = load('res://addons/gut/compare_result.gd')
 
