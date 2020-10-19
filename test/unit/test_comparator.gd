@@ -46,7 +46,10 @@ class TestMissing:
 class TestSimpleCompare:
 	extends 'res://addons/gut/test.gd'
 
-	var _compare  = _utils.Comparator.new()
+	var _compare  = null
+
+	func before_each():
+		_compare = _utils.Comparator.new()
 
 	var primitive_equal_values = [[1, 1], [3, 3.0], ['a', 'a'], [true, true], [null, null]]
 	func test_compare_equal_primitives(p=use_parameters(primitive_equal_values)):
@@ -69,7 +72,7 @@ class TestSimpleCompare:
 		assert_string_contains(result.summary, str(p[0]), 'zero value')
 		assert_string_contains(result.summary, str(p[1]), 'one value')
 
-	var incompatible_types = [[1, 'a'], [2.0, 2], [false, []], [{}, []]]
+	var incompatible_types = [[1, 'a'], ['text', Node], [false, []], [{}, []]]
 	func test_incompatible_types(p=use_parameters(incompatible_types)):
 		var result = _compare.simple(p[0], p[1])
 		assert_not_null(result.are_equal,  result.summary)
@@ -129,7 +132,10 @@ class TestShouldCompareIntToFloat:
 class TestShallowCompare:
 	extends 'res://addons/gut/test.gd'
 
-	var _compare  = _utils.Comparator.new()
+	var _compare  = null
+
+	func before_each():
+		_compare = _utils.Comparator.new()
 
 	func test_comparing_arrays_populates_different_indexes():
 		var a1  = [1, 2, 3]
@@ -177,7 +183,10 @@ class TestShallowCompare:
 class TestDeepCompare:
 	extends 'res://addons/gut/test.gd'
 
-	var _compare  = _utils.Comparator.new()
+	var _compare  = null
+
+	func before_each():
+		_compare = _utils.Comparator.new()
 
 	func test_comparing_arrays_populates_different_indexes():
 		var a1  = [1, 2, 3]

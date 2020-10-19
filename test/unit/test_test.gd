@@ -172,6 +172,7 @@ class TestAssertEq:
 		assert_fail(gr.test)
 		assert_string_contains(gr.test._fail_pass_text[0], DICTIONARY_DISCLAIMER)
 
+
 class TestAssertNe:
 	extends BaseTestClass
 
