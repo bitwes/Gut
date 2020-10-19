@@ -1,3 +1,5 @@
+extends 'res://addons/gut/compare_result.gd'
+
 
 const INDENT = '    '
 enum {
@@ -25,10 +27,24 @@ var _total_different = 0
 var _diff_type = SHALLOW
 
 # -------- comapre_result.gd "interface" ---------------------
-var are_equal = null setget ,are_equal
-var different_indexes = null
-var summary = null setget ,summarize
-var different_keys = null setget ,get_different_keys
+var different_keys = null setget set_different_keys ,get_different_keys
+
+func  set_are_equal(val):
+	_block_set('are_equal', val)
+
+func get_are_equal():
+	return are_equal()
+
+func set_summary(val):
+	_block_set('summary', val)
+
+func  get_summary():
+	return summarize()
+
+func set_different_keys(val):
+	_block_set('different_keys', val)
+# -------- comapre_result.gd "interface" ---------------------
+
 
 func _init(d1, d2, diff_type=DEEP):
 	_d1 = d1

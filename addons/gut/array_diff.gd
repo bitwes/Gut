@@ -1,3 +1,5 @@
+extends 'res://addons/gut/compare_result.gd'
+
 # ------------------------------------------------------------------------------
 # This class will diff two arrays.  It provides a text summary of the differences
 # or you can use get_different_indexes to get an array of the indexes that are
@@ -16,10 +18,23 @@ var _different_descriptions = []
 var _compare = _utils.Comparator.new()
 
 # -------- comapre_result.gd "interface" ---------------------
-var are_equal = null setget ,are_equal
-var different_indexes = null setget ,get_different_indexes
-var summary = null setget ,summarize
-var different_keys = null
+var different_indexes = null setget set_different_indexes ,get_different_indexes
+
+func  set_are_equal(val):
+	_block_set('are_equal', val)
+
+func get_are_equal():
+	return are_equal()
+
+func set_summary(val):
+	_block_set('summary', val)
+
+func  get_summary():
+	return summarize()
+
+func set_different_indexes(val):
+	_block_set('different_indexes', val)
+# -------- comapre_result.gd "interface" ---------------------
 
 enum {
 	DEEP,

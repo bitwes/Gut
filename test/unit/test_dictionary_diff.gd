@@ -1,6 +1,34 @@
 extends 'res://addons/gut/test.gd'
 
 
+
+class TestCompareResultInterace:
+	extends 'res://addons/gut/test.gd'
+
+	func test_cannot_set_summary():
+		var diff = DictionaryDiff.new({},{}, _utils.DIFF.DEEP)
+		diff.summary = 'the summary'
+		assert_ne(diff.summary,  'the summary')
+
+	func test_summary_prop_returns_summarize():
+		var diff = DictionaryDiff.new({},{}, _utils.DIFF.DEEP)
+		assert_not_null(diff.summary)
+
+	func test_cannot_set_are_equal():
+		var diff = DictionaryDiff.new({},{}, _utils.DIFF.DEEP)
+		diff.are_equal = 'asdf'
+		assert_eq(diff.are_equal, true)
+
+	func test_are_equal_prop_returns_result_of_diff():
+		var diff = DictionaryDiff.new({},{}, _utils.DIFF.DEEP)
+		assert_eq(diff.are_equal, true)
+
+
+
+
+
+
+
 func test_can_init_with_two_dictionaries():
 	var dd = DictionaryDiff.new({}, {})
 	assert_not_null(dd)

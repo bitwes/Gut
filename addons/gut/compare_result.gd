@@ -1,10 +1,17 @@
-var _utils = load('res://addons/gut/utils.gd').get_instance()
+var are_equal = null setget set_are_equal, get_are_equal
+var summary = null setget set_summary, get_summary
 
-var are_equal = null
-var summary = null
-var different_keys = null
-var different_indexes = null
+func _block_set(which, val):
+	push_error(str('cannot set ', which, ', value [', val, '] ignored.'))
 
+func get_are_equal():
+	return are_equal
 
-func _to_string():
+func set_are_equal(r_eq):
+	are_equal = r_eq
+
+func get_summary():
 	return summary
+
+func set_summary(smry):
+	summary = smry
