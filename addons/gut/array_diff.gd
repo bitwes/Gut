@@ -10,7 +10,8 @@ var _size_diff_threshold = 30
 var _strutils = _utils.Strutils.new()
 var _max_string_length = 100
 var _diff_type = null
-var _different_indexes = null
+var _different_indexes = []
+var _different_descriptions = []
 
 var _compare = _utils.Comparator.new()
 
@@ -22,7 +23,8 @@ var different_keys = null
 
 enum {
 	DEEP,
-	SHALLOW
+	SHALLOW,
+	SIMPLE
 }
 
 # -------------------------
@@ -32,56 +34,49 @@ func _init(array_1, array_2, diff_type=SHALLOW):
 	_a1 = array_1
 	_a2 = array_2
 	_diff_type = diff_type
-	_different_indexes = _find_diff_indexes()
+	_find_diff_indexes()
 
 
-func _are_indexes_equal(i):
-	var to_return = [true, null]
-	if(_utils.are_datatypes_same(_a1[i], _a2[i])):
-		if(_diff_type == DEEP):
-			to_return = _compare.deep(_a1[i], _a2[i]).are_equal
-		else:
-			to_return = _compare.simple(_a1[i], _a2[i]).are_equal
-	else:
-		to_return = false
+func _add_if_different(index, result):
+	if(!result.are_equal):
+		_different_indexes.append(index)
+		var desc = result.summary
+		if(result is _utils.DictionaryDiff and _diff_type == DEEP):
+			desc = str(_compare.format_value(_a1[index], 25), ' != ',
+				_compare.format_value(_a2[index], 25), '  Some keys have different values.')
+		elif(result is _utils.ArrayDiff and _diff_type == DEEP):
+			desc = str(_compare.format_value(_a1[index], 25), ' != ',
+			_compare.format_value(_a2[index], 25), '  Some indexes have different values.')
 
-	return to_return
+		_different_descriptions.append(desc)
 
 
 func _find_diff_indexes():
-	var different_indexes = []
 	for i in range(_a1.size()):
+		var result = null
 		if(i < _a2.size()):
-			if(!_are_indexes_equal(i)):
-				different_indexes.append(i)
+			if(_diff_type == DEEP):
+				result = _compare.deep(_a1[i], _a2[i])
+			else:
+				result = _compare.simple(_a1[i], _a2[i])
 		else:
-			different_indexes.append(i)
+			result = _compare.simple(_a1[i], _compare.MISSING, 'index')
+
+		_add_if_different(i, result)
 
 	if(_a1.size() < _a2.size()):
 		for i in range(_a1.size(), _a2.size()):
-			different_indexes.append(i)
-
-	return  different_indexes
+			_add_if_different(i, _compare.simple(_compare.MISSING, _a2[i], 'index'))
 
 
 func _make_diff_description(max_differences=_size_diff_threshold):
-	var diff_indexes = _different_indexes
-	var limit = min(diff_indexes.size(), max_differences)
+	var limit = min(_different_indexes.size(), max_differences)
 
 	var to_return = ""
 
 	for i in range(limit):
-		var idx = diff_indexes[i]
-
-		var a1_str = '<index missing>'
-		if(idx < _a1.size()):
-			a1_str = _strutils.truncate_string(_strutils.type2str(_a1[idx]), _max_string_length)
-
-		var a2_str = '<index missing>'
-		if(idx < _a2.size()):
-			a2_str = _strutils.truncate_string(_strutils.type2str(_a2[idx]), _max_string_length)
-
-		to_return += str('  ', idx, ': ', a1_str, ' != ', a2_str)
+		var idx = _different_indexes[i]
+		to_return += str('  ', idx, ': ', _different_descriptions[i])
 		if(i != limit -1):
 			to_return += "\n"
 

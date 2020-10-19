@@ -93,6 +93,7 @@ class TestSimpleCompare:
 		assert_string_contains(result.summary, '1 != 3')
 
 
+
 class TestShallowCompare:
 	extends 'res://addons/gut/test.gd'
 
@@ -139,6 +140,7 @@ class TestShallowCompare:
 	func test_works_with_primitives():
 		var result =  _compare.shallow(1, 1)
 		assert_true(result.are_equal)
+
 
 class TestDeepCompare:
 	extends 'res://addons/gut/test.gd'

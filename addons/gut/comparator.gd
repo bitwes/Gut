@@ -3,8 +3,6 @@ var _strutils = _utils.Strutils.new()
 var _max_length = 100
 
 const MISSING = '|__missing__gut__compare__value__|'
-func _format_value(value):
-	return _strutils.truncate_string(_strutils.type2str(value), _max_length)
 
 func _cannot_comapre_text(v1, v2):
 	return str('Cannot compare ', _strutils.types[typeof(v1)], ' with ',
@@ -14,9 +12,9 @@ func _make_missing_string(text):
 	return '<missing ' + text + '>'
 
 func _create_missing_result(v1, v2, text):
-	var to_return =  null
-	var v1_str = _format_value(v1)
-	var v2_str = _format_value(v2)
+	var to_return = null
+	var v1_str = format_value(v1)
+	var v2_str = format_value(v2)
 
 	if(typeof(v1) == TYPE_STRING and v1 == MISSING):
 		v1_str = _make_missing_string(text)
@@ -30,6 +28,7 @@ func _create_missing_result(v1, v2, text):
 		to_return.are_equal = false
 
 	return to_return
+
 
 func simple(v1, v2, missing_string=''):
 	var missing_result = _create_missing_result(v1, v2, missing_string)
@@ -63,7 +62,7 @@ func simple(v1, v2, missing_string=''):
 		result.are_equal = false
 		extra = str('.  ', _cannot_comapre_text(v1, v2))
 
-	result.summary = str(_format_value(v2), ' ', cmp_str, ' ', _format_value(v1), extra)
+	result.summary = str(format_value(v1), ' ', cmp_str, ' ', format_value(v2), extra)
 
 	return result
 
@@ -83,6 +82,7 @@ func shallow(v1, v2):
 
 	return result
 
+
 func deep(v1, v2):
 	var result =  null
 
@@ -99,5 +99,17 @@ func deep(v1, v2):
 	return result
 
 
-func format_value(val):
-	return _strutils.truncate_string(_strutils.type2str(val), _max_length)
+func format_value(val, max_val_length=_max_length):
+	return _strutils.truncate_string(_strutils.type2str(val), max_val_length)
+
+
+func compare(v1, v2, diff_type=_utils.DIFF.SIMPLE):
+	var result = null
+	if(diff_type == _utils.DIFF.SIMPLE):
+		result = simple(v1, v2)
+	elif(diff_type == _utils.DIFF.SHALLOW):
+		result = shallow(v1, v2)
+	elif(diff_type ==  _utils.DIFF.DEEP):
+		result = deep(v1, v2)
+
+	return result

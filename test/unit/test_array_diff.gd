@@ -1,13 +1,6 @@
 extends 'res://addons/gut/test.gd'
 
 
-func test_something():
-	var diff =  ArrayDiff.new([], [])
-	print(diff.are_equal)
-	print(diff.are_equal())
-	diff.are_equal = 'poop'
-	print(diff.are_equal)
-
 func test_can_instantiate_with_two_arrays():
 	var ad  = ArrayDiff.new([], [])
 	assert_not_null(ad)
@@ -45,7 +38,7 @@ func test_get_different_indexes_works_when_a1_smaller():
 
 func test_lists_indexes_as_missing_in_first_array():
 	var ad = ArrayDiff.new([1, 2, 3], [1, 2, 3, 4, 5])
-	assert_string_contains(ad.summarize(), '<index missing> !=')
+	assert_string_contains(ad.summarize(), '<missing index> !=')
 
 func test_get_different_indexes_works_when_a2_smaller():
 	var ad = ArrayDiff.new([3, 2, 1, 98, 99], [1, 2, 3])
@@ -77,7 +70,7 @@ func test_when_arrays_are_large_then_summarize_truncates():
 
 	var ad = ArrayDiff.new(a1, a2)
 	var summary = ad.summarize()
-	assert_lt(summary.length(), 800, summary)
+	assert_lt(summary.split("\n").size(), 40, summary)
 
 func test_works_with_strings_and_numbers():
 	var a1 = [0, 1, 2, 3, 4]
@@ -147,3 +140,9 @@ class TestDeepDiff:
 		var a2 = [[{'a': 1}], [{'b': 2}], [{'c': 2}]]
 		var diff = ArrayDiff.new(a1, a2, DIFF_TYPE.DEEP)
 		assert_false(diff.are_equal(), diff.summarize())
+
+	func test_when_deep_compare_non_equal_dictionaries_do_not_contain_disclaimer():
+		var a1 = [[{'a': 2}], [{'b': 3}], [{'c': 4}]]
+		var a2 = [[{'a': 1}], [{'b': 2}], [{'c': 2}]]
+		var diff = ArrayDiff.new(a1, a2, DIFF_TYPE.DEEP)
+		assert_eq(diff.summary.find('reference'), -1, diff.summary)
