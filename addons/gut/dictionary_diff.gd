@@ -34,6 +34,7 @@ func _init(d1, d2, diff_type=DEEP):
 	_d1 = d1
 	_d2 = d2
 	_diff_type = diff_type
+	compare.set_should_compare_int_to_float(false)
 	_different_keys = _find_different_keys()
 
 

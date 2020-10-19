@@ -7,11 +7,11 @@ func test_can_instantiate_with_two_arrays():
 
 func test_constructor_defaults_diff_type_to_shallow():
 	var diff = ArrayDiff.new([], [])
-	assert_eq(diff.get_diff_type(), DIFF_TYPE.SHALLOW)
+	assert_eq(diff.get_diff_type(), _utils.DIFF.SHALLOW)
 
 func test_constructor_sets_diff_type():
-	var diff = ArrayDiff.new([], [], DIFF_TYPE.DEEP)
-	assert_eq(diff.get_diff_type(), DIFF_TYPE.DEEP)
+	var diff = ArrayDiff.new([], [], _utils.DIFF.DEEP)
+	assert_eq(diff.get_diff_type(), _utils.DIFF.DEEP)
 
 func test_two_array_constructor_sets_a1_and_a2():
 	var a1 = [1, 2, 3]

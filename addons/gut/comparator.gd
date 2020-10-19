@@ -1,6 +1,7 @@
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _strutils = _utils.Strutils.new()
 var _max_length = 100
+var _should_compare_int_to_float = true
 
 const MISSING = '|__missing__gut__compare__value__|'
 
@@ -39,7 +40,14 @@ func simple(v1, v2, missing_string=''):
 	var cmp_str = null
 	var extra = ''
 
-	if(_utils.are_datatypes_same(v1, v2)):
+	if(_should_compare_int_to_float and [2, 3].has(typeof(v1)) and [2, 3].has(typeof(v2))):
+		result.are_equal = v1 == v2
+		if(result.are_equal):
+			cmp_str = '=='
+		else:
+			cmp_str = '!='
+
+	elif(_utils.are_datatypes_same(v1, v2)):
 		result.are_equal = v1 == v2
 		if(typeof(v1) == TYPE_DICTIONARY):
 			if(result.are_equal):
@@ -113,3 +121,10 @@ func compare(v1, v2, diff_type=_utils.DIFF.SIMPLE):
 		result = deep(v1, v2)
 
 	return result
+
+
+func get_should_compare_int_to_float():
+	return _should_compare_int_to_float
+
+func set_should_compare_int_to_float(should_compare_int_float):
+	_should_compare_int_to_float = should_compare_int_float

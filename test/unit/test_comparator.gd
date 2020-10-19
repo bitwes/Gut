@@ -8,6 +8,10 @@ class TestTheBasics:
 		var c = _utils.Comparator.new()
 		assert_not_null(c)
 
+	func test_get_set_should_compare_int_float():
+		var c = _utils.Comparator.new()
+		assert_accessors(c, 'should_compare_int_to_float', true, false)
+
 
 class TestMissing:
 	extends 'res://addons/gut/test.gd'
@@ -44,7 +48,7 @@ class TestSimpleCompare:
 
 	var _compare  = _utils.Comparator.new()
 
-	var primitive_equal_values = [[1, 1], ['a', 'a'], [true, true], [null, null]]
+	var primitive_equal_values = [[1, 1], [3, 3.0], ['a', 'a'], [true, true], [null, null]]
 	func test_compare_equal_primitives(p=use_parameters(primitive_equal_values)):
 		var result = _compare.simple(p[0], p[1])
 		assert_true(result.are_equal,  result.summary)
@@ -92,6 +96,34 @@ class TestSimpleCompare:
 		var result = _compare.simple([1, 2], [3, 4])
 		assert_string_contains(result.summary, '1 != 3')
 
+
+class TestShouldCompareIntToFloat:
+	extends 'res://addons/gut/test.gd'
+
+	var _compare  = null
+
+	func before_each():
+		_compare = _utils.Comparator.new()
+
+	func test_when_enabled_float_and_int_are_equal():
+		_compare.set_should_compare_int_to_float(true)
+		var result = _compare.simple(1, 1.0)
+		assert_true(result.are_equal, result.summary)
+
+	func  test_when_disabled_float_and_int_are_not_equal():
+		_compare.set_should_compare_int_to_float(false)
+		var result = _compare.simple(1, 1.0)
+		assert_false(result.are_equal, result.summary)
+
+	func test_when_enabled_does_not_change_how_arrays_treat_float_int():
+		_compare.set_should_compare_int_to_float(true)
+		var result = _compare.simple([1], [1.0])
+		assert_false(result.are_equal, result.summary)
+
+	func test_when_enabled_does_not_change_how_dicts_treat_float_int():
+		_compare.set_should_compare_int_to_float(true)
+		var result = _compare.shallow({'a':1}, {'a':1.0})
+		assert_false(result.are_equal, result.summary)
 
 
 class TestShallowCompare:

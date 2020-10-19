@@ -34,6 +34,7 @@ func _init(array_1, array_2, diff_type=SHALLOW):
 	_a1 = array_1
 	_a2 = array_2
 	_diff_type = diff_type
+	_compare.set_should_compare_int_to_float(false)
 	_find_diff_indexes()
 
 
