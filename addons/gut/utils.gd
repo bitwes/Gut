@@ -127,11 +127,11 @@ func get_bad_version_text():
 # ------------------------------------------------------------------------------
 # Checks the Godot version against req_godot array.
 # ------------------------------------------------------------------------------
-func is_version_ok():
-	var info = Engine.get_version_info()
-	var is_ok = info.major >= req_godot[0] and \
-			info.minor >= req_godot[1] and \
-			info.patch >= req_godot[2]
+func is_version_ok(engine_info=Engine.get_version_info(),required=req_godot):
+	var info = engine_info
+	var is_ok = info.major >= required[0] and \
+			info.minor >= required[1] and \
+			info.patch >= required[2]
 	return is_ok
 
 

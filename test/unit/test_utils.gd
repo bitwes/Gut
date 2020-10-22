@@ -47,3 +47,24 @@ func test_is_instance_false_for_instanced_things():
 	var utils = autofree(Utils.new())
 	var i = load('res://test/resources/SceneNoScript.tscn')
 	assert_false(utils.is_instance(i))
+
+func _fake_engine_version(version):
+	var parsed = version.split('.')
+	return{'major':parsed[0], 'minor':parsed[1], 'patch':parsed[2]}
+
+# godot version, required version, expected is_version_ok result
+var test_versions = ParameterFactory.named_parameters(
+	['engine_version', 'req_version', 'expected_result'],
+	[
+		['1.2.3', '2.0.0', false],
+		['3.3.0', '3.2.3', true],
+		['4.0.0', '3.1.0', true],
+		['3.0.1', '3.0.0', true],
+		['4.0.0', '2.0.0', true],
+	])
+func test_is_version_ok_with_lower_major(p=use_parameters(test_versions)):
+	var utils = autofree(Utils.new())
+	var engine_info = _fake_engine_version(p.engine_version)
+	var req_version = p.req_version.split('.')
+	assert_eq(utils.is_version_ok(engine_info, req_version), p.expected_result,
+		str(p.engine_version, ' >= ', p.req_version))
