@@ -68,7 +68,7 @@ class TestComplexOutput:
 
 		var dd = DictionaryDiff.new(d1, d2)
 		gut.p(dd.summarize())
-		assert_lt(dd.summarize().split("\n").size(), 40)
+		assert_lt(dd.summarize().split("\n").size(), 45)
 
 
 

@@ -17,7 +17,6 @@ var _d1 = null
 var _d2 = null
 
 var _max_string_length = 100
-var _different_keys = null
 var _num_shown = 0
 
 var _total_key_count = 0
@@ -73,10 +72,10 @@ func _init(d1, d2, diff_type=DEEP):
 	_d2 = d2
 	_diff_type = diff_type
 	compare.set_should_compare_int_to_float(false)
-	_different_keys = _find_different_keys()
+	differences = _find_differences()
 
 
-func _find_different_keys():
+func _find_differences():
 	var diff_keys = {}
 	var d1_keys = _d1.keys()
 	var d2_keys = _d2.keys()
@@ -93,6 +92,7 @@ func _find_different_keys():
 			var result = null
 			if(_diff_type == DEEP):
 				result = compare.deep(_d1[key], _d2[key])
+				result.max_differences = 20
 			else:
 				result = compare.simple(_d1[key], _d2[key])
 
@@ -132,7 +132,6 @@ func _dictionary_to_s(d, depth):
 			to_return +=  str(open, strutils.indent_text(sub_desc, depth + 1, INDENT), close)
 		elif(d[key] is _utils.ArrayDiff):
 			var diff = strutils.indent_text(d[key].differences_to_string(), depth, INDENT)
-			diff.max_differences = 20
 			to_return += str(strutils.type2str(key), ":  ", d[key].get_short_summary(), "\n", diff)
 		else:
 			to_return += str(strutils.type2str(key), ":  ", d[key], "\n")
@@ -144,7 +143,7 @@ func _dictionary_to_s(d, depth):
 
 func differences_to_string():
 	_num_shown = 0
-	var text = _dictionary_to_s(_different_keys, 0)
+	var text = _dictionary_to_s(differences, 0)
 	if(_total_key_count > max_differences):
 		text += "...\n"
 
@@ -167,11 +166,11 @@ func summarize():
 
 
 func are_equal():
-	return _different_keys.size() == 0
+	return differences.size() == 0
 
 
 func get_different_keys():
-	return _different_keys.duplicate()
+	return differences.duplicate()
 
 
 func  get_total_key_count():
