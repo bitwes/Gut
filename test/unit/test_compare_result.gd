@@ -14,3 +14,7 @@ func test_get_set_summary():
 	var  c = CompareResult.new()
 	assert_accessors(c, 'summary', null, 'asdf')
 
+func test_get_short_summary_returns_summary():
+	var c = CompareResult.new()
+	c.set_summary('adsf')
+	assert_eq(c.get_short_summary(), 'adsf')

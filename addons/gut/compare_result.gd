@@ -4,6 +4,9 @@ var summary = null setget set_summary, get_summary
 func _block_set(which, val):
 	push_error(str('cannot set ', which, ', value [', val, '] ignored.'))
 
+func _to_string():
+	return get_summary()
+
 func get_are_equal():
 	return are_equal
 
@@ -15,3 +18,12 @@ func get_summary():
 
 func set_summary(smry):
 	summary = smry
+
+func get_total_count():
+	pass
+
+func get_different_count():
+	pass
+
+func get_short_summary():
+	return summary

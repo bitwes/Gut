@@ -22,6 +22,29 @@ class TestCompareResultInterace:
 		var ad = ArrayDiff.new([], [])
 		assert_eq(ad.are_equal, true)
 
+	func test_get_total_different_returns_correct_count():
+		var diff = ArrayDiff.new([1, 2, 3], [1, 'two', 99, 'four'])
+		assert_eq(diff.get_different_count(), 3)
+
+	var _total_count_vars = [
+		[[1, 2, 3], [1, 2, 3, 4], 4],
+		[[1, 2, 3, 4], [1, 2, 3], 4],
+		[[1, 2], [1, 2], 2]
+	]
+	func test_get_total_count_returns_correct_count(p=use_parameters(_total_count_vars)):
+		var diff = ArrayDiff.new(p[0], p[1])
+		assert_eq(diff.get_total_count(), p[2])
+
+	func test_get_short_summary_includes_x_of_y_keys_when_different():
+		var diff = ArrayDiff.new([1, 2, 3, 4], [1, 'a', 'b', 'c', 'd'], _utils.DIFF.DEEP)
+		assert_string_contains(diff.get_short_summary(), '4 of 5')
+
+	func test_get_short_summary_does_not_include_x_of_y_when_equal():
+		var diff = ArrayDiff.new([], [], _utils.DIFF.DEEP)
+		assert_eq(diff.get_short_summary().find(' of '), -1, diff.get_short_summary())
+		assert_string_contains(diff.get_short_summary(), '==')
+
+
 
 class TestTheRest:
 	extends 'res://addons/gut/test.gd'
@@ -140,35 +163,71 @@ class TestTheRest:
 		assert_false(diff.are_equal(), diff.summarize())
 
 
-	class TestDeepDiff:
-		extends 'res://addons/gut/test.gd'
+class TestDeepDiff:
+	extends 'res://addons/gut/test.gd'
 
-		func test_diff_with_dictionaries_passes_when_not_same_reference_but_same_values():
-			var a1 = [{'a':1}, {'b':2}]
-			var a2 = [{'a':1}, {'b':2}]
-			var diff = ArrayDiff.new(a1, a2, DIFF_TYPE.DEEP)
-			assert_true(diff.are_equal(), diff.summarize())
+	func test_diff_with_dictionaries_passes_when_not_same_reference_but_same_values():
+		var a1 = [{'a':1}, {'b':2}]
+		var a2 = [{'a':1}, {'b':2}]
+		var diff = ArrayDiff.new(a1, a2, DIFF_TYPE.DEEP)
+		assert_true(diff.are_equal(), diff.summarize())
 
-		func test_diff_with_dictionaries_fails_when_different_values():
-			var a1 = [{'a':1}, {'b':1}, {'c':1}, {'d':1}]
-			var a2 = [{'a':1}, {'b':2}, {'c':2}, {'d':2}]
-			var diff = ArrayDiff.new(a1, a2, DIFF_TYPE.DEEP)
-			assert_false(diff.are_equal(), diff.summarize())
+	func test_diff_with_dictionaries_fails_when_different_values():
+		var a1 = [{'a':1}, {'b':1}, {'c':1}, {'d':1}]
+		var a2 = [{'a':1}, {'b':2}, {'c':2}, {'d':2}]
+		var diff = ArrayDiff.new(a1, a2, DIFF_TYPE.DEEP)
+		assert_false(diff.are_equal(), diff.summarize())
 
-		func test_matching_dictionaries_in_sub_arrays():
-			var a1 = [[{'a': 1}]]
-			var a2 = [[{'a': 1}]]
-			var diff = ArrayDiff.new(a1, a2, DIFF_TYPE.DEEP)
-			assert_true(diff.are_equal(), diff.summarize())
+	func test_matching_dictionaries_in_sub_arrays():
+		var a1 = [[{'a': 1}]]
+		var a2 = [[{'a': 1}]]
+		var diff = ArrayDiff.new(a1, a2, DIFF_TYPE.DEEP)
+		assert_true(diff.are_equal(), diff.summarize())
 
-		func test_non_matching_dictionaries_in_sub_arrays():
-			var a1 = [[{'a': 1}], [{'b': 1}], [{'c': 1}]]
-			var a2 = [[{'a': 1}], [{'b': 2}], [{'c': 2}]]
-			var diff = ArrayDiff.new(a1, a2, DIFF_TYPE.DEEP)
-			assert_false(diff.are_equal(), diff.summarize())
+	func test_non_matching_dictionaries_in_sub_arrays():
+		var a1 = [[{'a': 1}], [{'b': 1}], [{'c': 1}]]
+		var a2 = [[{'a': 1}], [{'b': 2}], [{'c': 2}]]
+		var diff = ArrayDiff.new(a1, a2, DIFF_TYPE.DEEP)
+		assert_false(diff.are_equal(), diff.summarize())
 
-		func test_when_deep_compare_non_equal_dictionaries_do_not_contain_disclaimer():
-			var a1 = [[{'a': 2}], [{'b': 3}], [{'c': 4}]]
-			var a2 = [[{'a': 1}], [{'b': 2}], [{'c': 2}]]
-			var diff = ArrayDiff.new(a1, a2, DIFF_TYPE.DEEP)
-			assert_eq(diff.summary.find('reference'), -1, diff.summary)
+	func test_when_deep_compare_non_equal_dictionaries_do_not_contain_disclaimer():
+		var a1 = [[{'a': 2}], [{'b': 3}], [{'c': 4}]]
+		var a2 = [[{'a': 1}], [{'b': 2}], [{'c': 2}]]
+		var diff = ArrayDiff.new(a1, a2, DIFF_TYPE.DEEP)
+		assert_eq(diff.summary.find('reference'), -1, diff.summary)
+
+
+
+class TestComplicatedDisplay:
+	extends 'res://addons/gut/test.gd'
+
+	func test_mix_of_array_and_dictionaries():
+		var a1 = [
+			'a', 'b', 'c',
+			[1, 2, 3, 4],
+			{'a':1, 'b':2, 'c':3},
+			[{'a':1}, {'b':2}]
+		]
+		var a2 = [
+			'a', 2, 'c',
+			['a', 2, 3, 'd'],
+			{'a':11, 'b':12, 'c':13},
+			[{'a':'diff'}, {'b':2}]
+		]
+		var diff = ArrayDiff.new(a1, a2, DIFF_TYPE.DEEP)
+		fail_test(diff.summary  + "\n this fails")
+
+
+	func test_multiple_sub_arrays():
+		var a1 = [
+			[1, 2, 3],
+			[[4, 5, 6], ['same'], [7, 8, 9]]
+		]
+		var a2 = [
+			[11, 12, 13],
+			[[14, 15, 16], ['same'], [17, 18, 19]]
+		]
+		var diff = ArrayDiff.new(a1, a2, DIFF_TYPE.DEEP)
+		fail_test(diff.summary  + "\n this fails")
+
+

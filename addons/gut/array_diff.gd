@@ -5,6 +5,7 @@ extends 'res://addons/gut/compare_result.gd'
 # or you can use get_different_indexes to get an array of the indexes that are
 # different between the two arrays.
 # ------------------------------------------------------------------------------
+const INDENT = '    '
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _a1 = null
 var _a2 =  null
@@ -12,8 +13,10 @@ var _size_diff_threshold = 30
 var _strutils = _utils.Strutils.new()
 var _max_string_length = 100
 var _diff_type = null
-var _different_indexes = []
-var _different_descriptions = []
+
+# key = array indexes that are different
+# value = CompareResult
+var _differences = {}
 
 var _compare = _utils.Comparator.new()
 
@@ -34,6 +37,21 @@ func  get_summary():
 
 func set_different_indexes(val):
 	_block_set('different_indexes', val)
+
+func get_different_count():
+	return _differences.size()
+
+func get_total_count():
+	return  max(_a1.size(), _a2.size())
+
+func get_short_summary():
+	var text = str(_strutils.truncate_string(str(_a1), 50),
+		' ',  _compare.get_compare_symbol(are_equal()), ' ',
+		 _strutils.truncate_string(str(_a2), 50))
+	if(!are_equal()):
+		text += str('  ', get_different_count(), ' of ', get_total_count(), ' indexes do not match.')
+	return text
+
 # -------- comapre_result.gd "interface" ---------------------
 
 enum {
@@ -55,16 +73,7 @@ func _init(array_1, array_2, diff_type=SHALLOW):
 
 func _add_if_different(index, result):
 	if(!result.are_equal):
-		_different_indexes.append(index)
-		var desc = result.summary
-		if(result is _utils.DictionaryDiff and _diff_type == DEEP):
-			desc = str(_compare.format_value(_a1[index], 25), ' != ',
-				_compare.format_value(_a2[index], 25), '  Some keys have different values.')
-		elif(result is _utils.ArrayDiff and _diff_type == DEEP):
-			desc = str(_compare.format_value(_a1[index], 25), ' != ',
-			_compare.format_value(_a2[index], 25), '  Some indexes have different values.')
-
-		_different_descriptions.append(desc)
+		_differences[index] = result
 
 
 func _find_diff_indexes():
@@ -85,18 +94,41 @@ func _find_diff_indexes():
 			_add_if_different(i, _compare.simple(_compare.MISSING, _a2[i], 'index'))
 
 
-func _make_diff_description(max_differences=_size_diff_threshold):
-	var limit = min(_different_indexes.size(), max_differences)
+func _array_to_s(d=_differences, depth=0):
+	var keys = d.keys()
+	var limit = min(keys.size(), _size_diff_threshold)
 
 	var to_return = ""
 
 	for i in range(limit):
-		var idx = _different_indexes[i]
-		to_return += str('  ', idx, ': ', _different_descriptions[i])
+		var key = keys[i]
+		var key_title = str(key, ': ')
+		if(d[key] is _utils.DictionaryDiff):
+			var diff = _strutils.indent_text(str(d[key].differences_to_string()), depth, INDENT)
+			to_return += str(key_title, d[key].get_short_summary(), "\n", diff)
+		elif(d[key] is _utils.ArrayDiff):
+			var open = "[\n"
+			var sub_desc = _array_to_s(d[key]._differences, depth)
+			var close = _strutils.indent_text("\n]", depth, INDENT)
+			to_return += str(key_title, d[key].get_short_summary(), "\n", open,
+				_strutils.indent_text(sub_desc, depth + 1, INDENT), close)
+		else:
+			to_return += _strutils.indent_text(str(key_title, d[key]), depth, INDENT)
+
 		if(i != limit -1):
 			to_return += "\n"
 
 	return to_return
+
+
+func _make_diff_description(max_differences=_size_diff_threshold):
+	_size_diff_threshold = max_differences
+	var text = _array_to_s(_differences, 0)
+
+	return str("[\n", _strutils.indent_text(text, 1, INDENT), "\n]")
+
+func differences_to_string():
+	return _make_diff_description()
 
 # -------------------------
 # Public
@@ -105,7 +137,7 @@ func _make_diff_description(max_differences=_size_diff_threshold):
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func are_equal():
-	return _different_indexes.size() == 0
+	return _differences.size() == 0
 
 
 # ------------------------------------------------------------------------------
@@ -113,7 +145,7 @@ func are_equal():
 # indexes that are missing from one of the arrays.
 # ------------------------------------------------------------------------------
 func get_different_indexes():
-	return _different_indexes
+	return _differences.keys()
 
 
 # ------------------------------------------------------------------------------
@@ -129,9 +161,9 @@ func summarize():
 		summary = str(a1_str, ' == ', a2_str)
 	else:
 		var diff_str = _make_diff_description()
-		var count_summary = str('- ', _different_indexes.size(), ' of ', total_indexes, ' indexes do not match.')
-		if(_different_indexes.size() > _size_diff_threshold):
-			count_summary += str("  Showing ", _size_diff_threshold, " of ", _different_indexes.size(), " differences.")
+		var count_summary = str('- ', _differences.size(), ' of ', total_indexes, ' indexes do not match.')
+		if(_differences.size() > _size_diff_threshold):
+			count_summary += str("  Showing ", _size_diff_threshold, " of ", _differences.size(), " differences.")
 		summary = str(a1_str, ' != ', a2_str, "\n", count_summary, "\n", diff_str)
 
 	return summary

@@ -4,6 +4,7 @@ var _max_length = 100
 var _should_compare_int_to_float = true
 
 const MISSING = '|__missing__gut__compare__value__|'
+const DICTIONARY_DISCLAIMER = 'Dictionaries are compared by reference by default.  See assert_eq in wiki for alternate ways to compare data structures.'
 
 func _cannot_comapre_text(v1, v2):
 	return str('Cannot compare ', _strutils.types[typeof(v1)], ' with ',
@@ -61,10 +62,7 @@ func simple(v1, v2, missing_string=''):
 			if(!array_result.are_equal()):
 				extra = ".\n" + array_result.summarize()
 
-		if(result.are_equal):
-			cmp_str = '=='
-		else:
-			cmp_str = '!='
+		cmp_str = get_compare_symbol(result.are_equal)
 	else:
 		cmp_str = '!='
 		result.are_equal = false
@@ -128,3 +126,9 @@ func get_should_compare_int_to_float():
 
 func set_should_compare_int_to_float(should_compare_int_float):
 	_should_compare_int_to_float = should_compare_int_float
+
+func get_compare_symbol(is_equal):
+	if(is_equal):
+		return '=='
+	else:
+		return '!='

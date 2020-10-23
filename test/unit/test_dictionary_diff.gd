@@ -23,9 +23,52 @@ class TestCompareResultInterace:
 		var diff = DictionaryDiff.new({},{}, _utils.DIFF.DEEP)
 		assert_eq(diff.are_equal, true)
 
+	func test_get_different_count_returns_correct_number():
+		var diff = DictionaryDiff.new({'a':1, 'b':2, 'c':3}, {'a':'a', 'b':2, 'c':'c'}, _utils.DIFF.DEEP)
+		assert_eq(diff.get_different_count(), 2)
+
+	func test_get_total_count_returns_correct_number():
+		var diff = DictionaryDiff.new({'a':1, 'b':2, 'c':3}, {'aa':9, 'b':2, 'cc':10}, _utils.DIFF.DEEP)
+		assert_eq(diff.get_total_count(), 5)
+
+	func test_get_short_summary_includes_x_of_y_keys_when_different():
+		var diff = DictionaryDiff.new({'a':1, 'b':2, 'c':3}, {'aa':9, 'b':2, 'cc':10}, _utils.DIFF.DEEP)
+		assert_string_contains(diff.get_short_summary(), '4 of 5')
+
+	func test_get_short_summary_does_not_include_x_of_y_when_equal():
+		var diff = DictionaryDiff.new({}, {}, _utils.DIFF.DEEP)
+		assert_eq(diff.get_short_summary().find(' of '), -1, diff.get_short_summary())
+		assert_string_contains(diff.get_short_summary(), '==')
 
 
+class TestComplexOutput:
+	extends 'res://addons/gut/test.gd'
 
+	func test_complex_real_use_output():
+		var d1 = {'a':1, 'dne_in_d2':'asdf', 'b':{'c':88, 'd':22, 'f':{'g':1, 'h':200}}, 'i':[1, 2, 3], 'z':{}}
+		var d2 = {'a':1, 'b':{'c':99, 'e':'letter e', 'f':{'g':1, 'h':2}}, 'i':[1, 'two', 3], 'z':{}}
+		var dd = DictionaryDiff.new(d1, d2)
+		fail_test(dd.summarize() + "\n\n this should fail")
+
+	func test_large_dictionary_summary():
+		var d1 = {}
+		var d2 = {}
+		for i in range(3):
+			for j in range(65, 91):
+				var one_char = PoolByteArray([j]).get_string_from_ascii()
+				var key = ''
+				for x in range(i + 1):
+					key += one_char
+				if(key == 'BB'):
+					d1[key] = d1.duplicate()
+					d2[key] = d2.duplicate()
+				else:
+					d1[key] = (i + 1) * j
+					d2[key] = one_char
+
+		var dd = DictionaryDiff.new(d1, d2)
+		gut.p(dd.summarize())
+		assert_lt(dd.summarize().split("\n").size(), 40)
 
 
 
@@ -74,25 +117,6 @@ func test_summarize():
 	var dd = DictionaryDiff.new(d1, d2)
 	gut.p(dd.summarize())
 
-func test_large_dictionary_summary():
-	var d1 = {}
-	var d2 = {}
-	for i in range(3):
-		for j in range(65, 91):
-			var one_char = PoolByteArray([j]).get_string_from_ascii()
-			var key = ''
-			for x in range(i + 1):
-				key += one_char
-			if(key == 'BB'):
-				d1[key] = d1.duplicate()
-				d2[key] = d2.duplicate()
-			else:
-				d1[key] = (i + 1) * j
-				d2[key] = one_char
-
-	var dd = DictionaryDiff.new(d1, d2)
-	gut.p(dd.summarize())
-	assert_lt(dd.summarize().split("\n").size(), 40)
 
 func test_with_obj_as_keys():
 	var d1 = {}
@@ -142,11 +166,6 @@ func test_get_different_keys_returns_a_copy_of_the_keys():
 	keys.erase('a')
 	assert_eq(dd.get_different_keys().size(), 1)
 
-func test_complex_real_use_output():
-	var d1 = {'a':1, 'dne_in_d2':'asdf', 'b':{'c':88, 'd':22, 'f':{'g':1, 'h':200}}, 'z':{}}
-	var d2 = {'a':1, 'b':{'c':99, 'e':'letter e', 'f':{'g':1, 'h':2}}, 'z':{}}
-	var dd = DictionaryDiff.new(d1, d2)
-	assert_true(dd.are_equal(), dd.summarize() + "\n\n this should fail")
 
 func test_dictionary_key_and_non_dictionary_key():
 	var d1 = {'a':1, 'b':{'c':1}}
@@ -171,3 +190,24 @@ func test_when_shallow_ditionaries_in_arrays_are_not_checked_for_values():
 	var d2 = {'a':[{'b':1}]}
 	var diff = DictionaryDiff.new(d1, d2, DIFF_TYPE.SHALLOW)
 	assert_false(diff.are_equal(), diff.summarize())
+
+
+func test_when_deep_diff_then_different_arrays_contains_ArrayDiff():
+	var d1 = {'a':[1, 2, 3]}
+	var d2 = {'a':[3, 4, 5]}
+	var diff = DictionaryDiff.new(d1, d2, DIFF_TYPE.DEEP)
+	assert_is(diff.different_keys['a'], ArrayDiff)
+
+
+func test_large_differences_in_sub_arrays_does_not_exceed_max_differences_shown():
+	var d1 = {'a':[], 'b':[]}
+	var d2 = {'a':[], 'b':[]}
+	for i in range(200):
+		d1['a'].append(i)
+		d2['a'].append(i + 1)
+
+		d1['b'].append(i)
+		d2['b'].append(i + 1)
+
+	var diff = DictionaryDiff.new(d1, d2, DIFF_TYPE.DEEP)
+	assert_lt(diff.summary.split("\n").size(), 50, diff.summary)
