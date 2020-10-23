@@ -1,5 +1,6 @@
 var are_equal = null setget set_are_equal, get_are_equal
 var summary = null setget set_summary, get_summary
+var max_differences = 30 setget set_max_differences, get_max_differences
 
 func _block_set(which, val):
 	push_error(str('cannot set ', which, ', value [', val, '] ignored.'))
@@ -27,3 +28,9 @@ func get_different_count():
 
 func get_short_summary():
 	return summary
+
+func get_max_differences():
+	return max_differences
+
+func set_max_differences(max_diff):
+	max_differences = max_diff

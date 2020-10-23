@@ -149,8 +149,8 @@ func test_sub_dictionary_compare_when_not_equal():
 	var d2 = {'a':1, 'b':{'c':99, 'e':'letter e', 'f':{'g':1, 'h':2}}, 'z':{}}
 	var dd = DictionaryDiff.new(d1, d2)
 	assert_false(dd.are_equal(), dd.summarize())
-	assert_eq(dd.get_total_key_count(), 10, 'total key count')
-	assert_eq(dd.get_total_different_count(), 7, 'total different count')
+	assert_eq(dd.get_total_count(), 10, 'total key count')
+	assert_eq(dd.get_different_count(), 7, 'total different count')
 
 func test_sub_dictionary_missing_in_other():
 	var d1 = {'a': 1, 'dne_in_d2':{'x':'x', 'y':'y', 'z':'z'}, 'r':1}

@@ -103,7 +103,7 @@ class TestTheRest:
 
 	func test_when_sizes_do_not_match_and_threshold_exceeded_then_summarize_tells_you():
 		var ad = ArrayDiff.new([3, 2, 1, 98, 99], [1, 2, 3])
-		ad._size_diff_threshold = 1
+		ad.max_differences = 1
 		assert_string_contains(ad.summarize(), 'Showing')
 
 	func test_when_arrays_are_large_then_summarize_truncates():

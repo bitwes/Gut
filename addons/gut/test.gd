@@ -126,7 +126,6 @@ var _fail_pass_text = []
 
 const EDITOR_PROPERTY = PROPERTY_USAGE_SCRIPT_VARIABLE | PROPERTY_USAGE_DEFAULT
 const VARIABLE_PROPERTY = PROPERTY_USAGE_SCRIPT_VARIABLE
-const DICTIONARY_DISCLAIMER = "Use DictionaryDiff class to compare values.  See GUT wiki for more information."
 
 # Summary counts for the test.
 var _summary = {

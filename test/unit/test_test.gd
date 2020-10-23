@@ -163,14 +163,14 @@ class TestAssertEq:
 		var d_pointer = d
 		gr.test.assert_eq(d, d_pointer)
 		assert_pass(gr.test)
-		assert_string_contains(gr.test._fail_pass_text[0], DICTIONARY_DISCLAIMER)
+		assert_string_contains(gr.test._fail_pass_text[0], _diff_tool.DICTIONARY_DISCLAIMER)
 
 	func test_dictionary_not_compared_by_value():
 		var d  = {'a':1}
 		var d2 = {'a':1}
 		gr.test.assert_eq(d, d2)
 		assert_fail(gr.test)
-		assert_string_contains(gr.test._fail_pass_text[0], DICTIONARY_DISCLAIMER)
+		assert_string_contains(gr.test._fail_pass_text[0], _diff_tool.DICTIONARY_DISCLAIMER)
 
 
 class TestAssertNe:
@@ -212,14 +212,14 @@ class TestAssertNe:
 		var d_pointer = d
 		gr.test.assert_ne(d, d_pointer)
 		assert_fail(gr.test)
-		assert_string_contains(gr.test._fail_pass_text[0], DICTIONARY_DISCLAIMER)
+		assert_string_contains(gr.test._fail_pass_text[0], _diff_tool.DICTIONARY_DISCLAIMER)
 
 	func test_dictionary_not_compared_by_value():
 		var d  = {'a':1}
 		var d2 = {'a':1}
 		gr.test.assert_ne(d, d2)
 		assert_pass(gr.test)
-		assert_string_contains(gr.test._fail_pass_text[0], DICTIONARY_DISCLAIMER)
+		assert_string_contains(gr.test._fail_pass_text[0], _diff_tool.DICTIONARY_DISCLAIMER)
 
 class TestAssertAlmostEq:
 	extends BaseTestClass

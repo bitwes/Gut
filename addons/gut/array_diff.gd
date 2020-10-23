@@ -9,7 +9,6 @@ const INDENT = '    '
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _a1 = null
 var _a2 =  null
-var _size_diff_threshold = 30
 var _strutils = _utils.Strutils.new()
 var _max_string_length = 100
 var _diff_type = null
@@ -82,6 +81,7 @@ func _find_diff_indexes():
 		if(i < _a2.size()):
 			if(_diff_type == DEEP):
 				result = _compare.deep(_a1[i], _a2[i])
+				result.max_differences = 20
 			else:
 				result = _compare.simple(_a1[i], _a2[i])
 		else:
@@ -96,7 +96,7 @@ func _find_diff_indexes():
 
 func _array_to_s(d=_differences, depth=0):
 	var keys = d.keys()
-	var limit = min(keys.size(), _size_diff_threshold)
+	var limit = min(keys.size(), max_differences)
 
 	var to_return = ""
 
@@ -121,8 +121,8 @@ func _array_to_s(d=_differences, depth=0):
 	return to_return
 
 
-func _make_diff_description(max_differences=_size_diff_threshold):
-	_size_diff_threshold = max_differences
+func _make_diff_description(max_differences=max_differences):
+	max_differences = max_differences
 	var text = _array_to_s(_differences, 0)
 
 	return str("[\n", _strutils.indent_text(text, 1, INDENT), "\n]")
@@ -162,8 +162,8 @@ func summarize():
 	else:
 		var diff_str = _make_diff_description()
 		var count_summary = str('- ', _differences.size(), ' of ', total_indexes, ' indexes do not match.')
-		if(_differences.size() > _size_diff_threshold):
-			count_summary += str("  Showing ", _size_diff_threshold, " of ", _differences.size(), " differences.")
+		if(_differences.size() > max_differences):
+			count_summary += str("  Showing ", max_differences, " of ", _differences.size(), " differences.")
 		summary = str(a1_str, ' != ', a2_str, "\n", count_summary, "\n", diff_str)
 
 	return summary

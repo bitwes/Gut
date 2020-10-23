@@ -55,7 +55,7 @@ func simple(v1, v2, missing_string=''):
 				extra = '.  Values point to the same dictionary.  '
 			else:
 				extra = '.  Values point to different dictionaries.  '
-			extra += 'Dictionaries are compared by reference.'
+			extra += DICTIONARY_DISCLAIMER
 
 		if(typeof(v1) == TYPE_ARRAY):
 			var array_result = _utils.ArrayDiff.new(v1, v2)
