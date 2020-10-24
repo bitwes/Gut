@@ -67,8 +67,9 @@ class TestComplexOutput:
 					d2[key] = one_char
 
 		var dd = DictionaryDiff.new(d1, d2)
+		dd.max_differences = 20
 		gut.p(dd.summarize())
-		assert_lt(dd.summarize().split("\n").size(), 45)
+		assert_lt(dd.summarize().split("\n").size(), 50)
 
 
 
@@ -84,27 +85,27 @@ func test_constructor_sets_diff_type():
 	var diff = DictionaryDiff.new({}, {}, DIFF_TYPE.SHALLOW)
 	assert_eq(diff.get_diff_type(), DIFF_TYPE.SHALLOW)
 
-func test_get_different_keys_returns_empty_array_when_matching():
+func test_get_differences_returns_empty_array_when_matching():
 	var dd = DictionaryDiff.new({'a':'asdf'}, {'a':'asdf'})
-	assert_eq(dd.get_different_keys().keys(), [])
+	assert_eq(dd.get_differences().keys(), [])
 
-func test_get_different_keys_returns_non_matching_keys():
+func test_get_differences_returns_non_matching_keys():
 	var dd = DictionaryDiff.new({'a':'asdf', 'b':1}, {'a':'asdf', 'b':2})
-	assert_eq(dd.get_different_keys().keys(), ['b'])
+	assert_eq(dd.get_differences().keys(), ['b'])
 
 func test_get_differetn_keys_returns_missing_indexes_in_d2():
 	var dd = DictionaryDiff.new({'a':'asdf', 'b':1}, {'a':'asdf'})
-	assert_eq(dd.get_different_keys().keys(), ['b'])
+	assert_eq(dd.get_differences().keys(), ['b'])
 
 func test_get_differetn_keys_returns_missing_indexes_in_d1():
 	var dd = DictionaryDiff.new({'a':'asdf'}, {'a':'asdf', 'b':1})
-	assert_eq(dd.get_different_keys().keys(), ['b'])
+	assert_eq(dd.get_differences().keys(), ['b'])
 
-func test_get_different_keys_works_with_different_datatypes():
+func test_get_differences_works_with_different_datatypes():
 	var d1 = {'a':1, 'b':'two', 'c':autofree(Node2D.new())}
 	var d2 = {'a':1.0, 'b':2, 'c':_utils.Strutils.new()}
 	var dd = DictionaryDiff.new(d1, d2)
-	assert_eq(dd.get_different_keys().keys(), ['a', 'b', 'c'])
+	assert_eq(dd.get_differences().keys(), ['a', 'b', 'c'])
 
 func test_are_equal_true_for_matching_dictionaries():
 	assert_true(DictionaryDiff.new({}, {}).are_equal(), 'empty')
@@ -160,11 +161,11 @@ func test_sub_dictionary_missing_in_other():
 	assert_string_contains(summary, 'key>' + ' !=')
 	assert_string_contains(summary, ' != ' + '<missing')
 
-func test_get_different_keys_returns_a_copy_of_the_keys():
+func test_get_differences_returns_a_copy_of_the_keys():
 	var dd = DictionaryDiff.new({'a':1}, {})
-	var keys = dd.get_different_keys()
+	var keys = dd.get_differences()
 	keys.erase('a')
-	assert_eq(dd.get_different_keys().size(), 1)
+	assert_eq(dd.get_differences().size(), 1)
 
 
 func test_dictionary_key_and_non_dictionary_key():
@@ -196,7 +197,7 @@ func test_when_deep_diff_then_different_arrays_contains_ArrayDiff():
 	var d1 = {'a':[1, 2, 3]}
 	var d2 = {'a':[3, 4, 5]}
 	var diff = DictionaryDiff.new(d1, d2, DIFF_TYPE.DEEP)
-	assert_is(diff.different_keys['a'], ArrayDiff)
+	assert_is(diff.differences['a'], ArrayDiff)
 
 
 func test_large_differences_in_sub_arrays_does_not_exceed_max_differences_shown():
@@ -211,3 +212,5 @@ func test_large_differences_in_sub_arrays_does_not_exceed_max_differences_shown(
 
 	var diff = DictionaryDiff.new(d1, d2, DIFF_TYPE.DEEP)
 	assert_lt(diff.summary.split("\n").size(), 50, diff.summary)
+
+

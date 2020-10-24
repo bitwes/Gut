@@ -37,7 +37,7 @@ func set_max_differences(max_diff):
 	max_differences = max_diff
 
 func get_differences():
-	return differences
+	return differences.duplicate()
 
 func set_differences(diffs):
 	_block_set('differences', diffs)

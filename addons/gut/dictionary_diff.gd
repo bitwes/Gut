@@ -6,8 +6,8 @@ enum {
 	DEEP,
 	SHALLOW
 }
-
 var _utils = load('res://addons/gut/utils.gd').get_instance()
+
 var strutils = _utils.Strutils.new()
 var compare = _utils.Comparator.new()
 
@@ -25,7 +25,6 @@ var _total_different = 0
 var _diff_type = SHALLOW
 
 # -------- comapre_result.gd "interface" ---------------------
-var different_keys = null setget set_different_keys ,get_different_keys
 
 func  set_are_equal(val):
 	_block_set('are_equal', val)
@@ -39,9 +38,6 @@ func set_summary(val):
 func get_summary():
 	return summarize()
 
-func set_different_keys(val):
-	_block_set('different_keys', val)
-
 func get_different_count():
 	return _total_different
 
@@ -53,19 +49,10 @@ func get_short_summary():
 		' ', compare.get_compare_symbol(are_equal()), ' ',
 		strutils.truncate_string(str(_d2), 50))
 	if(!are_equal()):
-		text += _do_not_match_clause()
+		text += str('  ', get_different_count(), ' of ', get_total_count(), ' keys do not match.')
 	return text
 # -------- comapre_result.gd "interface" ---------------------
 
-
-func _do_not_match_clause():
-	return str('  ', get_different_count(), ' of ', get_total_count(), ' keys do not match.')
-
-func _showing_clause():
-	var to_return = ''
-	if(_total_different > max_differences):
-		to_return += str("  Showing ", max_differences, " of ", _total_different, " differences.")
-	return to_return
 
 func _init(d1, d2, diff_type=DEEP):
 	_d1 = d1
@@ -116,61 +103,23 @@ func _find_differences():
 	return diff_keys
 
 
-func _dictionary_to_s(d, depth):
-	var to_return = ''
-	var keys = d.keys()
-	keys.sort()
-	var idx = 0
-	while(idx < keys.size() and _num_shown < max_differences):
-		var key = keys[idx]
-		if(d[key] is _utils.DictionaryDiff):
-			var open = str(strutils.type2str(key), ':', d[key].get_short_summary(), "\n{\n")
-			var sub_desc = _dictionary_to_s(d[key].different_keys, depth + 1)
-			if(_total_key_count > max_differences):
-				sub_desc += "...\n"
-			var close = "}\n"
-			to_return +=  str(open, strutils.indent_text(sub_desc, depth + 1, INDENT), close)
-		elif(d[key] is _utils.ArrayDiff):
-			var diff = strutils.indent_text(d[key].differences_to_string(), depth, INDENT)
-			to_return += str(strutils.type2str(key), ":  ", d[key].get_short_summary(), "\n", diff)
-		else:
-			to_return += str(strutils.type2str(key), ":  ", d[key], "\n")
-		_num_shown += 1
-		idx += 1
-
-	return to_return
-
-
-func differences_to_string():
-	_num_shown = 0
-	var text = _dictionary_to_s(differences, 0)
-	if(_total_key_count > max_differences):
-		text += "...\n"
-
-	return str("{\n", strutils.indent_text(text, 1, INDENT), "\n}")
-
-
 func summarize():
 	var summary = ''
-	var d1_str = strutils.truncate_string(str(_d1), _max_string_length)
-	var d2_str = strutils.truncate_string(str(_d2), _max_string_length)
 
 	if(are_equal()):
+		var d1_str = strutils.truncate_string(str(_d1), _max_string_length)
+		var d2_str = strutils.truncate_string(str(_d2), _max_string_length)
 		summary = str(d1_str, ' == ', d2_str)
 	else:
-		var diff_str = differences_to_string()
-		var size_compare = str("- ", _do_not_match_clause())
-		size_compare += _showing_clause()
-		summary = str(d1_str, ' != ', d2_str, "\n", size_compare, "\n", diff_str)
+		var formatter = load('res://addons/gut/diff_formatter.gd').new()
+		formatter.set_max_to_display(max_differences)
+		summary = formatter.make_it(self)
+
 	return summary
 
 
 func are_equal():
 	return differences.size() == 0
-
-
-func get_different_keys():
-	return differences.duplicate()
 
 
 func  get_total_key_count():

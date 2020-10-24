@@ -153,7 +153,7 @@ class TestShallowCompare:
 
 	func test_comparing_dictionaries_populates_different_keys():
 		var result = _compare.shallow({'a':1}, {'b':2})
-		assert_true(result.different_keys.size() == 2)
+		assert_true(result.differences.size() == 2)
 
 	func test_comparing_dictionaries_populates_are_equal():
 		var result = _compare.shallow({}, {})
@@ -204,7 +204,7 @@ class TestDeepCompare:
 
 	func test_comparing_dictionaries_populates_different_keys():
 		var result = _compare.deep({'a':1}, {'b':2})
-		assert_true(result.different_keys.size() == 2)
+		assert_true(result.differences.size() == 2)
 
 	func test_comparing_dictionaries_populates_are_equal():
 		var result = _compare.deep({}, {})

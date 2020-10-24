@@ -99,12 +99,7 @@ class TestTheRest:
 
 	func test_get_summary_text_lists_differences():
 		var ad = ArrayDiff.new([3, 2, 1, 98, 99], [1, 2, 3])
-		assert_string_contains(ad.summarize(), '0: 3 !=')
-
-	func test_when_sizes_do_not_match_and_threshold_exceeded_then_summarize_tells_you():
-		var ad = ArrayDiff.new([3, 2, 1, 98, 99], [1, 2, 3])
-		ad.max_differences = 1
-		assert_string_contains(ad.summarize(), 'Showing')
+		assert_string_contains(ad.summarize(), '0:  3 !=')
 
 	func test_when_arrays_are_large_then_summarize_truncates():
 		var a1 = []
