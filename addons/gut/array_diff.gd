@@ -6,14 +6,16 @@ extends 'res://addons/gut/compare_result.gd'
 # different between the two arrays.
 # ------------------------------------------------------------------------------
 var _utils = load('res://addons/gut/utils.gd').get_instance()
-const INDENT = '    '
+var _strutils = _utils.Strutils.new()
+var _compare = _utils.Comparator.new()
+
 var _a1 = null
 var _a2 =  null
-var _strutils = _utils.Strutils.new()
-var _max_string_length = 100
+
 var _diff_type = null
 
-var _compare = _utils.Comparator.new()
+var _total_different = 0
+
 
 # -------- comapre_result.gd "interface" ---------------------
 var different_indexes = null setget set_different_indexes ,get_different_indexes
@@ -47,13 +49,11 @@ func get_short_summary():
 		text += str('  ', get_different_count(), ' of ', get_total_count(), ' indexes do not match.')
 	return text
 
+func get_brackets():
+	return {'open':'[', 'close':']'}
+
 # -------- comapre_result.gd "interface" ---------------------
 
-enum {
-	DEEP,
-	SHALLOW,
-	SIMPLE
-}
 
 # -------------------------
 # Private
@@ -66,28 +66,24 @@ func _init(array_1, array_2, diff_type=SHALLOW):
 	_find_diff_indexes()
 
 
-func _add_if_different(index, result):
-	if(!result.are_equal):
-		differences[index] = result
-
-
 func _find_diff_indexes():
 	for i in range(_a1.size()):
 		var result = null
 		if(i < _a2.size()):
 			if(_diff_type == DEEP):
 				result = _compare.deep(_a1[i], _a2[i])
-				result.max_differences = 20
 			else:
 				result = _compare.simple(_a1[i], _a2[i])
 		else:
 			result = _compare.simple(_a1[i], _compare.MISSING, 'index')
 
-		_add_if_different(i, result)
+		if(!result.are_equal):
+			differences[i] = result
 
 	if(_a1.size() < _a2.size()):
 		for i in range(_a1.size(), _a2.size()):
-			_add_if_different(i, _compare.simple(_compare.MISSING, _a2[i], 'index'))
+			differences[i] = _compare.simple(_compare.MISSING, _a2[i], 'index')
+
 
 
 # -------------------------
@@ -116,9 +112,7 @@ func summarize():
 
 	var total_indexes = max(_a1.size(), _a2.size())
 	if(are_equal()):
-		var a1_str = _strutils.truncate_string(str(_a1), _max_string_length)
-		var a2_str = _strutils.truncate_string(str(_a2), _max_string_length)
-		summary = str(a1_str, ' == ', a2_str)
+		summary = get_short_summary()
 	else:
 		var formatter = load('res://addons/gut/diff_formatter.gd').new()
 		formatter.set_max_to_display(max_differences)

@@ -1,32 +1,19 @@
 extends 'res://addons/gut/compare_result.gd'
 
 
-const INDENT = '    '
-enum {
-	DEEP,
-	SHALLOW
-}
 var _utils = load('res://addons/gut/utils.gd').get_instance()
-
-var strutils = _utils.Strutils.new()
-var compare = _utils.Comparator.new()
-
-var MISSING_KEY = compare.MISSING
+var _strutils = _utils.Strutils.new()
+var _compare = _utils.Comparator.new()
 
 var _d1 = null
 var _d2 = null
 
-var _max_string_length = 100
-var _num_shown = 0
-
 var _total_key_count = 0
-var _total_different = 0
 
-var _diff_type = SHALLOW
+var _diff_type = null
 
 # -------- comapre_result.gd "interface" ---------------------
-
-func  set_are_equal(val):
+func set_are_equal(val):
 	_block_set('are_equal', val)
 
 func get_are_equal():
@@ -39,18 +26,22 @@ func get_summary():
 	return summarize()
 
 func get_different_count():
-	return _total_different
+	return differences.size()
 
 func  get_total_count():
 	return _total_key_count
 
 func get_short_summary():
-	var text = str(strutils.truncate_string(str(_d1), 50),
-		' ', compare.get_compare_symbol(are_equal()), ' ',
-		strutils.truncate_string(str(_d2), 50))
+	var text = str(_strutils.truncate_string(str(_d1), 50),
+		' ', _compare.get_compare_symbol(are_equal()), ' ',
+		_strutils.truncate_string(str(_d2), 50))
 	if(!are_equal()):
 		text += str('  ', get_different_count(), ' of ', get_total_count(), ' keys do not match.')
 	return text
+
+func get_brackets():
+	return {'open':'{', 'close':'}'}
+
 # -------- comapre_result.gd "interface" ---------------------
 
 
@@ -58,7 +49,7 @@ func _init(d1, d2, diff_type=DEEP):
 	_d1 = d1
 	_d2 = d2
 	_diff_type = diff_type
-	compare.set_should_compare_int_to_float(false)
+	_compare.set_should_compare_int_to_float(false)
 	differences = _find_differences()
 
 
@@ -71,34 +62,30 @@ func _find_differences():
 	_total_key_count += d1_keys.size()
 	for key in d1_keys:
 		if(!_d2.has(key)):
-			diff_keys[key] = compare.simple(_d1[key], compare.MISSING, 'key')
-			_total_different += 1
+			diff_keys[key] = _compare.simple(_d1[key], _compare.MISSING, 'key')
 		else:
 			d2_keys.remove(d2_keys.find(key))
 
 			var result = null
 			if(_diff_type == DEEP):
-				result = compare.deep(_d1[key], _d2[key])
-				result.max_differences = 20
+				result = _compare.deep(_d1[key], _d2[key])
 			else:
-				result = compare.simple(_d1[key], _d2[key])
+				result = _compare.simple(_d1[key], _d2[key])
+
+			#diff_keys[key] = result
 
 			if(result is _utils.DictionaryDiff):
 				_total_key_count += result.get_total_count()
-				_total_different += result.get_different_count()
 				if(!result.are_equal):
-					_total_different += 1
 					diff_keys[key] = result
 			else:
 				if(!result.are_equal):
-					_total_different += 1
 					diff_keys[key] = result
 
 	# Process all the keys in d2 that didn't exist in d1
 	_total_key_count += d2_keys.size()
-	_total_different += d2_keys.size()
 	for i in range(d2_keys.size()):
-		diff_keys[d2_keys[i]] = compare.simple(compare.MISSING, _d2[d2_keys[i]], 'key').summary
+		diff_keys[d2_keys[i]] = _compare.simple(_compare.MISSING, _d2[d2_keys[i]], 'key')
 
 	return diff_keys
 
@@ -107,9 +94,7 @@ func summarize():
 	var summary = ''
 
 	if(are_equal()):
-		var d1_str = strutils.truncate_string(str(_d1), _max_string_length)
-		var d2_str = strutils.truncate_string(str(_d2), _max_string_length)
-		summary = str(d1_str, ' == ', d2_str)
+		summary = get_short_summary()
 	else:
 		var formatter = load('res://addons/gut/diff_formatter.gd').new()
 		formatter.set_max_to_display(max_differences)
@@ -120,14 +105,6 @@ func summarize():
 
 func are_equal():
 	return differences.size() == 0
-
-
-func  get_total_key_count():
-	return
-
-
-func get_total_different_count():
-	return
 
 
 func get_diff_type():

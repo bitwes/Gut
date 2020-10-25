@@ -40,6 +40,10 @@ class TestCompareResultInterace:
 		assert_eq(diff.get_short_summary().find(' of '), -1, diff.get_short_summary())
 		assert_string_contains(diff.get_short_summary(), '==')
 
+	func test_brackets():
+		var diff = DictionaryDiff.new({}, {})
+		assert_eq(diff.get_brackets().open, '{', 'open')
+		assert_eq(diff.get_brackets().close, '}', 'close')
 
 class TestComplexOutput:
 	extends 'res://addons/gut/test.gd'
@@ -146,12 +150,12 @@ func test_sub_dictionary_compare_when_equal():
 	assert_true(dd.are_equal(), dd.summarize())
 
 func test_sub_dictionary_compare_when_not_equal():
-	var d1 = {'a':1, 'dne_in_d2':'asdf', 'b':{'c':88, 'd':22, 'f':{'g':1, 'h':200}}, 'z':{}}
+	var d1 = {'a':1, 'b':{'c':88, 'd':22, 'f':{'g':1, 'h':200}}, 'z':{}, 'dne_in_d2':'asdf'}
 	var d2 = {'a':1, 'b':{'c':99, 'e':'letter e', 'f':{'g':1, 'h':2}}, 'z':{}}
 	var dd = DictionaryDiff.new(d1, d2)
 	assert_false(dd.are_equal(), dd.summarize())
 	assert_eq(dd.get_total_count(), 10, 'total key count')
-	assert_eq(dd.get_different_count(), 7, 'total different count')
+	assert_eq(dd.get_different_count(), 2, 'total different count')
 
 func test_sub_dictionary_missing_in_other():
 	var d1 = {'a': 1, 'dne_in_d2':{'x':'x', 'y':'y', 'z':'z'}, 'r':1}
@@ -160,12 +164,6 @@ func test_sub_dictionary_missing_in_other():
 	var summary = diff.summarize()
 	assert_string_contains(summary, 'key>' + ' !=')
 	assert_string_contains(summary, ' != ' + '<missing')
-
-func test_get_differences_returns_a_copy_of_the_keys():
-	var dd = DictionaryDiff.new({'a':1}, {})
-	var keys = dd.get_differences()
-	keys.erase('a')
-	assert_eq(dd.get_differences().size(), 1)
 
 
 func test_dictionary_key_and_non_dictionary_key():
@@ -211,6 +209,7 @@ func test_large_differences_in_sub_arrays_does_not_exceed_max_differences_shown(
 		d2['b'].append(i + 1)
 
 	var diff = DictionaryDiff.new(d1, d2, DIFF_TYPE.DEEP)
+	diff.max_differences = 10
 	assert_lt(diff.summary.split("\n").size(), 50, diff.summary)
 
 

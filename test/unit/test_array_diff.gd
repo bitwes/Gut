@@ -44,6 +44,10 @@ class TestCompareResultInterace:
 		assert_eq(diff.get_short_summary().find(' of '), -1, diff.get_short_summary())
 		assert_string_contains(diff.get_short_summary(), '==')
 
+	func test_brackets():
+		var diff = ArrayDiff.new([], [])
+		assert_eq(diff.get_brackets().open, '[', 'open')
+		assert_eq(diff.get_brackets().close, ']', 'close')
 
 
 class TestTheRest:

@@ -6,25 +6,12 @@ const ABSOLUTE_MAX_DISPLAYED = 10000
 const UNLIMITED = -1
 
 
-func _get_brackets(diff):
-	var to_return = {}
-	if(diff is _utils.ArrayDiff):
-		to_return.open = '['
-		to_return.close = ']'
-	elif(diff is _utils.DictionaryDiff):
-		to_return.open = '{'
-		to_return.close = '}'
-	else:
-		to_return = null
-	return to_return
-
-
 func _single_diff(diff, depth=0):
 	var to_return = ""
-	var brackets = _get_brackets(diff)
+	var brackets = diff.get_brackets()
 
 	if(brackets != null and !diff.are_equal):
-		to_return = diff.get_short_summary() + "\n"
+		to_return = ''#diff.get_short_summary() + "\n"
 		to_return += str(brackets.open, "\n",
 			_strutils.indent_text(differences_to_s(diff.differences, depth), depth+1, INDENT), "\n",
 			brackets.close)
@@ -39,7 +26,8 @@ func make_it(diff):
 	if(diff.are_equal):
 		to_return = diff.summary
 	else:
-		to_return = _single_diff(diff, 0)
+		to_return = str(diff.get_short_summary(), "\n",
+		_strutils.indent_text(_single_diff(diff, 0), 1, '  '))
 	return to_return
 
 
@@ -70,3 +58,4 @@ func set_max_to_display(max_to_display):
 	_max_to_display = max_to_display
 	if(_max_to_display == UNLIMITED):
 		_max_to_display = ABSOLUTE_MAX_DISPLAYED
+
