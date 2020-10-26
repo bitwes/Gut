@@ -3,6 +3,8 @@ extends 'res://addons/gut/test.gd'
 class TestFormatter:
 	extends 'res://addons/gut/test.gd'
 
+	var ArrayDiff = _utils.DiffTool
+	var DictionaryDiff = _utils.DiffTool
 	var Formatter = load('res://addons/gut/diff_formatter.gd')
 
 	func test_equal_arrays():

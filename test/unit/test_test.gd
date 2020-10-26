@@ -84,16 +84,6 @@ class TestMiscTests:
 		# I cannot think of a way to test this without some giant amount of
 		# testing legwork.
 
-	func test_diff_types_match():
-		var a_diff = ArrayDiff.new([],[])
-		var d_diff = DictionaryDiff.new({},{})
-
-		assert_eq(DIFF_TYPE.DEEP, a_diff.DEEP, 'ArrayDiff DEEP')
-		assert_eq(DIFF_TYPE.DEEP, d_diff.DEEP, 'DictionaryDiff DEEP')
-
-		assert_eq(DIFF_TYPE.SHALLOW, a_diff.SHALLOW, 'ArrayDiff SHALLOW')
-		assert_eq(DIFF_TYPE.SHALLOW, d_diff.SHALLOW, 'DictionaryDiff SHALLOW')
-
 
 class TestAssertEq:
 	extends BaseTestClass
@@ -163,14 +153,14 @@ class TestAssertEq:
 		var d_pointer = d
 		gr.test.assert_eq(d, d_pointer)
 		assert_pass(gr.test)
-		assert_string_contains(gr.test._fail_pass_text[0], _diff_tool.DICTIONARY_DISCLAIMER)
+		assert_string_contains(gr.test._fail_pass_text[0], _compare.DICTIONARY_DISCLAIMER)
 
 	func test_dictionary_not_compared_by_value():
 		var d  = {'a':1}
 		var d2 = {'a':1}
 		gr.test.assert_eq(d, d2)
 		assert_fail(gr.test)
-		assert_string_contains(gr.test._fail_pass_text[0], _diff_tool.DICTIONARY_DISCLAIMER)
+		assert_string_contains(gr.test._fail_pass_text[0], _compare.DICTIONARY_DISCLAIMER)
 
 
 class TestAssertNe:
@@ -212,14 +202,14 @@ class TestAssertNe:
 		var d_pointer = d
 		gr.test.assert_ne(d, d_pointer)
 		assert_fail(gr.test)
-		assert_string_contains(gr.test._fail_pass_text[0], _diff_tool.DICTIONARY_DISCLAIMER)
+		assert_string_contains(gr.test._fail_pass_text[0], _compare.DICTIONARY_DISCLAIMER)
 
 	func test_dictionary_not_compared_by_value():
 		var d  = {'a':1}
 		var d2 = {'a':1}
 		gr.test.assert_ne(d, d2)
 		assert_pass(gr.test)
-		assert_string_contains(gr.test._fail_pass_text[0], _diff_tool.DICTIONARY_DISCLAIMER)
+		assert_string_contains(gr.test._fail_pass_text[0], _compare.DICTIONARY_DISCLAIMER)
 
 class TestAssertAlmostEq:
 	extends BaseTestClass
@@ -1638,31 +1628,4 @@ class TestPassFailTestMethods:
 		gr.test_with_gut.fail_test('fail this')
 		assert_eq(gr.test_with_gut.get_fail_count(), 1, 'test count')
 
-
-class TestNonMatchingArrayIndexes:
-	extends BaseTestClass
-
-	func test_empty_when_matching():
-		var a1 = [1, 2, 3]
-		var a2 = [1, 2, 3]
-		var result = gr.test.get_non_matching_array_indexes(a1, a2)
-		assert_eq(result, [])
-
-	func test_lists_missing_indexes_in_1():
-		var a1 = [1, 2, 3]
-		var a2 = [1, 2, 3, 4]
-		var result = gr.test.get_non_matching_array_indexes(a1, a2)
-		assert_eq(result, [3])
-
-	func test_lists_missing_indexes_in_2():
-		var a1 = [1, 2, 3, 4]
-		var a2 = [1, 2, 3]
-		var result = gr.test.get_non_matching_array_indexes(a1, a2)
-		assert_eq(result, [3])
-
-	func test_includes_non_equal_ones():
-		var a1 = [1.0, 2, [], 4]
-		var a2 = [1, 'two', autofree(Node2D.new()), '4']
-		var result = gr.test.get_non_matching_array_indexes(a1, a2)
-		assert_eq(result, [0, 1, 2, 3])
 

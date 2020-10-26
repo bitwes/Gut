@@ -46,186 +46,174 @@ class TestMissing:
 class TestSimpleCompare:
 	extends 'res://addons/gut/test.gd'
 
-	var _compare  = null
+	var _comparator  = null
 
 	func before_each():
-		_compare = _utils.Comparator.new()
+		_comparator = _utils.Comparator.new()
 
 	var primitive_equal_values = [[1, 1], [3, 3.0], ['a', 'a'], [true, true], [null, null]]
 	func test_compare_equal_primitives(p=use_parameters(primitive_equal_values)):
-		var result = _compare.simple(p[0], p[1])
+		var result = _comparator.simple(p[0], p[1])
 		assert_true(result.are_equal,  result.summary)
 
 	func test_all_primitives_have_a_summary(p=use_parameters(primitive_equal_values)):
-		var result = _compare.simple(p[0], p[1])
+		var result = _comparator.simple(p[0], p[1])
 		assert_string_contains(result.summary, '==', 'equals')
 		assert_string_contains(result.summary, str(p[0]), 'zero value')
 
 	var primitive_not_equal_values = [[1, 2], ['a', 'b'], [true, false], [null, 1]]
 	func test_compare_not_equal_primitives(p=use_parameters(primitive_not_equal_values)):
-		var result = _compare.simple(p[0], p[1])
+		var result = _comparator.simple(p[0], p[1])
 		assert_false(result.are_equal,  result.summary)
 
 	func test_all_not_equal_primitives_have_a_summary(p=use_parameters(primitive_not_equal_values)):
-		var result = _compare.simple(p[0], p[1])
+		var result = _comparator.simple(p[0], p[1])
 		assert_string_contains(result.summary, '!=', 'equals')
 		assert_string_contains(result.summary, str(p[0]), 'zero value')
 		assert_string_contains(result.summary, str(p[1]), 'one value')
 
 	var incompatible_types = [[1, 'a'], ['text', Node], [false, []], [{}, []]]
 	func test_incompatible_types(p=use_parameters(incompatible_types)):
-		var result = _compare.simple(p[0], p[1])
+		var result = _comparator.simple(p[0], p[1])
 		assert_not_null(result.are_equal,  result.summary)
 		assert_false(result.are_equal,  result.summary)
 
 	func test_incompatible_types_summary(p=use_parameters(incompatible_types)):
-		var result = _compare.simple(p[0], p[1])
+		var result = _comparator.simple(p[0], p[1])
 		assert_string_contains(result.summary, 'Cannot')
 		assert_string_contains(result.summary, '!=')
 
 	func test_comparing_equal_dictionaries_includes_disclaimer():
 		var d1 = {}
 		var d2 = d1
-		var result = _compare.simple(d1, d2)
+		var result = _comparator.simple(d1, d2)
 		assert_true(result.are_equal, result.summary)
 		assert_string_contains(result.summary, 'reference')
 
 	func test_comparing_different_dictionaries_includes_disclaimer():
-		var result = _compare.simple({}, {})
+		var result = _comparator.simple({}, {})
 		assert_false(result.are_equal, result.summary)
 		assert_string_contains(result.summary, 'reference')
 
 	func test_comparing_arrays_returns_array_diff_summary():
-		var result = _compare.simple([1, 2], [3, 4])
+		var result = _comparator.simple([1, 2], [3, 4])
 		assert_string_contains(result.summary, '1 != 3')
 
 
 class TestShouldCompareIntToFloat:
 	extends 'res://addons/gut/test.gd'
 
-	var _compare  = null
+	var _comparator  = null
 
 	func before_each():
-		_compare = _utils.Comparator.new()
+		_comparator = _utils.Comparator.new()
 
 	func test_when_enabled_float_and_int_are_equal():
-		_compare.set_should_compare_int_to_float(true)
-		var result = _compare.simple(1, 1.0)
+		_comparator.set_should_compare_int_to_float(true)
+		var result = _comparator.simple(1, 1.0)
 		assert_true(result.are_equal, result.summary)
 
 	func  test_when_disabled_float_and_int_are_not_equal():
-		_compare.set_should_compare_int_to_float(false)
-		var result = _compare.simple(1, 1.0)
+		_comparator.set_should_compare_int_to_float(false)
+		var result = _comparator.simple(1, 1.0)
 		assert_false(result.are_equal, result.summary)
 
 	func test_when_enabled_does_not_change_how_arrays_treat_float_int():
-		_compare.set_should_compare_int_to_float(true)
-		var result = _compare.simple([1], [1.0])
+		_comparator.set_should_compare_int_to_float(true)
+		var result = _comparator.simple([1], [1.0])
 		assert_false(result.are_equal, result.summary)
 
 	func test_when_enabled_does_not_change_how_dicts_treat_float_int():
-		_compare.set_should_compare_int_to_float(true)
-		var result = _compare.shallow({'a':1}, {'a':1.0})
+		_comparator.set_should_compare_int_to_float(true)
+		var result = _comparator.shallow({'a':1}, {'a':1.0})
 		assert_false(result.are_equal, result.summary)
 
 
 class TestShallowCompare:
 	extends 'res://addons/gut/test.gd'
 
-	var _compare  = null
+	var _comparator  = null
 
 	func before_each():
-		_compare = _utils.Comparator.new()
-
-	func test_comparing_arrays_populates_different_indexes():
-		var a1  = [1, 2, 3]
-		var a2  = ['a', 2, 'c']
-		var result = _compare.shallow(a1, a2)
-		assert_true(result.different_indexes == [0, 2])
+		_comparator = _utils.Comparator.new()
 
 	func test_comparing_arrays_are_equal_true_when_equal():
-		var result = _compare.shallow([1], [1])
+		var result = _comparator.shallow([1], [1])
 		assert_true(result.are_equal)
 
 	func test_comparing_arrays_sets_summary():
-		var result = _compare.shallow([2], [3])
+		var result = _comparator.shallow([2], [3])
 		assert_not_null(result.summary)
 
 	func test_comparing_dictionaries_populates_different_keys():
-		var result = _compare.shallow({'a':1}, {'b':2})
+		var result = _comparator.shallow({'a':1}, {'b':2})
 		assert_true(result.differences.size() == 2)
 
 	func test_comparing_dictionaries_populates_are_equal():
-		var result = _compare.shallow({}, {})
+		var result = _comparator.shallow({}, {})
 		assert_true(result.are_equal)
 
 	func test_comparing_dictionaries_populates_summary():
-		var result = _compare.shallow({}, {'a':1})
+		var result = _comparator.shallow({}, {'a':1})
 		assert_not_null(result.summary)
 
 	func test_comparing_dictionaries_does_not_include_sub_dictionaries():
-		var result = _compare.shallow({'a':{}}, {'a':{}})
+		var result = _comparator.shallow({'a':{}}, {'a':{}})
 		assert_false(result.are_equal)
 
 	func test_comparing_arrays_does_not_include_sub_dictionaries():
-		var result = _compare.shallow([{'a':1}], [{'a':1}])
+		var result = _comparator.shallow([{'a':1}], [{'a':1}])
 		assert_false(result.are_equal)
 
 	func test_works_with_different_datatypes():
-		var result = _compare.shallow({}, [])
+		var result = _comparator.shallow({}, [])
 		assert_false(result.are_equal)
 
 	func test_works_with_primitives():
-		var result =  _compare.shallow(1, 1)
+		var result =  _comparator.shallow(1, 1)
 		assert_true(result.are_equal)
 
 
 class TestDeepCompare:
 	extends 'res://addons/gut/test.gd'
 
-	var _compare  = null
+	var _comparator  = null
 
 	func before_each():
-		_compare = _utils.Comparator.new()
-
-	func test_comparing_arrays_populates_different_indexes():
-		var a1  = [1, 2, 3]
-		var a2  = ['a', 2, 'c']
-		var result = _compare.deep(a1, a2)
-		assert_true(result.different_indexes == [0, 2])
+		_comparator = _utils.Comparator.new()
 
 	func test_comparing_arrays_are_equal_true_when_equal():
-		var result = _compare.deep([1], [1])
+		var result = _comparator.deep([1], [1])
 		assert_true(result.are_equal)
 
 	func test_comparing_arrays_sets_summary():
-		var result = _compare.deep([2], [3])
+		var result = _comparator.deep([2], [3])
 		assert_not_null(result.summary)
 
 	func test_comparing_dictionaries_populates_different_keys():
-		var result = _compare.deep({'a':1}, {'b':2})
+		var result = _comparator.deep({'a':1}, {'b':2})
 		assert_true(result.differences.size() == 2)
 
 	func test_comparing_dictionaries_populates_are_equal():
-		var result = _compare.deep({}, {})
+		var result = _comparator.deep({}, {})
 		assert_true(result.are_equal)
 
 	func test_comparing_dictionaries_populates_summary():
-		var result = _compare.deep({}, {'a':1})
+		var result = _comparator.deep({}, {'a':1})
 		assert_not_null(result.summary)
 
 	func test_comparing_dictionaries_does_not_include_sub_dictionaries():
-		var result = _compare.deep({'a':{}}, {'a':{}})
+		var result = _comparator.deep({'a':{}}, {'a':{}})
 		assert_true(result.are_equal)
 
 	func test_comparing_arrays_does_not_include_sub_dictionaries():
-		var result = _compare.deep([{'a':1}], [{'a':1}])
+		var result = _comparator.deep([{'a':1}], [{'a':1}])
 		assert_true(result.are_equal)
 
 	func test_works_with_different_datatypes():
-		var result = _compare.deep({}, [])
+		var result = _comparator.deep({}, [])
 		assert_false(result.are_equal)
 
 	func test_works_with_primitives():
-		var result =  _compare.deep(1, 1)
+		var result =  _comparator.deep(1, 1)
 		assert_true(result.are_equal)

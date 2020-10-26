@@ -58,7 +58,7 @@ func simple(v1, v2, missing_string=''):
 			extra += DICTIONARY_DISCLAIMER
 
 		if(typeof(v1) == TYPE_ARRAY):
-			var array_result = _utils.ArrayDiff.new(v1, v2)
+			var array_result = _utils.DiffTool.new(v1, v2, _utils.DIFF.SHALLOW)
 			if(!array_result.are_equal()):
 				extra = ".\n" + array_result.summarize()
 
@@ -77,10 +77,10 @@ func shallow(v1, v2):
 	var result =  null
 
 	if(_utils.are_datatypes_same(v1, v2)):
-		if(typeof(v1) == TYPE_ARRAY):
-			result = _utils.ArrayDiff.new(v1, v2)
-		elif(typeof(v2) == TYPE_DICTIONARY):
-			result = _utils.DictionaryDiff.new(v1, v2, _utils.DIFF.SHALLOW)
+		if(typeof(v1) in [TYPE_ARRAY, TYPE_DICTIONARY]):
+			result = _utils.DiffTool.new(v1, v2, _utils.DIFF.SHALLOW)
+		# elif(typeof(v2) == TYPE_DICTIONARY):
+		# 	result = _utils.DictionaryDiff.new(v1, v2, _utils.DIFF.SHALLOW)
 		else:
 			result = simple(v1, v2)
 	else:
@@ -93,10 +93,10 @@ func deep(v1, v2):
 	var result =  null
 
 	if(_utils.are_datatypes_same(v1, v2)):
-		if(typeof(v1) == TYPE_ARRAY):
-			result = _utils.ArrayDiff.new(v1, v2, _utils.DIFF.DEEP)
-		elif(typeof(v2) == TYPE_DICTIONARY):
-			result = _utils.DictionaryDiff.new(v1, v2, _utils.DIFF.DEEP)
+		if(typeof(v1) in [TYPE_ARRAY, TYPE_DICTIONARY]):
+			result = _utils.DiffTool.new(v1, v2, _utils.DIFF.DEEP)
+		# elif(typeof(v2) == TYPE_DICTIONARY):
+		# 	result = _utils.DictionaryDiff.new(v1, v2, _utils.DIFF.DEEP)
 		else:
 			result = simple(v1, v2)
 	else:

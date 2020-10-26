@@ -100,9 +100,7 @@ class DoubleInfo:
 # Begin test.gd
 # ------------------------------------------------------------------------------
 var _utils = load('res://addons/gut/utils.gd').get_instance()
-var ArrayDiff = _utils.ArrayDiff
-var DictionaryDiff = _utils.DictionaryDiff
-var _diff_tool = _utils.Comparator.new()
+var _compare = _utils.Comparator.new()
 
 # constant for signal when calling yield_for
 const YIELD = 'timeout'
@@ -294,9 +292,9 @@ func assert_eq(got, expected, text=""):
 		var result = null
 
 		if(typeof(got) == TYPE_ARRAY):
-			result = _diff_tool.shallow(got, expected)
+			result = _compare.shallow(got, expected)
 		else:
-			result = _diff_tool.simple(got, expected)
+			result = _compare.simple(got, expected)
 
 		if(typeof(got) in [TYPE_ARRAY, TYPE_DICTIONARY]):
 			disp = str(result.summary, '  ', text)
@@ -316,9 +314,9 @@ func assert_ne(got, not_expected, text=""):
 		var result = null
 
 		if(typeof(got) == TYPE_ARRAY):
-			result = _diff_tool.shallow(got, not_expected)
+			result = _compare.shallow(got, not_expected)
 		else:
-			result = _diff_tool.simple(got, not_expected)
+			result = _compare.simple(got, not_expected)
 
 		if(typeof(got) in [TYPE_ARRAY, TYPE_DICTIONARY]):
 			disp = str(result.summary, '  ', text)
@@ -663,7 +661,7 @@ func assert_signal_emitted_with_parameters(object, signal_name, parameters, inde
 	if(_can_make_signal_assertions(object, signal_name)):
 		if(_signal_watcher.did_emit(object, signal_name)):
 			var parms_got = _signal_watcher.get_signal_parameters(object, signal_name, index)
-			var ad = ArrayDiff.new(parameters,  parms_got, DIFF_TYPE.DEEP)
+			var ad = _utils.DiffTool.new(parameters,  parms_got, DIFF_TYPE.DEEP)
 			if(ad.are_equal()):
 				_pass(str(disp, parms_got))
 			else:
@@ -1322,12 +1320,3 @@ func pass_test(text):
 # ------------------------------------------------------------------------------
 func fail_test(text):
 	_fail(text)
-
-# ------------------------------------------------------------------------------
-# Returns an array of indexes that == returns false for.  All indexes that do not
-# exist in the other array are included so be careful when using this data to
-# access elements in the source arrays.
-# ------------------------------------------------------------------------------
-func get_non_matching_array_indexes(array_1, array_2):
-	var ad = ArrayDiff.new(array_1, array_2)
-	return ad.get_different_indexes()

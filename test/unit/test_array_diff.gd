@@ -4,6 +4,8 @@ extends 'res://addons/gut/test.gd'
 class TestCompareResultInterace:
 	extends 'res://addons/gut/test.gd'
 
+	var ArrayDiff = _utils.DiffTool
+
 	func test_cannot_set_summary():
 		var ad = ArrayDiff.new([], [])
 		ad.summary = 'the summary'
@@ -53,6 +55,7 @@ class TestCompareResultInterace:
 class TestTheRest:
 	extends 'res://addons/gut/test.gd'
 
+	var ArrayDiff = _utils.DiffTool
 
 	func test_can_instantiate_with_two_arrays():
 		var ad  = ArrayDiff.new([], [])
@@ -158,6 +161,8 @@ class TestTheRest:
 class TestDeepDiff:
 	extends 'res://addons/gut/test.gd'
 
+	var ArrayDiff = _utils.DiffTool
+
 	func test_diff_with_dictionaries_passes_when_not_same_reference_but_same_values():
 		var a1 = [{'a':1}, {'b':2}]
 		var a2 = [{'a':1}, {'b':2}]
@@ -192,6 +197,8 @@ class TestDeepDiff:
 
 class TestComplicatedDisplay:
 	extends 'res://addons/gut/test.gd'
+
+	var ArrayDiff = _utils.DiffTool
 
 	func test_mix_of_array_and_dictionaries():
 		var a1 = [

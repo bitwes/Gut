@@ -5,8 +5,7 @@ extends 'res://addons/gut/test.gd'
 class TestCompareResultInterace:
 	extends 'res://addons/gut/test.gd'
 
-	func before_all():
-		DictionaryDiff = load('res://addons/gut/diff_tool.gd')
+	var DictionaryDiff = _utils.DiffTool
 
 	func test_cannot_set_summary():
 		var diff = DictionaryDiff.new({},{}, _utils.DIFF.DEEP)
@@ -51,8 +50,7 @@ class TestCompareResultInterace:
 class TestComplexOutput:
 	extends 'res://addons/gut/test.gd'
 
-	func before_all():
-		DictionaryDiff = load('res://addons/gut/diff_tool.gd')
+	var DictionaryDiff = _utils.DiffTool
 
 	func test_complex_real_use_output():
 		var d1 = {'a':1, 'dne_in_d2':'asdf', 'b':{'c':88, 'd':22, 'f':{'g':1, 'h':200}}, 'i':[1, 2, 3], 'z':{}}
@@ -84,9 +82,7 @@ class TestComplexOutput:
 class TestTheRest:
 	extends 'res://addons/gut/test.gd'
 
-
-	func before_all():
-		DictionaryDiff = load('res://addons/gut/diff_tool.gd')
+	var DictionaryDiff = _utils.DiffTool
 
 	func test_can_init_with_two_dictionaries():
 		var dd = DictionaryDiff.new({}, {})
@@ -202,11 +198,11 @@ class TestTheRest:
 		assert_false(diff.are_equal(), diff.summarize())
 
 
-	func test_when_deep_diff_then_different_arrays_contains_ArrayDiff():
+	func test_when_deep_diff_then_different_arrays_contains_DiffTool():
 		var d1 = {'a':[1, 2, 3]}
 		var d2 = {'a':[3, 4, 5]}
 		var diff = DictionaryDiff.new(d1, d2, DIFF_TYPE.DEEP)
-		assert_is(diff.differences['a'], ArrayDiff)
+		assert_is(diff.differences['a'], _utils.DiffTool)
 
 
 	func test_large_differences_in_sub_arrays_does_not_exceed_max_differences_shown():
