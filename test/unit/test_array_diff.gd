@@ -58,20 +58,13 @@ class TestTheRest:
 		var ad  = ArrayDiff.new([], [])
 		assert_not_null(ad)
 
-	func test_constructor_defaults_diff_type_to_shallow():
+	func test_constructor_defaults_diff_type_to_deep():
 		var diff = ArrayDiff.new([], [])
-		assert_eq(diff.get_diff_type(), _utils.DIFF.SHALLOW)
-
-	func test_constructor_sets_diff_type():
-		var diff = ArrayDiff.new([], [], _utils.DIFF.DEEP)
 		assert_eq(diff.get_diff_type(), _utils.DIFF.DEEP)
 
-	func test_two_array_constructor_sets_a1_and_a2():
-		var a1 = [1, 2, 3]
-		var a2 = [3, 4, 5]
-		var ad = ArrayDiff.new(a1, a2)
-		assert_eq(ad.get_a1(), a1, 'a1')
-		assert_eq(ad.get_a2(), a2, 'a2')
+	func test_constructor_sets_diff_type():
+		var diff = ArrayDiff.new([], [], _utils.DIFF.SHALLOW)
+		assert_eq(diff.get_diff_type(), _utils.DIFF.SHALLOW)
 
 	func test_is_equal_is_true_when_all_elements_match():
 		var ad = ArrayDiff.new([1, 2, 3], [1, 2, 3])
@@ -81,21 +74,21 @@ class TestTheRest:
 		var ad = ArrayDiff.new([1, 2, 3], [1, 2, 99])
 		assert_false(ad.are_equal(), 'should be false but is ' + str(ad.are_equal()))
 
-	func test_can_get_list_of_different_indexes():
-		var ad = ArrayDiff.new([1, 2, 3], [3, 2, 1])
-		assert_eq(ad.get_different_indexes(), [0, 2])
+	# func test_can_get_list_of_different_indexes():
+	# 	var ad = ArrayDiff.new([1, 2, 3], [3, 2, 1])
+	# 	assert_eq(ad.get_different_indexes(), [0, 2])
 
-	func test_get_different_indexes_works_when_a1_smaller():
-		var ad = ArrayDiff.new([1, 2, 3], [3, 2, 1, 98, 99])
-		assert_eq(ad.get_different_indexes(), [0, 2, 3 ,4])
+	# func test_get_different_indexes_works_when_a1_smaller():
+	# 	var ad = ArrayDiff.new([1, 2, 3], [3, 2, 1, 98, 99])
+	# 	assert_eq(ad.get_different_indexes(), [0, 2, 3 ,4])
 
 	func test_lists_indexes_as_missing_in_first_array():
 		var ad = ArrayDiff.new([1, 2, 3], [1, 2, 3, 4, 5])
 		assert_string_contains(ad.summarize(), '<missing index> !=')
 
-	func test_get_different_indexes_works_when_a2_smaller():
-		var ad = ArrayDiff.new([3, 2, 1, 98, 99], [1, 2, 3])
-		assert_eq(ad.get_different_indexes(), [0, 2, 3, 4])
+	# func test_get_different_indexes_works_when_a2_smaller():
+	# 	var ad = ArrayDiff.new([3, 2, 1, 98, 99], [1, 2, 3])
+	# 	assert_eq(ad.get_different_indexes(), [0, 2, 3, 4])
 
 	func test_get_summary_text_lists_both_arrays():
 		var ad = ArrayDiff.new([3, 2, 1, 98, 99], [1, 2, 3])
@@ -151,14 +144,14 @@ class TestTheRest:
 	func test_diff_with_dictionaries_fails_when_not_same_reference_but_same_values():
 		var a1 = [{'a':1}, {'b':2}]
 		var a2 = [{'a':1}, {'b':2}]
-		var diff = ArrayDiff.new(a1, a2)
+		var diff = ArrayDiff.new(a1, a2, DIFF_TYPE.SHALLOW)
 		assert_false(diff.are_equal(), diff.summarize())
 
 
 	func test_dictionaries_in_sub_arrays():
 		var a1 = [[{'a': 1}]]
 		var a2 = [[{'a': 1}]]
-		var diff = ArrayDiff.new(a1, a2)
+		var diff = ArrayDiff.new(a1, a2, DIFF_TYPE.SHALLOW)
 		assert_false(diff.are_equal(), diff.summarize())
 
 
