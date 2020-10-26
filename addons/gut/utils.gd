@@ -72,7 +72,9 @@ var _lgr = null
 var _test_mode = false
 
 var AutoFree = load('res://addons/gut/autofree.gd')
-
+var Comparator = load('res://addons/gut/comparator.gd')
+var CompareResult = load('res://addons/gut/compare_result.gd')
+var DiffTool = load('res://addons/gut/diff_tool.gd')
 var Doubler = load('res://addons/gut/doubler.gd')
 var Gut = load('res://addons/gut/gut.gd')
 var HookScript = load('res://addons/gut/hook_script.gd')
@@ -90,11 +92,6 @@ var Summary = load('res://addons/gut/summary.gd')
 var Test = load('res://addons/gut/test.gd')
 var TestCollector = load('res://addons/gut/test_collector.gd')
 var ThingCounter = load('res://addons/gut/thing_counter.gd')
-
-
-var DiffTool = load('res://addons/gut/diff_tool.gd')
-var Comparator = load('res://addons/gut/comparator.gd')
-var CompareResult = load('res://addons/gut/compare_result.gd')
 
 # Source of truth for the GUT version
 var version = '7.0.0'

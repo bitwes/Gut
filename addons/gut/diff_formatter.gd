@@ -11,7 +11,7 @@ func _single_diff(diff, depth=0):
 	var brackets = diff.get_brackets()
 
 	if(brackets != null and !diff.are_equal):
-		to_return = ''#diff.get_short_summary() + "\n"
+		to_return = ''
 		to_return += str(brackets.open, "\n",
 			_strutils.indent_text(differences_to_s(diff.differences, depth), depth+1, INDENT), "\n",
 			brackets.close)
@@ -26,8 +26,11 @@ func make_it(diff):
 	if(diff.are_equal):
 		to_return = diff.summary
 	else:
-		to_return = str(diff.get_short_summary(), "\n",
-		_strutils.indent_text(_single_diff(diff, 0), 1, '  '))
+		if(_max_to_display ==  ABSOLUTE_MAX_DISPLAYED):
+			to_return = str(diff.get_value_1(), ' != ', diff.get_value_2())
+		else:
+			to_return = diff.get_short_summary()
+		to_return +=  str("\n", _strutils.indent_text(_single_diff(diff, 0), 1, '  '))
 	return to_return
 
 

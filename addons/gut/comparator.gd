@@ -4,7 +4,7 @@ var _max_length = 100
 var _should_compare_int_to_float = true
 
 const MISSING = '|__missing__gut__compare__value__|'
-const DICTIONARY_DISCLAIMER = 'Dictionaries are compared by reference by default.  See assert_eq in wiki for alternate ways to compare data structures.'
+const DICTIONARY_DISCLAIMER = 'Dictionaries are compared-by-ref.  See assert_eq in wiki.'
 
 func _cannot_comapre_text(v1, v2):
 	return str('Cannot compare ', _strutils.types[typeof(v1)], ' with ',
@@ -52,9 +52,9 @@ func simple(v1, v2, missing_string=''):
 		result.are_equal = v1 == v2
 		if(typeof(v1) == TYPE_DICTIONARY):
 			if(result.are_equal):
-				extra = '.  Values point to the same dictionary.  '
+				extra = '.  Same dictionary ref.  '
 			else:
-				extra = '.  Values point to different dictionaries.  '
+				extra = '.  Different dictionary refs.  '
 			extra += DICTIONARY_DISCLAIMER
 
 		if(typeof(v1) == TYPE_ARRAY):
@@ -79,8 +79,6 @@ func shallow(v1, v2):
 	if(_utils.are_datatypes_same(v1, v2)):
 		if(typeof(v1) in [TYPE_ARRAY, TYPE_DICTIONARY]):
 			result = _utils.DiffTool.new(v1, v2, _utils.DIFF.SHALLOW)
-		# elif(typeof(v2) == TYPE_DICTIONARY):
-		# 	result = _utils.DictionaryDiff.new(v1, v2, _utils.DIFF.SHALLOW)
 		else:
 			result = simple(v1, v2)
 	else:
@@ -95,8 +93,6 @@ func deep(v1, v2):
 	if(_utils.are_datatypes_same(v1, v2)):
 		if(typeof(v1) in [TYPE_ARRAY, TYPE_DICTIONARY]):
 			result = _utils.DiffTool.new(v1, v2, _utils.DIFF.DEEP)
-		# elif(typeof(v2) == TYPE_DICTIONARY):
-		# 	result = _utils.DictionaryDiff.new(v1, v2, _utils.DIFF.DEEP)
 		else:
 			result = simple(v1, v2)
 	else:

@@ -141,8 +141,10 @@ var _signal_watcher = load('res://addons/gut/signal_watcher.gd').new()
 var DOUBLE_STRATEGY = null
 var _lgr = _utils.get_logger()
 var _strutils = _utils.Strutils.new()
+
 # syntax sugar
 var ParameterFactory = _utils.ParameterFactory
+
 
 func _init():
 	DOUBLE_STRATEGY = _utils.DOUBLE_STRATEGY # yes, this is right

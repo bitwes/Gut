@@ -1,6 +1,5 @@
 extends 'res://addons/gut/compare_result.gd'
 
-
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _strutils = _utils.Strutils.new()
 var _compare = _utils.Comparator.new()
@@ -12,6 +11,7 @@ var _total_count = 0
 var _diff_type = null
 var _brackets = null
 var _valid = true
+var _desc_things = 'somethings'
 
 # -------- comapre_result.gd "interface" ---------------------
 func set_are_equal(val):
@@ -37,16 +37,19 @@ func get_short_summary():
 		' ', _compare.get_compare_symbol(are_equal()), ' ',
 		_strutils.truncate_string(str(_value_2), 50))
 	if(!are_equal()):
-		text += str('  ', get_different_count(), ' of ', get_total_count(), ' do not match.')
+		text += str('  ', get_different_count(), ' of ', get_total_count(),
+			' ', _desc_things, ' do not match.')
 	return text
 
 func get_brackets():
 	return _brackets
 # -------- comapre_result.gd "interface" ---------------------
 
+
 func _invalidate():
 	_valid = false
 	differences = null
+
 
 func _init(v1, v2, diff_type=DEEP):
 	_value_1 = v1
@@ -55,13 +58,16 @@ func _init(v1, v2, diff_type=DEEP):
 	_compare.set_should_compare_int_to_float(false)
 	_find_differences(_value_1, _value_2)
 
+
 func _find_differences(v1, v2):
 	if(_utils.are_datatypes_same(v1, v2)):
 		if(typeof(v1) == TYPE_ARRAY):
 			_brackets = {'open':'[', 'close':']'}
+			_desc_things = 'indexes'
 			_diff_array(v1, v2)
 		elif(typeof(v2) == TYPE_DICTIONARY):
 			_brackets = {'open':'{', 'close':'}'}
+			_desc_things = 'keys'
 			_diff_dictionary(v1, v2)
 		else:
 			_invalidate()
@@ -70,8 +76,6 @@ func _find_differences(v1, v2):
 		_invalidate()
 		_utils.get_logger().error('Only Arrays and Dictionaries are supported.')
 
-func _diff_it(v1, v2):
-	pass
 
 func _diff_array(a1, a2):
 	_total_count = max(a1.size(), a2.size())
@@ -79,7 +83,7 @@ func _diff_array(a1, a2):
 		var result = null
 		if(i < a2.size()):
 			if(_diff_type == DEEP):
-				result = _compare.deep(a1[i], a2[i])# DiffTool.new(a1[i], a2[i]) #_compare.deep(a1[i], a2[i])
+				result = _compare.deep(a1[i], a2[i])
 			else:
 				result = _compare.simple(a1[i], a2[i])
 		else:
@@ -107,11 +111,9 @@ func _diff_dictionary(d1, d2):
 
 			var result = null
 			if(_diff_type == DEEP):
-				result = _compare.deep(d1[key], d2[key])# DiffTool.new(d1[key], d2[key])#_compare.deep(d1[key], d2[key])
+				result = _compare.deep(d1[key], d2[key])
 			else:
 				result = _compare.simple(d1[key], d2[key])
-
-			#diff_keys[key] = result
 
 			if(!result.are_equal):
 				differences[key] = result
@@ -144,3 +146,11 @@ func are_equal():
 
 func get_diff_type():
 	return _diff_type
+
+
+func get_value_1():
+	return _value_1
+
+
+func get_value_2():
+	return _value_2
