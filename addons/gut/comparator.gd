@@ -43,10 +43,6 @@ func simple(v1, v2, missing_string=''):
 
 	if(_should_compare_int_to_float and [2, 3].has(typeof(v1)) and [2, 3].has(typeof(v2))):
 		result.are_equal = v1 == v2
-		if(result.are_equal):
-			cmp_str = '=='
-		else:
-			cmp_str = '!='
 
 	elif(_utils.are_datatypes_same(v1, v2)):
 		result.are_equal = v1 == v2
@@ -59,16 +55,18 @@ func simple(v1, v2, missing_string=''):
 
 		if(typeof(v1) == TYPE_ARRAY):
 			var array_result = _utils.DiffTool.new(v1, v2, _utils.DIFF.SHALLOW)
+			result.summary = array_result.get_short_summary()
 			if(!array_result.are_equal()):
-				extra = ".\n" + array_result.summarize()
+				extra = ".\n" + array_result.get_short_summary()
 
-		cmp_str = get_compare_symbol(result.are_equal)
 	else:
 		cmp_str = '!='
 		result.are_equal = false
 		extra = str('.  ', _cannot_comapre_text(v1, v2))
 
-	result.summary = str(format_value(v1), ' ', cmp_str, ' ', format_value(v2), extra)
+	cmp_str = get_compare_symbol(result.are_equal)
+	if(typeof(v1) != TYPE_ARRAY):
+		result.summary = str(format_value(v1), ' ', cmp_str, ' ', format_value(v2), extra)
 
 	return result
 
@@ -120,8 +118,10 @@ func compare(v1, v2, diff_type=_utils.DIFF.SIMPLE):
 func get_should_compare_int_to_float():
 	return _should_compare_int_to_float
 
+
 func set_should_compare_int_to_float(should_compare_int_float):
 	_should_compare_int_to_float = should_compare_int_float
+
 
 func get_compare_symbol(is_equal):
 	if(is_equal):

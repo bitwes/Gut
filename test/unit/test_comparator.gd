@@ -88,16 +88,16 @@ class TestSimpleCompare:
 		var d2 = d1
 		var result = _comparator.simple(d1, d2)
 		assert_true(result.are_equal, result.summary)
-		assert_string_contains(result.summary, 'reference')
+		assert_string_contains(result.summary, _comparator.DICTIONARY_DISCLAIMER)
 
 	func test_comparing_different_dictionaries_includes_disclaimer():
 		var result = _comparator.simple({}, {})
 		assert_false(result.are_equal, result.summary)
-		assert_string_contains(result.summary, 'reference')
+		assert_string_contains(result.summary, _comparator.DICTIONARY_DISCLAIMER)
 
-	func test_comparing_arrays_returns_array_diff_summary():
+	func test_comparing_arrays_returns_array_diff_simple_summary():
 		var result = _comparator.simple([1, 2], [3, 4])
-		assert_string_contains(result.summary, '1 != 3')
+		assert_string_contains(result.summary, '[1, 2] != [3, 4]')
 
 
 class TestShouldCompareIntToFloat:
