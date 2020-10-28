@@ -1636,3 +1636,44 @@ class TestPassFailTestMethods:
 		assert_eq(gr.test_with_gut.get_fail_count(), 1, 'test count')
 
 
+class TestMoreCompare:
+	extends BaseTestClass
+
+	func test_use_compare_deep():
+		var d1 = {'a':[1, 2], 'b':'asdf', 'c':{'d':[1, 2]}}
+		var d2 = {'a':[1, 99], 'b':'asdf', 'c':{'d':[1, 2]}}
+
+		var result = compare_deep(d1, d2)
+		print(result.differences.keys())
+		print()
+		print(result.differences['a'])
+		print()
+		print(result.summary)
+
+		if(result.differences['a'] is CompareResult):
+			print('it is')
+
+	func test_big_compare():
+		var a1 = []
+		var a2 = []
+		for i in range(200):
+			var sub_a = []
+			var sub_b = []
+			for j in range(40):
+				sub_a.append(i + j)
+				sub_b.append(i)
+			a1.append(sub_a)
+			if(i%2 == 0):
+				a2.append(sub_b)
+			else:
+				a2.append(sub_a)
+
+		var result = compare_deep(a1, a2, 5)
+		print(result.summary)
+
+	func test_assert_eq_deep_with_non_things():
+		assert_ne_deep('a', 1)
+		assert_ne_deep('a', 'b')
+		assert_ne_deep('a', [])
+		assert_ne_deep('a', {})
+

@@ -1,5 +1,7 @@
 extends 'res://addons/gut/compare_result.gd'
 
+const UNLIMITED = -1
+
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _strutils = _utils.Strutils.new()
 var _compare = _utils.Comparator.new()

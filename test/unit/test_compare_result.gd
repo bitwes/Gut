@@ -1,7 +1,5 @@
 extends 'res://addons/gut/test.gd'
 
-var CompareResult = _utils.CompareResult
-
 func test_can_make_one():
 	var c  = CompareResult.new()
 	assert_not_null(c)

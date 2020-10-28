@@ -144,6 +144,7 @@ var _strutils = _utils.Strutils.new()
 
 # syntax sugar
 var ParameterFactory = _utils.ParameterFactory
+var CompareResult = _utils.CompareResult
 
 
 func _init():
@@ -1048,6 +1049,7 @@ func set_double_strategy(double_strategy):
 
 func pause_before_teardown():
 	gut.pause_before_teardown()
+
 # ------------------------------------------------------------------------------
 # Convert the _summary dictionary into text
 # ------------------------------------------------------------------------------
@@ -1307,7 +1309,7 @@ func is_failing():
 		!['before_all', 'after_all'].has(gut.get_current_test_object().name)):
 		return !gut.get_current_test_object().passed
 	else:
-		_lgr.error('No current test object found.  is_passing must be called inside a test.')
+		_lgr.error('No current test object found.  is_failing must be called inside a test.')
 		return null
 
 # ------------------------------------------------------------------------------
@@ -1322,3 +1324,61 @@ func pass_test(text):
 # ------------------------------------------------------------------------------
 func fail_test(text):
 	_fail(text)
+
+# ------------------------------------------------------------------------------
+#
+# ------------------------------------------------------------------------------
+func compare_deep(v1, v2, max_differences=null):
+	var result = _compare.deep(v1, v2)
+	if(max_differences != null):
+		result.max_differences = max_differences
+	return result
+
+# ------------------------------------------------------------------------------
+#
+# ------------------------------------------------------------------------------
+func compare_shallow(v1, v2, max_differences=null):
+	var result = _compare.shallow(v1, v2)
+	if(max_differences != null):
+		result.max_differences = max_differences
+	return result
+
+# ------------------------------------------------------------------------------
+#
+# ------------------------------------------------------------------------------
+func assert_eq_deep(v1, v2):
+	var result = compare_deep(v1, v2)
+	if(result.are_equal):
+		_pass(result.get_short_summary())
+	else:
+		_fail(result.summary)
+
+# ------------------------------------------------------------------------------
+#
+# ------------------------------------------------------------------------------
+func assert_ne_deep(v1, v2):
+	var result = compare_deep(v1, v2)
+	if(!result.are_equal):
+		_pass(result.get_short_summary())
+	else:
+		_fail(result.get_short_summary())
+
+# ------------------------------------------------------------------------------
+#
+# ------------------------------------------------------------------------------
+func assert_eq_shallow(v1, v2):
+	var result = compare_shallow(v1, v2)
+	if(result.are_equal):
+		_pass(result.get_short_summary())
+	else:
+		_fail(result.summary)
+
+# ------------------------------------------------------------------------------
+#
+# ------------------------------------------------------------------------------
+func assert_ne_shallow(v1, v2):
+	var result = compare_shallow(v1, v2)
+	if(!result.are_equal):
+		_pass(result.get_short_summary())
+	else:
+		_fail(result.get_short_summary())
