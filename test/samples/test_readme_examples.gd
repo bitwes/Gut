@@ -676,9 +676,63 @@ func test_assert_connected():
 	assert_connected(signaler, foo, 'the_signal')
 
 
-func test_get_non_matching_array_indexes():
-	gut.p(get_non_matching_array_indexes([1, 2, 3], [1, 2,3])) # prints []
-	gut.p(get_non_matching_array_indexes([1, 2], [1, 2, 3])) # prints [2]
-	gut.p(get_non_matching_array_indexes([1, 2, 3], [1, 2])) # prints [2]
-	gut.p(get_non_matching_array_indexes([1, 'two', 3], [1, 2, 3])) # prints [1]
-	gut.p(get_non_matching_array_indexes(['1', '2', '3'], [1, 2, 3])) # prints [0, 1, 2]
+func test_shallow_array_compare_1():
+	var a1 = [
+		'a', 'b', 'c',
+		[1, 2, 3, 4],
+		{'a':1, 'b':2, 'c':3},
+		[{'a':1}, {'b':2}]
+	]
+	var a2 = [
+		'a', 2, 'c',
+		['a', 2, 3, 'd'],
+		{'a':11, 'b':12, 'c':13},
+		[{'a':'diff'}, {'b':2}]
+	]
+	var result = compare_shallow(a1, a2)
+	assert_true(result.are_equal, result.summary)
+
+
+func test_shallow_array_compare_2():
+	var a1 = [
+		[1, 2, 3, 4],
+		[[4, 5, 6], ['same'], [7, 8, 9]]
+	]
+	var a2 = [
+		["1", 2.0, 13],
+		[[14, 15, 16], ['same'], [17, 18, 19]]
+	]
+	var result = compare_deep(a1, a2)
+	gut.p(result.summary)
+
+	gut.p('Traversing differences:')
+	gut.p(result.differences[1].differences[2].differences[0])
+
+func test_nested_difference():
+	var v1 = {'a':{'b':{'c':{'d':1}}}}
+	var v2 = {'a':{'b':{'c':{'d':2}}}}
+	var result = compare_deep(v1, v2)
+	gut.p(result.summary)
+
+	gut.p('Traversing differences:')
+	gut.p(result.differences['a'].differences['b'].differences['c'])
+
+
+func test_mix_of_array_and_dictionaries_deep():
+	var a1 = [
+		'a', 'b', 'c',
+		[1, 2, 3, 4],
+		{'a':1, 'b':2, 'c':3},
+		[{'a':1}, {'b':2}]
+	]
+	var a2 = [
+		'a', 2, 'c',
+		['a', 2, 3, 'd'],
+		{'a':11, 'b':12, 'c':13},
+		[{'a':'diff'}, {'b':2}]
+	]
+	var result = compare_deep(a1, a2)
+	gut.p(result.summary)
+
+	gut.p('Traversing differences:')
+	gut.p(result.differences[5].differences[0].differences['a'])

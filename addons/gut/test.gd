@@ -1325,8 +1325,10 @@ func pass_test(text):
 func fail_test(text):
 	_fail(text)
 
+
 # ------------------------------------------------------------------------------
-#
+# Peforms a deep compare on both values, a CompareResult instnace is returned.
+# The optional max_differences paramter sets the max_differences to be displayed.
 # ------------------------------------------------------------------------------
 func compare_deep(v1, v2, max_differences=null):
 	var result = _compare.deep(v1, v2)
@@ -1335,7 +1337,8 @@ func compare_deep(v1, v2, max_differences=null):
 	return result
 
 # ------------------------------------------------------------------------------
-#
+# Peforms a shallow compare on both values, a CompareResult instnace is returned.
+# The optional max_differences paramter sets the max_differences to be displayed.
 # ------------------------------------------------------------------------------
 func compare_shallow(v1, v2, max_differences=null):
 	var result = _compare.shallow(v1, v2)
@@ -1344,7 +1347,7 @@ func compare_shallow(v1, v2, max_differences=null):
 	return result
 
 # ------------------------------------------------------------------------------
-#
+# Performs a deep compare and asserts the  values are equal
 # ------------------------------------------------------------------------------
 func assert_eq_deep(v1, v2):
 	var result = compare_deep(v1, v2)
@@ -1354,7 +1357,7 @@ func assert_eq_deep(v1, v2):
 		_fail(result.summary)
 
 # ------------------------------------------------------------------------------
-#
+# Performs a deep compare and asserts the values are not equal
 # ------------------------------------------------------------------------------
 func assert_ne_deep(v1, v2):
 	var result = compare_deep(v1, v2)
@@ -1364,7 +1367,7 @@ func assert_ne_deep(v1, v2):
 		_fail(result.get_short_summary())
 
 # ------------------------------------------------------------------------------
-#
+# Performs a shallow compare and asserts the values are equal
 # ------------------------------------------------------------------------------
 func assert_eq_shallow(v1, v2):
 	var result = compare_shallow(v1, v2)
@@ -1374,7 +1377,7 @@ func assert_eq_shallow(v1, v2):
 		_fail(result.summary)
 
 # ------------------------------------------------------------------------------
-#
+# Performs a shallow compare and asserts the values are not equal
 # ------------------------------------------------------------------------------
 func assert_ne_shallow(v1, v2):
 	var result = compare_shallow(v1, v2)

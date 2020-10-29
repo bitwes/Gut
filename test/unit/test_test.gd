@@ -1171,7 +1171,6 @@ class TestAssertCalled:
 class TestAssertNotCalled:
 	extends BaseTestClass
 
-	#const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
 
 	func test_passes_when_no_calls_have_been_made():
 		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
@@ -1636,44 +1635,57 @@ class TestPassFailTestMethods:
 		assert_eq(gr.test_with_gut.get_fail_count(), 1, 'test count')
 
 
-class TestMoreCompare:
+class TestCompareDeepShallow:
 	extends BaseTestClass
 
-	func test_use_compare_deep():
-		var d1 = {'a':[1, 2], 'b':'asdf', 'c':{'d':[1, 2]}}
-		var d2 = {'a':[1, 99], 'b':'asdf', 'c':{'d':[1, 2]}}
+	func test_compare_shallow_uses_compare():
+		var d_compare = double(_utils.Comparator).new()
+		gr.test._compare = d_compare
+		var result = gr.test.compare_shallow([], [])
+		assert_called(d_compare, 'shallow')
 
-		var result = compare_deep(d1, d2)
-		print(result.differences.keys())
-		print()
-		print(result.differences['a'])
-		print()
-		print(result.summary)
+	func test_compare_shallow_sets_max_differences():
+		var result = gr.test.compare_shallow([], [], 10)
+		assert_eq(result.max_differences, 10)
 
-		if(result.differences['a'] is CompareResult):
-			print('it is')
+	func test_compare_deep_uses_compare():
+		var d_compare = double(_utils.Comparator).new()
+		gr.test._compare = d_compare
+		var result = gr.test.compare_deep([], [])
+		assert_called(d_compare, 'deep')
 
-	func test_big_compare():
-		var a1 = []
-		var a2 = []
-		for i in range(200):
-			var sub_a = []
-			var sub_b = []
-			for j in range(40):
-				sub_a.append(i + j)
-				sub_b.append(i)
-			a1.append(sub_a)
-			if(i%2 == 0):
-				a2.append(sub_b)
-			else:
-				a2.append(sub_a)
+	func test_compare_deep_sets_max_differences():
+		var result = gr.test.compare_deep([], [], 10)
+		assert_eq(result.max_differences, 10)
 
-		var result = compare_deep(a1, a2, 5)
-		print(result.summary)
+	func test_assert_eq_deep_pass_with_same():
+		gr.test.assert_eq_deep({'a':1}, {'a':1})
+		assert_pass(gr.test)
 
-	func test_assert_eq_deep_with_non_things():
-		assert_ne_deep('a', 1)
-		assert_ne_deep('a', 'b')
-		assert_ne_deep('a', [])
-		assert_ne_deep('a', {})
+	func test_assert_eq_deep_fails_with_different():
+		gr.test.assert_eq_deep({'a':12}, {'a':1})
+		assert_fail(gr.test)
 
+	func test_assert_ne_deep_passes_with_different():
+		gr.test.assert_ne_deep({'a':12}, {'a':1})
+		assert_pass(gr.test)
+
+	func test_assert_ne_deep_fails_with_same():
+		gr.test.assert_ne_deep({'a':1}, {'a':1})
+		assert_fail(gr.test)
+
+	func test_assert_eq_shallow_pass_with_same():
+		gr.test.assert_eq_shallow({'a':1}, {'a':1})
+		assert_pass(gr.test)
+
+	func test_assert_eq_shallow_fails_with_different():
+		gr.test.assert_eq_shallow({'a':12}, {'a':1})
+		assert_fail(gr.test)
+
+	func test_assert_ne_shallow_passes_with_different():
+		gr.test.assert_ne_shallow({'a':12}, {'a':1})
+		assert_pass(gr.test)
+
+	func test_assert_ne_shallow_fails_with_same():
+		gr.test.assert_ne_shallow({'a':1}, {'a':1})
+		assert_fail(gr.test)
