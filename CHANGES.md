@@ -11,7 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
    * No more `assert_true(true, 'we got here')`!  Long live `pass_test('we got here')`!
 * Enhanced the printing of floats and strings in the various asserts.  Floats will always have a deciaml point now making it easier to see float/int comparisons.  All strings are now wrapped in double quotes making it easier to see number/string comparisons.
 * Enhanced the display of arrays when using `assert_eq` and `assert_ne`.  It now lists up to 30 indexes that are different and thier values.  Large arrays are also truncated when printed to cut down on output.
-* added `get_non_matching_array_indexes` to `test.gd` so that you can further inspect the differences in arrays.
+* Added `compare_deep`, `compare_shallow`, `assert_eq/ne_deep`, `assert_eq/ne_shallow` to aid in comparing dictionaries and arrays.  See [Comparing Things](https://github.com/bitwes/Gut/wiki/Comparing-Things) wiki  page for more info.
 * __Issue 66__ Thanks to nilold for adding `assert_not_between`.
 * __Issue 184__ Asserts in `before_all` and `after_all` are now formally supported.  They will appear correctly in the output and asserts will be tracked in the summary.
 * __Issue 152__ `assert_signal_emitted_with_parameters` now uses the new enhanced array diffing code.
