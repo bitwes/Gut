@@ -54,7 +54,7 @@ func was_called(variant, method_name, parameters=null):
 	var to_return = false
 	if(_calls.has(variant) and _calls[variant].has(method_name)):
 		if(parameters):
-			to_return = _find_parameters(_calls[variant][method_name], parameters)#.has(parameters)
+			to_return = _find_parameters(_calls[variant][method_name], parameters)
 		else:
 			to_return = true
 	return to_return

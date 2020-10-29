@@ -105,13 +105,6 @@ var _compare = _utils.Comparator.new()
 # constant for signal when calling yield_for
 const YIELD = 'timeout'
 
-enum DIFF_TYPE{
-	DEEP,
-	SHALLOW,
-	SIMPLE
-}
-
-
 # Need a reference to the instance that is running the tests.  This
 # is set by the gut class when it runs the tests.  This gets you
 # access to the asserts in the tests you write.
@@ -145,7 +138,6 @@ var _strutils = _utils.Strutils.new()
 # syntax sugar
 var ParameterFactory = _utils.ParameterFactory
 var CompareResult = _utils.CompareResult
-
 
 func _init():
 	DOUBLE_STRATEGY = _utils.DOUBLE_STRATEGY # yes, this is right

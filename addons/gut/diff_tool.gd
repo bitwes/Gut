@@ -1,6 +1,10 @@
 extends 'res://addons/gut/compare_result.gd'
-
-const UNLIMITED = -1
+const INDENT = '    '
+enum {
+	DEEP,
+	SHALLOW,
+	SIMPLE
+}
 
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _strutils = _utils.Strutils.new()

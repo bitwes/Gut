@@ -1,11 +1,3 @@
-enum {
-	DEEP,
-	SHALLOW,
-	SIMPLE
-}
-
-const INDENT = '    '
-
 var are_equal = null setget set_are_equal, get_are_equal
 var summary = null setget set_summary, get_summary
 var max_differences = 30 setget set_max_differences, get_max_differences
