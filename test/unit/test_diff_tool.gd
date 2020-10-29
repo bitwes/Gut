@@ -135,14 +135,14 @@ class TestArrayDiff:
 	func test_diff_with_dictionaries_fails_when_not_same_reference_but_same_values():
 		var a1 = [{'a':1}, {'b':2}]
 		var a2 = [{'a':1}, {'b':2}]
-		var diff = DiffTool.new(a1, a2, DIFF_TYPE.SHALLOW)
+		var diff = DiffTool.new(a1, a2, _utils.DIFF.SHALLOW)
 		assert_false(diff.are_equal(), diff.summarize())
 
 
 	func test_dictionaries_in_sub_arrays():
 		var a1 = [[{'a': 1}]]
 		var a2 = [[{'a': 1}]]
-		var diff = DiffTool.new(a1, a2, DIFF_TYPE.SHALLOW)
+		var diff = DiffTool.new(a1, a2, _utils.DIFF.SHALLOW)
 		assert_false(diff.are_equal(), diff.summarize())
 
 
@@ -154,31 +154,31 @@ class TestArrayDeepDiff:
 	func test_diff_with_dictionaries_passes_when_not_same_reference_but_same_values():
 		var a1 = [{'a':1}, {'b':2}]
 		var a2 = [{'a':1}, {'b':2}]
-		var diff = DiffTool.new(a1, a2, DIFF_TYPE.DEEP)
+		var diff = DiffTool.new(a1, a2, _utils.DIFF.DEEP)
 		assert_true(diff.are_equal(), diff.summarize())
 
 	func test_diff_with_dictionaries_fails_when_different_values():
 		var a1 = [{'a':1}, {'b':1}, {'c':1}, {'d':1}]
 		var a2 = [{'a':1}, {'b':2}, {'c':2}, {'d':2}]
-		var diff = DiffTool.new(a1, a2, DIFF_TYPE.DEEP)
+		var diff = DiffTool.new(a1, a2, _utils.DIFF.DEEP)
 		assert_false(diff.are_equal(), diff.summarize())
 
 	func test_matching_dictionaries_in_sub_arrays():
 		var a1 = [[{'a': 1}]]
 		var a2 = [[{'a': 1}]]
-		var diff = DiffTool.new(a1, a2, DIFF_TYPE.DEEP)
+		var diff = DiffTool.new(a1, a2, _utils.DIFF.DEEP)
 		assert_true(diff.are_equal(), diff.summarize())
 
 	func test_non_matching_dictionaries_in_sub_arrays():
 		var a1 = [[{'a': 1}], [{'b': 1}], [{'c': 1}]]
 		var a2 = [[{'a': 1}], [{'b': 2}], [{'c': 2}]]
-		var diff = DiffTool.new(a1, a2, DIFF_TYPE.DEEP)
+		var diff = DiffTool.new(a1, a2, _utils.DIFF.DEEP)
 		assert_false(diff.are_equal(), diff.summarize())
 
 	func test_when_deep_compare_non_equal_dictionaries_do_not_contain_disclaimer():
 		var a1 = [[{'a': 2}], [{'b': 3}], [{'c': 4}]]
 		var a2 = [[{'a': 1}], [{'b': 2}], [{'c': 2}]]
-		var diff = DiffTool.new(a1, a2, DIFF_TYPE.DEEP)
+		var diff = DiffTool.new(a1, a2, _utils.DIFF.DEEP)
 		assert_eq(diff.summary.find('reference'), -1, diff.summary)
 
 
@@ -239,11 +239,11 @@ class TestDictionaryDiff:
 
 	func test_constructor_defaults_diff_type_to_shallow():
 		var diff = DiffTool.new({}, {})
-		assert_eq(diff.get_diff_type(), DIFF_TYPE.DEEP)
+		assert_eq(diff.get_diff_type(), _utils.DIFF.DEEP)
 
 	func test_constructor_sets_diff_type():
-		var diff = DiffTool.new({}, {}, DIFF_TYPE.SHALLOW)
-		assert_eq(diff.get_diff_type(), DIFF_TYPE.SHALLOW)
+		var diff = DiffTool.new({}, {}, _utils.DIFF.SHALLOW)
+		assert_eq(diff.get_diff_type(), _utils.DIFF.SHALLOW)
 
 	func test_get_differences_returns_empty_array_when_matching():
 		var dd = DiffTool.new({'a':'asdf'}, {'a':'asdf'})
@@ -337,20 +337,20 @@ class TestDictionaryDiff:
 	func test_when_shallow_sub_dictionaries_are_not_checked_for_values():
 		var d1 = {'a':1, 'b':{'a':99}}
 		var d2 = {'a':1, 'b':{'a':99}}
-		var diff = DiffTool.new(d1, d2, DIFF_TYPE.SHALLOW)
+		var diff = DiffTool.new(d1, d2, _utils.DIFF.SHALLOW)
 		assert_false(diff.are_equal(), diff.summarize())
 
 	func test_when_shallow_ditionaries_in_arrays_are_not_checked_for_values():
 		var d1 = {'a':[{'b':1}]}
 		var d2 = {'a':[{'b':1}]}
-		var diff = DiffTool.new(d1, d2, DIFF_TYPE.SHALLOW)
+		var diff = DiffTool.new(d1, d2, _utils.DIFF.SHALLOW)
 		assert_false(diff.are_equal(), diff.summarize())
 
 
 	func test_when_deep_diff_then_different_arrays_contains_DiffTool():
 		var d1 = {'a':[1, 2, 3]}
 		var d2 = {'a':[3, 4, 5]}
-		var diff = DiffTool.new(d1, d2, DIFF_TYPE.DEEP)
+		var diff = DiffTool.new(d1, d2, _utils.DIFF.DEEP)
 		assert_is(diff.differences['a'], _utils.DiffTool)
 
 
@@ -364,7 +364,7 @@ class TestDictionaryDiff:
 			d1['b'].append(i)
 			d2['b'].append(i + 1)
 
-		var diff = DiffTool.new(d1, d2, DIFF_TYPE.DEEP)
+		var diff = DiffTool.new(d1, d2, _utils.DIFF.DEEP)
 		diff.max_differences = 10
 		assert_lt(diff.summary.split("\n").size(), 50, diff.summary)
 		assert_false(diff.are_equal)

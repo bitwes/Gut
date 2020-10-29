@@ -16,7 +16,7 @@ class TestFormatter:
 		var d1 = {'a': 1, 'dne_in_d2':{'x':'x', 'y':'y', 'z':'z'}, 'r':1}
 		var d2 = {'a': 2, 'dne_in_d1':{'xx':'x', 'yy':'y', 'zz':'z'}, 'r':2}
 
-		var diff = DiffTool.new(d1, d2, DIFF_TYPE.DEEP)
+		var diff = DiffTool.new(d1, d2, _utils.DIFF.DEEP)
 		pass_test(Formatter.new().make_it(diff))
 
 
@@ -68,7 +68,7 @@ class TestFormatter:
 			{'a':11, 'b':12, 'c':13},
 			[{'a':'diff'}, {'b':2}]
 		]
-		var diff = DiffTool.new(a1, a2, DIFF_TYPE.DEEP)
+		var diff = DiffTool.new(a1, a2, _utils.DIFF.DEEP)
 		pass_test(Formatter.new().make_it(diff))
 
 	func test_mix_of_array_and_dictionaries_shallow():
@@ -84,7 +84,7 @@ class TestFormatter:
 			{'a':11, 'b':12, 'c':13},
 			[{'a':'diff'}, {'b':2}]
 		]
-		var diff = DiffTool.new(a1, a2, DIFF_TYPE.SHALLOW)
+		var diff = DiffTool.new(a1, a2, _utils.DIFF.SHALLOW)
 		print(_strutils.type2str(diff.differences[3]))
 		print('brackets = ', diff.differences[3].get_brackets())
 		pass_test(Formatter.new().make_it(diff))
@@ -99,7 +99,7 @@ class TestFormatter:
 			[11, 12, 13],
 			[[14, 15, 16], ['same'], [17, 18, 19]]
 		]
-		var diff = DiffTool.new(a1, a2, DIFF_TYPE.DEEP)
+		var diff = DiffTool.new(a1, a2, _utils.DIFF.DEEP)
 		pass_test(Formatter.new().make_it(diff))
 
 	func test_when_arrays_are_large_then_summarize_truncates():
@@ -178,7 +178,7 @@ class TestUsingAssertNe:
 	# 		[11, 12, 13],
 	# 		[[14, 15, 16], ['same'], [17, 18, 19]]
 	# 	]
-	# 	var diff = DiffTool.new(a1, a2, DIFF_TYPE.DEEP)
+	# 	var diff = DiffTool.new(a1, a2, _utils.DIFF.DEEP)
 	# 	pass_test(Formatter.new().make_it(diff))
 
 	# func test_when_arrays_are_large_then_summarize_truncates():
