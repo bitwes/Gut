@@ -108,6 +108,8 @@ func test_true():
 	gut.p('-- failing --')
 	assert_true(false) # FAIL
 	assert_true('a' == 'b') # FAIL
+	assert_true('b') # FAIL
+	assert_true(1)
 
 func test_false():
 	gut.p('-- passing --')
@@ -119,6 +121,9 @@ func test_false():
 	gut.p('-- failing --')
 	assert_false(true) # FAIL
 	assert_false('ABC' == 'ABC') # FAIL
+	assert_false(null) # FAIL
+	assert_false(0)
+
 
 func test_null():
 	gut.p('-- passing --')

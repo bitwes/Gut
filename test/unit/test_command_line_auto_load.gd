@@ -5,6 +5,6 @@
 extends "res://addons/gut/test.gd"
 
 func test_auto_load_works():
-  var g = get_node("/root/global")
-  g.print_loaded()
-  assert_true("should get here")
+	var g = get_node("/root/global")
+	g.print_loaded()
+	pass_test("should get here")
