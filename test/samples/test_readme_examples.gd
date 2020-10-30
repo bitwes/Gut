@@ -20,12 +20,16 @@ func test_equals():
 	assert_eq('racecar', 'racecar') # PASS
 	assert_eq(node2, node1) # PASS
 	assert_eq([1, 2, 3], [1, 2, 3]) # PASS
+	var d1_pass = {'a':1}
+	var d2_pass = d1_pass
+	assert_eq(d1_pass, d2_pass) # PASS
 
 	gut.p('-- failing --')
 	assert_eq(1, 2) # FAIL
 	assert_eq('hello', 'world') # FAIL
 	assert_eq(self, node1) # FAIL
 	assert_eq([1, 'two', 3], [1, 2, 3, 4]) # FAIL
+	assert_eq({'a':1}, {'a':1}) # FAIL
 
 func test_not_equal():
 	var two = 2
@@ -327,7 +331,7 @@ class MovingNode:
 
 func test_illustrate_yield():
 	var moving_node = MovingNode.new()
-	add_child(moving_node)
+	add_child_autofree(moving_node)
 	moving_node.set_position(Vector2(0, 0))
 
 	# While the yield happens, the node should move
@@ -364,7 +368,7 @@ class TimedSignaler:
 
 func test_illustrate_yield_to_with_less_time():
 	var t = TimedSignaler.new(5)
-	add_child(t)
+	add_child_autofree(t)
 	t.start()
 	yield(yield_to(t, 'the_signal', 1), YIELD)
 	# since we setup t to emit after 5 seconds, this will fail because we
@@ -373,7 +377,7 @@ func test_illustrate_yield_to_with_less_time():
 
 func test_illustrate_yield_to_with_more_time():
 	var t = TimedSignaler.new(1)
-	add_child(t)
+	add_child_autofree(t)
 	t.start()
 	yield(yield_to(t, 'the_signal', 5), YIELD)
 	# since we wait longer than it will take to emit the signal, this assert
@@ -636,7 +640,7 @@ func test_replace_node():
 	var DOUBLE_ME_SCENE = 'res://test/resources/doubler_test_objects/double_me_scene.tscn'
 
 	var scene = load(DOUBLE_ME_SCENE).instance()
-	add_child(scene)
+	add_child_autofree(scene)
 	var replace_label = Label.new()
 	replace_node(scene, 'Label', replace_label)
 
@@ -736,3 +740,60 @@ func test_mix_of_array_and_dictionaries_deep():
 
 	gut.p('Traversing differences:')
 	gut.p(result.differences[5].differences[0].differences['a'])
+
+
+func test_assert_eq_shallow():
+	var complex_example = [
+		'a', 'b', 'c',
+		[1, 2, 3, 4],
+		{'a':1, 'b':2, 'c':3},
+		[{'a':1}, {'b':2}]
+	]
+
+	# Passing
+	assert_eq_shallow([1, 2, 3], [1, 2, 3])
+	assert_eq_shallow([1, [2, 3], 4], [1, [2, 3], 4])
+	var d1 = {'foo':'bar'}
+	assert_eq_shallow([1, 2, d1], [1, 2, d1])
+	assert_eq_shallow({'a':1}, {'a':1})
+	assert_eq_shallow({'a':[1, 2, 3, d1]}, {'a':[1, 2, 3, d1]})
+
+	var shallow_copy = complex_example.duplicate(false)
+	assert_eq_shallow(complex_example, shallow_copy)
+
+	# Failing
+	assert_eq_shallow([1, 2], [1, 2 ,3]) # missing index
+	assert_eq_shallow({'a':1}, {'a':1, 'b':2}) # missing key
+	assert_eq_shallow([1, 2], [1.0, 2.0]) # floats != ints
+	assert_eq_shallow([1, 2, {'a':1}], [1, 2, {'a':1}]) # compare [2] by ref
+	assert_eq_shallow({'a':1}, {'a':1.0}) # floats != ints
+	assert_eq_shallow({'a':1, 'b':{'c':1}}, {'a':1, 'b':{'c':1}}) # compare 'b' by ref
+
+	var deep_copy = complex_example.duplicate(true)
+	assert_eq_shallow(complex_example, deep_copy)
+
+
+
+func test_assert_eq_deep():
+	var complex_example = [
+		'a', 'b', 'c',
+		[1, 2, 3, 4],
+		{'a':1, 'b':2, 'c':3},
+		[{'a':1}, {'b':2}]
+	]
+
+	# Passing
+	assert_eq_deep([1, 2, {'a':1}], [1, 2, {'a':1}])
+	assert_eq_deep({'a':1, 'b':{'c':1}}, {'b':{'c':1}, 'a':1})
+
+	var shallow_copy  = complex_example.duplicate(false)
+	var deep_copy = complex_example.duplicate(true)
+	assert_eq_deep(complex_example, shallow_copy)
+	assert_eq_deep(complex_example, deep_copy)
+	assert_eq_deep(shallow_copy, deep_copy)
+
+	# Failing
+	assert_eq_shallow([1, 2], [1, 2 ,3]) # missing index
+	assert_eq_shallow({'a':1}, {'a':1, 'b':2}) # missing key
+	assert_eq_deep([1, 2, {'a':1}], [1, 2, {'a':1.0}]) # floats != ints
+
