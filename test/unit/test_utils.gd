@@ -61,11 +61,20 @@ class TestVersionCheck:
 	var test_versions = ParameterFactory.named_parameters(
 		['engine_version', 'req_version', 'expected_result'],
 		[
-			['1.2.3', '2.0.0', false],
+			['1.2.3', '1.2.3', true],
+			['2.0.0', '1.0.0', true],
+			['1.0.1', '1.0.0', true],
+			['1.1.0', '1.0.0', true],
+			['1.1.1', '1.0.0', true],
+			['1.2.5', '1.0.10', true],
 			['3.3.0', '3.2.3', true],
 			['4.0.0', '3.2.0', true],
-			['3.0.1', '3.0.0', true],
-			['4.0.0', '2.0.0', true],
+
+			['3.0.0', '3.0.1', false],
+			['1.2.3', '2.0.0', false],
+			['1.2.1', '1.2.3', false],
+			['1.2.3', '1.3.0', false],
+
 		])
 	func test_is_version_ok(p=use_parameters(test_versions)):
 		var utils = autofree(Utils.new())

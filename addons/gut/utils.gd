@@ -128,10 +128,20 @@ func get_bad_version_text():
 # Checks the Godot version against req_godot array.
 # ------------------------------------------------------------------------------
 func is_version_ok(engine_info=Engine.get_version_info(),required=req_godot):
-	var is_ok = engine_info.major >= required[0] and \
-		engine_info.minor >= required[1] and \
-		engine_info.patch >= required[2]
-	return is_ok
+	var is_ok = null
+	var engine_array = [engine_info.major, engine_info.minor, engine_info.patch]
+
+	var idx = 0
+	while(is_ok == null and idx < engine_array.size()):
+		if(int(engine_array[idx]) > int(required[idx])):
+			is_ok = true
+		elif(int(engine_array[idx]) < int(required[idx])):
+			is_ok = false
+
+		idx += 1
+
+	# still null means each index was the same.
+	return nvl(is_ok, true)
 
 
 # ------------------------------------------------------------------------------
