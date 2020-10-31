@@ -1082,9 +1082,9 @@ func assert_setget(instance, name_property, has_setter = false, has_getter = fal
 		resource = _get_type_from_obj(instance)
 	
 	if has_setter:
-		name_setter = str("set_", _str(name_property))
+		name_setter = "set_" + str(name_property)
 	if has_getter:
-		name_getter = str("get_", _str(name_property))
+		name_getter = "get_" + str(name_property)
 	
 	assert_setget_called(resource, str(name_property), name_setter, name_getter)
 
@@ -1104,8 +1104,8 @@ func assert_property(instance, name_property, default_value, new_value) -> void:
 		resource = _get_type_from_obj(instance)
 		obj = instance
 	
-	var name_setter = str("set_", _str(name_property))
-	var name_getter = str("get_", _str(name_property))
+	var name_setter = "set_" + str(name_property)
+	var name_getter = "get_" + str(name_property)
 	
 	assert_accessors(obj, str(name_property), default_value, new_value)
 	assert_setget_called(resource, str(name_property), name_setter, name_getter)
