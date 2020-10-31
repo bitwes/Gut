@@ -245,12 +245,12 @@ func _init():
 	#print_all_info(r)
 	#print(r.get('Reference'))
 
-	print_all_info(DoubleMeScene)
-	print(DoubleMeScene.script)
-	print(DoubleMeScene.resource_name)
-	print(DoubleMeScene.get_meta_list())
+	#print_all_info(DoubleMeScene)
+	#print(DoubleMeScene.script)
+	#print(DoubleMeScene.resource_name)
+	#print(DoubleMeScene.get_meta_list())
 
-	#print_script_methods()
+	print_script_methods()
 	#var test = load('res://addons/gut/test.gd').new()
 	#print_method_info(test)
 

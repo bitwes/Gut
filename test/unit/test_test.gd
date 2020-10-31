@@ -1,14 +1,6 @@
 # ------------------------------------------------------------------------------
-# Tests test.gd.  test.gd contains all the asserts is the class that all
+# Tests test.gd.  test.gd contains all the asserts and is the class that all
 # test scripts inherit from.
-#
-# NOTE on naming tests.  Most of these tests were made before Inner Test Classes
-# were supported.  To that end a lot of tests should be renamed.  All new tests
-# should be in an Inner Test Class and follow a convention similar to:
-#   * test_passes_when...
-#   * test_passes_if...
-#   * test_fails_when...
-#   * etc
 # ------------------------------------------------------------------------------
 extends "res://addons/gut/test.gd"
 
@@ -63,7 +55,7 @@ class BaseTestClass:
 	func before_each():
 		gr.test = Test.new()
 		gr.test_with_gut = Test.new()
-		gr.test_with_gut.gut = Gut.new()
+		gr.test_with_gut.gut = autofree(Gut.new())
 
 	func after_each():
 		gr.test_with_gut.gut.get_doubler().clear_output_directory()
@@ -73,8 +65,6 @@ class BaseTestClass:
 		gr.test = null
 		gr.test_with_gut.gut.free()
 		gr.test_with_gut.free()
-
-
 
 class TestMiscTests:
 	extends BaseTestClass
@@ -93,8 +83,6 @@ class TestMiscTests:
 		pass
 		# I cannot think of a way to test this without some giant amount of
 		# testing legwork.
-
-
 
 class TestAssertEq:
 	extends BaseTestClass
@@ -145,6 +133,20 @@ class TestAssertEq:
 		gr.test.assert_eq(1.0, 1, 'Should pass and warn')
 		assert_warn(gr.test)
 
+	var array_vals = [
+		[[1, 2, 3], ['1', '2', '3'], false],
+		[[1, 2, 3], [1, 2, 3], true],
+		[[1, 2.0, 3], [1.0, 2, 3.0], false],
+		[[1, 2], [1, 2, 3, 4, 5], false],
+		[[1, 2, 3, 4, 5], [1, 2], false]
+	]
+	func test_with_array(p = use_parameters(array_vals)):
+		gr.test.assert_eq(p[0], p[1])
+		if(p[2]):
+			assert_pass(gr.test)
+		else:
+			assert_fail(gr.test)
+
 class TestAssertNe:
 	extends BaseTestClass
 
@@ -167,6 +169,17 @@ class TestAssertNe:
 	func test_fails_with_strings_equal():
 		gr.test.assert_ne("one", "one", "Should Fail")
 		assert_fail(gr.test)
+
+	var array_vals = [
+		[[1, 2, 3], ['1', '2', '3'], true],
+		[[1, 2, 3], [1, 2, 3], false],
+		[[1, 2.0, 3], [1.0, 2, 3.0], true]]
+	func test_with_array(p = use_parameters(array_vals)):
+		gr.test.assert_ne(p[0], p[1])
+		if(p[2]):
+			assert_pass(gr.test)
+		else:
+			assert_fail(gr.test)
 
 class TestAssertAlmostEq:
 	extends BaseTestClass
@@ -349,6 +362,54 @@ class TestAssertBetween:
 		gr.test.assert_between('q', 'z', 'a', "Should fail")
 		assert_fail(gr.test)
 
+
+class TestAssertNotBetween:
+	extends BaseTestClass
+
+	func test_with_number_lt():
+		gr.test.assert_not_between(1, 2, 3, "Should pass, 1 not between 2 and 3")
+		assert_pass(gr.test)
+
+	func test_with_number_gt():
+		gr.test.assert_not_between(4, 1, 3, "Should pass, 4 not between 1 and 3")
+		assert_pass(gr.test, 1, '4 not between 1 and 3')
+
+	func test_with_number_at_low_end():
+		gr.test.assert_not_between(1, 1, 3, "Should pass: exclusive not between")
+		assert_pass(gr.test, 1, '1 not between 1 and 3, exclusively')
+
+	func test_with_number_at_high_end():
+		gr.test.assert_not_between(3, 1, 3, "Should pass: exclusive not between")
+		assert_pass(gr.test, 1, '3 not between 1 and 3, exclusively')
+
+	func test_with_invalid_number_range():
+		gr.test.assert_not_between(4, 8, 0, "Should fail")
+		assert_fail(gr.test, 1, '8 is starting number and is not less than 0')
+
+	func test_with_string_between():
+		gr.test.assert_not_between('b', 'a', 'c', "Should fail, b is between a and c")
+		assert_fail(gr.test)
+
+	func test_with_string_lt():
+		gr.test.assert_not_between('a', 'b', 'd', "Should pass")
+		assert_pass(gr.test)
+
+	func test_with_string_gt():
+		gr.test.assert_not_between('z', 'a', 'c', "Should pass")
+		assert_pass(gr.test)
+
+	func test_with_string_at_high_end():
+		gr.test.assert_not_between('c', 'a', 'c', "Should pass: exclusive not between")
+		assert_pass(gr.test)
+
+	func test_with_string_at_low_end():
+		gr.test.assert_not_between('a', 'a', 'c', "Should pass: exclusive not between")
+		assert_pass(gr.test)
+
+	func test_with_invalid_string_range():
+		gr.test.assert_not_between('q', 'z', 'a', "Should fail: Invalid range")
+		assert_fail(gr.test)
+
 # TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestAssertTrue:
 	extends BaseTestClass
@@ -404,7 +465,7 @@ class TestAssertHas:
 		gr.test.assert_does_not_have(array, 20, 'Should not have it.')
 		assert_fail(gr.test)
 
-# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
+
 class TestFailingDatatypeChecks:
 	extends BaseTestClass
 
@@ -434,7 +495,7 @@ class TestFailingDatatypeChecks:
 		gr.test.assert_ne(null, Node2D.new())
 		assert_pass(gr.test, 2)
 
-# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
+
 class TestPending:
 	extends BaseTestClass
 
@@ -848,7 +909,13 @@ class TestSignalAsserts:
 		assert_string_contains(text, SIGNALS.NO_PARAMETERS)
 		assert_string_contains(text, SIGNALS.SOME_SIGNAL)
 
-# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
+	func test_issue_152():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1.0, 2, 3.0)
+		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1, 2.0, 3])
+		assert_fail(gr.test)
+
+
 class TestExtendAsserts:
 	extends BaseTestClass
 
@@ -1275,7 +1342,7 @@ class TestReplaceNode:
 		gr.test.replace_node(_arena, old, replacement)
 		assert_errored(gr.test)
 
-class TestIsFreed:
+class TestAssertIsFreed:
 	extends BaseTestClass
 
 	func test_object_is_freed_should_pass():
@@ -1406,10 +1473,10 @@ class TestMemoryMgmt:
 		assert_no_new_orphans()
 		assert_true(gut._current_test.passed, 'test should be passing')
 
-	func test_fails_when_orphans_introduced():
+	func test_failing_orphan_assert_marks_test_as_failing():
 		var n2d = Node2D.new()
 		assert_no_new_orphans('this should fail')
-		assert_false(gut._current_test.passed, 'test should be failing')
+		assert_true(is_failing(), 'test should be failing')
 		n2d.free()
 
 	func test_passes_when_orphans_released():
@@ -1448,6 +1515,117 @@ class TestMemoryMgmt:
 		for i in range(3):
 			var extra_test = TestClass.new()
 			add_child(extra_test)
+
+
+class TestTestStateChecking:
+	extends 'res://addons/gut/test.gd'
+
+	var _gut = null
+
+	func before_each():
+		.before_each()
+		_gut = _utils.Gut.new()
+		add_child_autoqfree(_gut)
+		_gut.add_script('res://test/resources/state_check_tests.gd')
+
+	func _same_name():
+		return gut.get_current_test_object().name
+
+	func _run_test(inner_class, name=_same_name()):
+		_gut.set_inner_class_name(inner_class)
+		_gut.set_unit_test_name(name)
+		_gut.test_scripts()
+
+	func _assert_pass_fail_count(passing, failing):
+		assert_eq(_gut.get_pass_count(), passing, 'Pass count does not match')
+		assert_eq(_gut.get_fail_count(), failing, 'Failing count does not match')
+
+	func test_is_passing_returns_true_when_test_is_passing():
+		_run_test('TestIsPassing')
+		_assert_pass_fail_count(2, 0)
+
+	func test_is_passing_returns_false_when_test_is_failing():
+		_run_test('TestIsPassing')
+		_assert_pass_fail_count(1, 1)
+
+	func test_is_passing_false_by_default():
+		_run_test('TestIsPassing')
+		_assert_pass_fail_count(1, 0)
+
+	func  test_is_passing_returns_true_before_test_fails():
+		_run_test('TestIsPassing')
+		_assert_pass_fail_count(2, 1)
+
+	func test_is_failing_returns_true_when_failing():
+		_run_test('TestIsFailing')
+		_assert_pass_fail_count(1, 1)
+
+	func test_is_failing_returns_false_when_passing():
+		_run_test('TestIsFailing')
+		_assert_pass_fail_count(2, 0)
+
+	func test_is_failing_returns_false_by_default():
+		_run_test('TestIsFailing')
+		_assert_pass_fail_count(1, 0)
+
+	func test_is_failing_returns_false_before_test_passes():
+		_run_test('TestIsFailing')
+		_assert_pass_fail_count(2, 0)
+
+	func test_error_generated_when_using_is_passing_in_before_all():
+		_run_test('TestUseIsPassingInBeforeAll', 'test_nothing')
+		assert_eq(_gut.get_logger().get_errors().size(), 1)
+
+	func test_error_generated_when_using_is_passing_in_after_all():
+		_run_test('TestUseIsPassingInAfterAll', 'test_nothing')
+		assert_eq(_gut.get_logger().get_errors().size(), 1)
+
+	func test_error_generated_when_using_is_failing_in_before_all():
+		_run_test('TestUseIsFailingInBeforeAll', 'test_nothing')
+		assert_eq(_gut.get_logger().get_errors().size(), 1)
+
+	func test_error_generated_when_using_is_failing_in_after_all():
+		_run_test('TestUseIsFailingInAfterAll', 'test_nothing')
+		assert_eq(_gut.get_logger().get_errors().size(), 1)
+
+class TestPassFailTestMethods:
+	extends BaseTestClass
+
+	func test_pass_test_passes_ups_pass_count():
+		gr.test_with_gut.pass_test('pass this')
+		assert_eq(gr.test_with_gut.get_pass_count(), 1, 'test count')
+
+	func test_fail_test_ups_fail_count():
+		gr.test_with_gut.fail_test('fail this')
+		assert_eq(gr.test_with_gut.get_fail_count(), 1, 'test count')
+
+
+class TestNonMatchingArrayIndexes:
+	extends BaseTestClass
+
+	func test_empty_when_matching():
+		var a1 = [1, 2, 3]
+		var a2 = [1, 2, 3]
+		var result = gr.test.get_non_matching_array_indexes(a1, a2)
+		assert_eq(result, [])
+
+	func test_lists_missing_indexes_in_1():
+		var a1 = [1, 2, 3]
+		var a2 = [1, 2, 3, 4]
+		var result = gr.test.get_non_matching_array_indexes(a1, a2)
+		assert_eq(result, [3])
+
+	func test_lists_missing_indexes_in_2():
+		var a1 = [1, 2, 3, 4]
+		var a2 = [1, 2, 3]
+		var result = gr.test.get_non_matching_array_indexes(a1, a2)
+		assert_eq(result, [3])
+
+	func test_includes_non_equal_ones():
+		var a1 = [1.0, 2, [], 4]
+		var a2 = [1, 'two', autofree(Node2D.new()), '4']
+		var result = gr.test.get_non_matching_array_indexes(a1, a2)
+		assert_eq(result, [0, 1, 2, 3])
 
 
 class TestAssertSetgetCalled:

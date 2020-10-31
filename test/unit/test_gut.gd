@@ -252,6 +252,46 @@ func test_simulate_calls_physics_process():
 
 
 # ------------------------------
+# No Assert Warning
+# ------------------------------
+func test_when_a_test_has_no_asserts_a_warning_is_generated():
+	gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
+	gr.test_gut.set_unit_test_name('test_no_asserts')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_logger().get_warnings().size(), 1)
+
+func test_with_passing_assert_no_assert_warning_is_not_generated():
+	gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
+	gr.test_gut.set_unit_test_name('test_passing_assert')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_logger().get_warnings().size(), 0)
+
+func test_with_failing_assert_no_assert_warning_is_not_generated():
+	gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
+	gr.test_gut.set_unit_test_name('test_failing_assert')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_logger().get_warnings().size(), 0)
+
+func test_with_pass_test_call_no_assert_warning_is_not_generated():
+	gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
+	gr.test_gut.set_unit_test_name('test_use_pass_test')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_logger().get_warnings().size(), 0)
+
+func test_with_fail_test_call_no_assert_warning_is_not_generated():
+	gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
+	gr.test_gut.set_unit_test_name('test_use_fail_test')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_logger().get_warnings().size(), 0)
+
+func test_with_pending_call_no_assert_warning_is_no_generated():
+	gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
+	gr.test_gut.set_unit_test_name('test_use_pending')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_logger().get_warnings().size(), 0)
+
+
+# ------------------------------
 # Setting test to run
 # ------------------------------
 const SAMPLES_DIR = 'res://test/samples/'
@@ -359,16 +399,28 @@ func test_when_inner_class_skipped_none_of_the_before_after_are_called():
 	gr.test_gut.test_scripts()
 	var instances = gr.test_gut._test_script_objects
 
+	var inner1_inst = null
+	var inner2_inst = null
 
-	assert_eq(instances[1].before_all_calls, 1, 'TestInner1 before_all calls')
-	assert_eq(instances[1].after_all_calls, 1, 'TestInner1 after_all calls')
-	assert_eq(instances[1].before_each_calls, 1, 'TestInner1 before_each_calls')
-	assert_eq(instances[1].after_each_calls, 1, 'TestInner1 after_each calls')
+	# order in which the inner classes will be run is unknown  so  we
+	# have to go looking for them.
+	for i in range(instances.size()):
+		var dict = inst2dict(instances[i])
+		print('subpath  = ', dict['@subpath'])
+		if(dict['@subpath'] == 'TestInner1'):
+			inner1_inst = instances[i]
+		elif(dict['@subpath'] == 'TestInner2'):
+			inner2_inst = instances[i]
 
-	assert_eq(instances[2].before_all_calls, 0, 'TestInner2 before_all calls')
-	assert_eq(instances[2].after_all_calls, 0, 'TestInner2 after_all calls')
-	assert_eq(instances[2].before_each_calls, 0, 'TestInner2 before_each_calls')
-	assert_eq(instances[2].after_each_calls, 0, 'TestInner2 after_each calls')
+	assert_eq(inner1_inst.before_all_calls, 1, 'TestInner1 before_all calls')
+	assert_eq(inner1_inst.after_all_calls, 1, 'TestInner1 after_all calls')
+	assert_eq(inner1_inst.before_each_calls, 1, 'TestInner1 before_each_calls')
+	assert_eq(inner1_inst.after_each_calls, 1, 'TestInner1 after_each calls')
+
+	assert_eq(inner2_inst.before_all_calls, 0, 'TestInner2 before_all calls')
+	assert_eq(inner2_inst.after_all_calls, 0, 'TestInner2 after_all calls')
+	assert_eq(inner2_inst.before_each_calls, 0, 'TestInner2 before_each_calls')
+	assert_eq(inner2_inst.after_each_calls, 0, 'TestInner2 after_each calls')
 
 # ------------------------------
 # Pre and post hook tests
@@ -427,8 +479,18 @@ func test_when_post_hook_set_to_invalid_script_no_tests_are_ran():
 # ------------------------------
 # Parameterized Test Tests
 # ------------------------------
+const TEST_WITH_PARAMETERS = 'res://test/resources/parsing_and_loading_samples/test_with_parameters.gd'
+func _get_test_script_object_of_type(the_gut, the_type):
+	var objs = gr.test_gut._test_script_objects
+	var obj = null
+	for i in range(objs.size()):
+		if(objs[i] is the_type):
+			obj = objs[i]
+		print('- ', _str(objs[i]))
+	return obj
+
 func test_can_run_tests_with_parameters():
-	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/test_with_parameters.gd')
+	gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 	gr.test_gut.set_unit_test_name('test_has_one_defaulted_parameter')
 	gr.test_gut.test_scripts()
 	var totals = gr.test_gut.get_summary().get_totals()
@@ -436,32 +498,96 @@ func test_can_run_tests_with_parameters():
 	assert_eq(totals.tests, 1, 'test count')
 
 func test_too_many_parameters_generates_an_error():
-	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/test_with_parameters.gd')
+	gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 	gr.test_gut.set_unit_test_name('test_has_two_parameters')
 	gr.test_gut.test_scripts()
 	assert_eq(gr.test_gut.get_logger().get_errors().size(), 1, 'error size')
 	assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test count')
 
 func test_parameterized_tests_are_called_multiple_times():
-	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/test_with_parameters.gd')
+	gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 	gr.test_gut.set_unit_test_name('test_has_three_values_for_parameters')
 	gr.test_gut.test_scripts()
 	assert_eq(gr.test_gut.get_pass_count(), 3)
 
 func test_when_use_parameters_is_not_called_then_error_is_generated():
-	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/test_with_parameters.gd')
+	gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 	gr.test_gut.set_unit_test_name('test_does_not_use_use_parameters')
 	gr.test_gut.test_scripts()
 	assert_eq(gr.test_gut.get_logger().get_errors().size(), 1, 'error size')
 	assert_eq(gr.test_gut.get_fail_count(), 1)
 
-# if you really think about this is a very very inception like test.
+# if you really think about this, it is a very very inception like test.
 func test_parameterized_test_that_yield_are_called_correctly():
-	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/test_with_parameters.gd')
+	gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 	gr.test_gut.set_unit_test_name('test_three_values_and_a_yield')
 	gr.test_gut.test_scripts()
-	yield(yield_to(gr.test_gut, gr.test_gut.SIGNAL_PRAMETERIZED_YIELD_DONE, 10), YIELD)
+	yield(yield_to(gr.test_gut, 'test_finished', 10), YIELD)
 	assert_eq(gr.test_gut.get_pass_count(), 3)
+
+func test_parameterized_test_calls_before_each_before_each_test():
+	gr.test_gut.add_script(TEST_WITH_PARAMETERS)
+	gr.test_gut.set_inner_class_name('TestWithBeforeEach')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_pass_count(), 3)
+	var obj = _get_test_script_object_of_type(gr.test_gut, load(TEST_WITH_PARAMETERS).TestWithBeforeEach)
+	assert_eq(obj.before_count, 3, 'test class:  before_count')
+
+func test_parameterized_test_calls_after_each_after_each_test():
+	gr.test_gut.add_script(TEST_WITH_PARAMETERS)
+	gr.test_gut.set_inner_class_name('TestWithAfterEach')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_pass_count(), 3)
+	var obj = _get_test_script_object_of_type(gr.test_gut, load(TEST_WITH_PARAMETERS).TestWithAfterEach)
+	assert_eq(obj.after_count, 3, 'test class:  after_count')
+
+
+# ------------------------------
+# Asserting in before_all and after_all
+# ------------------------------
+func test_passing_asserts_made_in_before_all_are_counted():
+	gr.test_gut.add_script('res://test/resources/has_asserts_in_beforeall_and_afterall.gd')
+	gr.test_gut.set_inner_class_name('TestPassingBeforeAllAssertNoOtherTests')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_assert_count(), 1, 'assert count')
+	assert_eq(gr.test_gut.get_pass_count(), 1, 'pass count')
+
+func test_passing_asserts_made_in_after_all_are_counted():
+	gr.test_gut.add_script('res://test/resources/has_asserts_in_beforeall_and_afterall.gd')
+	gr.test_gut.set_inner_class_name('TestPassingAfterAllAssertNoOtherTests')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_assert_count(), 1, 'assert count')
+	assert_eq(gr.test_gut.get_pass_count(), 1, 'pass count')
+
+func test_failing_asserts_made_in_before_all_are_counted():
+	gr.test_gut.add_script('res://test/resources/has_asserts_in_beforeall_and_afterall.gd')
+	gr.test_gut.set_inner_class_name('TestFailingBeforeAllAssertNoOtherTests')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_assert_count(), 1, 'assert count')
+	assert_eq(gr.test_gut.get_fail_count(), 1, 'fail count')
+
+func test_failing_asserts_made_in_after_all_are_counted():
+	gr.test_gut.add_script('res://test/resources/has_asserts_in_beforeall_and_afterall.gd')
+	gr.test_gut.set_inner_class_name('TestFailingAfterAllAssertNoOtherTests')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_assert_count(), 1, 'assert count')
+	assert_eq(gr.test_gut.get_fail_count(), 1, 'fail count')
+
+func test_before_all_after_all_printing():
+	gr.test_gut.add_script('res://test/resources/has_asserts_in_beforeall_and_afterall.gd')
+	gr.test_gut.set_inner_class_name('TestHasBeforeAllAfterAllAndSomeTests')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_pass_count(), 4, 'pass count')
+	assert_eq(gr.test_gut.get_fail_count(), 4, 'fail count')
+	assert_eq(gr.test_gut.get_assert_count(), 8, 'assert count`')
+
+func test_before_all_after_all_printing_all_classes_in_script():
+	gr.test_gut.add_script('res://test/resources/has_asserts_in_beforeall_and_afterall.gd')
+	gr.test_gut.test_scripts()
+	assert_eq(gr.test_gut.get_pass_count(), 11, 'pass count')
+	assert_eq(gr.test_gut.get_fail_count(), 11, 'fail count')
+	assert_eq(gr.test_gut.get_assert_count(), 22, 'assert count`')
+
 
 # ------------------------------------------------------------------------------
 #
