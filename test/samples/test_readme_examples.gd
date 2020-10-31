@@ -19,11 +19,13 @@ func test_equals():
 	assert_eq(one, 1, 'one should equal one') # PASS
 	assert_eq('racecar', 'racecar') # PASS
 	assert_eq(node2, node1) # PASS
+	assert_eq([1, 2, 3], [1, 2, 3]) # PASS
 
 	gut.p('-- failing --')
 	assert_eq(1, 2) # FAIL
 	assert_eq('hello', 'world') # FAIL
 	assert_eq(self, node1) # FAIL
+	assert_eq([1, 'two', 3], [1, 2, 3, 4]) # FAIL
 
 func test_not_equal():
 	var two = 2
@@ -145,6 +147,19 @@ func test_assert_between():
 	gut.p('-- failing --')
 	assert_between('a', 'b', 'c') # FAIL
 	assert_between(1, 5, 10) # FAIL
+
+
+func test_assert_not_between():
+	gut.p('-- passing --')
+	assert_not_between(1, 5, 10) # PASS
+	assert_not_between('a', 'b', 'd') # PASS
+	assert_not_between('d', 'b', 'd') # PASS
+	assert_not_between(10, 0, 10) # PASS
+	assert_not_between(-2, -2, 10) # PASS
+
+	gut.p('-- failing --')
+	assert_not_between(5, 0, 10, 'Five shouldnt be between 0 and 10') # FAIL
+	assert_not_between(0.25, -2.0, 4.0) # FAIL
 
 
 func test_has():
@@ -641,7 +656,7 @@ class Signaler:
 
 class Connector:
 	func connect_this():
-		pass	
+		pass
 	func  other_method():
 		pass
 
@@ -653,12 +668,20 @@ func test_assert_connected():
 	# Passing
 	assert_connected(signaler, connector, 'the_signal')
 	assert_connected(signaler, connector, 'the_signal', 'connect_this')
-	
+
 	# Failing
 	var foo = Connector.new()
 	assert_connected(signaler,  connector, 'the_signal', 'other_method')
 	assert_connected(signaler, connector, 'other_signal')
 	assert_connected(signaler, foo, 'the_signal')
+
+
+func test_get_non_matching_array_indexes():
+	gut.p(get_non_matching_array_indexes([1, 2, 3], [1, 2,3])) # prints []
+	gut.p(get_non_matching_array_indexes([1, 2], [1, 2, 3])) # prints [2]
+	gut.p(get_non_matching_array_indexes([1, 2, 3], [1, 2])) # prints [2]
+	gut.p(get_non_matching_array_indexes([1, 'two', 3], [1, 2, 3])) # prints [1]
+	gut.p(get_non_matching_array_indexes(['1', '2', '3'], [1, 2, 3])) # prints [0, 1, 2]
 
 
 # >>> Issue 70

@@ -59,6 +59,7 @@ const LOG_LEVEL_TEST_AND_FAILURES = 1
 const LOG_LEVEL_ALL_ASSERTS = 2
 const WAITING_MESSAGE = '/# waiting #/'
 const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
+const COMPLETED = 'completed'
 
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
@@ -127,23 +128,29 @@ var _parameter_handler = null
 # error displayed is seen since importing generates a lot of text.
 var _cancel_import = false
 
+# Used for proper assert tracking and printing during before_all
+var _before_all_test_obj = load('res://addons/gut/test_collector.gd').Test.new()
+# Used for proper assert tracking and printing during after_all
+var _after_all_test_obj = load('res://addons/gut/test_collector.gd').Test.new()
+
 const SIGNAL_TESTS_FINISHED = 'tests_finished'
 const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yield_before_teardown'
-const SIGNAL_PRAMETERIZED_YIELD_DONE = 'parameterized_yield_done'
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func _init():
+	_before_all_test_obj.name = 'before_all'
+	_after_all_test_obj.name = 'after_all'
 	# When running tests for GUT itself, _utils has been setup to always return
 	# a new logger so this does not set the gut instance on the base logger
 	# when creating test instances of GUT.
 	_lgr.set_gut(self)
 
 	add_user_signal(SIGNAL_TESTS_FINISHED)
+	add_user_signal('test_finished')
 	add_user_signal(SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
 	add_user_signal('timeout')
-	add_user_signal('done_waiting')
-	add_user_signal(SIGNAL_PRAMETERIZED_YIELD_DONE)
+
 	_doubler.set_output_dir(_temp_directory)
 	_doubler.set_stubber(_stubber)
 	_doubler.set_spy(_spy)
@@ -486,7 +493,8 @@ func _end_run():
 func _is_function_state(script_result):
 	return script_result != null and \
 		   typeof(script_result) == TYPE_OBJECT and \
-		   script_result is GDScriptFunctionState
+		   script_result is GDScriptFunctionState and \
+		   script_result.is_valid()
 
 # ------------------------------------------------------------------------------
 # Print out the heading for a new script
@@ -551,9 +559,8 @@ func _wait_for_done(result):
 	var iter_counter = 0
 	var print_after = 3
 
-	# sets waiting to false.
-	result.connect('completed', self, '_on_test_script_yield_completed')
-
+	# callback method sets waiting to false.
+	result.connect(COMPLETED, self, '_on_test_script_yield_completed')
 	if(!_was_yield_method_called):
 		_lgr.log('-- Yield detected, waiting --', _lgr.fmts.yellow)
 
@@ -572,7 +579,6 @@ func _wait_for_done(result):
 			dots = ''
 
 	_lgr.end_yield()
-	emit_signal('done_waiting')
 
 # ------------------------------------------------------------------------------
 # returns self so it can be integrated into the yield call.
@@ -591,7 +597,7 @@ func _call_deprecated_script_method(script, method, alt):
 			# Removing the deprecated line.  I think it's still too early to
 			# start bothering people with this.  Left everything here though
 			# because I don't want to remember how I did this last time.
-			#_lgr.deprecated(str('The method ', method, ' has been deprecated, use ', alt, ' instead.'))
+			_lgr.deprecated(str('The method ', method, ' has been deprecated, use ', alt, ' instead.'))
 			_deprecated_tracker.add(txt)
 		script.call(method)
 
@@ -616,31 +622,127 @@ func _get_indexes_matching_path(path):
 # ------------------------------------------------------------------------------
 # Execute all calls of a parameterized test.
 # ------------------------------------------------------------------------------
-func _parameterized_call(test_script):
-	var script_result = test_script.call(_current_test.name)
+func _run_parameterized_test(test_script, test_name):
+	var script_result = _run_test(test_script, test_name)
 	if(_is_function_state(script_result)):
-		_wait_for_done(script_result)
-		yield(self, 'done_waiting')
+		# _run_tests does _wait_for_done so just wait on it to  complete
+		yield(script_result, COMPLETED)
 
 	if(_parameter_handler == null):
 		_lgr.error(str('Parameterized test ', _current_test.name, ' did not call use_parameters for the default value of the parameter.'))
 		_fail(str('Parameterized test ', _current_test.name, ' did not call use_parameters for the default value of the parameter.'))
 	else:
 		while(!_parameter_handler.is_done()):
-			script_result = test_script.call(_current_test.name)
+			script_result = _run_test(test_script, test_name)
 			if(_is_function_state(script_result)):
-				_wait_for_done(script_result)
-				yield(self, 'done_waiting')
-		script_result = null
+				# _run_tests does _wait_for_done so just wait on it to  complete
+				yield(script_result, COMPLETED)
+
 	_parameter_handler = null
-	emit_signal(SIGNAL_PRAMETERIZED_YIELD_DONE)
 
 
 # ------------------------------------------------------------------------------
-# Run all tests in a script.  This is the core logic for running tests.
+# Runs a single test given a test.gd instance and the name of the test to run.
+# ------------------------------------------------------------------------------
+func _run_test(script_inst, test_name):
+	_lgr.log_test_name()
+	_lgr.set_indent_level(1)
+	_orphan_counter.add_counter('test')
+	var script_result = null
+
+	_call_deprecated_script_method(script_inst, 'setup', 'before_each')
+	var before_each_result = script_inst.before_each()
+	if(_is_function_state(before_each_result)):
+		yield(_wait_for_done(before_each_result), COMPLETED)
+
+	# When the script yields it will return a GDScriptFunctionState object
+	script_result = script_inst.call(test_name)
+	_new_summary.add_test(test_name)
+
+	# Cannot detect future yields since we never tell the method to resume.  If
+	# there was some way to tell the method to resume we could use what comes
+	# back from that to detect additional yields.  I don't think this is
+	# possible since we only know what the yield was for except when yield_for
+	# and yield_to are used.
+	if(_is_function_state(script_result)):
+		yield(_wait_for_done(script_result), COMPLETED)
+
+	# if the test called pause_before_teardown then yield until
+	# the continue button is pressed.
+	if(_pause_before_teardown and !_ignore_pause_before_teardown):
+		_gui.pause()
+		yield(_wait_for_continue_button(), SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
+
+	script_inst.clear_signal_watcher()
+
+	# call each post-each-test method until teardown is removed.
+	_call_deprecated_script_method(script_inst, 'teardown', 'after_each')
+	var after_each_result = script_inst.after_each()
+	if(_is_function_state(after_each_result)):
+		yield(_wait_for_done(after_each_result), COMPLETED)
+
+	# Free up everything in the _autofree.  Yield for a bit if we
+	# have anything with a queue_free so that they have time to
+	# free and are not found by the orphan counter.
+	var aqf_count = _autofree.get_queue_free_count()
+	_autofree.free_all()
+	if(aqf_count > 0):
+		yield(_do_yield_between(0.1), 'timeout')
+
+	if(_log_level > 0):
+		_orphan_counter.print_orphans('test', _lgr)
+
+	_doubler.get_ignored_methods().clear()
+
+# ------------------------------------------------------------------------------
+# Calls after_all on the passed in test script and takes care of settings so all
+# logger output appears indented and with a proper heading
 #
-# Note, this has to stay as a giant monstrosity of a method because of the
-# yields.
+# Calls both pre-all-tests methods until prerun_setup is removed
+# ------------------------------------------------------------------------------
+func _call_before_all(test_script):
+	_current_test = _before_all_test_obj
+	_current_test.has_printed_name = false
+	_lgr.inc_indent()
+
+	# Next 3 lines can be removed when prerun_setup removed.
+	_current_test.name = 'prerun_setup'
+	_call_deprecated_script_method(test_script, 'prerun_setup', 'before_all')
+	_current_test.name = 'before_all'
+
+	var result = test_script.before_all()
+	if(_is_function_state(result)):
+		yield(_wait_for_done(result), COMPLETED)
+
+	_lgr.dec_indent()
+	_current_test = null
+
+# ------------------------------------------------------------------------------
+# Calls after_all on the passed in test script and takes care of settings so all
+# logger output appears indented and with a proper heading
+#
+# Calls both post-all-tests methods until postrun_teardown is removed.
+# ------------------------------------------------------------------------------
+func _call_after_all(test_script):
+	_current_test = _after_all_test_obj
+	_current_test.has_printed_name = false
+	_lgr.inc_indent()
+
+	# Next 3 lines can be removed when postrun_teardown removed.
+	_current_test.name = 'postrun_teardown'
+	_call_deprecated_script_method(test_script, 'postrun_teardown', 'after_all')
+	_current_test.name = 'after_all'
+
+	var result = test_script.after_all()
+	if(_is_function_state(result)):
+		yield(_wait_for_done(result), COMPLETED)
+
+
+	_lgr.dec_indent()
+	_current_test = null
+
+# ------------------------------------------------------------------------------
+# Run all tests in a script.  This is the core logic for running tests.
 # ------------------------------------------------------------------------------
 func _test_the_scripts(indexes=[]):
 	_orphan_counter.add_counter('total')
@@ -681,7 +783,7 @@ func _test_the_scripts(indexes=[]):
 			_gui.set_title(the_script.get_full_name())
 			_lgr.set_indent_level(0)
 			_print_script_heading(the_script)
-			_new_summary.add_script(the_script.get_full_name())
+		_new_summary.add_script(the_script.get_full_name())
 
 		var test_script = the_script.get_new()
 		var script_result = null
@@ -700,9 +802,11 @@ func _test_the_scripts(indexes=[]):
 		if(!_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
 			the_script.tests = []
 		else:
-			# call both pre-all-tests methods until prerun_setup is removed
-			_call_deprecated_script_method(test_script, 'prerun_setup', 'before_all')
-			test_script.before_all()
+			var before_all_result = _call_before_all(test_script)
+			if(_is_function_state(before_all_result)):
+				# _call_before_all calls _wait for done, just wait for that to finish
+				yield(before_all_result, COMPLETED)
+
 
 		_gui.set_progress_test_max(the_script.tests.size()) # New way
 
@@ -712,74 +816,44 @@ func _test_the_scripts(indexes=[]):
 			_spy.clear()
 			_doubler.clear_output_directory()
 			_current_test = the_script.tests[i]
+			script_result = null
 
 			if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
 				(_unit_test_name == '')):
-				_lgr.log_test_name()
-				_lgr.set_indent_level(1)
-				_orphan_counter.add_counter('test')
 
 				# yield so things paint
 				if(_should_yield_now()):
 					yield(_do_yield_between(0.001), 'timeout')
 
-				_call_deprecated_script_method(test_script, 'setup', 'before_each')
-				test_script.before_each()
-
-				# When the script yields it will return a GDScriptFunctionState object
 				if(_current_test.arg_count > 1):
-					_lgr.error(str('Parameterized test ', _current_test.name, ' has too many parameters:  ', _current_test.arg_count, '.'))
+					_lgr.error(str('Parameterized test ', _current_test.name,
+						' has too many parameters:  ', _current_test.arg_count, '.'))
 				elif(_current_test.arg_count == 1):
-					script_result = _parameterized_call(test_script)
-					if(_is_function_state(script_result)):
-						yield(self, SIGNAL_PRAMETERIZED_YIELD_DONE)
-					script_result = null
+					script_result = _run_parameterized_test(test_script, _current_test.name)
 				else:
-					script_result = test_script.call(_current_test.name)
-					_new_summary.add_test(_current_test.name)
-
+					script_result = _run_test(test_script, _current_test.name)
 
 				if(_is_function_state(script_result)):
-					_wait_for_done(script_result)
-					yield(script_result, 'completed')
-					_lgr.end_yield()
+					# _run_test calls _wait for done, just wait for that to finish
+					yield(script_result, COMPLETED)
 
-				#if the test called pause_before_teardown then yield until
-				#the continue button is pressed.
-				if(_pause_before_teardown and !_ignore_pause_before_teardown):
-					_gui.pause()
-					yield(_wait_for_continue_button(), SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
-
-				test_script.clear_signal_watcher()
-
-
-				# call each post-each-test method until teardown is removed.
-				_call_deprecated_script_method(test_script, 'teardown', 'after_each')
-				test_script.after_each()
-
-				# Free up everything in the _autofree.  Yield for a bit if we
-				# have anything with a queue_free so that they have time to
-				# free and are not found by the orphan counter.
-				var aqf_count = _autofree.get_queue_free_count()
-				_autofree.free_all()
-				if(aqf_count > 0):
-					yield(_do_yield_between(0.01), 'timeout')
-				# ------
-
-				if(_log_level > 0):
-					_orphan_counter.print_orphans('test', _lgr)
-
+				if(_current_test.assert_count == 0 and !_current_test.pending):
+					_lgr.warn('Test did not assert')
 				_current_test.has_printed_name = false
 				_gui.set_progress_test_value(i + 1)
-				_doubler.get_ignored_methods().clear()
+				emit_signal('test_finished')
+
 
 		_current_test = null
 		_lgr.dec_indent()
 		_orphan_counter.print_orphans('script', _lgr)
-		# call both post-all-tests methods until postrun_teardown is removed.
+
 		if(_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
-			_call_deprecated_script_method(test_script, 'postrun_teardown', 'after_all')
-			test_script.after_all()
+			var after_all_result = _call_after_all(test_script)
+			if(_is_function_state(after_all_result)):
+				# _call_after_all calls _wait for done, just wait for that to finish
+				yield(after_all_result, COMPLETED)
+
 
 		_log_test_children_warning(test_script)
 		# This might end up being very resource intensive if the scripts
@@ -787,7 +861,6 @@ func _test_the_scripts(indexes=[]):
 		# into some other structure and kill the script objects with
 		# test_script.free() instead of remove child.
 		remove_child(test_script)
-		# END TESTS IN SCRIPT LOOP
 
 		_lgr.set_indent_level(0)
 		if(test_script.get_assert_count() > 0):
@@ -797,23 +870,28 @@ func _test_the_scripts(indexes=[]):
 		_gui.set_progress_script_value(test_indexes + 1) # new way
 		# END TEST SCRIPT LOOP
 
-
 	_lgr.set_indent_level(0)
 	_end_run()
+
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func _pass(text=''):
 	_gui.add_passing() # increments counters
 	if(_current_test):
+		_current_test.assert_count += 1
 		_new_summary.add_pass(_current_test.name, text)
+	else:
+		if(_new_summary != null): # b/c of tests.
+			_new_summary.add_pass('script level', text)
+
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func _fail(text=''):
 	_gui.add_failing() # increments counters
 	if(_current_test != null):
-		var line_text = '  at line ' + str(_extractLineNumber( _current_test))
+		var line_text = '  at line ' + str(_extract_line_number(_current_test))
 		p(line_text, LOG_LEVEL_FAIL_ONLY)
 		# format for summary
 		line_text =  "\n    " + line_text
@@ -822,13 +900,17 @@ func _fail(text=''):
 			call_count_text = str('(call #', _parameter_handler.get_call_count(), ') ')
 		_new_summary.add_fail(_current_test.name, call_count_text + text + line_text)
 		_current_test.passed = false
+		_current_test.assert_count += 1
+	else:
+		if(_new_summary != null): # b/c of tests.
+			_new_summary.add_fail('script level', text)
 
 
 # ------------------------------------------------------------------------------
 # Extracts the line number from curren stacktrace by matching the test case name
 # ------------------------------------------------------------------------------
-func _extractLineNumber(current_test):
-	var line_number = current_test.line_number
+func _extract_line_number(current_test):
+	var line_number = -1
 	# if stack trace available than extraxt the test case line number
 	var stackTrace = get_stack()
 	if(stackTrace!=null):
@@ -839,11 +921,14 @@ func _extractLineNumber(current_test):
 				line_number = line.get("line")
 	return line_number
 
+
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func _pending(text=''):
 	if(_current_test):
+		_current_test.pending = true
 		_new_summary.add_pending(_current_test.name, text)
+
 
 # ------------------------------------------------------------------------------
 # Gets all the files in a directory and all subdirectories if get_include_subdirectories
@@ -883,6 +968,8 @@ func _get_files(path, prefix, suffix):
 
 	files.sort()
 	return files
+
+
 #########################
 #
 # public
@@ -916,6 +1003,7 @@ func p(text, level=0, NOT_USED_ANYMORE=-123):
 func get_minimum_size():
 	return Vector2(810, 380)
 
+
 # ------------------------------------------------------------------------------
 # Runs all the scripts that were added using add_script
 # ------------------------------------------------------------------------------
@@ -935,6 +1023,7 @@ func test_scripts(run_rest=false):
 func run_tests(run_rest=false):
 	test_scripts(run_rest)
 
+
 # ------------------------------------------------------------------------------
 # Runs a single script passed in.
 # ------------------------------------------------------------------------------
@@ -944,6 +1033,7 @@ func test_script(script):
 	_test_collector.add_script(script)
 	_test_the_scripts()
 
+
 # ------------------------------------------------------------------------------
 # Adds a script to be run when test_scripts called.
 # ------------------------------------------------------------------------------
@@ -952,6 +1042,7 @@ func add_script(script):
 		_test_collector.set_test_class_prefix(_inner_class_prefix)
 		_test_collector.add_script(script)
 		_add_scripts_to_gui()
+
 
 # ------------------------------------------------------------------------------
 # Add all scripts in the specified directory that start with the prefix and end
@@ -974,6 +1065,7 @@ func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
 		for i in range(files.size()):
 			add_script(files[i])
 
+
 # ------------------------------------------------------------------------------
 # This will try to find a script in the list of scripts to test that contains
 # the specified script name.  It does not have to be a full match.  It will
@@ -985,6 +1077,7 @@ func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
 func select_script(script_name):
 	_script_name = script_name
 
+
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func export_tests(path=_export_path):
@@ -995,6 +1088,7 @@ func export_tests(path=_export_path):
 		if(result):
 			p(_test_collector.to_s())
 			p("Exported to " + path)
+
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -1009,11 +1103,13 @@ func import_tests(path=_export_path):
 			p("Imported from " + path)
 			_add_scripts_to_gui()
 
+
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func import_tests_if_none_found():
 	if(!_cancel_import and _test_collector.scripts.size() == 0):
 		import_tests()
+
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -1026,6 +1122,7 @@ func export_if_tests_found():
 # MISC
 #
 ################
+
 
 # ------------------------------------------------------------------------------
 # Maximize test runner window to fit the viewport.
@@ -1194,11 +1291,11 @@ func simulate(obj, times, delta):
 func set_yield_time(time, text=''):
 	_yield_timer.set_wait_time(time)
 	_yield_timer.start()
-	var msg = '/# Yielding (' + str(time) + 's)'
+	var msg = '-- Yielding (' + str(time) + 's)'
 	if(text == ''):
-		msg += ' #/'
+		msg += ' --'
 	else:
-		msg +=  ':  ' + text + ' #/'
+		msg +=  ':  ' + text + ' --'
 	_lgr.log(msg, _lgr.fmts.yellow)
 	_was_yield_method_called = true
 	return self
@@ -1213,7 +1310,7 @@ func set_yield_signal_or_time(obj, signal_name, max_wait, text=''):
 	_yield_timer.set_wait_time(max_wait)
 	_yield_timer.start()
 	_was_yield_method_called = true
-	_lgr.log(str('/# Yielding to signal "', signal_name, '" or for ', max_wait, ' seconds #/ ', text), _lgr.fmts.yellow)
+	_lgr.log(str('-- Yielding to signal "', signal_name, '" or for ', max_wait, ' seconds -- ', text), _lgr.fmts.yellow)
 	return self
 
 # ------------------------------------------------------------------------------
