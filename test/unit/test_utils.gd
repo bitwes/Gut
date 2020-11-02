@@ -47,3 +47,9 @@ func test_is_instance_false_for_instanced_things():
 	var utils = autofree(Utils.new())
 	var i = load('res://test/resources/SceneNoScript.tscn')
 	assert_false(utils.is_instance(i))
+
+func test_get_native_class_name_does_not_generate_orphans():
+	var utils = Utils.new()
+	var n = utils.get_native_class_name(Node2D)
+	utils.free()
+	assert_no_new_orphans()

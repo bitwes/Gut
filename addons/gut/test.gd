@@ -733,7 +733,7 @@ func assert_extends(object, a_class, text=''):
 
 # Alias for assert_extends
 func assert_is(object, a_class, text=''):
-	var disp = str('Expected [', _str(object), '] to be type of [', a_class, ']: ', text)
+	var disp  = ''#var disp = str('Expected [', _str(object), '] to be type of [', a_class, ']: ', text)
 	var NATIVE_CLASS = 'GDScriptNativeClass'
 	var GDSCRIPT_CLASS = 'GDScript'
 	var bad_param_2 = 'Parameter 2 must be a Class (like Node2D or Label).  You passed '
@@ -743,14 +743,16 @@ func assert_is(object, a_class, text=''):
 	elif(typeof(a_class) != TYPE_OBJECT):
 		_fail(str(bad_param_2, _str(a_class)))
 	else:
-		disp = str('Expected [', _str(object), '] to extend [', _str(a_class), ']: ', text)
-		if(a_class.get_class() != NATIVE_CLASS and a_class.get_class() != GDSCRIPT_CLASS):
-			_fail(str(bad_param_2, _str(a_class)))
-		else:
-			if(object is a_class):
-				_pass(disp)
-			else:
-				_fail(disp)
+		var a = _str(a_class)
+		#disp = 'adsf'
+		#disp = str('Expected [', _str(object), '] to extend [', _str(a_class), ']: ', text)
+		# if(a_class.get_class() != NATIVE_CLASS and a_class.get_class() != GDSCRIPT_CLASS):
+		# 	_fail(str(bad_param_2, _str(a_class)))
+		# else:
+		# 	if(object is a_class):
+		# 		_pass(disp)
+		# 	else:
+		# 		_fail(disp)
 
 func _get_typeof_string(the_type):
 	var to_return = ""
