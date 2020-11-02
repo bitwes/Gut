@@ -26,6 +26,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * __Issue 199__ If you pass an instance of something to `double` or `partial_double` a GUT error is generated and `null` is returned.
 * __Issue 200__ If you pass a non-doubled instance to `stub` a GUT error is generated and nothing is stubbed.
 * __Issue 211__ GDNative scripts cause `Error calling built-in function 'inst2dict': Not a script with an instance` when used in assertions.
+* __Issue 230__ `assert_true` and `assert_false` now only accept boolean values.  They will fail with anything else.
+* __Issue 231___ `assert_is` creates an orphan.
 
 
 # 7.0.0

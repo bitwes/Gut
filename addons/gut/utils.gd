@@ -137,12 +137,21 @@ func get_bad_version_text():
 # ------------------------------------------------------------------------------
 # Checks the Godot version against req_godot array.
 # ------------------------------------------------------------------------------
-func is_version_ok():
-	var info = Engine.get_version_info()
-	var is_ok = info.major >= req_godot[0] and \
-			info.minor >= req_godot[1] and \
-			info.patch >= req_godot[2]
-	return is_ok
+func is_version_ok(engine_info=Engine.get_version_info(),required=req_godot):
+	var is_ok = null
+	var engine_array = [engine_info.major, engine_info.minor, engine_info.patch]
+
+	var idx = 0
+	while(is_ok == null and idx < engine_array.size()):
+		if(int(engine_array[idx]) > int(required[idx])):
+			is_ok = true
+		elif(int(engine_array[idx]) < int(required[idx])):
+			is_ok = false
+
+		idx += 1
+
+	# still null means each index was the same.
+	return nvl(is_ok, true)
 
 
 # ------------------------------------------------------------------------------
@@ -275,7 +284,9 @@ func is_null_or_empty(text):
 func get_native_class_name(thing):
 	var to_return = null
 	if(is_native_class(thing)):
-		to_return = thing.new().get_class()
+		var newone = thing.new()
+		to_return = newone.get_class()
+		newone.free()
 	return to_return
 
 
