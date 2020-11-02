@@ -99,7 +99,8 @@ class DoubleInfo:
 # ------------------------------------------------------------------------------
 # Begin test.gd
 # ------------------------------------------------------------------------------
-var ArrayDiff = load('res://addons/gut/array_diff.gd')
+var _utils = load('res://addons/gut/utils.gd').get_instance()
+var _compare = _utils.Comparator.new()
 
 # constant for signal when calling yield_for
 const YIELD = 'timeout'
@@ -113,7 +114,6 @@ var _disable_strict_datatype_checks = false
 # Holds all the text for a test's fail/pass.  This is used for testing purposes
 # to see the text of a failed sub-test in test_test.gd
 var _fail_pass_text = []
-
 
 const EDITOR_PROPERTY = PROPERTY_USAGE_SCRIPT_VARIABLE | PROPERTY_USAGE_DEFAULT
 const VARIABLE_PROPERTY = PROPERTY_USAGE_SCRIPT_VARIABLE
@@ -132,11 +132,12 @@ var _signal_watcher = load('res://addons/gut/signal_watcher.gd').new()
 
 # Convenience copy of _utils.DOUBLE_STRATEGY
 var DOUBLE_STRATEGY = null
-var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
 var _strutils = _utils.Strutils.new()
+
 # syntax sugar
 var ParameterFactory = _utils.ParameterFactory
+var CompareResult = _utils.CompareResult
 
 func _init():
 	DOUBLE_STRATEGY = _utils.DOUBLE_STRATEGY # yes, this is right
@@ -280,37 +281,46 @@ func set_logger(logger):
 # Asserts that the expected value equals the value got.
 # ------------------------------------------------------------------------------
 func assert_eq(got, expected, text=""):
-	var disp = "[" + _str(got) + "] expected to equal [" + _str(expected) + "]:  " + text
+
 	if(_do_datatypes_match__fail_if_not(got, expected, text)):
+		var disp = "[" + _str(got) + "] expected to equal [" + _str(expected) + "]:  " + text
+		var result = null
+
 		if(typeof(got) == TYPE_ARRAY):
-			var ad = ArrayDiff.new(got,  expected)
-			if(ad.are_equal()):
-				_pass(str(ad.summarize()))
-			else:
-				_fail(str(ad.summarize()))
+			result = _compare.shallow(got, expected)
 		else:
-			if(expected != got):
-				_fail(disp)
-			else:
-				_pass(disp)
+			result = _compare.simple(got, expected)
+
+		if(typeof(got) in [TYPE_ARRAY, TYPE_DICTIONARY]):
+			disp = str(result.summary, '  ', text)
+
+		if(result.are_equal):
+			_pass(disp)
+		else:
+			_fail(disp)
+
 
 # ------------------------------------------------------------------------------
 # Asserts that the value got does not equal the "not expected" value.
 # ------------------------------------------------------------------------------
 func assert_ne(got, not_expected, text=""):
-	var disp = "[" + _str(got) + "] expected to be anything except [" + _str(not_expected) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, not_expected, text)):
+		var disp = "[" + _str(got) + "] expected to not equal [" + _str(not_expected) + "]:  " + text
+		var result = null
+
 		if(typeof(got) == TYPE_ARRAY):
-			var ad = ArrayDiff.new(got, not_expected)
-			if(!ad.are_equal()):
-				_pass(str(ad.summarize()))
-			else:
-				_fail(str(ad.summarize()))
+			result = _compare.shallow(got, not_expected)
 		else:
-			if(got == not_expected):
-				_fail(disp)
-			else:
-				_pass(disp)
+			result = _compare.simple(got, not_expected)
+
+		if(typeof(got) in [TYPE_ARRAY, TYPE_DICTIONARY]):
+			disp = str(result.summary, '  ', text)
+
+		if(result.are_equal):
+			_fail(disp)
+		else:
+			_pass(disp)
+
 
 # ------------------------------------------------------------------------------
 # Asserts that the expected value almost equals the value got.
@@ -654,11 +664,11 @@ func assert_signal_emitted_with_parameters(object, signal_name, parameters, inde
 	if(_can_make_signal_assertions(object, signal_name)):
 		if(_signal_watcher.did_emit(object, signal_name)):
 			var parms_got = _signal_watcher.get_signal_parameters(object, signal_name, index)
-			var ad = ArrayDiff.new(parameters,  parms_got)
-			if(ad.are_equal()):
+			var diff_result = _compare.deep(parameters, parms_got)
+			if(diff_result.are_equal()):
 				_pass(str(disp, parms_got))
 			else:
-				_fail(str('Expected object ', _str(object), ' to emit signal [', signal_name, '] with parameters ', ad.summarize()))
+				_fail(str('Expected object ', _str(object), ' to emit signal [', signal_name, '] with parameters ', diff_result.summarize()))
 		else:
 			var text = str('Object ', object, ' did not emit signal [', signal_name, ']')
 			_fail(_get_fail_msg_including_emitted_signals(text, object))
@@ -744,15 +754,14 @@ func assert_is(object, a_class, text=''):
 		_fail(str(bad_param_2, _str(a_class)))
 	else:
 		var a = _str(a_class)
-		#disp = 'adsf'
-		#disp = str('Expected [', _str(object), '] to extend [', _str(a_class), ']: ', text)
-		# if(a_class.get_class() != NATIVE_CLASS and a_class.get_class() != GDSCRIPT_CLASS):
-		# 	_fail(str(bad_param_2, _str(a_class)))
-		# else:
-		# 	if(object is a_class):
-		# 		_pass(disp)
-		# 	else:
-		# 		_fail(disp)
+		disp = str('Expected [', _str(object), '] to extend [', _str(a_class), ']: ', text)
+		if(a_class.get_class() != NATIVE_CLASS and a_class.get_class() != GDSCRIPT_CLASS):
+			_fail(str(bad_param_2, _str(a_class)))
+		else:
+			if(object is a_class):
+				_pass(disp)
+			else:
+				_fail(disp)
 
 func _get_typeof_string(the_type):
 	var to_return = ""
@@ -984,28 +993,28 @@ func assert_setget_called(type, name_property, name_setter  = "", name_getter  =
 	if not validation.is_valid:
 		_fail(validation.msg)
 		return
-	
+
 	var message = ""
 	var amount_calls_setter = 0
 	var amount_calls_getter = 0
 	var expected_calls_setter = 0
 	var expected_calls_getter = 0
 	var obj = _create_obj_from_type(double(type))
-	
+
 	if name_setter != '':
 		expected_calls_setter = 1
 		stub(obj, name_setter).to_do_nothing()
 		obj.set(name_property, null)
 		amount_calls_setter = gut.get_spy().call_count(obj, str(name_setter))
-	
+
 	if name_getter != '':
 		expected_calls_getter = 1
 		stub(obj, name_getter).to_do_nothing()
 		var new_property = obj.get(name_property)
 		amount_calls_getter = gut.get_spy().call_count(obj, str(name_getter))
-	
+
 	obj.free()
-	
+
 	# assert
 	if amount_calls_setter == expected_calls_setter and amount_calls_getter == expected_calls_getter:
 		_pass(str("For property %s the setget keyword is set up as expected." % _str(name_property)))
@@ -1021,27 +1030,27 @@ func assert_setget_called(type, name_property, name_setter  = "", name_getter  =
 		_fail(str(message))
 
 
-# Returns a dictionary that contains 
+# Returns a dictionary that contains
 # - an is_valid flag whether validation was successful or not and
 # - a message that gives some information about the validation errors.
 func _validate_assert_setget_called_input(type, name_property
 			, name_setter, name_getter):
 	var obj = null
 	var result = {"is_valid": true, "msg": ""}
-	
+
 	if null == type or typeof(type) != TYPE_OBJECT or not type.is_class("Resource"):
 		result.is_valid = false
 		result.msg = str("The type parameter should be a ressource, input is ", _str(type))
 		return result
-	
+
 	if null == double(type):
 		result.is_valid = false
 		result.msg = str("Attempt to double the type parameter failed. The type parameter should be a ressource that can be doubled.")
 		return result
-	
+
 	obj = _create_obj_from_type(type)
 	var property = _find_object_property(obj, str(name_property))
-	
+
 	if null == property:
 		result.is_valid = false
 		result.msg += str("The property %s doesn\'t exist." % _str(name_property))
@@ -1054,7 +1063,7 @@ func _validate_assert_setget_called_input(type, name_property
 	if name_getter != "" and not obj.has_method(str(name_getter)):
 		result.is_valid = false
 		result.msg += str("Method %s doesn\'t exist." %_str(name_getter))
-	
+
 	obj.free()
 	return result
 
@@ -1082,7 +1091,7 @@ func _get_type_from_obj(obj):
 # signature
 # ------------------------------------------------------------------------------
 func assert_setget(instance, name_property, has_setter = false, has_getter = false) -> void:
-	
+
 	var name_setter = ""
 	var name_getter = ""
 	var resource = null
@@ -1090,16 +1099,16 @@ func assert_setget(instance, name_property, has_setter = false, has_getter = fal
 		resource = instance
 	else:
 		resource = _get_type_from_obj(instance)
-	
+
 	if has_setter:
 		name_setter = "set_" + str(name_property)
 	if has_getter:
 		name_getter = "get_" + str(name_property)
-	
+
 	assert_setget_called(resource, str(name_property), name_setter, name_getter)
 
 # ------------------------------------------------------------------------------
-# Wrapper: asserts if the property exists, the accessor methods exist and the 
+# Wrapper: asserts if the property exists, the accessor methods exist and the
 # setget keyword is set for accessor methods
 # ------------------------------------------------------------------------------
 func assert_property(instance, name_property, default_value, new_value) -> void:
@@ -1113,16 +1122,16 @@ func assert_property(instance, name_property, default_value, new_value) -> void:
 	else:
 		resource = _get_type_from_obj(instance)
 		obj = instance
-	
+
 	var name_setter = "set_" + str(name_property)
 	var name_getter = "get_" + str(name_property)
-	
+
 	assert_accessors(obj, str(name_property), default_value, new_value)
 	assert_setget_called(resource, str(name_property), name_setter, name_getter)
-	
+
 	for entry in free_me:
 		entry.free()
-	
+
 	# assert
 	if get_fail_count() == 0:
 		_pass(str("The property is set up as expected."))
@@ -1195,6 +1204,7 @@ func set_double_strategy(double_strategy):
 
 func pause_before_teardown():
 	gut.pause_before_teardown()
+
 # ------------------------------------------------------------------------------
 # Convert the _summary dictionary into text
 # ------------------------------------------------------------------------------
@@ -1454,7 +1464,7 @@ func is_failing():
 		!['before_all', 'after_all'].has(gut.get_current_test_object().name)):
 		return !gut.get_current_test_object().passed
 	else:
-		_lgr.error('No current test object found.  is_passing must be called inside a test.')
+		_lgr.error('No current test object found.  is_failing must be called inside a test.')
 		return null
 
 # ------------------------------------------------------------------------------
@@ -1470,11 +1480,63 @@ func pass_test(text):
 func fail_test(text):
 	_fail(text)
 
+
 # ------------------------------------------------------------------------------
-# Returns an array of indexes that == returns false for.  All indexes that do not
-# exist in the other array are included so be careful when using this data to
-# access elements in the source arrays.
+# Peforms a deep compare on both values, a CompareResult instnace is returned.
+# The optional max_differences paramter sets the max_differences to be displayed.
 # ------------------------------------------------------------------------------
-func get_non_matching_array_indexes(array_1, array_2):
-	var ad = ArrayDiff.new(array_1, array_2)
-	return ad.get_different_indexes()
+func compare_deep(v1, v2, max_differences=null):
+	var result = _compare.deep(v1, v2)
+	if(max_differences != null):
+		result.max_differences = max_differences
+	return result
+
+# ------------------------------------------------------------------------------
+# Peforms a shallow compare on both values, a CompareResult instnace is returned.
+# The optional max_differences paramter sets the max_differences to be displayed.
+# ------------------------------------------------------------------------------
+func compare_shallow(v1, v2, max_differences=null):
+	var result = _compare.shallow(v1, v2)
+	if(max_differences != null):
+		result.max_differences = max_differences
+	return result
+
+# ------------------------------------------------------------------------------
+# Performs a deep compare and asserts the  values are equal
+# ------------------------------------------------------------------------------
+func assert_eq_deep(v1, v2):
+	var result = compare_deep(v1, v2)
+	if(result.are_equal):
+		_pass(result.get_short_summary())
+	else:
+		_fail(result.summary)
+
+# ------------------------------------------------------------------------------
+# Performs a deep compare and asserts the values are not equal
+# ------------------------------------------------------------------------------
+func assert_ne_deep(v1, v2):
+	var result = compare_deep(v1, v2)
+	if(!result.are_equal):
+		_pass(result.get_short_summary())
+	else:
+		_fail(result.get_short_summary())
+
+# ------------------------------------------------------------------------------
+# Performs a shallow compare and asserts the values are equal
+# ------------------------------------------------------------------------------
+func assert_eq_shallow(v1, v2):
+	var result = compare_shallow(v1, v2)
+	if(result.are_equal):
+		_pass(result.get_short_summary())
+	else:
+		_fail(result.summary)
+
+# ------------------------------------------------------------------------------
+# Performs a shallow compare and asserts the values are not equal
+# ------------------------------------------------------------------------------
+func assert_ne_shallow(v1, v2):
+	var result = compare_shallow(v1, v2)
+	if(!result.are_equal):
+		_pass(result.get_short_summary())
+	else:
+		_fail(result.get_short_summary())

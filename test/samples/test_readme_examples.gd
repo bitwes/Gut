@@ -20,12 +20,16 @@ func test_equals():
 	assert_eq('racecar', 'racecar') # PASS
 	assert_eq(node2, node1) # PASS
 	assert_eq([1, 2, 3], [1, 2, 3]) # PASS
+	var d1_pass = {'a':1}
+	var d2_pass = d1_pass
+	assert_eq(d1_pass, d2_pass) # PASS
 
 	gut.p('-- failing --')
 	assert_eq(1, 2) # FAIL
 	assert_eq('hello', 'world') # FAIL
 	assert_eq(self, node1) # FAIL
 	assert_eq([1, 'two', 3], [1, 2, 3, 4]) # FAIL
+	assert_eq({'a':1}, {'a':1}) # FAIL
 
 func test_not_equal():
 	var two = 2
@@ -332,7 +336,7 @@ class MovingNode:
 
 func test_illustrate_yield():
 	var moving_node = MovingNode.new()
-	add_child(moving_node)
+	add_child_autofree(moving_node)
 	moving_node.set_position(Vector2(0, 0))
 
 	# While the yield happens, the node should move
@@ -369,7 +373,7 @@ class TimedSignaler:
 
 func test_illustrate_yield_to_with_less_time():
 	var t = TimedSignaler.new(5)
-	add_child(t)
+	add_child_autofree(t)
 	t.start()
 	yield(yield_to(t, 'the_signal', 1), YIELD)
 	# since we setup t to emit after 5 seconds, this will fail because we
@@ -378,7 +382,7 @@ func test_illustrate_yield_to_with_less_time():
 
 func test_illustrate_yield_to_with_more_time():
 	var t = TimedSignaler.new(1)
-	add_child(t)
+	add_child_autofree(t)
 	t.start()
 	yield(yield_to(t, 'the_signal', 5), YIELD)
 	# since we wait longer than it will take to emit the signal, this assert
@@ -641,7 +645,7 @@ func test_replace_node():
 	var DOUBLE_ME_SCENE = 'res://test/resources/doubler_test_objects/double_me_scene.tscn'
 
 	var scene = load(DOUBLE_ME_SCENE).instance()
-	add_child(scene)
+	add_child_autofree(scene)
 	var replace_label = Label.new()
 	replace_node(scene, 'Label', replace_label)
 
@@ -681,13 +685,122 @@ func test_assert_connected():
 	assert_connected(signaler, foo, 'the_signal')
 
 
-func test_get_non_matching_array_indexes():
-	gut.p(get_non_matching_array_indexes([1, 2, 3], [1, 2,3])) # prints []
-	gut.p(get_non_matching_array_indexes([1, 2], [1, 2, 3])) # prints [2]
-	gut.p(get_non_matching_array_indexes([1, 2, 3], [1, 2])) # prints [2]
-	gut.p(get_non_matching_array_indexes([1, 'two', 3], [1, 2, 3])) # prints [1]
-	gut.p(get_non_matching_array_indexes(['1', '2', '3'], [1, 2, 3])) # prints [0, 1, 2]
+func test_shallow_array_compare_1():
+	var a1 = [
+		'a', 'b', 'c',
+		[1, 2, 3, 4],
+		{'a':1, 'b':2, 'c':3},
+		[{'a':1}, {'b':2}]
+	]
+	var a2 = [
+		'a', 2, 'c',
+		['a', 2, 3, 'd'],
+		{'a':11, 'b':12, 'c':13},
+		[{'a':'diff'}, {'b':2}]
+	]
+	var result = compare_shallow(a1, a2)
+	assert_true(result.are_equal, result.summary)
 
+
+func test_shallow_array_compare_2():
+	var a1 = [
+		[1, 2, 3, 4],
+		[[4, 5, 6], ['same'], [7, 8, 9]]
+	]
+	var a2 = [
+		["1", 2.0, 13],
+		[[14, 15, 16], ['same'], [17, 18, 19]]
+	]
+	var result = compare_deep(a1, a2)
+	gut.p(result.summary)
+
+	gut.p('Traversing differences:')
+	gut.p(result.differences[1].differences[2].differences[0])
+
+func test_nested_difference():
+	var v1 = {'a':{'b':{'c':{'d':1}}}}
+	var v2 = {'a':{'b':{'c':{'d':2}}}}
+	var result = compare_deep(v1, v2)
+	gut.p(result.summary)
+
+	gut.p('Traversing differences:')
+	gut.p(result.differences['a'].differences['b'].differences['c'])
+
+
+func test_mix_of_array_and_dictionaries_deep():
+	var a1 = [
+		'a', 'b', 'c',
+		[1, 2, 3, 4],
+		{'a':1, 'b':2, 'c':3},
+		[{'a':1}, {'b':2}]
+	]
+	var a2 = [
+		'a', 2, 'c',
+		['a', 2, 3, 'd'],
+		{'a':11, 'b':12, 'c':13},
+		[{'a':'diff'}, {'b':2}]
+	]
+	var result = compare_deep(a1, a2)
+	gut.p(result.summary)
+
+	gut.p('Traversing differences:')
+	gut.p(result.differences[5].differences[0].differences['a'])
+
+
+func test_assert_eq_shallow():
+	var complex_example = [
+		'a', 'b', 'c',
+		[1, 2, 3, 4],
+		{'a':1, 'b':2, 'c':3},
+		[{'a':1}, {'b':2}]
+	]
+
+	# Passing
+	assert_eq_shallow([1, 2, 3], [1, 2, 3])
+	assert_eq_shallow([1, [2, 3], 4], [1, [2, 3], 4])
+	var d1 = {'foo':'bar'}
+	assert_eq_shallow([1, 2, d1], [1, 2, d1])
+	assert_eq_shallow({'a':1}, {'a':1})
+	assert_eq_shallow({'a':[1, 2, 3, d1]}, {'a':[1, 2, 3, d1]})
+
+	var shallow_copy = complex_example.duplicate(false)
+	assert_eq_shallow(complex_example, shallow_copy)
+
+	# Failing
+	assert_eq_shallow([1, 2], [1, 2 ,3]) # missing index
+	assert_eq_shallow({'a':1}, {'a':1, 'b':2}) # missing key
+	assert_eq_shallow([1, 2], [1.0, 2.0]) # floats != ints
+	assert_eq_shallow([1, 2, {'a':1}], [1, 2, {'a':1}]) # compare [2] by ref
+	assert_eq_shallow({'a':1}, {'a':1.0}) # floats != ints
+	assert_eq_shallow({'a':1, 'b':{'c':1}}, {'a':1, 'b':{'c':1}}) # compare 'b' by ref
+
+	var deep_copy = complex_example.duplicate(true)
+	assert_eq_shallow(complex_example, deep_copy)
+
+
+
+func test_assert_eq_deep():
+	var complex_example = [
+		'a', 'b', 'c',
+		[1, 2, 3, 4],
+		{'a':1, 'b':2, 'c':3},
+		[{'a':1}, {'b':2}]
+	]
+
+	# Passing
+	assert_eq_deep([1, 2, {'a':1}], [1, 2, {'a':1}])
+	assert_eq_deep({'a':1, 'b':{'c':1}}, {'b':{'c':1}, 'a':1})
+
+	var shallow_copy  = complex_example.duplicate(false)
+	var deep_copy = complex_example.duplicate(true)
+	assert_eq_deep(complex_example, shallow_copy)
+	assert_eq_deep(complex_example, deep_copy)
+	assert_eq_deep(shallow_copy, deep_copy)
+
+	# Failing
+	assert_eq_shallow([1, 2], [1, 2 ,3]) # missing index
+	assert_eq_shallow({'a':1}, {'a':1, 'b':2}) # missing key
+	assert_eq_deep([1, 2, {'a':1}], [1, 2, {'a':1.0}]) # floats != ints
 
 # >>> Issue 70
 const Health = preload("res://test/resources/test_assert_setget_test_objects/readme_examples/health.gd")
@@ -698,8 +811,8 @@ func test_assert_setget_called():
 	assert_setget_called(Health, 'current_hp', 'set_current_hp', 'get_current_hp') # PASS
 	assert_setget_called(Health, 'current_hp', 'set_current_hp') # PASS
 	assert_setget_called(Health, 'current_hp', '', 'get_current_hp') # PASS
-	
-	
+
+
 	gut.p('-- failing --')
 	assert_setget_called(Health, 'max_hp', 'set_max_hp') # FAIL
 	assert_setget_called(Health, 'max_hp') # FAIL => out of scope
@@ -708,8 +821,8 @@ func test_assert_setget_called():
 	var health = Health.new()
 	assert_setget_called(health, 'current_hp', 'set_current_hp') # FAIL => type has to be a Resource
 	health.free()
-	
-	
+
+
 	gut.p('-- run time error --')
 	#assert_setget_called(Health, max_hp, null, null) # RTE
 	#assert_setget_called(Health, max_hp, 1, 1) # RTE
@@ -734,7 +847,7 @@ func test_assert_property():
 	health.max_hp = 10
 	assert_property(health, 'current_hp', 0, 5) # PASS
 	health.free()
-	
+
 	gut.p('-- failing --')
 	assert_property(Health, 'max_hp', 0, 5) # FAIL => no setget keyword
 	assert_property(Health, 'current_hp', 0, 5) # FAIL => method will clamp current_hp to max_hp which is 0 by default
