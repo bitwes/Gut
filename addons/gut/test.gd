@@ -360,19 +360,27 @@ func assert_lt(got, expected, text=""):
 # asserts that got is true
 # ------------------------------------------------------------------------------
 func assert_true(got, text=""):
-	if(!got):
-		_fail(text)
+	if(typeof(got) == TYPE_BOOL):
+		if(got):
+			_pass(text)
+		else:
+			_fail(text)
 	else:
-		_pass(text)
+		var msg = str("Cannot convert ", _strutils.type2str(got), " to boolean")
+		_fail(msg)
 
 # ------------------------------------------------------------------------------
 # Asserts that got is false
 # ------------------------------------------------------------------------------
 func assert_false(got, text=""):
-	if(got):
-		_fail(text)
+	if(typeof(got) == TYPE_BOOL):
+		if(got):
+			_fail(text)
+		else:
+			_pass(text)
 	else:
-		_pass(text)
+		var msg = str("Cannot convert ", _strutils.type2str(got), " to boolean")
+		_fail(msg)
 
 # ------------------------------------------------------------------------------
 # Asserts value is between (inclusive) the two expected values.

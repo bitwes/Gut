@@ -410,37 +410,46 @@ class TestAssertNotBetween:
 		gr.test.assert_not_between('q', 'z', 'a', "Should fail: Invalid range")
 		assert_fail(gr.test)
 
-# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestAssertTrue:
 	extends BaseTestClass
 
-	func test_assert_true_with_true():
+	func test_passes_with_true():
 		gr.test.assert_true(true, "Should pass, true is true")
 		assert_pass(gr.test)
 
-	func test_assert_true_with_false():
+	func test_fails_with_false():
 		gr.test.assert_true(false, "Should fail")
 		assert_fail(gr.test)
 
-	func test_can_call_true_without_text():
+	func test_text_is_optional():
 		gr.test.assert_true(true)
 		assert_pass(gr.test)
 
-# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
+	func test_fails_with_non_bools():
+		gr.test.assert_true('asdf')
+		gr.test.assert_true(1)
+		assert_fail(gr.test, 2)
+
+
 class TestAssertFalse:
 	extends BaseTestClass
 
-	func test_can_call_false_without_text():
+	func test_text_is_optional():
 		gr.test.assert_false(false)
 		assert_pass(gr.test)
 
-	func test_assert_flase_with_true():
+	func test_fails_with_true():
 		gr.test.assert_false(true, "Should fail")
 		assert_fail(gr.test)
 
-	func test_assert_false_with_false():
+	func test_passes_with_false():
 		gr.test.assert_false(false, "Should pass")
 		assert_pass(gr.test)
+
+	func test_fails_with_non_bools():
+		gr.test.assert_false(null)
+		gr.test.assert_false(0)
+		assert_fail(gr.test, 2)
 
 class TestAssertHas:
 	extends BaseTestClass
@@ -509,6 +518,7 @@ class TestPending:
 	func test_pending_does_not_increment_passed():
 		gr.test.pending()
 		assert_eq(gr.test.get_pass_count(), 0)
+
 
 class TestAssertHasMethod:
 	extends BaseTestClass
