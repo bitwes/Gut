@@ -108,6 +108,8 @@ func test_true():
 	gut.p('-- failing --')
 	assert_true(false) # FAIL
 	assert_true('a' == 'b') # FAIL
+	assert_true('b') # FAIL
+	assert_true(1)
 
 func test_false():
 	gut.p('-- passing --')
@@ -119,6 +121,9 @@ func test_false():
 	gut.p('-- failing --')
 	assert_false(true) # FAIL
 	assert_false('ABC' == 'ABC') # FAIL
+	assert_false(null) # FAIL
+	assert_false(0)
+
 
 func test_null():
 	gut.p('-- passing --')
@@ -682,3 +687,57 @@ func test_get_non_matching_array_indexes():
 	gut.p(get_non_matching_array_indexes([1, 2, 3], [1, 2])) # prints [2]
 	gut.p(get_non_matching_array_indexes([1, 'two', 3], [1, 2, 3])) # prints [1]
 	gut.p(get_non_matching_array_indexes(['1', '2', '3'], [1, 2, 3])) # prints [0, 1, 2]
+
+
+# >>> Issue 70
+const Health = preload("res://test/resources/test_assert_setget_test_objects/readme_examples/health.gd")
+const HealthBar = preload("res://test/resources/test_assert_setget_test_objects/readme_examples/HealthBar.tscn")
+
+func test_assert_setget_called():
+	gut.p('-- passing --')
+	assert_setget_called(Health, 'current_hp', 'set_current_hp', 'get_current_hp') # PASS
+	assert_setget_called(Health, 'current_hp', 'set_current_hp') # PASS
+	assert_setget_called(Health, 'current_hp', '', 'get_current_hp') # PASS
+	
+	
+	gut.p('-- failing --')
+	assert_setget_called(Health, 'max_hp', 'set_max_hp') # FAIL
+	assert_setget_called(Health, 'max_hp') # FAIL => out of scope
+	assert_setget_called(Health, 'current_hp') # FAIL => setter or getter name must be specified
+	assert_setget_called(Health, 'current_hp', 'set_curent_hp', 'get_current_hp') # FAIL => typo...
+	var health = Health.new()
+	assert_setget_called(health, 'current_hp', 'set_current_hp') # FAIL => type has to be a Resource
+	health.free()
+	
+	
+	gut.p('-- run time error --')
+	#assert_setget_called(Health, max_hp, null, null) # RTE
+	#assert_setget_called(Health, max_hp, 1, 1) # RTE
+
+
+func test_assert_setget():
+	gut.p('-- passing --')
+	assert_setget(HealthBar, 'health', true) # PASS
+	var health_bar = HealthBar.instance()
+	assert_setget(health_bar, 'health', true) # PASS
+	health_bar.queue_free()
+
+	gut.p('-- failing --')
+	assert_setget(HealthBar, 'label') # FAIL => setter or getter has to be specified
+	assert_setget(HealthBar, 'label', true) # FAIL => setter does not exist
+
+
+func test_assert_property():
+	gut.p('-- passing --')
+	assert_property(Health, 'current_hp', 0, 0) # PASS
+	var health = Health.new()
+	health.max_hp = 10
+	assert_property(health, 'current_hp', 0, 5) # PASS
+	health.free()
+	
+	gut.p('-- failing --')
+	assert_property(Health, 'max_hp', 0, 5) # FAIL => no setget keyword
+	assert_property(Health, 'current_hp', 0, 5) # FAIL => method will clamp current_hp to max_hp which is 0 by default
+	var directory = Directory.new()
+	assert_property(directory, 'current_dir', '', 'new_dir') # FAIL => directory is not a Resource nor a Node
+# <<< Issue 70

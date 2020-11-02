@@ -274,7 +274,9 @@ func is_null_or_empty(text):
 func get_native_class_name(thing):
 	var to_return = null
 	if(is_native_class(thing)):
-		to_return = thing.new().get_class()
+		var newone = thing.new()
+		to_return = newone.get_class()
+		newone.free()
 	return to_return
 
 

@@ -94,6 +94,14 @@ class TestType2Str:
 		n.free()
 		assert_eq(strutils.type2str(n), '[Deleted Object]', 'sometimes fails based on timing.')
 
+	func test_memory_leak():
+		print(gut.get_orphan_counter().orphan_count(), ' t-1')
+		var a = Node
+		print(gut.get_orphan_counter().orphan_count(), ' t-2')
+		var txt = strutils.type2str(a)
+		print(gut.get_orphan_counter().orphan_count(), ' t-3')
+		assert_no_new_orphans()
+
 
 class TestTruncateString:
 	extends 'res://addons/gut/test.gd'

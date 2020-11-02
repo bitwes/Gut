@@ -360,19 +360,27 @@ func assert_lt(got, expected, text=""):
 # asserts that got is true
 # ------------------------------------------------------------------------------
 func assert_true(got, text=""):
-	if(!got):
-		_fail(text)
+	if(typeof(got) == TYPE_BOOL):
+		if(got):
+			_pass(text)
+		else:
+			_fail(text)
 	else:
-		_pass(text)
+		var msg = str("Cannot convert ", _strutils.type2str(got), " to boolean")
+		_fail(msg)
 
 # ------------------------------------------------------------------------------
 # Asserts that got is false
 # ------------------------------------------------------------------------------
 func assert_false(got, text=""):
-	if(got):
-		_fail(text)
+	if(typeof(got) == TYPE_BOOL):
+		if(got):
+			_fail(text)
+		else:
+			_pass(text)
 	else:
-		_pass(text)
+		var msg = str("Cannot convert ", _strutils.type2str(got), " to boolean")
+		_fail(msg)
 
 # ------------------------------------------------------------------------------
 # Asserts value is between (inclusive) the two expected values.
@@ -725,7 +733,7 @@ func assert_extends(object, a_class, text=''):
 
 # Alias for assert_extends
 func assert_is(object, a_class, text=''):
-	var disp = str('Expected [', _str(object), '] to be type of [', a_class, ']: ', text)
+	var disp  = ''#var disp = str('Expected [', _str(object), '] to be type of [', a_class, ']: ', text)
 	var NATIVE_CLASS = 'GDScriptNativeClass'
 	var GDSCRIPT_CLASS = 'GDScript'
 	var bad_param_2 = 'Parameter 2 must be a Class (like Node2D or Label).  You passed '
@@ -735,14 +743,16 @@ func assert_is(object, a_class, text=''):
 	elif(typeof(a_class) != TYPE_OBJECT):
 		_fail(str(bad_param_2, _str(a_class)))
 	else:
-		disp = str('Expected [', _str(object), '] to extend [', _str(a_class), ']: ', text)
-		if(a_class.get_class() != NATIVE_CLASS and a_class.get_class() != GDSCRIPT_CLASS):
-			_fail(str(bad_param_2, _str(a_class)))
-		else:
-			if(object is a_class):
-				_pass(disp)
-			else:
-				_fail(disp)
+		var a = _str(a_class)
+		#disp = 'adsf'
+		#disp = str('Expected [', _str(object), '] to extend [', _str(a_class), ']: ', text)
+		# if(a_class.get_class() != NATIVE_CLASS and a_class.get_class() != GDSCRIPT_CLASS):
+		# 	_fail(str(bad_param_2, _str(a_class)))
+		# else:
+		# 	if(object is a_class):
+		# 		_pass(disp)
+		# 	else:
+		# 		_fail(disp)
 
 func _get_typeof_string(the_type):
 	var to_return = ""
@@ -964,6 +974,160 @@ func assert_no_new_orphans(text=''):
 		_fail(str('Expected no orphans, but found ', count, msg))
 	else:
 		_pass('No new orphans found.' + msg)
+
+# ------------------------------------------------------------------------------
+# Asserts the given setter and getter methods are called when the given property
+# is accessed.
+# ------------------------------------------------------------------------------
+func assert_setget_called(type, name_property, name_setter  = "", name_getter  = ""):
+	var validation = _validate_assert_setget_called_input(type, name_property, str(name_setter), str(name_getter))
+	if not validation.is_valid:
+		_fail(validation.msg)
+		return
+	
+	var message = ""
+	var amount_calls_setter = 0
+	var amount_calls_getter = 0
+	var expected_calls_setter = 0
+	var expected_calls_getter = 0
+	var obj = _create_obj_from_type(double(type))
+	
+	if name_setter != '':
+		expected_calls_setter = 1
+		stub(obj, name_setter).to_do_nothing()
+		obj.set(name_property, null)
+		amount_calls_setter = gut.get_spy().call_count(obj, str(name_setter))
+	
+	if name_getter != '':
+		expected_calls_getter = 1
+		stub(obj, name_getter).to_do_nothing()
+		var new_property = obj.get(name_property)
+		amount_calls_getter = gut.get_spy().call_count(obj, str(name_getter))
+	
+	obj.free()
+	
+	# assert
+	if amount_calls_setter == expected_calls_setter and amount_calls_getter == expected_calls_getter:
+		_pass(str("For property %s the setget keyword is set up as expected." % _str(name_property)))
+	else:
+		if amount_calls_setter < expected_calls_setter:
+			message += " The setter was not called."
+		elif amount_calls_setter > expected_calls_setter:
+			message += " The setter was called but should not have been."
+		if amount_calls_getter < expected_calls_getter:
+			message += " The getter was not called."
+		elif amount_calls_getter > expected_calls_getter:
+			message += " The getter was called but should not have been."
+		_fail(str(message))
+
+
+# Returns a dictionary that contains 
+# - an is_valid flag whether validation was successful or not and
+# - a message that gives some information about the validation errors.
+func _validate_assert_setget_called_input(type, name_property
+			, name_setter, name_getter):
+	var obj = null
+	var result = {"is_valid": true, "msg": ""}
+	
+	if null == type or typeof(type) != TYPE_OBJECT or not type.is_class("Resource"):
+		result.is_valid = false
+		result.msg = str("The type parameter should be a ressource, input is ", _str(type))
+		return result
+	
+	if null == double(type):
+		result.is_valid = false
+		result.msg = str("Attempt to double the type parameter failed. The type parameter should be a ressource that can be doubled.")
+		return result
+	
+	obj = _create_obj_from_type(type)
+	var property = _find_object_property(obj, str(name_property))
+	
+	if null == property:
+		result.is_valid = false
+		result.msg += str("The property %s doesn\'t exist." % _str(name_property))
+	if name_setter == "" and name_getter == "":
+		result.is_valid = false
+		result.msg += str("Either setter or getter method must be specified.")
+	if name_setter != "" and not obj.has_method(str(name_setter)):
+		result.is_valid = false
+		result.msg += str("Method %s doesn\'t exist." % _str(name_setter))
+	if name_getter != "" and not obj.has_method(str(name_getter)):
+		result.is_valid = false
+		result.msg += str("Method %s doesn\'t exist." %_str(name_getter))
+	
+	obj.free()
+	return result
+
+
+func _create_obj_from_type(type):
+	var obj = null
+	if type.is_class("PackedScene"):
+		obj = type.instance()
+		add_child(obj)
+	else:
+		obj = type.new()
+	return obj
+
+
+func _get_type_from_obj(obj):
+	var type = null
+	if obj.has_method(get_filename()):
+			type = load(obj.get_filename())
+	else:
+			type = obj.get_script()
+	return type
+
+# ------------------------------------------------------------------------------
+# Wrapper: invokes assert_setget_called but provides a slightly more convenient
+# signature
+# ------------------------------------------------------------------------------
+func assert_setget(instance, name_property, has_setter = false, has_getter = false) -> void:
+	
+	var name_setter = ""
+	var name_getter = ""
+	var resource = null
+	if instance.is_class("Resource"):
+		resource = instance
+	else:
+		resource = _get_type_from_obj(instance)
+	
+	if has_setter:
+		name_setter = "set_" + str(name_property)
+	if has_getter:
+		name_getter = "get_" + str(name_property)
+	
+	assert_setget_called(resource, str(name_property), name_setter, name_getter)
+
+# ------------------------------------------------------------------------------
+# Wrapper: asserts if the property exists, the accessor methods exist and the 
+# setget keyword is set for accessor methods
+# ------------------------------------------------------------------------------
+func assert_property(instance, name_property, default_value, new_value) -> void:
+	var free_me = []
+	var resource = null
+	var obj = null
+	if instance.is_class("Resource"):
+		resource = instance
+		obj = _create_obj_from_type(resource)
+		free_me.append(obj)
+	else:
+		resource = _get_type_from_obj(instance)
+		obj = instance
+	
+	var name_setter = "set_" + str(name_property)
+	var name_getter = "get_" + str(name_property)
+	
+	assert_accessors(obj, str(name_property), default_value, new_value)
+	assert_setget_called(resource, str(name_property), name_setter, name_getter)
+	
+	for entry in free_me:
+		entry.free()
+	
+	# assert
+	if get_fail_count() == 0:
+		_pass(str("The property is set up as expected."))
+	else:
+		_fail(str("The property is not set up as expected. Examine subtests to see what failed."))
 
 # ------------------------------------------------------------------------------
 # Mark the current test as pending.

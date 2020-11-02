@@ -1,5 +1,11 @@
 extends 'res://addons/gut/test.gd'
 
+func test_memory_leak():
+	var x = Node2D.new()
+	assert_is(x, Node)
+	x.free()
+	assert_no_new_orphans()
+
 func test_can_instantiate_with_two_arrays():
 	var ad  = ArrayDiff.new([], [])
 	assert_not_null(ad)
