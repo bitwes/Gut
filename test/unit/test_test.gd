@@ -55,7 +55,10 @@ class BaseTestClass:
 	func before_each():
 		gr.test = Test.new()
 		gr.test_with_gut = Test.new()
-		gr.test_with_gut.gut = autofree(Gut.new())
+		var g = autofree(Gut.new())
+		g._should_print_versions = false
+		gr.test_with_gut.gut = g
+		add_child(gr.test_with_gut.gut)
 
 	func after_each():
 		gr.test_with_gut.gut.get_doubler().clear_output_directory()
@@ -1710,14 +1713,6 @@ class TestAssertSetgetCalled:
 	const ControlChildMock = preload("res://test/resources/test_assert_setget_test_objects/ControlChildMock.tscn")
 	const InheritSceneMock = preload("res://test/resources/test_assert_setget_test_objects/InheritSceneMock.tscn")
 
-	func before_each():
-		.before_each()
-		#orphans hunting => ask butch how to handle this
-		gr.test_with_gut.gut.add_child(gr.test_with_gut.gut._yield_timer)
-		gr.test_with_gut.gut.add_child(gr.test_with_gut.gut._yield_between.timer)
-		gr.test_with_gut.gut.add_child(gr.test_with_gut.gut._wait_timer)
-
-
 	func test_passes_has_assert_setget_method():
 		assert_has_method(gr.test, "assert_setget_called")
 
@@ -1805,14 +1800,6 @@ class TestAssertProperty:
 	const ControlChildMock = preload("res://test/resources/test_assert_setget_test_objects/ControlChildMock.tscn")
 
 
-	func before_each():
-		.before_each()
-		#orphans hunting => ask butch how to handle this
-		gr.test_with_gut.gut.add_child(gr.test_with_gut.gut._yield_timer)
-		gr.test_with_gut.gut.add_child(gr.test_with_gut.gut._yield_between.timer)
-		gr.test_with_gut.gut.add_child(gr.test_with_gut.gut._wait_timer)
-
-
 	# omit the double check on passed asserts
 	func assert_fail(t, count=1, msg=""):
 		var self_fail_count = get_fail_count()
@@ -1883,14 +1870,6 @@ class TestAssertSetget:
 	const NodeChildMock = preload("res://test/resources/test_assert_setget_test_objects/node_child_mock.gd")
 	const SceneMock = preload("res://test/resources/test_assert_setget_test_objects/SceneMock.tscn")
 	const ControlChildMock = preload("res://test/resources/test_assert_setget_test_objects/ControlChildMock.tscn")
-
-
-	func before_each():
-		.before_each()
-		#orphans hunting => ask butch how to handle this
-		gr.test_with_gut.gut.add_child(gr.test_with_gut.gut._yield_timer)
-		gr.test_with_gut.gut.add_child(gr.test_with_gut.gut._yield_between.timer)
-		gr.test_with_gut.gut.add_child(gr.test_with_gut.gut._wait_timer)
 
 
 	func test_passes_has_assert_setget_method():
