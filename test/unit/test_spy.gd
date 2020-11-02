@@ -111,6 +111,13 @@ class TestAddingCallsWithParameters:
 		assert_eq(p, null, 'The returned parameters should be null')
 		assert_eq(_spy.get_logger().get_errors().size(), 1, 'generates error')
 
+	func test_performs_deep_compare_of_paramters():
+		var params = [1, 2, {'a':1, 'b':2}]
+		var simple = Simple.new()
+		_spy.add_call(simple, 'method1', params.duplicate(true))
+		assert_true(_spy.was_called(simple, 'method1', params))
+
+
 class TestGetCallCount:
 	extends 'res://addons/gut/test.gd'
 

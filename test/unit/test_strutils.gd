@@ -120,3 +120,25 @@ class TestTruncateString:
 		var s = 'this is some text that I have  typed into here for you to read.'
 		var result = strutils.truncate_string(s, -1)
 		assert_eq(result, s)
+
+
+class TestIndent:
+	extends 'res://addons/gut/test.gd'
+
+	var strutils = load('res://addons/gut/strutils.gd').new()
+
+	func test_one_indent_for_single_line():
+		var indented = strutils.indent_text('hello world', 1, '  ')
+		assert_string_starts_with(indented, '  ')
+
+	func test_four_indents_for_single_line():
+		var indented = strutils.indent_text('hello world', 4, '__')
+		assert_string_starts_with(indented, '________')
+
+	func test_with_newlines():
+		var indented = strutils.indent_text("hello\nworld", 2, '__')
+		assert_eq(indented, "____hello\n____world")
+
+	func test_newlines_with_trailing_newline():
+		var indented = strutils.indent_text("hello\nworld\n", 2, '__')
+		assert_eq(indented, "____hello\n____world\n")

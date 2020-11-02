@@ -90,10 +90,8 @@ func _get_obj_filename(thing):
 # ------------------------------------------------------------------------------
 func type2str(thing):
 	var oc = _utils.OrphanCounter.new()
-	print(oc.orphan_count(), ' type2str 1')
 	var filename = _get_obj_filename(thing)
 	var str_thing = str(thing)
-	print(oc.orphan_count(), ' type2str 2')
 
 	if(thing == null):
 		# According to str there is a difference between null and an Object
@@ -113,11 +111,8 @@ func type2str(thing):
 		# better this way.
 		pass
 	elif(typeof(thing) ==  TYPE_OBJECT):
-		print(oc.orphan_count(), ' type2str 3')
 		if(_utils.is_native_class(thing)):
-			print(oc.orphan_count(), ' type2str 3.1')
 			str_thing = _utils.get_native_class_name(thing)
-			print(oc.orphan_count(), ' type2str 4')
 		elif(_utils.is_double(thing)):
 			var double_path = _get_filename(thing.__gut_metadata_.path)
 			if(thing.__gut_metadata_.subpath != ''):
@@ -130,11 +125,8 @@ func type2str(thing):
 			str_thing = '(' + str_thing + ')'
 		str_thing = str(types[typeof(thing)], str_thing)
 
-	print(oc.orphan_count(), ' type2str 90')
 	if(filename != null):
-		print(oc.orphan_count(), ' type2str 91')
 		str_thing += str('(', filename, ')')
-		print(oc.orphan_count(), ' type2str 92')
 	return str_thing
 
 # ------------------------------------------------------------------------------
@@ -147,3 +139,28 @@ func truncate_string(src, max_size):
 	if(src.length() > max_size - 10 and max_size != -1):
 		to_return = str(src.substr(0, max_size - 10), '...',  src.substr(src.length() - 10, src.length()))
 	return to_return
+
+
+func _get_indent_text(times, pad):
+	var to_return = ''
+	for i in range(times):
+		to_return += pad
+
+	return to_return
+
+func indent_text(text, times, pad):
+	if(times == 0):
+		return text
+
+	var to_return = text
+	var ending_newline = ''
+
+	if(text.ends_with("\n")):
+		ending_newline = "\n"
+		to_return = to_return.left(to_return.length() -1)
+
+	var padding = _get_indent_text(times, pad)
+	to_return = to_return.replace("\n", "\n" + padding)
+	to_return += ending_newline
+
+	return padding + to_return
