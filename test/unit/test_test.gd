@@ -266,6 +266,30 @@ class TestAssertAlmostEq:
 		gr.test.assert_almost_eq(Vector2(1.0, 1.0), Vector2(2.0, 2.0), Vector2(1.0, 1.0), "Should pass, Vector2(1.0, 1.0) == Vector2(2.0, 2.0) +/- Vector2(1.0, 1.0)")
 		assert_pass(gr.test)
 
+	func test_fails_with_vector2s_y_ne():
+		gr.test.assert_almost_eq(Vector2(1.0, 2.0), Vector2(1.0, 1.0), Vector2(0.0, 0.0), "Should fail, Vector2(1.0, 2.0) == Vector2(1.0, 1.0) +/- Vector2(0.0, 0.0)")
+		assert_fail(gr.test)
+
+	func test_fails_with_vector3s_z_ne():
+		gr.test.assert_almost_eq(Vector3(1.0, 1.0, 2.0), Vector3(1.0, 1.0, 1.0), Vector3(0.0, 0.0, 0.0), "Should fail, Vector3(1.0, 1.0, 2.0) == Vector3(1.0, 1.0, 1.0) +/- Vector2(0.0, 0.0, 0.0)")
+		assert_fail(gr.test)
+
+	func test_fails_with_vector3s_y_z_ne():
+		gr.test.assert_almost_eq(Vector3(1.0, 2.0, 3.0), Vector3(1.0, 1.0, 1.0), Vector3(0.0, 0.0, 0.0), "Should fail, Vector3(1.0, 2.0, 3.0) == Vector3(1.0, 1.0, 1.0) +/- Vector3(0.0, 0.0, 0.0)")
+		assert_fail(gr.test)
+
+	func test_fails_with_vector2s_y_outside_range():
+		gr.test.assert_almost_eq(Vector2(1.0, 3.0), Vector2(1.0, 1.0), Vector2(1.0, 1.0), "Should fail, Vector2(1.0, 3.0) == Vector2(1.0, 1.0) +/- Vector2(1.0, 1.0)")
+		assert_fail(gr.test)
+
+	func test_fails_with_vector3s_z_outside_range():
+		gr.test.assert_almost_eq(Vector3(1.0, 2.0, 3.0), Vector3(1.0, 1.0, 1.0), Vector3(1.0, 1.0, 1.0), "Should fail, Vector3(1.0, 2.0, 3.0) == Vector3(1.0, 1.0, 1.0) +/- Vector3(1.0, 1.0, 1.0)")
+		assert_fail(gr.test)
+
+	func test_passes_with_vector3s_y_z_within_range():
+		gr.test.assert_almost_eq(Vector3(1.0, 2.0, 3.0), Vector3(1.0, 1.0, 1.0), Vector3(2.0, 2.0, 2.0), "Should pass, Vector3(1.0, 2.0, 3.0) == Vector3(1.0, 1.0, 1.0) +/- Vector3(2.0, 2.0, 2.0)")
+		assert_pass(gr.test)
+
 class TestAssertAlmostNe:
 	extends BaseTestClass
 
@@ -308,6 +332,30 @@ class TestAssertAlmostNe:
 	func test_passes_with_vector2s_almost_outside_range():
 		gr.test.assert_almost_ne(Vector2(1.0, 1.0), Vector2(2.0, 2.0), Vector2(0.9, 0.9), "Should pass, Vector2(1.0, 1.0) == Vector2(2.0, 2.0) +/- Vector2(0.9, 0.9)")
 		assert_pass(gr.test)
+
+	func test_passes_with_vector2s_y_ne():
+		gr.test.assert_almost_ne(Vector2(1.0, 2.0), Vector2(1.0, 1.0), Vector2(0.0, 0.0), "Should pass, Vector2(1.0, 2.0) == Vector2(1.0, 1.0) +/- Vector2(0.0, 0.0)")
+		assert_pass(gr.test)
+
+	func test_passes_with_vector3s_z_ne():
+		gr.test.assert_almost_ne(Vector3(1.0, 1.0, 2.0), Vector3(1.0, 1.0, 1.0), Vector3(0.0, 0.0, 0.0), "Should pass, Vector3(1.0, 1.0, 2.0) == Vector3(1.0, 1.0, 1.0) +/- Vector3(0.0, 0.0, 0.0)")
+		assert_pass(gr.test)
+
+	func test_passes_with_vector3s_y_z_ne():
+		gr.test.assert_almost_ne(Vector3(1.0, 2.0, 3.0), Vector3(1.0, 1.0, 1.0), Vector3(0.0, 0.0, 0.0), "Should pass, Vector3(1.0, 2.0, 3.0) == Vector3(1.0, 1.0, 1.0) +/- Vector3(0.0, 0.0, 0.0)")
+		assert_pass(gr.test)
+
+	func test_passes_with_vector2s_y_outside_range():
+		gr.test.assert_almost_ne(Vector2(1.0, 3.0), Vector2(1.0, 1.0), Vector2(1.0, 1.0), "Should pass, Vector2(1.0, 3.0) == Vector2(1.0, 1.0) +/- Vector2(1.0, 1.0)")
+		assert_pass(gr.test)
+
+	func test_passes_with_vector3s_z_outside_range():
+		gr.test.assert_almost_ne(Vector3(1.0, 2.0, 3.0), Vector3(1.0, 1.0, 1.0), Vector3(1.0, 1.0, 1.0), "Should pass, Vector3(1.0, 2.0, 3.0) == Vector3(1.0, 1.0, 1.0) +/- Vector3(1.0, 1.0, 1.0)")
+		assert_pass(gr.test)
+
+	func test_fails_with_vector3s_y_z_within_range():
+		gr.test.assert_almost_ne(Vector3(1.0, 2.0, 3.0), Vector3(1.0, 1.0, 1.0), Vector3(2.0, 2.0, 2.0), "Should fail, Vector3(1.0, 2.0, 3.0) == Vector3(1.0, 1.0, 1.0) +/- Vector3(2.0, 2.0, 2.0)")
+		assert_fail(gr.test)
 
 class TestAssertGt:
 	extends BaseTestClass

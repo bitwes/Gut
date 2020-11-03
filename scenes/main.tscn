@@ -50,6 +50,7 @@ _log_level = 2
 _export_path = "res://exported_tests.cfg"
 _directory1 = "res://test/unit"
 _directory2 = "res://test/integration"
+
 [connection signal="pressed" from="RunGutTestsButton" to="." method="_on_RunGutTestsButton_pressed"]
 [connection signal="pressed" from="ExportTests" to="." method="_on_ExportTests_pressed"]
 [connection signal="gut_ready" from="Gut" to="." method="_on_Gut_gut_ready"]
