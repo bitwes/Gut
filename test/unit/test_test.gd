@@ -49,6 +49,15 @@ class BaseTestClass:
 		if(get_fail_count() != self_fail_count or _print_all_subtests):
 			print_fail_pass_text(t)
 
+	func assert_fail_msg_contains(t, text):
+		if(t.get_fail_count() != 1):
+			assert_fail(t, 1, 'assert_fail_msg_contains requires single failing assert.')
+		elif(t.get_pass_count() != 0):
+			assert_pass(t, 0, 'assert_fail_msg_contains requires no passing asserts.')
+		else:
+			assert_string_contains(t._fail_pass_text[0], text)
+
+
 	# #############
 	# Seutp/Teardown
 	# #############
@@ -1708,86 +1717,79 @@ class TestAssertSetgetCalled:
 	extends BaseTestClass
 
 
-	const NodeChildMock = preload("res://test/resources/test_assert_setget_test_objects/node_child_mock.gd")
-	const SceneMock = preload("res://test/resources/test_assert_setget_test_objects/SceneMock.tscn")
-	const ControlChildMock = preload("res://test/resources/test_assert_setget_test_objects/ControlChildMock.tscn")
-	const InheritSceneMock = preload("res://test/resources/test_assert_setget_test_objects/InheritSceneMock.tscn")
-
-	func test_passes_has_assert_setget_method():
-		assert_has_method(gr.test, "assert_setget_called")
+	const TestNode = preload("res://test/resources/test_assert_setget_test_objects/test_node.gd")
+	const TestScene = preload("res://test/resources/test_assert_setget_test_objects/TestScene.tscn")
 
 
 	var bad_input = [
-				[NodeChildMock.new(), "field_with_setter_getter", "set_field_with_setter_getter", "get_field_with_setter_getter"]
-				, [NodeChildMock, "wrong_field_name", "set_field_with_setter_getter", "get_field_with_setter_getter"]
-				, [NodeChildMock, "field_with_setter_getter", "wrong_setter_name", "get_field_with_setter_getter"]
-				, [NodeChildMock, "field_with_setter_getter", "set_field_with_setter_getter", "wrong_getter_name"]
-				, [NodeChildMock, "field_with_setter_getter", "", ""]
-				, [5, "field_with_setter_getter", "set_field_with_setter_getter", ""]
-				,[NodeChildMock, "field_with_setter_getter", 1, 1]
-				,[NodeChildMock, "field_with_setter_getter", null, null]
-		]
+		# Passing instance instead of classe
+		[TestNode.new(), "has_both", "set_has_both", "get_has_both"],
+		# passing int instead of instance
+		[5, "has_both", "set_has_both", "get_has_both"],
+		# missing prop with existing setter/gettter
+		[TestNode, "wrong_field_name", "set_both", "get_has_both"],
+		# wrong setter
+		[TestNode, "has_both", "wrong_setter_name", "get_has_both"],
+		# wrong getter
+		[TestNode, "has_both", "set_has_both", "wrong_getter_name"],
+		# not passing setter/getter names
+		[TestNode, "has_both", "", ""],
+		# passing ints instead of strings
+		[TestNode, "has_both", 1, 1],
+		# passing nullsfor setter/getter names
+		[TestNode, "has_both", null, null],
+	]
 	func test_fails_with_bad_input_params(params=use_parameters(bad_input)):
 		var old_failed_count = gr.test_with_gut.get_fail_count() # issue parameterized tests
-		gr.test_with_gut.assert_setget_called(params[0],params[1], params[2], params[3])
+		gr.test_with_gut._assert_setget_called(params[0],params[1], params[2], params[3])
 		assert_fail(gr.test_with_gut, old_failed_count + 1)
-		if params[0] is NodeChildMock:
+		if params[0] is TestNode:
 			params[0].free()
 
 
-	func test_fails_with_default_setter_and_getter_names():
-		gr.test_with_gut.assert_setget_called(NodeChildMock, "field_with_setter_getter")
+	func test_fails_with_no_setter_and_getter_names():
+		gr.test_with_gut._assert_setget_called(TestNode, "has_both")
 		assert_fail(gr.test_with_gut)
 
 
 	func test_fails_if_given_setter_is_not_called():
-		gr.test_with_gut.assert_setget_called(NodeChildMock, "field", "set_field")
+		gr.test_with_gut._assert_setget_called(TestNode, "has_both_dnu_setget", "set_has_both_dnu_setget")
 		assert_fail(gr.test_with_gut)
 
 
 	func test_fails_if_given_getter_is_not_called():
-		gr.test_with_gut.assert_setget_called(NodeChildMock, "field", "", "get_field")
+		gr.test_with_gut._assert_setget_called(TestNode, "has_both_dnu_setget", "", "get_has_both_dnu_setget")
 		assert_fail(gr.test_with_gut)
 
 
 	func test_passes_if_given_type_is_packed_scene():
-		gr.test_with_gut.assert_setget_called(SceneMock, "node_with_setter_getter", "set_node_with_setter_getter", "get_node_with_setter_getter")
-		assert_pass(gr.test_with_gut)
-
-
-	func test_passes_if_given_types_root_is_control_node():
-		gr.test_with_gut.assert_setget_called(ControlChildMock, "node_with_setter", "set_node_with_setter")
-		assert_pass(gr.test_with_gut)
-
-
-	func test_passes_if_given_property_is_in_superclass():
-		gr.test_with_gut.assert_setget_called(InheritSceneMock, "node_with_setter_getter", "set_node_with_setter_getter")
+		gr.test_with_gut._assert_setget_called(TestScene, "node_with_setter_getter", "set_node_with_setter_getter", "get_node_with_setter_getter")
 		assert_pass(gr.test_with_gut)
 
 
 	func test_passes_if_given_setter_and_getter_is_called():
-		gr.test_with_gut.assert_setget_called(NodeChildMock, "field_with_setter_getter", "set_field_with_setter_getter", "get_field_with_setter_getter")
+		gr.test_with_gut._assert_setget_called(TestNode, "has_both", "set_has_both", "get_has_both")
 		assert_pass(gr.test_with_gut)
 
 
 	func test_passes_if_given_setter_is_called():
-		gr.test_with_gut.assert_setget_called(NodeChildMock, "field_with_setter_getter", "set_field_with_setter_getter")
+		gr.test_with_gut._assert_setget_called(TestNode, "has_both", "set_has_both")
 		assert_pass(gr.test_with_gut)
 
 
 	func test_passes_if_given_getter_is_called():
-		gr.test_with_gut.assert_setget_called(NodeChildMock, "field_with_setter_getter", "", "get_field_with_setter_getter")
+		gr.test_with_gut._assert_setget_called(TestNode, "has_both", "", "get_has_both")
 		assert_pass(gr.test_with_gut)
 
 
 	func test_fails_if_given_type_is_already_doubled():
-		var doubled_type = double(NodeChildMock)
-		gr.test_with_gut.assert_setget_called(doubled_type, "field_with_setter_getter", "set_field_with_setter_getter", "get_field_with_setter_getter")
+		var doubled_type = double(TestNode)
+		gr.test_with_gut._assert_setget_called(doubled_type, "has_both", "set_has_both", "get_has_both")
 		assert_fail(gr.test_with_gut)
 
 
 	func test_passes_if_given_setter_is_typed():
-		gr.test_with_gut.assert_setget_called(NodeChildMock, "field_with_setter", "set_field_with_setter")
+		gr.test_with_gut._assert_setget_called(TestNode, "typed_setter", "set_typed_setter")
 		assert_pass(gr.test_with_gut)
 
 
@@ -1795,17 +1797,8 @@ class TestAssertProperty:
 	extends BaseTestClass
 
 
-	const NodeChildMock = preload("res://test/resources/test_assert_setget_test_objects/node_child_mock.gd")
-	const SceneMock = preload("res://test/resources/test_assert_setget_test_objects/SceneMock.tscn")
-	const ControlChildMock = preload("res://test/resources/test_assert_setget_test_objects/ControlChildMock.tscn")
-
-
-	# omit the double check on passed asserts
-	func assert_fail(t, count=1, msg=""):
-		var self_fail_count = get_fail_count()
-		assert_eq(t.get_fail_count(), count, "Expected FAIL COUNT:  " + msg)
-		if(get_fail_count() != self_fail_count or _print_all_subtests):
-			print_fail_pass_text(t)
+	const TestNode = preload("res://test/resources/test_assert_setget_test_objects/test_node.gd")
+	const TestScene = preload("res://test/resources/test_assert_setget_test_objects/TestScene.tscn")
 
 
 	func test_passes_has_assert_setget_method():
@@ -1813,98 +1806,96 @@ class TestAssertProperty:
 
 
 	func test_passes_if_given_input_is_valid():
-		gr.test_with_gut.assert_property(NodeChildMock, "field_with_setter_getter", 0, 0)
+		gr.test_with_gut.assert_property(TestNode, "has_both", 4, 0)
 		assert_pass(gr.test_with_gut, 6)
 
 
 	func test_passes_if_instance_is_script():
-		gr.test_with_gut.assert_property(NodeChildMock, "field_with_setter_getter", 0, 0)
+		gr.test_with_gut.assert_property(TestNode, "has_both", 4, 0)
 		assert_pass(gr.test_with_gut, 6)
 
 
 	func test_passes_if_instance_is_packed_scene():
-		var new_node_child_mock = NodeChildMock.new()
+		var new_node_child_mock = TestNode.new()
 		add_child_autofree(new_node_child_mock)
-		gr.test_with_gut.assert_property(SceneMock, "node_with_setter_getter", null, new_node_child_mock)
+		gr.test_with_gut.assert_property(TestScene, "node_with_setter_getter", null, new_node_child_mock)
 		assert_pass(gr.test_with_gut, 6)
 
 
 	func test_passes_if_instance_is_obj_from_script():
-		var node_child_mock = NodeChildMock.new()
+		var node_child_mock = TestNode.new()
 		add_child_autofree(node_child_mock)
-		node_child_mock.field = 10
-		gr.test_with_gut.assert_property(node_child_mock, "field_with_setter_getter", 0, 5)
+		gr.test_with_gut.assert_property(node_child_mock, "has_both", 4, 5)
 		assert_pass(gr.test_with_gut, 6)
 
 
 	func test_passes_if_instance_is_obj_from_packed_scene():
-		var scene_mock = SceneMock.instance()
+		var scene_mock = TestScene.instance()
 		add_child_autoqfree(scene_mock)
 		var dflt_node_with_setter = scene_mock.get_node_with_setter_getter()
-		var new_node_child_mock = NodeChildMock.new()
+		var new_node_child_mock = TestNode.new()
 		add_child_autofree(new_node_child_mock)
 		gr.test_with_gut.assert_property(scene_mock, "node_with_setter_getter", dflt_node_with_setter, new_node_child_mock)
 		assert_pass(gr.test_with_gut, 6)
 
 
 	func test_fails_if_getter_does_not_exist():
-		var control_child_mock = ControlChildMock.instance()
-		add_child_autofree(control_child_mock)
-		var dflt_node_with_setter = control_child_mock.node_with_setter
-		var new_node_child_mock = NodeChildMock.new()
-		add_child_autofree(new_node_child_mock)
-		gr.test_with_gut.assert_property(control_child_mock, "node_with_setter", dflt_node_with_setter, new_node_child_mock)
-		assert_fail(gr.test_with_gut, 3)
-
+		var test_node = TestNode.new()
+		gr.test_with_gut.assert_property(test_node, 'has_setter', 2, 0)
+		assert_fail_pass(gr.test_with_gut, 3, 1)
 
 	func test_fails_if_obj_is_something_unexpected():
 		var instance = Directory.new()
 		gr.test_with_gut.assert_property(instance, "current_dir", "", "new_dir")
-		assert_fail(gr.test_with_gut, 3)
+		assert_fail_pass(gr.test_with_gut, 3, 1)
 
 
-class TestAssertSetget:
+
+class TestAssertSetGet:
 	extends BaseTestClass
 
+	const TestNode = preload("res://test/resources/test_assert_setget_test_objects/test_node.gd")
 
-	const NodeChildMock = preload("res://test/resources/test_assert_setget_test_objects/node_child_mock.gd")
-	const SceneMock = preload("res://test/resources/test_assert_setget_test_objects/SceneMock.tscn")
-	const ControlChildMock = preload("res://test/resources/test_assert_setget_test_objects/ControlChildMock.tscn")
-
-
-	func test_passes_has_assert_setget_method():
-		assert_has_method(gr.test, "assert_setget")
-
-
-	func test_passes_if_assert_setget_called_is_called_with_valid_input():
-		gr.test_with_gut.assert_setget(NodeChildMock, "field_with_setter_getter", true, true)
+	func test_can_use_with_getter_only_name():
+		gr.test_with_gut.assert_setget(TestNode, 'non_default_getter', null, '__get_non_default_getter')
 		assert_pass(gr.test_with_gut)
 
-
-	func test_passes_if_only_getter_is_given():
-		gr.test_with_gut.assert_setget(NodeChildMock, "field_with_setter_getter", false, true)
+	func test_can_use_with_setter_only_name():
+		gr.test_with_gut.assert_setget(TestNode, 'non_default_setter', '__set_non_default_setter')
 		assert_pass(gr.test_with_gut)
 
+	func test_can_use_with_setter_only():
+		gr.test_with_gut.assert_setget(TestNode, 'has_setter', SETTER_ONLY)
+		assert_pass(gr.test_with_gut)
 
-	func test_fails_if_no_setter_and_getter_given():
-		gr.test_with_gut.assert_setget(NodeChildMock, "field_with_setter_getter")
+	func test_can_use_with_getter_only():
+		gr.test_with_gut.assert_setget(TestNode, 'has_getter', GETTER_ONLY)
+		assert_pass(gr.test_with_gut)
+
+	func test_works_with_defaults():
+		gr.test_with_gut.assert_setget(TestNode, 'has_both')
+		assert_pass(gr.test_with_gut)
+
+	func test_works_with_non_default_accessors_for_both():
+		gr.test_with_gut.assert_setget(TestNode, 'non_default_both', '__set_default_both', '__get_default_both')
+		assert_pass(gr.test_with_gut)
+
+	func test_fails_with_defaults_and_no_getter():
+		gr.test_with_gut.assert_setget(TestNode, 'has_setter')
 		assert_fail(gr.test_with_gut)
 
+	func test_fails_with_defaults_and_no_setter():
+		gr.test_with_gut.assert_setget(TestNode, 'has_getter')
+		assert_fail(gr.test_with_gut)
 
-	func test_passes_if_instance_is_packed_scene():
-		gr.test_with_gut.assert_setget(SceneMock, "node_with_setter_getter", true, true)
-		assert_pass(gr.test_with_gut)
+	func test_fails_with_no_setter_getter():
+		gr.test_with_gut.assert_setget(TestNode, 'no_setget')
+		assert_fail(gr.test_with_gut)
 
+	func test_fails_when_property_does_not_exist():
+		gr.test_with_gut.assert_setget(TestNode, '__dne__')
+		assert_fail(gr.test_with_gut)
 
-	func test_passes_if_instance_is_obj():
-		var node_child_mock = NodeChildMock.new()
-		add_child_autofree(node_child_mock)
-		gr.test_with_gut.assert_setget(node_child_mock, "field_with_setter_getter", true, true)
-		assert_pass(gr.test_with_gut)
-
-
-	func test_passes_if_instance_is_obj_from_packed_scene():
-		var control_child_mock = ControlChildMock.instance()
-		add_child_autofree(control_child_mock)
-		gr.test_with_gut.assert_setget(control_child_mock, "node_with_setter", true)
-		assert_pass(gr.test_with_gut)
+	func test_fails_when_all_exist_but_setget_not_used():
+		gr.test_with_gut.assert_setget(TestNode, 'has_both_dnu_setget')
+		assert_fail(gr.test_with_gut)

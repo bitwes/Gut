@@ -1,5 +1,5 @@
 {
-  "dirs":["res://test/unit/", "res://test/integration/"],
+  "dirs":["res://test/unit/", "res://test/integration/", "res://test/samples/"],
   "should_maximize":true,
   "should_exit":true,
   "ignore_pause":true,

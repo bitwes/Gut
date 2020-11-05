@@ -118,6 +118,13 @@ var _fail_pass_text = []
 const EDITOR_PROPERTY = PROPERTY_USAGE_SCRIPT_VARIABLE | PROPERTY_USAGE_DEFAULT
 const VARIABLE_PROPERTY = PROPERTY_USAGE_SCRIPT_VARIABLE
 
+# Used with assert_setget
+enum {
+	DEFAULT_SETTER_GETTER,
+	SETTER_ONLY,
+	GETTER_ONLY
+}
+
 # Summary counts for the test.
 var _summary = {
 	asserts = 0,
@@ -242,6 +249,26 @@ func _fail_if_parameters_not_array(parameters):
 		_lgr.error('The "parameters" parameter must be an array of expected parameter values.')
 		_fail('Cannot compare paramter values because an array was not passed.')
 	return invalid
+
+
+func _create_obj_from_type(type):
+	var obj = null
+	if type.is_class("PackedScene"):
+		obj = type.instance()
+		add_child(obj)
+	else:
+		obj = type.new()
+	return obj
+
+
+func _get_type_from_obj(obj):
+	var type = null
+	if obj.has_method(get_filename()):
+			type = load(obj.get_filename())
+	else:
+			type = obj.get_script()
+	return type
+
 # #######################
 # Virtual Methods
 # #######################
@@ -525,7 +552,7 @@ func assert_accessors(obj, property, default, set_to):
 # If provided, property_usage constrains the type of property returned by
 # passing either:
 # EDITOR_PROPERTY for properties defined as: export(int) var some_value
-# VARIABLE_PROPERTY for properties defunded as: var another_value
+# VARIABLE_PROPERTY for properties defined as: var another_value
 # ---------------------------------------------------------------------------
 func _find_object_property(obj, property_name, property_usage=null):
 	var result = null
@@ -985,10 +1012,52 @@ func assert_no_new_orphans(text=''):
 		_pass('No new orphans found.' + msg)
 
 # ------------------------------------------------------------------------------
+# Returns a dictionary that contains
+# - an is_valid flag whether validation was successful or not and
+# - a message that gives some information about the validation errors.
+# ------------------------------------------------------------------------------
+func _validate_assert_setget_called_input(type, name_property
+			, name_setter, name_getter):
+	var obj = null
+	var result = {"is_valid": true, "msg": ""}
+
+	if null == type or typeof(type) != TYPE_OBJECT or not type.is_class("Resource"):
+		result.is_valid = false
+		result.msg = str("The type parameter should be a ressource, input is ", _str(type))
+		return result
+
+	if null == double(type):
+		result.is_valid = false
+		result.msg = str("Attempt to double the type parameter failed. The type parameter should be a ressource that can be doubled.")
+		return result
+
+	obj = _create_obj_from_type(type)
+	var property = _find_object_property(obj, str(name_property))
+
+	if null == property:
+		result.is_valid = false
+		result.msg += str("The property %s does not exist." % _str(name_property))
+	if name_setter == "" and name_getter == "":
+		result.is_valid = false
+		result.msg += str("Either setter or getter method must be specified.")
+	if name_setter != "" and not obj.has_method(str(name_setter)):
+		result.is_valid = false
+		result.msg += str("Setter method %s does not exist.  " % _str(name_setter))
+	if name_getter != "" and not obj.has_method(str(name_getter)):
+		result.is_valid = false
+		result.msg += str("Getter method %s does not exist.  " %_str(name_getter))
+
+	obj.free()
+	return result
+
+# ------------------------------------------------------------------------------
 # Asserts the given setter and getter methods are called when the given property
 # is accessed.
 # ------------------------------------------------------------------------------
-func assert_setget_called(type, name_property, name_setter  = "", name_getter  = ""):
+func _assert_setget_called(type, name_property, setter = "", getter  = ""):
+	var name_setter = _utils.nvl(setter, "")
+	var name_getter = _utils.nvl(getter, "")
+
 	var validation = _validate_assert_setget_called_input(type, name_property, str(name_setter), str(name_getter))
 	if not validation.is_valid:
 		_fail(validation.msg)
@@ -1016,8 +1085,9 @@ func assert_setget_called(type, name_property, name_setter  = "", name_getter  =
 	obj.free()
 
 	# assert
+
 	if amount_calls_setter == expected_calls_setter and amount_calls_getter == expected_calls_getter:
-		_pass(str("For property %s the setget keyword is set up as expected." % _str(name_property)))
+		_pass(str("setget for %s is correctly configured." % _str(name_property)))
 	else:
 		if amount_calls_setter < expected_calls_setter:
 			message += " The setter was not called."
@@ -1029,83 +1099,36 @@ func assert_setget_called(type, name_property, name_setter  = "", name_getter  =
 			message += " The getter was called but should not have been."
 		_fail(str(message))
 
-
-# Returns a dictionary that contains
-# - an is_valid flag whether validation was successful or not and
-# - a message that gives some information about the validation errors.
-func _validate_assert_setget_called_input(type, name_property
-			, name_setter, name_getter):
-	var obj = null
-	var result = {"is_valid": true, "msg": ""}
-
-	if null == type or typeof(type) != TYPE_OBJECT or not type.is_class("Resource"):
-		result.is_valid = false
-		result.msg = str("The type parameter should be a ressource, input is ", _str(type))
-		return result
-
-	if null == double(type):
-		result.is_valid = false
-		result.msg = str("Attempt to double the type parameter failed. The type parameter should be a ressource that can be doubled.")
-		return result
-
-	obj = _create_obj_from_type(type)
-	var property = _find_object_property(obj, str(name_property))
-
-	if null == property:
-		result.is_valid = false
-		result.msg += str("The property %s doesn\'t exist." % _str(name_property))
-	if name_setter == "" and name_getter == "":
-		result.is_valid = false
-		result.msg += str("Either setter or getter method must be specified.")
-	if name_setter != "" and not obj.has_method(str(name_setter)):
-		result.is_valid = false
-		result.msg += str("Method %s doesn\'t exist." % _str(name_setter))
-	if name_getter != "" and not obj.has_method(str(name_getter)):
-		result.is_valid = false
-		result.msg += str("Method %s doesn\'t exist." %_str(name_getter))
-
-	obj.free()
-	return result
-
-
-func _create_obj_from_type(type):
-	var obj = null
-	if type.is_class("PackedScene"):
-		obj = type.instance()
-		add_child(obj)
-	else:
-		obj = type.new()
-	return obj
-
-
-func _get_type_from_obj(obj):
-	var type = null
-	if obj.has_method(get_filename()):
-			type = load(obj.get_filename())
-	else:
-			type = obj.get_script()
-	return type
-
 # ------------------------------------------------------------------------------
 # Wrapper: invokes assert_setget_called but provides a slightly more convenient
 # signature
 # ------------------------------------------------------------------------------
-func assert_setget(instance, name_property, has_setter = false, has_getter = false) -> void:
+func assert_setget(
+	instance, name_property,
+	const_or_setter = DEFAULT_SETTER_GETTER, getter="__not_set__"):
 
-	var name_setter = ""
-	var name_getter = ""
+	var getter_name = null
+	if(getter != "__not_set__"):
+		getter_name = getter
+
+	var setter_name = null
+	if(typeof(const_or_setter) == TYPE_INT):
+		if(const_or_setter in [SETTER_ONLY, DEFAULT_SETTER_GETTER]):
+			setter_name  = str("set_", name_property)
+
+		if(const_or_setter in [GETTER_ONLY, DEFAULT_SETTER_GETTER]):
+			getter_name = str("get_", name_property)
+	else:
+		setter_name = const_or_setter
+
 	var resource = null
 	if instance.is_class("Resource"):
 		resource = instance
 	else:
 		resource = _get_type_from_obj(instance)
 
-	if has_setter:
-		name_setter = "set_" + str(name_property)
-	if has_getter:
-		name_getter = "get_" + str(name_property)
+	_assert_setget_called(resource, str(name_property), setter_name, getter_name)
 
-	assert_setget_called(resource, str(name_property), name_setter, name_getter)
 
 # ------------------------------------------------------------------------------
 # Wrapper: asserts if the property exists, the accessor methods exist and the
@@ -1127,7 +1150,7 @@ func assert_property(instance, name_property, default_value, new_value) -> void:
 	var name_getter = "get_" + str(name_property)
 
 	assert_accessors(obj, str(name_property), default_value, new_value)
-	assert_setget_called(resource, str(name_property), name_setter, name_getter)
+	_assert_setget_called(resource, str(name_property), name_setter, name_getter)
 
 	for entry in free_me:
 		entry.free()
@@ -1137,6 +1160,7 @@ func assert_property(instance, name_property, default_value, new_value) -> void:
 		_pass(str("The property is set up as expected."))
 	else:
 		_fail(str("The property is not set up as expected. Examine subtests to see what failed."))
+
 
 # ------------------------------------------------------------------------------
 # Mark the current test as pending.
@@ -1479,7 +1503,6 @@ func pass_test(text):
 # ------------------------------------------------------------------------------
 func fail_test(text):
 	_fail(text)
-
 
 # ------------------------------------------------------------------------------
 # Peforms a deep compare on both values, a CompareResult instnace is returned.
