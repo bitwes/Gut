@@ -4,17 +4,18 @@
 # easier, because no files and folders need to
 # be unchecked.
 
-/.gitattributes   export-ignore
-/.gitignore       export-ignore
-/CHANGES.md       export-ignore
-/default_env.tres export-ignore
-/icon.png         export-ignore
-/project.godot    export-ignore
-/README.md        export-ignore
-/.gutconfig.json  export-ignore
-
-/scenes           export-ignore
-/scratch          export-ignore
-/scripts          export-ignore
-/templates        export-ignore
-/test             export-ignore
+/.gitattributes        export-ignore
+/.gitignore            export-ignore
+/CHANGES.md            export-ignore
+/default_env.tres      export-ignore
+/icon.png              export-ignore
+/icon.png.import       export-ignore
+/project.godot         export-ignore
+/README.md             export-ignore
+/.gutconfig.json       export-ignore
+/readme_gutconfig.json export-ignore
+/scenes                export-ignore
+/scratch               export-ignore
+/scripts               export-ignore
+/templates             export-ignore
+/test                  export-ignore
