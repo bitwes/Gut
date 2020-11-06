@@ -1149,6 +1149,7 @@ func assert_property(instance, name_property, default_value, new_value) -> void:
 	var name_setter = "set_" + str(name_property)
 	var name_getter = "get_" + str(name_property)
 
+	var pre_fail_count = get_fail_count()
 	assert_accessors(obj, str(name_property), default_value, new_value)
 	_assert_setget_called(resource, str(name_property), name_setter, name_getter)
 
@@ -1156,7 +1157,7 @@ func assert_property(instance, name_property, default_value, new_value) -> void:
 		entry.free()
 
 	# assert
-	if get_fail_count() == 0:
+	if get_fail_count() == pre_fail_count:
 		_pass(str("The property is set up as expected."))
 	else:
 		_fail(str("The property is not set up as expected. Examine subtests to see what failed."))

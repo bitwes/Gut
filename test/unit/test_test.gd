@@ -1849,6 +1849,10 @@ class TestAssertProperty:
 		gr.test_with_gut.assert_property(instance, "current_dir", "", "new_dir")
 		assert_fail_pass(gr.test_with_gut, 3, 1)
 
+	func test_other_fails_do_not_cause_false_negatrive():
+		gr.test_with_gut.fail_test('fail')
+		gr.test_with_gut.assert_property(TestNode, "has_both", 4, 0)
+		assert_fail_pass(gr.test_with_gut, 1, 6)
 
 
 class TestAssertSetGet:
