@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://test/resources/test_assert_setget_test_objects/test_node.gd" type="Script" id=1]
+[ext_resource path="res://test/resources/test_assert_setget_test_objects/test_scene.gd" type="Script" id=2]
+
+[node name="SceneMock" type="Node2D"]
+script = ExtResource( 2 )
+
+[node name="NodeChildMock" type="Node" parent="."]
+script = ExtResource( 1 )

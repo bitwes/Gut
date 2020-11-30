@@ -802,55 +802,44 @@ func test_assert_eq_deep():
 	assert_eq_shallow({'a':1}, {'a':1, 'b':2}) # missing key
 	assert_eq_deep([1, 2, {'a':1}], [1, 2, {'a':1.0}]) # floats != ints
 
-# >>> Issue 70
-const Health = preload("res://test/resources/test_assert_setget_test_objects/readme_examples/health.gd")
-const HealthBar = preload("res://test/resources/test_assert_setget_test_objects/readme_examples/HealthBar.tscn")
 
-func test_assert_setget_called():
-	gut.p('-- passing --')
-	assert_setget_called(Health, 'current_hp', 'set_current_hp', 'get_current_hp') # PASS
-	assert_setget_called(Health, 'current_hp', 'set_current_hp') # PASS
-	assert_setget_called(Health, 'current_hp', '', 'get_current_hp') # PASS
-
-
-	gut.p('-- failing --')
-	assert_setget_called(Health, 'max_hp', 'set_max_hp') # FAIL
-	assert_setget_called(Health, 'max_hp') # FAIL => out of scope
-	assert_setget_called(Health, 'current_hp') # FAIL => setter or getter name must be specified
-	assert_setget_called(Health, 'current_hp', 'set_curent_hp', 'get_current_hp') # FAIL => typo...
-	var health = Health.new()
-	assert_setget_called(health, 'current_hp', 'set_current_hp') # FAIL => type has to be a Resource
-	health.free()
-
-
-	gut.p('-- run time error --')
-	#assert_setget_called(Health, max_hp, null, null) # RTE
-	#assert_setget_called(Health, max_hp, 1, 1) # RTE
-
-
-func test_assert_setget():
-	gut.p('-- passing --')
-	assert_setget(HealthBar, 'health', true) # PASS
-	var health_bar = HealthBar.instance()
-	assert_setget(health_bar, 'health', true) # PASS
-	health_bar.queue_free()
-
-	gut.p('-- failing --')
-	assert_setget(HealthBar, 'label') # FAIL => setter or getter has to be specified
-	assert_setget(HealthBar, 'label', true) # FAIL => setter does not exist
-
+var SetGetTestNode = load("res://test/resources/test_assert_setget_test_objects/test_node.gd")
 
 func test_assert_property():
 	gut.p('-- passing --')
-	assert_property(Health, 'current_hp', 0, 0) # PASS
-	var health = Health.new()
-	health.max_hp = 10
-	assert_property(health, 'current_hp', 0, 5) # PASS
-	health.free()
+	assert_property(SetGetTestNode, 'has_both', 4, 9)
+	var test_node = SetGetTestNode.new()
+	assert_property(test_node, 'has_both', 4, 9)
 
 	gut.p('-- failing --')
-	assert_property(Health, 'max_hp', 0, 5) # FAIL => no setget keyword
-	assert_property(Health, 'current_hp', 0, 5) # FAIL => method will clamp current_hp to max_hp which is 0 by default
-	var directory = Directory.new()
-	assert_property(directory, 'current_dir', '', 'new_dir') # FAIL => directory is not a Resource nor a Node
-# <<< Issue 70
+	assert_property(SetGetTestNode, 'has_setter', 2, 5) # missing getter
+	assert_property(SetGetTestNode, 'has_getter', 3, 7) # missing setter
+	assert_property(SetGetTestNode, 'has_both', 0, 10) # wrong default value
+	assert_property(SetGetTestNode, 'has_both_dnu_setget', 8,  10) # does  not use setget
+
+func test_assert_setget():
+	gut.p('-- passing --')
+	assert_setget(SetGetTestNode, 'has_both')
+	assert_setget(SetGetTestNode, 'has_setter', SETTER_ONLY)
+	assert_setget(SetGetTestNode, 'has_getter', GETTER_ONLY)
+	assert_setget(SetGetTestNode, 'non_default_both', '__set_default_both', '__get_default_both')
+	assert_setget(SetGetTestNode, 'non_default_getter', null, '__get_non_default_getter')
+	assert_setget(SetGetTestNode, 'non_default_setter', '__set_non_default_setter')
+
+	# These pass because it's not possible to check
+	# that a setter or getter does not exist
+	assert_setget(SetGetTestNode, 'has_both', SETTER_ONLY)
+	assert_setget(SetGetTestNode, 'has_both', GETTER_ONLY)
+
+
+	gut.p('-- failing --')
+	assert_setget(SetGetTestNode, 'no_setget')  # does not use setget
+	assert_setget(SetGetTestNode, 'has_setter') # missing getter
+	assert_setget(SetGetTestNode, 'has_getter') # missing setter
+	assert_setget(SetGetTestNode, 'has_both', 'wrong_name', 'wrong_name') # wrong names
+
+
+	# assert_setget(HealthBar, 'label') # FAIL => setter or getter has to be specified
+	# assert_setget(HealthBar, 'label', true) # FAIL => setter does not exist
+
+
