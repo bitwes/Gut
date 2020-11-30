@@ -138,6 +138,7 @@ const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yield_before_teardown'
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
+var  _should_print_versions = true # used to cut down on output in tests.
 func _init():
 	_before_all_test_obj.name = 'before_all'
 	_after_all_test_obj.name = 'after_all'
@@ -175,7 +176,8 @@ func _ready():
 		get_tree().quit()
 		return
 
-	_lgr.info(str('using [', OS.get_user_data_dir(), '] for temporary output.'))
+	if(_should_print_versions):
+		_lgr.info(str('using [', OS.get_user_data_dir(), '] for temporary output.'))
 
 	set_process_input(true)
 
@@ -222,6 +224,9 @@ func _notification(what):
 			_gui.free()
 
 func _print_versions(send_all = true):
+	if(!_should_print_versions):
+		return
+
 	var info = _utils.get_version_text()
 
 	if(send_all):
