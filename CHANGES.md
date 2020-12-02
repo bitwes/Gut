@@ -7,26 +7,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * `prerun_setup`, `setup`, `teardown`, `postrun_teardown` deprecation warnings have been enabled.  These were removed from the documentation over 2 years ago (6.6.0) and replaced with `before_all`, `before_each`, `after_each`, and `after_all`.  Having to make additional changes for these in order to implement __Issue 184__ annoyed me, so there will now be depracation warnings for these.  Earliest they could be removed is 8.0.0.
 
 ## Features
-<<<<<<< HEAD
-* Enhanced the printing of floats and strings in the various asserts.  Floats will always have a deciaml point now making it easier to see float/int comparisons.  All strings are now wrapped in double quotes making it easier to see number/string comparisons.
-* Enhanced the display of arrays when using `assert_eq` and `assert_ne`.  It now lists up to 30 indexes that are different and thier values.  Large arrays are also truncated when printed to cut down on output.
-* Added `compare_deep`, `compare_shallow`, `assert_eq/ne_deep`, `assert_eq/ne_shallow` to aid in comparing dictionaries and arrays.  See [Comparing Things](https://github.com/bitwes/Gut/wiki/Comparing-Things) wiki  page for more info.
-* __Issue 70__ Thanks to @short-story-long for adding "property" asserts `assert_property`, `assert_setget`, `assert_setget_called`.  You can now easily asssert  you  have your `setget` properties  setup correctly including ensuring that your setters/getters are used when accessing an attribute externally.
-=======
 * __Issue 70__ Thanks to @short-story-long for adding "property" asserts `assert_property`, `assert_setget`, `assert_setget_called`.  You can now easily asssert  you  have your `setget` properties  setup correctly including ensuring that your setters/getters are used when accessing an attribute externally.
 * __Issue 66__ Thanks to @nilold for adding `assert_not_between`.
 * Enhanced the printing of floats and strings in the various asserts.  Floats will always have a deciaml point now making it easier to see float/int comparisons.  All strings are now wrapped in double quotes making it easier to see number/string comparisons.
 * Enhanced the display of arrays when using `assert_eq` and `assert_ne`.  It now lists up to 30 indexes that are different and thier values.  Large arrays are also truncated when printed to cut down on output.
 * Added `compare_deep`, `compare_shallow`, `assert_eq/ne_deep`, `assert_eq/ne_shallow` to aid in comparing dictionaries and arrays.  See [Comparing Things](https://github.com/bitwes/Gut/wiki/Comparing-Things) wiki  page for more info.
->>>>>>> f8ce32409cb053ac65e4042c240539e701feabda
 * __Issue 201__ Added `pass_test(text)`, `fail_test(text)`, `is_passing()`, `is_failing()` methods to `test.gd`.
    * No more `assert_true(true, 'we got here')`!  Long live `pass_test('we got here')`!
 * `assert_called_with_paramters` now does a deep comparison of values instead of Godot's default equivalence check.
 * __Issue 152__ `assert_signal_emitted_with_parameters` now performs a deep compare of the paramters instead of Godot's default equivalence check.
-<<<<<<< HEAD
-* __Issue 66__ Thanks to @nilold for adding `assert_not_between`.
-=======
->>>>>>> f8ce32409cb053ac65e4042c240539e701feabda
 * __Issue 184__ Asserts in `before_all` and `after_all` are now formally supported.  They will appear correctly in the output and asserts will be tracked in the summary.
 
 
