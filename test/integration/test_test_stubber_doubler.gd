@@ -213,7 +213,7 @@ class TestPartialDoubleMethod:
 		_gut.free()
 		_test.free()
 
-	func test_parital_double_script():
+	func test_partial_double_script():
 		var inst = _test.partial_double(DOUBLE_ME_PATH).new()
 		inst.set_value(10)
 		assert_eq(inst.get_value(), 10)
