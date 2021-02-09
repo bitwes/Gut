@@ -8,6 +8,7 @@ class TimedSignaler:
 	extends Node2D
 
 	signal the_signal
+
 	var _timer = null
 
 	func _ready():
@@ -22,6 +23,19 @@ class TimedSignaler:
 	func emit_after(time):
 		_timer.set_wait_time(time)
 		_timer.start()
+
+class TimeSignalerParam:
+	extends TimedSignaler
+
+	func _on_timer_timeout():
+		emit_signal('the_signal', 1)
+
+class TimedSignalerMaxParams:
+	extends TimedSignaler
+
+	func _on_timer_timeout():
+		emit_signal('the_signal', 1, 2, 3, 4, 5, 6, 7, 8, 9)
+
 
 var timer = null
 
@@ -150,6 +164,20 @@ func test_yield_to__will_stop_timer_when_signal_emitted():
 
 func test_yield_to__watches_signals():
 	var signaler = add_child_autoqfree(TimedSignaler.new())
+	watch_signals(signaler)
+	signaler.emit_after(.5)
+	yield(yield_to(signaler, 'the_signal', 5), YIELD)
+	assert_signal_emitted(signaler, 'the_signal')
+
+func test_yield_to_works_on_signals_with_parameters():
+	var signaler = add_child_autoqfree(TimeSignalerParam.new())
+	watch_signals(signaler)
+	signaler.emit_after(.5)
+	yield(yield_to(signaler, 'the_signal', 5), YIELD)
+	assert_signal_emitted(signaler, 'the_signal')
+
+func test_yield_to_works_on_signals_with_max_parameters():
+	var signaler = add_child_autoqfree(TimedSignalerMaxParams.new())
 	watch_signals(signaler)
 	signaler.emit_after(.5)
 	yield(yield_to(signaler, 'the_signal', 5), YIELD)

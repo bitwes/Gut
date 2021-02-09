@@ -301,8 +301,15 @@ func _on_log_level_changed(value):
 # ------------------------------------------------------------------------------
 # Timeout for the built in timer.  emits the timeout signal.  Start timer
 # with set_yield_time()
+#
+# signal_watcher._on_watched_signal supports up to 9 additional arguments.
+# This is the most number of parameters GUT supports on signals.  The comment
+# on _on_watched_signal explains reasoning.
 # ------------------------------------------------------------------------------
-func _yielding_callback(from_obj=false):
+func _yielding_callback(from_obj=false,
+		__arg1=null, __arg2=null, __arg3=null,
+		__arg4=null, __arg5=null, __arg6=null,
+		__arg7=null, __arg8=null, __arg9=null):
 	_lgr.end_yield()
 	if(_yielding_to.obj):
 		_yielding_to.obj.call_deferred(
