@@ -2,6 +2,15 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+
+
+# x.x.x
+
+## Bug Fixes
+* __Issue 268__ Add message when `assert_signal_emitted_with_parameters` is passed bad parameters.
+
+
+
 # 7.1.0
 ## Misc
 * `prerun_setup`, `setup`, `teardown`, `postrun_teardown` deprecation warnings have been enabled.  These were removed from the documentation over 2 years ago (6.6.0) and replaced with `before_all`, `before_each`, `after_each`, and `after_all`.  Having to make additional changes for these in order to implement __Issue 184__ annoyed me, so there will now be depracation warnings for these.  Earliest they could be removed is 8.0.0.

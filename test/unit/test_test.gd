@@ -881,6 +881,14 @@ class TestSignalAsserts:
 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
 		assert_eq(gr.test.get_signal_emit_count(gr.signal_object, SIGNALS.SOME_SIGNAL), 2)
 
+
+	# ------------------
+	# With Parameters
+	func test__with_parameters_errors_when_parameters_are_not_an_array():
+		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, 1)
+		assert_errored(gr.test)
+		assert_fail(gr.test)
+
 	func test__assert_signal_emitted_with_parameters__fails_when_object_not_watched():
 		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [])
 		assert_fail(gr.test)
@@ -890,6 +898,7 @@ class TestSignalAsserts:
 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1)
 		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1])
 		assert_pass(gr.test)
+
 
 	func test__assert_signal_emitted_with_parameters__passes_when_all_parameters_match():
 		gr.test.watch_signals(gr.signal_object)
@@ -921,6 +930,21 @@ class TestSignalAsserts:
 		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1], 0)
 		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [2], 1)
 		assert_pass(gr.test, 2)
+
+	func test_when_signal_emit_with_parameters_fails_because_signal_was_not_emitted_then_signals_are_listed():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.emit_signal(SIGNALS.NO_PARAMETERS)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
+		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SCRIPT_SIGNAL, [0])
+		var text = gr.test._fail_pass_text[0]
+		assert_string_contains(text, SIGNALS.NO_PARAMETERS)
+		assert_string_contains(text, SIGNALS.SOME_SIGNAL)
+
+	func test_issue_152():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1.0, 2, 3.0)
+		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1, 2.0, 3])
+		assert_fail(gr.test)
 
 	func test__get_signal_emit_count__returns_neg_1_when_not_watched():
 		assert_eq(gr.test.get_signal_emit_count(gr.signal_object, SIGNALS.SOME_SIGNAL), -1)
@@ -958,22 +982,6 @@ class TestSignalAsserts:
 		var text = gr.test._fail_pass_text[0]
 		assert_string_contains(text, SIGNALS.NO_PARAMETERS)
 		assert_string_contains(text, SIGNALS.SOME_SIGNAL)
-
-	func test_when_signal_emit_with_parameters_fails_because_signal_was_not_emitted_then_signals_are_listed():
-		gr.test.watch_signals(gr.signal_object)
-		gr.signal_object.emit_signal(SIGNALS.NO_PARAMETERS)
-		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
-		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SCRIPT_SIGNAL, [0])
-		var text = gr.test._fail_pass_text[0]
-		assert_string_contains(text, SIGNALS.NO_PARAMETERS)
-		assert_string_contains(text, SIGNALS.SOME_SIGNAL)
-
-	func test_issue_152():
-		gr.test.watch_signals(gr.signal_object)
-		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1.0, 2, 3.0)
-		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1, 2.0, 3])
-		assert_fail(gr.test)
-
 
 class TestExtendAsserts:
 	extends BaseTestClass
