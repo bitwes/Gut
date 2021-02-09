@@ -687,6 +687,11 @@ func assert_signal_not_emitted(object, signal_name, text=""):
 # the object does not have the specified signal
 # ------------------------------------------------------------------------------
 func assert_signal_emitted_with_parameters(object, signal_name, parameters, index=-1):
+	if(typeof(parameters) != TYPE_ARRAY):
+		_lgr.error("The expected parameters must be wrapped in an array, you passed:  " + _str(parameters))
+		_fail("Bad Parameters")
+		return
+
 	var disp = str('Expected object ', _str(object), ' to emit signal [', signal_name, '] with parameters ', parameters, ', got ')
 	if(_can_make_signal_assertions(object, signal_name)):
 		if(_signal_watcher.did_emit(object, signal_name)):
@@ -707,7 +712,6 @@ func assert_signal_emitted_with_parameters(object, signal_name, parameters, inde
 # the object does not have the specified signal
 # ------------------------------------------------------------------------------
 func assert_signal_emit_count(object, signal_name, times, text=""):
-
 	if(_can_make_signal_assertions(object, signal_name)):
 		var count = _signal_watcher.get_emit_count(object, signal_name)
 		var disp = str('Expected the signal [', signal_name, '] emit count of [', count, '] to equal [', times, ']: ', text)
