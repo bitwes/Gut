@@ -26,7 +26,8 @@
 # THE SOFTWARE.
 #
 # ##############################################################################
-# View readme for usage details.
+# View the readme at https://github.com/bitwes/Gut/blob/master/README.md for usage details.
+# You should also check out the github wiki at: https://github.com/bitwes/Gut/wiki
 # ##############################################################################
 extends Control
 
