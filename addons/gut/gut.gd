@@ -487,7 +487,13 @@ func _end_run():
 	update()
 	_run_hook_script(_post_run_script_instance)
 	emit_signal(SIGNAL_TESTS_FINISHED)
-
+	
+	if _utils.latest_version:
+		if _utils.latest_version == _utils.version:
+			p("Gut is up to date")
+		else:
+			p(str("You are running Gut v",_utils.version," the latest version is v",_utils.latest_version))
+			p("You should consider updating Gut")
 	_gui.set_title("Finished.")
 
 

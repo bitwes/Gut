@@ -100,6 +100,26 @@ var req_godot = [3, 2, 0]
 # Used for doing file manipulation stuff so as to not keep making File instances.
 # could be a bit of overkill but who cares.
 var _file_checker = File.new()
+# Online fetch of the latest version available on github
+var latest_version = null
+
+func _ready() -> void:
+	var http_request = HTTPRequest.new()
+	add_child(http_request)
+	http_request.connect("request_completed", self, "_http_request_completed")
+	# Perform a GET request. The URL below returns JSON as of writing.
+	var error = http_request.request("https://api.github.com/repos/bitwes/Gut/releases/latest")
+	if error != OK:
+		push_error("An error occurred in the HTTP request while fetching latest version number.")
+
+
+
+func _http_request_completed(result, response_code, headers, body):
+	var response = parse_json(body.get_string_from_utf8())
+	# Will print the user agent string used by the HTTPRequest node (as recognized by httpbin.org).
+	if response:
+		latest_version = Array(response.html_url.split("/")).pop_back().right(1)
+
 
 const GUT_METADATA = '__gut_metadata_'
 
