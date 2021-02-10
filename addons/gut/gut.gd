@@ -489,11 +489,9 @@ func _end_run():
 	emit_signal(SIGNAL_TESTS_FINISHED)
 	
 	if _utils.latest_version:
-		if _utils.latest_version == _utils.version:
-			p("Gut is up to date")
-		else:
-			p(str("You are running Gut v",_utils.version," the latest version is v",_utils.latest_version))
-			p("You should consider updating Gut")
+		if not _utils.latest_version == _utils.version:
+			p("")
+			p(str("GUT version ",_utils.latest_version," is now available."))
 	_gui.set_title("Finished.")
 
 
