@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 # 7.1.0
 ## Misc
 * `prerun_setup`, `setup`, `teardown`, `postrun_teardown` deprecation warnings have been enabled.  These were removed from the documentation over 2 years ago (6.6.0) and replaced with `before_all`, `before_each`, `after_each`, and `after_all`.  Having to make additional changes for these in order to implement __Issue 184__ annoyed me, so there will now be depracation warnings for these.  Earliest they could be removed is 8.0.0.
+* __Issue 254__ Warns the user when a new version of Gut is available
 
 ## Features
 * __Issue 70__ Thanks to @short-story-long for adding "property" asserts `assert_property`, `assert_setget`, `assert_setget_called`.  You can now easily asssert  you  have your `setget` properties  setup correctly including ensuring that your setters/getters are used when accessing an attribute externally.
