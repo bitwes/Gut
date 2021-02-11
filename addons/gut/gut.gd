@@ -492,6 +492,7 @@ func _end_run():
 		if not _utils.latest_version == _utils.version:
 			p("")
 			p(str("GUT version ",_utils.latest_version," is now available."))
+			
 	_gui.set_title("Finished.")
 
 
