@@ -87,7 +87,8 @@ class ObjectInfo:
 	func _init(path, subpath=null):
 		_path = path
 		if(subpath != null):
-			_subpaths = _utils.split_string(subpath, '/')
+			_subpaths = Array(subpath.split('/'))
+ 
 
 	# Returns an instance of the class/inner class
 	func instantiate():
@@ -114,7 +115,7 @@ class ObjectInfo:
 		return _path
 
 	func get_subpath():
-		return _utils.join_array(_subpaths, '/')
+		return PoolStringArray(_subpaths).join('/')
 
 	func has_subpath():
 		return _subpaths.size() != 0
