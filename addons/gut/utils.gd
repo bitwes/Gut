@@ -128,7 +128,7 @@ func get_version_text():
 # Returns a nice string for erroring out when we have a bad Godot version.
 # ------------------------------------------------------------------------------
 func get_bad_version_text():
-	var ver = join_array(req_godot, '.')
+	var ver = PoolStringArray(req_godot).join('.')
 	var info = Engine.get_version_info()
 	var gd_version = str(info.major, '.', info.minor, '.', info.patch)
 	return 'GUT ' + version + ' requires Godot ' + ver + ' or greater.  Godot version is ' + gd_version
@@ -168,32 +168,6 @@ func get_logger():
 			_lgr = Logger.new()
 		return _lgr
 
-
-# ------------------------------------------------------------------------------
-# Returns an array created by splitting the string by the delimiter
-# ------------------------------------------------------------------------------
-func split_string(to_split, delim):
-	var to_return = []
-
-	var loc = to_split.find(delim)
-	while(loc != -1):
-		to_return.append(to_split.substr(0, loc))
-		to_split = to_split.substr(loc + 1, to_split.length() - loc)
-		loc = to_split.find(delim)
-	to_return.append(to_split)
-	return to_return
-
-
-# ------------------------------------------------------------------------------
-# Returns a string containing all the elements in the array separated by delim
-# ------------------------------------------------------------------------------
-func join_array(a, delim):
-	var to_return = ''
-	for i in range(a.size()):
-		to_return += str(a[i])
-		if(i != a.size() -1):
-			to_return += str(delim)
-	return to_return
 
 
 # ------------------------------------------------------------------------------
