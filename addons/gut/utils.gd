@@ -124,8 +124,6 @@ func _on_http_request_latest_version_completed(result, response_code, headers, b
 	if response:
 		if response.get("html_url"):	
 			latest_version = Array(response.html_url.split("/")).pop_back().right(1)
-			print(latest_version)
-			print(version)
 			if latest_version != version:
 				should_display_latest_version = true
 

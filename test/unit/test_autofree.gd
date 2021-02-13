@@ -69,4 +69,3 @@ func test_watch_for_orphans():
 
 func test_watch_for_orphans2():
 	var n = autoqfree(Node.new())
-	assert_false(false)
