@@ -488,6 +488,10 @@ func _end_run():
 	update()
 	_run_hook_script(_post_run_script_instance)
 	emit_signal(SIGNAL_TESTS_FINISHED)
+	
+	if _utils.should_display_latest_version:
+		p("")
+		p(str("GUT version ",_utils.latest_version," is now available."))
 
 	_gui.set_title("Finished.")
 
