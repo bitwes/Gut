@@ -1568,3 +1568,127 @@ func assert_ne_shallow(v1, v2):
 		_pass(result.get_short_summary())
 	else:
 		_fail(result.get_short_summary())
+# ------------------------------------------------------------------------------#
+# Performs a snapshot test
+# ------------------------------------------------------------------------------
+func assert_matches_snapshot(data,property_matchers = {}):
+	var snapshot_name = gut.get_current_test_object().snapshot_name
+	var x = _get_test_used_n_times(snapshot_name)
+	var full_name = str(snapshot_name,"_",x,".snapshot")
+	var file_path = str(gut._snapshot_directory,"/",full_name)
+	var dir = Directory.new()
+	var file = File.new()
+	
+	if not dir.dir_exists(gut._snapshot_directory):
+		dir.make_dir(gut._snapshot_directory)
+	
+	var stored 
+	var data_json_representation
+	var res = get_json_representation(data)
+	if res[1] == OK:
+		data_json_representation = res[0]
+	else:
+		return _fail("Couldnt get a JSON representation")
+
+	
+	# if the snapshot doesnt exist, create it, pass success
+	if not file.file_exists(file_path):
+		file.open(file_path,File.WRITE)
+		file.store_line(data_json_representation)
+		file.close()
+		return _pass(str("snapshot created at: ",file_path))
+	else:
+		#get data from snapshot
+		file.open(file_path,File.READ)
+		var result = JSON.parse(file.get_line())
+		if result.error != OK:
+			return _fail("Couldnt parse json representation from file")
+		stored = result.result
+
+		result = JSON.parse(data_json_representation)
+		if result.error != OK:
+			return _fail("Couldnt parse json representation from data")
+		data = result.result
+		recursive_ints_to_floats(data)
+		assert_eq(data,result)
+
+
+
+var _used_test_n_times := {}
+func _get_test_used_n_times(file_name : String) -> int:
+	if not _used_test_n_times.has(hash(file_name)): #TESTME : if test dont run in the same order : snapshot name are doomed
+		_used_test_n_times[hash(file_name)] = 0
+		return 0
+	else:
+		_used_test_n_times[hash(file_name)] += 1
+		return _used_test_n_times[hash(file_name)]
+
+func iterate_deep(d : Dictionary):
+	# returns an array with all objects in deep
+	var res := []
+	var stack := [d]
+	var current
+	while not stack.empty():
+		current = stack.pop_back()
+		match typeof(current):
+			TYPE_DICTIONARY:
+				for k in current.keys():
+					stack.append(k)
+				for k in current.values():
+					stack.append(k)
+			TYPE_ARRAY:
+				for k in current:
+					stack.append(k)
+			_ :
+				res.append(current)
+	return res
+
+func recursive_ints_to_floats(array_or_dict):
+	match typeof(array_or_dict):
+		TYPE_ARRAY:
+			pass #FIXME
+		TYPE_DICTIONARY:
+			pass #FIXME
+		_ :
+			push_error(str(
+				"invalid call recursive_ints_to_floats on type: ",
+				_strutils.type2str(array_or_dict)
+			))
+
+func get_json_representation(data):
+	var data_json_representation
+	match typeof(data):
+		TYPE_STRING: # should be json
+			#cmp with content of file
+			var res = JSON.parse(data)
+			if not res.error == OK:
+				push_error(str(
+							"data is not valid JSON: ",
+							data
+							))
+				return [null,FAILED]
+			else:
+				data_json_representation = data
+		TYPE_DICTIONARY:
+			#if one of the key is an object, this is not supported
+			for k in iterate_deep(data):
+				match typeof(k):
+					TYPE_OBJECT:
+						push_error(str(
+							"type not supported inside dictionnary: ",
+							_strutils.type2str(k)
+							))
+						return [null,FAILED]
+					
+			var res = JSON.print(data)
+			if res.error == OK:
+				data_json_representation = res.result
+
+		_ : #Type not supported
+			push_error(str(
+				"data type not supported: ",
+				_strutils.type2str(data)
+				))
+			return [null,FAILED]
+
+	return [data_json_representation,OK]

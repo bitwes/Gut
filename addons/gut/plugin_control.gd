@@ -82,6 +82,8 @@ export var _inner_class_prefix = 'Test'
 # much anymore since there was a change to the double creation implementation.
 # This will be removed in a later release.
 export(String) var _temp_directory = 'user://gut_temp_directory'
+# The directory GUT will use to write and read snapshots.
+export(String) var _snapshot_directory = 'user://gut_snap_shot_directory'
 # The path and filename for exported test information.
 export(String) var _export_path = ''
 # When enabled, any directory added will also include its subdirectories when
@@ -182,6 +184,7 @@ func _setup_gut():
 	_gut._file_extension = _file_extension
 	_gut._inner_class_prefix = _inner_class_prefix
 	_gut._temp_directory = _temp_directory
+	_gut._snapshot_directory = _snapshot_directory
 
 	_gut.set_should_maximize(_should_maximize)
 	_gut.set_yield_between_tests(_yield_between_tests)
