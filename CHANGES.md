@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Bug Fixes
 * __Issue 268__ Add message when `assert_signal_emitted_with_parameters` is passed bad parameters.
+* __Issue 258__ `yield_to` now supports signals with up to 9 parameters.  This is the same limit  supported by `watch_signals`.
 
 
 
