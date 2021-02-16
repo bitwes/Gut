@@ -354,8 +354,20 @@ func assert_ne(got, not_expected, text=""):
 # ------------------------------------------------------------------------------
 func assert_almost_eq(got, expected, error_interval, text=''):
 	var disp = "[" + _str(got) + "] expected to equal [" + _str(expected) + "] +/- [" + str(error_interval) + "]:  " + text
+	var result = false
 	if(_do_datatypes_match__fail_if_not(got, expected, text) and _do_datatypes_match__fail_if_not(got, error_interval, text)):
-		if(got < (expected - error_interval) or got > (expected + error_interval)):
+		if typeof(got) == TYPE_VECTOR2:
+			if got.x >= (expected.x - error_interval.x) and got.x <= (expected.x + error_interval.x):
+				if got.y >= (expected.y - error_interval.y) and got.y <= (expected.y + error_interval.y):
+					result = true
+		elif typeof(got) == TYPE_VECTOR3:
+			if got.x >= (expected.x - error_interval.x) and got.x <= (expected.x + error_interval.x):
+				if got.y >= (expected.y - error_interval.y) and got.y <= (expected.y + error_interval.y):
+					if got.z >= (expected.z - error_interval.z) and got.z <= (expected.z + error_interval.z):
+						result = true
+		elif(got >= (expected - error_interval) or got <= (expected + error_interval)):
+			result = true
+		if not result:
 			_fail(disp)
 		else:
 			_pass(disp)
@@ -365,11 +377,25 @@ func assert_almost_eq(got, expected, error_interval, text=''):
 # ------------------------------------------------------------------------------
 func assert_almost_ne(got, not_expected, error_interval, text=''):
 	var disp = "[" + _str(got) + "] expected to not equal [" + _str(not_expected) + "] +/- [" + str(error_interval) + "]:  " + text
+	var result = true
 	if(_do_datatypes_match__fail_if_not(got, not_expected, text) and _do_datatypes_match__fail_if_not(got, error_interval, text)):
-		if(got < (not_expected - error_interval) or got > (not_expected + error_interval)):
-			_pass(disp)
+		if typeof(got) == TYPE_VECTOR2:
+			if got.x >= (not_expected.x - error_interval.x) and got.x <= (not_expected.x + error_interval.x):
+				if got.y >= (not_expected.y - error_interval.y) and got.y <= (not_expected.y + error_interval.y):
+					result = false
+		elif typeof(got) == TYPE_VECTOR3:
+			if got.x >= (not_expected.x - error_interval.x) and got.x <= (not_expected.x + error_interval.x):
+				if got.y >= (not_expected.y - error_interval.y) and got.y <= (not_expected.y + error_interval.y):
+					if got.z >= (not_expected.z - error_interval.z) and got.z <= (not_expected.z + error_interval.z):
+						result = false
+		elif(got < (not_expected - error_interval) or got > (not_expected + error_interval)):
+			result = true
 		else:
+			result = false
+		if not result:
 			_fail(disp)
+		else:
+			_pass(disp)
 
 # ------------------------------------------------------------------------------
 # Asserts got is greater than expected
