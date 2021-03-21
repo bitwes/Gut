@@ -118,11 +118,11 @@ func _http_request_latest_version() -> void:
 func _on_http_request_latest_version_completed(result, response_code, headers, body):
 	if not result == HTTPRequest.RESULT_SUCCESS:
 		return
-	
+
 	var response = parse_json(body.get_string_from_utf8())
 	# Will print the user agent string used by the HTTPRequest node (as recognized by httpbin.org).
 	if response:
-		if response.get("html_url"):	
+		if response.get("html_url"):
 			latest_version = Array(response.html_url.split("/")).pop_back().right(1)
 			if latest_version != version:
 				should_display_latest_version = true
@@ -288,7 +288,8 @@ func get_native_class_name(thing):
 	if(is_native_class(thing)):
 		var newone = thing.new()
 		to_return = newone.get_class()
-		newone.free()
+		if !newone is Reference:
+			newone.free()
 	return to_return
 
 
