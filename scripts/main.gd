@@ -1,4 +1,4 @@
-extends Node2D
+extends Control
 # ##############################################################################
 #The MIT License (MIT)
 #=====================
@@ -86,20 +86,20 @@ func _run_test_one_line():
 #------------------------------------
 func _run_all_tests():
 	# get an instance of gut
-	tester = get_node("Gut")
+	tester = $HBoxContainer/Gut
 
 	tester.connect('tests_finished', self, '_on_tests_finished')
 	tester.show()
 	tester.set_position(Vector2(100, 100))
 
-	tester.set_should_print_to_console(true)
+#	tester.set_should_print_to_console(true)
 
 	# !! --------
 	# Set the yield between tests so that tests print as they complete
 	# instead of having to wait until the end.  It's a little slower,
 	# but you can tell what's going on.  Because it's slower it's
 	# disabled by default.
-	tester.set_yield_between_tests(true)
+#	tester.set_yield_between_tests(true)
 	# !! --------
 
 	# Add all scripts in two directories.
@@ -117,7 +117,7 @@ func _run_all_tests():
 # Some methods may include tests that are expected to fail.  Closely inspect
 # the resutls.
 func _run_gut_tests(gut):
-	gut.set_should_print_to_console(false)
+#	gut.set_should_print_to_console(false)
 	gut.add_script('res://test/unit/test_doubler.gd')
 	gut.add_script('res://test/unit/test_gut_yielding.gd')
 	gut.add_script('res://test/unit/test_gut.gd')

@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://addons/gut/GutScene.gd" type="Script" id=1]
 [ext_resource path="res://addons/gut/fonts/AnonymousPro-Italic.ttf" type="DynamicFontData" id=2]
@@ -8,183 +8,130 @@
 [ext_resource path="res://addons/gut/UserFileViewer.tscn" type="PackedScene" id=6]
 
 [sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0.192157, 0.192157, 0.227451, 1 )
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-
-[sub_resource type="StyleBoxFlat" id=2]
 bg_color = Color( 1, 1, 1, 1 )
 border_color = Color( 0, 0, 0, 1 )
 corner_radius_top_left = 5
 corner_radius_top_right = 5
 
-[sub_resource type="Theme" id=3]
+[sub_resource type="Theme" id=8]
 resource_local_to_scene = true
-Panel/styles/panel = SubResource( 2 )
+Panel/styles/panel = SubResource( 1 )
 Panel/styles/panelf = null
 Panel/styles/panelnc = null
 
-[sub_resource type="DynamicFont" id=4]
+[sub_resource type="DynamicFont" id=3]
 font_data = ExtResource( 4 )
 
-[sub_resource type="DynamicFont" id=5]
+[sub_resource type="DynamicFont" id=4]
 font_data = ExtResource( 2 )
 
-[sub_resource type="DynamicFont" id=6]
+[sub_resource type="DynamicFont" id=5]
 font_data = ExtResource( 5 )
 
-[sub_resource type="DynamicFont" id=7]
+[sub_resource type="DynamicFont" id=6]
 font_data = ExtResource( 3 )
 
-[sub_resource type="StyleBoxFlat" id=8]
+[sub_resource type="StyleBoxFlat" id=7]
 bg_color = Color( 0.192157, 0.192157, 0.227451, 1 )
 corner_radius_top_left = 20
 corner_radius_top_right = 20
 
-[node name="Gut" type="Panel"]
-margin_right = 880.0
-margin_bottom = 360.0
-rect_min_size = Vector2( 740, 250 )
-custom_styles/panel = SubResource( 1 )
+[node name="Gut" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="UserFileViewer" parent="." instance=ExtResource( 6 )]
-margin_top = 388.0
-margin_bottom = 818.0
+visible = false
+margin_top = 0.0
+margin_right = 880.0
+margin_bottom = 180.0
 
-[node name="TitleBar" type="Panel" parent="."]
-anchor_top = -0.000491047
+[node name="Window" type="VBoxContainer" parent="."]
 anchor_right = 1.0
-anchor_bottom = -0.000491047
-margin_left = 1.0
-margin_top = 1.17678
-margin_right = -1.0
-margin_bottom = 40.1768
-theme = SubResource( 3 )
+anchor_bottom = 1.0
+custom_constants/separation = 4
 __meta__ = {
-"_edit_group_": true,
 "_edit_use_anchors_": false
 }
 
-[node name="Title" type="Label" parent="TitleBar"]
-anchor_right = 1.0
-margin_bottom = 40.0
-custom_colors/font_color = Color( 0, 0, 0, 1 )
+[node name="TitleBar" type="HBoxContainer" parent="Window"]
+margin_right = 1024.0
+margin_bottom = 14.0
+theme = SubResource( 8 )
+
+[node name="Summary" type="HBoxContainer" parent="Window/TitleBar"]
+margin_right = 81.0
+margin_bottom = 14.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Passing" type="Label" parent="Window/TitleBar/Summary"]
+visible = false
+margin_right = 8.0
+margin_bottom = 14.0
+text = "0"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Failing" type="Label" parent="Window/TitleBar/Summary"]
+visible = false
+margin_right = 8.0
+margin_bottom = 14.0
+text = "0"
+align = 1
+valign = 1
+
+[node name="AssertCount" type="Label" parent="Window/TitleBar/Summary"]
+margin_right = 81.0
+margin_bottom = 14.0
+text = "Assert count"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Title" type="Label" parent="Window/TitleBar"]
+margin_left = 85.0
+margin_right = 968.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
 text = "Gut"
 align = 1
 valign = 1
 
-[node name="Time" type="Label" parent="TitleBar"]
-anchor_left = 1.0
-anchor_right = 1.0
-margin_left = -105.0
-margin_right = -53.0
-margin_bottom = 40.0
-custom_colors/font_color = Color( 0, 0, 0, 1 )
+[node name="Time" type="Label" parent="Window/TitleBar"]
+margin_left = 972.0
+margin_right = 1024.0
+margin_bottom = 14.0
 text = "9999.99"
 valign = 1
 
-[node name="Maximize" type="Button" parent="TitleBar"]
-anchor_left = 1.0
-anchor_right = 1.0
-margin_left = -30.0
-margin_top = 10.0
-margin_right = -6.0
-margin_bottom = 30.0
-custom_colors/font_color = Color( 0, 0, 0, 1 )
-text = "M"
-flat = true
-
-[node name="ScriptProgress" type="ProgressBar" parent="."]
-anchor_top = 1.0
-anchor_bottom = 1.0
-margin_left = 75.0
-margin_top = -70.0
-margin_right = 185.0
-margin_bottom = -40.0
-hint_tooltip = "Overall progress of executing tests."
-step = 1.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Label" type="Label" parent="ScriptProgress"]
-margin_left = -70.0
-margin_right = -5.0
-margin_bottom = 30.0
-text = "Scripts"
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="xy" type="Label" parent="ScriptProgress"]
-visible = false
-margin_right = 110.0
-margin_bottom = 30.0
-text = "0/0"
-align = 1
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="TestProgress" type="ProgressBar" parent="."]
-anchor_top = 1.0
-anchor_bottom = 1.0
-margin_left = 75.0
-margin_top = -105.0
-margin_right = 185.0
-margin_bottom = -75.0
-hint_tooltip = "Test progress for the current script."
-step = 1.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Label" type="Label" parent="TestProgress"]
-margin_left = -70.0
-margin_right = -5.0
-margin_bottom = 30.0
-text = "Tests"
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="xy" type="Label" parent="TestProgress"]
-visible = false
-margin_right = 110.0
-margin_bottom = 30.0
-text = "0/0"
-align = 1
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="TextDisplay" type="ColorRect" parent="."]
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_top = 40.0
-margin_bottom = -110.0
+[node name="TextDisplay" type="ColorRect" parent="Window"]
+margin_top = 18.0
+margin_right = 1024.0
+margin_bottom = 544.0
+size_flags_vertical = 3
 color = Color( 0, 0, 0, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="RichTextLabel" type="RichTextLabel" parent="TextDisplay"]
+[node name="RichTextLabel" type="RichTextLabel" parent="Window/TextDisplay"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
 focus_mode = 2
-custom_fonts/bold_italics_font = SubResource( 4 )
-custom_fonts/italics_font = SubResource( 5 )
-custom_fonts/bold_font = SubResource( 6 )
-custom_fonts/normal_font = SubResource( 7 )
+custom_fonts/bold_italics_font = SubResource( 3 )
+custom_fonts/italics_font = SubResource( 4 )
+custom_fonts/bold_font = SubResource( 5 )
+custom_fonts/normal_font = SubResource( 6 )
 bbcode_enabled = true
 scroll_following = true
 selection_enabled = true
@@ -192,7 +139,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="WaitingLabel" type="RichTextLabel" parent="TextDisplay"]
+[node name="WaitingLabel" type="RichTextLabel" parent="Window/TextDisplay"]
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -202,89 +149,110 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Navigation" type="Panel" parent="."]
-self_modulate = Color( 1, 1, 1, 0 )
-anchor_top = 1.0
+[node name="BottomBar" type="HBoxContainer" parent="Window"]
+margin_top = 548.0
+margin_right = 1024.0
+margin_bottom = 600.0
+
+[node name="Indicators" type="VBoxContainer" parent="Window/BottomBar"]
+margin_right = 254.0
+margin_bottom = 52.0
+size_flags_horizontal = 3
+
+[node name="Tests" type="HBoxContainer" parent="Window/BottomBar/Indicators"]
+margin_right = 254.0
+margin_bottom = 14.0
+
+[node name="Label" type="Label" parent="Window/BottomBar/Indicators/Tests"]
+margin_right = 125.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
+text = "Tests"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TestProgress" type="ProgressBar" parent="Window/BottomBar/Indicators/Tests"]
+margin_left = 129.0
+margin_right = 254.0
+margin_bottom = 14.0
+hint_tooltip = "Test progress for the current script."
+size_flags_horizontal = 3
+step = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="xy" type="Label" parent="Window/BottomBar/Indicators/Tests/TestProgress"]
+visible = false
+anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 220.0
-margin_top = -99.0
-margin_right = 580.0
-margin_bottom = 1.0
+text = "0/0"
+align = 1
+valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Previous" type="Button" parent="Navigation"]
-margin_left = -20.0
-margin_top = 44.0
-margin_right = 65.0
-margin_bottom = 84.0
-hint_tooltip = "Previous script in the list."
-text = "|<"
+[node name="Scripts" type="HBoxContainer" parent="Window/BottomBar/Indicators"]
+margin_top = 18.0
+margin_right = 254.0
+margin_bottom = 32.0
+
+[node name="Label" type="Label" parent="Window/BottomBar/Indicators/Scripts"]
+margin_right = 125.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
+text = "Scripts"
+valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Next" type="Button" parent="Navigation"]
-margin_left = 250.0
-margin_top = 44.0
-margin_right = 335.0
-margin_bottom = 84.0
-hint_tooltip = "Next script in the list.
-"
-text = ">|"
+[node name="ScriptProgress" type="ProgressBar" parent="Window/BottomBar/Indicators/Scripts"]
+margin_left = 129.0
+margin_right = 254.0
+margin_bottom = 14.0
+hint_tooltip = "Overall progress of executing tests."
+size_flags_horizontal = 3
+step = 1.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Run" type="Button" parent="Navigation"]
-margin_left = 70.0
-margin_top = 44.0
-margin_right = 155.0
-margin_bottom = 84.0
-hint_tooltip = "Run the currently selected item and all after it."
-text = ">"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="CurrentScript" type="Button" parent="Navigation"]
-anchor_top = -0.01
-anchor_bottom = -0.01
-margin_left = -20.0
-margin_top = -5.0
-margin_right = 335.0
-margin_bottom = 35.0
-hint_tooltip = "Select a script to run.  You can run just this script, or this script and all scripts after using the run buttons."
-text = "res://test/unit/test_gut.gd"
-clip_text = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="RunSingleScript" type="Button" parent="Navigation"]
-margin_left = 160.0
-margin_top = 44.0
-margin_right = 245.0
-margin_bottom = 84.0
-hint_tooltip = "Run the currently selected item.
-
-If the selected item has Inner Test Classes
-then they will all be run.  If the selected item
-is an Inner Test Class then only it will be run."
-text = "> (1)"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="LogLevelSlider" type="HSlider" parent="."]
-anchor_top = 1.0
+[node name="xy" type="Label" parent="Window/BottomBar/Indicators/Scripts/ScriptProgress"]
+visible = false
+anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 80.0
-margin_top = -40.0
-margin_right = 130.0
-margin_bottom = -20.0
-rect_scale = Vector2( 2, 2 )
+text = "0/0"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LogLevel" type="HBoxContainer" parent="Window/BottomBar/Indicators"]
+margin_top = 36.0
+margin_right = 254.0
+margin_bottom = 52.0
+
+[node name="Label" type="Label" parent="Window/BottomBar/Indicators/LogLevel"]
+margin_top = 1.0
+margin_right = 125.0
+margin_bottom = 15.0
+size_flags_horizontal = 3
+text = "Log Level"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LogLevelSlider" type="HSlider" parent="Window/BottomBar/Indicators/LogLevel"]
+margin_left = 129.0
+margin_right = 254.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
 max_value = 2.0
 tick_count = 3
 ticks_on_borders = true
@@ -292,103 +260,168 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="LogLevelSlider"]
-margin_left = -37.0
-margin_right = 28.0
-margin_bottom = 40.0
-rect_scale = Vector2( 0.5, 0.5 )
-text = "Log Level"
-valign = 1
+[node name="Navigation" type="VBoxContainer" parent="Window/BottomBar"]
+self_modulate = Color( 1, 1, 1, 0 )
+margin_left = 258.0
+margin_right = 766.0
+margin_bottom = 52.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ScriptsList" type="ItemList" parent="."]
-anchor_bottom = 1.0
-margin_left = 179.0
-margin_top = 40.0
-margin_right = 619.0
-margin_bottom = -110.0
+[node name="CurrentScript" type="Button" parent="Window/BottomBar/Navigation"]
+margin_right = 508.0
+margin_bottom = 20.0
+hint_tooltip = "Select a script to run.  You can run just this script, or this script and all scripts after using the run buttons."
+text = "res://test/unit/test_gut.gd"
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ScriptsList" type="ItemList" parent="Window/BottomBar/Navigation/CurrentScript"]
+visible = false
+anchor_right = 1.0
+margin_top = -246.0
+margin_bottom = -4.0
 allow_reselect = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="DoubleClickTimer" type="Timer" parent="ScriptsList"]
+[node name="DoubleClickTimer" type="Timer" parent="Window/BottomBar/Navigation/CurrentScript/ScriptsList"]
 wait_time = 0.3
 one_shot = true
 
-[node name="ExtraOptions" type="Panel" parent="."]
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = -212.0
-margin_top = -260.0
-margin_right = -2.0
-margin_bottom = -106.0
-custom_styles/panel = SubResource( 8 )
+[node name="Controls" type="HBoxContainer" parent="Window/BottomBar/Navigation"]
+margin_top = 24.0
+margin_right = 508.0
+margin_bottom = 44.0
+
+[node name="Previous" type="Button" parent="Window/BottomBar/Navigation/Controls"]
+margin_right = 124.0
+margin_bottom = 20.0
+hint_tooltip = "Previous script in the list."
+size_flags_horizontal = 3
+text = "|<"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="IgnorePause" type="CheckBox" parent="ExtraOptions"]
-margin_left = 18.0
-margin_right = 136.0
+[node name="Next" type="Button" parent="Window/BottomBar/Navigation/Controls"]
+margin_left = 128.0
+margin_right = 252.0
+margin_bottom = 20.0
+hint_tooltip = "Next script in the list.
+"
+size_flags_horizontal = 3
+text = ">|"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Run" type="Button" parent="Window/BottomBar/Navigation/Controls"]
+margin_left = 256.0
+margin_right = 380.0
+margin_bottom = 20.0
+hint_tooltip = "Run the currently selected item and all after it."
+size_flags_horizontal = 3
+text = ">"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="RunSingleScript" type="Button" parent="Window/BottomBar/Navigation/Controls"]
+margin_left = 384.0
+margin_right = 508.0
+margin_bottom = 20.0
+hint_tooltip = "Run the currently selected item.
+
+If the selected item has Inner Test Classes
+then they will all be run.  If the selected item
+is an Inner Test Class then only it will be run."
+size_flags_horizontal = 3
+text = "> (1)"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Continue" type="VBoxContainer" parent="Window/BottomBar"]
+self_modulate = Color( 1, 1, 1, 0 )
+margin_left = 770.0
+margin_right = 1024.0
+margin_bottom = 52.0
+size_flags_horizontal = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ShowExtras" type="Button" parent="Window/BottomBar/Continue"]
+margin_right = 254.0
+margin_bottom = 20.0
+hint_tooltip = "Show/hide additional options."
+toggle_mode = true
+text = "Extras"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ExtraOptions" type="Panel" parent="Window/BottomBar/Continue/ShowExtras"]
+visible = false
+anchor_right = 1.0
+margin_top = -246.296
+margin_bottom = -4.29602
+custom_styles/panel = SubResource( 7 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Window/BottomBar/Continue/ShowExtras/ExtraOptions"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 16.0
+margin_top = 16.0
+margin_right = -16.0
+margin_bottom = -16.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="IgnorePause" type="CheckBox" parent="Window/BottomBar/Continue/ShowExtras/ExtraOptions/VBoxContainer"]
+margin_right = 218.0
 margin_bottom = 24.0
-rect_scale = Vector2( 1.5, 1.5 )
 hint_tooltip = "Ignore all calls to pause_before_teardown."
 text = "Ignore Pauses"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Copy" type="Button" parent="ExtraOptions"]
-margin_left = 15.0
-margin_top = 40.0
-margin_right = 195.0
-margin_bottom = 80.0
+[node name="Copy" type="Button" parent="Window/BottomBar/Continue/ShowExtras/ExtraOptions/VBoxContainer"]
+margin_top = 28.0
+margin_right = 218.0
+margin_bottom = 48.0
 hint_tooltip = "Copy all output to the clipboard."
 text = "Copy to Clipboard"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="UserFiles" type="Button" parent="ExtraOptions"]
-margin_left = 15.0
-margin_top = 90.0
-margin_right = 195.0
-margin_bottom = 130.0
+[node name="UserFiles" type="Button" parent="Window/BottomBar/Continue/ShowExtras/ExtraOptions/VBoxContainer"]
+margin_top = 52.0
+margin_right = 218.0
+margin_bottom = 72.0
 hint_tooltip = "Copy all output to the clipboard."
 text = "View User Files"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ResizeHandle" type="Control" parent="."]
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = -40.0
-margin_top = -40.0
-
-[node name="Continue" type="Panel" parent="."]
-self_modulate = Color( 1, 1, 1, 0 )
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = -150.0
-margin_top = -100.0
-margin_right = -30.0
-margin_bottom = -10.0
-
-[node name="Continue" type="Button" parent="Continue"]
-margin_left = -2.0
-margin_top = 45.0
-margin_right = 117.0
-margin_bottom = 85.0
+[node name="Continue" type="Button" parent="Window/BottomBar/Continue"]
+margin_top = 24.0
+margin_right = 254.0
+margin_bottom = 44.0
 hint_tooltip = "When a pause_before_teardown is encountered this button will be enabled and must be pressed to continue running tests."
 disabled = true
 text = "Continue"
@@ -396,76 +429,16 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ShowExtras" type="Button" parent="Continue"]
-anchor_left = -0.0166667
-anchor_right = -0.0166667
-margin_left = 50.0
-margin_top = -5.0
-margin_right = 120.0
-margin_bottom = 35.0
-rect_pivot_offset = Vector2( 35, 20 )
-hint_tooltip = "Show/hide additional options."
-toggle_mode = true
-text = "_"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Summary" type="Node2D" parent="."]
-position = Vector2( 0, 3 )
-
-[node name="Passing" type="Label" parent="Summary"]
-visible = false
-margin_left = 5.0
-margin_top = 7.0
-margin_right = 45.0
-margin_bottom = 21.0
-custom_colors/font_color = Color( 0, 0, 0, 1 )
-text = "0"
-align = 1
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Failing" type="Label" parent="Summary"]
-visible = false
-margin_left = 100.0
-margin_top = 7.0
-margin_right = 140.0
-margin_bottom = 21.0
-custom_colors/font_color = Color( 0, 0, 0, 1 )
-text = "0"
-align = 1
-valign = 1
-
-[node name="AssertCount" type="Label" parent="Summary"]
-margin_left = 5.0
-margin_top = 7.0
-margin_right = 165.0
-margin_bottom = 21.0
-custom_colors/font_color = Color( 0, 0, 0, 1 )
-text = "Assert count"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-[connection signal="mouse_entered" from="TitleBar" to="." method="_on_TitleBar_mouse_entered"]
-[connection signal="mouse_exited" from="TitleBar" to="." method="_on_TitleBar_mouse_exited"]
-[connection signal="draw" from="TitleBar/Maximize" to="." method="_on_Maximize_draw"]
-[connection signal="pressed" from="TitleBar/Maximize" to="." method="_on_Maximize_pressed"]
-[connection signal="gui_input" from="TextDisplay/RichTextLabel" to="." method="_on_RichTextLabel_gui_input"]
-[connection signal="pressed" from="Navigation/Previous" to="." method="_on_Previous_pressed"]
-[connection signal="pressed" from="Navigation/Next" to="." method="_on_Next_pressed"]
-[connection signal="pressed" from="Navigation/Run" to="." method="_on_Run_pressed"]
-[connection signal="pressed" from="Navigation/CurrentScript" to="." method="_on_CurrentScript_pressed"]
-[connection signal="pressed" from="Navigation/RunSingleScript" to="." method="_on_RunSingleScript_pressed"]
-[connection signal="value_changed" from="LogLevelSlider" to="." method="_on_LogLevelSlider_value_changed"]
-[connection signal="item_selected" from="ScriptsList" to="." method="_on_ScriptsList_item_selected"]
-[connection signal="pressed" from="ExtraOptions/IgnorePause" to="." method="_on_IgnorePause_pressed"]
-[connection signal="pressed" from="ExtraOptions/Copy" to="." method="_on_Copy_pressed"]
-[connection signal="pressed" from="ExtraOptions/UserFiles" to="." method="_on_UserFiles_pressed"]
-[connection signal="mouse_entered" from="ResizeHandle" to="." method="_on_ResizeHandle_mouse_entered"]
-[connection signal="mouse_exited" from="ResizeHandle" to="." method="_on_ResizeHandle_mouse_exited"]
-[connection signal="pressed" from="Continue/Continue" to="." method="_on_Continue_pressed"]
-[connection signal="draw" from="Continue/ShowExtras" to="." method="_on_ShowExtras_draw"]
-[connection signal="toggled" from="Continue/ShowExtras" to="." method="_on_ShowExtras_toggled"]
+[connection signal="gui_input" from="Window/TextDisplay/RichTextLabel" to="." method="_on_RichTextLabel_gui_input"]
+[connection signal="value_changed" from="Window/BottomBar/Indicators/LogLevel/LogLevelSlider" to="." method="_on_LogLevelSlider_value_changed"]
+[connection signal="pressed" from="Window/BottomBar/Navigation/CurrentScript" to="." method="_on_CurrentScript_pressed"]
+[connection signal="item_selected" from="Window/BottomBar/Navigation/CurrentScript/ScriptsList" to="." method="_on_ScriptsList_item_selected"]
+[connection signal="pressed" from="Window/BottomBar/Navigation/Controls/Previous" to="." method="_on_Previous_pressed"]
+[connection signal="pressed" from="Window/BottomBar/Navigation/Controls/Next" to="." method="_on_Next_pressed"]
+[connection signal="pressed" from="Window/BottomBar/Navigation/Controls/Run" to="." method="_on_Run_pressed"]
+[connection signal="pressed" from="Window/BottomBar/Navigation/Controls/RunSingleScript" to="." method="_on_RunSingleScript_pressed"]
+[connection signal="toggled" from="Window/BottomBar/Continue/ShowExtras" to="." method="_on_ShowExtras_toggled"]
+[connection signal="pressed" from="Window/BottomBar/Continue/ShowExtras/ExtraOptions/VBoxContainer/IgnorePause" to="." method="_on_IgnorePause_pressed"]
+[connection signal="pressed" from="Window/BottomBar/Continue/ShowExtras/ExtraOptions/VBoxContainer/Copy" to="." method="_on_Copy_pressed"]
+[connection signal="pressed" from="Window/BottomBar/Continue/ShowExtras/ExtraOptions/VBoxContainer/UserFiles" to="." method="_on_UserFiles_pressed"]
+[connection signal="pressed" from="Window/BottomBar/Continue/Continue" to="." method="_on_Continue_pressed"]

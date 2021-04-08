@@ -1,45 +1,39 @@
-extends Panel
+extends Control
 
-onready var _script_list = $ScriptsList
+onready var _script_list = $Window/BottomBar/Navigation/CurrentScript/ScriptsList
+onready var _log_level_slider = $Window/BottomBar/Indicators/LogLevel/LogLevelSlider
 onready var _nav = {
-	prev = $Navigation/Previous,
-	next = $Navigation/Next,
-	run = $Navigation/Run,
-	current_script = $Navigation/CurrentScript,
-	run_single = $Navigation/RunSingleScript
+	prev = $Window/BottomBar/Navigation/Controls/Previous,
+	next = $Window/BottomBar/Navigation/Controls/Next,
+	run = $Window/BottomBar/Navigation/Controls/Run,
+	current_script = $Window/BottomBar/Navigation/CurrentScript,
+	run_single = $Window/BottomBar/Navigation/Controls/RunSingleScript
 }
 onready var _progress = {
-	script = $ScriptProgress,
-	script_xy = $ScriptProgress/xy,
-	test = $TestProgress,
-	test_xy = $TestProgress/xy
+	script = $Window/BottomBar/Indicators/Scripts/ScriptProgress,
+	script_xy = $Window/BottomBar/Indicators/Scripts/ScriptProgress/xy,
+	test = $Window/BottomBar/Indicators/Tests/TestProgress,
+	test_xy = $Window/BottomBar/Indicators/Tests/TestProgress/xy
 }
 onready var _summary = {
-	failing = $Summary/Failing,
-	passing = $Summary/Passing,
+	failing = $Window/TitleBar/Summary/Failing,
+	passing = $Window/TitleBar/Summary/Passing,
 	fail_count = 0,
 	pass_count = 0
 }
 
-onready var _extras = $ExtraOptions
-onready var _ignore_pauses = $ExtraOptions/IgnorePause
-onready var _continue_button = $Continue/Continue
-onready var _text_box = $TextDisplay/RichTextLabel
+onready var _extras = $Window/BottomBar/Continue/ShowExtras/ExtraOptions
+onready var _ignore_pauses = $Window/BottomBar/Continue/ShowExtras/ExtraOptions/VBoxContainer/IgnorePause
+onready var _continue_button = $Window/BottomBar/Continue/Continue
+onready var _text_box = $Window/TextDisplay/RichTextLabel
 
 onready var _titlebar = {
-	bar = $TitleBar,
-	time = $TitleBar/Time,
-	label = $TitleBar/Title
+	time = $Window/TitleBar/Time,
+	label = $Window/TitleBar/Title
 }
 
 onready var _user_files = $UserFileViewer
 
-var _mouse = {
-	down = false,
-	in_title = false,
-	down_pos = null,
-	in_handle = false
-}
 var _is_running = false
 var _start_time = 0.0
 var _time = 0.0
@@ -83,38 +77,6 @@ func _process(_delta):
 		_time = OS.get_ticks_msec() - _start_time
 		_titlebar.time.set_text(str('Time: ', elapsed_time_as_str()))
 
-func _draw(): # needs get_size()
-	# Draw the lines in the corner to show where you can
-	# drag to resize the dialog
-	var grab_margin = 3
-	var line_space = 3
-	var grab_line_color = Color(.4, .4, .4)
-	for i in range(1, 10):
-		var x = rect_size - Vector2(i * line_space, grab_margin)
-		var y = rect_size - Vector2(grab_margin, i * line_space)
-		draw_line(x, y, grab_line_color, 1, true)
-
-func _on_Maximize_draw():
-	# draw the maximize square thing.
-	var btn = $TitleBar/Maximize
-	btn.set_text('')
-	var w = btn.get_size().x
-	var h = btn.get_size().y
-	btn.draw_rect(Rect2(0, 0, w, h), Color(0, 0, 0, 1))
-	btn.draw_rect(Rect2(2, 4, w - 4, h - 6), Color(1,1,1,1))
-
-func _on_ShowExtras_draw():
-	var btn = $Continue/ShowExtras
-	btn.set_text('')
-	var start_x = 20
-	var start_y = 15
-	var pad = 5
-	var color = Color(.1, .1, .1, 1)
-	var width = 2
-	for i in range(3):
-		var y = start_y + pad * i
-		btn.draw_line(Vector2(start_x, y), Vector2(btn.get_size().x - start_x, y), color, width, true)
-
 # ####################
 # GUI Events
 # ####################
@@ -132,7 +94,7 @@ func _on_Next_pressed():
 	_select_script(get_selected_index() + 1)
 
 func _on_LogLevelSlider_value_changed(_value):
-	emit_signal('log_level_changed', $LogLevelSlider.value)
+	emit_signal('log_level_changed', _log_level_slider.value)
 
 func _on_Continue_pressed():
 	_continue_button.disabled = true
@@ -150,7 +112,7 @@ func _on_RunSingleScript_pressed():
 	emit_signal('run_single_script', get_selected_index())
 
 func _on_ScriptsList_item_selected(index):
-	var tmr = $ScriptsList/DoubleClickTimer
+	var tmr = $Window/BottomBar/Navigation/CurrentScript/ScriptsList/DoubleClickTimer
 	if(!tmr.is_stopped()):
 		_run_mode()
 		emit_signal('run_single_script', get_selected_index())
@@ -159,39 +121,6 @@ func _on_ScriptsList_item_selected(index):
 		tmr.start()
 
 	_select_script(index)
-
-func _on_TitleBar_mouse_entered():
-	_mouse.in_title = true
-
-func _on_TitleBar_mouse_exited():
-	_mouse.in_title = false
-
-func _input(event):
-	if(event is InputEventMouseButton):
-		if(event.button_index == 1):
-			_mouse.down = event.pressed
-			if(_mouse.down):
-				_mouse.down_pos = event.position
-
-	if(_mouse.in_title):
-		if(event is InputEventMouseMotion and _mouse.down):
-			set_position(get_position() + (event.position - _mouse.down_pos))
-			_mouse.down_pos = event.position
-			_pre_maximize_rect = get_rect()
-
-	if(_mouse.in_handle):
-		if(event is InputEventMouseMotion and _mouse.down):
-			var new_size = rect_size + event.position - _mouse.down_pos
-			var new_mouse_down_pos = event.position
-			rect_size = new_size
-			_mouse.down_pos = new_mouse_down_pos
-			_pre_maximize_rect = get_rect()
-
-func _on_ResizeHandle_mouse_entered():
-	_mouse.in_handle = true
-
-func _on_ResizeHandle_mouse_exited():
-	_mouse.in_handle = false
 
 func _on_RichTextLabel_gui_input(ev):
 	pass
@@ -204,12 +133,6 @@ func _on_Copy_pressed():
 func _on_ShowExtras_toggled(button_pressed):
 	_extras.visible = button_pressed
 
-func _on_Maximize_pressed():
-	if(get_rect() == _pre_maximize_rect):
-		maximize()
-	else:
-		rect_size = _pre_maximize_rect.size
-		rect_position = _pre_maximize_rect.position
 # ####################
 # Private
 # ####################
@@ -221,7 +144,8 @@ func _run_mode(is_running=true):
 	_is_running = is_running
 
 	_hide_scripts()
-	var ctrls = $Navigation.get_children()
+	$Window/BottomBar/Navigation/CurrentScript.disabled = is_running
+	var ctrls = $Window/BottomBar/Navigation/Controls.get_children()
 	for i in range(ctrls.size()):
 		ctrls[i].disabled = is_running
 
@@ -230,7 +154,7 @@ func _select_script(index):
 	var max_len = 50
 	if(text.length() > max_len):
 		text = '...' + text.right(text.length() - (max_len - 5))
-	$Navigation/CurrentScript.set_text(text)
+	$Window/BottomBar/Navigation/CurrentScript.set_text(text)
 	_script_list.select(index)
 	_update_controls()
 
@@ -265,8 +189,8 @@ func _update_summary():
 		return
 
 	var total = _summary.fail_count + _summary.pass_count
-	$Summary.visible = !total == 0
-	$Summary/AssertCount.text = str('Failures ', _summary.fail_count, '/', total)
+	$Window/TitleBar/Summary.visible = !total == 0
+	$Window/TitleBar/Summary/AssertCount.text = str('Failures ', _summary.fail_count, '/', total)
 # ####################
 # Public
 # ####################
@@ -287,13 +211,14 @@ func get_selected_index():
 	return _script_list.get_selected_items()[0]
 
 func get_log_level():
-	return $LogLevelSlider.value
+	return _log_level_slider.value
 
 func set_log_level(value):
 	var new_value = value
 	if(new_value == null):
 		new_value = 0
-	$LogLevelSlider.value = new_value
+	if _log_level_slider:
+		_log_level_slider.value = new_value
 
 func set_ignore_pause(should):
 	_ignore_pauses.pressed = should
@@ -304,7 +229,7 @@ func get_ignore_pause():
 func get_text_box():
 	# due to some timing issue, this cannot return _text_box but can return
 	# this.
-	return $TextDisplay/RichTextLabel
+	return $Window/TextDisplay/RichTextLabel
 
 func end_run():
 	_run_mode(false)
@@ -339,9 +264,9 @@ func pause():
 
 func set_title(title=null):
 	if(title == null):
-		$TitleBar/Title.set_text(DEFAULT_TITLE)
+		_titlebar.label.set_text(DEFAULT_TITLE)
 	else:
-		$TitleBar/Title.set_text(title)
+		_titlebar.label.set_text(title)
 
 func add_passing(amount=1):
 	if(!_summary):
@@ -423,10 +348,10 @@ func set_default_font_color(color):
 	_text_box.set('custom_colors/default_color', color)
 
 func set_background_color(color):
-	$TextDisplay.color = color
+	$Window/TextDisplay.color = color
 
 func _on_UserFiles_pressed():
 	_user_files.show_open()
 
 func get_waiting_label():
-	return $TextDisplay/WaitingLabel
+	return $Window/TextDisplay/WaitingLabel
