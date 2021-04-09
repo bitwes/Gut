@@ -1,6 +1,6 @@
 extends WindowDialog
 
-onready var rtl = $TextDisplay/RichTextLabel
+onready var rtl = $Body/TextDisplay/RichTextLabel
 var _has_opened_file = false
 
 func _get_file_as_text(path):
@@ -42,7 +42,7 @@ func _on_FileDialog_popup_hide():
 		self.hide()
 
 func get_rich_text_label():
-	return $TextDisplay/RichTextLabel
+	return $Body/TextDisplay/RichTextLabel
 
 func _on_Home_pressed():
 	rtl.scroll_to_line(0)

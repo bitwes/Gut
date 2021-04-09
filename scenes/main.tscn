@@ -3,73 +3,70 @@
 [ext_resource path="res://scripts/main.gd" type="Script" id=1]
 [ext_resource path="res://addons/gut/plugin_control.gd" type="Script" id=2]
 
-[node name="main" type="Node2D"]
+[node name="main" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
 script = ExtResource( 1 )
 __meta__ = {
-"__editor_plugin_screen__": "Script"
+"_edit_use_anchors_": false
 }
 
-[node name="RunGutTestsButton" type="Button" parent="."]
-margin_left = 838.0
-margin_top = 4.0
-margin_right = 1019.0
-margin_bottom = 79.0
-text = "Run Gut Unit Tests"
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = -8.0
+margin_bottom = -8.0
+custom_constants/separation = 8
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ExportTests" type="Button" parent="."]
-margin_left = 853.0
-margin_top = 102.0
-margin_right = 1021.0
-margin_bottom = 170.0
-text = "Export Tests"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Gut" type="Control" parent="."]
-margin_left = 4.0
-margin_top = 4.0
-margin_right = 845.0
-margin_bottom = 332.0
-rect_min_size = Vector2( 740, 250 )
+[node name="Gut" type="Control" parent="HBoxContainer"]
+margin_right = 868.0
+margin_bottom = 584.0
+size_flags_horizontal = 3
 script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 _font_name = "CourierPrime"
-_font_size = 20
 _font_color = Color( 0.733333, 0.733333, 0.733333, 1 )
 _background_color = Color( 0.14902, 0.14902, 0.14902, 1 )
-_color_output = true
 _select_script = "test_strutils.gd"
 _tests_like = ""
 _inner_class_name = ""
 _run_on_load = false
 _should_maximize = true
-_should_print_to_console = true
-_show_orphans = true
 _log_level = 2
-_yield_between_tests = true
-_disable_strict_datatype_checks = false
-_test_prefix = "test_"
-_file_prefix = "test_"
-_file_extension = ".gd"
-_inner_class_prefix = "Test"
-_temp_directory = "user://gut_temp_directory"
 _export_path = "res://exported_tests.cfg"
-_include_subdirectories = false
 _directory1 = "res://test/unit"
 _directory2 = "res://test/integration"
-_directory3 = ""
-_directory4 = ""
-_directory5 = ""
-_directory6 = ""
-_double_strategy = 1
-_pre_run_script = ""
-_post_run_script = ""
-[connection signal="pressed" from="RunGutTestsButton" to="." method="_on_RunGutTestsButton_pressed"]
-[connection signal="pressed" from="ExportTests" to="." method="_on_ExportTests_pressed"]
-[connection signal="gut_ready" from="Gut" to="." method="_on_Gut_gut_ready"]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+margin_left = 876.0
+margin_right = 1008.0
+margin_bottom = 584.0
+custom_constants/separation = 8
+
+[node name="RunGutTestsButton" type="Button" parent="HBoxContainer/VBoxContainer"]
+margin_right = 132.0
+margin_bottom = 20.0
+text = "Run Gut Unit Tests"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ExportTests" type="Button" parent="HBoxContainer/VBoxContainer"]
+margin_top = 28.0
+margin_right = 132.0
+margin_bottom = 48.0
+text = "Export Tests"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="gut_ready" from="HBoxContainer/Gut" to="." method="_on_Gut_gut_ready"]
+[connection signal="pressed" from="HBoxContainer/VBoxContainer/RunGutTestsButton" to="." method="_on_RunGutTestsButton_pressed"]
+[connection signal="pressed" from="HBoxContainer/VBoxContainer/ExportTests" to="." method="_on_ExportTests_pressed"]

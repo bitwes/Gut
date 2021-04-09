@@ -124,11 +124,6 @@ var _lgr = null
 var _cancel_import = false
 var _placeholder = null
 
-func _init():
-	# This min size has to be what the min size of the GutScene's min size is
-	# but it has to be set here and not inferred i think.
-	rect_min_size = Vector2(740, 250)
-
 func _ready():
 	# Must call this deferred so that there is enough time for
 	# Engine.get_main_loop() is populated and the psuedo singleton utils.gd
@@ -136,16 +131,14 @@ func _ready():
 	if(Engine.editor_hint):
 		_placeholder = load('res://addons/gut/GutScene.tscn').instance()
 		call_deferred('add_child', _placeholder)
-		_placeholder.rect_size = rect_size
+
+		# Go full rect on the placeholder
+		_placeholder.set_anchor(MARGIN_TOP, ANCHOR_BEGIN)
+		_placeholder.set_anchor(MARGIN_RIGHT, ANCHOR_END)
+		_placeholder.set_anchor(MARGIN_BOTTOM, ANCHOR_END)
+		_placeholder.set_anchor(MARGIN_LEFT, ANCHOR_BEGIN)
 	else:
 		call_deferred('_setup_gut')
-
-	connect('resized', self,  '_on_resized')
-
-func _on_resized():
-	if(_placeholder != null):
-		_placeholder.rect_size = rect_size
-
 
 # Templates can be missing if tests are exported and the export config for the
 # project does not include '*.txt' files.  This check and related flags make
@@ -194,7 +187,9 @@ func _setup_gut():
 	_gut.set_color_output(_color_output)
 	_gut.show_orphans(_show_orphans)
 
-	get_parent().add_child(_gut)
+	add_child(_gut)
+	# Hide ourselves so we don't cause any alignment changes
+	self.visible = false
 
 	if(!_utils.is_version_ok()):
 		return
@@ -218,7 +213,12 @@ func _setup_gut():
 	_gut.get_gui().set_font(_font_name)
 	_gut.get_gui().set_default_font_color(_font_color)
 	_gut.get_gui().set_background_color(_background_color)
-	_gut.get_gui().rect_size =  rect_size
+	_gut.get_gui().anchor_top = anchor_top
+	_gut.get_gui().anchor_right = anchor_right
+	_gut.get_gui().anchor_bottom = anchor_bottom
+	_gut.get_gui().anchor_left = anchor_left
+	_gut.get_gui().size_flags_horizontal = size_flags_horizontal
+	_gut.get_gui().size_flags_vertical = size_flags_vertical
 	emit_signal('gut_ready')
 
 	if(_run_on_load):
