@@ -123,6 +123,7 @@ var _final_opts = []
 # that I don't make any dumb typos and get the neat code-sense when I
 # type a dot.
 var options = {
+	autofree_yield_between_tests = 0.1,
 	background_color = Color(.15, .15, .15, 1).to_html(),
 	config_file = 'res://.gutconfig.json',
 	dirs = [],
@@ -195,6 +196,8 @@ func setup_options():
 	opts.add('-gfont_size', options.font_size, 'Font size, default "[default]"')
 	opts.add('-gbackground_color', options.background_color, 'Background color as an html color, default "[default]"')
 	opts.add('-gfont_color',options.font_color, 'Font color as an html color, default "[default]"')
+	opts.add('-gautofree_yield_between_tests',options.autofree_yield_between_tests,('Adjusts delay between tests that use autofree to avoid ' +
+		                                                                            'erroneous orphans. Default "[default]"'))
 	return opts
 
 
@@ -226,6 +229,7 @@ func extract_command_line_options(from, to):
 	to.font_name = from.get_value('-gfont_name')
 	to.background_color = from.get_value('-gbackground_color')
 	to.font_color = from.get_value('-gfont_color')
+	to.autofree_yield_between_tests = from.get_value('-gautofree_yield_between_tests')
 
 
 func load_options_from_config_file(file_path, into):
@@ -306,6 +310,8 @@ func apply_options(opts):
 		_tester.get_gui().set_default_font_color(Color(opts.font_color))
 	if(opts.background_color != null and opts.background_color.is_valid_html_color()):
 		_tester.get_gui().set_background_color(Color(opts.background_color))
+
+	_tester.set_autofree_yield_between_tests(opts.autofree_yield_between_tests)
 
 
 func _print_gutconfigs(values):

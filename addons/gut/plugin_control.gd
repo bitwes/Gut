@@ -64,6 +64,10 @@ export(int, 'Fail/Errors', 'Errors/Warnings/Test Names', 'Everything') var _log_
 # Disabling this can make the program appear to hang and can have some
 # unwanted consequences with the timing of freeing objects
 export var _yield_between_tests = true
+# Configures how long GUT waits after freeing autofree queued items to prevent
+# them from being detected as orphans. Smaller values increase the risk of showing
+# incorrect orphans but decrease excess time between tests.
+export(float) var _autofree_yield_between_tests = 0.1
 # When GUT compares values it first checks the types to prevent runtime errors.
 # This behavior can be disabled if desired.  This flag was added early in
 # development to prevent any breaking changes and will likely be removed in
@@ -185,6 +189,7 @@ func _setup_gut():
 
 	_gut.set_should_maximize(_should_maximize)
 	_gut.set_yield_between_tests(_yield_between_tests)
+	_gut.set_autofree_yield_between_tests(_autofree_yield_between_tests)
 	_gut.disable_strict_datatype_checks(_disable_strict_datatype_checks)
 	_gut.set_export_path(_export_path)
 	_gut.set_include_subdirectories(_include_subdirectories)

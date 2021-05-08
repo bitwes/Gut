@@ -49,6 +49,7 @@ var _double_strategy = 1  setget set_double_strategy, get_double_strategy
 var _pre_run_script = '' setget set_pre_run_script, get_pre_run_script
 var _post_run_script = '' setget set_post_run_script, get_post_run_script
 var _color_output = false setget set_color_output, get_color_output
+var _autofree_yield_between_tests = 0.1 setget set_autofree_yield_between_tests, get_autofree_yield_between_tests
 # -- End Settings --
 
 
@@ -704,7 +705,7 @@ func _run_test(script_inst, test_name):
 	var aqf_count = _autofree.get_queue_free_count()
 	_autofree.free_all()
 	if(aqf_count > 0):
-		yield(_do_yield_between(0.1), 'timeout')
+		yield(_do_yield_between(_autofree_yield_between_tests), 'timeout')
 
 	if(_log_level > 0):
 		_orphan_counter.print_orphans('test', _lgr)
@@ -1545,6 +1546,16 @@ func get_color_output():
 func set_color_output(color_output):
 	_color_output = color_output
 	_lgr.disable_formatting(!color_output)
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_autofree_yield_between_tests():
+	return _autofree_yield_between_tests
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func set_autofree_yield_between_tests(yield_time):
+	_autofree_yield_between_tests = yield_time
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
