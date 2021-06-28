@@ -7,6 +7,8 @@ class Test:
 	var passed = true
 	# the name of the function
 	var name = ""
+	# the name of the snapshot file <file_name>_<inner_class_name>_<test_name>_<X>.snapshot
+	var snapshot_name = ""
 	# flag to know if the name has been printed yet.
 	var has_printed_name = false
 	# the number of arguments the method has
@@ -144,6 +146,7 @@ func _populate_tests(test_script):
 		if(name.begins_with(_test_prefix)):
 			var t = Test.new()
 			t.name = name
+			t.snapshot_name = _make_snapshot_name(test_script.path,methods[i]["name"],test_script.inner_class_name)
 			t.arg_count = methods[i]['args'].size()
 			test_script.tests.append(t)
 
@@ -188,6 +191,17 @@ func _parse_script(test_script):
 			scripts_found.append(test_script.path + '[' + inner_classes[i] +']')
 
 	return scripts_found
+
+#<file_name>_<inner_class_name>_<test_name>_
+func _make_snapshot_name(path_to_file : String,test_name : String,inner_class_name) -> String:
+	var result : String = ""
+	var end = path_to_file.split("/")[-1]
+	var name_of_file = end.left(len(end)-3)
+	#we increment only if the test is the same in the same inner class or in no inner class
+	result += str(name_of_file,"_")
+	if inner_class_name: result += str(inner_class_name,"_")
+	result += str(test_name)
+	return result
 
 # -----------------
 # Public

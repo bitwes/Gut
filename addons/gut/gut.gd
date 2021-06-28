@@ -43,6 +43,7 @@ var _file_prefix = 'test_'
 var _file_extension = '.gd'
 var _inner_class_prefix = 'Test'
 var _temp_directory = 'user://gut_temp_directory'
+var _snapshot_directory = 'user://gut_snap_shot_directory'
 var _export_path = '' setget set_export_path, get_export_path
 var _include_subdirectories = false setget set_include_subdirectories, get_include_subdirectories
 var _double_strategy = 1  setget set_double_strategy, get_double_strategy
