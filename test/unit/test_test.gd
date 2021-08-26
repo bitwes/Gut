@@ -1043,6 +1043,17 @@ class TestExtendAsserts:
 		# TODO remove comment after awhile, this appears fixed in 3.2
 		assert_fail(gr.test, 1, 'Fails in 3.1, bug has been created.')
 
+	func test_assrt_is_does_not_free_references():
+		var ref = Reference.new()
+		gr.test.assert_is(ref, Reference)
+		assert_pass(gr.test)
+
+	func test_works_with_resources():
+		var res = Resource.new()
+		gr.test.assert_is(res, Resource)
+		assert_pass(gr.test)
+
+
 class TestAssertTypeOf:
 	extends BaseTestClass
 	func before_all():
