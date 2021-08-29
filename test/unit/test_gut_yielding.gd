@@ -37,6 +37,51 @@ class TimedSignalerMaxParams:
 		emit_signal('the_signal', 1, 2, 3, 4, 5, 6, 7, 8, 9)
 
 
+class TestPauseBeforeTeardown:
+	extends "res://addons/gut/test.gd"
+	var timer = null
+
+	func before_all():
+		timer = Timer.new()
+		timer.set_one_shot(true)
+		add_child(timer)
+
+	func after_all():
+		timer.free()
+
+	func before_each():
+		timer.set_wait_time(1)
+
+	func test_wait_for_continue_click():
+		gut.p('should have had to press continue')
+		assert_eq(1, 1, 'some simple assert')
+		gut.pause_before_teardown()
+
+	func test_can_pause_twice():
+		gut.p('should have had to press continue')
+		assert_eq(2, 2, 'Another simple assert')
+		gut.pause_before_teardown()
+
+	func test_can_pause_after_yielding():
+		pass_test('should have seen a pause and press continue')
+		gut.p('yielding for 1 second')
+		timer.start()
+		yield(timer, 'timeout')
+		gut.p('done yielding')
+		gut.pause_before_teardown()
+
+	func test_can_call_pause_before_yielding():
+		pass_test('should  see a pause')
+		gut.pause_before_teardown()
+		gut.p('yielding for 1 second')
+		timer.start()
+		yield(timer, 'timeout')
+		gut.p('done yielding')
+
+	func test_can_pause_between_each_parameterized_test(p=use_parameters([1, 2, 3])):
+		assert_between(p, -10, 10)
+		pause_before_teardown()
+
 
 
 class TestYieldsInTests:
@@ -69,37 +114,10 @@ class TestYieldsInTests:
 		yield(gut, 'timeout')
 		gut.p('done yielding')
 
-	func test_wait_for_continue_click():
-		gut.p('should have had to press continue')
-		assert_eq(1, 1, 'some simple assert')
-		gut.pause_before_teardown()
-
-	func test_can_pause_twice():
-		gut.p('should have had to press continue')
-		assert_eq(2, 2, 'Another simple assert')
-		gut.pause_before_teardown()
-
-
 	func test_will_wait_when_yielding():
 		pass_test('should have seen a pause')
 		timer.set_wait_time(5)
 		gut.p('yielding for 5 seconds')
-		timer.start()
-		yield(timer, 'timeout')
-		gut.p('done yielding')
-
-	func test_can_pause_after_yielding():
-		pass_test('should have seen a pause and press continue')
-		gut.p('yielding for 1 second')
-		timer.start()
-		yield(timer, 'timeout')
-		gut.p('done yielding')
-		gut.pause_before_teardown()
-
-	func test_can_call_pause_before_yielding():
-		pass_test('should  see a pause')
-		gut.pause_before_teardown()
-		gut.p('yielding for 1 second')
 		timer.start()
 		yield(timer, 'timeout')
 		gut.p('done yielding')
@@ -127,10 +145,6 @@ class TestYieldsInTests:
 	func test_with_parameters(p=use_parameters([['a', 'a'], ['b', 'b'], ['c', 'c']])):
 		yield(yield_for(1), YIELD)
 		assert_eq(p[0], p[1])
-
-	func test_can_pause_between_each_parameterized_test(p=use_parameters([1, 2, 3])):
-		assert_between(p, -10, 10)
-		pause_before_teardown()
 
 
 
@@ -226,6 +240,9 @@ class TestYieldFrames:
 
 	func before_each():
 		_frame_count = 0
+
+	func test_can_yield_using_set_yield_frames():
+		yield(gut.set_yield_frames(10), YIELD)
 
 	func test_yield_frames_waits_x_frames():
 		yield(yield_frames(5), YIELD)

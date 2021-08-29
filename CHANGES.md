@@ -6,6 +6,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 # NEXT RELEASE (changes to master since last release)
 
+## Features
+* `yield_frames` Similar to `yield_for` except this will yield for N frames instead of N seconds.
 ## Bug Fixes
 * __Issue 268__ Add message when `assert_signal_emitted_with_parameters` is passed bad parameters.
 * __Issue 258__ `yield_to` now supports signals with up to 9 parameters.  This is the same limit  supported by `watch_signals`.
