@@ -715,7 +715,7 @@ func _run_test(script_inst, test_name):
 	var aqf_count = _autofree.get_queue_free_count()
 	_autofree.free_all()
 	if(aqf_count > 0):
-		yield(_do_yield_between(0.1), 'timeout')
+		yield(set_yield_frames(1), 'timeout')
 
 	if(_log_level > 0):
 		_orphan_counter.print_orphans('test', _lgr)
@@ -820,7 +820,7 @@ func _test_the_scripts(indexes=[]):
 
 		# yield between test scripts so things paint
 		if(_yield_between.should):
-			yield(_do_yield_between(0.01), 'timeout')
+			yield(set_yield_frames(1), 'timeout')
 
 		# !!!
 		# Hack so there isn't another indent to this monster of a method.  if
@@ -851,7 +851,7 @@ func _test_the_scripts(indexes=[]):
 
 				# yield so things paint
 				if(_should_yield_now()):
-					yield(_do_yield_between(0.001), 'timeout')
+					yield(set_yield_frames(1), 'timeout')
 
 				if(_current_test.arg_count > 1):
 					_lgr.error(str('Parameterized test ', _current_test.name,
