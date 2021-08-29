@@ -37,6 +37,8 @@ class TimedSignalerMaxParams:
 		emit_signal('the_signal', 1, 2, 3, 4, 5, 6, 7, 8, 9)
 
 
+
+
 class TestYieldsInTests:
 	extends "res://addons/gut/test.gd"
 	var timer = null
@@ -152,6 +154,11 @@ class TestYieldFor:
 		yield(yield_for(0.5), YIELD)
 		pending('this is pending but should end test')
 
+	func test_output_for_long_yields():
+		yield(yield_for(2), YIELD)
+
+
+
 class TestYieldTo:
 	extends "res://addons/gut/test.gd"
 
@@ -206,3 +213,25 @@ class TestYieldTo:
 		signaler.emit_after(.5)
 		yield(yield_to(signaler, 'the_signal', 5), YIELD)
 		assert_signal_emitted(signaler, 'the_signal')
+
+
+
+class TestYieldFrames:
+	extends "res://addons/gut/test.gd"
+
+	var _frame_count = 0
+
+	func _process(delta):
+		_frame_count += 1
+
+	func before_each():
+		_frame_count = 0
+
+	func test_yield_frames_waits_x_frames():
+		yield(yield_frames(5), YIELD)
+		assert_eq(_frame_count, 5)
+
+	func test_renders_message():
+		yield(yield_frames(120), YIELD)
+		pass_test("did you look at the output?")
+

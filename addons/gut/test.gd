@@ -1199,6 +1199,10 @@ func yield_to(obj, signal_name, max_wait, msg=''):
 
 	return gut
 
+func yield_frames(frames, msg=''):
+	gut.set_yield_frames(frames, msg)
+	return gut
+
 # ------------------------------------------------------------------------------
 # Ends a test that had a yield in it.  You only need to use this if you do
 # not make assertions after a yield.

@@ -104,6 +104,7 @@ var _was_yield_method_called = false
 # used when yielding to gut instead of some other
 # signal.  Start with set_yield_time()
 var _yield_timer = Timer.new()
+var _yield_frames = 0
 
 var _unit_test_name = ''
 var _new_summary = null
@@ -140,6 +141,8 @@ const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yield_before_teardown'
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 var  _should_print_versions = true # used to cut down on output in tests.
+
+
 func _init():
 	_before_all_test_obj.name = 'before_all'
 	_after_all_test_obj.name = 'after_all'
@@ -165,6 +168,14 @@ func _init():
 	_test_collector.set_logger(_lgr)
 
 	_gui = load('res://addons/gut/GutScene.tscn').instance()
+
+
+func _process(delta):
+	if(_yield_frames > 0):
+		_yield_frames -= 1
+
+		if(_yield_frames == 0):
+			emit_signal('timeout')
 
 # ------------------------------------------------------------------------------
 # Initialize controls
@@ -321,7 +332,7 @@ func _yielding_callback(from_obj=false,
 		_yielding_to.signal_name = ''
 
 	if(from_obj):
-		# we must yiled for a little longer after the signal is emitted so that
+		# we must yield for a little longer after the signal is emitted so that
 		# the signal can propagate to other objects.  This was discovered trying
 		# to assert that obj/signal_name was emitted.  Without this extra delay
 		# the yield returns and processing finishes before the rest of the
@@ -495,7 +506,7 @@ func _end_run():
 	update()
 	_run_hook_script(_post_run_script_instance)
 	emit_signal(SIGNAL_TESTS_FINISHED)
-	
+
 	if _utils.should_display_latest_version:
 		p("")
 		p(str("GUT version ",_utils.latest_version," is now available."))
@@ -1316,6 +1327,20 @@ func set_yield_time(time, text=''):
 	_lgr.log(msg, _lgr.fmts.yellow)
 	_was_yield_method_called = true
 	return self
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func set_yield_frames(frames, text=''):
+	var msg = '-- Yielding (' + str(frames) + ' frames)'
+	if(text == ''):
+		msg += ' --'
+	else:
+		msg +=  ':  ' + text + ' --'
+	_lgr.log(msg, _lgr.fmts.yellow)
+
+	_was_yield_method_called = true
+	_yield_frames = frames + 1
+	pass
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
