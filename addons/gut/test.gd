@@ -1176,10 +1176,6 @@ func pending(text=""):
 		_lgr.pending(text)
 		gut._pending(text)
 
-# ------------------------------------------------------------------------------
-# Returns the number of times a signal was emitted.  -1 returned if the object
-# is not being watched.
-# ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
 # Yield for the time sent in.  The optional message will be printed when
@@ -1199,7 +1195,17 @@ func yield_to(obj, signal_name, max_wait, msg=''):
 
 	return gut
 
+# ------------------------------------------------------------------------------
+# Yield for a number of frames.  The optional message will be printed. when
+# Gut detects a yield.  When the number of frames have elapsed (counted in gut's
+# _process function) the YIELD signal will be emitted.
+# ------------------------------------------------------------------------------
 func yield_frames(frames, msg=''):
+	if(frames <= 0):
+		var text = str('yeild_frames:  frames must be > 0, you passed  ', frames, '.  0 frames waited.')
+		_lgr.error(text)
+		frames = 0
+
 	gut.set_yield_frames(frames, msg)
 	return gut
 

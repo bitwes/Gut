@@ -174,7 +174,7 @@ func _process(delta):
 	if(_yield_frames > 0):
 		_yield_frames -= 1
 
-		if(_yield_frames == 0):
+		if(_yield_frames <= 0):
 			emit_signal('timeout')
 
 # ------------------------------------------------------------------------------
@@ -1329,6 +1329,11 @@ func set_yield_time(time, text=''):
 	return self
 
 # ------------------------------------------------------------------------------
+# Sets a counter that is decremented each time _process is called.  When the
+# counter reaches 0 the 'timeout' signal is emitted.
+#
+# This actually results in waiting N+1 frames since that appears to be what is
+# required for _process in test.gd scripts to count N frames.
 # ------------------------------------------------------------------------------
 func set_yield_frames(frames, text=''):
 	var msg = '-- Yielding (' + str(frames) + ' frames)'
@@ -1339,10 +1344,12 @@ func set_yield_frames(frames, text=''):
 	_lgr.log(msg, _lgr.fmts.yellow)
 
 	_was_yield_method_called = true
-	_yield_frames = frames + 1
+	_yield_frames = max(frames + 1, 1)
 	return self
 
 # ------------------------------------------------------------------------------
+# This method handles yielding to a signal from an object or a maximum
+# number of seconds, whichever comes first.
 # ------------------------------------------------------------------------------
 func set_yield_signal_or_time(obj, signal_name, max_wait, text=''):
 	obj.connect(signal_name, self, '_yielding_callback', [true])

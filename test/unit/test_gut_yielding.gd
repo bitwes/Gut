@@ -249,6 +249,16 @@ class TestYieldFrames:
 		assert_eq(_frame_count, 5)
 
 	func test_renders_message():
-		yield(yield_frames(120), YIELD)
+		yield(yield_frames(120, 'this is the output.'), YIELD)
 		pass_test("did you look at the output?")
+
+	func test_yield_frames_zero_does_nothing():
+		yield(yield_frames(0, 'whaterver'), YIELD)
+		assert_eq(_frame_count, 0, 'This should be 0 since no frames were yielded')
+
+	func test_yield_frames_neg_number_does_nothing():
+		yield(yield_frames(-1, 'whatever'), YIELD)
+		assert_eq(_frame_count, 0, 'This should be 0 since no frames were yielded')
+
+
 
