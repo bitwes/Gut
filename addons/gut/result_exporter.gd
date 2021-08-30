@@ -69,3 +69,5 @@ func write_file(gut, path):
 		var msg = str("Error:  ", f_result, ".  Could not create export file ", path)
 		_utils.get_logger().error(msg)
 
+	return f_result
+
