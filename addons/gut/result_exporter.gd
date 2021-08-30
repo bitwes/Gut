@@ -1,3 +1,10 @@
+# ------------------------------------------------------------------------------
+# Creates a structure that contains all the data about the results of running
+# tests.  This was created to make an intermediate step organizing the result
+# of a run and exporting it in a specific format.  This can also serve as a
+# unofficial GUT export format.
+# ------------------------------------------------------------------------------
+
 func _export_tests(summary_script):
 	var to_return = {}
 	var tests = summary_script.get_tests()
@@ -23,7 +30,7 @@ func _export_scripts(summary):
 		scripts[s.name] = {
 			'props':{
 				"tests":s._tests.size(),
-				"disabled":s.get_pending_count(),
+				"pending":s.get_pending_count(),
 				"failures":s.get_fail_count(),
 			},
 			"tests":_export_tests(s)
@@ -42,9 +49,8 @@ func export_results(gut):
 	var result =  {
 		'test_scripts':{
 			"props":{
-				"disabled":totals.pending,
+				"pending":totals.pending,
 				"failures":totals.failing,
-				"name":"not_used",
 				"tests":totals.tests,
 			},
 			"scripts":scripts

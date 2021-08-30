@@ -14,10 +14,14 @@ func add_attr(name, value):
 func _export_test_result(test):
 	var to_return = ''
 
+	# Right now the pending and failure messages won't fit in the message
+	# attribute because they can span multiple lines and need to be escaped.
 	if(test.status == 'pending'):
-		to_return += str('<skipped>', test.pending[0], '</skipped>')
+		var skip_tag = str("<skipped message=\"pending\">", test.pending[0], "</skipped>")
+		to_return += skip_tag
 	elif(test.status == 'fail'):
-		to_return += str('<failure>', test.failing[0], '</failure>')
+		var fail_tag = str("<failure message=\"failed\">", test.failing[0], "</failure>")
+		to_return += fail_tag
 
 	return to_return
 
@@ -41,6 +45,7 @@ func _export_tests(script_result, classname):
 
 	return to_return
 
+
 func _export_scripts(exp_results):
 	var to_return = ""
 	for key in exp_results.test_scripts.scripts.keys():
@@ -48,7 +53,6 @@ func _export_scripts(exp_results):
 		to_return += "<testsuite "
 		to_return += add_attr("name", key)
 		to_return += add_attr("tests", s.props.tests)
-		to_return += add_attr("disabled", s.props.disabled)
 		to_return += add_attr("failures", s.props.failures)
 		to_return += ">\n"
 
@@ -64,13 +68,12 @@ func export_results(gut):
 	_utils.pretty_print(exp_results)
 	var to_return = '<?xml version="1.0" encoding="UTF-8"?>' + "\n"
 	to_return += '<testsuites '
-	to_return += str('name="', exp_results.test_scripts.props.name, '" ')
-	to_return += str('disabled="', exp_results.test_scripts.props.disabled, '" ')
-	to_return += str('failures="', exp_results.test_scripts.props.failures, '" ')
-	to_return += str('tests="', exp_results.test_scripts.props.tests, '" ')
+	to_return += add_attr("name", 'GutTests')
+	to_return += add_attr("failures", exp_results.test_scripts.props.failures)
+	to_return += add_attr('tests', exp_results.test_scripts.props.tests)
 	to_return += ">\n"
 
-	to_return += _export_scripts(exp_results)
+	to_return += indent(_export_scripts(exp_results), "  ")
 
 	to_return += '</testsuites>'
 	return to_return

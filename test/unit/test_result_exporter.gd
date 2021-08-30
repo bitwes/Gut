@@ -60,19 +60,17 @@ func test_test_script_props_has_props():
 	_test_gut.test_scripts()
 	var re = ResultExporter.new()
 	var result = re.export_results(_test_gut).test_scripts.props
-	assert_has(result, 'disabled')
+	assert_has(result, 'pending')
 	assert_has(result, 'failures')
-	assert_has(result, 'name')
 	assert_has(result, 'tests')
 
 func test_test_script_props_have_values_for_one_script():
 	run_scripts(_test_gut, 'test_simple.gd')
 	var re = ResultExporter.new()
 	var result = re.export_results(_test_gut).test_scripts.props
-	assert_eq(result['disabled'], 2, 'disabled')
+	assert_eq(result['pending'], 2, 'pending')
 	assert_eq(result['failures'], 4, 'failures')
 	assert_eq(result['tests'], 8, 'tests')
-	assert_eq(result['name'], 'not_used', 'name')
 
 func test_test_scripts_contains_script():
 	_test_gut.test_scripts()
@@ -99,7 +97,7 @@ func test_script_has_prop_values():
 	var result = re.export_results(_test_gut).test_scripts.scripts
 	result = result[export_script('test_simple.gd')]['props']
 	assert_has(result, 'tests')
-	assert_has(result, 'disabled')
+	assert_has(result, 'pending')
 	assert_has(result, 'failures')
 
 func test_script_has_proper_prop_values():
@@ -108,7 +106,7 @@ func test_script_has_proper_prop_values():
 	var result = re.export_results(_test_gut).test_scripts.scripts
 	result = result[export_script('test_simple.gd')]['props']
 	assert_eq(result['tests'], 8, 'test count')
-	assert_eq(result['disabled'], 2, 'pending count')
+	assert_eq(result['pending'], 2, 'pending count')
 	assert_eq(result['failures'], 4, 'failures')
 
 func test_script_has_proper_prop_values_for_2nd_script():
@@ -117,7 +115,7 @@ func test_script_has_proper_prop_values_for_2nd_script():
 	var result = re.export_results(_test_gut).test_scripts.scripts
 	result = result[export_script('test_simple_2.gd')]['props']
 	assert_eq(result['tests'], 3, 'test count')
-	assert_eq(result['disabled'], 1, 'pending count')
+	assert_eq(result['pending'], 1, 'pending count')
 	assert_eq(result['failures'], 1, 'failures')
 
 
@@ -125,7 +123,7 @@ func test_test_script_props_have_values_for_two_script():
 	run_scripts(_test_gut, ['test_simple.gd', 'test_simple_2.gd'])
 	var re = ResultExporter.new()
 	var result = re.export_results(_test_gut).test_scripts.props
-	assert_eq(result['disabled'], 3, 'disabled')
+	assert_eq(result['pending'], 3, 'pending')
 	assert_eq(result['failures'], 5, 'failures')
 	assert_eq(result['tests'], 11, 'tests')
 
@@ -133,7 +131,7 @@ func test_totals_with_inner_classes():
 	run_scripts(_test_gut, 'test_with_inner_classes.gd')
 	var re = ResultExporter.new()
 	var result = re.export_results(_test_gut).test_scripts.props
-	assert_eq(result['disabled'], 2, 'disabled')
+	assert_eq(result['pending'], 2, 'pending')
 	assert_eq(result['failures'], 2, 'failures')
 	assert_eq(result['tests'], 6, 'tests')
 
@@ -143,7 +141,7 @@ func test_script_totals_with_inner_classes():
 	var re = ResultExporter.new()
 	var result = re.export_results(_test_gut).test_scripts.scripts
 	result = result[export_script('test_with_inner_classes.gd.TestClassOne')]['props']
-	assert_eq(result['disabled'], 1, 'disabled')
+	assert_eq(result['pending'], 1, 'pending')
 	assert_eq(result['failures'], 1, 'failures')
 	assert_eq(result['tests'], 3, 'tests')
 
@@ -198,8 +196,8 @@ func test_test_has_text_fields():
 
 
 
-# func test_spot_check():
-# 	run_scripts(_test_gut, ['test_simple_2.gd', 'test_simple.gd', 'test_with_inner_classes.gd'])
-# 	var re = ResultExporter.new()
-# 	var result = re.export_results(_test_gut)
-# 	pretty_print(result)
+func test_spot_check():
+	run_scripts(_test_gut, ['test_simple_2.gd', 'test_simple.gd', 'test_with_inner_classes.gd'])
+	var re = ResultExporter.new()
+	var result = re.export_results(_test_gut)
+	pretty_print(result)

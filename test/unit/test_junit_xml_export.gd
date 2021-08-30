@@ -30,14 +30,28 @@ func run_scripts(g, one_or_more):
 	g.test_scripts()
 
 
+# Very simple xml validator.  Matches closing tags to opening tags as they
+# are encountered and any validation provided by XMLParser (which is very
+# little).  Does not catch malformed attributes among other things probably.
 func assert_is_valid_xml(s):
+	var tags = []
 	var pba = s.to_utf8()
 	var parser = XMLParser.new()
 	var result = parser.open_buffer(pba)
+
 	while(result == OK):
-		result = parser.read()
 		if(parser.get_node_type() == parser.NODE_ELEMENT):
-			print(parser.get_node_name())
+			tags.push_back(parser.get_node_name())
+		elif(parser.get_node_type() == parser.NODE_ELEMENT_END):
+			var last_tag = tags.pop_back()
+			if(last_tag != parser.get_node_name()):
+				var msg = str("End tag does not match.  Expected:  ", last_tag, ', got:  ', parser.get_node_name())
+				push_error(msg)
+				result = -1
+
+		if(result != -1):
+			result = parser.read()
+
 	assert_eq(result, ERR_FILE_EOF, 'Parsing xml should reach EOF')
 	return parser
 
