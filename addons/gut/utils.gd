@@ -78,6 +78,7 @@ var DiffTool = load('res://addons/gut/diff_tool.gd')
 var Doubler = load('res://addons/gut/doubler.gd')
 var Gut = load('res://addons/gut/gut.gd')
 var HookScript = load('res://addons/gut/hook_script.gd')
+var JunitExporter = load('res://addons/gut/junit_xml_export.gd')
 var MethodMaker = load('res://addons/gut/method_maker.gd')
 var OneToMany = load('res://addons/gut/one_to_many.gd')
 var OrphanCounter = load('res://addons/gut/orphan_counter.gd')
@@ -346,3 +347,7 @@ func search_array(ar, prop_method, value):
 
 func are_datatypes_same(got, expected):
 	return !(typeof(got) != typeof(expected) and got != null and expected != null)
+
+
+func pretty_print(dict):
+	print(str(JSON.print(dict, ' ')))

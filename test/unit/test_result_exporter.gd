@@ -198,8 +198,8 @@ func test_test_has_text_fields():
 
 
 
-func test_spot_check():
-	run_scripts(_test_gut, ['test_simple_2.gd', 'test_simple.gd', 'test_with_inner_classes.gd'])
-	var re = ResultExporter.new()
-	var result = re.export_results(_test_gut)
-	pretty_print(result)
+# func test_spot_check():
+# 	run_scripts(_test_gut, ['test_simple_2.gd', 'test_simple.gd', 'test_with_inner_classes.gd'])
+# 	var re = ResultExporter.new()
+# 	var result = re.export_results(_test_gut)
+# 	pretty_print(result)
