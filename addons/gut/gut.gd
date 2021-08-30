@@ -602,13 +602,13 @@ func _setup_script(test_script):
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-func _do_yield_between(time=1):
-	_yield_frames = 1
-	return self
+func _do_yield_between(time=.01):
+	# _yield_frames = 1
+	# return self
 	# TODO kill this when happy with it.
-	# _yield_between.timer.set_wait_time(time)
-	# _yield_between.timer.start()
-	# return _yield_between.timer
+	_yield_between.timer.set_wait_time(time)
+	_yield_between.timer.start()
+	return _yield_between.timer
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -714,7 +714,7 @@ func _run_test(script_inst, test_name):
 
 	# When the script yields it will return a GDScriptFunctionState object
 	script_result = script_inst.call(test_name)
-	_new_summary.add_test(test_name)
+	var test_summary = _new_summary.add_test(test_name)
 
 	# Cannot detect future yields since we never tell the method to resume.  If
 	# there was some way to tell the method to resume we could use what comes
@@ -746,6 +746,7 @@ func _run_test(script_inst, test_name):
 	if(aqf_count > 0):
 		yield(_do_yield_between(), 'timeout')
 
+	test_summary.orphans = _orphan_counter.get_counter('test')
 	if(_log_level > 0):
 		_orphan_counter.print_orphans('test', _lgr)
 
