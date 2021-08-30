@@ -1,3 +1,6 @@
+# ------------------------------------------------------------------------------
+# Creates an export of a test run in the JUnit XML format.
+# ------------------------------------------------------------------------------
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 
 var _exporter = _utils.ResultExporter.new()
@@ -64,8 +67,8 @@ func _export_scripts(exp_results):
 	return to_return
 
 
-func export_results(gut):
-	var exp_results = _exporter.export_results(gut)
+func get_results_xml(gut):
+	var exp_results = _exporter.get_results_dictionary(gut)
 	var to_return = '<?xml version="1.0" encoding="UTF-8"?>' + "\n"
 	to_return += '<testsuites '
 	to_return += add_attr("name", 'GutTests')
@@ -80,7 +83,7 @@ func export_results(gut):
 
 
 func write_file(gut, path):
-	var xml = export_results(gut)
+	var xml = get_results_xml(gut)
 
 	var f_result = _utils.write_file(path, xml)
 	if(f_result != OK):

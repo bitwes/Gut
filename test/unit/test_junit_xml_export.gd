@@ -1,7 +1,7 @@
 extends 'res://addons/gut/test.gd'
 
 var Gut = load('res://addons/gut/gut.gd')
-var JunitExporter = _utils.JunitExporter
+var JunitExporter = _utils.JunitXmlExport
 var Logger = _utils.Logger
 
 var _test_gut = null
@@ -70,14 +70,14 @@ func test_can_make_one():
 func test_no_tests_returns_valid_xml():
 	_test_gut.test_scripts()
 	var re = JunitExporter.new()
-	var result = re.export_results(_test_gut)
+	var result = re.get_results_xml(_test_gut)
 	assert_is_valid_xml(result)
 	print(result)
 
 func test_spot_check():
 	run_scripts(_test_gut, ['test_simple_2.gd', 'test_simple.gd', 'test_with_inner_classes.gd'])
 	var re = JunitExporter.new()
-	var result = re.export_results(_test_gut)
+	var result = re.get_results_xml(_test_gut)
 	assert_is_valid_xml(result)
 	print(result)
 

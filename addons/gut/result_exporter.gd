@@ -42,7 +42,7 @@ func _export_scripts(summary):
 # TODO
 #	time
 #	errors
-func export_results(gut):
+func get_results_dictionary(gut):
 	var summary = gut.get_summary()
 	var scripts = _export_scripts(summary)
 	var totals = summary.get_totals()
@@ -60,8 +60,8 @@ func export_results(gut):
 	return result
 
 
-func write_file(gut, path):
-	var dict = export_results(gut)
+func write_json_file(gut, path):
+	var dict = get_results_dictionary(gut)
 	var json = JSON.print(dict, ' ')
 
 	var f_result = _utils.write_file(path, json)
