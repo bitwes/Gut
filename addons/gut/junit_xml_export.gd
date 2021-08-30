@@ -54,6 +54,7 @@ func _export_scripts(exp_results):
 		to_return += add_attr("name", key)
 		to_return += add_attr("tests", s.props.tests)
 		to_return += add_attr("failures", s.props.failures)
+		to_return += add_attr("skipped", s.props.pending)
 		to_return += ">\n"
 
 		to_return += indent(_export_tests(s.tests, key), "    ")
@@ -65,7 +66,6 @@ func _export_scripts(exp_results):
 
 func export_results(gut):
 	var exp_results = _exporter.export_results(gut)
-	_utils.pretty_print(exp_results)
 	var to_return = '<?xml version="1.0" encoding="UTF-8"?>' + "\n"
 	to_return += '<testsuites '
 	to_return += add_attr("name", 'GutTests')

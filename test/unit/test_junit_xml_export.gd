@@ -6,8 +6,6 @@ var Logger = _utils.Logger
 
 var _test_gut = null
 
-func pretty_print(dict):
-	print(str(JSON.print(dict, ' ')))
 
 # Returns a new gut object, all setup for testing.
 func get_a_gut():

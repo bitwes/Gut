@@ -6,9 +6,6 @@ var Logger = _utils.Logger
 
 var _test_gut = null
 
-func pretty_print(dict):
-	print(str(JSON.print(dict, ' ')))
-
 # Returns a new gut object, all setup for testing.
 func get_a_gut():
 	var g = Gut.new()
@@ -165,7 +162,6 @@ func test_test_has_status_field():
 	run_scripts(_test_gut, 'test_simple_2.gd')
 	var re = ResultExporter.new()
 	var result = re.export_results(_test_gut)
-	pretty_print(result)
 	result = result.test_scripts.scripts[export_script('test_simple_2.gd')]
 	result = result.tests.test_pass
 	assert_has(result, 'status')
@@ -174,7 +170,6 @@ func test_test_status_field_has_proper_value():
 	run_scripts(_test_gut, 'test_simple_2.gd')
 	var re = ResultExporter.new()
 	var result = re.export_results(_test_gut)
-	pretty_print(result)
 	result = result.test_scripts.scripts[export_script('test_simple_2.gd')]
 	result = result.tests
 	assert_eq(result.test_pass.status, 'pass')
@@ -188,7 +183,6 @@ func test_test_has_text_fields():
 	var result = re.export_results(_test_gut)
 	result = result.test_scripts.scripts[export_script('test_simple_2.gd')]
 	result = result.tests.test_pass
-	pretty_print(result.pending)
 	assert_has(result, 'passing')
 	assert_has(result, 'failing')
 	assert_has(result, 'pending')
@@ -206,4 +200,4 @@ func test_spot_check():
 	run_scripts(_test_gut, ['test_simple_2.gd', 'test_simple.gd', 'test_with_inner_classes.gd'])
 	var re = ResultExporter.new()
 	var result = re.export_results(_test_gut)
-	pretty_print(result)
+	_utils.pretty_print(result)
