@@ -576,10 +576,13 @@ func _setup_script(test_script):
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-func _do_yield_between(time):
-	_yield_between.timer.set_wait_time(time)
-	_yield_between.timer.start()
-	return _yield_between.timer
+func _do_yield_between(time=1):
+	_yield_frames = 1
+	return self
+	# TODO kill this when happy with it.
+	# _yield_between.timer.set_wait_time(time)
+	# _yield_between.timer.start()
+	# return _yield_between.timer
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -715,7 +718,7 @@ func _run_test(script_inst, test_name):
 	var aqf_count = _autofree.get_queue_free_count()
 	_autofree.free_all()
 	if(aqf_count > 0):
-		yield(set_yield_frames(1), 'timeout')
+		yield(_do_yield_between(), 'timeout')
 
 	if(_log_level > 0):
 		_orphan_counter.print_orphans('test', _lgr)
@@ -820,7 +823,7 @@ func _test_the_scripts(indexes=[]):
 
 		# yield between test scripts so things paint
 		if(_yield_between.should):
-			yield(set_yield_frames(1), 'timeout')
+			yield(_do_yield_between(), 'timeout')
 
 		# !!!
 		# Hack so there isn't another indent to this monster of a method.  if
@@ -851,7 +854,7 @@ func _test_the_scripts(indexes=[]):
 
 				# yield so things paint
 				if(_should_yield_now()):
-					yield(set_yield_frames(1), 'timeout')
+					yield(_do_yield_between(), 'timeout')
 
 				if(_current_test.arg_count > 1):
 					_lgr.error(str('Parameterized test ', _current_test.name,
