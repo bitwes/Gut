@@ -18,6 +18,17 @@ class Test:
 			to_return += str(pad, '[Pending]:  ', pending_texts[i], "\n")
 		return to_return
 
+	func get_status():
+		var to_return = 'no asserts'
+		if(pending_texts.size() > 0):
+			to_return = 'pending'
+		elif(fail_texts.size() > 0):
+			to_return = 'fail'
+		elif(pass_texts.size() > 0):
+			to_return = 'pass'
+
+		return to_return
+
 # ------------------------------------------------------------------------------
 # Contains all the results for a single test-script/inner class.  Persists the
 # names of the tests and results and the order in which  the tests were run.
@@ -66,12 +77,15 @@ class TestScript:
 		var t = get_test_obj(test_name)
 		t.pending_texts.append(reason)
 
+	func get_tests():
+		return _tests
+
 # ------------------------------------------------------------------------------
 # Summary Class
 #
 # This class holds the results of all the test scripts and Inner Classes that
 # were run.
-# -------------------------------------------d-----------------------------------
+# ------------------------------------------------------------------------------
 var _scripts = []
 
 func add_script(name):
