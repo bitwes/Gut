@@ -77,3 +77,13 @@ func export_results(gut):
 
 	to_return += '</testsuites>'
 	return to_return
+
+
+func write_file(gut, path):
+	var xml = export_results(gut)
+
+	var f_result = _utils.write_file(path, xml)
+	if(f_result != OK):
+		var msg = str("Error:  ", f_result, ".  Could not create export file ", path)
+		_utils.get_logger().error(msg)
+

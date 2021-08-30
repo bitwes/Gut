@@ -272,6 +272,7 @@ func write_file(path, content):
 	if(result == OK):
 		f.store_string(content)
 		f.close()
+	return result
 
 
 # ------------------------------------------------------------------------------

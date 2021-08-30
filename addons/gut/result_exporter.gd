@@ -4,6 +4,7 @@
 # of a run and exporting it in a specific format.  This can also serve as a
 # unofficial GUT export format.
 # ------------------------------------------------------------------------------
+var _utils = load('res://addons/gut/utils.gd').get_instance()
 
 func _export_tests(summary_script):
 	var to_return = {}
@@ -57,3 +58,14 @@ func export_results(gut):
 		}
 	}
 	return result
+
+
+func write_file(gut, path):
+	var dict = export_results(gut)
+	var json = JSON.print(dict, ' ')
+
+	var f_result = _utils.write_file(path, json)
+	if(f_result != OK):
+		var msg = str("Error:  ", f_result, ".  Could not create export file ", path)
+		_utils.get_logger().error(msg)
+

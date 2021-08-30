@@ -186,7 +186,6 @@ func test_test_has_text_fields():
 	run_scripts(_test_gut, 'test_simple_2.gd')
 	var re = ResultExporter.new()
 	var result = re.export_results(_test_gut)
-	pretty_print(result)
 	result = result.test_scripts.scripts[export_script('test_simple_2.gd')]
 	result = result.tests.test_pass
 	pretty_print(result.pending)
@@ -195,6 +194,13 @@ func test_test_has_text_fields():
 	assert_has(result, 'pending')
 
 
+func test_write_file_creates_file():
+	run_scripts(_test_gut, 'test_simple_2.gd')
+	var fname = "user://test_result_exporter.json"
+	var re = ResultExporter.new()
+	var result = re.write_file(_test_gut, fname)
+	assert_file_not_empty(fname)
+	gut.file_delete(fname)
 
 func test_spot_check():
 	run_scripts(_test_gut, ['test_simple_2.gd', 'test_simple.gd', 'test_with_inner_classes.gd'])

@@ -83,3 +83,10 @@ func test_spot_check():
 	assert_is_valid_xml(result)
 	print(result)
 
+func test_write_file_creates_file():
+	run_scripts(_test_gut, 'test_simple_2.gd')
+	var fname = "user://test_junit_exporter.xml"
+	var re = JunitExporter.new()
+	var result = re.write_file(_test_gut, fname)
+	assert_file_not_empty(fname)
+	gut.file_delete(fname)
