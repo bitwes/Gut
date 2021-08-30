@@ -78,12 +78,14 @@ var DiffTool = load('res://addons/gut/diff_tool.gd')
 var Doubler = load('res://addons/gut/doubler.gd')
 var Gut = load('res://addons/gut/gut.gd')
 var HookScript = load('res://addons/gut/hook_script.gd')
+var JunitXmlExport = load('res://addons/gut/junit_xml_export.gd')
 var MethodMaker = load('res://addons/gut/method_maker.gd')
 var OneToMany = load('res://addons/gut/one_to_many.gd')
 var OrphanCounter = load('res://addons/gut/orphan_counter.gd')
 var ParameterFactory = load('res://addons/gut/parameter_factory.gd')
 var ParameterHandler = load('res://addons/gut/parameter_handler.gd')
 var Printers = load('res://addons/gut/printers.gd')
+var ResultExporter = load('res://addons/gut/result_exporter.gd')
 var Spy = load('res://addons/gut/spy.gd')
 var Strutils = load('res://addons/gut/strutils.gd')
 var Stubber = load('res://addons/gut/stubber.gd')
@@ -270,6 +272,7 @@ func write_file(path, content):
 	if(result == OK):
 		f.store_string(content)
 		f.close()
+	return result
 
 
 # ------------------------------------------------------------------------------
@@ -345,3 +348,7 @@ func search_array(ar, prop_method, value):
 
 func are_datatypes_same(got, expected):
 	return !(typeof(got) != typeof(expected) and got != null and expected != null)
+
+
+func pretty_print(dict):
+	print(str(JSON.print(dict, ' ')))

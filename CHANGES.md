@@ -5,7 +5,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 
 # NEXT RELEASE (changes to master since last release)
-
+## Features
+* __Issue 207__ Added ability to export test results in the JUnit XML format.
+  *  Added "Junit Xml File" setting to the Gut control to specify the file.  "Junit Xml Timestamp" will include an epoch timestamp in the filename.
+  *  `-gjunit_xml_file` and `-gjunit_xml_timestamp` are supported on the command line.
+  *   `junit_xml_file` and `junit_xml_timestamp` are supported in the `.gutconfig.json` file.
 ## Bug Fixes
 * __Issue 268__ Add message when `assert_signal_emitted_with_parameters` is passed bad parameters.
 * __Issue 258__ `yield_to` now supports signals with up to 9 parameters.  This is the same limit  supported by `watch_signals`.

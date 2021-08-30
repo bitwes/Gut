@@ -49,6 +49,8 @@ var _double_strategy = 1  setget set_double_strategy, get_double_strategy
 var _pre_run_script = '' setget set_pre_run_script, get_pre_run_script
 var _post_run_script = '' setget set_post_run_script, get_post_run_script
 var _color_output = false setget set_color_output, get_color_output
+var _junit_xml_file = '' setget set_junit_xml_file, get_junit_xml_file
+var _junit_xml_timestamp = false setget set_junit_xml_timestamp, get_junit_xml_timestamp
 # -- End Settings --
 
 
@@ -494,13 +496,37 @@ func _end_run():
 	_is_running = false
 	update()
 	_run_hook_script(_post_run_script_instance)
+	_export_results()
 	emit_signal(SIGNAL_TESTS_FINISHED)
-	
+
 	if _utils.should_display_latest_version:
 		p("")
 		p(str("GUT version ",_utils.latest_version," is now available."))
 
 	_gui.set_title("Finished.")
+
+
+# ------------------------------------------------------------------------------
+# Add additional export types here.
+# ------------------------------------------------------------------------------
+func _export_results():
+	if(_junit_xml_file != ''):
+		_export_junit_xml()
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func _export_junit_xml():
+	var exporter = _utils.JunitExporter.new()
+	var output_file = _junit_xml_file
+
+	if(_junit_xml_timestamp):
+		var ext = "." + output_file.get_extension()
+		output_file = output_file.replace(ext, str("_", OS.get_unix_time(), ext))
+
+	var f_result = exporter.write_file(self, output_file)
+	if(f_result == OK):
+		p(str("Results saved to ", output_file))
+
 
 
 # ------------------------------------------------------------------------------
@@ -1576,3 +1602,25 @@ func show_orphans(should):
 # ------------------------------------------------------------------------------
 func get_autofree():
 	return _autofree
+
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_junit_xml_file():
+	return _junit_xml_file
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func set_junit_xml_file(junit_xml_file):
+	_junit_xml_file = junit_xml_file
+
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_junit_xml_timestamp():
+	return _junit_xml_timestamp
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func set_junit_xml_timestamp(junit_xml_timestamp):
+	_junit_xml_timestamp = junit_xml_timestamp

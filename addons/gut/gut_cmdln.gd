@@ -135,6 +135,8 @@ var options = {
 	ignore_pause = false,
 	include_subdirs = false,
 	inner_class = '',
+	junit_xml_file = '',
+	junit_xml_timestamp = false,
 	log_level = 1,
 	opacity = 100,
 	post_run_script = '',
@@ -195,6 +197,9 @@ func setup_options():
 	opts.add('-gfont_size', options.font_size, 'Font size, default "[default]"')
 	opts.add('-gbackground_color', options.background_color, 'Background color as an html color, default "[default]"')
 	opts.add('-gfont_color',options.font_color, 'Font color as an html color, default "[default]"')
+
+	opts.add('-gjunit_xml_file', options.junit_xml_file, 'Export results of run to this file in the Junit XML format.')
+	opts.add('-gjunit_xml_timestamp', options.junit_xml_timestamp, 'Include a timestamp in the -gjunit_xml_file, default [default]')
 	return opts
 
 
@@ -226,6 +231,9 @@ func extract_command_line_options(from, to):
 	to.font_name = from.get_value('-gfont_name')
 	to.background_color = from.get_value('-gbackground_color')
 	to.font_color = from.get_value('-gfont_color')
+
+	to.junit_xml_file = from.get_value('-gjunit_xml_file')
+	to.junit_xml_timestamp = from.get_value('-gjunit_xml_timestamp')
 
 
 func load_options_from_config_file(file_path, into):
@@ -299,6 +307,8 @@ func apply_options(opts):
 	_tester.set_post_run_script(opts.post_run_script)
 	_tester.set_color_output(!opts.disable_colors)
 	_tester.show_orphans(!opts.hide_orphans)
+	_tester.set_junit_xml_file(opts.junit_xml_file)
+	_tester.set_junit_xml_timestamp(opts.junit_xml_timestamp)
 
 	_tester.get_gui().set_font_size(opts.font_size)
 	_tester.get_gui().set_font(opts.font_name)

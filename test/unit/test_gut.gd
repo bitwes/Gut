@@ -140,6 +140,12 @@ func test_get_set_color_output():
 
 func test_get_set_parameter_handler():
 	assert_accessors(gr.test_gut, 'parameter_handler', null, _utils.ParameterHandler.new())
+
+func test_get_set_junit_xml_file():
+	assert_accessors(gr.test_gut, 'junit_xml_file', '', 'user://xml_file.xml')
+
+func test_get_set_junit_xml_timestamp():
+	assert_accessors(gr.test_gut, 'junit_xml_timestamp', false, true)
 # ------------------------------
 # Doubler
 # ------------------------------
