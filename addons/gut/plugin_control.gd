@@ -104,6 +104,10 @@ export(int, 'FULL', 'PARTIAL') var _double_strategy = 1
 export(String, FILE) var _pre_run_script = ''
 # Path and filename to the script to run after all tests are run.
 export(String, FILE) var _post_run_script = ''
+# Path to the file that gut will export results to in the junit xml format
+export(String, FILE) var _junit_xml_file = ''
+# Flag to include a timestamp in the filename of _junit_xml_file
+export(bool) var _junit_xml_timestamp = false
 # ------------------------------------------------------------------------------
 
 
@@ -193,6 +197,8 @@ func _setup_gut():
 	_gut.set_post_run_script(_post_run_script)
 	_gut.set_color_output(_color_output)
 	_gut.show_orphans(_show_orphans)
+	_gut.set_junit_xml_file(_junit_xml_file)
+	_gut.set_junit_xml_timestamp(_junit_xml_timestamp)
 
 	get_parent().add_child(_gut)
 

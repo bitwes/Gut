@@ -1,7 +1,10 @@
 # ------------------------------------------------------------------------------
 # This script is the base for custom scripts to be used in pre and post
 # run hooks.
+#
+# To use, inherit from this script and then implement the run method.
 # ------------------------------------------------------------------------------
+var JunitXmlExport = load('res://addons/gut/junit_xml_export.gd')
 
 # This is the instance of GUT that is running the tests.  You can get
 # information about the run from this object.  This is set by GUT when the
@@ -12,6 +15,7 @@ var gut  = null
 var _exit_code = null
 
 var _should_abort =  false
+
 # Virtual method that will be called by GUT after instantiating
 # this script.
 func run():

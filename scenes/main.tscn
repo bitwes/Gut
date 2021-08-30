@@ -70,6 +70,8 @@ _directory6 = ""
 _double_strategy = 1
 _pre_run_script = ""
 _post_run_script = ""
+_junit_xml_file = ""
+_junit_xml_timestamp = false
 [connection signal="pressed" from="RunGutTestsButton" to="." method="_on_RunGutTestsButton_pressed"]
 [connection signal="pressed" from="ExportTests" to="." method="_on_ExportTests_pressed"]
 [connection signal="gut_ready" from="Gut" to="." method="_on_Gut_gut_ready"]
