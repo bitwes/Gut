@@ -283,6 +283,7 @@ func apply_options(opts):
 		_tester.add_directory(opts.dirs[i], opts.prefix, opts.suffix)
 
 	for i in range(opts.tests.size()):
+		print('Adding script: ' + str(opts.tests[i]))
 		_tester.add_script(opts.tests[i])
 
 	if(opts.selected != ''):
