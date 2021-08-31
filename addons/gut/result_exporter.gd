@@ -14,7 +14,8 @@ func _export_tests(summary_script):
 			"status":tests[key].get_status(),
 			"passing":tests[key].pass_texts,
 			"failing":tests[key].fail_texts,
-			"pending":tests[key].pending_texts
+			"pending":tests[key].pending_texts,
+			"orphans":tests[key].orphans
 		}
 
 	return to_return
@@ -53,6 +54,8 @@ func get_results_dictionary(gut):
 				"pending":totals.pending,
 				"failures":totals.failing,
 				"tests":totals.tests,
+				"time":gut.get_gui().elapsed_time_as_str().replace('s', ''),
+				"orphans":gut.get_orphan_counter().get_counter('total')
 			},
 			"scripts":scripts
 		}

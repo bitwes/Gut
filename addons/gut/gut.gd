@@ -106,6 +106,7 @@ var _was_yield_method_called = false
 # used when yielding to gut instead of some other
 # signal.  Start with set_yield_time()
 var _yield_timer = Timer.new()
+var _yield_frames = 0
 
 var _unit_test_name = ''
 var _new_summary = null
@@ -142,6 +143,8 @@ const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yield_before_teardown'
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 var  _should_print_versions = true # used to cut down on output in tests.
+
+
 func _init():
 	_before_all_test_obj.name = 'before_all'
 	_after_all_test_obj.name = 'after_all'
@@ -167,6 +170,14 @@ func _init():
 	_test_collector.set_logger(_lgr)
 
 	_gui = load('res://addons/gut/GutScene.tscn').instance()
+
+
+func _process(delta):
+	if(_yield_frames > 0):
+		_yield_frames -= 1
+
+		if(_yield_frames <= 0):
+			emit_signal('timeout')
 
 # ------------------------------------------------------------------------------
 # Initialize controls
@@ -323,7 +334,7 @@ func _yielding_callback(from_obj=false,
 		_yielding_to.signal_name = ''
 
 	if(from_obj):
-		# we must yiled for a little longer after the signal is emitted so that
+		# we must yield for a little longer after the signal is emitted so that
 		# the signal can propagate to other objects.  This was discovered trying
 		# to assert that obj/signal_name was emitted.  Without this extra delay
 		# the yield returns and processing finishes before the rest of the
@@ -591,10 +602,9 @@ func _setup_script(test_script):
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-func _do_yield_between(time):
-	_yield_between.timer.set_wait_time(time)
-	_yield_between.timer.start()
-	return _yield_between.timer
+func _do_yield_between(frames=2):
+	_yield_frames = frames
+	return self
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -700,7 +710,7 @@ func _run_test(script_inst, test_name):
 
 	# When the script yields it will return a GDScriptFunctionState object
 	script_result = script_inst.call(test_name)
-	_new_summary.add_test(test_name)
+	var test_summary = _new_summary.add_test(test_name)
 
 	# Cannot detect future yields since we never tell the method to resume.  If
 	# there was some way to tell the method to resume we could use what comes
@@ -730,8 +740,9 @@ func _run_test(script_inst, test_name):
 	var aqf_count = _autofree.get_queue_free_count()
 	_autofree.free_all()
 	if(aqf_count > 0):
-		yield(_do_yield_between(0.1), 'timeout')
+		yield(_do_yield_between(), 'timeout')
 
+	test_summary.orphans = _orphan_counter.get_counter('test')
 	if(_log_level > 0):
 		_orphan_counter.print_orphans('test', _lgr)
 
@@ -835,7 +846,7 @@ func _test_the_scripts(indexes=[]):
 
 		# yield between test scripts so things paint
 		if(_yield_between.should):
-			yield(_do_yield_between(0.01), 'timeout')
+			yield(_do_yield_between(), 'timeout')
 
 		# !!!
 		# Hack so there isn't another indent to this monster of a method.  if
@@ -866,7 +877,7 @@ func _test_the_scripts(indexes=[]):
 
 				# yield so things paint
 				if(_should_yield_now()):
-					yield(_do_yield_between(0.001), 'timeout')
+					yield(_do_yield_between(), 'timeout')
 
 				if(_current_test.arg_count > 1):
 					_lgr.error(str('Parameterized test ', _current_test.name,
@@ -1344,6 +1355,27 @@ func set_yield_time(time, text=''):
 	return self
 
 # ------------------------------------------------------------------------------
+# Sets a counter that is decremented each time _process is called.  When the
+# counter reaches 0 the 'timeout' signal is emitted.
+#
+# This actually results in waiting N+1 frames since that appears to be what is
+# required for _process in test.gd scripts to count N frames.
+# ------------------------------------------------------------------------------
+func set_yield_frames(frames, text=''):
+	var msg = '-- Yielding (' + str(frames) + ' frames)'
+	if(text == ''):
+		msg += ' --'
+	else:
+		msg +=  ':  ' + text + ' --'
+	_lgr.log(msg, _lgr.fmts.yellow)
+
+	_was_yield_method_called = true
+	_yield_frames = max(frames + 1, 1)
+	return self
+
+# ------------------------------------------------------------------------------
+# This method handles yielding to a signal from an object or a maximum
+# number of seconds, whichever comes first.
 # ------------------------------------------------------------------------------
 func set_yield_signal_or_time(obj, signal_name, max_wait, text=''):
 	obj.connect(signal_name, self, '_yielding_callback', [true])

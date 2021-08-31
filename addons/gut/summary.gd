@@ -6,6 +6,7 @@ class Test:
 	var pass_texts = []
 	var fail_texts = []
 	var pending_texts = []
+	var orphans = 0
 
 	# NOTE:  The "failed" and "pending" text must match what is outputted by
 	# the logger in order for text highlighting to occur in summary.
@@ -98,7 +99,7 @@ func get_current_script():
 	return _scripts[_scripts.size() - 1]
 
 func add_test(test_name):
-	get_current_script().get_test_obj(test_name)
+	return get_current_script().get_test_obj(test_name)
 
 func add_pass(test_name, reason = ''):
 	get_current_script().add_pass(test_name, reason)
