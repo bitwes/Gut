@@ -602,13 +602,9 @@ func _setup_script(test_script):
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-func _do_yield_between(time=.01):
-	# _yield_frames = 1
-	# return self
-	# TODO kill this when happy with it.
-	_yield_between.timer.set_wait_time(time)
-	_yield_between.timer.start()
-	return _yield_between.timer
+func _do_yield_between(frames=2):
+	_yield_frames = frames
+	return self
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
