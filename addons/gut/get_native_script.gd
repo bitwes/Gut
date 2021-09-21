@@ -3,4 +3,4 @@
 # You can then get a reference to NativeScript for use in `is` checks by calling
 # get_it.
 func get_it():
-    return NativeScript
+	return NativeScript
