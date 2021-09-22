@@ -300,17 +300,12 @@ class TestOverridingParameters:
 
 	func test_can_override_paramters_from_test():
 		_test.double_parameter_override(DOUBLE_EXTENDS_NODE2D, 'rpc_id', 3)
-		# this is required or gut won't find the rpc_id method
 
+		# DOUBLE_STRAGEY.FULL is required or gut won't find the rpc_id method
 		var inst = _test.double(DOUBLE_EXTENDS_NODE2D, DOUBLE_STRATEGY.FULL).new()
-		# This part shouldn't be in this script b/c we shouldn't be doing
-		# anything with the stubber, but for some reason DOUBLE_STRATEGY.FULL
-		# calls super by default for these built-in methods.
-		var sp = _utils.StubParams.new(DOUBLE_EXTENDS_NODE2D, 'rpc_id')
-		sp.to_do_nothing()
-		_gut.get_stubber().add_stub(sp)
+		_test.stub(DOUBLE_EXTENDS_NODE2D, 'rpc_id').to_do_nothing()		# This part shouldn't be in this script b/c we shouldn't be doing
 
-		add_child_autofree(inst)
+		autofree(inst)
 		inst.rpc_id(1, 'b', 'c')
 		pass_test('we got here without error')
 
@@ -323,6 +318,30 @@ class TestOverridingParameters:
 		autofree(inst)
 		inst.set_value(1)
 		pass_test('we got here without error')
+
+	func test_works_with_loaded_class():
+		_test.double_parameter_override(DoubleExtendsNode2D, 'rpc_id', 3)
+
+		# DOUBLE_STRAGEY.FULL is required or gut won't find the rpc_id method
+		var inst = _test.double(DoubleExtendsNode2D, DOUBLE_STRATEGY.FULL).new()
+		_test.stub(DoubleExtendsNode2D, 'rpc_id').to_do_nothing()		# This part shouldn't be in this script b/c we shouldn't be doing
+
+		autofree(inst)
+		inst.rpc_id(1, 'b', 'c')
+		pass_test('we got here without error')
+
+	func test_works_with_path_and_inner_path():
+		_test.double_parameter_override(INNER_CLASSES_PATH, 'InnerExtendsNode2D', 'rpc_id', 3)
+		_test.stub(InnerClasses, 'rpc').to_do_nothing()
+		var inst = _test.double(INNER_CLASSES_PATH, 'InnerExtendsNode2D', DOUBLE_STRATEGY.FULL).new()
+
+		autofree(inst)
+		inst.rpc_id(1, 'b', 'c')
+		pass_test('we got here without error')
+
+
+
+
 
 
 

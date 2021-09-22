@@ -1355,10 +1355,39 @@ func ignore_method_when_doubling(thing, method_name):
 
 	gut.get_doubler().add_ignored_method(path, method_name)
 
+# ------------------------------------------------------------------------------
+# Overrides the signature of the method when doubles are created.  This must be
+# called before the double is created.  These overrides are automatically
+# cleared between scripts.
+#
+# "thing" can be a path or a loaded script.  If you need to specify an inner
+# class subpath it goes in 2nd paramter.
+# The last two paramters are the method name to alter and the number of
+# paramters to change it to.
+#
+# Examples
+#	(object/path to double, method name, num params)
+#	(object/path to double, sub-path, method name, num params)
+# ------------------------------------------------------------------------------
+func double_parameter_override(thing, p2, p3, p4=null):
+	var double_info = null
+	var method_name = p2
+	var num_parameters = p3
 
-func double_parameter_override(thing, method_name, num_parameters):
-	gut.get_doubler().get_method_maker().add_parameter_override(thing, method_name, num_parameters)
+	if(p4 != null):
+		double_info = DoubleInfo.new(thing, p2)
+		method_name = p3
+		num_parameters = p4
+	else:
+		double_info = DoubleInfo.new(thing)
 
+	gut.get_doubler().get_method_maker().add_parameter_override(
+		double_info.path, method_name, num_parameters)
+
+# ------------------------------------------------------------------------------
+# Clear any paramter overrides that have been defined.  Overrides are cleared
+# automatically after each script has run, but maybe you wanna do it sooner.
+# ------------------------------------------------------------------------------
 func clear_double_paramter_overrides():
 	gut.get_doubler().get_method_maker().clear_overrides()
 
