@@ -54,3 +54,20 @@ class TestBoth:
 		inst.set_position(Vector2(20, 20))
 		assert_true(_spy.was_called(inst, 'set_position'))
 		assert_true(_spy.was_called(inst, 'set_position', [Vector2(20, 20)]))
+
+	func test_can_spy_on_overidden_parameters():
+		# this is required or gut won't find the rpc_id method
+		_doubler.set_strategy(DOUBLE_STRATEGY.FULL)
+		var path = 'res://test/resources/doubler_test_objects/double_extends_node2d.gd'
+		_doubler.get_method_maker().add_parameter_override(
+			path, 'rpc_id', 3)
+		var inst = _doubler.double(path).new()
+		# This part shouldn't be in this script b/c we shouldn't be doing
+		# anything with the stubber, but for some reason DOUBLE_STRATEGY.FULL
+		# calls super by default for these built-in methods.
+		var sp = _utils.StubParams.new(path, 'rpc_id')
+		sp.to_do_nothing()
+		_doubler.get_stubber().add_stub(sp)
+		add_child(inst)
+		inst.rpc_id(1, 'b', 'c')
+		assert_true(_spy.was_called(inst, 'rpc_id', [1, 'b', 'c']))

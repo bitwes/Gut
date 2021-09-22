@@ -1,3 +1,49 @@
+class ParamOverride:
+
+	var _paramter_overrides = {}
+
+	func _make_override_key(path, method_name):
+		return str(path, '::', method_name)
+
+	func has(path, method_name):
+		return _paramter_overrides.has(_make_override_key(path, method_name))
+
+	func add(path, method_name, num_params):
+		_paramter_overrides[_make_override_key(path, method_name)] = num_params
+
+	func clear():
+		_paramter_overrides.clear()
+
+
+	func get_super_call(path, method):
+		var p_list = get_param_list(path, method)
+		return str('.', method, '(', p_list, ')')
+
+
+	func get_param_list(path, method):
+		var num_params = _paramter_overrides[_make_override_key(path, method)]
+
+		var text = ''
+		for i in range(num_params):
+			text += str('p_gut_param_override_', i + 1, '__')
+			if(i != num_params -1):
+				text += ', '
+
+		return text
+
+	func get_defaulted_params(path, method):
+		var num_params = _paramter_overrides[_make_override_key(path, method)]
+
+		var text = ''
+		for i in range(num_params):
+			text += str('p_gut_param_override_', i + 1, '__=null')
+			if(i != num_params -1):
+				text += ', '
+
+		return text
+
+
+# ------------------------------------------------------------------------------
 # This class will generate method declaration lines based on method meta
 # data.  It will create defaults that match the method data.
 #
@@ -19,6 +65,7 @@
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
 const PARAM_PREFIX = 'p_'
+var _p_override = ParamOverride.new()
 
 # ------------------------------------------------------
 # _supported_defaults
@@ -93,6 +140,7 @@ var _func_text = _utils.get_file_as_text('res://addons/gut/double_templates/func
 func _is_supported_default(type_flag):
 	return type_flag >= 0 and type_flag < _supported_defaults.size() and [type_flag] != null
 
+
 # Creates a list of parameters with defaults of null unless a default value is
 # found in the metadata.  If a default is found in the meta then it is used if
 # it is one we know how support.
@@ -156,6 +204,10 @@ func _get_arg_text(method_meta):
 
 	return text
 
+
+
+
+
 # ###############
 # Public
 # ###############
@@ -164,11 +216,16 @@ func _get_arg_text(method_meta):
 # types whose defaults are supported will have their values.  If a datatype
 # is not supported and the parameter has a default, a warning message will be
 # printed and the declaration will return null.
-func get_function_text(meta):
-	var method_params = _get_arg_text(meta)
+func get_function_text(meta, path=null):
+	var method_params = ''
 	var text = null
+	var param_array = get_spy_call_parameters_text(meta, path)
 
-	var param_array = get_spy_call_parameters_text(meta)
+	if(_p_override.has(path, meta.name)):
+		method_params = _p_override.get_defaulted_params(path, meta.name)
+	else:
+		method_params = _get_arg_text(meta)
+
 	if(param_array == 'null'):
 		param_array = '[]'
 
@@ -178,36 +235,67 @@ func get_function_text(meta):
 			"func_decleration":decleration,
 			"method_name":meta.name,
 			"param_array":param_array,
-			"super_call":get_super_call_text(meta)
+			"super_call":get_super_call_text(meta, path)
 		})
 	return text
 
+
 # creates a call to the function in meta in the super's class.
-func get_super_call_text(meta):
+func get_super_call_text(meta, path=null):
 	var params = ''
+	var to_return = ''
 
-	for i in range(meta.args.size()):
-		params += PARAM_PREFIX + meta.args[i].name
-		if(meta.args.size() > 1 and i != meta.args.size() -1):
-			params += ', '
-	if(meta.name == '_init'):
-		return 'null'
+	if(_p_override.has(path, meta.name)):
+		to_return = _p_override.get_super_call(path, meta.name)
 	else:
-		return str('.', meta.name, '(', params, ')')
-
-func get_spy_call_parameters_text(meta):
-	var called_with = 'null'
-	if(meta.args.size() > 0):
-		called_with = '['
 		for i in range(meta.args.size()):
-			called_with += str(PARAM_PREFIX, meta.args[i].name)
-			if(i < meta.args.size() - 1):
-				called_with += ', '
-		called_with += ']'
+			params += PARAM_PREFIX + meta.args[i].name
+			if(meta.args.size() > 1 and i != meta.args.size() -1):
+				params += ', '
+		if(meta.name == '_init'):
+			to_return =  'null'
+		else:
+			to_return =  str('.', meta.name, '(', params, ')')
+
+	return to_return
+
+
+func get_spy_call_parameters_text(meta, path=null):
+	var called_with = 'null'
+
+	if(_p_override.has(path, meta.name)):
+		if(meta.args.size() >0):
+			called_with = str('[', _p_override.get_param_list(path, meta.name), ']')
+	else:
+		if(meta.args.size() > 0):
+			called_with = '['
+			for i in range(meta.args.size()):
+				called_with += str(PARAM_PREFIX, meta.args[i].name)
+				if(i < meta.args.size() - 1):
+					called_with += ', '
+			called_with += ']'
+
 	return called_with
+
 
 func get_logger():
 	return _lgr
 
+
 func set_logger(logger):
 	_lgr = logger
+
+
+func has_override(path, method_name):
+	return _p_override.has(path, method_name)
+
+
+func add_parameter_override(path, method_name, num_paramters):
+	_p_override.add(path, method_name, num_paramters)
+
+
+func clear_overrides():
+	_p_override.clear()
+
+
+
