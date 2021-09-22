@@ -242,7 +242,7 @@ func _init():
 	var r2 = r
 	var r3 = r
 	var r4 = r
-	#print_all_info(r)
+	print_all_info(r)
 	#print(r.get('Reference'))
 
 	#print_all_info(DoubleMeScene)

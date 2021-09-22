@@ -123,3 +123,80 @@ class TestSuperCall:
 		var meta = make_meta('dummy', params)
 		var text = _mm.get_super_call_text(meta)
 		assert_eq(text, '.dummy(p_value1, p_value2, p_value3)')
+
+
+class TestOverrideParameterList:
+	extends BaseTest
+
+	var _mm = null
+
+	func before_each():
+		_mm = MethodMaker.new()
+
+
+	func test_has_override_is_false_by_default():
+		assert_false(_mm.has_override('res://nothing.gd', 'foo'))
+
+	func test_can_add_override():
+		_mm.add_parameter_override('res://nothing.gd', 'foo', 10)
+		assert_true(_mm.has_override('res://nothing.gd', 'foo'))
+
+	func test_get_function_text_includes_override_paramters():
+		var path = 'res://nothing.gd'
+		_mm.add_parameter_override(path, 'foo', 1)
+		var meta = make_meta('foo', [])
+		var text = _mm.get_function_text(meta, path)
+		assert_string_contains(text, 'p_gut_param_override_1__')
+
+	func test_get_function_text_includes_multiple_override_paramters():
+		var path = 'res://nothing.gd'
+		_mm.add_parameter_override(path, 'foo', 5)
+		var meta = make_meta('foo', [])
+		var text = _mm.get_function_text(meta, path)
+		assert_string_contains(text, 'p_gut_param_override_1__')
+		assert_string_contains(text, 'p_gut_param_override_5__')
+
+	func test_can_clear_parameter_overrides():
+		var path = 'res://nothing.gd'
+		_mm.add_parameter_override(path, 'foo', 10)
+		_mm.clear_overrides()
+		var meta = make_meta('foo', [make_param('value1', TYPE_INT),])
+		var text = _mm.get_function_text(meta, path)
+		assert_eq(text.find('p_gut_param_'), -1, text)
+
+	func test_super_call_uses_overrides():
+		var path = 'res://nothing.gd'
+		_mm.add_parameter_override(path, 'foo', 2)
+		var meta = make_meta('foo', [make_param('value1', TYPE_INT),])
+		var text = _mm.get_super_call_text(meta, path)
+		assert_eq(text, '.foo(p_gut_param_override_1__, p_gut_param_override_2__)')
+
+	func test_spy_paramters_include_overrides():
+		var path = 'res://nothing.gd'
+		_mm.add_parameter_override(path, 'foo', 2)
+		var meta = make_meta('foo', [make_param('value1', TYPE_INT),])
+		var text = _mm.get_spy_call_parameters_text(meta, path)
+		assert_string_contains(text, 'p_gut_param_override_1__, p_gut_param_override_2__')
+
+	func test_get_function_text_includes_overrides_in_super_call():
+		var path = 'res://nothing.gd'
+		_mm.add_parameter_override(path, 'foo', 2)
+		var meta = make_meta('foo', [make_param('value1', TYPE_INT),])
+		var text = _mm.get_function_text(meta, path)
+		assert_string_contains(text, '.foo(p_gut_param_override_1__, p_gut_param_override_2__)')
+
+	func test_get_function_text_includes_overrides_in_spy_call():
+		var path = 'res://nothing.gd'
+		_mm.add_parameter_override(path, 'foo', 2)
+		var meta = make_meta('foo', [make_param('value1', TYPE_INT),])
+		var text = _mm.get_function_text(meta, path)
+		assert_string_contains(text, "__gut_spy('foo', [p_gut_param_override_1__, p_gut_param_override_2__])")
+
+	func test_all_parameters_are_defaulted_to_null():
+		var path = 'res://nothing.gd'
+		_mm.add_parameter_override(path, 'foo', 5)
+		var meta = make_meta('foo', [])
+		var text = _mm.get_function_text(meta, path)
+		assert_string_contains(text, 'p_gut_param_override_1__=null')
+		assert_string_contains(text, 'p_gut_param_override_5__=null')
+
