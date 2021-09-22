@@ -1355,6 +1355,13 @@ func ignore_method_when_doubling(thing, method_name):
 
 	gut.get_doubler().add_ignored_method(path, method_name)
 
+
+func double_parameter_override(thing, method_name, num_parameters):
+	gut.get_doubler().get_method_maker().add_parameter_override(thing, method_name, num_parameters)
+
+func clear_double_paramter_overrides():
+	gut.get_doubler().get_method_maker().clear_overrides()
+
 # ------------------------------------------------------------------------------
 # Stub something.
 #

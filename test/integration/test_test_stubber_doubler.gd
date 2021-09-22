@@ -54,7 +54,6 @@ class TestBasics:
 		doubled.is_blocking_signals()
 		gr.test.assert_called(doubled, 'is_blocking_signals')
 		assert_eq(gr.test.get_pass_count(), 1)
-		pause_before_teardown()
 
 	func test_when_strategy_is_partial_then_supers_are_NOT_spied_in_scenes():
 		var doubled = gr.test.double_scene(DOUBLE_ME_SCENE_PATH, DOUBLE_STRATEGY.PARTIAL).instance()
@@ -275,3 +274,56 @@ class TestPartialDoubleMethod:
 		var d = _test.partial_double(inst)
 		assert_null(d, 'double is null')
 		assert_eq(_test.get_logger().get_errors().size(), 1, 'generates error')
+
+
+class TestOverridingParameters:
+	extends "res://test/gut_test.gd"
+
+	var _gut = null
+	var _test = null
+
+	func before_all():
+		_gut = Gut.new()
+		_test = Test.new()
+		_test.gut = _gut
+
+		add_child(_gut)
+		add_child(_test)
+
+	func after_each():
+		_gut.get_stubber().clear()
+		_gut.get_doubler().clear_output_directory()
+
+	func after_all():
+		_gut.free()
+		_test.free()
+
+	func test_can_override_paramters_from_test():
+		_test.double_parameter_override(DOUBLE_EXTENDS_NODE2D, 'rpc_id', 3)
+		# this is required or gut won't find the rpc_id method
+
+		var inst = _test.double(DOUBLE_EXTENDS_NODE2D, DOUBLE_STRATEGY.FULL).new()
+		# This part shouldn't be in this script b/c we shouldn't be doing
+		# anything with the stubber, but for some reason DOUBLE_STRATEGY.FULL
+		# calls super by default for these built-in methods.
+		var sp = _utils.StubParams.new(DOUBLE_EXTENDS_NODE2D, 'rpc_id')
+		sp.to_do_nothing()
+		_gut.get_stubber().add_stub(sp)
+
+		add_child_autofree(inst)
+		inst.rpc_id(1, 'b', 'c')
+		pass_test('we got here without error')
+
+	func test_can_clear_paramter_overrides():
+		_test.double_parameter_override(DOUBLE_EXTENDS_NODE2D, 'set_value', 5)
+		_test.clear_double_paramter_overrides()
+
+		_test.stub(DOUBLE_EXTENDS_NODE2D, 'set_value').to_call_super()
+		var inst = _test.double(DOUBLE_EXTENDS_NODE2D, DOUBLE_STRATEGY.FULL).new()
+		autofree(inst)
+		inst.set_value(1)
+		pass_test('we got here without error')
+
+
+
+

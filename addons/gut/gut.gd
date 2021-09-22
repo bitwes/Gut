@@ -830,6 +830,7 @@ func _test_the_scripts(indexes=[]):
 
 	# loop through scripts
 	for test_indexes in range(indexes_to_run.size()):
+		_doubler.get_method_maker().clear_overrides()
 		var the_script = _test_collector.scripts[indexes_to_run[test_indexes]]
 		_orphan_counter.add_counter('script')
 

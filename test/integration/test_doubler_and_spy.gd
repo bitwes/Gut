@@ -62,6 +62,12 @@ class TestBoth:
 		_doubler.get_method_maker().add_parameter_override(
 			path, 'rpc_id', 3)
 		var inst = _doubler.double(path).new()
+		# This part shouldn't be in this script b/c we shouldn't be doing
+		# anything with the stubber, but for some reason DOUBLE_STRATEGY.FULL
+		# calls super by default for these built-in methods.
+		var sp = _utils.StubParams.new(path, 'rpc_id')
+		sp.to_do_nothing()
+		_doubler.get_stubber().add_stub(sp)
 		add_child(inst)
 		inst.rpc_id(1, 'b', 'c')
-		assert_true(_spy.was_called(inst, 'rpc_id', [1, 'b', 'c']), 'should not match')
+		assert_true(_spy.was_called(inst, 'rpc_id', [1, 'b', 'c']))
