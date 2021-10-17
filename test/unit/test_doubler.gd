@@ -17,6 +17,17 @@ class BaseTest:
 	func _get_temp_file_as_text(filename):
 		return gut.get_file_as_text(TEMP_FILES.plus_file(filename))
 
+	func _pdflt(method, idx):
+		return str('__gut_default_val("', method, '",', idx, ')')
+
+	func _sig_gen(method, no_defaults):
+		var to_return = ''
+		for i in range(no_defaults.size()):
+			to_return += str(no_defaults[i], '=', _pdflt(method, i), ', ')
+		return to_return
+
+
+
 class TestTheBasics:
 	extends BaseTest
 
@@ -74,12 +85,11 @@ class TestTheBasics:
 		assert_true(text.match('*param(p_arg0*:*'), text)
 
 	# Don't see a way to see which have defaults and which do not, so we default
-	# everything.
+	# everything to check with stubber for value
 	func test_all_parameters_are_defaulted_to_null():
 		var inst = gr.doubler.double(DOUBLE_ME_PATH).new()
 		var text = inst.get_script().get_source_code()
-		print(text)
-		assert_true(text.match('*one_default(p_arg0=null, p_arg1=null)*'))
+		assert_true(text.match('*has_two_params_one_default(p_arg0=__gut_default_val("has_two_params_one_default",0), p_arg1=__gut_default_val("has_two_params_one_default",1))*'))
 
 	func test_doubled_thing_includes_stubber_metadata():
 		var doubled = gr.doubler.double(DOUBLE_ME_PATH).new()
@@ -294,18 +304,23 @@ class TestDefaultParameters:
 	func test_parameters_are_doubled_for_connect():
 		var inst = doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
 		var text = inst.get_script().get_source_code()
-		var sig = 'func connect(p_signal=null, p_target=null, p_method=null, p_binds=[], p_flags=0):'
+		var no_defaults = _sig_gen('connect', ['p_signal', 'p_target', 'p_method'])
+		var sig = str('func connect(', no_defaults, 'p_binds=[], p_flags=0):')
 		assert_string_contains(text, sig)
 
 	func test_parameters_are_doubled_for_draw_char():
 		var inst = doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
 		var text = inst.get_script().get_source_code()#_get_temp_file_as_text('double_me_scene.gd')
-		var sig = 'func draw_char(p_font=null, p_position=null, p_char=null, p_next=null, p_modulate=Color(1,1,1,1)):'
+		var no_defaults = _sig_gen('draw_char', ['p_font', 'p_position', 'p_char', 'p_next'])
+		var sig = 'func draw_char(' + no_defaults + 'p_modulate=Color(1,1,1,1)):'
 		assert_string_contains(text, sig)
 
 	func test_parameters_are_doubled_for_draw_multimesh():
 		var inst = doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG).new()
-		var sig = 'func draw_multimesh(p_multimesh=null, p_texture=null, p_normal_map=null):'
+		var no_defaults = _sig_gen('draw_multimesh', ['p_multimesh', 'p_texture'])
+		var sig = str('func draw_multimesh(',
+			no_defaults,
+			'p_normal_map=null):')
 		assert_string_contains(inst.get_script().get_source_code(), sig)
 
 class TestDoubleInnerClasses:

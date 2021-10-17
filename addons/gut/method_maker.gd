@@ -157,8 +157,9 @@ func _get_arg_text(method_meta):
 	# a default in the meta data.  default_args is an array of default values
 	# for the last n parameters where n is the size of default_args so we only
 	# add nulls for everything up to the first parameter with a default.
-	for _i in range(args.size() - method_meta.default_args.size()):
-		defaults.append('null')
+	for i in range(args.size() - method_meta.default_args.size()):
+		var dft_text = str('__gut_default_val("', method_meta.name, '",', i, ')')
+		defaults.append(dft_text)
 
 	# Add meta-data defaults.
 	for i in range(method_meta.default_args.size()):
@@ -252,6 +253,7 @@ func get_super_call_text(meta, path=null):
 			params += PARAM_PREFIX + meta.args[i].name
 			if(meta.args.size() > 1 and i != meta.args.size() -1):
 				params += ', '
+
 		if(meta.name == '_init'):
 			to_return =  'null'
 		else:

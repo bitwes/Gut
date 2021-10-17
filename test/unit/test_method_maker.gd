@@ -46,11 +46,11 @@ class TestGetDecleration:
 		var txt = _mm.get_function_text(meta)
 		assert_eq(txt, null)
 
-	func test_parameters_get_prefix_and_default_null():
+	func test_parameters_get_prefix_and_default_to_call_stubber():
 		var params = [make_param('value1', TYPE_INT), make_param('value2', TYPE_INT)]
 		var meta = make_meta('dummy', params)
 		var txt = _mm.get_function_text(meta)
-		assert_string_contains(txt, 'func dummy(p_value1=null, p_value2=null):')
+		assert_string_contains(txt, 'func dummy(p_value1=__gut_default_val("dummy",0), p_value2=__gut_default_val("dummy",1)):')
 
 	func test_default_only_param():
 		var params = [make_param('value1', TYPE_INT)]
@@ -64,7 +64,7 @@ class TestGetDecleration:
 		var meta = make_meta('dummy', params)
 		meta.default_args.append(1)
 		var txt = _mm.get_function_text(meta)
-		assert_string_contains(txt, 'func dummy(p_value1=null, p_value2=1):')
+		assert_string_contains(txt, 'func dummy(p_value1=__gut_default_val("dummy",0), p_value2=1):')
 
 	func test_vector2_default():
 		var params = [make_param('value1', TYPE_VECTOR2)]

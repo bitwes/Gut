@@ -141,5 +141,3 @@ func  test_you_cannot_stub_init_to_do_nothing():
 	gr.stubber.add_stub(params)
 	assert_false(gr.stubber.should_call_super(inst, '_init'), 'stub not created')
 	assert_eq(gr.stubber.get_logger().get_errors().size(), err_count + 1, 'error generated')
-
-
