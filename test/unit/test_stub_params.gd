@@ -56,6 +56,13 @@ func test_to_call_super_returns_self():
 	var val = gr.stub_params.to_call_super()
 	assert_eq(val, gr.stub_params)
 
+func test_to_do_nothing_returns_self():
+	var sp = StubParamsClass.new('thing', 'method')
+	assert_eq(sp.to_do_nothing(), sp)
+
+# --------------
+# Paramter Count and Defaults
+# --------------
 func test_param_count_returns_null():
 	var val = gr.stub_params.param_count(3)
 	assert_null(val);

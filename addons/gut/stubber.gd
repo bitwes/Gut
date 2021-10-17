@@ -142,6 +142,25 @@ func should_call_super(obj, method, parameters=null):
 		_lgr.info('Unstubbed call to ' + method + '::' + _strutils.type2str(obj))
 		return false
 
+func get_parameter_count(obj, method):
+	var to_return = null
+	var stub_info = _find_stub(obj, method)
+	if(stub_info != null and stub_info.has_param_override()):
+		to_return = stub_info.parameter_count
+
+	return to_return
+
+func get_default_value(obj, method, p_index):
+	var to_return = null
+	var stub_info = _find_stub(obj, method)
+	if(stub_info != null and
+		stub_info.parameter_defaults != null and
+		stub_info.parameter_defaults.size() > p_index):
+
+		to_return = stub_info.parameter_defaults[p_index]
+
+	return to_return
+
 
 func clear():
 	returns.clear()
