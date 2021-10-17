@@ -78,6 +78,7 @@ class TestTheBasics:
 	func test_all_parameters_are_defaulted_to_null():
 		var inst = gr.doubler.double(DOUBLE_ME_PATH).new()
 		var text = inst.get_script().get_source_code()
+		print(text)
 		assert_true(text.match('*one_default(p_arg0=null, p_arg1=null)*'))
 
 	func test_doubled_thing_includes_stubber_metadata():

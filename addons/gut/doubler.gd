@@ -201,8 +201,8 @@ class FileOrString:
 
 # ------------------------------------------------------------------------------
 # A stroke of genius if I do say so.  This allows for doubling a scene without
-# having  to write any files.  By overloading instance we can make whatever
-# we want.
+# having  to write any files.  By overloading the "instance" method  we can
+# make whatever we want.
 # ------------------------------------------------------------------------------
 class PackedSceneDouble:
 	extends PackedScene

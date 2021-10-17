@@ -55,3 +55,36 @@ func test_can_set_to_call_super():
 func test_to_call_super_returns_self():
 	var val = gr.stub_params.to_call_super()
 	assert_eq(val, gr.stub_params)
+
+func test_param_count_returns_null():
+	var val = gr.stub_params.param_count(3)
+	assert_null(val);
+
+func test_param_count_sets_param_count():
+	var val = gr.stub_params.param_count(3)
+	assert_eq(gr.stub_params.parameter_count, 3)
+
+func test_param_count_default_value():
+	assert_eq(gr.stub_params.parameter_count, -1)
+
+func test_param_defaults_returns_null():
+	var val = gr.stub_params.param_defaults([])
+	assert_null(val)
+
+func test_param_defaults_sets_parameter_count():
+	gr.stub_params.param_defaults([1, 2, 3])
+	assert_eq(gr.stub_params.parameter_count, 3)
+
+func test_parameter_defaults_is_null_by_default():
+	assert_null(gr.stub_params.parameter_defaults)
+
+func test_param_defaults_set_parameter_defaults():
+	gr.stub_params.param_defaults([1, 2, 3])
+	assert_eq(gr.stub_params.parameter_defaults, [1, 2, 3])
+
+func test_has_param_override_is_false_by_default():
+	assert_false(gr.stub_params.has_param_override())
+
+func test_when_param_count_set_has_param_override_is_true():
+	gr.stub_params.param_count(3)
+	assert_true(gr.stub_params.has_param_override())
