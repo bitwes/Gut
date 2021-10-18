@@ -200,6 +200,18 @@ func test_get_parameter_count_returns_null_when_param_count_not_set():
 	gr.stubber.add_stub(sp)
 	assert_null(gr.stubber.get_parameter_count('thing', 'method'))
 
+func test_get_parameter_count_finds_count_when_another_stub_exists():
+	var sp = StubParamsClass.new('thing', 'method')
+	sp.param_count(3)
+	gr.stubber.add_stub(sp)
+
+	var second_sp = StubParamsClass.new('thing', 'method')
+	second_sp.to_call_super()
+	gr.stubber.add_stub(second_sp)
+
+	assert_eq(gr.stubber.get_parameter_count('thing', 'method'), 3)
+
+
 
 # ----------------
 # Default Parameter Values
@@ -224,3 +236,14 @@ func test_get_default_value_returns_null_when_index_outside_of_range():
 	sp.param_defaults([1, 2, 3])
 	gr.stubber.add_stub(sp)
 	assert_eq(gr.stubber.get_default_value('thing', 'method', 99), null)
+
+func test_get_default_values_finds_values_when_another_stub_exists():
+	var sp = StubParamsClass.new('thing', 'method')
+	sp.param_defaults([1, 2, 3])
+	gr.stubber.add_stub(sp)
+
+	var second_sp = StubParamsClass.new('thing', 'method')
+	second_sp.to_call_super()
+	gr.stubber.add_stub(second_sp)
+
+	assert_eq(gr.stubber.get_default_value('thing', 'method', 1), 2)

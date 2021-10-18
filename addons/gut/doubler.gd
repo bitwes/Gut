@@ -199,6 +199,7 @@ class FileOrString:
 		else:
 			return load(_path)
 
+
 # ------------------------------------------------------------------------------
 # A stroke of genius if I do say so.  This allows for doubling a scene without
 # having  to write any files.  By overloading the "instance" method  we can
@@ -220,7 +221,6 @@ class PackedSceneDouble:
 
 	func load_scene(path):
 		_scene = load(path)
-
 
 
 
@@ -387,14 +387,12 @@ func _get_inst_id_ref_str(inst):
 	return ref_str
 
 func _get_func_text(method_hash, path):
-	print(_stubber.to_s())
-	print('_get_func_text: ', path)
 	var override_count = null;
 	if(_stubber != null):
 		override_count = _stubber.get_parameter_count(path, method_hash.name)
-		print('_get_func_text: ', method_hash.name, ':', override_count)
+
 	var text = _method_maker.get_function_text(method_hash, path, override_count) + "\n"
-	print(text)
+
 	return text
 
 # returns the path to write the double file to
@@ -563,7 +561,6 @@ func get_make_files():
 func set_make_files(make_files):
 	_make_files = make_files
 	set_output_dir(_output_dir)
-
 
 func get_method_maker():
 	return _method_maker
