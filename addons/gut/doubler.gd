@@ -387,7 +387,15 @@ func _get_inst_id_ref_str(inst):
 	return ref_str
 
 func _get_func_text(method_hash, path):
-	return _method_maker.get_function_text(method_hash, path) + "\n"
+	print(_stubber.to_s())
+	print('_get_func_text: ', path)
+	var override_count = null;
+	if(_stubber != null):
+		override_count = _stubber.get_parameter_count(path, method_hash.name)
+		print('_get_func_text: ', method_hash.name, ':', override_count)
+	var text = _method_maker.get_function_text(method_hash, path, override_count) + "\n"
+	print(text)
+	return text
 
 # returns the path to write the double file to
 func _get_temp_path(object_info):

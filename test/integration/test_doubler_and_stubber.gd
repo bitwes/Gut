@@ -150,7 +150,8 @@ func test_can_stub_default_values():
 	gr.doubler.set_stubber(gr.stubber)
 
 	var TestClass = load(DEFAULT_PARAMS_PATH)
-	stub(TestClass, 'return_passed').to_call_super().param_defaults(['1', '2'])
+	var s = stub(TestClass, 'return_passed').to_call_super()
+	s.param_defaults(['1', '2'])
 	# stub(TestClass, 'return_passed').to_call_super()
 	# var params = _utils.StubParams.new(TestClass, 'return_passed')
 	# params.param_defaults(['1', '2'])
@@ -158,5 +159,21 @@ func test_can_stub_default_values():
 
 	var inst =  double(DEFAULT_PARAMS_PATH).new()
 	var ret_val = inst.return_passed()
+	assert_eq(ret_val, '12')
+	print(gut.get_stubber().to_s())
+
+
+func test_can_add_parameters():
+	var TestClass = load(DEFAULT_PARAMS_PATH)
+	var s = stub(TestClass, 'return_passed')
+	s.param_count(5)
+	# s.to_return('poop').when_passed(1, 2, 3, 4, 5)
+	# stub(TestClass, 'return_passed').to_call_super()
+	# var params = _utils.StubParams.new(TestClass, 'return_passed')
+	# params.param_defaults(['1', '2'])
+	# gr.stubber.add_stub(params)
+
+	var inst =  double(DEFAULT_PARAMS_PATH).new()
+	var ret_val = inst.return_passed(1, 2, 3, 4, 5)
 	assert_eq(ret_val, '12')
 	print(gut.get_stubber().to_s())

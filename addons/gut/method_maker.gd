@@ -147,11 +147,21 @@ func _is_supported_default(type_flag):
 #
 # If a default is found that we don't know how to handle then this method will
 # return null.
-func _get_arg_text(method_meta):
+func _get_arg_text(method_meta, override_size):
 	var text = ''
 	var args = method_meta.args
 	var defaults = []
 	var has_unsupported_defaults = false
+
+	if(override_size != null):
+		for i in range(override_size):
+			var dft_text = str('__gut_default_val("', method_meta.name, '",', i, ')')
+			text += str(PARAM_PREFIX, 'arg', i, '=', dft_text)
+			if(i != override_size -1):
+				text += ', '
+
+		return text;
+
 
 	# fill up the defaults with null defaults for everything that doesn't have
 	# a default in the meta data.  default_args is an array of default values
@@ -160,6 +170,7 @@ func _get_arg_text(method_meta):
 	for i in range(args.size() - method_meta.default_args.size()):
 		var dft_text = str('__gut_default_val("', method_meta.name, '",', i, ')')
 		defaults.append(dft_text)
+
 
 	# Add meta-data defaults.
 	for i in range(method_meta.default_args.size()):
@@ -217,7 +228,7 @@ func _get_arg_text(method_meta):
 # types whose defaults are supported will have their values.  If a datatype
 # is not supported and the parameter has a default, a warning message will be
 # printed and the declaration will return null.
-func get_function_text(meta, path=null):
+func get_function_text(meta, path=null, param_override=null):
 	var method_params = ''
 	var text = null
 	var param_array = get_spy_call_parameters_text(meta, path)
@@ -225,7 +236,7 @@ func get_function_text(meta, path=null):
 	if(_p_override.has(path, meta.name)):
 		method_params = _p_override.get_defaulted_params(path, meta.name)
 	else:
-		method_params = _get_arg_text(meta)
+		method_params = _get_arg_text(meta, param_override);
 
 	if(param_array == 'null'):
 		param_array = '[]'

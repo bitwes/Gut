@@ -145,22 +145,20 @@ func should_call_super(obj, method, parameters=null):
 func get_parameter_count(obj, method):
 	var to_return = null
 	var stub_info = _find_stub(obj, method)
+	print('stub_info = ', stub_info)
 	if(stub_info != null and stub_info.has_param_override()):
 		to_return = stub_info.parameter_count
 
 	return to_return
 
 func get_default_value(obj, method, p_index):
-	print('getting default for ', obj, '.', method, ' ', p_index)
 	var to_return = null
 	var stub_info = _find_stub(obj, method)
-	print('stub info = ', stub_info, '-', stub_info.parameter_defaults)
 	if(stub_info != null and
 		stub_info.parameter_defaults != null and
 		stub_info.parameter_defaults.size() > p_index):
 
 		to_return = stub_info.parameter_defaults[p_index]
-		print('  found ', to_return)
 
 	return to_return
 
