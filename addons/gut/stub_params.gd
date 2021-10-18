@@ -39,10 +39,12 @@ func when_passed(p1=NOT_SET,p2=NOT_SET,p3=NOT_SET,p4=NOT_SET,p5=NOT_SET,p6=NOT_S
 
 func param_count(x):
 	parameter_count = x
+	return self
 
 func param_defaults(values):
 	parameter_count = values.size()
 	parameter_defaults = values
+	return self
 
 func has_param_override():
 	return parameter_count != -1

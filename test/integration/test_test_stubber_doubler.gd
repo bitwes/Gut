@@ -323,3 +323,19 @@ class TestOverridingParameters:
 		_test.assert_called(inst, 'rpc_id', [1, 'foo', '3', '4', '5'])
 		assert_eq(_test.get_pass_count(), 1)
 
+
+	func test_issue_246_rpc_id_varargs2():
+		stub(Node, 'rpc_id').to_do_nothing().param_count(5)
+
+		var inst = double(Node).new()
+		add_child_autofree(inst)
+		inst.rpc_id(1, 'foo', '3', '4', '5')
+		assert_called(inst, 'rpc_id', [1, 'foo', '3', '4', '5'])
+
+	func test_issue_246_rpc_id_varargs_with_defaults():
+		stub(Node, 'rpc_id').to_do_nothing().param_defaults([null, null, 'a', 'b', 'c'])
+
+		var inst = double(Node).new()
+		add_child_autofree(inst)
+		inst.rpc_id(1, 'foo', 'z')
+		assert_called(inst, 'rpc_id', [1, 'foo', 'z', 'b', 'c'])

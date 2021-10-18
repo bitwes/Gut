@@ -63,9 +63,9 @@ func test_to_do_nothing_returns_self():
 # --------------
 # Paramter Count and Defaults
 # --------------
-func test_param_count_returns_null():
+func test_param_count_returns_self():
 	var val = gr.stub_params.param_count(3)
-	assert_null(val);
+	assert_eq(val, gr.stub_params);
 
 func test_param_count_sets_param_count():
 	var val = gr.stub_params.param_count(3)
@@ -74,9 +74,9 @@ func test_param_count_sets_param_count():
 func test_param_count_default_value():
 	assert_eq(gr.stub_params.parameter_count, -1)
 
-func test_param_defaults_returns_null():
+func test_param_defaults_returns_self():
 	var val = gr.stub_params.param_defaults([])
-	assert_null(val)
+	assert_eq(val, gr.stub_params)
 
 func test_param_defaults_sets_parameter_count():
 	gr.stub_params.param_defaults([1, 2, 3])

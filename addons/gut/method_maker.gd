@@ -1,12 +1,10 @@
 class CallParameters:
 	var p_name = null
 	var default = null
-	var is_extra = false
 
-	func _init(n, d, i):
+	func _init(n, d):
 		p_name = n
 		default = d
-		is_extra = i
 
 
 # ------------------------------------------------------------------------------
@@ -143,20 +141,20 @@ func _make_arg_array(method_meta, override_size):
 				else:
 					dflt_text = str(_supported_defaults[t], str(method_meta.default_args[dflt_idx]).to_lower())
 			else:
-				_lgr.warn(str(
+				_lgr.error(str(
 					'Unsupported default param type:  ',method_meta.name, '-', method_meta.args[i].name, ' ', t, ' = ', method_meta.default_args[dflt_idx]))
 				dflt_text = str('unsupported=',t)
 				has_unsupported_defaults = true
 
 		# Finally add in the parameter
-		to_return.append(CallParameters.new(PARAM_PREFIX + pname, dflt_text, false))
+		to_return.append(CallParameters.new(PARAM_PREFIX + pname, dflt_text))
 
 	# Add in extra parameters from stub settings.
 	if(override_size != null):
 		for i in range(method_meta.args.size(), override_size):
 			var pname = str(PARAM_PREFIX, 'arg', i)
 			var dflt_text = _make_stub_default(method_meta.name, i)
-			to_return.append(CallParameters.new(pname, dflt_text, true))
+			to_return.append(CallParameters.new(pname, dflt_text))
 
 	return [has_unsupported_defaults, to_return];
 
@@ -167,51 +165,14 @@ func _make_arg_array(method_meta, override_size):
 #
 # If a default is found that we don't know how to handle then this method will
 # return null.
-func _get_arg_text(result):
+func _get_arg_text(arg_array):
 	var text = ''
-	var has_unsupported_defaults = result[0]
-	var arg_array = result[1]
 
-	if(has_unsupported_defaults):
-		text = null
-	else:
-		for i in range(arg_array.size()):
-			text += str(arg_array[i].p_name, '=', arg_array[i].default)
-			if(i != arg_array.size() -1):
-				text += ', '
+	for i in range(arg_array.size()):
+		text += str(arg_array[i].p_name, '=', arg_array[i].default)
+		if(i != arg_array.size() -1):
+			text += ', '
 
-	return text
-
-
-
-# ###############
-# Public
-# ###############
-
-# Creates a delceration for a function based off of function metadata.  All
-# types whose defaults are supported will have their values.  If a datatype
-# is not supported and the parameter has a default, a warning message will be
-# printed and the declaration will return null.
-func get_function_text(meta, path=null, override_size=null):
-	var method_params = ''
-	var text = null
-	var result = _make_arg_array(meta, override_size)
-
-	var param_array = _get_spy_call_parameters_text(result[1])
-
-	method_params = _get_arg_text(result);
-
-	if(param_array == 'null'):
-		param_array = '[]'
-
-	if(method_params != null):
-		var decleration = str('func ', meta.name, '(', method_params, '):')
-		text = _func_text.format({
-			"func_decleration":decleration,
-			"method_name":meta.name,
-			"param_array":param_array,
-			"super_call":_get_super_call_text(meta.name, result[1])
-		})
 	return text
 
 
@@ -237,6 +198,44 @@ func _get_spy_call_parameters_text(args):
 		called_with += ']'
 
 	return called_with
+
+# ###############
+# Public
+# ###############
+
+# Creates a delceration for a function based off of function metadata.  All
+# types whose defaults are supported will have their values.  If a datatype
+# is not supported and the parameter has a default, a warning message will be
+# printed and the declaration will return null.
+func get_function_text(meta, path=null, override_size=null):
+	var method_params = ''
+	var text = null
+	var result = _make_arg_array(meta, override_size)
+	var has_unsupported = result[0]
+	var args = result[1]
+
+	var param_array = _get_spy_call_parameters_text(args)
+
+	if(has_unsupported):
+		# This will cause a runtime error.  This is the most convenient way to
+		# to stop running before the error gets more obscure.  _make_arg_array
+		# generates a gut error when unsupported defaults are found.
+		method_params = null
+	else:
+		method_params = _get_arg_text(args);
+
+	if(param_array == 'null'):
+		param_array = '[]'
+
+	if(method_params != null):
+		var decleration = str('func ', meta.name, '(', method_params, '):')
+		text = _func_text.format({
+			"func_decleration":decleration,
+			"method_name":meta.name,
+			"param_array":param_array,
+			"super_call":_get_super_call_text(meta.name, args)
+		})
+	return text
 
 
 func get_logger():
