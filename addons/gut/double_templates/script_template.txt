@@ -32,6 +32,12 @@ func __gut_get_stubbed_return(method_name, called_with):
 	else:
 		return null
 
+func __gut_default_val(method_name, p_index):
+	if(__gut_metadata_.stubber != null):
+		return __gut_metadata_.stubber.get_default_value(self, method_name, p_index)
+	else:
+		return null
+
 func  _init():
 	if(__gut_metadata_.gut != null):
 		__gut_metadata_.gut.get_autofree().add_free(self)

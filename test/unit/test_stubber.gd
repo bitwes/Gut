@@ -181,6 +181,69 @@ func test_should_call_super_overriden_by_setting_return():
 	gr.stubber.add_stub(sp)
 	assert_false(gr.stubber.should_call_super('thing', 'method'))
 
-func test_to_do_nothing_returns_self():
+
+
+# ----------------
+# Parameter Count
+# ----------------
+func test_get_parameter_count_returns_null_by_default():
+	assert_null(gr.stubber.get_parameter_count('thing', 'method'))
+
+func test_get_parameter_count_returns_stub_params_value():
 	var sp = StubParamsClass.new('thing', 'method')
-	assert_eq(sp.to_do_nothing(), sp)
+	sp.param_count(3)
+	gr.stubber.add_stub(sp)
+	assert_eq(gr.stubber.get_parameter_count('thing', 'method'), 3)
+
+func test_get_parameter_count_returns_null_when_param_count_not_set():
+	var sp = StubParamsClass.new('thing', 'method')
+	gr.stubber.add_stub(sp)
+	assert_null(gr.stubber.get_parameter_count('thing', 'method'))
+
+func test_get_parameter_count_finds_count_when_another_stub_exists():
+	var sp = StubParamsClass.new('thing', 'method')
+	sp.param_count(3)
+	gr.stubber.add_stub(sp)
+
+	var second_sp = StubParamsClass.new('thing', 'method')
+	second_sp.to_call_super()
+	gr.stubber.add_stub(second_sp)
+
+	assert_eq(gr.stubber.get_parameter_count('thing', 'method'), 3)
+
+
+
+# ----------------
+# Default Parameter Values
+# ----------------
+func test_get_default_value_returns_null_by_default():
+	assert_null(gr.stubber.get_default_value('thing', 'method', 0))
+
+func test_get_default_value_returns_stub_param_value_for_index():
+	var sp = StubParamsClass.new('thing', 'method')
+	sp.param_defaults([1, 2, 3])
+	gr.stubber.add_stub(sp)
+	assert_eq(gr.stubber.get_default_value('thing', 'method', 1), 2)
+
+func test_get_default_value_returns_null_when_only_count_has_been_set():
+	var sp = StubParamsClass.new('thing', 'method')
+	sp.param_count(3)
+	gr.stubber.add_stub(sp)
+	assert_eq(gr.stubber.get_default_value('thing', 'method', 1), null)
+
+func test_get_default_value_returns_null_when_index_outside_of_range():
+	var sp = StubParamsClass.new('thing', 'method')
+	sp.param_defaults([1, 2, 3])
+	gr.stubber.add_stub(sp)
+	assert_eq(gr.stubber.get_default_value('thing', 'method', 99), null)
+
+func test_get_default_values_finds_values_when_another_stub_exists():
+	var sp = StubParamsClass.new('thing', 'method')
+	sp.param_defaults([1, 2, 3])
+	gr.stubber.add_stub(sp)
+
+	var second_sp = StubParamsClass.new('thing', 'method')
+	second_sp.to_call_super()
+	gr.stubber.add_stub(second_sp)
+
+	assert_eq(gr.stubber.get_default_value('thing', 'method', 1), 2)
