@@ -49,8 +49,11 @@ func has_param_override():
 
 func to_s():
 	var base_string = str(stub_target, '[', target_subpath, '].', stub_method)
+	if(has_param_override()):
+		base_string += str(' (params ', parameter_count, ' def=', parameter_defaults, ') ')
+
 	if(call_super):
 		base_string += " to call SUPER"
 	else:
-		base_string += str(' with (', parameters, ') = ', return_val)
+		base_string += str(' with params (', parameters, ') returns ', return_val)
 	return base_string

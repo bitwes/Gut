@@ -8,6 +8,7 @@ const DOUBLE_ME_SCENE_PATH = 'res://test/resources/doubler_test_objects/double_m
 const DOUBLE_EXTENDS_NODE2D = 'res://test/resources/doubler_test_objects/double_extends_node2d.gd'
 const TEMP_FILES = 'user://test_doubler_temp_file'
 const TO_STUB_PATH = 'res://test/resources/stub_test_objects/to_stub.gd'
+const DEFAULT_PARAMS_PATH = 'res://test/resources/doubler_test_objects/double_default_parameters.gd'
 
 var gr = {
 	doubler = null,
@@ -141,3 +142,21 @@ func  test_you_cannot_stub_init_to_do_nothing():
 	gr.stubber.add_stub(params)
 	assert_false(gr.stubber.should_call_super(inst, '_init'), 'stub not created')
 	assert_eq(gr.stubber.get_logger().get_errors().size(), err_count + 1, 'error generated')
+
+
+# -------------------
+# Default parameters
+func test_can_stub_default_values():
+	gr.doubler.set_stubber(gr.stubber)
+
+	var TestClass = load(DEFAULT_PARAMS_PATH)
+	stub(TestClass, 'return_passed').to_call_super().param_defaults(['1', '2'])
+	# stub(TestClass, 'return_passed').to_call_super()
+	# var params = _utils.StubParams.new(TestClass, 'return_passed')
+	# params.param_defaults(['1', '2'])
+	# gr.stubber.add_stub(params)
+
+	var inst =  double(DEFAULT_PARAMS_PATH).new()
+	var ret_val = inst.return_passed()
+	assert_eq(ret_val, '12')
+	print(gut.get_stubber().to_s())
