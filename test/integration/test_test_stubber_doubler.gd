@@ -339,3 +339,12 @@ class TestOverridingParameters:
 		add_child_autofree(inst)
 		inst.rpc_id(1, 'foo', 'z')
 		assert_called(inst, 'rpc_id', [1, 'foo', 'z', 'b', 'c'])
+
+	func test_setting_less_parameters_does_not_affect_anything():
+		var TestClass = load(DEFAULT_PARAMS_PATH)
+		var s = _test.stub(TestClass, 'return_passed').param_count(0)
+
+		var inst =  _test.partial_double(DEFAULT_PARAMS_PATH).new()
+		var ret_val = inst.return_passed('a', 'b')
+		assert_eq(ret_val, 'ab')
+
