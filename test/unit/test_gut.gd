@@ -380,6 +380,9 @@ func test_when_set_only_inner_class_tests_run():
 	# which extends TestClass1 so it gets its two tests as well.
 	assert_eq(gr.test_gut.get_summary().get_totals().tests, 4)
 
+func test_when_script_has_const_that_starts_with_Test_it_ignores_it():
+	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/const_object.gd')
+	pass_test('we got here')
 
 # ------------------------------
 # Setup/before and teardown/after
