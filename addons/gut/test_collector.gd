@@ -152,7 +152,7 @@ func _get_inner_test_class_names(loaded):
 	var const_map = loaded.get_script_constant_map()
 	for key in const_map:
 		var thing = const_map[key]
-		if(typeof(thing) == TYPE_OBJECT):
+		if(_utils.is_gdscript(thing)):
 			if(key.begins_with(_test_class_prefix)):
 				if(_does_inherit_from_test(thing)):
 					inner_classes.append(key)
