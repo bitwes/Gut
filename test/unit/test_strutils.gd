@@ -58,6 +58,12 @@ class TestType2Str:
 	func test_gdnative():
 		assert_eq(strutils.type2str(Node2D), 'Node2D')
 
+	func test_NativeScript():
+		if(strutils.NativeScriptClass != null):
+			assert_eq(strutils.type2str(strutils.NativeScriptClass), 'NativeScript')
+		else:
+			pending("NativeScript is unavailable, cannot check NativeScript")
+
 	func test_loaded_scene():
 		assert_eq(strutils.type2str(DoubleMeScene), str(DoubleMeScene) + '(double_me_scene.tscn)')
 
