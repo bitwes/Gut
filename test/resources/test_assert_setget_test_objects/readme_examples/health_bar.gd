@@ -1,6 +1,6 @@
 extends Control
 
-const Health = preload("res://test/resources/test_assert_setget_test_objects/health.gd")
+const Health = preload("res://test/resources/test_assert_setget_test_objects/readme_examples/health.gd")
 var health: Health = null setget set_health
 
 onready var progress_bar = $ProgressBar

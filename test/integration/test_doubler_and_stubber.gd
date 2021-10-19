@@ -9,6 +9,7 @@ const DOUBLE_EXTENDS_NODE2D = 'res://test/resources/doubler_test_objects/double_
 const TEMP_FILES = 'user://test_doubler_temp_file'
 const TO_STUB_PATH = 'res://test/resources/stub_test_objects/to_stub.gd'
 
+
 var gr = {
 	doubler = null,
 	stubber = null

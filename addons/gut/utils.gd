@@ -245,6 +245,11 @@ func is_double(obj):
 func is_instance(obj):
 	return typeof(obj) == TYPE_OBJECT and !obj.has_method('new') and !obj.has_method('instance')
 
+# ------------------------------------------------------------------------------
+# Checks if the passed in is a GDScript
+# ------------------------------------------------------------------------------
+func is_gdscript(obj):
+	return typeof(obj) == TYPE_OBJECT and str(obj).begins_with('[GDScript:')
 
 # ------------------------------------------------------------------------------
 # Returns an array of values by calling get(property) on each element in source
@@ -352,3 +357,7 @@ func are_datatypes_same(got, expected):
 
 func pretty_print(dict):
 	print(str(JSON.print(dict, ' ')))
+
+
+func get_script_text(obj):
+	return obj.get_script().get_source_code()

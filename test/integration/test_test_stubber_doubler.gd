@@ -54,7 +54,6 @@ class TestBasics:
 		doubled.is_blocking_signals()
 		gr.test.assert_called(doubled, 'is_blocking_signals')
 		assert_eq(gr.test.get_pass_count(), 1)
-		pause_before_teardown()
 
 	func test_when_strategy_is_partial_then_supers_are_NOT_spied_in_scenes():
 		var doubled = gr.test.double_scene(DOUBLE_ME_SCENE_PATH, DOUBLE_STRATEGY.PARTIAL).instance()
@@ -275,3 +274,77 @@ class TestPartialDoubleMethod:
 		var d = _test.partial_double(inst)
 		assert_null(d, 'double is null')
 		assert_eq(_test.get_logger().get_errors().size(), 1, 'generates error')
+
+
+class TestOverridingParameters:
+	extends "res://test/gut_test.gd"
+
+	var _gut = null
+	var _test = null
+
+	func before_all():
+		_gut = Gut.new()
+		_test = Test.new()
+		_test.gut = _gut
+
+		add_child(_gut)
+		add_child(_test)
+
+	func after_each():
+		_gut.get_stubber().clear()
+		_gut.get_doubler().clear_output_directory()
+
+	func after_all():
+		_gut.free()
+		_test.free()
+
+
+	const DEFAULT_PARAMS_PATH = 'res://test/resources/doubler_test_objects/double_default_parameters.gd'
+	# -------------------
+	# Default parameters and override parameter count
+	func test_can_stub_default_values():
+		var TestClass = load(DEFAULT_PARAMS_PATH)
+		var s = _test.stub(TestClass, 'return_passed').to_call_super()
+		s.param_defaults(['1', '2'])
+
+		var inst =  _test.double(DEFAULT_PARAMS_PATH).new()
+		var ret_val = inst.return_passed()
+		assert_eq(ret_val, '12')
+		# print(gut.get_stubber().to_s())
+
+
+	func test_issue_246_rpc_id_varargs():
+		_test.stub(Node, 'rpc_id').to_do_nothing().param_count(5)
+		_test.stub(Node, '_ready').to_do_nothing()
+
+		var inst =  _test.double(Node).new()
+		add_child_autofree(inst)
+		var ret_val = inst.rpc_id(1, 'foo', '3', '4', '5')
+		_test.assert_called(inst, 'rpc_id', [1, 'foo', '3', '4', '5'])
+		assert_eq(_test.get_pass_count(), 1)
+
+
+	func test_issue_246_rpc_id_varargs2():
+		stub(Node, 'rpc_id').to_do_nothing().param_count(5)
+
+		var inst = double(Node).new()
+		add_child_autofree(inst)
+		inst.rpc_id(1, 'foo', '3', '4', '5')
+		assert_called(inst, 'rpc_id', [1, 'foo', '3', '4', '5'])
+
+	func test_issue_246_rpc_id_varargs_with_defaults():
+		stub(Node, 'rpc_id').to_do_nothing().param_defaults([null, null, 'a', 'b', 'c'])
+
+		var inst = double(Node).new()
+		add_child_autofree(inst)
+		inst.rpc_id(1, 'foo', 'z')
+		assert_called(inst, 'rpc_id', [1, 'foo', 'z', 'b', 'c'])
+
+	func test_setting_less_parameters_does_not_affect_anything():
+		var TestClass = load(DEFAULT_PARAMS_PATH)
+		var s = _test.stub(TestClass, 'return_passed').param_count(0)
+
+		var inst =  _test.partial_double(DEFAULT_PARAMS_PATH).new()
+		var ret_val = inst.return_passed('a', 'b')
+		assert_eq(ret_val, 'ab')
+

@@ -766,6 +766,12 @@ func get_call_parameters(object, method_name, index=-1):
 	return to_return
 
 # ------------------------------------------------------------------------------
+# Returns the call count for a method with optional paramter matching.
+# ------------------------------------------------------------------------------
+func get_call_count(object, method_name, parameters=null):
+	return gut.get_spy().call_count(object, method_name, parameters)
+
+# ------------------------------------------------------------------------------
 # Assert that object is an instance of a_class
 # ------------------------------------------------------------------------------
 func assert_extends(object, a_class, text=''):
@@ -1354,6 +1360,7 @@ func ignore_method_when_doubling(thing, method_name):
 			path = inst.get_script().get_path()
 
 	gut.get_doubler().add_ignored_method(path, method_name)
+
 
 # ------------------------------------------------------------------------------
 # Stub something.

@@ -46,11 +46,11 @@ class TestGetDecleration:
 		var txt = _mm.get_function_text(meta)
 		assert_eq(txt, null)
 
-	func test_parameters_get_prefix_and_default_null():
+	func test_parameters_get_prefix_and_default_to_call_stubber():
 		var params = [make_param('value1', TYPE_INT), make_param('value2', TYPE_INT)]
 		var meta = make_meta('dummy', params)
 		var txt = _mm.get_function_text(meta)
-		assert_string_contains(txt, 'func dummy(p_value1=null, p_value2=null):')
+		assert_string_contains(txt, 'func dummy(p_value1=__gut_default_val("dummy",0), p_value2=__gut_default_val("dummy",1)):')
 
 	func test_default_only_param():
 		var params = [make_param('value1', TYPE_INT)]
@@ -64,7 +64,7 @@ class TestGetDecleration:
 		var meta = make_meta('dummy', params)
 		meta.default_args.append(1)
 		var txt = _mm.get_function_text(meta)
-		assert_string_contains(txt, 'func dummy(p_value1=null, p_value2=1):')
+		assert_string_contains(txt, 'func dummy(p_value1=__gut_default_val("dummy",0), p_value2=1):')
 
 	func test_vector2_default():
 		var params = [make_param('value1', TYPE_VECTOR2)]
@@ -111,8 +111,8 @@ class TestSuperCall:
 
 	func test_super_call_works_with_no_parameters():
 		var meta = make_meta('dummy')
-		var text = _mm.get_super_call_text(meta)
-		assert_eq(text, '.dummy()')
+		var text = _mm.get_function_text(meta)
+		assert_string_contains(text, '.dummy()')
 
 	func test_super_call_contains_all_parameters():
 		var params = [
@@ -121,5 +121,48 @@ class TestSuperCall:
 			make_param('value3', TYPE_STRING)
 		]
 		var meta = make_meta('dummy', params)
-		var text = _mm.get_super_call_text(meta)
-		assert_eq(text, '.dummy(p_value1, p_value2, p_value3)')
+		var text = _mm.get_function_text(meta)
+		assert_string_contains(text, '.dummy(p_value1, p_value2, p_value3)')
+
+
+class TestOverrideParameterList:
+	extends BaseTest
+
+	var _mm = null
+
+	func before_each():
+		_mm = MethodMaker.new()
+
+
+	func test_get_function_text_includes_override_paramters():
+		var path = 'res://nothing.gd'
+
+		var meta = make_meta('foo', [])
+		var text = _mm.get_function_text(meta, path, 1)
+		assert_string_contains(text, 'p_arg0=')
+
+	func test_get_function_text_includes_multiple_override_paramters():
+		var path = 'res://nothing.gd'
+		var meta = make_meta('foo', [])
+		var text = _mm.get_function_text(meta, path, 5)
+		assert_string_contains(text, 'p_arg0=')
+		assert_string_contains(text, 'p_arg4=')
+
+	func test_super_call_uses_overrides():
+		var path = 'res://nothing.gd'
+		var meta = make_meta('foo', [make_param('value1', TYPE_INT),])
+		var text = _mm.get_function_text(meta, path, 2)
+		assert_string_contains(text, '.foo(p_value1, p_arg1)')
+
+	func test_spy_paramters_include_overrides():
+		var path = 'res://nothing.gd'
+		var meta = make_meta('foo', [make_param('value1', TYPE_INT),])
+		var text = _mm.get_function_text(meta, path, 2)
+		assert_string_contains(text, "__gut_spy('foo', [p_value1, p_arg1]")
+
+	func test_all_parameters_are_defaulted_to_null():
+		var path = 'res://nothing.gd'
+		var meta = make_meta('foo', [])
+		var text = _mm.get_function_text(meta, path, 5)
+		assert_string_contains(text, 'p_arg0=__gut_default_val("foo",0)')
+		assert_string_contains(text, 'p_arg4=__gut_default_val("foo",4)')

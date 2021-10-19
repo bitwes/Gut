@@ -1301,6 +1301,24 @@ class TestGetCallParameters:
 		var _p = gr.test_with_gut.get_call_parameters(thing, 'something')
 		assert_eq(gr.test_with_gut.get_logger().get_errors().size(), 1)
 
+class TestGetCallCount:
+	extends BaseTestClass
+
+	func test_it_works():
+		var doubled = gr.test_with_gut.partial_double(DOUBLE_ME_PATH).new()
+		for i in range(10):
+			doubled.set_value(5)
+		assert_eq(gr.test_with_gut.get_call_count(doubled, 'set_value'), 10)
+
+	func test_it_works_with_parameters():
+		var doubled = gr.test_with_gut.partial_double(DOUBLE_ME_PATH).new()
+		for i in range(3):
+			doubled.set_value(3)
+
+		for i in range(5):
+			doubled.set_value(5)
+		assert_eq(gr.test_with_gut.get_call_count(doubled, 'set_value', [3]), 3)
+
 
 class TestAssertNull:
 	extends BaseTestClass

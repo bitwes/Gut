@@ -1,3 +1,13 @@
+class CallParameters:
+	var p_name = null
+	var default = null
+
+	func _init(n, d):
+		p_name = n
+		default = d
+
+
+# ------------------------------------------------------------------------------
 # This class will generate method declaration lines based on method meta
 # data.  It will create defaults that match the method data.
 #
@@ -93,68 +103,101 @@ var _func_text = _utils.get_file_as_text('res://addons/gut/double_templates/func
 func _is_supported_default(type_flag):
 	return type_flag >= 0 and type_flag < _supported_defaults.size() and [type_flag] != null
 
+
+func _make_stub_default(method, index):
+	return str('__gut_default_val("', method, '",', index, ')')
+
+func _make_arg_array(method_meta, override_size):
+	var to_return = []
+
+	var has_unsupported_defaults = false
+	var dflt_start = method_meta.args.size() - method_meta.default_args.size()
+
+	for i in range(method_meta.args.size()):
+		var pname = method_meta.args[i].name
+		var dflt_text = ''
+
+		if(i < dflt_start):
+			dflt_text = _make_stub_default(method_meta.name, i)
+		else:
+			var dflt_idx = dflt_start - i
+			var t = method_meta.args[i]['type']
+			if(_is_supported_default(t)):
+				# strings are special, they need quotes around the value
+				if(t == TYPE_STRING):
+					dflt_text = str("'", str(method_meta.default_args[dflt_idx]), "'")
+				# Colors need the parens but things like Vector2 and Rect2 don't
+				elif(t == TYPE_COLOR):
+					dflt_text = str(_supported_defaults[t], '(', str(method_meta.default_args[dflt_idx]), ')')
+				elif(t == TYPE_OBJECT):
+					if(str(method_meta.default_args[dflt_idx]) == "[Object:null]"):
+						dflt_text = str(_supported_defaults[t], 'null')
+					else:
+						dflt_text = str(_supported_defaults[t], str(method_meta.default_args[dflt_idx]).to_lower())
+
+				# Everything else puts the prefix (if one is there) form _supported_defaults
+				# in front.  The to_lower is used b/c for some reason the defaults for
+				# null, true, false are all "Null", "True", "False".
+				else:
+					dflt_text = str(_supported_defaults[t], str(method_meta.default_args[dflt_idx]).to_lower())
+			else:
+				_lgr.error(str(
+					'Unsupported default param type:  ',method_meta.name, '-', method_meta.args[i].name, ' ', t, ' = ', method_meta.default_args[dflt_idx]))
+				dflt_text = str('unsupported=',t)
+				has_unsupported_defaults = true
+
+		# Finally add in the parameter
+		to_return.append(CallParameters.new(PARAM_PREFIX + pname, dflt_text))
+
+	# Add in extra parameters from stub settings.
+	if(override_size != null):
+		for i in range(method_meta.args.size(), override_size):
+			var pname = str(PARAM_PREFIX, 'arg', i)
+			var dflt_text = _make_stub_default(method_meta.name, i)
+			to_return.append(CallParameters.new(pname, dflt_text))
+
+	return [has_unsupported_defaults, to_return];
+
+
 # Creates a list of parameters with defaults of null unless a default value is
 # found in the metadata.  If a default is found in the meta then it is used if
 # it is one we know how support.
 #
 # If a default is found that we don't know how to handle then this method will
 # return null.
-func _get_arg_text(method_meta):
+func _get_arg_text(arg_array):
 	var text = ''
-	var args = method_meta.args
-	var defaults = []
-	var has_unsupported_defaults = false
 
-	# fill up the defaults with null defaults for everything that doesn't have
-	# a default in the meta data.  default_args is an array of default values
-	# for the last n parameters where n is the size of default_args so we only
-	# add nulls for everything up to the first parameter with a default.
-	for _i in range(args.size() - method_meta.default_args.size()):
-		defaults.append('null')
-
-	# Add meta-data defaults.
-	for i in range(method_meta.default_args.size()):
-		var t = args[defaults.size()]['type']
-		var value = ''
-		if(_is_supported_default(t)):
-			# strings are special, they need quotes around the value
-			if(t == TYPE_STRING):
-				value = str("'", str(method_meta.default_args[i]), "'")
-			# Colors need the parens but things like Vector2 and Rect2 don't
-			elif(t == TYPE_COLOR):
-				value = str(_supported_defaults[t], '(', str(method_meta.default_args[i]), ')')
-			elif(t == TYPE_OBJECT):
-				if(str(method_meta.default_args[i]) == "[Object:null]"):
-					value = str(_supported_defaults[t], 'null')
-				else:
-					value = str(_supported_defaults[t], str(method_meta.default_args[i]).to_lower())
-
-			# Everything else puts the prefix (if one is there) form _supported_defaults
-			# in front.  The to_lower is used b/c for some reason the defaults for
-			# null, true, false are all "Null", "True", "False".
-			else:
-				value = str(_supported_defaults[t], str(method_meta.default_args[i]).to_lower())
-		else:
-			_lgr.warn(str(
-				'Unsupported default param type:  ',method_meta.name, '-', args[defaults.size()].name, ' ', t, ' = ', method_meta.default_args[i]))
-			value = str('unsupported=',t)
-			has_unsupported_defaults = true
-
-		defaults.append(value)
-
-	# construct the string of parameters
-	for i in range(args.size()):
-		text += str(PARAM_PREFIX, args[i].name, '=', defaults[i])
-		if(i != args.size() -1):
+	for i in range(arg_array.size()):
+		text += str(arg_array[i].p_name, '=', arg_array[i].default)
+		if(i != arg_array.size() -1):
 			text += ', '
 
-	# if we don't know how to make a default then we have to return null b/c
-	# it will cause a runtime error and it's one thing we could return to let
-	# callers know it didn't work.
-	if(has_unsupported_defaults):
-		text = null
-
 	return text
+
+
+func _get_super_call_text(method_name, args):
+	var params = ''
+	for i in range(args.size()):
+		params += args[i].p_name
+		if(i != args.size() -1):
+			params += ', '
+
+	return str('.', method_name, '(', params, ')')
+
+
+func _get_spy_call_parameters_text(args):
+	var called_with = 'null'
+
+	if(args.size() > 0):
+		called_with = '['
+		for i in range(args.size()):
+			called_with += args[i].p_name
+			if(i < args.size() - 1):
+				called_with += ', '
+		called_with += ']'
+
+	return called_with
 
 # ###############
 # Public
@@ -164,11 +207,23 @@ func _get_arg_text(method_meta):
 # types whose defaults are supported will have their values.  If a datatype
 # is not supported and the parameter has a default, a warning message will be
 # printed and the declaration will return null.
-func get_function_text(meta):
-	var method_params = _get_arg_text(meta)
+func get_function_text(meta, path=null, override_size=null):
+	var method_params = ''
 	var text = null
+	var result = _make_arg_array(meta, override_size)
+	var has_unsupported = result[0]
+	var args = result[1]
 
-	var param_array = get_spy_call_parameters_text(meta)
+	var param_array = _get_spy_call_parameters_text(args)
+
+	if(has_unsupported):
+		# This will cause a runtime error.  This is the most convenient way to
+		# to stop running before the error gets more obscure.  _make_arg_array
+		# generates a gut error when unsupported defaults are found.
+		method_params = null
+	else:
+		method_params = _get_arg_text(args);
+
 	if(param_array == 'null'):
 		param_array = '[]'
 
@@ -178,36 +233,16 @@ func get_function_text(meta):
 			"func_decleration":decleration,
 			"method_name":meta.name,
 			"param_array":param_array,
-			"super_call":get_super_call_text(meta)
+			"super_call":_get_super_call_text(meta.name, args)
 		})
 	return text
 
-# creates a call to the function in meta in the super's class.
-func get_super_call_text(meta):
-	var params = ''
-
-	for i in range(meta.args.size()):
-		params += PARAM_PREFIX + meta.args[i].name
-		if(meta.args.size() > 1 and i != meta.args.size() -1):
-			params += ', '
-	if(meta.name == '_init'):
-		return 'null'
-	else:
-		return str('.', meta.name, '(', params, ')')
-
-func get_spy_call_parameters_text(meta):
-	var called_with = 'null'
-	if(meta.args.size() > 0):
-		called_with = '['
-		for i in range(meta.args.size()):
-			called_with += str(PARAM_PREFIX, meta.args[i].name)
-			if(i < meta.args.size() - 1):
-				called_with += ', '
-		called_with += ']'
-	return called_with
 
 func get_logger():
 	return _lgr
 
+
 func set_logger(logger):
 	_lgr = logger
+
+

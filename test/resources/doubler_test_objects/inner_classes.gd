@@ -12,6 +12,7 @@ class InnerA:
 	func get_a():
 		return 'a'
 
+
 # Needed another class with same method as an inner class to test
 # stubbing.
 class AnotherInnerA:
@@ -37,3 +38,7 @@ class InnerWithSignals:
 
 	func _init():
 		add_user_signal('user_signal')
+
+
+class InnerExtendsNode2D:
+	extends Node2D

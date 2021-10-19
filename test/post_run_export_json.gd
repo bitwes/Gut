@@ -3,6 +3,7 @@ extends  'res://addons/gut/hook_script.gd'
 var ResultExporter = load('res://addons/gut/result_exporter.gd')
 
 func run(): # called automatically by Gut
+	return;
 	var exporter = ResultExporter.new()
 
 	var filename = 'user://logs/gut_results'
