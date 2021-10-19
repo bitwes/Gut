@@ -20,6 +20,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * __Issue 268__ Add message when `assert_signal_emitted_with_parameters` is passed bad parameters.
 * __Issue 258__ `yield_to` now supports signals with up to 9 parameters.  This is the same limit  supported by `watch_signals`.
 * __Issue 304__ `assert_is` no longer errors when asserting objects of type `Reference`.
+* __Issue 257__ Gut only uses NativeScript when NativeScript exists in the build.
 * __Issue 290__ consts defined in test-scripts that start with 'Test' are further validated before being treated as Inner-Test-Classes.
 
 

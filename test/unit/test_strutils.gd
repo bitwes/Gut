@@ -5,7 +5,6 @@ class TestType2Str:
 
 	var strutils = load('res://addons/gut/strutils.gd').new()
 
-
 	class ExtendsControl:
 		extends Control
 
@@ -58,6 +57,19 @@ class TestType2Str:
 	func test_gdnative():
 		assert_eq(strutils.type2str(Node2D), 'Node2D')
 
+	func test_NativeScript():
+		if(strutils.NativeScriptClass != null):
+			assert_eq(strutils.type2str(strutils.NativeScriptClass), 'NativeScript')
+		else:
+			pending("NativeScript is unavailable in Godot build, cannot check NativeScript")
+
+	func test_extends_NativeScript():
+		if(strutils.NativeScriptClass != null):
+			var inst = load('res://test/resources/ExtendsNativeScript.gd').new()
+			assert_string_contains(strutils.type2str(inst), '(ExtendsNativeScript.gd)')
+		else:
+			pending("NativeScript is unavailable in Godot build, cannot check NativeScript")
+
 	func test_loaded_scene():
 		assert_eq(strutils.type2str(DoubleMeScene), str(DoubleMeScene) + '(double_me_scene.tscn)')
 
@@ -95,11 +107,11 @@ class TestType2Str:
 		assert_eq(strutils.type2str(n), '[Deleted Object]', 'sometimes fails based on timing.')
 
 	func test_memory_leak():
-		print(gut.get_orphan_counter().orphan_count(), ' t-1')
+		gut.p(str(gut.get_orphan_counter().orphan_count(), ' t-1'))
 		var a = Node
-		print(gut.get_orphan_counter().orphan_count(), ' t-2')
+		gut.p(str(gut.get_orphan_counter().orphan_count(), ' t-2'))
 		var txt = strutils.type2str(a)
-		print(gut.get_orphan_counter().orphan_count(), ' t-3')
+		gut.p(str(gut.get_orphan_counter().orphan_count(), ' t-3'))
 		assert_no_new_orphans()
 
 
