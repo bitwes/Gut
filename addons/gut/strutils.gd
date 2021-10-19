@@ -47,7 +47,7 @@ var _str_ignore_types = [
 func _init():
 	_init_types_dictionary()
 	# NativeScript does not exist when GDNative is not included in the build
-	if(!type_exists('NativeScript')):
+	if(type_exists('NativeScript')):
 		var getter = load('res://addons/gut/get_native_script.gd')
 		NativeScriptClass = getter.get_it()
 
