@@ -1,0 +1,2 @@
+class ExtendsNativeScript:
+    extends NativeScript
