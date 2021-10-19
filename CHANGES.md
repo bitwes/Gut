@@ -12,12 +12,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   *  Added "Junit Xml File" setting to the Gut control to specify the file.  "Junit Xml Timestamp" will include an epoch timestamp in the filename.
   *  `-gjunit_xml_file` and `-gjunit_xml_timestamp` are supported on the command line.
   *   `junit_xml_file` and `junit_xml_timestamp` are supported in the `.gutconfig.json` file.
+* __Issue #266__ Introduced `stub(...).param_count(x)` which allow you to specify the number of paramters a method has.  Useful when working with vararg methods or NativeScripts.  This addresses #246 and #252.  See the Stubbing page in the wiki for more information.
+* __Issue #263__ Introduced `stub(...).param_defaults([])` which allows you to specify the default values that a method should get.  See the Stubbing page in the wiki for more information.
+* __Issue #248__ Added `get_call_count` which allows you to get the number of times a method was called.
 
 ## Bug Fixes
 * __Issue 268__ Add message when `assert_signal_emitted_with_parameters` is passed bad parameters.
 * __Issue 258__ `yield_to` now supports signals with up to 9 parameters.  This is the same limit  supported by `watch_signals`.
 * __Issue 304__ `assert_is` no longer errors when asserting objects of type `Reference`.
-* __Issue 257__ NativeScript is no longer directly referenced unless it has been defined which should fix runtimer error when GDNative is not included in the Godot build.
+* __Issue 257__ Gut only uses NativeScript when NativeScript exists in the build.
 
 
 
