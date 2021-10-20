@@ -348,14 +348,13 @@ func assert_ne(got, not_expected, text=""):
 		else:
 			_pass(disp)
 
-
 # ------------------------------------------------------------------------------
 # Asserts that the expected value almost equals the value got.
 # ------------------------------------------------------------------------------
 func assert_almost_eq(got, expected, error_interval, text=''):
 	var disp = "[" + _str(got) + "] expected to equal [" + _str(expected) + "] +/- [" + str(error_interval) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, expected, text) and _do_datatypes_match__fail_if_not(got, error_interval, text)):
-		if(got < (expected - error_interval) or got > (expected + error_interval)):
+		if not _is_almost_eq(got, expected, error_interval):
 			_fail(disp)
 		else:
 			_pass(disp)
@@ -366,10 +365,29 @@ func assert_almost_eq(got, expected, error_interval, text=''):
 func assert_almost_ne(got, not_expected, error_interval, text=''):
 	var disp = "[" + _str(got) + "] expected to not equal [" + _str(not_expected) + "] +/- [" + str(error_interval) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, not_expected, text) and _do_datatypes_match__fail_if_not(got, error_interval, text)):
-		if(got < (not_expected - error_interval) or got > (not_expected + error_interval)):
-			_pass(disp)
-		else:
+		if _is_almost_eq(got, not_expected, error_interval):
 			_fail(disp)
+		else:
+			_pass(disp)
+
+# ------------------------------------------------------------------------------
+# Helper function which correctly compares two variables,
+# while properly handling vector2/3 types
+# ------------------------------------------------------------------------------
+func _is_almost_eq(got, expected, error_interval) -> bool:
+	var result = false
+	if typeof(got) == TYPE_VECTOR2:
+		if got.x >= (expected.x - error_interval.x) and got.x <= (expected.x + error_interval.x):
+			if got.y >= (expected.y - error_interval.y) and got.y <= (expected.y + error_interval.y):
+				result = true
+	elif typeof(got) == TYPE_VECTOR3:
+		if got.x >= (expected.x - error_interval.x) and got.x <= (expected.x + error_interval.x):
+			if got.y >= (expected.y - error_interval.y) and got.y <= (expected.y + error_interval.y):
+				if got.z >= (expected.z - error_interval.z) and got.z <= (expected.z + error_interval.z):
+					result = true
+	elif(got >= (expected - error_interval) and got <= (expected + error_interval)):
+		result = true
+	return(result)
 
 # ------------------------------------------------------------------------------
 # Asserts got is greater than expected
