@@ -22,9 +22,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * __Issue 304__ `assert_is` no longer errors when asserting objects of type `Reference`.
 * __Issue 257__ Gut only uses NativeScript when NativeScript exists in the build.
 * __Issue 290__ consts defined in test-scripts that start with 'Test' are further validated before being treated as Inner-Test-Classes.
+* __Issue 239__ @db0 fixed `assert_almost_eq` and `assert_almost_ne` to work with Vectors properly.
 
-
-
+q
 # 7.1.0
 ## Misc
 * `prerun_setup`, `setup`, `teardown`, `postrun_teardown` deprecation warnings have been enabled.  These were removed from the documentation over 2 years ago (6.6.0) and replaced with `before_all`, `before_each`, `after_each`, and `after_all`.  Having to make additional changes for these in order to implement __Issue 184__ annoyed me, so there will now be depracation warnings for these.  Earliest they could be removed is 8.0.0.
