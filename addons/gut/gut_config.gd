@@ -42,7 +42,11 @@ func _load_options_from_config_file(file_path, into):
 		else:
 			return 1
 
-	f.open(file_path, f.READ)
+	var result = f.open(file_path, f.READ)
+	if(result != OK):
+		push_error(str("Could not load data ", file_path, ' ', result))
+		return result
+
 	var json = f.get_as_text()
 	f.close()
 

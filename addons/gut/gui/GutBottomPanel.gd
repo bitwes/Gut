@@ -5,17 +5,18 @@ const RUNNER_JSON_PATH = 'res://addons/gut/gui/runner.json'
 const RESULT_FILE = 'user://_gut_runner_.bbcode'
 
 var TestScript = load('res://addons/gut/test.gd')
+var GutConfigGui = load('res://addons/gut/gui/gut_config_gui.gd')
 
 var _utils = null
 var _interface = null;
 var _pid = null;
 var _is_running = false;
-var _run_output = []
 var _gut_config = load('res://addons/gut/gut_config.gd').new()
+var _gut_config_gui = null
 var _gut_plugin = null
 
 onready var _ctrls = {
-	output = $layout/Output,
+	output = $layout/RSplit/Output,
 	run_button = $layout/cp/sc/vbox/HRunAll/RunTests,
 	last_run_label = $layout/cp/sc/vbox/HRerun/LastRunLabel,
 	run_like = {
@@ -29,17 +30,21 @@ onready var _ctrls = {
 		hbox = $layout/cp/sc/vbox/HRunCurrent,
 		label = $layout/cp/sc/vbox/HRunCurrent/ScriptName,
 		button = $layout/cp/sc/vbox/HRunCurrent/RunCurrent
-	}
+	},
+	settings = $layout/RSplit/Settings
 }
 
 func _init():
 	_gut_config.load_options(RUNNER_JSON_PATH)
 
 func _ready():
-	_utils = load('res://addons/gut/utils.gd').get_instance()
+	# _utils = load('res://addons/gut/utils.gd').get_instance()
 	_ctrls.run_like.hbox.connect("draw", self, '_draw_bg_box', [_ctrls.run_like.hbox])
 	if(_interface):
 		_interface.get_script_editor().connect("editor_script_changed", self, '_on_editor_script_changed')
+
+	# _gut_config_gui = GutConfigGui.new(_ctrls.settings)
+	# _gut_config_gui.set_options(_gut_config.options)
 
 
 func _is_test_script(script):
@@ -48,7 +53,6 @@ func _is_test_script(script):
 		from = from.get_base_script()
 
 	return from != null
-
 
 
 func _on_editor_script_changed(script):
@@ -63,12 +67,11 @@ func _on_editor_script_changed(script):
 			_ctrls.run_current.label.modulate = Color(1, .5, .5)
 
 
-
 func _draw_bg_box(which):
 	which.draw_rect(Rect2(Vector2(0, 0), which.rect_size), Color(0, 0, 0, .15))
 
 
-func _process(delta):
+func ___process(delta):
 	if(_is_running):
 		if(!_interface.is_playing_scene()):
 			_is_running = false
@@ -99,16 +102,21 @@ func _update_last_run_label():
 
 
 func _run_tests():
-	_utils.write_file(RESULT_FILE, 'Run in progress')
-	_gut_config.write_options(RUNNER_JSON_PATH)
+	# _utils.write_file(RESULT_FILE, 'Run in progress')
+	# _gut_config.options = _gut_config_gui.get_options(_gut_config.options)
+	# print(JSON.print(_gut_config.options, ' '))
+	# var w_result = _gut_config.write_options(RUNNER_JSON_PATH)
+	# if(w_result != OK):
+	# 	push_error(str('Could not write options to ', RUNNER_JSON_PATH, ': ', w_result))
+	# 	return;
 
-	_run_output.clear()
 	_ctrls.output.clear()
 
-	_update_last_run_label()
+	# _update_last_run_label()
 	_interface.play_custom_scene('res://addons/gut/gui/GutRunner.tscn')
+
 	_is_running = true
-	_ctrls.output.add_text('running...')
+	# _ctrls.output.add_text('running...')
 
 
 func _on_RunTests_pressed():

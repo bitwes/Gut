@@ -15,6 +15,9 @@ __meta__ = {
 anchor_top = -0.000882874
 anchor_right = 1.0
 anchor_bottom = 0.999117
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="cp" type="ColorRect" parent="layout"]
 margin_right = 500.0
@@ -174,14 +177,30 @@ margin_right = 248.0
 margin_bottom = 134.0
 placeholder_text = "All"
 
-[node name="Output" type="RichTextLabel" parent="layout"]
+[node name="RSplit" type="HSplitContainer" parent="layout"]
 margin_left = 512.0
 margin_right = 1024.0
+margin_bottom = 600.0
+
+[node name="Output" type="RichTextLabel" parent="layout/RSplit"]
+margin_right = 500.0
 margin_bottom = 600.0
 focus_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 selection_enabled = true
+
+[node name="Settings" type="VBoxContainer" parent="layout/RSplit"]
+margin_left = 512.0
+margin_right = 512.0
+margin_bottom = 600.0
+
+[node name="Row" type="HBoxContainer" parent="layout/RSplit/Settings"]
+margin_bottom = 14.0
+
+[node name="Label" type="Label" parent="layout/RSplit/Settings/Row"]
+margin_bottom = 14.0
+size_flags_horizontal = 3
 
 [connection signal="pressed" from="layout/cp/sc/vbox/HRunAll/RunTests" to="." method="_on_RunTests_pressed"]
 [connection signal="pressed" from="layout/cp/sc/vbox/HRerun/Rerun" to="." method="_on_Rerun_pressed"]
