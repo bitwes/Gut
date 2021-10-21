@@ -1,0 +1,34 @@
+{
+ "background_color": "ff262626",
+ "config_file": "res://.gutconfig.json",
+ "dirs": [
+  "res://test/unit/",
+  "res://test/integration/"
+ ],
+ "disable_colors": false,
+ "double_strategy": "partial",
+ "font_color": "ffcccccc",
+ "font_name": "CourierPrime",
+ "font_size": 16,
+ "hide_orphans": false,
+ "ignore_pause": true,
+ "include_subdirs": true,
+ "inner_class": null,
+ "junit_xml_file": "",
+ "junit_xml_timestamp": false,
+ "log_level": 1,
+ "opacity": 100,
+ "post_run_script": "",
+ "pre_run_script": "",
+ "prefix": "test_",
+ "selected": null,
+ "should_exit": true,
+ "should_exit_on_success": true,
+ "should_maximize": true,
+ "show_help": false,
+ "suffix": ".gd",
+ "tests": [
+
+ ],
+ "unit_test_name": null
+}

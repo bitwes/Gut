@@ -30,10 +30,10 @@ __meta__ = {
 }
 
 [node name="Gut" type="Control" parent="."]
-margin_left = 4.0
-margin_top = 4.0
-margin_right = 845.0
-margin_bottom = 332.0
+margin_left = 3.25671
+margin_top = 3.62834
+margin_right = 844.257
+margin_bottom = 331.628
 rect_min_size = Vector2( 740, 250 )
 script = ExtResource( 2 )
 __meta__ = {
