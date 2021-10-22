@@ -8,6 +8,7 @@ func _init(cont):
 	_base_container = cont
 
 	_base_control = HBoxContainer.new()
+	_base_control.size_flags_horizontal = _base_control.SIZE_EXPAND_FILL
 	var lbl = Label.new()
 	lbl.size_flags_horizontal = lbl.SIZE_EXPAND_FILL
 	_base_control.add_child(lbl)
@@ -107,10 +108,13 @@ func get_options(base_opts):
 			dirs.append(val)
 
 	to_return.include_subdirs = _cfg_ctrls.include_subdirs.pressed
+	to_return.should_exit_on_success = _cfg_ctrls.should_exit_on_success.pressed
 	to_return.should_exit = _cfg_ctrls.should_exit.pressed
 	to_return.dirs = dirs
 	to_return.font_size = _cfg_ctrls.font_size.value
 	to_return.font_name = _cfg_ctrls.font_name.get_item_text(
 		_cfg_ctrls.font_name.selected)
+	to_return.should_maximize = _cfg_ctrls.should_maximize.pressed
+	to_return.opacity = _cfg_ctrls.opacity.value
 
 	return to_return

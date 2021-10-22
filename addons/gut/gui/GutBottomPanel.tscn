@@ -17,94 +17,100 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="layout" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ControlBar" type="HBoxContainer" parent="layout"]
 margin_right = 1023.0
 margin_bottom = 42.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Rerun" type="Button" parent="HBoxContainer"]
+[node name="Rerun" type="Button" parent="layout/ControlBar"]
 margin_right = 101.0
 margin_bottom = 42.0
+disabled = true
 text = "Rerun <none>"
 
-[node name="RunCurrent" type="Button" parent="HBoxContainer"]
+[node name="RunCurrent" type="Button" parent="layout/ControlBar"]
 margin_left = 105.0
 margin_right = 193.0
 margin_bottom = 42.0
+disabled = true
 text = "Run <none>"
 
-[node name="CenterContainer2" type="CenterContainer" parent="HBoxContainer"]
+[node name="CenterContainer2" type="CenterContainer" parent="layout/ControlBar"]
 margin_left = 197.0
 margin_right = 318.0
 margin_bottom = 42.0
 size_flags_horizontal = 3
 
-[node name="RunLike" type="Button" parent="HBoxContainer"]
+[node name="RunLike" type="Button" parent="layout/ControlBar"]
 margin_left = 322.0
 margin_right = 405.0
 margin_bottom = 42.0
 text = "Run Like ->"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+[node name="CScript" type="VBoxContainer" parent="layout/ControlBar"]
 margin_left = 409.0
 margin_right = 549.0
 margin_bottom = 42.0
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="layout/ControlBar/CScript"]
 margin_right = 140.0
 margin_bottom = 14.0
 text = "Script"
 
-[node name="LineEdit" type="LineEdit" parent="HBoxContainer/VBoxContainer"]
+[node name="txtScript" type="LineEdit" parent="layout/ControlBar/CScript"]
 margin_top = 18.0
 margin_right = 140.0
 margin_bottom = 42.0
 rect_min_size = Vector2( 140, 0 )
-text = "test_this_thing.gd"
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer"]
+[node name="CInner" type="VBoxContainer" parent="layout/ControlBar"]
 margin_left = 553.0
 margin_right = 693.0
 margin_bottom = 42.0
 
-[node name="Label3" type="Label" parent="HBoxContainer/VBoxContainer2"]
+[node name="Label3" type="Label" parent="layout/ControlBar/CInner"]
 margin_right = 140.0
 margin_bottom = 14.0
 text = "Inner Class"
 
-[node name="LineEdit2" type="LineEdit" parent="HBoxContainer/VBoxContainer2"]
+[node name="txtInner" type="LineEdit" parent="layout/ControlBar/CInner"]
 margin_top = 18.0
 margin_right = 140.0
 margin_bottom = 42.0
 rect_min_size = Vector2( 140, 0 )
-text = "test_this_thing.gd"
 
-[node name="VBoxContainer3" type="VBoxContainer" parent="HBoxContainer"]
+[node name="CTest" type="VBoxContainer" parent="layout/ControlBar"]
 margin_left = 697.0
 margin_right = 837.0
 margin_bottom = 42.0
 
-[node name="Label2" type="Label" parent="HBoxContainer/VBoxContainer3"]
+[node name="Label2" type="Label" parent="layout/ControlBar/CTest"]
 margin_right = 140.0
 margin_bottom = 14.0
 text = "Test Name"
 
-[node name="LineEdit3" type="LineEdit" parent="HBoxContainer/VBoxContainer3"]
+[node name="txtTest" type="LineEdit" parent="layout/ControlBar/CTest"]
 margin_top = 18.0
 margin_right = 140.0
 margin_bottom = 42.0
 rect_min_size = Vector2( 140, 0 )
-text = "test_this_thing.gd"
 
-[node name="CenterContainer" type="CenterContainer" parent="HBoxContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="layout/ControlBar"]
 margin_left = 841.0
 margin_right = 962.0
 margin_bottom = 42.0
 size_flags_horizontal = 3
 
-[node name="RunAll" type="Button" parent="HBoxContainer"]
+[node name="RunAll" type="Button" parent="layout/ControlBar"]
 margin_left = 966.0
 margin_right = 1023.0
 margin_bottom = 42.0
@@ -113,214 +119,35 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="layout" type="HSplitContainer" parent="."]
-visible = false
-anchor_top = -0.000882874
-anchor_right = 1.0
-anchor_bottom = 0.999117
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="cp" type="ColorRect" parent="layout"]
-margin_right = 500.0
-margin_bottom = 600.0
-rect_min_size = Vector2( 500, 0 )
-color = Color( 1, 1, 1, 0.109804 )
-
-[node name="sc" type="ScrollContainer" parent="layout/cp"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="vbox" type="VBoxContainer" parent="layout/cp/sc"]
-margin_right = 500.0
-margin_bottom = 600.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="HRerun" type="HBoxContainer" parent="layout/cp/sc/vbox"]
-margin_right = 500.0
-margin_bottom = 20.0
-
-[node name="Rerun" type="Button" parent="layout/cp/sc/vbox/HRerun"]
-margin_right = 248.0
-margin_bottom = 20.0
-size_flags_horizontal = 3
-disabled = true
-text = "Rerun"
-
-[node name="LastRunLabel" type="Label" parent="layout/cp/sc/vbox/HRerun"]
-margin_left = 252.0
-margin_top = 3.0
-margin_right = 500.0
-margin_bottom = 17.0
-size_flags_horizontal = 3
-align = 1
-autowrap = true
-
-[node name="HRunAll" type="HBoxContainer" parent="layout/cp/sc/vbox"]
-margin_top = 24.0
-margin_right = 500.0
-margin_bottom = 44.0
-
-[node name="RunTests" type="Button" parent="layout/cp/sc/vbox/HRunAll"]
-margin_right = 248.0
-margin_bottom = 20.0
-size_flags_horizontal = 3
-text = "Run All"
-
-[node name="CenterContainer" type="CenterContainer" parent="layout/cp/sc/vbox/HRunAll"]
-margin_left = 252.0
-margin_right = 500.0
-margin_bottom = 20.0
-size_flags_horizontal = 3
-
-[node name="HRunCurrent" type="HBoxContainer" parent="layout/cp/sc/vbox"]
-margin_top = 48.0
-margin_right = 500.0
-margin_bottom = 68.0
-
-[node name="RunCurrent" type="Button" parent="layout/cp/sc/vbox/HRunCurrent"]
-margin_right = 248.0
-margin_bottom = 20.0
-size_flags_horizontal = 3
-disabled = true
-text = "Run Current"
-
-[node name="ScriptName" type="Label" parent="layout/cp/sc/vbox/HRunCurrent"]
-margin_left = 252.0
-margin_top = 3.0
-margin_right = 500.0
-margin_bottom = 17.0
-size_flags_horizontal = 3
-
-[node name="HRunLike" type="VBoxContainer" parent="layout/cp/sc/vbox"]
-margin_top = 72.0
-margin_right = 500.0
-margin_bottom = 176.0
-
-[node name="VInputs" type="VBoxContainer" parent="layout/cp/sc/vbox/HRunLike"]
-margin_right = 500.0
-margin_bottom = 80.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="HScript" type="HBoxContainer" parent="layout/cp/sc/vbox/HRunLike/VInputs"]
-margin_right = 500.0
-margin_bottom = 24.0
-
-[node name="Label" type="Label" parent="layout/cp/sc/vbox/HRunLike/VInputs/HScript"]
-margin_top = 5.0
-margin_right = 248.0
-margin_bottom = 19.0
-size_flags_horizontal = 3
-text = "Script Name"
-
-[node name="txtScriptName" type="LineEdit" parent="layout/cp/sc/vbox/HRunLike/VInputs/HScript"]
-margin_left = 252.0
-margin_right = 500.0
-margin_bottom = 24.0
-size_flags_horizontal = 3
-placeholder_text = "All"
-
-[node name="HInner" type="HBoxContainer" parent="layout/cp/sc/vbox/HRunLike/VInputs"]
-margin_top = 28.0
-margin_right = 500.0
-margin_bottom = 52.0
-
-[node name="Label2" type="Label" parent="layout/cp/sc/vbox/HRunLike/VInputs/HInner"]
-margin_top = 5.0
-margin_right = 248.0
-margin_bottom = 19.0
-size_flags_horizontal = 3
-text = "Inner Class Name"
-
-[node name="txtInnerName" type="LineEdit" parent="layout/cp/sc/vbox/HRunLike/VInputs/HInner"]
-margin_left = 252.0
-margin_right = 500.0
-margin_bottom = 24.0
-size_flags_horizontal = 3
-placeholder_text = "All"
-
-[node name="HTest" type="HBoxContainer" parent="layout/cp/sc/vbox/HRunLike/VInputs"]
-margin_top = 56.0
-margin_right = 500.0
-margin_bottom = 80.0
-
-[node name="Label3" type="Label" parent="layout/cp/sc/vbox/HRunLike/VInputs/HTest"]
-margin_top = 5.0
-margin_right = 248.0
-margin_bottom = 19.0
-size_flags_horizontal = 3
-text = "Test Name"
-
-[node name="txtTestName" type="LineEdit" parent="layout/cp/sc/vbox/HRunLike/VInputs/HTest"]
-margin_left = 252.0
-margin_right = 500.0
-margin_bottom = 24.0
-size_flags_horizontal = 3
-placeholder_text = "All"
-
-[node name="VRunButton" type="HBoxContainer" parent="layout/cp/sc/vbox/HRunLike"]
-margin_top = 84.0
-margin_right = 500.0
-margin_bottom = 104.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="CenterContainer2" type="CenterContainer" parent="layout/cp/sc/vbox/HRunLike/VRunButton"]
-margin_right = 164.0
-margin_bottom = 20.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="RunLikeButton" type="Button" parent="layout/cp/sc/vbox/HRunLike/VRunButton"]
-margin_left = 168.0
-margin_right = 332.0
-margin_bottom = 20.0
-size_flags_horizontal = 3
-text = "Run Like"
-
-[node name="CenterContainer" type="CenterContainer" parent="layout/cp/sc/vbox/HRunLike/VRunButton"]
-margin_left = 336.0
-margin_right = 500.0
-margin_bottom = 20.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
 [node name="RSplit" type="HSplitContainer" parent="layout"]
-margin_left = 512.0
-margin_right = 1024.0
-margin_bottom = 600.0
+margin_top = 46.0
+margin_right = 1023.0
+margin_bottom = 599.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="Output" type="RichTextLabel" parent="layout/RSplit"]
-margin_right = 250.0
-margin_bottom = 600.0
+margin_right = 811.0
+margin_bottom = 553.0
 focus_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 selection_enabled = true
 
 [node name="sc" type="ScrollContainer" parent="layout/RSplit"]
-margin_left = 262.0
-margin_right = 512.0
-margin_bottom = 600.0
-size_flags_horizontal = 3
+margin_left = 823.0
+margin_right = 1023.0
+margin_bottom = 553.0
+rect_min_size = Vector2( 200, 0 )
 size_flags_vertical = 3
 
 [node name="Settings" type="VBoxContainer" parent="layout/RSplit/sc"]
-margin_right = 250.0
-margin_bottom = 600.0
+margin_right = 200.0
+margin_bottom = 553.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[connection signal="pressed" from="layout/cp/sc/vbox/HRerun/Rerun" to="." method="_on_Rerun_pressed"]
-[connection signal="pressed" from="layout/cp/sc/vbox/HRunAll/RunTests" to="." method="_on_RunTests_pressed"]
-[connection signal="pressed" from="layout/cp/sc/vbox/HRunCurrent/RunCurrent" to="." method="_on_RunCurrent_pressed"]
-[connection signal="pressed" from="layout/cp/sc/vbox/HRunLike/VRunButton/RunLikeButton" to="." method="_on_RunLikeButton_pressed"]
+[connection signal="pressed" from="layout/ControlBar/Rerun" to="." method="_on_Rerun_pressed"]
+[connection signal="pressed" from="layout/ControlBar/RunCurrent" to="." method="_on_RunCurrent_pressed"]
+[connection signal="pressed" from="layout/ControlBar/RunLike" to="." method="_on_RunLike_pressed"]
+[connection signal="pressed" from="layout/ControlBar/RunAll" to="." method="_on_RunAll_pressed"]

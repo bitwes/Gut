@@ -13,24 +13,21 @@ var _gut_config = load('res://addons/gut/gut_config.gd').new()
 var _gut_config_gui = null
 var _gut_plugin = null
 
+
 onready var _ctrls = {
 	output = $layout/RSplit/Output,
-	run_button = $layout/cp/sc/vbox/HRunAll/RunTests,
+	run_button = $layout/ControlBar/RunAll,
 	run_like = {
-		hbox = $layout/cp/sc/vbox/HRunLike,
-		button = $layout/cp/sc/vbox/HRunLike/VRunButton/RunLikeButton,
-		txt_script = $layout/cp/sc/vbox/HRunLike/VInputs/HScript/txtScriptName,
-		txt_inner = $layout/cp/sc/vbox/HRunLike/VInputs/HInner/txtInnerName,
-		txt_test = $layout/cp/sc/vbox/HRunLike/VInputs/HTest/txtTestName
+		button = $layout/ControlBar/RunLike,
+		txt_script = $layout/ControlBar/CScript/txtScript,
+		txt_inner = $layout/ControlBar/CInner/txtInner,
+		txt_test = $layout/ControlBar/CTest/txtTest,
 	},
 	run_current = {
-		hbox = $layout/cp/sc/vbox/HRunCurrent,
-		label = $layout/cp/sc/vbox/HRunCurrent/ScriptName,
-		button = $layout/cp/sc/vbox/HRunCurrent/RunCurrent
+		button = $layout/ControlBar/RunCurrent,
 	},
 	rerun = {
-		button = $layout/cp/sc/vbox/HRerun/Rerun,
-		label = $layout/cp/sc/vbox/HRerun/LastRunLabel,
+		button = $layout/ControlBar/Rerun,
 	},
 	settings = $layout/RSplit/sc/Settings
 }
@@ -38,10 +35,9 @@ onready var _ctrls = {
 
 func _init():
 	_gut_config.load_options(RUNNER_JSON_PATH)
-	
+
 
 func _ready():
-	_ctrls.run_like.hbox.connect("draw", self, '_draw_bg_box', [_ctrls.run_like.hbox])
 	_gut_config_gui = GutConfigGui.new(_ctrls.settings)
 	_gut_config_gui.set_options(_gut_config.options)
 
@@ -89,7 +85,7 @@ func _update_last_run_label():
 		text += nvl(_gut_config.options.inner_class, '') + ' '
 		text += nvl(_gut_config.options.unit_test_name, '')
 
-	_ctrls.rerun.label.text = text
+	_ctrls.rerun.button.text = str('Rerun(', text.strip_edges(), ')')
 
 
 func _run_tests():
@@ -109,6 +105,10 @@ func _run_tests():
 
 	_is_running = true
 	_ctrls.output.add_text('running...')
+
+
+func _on_RunAll_pressed():
+	_on_RunTests_pressed()
 
 
 func _on_RunTests_pressed():
@@ -133,6 +133,10 @@ func _on_Rerun_pressed():
 	_run_tests()
 
 
+func _on_RunLike_pressed():
+	_on_RunLikeButton_pressed()
+
+
 func _on_RunLikeButton_pressed():
 	_gut_config.options.selected = _ctrls.run_like.txt_script.text
 	_gut_config.options.inner_class = _ctrls.run_like.txt_inner.text
@@ -144,16 +148,17 @@ func _on_RunLikeButton_pressed():
 func set_current_script(script):
 	if(script):
 		var file = script.resource_path.get_file()
-		_ctrls.run_current.label.text = file
+		_ctrls.run_current.button.text = str(file)
 		if(_is_test_script(script)):
+			_ctrls.run_current.button.text = str(file)
 			_ctrls.run_current.button.disabled = false
-			_ctrls.run_current.label.modulate = Color(.5, 1, .5)
+			_ctrls.run_current.button.modulate = Color(.5, 1, .5)
 		else:
 			_ctrls.run_current.button.disabled = true
-			_ctrls.run_current.label.modulate = Color(1, .5, .5)
+			_ctrls.run_current.button.modulate = Color(1, .5, .5)
 	else:
 		_ctrls.run_current.button.disabled = true
-		_ctrls.run_current.label.text = ''
+		_ctrls.run_current.label.text = 'None Selected'
 
 
 func set_interface(value):
@@ -161,8 +166,10 @@ func set_interface(value):
 	_interface.get_script_editor().connect("editor_script_changed", self, '_on_editor_script_changed')
 	set_current_script(_interface.get_script_editor().get_current_script())
 
+
 func set_plugin(value):
 	_gut_plugin = value
+
 
 # ------------------------------------------------------------------------------
 # Write a file.
@@ -175,6 +182,7 @@ func write_file(path, content):
 		f.close()
 	return result
 
+
 # ------------------------------------------------------------------------------
 # Returns the text of a file or an empty string if the file could not be opened.
 # ------------------------------------------------------------------------------
@@ -186,6 +194,7 @@ func get_file_as_text(path):
 		to_return = f.get_as_text()
 		f.close()
 	return to_return
+
 
 # ------------------------------------------------------------------------------
 # return if_null if value is null otherwise return value

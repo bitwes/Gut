@@ -39,3 +39,5 @@ func _on_tests_finished(should_exit, should_exit_on_success):
 
 	if(should_exit):
 		get_tree().quit()
+	elif(should_exit_on_success and _gut.get_fail_count() == 0):
+		get_tree().quit()
