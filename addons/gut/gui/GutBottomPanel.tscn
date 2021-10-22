@@ -3,15 +3,118 @@
 [ext_resource path="res://addons/gut/gui/GutBottomPanel.gd" type="Script" id=1]
 
 [node name="GutBottomPanel" type="Control"]
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchor_left = -0.0025866
+anchor_top = -0.00176575
+anchor_right = 0.997413
+anchor_bottom = 0.998234
+margin_left = 2.64868
+margin_top = 1.05945
+margin_right = 2.64862
+margin_bottom = 1.05945
 rect_min_size = Vector2( 0, 300 )
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+margin_right = 1023.0
+margin_bottom = 42.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Rerun" type="Button" parent="HBoxContainer"]
+margin_right = 101.0
+margin_bottom = 42.0
+text = "Rerun <none>"
+
+[node name="RunCurrent" type="Button" parent="HBoxContainer"]
+margin_left = 105.0
+margin_right = 193.0
+margin_bottom = 42.0
+text = "Run <none>"
+
+[node name="CenterContainer2" type="CenterContainer" parent="HBoxContainer"]
+margin_left = 197.0
+margin_right = 318.0
+margin_bottom = 42.0
+size_flags_horizontal = 3
+
+[node name="RunLike" type="Button" parent="HBoxContainer"]
+margin_left = 322.0
+margin_right = 405.0
+margin_bottom = 42.0
+text = "Run Like ->"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+margin_left = 409.0
+margin_right = 549.0
+margin_bottom = 42.0
+
+[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer"]
+margin_right = 140.0
+margin_bottom = 14.0
+text = "Script"
+
+[node name="LineEdit" type="LineEdit" parent="HBoxContainer/VBoxContainer"]
+margin_top = 18.0
+margin_right = 140.0
+margin_bottom = 42.0
+rect_min_size = Vector2( 140, 0 )
+text = "test_this_thing.gd"
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer"]
+margin_left = 553.0
+margin_right = 693.0
+margin_bottom = 42.0
+
+[node name="Label3" type="Label" parent="HBoxContainer/VBoxContainer2"]
+margin_right = 140.0
+margin_bottom = 14.0
+text = "Inner Class"
+
+[node name="LineEdit2" type="LineEdit" parent="HBoxContainer/VBoxContainer2"]
+margin_top = 18.0
+margin_right = 140.0
+margin_bottom = 42.0
+rect_min_size = Vector2( 140, 0 )
+text = "test_this_thing.gd"
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="HBoxContainer"]
+margin_left = 697.0
+margin_right = 837.0
+margin_bottom = 42.0
+
+[node name="Label2" type="Label" parent="HBoxContainer/VBoxContainer3"]
+margin_right = 140.0
+margin_bottom = 14.0
+text = "Test Name"
+
+[node name="LineEdit3" type="LineEdit" parent="HBoxContainer/VBoxContainer3"]
+margin_top = 18.0
+margin_right = 140.0
+margin_bottom = 42.0
+rect_min_size = Vector2( 140, 0 )
+text = "test_this_thing.gd"
+
+[node name="CenterContainer" type="CenterContainer" parent="HBoxContainer"]
+margin_left = 841.0
+margin_right = 962.0
+margin_bottom = 42.0
+size_flags_horizontal = 3
+
+[node name="RunAll" type="Button" parent="HBoxContainer"]
+margin_left = 966.0
+margin_right = 1023.0
+margin_bottom = 42.0
+text = "Run All"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="layout" type="HSplitContainer" parent="."]
+visible = false
 anchor_top = -0.000882874
 anchor_right = 1.0
 anchor_bottom = 0.999117
