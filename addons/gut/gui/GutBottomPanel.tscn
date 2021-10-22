@@ -1,6 +1,34 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://addons/gut/gui/GutBottomPanel.gd" type="Script" id=1]
+
+[sub_resource type="DynamicFontData" id=1]
+font_path = "res://addons/gut/fonts/CourierPrime-BoldItalic.ttf"
+
+[sub_resource type="DynamicFont" id=2]
+size = 30
+font_data = SubResource( 1 )
+
+[sub_resource type="DynamicFontData" id=3]
+font_path = "res://addons/gut/fonts/CourierPrime-Italic.ttf"
+
+[sub_resource type="DynamicFont" id=4]
+size = 30
+font_data = SubResource( 3 )
+
+[sub_resource type="DynamicFontData" id=5]
+font_path = "res://addons/gut/fonts/CourierPrime-Bold.ttf"
+
+[sub_resource type="DynamicFont" id=6]
+size = 30
+font_data = SubResource( 5 )
+
+[sub_resource type="DynamicFontData" id=7]
+font_path = "res://addons/gut/fonts/CourierPrime-Regular.ttf"
+
+[sub_resource type="DynamicFont" id=8]
+size = 30
+font_data = SubResource( 7 )
 
 [node name="GutBottomPanel" type="Control"]
 anchor_left = -0.0025866
@@ -11,7 +39,7 @@ margin_left = 2.64868
 margin_top = 1.05945
 margin_right = 2.64862
 margin_bottom = 1.05945
-rect_min_size = Vector2( 0, 300 )
+rect_min_size = Vector2( 0, 150 )
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -46,19 +74,19 @@ text = "Run <none>"
 
 [node name="CenterContainer2" type="CenterContainer" parent="layout/ControlBar"]
 margin_left = 197.0
-margin_right = 318.0
+margin_right = 278.0
 margin_bottom = 42.0
 size_flags_horizontal = 3
 
 [node name="RunLike" type="Button" parent="layout/ControlBar"]
-margin_left = 322.0
-margin_right = 405.0
+margin_left = 282.0
+margin_right = 352.0
 margin_bottom = 42.0
-text = "Run Like ->"
+text = "Run Like:"
 
 [node name="CScript" type="VBoxContainer" parent="layout/ControlBar"]
-margin_left = 409.0
-margin_right = 549.0
+margin_left = 356.0
+margin_right = 496.0
 margin_bottom = 42.0
 
 [node name="Label" type="Label" parent="layout/ControlBar/CScript"]
@@ -73,8 +101,8 @@ margin_bottom = 42.0
 rect_min_size = Vector2( 140, 0 )
 
 [node name="CInner" type="VBoxContainer" parent="layout/ControlBar"]
-margin_left = 553.0
-margin_right = 693.0
+margin_left = 500.0
+margin_right = 640.0
 margin_bottom = 42.0
 
 [node name="Label3" type="Label" parent="layout/ControlBar/CInner"]
@@ -89,8 +117,8 @@ margin_bottom = 42.0
 rect_min_size = Vector2( 140, 0 )
 
 [node name="CTest" type="VBoxContainer" parent="layout/ControlBar"]
-margin_left = 697.0
-margin_right = 837.0
+margin_left = 644.0
+margin_right = 784.0
 margin_bottom = 42.0
 
 [node name="Label2" type="Label" parent="layout/ControlBar/CTest"]
@@ -105,15 +133,16 @@ margin_bottom = 42.0
 rect_min_size = Vector2( 140, 0 )
 
 [node name="CenterContainer" type="CenterContainer" parent="layout/ControlBar"]
-margin_left = 841.0
-margin_right = 962.0
+margin_left = 788.0
+margin_right = 869.0
 margin_bottom = 42.0
 size_flags_horizontal = 3
 
 [node name="RunAll" type="Button" parent="layout/ControlBar"]
-margin_left = 966.0
+margin_left = 873.0
 margin_right = 1023.0
 margin_bottom = 42.0
+rect_min_size = Vector2( 150, 0 )
 text = "Run All"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -132,6 +161,10 @@ margin_bottom = 553.0
 focus_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+custom_fonts/bold_italics_font = SubResource( 2 )
+custom_fonts/italics_font = SubResource( 4 )
+custom_fonts/bold_font = SubResource( 6 )
+custom_fonts/normal_font = SubResource( 8 )
 selection_enabled = true
 
 [node name="sc" type="ScrollContainer" parent="layout/RSplit"]

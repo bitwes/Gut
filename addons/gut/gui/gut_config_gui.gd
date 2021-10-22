@@ -16,6 +16,7 @@ func _init(cont):
 
 
 func set_options(options):
+	_add_title("Settings")
 	_add_boolean('should_exit', options.should_exit, 'Exit on Finish')
 	_add_boolean('should_exit_on_success', options.should_exit_on_success, 'Exit on Success')
 	_add_boolean('should_maximize', options.should_maximize, 'Maximize')

@@ -32,6 +32,42 @@ onready var _ctrls = {
 	settings = $layout/RSplit/sc/Settings
 }
 
+# -----------------------------------
+func _set_font(rtl, font_name, custom_name):
+	if(font_name == null):
+		rtl.set('custom_fonts/' + custom_name, null)
+	else:
+		var dyn_font = DynamicFont.new()
+		var font_data = DynamicFontData.new()
+		font_data.font_path = 'res://addons/gut/fonts/' + font_name + '.ttf'
+		font_data.antialiased = true
+		dyn_font.font_data = font_data
+		rtl.set('custom_fonts/' + custom_name, dyn_font)
+
+
+func _set_all_fonts_in_ftl(ftl, base_name):
+	if(base_name == 'Default'):
+		_set_font(ftl, null, 'normal_font')
+		_set_font(ftl, null, 'bold_font')
+		_set_font(ftl, null, 'italics_font')
+		_set_font(ftl, null, 'bold_italics_font')
+	else:
+		_set_font(ftl, base_name + '-Regular', 'normal_font')
+		_set_font(ftl, base_name + '-Bold', 'bold_font')
+		_set_font(ftl, base_name + '-Italic', 'italics_font')
+		_set_font(ftl, base_name + '-BoldItalic', 'bold_italics_font')
+
+
+func _set_font_size_for_rtl(rtl, new_size):
+	if(rtl.get('custom_fonts/normal_font') != null):
+		rtl.get('custom_fonts/bold_italics_font').size = new_size
+		rtl.get('custom_fonts/bold_font').size = new_size
+		rtl.get('custom_fonts/italics_font').size = new_size
+		rtl.get('custom_fonts/normal_font').size = new_size
+# -----------------------------------
+
+
+
 
 func _init():
 	_gut_config.load_options(RUNNER_JSON_PATH)
@@ -40,6 +76,8 @@ func _init():
 func _ready():
 	_gut_config_gui = GutConfigGui.new(_ctrls.settings)
 	_gut_config_gui.set_options(_gut_config.options)
+	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.font_name)
+	_set_font_size_for_rtl(_ctrls.output, _gut_config.options.font_size)
 
 
 func _is_test_script(script):
@@ -92,7 +130,9 @@ func _run_tests():
 	_ctrls.rerun.button.disabled = false
 	write_file(RESULT_FILE, 'Run in progress')
 	_gut_config.options = _gut_config_gui.get_options(_gut_config.options)
-	print(JSON.print(_gut_config.options, ' '))
+	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.font_name)
+	_set_font_size_for_rtl(_ctrls.output, _gut_config.options.font_size)
+
 	var w_result = _gut_config.write_options(RUNNER_JSON_PATH)
 	if(w_result != OK):
 		push_error(str('Could not write options to ', RUNNER_JSON_PATH, ': ', w_result))
@@ -158,7 +198,7 @@ func set_current_script(script):
 			_ctrls.run_current.button.modulate = Color(1, .5, .5)
 	else:
 		_ctrls.run_current.button.disabled = true
-		_ctrls.run_current.label.text = 'None Selected'
+		_ctrls.run_current.button.text = 'None Selected'
 
 
 func set_interface(value):
