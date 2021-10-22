@@ -10,7 +10,7 @@ __meta__ = {
 }
 
 [node name="RunGutTestsButton" type="Button" parent="."]
-margin_left = 838.0
+margin_left = 836.0
 margin_top = 4.0
 margin_right = 1019.0
 margin_bottom = 79.0
