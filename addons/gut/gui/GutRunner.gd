@@ -1,11 +1,15 @@
 extends Node2D
 
 var Gut = load('res://addons/gut/gut.gd')
+var ResultExporter = load('res://addons/gut/result_exporter.gd')
+
 const RUNNER_JSON_PATH = 'res://.gut_editor_config.json'
 const RESULT_FILE = 'user://.gut_editor.bbcode'
+const RESULT_JSON = 'user://.gut_editor.json'
 
 var _gut_config = load('res://addons/gut/gut_config.gd').new()
 var _gut = null;
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	call_deferred('_setup_gut')
@@ -26,6 +30,8 @@ func _setup_gut():
 	_gut.test_scripts(run_rest_of_scripts)
 
 
+
+
 func _on_tests_finished(should_exit, should_exit_on_success):
 	var content = _gut.get_gui().get_text_box().text
 
@@ -36,6 +42,9 @@ func _on_tests_finished(should_exit, should_exit_on_success):
 		f.close()
 	else:
 		print('ERROR Could not save bbcode, result = ', result)
+
+	var exporter = ResultExporter.new()
+	var f_result = exporter.write_summary_file(_gut, RESULT_JSON)
 
 	if(should_exit):
 		get_tree().quit()

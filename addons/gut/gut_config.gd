@@ -1,5 +1,15 @@
 var Gut = load('res://addons/gut/gut.gd')
 
+# Do not want a ref to _utils here due to use by editor plugin.
+# _utils needs to be split so that constants and what not do not
+# have to rely on the weird singleton thing I made.
+enum DOUBLE_STRATEGY{
+	FULL,
+	PARTIAL
+}
+
+
+var valid_fonts = ['AnonymousPro', 'CourierPro', 'LobsterTwo', 'Default']
 var default_options = {
 	background_color = Color(.15, .15, .15, 1).to_html(),
 	config_file = 'res://.gutconfig.json',
@@ -31,6 +41,14 @@ var default_options = {
 }
 
 var options = default_options.duplicate()
+
+
+func _null_copy(h):
+	var new_hash = {}
+	for key in h:
+		new_hash[key] = null
+	return new_hash
+
 
 func _load_options_from_config_file(file_path, into):
 	# SHORTCIRCUIT
@@ -106,10 +124,10 @@ func _apply_options(opts, _tester):
 		_tester.select_script(opts.selected)
 		# _run_single = true
 
-	# if(opts.double_strategy == 'full'):
-	# 	_tester.set_double_strategy(_utils.DOUBLE_STRATEGY.FULL)
-	# elif(opts.double_strategy == 'partial'):
-	# 	_tester.set_double_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
+	if(opts.double_strategy == 'full'):
+		_tester.set_double_strategy(DOUBLE_STRATEGY.FULL)
+	elif(opts.double_strategy == 'partial'):
+		_tester.set_double_strategy(DOUBLE_STRATEGY.PARTIAL)
 
 	_tester.set_unit_test_name(opts.unit_test_name)
 	_tester.set_pre_run_script(opts.pre_run_script)
@@ -135,4 +153,12 @@ func config_gut(gut):
 
 
 func load_options(path):
-	_load_options_from_config_file(path, options)
+	return _load_options_from_config_file(path, options)
+
+
+func load_options_no_defaults(path):
+	options = _null_copy(default_options)
+	return _load_options_from_config_file(path, options)
+
+func apply_options(gut):
+	_apply_options(options, gut)

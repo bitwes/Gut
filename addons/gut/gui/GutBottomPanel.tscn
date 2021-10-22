@@ -155,7 +155,77 @@ margin_bottom = 599.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Output" type="RichTextLabel" parent="layout/RSplit"]
+[node name="CResults" type="VBoxContainer" parent="layout/RSplit"]
+margin_right = 811.0
+margin_bottom = 553.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ControlBar" type="HBoxContainer" parent="layout/RSplit/CResults"]
+margin_right = 811.0
+margin_bottom = 20.0
+
+[node name="lblPassing" type="Label" parent="layout/RSplit/CResults/ControlBar"]
+margin_top = 3.0
+margin_right = 48.0
+margin_bottom = 17.0
+text = "Passing"
+
+[node name="lblPassingValue" type="Label" parent="layout/RSplit/CResults/ControlBar"]
+margin_left = 52.0
+margin_top = 3.0
+margin_right = 67.0
+margin_bottom = 17.0
+text = "---"
+
+[node name="lblFailing" type="Label" parent="layout/RSplit/CResults/ControlBar"]
+margin_left = 71.0
+margin_top = 3.0
+margin_right = 112.0
+margin_bottom = 17.0
+text = "Failing"
+
+[node name="lblFailingValue" type="Label" parent="layout/RSplit/CResults/ControlBar"]
+margin_left = 116.0
+margin_top = 3.0
+margin_right = 131.0
+margin_bottom = 17.0
+text = "---"
+
+[node name="lblPending" type="Label" parent="layout/RSplit/CResults/ControlBar"]
+margin_left = 135.0
+margin_top = 3.0
+margin_right = 186.0
+margin_bottom = 17.0
+text = "Pending"
+
+[node name="lblPendingValue" type="Label" parent="layout/RSplit/CResults/ControlBar"]
+margin_left = 190.0
+margin_top = 3.0
+margin_right = 205.0
+margin_bottom = 17.0
+text = "---"
+
+[node name="CenterContainer" type="CenterContainer" parent="layout/RSplit/CResults/ControlBar"]
+margin_left = 209.0
+margin_right = 663.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+
+[node name="CopyButton" type="Button" parent="layout/RSplit/CResults/ControlBar"]
+margin_left = 667.0
+margin_right = 747.0
+margin_bottom = 20.0
+text = "  Copy All  "
+
+[node name="ClearButton" type="Button" parent="layout/RSplit/CResults/ControlBar"]
+margin_left = 751.0
+margin_right = 811.0
+margin_bottom = 20.0
+text = "  Clear  "
+
+[node name="Output" type="RichTextLabel" parent="layout/RSplit/CResults"]
+margin_top = 24.0
 margin_right = 811.0
 margin_bottom = 553.0
 focus_mode = 2
@@ -176,7 +246,7 @@ size_flags_vertical = 3
 
 [node name="Settings" type="VBoxContainer" parent="layout/RSplit/sc"]
 margin_right = 188.0
-margin_bottom = 558.0
+margin_bottom = 586.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -184,3 +254,5 @@ size_flags_vertical = 3
 [connection signal="pressed" from="layout/ControlBar/RunCurrent" to="." method="_on_RunCurrent_pressed"]
 [connection signal="pressed" from="layout/ControlBar/RunLike" to="." method="_on_RunLike_pressed"]
 [connection signal="pressed" from="layout/ControlBar/RunAll" to="." method="_on_RunAll_pressed"]
+[connection signal="pressed" from="layout/RSplit/CResults/ControlBar/CopyButton" to="." method="_on_CopyButton_pressed"]
+[connection signal="pressed" from="layout/RSplit/CResults/ControlBar/ClearButton" to="." method="_on_ClearButton_pressed"]

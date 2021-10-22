@@ -43,9 +43,11 @@ func _export_scripts(summary):
 # TODO
 #	time
 #	errors
-func get_results_dictionary(gut):
+func get_results_dictionary(gut, include_scripts=true):
 	var summary = gut.get_summary()
-	var scripts = _export_scripts(summary)
+	var scripts = []
+	if(include_scripts):
+		scripts = _export_scripts(summary)
 	var totals = summary.get_totals()
 
 	var result =  {
@@ -53,6 +55,7 @@ func get_results_dictionary(gut):
 			"props":{
 				"pending":totals.pending,
 				"failures":totals.failing,
+				"passing":totals.passing,
 				"tests":totals.tests,
 				"time":gut.get_gui().elapsed_time_as_str().replace('s', ''),
 				"orphans":gut.get_orphan_counter().get_counter('total')
@@ -74,3 +77,15 @@ func write_json_file(gut, path):
 
 	return f_result
 
+
+
+func write_summary_file(gut, path):
+	var dict = get_results_dictionary(gut, false)
+	var json = JSON.print(dict, ' ')
+
+	var f_result = _utils.write_file(path, json)
+	if(f_result != OK):
+		var msg = str("Error:  ", f_result, ".  Could not create export file ", path)
+		_utils.get_logger().error(msg)
+
+	return f_result

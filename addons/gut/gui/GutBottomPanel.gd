@@ -3,6 +3,7 @@ extends Control
 
 const RUNNER_JSON_PATH = 'res://.gut_editor_config.json'
 const RESULT_FILE = 'user://.gut_editor.bbcode'
+const RESULT_JSON = 'user://.gut_editor.json'
 
 var TestScript = load('res://addons/gut/test.gd')
 var GutConfigGui = load('res://addons/gut/gui/gut_config_gui.gd')
@@ -15,8 +16,9 @@ var _gut_plugin = null
 
 
 onready var _ctrls = {
-	output = $layout/RSplit/Output,
+	output = $layout/RSplit/CResults/Output,
 	run_button = $layout/ControlBar/RunAll,
+	settings = $layout/RSplit/sc/Settings,
 	run_like = {
 		button = $layout/ControlBar/RunLike,
 		txt_script = $layout/ControlBar/CScript/txtScript,
@@ -29,7 +31,12 @@ onready var _ctrls = {
 	rerun = {
 		button = $layout/ControlBar/Rerun,
 	},
-	settings = $layout/RSplit/sc/Settings
+	results = {
+		passing = $layout/RSplit/CResults/ControlBar/lblPassingValue,
+		failing = $layout/RSplit/CResults/ControlBar/lblFailingValue,
+		pending = $layout/RSplit/CResults/ControlBar/lblPendingValue
+	}
+	
 }
 
 # -----------------------------------
@@ -109,6 +116,16 @@ func load_result_output():
 	_ctrls.output.bbcode_text = get_file_as_text(RESULT_FILE)
 	_ctrls.output.grab_focus()
 	_ctrls.output.scroll_to_line(_ctrls.output.get_line_count() -1)
+	
+	var summary = get_file_as_text(RESULT_JSON)
+	var results = JSON.parse(summary)
+	if(results.error != OK):
+		return
+	var summary_json = results.result['test_scripts']['props']
+	_ctrls.results.passing.text = str(summary_json.passing)
+	_ctrls.results.failing.text = str(summary_json.failures)
+	_ctrls.results.pending.text = str(summary_json.pending)
+	
 
 
 func _update_last_run_label():
@@ -244,3 +261,11 @@ func nvl(value, if_null):
 		return if_null
 	else:
 		return value
+
+
+func _on_CopyButton_pressed():
+	OS.clipboard = _ctrls.output.text
+
+
+func _on_ClearButton_pressed():
+	_ctrls.output.clear()
