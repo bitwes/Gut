@@ -14,6 +14,7 @@ var _is_running = false;
 var _gut_config = load('res://addons/gut/gut_config.gd').new()
 var _gut_config_gui = null
 var _gut_plugin = null
+var _light_color = Color(0, 0, 0, .5)
 
 
 onready var _ctrls = {
@@ -21,6 +22,7 @@ onready var _ctrls = {
 	run_button = $layout/ControlBar/RunAll,
 	settings = $layout/RSplit/sc/Settings,
 	shortcut_dialog = $BottomPanelShortcuts,
+	light = $layout/RSplit/CResults/ControlBar/Light,
 	run_like = {
 		button = $layout/ControlBar/RunLike,
 		txt_script = $layout/ControlBar/CScript/txtScript,
@@ -216,6 +218,12 @@ func _on_Shortcuts_pressed():
 func _on_BottomPanelShortcuts_popup_hide():
 	_apply_shortcuts()
 	_ctrls.shortcut_dialog.save_shortcuts(SHORTCUTS_PATH)
+
+
+func _on_Light_draw():
+	var l = _ctrls.light
+	l.draw_circle(Vector2(l.rect_size.x / 2, l.rect_size.y / 2), l.rect_size.x / 2, _light_color)
+
 # ---------------
 # Public
 # ---------------
@@ -233,6 +241,15 @@ func load_result_output():
 	_ctrls.results.passing.text = str(summary_json.passing)
 	_ctrls.results.failing.text = str(summary_json.failures)
 	_ctrls.results.pending.text = str(summary_json.pending)
+	
+	if(summary_json.failures != 0):
+		_light_color = Color(1, 0, 0, .75)
+	elif(summary_json.pending != 0):
+		_light_color = Color(1, 1, 0, .75)
+	else:
+		_light_color = Color(0, 1, 0, .75)
+	_ctrls.light.update()
+	
 
 
 func set_current_script(script):
@@ -294,5 +311,3 @@ func nvl(value, if_null):
 		return if_null
 	else:
 		return value
-
-

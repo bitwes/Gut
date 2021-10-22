@@ -1,35 +1,63 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://addons/gut/gui/GutBottomPanel.gd" type="Script" id=1]
 [ext_resource path="res://addons/gut/gui/BottomPanelShortcuts.tscn" type="PackedScene" id=2]
 
-[sub_resource type="DynamicFontData" id=1]
+[sub_resource type="InputEventKey" id=1]
+control = true
+scancode = 50
+
+[sub_resource type="ShortCut" id=2]
+shortcut = SubResource( 1 )
+
+[sub_resource type="InputEventKey" id=3]
+control = true
+scancode = 52
+
+[sub_resource type="ShortCut" id=4]
+shortcut = SubResource( 3 )
+
+[sub_resource type="InputEventKey" id=5]
+control = true
+scancode = 51
+
+[sub_resource type="ShortCut" id=6]
+shortcut = SubResource( 5 )
+
+[sub_resource type="InputEventKey" id=7]
+control = true
+scancode = 49
+
+[sub_resource type="ShortCut" id=8]
+shortcut = SubResource( 7 )
+
+[sub_resource type="DynamicFontData" id=9]
 font_path = "res://addons/gut/fonts/CourierPrime-BoldItalic.ttf"
 
-[sub_resource type="DynamicFont" id=2]
+[sub_resource type="DynamicFont" id=10]
 size = 30
-font_data = SubResource( 1 )
+font_data = SubResource( 9 )
 
-[sub_resource type="DynamicFontData" id=3]
+[sub_resource type="DynamicFontData" id=11]
 font_path = "res://addons/gut/fonts/CourierPrime-Italic.ttf"
 
-[sub_resource type="DynamicFont" id=4]
+[sub_resource type="DynamicFont" id=12]
 size = 30
-font_data = SubResource( 3 )
+font_data = SubResource( 11 )
 
-[sub_resource type="DynamicFontData" id=5]
+[sub_resource type="DynamicFontData" id=13]
 font_path = "res://addons/gut/fonts/CourierPrime-Bold.ttf"
 
-[sub_resource type="DynamicFont" id=6]
+[sub_resource type="DynamicFont" id=14]
 size = 30
-font_data = SubResource( 5 )
+font_data = SubResource( 13 )
 
-[sub_resource type="DynamicFontData" id=7]
+[sub_resource type="DynamicFontData" id=15]
 font_path = "res://addons/gut/fonts/CourierPrime-Regular.ttf"
 
-[sub_resource type="DynamicFont" id=8]
+[sub_resource type="DynamicFont" id=16]
 size = 30
-font_data = SubResource( 7 )
+font_data = SubResource( 15 )
 
 [node name="GutBottomPanel" type="Control"]
 anchor_left = -0.0025866
@@ -64,6 +92,7 @@ __meta__ = {
 margin_right = 101.0
 margin_bottom = 42.0
 disabled = true
+shortcut = SubResource( 2 )
 text = "Rerun <none>"
 
 [node name="RunCurrent" type="Button" parent="layout/ControlBar"]
@@ -71,6 +100,7 @@ margin_left = 105.0
 margin_right = 193.0
 margin_bottom = 42.0
 disabled = true
+shortcut = SubResource( 4 )
 text = "Run <none>"
 
 [node name="CenterContainer2" type="CenterContainer" parent="layout/ControlBar"]
@@ -83,6 +113,7 @@ size_flags_horizontal = 3
 margin_left = 244.0
 margin_right = 314.0
 margin_bottom = 42.0
+shortcut = SubResource( 6 )
 text = "Run Like:"
 
 [node name="CScript" type="VBoxContainer" parent="layout/ControlBar"]
@@ -144,6 +175,7 @@ margin_left = 797.0
 margin_right = 947.0
 margin_bottom = 42.0
 rect_min_size = Vector2( 150, 0 )
+shortcut = SubResource( 8 )
 text = "Run All"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -170,78 +202,85 @@ size_flags_vertical = 3
 
 [node name="ControlBar" type="HBoxContainer" parent="layout/RSplit/CResults"]
 margin_right = 811.0
-margin_bottom = 20.0
+margin_bottom = 30.0
+
+[node name="Light" type="Control" parent="layout/RSplit/CResults/ControlBar"]
+margin_right = 30.0
+margin_bottom = 30.0
+rect_min_size = Vector2( 30, 30 )
 
 [node name="lblPassing" type="Label" parent="layout/RSplit/CResults/ControlBar"]
-margin_top = 3.0
-margin_right = 48.0
-margin_bottom = 17.0
+margin_left = 34.0
+margin_top = 8.0
+margin_right = 82.0
+margin_bottom = 22.0
 text = "Passing"
 
 [node name="lblPassingValue" type="Label" parent="layout/RSplit/CResults/ControlBar"]
-margin_left = 52.0
-margin_top = 3.0
-margin_right = 67.0
-margin_bottom = 17.0
+margin_left = 86.0
+margin_top = 8.0
+margin_right = 101.0
+margin_bottom = 22.0
 text = "---"
 
 [node name="lblFailing" type="Label" parent="layout/RSplit/CResults/ControlBar"]
-margin_left = 71.0
-margin_top = 3.0
-margin_right = 112.0
-margin_bottom = 17.0
+margin_left = 105.0
+margin_top = 8.0
+margin_right = 146.0
+margin_bottom = 22.0
 text = "Failing"
 
 [node name="lblFailingValue" type="Label" parent="layout/RSplit/CResults/ControlBar"]
-margin_left = 116.0
-margin_top = 3.0
-margin_right = 131.0
-margin_bottom = 17.0
+margin_left = 150.0
+margin_top = 8.0
+margin_right = 165.0
+margin_bottom = 22.0
 text = "---"
 
 [node name="lblPending" type="Label" parent="layout/RSplit/CResults/ControlBar"]
-margin_left = 135.0
-margin_top = 3.0
-margin_right = 186.0
-margin_bottom = 17.0
+margin_left = 169.0
+margin_top = 8.0
+margin_right = 220.0
+margin_bottom = 22.0
 text = "Pending"
 
 [node name="lblPendingValue" type="Label" parent="layout/RSplit/CResults/ControlBar"]
-margin_left = 190.0
-margin_top = 3.0
-margin_right = 205.0
-margin_bottom = 17.0
+margin_left = 224.0
+margin_top = 8.0
+margin_right = 239.0
+margin_bottom = 22.0
 text = "---"
 
 [node name="CenterContainer" type="CenterContainer" parent="layout/RSplit/CResults/ControlBar"]
-margin_left = 209.0
+margin_left = 243.0
 margin_right = 663.0
-margin_bottom = 20.0
+margin_bottom = 30.0
 size_flags_horizontal = 3
 
 [node name="CopyButton" type="Button" parent="layout/RSplit/CResults/ControlBar"]
 margin_left = 667.0
 margin_right = 747.0
-margin_bottom = 20.0
+margin_bottom = 30.0
 text = "  Copy All  "
 
 [node name="ClearButton" type="Button" parent="layout/RSplit/CResults/ControlBar"]
 margin_left = 751.0
 margin_right = 811.0
-margin_bottom = 20.0
+margin_bottom = 30.0
 text = "  Clear  "
 
 [node name="Output" type="RichTextLabel" parent="layout/RSplit/CResults"]
-margin_top = 24.0
+margin_top = 34.0
 margin_right = 811.0
 margin_bottom = 553.0
 focus_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_fonts/bold_italics_font = SubResource( 2 )
-custom_fonts/italics_font = SubResource( 4 )
-custom_fonts/bold_font = SubResource( 6 )
-custom_fonts/normal_font = SubResource( 8 )
+custom_fonts/bold_italics_font = SubResource( 10 )
+custom_fonts/italics_font = SubResource( 12 )
+custom_fonts/bold_font = SubResource( 14 )
+custom_fonts/normal_font = SubResource( 16 )
+scroll_following = true
 selection_enabled = true
 
 [node name="sc" type="ScrollContainer" parent="layout/RSplit"]
@@ -258,16 +297,21 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="BottomPanelShortcuts" parent="." instance=ExtResource( 2 )]
-margin_left = 5.82709
-margin_top = -166.865
-margin_right = 27.459
-margin_bottom = -118.665
+anchor_left = -0.000517324
+anchor_top = 0.000882874
+anchor_right = 0.233483
+anchor_bottom = 0.328883
+margin_left = 10.0649
+margin_top = -173.752
+margin_right = 31.6969
+margin_bottom = -125.552
 
 [connection signal="pressed" from="layout/ControlBar/Rerun" to="." method="_on_Rerun_pressed"]
 [connection signal="pressed" from="layout/ControlBar/RunCurrent" to="." method="_on_RunCurrent_pressed"]
 [connection signal="pressed" from="layout/ControlBar/RunLike" to="." method="_on_RunLike_pressed"]
 [connection signal="pressed" from="layout/ControlBar/RunAll" to="." method="_on_RunAll_pressed"]
 [connection signal="pressed" from="layout/ControlBar/Shortcuts" to="." method="_on_Shortcuts_pressed"]
+[connection signal="draw" from="layout/RSplit/CResults/ControlBar/Light" to="." method="_on_Light_draw"]
 [connection signal="pressed" from="layout/RSplit/CResults/ControlBar/CopyButton" to="." method="_on_CopyButton_pressed"]
 [connection signal="pressed" from="layout/RSplit/CResults/ControlBar/ClearButton" to="." method="_on_ClearButton_pressed"]
 [connection signal="popup_hide" from="BottomPanelShortcuts" to="." method="_on_BottomPanelShortcuts_popup_hide"]

@@ -4,7 +4,6 @@
 [ext_resource path="res://addons/gut/gui/BottomPanelShortcuts.gd" type="Script" id=2]
 
 [node name="BottomPanelShortcuts" type="WindowDialog"]
-visible = true
 anchor_right = 0.234
 anchor_bottom = 0.328
 margin_left = 392.0
