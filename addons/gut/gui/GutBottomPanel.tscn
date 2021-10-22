@@ -175,8 +175,8 @@ rect_min_size = Vector2( 200, 0 )
 size_flags_vertical = 3
 
 [node name="Settings" type="VBoxContainer" parent="layout/RSplit/sc"]
-margin_right = 200.0
-margin_bottom = 553.0
+margin_right = 188.0
+margin_bottom = 558.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 

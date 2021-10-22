@@ -527,7 +527,7 @@ func _export_results():
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func _export_junit_xml():
-	var exporter = _utils.JunitExporter.new()
+	var exporter = _utils.JunitXmlExport.new()
 	var output_file = _junit_xml_file
 
 	if(_junit_xml_timestamp):

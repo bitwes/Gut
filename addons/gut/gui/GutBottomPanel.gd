@@ -1,8 +1,8 @@
 tool
 extends Control
 
-const RUNNER_JSON_PATH = 'user://__gut_runner__.json'
-const RESULT_FILE = 'user://_gut_runner_.bbcode'
+const RUNNER_JSON_PATH = 'res://.gut_editor_config.json'
+const RESULT_FILE = 'user://.gut_editor.bbcode'
 
 var TestScript = load('res://addons/gut/test.gd')
 var GutConfigGui = load('res://addons/gut/gui/gut_config_gui.gd')
@@ -192,10 +192,10 @@ func set_current_script(script):
 		if(_is_test_script(script)):
 			_ctrls.run_current.button.text = str(file)
 			_ctrls.run_current.button.disabled = false
-			_ctrls.run_current.button.modulate = Color(.5, 1, .5)
+			# _ctrls.run_current.button.modulate = Color(.5, 1, .5)
 		else:
 			_ctrls.run_current.button.disabled = true
-			_ctrls.run_current.button.modulate = Color(1, .5, .5)
+			# _ctrls.run_current.button.modulate = Color(1, .5, .5)
 	else:
 		_ctrls.run_current.button.disabled = true
 		_ctrls.run_current.button.text = 'None Selected'

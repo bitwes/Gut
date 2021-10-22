@@ -17,10 +17,16 @@ func _init(cont):
 
 func set_options(options):
 	_add_title("Settings")
+	_add_number("log_level", options.log_level, "Log Level", 0, 3)
+	_add_boolean('ignore_pause', options.ignore_pause, 'Ignore Pause')
 	_add_boolean('should_exit', options.should_exit, 'Exit on Finish')
 	_add_boolean('should_exit_on_success', options.should_exit_on_success, 'Exit on Success')
 	_add_boolean('should_maximize', options.should_maximize, 'Maximize')
 	_add_number('opacity', options.opacity, 'Opacity', 0, 100)
+
+	_add_title("XML Output")
+	_add_value("junit_xml_file", options.junit_xml_file, "Output Path")
+	_add_boolean("junit_xml_timestamp", options.junit_xml_timestamp, "Include timestamp")
 
 	_add_title('Font')
 	_add_select('font_name', options.font_name, _avail_fonts, 'Font')
@@ -34,6 +40,10 @@ func set_options(options):
 			value = options.dirs[i]
 
 		_add_value(str('directory_', i), value, str('Directory ', i))
+
+	_add_title('Misc')
+	_add_value('prefix', options.prefix, 'Script Prefix')
+
 
 
 func _add_title(text):
@@ -101,21 +111,31 @@ func _add_boolean(key, value, disp_text):
 
 func get_options(base_opts):
 	var to_return = base_opts.duplicate()
+
+	to_return.log_level = _cfg_ctrls.log_level.value
+	to_return.ignore_pause = _cfg_ctrls.ignore_pause.pressed
+	to_return.should_exit = _cfg_ctrls.should_exit.pressed
+	to_return.should_exit_on_success = _cfg_ctrls.should_exit_on_success.pressed
+	to_return.should_maximize = _cfg_ctrls.should_maximize.pressed
+	to_return.opacity = _cfg_ctrls.opacity.value
+
+	to_return.junit_xml_file = _cfg_ctrls.junit_xml_file.text
+	to_return.junit_xml_timestamp = _cfg_ctrls.junit_xml_timestamp.pressed
+
+	to_return.font_name = _cfg_ctrls.font_name.get_item_text(
+		_cfg_ctrls.font_name.selected)
+	to_return.font_size = _cfg_ctrls.font_size.value
+
+	to_return.include_subdirs = _cfg_ctrls.include_subdirs.pressed
 	var dirs = []
 	for i in range(DIRS_TO_LIST):
 		var key = str('directory_', i)
 		var val = _cfg_ctrls[key].text
 		if(val != '' and val != null):
 			dirs.append(val)
-
-	to_return.include_subdirs = _cfg_ctrls.include_subdirs.pressed
-	to_return.should_exit_on_success = _cfg_ctrls.should_exit_on_success.pressed
-	to_return.should_exit = _cfg_ctrls.should_exit.pressed
 	to_return.dirs = dirs
-	to_return.font_size = _cfg_ctrls.font_size.value
-	to_return.font_name = _cfg_ctrls.font_name.get_item_text(
-		_cfg_ctrls.font_name.selected)
-	to_return.should_maximize = _cfg_ctrls.should_maximize.pressed
-	to_return.opacity = _cfg_ctrls.opacity.value
+
+	to_return.prefix = _cfg_ctrls.prefix.text
+
 
 	return to_return

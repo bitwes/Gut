@@ -1,8 +1,8 @@
 extends Node2D
 
 var Gut = load('res://addons/gut/gut.gd')
-const RUNNER_JSON_PATH = 'user://__gut_runner__.json'
-const RESULT_FILE = 'user://_gut_runner_.bbcode'
+const RUNNER_JSON_PATH = 'res://.gut_editor_config.json'
+const RESULT_FILE = 'user://.gut_editor.bbcode'
 
 var _gut_config = load('res://addons/gut/gut_config.gd').new()
 var _gut = null;
