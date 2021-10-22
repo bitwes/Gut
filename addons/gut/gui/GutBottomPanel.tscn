@@ -1,6 +1,7 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://addons/gut/gui/GutBottomPanel.gd" type="Script" id=1]
+[ext_resource path="res://addons/gut/gui/BottomPanelShortcuts.tscn" type="PackedScene" id=2]
 
 [sub_resource type="DynamicFontData" id=1]
 font_path = "res://addons/gut/fonts/CourierPrime-BoldItalic.ttf"
@@ -74,19 +75,19 @@ text = "Run <none>"
 
 [node name="CenterContainer2" type="CenterContainer" parent="layout/ControlBar"]
 margin_left = 197.0
-margin_right = 278.0
+margin_right = 240.0
 margin_bottom = 42.0
 size_flags_horizontal = 3
 
 [node name="RunLike" type="Button" parent="layout/ControlBar"]
-margin_left = 282.0
-margin_right = 352.0
+margin_left = 244.0
+margin_right = 314.0
 margin_bottom = 42.0
 text = "Run Like:"
 
 [node name="CScript" type="VBoxContainer" parent="layout/ControlBar"]
-margin_left = 356.0
-margin_right = 496.0
+margin_left = 318.0
+margin_right = 458.0
 margin_bottom = 42.0
 
 [node name="Label" type="Label" parent="layout/ControlBar/CScript"]
@@ -101,8 +102,8 @@ margin_bottom = 42.0
 rect_min_size = Vector2( 140, 0 )
 
 [node name="CInner" type="VBoxContainer" parent="layout/ControlBar"]
-margin_left = 500.0
-margin_right = 640.0
+margin_left = 462.0
+margin_right = 602.0
 margin_bottom = 42.0
 
 [node name="Label3" type="Label" parent="layout/ControlBar/CInner"]
@@ -117,8 +118,8 @@ margin_bottom = 42.0
 rect_min_size = Vector2( 140, 0 )
 
 [node name="CTest" type="VBoxContainer" parent="layout/ControlBar"]
-margin_left = 644.0
-margin_right = 784.0
+margin_left = 606.0
+margin_right = 746.0
 margin_bottom = 42.0
 
 [node name="Label2" type="Label" parent="layout/ControlBar/CTest"]
@@ -133,20 +134,26 @@ margin_bottom = 42.0
 rect_min_size = Vector2( 140, 0 )
 
 [node name="CenterContainer" type="CenterContainer" parent="layout/ControlBar"]
-margin_left = 788.0
-margin_right = 869.0
+margin_left = 750.0
+margin_right = 793.0
 margin_bottom = 42.0
 size_flags_horizontal = 3
 
 [node name="RunAll" type="Button" parent="layout/ControlBar"]
-margin_left = 873.0
-margin_right = 1023.0
+margin_left = 797.0
+margin_right = 947.0
 margin_bottom = 42.0
 rect_min_size = Vector2( 150, 0 )
 text = "Run All"
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Shortcuts" type="Button" parent="layout/ControlBar"]
+margin_left = 951.0
+margin_right = 1023.0
+margin_bottom = 42.0
+text = "Shortcuts"
 
 [node name="RSplit" type="HSplitContainer" parent="layout"]
 margin_top = 46.0
@@ -250,9 +257,17 @@ margin_bottom = 586.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
+[node name="BottomPanelShortcuts" parent="." instance=ExtResource( 2 )]
+margin_left = 5.82709
+margin_top = -166.865
+margin_right = 27.459
+margin_bottom = -118.665
+
 [connection signal="pressed" from="layout/ControlBar/Rerun" to="." method="_on_Rerun_pressed"]
 [connection signal="pressed" from="layout/ControlBar/RunCurrent" to="." method="_on_RunCurrent_pressed"]
 [connection signal="pressed" from="layout/ControlBar/RunLike" to="." method="_on_RunLike_pressed"]
 [connection signal="pressed" from="layout/ControlBar/RunAll" to="." method="_on_RunAll_pressed"]
+[connection signal="pressed" from="layout/ControlBar/Shortcuts" to="." method="_on_Shortcuts_pressed"]
 [connection signal="pressed" from="layout/RSplit/CResults/ControlBar/CopyButton" to="." method="_on_CopyButton_pressed"]
 [connection signal="pressed" from="layout/RSplit/CResults/ControlBar/ClearButton" to="." method="_on_ClearButton_pressed"]
+[connection signal="popup_hide" from="BottomPanelShortcuts" to="." method="_on_BottomPanelShortcuts_popup_hide"]

@@ -13,7 +13,7 @@
  "hide_orphans": false,
  "ignore_pause": true,
  "include_subdirs": false,
- "inner_class": "",
+ "inner_class": "2",
  "junit_xml_file": "",
  "junit_xml_timestamp": false,
  "log_level": 0,
