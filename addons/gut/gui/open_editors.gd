@@ -56,8 +56,8 @@ func _find_focused_editor():
 # Recursively search through the ScriptEditor for all the TextEdits.  Found
 # TextEdits are appended to _text_edits.
 func _populate_text_edits(thing=null):
-	var to_return = []
 	var ctrl = thing
+
 	if(ctrl == null):
 		ctrl = _script_editor
 		_num_searched = 0
