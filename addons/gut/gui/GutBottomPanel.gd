@@ -169,7 +169,8 @@ func _on_editor_script_changed(script):
 		set_current_script(script)
 
 func _on_editor_changed():
-	_open_editors.print_editors()
+	pass
+	# _open_editors.print_editors()
 
 func _on_RunAll_pressed():
 	_on_RunTests_pressed()
@@ -265,37 +266,22 @@ func set_current_script(script):
 		if(_is_test_script(script)):
 			_ctrls.run_current.button.text = str(file)
 			_ctrls.run_current.button.disabled = false
-			# _ctrls.run_current.button.modulate = Color(.5, 1, .5)
 		else:
 			_ctrls.run_current.button.disabled = true
-			# _ctrls.run_current.button.modulate = Color(1, .5, .5)
 	else:
 		_ctrls.run_current.button.disabled = true
 		_ctrls.run_current.button.text = 'None Selected'
-
-
-
-
-
-
-# func _find_editors(ctrl=null, structure=null,
-
-# VBoxContainer
-# HBoxContainer
-# TabContainer
-# ScriptTextEditor
-# VSplitContainer
-# CodeTextEditor
-# TextEdit
-
 
 
 func set_interface(value):
 	_interface = value
 	_interface.get_script_editor().connect("editor_script_changed", self, '_on_editor_script_changed')
 	set_current_script(_interface.get_script_editor().get_current_script())
-	_open_editors = load('res://addons/gut/gui/open_editors.gd').new(_interface.get_script_editor())
-	_open_editors.connect('editor_changed', self, '_on_editor_changed')
+	# TODO start using the open editors to do some sweet sweet run-at-cursor
+	# action in the editor.  If I didn't stop before implementing this then
+	# I may have never stopped working on this feature.
+	# _open_editors = load('res://addons/gut/gui/open_editors.gd').new(_interface.get_script_editor())
+	# _open_editors.connect('editor_changed', self, '_on_editor_changed')
 
 
 
