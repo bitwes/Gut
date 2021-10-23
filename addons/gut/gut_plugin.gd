@@ -9,11 +9,14 @@ func _enter_tree():
     # Add the new type with a name, a parent type, a script and an icon
     add_custom_type("Gut", "Control", preload("plugin_control.gd"), preload("icon.png"))
 
-    add_control_to_bottom_panel(_bottom_panel, 'GUT')
+    var button = add_control_to_bottom_panel(_bottom_panel, 'GUT')
+    button.shortcut_in_tooltip = true
 
     yield(get_tree().create_timer(3), 'timeout')
     _bottom_panel.set_interface(get_editor_interface())
     _bottom_panel.set_plugin(self)
+    _bottom_panel.set_panel_button(button)
+    _bottom_panel.load_shortcuts()
 
 
 func _exit_tree():

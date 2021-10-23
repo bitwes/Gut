@@ -27,8 +27,8 @@ func _ready():
 
 func _display_shortcut():
 	_ctrls.shortcut_label.text = to_s()
-	
-	
+
+
 func _is_shift_only_modifier():
 	return _source_event.shift and \
 		!(_source_event.meta or _source_event.control or _source_event.alt)
@@ -49,12 +49,12 @@ func _edit_mode(should):
 	_ctrls.save_button.disabled = should
 	_ctrls.cancel_button.visible = should
 	_ctrls.clear_button.visible = !should
-	
+
 	if(should and to_s() == ''):
 		_ctrls.shortcut_label.text = 'press buttons'
 	else:
 		_ctrls.shortcut_label.text = to_s()
-	
+
 	if(should):
 		emit_signal("start_edit")
 	else:
@@ -70,7 +70,7 @@ func _unhandled_key_input(event):
 			_source_event.control = event.control or event.scancode == KEY_CONTROL
 			_source_event.meta = event.meta or event.scancode == KEY_META
 			_source_event.shift = event.shift or event.scancode == KEY_SHIFT
-			
+
 			if(_has_modifier() and !_is_modifier(event.scancode)):
 				_source_event.scancode = event.scancode
 				_key_disp = OS.get_scancode_string(event.scancode)
@@ -90,8 +90,8 @@ func _on_SaveButton_pressed():
 	_edit_mode(false)
 	_pre_edit_event = null
 	emit_signal('changed')
-	
-	
+
+
 func _on_CancelButton_pressed():
 	_edit_mode(false)
 	_source_event = _pre_edit_event
@@ -115,17 +115,17 @@ func to_s():
 		modifiers.append('meta')
 	if(_source_event.shift):
 		modifiers.append('shift')
-		
+
 	if(_source_event.scancode != null):
 		modifiers.append(_key_disp)
-		
+
 	var mod_text = ''
 	for i in range(modifiers.size()):
 		mod_text += modifiers[i]
 		if(i != modifiers.size() - 1):
 			mod_text += ' + '
-			
-	return mod_text	
+
+	return mod_text
 
 
 func is_valid():
@@ -139,7 +139,7 @@ func get_shortcut():
 
 
 func set_shortcut(sc):
-	if(sc == null):
+	if(sc == null or sc.shortcut == null):
 		clear_shortcut()
 	else:
 		_source_event = sc.shortcut

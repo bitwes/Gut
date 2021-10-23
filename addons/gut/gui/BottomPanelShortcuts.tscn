@@ -4,6 +4,7 @@
 [ext_resource path="res://addons/gut/gui/BottomPanelShortcuts.gd" type="Script" id=2]
 
 [node name="BottomPanelShortcuts" type="WindowDialog"]
+visible = true
 anchor_right = 0.234
 anchor_bottom = 0.328
 margin_left = 392.0
@@ -108,8 +109,29 @@ margin_right = 240.0
 margin_bottom = 25.0
 size_flags_horizontal = 3
 
-[node name="CenterContainer2" type="CenterContainer" parent="Layout"]
+[node name="CPanelButton" type="HBoxContainer" parent="Layout"]
 margin_top = 116.0
+margin_right = 240.0
+margin_bottom = 141.0
+
+[node name="Label" type="Label" parent="Layout/CPanelButton"]
+margin_right = 50.0
+margin_bottom = 25.0
+rect_min_size = Vector2( 50, 0 )
+size_flags_vertical = 7
+text = "Panel"
+valign = 1
+
+[node name="ShortcutButton" parent="Layout/CPanelButton" instance=ExtResource( 1 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 54.0
+margin_right = 240.0
+margin_bottom = 25.0
+size_flags_horizontal = 3
+
+[node name="CenterContainer2" type="CenterContainer" parent="Layout"]
+margin_top = 145.0
 margin_right = 240.0
 margin_bottom = 159.0
 size_flags_horizontal = 3

@@ -15,6 +15,8 @@ var _gut_config = load('res://addons/gut/gut_config.gd').new()
 var _gut_config_gui = null
 var _gut_plugin = null
 var _light_color = Color(0, 0, 0, .5)
+var _panel_button = null
+var _open_editors = null
 
 
 onready var _ctrls = {
@@ -53,8 +55,7 @@ func _ready():
 	_gut_config_gui.set_options(_gut_config.options)
 	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.font_name)
 	_set_font_size_for_rtl(_ctrls.output, _gut_config.options.font_size)
-	_ctrls.shortcut_dialog.load_shortcuts(SHORTCUTS_PATH)
-	_apply_shortcuts()
+
 
 func _process(delta):
 	if(_is_running):
@@ -67,6 +68,11 @@ func _process(delta):
 # ---------------
 # Private
 # ---------------
+
+func load_shortcuts():
+	_ctrls.shortcut_dialog.load_shortcuts(SHORTCUTS_PATH)
+	_apply_shortcuts()
+
 
 # -----------------------------------
 func _set_font(rtl, font_name, custom_name):
@@ -110,6 +116,7 @@ func _is_test_script(script):
 
 	return from != null
 
+
 func _update_last_run_label():
 	var text = ''
 
@@ -145,19 +152,14 @@ func _run_tests():
 	_is_running = true
 	_ctrls.output.add_text('running...')
 
+
 func _apply_shortcuts():
 	_ctrls.run_button.shortcut = _ctrls.shortcut_dialog.get_run_all()
 	_ctrls.rerun.button.shortcut = _ctrls.shortcut_dialog.get_rerun()
 	_ctrls.run_current.button.shortcut = _ctrls.shortcut_dialog.get_run_current()
 	_ctrls.run_like.button.shortcut = _ctrls.shortcut_dialog.get_run_like()
+	_panel_button.shortcut = _ctrls.shortcut_dialog.get_panel_button()
 
-
-func _save_shortcuts():
-	pass
-
-
-func _load_shortcuts():
-	pass
 
 # ---------------
 # Events
@@ -165,6 +167,9 @@ func _load_shortcuts():
 func _on_editor_script_changed(script):
 	if(script):
 		set_current_script(script)
+
+func _on_editor_changed():
+	_open_editors.print_editors()
 
 func _on_RunAll_pressed():
 	_on_RunTests_pressed()
@@ -202,6 +207,7 @@ func _on_RunLikeButton_pressed():
 	_gut_config.options.unit_test_name = _ctrls.run_like.txt_test.text
 
 	_run_tests()
+
 
 func _on_CopyButton_pressed():
 	OS.clipboard = _ctrls.output.text
@@ -241,7 +247,7 @@ func load_result_output():
 	_ctrls.results.passing.text = str(summary_json.passing)
 	_ctrls.results.failing.text = str(summary_json.failures)
 	_ctrls.results.pending.text = str(summary_json.pending)
-	
+
 	if(summary_json.failures != 0):
 		_light_color = Color(1, 0, 0, .75)
 	elif(summary_json.pending != 0):
@@ -249,7 +255,7 @@ func load_result_output():
 	else:
 		_light_color = Color(0, 1, 0, .75)
 	_ctrls.light.update()
-	
+
 
 
 func set_current_script(script):
@@ -268,15 +274,37 @@ func set_current_script(script):
 		_ctrls.run_current.button.text = 'None Selected'
 
 
+
+
+
+
+# func _find_editors(ctrl=null, structure=null,
+
+# VBoxContainer
+# HBoxContainer
+# TabContainer
+# ScriptTextEditor
+# VSplitContainer
+# CodeTextEditor
+# TextEdit
+
+
+
 func set_interface(value):
 	_interface = value
 	_interface.get_script_editor().connect("editor_script_changed", self, '_on_editor_script_changed')
 	set_current_script(_interface.get_script_editor().get_current_script())
+	_open_editors = load('res://addons/gut/gui/open_editors.gd').new(_interface.get_script_editor())
+	_open_editors.connect('editor_changed', self, '_on_editor_changed')
+
 
 
 func set_plugin(value):
 	_gut_plugin = value
 
+
+func set_panel_button(value):
+	_panel_button = value
 
 # ------------------------------------------------------------------------------
 # Write a file.
@@ -311,3 +339,5 @@ func nvl(value, if_null):
 		return if_null
 	else:
 		return value
+
+
