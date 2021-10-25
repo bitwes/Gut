@@ -4,15 +4,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 
 
-# NEXT RELEASE (changes to master since last release)
+# 7.2.0
 
 ## Features
-* Run GUT from the Editor, no scene needed.
-* Added `yield_frames`.  It works similar to `yield_for` except it will yield for N frames instead of N seconds.
+* Run GUT straight from the Editor, no scene needed!  This is my first stab at making an Editor GUI for GUT.  It's not perfect yet so please me know what works and what doesn't.  More info in the [Quick Start](https://github.com/bitwes/Gut/wiki/Quick-Start) wiki page.
 * __Issue 207__ Added ability to export test results in the JUnit XML format.
   *  Added "Junit Xml File" setting to the Gut control to specify the file.  "Junit Xml Timestamp" will include an epoch timestamp in the filename.
   *  `-gjunit_xml_file` and `-gjunit_xml_timestamp` are supported on the command line.
   *   `junit_xml_file` and `junit_xml_timestamp` are supported in the `.gutconfig.json` file.
+* Added `yield_frames`.  It works similar to `yield_for` except it will yield for N frames instead of N seconds.
 * __Issue #266__ Introduced `stub(...).param_count(x)` which allow you to specify the number of paramters a method has.  Useful when working with vararg methods or NativeScripts.  This addresses #246 and #252.  See the Stubbing page in the wiki for more information.
 * __Issue #263__ Introduced `stub(...).param_defaults([])` which allows you to specify the default values that a method should get.  See the Stubbing page in the wiki for more information.
 * __Issue #248__ Added `get_call_count` which allows you to get the number of times a method was called.
@@ -25,7 +25,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * __Issue 290__ consts defined in test-scripts that start with 'Test' are further validated before being treated as Inner-Test-Classes.
 * __Issue 239__ @db0 fixed `assert_almost_eq` and `assert_almost_ne` to work with Vectors properly.
 
-q
+
 # 7.1.0
 ## Misc
 * `prerun_setup`, `setup`, `teardown`, `postrun_teardown` deprecation warnings have been enabled.  These were removed from the documentation over 2 years ago (6.6.0) and replaced with `before_all`, `before_each`, `after_each`, and `after_all`.  Having to make additional changes for these in order to implement __Issue 184__ annoyed me, so there will now be depracation warnings for these.  Earliest they could be removed is 8.0.0.
