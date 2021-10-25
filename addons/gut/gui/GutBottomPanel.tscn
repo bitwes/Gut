@@ -1,0 +1,387 @@
+[gd_scene load_steps=20 format=2]
+
+[ext_resource path="res://addons/gut/gui/GutBottomPanel.gd" type="Script" id=1]
+[ext_resource path="res://addons/gut/gui/BottomPanelShortcuts.tscn" type="PackedScene" id=2]
+
+[sub_resource type="InputEventKey" id=1]
+control = true
+scancode = 50
+
+[sub_resource type="ShortCut" id=2]
+shortcut = SubResource( 1 )
+
+[sub_resource type="InputEventKey" id=3]
+control = true
+scancode = 52
+
+[sub_resource type="ShortCut" id=4]
+shortcut = SubResource( 3 )
+
+[sub_resource type="StyleBoxEmpty" id=5]
+
+[sub_resource type="InputEventKey" id=6]
+control = true
+scancode = 51
+
+[sub_resource type="ShortCut" id=7]
+shortcut = SubResource( 6 )
+
+[sub_resource type="InputEventKey" id=8]
+control = true
+scancode = 49
+
+[sub_resource type="ShortCut" id=9]
+shortcut = SubResource( 8 )
+
+[sub_resource type="DynamicFontData" id=10]
+font_path = "res://addons/gut/fonts/CourierPrime-BoldItalic.ttf"
+
+[sub_resource type="DynamicFont" id=11]
+size = 30
+font_data = SubResource( 10 )
+
+[sub_resource type="DynamicFontData" id=12]
+font_path = "res://addons/gut/fonts/CourierPrime-Italic.ttf"
+
+[sub_resource type="DynamicFont" id=13]
+size = 30
+font_data = SubResource( 12 )
+
+[sub_resource type="DynamicFontData" id=14]
+font_path = "res://addons/gut/fonts/CourierPrime-Bold.ttf"
+
+[sub_resource type="DynamicFont" id=15]
+size = 30
+font_data = SubResource( 14 )
+
+[sub_resource type="DynamicFontData" id=16]
+font_path = "res://addons/gut/fonts/CourierPrime-Regular.ttf"
+
+[sub_resource type="DynamicFont" id=17]
+size = 30
+font_data = SubResource( 16 )
+
+[node name="GutBottomPanel" type="Control"]
+anchor_left = -0.0025866
+anchor_top = -0.00176575
+anchor_right = 0.997413
+anchor_bottom = 0.998234
+margin_left = 2.64868
+margin_top = 1.05945
+margin_right = 2.64862
+margin_bottom = 1.05945
+rect_min_size = Vector2( 0, 300 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="layout" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ControlBar" type="HBoxContainer" parent="layout"]
+margin_right = 1023.0
+margin_bottom = 42.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CRerun" type="VBoxContainer" parent="layout/ControlBar"]
+visible = false
+margin_right = 101.0
+margin_bottom = 42.0
+
+[node name="Label" type="Label" parent="layout/ControlBar/CRerun"]
+margin_right = 101.0
+margin_bottom = 14.0
+text = "Rerun"
+
+[node name="Rerun" type="Button" parent="layout/ControlBar/CRerun"]
+margin_top = 18.0
+margin_right = 101.0
+margin_bottom = 38.0
+hint_tooltip = "Re-run the last tests."
+size_flags_vertical = 8
+disabled = true
+shortcut = SubResource( 2 )
+text = "Rerun <none>"
+
+[node name="CRunCurrent" type="VBoxContainer" parent="layout/ControlBar"]
+margin_right = 85.0
+margin_bottom = 42.0
+
+[node name="Label" type="Label" parent="layout/ControlBar/CRunCurrent"]
+margin_right = 85.0
+margin_bottom = 14.0
+text = "Last Selected"
+
+[node name="RunCurrent" type="Button" parent="layout/ControlBar/CRunCurrent"]
+margin_top = 18.0
+margin_right = 85.0
+margin_bottom = 38.0
+hint_tooltip = "Run the last test script that was selected in the editor."
+size_flags_vertical = 8
+disabled = true
+shortcut = SubResource( 4 )
+text = "None"
+
+[node name="CenterContainer2" type="CenterContainer" parent="layout/ControlBar"]
+margin_left = 89.0
+margin_right = 184.0
+margin_bottom = 42.0
+size_flags_horizontal = 3
+
+[node name="FocusButton" type="Button" parent="layout/ControlBar"]
+show_behind_parent = true
+margin_left = 188.0
+margin_right = 188.0
+margin_bottom = 42.0
+custom_styles/normal = SubResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="RunLike" type="Button" parent="layout/ControlBar"]
+margin_left = 192.0
+margin_top = 22.0
+margin_right = 262.0
+margin_bottom = 42.0
+hint_tooltip = "Run all test scripts that contain text from the fields to the right.  the script name, inner class name and test name are all searched case-insensitive."
+size_flags_vertical = 8
+shortcut = SubResource( 7 )
+text = "Run Like:"
+
+[node name="CScript" type="VBoxContainer" parent="layout/ControlBar"]
+margin_left = 266.0
+margin_right = 406.0
+margin_bottom = 42.0
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="layout/ControlBar/CScript"]
+margin_right = 140.0
+margin_bottom = 14.0
+hint_tooltip = "\"Run Like\" will include scripts that have a filename (not path) that includes this text."
+mouse_filter = 1
+text = "Script"
+
+[node name="txtScript" type="LineEdit" parent="layout/ControlBar/CScript"]
+margin_top = 18.0
+margin_right = 140.0
+margin_bottom = 42.0
+rect_min_size = Vector2( 140, 0 )
+size_flags_horizontal = 3
+
+[node name="CInner" type="VBoxContainer" parent="layout/ControlBar"]
+margin_left = 410.0
+margin_right = 550.0
+margin_bottom = 42.0
+size_flags_horizontal = 3
+
+[node name="Label3" type="Label" parent="layout/ControlBar/CInner"]
+margin_right = 140.0
+margin_bottom = 14.0
+hint_tooltip = "\"Run Like\" will include Inner Test Classes that have a name that includes this text."
+mouse_filter = 1
+text = "Inner Class"
+
+[node name="txtInner" type="LineEdit" parent="layout/ControlBar/CInner"]
+margin_top = 18.0
+margin_right = 140.0
+margin_bottom = 42.0
+rect_min_size = Vector2( 140, 0 )
+size_flags_horizontal = 3
+
+[node name="CTest" type="VBoxContainer" parent="layout/ControlBar"]
+margin_left = 554.0
+margin_right = 694.0
+margin_bottom = 42.0
+size_flags_horizontal = 3
+
+[node name="Label2" type="Label" parent="layout/ControlBar/CTest"]
+margin_right = 140.0
+margin_bottom = 14.0
+hint_tooltip = "\"Run Like\" will include tests where the function name includes this text."
+mouse_filter = 1
+text = "Test Name"
+
+[node name="txtTest" type="LineEdit" parent="layout/ControlBar/CTest"]
+margin_top = 18.0
+margin_right = 140.0
+margin_bottom = 42.0
+rect_min_size = Vector2( 140, 0 )
+size_flags_horizontal = 3
+
+[node name="CenterContainer" type="CenterContainer" parent="layout/ControlBar"]
+margin_left = 698.0
+margin_right = 793.0
+margin_bottom = 42.0
+size_flags_horizontal = 3
+
+[node name="RunAll" type="Button" parent="layout/ControlBar"]
+margin_left = 797.0
+margin_top = 22.0
+margin_right = 947.0
+margin_bottom = 42.0
+rect_min_size = Vector2( 150, 0 )
+hint_tooltip = "Run all test scripts in the suite."
+size_flags_vertical = 8
+shortcut = SubResource( 9 )
+text = "Run All"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Shortcuts" type="Button" parent="layout/ControlBar"]
+margin_left = 951.0
+margin_top = 22.0
+margin_right = 1023.0
+margin_bottom = 42.0
+hint_tooltip = "Set shortcuts for GUT buttons.  Shortcuts do not work when the GUT panel is not visible."
+size_flags_vertical = 8
+text = "Shortcuts"
+
+[node name="RSplit" type="HSplitContainer" parent="layout"]
+margin_top = 46.0
+margin_right = 1023.0
+margin_bottom = 599.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CResults" type="VBoxContainer" parent="layout/RSplit"]
+margin_right = 611.0
+margin_bottom = 553.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ControlBar" type="HBoxContainer" parent="layout/RSplit/CResults"]
+margin_right = 611.0
+margin_bottom = 30.0
+
+[node name="Light" type="Control" parent="layout/RSplit/CResults/ControlBar"]
+margin_right = 30.0
+margin_bottom = 30.0
+rect_min_size = Vector2( 30, 30 )
+
+[node name="lblPassing" type="Label" parent="layout/RSplit/CResults/ControlBar"]
+margin_left = 34.0
+margin_top = 8.0
+margin_right = 82.0
+margin_bottom = 22.0
+text = "Passing"
+
+[node name="lblPassingValue" type="Label" parent="layout/RSplit/CResults/ControlBar"]
+margin_left = 86.0
+margin_top = 8.0
+margin_right = 101.0
+margin_bottom = 22.0
+text = "---"
+
+[node name="lblFailing" type="Label" parent="layout/RSplit/CResults/ControlBar"]
+margin_left = 105.0
+margin_top = 8.0
+margin_right = 146.0
+margin_bottom = 22.0
+text = "Failing"
+
+[node name="lblFailingValue" type="Label" parent="layout/RSplit/CResults/ControlBar"]
+margin_left = 150.0
+margin_top = 8.0
+margin_right = 165.0
+margin_bottom = 22.0
+text = "---"
+
+[node name="lblPending" type="Label" parent="layout/RSplit/CResults/ControlBar"]
+margin_left = 169.0
+margin_top = 8.0
+margin_right = 220.0
+margin_bottom = 22.0
+text = "Pending"
+
+[node name="lblPendingValue" type="Label" parent="layout/RSplit/CResults/ControlBar"]
+margin_left = 224.0
+margin_top = 8.0
+margin_right = 239.0
+margin_bottom = 22.0
+text = "---"
+
+[node name="CenterContainer" type="CenterContainer" parent="layout/RSplit/CResults/ControlBar"]
+margin_left = 243.0
+margin_right = 488.0
+margin_bottom = 30.0
+size_flags_horizontal = 3
+
+[node name="CopyButton" type="Button" parent="layout/RSplit/CResults/ControlBar"]
+margin_left = 492.0
+margin_right = 547.0
+margin_bottom = 30.0
+text = "  Copy "
+
+[node name="ClearButton" type="Button" parent="layout/RSplit/CResults/ControlBar"]
+margin_left = 551.0
+margin_right = 611.0
+margin_bottom = 30.0
+text = "  Clear  "
+
+[node name="Output" type="RichTextLabel" parent="layout/RSplit/CResults"]
+margin_top = 34.0
+margin_right = 611.0
+margin_bottom = 553.0
+focus_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_fonts/bold_italics_font = SubResource( 11 )
+custom_fonts/italics_font = SubResource( 13 )
+custom_fonts/bold_font = SubResource( 15 )
+custom_fonts/normal_font = SubResource( 17 )
+bbcode_enabled = true
+scroll_following = true
+selection_enabled = true
+
+[node name="sc" type="ScrollContainer" parent="layout/RSplit"]
+margin_left = 623.0
+margin_right = 1023.0
+margin_bottom = 553.0
+rect_min_size = Vector2( 400, 0 )
+mouse_filter = 1
+size_flags_vertical = 3
+
+[node name="Settings" type="VBoxContainer" parent="layout/RSplit/sc"]
+margin_right = 388.0
+margin_bottom = 586.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BottomPanelShortcuts" parent="." instance=ExtResource( 2 )]
+visible = false
+anchor_left = -0.000517324
+anchor_top = 0.000882874
+anchor_right = 0.233483
+anchor_bottom = 0.328883
+margin_left = 10.0649
+margin_top = -173.752
+margin_right = 31.6969
+margin_bottom = -125.552
+
+[connection signal="pressed" from="layout/ControlBar/CRerun/Rerun" to="." method="_on_Rerun_pressed"]
+[connection signal="pressed" from="layout/ControlBar/CRunCurrent/RunCurrent" to="." method="_on_RunCurrent_pressed"]
+[connection signal="pressed" from="layout/ControlBar/FocusButton" to="." method="_on_FocusButton_pressed"]
+[connection signal="pressed" from="layout/ControlBar/RunLike" to="." method="_on_RunLike_pressed"]
+[connection signal="focus_entered" from="layout/ControlBar/CScript/txtScript" to="." method="_on_txtScript_focus_entered"]
+[connection signal="focus_exited" from="layout/ControlBar/CScript/txtScript" to="." method="_on_txtScript_focus_exited"]
+[connection signal="text_entered" from="layout/ControlBar/CScript/txtScript" to="." method="_on_run_like_field_enter_pressed"]
+[connection signal="focus_entered" from="layout/ControlBar/CInner/txtInner" to="." method="_on_txtInner_focus_entered"]
+[connection signal="focus_exited" from="layout/ControlBar/CInner/txtInner" to="." method="_on_txtInner_focus_exited"]
+[connection signal="text_entered" from="layout/ControlBar/CInner/txtInner" to="." method="_on_run_like_field_enter_pressed"]
+[connection signal="focus_entered" from="layout/ControlBar/CTest/txtTest" to="." method="_on_txtTest_focus_entered"]
+[connection signal="focus_exited" from="layout/ControlBar/CTest/txtTest" to="." method="_on_txtTest_focus_exited"]
+[connection signal="text_entered" from="layout/ControlBar/CTest/txtTest" to="." method="_on_run_like_field_enter_pressed"]
+[connection signal="pressed" from="layout/ControlBar/RunAll" to="." method="_on_RunAll_pressed"]
+[connection signal="pressed" from="layout/ControlBar/Shortcuts" to="." method="_on_Shortcuts_pressed"]
+[connection signal="draw" from="layout/RSplit/CResults/ControlBar/Light" to="." method="_on_Light_draw"]
+[connection signal="pressed" from="layout/RSplit/CResults/ControlBar/CopyButton" to="." method="_on_CopyButton_pressed"]
+[connection signal="pressed" from="layout/RSplit/CResults/ControlBar/ClearButton" to="." method="_on_ClearButton_pressed"]
+[connection signal="popup_hide" from="BottomPanelShortcuts" to="." method="_on_BottomPanelShortcuts_popup_hide"]

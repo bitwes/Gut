@@ -3,164 +3,54 @@
 [ext_resource path="res://scenes/TestGutGui.gd" type="Script" id=1]
 [ext_resource path="res://addons/gut/GutScene.tscn" type="PackedScene" id=2]
 
-[node name="TestGutGui" type="Node2D" index="0"]
-
+[node name="TestGutGui" type="Node2D"]
 script = ExtResource( 1 )
 
-[node name="Gut" parent="." index="0" instance=ExtResource( 2 )]
+[node name="Gut" parent="." instance=ExtResource( 2 )]
 
-scale = Vector2( 0.96875, 0.96875 )
-
-[node name="Controls" type="Panel" parent="." index="1"]
-
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
+[node name="Controls" type="Panel" parent="."]
 margin_left = 790.0
 margin_top = 10.0
 margin_right = 1010.0
 margin_bottom = 400.0
-rect_pivot_offset = Vector2( 0, 0 )
-rect_clip_content = false
-mouse_filter = 0
-mouse_default_cursor_shape = 0
-size_flags_horizontal = 1
-size_flags_vertical = 1
 
-[node name="EndRunMode" type="Button" parent="Controls" index="0"]
-
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
+[node name="EndRunMode" type="Button" parent="Controls"]
 margin_left = 30.0
 margin_top = 10.0
 margin_right = 190.0
 margin_bottom = 60.0
-rect_pivot_offset = Vector2( 0, 0 )
-rect_clip_content = false
-focus_mode = 2
-mouse_filter = 0
-mouse_default_cursor_shape = 0
-size_flags_horizontal = 1
-size_flags_vertical = 1
-toggle_mode = false
-enabled_focus_mode = 2
-shortcut = null
-group = null
 text = "End Run Mode"
-flat = false
-align = 1
 
-[node name="PauseBeforeTeardown" type="Button" parent="Controls" index="1"]
-
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
+[node name="PauseBeforeTeardown" type="Button" parent="Controls"]
 margin_left = 30.0
 margin_top = 70.0
 margin_right = 191.0
 margin_bottom = 120.0
-rect_pivot_offset = Vector2( 0, 0 )
-rect_clip_content = false
-focus_mode = 2
-mouse_filter = 0
-mouse_default_cursor_shape = 0
-size_flags_horizontal = 1
-size_flags_vertical = 1
-toggle_mode = false
-enabled_focus_mode = 2
-shortcut = null
-group = null
 text = "Pause Before Teardown"
-flat = false
-align = 1
 
-[node name="Clear Summary" type="Button" parent="Controls" index="2"]
-
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
+[node name="Clear Summary" type="Button" parent="Controls"]
 margin_left = 30.0
 margin_top = 190.0
 margin_right = 191.0
 margin_bottom = 240.0
-rect_pivot_offset = Vector2( 0, 0 )
-rect_clip_content = false
-focus_mode = 2
-mouse_filter = 0
-mouse_default_cursor_shape = 0
-size_flags_horizontal = 1
-size_flags_vertical = 1
-toggle_mode = false
-enabled_focus_mode = 2
-shortcut = null
-group = null
 text = "Clear Summary"
-flat = false
-align = 1
 
-[node name="Pass" type="Button" parent="Controls" index="3"]
-
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
+[node name="Pass" type="Button" parent="Controls"]
 margin_left = 110.0
 margin_top = 130.0
 margin_right = 191.0
 margin_bottom = 180.0
-rect_pivot_offset = Vector2( 0, 0 )
-rect_clip_content = false
-focus_mode = 2
-mouse_filter = 0
-mouse_default_cursor_shape = 0
-size_flags_horizontal = 1
-size_flags_vertical = 1
-toggle_mode = false
-enabled_focus_mode = 2
-shortcut = null
-group = null
 text = "Pass"
-flat = false
-align = 1
 
-[node name="Fail" type="Button" parent="Controls" index="4"]
-
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
+[node name="Fail" type="Button" parent="Controls"]
 margin_left = 30.0
 margin_top = 130.0
 margin_right = 110.0
 margin_bottom = 180.0
-rect_pivot_offset = Vector2( 0, 0 )
-rect_clip_content = false
-focus_mode = 2
-mouse_filter = 0
-mouse_default_cursor_shape = 0
-size_flags_horizontal = 1
-size_flags_vertical = 1
-toggle_mode = false
-enabled_focus_mode = 2
-shortcut = null
-group = null
 text = "Fail"
-flat = false
-align = 1
 
 [connection signal="pressed" from="Controls/EndRunMode" to="." method="_on_EndRunMode_pressed"]
-
 [connection signal="pressed" from="Controls/PauseBeforeTeardown" to="." method="_on_PauseBeforeTeardown_pressed"]
-
 [connection signal="pressed" from="Controls/Clear Summary" to="." method="_on_Clear_Summary_pressed"]
-
 [connection signal="pressed" from="Controls/Pass" to="." method="_on_Pass_pressed"]
-
 [connection signal="pressed" from="Controls/Fail" to="." method="_on_Fail_pressed"]
-
-

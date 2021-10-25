@@ -527,7 +527,7 @@ func _export_results():
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func _export_junit_xml():
-	var exporter = _utils.JunitExporter.new()
+	var exporter = _utils.JunitXmlExport.new()
 	var output_file = _junit_xml_file
 
 	if(_junit_xml_timestamp):
@@ -564,12 +564,6 @@ func _print_script_heading(script):
 		else:
 			text = script.path + '.' + script.inner_class_name
 		_lgr.log("\n\n" + text, fmt)
-
-		if(!_utils.is_null_or_empty(_inner_class_name) and _does_class_name_match(_inner_class_name, script.inner_class_name)):
-			_lgr.log(str('  [',script.inner_class_name, '] matches [', _inner_class_name, ']'), fmt)
-
-		if(!_utils.is_null_or_empty(_unit_test_name)):
-			_lgr.log('  Only running tests like: "' + _unit_test_name + '"', fmt)
 
 
 # ------------------------------------------------------------------------------
@@ -1130,6 +1124,7 @@ func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
 # ------------------------------------------------------------------------------
 func select_script(script_name):
 	_script_name = script_name
+	_select_script = script_name
 
 
 # ------------------------------------------------------------------------------

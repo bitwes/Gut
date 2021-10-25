@@ -94,7 +94,6 @@ func _get_obj_filename(thing):
 # whatever is passed in when it can/should.
 # ------------------------------------------------------------------------------
 func type2str(thing):
-	var oc = _utils.OrphanCounter.new()
 	var filename = _get_obj_filename(thing)
 	var str_thing = str(thing)
 

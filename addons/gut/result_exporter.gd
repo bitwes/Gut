@@ -39,27 +39,47 @@ func _export_scripts(summary):
 		}
 	return scripts
 
+func _make_results_dict():
+	var result =  {
+		'test_scripts':{
+			"props":{
+				"pending":0,
+				"failures":0,
+				"passing":0,
+				"tests":0,
+				"time":0,
+				"orphans":0
+			},
+			"scripts":[]
+		}
+	}
+	return result
+	
 
 # TODO
 #	time
 #	errors
-func get_results_dictionary(gut):
+func get_results_dictionary(gut, include_scripts=true):
 	var summary = gut.get_summary()
-	var scripts = _export_scripts(summary)
-	var totals = summary.get_totals()
+	var scripts = []
+	
+	
+	if(include_scripts):
+		scripts = _export_scripts(summary)
+	
+	var result =  _make_results_dict()	
+	if(summary != null):
+		var totals = summary.get_totals()
 
-	var result =  {
-		'test_scripts':{
-			"props":{
-				"pending":totals.pending,
-				"failures":totals.failing,
-				"tests":totals.tests,
-				"time":gut.get_gui().elapsed_time_as_str().replace('s', ''),
-				"orphans":gut.get_orphan_counter().get_counter('total')
-			},
-			"scripts":scripts
-		}
-	}
+		var props = result.test_scripts.props
+		props.pending = totals.pending
+		props.failures = totals.failing
+		props.passing = totals.passing
+		props.tests = totals.tests
+		props.time = gut.get_gui().elapsed_time_as_str().replace('s', '')
+		props.orpahns = gut.get_orphan_counter().get_counter('total')
+		result.test_scripts.scripts = scripts
+		
 	return result
 
 
@@ -74,3 +94,15 @@ func write_json_file(gut, path):
 
 	return f_result
 
+
+
+func write_summary_file(gut, path):
+	var dict = get_results_dictionary(gut, false)
+	var json = JSON.print(dict, ' ')
+
+	var f_result = _utils.write_file(path, json)
+	if(f_result != OK):
+		var msg = str("Error:  ", f_result, ".  Could not create export file ", path)
+		_utils.get_logger().error(msg)
+
+	return f_result
