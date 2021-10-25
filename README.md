@@ -1,4 +1,4 @@
-# Gut 7.1.0
+# Gut 7.2.0
 GUT (Godot Unit Test) is a unit testing framework for the [Godot Engine](https://godotengine.org/).  It allows you to write tests for your gdscript in gdscript.
 
 ### Donate/Shameless Plug
