@@ -6,7 +6,8 @@ onready var _ctrls = {
 	rerun = $Layout/CRerun/ShortcutButton,
 	run_current = $Layout/CRunCurrent/ShortcutButton,
 	run_like = $Layout/CRunLike/ShortcutButton,
-	panel_button = $Layout/CPanelButton/ShortcutButton
+	run_like_foucs = $Layout/CRunLikeFocus/ShortcutButton,
+	panel_button = $Layout/CPanelButton/ShortcutButton,
 }
 
 
@@ -72,13 +73,22 @@ func get_panel_button():
 	return _ctrls.panel_button.get_shortcut()
 
 
+func set_focus_button(sc):
+	_ctrls.run_like_foucs.set_shortcut(sc)
+	
+func get_focus_button():
+	return _ctrls.run_like_foucs.get_shortcut()
+
 func save_shortcuts(path):
 	var f = ConfigFile.new()
+	
 	f.set_value('main', 'run_all', _ctrls.run_all.get_shortcut())
 	f.set_value('main', 'rerun', _ctrls.rerun.get_shortcut())
 	f.set_value('main', 'run_current', _ctrls.run_current.get_shortcut())
 	f.set_value('main', 'run_like', _ctrls.run_like.get_shortcut())
+	f.set_value('main', 'run_like_focus', _ctrls.run_like_foucs.get_shortcut())
 	f.set_value('main', 'panel_button', _ctrls.panel_button.get_shortcut())
+
 	f.save(path)
 
 
@@ -86,8 +96,10 @@ func load_shortcuts(path):
 	var emptyShortcut = ShortCut.new()
 	var f = ConfigFile.new()
 	f.load(path)
+	
 	_ctrls.run_all.set_shortcut(f.get_value('main', 'run_all', emptyShortcut))
 	_ctrls.rerun.set_shortcut(f.get_value('main', 'rerun', emptyShortcut))
 	_ctrls.run_current.set_shortcut(f.get_value('main', 'run_current', emptyShortcut))
 	_ctrls.run_like.set_shortcut(f.get_value('main', 'run_like', emptyShortcut))
+	_ctrls.run_like_foucs.set_shortcut(f.get_value('main', 'run_like_focus', emptyShortcut))
 	_ctrls.panel_button.set_shortcut(f.get_value('main', 'panel_button', emptyShortcut))

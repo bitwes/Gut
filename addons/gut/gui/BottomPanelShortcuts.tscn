@@ -9,8 +9,8 @@ anchor_right = 0.234
 anchor_bottom = 0.328
 margin_left = 392.0
 margin_top = 201.0
-margin_right = 392.384
-margin_bottom = 201.2
+margin_right = 475.384
+margin_bottom = 238.2
 popup_exclusive = true
 window_title = "Shortcuts"
 resizable = true
@@ -26,9 +26,17 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Label" type="Label" parent="Layout"]
+margin_right = 323.0
+margin_bottom = 31.0
+text = "Shortcuts will not work if the GUT Panel is not visible."
+align = 1
+autowrap = true
+
 [node name="CRunAll" type="HBoxContainer" parent="Layout"]
-margin_right = 240.0
-margin_bottom = 25.0
+margin_top = 35.0
+margin_right = 323.0
+margin_bottom = 60.0
 
 [node name="Label" type="Label" parent="Layout/CRunAll"]
 margin_right = 50.0
@@ -42,11 +50,12 @@ valign = 1
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 54.0
-margin_right = 240.0
+margin_right = 323.0
 margin_bottom = 25.0
 size_flags_horizontal = 3
 
 [node name="CRerun" type="HBoxContainer" parent="Layout"]
+visible = false
 margin_top = 29.0
 margin_right = 240.0
 margin_bottom = 54.0
@@ -68,30 +77,30 @@ margin_bottom = 25.0
 size_flags_horizontal = 3
 
 [node name="CRunCurrent" type="HBoxContainer" parent="Layout"]
-margin_top = 58.0
-margin_right = 240.0
-margin_bottom = 83.0
+margin_top = 64.0
+margin_right = 323.0
+margin_bottom = 89.0
 
 [node name="Label" type="Label" parent="Layout/CRunCurrent"]
-margin_right = 75.0
+margin_right = 85.0
 margin_bottom = 25.0
 rect_min_size = Vector2( 50, 0 )
 size_flags_vertical = 7
-text = "Run Current"
+text = "Last Selected"
 valign = 1
 
 [node name="ShortcutButton" parent="Layout/CRunCurrent" instance=ExtResource( 1 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 79.0
-margin_right = 240.0
+margin_left = 89.0
+margin_right = 323.0
 margin_bottom = 25.0
 size_flags_horizontal = 3
 
 [node name="CRunLike" type="HBoxContainer" parent="Layout"]
-margin_top = 87.0
-margin_right = 240.0
-margin_bottom = 112.0
+margin_top = 93.0
+margin_right = 323.0
+margin_bottom = 118.0
 
 [node name="Label" type="Label" parent="Layout/CRunLike"]
 margin_right = 54.0
@@ -105,59 +114,88 @@ valign = 1
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 58.0
-margin_right = 240.0
+margin_right = 323.0
 margin_bottom = 25.0
 size_flags_horizontal = 3
 
-[node name="CPanelButton" type="HBoxContainer" parent="Layout"]
-margin_top = 116.0
-margin_right = 240.0
-margin_bottom = 141.0
+[node name="CRunLikeFocus" type="HBoxContainer" parent="Layout"]
+margin_top = 122.0
+margin_right = 323.0
+margin_bottom = 147.0
 
-[node name="Label" type="Label" parent="Layout/CPanelButton"]
-margin_right = 50.0
+[node name="Label" type="Label" parent="Layout/CRunLikeFocus"]
+margin_right = 95.0
 margin_bottom = 25.0
 rect_min_size = Vector2( 50, 0 )
 size_flags_vertical = 7
-text = "Panel"
+text = "Focus Run Like"
+valign = 1
+
+[node name="ShortcutButton" parent="Layout/CRunLikeFocus" instance=ExtResource( 1 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 99.0
+margin_right = 323.0
+margin_bottom = 25.0
+size_flags_horizontal = 3
+
+[node name="Label2" type="Label" parent="Layout"]
+margin_top = 151.0
+margin_right = 323.0
+margin_bottom = 165.0
+text = "Show/Hide GUT panel.  Works all the time."
+align = 1
+autowrap = true
+
+[node name="CPanelButton" type="HBoxContainer" parent="Layout"]
+margin_top = 169.0
+margin_right = 323.0
+margin_bottom = 194.0
+
+[node name="Label" type="Label" parent="Layout/CPanelButton"]
+margin_right = 66.0
+margin_bottom = 25.0
+rect_min_size = Vector2( 50, 0 )
+size_flags_vertical = 7
+text = "GUT Panel"
 valign = 1
 
 [node name="ShortcutButton" parent="Layout/CPanelButton" instance=ExtResource( 1 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 54.0
-margin_right = 240.0
+margin_left = 70.0
+margin_right = 323.0
 margin_bottom = 25.0
 size_flags_horizontal = 3
 
 [node name="CenterContainer2" type="CenterContainer" parent="Layout"]
-margin_top = 145.0
-margin_right = 240.0
-margin_bottom = 159.0
+margin_top = 198.0
+margin_right = 323.0
+margin_bottom = 198.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Layout"]
-margin_top = 163.0
-margin_right = 240.0
-margin_bottom = 183.0
+margin_top = 202.0
+margin_right = 323.0
+margin_bottom = 222.0
 
 [node name="CenterContainer" type="CenterContainer" parent="Layout/HBoxContainer"]
-margin_right = 190.0
+margin_right = 273.0
 margin_bottom = 20.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Hide" type="Button" parent="Layout/HBoxContainer"]
-margin_left = 194.0
-margin_right = 240.0
+margin_left = 277.0
+margin_right = 323.0
 margin_bottom = 20.0
 text = "Done"
 
 [node name="CenterContainer" type="CenterContainer" parent="Layout"]
-margin_top = 187.0
-margin_right = 240.0
-margin_bottom = 197.0
+margin_top = 226.0
+margin_right = 323.0
+margin_bottom = 236.0
 rect_min_size = Vector2( 0, 10 )
 size_flags_horizontal = 3
 

@@ -39,6 +39,22 @@ func _export_scripts(summary):
 		}
 	return scripts
 
+func _make_results_dict():
+	var result =  {
+		'test_scripts':{
+			"props":{
+				"pending":0,
+				"failures":0,
+				"passing":0,
+				"tests":0,
+				"time":0,
+				"orphans":0
+			},
+			"scripts":[]
+		}
+	}
+	return result
+	
 
 # TODO
 #	time
@@ -46,23 +62,24 @@ func _export_scripts(summary):
 func get_results_dictionary(gut, include_scripts=true):
 	var summary = gut.get_summary()
 	var scripts = []
+	
+	
 	if(include_scripts):
 		scripts = _export_scripts(summary)
-	var totals = summary.get_totals()
+	
+	var result =  _make_results_dict()	
+	if(summary != null):
+		var totals = summary.get_totals()
 
-	var result =  {
-		'test_scripts':{
-			"props":{
-				"pending":totals.pending,
-				"failures":totals.failing,
-				"passing":totals.passing,
-				"tests":totals.tests,
-				"time":gut.get_gui().elapsed_time_as_str().replace('s', ''),
-				"orphans":gut.get_orphan_counter().get_counter('total')
-			},
-			"scripts":scripts
-		}
-	}
+		var props = result.test_scripts.props
+		props.pending = totals.pending
+		props.failures = totals.failing
+		props.passing = totals.passing
+		props.tests = totals.tests
+		props.time = gut.get_gui().elapsed_time_as_str().replace('s', '')
+		props.orpahns = gut.get_orphan_counter().get_counter('total')
+		result.test_scripts.scripts = scripts
+		
 	return result
 
 

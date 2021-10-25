@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 # NEXT RELEASE (changes to master since last release)
 
 ## Features
+* Run GUT from the Editor, no scene needed.
 * Added `yield_frames`.  It works similar to `yield_for` except it will yield for N frames instead of N seconds.
 * __Issue 207__ Added ability to export test results in the JUnit XML format.
   *  Added "Junit Xml File" setting to the Gut control to specify the file.  "Junit Xml Timestamp" will include an epoch timestamp in the filename.
