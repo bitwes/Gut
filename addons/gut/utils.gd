@@ -361,3 +361,30 @@ func pretty_print(dict):
 
 func get_script_text(obj):
 	return obj.get_script().get_source_code()
+
+# Sorts List of Matched Methods based upon the Line Number that they are found
+# in the GDScript
+class MethodMatchSorter:
+	static func sort_ascending(a, b):
+		if a[0] < b[0]:
+			return true
+		return false
+
+# Processes the list of methods on the current script, and finds their match to
+# the code as defined in the script.  This orders the script based upon their
+# declaration within the script file itself, ensuring proper ordering occurs
+# each time the tests are run.
+func process_script_methods(script: Script, prefix: String) -> Array:
+	var source = Array(script.get_source_code().split("\n"))
+	var meths = []
+	var matches = []
+	for meth in script.get_script_method_list():
+		if meth["name"].begins_with(prefix):
+			for i in source:
+				if i.begins_with("func " + meth["name"]):
+					matches.append([source.find(i), meth])
+	
+	matches.sort_custom(MethodMatchSorter, "sort_ascending")
+	for mmatch in matches:
+		meths.append(mmatch[1])
+	return meths
