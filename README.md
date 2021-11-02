@@ -12,7 +12,8 @@ If you would like to help support GUT check out my game [Country or State](https
 * Doubling:  [Full](https://github.com/bitwes/Gut/wiki/Doubles) and [Partial](https://github.com/bitwes/Gut/wiki/Partial-Doubles), [Stubbing](https://github.com/bitwes/Gut/wiki/Stubbing), [Spies](https://github.com/bitwes/Gut/wiki/Spies)
 * Command Line Interface [(CLI)](https://github.com/bitwes/Gut/wiki/Command-Line)
 * [Parameterized Tests](https://github.com/bitwes/Gut/wiki/ParameterizedTests)
-* [Export tests](https://github.com/bitwes/Gut/wiki/Exporting-Tests) with your project and run them on any platform Godot supports.
+* [Export results](https://github.com/bitwes/Gut/wiki/Export-Test-Results) in standard JUnit XML format.
+* [Distribute your tests](https://github.com/bitwes/Gut/wiki/Running-On-Devices) with your project and run them on any platform Godot supports.
 
 More info can be found in the [wiki](https://github.com/bitwes/Gut/wiki).
 
