@@ -12,7 +12,7 @@
  "hide_orphans": false,
  "ignore_pause": true,
  "include_subdirs": false,
- "inner_class": "",
+ "inner_class": null,
  "junit_xml_file": "",
  "junit_xml_timestamp": false,
  "log_level": 1,
@@ -20,7 +20,7 @@
  "post_run_script": "",
  "pre_run_script": "",
  "prefix": "test_",
- "selected": "spy.gd",
+ "selected": null,
  "should_exit": true,
  "should_exit_on_success": false,
  "should_maximize": false,
@@ -29,5 +29,5 @@
  "tests": [
 
  ],
- "unit_test_name": ""
+ "unit_test_name": null
 }

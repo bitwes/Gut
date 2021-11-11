@@ -8,8 +8,14 @@
 
 config_version=4
 
-_global_script_classes=[  ]
+_global_script_classes=[ {
+"base": "Object",
+"class": "ScriptParser",
+"language": "GDScript",
+"path": "res://addons/gut/script_parser.gd"
+} ]
 _global_script_class_icons={
+"ScriptParser": ""
 }
 
 [application]
@@ -29,7 +35,7 @@ gdscript/warnings/exclude_addons=false
 
 [editor_plugins]
 
-enabled=PoolStringArray(  )
+enabled=PoolStringArray( "res://addons/gut/plugin.cfg" )
 
 [network]
 

@@ -138,24 +138,14 @@ func _does_inherit_from_test(thing):
 	return to_return
 
 func _populate_tests(test_script):
-	# Old way of processing:
-#	var methods = test_script.load_script().get_script_method_list()
-#	for i in range(methods.size()):
-#		var name = methods[i]['name']
-#		if(name.begins_with(_test_prefix)):
-#			var t = Test.new()
-#			t.name = name
-#			t.arg_count = methods[i]['args'].size()
-#			test_script.tests.append(t)
-	
-	# New way of processing:
-	var methods = _utils.process_script_methods(test_script.load_script(), _test_prefix)
+	var methods = test_script.load_script().get_script_method_list()
 	for i in range(methods.size()):
-		var name = methods[i]["name"]
-		var t = Test.new()
-		t.name = name
-		t.arg_count = methods[i]['args'].size()
-		test_script.tests.append(t)
+		var name = methods[i]['name']
+		if(name.begins_with(_test_prefix)):
+			var t = Test.new()
+			t.name = name
+			t.arg_count = methods[i]['args'].size()
+			test_script.tests.append(t)
 
 func _get_inner_test_class_names(loaded):
 	var inner_classes = []

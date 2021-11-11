@@ -48,6 +48,7 @@ class DoubleInfo:
 	var strategy
 	var make_partial
 	var extension
+	var lineNo
 	var _utils = load('res://addons/gut/utils.gd').get_instance()
 	var _is_native = false
 	var is_valid = false
