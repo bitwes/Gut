@@ -470,6 +470,26 @@ func assert_not_between(got, expect_low, expect_high, text=""):
 				_pass(disp)
 
 # ------------------------------------------------------------------------------
+# Uses the built-in "in" method to determine if the object is contained in
+# the passed in collection.
+# ------------------------------------------------------------------------------
+func assert_in(obj, collection, text=""):
+	var disp = str('Expected [', _str(collection), '] to contain value:  [', _str(obj), ']:  ', text)
+	if obj in collection:
+		_pass(disp)
+	else:
+		_fail(disp)
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func assert_not_in(obj, collection, text=""):
+	var disp = str('Expected [', _str(collection), '] to NOT contain value:  [', _str(obj), ']:  ', text)
+	if obj in collection:
+		_fail(disp)
+	else:
+		_pass(disp)
+
+# ------------------------------------------------------------------------------
 # Uses the 'has' method of the object passed in to determine if it contains
 # the passed in element.
 # ------------------------------------------------------------------------------
