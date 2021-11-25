@@ -145,6 +145,8 @@ var _strutils = _utils.Strutils.new()
 # syntax sugar
 var ParameterFactory = _utils.ParameterFactory
 var CompareResult = _utils.CompareResult
+var InputFactory = _utils.InputFactory
+var InputSender = _utils.InputSender
 
 func _init():
 	DOUBLE_STRATEGY = _utils.DOUBLE_STRATEGY # yes, this is right
@@ -347,6 +349,7 @@ func assert_ne(got, not_expected, text=""):
 			_fail(disp)
 		else:
 			_pass(disp)
+
 
 # ------------------------------------------------------------------------------
 # Asserts that the expected value almost equals the value got.
@@ -1079,6 +1082,23 @@ func _validate_assert_setget_called_input(type, name_property
 	return result
 
 # ------------------------------------------------------------------------------
+# Validates the singleton_name is a string and exists.  Errors when conditions
+# are not met.  Returns true/false if singleton_name is valid or not.
+# ------------------------------------------------------------------------------
+func _validate_singleton_name(singleton_name):
+	var is_valid = true
+	if(typeof(singleton_name) != TYPE_STRING):
+		_lgr.error("double_singleton requires a Godot singleton name, you passed " + _str(singleton_name))
+		is_valid = false
+	elif(!ClassDB.class_exists(singleton_name)):
+		var txt = str("The singleton [", singleton_name, "] could not be found.  ",
+					"Check the GlobalScope page for a list of singletons.")
+		_lgr.error(txt)
+		is_valid = false
+	return is_valid
+
+
+# ------------------------------------------------------------------------------
 # Asserts the given setter and getter methods are called when the given property
 # is accessed.
 # ------------------------------------------------------------------------------
@@ -1200,6 +1220,10 @@ func pending(text=""):
 		_lgr.pending(text)
 		gut._pending(text)
 
+# ------------------------------------------------------------------------------
+# Returns the number of times a signal was emitted.  -1 returned if the object
+# is not being watched.
+# ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
 # Yield for the time sent in.  The optional message will be printed when
@@ -1341,6 +1365,23 @@ func partial_double(thing, p2=null, p3=null):
 
 	return _smart_double(double_info)
 
+# ------------------------------------------------------------------------------
+# Doubles a Godot singleton
+# ------------------------------------------------------------------------------
+func double_singleton(singleton_name):
+	var to_return = null
+	if(_validate_singleton_name(singleton_name)):
+		to_return = gut.get_doubler().double_singleton(singleton_name)
+	return to_return
+
+# ------------------------------------------------------------------------------
+# Partial Doubles a Godot singleton
+# ------------------------------------------------------------------------------
+func partial_double_singleton(singleton_name):
+	var to_return = null
+	if(_validate_singleton_name(singleton_name)):
+		to_return = gut.get_doubler().partial_double_singleton(singleton_name)
+	return to_return
 
 # ------------------------------------------------------------------------------
 # Specifically double a scene
@@ -1363,6 +1404,7 @@ func double_inner(path, subpath, strategy=null):
 	var override_strat = _utils.nvl(strategy, gut.get_doubler().get_strategy())
 	return gut.get_doubler().double_inner(path, subpath, override_strat)
 
+
 # ------------------------------------------------------------------------------
 # Add a method that the doubler will ignore.  You can pass this the path to a
 # script or scene or a loaded script or scene.  When running tests, these
@@ -1378,7 +1420,6 @@ func ignore_method_when_doubling(thing, method_name):
 			path = inst.get_script().get_path()
 
 	gut.get_doubler().add_ignored_method(path, method_name)
-
 
 # ------------------------------------------------------------------------------
 # Stub something.
