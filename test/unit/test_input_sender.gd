@@ -58,6 +58,19 @@ class TestTheBasics:
 		var sender = InputSender.new(r)
 		assert_eq(sender.get_receivers(), [r])
 
+	func test_wait_parses_seconds():
+		var sender = double(InputSender).new()
+		stub(sender, 'wait').to_call_super()
+		sender.wait('2s')
+		assert_called(sender, 'wait_secs', [2.0])
+
+	func test_wait_parses_frames():
+		var sender = double(InputSender).new()
+		stub(sender, 'wait').to_call_super()
+		sender.wait('3f')
+		assert_called(sender, 'wait_frames', [3.0])
+
+
 
 class TestCreateKeyEvents:
 	extends "res://addons/gut/test.gd"
@@ -427,3 +440,60 @@ class TestSequence:
 
 		yield(yield_to(sender, "playback_finished", 5), YIELD)
 		assert_eq(r.inputs[2].position, Vector2(6, 6))
+
+class TestDownFor:
+	extends "res://addons/gut/test.gd"
+
+	func test_action_down_for():
+		var r = add_child_autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+
+		sender.action_down("jump").hold_for('3f')
+		yield(yield_to(sender, "playback_finished", 5), YIELD)
+
+		assert_eq(r.inputs.size(), 2, 'input size')
+		var jump_pressed = r.inputs[0].action == "jump" and r.inputs[0].pressed
+		assert_true(jump_pressed, "jump pressed is action 0")
+		var jummp_released = r.inputs[1].action == "jump" and !(r.inputs[1].pressed)
+		assert_true(jummp_released, "jump released is action 1")
+
+	func test_key_down_for():
+		var r = add_child_autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+
+		sender.key_down("F").hold_for('.5s')
+		yield(yield_to(sender, "playback_finished", 5), YIELD)
+
+		assert_eq(r.inputs.size(), 2, 'input size')
+		var f_pressed = r.inputs[0].scancode == KEY_F and r.inputs[0].pressed
+		assert_true(f_pressed, "f pressed is action 0")
+		var f_released = r.inputs[1].scancode == KEY_F and !(r.inputs[1].pressed)
+
+
+	func test_mouse_left_down_for():
+		var r = add_child_autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+
+		sender.mouse_left_button_down(Vector2(1, 1)).hold_for('.5s')
+		yield(yield_to(sender, "playback_finished", 5), YIELD)
+
+		assert_eq(r.inputs.size(), 2, 'input size')
+		var left_pressed = r.inputs[0].button_index == BUTTON_LEFT and r.inputs[0].pressed
+		assert_true(left_pressed, "left mouse pressed")
+		var left_released = r.inputs[1].button_index == BUTTON_LEFT and !(r.inputs[1].pressed)
+		assert_true(left_released, 'left mouse released')
+
+
+class TestReleaseAll:
+	extends "res://addons/gut/test.gd"
+
+
+	func test_release_key():
+		pending()
+		# var r = add_child_autofree(InputTracker.new())
+		# var sender = InputSender.new(r)
+
+		# sender.key_down("F")
+		# sender.release_all()
+		# assert_eq(r.inputs.size(), 2, 'input size')
+

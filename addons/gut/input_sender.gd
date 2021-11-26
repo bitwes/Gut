@@ -99,6 +99,7 @@ var _input_queue = []
 var _next_queue_item = null
 var _last_key = null
 var _last_mouse_motion = null
+var _last_event = null
 
 signal playback_finished
 
@@ -124,6 +125,7 @@ func _send_event(event):
 
 
 func _send_or_record_event(event):
+	_last_event = event
 	if(_next_queue_item != null):
 		_next_queue_item.events.append(event)
 	else:
@@ -161,13 +163,28 @@ func get_receivers():
 
 
 func wait(t):
-	var item = InputQueueItem.new(t, 0)
-	_add_queue_item(item)
+	if(typeof(t) == TYPE_STRING):
+		var suffix = t.substr(t.length() -1, 1)
+		var val = float(t.rstrip('s').rstrip('f'))
+
+		if(suffix.to_lower() == 's'):
+			wait_secs(val)
+		elif(suffix.to_lower() == 'f'):
+			wait_frames(val)
+	else:
+		wait_secs(t)
+
 	return self
 
 
 func wait_frames(num_frames):
 	var item = InputQueueItem.new(0, num_frames)
+	_add_queue_item(item)
+	return self
+
+
+func wait_secs(num_secs):
+	var item = InputQueueItem.new(num_secs, 0)
 	_add_queue_item(item)
 	return self
 
@@ -261,3 +278,26 @@ func mouse_set_position(position, global_position=null):
 func send_event(event):
 	_send_or_record_event(event)
 	return self
+
+
+func release_all():
+	pass
+
+
+func hold_for(duration):
+	if(_last_event != null and _last_event.pressed):
+		var next_event = _last_event.duplicate()
+		next_event.pressed = false
+		wait(duration)
+		send_event(next_event)
+	return self
+
+
+func clear():
+	pass
+	# TODO clear _last_event
+	# TODO free all things in _input_queue
+	# TODO clear _input_queue
+	# TODO clear _next_queue_item
+	# TODO clear _last_key
+	# TODO clear _last_mouse_motion
