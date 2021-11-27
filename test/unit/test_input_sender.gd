@@ -41,6 +41,10 @@ class InputTracker:
 		inputs.append(event)
 		input_frames.append(_frame_counter)
 
+	func print_events():
+		for e in inputs:
+			print(e)
+
 class TestTheBasics:
 	extends "res://addons/gut/test.gd"
 
@@ -441,7 +445,7 @@ class TestSequence:
 		yield(yield_to(sender, "playback_finished", 5), YIELD)
 		assert_eq(r.inputs[2].position, Vector2(6, 6))
 
-class TestDownFor:
+class TestHoldFor:
 	extends "res://addons/gut/test.gd"
 
 	func test_action_down_for():
@@ -487,13 +491,43 @@ class TestDownFor:
 class TestReleaseAll:
 	extends "res://addons/gut/test.gd"
 
+	func before_all():
+		InputMap.add_action("jump")
+
+	func after_all():
+		InputMap.erase_action("jump")
+
 
 	func test_release_key():
-		pending()
-		# var r = add_child_autofree(InputTracker.new())
-		# var sender = InputSender.new(r)
+		var sender = InputSender.new(Input)
 
-		# sender.key_down("F")
-		# sender.release_all()
-		# assert_eq(r.inputs.size(), 2, 'input size')
+		sender.key_down("F")
+		sender.release_all()
+		assert_false(Input.is_key_pressed(KEY_F), 'key f should not be pressed anymore')
 
+	func test_release_all_does_not_release_keys_released():
+		var r = add_child_autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+
+		sender.key_down("F").hold_for(.2)
+		yield(sender, "playback_finished")
+		sender.release_all()
+
+		assert_eq(r.inputs.size(), 2)
+
+	func test_release_action():
+		var sender = InputSender.new(Input)
+
+		sender.action_down("jump")
+		sender.release_all()
+		assert_false(Input.is_action_pressed("jump"), 'jump should have been released')
+
+	func test_release_all_does_not_release_actions_released():
+		var r = add_child_autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+
+		sender.action_down("jump").hold_for(.2)
+		yield(sender, "playback_finished")
+		sender.release_all()
+
+		assert_eq(r.inputs.size(), 2)

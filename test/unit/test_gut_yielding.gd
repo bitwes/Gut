@@ -235,7 +235,7 @@ class TestYieldFrames:
 
 	var _frame_count = 0
 
-	func _process(delta):
+	func _physics_process(delta):
 		_frame_count += 1
 
 	func before_each():

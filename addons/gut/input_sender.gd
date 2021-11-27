@@ -65,7 +65,7 @@ class InputQueueItem:
 
 	# TODO should this be done in _physics_process instead or should it be
 	# configurable?
-	func _process(delta):
+	func _physics_process(delta):
 		if(frame_delay > 0 and _delay_started):
 			_waited_frames += 1
 			if(_waited_frames >= frame_delay):
@@ -101,6 +101,11 @@ var _last_key = null
 var _last_mouse_motion = null
 var _last_event = null
 
+# indexed by scancode, each entry contains a boolean value indicating the
+# last emitted "pressed" value for that scancode.
+var _pressed_keys = {}
+var _pressed_actions = {}
+
 signal playback_finished
 
 
@@ -110,6 +115,11 @@ func _init(r=null):
 
 
 func _send_event(event):
+	if(event is InputEventKey):
+		_pressed_keys[event.scancode] = event.pressed
+	elif(event is InputEventAction):
+		_pressed_actions[event.action] = event.pressed
+
 	for r in _receivers:
 		if(r == Input):
 			Input.parse_input_event(event)
@@ -281,7 +291,14 @@ func send_event(event):
 
 
 func release_all():
-	pass
+	for key in _pressed_keys:
+		if(_pressed_keys[key]):
+			_send_event(InputFactory.key_up(key))
+
+	for key in _pressed_actions:
+		if(_pressed_actions[key]):
+			_send_event(InputFactory.action_up(key))
+
 
 
 func hold_for(duration):
@@ -301,3 +318,4 @@ func clear():
 	# TODO clear _next_queue_item
 	# TODO clear _last_key
 	# TODO clear _last_mouse_motion
+	# TODO clear _pressed_keys

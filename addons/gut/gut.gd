@@ -172,7 +172,7 @@ func _init():
 	_gui = load('res://addons/gut/GutScene.tscn').instance()
 
 
-func _process(delta):
+func _physics_process(delta):
 	if(_yield_frames > 0):
 		_yield_frames -= 1
 
