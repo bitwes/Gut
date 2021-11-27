@@ -319,7 +319,7 @@ class TestSendEvent:
 		assert_true(Input.is_key_pressed(KEY_Y), 'is_pressed')
 
 		# illustrate that sending events to Input will also cause _input
-		# and _unhandled_inpu to fire on anything in the tree.
+		# and _unhandled_input to fire on anything in the tree.
 		assert_eq(thing.input_event, event, '_input event')
 		assert_eq(thing.unhandled_event, event, '_unhandled event')
 		assert_null(thing.gui_event, 'gui event')

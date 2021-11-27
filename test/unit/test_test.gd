@@ -116,14 +116,6 @@ class TestAssertEq:
 		gr.test.assert_eq(.19, 1.9)
 		assert_fail(gr.test)
 
-	var _float_vals = [['0.92', 0.92], ['1', 1.0], ['1.5', 1.5], ['1.92', 1.92], ['1.9', 1.9]]
-	func test_passes_when_cast_char_to_float(vals=use_parameters(_float_vals)):
-		var sval = vals[0]
-		var fval = vals[1]
-
-		assert_eq(float(sval), fval, 'float(string)')
-		assert_eq(sval.to_float(), fval, '.to_float()')
-
 	func test_fails_when_comparing_float_cast_as_int():
 		# int cast will make it 0
 		gr.test.assert_eq(int(0.5), 0.5)
