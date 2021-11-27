@@ -105,6 +105,7 @@ var _last_event = null
 # last emitted "pressed" value for that scancode.
 var _pressed_keys = {}
 var _pressed_actions = {}
+var _pressed_mouse_buttons = {}
 
 signal playback_finished
 
@@ -119,6 +120,8 @@ func _send_event(event):
 		_pressed_keys[event.scancode] = event.pressed
 	elif(event is InputEventAction):
 		_pressed_actions[event.action] = event.pressed
+	elif(event is InputEventMouseButton):
+		_pressed_mouse_buttons[event.button_index] = event
 
 	for r in _receivers:
 		if(r == Input):
@@ -294,11 +297,19 @@ func release_all():
 	for key in _pressed_keys:
 		if(_pressed_keys[key]):
 			_send_event(InputFactory.key_up(key))
+	_pressed_keys.clear()
 
 	for key in _pressed_actions:
 		if(_pressed_actions[key]):
 			_send_event(InputFactory.action_up(key))
+	_pressed_actions.clear()
 
+	for key in _pressed_mouse_buttons:
+		var event = _pressed_mouse_buttons[key].duplicate()
+		if(event.pressed):
+			event.pressed = false
+			_send_event(event)
+	_pressed_mouse_buttons.clear()
 
 
 func hold_for(duration):
@@ -319,3 +330,5 @@ func clear():
 	# TODO clear _last_key
 	# TODO clear _last_mouse_motion
 	# TODO clear _pressed_keys
+	# TODO clear _pressed_actions
+	# TODO clear _pressed_mouse_buttons

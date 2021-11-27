@@ -531,3 +531,20 @@ class TestReleaseAll:
 		sender.release_all()
 
 		assert_eq(r.inputs.size(), 2)
+
+	func test_release_mouse_button():
+		var sender = InputSender.new(Input)
+
+		sender.mouse_left_button_down(Vector2(0, 0))
+		sender.release_all()
+		assert_false(Input.is_mouse_button_pressed(BUTTON_LEFT))
+
+	func test_release_all_does_not_release_mouse_buttons_released():
+		var r = add_child_autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+
+		sender.mouse_right_button_down(Vector2(1,1)).hold_for(.2)
+		yield(sender, "playback_finished")
+		sender.release_all()
+
+		assert_eq(r.inputs.size(), 2)
