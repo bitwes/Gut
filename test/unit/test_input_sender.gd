@@ -448,7 +448,7 @@ class TestSequence:
 class TestHoldFor:
 	extends "res://addons/gut/test.gd"
 
-	func test_action_down_for():
+	func test_action_hold_for():
 		var r = add_child_autofree(InputTracker.new())
 		var sender = InputSender.new(r)
 
@@ -461,7 +461,7 @@ class TestHoldFor:
 		var jummp_released = r.inputs[1].action == "jump" and !(r.inputs[1].pressed)
 		assert_true(jummp_released, "jump released is action 1")
 
-	func test_key_down_for():
+	func test_key_hold_for():
 		var r = add_child_autofree(InputTracker.new())
 		var sender = InputSender.new(r)
 
@@ -474,7 +474,7 @@ class TestHoldFor:
 		var f_released = r.inputs[1].scancode == KEY_F and !(r.inputs[1].pressed)
 
 
-	func test_mouse_left_down_for():
+	func test_mouse_left_hold_for():
 		var r = add_child_autofree(InputTracker.new())
 		var sender = InputSender.new(r)
 
