@@ -171,7 +171,7 @@ class TestMouseButtons:
 	func test_lmb_up():
 		assert_mouse_event_sends_event("mouse_left_button_up")
 
-	func test_double_clickk():
+	func test_double_click():
 		assert_mouse_event_sends_event("mouse_double_click")
 
 	func test_rmb_down():
@@ -548,3 +548,126 @@ class TestReleaseAll:
 		sender.release_all()
 
 		assert_eq(r.inputs.size(), 2)
+
+
+class TestClear:
+	extends "res://addons/gut/test.gd"
+
+	func test_clears_input_queue():
+		var sender = InputSender.new()
+
+		sender.key_down("F").hold_for(1)
+		sender.clear()
+		assert_eq(sender._input_queue.size(), 0)
+
+	func test_frees_queue_items():
+		var sender = InputSender.new()
+
+		sender.key_down("F").hold_for(1)
+		var q_item = sender._input_queue[0]
+		sender.clear()
+		assert_freed(q_item, 'q_item')
+
+	func test_clears_next_queue_item():
+		var sender = InputSender.new()
+
+		sender.key_down("R").hold_for(1)
+		sender.clear()
+		assert_null(sender._next_queue_item)
+
+	func test_echo_does_not_echo_after_clear():
+		var r = autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+
+		sender.key_down("Q")
+		sender.clear()
+		sender.key_echo()
+		assert_eq(r.inputs.size(), 1)
+
+	func test_hold_for_does_nothing_after_clear():
+		var r = autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+
+		sender.key_down("Q")
+		sender.clear()
+		sender.hold_for(.1)
+		yield(yield_for(.5), YIELD)
+		assert_eq(r.inputs.size(), 1)
+
+	func test_relative_mouse_motion_uses_0_0_after_clear():
+		var r = autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+
+		sender.mouse_motion(Vector2(10, 10), Vector2(50, 50))
+		sender.clear()
+		sender.mouse_relative_motion(Vector2(3, 3))
+
+		assert_eq(r.inputs[1].position, Vector2(3, 3))
+
+	func test_release_all_releases_no_keys_after_clear():
+		var r = autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+
+		sender.key_down("U")
+		sender.clear()
+		sender.release_all()
+
+		assert_eq(r.inputs.size(), 1)
+
+	func test_release_all_releases_no_actions_after_clear():
+		var r = autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+		InputMap.add_action("jump")
+
+		sender.action_down("jump")
+		sender.clear()
+		sender.release_all()
+
+		assert_eq(r.inputs.size(), 1)
+		InputMap.erase_action("jump")
+
+	func test_release_all_releases_no_mouse_buttons_after_clear():
+		var r = autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+
+		sender.mouse_left_button_down(Vector2(0, 0))
+		sender.clear()
+		sender.release_all()
+
+		assert_eq(r.inputs.size(), 1)
+
+
+
+
+
+
+class TestAtScriptLevel:
+	extends "res://addons/gut/test.gd"
+
+	var _sender = InputSender.new(Input)
+
+	func after_each():
+		_sender.release_all()
+		_sender.clear()
+
+	func test_one():
+		_sender.key_down("F").hold_for(.1)\
+			.key_down("A").hold_for(.2)\
+			.key_down("P")
+
+		yield(_sender, "playback_finished")
+		assert_false(Input.is_key_pressed(KEY_F))
+
+	func test_two():
+		_sender.key_down("F").hold_for(.1)\
+			.key_down("A").hold_for(.2)
+
+		yield(_sender, "playback_finished")
+		assert_false(Input.is_key_pressed(KEY_F))
+
+	func test_three():
+		_sender.key_down("F").hold_for(.1)\
+			.key_down("A").hold_for(.2)
+
+		yield(_sender, "playback_finished")
+		assert_false(Input.is_key_pressed(KEY_F))

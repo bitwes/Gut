@@ -1009,7 +1009,7 @@ func assert_not_null(got, text=''):
 # Asserts object has been freed from memory
 # We pass in a title (since if it is freed, we lost all identity data)
 # -----------------------------------------------------------------------------
-func assert_freed(obj, title):
+func assert_freed(obj, title='something'):
 	var disp = title
 	if(is_instance_valid(obj)):
 		disp = _strutils.type2str(obj) + title

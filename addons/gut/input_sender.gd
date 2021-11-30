@@ -97,8 +97,10 @@ var InputFactory = load("res://addons/gut/input_factory.gd")
 var _receivers = []
 var _input_queue = []
 var _next_queue_item = null
-var _last_key = null
+# used by mouse_relative_motion.  These use this instead of _last_event since
+# it is logical to have a series of events happen between mouse motions.
 var _last_mouse_motion = null
+# used by hold_for and echo.
 var _last_event = null
 
 # indexed by scancode, each entry contains a boolean value indicating the
@@ -214,13 +216,12 @@ func key_up(which):
 func key_down(which):
 	var event = InputFactory.key_down(which)
 	_send_or_record_event(event)
-	_last_key = event
 	return self
 
 
 func key_echo():
-	if(_last_key != null):
-		var new_key = _last_key.duplicate()
+	if(_last_event != null and _last_event is InputEventKey):
+		var new_key = _last_event.duplicate()
 		new_key.echo = true
 		_send_or_record_event(new_key)
 	return self
@@ -323,12 +324,15 @@ func hold_for(duration):
 
 func clear():
 	pass
-	# TODO clear _last_event
-	# TODO free all things in _input_queue
-	# TODO clear _input_queue
-	# TODO clear _next_queue_item
-	# TODO clear _last_key
-	# TODO clear _last_mouse_motion
-	# TODO clear _pressed_keys
-	# TODO clear _pressed_actions
-	# TODO clear _pressed_mouse_buttons
+
+	_last_event = null
+	_last_mouse_motion = null
+	_next_queue_item = null
+
+	for item in _input_queue:
+		item.free()
+	_input_queue.clear()
+
+	_pressed_keys.clear()
+	_pressed_actions.clear()
+	_pressed_mouse_buttons.clear()
