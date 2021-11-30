@@ -74,6 +74,23 @@ class TestTheBasics:
 		sender.wait('3f')
 		assert_called(sender, 'wait_frames', [3.0])
 
+	func test_idle_by_default():
+		var sender = InputSender.new()
+
+		assert_true(sender.is_idle())
+
+	func test_not_idle_when_items_in_queue():
+		var sender = InputSender.new()
+
+		sender.key_down("A").hold_for(.1)
+		assert_false(sender.is_idle())
+
+	func test_is_idle_when_an_event_sent_without_wait():
+		var sender = InputSender.new()
+
+		sender.key_down("B")
+		assert_true(sender.is_idle())
+
 
 
 class TestCreateKeyEvents:
@@ -350,8 +367,8 @@ class TestSequence:
 		sender.send_event(e1)
 		sender.send_event(e2)
 
-		yield(yield_to(sender, "playback_finished", 2), YIELD)
-		assert_signal_emitted(sender, 'playback_finished')
+		yield(yield_to(sender, "idle", 2), YIELD)
+		assert_signal_emitted(sender, 'idle')
 
 	func test_playback_adds_delays():
 		var r = add_child_autofree(InputTracker.new())
@@ -372,7 +389,7 @@ class TestSequence:
 		yield(yield_for(.7), YIELD)
 		assert_eq(r.inputs.size(), 2, "second input sent")
 
-		yield(yield_to(sender, 'playback_finished', 5), YIELD)
+		yield(yield_to(sender, 'idle', 5), YIELD)
 		assert_eq(r.inputs.size(), 3, "last input sent")
 
 	func test_can_wait_frames():
@@ -394,7 +411,7 @@ class TestSequence:
 		yield(yield_for(.7), YIELD)
 		assert_eq(r.inputs.size(), 2, "second input sent")
 
-		yield(yield_to(sender, 'playback_finished', 5), YIELD)
+		yield(yield_to(sender, "idle", 5), YIELD)
 		assert_eq(r.inputs.size(), 3, "last input sent")
 
 	func test_non_delayed_events_happen_on_the_same_frame_when_delayed_seconds():
@@ -409,7 +426,7 @@ class TestSequence:
 			.wait(.5)\
 			.key_down("c")
 
-		yield(yield_to(sender, "playback_finished", 2), YIELD)
+		yield(yield_to(sender, "idle", 2), YIELD)
 		assert_eq(r.input_frames[1], r.input_frames[2])
 		assert_eq(r.inputs[1].scancode, KEY_A)
 		assert_eq(r.inputs[2].scancode, KEY_B)
@@ -426,7 +443,7 @@ class TestSequence:
 			.wait_frames(20)\
 			.key_down("c")
 
-		yield(yield_to(sender, "playback_finished", 2), YIELD)
+		yield(yield_to(sender, "idle", 2), YIELD)
 		assert_eq(r.input_frames[1], r.input_frames[2])
 		assert_eq(r.inputs[1].scancode, KEY_A)
 		assert_eq(r.inputs[2].scancode, KEY_B)
@@ -442,7 +459,7 @@ class TestSequence:
 			.wait_frames(1)\
 			.mouse_relative_motion(Vector2(3, 3))
 
-		yield(yield_to(sender, "playback_finished", 5), YIELD)
+		yield(yield_to(sender, "idle", 5), YIELD)
 		assert_eq(r.inputs[2].position, Vector2(6, 6))
 
 class TestHoldFor:
@@ -453,7 +470,7 @@ class TestHoldFor:
 		var sender = InputSender.new(r)
 
 		sender.action_down("jump").hold_for('3f')
-		yield(yield_to(sender, "playback_finished", 5), YIELD)
+		yield(yield_to(sender, "idle", 5), YIELD)
 
 		assert_eq(r.inputs.size(), 2, 'input size')
 		var jump_pressed = r.inputs[0].action == "jump" and r.inputs[0].pressed
@@ -466,7 +483,7 @@ class TestHoldFor:
 		var sender = InputSender.new(r)
 
 		sender.key_down("F").hold_for('.5s')
-		yield(yield_to(sender, "playback_finished", 5), YIELD)
+		yield(yield_to(sender, "idle", 5), YIELD)
 
 		assert_eq(r.inputs.size(), 2, 'input size')
 		var f_pressed = r.inputs[0].scancode == KEY_F and r.inputs[0].pressed
@@ -479,7 +496,7 @@ class TestHoldFor:
 		var sender = InputSender.new(r)
 
 		sender.mouse_left_button_down(Vector2(1, 1)).hold_for('.5s')
-		yield(yield_to(sender, "playback_finished", 5), YIELD)
+		yield(yield_to(sender, "idle", 5), YIELD)
 
 		assert_eq(r.inputs.size(), 2, 'input size')
 		var left_pressed = r.inputs[0].button_index == BUTTON_LEFT and r.inputs[0].pressed
@@ -510,7 +527,7 @@ class TestReleaseAll:
 		var sender = InputSender.new(r)
 
 		sender.key_down("F").hold_for(.2)
-		yield(sender, "playback_finished")
+		yield(sender, "idle")
 		sender.release_all()
 
 		assert_eq(r.inputs.size(), 2)
@@ -527,7 +544,7 @@ class TestReleaseAll:
 		var sender = InputSender.new(r)
 
 		sender.action_down("jump").hold_for(.2)
-		yield(sender, "playback_finished")
+		yield(sender, "idle")
 		sender.release_all()
 
 		assert_eq(r.inputs.size(), 2)
@@ -544,7 +561,7 @@ class TestReleaseAll:
 		var sender = InputSender.new(r)
 
 		sender.mouse_right_button_down(Vector2(1,1)).hold_for(.2)
-		yield(sender, "playback_finished")
+		yield(sender, "idle")
 		sender.release_all()
 
 		assert_eq(r.inputs.size(), 2)
@@ -553,12 +570,12 @@ class TestReleaseAll:
 class TestClear:
 	extends "res://addons/gut/test.gd"
 
-	func test_clears_input_queue():
+	func test_is_idle_after_clear():
 		var sender = InputSender.new()
 
 		sender.key_down("F").hold_for(1)
 		sender.clear()
-		assert_eq(sender._input_queue.size(), 0)
+		assert_true(sender.is_idle())
 
 	func test_frees_queue_items():
 		var sender = InputSender.new()
@@ -655,19 +672,19 @@ class TestAtScriptLevel:
 			.key_down("A").hold_for(.2)\
 			.key_down("P")
 
-		yield(_sender, "playback_finished")
+		yield(_sender, "idle")
 		assert_false(Input.is_key_pressed(KEY_F))
 
 	func test_two():
 		_sender.key_down("F").hold_for(.1)\
 			.key_down("A").hold_for(.2)
 
-		yield(_sender, "playback_finished")
+		yield(_sender, "idle")
 		assert_false(Input.is_key_pressed(KEY_F))
 
 	func test_three():
 		_sender.key_down("F").hold_for(.1)\
 			.key_down("A").hold_for(.2)
 
-		yield(_sender, "playback_finished")
+		yield(_sender, "idle")
 		assert_false(Input.is_key_pressed(KEY_F))

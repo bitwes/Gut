@@ -109,7 +109,7 @@ var _pressed_keys = {}
 var _pressed_actions = {}
 var _pressed_mouse_buttons = {}
 
-signal playback_finished
+signal idle
 
 
 func _init(r=null):
@@ -155,7 +155,7 @@ func _on_queue_item_ready(item):
 	done_event.queue_free()
 
 	if(_input_queue.size() == 0):
-		emit_signal("playback_finished")
+		emit_signal("idle")
 	else:
 		_input_queue[0].start()
 
@@ -336,3 +336,6 @@ func clear():
 	_pressed_keys.clear()
 	_pressed_actions.clear()
 	_pressed_mouse_buttons.clear()
+
+func is_idle():
+	return _input_queue.size() == 0
