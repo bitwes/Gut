@@ -47,3 +47,6 @@ func assert_has_logger(obj):
 			var l = double(Logger).new()
 			obj.set_logger(l)
 			assert_eq(obj.get_logger(), l, 'Set/get works')
+
+func get_error_count(obj):
+	return obj.get_logger().get_errors().size()

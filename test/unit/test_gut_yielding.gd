@@ -231,11 +231,11 @@ class TestYieldTo:
 
 
 class TestYieldFrames:
-	extends "res://addons/gut/test.gd"
+	extends "res://test/gut_test.gd"
 
 	var _frame_count = 0
 
-	func _process(delta):
+	func _physics_process(delta):
 		_frame_count += 1
 
 	func before_each():
@@ -252,13 +252,15 @@ class TestYieldFrames:
 		yield(yield_frames(120, 'this is the output.'), YIELD)
 		pass_test("did you look at the output?")
 
-	func test_yield_frames_zero_does_nothing():
+	func test_yield_frames_zero_generates_error():
+		var err_count = get_error_count(gut)
 		yield(yield_frames(0, 'whaterver'), YIELD)
-		assert_eq(_frame_count, 0, 'This should be 0 since no frames were yielded')
+		assert_eq(get_error_count(gut), err_count + 1)
 
-	func test_yield_frames_neg_number_does_nothing():
+	func test_yield_frames_neg_number_generates_error():
+		var err_count = get_error_count(gut)
 		yield(yield_frames(-1, 'whatever'), YIELD)
-		assert_eq(_frame_count, 0, 'This should be 0 since no frames were yielded')
+		assert_eq(get_error_count(gut), err_count + 1)
 
 
 

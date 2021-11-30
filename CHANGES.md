@@ -2,7 +2,22 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# Next Release
 
+## Features
+* Added `InputFactory` static class to `addons/gut/test.gd` to simplify creating `InputEvent*` events for use in tests.  See [Input Factory](https://github.com/bitwes/Gut/wiki/Input-Factory).
+* Added `InputSender` class for mocking input and scripting input sequences.  See [Mock Input](https://github.com/bitwes/Gut/wiki/Mock-Input).
+```
+func test_fireball_input():
+  var player = Fighter.new()
+  var sender = InputSender.new(player)
+
+  sender.action_down("down").hold_for(.1)\
+    .action_down("down_forward").hold_for(.1)\
+    .action_down("forward").key_down("FP")
+  yield(sender, 'idle')
+  assert_true(player.is_throwing_fireball())
+```
 
 # 7.2.0
 
