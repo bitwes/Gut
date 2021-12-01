@@ -1,0 +1,55 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/gut/gui/RunAtCursor.gd" type="Script" id=1]
+
+[node name="RunAtCursor" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = 1.0
+margin_bottom = -527.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBox" type="HBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LblNoneSelected" type="Label" parent="HBox"]
+margin_top = 29.0
+margin_right = 93.0
+margin_bottom = 43.0
+text = "None Selected"
+
+[node name="BtnRunScript" type="Button" parent="HBox"]
+visible = false
+margin_left = 97.0
+margin_right = 161.0
+margin_bottom = 73.0
+text = "<script>"
+
+[node name="BtnRunInnerClass" type="Button" parent="HBox"]
+visible = false
+margin_left = 165.0
+margin_right = 262.0
+margin_bottom = 73.0
+text = "<inner class>"
+
+[node name="BtnRunMethod" type="Button" parent="HBox"]
+visible = false
+margin_left = 266.0
+margin_right = 344.0
+margin_bottom = 73.0
+text = "<method>"
+
+[connection signal="pressed" from="HBox/BtnRunScript" to="." method="_on_BtnRunScript_pressed"]
+[connection signal="pressed" from="HBox/BtnRunInnerClass" to="." method="_on_BtnRunInnerClass_pressed"]
+[connection signal="pressed" from="HBox/BtnRunMethod" to="." method="_on_BtnRunMethod_pressed"]

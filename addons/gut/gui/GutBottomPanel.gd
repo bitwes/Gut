@@ -43,7 +43,8 @@ onready var _ctrls = {
 		passing = $layout/RSplit/CResults/ControlBar/lblPassingValue,
 		failing = $layout/RSplit/CResults/ControlBar/lblFailingValue,
 		pending = $layout/RSplit/CResults/ControlBar/lblPendingValue
-	}
+	},
+	run_at_cursor = $layout/ControlBar/CRunCurrent/RunAtCursor
 }
 
 
@@ -281,6 +282,17 @@ func _on_txtInner_focus_exited():
 func _on_txtTest_focus_exited():
 	_ctrls.run_like.txt_test.select(0, 0)
 
+func _on_FocusButton_pressed():
+	_ctrls.run_like.txt_script.grab_focus()
+
+func _on_RunAtCursor_run_tests(what):
+	_gut_config.options.selected = what.script
+	_gut_config.options.inner_class = what.inner_class
+	_gut_config.options.unit_test_name = what.test_method
+
+	_run_tests()
+
+
 # ---------------
 # Public
 # ---------------
@@ -318,12 +330,14 @@ func set_current_script(script):
 			_last_selected_path = script.resource_path.get_file()
 			_ctrls.run_current.button.text = str('Run:  ', file)
 			_ctrls.run_current.button.disabled = false
+			_ctrls.run_at_cursor.activate_for_script(script.resource_path)
 
 
 func set_interface(value):
 	_interface = value
 	_interface.get_script_editor().connect("editor_script_changed", self, '_on_editor_script_changed')
 	set_current_script(_interface.get_script_editor().get_current_script())
+	_ctrls.run_at_cursor.set_script_editor(_interface.get_script_editor())
 	# TODO start using the open editors to do some sweet sweet run-at-cursor
 	# action in the editor.  If I didn't stop before implementing this then
 	# I may have never stopped working on this feature.
@@ -373,5 +387,3 @@ func nvl(value, if_null):
 		return value
 
 
-func _on_FocusButton_pressed():
-	_ctrls.run_like.txt_script.grab_focus()

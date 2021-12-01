@@ -1,7 +1,8 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://addons/gut/gui/GutBottomPanel.gd" type="Script" id=1]
 [ext_resource path="res://addons/gut/gui/BottomPanelShortcuts.tscn" type="PackedScene" id=2]
+[ext_resource path="res://addons/gut/gui/RunAtCursor.tscn" type="PackedScene" id=3]
 
 [sub_resource type="InputEventKey" id=1]
 control = true
@@ -85,7 +86,7 @@ __meta__ = {
 
 [node name="ControlBar" type="HBoxContainer" parent="layout"]
 margin_right = 1023.0
-margin_bottom = 42.0
+margin_bottom = 58.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -93,7 +94,7 @@ __meta__ = {
 [node name="CRerun" type="VBoxContainer" parent="layout/ControlBar"]
 visible = false
 margin_right = 101.0
-margin_bottom = 42.0
+margin_bottom = 58.0
 
 [node name="Label" type="Label" parent="layout/ControlBar/CRerun"]
 margin_right = 101.0
@@ -111,18 +112,29 @@ shortcut = SubResource( 2 )
 text = "Rerun <none>"
 
 [node name="CRunCurrent" type="VBoxContainer" parent="layout/ControlBar"]
-margin_right = 85.0
-margin_bottom = 42.0
+margin_right = 260.0
+margin_bottom = 58.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="Label" type="Label" parent="layout/ControlBar/CRunCurrent"]
-margin_right = 85.0
+margin_right = 260.0
 margin_bottom = 14.0
 text = "Last Selected"
 
-[node name="RunCurrent" type="Button" parent="layout/ControlBar/CRunCurrent"]
+[node name="RunAtCursor" parent="layout/ControlBar/CRunCurrent" instance=ExtResource( 3 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
 margin_top = 18.0
-margin_right = 85.0
-margin_bottom = 38.0
+margin_right = 260.0
+margin_bottom = 58.0
+rect_min_size = Vector2( 0, 40 )
+
+[node name="RunCurrent" type="Button" parent="layout/ControlBar/CRunCurrent"]
+visible = false
+margin_top = 62.0
+margin_right = 260.0
+margin_bottom = 82.0
 hint_tooltip = "Run the last test script that was selected in the editor."
 size_flags_vertical = 8
 disabled = true
@@ -130,32 +142,34 @@ shortcut = SubResource( 4 )
 text = "None"
 
 [node name="CenterContainer2" type="CenterContainer" parent="layout/ControlBar"]
-margin_left = 89.0
-margin_right = 184.0
-margin_bottom = 42.0
+margin_left = 264.0
+margin_right = 524.0
+margin_bottom = 58.0
 size_flags_horizontal = 3
 
 [node name="FocusButton" type="Button" parent="layout/ControlBar"]
 show_behind_parent = true
-margin_left = 188.0
-margin_right = 188.0
-margin_bottom = 42.0
+margin_left = 528.0
+margin_right = 528.0
+margin_bottom = 58.0
 custom_styles/normal = SubResource( 5 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="RunLike" type="Button" parent="layout/ControlBar"]
-margin_left = 192.0
-margin_top = 22.0
-margin_right = 262.0
-margin_bottom = 42.0
+visible = false
+margin_left = 483.0
+margin_top = 38.0
+margin_right = 553.0
+margin_bottom = 58.0
 hint_tooltip = "Run all test scripts that contain text from the fields to the right.  the script name, inner class name and test name are all searched case-insensitive."
 size_flags_vertical = 8
 shortcut = SubResource( 7 )
 text = "Run Like:"
 
 [node name="CScript" type="VBoxContainer" parent="layout/ControlBar"]
+visible = false
 margin_left = 266.0
 margin_right = 406.0
 margin_bottom = 42.0
@@ -176,13 +190,14 @@ rect_min_size = Vector2( 140, 0 )
 size_flags_horizontal = 3
 
 [node name="CInner" type="VBoxContainer" parent="layout/ControlBar"]
-margin_left = 410.0
-margin_right = 550.0
+visible = false
+margin_left = 324.0
+margin_right = 478.0
 margin_bottom = 42.0
 size_flags_horizontal = 3
 
 [node name="Label3" type="Label" parent="layout/ControlBar/CInner"]
-margin_right = 140.0
+margin_right = 154.0
 margin_bottom = 14.0
 hint_tooltip = "\"Run Like\" will include Inner Test Classes that have a name that includes this text."
 mouse_filter = 1
@@ -190,19 +205,20 @@ text = "Inner Class"
 
 [node name="txtInner" type="LineEdit" parent="layout/ControlBar/CInner"]
 margin_top = 18.0
-margin_right = 140.0
+margin_right = 154.0
 margin_bottom = 42.0
 rect_min_size = Vector2( 140, 0 )
 size_flags_horizontal = 3
 
 [node name="CTest" type="VBoxContainer" parent="layout/ControlBar"]
-margin_left = 554.0
-margin_right = 694.0
+visible = false
+margin_left = 377.0
+margin_right = 583.0
 margin_bottom = 42.0
 size_flags_horizontal = 3
 
 [node name="Label2" type="Label" parent="layout/ControlBar/CTest"]
-margin_right = 140.0
+margin_right = 206.0
 margin_bottom = 14.0
 hint_tooltip = "\"Run Like\" will include tests where the function name includes this text."
 mouse_filter = 1
@@ -210,22 +226,22 @@ text = "Test Name"
 
 [node name="txtTest" type="LineEdit" parent="layout/ControlBar/CTest"]
 margin_top = 18.0
-margin_right = 140.0
+margin_right = 206.0
 margin_bottom = 42.0
 rect_min_size = Vector2( 140, 0 )
 size_flags_horizontal = 3
 
 [node name="CenterContainer" type="CenterContainer" parent="layout/ControlBar"]
-margin_left = 698.0
+margin_left = 532.0
 margin_right = 793.0
-margin_bottom = 42.0
+margin_bottom = 58.0
 size_flags_horizontal = 3
 
 [node name="RunAll" type="Button" parent="layout/ControlBar"]
 margin_left = 797.0
-margin_top = 22.0
+margin_top = 38.0
 margin_right = 947.0
-margin_bottom = 42.0
+margin_bottom = 58.0
 rect_min_size = Vector2( 150, 0 )
 hint_tooltip = "Run all test scripts in the suite."
 size_flags_vertical = 8
@@ -237,15 +253,15 @@ __meta__ = {
 
 [node name="Shortcuts" type="Button" parent="layout/ControlBar"]
 margin_left = 951.0
-margin_top = 22.0
+margin_top = 38.0
 margin_right = 1023.0
-margin_bottom = 42.0
+margin_bottom = 58.0
 hint_tooltip = "Set shortcuts for GUT buttons.  Shortcuts do not work when the GUT panel is not visible."
 size_flags_vertical = 8
 text = "Shortcuts"
 
 [node name="RSplit" type="HSplitContainer" parent="layout"]
-margin_top = 46.0
+margin_top = 62.0
 margin_right = 1023.0
 margin_bottom = 599.0
 size_flags_horizontal = 3
@@ -253,83 +269,84 @@ size_flags_vertical = 3
 
 [node name="CResults" type="VBoxContainer" parent="layout/RSplit"]
 margin_right = 611.0
-margin_bottom = 553.0
+margin_bottom = 537.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="ControlBar" type="HBoxContainer" parent="layout/RSplit/CResults"]
 margin_right = 611.0
-margin_bottom = 30.0
+margin_bottom = 35.0
+rect_min_size = Vector2( 0, 35 )
 
 [node name="Light" type="Control" parent="layout/RSplit/CResults/ControlBar"]
 margin_right = 30.0
-margin_bottom = 30.0
+margin_bottom = 35.0
 rect_min_size = Vector2( 30, 30 )
 
 [node name="lblPassing" type="Label" parent="layout/RSplit/CResults/ControlBar"]
 margin_left = 34.0
-margin_top = 8.0
+margin_top = 10.0
 margin_right = 82.0
-margin_bottom = 22.0
+margin_bottom = 24.0
 text = "Passing"
 
 [node name="lblPassingValue" type="Label" parent="layout/RSplit/CResults/ControlBar"]
 margin_left = 86.0
-margin_top = 8.0
+margin_top = 10.0
 margin_right = 101.0
-margin_bottom = 22.0
+margin_bottom = 24.0
 text = "---"
 
 [node name="lblFailing" type="Label" parent="layout/RSplit/CResults/ControlBar"]
 margin_left = 105.0
-margin_top = 8.0
+margin_top = 10.0
 margin_right = 146.0
-margin_bottom = 22.0
+margin_bottom = 24.0
 text = "Failing"
 
 [node name="lblFailingValue" type="Label" parent="layout/RSplit/CResults/ControlBar"]
 margin_left = 150.0
-margin_top = 8.0
+margin_top = 10.0
 margin_right = 165.0
-margin_bottom = 22.0
+margin_bottom = 24.0
 text = "---"
 
 [node name="lblPending" type="Label" parent="layout/RSplit/CResults/ControlBar"]
 margin_left = 169.0
-margin_top = 8.0
+margin_top = 10.0
 margin_right = 220.0
-margin_bottom = 22.0
+margin_bottom = 24.0
 text = "Pending"
 
 [node name="lblPendingValue" type="Label" parent="layout/RSplit/CResults/ControlBar"]
 margin_left = 224.0
-margin_top = 8.0
+margin_top = 10.0
 margin_right = 239.0
-margin_bottom = 22.0
+margin_bottom = 24.0
 text = "---"
 
 [node name="CenterContainer" type="CenterContainer" parent="layout/RSplit/CResults/ControlBar"]
 margin_left = 243.0
 margin_right = 488.0
-margin_bottom = 30.0
+margin_bottom = 35.0
 size_flags_horizontal = 3
 
 [node name="CopyButton" type="Button" parent="layout/RSplit/CResults/ControlBar"]
 margin_left = 492.0
 margin_right = 547.0
-margin_bottom = 30.0
+margin_bottom = 35.0
 text = "  Copy "
 
 [node name="ClearButton" type="Button" parent="layout/RSplit/CResults/ControlBar"]
 margin_left = 551.0
 margin_right = 611.0
-margin_bottom = 30.0
+margin_bottom = 35.0
 text = "  Clear  "
 
 [node name="Output" type="RichTextLabel" parent="layout/RSplit/CResults"]
-margin_top = 34.0
+margin_top = 39.0
 margin_right = 611.0
-margin_bottom = 553.0
+margin_bottom = 537.0
 focus_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -344,7 +361,7 @@ selection_enabled = true
 [node name="sc" type="ScrollContainer" parent="layout/RSplit"]
 margin_left = 623.0
 margin_right = 1023.0
-margin_bottom = 553.0
+margin_bottom = 537.0
 rect_min_size = Vector2( 400, 0 )
 mouse_filter = 1
 size_flags_vertical = 3
@@ -367,6 +384,7 @@ margin_right = 31.6969
 margin_bottom = -125.552
 
 [connection signal="pressed" from="layout/ControlBar/CRerun/Rerun" to="." method="_on_Rerun_pressed"]
+[connection signal="run_tests" from="layout/ControlBar/CRunCurrent/RunAtCursor" to="." method="_on_RunAtCursor_run_tests"]
 [connection signal="pressed" from="layout/ControlBar/CRunCurrent/RunCurrent" to="." method="_on_RunCurrent_pressed"]
 [connection signal="pressed" from="layout/ControlBar/FocusButton" to="." method="_on_FocusButton_pressed"]
 [connection signal="pressed" from="layout/ControlBar/RunLike" to="." method="_on_RunLike_pressed"]
