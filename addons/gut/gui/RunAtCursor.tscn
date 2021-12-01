@@ -25,9 +25,9 @@ __meta__ = {
 
 [node name="LblNoneSelected" type="Label" parent="HBox"]
 margin_top = 29.0
-margin_right = 93.0
+margin_right = 50.0
 margin_bottom = 43.0
-text = "None Selected"
+text = "<None>"
 
 [node name="BtnRunScript" type="Button" parent="HBox"]
 visible = false

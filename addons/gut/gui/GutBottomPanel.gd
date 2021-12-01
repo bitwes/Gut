@@ -26,19 +26,19 @@ onready var _ctrls = {
 	settings = $layout/RSplit/sc/Settings,
 	shortcut_dialog = $BottomPanelShortcuts,
 	light = $layout/RSplit/CResults/ControlBar/Light,
-	run_like = {
-		button = $layout/ControlBar/RunLike,
-		txt_script = $layout/ControlBar/CScript/txtScript,
-		txt_inner = $layout/ControlBar/CInner/txtInner,
-		txt_test = $layout/ControlBar/CTest/txtTest,
-		focust_button = $layout/ControlBar/FocusButton,
-	},
-	run_current = {
-		button = $layout/ControlBar/CRunCurrent/RunCurrent,
-	},
-	rerun = {
-		button = $layout/ControlBar/CRerun/Rerun,
-	},
+#	run_like = {
+#		button = $layout/ControlBar/RunLike,
+#		txt_script = $layout/ControlBar/CScript/txtScript,
+#		txt_inner = $layout/ControlBar/CInner/txtInner,
+#		txt_test = $layout/ControlBar/CTest/txtTest,
+#		focust_button = $layout/ControlBar/FocusButton,
+#	},
+#	run_current = {
+#		button = $layout/ControlBar/CRunCurrent/RunCurrent,
+#	},
+#	rerun = {
+#		button = $layout/ControlBar/CRerun/Rerun,
+#	},
 	results = {
 		passing = $layout/RSplit/CResults/ControlBar/lblPassingValue,
 		failing = $layout/RSplit/CResults/ControlBar/lblFailingValue,
@@ -131,7 +131,6 @@ func _update_last_run_label():
 		text += nvl(_gut_config.options.inner_class, '') + ' '
 		text += nvl(_gut_config.options.unit_test_name, '')
 
-	_ctrls.rerun.button.text = str(text.strip_edges())
 
 
 func _show_errors(errs):
@@ -149,7 +148,6 @@ func _run_tests():
 		_show_errors(issues)
 		return
 
-	_ctrls.rerun.button.disabled = false
 	write_file(RESULT_FILE, 'Run in progress')
 	_gut_config.options = _gut_config_gui.get_options(_gut_config.options)
 	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.font_name)
@@ -171,19 +169,15 @@ func _run_tests():
 
 func _apply_shortcuts():
 	_ctrls.run_button.shortcut = _ctrls.shortcut_dialog.get_run_all()
-	_ctrls.rerun.button.shortcut = _ctrls.shortcut_dialog.get_rerun()
-	_ctrls.run_current.button.shortcut = _ctrls.shortcut_dialog.get_run_current()
-	_ctrls.run_like.button.shortcut = _ctrls.shortcut_dialog.get_run_like()
-	_ctrls.run_like.focust_button.shortcut = _ctrls.shortcut_dialog.get_focus_button()
+
+	_ctrls.run_at_cursor.get_script_button().shortcut = \
+		_ctrls.shortcut_dialog.get_run_current_script()
+	_ctrls.run_at_cursor.get_inner_button().shortcut = \
+		_ctrls.shortcut_dialog.get_run_current_inner()
+	_ctrls.run_at_cursor.get_test_button().shortcut = \
+		_ctrls.shortcut_dialog.get_run_current_test()
+
 	_panel_button.shortcut = _ctrls.shortcut_dialog.get_panel_button()
-
-
-func _run_like():
-	_gut_config.options.selected = _ctrls.run_like.txt_script.text
-	_gut_config.options.inner_class = _ctrls.run_like.txt_inner.text
-	_gut_config.options.unit_test_name = _ctrls.run_like.txt_test.text
-
-	_run_tests()
 
 
 func _run_all():
@@ -193,13 +187,6 @@ func _run_all():
 
 	_run_tests()
 
-
-func _run_last_selected():
-	if(_last_selected_path != null):
-		_gut_config.options.inner_class = null
-		_gut_config.options.unit_test_name = null
-		_gut_config.options.selected = _last_selected_path.get_file()
-		_run_tests()
 
 # ---------------
 # Events
@@ -219,19 +206,6 @@ func _on_RunAll_pressed():
 func _on_RunTests_pressed():
 	_run_all()
 
-func _on_RunCurrent_pressed():
-	_run_last_selected()
-
-func _on_Rerun_pressed():
-	_run_tests()
-
-
-func _on_RunLike_pressed():
-	_on_RunLikeButton_pressed()
-
-
-func _on_RunLikeButton_pressed():
-	_run_like()
 
 func _on_CopyButton_pressed():
 	OS.clipboard = _ctrls.output.text
@@ -254,36 +228,6 @@ func _on_Light_draw():
 	var l = _ctrls.light
 	l.draw_circle(Vector2(l.rect_size.x / 2, l.rect_size.y / 2), l.rect_size.x / 2, _light_color)
 
-
-func _on_run_like_field_enter_pressed(new_text):
-	_run_like()
-
-
-func _on_txtScript_focus_entered():
-	_ctrls.run_like.txt_script.select_all()
-
-
-func _on_txtInner_focus_entered():
-	_ctrls.run_like.txt_inner.select_all()
-
-
-func _on_txtTest_focus_entered():
-	_ctrls.run_like.txt_test.select_all()
-
-
-func _on_txtScript_focus_exited():
-	_ctrls.run_like.txt_script.select(0, 0)
-
-
-func _on_txtInner_focus_exited():
-	_ctrls.run_like.txt_inner.select(0, 0)
-
-
-func _on_txtTest_focus_exited():
-	_ctrls.run_like.txt_test.select(0, 0)
-
-func _on_FocusButton_pressed():
-	_ctrls.run_like.txt_script.grab_focus()
 
 func _on_RunAtCursor_run_tests(what):
 	_gut_config.options.selected = what.script
@@ -328,8 +272,6 @@ func set_current_script(script):
 		if(_is_test_script(script)):
 			var file = script.resource_path.get_file()
 			_last_selected_path = script.resource_path.get_file()
-			_ctrls.run_current.button.text = str('Run:  ', file)
-			_ctrls.run_current.button.disabled = false
 			_ctrls.run_at_cursor.activate_for_script(script.resource_path)
 
 
