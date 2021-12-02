@@ -8,7 +8,9 @@ onready var _ctrls = {
 	btn_script = $HBox/BtnRunScript,
 	btn_inner = $HBox/BtnRunInnerClass,
 	btn_method = $HBox/BtnRunMethod,
-	lbl_none = $HBox/LblNoneSelected
+	lbl_none = $HBox/LblNoneSelected,
+	arrow_1 = $HBox/Arrow1,
+	arrow_2 = $HBox/Arrow2
 }
 
 var _editors = null
@@ -48,10 +50,14 @@ func _update_buttons(info):
 	_ctrls.btn_script.visible = _cur_script_path != null
 
 	_ctrls.btn_inner.visible = info.inner_class != null
+	_ctrls.arrow_1.visible = info.inner_class != null
 	_ctrls.btn_inner.text = str(info.inner_class)
+	_ctrls.btn_inner.hint_tooltip = str("Run all tests in Inner-Test-Class ", info.inner_class)
 
 	_ctrls.btn_method.visible = info.test_method != null
+	_ctrls.arrow_2.visible = info.test_method != null
 	_ctrls.btn_method.text = str(info.test_method)
+	_ctrls.btn_method.hint_tooltip = str("Run test ", info.test_method)
 
 	rect_min_size.x = _ctrls.btn_method.rect_size.x + _ctrls.btn_method.rect_position.x
 
@@ -71,6 +77,7 @@ func set_script_editor(value):
 func activate_for_script(path):
 	_ctrls.btn_script.visible = true
 	_ctrls.btn_script.text = path.get_file()
+	_ctrls.btn_script.hint_tooltip = str("Run all tests in script ", path)
 	_cur_script_path = path
 	_editors.refresh()
 	_set_editor(_editors.get_current_text_edit())

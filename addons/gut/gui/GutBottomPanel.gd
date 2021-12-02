@@ -30,7 +30,7 @@ onready var _ctrls = {
 		failing = $layout/RSplit/CResults/ControlBar/lblFailingValue,
 		pending = $layout/RSplit/CResults/ControlBar/lblPendingValue
 	},
-	run_at_cursor = $layout/ControlBar/CRunCurrent/RunAtCursor
+	run_at_cursor = $layout/ControlBar/RunAtCursor
 }
 
 
