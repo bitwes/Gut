@@ -48,6 +48,12 @@ class InputTracker:
 class TestTheBasics:
 	extends "res://addons/gut/test.gd"
 
+	func before_all():
+		InputMap.add_action("jump")
+
+	func after_all():
+		InputMap.erase_action("jump")
+
 	func test_can_make_one():
 		assert_not_null(InputSender.new())
 
@@ -91,6 +97,89 @@ class TestTheBasics:
 		sender.key_down("B")
 		assert_true(sender.is_idle())
 
+	func test_is_key_pressed_false_by_default():
+		var sender = InputSender.new()
+		assert_false(sender.is_key_pressed("F"))
+
+	func test_is_key_pressed_true_when_sent_key():
+		var sender = InputSender.new()
+		sender.key_down("F")
+		assert_true(sender.is_key_pressed("F"))
+
+	func test_is_action_pressed_false_by_default():
+		var sender = InputSender.new()
+		assert_false(sender.is_action_pressed("jump"))
+
+	func test_is_action_pressed_true_when_action_sent():
+		var sender = InputSender.new()
+		sender.action_down("jump")
+		assert_true(sender.is_action_pressed("jump"))
+
+	func test_is_mouse_button_pressed_false_by_default():
+		var sender = InputSender.new()
+		assert_false(sender.is_mouse_button_pressed(BUTTON_LEFT))
+
+	func test_is_mouse_button_pressed_true_when_button_sent():
+		var sender = InputSender.new()
+		sender.mouse_right_button_down(Vector2(1,1))
+		assert_true(sender.is_mouse_button_pressed(BUTTON_RIGHT))
+
+	func test_warns_when_key_down_for_a_pressed_key():
+		var sender = InputSender.new()
+		var lgr = _utils.Logger.new()
+		sender._lgr = lgr
+		sender.key_down("S")
+		sender.key_down("S")
+		assert_eq(lgr.get_warnings().size(), 1)
+
+	func test_does_now_warn_for_key_up():
+		var sender = InputSender.new()
+		var lgr = _utils.Logger.new()
+		sender._lgr = lgr
+		sender.key_down("S")
+		sender.key_up("S")
+		assert_eq(lgr.get_warnings().size(), 0)
+
+	func test_does_not_warn_for_key_echos():
+		var sender = InputSender.new()
+		var lgr = _utils.Logger.new()
+		sender._lgr = lgr
+		sender.key_down("S")
+		sender.key_echo()
+		sender.key_echo()
+		assert_eq(lgr.get_warnings().size(), 0)
+
+	func test_warns_when_action_down_for_a_pressed_action():
+		var sender = InputSender.new()
+		var lgr = _utils.Logger.new()
+		sender._lgr = lgr
+		sender.action_down("jump")
+		sender.action_down("jump")
+		assert_eq(lgr.get_warnings().size(), 1)
+
+	func test_does_not_warn_for_action_up():
+		var sender = InputSender.new()
+		var lgr = _utils.Logger.new()
+		sender._lgr = lgr
+		sender.action_down("jump")
+		sender.action_up("jump")
+		assert_eq(lgr.get_warnings().size(), 0)
+
+	func test_warns_when_mouse_down_for_a_pressed_mouse_button():
+		var sender = InputSender.new()
+		var lgr = _utils.Logger.new()
+		sender._lgr = lgr
+		sender.mouse_right_button_down(Vector2(1,1))
+		sender.mouse_right_button_down(Vector2(1,1))
+		assert_eq(lgr.get_warnings().size(), 1)
+
+	func test_does_not_warn_for_mouse_up():
+		var sender = InputSender.new()
+		var lgr = _utils.Logger.new()
+		sender._lgr = lgr
+		sender.mouse_right_button_down(Vector2(1,1))
+		sender.mouse_right_button_up(Vector2(1,1))
+		assert_eq(lgr.get_warnings().size(), 0)
 
 
 class TestCreateKeyEvents:

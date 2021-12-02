@@ -92,8 +92,15 @@ class InputQueueItem:
 			var t = _delay_timer(time_delay)
 			t.connect("timeout", self, "_on_time_timeout")
 
-
+# ##############################################################################
+#
+# ##############################################################################
+var _utils = load('res://addons/gut/utils.gd').get_instance()
 var InputFactory = load("res://addons/gut/input_factory.gd")
+
+const INPUT_WARN = 'If using Input as a reciever it will not respond to *_down events until a *_up event is recieved.  Call the appropriate *_up event or use .hold_for(...) to automatically release after some duration.'
+
+var _lgr = _utils.get_logger()
 var _receivers = []
 var _input_queue = []
 var _next_queue_item = null
@@ -119,10 +126,16 @@ func _init(r=null):
 
 func _send_event(event):
 	if(event is InputEventKey):
+		if((event.pressed and !event.echo) and is_key_pressed(event.scancode)):
+			_lgr.warn(str("InputSender:  key_down called for ", event.as_text(), " when that key is already pressed.  ", INPUT_WARN))
 		_pressed_keys[event.scancode] = event.pressed
 	elif(event is InputEventAction):
+		if(event.pressed and is_action_pressed(event.action)):
+			_lgr.warn(str("InputSender:  action_down called for ", event.action, " when that action is already pressed.  ", INPUT_WARN))
 		_pressed_actions[event.action] = event.pressed
 	elif(event is InputEventMouseButton):
+		if(event.pressed and is_mouse_button_pressed(event.button_index)):
+			_lgr.warn(str("InputSender:  mouse_button_down called for ", event.button_index, " when that mouse button is already pressed.  ", INPUT_WARN))
 		_pressed_mouse_buttons[event.button_index] = event
 
 	for r in _receivers:
@@ -339,3 +352,13 @@ func clear():
 
 func is_idle():
 	return _input_queue.size() == 0
+
+func is_key_pressed(which):
+	var event = InputFactory.key_up(which)
+	return _pressed_keys.has(event.scancode) and _pressed_keys[event.scancode]
+
+func is_action_pressed(which):
+	return _pressed_actions.has(which) and _pressed_actions[which]
+
+func is_mouse_button_pressed(which):
+	return _pressed_mouse_buttons.has(which) and _pressed_mouse_buttons[which]
