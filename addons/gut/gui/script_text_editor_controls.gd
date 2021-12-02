@@ -18,7 +18,6 @@ class ScriptEditorControlRef:
 		# one of these in the future, but their position in the tree may change.
 		_code_editor = weakref(_get_first_child_named('CodeTextEditor', _script_editor.get_ref()))
 		_text_edit = weakref(_get_first_child_named("TextEdit", _code_editor.get_ref()))
-		print(_script_editor.get_ref(), _code_editor.get_ref(), _text_edit.get_ref())
 
 
 	func _get_first_child_named(obj_name, parent_obj):
@@ -60,6 +59,9 @@ class ScriptEditorControlRef:
 	func is_visible():
 		return _script_editor.get_ref().visible
 
+# ##############################################################################
+#
+# ##############################################################################
 
 # Used to make searching for the controls easier and faster.
 var _script_editors_parent = null
@@ -69,13 +71,15 @@ var _script_editor = null
 # and related controls at the time of the last refresh.
 var _script_editor_controls = []
 
+var _method_prefix = 'test_'
+var _inner_class_prefix = 'Test'
 
 func _init(script_edit):
 	_script_editor = script_edit
 	refresh()
 
 
-func is_script_editor(obj):
+func _is_script_editor(obj):
 	return str(obj).find('[ScriptTextEditor') != -1
 
 
@@ -94,11 +98,12 @@ func _populate_editors():
 
 	_script_editor_controls.clear()
 	for child in _script_editors_parent.get_children():
-		if(is_script_editor(child)):
+		if(_is_script_editor(child)):
 			var ref = ScriptEditorControlRef.new(child)
 			_script_editor_controls.append(ref)
 
-
+# Yes, this is the same as the one above but with a different name.  This was
+# easier than trying to find a place where it could be used by both.
 func _get_first_child_of_type_name(obj_name, parent_obj):
 	if(parent_obj == null):
 		return null
@@ -117,6 +122,19 @@ func _get_first_child_of_type_name(obj_name, parent_obj):
 
 	return to_return
 
+
+func _get_func_name_from_line(text):
+	text = text.strip_edges()
+	var left = text.split("(")[0]
+	var func_name = left.split(" ")[1]
+	return func_name
+
+
+func _get_class_name_from_line(text):
+	text = text.strip_edges()
+	var right = text.split(" ")[1]
+	var the_name = right.rstrip(":")
+	return the_name
 
 func refresh():
 	if(_script_editors_parent == null):
@@ -142,26 +160,13 @@ func get_current_text_edit():
 
 	return to_return
 
+
 func get_script_editor_controls():
 	var to_return = []
 	for ctrl_ref in _script_editor_controls:
 		to_return.append(ctrl_ref.get_script_text_edit())
 
 	return to_return
-
-
-func _get_func_name_from_line(text):
-	text = text.strip_edges()
-	var left = text.split("(")[0]
-	var func_name = left.split(" ")[1]
-	return func_name
-
-
-func _get_class_name_from_line(text):
-	text = text.strip_edges()
-	var right = text.split(" ")[1]
-	var the_name = right.rstrip(":")
-	return the_name
 
 
 func get_line_info():
@@ -185,7 +190,7 @@ func get_line_info():
 
 			if(!done_func and strip_text.begins_with("func ")):
 				var func_name = _get_func_name_from_line(text)
-				if(func_name.begins_with('test_')):
+				if(func_name.begins_with(_method_prefix)):
 					info.test_method = func_name
 				done_func = true
 				# If the func line is left justified then there won't be any
@@ -195,7 +200,7 @@ func get_line_info():
 
 			if(!done_inner and strip_text.begins_with("class")):
 				var inner_name = _get_class_name_from_line(text)
-				if(inner_name.begins_with('Test')):
+				if(inner_name.begins_with(_inner_class_prefix)):
 					info.inner_class = inner_name
 					done_inner = true
 					# if we found an inner class then we are already past
@@ -204,3 +209,19 @@ func get_line_info():
 		line -= 1
 
 	return info
+
+
+func get_method_prefix():
+	return _method_prefix
+
+
+func set_method_prefix(method_prefix):
+	_method_prefix = method_prefix
+
+
+func get_inner_class_prefix():
+	return _inner_class_prefix
+
+
+func set_inner_class_prefix(inner_class_prefix):
+	_inner_class_prefix = inner_class_prefix

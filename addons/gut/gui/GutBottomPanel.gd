@@ -16,7 +16,6 @@ var _gut_config_gui = null
 var _gut_plugin = null
 var _light_color = Color(0, 0, 0, .5)
 var _panel_button = null
-var _open_editors = null
 var _last_selected_path = null
 
 
@@ -26,19 +25,6 @@ onready var _ctrls = {
 	settings = $layout/RSplit/sc/Settings,
 	shortcut_dialog = $BottomPanelShortcuts,
 	light = $layout/RSplit/CResults/ControlBar/Light,
-#	run_like = {
-#		button = $layout/ControlBar/RunLike,
-#		txt_script = $layout/ControlBar/CScript/txtScript,
-#		txt_inner = $layout/ControlBar/CInner/txtInner,
-#		txt_test = $layout/ControlBar/CTest/txtTest,
-#		focust_button = $layout/ControlBar/FocusButton,
-#	},
-#	run_current = {
-#		button = $layout/ControlBar/CRunCurrent/RunCurrent,
-#	},
-#	rerun = {
-#		button = $layout/ControlBar/CRerun/Rerun,
-#	},
 	results = {
 		passing = $layout/RSplit/CResults/ControlBar/lblPassingValue,
 		failing = $layout/RSplit/CResults/ControlBar/lblFailingValue,
@@ -195,9 +181,6 @@ func _on_editor_script_changed(script):
 	if(script):
 		set_current_script(script)
 
-func _on_editor_changed():
-	pass
-	# _open_editors.print_editors()
 
 func _on_RunAll_pressed():
 	_on_RunTests_pressed()
@@ -280,11 +263,6 @@ func set_interface(value):
 	_interface.get_script_editor().connect("editor_script_changed", self, '_on_editor_script_changed')
 	set_current_script(_interface.get_script_editor().get_current_script())
 	_ctrls.run_at_cursor.set_script_editor(_interface.get_script_editor())
-	# TODO start using the open editors to do some sweet sweet run-at-cursor
-	# action in the editor.  If I didn't stop before implementing this then
-	# I may have never stopped working on this feature.
-	# _open_editors = load('res://addons/gut/gui/open_editors.gd').new(_interface.get_script_editor())
-	# _open_editors.connect('editor_changed', self, '_on_editor_changed')
 
 
 func set_plugin(value):
