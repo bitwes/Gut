@@ -97,6 +97,9 @@ class TestTheBasics:
 		sender.key_down("B")
 		assert_true(sender.is_idle())
 
+
+
+
 	func test_is_key_pressed_false_by_default():
 		var sender = InputSender.new()
 		assert_false(sender.is_key_pressed("F"))
@@ -180,6 +183,17 @@ class TestTheBasics:
 		sender.mouse_right_button_down(Vector2(1,1))
 		sender.mouse_right_button_up(Vector2(1,1))
 		assert_eq(lgr.get_warnings().size(), 0)
+
+	func test_warns_for_2nd_down_event_after_idle():
+		var sender = InputSender.new()
+		var lgr = _utils.Logger.new()
+		sender._lgr = lgr
+
+		sender.key_down("R").wait(.2)
+		yield(sender, 'idle')
+
+		sender.key_down("R")
+		assert_eq(lgr.get_warnings().size(), 1)
 
 
 class TestCreateKeyEvents:
@@ -550,6 +564,7 @@ class TestSequence:
 
 		yield(yield_to(sender, "idle", 5), YIELD)
 		assert_eq(r.inputs[2].position, Vector2(6, 6))
+
 
 class TestHoldFor:
 	extends "res://addons/gut/test.gd"

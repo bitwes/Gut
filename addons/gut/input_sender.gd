@@ -168,6 +168,7 @@ func _on_queue_item_ready(item):
 	done_event.queue_free()
 
 	if(_input_queue.size() == 0):
+		_next_queue_item = null
 		emit_signal("idle")
 	else:
 		_input_queue[0].start()
