@@ -1,17 +1,9 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://addons/gut/gui/GutBottomPanel.gd" type="Script" id=1]
 [ext_resource path="res://addons/gut/gui/BottomPanelShortcuts.tscn" type="PackedScene" id=2]
 [ext_resource path="res://addons/gut/gui/RunAtCursor.tscn" type="PackedScene" id=3]
-
-[sub_resource type="InputEventKey" id=3]
-control = true
-scancode = 52
-
-[sub_resource type="ShortCut" id=4]
-shortcut = SubResource( 3 )
-
-[sub_resource type="StyleBoxEmpty" id=5]
+[ext_resource path="res://addons/gut/gui/play.png" type="Texture" id=4]
 
 [sub_resource type="InputEventKey" id=8]
 control = true
@@ -19,6 +11,8 @@ scancode = 49
 
 [sub_resource type="ShortCut" id=9]
 shortcut = SubResource( 8 )
+
+[sub_resource type="StyleBoxEmpty" id=5]
 
 [sub_resource type="DynamicFontData" id=10]
 font_path = "res://addons/gut/fonts/CourierPrime-BoldItalic.ttf"
@@ -72,88 +66,83 @@ __meta__ = {
 
 [node name="ControlBar" type="HBoxContainer" parent="layout"]
 margin_right = 1023.0
-margin_bottom = 58.0
+margin_bottom = 40.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="CRunCurrent" type="VBoxContainer" parent="layout/ControlBar"]
-margin_right = 260.0
-margin_bottom = 58.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
+[node name="RunAll" type="Button" parent="layout/ControlBar"]
+margin_right = 150.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 150, 0 )
+hint_tooltip = "Run all test scripts in the suite."
+size_flags_vertical = 11
+shortcut = SubResource( 9 )
+text = "Run All"
+icon = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="Label" type="Label" parent="layout/ControlBar/CRunCurrent"]
-margin_right = 260.0
-margin_bottom = 14.0
-text = "Current"
+[node name="Label" type="Label" parent="layout/ControlBar"]
+margin_left = 154.0
+margin_top = 13.0
+margin_right = 213.0
+margin_bottom = 27.0
+hint_tooltip = "When a test script is edited, buttons are displayed to 
+run the opened script or an Inner-Test-Class or a 
+single test.  The buttons change based on the location 
+of the cursor in the file.
 
-[node name="RunAtCursor" parent="layout/ControlBar/CRunCurrent" instance=ExtResource( 3 )]
+These buttons will remain active when editing other 
+items so that you can run tests without having to switch 
+back to the test script.
+
+You can assign keyboard shortcuts for these buttons 
+using the \"shortcuts\" button in the GUT panel."
+mouse_filter = 1
+text = "Current:  "
+
+[node name="RunAtCursor" parent="layout/ControlBar" instance=ExtResource( 3 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 18.0
-margin_right = 260.0
-margin_bottom = 58.0
+margin_left = 217.0
+margin_right = 456.0
+margin_bottom = 40.0
 rect_min_size = Vector2( 0, 40 )
 
-[node name="RunCurrent" type="Button" parent="layout/ControlBar/CRunCurrent"]
-visible = false
-margin_top = 62.0
-margin_right = 260.0
-margin_bottom = 82.0
-hint_tooltip = "Run the last test script that was selected in the editor."
-size_flags_vertical = 8
-disabled = true
-shortcut = SubResource( 4 )
-text = "None"
-
 [node name="CenterContainer2" type="CenterContainer" parent="layout/ControlBar"]
-margin_left = 264.0
-margin_right = 524.0
-margin_bottom = 58.0
+margin_left = 460.0
+margin_right = 699.0
+margin_bottom = 40.0
 size_flags_horizontal = 3
 
 [node name="FocusButton" type="Button" parent="layout/ControlBar"]
 show_behind_parent = true
-margin_left = 528.0
-margin_right = 528.0
-margin_bottom = 58.0
+margin_left = 703.0
+margin_right = 703.0
+margin_bottom = 40.0
 custom_styles/normal = SubResource( 5 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="CenterContainer" type="CenterContainer" parent="layout/ControlBar"]
-margin_left = 532.0
-margin_right = 793.0
-margin_bottom = 58.0
+margin_left = 707.0
+margin_right = 946.0
+margin_bottom = 40.0
 size_flags_horizontal = 3
 
-[node name="RunAll" type="Button" parent="layout/ControlBar"]
-margin_left = 797.0
-margin_top = 38.0
-margin_right = 947.0
-margin_bottom = 58.0
-rect_min_size = Vector2( 150, 0 )
-hint_tooltip = "Run all test scripts in the suite."
-size_flags_vertical = 8
-shortcut = SubResource( 9 )
-text = "Run All"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="Shortcuts" type="Button" parent="layout/ControlBar"]
-margin_left = 951.0
-margin_top = 38.0
-margin_right = 1023.0
-margin_bottom = 58.0
+margin_left = 950.0
+margin_right = 1022.0
+margin_bottom = 40.0
 hint_tooltip = "Set shortcuts for GUT buttons.  Shortcuts do not work when the GUT panel is not visible."
-size_flags_vertical = 8
+size_flags_vertical = 11
 text = "Shortcuts"
 
 [node name="RSplit" type="HSplitContainer" parent="layout"]
-margin_top = 62.0
+margin_top = 44.0
 margin_right = 1023.0
 margin_bottom = 599.0
 size_flags_horizontal = 3
@@ -161,7 +150,7 @@ size_flags_vertical = 3
 
 [node name="CResults" type="VBoxContainer" parent="layout/RSplit"]
 margin_right = 611.0
-margin_bottom = 537.0
+margin_bottom = 555.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -238,7 +227,7 @@ text = "  Clear  "
 [node name="Output" type="RichTextLabel" parent="layout/RSplit/CResults"]
 margin_top = 39.0
 margin_right = 611.0
-margin_bottom = 537.0
+margin_bottom = 555.0
 focus_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -253,7 +242,7 @@ selection_enabled = true
 [node name="sc" type="ScrollContainer" parent="layout/RSplit"]
 margin_left = 623.0
 margin_right = 1023.0
-margin_bottom = 537.0
+margin_bottom = 555.0
 rect_min_size = Vector2( 400, 0 )
 mouse_filter = 1
 size_flags_vertical = 3
@@ -275,10 +264,9 @@ margin_top = -173.752
 margin_right = 31.6969
 margin_bottom = -125.552
 
-[connection signal="run_tests" from="layout/ControlBar/CRunCurrent/RunAtCursor" to="." method="_on_RunAtCursor_run_tests"]
-[connection signal="pressed" from="layout/ControlBar/CRunCurrent/RunCurrent" to="." method="_on_RunCurrent_pressed"]
-[connection signal="pressed" from="layout/ControlBar/FocusButton" to="." method="_on_FocusButton_pressed"]
 [connection signal="pressed" from="layout/ControlBar/RunAll" to="." method="_on_RunAll_pressed"]
+[connection signal="run_tests" from="layout/ControlBar/RunAtCursor" to="." method="_on_RunAtCursor_run_tests"]
+[connection signal="pressed" from="layout/ControlBar/FocusButton" to="." method="_on_FocusButton_pressed"]
 [connection signal="pressed" from="layout/ControlBar/Shortcuts" to="." method="_on_Shortcuts_pressed"]
 [connection signal="draw" from="layout/RSplit/CResults/ControlBar/Light" to="." method="_on_Light_draw"]
 [connection signal="pressed" from="layout/RSplit/CResults/ControlBar/CopyButton" to="." method="_on_CopyButton_pressed"]
