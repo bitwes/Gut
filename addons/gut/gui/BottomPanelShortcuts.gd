@@ -15,6 +15,11 @@ func _ready():
 		sc_button.connect('start_edit', self, '_on_edit_start', [sc_button])
 		sc_button.connect('end_edit', self, '_on_edit_end')
 
+
+	# show dialog when running scene from editor.
+	if(get_parent() == get_tree().root):
+		popup_centered()
+
 # ------------
 # Events
 # ------------
@@ -26,11 +31,13 @@ func _on_edit_start(which):
 		var sc_button = _ctrls[key]
 		if(sc_button != which):
 			sc_button.disable_set(true)
+			sc_button.disable_clear(true)
 
 func _on_edit_end():
 	for key in _ctrls:
 		var sc_button = _ctrls[key]
 		sc_button.disable_set(false)
+		sc_button.disable_clear(false)
 
 # ------------
 # Public

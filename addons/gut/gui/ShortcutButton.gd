@@ -14,9 +14,11 @@ signal changed
 signal start_edit
 signal end_edit
 
+const NO_SHORTCUT = '<None>'
+
 var _source_event = InputEventKey.new()
 var _pre_edit_event = null
-var _key_disp = ''
+var _key_disp = NO_SHORTCUT
 
 var _modifier_keys = [KEY_ALT, KEY_CONTROL, KEY_META, KEY_SHIFT]
 
@@ -76,7 +78,7 @@ func _unhandled_key_input(event):
 				_key_disp = OS.get_scancode_string(event.scancode)
 			else:
 #				_source_event.set_scancode = null
-				_key_disp = ''
+				_key_disp = NO_SHORTCUT
 			_display_shortcut()
 			_ctrls.save_button.disabled = !is_valid()
 
@@ -96,6 +98,8 @@ func _on_CancelButton_pressed():
 	_edit_mode(false)
 	_source_event = _pre_edit_event
 	_key_disp = OS.get_scancode_string(_source_event.scancode)
+	if(_key_disp == ''):
+		_key_disp = NO_SHORTCUT
 	_display_shortcut()
 
 
@@ -129,7 +133,7 @@ func to_s():
 
 
 func is_valid():
-	return _has_modifier() and _key_disp != '' and !_is_shift_only_modifier()
+	return _has_modifier() and _key_disp != NO_SHORTCUT and !_is_shift_only_modifier()
 
 
 func get_shortcut():
@@ -149,9 +153,12 @@ func set_shortcut(sc):
 
 func clear_shortcut():
 	_source_event = InputEventKey.new()
-	_key_disp = ''
+	_key_disp = NO_SHORTCUT
 	_display_shortcut()
 
 
 func disable_set(should):
 	_ctrls.set_button.disabled = should
+
+func disable_clear(should):
+	_ctrls.clear_button.disabled = should
