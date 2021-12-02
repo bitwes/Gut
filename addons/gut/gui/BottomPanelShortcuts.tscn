@@ -54,87 +54,65 @@ margin_right = 323.0
 margin_bottom = 25.0
 size_flags_horizontal = 3
 
-[node name="CRerun" type="HBoxContainer" parent="Layout"]
-visible = false
-margin_top = 29.0
-margin_right = 240.0
-margin_bottom = 54.0
-
-[node name="Label" type="Label" parent="Layout/CRerun"]
-margin_right = 50.0
-margin_bottom = 25.0
-rect_min_size = Vector2( 50, 0 )
-size_flags_vertical = 7
-text = "Rerun"
-valign = 1
-
-[node name="ShortcutButton" parent="Layout/CRerun" instance=ExtResource( 1 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 54.0
-margin_right = 240.0
-margin_bottom = 25.0
-size_flags_horizontal = 3
-
-[node name="CRunCurrent" type="HBoxContainer" parent="Layout"]
+[node name="CRunCurrentScript" type="HBoxContainer" parent="Layout"]
 margin_top = 64.0
 margin_right = 323.0
 margin_bottom = 89.0
 
-[node name="Label" type="Label" parent="Layout/CRunCurrent"]
-margin_right = 85.0
+[node name="Label" type="Label" parent="Layout/CRunCurrentScript"]
+margin_right = 115.0
 margin_bottom = 25.0
 rect_min_size = Vector2( 50, 0 )
 size_flags_vertical = 7
-text = "Last Selected"
+text = "Run Current Script"
 valign = 1
 
-[node name="ShortcutButton" parent="Layout/CRunCurrent" instance=ExtResource( 1 )]
+[node name="ShortcutButton" parent="Layout/CRunCurrentScript" instance=ExtResource( 1 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 89.0
+margin_left = 119.0
 margin_right = 323.0
 margin_bottom = 25.0
 size_flags_horizontal = 3
 
-[node name="CRunLike" type="HBoxContainer" parent="Layout"]
+[node name="CRunCurrentInner" type="HBoxContainer" parent="Layout"]
 margin_top = 93.0
 margin_right = 323.0
 margin_bottom = 118.0
 
-[node name="Label" type="Label" parent="Layout/CRunLike"]
-margin_right = 54.0
+[node name="Label" type="Label" parent="Layout/CRunCurrentInner"]
+margin_right = 150.0
 margin_bottom = 25.0
 rect_min_size = Vector2( 50, 0 )
 size_flags_vertical = 7
-text = "Run Like"
+text = "Run Current Inner Class"
 valign = 1
 
-[node name="ShortcutButton" parent="Layout/CRunLike" instance=ExtResource( 1 )]
+[node name="ShortcutButton" parent="Layout/CRunCurrentInner" instance=ExtResource( 1 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 58.0
+margin_left = 154.0
 margin_right = 323.0
 margin_bottom = 25.0
 size_flags_horizontal = 3
 
-[node name="CRunLikeFocus" type="HBoxContainer" parent="Layout"]
+[node name="CRunCurrentTest" type="HBoxContainer" parent="Layout"]
 margin_top = 122.0
 margin_right = 323.0
 margin_bottom = 147.0
 
-[node name="Label" type="Label" parent="Layout/CRunLikeFocus"]
-margin_right = 95.0
+[node name="Label" type="Label" parent="Layout/CRunCurrentTest"]
+margin_right = 106.0
 margin_bottom = 25.0
 rect_min_size = Vector2( 50, 0 )
 size_flags_vertical = 7
-text = "Focus Run Like"
+text = "Run Current Test"
 valign = 1
 
-[node name="ShortcutButton" parent="Layout/CRunLikeFocus" instance=ExtResource( 1 )]
+[node name="ShortcutButton" parent="Layout/CRunCurrentTest" instance=ExtResource( 1 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 99.0
+margin_left = 110.0
 margin_right = 323.0
 margin_bottom = 25.0
 size_flags_horizontal = 3

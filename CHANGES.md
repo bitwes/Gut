@@ -18,6 +18,8 @@ func test_fireball_input():
   yield(sender, 'idle')
   assert_true(player.is_throwing_fireball())
 ```
+* In-Editor GUT Panel improvements
+  * Smart buttons to run tests based on cursor location.
 
 # 7.2.0
 
