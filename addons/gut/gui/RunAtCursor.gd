@@ -107,3 +107,11 @@ func get_inner_button():
 
 func get_test_button():
 	return _ctrls.btn_method
+
+# not used, thought was configurable but it's just the script prefix
+func set_method_prefix(value):
+	_editors.set_method_prefix(value)
+
+# not used, thought was configurable but it's just the script prefix
+func set_inner_class_prefix(value):
+	_editors.set_inner_class_prefix(value)
