@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://addons/gut/GutScene.gd" type="Script" id=1]
 [ext_resource path="res://addons/gut/fonts/AnonymousPro-Italic.ttf" type="DynamicFontData" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://addons/gut/fonts/AnonymousPro-BoldItalic.ttf" type="DynamicFontData" id=4]
 [ext_resource path="res://addons/gut/fonts/AnonymousPro-Bold.ttf" type="DynamicFontData" id=5]
 [ext_resource path="res://addons/gut/UserFileViewer.tscn" type="PackedScene" id=6]
+[ext_resource path="res://addons/gut/gui/GutSceneTheme.tres" type="Theme" id=7]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.192157, 0.192157, 0.227451, 1 )
@@ -42,9 +43,10 @@ corner_radius_top_left = 20
 corner_radius_top_right = 20
 
 [node name="Gut" type="Panel"]
-margin_right = 880.0
-margin_bottom = 360.0
+margin_right = 796.0
+margin_bottom = 374.0
 rect_min_size = Vector2( 740, 250 )
+theme = ExtResource( 7 )
 custom_styles/panel = SubResource( 1 )
 script = ExtResource( 1 )
 __meta__ = {
@@ -280,10 +282,10 @@ __meta__ = {
 [node name="LogLevelSlider" type="HSlider" parent="."]
 anchor_top = 1.0
 anchor_bottom = 1.0
-margin_left = 80.0
-margin_top = -40.0
-margin_right = 130.0
-margin_bottom = -20.0
+margin_left = 93.25
+margin_top = -40.5
+margin_right = 138.25
+margin_bottom = -20.5
 rect_scale = Vector2( 2, 2 )
 max_value = 2.0
 tick_count = 3
@@ -293,9 +295,10 @@ __meta__ = {
 }
 
 [node name="Label" type="Label" parent="LogLevelSlider"]
-margin_left = -37.0
-margin_right = 28.0
-margin_bottom = 40.0
+margin_left = -43.75
+margin_top = -0.375
+margin_right = 37.25
+margin_bottom = 39.625
 rect_scale = Vector2( 0.5, 0.5 )
 text = "Log Level"
 valign = 1
@@ -333,10 +336,11 @@ __meta__ = {
 }
 
 [node name="IgnorePause" type="CheckBox" parent="ExtraOptions"]
-margin_left = 18.0
-margin_right = 136.0
-margin_bottom = 24.0
-rect_scale = Vector2( 1.5, 1.5 )
+margin_left = 17.5
+margin_top = 4.5
+margin_right = 162.5
+margin_bottom = 29.5
+rect_scale = Vector2( 1.2, 1.2 )
 hint_tooltip = "Ignore all calls to pause_before_teardown."
 text = "Ignore Pauses"
 __meta__ = {
@@ -449,6 +453,7 @@ text = "Assert count"
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
 [connection signal="mouse_entered" from="TitleBar" to="." method="_on_TitleBar_mouse_entered"]
 [connection signal="mouse_exited" from="TitleBar" to="." method="_on_TitleBar_mouse_exited"]
 [connection signal="draw" from="TitleBar/Maximize" to="." method="_on_Maximize_draw"]
