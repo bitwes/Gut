@@ -396,7 +396,7 @@ func _print_summary():
 
 	if(_new_summary.get_totals().tests > 0):
 		var fmt = _lgr.fmts.green
-		var msg = str(_new_summary.get_totals().passing) + ' passed ' + str(_new_summary.get_totals().failing) + ' failed.  ' + \
+		var msg = str(_new_summary.get_totals().passing_tests) + ' passed ' + str(_new_summary.get_totals().failing_tests) + ' failed.  ' + \
 			str("Tests finished in ", _gui.elapsed_time_as_str())
 		if(_new_summary.get_totals().failing > 0):
 			fmt = _lgr.fmts.red
