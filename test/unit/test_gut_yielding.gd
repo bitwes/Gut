@@ -1,8 +1,9 @@
+extends GutTest
 #-------------------------------------------------------------------------------
 # All of these tests require some amount of user interaction or verifying of the
 # output.
 #-------------------------------------------------------------------------------
-extends "res://addons/gut/test.gd"
+
 
 class TimedSignaler:
 	extends Node2D

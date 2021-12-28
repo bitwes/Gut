@@ -2,7 +2,7 @@
 # Tests test.gd.  test.gd contains all the asserts and is the class that all
 # test scripts inherit from.
 # ------------------------------------------------------------------------------
-extends "res://addons/gut/test.gd"
+extends GutTest
 
 class BaseTestClass:
 	extends "res://test/gut_test.gd"

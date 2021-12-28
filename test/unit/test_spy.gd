@@ -1,4 +1,4 @@
-extends 'res://addons/gut/test.gd'
+extends GutTest
 
 class TestSpy:
 	extends 'res://test/gut_test.gd'

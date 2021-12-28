@@ -1,4 +1,4 @@
-extends 'res://addons/gut/test.gd'
+extends GutTest
 
 const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
 var DoubleMe = load(DOUBLE_ME_PATH)
