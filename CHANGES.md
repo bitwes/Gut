@@ -15,11 +15,18 @@ func test_fireball_input():
   sender.action_down("down").hold_for(.1)\
     .action_down("down_forward").hold_for(.1)\
     .action_down("forward").key_down("FP")
+
   yield(sender, 'idle')
   assert_true(player.is_throwing_fireball())
 ```
 * In-Editor GUT Panel improvements
   * Smart buttons to run tests based on cursor location.
+* __Issue 215__ You can now use `extends GutTest` instead of `extends 'res://addons/gut/test.gd'` when creating test scripts.  That's 45% less text!
+* __Issue 310__ The summary output now lists the number of passing/failing tests as well as passing/failing assert counts.
+
+## Bug Fixes
+* __Issue 283__ The Gut Scene now has a theme with a font which prevents higher level font changes from applying to the Gut Scene.
+* __Issue 294__ GUT ignores the `res://addons/gut` directory if you accidently include it as a test directory.
 
 # 7.2.0
 

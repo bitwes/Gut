@@ -43,7 +43,7 @@ corner_radius_top_left = 20
 corner_radius_top_right = 20
 
 [node name="Gut" type="Panel"]
-margin_right = 796.0
+margin_right = 740.0
 margin_bottom = 374.0
 rect_min_size = Vector2( 740, 250 )
 theme = ExtResource( 7 )
