@@ -266,7 +266,7 @@ func _create_obj_from_type(type):
 
 func _get_type_from_obj(obj):
 	var type = null
-	if obj.has_method(get_filename()):
+	if obj.has_method("get_filename"):
 			type = load(obj.get_filename())
 	else:
 			type = obj.get_script()
