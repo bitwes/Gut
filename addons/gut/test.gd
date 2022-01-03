@@ -812,10 +812,10 @@ func assert_is(object, a_class, text=''):
 	elif(typeof(a_class) != TYPE_OBJECT):
 		_fail(str(bad_param_2, _str(a_class)))
 	else:
-		var a = _str(a_class)
-		disp = str('Expected [', _str(object), '] to extend [', _str(a_class), ']: ', text)
+		var a_str = _str(a_class)
+		disp = str('Expected [', _str(object), '] to extend [', a_str, ']: ', text)
 		if(a_class.get_class() != NATIVE_CLASS and a_class.get_class() != GDSCRIPT_CLASS):
-			_fail(str(bad_param_2, _str(a_class)))
+			_fail(str(bad_param_2, a_str))
 		else:
 			if(object is a_class):
 				_pass(disp)
@@ -1112,7 +1112,7 @@ func _assert_setget_called(type, name_property, setter = "", getter  = ""):
 	if name_getter != '':
 		expected_calls_getter = 1
 		stub(obj, name_getter).to_do_nothing()
-		var new_property = obj.get(name_property)
+		var __new_property = obj.get(name_property)
 		amount_calls_getter = gut.get_spy().call_count(obj, str(name_getter))
 
 	obj.free()
