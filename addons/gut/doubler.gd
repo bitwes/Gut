@@ -435,11 +435,12 @@ func _write_file(obj_info, dest_path, override_path=null):
 	var base_script = _get_base_script_text(obj_info, override_path)
 	var script_methods = _get_methods(obj_info)
 	var super_name = ""
+	var path = ""
 
 	if(obj_info.is_singleton()):
 		super_name = obj_info.get_singleton_name()
 	else:
-		super_name = obj_info.get_path()
+		path = obj_info.get_path()
 
 	var f = FileOrString.new()
 	f._do_file = _make_files
@@ -453,11 +454,11 @@ func _write_file(obj_info, dest_path, override_path=null):
 	f.store_string(base_script)
 
 	for i in range(script_methods.local_methods.size()):
-		f.store_string(_get_func_text(script_methods.local_methods[i], super_name))
+		f.store_string(_get_func_text(script_methods.local_methods[i], path, super_name))
 
 	for i in range(script_methods.built_ins.size()):
 		_stub_to_call_super(obj_info, script_methods.built_ins[i].name)
-		f.store_string(_get_func_text(script_methods.built_ins[i], super_name))
+		f.store_string(_get_func_text(script_methods.built_ins[i], path, super_name))
 
 	f.close()
 	if(_print_source):
@@ -528,12 +529,12 @@ func _get_inst_id_ref_str(inst):
 	return ref_str
 
 
-func _get_func_text(method_hash, path):
+func _get_func_text(method_hash, path, super=""):
 	var override_count = null;
 	if(_stubber != null):
 		override_count = _stubber.get_parameter_count(path, method_hash.name)
 
-	var text = _method_maker.get_function_text(method_hash, path, override_count) + "\n"
+	var text = _method_maker.get_function_text(method_hash, path, override_count, super) + "\n"
 
 	return text
 

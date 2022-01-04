@@ -5,6 +5,7 @@ class TestType2Str:
 
 	var strutils = load('res://addons/gut/strutils.gd').new()
 
+
 	class ExtendsControl:
 		extends Control
 
@@ -85,6 +86,18 @@ class TestType2Str:
 		var d = double(InnerClasses, 'InnerA').new()
 		assert_eq(strutils.type2str(d), str(d) + '(double of inner_classes.gd/InnerA)')
 
+	func test_partial_double():
+		var d = partial_double(DOUBLE_ME_PATH).new()
+		assert_string_contains(strutils.type2str(d), "partial-double")
+
+	func test_singleton_double_includes_singleton_name():
+		var d = double_singleton("Input").new()
+		assert_string_contains(strutils.type2str(d), "double of Input")
+
+	func test_singleton_double_includes_word_singleton():
+		var d = double_singleton("Input").new()
+		assert_string_contains(strutils.type2str(d), "Singleton")
+
 	func test_assert_null():
 		assert_eq(strutils.type2str(null), str(null))
 
@@ -104,14 +117,14 @@ class TestType2Str:
 	func test_returns_null_for_just_freed_objects():
 		var n = autofree(Node.new())
 		n.free()
-		assert_eq(strutils.type2str(n), '[Deleted Object]', 'sometimes fails based on timing.')
+		assert_eq(str(n), '[Deleted Object]', 'sometimes fails based on timing.')
 
 	func test_memory_leak():
-		gut.p(str(gut.get_orphan_counter().orphan_count(), ' t-1'))
+		print(gut.get_orphan_counter().orphan_count(), ' t-1')
 		var a = Node
-		gut.p(str(gut.get_orphan_counter().orphan_count(), ' t-2'))
+		print(gut.get_orphan_counter().orphan_count(), ' t-2')
 		var txt = strutils.type2str(a)
-		gut.p(str(gut.get_orphan_counter().orphan_count(), ' t-3'))
+		print(gut.get_orphan_counter().orphan_count(), ' t-3')
 		assert_no_new_orphans()
 
 
