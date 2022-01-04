@@ -5,7 +5,8 @@ var __gut_metadata_ = {
 	path='res://test/resources/stub_test_objects/to_stub.gd',
 	subpath='',
 	stubber=null,
-	spy=null
+	spy=null,
+	from_singleton = "",
 }
 func get_value():
 	return value

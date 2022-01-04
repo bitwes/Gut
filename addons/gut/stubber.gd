@@ -12,19 +12,19 @@
 # 	}
 # }
 var returns = {}
-var parameters = {}
-# -------------
-
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
 var _strutils = _utils.Strutils.new()
 
 func _make_key_from_metadata(doubled):
 	var to_return = doubled.__gut_metadata_.path
-	if(doubled.__gut_metadata_.subpath != ''):
-		to_return += str('-', doubled.__gut_metadata_.subpath)
-	return to_return
 
+	if(doubled.__gut_metadata_.from_singleton != ''):
+		to_return = str(doubled.__gut_metadata_.from_singleton)
+	elif(doubled.__gut_metadata_.subpath != ''):
+		to_return += str('-', doubled.__gut_metadata_.subpath)
+
+	return to_return
 
 # Creates they key for the returns hash based on the type of object passed in
 # obj could be a string of a path to a script with an optional subpath or
@@ -45,6 +45,7 @@ func _make_key_from_variant(obj, subpath=null):
 				to_return = _utils.get_native_class_name(obj)
 			else:
 				to_return = obj.resource_path
+
 	return to_return
 
 
@@ -60,6 +61,9 @@ func _add_obj_method(obj, method, subpath=null):
 
 	return key
 
+# ##############
+# Public
+# ##############
 
 # Searches returns for an entry that matches the instance or the class that
 # passed in obj is.
@@ -102,11 +106,6 @@ func _find_stub(obj, method, parameters=null, find_overloads=false):
 
 	return to_return
 
-
-# ##############
-# Public
-# ##############
-
 # TODO: This method is only used in tests and should be refactored out.  It
 # does not support inner classes and isn't helpful.
 func set_return(obj, method, value, parameters=null):
@@ -148,18 +147,27 @@ func get_return(obj, method, parameters=null):
 	else:
 		return null
 
-
 func should_call_super(obj, method, parameters=null):
+	if(_utils.non_super_methods.has(method)):
+		return false
+
 	var stub_info = _find_stub(obj, method, parameters)
+
+	var is_partial = false
+	if(typeof(obj) != TYPE_STRING): # some stubber tests test with strings
+		is_partial = obj.__gut_metadata_.is_partial
+	var should_call_super = is_partial
+
 	if(stub_info != null):
-		return stub_info.call_super
-	else:
+		should_call_super = stub_info.call_super
+	elif(!is_partial):
 		# this log message is here because of how the generated doubled scripts
 		# are structured.  With this log msg here, you will only see one
 		# "unstubbed" info instead of multiple.
 		_lgr.info('Unstubbed call to ' + method + '::' + _strutils.type2str(obj))
-		return false
+		should_call_super = false
 
+	return should_call_super
 
 func get_parameter_count(obj, method):
 	var to_return = null
@@ -175,8 +183,8 @@ func get_default_value(obj, method, p_index):
 	var to_return = null
 	var stub_info = _find_stub(obj, method, null, true)
 	if(stub_info != null and
-	   stub_info.parameter_defaults != null and
-	   stub_info.parameter_defaults.size() > p_index):
+		stub_info.parameter_defaults != null and
+		stub_info.parameter_defaults.size() > p_index):
 
 		to_return = stub_info.parameter_defaults[p_index]
 
@@ -184,22 +192,21 @@ func get_default_value(obj, method, p_index):
 	return to_return
 
 
+
+
 func clear():
 	returns.clear()
-
 
 func get_logger():
 	return _lgr
 
-
 func set_logger(logger):
 	_lgr = logger
-
 
 func to_s():
 	var text = ''
 	for thing in returns:
-		text += str(thing) + "\n"
+		text += str("-- ", thing, " --\n")
 		for method in returns[thing]:
 			text += str("\t", method, "\n")
 			for i in range(returns[thing][method].size()):

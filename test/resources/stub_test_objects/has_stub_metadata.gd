@@ -1,4 +1,5 @@
 var __gut_metadata_ = {
     path = '',
-    subpath=''
+    subpath='',
+    from_singleton='',
 }
