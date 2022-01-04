@@ -438,6 +438,8 @@ func _write_file(obj_info, dest_path, override_path=null):
 
 	if(obj_info.is_singleton()):
 		super_name = obj_info.get_singleton_name()
+	else:
+		super_name = obj_info.get_path()
 
 	var f = FileOrString.new()
 	f._do_file = _make_files
