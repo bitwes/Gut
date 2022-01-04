@@ -55,6 +55,12 @@ func test_get_native_class_name_does_not_generate_orphans():
 	utils.free()
 	assert_no_new_orphans()
 
+func test_get_native_class_name_does_not_free_references():
+	var utils = autofree(Utils.new())
+	var n = utils.get_native_class_name(InputEventKey)
+	pass_test("we got here")
+
+
 class TestVersionCheck:
 	extends 'res://addons/gut/test.gd'
 
@@ -99,4 +105,3 @@ func test_latest_version_if_version_is_old_warning_is_on():
 	assert_not_null(p, "should have a child http request")
 	yield(yield_to(p,"request_completed",2),YIELD)
 	assert_true(utils.should_display_latest_version,"this should fail only if you dont have internet connection")
-			
