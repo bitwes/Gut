@@ -345,8 +345,8 @@ class TestDefaultParameters:
 		"VisualServer"		# TYPE_REAL_ARRAY, TYPE_INT_ARRAY
 	]
 	func test_various_singletons_that_introduced_new_default_types(singleton = use_parameters(singletons)):
-		pending();return;
-		assert_not_null(doubler.double_singleton(singleton).new())
+		var inst = doubler.double_singleton(singleton).new()
+		assert_not_null(inst)
 
 
 class TestDoubleInnerClasses:
@@ -539,7 +539,6 @@ class TestDoubleSingleton:
 
 	func test_partial_double_gets_implementation():
 		var doubled = _doubler.partial_double_singleton("Input").new()
-		print(get_instance_source(doubled))
 		assert_false(doubled.is_action_just_pressed("foobar"))
 
 	func test_double_gets_constants():
@@ -570,11 +569,11 @@ class TestDoubleSingleton:
 		"Engine", "Geometry", "Input",
 		"InputMap", "IP", "JavaClassWrapper",
 		"JavaScript", "JSON", "Marshalls",
-		"OS", "Performance", #"Physics2DServer",
-		#"PhysicsServer",
+		"OS", "Performance", "Physics2DServer",
+		"PhysicsServer",
 		"ProjectSettings", "ResourceLoader",
 		"ResourceSaver", "TranslationServer", "VisualScriptEditor",
-		#"VisualServer",
+		"VisualServer",
 		# these two were missed by print_instanced_ClassDB_classes but were in
 		# the global scope list.
 		"ClassDB", "EditorNavigationMeshGenerator"

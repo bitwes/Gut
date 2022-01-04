@@ -124,7 +124,7 @@ func _make_arg_array(method_meta, override_size):
 		if(i < dflt_start):
 			dflt_text = _make_stub_default(method_meta.name, i)
 		else:
-			var dflt_idx = dflt_start - i
+			var dflt_idx = i - dflt_start
 			var t = method_meta.args[i]['type']
 			if(_is_supported_default(t)):
 				# strings are special, they need quotes around the value
@@ -140,7 +140,7 @@ func _make_arg_array(method_meta, override_size):
 						dflt_text = str(_supported_defaults[t], str(method_meta.default_args[dflt_idx]).to_lower())
 				elif(t == TYPE_TRANSFORM):
 					#value will be 4 Vector3 and look like: 1, 0, 0, 0, 1, 0, 0, 0, 1 - 0, 0, 0
-					var sections = str(method_meta.default_args[i]).split("-")
+					var sections = str(method_meta.default_args[dflt_idx]).split("-")
 					var vecs = sections[0].split(",")
 					vecs.append_array(sections[1].split(","))
 					var v1 = str("Vector3(", vecs[0], ", ", vecs[1], ", ", vecs[2], ")")
@@ -150,7 +150,7 @@ func _make_arg_array(method_meta, override_size):
 					dflt_text = str(_supported_defaults[t], "(", v1, ", ", v2, ", ", v3, ", ", v4, ")")
 				elif(t == TYPE_TRANSFORM2D):
 					# value will look like:  ((1, 0), (0, 1), (0, 0))
-					var vectors = str(method_meta.default_args[i])
+					var vectors = str(method_meta.default_args[dflt_idx])
 					vectors = vectors.replace("((", "(")
 					vectors = vectors.replace("))", ")")
 					vectors = vectors.replace("(", "Vector2(")
@@ -262,6 +262,7 @@ func get_function_text(meta, path=null, override_size=null, super_name=""):
 			"param_array":param_array,
 			"super_call":_get_super_call_text(meta.name, args, super_name)
 		})
+
 	return text
 
 

@@ -365,7 +365,6 @@ var _make_files = false
 # used by tests for debugging purposes.
 var _print_source = false
 
-
 func _init(strategy=_utils.DOUBLE_STRATEGY.PARTIAL):
 	set_logger(_utils.get_logger())
 	_strategy = strategy
