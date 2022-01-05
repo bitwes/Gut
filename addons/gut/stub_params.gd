@@ -81,7 +81,7 @@ func to_s():
 
 	if(has_param_override()):
 		base_string += str(' (param count override=', parameter_count, ' defaults=', parameter_defaults)
-		if(_parameter_override_only):
+		if(is_param_override_only()):
 			base_string += " ONLY"
 		base_string += ') '
 
