@@ -295,8 +295,8 @@ func write_file(path, content):
 	if(result == OK):
 		f.store_string(content)
 		f.close()
-	return result
 
+	return result
 
 # ------------------------------------------------------------------------------
 # true if what is passed in is null or an empty string.
@@ -379,3 +379,11 @@ func pretty_print(dict):
 
 func get_script_text(obj):
 	return obj.get_script().get_source_code()
+
+
+func get_singleton_by_name(name):
+	var source = str("var singleton = ", name)
+	var script = GDScript.new()
+	script.set_source_code(source)
+	script.reload()
+	return script.new().singleton

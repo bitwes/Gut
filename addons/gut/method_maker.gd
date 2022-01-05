@@ -53,20 +53,19 @@ const PARAM_PREFIX = 'p_'
 	# TYPE_DICTIONARY = 18 — Variable is of type Dictionary.
 	# TYPE_ARRAY = 19 — Variable is of type Array.
 	# TYPE_VECTOR2_ARRAY = 24 — Variable is of type PoolVector2Array.
+	# TYPE_TRANSFORM = 13 — Variable is of type Transform.
+	# TYPE_TRANSFORM2D = 8 — Variable is of type Transform2D.
+	# TYPE_RID = 16 — Variable is of type RID.
+	# TYPE_INT_ARRAY = 21 — Variable is of type PoolIntArray.
+	# TYPE_REAL_ARRAY = 22 — Variable is of type PoolRealArray.
 
 
-
-# TYPE_TRANSFORM2D = 8 — Variable is of type Transform2D.
 # TYPE_PLANE = 9 — Variable is of type Plane.
 # TYPE_QUAT = 10 — Variable is of type Quat.
 # TYPE_AABB = 11 — Variable is of type AABB.
 # TYPE_BASIS = 12 — Variable is of type Basis.
-# TYPE_TRANSFORM = 13 — Variable is of type Transform.
 # TYPE_NODE_PATH = 15 — Variable is of type NodePath.
-# TYPE_RID = 16 — Variable is of type RID.
 # TYPE_RAW_ARRAY = 20 — Variable is of type PoolByteArray.
-# TYPE_INT_ARRAY = 21 — Variable is of type PoolIntArray.
-# TYPE_REAL_ARRAY = 22 — Variable is of type PoolRealArray.
 # TYPE_STRING_ARRAY = 23 — Variable is of type PoolStringArray.
 # TYPE_VECTOR3_ARRAY = 25 — Variable is of type PoolVector3Array.
 # TYPE_COLOR_ARRAY = 26 — Variable is of type PoolColorArray.
@@ -88,12 +87,17 @@ func _init():
 	_supported_defaults[TYPE_STRING] = ''
 	_supported_defaults[TYPE_DICTIONARY] = ''
 	_supported_defaults[TYPE_VECTOR2_ARRAY] = ''
+	_supported_defaults[TYPE_RID] = ''
 
 	# These require a prefix for whatever default is provided
 	_supported_defaults[TYPE_VECTOR2] = 'Vector2'
 	_supported_defaults[TYPE_RECT2] = 'Rect2'
 	_supported_defaults[TYPE_VECTOR3] = 'Vector3'
 	_supported_defaults[TYPE_COLOR] = 'Color'
+	_supported_defaults[TYPE_TRANSFORM2D] = 'Transform2D'
+	_supported_defaults[TYPE_TRANSFORM] = 'Transform'
+	_supported_defaults[TYPE_INT_ARRAY] = 'PoolIntArray'
+	_supported_defaults[TYPE_REAL_ARRAY] = 'PoolRealArray'
 
 # ###############
 # Private
@@ -120,7 +124,7 @@ func _make_arg_array(method_meta, override_size):
 		if(i < dflt_start):
 			dflt_text = _make_stub_default(method_meta.name, i)
 		else:
-			var dflt_idx = dflt_start - i
+			var dflt_idx = i - dflt_start
 			var t = method_meta.args[i]['type']
 			if(_is_supported_default(t)):
 				# strings are special, they need quotes around the value
@@ -134,6 +138,27 @@ func _make_arg_array(method_meta, override_size):
 						dflt_text = str(_supported_defaults[t], 'null')
 					else:
 						dflt_text = str(_supported_defaults[t], str(method_meta.default_args[dflt_idx]).to_lower())
+				elif(t == TYPE_TRANSFORM):
+					#value will be 4 Vector3 and look like: 1, 0, 0, 0, 1, 0, 0, 0, 1 - 0, 0, 0
+					var sections = str(method_meta.default_args[dflt_idx]).split("-")
+					var vecs = sections[0].split(",")
+					vecs.append_array(sections[1].split(","))
+					var v1 = str("Vector3(", vecs[0], ", ", vecs[1], ", ", vecs[2], ")")
+					var v2 = str("Vector3(", vecs[3], ", ", vecs[4], ", ", vecs[5], ")")
+					var v3 = str("Vector3(", vecs[6], ", ", vecs[7], ", ", vecs[8], ")")
+					var v4 = str("Vector3(", vecs[9], ", ", vecs[10], ", ", vecs[11], ")")
+					dflt_text = str(_supported_defaults[t], "(", v1, ", ", v2, ", ", v3, ", ", v4, ")")
+				elif(t == TYPE_TRANSFORM2D):
+					# value will look like:  ((1, 0), (0, 1), (0, 0))
+					var vectors = str(method_meta.default_args[dflt_idx])
+					vectors = vectors.replace("((", "(")
+					vectors = vectors.replace("))", ")")
+					vectors = vectors.replace("(", "Vector2(")
+					dflt_text = str(_supported_defaults[t], "(", vectors, ")")
+				elif(t == TYPE_RID):
+					dflt_text = str(_supported_defaults[t], 'null')
+				elif(t in [TYPE_REAL_ARRAY, TYPE_INT_ARRAY]):
+					dflt_text = str(_supported_defaults[t], "()")
 
 				# Everything else puts the prefix (if one is there) form _supported_defaults
 				# in front.  The to_lower is used b/c for some reason the defaults for
@@ -176,14 +201,15 @@ func _get_arg_text(arg_array):
 	return text
 
 
-func _get_super_call_text(method_name, args):
+# creates a call to the function in meta in the super's class.
+func _get_super_call_text(method_name, args, super_name=""):
 	var params = ''
 	for i in range(args.size()):
 		params += args[i].p_name
 		if(i != args.size() -1):
 			params += ', '
 
-	return str('.', method_name, '(', params, ')')
+	return str(super_name, '.', method_name, '(', params, ')')
 
 
 func _get_spy_call_parameters_text(args):
@@ -199,6 +225,7 @@ func _get_spy_call_parameters_text(args):
 
 	return called_with
 
+
 # ###############
 # Public
 # ###############
@@ -207,7 +234,7 @@ func _get_spy_call_parameters_text(args):
 # types whose defaults are supported will have their values.  If a datatype
 # is not supported and the parameter has a default, a warning message will be
 # printed and the declaration will return null.
-func get_function_text(meta, path=null, override_size=null):
+func get_function_text(meta, path=null, override_size=null, super_name=""):
 	var method_params = ''
 	var text = null
 	var result = _make_arg_array(meta, override_size)
@@ -233,16 +260,16 @@ func get_function_text(meta, path=null, override_size=null):
 			"func_decleration":decleration,
 			"method_name":meta.name,
 			"param_array":param_array,
-			"super_call":_get_super_call_text(meta.name, args)
+			"super_call":_get_super_call_text(meta.name, args, super_name)
 		})
+
 	return text
+
+
 
 
 func get_logger():
 	return _lgr
 
-
 func set_logger(logger):
 	_lgr = logger
-
-

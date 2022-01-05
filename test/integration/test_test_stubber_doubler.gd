@@ -54,6 +54,7 @@ class TestBasics:
 		doubled.is_blocking_signals()
 		gr.test.assert_called(doubled, 'is_blocking_signals')
 		assert_eq(gr.test.get_pass_count(), 1)
+		pause_before_teardown()
 
 	func test_when_strategy_is_partial_then_supers_are_NOT_spied_in_scenes():
 		var doubled = gr.test.double_scene(DOUBLE_ME_SCENE_PATH, DOUBLE_STRATEGY.PARTIAL).instance()
@@ -86,6 +87,12 @@ class TestBasics:
 		var n = autofree(Node.new())
 		gr.test.stub(n, 'something').to_return(3)
 		assert_eq(gr.test.get_logger().get_errors().size(), 1)
+
+	func test_when_stub_passed_singleton_it_generates_error():
+		gr.test.stub(Input, "is_action_just_pressed").to_return(true)
+		assert_eq(gr.test.get_logger().get_errors().size(), 1)
+
+
 
 class TestIgnoreMethodsWhenDoubling:
 	extends "res://test/gut_test.gd"
@@ -126,6 +133,7 @@ class TestIgnoreMethodsWhenDoubling:
 		m_inst.return_hello()
 		# since it is ignored it should not have been caught by the stubber
 		_test.assert_not_called(m_inst, 'return_hello')
+
 
 class TestTestsSmartDoubleMethod:
 	extends "res://test/gut_test.gd"
@@ -310,7 +318,7 @@ class TestOverridingParameters:
 		var inst =  _test.double(DEFAULT_PARAMS_PATH).new()
 		var ret_val = inst.return_passed()
 		assert_eq(ret_val, '12')
-		# print(gut.get_stubber().to_s())
+		print(_gut.get_stubber().to_s())
 
 
 	func test_issue_246_rpc_id_varargs():
@@ -347,4 +355,48 @@ class TestOverridingParameters:
 		var inst =  _test.partial_double(DEFAULT_PARAMS_PATH).new()
 		var ret_val = inst.return_passed('a', 'b')
 		assert_eq(ret_val, 'ab')
+		print(_gut.get_stubber().to_s())
 
+
+class TestSingletonDoubling:
+	extends "res://test/gut_test.gd"
+
+	var _test_gut = null
+	var _test = null
+
+	func before_each():
+		_test_gut = Gut.new()
+		_test_gut._should_print_versions = false
+		_test = Test.new()
+		_test.gut = _test_gut
+
+		add_child_autofree(_test_gut)
+		add_child_autofree(_test)
+
+	func test_double_gives_double():
+		var inst = _test.double_singleton("Input").new()
+		assert_eq(inst.__gut_metadata_.from_singleton, "Input")
+
+	func test_partial_gives_partial_double():
+		var inst = _test.partial_double_singleton("Input").new()
+		assert_true(inst.__gut_metadata_.is_partial)
+
+	func test_double_errors_if_not_passed_a_string():
+		var value = _test.double_singleton(Node2D)
+		assert_errored(_test)
+		assert_null(value, "null should be returned")
+
+	func test_double_errors_if_class_name_does_not_exist():
+		var value = _test.double_singleton("asdf")
+		assert_errored(_test)
+		assert_null(value, "null should be returned")
+
+	func test_partial_double_errors_if_not_passed_a_string():
+		var value = _test.partial_double_singleton(Node2D)
+		assert_errored(_test)
+		assert_null(value, "null should be returned")
+
+	func test_partial_double_errors_if_class_name_does_not_exist():
+		var value = _test.partial_double_singleton("asdf")
+		assert_errored(_test)
+		assert_null(value, "null should be returned")

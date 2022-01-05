@@ -19,6 +19,16 @@ func test_fireball_input():
   yield(sender, 'idle')
   assert_true(player.is_throwing_fireball())
 ```
+* Create doubles and partial doubles of Godot Singletons such as `Input`, `OS`, `JavaScript`.
+```
+func test_foo():
+  var player = Fighter.new()
+  var dbl_input = double_singleton('Input')
+  # For doubles of singletons to work, your classes must have a local reference
+  # to the singleton that can be overidden with the double.
+  player.local_input_ref = dbl_input
+  stub(dbl_input, 'is_action_just_pressed').to_return(true).when_passed('jump')
+```
 * In-Editor GUT Panel improvements
   * Smart buttons to run tests based on cursor location.
 * __Issue 215__ You can now use `extends GutTest` instead of `extends 'res://addons/gut/test.gd'` when creating test scripts.  That's 45% less text!

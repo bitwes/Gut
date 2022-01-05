@@ -54,3 +54,8 @@ class TestBoth:
 		inst.set_position(Vector2(20, 20))
 		assert_true(_spy.was_called(inst, 'set_position'))
 		assert_true(_spy.was_called(inst, 'set_position', [Vector2(20, 20)]))
+
+	func test_can_spy_on_singleton_doubles():
+		var inst  = _doubler.partial_double_singleton("Input").new()
+		inst.is_action_just_pressed("foobar")
+		assert_true(_spy.was_called(inst, "is_action_just_pressed"))

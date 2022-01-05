@@ -1,4 +1,4 @@
-extends "res://addons/gut/test.gd"
+extends GutTest
 
 # test.gd has a StubParams variable already so this has to have a
 # different name.  I thought it was too vague to just use the one
@@ -61,7 +61,7 @@ func test_to_do_nothing_returns_self():
 	assert_eq(sp.to_do_nothing(), sp)
 
 # --------------
-# Paramter Count and Defaults
+# Parameter Count and Defaults
 # --------------
 func test_param_count_returns_self():
 	var val = gr.stub_params.param_count(3)
@@ -95,3 +95,54 @@ func test_has_param_override_is_false_by_default():
 func test_when_param_count_set_has_param_override_is_true():
 	gr.stub_params.param_count(3)
 	assert_true(gr.stub_params.has_param_override())
+
+# --------------
+# Parameter Override Only
+# --------------
+func test_is_paramter_override_only_false_by_default():
+	var sp = StubParamsClass.new()
+	assert_false(sp.is_param_override_only())
+
+func test_param_count_override_params_sets_flag():
+	var sp = StubParamsClass.new()
+	sp.param_count(10)
+	assert_true(sp.is_param_override_only())
+
+func test_setting_defaults_sets_flag():
+	var sp = StubParamsClass.new()
+	sp.param_defaults([1, 2, 3])
+	assert_true(sp.is_param_override_only())
+
+func test_to_return_sets_override_flag():
+	var sp = StubParamsClass.new()
+	sp.param_count(10)
+	sp.to_return(7)
+	assert_false(sp.is_param_override_only())
+
+func test_order_of_calls_with_to_return_does_not_matter():
+	var sp = StubParamsClass.new()
+	sp.to_return(7)
+	sp.param_count(10)
+	assert_false(sp.is_param_override_only())
+
+func test_to_do_nothing_sets_flag():
+	var sp = StubParamsClass.new()
+	sp.param_count(10)
+	sp.to_do_nothing()
+	assert_false(sp.is_param_override_only())
+
+func test_to_call_super_sets_flag():
+	var sp = StubParamsClass.new()
+	sp.param_count(10)
+	sp.to_call_super()
+	assert_false(sp.is_param_override_only())
+
+# I think this is how it should work.  You may want (if you even can) to
+# stub the paramters of a double when it is passed specific values.  In
+# all other cases that I can think of, you will end up calling one of the
+# other stub methods that flip the flag.
+func test_when_passed_does_not_set_flag():
+	var sp = StubParamsClass.new()
+	sp.param_count(10)
+	sp.when_passed(1, 2, 3)
+	assert_true(sp.is_param_override_only())

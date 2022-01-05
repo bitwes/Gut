@@ -1082,6 +1082,22 @@ func _validate_assert_setget_called_input(type, name_property
 	obj.free()
 	return result
 
+# ------------------------------------------------------------------------------
+# Validates the singleton_name is a string and exists.  Errors when conditions
+# are not met.  Returns true/false if singleton_name is valid or not.
+# ------------------------------------------------------------------------------
+func _validate_singleton_name(singleton_name):
+	var is_valid = true
+	if(typeof(singleton_name) != TYPE_STRING):
+		_lgr.error("double_singleton requires a Godot singleton name, you passed " + _str(singleton_name))
+		is_valid = false
+	elif(!ClassDB.class_exists(singleton_name)):
+		var txt = str("The singleton [", singleton_name, "] could not be found.  ",
+					"Check the GlobalScope page for a list of singletons.")
+		_lgr.error(txt)
+		is_valid = false
+	return is_valid
+
 
 # ------------------------------------------------------------------------------
 # Asserts the given setter and getter methods are called when the given property
@@ -1350,6 +1366,23 @@ func partial_double(thing, p2=null, p3=null):
 
 	return _smart_double(double_info)
 
+# ------------------------------------------------------------------------------
+# Doubles a Godot singleton
+# ------------------------------------------------------------------------------
+func double_singleton(singleton_name):
+	var to_return = null
+	if(_validate_singleton_name(singleton_name)):
+		to_return = gut.get_doubler().double_singleton(singleton_name)
+	return to_return
+
+# ------------------------------------------------------------------------------
+# Partial Doubles a Godot singleton
+# ------------------------------------------------------------------------------
+func partial_double_singleton(singleton_name):
+	var to_return = null
+	if(_validate_singleton_name(singleton_name)):
+		to_return = gut.get_doubler().partial_double_singleton(singleton_name)
+	return to_return
 
 # ------------------------------------------------------------------------------
 # Specifically double a scene

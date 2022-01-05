@@ -12,17 +12,19 @@
 # 	}
 # }
 var returns = {}
-var parameters = {}
-# -------------
-
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
 var _strutils = _utils.Strutils.new()
 
+
 func _make_key_from_metadata(doubled):
 	var to_return = doubled.__gut_metadata_.path
-	if(doubled.__gut_metadata_.subpath != ''):
+
+	if(doubled.__gut_metadata_.from_singleton != ''):
+		to_return = str(doubled.__gut_metadata_.from_singleton)
+	elif(doubled.__gut_metadata_.subpath != ''):
 		to_return += str('-', doubled.__gut_metadata_.subpath)
+
 	return to_return
 
 
@@ -45,6 +47,7 @@ func _make_key_from_variant(obj, subpath=null):
 				to_return = _utils.get_native_class_name(obj)
 			else:
 				to_return = obj.resource_path
+
 	return to_return
 
 
@@ -60,6 +63,9 @@ func _add_obj_method(obj, method, subpath=null):
 
 	return key
 
+# ##############
+# Public
+# ##############
 
 # Searches returns for an entry that matches the instance or the class that
 # passed in obj is.
@@ -76,45 +82,34 @@ func _find_stub(obj, method, parameters=null, find_overloads=false):
 			key = _make_key_from_metadata(obj)
 
 	if(returns.has(key) and returns[key].has(method)):
-		var param_idx = -1
-		var null_idx = -1
-		var overloads_idx = -1
+		var param_match = null
+		var null_match = null
+		var overload_match = null
 
 		for i in range(returns[key][method].size()):
 			if(returns[key][method][i].parameters == parameters):
-				param_idx = i
-			if(returns[key][method][i].parameters == null):
-				null_idx = i
-			if(returns[key][method][i].has_param_override()):
-				overloads_idx = i
+				param_match = returns[key][method][i]
 
-		if(find_overloads and overloads_idx != -1):
-			to_return = returns[key][method][overloads_idx]
+			if(returns[key][method][i].parameters == null):
+				null_match = returns[key][method][i]
+
+			if(returns[key][method][i].has_param_override()):
+				overload_match = returns[key][method][i]
+
+		if(find_overloads and overload_match != null):
+			to_return = overload_match
 		# We have matching parameter values so return the stub value for that
-		elif(param_idx != -1):
-			to_return = returns[key][method][param_idx]
+		elif(param_match != null):
+			to_return = param_match
 		# We found a case where the parameters were not specified so return
-		# parameters for that
-		elif(null_idx != -1):
-			to_return = returns[key][method][null_idx]
+		# parameters for that.  Only do this if the null match is not *just*
+		# a paramerter override stub.
+		elif(null_match != null and !null_match.is_param_override_only()):
+			to_return = null_match
 		else:
 			_lgr.warn(str('Call to [', method, '] was not stubbed for the supplied parameters ', parameters, '.  Null was returned.'))
 
 	return to_return
-
-
-# ##############
-# Public
-# ##############
-
-# TODO: This method is only used in tests and should be refactored out.  It
-# does not support inner classes and isn't helpful.
-func set_return(obj, method, value, parameters=null):
-	var key = _add_obj_method(obj, method)
-	var sp = _utils.StubParams.new(key, method)
-	sp.parameters = parameters
-	sp.return_val = value
-	returns[key][method].append(sp)
 
 
 func add_stub(stub_params):
@@ -150,15 +145,26 @@ func get_return(obj, method, parameters=null):
 
 
 func should_call_super(obj, method, parameters=null):
+	if(_utils.non_super_methods.has(method)):
+		return false
+
 	var stub_info = _find_stub(obj, method, parameters)
+
+	var is_partial = false
+	if(typeof(obj) != TYPE_STRING): # some stubber tests test with strings
+		is_partial = obj.__gut_metadata_.is_partial
+	var should = is_partial
+
 	if(stub_info != null):
-		return stub_info.call_super
-	else:
+		should = stub_info.call_super
+	elif(!is_partial):
 		# this log message is here because of how the generated doubled scripts
 		# are structured.  With this log msg here, you will only see one
 		# "unstubbed" info instead of multiple.
 		_lgr.info('Unstubbed call to ' + method + '::' + _strutils.type2str(obj))
-		return false
+		should = false
+
+	return should
 
 
 func get_parameter_count(obj, method):
@@ -175,12 +181,11 @@ func get_default_value(obj, method, p_index):
 	var to_return = null
 	var stub_info = _find_stub(obj, method, null, true)
 	if(stub_info != null and
-	   stub_info.parameter_defaults != null and
-	   stub_info.parameter_defaults.size() > p_index):
+		stub_info.parameter_defaults != null and
+		stub_info.parameter_defaults.size() > p_index):
 
 		to_return = stub_info.parameter_defaults[p_index]
 
-	# print('get_default ', obj, '.', method, '  ', p_index, ' = ', to_return)
 	return to_return
 
 
@@ -199,9 +204,13 @@ func set_logger(logger):
 func to_s():
 	var text = ''
 	for thing in returns:
-		text += str(thing) + "\n"
+		text += str("-- ", thing, " --\n")
 		for method in returns[thing]:
 			text += str("\t", method, "\n")
 			for i in range(returns[thing][method].size()):
 				text += "\t\t" + returns[thing][method][i].to_s() + "\n"
+
+	if(text == ''):
+		text = 'Stubber is empty';
+
 	return text

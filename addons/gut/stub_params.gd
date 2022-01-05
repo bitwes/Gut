@@ -5,8 +5,22 @@ var target_subpath = null
 var parameters = null
 var stub_method = null
 var call_super = false
+
+# -- Paramter Override --
+# Parmater overrides are stored in here along with all the other stub info
+# so that you can chain stubbing parameter overrides along with all the
+# other stubbing.  This adds some complexity to the logic that tries to
+# find the correct stub for a call by a double.  Since an instance of this
+# class could be just a parameter override, or it could have been chained
+# we have to have _paramter_override_only so that we know when to tell the
+# difference.
 var parameter_count = -1
 var parameter_defaults = null
+# Anything that would make this stub not just an override of paramters
+# must set this flag to false.  This must be private bc the actual logic
+# to determine if this stub is only an override is more complicated.
+var _parameter_override_only = true
+# --
 
 const NOT_SET = '|_1_this_is_not_set_1_|'
 
@@ -18,6 +32,7 @@ func _init(target=null, method=null, subpath=null):
 func to_return(val):
 	return_val = val
 	call_super = false
+	_parameter_override_only = false
 	return self
 
 func to_do_nothing():
@@ -25,6 +40,7 @@ func to_do_nothing():
 
 func to_call_super():
 	call_super = true
+	_parameter_override_only = false
 	return self
 
 func when_passed(p1=NOT_SET,p2=NOT_SET,p3=NOT_SET,p4=NOT_SET,p5=NOT_SET,p6=NOT_SET,p7=NOT_SET,p8=NOT_SET,p9=NOT_SET,p10=NOT_SET):
@@ -49,13 +65,30 @@ func param_defaults(values):
 func has_param_override():
 	return parameter_count != -1
 
-func to_s():
-	var base_string = str(stub_target, '[', target_subpath, '].', stub_method)
+func is_param_override_only():
+	var to_return = false
 	if(has_param_override()):
-		base_string += str(' (params ', parameter_count, ' def=', parameter_defaults, ') ')
+		to_return = _parameter_override_only
+	return to_return
+
+func to_s():
+	var base_string = str(stub_target)
+	if(target_subpath != null):
+		base_string += str('[', target_subpath, '].')
+	else:
+		base_string += '.'
+	base_string += stub_method
+
+	if(has_param_override()):
+		base_string += str(' (param count override=', parameter_count, ' defaults=', parameter_defaults)
+		if(is_param_override_only()):
+			base_string += " ONLY"
+		base_string += ') '
 
 	if(call_super):
 		base_string += " to call SUPER"
-	else:
+
+	if(parameters != null):
 		base_string += str(' with params (', parameters, ') returns ', return_val)
+
 	return base_string
