@@ -2,6 +2,7 @@ extends "res://addons/gut/test.gd"
 
 var Gut = load('res://addons/gut/gut.gd')
 var Test = load('res://addons/gut/test.gd')
+var StubParams = load('res://addons/gut/stub_params.gd')
 
 const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
 const DOUBLE_ME_SCENE_PATH = 'res://test/resources/doubler_test_objects/double_me_scene.tscn'
@@ -15,7 +16,8 @@ func test_can_get_stubber():
 # PURE testing but it appears to cover the bases ok.
 # ------
 func test_stubber_cleared_between_tests_setup():
-	gut.get_stubber().set_return('thing', 'method', 5)
+	var sp = StubParams.new('thing', 'method').to_return(5)
+	gut.get_stubber().add_stub(sp)
 	gut.p('this sets up for next test')
 
 func test_stubber_cleared_between_tests():

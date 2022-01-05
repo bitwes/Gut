@@ -318,7 +318,7 @@ class TestOverridingParameters:
 		var inst =  _test.double(DEFAULT_PARAMS_PATH).new()
 		var ret_val = inst.return_passed()
 		assert_eq(ret_val, '12')
-		# print(gut.get_stubber().to_s())
+		print(_gut.get_stubber().to_s())
 
 
 	func test_issue_246_rpc_id_varargs():
@@ -355,6 +355,7 @@ class TestOverridingParameters:
 		var inst =  _test.partial_double(DEFAULT_PARAMS_PATH).new()
 		var ret_val = inst.return_passed('a', 'b')
 		assert_eq(ret_val, 'ab')
+		print(_gut.get_stubber().to_s())
 
 
 class TestSingletonDoubling:

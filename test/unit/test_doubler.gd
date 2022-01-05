@@ -454,6 +454,7 @@ class TestPartialDoubles:
 
 		assert_null(double.get_value(), 'double get_value')
 		assert_eq(p_double.get_value(), 0, 'partial get_value')
+		print(doubler.get_stubber().to_s())
 
 
 class TestDoubleGDNaviteClasses:
