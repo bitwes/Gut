@@ -155,6 +155,12 @@ func _add_file(key, value, disp_text, hint=''):
 	var ctrl = _new_row(key, disp_text, value_ctrl, hint)
 
 
+func _add_color(key, value, disp_text, hint=''):
+	var value_ctrl = ColorPickerButton.new()
+	value_ctrl.size_flags_horizontal = value_ctrl.SIZE_EXPAND_FILL
+	value_ctrl.color = value
+
+	var ctrl = _new_row(key, disp_text, value_ctrl, hint)
 # ------------------
 # Events
 # ------------------
@@ -227,6 +233,8 @@ func set_options(options):
 		"Maximize GUT when tests are being run.")
 	_add_number('opacity', options.opacity, 'Opacity', 0, 100,
 		"The opacity of GUT when tests are running.")
+	_add_color('background_color', options.background_color, 'Background Color')
+	_add_color('font_color', options.font_color, 'Font Color')
 
 
 	_add_title('Directories')
@@ -275,6 +283,8 @@ func get_options(base_opts):
 	to_return.font_size = _cfg_ctrls.font_size.value
 	to_return.should_maximize = _cfg_ctrls.should_maximize.pressed
 	to_return.opacity = _cfg_ctrls.opacity.value
+	to_return.background_color = _cfg_ctrls.background_color.color.to_html()
+	to_return.font_color = _cfg_ctrls.font_color.color.to_html()
 
 
 	# Directories
