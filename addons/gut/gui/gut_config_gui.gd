@@ -1,25 +1,5 @@
-var _base_container = null
-var _base_control = null
-const DIRS_TO_LIST = 6
-var _cfg_ctrls = {}
-var _avail_fonts = ['AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default']
-
-
-signal settings_changed
-
-func _init(cont):
-	_base_container = cont
-
-	_base_control = HBoxContainer.new()
-	_base_control.size_flags_horizontal = _base_control.SIZE_EXPAND_FILL
-	_base_control.mouse_filter = _base_control.MOUSE_FILTER_PASS
-
-	var lbl = Label.new()
-	lbl.size_flags_horizontal = lbl.SIZE_EXPAND_FILL
-	lbl.mouse_filter = lbl.MOUSE_FILTER_STOP
-	_base_control.add_child(lbl)
-
-
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 class DirectoryCtrl:
 	extends HBoxContainer
 
@@ -60,12 +40,41 @@ class DirectoryCtrl:
 		text = t
 		_txt_path.text = text
 
-
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 class FileCtrl:
 	extends DirectoryCtrl
 
 	func _init():
 		_dialog.mode = _dialog.MODE_OPEN_FILE
+
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+var _base_container = null
+var _base_control = null
+const DIRS_TO_LIST = 6
+var _cfg_ctrls = {}
+var _avail_fonts = ['AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default']
+
+
+signal settings_changed
+
+func _init(cont):
+	_base_container = cont
+
+	_base_control = HBoxContainer.new()
+	_base_control.size_flags_horizontal = _base_control.SIZE_EXPAND_FILL
+	_base_control.mouse_filter = _base_control.MOUSE_FILTER_PASS
+
+	# I don't remember what this is all about at all.  Could be
+	# garbage.  Decided to spend more time typing this message
+	# than figuring it out.
+	var lbl = Label.new()
+	lbl.size_flags_horizontal = lbl.SIZE_EXPAND_FILL
+	lbl.mouse_filter = lbl.MOUSE_FILTER_STOP
+	_base_control.add_child(lbl)
+
 
 # ------------------
 # Private
@@ -188,15 +197,12 @@ func set_options(options):
 		"Detail level for log messages.")
 	_add_boolean('ignore_pause', options.ignore_pause, 'Ignore Pause',
 		"Ignore calls to pause_before_teardown")
-	_add_boolean('hide_orphans', options.hide_orphans, 'Do not show Orphans', 'Hide orpahn output.')
+	_add_boolean('hide_orphans', options.hide_orphans, 'Hide Orphans',
+		'Do not display orphan counts in output.')
 	_add_boolean('should_exit', options.should_exit, 'Exit on Finish',
 		"Exit when tests finished.")
 	_add_boolean('should_exit_on_success', options.should_exit_on_success, 'Exit on Success',
-		"Exit if there are no failures.  Does nothing if 'Exit on Finish' is set.")
-	_add_boolean('should_maximize', options.should_maximize, 'Maximize',
-		"Maximize GUT when tests are being run.")
-	_add_number('opacity', options.opacity, 'Opacity', 0, 100,
-		"The opacity of GUT when tests are running.")
+		"Exit if there are no failures.  Does nothing if 'Exit on Finish' is enabled.")
 
 
 	_add_title("XML Output")
@@ -205,12 +211,22 @@ func set_options(options):
 	_add_boolean("junit_xml_timestamp", options.junit_xml_timestamp, "Include timestamp",
 		"Include a timestamp in the filename so that each run gets its own xml file.")
 
+	_add_title("Output")
+	_add_select('output_font_name', options.panel_options.font_name, _avail_fonts, 'Font',
+		"The name of the font to use when running tests and in the output panel to the left.")
+	_add_number('output_font_size', options.panel_options.font_size, 'Font Size', 5, 100,
+		"The font size to use when running tests and in the output panel to the left.")
 
-	_add_title('Font')
+
+	_add_title('Runner Appearance')
 	_add_select('font_name', options.font_name, _avail_fonts, 'Font',
 		"The name of the font to use when running tests and in the output panel to the left.")
 	_add_number('font_size', options.font_size, 'Font Size', 5, 100,
 		"The font size to use when running tests and in the output panel to the left.")
+	_add_boolean('should_maximize', options.should_maximize, 'Maximize',
+		"Maximize GUT when tests are being run.")
+	_add_number('opacity', options.opacity, 'Opacity', 0, 100,
+		"The opacity of GUT when tests are running.")
 
 
 	_add_title('Directories')
@@ -234,7 +250,6 @@ func set_options(options):
 		"The filename prefix for all test scripts.")
 
 
-
 func get_options(base_opts):
 	var to_return = base_opts.duplicate()
 
@@ -244,17 +259,23 @@ func get_options(base_opts):
 	to_return.hide_orphans = _cfg_ctrls.hide_orphans.pressed
 	to_return.should_exit = _cfg_ctrls.should_exit.pressed
 	to_return.should_exit_on_success = _cfg_ctrls.should_exit_on_success.pressed
-	to_return.should_maximize = _cfg_ctrls.should_maximize.pressed
-	to_return.opacity = _cfg_ctrls.opacity.value
 
 	# XML Output
 	to_return.junit_xml_file = _cfg_ctrls.junit_xml_file.text
 	to_return.junit_xml_timestamp = _cfg_ctrls.junit_xml_timestamp.pressed
 
-	# Font
+	#Output
+	to_return.panel_options.font_name = _cfg_ctrls.output_font_name.get_item_text(
+		_cfg_ctrls.output_font_name.selected)
+	to_return.panel_options.font_size = _cfg_ctrls.output_font_size.value
+
+	# Runner Appearance
 	to_return.font_name = _cfg_ctrls.font_name.get_item_text(
 		_cfg_ctrls.font_name.selected)
 	to_return.font_size = _cfg_ctrls.font_size.value
+	to_return.should_maximize = _cfg_ctrls.should_maximize.pressed
+	to_return.opacity = _cfg_ctrls.opacity.value
+
 
 	# Directories
 	to_return.include_subdirs = _cfg_ctrls.include_subdirs.pressed

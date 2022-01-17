@@ -35,14 +35,14 @@ onready var _ctrls = {
 
 
 func _init():
-	_gut_config.load_options(RUNNER_JSON_PATH)
+	_gut_config.load_panel_options(RUNNER_JSON_PATH)
 
 
 func _ready():
 	_gut_config_gui = GutConfigGui.new(_ctrls.settings)
 	_gut_config_gui.set_options(_gut_config.options)
-	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.font_name)
-	_set_font_size_for_rtl(_ctrls.output, _gut_config.options.font_size)
+	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.panel_options.font_name)
+	_set_font_size_for_rtl(_ctrls.output, _gut_config.options.panel_options.font_size)
 
 
 func _process(delta):
@@ -136,8 +136,8 @@ func _run_tests():
 
 	write_file(RESULT_FILE, 'Run in progress')
 	_gut_config.options = _gut_config_gui.get_options(_gut_config.options)
-	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.font_name)
-	_set_font_size_for_rtl(_ctrls.output, _gut_config.options.font_size)
+	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.panel_options.font_name)
+	_set_font_size_for_rtl(_ctrls.output, _gut_config.options.panel_options.font_size)
 
 	var w_result = _gut_config.write_options(RUNNER_JSON_PATH)
 	if(w_result != OK):

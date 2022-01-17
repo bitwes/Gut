@@ -40,6 +40,11 @@ var default_options = {
 	unit_test_name = '',
 }
 
+var default_panel_options = {
+	font_name = 'CourierPrime',
+	font_size = 30
+}
+
 var options = default_options.duplicate()
 
 
@@ -155,6 +160,9 @@ func config_gut(gut):
 func load_options(path):
 	return _load_options_from_config_file(path, options)
 
+func load_panel_options(path):
+	options['panel_options'] = default_panel_options.duplicate()
+	return _load_options_from_config_file(path, options)
 
 func load_options_no_defaults(path):
 	options = _null_copy(default_options)
