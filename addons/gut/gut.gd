@@ -426,7 +426,7 @@ func _validate_hook_script(path):
 			result.valid = true
 		else:
 			result.valid = false
-			_lgr.error('The hook script [' + path + '] does not extend res://addons/gut/hook_script.gd')
+			_lgr.error('The hook script [' + path + '] does not extend GutHookScript')
 	else:
 		result.valid = false
 		_lgr.error('The hook script [' + path + '] does not exist.')

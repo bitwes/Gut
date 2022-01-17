@@ -1,15 +1,16 @@
 {
- "background_color": "ff262626",
+ "background_color": "ff343434",
  "config_file": "res://.gutconfig.json",
  "dirs": [
   "res://test/unit",
-  "res://test/integration"
+  "res://test/integration",
+  "res://test/panel_demo_scripts"
  ],
  "disable_colors": false,
  "double_strategy": "partial",
- "font_color": "ffcccccc",
+ "font_color": "ffc1bfce",
  "font_name": "CourierPrime",
- "font_size": 30,
+ "font_size": 15,
  "hide_orphans": false,
  "ignore_pause": true,
  "include_subdirs": false,
@@ -21,8 +22,8 @@
  "post_run_script": "",
  "pre_run_script": "",
  "prefix": "test_",
- "selected": "test_spy.gd",
- "should_exit": true,
+ "selected": "test_totals_testing.gd",
+ "should_exit": false,
  "should_exit_on_success": false,
  "should_maximize": false,
  "show_help": false,
@@ -30,5 +31,9 @@
  "tests": [
 
  ],
- "unit_test_name": null
+ "unit_test_name": null,
+ "panel_options": {
+  "font_name": "CourierPrime",
+  "font_size": 30
+ }
 }

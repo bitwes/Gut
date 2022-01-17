@@ -26,23 +26,26 @@ onready var _ctrls = {
 	shortcut_dialog = $BottomPanelShortcuts,
 	light = $layout/RSplit/CResults/ControlBar/Light,
 	results = {
-		passing = $layout/RSplit/CResults/ControlBar/lblPassingValue,
-		failing = $layout/RSplit/CResults/ControlBar/lblFailingValue,
-		pending = $layout/RSplit/CResults/ControlBar/lblPendingValue
+		passing = $layout/RSplit/CResults/ControlBar/Passing/value,
+		failing = $layout/RSplit/CResults/ControlBar/Failing/value,
+		pending = $layout/RSplit/CResults/ControlBar/Pending/value,
+		errors = $layout/RSplit/CResults/ControlBar/Errors/value,
+		warnings = $layout/RSplit/CResults/ControlBar/Warnings/value,
+		orphans = $layout/RSplit/CResults/ControlBar/Orphans/value
 	},
 	run_at_cursor = $layout/ControlBar/RunAtCursor
 }
 
 
 func _init():
-	_gut_config.load_options(RUNNER_JSON_PATH)
+	_gut_config.load_panel_options(RUNNER_JSON_PATH)
 
 
 func _ready():
 	_gut_config_gui = GutConfigGui.new(_ctrls.settings)
 	_gut_config_gui.set_options(_gut_config.options)
-	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.font_name)
-	_set_font_size_for_rtl(_ctrls.output, _gut_config.options.font_size)
+	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.panel_options.font_name)
+	_set_font_size_for_rtl(_ctrls.output, _gut_config.options.panel_options.font_size)
 
 
 func _process(delta):
@@ -136,8 +139,8 @@ func _run_tests():
 
 	write_file(RESULT_FILE, 'Run in progress')
 	_gut_config.options = _gut_config_gui.get_options(_gut_config.options)
-	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.font_name)
-	_set_font_size_for_rtl(_ctrls.output, _gut_config.options.font_size)
+	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.panel_options.font_name)
+	_set_font_size_for_rtl(_ctrls.output, _gut_config.options.panel_options.font_size)
 
 	var w_result = _gut_config.write_options(RUNNER_JSON_PATH)
 	if(w_result != OK):
@@ -235,8 +238,22 @@ func load_result_output():
 		return
 	var summary_json = results.result['test_scripts']['props']
 	_ctrls.results.passing.text = str(summary_json.passing)
+	_ctrls.results.passing.get_parent().visible = true
+	
 	_ctrls.results.failing.text = str(summary_json.failures)
+	_ctrls.results.failing.get_parent().visible = true
+	
 	_ctrls.results.pending.text = str(summary_json.pending)
+	_ctrls.results.pending.get_parent().visible = _ctrls.results.pending.text != '0'
+	
+	_ctrls.results.errors.text = str(summary_json.errors)
+	_ctrls.results.errors.get_parent().visible = _ctrls.results.errors.text != '0'
+	
+	_ctrls.results.warnings.text = str(summary_json.warnings)
+	_ctrls.results.warnings.get_parent().visible = _ctrls.results.warnings.text != '0'
+	
+	_ctrls.results.orphans.text = str(summary_json.orphans)
+	_ctrls.results.orphans.get_parent().visible = _ctrls.results.orphans.text != '0' and !_gut_config.options.hide_orphans
 
 	if(summary_json.tests == 0):
 		_light_color = Color(1, 0, 0, .75)

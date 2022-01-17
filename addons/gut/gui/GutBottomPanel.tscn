@@ -164,50 +164,162 @@ margin_right = 30.0
 margin_bottom = 35.0
 rect_min_size = Vector2( 30, 30 )
 
-[node name="lblPassing" type="Label" parent="layout/RSplit/CResults/ControlBar"]
+[node name="Passing" type="HBoxContainer" parent="layout/RSplit/CResults/ControlBar"]
+visible = false
 margin_left = 34.0
+margin_right = 107.0
+margin_bottom = 35.0
+
+[node name="Sep" type="ColorRect" parent="layout/RSplit/CResults/ControlBar/Passing"]
+margin_right = 2.0
+margin_bottom = 35.0
+rect_min_size = Vector2( 2, 0 )
+
+[node name="label" type="Label" parent="layout/RSplit/CResults/ControlBar/Passing"]
+margin_left = 6.0
 margin_top = 10.0
-margin_right = 82.0
+margin_right = 54.0
 margin_bottom = 24.0
 text = "Passing"
 
-[node name="lblPassingValue" type="Label" parent="layout/RSplit/CResults/ControlBar"]
-margin_left = 86.0
+[node name="value" type="Label" parent="layout/RSplit/CResults/ControlBar/Passing"]
+margin_left = 58.0
 margin_top = 10.0
-margin_right = 101.0
+margin_right = 73.0
 margin_bottom = 24.0
 text = "---"
 
-[node name="lblFailing" type="Label" parent="layout/RSplit/CResults/ControlBar"]
-margin_left = 105.0
+[node name="Failing" type="HBoxContainer" parent="layout/RSplit/CResults/ControlBar"]
+visible = false
+margin_left = 34.0
+margin_right = 100.0
+margin_bottom = 35.0
+
+[node name="Sep" type="ColorRect" parent="layout/RSplit/CResults/ControlBar/Failing"]
+margin_right = 2.0
+margin_bottom = 35.0
+rect_min_size = Vector2( 2, 0 )
+
+[node name="label" type="Label" parent="layout/RSplit/CResults/ControlBar/Failing"]
+margin_left = 6.0
 margin_top = 10.0
-margin_right = 146.0
+margin_right = 47.0
 margin_bottom = 24.0
 text = "Failing"
 
-[node name="lblFailingValue" type="Label" parent="layout/RSplit/CResults/ControlBar"]
-margin_left = 150.0
+[node name="value" type="Label" parent="layout/RSplit/CResults/ControlBar/Failing"]
+margin_left = 51.0
 margin_top = 10.0
-margin_right = 165.0
+margin_right = 66.0
 margin_bottom = 24.0
 text = "---"
 
-[node name="lblPending" type="Label" parent="layout/RSplit/CResults/ControlBar"]
-margin_left = 169.0
+[node name="Pending" type="HBoxContainer" parent="layout/RSplit/CResults/ControlBar"]
+visible = false
+margin_left = 34.0
+margin_right = 110.0
+margin_bottom = 35.0
+
+[node name="Sep" type="ColorRect" parent="layout/RSplit/CResults/ControlBar/Pending"]
+margin_right = 2.0
+margin_bottom = 35.0
+rect_min_size = Vector2( 2, 0 )
+
+[node name="label" type="Label" parent="layout/RSplit/CResults/ControlBar/Pending"]
+margin_left = 6.0
 margin_top = 10.0
-margin_right = 220.0
+margin_right = 57.0
 margin_bottom = 24.0
 text = "Pending"
 
-[node name="lblPendingValue" type="Label" parent="layout/RSplit/CResults/ControlBar"]
-margin_left = 224.0
+[node name="value" type="Label" parent="layout/RSplit/CResults/ControlBar/Pending"]
+margin_left = 61.0
 margin_top = 10.0
-margin_right = 239.0
+margin_right = 76.0
+margin_bottom = 24.0
+text = "---"
+
+[node name="Orphans" type="HBoxContainer" parent="layout/RSplit/CResults/ControlBar"]
+visible = false
+margin_left = 34.0
+margin_right = 110.0
+margin_bottom = 35.0
+
+[node name="Sep" type="ColorRect" parent="layout/RSplit/CResults/ControlBar/Orphans"]
+margin_right = 2.0
+margin_bottom = 35.0
+rect_min_size = Vector2( 2, 0 )
+
+[node name="label" type="Label" parent="layout/RSplit/CResults/ControlBar/Orphans"]
+margin_left = 6.0
+margin_top = 10.0
+margin_right = 57.0
+margin_bottom = 24.0
+text = "Orphans"
+
+[node name="value" type="Label" parent="layout/RSplit/CResults/ControlBar/Orphans"]
+margin_left = 61.0
+margin_top = 10.0
+margin_right = 76.0
+margin_bottom = 24.0
+text = "---"
+
+[node name="Errors" type="HBoxContainer" parent="layout/RSplit/CResults/ControlBar"]
+visible = false
+margin_left = 34.0
+margin_right = 96.0
+margin_bottom = 35.0
+
+[node name="Sep" type="ColorRect" parent="layout/RSplit/CResults/ControlBar/Errors"]
+margin_right = 2.0
+margin_bottom = 35.0
+rect_min_size = Vector2( 2, 0 )
+
+[node name="label" type="Label" parent="layout/RSplit/CResults/ControlBar/Errors"]
+margin_left = 6.0
+margin_top = 10.0
+margin_right = 43.0
+margin_bottom = 24.0
+hint_tooltip = "The number of GUT errors generated.  This does not include engine errors."
+text = "Errors"
+
+[node name="value" type="Label" parent="layout/RSplit/CResults/ControlBar/Errors"]
+margin_left = 47.0
+margin_top = 10.0
+margin_right = 62.0
+margin_bottom = 24.0
+text = "---"
+
+[node name="Warnings" type="HBoxContainer" parent="layout/RSplit/CResults/ControlBar"]
+visible = false
+margin_left = 34.0
+margin_right = 118.0
+margin_bottom = 35.0
+
+[node name="Sep" type="ColorRect" parent="layout/RSplit/CResults/ControlBar/Warnings"]
+margin_right = 2.0
+margin_bottom = 35.0
+rect_min_size = Vector2( 2, 0 )
+
+[node name="label" type="Label" parent="layout/RSplit/CResults/ControlBar/Warnings"]
+margin_left = 6.0
+margin_top = 10.0
+margin_right = 65.0
+margin_bottom = 24.0
+text = "Warnings"
+__meta__ = {
+"_editor_description_": "The number of GUT Warnings generated.  This does not include engine warnings."
+}
+
+[node name="value" type="Label" parent="layout/RSplit/CResults/ControlBar/Warnings"]
+margin_left = 69.0
+margin_top = 10.0
+margin_right = 84.0
 margin_bottom = 24.0
 text = "---"
 
 [node name="CenterContainer" type="CenterContainer" parent="layout/RSplit/CResults/ControlBar"]
-margin_left = 243.0
+margin_left = 34.0
 margin_right = 488.0
 margin_bottom = 35.0
 size_flags_horizontal = 3
@@ -249,7 +361,7 @@ size_flags_vertical = 3
 
 [node name="Settings" type="VBoxContainer" parent="layout/RSplit/sc"]
 margin_right = 388.0
-margin_bottom = 586.0
+margin_bottom = 806.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
