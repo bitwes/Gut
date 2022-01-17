@@ -17,7 +17,7 @@
  "inner_class": null,
  "junit_xml_file": "",
  "junit_xml_timestamp": false,
- "log_level": 0,
+ "log_level": 1,
  "opacity": 100,
  "post_run_script": "",
  "pre_run_script": "",
@@ -31,7 +31,7 @@
  "tests": [
 
  ],
- "unit_test_name": null,
+ "unit_test_name": "test_makes_an_info",
  "panel_options": {
   "font_name": "CourierPrime",
   "font_size": 30

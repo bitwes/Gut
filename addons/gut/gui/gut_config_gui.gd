@@ -200,7 +200,11 @@ func get_config_issues():
 func set_options(options):
 	_add_title("Settings")
 	_add_number("log_level", options.log_level, "Log Level", 0, 3,
-		"Detail level for log messages.")
+		"Detail level for log messages.\n" + \
+		"\t0: Errors and failures only.\n" + \
+		"\t1: Adds all test names + warnings + info\n" + \
+		"\t2: Shows all asserts\n" + \
+		"\t3: Adds more stuff probably, maybe not.")
 	_add_boolean('ignore_pause', options.ignore_pause, 'Ignore Pause',
 		"Ignore calls to pause_before_teardown")
 	_add_boolean('hide_orphans', options.hide_orphans, 'Hide Orphans',

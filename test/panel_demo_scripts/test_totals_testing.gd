@@ -22,6 +22,10 @@ func test_makes_orphan():
 	var orphan = Node2D.new()
 	assert_true(true)
 	
+func test_makes_an_info():
+	gut.get_logger().info("here is some info")
+	pass_test('info pass!')
+	
 func test_pending():
 	pending("this is pending")
 	
