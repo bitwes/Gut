@@ -15,7 +15,7 @@ func _export_tests(summary_script):
 			"passing":tests[key].pass_texts,
 			"failing":tests[key].fail_texts,
 			"pending":tests[key].pending_texts,
-			"orphans":tests[key].orphans
+			"orphans":tests[key].orphans,
 		}
 
 	return to_return
@@ -48,13 +48,15 @@ func _make_results_dict():
 				"passing":0,
 				"tests":0,
 				"time":0,
-				"orphans":0
+				"orphans":0,
+				"errors":0,
+				"warnings":0
 			},
 			"scripts":[]
 		}
 	}
 	return result
-	
+
 
 # TODO
 #	time
@@ -62,24 +64,25 @@ func _make_results_dict():
 func get_results_dictionary(gut, include_scripts=true):
 	var summary = gut.get_summary()
 	var scripts = []
-	
-	
+
 	if(include_scripts):
 		scripts = _export_scripts(summary)
-	
-	var result =  _make_results_dict()	
+
+	var result =  _make_results_dict()
 	if(summary != null):
 		var totals = summary.get_totals()
 
 		var props = result.test_scripts.props
 		props.pending = totals.pending
 		props.failures = totals.failing
-		props.passing = totals.passing
+		props.passing = totals.passing_tests
 		props.tests = totals.tests
+		props.errors = gut.get_logger().get_errors().size()
+		props.warnings = gut.get_logger().get_warnings().size()
 		props.time = gut.get_gui().elapsed_time_as_str().replace('s', '')
-		props.orpahns = gut.get_orphan_counter().get_counter('total')
+		props.orphans = gut.get_orphan_counter().get_counter('total')
 		result.test_scripts.scripts = scripts
-		
+
 	return result
 
 

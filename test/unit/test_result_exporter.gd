@@ -60,6 +60,9 @@ func test_test_script_props_has_props():
 	assert_has(result, 'pending')
 	assert_has(result, 'failures')
 	assert_has(result, 'tests')
+	assert_has(result, 'errors')
+	assert_has(result, 'warnings')
+	assert_has(result, 'orphans')
 
 func test_test_script_props_have_values_for_one_script():
 	run_scripts(_test_gut, 'test_simple.gd')
@@ -68,6 +71,14 @@ func test_test_script_props_have_values_for_one_script():
 	assert_eq(result['pending'], 2, 'pending')
 	assert_eq(result['failures'], 4, 'failures')
 	assert_eq(result['tests'], 8, 'tests')
+
+func test_warnings_and_errors_populated():
+	run_scripts(_test_gut, 'test_has_error_and_warning.gd')
+	var re = ResultExporter.new()
+	var result = re.get_results_dictionary(_test_gut).test_scripts.props
+
+	assert_eq(result['errors'], 1, 'errors')
+	assert_eq(result['warnings'], 1, 'warnings')
 
 func test_test_scripts_contains_script():
 	_test_gut.test_scripts()

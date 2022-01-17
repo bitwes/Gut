@@ -26,9 +26,12 @@ onready var _ctrls = {
 	shortcut_dialog = $BottomPanelShortcuts,
 	light = $layout/RSplit/CResults/ControlBar/Light,
 	results = {
-		passing = $layout/RSplit/CResults/ControlBar/lblPassingValue,
-		failing = $layout/RSplit/CResults/ControlBar/lblFailingValue,
-		pending = $layout/RSplit/CResults/ControlBar/lblPendingValue
+		passing = $layout/RSplit/CResults/ControlBar/Passing/value,
+		failing = $layout/RSplit/CResults/ControlBar/Failing/value,
+		pending = $layout/RSplit/CResults/ControlBar/Pending/value,
+		errors = $layout/RSplit/CResults/ControlBar/Errors/value,
+		warnings = $layout/RSplit/CResults/ControlBar/Warnings/value,
+		orphans = $layout/RSplit/CResults/ControlBar/Orphans/value
 	},
 	run_at_cursor = $layout/ControlBar/RunAtCursor
 }
@@ -235,8 +238,22 @@ func load_result_output():
 		return
 	var summary_json = results.result['test_scripts']['props']
 	_ctrls.results.passing.text = str(summary_json.passing)
+	_ctrls.results.passing.get_parent().visible = true
+	
 	_ctrls.results.failing.text = str(summary_json.failures)
+	_ctrls.results.failing.get_parent().visible = true
+	
 	_ctrls.results.pending.text = str(summary_json.pending)
+	_ctrls.results.pending.get_parent().visible = _ctrls.results.pending.text != '0'
+	
+	_ctrls.results.errors.text = str(summary_json.errors)
+	_ctrls.results.errors.get_parent().visible = _ctrls.results.errors.text != '0'
+	
+	_ctrls.results.warnings.text = str(summary_json.warnings)
+	_ctrls.results.warnings.get_parent().visible = _ctrls.results.warnings.text != '0'
+	
+	_ctrls.results.orphans.text = str(summary_json.orphans)
+	_ctrls.results.orphans.get_parent().visible = _ctrls.results.orphans.text != '0'
 
 	if(summary_json.tests == 0):
 		_light_color = Color(1, 0, 0, .75)
