@@ -9,7 +9,7 @@ class BaseTestClass:
 	# !! Use this for debugging to see the results of all the subtests that
 	# are run using assert_fail_pass, assert_fail and assert_pass that are
 	# built into this class
-	var _print_all_subtests = false
+	var _print_all_subtests = true
 
 	# GlobalReset(gr) variables to be used by tests.
 	# The values of these are reset in the setup or
@@ -654,6 +654,13 @@ class TestGetSetAsserts:
 		func set_thing(new_thing):
 			_thing = new_thing
 
+	class HasIsGetter:
+		var _flagged = true
+		func is_flagged():
+			return _flagged
+		func set_flagged(isit):
+			_flagged = isit
+
 	func test_fail_if_get_set_not_defined():
 		var obj = NoGetNoSet.new()
 		gr.test.assert_accessors(obj, 'thing', 'something', 'another thing')
@@ -678,6 +685,12 @@ class TestGetSetAsserts:
 		var obj = HasGetSetThatWorks.new()
 		gr.test.assert_accessors(obj, 'thing', 'something', 'another thing')
 		assert_pass(gr.test, 4)
+
+	func test_finds_getters_that_start_with_is():
+		var obj = HasIsGetter.new()
+		gr.test.assert_accessors(obj, 'flagged', true, false)
+		assert_pass(gr.test, 4)
+
 
 class TestAssertExports:
 	extends BaseTestClass

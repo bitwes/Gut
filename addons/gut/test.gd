@@ -539,8 +539,11 @@ func assert_file_not_empty(file_path):
 # ------------------------------------------------------------------------------
 # Asserts the object has the specified method
 # ------------------------------------------------------------------------------
-func assert_has_method(obj, method):
-	assert_true(obj.has_method(method), _str(obj) + ' should have method: ' + method)
+func assert_has_method(obj, method, text=''):
+	var disp = _str(obj) + ' should have method: ' + method
+	if(text != ''):
+		disp = _str(obj) + ' ' + text
+	assert_true(obj.has_method(method), disp)
 
 # Old deprecated method name
 func assert_get_set_methods(obj, property, default, set_to):
@@ -556,16 +559,20 @@ func assert_get_set_methods(obj, property, default, set_to):
 # ------------------------------------------------------------------------------
 func assert_accessors(obj, property, default, set_to):
 	var fail_count = _summary.failed
-	var get = 'get_' + property
-	var set = 'set_' + property
-	assert_has_method(obj, get)
-	assert_has_method(obj, set)
+	var get_func = 'get_' + property
+	var set_func = 'set_' + property
+
+	if(obj.has_method('is_' + property)):
+		get_func = 'is_' + property
+
+	assert_has_method(obj, get_func, 'should have getter starting with get_ or is_')
+	assert_has_method(obj, set_func)
 	# SHORT CIRCUIT
 	if(_summary.failed > fail_count):
 		return
-	assert_eq(obj.call(get), default, 'It should have the expected default value.')
-	obj.call(set, set_to)
-	assert_eq(obj.call(get), set_to, 'The set value should have been returned.')
+	assert_eq(obj.call(get_func), default, 'It should have the expected default value.')
+	obj.call(set_func, set_to)
+	assert_eq(obj.call(get_func), set_to, 'The set value should have been returned.')
 
 
 # ---------------------------------------------------------------------------
@@ -1055,7 +1062,7 @@ func _validate_assert_setget_called_input(type, name_property
 
 	if null == type or typeof(type) != TYPE_OBJECT or not type.is_class("Resource"):
 		result.is_valid = false
-		result.msg = str("The type parameter should be a ressource, input is ", _str(type))
+		result.msg = str("The type parameter should be a ressource, ", _str(type), ' was passed.')
 		return result
 
 	if null == double(type):
