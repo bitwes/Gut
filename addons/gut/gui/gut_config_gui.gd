@@ -34,7 +34,7 @@ class DirectoryCtrl:
 		add_child(_dialog)
 
 	func get_text():
-		return text
+		return _txt_path.text
 
 	func set_text(t):
 		text = t
@@ -249,8 +249,8 @@ func set_options(options):
 
 
 	_add_title('Hooks')
-	_add_file('pre_run_script', options.pre_run_script, 'pre-run hook', 'This script will be run by GUT before any tests are run.')
-	_add_file('post_run_script', options.post_run_script, 'post-run hook', 'This script will be run by GUT after all tests are run.')
+	_add_file('pre_run_script', options.pre_run_script, 'Pre-Run Hook', 'This script will be run by GUT before any tests are run.')
+	_add_file('post_run_script', options.post_run_script, 'Post-Run Hook', 'This script will be run by GUT after all tests are run.')
 
 
 	_add_title('Misc')

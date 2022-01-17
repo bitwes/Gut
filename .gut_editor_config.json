@@ -13,12 +13,12 @@
  "hide_orphans": false,
  "ignore_pause": true,
  "include_subdirs": false,
- "inner_class": "TestGetCallCount",
+ "inner_class": "TestSpy",
  "junit_xml_file": "",
  "junit_xml_timestamp": false,
  "log_level": 0,
  "opacity": 100,
- "post_run_script": "",
+ "post_run_script": "res://scripts/global.gd",
  "pre_run_script": "",
  "prefix": "test_",
  "selected": "test_spy.gd",
@@ -30,7 +30,7 @@
  "tests": [
 
  ],
- "unit_test_name": null,
+ "unit_test_name": "test_can_add_call_to_method_on_instance",
  "panel_options": {
   "font_name": "CourierPrime",
   "font_size": 30
