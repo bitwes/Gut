@@ -253,7 +253,7 @@ func load_result_output():
 	_ctrls.results.warnings.get_parent().visible = _ctrls.results.warnings.text != '0'
 	
 	_ctrls.results.orphans.text = str(summary_json.orphans)
-	_ctrls.results.orphans.get_parent().visible = _ctrls.results.orphans.text != '0'
+	_ctrls.results.orphans.get_parent().visible = _ctrls.results.orphans.text != '0' and !_gut_config.options.hide_orphans
 
 	if(summary_json.tests == 0):
 		_light_color = Color(1, 0, 0, .75)
