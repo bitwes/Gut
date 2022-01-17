@@ -221,7 +221,7 @@ func set_options(options):
 	_add_boolean("junit_xml_timestamp", options.junit_xml_timestamp, "Include timestamp",
 		"Include a timestamp in the filename so that each run gets its own xml file.")
 
-	_add_title("Output")
+	_add_title("Panel Output")
 	_add_select('output_font_name', options.panel_options.font_name, _avail_fonts, 'Font',
 		"The name of the font to use when running tests and in the output panel to the left.")
 	_add_number('output_font_size', options.panel_options.font_size, 'Font Size', 5, 100,
@@ -239,6 +239,8 @@ func set_options(options):
 		"The opacity of GUT when tests are running.")
 	_add_color('background_color', options.background_color, 'Background Color')
 	_add_color('font_color', options.font_color, 'Font Color')
+	_add_boolean('disable_colors', options.disable_colors, 'Disable Formatting',
+		'Disable formatting and colors used in the Runner.  Does not affect panel output.')
 
 
 	_add_title('Directories')
@@ -289,6 +291,7 @@ func get_options(base_opts):
 	to_return.opacity = _cfg_ctrls.opacity.value
 	to_return.background_color = _cfg_ctrls.background_color.color.to_html()
 	to_return.font_color = _cfg_ctrls.font_color.color.to_html()
+	to_return.disable_colors = _cfg_ctrls.disable_colors.pressed
 
 
 	# Directories

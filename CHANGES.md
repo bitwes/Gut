@@ -31,7 +31,7 @@ func test_foo():
 ```
 * In-Editor GUT Panel improvements
   * Smart buttons to run tests based on cursor location.
-  * Added more settings (hook scripts, font color, background color, panel font settings, directory and file dialog buttons where appropriate, hide orphans)
+  * Added more settings (hook scripts, font color, background color, panel font settings, directory and file dialog buttons where appropriate, hide orphans, disable colors)
   * Display counts for errors, warnings, orphans (only displayed when present).
 * Added some `class_name` clauses to files:
   * __Issue 215__ You can now use `extends GutTest` instead of `extends 'res://addons/gut/test.gd'` when creating test scripts.  That's 45% less text!

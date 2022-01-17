@@ -23,7 +23,7 @@
  "pre_run_script": "",
  "prefix": "test_",
  "selected": "test_totals_testing.gd",
- "should_exit": true,
+ "should_exit": false,
  "should_exit_on_success": false,
  "should_maximize": false,
  "show_help": false,
@@ -31,7 +31,7 @@
  "tests": [
 
  ],
- "unit_test_name": "test_makes_an_info",
+ "unit_test_name": null,
  "panel_options": {
   "font_name": "CourierPrime",
   "font_size": 30
