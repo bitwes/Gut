@@ -1603,6 +1603,12 @@ class TestParameterizedTests:
 		gr.test_with_gut.use_parameters(['a', 'b', 'c', 'd'])
 		assert_eq(gr.test_with_gut.gut.get_parameter_handler(), ph)
 
+	func test_when_parameterized_test_does_not_assert_a_warning_is_generated(p=use_parameters([1, 2, 3])):
+		if(p == 1):
+			gut.p("WATCH THIS, SHOULD GENERATE 2 WARNINGS")
+		if(p == 2):
+			pass_test('passing')
+
 
 class TestMemoryMgmt:
 	extends 'res://addons/gut/test.gd'

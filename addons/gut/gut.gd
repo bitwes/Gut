@@ -671,6 +671,9 @@ func _get_indexes_matching_path(path):
 # ------------------------------------------------------------------------------
 func _run_parameterized_test(test_script, test_name):
 	var script_result = _run_test(test_script, test_name)
+	if(_current_test.assert_count == 0 and !_current_test.pending):
+		_lgr.warn('Test did not assert')
+
 	if(_is_function_state(script_result)):
 		# _run_tests does _wait_for_done so just wait on it to  complete
 		yield(script_result, COMPLETED)
@@ -680,10 +683,15 @@ func _run_parameterized_test(test_script, test_name):
 		_fail(str('Parameterized test ', _current_test.name, ' did not call use_parameters for the default value of the parameter.'))
 	else:
 		while(!_parameter_handler.is_done()):
+			var cur_assert_count = _current_test.assert_count
 			script_result = _run_test(test_script, test_name)
 			if(_is_function_state(script_result)):
 				# _run_tests does _wait_for_done so just wait on it to  complete
 				yield(script_result, COMPLETED)
+
+			if(_current_test.assert_count == cur_assert_count and !_current_test.pending):
+				_lgr.warn('Test did not assert')
+
 
 	_parameter_handler = null
 
