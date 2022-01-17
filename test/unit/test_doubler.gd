@@ -443,10 +443,12 @@ class TestPartialDoubles:
 		assert_eq(inst.return_hello(), null)
 		pause_before_teardown()
 
+
 	func test_init_is_not_stubbed_to_call_super():
 		var inst = doubler.partial_double(DOUBLE_ME_PATH).new()
 		var text = get_instance_source(inst)
 		assert_false(text.match("*__gut_should_call_super('_init'*"), 'should not call super _init')
+
 
 	func test_can_partial_and_normal_double_in_same_test():
 		var double = doubler.double(DOUBLE_ME_PATH).new()
