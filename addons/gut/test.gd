@@ -264,14 +264,6 @@ func _create_obj_from_type(type):
 	return obj
 
 
-func _get_type_from_obj(obj):
-	var type = null
-	if obj.has_method("get_filename"):
-			type = load(obj.get_filename())
-	else:
-			type = obj.get_script()
-	return type
-
 # #######################
 # Virtual Methods
 # #######################
@@ -1181,7 +1173,7 @@ func assert_setget(
 	if instance.is_class("Resource"):
 		resource = instance
 	else:
-		resource = _get_type_from_obj(instance)
+		resource = instance.get_script()
 
 	_assert_setget_called(resource, str(name_property), setter_name, getter_name)
 
@@ -1199,7 +1191,7 @@ func assert_property(instance, name_property, default_value, new_value) -> void:
 		obj = _create_obj_from_type(resource)
 		free_me.append(obj)
 	else:
-		resource = _get_type_from_obj(instance)
+		resource = instance.get_script()
 		obj = instance
 
 	var name_setter = "set_" + str(name_property)
