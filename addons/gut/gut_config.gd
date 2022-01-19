@@ -38,6 +38,10 @@ var default_options = {
 	suffix = '.gd',
 	tests = [],
 	unit_test_name = '',
+
+	use_viewport = false,
+	viewport_size = null,
+	resolution = null
 }
 
 var default_panel_options = {

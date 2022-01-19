@@ -15,6 +15,7 @@ var _cmdln_mode = false
 
 var _resolution = null
 var _viewport_size = null
+var _use_viewport = false
 
 
 onready var _test_parent = $ColorRect/ViewportContainer/Viewport
@@ -22,11 +23,30 @@ onready var _color_rect = $ColorRect
 
 
 func _ready():
+	if(_gut_config == null):
+		_gut_config = GutConfig.new()
+		_gut_config.load_options(RUNNER_JSON_PATH)
+
+	if(_gut_config.options.viewport_size != null):
+		_viewport_size = Vector2(
+			_gut_config.options.viewport_size[0],
+			_gut_config.options.viewport_size[1])
+
+	if(_gut_config.options.resolution != null):
+		_resolution = Vector2(
+			_gut_config.options.resolution[0],
+			_gut_config.options.resolution[1])
+
+	_use_viewport = _gut_config.options.use_viewport
 	_setup_screen()
 	call_deferred('_setup_gut')
 
 
 func _setup_screen():
+	if(!_use_viewport):
+		_color_rect.visible = false
+		return
+
 	_test_parent.size = _test_parent.get_parent().rect_size
 	_color_rect.rect_position = Vector2(0, 0)
 
@@ -35,6 +55,7 @@ func _setup_screen():
 
 	if(_resolution != null):
 		get_tree().root.set_size_override(true, _resolution)
+
 	else:
 		_resolution = get_tree().root.get_size_override()
 
@@ -48,21 +69,21 @@ func _setup_screen():
 
 
 func _draw():
-	var drect = _color_rect.get_rect()
-	drect.position -= Vector2(2, 2)
-	drect.size += Vector2(2, 2)
-	draw_rect(drect, Color(1, 0, 0), false, 3)
+	if(_use_viewport):
+		var drect = _color_rect.get_rect()
+		drect.position -= Vector2(2, 2)
+		drect.size += Vector2(2, 2)
+		draw_rect(drect, Color(1, 0, 0), false, 3)
 
 
 func _setup_gut():
 	if(_gut == null):
 		_gut = Gut.new()
-	_gut.set_add_children_to(_test_parent)
-	add_child(_gut)
 
-	if(_gut_config == null):
-		_gut_config = GutConfig.new()
-		_gut_config.load_options(RUNNER_JSON_PATH)
+	if(_use_viewport):
+		_gut.set_add_children_to(_test_parent)
+
+	add_child(_gut)
 
 	if(!_cmdln_mode):
 		_gut.connect('tests_finished', self, '_on_tests_finished',
@@ -122,3 +143,6 @@ func set_viewport_size(s):
 
 func set_resolution(r):
 	_resolution = r
+
+func set_use_viewport(should):
+	_use_viewport = should

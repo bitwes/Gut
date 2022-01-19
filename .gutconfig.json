@@ -2,13 +2,15 @@
   "dirs":["res://test/unit/", "res://test/integration/"],
   "should_maximize":true,
   "should_exit":true,
-  "ignore_pause":true,
+  "ignore_pause":false,
   "log_level":2,
-  "opacity":50,
+  "opacity":100,
   "double_strategy":"partial",
   "include_subdirs":true,
   "inner_class":"",
   "disable_colors":false,
   "post_run_script":"res://test/post_run_export_json.gd",
 
+  "use_viewport":true,
+  "resolution":[1600, 960]
 }

@@ -266,14 +266,11 @@ func _run_gut():
 			runner.set_gut_config(_gut_config)
 
 			_tester = runner.get_gut()
-			# get_root().add_child(_tester)
 			_tester.connect('tests_finished', self, '_on_tests_finished',
 				[_final_opts.should_exit, _final_opts.should_exit_on_success])
-			# _gut_config.apply_options(_tester)
 
+			# The runner will kick off tests after _ready
 			get_root().add_child(runner)
-			# var run_others = _final_opts.selected == null
-			# _tester.test_scripts(run_others)
 
 
 # exit if option is set.

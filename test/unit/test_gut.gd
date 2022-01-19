@@ -168,6 +168,7 @@ func test_clears_ignored_methods_between_tests():
 	gr.test_gut._tests_like = 'test_assert_eq_number_not_equal'
 	gr.test_gut.test_scripts()
 	assert_eq(gr.test_gut.get_doubler().get_ignored_methods().size(), 0)
+	pause_before_teardown()
 
 
 # ------------------------------
