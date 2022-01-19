@@ -146,6 +146,9 @@ func test_get_set_junit_xml_file():
 
 func test_get_set_junit_xml_timestamp():
 	assert_accessors(gr.test_gut, 'junit_xml_timestamp', false, true)
+
+func test_get_set_add_children_to():
+	assert_accessors(gr.test_gut, 'add_children_to', gr.test_gut, autofree(Node.new()))
 # ------------------------------
 # Doubler
 # ------------------------------

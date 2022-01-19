@@ -41,6 +41,7 @@ extends SceneTree
 
 var Optparse = load('res://addons/gut/optparse.gd')
 var Gut = load('res://addons/gut/gut.gd')
+var GutRunner = load('res://addons/gut/gui/GutRunner.tscn')
 
 # ------------------------------------------------------------------------------
 # Helper class to resolve the various different places where an option can
@@ -260,14 +261,19 @@ func _run_gut():
 			_final_opts = opt_resolver.get_resolved_values();
 			_gut_config.options = _final_opts
 
-			_tester = Gut.new()
-			get_root().add_child(_tester)
+			var runner = GutRunner.instance()
+			runner.set_cmdln_mode(true)
+			runner.set_gut_config(_gut_config)
+
+			_tester = runner.get_gut()
+			# get_root().add_child(_tester)
 			_tester.connect('tests_finished', self, '_on_tests_finished',
 				[_final_opts.should_exit, _final_opts.should_exit_on_success])
-			_gut_config.apply_options(_tester)
+			# _gut_config.apply_options(_tester)
 
-			var run_others = _final_opts.selected == null
-			_tester.test_scripts(run_others)
+			get_root().add_child(runner)
+			# var run_others = _final_opts.selected == null
+			# _tester.test_scripts(run_others)
 
 
 # exit if option is set.

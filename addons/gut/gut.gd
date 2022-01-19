@@ -51,6 +51,7 @@ var _post_run_script = '' setget set_post_run_script, get_post_run_script
 var _color_output = false setget set_color_output, get_color_output
 var _junit_xml_file = '' setget set_junit_xml_file, get_junit_xml_file
 var _junit_xml_timestamp = false setget set_junit_xml_timestamp, get_junit_xml_timestamp
+var _add_children_to = self setget set_add_children_to, get_add_children_to
 # -- End Settings --
 
 
@@ -590,7 +591,7 @@ func _does_class_name_match(the_class_name, script_class_name):
 func _setup_script(test_script):
 	test_script.gut = self
 	test_script.set_logger(_lgr)
-	add_child(test_script)
+	_add_children_to.add_child(test_script)
 	_test_script_objects.append(test_script)
 
 
@@ -916,7 +917,7 @@ func _test_the_scripts(indexes=[]):
 		# don't clean up after themselves.  Might have to consolidate output
 		# into some other structure and kill the script objects with
 		# test_script.free() instead of remove child.
-		remove_child(test_script)
+		_add_children_to.remove_child(test_script)
 
 		_lgr.set_indent_level(0)
 		if(test_script.get_assert_count() > 0):
@@ -1662,3 +1663,13 @@ func get_junit_xml_timestamp():
 # ------------------------------------------------------------------------------
 func set_junit_xml_timestamp(junit_xml_timestamp):
 	_junit_xml_timestamp = junit_xml_timestamp
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_add_children_to():
+	return _add_children_to
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func set_add_children_to(add_children_to):
+	_add_children_to = add_children_to
