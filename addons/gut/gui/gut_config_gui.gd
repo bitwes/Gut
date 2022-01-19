@@ -23,6 +23,7 @@ class DirectoryCtrl:
 	func _on_selected(path):
 		set_text(path)
 
+
 	func _on_dir_button_pressed():
 		_dialog.current_dir = _txt_path.text
 		_dialog.popup_centered()
@@ -194,6 +195,7 @@ func _add_boolean(key, value, disp_text, hint=''):
 
 	var ctrl = _new_row(key, disp_text, value_ctrl, hint)
 
+
 func _add_directory(key, value, disp_text, hint=''):
 	var value_ctrl = DirectoryCtrl.new()
 	value_ctrl.size_flags_horizontal = value_ctrl.SIZE_EXPAND_FILL
@@ -211,12 +213,14 @@ func _add_file(key, value, disp_text, hint=''):
 
 	var ctrl = _new_row(key, disp_text, value_ctrl, hint)
 
+
 func _add_color(key, value, disp_text, hint=''):
 	var value_ctrl = ColorPickerButton.new()
 	value_ctrl.size_flags_horizontal = value_ctrl.SIZE_EXPAND_FILL
 	value_ctrl.color = value
 
 	var ctrl = _new_row(key, disp_text, value_ctrl, hint)
+
 
 func _add_vector2(key, value, disp_text, hint=''):
 	var value_ctrl = Vector2Ctrl.new()
@@ -313,13 +317,6 @@ func set_options(options):
 		"Exit if there are no failures.  Does nothing if 'Exit on Finish' is enabled.")
 
 
-	_add_title("XML Output")
-	_add_value("junit_xml_file", options.junit_xml_file, "Output Path",
-		"Path and filename where GUT should create the JUnit XML file.")
-	_add_boolean("junit_xml_timestamp", options.junit_xml_timestamp, "Include timestamp",
-		"Include a timestamp in the filename so that each run gets its own xml file.")
-
-
 	_add_title("Panel Output")
 	_add_select('output_font_name', options.panel_options.font_name, _avail_fonts, 'Font',
 		"The name of the font to use when running tests and in the output panel to the left.")
@@ -329,15 +326,17 @@ func set_options(options):
 
 	_add_title('Runner Appearance')
 	_add_select('font_name', options.font_name, _avail_fonts, 'Font',
-		"The name of the font to use when running tests and in the output panel to the left.")
+		"The font to use for text output in the Gut Runner.")
 	_add_number('font_size', options.font_size, 'Font Size', 5, 100,
-		"The font size to use when running tests and in the output panel to the left.")
+		"The font size for text output in the Gut Runner.")
+	_add_color('font_color', options.font_color, 'Font Color',
+		"The font color for text output in the Gut Runner.")
+	_add_color('background_color', options.background_color, 'Background Color',
+		"The background color for text output in the Gut Runner.")
 	_add_boolean('should_maximize', options.should_maximize, 'Maximize',
 		"Maximize GUT when tests are being run.")
 	_add_number('opacity', options.opacity, 'Opacity', 0, 100,
 		"The opacity of GUT when tests are running.")
-	_add_color('background_color', options.background_color, 'Background Color')
-	_add_color('font_color', options.font_color, 'Font Color')
 	_add_boolean('disable_colors', options.disable_colors, 'Disable Formatting',
 		'Disable formatting and colors used in the Runner.  Does not affect panel output.')
 
@@ -346,13 +345,22 @@ func set_options(options):
 	_add_boolean("use_viewport", options.use_viewport, "Use Viewport",
 		"Tests are added to the tree in a viewport instead of to the GUT " + \
 		"instance.  This can help with layout while tests are running")
-	_add_boolean("gut_on_top", options.gut_on_top, "GUT on Top")
-	_add_vector2('resolution', options.resolution, 'Resolution')
-	_add_vector2('viewport_size', options.viewport_size, 'Viewport Size')
-	_add_color('viewport_bg_color', options.viewport_bg_color, 'Viewport Bg Color')
+	_add_boolean("gut_on_top", options.gut_on_top, "GUT on Top",
+		"The GUT Runner appears above the viewport.")
+	_add_vector2('resolution', options.resolution, 'Resolution',
+		"The size and resolution of the window when tests are run.  Set both " +
+		"the x and y to non-zero values to override the project setting size.  " +
+		"The viewport retains the size of the project settings window size " +
+		"unless Viewport Size is set.")
+	_add_vector2('viewport_size', options.viewport_size, 'Viewport Size',
+		"Change the size of the viewport.  The viewport defaults to the project settings " +
+		"window size.")
+	_add_color('viewport_bg_color', options.viewport_bg_color, 'Viewport Bg Color',
+		"The color shown behind the viewport.  This color will bleed through " +
+		"transparencies of objects when you use add_child in a test.")
 
 
-	_add_title('Directories')
+	_add_title('Test Directories')
 	_add_boolean('include_subdirs', options.include_subdirs, 'Include Subdirs',
 		"Include subdirectories of the directories configured below.")
 	for i in range(DIRS_TO_LIST):
@@ -362,10 +370,20 @@ func set_options(options):
 
 		_add_directory(str('directory_', i), value, str('Directory ', i))
 
+	_add_title("XML Output")
+	_add_value("junit_xml_file", options.junit_xml_file, "Output Path",
+		"Path and filename where GUT should create a JUnit compliant XML file.  " +
+		"This file will contain the results of the last test run.  To avoid " +
+		"overriding the file use Include Timestamp.")
+	_add_boolean("junit_xml_timestamp", options.junit_xml_timestamp, "Include Timestamp",
+		"Include a timestamp in the filename so that each run gets its own xml file.")
+
 
 	_add_title('Hooks')
-	_add_file('pre_run_script', options.pre_run_script, 'Pre-Run Hook', 'This script will be run by GUT before any tests are run.')
-	_add_file('post_run_script', options.post_run_script, 'Post-Run Hook', 'This script will be run by GUT after all tests are run.')
+	_add_file('pre_run_script', options.pre_run_script, 'Pre-Run Hook',
+		'This script will be run by GUT before any tests are run.')
+	_add_file('post_run_script', options.post_run_script, 'Post-Run Hook',
+		'This script will be run by GUT after all tests are run.')
 
 
 	_add_title('Misc')
@@ -386,10 +404,6 @@ func get_options(base_opts):
 	to_return.should_exit = _cfg_ctrls.should_exit.pressed
 	to_return.should_exit_on_success = _cfg_ctrls.should_exit_on_success.pressed
 
-	# XML Output
-	to_return.junit_xml_file = _cfg_ctrls.junit_xml_file.text
-	to_return.junit_xml_timestamp = _cfg_ctrls.junit_xml_timestamp.pressed
-
 	#Output
 	to_return.panel_options.font_name = _cfg_ctrls.output_font_name.get_item_text(
 		_cfg_ctrls.output_font_name.selected)
@@ -404,7 +418,6 @@ func get_options(base_opts):
 	to_return.background_color = _cfg_ctrls.background_color.color.to_html()
 	to_return.font_color = _cfg_ctrls.font_color.color.to_html()
 	to_return.disable_colors = _cfg_ctrls.disable_colors.pressed
-
 
 	# Test Window
 	to_return.use_viewport = _cfg_ctrls.use_viewport.pressed
@@ -422,6 +435,10 @@ func get_options(base_opts):
 		if(val != '' and val != null):
 			dirs.append(val)
 	to_return.dirs = dirs
+
+	# XML Output
+	to_return.junit_xml_file = _cfg_ctrls.junit_xml_file.text
+	to_return.junit_xml_timestamp = _cfg_ctrls.junit_xml_timestamp.pressed
 
 	# Hooks
 	to_return.pre_run_script = _cfg_ctrls.pre_run_script.text

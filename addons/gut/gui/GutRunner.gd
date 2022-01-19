@@ -43,6 +43,7 @@ func _ready():
 	call_deferred('_setup_gut')
 
 
+
 func _setup_screen():
 	if(!_use_viewport):
 		_color_rect.visible = false
@@ -56,6 +57,10 @@ func _setup_screen():
 		_viewport_size = get_tree().root.get_size_override()
 
 	if(_resolution != null):
+		if(_resolution.x < 200):
+			_resolution.x = 200
+		if(_resolution.y < 200):
+			_resolution.y = 200
 		get_tree().root.set_size_override(false, _resolution)
 		OS.window_size = _resolution
 		get_tree().set_screen_stretch(SceneTree.STRETCH_MODE_DISABLED,  SceneTree.STRETCH_MODE_DISABLED, _resolution)
