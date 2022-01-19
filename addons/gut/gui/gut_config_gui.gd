@@ -158,6 +158,7 @@ func _add_title(text):
 func _add_number(key, value, disp_text, v_min, v_max, hint=''):
 	var value_ctrl = SpinBox.new()
 	value_ctrl.value = value
+	value_ctrl.size_flags_horizontal = value_ctrl.SIZE_EXPAND_FILL
 	value_ctrl.min_value = v_min
 	value_ctrl.max_value = v_max
 	_wire_select_on_focus(value_ctrl.get_line_edit())
@@ -173,6 +174,7 @@ func _add_select(key, value, values, disp_text, hint=''):
 		if(value == values[i]):
 			select_idx = i
 	value_ctrl.selected = select_idx
+	value_ctrl.size_flags_horizontal = value_ctrl.SIZE_EXPAND_FILL
 
 	var ctrl = _new_row(key, disp_text, value_ctrl, hint)
 
@@ -224,24 +226,44 @@ func _add_vector2(key, value, disp_text, hint=''):
 	_wire_select_on_focus(value_ctrl.y_spin.get_line_edit())
 
 	var ctrl = _new_row(key, disp_text, value_ctrl, hint)
+# -----------------------------
+
+
+func _wire_up_controls():
+	_cfg_ctrls.use_viewport.connect('toggled', self, '_on_use_viewport_toggled')
+
+
+func _show_viewport_controls(should):
+	_cfg_ctrls.resolution.disabled = !should
+	_cfg_ctrls.viewport_size.disabled = !should
+	_cfg_ctrls.gut_on_top.get_parent().visible = should
+	_cfg_ctrls.viewport_bg_color.get_parent().visible = should
+
+
 # ------------------
 # Events
 # ------------------
+func _on_use_viewport_toggled(pressed):
+	_show_viewport_controls(pressed)
+
+
 func _on_ctrl_value_changed(which):
 	pass
+
 
 func _wire_select_on_focus(which):
 	which.connect('focus_entered', self, '_on_ctrl_focus_highlight', [which])
 	which.connect('focus_exited', self, '_on_ctrl_focus_unhighlight', [which])
 
+
 func _on_ctrl_focus_highlight(which):
 	if(which.has_method('select_all')):
 		which.call_deferred('select_all')
 
+
 func _on_ctrl_focus_unhighlight(which):
 	if(which.has_method('select')):
 		which.select(0, 0)
-
 
 
 func _on_title_cell_draw(which):
@@ -297,6 +319,7 @@ func set_options(options):
 	_add_boolean("junit_xml_timestamp", options.junit_xml_timestamp, "Include timestamp",
 		"Include a timestamp in the filename so that each run gets its own xml file.")
 
+
 	_add_title("Panel Output")
 	_add_select('output_font_name', options.panel_options.font_name, _avail_fonts, 'Font',
 		"The name of the font to use when running tests and in the output panel to the left.")
@@ -319,12 +342,14 @@ func set_options(options):
 		'Disable formatting and colors used in the Runner.  Does not affect panel output.')
 
 
-	_add_title("Test Window")
+	_add_title("Runner Window")
 	_add_boolean("use_viewport", options.use_viewport, "Use Viewport",
 		"Tests are added to the tree in a viewport instead of to the GUT " + \
 		"instance.  This can help with layout while tests are running")
+	_add_boolean("gut_on_top", options.gut_on_top, "GUT on Top")
 	_add_vector2('resolution', options.resolution, 'Resolution')
 	_add_vector2('viewport_size', options.viewport_size, 'Viewport Size')
+	_add_color('viewport_bg_color', options.viewport_bg_color, 'Viewport Bg Color')
 
 
 	_add_title('Directories')
@@ -347,14 +372,9 @@ func set_options(options):
 	_add_value('prefix', options.prefix, 'Script Prefix',
 		"The filename prefix for all test scripts.")
 
+	_show_viewport_controls(options.use_viewport)
 	_wire_up_controls()
 
-func _wire_up_controls():
-	_cfg_ctrls.use_viewport.connect('toggled', self, '_on_use_viewport_toggled')
-
-func _on_use_viewport_toggled(pressed):
-	_cfg_ctrls.resolution.disabled = !pressed
-	_cfg_ctrls.viewport_size.disabled = !pressed
 
 func get_options(base_opts):
 	var to_return = base_opts.duplicate()
@@ -385,10 +405,13 @@ func get_options(base_opts):
 	to_return.font_color = _cfg_ctrls.font_color.color.to_html()
 	to_return.disable_colors = _cfg_ctrls.disable_colors.pressed
 
+
 	# Test Window
 	to_return.use_viewport = _cfg_ctrls.use_viewport.pressed
 	to_return.resolution = _cfg_ctrls.resolution.value
 	to_return.viewport_size = _cfg_ctrls.viewport_size.value
+	to_return.gut_on_top = _cfg_ctrls.gut_on_top.pressed
+	to_return.viewport_bg_color = _cfg_ctrls.viewport_bg_color.color.to_html()
 
 	# Directories
 	to_return.include_subdirs = _cfg_ctrls.include_subdirs.pressed

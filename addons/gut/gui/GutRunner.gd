@@ -38,6 +38,7 @@ func _ready():
 
 	_use_viewport = _gut_config.options.use_viewport
 
+	_color_rect.connect('draw', self, '_on_color_rect_draw')
 	_setup_screen()
 	call_deferred('_setup_gut')
 
@@ -49,6 +50,7 @@ func _setup_screen():
 
 	_test_parent.size = _test_parent.get_parent().rect_size
 	_color_rect.rect_position = Vector2(0, 0)
+	_color_rect.color = _gut_config.options.viewport_bg_color
 
 	if(_viewport_size == null):
 		_viewport_size = get_tree().root.get_size_override()
@@ -69,15 +71,16 @@ func _setup_screen():
 		_color_rect.rect_position.x = _resolution.x - _viewport_size.x - 5
 		_color_rect.rect_position.y += 5
 		_should_draw_outline = true
-		update()
+		_color_rect.update()
 
 
-func _draw():
+func _on_color_rect_draw():
 	if(_should_draw_outline):
+
 		var drect = _color_rect.get_rect()
-		drect.position -= Vector2(2, 2)
-		drect.size += Vector2(2, 2)
-		draw_rect(drect, Color(1, 0, 0), false, 3)
+		drect.position = Vector2(-2, -2)
+		drect.size += Vector2(4, 4)
+		_color_rect.draw_rect(drect, Color(1, 0, 0), false, 3)
 
 
 func _setup_gut():
@@ -88,6 +91,8 @@ func _setup_gut():
 		_gut.set_add_children_to(_test_parent)
 
 	add_child(_gut)
+	if(!_gut_config.options.gut_on_top):
+		move_child(_gut, 0)
 
 	if(!_cmdln_mode):
 		_gut.connect('tests_finished', self, '_on_tests_finished',
