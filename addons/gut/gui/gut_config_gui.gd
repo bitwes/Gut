@@ -40,6 +40,9 @@ class DirectoryCtrl:
 		text = t
 		_txt_path.text = text
 
+	func get_line_edit():
+		return _txt_path
+
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 class FileCtrl:
@@ -47,6 +50,50 @@ class FileCtrl:
 
 	func _init():
 		_dialog.mode = _dialog.MODE_OPEN_FILE
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+class Vector2Ctrl:
+	extends VBoxContainer
+
+	var value = Vector2(-1, -1) setget set_value, get_value
+	var disabled = false setget set_disabled, get_disabled
+	var x_spin = SpinBox.new()
+	var y_spin = SpinBox.new()
+
+	func _init():
+		add_child(_make_one('x:  ', x_spin))
+		add_child(_make_one('y:  ', y_spin))
+
+	func _make_one(txt, spinner):
+		var hbox = HBoxContainer.new()
+		var lbl = Label.new()
+		lbl.text = txt
+		hbox.add_child(lbl)
+		hbox.add_child(spinner)
+		spinner.min_value = -1
+		spinner.max_value = 10000
+		spinner.size_flags_horizontal = spinner.SIZE_EXPAND_FILL
+		return hbox
+
+	func set_value(v):
+		if(v != null):
+			x_spin.value = v[0]
+			y_spin.value = v[1]
+
+	# Returns array instead of vector2 b/c that is what is stored in
+	# in the dictionary and what is expected everywhere else.
+	func get_value():
+		return [x_spin.value, y_spin.value]
+
+	func set_disabled(should):
+		get_parent().visible = !should
+		x_spin.visible = !should
+		y_spin.visible = !should
+
+	func get_disabled():
+		pass
+
 
 
 # ------------------------------------------------------------------------------
@@ -90,6 +137,10 @@ func _new_row(key, disp_text, value_ctrl, hint):
 	_cfg_ctrls[key] = value_ctrl
 	ctrl.add_child(value_ctrl)
 
+	var rpad = CenterContainer.new()
+	rpad.rect_min_size.x = 5
+	ctrl.add_child(rpad)
+
 	return ctrl
 
 
@@ -109,6 +160,7 @@ func _add_number(key, value, disp_text, v_min, v_max, hint=''):
 	value_ctrl.value = value
 	value_ctrl.min_value = v_min
 	value_ctrl.max_value = v_max
+	_wire_select_on_focus(value_ctrl.get_line_edit())
 
 	var ctrl = _new_row(key, disp_text, value_ctrl, hint)
 
@@ -129,6 +181,7 @@ func _add_value(key, value, disp_text, hint=''):
 	var value_ctrl = LineEdit.new()
 	value_ctrl.size_flags_horizontal = value_ctrl.SIZE_EXPAND_FILL
 	value_ctrl.text = value
+	_wire_select_on_focus(value_ctrl)
 
 	var ctrl = _new_row(key, disp_text, value_ctrl, hint)
 
@@ -143,6 +196,7 @@ func _add_directory(key, value, disp_text, hint=''):
 	var value_ctrl = DirectoryCtrl.new()
 	value_ctrl.size_flags_horizontal = value_ctrl.SIZE_EXPAND_FILL
 	value_ctrl.text = value
+	_wire_select_on_focus(value_ctrl.get_line_edit())
 
 	var ctrl = _new_row(key, disp_text, value_ctrl, hint)
 
@@ -151,9 +205,9 @@ func _add_file(key, value, disp_text, hint=''):
 	var value_ctrl = FileCtrl.new()
 	value_ctrl.size_flags_horizontal = value_ctrl.SIZE_EXPAND_FILL
 	value_ctrl.text = value
+	_wire_select_on_focus(value_ctrl.get_line_edit())
 
 	var ctrl = _new_row(key, disp_text, value_ctrl, hint)
-
 
 func _add_color(key, value, disp_text, hint=''):
 	var value_ctrl = ColorPickerButton.new()
@@ -161,11 +215,33 @@ func _add_color(key, value, disp_text, hint=''):
 	value_ctrl.color = value
 
 	var ctrl = _new_row(key, disp_text, value_ctrl, hint)
+
+func _add_vector2(key, value, disp_text, hint=''):
+	var value_ctrl = Vector2Ctrl.new()
+	value_ctrl.size_flags_horizontal = value_ctrl.SIZE_EXPAND_FILL
+	value_ctrl.value = value
+	_wire_select_on_focus(value_ctrl.x_spin.get_line_edit())
+	_wire_select_on_focus(value_ctrl.y_spin.get_line_edit())
+
+	var ctrl = _new_row(key, disp_text, value_ctrl, hint)
 # ------------------
 # Events
 # ------------------
 func _on_ctrl_value_changed(which):
 	pass
+
+func _wire_select_on_focus(which):
+	which.connect('focus_entered', self, '_on_ctrl_focus_highlight', [which])
+	which.connect('focus_exited', self, '_on_ctrl_focus_unhighlight', [which])
+
+func _on_ctrl_focus_highlight(which):
+	if(which.has_method('select_all')):
+		which.call_deferred('select_all')
+
+func _on_ctrl_focus_unhighlight(which):
+	if(which.has_method('select')):
+		which.select(0, 0)
+
 
 
 func _on_title_cell_draw(which):
@@ -243,6 +319,14 @@ func set_options(options):
 		'Disable formatting and colors used in the Runner.  Does not affect panel output.')
 
 
+	_add_title("Test Window")
+	_add_boolean("use_viewport", options.use_viewport, "Use Viewport",
+		"Tests are added to the tree in a viewport instead of to the GUT " + \
+		"instance.  This can help with layout while tests are running")
+	_add_vector2('resolution', options.resolution, 'Resolution')
+	_add_vector2('viewport_size', options.viewport_size, 'Viewport Size')
+
+
 	_add_title('Directories')
 	_add_boolean('include_subdirs', options.include_subdirs, 'Include Subdirs',
 		"Include subdirectories of the directories configured below.")
@@ -263,6 +347,14 @@ func set_options(options):
 	_add_value('prefix', options.prefix, 'Script Prefix',
 		"The filename prefix for all test scripts.")
 
+	_wire_up_controls()
+
+func _wire_up_controls():
+	_cfg_ctrls.use_viewport.connect('toggled', self, '_on_use_viewport_toggled')
+
+func _on_use_viewport_toggled(pressed):
+	_cfg_ctrls.resolution.disabled = !pressed
+	_cfg_ctrls.viewport_size.disabled = !pressed
 
 func get_options(base_opts):
 	var to_return = base_opts.duplicate()
@@ -293,6 +385,10 @@ func get_options(base_opts):
 	to_return.font_color = _cfg_ctrls.font_color.color.to_html()
 	to_return.disable_colors = _cfg_ctrls.disable_colors.pressed
 
+	# Test Window
+	to_return.use_viewport = _cfg_ctrls.use_viewport.pressed
+	to_return.resolution = _cfg_ctrls.resolution.value
+	to_return.viewport_size = _cfg_ctrls.viewport_size.value
 
 	# Directories
 	to_return.include_subdirs = _cfg_ctrls.include_subdirs.pressed

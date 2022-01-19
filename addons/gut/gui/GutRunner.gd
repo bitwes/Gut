@@ -16,6 +16,7 @@ var _cmdln_mode = false
 var _resolution = null
 var _viewport_size = null
 var _use_viewport = false
+var _should_draw_outline = false
 
 
 onready var _test_parent = $ColorRect/ViewportContainer/Viewport
@@ -27,17 +28,16 @@ func _ready():
 		_gut_config = GutConfig.new()
 		_gut_config.load_options(RUNNER_JSON_PATH)
 
-	if(_gut_config.options.viewport_size != null):
-		_viewport_size = Vector2(
-			_gut_config.options.viewport_size[0],
-			_gut_config.options.viewport_size[1])
+	var viewport_option = _gut_config.options.viewport_size
+	if(viewport_option != null and viewport_option[0] > 2 and viewport_option[1] > 2):
+		_viewport_size = Vector2(viewport_option[0], viewport_option[1])
 
-	if(_gut_config.options.resolution != null):
-		_resolution = Vector2(
-			_gut_config.options.resolution[0],
-			_gut_config.options.resolution[1])
+	var res_option = _gut_config.options.resolution
+	if(res_option != null and res_option[0] > 2 and res_option[1] > 2):
+		_resolution = Vector2(res_option[0], res_option[1])
 
 	_use_viewport = _gut_config.options.use_viewport
+
 	_setup_screen()
 	call_deferred('_setup_gut')
 
@@ -54,8 +54,9 @@ func _setup_screen():
 		_viewport_size = get_tree().root.get_size_override()
 
 	if(_resolution != null):
-		get_tree().root.set_size_override(true, _resolution)
-
+		get_tree().root.set_size_override(false, _resolution)
+		OS.window_size = _resolution
+		get_tree().set_screen_stretch(SceneTree.STRETCH_MODE_DISABLED,  SceneTree.STRETCH_MODE_DISABLED, _resolution)
 	else:
 		_resolution = get_tree().root.get_size_override()
 
@@ -63,13 +64,16 @@ func _setup_screen():
 		_color_rect.rect_size = _viewport_size
 		_test_parent.size = _viewport_size
 
+
 	if(_viewport_size.x < _resolution.x):
 		_color_rect.rect_position.x = _resolution.x - _viewport_size.x - 5
 		_color_rect.rect_position.y += 5
+		_should_draw_outline = true
+		update()
 
 
 func _draw():
-	if(_use_viewport):
+	if(_should_draw_outline):
 		var drect = _color_rect.get_rect()
 		drect.position -= Vector2(2, 2)
 		drect.size += Vector2(2, 2)

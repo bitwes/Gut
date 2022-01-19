@@ -22,7 +22,7 @@
  "post_run_script": "",
  "pre_run_script": "",
  "prefix": "test_",
- "selected": "test_totals_testing.gd",
+ "selected": "test_gut.gd",
  "should_exit": false,
  "should_exit_on_success": false,
  "should_maximize": false,
@@ -31,7 +31,16 @@
  "tests": [
 
  ],
- "unit_test_name": null,
+ "unit_test_name": "test_when_test_overrides_strategy_it_is_reset_after_test_finishes",
+ "use_viewport": true,
+ "viewport_size": [
+  0,
+  0
+ ],
+ "resolution": [
+  800,
+  480
+ ],
  "panel_options": {
   "font_name": "CourierPrime",
   "font_size": 30
