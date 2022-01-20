@@ -40,7 +40,8 @@ func _ready():
 
 	_color_rect.connect('draw', self, '_on_color_rect_draw')
 	_setup_screen()
-	call_deferred('_setup_gut')
+	if(!_cmdln_mode):
+		call_deferred('run_tests')
 
 
 
@@ -88,7 +89,7 @@ func _on_color_rect_draw():
 		_color_rect.draw_rect(drect, Color(1, 0, 0), false, 3)
 
 
-func _setup_gut():
+func run_tests():
 	if(_gut == null):
 		_gut = Gut.new()
 

@@ -271,6 +271,7 @@ func _run_gut():
 
 			# The runner will kick off tests after _ready
 			get_root().add_child(runner)
+			runner.run_tests()
 
 
 # exit if option is set.
