@@ -11,6 +11,9 @@ const RESULT_JSON = 'user://.gut_editor.json'
 var _gut_config = null
 var _gut = null;
 var _wrote_results = false
+# Flag for when this is being used at the command line.  Otherwise it is
+# assumed this is being used by the panel and being launched with
+# play_custom_scene
 var _cmdln_mode = false
 
 var _resolution = null
@@ -40,6 +43,10 @@ func _ready():
 
 	_color_rect.connect('draw', self, '_on_color_rect_draw')
 	_setup_screen()
+
+	# The command line will call run_tests on its own.  When used from the panel
+	# we have to kick off the tests ourselves b/c there's no way I know of to
+	# interact with the scene that was run via play_custom_scene.
 	if(!_cmdln_mode):
 		call_deferred('run_tests')
 

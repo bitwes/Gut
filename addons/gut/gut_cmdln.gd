@@ -269,7 +269,6 @@ func _run_gut():
 			_tester.connect('tests_finished', self, '_on_tests_finished',
 				[_final_opts.should_exit, _final_opts.should_exit_on_success])
 
-			# The runner will kick off tests after _ready
 			get_root().add_child(runner)
 			runner.run_tests()
 
