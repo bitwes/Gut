@@ -278,8 +278,8 @@ func set_current_script(script):
 func set_interface(value):
 	_interface = value
 	_interface.get_script_editor().connect("editor_script_changed", self, '_on_editor_script_changed')
-	set_current_script(_interface.get_script_editor().get_current_script())
 	_ctrls.run_at_cursor.set_script_editor(_interface.get_script_editor())
+	set_current_script(_interface.get_script_editor().get_current_script())
 
 
 func set_plugin(value):

@@ -44,7 +44,6 @@ var default_options = {
 	viewport_bg_color = Color(1, 1, 1, 0).to_html(),
 	resolution = null,
 	gut_on_top = true,
-
 }
 
 var default_panel_options = {
