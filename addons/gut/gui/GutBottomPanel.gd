@@ -239,19 +239,19 @@ func load_result_output():
 	var summary_json = results.result['test_scripts']['props']
 	_ctrls.results.passing.text = str(summary_json.passing)
 	_ctrls.results.passing.get_parent().visible = true
-	
+
 	_ctrls.results.failing.text = str(summary_json.failures)
 	_ctrls.results.failing.get_parent().visible = true
-	
+
 	_ctrls.results.pending.text = str(summary_json.pending)
 	_ctrls.results.pending.get_parent().visible = _ctrls.results.pending.text != '0'
-	
+
 	_ctrls.results.errors.text = str(summary_json.errors)
 	_ctrls.results.errors.get_parent().visible = _ctrls.results.errors.text != '0'
-	
+
 	_ctrls.results.warnings.text = str(summary_json.warnings)
 	_ctrls.results.warnings.get_parent().visible = _ctrls.results.warnings.text != '0'
-	
+
 	_ctrls.results.orphans.text = str(summary_json.orphans)
 	_ctrls.results.orphans.get_parent().visible = _ctrls.results.orphans.text != '0' and !_gut_config.options.hide_orphans
 
@@ -278,8 +278,8 @@ func set_current_script(script):
 func set_interface(value):
 	_interface = value
 	_interface.get_script_editor().connect("editor_script_changed", self, '_on_editor_script_changed')
-	set_current_script(_interface.get_script_editor().get_current_script())
 	_ctrls.run_at_cursor.set_script_editor(_interface.get_script_editor())
+	set_current_script(_interface.get_script_editor().get_current_script())
 
 
 func set_plugin(value):

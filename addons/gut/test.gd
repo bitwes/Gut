@@ -42,7 +42,7 @@ extends Node
 # Helper class to hold info for objects to double.  This extracts info and has
 # some convenience methods.  This is key in being able to make the "smart double"
 # method which makes doubling much easier for the user.
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 class DoubleInfo:
 	var path
 	var subpath

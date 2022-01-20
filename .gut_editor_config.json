@@ -22,8 +22,8 @@
  "post_run_script": "",
  "pre_run_script": "",
  "prefix": "test_",
- "selected": "test_totals_testing.gd",
- "should_exit": false,
+ "selected": "test_gut.gd",
+ "should_exit": true,
  "should_exit_on_success": false,
  "should_maximize": false,
  "show_help": false,
@@ -32,6 +32,17 @@
 
  ],
  "unit_test_name": null,
+ "use_viewport": true,
+ "viewport_size": [
+  0,
+  0
+ ],
+ "viewport_bg_color": "00ffffff",
+ "resolution": [
+  800,
+  500
+ ],
+ "gut_on_top": true,
  "panel_options": {
   "font_name": "CourierPrime",
   "font_size": 30

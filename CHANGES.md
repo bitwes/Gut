@@ -29,6 +29,7 @@ func test_foo():
   player.local_input_ref = dbl_input
   stub(dbl_input, 'is_action_just_pressed').to_return(true).when_passed('jump')
 ```
+* __Issue 121__ Introduced new settings which make GUT use a viewport to add child objects to instead of itself.  There is a "Use Viewport" setting added to the GUT Panel and some related options.  These options can also be set in a `gutconfig` file but do not have explicit command line options.
 * In-Editor GUT Panel improvements
   * Smart buttons to run tests based on cursor location.
   * Added more settings (hook scripts, font color, background color, panel font settings, directory and file dialog buttons where appropriate, hide orphans, disable colors)
@@ -37,6 +38,7 @@ func test_foo():
   * __Issue 215__ You can now use `extends GutTest` instead of `extends 'res://addons/gut/test.gd'` when creating test scripts.  That's 45% less text!
   * When making a hook script, you can use `extends GutHookScript` instead of using the path.
 * __Issue 310__ The summary output now lists the number of passing/failing tests as well as passing/failing assert counts.
+
 
 ## Bug Fixes
 * __Issue 283__ The Gut Scene now has a theme with a font which prevents higher level font changes from applying to the Gut Scene.

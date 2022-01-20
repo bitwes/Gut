@@ -38,6 +38,12 @@ var default_options = {
 	suffix = '.gd',
 	tests = [],
 	unit_test_name = '',
+
+	use_viewport = false,
+	viewport_size = null,
+	viewport_bg_color = Color(1, 1, 1, 0).to_html(),
+	resolution = null,
+	gut_on_top = true,
 }
 
 var default_panel_options = {
