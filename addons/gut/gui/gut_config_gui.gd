@@ -106,8 +106,6 @@ var _cfg_ctrls = {}
 var _avail_fonts = ['AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default']
 
 
-signal settings_changed
-
 func _init(cont):
 	_base_container = cont
 
@@ -164,7 +162,7 @@ func _add_number(key, value, disp_text, v_min, v_max, hint=''):
 	value_ctrl.max_value = v_max
 	_wire_select_on_focus(value_ctrl.get_line_edit())
 
-	var ctrl = _new_row(key, disp_text, value_ctrl, hint)
+	_new_row(key, disp_text, value_ctrl, hint)
 
 
 func _add_select(key, value, values, disp_text, hint=''):
@@ -177,7 +175,7 @@ func _add_select(key, value, values, disp_text, hint=''):
 	value_ctrl.selected = select_idx
 	value_ctrl.size_flags_horizontal = value_ctrl.SIZE_EXPAND_FILL
 
-	var ctrl = _new_row(key, disp_text, value_ctrl, hint)
+	_new_row(key, disp_text, value_ctrl, hint)
 
 
 func _add_value(key, value, disp_text, hint=''):
@@ -186,14 +184,14 @@ func _add_value(key, value, disp_text, hint=''):
 	value_ctrl.text = value
 	_wire_select_on_focus(value_ctrl)
 
-	var ctrl = _new_row(key, disp_text, value_ctrl, hint)
+	_new_row(key, disp_text, value_ctrl, hint)
 
 
 func _add_boolean(key, value, disp_text, hint=''):
 	var value_ctrl = CheckBox.new()
 	value_ctrl.pressed = value
 
-	var ctrl = _new_row(key, disp_text, value_ctrl, hint)
+	_new_row(key, disp_text, value_ctrl, hint)
 
 
 func _add_directory(key, value, disp_text, hint=''):
@@ -202,7 +200,7 @@ func _add_directory(key, value, disp_text, hint=''):
 	value_ctrl.text = value
 	_wire_select_on_focus(value_ctrl.get_line_edit())
 
-	var ctrl = _new_row(key, disp_text, value_ctrl, hint)
+	_new_row(key, disp_text, value_ctrl, hint)
 
 
 func _add_file(key, value, disp_text, hint=''):
@@ -211,7 +209,7 @@ func _add_file(key, value, disp_text, hint=''):
 	value_ctrl.text = value
 	_wire_select_on_focus(value_ctrl.get_line_edit())
 
-	var ctrl = _new_row(key, disp_text, value_ctrl, hint)
+	_new_row(key, disp_text, value_ctrl, hint)
 
 
 func _add_color(key, value, disp_text, hint=''):
@@ -219,7 +217,7 @@ func _add_color(key, value, disp_text, hint=''):
 	value_ctrl.size_flags_horizontal = value_ctrl.SIZE_EXPAND_FILL
 	value_ctrl.color = value
 
-	var ctrl = _new_row(key, disp_text, value_ctrl, hint)
+	_new_row(key, disp_text, value_ctrl, hint)
 
 
 func _add_vector2(key, value, disp_text, hint=''):
@@ -229,7 +227,7 @@ func _add_vector2(key, value, disp_text, hint=''):
 	_wire_select_on_focus(value_ctrl.x_spin.get_line_edit())
 	_wire_select_on_focus(value_ctrl.y_spin.get_line_edit())
 
-	var ctrl = _new_row(key, disp_text, value_ctrl, hint)
+	_new_row(key, disp_text, value_ctrl, hint)
 # -----------------------------
 
 
@@ -249,10 +247,6 @@ func _show_viewport_controls(should):
 # ------------------
 func _on_use_viewport_toggled(pressed):
 	_show_viewport_controls(pressed)
-
-
-func _on_ctrl_value_changed(which):
-	pass
 
 
 func _wire_select_on_focus(which):
@@ -341,7 +335,7 @@ func set_options(options):
 		'Disable formatting and colors used in the Runner.  Does not affect panel output.')
 
 
-	_add_title("Runner Window")
+	_add_title("Window")
 	_add_boolean("use_viewport", options.use_viewport, "Use Viewport",
 		"Tests are added to the tree in a viewport instead of to the GUT " + \
 		"instance.  This can help with layout while tests are running")

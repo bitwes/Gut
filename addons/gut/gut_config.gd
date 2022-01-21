@@ -39,7 +39,7 @@ var default_options = {
 	tests = [],
 	unit_test_name = '',
 
-	use_viewport = false,
+	use_viewport = true,
 	viewport_size = null,
 	viewport_bg_color = Color(1, 1, 1, 0).to_html(),
 	resolution = null,
