@@ -57,7 +57,10 @@ class ScriptEditorControlRef:
 
 
 	func is_visible():
-		return _script_editor.get_ref().visible
+		var to_return = false
+		if(_script_editor.get_ref()):
+			to_return = _script_editor.get_ref().visible
+		return to_return
 
 # ##############################################################################
 #

@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-# Next Release
+# 7.3.0
 
 ## Features
 * Added `InputFactory` static class to `addons/gut/test.gd` to simplify creating `InputEvent*` events for use in tests.  See [Input Factory](https://github.com/bitwes/Gut/wiki/Input-Factory).
