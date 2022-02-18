@@ -173,10 +173,11 @@ func _parse_script(test_script):
 
 	var loaded = load(test_script.path)
 	if(_does_inherit_from_test(loaded)):
+		scripts.append(test_script)
 		_populate_tests(test_script)
 		scripts_found.append(test_script.path)
-		inner_classes = _get_inner_test_class_names(loaded)
 
+	inner_classes = _get_inner_test_class_names(loaded)
 	for i in range(inner_classes.size()):
 		var loaded_inner = loaded.get(inner_classes[i])
 		if(_does_inherit_from_test(loaded_inner)):
@@ -205,7 +206,6 @@ func add_script(path):
 
 	var ts = TestScript.new(_utils, _lgr)
 	ts.path = path
-	scripts.append(ts)
 	return _parse_script(ts)
 
 func clear():
