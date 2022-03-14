@@ -2,34 +2,40 @@ extends Panel
 
 onready var _script_list = $ScriptsList
 onready var _nav = {
-	prev = $Navigation/Previous,
-	next = $Navigation/Next,
-	run = $Navigation/Run,
-	current_script = $Navigation/CurrentScript,
-	run_single = $Navigation/RunSingleScript
+	container = $VBox/BottomPanel/Navigation,
+	prev = $VBox/BottomPanel/Navigation/Previous,
+	next = $VBox/BottomPanel/Navigation/Next,
+	run =  $VBox/BottomPanel/Navigation/Run,
+	current_script = $VBox/BottomPanel/Navigation/CurrentScript,
+	run_single = $VBox/BottomPanel/Navigation/RunSingleScript
 }
 onready var _progress = {
-	script = $ScriptProgress,
-	script_xy = $ScriptProgress/xy,
-	test = $TestProgress,
-	test_xy = $TestProgress/xy
+	script = $VBox/BottomPanel/ScriptProgress,
+	script_xy = $VBox/BottomPanel/ScriptProgress/xy,
+	test = $VBox/BottomPanel/TestProgress,
+	test_xy = $VBox/BottomPanel/TestProgress/xy
 }
 onready var _summary = {
-	failing = $Summary/Failing,
-	passing = $Summary/Passing,
+	control = $VBox/TitleBar/Summary,
+	failing = $VBox/TitleBar/Summary/Failing,
+	passing = $VBox/TitleBar/Summary/Passing,
+	asserts = $VBox/TitleBar/Summary/AssertCount,
 	fail_count = 0,
 	pass_count = 0
 }
 
 onready var _extras = $ExtraOptions
 onready var _ignore_pauses = $ExtraOptions/IgnorePause
-onready var _continue_button = $Continue/Continue
-onready var _text_box = $TextDisplay/RichTextLabel
+onready var _continue_button = $VBox/BottomPanel/Continue/Continue
+onready var _text_box = $VBox/TextDisplay/RichTextLabel
+onready var _text_box_container = $VBox/TextDisplay
+onready var _log_level_slider = $VBox/BottomPanel/LogLevelSlider
+onready var _resize_handle = $ResizeHandle
 
 onready var _titlebar = {
-	bar = $TitleBar,
-	time = $TitleBar/Time,
-	label = $TitleBar/Title
+	bar = $VBox/TitleBar,
+	time = $VBox/TitleBar/Time,
+	label = $VBox/TitleBar/Title
 }
 
 onready var _user_files = $UserFileViewer
@@ -47,6 +53,11 @@ var _time = 0.0
 const DEFAULT_TITLE = 'Gut: The Godot Unit Testing tool.'
 var _pre_maximize_rect = null
 var _font_size = 20
+
+var min_sizes = {
+	compact = Vector2(740, 135),
+	full = Vector2(740, 300)
+}
 
 signal end_pause
 signal ignore_pause
@@ -89,14 +100,15 @@ func _draw(): # needs get_size()
 	var grab_margin = 3
 	var line_space = 3
 	var grab_line_color = Color(.4, .4, .4)
-	for i in range(1, 10):
-		var x = rect_size - Vector2(i * line_space, grab_margin)
-		var y = rect_size - Vector2(grab_margin, i * line_space)
-		draw_line(x, y, grab_line_color, 1, true)
+	if(_resize_handle.visible):
+		for i in range(1, 10):
+			var x = rect_size - Vector2(i * line_space, grab_margin)
+			var y = rect_size - Vector2(grab_margin, i * line_space)
+			draw_line(x, y, grab_line_color, 1, true)
 
 func _on_Maximize_draw():
 	# draw the maximize square thing.
-	var btn = $TitleBar/Maximize
+	var btn = $VBox/TitleBar/Maximize
 	btn.set_text('')
 	var w = btn.get_size().x
 	var h = btn.get_size().y
@@ -104,7 +116,7 @@ func _on_Maximize_draw():
 	btn.draw_rect(Rect2(2, 4, w - 4, h - 6), Color(1,1,1,1))
 
 func _on_ShowExtras_draw():
-	var btn = $Continue/ShowExtras
+	var btn = $VBox/BottomPanel/Continue/ShowExtras
 	btn.set_text('')
 	var start_x = 20
 	var start_y = 15
@@ -132,7 +144,7 @@ func _on_Next_pressed():
 	_select_script(get_selected_index() + 1)
 
 func _on_LogLevelSlider_value_changed(_value):
-	emit_signal('log_level_changed', $LogLevelSlider.value)
+	emit_signal('log_level_changed', _log_level_slider.value)
 
 func _on_Continue_pressed():
 	_continue_button.disabled = true
@@ -221,7 +233,7 @@ func _run_mode(is_running=true):
 	_is_running = is_running
 
 	_hide_scripts()
-	var ctrls = $Navigation.get_children()
+	var ctrls = _nav.container.get_children()
 	for i in range(ctrls.size()):
 		ctrls[i].disabled = is_running
 
@@ -230,7 +242,7 @@ func _select_script(index):
 	var max_len = 50
 	if(text.length() > max_len):
 		text = '...' + text.right(text.length() - (max_len - 5))
-	$Navigation/CurrentScript.set_text(text)
+	_nav.current_script.set_text(text)
 	_script_list.select(index)
 	_update_controls()
 
@@ -265,8 +277,8 @@ func _update_summary():
 		return
 
 	var total = _summary.fail_count + _summary.pass_count
-	$Summary.visible = !total == 0
-	$Summary/AssertCount.text = str('Failures ', _summary.fail_count, '/', total)
+	_summary.control.visible = !total == 0
+	_summary.asserts.text = str('Failures ', _summary.fail_count, '/', total)
 # ####################
 # Public
 # ####################
@@ -287,13 +299,15 @@ func get_selected_index():
 	return _script_list.get_selected_items()[0]
 
 func get_log_level():
-	return $LogLevelSlider.value
+	return _log_level_slider.value
 
 func set_log_level(value):
 	var new_value = value
 	if(new_value == null):
 		new_value = 0
-	$LogLevelSlider.value = new_value
+	# !! For some reason, _log_level_slider was null, but this wasn't, so
+	# here's another hardcoded node path.
+	$VBox/BottomPanel/LogLevelSlider.value = new_value
 
 func set_ignore_pause(should):
 	_ignore_pauses.pressed = should
@@ -304,7 +318,7 @@ func get_ignore_pause():
 func get_text_box():
 	# due to some timing issue, this cannot return _text_box but can return
 	# this.
-	return $TextDisplay/RichTextLabel
+	return $VBox/TextDisplay/RichTextLabel
 
 func end_run():
 	_run_mode(false)
@@ -339,9 +353,9 @@ func pause():
 
 func set_title(title=null):
 	if(title == null):
-		$TitleBar/Title.set_text(DEFAULT_TITLE)
+		_titlebar.label.set_text(DEFAULT_TITLE)
 	else:
-		$TitleBar/Title.set_text(title)
+		_titlebar.label.set_text(title)
 
 func add_passing(amount=1):
 	if(!_summary):
@@ -423,10 +437,29 @@ func set_default_font_color(color):
 	_text_box.set('custom_colors/default_color', color)
 
 func set_background_color(color):
-	$TextDisplay.color = color
+	_text_box_container.color = color
 
 func _on_UserFiles_pressed():
 	_user_files.show_open()
 
 func get_waiting_label():
-	return $TextDisplay/WaitingLabel
+	return $VBox/TextDisplay/WaitingLabel
+
+var _compact_mode = false
+func compact_mode(should):
+	_compact_mode = should
+	_text_box_container.visible = !should
+	_nav.container.visible = !should
+	_log_level_slider.visible = !should
+	$VBox/BottomPanel/Continue/ShowExtras.visible = !should
+	_resize_handle.visible = !should
+	if(should):
+		rect_min_size = min_sizes.compact
+		rect_size = rect_min_size
+	else:
+		rect_min_size = min_sizes.full
+
+
+func _on_BtnCompact_pressed():
+	compact_mode(!_compact_mode)
+	

@@ -14,7 +14,7 @@
  "hide_orphans": false,
  "ignore_pause": true,
  "include_subdirs": false,
- "inner_class": null,
+ "inner_class": "TestGetCallCount",
  "junit_xml_file": "",
  "junit_xml_timestamp": false,
  "log_level": 3,
@@ -22,8 +22,8 @@
  "post_run_script": "",
  "pre_run_script": "",
  "prefix": "test_",
- "selected": "test_gut.gd",
- "should_exit": true,
+ "selected": "test_spy.gd",
+ "should_exit": false,
  "should_exit_on_success": false,
  "should_maximize": false,
  "show_help": false,
@@ -31,7 +31,7 @@
  "tests": [
 
  ],
- "unit_test_name": null,
+ "unit_test_name": "test_when_no_calls_found_call_count_returns_0",
  "use_viewport": true,
  "viewport_size": [
   0,
