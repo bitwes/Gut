@@ -244,6 +244,9 @@ func _on_Minimize_draw():
 	var h = btn.get_size().y
 	btn.draw_rect(Rect2(0, h-3, w, 3), Color(0, 0, 0, 1))
 
+func _on_UserFiles_pressed():
+	_user_files.show_open()
+
 
 # ####################
 # Private
@@ -401,7 +404,7 @@ func clear_summary():
 
 func maximize():
 	if(is_inside_tree()):
-		var vp_size_offset = get_viewport().size
+		var vp_size_offset = get_tree().root.get_viewport().get_visible_rect().size
 		rect_size = vp_size_offset / get_scale()
 		set_position(Vector2(0, 0))
 
@@ -464,9 +467,6 @@ func set_default_font_color(color):
 func set_background_color(color):
 	_text_box_container.color = color
 
-func _on_UserFiles_pressed():
-	_user_files.show_open()
-
 func get_waiting_label():
 	return $VBox/TextDisplay/WaitingLabel
 
@@ -491,13 +491,12 @@ func compact_mode(should):
 		rect_min_size = min_sizes.full
 		rect_size = min_sizes.full
 		
-	
+	goto_bottom_right_corner()
 
 
-func _on_BtnCompact_pressed():
-	compact_mode(!_compact_mode)
-	
 func set_script_path(text):
 	_current_script.text = text
 
 
+func goto_bottom_right_corner():
+	rect_position = get_tree().root.get_viewport().get_visible_rect().size - rect_size

@@ -40,10 +40,6 @@ var default_options = {
 	tests = [],
 	unit_test_name = '',
 
-	use_viewport = true,
-	viewport_size = null,
-	viewport_bg_color = Color(1, 1, 1, 0).to_html(),
-	resolution = null,
 	gut_on_top = true,
 }
 
@@ -160,7 +156,6 @@ func _apply_options(opts, _tester):
 		_tester.get_gui().set_background_color(Color(opts.background_color))
 
 	return _tester
-
 
 
 func config_gut(gut):
