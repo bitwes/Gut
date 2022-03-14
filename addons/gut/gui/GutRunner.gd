@@ -98,13 +98,12 @@ func _on_color_rect_draw():
 func run_tests():
 	if(_gut == null):
 		_gut = Gut.new()
-		_gut.get_gui().rect_position.y = 30
 		_gut.set_add_children_to(self)
 
 #	if(_use_viewport):
 #		_gut.set_add_children_to(_test_parent)
 
-	
+
 	if(_gut_config.options.gut_on_top):
 		_gut_layer.add_child(_gut)
 	else:

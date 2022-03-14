@@ -51,13 +51,15 @@ var _mouse = {
 	down_pos = null,
 	in_handle = false
 }
+
 var _is_running = false
 var _start_time = 0.0
 var _time = 0.0
 
-const DEFAULT_TITLE = 'Gut: The Godot Unit Testing tool.'
+const DEFAULT_TITLE = 'GUT'
 var _pre_maximize_rect = null
 var _font_size = 20
+var _compact_mode = false
 
 var min_sizes = {
 	compact = Vector2(330, 100),
@@ -223,13 +225,12 @@ func _on_ShowExtras_toggled(button_pressed):
 
 func _on_Maximize_pressed():
 	if(get_rect() == _pre_maximize_rect):
-		maximize()
 		compact_mode(false)
+		maximize()
 	else:
+		compact_mode(false)
 		rect_size = _pre_maximize_rect.size
 		rect_position = _pre_maximize_rect.position
-		compact_mode(false)
-		
 
 func _on_Minimize_pressed():
 	compact_mode(!_compact_mode)
@@ -469,8 +470,10 @@ func _on_UserFiles_pressed():
 func get_waiting_label():
 	return $VBox/TextDisplay/WaitingLabel
 
-var _compact_mode = false
 func compact_mode(should):
+	if(_compact_mode == should):
+		return
+		
 	_compact_mode = should
 	_text_box_container.visible = !should
 	_nav.container.visible = !should
@@ -481,12 +484,16 @@ func compact_mode(should):
 	_current_script.visible = !should
 	_title_replacement.visible = should
 	
-	
 	if(should):
 		rect_min_size = min_sizes.compact
 		rect_size = rect_min_size
 	else:
 		rect_min_size = min_sizes.full
+		rect_size = min_sizes.full
+		
+	var new_pos = get_tree().root.get_viewport().size - rect_size
+	rect_position = new_pos
+	
 
 
 func _on_BtnCompact_pressed():

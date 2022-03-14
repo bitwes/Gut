@@ -516,6 +516,7 @@ func _end_run():
 		p(str("GUT version ",_utils.latest_version," is now available."))
 
 	_gui.set_title("Finished.")
+	_gui.compact_mode(false)
 
 
 # ------------------------------------------------------------------------------

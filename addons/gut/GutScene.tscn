@@ -298,8 +298,8 @@ __meta__ = {
 
 [node name="xy" type="Label" parent="VBox/BottomPanel/VBox/HBox/Progress/TestProgress"]
 visible = false
-margin_right = 95.0
-margin_bottom = 22.0
+anchor_right = 1.0
+anchor_bottom = 1.0
 text = "0/0"
 align = 1
 valign = 1
@@ -332,8 +332,8 @@ __meta__ = {
 
 [node name="xy" type="Label" parent="VBox/BottomPanel/VBox/HBox/Progress/ScriptProgress"]
 visible = false
-margin_right = 98.0
-margin_bottom = 17.0
+anchor_right = 1.0
+anchor_bottom = 1.0
 text = "0/0"
 align = 1
 valign = 1
