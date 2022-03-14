@@ -32,16 +32,3 @@ render_target_update_mode = 0
 
 [node name="GutLayer" type="CanvasLayer" parent="."]
 layer = 128
-
-[node name="ShowHideGut" type="Button" parent="GutLayer"]
-modulate = Color( 1, 1, 1, 0.733333 )
-margin_left = 2.97321
-margin_top = 4.4598
-margin_right = 108.973
-margin_bottom = 31.4598
-text = "Hide GUT"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[connection signal="pressed" from="GutLayer/ShowHideGut" to="." method="_on_ShowHideGut_pressed"]

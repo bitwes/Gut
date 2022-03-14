@@ -25,7 +25,6 @@ var _should_draw_outline = false
 onready var _test_parent = $ColorRect/ViewportContainer/Viewport
 onready var _color_rect = $ColorRect
 onready var _gut_layer = $GutLayer
-onready var _show_hide_gut = $GutLayer/ShowHideGut
 
 
 func _ready():
@@ -154,9 +153,6 @@ func _on_tests_finished(should_exit, should_exit_on_success):
 	elif(should_exit_on_success and _gut.get_fail_count() == 0):
 		get_tree().quit()
 
-func _on_ShowHideGut_pressed():
-	show_gut(!_gut.get_gui().visible)
-
 
 func get_gut():
 	if(_gut == null):
@@ -177,11 +173,3 @@ func set_resolution(r):
 
 func set_use_viewport(should):
 	_use_viewport = should
-
-func show_gut(should):
-	_gut.get_gui().visible = should
-	if(_gut.get_gui().visible):
-		_show_hide_gut.text = "Hide GUT"
-	else:
-		_show_hide_gut.text = "Show GUT"
-
