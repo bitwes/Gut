@@ -837,7 +837,7 @@ func _test_the_scripts(indexes=[]):
 		_orphan_counter.add_counter('script')
 
 		if(the_script.tests.size() > 0):
-			_gui.set_title(the_script.get_full_name())
+			_gui.set_script_path(the_script.get_full_name())
 			_lgr.set_indent_level(0)
 			_print_script_heading(the_script)
 		_new_summary.add_script(the_script.get_full_name())

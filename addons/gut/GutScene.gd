@@ -1,41 +1,46 @@
 extends Panel
 
 onready var _script_list = $ScriptsList
+onready var _nav_container = $VBox/BottomPanel/VBox/HBox/Navigation
 onready var _nav = {
-	container = $VBox/BottomPanel/Navigation,
-	prev = $VBox/BottomPanel/Navigation/Previous,
-	next = $VBox/BottomPanel/Navigation/Next,
-	run =  $VBox/BottomPanel/Navigation/Run,
-	current_script = $VBox/BottomPanel/Navigation/CurrentScript,
-	run_single = $VBox/BottomPanel/Navigation/RunSingleScript
+	container = _nav_container,
+	prev = _nav_container.get_node('VBox/HBox/Previous'),
+	next = _nav_container.get_node('VBox/HBox/Next'),
+	run =  _nav_container.get_node('VBox/HBox/Run'),
+	current_script = _nav_container.get_node('VBox/CurrentScript'),
+	run_single = _nav_container.get_node('VBox/HBox/RunSingleScript')
 }
+
+onready var _progress_container = $VBox/BottomPanel/VBox/HBox/Progress
 onready var _progress = {
-	script = $VBox/BottomPanel/ScriptProgress,
-	script_xy = $VBox/BottomPanel/ScriptProgress/xy,
-	test = $VBox/BottomPanel/TestProgress,
-	test_xy = $VBox/BottomPanel/TestProgress/xy
+	script = _progress_container.get_node("ScriptProgress"),
+	script_xy = _progress_container.get_node("ScriptProgress/xy"),
+	test = _progress_container.get_node("TestProgress"),
+	test_xy = _progress_container.get_node("TestProgress/xy")
 }
 onready var _summary = {
-	control = $VBox/TitleBar/Summary,
-	failing = $VBox/TitleBar/Summary/Failing,
-	passing = $VBox/TitleBar/Summary/Passing,
-	asserts = $VBox/TitleBar/Summary/AssertCount,
+	control = $VBox/TitleBar/HBox/Summary,
+	failing = $VBox/TitleBar/HBox/Summary/Failing,
+	passing = $VBox/TitleBar/HBox/Summary/Passing,
+	asserts = $VBox/TitleBar/HBox/Summary/AssertCount,
 	fail_count = 0,
 	pass_count = 0
 }
 
 onready var _extras = $ExtraOptions
 onready var _ignore_pauses = $ExtraOptions/IgnorePause
-onready var _continue_button = $VBox/BottomPanel/Continue/Continue
+onready var _continue_button = $VBox/BottomPanel/VBox/HBox/Continue/Continue
 onready var _text_box = $VBox/TextDisplay/RichTextLabel
 onready var _text_box_container = $VBox/TextDisplay
-onready var _log_level_slider = $VBox/BottomPanel/LogLevelSlider
+onready var _log_level_slider = $VBox/BottomPanel/VBox/HBox2/LogLevelSlider
 onready var _resize_handle = $ResizeHandle
+onready var _current_script = $VBox/BottomPanel/VBox/HBox2/CurrentScriptLabel
+onready var _title_replacement = $VBox/TitleBar/HBox/TitleReplacement
 
 onready var _titlebar = {
 	bar = $VBox/TitleBar,
-	time = $VBox/TitleBar/Time,
-	label = $VBox/TitleBar/Title
+	time = $VBox/TitleBar/HBox/Time,
+	label = $VBox/TitleBar/HBox/Title
 }
 
 onready var _user_files = $UserFileViewer
@@ -55,8 +60,8 @@ var _pre_maximize_rect = null
 var _font_size = 20
 
 var min_sizes = {
-	compact = Vector2(740, 135),
-	full = Vector2(740, 300)
+	compact = Vector2(330, 100),
+	full = Vector2(740, 300),
 }
 
 signal end_pause
@@ -66,17 +71,17 @@ signal run_script
 signal run_single_script
 
 func _ready():
-
 	if(Engine.editor_hint):
 		return
 
+	_current_script.text = ''
 	_pre_maximize_rect = get_rect()
 	_hide_scripts()
 	_update_controls()
 	_nav.current_script.set_text("No scripts available")
 	set_title()
 	clear_summary()
-	_titlebar.time.set_text("Time 0.0")
+	_titlebar.time.set_text("t: 0.0")
 
 	_extras.visible = false
 	update()
@@ -92,7 +97,7 @@ func elapsed_time_as_str():
 func _process(_delta):
 	if(_is_running):
 		_time = OS.get_ticks_msec() - _start_time
-		_titlebar.time.set_text(str('Time: ', elapsed_time_as_str()))
+		_titlebar.time.set_text(str('t: ', elapsed_time_as_str()))
 
 func _draw(): # needs get_size()
 	# Draw the lines in the corner to show where you can
@@ -108,15 +113,15 @@ func _draw(): # needs get_size()
 
 func _on_Maximize_draw():
 	# draw the maximize square thing.
-	var btn = $VBox/TitleBar/Maximize
+	var btn = $VBox/TitleBar/HBox/Maximize
 	btn.set_text('')
 	var w = btn.get_size().x
 	var h = btn.get_size().y
-	btn.draw_rect(Rect2(0, 0, w, h), Color(0, 0, 0, 1))
-	btn.draw_rect(Rect2(2, 4, w - 4, h - 6), Color(1,1,1,1))
+	btn.draw_rect(Rect2(0, 2, w, h -2), Color(0, 0, 0, 1))
+	btn.draw_rect(Rect2(2, 6, w - 4, h - 8), Color(1,1,1,1))
 
 func _on_ShowExtras_draw():
-	var btn = $VBox/BottomPanel/Continue/ShowExtras
+	var btn = $VBox/BottomPanel/VBox/HBox/Continue/ShowExtras
 	btn.set_text('')
 	var start_x = 20
 	var start_y = 15
@@ -219,9 +224,26 @@ func _on_ShowExtras_toggled(button_pressed):
 func _on_Maximize_pressed():
 	if(get_rect() == _pre_maximize_rect):
 		maximize()
+		compact_mode(false)
 	else:
 		rect_size = _pre_maximize_rect.size
 		rect_position = _pre_maximize_rect.position
+		compact_mode(false)
+		
+
+func _on_Minimize_pressed():
+	compact_mode(!_compact_mode)
+
+
+func _on_Minimize_draw():
+	# draw the maximize square thing.
+	var btn = $VBox/TitleBar/HBox/Minimize
+	btn.set_text('')
+	var w = btn.get_size().x
+	var h = btn.get_size().y
+	btn.draw_rect(Rect2(0, h-3, w, 3), Color(0, 0, 0, 1))
+
+
 # ####################
 # Private
 # ####################
@@ -233,9 +255,11 @@ func _run_mode(is_running=true):
 	_is_running = is_running
 
 	_hide_scripts()
-	var ctrls = _nav.container.get_children()
-	for i in range(ctrls.size()):
-		ctrls[i].disabled = is_running
+	_nav.prev.disabled = is_running
+	_nav.next.disabled = is_running
+	_nav.run.disabled = is_running
+	_nav.current_script.disabled = is_running
+	_nav.run_single.disabled = is_running
 
 func _select_script(index):
 	var text = _script_list.get_item_text(index)
@@ -307,7 +331,7 @@ func set_log_level(value):
 		new_value = 0
 	# !! For some reason, _log_level_slider was null, but this wasn't, so
 	# here's another hardcoded node path.
-	$VBox/BottomPanel/LogLevelSlider.value = new_value
+	$VBox/BottomPanel/VBox/HBox2/LogLevelSlider.value = new_value
 
 func set_ignore_pause(should):
 	_ignore_pauses.pressed = should
@@ -451,8 +475,13 @@ func compact_mode(should):
 	_text_box_container.visible = !should
 	_nav.container.visible = !should
 	_log_level_slider.visible = !should
-	$VBox/BottomPanel/Continue/ShowExtras.visible = !should
+	$VBox/BottomPanel/VBox/HBox/Continue/ShowExtras.visible = !should
+	_titlebar.label.visible = !should
 	_resize_handle.visible = !should
+	_current_script.visible = !should
+	_title_replacement.visible = should
+	
+	
 	if(should):
 		rect_min_size = min_sizes.compact
 		rect_size = rect_min_size
@@ -463,3 +492,7 @@ func compact_mode(should):
 func _on_BtnCompact_pressed():
 	compact_mode(!_compact_mode)
 	
+func set_script_path(text):
+	_current_script.text = text
+
+
