@@ -34,6 +34,7 @@ var default_options = {
 	should_exit = false,
 	should_exit_on_success = false,
 	should_maximize = false,
+	compact_mode = false,
 	show_help = false,
 	suffix = '.gd',
 	tests = [],
@@ -119,6 +120,9 @@ func _apply_options(opts, _tester):
 
 	if(opts.should_maximize):
 		_tester.maximize()
+
+	if(opts.compact_mode):
+		_tester.get_gui().compact_mode(true)
 
 	if(opts.inner_class != ''):
 		_tester.set_inner_class_name(opts.inner_class)

@@ -320,13 +320,17 @@ func set_options(options):
 		"The font size to use when running tests and in the output panel to the left.")
 
 
-	_add_title('Runner Appearance')
+	_add_title('Runner Window')
 	_add_boolean("gut_on_top", options.gut_on_top, "On Top",
 		"The GUT Runner appears above the viewport.")
 	_add_number('opacity', options.opacity, 'Opacity', 0, 100,
 		"The opacity of GUT when tests are running.")
 	_add_boolean('should_maximize', options.should_maximize, 'Maximize',
 		"Maximize GUT when tests are being run.")
+	_add_boolean('compact_mode', options.compact_mode, 'Compact Mode',
+		'The runner will be in compact mode.  This overrides Maximize.')
+
+	_add_title('Runner Appearance')
 	_add_select('font_name', options.font_name, _avail_fonts, 'Font',
 		"The font to use for text output in the Gut Runner.")
 	_add_number('font_size', options.font_size, 'Font Size', 5, 100,
@@ -410,6 +414,7 @@ func get_options(base_opts):
 		_cfg_ctrls.font_name.selected)
 	to_return.font_size = _cfg_ctrls.font_size.value
 	to_return.should_maximize = _cfg_ctrls.should_maximize.pressed
+	to_return.compact_mode = _cfg_ctrls.compact_mode.pressed
 	to_return.opacity = _cfg_ctrls.opacity.value
 	to_return.background_color = _cfg_ctrls.background_color.color.to_html()
 	to_return.font_color = _cfg_ctrls.font_color.color.to_html()

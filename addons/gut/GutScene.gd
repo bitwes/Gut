@@ -231,8 +231,8 @@ func _on_Maximize_pressed():
 		compact_mode(false)
 		rect_size = _pre_maximize_rect.size
 		rect_position = _pre_maximize_rect.position
-
 func _on_Minimize_pressed():
+
 	compact_mode(!_compact_mode)
 
 
@@ -491,8 +491,6 @@ func compact_mode(should):
 		rect_min_size = min_sizes.full
 		rect_size = min_sizes.full
 		
-	var new_pos = get_tree().root.get_viewport().size - rect_size
-	rect_position = new_pos
 	
 
 
