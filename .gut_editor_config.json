@@ -14,7 +14,7 @@
  "hide_orphans": false,
  "ignore_pause": true,
  "include_subdirs": false,
- "inner_class": "TestGetCallCount",
+ "inner_class": null,
  "junit_xml_file": "",
  "junit_xml_timestamp": false,
  "log_level": 3,
@@ -22,26 +22,17 @@
  "post_run_script": "",
  "pre_run_script": "",
  "prefix": "test_",
- "selected": "test_spy.gd",
+ "selected": null,
  "should_exit": false,
  "should_exit_on_success": false,
  "should_maximize": false,
+ "compact_mode": false,
  "show_help": false,
  "suffix": ".gd",
  "tests": [
 
  ],
- "unit_test_name": "test_when_no_calls_found_call_count_returns_0",
- "use_viewport": true,
- "viewport_size": [
-  0,
-  0
- ],
- "viewport_bg_color": "00ffffff",
- "resolution": [
-  800,
-  500
- ],
+ "unit_test_name": null,
  "gut_on_top": true,
  "panel_options": {
   "font_name": "CourierPrime",
