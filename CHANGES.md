@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 # 7.3.0
 
 ## Features
+#### Mocking Input
 * Added `InputFactory` static class to `addons/gut/test.gd` to simplify creating `InputEvent*` events for use in tests.  See [Input Factory](https://github.com/bitwes/Gut/wiki/Input-Factory).
 * Added `InputSender` class for mocking input and scripting input sequences.  See [Mock Input](https://github.com/bitwes/Gut/wiki/Mock-Input).
 ```
@@ -29,7 +30,10 @@ func test_foo():
   player.local_input_ref = dbl_input
   stub(dbl_input, 'is_action_just_pressed').to_return(true).when_passed('jump')
 ```
-* __Issue 121__ Introduced new settings which make GUT use a viewport to add child objects to instead of itself.  There is a "Use Viewport" setting added to the GUT Panel and some related options.  These options can also be set in a `gutconfig` file but do not have explicit command line options.
+#### Misc
+* __Issue 121__ Child tests are now added to the root scene instead of to the GUT Runner.  The new "On Top" setting and "Compact Mode" can be used to manage the visibility of objects added during tests and seeing test results.
+* Introduced new setting which causes GUT to always be on top.  There is an "On Top" setting added to the GUT Panel.  This option can also be specified in gutconfig (`"gut_on_top":true`).
+* Compact Mode added to the panel, gutconfig and command line.  This minimizes the size of the GUT runner and puts it in the corner.  Unlike Baby...we all can put GUT in the corner.
 * In-Editor GUT Panel improvements
   * Smart buttons to run tests based on cursor location.
   * Added more settings (hook scripts, font color, background color, panel font settings, directory and file dialog buttons where appropriate, hide orphans, disable colors)
