@@ -59,3 +59,4 @@ class TestBoth:
 		var inst  = _doubler.partial_double_singleton("Input").new()
 		inst.is_action_just_pressed("foobar")
 		assert_true(_spy.was_called(inst, "is_action_just_pressed"))
+

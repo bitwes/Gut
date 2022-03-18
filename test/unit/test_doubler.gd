@@ -511,91 +511,101 @@ class TestAutofree:
 		assert_eq(doubled.a, 'asdf')
 
 
-class TestDoubleSingleton:
-	extends BaseTest
+# class TestDoubleSingleton:
+# 	extends BaseTest
 
-	var _doubler = null
-	var _stubber = _utils.Stubber.new()
+# 	var _doubler = null
+# 	var _stubber = _utils.Stubber.new()
 
-	func before_each():
-		_stubber.clear()
-		_doubler = Doubler.new()
-		_doubler.set_output_dir(TEMP_FILES)
-		_doubler.set_stubber(_stubber)
-		_doubler._print_source = false
+# 	func before_each():
+# 		_stubber.clear()
+# 		_doubler = Doubler.new()
+# 		_doubler.set_output_dir(TEMP_FILES)
+# 		_doubler.set_stubber(_stubber)
+# 		_doubler._print_source = false
 
-	func test_can_make_double_of_input():
-		var Doubled = _doubler.double_singleton("Input")
-		assert_not_null(Doubled)
+# 	func test_can_make_double_of_input():
+# 		var Doubled = _doubler.double_singleton("Input")
+# 		assert_not_null(Doubled)
 
-	func test_can_make_instance_of_double():
-		var doubled = _doubler.double_singleton("Input").new()
-		assert_not_null(doubled)
+# 	func test_can_make_instance_of_double():
+# 		var doubled = _doubler.double_singleton("Input").new()
+# 		assert_not_null(doubled)
 
-	func test_double_gets_methods_from_input():
-		var doubled = _doubler.double_singleton("Input").new()
-		assert_true(doubled.has_method("action_press"))
+# 	func test_double_gets_methods_from_input():
+# 		var doubled = _doubler.double_singleton("Input").new()
+# 		assert_true(doubled.has_method("action_press"))
 
-	func test_normal_double_of_input_does_not_have_implementations():
-		var doubled = _doubler.double_singleton("Input").new()
-		assert_null(doubled.is_action_just_pressed())
+# 	func test_normal_double_of_input_does_not_have_implementations():
+# 		var doubled = _doubler.double_singleton("Input").new()
+# 		assert_null(doubled.is_action_just_pressed())
 
-	func test_partial_double_gets_implementation():
-		var doubled = _doubler.partial_double_singleton("Input").new()
-		assert_false(doubled.is_action_just_pressed("foobar"))
+# 	func test_partial_double_gets_implementation():
+# 		var doubled = _doubler.partial_double_singleton("Input").new()
+# 		assert_false(doubled.is_action_just_pressed("foobar"))
 
-	func test_double_gets_constants():
-		var doubled = _doubler.double_singleton("Input").new()
-		assert_eq(doubled.CURSOR_VSPLIT, Input.CURSOR_VSPLIT)
+# 	func test_double_gets_constants():
+# 		var doubled = _doubler.double_singleton("Input").new()
+# 		assert_eq(doubled.CURSOR_VSPLIT, Input.CURSOR_VSPLIT)
 
-	func test_partial_double_gets_wired_properties():
-		var doubled = _doubler.partial_double_singleton("ARVRServer").new()
-		assert_eq(doubled.world_scale, 1.0, "property")
-		assert_eq(doubled.get_world_scale(), 1.0, "accessor")
+# 	func test_partial_double_gets_wired_properties():
+# 		var doubled = _doubler.partial_double_singleton("ARVRServer").new()
+# 		assert_eq(doubled.world_scale, 1.0, "property")
+# 		assert_eq(doubled.get_world_scale(), 1.0, "accessor")
 
-	func test_partial_double_setters_are_wired_to_set_source_property():
-		var doubled = _doubler.partial_double_singleton("ARVRServer").new()
-		doubled.world_scale = 0.5
-		assert_eq(ARVRServer.get_world_scale(), 0.5, "accessor")
-		# make sure to put it back to what it was, who knows what it does.
-		ARVRServer.world_scale = 1.0
+# 	func test_partial_double_setters_are_wired_to_set_source_property():
+# 		var doubled = _doubler.partial_double_singleton("ARVRServer").new()
+# 		doubled.world_scale = 0.5
+# 		assert_eq(ARVRServer.get_world_scale(), 0.5, "accessor")
+# 		# make sure to put it back to what it was, who knows what it does.
+# 		ARVRServer.world_scale = 1.0
 
-	func test_double_gets_unwired_properties_by_default():
-		var doubled = _doubler.double_singleton("ARVRServer").new()
-		assert_null(doubled.world_scale)
+# 	func test_double_gets_unwired_properties_by_default():
+# 		var doubled = _doubler.double_singleton("ARVRServer").new()
+# 		assert_null(doubled.world_scale)
 
-	# These singletons were found using print_instanced_ClassDB_classes in
-	# scratch/get_info.gd and are most likely the only singletons that
-	# should be doubled as of now.
-	var eligible_singletons = [
-		"ARVRServer", "AudioServer", "CameraServer",
-		"Engine", "Geometry", "Input",
-		"InputMap", "IP", "JavaClassWrapper",
-		"JavaScript", "JSON", "Marshalls",
-		"OS", "Performance", "Physics2DServer",
-		"PhysicsServer",
-		"ProjectSettings", "ResourceLoader",
-		"ResourceSaver", "TranslationServer", "VisualScriptEditor",
-		"VisualServer",
-		# these two were missed by print_instanced_ClassDB_classes but were in
-		# the global scope list.
-		"ClassDB", "EditorNavigationMeshGenerator"
-	]
-	func test_can_make_doubles_of_eligible_singletons(singleton = use_parameters(eligible_singletons)):
-		assert_not_null(_doubler.double_singleton(singleton), singleton)
+# 	# These singletons were found using print_instanced_ClassDB_classes in
+# 	# scratch/get_info.gd and are most likely the only singletons that
+# 	# should be doubled as of now.
+# 	var eligible_singletons = [
+# 		"ARVRServer", "AudioServer", "CameraServer",
+# 		"Engine", "Geometry", "Input",
+# 		"InputMap", "IP", "JavaClassWrapper",
+# 		"JavaScript", "JSON", "Marshalls",
+# 		"OS", "Performance", "Physics2DServer",
+# 		"PhysicsServer",
+# 		"ProjectSettings", "ResourceLoader",
+# 		"ResourceSaver", "TranslationServer", "VisualScriptEditor",
+# 		"VisualServer",
+# 		# these two were missed by print_instanced_ClassDB_classes but were in
+# 		# the global scope list.
+# 		"ClassDB", "EditorNavigationMeshGenerator"
+# 	]
+# 	func test_can_make_doubles_of_eligible_singletons(singleton = use_parameters(eligible_singletons)):
+# 		# !! Keep eligible singletons in line with eligible_singletons in test_test_stubber_doubler
+# 		assert_not_null(_doubler.double_singleton(singleton), singleton)
 
-	# Note that setters aren't tested b/c picking valid values automatically is
-	# an unreasonable approach and I didn't want to maintain a list.  If a setter
-	# or getter method is not found when trying to make the double then an
-	# error should be printed.  It seems safe to assume if the getters are wired
-	# and there aren't any error messages when this test runs then the setters
-	# are also wired.  A specific setter is tested in a previous test, just
-	# not on all properties of all the eligible singletons.
-	func test_property_getters_wired_for_partials_of_eligible_singletons(singleton = use_parameters(eligible_singletons)):
-		var props = ClassDB.class_get_property_list(singleton)
-		for prop in props:
-			var double = partial_double_singleton(singleton).new()
-			var parent_inst = _utils.get_singleton_by_name(singleton)
-			assert_eq(double.get(prop["name"]), parent_inst.get(prop["name"]),
-				str(singleton, ".", prop["name"]))
+# 	# Note that setters aren't tested b/c picking valid values automatically is
+# 	# an unreasonable approach and I didn't want to maintain a list.  If a setter
+# 	# or getter method is not found when trying to make the double then an
+# 	# error should be printed.  It seems safe to assume if the getters are wired
+# 	# and there aren't any error messages when this test runs then the setters
+# 	# are also wired.  A specific setter is tested in a previous test, just
+# 	# not on all properties of all the eligible singletons.
+# 	func test_property_getters_wired_for_partials_of_eligible_singletons(singleton = use_parameters(eligible_singletons)):
+# 		var props = ClassDB.class_get_property_list(singleton)
+# 		for prop in props:
+# 			var double = partial_double_singleton(singleton).new()
+# 			var parent_inst = _utils.get_singleton_by_name(singleton)
+# 			assert_eq(double.get(prop["name"]), parent_inst.get(prop["name"]),
+# 				str(singleton, ".", prop["name"]))
 
+# 	var os_method_names = ['get_processor_count']
+# 	func test_OS_methods(method_name = use_parameters(os_method_names)):
+# 		var dbl_os = _doubler.partial_double_singleton('OS').new()
+# 		assert_eq(dbl_os.has_method(method_name), OS.has_method(method_name), 'has ' + method_name)
+
+# 	var input_method_names = ['something']
+# 	func test_Input_methods(method_name = use_parameters(input_method_names)):
+# 		var dbl_input = _doubler.partial_double_singleton('Input')
+# 		assert_eq(dbl_input.has_method(method_name), Input.has_method(method_name), 'has ' + method_name)

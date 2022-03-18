@@ -499,9 +499,15 @@ func _get_methods(object_info):
 		if(object_info.is_singleton()):
 			#print(methods[i].name, " :: ", methods[i].flags, " :: ", methods[i].id)
 			#print("    ", methods[i])
-			# It appears that id for class methods starts above 1000 and objects
-			# upstream of Input were below 100
-			if(methods[i].id > 1000 and methods[i].flags in [1, 9]):
+
+			# It appears that the ID for methods upstream from a singleton are
+			# below 200.  Initially it was thought that singleton specific methods
+			# were above 1000.  This was true for Input but not for OS.  I've
+			# changed the condition to be > 200 instead of > 1000.  It will take
+			# some investigation to figure out if this is right, but it works
+			# for now.  Someone either find an issue and open a bug, or this will
+			# just exist like this.  Sorry future me (or someone else).
+			if(methods[i].id > 200 and methods[i].flags in [1, 9]):
 				script_methods.add_local_method(methods[i])
 
 		# 65 is a magic number for methods in script, though documentation
@@ -559,10 +565,6 @@ func _get_temp_path(object_info):
 
 	var to_return = _output_dir.plus_file(file_name)
 	return to_return
-
-
-func _load_double(fileOrString):
-	return fileOrString.load_it()
 
 
 func _double(obj_info, override_path=null):

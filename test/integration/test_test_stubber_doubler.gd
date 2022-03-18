@@ -358,45 +358,79 @@ class TestOverridingParameters:
 		print(_gut.get_stubber().to_s())
 
 
-class TestSingletonDoubling:
-	extends "res://test/gut_test.gd"
+# class TestSingletonDoubling:
+# 	extends "res://test/gut_test.gd"
 
-	var _test_gut = null
-	var _test = null
+# 	var _test_gut = null
+# 	var _test = null
 
-	func before_each():
-		_test_gut = Gut.new()
-		_test_gut._should_print_versions = false
-		_test = Test.new()
-		_test.gut = _test_gut
+# 	func before_each():
+# 		_test_gut = Gut.new()
+# 		_test_gut._should_print_versions = false
+# 		_test = Test.new()
+# 		_test.gut = _test_gut
 
-		add_child_autofree(_test_gut)
-		add_child_autofree(_test)
+# 		add_child_autofree(_test_gut)
+# 		add_child_autofree(_test)
 
-	func test_double_gives_double():
-		var inst = _test.double_singleton("Input").new()
-		assert_eq(inst.__gut_metadata_.from_singleton, "Input")
+# 	func test_double_gives_double():
+# 		var inst = _test.double_singleton("Input").new()
+# 		assert_eq(inst.__gut_metadata_.from_singleton, "Input")
 
-	func test_partial_gives_partial_double():
-		var inst = _test.partial_double_singleton("Input").new()
-		assert_true(inst.__gut_metadata_.is_partial)
+# 	func test_partial_gives_partial_double():
+# 		var inst = _test.partial_double_singleton("Input").new()
+# 		assert_true(inst.__gut_metadata_.is_partial)
 
-	func test_double_errors_if_not_passed_a_string():
-		var value = _test.double_singleton(Node2D)
-		assert_errored(_test)
-		assert_null(value, "null should be returned")
+# 	func test_double_errors_if_not_passed_a_string():
+# 		var value = _test.double_singleton(Node2D)
+# 		assert_errored(_test)
+# 		assert_null(value, "null should be returned")
 
-	func test_double_errors_if_class_name_does_not_exist():
-		var value = _test.double_singleton("asdf")
-		assert_errored(_test)
-		assert_null(value, "null should be returned")
+# 	func test_double_errors_if_class_name_does_not_exist():
+# 		var value = _test.double_singleton("asdf")
+# 		assert_errored(_test)
+# 		assert_null(value, "null should be returned")
 
-	func test_partial_double_errors_if_not_passed_a_string():
-		var value = _test.partial_double_singleton(Node2D)
-		assert_errored(_test)
-		assert_null(value, "null should be returned")
+# 	func test_partial_double_errors_if_not_passed_a_string():
+# 		var value = _test.partial_double_singleton(Node2D)
+# 		assert_errored(_test)
+# 		assert_null(value, "null should be returned")
 
-	func test_partial_double_errors_if_class_name_does_not_exist():
-		var value = _test.partial_double_singleton("asdf")
-		assert_errored(_test)
-		assert_null(value, "null should be returned")
+# 	func test_partial_double_errors_if_class_name_does_not_exist():
+# 		var value = _test.partial_double_singleton("asdf")
+# 		assert_errored(_test)
+# 		assert_null(value, "null should be returned")
+
+
+# 	func test_can_stub_is_action_just_pressed_on_Input():
+# 		var inst = _test.double_singleton("Input").new()
+# 		_test.stub(inst, 'is_action_just_pressed').to_return(true)
+# 		assert_true(inst.is_action_just_pressed('some_action'))
+
+# 	func test_can_stub_get_processor_count_on_OS():
+# 		var dbl_os = _test.partial_double_singleton('OS').new()
+# 		_test.stub(dbl_os, 'get_processor_count').to_return(99)
+# 		assert_eq(dbl_os.get_processor_count(), 99)
+
+
+# 	var eligible_singletons = [
+# 		"ARVRServer", "AudioServer", "CameraServer",
+# 		"Engine", "Geometry", "Input",
+# 		"InputMap", "IP", "JavaClassWrapper",
+# 		"JavaScript", "JSON", "Marshalls",
+# 		"OS", "Performance", "Physics2DServer",
+# 		"PhysicsServer",
+# 		"ProjectSettings", "ResourceLoader",
+# 		"ResourceSaver", "TranslationServer", "VisualScriptEditor",
+# 		"VisualServer",
+# 		# these two were missed by print_instanced_ClassDB_classes but were in
+# 		# the global scope list.
+# 		"ClassDB", "EditorNavigationMeshGenerator"
+# 	]
+# 	func test_all_doubler_supported_singletons_are_supported_by_double_singleton_method(singleton = use_parameters(eligible_singletons)):
+# 		# !! Keep eligible singletons in line with eligible_singletons in test_doubler
+# 		assert_not_null(double_singleton(singleton), singleton)
+
+# 	func test_all_doubler_supported_singles_are_supported_by_partial_double_singleton_method(singleton = use_parameters(eligible_singletons)):
+# 		# !! Keep eligible singletons in line with eligible_singletons in test_doubler
+# 		assert_not_null(partial_double_singleton(singleton), singleton)

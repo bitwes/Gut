@@ -20,16 +20,7 @@ func test_fireball_input():
   yield(sender, 'idle')
   assert_true(player.is_throwing_fireball())
 ```
-* Create doubles and partial doubles of Godot Singletons such as `Input`, `OS`, `JavaScript`.
-```
-func test_foo():
-  var player = Fighter.new()
-  var dbl_input = double_singleton('Input')
-  # For doubles of singletons to work, your classes must have a local reference
-  # to the singleton that can be overidden with the double.
-  player.local_input_ref = dbl_input
-  stub(dbl_input, 'is_action_just_pressed').to_return(true).when_passed('jump')
-```
+
 #### Misc
 * __Issue 121__ Child tests are now added to the root scene instead of to the GUT Runner.  The new "On Top" setting and "Compact Mode" can be used to manage the visibility of objects added during tests and seeing test results.
 * Introduced new setting which causes GUT to always be on top.  There is an "On Top" setting added to the GUT Panel.  This option can also be specified in gutconfig (`"gut_on_top":true`).
