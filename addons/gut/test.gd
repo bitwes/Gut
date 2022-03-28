@@ -793,13 +793,15 @@ func get_call_count(object, method_name, parameters=null):
 	return gut.get_spy().call_count(object, method_name, parameters)
 
 # ------------------------------------------------------------------------------
-# Assert that object is an instance of a_class
+# Deprecated. Use assert_is.
 # ------------------------------------------------------------------------------
 func assert_extends(object, a_class, text=''):
 	_lgr.deprecated('assert_extends', 'assert_is')
 	assert_is(object, a_class, text)
 
-# Alias for assert_extends
+# ------------------------------------------------------------------------------
+# Assert that object is an instance of a_class
+# ------------------------------------------------------------------------------
 func assert_is(object, a_class, text=''):
 	var disp  = ''#var disp = str('Expected [', _str(object), '] to be type of [', a_class, ']: ', text)
 	var NATIVE_CLASS = 'GDScriptNativeClass'
