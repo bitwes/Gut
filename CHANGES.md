@@ -6,6 +6,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Features
 #### Mocking Input
+* Added some `class_name` clauses to files:
+  * __Issue 215__ You can now use `extends GutTest` instead of `extends 'res://addons/gut/test.gd'` when creating test scripts.  That's 45% less text!
+  * When making a hook script, you can use `extends GutHookScript` instead of using the path.
 * Added `InputFactory` static class to `addons/gut/test.gd` to simplify creating `InputEvent*` events for use in tests.  See [Input Factory](https://github.com/bitwes/Gut/wiki/Input-Factory).
 * Added `InputSender` class for mocking input and scripting input sequences.  See [Mock Input](https://github.com/bitwes/Gut/wiki/Mock-Input).
 ```
@@ -29,9 +32,6 @@ func test_fireball_input():
   * Smart buttons to run tests based on cursor location.
   * Added more settings (hook scripts, font color, background color, panel font settings, directory and file dialog buttons where appropriate, hide orphans, disable colors)
   * Display counts for errors, warnings, orphans (only displayed when present).
-* Added some `class_name` clauses to files:
-  * __Issue 215__ You can now use `extends GutTest` instead of `extends 'res://addons/gut/test.gd'` when creating test scripts.  That's 45% less text!
-  * When making a hook script, you can use `extends GutHookScript` instead of using the path.
 * __Issue 310__ The summary output now lists the number of passing/failing tests as well as passing/failing assert counts.
 
 
