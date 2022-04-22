@@ -34,15 +34,12 @@ var default_options = {
 	should_exit = false,
 	should_exit_on_success = false,
 	should_maximize = false,
+	compact_mode = false,
 	show_help = false,
 	suffix = '.gd',
 	tests = [],
 	unit_test_name = '',
 
-	use_viewport = true,
-	viewport_size = null,
-	viewport_bg_color = Color(1, 1, 1, 0).to_html(),
-	resolution = null,
 	gut_on_top = true,
 }
 
@@ -120,6 +117,9 @@ func _apply_options(opts, _tester):
 	if(opts.should_maximize):
 		_tester.maximize()
 
+	if(opts.compact_mode):
+		_tester.get_gui().compact_mode(true)
+
 	if(opts.inner_class != ''):
 		_tester.set_inner_class_name(opts.inner_class)
 	_tester.set_log_level(opts.log_level)
@@ -156,7 +156,6 @@ func _apply_options(opts, _tester):
 		_tester.get_gui().set_background_color(Color(opts.background_color))
 
 	return _tester
-
 
 
 func config_gut(gut):

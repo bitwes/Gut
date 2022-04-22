@@ -1090,7 +1090,10 @@ func _validate_singleton_name(singleton_name):
 	if(typeof(singleton_name) != TYPE_STRING):
 		_lgr.error("double_singleton requires a Godot singleton name, you passed " + _str(singleton_name))
 		is_valid = false
-	elif(!ClassDB.class_exists(singleton_name)):
+	# Sometimes they have underscores in front of them, sometimes they do not.
+	# The doubler is smart enought of ind the right thing, so this has to be
+	# that smart as well.
+	elif(!ClassDB.class_exists(singleton_name) and !ClassDB.class_exists('_' + singleton_name)):
 		var txt = str("The singleton [", singleton_name, "] could not be found.  ",
 					"Check the GlobalScope page for a list of singletons.")
 		_lgr.error(txt)
@@ -1369,19 +1372,21 @@ func partial_double(thing, p2=null, p3=null):
 # Doubles a Godot singleton
 # ------------------------------------------------------------------------------
 func double_singleton(singleton_name):
-	var to_return = null
-	if(_validate_singleton_name(singleton_name)):
-		to_return = gut.get_doubler().double_singleton(singleton_name)
-	return to_return
+	return null
+	# var to_return = null
+	# if(_validate_singleton_name(singleton_name)):
+	# 	to_return = gut.get_doubler().double_singleton(singleton_name)
+	# return to_return
 
 # ------------------------------------------------------------------------------
 # Partial Doubles a Godot singleton
 # ------------------------------------------------------------------------------
 func partial_double_singleton(singleton_name):
-	var to_return = null
-	if(_validate_singleton_name(singleton_name)):
-		to_return = gut.get_doubler().partial_double_singleton(singleton_name)
-	return to_return
+	return null
+	# var to_return = null
+	# if(_validate_singleton_name(singleton_name)):
+	# 	to_return = gut.get_doubler().partial_double_singleton(singleton_name)
+	# return to_return
 
 # ------------------------------------------------------------------------------
 # Specifically double a scene

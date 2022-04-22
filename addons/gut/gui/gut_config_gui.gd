@@ -231,24 +231,9 @@ func _add_vector2(key, value, disp_text, hint=''):
 # -----------------------------
 
 
-func _wire_up_controls():
-	_cfg_ctrls.use_viewport.connect('toggled', self, '_on_use_viewport_toggled')
-
-
-func _show_viewport_controls(should):
-	_cfg_ctrls.resolution.disabled = !should
-	_cfg_ctrls.viewport_size.disabled = !should
-	_cfg_ctrls.gut_on_top.get_parent().visible = should
-	_cfg_ctrls.viewport_bg_color.get_parent().visible = should
-
-
 # ------------------
 # Events
 # ------------------
-func _on_use_viewport_toggled(pressed):
-	_show_viewport_controls(pressed)
-
-
 func _wire_select_on_focus(which):
 	which.connect('focus_entered', self, '_on_ctrl_focus_highlight', [which])
 	which.connect('focus_exited', self, '_on_ctrl_focus_unhighlight', [which])
@@ -318,6 +303,16 @@ func set_options(options):
 		"The font size to use when running tests and in the output panel to the left.")
 
 
+	_add_title('Runner Window')
+	_add_boolean("gut_on_top", options.gut_on_top, "On Top",
+		"The GUT Runner appears above children added during tests.")
+	_add_number('opacity', options.opacity, 'Opacity', 0, 100,
+		"The opacity of GUT when tests are running.")
+	_add_boolean('should_maximize', options.should_maximize, 'Maximize',
+		"Maximize GUT when tests are being run.")
+	_add_boolean('compact_mode', options.compact_mode, 'Compact Mode',
+		'The runner will be in compact mode.  This overrides Maximize.')
+
 	_add_title('Runner Appearance')
 	_add_select('font_name', options.font_name, _avail_fonts, 'Font',
 		"The font to use for text output in the Gut Runner.")
@@ -327,32 +322,8 @@ func set_options(options):
 		"The font color for text output in the Gut Runner.")
 	_add_color('background_color', options.background_color, 'Background Color',
 		"The background color for text output in the Gut Runner.")
-	_add_boolean('should_maximize', options.should_maximize, 'Maximize',
-		"Maximize GUT when tests are being run.")
-	_add_number('opacity', options.opacity, 'Opacity', 0, 100,
-		"The opacity of GUT when tests are running.")
 	_add_boolean('disable_colors', options.disable_colors, 'Disable Formatting',
 		'Disable formatting and colors used in the Runner.  Does not affect panel output.')
-
-
-	_add_title("Window")
-	_add_boolean("use_viewport", options.use_viewport, "Use Viewport",
-		"Tests are added to the tree in a viewport instead of to the GUT " + \
-		"instance.  This can help with layout while tests are running")
-	_add_boolean("gut_on_top", options.gut_on_top, "GUT on Top",
-		"The GUT Runner appears above the viewport.")
-	_add_vector2('resolution', options.resolution, 'Resolution',
-		"The size and resolution of the window when tests are run.  Set both " +
-		"the x and y to non-zero values to override the project setting size.  " +
-		"The viewport retains the size of the project settings window size " +
-		"unless Viewport Size is set.")
-	_add_vector2('viewport_size', options.viewport_size, 'Viewport Size',
-		"Change the size of the viewport.  The viewport defaults to the project settings " +
-		"window size.")
-	_add_color('viewport_bg_color', options.viewport_bg_color, 'Viewport Bg Color',
-		"The color shown behind the viewport.  This color will bleed through " +
-		"transparencies of objects when you use add_child in a test.")
-
 
 	_add_title('Test Directories')
 	_add_boolean('include_subdirs', options.include_subdirs, 'Include Subdirs',
@@ -384,9 +355,6 @@ func set_options(options):
 	_add_value('prefix', options.prefix, 'Script Prefix',
 		"The filename prefix for all test scripts.")
 
-	_show_viewport_controls(options.use_viewport)
-	_wire_up_controls()
-
 
 func get_options(base_opts):
 	var to_return = base_opts.duplicate()
@@ -408,17 +376,13 @@ func get_options(base_opts):
 		_cfg_ctrls.font_name.selected)
 	to_return.font_size = _cfg_ctrls.font_size.value
 	to_return.should_maximize = _cfg_ctrls.should_maximize.pressed
+	to_return.compact_mode = _cfg_ctrls.compact_mode.pressed
 	to_return.opacity = _cfg_ctrls.opacity.value
 	to_return.background_color = _cfg_ctrls.background_color.color.to_html()
 	to_return.font_color = _cfg_ctrls.font_color.color.to_html()
 	to_return.disable_colors = _cfg_ctrls.disable_colors.pressed
-
-	# Test Window
-	to_return.use_viewport = _cfg_ctrls.use_viewport.pressed
-	to_return.resolution = _cfg_ctrls.resolution.value
-	to_return.viewport_size = _cfg_ctrls.viewport_size.value
 	to_return.gut_on_top = _cfg_ctrls.gut_on_top.pressed
-	to_return.viewport_bg_color = _cfg_ctrls.viewport_bg_color.color.to_html()
+
 
 	# Directories
 	to_return.include_subdirs = _cfg_ctrls.include_subdirs.pressed
