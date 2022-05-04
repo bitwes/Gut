@@ -72,7 +72,7 @@ class TestSimpleCompare:
 		assert_string_contains(result.summary, str(p[0]), 'zero value')
 		assert_string_contains(result.summary, str(p[1]), 'one value')
 
-	var incompatible_types = [[1, 'a'], ['text', Node], [false, []], [{}, []]]
+	var incompatible_types = [[1, 'a'], ['text', Node], [false, []], [{}, []], [[], 12]]
 	func test_incompatible_types(p=use_parameters(incompatible_types)):
 		var result = _comparator.simple(p[0], p[1])
 		assert_not_null(result.are_equal,  result.summary)

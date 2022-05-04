@@ -65,8 +65,7 @@ func simple(v1, v2, missing_string=''):
 		extra = str('.  ', _cannot_comapre_text(v1, v2))
 
 	cmp_str = get_compare_symbol(result.are_equal)
-	if(typeof(v1) != TYPE_ARRAY):
-		result.summary = str(format_value(v1), ' ', cmp_str, ' ', format_value(v2), extra)
+	result.summary = str(format_value(v1), ' ', cmp_str, ' ', format_value(v2), extra)
 
 	return result
 
