@@ -49,8 +49,8 @@ func __gut_default_val(method_name, p_index):
 	else:
 		return null
 
-
-func  _init():
+func __gut_init():
+	print('!! __gut_init called')
 	if(__gut_metadata_.gut != null):
 		__gut_metadata_.gut.get_autofree().add_free(self)
 

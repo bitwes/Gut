@@ -103,6 +103,7 @@ func _init():
 # Private
 # ###############
 var _func_text = _utils.get_file_as_text('res://addons/gut/double_templates/function_template.txt')
+var _init_text = _utils.get_file_as_text('res://addons/gut/double_templates/init_template.txt')
 
 func _is_supported_default(type_flag):
 	return type_flag >= 0 and type_flag < _supported_defaults.size() and [type_flag] != null
@@ -229,12 +230,55 @@ func _get_spy_call_parameters_text(args):
 # ###############
 # Public
 # ###############
+func _get_init_text(meta, override_size=null):
+	var method_params = ''
+	var text = null
+
+	var result = _make_arg_array(meta, override_size)
+	var has_unsupported = result[0]
+	var args = result[1]
+
+	var param_array = _get_spy_call_parameters_text(args)
+
+	if(has_unsupported):
+		# This will cause a runtime error.  This is the most convenient way to
+		# to stop running before the error gets more obscure.  _make_arg_array
+		# generates a gut error when unsupported defaults are found.
+		method_params = null
+	else:
+		method_params = _get_arg_text(args);
+
+	if(param_array == 'null'):
+		param_array = '[]'
+
+	if(method_params != null):
+		var decleration = str('func ', meta.name, '(', method_params, ')')
+		var super_params = ''
+		if(args.size() > 0):
+			super_params = '.('
+			for i in range(args.size()):
+				super_params += args[i].p_name
+				if(i != args.size() -1):
+					super_params += ', '
+			super_params += ')'
+
+		text = _init_text.format({
+			"func_decleration":decleration,
+			"super_params":super_params
+		})
+
+	return text
 
 # Creates a delceration for a function based off of function metadata.  All
 # types whose defaults are supported will have their values.  If a datatype
 # is not supported and the parameter has a default, a warning message will be
 # printed and the declaration will return null.
+#
+# path is no longer used
 func get_function_text(meta, path=null, override_size=null, super_name=""):
+	if(meta.name == '_init'):
+		return _get_init_text(meta, override_size)
+
 	var method_params = ''
 	var text = null
 	var result = _make_arg_array(meta, override_size)

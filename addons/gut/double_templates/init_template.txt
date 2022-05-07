@@ -1,0 +1,2 @@
+{func_decleration}{super_params}:
+    __gut_init()
