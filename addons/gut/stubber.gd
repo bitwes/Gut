@@ -180,6 +180,7 @@ func get_parameter_count(obj, method):
 func get_default_value(obj, method, p_index):
 	var to_return = null
 	var stub_info = _find_stub(obj, method, null, true)
+
 	if(stub_info != null and
 		stub_info.parameter_defaults != null and
 		stub_info.parameter_defaults.size() > p_index):
