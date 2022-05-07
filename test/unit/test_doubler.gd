@@ -502,13 +502,7 @@ class TestAutofree:
 		gut.get_autofree().free_all()
 		assert_no_new_orphans()
 
-	func test_double_default_init_params():
-		var doubled = double('res://test/unit/test_doubler.gd', 'TestAutofree/InitHasDefaultParams').new()
-		assert_eq(doubled.a, 'asdf')
 
-	func test_partial_double_default_init_params():
-		var doubled = partial_double('res://test/unit/test_doubler.gd', 'TestAutofree/InitHasDefaultParams').new()
-		assert_eq(doubled.a, 'asdf')
 
 class TestInitParameters:
 	extends BaseTest
@@ -543,15 +537,14 @@ class TestInitParameters:
 		var doubled = DoubledClass.new('test')
 		assert_eq(doubled.value, 'test')
 
-	func test_double_can_have_default_param_values_stubbed():
-		stub('res://test/unit/test_doubler.gd',
-		'TestInitParameters/InitDefaultParameters', '_init').param_defaults(["override_default"])
-		var doubled = DoubledClass.new()
-		assert_eq(doubled.value, 'override_default')
-
 	func test_partial_double_gets_passed_value():
 		var doubled = PartialDoubledClass.new('test')
 		assert_eq(doubled.value, 'test')
+
+	func test_partial_double_gets_null_for_default_value():
+		var doubled = PartialDoubledClass.new()
+		assert_null(doubled.value)
+
 
 
 # class TestDoubleSingleton:

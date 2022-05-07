@@ -94,6 +94,7 @@ class TestBasics:
 
 
 
+
 class TestIgnoreMethodsWhenDoubling:
 	extends "res://test/gut_test.gd"
 
@@ -306,7 +307,7 @@ class TestOverridingParameters:
 		_gut.free()
 		_test.free()
 
-
+	const INIT_PARAMETERS = 'res://test/resources/stub_test_objects/init_parameters.gd'
 	const DEFAULT_PARAMS_PATH = 'res://test/resources/doubler_test_objects/double_default_parameters.gd'
 	# -------------------
 	# Default parameters and override parameter count
@@ -356,6 +357,13 @@ class TestOverridingParameters:
 		var ret_val = inst.return_passed('a', 'b')
 		assert_eq(ret_val, 'ab')
 		print(_gut.get_stubber().to_s())
+
+	func test_double___can_have_default_param_values_stubbed_using_class():
+		var InitParams = load(INIT_PARAMETERS)
+		_test.stub(InitParams, '_init').param_defaults(["override_default"])
+		var inst = _test.double(InitParams).new()
+		assert_eq(inst.value, 'override_default')
+
 
 
 # class TestSingletonDoubling:

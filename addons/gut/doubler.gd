@@ -61,13 +61,6 @@ class ScriptMethods:
 		'_get_minimum_size', # Nonexistent function _get_minimum_size
 	]
 
-	# These methods should not be included in the double.
-	var _skip = [
-		# There is an init in the template.  There is also no real reason
-		# to include this method since it will always be called, it has no
-		# return value, and you cannot prevent super from being called.
-
-	]
 
 	var built_ins = []
 	var local_methods = []
@@ -77,8 +70,6 @@ class ScriptMethods:
 		return _blacklist.find(method_meta.name) != -1
 
 	func _add_name_if_does_not_have(method_name):
-		if(_skip.has(method_name)):
-			return false
 		var should_add = _method_names.find(method_name) == -1
 		if(should_add):
 			_method_names.append(method_name)
