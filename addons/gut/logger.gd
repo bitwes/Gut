@@ -333,12 +333,19 @@ func _end_yield_gui():
 	lbl.visible = false
 	lbl.set_text('')
 
+# This is used for displaying the "yield detected" and "yielding to" messages.
+func yield_msg(text):
+	if(_type_data.warn.enabled):
+		self.log(text, fmts.yellow)
+
+# This is used for the animated "waiting" message
 func yield_text(text):
 	_yield_text_terminal(text)
 	_yield_text_gui(text)
 	_last_yield_text = text
 	_yield_calls += 1
 
+# This is used for the animated "waiting" message
 func end_yield():
 	if(_yield_calls == 0):
 		return
