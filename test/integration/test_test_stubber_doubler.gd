@@ -356,9 +356,8 @@ class TestOverridingParameters:
 		var inst =  _test.partial_double(DEFAULT_PARAMS_PATH).new()
 		var ret_val = inst.return_passed('a', 'b')
 		assert_eq(ret_val, 'ab')
-		print(_gut.get_stubber().to_s())
 
-	func test_double___can_have_default_param_values_stubbed_using_class():
+	func test_double_can_have_default_param_values_stubbed_using_class():
 		var InitParams = load(INIT_PARAMETERS)
 		_test.stub(InitParams, '_init').param_defaults(["override_default"])
 		var inst = _test.double(InitParams).new()

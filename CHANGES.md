@@ -2,6 +2,22 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+
+# 7.X.X
+
+## Features
+* __Issue 354__ Doubles and partial doubles can now be instanced with parameters
+  * You can now specify parameters when instancing a double/partial double:<br/>
+  `var dbl = double(MyClass).new(1, 2, 'c')`
+  * You can now spy on `_init` to verify parameter values:<br/>
+  `assert_called(my_inst, '_init', [1, 2, 'c'])`
+  * You can now stub default parameter values for `_init`:<br/>
+  `stub(MyClass, '_init').param_defaults([1, 2, 'c'])`
+*
+#### Misc
+* Yield messages are now disabled on log level 0.
+*
+
 # 7.3.0
 
 ## Features

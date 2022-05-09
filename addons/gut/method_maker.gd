@@ -231,7 +231,7 @@ func _get_spy_call_parameters_text(args):
 # Public
 # ###############
 
-func _get_init_text(meta, args, method_params):
+func _get_init_text(meta, args, method_params, param_array):
 	var text = null
 
 	var decleration = str('func ', meta.name, '(', method_params, ')')
@@ -246,7 +246,9 @@ func _get_init_text(meta, args, method_params):
 
 	text = _init_text.format({
 		"func_decleration":decleration,
-		"super_params":super_params
+		"super_params":super_params,
+		"param_array":param_array,
+		"method_name":meta.name
 	})
 
 	return text
@@ -280,7 +282,7 @@ func get_function_text(meta, path=null, override_size=null, super_name=""):
 
 	if(method_params != null):
 		if(meta.name == '_init'):
-			text =  _get_init_text(meta, args, method_params)
+			text =  _get_init_text(meta, args, method_params, param_array)
 		else:
 			var decleration = str('func ', meta.name, '(', method_params, '):')
 			text = _func_text.format({
