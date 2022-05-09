@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+
+# 7.X.X
+
+#### Misc
+* Yield messages are now disabled on log level 0.
+
 # 7.3.0
 
 ## Features

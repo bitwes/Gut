@@ -611,7 +611,7 @@ func _wait_for_done(result):
 	# callback method sets waiting to false.
 	result.connect(COMPLETED, self, '_on_test_script_yield_completed')
 	if(!_was_yield_method_called):
-		_lgr.log('-- Yield detected, waiting --', _lgr.fmts.yellow)
+		_lgr.yield_msg('-- Yield detected, waiting --')
 
 	_was_yield_method_called = false
 	_waiting = true
@@ -1358,7 +1358,7 @@ func set_yield_time(time, text=''):
 		msg += ' --'
 	else:
 		msg +=  ':  ' + text + ' --'
-	_lgr.log(msg, _lgr.fmts.yellow)
+	_lgr.yield_msg(msg)
 	_was_yield_method_called = true
 	return self
 
@@ -1375,7 +1375,7 @@ func set_yield_frames(frames, text=''):
 		msg += ' --'
 	else:
 		msg +=  ':  ' + text + ' --'
-	_lgr.log(msg, _lgr.fmts.yellow)
+	_lgr.yield_msg(msg)
 
 	_was_yield_method_called = true
 	_yield_frames = max(frames + 1, 1)
@@ -1393,7 +1393,7 @@ func set_yield_signal_or_time(obj, signal_name, max_wait, text=''):
 	_yield_timer.set_wait_time(max_wait)
 	_yield_timer.start()
 	_was_yield_method_called = true
-	_lgr.log(str('-- Yielding to signal "', signal_name, '" or for ', max_wait, ' seconds -- ', text), _lgr.fmts.yellow)
+	_lgr.yield_msg(str('-- Yielding to signal "', signal_name, '" or for ', max_wait, ' seconds -- ', text))
 	return self
 
 # ------------------------------------------------------------------------------
