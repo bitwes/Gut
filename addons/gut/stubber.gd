@@ -113,11 +113,9 @@ func _find_stub(obj, method, parameters=null, find_overloads=false):
 
 
 func add_stub(stub_params):
-	if(stub_params.stub_method == '_init'):
-		_lgr.error("You cannot stub _init.  Super's _init is ALWAYS called.")
-	else:
-		var key = _add_obj_method(stub_params.stub_target, stub_params.stub_method, stub_params.target_subpath)
-		returns[key][stub_params.stub_method].append(stub_params)
+	stub_params._lgr = _lgr
+	var key = _add_obj_method(stub_params.stub_target, stub_params.stub_method, stub_params.target_subpath)
+	returns[key][stub_params.stub_method].append(stub_params)
 
 
 # Gets a stubbed return value for the object and method passed in.  If the
@@ -180,6 +178,7 @@ func get_parameter_count(obj, method):
 func get_default_value(obj, method, p_index):
 	var to_return = null
 	var stub_info = _find_stub(obj, method, null, true)
+
 	if(stub_info != null and
 		stub_info.parameter_defaults != null and
 		stub_info.parameter_defaults.size() > p_index):

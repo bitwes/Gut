@@ -1,6 +1,7 @@
 extends 'res://test/gut_test.gd'
 
 const TEMP_FILES = 'user://test_doubler_and_spy'
+const INIT_PARAMETERS = 'res://test/resources/stub_test_objects/init_parameters.gd'
 
 class TestBoth:
 	extends 'res://test/gut_test.gd'
@@ -60,3 +61,11 @@ class TestBoth:
 		inst.is_action_just_pressed("foobar")
 		assert_true(_spy.was_called(inst, "is_action_just_pressed"))
 
+
+	func test_can_spy_on_init():
+		var inst = _doubler.double(INIT_PARAMETERS).new('test_value')
+		assert_true(_spy.was_called(inst, '_init'))
+
+	func test_can_spy_on_init_parameters():
+		var inst = _doubler.double(INIT_PARAMETERS).new('test_value')
+		assert_true(_spy.was_called(inst, '_init', ['test_value']))

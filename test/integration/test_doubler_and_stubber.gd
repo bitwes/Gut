@@ -9,6 +9,7 @@ const DOUBLE_ME_SCENE_PATH = 'res://test/resources/doubler_test_objects/double_m
 const DOUBLE_EXTENDS_NODE2D = 'res://test/resources/doubler_test_objects/double_extends_node2d.gd'
 const TEMP_FILES = 'user://test_doubler_temp_file'
 const TO_STUB_PATH = 'res://test/resources/stub_test_objects/to_stub.gd'
+const INIT_PARAMETERS = 'res://test/resources/stub_test_objects/init_parameters.gd'
 
 
 var gr = {
@@ -126,8 +127,9 @@ func test_stubbing_init_to_call_super_generates_error():
 	var err_count = gr.stubber.get_logger().get_errors().size()
 
 	var inst =  gr.doubler.partial_double(DOUBLE_ME_PATH).new()
-	var params = _utils.StubParams.new(inst, '_init').to_call_super()
+	var params = _utils.StubParams.new(inst, '_init')
 	gr.stubber.add_stub(params)
+	params.to_call_super()
 	assert_eq(gr.stubber.get_logger().get_errors().size(), err_count + 1)
 
 func test_stubbing_init_to_call_super_does_not_generate_stub():
@@ -138,11 +140,26 @@ func test_stubbing_init_to_call_super_does_not_generate_stub():
 
 func  test_you_cannot_stub_init_to_do_nothing():
 	var err_count = gr.stubber.get_logger().get_errors().size()
-
 	var inst =  gr.doubler.partial_double(DOUBLE_ME_PATH).new()
-	var params = _utils.StubParams.new(inst, '_init').to_do_nothing()
+	var params = _utils.StubParams.new(inst, '_init')
 	gr.stubber.add_stub(params)
+	params.to_do_nothing()
 	assert_false(gr.stubber.should_call_super(inst, '_init'), 'stub not created')
 	assert_eq(gr.stubber.get_logger().get_errors().size(), err_count + 1, 'error generated')
 
+func test_stubbing_return_value_of_init_results_in_error():
+	var err_count = gr.stubber.get_logger().get_errors().size()
+	var inst =  gr.doubler.partial_double(DOUBLE_ME_PATH).new()
+	var params = _utils.StubParams.new(inst, '_init')
+	gr.stubber.add_stub(params)
+	params.to_return('abc')
+	assert_eq(gr.stubber.get_return(inst, '_init'), null, 'return value')
+	assert_eq(gr.stubber.get_logger().get_errors().size(), err_count + 1, 'error generated')
+
+func test_double_can_have_default_param_values_stubbed():
+	var params = _utils.StubParams.new(INIT_PARAMETERS, '_init')
+	params.param_defaults(["override_default"])
+	gr.stubber.add_stub(params)
+	var inst = gr.doubler.double(INIT_PARAMETERS).new()
+	assert_eq(inst.value, 'override_default')
 

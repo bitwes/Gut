@@ -502,13 +502,49 @@ class TestAutofree:
 		gut.get_autofree().free_all()
 		assert_no_new_orphans()
 
-	func test_double_default_init_params():
-		var doubled = double('res://test/unit/test_doubler.gd', 'TestAutofree/InitHasDefaultParams').new()
-		assert_eq(doubled.a, 'asdf')
 
-	func test_partial_double_default_init_params():
-		var doubled = partial_double('res://test/unit/test_doubler.gd', 'TestAutofree/InitHasDefaultParams').new()
-		assert_eq(doubled.a, 'asdf')
+
+class TestInitParameters:
+	extends BaseTest
+
+	class InitDefaultParameters:
+		var value = 'start_value'
+
+		func _init(p_arg0='default_value'):
+			value = p_arg0
+
+	var DoubledClass = null
+	var PartialDoubledClass = null
+
+	func before_all():
+		gut.get_doubler()._print_source = false
+
+	func before_each():
+		DoubledClass = double(
+			'res://test/unit/test_doubler.gd',
+			'TestInitParameters/InitDefaultParameters')
+		PartialDoubledClass = partial_double(
+			'res://test/unit/test_doubler.gd',
+			'TestInitParameters/InitDefaultParameters')
+
+	# This is due to the gut defaulting mechanism since the
+	# default value cannot be known
+	func test_double_gets_null_for_default_value():
+		var doubled = DoubledClass.new()
+		assert_null(doubled.value)
+
+	func test_double_gets_passed_value():
+		var doubled = DoubledClass.new('test')
+		assert_eq(doubled.value, 'test')
+
+	func test_partial_double_gets_passed_value():
+		var doubled = PartialDoubledClass.new('test')
+		assert_eq(doubled.value, 'test')
+
+	func test_partial_double_gets_null_for_default_value():
+		var doubled = PartialDoubledClass.new()
+		assert_null(doubled.value)
+
 
 
 # class TestDoubleSingleton:
