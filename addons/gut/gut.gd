@@ -602,12 +602,10 @@ func _do_yield_between(frames=2):
 	_yield_frames = frames
 	return self
 
+
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func _wait_for_done(result):
-	var iter_counter = 0
-	var print_after = 3
-
 	# callback method sets waiting to false.
 	result.connect(COMPLETED, self, '_on_test_script_yield_completed')
 	if(!_was_yield_method_called):
@@ -615,19 +613,24 @@ func _wait_for_done(result):
 
 	_was_yield_method_called = false
 	_waiting = true
-	_wait_timer.set_wait_time(0.4)
 
+	var cycles_per_dot = 500
+	var cycles = 0
 	var dots = ''
+
 	while(_waiting):
-		iter_counter += 1
-		_lgr.yield_text('waiting' + dots)
-		_wait_timer.start()
-		yield(_wait_timer, 'timeout')
-		dots += '.'
-		if(dots.length() > 5):
-			dots = ''
+		yield(get_tree(), 'idle_frame')
+		cycles += 1
+
+		if(cycles >= cycles_per_dot):
+			cycles = 0
+			dots += '.'
+			if(dots.length() > 5):
+				dots = ''
+			_lgr.yield_text('waiting' + dots)
 
 	_lgr.end_yield()
+
 
 # ------------------------------------------------------------------------------
 # returns self so it can be integrated into the yield call.
@@ -636,6 +639,7 @@ func _wait_for_continue_button():
 	p(PAUSE_MESSAGE, 0)
 	_waiting = true
 	return self
+
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
