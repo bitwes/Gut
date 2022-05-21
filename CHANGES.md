@@ -18,6 +18,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * Yield messages are now disabled on log level 0.
 *
 
+## Bug Fixes
+* __Issue 288__ First `yield` in a test does not cause a .4 second delay.
+
 # 7.3.0
 
 ## Features
