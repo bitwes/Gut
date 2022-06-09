@@ -1,9 +1,10 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://addons/gut/gui/GutBottomPanel.gd" type="Script" id=1]
 [ext_resource path="res://addons/gut/gui/BottomPanelShortcuts.tscn" type="PackedScene" id=2]
 [ext_resource path="res://addons/gut/gui/RunAtCursor.tscn" type="PackedScene" id=3]
 [ext_resource path="res://addons/gut/gui/play.png" type="Texture" id=4]
+[ext_resource path="res://addons/gut/gui/RunResults.tscn" type="PackedScene" id=5]
 
 [sub_resource type="InputEventKey" id=8]
 control = true
@@ -53,9 +54,6 @@ margin_right = 2.64862
 margin_bottom = 1.05945
 rect_min_size = Vector2( 0, 300 )
 script = ExtResource( 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="layout" type="VBoxContainer" parent="."]
 anchor_right = 1.0
@@ -361,7 +359,7 @@ size_flags_vertical = 3
 
 [node name="Settings" type="VBoxContainer" parent="layout/RSplit/sc"]
 margin_right = 388.0
-margin_bottom = 862.0
+margin_bottom = 908.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -376,6 +374,12 @@ margin_top = -173.752
 margin_right = 31.6969
 margin_bottom = -125.552
 
+[node name="RunResults" parent="." instance=ExtResource( 5 )]
+margin_left = 8.24069
+margin_top = -189.536
+margin_right = 207.241
+margin_bottom = -10.5358
+
 [connection signal="pressed" from="layout/ControlBar/RunAll" to="." method="_on_RunAll_pressed"]
 [connection signal="run_tests" from="layout/ControlBar/RunAtCursor" to="." method="_on_RunAtCursor_run_tests"]
 [connection signal="pressed" from="layout/ControlBar/FocusButton" to="." method="_on_FocusButton_pressed"]
@@ -384,3 +388,4 @@ margin_bottom = -125.552
 [connection signal="pressed" from="layout/RSplit/CResults/ControlBar/CopyButton" to="." method="_on_CopyButton_pressed"]
 [connection signal="pressed" from="layout/RSplit/CResults/ControlBar/ClearButton" to="." method="_on_ClearButton_pressed"]
 [connection signal="popup_hide" from="BottomPanelShortcuts" to="." method="_on_BottomPanelShortcuts_popup_hide"]
+[connection signal="ready" from="RunResults" to="." method="_on_RunResults_ready"]

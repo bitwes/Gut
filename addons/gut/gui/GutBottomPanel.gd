@@ -33,7 +33,8 @@ onready var _ctrls = {
 		warnings = $layout/RSplit/CResults/ControlBar/Warnings/value,
 		orphans = $layout/RSplit/CResults/ControlBar/Orphans/value
 	},
-	run_at_cursor = $layout/ControlBar/RunAtCursor
+	run_at_cursor = $layout/ControlBar/RunAtCursor,
+	run_results = $RunResults
 }
 
 
@@ -42,6 +43,7 @@ func _init():
 
 
 func _ready():
+	print('Panel Ready')
 	_gut_config_gui = GutConfigGui.new(_ctrls.settings)
 	_gut_config_gui.set_options(_gut_config.options)
 	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.panel_options.font_name)
@@ -233,6 +235,7 @@ func load_result_output():
 	_ctrls.output.scroll_to_line(_ctrls.output.get_line_count() -1)
 
 	var summary = get_file_as_text(RESULT_JSON)
+	_ctrls.run_results.load_json_results(RESULT_JSON)
 	var results = JSON.parse(summary)
 	if(results.error != OK):
 		return
@@ -277,6 +280,8 @@ func set_current_script(script):
 
 func set_interface(value):
 	_interface = value
+	_ctrls.run_results.set_interface(value)
+	
 	_interface.get_script_editor().connect("editor_script_changed", self, '_on_editor_script_changed')
 	_ctrls.run_at_cursor.set_script_editor(_interface.get_script_editor())
 	set_current_script(_interface.get_script_editor().get_current_script())
@@ -324,3 +329,11 @@ func nvl(value, if_null):
 		return value
 
 
+
+
+func _on_RunResults_ready():
+	print('_on_RunResults_ready')
+
+
+func _on_SomeControl_ready():
+	print('_on_SomeControl_ready')

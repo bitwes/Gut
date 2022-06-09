@@ -22,8 +22,8 @@
  "post_run_script": "",
  "pre_run_script": "",
  "prefix": "test_",
- "selected": "test_i288_wait_times.gd",
- "should_exit": true,
+ "selected": "test_print.gd",
+ "should_exit": false,
  "should_exit_on_success": false,
  "should_maximize": false,
  "compact_mode": false,
@@ -32,7 +32,7 @@
  "tests": [
 
  ],
- "unit_test_name": null,
+ "unit_test_name": "test_print_indent",
  "gut_on_top": true,
  "panel_options": {
   "font_name": "CourierPrime",

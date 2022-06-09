@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/gut/gui/RunResults.gd" type="Script" id=1]
+
+[node name="RunResults" type="Control"]
+margin_right = 199.0
+margin_bottom = 179.0
+script = ExtResource( 1 )
+
+[node name="Panel" type="Panel" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Button" type="Button" parent="Panel"]
+margin_left = 20.5
+margin_top = 21.5
+margin_right = 117.5
+margin_bottom = 64.5
+text = "Hello world"
+
+[connection signal="pressed" from="Panel/Button" to="." method="_on_Button_pressed"]
