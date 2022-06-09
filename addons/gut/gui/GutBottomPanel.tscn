@@ -334,10 +334,28 @@ margin_right = 611.0
 margin_bottom = 35.0
 text = "  Clear  "
 
-[node name="Output" type="RichTextLabel" parent="layout/RSplit/CResults"]
+[node name="Tabs" type="TabContainer" parent="layout/RSplit/CResults"]
 margin_top = 39.0
 margin_right = 611.0
 margin_bottom = 555.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+tab_align = 0
+
+[node name="RunResults" parent="layout/RSplit/CResults/Tabs" instance=ExtResource( 5 )]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+rect_min_size = Vector2( 100, 0 )
+
+[node name="Output" type="RichTextLabel" parent="layout/RSplit/CResults/Tabs"]
+visible = false
+margin_top = -480.0
+margin_right = 611.0
+margin_bottom = -4.0
 focus_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -374,12 +392,6 @@ margin_top = -173.752
 margin_right = 31.6969
 margin_bottom = -125.552
 
-[node name="RunResults" parent="." instance=ExtResource( 5 )]
-margin_left = 8.0
-margin_top = -362.0
-margin_right = 761.0
-margin_bottom = -11.0
-
 [connection signal="pressed" from="layout/ControlBar/RunAll" to="." method="_on_RunAll_pressed"]
 [connection signal="run_tests" from="layout/ControlBar/RunAtCursor" to="." method="_on_RunAtCursor_run_tests"]
 [connection signal="pressed" from="layout/ControlBar/FocusButton" to="." method="_on_FocusButton_pressed"]
@@ -388,4 +400,3 @@ margin_bottom = -11.0
 [connection signal="pressed" from="layout/RSplit/CResults/ControlBar/CopyButton" to="." method="_on_CopyButton_pressed"]
 [connection signal="pressed" from="layout/RSplit/CResults/ControlBar/ClearButton" to="." method="_on_ClearButton_pressed"]
 [connection signal="popup_hide" from="BottomPanelShortcuts" to="." method="_on_BottomPanelShortcuts_popup_hide"]
-[connection signal="ready" from="RunResults" to="." method="_on_RunResults_ready"]

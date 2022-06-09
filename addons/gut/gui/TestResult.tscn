@@ -5,24 +5,26 @@
 [node name="TestResult" type="VBoxContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 2
 script = ExtResource( 2 )
 
 [node name="HBox" type="HBoxContainer" parent="."]
 margin_right = 1024.0
+margin_bottom = 14.0
+
+[node name="Goto" type="Button" parent="HBox"]
+visible = false
+margin_right = 27.0
 margin_bottom = 20.0
+text = "go"
 
 [node name="Name" type="Label" parent="HBox"]
-margin_top = 3.0
-margin_bottom = 17.0
+margin_bottom = 14.0
 
 [node name="Status" type="Label" parent="HBox"]
 margin_left = 4.0
-margin_top = 3.0
-margin_right = 4.0
-margin_bottom = 17.0
-
-[node name="Goto" type="Button" parent="HBox"]
-margin_left = 8.0
-margin_right = 35.0
-margin_bottom = 20.0
-text = "go"
+margin_right = 1024.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
+size_flags_vertical = 6

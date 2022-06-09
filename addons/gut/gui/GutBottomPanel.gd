@@ -20,7 +20,7 @@ var _last_selected_path = null
 
 
 onready var _ctrls = {
-	output = $layout/RSplit/CResults/Output,
+	output = $layout/RSplit/CResults/Tabs/Output,
 	run_button = $layout/ControlBar/RunAll,
 	settings = $layout/RSplit/sc/Settings,
 	shortcut_dialog = $BottomPanelShortcuts,
@@ -34,7 +34,7 @@ onready var _ctrls = {
 		orphans = $layout/RSplit/CResults/ControlBar/Orphans/value
 	},
 	run_at_cursor = $layout/ControlBar/RunAtCursor,
-	run_results = $RunResults
+	run_results = $layout/RSplit/CResults/Tabs/RunResults
 }
 
 
@@ -150,6 +150,7 @@ func _run_tests():
 		return;
 
 	_ctrls.output.clear()
+	_ctrls.run_results.clear()
 
 	_update_last_run_label()
 	_interface.play_custom_scene('res://addons/gut/gui/GutRunner.tscn')
@@ -327,13 +328,3 @@ func nvl(value, if_null):
 		return if_null
 	else:
 		return value
-
-
-
-
-func _on_RunResults_ready():
-	print('_on_RunResults_ready')
-
-
-func _on_SomeControl_ready():
-	print('_on_SomeControl_ready')
