@@ -16,6 +16,8 @@ class Test:
 	# if the test has been marked pending at anypont during
 	# execution.
 	var pending = false
+	# the line number when the  test fails
+	var line_number = -1
 
 
 # ------------------------------------------------------------------------------

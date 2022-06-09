@@ -15,7 +15,7 @@ func _export_tests(summary_script):
 			"passing":tests[key].pass_texts,
 			"failing":tests[key].fail_texts,
 			"pending":tests[key].pending_texts,
-			"orphans":tests[key].orphans,
+			"orphans":tests[key].orphans
 		}
 
 	return to_return

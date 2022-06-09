@@ -953,7 +953,8 @@ func _pass(text=''):
 func _fail(text=''):
 	_gui.add_failing() # increments counters
 	if(_current_test != null):
-		var line_text = '  at line ' + str(_extract_line_number(_current_test))
+		var line_number = _extract_line_number(_current_test)
+		var line_text = '  at line ' + str(line_number)
 		p(line_text, LOG_LEVEL_FAIL_ONLY)
 		# format for summary
 		line_text =  "\n    " + line_text
@@ -963,6 +964,7 @@ func _fail(text=''):
 		_new_summary.add_fail(_current_test.name, call_count_text + text + line_text)
 		_current_test.passed = false
 		_current_test.assert_count += 1
+		_current_test.line_number = line_number
 	else:
 		if(_new_summary != null): # b/c of tests.
 			_new_summary.add_fail('script level', text)

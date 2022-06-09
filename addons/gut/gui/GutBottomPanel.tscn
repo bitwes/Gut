@@ -375,10 +375,10 @@ margin_right = 31.6969
 margin_bottom = -125.552
 
 [node name="RunResults" parent="." instance=ExtResource( 5 )]
-margin_left = 8.24069
-margin_top = -189.536
-margin_right = 207.241
-margin_bottom = -10.5358
+margin_left = 8.0
+margin_top = -362.0
+margin_right = 761.0
+margin_bottom = -11.0
 
 [connection signal="pressed" from="layout/ControlBar/RunAll" to="." method="_on_RunAll_pressed"]
 [connection signal="run_tests" from="layout/ControlBar/RunAtCursor" to="." method="_on_RunAtCursor_run_tests"]
