@@ -12,6 +12,7 @@ func test_generates_error():
 
 func test_generates_warning():
 	gut.get_logger().warn("This is a manual warning")
+	pass_test('passing')
 
 func test_multiple_passing_asserts():
 	assert_eq(1, 1)
@@ -28,5 +29,8 @@ func test_makes_an_info():
 
 func test_pending():
 	pending("this is pending")
+	
+func test_no_assert():
+	gut.p('this has no assert')
 
 
