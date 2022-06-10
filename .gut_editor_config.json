@@ -2,8 +2,6 @@
  "background_color": "ff343434",
  "config_file": "res://.gutconfig.json",
  "dirs": [
-  "res://test/unit",
-  "res://test/integration",
   "res://test/panel_demo_scripts"
  ],
  "disable_colors": false,
@@ -22,7 +20,7 @@
  "post_run_script": "",
  "pre_run_script": "",
  "prefix": "test_",
- "selected": "test_print.gd",
+ "selected": null,
  "should_exit": true,
  "should_exit_on_success": false,
  "should_maximize": false,

@@ -55,6 +55,8 @@ func _ready():
 	_ctrls.run_results.connect('search_for_text', self, '_on_run_result_text_search')
 
 func _on_run_result_text_search(text):
+	# TODO this could be foolproof it it accepted the inner class name too.  it
+	# could search for the class name first and then the method.
 	var line = _ctrls.run_at_cursor.search_current_editor_for_text(text)
 	if(line != -1):
 		_interface.get_script_editor().goto_line(line)

@@ -130,6 +130,8 @@ func set_method_prefix(value):
 func set_inner_class_prefix(value):
 	_editors.set_inner_class_prefix(value)
 
+# Mashed this function in here b/c it has _editors.  Probably should be 
+# somewhere else (possibly in script_text_editor_controls).
 func search_current_editor_for_text(txt):
 	var te = _editors.get_current_text_edit()
 	var result = te.search(txt, 0, 0, 0)
