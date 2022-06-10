@@ -9,10 +9,12 @@ onready var _ctrls = {
 
 var _path = null
 var _name = null
+var _font = null
 var _tests = []
 
+
 func _draw():
-	var c = Color(0, 0, .5)
+	var c = Color(0, 0, .5, .5)
 	var r = Rect2(Vector2(0, 0), $HBox.rect_size)
 	draw_rect(r, c)
 	
@@ -64,3 +66,10 @@ func add_test_result(result_obj):
 
 func get_path():
 	return _path
+	
+	
+func set_font(value, size):
+	_font = value.duplicate()
+	
+	_font.size = size
+	_ctrls.lbl_name.add_font_override("font", _font)

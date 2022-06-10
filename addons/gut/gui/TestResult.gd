@@ -10,11 +10,13 @@ onready var _ctrls = {
 
 var _path = null
 var _line_number = -1
+var _font = null
 
 signal goto(path, line_number, method_name)
 
 func _ready():
-	_ctrls.btn_goto.connect('pressed', self, '_on_goto_pressed')
+	pass
+#	_ctrls.btn_goto.connect('pressed', self, '_on_goto_pressed')
 
 
 func _on_goto_pressed(p=_path, l=_line_number):
@@ -33,6 +35,7 @@ func _create_assert_row(failure, b_color=Color(1, 1, 1, 1)):
 	btn.connect('pressed', self, '_on_goto_pressed', [_path, int(line)])
 	btn.align = btn.ALIGN_LEFT
 	btn.self_modulate = b_color
+	btn.add_font_override("font", _font)
 	btn.flat = false
 	
 	var sep = CenterContainer.new()
@@ -70,9 +73,9 @@ func set_status(value, text):
 	_ctrls.lbl_status.text = text.replace("\n", '')
 	_ctrls.lbl_status.visible = false
 	
-	_ctrls.btn_goto.visible = value != 'pass'
-	_ctrls.btn_goto.text = value
-	_ctrls.btn_goto.visible = false
+#	_ctrls.btn_goto.visible = value != 'pass'
+#	_ctrls.btn_goto.text = value
+#	_ctrls.btn_goto.visible = false
 
 	
 func get_status():
@@ -83,3 +86,9 @@ func set_goto(path, line_number):
 	_path = path
 	_line_number = line_number
 
+func set_font(font):
+	_font = font
+	
+#	_ctrls.lbl_status.add_font_override("font", _font)
+#	_ctrls.btn_goto.add_font_override("font", _font)
+	_ctrls.lbl_name.add_font_override("font", _font)

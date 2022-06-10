@@ -47,8 +47,11 @@ func _ready():
 	_gut_config_gui.set_options(_gut_config.options)
 	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.panel_options.font_name)
 	_set_font_size_for_rtl(_ctrls.output, _gut_config.options.panel_options.font_size)
-	_ctrls.run_results.add_centered_text("Let's run some tests!")
 	
+	_ctrls.run_results.set_font(
+		_gut_config.options.panel_options.font_name, 
+		_gut_config.options.panel_options.font_size)
+	_ctrls.run_results.add_centered_text("Let's run some tests!")
 	_ctrls.run_results.connect('search_for_text', self, '_on_run_result_text_search')
 
 func _on_run_result_text_search(text):
@@ -150,6 +153,9 @@ func _run_tests():
 	_gut_config.options = _gut_config_gui.get_options(_gut_config.options)
 	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.panel_options.font_name)
 	_set_font_size_for_rtl(_ctrls.output, _gut_config.options.panel_options.font_size)
+	_ctrls.run_results.set_font(
+		_gut_config.options.panel_options.font_name, 
+		_gut_config.options.panel_options.font_size)
 
 	var w_result = _gut_config.write_options(RUNNER_JSON_PATH)
 	if(w_result != OK):
