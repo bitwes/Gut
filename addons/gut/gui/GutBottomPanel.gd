@@ -43,11 +43,18 @@ func _init():
 
 
 func _ready():
-	print('Panel Ready')
 	_gut_config_gui = GutConfigGui.new(_ctrls.settings)
 	_gut_config_gui.set_options(_gut_config.options)
 	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.panel_options.font_name)
 	_set_font_size_for_rtl(_ctrls.output, _gut_config.options.panel_options.font_size)
+	_ctrls.run_results.add_centered_text("Let's run some tests!")
+	
+	_ctrls.run_results.connect('search_for_text', self, '_on_run_result_text_search')
+
+func _on_run_result_text_search(text):
+	var line = _ctrls.run_at_cursor.search_current_editor_for_text(text)
+	if(line != -1):
+		_interface.get_script_editor().goto_line(line)
 
 
 func _process(delta):
@@ -151,12 +158,13 @@ func _run_tests():
 
 	_ctrls.output.clear()
 	_ctrls.run_results.clear()
+	_ctrls.run_results.add_centered_text('Running...')
 
 	_update_last_run_label()
 	_interface.play_custom_scene('res://addons/gut/gui/GutRunner.tscn')
 
 	_is_running = true
-	_ctrls.output.add_text('running...')
+	_ctrls.output.add_text('Running...')
 
 
 func _apply_shortcuts():
@@ -236,10 +244,12 @@ func load_result_output():
 	_ctrls.output.scroll_to_line(_ctrls.output.get_line_count() -1)
 
 	var summary = get_file_as_text(RESULT_JSON)
-	_ctrls.run_results.load_json_results(RESULT_JSON)
 	var results = JSON.parse(summary)
 	if(results.error != OK):
 		return
+		
+	_ctrls.run_results.load_json_results(results.result)
+	
 	var summary_json = results.result['test_scripts']['props']
 	_ctrls.results.passing.text = str(summary_json.passing)
 	_ctrls.results.passing.get_parent().visible = true

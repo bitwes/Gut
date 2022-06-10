@@ -9,13 +9,12 @@ var TestResult = load('res://addons/gut/gui/TestResult.tscn')
 
 var _hide_passing = true
 
-
+signal search_for_text(text)
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 onready var _ctrls = {
 	vbox = $Panel/Scroll/VBox
 }
-
 
 
 func set_interface(which):
@@ -24,7 +23,7 @@ func set_interface(which):
 
 func _ready():
 	if(get_parent() == get_tree().root):
-		load_json_results('user://.gut_editor.json')
+		load_json_file('user://.gut_editor.json')
 
 
 func _open_file(path, line_number):
@@ -50,7 +49,7 @@ func _add_script_ctrl(script_path, script_json):
 	var status_text = str(script_json.props.failures , '/',
 		script_json.props.tests)
 	obj.set_status(status_text)
-#	obj.visible = !_hide_passing
+	obj.visible = !_hide_passing
 
 	return obj
 
@@ -60,31 +59,35 @@ func _add_test_ctrl_to_script_ctrl(test_name, test_json, script_ctrl):
 	obj.visible = false
 	var test_row = script_ctrl.add_test_result(obj)
 	obj.set_name(test_name)
-	var desc = "ok"
-	var line = -1
-	if(test_json.failing.size() > 0):
-		var f_text = test_json.failing[0]
-		line = f_text.split("at line")[-1].split(" ")[-1]
-		desc = test_json.failing[0]
-	obj.set_status(test_json.status, desc)
-	obj.set_goto(script_ctrl.get_path(), int(line))
-
+	obj.set_goto(script_ctrl.get_path(), -1)
+	obj.set_data(test_name, test_json)
 	
 	obj.visible = !_hide_passing or(_hide_passing and  test_json.status != 'pass')
 	test_row.visible = obj.visible
+	if(_hide_passing and obj.visible):
+		script_ctrl.visible = true
+		
 	script_ctrl.update_name_display()
-
 	return obj
 
-func _on_test_result_goto(path, line):
+func _on_test_result_goto(path, line, method_name=''):
 	if(_interface):
 		_open_file(path, line)
+		if(line == -1 and method_name != ''):
+			emit_signal('search_for_text', method_name)
 	else:
 		print('going to ', path, '@', line)
 
-func load_json_results(path):
+func load_json_file(path):
 	var text = _utils.get_file_as_text('user://.gut_editor.json')
 	var j = JSON.parse(text).result
+	load_json_results(j)
+	
+
+func load_json_results(j):
+	clear()
+#	var text = _utils.get_file_as_text('user://.gut_editor.json')
+#	var j = JSON.parse(text).result
 
 	var scripts = j['test_scripts']['scripts']
 	var script_keys = scripts.keys()
@@ -93,20 +96,37 @@ func load_json_results(path):
 		var test_keys = tests.keys()
 		var script_obj = _add_script_ctrl(key, scripts[key])
 		
-		for test_key in test_keys:
-			
+		for test_key in test_keys:			
 			var test_obj = _add_test_ctrl_to_script_ctrl(test_key, tests[test_key], script_obj)
 			test_obj.connect('goto', self, '_on_test_result_goto')
-			if(tests[test_key].status == 'fail'):
-				for f_text in tests[test_key]["failing"]:
-					var line_number = f_text.split("at line")[-1].split(" ")[-1]
-			else:
-				pass
-				
+
+	_show_all_passed()
+
+
+func add_centered_text(t):
+	var row = HBoxContainer.new()
+	row.alignment = row.ALIGN_CENTER
+	row.size_flags_vertical = row.SIZE_EXPAND_FILL
+	var lbl = Label.new()
+	row.add_child(lbl)
+	lbl.text = t
+	_ctrls.vbox.add_child(row)
+	
+
+func _show_all_passed():
+	var kids = _ctrls.vbox.get_children()
+	var i = 0
+	while(i < kids.size() and !kids[i].visible):
+		i += 1
+		
+	print(i, '=', kids.size())
+	if(i == kids.size()):
+		add_centered_text('Everything passed!')
+
 func clear():
 	var kids = _ctrls.vbox.get_children()
 	for kid in kids:
-		kid.queue_free()
+		kid.free()
 	
 
 

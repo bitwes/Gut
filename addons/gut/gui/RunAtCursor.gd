@@ -129,3 +129,17 @@ func set_method_prefix(value):
 # not used, thought was configurable but it's just the script prefix
 func set_inner_class_prefix(value):
 	_editors.set_inner_class_prefix(value)
+
+func search_current_editor_for_text(txt):
+	var te = _editors.get_current_text_edit()
+	var result = te.search(txt, 0, 0, 0)
+	var to_return = -1
+	
+	if result.size() > 0:
+		to_return = result[TextEdit.SEARCH_RESULT_LINE]
+#		var res_column = result[TextEdit.SEARCH_RESULT_COLUMN]
+	
+	return to_return
+	
+
+	

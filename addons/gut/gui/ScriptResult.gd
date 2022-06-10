@@ -8,8 +8,33 @@ var _path = null
 var _name = null
 var _tests = []
 
+class Indenter:
+	extends CenterContainer
+	
+	func _draw():
+		return
+		var re = Rect2(Vector2(0, 0), rect_size)
+		draw_rect(re, Color(1, 0, 0), false, 1)
+		
+		var r = 10
+		var c = Vector2(rect_size.x - r, r)
+		draw_circle(c, r, Color(1, 1, 1))
+
+
 func _draw():
-	draw_rect(Rect2(Vector2(0, 0), rect_size), Color(0, 1, 0), false, 2)
+	var c = Color(0, 0, .5)
+	var r = Rect2(Vector2(0, 0), $HBox.rect_size)
+#	draw_rect(r, Color(0, 0, 0, .3))
+	draw_rect(r, c)
+	
+	var kids = get_children()
+	var odd = false
+	for i in range(1, kids.size()):
+		if(kids[i].visible):
+			if(odd):
+				draw_rect(kids[i].get_rect(), Color(0, 0, 0, .2))
+			odd = !odd
+			
 
 
 func _ready():
@@ -34,7 +59,8 @@ func update_name_display():
 		if(test.get_status() != 'pass'):
 			failing += 1
 			
-	_lbl_name.text = str(_name, ' ', total - failing, '/', total)
+	_lbl_name.text = str(_name, "      ", failing, '/', total)
+	
 
 
 func set_status(s):
@@ -44,8 +70,8 @@ func set_status(s):
 func add_test_result(result_obj):
 	_tests.append(result_obj)
 	var row = HBoxContainer.new()
-	var sep = CenterContainer.new()
-	sep.rect_min_size.x = 20
+	var sep = Indenter.new()
+	sep.rect_min_size.x = 40
 
 	row.add_child(sep)
 	row.add_child(result_obj)

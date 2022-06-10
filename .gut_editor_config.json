@@ -22,7 +22,7 @@
  "post_run_script": "",
  "pre_run_script": "",
  "prefix": "test_",
- "selected": "test_gut_yielding.gd",
+ "selected": "test_totals_testing.gd",
  "should_exit": true,
  "should_exit_on_success": false,
  "should_maximize": false,
@@ -32,7 +32,7 @@
  "tests": [
 
  ],
- "unit_test_name": null,
+ "unit_test_name": "test_generates_warning",
  "gut_on_top": true,
  "panel_options": {
   "font_name": "CourierPrime",
