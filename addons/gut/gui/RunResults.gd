@@ -10,15 +10,10 @@ var TestResult = load('res://addons/gut/gui/TestResult.tscn')
 var _hide_passing = true
 
 signal search_for_text(text)
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
+
 onready var _ctrls = {
 	vbox = $Panel/Scroll/VBox
 }
-
-
-func set_interface(which):
-	_interface = which
 
 
 func _ready():
@@ -36,10 +31,6 @@ func _open_file(path, line_number):
 		_interface.edit_script(r, line_number)
 	else:
 		_interface.edit_script(r)
-
-
-func _on_Button_pressed():
-	_open_file('res://test/unit/test_print.gd', 27)
 
 
 func _add_script_ctrl(script_path, script_json):
@@ -70,6 +61,7 @@ func _add_test_ctrl_to_script_ctrl(test_name, test_json, script_ctrl):
 	script_ctrl.update_name_display()
 	return obj
 
+
 func _on_test_result_goto(path, line, method_name=''):
 	if(_interface):
 		_open_file(path, line)
@@ -77,6 +69,7 @@ func _on_test_result_goto(path, line, method_name=''):
 			emit_signal('search_for_text', method_name)
 	else:
 		print('going to ', path, '@', line)
+
 
 func load_json_file(path):
 	var text = _utils.get_file_as_text('user://.gut_editor.json')
@@ -86,8 +79,6 @@ func load_json_file(path):
 
 func load_json_results(j):
 	clear()
-#	var text = _utils.get_file_as_text('user://.gut_editor.json')
-#	var j = JSON.parse(text).result
 
 	var scripts = j['test_scripts']['scripts']
 	var script_keys = scripts.keys()
@@ -107,6 +98,7 @@ func add_centered_text(t):
 	var row = HBoxContainer.new()
 	row.alignment = row.ALIGN_CENTER
 	row.size_flags_vertical = row.SIZE_EXPAND_FILL
+	
 	var lbl = Label.new()
 	row.add_child(lbl)
 	lbl.text = t
@@ -123,10 +115,12 @@ func _show_all_passed():
 	if(i == kids.size()):
 		add_centered_text('Everything passed!')
 
+
 func clear():
 	var kids = _ctrls.vbox.get_children()
 	for kid in kids:
 		kid.free()
 	
-
-
+	
+func set_interface(which):
+	_interface = which
