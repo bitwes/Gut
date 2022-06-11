@@ -21,7 +21,7 @@ var _last_selected_path = null
 
 
 onready var _ctrls = {
-	output = $layout/RSplit/CResults/Tabs/Output,
+	output = $layout/RSplit/CResults/Tabs/Output/Output,
 	run_button = $layout/ControlBar/RunAll,
 	settings = $layout/RSplit/sc/Settings,
 	shortcut_dialog = $BottomPanelShortcuts,

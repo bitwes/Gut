@@ -318,21 +318,9 @@ text = "---"
 
 [node name="CenterContainer" type="CenterContainer" parent="layout/RSplit/CResults/ControlBar"]
 margin_left = 34.0
-margin_right = 488.0
-margin_bottom = 35.0
-size_flags_horizontal = 3
-
-[node name="CopyButton" type="Button" parent="layout/RSplit/CResults/ControlBar"]
-margin_left = 492.0
-margin_right = 547.0
-margin_bottom = 35.0
-text = "  Copy "
-
-[node name="ClearButton" type="Button" parent="layout/RSplit/CResults/ControlBar"]
-margin_left = 551.0
 margin_right = 611.0
 margin_bottom = 35.0
-text = "  Clear  "
+size_flags_horizontal = 3
 
 [node name="Tabs" type="TabContainer" parent="layout/RSplit/CResults"]
 margin_top = 39.0
@@ -343,6 +331,7 @@ size_flags_vertical = 3
 tab_align = 0
 
 [node name="RunResults" parent="layout/RSplit/CResults/Tabs" instance=ExtResource( 5 )]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -351,11 +340,32 @@ margin_right = -4.0
 margin_bottom = -4.0
 rect_min_size = Vector2( 100, 0 )
 
-[node name="Output" type="RichTextLabel" parent="layout/RSplit/CResults/Tabs"]
-visible = false
-margin_top = -480.0
-margin_right = 611.0
-margin_bottom = -4.0
+[node name="Output" type="VBoxContainer" parent="layout/RSplit/CResults/Tabs"]
+margin_right = 40.0
+margin_bottom = 40.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Toolbar" type="HBoxContainer" parent="layout/RSplit/CResults/Tabs/Output"]
+margin_right = 119.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+
+[node name="CopyButton" type="Button" parent="layout/RSplit/CResults/Tabs/Output/Toolbar"]
+margin_right = 55.0
+margin_bottom = 20.0
+text = "  Copy "
+
+[node name="ClearButton" type="Button" parent="layout/RSplit/CResults/Tabs/Output/Toolbar"]
+margin_left = 59.0
+margin_right = 119.0
+margin_bottom = 20.0
+text = "  Clear  "
+
+[node name="Output" type="RichTextLabel" parent="layout/RSplit/CResults/Tabs/Output"]
+margin_top = 24.0
+margin_right = 119.0
+margin_bottom = 40.0
 focus_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -397,6 +407,6 @@ margin_bottom = -125.552
 [connection signal="pressed" from="layout/ControlBar/FocusButton" to="." method="_on_FocusButton_pressed"]
 [connection signal="pressed" from="layout/ControlBar/Shortcuts" to="." method="_on_Shortcuts_pressed"]
 [connection signal="draw" from="layout/RSplit/CResults/ControlBar/Light" to="." method="_on_Light_draw"]
-[connection signal="pressed" from="layout/RSplit/CResults/ControlBar/CopyButton" to="." method="_on_CopyButton_pressed"]
-[connection signal="pressed" from="layout/RSplit/CResults/ControlBar/ClearButton" to="." method="_on_ClearButton_pressed"]
+[connection signal="pressed" from="layout/RSplit/CResults/Tabs/Output/Toolbar/CopyButton" to="." method="_on_CopyButton_pressed"]
+[connection signal="pressed" from="layout/RSplit/CResults/Tabs/Output/Toolbar/ClearButton" to="." method="_on_ClearButton_pressed"]
 [connection signal="popup_hide" from="BottomPanelShortcuts" to="." method="_on_BottomPanelShortcuts_popup_hide"]
