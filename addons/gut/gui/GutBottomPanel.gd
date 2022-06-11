@@ -8,6 +8,7 @@ const SHORTCUTS_PATH = 'res://.gut_editor_shortcuts.cfg'
 
 var TestScript = load('res://addons/gut/test.gd')
 var GutConfigGui = load('res://addons/gut/gui/gut_config_gui.gd')
+var ScriptTextEditors = load('res://addons/gut/gui/script_text_editor_controls.gd')
 
 var _interface = null;
 var _is_running = false;
@@ -47,19 +48,11 @@ func _ready():
 	_gut_config_gui.set_options(_gut_config.options)
 	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.panel_options.font_name)
 	_set_font_size_for_rtl(_ctrls.output, _gut_config.options.panel_options.font_size)
-	
+
 	_ctrls.run_results.set_font(
-		_gut_config.options.panel_options.font_name, 
+		_gut_config.options.panel_options.font_name,
 		_gut_config.options.panel_options.font_size)
 	_ctrls.run_results.add_centered_text("Let's run some tests!")
-	_ctrls.run_results.connect('search_for_text', self, '_on_run_result_text_search')
-
-func _on_run_result_text_search(text):
-	# TODO this could be foolproof it it accepted the inner class name too.  it
-	# could search for the class name first and then the method.
-	var line = _ctrls.run_at_cursor.search_current_editor_for_text(text)
-	if(line != -1):
-		_interface.get_script_editor().goto_line(line)
 
 
 func _process(delta):
@@ -156,7 +149,7 @@ func _run_tests():
 	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.panel_options.font_name)
 	_set_font_size_for_rtl(_ctrls.output, _gut_config.options.panel_options.font_size)
 	_ctrls.run_results.set_font(
-		_gut_config.options.panel_options.font_name, 
+		_gut_config.options.panel_options.font_name,
 		_gut_config.options.panel_options.font_size)
 
 	var w_result = _gut_config.write_options(RUNNER_JSON_PATH)
@@ -255,9 +248,9 @@ func load_result_output():
 	var results = JSON.parse(summary)
 	if(results.error != OK):
 		return
-		
+
 	_ctrls.run_results.load_json_results(results.result)
-	
+
 	var summary_json = results.result['test_scripts']['props']
 	_ctrls.results.passing.text = str(summary_json.passing)
 	_ctrls.results.passing.get_parent().visible = true
@@ -299,10 +292,12 @@ func set_current_script(script):
 
 func set_interface(value):
 	_interface = value
-	_ctrls.run_results.set_interface(value)
-	
 	_interface.get_script_editor().connect("editor_script_changed", self, '_on_editor_script_changed')
-	_ctrls.run_at_cursor.set_script_editor(_interface.get_script_editor())
+
+	var ste = ScriptTextEditors.new(_interface.get_script_editor())
+	_ctrls.run_results.set_interface(_interface)
+	_ctrls.run_results.set_script_text_editors(ste)
+	_ctrls.run_at_cursor.set_script_text_editors(ste)
 	set_current_script(_interface.get_script_editor().get_current_script())
 
 

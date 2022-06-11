@@ -14,7 +14,6 @@ onready var _ctrls = {
 }
 
 var _editors = null
-var _script_editor = null
 var _cur_editor = null
 var _last_line = -1
 var _cur_script_path = null
@@ -59,12 +58,12 @@ func _update_buttons(info):
 	_ctrls.arrow_2.visible = info.test_method != null
 	_ctrls.btn_method.text = str(info.test_method)
 	_ctrls.btn_method.hint_tooltip = str("Run test ", info.test_method)
-	
-	# The button's new size won't take effect until the next frame.  
+
+	# The button's new size won't take effect until the next frame.
 	# This appears to be what was causing the button to not be clickable the
 	# first time.
 	call_deferred("_update_rect_size")
-	
+
 
 func _update_rect_size():
 	rect_min_size.x = _ctrls.btn_method.rect_size.x + _ctrls.btn_method.rect_position.x
@@ -76,9 +75,8 @@ func _on_cursor_changed(which):
 		_update_buttons(_last_info)
 
 
-func set_script_editor(value):
-	_script_editor = value
-	_editors = ScriptTextEditors.new(value)
+func set_script_text_editors(value):
+	_editors = value
 
 
 func activate_for_script(path):
@@ -130,18 +128,18 @@ func set_method_prefix(value):
 func set_inner_class_prefix(value):
 	_editors.set_inner_class_prefix(value)
 
-# Mashed this function in here b/c it has _editors.  Probably should be 
+# Mashed this function in here b/c it has _editors.  Probably should be
 # somewhere else (possibly in script_text_editor_controls).
 func search_current_editor_for_text(txt):
 	var te = _editors.get_current_text_edit()
 	var result = te.search(txt, 0, 0, 0)
 	var to_return = -1
-	
+
 	if result.size() > 0:
 		to_return = result[TextEdit.SEARCH_RESULT_LINE]
 #		var res_column = result[TextEdit.SEARCH_RESULT_COLUMN]
-	
-	return to_return
-	
 
-	
+	return to_return
+
+
+

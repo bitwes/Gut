@@ -1,6 +1,11 @@
 extends GutTest
 
+func test_this_is_only_a_test():
+	fail_test('but it is failing')
 
+func test_duplicate_name():
+	pending('base level duplicate')
+	
 class TestPassingDupeNames:
 	extends GutTest
 	
