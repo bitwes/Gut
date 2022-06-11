@@ -30,54 +30,57 @@ anchor_bottom = 1.0
 margin_right = 958.0
 margin_bottom = 24.0
 
-[node name="Collapse" type="ToolButton" parent="VBox/Toolbar"]
+[node name="Expand" type="ToolButton" parent="VBox/Toolbar"]
 margin_right = 28.0
+margin_bottom = 24.0
+hint_tooltip = "Expand selected item and all children."
+icon = SubResource( 2 )
+
+[node name="Collapse" type="ToolButton" parent="VBox/Toolbar"]
+margin_left = 32.0
+margin_right = 60.0
 margin_bottom = 24.0
 hint_tooltip = "Collapse selected item and all children."
 icon = SubResource( 2 )
 
-[node name="Expand" type="ToolButton" parent="VBox/Toolbar"]
-margin_left = 32.0
-margin_right = 44.0
-margin_bottom = 24.0
-hint_tooltip = "Expand selected item and all children."
-
 [node name="Sep" type="ColorRect" parent="VBox/Toolbar"]
-margin_left = 48.0
-margin_right = 50.0
+margin_left = 64.0
+margin_right = 66.0
 margin_bottom = 24.0
 rect_min_size = Vector2( 2, 0 )
 
 [node name="LblAll" type="Label" parent="VBox/Toolbar"]
-margin_left = 54.0
+margin_left = 70.0
 margin_top = 5.0
-margin_right = 75.0
+margin_right = 91.0
 margin_bottom = 19.0
 text = "All:"
 align = 1
 
-[node name="CollapseAll" type="ToolButton" parent="VBox/Toolbar"]
-margin_left = 79.0
-margin_right = 91.0
-margin_bottom = 24.0
-hint_tooltip = "Collapse all."
-
 [node name="ExpandAll" type="ToolButton" parent="VBox/Toolbar"]
 margin_left = 95.0
-margin_right = 107.0
+margin_right = 123.0
 margin_bottom = 24.0
 hint_tooltip = "Expand All."
+icon = SubResource( 2 )
+
+[node name="CollapseAll" type="ToolButton" parent="VBox/Toolbar"]
+margin_left = 127.0
+margin_right = 155.0
+margin_bottom = 24.0
+hint_tooltip = "Collapse all."
+icon = SubResource( 2 )
 
 [node name="Sep2" type="ColorRect" parent="VBox/Toolbar"]
-margin_left = 111.0
-margin_right = 113.0
+margin_left = 159.0
+margin_right = 161.0
 margin_bottom = 24.0
 rect_min_size = Vector2( 2, 0 )
 
 [node name="HidePassing" type="CheckBox" parent="VBox/Toolbar"]
 modulate = Color( 0.160784, 0.670588, 0, 1 )
-margin_left = 117.0
-margin_right = 141.0
+margin_left = 165.0
+margin_right = 189.0
 margin_bottom = 24.0
 hint_tooltip = "Show/Hide passing tests.  Takes effect on next run."
 size_flags_horizontal = 4
@@ -114,9 +117,9 @@ anchor_bottom = 1.0
 align = 1
 valign = 1
 
-[connection signal="pressed" from="VBox/Toolbar/Collapse" to="." method="_on_Collapse_pressed"]
 [connection signal="pressed" from="VBox/Toolbar/Expand" to="." method="_on_Expand_pressed"]
-[connection signal="pressed" from="VBox/Toolbar/CollapseAll" to="." method="_on_CollapseAll_pressed"]
+[connection signal="pressed" from="VBox/Toolbar/Collapse" to="." method="_on_Collapse_pressed"]
 [connection signal="pressed" from="VBox/Toolbar/ExpandAll" to="." method="_on_ExpandAll_pressed"]
+[connection signal="pressed" from="VBox/Toolbar/CollapseAll" to="." method="_on_CollapseAll_pressed"]
 [connection signal="pressed" from="VBox/Toolbar/HidePassing" to="." method="_on_Hide_Passing_pressed"]
 [connection signal="item_selected" from="VBox/Output/Scroll/Tree" to="." method="_on_Tree_item_selected"]

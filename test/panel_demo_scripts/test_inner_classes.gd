@@ -6,6 +6,7 @@ func test_this_is_only_a_test():
 func test_duplicate_name():
 	pending('base level duplicate')
 	
+	
 class TestPassingDupeNames:
 	extends GutTest
 	
@@ -24,6 +25,7 @@ class TestBrokenDupedNames:
 		
 	func test_duplicate_name_two():
 		pending('this one is pending')
+
 
 class TestInner:
 	extends GutTest
