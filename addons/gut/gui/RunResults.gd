@@ -24,7 +24,7 @@ onready var _ctrls = {
 }
 
 func _test_running_setup():
-	_hide_passing = false
+	_hide_passing = true
 	var _gut_config = load('res://addons/gut/gut_config.gd').new()
 	_gut_config.load_panel_options('res://.gut_editor_config.json')
 	set_font(
@@ -57,46 +57,60 @@ func _open_file(path, line_number):
 
 
 func _add_script_tree_item(script_path, script_json):
-	var item = _ctrls.tree.create_item(_root)
-	item.set_text(0, script_path)
-	var meta = {"type":"script", "json":script_json}
+	var path_info = _get_path_and_inner_class_name_from_test_path(script_path)
+	# print('* adding script ', path_info)
+	var item_text = script_path
+	var parent = _root
+
+	if(path_info.inner_class != ''):
+		parent = _find_script_item_with_path(path_info.path)
+		item_text = path_info.inner_class
+		if(parent == null):
+			parent = _add_script_tree_item(path_info.path, {})
+
+	var item = _ctrls.tree.create_item(parent)
+	item.set_text(0, item_text)
+	var meta = {
+		"type":"script",
+		"path":path_info.path,
+		"inner_class":path_info.inner_class,
+		"json":script_json}
 	item.set_metadata(0, meta)
 
 	return item
 
 
 func _add_assert_item(text, icon, parent_item):
-		var assert_item = _ctrls.tree.create_item(parent_item)
-		assert_item.set_icon_max_width(0, _max_icon_width)
-		assert_item.set_text(0, text)
-		assert_item.set_metadata(0, {"type":"assert"})
-		assert_item.set_icon(0, icon)
-#		assert_item.set_custom_bg_color(0, Color(0, 1, 0), true)
+	# print('        * adding assert')
+	var assert_item = _ctrls.tree.create_item(parent_item)
+	assert_item.set_icon_max_width(0, _max_icon_width)
+	assert_item.set_text(0, text)
+	assert_item.set_metadata(0, {"type":"assert"})
+	assert_item.set_icon(0, icon)
 
-		return assert_item
+	return assert_item
 
 
 func _add_test_tree_item(test_name, test_json, script_item):
+	# print('    * adding test ', test_name)
 	if(_hide_passing and test_json['status'] == 'pass'):
 		return
 
 	var item = _ctrls.tree.create_item(script_item)
 	var status = test_json['status']
+	var meta = {"type":"test", "json":test_json}
+
 	item.set_text(0, test_name)
 	item.set_text(1, status)
-	var meta = {"type":"test", "json":test_json}
 	item.set_metadata(0, meta)
 	item.set_icon_max_width(0, _max_icon_width)
 
 	if(status == 'pass'):
 		item.set_icon(0, _icons.green)
-#		item.set_custom_bg_color(1, Color(0, 1, 0), true)
 	elif(status == 'fail'):
 		item.set_icon(0, _icons.red)
-#		item.set_custom_bg_color(1, Color(1, 0, 0), true)
 	else:
 		item.set_icon(0, _icons.yellow)
-#		item.set_custom_bg_color(1, Color.yellow, true)
 
 	if(!_hide_passing):
 		for passing in test_json.passing:
@@ -117,27 +131,53 @@ func _load_result_tree(j):
 	# if we made it here, the json is valid and we did something, otherwise the
 	# 'nothing to see here' should be visible.
 	clear_centered_text()
+	var _last_script_item = null
 	for key in script_keys:
 		var tests = scripts[key]['tests']
 		var test_keys = tests.keys()
 		var s_item = _add_script_tree_item(key, scripts[key])
 		var bad_count = 0
+
 		for test_key in test_keys:
 			var t_item = _add_test_tree_item(test_key, tests[test_key], s_item)
 			if(tests[test_key].status != 'pass'):
 				bad_count += 1
-			else:
+			elif(t_item != null):
 				t_item.collapsed = true
 
 		# get_children returns the first child or null.  its a dumb name.
 		if(s_item.get_children() == null):
+			# var m = s_item.get_metadata(0)
+			# print('!! Deleting ', m.path, ' ', m.inner_class)
 			s_item.free()
 		else:
 			if(bad_count == 0):
 				s_item.collapsed = true
 			s_item.set_text(1, str(bad_count, '/', test_keys.size()))
 
+	_free_childless_scripts()
 	_show_all_passed()
+
+func _free_childless_scripts():
+	var item = _root.get_children()
+	while(item != null):
+		var next_item = item.get_next()
+		if(item.get_children() == null):
+			item.free()
+		item = next_item
+
+func _find_script_item_with_path(path):
+	var item = _root.get_children()
+	var to_return = null
+
+	while(item != null and to_return == null):
+		if(item.get_metadata(0).path == path):
+			to_return = item
+		else:
+			item = item.get_next()
+
+	return to_return
+
 
 
 func _get_line_number_from_assert_msg(msg):
@@ -166,25 +206,33 @@ func _handle_tree_item_select(item):
 
 	var path = '';
 	var line = -1;
-	var search = ''
+	var method_name = ''
+	var inner_class = ''
 
 	if(item_type == 'test'):
-		path = item.get_parent().get_text(0)
+		var s_item = item.get_parent()
+		path = s_item.get_metadata(0)['path']
+		inner_class = s_item.get_metadata(0)['inner_class']
 		line = -1
-		search = item.get_text(0)
+		method_name = item.get_text(0)
 	elif(item_type == 'assert'):
-		path = item.get_parent().get_parent().get_text(0)
+		var s_item = item.get_parent().get_parent()
+		path = s_item.get_metadata(0)['path']
+		inner_class = s_item.get_metadata(0)['inner_class']
+
 		line = _get_line_number_from_assert_msg(item.get_text(0))
-		search = item.get_parent().get_text(0)
+		method_name = item.get_parent().get_text(0)
 	elif(item_type == 'script'):
-		path = item.get_text(0)
+		path = item.get_metadata(0)['path']
+		if(item.get_parent() != _root):
+			inner_class = item.get_text(0)
 		line = -1
-		search = ''
+		method_name = ''
 	else:
 		return
 
 	var path_info = _get_path_and_inner_class_name_from_test_path(path)
-	_goto_code(path_info.path, line, search, path_info.inner_class)
+	_goto_code(path, line, method_name, inner_class)
 
 
 # starts at beginning of text edit and searches for each search term, moving

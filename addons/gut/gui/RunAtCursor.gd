@@ -23,7 +23,6 @@ signal run_tests(what)
 
 
 func _ready():
-	print('run at cursor ready')
 	_ctrls.lbl_none.visible = true
 	_ctrls.btn_script.visible = false
 	_ctrls.btn_inner.visible = false
