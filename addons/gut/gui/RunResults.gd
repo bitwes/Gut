@@ -19,12 +19,13 @@ var _icons = {
 signal search_for_text(text)
 
 onready var _ctrls = {
-	tree = $Panel/Scroll/Tree,
-	lbl_overlay = $Panel/OverlayMessage
+	tree = $VBox/Output/Scroll/Tree,
+	lbl_overlay = $VBox/Output/OverlayMessage,
+	chk_hide_passing = $VBox/Toolbar/HidePassing
 }
 
 func _test_running_setup():
-	_hide_passing = true
+	_hide_passing = false
 	var _gut_config = load('res://addons/gut/gut_config.gd').new()
 	_gut_config.load_panel_options('res://.gut_editor_config.json')
 	set_font(
@@ -343,6 +344,35 @@ func set_script_text_editors(value):
 	_editors = value
 
 
+func _set_collapsed_on_all(item, value):
+	if(item == _root):
+		var node = _root.get_children()
+		while(node != null):
+			node.call_recursive('set_collapsed', value)
+			node = node.get_next()
+	else:
+		item.call_recursive('set_collapsed', value)
+
+
+func collapse_all():
+	_set_collapsed_on_all(_root, true)
+
+
+func expand_all():
+	_set_collapsed_on_all(_root, false)
+
+
+func collapse_selected():
+	var item = _ctrls.tree.get_selected()
+	if(item != null):
+		_set_collapsed_on_all(item, true)
+
+func expand_selected():
+	var item = _ctrls.tree.get_selected()
+	if(item != null):
+		_set_collapsed_on_all(item, false)
+
+
 func set_font(font_name, size):
 	pass
 #	var dyn_font = DynamicFont.new()
@@ -354,3 +384,23 @@ func set_font(font_name, size):
 #	_font = dyn_font
 #	_font.size = size
 #	_font_size = size
+
+
+func _on_Collapse_pressed():
+	collapse_selected()
+
+
+func _on_Expand_pressed():
+	expand_selected()
+
+
+func _on_CollapseAll_pressed():
+	collapse_all()
+
+
+func _on_ExpandAll_pressed():
+	expand_all()
+
+
+func _on_Hide_Passing_pressed():
+	_hide_passing = _ctrls.chk_hide_passing.pressed

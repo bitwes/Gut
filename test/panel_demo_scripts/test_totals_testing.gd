@@ -18,6 +18,15 @@ func test_multiple_passing_asserts():
 	assert_eq(1, 1)
 	assert_eq(2, 2)
 	assert_eq('a', 'a')
+	
+func test_multiple_failing():
+	assert_ne(1, 1)
+	assert_ne(2, 2)
+	assert_ne('a', 'a')
+	
+func test_multiple_failing2():
+	assert_ne(1, 1)
+	assert_ne(2, 2)
 
 func test_makes_orphan():
 	var orphan = Node2D.new()

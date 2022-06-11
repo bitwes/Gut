@@ -134,6 +134,7 @@ class TestIgnoreMethodsWhenDoubling:
 		m_inst.return_hello()
 		# since it is ignored it should not have been caught by the stubber
 		_test.assert_not_called(m_inst, 'return_hello')
+		assert_eq(_test.get_fail_count(), 0)
 
 
 class TestTestsSmartDoubleMethod:

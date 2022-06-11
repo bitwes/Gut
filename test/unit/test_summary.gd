@@ -12,6 +12,7 @@ func before_each():
 
 func test_can_add_script():
 	gr.summary.add_script('script1')
+	pass_test('no error')
 
 func test_can_get_scripts():
 	gr.summary.add_script('script1')
