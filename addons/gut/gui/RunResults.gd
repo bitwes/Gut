@@ -3,15 +3,12 @@ tool
 
 var _interface = null
 var _utils = load('res://addons/gut/utils.gd').new()
-
-var ScriptResult = load('res://addons/gut/gui/ScriptResult.tscn')
-var TestResult = load('res://addons/gut/gui/TestResult.tscn')
-
 var _hide_passing = true
 var _font = null
 var _font_size = null
-
 var _root = null
+var _max_icon_width = 10
+
 var _icons = {
 	red = load('res://addons/gut/images/red.png'),
 	green = load('res://addons/gut/images/green.png'),
@@ -21,32 +18,30 @@ var _icons = {
 signal search_for_text(text)
 
 onready var _ctrls = {
-#	vbox = $Panel/Scroll/VBox,
 	tree = $Panel/Scroll/Tree,
 	lbl_overlay = $Panel/OverlayMessage
 }
+
+func _test_running_setup():
+	_hide_passing = false
+	var _gut_config = load('res://addons/gut/gut_config.gd').new()
+	_gut_config.load_panel_options('res://.gut_editor_config.json')
+	set_font(
+		_gut_config.options.panel_options.font_name, 
+		_gut_config.options.panel_options.font_size)
+	load_json_file('user://.gut_editor.json')
 
 
 func _ready():
 	_root = _ctrls.tree.create_item()
 	_ctrls.tree.set_hide_root(true)
 	_ctrls.tree.columns = 2
-#	_ctrls.tree.set_column_title(0, 'Thing')
-#	_ctrls.tree.set_column_title(1, 'Status')
-#	_ctrls.tree.set_column_titles_visible(true)
 	_ctrls.tree.set_column_expand(0, true)
 	_ctrls.tree.set_column_expand(1, false)
 	_ctrls.tree.set_column_min_width(1, 150)
 	
 	if(get_parent() == get_tree().root):
-		_hide_passing = false
-		var _gut_config = load('res://addons/gut/gut_config.gd').new()
-		_gut_config.load_panel_options('res://.gut_editor_config.json')
-		set_font(
-			_gut_config.options.panel_options.font_name, 
-			_gut_config.options.panel_options.font_size)
-		load_json_file('user://.gut_editor.json')
-
+		_test_running_setup()
 
 func _open_file(path, line_number):
 	if(_interface == null):
@@ -60,9 +55,67 @@ func _open_file(path, line_number):
 		_interface.edit_script(r)
 
 
+func _add_script_tree_item(script_path, script_json):
+	var item = _ctrls.tree.create_item(_root)
+	item.set_text(0, script_path)
+	var meta = {"type":"script", "json":script_json}
+	item.set_metadata(0, meta)
+	
+	return item
+
+
+func _add_assert_item(text, icon, parent_item):
+		var assert_item = _ctrls.tree.create_item(parent_item)
+		assert_item.set_icon_max_width(0, _max_icon_width)
+		assert_item.set_text(0, text)
+		assert_item.set_metadata(0, {"type":"assert"})
+		assert_item.set_icon(0, icon)
+#		assert_item.set_custom_bg_color(0, Color(0, 1, 0), true)
+		
+		return assert_item
+
+	
+func _add_test_tree_item(test_name, test_json, script_item):
+	if(_hide_passing and test_json['status'] == 'pass'):
+		return
+	
+	var item = _ctrls.tree.create_item(script_item)
+	var status = test_json['status']
+	item.set_text(0, test_name)
+	item.set_text(1, status)
+	var meta = {"type":"test", "json":test_json}
+	item.set_metadata(0, meta)
+	item.set_icon_max_width(0, _max_icon_width)
+	
+	if(status == 'pass'):
+		item.set_icon(0, _icons.green)
+#		item.set_custom_bg_color(1, Color(0, 1, 0), true)
+	elif(status == 'fail'):
+		item.set_icon(0, _icons.red)
+#		item.set_custom_bg_color(1, Color(1, 0, 0), true)
+	else:
+		item.set_icon(0, _icons.yellow)
+#		item.set_custom_bg_color(1, Color.yellow, true)
+	
+	if(!_hide_passing):
+		for passing in test_json.passing:
+			_add_assert_item('pass: ' + passing, _icons.green, item)
+	
+	for failure in test_json.failing:
+		_add_assert_item("fail:  " + failure.replace("\n", ''), _icons.red, item)
+
+	for pending in test_json.pending:
+		_add_assert_item("pending:  " + pending.replace("\n", ''), _icons.yellow, item)
+
+	return item
+	
+	
 func _load_result_tree(j):
 	var scripts = j['test_scripts']['scripts']
 	var script_keys = scripts.keys()
+	# if we made it here, the json is valid and we did something, otherwise the
+	# 'nothing to see here' should be visible.
+	clear_centered_text() 
 	for key in script_keys:
 		var tests = scripts[key]['tests']
 		var test_keys = tests.keys()
@@ -84,53 +137,7 @@ func _load_result_tree(j):
 	_show_all_passed()
 
 
-
-func _add_script_tree_item(script_path, script_json):
-	var item = _ctrls.tree.create_item(_root)
-	item.set_text(0, script_path)
-	var meta = {"type":"script", "json":script_json}
-	item.set_metadata(0, meta)
-	
-	return item
-	
-func _add_test_tree_item(test_name, test_json, script_item):
-	if(_hide_passing and test_json['status'] == 'pass'):
-		return
-	
-	var item = _ctrls.tree.create_item(script_item)
-	var status = test_json['status']
-	item.set_text(0, test_name)
-	item.set_text(1, status)
-	var meta = {"type":"test", "json":test_json}
-	item.set_metadata(0, meta)
-	item.set_icon_max_width(0, 10)
-	
-	if(status == 'pass'):
-		item.set_icon(0, _icons.green)
-	elif(status == 'fail'):
-		item.set_icon(0, _icons.red)
-	else:
-		item.set_icon(0, _icons.yellow)
-	
-	for failure in test_json.failing:
-		var assert_item = _ctrls.tree.create_item(item)
-		assert_item.set_icon_max_width(0, 10)
-		assert_item.set_text(0, "fail:  " + failure.replace("\n", ''))
-		assert_item.set_metadata(0, {"type":"assert"})
-		assert_item.set_icon(0, _icons.red)
-
-	for pending in test_json.pending:
-		var assert_item = _ctrls.tree.create_item(item)
-		assert_item.set_icon_max_width(0, 10)
-		assert_item.set_text(0, "pending:  " + pending.replace("\n", ''))
-		assert_item.set_metadata(0, {"type":"assert"})
-		assert_item.set_icon(0, _icons.yellow)
-
-		
-	return item
-
-func _on_Tree_item_selected():
-	var item = _ctrls.tree.get_selected()
+func _handle_tree_item_select(item):
 	var item_type = item.get_metadata(0).type
 	
 	var path = '';
@@ -150,41 +157,10 @@ func _on_Tree_item_selected():
 		var loc = path.find('.gd')
 		path = path.substr(0, loc + 3)
 
-	_on_test_result_goto(path, line, search)
+	_goto_code(path, line, search)
 
 
-func _add_script_ctrl(script_path, script_json):
-	var obj = ScriptResult.instance()
-	_ctrls.vbox.add_child(obj)
-	obj.set_font(_font, _font_size * 1.15)
-	obj.set_name(script_path)
-	var status_text = str(script_json.props.failures , '/',
-		script_json.props.tests)
-	obj.set_status(status_text)
-	obj.visible = !_hide_passing
-
-	return obj
-
-
-func _add_test_ctrl_to_script_ctrl(test_name, test_json, script_ctrl):
-	var obj = TestResult.instance()
-	obj.visible = false
-	var test_row = script_ctrl.add_test_result(obj)
-	obj.set_font(_font)
-	obj.set_name(test_name)
-	obj.set_goto(script_ctrl.get_path(), -1)
-	obj.set_data(test_name, test_json)
-	
-	obj.visible = !_hide_passing or(_hide_passing and  test_json.status != 'pass')
-	test_row.visible = obj.visible
-	if(_hide_passing and obj.visible):
-		script_ctrl.visible = true
-		
-	script_ctrl.update_name_display()
-	return obj
-
-
-func _on_test_result_goto(path, line, method_name=''):
+func _goto_code(path, line, method_name=''):
 	if(_interface):
 		_open_file(path, line)
 		if(line == -1 and method_name != ''):
@@ -193,68 +169,53 @@ func _on_test_result_goto(path, line, method_name=''):
 		print('going to ', path, '@', line, ' ', method_name)
 
 
-func load_json_file(path):
-	var text = _utils.get_file_as_text(path)
-	var j = JSON.parse(text).result
-	load_json_results(j)
-	
-
-func _load_result_controls(j):
-	var scripts = j['test_scripts']['scripts']
-	var script_keys = scripts.keys()
-	for key in script_keys:
-		var tests = scripts[key]['tests']
-		var test_keys = tests.keys()
-		var script_obj = _add_script_ctrl(key, scripts[key])
-		
-		for test_key in test_keys:
-			var test_obj = _add_test_ctrl_to_script_ctrl(test_key, tests[test_key], script_obj)
-			test_obj.connect('goto', self, '_on_test_result_goto')
-
-	_show_all_passed()
-	
-
-
-func load_json_results(j):
-	clear()
-	_load_result_tree(j)
-
-
-
-func add_centered_text(t):
-	_ctrls.lbl_overlay.text = t
-	
-#	var row = HBoxContainer.new()
-#	row.alignment = row.ALIGN_CENTER
-#	row.size_flags_vertical = row.SIZE_EXPAND_FILL
-#
-#	var lbl = Label.new()
-#	row.add_child(lbl)
-#	lbl.text = t
-#	_ctrls.vbox.add_child(row)
-	
-
 func _show_all_passed():
 	if(_root.get_children() == null):
 		add_centered_text('Everything passed!')
 
-#	var kids = _ctrls.vbox.get_children()
-#	var i = 0
-#	while(i < kids.size() and !kids[i].visible):
-#		i += 1
-#
-#	print(i, '=', kids.size())
-#	if(i == kids.size()):
-#		add_centered_text('Everything passed!')
+# --------------
+# Events
+# --------------
+func _on_Tree_item_selected():
+	_handle_tree_item_select(_ctrls.tree.get_selected())
+
+
+# --------------
+# Public
+# --------------
+func load_json_file(path):
+	var text = _utils.get_file_as_text(path)
+	if(text != ''):
+		var result = JSON.parse(text)
+		if(result.error != OK):
+			add_centered_text(str(path, " has invalid json in it \n", 
+				'Error ', result.error, "@", result.error_line, "\n",
+				result.error_string))
+			return
+		
+		load_json_results(result.result)
+	else:
+		add_centered_text(str(path, ' was empty or did not exist.'))
+	
+
+func load_json_results(j):
+	clear()
+	add_centered_text('Nothing Here')
+	_load_result_tree(j)
+
+
+func add_centered_text(t):
+	_ctrls.lbl_overlay.text = t
+
+
+func clear_centered_text():
+	_ctrls.lbl_overlay.text = ''
 
 
 func clear():
 	_ctrls.tree.clear()
 	_root = _ctrls.tree.create_item()
-	_ctrls.lbl_overlay.text = ''
-#	var kids = _ctrls.vbox.get_children()
-#	for kid in kids:
-#		kid.free()
+	clear_centered_text()
 	
 	
 func set_interface(which):
@@ -262,12 +223,13 @@ func set_interface(which):
 
 
 func set_font(font_name, size):
-	var dyn_font = DynamicFont.new()
-	var font_data = DynamicFontData.new()
-	font_data.font_path = 'res://addons/gut/fonts/' + font_name + '-Regular.ttf'
-	font_data.antialiased = true
-	dyn_font.font_data = font_data
-
-	_font = dyn_font
-	_font.size = size
-	_font_size = size
+	pass
+#	var dyn_font = DynamicFont.new()
+#	var font_data = DynamicFontData.new()
+#	font_data.font_path = 'res://addons/gut/fonts/' + font_name + '-Regular.ttf'
+#	font_data.antialiased = true
+#	dyn_font.font_data = font_data
+#
+#	_font = dyn_font
+#	_font.size = size
+#	_font_size = size

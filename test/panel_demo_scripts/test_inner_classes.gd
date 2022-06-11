@@ -1,7 +1,7 @@
 extends GutTest
 
 
-class TestInner1:
+class TestPassingDupeNames:
 	extends GutTest
 	
 	func test_duplicate_name():
@@ -11,7 +11,7 @@ class TestInner1:
 		pass_test('this also passes')
 
 
-class TestInner2:
+class TestBrokenDupedNames:
 	extends GutTest
 	
 	func test_duplicate_name():
@@ -20,7 +20,7 @@ class TestInner2:
 	func test_duplicate_name_two():
 		pending('this one is pending')
 
-class TestInner3:
+class TestInner:
 	extends GutTest
 	
 	func test_something_cool():
