@@ -21,7 +21,14 @@ signal search_for_text(text)
 onready var _ctrls = {
 	tree = $VBox/Output/Scroll/Tree,
 	lbl_overlay = $VBox/Output/OverlayMessage,
-	chk_hide_passing = $VBox/Toolbar/HidePassing
+	chk_hide_passing = $VBox/Toolbar/HidePassing,
+	toolbar = {
+		collapse = $VBox/Toolbar/Collapse,
+		collapse_all = $VBox/Toolbar/CollapseAll,
+		expand = $VBox/Toolbar/Expand,
+		expand_all = $VBox/Toolbar/ExpandAll,
+		hide_passing = $VBox/Toolbar/HidePassing
+	}
 }
 
 func _test_running_setup():
@@ -34,6 +41,10 @@ func _test_running_setup():
 	load_json_file('user://.gut_editor.json')
 
 
+func _set_toolbutton_icon(btn, icon_name):
+	btn.icon = get_icon(icon_name, 'EditorIcons')
+
+
 func _ready():
 	_root = _ctrls.tree.create_item()
 	_ctrls.tree.set_hide_root(true)
@@ -41,6 +52,14 @@ func _ready():
 	_ctrls.tree.set_column_expand(0, true)
 	_ctrls.tree.set_column_expand(1, false)
 	_ctrls.tree.set_column_min_width(1, 150)
+
+	_set_toolbutton_icon(_ctrls.toolbar.collapse, 'CollapseTree')
+	_set_toolbutton_icon(_ctrls.toolbar.collapse_all, 'CollapseTree')
+	_set_toolbutton_icon(_ctrls.toolbar.expand, 'ExpandTree')
+	_set_toolbutton_icon(_ctrls.toolbar.expand_all, 'ExpandTree')
+
+	_ctrls.toolbar.hide_passing.set('custom_icons/checked', get_icon('GuiVisibilityHidden', 'EditorIcons'))
+	_ctrls.toolbar.hide_passing.set('custom_icons/unchecked', get_icon('GuiVisibilityVisible', 'EditorIcons'))
 
 	if(get_parent() == get_tree().root):
 		_test_running_setup()
@@ -403,4 +422,4 @@ func _on_ExpandAll_pressed():
 
 
 func _on_Hide_Passing_pressed():
-	_hide_passing = _ctrls.chk_hide_passing.pressed
+	_hide_passing = _ctrls.toolbar.hide_passing.pressed
