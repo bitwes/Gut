@@ -126,6 +126,8 @@ func _load_result_tree(j):
 			var t_item = _add_test_tree_item(test_key, tests[test_key], s_item)
 			if(tests[test_key].status != 'pass'):
 				bad_count += 1
+			else:
+				t_item.collapsed = true
 
 		# get_children returns the first child or null.  its a dumb name.
 		if(s_item.get_children() == null):
