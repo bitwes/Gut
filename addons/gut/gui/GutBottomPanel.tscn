@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://addons/gut/gui/GutBottomPanel.gd" type="Script" id=1]
 [ext_resource path="res://addons/gut/gui/BottomPanelShortcuts.tscn" type="PackedScene" id=2]
@@ -12,8 +12,6 @@ scancode = 49
 
 [sub_resource type="ShortCut" id=9]
 shortcut = SubResource( 8 )
-
-[sub_resource type="StyleBoxEmpty" id=5]
 
 [sub_resource type="Image" id=20]
 data = {
@@ -120,38 +118,54 @@ text = "Current:  "
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 217.0
-margin_right = 465.0
+margin_right = 548.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 0, 40 )
 
 [node name="CenterContainer2" type="CenterContainer" parent="layout/ControlBar"]
-margin_left = 469.0
-margin_right = 718.0
+margin_left = 552.0
+margin_right = 883.0
 margin_bottom = 40.0
 size_flags_horizontal = 3
 
-[node name="FocusButton" type="Button" parent="layout/ControlBar"]
-show_behind_parent = true
-margin_left = 722.0
-margin_right = 722.0
+[node name="Sep1" type="ColorRect" parent="layout/ControlBar"]
+margin_left = 887.0
+margin_right = 889.0
 margin_bottom = 40.0
-custom_styles/normal = SubResource( 5 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+rect_min_size = Vector2( 2, 0 )
 
-[node name="CenterContainer" type="CenterContainer" parent="layout/ControlBar"]
-margin_left = 726.0
-margin_right = 975.0
+[node name="RunResultsBtn" type="ToolButton" parent="layout/ControlBar"]
+margin_left = 893.0
+margin_right = 921.0
 margin_bottom = 40.0
-size_flags_horizontal = 3
-
-[node name="Settings" type="ToolButton" parent="layout/ControlBar"]
-margin_left = 979.0
-margin_right = 991.0
-margin_bottom = 40.0
+hint_tooltip = "Show/Hide Results Tree Panel."
 toggle_mode = true
 pressed = true
+icon = SubResource( 11 )
+
+[node name="OutputBtn" type="ToolButton" parent="layout/ControlBar"]
+margin_left = 925.0
+margin_right = 953.0
+margin_bottom = 40.0
+hint_tooltip = "Show/Hide Output Panel."
+toggle_mode = true
+pressed = true
+icon = SubResource( 11 )
+
+[node name="Settings" type="ToolButton" parent="layout/ControlBar"]
+margin_left = 957.0
+margin_right = 985.0
+margin_bottom = 40.0
+hint_tooltip = "Show/Hide Settings Panel."
+toggle_mode = true
+pressed = true
+icon = SubResource( 11 )
+
+[node name="Sep2" type="ColorRect" parent="layout/ControlBar"]
+margin_left = 989.0
+margin_right = 991.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 2, 0 )
 
 [node name="Shortcuts" type="ToolButton" parent="layout/ControlBar"]
 margin_left = 995.0
@@ -169,17 +183,18 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="CResults" type="VBoxContainer" parent="layout/RSplit"]
-margin_right = 611.0
+margin_right = 511.0
 margin_bottom = 555.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="ControlBar" type="HBoxContainer" parent="layout/RSplit/CResults"]
-margin_right = 611.0
+margin_right = 511.0
 margin_bottom = 35.0
 rect_min_size = Vector2( 0, 35 )
 
 [node name="Light" type="Control" parent="layout/RSplit/CResults/ControlBar"]
+visible = false
 margin_right = 30.0
 margin_bottom = 35.0
 rect_min_size = Vector2( 30, 30 )
@@ -339,37 +354,33 @@ margin_bottom = 24.0
 text = "---"
 
 [node name="CenterContainer" type="CenterContainer" parent="layout/RSplit/CResults/ControlBar"]
-margin_left = 34.0
-margin_right = 611.0
+margin_right = 511.0
 margin_bottom = 35.0
 size_flags_horizontal = 3
 
-[node name="Tabs" type="TabContainer" parent="layout/RSplit/CResults"]
+[node name="Tabs" type="HSplitContainer" parent="layout/RSplit/CResults"]
 margin_top = 39.0
-margin_right = 611.0
+margin_right = 511.0
 margin_bottom = 555.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-tab_align = 0
 
 [node name="RunResults" parent="layout/RSplit/CResults/Tabs" instance=ExtResource( 5 )]
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 4.0
-margin_top = 32.0
-margin_right = -4.0
-margin_bottom = -4.0
+margin_right = 249.0
+margin_bottom = 516.0
 rect_min_size = Vector2( 100, 0 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="Output" type="VBoxContainer" parent="layout/RSplit/CResults/Tabs"]
-visible = false
-margin_right = 40.0
-margin_bottom = 40.0
+margin_left = 261.0
+margin_right = 511.0
+margin_bottom = 516.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Toolbar" type="HBoxContainer" parent="layout/RSplit/CResults/Tabs/Output"]
-margin_right = 119.0
+margin_right = 250.0
 margin_bottom = 20.0
 size_flags_horizontal = 3
 
@@ -386,8 +397,8 @@ text = "  Clear  "
 
 [node name="Output" type="RichTextLabel" parent="layout/RSplit/CResults/Tabs/Output"]
 margin_top = 24.0
-margin_right = 119.0
-margin_bottom = 40.0
+margin_right = 250.0
+margin_bottom = 516.0
 focus_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -400,15 +411,15 @@ scroll_following = true
 selection_enabled = true
 
 [node name="sc" type="ScrollContainer" parent="layout/RSplit"]
-margin_left = 623.0
+margin_left = 523.0
 margin_right = 1023.0
 margin_bottom = 555.0
-rect_min_size = Vector2( 400, 0 )
+rect_min_size = Vector2( 500, 0 )
 mouse_filter = 1
 size_flags_vertical = 3
 
 [node name="Settings" type="VBoxContainer" parent="layout/RSplit/sc"]
-margin_right = 388.0
+margin_right = 488.0
 margin_bottom = 908.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -426,7 +437,8 @@ margin_bottom = -125.552
 
 [connection signal="pressed" from="layout/ControlBar/RunAll" to="." method="_on_RunAll_pressed"]
 [connection signal="run_tests" from="layout/ControlBar/RunAtCursor" to="." method="_on_RunAtCursor_run_tests"]
-[connection signal="pressed" from="layout/ControlBar/FocusButton" to="." method="_on_FocusButton_pressed"]
+[connection signal="pressed" from="layout/ControlBar/RunResultsBtn" to="." method="_on_RunResultsBtn_pressed"]
+[connection signal="pressed" from="layout/ControlBar/OutputBtn" to="." method="_on_OutputBtn_pressed"]
 [connection signal="pressed" from="layout/ControlBar/Settings" to="." method="_on_Settings_pressed"]
 [connection signal="pressed" from="layout/ControlBar/Shortcuts" to="." method="_on_Shortcuts_pressed"]
 [connection signal="draw" from="layout/RSplit/CResults/ControlBar/Light" to="." method="_on_Light_draw"]

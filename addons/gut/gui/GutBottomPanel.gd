@@ -25,10 +25,13 @@ onready var _ctrls = {
 	run_button = $layout/ControlBar/RunAll,
 	settings_button = $layout/ControlBar/Settings,
 	shortcuts_button = $layout/ControlBar/Shortcuts,
+	run_results_button = $layout/ControlBar/RunResultsBtn,
+	output_button = $layout/ControlBar/OutputBtn,
 	settings = $layout/RSplit/sc/Settings,
 	shortcut_dialog = $BottomPanelShortcuts,
 	light = $layout/RSplit/CResults/ControlBar/Light,
 	results = {
+		bar = $layout/RSplit/CResults/ControlBar,
 		passing = $layout/RSplit/CResults/ControlBar/Passing/value,
 		failing = $layout/RSplit/CResults/ControlBar/Failing/value,
 		pending = $layout/RSplit/CResults/ControlBar/Pending/value,
@@ -46,6 +49,7 @@ func _init():
 
 
 func _ready():
+	_ctrls.results.bar.connect('draw', self, '_on_results_bar_draw', [_ctrls.results.bar])
 	hide_settings(!_ctrls.settings_button.pressed)
 	_gut_config_gui = GutConfigGui.new(_ctrls.settings)
 	_gut_config_gui.set_options(_gut_config.options)
@@ -54,7 +58,9 @@ func _ready():
 	
 	_ctrls.shortcuts_button.icon = get_icon('ShortCut', 'EditorIcons')
 	_ctrls.settings_button.icon = get_icon('Tools', 'EditorIcons')
-
+	_ctrls.run_results_button.icon = get_icon('AnimationTrackGroup', 'EditorIcons') # Tree
+	_ctrls.output_button.icon = get_icon('Font', 'EditorIcons')
+	
 	_ctrls.run_results.set_font(
 		_gut_config.options.panel_options.font_name,
 		_gut_config.options.panel_options.font_size)
@@ -204,6 +210,9 @@ func _run_all():
 # ---------------
 # Events
 # ---------------
+func _on_results_bar_draw(bar):
+	bar.draw_rect(Rect2(Vector2(0, 0), bar.rect_size), Color(0, 0, 0, .2))
+	
 func _on_editor_script_changed(script):
 	if(script):
 		set_current_script(script)
@@ -246,6 +255,8 @@ func _on_RunAtCursor_run_tests(what):
 
 	_run_tests()
 
+func _on_Settings_pressed():
+	hide_settings(!_ctrls.settings_button.pressed)
 
 # ---------------
 # Public
@@ -290,6 +301,7 @@ func load_result_output():
 		_light_color = Color(1, 1, 0, .75)
 	else:
 		_light_color = Color(0, 1, 0, .75)
+	_ctrls.light.visible = true
 	_ctrls.light.update()
 
 
@@ -367,7 +379,12 @@ func hide_settings(should):
 		s_scroll.get_parent().move_child(s_scroll, 1)
 	
 	$layout/RSplit.collapsed = should
-	
 
-func _on_Settings_pressed():
-	hide_settings(!_ctrls.settings_button.pressed)
+
+func _on_OutputBtn_pressed():
+	$layout/RSplit/CResults/Tabs/Output.visible = _ctrls.output_button.pressed
+
+
+func _on_RunResultsBtn_pressed():
+	_ctrls.run_results.visible = _ctrls.run_results_button.pressed
+	
