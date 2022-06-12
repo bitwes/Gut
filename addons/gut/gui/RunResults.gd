@@ -10,7 +10,7 @@ var _root = null
 var _max_icon_width = 10
 var _editors = null # script_text_editor_controls.gd
 
-var _icons = {
+var 	_icons = {
 	red = load('res://addons/gut/images/red.png'),
 	green = load('res://addons/gut/images/green.png'),
 	yellow = load('res://addons/gut/images/yellow.png'),
@@ -45,7 +45,7 @@ func _set_toolbutton_icon(btn, icon_name):
 	btn.icon = get_icon(icon_name, 'EditorIcons')
 
 
-func _ready():
+func _ready():	
 	_root = _ctrls.tree.create_item()
 	_ctrls.tree.set_hide_root(true)
 	_ctrls.tree.columns = 2
