@@ -8,6 +8,7 @@ const SHORTCUTS_PATH = 'res://.gut_editor_shortcuts.cfg'
 
 var TestScript = load('res://addons/gut/test.gd')
 var GutConfigGui = load('res://addons/gut/gui/gut_config_gui.gd')
+var ScriptTextEditors = load('res://addons/gut/gui/script_text_editor_controls.gd')
 
 var _interface = null;
 var _is_running = false;
@@ -20,12 +21,17 @@ var _last_selected_path = null
 
 
 onready var _ctrls = {
-	output = $layout/RSplit/CResults/Output,
+	output = $layout/RSplit/CResults/Tabs/Output/Output,
 	run_button = $layout/ControlBar/RunAll,
+	settings_button = $layout/ControlBar/Settings,
+	shortcuts_button = $layout/ControlBar/Shortcuts,
+	run_results_button = $layout/ControlBar/RunResultsBtn,
+	output_button = $layout/ControlBar/OutputBtn,
 	settings = $layout/RSplit/sc/Settings,
 	shortcut_dialog = $BottomPanelShortcuts,
 	light = $layout/RSplit/CResults/ControlBar/Light,
 	results = {
+		bar = $layout/RSplit/CResults/ControlBar,
 		passing = $layout/RSplit/CResults/ControlBar/Passing/value,
 		failing = $layout/RSplit/CResults/ControlBar/Failing/value,
 		pending = $layout/RSplit/CResults/ControlBar/Pending/value,
@@ -33,7 +39,8 @@ onready var _ctrls = {
 		warnings = $layout/RSplit/CResults/ControlBar/Warnings/value,
 		orphans = $layout/RSplit/CResults/ControlBar/Orphans/value
 	},
-	run_at_cursor = $layout/ControlBar/RunAtCursor
+	run_at_cursor = $layout/ControlBar/RunAtCursor,
+	run_results = $layout/RSplit/CResults/Tabs/RunResults
 }
 
 
@@ -42,10 +49,28 @@ func _init():
 
 
 func _ready():
+	_ctrls.results.bar.connect('draw', self, '_on_results_bar_draw', [_ctrls.results.bar])
+	hide_settings(!_ctrls.settings_button.pressed)
 	_gut_config_gui = GutConfigGui.new(_ctrls.settings)
 	_gut_config_gui.set_options(_gut_config.options)
 	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.panel_options.font_name)
 	_set_font_size_for_rtl(_ctrls.output, _gut_config.options.panel_options.font_size)
+	
+	_ctrls.shortcuts_button.icon = get_icon('ShortCut', 'EditorIcons')
+	_ctrls.settings_button.icon = get_icon('Tools', 'EditorIcons')
+	_ctrls.run_results_button.icon = get_icon('AnimationTrackGroup', 'EditorIcons') # Tree
+	_ctrls.output_button.icon = get_icon('Font', 'EditorIcons')
+	
+	_ctrls.run_results.set_font(
+		_gut_config.options.panel_options.font_name,
+		_gut_config.options.panel_options.font_size)
+	
+	var check_import = load('res://addons/gut/images/red.png')
+	if(check_import == null):
+		_ctrls.run_results.add_centered_text("GUT got some new images that are not imported yet.  Please restart Godot.")
+		print('GUT got some new images that are not imported yet.  Please restart Godot.')
+	else:
+		_ctrls.run_results.add_centered_text("Let's run some tests!")
 
 
 func _process(delta):
@@ -141,6 +166,9 @@ func _run_tests():
 	_gut_config.options = _gut_config_gui.get_options(_gut_config.options)
 	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.panel_options.font_name)
 	_set_font_size_for_rtl(_ctrls.output, _gut_config.options.panel_options.font_size)
+	_ctrls.run_results.set_font(
+		_gut_config.options.panel_options.font_name,
+		_gut_config.options.panel_options.font_size)
 
 	var w_result = _gut_config.write_options(RUNNER_JSON_PATH)
 	if(w_result != OK):
@@ -148,12 +176,14 @@ func _run_tests():
 		return;
 
 	_ctrls.output.clear()
+	_ctrls.run_results.clear()
+	_ctrls.run_results.add_centered_text('Running...')
 
 	_update_last_run_label()
 	_interface.play_custom_scene('res://addons/gut/gui/GutRunner.tscn')
 
 	_is_running = true
-	_ctrls.output.add_text('running...')
+	_ctrls.output.add_text('Running...')
 
 
 func _apply_shortcuts():
@@ -180,6 +210,9 @@ func _run_all():
 # ---------------
 # Events
 # ---------------
+func _on_results_bar_draw(bar):
+	bar.draw_rect(Rect2(Vector2(0, 0), bar.rect_size), Color(0, 0, 0, .2))
+	
 func _on_editor_script_changed(script):
 	if(script):
 		set_current_script(script)
@@ -222,6 +255,8 @@ func _on_RunAtCursor_run_tests(what):
 
 	_run_tests()
 
+func _on_Settings_pressed():
+	hide_settings(!_ctrls.settings_button.pressed)
 
 # ---------------
 # Public
@@ -236,6 +271,9 @@ func load_result_output():
 	var results = JSON.parse(summary)
 	if(results.error != OK):
 		return
+
+	_ctrls.run_results.load_json_results(results.result)
+
 	var summary_json = results.result['test_scripts']['props']
 	_ctrls.results.passing.text = str(summary_json.passing)
 	_ctrls.results.passing.get_parent().visible = true
@@ -263,6 +301,7 @@ func load_result_output():
 		_light_color = Color(1, 1, 0, .75)
 	else:
 		_light_color = Color(0, 1, 0, .75)
+	_ctrls.light.visible = true
 	_ctrls.light.update()
 
 
@@ -278,7 +317,11 @@ func set_current_script(script):
 func set_interface(value):
 	_interface = value
 	_interface.get_script_editor().connect("editor_script_changed", self, '_on_editor_script_changed')
-	_ctrls.run_at_cursor.set_script_editor(_interface.get_script_editor())
+
+	var ste = ScriptTextEditors.new(_interface.get_script_editor())
+	_ctrls.run_results.set_interface(_interface)
+	_ctrls.run_results.set_script_text_editors(ste)
+	_ctrls.run_at_cursor.set_script_text_editors(ste)
 	set_current_script(_interface.get_script_editor().get_current_script())
 
 
@@ -324,3 +367,24 @@ func nvl(value, if_null):
 		return value
 
 
+func hide_settings(should):
+	var s_scroll = _ctrls.settings.get_parent()
+	s_scroll.visible = !should
+	
+	# collapse only collapses the first control, so we move 
+	# settings around to be the collapsed one
+	if(should):
+		s_scroll.get_parent().move_child(s_scroll, 0)
+	else:
+		s_scroll.get_parent().move_child(s_scroll, 1)
+	
+	$layout/RSplit.collapsed = should
+
+
+func _on_OutputBtn_pressed():
+	$layout/RSplit/CResults/Tabs/Output.visible = _ctrls.output_button.pressed
+
+
+func _on_RunResultsBtn_pressed():
+	_ctrls.run_results.visible = _ctrls.run_results_button.pressed
+	

@@ -224,11 +224,13 @@ func print_script_methods():
 	var methods = script.get_script_method_list()
 	for i in range(methods.size()):
 		print(methods[i]['name'])
+		pp(methods[i])
 
 
 func print_all_info(thing):
 	print('Methods')
 	var methods = thing.get_method_list()
+
 	for i in range(methods.size()):
 		print('  ', methods[i].name)
 
@@ -236,6 +238,10 @@ func print_all_info(thing):
 	var props = thing.get_property_list()
 	for i in range(props.size()):
 		print('  ', props[i].name, props[i])
+
+
+func pp(dict):
+	print(JSON.print(dict, ' '))
 
 func _init():
 	var r = Reference.new()
@@ -245,12 +251,12 @@ func _init():
 	#print_all_info(r)
 	#print(r.get('Reference'))
 
-	#print_all_info(DoubleMeScene)
+	# print_all_info(DoubleMeScene)
 	#print(DoubleMeScene.script)
 	#print(DoubleMeScene.resource_name)
-	#print(DoubleMeScene.get_meta_list())
+	print(DoubleMeScene.get_meta_list())
 
-	#print_script_methods()
+	print_script_methods()
 	#var test = load('res://addons/gut/test.gd').new()
 	#print_method_info(test)
 
@@ -285,8 +291,8 @@ func _init():
 	#var obj = load('res://test/resources/doubler_test_objects/double_extends_window_dialog.gd').new()
 	#ExtendsNode2D.set_meta('gut_ignore', 'something')
 	#print_method_info(obj)
-	print_method_info(CodeTextEditor)
-	print(CodeTextEditor.new().get_property_list())
+	# print_method_info(CodeTextEditor)
+	# print(CodeTextEditor.new().get_property_list())
 	#print(obj.get_meta_list())
 	#print(ExtendsNode2D.get_meta_list())
 	#print_method_info(ExtendsNode2D)

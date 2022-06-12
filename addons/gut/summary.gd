@@ -7,6 +7,7 @@ class Test:
 	var fail_texts = []
 	var pending_texts = []
 	var orphans = 0
+	var line_number = 0
 
 	# NOTE:  The "failed" and "pending" text must match what is outputted by
 	# the logger in order for text highlighting to occur in summary.

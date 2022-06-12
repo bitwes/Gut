@@ -15,10 +15,12 @@ class TestSpy:
 
 	func test_can_add_call_to_method_on_path():
 		_spy.add_call('nothing', 'method_name')
+		pass_test("no errors, we are all good")
 
 	func test_can_add_call_to_method_on_instance():
 		var simple = Simple.new()
 		_spy.add_call(simple, 'method_name')
+		pass_test("no errors, we are all good")
 
 	func test_was_called_returns_true_if_path_and_method_were_called():
 		var simple = Simple.new()
@@ -73,6 +75,7 @@ class TestAddingCallsWithParameters:
 
 	func test_can_add_call_with_parameters():
 		_spy.add_call(Simple.new(), 'method1', [1])
+		pass_test("no errors, we are all good")
 
 	func test_can_check_for_calls_with_parameters():
 		var simple = Simple.new()

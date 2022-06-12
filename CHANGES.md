@@ -13,7 +13,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   `assert_called(my_inst, '_init', [1, 2, 'c'])`
   * You can now stub default parameter values for `_init`:<br/>
   `stub(MyClass, '_init').param_defaults([1, 2, 'c'])`
-*
+* __Issue 363__ GUT In-Editor Panel Improvements
+  * New, super fancy, Tree Panel that shows your failing/pending/risky tests.  Click an element in the tree, go to that line in the file.
+  * You can toggle the visibility of Settings, Output, and Tree panels.
+  * Some nice editor icons to make things look slick.
+
 #### Misc
 * Yield messages are now disabled on log level 0.
 *

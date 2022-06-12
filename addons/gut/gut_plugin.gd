@@ -3,6 +3,7 @@ extends EditorPlugin
 
 var _bottom_panel = null
 
+
 func _enter_tree():
 	_bottom_panel = preload('res://addons/gut/gui/GutBottomPanel.tscn').instance()
 	# Initialization of the plugin goes here
@@ -17,6 +18,8 @@ func _enter_tree():
 	_bottom_panel.set_plugin(self)
 	_bottom_panel.set_panel_button(button)
 	_bottom_panel.load_shortcuts()
+	
+	
 
 
 func _exit_tree():

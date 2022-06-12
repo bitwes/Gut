@@ -116,7 +116,7 @@ class TestLogLevels:
 
 	var _orig_log_level = -1
 	var _orig_indent_string = null
-
+  
 	func before_all():
 		_orig_log_level = gut.get_log_level()
 		_orig_indent_string = gut.get_logger().get_indent_string()
@@ -140,4 +140,4 @@ class TestLogLevels:
 		gut.get_logger().error('test text')
 		gut.get_logger().info('test text')
 		gut.get_logger().debug('test text')
-		assert_true(false, 'this should fail')
+		assert_true(false, str('this should fail (', level, ')'))

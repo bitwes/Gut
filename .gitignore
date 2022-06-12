@@ -18,3 +18,7 @@ mono_crash.*.json
 .DS_Store
 exported_tests.cfg
 .vscode/
+
+# GUT-specific ignores
+.gut_editor_config.json
+.gut_editor_shortcuts.cfg

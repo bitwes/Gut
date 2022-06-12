@@ -68,7 +68,7 @@ func _write_results():
 		print('ERROR Could not save bbcode, result = ', result)
 
 	var exporter = ResultExporter.new()
-	var f_result = exporter.write_summary_file(_gut, RESULT_JSON)
+	var f_result = exporter.write_json_file(_gut, RESULT_JSON)
 	_wrote_results = true
 
 
