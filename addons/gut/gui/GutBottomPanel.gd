@@ -23,6 +23,8 @@ var _last_selected_path = null
 onready var _ctrls = {
 	output = $layout/RSplit/CResults/Tabs/Output/Output,
 	run_button = $layout/ControlBar/RunAll,
+	settings_button = $layout/ControlBar/Settings,
+	shortcuts_button = $layout/ControlBar/Shortcuts,
 	settings = $layout/RSplit/sc/Settings,
 	shortcut_dialog = $BottomPanelShortcuts,
 	light = $layout/RSplit/CResults/ControlBar/Light,
@@ -44,10 +46,14 @@ func _init():
 
 
 func _ready():
+	hide_settings(!_ctrls.settings_button.pressed)
 	_gut_config_gui = GutConfigGui.new(_ctrls.settings)
 	_gut_config_gui.set_options(_gut_config.options)
 	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.panel_options.font_name)
 	_set_font_size_for_rtl(_ctrls.output, _gut_config.options.panel_options.font_size)
+	
+	_ctrls.shortcuts_button.icon = get_icon('ShortCut', 'EditorIcons')
+	_ctrls.settings_button.icon = get_icon('Tools', 'EditorIcons')
 
 	_ctrls.run_results.set_font(
 		_gut_config.options.panel_options.font_name,
@@ -347,3 +353,21 @@ func nvl(value, if_null):
 		return if_null
 	else:
 		return value
+
+
+func hide_settings(should):
+	var s_scroll = _ctrls.settings.get_parent()
+	s_scroll.visible = !should
+	
+	# collapse only collapses the first control, so we move 
+	# settings around to be the collapsed one
+	if(should):
+		s_scroll.get_parent().move_child(s_scroll, 0)
+	else:
+		s_scroll.get_parent().move_child(s_scroll, 1)
+	
+	$layout/RSplit.collapsed = should
+	
+
+func _on_Settings_pressed():
+	hide_settings(!_ctrls.settings_button.pressed)

@@ -2,7 +2,7 @@
 
 [ext_resource path="res://addons/gut/gui/RunResults.gd" type="Script" id=1]
 
-[sub_resource type="Image" id=3]
+[sub_resource type="Image" id=12]
 data = {
 "data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
 "format": "LumAlpha8",
@@ -11,10 +11,10 @@ data = {
 "width": 16
 }
 
-[sub_resource type="ImageTexture" id=2]
+[sub_resource type="ImageTexture" id=11]
 flags = 4
 flags = 4
-image = SubResource( 3 )
+image = SubResource( 12 )
 size = Vector2( 16, 16 )
 
 [node name="RunResults" type="Control"]
@@ -34,14 +34,14 @@ margin_bottom = 24.0
 margin_right = 28.0
 margin_bottom = 24.0
 hint_tooltip = "Expand selected item and all children."
-icon = SubResource( 2 )
+icon = SubResource( 11 )
 
 [node name="Collapse" type="ToolButton" parent="VBox/Toolbar"]
 margin_left = 32.0
 margin_right = 60.0
 margin_bottom = 24.0
 hint_tooltip = "Collapse selected item and all children."
-icon = SubResource( 2 )
+icon = SubResource( 11 )
 
 [node name="Sep" type="ColorRect" parent="VBox/Toolbar"]
 margin_left = 64.0
@@ -62,14 +62,14 @@ margin_left = 95.0
 margin_right = 123.0
 margin_bottom = 24.0
 hint_tooltip = "Expand All."
-icon = SubResource( 2 )
+icon = SubResource( 11 )
 
 [node name="CollapseAll" type="ToolButton" parent="VBox/Toolbar"]
 margin_left = 127.0
 margin_right = 155.0
 margin_bottom = 24.0
 hint_tooltip = "Collapse all."
-icon = SubResource( 2 )
+icon = SubResource( 11 )
 
 [node name="Sep2" type="ColorRect" parent="VBox/Toolbar"]
 margin_left = 159.0
@@ -84,8 +84,8 @@ margin_right = 189.0
 margin_bottom = 24.0
 hint_tooltip = "Show/Hide passing tests.  Takes effect on next run."
 size_flags_horizontal = 4
-custom_icons/checked = SubResource( 2 )
-custom_icons/unchecked = SubResource( 2 )
+custom_icons/checked = SubResource( 11 )
+custom_icons/unchecked = SubResource( 11 )
 pressed = true
 __meta__ = {
 "_editor_description_": ""
