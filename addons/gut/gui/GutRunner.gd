@@ -35,10 +35,10 @@ func run_tests():
 	if(_gut == null):
 		_gut = Gut.new()
 
-	if(_gut_config.options.has('panel_options')):
-		_gut.get_logger().get_printer('gui').set_use_buffer(
-			_gut_config.options.panel_options.use_colors
-		)
+#	if(_gut_config.options.has('panel_options')):
+#		_gut.get_logger().get_printer('gui').set_use_buffer(
+#			_gut_config.options.panel_options.use_colors
+#		)
 
 	_gut.set_add_children_to(self)
 	if(_gut_config.options.gut_on_top):

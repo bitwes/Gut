@@ -72,6 +72,7 @@ func test_yield():
 	yield(yield_for(2), YIELD)
 	gut.p('end yield')
 
+
 class TestGuiOutput:
 	extends 'res://addons/gut/test.gd'
 
@@ -80,8 +81,14 @@ class TestGuiOutput:
 		assert_string_contains(gut.get_gui().get_text_box().get_text(), '[u]this should')
 
 	func test_embedded_bbcode_with_format():
-		_lgr.log('[i]this should not be italic', _lgr.fmts.yellow)
+		_lgr.log('[i]this should not be italic but should be yellow', _lgr.fmts.yellow)
 		assert_string_contains(gut.get_gui().get_text_box().get_text(), '[i]this should')
+		
+	func test_embedded_bbcode_with_closing_tag():
+		_lgr.log('all of this [/b] should be bold', _lgr.fmts.bold)
+		_lgr.log('thi should not be bold')
+		assert_string_contains(gut.get_gui().get_text_box().get_text(), '[/b] should be bold')
+
 
 class TestBasicLoggerOutput:
 	extends 'res://test/gut_test.gd'
@@ -110,6 +117,7 @@ class TestBasicLoggerOutput:
 		_test_logger.set_indent_level(2)
 		_test_logger.log("hello\nthis\nshould\nline up")
 		assert_true(true)
+
 
 class TestLogLevels:
 	extends 'res://addons/gut/test.gd' # this was on purpose

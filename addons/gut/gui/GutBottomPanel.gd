@@ -321,7 +321,7 @@ func hide_output_text(should):
 
 
 func load_result_output():
-	_ctrls.output.bbcode_text = get_file_as_text(RESULT_FILE)
+	_ctrls.output.text = get_file_as_text(RESULT_FILE)
 	_ctrls.output.grab_focus()
 	_ctrls.output.scroll_to_line(_ctrls.output.get_line_count() -1)
 
