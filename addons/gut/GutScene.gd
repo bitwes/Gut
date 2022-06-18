@@ -473,7 +473,7 @@ func get_waiting_label():
 func compact_mode(should):
 	if(_compact_mode == should):
 		return
-		
+
 	_compact_mode = should
 	_text_box_container.visible = !should
 	_nav.container.visible = !should
@@ -483,14 +483,14 @@ func compact_mode(should):
 	_resize_handle.visible = !should
 	_current_script.visible = !should
 	_title_replacement.visible = should
-	
+
 	if(should):
 		rect_min_size = min_sizes.compact
 		rect_size = rect_min_size
 	else:
 		rect_min_size = min_sizes.full
 		rect_size = min_sizes.full
-		
+
 	goto_bottom_right_corner()
 
 

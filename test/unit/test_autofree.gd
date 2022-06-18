@@ -5,7 +5,7 @@ var AutoFree = load('res://addons/gut/autofree.gd')
 var _starting_orphans = 0
 func before_all():
 	_starting_orphans = gut.get_orphan_counter().orphan_count()
-	
+
 func after_all():
 	assert_eq(gut.get_orphan_counter().orphan_count(), _starting_orphans, 'no new orphans during script')
 

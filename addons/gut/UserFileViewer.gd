@@ -32,7 +32,7 @@ func show_file(path):
 		text = '<Empty File>'
 	rtl.set_text(text)
 	self.window_title = path
-	
+
 func show_open():
 	self.popup_centered()
 	$FileDialog.popup_centered()

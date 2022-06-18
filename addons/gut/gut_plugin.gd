@@ -18,8 +18,6 @@ func _enter_tree():
 	_bottom_panel.set_plugin(self)
 	_bottom_panel.set_panel_button(button)
 	_bottom_panel.load_shortcuts()
-	
-	
 
 
 func _exit_tree():
