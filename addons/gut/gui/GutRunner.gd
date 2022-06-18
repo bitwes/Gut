@@ -22,7 +22,7 @@ onready var _gut_layer = $GutLayer
 func _ready():
 	if(_gut_config == null):
 		_gut_config = GutConfig.new()
-		_gut_config.load_options(RUNNER_JSON_PATH)
+		_gut_config.load_panel_options(RUNNER_JSON_PATH)
 
 	# The command line will call run_tests on its own.  When used from the panel
 	# we have to kick off the tests ourselves b/c there's no way I know of to
@@ -34,6 +34,11 @@ func _ready():
 func run_tests():
 	if(_gut == null):
 		_gut = Gut.new()
+
+	if(_gut_config.options.has('panel_options')):
+		_gut.get_logger().get_printer('gui').set_use_buffer(
+			_gut_config.options.panel_options.use_colors
+		)
 
 	_gut.set_add_children_to(self)
 	if(_gut_config.options.gut_on_top):
