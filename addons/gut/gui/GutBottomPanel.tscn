@@ -1,10 +1,11 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://addons/gut/gui/GutBottomPanel.gd" type="Script" id=1]
 [ext_resource path="res://addons/gut/gui/BottomPanelShortcuts.tscn" type="PackedScene" id=2]
 [ext_resource path="res://addons/gut/gui/RunAtCursor.tscn" type="PackedScene" id=3]
 [ext_resource path="res://addons/gut/gui/play.png" type="Texture" id=4]
 [ext_resource path="res://addons/gut/gui/RunResults.tscn" type="PackedScene" id=5]
+[ext_resource path="res://addons/gut/gui/OutputText.tscn" type="PackedScene" id=6]
 
 [sub_resource type="InputEventKey" id=8]
 control = true
@@ -13,7 +14,7 @@ scancode = 49
 [sub_resource type="ShortCut" id=9]
 shortcut = SubResource( 8 )
 
-[sub_resource type="Image" id=20]
+[sub_resource type="Image" id=12]
 data = {
 "data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
 "format": "LumAlpha8",
@@ -25,36 +26,8 @@ data = {
 [sub_resource type="ImageTexture" id=11]
 flags = 4
 flags = 4
-image = SubResource( 20 )
+image = SubResource( 12 )
 size = Vector2( 16, 16 )
-
-[sub_resource type="DynamicFontData" id=12]
-font_path = "res://addons/gut/fonts/CourierPrime-BoldItalic.ttf"
-
-[sub_resource type="DynamicFont" id=13]
-size = 30
-font_data = SubResource( 12 )
-
-[sub_resource type="DynamicFontData" id=14]
-font_path = "res://addons/gut/fonts/CourierPrime-Italic.ttf"
-
-[sub_resource type="DynamicFont" id=15]
-size = 30
-font_data = SubResource( 14 )
-
-[sub_resource type="DynamicFontData" id=16]
-font_path = "res://addons/gut/fonts/CourierPrime-Bold.ttf"
-
-[sub_resource type="DynamicFont" id=17]
-size = 30
-font_data = SubResource( 16 )
-
-[sub_resource type="DynamicFontData" id=18]
-font_path = "res://addons/gut/fonts/CourierPrime-Regular.ttf"
-
-[sub_resource type="DynamicFont" id=19]
-size = 30
-font_data = SubResource( 18 )
 
 [node name="GutBottomPanel" type="Control"]
 anchor_left = -0.0025866
@@ -76,7 +49,7 @@ __meta__ = {
 }
 
 [node name="ControlBar" type="HBoxContainer" parent="layout"]
-margin_right = 1023.0
+margin_right = 1093.0
 margin_bottom = 40.0
 __meta__ = {
 "_edit_use_anchors_": false
@@ -118,25 +91,25 @@ text = "Current:  "
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 217.0
-margin_right = 548.0
+margin_right = 583.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 0, 40 )
 
 [node name="CenterContainer2" type="CenterContainer" parent="layout/ControlBar"]
-margin_left = 552.0
-margin_right = 883.0
+margin_left = 587.0
+margin_right = 953.0
 margin_bottom = 40.0
 size_flags_horizontal = 3
 
 [node name="Sep1" type="ColorRect" parent="layout/ControlBar"]
-margin_left = 887.0
-margin_right = 889.0
+margin_left = 957.0
+margin_right = 959.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 2, 0 )
 
 [node name="RunResultsBtn" type="ToolButton" parent="layout/ControlBar"]
-margin_left = 893.0
-margin_right = 921.0
+margin_left = 963.0
+margin_right = 991.0
 margin_bottom = 40.0
 hint_tooltip = "Show/Hide Results Tree Panel."
 toggle_mode = true
@@ -144,8 +117,8 @@ pressed = true
 icon = SubResource( 11 )
 
 [node name="OutputBtn" type="ToolButton" parent="layout/ControlBar"]
-margin_left = 925.0
-margin_right = 953.0
+margin_left = 995.0
+margin_right = 1023.0
 margin_bottom = 40.0
 hint_tooltip = "Show/Hide Output Panel."
 toggle_mode = true
@@ -153,8 +126,8 @@ pressed = true
 icon = SubResource( 11 )
 
 [node name="Settings" type="ToolButton" parent="layout/ControlBar"]
-margin_left = 957.0
-margin_right = 985.0
+margin_left = 1027.0
+margin_right = 1055.0
 margin_bottom = 40.0
 hint_tooltip = "Show/Hide Settings Panel."
 toggle_mode = true
@@ -162,14 +135,14 @@ pressed = true
 icon = SubResource( 11 )
 
 [node name="Sep2" type="ColorRect" parent="layout/ControlBar"]
-margin_left = 989.0
-margin_right = 991.0
+margin_left = 1059.0
+margin_right = 1061.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 2, 0 )
 
 [node name="Shortcuts" type="ToolButton" parent="layout/ControlBar"]
-margin_left = 995.0
-margin_right = 1023.0
+margin_left = 1065.0
+margin_right = 1093.0
 margin_bottom = 40.0
 hint_tooltip = "Set shortcuts for GUT buttons.  Shortcuts do not work when the GUT panel is not visible."
 size_flags_vertical = 11
@@ -177,19 +150,19 @@ icon = SubResource( 11 )
 
 [node name="RSplit" type="HSplitContainer" parent="layout"]
 margin_top = 44.0
-margin_right = 1023.0
+margin_right = 1093.0
 margin_bottom = 599.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="CResults" type="VBoxContainer" parent="layout/RSplit"]
-margin_right = 511.0
+margin_right = 581.0
 margin_bottom = 555.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="ControlBar" type="HBoxContainer" parent="layout/RSplit/CResults"]
-margin_right = 511.0
+margin_right = 581.0
 margin_bottom = 35.0
 rect_min_size = Vector2( 0, 35 )
 
@@ -354,77 +327,31 @@ margin_bottom = 24.0
 text = "---"
 
 [node name="CenterContainer" type="CenterContainer" parent="layout/RSplit/CResults/ControlBar"]
-margin_right = 511.0
+margin_right = 581.0
 margin_bottom = 35.0
 size_flags_horizontal = 3
 
 [node name="Tabs" type="HSplitContainer" parent="layout/RSplit/CResults"]
 margin_top = 39.0
-margin_right = 511.0
+margin_right = 581.0
 margin_bottom = 555.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="RunResults" parent="layout/RSplit/CResults/Tabs" instance=ExtResource( 5 )]
-margin_right = 249.0
+margin_right = 450.0
 margin_bottom = 516.0
-rect_min_size = Vector2( 100, 0 )
+rect_min_size = Vector2( 450, 0 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Output" type="VBoxContainer" parent="layout/RSplit/CResults/Tabs"]
-margin_left = 261.0
-margin_right = 511.0
-margin_bottom = 516.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="Toolbar" type="HBoxContainer" parent="layout/RSplit/CResults/Tabs/Output"]
-margin_right = 250.0
-margin_bottom = 22.0
-size_flags_horizontal = 3
-
-[node name="CopyButton" type="ToolButton" parent="layout/RSplit/CResults/Tabs/Output/Toolbar"]
-margin_right = 12.0
-margin_bottom = 22.0
-
-[node name="UseColors" type="ToolButton" parent="layout/RSplit/CResults/Tabs/Output/Toolbar"]
-margin_left = 16.0
-margin_right = 28.0
-margin_bottom = 22.0
-hint_tooltip = "Colorize output.  Takes effect on next run.  Could be slightly slower on long runs."
-toggle_mode = true
-
-[node name="CenterContainer" type="CenterContainer" parent="layout/RSplit/CResults/Tabs/Output/Toolbar"]
-margin_left = 32.0
-margin_right = 186.0
-margin_bottom = 22.0
-size_flags_horizontal = 3
-
-[node name="ClearButton" type="Button" parent="layout/RSplit/CResults/Tabs/Output/Toolbar"]
-margin_left = 190.0
-margin_right = 250.0
-margin_bottom = 22.0
-text = "  Clear  "
-
-[node name="Output" type="RichTextLabel" parent="layout/RSplit/CResults/Tabs/Output"]
-margin_top = 26.0
-margin_right = 250.0
-margin_bottom = 516.0
-focus_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_fonts/bold_italics_font = SubResource( 13 )
-custom_fonts/italics_font = SubResource( 15 )
-custom_fonts/bold_font = SubResource( 17 )
-custom_fonts/normal_font = SubResource( 19 )
-bbcode_enabled = true
-scroll_following = true
-selection_enabled = true
+[node name="OutputText" parent="layout/RSplit/CResults/Tabs" instance=ExtResource( 6 )]
+margin_left = 462.0
+margin_right = 581.0
 
 [node name="sc" type="ScrollContainer" parent="layout/RSplit"]
-margin_left = 523.0
-margin_right = 1023.0
+margin_left = 593.0
+margin_right = 1093.0
 margin_bottom = 555.0
 rect_min_size = Vector2( 500, 0 )
 mouse_filter = 1
@@ -454,7 +381,4 @@ margin_bottom = -125.552
 [connection signal="pressed" from="layout/ControlBar/Settings" to="." method="_on_Settings_pressed"]
 [connection signal="pressed" from="layout/ControlBar/Shortcuts" to="." method="_on_Shortcuts_pressed"]
 [connection signal="draw" from="layout/RSplit/CResults/ControlBar/Light" to="." method="_on_Light_draw"]
-[connection signal="pressed" from="layout/RSplit/CResults/Tabs/Output/Toolbar/CopyButton" to="." method="_on_CopyButton_pressed"]
-[connection signal="pressed" from="layout/RSplit/CResults/Tabs/Output/Toolbar/UseColors" to="." method="_on_UseColors_pressed"]
-[connection signal="pressed" from="layout/RSplit/CResults/Tabs/Output/Toolbar/ClearButton" to="." method="_on_ClearButton_pressed"]
 [connection signal="popup_hide" from="BottomPanelShortcuts" to="." method="_on_BottomPanelShortcuts_popup_hide"]

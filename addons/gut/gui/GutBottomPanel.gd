@@ -21,7 +21,8 @@ var _last_selected_path = null
 
 
 onready var _ctrls = {
-	output = $layout/RSplit/CResults/Tabs/Output/Output,
+	output = $layout/RSplit/CResults/Tabs/OutputText.get_rich_text_edit(),
+	output_ctrl = $layout/RSplit/CResults/Tabs/OutputText,
 	run_button = $layout/ControlBar/RunAll,
 	shortcuts_button = $layout/ControlBar/Shortcuts,
 
@@ -41,10 +42,6 @@ onready var _ctrls = {
 		warnings = $layout/RSplit/CResults/ControlBar/Warnings/value,
 		orphans = $layout/RSplit/CResults/ControlBar/Orphans/value
 	},
-	output_toolbar = {
-		use_colors = $layout/RSplit/CResults/Tabs/Output/Toolbar/UseColors,
-		copy = $layout/RSplit/CResults/Tabs/Output/Toolbar/CopyButton,
-	},
 	run_at_cursor = $layout/ControlBar/RunAtCursor,
 	run_results = $layout/RSplit/CResults/Tabs/RunResults
 }
@@ -55,8 +52,6 @@ func _init():
 
 
 func _ready():
-	_ctrls.output_toolbar.use_colors.icon = get_icon('RichTextEffect', 'EditorIcons')
-	_ctrls.output_toolbar.copy.icon = get_icon('ActionCopy', 'EditorIcons')
 	_ctrls.results.bar.connect('draw', self, '_on_results_bar_draw', [_ctrls.results.bar])
 	hide_settings(!_ctrls.settings_button.pressed)
 	_gut_config_gui = GutConfigGui.new(_ctrls.settings)
@@ -65,10 +60,10 @@ func _ready():
 	hide_settings(_gut_config.options.panel_options.hide_settings)
 	hide_result_tree(_gut_config.options.panel_options.hide_result_tree)
 	hide_output_text(_gut_config.options.panel_options.hide_output_text)
-	_ctrls.output_toolbar.use_colors.pressed = _gut_config.options.panel_options.use_colors
-
-	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.panel_options.font_name)
-	_set_font_size_for_rtl(_ctrls.output, _gut_config.options.panel_options.font_size)
+	
+	_ctrls.output_ctrl.set_use_colors(_gut_config.options.panel_options.use_colors)
+	_ctrls.output_ctrl.set_all_fonts(_gut_config.options.panel_options.font_name)
+	_ctrls.output_ctrl.set_font_size(_gut_config.options.panel_options.font_size)
 
 	_ctrls.shortcuts_button.icon = get_icon('ShortCut', 'EditorIcons')
 	_ctrls.settings_button.icon = get_icon('Tools', 'EditorIcons')
@@ -102,41 +97,6 @@ func _process(delta):
 func load_shortcuts():
 	_ctrls.shortcut_dialog.load_shortcuts(SHORTCUTS_PATH)
 	_apply_shortcuts()
-
-
-# -----------------------------------
-func _set_font(rtl, font_name, custom_name):
-	if(font_name == null):
-		rtl.set('custom_fonts/' + custom_name, null)
-	else:
-		var dyn_font = DynamicFont.new()
-		var font_data = DynamicFontData.new()
-		font_data.font_path = 'res://addons/gut/fonts/' + font_name + '.ttf'
-		font_data.antialiased = true
-		dyn_font.font_data = font_data
-		rtl.set('custom_fonts/' + custom_name, dyn_font)
-
-
-func _set_all_fonts_in_ftl(ftl, base_name):
-	if(base_name == 'Default'):
-		_set_font(ftl, null, 'normal_font')
-		_set_font(ftl, null, 'bold_font')
-		_set_font(ftl, null, 'italics_font')
-		_set_font(ftl, null, 'bold_italics_font')
-	else:
-		_set_font(ftl, base_name + '-Regular', 'normal_font')
-		_set_font(ftl, base_name + '-Bold', 'bold_font')
-		_set_font(ftl, base_name + '-Italic', 'italics_font')
-		_set_font(ftl, base_name + '-BoldItalic', 'bold_italics_font')
-
-
-func _set_font_size_for_rtl(rtl, new_size):
-	if(rtl.get('custom_fonts/normal_font') != null):
-		rtl.get('custom_fonts/bold_italics_font').size = new_size
-		rtl.get('custom_fonts/bold_font').size = new_size
-		rtl.get('custom_fonts/italics_font').size = new_size
-		rtl.get('custom_fonts/normal_font').size = new_size
-# -----------------------------------
 
 
 func _is_test_script(script):
@@ -184,10 +144,10 @@ func _run_tests():
 	_gut_config.options.panel_options.hide_settings = !_ctrls.settings_button.pressed
 	_gut_config.options.panel_options.hide_result_tree = !_ctrls.run_results_button.pressed
 	_gut_config.options.panel_options.hide_output_text = !_ctrls.output_button.pressed
-	_gut_config.options.panel_options.use_colors = _ctrls.output_toolbar.use_colors.pressed
+	_gut_config.options.panel_options.use_colors = _ctrls.output_ctrl.get_use_colors()
 
-	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.panel_options.font_name)
-	_set_font_size_for_rtl(_ctrls.output, _gut_config.options.panel_options.font_size)
+	_ctrls.output_ctrl.set_all_fonts(_gut_config.options.panel_options.font_name)
+	_ctrls.output_ctrl.set_font_size(_gut_config.options.panel_options.font_size)
 	_ctrls.run_results.set_font(
 		_gut_config.options.panel_options.font_name,
 		_gut_config.options.panel_options.font_size)
@@ -249,14 +209,6 @@ func _on_RunTests_pressed():
 	_run_all()
 
 
-func _on_CopyButton_pressed():
-	OS.clipboard = _ctrls.output.text
-
-
-func _on_ClearButton_pressed():
-	_ctrls.output.clear()
-
-
 func _on_Shortcuts_pressed():
 	_ctrls.shortcut_dialog.popup_centered()
 
@@ -316,14 +268,12 @@ func hide_settings(should):
 
 
 func hide_output_text(should):
-	$layout/RSplit/CResults/Tabs/Output.visible = !should
+	$layout/RSplit/CResults/Tabs/OutputText.visible = !should
 	_ctrls.output_button.pressed = !should
 
 
 func load_result_output():
-	_ctrls.output.text = get_file_as_text(RESULT_FILE)
-	_ctrls.output.grab_focus()
-	_ctrls.output.scroll_to_line(_ctrls.output.get_line_count() -1)
+	_ctrls.output_ctrl.load_file(RESULT_FILE)
 
 	var summary = get_file_as_text(RESULT_JSON)
 	var results = JSON.parse(summary)

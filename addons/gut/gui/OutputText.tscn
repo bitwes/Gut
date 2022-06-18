@@ -1,0 +1,95 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://addons/gut/gui/OutputText.gd" type="Script" id=1]
+
+[sub_resource type="Image" id=12]
+data = {
+"data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
+"format": "LumAlpha8",
+"height": 16,
+"mipmaps": false,
+"width": 16
+}
+
+[sub_resource type="ImageTexture" id=11]
+flags = 4
+flags = 4
+image = SubResource( 12 )
+size = Vector2( 16, 16 )
+
+[node name="OutputText" type="VBoxContainer"]
+margin_right = 862.0
+margin_bottom = 523.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource( 1 )
+
+[node name="Toolbar" type="HBoxContainer" parent="."]
+margin_right = 862.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+
+[node name="ShowSearch" type="ToolButton" parent="Toolbar"]
+margin_right = 12.0
+margin_bottom = 22.0
+toggle_mode = true
+
+[node name="UseColors" type="ToolButton" parent="Toolbar"]
+visible = false
+margin_left = 32.0
+margin_right = 60.0
+margin_bottom = 24.0
+hint_tooltip = "Colorize output.  Takes effect on next run.  Could be slightly slower on long runs."
+toggle_mode = true
+pressed = true
+icon = SubResource( 11 )
+
+[node name="CenterContainer" type="CenterContainer" parent="Toolbar"]
+margin_left = 16.0
+margin_right = 743.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+
+[node name="CopyButton" type="Button" parent="Toolbar"]
+margin_left = 747.0
+margin_right = 798.0
+margin_bottom = 22.0
+hint_tooltip = "Copy to clipboard"
+text = " Copy "
+
+[node name="ClearButton" type="Button" parent="Toolbar"]
+margin_left = 802.0
+margin_right = 862.0
+margin_bottom = 22.0
+text = "  Clear  "
+
+[node name="Output" type="RichTextLabel" parent="."]
+margin_top = 26.0
+margin_right = 862.0
+margin_bottom = 523.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Search" type="HBoxContainer" parent="."]
+visible = false
+margin_top = 499.0
+margin_right = 862.0
+margin_bottom = 523.0
+
+[node name="SearchTerm" type="LineEdit" parent="Search"]
+margin_right = 804.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+
+[node name="SearchButton" type="Button" parent="Search"]
+margin_left = 808.0
+margin_right = 862.0
+margin_bottom = 24.0
+text = "Search"
+
+[connection signal="pressed" from="Toolbar/ShowSearch" to="." method="_on_ShowSearch_pressed"]
+[connection signal="pressed" from="Toolbar/UseColors" to="." method="_on_UseColors_pressed"]
+[connection signal="pressed" from="Toolbar/CopyButton" to="." method="_on_CopyButton_pressed"]
+[connection signal="pressed" from="Toolbar/ClearButton" to="." method="_on_ClearButton_pressed"]
+[connection signal="text_changed" from="Search/SearchTerm" to="." method="_on_SearchTerm_text_changed"]
+[connection signal="pressed" from="Search/SearchButton" to="." method="_on_SearchButton_pressed"]
