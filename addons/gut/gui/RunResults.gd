@@ -9,6 +9,7 @@ var _font_size = null
 var _root = null
 var _max_icon_width = 10
 var _editors = null # script_text_editor_controls.gd
+var _show_orphans = true
 
 var 	_icons = {
 	red = load('res://addons/gut/images/red.png'),
@@ -33,7 +34,8 @@ onready var _ctrls = {
 }
 
 func _test_running_setup():
-	_hide_passing = false
+	_hide_passing = true
+	_show_orphans = false
 	var _gut_config = load('res://addons/gut/gut_config.gd').new()
 	_gut_config.load_panel_options('res://.gut_editor_config.json')
 	set_font(
@@ -118,7 +120,8 @@ func _add_assert_item(text, icon, parent_item):
 
 func _add_test_tree_item(test_name, test_json, script_item):
 	# print('    * adding test ', test_name)
-	if(_hide_passing and test_json['status'] == 'pass'):
+	var no_orphans_to_show = !_show_orphans or (_show_orphans and test_json.orphans == 0)
+	if(_hide_passing and test_json['status'] == 'pass' and no_orphans_to_show):
 		return
 
 	var item = _ctrls.tree.create_item(script_item)
@@ -130,8 +133,11 @@ func _add_test_tree_item(test_name, test_json, script_item):
 	item.set_metadata(0, meta)
 	item.set_icon_max_width(0, _max_icon_width)
 
-	if(status == 'pass'):
+	if(status == 'pass' and no_orphans_to_show):
 		item.set_icon(0, _icons.green)
+	elif(status == 'pass' and !no_orphans_to_show):
+		item.set_icon(0, _icons.yellow)
+		item.set_text(1, 'orphans')
 	elif(status == 'fail'):
 		item.set_icon(0, _icons.red)
 	else:
@@ -147,6 +153,9 @@ func _add_test_tree_item(test_name, test_json, script_item):
 	for pending in test_json.pending:
 		_add_assert_item("pending:  " + pending.replace("\n", ''), _icons.yellow, item)
 
+	if(!no_orphans_to_show):
+		_add_assert_item(str(test_json.orphans, ' orphans'), _icons.yellow, item)
+		
 	return item
 
 
@@ -321,6 +330,24 @@ func _show_all_passed():
 func _on_Tree_item_selected():
 	_handle_tree_item_select(_ctrls.tree.get_selected())
 
+func _on_Collapse_pressed():
+	collapse_selected()
+
+
+func _on_Expand_pressed():
+	expand_selected()
+
+
+func _on_CollapseAll_pressed():
+	collapse_all()
+
+
+func _on_ExpandAll_pressed():
+	expand_all()
+
+
+func _on_Hide_Passing_pressed():
+	_hide_passing = _ctrls.toolbar.hide_passing.pressed
 
 # --------------
 # Public
@@ -397,6 +424,9 @@ func expand_selected():
 		_set_collapsed_on_all(item, false)
 
 
+func set_show_orphans(should):
+	_show_orphans = should
+
 func set_font(font_name, size):
 	pass
 #	var dyn_font = DynamicFont.new()
@@ -410,21 +440,3 @@ func set_font(font_name, size):
 #	_font_size = size
 
 
-func _on_Collapse_pressed():
-	collapse_selected()
-
-
-func _on_Expand_pressed():
-	expand_selected()
-
-
-func _on_CollapseAll_pressed():
-	collapse_all()
-
-
-func _on_ExpandAll_pressed():
-	expand_all()
-
-
-func _on_Hide_Passing_pressed():
-	_hide_passing = _ctrls.toolbar.hide_passing.pressed

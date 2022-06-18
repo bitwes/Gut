@@ -191,6 +191,7 @@ func _run_tests():
 	_ctrls.run_results.set_font(
 		_gut_config.options.panel_options.font_name,
 		_gut_config.options.panel_options.font_size)
+	_ctrls.run_results.set_show_orphans(!_gut_config.options.hide_orphans)
 
 	var w_result = _gut_config.write_options(RUNNER_JSON_PATH)
 	if(w_result != OK):
