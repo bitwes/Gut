@@ -86,7 +86,7 @@ func _process(delta):
 	if(_is_running):
 		if(!_interface.is_playing_scene()):
 			_is_running = false
-			_ctrls.output.add_text("\ndone")
+			_ctrls.output_ctrl.add_text("\ndone")
 			load_result_output()
 			_gut_plugin.make_bottom_panel_item_visible(self)
 
@@ -152,13 +152,14 @@ func _run_tests():
 		_gut_config.options.panel_options.font_name,
 		_gut_config.options.panel_options.font_size)
 	_ctrls.run_results.set_show_orphans(!_gut_config.options.hide_orphans)
+	_ctrls.run_results.set_output_control(_ctrls.output_ctrl)
 
 	var w_result = _gut_config.write_options(RUNNER_JSON_PATH)
 	if(w_result != OK):
 		push_error(str('Could not write options to ', RUNNER_JSON_PATH, ': ', w_result))
 		return;
 
-	_ctrls.output.clear()
+	_ctrls.output_ctrl.clear()
 	_ctrls.run_results.clear()
 	_ctrls.run_results.add_centered_text('Running...')
 
@@ -166,7 +167,7 @@ func _run_tests():
 	_interface.play_custom_scene('res://addons/gut/gui/GutRunner.tscn')
 
 	_is_running = true
-	_ctrls.output.add_text('Running...')
+	_ctrls.output_ctrl.add_text('Running...')
 
 
 func _apply_shortcuts():

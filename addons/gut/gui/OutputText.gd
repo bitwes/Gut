@@ -13,15 +13,15 @@ onready var _ctrls = {
 	}
 }
 
-var _newline_indexes = []
-var _cur_search_pos = 0
+#var _newline_indexes = []
+var _cur_search_pos = Vector2(0, 0)
 
 func _test_running_setup():
 	_ctrls.use_colors.text = 'use colors'
 	_ctrls.show_search.text = 'search'
 	
 	set_all_fonts("CourierPrime")
-	set_font_size(15)
+	set_font_size(40)
 	
 	load_file('user://.gut_editor.bbcode')
 	
@@ -49,7 +49,33 @@ func _set_font(font_name, custom_name):
 		dyn_font.font_data = font_data
 		rtl.set('custom_fonts/' + custom_name, dyn_font)
 
-
+#func _search_rtl(text, start_pos = 0):
+#	var pos = _ctrls.output.text.findn(text, start_pos)
+#	if(pos == -1):
+#		print('"', text, '" not found')
+#		return
+#
+#	var i = 0
+#	var line = 0
+#	while(pos > _newline_indexes[i] and i < _newline_indexes.size()):
+#		i += 1
+#
+#	line = i -1
+#	_ctrls.output.scroll_to_line(line)
+#	_cur_search_pos = pos + 1
+	
+func _search_text_edit(text, start_pos):
+	var result = _ctrls.output.search(text, 0, start_pos.y, start_pos.x)
+	var new_pos = Vector2(0, 0)
+	if(result.size() == 2):
+		new_pos.y = result[_ctrls.output.SEARCH_RESULT_LINE]
+		new_pos.x = result[_ctrls.output.SEARCH_RESULT_COLUMN]
+	else:
+		return Vector2(-1, -1)
+		
+	_ctrls.output.scroll_vertical = new_pos.y
+	return new_pos
+	
 # ------------------
 # Events
 # ------------------
@@ -64,31 +90,46 @@ func _on_UseColors_pressed():
 func _on_ClearButton_pressed():
 	clear()
 
+
 func _on_ShowSearch_pressed():
 	_ctrls.search_bar.bar.visible = _ctrls.show_search.pressed
+	_ctrls.search_bar.search_term.grab_focus()
+	_ctrls.search_bar.search_term.select_all()
 
+
+func _on_SearchTerm_focus_entered():
+	_ctrls.search_bar.search_term.call_deferred('select_all')
+
+
+func _on_SearchButton_pressed():
+	_cur_search_pos = search(_ctrls.search_bar.search_term.text, _cur_search_pos, true)
+	_cur_search_pos.x += 1
+
+
+func _on_SearchTerm_text_changed(new_text):
+	_cur_search_pos = Vector2(0, 0)
+
+
+func _on_SearchTerm_text_entered(new_text):
+	_cur_search_pos = search(new_text, _cur_search_pos, true)
+	_cur_search_pos.x += 1
 
 # ------------------
 # Public
 # ------------------
-func search(text, start_pos = 0):
-	var pos = _ctrls.output.text.findn(text, start_pos)
-	if(pos == -1):
-		print('"', text, '" not found')
-		return
 
-	var i = 0
-	var line = 0
-	while(pos > _newline_indexes[i] and i < _newline_indexes.size()):
-		i += 1
-	
-	line = i -1
-	_ctrls.output.scroll_to_line(line)
-	_cur_search_pos = pos + 1
-	
+func search(text, start_pos, highlight=true):
+	var new_pos =  _search_text_edit(text, start_pos)
+	if(highlight and new_pos.x != -1):
+		_ctrls.output.select(new_pos.y, new_pos.x, new_pos.y, new_pos.x + text.length())
+	return new_pos
 	
 func copy_to_clipboard():
-	OS.clipboard = _ctrls.output.text
+	var selected = _ctrls.output.get_selection_text()
+	if(selected != ''):
+		OS.clipboard = selected
+	else:
+		OS.clipboard = _ctrls.output.text
 	
 	
 func clear():
@@ -97,24 +138,27 @@ func clear():
 
 func set_all_fonts(base_name):
 	if(base_name == 'Default'):
-		_set_font(null, 'normal_font')
-		_set_font(null, 'bold_font')
-		_set_font(null, 'italics_font')
-		_set_font(null, 'bold_italics_font')
+		_set_font(null, 'font')
+#		_set_font(null, 'normal_font')
+#		_set_font(null, 'bold_font')
+#		_set_font(null, 'italics_font')
+#		_set_font(null, 'bold_italics_font')
 	else:
-		_set_font(base_name + '-Regular', 'normal_font')
-		_set_font(base_name + '-Bold', 'bold_font')
-		_set_font(base_name + '-Italic', 'italics_font')
-		_set_font(base_name + '-BoldItalic', 'bold_italics_font')
+		_set_font(base_name + '-Regular', 'font')
+#		_set_font(base_name + '-Regular', 'normal_font')
+#		_set_font(base_name + '-Bold', 'bold_font')
+#		_set_font(base_name + '-Italic', 'italics_font')
+#		_set_font(base_name + '-BoldItalic', 'bold_italics_font')
 
 
 func set_font_size(new_size):
 	var rtl = _ctrls.output
-	if(rtl.get('custom_fonts/normal_font') != null):
-		rtl.get('custom_fonts/bold_italics_font').size = new_size
-		rtl.get('custom_fonts/bold_font').size = new_size
-		rtl.get('custom_fonts/italics_font').size = new_size
-		rtl.get('custom_fonts/normal_font').size = new_size
+	if(rtl.get('custom_fonts/font') != null):
+		rtl.get('custom_fonts/font').size = new_size
+#		rtl.get('custom_fonts/bold_italics_font').size = new_size
+#		rtl.get('custom_fonts/bold_font').size = new_size
+#		rtl.get('custom_fonts/italics_font').size = new_size
+#		rtl.get('custom_fonts/normal_font').size = new_size
 
 
 func set_use_colors(value):
@@ -138,20 +182,15 @@ func load_file(path):
 	var t = f.get_as_text()
 	f.close()
 	_ctrls.output.text = t
+	_ctrls.output.scroll_vertical = _ctrls.output.get_line_count()
+	_ctrls.output.set_deferred('scroll_vertical', _ctrls.output.get_line_count())
 	
-	_ctrls.output.grab_focus()
-	_ctrls.output.scroll_to_line(_ctrls.output.get_line_count() -1)
-	
-	var last_n = t.find_last("\n")
-	var n_pos = 1
-	while(n_pos < last_n and n_pos > 0):
-		n_pos = t.find("\n", n_pos) + 2
-		_newline_indexes.append(n_pos)
+
+func add_text(text):
+	_ctrls.output.text += text
 
 
-func _on_SearchButton_pressed():
-	search(_ctrls.search_bar.search_term.text, _cur_search_pos)
+func scroll_to_line(line):
+	_ctrls.output.scroll_vertical = line
+	_ctrls.output.cursor_set_line(line)
 
-
-func _on_SearchTerm_text_changed(new_text):
-	_cur_search_pos = 0

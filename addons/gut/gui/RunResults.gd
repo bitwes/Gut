@@ -10,6 +10,7 @@ var _root = null
 var _max_icon_width = 10
 var _editors = null # script_text_editor_controls.gd
 var _show_orphans = true
+var _output_control = null
 
 var 	_icons = {
 	red = load('res://addons/gut/images/red.png'),
@@ -270,6 +271,7 @@ func _handle_tree_item_select(item):
 
 	var path_info = _get_path_and_inner_class_name_from_test_path(path)
 	_goto_code(path, line, method_name, inner_class)
+	_goto_output(path, method_name, inner_class)
 
 
 # starts at beginning of text edit and searches for each search term, moving
@@ -278,8 +280,8 @@ func _handle_tree_item_select(item):
 # each string before it.  (Generic way of searching for a method name in an
 # inner class that may have be a duplicate of a method name in a different
 # inner class)
-func _get_line_number_for_seq_search(search_strings):
-	var te = _editors.get_current_text_edit()
+func _get_line_number_for_seq_search(search_strings, te):
+#	var te = _editors.get_current_text_edit()
 	var result = null
 	var to_return = -1
 	var start_line = 0
@@ -317,10 +319,26 @@ func _goto_code(path, line, method_name='', inner_class =''):
 		if(method_name != ''):
 			search_strings.append(method_name)
 
-		line = _get_line_number_for_seq_search(search_strings)
+		line = _get_line_number_for_seq_search(search_strings, _editors.get_current_text_edit())
 		if(line != -1):
 			_interface.get_script_editor().goto_line(line)
 
+func _goto_output(path, method_name, inner_class):
+	if(_output_control == null):
+		return
+		
+	var search_strings = [path]
+
+	if(inner_class != ''):
+		search_strings.append(inner_class)
+
+	if(method_name != ''):
+		search_strings.append(method_name)
+	
+	var line = _get_line_number_for_seq_search(search_strings, _output_control.get_rich_text_edit())
+	if(line != -1):
+		_output_control.scroll_to_line(line)
+	
 
 func _show_all_passed():
 	if(_root.get_children() == null):
@@ -443,3 +461,5 @@ func set_font(font_name, size):
 #	_font_size = size
 
 
+func set_output_control(value):
+	_output_control = value

@@ -63,12 +63,16 @@ margin_right = 862.0
 margin_bottom = 22.0
 text = "  Clear  "
 
-[node name="Output" type="RichTextLabel" parent="."]
+[node name="Output" type="TextEdit" parent="."]
 margin_top = 26.0
 margin_right = 862.0
 margin_bottom = 523.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+readonly = true
+highlight_current_line = true
+shortcut_keys_enabled = false
+smooth_scrolling = true
 
 [node name="Search" type="HBoxContainer" parent="."]
 visible = false
@@ -91,5 +95,7 @@ text = "Search"
 [connection signal="pressed" from="Toolbar/UseColors" to="." method="_on_UseColors_pressed"]
 [connection signal="pressed" from="Toolbar/CopyButton" to="." method="_on_CopyButton_pressed"]
 [connection signal="pressed" from="Toolbar/ClearButton" to="." method="_on_ClearButton_pressed"]
+[connection signal="focus_entered" from="Search/SearchTerm" to="." method="_on_SearchTerm_focus_entered"]
 [connection signal="text_changed" from="Search/SearchTerm" to="." method="_on_SearchTerm_text_changed"]
+[connection signal="text_entered" from="Search/SearchTerm" to="." method="_on_SearchTerm_text_entered"]
 [connection signal="pressed" from="Search/SearchButton" to="." method="_on_SearchButton_pressed"]
