@@ -27,7 +27,8 @@ onready var _ctrls = {
 		collapse_all = $VBox/Toolbar/CollapseAll,
 		expand = $VBox/Toolbar/Expand,
 		expand_all = $VBox/Toolbar/ExpandAll,
-		hide_passing = $VBox/Toolbar/HidePassing
+		hide_passing = $VBox/Toolbar/HidePassing,
+		show_script = $VBox/Toolbar/ShowScript
 	}
 }
 
@@ -57,6 +58,7 @@ func _ready():
 	_set_toolbutton_icon(_ctrls.toolbar.collapse_all, 'CollapseTree')
 	_set_toolbutton_icon(_ctrls.toolbar.expand, 'ExpandTree')
 	_set_toolbutton_icon(_ctrls.toolbar.expand_all, 'ExpandTree')
+	_set_toolbutton_icon(_ctrls.toolbar.show_script, 'Script')
 
 	_ctrls.toolbar.hide_passing.set('custom_icons/checked', get_icon('GuiVisibilityHidden', 'EditorIcons'))
 	_ctrls.toolbar.hide_passing.set('custom_icons/unchecked', get_icon('GuiVisibilityVisible', 'EditorIcons'))
@@ -74,7 +76,9 @@ func _open_file(path, line_number):
 		_interface.edit_script(r, line_number)
 	else:
 		_interface.edit_script(r)
-	_interface.set_main_screen_editor('Script')
+	
+	if(_ctrls.toolbar.show_script.pressed):
+		_interface.set_main_screen_editor('Script')
 
 
 func _add_script_tree_item(script_path, script_json):

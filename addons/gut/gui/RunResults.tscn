@@ -91,6 +91,14 @@ __meta__ = {
 "_editor_description_": ""
 }
 
+[node name="ShowScript" type="ToolButton" parent="VBox/Toolbar"]
+margin_left = 193.0
+margin_right = 205.0
+margin_bottom = 24.0
+hint_tooltip = "Show the script editor when tree nodes are clicked."
+toggle_mode = true
+pressed = true
+
 [node name="Output" type="Panel" parent="VBox"]
 self_modulate = Color( 1, 1, 1, 0.541176 )
 margin_top = 28.0
