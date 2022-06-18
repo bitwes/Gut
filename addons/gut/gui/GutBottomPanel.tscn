@@ -381,22 +381,34 @@ size_flags_vertical = 3
 
 [node name="Toolbar" type="HBoxContainer" parent="layout/RSplit/CResults/Tabs/Output"]
 margin_right = 250.0
-margin_bottom = 20.0
+margin_bottom = 22.0
 size_flags_horizontal = 3
 
-[node name="CopyButton" type="Button" parent="layout/RSplit/CResults/Tabs/Output/Toolbar"]
-margin_right = 55.0
-margin_bottom = 20.0
-text = "  Copy "
+[node name="CopyButton" type="ToolButton" parent="layout/RSplit/CResults/Tabs/Output/Toolbar"]
+margin_right = 12.0
+margin_bottom = 22.0
+
+[node name="UseColors" type="ToolButton" parent="layout/RSplit/CResults/Tabs/Output/Toolbar"]
+margin_left = 16.0
+margin_right = 28.0
+margin_bottom = 22.0
+hint_tooltip = "Colorize output.  Takes effect on next run.  Could be slightly slower on long runs."
+toggle_mode = true
+
+[node name="CenterContainer" type="CenterContainer" parent="layout/RSplit/CResults/Tabs/Output/Toolbar"]
+margin_left = 32.0
+margin_right = 186.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
 
 [node name="ClearButton" type="Button" parent="layout/RSplit/CResults/Tabs/Output/Toolbar"]
-margin_left = 59.0
-margin_right = 119.0
-margin_bottom = 20.0
+margin_left = 190.0
+margin_right = 250.0
+margin_bottom = 22.0
 text = "  Clear  "
 
 [node name="Output" type="RichTextLabel" parent="layout/RSplit/CResults/Tabs/Output"]
-margin_top = 24.0
+margin_top = 26.0
 margin_right = 250.0
 margin_bottom = 516.0
 focus_mode = 2
@@ -443,5 +455,6 @@ margin_bottom = -125.552
 [connection signal="pressed" from="layout/ControlBar/Shortcuts" to="." method="_on_Shortcuts_pressed"]
 [connection signal="draw" from="layout/RSplit/CResults/ControlBar/Light" to="." method="_on_Light_draw"]
 [connection signal="pressed" from="layout/RSplit/CResults/Tabs/Output/Toolbar/CopyButton" to="." method="_on_CopyButton_pressed"]
+[connection signal="pressed" from="layout/RSplit/CResults/Tabs/Output/Toolbar/UseColors" to="." method="_on_UseColors_pressed"]
 [connection signal="pressed" from="layout/RSplit/CResults/Tabs/Output/Toolbar/ClearButton" to="." method="_on_ClearButton_pressed"]
 [connection signal="popup_hide" from="BottomPanelShortcuts" to="." method="_on_BottomPanelShortcuts_popup_hide"]

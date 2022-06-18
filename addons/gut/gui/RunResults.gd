@@ -74,6 +74,7 @@ func _open_file(path, line_number):
 		_interface.edit_script(r, line_number)
 	else:
 		_interface.edit_script(r)
+	_interface.set_main_screen_editor('Script')
 
 
 func _add_script_tree_item(script_path, script_json):

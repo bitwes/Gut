@@ -39,6 +39,10 @@ onready var _ctrls = {
 		warnings = $layout/RSplit/CResults/ControlBar/Warnings/value,
 		orphans = $layout/RSplit/CResults/ControlBar/Orphans/value
 	},
+	output_toolbar = {
+		use_colors = $layout/RSplit/CResults/Tabs/Output/Toolbar/UseColors,
+		copy = $layout/RSplit/CResults/Tabs/Output/Toolbar/CopyButton,
+	},
 	run_at_cursor = $layout/ControlBar/RunAtCursor,
 	run_results = $layout/RSplit/CResults/Tabs/RunResults
 }
@@ -49,6 +53,8 @@ func _init():
 
 
 func _ready():
+	_ctrls.output_toolbar.use_colors.icon = get_icon('RichTextEffect', 'EditorIcons')
+	_ctrls.output_toolbar.copy.icon = get_icon('ActionCopy', 'EditorIcons')
 	_ctrls.results.bar.connect('draw', self, '_on_results_bar_draw', [_ctrls.results.bar])
 	hide_settings(!_ctrls.settings_button.pressed)
 	_gut_config_gui = GutConfigGui.new(_ctrls.settings)
@@ -154,6 +160,8 @@ func _show_errors(errs):
 		text += str('*  ', e, "\n")
 	text += "[right]Check your settings here ----->[/right]"
 	_ctrls.output.bbcode_text = text
+	hide_output_text(false)
+	hide_settings(false)
 
 
 func _run_tests():
@@ -258,9 +266,44 @@ func _on_RunAtCursor_run_tests(what):
 func _on_Settings_pressed():
 	hide_settings(!_ctrls.settings_button.pressed)
 
+
+func _on_OutputBtn_pressed():
+	hide_output_text(!_ctrls.output_button.pressed)
+
+
+func _on_RunResultsBtn_pressed():
+	hide_result_tree(! _ctrls.run_results_button.pressed)
+	
+func _on_UseColors_pressed():
+	pass # Replace with function body.
+
 # ---------------
 # Public
 # ---------------
+func hide_result_tree(should):
+	_ctrls.run_results.visible = !should
+	_ctrls.run_results_button.pressed = !should
+	
+	
+func hide_settings(should):
+	var s_scroll = _ctrls.settings.get_parent()
+	s_scroll.visible = !should
+	
+	# collapse only collapses the first control, so we move 
+	# settings around to be the collapsed one
+	if(should):
+		s_scroll.get_parent().move_child(s_scroll, 0)
+	else:
+		s_scroll.get_parent().move_child(s_scroll, 1)
+	
+	$layout/RSplit.collapsed = should
+	_ctrls.settings_button.pressed = !should
+	
+	
+func hide_output_text(should):
+	$layout/RSplit/CResults/Tabs/Output.visible = !should
+	_ctrls.output_button.pressed = !should
+	
 
 func load_result_output():
 	_ctrls.output.bbcode_text = get_file_as_text(RESULT_FILE)
@@ -366,25 +409,3 @@ func nvl(value, if_null):
 	else:
 		return value
 
-
-func hide_settings(should):
-	var s_scroll = _ctrls.settings.get_parent()
-	s_scroll.visible = !should
-	
-	# collapse only collapses the first control, so we move 
-	# settings around to be the collapsed one
-	if(should):
-		s_scroll.get_parent().move_child(s_scroll, 0)
-	else:
-		s_scroll.get_parent().move_child(s_scroll, 1)
-	
-	$layout/RSplit.collapsed = should
-
-
-func _on_OutputBtn_pressed():
-	$layout/RSplit/CResults/Tabs/Output.visible = _ctrls.output_button.pressed
-
-
-func _on_RunResultsBtn_pressed():
-	_ctrls.run_results.visible = _ctrls.run_results_button.pressed
-	
