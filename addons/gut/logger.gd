@@ -353,3 +353,6 @@ func end_yield():
 	_end_yield_gui()
 	_yield_calls = 0
 	_last_yield_text = ''
+
+func get_gui_bbcode():
+	return _printers.gui.get_bbcode()

@@ -47,6 +47,11 @@ class Printer:
 class GutGuiPrinter:
 	extends Printer
 	var _gut = null
+	# so, getting the bbcode out of the rich text label is impossible.  So
+	# we build a buffer of it as we go.  This works, but it stinks we have
+	# to do it this way.
+	var _buffer = ""
+	var _use_buffer = true
 
 	var _colors = {
 			red = Color.red,
@@ -56,6 +61,13 @@ class GutGuiPrinter:
 
 	func _init():
 		_printer_name = 'gui'
+
+	func _add_bbcode(bbcode):
+		var box = _gut.get_gui().get_text_box()
+		box.append_bbcode(bbcode)
+		if(_use_buffer):
+			_buffer += bbcode
+
 
 	func _wrap_with_tag(text, tag):
 		return str('[', tag, ']', text, '[/', tag, ']')
@@ -67,22 +79,18 @@ class GutGuiPrinter:
 		var box = _gut.get_gui().get_text_box()
 
 		if(fmt == 'bold'):
-			box.push_bold()
+			_add_bbcode(str('[b]', text, '[/b]'))
 		elif(fmt == 'underline'):
-			box.push_underline()
+			_add_bbcode(str('[u]', text, '[/u]'))
 		elif(_colors.has(fmt)):
-			box.push_color(_colors[fmt])
+			_add_bbcode(_color_text(text, fmt))
 		else:
-			# just pushing something to pop.
-			box.push_normal()
-
-		box.add_text(text)
-		box.pop()
+			_add_bbcode(text)
 
 		return ''
 
 	func _output(text):
-		_gut.get_gui().get_text_box().add_text(text)
+		_add_bbcode(text)
 
 	func get_gut():
 		return _gut
@@ -90,11 +98,24 @@ class GutGuiPrinter:
 	func set_gut(gut):
 		_gut = gut
 
-	# This can be very very slow when the box has a lot of text.
+	# This can be very very slow when the box has a lot of text, and won't work
+	# with the buffer.  I don't think it is actually being used though.
 	func clear_line():
 		var box = _gut.get_gui().get_text_box()
 		box.remove_line(box.get_line_count() - 1)
 		box.update()
+
+	func get_bbcode():
+		if(_use_buffer):
+			return _buffer
+		else:
+			return _gut.get_gui().get_text_box().text
+
+	func set_use_buffer(value):
+		_use_buffer = value
+
+	func get_use_buffer():
+		return _use_buffer
 
 # ------------------------------------------------------------------------------
 # This AND TerminalPrinter should not be enabled at the same time since it will
