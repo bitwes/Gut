@@ -2,7 +2,7 @@
 
 [ext_resource path="res://addons/gut/gui/RunResults.gd" type="Script" id=1]
 
-[sub_resource type="Image" id=12]
+[sub_resource type="Image" id=3]
 data = {
 "data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
 "format": "LumAlpha8",
@@ -11,14 +11,14 @@ data = {
 "width": 16
 }
 
-[sub_resource type="ImageTexture" id=11]
+[sub_resource type="ImageTexture" id=2]
 flags = 4
 flags = 4
-image = SubResource( 12 )
+image = SubResource( 3 )
 size = Vector2( 16, 16 )
 
 [node name="RunResults" type="Control"]
-margin_right = 286.0
+margin_right = 595.0
 margin_bottom = 459.0
 rect_min_size = Vector2( 300, 0 )
 script = ExtResource( 1 )
@@ -28,21 +28,21 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="Toolbar" type="HBoxContainer" parent="VBox"]
-margin_right = 300.0
+margin_right = 595.0
 margin_bottom = 24.0
 
 [node name="Expand" type="ToolButton" parent="VBox/Toolbar"]
 margin_right = 28.0
 margin_bottom = 24.0
 hint_tooltip = "Expand selected item and all children."
-icon = SubResource( 11 )
+icon = SubResource( 2 )
 
 [node name="Collapse" type="ToolButton" parent="VBox/Toolbar"]
 margin_left = 32.0
 margin_right = 60.0
 margin_bottom = 24.0
 hint_tooltip = "Collapse selected item and all children."
-icon = SubResource( 11 )
+icon = SubResource( 2 )
 
 [node name="Sep" type="ColorRect" parent="VBox/Toolbar"]
 margin_left = 64.0
@@ -63,14 +63,14 @@ margin_left = 95.0
 margin_right = 123.0
 margin_bottom = 24.0
 hint_tooltip = "Expand All."
-icon = SubResource( 11 )
+icon = SubResource( 2 )
 
 [node name="CollapseAll" type="ToolButton" parent="VBox/Toolbar"]
 margin_left = 127.0
 margin_right = 155.0
 margin_bottom = 24.0
 hint_tooltip = "Collapse all."
-icon = SubResource( 11 )
+icon = SubResource( 2 )
 
 [node name="Sep2" type="ColorRect" parent="VBox/Toolbar"]
 margin_left = 159.0
@@ -85,8 +85,8 @@ margin_right = 189.0
 margin_bottom = 24.0
 hint_tooltip = "Show/Hide passing tests.  Takes effect on next run."
 size_flags_horizontal = 4
-custom_icons/checked = SubResource( 11 )
-custom_icons/unchecked = SubResource( 11 )
+custom_icons/checked = SubResource( 2 )
+custom_icons/unchecked = SubResource( 2 )
 pressed = true
 __meta__ = {
 "_editor_description_": ""
@@ -99,12 +99,12 @@ margin_bottom = 24.0
 hint_tooltip = "Show the script editor when tree nodes are clicked."
 toggle_mode = true
 pressed = true
-icon = SubResource( 11 )
+icon = SubResource( 2 )
 
 [node name="Output" type="Panel" parent="VBox"]
 self_modulate = Color( 1, 1, 1, 0.541176 )
 margin_top = 28.0
-margin_right = 300.0
+margin_right = 595.0
 margin_bottom = 459.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -114,7 +114,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="Tree" type="Tree" parent="VBox/Output/Scroll"]
-margin_right = 300.0
+margin_right = 595.0
 margin_bottom = 431.0
 size_flags_horizontal = 3
 size_flags_vertical = 3

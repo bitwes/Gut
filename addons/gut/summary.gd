@@ -1,6 +1,9 @@
 # ------------------------------------------------------------------------------
 # Contains all the results of a single test.  Allows for multiple asserts results
 # and pending calls.
+#
+# When determining the status of a test, check for failing then passing then
+# pending.
 # ------------------------------------------------------------------------------
 class Test:
 	var pass_texts = []
@@ -8,6 +11,23 @@ class Test:
 	var pending_texts = []
 	var orphans = 0
 	var line_number = 0
+
+	# must have passed an assert and not have any other status to be passing
+	func is_passing():
+		return pass_texts.size() > 0 and fail_texts.size() == 0 and pending_texts.size() == 0
+
+	# failing takes precedence over everything else, so any failures makes the
+	# test a failure.
+	func is_failing():
+		return fail_texts.size() > 0
+
+	# test is only pending if pending was called and the test is not failing.
+	func is_pending():
+		return pending_texts.size() > 0 and fail_texts.size() == 0
+
+	func did_something():
+		return is_passing() or is_failing() or is_pending()
+
 
 	# NOTE:  The "failed" and "pending" text must match what is outputted by
 	# the logger in order for text highlighting to occur in summary.
@@ -64,15 +84,21 @@ class TestScript:
 	func get_passing_test_count():
 		var count = 0
 		for key in _tests:
-			if(_tests[key].fail_texts.size() == 0 and
-				_tests[key].pending_texts.size() == 0):
+			if(_tests[key].is_passing()):
 				count += 1
 		return count
 
 	func get_failing_test_count():
 		var count = 0
 		for key in _tests:
-			if(_tests[key].fail_texts.size() != 0):
+			if(_tests[key].is_failing()):
+				count += 1
+		return count
+
+	func get_risky_count():
+		var count = 0
+		for key in _tests:
+			if(!_tests[key].did_something()):
 				count += 1
 		return count
 
@@ -148,6 +174,7 @@ func get_totals():
 		passing = 0,
 		pending = 0,
 		failing = 0,
+		risky = 0,
 		tests = 0,
 		scripts = 0,
 		passing_tests = 0,
@@ -155,12 +182,16 @@ func get_totals():
 	}
 
 	for i in range(_scripts.size()):
+		# assert totals
 		totals.passing += _scripts[i].get_pass_count()
 		totals.pending += _scripts[i].get_pending_count()
 		totals.failing += _scripts[i].get_fail_count()
+
+		# test totals
 		totals.tests += _scripts[i]._test_order.size()
 		totals.passing_tests += _scripts[i].get_passing_test_count()
 		totals.failing_tests += _scripts[i].get_failing_test_count()
+		totals.risky += _scripts[i].get_risky_count()
 
 	totals.scripts = get_non_inner_class_script_count()
 
@@ -179,7 +210,7 @@ func log_summary_text(lgr):
 		for t in range(_scripts[s]._test_order.size()):
 			var tname = _scripts[s]._test_order[t]
 			var test = _scripts[s].get_test_obj(tname)
-			if(test.fail_texts.size() > 0 or test.pending_texts.size() > 0):
+			if(!test.is_passing()):
 				found_failing_or_pending = true
 				lgr.log(str('- ', tname))
 				lgr.inc_indent()
@@ -188,6 +219,8 @@ func log_summary_text(lgr):
 					lgr.failed(test.fail_texts[i])
 				for i in range(test.pending_texts.size()):
 					lgr.pending(test.pending_texts[i])
+				if(!test.did_something()):
+					lgr.log('[Did not assert]', lgr.fmts.yellow)
 				lgr.dec_indent()
 
 	lgr.set_indent_level(0)
@@ -200,8 +233,9 @@ func log_summary_text(lgr):
 	lgr.log(str('Scripts:          ', get_non_inner_class_script_count()))
 	lgr.log(str('Passing tests     ', _totals.passing_tests))
 	lgr.log(str('Failing tests     ', _totals.failing_tests))
+	lgr.log(str('Risky tests       ', _totals.risky))
 	lgr.log(str('Pending:          ', _totals.pending))
-	lgr.log(str('Asserts:          ', _totals.passing, '/', _totals.failing))
+	lgr.log(str('Asserts:          ', _totals.passing, ' of ', _totals.passing + _totals.failing, ' passed'))
 
 	lgr.set_indent_level(orig_indent)
 

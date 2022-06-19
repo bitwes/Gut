@@ -20,11 +20,13 @@ onready var _progress = {
 }
 onready var _summary = {
 	control = $VBox/TitleBar/HBox/Summary,
-	failing = $VBox/TitleBar/HBox/Summary/Failing,
-	passing = $VBox/TitleBar/HBox/Summary/Passing,
+	failing = $VBox/TitleBar/HBox/Summary/Failing, # defunct?
+	passing = $VBox/TitleBar/HBox/Summary/Passing, # defunct?
 	asserts = $VBox/TitleBar/HBox/Summary/AssertCount,
-	fail_count = 0,
-	pass_count = 0
+	fail_count = 0, # defunct?
+	pass_count = 0, # defunct?
+	test_count = 0,
+	passing_test_count = 0
 }
 
 onready var _extras = $ExtraOptions
@@ -306,7 +308,8 @@ func _update_summary():
 
 	var total = _summary.fail_count + _summary.pass_count
 	_summary.control.visible = !total == 0
-	_summary.asserts.text = str('Failures ', _summary.fail_count, '/', total)
+	# this now shows tests but I didn't rename everything
+	_summary.asserts.text = str(_summary.passing_test_count, '/', _summary.test_count, ' tests passed')
 # ####################
 # Public
 # ####################
@@ -397,6 +400,14 @@ func add_failing(amount=1):
 	_summary.fail_count += amount
 	_update_summary()
 
+func add_test(passing):
+	if(!_summary):
+		return
+	_summary.test_count += 1
+	if(passing):
+		_summary.passing_test_count += 1
+	_update_summary()
+
 func clear_summary():
 	_summary.fail_count = 0
 	_summary.pass_count = 0
@@ -473,7 +484,7 @@ func get_waiting_label():
 func compact_mode(should):
 	if(_compact_mode == should):
 		return
-		
+
 	_compact_mode = should
 	_text_box_container.visible = !should
 	_nav.container.visible = !should
@@ -483,14 +494,14 @@ func compact_mode(should):
 	_resize_handle.visible = !should
 	_current_script.visible = !should
 	_title_replacement.visible = should
-	
+
 	if(should):
 		rect_min_size = min_sizes.compact
 		rect_size = rect_min_size
 	else:
 		rect_min_size = min_sizes.full
 		rect_size = min_sizes.full
-		
+
 	goto_bottom_right_corner()
 
 

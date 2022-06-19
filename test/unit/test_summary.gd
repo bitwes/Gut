@@ -73,6 +73,42 @@ func test_get_non_inner_claas_script_count_handles_mixed_scripts():
 	gr.summary.add_script('res://two.gd')
 	assert_eq(gr.summary.get_non_inner_class_script_count(), 3)
 
+func test_test_that_do_not_assert_do_not_count_as_passing():
+	gr.summary.add_script('res://script.gd')
+	gr.summary.add_test('foo')
+
+	var total = gr.summary.get_totals()
+	assert_eq(total.passing_tests, 0, 'pass count')
+
+func test_tests_that_do_not_assert_count_as_tests():
+	gr.summary.add_script('res://script.gd')
+	gr.summary.add_test('foo')
+
+	var total = gr.summary.get_totals()
+	assert_eq(total.tests, 1, 'test count')
+
+func test_test_that_do_not_assert_are_not_pending():
+	gr.summary.add_script('res://script.gd')
+	gr.summary.add_test('foo')
+
+	var total = gr.summary.get_totals()
+	assert_eq(total.pending, 0)
+
+func test_test_that_do_not_assert_are_not_failing():
+	gr.summary.add_script('res://script.gd')
+	gr.summary.add_test('foo')
+
+	var total = gr.summary.get_totals()
+	assert_eq(total.failing, 0)
+
+func test_test_that_do_not_assert_are_risky():
+	gr.summary.add_script('res://script.gd')
+	gr.summary.add_test('foo')
+
+	var total = gr.summary.get_totals()
+	assert_eq(total.risky, 1)
+
+
 # func test_printed_summary_uses_non_inncer_class_as_script_count():
 # 	gr.summary.add_script('res://script.gd.InnerClass')
 # 	gr.summary.add_script('res://script.gd.InnerClass2')
@@ -97,4 +133,17 @@ func test_check_out_this_summary():
 	gr.summary.add_script('script_complex')
 	gr.summary.add_fail('pending_fail', 'fail')
 	gr.summary.add_pending('pending_fail', 'pending')
-	assert_true(true)
+
+	gr.summary.add_script('no_tests')
+
+	gr.summary.add_script('no_asserts')
+	gr.summary.add_test('does_nothing')
+
+	gut.p("---------------------------------------")
+	gut.p("- Start Summary Output")
+	gut.p("---------------------------------------")
+	gr.summary.log_summary_text(gut.get_logger())
+	gut.p("---------------------------------------")
+	gut.p("- End Summary Output")
+	gut.p("---------------------------------------")
+	pass_test('Must be visually checked')

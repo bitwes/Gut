@@ -49,9 +49,6 @@ rect_min_size = Vector2( 740, 300 )
 theme = ExtResource( 7 )
 custom_styles/panel = SubResource( 1 )
 script = ExtResource( 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="UserFileViewer" parent="." instance=ExtResource( 6 )]
 margin_top = 388.0

@@ -35,13 +35,21 @@ onready var _ctrls = {
 }
 
 func _test_running_setup():
-	_hide_passing = true
+	_hide_passing = false
 	_show_orphans = false
 	var _gut_config = load('res://addons/gut/gut_config.gd').new()
 	_gut_config.load_panel_options('res://.gut_editor_config.json')
 	set_font(
 		_gut_config.options.panel_options.font_name,
 		_gut_config.options.panel_options.font_size)
+
+	_ctrls.toolbar.collapse.text = '[c]'
+	_ctrls.toolbar.collapse_all.text = '[c]'
+	_ctrls.toolbar.expand.text = '[e]'
+	_ctrls.toolbar.expand_all.text = '[e]'
+	_ctrls.toolbar.show_script.text = '[s]'
+	_ctrls.toolbar.hide_passing.text = '[hp]'
+
 	load_json_file('user://.gut_editor.json')
 
 
@@ -49,7 +57,7 @@ func _set_toolbutton_icon(btn, icon_name):
 	btn.icon = get_icon(icon_name, 'EditorIcons')
 
 
-func _ready():	
+func _ready():
 	_root = _ctrls.tree.create_item()
 	_ctrls.tree.set_hide_root(true)
 	_ctrls.tree.columns = 2
@@ -79,7 +87,7 @@ func _open_file(path, line_number):
 		_interface.edit_script(r, line_number)
 	else:
 		_interface.edit_script(r)
-	
+
 	if(_ctrls.toolbar.show_script.pressed):
 		_interface.set_main_screen_editor('Script')
 
@@ -159,7 +167,7 @@ func _add_test_tree_item(test_name, test_json, script_item):
 		if(test_json.orphans == 1):
 			o = 'orphan'
 		_add_assert_item(str(test_json.orphans, ' new ', o), _icons.yellow, item)
-		
+
 	return item
 
 
@@ -169,6 +177,7 @@ func _load_result_tree(j):
 	# if we made it here, the json is valid and we did something, otherwise the
 	# 'nothing to see here' should be visible.
 	clear_centered_text()
+
 	var _last_script_item = null
 	for key in script_keys:
 		var tests = scripts[key]['tests']
@@ -189,9 +198,14 @@ func _load_result_tree(j):
 			# print('!! Deleting ', m.path, ' ', m.inner_class)
 			s_item.free()
 		else:
+			var total_text = str(test_keys.size(), ' passed')
+			s_item.set_text_align(1, s_item.ALIGN_RIGHT)
 			if(bad_count == 0):
 				s_item.collapsed = true
-			s_item.set_text(1, str(bad_count, '/', test_keys.size()))
+			else:
+				total_text = str(test_keys.size() - bad_count, ' of ', test_keys.size(), ' passed')
+			s_item.set_text(1, total_text)
+
 
 	_free_childless_scripts()
 	_show_all_passed()
@@ -326,7 +340,7 @@ func _goto_code(path, line, method_name='', inner_class =''):
 func _goto_output(path, method_name, inner_class):
 	if(_output_control == null):
 		return
-		
+
 	var search_strings = [path]
 
 	if(inner_class != ''):
@@ -334,11 +348,11 @@ func _goto_output(path, method_name, inner_class):
 
 	if(method_name != ''):
 		search_strings.append(method_name)
-	
+
 	var line = _get_line_number_for_seq_search(search_strings, _output_control.get_rich_text_edit())
 	if(line != -1):
 		_output_control.scroll_to_line(line)
-	
+
 
 func _show_all_passed():
 	if(_root.get_children() == null):
