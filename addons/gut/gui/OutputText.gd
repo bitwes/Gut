@@ -133,7 +133,7 @@ func copy_to_clipboard():
 	
 	
 func clear():
-	_ctrls.output.clear()
+	_ctrls.output.text = ''
 
 
 func set_all_fonts(base_name):

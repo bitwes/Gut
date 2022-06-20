@@ -118,12 +118,12 @@ func _is_test_script(script):
 
 
 func _show_errors(errs):
-	_ctrls.output.clear()
+	_ctrls.output_ctrl.clear()
 	var text = "Cannot run tests, you have a conrfiguration error:\n"
 	for e in errs:
 		text += str('*  ', e, "\n")
-	text += "[right]Check your settings here ----->[/right]"
-	_ctrls.output.bbcode_text = text
+	text += "Check your settings ----->"
+	_ctrls.output_ctrl.add_text(text)
 	hide_output_text(false)
 	hide_settings(false)
 
