@@ -39,7 +39,7 @@ onready var _ctrls = {
 }
 
 func _test_running_setup():
-	_hide_passing = false
+	_hide_passing = true
 	_show_orphans = true
 	var _gut_config = load('res://addons/gut/gut_config.gd').new()
 	_gut_config.load_panel_options('res://.gut_editor_config.json')
@@ -150,6 +150,7 @@ func _add_test_tree_item(test_name, test_json, script_item):
 
 	item.set_text(0, test_name)
 	item.set_text(1, status)
+	item.set_text_align(1, TreeItem.ALIGN_RIGHT)
 	item.set_custom_bg_color(1, _col_1_bg_color)
 
 	item.set_metadata(0, meta)
@@ -215,7 +216,7 @@ func _load_result_tree(j):
 			s_item.free()
 		else:
 			var total_text = str(test_keys.size(), ' passed')
-			s_item.set_text_align(1, s_item.ALIGN_RIGHT)
+			s_item.set_text_align(1, s_item.ALIGN_LEFT)
 			if(bad_count == 0):
 				s_item.collapsed = true
 			else:

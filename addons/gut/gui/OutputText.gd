@@ -13,7 +13,6 @@ onready var _ctrls = {
 	}
 }
 
-#var _newline_indexes = []
 var _cur_search_pos = Vector2(0, 0)
 
 func _test_running_setup():
@@ -21,7 +20,7 @@ func _test_running_setup():
 	_ctrls.show_search.text = 'search'
 	
 	set_all_fonts("CourierPrime")
-	set_font_size(40)
+	set_font_size(20)
 	
 	load_file('user://.gut_editor.bbcode')
 	
@@ -30,6 +29,7 @@ func _ready():
 	_ctrls.use_colors.icon = get_icon('RichTextEffect', 'EditorIcons')
 	_ctrls.show_search.icon = get_icon('Search', 'EditorIcons')
 
+	_setup_colors()
 	if(get_parent() == get_tree().root):
 		_test_running_setup()
 		
@@ -37,6 +37,23 @@ func _ready():
 # ------------------
 # Private
 # ------------------
+func _setup_colors():
+	_ctrls.output.clear_colors()
+	var keywords = [
+		['Failed', Color.red],
+		['Passed', Color.green],
+		['Pending', Color.yellow],
+		['Orphans', Color.yellow],
+		['WARNING', Color.yellow],
+		['ERROR', Color.red]
+	]
+	
+	for keyword in keywords:
+		_ctrls.output.add_keyword_color(keyword[0], keyword[1])
+	
+	_ctrls.output.update()
+
+
 func _set_font(font_name, custom_name):
 	var rtl = _ctrls.output
 	if(font_name == null):
@@ -49,20 +66,6 @@ func _set_font(font_name, custom_name):
 		dyn_font.font_data = font_data
 		rtl.set('custom_fonts/' + custom_name, dyn_font)
 
-#func _search_rtl(text, start_pos = 0):
-#	var pos = _ctrls.output.text.findn(text, start_pos)
-#	if(pos == -1):
-#		print('"', text, '" not found')
-#		return
-#
-#	var i = 0
-#	var line = 0
-#	while(pos > _newline_indexes[i] and i < _newline_indexes.size()):
-#		i += 1
-#
-#	line = i -1
-#	_ctrls.output.scroll_to_line(line)
-#	_cur_search_pos = pos + 1
 	
 func _search_text_edit(text, start_pos):
 	var result = _ctrls.output.search(text, 0, start_pos.y, start_pos.x)
@@ -75,7 +78,8 @@ func _search_text_edit(text, start_pos):
 		
 	_ctrls.output.scroll_vertical = new_pos.y
 	return new_pos
-	
+
+
 # ------------------
 # Events
 # ------------------
@@ -84,7 +88,7 @@ func _on_CopyButton_pressed():
 
 
 func _on_UseColors_pressed():
-	pass # Replace with function body.
+	_ctrls.output.syntax_highlighting = _ctrls.use_colors.pressed
 
 
 func _on_ClearButton_pressed():
@@ -123,6 +127,8 @@ func search(text, start_pos, highlight=true):
 	if(highlight and new_pos.x != -1):
 		_ctrls.output.select(new_pos.y, new_pos.x, new_pos.y, new_pos.x + text.length())
 	return new_pos
+	
+	
 	
 func copy_to_clipboard():
 	var selected = _ctrls.output.get_selection_text()
@@ -187,7 +193,8 @@ func load_file(path):
 	
 
 func add_text(text):
-	_ctrls.output.text += text
+	if(is_inside_tree()):
+		_ctrls.output.text += text
 
 
 func scroll_to_line(line):

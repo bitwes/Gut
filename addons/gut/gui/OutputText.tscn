@@ -2,7 +2,7 @@
 
 [ext_resource path="res://addons/gut/gui/OutputText.gd" type="Script" id=1]
 
-[sub_resource type="Image" id=12]
+[sub_resource type="Image" id=3]
 data = {
 "data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
 "format": "LumAlpha8",
@@ -11,10 +11,10 @@ data = {
 "width": 16
 }
 
-[sub_resource type="ImageTexture" id=11]
+[sub_resource type="ImageTexture" id=2]
 flags = 4
 flags = 4
-image = SubResource( 12 )
+image = SubResource( 3 )
 size = Vector2( 16, 16 )
 
 [node name="OutputText" type="VBoxContainer"]
@@ -26,51 +26,54 @@ script = ExtResource( 1 )
 
 [node name="Toolbar" type="HBoxContainer" parent="."]
 margin_right = 862.0
-margin_bottom = 22.0
+margin_bottom = 24.0
 size_flags_horizontal = 3
 
 [node name="ShowSearch" type="ToolButton" parent="Toolbar"]
-margin_right = 12.0
-margin_bottom = 22.0
+margin_right = 28.0
+margin_bottom = 24.0
 toggle_mode = true
+icon = SubResource( 2 )
 
 [node name="UseColors" type="ToolButton" parent="Toolbar"]
-visible = false
 margin_left = 32.0
 margin_right = 60.0
 margin_bottom = 24.0
-hint_tooltip = "Colorize output.  Takes effect on next run.  Could be slightly slower on long runs."
+hint_tooltip = "Colorize output. 
+ It's not the same as everywhere else (long story),
+ but it is better than nothing."
 toggle_mode = true
 pressed = true
-icon = SubResource( 11 )
+icon = SubResource( 2 )
 
 [node name="CenterContainer" type="CenterContainer" parent="Toolbar"]
-margin_left = 16.0
+margin_left = 64.0
 margin_right = 743.0
-margin_bottom = 22.0
+margin_bottom = 24.0
 size_flags_horizontal = 3
 
 [node name="CopyButton" type="Button" parent="Toolbar"]
 margin_left = 747.0
 margin_right = 798.0
-margin_bottom = 22.0
+margin_bottom = 24.0
 hint_tooltip = "Copy to clipboard"
 text = " Copy "
 
 [node name="ClearButton" type="Button" parent="Toolbar"]
 margin_left = 802.0
 margin_right = 862.0
-margin_bottom = 22.0
+margin_bottom = 24.0
 text = "  Clear  "
 
 [node name="Output" type="TextEdit" parent="."]
-margin_top = 26.0
+margin_top = 28.0
 margin_right = 862.0
 margin_bottom = 523.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 readonly = true
 highlight_current_line = true
+syntax_highlighting = true
 shortcut_keys_enabled = false
 smooth_scrolling = true
 
