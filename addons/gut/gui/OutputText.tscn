@@ -74,7 +74,7 @@ size_flags_vertical = 3
 readonly = true
 highlight_current_line = true
 syntax_highlighting = true
-shortcut_keys_enabled = false
+show_line_numbers = true
 smooth_scrolling = true
 
 [node name="Search" type="HBoxContainer" parent="."]
@@ -88,17 +88,27 @@ margin_right = 804.0
 margin_bottom = 24.0
 size_flags_horizontal = 3
 
-[node name="SearchButton" type="Button" parent="Search"]
+[node name="SearchNext" type="Button" parent="Search"]
 margin_left = 808.0
 margin_right = 862.0
 margin_bottom = 24.0
-text = "Search"
+hint_tooltip = "Find next (enter)"
+text = "Next"
+
+[node name="SearchPrev" type="Button" parent="Search"]
+margin_left = 808.0
+margin_right = 820.0
+margin_bottom = 20.0
+hint_tooltip = "Find previous (shift + enter)"
+text = "Prev"
 
 [connection signal="pressed" from="Toolbar/ShowSearch" to="." method="_on_ShowSearch_pressed"]
 [connection signal="pressed" from="Toolbar/UseColors" to="." method="_on_UseColors_pressed"]
 [connection signal="pressed" from="Toolbar/CopyButton" to="." method="_on_CopyButton_pressed"]
 [connection signal="pressed" from="Toolbar/ClearButton" to="." method="_on_ClearButton_pressed"]
 [connection signal="focus_entered" from="Search/SearchTerm" to="." method="_on_SearchTerm_focus_entered"]
+[connection signal="gui_input" from="Search/SearchTerm" to="." method="_on_SearchTerm_gui_input"]
 [connection signal="text_changed" from="Search/SearchTerm" to="." method="_on_SearchTerm_text_changed"]
 [connection signal="text_entered" from="Search/SearchTerm" to="." method="_on_SearchTerm_text_entered"]
-[connection signal="pressed" from="Search/SearchButton" to="." method="_on_SearchButton_pressed"]
+[connection signal="pressed" from="Search/SearchNext" to="." method="_on_SearchNext_pressed"]
+[connection signal="pressed" from="Search/SearchPrev" to="." method="_on_SearchPrev_pressed"]

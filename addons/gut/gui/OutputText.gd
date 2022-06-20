@@ -1,6 +1,81 @@
 extends VBoxContainer
 tool
 
+class SearchResults:
+	const L = TextEdit.SEARCH_RESULT_LINE
+	const C = TextEdit.SEARCH_RESULT_COLUMN
+
+	var positions = []
+	var te = null
+	var _last_term = ''
+	
+	func _search_te(text, start_position, flags=0):
+		var start_pos = start_position
+		if(start_pos[L] < 0 or start_pos[L] > te.get_line_count()):
+			start_pos[L] = 0
+		if(start_pos[C] < 0):
+			start_pos[L] = 0
+			
+		var result = te.search(text, flags, start_pos[L], start_pos[C])
+		if(result.size() == 2 and result[L] == start_position[L] and 
+			result[C] == start_position[C] and text == _last_term):
+			if(flags == TextEdit.SEARCH_BACKWARDS):
+				result[C] -= 1
+			else:
+				result[C] += 1
+			result = _search_te(text, result, flags)
+		elif(result.size() == 2):
+			te.scroll_vertical = result[L]
+			te.select(result[L], result[C], result[L], result[C] + text.length())
+			te.cursor_set_column(result[C])
+			te.cursor_set_line(result[L])
+			te.center_viewport_to_cursor()
+			
+		_last_term = text
+		return result
+
+	func _cursor_to_pos():
+		var to_return = [0, 0]
+		to_return[L] = te.cursor_get_line()
+		to_return[C] = te.cursor_get_column()
+		return to_return
+		
+	func find_next(term):
+		return _search_te(term, _cursor_to_pos())
+		
+	func find_prev(term):
+		var new_pos = _search_te(term, _cursor_to_pos(), TextEdit.SEARCH_BACKWARDS)
+		return new_pos
+
+	func get_next_pos():
+		pass
+		
+	func get_prev_pos():
+		pass
+		
+	func clear():
+		pass
+		
+	func find_all(text):
+		var c_pos = [0, 0]
+		var found = true
+		var last_pos = [0, 0]
+		positions.clear()
+		
+		while(found):
+			c_pos = te.search(text, 0, c_pos[L], c_pos[C])
+
+			if(c_pos.size() > 0 and 
+				(c_pos[L] > last_pos[L] or 
+					(c_pos[L] == last_pos[L] and c_pos[C] > last_pos[C]))):
+				positions.append([c_pos[L], c_pos[C]])
+				c_pos[C] += 1
+				last_pos = c_pos
+			else:
+				found = false
+
+
+
 onready var _ctrls = {
 	copy_button = $Toolbar/CopyButton,
 	use_colors = $Toolbar/UseColors,
@@ -12,8 +87,7 @@ onready var _ctrls = {
 		search_term = $Search/SearchTerm
 	}
 }
-
-var _cur_search_pos = Vector2(0, 0)
+var _sr = SearchResults.new()
 
 func _test_running_setup():
 	_ctrls.use_colors.text = 'use colors'
@@ -26,6 +100,7 @@ func _test_running_setup():
 	
 	
 func _ready():
+	_sr.te = _ctrls.output
 	_ctrls.use_colors.icon = get_icon('RichTextEffect', 'EditorIcons')
 	_ctrls.show_search.icon = get_icon('Search', 'EditorIcons')
 
@@ -66,19 +141,6 @@ func _set_font(font_name, custom_name):
 		dyn_font.font_data = font_data
 		rtl.set('custom_fonts/' + custom_name, dyn_font)
 
-	
-func _search_text_edit(text, start_pos):
-	var result = _ctrls.output.search(text, 0, start_pos.y, start_pos.x)
-	var new_pos = Vector2(0, 0)
-	if(result.size() == 2):
-		new_pos.y = result[_ctrls.output.SEARCH_RESULT_LINE]
-		new_pos.x = result[_ctrls.output.SEARCH_RESULT_COLUMN]
-	else:
-		return Vector2(-1, -1)
-		
-	_ctrls.output.scroll_vertical = new_pos.y
-	return new_pos
-
 
 # ------------------
 # Events
@@ -96,39 +158,52 @@ func _on_ClearButton_pressed():
 
 
 func _on_ShowSearch_pressed():
-	_ctrls.search_bar.bar.visible = _ctrls.show_search.pressed
-	_ctrls.search_bar.search_term.grab_focus()
-	_ctrls.search_bar.search_term.select_all()
+	show_search(_ctrls.show_search.pressed)
 
 
 func _on_SearchTerm_focus_entered():
 	_ctrls.search_bar.search_term.call_deferred('select_all')
 
+func _on_SearchNext_pressed():
+	_sr.find_next(_ctrls.search_bar.search_term.text)
 
-func _on_SearchButton_pressed():
-	_cur_search_pos = search(_ctrls.search_bar.search_term.text, _cur_search_pos, true)
-	_cur_search_pos.x += 1
+
+func _on_SearchPrev_pressed():
+	_sr.find_prev(_ctrls.search_bar.search_term.text)
 
 
 func _on_SearchTerm_text_changed(new_text):
-	_cur_search_pos = Vector2(0, 0)
+	if(new_text == ''):
+		_ctrls.output.deselect()
+	else:
+		_sr.find_next(new_text)
 
 
 func _on_SearchTerm_text_entered(new_text):
-	_cur_search_pos = search(new_text, _cur_search_pos, true)
-	_cur_search_pos.x += 1
+	if(Input.is_physical_key_pressed(KEY_SHIFT)):
+		_sr.find_prev(new_text)
+	else:
+		_sr.find_next(new_text)
+		
+		
+func _on_SearchTerm_gui_input(event):
+	if(event is InputEventKey and !event.pressed and event.scancode == KEY_ESCAPE):
+		show_search(false)
 
 # ------------------
 # Public
 # ------------------
+func show_search(should):
+	_ctrls.search_bar.bar.visible = should
+	if(should):
+		_ctrls.search_bar.search_term.grab_focus()
+		_ctrls.search_bar.search_term.select_all()
+	_ctrls.show_search.pressed = should
+
 
 func search(text, start_pos, highlight=true):
-	var new_pos =  _search_text_edit(text, start_pos)
-	if(highlight and new_pos.x != -1):
-		_ctrls.output.select(new_pos.y, new_pos.x, new_pos.y, new_pos.x + text.length())
-	return new_pos
-	
-	
+	return _sr.find_next(text)
+		
 	
 func copy_to_clipboard():
 	var selected = _ctrls.output.get_selection_text()
