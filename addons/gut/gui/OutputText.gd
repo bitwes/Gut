@@ -8,16 +8,16 @@ class SearchResults:
 	var positions = []
 	var te = null
 	var _last_term = ''
-	
+
 	func _search_te(text, start_position, flags=0):
 		var start_pos = start_position
 		if(start_pos[L] < 0 or start_pos[L] > te.get_line_count()):
 			start_pos[L] = 0
 		if(start_pos[C] < 0):
 			start_pos[L] = 0
-			
+
 		var result = te.search(text, flags, start_pos[L], start_pos[C])
-		if(result.size() == 2 and result[L] == start_position[L] and 
+		if(result.size() == 2 and result[L] == start_position[L] and
 			result[C] == start_position[C] and text == _last_term):
 			if(flags == TextEdit.SEARCH_BACKWARDS):
 				result[C] -= 1
@@ -30,7 +30,7 @@ class SearchResults:
 			te.cursor_set_column(result[C])
 			te.cursor_set_line(result[L])
 			te.center_viewport_to_cursor()
-			
+
 		_last_term = text
 		return result
 
@@ -39,34 +39,34 @@ class SearchResults:
 		to_return[L] = te.cursor_get_line()
 		to_return[C] = te.cursor_get_column()
 		return to_return
-		
+
 	func find_next(term):
 		return _search_te(term, _cursor_to_pos())
-		
+
 	func find_prev(term):
 		var new_pos = _search_te(term, _cursor_to_pos(), TextEdit.SEARCH_BACKWARDS)
 		return new_pos
 
 	func get_next_pos():
 		pass
-		
+
 	func get_prev_pos():
 		pass
-		
+
 	func clear():
 		pass
-		
+
 	func find_all(text):
 		var c_pos = [0, 0]
 		var found = true
 		var last_pos = [0, 0]
 		positions.clear()
-		
+
 		while(found):
 			c_pos = te.search(text, 0, c_pos[L], c_pos[C])
 
-			if(c_pos.size() > 0 and 
-				(c_pos[L] > last_pos[L] or 
+			if(c_pos.size() > 0 and
+				(c_pos[L] > last_pos[L] or
 					(c_pos[L] == last_pos[L] and c_pos[C] > last_pos[C]))):
 				positions.append([c_pos[L], c_pos[C]])
 				c_pos[C] += 1
@@ -92,13 +92,13 @@ var _sr = SearchResults.new()
 func _test_running_setup():
 	_ctrls.use_colors.text = 'use colors'
 	_ctrls.show_search.text = 'search'
-	
+
 	set_all_fonts("CourierPrime")
 	set_font_size(20)
-	
+
 	load_file('user://.gut_editor.bbcode')
-	
-	
+
+
 func _ready():
 	_sr.te = _ctrls.output
 	_ctrls.use_colors.icon = get_icon('RichTextEffect', 'EditorIcons')
@@ -107,7 +107,7 @@ func _ready():
 	_setup_colors()
 	if(get_parent() == get_tree().root):
 		_test_running_setup()
-		
+
 
 # ------------------
 # Private
@@ -122,10 +122,10 @@ func _setup_colors():
 		['WARNING', Color.yellow],
 		['ERROR', Color.red]
 	]
-	
+
 	for keyword in keywords:
 		_ctrls.output.add_keyword_color(keyword[0], keyword[1])
-	
+
 	_ctrls.output.update()
 
 
@@ -184,8 +184,8 @@ func _on_SearchTerm_text_entered(new_text):
 		_sr.find_prev(new_text)
 	else:
 		_sr.find_next(new_text)
-		
-		
+
+
 func _on_SearchTerm_gui_input(event):
 	if(event is InputEventKey and !event.pressed and event.scancode == KEY_ESCAPE):
 		show_search(false)
@@ -203,16 +203,16 @@ func show_search(should):
 
 func search(text, start_pos, highlight=true):
 	return _sr.find_next(text)
-		
-	
+
+
 func copy_to_clipboard():
 	var selected = _ctrls.output.get_selection_text()
 	if(selected != ''):
 		OS.clipboard = selected
 	else:
 		OS.clipboard = _ctrls.output.text
-	
-	
+
+
 func clear():
 	_ctrls.output.text = ''
 
@@ -245,27 +245,27 @@ func set_font_size(new_size):
 func set_use_colors(value):
 	pass
 
-	
+
 func get_use_colors():
 	return false;
 
-	
+
 func get_rich_text_edit():
 	return _ctrls.output
-	
-	
+
+
 func load_file(path):
 	var f = File.new()
 	var result = f.open(path, f.READ)
 	if(result != OK):
 		return
-		
+
 	var t = f.get_as_text()
 	f.close()
 	_ctrls.output.text = t
 	_ctrls.output.scroll_vertical = _ctrls.output.get_line_count()
 	_ctrls.output.set_deferred('scroll_vertical', _ctrls.output.get_line_count())
-	
+
 
 func add_text(text):
 	if(is_inside_tree()):

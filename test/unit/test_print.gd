@@ -83,7 +83,7 @@ class TestGuiOutput:
 	func test_embedded_bbcode_with_format():
 		_lgr.log('[i]this should not be italic but should be yellow', _lgr.fmts.yellow)
 		assert_string_contains(gut.get_gui().get_text_box().get_text(), '[i]this should')
-		
+
 	func test_embedded_bbcode_with_closing_tag():
 		_lgr.log('all of this [/b] should be bold', _lgr.fmts.bold)
 		_lgr.log('thi should not be bold')
@@ -124,7 +124,7 @@ class TestLogLevels:
 
 	var _orig_log_level = -1
 	var _orig_indent_string = null
-  
+
 	func before_all():
 		_orig_log_level = gut.get_log_level()
 		_orig_indent_string = gut.get_logger().get_indent_string()

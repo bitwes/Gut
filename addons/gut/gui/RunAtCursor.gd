@@ -97,8 +97,8 @@ func _on_BtnRunMethod_pressed():
 	var info = _last_info.duplicate()
 	info.script = _cur_script_path.get_file()
 	emit_signal("run_tests", info)
-	
-	
+
+
 # ----------------
 # Public
 # ----------------
