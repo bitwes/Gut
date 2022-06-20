@@ -28,7 +28,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="Toolbar" type="HBoxContainer" parent="VBox"]
-margin_right = 302.0
+margin_right = 296.0
 margin_bottom = 24.0
 size_flags_horizontal = 0
 
@@ -98,17 +98,17 @@ margin_right = 195.0
 margin_bottom = 24.0
 rect_min_size = Vector2( 2, 0 )
 
-[node name="LblScroll" type="Label" parent="VBox/Toolbar"]
+[node name="LblSync" type="Label" parent="VBox/Toolbar"]
 margin_left = 199.0
 margin_top = 5.0
-margin_right = 238.0
+margin_right = 232.0
 margin_bottom = 19.0
-text = "Scroll:"
+text = "Sync:"
 align = 1
 
 [node name="ShowScript" type="ToolButton" parent="VBox/Toolbar"]
-margin_left = 242.0
-margin_right = 270.0
+margin_left = 236.0
+margin_right = 264.0
 margin_bottom = 24.0
 hint_tooltip = "Open script and scroll to line when a tree item is clicked."
 toggle_mode = true
@@ -116,8 +116,8 @@ pressed = true
 icon = SubResource( 2 )
 
 [node name="ScrollOutput" type="ToolButton" parent="VBox/Toolbar"]
-margin_left = 274.0
-margin_right = 302.0
+margin_left = 268.0
+margin_right = 296.0
 margin_bottom = 24.0
 hint_tooltip = "Scroll to related line in the output panel when tree item clicked."
 toggle_mode = true

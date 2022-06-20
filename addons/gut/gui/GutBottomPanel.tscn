@@ -14,7 +14,7 @@ scancode = 49
 [sub_resource type="ShortCut" id=9]
 shortcut = SubResource( 8 )
 
-[sub_resource type="Image" id=12]
+[sub_resource type="Image" id=10]
 data = {
 "data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
 "format": "LumAlpha8",
@@ -23,10 +23,10 @@ data = {
 "width": 16
 }
 
-[sub_resource type="ImageTexture" id=11]
+[sub_resource type="ImageTexture" id=2]
 flags = 4
 flags = 4
-image = SubResource( 12 )
+image = SubResource( 10 )
 size = Vector2( 16, 16 )
 
 [node name="GutBottomPanel" type="Control"]
@@ -114,7 +114,7 @@ margin_bottom = 40.0
 hint_tooltip = "Show/Hide Results Tree Panel."
 toggle_mode = true
 pressed = true
-icon = SubResource( 11 )
+icon = SubResource( 2 )
 
 [node name="OutputBtn" type="ToolButton" parent="layout/ControlBar"]
 margin_left = 925.0
@@ -123,7 +123,7 @@ margin_bottom = 40.0
 hint_tooltip = "Show/Hide Output Panel."
 toggle_mode = true
 pressed = true
-icon = SubResource( 11 )
+icon = SubResource( 2 )
 
 [node name="Settings" type="ToolButton" parent="layout/ControlBar"]
 margin_left = 957.0
@@ -131,7 +131,7 @@ margin_right = 985.0
 margin_bottom = 40.0
 hint_tooltip = "Show/Hide Settings Panel."
 toggle_mode = true
-icon = SubResource( 11 )
+icon = SubResource( 2 )
 
 [node name="Sep2" type="ColorRect" parent="layout/ControlBar"]
 margin_left = 989.0
@@ -145,7 +145,7 @@ margin_right = 1023.0
 margin_bottom = 40.0
 hint_tooltip = "Set shortcuts for GUT buttons.  Shortcuts do not work when the GUT panel is not visible."
 size_flags_vertical = 11
-icon = SubResource( 11 )
+icon = SubResource( 2 )
 
 [node name="RSplit" type="HSplitContainer" parent="layout"]
 margin_top = 44.0
