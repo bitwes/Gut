@@ -14,7 +14,7 @@ scancode = 49
 [sub_resource type="ShortCut" id=9]
 shortcut = SubResource( 8 )
 
-[sub_resource type="Image" id=12]
+[sub_resource type="Image" id=10]
 data = {
 "data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
 "format": "LumAlpha8",
@@ -23,10 +23,10 @@ data = {
 "width": 16
 }
 
-[sub_resource type="ImageTexture" id=11]
+[sub_resource type="ImageTexture" id=2]
 flags = 4
 flags = 4
-image = SubResource( 12 )
+image = SubResource( 10 )
 size = Vector2( 16, 16 )
 
 [node name="GutBottomPanel" type="Control"]
@@ -49,7 +49,7 @@ __meta__ = {
 }
 
 [node name="ControlBar" type="HBoxContainer" parent="layout"]
-margin_right = 1093.0
+margin_right = 1023.0
 margin_bottom = 40.0
 __meta__ = {
 "_edit_use_anchors_": false
@@ -91,78 +91,93 @@ text = "Current:  "
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 217.0
-margin_right = 583.0
+margin_right = 548.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 0, 40 )
 
 [node name="CenterContainer2" type="CenterContainer" parent="layout/ControlBar"]
-margin_left = 587.0
-margin_right = 953.0
+margin_left = 552.0
+margin_right = 883.0
 margin_bottom = 40.0
 size_flags_horizontal = 3
 
 [node name="Sep1" type="ColorRect" parent="layout/ControlBar"]
-margin_left = 957.0
-margin_right = 959.0
+margin_left = 887.0
+margin_right = 889.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 2, 0 )
 
 [node name="RunResultsBtn" type="ToolButton" parent="layout/ControlBar"]
-margin_left = 963.0
-margin_right = 991.0
+margin_left = 893.0
+margin_right = 921.0
 margin_bottom = 40.0
 hint_tooltip = "Show/Hide Results Tree Panel."
 toggle_mode = true
 pressed = true
-icon = SubResource( 11 )
+icon = SubResource( 2 )
 
 [node name="OutputBtn" type="ToolButton" parent="layout/ControlBar"]
-margin_left = 995.0
-margin_right = 1023.0
+margin_left = 925.0
+margin_right = 953.0
 margin_bottom = 40.0
 hint_tooltip = "Show/Hide Output Panel."
 toggle_mode = true
 pressed = true
-icon = SubResource( 11 )
+icon = SubResource( 2 )
 
 [node name="Settings" type="ToolButton" parent="layout/ControlBar"]
-margin_left = 1027.0
-margin_right = 1055.0
+margin_left = 957.0
+margin_right = 985.0
 margin_bottom = 40.0
 hint_tooltip = "Show/Hide Settings Panel."
 toggle_mode = true
-pressed = true
-icon = SubResource( 11 )
+icon = SubResource( 2 )
 
 [node name="Sep2" type="ColorRect" parent="layout/ControlBar"]
-margin_left = 1059.0
-margin_right = 1061.0
+margin_left = 989.0
+margin_right = 991.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 2, 0 )
 
 [node name="Shortcuts" type="ToolButton" parent="layout/ControlBar"]
-margin_left = 1065.0
-margin_right = 1093.0
+margin_left = 995.0
+margin_right = 1023.0
 margin_bottom = 40.0
 hint_tooltip = "Set shortcuts for GUT buttons.  Shortcuts do not work when the GUT panel is not visible."
 size_flags_vertical = 11
-icon = SubResource( 11 )
+icon = SubResource( 2 )
 
 [node name="RSplit" type="HSplitContainer" parent="layout"]
 margin_top = 44.0
-margin_right = 1093.0
+margin_right = 1023.0
 margin_bottom = 599.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+collapsed = true
+
+[node name="sc" type="ScrollContainer" parent="layout/RSplit"]
+visible = false
+margin_left = 593.0
+margin_right = 1093.0
+margin_bottom = 555.0
+rect_min_size = Vector2( 500, 0 )
+mouse_filter = 1
+size_flags_vertical = 3
+
+[node name="Settings" type="VBoxContainer" parent="layout/RSplit/sc"]
+margin_right = 500.0
+margin_bottom = 908.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="CResults" type="VBoxContainer" parent="layout/RSplit"]
-margin_right = 581.0
+margin_right = 1023.0
 margin_bottom = 555.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="ControlBar" type="HBoxContainer" parent="layout/RSplit/CResults"]
-margin_right = 581.0
+margin_right = 1023.0
 margin_bottom = 35.0
 rect_min_size = Vector2( 0, 35 )
 
@@ -327,41 +342,28 @@ margin_bottom = 24.0
 text = "---"
 
 [node name="CenterContainer" type="CenterContainer" parent="layout/RSplit/CResults/ControlBar"]
-margin_right = 581.0
+margin_right = 1023.0
 margin_bottom = 35.0
 size_flags_horizontal = 3
 
 [node name="Tabs" type="HSplitContainer" parent="layout/RSplit/CResults"]
 margin_top = 39.0
-margin_right = 581.0
+margin_right = 1023.0
 margin_bottom = 555.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="RunResults" parent="layout/RSplit/CResults/Tabs" instance=ExtResource( 5 )]
-margin_right = 450.0
+margin_right = 505.0
 margin_bottom = 516.0
-rect_min_size = Vector2( 450, 0 )
+rect_min_size = Vector2( 10, 0 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="OutputText" parent="layout/RSplit/CResults/Tabs" instance=ExtResource( 6 )]
-margin_left = 462.0
-margin_right = 581.0
-
-[node name="sc" type="ScrollContainer" parent="layout/RSplit"]
-margin_left = 593.0
-margin_right = 1093.0
-margin_bottom = 555.0
-rect_min_size = Vector2( 500, 0 )
-mouse_filter = 1
-size_flags_vertical = 3
-
-[node name="Settings" type="VBoxContainer" parent="layout/RSplit/sc"]
-margin_right = 488.0
-margin_bottom = 908.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
+margin_left = 517.0
+margin_right = 1023.0
+margin_bottom = 516.0
 
 [node name="BottomPanelShortcuts" parent="." instance=ExtResource( 2 )]
 visible = false

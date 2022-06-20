@@ -12,6 +12,8 @@ var _editors = null # script_text_editor_controls.gd
 var _show_orphans = true
 var _output_control = null
 
+const _col_1_bg_color = Color(0, 0, 0, .1)
+
 var 	_icons = {
 	red = load('res://addons/gut/images/red.png'),
 	green = load('res://addons/gut/images/green.png'),
@@ -25,12 +27,14 @@ onready var _ctrls = {
 	lbl_overlay = $VBox/Output/OverlayMessage,
 	chk_hide_passing = $VBox/Toolbar/HidePassing,
 	toolbar = {
+		toolbar = $VBox/Toolbar,
 		collapse = $VBox/Toolbar/Collapse,
 		collapse_all = $VBox/Toolbar/CollapseAll,
 		expand = $VBox/Toolbar/Expand,
 		expand_all = $VBox/Toolbar/ExpandAll,
 		hide_passing = $VBox/Toolbar/HidePassing,
-		show_script = $VBox/Toolbar/ShowScript
+		show_script = $VBox/Toolbar/ShowScript,
+		scroll_output = $VBox/Toolbar/ScrollOutput
 	}
 }
 
@@ -43,39 +47,44 @@ func _test_running_setup():
 		_gut_config.options.panel_options.font_name,
 		_gut_config.options.panel_options.font_size)
 
-	_ctrls.toolbar.collapse.text = '[c]'
-	_ctrls.toolbar.collapse_all.text = '[c]'
-	_ctrls.toolbar.expand.text = '[e]'
-	_ctrls.toolbar.expand_all.text = '[e]'
-	_ctrls.toolbar.show_script.text = '[s]'
 	_ctrls.toolbar.hide_passing.text = '[hp]'
-
 	load_json_file('user://.gut_editor.json')
 
 
-func _set_toolbutton_icon(btn, icon_name):
-	btn.icon = get_icon(icon_name, 'EditorIcons')
+func _set_toolbutton_icon(btn, icon_name, text):
+	if(Engine.editor_hint):
+		btn.icon = get_icon(icon_name, 'EditorIcons')
+	else:
+		btn.text = str('[', text, ']')
 
 
 func _ready():
+	var f = $FontSampler.get_font("font")
+	var s_size = f.get_string_size("000 of 000 passed")
 	_root = _ctrls.tree.create_item()
 	_ctrls.tree.set_hide_root(true)
 	_ctrls.tree.columns = 2
 	_ctrls.tree.set_column_expand(0, true)
 	_ctrls.tree.set_column_expand(1, false)
-	_ctrls.tree.set_column_min_width(1, 150)
+	_ctrls.tree.set_column_min_width(1, s_size.x)
 
-	_set_toolbutton_icon(_ctrls.toolbar.collapse, 'CollapseTree')
-	_set_toolbutton_icon(_ctrls.toolbar.collapse_all, 'CollapseTree')
-	_set_toolbutton_icon(_ctrls.toolbar.expand, 'ExpandTree')
-	_set_toolbutton_icon(_ctrls.toolbar.expand_all, 'ExpandTree')
-	_set_toolbutton_icon(_ctrls.toolbar.show_script, 'Script')
+	_set_toolbutton_icon(_ctrls.toolbar.collapse, 'CollapseTree', 'c')
+	_set_toolbutton_icon(_ctrls.toolbar.collapse_all, 'CollapseTree', 'c')
+	_set_toolbutton_icon(_ctrls.toolbar.expand, 'ExpandTree', 'e')
+	_set_toolbutton_icon(_ctrls.toolbar.expand_all, 'ExpandTree', 'e')
+	_set_toolbutton_icon(_ctrls.toolbar.show_script, 'Script', 'ss')
+	_set_toolbutton_icon(_ctrls.toolbar.scroll_output, 'Font', 'so')
 
 	_ctrls.toolbar.hide_passing.set('custom_icons/checked', get_icon('GuiVisibilityHidden', 'EditorIcons'))
 	_ctrls.toolbar.hide_passing.set('custom_icons/unchecked', get_icon('GuiVisibilityVisible', 'EditorIcons'))
 
 	if(get_parent() == get_tree().root):
 		_test_running_setup()
+		
+	call_deferred('_update_min_width')
+
+func _update_min_width():
+	rect_min_size.x = _ctrls.toolbar.toolbar.rect_size.x
 
 func _open_file(path, line_number):
 	if(_interface == null):
@@ -112,6 +121,7 @@ func _add_script_tree_item(script_path, script_json):
 		"inner_class":path_info.inner_class,
 		"json":script_json}
 	item.set_metadata(0, meta)
+	item.set_custom_bg_color(1, _col_1_bg_color)
 
 	return item
 
@@ -123,6 +133,7 @@ func _add_assert_item(text, icon, parent_item):
 	assert_item.set_text(0, text)
 	assert_item.set_metadata(0, {"type":"assert"})
 	assert_item.set_icon(0, icon)
+	assert_item.set_custom_bg_color(1, _col_1_bg_color)
 
 	return assert_item
 
@@ -139,6 +150,8 @@ func _add_test_tree_item(test_name, test_json, script_item):
 
 	item.set_text(0, test_name)
 	item.set_text(1, status)
+	item.set_custom_bg_color(1, _col_1_bg_color)
+	
 	item.set_metadata(0, meta)
 	item.set_icon_max_width(0, _max_icon_width)
 
@@ -206,9 +219,9 @@ func _load_result_tree(j):
 				total_text = str(test_keys.size() - bad_count, ' of ', test_keys.size(), ' passed')
 			s_item.set_text(1, total_text)
 
-
 	_free_childless_scripts()
 	_show_all_passed()
+
 
 func _free_childless_scripts():
 	var item = _root.get_children()
@@ -217,6 +230,7 @@ func _free_childless_scripts():
 		if(item.get_children() == null):
 			item.free()
 		item = next_item
+
 
 func _find_script_item_with_path(path):
 	var item = _root.get_children()
@@ -229,7 +243,6 @@ func _find_script_item_with_path(path):
 			item = item.get_next()
 
 	return to_return
-
 
 
 func _get_line_number_from_assert_msg(msg):
@@ -253,7 +266,7 @@ func _get_path_and_inner_class_name_from_test_path(path):
 	return to_return
 
 
-func _handle_tree_item_select(item):
+func _handle_tree_item_select(item, force_scroll):
 	var item_type = item.get_metadata(0).type
 
 	var path = '';
@@ -284,8 +297,10 @@ func _handle_tree_item_select(item):
 		return
 
 	var path_info = _get_path_and_inner_class_name_from_test_path(path)
-	_goto_code(path, line, method_name, inner_class)
-	_goto_output(path, method_name, inner_class)
+	if(force_scroll or _ctrls.toolbar.show_script.pressed):
+		_goto_code(path, line, method_name, inner_class)
+	if(force_scroll or _ctrls.toolbar.scroll_output.pressed):
+		_goto_output(path, method_name, inner_class)
 
 
 # starts at beginning of text edit and searches for each search term, moving
@@ -309,12 +324,10 @@ func _get_line_number_for_seq_search(search_strings, te):
 		if(result.size() > 0):
 			start_line = result[TextEdit.SEARCH_RESULT_LINE]
 			start_col = result[TextEdit.SEARCH_RESULT_COLUMN]
+			to_return = start_line
 		else:
 			string_found = false
 		i += 1
-
-	if(string_found):
-		to_return = start_line
 
 	return to_return
 
@@ -336,6 +349,7 @@ func _goto_code(path, line, method_name='', inner_class =''):
 		line = _get_line_number_for_seq_search(search_strings, _editors.get_current_text_edit())
 		if(line != -1):
 			_interface.get_script_editor().goto_line(line)
+
 
 func _goto_output(path, method_name, inner_class):
 	if(_output_control == null):
@@ -359,11 +373,32 @@ func _show_all_passed():
 		add_centered_text('Everything passed!')
 
 
+func _set_collapsed_on_all(item, value):
+	if(item == _root):
+		var node = _root.get_children()
+		while(node != null):
+			node.call_recursive('set_collapsed', value)
+			node = node.get_next()
+	else:
+		item.call_recursive('set_collapsed', value)
+
 # --------------
 # Events
 # --------------
 func _on_Tree_item_selected():
-	_handle_tree_item_select(_ctrls.tree.get_selected())
+	# do not force scroll
+	var item = _ctrls.tree.get_selected()
+	_handle_tree_item_select(item, false)
+	# it just looks better if the left is always selected.
+	if(item.is_selected(1)):
+		item.deselect(1)
+		item.select(0)
+		
+
+func _on_Tree_item_activated():
+	# force scroll
+	print('double clicked')
+	_handle_tree_item_select(_ctrls.tree.get_selected(), true)
 
 func _on_Collapse_pressed():
 	collapse_selected()
@@ -430,16 +465,6 @@ func set_script_text_editors(value):
 	_editors = value
 
 
-func _set_collapsed_on_all(item, value):
-	if(item == _root):
-		var node = _root.get_children()
-		while(node != null):
-			node.call_recursive('set_collapsed', value)
-			node = node.get_next()
-	else:
-		item.call_recursive('set_collapsed', value)
-
-
 func collapse_all():
 	_set_collapsed_on_all(_root, true)
 
@@ -461,6 +486,7 @@ func expand_selected():
 
 func set_show_orphans(should):
 	_show_orphans = should
+
 
 func set_font(font_name, size):
 	pass
