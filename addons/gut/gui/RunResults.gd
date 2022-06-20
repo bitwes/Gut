@@ -40,7 +40,7 @@ onready var _ctrls = {
 
 func _test_running_setup():
 	_hide_passing = false
-	_show_orphans = false
+	_show_orphans = true
 	var _gut_config = load('res://addons/gut/gut_config.gd').new()
 	_gut_config.load_panel_options('res://.gut_editor_config.json')
 	set_font(
@@ -80,7 +80,7 @@ func _ready():
 
 	if(get_parent() == get_tree().root):
 		_test_running_setup()
-		
+
 	call_deferred('_update_min_width')
 
 func _update_min_width():
@@ -151,15 +151,21 @@ func _add_test_tree_item(test_name, test_json, script_item):
 	item.set_text(0, test_name)
 	item.set_text(1, status)
 	item.set_custom_bg_color(1, _col_1_bg_color)
-	
+
 	item.set_metadata(0, meta)
 	item.set_icon_max_width(0, _max_icon_width)
+
+	var orphan_text = 'orphans'
+	if(test_json.orphans == 1):
+		orphan_text = 'orphan'
+	orphan_text = str(test_json.orphans, ' ', orphan_text)
+
 
 	if(status == 'pass' and no_orphans_to_show):
 		item.set_icon(0, _icons.green)
 	elif(status == 'pass' and !no_orphans_to_show):
 		item.set_icon(0, _icons.yellow)
-		item.set_text(1, 'orphans')
+		item.set_text(1, orphan_text)
 	elif(status == 'fail'):
 		item.set_icon(0, _icons.red)
 	else:
@@ -175,11 +181,8 @@ func _add_test_tree_item(test_name, test_json, script_item):
 	for pending in test_json.pending:
 		_add_assert_item("pending:  " + pending.replace("\n", ''), _icons.yellow, item)
 
-	if(!no_orphans_to_show):
-		var o = 'orphans'
-		if(test_json.orphans == 1):
-			o = 'orphan'
-		_add_assert_item(str(test_json.orphans, ' new ', o), _icons.yellow, item)
+	if(status != 'pass' and !no_orphans_to_show):
+		_add_assert_item(orphan_text, _icons.yellow, item)
 
 	return item
 
@@ -393,7 +396,7 @@ func _on_Tree_item_selected():
 	if(item.is_selected(1)):
 		item.deselect(1)
 		item.select(0)
-		
+
 
 func _on_Tree_item_activated():
 	# force scroll
