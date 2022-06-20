@@ -28,7 +28,9 @@ func _ready():
 	_ctrls.btn_inner.visible = false
 	_ctrls.btn_method.visible = false
 
-
+# ----------------
+# Private
+# ----------------
 func _set_editor(which):
 	_last_line = -1
 	if(_cur_editor != null and _cur_editor.get_ref()):
@@ -41,7 +43,6 @@ func _set_editor(which):
 		_last_line = which.cursor_get_line()
 		_last_info = _editors.get_line_info()
 		_update_buttons(_last_info)
-
 
 
 func _update_buttons(info):
@@ -67,24 +68,14 @@ func _update_buttons(info):
 func _update_rect_size():
 	rect_min_size.x = _ctrls.btn_method.rect_size.x + _ctrls.btn_method.rect_position.x
 
+# ----------------
+# Events
+# ----------------
 func _on_cursor_changed(which):
 	if(which.cursor_get_line() != _last_line):
 		_last_line = which.cursor_get_line()
 		_last_info = _editors.get_line_info()
 		_update_buttons(_last_info)
-
-
-func set_script_text_editors(value):
-	_editors = value
-
-
-func activate_for_script(path):
-	_ctrls.btn_script.visible = true
-	_ctrls.btn_script.text = path.get_file()
-	_ctrls.btn_script.hint_tooltip = str("Run all tests in script ", path)
-	_cur_script_path = path
-	_editors.refresh()
-	_set_editor(_editors.get_current_text_edit())
 
 
 func _on_BtnRunScript_pressed():
@@ -106,6 +97,22 @@ func _on_BtnRunMethod_pressed():
 	var info = _last_info.duplicate()
 	info.script = _cur_script_path.get_file()
 	emit_signal("run_tests", info)
+	
+	
+# ----------------
+# Public
+# ----------------
+func set_script_text_editors(value):
+	_editors = value
+
+
+func activate_for_script(path):
+	_ctrls.btn_script.visible = true
+	_ctrls.btn_script.text = path.get_file()
+	_ctrls.btn_script.hint_tooltip = str("Run all tests in script ", path)
+	_cur_script_path = path
+	_editors.refresh()
+	_set_editor(_editors.get_current_text_edit())
 
 
 func get_script_button():
@@ -119,13 +126,16 @@ func get_inner_button():
 func get_test_button():
 	return _ctrls.btn_method
 
+
 # not used, thought was configurable but it's just the script prefix
 func set_method_prefix(value):
 	_editors.set_method_prefix(value)
 
+
 # not used, thought was configurable but it's just the script prefix
 func set_inner_class_prefix(value):
 	_editors.set_inner_class_prefix(value)
+
 
 # Mashed this function in here b/c it has _editors.  Probably should be
 # somewhere else (possibly in script_text_editor_controls).
@@ -136,7 +146,6 @@ func search_current_editor_for_text(txt):
 
 	if result.size() > 0:
 		to_return = result[TextEdit.SEARCH_RESULT_LINE]
-#		var res_column = result[TextEdit.SEARCH_RESULT_COLUMN]
 
 	return to_return
 

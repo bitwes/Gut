@@ -56,20 +56,15 @@ func _ready():
 	hide_settings(!_ctrls.settings_button.pressed)
 	_gut_config_gui = GutConfigGui.new(_ctrls.settings)
 	_gut_config_gui.set_options(_gut_config.options)
-
-	hide_settings(_gut_config.options.panel_options.hide_settings)
-	hide_result_tree(_gut_config.options.panel_options.hide_result_tree)
-	hide_output_text(_gut_config.options.panel_options.hide_output_text)
 	
-	_ctrls.output_ctrl.set_use_colors(_gut_config.options.panel_options.use_colors)
-	_ctrls.output_ctrl.set_all_fonts(_gut_config.options.panel_options.font_name)
-	_ctrls.output_ctrl.set_font_size(_gut_config.options.panel_options.font_size)
-
+	_apply_options_to_controls()
+	
 	_ctrls.shortcuts_button.icon = get_icon('ShortCut', 'EditorIcons')
 	_ctrls.settings_button.icon = get_icon('Tools', 'EditorIcons')
 	_ctrls.run_results_button.icon = get_icon('AnimationTrackGroup', 'EditorIcons') # Tree
 	_ctrls.output_button.icon = get_icon('Font', 'EditorIcons')
 
+	_ctrls.run_results.set_output_control(_ctrls.output_ctrl)
 	_ctrls.run_results.set_font(
 		_gut_config.options.panel_options.font_name,
 		_gut_config.options.panel_options.font_size)
@@ -80,6 +75,21 @@ func _ready():
 		print('GUT got some new images that are not imported yet.  Please restart Godot.')
 	else:
 		_ctrls.run_results.add_centered_text("Let's run some tests!")
+
+
+func _apply_options_to_controls():
+	hide_settings(_gut_config.options.panel_options.hide_settings)
+	hide_result_tree(_gut_config.options.panel_options.hide_result_tree)
+	hide_output_text(_gut_config.options.panel_options.hide_output_text)
+
+	_ctrls.output_ctrl.set_use_colors(_gut_config.options.panel_options.use_colors)
+	_ctrls.output_ctrl.set_all_fonts(_gut_config.options.panel_options.font_name)
+	_ctrls.output_ctrl.set_font_size(_gut_config.options.panel_options.font_size)
+	
+	_ctrls.run_results.set_font(
+		_gut_config.options.panel_options.font_name,
+		_gut_config.options.panel_options.font_size)
+	_ctrls.run_results.set_show_orphans(!_gut_config.options.hide_orphans)
 
 
 func _process(delta):
@@ -107,20 +117,6 @@ func _is_test_script(script):
 	return from != null
 
 
-func _update_last_run_label():
-	var text = ''
-
-	if(	_gut_config.options.selected == null and
-		_gut_config.options.inner_class == null and
-		_gut_config.options.unit_test_name == null):
-		text = 'All'
-	else:
-		text = nvl(_gut_config.options.selected, '') + ' '
-		text += nvl(_gut_config.options.inner_class, '') + ' '
-		text += nvl(_gut_config.options.unit_test_name, '')
-
-
-
 func _show_errors(errs):
 	_ctrls.output.clear()
 	var text = "Cannot run tests, you have a conrfiguration error:\n"
@@ -132,6 +128,19 @@ func _show_errors(errs):
 	hide_settings(false)
 
 
+func _save_config():
+	_gut_config.options = _gut_config_gui.get_options(_gut_config.options)
+	_gut_config.options.panel_options.hide_settings = !_ctrls.settings_button.pressed
+	_gut_config.options.panel_options.hide_result_tree = !_ctrls.run_results_button.pressed
+	_gut_config.options.panel_options.hide_output_text = !_ctrls.output_button.pressed
+	_gut_config.options.panel_options.use_colors = _ctrls.output_ctrl.get_use_colors()
+	
+	var w_result = _gut_config.write_options(RUNNER_JSON_PATH)
+	if(w_result != OK):
+		push_error(str('Could not write options to ', RUNNER_JSON_PATH, ': ', w_result))
+		return;
+
+
 func _run_tests():
 	var issues = _gut_config_gui.get_config_issues()
 	if(issues.size() > 0):
@@ -139,33 +148,14 @@ func _run_tests():
 		return
 
 	write_file(RESULT_FILE, 'Run in progress')
-	_gut_config.options = _gut_config_gui.get_options(_gut_config.options)
-
-	_gut_config.options.panel_options.hide_settings = !_ctrls.settings_button.pressed
-	_gut_config.options.panel_options.hide_result_tree = !_ctrls.run_results_button.pressed
-	_gut_config.options.panel_options.hide_output_text = !_ctrls.output_button.pressed
-	_gut_config.options.panel_options.use_colors = _ctrls.output_ctrl.get_use_colors()
-
-	_ctrls.output_ctrl.set_all_fonts(_gut_config.options.panel_options.font_name)
-	_ctrls.output_ctrl.set_font_size(_gut_config.options.panel_options.font_size)
-	_ctrls.run_results.set_font(
-		_gut_config.options.panel_options.font_name,
-		_gut_config.options.panel_options.font_size)
-	_ctrls.run_results.set_show_orphans(!_gut_config.options.hide_orphans)
-	_ctrls.run_results.set_output_control(_ctrls.output_ctrl)
-
-	var w_result = _gut_config.write_options(RUNNER_JSON_PATH)
-	if(w_result != OK):
-		push_error(str('Could not write options to ', RUNNER_JSON_PATH, ': ', w_result))
-		return;
+	_save_config()
+	_apply_options_to_controls()
 
 	_ctrls.output_ctrl.clear()
 	_ctrls.run_results.clear()
 	_ctrls.run_results.add_centered_text('Running...')
 
-	_update_last_run_label()
 	_interface.play_custom_scene('res://addons/gut/gui/GutRunner.tscn')
-
 	_is_running = true
 	_ctrls.output_ctrl.add_text('Running...')
 
@@ -197,16 +187,18 @@ func _run_all():
 func _on_results_bar_draw(bar):
 	bar.draw_rect(Rect2(Vector2(0, 0), bar.rect_size), Color(0, 0, 0, .2))
 
+
+func _on_Light_draw():
+	var l = _ctrls.light
+	l.draw_circle(Vector2(l.rect_size.x / 2, l.rect_size.y / 2), l.rect_size.x / 2, _light_color)
+
+
 func _on_editor_script_changed(script):
 	if(script):
 		set_current_script(script)
 
 
 func _on_RunAll_pressed():
-	_on_RunTests_pressed()
-
-
-func _on_RunTests_pressed():
 	_run_all()
 
 
@@ -219,11 +211,6 @@ func _on_BottomPanelShortcuts_popup_hide():
 	_ctrls.shortcut_dialog.save_shortcuts(SHORTCUTS_PATH)
 
 
-func _on_Light_draw():
-	var l = _ctrls.light
-	l.draw_circle(Vector2(l.rect_size.x / 2, l.rect_size.y / 2), l.rect_size.x / 2, _light_color)
-
-
 func _on_RunAtCursor_run_tests(what):
 	_gut_config.options.selected = what.script
 	_gut_config.options.inner_class = what.inner_class
@@ -231,19 +218,26 @@ func _on_RunAtCursor_run_tests(what):
 
 	_run_tests()
 
+
 func _on_Settings_pressed():
 	hide_settings(!_ctrls.settings_button.pressed)
+	_save_config()
 
 
 func _on_OutputBtn_pressed():
 	hide_output_text(!_ctrls.output_button.pressed)
+	_save_config()
 
 
 func _on_RunResultsBtn_pressed():
 	hide_result_tree(! _ctrls.run_results_button.pressed)
+	_save_config()
 
+
+# Currently not used, but will be when I figure out how to put
+# colors into the text results
 func _on_UseColors_pressed():
-	pass # Replace with function body.
+	pass 
 
 # ---------------
 # Public
@@ -312,7 +306,6 @@ func load_result_output():
 		_light_color = Color(0, 1, 0, .75)
 	_ctrls.light.visible = true
 	_ctrls.light.update()
-
 
 
 func set_current_script(script):
