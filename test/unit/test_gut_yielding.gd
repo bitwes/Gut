@@ -171,6 +171,7 @@ class TestYieldFor:
 
 	func test_output_for_long_yields():
 		yield(yield_for(2), YIELD)
+		pass_test('Visually check this')
 
 
 
@@ -244,6 +245,7 @@ class TestYieldFrames:
 
 	func test_can_yield_using_set_yield_frames():
 		yield(gut.set_yield_frames(10), YIELD)
+		pass_test('we got here')
 
 	func test_yield_frames_waits_x_frames():
 		yield(yield_frames(5), YIELD)

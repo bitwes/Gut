@@ -279,6 +279,7 @@ class TestBuiltInOverloading:
 	func test_can_call_a_built_in_that_has_default_parameters():
 		var inst = autofree(doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG).new())
 		inst.connect('hide', self, '_hide_call_back')
+		pass_test("if we got here, it worked")
 
 	func test_all_types_supported():
 		assert_string_contains(_dbl_win_dia_text, 'popup_centered(p_size=Vector2(0, 0)):', 'Vector2')
