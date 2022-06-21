@@ -227,6 +227,9 @@ func log_summary_text(lgr):
 	if(!found_failing_or_pending):
 		lgr.log('All tests passed', lgr.fmts.green)
 
+	# just picked a non-printable char, dunno if it is a good or bad choice.
+	var npws = PoolByteArray([31]).get_string_from_ascii()
+
 	lgr.log()
 	var _totals = get_totals()
 	lgr.log("Totals", lgr.fmts.yellow)
@@ -234,7 +237,10 @@ func log_summary_text(lgr):
 	lgr.log(str('Passing tests     ', _totals.passing_tests))
 	lgr.log(str('Failing tests     ', _totals.failing_tests))
 	lgr.log(str('Risky tests       ', _totals.risky))
-	lgr.log(str('Pending:          ', _totals.pending))
+	var pnd=str('Pending:          ', _totals.pending)
+	# add a non printable character so this "pending" isn't highlighted in the
+	# editor's output panel.
+	lgr.log(str(npws, pnd))
 	lgr.log(str('Asserts:          ', _totals.passing, ' of ', _totals.passing + _totals.failing, ' passed'))
 
 	lgr.set_indent_level(orig_indent)

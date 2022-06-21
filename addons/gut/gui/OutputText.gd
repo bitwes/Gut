@@ -32,6 +32,7 @@ class SearchResults:
 			te.center_viewport_to_cursor()
 
 		_last_term = text
+		te.center_viewport_to_cursor()
 		return result
 
 	func _cursor_to_pos():
@@ -131,6 +132,10 @@ func _setup_colors():
 	for keyword in keywords:
 		_ctrls.output.add_keyword_color(keyword[0], keyword[1])
 
+	var f_color = _ctrls.output.get_color("font_color")
+	_ctrls.output.add_color_override("font_color_readonly", f_color)
+	_ctrls.output.add_color_override("function_color", f_color)
+	_ctrls.output.add_color_override("member_variable_color", f_color)
 	_ctrls.output.update()
 
 
