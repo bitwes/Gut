@@ -77,14 +77,17 @@ class SearchResults:
 
 
 onready var _ctrls = {
+	output = $Output,
+
 	copy_button = $Toolbar/CopyButton,
 	use_colors = $Toolbar/UseColors,
 	clear_button = $Toolbar/ClearButton,
-	output = $Output,
+	word_wrap = $Toolbar/WordWrap,
 	show_search = $Toolbar/ShowSearch,
+
 	search_bar = {
 		bar = $Search,
-		search_term = $Search/SearchTerm
+		search_term = $Search/SearchTerm,
 	}
 }
 var _sr = SearchResults.new()
@@ -92,6 +95,7 @@ var _sr = SearchResults.new()
 func _test_running_setup():
 	_ctrls.use_colors.text = 'use colors'
 	_ctrls.show_search.text = 'search'
+	_ctrls.word_wrap.text = 'ww'
 
 	set_all_fonts("CourierPrime")
 	set_font_size(20)
@@ -103,6 +107,7 @@ func _ready():
 	_sr.te = _ctrls.output
 	_ctrls.use_colors.icon = get_icon('RichTextEffect', 'EditorIcons')
 	_ctrls.show_search.icon = get_icon('Search', 'EditorIcons')
+	_ctrls.word_wrap.icon = get_icon('Loop', 'EditorIcons')
 
 	_setup_colors()
 	if(get_parent() == get_tree().root):
@@ -190,6 +195,10 @@ func _on_SearchTerm_gui_input(event):
 	if(event is InputEventKey and !event.pressed and event.scancode == KEY_ESCAPE):
 		show_search(false)
 
+func _on_WordWrap_pressed():
+	_ctrls.output.wrap_enabled = _ctrls.word_wrap.pressed
+	_ctrls.output.update()
+
 # ------------------
 # Public
 # ------------------
@@ -275,4 +284,3 @@ func add_text(text):
 func scroll_to_line(line):
 	_ctrls.output.scroll_vertical = line
 	_ctrls.output.cursor_set_line(line)
-

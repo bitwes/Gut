@@ -46,8 +46,15 @@ toggle_mode = true
 pressed = true
 icon = SubResource( 2 )
 
-[node name="CenterContainer" type="CenterContainer" parent="Toolbar"]
+[node name="WordWrap" type="ToolButton" parent="Toolbar"]
 margin_left = 64.0
+margin_right = 76.0
+margin_bottom = 24.0
+hint_tooltip = "Word wrap"
+toggle_mode = true
+
+[node name="CenterContainer" type="CenterContainer" parent="Toolbar"]
+margin_left = 80.0
 margin_right = 743.0
 margin_bottom = 24.0
 size_flags_horizontal = 3
@@ -104,6 +111,7 @@ text = "Prev"
 
 [connection signal="pressed" from="Toolbar/ShowSearch" to="." method="_on_ShowSearch_pressed"]
 [connection signal="pressed" from="Toolbar/UseColors" to="." method="_on_UseColors_pressed"]
+[connection signal="pressed" from="Toolbar/WordWrap" to="." method="_on_WordWrap_pressed"]
 [connection signal="pressed" from="Toolbar/CopyButton" to="." method="_on_CopyButton_pressed"]
 [connection signal="pressed" from="Toolbar/ClearButton" to="." method="_on_ClearButton_pressed"]
 [connection signal="focus_entered" from="Search/SearchTerm" to="." method="_on_SearchTerm_focus_entered"]
