@@ -45,7 +45,7 @@ func _set_toolbutton_icon(btn, icon_name):
 	btn.icon = get_icon(icon_name, 'EditorIcons')
 
 
-func _ready():	
+func _ready():
 	_root = _ctrls.tree.create_item()
 	_ctrls.tree.set_hide_root(true)
 	_ctrls.tree.columns = 2

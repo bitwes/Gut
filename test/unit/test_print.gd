@@ -116,7 +116,7 @@ class TestLogLevels:
 
 	var _orig_log_level = -1
 	var _orig_indent_string = null
-  
+
 	func before_all():
 		_orig_log_level = gut.get_log_level()
 		_orig_indent_string = gut.get_logger().get_indent_string()

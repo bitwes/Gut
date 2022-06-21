@@ -55,16 +55,16 @@ func _ready():
 	_gut_config_gui.set_options(_gut_config.options)
 	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.panel_options.font_name)
 	_set_font_size_for_rtl(_ctrls.output, _gut_config.options.panel_options.font_size)
-	
+
 	_ctrls.shortcuts_button.icon = get_icon('ShortCut', 'EditorIcons')
 	_ctrls.settings_button.icon = get_icon('Tools', 'EditorIcons')
 	_ctrls.run_results_button.icon = get_icon('AnimationTrackGroup', 'EditorIcons') # Tree
 	_ctrls.output_button.icon = get_icon('Font', 'EditorIcons')
-	
+
 	_ctrls.run_results.set_font(
 		_gut_config.options.panel_options.font_name,
 		_gut_config.options.panel_options.font_size)
-	
+
 	var check_import = load('res://addons/gut/images/red.png')
 	if(check_import == null):
 		_ctrls.run_results.add_centered_text("GUT got some new images that are not imported yet.  Please restart Godot.")
@@ -212,7 +212,7 @@ func _run_all():
 # ---------------
 func _on_results_bar_draw(bar):
 	bar.draw_rect(Rect2(Vector2(0, 0), bar.rect_size), Color(0, 0, 0, .2))
-	
+
 func _on_editor_script_changed(script):
 	if(script):
 		set_current_script(script)
@@ -370,14 +370,14 @@ func nvl(value, if_null):
 func hide_settings(should):
 	var s_scroll = _ctrls.settings.get_parent()
 	s_scroll.visible = !should
-	
-	# collapse only collapses the first control, so we move 
+
+	# collapse only collapses the first control, so we move
 	# settings around to be the collapsed one
 	if(should):
 		s_scroll.get_parent().move_child(s_scroll, 0)
 	else:
 		s_scroll.get_parent().move_child(s_scroll, 1)
-	
+
 	$layout/RSplit.collapsed = should
 
 
@@ -387,4 +387,4 @@ func _on_OutputBtn_pressed():
 
 func _on_RunResultsBtn_pressed():
 	_ctrls.run_results.visible = _ctrls.run_results_button.pressed
-	
+
