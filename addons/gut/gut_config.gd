@@ -91,10 +91,6 @@ func _load_options_from_config_file(file_path, into):
 	# Get all the options out of the config file using the option name.  The
 	# options hash is now the default source of truth for the name of an option.
 	_load_dict_into(results.result, into)
-	# for key in into:
-	# 	if(results.result.has(key)):
-	# 		if(results.result[key] != null):
-	# 			into[key] = results.result[key]
 
 	return 1
 
