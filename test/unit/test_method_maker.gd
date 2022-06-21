@@ -39,6 +39,18 @@ class TestGetDecleration:
 		var _txt = _mm.get_function_text(meta)
 		assert_true(true, 'we got here')
 
+	func test_unsupported_type_within_range_generates_error():
+		var err_count = gut.get_logger().get_errors().size()
+
+		# Force an unsupported on a known supported
+		_mm._supported_defaults[TYPE_INT] = null
+		var params = [make_param('value1', TYPE_INT)]
+
+		var meta = make_meta('dummy', params)
+		meta.default_args.append(1)
+		var _txt = _mm.get_function_text(meta)
+		assert_eq(gut.get_logger().get_errors().size(), err_count + 1)
+
 	func test_if_unknonw_param_type_function_text_is_null():
 		var params = [make_param('value1', 999)]
 		var meta = make_meta('dummy', params)
@@ -100,6 +112,8 @@ class TestGetDecleration:
 		meta.default_args.append('1,1,1,1')
 		var txt = _mm.get_function_text(meta)
 		assert_string_contains(txt, 'func dummy(p_value1=Color(1,1,1,1)):')
+
+
 
 class TestSuperCall:
 	extends BaseTest

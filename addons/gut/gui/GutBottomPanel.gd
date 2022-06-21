@@ -56,9 +56,9 @@ func _ready():
 	hide_settings(!_ctrls.settings_button.pressed)
 	_gut_config_gui = GutConfigGui.new(_ctrls.settings)
 	_gut_config_gui.set_options(_gut_config.options)
-	
+
 	_apply_options_to_controls()
-	
+
 	_ctrls.shortcuts_button.icon = get_icon('ShortCut', 'EditorIcons')
 	_ctrls.settings_button.icon = get_icon('Tools', 'EditorIcons')
 	_ctrls.run_results_button.icon = get_icon('AnimationTrackGroup', 'EditorIcons') # Tree
@@ -85,7 +85,7 @@ func _apply_options_to_controls():
 	_ctrls.output_ctrl.set_use_colors(_gut_config.options.panel_options.use_colors)
 	_ctrls.output_ctrl.set_all_fonts(_gut_config.options.panel_options.font_name)
 	_ctrls.output_ctrl.set_font_size(_gut_config.options.panel_options.font_size)
-	
+
 	_ctrls.run_results.set_font(
 		_gut_config.options.panel_options.font_name,
 		_gut_config.options.panel_options.font_size)
@@ -134,7 +134,7 @@ func _save_config():
 	_gut_config.options.panel_options.hide_result_tree = !_ctrls.run_results_button.pressed
 	_gut_config.options.panel_options.hide_output_text = !_ctrls.output_button.pressed
 	_gut_config.options.panel_options.use_colors = _ctrls.output_ctrl.get_use_colors()
-	
+
 	var w_result = _gut_config.write_options(RUNNER_JSON_PATH)
 	if(w_result != OK):
 		push_error(str('Could not write options to ', RUNNER_JSON_PATH, ': ', w_result))
@@ -237,7 +237,7 @@ func _on_RunResultsBtn_pressed():
 # Currently not used, but will be when I figure out how to put
 # colors into the text results
 func _on_UseColors_pressed():
-	pass 
+	pass
 
 # ---------------
 # Public

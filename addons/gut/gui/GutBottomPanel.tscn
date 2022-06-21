@@ -73,16 +73,16 @@ margin_left = 154.0
 margin_top = 13.0
 margin_right = 213.0
 margin_bottom = 27.0
-hint_tooltip = "When a test script is edited, buttons are displayed to 
-run the opened script or an Inner-Test-Class or a 
-single test.  The buttons change based on the location 
+hint_tooltip = "When a test script is edited, buttons are displayed to
+run the opened script or an Inner-Test-Class or a
+single test.  The buttons change based on the location
 of the cursor in the file.
 
-These buttons will remain active when editing other 
-items so that you can run tests without having to switch 
+These buttons will remain active when editing other
+items so that you can run tests without having to switch
 back to the test script.
 
-You can assign keyboard shortcuts for these buttons 
+You can assign keyboard shortcuts for these buttons
 using the \"shortcuts\" button in the GUT panel."
 mouse_filter = 1
 text = "Current:  "
