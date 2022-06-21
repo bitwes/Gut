@@ -24,6 +24,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Bug Fixes
 * __Issue 288__ First `yield` in a test does not cause a .4 second delay.
+* __Issue 368__ Doubling `WebSocketClient` and anything with a `PoolStringArray` default value.
 
 # 7.3.0
 

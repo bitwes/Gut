@@ -58,6 +58,7 @@ const PARAM_PREFIX = 'p_'
 	# TYPE_RID = 16 — Variable is of type RID.
 	# TYPE_INT_ARRAY = 21 — Variable is of type PoolIntArray.
 	# TYPE_REAL_ARRAY = 22 — Variable is of type PoolRealArray.
+	# TYPE_STRING_ARRAY = 23 — Variable is of type PoolStringArray.
 
 
 # TYPE_PLANE = 9 — Variable is of type Plane.
@@ -66,7 +67,6 @@ const PARAM_PREFIX = 'p_'
 # TYPE_BASIS = 12 — Variable is of type Basis.
 # TYPE_NODE_PATH = 15 — Variable is of type NodePath.
 # TYPE_RAW_ARRAY = 20 — Variable is of type PoolByteArray.
-# TYPE_STRING_ARRAY = 23 — Variable is of type PoolStringArray.
 # TYPE_VECTOR3_ARRAY = 25 — Variable is of type PoolVector3Array.
 # TYPE_COLOR_ARRAY = 26 — Variable is of type PoolColorArray.
 # TYPE_MAX = 27 — Marker for end of type constants.
@@ -98,6 +98,7 @@ func _init():
 	_supported_defaults[TYPE_TRANSFORM] = 'Transform'
 	_supported_defaults[TYPE_INT_ARRAY] = 'PoolIntArray'
 	_supported_defaults[TYPE_REAL_ARRAY] = 'PoolRealArray'
+	_supported_defaults[TYPE_STRING_ARRAY] = 'PoolStringArray'
 
 # ###############
 # Private
@@ -106,7 +107,7 @@ var _func_text = _utils.get_file_as_text('res://addons/gut/double_templates/func
 var _init_text = _utils.get_file_as_text('res://addons/gut/double_templates/init_template.txt')
 
 func _is_supported_default(type_flag):
-	return type_flag >= 0 and type_flag < _supported_defaults.size() and [type_flag] != null
+	return type_flag >= 0 and type_flag < _supported_defaults.size() and _supported_defaults[type_flag] != null
 
 
 func _make_stub_default(method, index):
@@ -140,7 +141,7 @@ func _make_arg_array(method_meta, override_size):
 					else:
 						dflt_text = str(_supported_defaults[t], str(method_meta.default_args[dflt_idx]).to_lower())
 				elif(t == TYPE_TRANSFORM):
-					#value will be 4 Vector3 and look like: 1, 0, 0, 0, 1, 0, 0, 0, 1 - 0, 0, 0
+					# value will be 4 Vector3 and look like: 1, 0, 0, 0, 1, 0, 0, 0, 1 - 0, 0, 0
 					var sections = str(method_meta.default_args[dflt_idx]).split("-")
 					var vecs = sections[0].split(",")
 					vecs.append_array(sections[1].split(","))
@@ -158,10 +159,9 @@ func _make_arg_array(method_meta, override_size):
 					dflt_text = str(_supported_defaults[t], "(", vectors, ")")
 				elif(t == TYPE_RID):
 					dflt_text = str(_supported_defaults[t], 'null')
-				elif(t in [TYPE_REAL_ARRAY, TYPE_INT_ARRAY]):
+				elif(t in [TYPE_REAL_ARRAY, TYPE_INT_ARRAY, TYPE_STRING_ARRAY]):
 					dflt_text = str(_supported_defaults[t], "()")
-
-				# Everything else puts the prefix (if one is there) form _supported_defaults
+				# Everything else puts the prefix (if one is there) from _supported_defaults
 				# in front.  The to_lower is used b/c for some reason the defaults for
 				# null, true, false are all "Null", "True", "False".
 				else:
