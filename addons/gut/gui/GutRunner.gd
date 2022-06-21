@@ -22,8 +22,7 @@ onready var _gut_layer = $GutLayer
 func _ready():
 	if(_gut_config == null):
 		_gut_config = GutConfig.new()
-		_gut_config.load_options(RUNNER_JSON_PATH)
-
+		_gut_config.load_panel_options(RUNNER_JSON_PATH)
 
 	# The command line will call run_tests on its own.  When used from the panel
 	# we have to kick off the tests ourselves b/c there's no way I know of to
@@ -55,9 +54,7 @@ func run_tests():
 
 
 func _write_results():
-	# bbcode_text appears to be empty.  I'm not 100% sure why.  Until that is
-	# figured out we have to just get the text which stinks.
-	var content = _gut.get_gui().get_text_box().text
+	var content = _gut.get_logger().get_gui_bbcode()
 
 	var f = File.new()
 	var result = f.open(RESULT_FILE, f.WRITE)

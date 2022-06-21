@@ -277,6 +277,7 @@ class TestDictionaryDiff:
 		var d2 = {'a':1.0, 'b':2, 'c':_utils.Strutils.new(), 'cc':'adsf'}
 		var dd = DiffTool.new(d1, d2)
 		gut.p(dd.summarize())
+		pass_test('Visually check this')
 
 
 	func test_with_obj_as_keys():
@@ -298,6 +299,7 @@ class TestDictionaryDiff:
 
 		var dd =  DiffTool.new(d1, d2)
 		gut.p(dd.summarize())
+		pass_test('Visually check this')
 
 	func test_sub_dictionary_compare_when_equal():
 		var d1 = {'a':1, 'b':{'a':99}}

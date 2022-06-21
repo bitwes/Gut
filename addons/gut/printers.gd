@@ -63,6 +63,22 @@ class GutGuiPrinter:
 	func _color_text(text, c_word):
 		return '[color=' + c_word + ']' + text + '[/color]'
 
+	# Remember, we have to use push and pop because the output from the tests
+	# can contain [] in it which can mess up the formatting.  There is no way
+	# as of 3.4 that you can get the bbcode out of RTL when using push and pop.
+	#
+	# The only way we could get around this is by adding in non-printable
+	# whitespace after each "[" that is in the text.  Then we could maybe do
+	# this another way and still be able to get the bbcode out, or generate it
+	# at the same time in a buffer (like we tried that one time).
+	#
+	# Since RTL doesn't have good search and selection methods, and those are
+	# really handy in the editor, it isn't worth making bbcode that can be used
+	# there as well.
+	#
+	# You'll try to get it so the colors can be the same in the editor as they
+	# are in the output.  Good luck, and I hope I typed enough to not go too
+	# far that rabbit hole before finding out it's not worth it.
 	func format_text(text, fmt):
 		var box = _gut.get_gui().get_text_box()
 
@@ -95,6 +111,9 @@ class GutGuiPrinter:
 		var box = _gut.get_gui().get_text_box()
 		box.remove_line(box.get_line_count() - 1)
 		box.update()
+
+	func get_bbcode():
+		return _gut.get_gui().get_text_box().text
 
 # ------------------------------------------------------------------------------
 # This AND TerminalPrinter should not be enabled at the same time since it will

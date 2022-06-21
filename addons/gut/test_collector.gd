@@ -19,6 +19,12 @@ class Test:
 	# the line number when the  test fails
 	var line_number = -1
 
+	func did_pass():
+		return passed and !pending and assert_count > 0
+
+	func did_assert():
+		return assert_count > 0 or pending
+
 
 # ------------------------------------------------------------------------------
 # This holds all the meta information for a test script.  It contains the

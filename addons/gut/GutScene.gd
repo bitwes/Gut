@@ -20,11 +20,13 @@ onready var _progress = {
 }
 onready var _summary = {
 	control = $VBox/TitleBar/HBox/Summary,
-	failing = $VBox/TitleBar/HBox/Summary/Failing,
-	passing = $VBox/TitleBar/HBox/Summary/Passing,
+	failing = $VBox/TitleBar/HBox/Summary/Failing, # defunct?
+	passing = $VBox/TitleBar/HBox/Summary/Passing, # defunct?
 	asserts = $VBox/TitleBar/HBox/Summary/AssertCount,
-	fail_count = 0,
-	pass_count = 0
+	fail_count = 0, # defunct?
+	pass_count = 0, # defunct?
+	test_count = 0,
+	passing_test_count = 0
 }
 
 onready var _extras = $ExtraOptions
@@ -306,7 +308,8 @@ func _update_summary():
 
 	var total = _summary.fail_count + _summary.pass_count
 	_summary.control.visible = !total == 0
-	_summary.asserts.text = str('Failures ', _summary.fail_count, '/', total)
+	# this now shows tests but I didn't rename everything
+	_summary.asserts.text = str(_summary.passing_test_count, '/', _summary.test_count, ' tests passed')
 # ####################
 # Public
 # ####################
@@ -395,6 +398,14 @@ func add_failing(amount=1):
 	if(!_summary):
 		return
 	_summary.fail_count += amount
+	_update_summary()
+
+func add_test(passing):
+	if(!_summary):
+		return
+	_summary.test_count += 1
+	if(passing):
+		_summary.passing_test_count += 1
 	_update_summary()
 
 func clear_summary():

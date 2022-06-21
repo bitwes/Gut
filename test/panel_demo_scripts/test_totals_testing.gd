@@ -42,4 +42,22 @@ func test_pending():
 func test_no_assert():
 	gut.p('this has no assert')
 
+func test_this_makes_3_orphans():
+	var n1 = Node2D.new()
+	var n2 = Node2D.new()
+	var n3 = Node2D.new()
+	pass_test('passing')
+
+func test_this_autofrees_2_of_3():
+	var n1 = add_child_autofree(Node2D.new())
+	var n2 = autofree(Node2D.new())
+	var n3 = Node2D.new()
+	pass_test('passing')
+
+func test_fail_with_orphans():
+	var n1 = Node2D.new()
+	fail_test('failing with orphans')
+
+func test_no_assert_and_orphans():
+	var n1 = Node2D.new()
 

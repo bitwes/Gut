@@ -899,8 +899,11 @@ func _test_the_scripts(indexes=[]):
 					# _run_test calls _wait for done, just wait for that to finish
 					yield(script_result, COMPLETED)
 
-				if(_current_test.assert_count == 0 and !_current_test.pending):
+				if(!_current_test.did_assert()):
 					_lgr.warn('Test did not assert')
+
+				_gui.add_test(_current_test.did_pass())
+
 				_current_test.has_printed_name = false
 				_gui.set_progress_test_value(i + 1)
 				emit_signal('test_finished')

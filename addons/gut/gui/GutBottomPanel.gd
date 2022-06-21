@@ -21,12 +21,15 @@ var _last_selected_path = null
 
 
 onready var _ctrls = {
-	output = $layout/RSplit/CResults/Tabs/Output/Output,
+	output = $layout/RSplit/CResults/Tabs/OutputText.get_rich_text_edit(),
+	output_ctrl = $layout/RSplit/CResults/Tabs/OutputText,
 	run_button = $layout/ControlBar/RunAll,
-	settings_button = $layout/ControlBar/Settings,
 	shortcuts_button = $layout/ControlBar/Shortcuts,
+
+	settings_button = $layout/ControlBar/Settings,
 	run_results_button = $layout/ControlBar/RunResultsBtn,
 	output_button = $layout/ControlBar/OutputBtn,
+
 	settings = $layout/RSplit/sc/Settings,
 	shortcut_dialog = $BottomPanelShortcuts,
 	light = $layout/RSplit/CResults/ControlBar/Light,
@@ -53,14 +56,15 @@ func _ready():
 	hide_settings(!_ctrls.settings_button.pressed)
 	_gut_config_gui = GutConfigGui.new(_ctrls.settings)
 	_gut_config_gui.set_options(_gut_config.options)
-	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.panel_options.font_name)
-	_set_font_size_for_rtl(_ctrls.output, _gut_config.options.panel_options.font_size)
+
+	_apply_options_to_controls()
 
 	_ctrls.shortcuts_button.icon = get_icon('ShortCut', 'EditorIcons')
 	_ctrls.settings_button.icon = get_icon('Tools', 'EditorIcons')
 	_ctrls.run_results_button.icon = get_icon('AnimationTrackGroup', 'EditorIcons') # Tree
 	_ctrls.output_button.icon = get_icon('Font', 'EditorIcons')
 
+	_ctrls.run_results.set_output_control(_ctrls.output_ctrl)
 	_ctrls.run_results.set_font(
 		_gut_config.options.panel_options.font_name,
 		_gut_config.options.panel_options.font_size)
@@ -73,11 +77,26 @@ func _ready():
 		_ctrls.run_results.add_centered_text("Let's run some tests!")
 
 
+func _apply_options_to_controls():
+	hide_settings(_gut_config.options.panel_options.hide_settings)
+	hide_result_tree(_gut_config.options.panel_options.hide_result_tree)
+	hide_output_text(_gut_config.options.panel_options.hide_output_text)
+
+	_ctrls.output_ctrl.set_use_colors(_gut_config.options.panel_options.use_colors)
+	_ctrls.output_ctrl.set_all_fonts(_gut_config.options.panel_options.font_name)
+	_ctrls.output_ctrl.set_font_size(_gut_config.options.panel_options.font_size)
+
+	_ctrls.run_results.set_font(
+		_gut_config.options.panel_options.font_name,
+		_gut_config.options.panel_options.font_size)
+	_ctrls.run_results.set_show_orphans(!_gut_config.options.hide_orphans)
+
+
 func _process(delta):
 	if(_is_running):
 		if(!_interface.is_playing_scene()):
 			_is_running = false
-			_ctrls.output.add_text("\ndone")
+			_ctrls.output_ctrl.add_text("\ndone")
 			load_result_output()
 			_gut_plugin.make_bottom_panel_item_visible(self)
 
@@ -90,41 +109,6 @@ func load_shortcuts():
 	_apply_shortcuts()
 
 
-# -----------------------------------
-func _set_font(rtl, font_name, custom_name):
-	if(font_name == null):
-		rtl.set('custom_fonts/' + custom_name, null)
-	else:
-		var dyn_font = DynamicFont.new()
-		var font_data = DynamicFontData.new()
-		font_data.font_path = 'res://addons/gut/fonts/' + font_name + '.ttf'
-		font_data.antialiased = true
-		dyn_font.font_data = font_data
-		rtl.set('custom_fonts/' + custom_name, dyn_font)
-
-
-func _set_all_fonts_in_ftl(ftl, base_name):
-	if(base_name == 'Default'):
-		_set_font(ftl, null, 'normal_font')
-		_set_font(ftl, null, 'bold_font')
-		_set_font(ftl, null, 'italics_font')
-		_set_font(ftl, null, 'bold_italics_font')
-	else:
-		_set_font(ftl, base_name + '-Regular', 'normal_font')
-		_set_font(ftl, base_name + '-Bold', 'bold_font')
-		_set_font(ftl, base_name + '-Italic', 'italics_font')
-		_set_font(ftl, base_name + '-BoldItalic', 'bold_italics_font')
-
-
-func _set_font_size_for_rtl(rtl, new_size):
-	if(rtl.get('custom_fonts/normal_font') != null):
-		rtl.get('custom_fonts/bold_italics_font').size = new_size
-		rtl.get('custom_fonts/bold_font').size = new_size
-		rtl.get('custom_fonts/italics_font').size = new_size
-		rtl.get('custom_fonts/normal_font').size = new_size
-# -----------------------------------
-
-
 func _is_test_script(script):
 	var from = script.get_base_script()
 	while(from and from.resource_path != 'res://addons/gut/test.gd'):
@@ -133,27 +117,28 @@ func _is_test_script(script):
 	return from != null
 
 
-func _update_last_run_label():
-	var text = ''
-
-	if(	_gut_config.options.selected == null and
-		_gut_config.options.inner_class == null and
-		_gut_config.options.unit_test_name == null):
-		text = 'All'
-	else:
-		text = nvl(_gut_config.options.selected, '') + ' '
-		text += nvl(_gut_config.options.inner_class, '') + ' '
-		text += nvl(_gut_config.options.unit_test_name, '')
-
-
-
 func _show_errors(errs):
-	_ctrls.output.clear()
+	_ctrls.output_ctrl.clear()
 	var text = "Cannot run tests, you have a conrfiguration error:\n"
 	for e in errs:
 		text += str('*  ', e, "\n")
-	text += "[right]Check your settings here ----->[/right]"
-	_ctrls.output.bbcode_text = text
+	text += "Check your settings ----->"
+	_ctrls.output_ctrl.add_text(text)
+	hide_output_text(false)
+	hide_settings(false)
+
+
+func _save_config():
+	_gut_config.options = _gut_config_gui.get_options(_gut_config.options)
+	_gut_config.options.panel_options.hide_settings = !_ctrls.settings_button.pressed
+	_gut_config.options.panel_options.hide_result_tree = !_ctrls.run_results_button.pressed
+	_gut_config.options.panel_options.hide_output_text = !_ctrls.output_button.pressed
+	_gut_config.options.panel_options.use_colors = _ctrls.output_ctrl.get_use_colors()
+
+	var w_result = _gut_config.write_options(RUNNER_JSON_PATH)
+	if(w_result != OK):
+		push_error(str('Could not write options to ', RUNNER_JSON_PATH, ': ', w_result))
+		return;
 
 
 func _run_tests():
@@ -163,27 +148,16 @@ func _run_tests():
 		return
 
 	write_file(RESULT_FILE, 'Run in progress')
-	_gut_config.options = _gut_config_gui.get_options(_gut_config.options)
-	_set_all_fonts_in_ftl(_ctrls.output, _gut_config.options.panel_options.font_name)
-	_set_font_size_for_rtl(_ctrls.output, _gut_config.options.panel_options.font_size)
-	_ctrls.run_results.set_font(
-		_gut_config.options.panel_options.font_name,
-		_gut_config.options.panel_options.font_size)
+	_save_config()
+	_apply_options_to_controls()
 
-	var w_result = _gut_config.write_options(RUNNER_JSON_PATH)
-	if(w_result != OK):
-		push_error(str('Could not write options to ', RUNNER_JSON_PATH, ': ', w_result))
-		return;
-
-	_ctrls.output.clear()
+	_ctrls.output_ctrl.clear()
 	_ctrls.run_results.clear()
 	_ctrls.run_results.add_centered_text('Running...')
 
-	_update_last_run_label()
 	_interface.play_custom_scene('res://addons/gut/gui/GutRunner.tscn')
-
 	_is_running = true
-	_ctrls.output.add_text('Running...')
+	_ctrls.output_ctrl.add_text('Running...')
 
 
 func _apply_shortcuts():
@@ -213,25 +187,19 @@ func _run_all():
 func _on_results_bar_draw(bar):
 	bar.draw_rect(Rect2(Vector2(0, 0), bar.rect_size), Color(0, 0, 0, .2))
 
+
+func _on_Light_draw():
+	var l = _ctrls.light
+	l.draw_circle(Vector2(l.rect_size.x / 2, l.rect_size.y / 2), l.rect_size.x / 2, _light_color)
+
+
 func _on_editor_script_changed(script):
 	if(script):
 		set_current_script(script)
 
 
 func _on_RunAll_pressed():
-	_on_RunTests_pressed()
-
-
-func _on_RunTests_pressed():
 	_run_all()
-
-
-func _on_CopyButton_pressed():
-	OS.clipboard = _ctrls.output.text
-
-
-func _on_ClearButton_pressed():
-	_ctrls.output.clear()
 
 
 func _on_Shortcuts_pressed():
@@ -243,11 +211,6 @@ func _on_BottomPanelShortcuts_popup_hide():
 	_ctrls.shortcut_dialog.save_shortcuts(SHORTCUTS_PATH)
 
 
-func _on_Light_draw():
-	var l = _ctrls.light
-	l.draw_circle(Vector2(l.rect_size.x / 2, l.rect_size.y / 2), l.rect_size.x / 2, _light_color)
-
-
 func _on_RunAtCursor_run_tests(what):
 	_gut_config.options.selected = what.script
 	_gut_config.options.inner_class = what.inner_class
@@ -255,17 +218,57 @@ func _on_RunAtCursor_run_tests(what):
 
 	_run_tests()
 
+
 func _on_Settings_pressed():
 	hide_settings(!_ctrls.settings_button.pressed)
+	_save_config()
+
+
+func _on_OutputBtn_pressed():
+	hide_output_text(!_ctrls.output_button.pressed)
+	_save_config()
+
+
+func _on_RunResultsBtn_pressed():
+	hide_result_tree(! _ctrls.run_results_button.pressed)
+	_save_config()
+
+
+# Currently not used, but will be when I figure out how to put
+# colors into the text results
+func _on_UseColors_pressed():
+	pass
 
 # ---------------
 # Public
 # ---------------
+func hide_result_tree(should):
+	_ctrls.run_results.visible = !should
+	_ctrls.run_results_button.pressed = !should
+
+
+func hide_settings(should):
+	var s_scroll = _ctrls.settings.get_parent()
+	s_scroll.visible = !should
+
+	# collapse only collapses the first control, so we move
+	# settings around to be the collapsed one
+	if(should):
+		s_scroll.get_parent().move_child(s_scroll, 0)
+	else:
+		s_scroll.get_parent().move_child(s_scroll, 1)
+
+	$layout/RSplit.collapsed = should
+	_ctrls.settings_button.pressed = !should
+
+
+func hide_output_text(should):
+	$layout/RSplit/CResults/Tabs/OutputText.visible = !should
+	_ctrls.output_button.pressed = !should
+
 
 func load_result_output():
-	_ctrls.output.bbcode_text = get_file_as_text(RESULT_FILE)
-	_ctrls.output.grab_focus()
-	_ctrls.output.scroll_to_line(_ctrls.output.get_line_count() -1)
+	_ctrls.output_ctrl.load_file(RESULT_FILE)
 
 	var summary = get_file_as_text(RESULT_JSON)
 	var results = JSON.parse(summary)
@@ -303,7 +306,6 @@ func load_result_output():
 		_light_color = Color(0, 1, 0, .75)
 	_ctrls.light.visible = true
 	_ctrls.light.update()
-
 
 
 func set_current_script(script):
@@ -365,26 +367,4 @@ func nvl(value, if_null):
 		return if_null
 	else:
 		return value
-
-
-func hide_settings(should):
-	var s_scroll = _ctrls.settings.get_parent()
-	s_scroll.visible = !should
-
-	# collapse only collapses the first control, so we move
-	# settings around to be the collapsed one
-	if(should):
-		s_scroll.get_parent().move_child(s_scroll, 0)
-	else:
-		s_scroll.get_parent().move_child(s_scroll, 1)
-
-	$layout/RSplit.collapsed = should
-
-
-func _on_OutputBtn_pressed():
-	$layout/RSplit/CResults/Tabs/Output.visible = _ctrls.output_button.pressed
-
-
-func _on_RunResultsBtn_pressed():
-	_ctrls.run_results.visible = _ctrls.run_results_button.pressed
 
