@@ -40,6 +40,7 @@ var _log_level = 1 setget set_log_level, get_log_level
 var _disable_strict_datatype_checks = false setget disable_strict_datatype_checks, is_strict_datatype_checks_disabled
 var _test_prefix = 'test_'
 var _file_prefix = 'test_'
+var _file_suffix = '.gd'
 var _file_extension = '.gd'
 var _inner_class_prefix = 'Test'
 var _temp_directory = 'user://gut_temp_directory'
@@ -1119,7 +1120,7 @@ func add_script(script):
 # with the suffix.  Does not look in sub directories.  Can be called multiple
 # times.
 # ------------------------------------------------------------------------------
-func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
+func add_directory(path, prefix=_file_prefix, suffix=_file_suffix):
 	# check for '' b/c the calls to addin the exported directories 1-6 will pass
 	# '' if the field has not been populated.  This will cause res:// to be
 	# processed which will include all files if include_subdirectories is true.
