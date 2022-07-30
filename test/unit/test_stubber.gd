@@ -100,8 +100,8 @@ func test_returns_can_be_layered():
 	gr.stubber.set_return(TO_STUB_PATH, 'get_value', 0)
 	var inst = ToStub.new()
 	gr.stubber.set_return(inst, 'get_other', 100)
-	assert_eq(gr.stubber.get_return(inst, 'get_value'), 0, 'unstubbed instance method should get class value')
-	assert_eq(gr.stubber.get_return(inst, 'get_other'), 100, 'stubbed instance method should get inst value')
+	assert_eq(gr.stubber.get_return(inst, 'get_value'), 0, 'unstubbed instantiate method should get class value')
+	assert_eq(gr.stubber.get_return(inst, 'get_other'), 100, 'stubbed instantiate method should get inst value')
 	assert_eq(gr.stubber.get_return(TO_STUB_PATH, 'get_value'), 0, 'stubbed path method should get path value')
 	assert_eq(gr.stubber.get_return(TO_STUB_PATH ,'get_other'), null, 'unstubbed path method should get null')
 

@@ -13,14 +13,14 @@ class SignalReporter:
 		# strip off any unused vars.
 		var idx = args.size() -1
 		while(str(args[idx]) == ARG_NOT_SET):
-			args.remove(idx)
+			args.remove_at(idx)
 			idx -= 1
 		var signal_name = args[args.size() -1]
 		args.pop_back()
 
 
 
-		._on_watched_signal(arg1, arg2, arg3, \
+		super._on_watched_signal(arg1, arg2, arg3, \
 			arg4,  arg5, arg6, \
 			arg7,  arg8, arg9, \
 			arg10, arg11)

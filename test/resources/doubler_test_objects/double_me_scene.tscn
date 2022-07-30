@@ -6,18 +6,18 @@
 script = ExtResource( 1 )
 
 [node name="Label" type="Label" parent="."]
-margin_right = 40.0
-margin_bottom = 14.0
+offset_right = 40.0
+offset_bottom = 14.0
 text = "This is a label"
 
 [node name="MyPanel" type="Panel" parent="."]
-margin_left = 40.0
-margin_top = 42.0
-margin_right = 178.0
-margin_bottom = 131.0
+offset_left = 40.0
+offset_top = 42.0
+offset_right = 178.0
+offset_bottom = 131.0
 
 [node name="MyButton" type="Button" parent="MyPanel"]
-margin_left = 25.0
-margin_top = 27.0
-margin_right = 116.0
-margin_bottom = 66.0
+offset_left = 25.0
+offset_top = 27.0
+offset_right = 116.0
+offset_bottom = 66.0

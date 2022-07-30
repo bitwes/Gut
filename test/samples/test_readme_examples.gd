@@ -307,8 +307,8 @@ func test_assert_has_method():
 
 # ------------------------------------------------------------------------------
 class ExportClass:
-	export var some_number = 5
-	export(PackedScene) var some_scene
+	@export var some_number = 5
+	@export var some_scene: PackedScene
 	var some_variable = 1
 
 func test_assert_exports():
@@ -340,12 +340,12 @@ func test_illustrate_yield():
 	moving_node.set_position(Vector2(0, 0))
 
 	# While the yield happens, the node should move
-	yield(yield_for(2), YIELD)
+	await yield_for(2).YIELD
 	assert_gt(moving_node.get_position().x, 0)
 	assert_between(moving_node.get_position().x, 3.9, 4, 'it should move almost 4 whatevers at speed 2')
 
 func test_illustrate_end_test():
-	yield(yield_for(1), YIELD)
+	await yield_for(1).YIELD
 	# we don't have anything to test yet, or at all.  So we
 	# call end_test so that Gut knows all the yielding has
 	# finished.
@@ -364,7 +364,7 @@ class TimedSignaler:
 		var t = Timer.new()
 		add_child(t)
 		t.set_wait_time(_time)
-		t.connect('timeout', self, '_on_timer_timeout')
+		t.connect('timeout',Callable(self,'_on_timer_timeout'))
 		t.set_one_shot(true)
 		t.start()
 
@@ -375,7 +375,7 @@ func test_illustrate_yield_to_with_less_time():
 	var t = TimedSignaler.new(5)
 	add_child_autofree(t)
 	t.start()
-	yield(yield_to(t, 'the_signal', 1), YIELD)
+	await yield_to(t, 'the_signal', 1).YIELD
 	# since we setup t to emit after 5 seconds, this will fail because we
 	# only yielded for 1 second vail yield_to
 	assert_signal_emitted(t, 'the_signal', 'This will fail')
@@ -384,7 +384,7 @@ func test_illustrate_yield_to_with_more_time():
 	var t = TimedSignaler.new(1)
 	add_child_autofree(t)
 	t.start()
-	yield(yield_to(t, 'the_signal', 5), YIELD)
+	await yield_to(t, 'the_signal', 5).YIELD
 	# since we wait longer than it will take to emit the signal, this assert
 	# will pass
 	assert_signal_emitted(t, 'the_signal', 'This will pass')
@@ -574,7 +574,7 @@ func test_assert_called():
 	# ast least not yet.
 	assert_called(doubled, 'has_two_params_one_default', ['a'])
 	# This fails with a specific message indicating that you have to pass an
-	# instance of a doubled class.
+	# instantiate of a doubled class.
 	assert_called(GDScript.new(), 'some_method')
 
 func test_assert_call_count():
@@ -598,7 +598,7 @@ func test_assert_call_count():
 	assert_call_count(doubled, 'set_value', 2, [4])
 	assert_call_count(doubled, 'get_value', 1)
 	# This fails with a specific message indicating that you have to pass an
-	# instance of a doubled class even though technically the method was called.
+	# instantiate of a doubled class even though technically the method was called.
 	assert_call_count(GDScript.new(), 'some_method', 0)
 	# This fails b/c double_extends_node2d does not have it's own implementation
 	# of set_position.  The function is supplied by the parent class and these
@@ -644,7 +644,7 @@ func test_replace_node():
 	# 	return $MyPanel/MyButton
 	var DOUBLE_ME_SCENE = 'res://test/resources/doubler_test_objects/double_me_scene.tscn'
 
-	var scene = load(DOUBLE_ME_SCENE).instance()
+	var scene = load(DOUBLE_ME_SCENE).instantiate()
 	add_child_autofree(scene)
 	var replace_label = Label.new()
 	replace_node(scene, 'Label', replace_label)
@@ -672,7 +672,7 @@ class Connector:
 func test_assert_connected():
 	var signaler = Signaler.new()
 	var connector  = Connector.new()
-	signaler.connect('the_signal', connector, 'connect_this')
+	signaler.connect('the_signal',Callable(connector,'connect_this'))
 
 	# Passing
 	assert_connected(signaler, connector, 'the_signal')

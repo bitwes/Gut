@@ -12,7 +12,7 @@ func test_can_get_stubber():
 	assert_ne(g.get_stubber(), null)
 
 # ---------------------------------
-# these two tests use the gut instance that is passed to THIS test.  This isn't
+# these two tests use the gut instantiate that is passed to THIS test.  This isn't
 # PURE testing but it appears to cover the bases ok.
 # ------
 func test_stubber_cleared_between_tests_setup():
@@ -38,7 +38,7 @@ func test_doublers_stubber_is_guts_stubber():
 func test_can_stub_scene_script_and_scene_at_same_time():
 	var script_path = DOUBLE_ME_SCENE_PATH.replace('.tscn', '.gd')
 
-	var scene = double_scene(DOUBLE_ME_SCENE_PATH).instance()
+	var scene = double_scene(DOUBLE_ME_SCENE_PATH).instantiate()
 	var script = double(script_path).new()
 
 	stub(DOUBLE_ME_SCENE_PATH, 'return_hello').to_return('scene')

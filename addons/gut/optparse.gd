@@ -94,7 +94,7 @@ class CmdLineParser:
 		var opt_loc = find_option(option)
 		if(opt_loc != -1):
 			to_return = _parse_array_value(_opts[opt_loc])
-			_opts.remove(opt_loc)
+			_opts.remove_at(opt_loc)
 
 		return to_return
 
@@ -107,7 +107,7 @@ class CmdLineParser:
 		var opt_loc = find_option(option)
 		if(opt_loc != -1):
 			to_return = _parse_option_value(_opts[opt_loc])
-			_opts.remove(opt_loc)
+			_opts.remove_at(opt_loc)
 
 		return to_return
 
@@ -128,14 +128,14 @@ class CmdLineParser:
 
 		var script_option = to_return.find('-s')
 		if script_option != -1:
-			to_return.remove(script_option + 1)
-			to_return.remove(script_option)
+			to_return.remove_at(script_option + 1)
+			to_return.remove_at(script_option)
 
 		while(_used_options.size() > 0):
 			var index = to_return.find(_used_options[0].split("=")[0])
 			if(index != -1):
-				to_return.remove(index)
-			_used_options.remove(0)
+				to_return.remove_at(index)
+			_used_options.remove_at(0)
 
 		return to_return
 
@@ -148,7 +148,7 @@ class Option:
 	var default = null
 	var description = ''
 
-	func _init(name, default_value, desc=''):
+	func _init(name,default_value,desc=''):
 		option_name = name
 		default = default_value
 		description = desc

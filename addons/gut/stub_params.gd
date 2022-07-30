@@ -13,7 +13,7 @@ var call_super = false
 # Parmater overrides are stored in here along with all the other stub info
 # so that you can chain stubbing parameter overrides along with all the
 # other stubbing.  This adds some complexity to the logic that tries to
-# find the correct stub for a call by a double.  Since an instance of this
+# find the correct stub for a call by a double.  Since an instantiate of this
 # class could be just a parameter override, or it could have been chained
 # we have to have _paramter_override_only so that we know when to tell the
 # difference.
@@ -27,7 +27,7 @@ var _parameter_override_only = true
 
 const NOT_SET = '|_1_this_is_not_set_1_|'
 
-func _init(target=null, method=null, subpath=null):
+func _init(target=null,method=null,subpath=null):
 	stub_target = target
 	stub_method = method
 	target_subpath = subpath
@@ -62,7 +62,7 @@ func when_passed(p1=NOT_SET,p2=NOT_SET,p3=NOT_SET,p4=NOT_SET,p5=NOT_SET,p6=NOT_S
 	var idx = 0
 	while(idx < parameters.size()):
 		if(str(parameters[idx]) == NOT_SET):
-			parameters.remove(idx)
+			parameters.remove_at(idx)
 		else:
 			idx += 1
 	return self

@@ -1,7 +1,7 @@
 extends SceneTree
 
 class ParamHandler:
-	var _base_parameters = null
+	var _base_parameters = []
 	var _call_count = 0
 
 	func is_done():

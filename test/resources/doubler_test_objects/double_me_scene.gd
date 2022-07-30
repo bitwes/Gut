@@ -1,6 +1,6 @@
 extends Node2D
 
-onready var label = get_node('Label')
+@onready var label = get_node('Label')
 
 func return_hello():
 	return 'hello'

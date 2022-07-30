@@ -63,8 +63,8 @@ func test_can_stub_doubled_instance_values():
 	var sp2 = StubParams.new(d1, 'get_value').to_return(10)
 	gr.stubber.add_stub(sp2)
 
-	assert_eq(d1.get_value(), 10, 'instance gets right value')
-	assert_eq(d2.get_value(), 5, 'other instance gets class value')
+	assert_eq(d1.get_value(), 10, 'instantiate gets right value')
+	assert_eq(d2.get_value(), 5, 'other instantiate gets class value')
 
 func test_stubbed_methods_send_parameters_in_callback():
 	var sp = StubParams.new(DOUBLE_ME_PATH, 'has_one_param')
@@ -88,7 +88,7 @@ func test_can_stub_doubled_scenes():
 	var sp = StubParams.new(DOUBLE_ME_SCENE_PATH, 'return_hello')
 	sp.to_return('world')
 	gr.stubber.add_stub(sp)
-	var inst = autofree(gr.doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance())
+	var inst = autofree(gr.doubler.double_scene(DOUBLE_ME_SCENE_PATH).instantiate())
 	assert_eq(inst.return_hello(), 'world')
 
 func test_when_stubbed_to_call_super_then_super_is_called():

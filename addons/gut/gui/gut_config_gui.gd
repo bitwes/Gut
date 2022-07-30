@@ -3,21 +3,25 @@
 class DirectoryCtrl:
 	extends HBoxContainer
 
-	var text = '' setget set_text, get_text
+	var text = '' :
+	get:
+		return text # TODOConverter40 Copy here content of get_text
+	set(mod_value):
+		mod_value  # TODOConverter40 Copy here content of set_text
 	var _txt_path = LineEdit.new()
 	var _btn_dir = Button.new()
 	var _dialog = FileDialog.new()
 
 	func _init():
 		_btn_dir.text = '...'
-		_btn_dir.connect('pressed', self, '_on_dir_button_pressed')
+		_btn_dir.connect('pressed',Callable(self,'_on_dir_button_pressed'))
 
 		_txt_path.size_flags_horizontal = _txt_path.SIZE_EXPAND_FILL
 
-		_dialog.mode = _dialog.MODE_OPEN_DIR
+		_dialog.mode = _dialog.FILE_MODE_OPEN_DIR
 		_dialog.resizable = true
-		_dialog.connect("dir_selected", self, '_on_selected')
-		_dialog.connect("file_selected", self, '_on_selected')
+		_dialog.connect("dir_selected",Callable(self,'_on_selected'))
+		_dialog.connect("file_selected",Callable(self,'_on_selected'))
 		_dialog.rect_size = Vector2(1000, 700)
 
 	func _on_selected(path):
@@ -50,15 +54,23 @@ class FileCtrl:
 	extends DirectoryCtrl
 
 	func _init():
-		_dialog.mode = _dialog.MODE_OPEN_FILE
+		_dialog.mode = _dialog.FILE_MODE_OPEN_FILE
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 class Vector2Ctrl:
 	extends VBoxContainer
 
-	var value = Vector2(-1, -1) setget set_value, get_value
-	var disabled = false setget set_disabled, get_disabled
+	var value = Vector2(-1, -1) :
+	get:
+		return value # TODOConverter40 Copy here content of get_value
+	set(mod_value):
+		mod_value  # TODOConverter40 Copy here content of set_value
+	var disabled = false :
+	get:
+		return disabled # TODOConverter40 Copy here content of get_disabled
+	set(mod_value):
+		mod_value  # TODOConverter40 Copy here content of set_disabled
 	var x_spin = SpinBox.new()
 	var y_spin = SpinBox.new()
 
@@ -148,10 +160,10 @@ func _add_title(text):
 	var lbl = row.get_node('Label')
 
 	lbl.text = text
-	lbl.align = Label.ALIGN_CENTER
+	lbl.align = Label.ALIGNMENT_CENTER
 	_base_container.add_child(row)
 
-	row.connect('draw', self, '_on_title_cell_draw', [row])
+	row.connect('draw',Callable(self,'_on_title_cell_draw'),[row])
 
 
 func _add_number(key, value, disp_text, v_min, v_max, hint=''):
@@ -235,8 +247,8 @@ func _add_vector2(key, value, disp_text, hint=''):
 # Events
 # ------------------
 func _wire_select_on_focus(which):
-	which.connect('focus_entered', self, '_on_ctrl_focus_highlight', [which])
-	which.connect('focus_exited', self, '_on_ctrl_focus_unhighlight', [which])
+	which.connect('focus_entered',Callable(self,'_on_ctrl_focus_highlight'),[which])
+	which.connect('focus_exited',Callable(self,'_on_ctrl_focus_unhighlight'),[which])
 
 
 func _on_ctrl_focus_highlight(which):
@@ -336,8 +348,8 @@ func set_options(options):
 		_add_directory(str('directory_', i), value, str('Directory ', i))
 
 	_add_title("XML Output")
-	_add_value("junit_xml_file", options.junit_xml_file, "Output Path",
-		"Path and filename where GUT should create a JUnit compliant XML file.  " +
+	_add_value("junit_xml_file", options.junit_xml_file, "Output Path3D",
+		"Path3D and filename where GUT should create a JUnit compliant XML file.  " +
 		"This file will contain the results of the last test run.  To avoid " +
 		"overriding the file use Include Timestamp.")
 	_add_boolean("junit_xml_timestamp", options.junit_xml_timestamp, "Include Timestamp",

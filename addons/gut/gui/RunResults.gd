@@ -1,5 +1,5 @@
 extends Control
-tool
+@tool
 
 var _interface = null
 var _utils = load('res://addons/gut/utils.gd').new()
@@ -22,7 +22,7 @@ var 	_icons = {
 
 signal search_for_text(text)
 
-onready var _ctrls = {
+@onready var _ctrls = {
 	tree = $VBox/Output/Scroll/Tree,
 	lbl_overlay = $VBox/Output/OverlayMessage,
 	chk_hide_passing = $VBox/Toolbar/HidePassing,
@@ -66,7 +66,7 @@ func _ready():
 	_ctrls.tree.columns = 2
 	_ctrls.tree.set_column_expand(0, true)
 	_ctrls.tree.set_column_expand(1, false)
-	_ctrls.tree.set_column_min_width(1, s_size.x)
+	_ctrls.tree.set_column_custom_minimum_width(1, s_size.x)
 
 	_set_toolbutton_icon(_ctrls.toolbar.collapse, 'CollapseTree', 'c')
 	_set_toolbutton_icon(_ctrls.toolbar.collapse_all, 'CollapseTree', 'c')
@@ -150,7 +150,7 @@ func _add_test_tree_item(test_name, test_json, script_item):
 
 	item.set_text(0, test_name)
 	item.set_text(1, status)
-	item.set_text_align(1, TreeItem.ALIGN_RIGHT)
+	item.set_text_alignment(1, TreeItem.ALIGN_RIGHT)
 	item.set_custom_bg_color(1, _col_1_bg_color)
 
 	item.set_metadata(0, meta)
@@ -216,7 +216,7 @@ func _load_result_tree(j):
 			s_item.free()
 		else:
 			var total_text = str(test_keys.size(), ' passed')
-			s_item.set_text_align(1, s_item.ALIGN_LEFT)
+			s_item.set_text_alignment(1, s_item.ALIGN_LEFT)
 			if(bad_count == 0):
 				s_item.collapsed = true
 			else:
@@ -429,7 +429,9 @@ func _on_Hide_Passing_pressed():
 func load_json_file(path):
 	var text = _utils.get_file_as_text(path)
 	if(text != ''):
-		var result = JSON.parse(text)
+		var test_json_conv = JSON.new()
+		test_json_conv.parse(text)
+		var result = test_json_conv.get_data()
 		if(result.error != OK):
 			add_centered_text(str(path, " has invalid json in it \n",
 				'Error ', result.error, "@", result.error_line, "\n",
@@ -494,8 +496,8 @@ func set_show_orphans(should):
 
 func set_font(font_name, size):
 	pass
-#	var dyn_font = DynamicFont.new()
-#	var font_data = DynamicFontData.new()
+#	var dyn_font = FontFile.new()
+#	var font_data = FontFile.new()
 #	font_data.font_path = 'res://addons/gut/fonts/' + font_name + '-Regular.ttf'
 #	font_data.antialiased = true
 #	dyn_font.font_data = font_data

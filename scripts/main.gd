@@ -73,8 +73,8 @@ func _on_tests_finished():
 
 #------------------------------------
 # Example:
-# This creates an instance of Gut and runs a single script.  The output will
-# be visible in the console, not the Gut instance on the screen.
+# This creates an instantiate of Gut and runs a single script.  The output will
+# be visible in the console, not the Gut instantiate on the screen.
 #------------------------------------
 func _run_test_one_line():
 	load('res://addons/gut/gut.gd').new().test_script('res://test/samples/test_sample_all_passed.gd')
@@ -85,10 +85,10 @@ func _run_test_one_line():
 # with a reference to the class.
 #------------------------------------
 func _run_all_tests():
-	# get an instance of gut
+	# get an instantiate of gut
 	tester = get_node("Gut")
 
-	tester.connect('tests_finished', self, '_on_tests_finished')
+	tester.connect('tests_finished',Callable(self,'_on_tests_finished'))
 	tester.show()
 	tester.set_position(Vector2(100, 100))
 

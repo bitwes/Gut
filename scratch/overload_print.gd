@@ -1,7 +1,7 @@
 extends SceneTree
 
 func print(p1='', p2 = '', p3='', p4='', p5=''):
-    .print('custom_print:  ', p1, p2, p3, p4, p5)
+    super.print('custom_print:  ', p1, p2, p3, p4, p5)
 
 
 func _init():

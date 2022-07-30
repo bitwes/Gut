@@ -33,7 +33,7 @@ var _to_queue_free = []
 
 func add_free(thing):
 	if(typeof(thing) == TYPE_OBJECT):
-		if(!thing is Reference):
+		if(!thing is RefCounted):
 			_to_free.append(thing)
 
 func add_queue_free(thing):

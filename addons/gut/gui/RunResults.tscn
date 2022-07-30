@@ -4,7 +4,7 @@
 
 [sub_resource type="Image" id=3]
 data = {
-"data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
+"data": PackedByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
 "format": "LumAlpha8",
 "height": 16,
 "mipmaps": false,
@@ -18,8 +18,8 @@ image = SubResource( 3 )
 size = Vector2( 16, 16 )
 
 [node name="RunResults" type="Control"]
-margin_right = 595.0
-margin_bottom = 459.0
+offset_right = 595.0
+offset_bottom = 459.0
 rect_min_size = Vector2( 302, 0 )
 script = ExtResource( 1 )
 
@@ -28,61 +28,61 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="Toolbar" type="HBoxContainer" parent="VBox"]
-margin_right = 296.0
-margin_bottom = 24.0
+offset_right = 296.0
+offset_bottom = 24.0
 size_flags_horizontal = 0
 
-[node name="Expand" type="ToolButton" parent="VBox/Toolbar"]
-margin_right = 28.0
-margin_bottom = 24.0
+[node name="Expand" type="Button" parent="VBox/Toolbar"]
+offset_right = 28.0
+offset_bottom = 24.0
 hint_tooltip = "Expand selected item and all children."
 icon = SubResource( 2 )
 
-[node name="Collapse" type="ToolButton" parent="VBox/Toolbar"]
-margin_left = 32.0
-margin_right = 60.0
-margin_bottom = 24.0
+[node name="Collapse" type="Button" parent="VBox/Toolbar"]
+offset_left = 32.0
+offset_right = 60.0
+offset_bottom = 24.0
 hint_tooltip = "Collapse selected item and all children."
 icon = SubResource( 2 )
 
 [node name="Sep" type="ColorRect" parent="VBox/Toolbar"]
-margin_left = 64.0
-margin_right = 66.0
-margin_bottom = 24.0
+offset_left = 64.0
+offset_right = 66.0
+offset_bottom = 24.0
 rect_min_size = Vector2( 2, 0 )
 
 [node name="LblAll" type="Label" parent="VBox/Toolbar"]
-margin_left = 70.0
-margin_top = 5.0
-margin_right = 91.0
-margin_bottom = 19.0
+offset_left = 70.0
+offset_top = 5.0
+offset_right = 91.0
+offset_bottom = 19.0
 text = "All:"
 align = 1
 
-[node name="ExpandAll" type="ToolButton" parent="VBox/Toolbar"]
-margin_left = 95.0
-margin_right = 123.0
-margin_bottom = 24.0
+[node name="ExpandAll" type="Button" parent="VBox/Toolbar"]
+offset_left = 95.0
+offset_right = 123.0
+offset_bottom = 24.0
 hint_tooltip = "Expand All."
 icon = SubResource( 2 )
 
-[node name="CollapseAll" type="ToolButton" parent="VBox/Toolbar"]
-margin_left = 127.0
-margin_right = 155.0
-margin_bottom = 24.0
+[node name="CollapseAll" type="Button" parent="VBox/Toolbar"]
+offset_left = 127.0
+offset_right = 155.0
+offset_bottom = 24.0
 hint_tooltip = "Collapse all."
 icon = SubResource( 2 )
 
 [node name="Sep2" type="ColorRect" parent="VBox/Toolbar"]
-margin_left = 159.0
-margin_right = 161.0
-margin_bottom = 24.0
+offset_left = 159.0
+offset_right = 161.0
+offset_bottom = 24.0
 rect_min_size = Vector2( 2, 0 )
 
 [node name="HidePassing" type="CheckBox" parent="VBox/Toolbar"]
-margin_left = 165.0
-margin_right = 189.0
-margin_bottom = 24.0
+offset_left = 165.0
+offset_right = 189.0
+offset_bottom = 24.0
 hint_tooltip = "Show/Hide passing tests.  Takes effect on next run."
 size_flags_horizontal = 4
 custom_icons/checked = SubResource( 2 )
@@ -93,32 +93,32 @@ __meta__ = {
 }
 
 [node name="Sep3" type="ColorRect" parent="VBox/Toolbar"]
-margin_left = 193.0
-margin_right = 195.0
-margin_bottom = 24.0
+offset_left = 193.0
+offset_right = 195.0
+offset_bottom = 24.0
 rect_min_size = Vector2( 2, 0 )
 
 [node name="LblSync" type="Label" parent="VBox/Toolbar"]
-margin_left = 199.0
-margin_top = 5.0
-margin_right = 232.0
-margin_bottom = 19.0
+offset_left = 199.0
+offset_top = 5.0
+offset_right = 232.0
+offset_bottom = 19.0
 text = "Sync:"
 align = 1
 
-[node name="ShowScript" type="ToolButton" parent="VBox/Toolbar"]
-margin_left = 236.0
-margin_right = 264.0
-margin_bottom = 24.0
+[node name="ShowScript" type="Button" parent="VBox/Toolbar"]
+offset_left = 236.0
+offset_right = 264.0
+offset_bottom = 24.0
 hint_tooltip = "Open script and scroll to line when a tree item is clicked."
 toggle_mode = true
 pressed = true
 icon = SubResource( 2 )
 
-[node name="ScrollOutput" type="ToolButton" parent="VBox/Toolbar"]
-margin_left = 268.0
-margin_right = 296.0
-margin_bottom = 24.0
+[node name="ScrollOutput" type="Button" parent="VBox/Toolbar"]
+offset_left = 268.0
+offset_right = 296.0
+offset_bottom = 24.0
 hint_tooltip = "Scroll to related line in the output panel when tree item clicked."
 toggle_mode = true
 pressed = true
@@ -126,9 +126,9 @@ icon = SubResource( 2 )
 
 [node name="Output" type="Panel" parent="VBox"]
 self_modulate = Color( 1, 1, 1, 0.541176 )
-margin_top = 28.0
-margin_right = 595.0
-margin_bottom = 459.0
+offset_top = 28.0
+offset_right = 595.0
+offset_bottom = 459.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -137,8 +137,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="Tree" type="Tree" parent="VBox/Output/Scroll"]
-margin_right = 595.0
-margin_bottom = 431.0
+offset_right = 595.0
+offset_bottom = 431.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 columns = 2
@@ -152,8 +152,8 @@ valign = 1
 
 [node name="FontSampler" type="Label" parent="."]
 visible = false
-margin_right = 40.0
-margin_bottom = 14.0
+offset_right = 40.0
+offset_bottom = 14.0
 text = "000 of 000 passed"
 
 [connection signal="pressed" from="VBox/Toolbar/Expand" to="." method="_on_Expand_pressed"]

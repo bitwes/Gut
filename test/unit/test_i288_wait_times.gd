@@ -18,45 +18,45 @@ var _start_time = 0.0
 var _max_acceptable_time = 0.0
 
 func before_all():
-	_start_time = OS.get_ticks_msec()
+	_start_time = Time.get_ticks_msec()
 
 func after_all():
-	var total_time = OS.get_ticks_msec() - _start_time
+	var total_time = Time.get_ticks_msec() - _start_time
 	assert_lt(total_time, _max_acceptable_time)
 
 func test_yield1():
 	_max_acceptable_time += 20
-	yield( get_tree(), "idle_frame" )
+	await get_tree().idle_frame
 	pass_test('no test')
 
 func test_yield2():
 	_max_acceptable_time += 20
-	yield( get_tree(), "idle_frame" )
+	await get_tree().idle_frame
 	pass_test('no test')
 
 func test_yield3():
 	_max_acceptable_time += 20
-	yield( get_tree(), "idle_frame" )
+	await get_tree().idle_frame
 	pass_test('no test')
 
 func test_yield4():
 	_max_acceptable_time += 20
-	yield( get_tree(), "idle_frame" )
+	await get_tree().idle_frame
 	pass_test('no test')
 
 func test_yield5():
 	_max_acceptable_time += 20
-	yield( get_tree(), "idle_frame" )
+	await get_tree().idle_frame
 	pass_test('no test')
 
 var yield_params = [1, 2, 3, 4, 5, 6, 7, 8]
 func test_parameterized(p=use_parameters(yield_params)):
 	_max_acceptable_time += 20
-	yield( get_tree(), "idle_frame" )
+	await get_tree().idle_frame
 	pass_test('no test')
 
 
 func test_yield_for_some_seconds_to_watch_animation():
 	_max_acceptable_time += 3050
-	yield(yield_for(3), YIELD)
+	await yield_for(3).YIELD
 	pass_test('no test')

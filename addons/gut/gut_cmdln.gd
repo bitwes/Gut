@@ -88,9 +88,9 @@ class OptionResolver:
 
 	func to_s():
 		return str("base:\n", _string_it(base_opts), "\n", \
-				   "config:\n", _string_it(config_opts), "\n", \
-				   "cmd:\n", _string_it(cmd_opts), "\n", \
-				   "resolved:\n", _string_it(get_resolved_values()))
+				"config:\n", _string_it(config_opts), "\n", \
+				"cmd:\n", _string_it(cmd_opts), "\n", \
+				"resolved:\n", _string_it(get_resolved_values()))
 
 	func get_resolved_values():
 		var to_return = {}
@@ -116,7 +116,7 @@ class OptionResolver:
 # ------------------------------------------------------------------------------
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _gut_config = load('res://addons/gut/gut_config.gd').new()
-# instance of gut
+# instantiate of gut
 var _tester = null
 # array of command line options specified
 var _final_opts = []
@@ -205,14 +205,14 @@ func extract_command_line_options(from, to):
 
 
 func _print_gutconfigs(values):
-	var header = """Here is a sample of a full .gutconfig.json file.
+	var header = """Here is a sample of a full super.gutconfig.json file.
 You do not need to specify all values in your own file.  The values supplied in
 this sample are what would be used if you ran gut w/o the -gprint_gutconfig_sample
-option (option priority:  command-line, .gutconfig, default)."""
+option (option priority:  command-line, super.gutconfig, default)."""
 	print("\n", header.replace("\n", ' '), "\n\n")
 	var resolved = values
 
-	# remove some options that don't make sense to be in config
+	# remove_at some options that don't make sense to be in config
 	resolved.erase("config_file")
 	resolved.erase("show_help")
 
@@ -253,7 +253,7 @@ func _run_gut():
 		elif(o.get_value('-gpo')):
 			print('All command line options and where they are specified.  ' +
 				'The "final" value shows which value will actually be used ' +
-				'based on order of precedence (default < .gutconfig < cmd line).' + "\n")
+				'based on order of precedence (default < super.gutconfig < cmd line).' + "\n")
 			print(opt_resolver.to_s_verbose())
 			quit()
 		elif(o.get_value('-gprint_gutconfig_sample')):
@@ -263,7 +263,7 @@ func _run_gut():
 			_final_opts = opt_resolver.get_resolved_values();
 			_gut_config.options = _final_opts
 
-			var runner = GutRunner.instance()
+			var runner = GutRunner.instantiate()
 			runner.set_cmdln_mode(true)
 			runner.set_gut_config(_gut_config)
 
@@ -280,7 +280,7 @@ func _on_tests_finished(should_exit, should_exit_on_success):
 	if(_final_opts.dirs.size() == 0):
 		if(_tester.get_summary().get_totals().scripts == 0):
 			var lgr = _tester.get_logger()
-			lgr.error('No directories configured.  Add directories with options or a .gutconfig.json file.  Use the -gh option for more information.')
+			lgr.error('No directories configured.  Add directories with options or a super.gutconfig.json file.  Use the -gh option for more information.')
 
 	if(_tester.get_fail_count()):
 		OS.exit_code = 1

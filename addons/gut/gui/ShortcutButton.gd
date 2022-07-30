@@ -1,8 +1,8 @@
-tool
+@tool
 extends Control
 
 
-onready var _ctrls = {
+@onready var _ctrls = {
 	shortcut_label = $Layout/lblShortcut,
 	set_button = $Layout/SetButton,
 	save_button = $Layout/SaveButton,
@@ -20,7 +20,7 @@ var _source_event = InputEventKey.new()
 var _pre_edit_event = null
 var _key_disp = NO_SHORTCUT
 
-var _modifier_keys = [KEY_ALT, KEY_CONTROL, KEY_META, KEY_SHIFT]
+var _modifier_keys = [KEY_ALT, KEY_CTRL, KEY_META, KEY_SHIFT]
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -69,15 +69,15 @@ func _unhandled_key_input(event):
 	if(event is InputEventKey):
 		if(event.pressed):
 			_source_event.alt = event.alt or event.scancode == KEY_ALT
-			_source_event.control = event.control or event.scancode == KEY_CONTROL
+			_source_event.control = event.control or event.scancode == KEY_CTRL
 			_source_event.meta = event.meta or event.scancode == KEY_META
 			_source_event.shift = event.shift or event.scancode == KEY_SHIFT
 
 			if(_has_modifier() and !_is_modifier(event.scancode)):
 				_source_event.scancode = event.scancode
-				_key_disp = OS.get_scancode_string(event.scancode)
+				_key_disp = OS.get_keycode_string(event.scancode)
 			else:
-#				_source_event.set_scancode = null
+#				_source_event.set_keycode = null
 				_key_disp = NO_SHORTCUT
 			_display_shortcut()
 			_ctrls.save_button.disabled = !is_valid()
@@ -97,7 +97,7 @@ func _on_SaveButton_pressed():
 func _on_CancelButton_pressed():
 	_edit_mode(false)
 	_source_event = _pre_edit_event
-	_key_disp = OS.get_scancode_string(_source_event.scancode)
+	_key_disp = OS.get_keycode_string(_source_event.scancode)
 	if(_key_disp == ''):
 		_key_disp = NO_SHORTCUT
 	_display_shortcut()
@@ -137,7 +137,7 @@ func is_valid():
 
 
 func get_shortcut():
-	var to_return = ShortCut.new()
+	var to_return = Shortcut.new()
 	to_return.shortcut = _source_event
 	return to_return
 
@@ -147,7 +147,7 @@ func set_shortcut(sc):
 		clear_shortcut()
 	else:
 		_source_event = sc.shortcut
-		_key_disp = OS.get_scancode_string(_source_event.scancode)
+		_key_disp = OS.get_keycode_string(_source_event.scancode)
 		_display_shortcut()
 
 

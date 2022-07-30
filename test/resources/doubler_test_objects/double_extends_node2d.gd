@@ -15,4 +15,4 @@ func has_two_params_one_default(one, two=null):
 	pass
 
 func get_position():
-	return .get_position()
+	return super.get_position()

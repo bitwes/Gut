@@ -704,16 +704,16 @@ class TestAssertExports:
 		var some_property = 1
 
 	class HasCorrectEditorPropertyAndExplicitType:
-		export(int) var int_property
+		@export var int_property: int
 
 	class HasCorrectEditorPropertyAndImplicitType:
-		export var vec2_property = Vector2(0.0, 0.0)
+		@export var vec2_property = Vector2(0.0, 0.0)
 
 	class HasCorrectEditorPropertyNotType:
-		export(bool) var bool_property
+		@export var bool_property: bool
 
 	class HasObjectDerivedPropertyType:
-		export(PackedScene) var scene_property
+		@export var scene_property: PackedScene
 
 	func test_fail_if_property_not_found():
 		var obj = NoProperty.new()
@@ -737,7 +737,7 @@ class TestAssertExports:
 
 	func test_fail_if_editor_property_present_with_incorrect_type():
 		var obj = HasCorrectEditorPropertyNotType.new()
-		gr.test.assert_exports(obj, "bool_property", TYPE_REAL)
+		gr.test.assert_exports(obj, "bool_property", TYPE_FLOAT)
 		assert_fail(gr.test)
 
 	func test__object_derived_type__exported_as_object_type():
@@ -860,11 +860,11 @@ class TestSignalAsserts:
 			add_user_signal(SIGNALS.SOME_SIGNAL)
 
 	func before_each():
-		.before_each()
+		super.before_each()
 		gr.signal_object = SignalObject.new()
 
 	func after_each():
-		.after_each()
+		super.after_each()
 		gr.signal_object = null
 
 	func test_when_object_not_being_watched__assert_signal_emitted__fails():
@@ -1094,12 +1094,12 @@ class TestExtendAsserts:
 		var a = HasSubclass1.SubClass.new()
 		gr.test.assert_is(a, HasSubclass2.SubClass)
 		# created bug https://github.com/godotengine/godot/issues/27111 for 3.1
-		# TODO remove comment after awhile, this appears fixed in 3.2
+		# TODO remove_at comment after awhile, this appears fixed in 3.2
 		assert_fail(gr.test, 1, 'Fails in 3.1, bug has been created.')
 
 	func test_assrt_is_does_not_free_references():
-		var ref = Reference.new()
-		gr.test.assert_is(ref, Reference)
+		var ref = RefCounted.new()
+		gr.test.assert_is(ref, RefCounted)
 		assert_pass(gr.test)
 
 	func test_works_with_resources():
@@ -1437,11 +1437,11 @@ class TestReplaceNode:
 	var _arena = null
 
 	func before_each():
-		.before_each()
-		_arena = Arena.instance()
+		super.before_each()
+		_arena = Arena.instantiate()
 
 	func after_each():
-		.after_each()
+		super.after_each()
 		_arena.queue_free()
 
 	func test_can_replace_node():
@@ -1469,7 +1469,7 @@ class TestReplaceNode:
 		var old = _arena.get_sword()
 		gr.test.replace_node(_arena, 'Player1/Sword', replacement)
 		# object is freed using queue_free, so we have to wait for it to go away
-		yield(yield_for(0.5), YIELD)
+		await yield_for(0.5).YIELD
 		assert_true(_utils.is_freed(old))
 
 	func test_replaced_node_retains_groups():
@@ -1545,14 +1545,14 @@ class TestConnectionAsserts:
 	func test_when_target_connected_to_source_connected_passes_with_method_name():
 		var s = Signaler.new()
 		var c = ConnectTo.new()
-		s.connect(SIGNAL_NAME, c, METHOD_NAME)
+		s.connect(SIGNAL_NAME,Callable(c,METHOD_NAME))
 		gr.test.assert_connected(s, c, SIGNAL_NAME, METHOD_NAME)
 		assert_pass(gr.test)
 
 	func test_when_target_connected_to_source_connected_passes_without_method_name():
 		var s = Signaler.new()
 		var c = ConnectTo.new()
-		s.connect(SIGNAL_NAME, c, METHOD_NAME)
+		s.connect(SIGNAL_NAME,Callable(c,METHOD_NAME))
 		gr.test.assert_connected(s, c, SIGNAL_NAME)
 		assert_pass(gr.test)
 
@@ -1571,14 +1571,14 @@ class TestConnectionAsserts:
 	func test_when_target_connected_to_source_not_connected_fails_with_method_name():
 		var s = Signaler.new()
 		var c = ConnectTo.new()
-		s.connect(SIGNAL_NAME, c, METHOD_NAME)
+		s.connect(SIGNAL_NAME,Callable(c,METHOD_NAME))
 		gr.test.assert_not_connected(s, c, SIGNAL_NAME, METHOD_NAME)
 		assert_fail(gr.test)
 
 	func test_when_target_connected_to_source_not_connected_fails_without_method_name():
 		var s = Signaler.new()
 		var c = ConnectTo.new()
-		s.connect(SIGNAL_NAME, c, METHOD_NAME)
+		s.connect(SIGNAL_NAME,Callable(c,METHOD_NAME))
 		gr.test.assert_not_connected(s, c, SIGNAL_NAME)
 		assert_fail(gr.test)
 
@@ -1646,7 +1646,7 @@ class TestMemoryMgmt:
 	func test_passes_with_queue_free():
 		var n2d = Node2D.new()
 		n2d.queue_free()
-		yield(yield_for(.5, 'must yield for queue_free to take hold'), YIELD)
+		await yield_for(.5, 'must yield for queue_free to take hold').YIELD
 		assert_no_new_orphans()
 		assert_true(gut._current_test.passed, 'this should be passing')
 
@@ -1664,7 +1664,7 @@ class TestMemoryMgmt:
 		assert_eq(n.get_parent(), self, 'added as child')
 		gut.get_autofree().free_all()
 		assert_not_freed(n, 'node') # should not be freed until yield
-		yield(yield_for(.5), YIELD)
+		await yield_for(.5).YIELD
 		assert_freed(n, 'node')
 		assert_no_new_orphans()
 
@@ -1681,7 +1681,7 @@ class TestTestStateChecking:
 	var _gut = null
 
 	func before_each():
-		.before_each()
+		super.before_each()
 		_gut = _utils.Gut.new()
 		add_child_autoqfree(_gut)
 		_gut.add_script('res://test/resources/state_check_tests.gd')
@@ -1822,9 +1822,9 @@ class TestAssertSetgetCalled:
 	const TestScene = preload("res://test/resources/test_assert_setget_test_objects/TestScene.tscn")
 
 	var bad_input = [
-		# Passing instance instead of classe
+		# Passing instantiate instead of classe
 		[TestNode.new(), "has_both", "set_has_both", "get_has_both"],
-		# passing int instead of instance
+		# passing int instead of instantiate
 		[5, "has_both", "set_has_both", "get_has_both"],
 		# missing prop with existing setter/gettter
 		[TestNode, "wrong_field_name", "set_both", "get_has_both"],
@@ -1930,7 +1930,7 @@ class TestAssertProperty:
 
 
 	func test_passes_if_instance_is_obj_from_packed_scene():
-		var scene_mock = TestScene.instance()
+		var scene_mock = TestScene.instantiate()
 		add_child_autoqfree(scene_mock)
 		var dflt_node_with_setter = scene_mock.get_node_with_setter_getter()
 		var new_node_child_mock = TestNode.new()
@@ -1945,8 +1945,8 @@ class TestAssertProperty:
 		assert_fail_pass(gr.test_with_gut, 3, 1)
 
 	func test_fails_if_obj_is_something_unexpected():
-		var instance = Directory.new()
-		gr.test_with_gut.assert_property(instance, "current_dir", "", "new_dir")
+		var instantiate = Directory.new()
+		gr.test_with_gut.assert_property(instantiate, "current_dir", "", "new_dir")
 		assert_fail_pass(gr.test_with_gut, 3, 1)
 
 	func test_other_fails_do_not_cause_false_negatrive():

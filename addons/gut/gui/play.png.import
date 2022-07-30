@@ -1,8 +1,9 @@
 [remap]
 
 importer="texture"
-type="StreamTexture"
-path="res://.import/play.png-5c90e88e8136487a183a099d67a7de24.stex"
+type="CompressedTexture2D"
+uid="uid://cr6tvdv0ve6cv"
+path="res://.godot/imported/play.png-5c90e88e8136487a183a099d67a7de24.ctex"
 metadata={
 "vram_texture": false
 }
@@ -10,26 +11,24 @@ metadata={
 [deps]
 
 source_file="res://addons/gut/gui/play.png"
-dest_files=[ "res://.import/play.png-5c90e88e8136487a183a099d67a7de24.stex" ]
+dest_files=["res://.godot/imported/play.png-5c90e88e8136487a183a099d67a7de24.ctex"]
 
 [params]
 
 compress/mode=0
 compress/lossy_quality=0.7
-compress/hdr_mode=0
+compress/hdr_compression=1
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=0
-flags/filter=true
-flags/mipmaps=false
-flags/anisotropic=false
-flags/srgb=2
+compress/channel_pack=0
+mipmaps/generate=false
+mipmaps/limit=-1
+roughness/mode=0
+roughness/src_normal=""
 process/fix_alpha_border=true
 process/premult_alpha=false
-process/HDR_as_SRGB=false
-process/invert_color=false
 process/normal_map_invert_y=false
-stream=false
-size_limit=0
-detect_3d=true
-svg/scale=1.0
+process/hdr_as_srgb=false
+process/hdr_clamp_exposure=false
+process/size_limit=0
+detect_3d/compress_to=1

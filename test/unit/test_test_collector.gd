@@ -55,7 +55,7 @@ class TestTestCollector:
 		gr.tc.set_test_class_prefix('DifferentPrefix')
 		gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')
 		assert_true(gr.tc.has_script(SCRIPTS_ROOT + 'has_inner_class.gd.DifferentPrefixClass'),
-		 'shold have DifferentPrefixClass')
+		'shold have DifferentPrefixClass')
 
 	func test_ignores_classes_that_match_but_do_not_extend_test():
 		gr.tc.set_test_class_prefix('DoesNotExtend')

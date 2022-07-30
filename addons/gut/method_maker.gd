@@ -2,7 +2,7 @@ class CallParameters:
 	var p_name = null
 	var default = null
 
-	func _init(n, d):
+	func _init(n,d):
 		p_name = n
 		default = d
 
@@ -43,7 +43,7 @@ const PARAM_PREFIX = 'p_'
 	# TYPE_NIL = 0 — Variable is of type nil (only applied for null).
 	# TYPE_BOOL = 1 — Variable is of type bool.
 	# TYPE_INT = 2 — Variable is of type int.
-	# TYPE_REAL = 3 — Variable is of type float/real.
+	# TYPE_FLOAT = 3 — Variable is of type float/real.
 	# TYPE_STRING = 4 — Variable is of type String.
 	# TYPE_VECTOR2 = 5 — Variable is of type Vector2.
 	# TYPE_RECT2 = 6 — Variable is of type Rect2.
@@ -52,23 +52,23 @@ const PARAM_PREFIX = 'p_'
 	# TYPE_OBJECT = 17 — Variable is of type Object.
 	# TYPE_DICTIONARY = 18 — Variable is of type Dictionary.
 	# TYPE_ARRAY = 19 — Variable is of type Array.
-	# TYPE_VECTOR2_ARRAY = 24 — Variable is of type PoolVector2Array.
-	# TYPE_TRANSFORM = 13 — Variable is of type Transform.
+	# TYPE_PACKED_VECTOR2_ARRAY = 24 — Variable is of type PackedVector2Array.
+	# TYPE_TRANSFORM3D = 13 — Variable is of type Transform3D.
 	# TYPE_TRANSFORM2D = 8 — Variable is of type Transform2D.
 	# TYPE_RID = 16 — Variable is of type RID.
-	# TYPE_INT_ARRAY = 21 — Variable is of type PoolIntArray.
-	# TYPE_REAL_ARRAY = 22 — Variable is of type PoolRealArray.
-	# TYPE_STRING_ARRAY = 23 — Variable is of type PoolStringArray.
+	# TYPE_PACKED_INT32_ARRAY = 21 — Variable is of type PackedInt32Array.
+	# TYPE_PACKED_FLOAT32_ARRAY = 22 — Variable is of type PackedFloat32Array.
+	# TYPE_PACKED_STRING_ARRAY = 23 — Variable is of type PackedStringArray.
 
 
 # TYPE_PLANE = 9 — Variable is of type Plane.
-# TYPE_QUAT = 10 — Variable is of type Quat.
+# TYPE_QUATERNION = 10 — Variable is of type Quaternion.
 # TYPE_AABB = 11 — Variable is of type AABB.
 # TYPE_BASIS = 12 — Variable is of type Basis.
 # TYPE_NODE_PATH = 15 — Variable is of type NodePath.
-# TYPE_RAW_ARRAY = 20 — Variable is of type PoolByteArray.
-# TYPE_VECTOR3_ARRAY = 25 — Variable is of type PoolVector3Array.
-# TYPE_COLOR_ARRAY = 26 — Variable is of type PoolColorArray.
+# TYPE_PACKED_BYTE_ARRAY = 20 — Variable is of type PackedByteArray.
+# TYPE_PACKED_VECTOR3_ARRAY = 25 — Variable is of type PackedVector3Array.
+# TYPE_PACKED_COLOR_ARRAY = 26 — Variable is of type PackedColorArray.
 # TYPE_MAX = 27 — Marker for end of type constants.
 # ------------------------------------------------------
 var _supported_defaults = []
@@ -81,12 +81,12 @@ func _init():
 	_supported_defaults[TYPE_NIL] = ''
 	_supported_defaults[TYPE_BOOL] = ''
 	_supported_defaults[TYPE_INT] = ''
-	_supported_defaults[TYPE_REAL] = ''
+	_supported_defaults[TYPE_FLOAT] = ''
 	_supported_defaults[TYPE_OBJECT] = ''
 	_supported_defaults[TYPE_ARRAY] = ''
 	_supported_defaults[TYPE_STRING] = ''
 	_supported_defaults[TYPE_DICTIONARY] = ''
-	_supported_defaults[TYPE_VECTOR2_ARRAY] = ''
+	_supported_defaults[TYPE_PACKED_VECTOR2_ARRAY] = ''
 	_supported_defaults[TYPE_RID] = ''
 
 	# These require a prefix for whatever default is provided
@@ -95,10 +95,10 @@ func _init():
 	_supported_defaults[TYPE_VECTOR3] = 'Vector3'
 	_supported_defaults[TYPE_COLOR] = 'Color'
 	_supported_defaults[TYPE_TRANSFORM2D] = 'Transform2D'
-	_supported_defaults[TYPE_TRANSFORM] = 'Transform'
-	_supported_defaults[TYPE_INT_ARRAY] = 'PoolIntArray'
-	_supported_defaults[TYPE_REAL_ARRAY] = 'PoolRealArray'
-	_supported_defaults[TYPE_STRING_ARRAY] = 'PoolStringArray'
+	_supported_defaults[TYPE_TRANSFORM3D] = 'Transform3D'
+	_supported_defaults[TYPE_PACKED_INT32_ARRAY] = 'PackedInt32Array'
+	_supported_defaults[TYPE_PACKED_FLOAT32_ARRAY] = 'PackedFloat32Array'
+	_supported_defaults[TYPE_PACKED_STRING_ARRAY] = 'PackedStringArray'
 
 # ###############
 # Private
@@ -140,7 +140,7 @@ func _make_arg_array(method_meta, override_size):
 						dflt_text = str(_supported_defaults[t], 'null')
 					else:
 						dflt_text = str(_supported_defaults[t], str(method_meta.default_args[dflt_idx]).to_lower())
-				elif(t == TYPE_TRANSFORM):
+				elif(t == TYPE_TRANSFORM3D):
 					# value will be 4 Vector3 and look like: 1, 0, 0, 0, 1, 0, 0, 0, 1 - 0, 0, 0
 					var sections = str(method_meta.default_args[dflt_idx]).split("-")
 					var vecs = sections[0].split(",")
@@ -159,7 +159,7 @@ func _make_arg_array(method_meta, override_size):
 					dflt_text = str(_supported_defaults[t], "(", vectors, ")")
 				elif(t == TYPE_RID):
 					dflt_text = str(_supported_defaults[t], 'null')
-				elif(t in [TYPE_REAL_ARRAY, TYPE_INT_ARRAY, TYPE_STRING_ARRAY]):
+				elif(t in [TYPE_PACKED_FLOAT32_ARRAY, TYPE_PACKED_INT32_ARRAY, TYPE_PACKED_STRING_ARRAY]):
 					dflt_text = str(_supported_defaults[t], "()")
 				# Everything else puts the prefix (if one is there) from _supported_defaults
 				# in front.  The to_lower is used b/c for some reason the defaults for

@@ -7,8 +7,8 @@
 script = ExtResource( 2 )
 
 [node name="Gut" type="Control" parent="."]
-margin_right = 740.0
-margin_bottom = 250.0
+offset_right = 740.0
+offset_bottom = 250.0
 rect_min_size = Vector2( 740, 250 )
 script = ExtResource( 1 )
 __meta__ = {

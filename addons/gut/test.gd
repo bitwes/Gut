@@ -61,7 +61,7 @@ class DoubleInfo:
 	#   (object_to_double, subpath)
 	#   (object_to_double, strategy)
 	#   (object_to_double, subpath, strategy)
-	func _init(thing, p2=null, p3=null):
+	func _init(thing,p2=null,p3=null):
 		strategy = p2
 
 		# short-circuit and ensure that is_valid
@@ -106,7 +106,7 @@ var _compare = _utils.Comparator.new()
 # constant for signal when calling yield_for
 const YIELD = 'timeout'
 
-# Need a reference to the instance that is running the tests.  This
+# Need a reference to the instantiate that is running the tests.  This
 # is set by the gut class when it runs the tests.  This gets you
 # access to the asserts in the tests you write.
 var gut = null
@@ -203,14 +203,14 @@ func _do_datatypes_match__fail_if_not(got, expected, text):
 
 # ------------------------------------------------------------------------------
 # Create a string that lists all the methods that were called on an spied
-# instance.
+# instantiate.
 # ------------------------------------------------------------------------------
 func _get_desc_of_calls_to_instance(inst):
 	var BULLET = '  * '
 	var calls = gut.get_spy().get_call_list_as_string(inst)
 	# indent all the calls
 	calls = BULLET + calls.replace("\n", "\n" + BULLET)
-	# remove trailing newline and bullet
+	# remove_at trailing newline and bullet
 	calls = calls.substr(0, calls.length() - BULLET.length() - 1)
 	return "Calls made on " + str(inst) + "\n" + calls
 
@@ -231,7 +231,7 @@ func _fail_if_not_watching(object):
 	var did_fail = false
 	if(!_signal_watcher.is_watching_object(object)):
 		_fail(str('Cannot make signal assertions because the object ', object, \
-				  ' is not being watched.  Call watch_signals(some_object) to be able to make assertions about signals.'))
+				' is not being watched.  Call watch_signals(some_object) to be able to make assertions about signals.'))
 		did_fail = true
 	return did_fail
 
@@ -257,7 +257,7 @@ func _fail_if_parameters_not_array(parameters):
 func _create_obj_from_type(type):
 	var obj = null
 	if type.is_class("PackedScene"):
-		obj = type.instance()
+		obj = type.instantiate()
 		add_child(obj)
 	else:
 		obj = type.new()
@@ -551,8 +551,8 @@ func assert_get_set_methods(obj, property, default, set_to):
 # ------------------------------------------------------------------------------
 func assert_accessors(obj, property, default, set_to):
 	var fail_count = _summary.failed
-	var get_func = 'get_' + property
-	var set_func = 'set_' + property
+	var get()_func = 'get_' + property
+	var set()_func = 'set_' + property
 
 	if(obj.has_method('is_' + property)):
 		get_func = 'is_' + property
@@ -572,7 +572,7 @@ func assert_accessors(obj, property, default, set_to):
 # from passed object. Returns null if not found.
 # If provided, property_usage constrains the type of property returned by
 # passing either:
-# EDITOR_PROPERTY for properties defined as: export(int) var some_value
+# EDITOR_PROPERTY for properties defined as: export var some_value: int
 # VARIABLE_PROPERTY for properties defined as: var another_value
 # ---------------------------------------------------------------------------
 func _find_object_property(obj, property_name, property_usage=null):
@@ -580,7 +580,7 @@ func _find_object_property(obj, property_name, property_usage=null):
 	var found = false
 	var properties = obj.get_property_list()
 
-	while !found and !properties.empty():
+	while !found and !properties.is_empty():
 		var property = properties.pop_back()
 		if property['name'] == property_name:
 			if property_usage == null or property['usage'] == property_usage:
@@ -619,7 +619,7 @@ func _can_make_signal_assertions(object, signal_name):
 # ------------------------------------------------------------------------------
 func _is_connected(signaler_obj, connect_to_obj, signal_name, method_name=""):
 	if(method_name != ""):
-		return signaler_obj.is_connected(signal_name, connect_to_obj, method_name)
+		return signaler_obj.is_connected(signal_name,Callable(connect_to_obj,method_name))
 	else:
 		var connections = signaler_obj.get_signal_connection_list(signal_name)
 		for conn in connections:
@@ -800,7 +800,7 @@ func assert_extends(object, a_class, text=''):
 	assert_is(object, a_class, text)
 
 # ------------------------------------------------------------------------------
-# Assert that object is an instance of a_class
+# Assert that object is an instantiate of a_class
 # ------------------------------------------------------------------------------
 func assert_is(object, a_class, text=''):
 	var disp  = ''#var disp = str('Expected [', _str(object), '] to be type of [', a_class, ']: ', text)
@@ -809,7 +809,7 @@ func assert_is(object, a_class, text=''):
 	var bad_param_2 = 'Parameter 2 must be a Class (like Node2D or Label).  You passed '
 
 	if(typeof(object) != TYPE_OBJECT):
-		_fail(str('Parameter 1 must be an instance of an object.  You passed:  ', _str(object)))
+		_fail(str('Parameter 1 must be an instantiate of an object.  You passed:  ', _str(object)))
 	elif(typeof(a_class) != TYPE_OBJECT):
 		_fail(str(bad_param_2, _str(a_class)))
 	else:
@@ -919,7 +919,7 @@ func assert_string_ends_with(text, search, match_case=true):
 			_fail(disp)
 
 # ------------------------------------------------------------------------------
-# Assert that a method was called on an instance of a doubled class.  If
+# Assert that a method was called on an instantiate of a doubled class.  If
 # parameters are supplied then the params passed in when called must match.
 # TODO make 3rd parameter "param_or_text" and add fourth parameter of "text" and
 #      then work some magic so this can have a "text" parameter without being
@@ -932,7 +932,7 @@ func assert_called(inst, method_name, parameters=null):
 		return
 
 	if(!_utils.is_double(inst)):
-		_fail('You must pass a doubled instance to assert_called.  Check the wiki for info on using double.')
+		_fail('You must pass a doubled instantiate to assert_called.  Check the wiki for info on using double.')
 	else:
 		if(gut.get_spy().was_called(inst, method_name, parameters)):
 			_pass(disp)
@@ -942,7 +942,7 @@ func assert_called(inst, method_name, parameters=null):
 			_fail(str(disp, "\n", _get_desc_of_calls_to_instance(inst)))
 
 # ------------------------------------------------------------------------------
-# Assert that a method was not called on an instance of a doubled class.  If
+# Assert that a method was not called on an instantiate of a doubled class.  If
 # parameters are specified then this will only fail if it finds a call that was
 # sent matching parameters.
 # ------------------------------------------------------------------------------
@@ -953,7 +953,7 @@ func assert_not_called(inst, method_name, parameters=null):
 		return
 
 	if(!_utils.is_double(inst)):
-		_fail('You must pass a doubled instance to assert_not_called.  Check the wiki for info on using double.')
+		_fail('You must pass a doubled instantiate to assert_not_called.  Check the wiki for info on using double.')
 	else:
 		if(gut.get_spy().was_called(inst, method_name, parameters)):
 			if(parameters != null):
@@ -963,7 +963,7 @@ func assert_not_called(inst, method_name, parameters=null):
 			_pass(disp)
 
 # ------------------------------------------------------------------------------
-# Assert that a method on an instance of a doubled class was called a number
+# Assert that a method on an instantiate of a doubled class was called a number
 # of times.  If parameters are specified then only calls with matching
 # parameter values will be counted.
 # ------------------------------------------------------------------------------
@@ -980,7 +980,7 @@ func assert_call_count(inst, method_name, expected_count, parameters=null):
 	disp = disp % [method_name, _str(inst), expected_count, param_text, count]
 
 	if(!_utils.is_double(inst)):
-		_fail('You must pass a doubled instance to assert_call_count.  Check the wiki for info on using double.')
+		_fail('You must pass a doubled instantiate to assert_call_count.  Check the wiki for info on using double.')
 	else:
 		if(count == expected_count):
 			_pass(disp)
@@ -1157,7 +1157,7 @@ func _assert_setget_called(type, name_property, setter = "", getter  = ""):
 # signature
 # ------------------------------------------------------------------------------
 func assert_setget(
-	instance, name_property,
+	instantiate, name_property,
 	const_or_setter = DEFAULT_SETTER_GETTER, getter="__not_set__"):
 
 	var getter_name = null
@@ -1175,10 +1175,10 @@ func assert_setget(
 		setter_name = const_or_setter
 
 	var resource = null
-	if instance.is_class("Resource"):
-		resource = instance
+	if instantiate.is_class("Resource"):
+		resource = instantiate
 	else:
-		resource = instance.get_script()
+		resource = instantiate.get_script()
 
 	_assert_setget_called(resource, str(name_property), setter_name, getter_name)
 
@@ -1187,17 +1187,17 @@ func assert_setget(
 # Wrapper: asserts if the property exists, the accessor methods exist and the
 # setget keyword is set for accessor methods
 # ------------------------------------------------------------------------------
-func assert_property(instance, name_property, default_value, new_value) -> void:
+func assert_property(instantiate, name_property, default_value, new_value) -> void:
 	var free_me = []
 	var resource = null
 	var obj = null
-	if instance.is_class("Resource"):
-		resource = instance
+	if instantiate.is_class("Resource"):
+		resource = instantiate
 		obj = _create_obj_from_type(resource)
 		free_me.append(obj)
 	else:
-		resource = instance.get_script()
-		obj = instance
+		resource = instantiate.get_script()
+		obj = instantiate
 
 	var name_setter = "set_" + str(name_property)
 	var name_getter = "get_" + str(name_property)
@@ -1267,7 +1267,7 @@ func yield_frames(frames, msg=''):
 # not make assertions after a yield.
 # ------------------------------------------------------------------------------
 func end_test():
-	_lgr.deprecated('end_test is no longer necessary, you can remove it.')
+	_lgr.deprecated('end_test is no longer necessary, you can remove_at it.')
 	#gut.end_yielded_test()
 
 func get_summary():
@@ -1351,7 +1351,7 @@ func _smart_double(double_info):
 func double(thing, p2=null, p3=null):
 	var double_info = DoubleInfo.new(thing, p2, p3)
 	if(!double_info.is_valid):
-		_lgr.error('double requires a class or path, you passed an instance:  ' + _str(thing))
+		_lgr.error('double requires a class or path, you passed an instantiate:  ' + _str(thing))
 		return null
 
 	double_info.make_partial = false
@@ -1363,7 +1363,7 @@ func double(thing, p2=null, p3=null):
 func partial_double(thing, p2=null, p3=null):
 	var double_info = DoubleInfo.new(thing, p2, p3)
 	if(!double_info.is_valid):
-		_lgr.error('partial_double requires a class or path, you passed an instance:  ' + _str(thing))
+		_lgr.error('partial_double requires a class or path, you passed an instantiate:  ' + _str(thing))
 		return null
 
 	double_info.make_partial = true
@@ -1422,7 +1422,7 @@ func ignore_method_when_doubling(thing, method_name):
 	var path = double_info.path
 
 	if(double_info.is_scene()):
-		var inst = thing.instance()
+		var inst = thing.instantiate()
 		if(inst.get_script()):
 			path = inst.get_script().get_path()
 
@@ -1432,7 +1432,7 @@ func ignore_method_when_doubling(thing, method_name):
 # Stub something.
 #
 # Parameters
-# 1: the thing to stub, a file path or a instance or a class
+# 1: the thing to stub, a file path or a instantiate or a class
 # 2: either an inner class subpath or the method name
 # 3: the method name if an inner class subpath was specified
 # NOTE:  right now we cannot stub inner classes at the path level so this should
@@ -1543,7 +1543,7 @@ func add_child_autofree(node, legible_unique_name = false):
 	gut.get_autofree().add_free(node)
 	# Explicitly calling super here b/c add_child MIGHT change and I don't want
 	# a bug sneaking its way in here.
-	.add_child(node, legible_unique_name)
+	super.add_child(node, legible_unique_name)
 	return node
 
 # ------------------------------------------------------------------------------
@@ -1553,7 +1553,7 @@ func add_child_autoqfree(node, legible_unique_name=false):
 	gut.get_autofree().add_queue_free(node)
 	# Explicitly calling super here b/c add_child MIGHT change and I don't want
 	# a bug sneaking its way in here.
-	.add_child(node, legible_unique_name)
+	super.add_child(node, legible_unique_name)
 	return node
 
 # ------------------------------------------------------------------------------

@@ -38,7 +38,7 @@ class TestFormatter:
 		var d2 = {}
 		for i in range(3):
 			for j in range(65, 91):
-				var one_char = PoolByteArray([j]).get_string_from_ascii()
+				var one_char = PackedByteArray([j]).get_string_from_ascii()
 				var key = ''
 				for x in range(i + 1):
 					key += one_char

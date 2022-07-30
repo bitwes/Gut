@@ -5,8 +5,8 @@
 [node name="ShortcutButton" type="Control"]
 anchor_right = 0.123
 anchor_bottom = 0.04
-margin_right = 33.048
-margin_bottom = 1.0
+offset_right = 33.048
+offset_bottom = 1.0
 rect_min_size = Vector2( 125, 25 )
 script = ExtResource( 1 )
 __meta__ = {
@@ -21,8 +21,8 @@ __meta__ = {
 }
 
 [node name="lblShortcut" type="Label" parent="Layout"]
-margin_right = 50.0
-margin_bottom = 25.0
+offset_right = 50.0
+offset_bottom = 25.0
 size_flags_horizontal = 3
 size_flags_vertical = 7
 text = "<None>"
@@ -30,15 +30,15 @@ align = 2
 valign = 1
 
 [node name="CenterContainer" type="CenterContainer" parent="Layout"]
-margin_left = 54.0
-margin_right = 64.0
-margin_bottom = 25.0
+offset_left = 54.0
+offset_right = 64.0
+offset_bottom = 25.0
 rect_min_size = Vector2( 10, 0 )
 
 [node name="SetButton" type="Button" parent="Layout"]
-margin_left = 68.0
-margin_right = 128.0
-margin_bottom = 25.0
+offset_left = 68.0
+offset_right = 128.0
+offset_bottom = 25.0
 rect_min_size = Vector2( 60, 0 )
 text = "Set"
 __meta__ = {
@@ -47,9 +47,9 @@ __meta__ = {
 
 [node name="SaveButton" type="Button" parent="Layout"]
 visible = false
-margin_left = 82.0
-margin_right = 142.0
-margin_bottom = 25.0
+offset_left = 82.0
+offset_right = 142.0
+offset_bottom = 25.0
 rect_min_size = Vector2( 60, 0 )
 text = "Save"
 __meta__ = {
@@ -58,9 +58,9 @@ __meta__ = {
 
 [node name="CancelButton" type="Button" parent="Layout"]
 visible = false
-margin_left = 82.0
-margin_right = 142.0
-margin_bottom = 25.0
+offset_left = 82.0
+offset_right = 142.0
+offset_bottom = 25.0
 rect_min_size = Vector2( 60, 0 )
 text = "Cancel"
 __meta__ = {
@@ -68,9 +68,9 @@ __meta__ = {
 }
 
 [node name="ClearButton" type="Button" parent="Layout"]
-margin_left = 132.0
-margin_right = 192.0
-margin_bottom = 25.0
+offset_left = 132.0
+offset_right = 192.0
+offset_bottom = 25.0
 rect_min_size = Vector2( 60, 0 )
 text = "Clear"
 

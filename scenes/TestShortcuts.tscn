@@ -8,25 +8,25 @@ control = true
 pressed = true
 scancode = 48
 
-[sub_resource type="ShortCut" id=2]
+[sub_resource type="Shortcut" id=2]
 shortcut = SubResource( 1 )
 
 [node name="TestShortcuts" type="Node2D"]
 script = ExtResource( 2 )
 
 [node name="ShortcutButton" parent="." instance=ExtResource( 1 )]
-margin_left = 255.331
-margin_top = 57.7408
-margin_right = 485.331
-margin_bottom = 114.741
+offset_left = 255.331
+offset_top = 57.7408
+offset_right = 485.331
+offset_bottom = 114.741
 
 [node name="Button" type="Button" parent="."]
-margin_left = 112.303
-margin_top = 57.211
-margin_right = 238.303
-margin_bottom = 106.211
+offset_left = 112.303
+offset_top = 57.211
+offset_right = 238.303
+offset_bottom = 106.211
 shortcut = SubResource( 2 )
-text = "Hello World"
+text = "Hello World3D"
 __meta__ = {
 "_edit_use_anchors_": false
 }

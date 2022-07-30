@@ -1,5 +1,5 @@
 extends VBoxContainer
-tool
+@tool
 
 class SearchResults:
 	const L = TextEdit.SEARCH_RESULT_LINE
@@ -27,18 +27,18 @@ class SearchResults:
 		elif(result.size() == 2):
 			te.scroll_vertical = result[L]
 			te.select(result[L], result[C], result[L], result[C] + text.length())
-			te.cursor_set_column(result[C])
-			te.cursor_set_line(result[L])
-			te.center_viewport_to_cursor()
+			te.set_caret_column(result[C])
+			te.set_caret_line(result[L])
+			te.center_viewport_to_caret()
 
 		_last_term = text
-		te.center_viewport_to_cursor()
+		te.center_viewport_to_caret()
 		return result
 
 	func _cursor_to_pos():
 		var to_return = [0, 0]
-		to_return[L] = te.cursor_get_line()
-		to_return[C] = te.cursor_get_column()
+		to_return[L] = te.get_caret_line()
+		to_return[C] = te.get_caret_column()
 		return to_return
 
 	func find_next(term):
@@ -77,7 +77,7 @@ class SearchResults:
 
 
 
-onready var _ctrls = {
+@onready var _ctrls = {
 	output = $Output,
 
 	copy_button = $Toolbar/CopyButton,
@@ -121,21 +121,21 @@ func _ready():
 func _setup_colors():
 	_ctrls.output.clear_colors()
 	var keywords = [
-		['Failed', Color.red],
-		['Passed', Color.green],
-		['Pending', Color.yellow],
-		['Orphans', Color.yellow],
-		['WARNING', Color.yellow],
-		['ERROR', Color.red]
+		['Failed', Color.RED],
+		['Passed', Color.GREEN],
+		['Pending', Color.YELLOW],
+		['Orphans', Color.YELLOW],
+		['WARNING', Color.YELLOW],
+		['ERROR', Color.RED]
 	]
 
 	for keyword in keywords:
 		_ctrls.output.add_keyword_color(keyword[0], keyword[1])
 
 	var f_color = _ctrls.output.get_color("font_color")
-	_ctrls.output.add_color_override("font_color_readonly", f_color)
-	_ctrls.output.add_color_override("function_color", f_color)
-	_ctrls.output.add_color_override("member_variable_color", f_color)
+	_ctrls.output.add_theme_color_override("font_color_readonly", f_color)
+	_ctrls.output.add_theme_color_override("function_color", f_color)
+	_ctrls.output.add_theme_color_override("member_variable_color", f_color)
 	_ctrls.output.update()
 
 
@@ -144,8 +144,8 @@ func _set_font(font_name, custom_name):
 	if(font_name == null):
 		rtl.set('custom_fonts/' + custom_name, null)
 	else:
-		var dyn_font = DynamicFont.new()
-		var font_data = DynamicFontData.new()
+		var dyn_font = FontFile.new()
+		var font_data = FontFile.new()
 		font_data.font_path = 'res://addons/gut/fonts/' + font_name + '.ttf'
 		font_data.antialiased = true
 		dyn_font.font_data = font_data
@@ -160,7 +160,7 @@ func _on_CopyButton_pressed():
 
 
 func _on_UseColors_pressed():
-	_ctrls.output.syntax_highlighting = _ctrls.use_colors.pressed
+	_ctrls.output.syntax_highlighter = _ctrls.use_colors.pressed
 
 
 func _on_ClearButton_pressed():
@@ -288,4 +288,4 @@ func add_text(text):
 
 func scroll_to_line(line):
 	_ctrls.output.scroll_vertical = line
-	_ctrls.output.cursor_set_line(line)
+	_ctrls.output.set_caret_line(line)

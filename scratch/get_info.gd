@@ -120,7 +120,7 @@ func print_a_bunch_of_methods_by_flags():
 	print("\n\n\n")
 	print_methods_by_flags(subtract_dictionary(o, n))
 	print("strays  ")
-	e.print_stray_nodes()
+	e.print_orphan_nodes()
 
 func get_defaults_and_types(method_meta):
 	var text = ""
@@ -189,7 +189,7 @@ func print_other_info(loaded):
 				print('  ', 'base id      ', base_script.get_instance_id())
 				print('  ', 'base path    ', base_script.get_path() )
 			print('  ', 'base type    ', thing.get_instance_base_type())
-			print('  ', 'can instance ', thing.can_instance())
+			print('  ', 'can instantiate ', thing.can_instantiate())
 			print('  ', 'id           ', thing.get_instance_id())
 			print('  ', 'is test      ', does_inherit_from_test(thing))
 
@@ -244,12 +244,12 @@ func pp(dict):
 	print(JSON.print(dict, ' '))
 
 func _init():
-	var r = Reference.new()
+	var r = RefCounted.new()
 	var r2 = r
 	var r3 = r
 	var r4 = r
 	#print_all_info(r)
-	#print(r.get('Reference'))
+	#print(r.get('RefCounted'))
 
 	# print_all_info(DoubleMeScene)
 	#print(DoubleMeScene.script)

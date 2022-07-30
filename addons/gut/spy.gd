@@ -78,27 +78,27 @@ func get_call_parameters(variant, method_name, index=-1):
 
 	return to_return
 
-func call_count(instance, method_name, parameters=null):
+func call_count(instantiate, method_name, parameters=null):
 	var to_return = 0
 
-	if(was_called(instance, method_name)):
+	if(was_called(instantiate, method_name)):
 		if(parameters):
-			for i in range(_calls[instance][method_name].size()):
-				if(_calls[instance][method_name][i] == parameters):
+			for i in range(_calls[instantiate][method_name].size()):
+				if(_calls[instantiate][method_name][i] == parameters):
 					to_return += 1
 		else:
-			to_return = _calls[instance][method_name].size()
+			to_return = _calls[instantiate][method_name].size()
 	return to_return
 
 func clear():
 	_calls = {}
 
-func get_call_list_as_string(instance):
+func get_call_list_as_string(instantiate):
 	var to_return = ''
-	if(_calls.has(instance)):
-		for method in _calls[instance]:
-			for i in range(_calls[instance][method].size()):
-				to_return += str(method, '(', _get_params_as_string(_calls[instance][method][i]), ")\n")
+	if(_calls.has(instantiate)):
+		for method in _calls[instantiate]:
+			for i in range(_calls[instantiate][method].size()):
+				to_return += str(method, '(', _get_params_as_string(_calls[instantiate][method][i]), ")\n")
 	return to_return
 
 func get_logger():

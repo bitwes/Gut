@@ -127,17 +127,17 @@ class TestTheBasics:
 
 	func test_can_double_scene():
 		var obj = gr.doubler.double_scene(DOUBLE_ME_SCENE_PATH)
-		var inst = obj.instance()
+		var inst = obj.instantiate()
 		assert_eq(inst.return_hello(), null)
 
 	func test_can_add_doubled_scene_to_tree():
-		var inst = gr.doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
+		var inst = gr.doubler.double_scene(DOUBLE_ME_SCENE_PATH).instantiate()
 		add_child(inst)
 		assert_ne(inst.label, null)
 		remove_child(inst)
 
 	func test_metadata_for_scenes_script_points_to_scene_not_script():
-		var inst = gr.doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance()
+		var inst = gr.doubler.double_scene(DOUBLE_ME_SCENE_PATH).instantiate()
 		assert_eq(inst.__gut_metadata_.path, DOUBLE_ME_SCENE_PATH)
 
 	func test_does_not_add_duplicate_methods():
@@ -215,7 +215,7 @@ class TestBuiltInOverloading:
 
 
 	func before_all():
-		# WindowDialog has A LOT of the edge cases we need to check so it is used
+		# Window has A LOT of the edge cases we need to check so it is used
 		# as the default.
 		var d = Doubler.new(_utils.DOUBLE_STRATEGY.FULL)
 		_dbl_win_dia = d.double(DOUBLE_EXTENDS_WINDOW_DIALOG)
@@ -251,7 +251,7 @@ class TestBuiltInOverloading:
 
 	func test_can_override_strategy_when_doubling_scene():
 		doubler.set_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
-		var inst = autofree(doubler.double_scene(DOUBLE_ME_SCENE_PATH, DOUBLE_STRATEGY.FULL).instance())
+		var inst = autofree(doubler.double_scene(DOUBLE_ME_SCENE_PATH, DOUBLE_STRATEGY.FULL).instantiate())
 		var txt = get_instance_source(inst)
 		assert_ne(txt, '', "text is not empty")
 		assert_ne(txt.find('func is_blocking_signals'), -1, 'HAS non-overloaded methods')
@@ -265,12 +265,12 @@ class TestBuiltInOverloading:
 		assert_ne(inst, null)
 
 	func test_when_everything_included_you_can_still_double_a_scene():
-		var inst = autofree(doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance())
+		var inst = autofree(doubler.double_scene(DOUBLE_ME_SCENE_PATH).instantiate())
 		add_child(inst)
-		assert_ne(inst, null, "instance is not null")
-		assert_ne(inst.label, null, "Can get to a label on the instance")
+		assert_ne(inst, null, "instantiate is not null")
+		assert_ne(inst.label, null, "Can get to a label on the instantiate")
 		# pause so _process gets called
-		yield(yield_for(3), YIELD)
+		await yield_for(3).YIELD
 		end_test()
 
 	func test_double_includes_methods_in_super():
@@ -278,7 +278,7 @@ class TestBuiltInOverloading:
 
 	func test_can_call_a_built_in_that_has_default_parameters():
 		var inst = autofree(doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG).new())
-		inst.connect('hide', self, '_hide_call_back')
+		inst.connect('hide',Callable(self,'_hide_call_back'))
 		pass_test("if we got here, it worked")
 
 	func test_all_types_supported():
@@ -316,15 +316,15 @@ class TestDefaultParameters:
 		doubler.set_output_dir(TEMP_FILES)
 
 	func test_parameters_are_doubled_for_connect():
-		var inst = autofree(doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance())
+		var inst = autofree(doubler.double_scene(DOUBLE_ME_SCENE_PATH).instantiate())
 		var text = get_instance_source(inst)
 		var no_defaults = _sig_gen('connect', ['p_signal', 'p_target', 'p_method'])
-		var sig = str('func connect(', no_defaults, 'p_binds=[], p_flags=0):')
+		var sig = str('func connect(',Callable(no_defaults,'p_binds=[]),p_flags=0):')
 
 		assert_string_contains(text, sig)
 
 	func test_parameters_are_doubled_for_draw_char():
-		var inst = autofree(doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance())
+		var inst = autofree(doubler.double_scene(DOUBLE_ME_SCENE_PATH).instantiate())
 		var text = get_instance_source(inst)
 		var no_defaults = _sig_gen('draw_char', ['p_font', 'p_position', 'p_char', 'p_next'])
 		var sig = 'func draw_char(' + no_defaults + 'p_modulate=Color(1,1,1,1)):'
@@ -334,16 +334,16 @@ class TestDefaultParameters:
 	func test_parameters_are_doubled_for_draw_multimesh():
 		var inst = autofree(doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG).new())
 		var no_defaults = _sig_gen('draw_multimesh', ['p_multimesh', 'p_texture'])
-		var sig = str('func draw_multimesh(',
+		var sig = str('func draw_multimesh()(',
 			no_defaults,
 			'p_normal_map=null):')
 
 		assert_string_contains(get_instance_source(inst), sig)
 
 	var singletons = [
-		"Physics2DServer",	# TYPE_TRANSFORM2D, TYPE_RID
-		"PhysicsServer",	# TYPE_TRANSFORM
-		"VisualServer"		# TYPE_REAL_ARRAY, TYPE_INT_ARRAY
+		"PhysicsServer2D",	# TYPE_TRANSFORM2D, TYPE_RID
+		"PhysicsServer3D",	# TYPE_TRANSFORM3D
+		"RenderingServer"		# TYPE_PACKED_FLOAT32_ARRAY, TYPE_PACKED_INT32_ARRAY
 	]
 	func test_various_singletons_that_introduced_new_default_types(singleton = use_parameters(singletons)):
 		var inst = doubler.double_singleton(singleton).new()
@@ -436,11 +436,11 @@ class TestPartialDoubles:
 		assert_eq(inst.get_a(), null)
 
 	func test_can_make_partial_of_scene():
-		var inst = autofree(doubler.partial_double_scene(DOUBLE_ME_SCENE_PATH).instance())
+		var inst = autofree(doubler.partial_double_scene(DOUBLE_ME_SCENE_PATH).instantiate())
 		assert_eq(inst.return_hello(), 'hello')
 
 	func test_double_scene_does_not_call_supers():
-		var inst = autofree(doubler.double_scene(DOUBLE_ME_SCENE_PATH).instance())
+		var inst = autofree(doubler.double_scene(DOUBLE_ME_SCENE_PATH).instantiate())
 		assert_eq(inst.return_hello(), null)
 		pause_before_teardown()
 
@@ -586,37 +586,37 @@ class TestInitParameters:
 # 		assert_eq(doubled.CURSOR_VSPLIT, Input.CURSOR_VSPLIT)
 
 # 	func test_partial_double_gets_wired_properties():
-# 		var doubled = _doubler.partial_double_singleton("ARVRServer").new()
+# 		var doubled = _doubler.partial_double_singleton("XRServer").new()
 # 		assert_eq(doubled.world_scale, 1.0, "property")
 # 		assert_eq(doubled.get_world_scale(), 1.0, "accessor")
 
 # 	func test_partial_double_setters_are_wired_to_set_source_property():
-# 		var doubled = _doubler.partial_double_singleton("ARVRServer").new()
+# 		var doubled = _doubler.partial_double_singleton("XRServer").new()
 # 		doubled.world_scale = 0.5
-# 		assert_eq(ARVRServer.get_world_scale(), 0.5, "accessor")
+# 		assert_eq(XRServer.get_world_scale(), 0.5, "accessor")
 # 		# make sure to put it back to what it was, who knows what it does.
-# 		ARVRServer.world_scale = 1.0
+# 		XRServer.world_scale = 1.0
 
 # 	func test_double_gets_unwired_properties_by_default():
-# 		var doubled = _doubler.double_singleton("ARVRServer").new()
+# 		var doubled = _doubler.double_singleton("XRServer").new()
 # 		assert_null(doubled.world_scale)
 
 # 	# These singletons were found using print_instanced_ClassDB_classes in
 # 	# scratch/get_info.gd and are most likely the only singletons that
 # 	# should be doubled as of now.
 # 	var eligible_singletons = [
-# 		"ARVRServer", "AudioServer", "CameraServer",
-# 		"Engine", "Geometry", "Input",
+# 		"XRServer", "AudioServer", "CameraServer",
+# 		"Engine", "Geometry2D", "Input",
 # 		"InputMap", "IP", "JavaClassWrapper",
 # 		"JavaScript", "JSON", "Marshalls",
-# 		"OS", "Performance", "Physics2DServer",
-# 		"PhysicsServer",
+# 		"OS", "Performance", "PhysicsServer2D",
+# 		"PhysicsServer3D",
 # 		"ProjectSettings", "ResourceLoader",
 # 		"ResourceSaver", "TranslationServer", "VisualScriptEditor",
-# 		"VisualServer",
+# 		"RenderingServer",
 # 		# these two were missed by print_instanced_ClassDB_classes but were in
 # 		# the global scope list.
-# 		"ClassDB", "EditorNavigationMeshGenerator"
+# 		"ClassDB", "NavigationMeshGenerator"
 # 	]
 # 	func test_can_make_doubles_of_eligible_singletons(singleton = use_parameters(eligible_singletons)):
 # 		# !! Keep eligible singletons in line with eligible_singletons in test_test_stubber_doubler

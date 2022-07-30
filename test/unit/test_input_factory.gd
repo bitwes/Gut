@@ -77,25 +77,25 @@ class TestMouseButtons:
 		assert_eq(event.global_position, Vector2(11, 11), "global position")
 
 	func test_lmb_down():
-		assert_mouse_event_props("mouse_left_button_down", true, BUTTON_LEFT)
+		assert_mouse_event_props("mouse_left_button_down", true, MOUSE_BUTTON_LEFT)
 		assert_mouse_event_positions("mouse_left_button_down")
 
 	func test_lmb_up():
-		assert_mouse_event_props("mouse_left_button_up", false, BUTTON_LEFT)
+		assert_mouse_event_props("mouse_left_button_up", false, MOUSE_BUTTON_LEFT)
 		assert_mouse_event_positions("mouse_left_button_up")
 
 	func test_double_clickk():
-		assert_mouse_event_props("mouse_double_click", false, BUTTON_LEFT)
+		assert_mouse_event_props("mouse_double_click", false, MOUSE_BUTTON_LEFT)
 		assert_mouse_event_positions("mouse_double_click")
 		var event = InputFactory.mouse_double_click(Vector2(1, 1))
 		assert_true(event.doubleclick, "double click")
 
 	func test_rmb_down():
-		assert_mouse_event_props("mouse_right_button_down", true, BUTTON_RIGHT)
+		assert_mouse_event_props("mouse_right_button_down", true, MOUSE_BUTTON_RIGHT)
 		assert_mouse_event_positions("mouse_right_button_down")
 
 	func test_rmb_up():
-		assert_mouse_event_props("mouse_right_button_up", false, BUTTON_RIGHT)
+		assert_mouse_event_props("mouse_right_button_up", false, MOUSE_BUTTON_RIGHT)
 		assert_mouse_event_positions("mouse_right_button_up")
 
 class TestMouseMotion:

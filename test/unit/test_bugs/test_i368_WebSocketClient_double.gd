@@ -22,19 +22,19 @@ func test_can_spy_on_defaulted_params():
 	var pd = double(WebSocketClient).new()
 	pd.connect_to_url('somewhere.biz')
 	assert_called(pd, 'connect_to_url',
-		['somewhere.biz', PoolStringArray(), false, PoolStringArray()])
+		['somewhere.biz', PackedStringArray(), false, PackedStringArray()])
 
 func test_can_stub_default_of_connect_to_url_first_param():
 	stub(WebSocketClient, 'connect_to_url').param_defaults(['asdf'])
 	var pd = double(WebSocketClient).new()
 	pd.connect_to_url()
 	assert_called(pd, 'connect_to_url',
-		['asdf', PoolStringArray(), false, PoolStringArray()])
+		['asdf', PackedStringArray(), false, PackedStringArray()])
 
 func test_can_spy_on_all_params():
 	var pd = double(WebSocketClient).new()
-	var psa_1 = PoolStringArray([1, 2, 3])
-	var psa_2 = PoolStringArray(['a', 'b', 'c'])
+	var psa_1 = PackedStringArray([1, 2, 3])
+	var psa_2 = PackedStringArray(['a', 'b', 'c'])
 	pd.connect_to_url('somewhere.biz', psa_1, true, psa_2)
 	assert_called(pd, 'connect_to_url',
 		['somewhere.biz', psa_1, true, psa_2])

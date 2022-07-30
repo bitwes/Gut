@@ -1,8 +1,12 @@
 extends Node
 
 
-export(int) var max_hp = 0
-export(int) var current_hp = 0 setget set_current_hp, get_current_hp
+@export var max_hp: int = 0
+@export var current_hp: int = 0 :
+	get:
+		return current_hp # TODOConverter40 Copy here content of get_current_hp
+	set(mod_value):
+		mod_value  # TODOConverter40 Copy here content of set_current_hp
 
 
 func set_max_hp(value: int) -> void:

@@ -6,7 +6,7 @@ var node3 = Node.new()
 
 func _init():
 	print('starting kids = ', get_root().get_children())
-	print('stray nodes = ', node1.print_stray_nodes())
+	print('stray nodes = ', node1.print_orphan_nodes())
 
 	print('created nodes = ', node1, node2, node3)
 	get_root().add_child(node1)

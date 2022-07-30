@@ -16,7 +16,7 @@ var _wrote_results = false
 # play_custom_scene
 var _cmdln_mode = false
 
-onready var _gut_layer = $GutLayer
+@onready var _gut_layer = $GutLayer
 
 
 func _ready():

@@ -17,8 +17,8 @@ class SuperPack:
 	func set_script_obj(obj):
 		_script = obj
 
-	func instance(edit_state=0):
-		var inst = _scene.instance(edit_state)
+	func instantiate(edit_state=0):
+		var inst = _scene.instantiate(edit_state)
 		inst.set_script(_script)
 		return inst
 
@@ -31,16 +31,16 @@ func make_class():
 	var text = ""
 
 	text = "class MadeIt:\n" + \
-		  "\tvar something=\"hello\"\n" + \
-		  "\tfunc do_something():\n" +\
-		  "\t\treturn 'did it'"
+		"\tvar something=\"hello\"\n" + \
+		"\tfunc do_something():\n" +\
+		"\t\treturn 'did it'"
 
 	return text
 
 func make_node():
 	var text = "extends Node2D\n" + \
-	           "func do_something():\n" + \
-			   "\treturn 'did it!!'"
+	"func do_something():\n" + \
+			"\treturn 'did it!!'"
 	return text
 
 
@@ -57,11 +57,11 @@ func create_node2d():
 	n.free()
 
 func create_instance():
-	var obj = Reference.new()
+	var obj = RefCounted.new()
 	obj.set_script(get_script_for_text(make_class()))
 
 	var inner_class = obj.MadeIt.new()
-	print('create instance  = ', inner_class.do_something())
+	print('create instantiate  = ', inner_class.do_something())
 
 func create_scene():
 	var s2 = SuperPack.new()
@@ -69,7 +69,7 @@ func create_scene():
 	print(s2._scene._bundled)
 	s2.set_script_obj(get_script_for_text(make_node()))
 
-	var inst = s2.instance()
+	var inst = s2.instantiate()
 	print('create scene = ', inst.do_something())
 
 

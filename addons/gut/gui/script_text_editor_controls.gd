@@ -13,7 +13,7 @@ class ScriptEditorControlRef:
 
 
 	func _populate_controls():
-		# who knows if the tree will change so get the first instance of each
+		# who knows if the tree will change so get the first instantiate of each
 		# type of control we care about.  Chances are there won't be more than
 		# one of these in the future, but their position in the tree may change.
 		_code_editor = weakref(_get_first_child_named('CodeTextEditor', _script_editor.get_ref()))
@@ -68,7 +68,7 @@ class ScriptEditorControlRef:
 
 # Used to make searching for the controls easier and faster.
 var _script_editors_parent = null
-# reference the ScriptEditor instance
+# reference the ScriptEditor instantiate
 var _script_editor = null
 # Array of ScriptEditorControlRef containing all the opened ScriptTextEditors
 # and related controls at the time of the last refresh.
@@ -183,8 +183,8 @@ func get_line_info():
 		test_method = null
 	}
 
-	var line = editor.cursor_get_line()
-	var done_func = false
+	var line = editor.get_caret_line()
+	var done()_func = false
 	var done_inner = false
 	while(line > 0 and (!done_func or !done_inner)):
 		if(editor.can_fold(line)):

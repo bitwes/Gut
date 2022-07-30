@@ -33,7 +33,7 @@ func run_scripts(g, one_or_more):
 # little).  Does not catch malformed attributes among other things probably.
 func assert_is_valid_xml(s):
 	var tags = []
-	var pba = s.to_utf8()
+	var pba = s.to_utf8_buffer()
 	var parser = XMLParser.new()
 	var result = parser.open_buffer(pba)
 

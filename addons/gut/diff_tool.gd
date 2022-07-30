@@ -57,7 +57,7 @@ func _invalidate():
 	differences = null
 
 
-func _init(v1, v2, diff_type=DEEP):
+func _init(v1,v2,diff_type=DEEP):
 	_value_1 = v1
 	_value_2 = v2
 	_diff_type = diff_type
@@ -113,7 +113,7 @@ func _diff_dictionary(d1, d2):
 		if(!d2.has(key)):
 			differences[key] = _compare.simple(d1[key], _compare.MISSING, 'key')
 		else:
-			d2_keys.remove(d2_keys.find(key))
+			d2_keys.remove_at(d2_keys.find(key))
 
 			var result = null
 			if(_diff_type == DEEP):

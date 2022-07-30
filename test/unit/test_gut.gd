@@ -394,16 +394,16 @@ func test_when_script_has_const_that_starts_with_Test_it_ignores_it():
 func test_after_running_script_everything_checks_out():
 	gr.test_gut.add_script('res://test/samples/test_before_after.gd')
 	gr.test_gut.test_scripts()
-	var instance = gr.test_gut.get_current_script_object()
-	assert_eq(instance.counts.before_all, 1, 'before_all')
-	assert_eq(instance.counts.before_each, 3, 'before_each')
-	assert_eq(instance.counts.after_all, 1, 'after_all')
-	assert_eq(instance.counts.after_each, 3, 'after_each')
+	var instantiate = gr.test_gut.get_current_script_object()
+	assert_eq(instantiate.counts.before_all, 1, 'before_all')
+	assert_eq(instantiate.counts.before_each, 3, 'before_each')
+	assert_eq(instantiate.counts.after_all, 1, 'after_all')
+	assert_eq(instantiate.counts.after_each, 3, 'after_each')
 
-	assert_eq(instance.counts.prerun_setup, 1, 'prerun_setup')
-	assert_eq(instance.counts.setup, 3, 'setup')
-	assert_eq(instance.counts.postrun_teardown, 1, 'postrun_teardown')
-	assert_eq(instance.counts.teardown, 3, 'teardown')
+	assert_eq(instantiate.counts.prerun_setup, 1, 'prerun_setup')
+	assert_eq(instantiate.counts.setup, 3, 'setup')
+	assert_eq(instantiate.counts.postrun_teardown, 1, 'postrun_teardown')
+	assert_eq(instantiate.counts.teardown, 3, 'teardown')
 
 func test_when_inner_class_skipped_none_of_the_before_after_are_called():
 	gut.p('these tests sometimes fail.  Will have to add inner class names to test objects to make sure it passes.  GUT no longer guarantees the order in which the inner test classes are run so sometimes it works and sometimes it doesnt.')
@@ -477,7 +477,7 @@ func test_post_hook_is_run_after_tests():
 	gr.test_gut.set_post_run_script('res://test/resources/post_run_script.gd')
 	gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 	gr.test_gut.test_scripts()
-	yield(yield_for(1), YIELD)
+	await yield_for(1).YIELD
 	assert_is(gr.test_gut._post_run_script_instance, PostRunScript, 'Instance is set')
 	assert_true(gr.test_gut._post_run_script_instance.run_called, 'run was called')
 
@@ -535,7 +535,7 @@ func test_parameterized_test_that_yield_are_called_correctly():
 	gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 	gr.test_gut.set_unit_test_name('test_three_values_and_a_yield')
 	gr.test_gut.test_scripts()
-	yield(yield_to(gr.test_gut, 'test_finished', 10), YIELD)
+	await yield_to(gr.test_gut, 'test_finished', 10).YIELD
 	assert_eq(gr.test_gut.get_pass_count(), 3)
 
 func test_parameterized_test_calls_before_each_before_each_test():

@@ -50,28 +50,28 @@ class TestYieldInBeforeAfterMethods:
 
 	func test_gut_waits_for_yield_in_before_all():
 		_run_tests(SCRIPT_PATH, 'TestYieldInBeforeAll', null)
-		yield(yield_to(_gut, 'tests_finished', 10), YIELD)
+		await yield_to(_gut, 'tests_finished', 10).YIELD
 		_assert_pass_fail_count(1, 0)
 
 	func test_gut_waits_for_yield_in_after_all():
 		_run_tests(SCRIPT_PATH, 'TestYieldInAfterAll', null)
-		yield(yield_to(_gut, 'tests_finished', 10), YIELD)
+		await yield_to(_gut, 'tests_finished', 10).YIELD
 		var test_script = _get_inner_class_script_instance('TestYieldInAfterAll')
 		assert_eq(test_script.after_all_value, 'set')
 
 	func test_gut_waits_for_yield_in_after_each():
 		_run_tests(SCRIPT_PATH, 'TestYieldInAfterEach', null)
-		yield(yield_to(_gut, 'tests_finished', 10), YIELD)
+		await yield_to(_gut, 'tests_finished', 10).YIELD
 		_assert_pass_fail_count(1, 1)
 
 	func test_gut_waits_for_yield_in_before_each():
 		_run_tests(SCRIPT_PATH, 'TestYieldInBeforeEach', null)
-		yield(yield_to(_gut, 'tests_finished', 10), YIELD)
+		await yield_to(_gut, 'tests_finished', 10).YIELD
 		_assert_pass_fail_count(1, 0)
 
 	# func test_all_with_non_gut_yield_methods():
 	# 	_run_tests(SCRIPT_PATH, 'TestYieldsThatDoNotUseGutYieldMethods', null)
-	# 	yield(yield_to(_gut, 'tests_finished', 10), YIELD)
+	# 	await yield_to(_gut, 'tests_finished', 10).YIELD
 	# 	var test_script = _get_inner_class_script_instance('TestYieldsThatDoNotUseGutYieldMethods')
 	# 	assert_eq(test_script.before_all_value, 'set', 'before_all_value')
 	# 	assert_eq(test_script.before_each_value, 'set', 'before_each_value')
@@ -94,25 +94,25 @@ class TestOutputWhenRunDirectly:
 
 		_timer.start()
 		gut.p('before_all yield')
-		yield(_timer, 'timeout')
+		await _timer.timeout
 		before_all_value = 'set'
 
 	func before_each():
 		_timer.start()
 		gut.p('before_each yield')
-		yield(_timer, 'timeout')
+		await _timer.timeout
 		before_each_value = 'set'
 
 	func after_each():
 		_timer.start()
 		gut.p('after_each yield')
-		yield(_timer, 'timeout')
+		await _timer.timeout
 		after_each_value = 'set'
 
 	func after_all():
 		_timer.start()
 		gut.p('after_all yield')
-		yield(_timer, 'timeout')
+		await _timer.timeout
 		# must be queued free b/c after yield _timer is still emitting
 		# the timeout signal.  This results in a false positive message
 		# indicating there are still children in the test.
@@ -123,6 +123,6 @@ class TestOutputWhenRunDirectly:
 		assert_eq(before_each_value, 'set', 'before each value')
 		_timer.start()
 		gut.p('test_one yield')
-		yield(_timer, 'timeout')
+		await _timer.timeout
 
 

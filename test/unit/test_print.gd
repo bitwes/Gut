@@ -69,7 +69,7 @@ func test_show_info():
 
 func test_yield():
 	gut.p('starting yield')
-	yield(yield_for(2), YIELD)
+	await yield_for(2).YIELD
 	gut.p('end yield')
 
 

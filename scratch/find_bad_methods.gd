@@ -64,7 +64,7 @@ func remove_methods_from_blacklist_one_by_one(obj, path):
 	for _i in range(doubler._blacklist.size()):
 
 		var removed = doubler._blacklist[0]
-		doubler._blacklist.remove(0)
+		doubler._blacklist.remove_at(0)
 		if(!_local_black_list.has(removed)):
 			print(removed)
 			var inst = doubler.double(path)
@@ -77,7 +77,7 @@ func remove_methods_from_blacklist_one_by_one(obj, path):
 
 	doubler.clear_output_directory()
 
-# given a path it will create a double of it and then create an instance of the
+# given a path it will create a double of it and then create an instantiate of the
 # doubled object checking for nulls along the way.  Thi is what I used to test
 # the black lists for various objects.
 func double_and_instance_it(path):
@@ -104,5 +104,5 @@ func _init():
 
 	remove_methods_from_blacklist_one_by_one(DoubleExtendsNode2d.new(), DOUBLE_EXTENDS_NODE2D)
 	inst = double_and_instance_it(DOUBLE_EXTENDS_NODE2D)
-	n.print_stray_nodes()
+	n.print_orphan_nodes()
 	quit()

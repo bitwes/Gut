@@ -1,6 +1,6 @@
-extends WindowDialog
+extends Window
 
-onready var rtl = $TextDisplay/RichTextLabel
+@onready var rtl = $TextDisplay/RichTextLabel
 var _has_opened_file = false
 
 func _get_file_as_text(path):

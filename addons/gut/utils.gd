@@ -34,7 +34,7 @@
 extends Node
 
 # ------------------------------------------------------------------------------
-# The instance name as a function since you can't have static variables.
+# The instantiate name as a function since you can't have static variables.
 # ------------------------------------------------------------------------------
 static func INSTANCE_NAME():
 	return '__GutUtilsInstName__'
@@ -53,7 +53,7 @@ static func get_root_node():
 		return null
 
 # ------------------------------------------------------------------------------
-# Get the ONE instance of utils
+# Get the ONE instantiate of utils
 # ------------------------------------------------------------------------------
 static func get_instance():
 	var the_root = get_root_node()
@@ -131,7 +131,7 @@ func _http_request_latest_version() -> void:
 	var http_request = HTTPRequest.new()
 	http_request.name = "http_request"
 	add_child(http_request)
-	http_request.connect("request_completed", self, "_on_http_request_latest_version_completed")
+	http_request.connect("request_completed",Callable(self,"_on_http_request_latest_version_completed"))
 	# Perform a GET request. The URL below returns JSON as of writing.
 	var error = http_request.request("https://api.github.com/repos/bitwes/Gut/releases/latest")
 
@@ -139,7 +139,9 @@ func _on_http_request_latest_version_completed(result, response_code, headers, b
 	if not result == HTTPRequest.RESULT_SUCCESS:
 		return
 
-	var response = parse_json(body.get_string_from_utf8())
+	var test_json_conv = JSON.new()
+	test_json_conv.parse(body.get_string_from_utf8())
+	var response = test_json_conv.get_data()
 	# Will print the user agent string used by the HTTPRequest node (as recognized by httpbin.org).
 	if response:
 		if response.get("html_url"):
@@ -176,7 +178,7 @@ func get_version_text():
 # Returns a nice string for erroring out when we have a bad Godot version.
 # ------------------------------------------------------------------------------
 func get_bad_version_text():
-	var ver = PoolStringArray(req_godot).join('.')
+	var ver = '.'.join(PackedStringArray(req_godot))
 	var info = Engine.get_version_info()
 	var gd_version = str(info.major, '.', info.minor, '.', info.patch)
 	return 'GUT ' + version + ' requires Godot ' + ver + ' or greater.  Godot version is ' + gd_version
@@ -258,10 +260,10 @@ func is_double(obj):
 
 
 # ------------------------------------------------------------------------------
-# Checks if the passed in is an instance of a class
+# Checks if the passed in is an instantiate of a class
 # ------------------------------------------------------------------------------
 func is_instance(obj):
-	return typeof(obj) == TYPE_OBJECT and !obj.has_method('new') and !obj.has_method('instance')
+	return typeof(obj) == TYPE_OBJECT and !obj.has_method('new') and !obj.has_method('instantiate')
 
 # ------------------------------------------------------------------------------
 # Checks if the passed in is a GDScript
@@ -314,7 +316,7 @@ func get_native_class_name(thing):
 	if(is_native_class(thing)):
 		var newone = thing.new()
 		to_return = newone.get_class()
-		if(!newone is Reference):
+		if(!newone is RefCounted):
 			newone.free()
 	return to_return
 

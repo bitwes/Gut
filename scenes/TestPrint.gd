@@ -13,7 +13,7 @@ func after_all():
 
 func _on_Gut_gut_ready():
 	yield_timer.wait_time = .5
-	yield_timer.connect('timeout', self, 'on_yield_timer_timeout')
+	yield_timer.connect('timeout',Callable(self,'on_yield_timer_timeout'))
 	yield_timer.one_shot = false
 	add_child(yield_timer)
 
@@ -44,7 +44,7 @@ func _run_print_routines():
 	_lgr.set_indent_string('    ')
 
 func _print_some_things():
-	_lgr.log('Hello World')
+	_lgr.log('Hello World3D')
 	_lgr.passed('This passed')
 	_lgr.failed('This failed')
 	_lgr.info('infoing')

@@ -1,1 +1,1 @@
-extends WindowDialog
+extends Window

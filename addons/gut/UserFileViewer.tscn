@@ -2,12 +2,12 @@
 
 [ext_resource path="res://addons/gut/UserFileViewer.gd" type="Script" id=1]
 
-[node name="UserFileViewer" type="WindowDialog"]
-margin_top = 20.0
-margin_right = 800.0
-margin_bottom = 450.0
+[node name="UserFileViewer" type="Window"]
+offset_top = 20.0
+offset_right = 800.0
+offset_bottom = 450.0
 rect_min_size = Vector2( 800, 180 )
-popup_exclusive = true
+exclusive = true
 window_title = "View  File"
 resizable = true
 script = ExtResource( 1 )
@@ -16,11 +16,11 @@ __meta__ = {
 }
 
 [node name="FileDialog" type="FileDialog" parent="."]
-margin_right = 416.0
-margin_bottom = 184.0
+offset_right = 416.0
+offset_bottom = 184.0
 rect_min_size = Vector2( 400, 140 )
 rect_scale = Vector2( 2, 2 )
-popup_exclusive = true
+exclusive = true
 window_title = "Open a File"
 resizable = true
 mode = 0
@@ -35,9 +35,9 @@ __meta__ = {
 [node name="TextDisplay" type="ColorRect" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 8.0
-margin_right = -10.0
-margin_bottom = -65.0
+offset_left = 8.0
+offset_right = -10.0
+offset_bottom = -65.0
 color = Color( 0.2, 0.188235, 0.188235, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -62,10 +62,10 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -158.0
-margin_top = -50.0
-margin_right = -84.0
-margin_bottom = -30.0
+offset_left = -158.0
+offset_top = -50.0
+offset_right = -84.0
+offset_bottom = -30.0
 rect_scale = Vector2( 2, 2 )
 text = "Open File"
 
@@ -74,10 +74,10 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -478.0
-margin_top = -50.0
-margin_right = -404.0
-margin_bottom = -30.0
+offset_left = -478.0
+offset_top = -50.0
+offset_right = -404.0
+offset_bottom = -30.0
 rect_scale = Vector2( 2, 2 )
 text = "Home"
 __meta__ = {
@@ -87,10 +87,10 @@ __meta__ = {
 [node name="Copy" type="Button" parent="."]
 anchor_top = 1.0
 anchor_bottom = 1.0
-margin_left = 160.0
-margin_top = -50.0
-margin_right = 234.0
-margin_bottom = -30.0
+offset_left = 160.0
+offset_top = -50.0
+offset_right = 234.0
+offset_bottom = -30.0
 rect_scale = Vector2( 2, 2 )
 text = "Copy"
 __meta__ = {
@@ -102,20 +102,20 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -318.0
-margin_top = -50.0
-margin_right = -244.0
-margin_bottom = -30.0
+offset_left = -318.0
+offset_top = -50.0
+offset_right = -244.0
+offset_bottom = -30.0
 rect_scale = Vector2( 2, 2 )
 text = "End"
 
 [node name="Close" type="Button" parent="."]
 anchor_top = 1.0
 anchor_bottom = 1.0
-margin_left = 10.0
-margin_top = -50.0
-margin_right = 80.0
-margin_bottom = -30.0
+offset_left = 10.0
+offset_top = -50.0
+offset_right = 80.0
+offset_bottom = -30.0
 rect_scale = Vector2( 2, 2 )
 text = "Close"
 

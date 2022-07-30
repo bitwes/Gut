@@ -71,7 +71,7 @@ class InputQueueItem:
 			if(_waited_frames >= frame_delay):
 				emit_signal("event_ready")
 
-	func _init(t_delay, f_delay):
+	func _init(t_delay,f_delay):
 		time_delay = t_delay
 		frame_delay = f_delay
 		_is_ready = time_delay == 0 and frame_delay == 0
@@ -90,7 +90,7 @@ class InputQueueItem:
 		_delay_started = true
 		if(time_delay > 0):
 			var t = _delay_timer(time_delay)
-			t.connect("timeout", self, "_on_time_timeout")
+			t.connect("timeout",Callable(self,"_on_time_timeout"))
 
 # ##############################################################################
 #
@@ -98,7 +98,7 @@ class InputQueueItem:
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var InputFactory = load("res://addons/gut/input_factory.gd")
 
-const INPUT_WARN = 'If using Input as a reciever it will not respond to *_down events until a *_up event is recieved.  Call the appropriate *_up event or use .hold_for(...) to automatically release after some duration.'
+const INPUT_WARN = 'If using Input as a reciever it will not respond to *_down events until a *_up event is recieved.  Call the appropriate *_up event or use super.hold_for(...) to automatically release after some duration.'
 
 var _lgr = _utils.get_logger()
 var _receivers = []
@@ -175,7 +175,7 @@ func _on_queue_item_ready(item):
 
 
 func _add_queue_item(item):
-	item.connect("event_ready", self, "_on_queue_item_ready", [item])
+	item.connect("event_ready",Callable(self,"_on_queue_item_ready"),[item])
 	_next_queue_item = item
 	_input_queue.append(item)
 	Engine.get_main_loop().root.add_child(item)

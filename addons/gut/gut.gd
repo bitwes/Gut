@@ -35,23 +35,71 @@ extends Control
 var _select_script = ''
 var _tests_like = ''
 var _inner_class_name = ''
-var _should_maximize = false setget set_should_maximize, get_should_maximize
-var _log_level = 1 setget set_log_level, get_log_level
-var _disable_strict_datatype_checks = false setget disable_strict_datatype_checks, is_strict_datatype_checks_disabled
+var _should_maximize = false :
+	get:
+		return _should_maximize # TODOConverter40 Copy here content of get_should_maximize
+	set(mod_value):
+		mod_value  # TODOConverter40 Copy here content of set_should_maximize
+var _log_level = 1 :
+	get:
+		return _log_level # TODOConverter40 Copy here content of get_log_level
+	set(mod_value):
+		mod_value  # TODOConverter40 Copy here content of set_log_level
+var _disable_strict_datatype_checks = false :
+	get:
+		return _disable_strict_datatype_checks # TODOConverter40 Copy here content of is_strict_datatype_checks_disabled
+	set(mod_value):
+		mod_value  # TODOConverter40 Copy here content of disable_strict_datatype_checks
 var _test_prefix = 'test_'
 var _file_prefix = 'test_'
 var _file_extension = '.gd'
 var _inner_class_prefix = 'Test'
 var _temp_directory = 'user://gut_temp_directory'
-var _export_path = '' setget set_export_path, get_export_path
-var _include_subdirectories = false setget set_include_subdirectories, get_include_subdirectories
-var _double_strategy = 1  setget set_double_strategy, get_double_strategy
-var _pre_run_script = '' setget set_pre_run_script, get_pre_run_script
-var _post_run_script = '' setget set_post_run_script, get_post_run_script
-var _color_output = false setget set_color_output, get_color_output
-var _junit_xml_file = '' setget set_junit_xml_file, get_junit_xml_file
-var _junit_xml_timestamp = false setget set_junit_xml_timestamp, get_junit_xml_timestamp
-var _add_children_to = self setget set_add_children_to, get_add_children_to
+var _export_path = '' :
+	get:
+		return _export_path # TODOConverter40 Copy here content of get_export_path
+	set(mod_value):
+		mod_value  # TODOConverter40 Copy here content of set_export_path
+var _include_subdirectories = false :
+	get:
+		return _include_subdirectories # TODOConverter40 Copy here content of get_include_subdirectories
+	set(mod_value):
+		mod_value  # TODOConverter40 Copy here content of set_include_subdirectories
+var _double_strategy = 1  :
+	get:
+		return _double_strategy # TODOConverter40 Copy here content of get_double_strategy
+	set(mod_value):
+		mod_value  # TODOConverter40 Copy here content of set_double_strategy
+var _pre_run_script = '' :
+	get:
+		return _pre_run_script # TODOConverter40 Copy here content of get_pre_run_script
+	set(mod_value):
+		mod_value  # TODOConverter40 Copy here content of set_pre_run_script
+var _post_run_script = '' :
+	get:
+		return _post_run_script # TODOConverter40 Copy here content of get_post_run_script
+	set(mod_value):
+		mod_value  # TODOConverter40 Copy here content of set_post_run_script
+var _color_output = false :
+	get:
+		return _color_output # TODOConverter40 Copy here content of get_color_output
+	set(mod_value):
+		mod_value  # TODOConverter40 Copy here content of set_color_output
+var _junit_xml_file = '' :
+	get:
+		return _junit_xml_file # TODOConverter40 Copy here content of get_junit_xml_file
+	set(mod_value):
+		mod_value  # TODOConverter40 Copy here content of set_junit_xml_file
+var _junit_xml_timestamp = false :
+	get:
+		return _junit_xml_timestamp # TODOConverter40 Copy here content of get_junit_xml_timestamp
+	set(mod_value):
+		mod_value  # TODOConverter40 Copy here content of set_junit_xml_timestamp
+var _add_children_to = self :
+	get:
+		return _add_children_to # TODOConverter40 Copy here content of get_add_children_to
+	set(mod_value):
+		mod_value  # TODOConverter40 Copy here content of set_add_children_to
 # -- End Settings --
 
 
@@ -71,7 +119,7 @@ var _strutils = _utils.Strutils.new()
 # Used to prevent multiple messages for deprecated setup/teardown messages
 var _deprecated_tracker = _utils.ThingCounter.new()
 
-# The instance that is created from _pre_run_script.  Accessible from
+# The instantiate that is created from _pre_run_script.  Accessible from
 # get_pre_run_script_instance.
 var _pre_run_script_instance = null
 var _post_run_script_instance = null # This is not used except in tests.
@@ -150,7 +198,7 @@ func _init():
 	_before_all_test_obj.name = 'before_all'
 	_after_all_test_obj.name = 'after_all'
 	# When running tests for GUT itself, _utils has been setup to always return
-	# a new logger so this does not set the gut instance on the base logger
+	# a new logger so this does not set the gut instantiate on the base logger
 	# when creating test instances of GUT.
 	_lgr.set_gut(self)
 
@@ -164,13 +212,13 @@ func _init():
 	_doubler.set_spy(_spy)
 	_doubler.set_gut(self)
 
-	# TODO remove these, universal logger should fix this.
+	# TODO remove_at these, universal logger should fix this.
 	_doubler.set_logger(_lgr)
 	_spy.set_logger(_lgr)
 	_stubber.set_logger(_lgr)
 	_test_collector.set_logger(_lgr)
 
-	_gui = load('res://addons/gut/GutScene.tscn').instance()
+	_gui = load('res://addons/gut/GutScene.tscn').instantiate()
 
 
 func _physics_process(delta):
@@ -205,7 +253,7 @@ func _ready():
 
 	add_child(_yield_timer)
 	_yield_timer.set_one_shot(true)
-	_yield_timer.connect('timeout', self, '_yielding_callback')
+	_yield_timer.connect('timeout',Callable(self,'_yielding_callback'))
 
 	_setup_gui()
 
@@ -264,12 +312,12 @@ func _setup_gui():
 	add_child(_gui)
 	_gui.set_anchor(MARGIN_RIGHT, ANCHOR_END)
 	_gui.set_anchor(MARGIN_BOTTOM, ANCHOR_END)
-	_gui.connect('run_single_script', self, '_on_run_one')
-	_gui.connect('run_script', self, '_on_new_gui_run_script')
-	_gui.connect('end_pause', self, '_on_new_gui_end_pause')
-	_gui.connect('ignore_pause', self, '_on_new_gui_ignore_pause')
-	_gui.connect('log_level_changed', self, '_on_log_level_changed')
-	var _foo = connect('tests_finished', _gui, 'end_run')
+	_gui.connect('run_single_script',Callable(self,'_on_run_one'))
+	_gui.connect('run_script',Callable(self,'_on_new_gui_run_script'))
+	_gui.connect('end_pause',Callable(self,'_on_new_gui_end_pause'))
+	_gui.connect('ignore_pause',Callable(self,'_on_new_gui_ignore_pause'))
+	_gui.connect('log_level_changed',Callable(self,'_on_log_level_changed'))
+	var _foo = connect('tests_finished',Callable(_gui,'end_run'))
 
 func _add_scripts_to_gui():
 	var scripts = []
@@ -412,10 +460,10 @@ func _print_summary():
 func _validate_hook_script(path):
 	var result = {
 		valid = true,
-		instance = null
+		instantiate = null
 	}
 
-	# empty path is valid but will have a null instance
+	# empty path is valid but will have a null instantiate
 	if(path == ''):
 		return result
 
@@ -423,7 +471,7 @@ func _validate_hook_script(path):
 	if(f.file_exists(path)):
 		var inst = load(path).new()
 		if(inst and inst is _utils.HookScript):
-			result.instance = inst
+			result.instantiate = inst
 			result.valid = true
 		else:
 			result.valid = false
@@ -463,9 +511,9 @@ func _init_run():
 	_yield_between.tests_since_last_yield = 0
 
 	var pre_hook_result = _validate_hook_script(_pre_run_script)
-	_pre_run_script_instance = pre_hook_result.instance
+	_pre_run_script_instance = pre_hook_result.instantiate
 	var post_hook_result = _validate_hook_script(_post_run_script)
-	_post_run_script_instance  = post_hook_result.instance
+	_post_run_script_instance  = post_hook_result.instantiate
 
 	valid = pre_hook_result.valid and  post_hook_result.valid
 
@@ -502,7 +550,7 @@ func _end_run():
 	# then move the cursor.  I found this workaround through trial and error.
 	_yield_between.timer.set_wait_time(0.1)
 	_yield_between.timer.start()
-	yield(_yield_between.timer, 'timeout')
+	await _yield_between.timer.timeout
 	_gui.scroll_to_bottom()
 
 	_is_running = false
@@ -548,9 +596,9 @@ func _export_junit_xml():
 # ------------------------------------------------------------------------------
 func _is_function_state(script_result):
 	return script_result != null and \
-		   typeof(script_result) == TYPE_OBJECT and \
-		   script_result is GDScriptFunctionState and \
-		   script_result.is_valid()
+		typeof(script_result) == TYPE_OBJECT and \
+		script_result is GDScriptFunctionState and \
+		script_result.is_valid()
 
 # ------------------------------------------------------------------------------
 # Print out the heading for a new script
@@ -574,7 +622,7 @@ func _print_script_heading(script):
 # ------------------------------------------------------------------------------
 func _should_yield_now():
 	var should = _yield_between.should and \
-				 _yield_between.tests_since_last_yield == _yield_between.after_x_tests
+				_yield_between.tests_since_last_yield == _yield_between.after_x_tests
 	if(should):
 		_yield_between.tests_since_last_yield = 0
 	else:
@@ -607,7 +655,7 @@ func _do_yield_between(frames=2):
 # ------------------------------------------------------------------------------
 func _wait_for_done(result):
 	# callback method sets waiting to false.
-	result.connect(COMPLETED, self, '_on_test_script_yield_completed')
+	result.connect(COMPLETED,Callable(self,'_on_test_script_yield_completed'))
 	if(!_was_yield_method_called):
 		_lgr.yield_msg('-- Yield detected, waiting --')
 
@@ -619,7 +667,7 @@ func _wait_for_done(result):
 	var dots = ''
 
 	while(_waiting):
-		yield(get_tree(), 'idle_frame')
+		await get_tree().idle_frame
 		cycles += 1
 
 		if(cycles >= cycles_per_dot):
@@ -682,7 +730,7 @@ func _run_parameterized_test(test_script, test_name):
 
 	if(_is_function_state(script_result)):
 		# _run_tests does _wait_for_done so just wait on it to  complete
-		yield(script_result, COMPLETED)
+		await script_result.COMPLETED
 
 	if(_parameter_handler == null):
 		_lgr.error(str('Parameterized test ', _current_test.name, ' did not call use_parameters for the default value of the parameter.'))
@@ -693,7 +741,7 @@ func _run_parameterized_test(test_script, test_name):
 			script_result = _run_test(test_script, test_name)
 			if(_is_function_state(script_result)):
 				# _run_tests does _wait_for_done so just wait on it to  complete
-				yield(script_result, COMPLETED)
+				await script_result.COMPLETED
 
 			if(_current_test.assert_count == cur_assert_count and !_current_test.pending):
 				_lgr.warn('Test did not assert')
@@ -703,7 +751,7 @@ func _run_parameterized_test(test_script, test_name):
 
 
 # ------------------------------------------------------------------------------
-# Runs a single test given a test.gd instance and the name of the test to run.
+# Runs a single test given a test.gd instantiate and the name of the test to run.
 # ------------------------------------------------------------------------------
 func _run_test(script_inst, test_name):
 	_lgr.log_test_name()
@@ -714,7 +762,7 @@ func _run_test(script_inst, test_name):
 	_call_deprecated_script_method(script_inst, 'setup', 'before_each')
 	var before_each_result = script_inst.before_each()
 	if(_is_function_state(before_each_result)):
-		yield(_wait_for_done(before_each_result), COMPLETED)
+		await _wait_for_done(before_each_result).COMPLETED
 
 	# When the script yields it will return a GDScriptFunctionState object
 	script_result = script_inst.call(test_name)
@@ -726,13 +774,13 @@ func _run_test(script_inst, test_name):
 	# possible since we only know what the yield was for except when yield_for
 	# and yield_to are used.
 	if(_is_function_state(script_result)):
-		yield(_wait_for_done(script_result), COMPLETED)
+		await _wait_for_done(script_result).COMPLETED
 
 	# if the test called pause_before_teardown then yield until
 	# the continue button is pressed.
 	if(_pause_before_teardown and !_ignore_pause_before_teardown):
 		_gui.pause()
-		yield(_wait_for_continue_button(), SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
+		await _wait_for_continue_button().SIGNAL_STOP_YIELD_BEFORE_TEARDOWN
 
 	script_inst.clear_signal_watcher()
 
@@ -740,7 +788,7 @@ func _run_test(script_inst, test_name):
 	_call_deprecated_script_method(script_inst, 'teardown', 'after_each')
 	var after_each_result = script_inst.after_each()
 	if(_is_function_state(after_each_result)):
-		yield(_wait_for_done(after_each_result), COMPLETED)
+		await _wait_for_done(after_each_result).COMPLETED
 
 	# Free up everything in the _autofree.  Yield for a bit if we
 	# have anything with a queue_free so that they have time to
@@ -748,7 +796,7 @@ func _run_test(script_inst, test_name):
 	var aqf_count = _autofree.get_queue_free_count()
 	_autofree.free_all()
 	if(aqf_count > 0):
-		yield(_do_yield_between(), 'timeout')
+		await _do_yield_between().timeout
 
 	test_summary.orphans = _orphan_counter.get_counter('test')
 	if(_log_level > 0):
@@ -774,7 +822,7 @@ func _call_before_all(test_script):
 
 	var result = test_script.before_all()
 	if(_is_function_state(result)):
-		yield(_wait_for_done(result), COMPLETED)
+		await _wait_for_done(result).COMPLETED
 
 	_lgr.dec_indent()
 	_current_test = null
@@ -797,7 +845,7 @@ func _call_after_all(test_script):
 
 	var result = test_script.after_all()
 	if(_is_function_state(result)):
-		yield(_wait_for_done(result), COMPLETED)
+		await _wait_for_done(result).COMPLETED
 
 
 	_lgr.dec_indent()
@@ -854,7 +902,7 @@ func _test_the_scripts(indexes=[]):
 
 		# yield between test scripts so things paint
 		if(_yield_between.should):
-			yield(_do_yield_between(), 'timeout')
+			await _do_yield_between().timeout
 
 		# !!!
 		# Hack so there isn't another indent to this monster of a method.  if
@@ -867,7 +915,7 @@ func _test_the_scripts(indexes=[]):
 			var before_all_result = _call_before_all(test_script)
 			if(_is_function_state(before_all_result)):
 				# _call_before_all calls _wait for done, just wait for that to finish
-				yield(before_all_result, COMPLETED)
+				await before_all_result.COMPLETED
 
 
 		_gui.set_progress_test_max(the_script.tests.size()) # New way
@@ -885,7 +933,7 @@ func _test_the_scripts(indexes=[]):
 
 				# yield so things paint
 				if(_should_yield_now()):
-					yield(_do_yield_between(), 'timeout')
+					await _do_yield_between().timeout
 
 				if(_current_test.arg_count > 1):
 					_lgr.error(str('Parameterized test ', _current_test.name,
@@ -897,7 +945,7 @@ func _test_the_scripts(indexes=[]):
 
 				if(_is_function_state(script_result)):
 					# _run_test calls _wait for done, just wait for that to finish
-					yield(script_result, COMPLETED)
+					await script_result.COMPLETED
 
 				if(!_current_test.did_assert()):
 					_lgr.warn('Test did not assert')
@@ -917,14 +965,14 @@ func _test_the_scripts(indexes=[]):
 			var after_all_result = _call_after_all(test_script)
 			if(_is_function_state(after_all_result)):
 				# _call_after_all calls _wait for done, just wait for that to finish
-				yield(after_all_result, COMPLETED)
+				await after_all_result.COMPLETED
 
 
 		_log_test_children_warning(test_script)
 		# This might end up being very resource intensive if the scripts
 		# don't clean up after themselves.  Might have to consolidate output
 		# into some other structure and kill the script objects with
-		# test_script.free() instead of remove child.
+		# test_script.free() instead of remove_at child.
 		_add_children_to.remove_child(test_script)
 
 		_lgr.set_indent_level(0)
@@ -1011,7 +1059,7 @@ func _get_files(path, prefix, suffix):
 	var d = Directory.new()
 	d.open(path)
 	# true parameter tells list_dir_begin not to include "." and ".." directories.
-	d.list_dir_begin(true)
+	d.list_dir_begin() # TODOGODOT4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 
 	# Traversing a directory is kinda odd.  You have to start the process of listing
 	# the contents of a directory with list_dir_begin then use get_next until it
@@ -1226,7 +1274,7 @@ func is_strict_datatype_checks_disabled():
 # you want to watch a test play out onscreen or inspect results.
 # ------------------------------------------------------------------------------
 func end_yielded_test():
-	_lgr.deprecated('end_yielded_test is no longer necessary, you can remove it.')
+	_lgr.deprecated('end_yielded_test is no longer necessary, you can remove_at it.')
 
 # ------------------------------------------------------------------------------
 # Clears the text of the text box.  This resets all counters.
@@ -1313,7 +1361,7 @@ func pause_before_teardown():
 
 # ------------------------------------------------------------------------------
 # For batch processing purposes, you may want to ignore any calls to
-# pause_before_teardown that you forgot to remove.
+# pause_before_teardown that you forgot to remove_at.
 # ------------------------------------------------------------------------------
 func set_ignore_pause_before_teardown(should_ignore):
 	_ignore_pause_before_teardown = should_ignore
@@ -1357,7 +1405,7 @@ func simulate(obj, times, delta):
 # used in a call to yield...cutting down on lines of code.
 #
 # Example, yield to the Gut object for 10 seconds:
-#  yield(gut.set_yield_time(10), 'timeout')
+#  await gut.set_yield_time(10).timeout
 # ------------------------------------------------------------------------------
 func set_yield_time(time, text=''):
 	_yield_timer.set_wait_time(time)
@@ -1395,7 +1443,7 @@ func set_yield_frames(frames, text=''):
 # number of seconds, whichever comes first.
 # ------------------------------------------------------------------------------
 func set_yield_signal_or_time(obj, signal_name, max_wait, text=''):
-	obj.connect(signal_name, self, '_yielding_callback', [true])
+	obj.connect(signal_name,Callable(self,'_yielding_callback'),[true])
 	_yielding_to.obj = obj
 	_yielding_to.signal_name = signal_name
 
@@ -1432,7 +1480,7 @@ func file_delete(path):
 	var d = Directory.new()
 	var result = d.open(path.get_base_dir())
 	if(result == OK):
-		d.remove(path)
+		d.remove_at(path)
 
 # ------------------------------------------------------------------------------
 # Checks to see if the passed in file has any data in it.
@@ -1440,7 +1488,7 @@ func file_delete(path):
 func is_file_empty(path):
 	var f = File.new()
 	f.open(path, f.READ)
-	var empty = f.get_len() == 0
+	var empty = f.get_length() == 0
 	f.close()
 	return empty
 
@@ -1463,14 +1511,14 @@ func directory_delete_files(path):
 	# Traversing a directory is kinda odd.  You have to start the process of listing
 	# the contents of a directory with list_dir_begin then use get_next until it
 	# returns an empty string.  Then I guess you should end it.
-	d.list_dir_begin()
+	d.list_dir_begin() # TODOGODOT4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 	var thing = d.get_next() # could be a dir or a file or something else maybe?
 	var full_path = ''
 	while(thing != ''):
 		full_path = path + "/" + thing
 		#file_exists returns fasle for directories
 		if(d.file_exists(full_path)):
-			d.remove(full_path)
+			d.remove_at(full_path)
 		thing = d.get_next()
 	d.list_dir_end()
 

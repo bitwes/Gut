@@ -27,87 +27,87 @@
 #
 # ##############################################################################
 # This is the control that is added via the editor.  It exposes GUT settings
-# through the editor and delays the creation of the GUT instance until
+# through the editor and delays the creation of the GUT instantiate until
 # Engine.get_main_loop() works as expected.
 # ##############################################################################
-tool
+@tool
 extends Control
 
 # ------------------------------------------------------------------------------
 # GUT Settings
 # ------------------------------------------------------------------------------
-export(String, 'AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default') var _font_name = 'AnonymousPro'
-export(int) var _font_size = 20
-export(Color) var _font_color = Color(.8, .8, .8, 1)
-export(Color) var _background_color = Color(.15, .15, .15, 1)
+@export var _font_name = 'AnonymousPro' # (String, 'AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default')
+@export var _font_size: int = 20
+@export var _font_color: Color = Color(.8, .8, .8, 1)
+@export var _background_color: Color = Color(.15, .15, .15, 1)
 # Enable/Disable coloring of output.
-export(bool) var _color_output = true
+@export var _color_output: bool = true
 # The full/partial name of a script to select upon startup
-export(String) var _select_script = ''
+@export var _select_script: String = ''
 # The full/partial name of a test.  All tests that contain the string will be
 # run
-export(String) var _tests_like = ''
+@export var _tests_like: String = ''
 # The full/partial name of an Inner Class to be run.  All Inner Classes that
 # contain the string will be run.
-export(String) var _inner_class_name = ''
+@export var _inner_class_name: String = ''
 # Start running tests when the scene finishes loading
-export var _run_on_load = false
+@export var _run_on_load = false
 # Maximize the GUT control on startup
-export var _should_maximize = false
+@export var _should_maximize = false
 # Print output to the consol as well
-export var _should_print_to_console = true
+@export var _should_print_to_console = true
 # Display orphan counts at the end of tests/scripts.
-export var _show_orphans = true
+@export var _show_orphans = true
 # The log level.
-export(int, 'Fail/Errors', 'Errors/Warnings/Test Names', 'Everything') var _log_level = 1
+@export var _log_level = 1 # (int, 'Fail/Errors', 'Errors/Warnings/Test Names', 'Everything')
 # When enabled GUT will yield between tests to give the GUI time to paint.
 # Disabling this can make the program appear to hang and can have some
 # unwanted consequences with the timing of freeing objects
-export var _yield_between_tests = true
+@export var _yield_between_tests = true
 # When GUT compares values it first checks the types to prevent runtime errors.
 # This behavior can be disabled if desired.  This flag was added early in
 # development to prevent any breaking changes and will likely be removed in
 # the future.
-export var _disable_strict_datatype_checks = false
+@export var _disable_strict_datatype_checks = false
 # The prefix used to find test methods.
-export var _test_prefix = 'test_'
+@export var _test_prefix = 'test_'
 # The prefix used to find test scripts.
-export var _file_prefix = 'test_'
+@export var _file_prefix = 'test_'
 # The file extension for test scripts (I don't think you can change this and
 # everythign work).
-export var _file_extension = '.gd'
+@export var _file_extension = '.gd'
 # The prefix used to find Inner Test Classes.
-export var _inner_class_prefix = 'Test'
+@export var _inner_class_prefix = 'Test'
 # The directory GUT will use to write any temporary files.  This isn't used
 # much anymore since there was a change to the double creation implementation.
 # This will be removed in a later release.
-export(String) var _temp_directory = 'user://gut_temp_directory'
+@export var _temp_directory: String = 'user://gut_temp_directory'
 # The path and filename for exported test information.
-export(String) var _export_path = ''
+@export var _export_path: String = ''
 # When enabled, any directory added will also include its subdirectories when
 # GUT looks for test scripts.
-export var _include_subdirectories = false
+@export var _include_subdirectories = false
 # Allow user to add test directories via editor.  This is done with strings
 # instead of an array because the interface for editing arrays is really
 # cumbersome and complicates testing because arrays set through the editor
 # apply to ALL instances.  This also allows the user to use the built in
 # dialog to pick a directory.
-export(String, DIR) var _directory1 = ''
-export(String, DIR) var _directory2 = ''
-export(String, DIR) var _directory3 = ''
-export(String, DIR) var _directory4 = ''
-export(String, DIR) var _directory5 = ''
-export(String, DIR) var _directory6 = ''
+@export var _directory1 = '' # (String, DIR)
+@export var _directory2 = '' # (String, DIR)
+@export var _directory3 = '' # (String, DIR)
+@export var _directory4 = '' # (String, DIR)
+@export var _directory5 = '' # (String, DIR)
+@export var _directory6 = '' # (String, DIR)
 # Must match the types in _utils for double strategy
-export(int, 'FULL', 'PARTIAL') var _double_strategy = 1
-# Path and filename to the script to run before all tests are run.
-export(String, FILE) var _pre_run_script = ''
-# Path and filename to the script to run after all tests are run.
-export(String, FILE) var _post_run_script = ''
-# Path to the file that gut will export results to in the junit xml format
-export(String, FILE) var _junit_xml_file = ''
+@export var _double_strategy = 1 # (int, 'FULL', 'PARTIAL')
+# Path3D and filename to the script to run before all tests are run.
+@export var _pre_run_script = '' # (String, FILE)
+# Path3D and filename to the script to run after all tests are run.
+@export var _post_run_script = '' # (String, FILE)
+# Path3D to the file that gut will export results to in the junit xml format
+@export var _junit_xml_file = '' # (String, FILE)
 # Flag to include a timestamp in the filename of _junit_xml_file
-export(bool) var _junit_xml_timestamp = false
+@export var _junit_xml_timestamp: bool = false
 # ------------------------------------------------------------------------------
 
 
@@ -138,13 +138,13 @@ func _ready():
 	# Engine.get_main_loop() is populated and the psuedo singleton utils.gd
 	# can be setup correctly.
 	if(Engine.editor_hint):
-		_placeholder = load('res://addons/gut/GutScene.tscn').instance()
+		_placeholder = load('res://addons/gut/GutScene.tscn').instantiate()
 		call_deferred('add_child', _placeholder)
 		_placeholder.rect_size = rect_size
 	else:
 		call_deferred('_setup_gut')
 
-	connect('resized', self,  '_on_resized')
+	connect('resized',Callable(self,'_on_resized'))
 
 func _on_resized():
 	if(_placeholder != null):
@@ -172,7 +172,7 @@ func _setup_gut():
 
 	_lgr = _utils.get_logger()
 	_gut = load('res://addons/gut/gut.gd').new()
-	_gut.connect('tests_finished', self, '_on_tests_finished')
+	_gut.connect('tests_finished',Callable(self,'_on_tests_finished'))
 
 	if(!_check_for_templates()):
 		return
