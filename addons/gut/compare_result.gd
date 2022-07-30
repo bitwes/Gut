@@ -1,6 +1,6 @@
-var are_equal = null :
+var are_equal_member = null :
 	get:
-		return are_equal # TODOConverter40 Copy here content of get_are_equal
+		return are_equal_member # TODOConverter40 Copy here content of get_are_equal
 	set(mod_value):
 		mod_value  # TODOConverter40 Copy here content of set_are_equal
 var summary = null :
@@ -26,10 +26,10 @@ func _to_string():
 	return str(get_summary()) # could be null, gotta str it.
 
 func get_are_equal():
-	return are_equal
+	return are_equal_member
 
 func set_are_equal(r_eq):
-	are_equal = r_eq
+	are_equal_member = r_eq
 
 func get_summary():
 	return summary

@@ -55,14 +55,14 @@ static func _to_scancode(which):
 
 
 static func new_mouse_button_event(position, global_position, pressed, button_index):
-    var event = InputEventMouseButton.new()
-    event.position = position
-    if(global_position != null):
-        event.global_position = global_position
-    event.pressed = pressed
-    event.button_index = button_index
+	var event = InputEventMouseButton.new()
+	event.position = position
+	if(global_position != null):
+		event.global_position = global_position
+	event.pressed = pressed
+	event.button_index = button_index
 
-    return event
+	return event
 
 
 static func key_up(which):

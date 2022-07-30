@@ -551,8 +551,8 @@ func assert_get_set_methods(obj, property, default, set_to):
 # ------------------------------------------------------------------------------
 func assert_accessors(obj, property, default, set_to):
 	var fail_count = _summary.failed
-	var get()_func = 'get_' + property
-	var set()_func = 'set_' + property
+	var get_func = 'get_' + property
+	var set_func = 'set_' + property
 
 	if(obj.has_method('is_' + property)):
 		get_func = 'is_' + property

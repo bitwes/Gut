@@ -53,6 +53,7 @@ var default_panel_options = {
 }
 
 var options = default_options.duplicate()
+var json = JSON.new()
 
 
 func _null_copy(h):
@@ -109,7 +110,7 @@ func _load_dict_into(source, dest):
 
 
 func write_options(path):
-	var content = JSON.print(options, ' ')
+	var content = json.print(options, ' ')
 
 	var f = File.new()
 	var result = f.open(path, f.WRITE)

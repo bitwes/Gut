@@ -33,9 +33,9 @@ class Test:
 # This class also facilitates all the exporting and importing of tests.
 # ------------------------------------------------------------------------------
 class TestScript:
-	var inner_class_name = null
+	var inner_class_name:StringName = null
 	var tests = []
-	var path = null
+	var path:String = null
 	var _utils = null
 	var _lgr = null
 
@@ -70,13 +70,13 @@ class TestScript:
 	func get_filename_and_inner():
 		var to_return = get_filename()
 		if(inner_class_name != null):
-			to_return += '.' + inner_class_name
+			to_return += '.' + String(inner_class_name)
 		return to_return
 
 	func get_full_name():
 		var to_return = path
 		if(inner_class_name != null):
-			to_return += '.' + inner_class_name
+			to_return += '.' + String(inner_class_name)
 		return to_return
 
 	func get_filename():

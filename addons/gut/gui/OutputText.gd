@@ -2,8 +2,8 @@ extends VBoxContainer
 @tool
 
 class SearchResults:
-	const L = TextEdit.SEARCH_RESULT_LINE
-	const C = TextEdit.SEARCH_RESULT_COLUMN
+	var L = TextEdit.SEARCH_RESULT_LINE
+	var C = TextEdit.SEARCH_RESULT_COLUMN
 
 	var positions = []
 	var te = null
@@ -106,9 +106,9 @@ func _test_running_setup():
 
 func _ready():
 	_sr.te = _ctrls.output
-	_ctrls.use_colors.icon = get_icon('RichTextEffect', 'EditorIcons')
-	_ctrls.show_search.icon = get_icon('Search', 'EditorIcons')
-	_ctrls.word_wrap.icon = get_icon('Loop', 'EditorIcons')
+	_ctrls.use_colors.icon = get_theme_icon('RichTextEffect', 'EditorIcons')
+	_ctrls.show_search.icon = get_theme_icon('Search', 'EditorIcons')
+	_ctrls.word_wrap.icon = get_theme_icon('Loop', 'EditorIcons')
 
 	_setup_colors()
 	if(get_parent() == get_tree().root):

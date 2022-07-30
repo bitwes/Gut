@@ -43,6 +43,8 @@ var Optparse = load('res://addons/gut/optparse.gd')
 var Gut = load('res://addons/gut/gut.gd')
 var GutRunner = load('res://addons/gut/gui/GutRunner.tscn')
 
+var json = JSON.new()
+
 # ------------------------------------------------------------------------------
 # Helper class to resolve the various different places where an option can
 # be set.  Using the get_value method will enforce the order of precedence of:
@@ -55,9 +57,9 @@ var GutRunner = load('res://addons/gut/gui/GutRunner.tscn')
 # will punch through null values of higher precedented hashes.
 # ------------------------------------------------------------------------------
 class OptionResolver:
-	var base_opts = null
-	var cmd_opts = null
-	var config_opts = null
+	var base_opts:Dictionary = null
+	var cmd_opts:Dictionary = null
+	var config_opts:Dictionary = null
 
 
 	func get_value(key):
@@ -217,13 +219,13 @@ option (option priority:  command-line, super.gutconfig, default)."""
 	resolved.erase("show_help")
 
 	print("Here's a config with all the properties set based off of your current command and config.")
-	print(JSON.print(resolved, '  '))
+	print(json.print(resolved, '  '))
 
 	for key in resolved:
 		resolved[key] = null
 
 	print("\n\nAnd here's an empty config for you fill in what you want.")
-	print(JSON.print(resolved, ' '))
+	print(json.print(resolved, ' '))
 
 
 # parse options and run Gut

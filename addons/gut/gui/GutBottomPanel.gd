@@ -59,10 +59,10 @@ func _ready():
 
 	_apply_options_to_controls()
 
-	_ctrls.shortcuts_button.icon = get_icon('Shortcut', 'EditorIcons')
-	_ctrls.settings_button.icon = get_icon('Tools', 'EditorIcons')
-	_ctrls.run_results_button.icon = get_icon('AnimationTrackGroup', 'EditorIcons') # Tree
-	_ctrls.output_button.icon = get_icon('Font', 'EditorIcons')
+	_ctrls.shortcuts_button.icon = get_theme_icon('Shortcut', 'EditorIcons')
+	_ctrls.settings_button.icon = get_theme_icon('Tools', 'EditorIcons')
+	_ctrls.run_results_button.icon = get_theme_icon('AnimationTrackGroup', 'EditorIcons') # Tree
+	_ctrls.output_button.icon = get_theme_icon('Font', 'EditorIcons')
 
 	_ctrls.run_results.set_output_control(_ctrls.output_ctrl)
 	_ctrls.run_results.set_font(

@@ -131,7 +131,7 @@ var _placeholder = null
 func _init():
 	# This min size has to be what the min size of the GutScene's min size is
 	# but it has to be set here and not inferred i think.
-	rect_min_size = Vector2(740, 250)
+	size = Vector2(740, 250)
 
 func _ready():
 	# Must call this deferred so that there is enough time for
@@ -140,7 +140,7 @@ func _ready():
 	if(Engine.editor_hint):
 		_placeholder = load('res://addons/gut/GutScene.tscn').instantiate()
 		call_deferred('add_child', _placeholder)
-		_placeholder.rect_size = rect_size
+		_placeholder.size = size
 	else:
 		call_deferred('_setup_gut')
 
@@ -148,7 +148,7 @@ func _ready():
 
 func _on_resized():
 	if(_placeholder != null):
-		_placeholder.rect_size = rect_size
+		_placeholder.size = size
 
 
 # Templates can be missing if tests are exported and the export config for the
@@ -224,7 +224,7 @@ func _setup_gut():
 	_gut.get_gui().set_font(_font_name)
 	_gut.get_gui().set_default_font_color(_font_color)
 	_gut.get_gui().set_background_color(_background_color)
-	_gut.get_gui().rect_size =  rect_size
+	_gut.get_gui().size = size
 	emit_signal('gut_ready')
 
 	if(_run_on_load):

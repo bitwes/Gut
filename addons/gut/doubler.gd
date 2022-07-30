@@ -525,12 +525,12 @@ func _get_inst_id_ref_str(inst):
 	return ref_str
 
 
-func _get_func_text(method_hash, path, super=""):
+func _get_func_text(method_hash, path, super_=""):
 	var override_count = null;
 	if(_stubber != null):
 		override_count = _stubber.get_parameter_count(path, method_hash.name)
 
-	var text = _method_maker.get_function_text(method_hash, path, override_count, super) + "\n"
+	var text = _method_maker.get_function_text(method_hash, path, override_count, super_) + "\n"
 
 	return text
 

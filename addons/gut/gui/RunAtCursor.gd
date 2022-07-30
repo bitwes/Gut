@@ -59,15 +59,6 @@ func _update_buttons(info):
 	_ctrls.btn_method.text = str(info.test_method)
 	_ctrls.btn_method.hint_tooltip = str("Run test ", info.test_method)
 
-	# The button's new size won't take effect until the next frame.
-	# This appears to be what was causing the button to not be clickable the
-	# first time.
-	call_deferred("_update_rect_size")
-
-
-func _update_rect_size():
-	rect_min_size.x = _ctrls.btn_method.rect_size.x + _ctrls.btn_method.rect_position.x
-
 # ----------------
 # Events
 # ----------------

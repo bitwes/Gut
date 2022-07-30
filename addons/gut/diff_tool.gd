@@ -142,7 +142,6 @@ func summarize():
 
 	return summary
 
-
 func are_equal():
 	if(!_valid):
 		return null

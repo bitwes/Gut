@@ -1,91 +1,44 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=6 format=3 uid="uid://cnajq0pryv2u4"]
 
-[ext_resource path="res://addons/gut/GutScene.gd" type="Script" id=1]
-[ext_resource path="res://addons/gut/fonts/AnonymousPro-Italic.ttf" type="FontFile" id=2]
-[ext_resource path="res://addons/gut/fonts/AnonymousPro-Regular.ttf" type="FontFile" id=3]
-[ext_resource path="res://addons/gut/fonts/AnonymousPro-BoldItalic.ttf" type="FontFile" id=4]
-[ext_resource path="res://addons/gut/fonts/AnonymousPro-Bold.ttf" type="FontFile" id=5]
-[ext_resource path="res://addons/gut/UserFileViewer.tscn" type="PackedScene" id=6]
-[ext_resource path="res://addons/gut/gui/GutSceneTheme.tres" type="Theme" id=7]
+[ext_resource type="Script" path="res://addons/gut/GutScene.gd" id="1"]
+[ext_resource type="PackedScene" path="res://addons/gut/UserFileViewer.tscn" id="6"]
+[ext_resource type="Theme" uid="uid://cstkhwkpajvqu" path="res://addons/gut/gui/GutSceneTheme.tres" id="7"]
 
-[sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0.192157, 0.192157, 0.227451, 1 )
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-
-[sub_resource type="StyleBoxFlat" id=2]
-bg_color = Color( 1, 1, 1, 1 )
-border_color = Color( 0, 0, 0, 1 )
+[sub_resource type="StyleBoxFlat" id="2"]
+bg_color = Color(1, 1, 1, 1)
+border_color = Color(0, 0, 0, 1)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
 
-[sub_resource type="Theme" id=3]
+[sub_resource type="Theme" id="3"]
 resource_local_to_scene = true
-Panel/styles/panel = SubResource( 2 )
+Panel/styles/panel = SubResource("2")
 Panel/styles/panelf = null
 Panel/styles/panelnc = null
-
-[sub_resource type="FontFile" id=4]
-font_data = ExtResource( 4 )
-
-[sub_resource type="FontFile" id=5]
-font_data = ExtResource( 2 )
-
-[sub_resource type="FontFile" id=6]
-font_data = ExtResource( 5 )
-
-[sub_resource type="FontFile" id=7]
-font_data = ExtResource( 3 )
-
-[sub_resource type="StyleBoxFlat" id=8]
-bg_color = Color( 0.192157, 0.192157, 0.227451, 1 )
-corner_radius_top_left = 20
-corner_radius_top_right = 20
 
 [node name="Gut" type="Panel"]
 offset_right = 740.0
 offset_bottom = 300.0
-rect_min_size = Vector2( 740, 300 )
-theme = ExtResource( 7 )
-custom_styles/panel = SubResource( 1 )
-script = ExtResource( 1 )
+theme = ExtResource("7")
+script = ExtResource("1")
 
-[node name="UserFileViewer" parent="." instance=ExtResource( 6 )]
-offset_top = 388.0
-offset_bottom = 818.0
+[node name="UserFileViewer" parent="." instance=ExtResource("6")]
 
 [node name="VBox" type="VBoxContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="TitleBar" type="Panel" parent="VBox"]
 offset_right = 740.0
-offset_bottom = 30.0
-rect_min_size = Vector2( 0, 30 )
-theme = SubResource( 3 )
-__meta__ = {
-"_edit_group_": true,
-"_edit_use_anchors_": false
-}
+theme = SubResource("3")
 
 [node name="HBox" type="HBoxContainer" parent="VBox/TitleBar"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Summary" type="Control" parent="VBox/TitleBar/HBox"]
-offset_right = 110.0
-offset_bottom = 30.0
-rect_min_size = Vector2( 110, 0 )
+offset_bottom = 25.0
 mouse_filter = 2
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Passing" type="Label" parent="VBox/TitleBar/HBox/Summary"]
 visible = false
@@ -93,13 +46,7 @@ offset_left = 5.0
 offset_top = 7.0
 offset_right = 45.0
 offset_bottom = 21.0
-custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "0"
-align = 1
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Failing" type="Label" parent="VBox/TitleBar/HBox/Summary"]
 visible = false
@@ -107,125 +54,83 @@ offset_left = 100.0
 offset_top = 7.0
 offset_right = 140.0
 offset_bottom = 21.0
-custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "0"
-align = 1
-valign = 1
 
 [node name="AssertCount" type="Label" parent="VBox/TitleBar/HBox/Summary"]
 offset_left = 5.0
 offset_top = 7.0
 offset_right = 165.0
 offset_bottom = 21.0
-custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Assert count"
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="TitleReplacement" type="CenterContainer" parent="VBox/TitleBar/HBox"]
 visible = false
 offset_left = 114.0
 offset_right = 352.0
 offset_bottom = 30.0
-rect_min_size = Vector2( 5, 0 )
-mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+mouse_filter = 2
 
 [node name="Title" type="Label" parent="VBox/TitleBar/HBox"]
-offset_left = 114.0
-offset_right = 594.0
-offset_bottom = 30.0
+offset_left = 4.0
+offset_right = 623.0
+offset_bottom = 25.0
 size_flags_horizontal = 3
 size_flags_vertical = 7
-custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Gut"
-align = 1
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Time" type="Label" parent="VBox/TitleBar/HBox"]
-offset_left = 598.0
-offset_top = 7.0
-offset_right = 654.0
+offset_left = 627.0
+offset_top = 2.0
+offset_right = 690.0
 offset_bottom = 22.0
-custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "9999.99"
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="CC" type="CenterContainer" parent="VBox/TitleBar/HBox"]
-offset_left = 658.0
-offset_right = 663.0
-offset_bottom = 30.0
-rect_min_size = Vector2( 5, 0 )
+offset_left = 694.0
+offset_right = 694.0
+offset_bottom = 25.0
 mouse_filter = 2
 
 [node name="Minimize" type="Button" parent="VBox/TitleBar/HBox"]
-offset_left = 667.0
-offset_right = 697.0
-offset_bottom = 30.0
-rect_min_size = Vector2( 30, 0 )
-custom_colors/font_color = Color( 0, 0, 0, 1 )
+offset_left = 698.0
+offset_right = 715.0
+offset_bottom = 25.0
 text = "N"
 flat = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Maximize" type="Button" parent="VBox/TitleBar/HBox"]
-offset_left = 701.0
-offset_right = 731.0
-offset_bottom = 30.0
-rect_min_size = Vector2( 30, 0 )
-custom_colors/font_color = Color( 0, 0, 0, 1 )
+offset_left = 719.0
+offset_right = 736.0
+offset_bottom = 25.0
 text = "X"
 flat = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="CC2" type="CenterContainer" parent="VBox/TitleBar/HBox"]
-offset_left = 735.0
+offset_left = 740.0
 offset_right = 740.0
-offset_bottom = 30.0
-rect_min_size = Vector2( 5, 0 )
+offset_bottom = 25.0
 mouse_filter = 2
 
 [node name="TextDisplay" type="ColorRect" parent="VBox"]
-offset_top = 34.0
+offset_top = 4.0
 offset_right = 740.0
-offset_bottom = 176.0
+offset_bottom = 296.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-color = Color( 0, 0, 0, 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+color = Color(0, 0, 0, 1)
 
 [node name="RichTextLabel" type="RichTextLabel" parent="VBox/TextDisplay"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 10.0
-rect_min_size = Vector2( 0, 116 )
-focus_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_fonts/bold_italics_font = SubResource( 4 )
-custom_fonts/italics_font = SubResource( 5 )
-custom_fonts/bold_font = SubResource( 6 )
-custom_fonts/normal_font = SubResource( 7 )
+focus_mode = 2
 bbcode_enabled = true
 scroll_following = true
 selection_enabled = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="WaitingLabel" type="RichTextLabel" parent="VBox/TextDisplay"]
 anchor_top = 1.0
@@ -233,54 +138,40 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = -25.0
 bbcode_enabled = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="BottomPanel" type="ColorRect" parent="VBox"]
-offset_top = 180.0
+offset_top = 300.0
 offset_right = 740.0
 offset_bottom = 300.0
-rect_min_size = Vector2( 0, 120 )
 size_flags_horizontal = 9
 size_flags_vertical = 9
-color = Color( 1, 1, 1, 0 )
+color = Color(1, 1, 1, 0)
 
 [node name="VBox" type="VBoxContainer" parent="VBox/BottomPanel"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="HBox" type="HBoxContainer" parent="VBox/BottomPanel/VBox"]
 offset_right = 740.0
-offset_bottom = 80.0
+offset_bottom = 54.0
 size_flags_horizontal = 3
 
 [node name="CC1" type="CenterContainer" parent="VBox/BottomPanel/VBox/HBox"]
-offset_right = 5.0
-offset_bottom = 80.0
-rect_min_size = Vector2( 5, 0 )
+offset_bottom = 54.0
 
 [node name="Progress" type="VBoxContainer" parent="VBox/BottomPanel/VBox/HBox"]
-offset_left = 9.0
-offset_right = 179.0
-offset_bottom = 80.0
-rect_min_size = Vector2( 170, 0 )
+offset_left = 4.0
+offset_right = 8.0
+offset_bottom = 54.0
 alignment = 1
 
 [node name="TestProgress" type="ProgressBar" parent="VBox/BottomPanel/VBox/HBox/Progress"]
-offset_top = 11.0
-offset_right = 100.0
-offset_bottom = 36.0
-rect_min_size = Vector2( 100, 25 )
-hint_tooltip = "Test progress for the current script."
+offset_top = 2.0
+offset_right = 4.0
+offset_bottom = 23.0
 size_flags_horizontal = 0
+hint_tooltip = "Test progress for the current script."
 step = 1.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Label" type="Label" parent="VBox/BottomPanel/VBox/HBox/Progress/TestProgress"]
 offset_left = 107.5
@@ -288,33 +179,20 @@ offset_top = 3.0
 offset_right = 172.5
 offset_bottom = 18.0
 text = "Tests"
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="xy" type="Label" parent="VBox/BottomPanel/VBox/HBox/Progress/TestProgress"]
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 text = "0/0"
-align = 1
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="ScriptProgress" type="ProgressBar" parent="VBox/BottomPanel/VBox/HBox/Progress"]
-offset_top = 40.0
-offset_right = 100.0
-offset_bottom = 65.0
-rect_min_size = Vector2( 100, 25 )
-hint_tooltip = "Overall progress of executing tests."
+offset_top = 27.0
+offset_right = 4.0
+offset_bottom = 48.0
 size_flags_horizontal = 0
+hint_tooltip = "Overall progress of executing tests."
 step = 1.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Label" type="Label" parent="VBox/BottomPanel/VBox/HBox/Progress/ScriptProgress"]
 offset_left = 107.0
@@ -322,190 +200,140 @@ offset_top = 3.5
 offset_right = 172.0
 offset_bottom = 18.5
 text = "Scripts"
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="xy" type="Label" parent="VBox/BottomPanel/VBox/HBox/Progress/ScriptProgress"]
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 text = "0/0"
-align = 1
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="CenterContainer" type="CenterContainer" parent="VBox/BottomPanel/VBox/HBox/Progress"]
-offset_top = 69.0
-offset_right = 170.0
-offset_bottom = 69.0
+offset_top = 52.0
+offset_right = 4.0
+offset_bottom = 52.0
 
 [node name="CC2" type="CenterContainer" parent="VBox/BottomPanel/VBox/HBox"]
-offset_left = 183.0
-offset_right = 226.0
-offset_bottom = 80.0
-rect_min_size = Vector2( 5, 0 )
+offset_left = 12.0
+offset_right = 328.0
+offset_bottom = 54.0
 size_flags_horizontal = 3
 
 [node name="Node3D" type="Panel" parent="VBox/BottomPanel/VBox/HBox"]
-self_modulate = Color( 1, 1, 1, 0 )
-offset_left = 230.0
-offset_right = 580.0
-offset_bottom = 80.0
-rect_min_size = Vector2( 350, 80 )
-__meta__ = {
-"_edit_group_": true,
-"_edit_use_anchors_": false
-}
+self_modulate = Color(1, 1, 1, 0)
+offset_left = 332.0
+offset_right = 332.0
+offset_bottom = 54.0
 
 [node name="VBox" type="VBoxContainer" parent="VBox/BottomPanel/VBox/HBox/Node3D"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="CurrentScript" type="Button" parent="VBox/BottomPanel/VBox/HBox/Node3D/VBox"]
-offset_right = 350.0
-offset_bottom = 38.0
-hint_tooltip = "Select a script to run.  You can run just this script, or this script and all scripts after using the run buttons."
+offset_right = 134.0
+offset_bottom = 25.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+hint_tooltip = "Select a script to run.  You can run just this script, or this script and all scripts after using the run buttons."
 text = "res://test/unit/test_gut.gd"
 clip_text = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="HBox" type="HBoxContainer" parent="VBox/BottomPanel/VBox/HBox/Node3D/VBox"]
-offset_top = 42.0
-offset_right = 350.0
-offset_bottom = 80.0
+offset_top = 29.0
+offset_right = 134.0
+offset_bottom = 54.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Previous" type="Button" parent="VBox/BottomPanel/VBox/HBox/Node3D/VBox/HBox"]
-offset_right = 84.0
-offset_bottom = 38.0
-hint_tooltip = "Previous script in the list."
+offset_right = 26.0
+offset_bottom = 25.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+hint_tooltip = "Previous script in the list."
 text = "|<"
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Next" type="Button" parent="VBox/BottomPanel/VBox/HBox/Node3D/VBox/HBox"]
-offset_left = 88.0
-offset_right = 173.0
-offset_bottom = 38.0
+offset_left = 30.0
+offset_right = 56.0
+offset_bottom = 25.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 hint_tooltip = "Next script in the list.
 "
-size_flags_horizontal = 3
-size_flags_vertical = 3
 text = ">|"
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Run" type="Button" parent="VBox/BottomPanel/VBox/HBox/Node3D/VBox/HBox"]
-offset_left = 177.0
-offset_right = 261.0
-offset_bottom = 38.0
-hint_tooltip = "Run the currently selected item and all after it."
+offset_left = 60.0
+offset_right = 77.0
+offset_bottom = 25.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+hint_tooltip = "Run the currently selected item and all after it."
 text = ">"
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="RunSingleScript" type="Button" parent="VBox/BottomPanel/VBox/HBox/Node3D/VBox/HBox"]
-offset_left = 265.0
-offset_right = 350.0
-offset_bottom = 38.0
+offset_left = 81.0
+offset_right = 134.0
+offset_bottom = 25.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 hint_tooltip = "Run the currently selected item.
 
 If the selected item has Inner Test Classes
 then they will all be run.  If the selected item
 is an Inner Test Class then only it will be run."
-size_flags_horizontal = 3
-size_flags_vertical = 3
 text = "> (1)"
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="CC3" type="CenterContainer" parent="VBox/BottomPanel/VBox/HBox"]
-offset_left = 584.0
-offset_right = 627.0
-offset_bottom = 80.0
-rect_min_size = Vector2( 5, 0 )
+offset_left = 336.0
+offset_right = 652.0
+offset_bottom = 54.0
 size_flags_horizontal = 3
 
 [node name="Continue" type="VBoxContainer" parent="VBox/BottomPanel/VBox/HBox"]
-self_modulate = Color( 1, 1, 1, 0 )
-offset_left = 631.0
-offset_right = 731.0
-offset_bottom = 80.0
+self_modulate = Color(1, 1, 1, 0)
+offset_left = 656.0
+offset_right = 736.0
+offset_bottom = 54.0
 alignment = 1
 
 [node name="ShowExtras" type="Button" parent="VBox/BottomPanel/VBox/HBox/Continue"]
-offset_right = 50.0
-offset_bottom = 35.0
-rect_min_size = Vector2( 50, 35 )
-rect_pivot_offset = Vector2( 35, 20 )
-hint_tooltip = "Show/hide additional options."
+offset_right = 17.0
+offset_bottom = 25.0
 size_flags_horizontal = 0
+hint_tooltip = "Show/hide additional options."
 toggle_mode = true
 text = "_"
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Continue" type="Button" parent="VBox/BottomPanel/VBox/HBox/Continue"]
-offset_top = 39.0
-offset_right = 100.0
-offset_bottom = 79.0
-rect_min_size = Vector2( 100, 40 )
+offset_top = 29.0
+offset_right = 80.0
+offset_bottom = 54.0
 hint_tooltip = "When a pause_before_teardown is encountered this button will be enabled and must be pressed to continue running tests."
 disabled = true
 text = "Continue"
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="CC4" type="CenterContainer" parent="VBox/BottomPanel/VBox/HBox"]
-offset_left = 735.0
+offset_left = 740.0
 offset_right = 740.0
-offset_bottom = 80.0
-rect_min_size = Vector2( 5, 0 )
+offset_bottom = 54.0
 
 [node name="HBox2" type="HBoxContainer" parent="VBox/BottomPanel/VBox"]
-offset_top = 84.0
+offset_top = 58.0
 offset_right = 740.0
-offset_bottom = 114.0
+offset_bottom = 78.0
 
 [node name="CC" type="CenterContainer" parent="VBox/BottomPanel/VBox/HBox2"]
-offset_right = 5.0
-offset_bottom = 30.0
-rect_min_size = Vector2( 5, 0 )
+offset_bottom = 20.0
 
 [node name="LogLevelSlider" type="HSlider" parent="VBox/BottomPanel/VBox/HBox2"]
-offset_left = 9.0
-offset_right = 109.0
-offset_bottom = 30.0
-rect_min_size = Vector2( 100, 30 )
+offset_left = 4.0
+offset_right = 12.0
+offset_bottom = 20.0
 size_flags_vertical = 3
 max_value = 2.0
 tick_count = 3
 ticks_on_borders = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Label" type="Label" parent="VBox/BottomPanel/VBox/HBox2/LogLevelSlider"]
 offset_left = 4.0
@@ -513,28 +341,19 @@ offset_top = -17.0
 offset_right = 85.0
 offset_bottom = 7.0
 text = "Log Level"
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="CenterContainer" type="CenterContainer" parent="VBox/BottomPanel/VBox/HBox2"]
-offset_left = 113.0
-offset_right = 163.0
-offset_bottom = 30.0
-rect_min_size = Vector2( 50, 0 )
+offset_left = 16.0
+offset_right = 16.0
+offset_bottom = 20.0
 
 [node name="CurrentScriptLabel" type="Label" parent="VBox/BottomPanel/VBox/HBox2"]
-offset_left = 167.0
-offset_top = 7.0
+offset_left = 20.0
 offset_right = 740.0
-offset_bottom = 22.0
+offset_bottom = 20.0
 size_flags_horizontal = 3
 size_flags_vertical = 6
 text = "res://test/unit/test_something.gd"
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="ScriptsList" type="ItemList" parent="."]
 visible = false
@@ -544,9 +363,6 @@ offset_top = 40.0
 offset_right = 619.0
 offset_bottom = -110.0
 allow_reselect = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="DoubleClickTimer" type="Timer" parent="ScriptsList"]
 wait_time = 0.3
@@ -562,22 +378,14 @@ offset_left = -212.0
 offset_top = -260.0
 offset_right = -2.0
 offset_bottom = -106.0
-custom_styles/panel = SubResource( 8 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="IgnorePause" type="CheckBox" parent="ExtraOptions"]
 offset_left = 17.5
 offset_top = 4.5
 offset_right = 162.5
 offset_bottom = 29.5
-rect_scale = Vector2( 1.2, 1.2 )
 hint_tooltip = "Ignore all calls to pause_before_teardown."
 text = "Ignore Pauses"
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Copy" type="Button" parent="ExtraOptions"]
 offset_left = 15.0
@@ -586,9 +394,6 @@ offset_right = 195.0
 offset_bottom = 80.0
 hint_tooltip = "Copy all output to the clipboard."
 text = "Copy to Clipboard"
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="UserFiles" type="Button" parent="ExtraOptions"]
 offset_left = 15.0
@@ -597,9 +402,6 @@ offset_right = 195.0
 offset_bottom = 130.0
 hint_tooltip = "Copy all output to the clipboard."
 text = "View User Files"
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="ResizeHandle" type="Control" parent="."]
 anchor_left = 1.0
@@ -608,9 +410,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -40.0
 offset_top = -40.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [connection signal="mouse_entered" from="VBox/TitleBar" to="." method="_on_TitleBar_mouse_entered"]
 [connection signal="mouse_exited" from="VBox/TitleBar" to="." method="_on_TitleBar_mouse_exited"]

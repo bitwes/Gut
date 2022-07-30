@@ -111,8 +111,8 @@ func _draw(): # needs get_size()
 	var grab_line_color = Color(.4, .4, .4)
 	if(_resize_handle.visible):
 		for i in range(1, 10):
-			var x = rect_size - Vector2(i * line_space, grab_margin)
-			var y = rect_size - Vector2(grab_margin, i * line_space)
+			var x = size - Vector2(i * line_space, grab_margin)
+			var y = size - Vector2(grab_margin, i * line_space)
 			draw_line(x,y,grab_line_color,1)
 
 func _on_Maximize_draw():
@@ -202,9 +202,9 @@ func _input(event):
 
 	if(_mouse.in_handle):
 		if(event is InputEventMouseMotion and _mouse.down):
-			var new_size = rect_size + event.position - _mouse.down_pos
+			var new_size = size + event.position - _mouse.down_pos
 			var new_mouse_down_pos = event.position
-			rect_size = new_size
+			size = new_size
 			_mouse.down_pos = new_mouse_down_pos
 			_pre_maximize_rect = get_rect()
 
@@ -231,8 +231,8 @@ func _on_Maximize_pressed():
 		maximize()
 	else:
 		compact_mode(false)
-		rect_size = _pre_maximize_rect.size
-		rect_position = _pre_maximize_rect.position
+		size = _pre_maximize_rect.size
+		position = _pre_maximize_rect.position
 func _on_Minimize_pressed():
 
 	compact_mode(!_compact_mode)
@@ -416,7 +416,7 @@ func clear_summary():
 func maximize():
 	if(is_inside_tree()):
 		var vp_size_offset = get_tree().root.get_viewport().get_visible_rect().size
-		rect_size = vp_size_offset / get_scale()
+		size = vp_size_offset / get_scale()
 		set_position(Vector2(0, 0))
 
 func clear_text():
@@ -495,12 +495,7 @@ func compact_mode(should):
 	_current_script.visible = !should
 	_title_replacement.visible = should
 
-	if(should):
-		rect_min_size = min_sizes.compact
-		rect_size = rect_min_size
-	else:
-		rect_min_size = min_sizes.full
-		rect_size = min_sizes.full
+	size = min_sizes.full
 
 	goto_bottom_right_corner()
 
@@ -510,4 +505,4 @@ func set_script_path(text):
 
 
 func goto_bottom_right_corner():
-	rect_position = get_tree().root.get_viewport().get_visible_rect().size - rect_size
+	position = get_tree().root.get_viewport().get_visible_rect().size - size

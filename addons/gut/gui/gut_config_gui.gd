@@ -3,11 +3,11 @@
 class DirectoryCtrl:
 	extends HBoxContainer
 
-	var text = '' :
-	get:
-		return text # TODOConverter40 Copy here content of get_text
-	set(mod_value):
-		mod_value  # TODOConverter40 Copy here content of set_text
+	var text = '':
+		get:
+			return text # TODOConverter40 Copy here content of get_text
+		set(mod_value):
+			mod_value  # TODOConverter40 Copy here content of set_text
 	var _txt_path = LineEdit.new()
 	var _btn_dir = Button.new()
 	var _dialog = FileDialog.new()
@@ -62,15 +62,15 @@ class Vector2Ctrl:
 	extends VBoxContainer
 
 	var value = Vector2(-1, -1) :
-	get:
-		return value # TODOConverter40 Copy here content of get_value
-	set(mod_value):
-		mod_value  # TODOConverter40 Copy here content of set_value
+		get:
+			return value # TODOConverter40 Copy here content of get_value
+		set(mod_value):
+			mod_value  # TODOConverter40 Copy here content of set_value
 	var disabled = false :
-	get:
-		return disabled # TODOConverter40 Copy here content of get_disabled
-	set(mod_value):
-		mod_value  # TODOConverter40 Copy here content of set_disabled
+		get:
+			return disabled # TODOConverter40 Copy here content of get_disabled
+		set(mod_value):
+			mod_value  # TODOConverter40 Copy here content of set_disabled
 	var x_spin = SpinBox.new()
 	var y_spin = SpinBox.new()
 

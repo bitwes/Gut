@@ -53,7 +53,7 @@ func _test_running_setup():
 
 func _set_toolbutton_icon(btn, icon_name, text):
 	if(Engine.editor_hint):
-		btn.icon = get_icon(icon_name, 'EditorIcons')
+		btn.icon = get_theme_icon(icon_name, 'EditorIcons')
 	else:
 		btn.text = str('[', text, ']')
 
@@ -75,16 +75,11 @@ func _ready():
 	_set_toolbutton_icon(_ctrls.toolbar.show_script, 'Script', 'ss')
 	_set_toolbutton_icon(_ctrls.toolbar.scroll_output, 'Font', 'so')
 
-	_ctrls.toolbar.hide_passing.set('custom_icons/checked', get_icon('GuiVisibilityHidden', 'EditorIcons'))
-	_ctrls.toolbar.hide_passing.set('custom_icons/unchecked', get_icon('GuiVisibilityVisible', 'EditorIcons'))
+	_ctrls.toolbar.hide_passing.set('custom_icons/checked', get_theme_icon('GuiVisibilityHidden', 'EditorIcons'))
+	_ctrls.toolbar.hide_passing.set('custom_icons/unchecked', get_theme_icon('GuiVisibilityVisible', 'EditorIcons'))
 
 	if(get_parent() == get_tree().root):
 		_test_running_setup()
-
-	call_deferred('_update_min_width')
-
-func _update_min_width():
-	rect_min_size.x = _ctrls.toolbar.toolbar.rect_size.x
 
 func _open_file(path, line_number):
 	if(_interface == null):
