@@ -66,7 +66,7 @@ The post-run hook can access the pre-run hook instance via `gut.get_pre_run_scri
 # <a name="postrun">Post-Run Hook
 The post-run hook is run after all tests are run and all output has been generated.  The post-run hook can access the pre-run script instance (if one was specified) via `gut.get_pre_run_script_instance()`.
 
-The post-run hook could be useful in writing files used by CICD pipelines to verify the status fo the run.
+The post-run hook could be useful in writing files used by CICD pipelines to verify the status of the run.
 
 
 

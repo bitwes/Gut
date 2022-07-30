@@ -3,17 +3,17 @@ Also supplied in this repo is the `gut_cmdln.gd` script that can be run from the
 __Note:__ All the examples here come from my Mac/Bash.
 
 In the examples below I will be using `godot` as a command.  This is an alias I have created as:
-```
+```bash
 alias godot='/Applications/Godot.app/Contents/MacOS/Godot'
 ```
 
 From the command line, at the root of your project, use the following command to run the script.  Use the options below to run tests.
 
-```
-godot -d -s --path $PWD addons/gut/gut_cmdln.gd
+```bash
+godot -d -s --path "$PWD" addons/gut/gut_cmdln.gd
 ```
 
-The `-d` option tells Godot to run in debug mode which is helpful.  The `-s` option tells Godot to run a script. `--path $PWD` tells Godot to treat the current directory as the root of a project.
+The `-d` option tells Godot to run in debug mode which is helpful.  The `-s` option tells Godot to run a script. `--path "$PWD"` tells Godot to treat the current directory as the root of a project.
 
 When running from command line, `0` will be returned if all tests pass and `1` will be returned if any fail (`pending` doesn't affect the return value).
 
@@ -67,11 +67,15 @@ Options
 
 Run godot in debug mode (-d), run a test script (-gtest), set log level to lowest (-glog), exit when done (-gexit)
 
-`godot -s addons/gut/gut_cmdln.gd -d --path $PWD -gtest=res://test/unit/sample_tests.gd -glog=1 -gexit`
+```bash
+godot -s addons/gut/gut_cmdln.gd -d --path "$PWD" -gtest=res://test/unit/sample_tests.gd -glog=1 -gexit
+```
 
 Load all test scripts that begin with 'me_' and end in '.res' and run me_only_only_me.res (given that the directory contains the following scripts:  me_and_only_me.res, me_only.res, me_one.res, me_two.res).  I don't specify the -gexit on this one since I might want to run all the scripts using the GUI after I run this one script.
 
-`godot -s addons/gut/gut_cmdln.gd -d --path $PWD -gdir=res://test/unit -gprefix=me_ -gsuffix=.res -gselect=only_me`
+```bash
+godot -s addons/gut/gut_cmdln.gd -d --path "$PWD" -gdir=res://test/unit -gprefix=me_ -gsuffix=.res -gselect=only_me
+```
 
 # Config file
 To cut down on the amount of arguments you have to pass to gut and to make it easier to change them, you can optionally use a json file to specify some of the values.  By default `gut_cmdln` looks for a config file at `res://.gutconfig.json`.  You can specify a different file using the `-gconfig` option.

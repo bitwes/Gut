@@ -53,9 +53,9 @@ When you use an instance of an object as a receiver, `InputSender` will send `In
 1.  `_gui_input`
 1.  `_unhandled_input`
 
-When there are multipe receivers, each receiver will be called in the order they were added.  All three `_input` methods will be called on each reciever then the `InputSender` will move to the next receiver.
+When there are multiple receivers, each receiver will be called in the order they were added.  All three `_input` methods will be called on each receiver then the `InputSender` will move to the next receiver.
 
-When using objects as recievers it is recommended that each test create its own instance of `InputSender`.  `InputSender` retains information about what actions/buttons/etc have been pressed.  By creating a new instance in each test, you don't have to worry about clearing this state between tests.
+When using objects as receivers it is recommended that each test create its own instance of `InputSender`.  `InputSender` retains information about what actions/buttons/etc have been pressed.  By creating a new instance in each test, you don't have to worry about clearing this state between tests.
 
 If you are processing input by directly interacting with the `Input` global, then you should follow the instructions in the next section.
 ``` gdscript
@@ -74,13 +74,13 @@ In Godot 3.4 `Input.use_accumualted_input` is disabled by default (even though t
 <hr>
 
 
-When `Input` is used as a reciever `Input` will send all inputs it receives from the `InputSender` to every object that has been added to the tree.  `Input` will treat all the events it gets exactly the same as if the events were triggered from hardware.  This means all the `is_action_just_pressed` and similar functions will work the same.  The `InputEvent` instances will also be sent to the various `_input` methods on objects in the tree in whatever order `Input` desires.
+When `Input` is used as a receiver `Input` will send all inputs it receives from the `InputSender` to every object that has been added to the tree.  `Input` will treat all the events it gets exactly the same as if the events were triggered from hardware.  This means all the `is_action_just_pressed` and similar functions will work the same.  The `InputEvent` instances will also be sent to the various `_input` methods on objects in the tree in whatever order `Input` desires.
 
 Using `Input` makes testing objects that handle input via `_process` or `_process_delta` much easier but you have to be a little careful when using it though.  Since the `Input` instance is global and retains its state for the duration of the test run.
 
 1.  You should declare your `InputSender` instance at the class level.  You will need access to it in the `after_each` method.
 1.  Call `release_all` on the `InputSender` in `after_each`.  This makes sure that `Input` doesn't think that a button is pressed when you don't expect it to be.  If `Input` thinks a button is pressed, it will not send any "down" events until it gets an "up" event.
-1.  Call `clear` on the `InputSender` in `after_each`.  This clears out any state the `InputSender` has.  It tracks inputs so that functions like `hold_for` can create dyanmic "up" events, as well as various other things.  Calling `clear` makes sure that `InputSender` state does not leak from one test to another.
+1.  Call `clear` on the `InputSender` in `after_each`.  This clears out any state the `InputSender` has.  It tracks inputs so that functions like `hold_for` can create dynamic "up" events, as well as various other things.  Calling `clear` makes sure that `InputSender` state does not leak from one test to another.
 1.  You must ALWAYS yield before making an assert or your objects will not get a chance to process the frame the `Input` was sent on (`_process` and `_physics_process` will not be called without a yield).
 
 ``` gdscript
@@ -192,7 +192,7 @@ func test_fireball_input():
 # In this example we are testing that two actions in combination cause the
 # player to slide.  Note that there is no release of the actions in this
 # test.  This is a good example of why using release_all in after_each makes
-# the tests simplier to write and prevents leaking of inputs from one test to
+# the tests simpler to write and prevents leaking of inputs from one test to
 # another.
 func test_holding_down_and_jump_does_slide():
     var player = add_child_autofree(Player.new())
@@ -210,7 +210,7 @@ func test_holding_down_and_jump_does_slide():
 * If you use a class level `InputSender` and forget to call `release_all` and `clear` between tests then things will eventually start behaving weird and your tests will pass/fail in unpredictable ways.
 
 ## Understanding Input.use_accumulated_input
-When `use_accumualted_input` is enabled, `Input` waits to process input until the end of a frame.  This means that if you do not flush the buffer or there are no "waits" or calls to `yeild` before you test how input was processed then your tests will fail.
+When `use_accumualted_input` is enabled, `Input` waits to process input until the end of a frame.  This means that if you do not flush the buffer or there are no "waits" or calls to `yield` before you test how input was processed then your tests will fail.
 
 ### Testing with use_accumulated_input
 #### Recommended approaches
@@ -220,7 +220,7 @@ When `use_accumualted_input` is enabled, `Input` waits to process input until th
 
 #### Other ways that aren't so good.
 If you use these approaches you should quarantine these tests in their own Inner Class or script so that they do not influence other tests that do not expect the buffer to be constantly flushed or `use_accumulated_input` to be disabled.
-1.  In GUT 7.4.0 `InputSender` has an `auto_flush_input` property which is disabled by default.  When enabled this will call `Input.flush_buffered_events` after each input sent through an `InputSender`.  This is a bit dangerous since this can cause some of your tests to not test the way your game will recieve input when playing the game.
+1.  In GUT 7.4.0 `InputSender` has an `auto_flush_input` property which is disabled by default.  When enabled this will call `Input.flush_buffered_events` after each input sent through an `InputSender`.  This is a bit dangerous since this can cause some of your tests to not test the way your game will receive input when playing the game.
 1.  You can disable `use_accumulated_input` in `before_all` and re-enable in `after_all`.  Just like with `auto_flush_input`, this has the potential to not test all inputs the same way as your game will get them when playing the game.
 
 ### Examples
@@ -274,7 +274,7 @@ func test_when_uai_enabled_flushing_buffer_just_pressed_is_processed_immediately
 
 # Functions
 __<a name="new">new(receiver=null)</a>__<br/>
-The optional receiver will be added to the list of recievers.
+The optional receiver will be added to the list of receivers.
 
 __<a name="add_receiver">add_receiver(obj)</a>__<br/>
 Add an object to receive input events.
@@ -313,7 +313,7 @@ __<a name="mouse_set_position">mouse_set_position(position, global_position=null
 Sets the mouse's position.  This does not send an event.  This position will be used for the next call to `mouse_relative_motion`.
 
 __<a name="set_auto_flush_input">set_auto_flush_input(val)</a>__<br/>
-Enable/Disable auto flusing of input.  When enabled the `InputSender` will call `Input.flush_buffered_events` after each event is sent.  See the `use_accumulated_input` section for more information.
+Enable/Disable auto flushing of input.  When enabled the `InputSender` will call `Input.flush_buffered_events` after each event is sent.  See the `use_accumulated_input` section for more information.
 
 __<a name="get_auto_flush_input">get_auto_flush_input()</a>__<br/>
 Get it.
@@ -354,7 +354,7 @@ __<a name="mouse_right_button_up">mouse_right_button_up(position, global_positio
 Sends a "button up" `InputEventMouseButton` for the right mouse button.
 
 __<a name="mouse_motion(">mouse_motion(position, global_position=null)</a>__<br/>
-Sends a "InputEventMouseMotion" to move the mouse the specified postions.
+Sends a "InputEventMouseMotion" to move the mouse the specified positions.
 
 __<a name="mouse_relative_motion">mouse_relative_motion(offset, speed=Vector2(0, 0))</a>__<br/>
 Sends a "InputEventMouseMotion" that moves the mouse `offset` from the last `mouse_motion` or `mouse_set_position` call.

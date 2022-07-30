@@ -38,7 +38,7 @@ var AnotherObject = load('res://scripts/another_object')
 
 # ...
 
-# Given that SomeCoolObj has a _process method that incrments a_number by 1
+# Given that SomeCoolObj has a _process method that increments a_number by 1
 # each time _process is called, and that the number starts at 0, this test
 # should pass
 func test_does_something_each_loop():

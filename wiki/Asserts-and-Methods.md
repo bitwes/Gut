@@ -333,7 +333,7 @@ assert_does_not_have(a_hash, 'three') # PASS
 gut.p('-- failing --')
 assert_does_not_have(an_array, 'four') # FAIL
 assert_does_not_have(an_array, 2) # FAIL
-# the hash's has method checkes indexes not values
+# the hash's has method checks indexes not values
 assert_does_not_have(a_hash, 'one') # FAIL
 assert_does_not_have(a_hash, '3') # FAIL
 ```
@@ -384,7 +384,7 @@ func test_string_ends_with():
 ```
 
 #### <a name="assert_has_signal"> assert_has_signal(object, signal_name) </a>
-Asserts the passed in object has a signal with the specified name.  It should be noted that all the asserts that verfy a signal was/wasn't emitted will first check that the object has the signal being asserted against.  If it does not, a specific failure message will be given.  This means you can usually skip the step of specifically verifying that the object has a signal and move on to making sure it emits the signal correctly.
+Asserts the passed in object has a signal with the specified name.  It should be noted that all the asserts that verify a signal was/wasn't emitted will first check that the object has the signal being asserted against.  If it does not, a specific failure message will be given.  This means you can usually skip the step of specifically verifying that the object has a signal and move on to making sure it emits the signal correctly.
 ``` gdscript
 class SignalObject:
 	func _init():
@@ -892,7 +892,7 @@ func test_get_call_parameters():
 ```
 
 #### <a name="get_call_count">get_call_count(obj, method_name, parameters=null) </a>
-Get the number of times a method was called on a double.  Include the optional parameters array to only get the count for calls with matching parameters.  This is essentailly `assert_call_count` without the assert, in case you need to do something else with the count.
+Get the number of times a method was called on a double.  Include the optional parameters array to only get the count for calls with matching parameters.  This is essentially `assert_call_count` without the assert, in case you need to do something else with the count.
 ```
 	func test_called_10_times():
 		var doubled = partial_double(DOUBLE_ME_PATH).new()
@@ -990,7 +990,7 @@ Marks an object so that `free` will be called on it after the test finishes.  Re
 Marks an object so that `queue_free` will be called on it after the test finishes.  Returns the object passed in.  See [Memory Management](Memory-Management) page for more details.
 
 #### <a name="assert_no_new_orphans">assert_no_new_orphans(text='') </a>
-This method will assert that no orphaned nodes have been introduced by the test when the assert is executed.  See the [Memory Management](Memory-Management#testing_for_leaks) page for more infomration.
+This method will assert that no orphaned nodes have been introduced by the test when the assert is executed.  See the [Memory Management](Memory-Management#testing_for_leaks) page for more information.
 
 #### <a name="gut_p"> gut.p(text, level=0) </a>
 Print info to the GUI and console (if enabled).  You can see examples if this in the sample code above.  In order to be able to spot check the sample code, I print out a divider between the passing and failing tests.
@@ -1138,7 +1138,7 @@ This will only work for references to the node are made __after__ `replace_node`
 * it was set on `_init`
 * or it was set in `_ready` or via an `onready` variable, and the base object has already been added to the tree
 
-then these variables will point to the old object (which gets freed after the call to `repalce_node`).
+then these variables will point to the old object (which gets freed after the call to `replace_node`).
 
 ```gdscript
 func test_replace_node():
@@ -1378,7 +1378,7 @@ gut.p('-- failing --')
 assert_setget_called(Health, 'max_hp', 'set_max_hp') # FAIL
 assert_setget_called(Health, 'max_hp') # FAIL => out of scope
 assert_setget_called(Health, 'current_hp') # FAIL => setter or getter name must be specified
-assert_setget_called(Health, 'current_hp', 'set_curent_hp', 'get_current_hp') # FAIL => typo...
+assert_setget_called(Health, 'current_hp', 'set_current_hp', 'get_current_hp') # FAIL => typo...
 var health = Health.new()
 assert_setget_called(health, 'current_hp', 'set_current_hp') # FAIL => type has to be a Resource
 assert_setget_called(Health, max_hp, null, null) # FAIL => methods do not exist
