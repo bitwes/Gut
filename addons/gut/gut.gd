@@ -37,19 +37,19 @@ var _tests_like = ''
 var _inner_class_name = ''
 var _should_maximize = false :
 	get:
-		return _should_maximize # TODOConverter40 Copy here content of get_should_maximize
-	set(mod_value):
-		mod_value  # TODOConverter40 Copy here content of set_should_maximize
+		return get_should_maximize()
+	set(val):
+		set_should_maximize(val)
 var _log_level = 1 :
 	get:
-		return _log_level # TODOConverter40 Copy here content of get_log_level
-	set(mod_value):
-		mod_value  # TODOConverter40 Copy here content of set_log_level
+		return get_log_level()
+	set(val):
+		set_log_level(val)
 var _disable_strict_datatype_checks = false :
 	get:
-		return _disable_strict_datatype_checks # TODOConverter40 Copy here content of is_strict_datatype_checks_disabled
-	set(mod_value):
-		mod_value  # TODOConverter40 Copy here content of disable_strict_datatype_checks
+		return is_strict_datatype_checks_disabled()
+	set(val):
+		disable_strict_datatype_checks(val)
 var _test_prefix = 'test_'
 var _file_prefix = 'test_'
 var _file_extension = '.gd'
@@ -57,49 +57,49 @@ var _inner_class_prefix = 'Test'
 var _temp_directory = 'user://gut_temp_directory'
 var _export_path = '' :
 	get:
-		return _export_path # TODOConverter40 Copy here content of get_export_path
-	set(mod_value):
-		mod_value  # TODOConverter40 Copy here content of set_export_path
+		return get_export_path()
+	set(val):
+		set_export_path(val)
 var _include_subdirectories = false :
 	get:
-		return _include_subdirectories # TODOConverter40 Copy here content of get_include_subdirectories
-	set(mod_value):
-		mod_value  # TODOConverter40 Copy here content of set_include_subdirectories
+		return get_include_subdirectories()
+	set(val):
+		set_include_subdirectories(val)
 var _double_strategy = 1  :
 	get:
-		return _double_strategy # TODOConverter40 Copy here content of get_double_strategy
-	set(mod_value):
-		mod_value  # TODOConverter40 Copy here content of set_double_strategy
+		return get_double_strategy()
+	set(val):
+		set_double_strategy(val)
 var _pre_run_script = '' :
 	get:
-		return _pre_run_script # TODOConverter40 Copy here content of get_pre_run_script
-	set(mod_value):
-		mod_value  # TODOConverter40 Copy here content of set_pre_run_script
+		return get_pre_run_script()
+	set(val):
+		set_pre_run_script(val)
 var _post_run_script = '' :
 	get:
-		return _post_run_script # TODOConverter40 Copy here content of get_post_run_script
-	set(mod_value):
-		mod_value  # TODOConverter40 Copy here content of set_post_run_script
+		return get_post_run_script()
+	set(val):
+		set_post_run_script(val)
 var _color_output = false :
 	get:
-		return _color_output # TODOConverter40 Copy here content of get_color_output
-	set(mod_value):
-		mod_value  # TODOConverter40 Copy here content of set_color_output
+		return get_color_output()
+	set(val):
+		set_color_output(val)
 var _junit_xml_file = '' :
 	get:
-		return _junit_xml_file # TODOConverter40 Copy here content of get_junit_xml_file
-	set(mod_value):
-		mod_value  # TODOConverter40 Copy here content of set_junit_xml_file
+		return get_junit_xml_file()
+	set(val):
+		set_junit_xml_file(val)
 var _junit_xml_timestamp = false :
 	get:
-		return _junit_xml_timestamp # TODOConverter40 Copy here content of get_junit_xml_timestamp
-	set(mod_value):
-		mod_value  # TODOConverter40 Copy here content of set_junit_xml_timestamp
+		return get_junit_xml_timestamp()
+	set(val):
+		set_junit_xml_timestamp(val)
 var _add_children_to = self :
 	get:
-		return _add_children_to # TODOConverter40 Copy here content of get_add_children_to
-	set(mod_value):
-		mod_value  # TODOConverter40 Copy here content of set_add_children_to
+		return get_add_children_to()
+	set(val):
+		set_add_children_to(val)
 # -- End Settings --
 
 

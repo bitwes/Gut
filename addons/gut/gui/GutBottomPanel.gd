@@ -204,12 +204,10 @@ func _on_RunAll_pressed():
 
 func _on_Shortcuts_pressed():
 	_ctrls.shortcut_dialog.popup_centered()
-
-
-func _on_BottomPanelShortcuts_popup_hide():
+	
+func _on_bottom_panel_shortcuts_visibility_changed():
 	_apply_shortcuts()
 	_ctrls.shortcut_dialog.save_shortcuts(SHORTCUTS_PATH)
-
 
 func _on_RunAtCursor_run_tests(what):
 	_gut_config.options.selected = what.script
@@ -369,4 +367,3 @@ func nvl(value, if_null):
 		return if_null
 	else:
 		return value
-

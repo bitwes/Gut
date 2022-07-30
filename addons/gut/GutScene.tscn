@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://cnajq0pryv2u4"]
 
 [ext_resource type="Script" path="res://addons/gut/GutScene.gd" id="1"]
-[ext_resource type="PackedScene" path="res://addons/gut/UserFileViewer.tscn" id="6"]
+[ext_resource type="PackedScene" uid="uid://bsm7wtt1gie4v" path="res://addons/gut/UserFileViewer.tscn" id="6"]
 [ext_resource type="Theme" uid="uid://cstkhwkpajvqu" path="res://addons/gut/gui/GutSceneTheme.tres" id="7"]
 
 [sub_resource type="StyleBoxFlat" id="2"]

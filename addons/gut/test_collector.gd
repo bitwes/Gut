@@ -33,9 +33,9 @@ class Test:
 # This class also facilitates all the exporting and importing of tests.
 # ------------------------------------------------------------------------------
 class TestScript:
-	var inner_class_name:StringName = null
+	var inner_class_name:StringName
 	var tests = []
-	var path:String = null
+	var path:String
 	var _utils = null
 	var _lgr = null
 
@@ -119,7 +119,7 @@ class TestScript:
 		if(inner_name != 'Placeholder'):
 			inner_class_name = inner_name
 		else: # just being explicit
-			inner_class_name = null
+			inner_class_name = StringName("")
 
 	func get_test_named(name):
 		return _utils.search_array(tests, 'name', name)
@@ -145,8 +145,9 @@ func _does_inherit_from_test(thing):
 			to_return = _does_inherit_from_test(base_script)
 	return to_return
 
-func _populate_tests(test_script):
-	var methods = test_script.load_script().get_script_method_list()
+func _populate_tests(test_script:TestScript):
+	var script =  test_script.load_script()
+	var methods = script.get_script_method_list()
 	for i in range(methods.size()):
 		var name = methods[i]['name']
 		if(name.begins_with(_test_prefix)):

@@ -5,9 +5,9 @@ class DirectoryCtrl:
 
 	var text = '':
 		get:
-			return text # TODOConverter40 Copy here content of get_text
-		set(mod_value):
-			mod_value  # TODOConverter40 Copy here content of set_text
+			return get_text()
+		set(val):
+			set_text(val)
 	var _txt_path = LineEdit.new()
 	var _btn_dir = Button.new()
 	var _dialog = FileDialog.new()
@@ -63,14 +63,14 @@ class Vector2Ctrl:
 
 	var value = Vector2(-1, -1) :
 		get:
-			return value # TODOConverter40 Copy here content of get_value
-		set(mod_value):
-			mod_value  # TODOConverter40 Copy here content of set_value
+			return get_value()
+		set(val):
+			set_value(val)
 	var disabled = false :
 		get:
-			return disabled # TODOConverter40 Copy here content of get_disabled
-		set(mod_value):
-			mod_value  # TODOConverter40 Copy here content of set_disabled
+			return get_disabled()
+		set(val):
+			set_disabled(val)
 	var x_spin = SpinBox.new()
 	var y_spin = SpinBox.new()
 

@@ -1,23 +1,23 @@
 var are_equal_member = null :
 	get:
-		return are_equal_member # TODOConverter40 Copy here content of get_are_equal
-	set(mod_value):
-		mod_value  # TODOConverter40 Copy here content of set_are_equal
+		return are_equal_member
+	set(val):
+		set_are_equal(val)
 var summary = null :
 	get:
-		return summary # TODOConverter40 Copy here content of get_summary
-	set(mod_value):
-		mod_value  # TODOConverter40 Copy here content of set_summary
+		return summary
+	set(val):
+		set_summary(val)
 var max_differences = 30 :
 	get:
-		return max_differences # TODOConverter40 Copy here content of get_max_differences
-	set(mod_value):
-		mod_value  # TODOConverter40 Copy here content of set_max_differences
+		return max_differences
+	set(val):
+		set_max_differences(val)
 var differences = {} :
 	get:
-		return differences # TODOConverter40 Copy here content of get_differences
-	set(mod_value):
-		mod_value  # TODOConverter40 Copy here content of set_differences
+		return differences
+	set(val):
+		set_differences(val)
 
 func _block_set(which, val):
 	push_error(str('cannot set ', which, ', value [', val, '] ignored.'))
