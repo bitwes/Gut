@@ -52,7 +52,7 @@ func _test_running_setup():
 
 
 func _set_toolbutton_icon(btn, icon_name, text):
-	if(Engine.editor_hint):
+	if(Editor.is_editor_hint()):
 		btn.icon = get_theme_icon(icon_name, 'EditorIcons')
 	else:
 		btn.text = str('[', text, ']')

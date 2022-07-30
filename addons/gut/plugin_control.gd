@@ -137,7 +137,7 @@ func _ready():
 	# Must call this deferred so that there is enough time for
 	# Engine.get_main_loop() is populated and the psuedo singleton utils.gd
 	# can be setup correctly.
-	if(Engine.editor_hint):
+	if(Engine.is_editor_hint()):
 		_placeholder = load('res://addons/gut/GutScene.tscn').instantiate()
 		call_deferred('add_child', _placeholder)
 		_placeholder.size = size

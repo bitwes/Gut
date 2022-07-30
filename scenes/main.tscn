@@ -26,9 +26,6 @@ offset_top = 3.62834
 offset_right = 844.257
 offset_bottom = 331.628
 script = ExtResource("2")
-__meta__ = {
-"_edit_use_anchors_": false
-}
 _font_name = "CourierPrime"
 _font_color = Color(0.733333, 0.733333, 0.733333, 1)
 _background_color = Color(0.14902, 0.14902, 0.14902, 1)
@@ -40,3 +37,4 @@ _directory2 = "res://test/integration"
 
 [connection signal="pressed" from="RunGutTestsButton" to="." method="_on_RunGutTestsButton_pressed"]
 [connection signal="pressed" from="ExportTests" to="." method="_on_ExportTests_pressed"]
+[connection signal="gut_ready" from="Gut" to="." method="_on_Gut_gut_ready"]

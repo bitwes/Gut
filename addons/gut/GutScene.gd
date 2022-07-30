@@ -75,7 +75,7 @@ signal run_script
 signal run_single_script
 
 func _ready():
-	if(Engine.editor_hint):
+	if(Editor.is_editor_hint()):
 		return
 
 	_current_script.text = ''

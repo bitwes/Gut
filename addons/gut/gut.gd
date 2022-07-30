@@ -310,8 +310,8 @@ func _setup_gui():
 	# must match between both gut and the gui.
 	_gui.rect_size = self.rect_size
 	add_child(_gui)
-	_gui.set_anchor(MARGIN_RIGHT, ANCHOR_END)
-	_gui.set_anchor(MARGIN_BOTTOM, ANCHOR_END)
+	_gui.set_anchor(super.MARGIN_RIGHT, super.MANCHOR_END)
+	_gui.set_anchor(super.MMARGIN_BOTTOM, super.MANCHOR_END)
 	_gui.connect('run_single_script',Callable(self,'_on_run_one'))
 	_gui.connect('run_script',Callable(self,'_on_new_gui_run_script'))
 	_gui.connect('end_pause',Callable(self,'_on_new_gui_end_pause'))
