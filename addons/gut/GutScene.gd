@@ -75,7 +75,7 @@ signal run_script
 signal run_single_script
 
 func _ready():
-	if(Editor.is_editor_hint()):
+	if(Engine.editor_hint):
 		return
 
 	_current_script.text = ''
@@ -495,7 +495,12 @@ func compact_mode(should):
 	_current_script.visible = !should
 	_title_replacement.visible = should
 
-	size = min_sizes.full
+	if(should):
+		custom_minimum_size = min_sizes.compact
+		size = custom_minimum_size
+	else:
+		custom_minimum_size = min_sizes.full
+		size = min_sizes.full
 
 	goto_bottom_right_corner()
 
