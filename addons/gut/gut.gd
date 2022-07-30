@@ -168,7 +168,7 @@ var _yielding_to = {
 var _stubber = _utils.Stubber.new()
 var _doubler = _utils.Doubler.new()
 var _spy = _utils.Spy.new()
-var _gui = null
+var _gui:Control = null
 var _orphan_counter =  _utils.OrphanCounter.new()
 var _autofree = _utils.AutoFree.new()
 
@@ -306,12 +306,14 @@ func _print_versions(send_all = true):
 # ##############################################################################
 func _setup_gui():
 	# This is how we get the size of the control to translate to the gui when
-	# the scene is run.  This is also another reason why the min_rect_size
+	# the scene is run.  This is also another reason why the custom_minimum_size
 	# must match between both gut and the gui.
-	_gui.rect_size = self.rect_size
+	_gui.size = self.size
 	add_child(_gui)
-	_gui.set_anchor(super.MARGIN_RIGHT, super.MANCHOR_END)
-	_gui.set_anchor(super.MMARGIN_BOTTOM, super.MANCHOR_END)
+	
+	_gui.set_anchor(SIDE_RIGHT, SIDE_RIGHT)
+	_gui.set_anchor(SIDE_BOTTOM, SIDE_RIGHT)
+	
 	_gui.connect('run_single_script',Callable(self,'_on_run_one'))
 	_gui.connect('run_script',Callable(self,'_on_new_gui_run_script'))
 	_gui.connect('end_pause',Callable(self,'_on_new_gui_end_pause'))
@@ -582,7 +584,7 @@ func _export_junit_xml():
 
 	if(_junit_xml_timestamp):
 		var ext = "." + output_file.get_extension()
-		output_file = output_file.replace(ext, str("_", OS.get_unix_time(), ext))
+		output_file = output_file.replace(ext, str("_", Time.get_unix_time_from_system(), ext))
 
 	var f_result = exporter.write_file(self, output_file)
 	if(f_result == OK):
@@ -597,7 +599,7 @@ func _export_junit_xml():
 func _is_function_state(script_result):
 	return script_result != null and \
 		typeof(script_result) == TYPE_OBJECT and \
-		script_result is GDScriptFunctionState and \
+		script_result is GDScript and \
 		script_result.is_valid()
 
 # ------------------------------------------------------------------------------
@@ -724,7 +726,7 @@ func _get_indexes_matching_path(path):
 # Execute all calls of a parameterized test.
 # ------------------------------------------------------------------------------
 func _run_parameterized_test(test_script, test_name):
-	var script_result = _run_test(test_script, test_name)
+	var script_result = await _run_test(test_script, test_name)
 	if(_current_test.assert_count == 0 and !_current_test.pending):
 		_lgr.warn('Test did not assert')
 
@@ -738,7 +740,7 @@ func _run_parameterized_test(test_script, test_name):
 	else:
 		while(!_parameter_handler.is_done()):
 			var cur_assert_count = _current_test.assert_count
-			script_result = _run_test(test_script, test_name)
+			script_result = await _run_test(test_script, test_name)
 			if(_is_function_state(script_result)):
 				# _run_tests does _wait_for_done so just wait on it to  complete
 				await script_result.COMPLETED
@@ -762,7 +764,7 @@ func _run_test(script_inst, test_name):
 	_call_deprecated_script_method(script_inst, 'setup', 'before_each')
 	var before_each_result = script_inst.before_each()
 	if(_is_function_state(before_each_result)):
-		await _wait_for_done(before_each_result).COMPLETED
+		await _wait_for_done(before_each_result)
 
 	# When the script yields it will return a GDScriptFunctionState object
 	script_result = script_inst.call(test_name)
@@ -774,7 +776,7 @@ func _run_test(script_inst, test_name):
 	# possible since we only know what the yield was for except when yield_for
 	# and yield_to are used.
 	if(_is_function_state(script_result)):
-		await _wait_for_done(script_result).COMPLETED
+		await _wait_for_done(script_result)
 
 	# if the test called pause_before_teardown then yield until
 	# the continue button is pressed.
@@ -788,7 +790,7 @@ func _run_test(script_inst, test_name):
 	_call_deprecated_script_method(script_inst, 'teardown', 'after_each')
 	var after_each_result = script_inst.after_each()
 	if(_is_function_state(after_each_result)):
-		await _wait_for_done(after_each_result).COMPLETED
+		await _wait_for_done(after_each_result)
 
 	# Free up everything in the _autofree.  Yield for a bit if we
 	# have anything with a queue_free so that they have time to
@@ -822,7 +824,7 @@ func _call_before_all(test_script):
 
 	var result = test_script.before_all()
 	if(_is_function_state(result)):
-		await _wait_for_done(result).COMPLETED
+		await _wait_for_done(result)
 
 	_lgr.dec_indent()
 	_current_test = null
@@ -845,7 +847,7 @@ func _call_after_all(test_script):
 
 	var result = test_script.after_all()
 	if(_is_function_state(result)):
-		await _wait_for_done(result).COMPLETED
+		await _wait_for_done(result)
 
 
 	_lgr.dec_indent()
@@ -912,7 +914,7 @@ func _test_the_scripts(indexes=[]):
 		if(!_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
 			the_script.tests = []
 		else:
-			var before_all_result = _call_before_all(test_script)
+			var before_all_result = await _call_before_all(test_script)
 			if(_is_function_state(before_all_result)):
 				# _call_before_all calls _wait for done, just wait for that to finish
 				await before_all_result.COMPLETED
@@ -939,9 +941,9 @@ func _test_the_scripts(indexes=[]):
 					_lgr.error(str('Parameterized test ', _current_test.name,
 						' has too many parameters:  ', _current_test.arg_count, '.'))
 				elif(_current_test.arg_count == 1):
-					script_result = _run_parameterized_test(test_script, _current_test.name)
+					script_result = await _run_parameterized_test(test_script, _current_test.name)
 				else:
-					script_result = _run_test(test_script, _current_test.name)
+					script_result = await _run_test(test_script, _current_test.name)
 
 				if(_is_function_state(script_result)):
 					# _run_test calls _wait for done, just wait for that to finish
@@ -962,7 +964,7 @@ func _test_the_scripts(indexes=[]):
 		_orphan_counter.print_orphans('script', _lgr)
 
 		if(_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
-			var after_all_result = _call_after_all(test_script)
+			var after_all_result = await _call_after_all(test_script)
 			if(_is_function_state(after_all_result)):
 				# _call_after_all calls _wait for done, just wait for that to finish
 				await after_all_result.COMPLETED

@@ -75,7 +75,7 @@ signal run_script
 signal run_single_script
 
 func _ready():
-	if(Engine.editor_hint):
+	if(Engine.is_editor_hint()):
 		return
 
 	_current_script.text = ''
@@ -303,7 +303,7 @@ func _update_controls():
 	_nav.run_single.disabled = is_empty
 
 func _update_summary():
-	if(!_summary):
+	if _summary.is_empty():
 		return
 
 	var total = _summary.fail_count + _summary.pass_count
@@ -449,10 +449,8 @@ func _set_font(rtl, font_name, custom_name):
 		rtl.set('custom_fonts/' + custom_name, null)
 	else:
 		var dyn_font = FontFile.new()
-		var font_data = FontFile.new()
-		font_data.font_path = 'res://addons/gut/fonts/' + font_name + '.ttf'
-		font_data.antialiased = true
-		dyn_font.font_data = font_data
+		dyn_font = load('res://addons/gut/fonts/' + font_name + '.ttf')
+		dyn_font.antialiased = true
 		rtl.set('custom_fonts/' + custom_name, dyn_font)
 
 func _set_all_fonts_in_ftl(ftl, base_name):
