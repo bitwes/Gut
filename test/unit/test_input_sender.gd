@@ -329,8 +329,8 @@ class TestMouseMotion:
 		var r = autofree(InputTracker.new())
 		var sender = InputSender.new(r)
 		sender\
-			super.mouse_motion(Vector2(10, 10), Vector2(50, 50))\
-			super.mouse_relative_motion(Vector2(3, 3))
+			.mouse_motion(Vector2(10, 10), Vector2(50, 50))\
+			.mouse_relative_motion(Vector2(3, 3))
 
 		assert_eq(r.inputs[1].position, Vector2(13, 13))
 
@@ -338,9 +338,9 @@ class TestMouseMotion:
 		var r = autofree(InputTracker.new())
 		var sender = InputSender.new(r)
 		sender\
-			super.mouse_motion(Vector2(10, 10), Vector2(50, 50))\
-			super.mouse_relative_motion(Vector2(3, 3))\
-			super.mouse_relative_motion(Vector2(1, 1))
+			.mouse_motion(Vector2(10, 10), Vector2(50, 50))\
+			.mouse_relative_motion(Vector2(3, 3))\
+			.mouse_relative_motion(Vector2(1, 1))
 
 		assert_eq(r.inputs[-1].position, Vector2(14, 14))
 
@@ -348,8 +348,8 @@ class TestMouseMotion:
 		var r = autofree(InputTracker.new())
 		var sender = InputSender.new(r)
 		sender\
-			super.mouse_motion(Vector2(10, 10), Vector2(50, 50))\
-			super.mouse_relative_motion(Vector2(3, 3), Vector2(1, 1))
+			.mouse_motion(Vector2(10, 10), Vector2(50, 50))\
+			.mouse_relative_motion(Vector2(3, 3), Vector2(1, 1))
 
 		assert_eq(r.inputs[-1].speed, Vector2(1, 1))
 
@@ -360,8 +360,8 @@ class TestMouseMotion:
 		var sender = InputSender.new(r)
 
 		sender\
-			super.mouse_set_position(Vector2(10, 10), Vector2(20, 20))\
-			super.mouse_relative_motion(Vector2(5, 5))
+			.mouse_set_position(Vector2(10, 10), Vector2(20, 20))\
+			.mouse_relative_motion(Vector2(5, 5))
 
 		assert_eq(r.inputs[0].position, Vector2(15, 15), 'position')
 		assert_eq(r.inputs[0].global_position, Vector2(25, 25), 'global_position')
@@ -481,11 +481,11 @@ class TestSequence:
 		cust_event.action = "foobar"
 
 		sender\
-			super.key_down(KEY_1)\
-			super.wait(.5)\
-			super.key_up(KEY_1)\
-			super.wait(.5)\
-			super.send_event(cust_event)
+			.key_down(KEY_1)\
+			.wait(.5)\
+			.key_up(KEY_1)\
+			.wait(.5)\
+			.send_event(cust_event)
 
 		assert_eq(r.inputs.size(), 1, "first input sent")
 
@@ -503,11 +503,11 @@ class TestSequence:
 		cust_event.action = "foobar"
 
 		sender\
-			super.key_down(KEY_1)\
-			super.wait_frames(30)\
-			super.key_up(KEY_1)\
-			super.wait_frames(30)\
-			super.send_event(cust_event)
+			.key_down(KEY_1)\
+			.wait_frames(30)\
+			.key_up(KEY_1)\
+			.wait_frames(30)\
+			.send_event(cust_event)
 
 		assert_eq(r.inputs.size(), 1, "first input sent")
 
@@ -522,12 +522,12 @@ class TestSequence:
 		var sender = InputSender.new(r)
 
 		sender\
-			super.key_down("z")\
-			super.wait(.5)\
-			super.key_down("a")\
-			super.key_down("b")\
-			super.wait(.5)\
-			super.key_down("c")
+			.key_down("z")\
+			.wait(.5)\
+			.key_down("a")\
+			.key_down("b")\
+			.wait(.5)\
+			.key_down("c")
 
 		await yield_to(sender, "idle", 2).YIELD
 		assert_eq(r.input_frames[1], r.input_frames[2])
@@ -539,12 +539,12 @@ class TestSequence:
 		var sender = InputSender.new(r)
 
 		sender\
-			super.key_down("a")\
-			super.wait_frames(10)\
-			super.key_up("a")\
-			super.key_down("b")\
-			super.wait_frames(20)\
-			super.key_down("c")
+			.key_down("a")\
+			.wait_frames(10)\
+			.key_up("a")\
+			.key_down("b")\
+			.wait_frames(20)\
+			.key_down("c")
 
 		await yield_to(sender, "idle", 2).YIELD
 		assert_eq(r.input_frames[1], r.input_frames[2])
@@ -556,11 +556,11 @@ class TestSequence:
 		var sender = InputSender.new(r)
 
 		sender\
-			super.mouse_relative_motion(Vector2(1, 1))\
-			super.wait_frames(1)\
-			super.mouse_relative_motion(Vector2(2, 2))\
-			super.wait_frames(1)\
-			super.mouse_relative_motion(Vector2(3, 3))
+			.mouse_relative_motion(Vector2(1, 1))\
+			.wait_frames(1)\
+			.mouse_relative_motion(Vector2(2, 2))\
+			.wait_frames(1)\
+			.mouse_relative_motion(Vector2(3, 3))
 
 		await yield_to(sender, "idle", 5).YIELD
 		assert_eq(r.inputs[2].position, Vector2(6, 6))
@@ -773,22 +773,22 @@ class TestAtScriptLevel:
 
 	func test_one():
 		_sender.key_down("F").hold_for(.1)\
-			super.key_down("A").hold_for(.2)\
-			super.key_down("P")
+			.key_down("A").hold_for(.2)\
+			.key_down("P")
 
 		await _sender.idle
 		assert_false(Input.is_key_pressed(KEY_F))
 
 	func test_two():
 		_sender.key_down("F").hold_for(.1)\
-			super.key_down("A").hold_for(.2)
+			.key_down("A").hold_for(.2)
 
 		await _sender.idle
 		assert_false(Input.is_key_pressed(KEY_F))
 
 	func test_three():
 		_sender.key_down("F").hold_for(.1)\
-			super.key_down("A").hold_for(.2)
+			.key_down("A").hold_for(.2)
 
 		await _sender.idle
 		assert_false(Input.is_key_pressed(KEY_F))

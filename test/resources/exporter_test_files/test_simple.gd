@@ -4,13 +4,13 @@ func test_pass_1():
 	assert_eq('one', 'one')
 
 func test_pass_2():
-    assert_eq('two', 'two')
+	assert_eq('two', 'two')
 
 func test_fail_1():
 	assert_eq(1, 'two')
 
 func test_fail_2():
-    assert_eq('two', 2)
+	assert_eq('two', 2)
 
 func test_pending_no_text():
 	pending()

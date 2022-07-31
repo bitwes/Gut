@@ -319,7 +319,7 @@ class TestDefaultParameters:
 		var inst = autofree(doubler.double_scene(DOUBLE_ME_SCENE_PATH).instantiate())
 		var text = get_instance_source(inst)
 		var no_defaults = _sig_gen('connect', ['p_signal', 'p_target', 'p_method'])
-		var sig = str('func connect(',Callable(no_defaults,'p_binds=[]),p_flags=0):')
+		var sig = str('func connect(',Callable(no_defaults,'p_binds=[]),p_flags=0):'))
 
 		assert_string_contains(text, sig)
 

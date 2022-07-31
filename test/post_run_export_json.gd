@@ -6,7 +6,7 @@ func run(): # called automatically by Gut
 	var exporter = ResultExporter.new()
 
 	var filename = 'user://logs/gut_results'
-	filename += str("_", OS.get_unix_time(), ".json")
+	filename += str("_", Time.get_unix_time_from_system(), ".json")
 
 	var f_result = exporter.write_json_file(gut, filename)
 	if(f_result == OK):

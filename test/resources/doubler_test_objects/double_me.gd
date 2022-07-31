@@ -22,7 +22,7 @@ func has_two_params_one_default(one, two=null):
 	pass
 
 func get_position():
-	return super.get_position()
+	return get_position()
 
 func has_string_and_array_defaults(string_param = "asdf", array_param = [1]):
 	pass

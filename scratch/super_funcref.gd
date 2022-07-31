@@ -14,7 +14,7 @@ class  SubClass:
 func _init():
 
 	var sub = SubClass.new()
-	var fref = funcref(sub, 'print_hello')
+	var fref = sub.print_hello
 	print(fref.is_valid())
 	fref.call_func()
 
