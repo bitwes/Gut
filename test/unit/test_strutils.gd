@@ -54,23 +54,7 @@ class TestType2Str:
 	func test_color():
 		var c  = Color(.1, .2, .3)
 		assert_eq(strutils.type2str(c), 'Color(0.1,0.2,0.3,1)')
-
-	func test_gdnative():
-		assert_eq(strutils.type2str(Node2D), 'Node2D')
-
-	func test_NativeScript():
-		if(strutils.NativeScriptClass != null):
-			assert_eq(strutils.type2str(strutils.NativeScriptClass), 'NativeScript')
-		else:
-			pending("NativeScript is unavailable in Godot build, cannot check NativeScript")
-
-	func test_extends_NativeScript():
-		if(strutils.NativeScriptClass != null):
-			var inst = load('res://test/resources/ExtendsNativeScript.gd').new()
-			assert_string_contains(strutils.type2str(inst), '(ExtendsNativeScript.gd)')
-		else:
-			pending("NativeScript is unavailable in Godot build, cannot check NativeScript")
-
+		
 	func test_loaded_scene():
 		assert_eq(strutils.type2str(DoubleMeScene), str(DoubleMeScene) + '(double_me_scene.tscn)')
 

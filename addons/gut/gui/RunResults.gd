@@ -59,7 +59,7 @@ func _set_toolbutton_icon(btn, icon_name, text):
 
 
 func _ready():
-	var f = $FontSampler.get_font("font")
+	var f = $FontSampler.font
 	var s_size = f.get_string_size("000 of 000 passed")
 	_root = _ctrls.tree.create_item()
 	_ctrls.tree.set_hide_root(true)

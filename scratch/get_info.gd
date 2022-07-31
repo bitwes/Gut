@@ -10,6 +10,7 @@ extends SceneTree
 const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
 var DoubleMe = load(DOUBLE_ME_PATH)
 var DoubleMeScene = load('res://test/resources/doubler_test_objects/double_me_scene.tscn')
+var json = JSON.new()
 
 const DEFAULT_ARGS = 'default_args'
 const NAME = 'name'
@@ -136,7 +137,7 @@ func get_defaults_and_types(method_meta):
 
 func class_db_stuff():
 	print(ClassDB.class_exists('Node2D'))
-	print('category = ',  ClassDB.class_get_category('Node2D'))
+	#print('category = ',  ClassDB.('Node2D'))
 	#print(str(JSON.print(ClassDB.class_get_method_list('Node2D'), ' ')))
 	# print(ClassDB.class_get_integer_constant_list('Node2D'))
 	# print(ClassDB.get_class_list())
@@ -241,7 +242,7 @@ func print_all_info(thing):
 
 
 func pp(dict):
-	print(JSON.print(dict, ' '))
+	print(json.print(dict, ' '))
 
 func _init():
 	var r = RefCounted.new()

@@ -2,8 +2,8 @@ extends VBoxContainer
 @tool
 
 class SearchResults:
-	var L = TextEdit.SEARCH_RESULT_LINE
-	var C = TextEdit.SEARCH_RESULT_COLUMN
+	var L = 0
+	var C = 0
 
 	var positions = []
 	var te = null
@@ -24,12 +24,16 @@ class SearchResults:
 			else:
 				result[C] += 1
 			result = _search_te(text, result, flags)
+			L = result.y
+			C = result.x
 		elif(result.size() == 2):
 			te.scroll_vertical = result[L]
 			te.select(result[L], result[C], result[L], result[C] + text.length())
 			te.set_caret_column(result[C])
 			te.set_caret_line(result[L])
 			te.center_viewport_to_caret()
+			L = result.y
+			C = result.x
 
 		_last_term = text
 		te.center_viewport_to_caret()

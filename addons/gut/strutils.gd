@@ -4,7 +4,6 @@ var _utils = load('res://addons/gut/utils.gd').get_instance()
 # name for the types that corosponds with the type constants defined in the
 # engine.
 var types = {}
-var NativeScriptClass = null
 
 func _init_types_dictionary():
 	types[TYPE_NIL] = 'TYPE_NIL'
@@ -46,10 +45,6 @@ var _str_ignore_types = [
 
 func _init():
 	_init_types_dictionary()
-	# NativeScript does not exist when GDNative is not included in the build
-	if(type_exists('NativeScript')):
-		var getter = load('res://addons/gut/get_native_script.gd')
-		NativeScriptClass = getter.get_it()
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -77,10 +72,6 @@ func _get_obj_filename(thing):
 			# If it isn't a packed scene and it doesn't have a script then
 			# we do nothing.  This just read better.
 			pass
-	elif(NativeScriptClass != null and thing.get_script() is NativeScriptClass):
-		# Work with GDNative scripts:
-		# inst2dict fails with "Not a script with an instantiate" on GDNative script instances
-		filename = _get_filename(thing.get_script().resource_path)
 	elif(!_utils.is_native_class(thing)):
 		var dict = inst2dict(thing)
 		filename = _get_filename(dict['@path'])
