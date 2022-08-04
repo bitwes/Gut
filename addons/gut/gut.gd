@@ -210,6 +210,19 @@ const SIGNAL_TESTS_FINISHED = 'tests_finished'
 const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yield_before_teardown'
 
 signal timeout
+signal tests_finished
+signal test_finished
+signal stop_yield_before_teardown
+
+# potential gui signals.  With these, we can probably remove all references to
+# the gui from here.
+signal test_started
+signal start_script
+signal end_script
+signal start_test
+signal end_test
+signal paused
+
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 var  _should_print_versions = true # used to cut down on output in tests.
@@ -222,11 +235,6 @@ func _init():
 	# a new logger so this does not set the gut instantiate on the base logger
 	# when creating test instances of GUT.
 	_lgr.set_gut(self)
-
-	add_user_signal(SIGNAL_TESTS_FINISHED)
-	add_user_signal('test_finished')
-	add_user_signal(SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
-	# add_user_signal('timeout')
 
 	_doubler.set_output_dir(_temp_directory)
 	_doubler.set_stubber(_stubber)

@@ -1,0 +1,106 @@
+[gd_scene format=3 uid="uid://m28heqtswbuq"]
+
+[node name="GutScene2" type="Node2D"]
+
+[node name="Panel" type="Panel" parent="."]
+offset_right = 468.0
+offset_bottom = 269.0
+
+[node name="MainBox" type="VBoxContainer" parent="Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="TitleBar" type="Panel" parent="Panel/MainBox"]
+custom_minimum_size = Vector2(0, 25)
+offset_right = 468.0
+offset_bottom = 25.0
+
+[node name="TitleBox" type="HBoxContainer" parent="Panel/MainBox/TitleBar"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 2.0
+offset_bottom = 3.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_layout_mode = 1
+
+[node name="Spacer1" type="CenterContainer" parent="Panel/MainBox/TitleBar/TitleBox"]
+offset_right = 213.0
+offset_bottom = 26.0
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="Panel/MainBox/TitleBar/TitleBox"]
+offset_left = 217.0
+offset_right = 251.0
+offset_bottom = 26.0
+text = "Title"
+
+[node name="Spacer2" type="CenterContainer" parent="Panel/MainBox/TitleBar/TitleBox"]
+offset_left = 255.0
+offset_right = 468.0
+offset_bottom = 26.0
+size_flags_horizontal = 3
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Panel/MainBox"]
+offset_top = 29.0
+offset_right = 468.0
+offset_bottom = 207.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ControlBox" type="HBoxContainer" parent="Panel/MainBox"]
+offset_top = 211.0
+offset_right = 468.0
+offset_bottom = 269.0
+
+[node name="ProgressBox" type="VBoxContainer" parent="Panel/MainBox/ControlBox"]
+offset_right = 164.0
+offset_bottom = 58.0
+
+[node name="TestBox" type="HBoxContainer" parent="Panel/MainBox/ControlBox/ProgressBox"]
+offset_right = 164.0
+offset_bottom = 27.0
+
+[node name="Label" type="Label" parent="Panel/MainBox/ControlBox/ProgressBox/TestBox"]
+custom_minimum_size = Vector2(60, 0)
+offset_right = 60.0
+offset_bottom = 26.0
+text = "Tests"
+
+[node name="ProgressBar" type="ProgressBar" parent="Panel/MainBox/ControlBox/ProgressBox/TestBox"]
+custom_minimum_size = Vector2(100, 0)
+offset_left = 64.0
+offset_right = 164.0
+offset_bottom = 27.0
+
+[node name="ScriptBox" type="HBoxContainer" parent="Panel/MainBox/ControlBox/ProgressBox"]
+offset_top = 31.0
+offset_right = 164.0
+offset_bottom = 58.0
+
+[node name="Label" type="Label" parent="Panel/MainBox/ControlBox/ProgressBox/ScriptBox"]
+custom_minimum_size = Vector2(60, 0)
+offset_right = 60.0
+offset_bottom = 26.0
+text = "Scripts"
+
+[node name="ProgressBar" type="ProgressBar" parent="Panel/MainBox/ControlBox/ProgressBox/ScriptBox"]
+custom_minimum_size = Vector2(100, 0)
+offset_left = 64.0
+offset_right = 164.0
+offset_bottom = 27.0
+
+[node name="Spacer1" type="CenterContainer" parent="Panel/MainBox/ControlBox"]
+offset_left = 168.0
+offset_right = 385.0
+offset_bottom = 58.0
+size_flags_horizontal = 3
+
+[node name="Button" type="Button" parent="Panel/MainBox/ControlBox"]
+offset_left = 389.0
+offset_top = 13.0
+offset_right = 468.0
+offset_bottom = 44.0
+size_flags_vertical = 4
+text = "Continue
+"

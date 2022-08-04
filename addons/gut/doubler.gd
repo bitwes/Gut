@@ -443,9 +443,11 @@ func _write_file(obj_info, dest_path, override_path=null):
 
 	f.store_string(base_script)
 
+	print('local method count = ', script_methods.local_methods.size())
 	for i in range(script_methods.local_methods.size()):
 		f.store_string(_get_func_text(script_methods.local_methods[i], path, super_name))
 
+	print('built-in method count = ', script_methods.built_ins.size())
 	for i in range(script_methods.built_ins.size()):
 		_stub_to_call_super(obj_info, script_methods.built_ins[i].name)
 		f.store_string(_get_func_text(script_methods.built_ins[i], path, super_name))
@@ -477,16 +479,17 @@ func _double_scene_and_script(scene_info):
 
 
 func _get_methods(object_info):
-	var obj = object_info.instantiate()
+	var obj = object_info.get_loaded_class()
 	# any method in the script or super script
 	var script_methods = ScriptMethods.new()
-	var methods = obj.get_method_list()
+	var methods = obj.get_script_method_list()
 
-	if(!object_info.is_singleton() and !(obj is RefCounted)):
-		obj.free()
+	# if(!object_info.is_singleton() and !(obj is RefCounted)):
+	# 	obj.free()
 
 	# first pass is for local methods only
 	for i in range(methods.size()):
+		print(i, '.  ', methods[i].name, ' ', methods[i].flags)
 		if(object_info.is_singleton()):
 			#print(methods[i].name, " :: ", methods[i].flags, " :: ", methods[i].id)
 			#print("    ", methods[i])
@@ -504,7 +507,7 @@ func _get_methods(object_info):
 		# 65 is a magic number for methods in script, though documentation
 		# says 64.  This picks up local overloads of base class methods too.
 		# See MethodFlags in @GlobalScope
-		elif(methods[i].flags == 65 and !_ignored_methods.has(object_info.get_path(), methods[i]['name'])):
+		elif(!_ignored_methods.has(object_info.get_path(), methods[i]['name'])):
 			script_methods.add_local_method(methods[i])
 
 	if(object_info.get_method_strategy() == _utils.DOUBLE_STRATEGY.FULL):

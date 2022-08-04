@@ -18,6 +18,9 @@ const ARGS = 'args'
 
 
 class HasSomeInners:
+	signal look_at_me_now
+
+	const WHATEVER = 'maaaaaan'
 
 	class Inner1:
 		extends 'res://addons/gut/test.gd'
@@ -53,6 +56,8 @@ class ExtendsNode2D:
 class SimpleObject:
 	var a = 'a'
 
+
+
 func get_methods_by_flag(obj):
 	var methods_by_flags = {}
 	var methods = obj.get_method_list()
@@ -65,6 +70,7 @@ func get_methods_by_flag(obj):
 		else:
 			methods_by_flags[flag] = [name]
 	return methods_by_flags
+
 
 func print_methods_by_flags(methods_by_flags):
 
@@ -79,6 +85,7 @@ func print_methods_by_flags(methods_by_flags):
 			total += methods_by_flags[flag].size()
 	print("Total:  ", total)
 
+
 func subtract_dictionary(sub_this, from_this):
 	var result = {}
 	for key in sub_this:
@@ -90,6 +97,7 @@ func subtract_dictionary(sub_this, from_this):
 				if(index == -1):
 					result[key].append(value)
 	return result
+
 
 func print_method_info(obj):
 	var methods = obj.get_method_list()
@@ -108,6 +116,7 @@ func print_method_info(obj):
 				else:
 					print('  ', key, ':  ', methods[i][key])
 
+
 func print_a_bunch_of_methods_by_flags():
 	var e = ExtendsNode2D.new()
 	var n = get_methods_by_flag(e)
@@ -122,6 +131,7 @@ func print_a_bunch_of_methods_by_flags():
 	print_methods_by_flags(subtract_dictionary(o, n))
 	print("strays  ")
 	e.print_orphan_nodes()
+
 
 func get_defaults_and_types(method_meta):
 	var text = ""
@@ -194,20 +204,20 @@ func print_other_info(loaded):
 			print('  ', 'id           ', thing.get_instance_id())
 			print('  ', 'is test      ', does_inherit_from_test(thing))
 
+
 func print_inner_test_classes(loaded, from=null):
-	print('path = ', loaded.get_path())
-	if(loaded.get_base_script() != null):
-		print('base = ', loaded.get_base_script().get_path())
-	else:
-		print('base = ')
+	# print('path = ', loaded.get_path())
+	# if(loaded.get_base_script() != null):
+	# 	print('base = ', loaded.get_base_script().get_path())
+	# else:
+	# 	print('base = ')
+
 	var const_map = loaded.get_script_constant_map()
 	for key in const_map:
 		var thing = const_map[key]
-		if(from != null):
-			print(from, '/', key, ':')
-		else:
-			print(key, ':')
+
 		if(typeof(thing) == TYPE_OBJECT):
+			print('Class ', key, ':')
 			if(does_inherit_from_test(thing)):
 				print('  is a test class')
 			else:
@@ -219,8 +229,12 @@ func print_inner_test_classes(loaded, from=null):
 				next_from = str(from, '/', key)
 			print_inner_test_classes(thing, next_from)
 
+		else:
+			print('CONST ', key, ' = ', thing)
+
+
 func print_script_methods():
-	var script = load('res://test/unit/test_print.gd')
+	var script = load('res://tests_4_0/test_print.gd')
 
 	var methods = script.get_script_method_list()
 	for i in range(methods.size()):
@@ -229,35 +243,56 @@ func print_script_methods():
 
 
 func print_all_info(thing):
-	print('Methods')
+	print('path = ', thing.get_path())
+	print('--- Methods ---')
 	var methods = thing.get_method_list()
 
 	for i in range(methods.size()):
 		print('  ', methods[i].name)
 
-	print('Properties')
+	print('--- Properties ---')
 	var props = thing.get_property_list()
 	for i in range(props.size()):
 		print('  ', props[i].name, props[i])
+		print('    value = ', thing.get(props[i].name))
+
+	print('--- Constants ---')
+	print_inner_test_classes(thing)
+
+	print('--- Signals ---')
+	var sigs = thing.get_signal_list()
+	for sig in sigs:
+		print(sig['name'])
+		print('  ', sig)
 
 
 func pp(dict):
-	print(json.print(dict, ' '))
+	print(json.stringify(dict, ' '))
+
+
 
 func _init():
-	var r = RefCounted.new()
-	var r2 = r
-	var r3 = r
-	var r4 = r
-	#print_all_info(r)
+	# class_db_stuff()
+
+	# var r = RefCounted.new()
+	# var r2 = r
+	# var r3 = r
+	# var r4 = r
+	# print_all_info(r)
+
+
 	#print(r.get('RefCounted'))
 
-	# print_all_info(DoubleMeScene)
+	# print_all_info(HasSomeInners)
+	# print_all_info(DoubleMe)
+	pp(DoubleMe.get_script_method_list())
+	var flag_methods = get_methods_by_flag(DoubleMe)
+	print_methods_by_flags(flag_methods)
 	#print(DoubleMeScene.script)
 	#print(DoubleMeScene.resource_name)
-	print(DoubleMeScene.get_meta_list())
+	# print(DoubleMeScene.get_meta_list())
 
-	print_script_methods()
+	# print_script_methods()
 	#var test = load('res://addons/gut/test.gd').new()
 	#print_method_info(test)
 
@@ -274,7 +309,7 @@ func _init():
 	# print("\n\n\n")
 	# print_inner_test_classes(load('res://scratch/get_info.gd'))
 
-	#print_inner_test_classes(load('res://test/unit/test_doubler.gd'))
+	# print_inner_test_classes(load('res://test/unit/test_doubler.gd'))
 	#print_inner_test_classes(HasSomeInners)
 	#print_other_info(HasSomeInners)
 	#print_other_info(HasSomeInners.ExtendsInner1)

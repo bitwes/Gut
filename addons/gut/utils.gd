@@ -128,6 +128,7 @@ func _ready() -> void:
 	_http_request_latest_version()
 
 func _http_request_latest_version() -> void:
+	return
 	var http_request = HTTPRequest.new()
 	http_request.name = "http_request"
 	add_child(http_request)

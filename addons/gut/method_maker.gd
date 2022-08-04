@@ -210,7 +210,7 @@ func _get_super_call_text(method_name, args, super_name=""):
 		if(i != args.size() -1):
 			params += ', '
 
-	return str(super_name, '.', method_name, '(', params, ')')
+	return str(super_name, 'super.', method_name, '(', params, ')')
 
 
 func _get_spy_call_parameters_text(args):
@@ -268,7 +268,6 @@ func get_function_text(meta, path=null, override_size=null, super_name=""):
 	var args = result[1]
 
 	var param_array = _get_spy_call_parameters_text(args)
-
 	if(has_unsupported):
 		# This will cause a runtime error.  This is the most convenient way to
 		# to stop running before the error gets more obscure.  _make_arg_array
@@ -292,6 +291,7 @@ func get_function_text(meta, path=null, override_size=null, super_name=""):
 				"super_call":_get_super_call_text(meta.name, args, super_name)
 			})
 
+	print(text)
 	return text
 
 

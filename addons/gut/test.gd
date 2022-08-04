@@ -63,7 +63,7 @@ class DoubleInfo:
 	#   (object_to_double, subpath, strategy)
 	func _init(thing,p2=null,p3=null):
 		strategy = p2
-
+		print(thing, ' is ', typeof(thing), ' = ', TYPE_OBJECT)
 		# short-circuit and ensure that is_valid
 		# is not set to true.
 		if(_utils.is_instance(thing)):
@@ -79,7 +79,10 @@ class DoubleInfo:
 				_is_native = true
 				extension = 'native_class_not_used'
 			else:
-				path = thing.resource_path
+				print('!!!here')
+				path = thing.get('resource_path')
+				print(thing.get_property_list())
+				print(path)
 		else:
 			path = thing
 
@@ -96,6 +99,16 @@ class DoubleInfo:
 
 	func is_native():
 		return _is_native
+
+	func to_s():
+		return str(path, "\n",
+			subpath, "\n",
+			strategy, "\n",
+			make_partial, "\n",
+			extension, "\n",
+			_is_native, "\n",
+			is_valid, "\n")
+
 
 # ------------------------------------------------------------------------------
 # Begin test.gd
@@ -1351,6 +1364,7 @@ func _smart_double(double_info):
 # ------------------------------------------------------------------------------
 func double(thing, p2=null, p3=null):
 	var double_info = DoubleInfo.new(thing, p2, p3)
+	print(double_info.to_s())
 	if(!double_info.is_valid):
 		_lgr.error('double requires a class or path, you passed an instantiate:  ' + _str(thing))
 		return null
