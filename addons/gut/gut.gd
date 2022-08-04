@@ -1133,7 +1133,12 @@ func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
 	else:
 		var files = _get_files(path, prefix, suffix)
 		for i in range(files.size()):
-			add_script(files[i])
+			if(_script_name == null or \
+					(_script_name != null and files[i].findn(_script_name) != -1)):
+				print('adding ', files[i])
+				add_script(files[i])
+			else:
+				print('skipping ', files[i])
 
 
 # ------------------------------------------------------------------------------
