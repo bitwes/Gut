@@ -272,7 +272,7 @@ func get_config_issues():
 	if(!has_directory):
 		to_return.append('You do not have any directories set.')
 
-	if not ('.gd' in _cfg_ctrls['suffix'].text):
+	if(!_cfg_ctrls['suffix'].text.ends_with('.gd')):
 		to_return.append("Script suffix must end in '.gd'")
 
 	return to_return
@@ -355,7 +355,7 @@ func set_options(options):
 	_add_value('prefix', options.prefix, 'Script Prefix',
 		"The filename prefix for all test scripts.")
 	_add_value('suffix', options.suffix, 'Script Suffix',
-		"The filename suffix for all test scripts.")
+		"The filename suffix for all test scripts. Must end in '.gc'")
 
 
 func get_options(base_opts):

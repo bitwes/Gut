@@ -75,9 +75,6 @@ export var _test_prefix = 'test_'
 export var _file_prefix = 'test_'
 # The suffix used to find test scripts.
 export var _file_suffix = '.gd'
-# The file extension for test scripts (I don't think you can change this and
-# everything will work).
-export var _file_extension = '.gd'
 # The prefix used to find Inner Test Classes.
 export var _inner_class_prefix = 'Test'
 # The directory GUT will use to write any temporary files.  This isn't used
@@ -186,7 +183,6 @@ func _setup_gut():
 	_gut._test_prefix = _test_prefix
 	_gut._file_prefix = _file_prefix
 	_gut._file_suffix = _file_suffix
-	_gut._file_extension = _file_extension
 	_gut._inner_class_prefix = _inner_class_prefix
 	_gut._temp_directory = _temp_directory
 

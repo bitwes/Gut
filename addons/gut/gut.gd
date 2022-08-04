@@ -41,7 +41,6 @@ var _disable_strict_datatype_checks = false setget disable_strict_datatype_check
 var _test_prefix = 'test_'
 var _file_prefix = 'test_'
 var _file_suffix = '.gd'
-var _file_extension = '.gd'
 var _inner_class_prefix = 'Test'
 var _temp_directory = 'user://gut_temp_directory'
 var _export_path = '' setget set_export_path, get_export_path
