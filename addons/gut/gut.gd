@@ -35,12 +35,16 @@ extends Control
 var _select_script = ''
 var _tests_like = ''
 var _inner_class_name = ''
-var _should_maximize = false :
+
+var _should_maximize = false
+var should_maximize :
 	get:
 		return get_should_maximize()
 	set(val):
 		set_should_maximize(val)
-var _log_level = 1 :
+
+var _log_level = 1
+var log_level :
 	get:
 		return get_log_level()
 	set(val):
@@ -60,42 +64,58 @@ var _export_path = '' :
 		return get_export_path()
 	set(val):
 		set_export_path(val)
-var _include_subdirectories = false :
+
+var _include_subdirectories = false
+var include_subdirectories:
 	get:
 		return get_include_subdirectories()
 	set(val):
 		set_include_subdirectories(val)
-var _double_strategy = 1  :
+
+var _double_strategy = 1
+var double_strategy = 1  :
 	get:
 		return get_double_strategy()
 	set(val):
 		set_double_strategy(val)
-var _pre_run_script = '' :
+
+var _pre_run_script = ''
+var pre_run_script = '' :
 	get:
 		return get_pre_run_script()
 	set(val):
 		set_pre_run_script(val)
-var _post_run_script = '' :
+
+var _post_run_script = ''
+var post_run_script = '' :
 	get:
 		return get_post_run_script()
 	set(val):
 		set_post_run_script(val)
-var _color_output = false :
+
+var _color_output = false
+var color_output = false :
 	get:
 		return get_color_output()
 	set(val):
 		set_color_output(val)
-var _junit_xml_file = '' :
+
+var _junit_xml_file = ''
+var junit_xml_file = '' :
 	get:
 		return get_junit_xml_file()
 	set(val):
 		set_junit_xml_file(val)
-var _junit_xml_timestamp = false :
+
+var _junit_xml_timestamp = false
+var junit_xml_timestamp = false :
 	get:
 		return get_junit_xml_timestamp()
 	set(val):
 		set_junit_xml_timestamp(val)
-var _add_children_to = self :
+
+var _add_children_to = self
+var add_children_to = self :
 	get:
 		return get_add_children_to()
 	set(val):
@@ -310,10 +330,10 @@ func _setup_gui():
 	# must match between both gut and the gui.
 	_gui.size = self.size
 	add_child(_gui)
-	
+
 	_gui.set_anchor(SIDE_RIGHT, SIDE_RIGHT)
 	_gui.set_anchor(SIDE_BOTTOM, SIDE_RIGHT)
-	
+
 	_gui.connect('run_single_script',Callable(self,'_on_run_one'))
 	_gui.connect('run_script',Callable(self,'_on_new_gui_run_script'))
 	_gui.connect('end_pause',Callable(self,'_on_new_gui_end_pause'))
@@ -897,6 +917,8 @@ func _test_the_scripts(indexes=[]):
 			_print_script_heading(the_script)
 		_new_summary.add_script(the_script.get_full_name())
 
+		if(!the_script.is_loaded):
+			break
 		var test_script = the_script.get_new()
 		var script_result = null
 		_setup_script(test_script)
@@ -1731,5 +1753,5 @@ func get_add_children_to():
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-func set_add_children_to(add_children_to):
-	_add_children_to = add_children_to
+func set_add_children_to(val):
+	_add_children_to = val

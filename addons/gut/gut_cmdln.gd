@@ -57,9 +57,9 @@ var json = JSON.new()
 # will punch through null values of higher precedented hashes.
 # ------------------------------------------------------------------------------
 class OptionResolver:
-	var base_opts:Dictionary = null
-	var cmd_opts:Dictionary = null
-	var config_opts:Dictionary = null
+	var base_opts = {}
+	var cmd_opts = {}
+	var config_opts = {}
 
 
 	func get_value(key):
@@ -219,13 +219,13 @@ option (option priority:  command-line, super.gutconfig, default)."""
 	resolved.erase("show_help")
 
 	print("Here's a config with all the properties set based off of your current command and config.")
-	print(json.print(resolved, '  '))
+	print(json.stringify(resolved, '  '))
 
 	for key in resolved:
 		resolved[key] = null
 
 	print("\n\nAnd here's an empty config for you fill in what you want.")
-	print(json.print(resolved, ' '))
+	print(json.stringify(resolved, ' '))
 
 
 # parse options and run Gut
@@ -270,7 +270,7 @@ func _run_gut():
 			runner.set_gut_config(_gut_config)
 
 			_tester = runner.get_gut()
-			_tester.connect('tests_finished', self, '_on_tests_finished',
+			_tester.connect('tests_finished', self._on_tests_finished,
 				[_final_opts.should_exit, _final_opts.should_exit_on_success])
 
 			get_root().add_child(runner)

@@ -42,7 +42,7 @@ gdscript/warnings/exclude_addons=false
 
 [editor_plugins]
 
-enabled=PackedStringArray()
+enabled=PackedStringArray("res://addons/gut/plugin.cfg")
 
 [network]
 

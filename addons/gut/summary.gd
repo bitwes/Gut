@@ -162,11 +162,12 @@ func get_test_text(test_name):
 func get_non_inner_class_script_count():
 	var unique_scripts = {}
 	for i in range(_scripts.size()):
-		var ext_loc = _scripts[i].name.find_last('.gd.')
-		if(ext_loc == -1):
-			unique_scripts[_scripts[i].name] = 1
-		else:
-			unique_scripts[_scripts[i].name.substr(0, ext_loc + 3)] = 1
+		unique_scripts[_scripts[i].name] = 1
+		# var ext_loc = _scripts[i].name.find_last('.gd.')
+		# if(ext_loc == -1):
+		# 	unique_scripts[_scripts[i].name] = 1
+		# else:
+		# 	unique_scripts[_scripts[i].name.substr(0, ext_loc + 3)] = 1
 	return unique_scripts.keys().size()
 
 func get_totals():

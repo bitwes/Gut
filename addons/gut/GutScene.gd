@@ -341,10 +341,10 @@ func set_log_level(value):
 	$VBox/BottomPanel/VBox/HBox2/LogLevelSlider.value = new_value
 
 func set_ignore_pause(should):
-	_ignore_pauses.pressed = should
+	_ignore_pauses.button_pressed = should
 
 func get_ignore_pause():
-	return _ignore_pauses.pressed
+	return _ignore_pauses.button_pressed
 
 func get_text_box():
 	# due to some timing issue, this cannot return _text_box but can return

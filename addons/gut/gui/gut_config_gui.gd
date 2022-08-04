@@ -201,7 +201,7 @@ func _add_value(key, value, disp_text, hint=''):
 
 func _add_boolean(key, value, disp_text, hint=''):
 	var value_ctrl = CheckBox.new()
-	value_ctrl.pressed = value
+	value_ctrl.button_pressed = value
 
 	_new_row(key, disp_text, value_ctrl, hint)
 
@@ -373,10 +373,10 @@ func get_options(base_opts):
 
 	# Settings
 	to_return.log_level = _cfg_ctrls.log_level.value
-	to_return.ignore_pause = _cfg_ctrls.ignore_pause.pressed
-	to_return.hide_orphans = _cfg_ctrls.hide_orphans.pressed
-	to_return.should_exit = _cfg_ctrls.should_exit.pressed
-	to_return.should_exit_on_success = _cfg_ctrls.should_exit_on_success.pressed
+	to_return.ignore_pause = _cfg_ctrls.ignore_pause.button_pressed
+	to_return.hide_orphans = _cfg_ctrls.hide_orphans.button_pressed
+	to_return.should_exit = _cfg_ctrls.should_exit.button_pressed
+	to_return.should_exit_on_success = _cfg_ctrls.should_exit_on_success.button_pressed
 
 	#Output
 	to_return.panel_options.font_name = _cfg_ctrls.output_font_name.get_item_text(
@@ -387,17 +387,17 @@ func get_options(base_opts):
 	to_return.font_name = _cfg_ctrls.font_name.get_item_text(
 		_cfg_ctrls.font_name.selected)
 	to_return.font_size = _cfg_ctrls.font_size.value
-	to_return.should_maximize = _cfg_ctrls.should_maximize.pressed
-	to_return.compact_mode = _cfg_ctrls.compact_mode.pressed
+	to_return.should_maximize = _cfg_ctrls.should_maximize.button_pressed
+	to_return.compact_mode = _cfg_ctrls.compact_mode.button_pressed
 	to_return.opacity = _cfg_ctrls.opacity.value
 	to_return.background_color = _cfg_ctrls.background_color.color.to_html()
 	to_return.font_color = _cfg_ctrls.font_color.color.to_html()
-	to_return.disable_colors = _cfg_ctrls.disable_colors.pressed
-	to_return.gut_on_top = _cfg_ctrls.gut_on_top.pressed
+	to_return.disable_colors = _cfg_ctrls.disable_colors.button_pressed
+	to_return.gut_on_top = _cfg_ctrls.gut_on_top.button_pressed
 
 
 	# Directories
-	to_return.include_subdirs = _cfg_ctrls.include_subdirs.pressed
+	to_return.include_subdirs = _cfg_ctrls.include_subdirs.button_pressed
 	var dirs = []
 	for i in range(DIRS_TO_LIST):
 		var key = str('directory_', i)
@@ -408,7 +408,7 @@ func get_options(base_opts):
 
 	# XML Output
 	to_return.junit_xml_file = _cfg_ctrls.junit_xml_file.text
-	to_return.junit_xml_timestamp = _cfg_ctrls.junit_xml_timestamp.pressed
+	to_return.junit_xml_timestamp = _cfg_ctrls.junit_xml_timestamp.button_pressed
 
 	# Hooks
 	to_return.pre_run_script = _cfg_ctrls.pre_run_script.text

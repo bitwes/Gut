@@ -85,7 +85,7 @@ func _load_options_from_config_file(file_path, into):
 	test_json_conv.parse(json)
 	var results = test_json_conv.get_data()
 	# SHORTCIRCUIT
-	if(results.error != OK):
+	if(results == null):
 		print("\n\n",'!! ERROR parsing file:  ', file_path)
 		print('    at line ', results.error_line, ':')
 		print('    ', results.error_string)
@@ -93,7 +93,7 @@ func _load_options_from_config_file(file_path, into):
 
 	# Get all the options out of the config file using the option name.  The
 	# options hash is now the default source of truth for the name of an option.
-	_load_dict_into(results.result, into)
+	_load_dict_into(results, into)
 
 	return 1
 

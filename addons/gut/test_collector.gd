@@ -38,6 +38,7 @@ class TestScript:
 	var path:String
 	var _utils = null
 	var _lgr = null
+	var is_loaded = false
 
 	func _init(utils=null,logger=null):
 		_utils = utils
@@ -147,6 +148,11 @@ func _does_inherit_from_test(thing):
 
 func _populate_tests(test_script:TestScript):
 	var script =  test_script.load_script()
+	if(script == null):
+		print(test_script.path, ' could not be loaded')
+		return false
+
+	test_script.is_loaded = true
 	var methods = script.get_script_method_list()
 	for i in range(methods.size()):
 		var name = methods[i]['name']
@@ -202,6 +208,7 @@ func _parse_script(test_script):
 # Public
 # -----------------
 func add_script(path):
+	print('Adding ', path)
 	# SHORTCIRCUIT
 	if(has_script(path)):
 		return []
