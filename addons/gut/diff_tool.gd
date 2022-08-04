@@ -24,7 +24,11 @@ func set_are_equal(val):
 	_block_set('are_equal', val)
 
 func get_are_equal():
-	return are_equal()
+	if(!_valid):
+		return null
+	else:
+		return differences.size() == 0
+
 
 func set_summary(val):
 	_block_set('summary', val)
@@ -40,9 +44,9 @@ func  get_total_count():
 
 func get_short_summary():
 	var text = str(_strutils.truncate_string(str(_value_1), 50),
-		' ', _compare.get_compare_symbol(are_equal()), ' ',
+		' ', _compare.get_compare_symbol(are_equal), ' ',
 		_strutils.truncate_string(str(_value_2), 50))
-	if(!are_equal()):
+	if(!are_equal):
 		text += str('  ', get_different_count(), ' of ', get_total_count(),
 			' ', _desc_things, ' do not match.')
 	return text
@@ -133,7 +137,7 @@ func _diff_dictionary(d1, d2):
 func summarize():
 	var summary = ''
 
-	if(are_equal()):
+	if(are_equal):
 		summary = get_short_summary()
 	else:
 		var formatter = load('res://addons/gut/diff_formatter.gd').new()
@@ -141,12 +145,6 @@ func summarize():
 		summary = formatter.make_it(self)
 
 	return summary
-
-func are_equal():
-	if(!_valid):
-		return null
-	else:
-		return differences.size() == 0
 
 
 func get_diff_type():

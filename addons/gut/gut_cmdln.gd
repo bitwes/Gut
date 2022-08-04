@@ -285,17 +285,23 @@ func _on_tests_finished(should_exit, should_exit_on_success):
 			lgr.error('No directories configured.  Add directories with options or a super.gutconfig.json file.  Use the -gh option for more information.')
 
 	if(_tester.get_fail_count()):
-		OS.exit_code = 1
+		set_exit_code(1)
 
 	# Overwrite the exit code with the post_script
 	var post_inst = _tester.get_post_run_script_instance()
 	if(post_inst != null and post_inst.get_exit_code() != null):
-		OS.exit_code = post_inst.get_exit_code()
+		set_exit_code(post_inst.get_exit_code())
 
 	if(should_exit or (should_exit_on_success and _tester.get_fail_count() == 0)):
 		quit()
 	else:
 		print("Tests finished, exit manually")
+
+func set_exit_code(val):
+	pass
+	# OS.exit_code doesn't exist anymore, but when we find a solution it just
+	# goes here.
+
 
 # ------------------------------------------------------------------------------
 # MAIN
@@ -304,7 +310,7 @@ func _init():
 	if(!_utils.is_version_ok()):
 		print("\n\n", _utils.get_version_text())
 		push_error(_utils.get_bad_version_text())
-		OS.exit_code = 1
+		set_exit_code(1)
 		quit()
 	else:
 		_run_gut()

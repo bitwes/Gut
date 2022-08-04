@@ -71,11 +71,11 @@ class TestArrayDiff:
 
 	func test_is_equal_is_true_when_all_elements_match():
 		var ad = DiffTool.new([1, 2, 3], [1, 2, 3])
-		assert_true(ad.are_equal())
+		assert_true(ad.are_equal)
 
 	func test_is_equal_returns_false_when_one_element_does_not_match():
 		var ad = DiffTool.new([1, 2, 3], [1, 2, 99])
-		assert_false(ad.are_equal(), 'should be false but is ' + str(ad.are_equal()))
+		assert_false(ad.are_equal, 'should be false but is ' + str(ad.are_equal))
 
 	func test_lists_indexes_as_missing_in_first_array():
 		var ad = DiffTool.new([1, 2, 3], [1, 2, 3, 4, 5])
@@ -136,14 +136,14 @@ class TestArrayDiff:
 		var a1 = [{'a':1}, {'b':2}]
 		var a2 = [{'a':1}, {'b':2}]
 		var diff = DiffTool.new(a1, a2, _utils.DIFF.SHALLOW)
-		assert_false(diff.are_equal(), diff.summarize())
+		assert_false(diff.are_equal, diff.summarize())
 
 
 	func test_dictionaries_in_sub_arrays():
 		var a1 = [[{'a': 1}]]
 		var a2 = [[{'a': 1}]]
 		var diff = DiffTool.new(a1, a2, _utils.DIFF.SHALLOW)
-		assert_false(diff.are_equal(), diff.summarize())
+		assert_false(diff.are_equal, diff.summarize())
 
 
 class TestArrayDeepDiff:
@@ -155,25 +155,25 @@ class TestArrayDeepDiff:
 		var a1 = [{'a':1}, {'b':2}]
 		var a2 = [{'a':1}, {'b':2}]
 		var diff = DiffTool.new(a1, a2, _utils.DIFF.DEEP)
-		assert_true(diff.are_equal(), diff.summarize())
+		assert_true(diff.are_equal, diff.summarize())
 
 	func test_diff_with_dictionaries_fails_when_different_values():
 		var a1 = [{'a':1}, {'b':1}, {'c':1}, {'d':1}]
 		var a2 = [{'a':1}, {'b':2}, {'c':2}, {'d':2}]
 		var diff = DiffTool.new(a1, a2, _utils.DIFF.DEEP)
-		assert_false(diff.are_equal(), diff.summarize())
+		assert_false(diff.are_equal, diff.summarize())
 
 	func test_matching_dictionaries_in_sub_arrays():
 		var a1 = [[{'a': 1}]]
 		var a2 = [[{'a': 1}]]
 		var diff = DiffTool.new(a1, a2, _utils.DIFF.DEEP)
-		assert_true(diff.are_equal(), diff.summarize())
+		assert_true(diff.are_equal, diff.summarize())
 
 	func test_non_matching_dictionaries_in_sub_arrays():
 		var a1 = [[{'a': 1}], [{'b': 1}], [{'c': 1}]]
 		var a2 = [[{'a': 1}], [{'b': 2}], [{'c': 2}]]
 		var diff = DiffTool.new(a1, a2, _utils.DIFF.DEEP)
-		assert_false(diff.are_equal(), diff.summarize())
+		assert_false(diff.are_equal, diff.summarize())
 
 	func test_when_deep_compare_non_equal_dictionaries_do_not_contain_disclaimer():
 		var a1 = [[{'a': 2}], [{'b': 3}], [{'c': 4}]]
@@ -268,9 +268,9 @@ class TestDictionaryDiff:
 		assert_eq(dd.get_differences().keys(), ['a', 'b', 'c'])
 
 	func test_are_equal_true_for_matching_dictionaries():
-		assert_true(DiffTool.new({}, {}).are_equal(), 'empty')
-		assert_true(DiffTool.new({'a':1}, {'a':1}).are_equal(), 'same')
-		assert_true(DiffTool.new({'a':1, 'b':2}, {'b':2, 'a':1}).are_equal(), 'different order')
+		assert_true(DiffTool.new({}, {}).are_equal, 'empty')
+		assert_true(DiffTool.new({'a':1}, {'a':1}).are_equal, 'same')
+		assert_true(DiffTool.new({'a':1, 'b':2}, {'b':2, 'a':1}).are_equal, 'different order')
 
 	func test_summarize():
 		var d1 = {'aa':'asdf', 'a':1, 'b':'two', 'c':autofree(Node2D.new())}
@@ -305,13 +305,13 @@ class TestDictionaryDiff:
 		var d1 = {'a':1, 'b':{'a':99}}
 		var d2 = {'a':1, 'b':{'a':99}}
 		var dd = DiffTool.new(d1, d2)
-		assert_true(dd.are_equal(), dd.summarize())
+		assert_true(dd.are_equal, dd.summarize())
 
 	func test_sub_dictionary_compare_when_not_equal():
 		var d1 = {'a':1, 'b':{'c':88, 'd':22, 'f':{'g':1, 'h':200}}, 'z':{}, 'dne_in_d2':'asdf'}
 		var d2 = {'a':1, 'b':{'c':99, 'e':'letter e', 'f':{'g':1, 'h':2}}, 'z':{}}
 		var dd = DiffTool.new(d1, d2)
-		assert_false(dd.are_equal(), dd.summarize())
+		assert_false(dd.are_equal, dd.summarize())
 		assert_eq(dd.get_total_count(), 4, 'total key count')
 		assert_eq(dd.get_different_count(), 2, 'total different count')
 
@@ -328,25 +328,25 @@ class TestDictionaryDiff:
 		var d1 = {'a':1, 'b':{'c':1}}
 		var d2 = {'a':1, 'b':22}
 		var diff = DiffTool.new(d1, d2)
-		assert_false(diff.are_equal(), diff.summarize())
+		assert_false(diff.are_equal, diff.summarize())
 
 	func test_ditionaries_in_arrays():
 		var d1 = {'a':[{'b':1}]}
 		var d2 = {'a':[{'b':1}]}
 		var diff = DiffTool.new(d1, d2)
-		assert_true(diff.are_equal(), diff.summarize())
+		assert_true(diff.are_equal, diff.summarize())
 
 	func test_when_shallow_sub_dictionaries_are_not_checked_for_values():
 		var d1 = {'a':1, 'b':{'a':99}}
 		var d2 = {'a':1, 'b':{'a':99}}
 		var diff = DiffTool.new(d1, d2, _utils.DIFF.SHALLOW)
-		assert_false(diff.are_equal(), diff.summarize())
+		assert_false(diff.are_equal, diff.summarize())
 
 	func test_when_shallow_ditionaries_in_arrays_are_not_checked_for_values():
 		var d1 = {'a':[{'b':1}]}
 		var d2 = {'a':[{'b':1}]}
 		var diff = DiffTool.new(d1, d2, _utils.DIFF.SHALLOW)
-		assert_false(diff.are_equal(), diff.summarize())
+		assert_false(diff.are_equal, diff.summarize())
 
 
 	func test_when_deep_diff_then_different_arrays_contains_DiffTool():

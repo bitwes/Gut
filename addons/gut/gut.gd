@@ -209,6 +209,7 @@ var _after_all_test_obj = load('res://addons/gut/test_collector.gd').Test.new()
 const SIGNAL_TESTS_FINISHED = 'tests_finished'
 const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yield_before_teardown'
 
+signal timeout
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 var  _should_print_versions = true # used to cut down on output in tests.
@@ -225,7 +226,7 @@ func _init():
 	add_user_signal(SIGNAL_TESTS_FINISHED)
 	add_user_signal('test_finished')
 	add_user_signal(SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
-	add_user_signal('timeout')
+	# add_user_signal('timeout')
 
 	_doubler.set_output_dir(_temp_directory)
 	_doubler.set_stubber(_stubber)
@@ -634,7 +635,7 @@ func _print_script_heading(script):
 		if(script.inner_class_name == null):
 			text = script.path
 		else:
-			text = script.path + '.' + script.inner_class_name
+			text = str(script.path, '.', script.inner_class_name)
 		_lgr.log("\n\n" + text, fmt)
 
 
@@ -926,7 +927,7 @@ func _test_the_scripts(indexes=[]):
 
 		# yield between test scripts so things paint
 		if(_yield_between.should):
-			await _do_yield_between().timeout
+			await(_do_yield_between().timeout)
 
 		# !!!
 		# Hack so there isn't another indent to this monster of a method.  if

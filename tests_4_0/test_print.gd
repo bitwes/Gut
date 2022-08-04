@@ -68,9 +68,10 @@ func test_show_info():
 	assert_true(true)
 
 func test_yield():
-	gut.p('starting yield')
-	await yield_for(2).YIELD
-	gut.p('end yield')
+	pending("** YIELD **")
+	# gut.p('starting yield')
+	# await yield_for(2).timeout
+	# gut.p('end yield')
 
 
 class TestGuiOutput:

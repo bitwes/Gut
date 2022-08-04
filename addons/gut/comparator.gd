@@ -41,7 +41,7 @@ func simple(v1, v2, missing_string=''):
 	var cmp_str = null
 	var extra = ''
 
-	if(_should_compare_int_to_float and [2, 3].has(typeof(v1)) and [2, 3].has(typeof(v2))):
+	if(_should_compare_int_to_float and [TYPE_INT, TYPE_FLOAT].has(typeof(v1)) and [TYPE_INT, TYPE_FLOAT].has(typeof(v2))):
 		result.are_equal = v1 == v2
 
 	elif(_utils.are_datatypes_same(v1, v2)):
@@ -56,7 +56,7 @@ func simple(v1, v2, missing_string=''):
 		if(typeof(v1) == TYPE_ARRAY):
 			var array_result = _utils.DiffTool.new(v1, v2, _utils.DIFF.SHALLOW)
 			result.summary = array_result.get_short_summary()
-			if(!array_result.are_equal()):
+			if(!array_result.are_equal):
 				extra = ".\n" + array_result.get_short_summary()
 
 	else:

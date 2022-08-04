@@ -105,6 +105,7 @@ var _compare = _utils.Comparator.new()
 
 # constant for signal when calling yield_for
 const YIELD = 'timeout'
+signal timeout
 
 # Need a reference to the instantiate that is running the tests.  This
 # is set by the gut class when it runs the tests.  This gets you

@@ -389,19 +389,19 @@ func set_title(title=null):
 		_titlebar.label.set_text(title)
 
 func add_passing(amount=1):
-	if(!_summary):
+	if(_summary == null):
 		return
 	_summary.pass_count += amount
 	_update_summary()
 
 func add_failing(amount=1):
-	if(!_summary):
+	if(_summary == null):
 		return
 	_summary.fail_count += amount
 	_update_summary()
 
 func add_test(passing):
-	if(!_summary):
+	if(_summary == null):
 		return
 	_summary.test_count += 1
 	if(passing):
