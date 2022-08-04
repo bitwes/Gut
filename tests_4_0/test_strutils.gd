@@ -5,6 +5,8 @@ class TestType2Str:
 
 	var strutils = load('res://addons/gut/strutils.gd').new()
 
+	func test_pending_class():
+		pending("This is pending in 4.0")
 
 	class ExtendsControl:
 		extends Control
@@ -54,33 +56,37 @@ class TestType2Str:
 	func test_color():
 		var c  = Color(.1, .2, .3)
 		assert_eq(strutils.type2str(c), 'Color(0.1,0.2,0.3,1)')
-		
+
 	func test_loaded_scene():
 		assert_eq(strutils.type2str(DoubleMeScene), str(DoubleMeScene) + '(double_me_scene.tscn)')
 
 	func test_doubles():
-		var d = double(DOUBLE_ME_PATH).new()
-		assert_eq(strutils.type2str(d), str(d) + '(double of double_me.gd)')
+		pending("pending in 4.0")
+	# 	var d = double(DOUBLE_ME_PATH).new()
+	# 	assert_eq(strutils.type2str(d), str(d) + '(double of double_me.gd)')
 
 	func test_another_double():
-		var d = double(DOUBLE_EXTENDS_NODE2D).new()
-		assert_eq(strutils.type2str(d), str(d) + '(double of double_extends_node2d.gd)')
+		pending("pending in 4.0")
+	# 	var d = double(DOUBLE_EXTENDS_NODE2D).new()
+	# 	assert_eq(strutils.type2str(d), str(d) + '(double of double_extends_node2d.gd)')
 
 	func test_double_inner():
-		var d = double(InnerClasses, 'InnerA').new()
-		assert_eq(strutils.type2str(d), str(d) + '(double of inner_classes.gd/InnerA)')
+		pending("pending in 4.0")
+	# 	var d = double(InnerClasses, 'InnerA').new()
+	# 	assert_eq(strutils.type2str(d), str(d) + '(double of inner_classes.gd/InnerA)')
 
 	func test_partial_double():
-		var d = partial_double(DOUBLE_ME_PATH).new()
-		assert_string_contains(strutils.type2str(d), "partial-double")
+		pending("pending in 4.0")
+	# 	var d = partial_double(DOUBLE_ME_PATH).new()
+	# 	assert_string_contains(strutils.type2str(d), "partial-double")
 
-	# func test_singleton_double_includes_singleton_name():
-	# 	var d = double_singleton("Input").new()
-	# 	assert_string_contains(strutils.type2str(d), "double of Input")
+	# # func test_singleton_double_includes_singleton_name():
+	# # 	var d = double_singleton("Input").new()
+	# # 	assert_string_contains(strutils.type2str(d), "double of Input")
 
-	# func test_singleton_double_includes_word_singleton():
-	# 	var d = double_singleton("Input").new()
-	# 	assert_string_contains(strutils.type2str(d), "Singleton")
+	# # func test_singleton_double_includes_word_singleton():
+	# # 	var d = double_singleton("Input").new()
+	# # 	assert_string_contains(strutils.type2str(d), "Singleton")
 
 	func test_assert_null():
 		assert_eq(strutils.type2str(null), str(null))
@@ -89,7 +95,7 @@ class TestType2Str:
 		var scene = autofree(load(DOUBLE_ME_SCENE_PATH).instantiate())
 		assert_eq(strutils.type2str(scene.get_parent()), 'Null')
 
-	# currently does not print the inner class, maybe later.
+	# # currently does not print the inner class, maybe later.
 	func test_inner_class():
 		var ec = autofree(ExtendsControl.new())
 		assert_eq(strutils.type2str(ec), str(ec) + '(test_strutils.gd/TestType2Str/ExtendsControl)')
@@ -104,12 +110,13 @@ class TestType2Str:
 		assert_eq(str(n), '[Deleted Object]', 'sometimes fails based on timing.')
 
 	func test_memory_leak():
-		print(gut.get_orphan_counter().orphan_count(), ' t-1')
-		var a = Node
-		print(gut.get_orphan_counter().orphan_count(), ' t-2')
-		var txt = strutils.type2str(a)
-		print(gut.get_orphan_counter().orphan_count(), ' t-3')
-		assert_no_new_orphans()
+		pending("pending in 4.0")
+		# print(gut.get_orphan_counter().orphan_count(), ' t-1')
+		# var a = Node
+		# print(gut.get_orphan_counter().orphan_count(), ' t-2')
+		# var txt = strutils.type2str(a)
+		# print(gut.get_orphan_counter().orphan_count(), ' t-3')
+		# assert_no_new_orphans()
 
 
 class TestTruncateString:

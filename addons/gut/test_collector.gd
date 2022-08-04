@@ -154,10 +154,8 @@ func _does_inherit_from_test(thing):
 func _populate_tests(test_script:TestScript):
 	var script =  test_script.load_script()
 	if(script == null):
-		print('  ', test_script.path, ' could not be loaded')
+		print('  !!! ', test_script.path, ' could not be loaded')
 		return false
-	else:
-		print('  Loaded')
 
 	test_script.is_loaded = true
 	var methods = script.get_script_method_list()

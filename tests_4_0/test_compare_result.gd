@@ -6,7 +6,7 @@ func test_can_make_one():
 
 func test_get_set_equal():
 	var c = CompareResult.new()
-	assert_accessors(c, 'are_equal', null, true)
+	assert_accessors(c, 'are_equal', false, true)
 
 func test_get_set_summary():
 	var  c = CompareResult.new()
