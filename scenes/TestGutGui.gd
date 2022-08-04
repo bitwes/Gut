@@ -15,7 +15,6 @@ class SignalReporter:
 		while(str(args[idx]) == ARG_NOT_SET):
 			args.remove_at(idx)
 			idx -= 1
-		var signal_name = args[args.size() -1]
 		args.pop_back()
 
 

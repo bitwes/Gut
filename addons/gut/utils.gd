@@ -44,7 +44,6 @@ static func INSTANCE_NAME():
 # if we don't have a main loop ready to go yet.
 # ------------------------------------------------------------------------------
 static func get_root_node():
-	var to_return = null
 	var main_loop = Engine.get_main_loop()
 	if(main_loop != null):
 		return main_loop.root
@@ -134,7 +133,7 @@ func _http_request_latest_version() -> void:
 	add_child(http_request)
 	http_request.connect("request_completed",Callable(self,"_on_http_request_latest_version_completed"))
 	# Perform a GET request. The URL below returns JSON as of writing.
-	var error = http_request.request("https://api.github.com/repos/bitwes/Gut/releases/latest")
+	var __error = http_request.request("https://api.github.com/repos/bitwes/Gut/releases/latest")
 
 func _on_http_request_latest_version_completed(result, response_code, headers, body):
 	if not result == HTTPRequest.RESULT_SUCCESS:

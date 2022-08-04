@@ -214,7 +214,7 @@ func _on_ResizeHandle_mouse_entered():
 func _on_ResizeHandle_mouse_exited():
 	_mouse.in_handle = false
 
-func _on_RichTextLabel_gui_input(ev):
+func _on_RichTextLabel_gui_input(_ev):
 	pass
 	# leaving this b/c it is wired up and might have to send
 	# more signals through
@@ -434,7 +434,7 @@ func _set_font_size_for_rtl(rtl, new_size):
 		rtl.get('custom_fonts/normal_font').size = new_size
 
 
-func _set_fonts_for_rtl(rtl, base_font_name):
+func _set_fonts_for_rtl(_rtl, _base_font_name):
 	pass
 
 
