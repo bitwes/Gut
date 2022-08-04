@@ -656,7 +656,8 @@ func _should_yield_now():
 # Yes if the class name is null or the script's class name includes class_name
 # ------------------------------------------------------------------------------
 func _does_class_name_match(the_class_name, script_class_name):
-	return (the_class_name == null or the_class_name == '') or (script_class_name != null and script_class_name.findn(the_class_name) != -1)
+	return (the_class_name == null or the_class_name == '') or \
+		(script_class_name != null and str(script_class_name).findn(the_class_name) != -1)
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
