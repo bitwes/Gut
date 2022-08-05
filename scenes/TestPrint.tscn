@@ -30,7 +30,6 @@ _yield_between_tests = true
 _disable_strict_datatype_checks = false
 _test_prefix = "test_"
 _file_prefix = "test_"
-_file_suffix = ".gd"
 _inner_class_prefix = "Test"
 _temp_directory = "user://gut_temp_directory"
 _export_path = ""

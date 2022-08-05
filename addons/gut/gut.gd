@@ -38,9 +38,6 @@ var _inner_class_name = ''
 var _should_maximize = false setget set_should_maximize, get_should_maximize
 var _log_level = 1 setget set_log_level, get_log_level
 var _disable_strict_datatype_checks = false setget disable_strict_datatype_checks, is_strict_datatype_checks_disabled
-var _test_prefix = 'test_'
-var _file_prefix = 'test_'
-var _file_suffix = '.gd'
 var _inner_class_prefix = 'Test'
 var _temp_directory = 'user://gut_temp_directory'
 var _export_path = '' setget set_export_path, get_export_path
@@ -1083,7 +1080,9 @@ func test_scripts(run_rest=false):
 	if(_script_name != null and _script_name != ''):
 		var indexes = _get_indexes_matching_script_name(_script_name)
 		if(indexes == []):
-			_lgr.error('Could not find script matching ' + _script_name)
+			_lgr.error(str(
+				"Could not find script matching '", _script_name, "'.\n",
+				"Check your directory settings and Script Prefix/Suffix settings."))
 		else:
 			_test_the_scripts(indexes)
 	else:
@@ -1119,7 +1118,7 @@ func add_script(script):
 # with the suffix.  Does not look in sub directories.  Can be called multiple
 # times.
 # ------------------------------------------------------------------------------
-func add_directory(path, prefix=_file_prefix, suffix=_file_suffix):
+func add_directory(path, prefix="test_", suffix=".gd"):
 	# check for '' b/c the calls to addin the exported directories 1-6 will pass
 	# '' if the field has not been populated.  This will cause res:// to be
 	# processed which will include all files if include_subdirectories is true.

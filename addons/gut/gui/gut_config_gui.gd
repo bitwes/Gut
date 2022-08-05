@@ -355,7 +355,7 @@ func set_options(options):
 	_add_value('prefix', options.prefix, 'Script Prefix',
 		"The filename prefix for all test scripts.")
 	_add_value('suffix', options.suffix, 'Script Suffix',
-		"The filename suffix for all test scripts. Must end in '.gd'")
+		"Script suffix, including .gd extension.  For example '_foo.gd'.")
 
 
 func get_options(base_opts):
