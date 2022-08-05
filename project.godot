@@ -43,6 +43,10 @@ gdscript/warnings/unused_variable=0
 gdscript/warnings/unused_local_constant=0
 gdscript/warnings/redundant_await=0
 
+[display]
+
+window/dpi/allow_hidpi=false
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/gut/plugin.cfg")

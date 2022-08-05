@@ -799,9 +799,6 @@ class TestAssertFileExists:
 class TestAssertFileDne:
 	extends BaseTestClass
 
-	func test_pending_class():
-		pending("This is pending in 4.0")
-
 	func test__assert_file_dne__with_file_dne():
 		gr.test_with_gut.assert_file_does_not_exist('user://file_dne.txt')
 		assert_pass(gr.test_with_gut)
@@ -875,9 +872,6 @@ class TestAssertFileNotEmpty:
 # TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestSignalAsserts:
 	extends BaseTestClass
-
-	func test_pending_class():
-		pending("This is pending in 4.0")
 
 	# Constants for all the signals created in SignalObject so I don't get false
 	# pass/fail from typos
@@ -1424,9 +1418,6 @@ class TestGetCallParameters:
 # ------------------------------------------------------------------------------
 class TestGetCallCount:
 	extends BaseTestClass
-
-	func test_pending_class():
-		pending("This is pending in 4.0")
 
 	func test_it_works():
 		var doubled = gr.test_with_gut.partial_double(DOUBLE_ME_PATH).new()
