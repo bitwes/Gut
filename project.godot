@@ -38,7 +38,9 @@ global="*res://scripts/global.gd"
 [debug]
 
 gdscript/warnings/enable=false
-gdscript/warnings/exclude_addons=false
+gdscript/warnings/treat_warnings_as_errors=true
+gdscript/warnings/unused_variable=0
+gdscript/warnings/unused_local_constant=0
 
 [editor_plugins]
 

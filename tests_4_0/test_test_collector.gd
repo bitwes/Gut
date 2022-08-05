@@ -93,6 +93,7 @@ class TestTestsWithParameters:
 
 	func before_each():
 		_tc = TestCollector.new()
+		print('_tc = ', _tc)
 
 	func test_populates_arg_count_for_script():
 		_tc.add_script(SCRIPTS_ROOT + 'test_with_parameters.gd')

@@ -36,6 +36,7 @@ func _init_types_dictionary():
 	types[TYPE_PACKED_VECTOR3_ARRAY] = 'TYPE_PACKED_VECTOR3_ARRAY'
 	types[TYPE_PACKED_COLOR_ARRAY] = 'TYPE_PACKED_COLOR_ARRAY'
 	types[TYPE_MAX] = 'TYPE_MAX'
+	types[TYPE_STRING_NAME] = 'TYPE_STRING_NAME'
 
 # Types to not be formatted when using _str
 var _str_ignore_types = [

@@ -71,13 +71,13 @@ class TestScript:
 
 	func get_filename_and_inner():
 		var to_return = get_filename()
-		if(inner_class_name != null):
+		if(inner_class_name != ''):
 			to_return += '.' + String(inner_class_name)
 		return to_return
 
 	func get_full_name():
 		var to_return = path
-		if(inner_class_name != null):
+		if(inner_class_name != ''):
 			to_return += '.' + String(inner_class_name)
 		return to_return
 
@@ -85,7 +85,7 @@ class TestScript:
 		return path.get_file()
 
 	func has_inner_class():
-		return inner_class_name != null
+		return inner_class_name != ''
 
 
 	# Note:  although this no longer needs to export the inner_class names since

@@ -210,7 +210,7 @@ func _get_super_call_text(method_name, args, super_name=""):
 		if(i != args.size() -1):
 			params += ', '
 
-	return str(super_name, 'super.', method_name, '(', params, ')')
+	return str(super_name, 'await super.', method_name, '(', params, ')')
 
 
 func _get_spy_call_parameters_text(args):

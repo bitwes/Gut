@@ -6,7 +6,7 @@ var _should_compare_int_to_float = true
 const MISSING = '|__missing__gut__compare__value__|'
 const DICTIONARY_DISCLAIMER = 'Dictionaries are compared-by-ref.  See assert_eq in wiki.'
 
-func _cannot_comapre_text(v1, v2):
+func _cannot_compare_text(v1, v2):
 	return str('Cannot compare ', _strutils.types[typeof(v1)], ' with ',
 		_strutils.types[typeof(v2)], '.')
 
@@ -41,9 +41,14 @@ func simple(v1, v2, missing_string=''):
 	var cmp_str = null
 	var extra = ''
 
-	if(_should_compare_int_to_float and [TYPE_INT, TYPE_FLOAT].has(typeof(v1)) and [TYPE_INT, TYPE_FLOAT].has(typeof(v2))):
-		result.are_equal = v1 == v2
+	var tv1 = typeof(v1)
+	var tv2 = typeof(v2)
 
+	print(tv1, '::', tv2, '   ', _strutils.types[tv1], '::', _strutils.types[tv2])
+	if(_should_compare_int_to_float and [TYPE_INT, TYPE_FLOAT].has(tv1) and [TYPE_INT, TYPE_FLOAT].has(tv2)):
+		result.are_equal = v1 == v2
+	elif([TYPE_STRING, TYPE_STRING_NAME].has(tv1) and [TYPE_STRING, TYPE_STRING_NAME].has(tv2)):
+		result.are_equal = v1 == v2
 	elif(_utils.are_datatypes_same(v1, v2)):
 		result.are_equal = v1 == v2
 		if(typeof(v1) == TYPE_DICTIONARY):
@@ -62,7 +67,7 @@ func simple(v1, v2, missing_string=''):
 	else:
 		cmp_str = '!='
 		result.are_equal = false
-		extra = str('.  ', _cannot_comapre_text(v1, v2))
+		extra = str('.  ', _cannot_compare_text(v1, v2))
 
 	cmp_str = get_compare_symbol(result.are_equal)
 	result.summary = str(format_value(v1), ' ', cmp_str, ' ', format_value(v2), extra)

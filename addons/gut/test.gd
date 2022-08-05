@@ -205,6 +205,8 @@ func _do_datatypes_match__fail_if_not(got, expected, text):
 			if([2, 3].has(got_type) and [2, 3].has(expect_type)):
 				_lgr.warn(str('Warn:  Float/Int comparison.  Got ', _strutils.types[got_type],
 					' but expected ', _strutils.types[expect_type]))
+			elif([TYPE_STRING, TYPE_STRING_NAME].has(got_type) and [TYPE_STRING, TYPE_STRING_NAME].has(expect_type)):
+				pass
 			else:
 				_fail('Cannot compare ' + _strutils.types[got_type] + '[' + _str(got) + '] to ' + \
 					_strutils.types[expect_type] + '[' + _str(expected) + '].  ' + text)
