@@ -490,6 +490,7 @@ func _get_methods(object_info):
 	# first pass is for local methods only
 	for i in range(methods.size()):
 		print(i, '.  ', methods[i].name, ' ', methods[i].flags)
+		print('  ', methods[i])
 		if(object_info.is_singleton()):
 			#print(methods[i].name, " :: ", methods[i].flags, " :: ", methods[i].id)
 			#print("    ", methods[i])
@@ -507,7 +508,7 @@ func _get_methods(object_info):
 		# 65 is a magic number for methods in script, though documentation
 		# says 64.  This picks up local overloads of base class methods too.
 		# See MethodFlags in @GlobalScope
-		elif(!_ignored_methods.has(object_info.get_path(), methods[i]['name'])):
+		elif(!methods[i].name.begins_with('@') and !_ignored_methods.has(object_info.get_path(), methods[i]['name'])):
 			script_methods.add_local_method(methods[i])
 
 	if(object_info.get_method_strategy() == _utils.DOUBLE_STRATEGY.FULL):

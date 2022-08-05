@@ -213,7 +213,7 @@ func _parse_script(test_script):
 # Public
 # -----------------
 func add_script(path):
-	print('Adding ', path)
+	# print('Adding ', path)
 	# SHORTCIRCUIT
 	if(has_script(path)):
 		return []

@@ -79,10 +79,7 @@ class DoubleInfo:
 				_is_native = true
 				extension = 'native_class_not_used'
 			else:
-				print('!!!here')
 				path = thing.get('resource_path')
-				print(thing.get_property_list())
-				print(path)
 		else:
 			path = thing
 
