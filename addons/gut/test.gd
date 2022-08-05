@@ -731,7 +731,7 @@ func assert_signal_emitted_with_parameters(object, signal_name, parameters, inde
 		if(_signal_watcher.did_emit(object, signal_name)):
 			var parms_got = _signal_watcher.get_signal_parameters(object, signal_name, index)
 			var diff_result = _compare.deep(parameters, parms_got)
-			if(diff_result.are_equal()):
+			if(diff_result.are_equal):
 				_pass(str(disp, parms_got))
 			else:
 				_fail(str('Expected object ', _str(object), ' to emit signal [', signal_name, '] with parameters ', diff_result.summarize()))

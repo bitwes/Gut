@@ -879,209 +879,209 @@ class TestSignalAsserts:
 	func test_pending_class():
 		pending("This is pending in 4.0")
 
-# 	# Constants for all the signals created in SignalObject so I don't get false
-# 	# pass/fail from typos
-# 	const SIGNALS = {
-# 		NO_PARAMETERS = 'no_parameters',
-# 		ONE_PARAMETER = 'one_parameter',
-# 		TWO_PARAMETERS = 'two_parameters',
-# 		SOME_SIGNAL = 'some_signal',
-# 		SCRIPT_SIGNAL = 'script_signal'
-# 	}
+	# Constants for all the signals created in SignalObject so I don't get false
+	# pass/fail from typos
+	const SIGNALS = {
+		NO_PARAMETERS = 'no_parameters',
+		ONE_PARAMETER = 'one_parameter',
+		TWO_PARAMETERS = 'two_parameters',
+		SOME_SIGNAL = 'some_signal',
+		SCRIPT_SIGNAL = 'script_signal'
+	}
 
-# 	# ####################
-# 	# A class that can emit all the signals in SIGNALS
-# 	# ####################
-# 	class SignalObject:
-# 		signal script_signal
-# 		func _init():
-# 			add_user_signal(SIGNALS.NO_PARAMETERS)
-# 			add_user_signal(SIGNALS.ONE_PARAMETER, [
-# 				{'name':'something', 'type':TYPE_INT}
-# 			])
-# 			add_user_signal(SIGNALS.TWO_PARAMETERS, [
-# 				{'name':'num', 'type':TYPE_INT},
-# 				{'name':'letters', 'type':TYPE_STRING}
-# 			])
-# 			add_user_signal(SIGNALS.SOME_SIGNAL)
+	# ####################
+	# A class that can emit all the signals in SIGNALS
+	# ####################
+	class SignalObject:
+		signal script_signal
+		func _init():
+			add_user_signal(SIGNALS.NO_PARAMETERS)
+			add_user_signal(SIGNALS.ONE_PARAMETER, [
+				{'name':'something', 'type':TYPE_INT}
+			])
+			add_user_signal(SIGNALS.TWO_PARAMETERS, [
+				{'name':'num', 'type':TYPE_INT},
+				{'name':'letters', 'type':TYPE_STRING}
+			])
+			add_user_signal(SIGNALS.SOME_SIGNAL)
 
-# 	func before_each():
-# 		super.before_each()
-# 		gr.signal_object = SignalObject.new()
+	func before_each():
+		super.before_each()
+		gr.signal_object = SignalObject.new()
 
-# 	func after_each():
-# 		super.after_each()
-# 		gr.signal_object = null
+	func after_each():
+		super.after_each()
+		gr.signal_object = null
 
-# 	func test_when_object_not_being_watched__assert_signal_emitted__fails():
-# 		gr.test.assert_signal_emitted(gr.signal_object, SIGNALS.SOME_SIGNAL)
-# 		assert_fail(gr.test)
+	func test_when_object_not_being_watched__assert_signal_emitted__fails():
+		gr.test.assert_signal_emitted(gr.signal_object, SIGNALS.SOME_SIGNAL)
+		assert_fail(gr.test)
 
-# 	func test_when_signal_emitted__assert_signal_emitted__passes():
-# 		gr.test.watch_signals(gr.signal_object)
-# 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
-# 		gr.test.assert_signal_emitted(gr.signal_object, SIGNALS.SOME_SIGNAL)
-# 		assert_pass(gr.test)
+	func test_when_signal_emitted__assert_signal_emitted__passes():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
+		gr.test.assert_signal_emitted(gr.signal_object, SIGNALS.SOME_SIGNAL)
+		assert_pass(gr.test)
 
-# 	func test_when_signal_not_emitted__assert_signal_emitted__fails():
-# 		gr.test.watch_signals(gr.signal_object)
-# 		gr.test.assert_signal_emitted(gr.signal_object, SIGNALS.SOME_SIGNAL)
-# 		assert_fail(gr.test)
+	func test_when_signal_not_emitted__assert_signal_emitted__fails():
+		gr.test.watch_signals(gr.signal_object)
+		gr.test.assert_signal_emitted(gr.signal_object, SIGNALS.SOME_SIGNAL)
+		assert_fail(gr.test)
 
-# 	func test_when_object_does_not_have_signal__assert_signal_emitted__fails():
-# 		gr.test.watch_signals(gr.signal_object)
-# 		gr.test.assert_signal_emitted(gr.signal_object, 'signal_does_not_exist')
-# 		assert_fail(gr.test, 1, 'Only the failure that it does not have signal should fire.')
+	func test_when_object_does_not_have_signal__assert_signal_emitted__fails():
+		gr.test.watch_signals(gr.signal_object)
+		gr.test.assert_signal_emitted(gr.signal_object, 'signal_does_not_exist')
+		assert_fail(gr.test, 1, 'Only the failure that it does not have signal should fire.')
 
-# 	func test_when_signal_emitted__assert_signal_not_emitted__fails():
-# 		gr.test.watch_signals(gr.signal_object)
-# 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
-# 		gr.test.assert_signal_not_emitted(gr.signal_object, SIGNALS.SOME_SIGNAL)
-# 		assert_fail(gr.test)
+	func test_when_signal_emitted__assert_signal_not_emitted__fails():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
+		gr.test.assert_signal_not_emitted(gr.signal_object, SIGNALS.SOME_SIGNAL)
+		assert_fail(gr.test)
 
-# 	func test_when_signal_not_emitted__assert_signal_not_emitted__fails():
-# 		gr.test.watch_signals(gr.signal_object)
-# 		gr.test.assert_signal_not_emitted(gr.signal_object, SIGNALS.SOME_SIGNAL)
-# 		assert_pass(gr.test)
+	func test_when_signal_not_emitted__assert_signal_not_emitted__fails():
+		gr.test.watch_signals(gr.signal_object)
+		gr.test.assert_signal_not_emitted(gr.signal_object, SIGNALS.SOME_SIGNAL)
+		assert_pass(gr.test)
 
-# 	func test_when_object_does_not_have_signal__assert_signal_not_emitted__fails():
-# 		gr.test.watch_signals(gr.signal_object)
-# 		gr.test.assert_signal_not_emitted(gr.signal_object, 'signal_does_not_exist')
-# 		assert_fail(gr.test, 1, 'Only the failure that it does not have signal should fire.')
+	func test_when_object_does_not_have_signal__assert_signal_not_emitted__fails():
+		gr.test.watch_signals(gr.signal_object)
+		gr.test.assert_signal_not_emitted(gr.signal_object, 'signal_does_not_exist')
+		assert_fail(gr.test, 1, 'Only the failure that it does not have signal should fire.')
 
-# 	func test_when_signal_emitted_once__assert_signal_emit_count__passes_with_1():
-# 		gr.test.watch_signals(gr.signal_object)
-# 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
-# 		gr.test.assert_signal_emit_count(gr.signal_object, SIGNALS.SOME_SIGNAL, 1)
-# 		assert_pass(gr.test)
+	func test_when_signal_emitted_once__assert_signal_emit_count__passes_with_1():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
+		gr.test.assert_signal_emit_count(gr.signal_object, SIGNALS.SOME_SIGNAL, 1)
+		assert_pass(gr.test)
 
-# 	func test_when_signal_emitted_twice__assert_signal_emit_count__fails_with_1():
-# 		gr.test.watch_signals(gr.signal_object)
-# 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
-# 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
-# 		gr.test.assert_signal_emit_count(gr.signal_object, SIGNALS.SOME_SIGNAL, 1)
-# 		assert_fail(gr.test)
+	func test_when_signal_emitted_twice__assert_signal_emit_count__fails_with_1():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
+		gr.test.assert_signal_emit_count(gr.signal_object, SIGNALS.SOME_SIGNAL, 1)
+		assert_fail(gr.test)
 
-# 	func test_when_object_does_not_have_signal__assert_signal_emit_count__fails():
-# 		gr.test.watch_signals(gr.signal_object)
-# 		gr.test.assert_signal_emit_count(gr.signal_object, 'signal_does_not_exist', 0)
-# 		assert_fail(gr.test)
+	func test_when_object_does_not_have_signal__assert_signal_emit_count__fails():
+		gr.test.watch_signals(gr.signal_object)
+		gr.test.assert_signal_emit_count(gr.signal_object, 'signal_does_not_exist', 0)
+		assert_fail(gr.test)
 
-# 	func test__assert_has_signal__passes_when_it_has_the_signal():
-# 		gr.test.assert_has_signal(gr.signal_object, SIGNALS.NO_PARAMETERS)
-# 		assert_pass(gr.test)
+	func test__assert_has_signal__passes_when_it_has_the_signal():
+		gr.test.assert_has_signal(gr.signal_object, SIGNALS.NO_PARAMETERS)
+		assert_pass(gr.test)
 
-# 	func test__assert_has_signal__fails_when_it_does_not_have_the_signal():
-# 		gr.test.assert_has_signal(gr.signal_object, 'signal does not exist')
-# 		assert_fail(gr.test)
+	func test__assert_has_signal__fails_when_it_does_not_have_the_signal():
+		gr.test.assert_has_signal(gr.signal_object, 'signal does not exist')
+		assert_fail(gr.test)
 
-# 	func test_can_get_signal_emit_counts():
-# 		gr.test.watch_signals(gr.signal_object)
-# 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
-# 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
-# 		assert_eq(gr.test.get_signal_emit_count(gr.signal_object, SIGNALS.SOME_SIGNAL), 2)
-
-
-# 	# ------------------
-# 	# With Parameters
-# 	func test__with_parameters_errors_when_parameters_are_not_an_array():
-# 		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, 1)
-# 		assert_errored(gr.test)
-# 		assert_fail(gr.test)
-
-# 	func test__assert_signal_emitted_with_parameters__fails_when_object_not_watched():
-# 		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [])
-# 		assert_fail(gr.test)
-
-# 	func test__assert_signal_emitted_with_parameters__passes_when_parameters_match():
-# 		gr.test.watch_signals(gr.signal_object)
-# 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1)
-# 		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1])
-# 		assert_pass(gr.test)
+	func test_can_get_signal_emit_counts():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
+		assert_eq(gr.test.get_signal_emit_count(gr.signal_object, SIGNALS.SOME_SIGNAL), 2)
 
 
-# 	func test__assert_signal_emitted_with_parameters__passes_when_all_parameters_match():
-# 		gr.test.watch_signals(gr.signal_object)
-# 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1, 2, 3)
-# 		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1, 2, 3])
-# 		assert_pass(gr.test)
+	# ------------------
+	# With Parameters
+	func test__with_parameters_errors_when_parameters_are_not_an_array():
+		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, 1)
+		assert_errored(gr.test)
+		assert_fail(gr.test)
 
-# 	func test__assert_signal_emitted_with_parameters__fails_when_signal_not_emitted():
-# 		gr.test.watch_signals(gr.signal_object)
-# 		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [2])
-# 		assert_fail(gr.test)
+	func test__assert_signal_emitted_with_parameters__fails_when_object_not_watched():
+		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [])
+		assert_fail(gr.test)
 
-# 	func test__assert_signal_emitted_with_parameters__fails_when_parameters_dont_match():
-# 		gr.test.watch_signals(gr.signal_object)
-# 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1)
-# 		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [2])
-# 		assert_fail(gr.test)
+	func test__assert_signal_emitted_with_parameters__passes_when_parameters_match():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1)
+		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1])
+		assert_pass(gr.test)
 
-# 	func test__assert_signal_emitted_with_parameters__fails_when_not_all_parameters_match():
-# 		gr.test.watch_signals(gr.signal_object)
-# 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1, 2, 3)
-# 		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1, 0, 3])
-# 		assert_fail(gr.test)
 
-# 	func test__assert_signal_emitted_with_parameters__can_check_multiple_emission():
-# 		gr.test.watch_signals(gr.signal_object)
-# 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1)
-# 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 2)
-# 		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1], 0)
-# 		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [2], 1)
-# 		assert_pass(gr.test, 2)
+	func test__assert_signal_emitted_with_parameters__passes_when_all_parameters_match():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1, 2, 3)
+		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1, 2, 3])
+		assert_pass(gr.test)
 
-# 	func test_when_signal_emit_with_parameters_fails_because_signal_was_not_emitted_then_signals_are_listed():
-# 		gr.test.watch_signals(gr.signal_object)
-# 		gr.signal_object.emit_signal(SIGNALS.NO_PARAMETERS)
-# 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
-# 		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SCRIPT_SIGNAL, [0])
-# 		var text = gr.test._fail_pass_text[0]
-# 		assert_string_contains(text, SIGNALS.NO_PARAMETERS)
-# 		assert_string_contains(text, SIGNALS.SOME_SIGNAL)
+	func test__assert_signal_emitted_with_parameters__fails_when_signal_not_emitted():
+		gr.test.watch_signals(gr.signal_object)
+		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [2])
+		assert_fail(gr.test)
 
-# 	func test_issue_152():
-# 		gr.test.watch_signals(gr.signal_object)
-# 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1.0, 2, 3.0)
-# 		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1, 2.0, 3])
-# 		assert_fail(gr.test)
+	func test__assert_signal_emitted_with_parameters__fails_when_parameters_dont_match():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1)
+		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [2])
+		assert_fail(gr.test)
 
-# 	func test__get_signal_emit_count__returns_neg_1_when_not_watched():
-# 		assert_eq(gr.test.get_signal_emit_count(gr.signal_object, SIGNALS.SOME_SIGNAL), -1)
+	func test__assert_signal_emitted_with_parameters__fails_when_not_all_parameters_match():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1, 2, 3)
+		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1, 0, 3])
+		assert_fail(gr.test)
 
-# 	func test_can_get_signal_parameters():
-# 		gr.test.watch_signals(gr.signal_object)
-# 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1, 2, 3)
-# 		assert_eq(gr.test.get_signal_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, 0), [1, 2, 3])
+	func test__assert_signal_emitted_with_parameters__can_check_multiple_emission():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 2)
+		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1], 0)
+		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [2], 1)
+		assert_pass(gr.test, 2)
 
-# 	func test__assert_signal_emitted__passes_with_script_signals():
-# 		gr.test.watch_signals(gr.signal_object)
-# 		gr.signal_object.emit_signal(SIGNALS.SCRIPT_SIGNAL)
-# 		gr.test.assert_signal_emitted(gr.signal_object, SIGNALS.SCRIPT_SIGNAL)
-# 		assert_pass(gr.test)
+	func test_when_signal_emit_with_parameters_fails_because_signal_was_not_emitted_then_signals_are_listed():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.emit_signal(SIGNALS.NO_PARAMETERS)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
+		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SCRIPT_SIGNAL, [0])
+		var text = gr.test._fail_pass_text[0]
+		assert_string_contains(text, SIGNALS.NO_PARAMETERS)
+		assert_string_contains(text, SIGNALS.SOME_SIGNAL)
 
-# 	func test__assert_has_signal__works_with_script_signals():
-# 		gr.test.assert_has_signal(gr.signal_object, SIGNALS.SCRIPT_SIGNAL)
-# 		assert_pass(gr.test)
+	func test_issue_152():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1.0, 2, 3.0)
+		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1, 2.0, 3])
+		assert_fail(gr.test)
 
-# 	func test_when_signal_emitted_fails_emitted_signals_are_listed():
-# 		gr.test.watch_signals(gr.signal_object)
-# 		gr.signal_object.emit_signal(SIGNALS.NO_PARAMETERS)
-# 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
-# 		gr.test.assert_signal_emitted(gr.signal_object, SIGNALS.SCRIPT_SIGNAL)
-# 		var text = gr.test._fail_pass_text[0]
-# 		assert_string_contains(text, SIGNALS.NO_PARAMETERS)
-# 		assert_string_contains(text, SIGNALS.SOME_SIGNAL)
+	func test__get_signal_emit_count__returns_neg_1_when_not_watched():
+		assert_eq(gr.test.get_signal_emit_count(gr.signal_object, SIGNALS.SOME_SIGNAL), -1)
 
-# 	func test_when_signal_count_fails_then_emitted_signals_are_listed():
-# 		gr.test.watch_signals(gr.signal_object)
-# 		gr.signal_object.emit_signal(SIGNALS.NO_PARAMETERS)
-# 		gr.signal_object.emit_signal(SIGNALS.SCRIPT_SIGNAL)
-# 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
-# 		gr.test.assert_signal_emit_count(gr.signal_object, SIGNALS.SCRIPT_SIGNAL, 2)
-# 		var text = gr.test._fail_pass_text[0]
-# 		assert_string_contains(text, SIGNALS.NO_PARAMETERS)
-# 		assert_string_contains(text, SIGNALS.SOME_SIGNAL)
+	func test_can_get_signal_parameters():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1, 2, 3)
+		assert_eq(gr.test.get_signal_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, 0), [1, 2, 3])
+
+	func test__assert_signal_emitted__passes_with_script_signals():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.emit_signal(SIGNALS.SCRIPT_SIGNAL)
+		gr.test.assert_signal_emitted(gr.signal_object, SIGNALS.SCRIPT_SIGNAL)
+		assert_pass(gr.test)
+
+	func test__assert_has_signal__works_with_script_signals():
+		gr.test.assert_has_signal(gr.signal_object, SIGNALS.SCRIPT_SIGNAL)
+		assert_pass(gr.test)
+
+	func test_when_signal_emitted_fails_emitted_signals_are_listed():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.emit_signal(SIGNALS.NO_PARAMETERS)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
+		gr.test.assert_signal_emitted(gr.signal_object, SIGNALS.SCRIPT_SIGNAL)
+		var text = gr.test._fail_pass_text[0]
+		assert_string_contains(text, SIGNALS.NO_PARAMETERS)
+		assert_string_contains(text, SIGNALS.SOME_SIGNAL)
+
+	func test_when_signal_count_fails_then_emitted_signals_are_listed():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.emit_signal(SIGNALS.NO_PARAMETERS)
+		gr.signal_object.emit_signal(SIGNALS.SCRIPT_SIGNAL)
+		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
+		gr.test.assert_signal_emit_count(gr.signal_object, SIGNALS.SCRIPT_SIGNAL, 2)
+		var text = gr.test._fail_pass_text[0]
+		assert_string_contains(text, SIGNALS.NO_PARAMETERS)
+		assert_string_contains(text, SIGNALS.SOME_SIGNAL)
 
 
 # ------------------------------------------------------------------------------
