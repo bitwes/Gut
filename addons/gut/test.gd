@@ -1651,3 +1651,37 @@ func assert_ne_shallow(v1, v2):
 		_pass(result.get_short_summary())
 	else:
 		_fail(result.get_short_summary())
+
+
+# ------------------------------------------------------------------------------
+# Checks the passed in version string (x.x.x) against the engine version to see
+# if the engine version is less than the expected version.  If it is then the
+# test is mareked as passed (for a lack of anything better to do).  The result
+# of the check is returned.
+#
+# Example:
+# if(skip_if_godot_version_lt('3.5.0')):
+# 	return
+# ------------------------------------------------------------------------------
+func skip_if_godot_version_lt(expected):
+	var should_skip = !_utils.is_godot_version_gte(expected)
+	if(should_skip):
+		_pass(str('Skipping ', _utils.godot_version(), ' is less than ', expected))
+	return should_skip
+
+
+# ------------------------------------------------------------------------------
+# Checks if the passed in version matches the engine version.  The passed in
+# version can contain just the major, major.minor or major.minor.path.  If
+# the version is not the same then the test is marked as passed.  The result of
+# the check is returned.
+#
+# Example:
+# if(skip_if_godot_version_ne('3.4')):
+# 	return
+# ------------------------------------------------------------------------------
+func skip_if_godot_version_ne(expected):
+	var should_skip = !_utils.is_godot_version(expected)
+	if(should_skip):
+		_pass(str('Skipping ', _utils.godot_version(), ' is not ', expected))
+	return should_skip

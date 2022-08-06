@@ -7,7 +7,7 @@ extends SceneTree
 #
 # For all checks other than is_action_just_pressed and is_action_just_released,
 # yeilding before checking will also work.  The *just* methods require that you
-# either disable accumu0lated input or flush the buffer so that checks fire
+# either disable accumulated input or flush the buffer so that checks fire
 # on the same frame.
 
 var InputSender = load('res://addons/gut/input_sender.gd')
