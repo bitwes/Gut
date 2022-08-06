@@ -7,8 +7,6 @@
   "opacity":100,
   "double_strategy":"partial",
   "include_subdirs":true,
-  "inner_class":"",
-  "disable_colors":false,
   "post_run_script":"res://test/post_run_export_json.gd",
 
   "compact_mode":true,
