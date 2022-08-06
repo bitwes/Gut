@@ -1133,7 +1133,7 @@ func add_directory(path, prefix=_file_prefix, suffix=_file_extension):
 	else:
 		var files = _get_files(path, prefix, suffix)
 		for i in range(files.size()):
-			if(_script_name == null or \
+			if(_script_name == null or _script_name == '' or \
 					(_script_name != null and files[i].findn(_script_name) != -1)):
 				add_script(files[i])
 
