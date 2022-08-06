@@ -26,8 +26,6 @@ resizable = true
 mode = 0
 access = 1
 show_hidden_files = true
-current_dir = "user://"
-current_path = "user://"
 __meta__ = {
 "_edit_use_anchors_": false
 }
