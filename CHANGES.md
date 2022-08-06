@@ -23,6 +23,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * Yield messages are now disabled on log level 0.
 * Tests that do not assert are included in the summary as "risky".
 * Test totals in various places have been adjusted to display a passing count and total count.
+* Running a single test script is faster now.  Gut no longer parses scripts with non-matching names.
 
 ## Bug Fixes
 * __Issue #288__ First `yield` in a test does not cause a .4 second delay.
