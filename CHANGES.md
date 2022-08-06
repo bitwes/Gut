@@ -6,14 +6,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 # 7.X.X
 
 ## Features
-* __Issue 354__ Doubles and partial doubles can now be instanced with parameters
+* __Issue #354__ Doubles and partial doubles can now be instanced with parameters
   * You can now specify parameters when instancing a double/partial double:<br/>
   `var dbl = double(MyClass).new(1, 2, 'c')`
   * You can now spy on `_init` to verify parameter values:<br/>
   `assert_called(my_inst, '_init', [1, 2, 'c'])`
   * You can now stub default parameter values for `_init`:<br/>
   `stub(MyClass, '_init').param_defaults([1, 2, 'c'])`
-* __Issue 363__ GUT In-Editor Panel Improvements
+* __Issue #363__ GUT In-Editor Panel Improvements
   * New, super fancy, Tree Panel that shows your failing/pending/risky tests.  Click an element in the tree, go to that line in the file AND that line in the output.
   * You can toggle the visibility of Settings, Output, and Tree panels.
   * You can search the output.
@@ -25,8 +25,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * Test totals in various places have been adjusted to display a passing count and total count.
 
 ## Bug Fixes
-* __Issue 288__ First `yield` in a test does not cause a .4 second delay.
-* __Issue 368__ Doubling `WebSocketClient` and anything with a `PoolStringArray` default value.
+* __Issue #288__ First `yield` in a test does not cause a .4 second delay.
+* __Issue #368__ Doubling `WebSocketClient` and anything with a `PoolStringArray` default value.
+* __Issue #387__ Introduced `auto_flush_input` to `InputSender` to address that `Input.use_accumulate_input` is enabled by default in Godot 3.5.0.
 
 # 7.3.0
 

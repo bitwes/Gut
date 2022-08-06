@@ -92,6 +92,7 @@ class InputQueueItem:
 			var t = _delay_timer(time_delay)
 			t.connect("timeout", self, "_on_time_timeout")
 
+
 # ##############################################################################
 #
 # ##############################################################################
@@ -115,6 +116,8 @@ var _last_event = null
 var _pressed_keys = {}
 var _pressed_actions = {}
 var _pressed_mouse_buttons = {}
+
+var _auto_flush_input = false
 
 signal idle
 
@@ -141,6 +144,8 @@ func _send_event(event):
 	for r in _receivers:
 		if(r == Input):
 			Input.parse_input_event(event)
+			if(_auto_flush_input):
+				Input.flush_buffered_events()
 		else:
 			if(r.has_method("_input")):
 				r._input(event)
@@ -363,3 +368,11 @@ func is_action_pressed(which):
 
 func is_mouse_button_pressed(which):
 	return _pressed_mouse_buttons.has(which) and _pressed_mouse_buttons[which]
+
+
+func get_auto_flush_input():
+	return _auto_flush_input
+
+
+func set_auto_flush_input(val):
+	_auto_flush_input = val
