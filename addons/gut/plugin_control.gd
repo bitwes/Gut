@@ -182,7 +182,6 @@ func _setup_gut():
 
 	_gut._test_prefix = _test_prefix
 	_gut._file_prefix = _file_prefix
-	_gut._file_suffix = _file_suffix
 	_gut._inner_class_prefix = _inner_class_prefix
 	_gut._temp_directory = _temp_directory
 
