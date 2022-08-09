@@ -133,7 +133,7 @@ func setup_options(options, font_names):
 	opts.add('-gtest', [], 'Comma delimited list of full paths to test scripts to run.')
 	opts.add('-gdir', options.dirs, 'Comma delimited list of directories to add tests from.')
 	opts.add('-gprefix', options.prefix, 'Prefix used to find tests when specifying -gdir.  Default "[default]".')
-	opts.add('-gsuffix', options.suffix, 'Suffix used to find tests when specifying -gdir.  Default "[default]".')
+	opts.add('-gsuffix', options.suffix, 'Test script suffix, including .gd extension.  Default "[default]".')
 	opts.add('-ghide_orphans', false, 'Display orphan counts for tests and scripts.  Default "[default]".')
 	opts.add('-gmaximize', false, 'Maximizes test runner window to fit the viewport.')
 	opts.add('-gcompact_mode', false, 'The runner will be in compact mode.  This overrides -gmaximize.')
