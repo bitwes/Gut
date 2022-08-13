@@ -17,6 +17,7 @@ If you would like to help support GUT check out my game [Country or State](https
 
 More info can be found in the [wiki](https://github.com/bitwes/Gut/wiki).
 
+[[https://raw.githubusercontent.com/wiki/bitwes/Gut/images/gut_panel.png|alt=gut_panel]]
 
 # Getting Started
 * [Install](https://github.com/bitwes/Gut/wiki/Install)
