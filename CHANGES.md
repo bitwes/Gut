@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 
-# 7.X.X
+# 7.4.0
 
 ## Features
 * __Issue 354__ Doubles and partial doubles can now be instanced with parameters
