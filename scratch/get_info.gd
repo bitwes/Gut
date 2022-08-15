@@ -10,6 +10,7 @@ extends SceneTree
 const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
 var DoubleMe = load(DOUBLE_ME_PATH)
 var DoubleMeScene = load('res://test/resources/doubler_test_objects/double_me_scene.tscn')
+var SetGetTestNode = load('res://test/resources/test_assert_setget_test_objects/test_node.gd')
 var json = JSON.new()
 
 const DEFAULT_ARGS = 'default_args'
@@ -244,17 +245,32 @@ func print_script_methods():
 
 func print_all_info(thing):
 	print('path = ', thing.get_path())
-	print('--- Methods ---')
-	var methods = thing.get_method_list()
 
+	print('--- Methods (object) ---')
+	var methods = thing.get_method_list()
 	for i in range(methods.size()):
 		print('  ', methods[i].name)
+		# pp(methods[i])
 
-	print('--- Properties ---')
+	print('--- Methods (script) ---')
+	methods = thing.get_script_method_list()
+	for i in range(methods.size()):
+		print('  ', methods[i].name)
+		# pp(methods[i])
+
+	print('--- Properties (object) ---')
 	var props = thing.get_property_list()
 	for i in range(props.size()):
 		print('  ', props[i].name, props[i])
-		print('    value = ', thing.get(props[i].name))
+		if(props[i].name != 'source_code' and props[i].name != 'script/source'):
+			print('    value = ', thing.get(props[i].name))
+
+	print('--- Properties (script) ---')
+	props = thing.get_script_property_list()
+	for i in range(props.size()):
+		print('  ', props[i].name, props[i])
+		if(props[i].name != 'source_code' and props[i].name != 'script/source'):
+			print('    value = ', thing.get(props[i].name))
 
 	print('--- Constants ---')
 	print_inner_test_classes(thing)
@@ -269,9 +285,17 @@ func print_all_info(thing):
 func pp(dict):
 	print(json.stringify(dict, ' '))
 
-
+func has_script_method(Class):
+	var methods = Class.get_script_method_list()
 
 func _init():
+	print_all_info(SetGetTestNode)
+	# print(SetGetTestNode.has_method('has_setter_setter'))
+	# var inst = SetGetTestNode.new()
+	# print(inst.has_method('has_setter_setter'))
+	# print(inst.has_method('@has_setter_setter'))
+	# print(inst.has_method('@has_getter_getter'))
+
 	# class_db_stuff()
 
 	# var r = RefCounted.new()
@@ -285,9 +309,15 @@ func _init():
 
 	# print_all_info(HasSomeInners)
 	# print_all_info(DoubleMe)
-	pp(DoubleMe.get_script_method_list())
-	var flag_methods = get_methods_by_flag(DoubleMe)
-	print_methods_by_flags(flag_methods)
+	# var dm = DoubleMe.new()
+	# get_root().add_child(dm)
+	# var result = await dm.might_await_no_return()
+	# dm.might_await_no_return()
+	# dm.uses_await_response()
+
+	# pp(DoubleMe.get_script_method_list())
+	# var flag_methods = get_methods_by_flag(DoubleMe)
+	# print_methods_by_flags(flag_methods)
 	#print(DoubleMeScene.script)
 	#print(DoubleMeScene.resource_name)
 	# print(DoubleMeScene.get_meta_list())

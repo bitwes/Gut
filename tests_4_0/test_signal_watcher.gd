@@ -46,7 +46,7 @@ class SignalObject:
 # Setup/Teardown
 # ####################
 func before_each():
-	gr.sw = SignalWatcher.new()
+	gr.sw = autofree(SignalWatcher.new())
 	gr.so = SignalObject.new()
 
 func after_each():
@@ -239,12 +239,13 @@ func test_when_cleared_it_should_disconnect_from_signals():
 		assert_false(gr.so.is_connected(SIGNALS[sig],Callable(gr.sw,'_on_watched_signal')), str('it should NOT be connected to: ', SIGNALS[sig]))
 
 func test_clearing_ignores_freed_objecdts():
-	add_child(gr.so)
-	gr.sw.watch_signals(gr.so)
-	gr.so.free()
-	await yield_for(0.5).YIELD
-	gr.sw.clear()
-	end_test()
+	pending("** YIELD **")
+	# add_child(gr.so)
+	# gr.sw.watch_signals(gr.so)
+	# gr.so.free()
+	# await yield_for(0.5).YIELD
+	# gr.sw.clear()
+	# end_test()
 
 # ####################
 # Get signals emitted

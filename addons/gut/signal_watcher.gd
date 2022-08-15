@@ -95,6 +95,20 @@ func _on_watched_signal(arg1=ARG_NOT_SET, arg2=ARG_NOT_SET, arg3=ARG_NOT_SET, \
 
 	_watched_signals[object][signal_name].append(args)
 
+# This parameter stuff should go into test.gd not here.  This thing works
+# just fine the way it is.
+func _obj_name_pair(obj_or_signal, signal_name=null):
+	var to_return = {
+		'object' : obj_or_signal,
+		'signal_name' : signal_name
+	}
+	if(obj_or_signal is Signal):
+		to_return.object =  obj_or_signal.get_object()
+		to_return.signal_name = obj_or_signal.get_name()
+
+	return to_return
+
+
 func does_object_have_signal(object, signal_name):
 	var signals = object.get_signal_list()
 	for i in range(signals.size()):
@@ -120,10 +134,11 @@ func get_emit_count(object, signal_name):
 		to_return = _watched_signals[object][signal_name].size()
 	return to_return
 
-func did_emit(object, signal_name):
+func did_emit(object, signal_name=null):
+	var vals = _obj_name_pair(object, signal_name)
 	var did = false
-	if(is_watching(object, signal_name)):
-		did = get_emit_count(object, signal_name) != 0
+	if(is_watching(vals.object, vals.signal_name)):
+		did = get_emit_count(vals.object, vals.signal_name) != 0
 	return did
 
 func print_object_signals(object):

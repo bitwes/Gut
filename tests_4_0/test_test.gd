@@ -4,6 +4,7 @@
 # ------------------------------------------------------------------------------
 extends GutTest
 
+# ------------------------------------------------------------------------------
 class BaseTestClass:
 	extends "res://test/gut_test.gd"
 	# !! Use this for debugging to see the results of all the subtests that
@@ -79,6 +80,7 @@ class BaseTestClass:
 		gr.test_with_gut.free()
 
 
+# ------------------------------------------------------------------------------
 class TestMiscTests:
 	extends BaseTestClass
 

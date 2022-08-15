@@ -1,4 +1,5 @@
 extends Node
+var _priv_var = 'asdf'
 
 # -------------------------------------------------
 var no_setget = 1
