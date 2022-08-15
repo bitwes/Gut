@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# 7.4.1
+* __Issue i393__ 7.4.0 broke running from a scene.  On a side note, try the new and improved Gut Panel!  It __did not__ break in the last release and was significantly improved!
 
 # 7.4.0
 

@@ -135,6 +135,8 @@ var _before_all_test_obj = load('res://addons/gut/test_collector.gd').Test.new()
 # Used for proper assert tracking and printing during after_all
 var _after_all_test_obj = load('res://addons/gut/test_collector.gd').Test.new()
 
+
+var _file_prefix = 'test_'
 const SIGNAL_TESTS_FINISHED = 'tests_finished'
 const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yield_before_teardown'
 
@@ -1118,7 +1120,7 @@ func add_script(script):
 # with the suffix.  Does not look in sub directories.  Can be called multiple
 # times.
 # ------------------------------------------------------------------------------
-func add_directory(path, prefix="test_", suffix=".gd"):
+func add_directory(path, prefix=_file_prefix, suffix=".gd"):
 	# check for '' b/c the calls to addin the exported directories 1-6 will pass
 	# '' if the field has not been populated.  This will cause res:// to be
 	# processed which will include all files if include_subdirectories is true.
