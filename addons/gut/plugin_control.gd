@@ -69,8 +69,6 @@ export var _yield_between_tests = true
 # development to prevent any breaking changes and will likely be removed in
 # the future.
 export var _disable_strict_datatype_checks = false
-# The prefix used to find test methods.
-export var _test_prefix = 'test_'
 # The prefix used to find test scripts.
 export var _file_prefix = 'test_'
 # The suffix used to find test scripts.
@@ -180,7 +178,6 @@ func _setup_gut():
 	_gut._tests_like = _tests_like
 	_gut._inner_class_name = _inner_class_name
 
-	_gut._test_prefix = _test_prefix
 	_gut._file_prefix = _file_prefix
 	_gut._inner_class_prefix = _inner_class_prefix
 	_gut._temp_directory = _temp_directory
