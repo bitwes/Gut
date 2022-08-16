@@ -5,6 +5,9 @@ var should_might_await_await = true
 
 signal signal_signal
 
+func _notification(what):
+	pass
+
 func _ready():
 	pass
 
@@ -62,3 +65,7 @@ func might_await_no_return(some_default=3):
 
 func uses_await_response():
 	var foo = await this_is_a_coroutine()
+
+
+func default_is_value(val = _value):
+	return val
