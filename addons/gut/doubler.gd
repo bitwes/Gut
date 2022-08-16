@@ -443,11 +443,11 @@ func _write_file(obj_info, dest_path, override_path=null):
 
 	f.store_string(base_script)
 
-	print('local method count = ', script_methods.local_methods.size())
+	# print('local method count = ', script_methods.local_methods.size())
 	for i in range(script_methods.local_methods.size()):
 		f.store_string(_get_func_text(script_methods.local_methods[i], path, super_name))
 
-	print('built-in method count = ', script_methods.built_ins.size())
+	# print('built-in method count = ', script_methods.built_ins.size())
 	for i in range(script_methods.built_ins.size()):
 		_stub_to_call_super(obj_info, script_methods.built_ins[i].name)
 		f.store_string(_get_func_text(script_methods.built_ins[i], path, super_name))

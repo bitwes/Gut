@@ -256,7 +256,7 @@ func print_all_info(thing):
 	methods = thing.get_script_method_list()
 	for i in range(methods.size()):
 		print('  ', methods[i].name)
-		# pp(methods[i])
+		pp(methods[i])
 
 	print('--- Properties (object) ---')
 	var props = thing.get_property_list()
@@ -289,7 +289,8 @@ func has_script_method(Class):
 	var methods = Class.get_script_method_list()
 
 func _init():
-	print_all_info(SetGetTestNode)
+	print_all_info(GutTest)
+	# print_all_info(SetGetTestNode)
 	# print(SetGetTestNode.has_method('has_setter_setter'))
 	# var inst = SetGetTestNode.new()
 	# print(inst.has_method('has_setter_setter'))

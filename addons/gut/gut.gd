@@ -532,6 +532,7 @@ func _init_run():
 	_test_collector.set_test_class_prefix(_inner_class_prefix)
 	_test_script_objects = []
 	_new_summary = _utils.Summary.new()
+	print('NEW SUMMARY = ', _new_summary)
 
 	_log_text = ""
 
@@ -1515,7 +1516,7 @@ func file_delete(path):
 	var d = Directory.new()
 	var result = d.open(path.get_base_dir())
 	if(result == OK):
-		d.remove_at(path)
+		d.remove(path)
 
 # ------------------------------------------------------------------------------
 # Checks to see if the passed in file has any data in it.
