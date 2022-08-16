@@ -123,7 +123,7 @@ func _ready():
 # Private
 # ------------------
 func _setup_colors():
-	_ctrls.output.clear_colors()
+	_ctrls.output.clear()
 	var keywords = [
 		['Failed', Color.RED],
 		['Passed', Color.GREEN],
