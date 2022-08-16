@@ -52,7 +52,7 @@ func _test_running_setup():
 
 
 func _set_toolbutton_icon(btn, icon_name, text):
-	if(Engine.editor_hint):
+	if(Engine.is_editor_hint()):
 		btn.icon = get_theme_icon(icon_name, 'EditorIcons')
 	else:
 		btn.text = str('[', text, ']')
@@ -84,7 +84,7 @@ func _ready():
 	call_deferred('_update_min_width')
 
 func _update_min_width():
-	custom_minimum_size.x = _ctrls.toolbar.toolbar.rect_size.x
+	custom_minimum_size.x = _ctrls.toolbar.toolbar.size.x
 
 func _open_file(path, line_number):
 	if(_interface == null):
