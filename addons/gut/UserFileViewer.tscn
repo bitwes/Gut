@@ -9,6 +9,9 @@ script = ExtResource("1")
 [node name="FileDialog" type="FileDialog" parent="."]
 access = 1
 show_hidden_files = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="TextDisplay" type="ColorRect" parent="."]
 anchor_right = 1.0

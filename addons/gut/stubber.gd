@@ -106,8 +106,8 @@ func _find_stub(obj, method, parameters=null, find_overloads=false):
 		# a paramerter override stub.
 		elif(null_match != null and !null_match.is_param_override_only()):
 			to_return = null_match
-		else:
-			_lgr.warn(str('Call to [', method, '] was not stubbed for the supplied parameters ', parameters, '.  Null was returned.'))
+
+
 
 	return to_return
 
@@ -139,6 +139,7 @@ func get_return(obj, method, parameters=null):
 	if(stub_info != null):
 		return stub_info.return_val
 	else:
+		_lgr.warn(str('Call to [', method, '] was not stubbed for the supplied parameters ', parameters, '.  Null was returned.'))
 		return null
 
 

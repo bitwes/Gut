@@ -11,7 +11,6 @@ func test_can_add_get_counter():
 	assert_eq(oc.get_counter('one'), 4)
 
 func test_print_singular_orphan():
-	stub(_utils.Logger, '_init').to_do_nothing()
 	var oc = partial_double(_utils.OrphanCounter).new()
 	var d_logger = double(_utils.Logger).new()
 
@@ -20,10 +19,9 @@ func test_print_singular_orphan():
 	stub(oc, 'orphan_count').to_return(2)
 	oc.print_orphans('one', d_logger)
 	var msg = get_call_parameters(d_logger, 'orphan')[0]
-	assert_string_contains(msg, 'orphan(')
+	assert_string_contains(msg, 'orphan')
 
 func test_print_plural_orphans():
-	stub(_utils.Logger, '_init').to_do_nothing()
 	var oc = partial_double(_utils.OrphanCounter).new()
 	var d_logger = double(_utils.Logger).new()
 
@@ -32,7 +30,7 @@ func test_print_plural_orphans():
 	stub(oc, 'orphan_count').to_return(5)
 	oc.print_orphans('one', d_logger)
 	var msg = get_call_parameters(d_logger, 'orphan')[0]
-	assert_string_contains(msg, 'orphans(')
+	assert_string_contains(msg, 'orphans')
 
 func test_adding_same_name_overwrites_prev_start_val():
 	var oc = partial_double(_utils.OrphanCounter).new()
