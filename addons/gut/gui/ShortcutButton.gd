@@ -111,16 +111,20 @@ func _on_ClearButton_pressed():
 # ---------------
 func to_s():
 	var modifiers = []
-	if(_source_event.alt):
+	if(OS.get_keycode_string(_source_event.get_keycode_with_modifiers())
+		.to_lower().contains('alt')):
 		modifiers.append('alt')
-	if(_source_event.control):
+	if(OS.get_keycode_string(_source_event.get_keycode_with_modifiers())
+		.to_lower().contains('ctrl')):
 		modifiers.append('ctrl')
-	if(_source_event.meta):
+	if(OS.get_keycode_string(_source_event.get_keycode_with_modifiers())
+		.to_lower().contains('meta')):
 		modifiers.append('meta')
-	if(_source_event.shift):
+	if(OS.get_keycode_string(_source_event.get_keycode_with_modifiers())
+		.to_lower().contains('shift')):
 		modifiers.append('shift')
 
-	if(_source_event.scancode != null):
+	if(_source_event.keycode != null):
 		modifiers.append(_key_disp)
 
 	var mod_text = ''
