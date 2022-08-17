@@ -19,10 +19,10 @@ class DirectoryCtrl:
 		_txt_path.size_flags_horizontal = _txt_path.SIZE_EXPAND_FILL
 
 		_dialog.mode = _dialog.FILE_MODE_OPEN_DIR
-		_dialog.resizable = true
+		_dialog.unresizable = false
 		_dialog.connect("dir_selected",Callable(self,'_on_selected'))
 		_dialog.connect("file_selected",Callable(self,'_on_selected'))
-		_dialog.rect_size = Vector2(1000, 700)
+		_dialog.size = Vector2(1000, 700)
 
 	func _on_selected(path):
 		set_text(path)
