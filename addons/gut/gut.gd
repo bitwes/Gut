@@ -207,7 +207,6 @@ var _before_all_test_obj = load('res://addons/gut/test_collector.gd').Test.new()
 var _after_all_test_obj = load('res://addons/gut/test_collector.gd').Test.new()
 
 
-var _file_prefix = 'test_'
 const SIGNAL_TESTS_FINISHED = 'tests_finished'
 const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yield_before_teardown'
 
