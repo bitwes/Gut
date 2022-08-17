@@ -98,7 +98,7 @@ var TestCollector = load('res://addons/gut/test_collector.gd')
 var ThingCounter = load('res://addons/gut/thing_counter.gd')
 
 # Source of truth for the GUT version
-var version = '7.3.0'
+var version = '7.4.1'
 # The required Godot version as an array.
 var req_godot = [3, 2, 0]
 # Used for doing file manipulation stuff so as to not keep making File instances.
@@ -203,6 +203,32 @@ func is_version_ok(engine_info=Engine.get_version_info(),required=req_godot):
 
 	# still null means each index was the same.
 	return nvl(is_ok, true)
+
+
+func godot_version(engine_info=Engine.get_version_info()):
+	return str(engine_info.major, '.', engine_info.minor, '.', engine_info.patch)
+
+
+func is_godot_version(expected, engine_info=Engine.get_version_info()):
+	var engine_array = [engine_info.major, engine_info.minor, engine_info.patch]
+	var expected_array = expected.split('.')
+
+	if(expected_array.size() > engine_array.size()):
+		return false
+
+	var is_version = true
+	var i = 0
+	while(i < expected_array.size() and i < engine_array.size() and is_version):
+		if(expected_array[i] == str(engine_array[i])):
+			i += 1
+		else:
+			is_version = false
+
+	return is_version
+
+
+func is_godot_version_gte(expected, engine_info=Engine.get_version_info()):
+	return is_version_ok(engine_info, expected.split('.'))
 
 
 # ------------------------------------------------------------------------------

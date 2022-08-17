@@ -140,15 +140,16 @@ func _apply_options(opts, _tester):
 	_tester.set_log_level(opts.log_level)
 	_tester.set_ignore_pause_before_teardown(opts.ignore_pause)
 
+	if(opts.selected != ''):
+		_tester.select_script(opts.selected)
+		# _run_single = true
+
 	for i in range(opts.dirs.size()):
 		_tester.add_directory(opts.dirs[i], opts.prefix, opts.suffix)
 
 	for i in range(opts.tests.size()):
 		_tester.add_script(opts.tests[i])
 
-	if(opts.selected != ''):
-		_tester.select_script(opts.selected)
-		# _run_single = true
 
 	if(opts.double_strategy == 'full'):
 		_tester.set_double_strategy(DOUBLE_STRATEGY.FULL)

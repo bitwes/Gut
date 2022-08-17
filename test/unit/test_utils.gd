@@ -24,6 +24,15 @@ func test_is_double_returns_false_for_primitives():
 	assert_false(utils.is_double({}), 'dictionary')
 	# that's probably enough spot checking
 
+func test_latest_version_if_version_is_old_warning_is_on():
+	var utils = autofree(Utils.new())
+	utils.version = "1.0.0"
+	add_child(utils)
+	utils._http_request_latest_version()
+	var p = utils.get_node("http_request")
+	assert_not_null(p, "should have a child http request")
+	yield(yield_to(p,"request_completed",2),YIELD)
+	assert_true(utils.should_display_latest_version,"this should fail only if you dont have internet connection")
 
 class OverloadsGet:
 	var a = []
@@ -61,6 +70,7 @@ func test_get_native_class_name_does_not_free_references():
 	pass_test("we got here")
 
 
+
 class TestVersionCheck:
 	extends 'res://addons/gut/test.gd'
 
@@ -70,7 +80,7 @@ class TestVersionCheck:
 		var parsed = version.split('.')
 		return{'major':parsed[0], 'minor':parsed[1], 'patch':parsed[2]}
 
-	var test_versions = ParameterFactory.named_parameters(
+	var test_ok_versions = ParameterFactory.named_parameters(
 		['engine_version', 'req_version', 'expected_result'],
 		[
 			['1.2.3', '1.2.3', true],
@@ -88,12 +98,32 @@ class TestVersionCheck:
 			['1.2.3', '1.3.0', false],
 
 		])
-	func test_is_version_ok(p=use_parameters(test_versions)):
+	func test_is_version_ok(p=use_parameters(test_ok_versions)):
 		var utils = autofree(Utils.new())
 		var engine_info = _fake_engine_version(p.engine_version)
 		var req_version = p.req_version.split('.')
 		assert_eq(utils.is_version_ok(engine_info, req_version), p.expected_result,
 			str(p.engine_version, ' >= ', p.req_version))
+
+	var test_is_versions = ParameterFactory.named_parameters(
+		['engine_version', 'expected_version', 'expected_result'],
+		[
+			['1.2.3', '1.2.3', true],
+			['1.2.3', '1.2', true],
+			['1.2.3', '1', true],
+
+			['1.2.4', '1.2.3', false],
+			['1.3.3', '1.2.3', false],
+			['2.2.3', '1.2.3', false],
+
+			['1.2.3', '1.2.3.4', false]
+		])
+
+	func test_is_godot_version(p=use_parameters(test_is_versions)):
+		var utils = autofree(Utils.new())
+		var engine_info = _fake_engine_version(p.engine_version)
+		assert_eq(utils.is_godot_version(p.expected_version, engine_info), p.expected_result,
+			str(p.engine_version, ' is ', p.expected_version))
 
 
 func test_latest_version_if_version_is_old_warning_is_on():

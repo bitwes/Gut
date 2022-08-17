@@ -38,6 +38,7 @@ class TestUsingResDirs:
 	func before_each():
 		gr.gut = get_a_gut()
 
+
 	func test_adding_directory_loads_files():
 		gr.gut.add_directory(TEST_LOAD_DIR)
 		assert_true(gr.gut._test_collector.has_script(TEST_LOAD_DIR + '/test_samples.gd'))
@@ -45,6 +46,11 @@ class TestUsingResDirs:
 	func test_adding_directory_does_not_load_bad_prefixed_files():
 		gr.gut.add_directory(TEST_LOAD_DIR)
 		assert_false(gr.gut._test_collector.has_script(TEST_LOAD_DIR + '/bad_prefix.gd'))
+
+	func test_adding_directory_loads_files_for_given_suffix():
+		gr.gut.add_directory(TEST_LOAD_DIR, 'test_', 'specific_suffix.gd')
+		assert_true(gr.gut.get_test_collector().has_script(TEST_LOAD_DIR + '/test_with_specific_suffix.gd'))
+		assert_eq(gr.gut.get_test_collector().scripts.size(), 1, 'Should not find more than one test script with \'specific_suffix.gd\'')
 
 	func test_adding_directory_skips_files_with_wrong_extension():
 		gr.gut.add_directory(TEST_LOAD_DIR)
