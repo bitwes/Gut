@@ -270,8 +270,7 @@ func _run_gut():
 			runner.set_gut_config(_gut_config)
 
 			_tester = runner.get_gut()
-			_tester.connect('tests_finished', self._on_tests_finished,
-				[_final_opts.should_exit, _final_opts.should_exit_on_success])
+			_tester.connect('tests_finished', _on_tests_finished.bind(_final_opts.should_exit, _final_opts.should_exit_on_success))
 
 			get_root().add_child(runner)
 			runner.run_tests()
