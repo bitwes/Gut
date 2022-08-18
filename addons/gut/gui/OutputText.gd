@@ -134,9 +134,15 @@ func _setup_colors():
 	]
 
 	for keyword in keywords:
-		_ctrls.output.add_keyword_color(keyword[0], keyword[1])
+		if (_ctrls.output.syntax_highlighter == null) :
+			_ctrls.output.syntax_highlighter = CodeHighlighter.new()
+		_ctrls.output.syntax_highlighter.add_keyword_color(keyword[0], keyword[1])
 
-	var f_color = _ctrls.output.get_color("font_color")
+	var f_color = null
+	if (_ctrls.output.theme == null) :
+		f_color = get_theme_color("font_color")
+	else :
+		f_color = _ctrls.output.theme.font_color
 	_ctrls.output.add_theme_color_override("font_color_readonly", f_color)
 	_ctrls.output.add_theme_color_override("function_color", f_color)
 	_ctrls.output.add_theme_color_override("member_variable_color", f_color)
