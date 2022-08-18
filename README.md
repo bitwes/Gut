@@ -1,11 +1,11 @@
-# Gut 7.3.0
+# Gut 7.4.1
 GUT (Godot Unit Test) is a unit testing framework for the [Godot Engine](https://godotengine.org/).  It allows you to write tests for your gdscript in gdscript.
 
 ### Donate/Shameless Plug
 If you would like to help support GUT check out my game [Country or State](https://www.youtube.com/watch?v=iCAROKgN9xw&t=4s) on [Android](https://play.google.com/store/apps/details?id=com.butchwesley.country_or_state&hl=en_US&gl=US) and [iOS](https://apps.apple.com/us/app/country-or-state/id1504122706).  Then, purchase the full version even if you don't like it.  Thanks!
 
 # Features
-* Godot 3.2.x, 3.3.x, 3.4.x compatible.
+* Godot 3.4.x, 3.5.x compatible.
 * [Simple install](https://github.com/bitwes/Gut/wiki/Install) via the Asset Library.
 * A plethora of [asserts and utility methods](https://github.com/bitwes/Gut/wiki/Asserts-and-Methods) to help make your tests simple and concise.
 * Support for [Inner Test Classes](https://github.com/bitwes/Gut/wiki/Inner-Test-Classes) to give your tests some extra context and maintainability.
@@ -17,6 +17,7 @@ If you would like to help support GUT check out my game [Country or State](https
 
 More info can be found in the [wiki](https://github.com/bitwes/Gut/wiki).
 
+![Panel](https://raw.githubusercontent.com/bitwes/Gut/master/gut_panel.png)
 
 # Getting Started
 * [Install](https://github.com/bitwes/Gut/wiki/Install)

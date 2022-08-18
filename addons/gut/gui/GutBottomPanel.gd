@@ -119,7 +119,7 @@ func _is_test_script(script):
 
 func _show_errors(errs):
 	_ctrls.output_ctrl.clear()
-	var text = "Cannot run tests, you have a conrfiguration error:\n"
+	var text = "Cannot run tests, you have a configuration error:\n"
 	for e in errs:
 		text += str('*  ', e, "\n")
 	text += "Check your settings ----->"

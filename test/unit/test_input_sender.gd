@@ -57,6 +57,9 @@ class TestTheBasics:
 	func test_can_make_one():
 		assert_not_null(InputSender.new())
 
+	func test_set_get_auto_flush_input():
+		assert_accessors(InputSender.new(), 'auto_flush_input', false, true)
+
 	func test_add_receiver():
 		var sender = InputSender.new()
 		var r = autofree(Node.new())
@@ -424,8 +427,12 @@ class TestSendEvent:
 		sender.send_event(event)
 		pass_test("we got here")
 
-	func test_sends_events_to_Input():
+	func test_sends_events_to_input_in_same_frame_when_auto_flush_true():
+		if(skip_if_godot_version_lt('3.5.0')):
+			return
+
 		var sender = InputSender.new(Input)
+		sender.set_auto_flush_input(true)
 		# not a receiver, in the tree so Input will send events it gets with
 		# parse_input_event to _input and _unhandled_input
 		var thing = HasInputEvents.new()
@@ -443,6 +450,27 @@ class TestSendEvent:
 		assert_eq(thing.input_event, event, '_input event')
 		assert_eq(thing.unhandled_event, event, '_unhandled event')
 		assert_null(thing.gui_event, 'gui event')
+
+	func test_does_not_send_immediately_when_accumulate_and_not_auto_flushing_34():
+		if(skip_if_godot_version_ne('3.4')):
+			return
+
+		var sender = InputSender.new(Input)
+		sender.set_auto_flush_input(false)
+		Input.set_use_accumulated_input(true)
+
+		# not a receiver, in the tree so Input will send events it gets with
+		# parse_input_event to _input and _unhandled_input
+		var thing = HasInputEvents.new()
+		add_child_autofree(thing)
+
+		var event = InputEventKey.new()
+		event.pressed = true
+		event.scancode = KEY_Y
+		sender.send_event(event)
+
+		assert_false(Input.is_key_pressed(KEY_Y), 'is_pressed')
+		Input.set_use_accumulated_input(false)
 
 
 class TestSequence:
@@ -615,6 +643,9 @@ class TestReleaseAll:
 	func before_all():
 		InputMap.add_action("jump")
 
+	func before_each():
+		Input.flush_buffered_events()
+
 	func after_all():
 		InputMap.erase_action("jump")
 
@@ -756,10 +787,6 @@ class TestClear:
 		sender.release_all()
 
 		assert_eq(r.inputs.size(), 1)
-
-
-
-
 
 
 class TestAtScriptLevel:

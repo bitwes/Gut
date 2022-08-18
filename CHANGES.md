@@ -2,8 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# 7.4.1
+* __Issue i393__ 7.4.0 broke running from a scene.  On a side note, try the new and improved Gut Panel!  It __did not__ break in the last release and was significantly improved!
 
-# 7.X.X
+# 7.4.0
 
 ## Features
 * __Issue 354__ Doubles and partial doubles can now be instanced with parameters
@@ -18,15 +20,18 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   * You can toggle the visibility of Settings, Output, and Tree panels.
   * You can search the output.
   * Some nice editor icons to make things look slick.
+* __Issue 375__ You can change the suffix of your test files.  Example:  `_foo.gd`.
 
 #### Misc
 * Yield messages are now disabled on log level 0.
 * Tests that do not assert are included in the summary as "risky".
 * Test totals in various places have been adjusted to display a passing count and total count.
+* Running a single test script is faster now.  Gut no longer parses scripts with non-matching names.
 
 ## Bug Fixes
 * __Issue 288__ First `yield` in a test does not cause a .4 second delay.
 * __Issue 368__ Doubling `WebSocketClient` and anything with a `PoolStringArray` default value.
+* __Issue 387__ Introduced `auto_flush_input` to `InputSender` to address that `Input.use_accumulate_input` is enabled by default in Godot 3.5.0.
 
 # 7.3.0
 

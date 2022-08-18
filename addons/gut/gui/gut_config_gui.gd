@@ -284,8 +284,8 @@ func get_config_issues():
 	if(!has_directory):
 		to_return.append('You do not have any directories set.')
 
-	if(_cfg_ctrls['prefix'].text == ''):
-		to_return.append("You must set a Script prefix or GUT won't find any scripts")
+	if(!_cfg_ctrls['suffix'].text.ends_with('.gd')):
+		to_return.append("Script suffix must end in '.gd'")
 
 	return to_return
 
@@ -366,6 +366,8 @@ func set_options(options):
 	_add_title('Misc')
 	_add_value('prefix', options.prefix, 'Script Prefix',
 		"The filename prefix for all test scripts.")
+	_add_value('suffix', options.suffix, 'Script Suffix',
+		"Script suffix, including .gd extension.  For example '_foo.gd'.")
 
 
 func get_options(base_opts):
@@ -416,5 +418,6 @@ func get_options(base_opts):
 
 	# Misc
 	to_return.prefix = _cfg_ctrls.prefix.text
+	to_return.suffix = _cfg_ctrls.suffix.text
 
 	return to_return
