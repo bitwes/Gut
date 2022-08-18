@@ -185,12 +185,12 @@ func _run_all():
 # Events
 # ---------------
 func _on_results_bar_draw(bar):
-	bar.draw_rect(Rect2(Vector2(0, 0), bar.rect_size), Color(0, 0, 0, .2))
+	bar.draw_rect(Rect2(Vector2(0, 0), bar.size), Color(0, 0, 0, .2))
 
 
 func _on_Light_draw():
 	var l = _ctrls.light
-	l.draw_circle(Vector2(l.rect_size.x / 2, l.rect_size.y / 2), l.rect_size.x / 2, _light_color)
+	l.draw_circle(Vector2(l.size.x / 2, l.size.y / 2), l.size.x / 2, _light_color)
 
 
 func _on_editor_script_changed(script):

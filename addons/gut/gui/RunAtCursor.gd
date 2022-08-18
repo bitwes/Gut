@@ -62,10 +62,10 @@ func _update_buttons(info):
 	# The button's new size won't take effect until the next frame.
 	# This appears to be what was causing the button to not be clickable the
 	# first time.
-	call_deferred("_update_rect_size")
+	call_deferred("_update_size")
 
-func _update_rect_size():
-	custom_minimum_size.x = _ctrls.btn_method.rect_size.x + _ctrls.btn_method.rect_position.x
+func _update_size():
+	custom_minimum_size.x = _ctrls.btn_method.size.x + _ctrls.btn_method.rect_position.x
 
 # ----------------
 # Events
