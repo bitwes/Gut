@@ -7,7 +7,9 @@ class DirectoryCtrl:
 		get:
 			return get_text()
 		set(val):
-			set_text(val)
+			text = val
+			_txt_path.text = text
+
 	var _txt_path = LineEdit.new()
 	var _btn_dir = Button.new()
 	var _dialog = FileDialog.new()
@@ -25,7 +27,7 @@ class DirectoryCtrl:
 		_dialog.size = Vector2(1000, 700)
 
 	func _on_selected(path):
-		set_text(path)
+		text = path
 
 
 	func _on_dir_button_pressed():
@@ -34,16 +36,12 @@ class DirectoryCtrl:
 
 
 	func _ready():
-		add_child(_txt_path)
-		add_child(_btn_dir)
-		add_child(_dialog)
+		call_deferred('add_child', _txt_path)
+		call_deferred('add_child', _btn_dir)
+		call_deferred('add_child', _dialog)
 
 	func get_text():
 		return _txt_path.text
-
-	func set_text(t):
-		text = t
-		_txt_path.text = text
 
 	func get_line_edit():
 		return _txt_path
