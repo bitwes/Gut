@@ -170,7 +170,7 @@ func _on_CopyButton_pressed():
 
 
 func _on_UseColors_pressed():
-	_ctrls.output.syntax_highlighter = _ctrls.use_colors.pressed
+	_ctrls.output.syntax_highlighter = _ctrls.use_colors.button_pressed
 
 
 func _on_ClearButton_pressed():
@@ -178,7 +178,7 @@ func _on_ClearButton_pressed():
 
 
 func _on_ShowSearch_pressed():
-	show_search(_ctrls.show_search.pressed)
+	show_search(_ctrls.show_search.button_pressed)
 
 
 func _on_SearchTerm_focus_entered():
@@ -222,7 +222,7 @@ func show_search(should):
 	if(should):
 		_ctrls.search_bar.search_term.grab_focus()
 		_ctrls.search_bar.search_term.select_all()
-	_ctrls.show_search.pressed = should
+	_ctrls.show_search.button_pressed = should
 
 
 func search(text, start_pos, highlight=true):
