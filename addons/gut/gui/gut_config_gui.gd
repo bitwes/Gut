@@ -139,7 +139,7 @@ func _init(cont):
 # ------------------
 func _new_row(key, disp_text, value_ctrl, hint):
 	var ctrl = _base_control.duplicate()
-	var lbl = ctrl.get_node("Label")
+	var lbl = ctrl.get_child(0)
 
 	lbl.hint_tooltip = hint
 	lbl.text = disp_text
@@ -149,7 +149,7 @@ func _new_row(key, disp_text, value_ctrl, hint):
 	ctrl.add_child(value_ctrl)
 
 	var rpad = CenterContainer.new()
-	rpad.rect_min_size.x = 5
+	# rpad.rect_min_size.x = 5
 	ctrl.add_child(rpad)
 
 	return ctrl
@@ -157,13 +157,13 @@ func _new_row(key, disp_text, value_ctrl, hint):
 
 func _add_title(text):
 	var row = _base_control.duplicate()
-	var lbl = row.get_node('Label')
+	var lbl = row.get_child(0)
 
 	lbl.text = text
-	lbl.align = Label.ALIGNMENT_CENTER
+	# lbl.align = Label.ALIGNMENT_CENTER
 	_base_container.add_child(row)
 
-	row.connect('draw',Callable(self,'_on_title_cell_draw'),[row])
+	row.connect('draw', _on_title_cell_draw.bind(row))
 
 
 func _add_number(key, value, disp_text, v_min, v_max, hint=''):
@@ -247,8 +247,9 @@ func _add_vector2(key, value, disp_text, hint=''):
 # Events
 # ------------------
 func _wire_select_on_focus(which):
-	which.connect('focus_entered',Callable(self,'_on_ctrl_focus_highlight'),[which])
-	which.connect('focus_exited',Callable(self,'_on_ctrl_focus_unhighlight'),[which])
+	pass
+	which.connect('focus_entered', _on_ctrl_focus_highlight.bind(which))
+	which.connect('focus_exited', _on_ctrl_focus_unhighlight.bind(which))
 
 
 func _on_ctrl_focus_highlight(which):

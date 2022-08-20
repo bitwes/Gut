@@ -29,7 +29,7 @@ class NewAccessors:
 
     var read_only = 'read me' :
         get: return read_only
-        set(val): raise_error('READ ONLY, CANNOOT SET')
+        set(val): print('READ ONLY, CANNOOT SET')
 
 
 

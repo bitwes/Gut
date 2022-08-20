@@ -24,15 +24,6 @@ func test_is_double_returns_false_for_primitives():
 	assert_false(utils.is_double({}), 'dictionary')
 	# that's probably enough spot checking
 
-func test_latest_version_if_version_is_old_warning_is_on():
-	var utils = autofree(Utils.new())
-	utils.version = "1.0.0"
-	add_child(utils)
-	utils._http_request_latest_version()
-	var p = utils.get_node("http_request")
-	assert_not_null(p, "should have a child http request")
-	yield(yield_to(p,"request_completed",2),YIELD)
-	assert_true(utils.should_display_latest_version,"this should fail only if you dont have internet connection")
 
 class OverloadsGet:
 	var a = []
@@ -127,11 +118,13 @@ class TestVersionCheck:
 
 
 func test_latest_version_if_version_is_old_warning_is_on():
-	var utils = autofree(Utils.new())
-	utils.version = "1.0.0"
-	add_child(utils)
-	utils._http_request_latest_version()
-	var p = utils.get_node("http_request")
-	assert_not_null(p, "should have a child http request")
-	await yield_to(p,"request_completed",2).YIELD
-	assert_true(utils.should_display_latest_version,"this should fail only if you dont have internet connection")
+	pending('yield')
+	# var utils = autofree(Utils.new())
+	# utils.version = "1.0.0"
+	# add_child(utils)
+	# utils._http_request_latest_version()
+	# var p = utils.get_node("http_request")
+	# assert_not_null(p, "should have a child http request")
+	# await yield_to(p,"request_completed",2).YIELD
+	# assert_true(utils.should_display_latest_version,"this should fail only if you dont have internet connection")
+

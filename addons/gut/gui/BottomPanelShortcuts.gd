@@ -12,8 +12,8 @@ extends Window
 func _ready():
 	for key in _ctrls:
 		var sc_button = _ctrls[key]
-		sc_button.connect('start_edit',Callable(self,'_on_edit_start'),[sc_button])
-		sc_button.connect('end_edit',Callable(self,'_on_edit_end'))
+		sc_button.connect('start_edit', _on_edit_start.bind(sc_button))
+		sc_button.connect('end_edit', _on_edit_end)
 
 
 	# show dialog when running scene from editor.
