@@ -28,20 +28,26 @@ func _ready():
 
 
 func _display_shortcut():
-	_ctrls.shortcut_label.text = to_s()
+	if(_key_disp == ''):
+		_key_disp = NO_SHORTCUT
+	_ctrls.shortcut_label.text = _key_disp
 
 
 func _is_shift_only_modifier():
-	return _source_event.shift and \
-		!(_source_event.meta or _source_event.control or _source_event.alt)
+	return _source_event.shift_pressed and \
+		!(_source_event.alt_pressed or _source_event.command_pressed or \
+		_source_event.ctrl_pressed or _source_event.meta_pressed) and \
+		!_is_modifier(_source_event.keycode)
 
 
-func _has_modifier():
-	return _source_event.alt or _source_event.control or _source_event.meta or _source_event.shift
+func _has_modifier(event):
+	return event.alt_pressed or event.command_pressed or \
+		event.ctrl_pressed or event.meta_pressed or \
+		event.shift_pressed
 
 
-func _is_modifier(scancode):
-	return _modifier_keys.has(scancode)
+func _is_modifier(keycode):
+	return _modifier_keys.has(keycode)
 
 
 func _edit_mode(should):
@@ -68,16 +74,11 @@ func _edit_mode(should):
 func _unhandled_key_input(event):
 	if(event is InputEventKey):
 		if(event.pressed):
-			_source_event.alt = event.alt or event.scancode == KEY_ALT
-			_source_event.control = event.control or event.scancode == KEY_CTRL
-			_source_event.meta = event.meta or event.scancode == KEY_META
-			_source_event.shift = event.shift or event.scancode == KEY_SHIFT
-
-			if(_has_modifier() and !_is_modifier(event.scancode)):
-				_source_event.scancode = event.scancode
-				_key_disp = OS.get_keycode_string(event.scancode)
+			if(_has_modifier(event) and !_is_modifier(event.get_keycode_with_modifiers())):
+				_source_event = event
+				_key_disp = OS.get_keycode_string(event.get_keycode_with_modifiers())
 			else:
-#				_source_event.set_keycode = null
+				_source_event = InputEventKey.new()
 				_key_disp = NO_SHORTCUT
 			_display_shortcut()
 			_ctrls.save_button.disabled = !is_valid()
@@ -97,9 +98,7 @@ func _on_SaveButton_pressed():
 func _on_CancelButton_pressed():
 	_edit_mode(false)
 	_source_event = _pre_edit_event
-	_key_disp = OS.get_keycode_string(_source_event.scancode)
-	if(_key_disp == ''):
-		_key_disp = NO_SHORTCUT
+	_key_disp = OS.get_keycode_string(_source_event.get_keycode_with_modifiers())
 	_display_shortcut()
 
 
@@ -110,48 +109,25 @@ func _on_ClearButton_pressed():
 # Public
 # ---------------
 func to_s():
-	var modifiers = []
-	if(OS.get_keycode_string(_source_event.get_keycode_with_modifiers())
-		.to_lower().contains('alt')):
-		modifiers.append('alt')
-	if(OS.get_keycode_string(_source_event.get_keycode_with_modifiers())
-		.to_lower().contains('ctrl')):
-		modifiers.append('ctrl')
-	if(OS.get_keycode_string(_source_event.get_keycode_with_modifiers())
-		.to_lower().contains('meta')):
-		modifiers.append('meta')
-	if(OS.get_keycode_string(_source_event.get_keycode_with_modifiers())
-		.to_lower().contains('shift')):
-		modifiers.append('shift')
-
-	if(_source_event.keycode != null):
-		modifiers.append(_key_disp)
-
-	var mod_text = ''
-	for i in range(modifiers.size()):
-		mod_text += modifiers[i]
-		if(i != modifiers.size() - 1):
-			mod_text += ' + '
-
-	return mod_text
+	return OS.get_keycode_string(_source_event.get_keycode_with_modifiers())
 
 
 func is_valid():
-	return _has_modifier() and _key_disp != NO_SHORTCUT and !_is_shift_only_modifier()
+	return _has_modifier(_source_event) and !_is_shift_only_modifier()
 
 
 func get_shortcut():
 	var to_return = Shortcut.new()
-	to_return.shortcut = _source_event
+	to_return.events.append(_source_event)
 	return to_return
 
 
 func set_shortcut(sc):
-	if(sc == null or sc.shortcut == null):
+	if(sc == null or sc.events == null || sc.events.size() <= 0):
 		clear_shortcut()
 	else:
-		_source_event = sc.shortcut
-		_key_disp = OS.get_keycode_string(_source_event.scancode)
+		_source_event = sc.events[0]
+		_key_disp = OS.get_keycode_string(_source_event.get_keycode_with_modifiers())
 		_display_shortcut()
 
 
