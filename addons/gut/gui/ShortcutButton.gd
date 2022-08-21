@@ -98,7 +98,7 @@ func _on_SaveButton_pressed():
 func _on_CancelButton_pressed():
 	_edit_mode(false)
 	_source_event = _pre_edit_event
-	_key_disp = OS.get_keycode_string(_source_event.get_keycode_with_modifiers())
+	_key_disp = to_s()
 	_display_shortcut()
 
 
@@ -127,7 +127,7 @@ func set_shortcut(sc):
 		clear_shortcut()
 	else:
 		_source_event = sc.events[0]
-		_key_disp = OS.get_keycode_string(_source_event.get_keycode_with_modifiers())
+		_key_disp = to_s()
 		_display_shortcut()
 
 
