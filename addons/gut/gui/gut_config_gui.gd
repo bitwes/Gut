@@ -5,9 +5,8 @@ class DirectoryCtrl:
 
 	var text = '':
 		get:
-			return get_text()
+			return _txt_path.text
 		set(val):
-			text = val
 			_txt_path.text = text
 
 	var _txt_path = LineEdit.new()
@@ -36,12 +35,10 @@ class DirectoryCtrl:
 
 
 	func _ready():
-		call_deferred('add_child', _txt_path)
-		call_deferred('add_child', _btn_dir)
-		call_deferred('add_child', _dialog)
+		add_child(_txt_path)
+		add_child(_btn_dir)
+		add_child(_dialog)
 
-	func get_text():
-		return _txt_path.text
 
 	func get_line_edit():
 		return _txt_path
