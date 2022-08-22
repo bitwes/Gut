@@ -413,7 +413,7 @@ func are_datatypes_same(got, expected):
 
 
 func pretty_print(dict):
-	print(str(json.stringify(dict, ' ')))
+	print(json.stringify(dict, ' '))
 
 
 func get_script_text(obj):
