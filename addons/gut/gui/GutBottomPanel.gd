@@ -270,14 +270,13 @@ func load_result_output():
 
 	var summary = get_file_as_text(RESULT_JSON)
 	var test_json_conv = JSON.new()
-	test_json_conv.parse(summary)
-	var results = test_json_conv.get_data()
-	if(results.error != OK):
+	if (test_json_conv.parse(summary) != OK):
 		return
+	var results = test_json_conv.get_data()
 
-	_ctrls.run_results.load_json_results(results.result)
+	_ctrls.run_results.load_json_results(results)
 
-	var summary_json = results.result['test_scripts']['props']
+	var summary_json = results['test_scripts']['props']
 	_ctrls.results.passing.text = str(summary_json.passing)
 	_ctrls.results.passing.get_parent().visible = true
 
