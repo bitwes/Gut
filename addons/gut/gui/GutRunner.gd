@@ -42,8 +42,8 @@ func run_tests():
 		add_child(_gut)
 
 	if(!_cmdln_mode):
-		_gut.connect('tests_finished', self, '_on_tests_finished',
-			[_gut_config.options.should_exit, _gut_config.options.should_exit_on_success])
+		_gut.connect('tests_finished', _on_tests_finished.bind(
+			_gut_config.options.should_exit, _gut_config.options.should_exit_on_success))
 
 	_gut_config.config_gut(_gut)
 	if(_gut_config.options.gut_on_top):
@@ -62,7 +62,7 @@ func _write_results():
 		f.store_string(content)
 		f.close()
 	else:
-		print('ERROR Could not save bbcode, result = ', result)
+		push_error('Could not save bbcode, result = ', result)
 
 	var exporter = ResultExporter.new()
 	var f_result = exporter.write_json_file(_gut, RESULT_JSON)

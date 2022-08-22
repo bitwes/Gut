@@ -220,7 +220,7 @@ func _load_result_tree(j):
 			s_item.free()
 		else:
 			var total_text = str(test_keys.size(), ' passed')
-			s_item.set_text_alignment(1, s_item.ALIGN_LEFT)
+			s_item.set_text_alignment(1, HORIZONTAL_ALIGNMENT_LEFT)
 			if(bad_count == 0):
 				s_item.collapsed = true
 			else:
@@ -232,12 +232,10 @@ func _load_result_tree(j):
 
 
 func _free_childless_scripts():
-	var item = _root.get_children()
-	while(item != null):
-		var next_item = item.get_next()
-		if(item.get_children() == null):
-			item.free()
-		item = next_item
+	var children = _root.get_children() # Returns an array in 4.0
+	for i in range(0, children.size()):
+		if(children[i].get_children() == null):
+			children[i].free()
 
 
 func _find_script_item_with_path(path):
@@ -329,9 +327,9 @@ func _get_line_number_for_seq_search(search_strings, te):
 	var string_found = true
 	while(i < search_strings.size() and string_found):
 		result = te.search(search_strings[i], s_flags, start_line, start_col)
-		if(result.size() > 0):
-			start_line = result[TextEdit.SEARCH_RESULT_LINE]
-			start_col = result[TextEdit.SEARCH_RESULT_COLUMN]
+		if(result.length() > 0):
+			start_line = result.y
+			start_col = result.x
 			to_return = start_line
 		else:
 			string_found = false
