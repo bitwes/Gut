@@ -110,7 +110,7 @@ func _load_dict_into(source, dest):
 
 
 func write_options(path):
-	var content = json.print(options, ' ')
+	var content = json.stringify(options, ' ')
 
 	var f = File.new()
 	var result = f.open(path, f.WRITE)
