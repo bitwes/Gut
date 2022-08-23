@@ -318,24 +318,20 @@ func _handle_tree_item_select(item, force_scroll):
 func _get_line_number_for_seq_search(search_strings, te):
 #	var te = _editors.get_current_text_edit()
 	var result = null
-	var to_return = -1
-	var start_line = 0
-	var start_col = 0
+	var line = Vector2i(-1, -1)
 	var s_flags = 0
 
 	var i = 0
 	var string_found = true
 	while(i < search_strings.size() and string_found):
-		result = te.search(search_strings[i], s_flags, start_line, start_col)
-		if(result.length() > 0):
-			start_line = result.y
-			start_col = result.x
-			to_return = start_line
+		result = te.search(search_strings[i], s_flags, 0, 0)
+		if(result.x != -1):
+			line = result
 		else:
 			string_found = false
 		i += 1
 
-	return to_return
+	return line.y
 
 
 func _goto_code(path, line, method_name='', inner_class =''):
