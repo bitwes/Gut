@@ -132,8 +132,8 @@ func _apply_options(opts, _tester):
 	if(opts.should_maximize):
 		_tester.maximize()
 
-	if(opts.compact_mode):
-		_tester.get_gui().compact_mode(true)
+#	if(opts.compact_mode):
+#		_tester.get_gui().compact_mode(true)
 
 	if(opts.inner_class != ''):
 		_tester.set_inner_class_name(opts.inner_class)
@@ -164,12 +164,12 @@ func _apply_options(opts, _tester):
 	_tester.set_junit_xml_file(opts.junit_xml_file)
 	_tester.set_junit_xml_timestamp(opts.junit_xml_timestamp)
 
-	_tester.get_gui().set_font_size(opts.font_size)
-	_tester.get_gui().set_font(opts.font_name)
-	if(opts.font_color != null and opts.font_color.is_valid_html_color()):
-		_tester.get_gui().set_default_font_color(Color(opts.font_color))
-	if(opts.background_color != null and opts.background_color.is_valid_html_color()):
-		_tester.get_gui().set_background_color(Color(opts.background_color))
+#	_tester.get_gui().set_font_size(opts.font_size)
+#	_tester.get_gui().set_font(opts.font_name)
+#	if(opts.font_color != null and opts.font_color.is_valid_html_color()):
+#		_tester.get_gui().set_default_font_color(Color(opts.font_color))
+#	if(opts.background_color != null and opts.background_color.is_valid_html_color()):
+#		_tester.get_gui().set_background_color(Color(opts.background_color))
 
 	return _tester
 

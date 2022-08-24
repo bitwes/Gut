@@ -262,7 +262,7 @@ func set_gut(gut):
 	else:
 		if(_printers.gui == null):
 			_printers.gui = _utils.Printers.GutGuiPrinter.new()
-		_printers.gui.set_gut(gut)
+
 
 func get_indent_level():
 	return _indent_level

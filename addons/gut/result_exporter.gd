@@ -80,7 +80,7 @@ func get_results_dictionary(gut, include_scripts=true):
 		props.tests = totals.tests
 		props.errors = gut.get_logger().get_errors().size()
 		props.warnings = gut.get_logger().get_warnings().size()
-		props.time = gut.get_gui().elapsed_time_as_str().replace('s', '')
+		props.time = 99.9 #TODO gut.get_gui().elapsed_time_as_str().replace('s', '')
 		props.orphans = gut.get_orphan_counter().get_counter('total')
 		result.test_scripts.scripts = scripts
 

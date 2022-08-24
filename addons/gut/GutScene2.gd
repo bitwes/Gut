@@ -3,8 +3,7 @@ extends Node2D
 
 class GuiHandler:
 	var _gui = null
-	
-	signal end_pause
+	var _gut = null
 	
 	var _ctrls = {
 		prog_script = null,
@@ -12,7 +11,7 @@ class GuiHandler:
 		path_dir = null, 
 		path_file = null,
 		rtl = null,
-		btn_continue = null
+		btn_continue = null 
 	}
 	
 	func _init(gui):
@@ -29,12 +28,53 @@ class GuiHandler:
 		_ctrls.btn_continue.visible = false
 		_ctrls.btn_continue.pressed.connect(_on_continue_pressed)
 		
-		
+		_ctrls.prog_script.value = 0
+		_ctrls.prog_test.value = 0
+		_ctrls.path_dir.text = ''
+		_ctrls.path_file.text = ''
+	
+	# ------------------
+	# Events
+	# ------------------
 	func _on_continue_pressed():
-		end_pause.emit()
+		_gut.end_teardown_pause()
 		_ctrls.btn_continue.visible = false
+
+		
+	func _on_gut_start_run():
+		if(_ctrls.rtl != null):
+			_ctrls.rtl.clear()
+		set_num_scripts(_gut.get_test_collector().scripts.size())
+	
+	
+	func _on_gut_end_run():
+		pass
 		
 		
+	func _on_gut_start_script(script_obj):
+		next_script(script_obj.get_full_name(), script_obj.tests.size())
+
+		
+	func _on_gut_end_script():
+		pass
+
+		
+	func _on_gut_start_test(test_name):
+		next_test(test_name)
+
+
+	func _on_gut_end_test():
+		pass
+
+	
+	func _on_gut_start_pause():
+		pause_before_teardown()
+		
+	func _on_gut_end_pause():
+		pass
+	# ------------------
+	# Private
+	# ------------------
 	func _get_first_child_named(obj_name, parent_obj):
 		if(parent_obj == null):
 			return null
@@ -52,27 +92,52 @@ class GuiHandler:
 					index += 1
 
 		return to_return
-		
+	
+	# ------------------
+	# Public
+	# ------------------
 	func set_num_scripts(val):
 		_ctrls.prog_script.value = 0
-		_ctrls.prog_script.max = val
+		_ctrls.prog_script.max_value = val
+		
 		
 	func next_script(path, num_tests):
 		_ctrls.prog_script.value += 1
 		_ctrls.prog_test.value = 0
-		_ctrls.prog_test.max = num_tests
+		_ctrls.prog_test.max_value = num_tests
 		
 		_ctrls.path_dir.text = path.get_base_dir()
 		_ctrls.path_file.text = path.get_file()
 		
+		
 	func next_test(test_name):
 		_ctrls.prog_test.value += 1
-		# do something with the name?
+		
 		
 	func pause_before_teardown():
 		_ctrls.btn_continue.visible = true
 		
+		
+	func set_gut(g):
+		_gut = g
+		g.start_run.connect(_on_gut_start_run)
+		g.end_run.connect(_on_gut_end_run)
+		
+		g.start_script.connect(_on_gut_start_script)
+		g.end_script.connect(_on_gut_end_script)
+		
+		g.start_test.connect(_on_gut_start_test)
+		g.end_test.connect(_on_gut_end_test)
+		
+		g.start_pause_before_teardown.connect(_on_gut_start_pause)
+		g.end_pause_before_teardown.connect(_on_gut_end_pause)
+		
+	func get_textbox():
+		return _ctrls.rtl
 
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 var _large_handler = null
 var _min_handler = null
 var gut = null :
@@ -89,28 +154,7 @@ func _ready():
 
 	
 func _set_gut(val):
-	val.timeout.connect(_on_gut_timeout)
-#	val.tests_finished.connect(_on_tests_finished)
-#	val.test_finished.connect(_on_test_finished)
-#	val.stop_yield_before_teardown.connect(_on_stop_yield_before_teardown)
+	_large_handler.set_gut(val)
 
-# potential gui signals.  With these, we can probably remove all references to
-# the gui from here.
-#signal test_started
-#signal start_script
-#signal end_script
-#signal start_test
-#signal end_test
-#signal paused
-
-func _on_gut_timeout():
-	pass
-
-func _on_tests_finished():
-	pass
-	
-func _on_test_finished():
-	pass
-
-func _on_stop_yield_before_teardown():
-	pass
+func get_textbox():
+	return _large_handler.get_textbox()

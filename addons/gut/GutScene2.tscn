@@ -8,8 +8,8 @@
 script = ExtResource("1_b4m8y")
 
 [node name="Large" type="Panel" parent="."]
-offset_right = 487.0
-offset_bottom = 280.0
+offset_right = 717.0
+offset_bottom = 388.0
 theme = ExtResource("1_s37wl")
 
 [node name="MainBox" type="VBoxContainer" parent="Large"]
@@ -21,7 +21,7 @@ metadata/_edit_layout_mode = 1
 
 [node name="TitleBar" type="Panel" parent="Large/MainBox"]
 custom_minimum_size = Vector2(0, 25)
-offset_right = 487.0
+offset_right = 717.0
 offset_bottom = 25.0
 
 [node name="TitleBox" type="HBoxContainer" parent="Large/MainBox/TitleBar"]
@@ -34,53 +34,110 @@ grow_vertical = 2
 metadata/_edit_layout_mode = 1
 
 [node name="Spacer1" type="CenterContainer" parent="Large/MainBox/TitleBar/TitleBox"]
-offset_right = 217.0
+offset_right = 332.0
 offset_bottom = 26.0
 size_flags_horizontal = 3
 
 [node name="Title" type="Label" parent="Large/MainBox/TitleBar/TitleBox"]
-offset_left = 221.0
+offset_left = 336.0
 offset_top = 3.0
-offset_right = 266.0
+offset_right = 381.0
 offset_bottom = 23.0
 text = "Title"
 
 [node name="Spacer2" type="CenterContainer" parent="Large/MainBox/TitleBar/TitleBox"]
-offset_left = 270.0
-offset_right = 487.0
+offset_left = 385.0
+offset_right = 717.0
 offset_bottom = 26.0
 size_flags_horizontal = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Large/MainBox"]
 offset_top = 29.0
-offset_right = 487.0
-offset_bottom = 271.0
+offset_right = 717.0
+offset_bottom = 379.0
 size_flags_vertical = 3
-
-[node name="S1" type="CenterContainer" parent="Large/MainBox/HBoxContainer"]
-custom_minimum_size = Vector2(5, 0)
-offset_right = 5.0
-offset_bottom = 242.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Large/MainBox/HBoxContainer"]
-offset_left = 9.0
-offset_right = 478.0
-offset_bottom = 242.0
+offset_right = 717.0
+offset_bottom = 350.0
 size_flags_horizontal = 3
 
-[node name="Output" type="RichTextLabel" parent="Large/MainBox/HBoxContainer/VBoxContainer"]
-offset_right = 469.0
-offset_bottom = 192.0
+[node name="OutputBG" type="ColorRect" parent="Large/MainBox/HBoxContainer/VBoxContainer"]
+offset_right = 717.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+color = Color(0.0745098, 0.0705882, 0.0784314, 1)
+metadata/_edit_layout_mode = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/OutputBG"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="S2" type="CenterContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/OutputBG/HBoxContainer"]
+custom_minimum_size = Vector2(5, 0)
+offset_right = 5.0
+offset_bottom = 300.0
+
+[node name="Output" type="RichTextLabel" parent="Large/MainBox/HBoxContainer/VBoxContainer/OutputBG/HBoxContainer"]
+offset_left = 9.0
+offset_right = 708.0
+offset_bottom = 300.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+focus_mode = 2
+bbcode_enabled = true
+text = "This is the output text for you to see
+
+
+This is the output text for you to see
+
+
+This is the output text for you to see
+
+
+This is the output text for you to see
+
+
+This is the output text for you to see
+
+
+This is the output text for you to see
+
+
+This is the output text for you to see
+
+
+This is the output text for you to see
+
+
+This is the output text for you to see
+
+
+This is the output text for you to see"
+scroll_following = true
+selection_enabled = true
+
+[node name="S1" type="CenterContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/OutputBG/HBoxContainer"]
+custom_minimum_size = Vector2(5, 0)
+offset_left = 712.0
+offset_right = 717.0
+offset_bottom = 300.0
 
 [node name="ControlBox" type="HBoxContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer"]
-offset_top = 196.0
-offset_right = 469.0
-offset_bottom = 242.0
+offset_top = 304.0
+offset_right = 717.0
+offset_bottom = 350.0
+
+[node name="S1" type="CenterContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
+custom_minimum_size = Vector2(5, 0)
+offset_right = 5.0
+offset_bottom = 46.0
 
 [node name="ProgressBars" type="VBoxContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
-offset_right = 167.0
+offset_left = 9.0
+offset_right = 176.0
 offset_bottom = 46.0
 
 [node name="TestBox" type="HBoxContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/ProgressBars"]
@@ -119,8 +176,8 @@ offset_bottom = 21.0
 value = 75.0
 
 [node name="PathDisplay" type="VBoxContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
-offset_left = 171.0
-offset_right = 376.0
+offset_left = 180.0
+offset_right = 385.0
 offset_bottom = 46.0
 size_flags_vertical = 3
 
@@ -150,36 +207,36 @@ theme_override_font_sizes/font_size = 11
 text = "test_this_thing.gd"
 
 [node name="Spacer1" type="CenterContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
-offset_left = 380.0
-offset_right = 385.0
+offset_left = 389.0
+offset_right = 624.0
 offset_bottom = 46.0
 size_flags_horizontal = 3
 
 [node name="Continue" type="Button" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
-offset_left = 389.0
+offset_left = 628.0
 offset_top = 10.0
-offset_right = 469.0
+offset_right = 708.0
 offset_bottom = 35.0
 size_flags_vertical = 4
 text = "Continue
 "
 
-[node name="S2" type="CenterContainer" parent="Large/MainBox/HBoxContainer"]
+[node name="S3" type="CenterContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
 custom_minimum_size = Vector2(5, 0)
-offset_left = 482.0
-offset_right = 487.0
-offset_bottom = 242.0
+offset_left = 712.0
+offset_right = 717.0
+offset_bottom = 46.0
 
-[node name="S1" type="CenterContainer" parent="Large/MainBox"]
+[node name="BottomPad" type="CenterContainer" parent="Large/MainBox"]
 custom_minimum_size = Vector2(0, 5)
-offset_top = 275.0
-offset_right = 487.0
-offset_bottom = 280.0
+offset_top = 383.0
+offset_right = 717.0
+offset_bottom = 388.0
 
 [node name="Min" type="Panel" parent="."]
 clip_contents = true
-offset_left = 500.0
-offset_right = 763.0
+offset_left = 724.0
+offset_right = 987.0
 offset_bottom = 119.0
 theme = ExtResource("1_s37wl")
 metadata/_edit_group_ = true

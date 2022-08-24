@@ -217,9 +217,9 @@ signal end_pause_before_teardown
 # the gui from here.
 signal start_run
 signal end_run
-signal start_script(path)
+signal start_script(test_script_obj)
 signal end_script
-signal start_test(name)
+signal start_test(test_name)
 signal end_test
 
 
@@ -368,6 +368,11 @@ func _yielding_callback(from_obj=false,
 func _on_test_script_yield_completed():
 	_waiting = false
 
+func end_teardown_pause():
+	_pause_before_teardown = false
+	_waiting = false
+	end_pause_before_teardown.emit()
+	
 #####################
 #
 # Private
@@ -492,7 +497,6 @@ func _init_run():
 # Print out run information and close out the run.
 # ------------------------------------------------------------------------------
 func _end_run():
-	end_run.emit()
 	_print_summary()
 	p("\n")
 
@@ -524,7 +528,7 @@ func _end_run():
 	update()
 	_run_hook_script(_post_run_script_instance)
 	_export_results()
-	emit_signal(SIGNAL_TESTS_FINISHED)
+	end_run.emit()
 
 	if _utils.should_display_latest_version:
 		p("")
@@ -729,6 +733,7 @@ func _run_test(script_inst, test_name):
 	if(_is_function_state(before_each_result)):
 		await _wait_for_done(before_each_result)
 
+	start_test.emit(test_name)
 	# When the script yields it will return a GDScriptFunctionState object
 	script_result = script_inst.call(test_name)
 	var test_summary = _new_summary.add_test(test_name)
@@ -831,7 +836,7 @@ func _test_the_scripts(indexes=[]):
 	_run_hook_script(_pre_run_script_instance)
 	if(_pre_run_script_instance!= null and _pre_run_script_instance.should_abort()):
 		_lgr.error('pre-run abort')
-		emit_signal(SIGNAL_TESTS_FINISHED)
+		end_run.emit()
 		return
 
 	start_run.emit()
@@ -860,7 +865,7 @@ func _test_the_scripts(indexes=[]):
 		if(!the_script.is_loaded):
 			break
 
-		start_script.emit(the_script.get_full_name())
+		start_script.emit(the_script)
 
 		var test_script = the_script.get_new()
 		var script_result = null
@@ -896,7 +901,7 @@ func _test_the_scripts(indexes=[]):
 			if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
 				(_unit_test_name == '')):
 
-				start_test.emit(_unit_test_name)
+				
 				# yield so things paint
 				if(_should_yield_now()):
 					await _do_yield_between().timeout
@@ -916,10 +921,8 @@ func _test_the_scripts(indexes=[]):
 				if(!_current_test.did_assert()):
 					_lgr.warn('Test did not assert')
 
-				end_test.emit()
-
 				_current_test.has_printed_name = false
-				emit_signal('test_finished')
+				end_test.emit()
 
 
 		_current_test = null

@@ -8,6 +8,10 @@ func _init():
 	_runner.auto_run_tests = false
 
 func _ready():
+	# wait a bit for _utils to be happy.
+	await get_tree().create_timer(.2).timeout
 	add_child(_runner)
-	print(_runner.get_gut())
-	
+
+
+func _on_start_run_pressed():
+	_runner.run_tests()
