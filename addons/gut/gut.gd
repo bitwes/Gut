@@ -154,6 +154,7 @@ var _test_script_objects = []
 var _waiting = false
 var _done = false
 var _is_running = false
+var _start_time = 0.0
 
 var _current_test = null
 var _log_text = ""
@@ -206,14 +207,13 @@ var _before_all_test_obj = load('res://addons/gut/test_collector.gd').Test.new()
 var _after_all_test_obj = load('res://addons/gut/test_collector.gd').Test.new()
 
 
-
+# ###########################
+# Signals
+# ###########################
 signal timeout
-
 signal start_pause_before_teardown
 signal end_pause_before_teardown
 
-# potential gui signals.  With these, we can probably remove all references to
-# the gui from here.
 signal start_run
 signal end_run
 signal start_script(test_script_obj)
@@ -417,7 +417,7 @@ func _print_summary():
 	if(_new_summary.get_totals().tests > 0):
 		var fmt = _lgr.fmts.green
 		var msg = str(_new_summary.get_totals().passing_tests) + ' passed ' + str(_new_summary.get_totals().failing_tests) + ' failed.  ' + \
-			str("Tests finished in ", "TODO calculate time differently")
+			str("Tests finished in ", get_elapsed_time(), 's')
 		if(_new_summary.get_totals().failing > 0):
 			fmt = _lgr.fmts.red
 		elif(_new_summary.get_totals().pending > 0):
@@ -839,6 +839,7 @@ func _test_the_scripts(indexes=[]):
 		return
 
 	start_run.emit()
+	_start_time = Time.get_ticks_msec()
 
 	var indexes_to_run = []
 	if(indexes.size()==0):
@@ -871,9 +872,11 @@ func _test_the_scripts(indexes=[]):
 		_setup_script(test_script)
 		_doubler.set_strategy(_double_strategy)
 
-		# yield between test scripts so things paint
-		if(_yield_between.should):
-			await(_do_yield_between().timeout)
+		# MAYBE don't need this...yield between test scripts so things paint
+		# 200 tests took 2.087 to run with this and 1.232s w/o it and everything
+		# appearted to paint just fine.
+		# if(_yield_between.should):
+		# 	await(_do_yield_between().timeout)
 
 		# !!!
 		# Hack so there isn't another indent to this monster of a method.  if
@@ -899,7 +902,6 @@ func _test_the_scripts(indexes=[]):
 
 			if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
 				(_unit_test_name == '')):
-
 
 				# yield so things paint
 				if(_should_yield_now()):
@@ -1058,7 +1060,13 @@ func _get_files(path, prefix, suffix):
 # public
 #
 #########################
+func get_elapsed_time():
+	var to_return = 0.0
+	if(_start_time != 0.0):
+		to_return = Time.get_ticks_msec() - _start_time
+	to_return = to_return / 1000.0
 
+	return to_return
 # ------------------------------------------------------------------------------
 # Conditionally prints the text to the console/results variable based on the
 # current log level and what level is passed in.  Whenever currently in a test,

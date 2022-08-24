@@ -5,7 +5,6 @@ class TestThingsOne:
 
 	func test_1():
 		pass_test('passing test test')
-		pause_before_teardown()
 
 	func test_2():
 		pass_test('passing test test')
@@ -33,7 +32,6 @@ class TestThingsOne:
 
 	func test_10():
 		pass_test('passing test test')
-		pause_before_teardown()
 
 
 class TestThingsTwo:

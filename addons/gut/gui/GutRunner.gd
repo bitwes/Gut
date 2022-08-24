@@ -55,8 +55,6 @@ func run_tests(show_gui=true):
 		_gut.end_run.connect(_on_tests_finished.bind(_gut_config.options.should_exit, _gut_config.options.should_exit_on_success))
 
 	_gut_config.config_gut(_gut)
-#	if(_gut_config.options.gut_on_top):
-#		_gut.get_gui().goto_bottom_right_corner()
 
 	var run_rest_of_scripts = _gut_config.options.unit_test_name == ''
 	_gut.test_scripts(run_rest_of_scripts)
@@ -97,8 +95,10 @@ func get_gut():
 		_gut = Gut.new()
 	return _gut
 
+
 func set_gut_config(which):
 	_gut_config = which
+
 
 func set_cmdln_mode(is_it):
 	_cmdln_mode = is_it

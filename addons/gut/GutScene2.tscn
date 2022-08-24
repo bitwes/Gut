@@ -88,34 +88,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 focus_mode = 2
 bbcode_enabled = true
-text = "This is the output text for you to see
-
-
-This is the output text for you to see
-
-
-This is the output text for you to see
-
-
-This is the output text for you to see
-
-
-This is the output text for you to see
-
-
-This is the output text for you to see
-
-
-This is the output text for you to see
-
-
-This is the output text for you to see
-
-
-This is the output text for you to see
-
-
-This is the output text for you to see"
 scroll_following = true
 selection_enabled = true
 
