@@ -207,21 +207,21 @@ var _before_all_test_obj = load('res://addons/gut/test_collector.gd').Test.new()
 var _after_all_test_obj = load('res://addons/gut/test_collector.gd').Test.new()
 
 
-const SIGNAL_TESTS_FINISHED = 'tests_finished'
-const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yield_before_teardown'
 
 signal timeout
-signal tests_finished
-signal test_finished
+
+signal start_pause_before_teardown
 signal end_pause_before_teardown
 
 # potential gui signals.  With these, we can probably remove all references to
 # the gui from here.
+signal start_run
+signal end_run
 signal start_script(path)
 signal end_script
 signal start_test(name)
 signal end_test
-signal start_pause_before_teardown
+
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -247,7 +247,6 @@ func _init():
 	_stubber.set_logger(_lgr)
 	_test_collector.set_logger(_lgr)
 
-	_gui = load('res://addons/gut/GutScene.tscn').instantiate()
 
 
 func _physics_process(delta):
@@ -284,8 +283,6 @@ func _ready():
 	_yield_timer.set_one_shot(true)
 	_yield_timer.connect('timeout',Callable(self,'_yielding_callback'))
 
-	_setup_gui()
-
 	if(_select_script != null):
 		select_script(_select_script)
 
@@ -312,9 +309,6 @@ func _notification(what):
 
 		_test_script_objects = []
 
-		if(is_instance_valid(_gui)):
-			_gui.free()
-
 func _print_versions(send_all = true):
 	if(!_should_print_versions):
 		return
@@ -327,64 +321,6 @@ func _print_versions(send_all = true):
 		var printer = _lgr.get_printer('gui')
 		printer.send(info + "\n")
 
-
-# ##############################################################################
-#
-# GUI Events and setup
-#
-# ##############################################################################
-func _setup_gui():
-	# This is how we get the size of the control to translate to the gui when
-	# the scene is run.  This is also another reason why the custom_minimum_size
-	# must match between both gut and the gui.
-	_gui.size = self.size
-	add_child(_gui)
-
-	_gui.set_anchor(SIDE_RIGHT, SIDE_RIGHT)
-	_gui.set_anchor(SIDE_BOTTOM, SIDE_RIGHT)
-
-	_gui.connect('run_single_script',Callable(self,'_on_run_one'))
-	_gui.connect('run_script',Callable(self,'_on_new_gui_run_script'))
-	_gui.connect('end_pause',Callable(self,'_on_new_gui_end_pause'))
-	_gui.connect('ignore_pause',Callable(self,'_on_new_gui_ignore_pause'))
-	_gui.connect('log_level_changed',Callable(self,'_on_log_level_changed'))
-	var _foo = connect('tests_finished',Callable(_gui,'end_run'))
-
-func _add_scripts_to_gui():
-	var scripts = []
-	for i in range(_test_collector.scripts.size()):
-		var s = _test_collector.scripts[i]
-		var txt = ''
-		if(s.has_inner_class()):
-			txt = str(' - ', s.inner_class_name, ' (', s.tests.size(), ')')
-		else:
-			txt = str(s.get_full_name(), '  (', s.tests.size(), ')')
-		scripts.append(txt)
-	_gui.set_scripts(scripts)
-
-func _on_run_one(index):
-	clear_text()
-	var indexes = [index]
-	if(!_test_collector.scripts[index].has_inner_class()):
-		indexes = _get_indexes_matching_path(_test_collector.scripts[index].path)
-	_test_the_scripts(indexes)
-
-func _on_new_gui_run_script(index):
-	var indexes = []
-	clear_text()
-	for i in range(index, _test_collector.scripts.size()):
-		indexes.append(i)
-	_test_the_scripts(indexes)
-
-func _on_new_gui_end_pause():
-	_pause_before_teardown = false
-	end_pause_before_teardown.emit()
-
-func _on_new_gui_ignore_pause(should):
-	_ignore_pause_before_teardown = should
-
-func _on_log_level_changed(value):
-	set_log_level(value)
 
 #####################
 #
@@ -477,7 +413,7 @@ func _print_summary():
 	if(_new_summary.get_totals().tests > 0):
 		var fmt = _lgr.fmts.green
 		var msg = str(_new_summary.get_totals().passing_tests) + ' passed ' + str(_new_summary.get_totals().failing_tests) + ' failed.  ' + \
-			str("Tests finished in ", _gui.elapsed_time_as_str())
+			str("Tests finished in ", "TODO calculate time differently")
 		if(_new_summary.get_totals().failing > 0):
 			fmt = _lgr.fmts.red
 		elif(_new_summary.get_totals().pending > 0):
@@ -556,7 +492,7 @@ func _init_run():
 # Print out run information and close out the run.
 # ------------------------------------------------------------------------------
 func _end_run():
-	_gui.end_run()
+	end_run.emit()
 	_print_summary()
 	p("\n")
 
@@ -583,7 +519,6 @@ func _end_run():
 	_yield_between.timer.set_wait_time(0.1)
 	_yield_between.timer.start()
 	await _yield_between.timer.timeout
-	_gui.scroll_to_bottom()
 
 	_is_running = false
 	update()
@@ -594,9 +529,6 @@ func _end_run():
 	if _utils.should_display_latest_version:
 		p("")
 		p(str("GUT version ",_utils.latest_version," is now available."))
-
-	_gui.set_title("Finished.")
-	_gui.compact_mode(false)
 
 
 # ------------------------------------------------------------------------------
@@ -813,7 +745,6 @@ func _run_test(script_inst, test_name):
 	# the continue button is pressed.
 	if(_pause_before_teardown and !_ignore_pause_before_teardown):
 		start_pause_before_teardown.emit()
-		_gui.pause()
 		await _wait_for_continue_button().end_pause_before_teardown
 
 	script_inst.clear_signal_watcher()
@@ -903,7 +834,7 @@ func _test_the_scripts(indexes=[]):
 		emit_signal(SIGNAL_TESTS_FINISHED)
 		return
 
-	_gui.run_mode()
+	start_run.emit()
 
 	var indexes_to_run = []
 	if(indexes.size()==0):
@@ -912,8 +843,6 @@ func _test_the_scripts(indexes=[]):
 	else:
 		indexes_to_run = indexes
 
-	_gui.set_progress_script_max(indexes_to_run.size()) # New way
-	_gui.set_progress_script_value(0)
 
 	if(_doubler.get_strategy() == _utils.DOUBLE_STRATEGY.FULL):
 		_lgr.info("Using Double Strategy FULL as default strategy.  Keep an eye out for weirdness, this is still experimental.")
@@ -924,13 +853,15 @@ func _test_the_scripts(indexes=[]):
 		_orphan_counter.add_counter('script')
 
 		if(the_script.tests.size() > 0):
-			_gui.set_script_path(the_script.get_full_name())
 			_lgr.set_indent_level(0)
 			_print_script_heading(the_script)
 		_new_summary.add_script(the_script.get_full_name())
 
 		if(!the_script.is_loaded):
 			break
+
+		start_script.emit(the_script.get_full_name())
+
 		var test_script = the_script.get_new()
 		var script_result = null
 		_setup_script(test_script)
@@ -954,8 +885,6 @@ func _test_the_scripts(indexes=[]):
 				await before_all_result.COMPLETED
 
 
-		_gui.set_progress_test_max(the_script.tests.size()) # New way
-
 		# Each test in the script
 		for i in range(the_script.tests.size()):
 			_stubber.clear()
@@ -967,6 +896,7 @@ func _test_the_scripts(indexes=[]):
 			if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
 				(_unit_test_name == '')):
 
+				start_test.emit(_unit_test_name)
 				# yield so things paint
 				if(_should_yield_now()):
 					await _do_yield_between().timeout
@@ -986,10 +916,9 @@ func _test_the_scripts(indexes=[]):
 				if(!_current_test.did_assert()):
 					_lgr.warn('Test did not assert')
 
-				_gui.add_test(_current_test.did_pass())
+				end_test.emit()
 
 				_current_test.has_printed_name = false
-				_gui.set_progress_test_value(i + 1)
 				emit_signal('test_finished')
 
 
@@ -1016,7 +945,7 @@ func _test_the_scripts(indexes=[]):
 			var script_sum = str(test_script.get_pass_count(), '/', test_script.get_assert_count(), ' passed.')
 			_lgr.log(script_sum, _lgr.fmts.bold)
 
-		_gui.set_progress_script_value(test_indexes + 1) # new way
+		end_script.emit()
 		# END TEST SCRIPT LOOP
 
 	_lgr.set_indent_level(0)
@@ -1026,7 +955,6 @@ func _test_the_scripts(indexes=[]):
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func _pass(text=''):
-	_gui.add_passing() # increments counters
 	if(_current_test):
 		_current_test.assert_count += 1
 		_new_summary.add_pass(_current_test.name, text)
@@ -1038,7 +966,6 @@ func _pass(text=''):
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func _fail(text=''):
-	_gui.add_failing() # increments counters
 	if(_current_test != null):
 		var line_number = _extract_line_number(_current_test)
 		var line_text = '  at line ' + str(line_number)
@@ -1138,12 +1065,8 @@ func _get_files(path, prefix, suffix):
 #
 # The first time output is generated when in a test, the test name will be
 # printed.
-#
-# NOT_USED_ANYMORE was indent level.  This was deprecated in 7.0.0.
 # ------------------------------------------------------------------------------
-func p(text, level=0, NOT_USED_ANYMORE=-123):
-	if(NOT_USED_ANYMORE != -123):
-		_lgr.deprecated('gut.p no longer supports the optional 3rd parameter for indent_level parameter.')
+func p(text, level=0):
 	var str_text = str(text)
 
 	if(level <= _utils.nvl(_log_level, 0)):
@@ -1197,7 +1120,6 @@ func add_script(script):
 	if(!Engine.is_editor_hint()):
 		_test_collector.set_test_class_prefix(_inner_class_prefix)
 		_test_collector.add_script(script)
-		_add_scripts_to_gui()
 
 
 # ------------------------------------------------------------------------------
@@ -1261,7 +1183,6 @@ func import_tests(path=_export_path):
 		if(result):
 			p(_test_collector.to_s())
 			p("Imported from " + path)
-			_add_scripts_to_gui()
 
 
 # ------------------------------------------------------------------------------
@@ -1298,7 +1219,7 @@ func get_should_maximize():
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func maximize():
-	_gui.maximize()
+	_lgr.deprecated('gut.maximize')
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -1321,8 +1242,8 @@ func end_yielded_test():
 # Clears the text of the text box.  This resets all counters.
 # ------------------------------------------------------------------------------
 func clear_text():
-	_gui.clear_text()
-	update()
+	_lgr.deprecated('gut.clear_text')
+
 
 # ------------------------------------------------------------------------------
 # Get the number of tests that were ran
@@ -1384,9 +1305,6 @@ func set_log_level(level):
 	_lgr.set_type_enabled(_lgr.types.info, level > 1)
 	_lgr.set_type_enabled(_lgr.types.debug, level > 1)
 
-	if(!Engine.is_editor_hint()):
-		_gui.set_log_level(level)
-
 # ------------------------------------------------------------------------------
 # Get the current log level.
 # ------------------------------------------------------------------------------
@@ -1406,7 +1324,6 @@ func pause_before_teardown():
 # ------------------------------------------------------------------------------
 func set_ignore_pause_before_teardown(should_ignore):
 	_ignore_pause_before_teardown = should_ignore
-	_gui.set_ignore_pause(should_ignore)
 
 func get_ignore_pause_before_teardown():
 	return _ignore_pause_before_teardown

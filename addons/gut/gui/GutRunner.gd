@@ -17,7 +17,9 @@ var _wrote_results = false
 var _cmdln_mode = false
 
 @onready var _gut_layer = $GutLayer
+@onready var _gui = $GutLayer/GutScene
 
+var auto_run_tests = true
 
 func _ready():
 	if(_gut_config == null):
@@ -27,13 +29,13 @@ func _ready():
 	# The command line will call run_tests on its own.  When used from the panel
 	# we have to kick off the tests ourselves b/c there's no way I know of to
 	# interact with the scene that was run via play_custom_scene.
-	if(!_cmdln_mode):
+	if(!_cmdln_mode and auto_run_tests):
 		call_deferred('run_tests')
 
 
 func run_tests():
 	if(_gut == null):
-		_gut = Gut.new()
+		get_gut()
 
 	_gut.set_add_children_to(self)
 	if(_gut_config.options.gut_on_top):
@@ -42,8 +44,7 @@ func run_tests():
 		add_child(_gut)
 
 	if(!_cmdln_mode):
-		_gut.connect('tests_finished', self, '_on_tests_finished',
-			[_gut_config.options.should_exit, _gut_config.options.should_exit_on_success])
+		_gut.end_run.connect(_on_tests_finished.bind(_gut_config.options.should_exit, _gut_config.options.should_exit_on_success))
 
 	_gut_config.config_gut(_gut)
 	if(_gut_config.options.gut_on_top):
@@ -86,6 +87,7 @@ func _on_tests_finished(should_exit, should_exit_on_success):
 func get_gut():
 	if(_gut == null):
 		_gut = Gut.new()
+		_gui.gut = _gut
 	return _gut
 
 func set_gut_config(which):

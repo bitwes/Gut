@@ -84,13 +84,15 @@ var gut = null :
 func _ready():
 	_large_handler = GuiHandler.new($Large)
 	_min_handler = GuiHandler.new($Min)	
+	
+	$Min.visible = false
 
 	
 func _set_gut(val):
 	val.timeout.connect(_on_gut_timeout)
-	val.tests_finished.connect(_on_tests_finished)
-	val.test_finished.connect(_on_test_finished)
-	val.stop_yield_before_teardown.connect(_on_stop_yield_before_teardown)
+#	val.tests_finished.connect(_on_tests_finished)
+#	val.test_finished.connect(_on_test_finished)
+#	val.stop_yield_before_teardown.connect(_on_stop_yield_before_teardown)
 
 # potential gui signals.  With these, we can probably remove all references to
 # the gui from here.

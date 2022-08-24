@@ -1,12 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://1gpt1yhn1rlg"]
+[gd_scene load_steps=2 format=3 uid="uid://1gpt1yhn1rlg"]
 
 [ext_resource type="Script" path="res://scenes/TestGutGui.gd" id="1"]
-[ext_resource type="PackedScene" uid="uid://cnajq0pryv2u4" path="res://addons/gut/GutScene.tscn" id="2"]
 
 [node name="TestGutGui" type="Node2D"]
 script = ExtResource("1")
-
-[node name="Gut" parent="." instance=ExtResource("2")]
 
 [node name="Controls" type="Panel" parent="."]
 offset_left = 790.0
@@ -45,8 +42,8 @@ text = "Pass"
 [node name="Fail" type="Button" parent="Controls"]
 offset_left = 30.0
 offset_top = 130.0
-offset_right = 110.0
-offset_bottom = 180.0
+offset_right = 99.0
+offset_bottom = 163.0
 text = "Fail"
 
 [connection signal="pressed" from="Controls/EndRunMode" to="." method="_on_EndRunMode_pressed"]
