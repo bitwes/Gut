@@ -8,6 +8,9 @@
   "dirs": [
     "res://new_gui_tests"
   ],
+  "__dirs":[
+    "res://tests_4_0"
+  ],
   "should_maximize": false,
   "should_exit": true,
   "ignore_pause": true,

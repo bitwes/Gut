@@ -34,22 +34,29 @@ grow_vertical = 2
 metadata/_edit_layout_mode = 1
 
 [node name="Spacer1" type="CenterContainer" parent="Large/MainBox/TitleBar/TitleBox"]
-offset_right = 332.0
+offset_right = 303.0
 offset_bottom = 26.0
 size_flags_horizontal = 3
 
 [node name="Title" type="Label" parent="Large/MainBox/TitleBar/TitleBox"]
-offset_left = 336.0
+offset_left = 307.0
 offset_top = 3.0
-offset_right = 381.0
+offset_right = 352.0
 offset_bottom = 23.0
 text = "Title"
 
 [node name="Spacer2" type="CenterContainer" parent="Large/MainBox/TitleBar/TitleBox"]
-offset_left = 385.0
-offset_right = 717.0
+offset_left = 356.0
+offset_right = 659.0
 offset_bottom = 26.0
 size_flags_horizontal = 3
+
+[node name="TimeLabel" type="Label" parent="Large/MainBox/TitleBar/TitleBox"]
+offset_left = 663.0
+offset_top = 3.0
+offset_right = 717.0
+offset_bottom = 23.0
+text = "0.000s"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Large/MainBox"]
 offset_top = 29.0
@@ -207,9 +214,10 @@ offset_bottom = 388.0
 
 [node name="Min" type="Panel" parent="."]
 clip_contents = true
-offset_left = 724.0
-offset_right = 987.0
-offset_bottom = 119.0
+offset_left = 456.0
+offset_top = 396.0
+offset_right = 719.0
+offset_bottom = 515.0
 theme = ExtResource("1_s37wl")
 metadata/_edit_group_ = true
 
@@ -235,22 +243,29 @@ grow_vertical = 2
 metadata/_edit_layout_mode = 1
 
 [node name="Spacer1" type="CenterContainer" parent="Min/MainBox/TitleBar/TitleBox"]
-offset_right = 106.0
+offset_right = 77.0
 offset_bottom = 26.0
 size_flags_horizontal = 3
 
 [node name="Title" type="Label" parent="Min/MainBox/TitleBar/TitleBox"]
-offset_left = 110.0
+offset_left = 81.0
 offset_top = 3.0
-offset_right = 155.0
+offset_right = 126.0
 offset_bottom = 23.0
 text = "Title"
 
 [node name="Spacer2" type="CenterContainer" parent="Min/MainBox/TitleBar/TitleBox"]
-offset_left = 159.0
-offset_right = 266.0
+offset_left = 130.0
+offset_right = 208.0
 offset_bottom = 26.0
 size_flags_horizontal = 3
+
+[node name="TimeLabel" type="Label" parent="Min/MainBox/TitleBar/TitleBox"]
+offset_left = 212.0
+offset_top = 3.0
+offset_right = 266.0
+offset_bottom = 23.0
+text = "0.000s"
 
 [node name="Body" type="HBoxContainer" parent="Min/MainBox"]
 offset_top = 29.0

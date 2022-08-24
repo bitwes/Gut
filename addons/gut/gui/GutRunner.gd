@@ -57,6 +57,7 @@ func run_tests(show_gui=true):
 	_gut_config.config_gut(_gut)
 
 	var run_rest_of_scripts = _gut_config.options.unit_test_name == ''
+
 	_gut.test_scripts(run_rest_of_scripts)
 
 

@@ -11,7 +11,8 @@ class GuiHandler:
 		path_dir = null, 
 		path_file = null,
 		rtl = null,
-		btn_continue = null 
+		btn_continue = null,
+		time_label = null
 	}
 	
 	func _init(gui):
@@ -24,6 +25,7 @@ class GuiHandler:
 		_ctrls.path_file = _get_first_child_named('File', _gui)
 		_ctrls.btn_continue = _get_first_child_named('Continue', _gui)
 		_ctrls.rtl = _get_first_child_named('Output', _gui)
+		_ctrls.time_label = _get_first_child_named('TimeLabel', _gui)
 		
 		_ctrls.btn_continue.visible = false
 		_ctrls.btn_continue.pressed.connect(_on_continue_pressed)
@@ -32,7 +34,11 @@ class GuiHandler:
 		_ctrls.prog_test.value = 0
 		_ctrls.path_dir.text = ''
 		_ctrls.path_file.text = ''
-	
+		_ctrls.time_label.text = ''
+		
+		print(_ctrls)
+		
+		
 	# ------------------
 	# Events
 	# ------------------
@@ -48,7 +54,7 @@ class GuiHandler:
 	
 	
 	func _on_gut_end_run():
-		pass
+		_ctrls.time_label.text = ''
 		
 		
 	func _on_gut_start_script(script_obj):
@@ -134,6 +140,9 @@ class GuiHandler:
 		
 	func get_textbox():
 		return _ctrls.rtl
+		
+	func set_elapsed_time(t):
+		_ctrls.time_label.text = str(t, 's')
 
 
 # ------------------------------------------------------------------------------
@@ -151,10 +160,16 @@ func _ready():
 	_min_handler = GuiHandler.new($Min)	
 	
 	$Min.visible = false
+	$Large.visible = !$Min.visible
 
+func _process(_delta):
+	if(gut != null and gut.is_running()):
+		_large_handler.set_elapsed_time(gut.get_elapsed_time())
+		_min_handler.set_elapsed_time(gut.get_elapsed_time())
 	
 func _set_gut(val):
 	_large_handler.set_gut(val)
+	_min_handler.set_gut(val)
 
 func get_textbox():
 	return _large_handler.get_textbox()

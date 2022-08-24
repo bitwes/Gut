@@ -120,8 +120,15 @@ var add_children_to = self :
 		return get_add_children_to()
 	set(val):
 		set_add_children_to(val)
-# -- End Settings --
 
+
+var paint_after = .2:
+	get:
+		return paint_after
+	set(val):
+		paint_after = val
+# -- End Settings --
+var _last_paint_time = 0.0
 
 # ###########################
 # Other Vars
@@ -164,13 +171,6 @@ var _pause_before_teardown = false
 # when batch processing and you don't want to watch.
 var _ignore_pause_before_teardown = false
 var _wait_timer = Timer.new()
-
-var _yield_between = {
-	should = false,
-	timer = Timer.new(),
-	after_x_tests = 5,
-	tests_since_last_yield = 0
-}
 
 var _was_yield_method_called = false
 # used when yielding to gut instead of some other
@@ -247,7 +247,6 @@ func _init():
 	_test_collector.set_logger(_lgr)
 
 
-
 func _physics_process(delta):
 	if(_yield_frames > 0):
 		_yield_frames -= 1
@@ -275,7 +274,6 @@ func _ready():
 	_wait_timer.set_wait_time(1)
 	_wait_timer.set_one_shot(true)
 
-	add_child(_yield_between.timer)
 	_wait_timer.set_one_shot(true)
 
 	add_child(_yield_timer)
@@ -480,8 +478,6 @@ func _init_run():
 
 	_is_running = true
 
-	_yield_between.tests_since_last_yield = 0
-
 	var pre_hook_result = _validate_hook_script(_pre_run_script)
 	_pre_run_script_instance = pre_hook_result.instantiate
 	var post_hook_result = _validate_hook_script(_post_run_script)
@@ -515,13 +511,6 @@ func _end_run():
 		p('Ran Tests matching "' + _unit_test_name + '"')
 	if(!_utils.is_null_or_empty(_inner_class_name)):
 		p('Ran Inner Classes matching "' + _inner_class_name + '"')
-
-	# For some reason the text edit control isn't scrolling to the bottom after
-	# the summary is printed.  As a workaround, yield for a short time and
-	# then move the cursor.  I found this workaround through trial and error.
-	_yield_between.timer.set_wait_time(0.1)
-	_yield_between.timer.start()
-	await _yield_between.timer.timeout
 
 	_is_running = false
 	update()
@@ -584,19 +573,6 @@ func _print_script_heading(script):
 
 
 # ------------------------------------------------------------------------------
-# Just gets more logic out of _test_the_scripts.  Decides if we should yield after
-# this test based on flags and counters.
-# ------------------------------------------------------------------------------
-func _should_yield_now():
-	var should = _yield_between.should and \
-				_yield_between.tests_since_last_yield == _yield_between.after_x_tests
-	if(should):
-		_yield_between.tests_since_last_yield = 0
-	else:
-		_yield_between.tests_since_last_yield += 1
-	return should
-
-# ------------------------------------------------------------------------------
 # Yes if the class name is null or the script's class name includes class_name
 # ------------------------------------------------------------------------------
 func _does_class_name_match(the_class_name, script_class_name):
@@ -610,13 +586,6 @@ func _setup_script(test_script):
 	test_script.set_logger(_lgr)
 	_add_children_to.add_child(test_script)
 	_test_script_objects.append(test_script)
-
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func _do_yield_between(frames=2):
-	_yield_frames = frames
-	return self
 
 
 # ------------------------------------------------------------------------------
@@ -765,7 +734,7 @@ func _run_test(script_inst, test_name):
 	var aqf_count = _autofree.get_queue_free_count()
 	_autofree.free_all()
 	if(aqf_count > 0):
-		await _do_yield_between().timeout
+		await get_tree().create_timer(.25).timeout
 
 	test_summary.orphans = _orphan_counter.get_counter('test')
 	if(_log_level > 0):
@@ -840,6 +809,7 @@ func _test_the_scripts(indexes=[]):
 
 	start_run.emit()
 	_start_time = Time.get_ticks_msec()
+	_last_paint_time = _start_time
 
 	var indexes_to_run = []
 	if(indexes.size()==0):
@@ -872,12 +842,6 @@ func _test_the_scripts(indexes=[]):
 		_setup_script(test_script)
 		_doubler.set_strategy(_double_strategy)
 
-		# MAYBE don't need this...yield between test scripts so things paint
-		# 200 tests took 2.087 to run with this and 1.232s w/o it and everything
-		# appearted to paint just fine.
-		# if(_yield_between.should):
-		# 	await(_do_yield_between().timeout)
-
 		# !!!
 		# Hack so there isn't another indent to this monster of a method.  if
 		# inner class is set and we do not have a match then empty the tests
@@ -903,10 +867,6 @@ func _test_the_scripts(indexes=[]):
 			if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
 				(_unit_test_name == '')):
 
-				# yield so things paint
-				if(_should_yield_now()):
-					await _do_yield_between().timeout
-
 				if(_current_test.arg_count > 1):
 					_lgr.error(str('Parameterized test ', _current_test.name,
 						' has too many parameters:  ', _current_test.arg_count, '.'))
@@ -925,6 +885,14 @@ func _test_the_scripts(indexes=[]):
 				_current_test.has_printed_name = false
 				end_test.emit()
 
+				# After each test, check to see if we shoudl wait a frame to
+				# paint based on how much time has elapsed since we last 'painted'
+				if(paint_after > 0.0):
+					var now = Time.get_ticks_msec()
+					var time_since = (now - _last_paint_time) / 1000.0
+					if(time_since > paint_after):
+						_last_paint_time = now
+						await get_tree().process_frame
 
 		_current_test = null
 		_lgr.dec_indent()
@@ -1339,20 +1307,6 @@ func get_ignore_pause_before_teardown():
 	return _ignore_pause_before_teardown
 
 # ------------------------------------------------------------------------------
-# Set to true so that painting of the screen will occur between tests.  Allows you
-# to see the output as tests occur.  Especially useful with long running tests that
-# make it appear as though it has humg.
-#
-# NOTE:  not compatible with 1.0 so this is disabled by default.  This will
-# change in future releases.
-# ------------------------------------------------------------------------------
-func set_yield_between_tests(should):
-	_yield_between.should = should
-
-func get_yield_between_tests():
-	return _yield_between.should
-
-# ------------------------------------------------------------------------------
 # Call _process or _fixed_process, if they exist, on obj and all it's children
 # and their children and so and so forth.  Delta will be passed through to all
 # the _process or _fixed_process methods.
@@ -1694,3 +1648,8 @@ func get_add_children_to():
 # ------------------------------------------------------------------------------
 func set_add_children_to(val):
 	_add_children_to = val
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func is_running():
+	return _is_running
