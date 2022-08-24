@@ -132,6 +132,7 @@ func setup_options(options, font_names):
 					'with a "g".  Also, any option that requires a value will take the form of ' +
 					'"-g<name>=<value>".  There cannot be any spaces between the option, the "=", or ' +
 					'inside a specified value or godot will think you are trying to run a scene.'))
+
 	opts.add('-gtest', [], 'Comma delimited list of full paths to test scripts to run.')
 	opts.add('-gdir', options.dirs, 'Comma delimited list of directories to add tests from.')
 	opts.add('-gprefix', options.prefix, 'Prefix used to find tests when specifying -gdir.  Default "[default]".')
@@ -165,6 +166,7 @@ func setup_options(options, font_names):
 	opts.add('-gfont_size', options.font_size, 'Font size, default "[default]"')
 	opts.add('-gbackground_color', options.background_color, 'Background color as an html color, default "[default]"')
 	opts.add('-gfont_color',options.font_color, 'Font color as an html color, default "[default]"')
+	opts.add('-gpaint_after', options.paint_after, 'Delay before GUT will add a 1 frame pause to paint the screen/GUI.  default [default]')
 
 	opts.add('-gjunit_xml_file', options.junit_xml_file, 'Export results of run to this file in the Junit XML format.')
 	opts.add('-gjunit_xml_timestamp', options.junit_xml_timestamp, 'Include a timestamp in the -gjunit_xml_file, default [default]')
@@ -200,6 +202,7 @@ func extract_command_line_options(from, to):
 	to.font_name = from.get_value('-gfont_name')
 	to.background_color = from.get_value('-gbackground_color')
 	to.font_color = from.get_value('-gfont_color')
+	to.paint_after = from.get_value('-gpaint_after')
 
 	to.junit_xml_file = from.get_value('-gjunit_xml_file')
 	to.junit_xml_timestamp = from.get_value('-gjunit_xml_timestamp')

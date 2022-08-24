@@ -27,6 +27,7 @@ var default_options = {
 	junit_xml_timestamp = false,
 	log_level = 1,
 	opacity = 100,
+	paint_after = .2,
 	post_run_script = '',
 	pre_run_script = '',
 	prefix = 'test_',
@@ -162,6 +163,7 @@ func _apply_options(opts, _tester):
 	_tester.show_orphans(!opts.hide_orphans)
 	_tester.set_junit_xml_file(opts.junit_xml_file)
 	_tester.set_junit_xml_timestamp(opts.junit_xml_timestamp)
+	_tester.paint_after = str(opts.paint_after).to_float()
 
 #	_tester.get_gui().set_font_size(opts.font_size)
 #	_tester.get_gui().set_font(opts.font_name)

@@ -55,9 +55,7 @@ func run_tests(show_gui=true):
 		_gut.end_run.connect(_on_tests_finished.bind(_gut_config.options.should_exit, _gut_config.options.should_exit_on_success))
 
 	_gut_config.config_gut(_gut)
-
 	var run_rest_of_scripts = _gut_config.options.unit_test_name == ''
-
 	_gut.test_scripts(run_rest_of_scripts)
 
 
