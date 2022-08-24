@@ -6,9 +6,6 @@ var _bottom_panel = null
 
 func _enter_tree():
 	_bottom_panel = preload('res://addons/gut/gui/GutBottomPanel.tscn').instantiate()
-	# Initialization of the plugin goes here
-	# Add the new type with a name, a parent type, a script and an icon
-	add_custom_type("Gut", "Control", preload("plugin_control.gd"), preload("icon.png"))
 
 	var button = add_control_to_bottom_panel(_bottom_panel, 'GUT')
 	button.shortcut_in_tooltip = true
@@ -23,6 +20,5 @@ func _enter_tree():
 func _exit_tree():
 	# Clean-up of the plugin goes here
 	# Always remember to remove_at it from the engine when deactivated
-	remove_custom_type("Gut")
 	remove_control_from_bottom_panel(_bottom_panel)
 	_bottom_panel.free()

@@ -188,7 +188,6 @@ var _yielding_to = {
 var _stubber = _utils.Stubber.new()
 var _doubler = _utils.Doubler.new()
 var _spy = _utils.Spy.new()
-var _gui:Control = null
 var _orphan_counter =  _utils.OrphanCounter.new()
 var _autofree = _utils.AutoFree.new()
 
@@ -1640,11 +1639,6 @@ func get_parameter_handler():
 func set_parameter_handler(parameter_handler):
 	_parameter_handler = parameter_handler
 	_parameter_handler.set_logger(_lgr)
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_gui():
-	return _gui
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
