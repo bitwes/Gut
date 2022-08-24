@@ -6,7 +6,7 @@
   ],
   "_post_run_script": "res://test/post_run_export_json.gd",
   "dirs": [
-    "res://tests_4_0"
+    "res://new_gui_tests"
   ],
   "should_maximize": false,
   "should_exit": true,

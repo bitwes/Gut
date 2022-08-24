@@ -33,9 +33,17 @@ func _ready():
 		call_deferred('run_tests')
 
 
-func run_tests():
+func run_tests(show_gui=true):
 	if(_gut == null):
 		get_gut()
+
+	if(show_gui):
+		_gui.gut = _gut
+		var printer = _gut.get_logger().get_printer('gui')
+		printer.set_textbox(_gui.get_textbox())
+	else:
+		_gut.get_logger().disable_printer('gui', true)
+		_gui.visible = false
 
 	_gut.set_add_children_to(self)
 	if(_gut_config.options.gut_on_top):
@@ -87,9 +95,6 @@ func _on_tests_finished(should_exit, should_exit_on_success):
 func get_gut():
 	if(_gut == null):
 		_gut = Gut.new()
-		_gui.gut = _gut
-		var printer = _gut.get_logger().get_printer('gui')
-		printer.set_textbox(_gui.get_textbox())
 	return _gut
 
 func set_gut_config(which):

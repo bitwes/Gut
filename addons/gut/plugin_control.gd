@@ -172,7 +172,7 @@ func _setup_gut():
 
 	_lgr = _utils.get_logger()
 	_gut = load('res://addons/gut/gut.gd').new()
-	_gut.connect('tests_finished',Callable(self,'_on_tests_finished'))
+	_gut.connect('end_run',Callable(self,'_on_tests_finished'))
 
 	if(!_check_for_templates()):
 		return

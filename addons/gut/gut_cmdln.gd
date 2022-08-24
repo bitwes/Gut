@@ -266,13 +266,14 @@ func _run_gut():
 			_gut_config.options = _final_opts
 
 			var runner = GutRunner.instantiate()
+
 			runner.set_cmdln_mode(true)
 			runner.set_gut_config(_gut_config)
 
-			_tester = runner.get_gut()
-			_tester.connect('tests_finished', _on_tests_finished.bind(_final_opts.should_exit, _final_opts.should_exit_on_success))
-
 			get_root().add_child(runner)
+			_tester = runner.get_gut()
+			_tester.connect('end_run', Callable(self,'_on_tests_finished').bind(_final_opts.should_exit, _final_opts.should_exit_on_success))
+
 			runner.run_tests()
 
 

@@ -37,7 +37,7 @@ var _tests_like = ''
 var _inner_class_name = ''
 
 var _should_maximize = false
-var should_maximize :
+var should_maximize = false :
 	get:
 		return get_should_maximize()
 	set(val):
@@ -317,9 +317,9 @@ func _print_versions(send_all = true):
 
 	if(send_all):
 		p(info)
-	else:
-		var printer = _lgr.get_printer('gui')
-		printer.send(info + "\n")
+	# else:
+	# 	var printer = _lgr.get_printer('gui')
+	# 	printer.send(info + "\n")
 
 
 #####################
@@ -372,7 +372,7 @@ func end_teardown_pause():
 	_pause_before_teardown = false
 	_waiting = false
 	end_pause_before_teardown.emit()
-	
+
 #####################
 #
 # Private
@@ -901,7 +901,7 @@ func _test_the_scripts(indexes=[]):
 			if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
 				(_unit_test_name == '')):
 
-				
+
 				# yield so things paint
 				if(_should_yield_now()):
 					await _do_yield_between().timeout
