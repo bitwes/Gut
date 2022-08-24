@@ -17,7 +17,7 @@ class ScriptEditorControlRef:
 		# type of control we care about.  Chances are there won't be more than
 		# one of these in the future, but their position in the tree may change.
 		_code_editor = weakref(_get_first_child_named('CodeTextEditor', _script_editor.get_ref()))
-		_text_edit = weakref(_get_first_child_named("TextEdit", _code_editor.get_ref()))
+		_text_edit = weakref(_get_first_child_named("CodeEdit", _code_editor.get_ref()))
 
 
 	func _get_first_child_named(obj_name, parent_obj):
@@ -187,7 +187,7 @@ func get_line_info():
 	var done_func = false
 	var done_inner = false
 	while(line > 0 and (!done_func or !done_inner)):
-		if(editor.can_fold(line)):
+		if(editor.can_fold_line(line)):
 			var text = editor.get_line(line)
 			var strip_text = text.strip_edges(true, false) # only left
 
