@@ -53,6 +53,9 @@ static func get_root_node():
 
 # ------------------------------------------------------------------------------
 # Get the ONE instantiate of utils
+# Since we can't have static variables we have to store the instance in the
+# tree.  This means you have to wait a bit for the main loop to be up and
+# running.
 # ------------------------------------------------------------------------------
 static func get_instance():
 	var the_root = get_root_node()

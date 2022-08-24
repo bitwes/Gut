@@ -213,16 +213,15 @@ const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yield_before_teardown'
 signal timeout
 signal tests_finished
 signal test_finished
-signal stop_yield_before_teardown
+signal end_pause_before_teardown
 
 # potential gui signals.  With these, we can probably remove all references to
 # the gui from here.
-signal test_started
-signal start_script
+signal start_script(path)
 signal end_script
-signal start_test
+signal start_test(name)
 signal end_test
-signal paused
+signal start_pause_before_teardown
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -379,7 +378,7 @@ func _on_new_gui_run_script(index):
 
 func _on_new_gui_end_pause():
 	_pause_before_teardown = false
-	emit_signal(SIGNAL_STOP_YIELD_BEFORE_TEARDOWN)
+	end_pause_before_teardown.emit()
 
 func _on_new_gui_ignore_pause(should):
 	_ignore_pause_before_teardown = should
@@ -813,8 +812,9 @@ func _run_test(script_inst, test_name):
 	# if the test called pause_before_teardown then yield until
 	# the continue button is pressed.
 	if(_pause_before_teardown and !_ignore_pause_before_teardown):
+		start_pause_before_teardown.emit()
 		_gui.pause()
-		await _wait_for_continue_button().SIGNAL_STOP_YIELD_BEFORE_TEARDOWN
+		await _wait_for_continue_button().end_pause_before_teardown
 
 	script_inst.clear_signal_watcher()
 
