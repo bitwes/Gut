@@ -154,7 +154,7 @@ func _add_test_tree_item(test_name, test_json, script_item):
 
 	item.set_text(0, test_name)
 	item.set_text(1, status)
-	item.set_text_alignment(1, TreeItem.ALIGN_RIGHT)
+	item.set_text_alignment(1, HORIZONTAL_ALIGNMENT_RIGHT)
 	item.set_custom_bg_color(1, _col_1_bg_color)
 
 	item.set_metadata(0, meta)
@@ -256,7 +256,7 @@ func _find_script_item_with_path(path):
 func _get_line_number_from_assert_msg(msg):
 	var line = -1
 	if(msg.find('at line') > 0):
-		line = int(msg.split("at line")[-1].split(" ")[-1])
+		line = msg.split("at line")[-1].split(" ")[-1].to_int()
 	return line
 
 
