@@ -9,7 +9,7 @@
     "res://tests_4_0"
   ],
   "should_maximize": false,
-  "should_exit": true,
+  "should_exit": false,
   "ignore_pause": true,
   "log_level": 3,
   "opacity": 100,
