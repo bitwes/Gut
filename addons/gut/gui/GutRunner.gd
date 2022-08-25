@@ -70,6 +70,12 @@ func _setup_gui(show_gui):
 	if(opts.background_color != null and opts.background_color.is_valid_html_color()):
 		_gui.set_background_color(Color(opts.background_color))
 
+	#_tester.set_modulate(Color(1.0, 1.0, 1.0, min(1.0, float(opts.opacity) / 100)))
+	# if(opts.should_maximize):
+	# 	_tester.maximize()
+	#if(opts.compact_mode):
+	#	_tester.get_gui().compact_mode(true)
+
 
 
 func _write_results():

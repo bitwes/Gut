@@ -80,6 +80,9 @@ class GutGuiPrinter:
 	# are in the output.  Good luck, and I hope I typed enough to not go too
 	# far that rabbit hole before finding out it's not worth it.
 	func format_text(text, fmt):
+		if(_textbox == null):
+			return
+
 		if(fmt == 'bold'):
 			_textbox.push_bold()
 		elif(fmt == 'underline'):
@@ -96,6 +99,9 @@ class GutGuiPrinter:
 		return ''
 
 	func _output(text):
+		if(_textbox == null):
+			return
+
 		_textbox.add_text(text)
 
 	func get_textbox():
@@ -111,6 +117,9 @@ class GutGuiPrinter:
 
 	func get_bbcode():
 		return _textbox.text
+
+	func get_disabled():
+		return _disabled and _textbox != null
 
 # ------------------------------------------------------------------------------
 # This AND TerminalPrinter should not be enabled at the same time since it will

@@ -36,12 +36,6 @@ var _select_script = ''
 var _tests_like = ''
 var _inner_class_name = ''
 
-var _should_maximize = false
-var should_maximize = false :
-	get:
-		return get_should_maximize()
-	set(val):
-		set_should_maximize(val)
 
 var _log_level = 1
 var log_level :
@@ -49,28 +43,36 @@ var log_level :
 		return get_log_level()
 	set(val):
 		set_log_level(val)
-var _disable_strict_datatype_checks = false :
+
+# TODO
+# This appears to not be used anymore.  Going to wait for more tests to be
+# ported before removing.
+var _disable_strict_datatype_checks = false
+var disable_strict_datatype_checks = false :
 	get:
-		return is_strict_datatype_checks_disabled()
+		return _disable_strict_datatype_checks
 	set(val):
-		disable_strict_datatype_checks(val)
+		_disable_strict_datatype_checks = val
+
 var _test_prefix = 'test_'
 var _file_prefix = 'test_'
 var _file_extension = '.gd'
 var _inner_class_prefix = 'Test'
 var _temp_directory = 'user://gut_temp_directory'
-var _export_path = '' :
+
+var _export_path = ''
+var export_path = '' :
 	get:
-		return get_export_path()
+		return _export_path
 	set(val):
-		set_export_path(val)
+		_export_path = val
 
 var _include_subdirectories = false
 var include_subdirectories:
 	get:
-		return get_include_subdirectories()
+		return _include_subdirectories
 	set(val):
-		set_include_subdirectories(val)
+		_include_subdirectories = val
 
 var _double_strategy = 1
 var double_strategy = 1  :
@@ -280,10 +282,6 @@ func _ready():
 
 	if(_tests_like != null):
 		set_unit_test_name(_tests_like)
-
-	if(_should_maximize):
-		# GUI checks for is_in_tree will not pass yet.
-		call_deferred('maximize')
 
 	_print_versions()
 
@@ -956,7 +954,7 @@ func _pending(text=''):
 
 
 # ------------------------------------------------------------------------------
-# Gets all the files in a directory and all subdirectories if get_include_subdirectories
+# Gets all the files in a directory and all subdirectories if include_subdirectories
 # is true.  The files returned are all sorted by name.
 # ------------------------------------------------------------------------------
 func _get_files(path, prefix, suffix):
@@ -983,7 +981,7 @@ func _get_files(path, prefix, suffix):
 		if(d.file_exists(full_path)):
 			if(fs_item.begins_with(prefix) and fs_item.ends_with(suffix)):
 				files.append(full_path)
-		elif(get_include_subdirectories() and d.dir_exists(full_path)):
+		elif(include_subdirectories and d.dir_exists(full_path)):
 			directories.append(full_path)
 
 		fs_item = d.get_next()
@@ -1157,30 +1155,10 @@ func export_if_tests_found():
 
 
 # ------------------------------------------------------------------------------
-# Maximize test runner window to fit the viewport.
-# ------------------------------------------------------------------------------
-func set_should_maximize(should):
-	_should_maximize = should
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_should_maximize():
-	return _should_maximize
-
-# ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func maximize():
 	_lgr.deprecated('gut.maximize')
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func disable_strict_datatype_checks(should):
-	_disable_strict_datatype_checks = should
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func is_strict_datatype_checks_disabled():
-	return _disable_strict_datatype_checks
 
 # ------------------------------------------------------------------------------
 # Pauses the test and waits for you to press a confirmation button.  Useful when
@@ -1412,10 +1390,6 @@ func set_double_strategy(double_strategy):
 	_double_strategy = double_strategy
 	_doubler.set_strategy(double_strategy)
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_include_subdirectories():
-	return _include_subdirectories
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -1430,23 +1404,9 @@ func set_logger(logger):
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-func set_include_subdirectories(include_subdirectories):
-	_include_subdirectories = include_subdirectories
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
 func get_test_collector():
 	return _test_collector
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_export_path():
-	return _export_path
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func set_export_path(export_path):
-	_export_path = export_path
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------

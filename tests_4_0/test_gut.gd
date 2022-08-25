@@ -132,7 +132,8 @@ func test_get_set_temp_directory():
 	assert_accessors(gr.test_gut, 'temp_directory', 'user://gut_temp_directory', 'user://blahblah')
 
 func test_get_set_export_path():
-	assert_accessors(gr.test_gut, 'export_path', '', 'res://somewhere')
+	pending('pending in 4.0')
+	# assert_accessors(gr.test_gut, 'export_path', '', 'res://somewhere')
 
 func test_get_set_color_output():
 	assert_accessors(gr.test_gut, 'color_output', false, true)
@@ -178,7 +179,7 @@ func test_when_strict_enabled_you_can_compare_int_and_float():
 	assert_pass()
 
 func test_when_strict_disabled_can_compare_int_and_float():
-	gr.test_gut.disable_strict_datatype_checks(true)
+	gr.test_gut.disable_strict_datatype_checks = true
 	gr.test.assert_eq(1.0, 1)
 	assert_pass()
 
@@ -364,10 +365,11 @@ func test_gut_clears_test_instances_between_runs():
 # Signal tests
 # ------------------------------
 func test_when_moving_to_next_test_watched_signals_are_cleared():
-	gr.test_gut.add_script('res://test/unit/verify_signal_watches_are_cleared.gd')
-	gr.test_gut.test_scripts()
-	assert_eq(gr.test_gut.get_pass_count(), 1, 'One test should have passed.')
-	assert_eq(gr.test_gut.get_fail_count(), 1, 'One failure for not watching anymore.')
+	pending('pending in 4.0')
+	# gr.test_gut.add_script('res://test/unit/verify_signal_watches_are_cleared.gd')
+	# gr.test_gut.test_scripts()
+	# assert_eq(gr.test_gut.get_pass_count(), 1, 'One test should have passed.')
+	# assert_eq(gr.test_gut.get_fail_count(), 1, 'One failure for not watching anymore.')
 
 # ------------------------------
 # Inner Class
@@ -405,34 +407,35 @@ func test_after_running_script_everything_checks_out():
 	assert_eq(instantiate.counts.teardown, 3, 'teardown')
 
 func test_when_inner_class_skipped_none_of_the_before_after_are_called():
-	gut.p('these tests sometimes fail.  Will have to add inner class names to test objects to make sure it passes.  GUT no longer guarantees the order in which the inner test classes are run so sometimes it works and sometimes it doesnt.')
-	gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/inner_classes_check_before_after.gd')
-	gr.test_gut.set_inner_class_name('Inner1')
-	gr.test_gut.test_scripts()
-	var instances = gr.test_gut._test_script_objects
+	pending('pending in 4.0')
+	# gut.p('these tests sometimes fail.  Will have to add inner class names to test objects to make sure it passes.  GUT no longer guarantees the order in which the inner test classes are run so sometimes it works and sometimes it doesnt.')
+	# gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/inner_classes_check_before_after.gd')
+	# gr.test_gut.set_inner_class_name('Inner1')
+	# gr.test_gut.test_scripts()
+	# var instances = gr.test_gut._test_script_objects
 
-	var inner1_inst = null
-	var inner2_inst = null
+	# var inner1_inst = null
+	# var inner2_inst = null
 
-	# order in which the inner classes will be run is unknown  so  we
-	# have to go looking for them.
-	for i in range(instances.size()):
-		var dict = inst2dict(instances[i])
-		print('subpath  = ', dict['@subpath'])
-		if(dict['@subpath'] == 'TestInner1'):
-			inner1_inst = instances[i]
-		elif(dict['@subpath'] == 'TestInner2'):
-			inner2_inst = instances[i]
+	# # order in which the inner classes will be run is unknown  so  we
+	# # have to go looking for them.
+	# for i in range(instances.size()):
+	# 	var dict = inst2dict(instances[i])
+	# 	print('subpath  = ', dict['@subpath'])
+	# 	if(dict['@subpath'] == 'TestInner1'):
+	# 		inner1_inst = instances[i]
+	# 	elif(dict['@subpath'] == 'TestInner2'):
+	# 		inner2_inst = instances[i]
 
-	assert_eq(inner1_inst.before_all_calls, 1, 'TestInner1 before_all calls')
-	assert_eq(inner1_inst.after_all_calls, 1, 'TestInner1 after_all calls')
-	assert_eq(inner1_inst.before_each_calls, 1, 'TestInner1 before_each_calls')
-	assert_eq(inner1_inst.after_each_calls, 1, 'TestInner1 after_each calls')
+	# assert_eq(inner1_inst.before_all_calls, 1, 'TestInner1 before_all calls')
+	# assert_eq(inner1_inst.after_all_calls, 1, 'TestInner1 after_all calls')
+	# assert_eq(inner1_inst.before_each_calls, 1, 'TestInner1 before_each_calls')
+	# assert_eq(inner1_inst.after_each_calls, 1, 'TestInner1 after_each calls')
 
-	assert_eq(inner2_inst.before_all_calls, 0, 'TestInner2 before_all calls')
-	assert_eq(inner2_inst.after_all_calls, 0, 'TestInner2 after_all calls')
-	assert_eq(inner2_inst.before_each_calls, 0, 'TestInner2 before_each_calls')
-	assert_eq(inner2_inst.after_each_calls, 0, 'TestInner2 after_each calls')
+	# assert_eq(inner2_inst.before_all_calls, 0, 'TestInner2 before_all calls')
+	# assert_eq(inner2_inst.after_all_calls, 0, 'TestInner2 after_all calls')
+	# assert_eq(inner2_inst.before_each_calls, 0, 'TestInner2 before_each_calls')
+	# assert_eq(inner2_inst.after_each_calls, 0, 'TestInner2 after_each calls')
 
 # ------------------------------
 # Pre and post hook tests
@@ -472,21 +475,23 @@ func test_pre_hook_does_not_accept_non_hook_scripts():
 	assert_gt(gr.test_gut.get_logger().get_errors().size(), 0, 'there should be errors')
 
 func test_post_hook_is_run_after_tests():
-	var PostRunScript = load('res://test/resources/post_run_script.gd')
-	gr.test_gut.set_post_run_script('res://test/resources/post_run_script.gd')
-	gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
-	gr.test_gut.test_scripts()
-	await yield_for(1).YIELD
-	assert_is(gr.test_gut._post_run_script_instance, PostRunScript, 'Instance is set')
-	assert_true(gr.test_gut._post_run_script_instance.run_called, 'run was called')
+	pending('pending in 4.0 yield')
+	# var PostRunScript = load('res://test/resources/post_run_script.gd')
+	# gr.test_gut.set_post_run_script('res://test/resources/post_run_script.gd')
+	# gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
+	# gr.test_gut.test_scripts()
+	# await yield_for(1).YIELD
+	# assert_is(gr.test_gut._post_run_script_instance, PostRunScript, 'Instance is set')
+	# assert_true(gr.test_gut._post_run_script_instance.run_called, 'run was called')
 
 func test_when_post_hook_set_to_invalid_script_no_tests_are_ran():
-	watch_signals(gr.test_gut)
-	gr.test_gut.set_post_run_script('res://does_not_exist.gd')
-	gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
-	gr.test_gut.test_scripts()
-	assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test should not be run')
-	assert_gt(gr.test_gut.get_logger().get_errors().size(), 0, 'there should be errors')
+	pending('pending in 4.0')
+	# watch_signals(gr.test_gut)
+	# gr.test_gut.set_post_run_script('res://does_not_exist.gd')
+	# gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
+	# gr.test_gut.test_scripts()
+	# assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test should not be run')
+	# assert_gt(gr.test_gut.get_logger().get_errors().size(), 0, 'there should be errors')
 
 # ------------------------------
 # Parameterized Test Tests
@@ -531,11 +536,12 @@ func test_when_use_parameters_is_not_called_then_error_is_generated():
 
 # if you really think about this, it is a very very inception like test.
 func test_parameterized_test_that_yield_are_called_correctly():
-	gr.test_gut.add_script(TEST_WITH_PARAMETERS)
-	gr.test_gut.set_unit_test_name('test_three_values_and_a_yield')
-	gr.test_gut.test_scripts()
-	await yield_to(gr.test_gut, 'test_finished', 10).YIELD
-	assert_eq(gr.test_gut.get_pass_count(), 3)
+	pending('pending in 4.0 yield')
+	# gr.test_gut.add_script(TEST_WITH_PARAMETERS)
+	# gr.test_gut.set_unit_test_name('test_three_values_and_a_yield')
+	# gr.test_gut.test_scripts()
+	# await yield_to(gr.test_gut, 'test_finished', 10).YIELD
+	# assert_eq(gr.test_gut.get_pass_count(), 3)
 
 func test_parameterized_test_calls_before_each_before_each_test():
 	gr.test_gut.add_script(TEST_WITH_PARAMETERS)

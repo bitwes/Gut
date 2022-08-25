@@ -159,11 +159,11 @@ class TestUsingDynamicDirs:
 		assert_accessors(gr.gut, 'include_subdirectories', false, true)
 
 	func test_when_subdir_true_it_finds_subdirectories():
-		gr.gut.set_include_subdirectories(true)
+		gr.gut.include_subdirectories = true
 		gr.gut.add_directory(TEST_BASE_DIR)
 		assert_true(gr.gut._test_collector.has_script(TEST_BASE_DIR + 'other_root/three/test_script.gd'))
 
 	func test_when_subdir_false_it_does_not_find_subdirectories():
-		gr.gut.set_include_subdirectories(false)
+		gr.gut.include_subdirectories= false
 		gr.gut.add_directory(TEST_BASE_DIR)
 		assert_false(gr.gut._test_collector.has_script(TEST_BASE_DIR + 'other_root/three/test_script.gd'))

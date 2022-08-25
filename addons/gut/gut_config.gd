@@ -124,15 +124,7 @@ func write_options(path):
 # Apply all the options specified to _tester.  This is where the rubber meets
 # the road.
 func _apply_options(opts, _tester):
-	# TODO 4.0 move this to the gui section in gut runner
-	#_tester.set_modulate(Color(1.0, 1.0, 1.0, min(1.0, float(opts.opacity) / 100)))
-	_tester.set_include_subdirectories(opts.include_subdirs)
-
-	if(opts.should_maximize):
-		_tester.maximize()
-
-#	if(opts.compact_mode):
-#		_tester.get_gui().compact_mode(true)
+	_tester.include_subdirectories = opts.include_subdirs
 
 	if(opts.inner_class != ''):
 		_tester.set_inner_class_name(opts.inner_class)
@@ -141,14 +133,12 @@ func _apply_options(opts, _tester):
 
 	if(opts.selected != ''):
 		_tester.select_script(opts.selected)
-		# _run_single = true
 
 	for i in range(opts.dirs.size()):
 		_tester.add_directory(opts.dirs[i], opts.prefix, opts.suffix)
 
 	for i in range(opts.tests.size()):
 		_tester.add_script(opts.tests[i])
-
 
 	if(opts.double_strategy == 'full'):
 		_tester.set_double_strategy(DOUBLE_STRATEGY.FULL)
