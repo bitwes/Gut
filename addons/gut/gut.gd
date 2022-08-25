@@ -36,12 +36,18 @@ var _select_script = ''
 var _tests_like = ''
 var _inner_class_name = ''
 
+var _test_prefix = 'test_'
+var _file_prefix = 'test_'
+var _file_extension = '.gd'
+var _inner_class_prefix = 'Test'
+var _temp_directory = 'user://gut_temp_directory'
+
 var _log_level = 1
-var log_level :
-	get: return get_log_level()
+var log_level = 1:
+	get: return _log_level
 	set(val):set_log_level(val)
 
-# TODO
+# TODO 4.0
 # This appears to not be used anymore.  Going to wait for more tests to be
 # ported before removing.
 var _disable_strict_datatype_checks = false
@@ -49,11 +55,6 @@ var disable_strict_datatype_checks = false :
 	get: return _disable_strict_datatype_checks
 	set(val): _disable_strict_datatype_checks = val
 
-var _test_prefix = 'test_'
-var _file_prefix = 'test_'
-var _file_extension = '.gd'
-var _inner_class_prefix = 'Test'
-var _temp_directory = 'user://gut_temp_directory'
 
 var _export_path = ''
 var export_path = '' :
@@ -955,7 +956,7 @@ func _get_files(path, prefix, suffix):
 	var d = Directory.new()
 	d.open(path)
 	# true parameter tells list_dir_begin not to include "." and ".." directories.
-	d.list_dir_begin() # TODOGODOT4 fill missing arguments https://github.com/godotengine/godot/pull/40547
+	d.list_dir_begin() # TODO 4.0 fill missing arguments https://github.com/godotengine/godot/pull/40547
 
 	# Traversing a directory is kinda odd.  You have to start the process of listing
 	# the contents of a directory with list_dir_begin then use get_next until it
@@ -1222,11 +1223,6 @@ func set_log_level(level):
 	_lgr.set_type_enabled(_lgr.types.info, level > 1)
 	_lgr.set_type_enabled(_lgr.types.debug, level > 1)
 
-# ------------------------------------------------------------------------------
-# Get the current log level.
-# ------------------------------------------------------------------------------
-func get_log_level():
-	return _log_level
 
 # ------------------------------------------------------------------------------
 # Call this method to make the test pause before teardown so that you can inspect

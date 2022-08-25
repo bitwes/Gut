@@ -1984,114 +1984,93 @@ class TestAssertSetgetCalled:
 class TestAssertProperty:
 	extends BaseTestClass
 
-	var skip_script = 'Not ready for 4.0'
-
 	const TestNode = preload("res://test/resources/test_assert_setget_test_objects/test_node.gd")
 	const TestScene = preload("res://test/resources/test_assert_setget_test_objects/TestScene.tscn")
+	# the number of asserts performed by assert_property.
+	# 1 for setter method
+	# 1 for getter method
+	# 1 for default value
+	# 1 for setter
+	# 1 for the total test fail count != 0
+	const SUB_ASSERT_COUNT = 5
 
-
-	func test_passes_has_assert_setget_method():
+	func test_has_assert_setget_method():
 		assert_has_method(gr.test, "assert_property")
-
 
 	func test_passes_if_given_input_is_valid():
 		gr.test_with_gut.assert_property(TestNode, "has_both", 4, 0)
-		assert_pass(gr.test_with_gut, 6)
-
+		assert_pass(gr.test_with_gut, SUB_ASSERT_COUNT)
 
 	func test_passes_if_instance_is_script():
 		gr.test_with_gut.assert_property(TestNode, "has_both", 4, 0)
-		assert_pass(gr.test_with_gut, 6)
-
+		assert_pass(gr.test_with_gut, SUB_ASSERT_COUNT)
 
 	func test_passes_if_instance_is_packed_scene():
 		var new_node_child_mock = TestNode.new()
 		add_child_autofree(new_node_child_mock)
 		gr.test_with_gut.assert_property(TestScene, "node_with_setter_getter", null, new_node_child_mock)
-		assert_pass(gr.test_with_gut, 6)
-
+		assert_pass(gr.test_with_gut, SUB_ASSERT_COUNT)
 
 	func test_passes_if_instance_is_obj_from_script():
 		var node_child_mock = TestNode.new()
 		add_child_autofree(node_child_mock)
 		gr.test_with_gut.assert_property(node_child_mock, "has_both", 4, 5)
-		assert_pass(gr.test_with_gut, 6)
-
+		assert_pass(gr.test_with_gut, SUB_ASSERT_COUNT)
 
 	func test_passes_if_instance_is_obj_from_packed_scene():
 		var scene_mock = TestScene.instantiate()
 		add_child_autoqfree(scene_mock)
-		var dflt_node_with_setter = scene_mock.get_node_with_setter_getter()
+		var dflt_node_with_setter = scene_mock.node_with_setter_getter
 		var new_node_child_mock = TestNode.new()
 		add_child_autofree(new_node_child_mock)
 		gr.test_with_gut.assert_property(scene_mock, "node_with_setter_getter", dflt_node_with_setter, new_node_child_mock)
-		assert_pass(gr.test_with_gut, 6)
-
+		assert_pass(gr.test_with_gut, SUB_ASSERT_COUNT)
 
 	func test_fails_if_getter_does_not_exist():
 		var test_node = TestNode.new()
 		gr.test_with_gut.assert_property(test_node, 'has_setter', 2, 0)
-		assert_fail_pass(gr.test_with_gut, 3, 1)
+		assert_fail_pass(gr.test_with_gut, 2, 1)
 
 	func test_fails_if_obj_is_something_unexpected():
-		var instantiate = Directory.new()
-		gr.test_with_gut.assert_property(instantiate, "current_dir", "", "new_dir")
-		assert_fail_pass(gr.test_with_gut, 3, 1)
+		var inst = Directory.new()
+		gr.test_with_gut.assert_property(inst, "current_dir", "", "new_dir")
+		assert_fail_pass(gr.test_with_gut, 3, 0)
 
-	func test_other_fails_do_not_cause_false_negatrive():
+	func test_other_fails_do_not_cause_false_negative():
 		gr.test_with_gut.fail_test('fail')
 		gr.test_with_gut.assert_property(TestNode, "has_both", 4, 0)
-		assert_fail_pass(gr.test_with_gut, 1, 6)
+		assert_fail_pass(gr.test_with_gut, 1, SUB_ASSERT_COUNT)
 
 
-# ------------------------------------------------------------------------------
-class TestAssertSetGet:
+class TestAssertBackedProperty:
 	extends BaseTestClass
 
-	var skip_script = 'Not ready for 4.0'
-
 	const TestNode = preload("res://test/resources/test_assert_setget_test_objects/test_node.gd")
+	const TestScene = preload("res://test/resources/test_assert_setget_test_objects/TestScene.tscn")
+	# the number of asserts performed by assert_property.
+	# 1 for expected backing variable name
+	# 1 for setter method
+	# 1 for getter method
+	# 1 for default value
+	# 1 for setter
+	# 1 for setting backed variable
+	# 1 for getting backed variable
+	const SUB_ASSERT_COUNT = 7
 
-	func test_can_use_with_getter_only_name():
-		gr.test_with_gut.assert_setget(TestNode, 'non_default_getter', null, '__get_non_default_getter')
-		assert_pass(gr.test_with_gut)
+	func test_has_method():
+		assert_has_method(gr.test, "assert_property_with_backing_variable")
 
-	func test_can_use_with_setter_only_name():
-		gr.test_with_gut.assert_setget(TestNode, 'non_default_setter', '__set_non_default_setter')
-		assert_pass(gr.test_with_gut)
+	func test_all_pass_when_everything_is_setup_right():
+		var test_node = autofree(TestNode.new())
+		gr.test_with_gut.assert_property_with_backing_variable(test_node, "backed_property", 10, 0)
+		assert_pass(gr.test_with_gut, SUB_ASSERT_COUNT)
 
-	func test_can_use_with_setter_only():
-		gr.test_with_gut.assert_setget(TestNode, 'has_setter', SETTER_ONLY)
-		assert_pass(gr.test_with_gut)
+	func test_fails_when_getter_does_not_return_backing_var():
+		var test_node = autofree(TestNode.new())
+		gr.test_with_gut.assert_property_with_backing_variable(test_node, "backed_get_broke", 11, 0)
+		assert_fail_pass(gr.test_with_gut, 1, SUB_ASSERT_COUNT - 1)
 
-	func test_can_use_with_getter_only():
-		gr.test_with_gut.assert_setget(TestNode, 'has_getter', GETTER_ONLY)
-		assert_pass(gr.test_with_gut)
-
-	func test_works_with_defaults():
-		gr.test_with_gut.assert_setget(TestNode, 'has_both')
-		assert_pass(gr.test_with_gut)
-
-	func test_works_with_non_default_accessors_for_both():
-		gr.test_with_gut.assert_setget(TestNode, 'non_default_both', '__set_default_both', '__get_default_both')
-		assert_pass(gr.test_with_gut)
-
-	func test_fails_with_defaults_and_no_getter():
-		gr.test_with_gut.assert_setget(TestNode, 'has_setter')
-		assert_fail(gr.test_with_gut)
-
-	func test_fails_with_defaults_and_no_setter():
-		gr.test_with_gut.assert_setget(TestNode, 'has_getter')
-		assert_fail(gr.test_with_gut)
-
-	func test_fails_with_no_setter_getter():
-		gr.test_with_gut.assert_setget(TestNode, 'no_setget')
-		assert_fail(gr.test_with_gut)
-
-	func test_fails_when_property_does_not_exist():
-		gr.test_with_gut.assert_setget(TestNode, '__dne__')
-		assert_fail(gr.test_with_gut)
-
-	func test_fails_when_all_exist_but_setget_not_used():
-		gr.test_with_gut.assert_setget(TestNode, 'has_both_dnu_setget')
-		assert_fail(gr.test_with_gut)
+	func test_fails_when_setter_does_not_set_backing_var():
+		var test_node = autofree(TestNode.new())
+		gr.test_with_gut.assert_property_with_backing_variable(test_node, "backed_set_broke", 12, 0)
+		assert_fail_pass(gr.test_with_gut, 1, SUB_ASSERT_COUNT - 1)

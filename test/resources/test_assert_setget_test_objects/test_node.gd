@@ -6,8 +6,6 @@ var no_setget = 1
 
 # -------------------------------------------------
 var has_setter = 2 :
-	get:
-		return has_setter
 	set(val):
 		has_setter = val
 
@@ -62,3 +60,18 @@ var typed_setter:int = 9 :
 	set(val):
 		typed_setter = val
 
+var _backed_property = 10
+var backed_property = 10 :
+	get: return _backed_property
+	set(val): _backed_property = val
+
+var _backed_get_broke = 11
+var backed_get_broke = 11 :
+	get: return backed_get_broke
+	set(val): _backed_get_broke = val
+
+
+var _backed_set_broke = 12
+var backed_set_broke = 12 :
+	get: return _backed_set_broke
+	set(val): backed_set_broke = val

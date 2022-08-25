@@ -130,13 +130,6 @@ var _fail_pass_text = []
 const EDITOR_PROPERTY = PROPERTY_USAGE_SCRIPT_VARIABLE | PROPERTY_USAGE_DEFAULT
 const VARIABLE_PROPERTY = PROPERTY_USAGE_SCRIPT_VARIABLE
 
-# Used with assert_setget
-enum {
-	DEFAULT_SETTER_GETTER,
-	SETTER_ONLY,
-	GETTER_ONLY
-}
-
 # Summary counts for the test.
 var _summary = {
 	asserts = 0,
@@ -801,12 +794,6 @@ func get_call_parameters(object, method_name, index=-1):
 func get_call_count(object, method_name, parameters=null):
 	return gut.get_spy().call_count(object, method_name, parameters)
 
-# ------------------------------------------------------------------------------
-# Deprecated. Use assert_is.
-# ------------------------------------------------------------------------------
-func assert_extends(object, a_class, text=''):
-	_lgr.deprecated('assert_extends', 'assert_is')
-	assert_is(object, a_class, text)
 
 # ------------------------------------------------------------------------------
 # Assert that object is an instantiate of a_class
@@ -905,6 +892,7 @@ func assert_string_starts_with(text, search, match_case=true):
 			_pass(disp)
 		else:
 			_fail(disp)
+
 
 # ------------------------------------------------------------------------------
 # Assert that text ends with given search string.
@@ -1053,44 +1041,6 @@ func assert_no_new_orphans(text=''):
 	else:
 		_pass('No new orphans found.' + msg)
 
-# ------------------------------------------------------------------------------
-# Returns a dictionary that contains
-# - an is_valid flag whether validation was successful or not and
-# - a message that gives some information about the validation errors.
-# ------------------------------------------------------------------------------
-func _validate_assert_setget_called_input(type, name_property
-			, name_setter, name_getter):
-	var obj = null
-	var result = {"is_valid": true, "msg": ""}
-
-	if null == type or typeof(type) != TYPE_OBJECT or not type.is_class("Resource"):
-		result.is_valid = false
-		result.msg = str("The type parameter should be a ressource, ", _str(type), ' was passed.')
-		return result
-
-	if null == double(type):
-		result.is_valid = false
-		result.msg = str("Attempt to double the type parameter failed. The type parameter should be a ressource that can be doubled.")
-		return result
-
-	obj = _create_obj_from_type(type)
-	var property = _find_object_property(obj, str(name_property))
-
-	if null == property:
-		result.is_valid = false
-		result.msg += str("The property %s does not exist." % _str(name_property))
-	if name_setter == "" and name_getter == "":
-		result.is_valid = false
-		result.msg += str("Either setter or getter method must be specified.")
-	if name_setter != "" and not obj.has_method(str(name_setter)):
-		result.is_valid = false
-		result.msg += str("Setter method %s does not exist.  " % _str(name_setter))
-	if name_getter != "" and not obj.has_method(str(name_getter)):
-		result.is_valid = false
-		result.msg += str("Getter method %s does not exist.  " %_str(name_getter))
-
-	obj.free()
-	return result
 
 # ------------------------------------------------------------------------------
 # Validates the singleton_name is a string and exists.  Errors when conditions
@@ -1113,110 +1063,100 @@ func _validate_singleton_name(singleton_name):
 
 
 # ------------------------------------------------------------------------------
-# Asserts the given setter and getter methods are called when the given property
-# is accessed.
-# ------------------------------------------------------------------------------
-func _assert_setget_called(type, name_property, setter = "", getter  = ""):
-	var name_setter = _utils.nvl(setter, "")
-	var name_getter = _utils.nvl(getter, "")
-
-	var validation = _validate_assert_setget_called_input(type, name_property, str(name_setter), str(name_getter))
-	if not validation.is_valid:
-		_fail(validation.msg)
-		return
-
-	var message = ""
-	var amount_calls_setter = 0
-	var amount_calls_getter = 0
-	var expected_calls_setter = 0
-	var expected_calls_getter = 0
-	var obj = _create_obj_from_type(double(type))
-
-	if name_setter != '':
-		expected_calls_setter = 1
-		stub(obj, name_setter).to_do_nothing()
-		obj.set(name_property, null)
-		amount_calls_setter = gut.get_spy().call_count(obj, str(name_setter))
-
-	if name_getter != '':
-		expected_calls_getter = 1
-		stub(obj, name_getter).to_do_nothing()
-		var __new_property = obj.get(name_property)
-		amount_calls_getter = gut.get_spy().call_count(obj, str(name_getter))
-
-	obj.free()
-
-	# assert
-
-	if amount_calls_setter == expected_calls_setter and amount_calls_getter == expected_calls_getter:
-		_pass(str("setget for %s is correctly configured." % _str(name_property)))
-	else:
-		if amount_calls_setter < expected_calls_setter:
-			message += " The setter was not called."
-		elif amount_calls_setter > expected_calls_setter:
-			message += " The setter was called but should not have been."
-		if amount_calls_getter < expected_calls_getter:
-			message += " The getter was not called."
-		elif amount_calls_getter > expected_calls_getter:
-			message += " The getter was called but should not have been."
-		_fail(str(message))
-
-# ------------------------------------------------------------------------------
-# Wrapper: invokes assert_setget_called but provides a slightly more convenient
-# signature
 # ------------------------------------------------------------------------------
 func assert_setget(
 	instantiate, name_property,
-	const_or_setter = DEFAULT_SETTER_GETTER, getter="__not_set__"):
-
-	var getter_name = null
-	if(getter != "__not_set__"):
-		getter_name = getter
-
-	var setter_name = null
-	if(typeof(const_or_setter) == TYPE_INT):
-		if(const_or_setter in [SETTER_ONLY, DEFAULT_SETTER_GETTER]):
-			setter_name  = str("set_", name_property)
-
-		if(const_or_setter in [GETTER_ONLY, DEFAULT_SETTER_GETTER]):
-			getter_name = str("get_", name_property)
-	else:
-		setter_name = const_or_setter
-
-	var resource = null
-	if instantiate.is_class("Resource"):
-		resource = instantiate
-	else:
-		resource = instantiate.get_script()
-
-	_assert_setget_called(resource, str(name_property), setter_name, getter_name)
+	const_or_setter = null, getter="__not_set__"):
+	_lgr.deprecated('assert_setget')
+	_fail('assert_setget has been removed.  Use assert_property, assert_set_property, assert_readonly_property instead.')
 
 
 # ------------------------------------------------------------------------------
-# Wrapper: asserts if the property exists, the accessor methods exist and the
-# setget keyword is set for accessor methods
+# This will set the property through the setter and compare the result to the
+# expected value.  Useful when setter is not simple.
 # ------------------------------------------------------------------------------
-func assert_property(instantiate, name_property, default_value, new_value) -> void:
-	var free_me = []
+func assert_set_property(obj, property_name, new_value, expected_value):
+	pending("this hasn't been implemented yet")
+
+
+# ------------------------------------------------------------------------------
+# This will attempt to assign new_value to the property and verify that it
+# is equal to expected_value.
+# ------------------------------------------------------------------------------
+func assert_readonly_property(obj, property_name, new_value, expected_value):
+	pending("this hasn't been implemented yet")
+
+
+# ------------------------------------------------------------------------------
+# Assumes backing varible with be _<property_name>.  This will perform all the
+# asserts of assert_property.  Then this will set the value through the setter
+# and check the backing variable value.  It will then reset throught the setter
+# and set the backing variable and check the getter.
+# ------------------------------------------------------------------------------
+func assert_property_with_backing_variable(obj, property_name, default_value, new_value):
+	var setter_name = str('@', property_name, '_setter')
+	var getter_name = str('@', property_name, '_getter')
+	var backing_var_name = str('_', property_name)
+	var pre_fail_count = get_fail_count()
+
+	var props = obj.get_property_list()
+	var found = false
+	var idx = 0
+	while(idx < props.size() and !found):
+		found = props[idx].name == backing_var_name
+		idx += 1
+
+	assert_true(found, str(obj, ' has ', backing_var_name, ' variable.'))
+	assert_has_method(obj, setter_name)
+	assert_has_method(obj, getter_name)
+
+	if(pre_fail_count == get_fail_count()):
+		var call_setter = Callable(obj, setter_name)
+		var call_getter = Callable(obj, getter_name)
+
+		assert_eq(obj.get(backing_var_name), default_value, str('Variable ', backing_var_name, ' has default value.'))
+		assert_eq(call_getter.call(), default_value, 'Getter returns default value.')
+		call_setter.call(new_value)
+		assert_eq(call_getter.call(), new_value, 'Getter returns value from Setter.')
+		assert_eq(obj.get(backing_var_name), new_value, str('Variable ', backing_var_name, ' was set'))
+
+
+
+# ------------------------------------------------------------------------------
+# This will verify that the method has a setter and getter for the property.
+# It will then use the getter to check the default.  Then use the
+# setter with new_value and verify the getter returns the same value.
+# ------------------------------------------------------------------------------
+func assert_property(inst, name_property, default_value, new_value) -> void:
+	var free_me = null
 	var resource = null
 	var obj = null
-	if instantiate.is_class("Resource"):
-		resource = instantiate
-		obj = _create_obj_from_type(resource)
-		free_me.append(obj)
-	else:
-		resource = instantiate.get_script()
-		obj = instantiate
 
-	var name_setter = "set_" + str(name_property)
-	var name_getter = "get_" + str(name_property)
+	if inst.is_class("Resource"):
+		resource = inst
+		obj = _create_obj_from_type(resource)
+		free_me = obj
+	else:
+		resource = inst.get_script()
+		obj = inst
+
+	var setter_name = str('@', name_property, '_setter')
+	var getter_name = str('@', name_property, '_getter')
 
 	var pre_fail_count = get_fail_count()
-	assert_accessors(obj, str(name_property), default_value, new_value)
-	_assert_setget_called(resource, str(name_property), name_setter, name_getter)
+	assert_has_method(obj, setter_name)
+	assert_has_method(obj, getter_name)
 
-	for entry in free_me:
-		entry.free()
+	if(pre_fail_count == get_fail_count()):
+		var call_setter = Callable(obj, setter_name)
+		var call_getter = Callable(obj, getter_name)
+
+		assert_eq(call_getter.call(), default_value, 'Default value')
+		call_setter.call(new_value)
+		assert_eq(call_getter.call(), new_value, 'Getter gets Setter value')
+
+	if(free_me != null):
+		free_me.free()
 
 	# assert
 	if get_fail_count() == pre_fail_count:
@@ -1270,14 +1210,6 @@ func yield_frames(frames, msg=''):
 
 	gut.set_yield_frames(frames, msg)
 	return gut
-
-# ------------------------------------------------------------------------------
-# Ends a test that had a yield in it.  You only need to use this if you do
-# not make assertions after a yield.
-# ------------------------------------------------------------------------------
-func end_test():
-	_lgr.deprecated('end_test is no longer necessary, you can remove_at it.')
-	#gut.end_yielded_test()
 
 func get_summary():
 	return _summary

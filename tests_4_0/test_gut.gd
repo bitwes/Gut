@@ -121,6 +121,24 @@ func after_all():
 # ------------------------------
 # Settings
 # ------------------------------
+var _backed_properties = ParameterFactory.named_parameters(
+	['property_name', 'default', 'new_value'],
+	[
+		['disable_strict_datatype_checks', false, true],
+		['log_level', 1, 3],
+		['disable_strict_datatype_checks', false, true],
+		['include_subdirectories', false, true],
+		['double_strategy', 1, 2],
+		['pre_run_script', '', 'res://something.gd'],
+		['post_run_script', '', 'res://something_else.gd'],
+		['color_output', false, true],
+	])
+
+func test_check_backed_properties(p=use_parameters(_backed_properties)):
+	var g = autofree(Gut.new())
+	assert_property_with_backing_variable(g, p.property_name, p.default, p.new_value)
+
+
 func test_get_set_ingore_pauses():
 	assert_accessors(gr.test_gut, 'ignore_pause_before_teardown', false, true)
 
@@ -132,8 +150,7 @@ func test_get_set_temp_directory():
 	assert_accessors(gr.test_gut, 'temp_directory', 'user://gut_temp_directory', 'user://blahblah')
 
 func test_get_set_export_path():
-	pending('pending in 4.0')
-	# assert_accessors(gr.test_gut, 'export_path', '', 'res://somewhere')
+	assert_property(gr.test_gut, 'export_path', '', 'res://somewhere')
 
 func test_get_set_color_output():
 	assert_accessors(gr.test_gut, 'color_output', false, true)
