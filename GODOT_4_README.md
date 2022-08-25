@@ -10,7 +10,7 @@ This file tracks the changes that have occurred in porting GUT to Godot 4.0.  Al
 ## Godot 4 Changes
 These are changes to Godot that affect how GUT is used/implemented.
 
-* `setget` has been replaced with a completely new syntax.  More info at #380.
+* `setget` has been replaced with a completely new syntax.  More info at [#380](/../../issues/380).
 * `connect` has been significantly altered.  The signal related asserts will likely change to use `Callable` parameters instead of strings.  It is possible to use strings, so this may remain in some form.  More info in #383.
 * `yield` has been replaced with `await`.  `yield_to`, `yield_for`, and `yield_frames` will be replaced with similar `await` methods.  The `yield_*` methods will be deprecated.  More info at # 382.
 
