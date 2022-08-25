@@ -16,7 +16,6 @@ class BaseTest:
 	# Returns a new gut object, all setup for testing.
 	func get_a_gut():
 		var g = Gut.new()
-		g.set_yield_between_tests(false)
 		g.set_log_level(g.LOG_LEVEL_ALL_ASSERTS)
 		add_child(g)
 		return g
@@ -72,7 +71,6 @@ class TestUsingResDirs:
 		var t = Test.new()
 		t.gut = g
 		add_child(g)
-		g.set_yield_between_tests(false)
 		g.add_directory('res://test/resources/parsing_and_loading_samples')
 		g.add_directory('res://test/unit')
 		g.add_directory('res://test/integration')

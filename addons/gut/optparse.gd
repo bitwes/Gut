@@ -235,6 +235,8 @@ func parse():
 				options[i].value = parser.get_array_value(options[i].option_name)
 			elif(t == TYPE_BOOL):
 				options[i].value = parser.was_specified(options[i].option_name)
+			elif(t == TYPE_FLOAT):
+				options[i].value = parser.get_value(options[i].option_name)
 			elif(t == TYPE_NIL):
 				print(options[i].option_name + ' cannot be processed, it has a nil datatype')
 			else:

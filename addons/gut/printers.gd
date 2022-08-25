@@ -46,7 +46,7 @@ class Printer:
 # ------------------------------------------------------------------------------
 class GutGuiPrinter:
 	extends Printer
-	var _gut = null
+	var _textbox = null
 
 	var _colors = {
 			red = Color.RED,
@@ -80,40 +80,37 @@ class GutGuiPrinter:
 	# are in the output.  Good luck, and I hope I typed enough to not go too
 	# far that rabbit hole before finding out it's not worth it.
 	func format_text(text, fmt):
-		var box = _gut.get_gui().get_text_box()
-
 		if(fmt == 'bold'):
-			box.push_bold()
+			_textbox.push_bold()
 		elif(fmt == 'underline'):
-			box.push_underline()
+			_textbox.push_underline()
 		elif(_colors.has(fmt)):
-			box.push_color(_colors[fmt])
+			_textbox.push_color(_colors[fmt])
 		else:
 			# just pushing something to pop.
-			box.push_normal()
+			_textbox.push_normal()
 
-		box.add_text(text)
-		box.pop()
+		_textbox.add_text(text)
+		_textbox.pop()
 
 		return ''
 
 	func _output(text):
-		_gut.get_gui().get_text_box().add_text(text)
+		_textbox.add_text(text)
 
-	func get_gut():
-		return _gut
+	func get_textbox():
+		return _textbox
 
-	func set_gut(gut):
-		_gut = gut
+	func set_textbox(textbox):
+		_textbox = textbox
 
 	# This can be very very slow when the box has a lot of text.
 	func clear_line():
-		var box = _gut.get_gui().get_text_box()
-		box.remove_line(box.get_line_count() - 1)
-		box.update()
+		_textbox.remove_line(_textbox.get_line_count() - 1)
+		_textbox.update()
 
 	func get_bbcode():
-		return _gut.get_gui().get_text_box().text
+		return _textbox.text
 
 # ------------------------------------------------------------------------------
 # This AND TerminalPrinter should not be enabled at the same time since it will

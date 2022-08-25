@@ -262,7 +262,7 @@ func set_gut(gut):
 	else:
 		if(_printers.gui == null):
 			_printers.gui = _utils.Printers.GutGuiPrinter.new()
-		_printers.gui.set_gut(gut)
+
 
 func get_indent_level():
 	return _indent_level
@@ -324,14 +324,16 @@ func _end_yield_terminal():
 	printer.back(_last_yield_text.length())
 
 func _yield_text_gui(text):
-	var lbl = _gut.get_gui().get_waiting_label()
-	lbl.visible = true
-	lbl.set_bbcode('[color=yellow]' + text + '[/color]')
+	pass
+	# var lbl = _gut.get_gui().get_waiting_label()
+	# lbl.visible = true
+	# lbl.set_bbcode('[color=yellow]' + text + '[/color]')
 
 func _end_yield_gui():
-	var lbl = _gut.get_gui().get_waiting_label()
-	lbl.visible = false
-	lbl.set_text('')
+	pass
+	# var lbl = _gut.get_gui().get_waiting_label()
+	# lbl.visible = false
+	# lbl.set_text('')
 
 # This is used for displaying the "yield detected" and "yielding to" messages.
 func yield_msg(text):

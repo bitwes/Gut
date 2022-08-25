@@ -94,14 +94,6 @@ func _run_all_tests():
 
 	tester.set_should_print_to_console(true)
 
-	# !! --------
-	# Set the yield between tests so that tests print as they complete
-	# instead of having to wait until the end.  It's a little slower,
-	# but you can tell what's going on.  Because it's slower it's
-	# disabled by default.
-	tester.set_yield_between_tests(true)
-	# !! --------
-
 	# Add all scripts in two directories.
 	tester.add_directory('res://test/unit')
 	tester.add_directory('res://test/integration')
@@ -134,7 +126,6 @@ func _run_gut_tests(gut):
 	gut.add_script('res://test/integration/test_doubler_and_spy.gd')
 	gut.add_script('res://test/integration/test_gut_and_spy.gd')
 
-	gut.set_yield_between_tests(true)
 	# true says to run all the scripts, not just the first or
 	# the selected script.
 	gut.test_scripts()

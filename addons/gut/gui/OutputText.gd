@@ -154,12 +154,14 @@ func _set_font(font_name, custom_name):
 	if(font_name == null):
 		rtl.set('custom_fonts/' + custom_name, null)
 	else:
-		var dyn_font = FontFile.new()
-		var font_data = FontFile.new()
-		font_data.font_path = 'res://addons/gut/fonts/' + font_name + '.ttf'
-		font_data.antialiased = true
-		dyn_font.font_data = font_data
-		rtl.set('custom_fonts/' + custom_name, dyn_font)
+		pass
+		# cuasing issues in 4.0
+		# var dyn_font = FontFile.new()
+		# var font_data = FontFile.new()
+		# font_data.font_path = 'res://addons/gut/fonts/' + font_name + '.ttf'
+		# font_data.antialiased = true
+		# dyn_font.font_data = font_data
+		# rtl.set('custom_fonts/' + custom_name, dyn_font)
 
 
 # ------------------

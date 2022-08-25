@@ -1,130 +1,96 @@
-[gd_scene load_steps=6 format=3 uid="uid://cnajq0pryv2u4"]
+[gd_scene load_steps=4 format=3 uid="uid://m28heqtswbuq"]
 
-[ext_resource type="Script" path="res://addons/gut/GutScene.gd" id="1"]
-[ext_resource type="PackedScene" uid="uid://bsm7wtt1gie4v" path="res://addons/gut/UserFileViewer.tscn" id="6"]
-[ext_resource type="Theme" uid="uid://cstkhwkpajvqu" path="res://addons/gut/gui/GutSceneTheme.tres" id="7"]
+[ext_resource type="Script" path="res://addons/gut/GutScene.gd" id="1_b4m8y"]
+[ext_resource type="Theme" uid="uid://cstkhwkpajvqu" path="res://addons/gut/gui/GutSceneTheme.tres" id="1_s37wl"]
+[ext_resource type="FontFile" uid="uid://bnh0lslf4yh87" path="res://addons/gut/fonts/CourierPrime-Regular.ttf" id="3_qvb8f"]
 
-[sub_resource type="StyleBoxFlat" id="2"]
-bg_color = Color(1, 1, 1, 1)
-border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
+[node name="GutScene" type="Node2D"]
+script = ExtResource("1_b4m8y")
 
-[sub_resource type="Theme" id="3"]
-resource_local_to_scene = true
-Panel/styles/panel = SubResource("2")
-Panel/styles/panelf = null
-Panel/styles/panelnc = null
+[node name="Large" type="Panel" parent="."]
+offset_right = 717.0
+offset_bottom = 388.0
+theme = ExtResource("1_s37wl")
 
-[node name="Gut" type="Panel"]
-offset_right = 740.0
-offset_bottom = 300.0
-theme = ExtResource("7")
-script = ExtResource("1")
-
-[node name="UserFileViewer" parent="." instance=ExtResource("6")]
-
-[node name="VBox" type="VBoxContainer" parent="."]
+[node name="MainBox" type="VBoxContainer" parent="Large"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_layout_mode = 1
 
-[node name="TitleBar" type="Panel" parent="VBox"]
-offset_right = 740.0
-theme = SubResource("3")
+[node name="TitleBar" type="Panel" parent="Large/MainBox"]
+custom_minimum_size = Vector2(0, 25)
+offset_right = 717.0
+offset_bottom = 25.0
 
-[node name="HBox" type="HBoxContainer" parent="VBox/TitleBar"]
+[node name="TitleBox" type="HBoxContainer" parent="Large/MainBox/TitleBar"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-
-[node name="Summary" type="Control" parent="VBox/TitleBar/HBox"]
-offset_bottom = 25.0
-mouse_filter = 2
-
-[node name="Passing" type="Label" parent="VBox/TitleBar/HBox/Summary"]
-visible = false
-offset_left = 5.0
-offset_top = 7.0
-offset_right = 45.0
-offset_bottom = 21.0
-text = "0"
-
-[node name="Failing" type="Label" parent="VBox/TitleBar/HBox/Summary"]
-visible = false
-offset_left = 100.0
-offset_top = 7.0
-offset_right = 140.0
-offset_bottom = 21.0
-text = "0"
-
-[node name="AssertCount" type="Label" parent="VBox/TitleBar/HBox/Summary"]
-offset_left = 5.0
-offset_top = 7.0
-offset_right = 165.0
-offset_bottom = 21.0
-text = "Assert count"
-
-[node name="TitleReplacement" type="CenterContainer" parent="VBox/TitleBar/HBox"]
-visible = false
-offset_left = 114.0
-offset_right = 352.0
-offset_bottom = 30.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-mouse_filter = 2
-
-[node name="Title" type="Label" parent="VBox/TitleBar/HBox"]
-offset_left = 4.0
-offset_right = 623.0
-offset_bottom = 25.0
-size_flags_horizontal = 3
-size_flags_vertical = 7
-text = "Gut"
-
-[node name="Time" type="Label" parent="VBox/TitleBar/HBox"]
-offset_left = 627.0
 offset_top = 2.0
-offset_right = 690.0
-offset_bottom = 22.0
-text = "9999.99"
+offset_bottom = 3.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_layout_mode = 1
 
-[node name="CC" type="CenterContainer" parent="VBox/TitleBar/HBox"]
-offset_left = 694.0
-offset_right = 694.0
-offset_bottom = 25.0
-mouse_filter = 2
-
-[node name="Minimize" type="Button" parent="VBox/TitleBar/HBox"]
-offset_left = 698.0
-offset_right = 715.0
-offset_bottom = 25.0
-text = "N"
-flat = true
-
-[node name="Maximize" type="Button" parent="VBox/TitleBar/HBox"]
-offset_left = 719.0
-offset_right = 736.0
-offset_bottom = 25.0
-text = "X"
-flat = true
-
-[node name="CC2" type="CenterContainer" parent="VBox/TitleBar/HBox"]
-offset_left = 740.0
-offset_right = 740.0
-offset_bottom = 25.0
-mouse_filter = 2
-
-[node name="TextDisplay" type="ColorRect" parent="VBox"]
-offset_top = 4.0
-offset_right = 740.0
-offset_bottom = 296.0
+[node name="Spacer1" type="CenterContainer" parent="Large/MainBox/TitleBar/TitleBox"]
+offset_right = 303.0
+offset_bottom = 26.0
 size_flags_horizontal = 3
-size_flags_vertical = 3
-color = Color(0, 0, 0, 1)
 
-[node name="RichTextLabel" type="RichTextLabel" parent="VBox/TextDisplay"]
+[node name="Title" type="Label" parent="Large/MainBox/TitleBar/TitleBox"]
+offset_left = 307.0
+offset_top = 3.0
+offset_right = 352.0
+offset_bottom = 23.0
+text = "Title"
+
+[node name="Spacer2" type="CenterContainer" parent="Large/MainBox/TitleBar/TitleBox"]
+offset_left = 356.0
+offset_right = 659.0
+offset_bottom = 26.0
+size_flags_horizontal = 3
+
+[node name="TimeLabel" type="Label" parent="Large/MainBox/TitleBar/TitleBox"]
+offset_left = 663.0
+offset_top = 3.0
+offset_right = 717.0
+offset_bottom = 23.0
+text = "0.000s"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Large/MainBox"]
+offset_top = 29.0
+offset_right = 717.0
+offset_bottom = 379.0
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Large/MainBox/HBoxContainer"]
+offset_right = 717.0
+offset_bottom = 350.0
+size_flags_horizontal = 3
+
+[node name="OutputBG" type="ColorRect" parent="Large/MainBox/HBoxContainer/VBoxContainer"]
+offset_right = 717.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+color = Color(0.0745098, 0.0705882, 0.0784314, 1)
+metadata/_edit_layout_mode = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/OutputBG"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 10.0
+
+[node name="S2" type="CenterContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/OutputBG/HBoxContainer"]
+custom_minimum_size = Vector2(5, 0)
+offset_right = 5.0
+offset_bottom = 300.0
+
+[node name="Output" type="RichTextLabel" parent="Large/MainBox/HBoxContainer/VBoxContainer/OutputBG/HBoxContainer"]
+offset_left = 9.0
+offset_right = 708.0
+offset_bottom = 300.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 focus_mode = 2
@@ -132,304 +98,270 @@ bbcode_enabled = true
 scroll_following = true
 selection_enabled = true
 
-[node name="WaitingLabel" type="RichTextLabel" parent="VBox/TextDisplay"]
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -25.0
-bbcode_enabled = true
-
-[node name="BottomPanel" type="ColorRect" parent="VBox"]
-offset_top = 300.0
-offset_right = 740.0
+[node name="S1" type="CenterContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/OutputBG/HBoxContainer"]
+custom_minimum_size = Vector2(5, 0)
+offset_left = 712.0
+offset_right = 717.0
 offset_bottom = 300.0
-size_flags_horizontal = 9
-size_flags_vertical = 9
-color = Color(1, 1, 1, 0)
 
-[node name="VBox" type="VBoxContainer" parent="VBox/BottomPanel"]
-anchor_right = 1.0
-anchor_bottom = 1.0
+[node name="ControlBox" type="HBoxContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer"]
+offset_top = 304.0
+offset_right = 717.0
+offset_bottom = 350.0
 
-[node name="HBox" type="HBoxContainer" parent="VBox/BottomPanel/VBox"]
-offset_right = 740.0
-offset_bottom = 54.0
-size_flags_horizontal = 3
+[node name="S1" type="CenterContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
+custom_minimum_size = Vector2(5, 0)
+offset_right = 5.0
+offset_bottom = 46.0
 
-[node name="CC1" type="CenterContainer" parent="VBox/BottomPanel/VBox/HBox"]
-offset_bottom = 54.0
+[node name="ProgressBars" type="VBoxContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
+offset_left = 9.0
+offset_right = 176.0
+offset_bottom = 46.0
 
-[node name="Progress" type="VBoxContainer" parent="VBox/BottomPanel/VBox/HBox"]
-offset_left = 4.0
-offset_right = 8.0
-offset_bottom = 54.0
-alignment = 1
+[node name="TestBox" type="HBoxContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/ProgressBars"]
+offset_right = 167.0
+offset_bottom = 21.0
 
-[node name="TestProgress" type="ProgressBar" parent="VBox/BottomPanel/VBox/HBox/Progress"]
-offset_top = 2.0
-offset_right = 4.0
-offset_bottom = 23.0
-size_flags_horizontal = 0
-hint_tooltip = "Test progress for the current script."
-step = 1.0
-
-[node name="Label" type="Label" parent="VBox/BottomPanel/VBox/HBox/Progress/TestProgress"]
-offset_left = 107.5
-offset_top = 3.0
-offset_right = 172.5
-offset_bottom = 18.0
+[node name="Label" type="Label" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/ProgressBars/TestBox"]
+custom_minimum_size = Vector2(60, 0)
+offset_right = 60.0
+offset_bottom = 20.0
 text = "Tests"
 
-[node name="xy" type="Label" parent="VBox/BottomPanel/VBox/HBox/Progress/TestProgress"]
-visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
-text = "0/0"
+[node name="ProgressTest" type="ProgressBar" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/ProgressBars/TestBox"]
+custom_minimum_size = Vector2(100, 0)
+offset_left = 64.0
+offset_right = 164.0
+offset_bottom = 21.0
+value = 25.0
 
-[node name="ScriptProgress" type="ProgressBar" parent="VBox/BottomPanel/VBox/HBox/Progress"]
-offset_top = 27.0
-offset_right = 4.0
-offset_bottom = 48.0
-size_flags_horizontal = 0
-hint_tooltip = "Overall progress of executing tests."
-step = 1.0
+[node name="ScriptBox" type="HBoxContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/ProgressBars"]
+offset_top = 25.0
+offset_right = 167.0
+offset_bottom = 46.0
 
-[node name="Label" type="Label" parent="VBox/BottomPanel/VBox/HBox/Progress/ScriptProgress"]
-offset_left = 107.0
-offset_top = 3.5
-offset_right = 172.0
-offset_bottom = 18.5
+[node name="Label" type="Label" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/ProgressBars/ScriptBox"]
+custom_minimum_size = Vector2(60, 0)
+offset_right = 63.0
+offset_bottom = 20.0
 text = "Scripts"
 
-[node name="xy" type="Label" parent="VBox/BottomPanel/VBox/HBox/Progress/ScriptProgress"]
-visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
-text = "0/0"
+[node name="ProgressScript" type="ProgressBar" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/ProgressBars/ScriptBox"]
+custom_minimum_size = Vector2(100, 0)
+offset_left = 67.0
+offset_right = 167.0
+offset_bottom = 21.0
+value = 75.0
 
-[node name="CenterContainer" type="CenterContainer" parent="VBox/BottomPanel/VBox/HBox/Progress"]
-offset_top = 52.0
-offset_right = 4.0
-offset_bottom = 52.0
-
-[node name="CC2" type="CenterContainer" parent="VBox/BottomPanel/VBox/HBox"]
-offset_left = 12.0
-offset_right = 328.0
-offset_bottom = 54.0
-size_flags_horizontal = 3
-
-[node name="Node3D" type="Panel" parent="VBox/BottomPanel/VBox/HBox"]
-self_modulate = Color(1, 1, 1, 0)
-offset_left = 332.0
-offset_right = 332.0
-offset_bottom = 54.0
-
-[node name="VBox" type="VBoxContainer" parent="VBox/BottomPanel/VBox/HBox/Node3D"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-
-[node name="CurrentScript" type="Button" parent="VBox/BottomPanel/VBox/HBox/Node3D/VBox"]
-offset_right = 134.0
-offset_bottom = 25.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-hint_tooltip = "Select a script to run.  You can run just this script, or this script and all scripts after using the run buttons."
-text = "res://test/unit/test_gut.gd"
-clip_text = true
-
-[node name="HBox" type="HBoxContainer" parent="VBox/BottomPanel/VBox/HBox/Node3D/VBox"]
-offset_top = 29.0
-offset_right = 134.0
-offset_bottom = 54.0
-size_flags_horizontal = 3
+[node name="PathDisplay" type="VBoxContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
+offset_left = 180.0
+offset_right = 385.0
+offset_bottom = 46.0
 size_flags_vertical = 3
 
-[node name="Previous" type="Button" parent="VBox/BottomPanel/VBox/HBox/Node3D/VBox/HBox"]
-offset_right = 26.0
-offset_bottom = 25.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-hint_tooltip = "Previous script in the list."
-text = "|<"
+[node name="Path" type="Label" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/PathDisplay"]
+offset_right = 205.0
+offset_bottom = 16.0
+theme_override_fonts/font = ExtResource("3_qvb8f")
+theme_override_font_sizes/font_size = 11
+text = "res://test/integration/whatever"
 
-[node name="Next" type="Button" parent="VBox/BottomPanel/VBox/HBox/Node3D/VBox/HBox"]
-offset_left = 30.0
-offset_right = 56.0
-offset_bottom = 25.0
+[node name="HBoxContainer" type="HBoxContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/PathDisplay"]
+offset_top = 20.0
+offset_right = 205.0
+offset_bottom = 36.0
+
+[node name="S3" type="CenterContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/PathDisplay/HBoxContainer"]
+custom_minimum_size = Vector2(5, 0)
+offset_right = 5.0
+offset_bottom = 16.0
+
+[node name="File" type="Label" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/PathDisplay/HBoxContainer"]
+offset_left = 9.0
+offset_right = 128.0
+offset_bottom = 16.0
+theme_override_fonts/font = ExtResource("3_qvb8f")
+theme_override_font_sizes/font_size = 11
+text = "test_this_thing.gd"
+
+[node name="Spacer1" type="CenterContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
+offset_left = 389.0
+offset_right = 624.0
+offset_bottom = 46.0
 size_flags_horizontal = 3
-size_flags_vertical = 3
-hint_tooltip = "Next script in the list.
+
+[node name="Continue" type="Button" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
+offset_left = 628.0
+offset_top = 10.0
+offset_right = 708.0
+offset_bottom = 35.0
+size_flags_vertical = 4
+text = "Continue
 "
-text = ">|"
 
-[node name="Run" type="Button" parent="VBox/BottomPanel/VBox/HBox/Node3D/VBox/HBox"]
-offset_left = 60.0
+[node name="S3" type="CenterContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
+custom_minimum_size = Vector2(5, 0)
+offset_left = 712.0
+offset_right = 717.0
+offset_bottom = 46.0
+
+[node name="BottomPad" type="CenterContainer" parent="Large/MainBox"]
+custom_minimum_size = Vector2(0, 5)
+offset_top = 383.0
+offset_right = 717.0
+offset_bottom = 388.0
+
+[node name="Min" type="Panel" parent="."]
+clip_contents = true
+offset_left = 456.0
+offset_top = 396.0
+offset_right = 719.0
+offset_bottom = 515.0
+theme = ExtResource("1_s37wl")
+metadata/_edit_group_ = true
+
+[node name="MainBox" type="VBoxContainer" parent="Min"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_layout_mode = 1
+
+[node name="TitleBar" type="Panel" parent="Min/MainBox"]
+custom_minimum_size = Vector2(0, 25)
+offset_right = 266.0
+offset_bottom = 25.0
+
+[node name="TitleBox" type="HBoxContainer" parent="Min/MainBox/TitleBar"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 2.0
+offset_bottom = 3.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_layout_mode = 1
+
+[node name="Spacer1" type="CenterContainer" parent="Min/MainBox/TitleBar/TitleBox"]
 offset_right = 77.0
-offset_bottom = 25.0
+offset_bottom = 26.0
 size_flags_horizontal = 3
-size_flags_vertical = 3
-hint_tooltip = "Run the currently selected item and all after it."
-text = ">"
 
-[node name="RunSingleScript" type="Button" parent="VBox/BottomPanel/VBox/HBox/Node3D/VBox/HBox"]
+[node name="Title" type="Label" parent="Min/MainBox/TitleBar/TitleBox"]
 offset_left = 81.0
-offset_right = 134.0
-offset_bottom = 25.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-hint_tooltip = "Run the currently selected item.
+offset_top = 3.0
+offset_right = 126.0
+offset_bottom = 23.0
+text = "Title"
 
-If the selected item has Inner Test Classes
-then they will all be run.  If the selected item
-is an Inner Test Class then only it will be run."
-text = "> (1)"
-
-[node name="CC3" type="CenterContainer" parent="VBox/BottomPanel/VBox/HBox"]
-offset_left = 336.0
-offset_right = 652.0
-offset_bottom = 54.0
+[node name="Spacer2" type="CenterContainer" parent="Min/MainBox/TitleBar/TitleBox"]
+offset_left = 130.0
+offset_right = 208.0
+offset_bottom = 26.0
 size_flags_horizontal = 3
 
-[node name="Continue" type="VBoxContainer" parent="VBox/BottomPanel/VBox/HBox"]
-self_modulate = Color(1, 1, 1, 0)
-offset_left = 656.0
-offset_right = 736.0
-offset_bottom = 54.0
-alignment = 1
+[node name="TimeLabel" type="Label" parent="Min/MainBox/TitleBar/TitleBox"]
+offset_left = 212.0
+offset_top = 3.0
+offset_right = 266.0
+offset_bottom = 23.0
+text = "0.000s"
 
-[node name="ShowExtras" type="Button" parent="VBox/BottomPanel/VBox/HBox/Continue"]
-offset_right = 17.0
-offset_bottom = 25.0
-size_flags_horizontal = 0
-hint_tooltip = "Show/hide additional options."
-toggle_mode = true
-text = "_"
-
-[node name="Continue" type="Button" parent="VBox/BottomPanel/VBox/HBox/Continue"]
+[node name="Body" type="HBoxContainer" parent="Min/MainBox"]
 offset_top = 29.0
-offset_right = 80.0
-offset_bottom = 54.0
-hint_tooltip = "When a pause_before_teardown is encountered this button will be enabled and must be pressed to continue running tests."
-disabled = true
-text = "Continue"
-
-[node name="CC4" type="CenterContainer" parent="VBox/BottomPanel/VBox/HBox"]
-offset_left = 740.0
-offset_right = 740.0
-offset_bottom = 54.0
-
-[node name="HBox2" type="HBoxContainer" parent="VBox/BottomPanel/VBox"]
-offset_top = 58.0
-offset_right = 740.0
-offset_bottom = 78.0
-
-[node name="CC" type="CenterContainer" parent="VBox/BottomPanel/VBox/HBox2"]
-offset_bottom = 20.0
-
-[node name="LogLevelSlider" type="HSlider" parent="VBox/BottomPanel/VBox/HBox2"]
-offset_left = 4.0
-offset_right = 12.0
-offset_bottom = 20.0
+offset_right = 266.0
+offset_bottom = 119.0
 size_flags_vertical = 3
-max_value = 2.0
-tick_count = 3
-ticks_on_borders = true
 
-[node name="Label" type="Label" parent="VBox/BottomPanel/VBox/HBox2/LogLevelSlider"]
-offset_left = 4.0
-offset_top = -17.0
-offset_right = 85.0
-offset_bottom = 7.0
-text = "Log Level"
+[node name="LeftMargin" type="CenterContainer" parent="Min/MainBox/Body"]
+custom_minimum_size = Vector2(5, 0)
+offset_right = 5.0
+offset_bottom = 90.0
 
-[node name="CenterContainer" type="CenterContainer" parent="VBox/BottomPanel/VBox/HBox2"]
-offset_left = 16.0
-offset_right = 16.0
-offset_bottom = 20.0
-
-[node name="CurrentScriptLabel" type="Label" parent="VBox/BottomPanel/VBox/HBox2"]
-offset_left = 20.0
-offset_right = 740.0
-offset_bottom = 20.0
+[node name="BodyRows" type="VBoxContainer" parent="Min/MainBox/Body"]
+offset_left = 9.0
+offset_right = 257.0
+offset_bottom = 90.0
 size_flags_horizontal = 3
-size_flags_vertical = 6
-text = "res://test/unit/test_something.gd"
 
-[node name="ScriptsList" type="ItemList" parent="."]
-visible = false
-anchor_bottom = 1.0
-offset_left = 179.0
-offset_top = 40.0
-offset_right = 619.0
-offset_bottom = -110.0
-allow_reselect = true
+[node name="ProgressBars" type="HBoxContainer" parent="Min/MainBox/Body/BodyRows"]
+offset_right = 248.0
+offset_bottom = 21.0
+size_flags_horizontal = 3
 
-[node name="DoubleClickTimer" type="Timer" parent="ScriptsList"]
-wait_time = 0.3
-one_shot = true
+[node name="HBoxContainer" type="HBoxContainer" parent="Min/MainBox/Body/BodyRows/ProgressBars"]
+offset_right = 122.0
+offset_bottom = 21.0
 
-[node name="ExtraOptions" type="Panel" parent="."]
-visible = false
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -212.0
-offset_top = -260.0
-offset_right = -2.0
-offset_bottom = -106.0
+[node name="Label" type="Label" parent="Min/MainBox/Body/BodyRows/ProgressBars/HBoxContainer"]
+offset_right = 18.0
+offset_bottom = 20.0
+text = "T:"
 
-[node name="IgnorePause" type="CheckBox" parent="ExtraOptions"]
-offset_left = 17.5
-offset_top = 4.5
-offset_right = 162.5
-offset_bottom = 29.5
-hint_tooltip = "Ignore all calls to pause_before_teardown."
-text = "Ignore Pauses"
+[node name="ProgressTest" type="ProgressBar" parent="Min/MainBox/Body/BodyRows/ProgressBars/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+offset_left = 22.0
+offset_right = 122.0
+offset_bottom = 21.0
+value = 25.0
 
-[node name="Copy" type="Button" parent="ExtraOptions"]
-offset_left = 15.0
-offset_top = 40.0
-offset_right = 195.0
-offset_bottom = 80.0
-hint_tooltip = "Copy all output to the clipboard."
-text = "Copy to Clipboard"
+[node name="HBoxContainer2" type="HBoxContainer" parent="Min/MainBox/Body/BodyRows/ProgressBars"]
+offset_left = 126.0
+offset_right = 248.0
+offset_bottom = 21.0
 
-[node name="UserFiles" type="Button" parent="ExtraOptions"]
-offset_left = 15.0
-offset_top = 90.0
-offset_right = 195.0
-offset_bottom = 130.0
-hint_tooltip = "Copy all output to the clipboard."
-text = "View User Files"
+[node name="Label" type="Label" parent="Min/MainBox/Body/BodyRows/ProgressBars/HBoxContainer2"]
+offset_right = 18.0
+offset_bottom = 20.0
+text = "S:"
 
-[node name="ResizeHandle" type="Control" parent="."]
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -40.0
-offset_top = -40.0
+[node name="ProgressScript" type="ProgressBar" parent="Min/MainBox/Body/BodyRows/ProgressBars/HBoxContainer2"]
+custom_minimum_size = Vector2(100, 0)
+offset_left = 22.0
+offset_right = 122.0
+offset_bottom = 21.0
+value = 75.0
 
-[connection signal="mouse_entered" from="VBox/TitleBar" to="." method="_on_TitleBar_mouse_entered"]
-[connection signal="mouse_exited" from="VBox/TitleBar" to="." method="_on_TitleBar_mouse_exited"]
-[connection signal="draw" from="VBox/TitleBar/HBox/Minimize" to="." method="_on_Minimize_draw"]
-[connection signal="pressed" from="VBox/TitleBar/HBox/Minimize" to="." method="_on_Minimize_pressed"]
-[connection signal="draw" from="VBox/TitleBar/HBox/Maximize" to="." method="_on_Maximize_draw"]
-[connection signal="pressed" from="VBox/TitleBar/HBox/Maximize" to="." method="_on_Maximize_pressed"]
-[connection signal="gui_input" from="VBox/TextDisplay/RichTextLabel" to="." method="_on_RichTextLabel_gui_input"]
-[connection signal="pressed" from="VBox/BottomPanel/VBox/HBox/Node3D/VBox/CurrentScript" to="." method="_on_CurrentScript_pressed"]
-[connection signal="pressed" from="VBox/BottomPanel/VBox/HBox/Node3D/VBox/HBox/Previous" to="." method="_on_Previous_pressed"]
-[connection signal="pressed" from="VBox/BottomPanel/VBox/HBox/Node3D/VBox/HBox/Next" to="." method="_on_Next_pressed"]
-[connection signal="pressed" from="VBox/BottomPanel/VBox/HBox/Node3D/VBox/HBox/Run" to="." method="_on_Run_pressed"]
-[connection signal="pressed" from="VBox/BottomPanel/VBox/HBox/Node3D/VBox/HBox/RunSingleScript" to="." method="_on_RunSingleScript_pressed"]
-[connection signal="draw" from="VBox/BottomPanel/VBox/HBox/Continue/ShowExtras" to="." method="_on_ShowExtras_draw"]
-[connection signal="toggled" from="VBox/BottomPanel/VBox/HBox/Continue/ShowExtras" to="." method="_on_ShowExtras_toggled"]
-[connection signal="pressed" from="VBox/BottomPanel/VBox/HBox/Continue/Continue" to="." method="_on_Continue_pressed"]
-[connection signal="value_changed" from="VBox/BottomPanel/VBox/HBox2/LogLevelSlider" to="." method="_on_LogLevelSlider_value_changed"]
-[connection signal="item_selected" from="ScriptsList" to="." method="_on_ScriptsList_item_selected"]
-[connection signal="pressed" from="ExtraOptions/IgnorePause" to="." method="_on_IgnorePause_pressed"]
-[connection signal="pressed" from="ExtraOptions/Copy" to="." method="_on_Copy_pressed"]
-[connection signal="pressed" from="ExtraOptions/UserFiles" to="." method="_on_UserFiles_pressed"]
-[connection signal="mouse_entered" from="ResizeHandle" to="." method="_on_ResizeHandle_mouse_entered"]
-[connection signal="mouse_exited" from="ResizeHandle" to="." method="_on_ResizeHandle_mouse_exited"]
+[node name="PathDisplay" type="VBoxContainer" parent="Min/MainBox/Body/BodyRows"]
+offset_top = 25.0
+offset_right = 248.0
+offset_bottom = 61.0
+size_flags_vertical = 3
+
+[node name="Path" type="Label" parent="Min/MainBox/Body/BodyRows/PathDisplay"]
+offset_right = 248.0
+offset_bottom = 16.0
+theme_override_fonts/font = ExtResource("3_qvb8f")
+theme_override_font_sizes/font_size = 11
+text = "res://test/integration/whatever"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Min/MainBox/Body/BodyRows/PathDisplay"]
+offset_top = 20.0
+offset_right = 248.0
+offset_bottom = 36.0
+
+[node name="S3" type="CenterContainer" parent="Min/MainBox/Body/BodyRows/PathDisplay/HBoxContainer"]
+custom_minimum_size = Vector2(5, 0)
+offset_right = 5.0
+offset_bottom = 16.0
+
+[node name="File" type="Label" parent="Min/MainBox/Body/BodyRows/PathDisplay/HBoxContainer"]
+offset_left = 9.0
+offset_right = 128.0
+offset_bottom = 16.0
+theme_override_fonts/font = ExtResource("3_qvb8f")
+theme_override_font_sizes/font_size = 11
+text = "test_this_thing.gd"
+
+[node name="Continue" type="Button" parent="Min/MainBox/Body/BodyRows"]
+offset_top = 65.0
+offset_right = 248.0
+offset_bottom = 90.0
+text = "Continue
+"
+
+[node name="RightMargin" type="CenterContainer" parent="Min/MainBox/Body"]
+custom_minimum_size = Vector2(5, 0)
+offset_left = 261.0
+offset_right = 266.0
+offset_bottom = 90.0

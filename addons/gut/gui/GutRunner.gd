@@ -17,7 +17,9 @@ var _wrote_results = false
 var _cmdln_mode = false
 
 @onready var _gut_layer = $GutLayer
+@onready var _gui = $GutLayer/GutScene
 
+var auto_run_tests = true
 
 func _ready():
 	if(_gut_config == null):
@@ -27,13 +29,15 @@ func _ready():
 	# The command line will call run_tests on its own.  When used from the panel
 	# we have to kick off the tests ourselves b/c there's no way I know of to
 	# interact with the scene that was run via play_custom_scene.
-	if(!_cmdln_mode):
+	if(!_cmdln_mode and auto_run_tests):
 		call_deferred('run_tests')
 
 
-func run_tests():
+func run_tests(show_gui=true):
 	if(_gut == null):
-		_gut = Gut.new()
+		get_gut()
+
+	_setup_gui(show_gui)
 
 	_gut.set_add_children_to(self)
 	if(_gut_config.options.gut_on_top):
@@ -42,19 +46,34 @@ func run_tests():
 		add_child(_gut)
 
 	if(!_cmdln_mode):
-		_gut.connect('tests_finished', _on_tests_finished.bind(
-			_gut_config.options.should_exit, _gut_config.options.should_exit_on_success))
+		_gut.end_run.connect(_on_tests_finished.bind(_gut_config.options.should_exit, _gut_config.options.should_exit_on_success))
 
 	_gut_config.config_gut(_gut)
-	if(_gut_config.options.gut_on_top):
-		_gut.get_gui().goto_bottom_right_corner()
-
 	var run_rest_of_scripts = _gut_config.options.unit_test_name == ''
 	_gut.test_scripts(run_rest_of_scripts)
 
 
+func _setup_gui(show_gui):
+	if(show_gui):
+		_gui.gut = _gut
+		var printer = _gut.get_logger().get_printer('gui')
+		printer.set_textbox(_gui.get_textbox())
+	else:
+		_gut.get_logger().disable_printer('gui', true)
+		_gui.visible = false
+
+	var opts = _gut_config.options
+	_gui.set_font_size(opts.font_size)
+	_gui.set_font(opts.font_name)
+	if(opts.font_color != null and opts.font_color.is_valid_html_color()):
+		_gui.set_default_font_color(Color(opts.font_color))
+	if(opts.background_color != null and opts.background_color.is_valid_html_color()):
+		_gui.set_background_color(Color(opts.background_color))
+
+
+
 func _write_results():
-	var content = _gut.get_logger().get_gui_bbcode()
+	var content = _gui.get_textbox().text #_gut.get_logger().get_gui_bbcode()
 
 	var f = File.new()
 	var result = f.open(RESULT_FILE, f.WRITE)
@@ -88,8 +107,10 @@ func get_gut():
 		_gut = Gut.new()
 	return _gut
 
+
 func set_gut_config(which):
 	_gut_config = which
+
 
 func set_cmdln_mode(is_it):
 	_cmdln_mode = is_it

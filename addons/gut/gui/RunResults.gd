@@ -84,7 +84,7 @@ func _ready():
 
 	if(get_parent() == get_tree().root):
 		_test_running_setup()
-		
+
 	call_deferred('_update_min_width')
 
 func _update_min_width():
@@ -154,7 +154,7 @@ func _add_test_tree_item(test_name, test_json, script_item):
 
 	item.set_text(0, test_name)
 	item.set_text(1, status)
-	item.set_text_alignment(1, TreeItem.ALIGN_RIGHT)
+	item.set_text_alignment(1, HORIZONTAL_ALIGNMENT_RIGHT)
 	item.set_custom_bg_color(1, _col_1_bg_color)
 
 	item.set_metadata(0, meta)
@@ -220,7 +220,7 @@ func _load_result_tree(j):
 			s_item.free()
 		else:
 			var total_text = str(test_keys.size(), ' passed')
-			s_item.set_text_alignment(1, HORIZONTAL_ALIGNMENT_LEFT)
+#			s_item.set_text_alignment(1, s_item.ALIGN_LEFT)
 			if(bad_count == 0):
 				s_item.collapsed = true
 			else:
@@ -232,21 +232,25 @@ func _load_result_tree(j):
 
 
 func _free_childless_scripts():
-	var children = _root.get_children() # Returns an array in 4.0
-	for i in range(0, children.size()):
-		if(children[i].get_children() == null):
-			children[i].free()
+	var items = _root.get_children()
+	for item in items:
+		var next_item = item.get_next()
+		if(item.get_children() == null):
+			item.free()
+		item = next_item
 
 
 func _find_script_item_with_path(path):
-	var item = _root.get_children()
+	var items = _root.get_children()
 	var to_return = null
 
-	while(item != null and to_return == null):
+	var idx = 0
+	while(idx < items.size() and to_return == null):
+		var item = items[idx]
 		if(item.get_metadata(0).path == path):
 			to_return = item
 		else:
-			item = item.get_next()
+			idx += 1
 
 	return to_return
 
@@ -254,7 +258,7 @@ func _find_script_item_with_path(path):
 func _get_line_number_from_assert_msg(msg):
 	var line = -1
 	if(msg.find('at line') > 0):
-		line = int(msg.split("at line")[-1].split(" ")[-1])
+		line = msg.split("at line")[-1].split(" ")[-1].to_int()
 	return line
 
 
@@ -419,7 +423,7 @@ func _on_ExpandAll_pressed():
 
 
 func _on_Hide_Passing_pressed():
-	_hide_passing = _ctrls.toolbar.hide_passing.pressed
+	_hide_passing = _ctrls.toolbar.hide_passing.button_pressed
 
 # --------------
 # Public
