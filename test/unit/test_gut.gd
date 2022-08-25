@@ -67,7 +67,6 @@ func callback_for_test_finished():
 # Returns a new gut object, all setup for testing.
 func get_a_gut():
 	var g = Gut.new()
-	g.set_yield_between_tests(false)
 	g.set_log_level(g.LOG_LEVEL_ALL_ASSERTS)
 	return g
 

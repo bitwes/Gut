@@ -44,7 +44,7 @@ func simple(v1, v2, missing_string=''):
 	var tv1 = typeof(v1)
 	var tv2 = typeof(v2)
 
-	print(tv1, '::', tv2, '   ', _strutils.types[tv1], '::', _strutils.types[tv2])
+	# print(tv1, '::', tv2, '   ', _strutils.types[tv1], '::', _strutils.types[tv2])
 	if(_should_compare_int_to_float and [TYPE_INT, TYPE_FLOAT].has(tv1) and [TYPE_INT, TYPE_FLOAT].has(tv2)):
 		result.are_equal = v1 == v2
 	elif([TYPE_STRING, TYPE_STRING_NAME].has(tv1) and [TYPE_STRING, TYPE_STRING_NAME].has(tv2)):

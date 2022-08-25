@@ -11,7 +11,8 @@ class TestSpy:
 		_spy = Spy.new()
 
 	func test_has_logger():
-		assert_has_logger(_spy)
+		pending('pending in 4.0')
+		# assert_has_logger(_spy)
 
 	func test_can_add_call_to_method_on_path():
 		_spy.add_call('nothing', 'method_name')
