@@ -550,10 +550,6 @@ func assert_has_method(obj, method, text=''):
 		disp = _str(obj) + ' ' + text
 	assert_true(obj.has_method(method), disp)
 
-# Old deprecated method name
-func assert_get_set_methods(obj, property, default, set_to):
-	_lgr.deprecated('assert_get_set_methods', 'assert_accessors')
-	assert_accessors(obj, property, default, set_to)
 
 # ------------------------------------------------------------------------------
 # Verifies the object has get and set methods for the property passed in.  The
