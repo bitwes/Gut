@@ -36,23 +36,18 @@ var _select_script = ''
 var _tests_like = ''
 var _inner_class_name = ''
 
-
 var _log_level = 1
 var log_level :
-	get:
-		return get_log_level()
-	set(val):
-		set_log_level(val)
+	get: return get_log_level()
+	set(val):set_log_level(val)
 
 # TODO
 # This appears to not be used anymore.  Going to wait for more tests to be
 # ported before removing.
 var _disable_strict_datatype_checks = false
 var disable_strict_datatype_checks = false :
-	get:
-		return _disable_strict_datatype_checks
-	set(val):
-		_disable_strict_datatype_checks = val
+	get: return _disable_strict_datatype_checks
+	set(val): _disable_strict_datatype_checks = val
 
 var _test_prefix = 'test_'
 var _file_prefix = 'test_'
@@ -62,75 +57,53 @@ var _temp_directory = 'user://gut_temp_directory'
 
 var _export_path = ''
 var export_path = '' :
-	get:
-		return _export_path
-	set(val):
-		_export_path = val
+	get: return _export_path
+	set(val): _export_path = val
 
 var _include_subdirectories = false
 var include_subdirectories:
-	get:
-		return _include_subdirectories
-	set(val):
-		_include_subdirectories = val
+	get: return _include_subdirectories
+	set(val): _include_subdirectories = val
 
 var _double_strategy = 1
 var double_strategy = 1  :
-	get:
-		return get_double_strategy()
-	set(val):
-		set_double_strategy(val)
+	get: return get_double_strategy()
+	set(val): set_double_strategy(val)
 
 var _pre_run_script = ''
 var pre_run_script = '' :
-	get:
-		return get_pre_run_script()
-	set(val):
-		set_pre_run_script(val)
+	get: return get_pre_run_script()
+	set(val): set_pre_run_script(val)
 
 var _post_run_script = ''
 var post_run_script = '' :
-	get:
-		return get_post_run_script()
-	set(val):
-		set_post_run_script(val)
+	get: return get_post_run_script()
+	set(val): set_post_run_script(val)
 
 var _color_output = false
 var color_output = false :
-	get:
-		return get_color_output()
-	set(val):
-		set_color_output(val)
+	get: return get_color_output()
+	set(val): set_color_output(val)
 
 var _junit_xml_file = ''
 var junit_xml_file = '' :
-	get:
-		return get_junit_xml_file()
-	set(val):
-		set_junit_xml_file(val)
+	get: return get_junit_xml_file()
+	set(val): set_junit_xml_file(val)
 
 var _junit_xml_timestamp = false
 var junit_xml_timestamp = false :
-	get:
-		return get_junit_xml_timestamp()
-	set(val):
-		set_junit_xml_timestamp(val)
+	get: return get_junit_xml_timestamp()
+	set(val): set_junit_xml_timestamp(val)
 
 var _add_children_to = self
 var add_children_to = self :
-	get:
-		return get_add_children_to()
-	set(val):
-		set_add_children_to(val)
-
+	get: return get_add_children_to()
+	set(val): set_add_children_to(val)
 
 var paint_after = .2:
-	get:
-		return paint_after
-	set(val):
-		paint_after = val
+	get: return paint_after
+	set(val): paint_after = val
 # -- End Settings --
-var _last_paint_time = 0.0
 
 # ###########################
 # Other Vars
@@ -142,6 +115,7 @@ const WAITING_MESSAGE = '/# waiting #/'
 const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
 const COMPLETED = 'completed'
 
+var _last_paint_time = 0.0
 var _lgr = _utils.get_logger()
 var _strutils = _utils.Strutils.new()
 # Used to prevent multiple messages for deprecated setup/teardown messages
