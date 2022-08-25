@@ -37,13 +37,7 @@ func run_tests(show_gui=true):
 	if(_gut == null):
 		get_gut()
 
-	if(show_gui):
-		_gui.gut = _gut
-		var printer = _gut.get_logger().get_printer('gui')
-		printer.set_textbox(_gui.get_textbox())
-	else:
-		_gut.get_logger().disable_printer('gui', true)
-		_gui.visible = false
+	_setup_gui(show_gui)
 
 	_gut.set_add_children_to(self)
 	if(_gut_config.options.gut_on_top):
@@ -59,8 +53,27 @@ func run_tests(show_gui=true):
 	_gut.test_scripts(run_rest_of_scripts)
 
 
+func _setup_gui(show_gui):
+	if(show_gui):
+		_gui.gut = _gut
+		var printer = _gut.get_logger().get_printer('gui')
+		printer.set_textbox(_gui.get_textbox())
+	else:
+		_gut.get_logger().disable_printer('gui', true)
+		_gui.visible = false
+
+	var opts = _gut_config.options
+	_gui.set_font_size(opts.font_size)
+	_gui.set_font(opts.font_name)
+	if(opts.font_color != null and opts.font_color.is_valid_html_color()):
+		_gui.set_default_font_color(Color(opts.font_color))
+	if(opts.background_color != null and opts.background_color.is_valid_html_color()):
+		_gui.set_background_color(Color(opts.background_color))
+
+
+
 func _write_results():
-	var content = _gut.get_logger().get_gui_bbcode()
+	var content = _gui.get_textbox().text #_gut.get_logger().get_gui_bbcode()
 
 	var f = File.new()
 	var result = f.open(RESULT_FILE, f.WRITE)

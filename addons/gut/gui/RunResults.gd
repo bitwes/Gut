@@ -220,7 +220,7 @@ func _load_result_tree(j):
 			s_item.free()
 		else:
 			var total_text = str(test_keys.size(), ' passed')
-			s_item.set_text_alignment(1, s_item.ALIGN_LEFT)
+#			s_item.set_text_alignment(1, s_item.ALIGN_LEFT)
 			if(bad_count == 0):
 				s_item.collapsed = true
 			else:
@@ -232,8 +232,8 @@ func _load_result_tree(j):
 
 
 func _free_childless_scripts():
-	var item = _root.get_children()
-	while(item != null):
+	var items = _root.get_children()
+	for item in items:
 		var next_item = item.get_next()
 		if(item.get_children() == null):
 			item.free()
@@ -241,14 +241,16 @@ func _free_childless_scripts():
 
 
 func _find_script_item_with_path(path):
-	var item = _root.get_children()
+	var items = _root.get_children()
 	var to_return = null
 
-	while(item != null and to_return == null):
+	var idx = 0
+	while(idx < items.size() and to_return == null):
+		var item = items[idx]
 		if(item.get_metadata(0).path == path):
 			to_return = item
 		else:
-			item = item.get_next()
+			idx += 1
 
 	return to_return
 
@@ -425,7 +427,7 @@ func _on_ExpandAll_pressed():
 
 
 func _on_Hide_Passing_pressed():
-	_hide_passing = _ctrls.toolbar.hide_passing.pressed
+	_hide_passing = _ctrls.toolbar.hide_passing.button_pressed
 
 # --------------
 # Public

@@ -4,7 +4,7 @@ class TestThingsOne:
 	extends GutTest
 
 	func test_1():
-		pass_test('passing test test')
+		fail_test('passing test test')
 
 	func test_2():
 		pass_test('passing test test')

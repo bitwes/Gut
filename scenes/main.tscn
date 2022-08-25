@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://cme7ha7tcw3y8"]
+[gd_scene load_steps=2 format=3 uid="uid://cme7ha7tcw3y8"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1"]
-[ext_resource type="Script" path="res://addons/gut/plugin_control.gd" id="2"]
 
 [node name="main" type="Node2D"]
 script = ExtResource("1")
@@ -19,13 +18,6 @@ offset_top = 102.0
 offset_right = 1021.0
 offset_bottom = 170.0
 text = "Export Tests"
-
-[node name="Gut" type="Control" parent="."]
-offset_left = 3.25671
-offset_top = 3.62834
-offset_right = 743.257
-offset_bottom = 253.628
-script = ExtResource("2")
 
 [connection signal="pressed" from="RunGutTestsButton" to="." method="_on_RunGutTestsButton_pressed"]
 [connection signal="pressed" from="ExportTests" to="." method="_on_ExportTests_pressed"]

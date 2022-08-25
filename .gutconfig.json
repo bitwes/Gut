@@ -5,10 +5,10 @@
     "res://test/integration/"
   ],
   "_post_run_script": "res://test/post_run_export_json.gd",
-  "__dirs": [
+  "dirs": [
     "res://new_gui_tests"
   ],
-  "dirs":[
+  "__dirs":[
     "res://tests_4_0"
   ],
   "should_maximize": false,

@@ -364,7 +364,14 @@ func set_options(options):
 		"The filename prefix for all test scripts.")
 	_add_value('suffix', options.suffix, 'Script Suffix',
 		"Script suffix, including .gd extension.  For example '_foo.gd'.")
+	_add_number('paint_after', options.paint_after, 'Paint After', 0.0, 1.0,
+		"How long GUT will wait before pausing for 1 frame to paint the screen.  0 is never.")
+	# since _add_number doesn't set step property, it will default to a step of
+	# 1 and cast values to int.  Give it a .5 step and re-set the value.
+	_cfg_ctrls.paint_after.step = .05
+	_cfg_ctrls.paint_after.value = options.paint_after
 
+	print('paint after = ', options.paint_after)
 
 func get_options(base_opts):
 	var to_return = base_opts.duplicate()
@@ -392,6 +399,7 @@ func get_options(base_opts):
 	to_return.font_color = _cfg_ctrls.font_color.color.to_html()
 	to_return.disable_colors = _cfg_ctrls.disable_colors.button_pressed
 	to_return.gut_on_top = _cfg_ctrls.gut_on_top.button_pressed
+	to_return.paint_after = _cfg_ctrls.paint_after.value
 
 
 	# Directories
