@@ -7,7 +7,7 @@ class DirectoryCtrl:
 		get:
 			return _txt_path.text
 		set(val):
-			_txt_path.text = text
+			_txt_path.text = val
 
 	var _txt_path = LineEdit.new()
 	var _btn_dir = Button.new()
