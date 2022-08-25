@@ -89,10 +89,11 @@ class TestMiscTests:
 		assert_pass(gr.test)
 
 	func test_get_set_logger():
-		assert_ne(gr.test.get_logger(), null)
-		var dlog = double(Logger).new()
-		gr.test.set_logger(dlog)
-		assert_eq(gr.test.get_logger(), dlog)
+		pending('pending in 4.0')
+		# assert_ne(gr.test.get_logger(), null)
+		# var dlog = double(Logger).new()
+		# gr.test.set_logger(dlog)
+		# assert_eq(gr.test.get_logger(), dlog)
 
 	func test_not_freeing_children_generates_warning():
 		pass
@@ -659,123 +660,121 @@ class TestAssertHasMethod:
 class TestGetSetAsserts:
 	extends BaseTestClass
 
-	func test_pending_class():
-		pending("This is pending in 4.0")
+	var skip_script = 'Not ready for 4.0'
 
-# 	class NoGetNoSet:
-# 		var _thing = 'nothing'
+	class NoGetNoSet:
+		var _thing = 'nothing'
 
-# 	class HasGetNotSet:
-# 		func get_thing():
-# 			pass
+	class HasGetNotSet:
+		func get_thing():
+			pass
 
-# 	class HasGetAndSetThatDontWork:
-# 		func get_thing():
-# 			pass
-# 		func set_thing(new_thing):
-# 			pass
+	class HasGetAndSetThatDontWork:
+		func get_thing():
+			pass
+		func set_thing(new_thing):
+			pass
 
-# 	class HasGetSetThatWorks:
-# 		var _thing = 'something'
+	class HasGetSetThatWorks:
+		var _thing = 'something'
 
-# 		func get_thing():
-# 			return _thing
-# 		func set_thing(new_thing):
-# 			_thing = new_thing
+		func get_thing():
+			return _thing
+		func set_thing(new_thing):
+			_thing = new_thing
 
-# 	class HasIsGetter:
-# 		var _flagged = true
-# 		func is_flagged():
-# 			return _flagged
-# 		func set_flagged(isit):
-# 			_flagged = isit
+	class HasIsGetter:
+		var _flagged = true
+		func is_flagged():
+			return _flagged
+		func set_flagged(isit):
+			_flagged = isit
 
-# 	func test_fail_if_get_set_not_defined():
-# 		var obj = NoGetNoSet.new()
-# 		gr.test.assert_accessors(obj, 'thing', 'something', 'another thing')
-# 		assert_fail(gr.test, 2)
+	func test_fail_if_get_set_not_defined():
+		var obj = NoGetNoSet.new()
+		gr.test.assert_accessors(obj, 'thing', 'something', 'another thing')
+		assert_fail(gr.test, 2)
 
-# 	func test_fail_if_has_get_and_not_set():
-# 		var obj = HasGetNotSet.new()
-# 		gr.test.assert_accessors(obj, 'thing', 'something', 'another thing')
-# 		assert_fail_pass(gr.test, 1, 1)
+	func test_fail_if_has_get_and_not_set():
+		var obj = HasGetNotSet.new()
+		gr.test.assert_accessors(obj, 'thing', 'something', 'another thing')
+		assert_fail_pass(gr.test, 1, 1)
 
-# 	func test_fail_if_default_wrong_and_get_dont_work():
-# 		var obj = HasGetAndSetThatDontWork.new()
-# 		gr.test.assert_accessors(obj, 'thing', 'something', 'another thing')
-# 		assert_fail_pass(gr.test, 2, 2)
+	func test_fail_if_default_wrong_and_get_dont_work():
+		var obj = HasGetAndSetThatDontWork.new()
+		gr.test.assert_accessors(obj, 'thing', 'something', 'another thing')
+		assert_fail_pass(gr.test, 2, 2)
 
-# 	func test_fail_if_default_wrong():
-# 		var obj = HasGetSetThatWorks.new()
-# 		gr.test.assert_accessors(obj, 'thing', 'not the right default', 'another thing')
-# 		assert_fail_pass(gr.test, 1, 3)
+	func test_fail_if_default_wrong():
+		var obj = HasGetSetThatWorks.new()
+		gr.test.assert_accessors(obj, 'thing', 'not the right default', 'another thing')
+		assert_fail_pass(gr.test, 1, 3)
 
-# 	func test_pass_if_all_get_sets_are_aligned():
-# 		var obj = HasGetSetThatWorks.new()
-# 		gr.test.assert_accessors(obj, 'thing', 'something', 'another thing')
-# 		assert_pass(gr.test, 4)
+	func test_pass_if_all_get_sets_are_aligned():
+		var obj = HasGetSetThatWorks.new()
+		gr.test.assert_accessors(obj, 'thing', 'something', 'another thing')
+		assert_pass(gr.test, 4)
 
-# 	func test_finds_getters_that_start_with_is():
-# 		var obj = HasIsGetter.new()
-# 		gr.test.assert_accessors(obj, 'flagged', true, false)
-# 		assert_pass(gr.test, 4)
+	func test_finds_getters_that_start_with_is():
+		var obj = HasIsGetter.new()
+		gr.test.assert_accessors(obj, 'flagged', true, false)
+		assert_pass(gr.test, 4)
 
 
 # ------------------------------------------------------------------------------
 class TestAssertExports:
 	extends BaseTestClass
 
-	func test_pending_class():
-		pending("This is pending in 4.0")
+	var skip_script = 'Not ready for 4.0'
 
-# 	class NoProperty:
-# 		func _unused():
-# 			pass
+	class NoProperty:
+		func _unused():
+			pass
 
-# 	class NotEditorProperty:
-# 		var some_property = 1
+	class NotEditorProperty:
+		var some_property = 1
 
-# 	class HasCorrectEditorPropertyAndExplicitType:
-# 		@export var int_property: int
+	class HasCorrectEditorPropertyAndExplicitType:
+		@export var int_property: int
 
-# 	class HasCorrectEditorPropertyAndImplicitType:
-# 		@export var vec2_property = Vector2(0.0, 0.0)
+	class HasCorrectEditorPropertyAndImplicitType:
+		@export var vec2_property = Vector2(0.0, 0.0)
 
-# 	class HasCorrectEditorPropertyNotType:
-# 		@export var bool_property: bool
+	class HasCorrectEditorPropertyNotType:
+		@export var bool_property: bool
 
-# 	class HasObjectDerivedPropertyType:
-# 		@export var scene_property: PackedScene
+	class HasObjectDerivedPropertyType:
+		@export var scene_property: PackedScene
 
-# 	func test_fail_if_property_not_found():
-# 		var obj = NoProperty.new()
-# 		gr.test.assert_exports(obj, "some_property", TYPE_BOOL)
-# 		assert_fail(gr.test)
+	func test_fail_if_property_not_found():
+		var obj = NoProperty.new()
+		gr.test.assert_exports(obj, "some_property", TYPE_BOOL)
+		assert_fail(gr.test)
 
-# 	func test_fail_if_not_editor_property():
-# 		var obj = NotEditorProperty.new()
-# 		gr.test.assert_exports(obj, "some_property", TYPE_INT)
-# 		assert_fail(gr.test)
+	func test_fail_if_not_editor_property():
+		var obj = NotEditorProperty.new()
+		gr.test.assert_exports(obj, "some_property", TYPE_INT)
+		assert_fail(gr.test)
 
-# 	func test_pass_if_editor_property_present_with_correct_explicit_type():
-# 		var obj = HasCorrectEditorPropertyAndExplicitType.new()
-# 		gr.test.assert_exports(obj, "int_property", TYPE_INT)
-# 		assert_pass(gr.test)
+	func test_pass_if_editor_property_present_with_correct_explicit_type():
+		var obj = HasCorrectEditorPropertyAndExplicitType.new()
+		gr.test.assert_exports(obj, "int_property", TYPE_INT)
+		assert_pass(gr.test)
 
-# 	func test_pass_if_editor_property_present_with_correct_implicit_type():
-# 		var obj = HasCorrectEditorPropertyAndImplicitType.new()
-# 		gr.test.assert_exports(obj, "vec2_property", TYPE_VECTOR2)
-# 		assert_pass(gr.test)
+	func test_pass_if_editor_property_present_with_correct_implicit_type():
+		var obj = HasCorrectEditorPropertyAndImplicitType.new()
+		gr.test.assert_exports(obj, "vec2_property", TYPE_VECTOR2)
+		assert_pass(gr.test)
 
-# 	func test_fail_if_editor_property_present_with_incorrect_type():
-# 		var obj = HasCorrectEditorPropertyNotType.new()
-# 		gr.test.assert_exports(obj, "bool_property", TYPE_FLOAT)
-# 		assert_fail(gr.test)
+	func test_fail_if_editor_property_present_with_incorrect_type():
+		var obj = HasCorrectEditorPropertyNotType.new()
+		gr.test.assert_exports(obj, "bool_property", TYPE_FLOAT)
+		assert_fail(gr.test)
 
-# 	func test__object_derived_type__exported_as_object_type():
-# 		var obj = HasObjectDerivedPropertyType.new()
-# 		gr.test.assert_exports(obj, "scene_property", TYPE_OBJECT)
-# 		assert_pass(gr.test)
+	func test__object_derived_type__exported_as_object_type():
+		var obj = HasObjectDerivedPropertyType.new()
+		gr.test.assert_exports(obj, "scene_property", TYPE_OBJECT)
+		assert_pass(gr.test)
 
 
 # ------------------------------------------------------------------------------
@@ -900,6 +899,8 @@ class TestSignalAsserts:
 				{'name':'letters', 'type':TYPE_STRING}
 			])
 			add_user_signal(SIGNALS.SOME_SIGNAL)
+
+	var skip_script = 'Not ready for 4.0'
 
 	func before_each():
 		super.before_each()
@@ -1084,75 +1085,74 @@ class TestSignalAsserts:
 class TestExtendAsserts:
 	extends BaseTestClass
 
-	func test_pending_class():
-		pending("This is pending in 4.0...these crash HARD")
+	var skip_script = 'Not ready for 4.0'
 
-	# class BaseClass:
-	# 	extends Node2D
+	class BaseClass:
+		extends Node2D
 
-	# class ExtendsBaseClass:
-	# 	extends BaseClass
+	class ExtendsBaseClass:
+		extends BaseClass
 
-	# class HasSubclass1:
-	# 	class SubClass:
-	# 		var a = 1
+	class HasSubclass1:
+		class SubClass:
+			var a = 1
 
-	# class HasSubclass2:
-	# 	class SubClass:
-	# 		var a = 2
+	class HasSubclass2:
+		class SubClass:
+			var a = 2
 
-	# func test_passes_when_class_extends_parent():
-	# 	var node2d = Node2D.new()
-	# 	gr.test.assert_is(node2d, Node2D)
-	# 	assert_pass(gr.test)
+	func test_passes_when_class_extends_parent():
+		var node2d = Node2D.new()
+		gr.test.assert_is(node2d, Node2D)
+		assert_pass(gr.test)
 
-	# func test_fails_when_class_does_not_extend_parent():
-	# 	var lbl = Label.new()
-	# 	gr.test.assert_is(lbl, TextEdit)
-	# 	assert_fail(gr.test)
+	func test_fails_when_class_does_not_extend_parent():
+		var lbl = Label.new()
+		gr.test.assert_is(lbl, TextEdit)
+		assert_fail(gr.test)
 
-	# func test_fails_with_primitves_and_classes():
-	# 	gr.test.assert_is([], Node2D)
-	# 	assert_fail(gr.test)
+	func test_fails_with_primitves_and_classes():
+		gr.test.assert_is([], Node2D)
+		assert_fail(gr.test)
 
-	# func test_fails_when_compareing_object_to_primitives():
-	# 	gr.test.assert_is(Node2D.new(), [])
-	# 	gr.test.assert_is(TextEdit.new(), {})
-	# 	assert_fail(gr.test, 2)
+	func test_fails_when_compareing_object_to_primitives():
+		gr.test.assert_is(Node2D.new(), [])
+		gr.test.assert_is(TextEdit.new(), {})
+		assert_fail(gr.test, 2)
 
-	# func test_fails_with_another_instance():
-	# 	var node1 = Node2D.new()
-	# 	var node2 = Node2D.new()
-	# 	gr.test.assert_is(node1, node2)
-	# 	assert_fail(gr.test)
+	func test_fails_with_another_instance():
+		var node1 = Node2D.new()
+		var node2 = Node2D.new()
+		gr.test.assert_is(node1, node2)
+		assert_fail(gr.test)
 
-	# func test_passes_with_deeper_inheritance():
-	# 	var eb = ExtendsBaseClass.new()
-	# 	gr.test.assert_is(eb, Node2D)
-	# 	assert_pass(gr.test)
+	func test_passes_with_deeper_inheritance():
+		var eb = ExtendsBaseClass.new()
+		gr.test.assert_is(eb, Node2D)
+		assert_pass(gr.test)
 
-	# func test_fails_when_class_names_match_but_inheritance_does_not():
-	# 	var a = HasSubclass1.SubClass.new()
-	# 	var b = HasSubclass2.SubClass.new()
-	# 	gr.test.assert_is(a, b)
-	# 	assert_fail(gr.test)
+	func test_fails_when_class_names_match_but_inheritance_does_not():
+		var a = HasSubclass1.SubClass.new()
+		var b = HasSubclass2.SubClass.new()
+		gr.test.assert_is(a, b)
+		assert_fail(gr.test)
 
-	# func test_fails_when_class_names_match_but_inheritance_does_not__with_class():
-	# 	var a = HasSubclass1.SubClass.new()
-	# 	gr.test.assert_is(a, HasSubclass2.SubClass)
-	# 	# created bug https://github.com/godotengine/godot/issues/27111 for 3.1
-	# 	# TODO remove_at comment after awhile, this appears fixed in 3.2
-	# 	assert_fail(gr.test, 1, 'Fails in 3.1, bug has been created.')
+	func test_fails_when_class_names_match_but_inheritance_does_not__with_class():
+		var a = HasSubclass1.SubClass.new()
+		gr.test.assert_is(a, HasSubclass2.SubClass)
+		# created bug https://github.com/godotengine/godot/issues/27111 for 3.1
+		# TODO remove_at comment after awhile, this appears fixed in 3.2
+		assert_fail(gr.test, 1, 'Fails in 3.1, bug has been created.')
 
-	# func test_assrt_is_does_not_free_references():
-	# 	var ref = RefCounted.new()
-	# 	gr.test.assert_is(ref, RefCounted)
-	# 	assert_pass(gr.test)
+	func test_assrt_is_does_not_free_references():
+		var ref = RefCounted.new()
+		gr.test.assert_is(ref, RefCounted)
+		assert_pass(gr.test)
 
-	# func test_works_with_resources():
-	# 	var res = Resource.new()
-	# 	gr.test.assert_is(res, Resource)
-	# 	assert_pass(gr.test)
+	func test_works_with_resources():
+		var res = Resource.new()
+		gr.test.assert_is(res, Resource)
+		assert_pass(gr.test)
 
 
 # ------------------------------------------------------------------------------
@@ -1275,6 +1275,8 @@ class TestStringEndsWith:
 class TestAssertCalled:
 	extends BaseTestClass
 
+	var skip_script = 'Not ready for 4.0'
+
 	func test_assert_called_fails_with_message_if_non_doubled_passed():
 		var obj = GDScript.new()
 		gr.test_with_gut.gut.get_spy().add_call(obj, 'method')
@@ -1318,6 +1320,8 @@ class TestAssertCalled:
 class TestAssertNotCalled:
 	extends BaseTestClass
 
+	var skip_script = 'Not ready for 4.0'
+
 	func test_passes_when_no_calls_have_been_made():
 		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
 		gr.test_with_gut.assert_not_called(doubled, 'get_value')
@@ -1355,6 +1359,8 @@ class TestAssertNotCalled:
 # ------------------------------------------------------------------------------
 class TestAssertCallCount:
 	extends BaseTestClass
+
+	var skip_script = 'Not ready for 4.0'
 
 	func test_passes_when_nothing_called_and_expected_count_zero():
 		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
@@ -1404,6 +1410,8 @@ class TestAssertCallCount:
 class TestGetCallParameters:
 	extends BaseTestClass
 
+	var skip_script = 'Not ready for 4.0'
+
 	func test_it_works():
 		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
 		doubled.set_value(5)
@@ -1420,6 +1428,8 @@ class TestGetCallParameters:
 # ------------------------------------------------------------------------------
 class TestGetCallCount:
 	extends BaseTestClass
+
+	var skip_script = 'Not ready for 4.0'
 
 	func test_it_works():
 		var doubled = gr.test_with_gut.partial_double(DOUBLE_ME_PATH).new()
@@ -1595,70 +1605,69 @@ class TestAssertIsFreed:
 class TestConnectionAsserts:
 	extends BaseTestClass
 
-	func test_pending_class():
-		pending("This is pending in 4.0")
+	var skip_script = 'Not ready for 4.0'
 
-# 	const SIGNAL_NAME = 'test_signal'
-# 	const METHOD_NAME = 'test_signal_connector'
+	const SIGNAL_NAME = 'test_signal'
+	const METHOD_NAME = 'test_signal_connector'
 
-# 	class Signaler:
-# 		signal test_signal
+	class Signaler:
+		signal test_signal
 
-# 	class ConnectTo:
-# 		func test_signal_connector():
-# 			pass
+	class ConnectTo:
+		func test_signal_connector():
+			pass
 
-# 	func test_when_target_connected_to_source_connected_passes_with_method_name():
-# 		var s = Signaler.new()
-# 		var c = ConnectTo.new()
-# 		s.connect(SIGNAL_NAME,Callable(c,METHOD_NAME))
-# 		gr.test.assert_connected(s, c, SIGNAL_NAME, METHOD_NAME)
-# 		assert_pass(gr.test)
+	func test_when_target_connected_to_source_connected_passes_with_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		s.connect(SIGNAL_NAME,Callable(c,METHOD_NAME))
+		gr.test.assert_connected(s, c, SIGNAL_NAME, METHOD_NAME)
+		assert_pass(gr.test)
 
-# 	func test_when_target_connected_to_source_connected_passes_without_method_name():
-# 		var s = Signaler.new()
-# 		var c = ConnectTo.new()
-# 		s.connect(SIGNAL_NAME,Callable(c,METHOD_NAME))
-# 		gr.test.assert_connected(s, c, SIGNAL_NAME)
-# 		assert_pass(gr.test)
+	func test_when_target_connected_to_source_connected_passes_without_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		s.connect(SIGNAL_NAME,Callable(c,METHOD_NAME))
+		gr.test.assert_connected(s, c, SIGNAL_NAME)
+		assert_pass(gr.test)
 
-# 	func test_when_target_not_connected_to_source_connected_fails_with_method_name():
-# 		var s = Signaler.new()
-# 		var c = ConnectTo.new()
-# 		gr.test.assert_connected(s, c, SIGNAL_NAME, METHOD_NAME)
-# 		assert_fail(gr.test)
+	func test_when_target_not_connected_to_source_connected_fails_with_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		gr.test.assert_connected(s, c, SIGNAL_NAME, METHOD_NAME)
+		assert_fail(gr.test)
 
-# 	func test_when_target_not_connected_to_source_connected_fails_without_method_name():
-# 		var s = Signaler.new()
-# 		var c = ConnectTo.new()
-# 		gr.test.assert_connected(s, c, SIGNAL_NAME)
-# 		assert_fail(gr.test)
+	func test_when_target_not_connected_to_source_connected_fails_without_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		gr.test.assert_connected(s, c, SIGNAL_NAME)
+		assert_fail(gr.test)
 
-# 	func test_when_target_connected_to_source_not_connected_fails_with_method_name():
-# 		var s = Signaler.new()
-# 		var c = ConnectTo.new()
-# 		s.connect(SIGNAL_NAME,Callable(c,METHOD_NAME))
-# 		gr.test.assert_not_connected(s, c, SIGNAL_NAME, METHOD_NAME)
-# 		assert_fail(gr.test)
+	func test_when_target_connected_to_source_not_connected_fails_with_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		s.connect(SIGNAL_NAME,Callable(c,METHOD_NAME))
+		gr.test.assert_not_connected(s, c, SIGNAL_NAME, METHOD_NAME)
+		assert_fail(gr.test)
 
-# 	func test_when_target_connected_to_source_not_connected_fails_without_method_name():
-# 		var s = Signaler.new()
-# 		var c = ConnectTo.new()
-# 		s.connect(SIGNAL_NAME,Callable(c,METHOD_NAME))
-# 		gr.test.assert_not_connected(s, c, SIGNAL_NAME)
-# 		assert_fail(gr.test)
+	func test_when_target_connected_to_source_not_connected_fails_without_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		s.connect(SIGNAL_NAME,Callable(c,METHOD_NAME))
+		gr.test.assert_not_connected(s, c, SIGNAL_NAME)
+		assert_fail(gr.test)
 
-# 	func test_when_target_not_connected_to_source_not_connected_passes_with_method_name():
-# 		var s = Signaler.new()
-# 		var c = ConnectTo.new()
-# 		gr.test.assert_not_connected(s, c, SIGNAL_NAME, METHOD_NAME)
-# 		assert_pass(gr.test)
+	func test_when_target_not_connected_to_source_not_connected_passes_with_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		gr.test.assert_not_connected(s, c, SIGNAL_NAME, METHOD_NAME)
+		assert_pass(gr.test)
 
-# 	func test_when_target_not_connected_to_source_not_connected_passes_without_method_name():
-# 		var s = Signaler.new()
-# 		var c = ConnectTo.new()
-# 		gr.test.assert_not_connected(s, c, SIGNAL_NAME)
-# 		assert_pass(gr.test)
+	func test_when_target_not_connected_to_source_not_connected_passes_without_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		gr.test.assert_not_connected(s, c, SIGNAL_NAME)
+		assert_pass(gr.test)
 
 
 # ------------------------------------------------------------------------------
@@ -1695,55 +1704,54 @@ class TestParameterizedTests:
 class TestMemoryMgmt:
 	extends 'res://addons/gut/test.gd'
 
-	func test_pending_class():
-		pending("This is pending in 4.0")
+	var skip_script = 'Not ready for 4.0'
 
-	# func test_passes_when_no_orphans_introduced():
-	# 	assert_no_new_orphans()
-	# 	assert_true(gut._current_test.passed, 'test should be passing')
+	func test_passes_when_no_orphans_introduced():
+		assert_no_new_orphans()
+		assert_true(gut._current_test.passed, 'test should be passing')
 
-	# func test_failing_orphan_assert_marks_test_as_failing():
-	# 	var n2d = Node2D.new()
-	# 	assert_no_new_orphans('this should fail')
-	# 	assert_true(is_failing(), 'test should be failing')
-	# 	n2d.free()
+	func test_failing_orphan_assert_marks_test_as_failing():
+		var n2d = Node2D.new()
+		assert_no_new_orphans('this should fail')
+		assert_true(is_failing(), 'test should be failing')
+		n2d.free()
 
-	# func test_passes_when_orphans_released():
-	# 	var n2d = Node2D.new()
-	# 	n2d.free()
-	# 	assert_no_new_orphans()
-	# 	assert_true(gut._current_test.passed, 'this should be passing')
+	func test_passes_when_orphans_released():
+		var n2d = Node2D.new()
+		n2d.free()
+		assert_no_new_orphans()
+		assert_true(gut._current_test.passed, 'this should be passing')
 
-	# func test_passes_with_queue_free():
-	# 	var n2d = Node2D.new()
-	# 	n2d.queue_free()
-	# 	await yield_for(.5, 'must yield for queue_free to take hold').YIELD
-	# 	assert_no_new_orphans()
-	# 	assert_true(gut._current_test.passed, 'this should be passing')
+	func test_passes_with_queue_free():
+		var n2d = Node2D.new()
+		n2d.queue_free()
+		await yield_for(.5, 'must yield for queue_free to take hold').YIELD
+		assert_no_new_orphans()
+		assert_true(gut._current_test.passed, 'this should be passing')
 
-	# func test_autofree_children():
-	# 	var n = Node.new()
-	# 	add_child_autofree(n)
-	# 	assert_eq(n.get_parent(), self, 'added as child')
-	# 	gut.get_autofree().free_all()
-	# 	assert_freed(n, 'node')
-	# 	assert_no_new_orphans()
+	func test_autofree_children():
+		var n = Node.new()
+		add_child_autofree(n)
+		assert_eq(n.get_parent(), self, 'added as child')
+		gut.get_autofree().free_all()
+		assert_freed(n, 'node')
+		assert_no_new_orphans()
 
-	# func test_autoqfree_children():
-	# 	var n = Node.new()
-	# 	add_child_autoqfree(n)
-	# 	assert_eq(n.get_parent(), self, 'added as child')
-	# 	gut.get_autofree().free_all()
-	# 	assert_not_freed(n, 'node') # should not be freed until yield
-	# 	await yield_for(.5).YIELD
-	# 	assert_freed(n, 'node')
-	# 	assert_no_new_orphans()
+	func test_autoqfree_children():
+		var n = Node.new()
+		add_child_autoqfree(n)
+		assert_eq(n.get_parent(), self, 'added as child')
+		gut.get_autofree().free_all()
+		assert_not_freed(n, 'node') # should not be freed until yield
+		await yield_for(.5).YIELD
+		assert_freed(n, 'node')
+		assert_no_new_orphans()
 
-	# func test_children_warning():
-	# 	var TestClass = load('res://addons/gut/test.gd')
-	# 	for i in range(3):
-	# 		var extra_test = TestClass.new()
-	# 		add_child(extra_test)
+	func test_children_warning():
+		var TestClass = load('res://addons/gut/test.gd')
+		for i in range(3):
+			var extra_test = TestClass.new()
+			add_child(extra_test)
 
 
 # ------------------------------------------------------------------------------
@@ -1836,259 +1844,254 @@ class TestPassFailTestMethods:
 class TestCompareDeepShallow:
 	extends BaseTestClass
 
-	func test_pending_class():
-		pending("This is pending in 4.0")
+	var skip_script = 'Not ready for 4.0'
 
-# 	func test_compare_shallow_uses_compare():
-# 		var d_compare = double(_utils.Comparator).new()
-# 		gr.test._compare = d_compare
-# 		var result = gr.test.compare_shallow([], [])
-# 		assert_called(d_compare, 'shallow')
+	func test_compare_shallow_uses_compare():
+		var d_compare = double(_utils.Comparator).new()
+		gr.test._compare = d_compare
+		var result = gr.test.compare_shallow([], [])
+		assert_called(d_compare, 'shallow')
 
-# 	func test_compare_shallow_sets_max_differences():
-# 		var result = gr.test.compare_shallow([], [], 10)
-# 		assert_eq(result.max_differences, 10)
+	func test_compare_shallow_sets_max_differences():
+		var result = gr.test.compare_shallow([], [], 10)
+		assert_eq(result.max_differences, 10)
 
-# 	func test_compare_deep_uses_compare():
-# 		var d_compare = double(_utils.Comparator).new()
-# 		gr.test._compare = d_compare
-# 		var result = gr.test.compare_deep([], [])
-# 		assert_called(d_compare, 'deep')
+	func test_compare_deep_uses_compare():
+		var d_compare = double(_utils.Comparator).new()
+		gr.test._compare = d_compare
+		var result = gr.test.compare_deep([], [])
+		assert_called(d_compare, 'deep')
 
-# 	func test_compare_deep_sets_max_differences():
-# 		var result = gr.test.compare_deep([], [], 10)
-# 		assert_eq(result.max_differences, 10)
+	func test_compare_deep_sets_max_differences():
+		var result = gr.test.compare_deep([], [], 10)
+		assert_eq(result.max_differences, 10)
 
-# 	func test_assert_eq_deep_pass_with_same():
-# 		gr.test.assert_eq_deep({'a':1}, {'a':1})
-# 		assert_pass(gr.test)
+	func test_assert_eq_deep_pass_with_same():
+		gr.test.assert_eq_deep({'a':1}, {'a':1})
+		assert_pass(gr.test)
 
-# 	func test_assert_eq_deep_fails_with_different():
-# 		gr.test.assert_eq_deep({'a':12}, {'a':1})
-# 		assert_fail(gr.test)
+	func test_assert_eq_deep_fails_with_different():
+		gr.test.assert_eq_deep({'a':12}, {'a':1})
+		assert_fail(gr.test)
 
-# 	func test_assert_ne_deep_passes_with_different():
-# 		gr.test.assert_ne_deep({'a':12}, {'a':1})
-# 		assert_pass(gr.test)
+	func test_assert_ne_deep_passes_with_different():
+		gr.test.assert_ne_deep({'a':12}, {'a':1})
+		assert_pass(gr.test)
 
-# 	func test_assert_ne_deep_fails_with_same():
-# 		gr.test.assert_ne_deep({'a':1}, {'a':1})
-# 		assert_fail(gr.test)
+	func test_assert_ne_deep_fails_with_same():
+		gr.test.assert_ne_deep({'a':1}, {'a':1})
+		assert_fail(gr.test)
 
-# 	func test_assert_eq_shallow_pass_with_same():
-# 		gr.test.assert_eq_shallow({'a':1}, {'a':1})
-# 		assert_pass(gr.test)
+	func test_assert_eq_shallow_pass_with_same():
+		gr.test.assert_eq_shallow({'a':1}, {'a':1})
+		assert_pass(gr.test)
 
-# 	func test_assert_eq_shallow_fails_with_different():
-# 		gr.test.assert_eq_shallow({'a':12}, {'a':1})
-# 		assert_fail(gr.test)
+	func test_assert_eq_shallow_fails_with_different():
+		gr.test.assert_eq_shallow({'a':12}, {'a':1})
+		assert_fail(gr.test)
 
-# 	func test_assert_ne_shallow_passes_with_different():
-# 		gr.test.assert_ne_shallow({'a':12}, {'a':1})
-# 		assert_pass(gr.test)
+	func test_assert_ne_shallow_passes_with_different():
+		gr.test.assert_ne_shallow({'a':12}, {'a':1})
+		assert_pass(gr.test)
 
-# 	func test_assert_ne_shallow_fails_with_same():
-# 		gr.test.assert_ne_shallow({'a':1}, {'a':1})
-# 		assert_fail(gr.test)
+	func test_assert_ne_shallow_fails_with_same():
+		gr.test.assert_ne_shallow({'a':1}, {'a':1})
+		assert_fail(gr.test)
 
 
 # ------------------------------------------------------------------------------
 class TestAssertSetgetCalled:
 	extends BaseTestClass
 
-	func test_pending_class():
-		pending("This is pending in 4.0")
+	var skip_script = 'Not ready for 4.0'
 
-# 	const TestNode = preload("res://test/resources/test_assert_setget_test_objects/test_node.gd")
-# 	const TestScene = preload("res://test/resources/test_assert_setget_test_objects/TestScene.tscn")
+	const TestNode = preload("res://test/resources/test_assert_setget_test_objects/test_node.gd")
+	const TestScene = preload("res://test/resources/test_assert_setget_test_objects/TestScene.tscn")
 
-# 	var bad_input = [
-# 		# Passing instantiate instead of classe
-# 		[TestNode.new(), "has_both", "set_has_both", "get_has_both"],
-# 		# passing int instead of instantiate
-# 		[5, "has_both", "set_has_both", "get_has_both"],
-# 		# missing prop with existing setter/gettter
-# 		[TestNode, "wrong_field_name", "set_both", "get_has_both"],
-# 		# wrong setter
-# 		[TestNode, "has_both", "wrong_setter_name", "get_has_both"],
-# 		# wrong getter
-# 		[TestNode, "has_both", "set_has_both", "wrong_getter_name"],
-# 		# not passing setter/getter names
-# 		[TestNode, "has_both", "", ""],
-# 		# passing ints instead of strings
-# 		[TestNode, "has_both", 1, 1],
-# 		# passing nullsfor setter/getter names
-# 		[TestNode, "has_both", null, null],
-# 	]
-# 	func test_fails_with_bad_input_params(params=use_parameters(bad_input)):
-# 		var old_failed_count = gr.test_with_gut.get_fail_count() # issue parameterized tests
-# 		gr.test_with_gut._assert_setget_called(params[0],params[1], params[2], params[3])
-# 		assert_fail(gr.test_with_gut, old_failed_count + 1)
-# 		if params[0] is TestNode:
-# 			params[0].free()
-
-
-# 	func test_fails_with_no_setter_and_getter_names():
-# 		gr.test_with_gut._assert_setget_called(TestNode, "has_both")
-# 		assert_fail(gr.test_with_gut)
+	var bad_input = [
+		# Passing instantiate instead of classe
+		[TestNode.new(), "has_both", "set_has_both", "get_has_both"],
+		# passing int instead of instantiate
+		[5, "has_both", "set_has_both", "get_has_both"],
+		# missing prop with existing setter/gettter
+		[TestNode, "wrong_field_name", "set_both", "get_has_both"],
+		# wrong setter
+		[TestNode, "has_both", "wrong_setter_name", "get_has_both"],
+		# wrong getter
+		[TestNode, "has_both", "set_has_both", "wrong_getter_name"],
+		# not passing setter/getter names
+		[TestNode, "has_both", "", ""],
+		# passing ints instead of strings
+		[TestNode, "has_both", 1, 1],
+		# passing nullsfor setter/getter names
+		[TestNode, "has_both", null, null],
+	]
+	func test_fails_with_bad_input_params(params=use_parameters(bad_input)):
+		var old_failed_count = gr.test_with_gut.get_fail_count() # issue parameterized tests
+		gr.test_with_gut._assert_setget_called(params[0],params[1], params[2], params[3])
+		assert_fail(gr.test_with_gut, old_failed_count + 1)
+		if params[0] is TestNode:
+			params[0].free()
 
 
-# 	func test_fails_if_given_setter_is_not_called():
-# 		gr.test_with_gut._assert_setget_called(TestNode, "has_both_dnu_setget", "set_has_both_dnu_setget")
-# 		assert_fail(gr.test_with_gut)
+	func test_fails_with_no_setter_and_getter_names():
+		gr.test_with_gut._assert_setget_called(TestNode, "has_both")
+		assert_fail(gr.test_with_gut)
 
 
-# 	func test_fails_if_given_getter_is_not_called():
-# 		gr.test_with_gut._assert_setget_called(TestNode, "has_both_dnu_setget", "", "get_has_both_dnu_setget")
-# 		assert_fail(gr.test_with_gut)
+	func test_fails_if_given_setter_is_not_called():
+		gr.test_with_gut._assert_setget_called(TestNode, "has_both_dnu_setget", "set_has_both_dnu_setget")
+		assert_fail(gr.test_with_gut)
 
 
-# 	func test_passes_if_given_type_is_packed_scene():
-# 		gr.test_with_gut._assert_setget_called(TestScene, "node_with_setter_getter", "set_node_with_setter_getter", "get_node_with_setter_getter")
-# 		assert_pass(gr.test_with_gut)
+	func test_fails_if_given_getter_is_not_called():
+		gr.test_with_gut._assert_setget_called(TestNode, "has_both_dnu_setget", "", "get_has_both_dnu_setget")
+		assert_fail(gr.test_with_gut)
 
 
-# 	func test_passes_if_given_setter_and_getter_is_called():
-# 		gr.test_with_gut._assert_setget_called(TestNode, "has_both", "set_has_both", "get_has_both")
-# 		assert_pass(gr.test_with_gut)
+	func test_passes_if_given_type_is_packed_scene():
+		gr.test_with_gut._assert_setget_called(TestScene, "node_with_setter_getter", "set_node_with_setter_getter", "get_node_with_setter_getter")
+		assert_pass(gr.test_with_gut)
 
 
-# 	func test_passes_if_given_setter_is_called():
-# 		gr.test_with_gut._assert_setget_called(TestNode, "has_both", "set_has_both")
-# 		assert_pass(gr.test_with_gut)
+	func test_passes_if_given_setter_and_getter_is_called():
+		gr.test_with_gut._assert_setget_called(TestNode, "has_both", "set_has_both", "get_has_both")
+		assert_pass(gr.test_with_gut)
 
 
-# 	func test_passes_if_given_getter_is_called():
-# 		gr.test_with_gut._assert_setget_called(TestNode, "has_both", "", "get_has_both")
-# 		assert_pass(gr.test_with_gut)
+	func test_passes_if_given_setter_is_called():
+		gr.test_with_gut._assert_setget_called(TestNode, "has_both", "set_has_both")
+		assert_pass(gr.test_with_gut)
 
 
-# 	func test_fails_if_given_type_is_already_doubled():
-# 		var doubled_type = double(TestNode)
-# 		gr.test_with_gut._assert_setget_called(doubled_type, "has_both", "set_has_both", "get_has_both")
-# 		assert_fail(gr.test_with_gut)
+	func test_passes_if_given_getter_is_called():
+		gr.test_with_gut._assert_setget_called(TestNode, "has_both", "", "get_has_both")
+		assert_pass(gr.test_with_gut)
 
 
-# 	func test_passes_if_given_setter_is_typed():
-# 		gr.test_with_gut._assert_setget_called(TestNode, "typed_setter", "set_typed_setter")
-# 		assert_pass(gr.test_with_gut)
+	func test_fails_if_given_type_is_already_doubled():
+		var doubled_type = double(TestNode)
+		gr.test_with_gut._assert_setget_called(doubled_type, "has_both", "set_has_both", "get_has_both")
+		assert_fail(gr.test_with_gut)
+
+
+	func test_passes_if_given_setter_is_typed():
+		gr.test_with_gut._assert_setget_called(TestNode, "typed_setter", "set_typed_setter")
+		assert_pass(gr.test_with_gut)
 
 
 # ------------------------------------------------------------------------------
 class TestAssertProperty:
 	extends BaseTestClass
 
-	func test_pending_class():
-		pending("This is pending in 4.0")
+	var skip_script = 'Not ready for 4.0'
+
+	const TestNode = preload("res://test/resources/test_assert_setget_test_objects/test_node.gd")
+	const TestScene = preload("res://test/resources/test_assert_setget_test_objects/TestScene.tscn")
 
 
-# 	const TestNode = preload("res://test/resources/test_assert_setget_test_objects/test_node.gd")
-# 	const TestScene = preload("res://test/resources/test_assert_setget_test_objects/TestScene.tscn")
+	func test_passes_has_assert_setget_method():
+		assert_has_method(gr.test, "assert_property")
 
 
-# 	func test_passes_has_assert_setget_method():
-# 		assert_has_method(gr.test, "assert_property")
+	func test_passes_if_given_input_is_valid():
+		gr.test_with_gut.assert_property(TestNode, "has_both", 4, 0)
+		assert_pass(gr.test_with_gut, 6)
 
 
-# 	func test_passes_if_given_input_is_valid():
-# 		gr.test_with_gut.assert_property(TestNode, "has_both", 4, 0)
-# 		assert_pass(gr.test_with_gut, 6)
+	func test_passes_if_instance_is_script():
+		gr.test_with_gut.assert_property(TestNode, "has_both", 4, 0)
+		assert_pass(gr.test_with_gut, 6)
 
 
-# 	func test_passes_if_instance_is_script():
-# 		gr.test_with_gut.assert_property(TestNode, "has_both", 4, 0)
-# 		assert_pass(gr.test_with_gut, 6)
+	func test_passes_if_instance_is_packed_scene():
+		var new_node_child_mock = TestNode.new()
+		add_child_autofree(new_node_child_mock)
+		gr.test_with_gut.assert_property(TestScene, "node_with_setter_getter", null, new_node_child_mock)
+		assert_pass(gr.test_with_gut, 6)
 
 
-# 	func test_passes_if_instance_is_packed_scene():
-# 		var new_node_child_mock = TestNode.new()
-# 		add_child_autofree(new_node_child_mock)
-# 		gr.test_with_gut.assert_property(TestScene, "node_with_setter_getter", null, new_node_child_mock)
-# 		assert_pass(gr.test_with_gut, 6)
+	func test_passes_if_instance_is_obj_from_script():
+		var node_child_mock = TestNode.new()
+		add_child_autofree(node_child_mock)
+		gr.test_with_gut.assert_property(node_child_mock, "has_both", 4, 5)
+		assert_pass(gr.test_with_gut, 6)
 
 
-# 	func test_passes_if_instance_is_obj_from_script():
-# 		var node_child_mock = TestNode.new()
-# 		add_child_autofree(node_child_mock)
-# 		gr.test_with_gut.assert_property(node_child_mock, "has_both", 4, 5)
-# 		assert_pass(gr.test_with_gut, 6)
+	func test_passes_if_instance_is_obj_from_packed_scene():
+		var scene_mock = TestScene.instantiate()
+		add_child_autoqfree(scene_mock)
+		var dflt_node_with_setter = scene_mock.get_node_with_setter_getter()
+		var new_node_child_mock = TestNode.new()
+		add_child_autofree(new_node_child_mock)
+		gr.test_with_gut.assert_property(scene_mock, "node_with_setter_getter", dflt_node_with_setter, new_node_child_mock)
+		assert_pass(gr.test_with_gut, 6)
 
 
-# 	func test_passes_if_instance_is_obj_from_packed_scene():
-# 		var scene_mock = TestScene.instantiate()
-# 		add_child_autoqfree(scene_mock)
-# 		var dflt_node_with_setter = scene_mock.get_node_with_setter_getter()
-# 		var new_node_child_mock = TestNode.new()
-# 		add_child_autofree(new_node_child_mock)
-# 		gr.test_with_gut.assert_property(scene_mock, "node_with_setter_getter", dflt_node_with_setter, new_node_child_mock)
-# 		assert_pass(gr.test_with_gut, 6)
+	func test_fails_if_getter_does_not_exist():
+		var test_node = TestNode.new()
+		gr.test_with_gut.assert_property(test_node, 'has_setter', 2, 0)
+		assert_fail_pass(gr.test_with_gut, 3, 1)
 
+	func test_fails_if_obj_is_something_unexpected():
+		var instantiate = Directory.new()
+		gr.test_with_gut.assert_property(instantiate, "current_dir", "", "new_dir")
+		assert_fail_pass(gr.test_with_gut, 3, 1)
 
-# 	func test_fails_if_getter_does_not_exist():
-# 		var test_node = TestNode.new()
-# 		gr.test_with_gut.assert_property(test_node, 'has_setter', 2, 0)
-# 		assert_fail_pass(gr.test_with_gut, 3, 1)
-
-# 	func test_fails_if_obj_is_something_unexpected():
-# 		var instantiate = Directory.new()
-# 		gr.test_with_gut.assert_property(instantiate, "current_dir", "", "new_dir")
-# 		assert_fail_pass(gr.test_with_gut, 3, 1)
-
-# 	func test_other_fails_do_not_cause_false_negatrive():
-# 		gr.test_with_gut.fail_test('fail')
-# 		gr.test_with_gut.assert_property(TestNode, "has_both", 4, 0)
-# 		assert_fail_pass(gr.test_with_gut, 1, 6)
+	func test_other_fails_do_not_cause_false_negatrive():
+		gr.test_with_gut.fail_test('fail')
+		gr.test_with_gut.assert_property(TestNode, "has_both", 4, 0)
+		assert_fail_pass(gr.test_with_gut, 1, 6)
 
 
 # ------------------------------------------------------------------------------
 class TestAssertSetGet:
 	extends BaseTestClass
 
-	func test_pending_class():
-		pending("This is pending in 4.0")
+	var skip_script = 'Not ready for 4.0'
 
-# 	const TestNode = preload("res://test/resources/test_assert_setget_test_objects/test_node.gd")
+	const TestNode = preload("res://test/resources/test_assert_setget_test_objects/test_node.gd")
 
-# 	func test_can_use_with_getter_only_name():
-# 		gr.test_with_gut.assert_setget(TestNode, 'non_default_getter', null, '__get_non_default_getter')
-# 		assert_pass(gr.test_with_gut)
+	func test_can_use_with_getter_only_name():
+		gr.test_with_gut.assert_setget(TestNode, 'non_default_getter', null, '__get_non_default_getter')
+		assert_pass(gr.test_with_gut)
 
-# 	func test_can_use_with_setter_only_name():
-# 		gr.test_with_gut.assert_setget(TestNode, 'non_default_setter', '__set_non_default_setter')
-# 		assert_pass(gr.test_with_gut)
+	func test_can_use_with_setter_only_name():
+		gr.test_with_gut.assert_setget(TestNode, 'non_default_setter', '__set_non_default_setter')
+		assert_pass(gr.test_with_gut)
 
-# 	func test_can_use_with_setter_only():
-# 		gr.test_with_gut.assert_setget(TestNode, 'has_setter', SETTER_ONLY)
-# 		assert_pass(gr.test_with_gut)
+	func test_can_use_with_setter_only():
+		gr.test_with_gut.assert_setget(TestNode, 'has_setter', SETTER_ONLY)
+		assert_pass(gr.test_with_gut)
 
-# 	func test_can_use_with_getter_only():
-# 		gr.test_with_gut.assert_setget(TestNode, 'has_getter', GETTER_ONLY)
-# 		assert_pass(gr.test_with_gut)
+	func test_can_use_with_getter_only():
+		gr.test_with_gut.assert_setget(TestNode, 'has_getter', GETTER_ONLY)
+		assert_pass(gr.test_with_gut)
 
-# 	func test_works_with_defaults():
-# 		gr.test_with_gut.assert_setget(TestNode, 'has_both')
-# 		assert_pass(gr.test_with_gut)
+	func test_works_with_defaults():
+		gr.test_with_gut.assert_setget(TestNode, 'has_both')
+		assert_pass(gr.test_with_gut)
 
-# 	func test_works_with_non_default_accessors_for_both():
-# 		gr.test_with_gut.assert_setget(TestNode, 'non_default_both', '__set_default_both', '__get_default_both')
-# 		assert_pass(gr.test_with_gut)
+	func test_works_with_non_default_accessors_for_both():
+		gr.test_with_gut.assert_setget(TestNode, 'non_default_both', '__set_default_both', '__get_default_both')
+		assert_pass(gr.test_with_gut)
 
-# 	func test_fails_with_defaults_and_no_getter():
-# 		gr.test_with_gut.assert_setget(TestNode, 'has_setter')
-# 		assert_fail(gr.test_with_gut)
+	func test_fails_with_defaults_and_no_getter():
+		gr.test_with_gut.assert_setget(TestNode, 'has_setter')
+		assert_fail(gr.test_with_gut)
 
-# 	func test_fails_with_defaults_and_no_setter():
-# 		gr.test_with_gut.assert_setget(TestNode, 'has_getter')
-# 		assert_fail(gr.test_with_gut)
+	func test_fails_with_defaults_and_no_setter():
+		gr.test_with_gut.assert_setget(TestNode, 'has_getter')
+		assert_fail(gr.test_with_gut)
 
-# 	func test_fails_with_no_setter_getter():
-# 		gr.test_with_gut.assert_setget(TestNode, 'no_setget')
-# 		assert_fail(gr.test_with_gut)
+	func test_fails_with_no_setter_getter():
+		gr.test_with_gut.assert_setget(TestNode, 'no_setget')
+		assert_fail(gr.test_with_gut)
 
-# 	func test_fails_when_property_does_not_exist():
-# 		gr.test_with_gut.assert_setget(TestNode, '__dne__')
-# 		assert_fail(gr.test_with_gut)
+	func test_fails_when_property_does_not_exist():
+		gr.test_with_gut.assert_setget(TestNode, '__dne__')
+		assert_fail(gr.test_with_gut)
 
-# 	func test_fails_when_all_exist_but_setget_not_used():
-# 		gr.test_with_gut.assert_setget(TestNode, 'has_both_dnu_setget')
-# 		assert_fail(gr.test_with_gut)
+	func test_fails_when_all_exist_but_setget_not_used():
+		gr.test_with_gut.assert_setget(TestNode, 'has_both_dnu_setget')
+		assert_fail(gr.test_with_gut)

@@ -785,6 +785,20 @@ func _test_the_scripts(indexes=[]):
 		start_script.emit(the_script)
 
 		var test_script = the_script.get_new()
+
+		# ----
+		# SHORTCIRCUIT
+		# skip_script logic
+		var skip_script = test_script.get('skip_script')
+		if(skip_script != null):
+			var msg = str('- [Script skipped]:  ', skip_script)
+			_lgr.inc_indent()
+			_lgr.log(msg, _lgr.fmts.yellow)
+			_lgr.dec_indent()
+			_new_summary.get_current_script().was_skipped = true
+			continue
+		# ----
+
 		var script_result = null
 		_setup_script(test_script)
 		_doubler.set_strategy(_double_strategy)
