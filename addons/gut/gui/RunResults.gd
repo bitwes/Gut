@@ -84,7 +84,7 @@ func _ready():
 
 	if(get_parent() == get_tree().root):
 		_test_running_setup()
-		
+
 	call_deferred('_update_min_width')
 
 func _update_min_width():
@@ -322,24 +322,20 @@ func _handle_tree_item_select(item, force_scroll):
 func _get_line_number_for_seq_search(search_strings, te):
 #	var te = _editors.get_current_text_edit()
 	var result = null
-	var to_return = -1
-	var start_line = 0
-	var start_col = 0
+	var line = Vector2i(-1, -1)
 	var s_flags = 0
 
 	var i = 0
 	var string_found = true
 	while(i < search_strings.size() and string_found):
-		result = te.search(search_strings[i], s_flags, start_line, start_col)
-		if(result.size() > 0):
-			start_line = result[TextEdit.SEARCH_RESULT_LINE]
-			start_col = result[TextEdit.SEARCH_RESULT_COLUMN]
-			to_return = start_line
+		result = te.search(search_strings[i], s_flags, line.y, line.x)
+		if(result.x != -1):
+			line = result
 		else:
 			string_found = false
 		i += 1
 
-	return to_return
+	return line.y
 
 
 func _goto_code(path, line, method_name='', inner_class =''):
