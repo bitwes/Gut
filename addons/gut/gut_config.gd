@@ -124,9 +124,8 @@ func write_options(path):
 # Apply all the options specified to _tester.  This is where the rubber meets
 # the road.
 func _apply_options(opts, _tester):
-	_tester.set_modulate(Color(1.0, 1.0, 1.0, min(1.0, float(opts.opacity) / 100)))
-	_tester.show()
-
+	# TODO 4.0 move this to the gui section in gut runner
+	#_tester.set_modulate(Color(1.0, 1.0, 1.0, min(1.0, float(opts.opacity) / 100)))
 	_tester.set_include_subdirectories(opts.include_subdirs)
 
 	if(opts.should_maximize):

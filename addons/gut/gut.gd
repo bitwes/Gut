@@ -29,7 +29,7 @@
 # View the readme at https://github.com/bitwes/Gut/blob/master/README.md for usage details.
 # You should also check out the github wiki at: https://github.com/bitwes/Gut/wiki
 # ##############################################################################
-extends Control
+extends 'res://addons/gut/gut_to_move.gd'
 
 # -- Settings --
 var _select_script = ''
@@ -140,7 +140,6 @@ const WAITING_MESSAGE = '/# waiting #/'
 const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
 const COMPLETED = 'completed'
 
-var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
 var _strutils = _utils.Strutils.new()
 # Used to prevent multiple messages for deprecated setup/teardown messages
@@ -268,12 +267,8 @@ func _ready():
 	if(_should_print_versions):
 		_lgr.info(str('using [', OS.get_user_data_dir(), '] for temporary output.'))
 
-	set_process_input(true)
-
 	add_child(_wait_timer)
 	_wait_timer.set_wait_time(1)
-	_wait_timer.set_one_shot(true)
-
 	_wait_timer.set_one_shot(true)
 
 	add_child(_yield_timer)
@@ -290,9 +285,6 @@ func _ready():
 		# GUI checks for is_in_tree will not pass yet.
 		call_deferred('maximize')
 
-	# hide the panel that IS gut so that only the GUI is seen
-	self.self_modulate = Color(1,1,1,0)
-	show()
 	_print_versions()
 
 # ------------------------------------------------------------------------------
@@ -513,7 +505,7 @@ func _end_run():
 		p('Ran Inner Classes matching "' + _inner_class_name + '"')
 
 	_is_running = false
-	update()
+
 	_run_hook_script(_post_run_script_instance)
 	_export_results()
 	end_run.emit()
@@ -628,19 +620,6 @@ func _wait_for_continue_button():
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-func _call_deprecated_script_method(script, method, alt):
-	if(script.has_method(method)):
-		var txt = str(script, '-', method)
-		if(!_deprecated_tracker.has(txt)):
-			# Removing the deprecated line.  I think it's still too early to
-			# start bothering people with this.  Left everything here though
-			# because I don't want to remember how I did this last time.
-			_lgr.deprecated(str('The method ', method, ' has been deprecated, use ', alt, ' instead.'))
-			_deprecated_tracker.add(txt)
-		script.call(method)
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
 func _get_indexes_matching_script_name(name):
 	var indexes = [] # empty runs all
 	for i in range(_test_collector.scripts.size()):
@@ -696,7 +675,6 @@ func _run_test(script_inst, test_name):
 	_orphan_counter.add_counter('test')
 	var script_result = null
 
-	_call_deprecated_script_method(script_inst, 'setup', 'before_each')
 	var before_each_result = script_inst.before_each()
 	if(_is_function_state(before_each_result)):
 		await _wait_for_done(before_each_result)
@@ -723,7 +701,6 @@ func _run_test(script_inst, test_name):
 	script_inst.clear_signal_watcher()
 
 	# call each post-each-test method until teardown is removed.
-	_call_deprecated_script_method(script_inst, 'teardown', 'after_each')
 	var after_each_result = script_inst.after_each()
 	if(_is_function_state(after_each_result)):
 		await _wait_for_done(after_each_result)
@@ -755,7 +732,6 @@ func _call_before_all(test_script):
 
 	# Next 3 lines can be removed when prerun_setup removed.
 	_current_test.name = 'prerun_setup'
-	_call_deprecated_script_method(test_script, 'prerun_setup', 'before_all')
 	_current_test.name = 'before_all'
 
 	var result = test_script.before_all()
@@ -778,7 +754,6 @@ func _call_after_all(test_script):
 
 	# Next 3 lines can be removed when postrun_teardown removed.
 	_current_test.name = 'postrun_teardown'
-	_call_deprecated_script_method(test_script, 'postrun_teardown', 'after_all')
 	_current_test.name = 'after_all'
 
 	var result = test_script.after_all()
@@ -1035,6 +1010,7 @@ func get_elapsed_time():
 	to_return = to_return / 1000.0
 
 	return to_return
+
 # ------------------------------------------------------------------------------
 # Conditionally prints the text to the console/results variable based on the
 # current log level and what level is passed in.  Whenever currently in a test,
@@ -1055,9 +1031,6 @@ func p(text, level=0):
 # RUN TESTS/ADD SCRIPTS
 #
 ################
-func get_minimum_size():
-	return Vector2(810, 380)
-
 
 # ------------------------------------------------------------------------------
 # Runs all the scripts that were added using add_script
@@ -1306,20 +1279,6 @@ func set_ignore_pause_before_teardown(should_ignore):
 func get_ignore_pause_before_teardown():
 	return _ignore_pause_before_teardown
 
-# ------------------------------------------------------------------------------
-# Call _process or _fixed_process, if they exist, on obj and all it's children
-# and their children and so and so forth.  Delta will be passed through to all
-# the _process or _fixed_process methods.
-# ------------------------------------------------------------------------------
-func simulate(obj, times, delta):
-	for _i in range(times):
-		if(obj.has_method("_process")):
-			obj._process(delta)
-		if(obj.has_method("_physics_process")):
-			obj._physics_process(delta)
-
-		for kid in obj.get_children():
-			simulate(kid, 1, delta)
 
 # ------------------------------------------------------------------------------
 # Starts an internal timer with a timeout of the passed in time.  A 'timeout'
@@ -1387,62 +1346,6 @@ func get_unit_test_name():
 func set_unit_test_name(test_name):
 	_unit_test_name = test_name
 
-# ------------------------------------------------------------------------------
-# Creates an empty file at the specified path
-# ------------------------------------------------------------------------------
-func file_touch(path):
-	var f = File.new()
-	f.open(path, f.WRITE)
-	f.close()
-
-# ------------------------------------------------------------------------------
-# deletes the file at the specified path
-# ------------------------------------------------------------------------------
-func file_delete(path):
-	var d = Directory.new()
-	var result = d.open(path.get_base_dir())
-	if(result == OK):
-		d.remove(path)
-
-# ------------------------------------------------------------------------------
-# Checks to see if the passed in file has any data in it.
-# ------------------------------------------------------------------------------
-func is_file_empty(path):
-	var f = File.new()
-	f.open(path, f.READ)
-	var empty = f.get_length() == 0
-	f.close()
-	return empty
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_file_as_text(path):
-	return _utils.get_file_as_text(path)
-
-# ------------------------------------------------------------------------------
-# deletes all files in a given directory
-# ------------------------------------------------------------------------------
-func directory_delete_files(path):
-	var d = Directory.new()
-	var result = d.open(path)
-
-	# SHORTCIRCUIT
-	if(result != OK):
-		return
-
-	# Traversing a directory is kinda odd.  You have to start the process of listing
-	# the contents of a directory with list_dir_begin then use get_next until it
-	# returns an empty string.  Then I guess you should end it.
-	d.list_dir_begin() # TODOGODOT4 fill missing arguments https://github.com/godotengine/godot/pull/40547
-	var thing = d.get_next() # could be a dir or a file or something else maybe?
-	var full_path = ''
-	while(thing != ''):
-		full_path = path + "/" + thing
-		#file_exists returns fasle for directories
-		if(d.file_exists(full_path)):
-			d.remove(full_path)
-		thing = d.get_next()
-	d.list_dir_end()
 
 # ------------------------------------------------------------------------------
 # Returns the instantiated script object that is currently being run.
