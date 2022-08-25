@@ -328,7 +328,7 @@ func _get_line_number_for_seq_search(search_strings, te):
 	var i = 0
 	var string_found = true
 	while(i < search_strings.size() and string_found):
-		result = te.search(search_strings[i], s_flags, 0, 0)
+		result = te.search(search_strings[i], s_flags, line.y, line.x)
 		if(result.x != -1):
 			line = result
 		else:
