@@ -68,8 +68,11 @@ var include_subdirectories:
 
 var _double_strategy = 1
 var double_strategy = 1  :
-	get: return get_double_strategy()
-	set(val): set_double_strategy(val)
+	get: return _double_strategy
+	set(val):
+		_double_strategy = val
+		_doubler.set_strategy(double_strategy)
+
 
 var _pre_run_script = ''
 var pre_run_script = '' :
@@ -90,13 +93,13 @@ var color_output = false :
 
 var _junit_xml_file = ''
 var junit_xml_file = '' :
-	get: return get_junit_xml_file()
-	set(val): set_junit_xml_file(val)
+	get: return _junit_xml_file
+	set(val): _junit_xml_file = val
 
 var _junit_xml_timestamp = false
 var junit_xml_timestamp = false :
-	get: return get_junit_xml_timestamp()
-	set(val): set_junit_xml_timestamp(val)
+	get: return _junit_xml_timestamp
+	set(val): _junit_xml_timestamp = val
 
 var _add_children_to = self
 var add_children_to = self :
@@ -1375,17 +1378,6 @@ func set_inner_class_name(inner_class_name):
 func get_summary():
 	return _new_summary
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_double_strategy():
-	return _double_strategy
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func set_double_strategy(double_strategy):
-	_double_strategy = double_strategy
-	_doubler.set_strategy(double_strategy)
-
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -1445,29 +1437,6 @@ func show_orphans(should):
 # ------------------------------------------------------------------------------
 func get_autofree():
 	return _autofree
-
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_junit_xml_file():
-	return _junit_xml_file
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func set_junit_xml_file(junit_xml_file):
-	_junit_xml_file = junit_xml_file
-
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_junit_xml_timestamp():
-	return _junit_xml_timestamp
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func set_junit_xml_timestamp(junit_xml_timestamp):
-	_junit_xml_timestamp = junit_xml_timestamp
-
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------

@@ -141,17 +141,17 @@ func _apply_options(opts, _tester):
 		_tester.add_script(opts.tests[i])
 
 	if(opts.double_strategy == 'full'):
-		_tester.set_double_strategy(DOUBLE_STRATEGY.FULL)
+		_tester.double_strategy = DOUBLE_STRATEGY.FULL
 	elif(opts.double_strategy == 'partial'):
-		_tester.set_double_strategy(DOUBLE_STRATEGY.PARTIAL)
+		_tester.double_strategy = DOUBLE_STRATEGY.PARTIAL
 
 	_tester.set_unit_test_name(opts.unit_test_name)
 	_tester.pre_run_script = opts.pre_run_script
 	_tester.post_run_script = opts.post_run_script
 	_tester.color_output = !opts.disable_colors
 	_tester.show_orphans(!opts.hide_orphans)
-	_tester.set_junit_xml_file(opts.junit_xml_file)
-	_tester.set_junit_xml_timestamp(opts.junit_xml_timestamp)
+	_tester.junit_xml_file = opts.junit_xml_file
+	_tester.junit_xml_timestamp = opts.junit_xml_timestamp
 	_tester.paint_after = str(opts.paint_after).to_float()
 
 

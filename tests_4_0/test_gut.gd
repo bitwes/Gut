@@ -59,13 +59,6 @@ class TestProperties:
 	func test_get_set_parameter_handler():
 		assert_accessors(_gut, 'parameter_handler', null, _utils.ParameterHandler.new([]))
 
-	func test_get_set_junit_xml_file():
-		assert_accessors(_gut, 'junit_xml_file', '', 'user://xml_file.xml')
-
-	func test_get_set_junit_xml_timestamp():
-		assert_accessors(_gut, 'junit_xml_timestamp', false, true)
-
-
 
 class TestEverythingElse:
 	extends GutTest
@@ -189,11 +182,8 @@ class TestEverythingElse:
 	# ------------------------------
 	# Doubler
 	# ------------------------------
-	func test_get_set_double_strategy():
-		assert_accessors(gr.test_gut, 'double_strategy', 1, 2)
-
 	func test_when_test_overrides_strategy_it_is_reset_after_test_finishes():
-		gr.test_gut.set_double_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
+		gr.test_gut.double_strategy = _utils.DOUBLE_STRATEGY.PARTIAL
 		gr.test_gut.add_script('res://test/samples/test_before_after.gd')
 		gr.test_gut.get_doubler().set_strategy(_utils.DOUBLE_STRATEGY.FULL)
 		gr.test_gut.test_scripts()
