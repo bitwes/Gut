@@ -27,6 +27,8 @@ class TestProperties:
 			['color_output', false, true],
 			['junit_xml_file', '', 'user://somewhere.json'],
 			['junit_xml_timestamp', false, true],
+			['export_path', '', 'res://somewhere/cool'],
+			['color_output', false, true]
 		])
 
 	func test_check_backed_properties(p=use_parameters(_backed_properties)):
@@ -54,23 +56,14 @@ class TestProperties:
 	func test_get_set_temp_directory():
 		assert_accessors(_gut, 'temp_directory', 'user://gut_temp_directory', 'user://blahblah')
 
-	func test_get_set_export_path():
-		assert_property(_gut, 'export_path', '', 'res://somewhere')
-
-	func test_get_set_color_output():
-		assert_accessors(_gut, 'color_output', false, true)
-
 	func test_get_set_parameter_handler():
-		assert_accessors(_gut, 'parameter_handler', null, _utils.ParameterHandler.new())
+		assert_accessors(_gut, 'parameter_handler', null, _utils.ParameterHandler.new([]))
 
 	func test_get_set_junit_xml_file():
 		assert_accessors(_gut, 'junit_xml_file', '', 'user://xml_file.xml')
 
 	func test_get_set_junit_xml_timestamp():
 		assert_accessors(_gut, 'junit_xml_timestamp', false, true)
-
-	func test_get_set_add_children_to():
-		assert_accessors(_gut, 'add_children_to', _gut, autofree(Node.new()))
 
 
 
@@ -141,7 +134,7 @@ class TestEverythingElse:
 	# Returns a new gut object, all setup for testing.
 	func get_a_gut():
 		var g = Gut.new()
-		g.set_log_level(g.LOG_LEVEL_ALL_ASSERTS)
+		g.log_level = g.LOG_LEVEL_ALL_ASSERTS
 		return g
 
 	# Prints out gr.test_gut assert results, used by assert_fail and assert_pass
@@ -486,33 +479,33 @@ class TestEverythingElse:
 	# ------------------------------
 	func test_when_pre_hook_set_script_instance_is_is_retrievable():
 		var  PreRunScript = load('res://test/resources/pre_run_script.gd')
-		gr.test_gut.set_pre_run_script('res://test/resources/pre_run_script.gd')
+		gr.test_gut.pre_run_script = 'res://test/resources/pre_run_script.gd'
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		gr.test_gut.test_scripts()
 		assert_is(gr.test_gut.get_pre_run_script_instance(), PreRunScript)
 
 	func test_when_pre_hook_set_run_method_is_called():
 		var  PreRunScript = load('res://test/resources/pre_run_script.gd')
-		gr.test_gut.set_pre_run_script('res://test/resources/pre_run_script.gd')
+		gr.test_gut.pre_run_script = 'res://test/resources/pre_run_script.gd'
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		gr.test_gut.test_scripts()
 		assert_true(gr.test_gut.get_pre_run_script_instance().run_called)
 
 	func test_when_pre_hook_set_to_invalid_script_no_tests_are_ran():
-		gr.test_gut.set_pre_run_script('res://does_not_exist.gd')
+		gr.test_gut.pre_run_script = 'res://does_not_exist.gd'
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		gr.test_gut.test_scripts()
 		assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test should not be run')
 		assert_gt(gr.test_gut.get_logger().get_errors().size(), 0, 'there should be errors')
 
 	func test_pre_hook_sets_gut_instance():
-		gr.test_gut.set_pre_run_script('res://test/resources/pre_run_script.gd')
+		gr.test_gut.pre_run_script = 'res://test/resources/pre_run_script.gd'
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		gr.test_gut.test_scripts()
 		assert_eq(gr.test_gut.get_pre_run_script_instance().gut, gr.test_gut)
 
 	func test_pre_hook_does_not_accept_non_hook_scripts():
-		gr.test_gut.set_pre_run_script('res://test/resources/non_hook_script.gd')
+		gr.test_gut.pre_run_script = 'res://test/resources/non_hook_script.gd'
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		gr.test_gut.test_scripts()
 		assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test should not be run')
@@ -521,7 +514,7 @@ class TestEverythingElse:
 	func test_post_hook_is_run_after_tests():
 		pending('pending in 4.0 yield')
 		# var PostRunScript = load('res://test/resources/post_run_script.gd')
-		# gr.test_gut.set_post_run_script('res://test/resources/post_run_script.gd')
+		# gr.test_gut.post_run_script = 'res://test/resources/post_run_script.gd'
 		# gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		# gr.test_gut.test_scripts()
 		# await yield_for(1).YIELD
@@ -531,7 +524,7 @@ class TestEverythingElse:
 	func test_when_post_hook_set_to_invalid_script_no_tests_are_ran():
 		pending('pending in 4.0')
 		# watch_signals(gr.test_gut)
-		# gr.test_gut.set_post_run_script('res://does_not_exist.gd')
+		# gr.test_gut.post_run_script = 'res://does_not_exist.gd'
 		# gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		# gr.test_gut.test_scripts()
 		# assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test should not be run')

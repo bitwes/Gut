@@ -135,11 +135,11 @@ class TestLogLevels:
 		gut.get_logger().set_indent_string('--->')
 
 	func after_all():
-		gut.set_log_level(_orig_log_level)
+		gut.log_level = _orig_log_level
 		gut.get_logger().set_indent_string(_orig_indent_string)
 
 	func test_log_types_at_levels_with_passing_test(level=use_parameters([-2, -1, 0, 1, 2, 3])):
-		gut.set_log_level(level)
+		gut.log_level = level
 		gut.get_logger().warn('test text')
 		gut.get_logger().error('test text')
 		gut.get_logger().info('test text')
@@ -147,7 +147,7 @@ class TestLogLevels:
 		assert_true(true, 'this should pass')
 
 	func test_log_types_at_levels_with_failing_test(level=use_parameters([-2, -1, 0, 1, 2, 3])):
-		gut.set_log_level(level)
+		gut.log_level = level
 		gut.get_logger().warn('test text')
 		gut.get_logger().error('test text')
 		gut.get_logger().info('test text')

@@ -1088,6 +1088,25 @@ func assert_readonly_property(obj, property_name, new_value, expected_value):
 
 
 # ------------------------------------------------------------------------------
+# Checks the object for 'get_' and 'set_' methods for the specified property.
+# If found a warning is generated.
+# ------------------------------------------------------------------------------
+func _warn_for_public_accessors(obj, property_name):
+	var public_accessors = []
+	var accessor_names = [
+		str('get_', property_name),
+		str('is_', property_name),
+		str('set_', property_name)
+	]
+
+	for acc in accessor_names:
+		if(obj.has_method(acc)):
+			public_accessors.append(acc)
+
+	if(public_accessors.size() > 0):
+		_lgr.warn (str('Public accessors ', public_accessors, ' found for property ', property_name))
+
+# ------------------------------------------------------------------------------
 # Assumes backing varible with be _<property_name>.  This will perform all the
 # asserts of assert_property.  Then this will set the value through the setter
 # and check the backing variable value.  It will then reset throught the setter
@@ -1120,6 +1139,7 @@ func assert_property_with_backing_variable(obj, property_name, default_value, ne
 		assert_eq(call_getter.call(), new_value, 'Getter returns value from Setter.')
 		assert_eq(obj.get(backing_var_name), new_value, str('Variable ', backing_var_name, ' was set'))
 
+	_warn_for_public_accessors(obj, property_name)
 
 
 # ------------------------------------------------------------------------------
@@ -1127,23 +1147,14 @@ func assert_property_with_backing_variable(obj, property_name, default_value, ne
 # It will then use the getter to check the default.  Then use the
 # setter with new_value and verify the getter returns the same value.
 # ------------------------------------------------------------------------------
-func assert_property(inst, name_property, default_value, new_value) -> void:
+func assert_property(obj, property_name, default_value, new_value) -> void:
 	var free_me = null
 	var resource = null
-	var obj = null
-
-	if inst.is_class("Resource"):
-		resource = inst
-		obj = _create_obj_from_type(resource)
-		free_me = obj
-	else:
-		resource = inst.get_script()
-		obj = inst
-
-	var setter_name = str('@', name_property, '_setter')
-	var getter_name = str('@', name_property, '_getter')
-
 	var pre_fail_count = get_fail_count()
+
+	var setter_name = str('@', property_name, '_setter')
+	var getter_name = str('@', property_name, '_getter')
+
 	assert_has_method(obj, setter_name)
 	assert_has_method(obj, getter_name)
 
@@ -1155,14 +1166,7 @@ func assert_property(inst, name_property, default_value, new_value) -> void:
 		call_setter.call(new_value)
 		assert_eq(call_getter.call(), new_value, 'Getter gets Setter value')
 
-	if(free_me != null):
-		free_me.free()
-
-	# assert
-	if get_fail_count() == pre_fail_count:
-		_pass(str("The property is set up as expected."))
-	else:
-		_fail(str("The property is not set up as expected. Examine subtests to see what failed."))
+	_warn_for_public_accessors(obj, property_name)
 
 
 # ------------------------------------------------------------------------------

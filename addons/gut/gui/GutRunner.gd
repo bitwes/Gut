@@ -39,7 +39,7 @@ func run_tests(show_gui=true):
 
 	_setup_gui(show_gui)
 
-	_gut.set_add_children_to(self)
+	_gut.add_children_to = self
 	if(_gut_config.options.gut_on_top):
 		_gut_layer.add_child(_gut)
 	else:

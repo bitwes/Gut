@@ -45,7 +45,7 @@ var _temp_directory = 'user://gut_temp_directory'
 var _log_level = 1
 var log_level = 1:
 	get: return _log_level
-	set(val):set_log_level(val)
+	set(val):_set_log_level(val)
 
 # TODO 4.0
 # This appears to not be used anymore.  Going to wait for more tests to be
@@ -73,18 +73,20 @@ var double_strategy = 1  :
 
 var _pre_run_script = ''
 var pre_run_script = '' :
-	get: return get_pre_run_script()
-	set(val): set_pre_run_script(val)
+	get: return _pre_run_script
+	set(val): _pre_run_script = val
 
 var _post_run_script = ''
 var post_run_script = '' :
-	get: return get_post_run_script()
-	set(val): set_post_run_script(val)
+	get: return _post_run_script
+	set(val): _post_run_script = val
 
 var _color_output = false
 var color_output = false :
-	get: return get_color_output()
-	set(val): set_color_output(val)
+	get: return _color_output
+	set(val):
+		_color_output = val
+		_lgr.disable_formatting(!_color_output)
 
 var _junit_xml_file = ''
 var junit_xml_file = '' :
@@ -98,8 +100,8 @@ var junit_xml_timestamp = false :
 
 var _add_children_to = self
 var add_children_to = self :
-	get: return get_add_children_to()
-	set(val): set_add_children_to(val)
+	get: return _add_children_to
+	set(val): _add_children_to = val
 
 var paint_after = .2:
 	get: return paint_after
@@ -279,16 +281,46 @@ func _print_versions(send_all = true):
 
 	if(send_all):
 		p(info)
-	# else:
-	# 	var printer = _lgr.get_printer('gui')
-	# 	printer.send(info + "\n")
+	else:
+		_lgr.get_printer('gui').send(info + "\n")
 
 
-#####################
+
+
+# ####################
+#
+# Accessor code
+#
+# ####################
+
+
+# ------------------------------------------------------------------------------
+# Set the log level.  Use one of the various LOG_LEVEL_* constants.
+# ------------------------------------------------------------------------------
+func _set_log_level(level):
+	_log_level = max(level, 0)
+
+	# Level 0 settings
+	_lgr.set_less_test_names(level == 0)
+	# Explicitly always enabled
+	_lgr.set_type_enabled(_lgr.types.normal, true)
+	_lgr.set_type_enabled(_lgr.types.error, true)
+	_lgr.set_type_enabled(_lgr.types.pending, true)
+
+	# Level 1 types
+	_lgr.set_type_enabled(_lgr.types.warn, level > 0)
+	_lgr.set_type_enabled(_lgr.types.deprecated, level > 0)
+
+	# Level 2 types
+	_lgr.set_type_enabled(_lgr.types.passed, level > 1)
+	_lgr.set_type_enabled(_lgr.types.info, level > 1)
+	_lgr.set_type_enabled(_lgr.types.debug, level > 1)
+
+# ####################
 #
 # Events
 #
-#####################
+# ####################
 
 # ------------------------------------------------------------------------------
 # Timeout for the built in timer.  emits the timeout signal.  Start timer
@@ -1201,27 +1233,7 @@ func get_pending_count():
 func get_result_text():
 	return _log_text
 
-# ------------------------------------------------------------------------------
-# Set the log level.  Use one of the various LOG_LEVEL_* constants.
-# ------------------------------------------------------------------------------
-func set_log_level(level):
-	_log_level = max(level, 0)
 
-	# Level 0 settings
-	_lgr.set_less_test_names(level == 0)
-	# Explicitly always enabled
-	_lgr.set_type_enabled(_lgr.types.normal, true)
-	_lgr.set_type_enabled(_lgr.types.error, true)
-	_lgr.set_type_enabled(_lgr.types.pending, true)
-
-	# Level 1 types
-	_lgr.set_type_enabled(_lgr.types.warn, level > 0)
-	_lgr.set_type_enabled(_lgr.types.deprecated, level > 0)
-
-	# Level 2 types
-	_lgr.set_type_enabled(_lgr.types.passed, level > 1)
-	_lgr.set_type_enabled(_lgr.types.info, level > 1)
-	_lgr.set_type_enabled(_lgr.types.debug, level > 1)
 
 
 # ------------------------------------------------------------------------------
@@ -1399,26 +1411,6 @@ func get_version():
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-func get_pre_run_script():
-	return _pre_run_script
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func set_pre_run_script(pre_run_script):
-	_pre_run_script = pre_run_script
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_post_run_script():
-	return _post_run_script
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func set_post_run_script(post_run_script):
-	_post_run_script = post_run_script
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
 func get_pre_run_script_instance():
 	return _pre_run_script_instance
 
@@ -1427,16 +1419,6 @@ func get_pre_run_script_instance():
 func get_post_run_script_instance():
 	return _post_run_script_instance
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_color_output():
-	return _color_output
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func set_color_output(color_output):
-	_color_output = color_output
-	_lgr.disable_formatting(!color_output)
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -1486,15 +1468,6 @@ func get_junit_xml_timestamp():
 func set_junit_xml_timestamp(junit_xml_timestamp):
 	_junit_xml_timestamp = junit_xml_timestamp
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_add_children_to():
-	return _add_children_to
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func set_add_children_to(val):
-	_add_children_to = val
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------

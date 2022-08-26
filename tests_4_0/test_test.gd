@@ -1992,23 +1992,23 @@ class TestAssertProperty:
 	# 1 for default value
 	# 1 for setter
 	# 1 for the total test fail count != 0
-	const SUB_ASSERT_COUNT = 5
+	const SUB_ASSERT_COUNT = 4
 
 	func test_has_assert_setget_method():
 		assert_has_method(gr.test, "assert_property")
 
 	func test_passes_if_given_input_is_valid():
-		gr.test_with_gut.assert_property(TestNode, "has_both", 4, 0)
+		gr.test_with_gut.assert_property(TestNode.new(), "has_both", 4, 0)
 		assert_pass(gr.test_with_gut, SUB_ASSERT_COUNT)
 
 	func test_passes_if_instance_is_script():
-		gr.test_with_gut.assert_property(TestNode, "has_both", 4, 0)
+		gr.test_with_gut.assert_property(TestNode.new(), "has_both", 4, 0)
 		assert_pass(gr.test_with_gut, SUB_ASSERT_COUNT)
 
 	func test_passes_if_instance_is_packed_scene():
 		var new_node_child_mock = TestNode.new()
 		add_child_autofree(new_node_child_mock)
-		gr.test_with_gut.assert_property(TestScene, "node_with_setter_getter", null, new_node_child_mock)
+		gr.test_with_gut.assert_property(TestScene.instantiate(), "node_with_setter_getter", null, new_node_child_mock)
 		assert_pass(gr.test_with_gut, SUB_ASSERT_COUNT)
 
 	func test_passes_if_instance_is_obj_from_script():
@@ -2029,16 +2029,16 @@ class TestAssertProperty:
 	func test_fails_if_getter_does_not_exist():
 		var test_node = TestNode.new()
 		gr.test_with_gut.assert_property(test_node, 'has_setter', 2, 0)
-		assert_fail_pass(gr.test_with_gut, 2, 1)
+		assert_fail_pass(gr.test_with_gut, 1, 1)
 
 	func test_fails_if_obj_is_something_unexpected():
 		var inst = Directory.new()
 		gr.test_with_gut.assert_property(inst, "current_dir", "", "new_dir")
-		assert_fail_pass(gr.test_with_gut, 3, 0)
+		assert_fail_pass(gr.test_with_gut, 2, 0)
 
 	func test_other_fails_do_not_cause_false_negative():
 		gr.test_with_gut.fail_test('fail')
-		gr.test_with_gut.assert_property(TestNode, "has_both", 4, 0)
+		gr.test_with_gut.assert_property(TestNode.new(), "has_both", 4, 0)
 		assert_fail_pass(gr.test_with_gut, 1, SUB_ASSERT_COUNT)
 
 

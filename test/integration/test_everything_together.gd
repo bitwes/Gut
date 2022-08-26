@@ -8,7 +8,7 @@ class TestLogging:
 
 	func before_each():
 		_gut = Gut.new()
-		_gut.set_log_level(0)
+		_gut.log_level = 0
 		add_child(_gut)
 
 	func after_each():
