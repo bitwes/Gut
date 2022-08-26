@@ -1680,18 +1680,18 @@ class TestParameterizedTests:
 
 	func test_when_use_parameters_is_called_it_populates_guts_parameter_handler():
 		gr.test_with_gut.use_parameters(['a'])
-		assert_not_null(gr.test_with_gut.gut.get_parameter_handler())
+		assert_not_null(gr.test_with_gut.gut.parameter_handler)
 
 	func test_prameter_handler_has_logger_set_to_guts_logger():
 		gr.test_with_gut.use_parameters(['a'])
-		var ph = gr.test_with_gut.gut.get_parameter_handler()
+		var ph = gr.test_with_gut.gut.parameter_handler
 		assert_eq(ph.get_logger(), gr.test_with_gut.gut.get_logger())
 
 	func test_when_gut_already_has_parameter_handler_it_does_not_make_a_new_one():
 		gr.test_with_gut.use_parameters(['a', 'b', 'c', 'd'])
-		var ph = gr.test_with_gut.gut.get_parameter_handler()
+		var ph = gr.test_with_gut.gut.parameter_handler
 		gr.test_with_gut.use_parameters(['a', 'b', 'c', 'd'])
-		assert_eq(gr.test_with_gut.gut.get_parameter_handler(), ph)
+		assert_eq(gr.test_with_gut.gut.parameter_handler, ph)
 
 	func test_when_parameterized_test_does_not_assert_a_warning_is_generated(p=use_parameters([1, 2, 3])):
 		if(p == 1):

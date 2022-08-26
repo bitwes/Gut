@@ -154,7 +154,6 @@ func _apply_options(opts, _tester):
 	_tester.junit_xml_timestamp = opts.junit_xml_timestamp
 	_tester.paint_after = str(opts.paint_after).to_float()
 
-
 	return _tester
 
 

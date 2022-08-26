@@ -1454,10 +1454,10 @@ func replace_node(base_node, path_or_node, with_this):
 # enough times.
 # ------------------------------------------------------------------------------
 func use_parameters(params):
-	var ph = gut.get_parameter_handler()
+	var ph = gut.parameter_handler
 	if(ph == null):
 		ph = _utils.ParameterHandler.new(params)
-		gut.set_parameter_handler(ph)
+		gut.parameter_handler = ph
 
 	var output = str('(call #', ph.get_call_count() + 1, ') with parameters:  ', ph.get_current_parameters())
 	_lgr.log(output)

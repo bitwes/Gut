@@ -31,7 +31,9 @@
 # ##############################################################################
 extends 'res://addons/gut/gut_to_move.gd'
 
-# -- Settings --
+# ##################
+# Properties
+# ##################
 var _select_script = ''
 var _tests_like = ''
 var _inner_class_name = ''
@@ -40,7 +42,11 @@ var _test_prefix = 'test_'
 var _file_prefix = 'test_'
 var _file_extension = '.gd'
 var _inner_class_prefix = 'Test'
+
 var _temp_directory = 'user://gut_temp_directory'
+var temp_directory = _temp_directory :
+	get: return _temp_directory
+	set(val): _temp_directory = val
 
 var _log_level = 1
 var log_level = 1:
@@ -54,7 +60,6 @@ var _disable_strict_datatype_checks = false
 var disable_strict_datatype_checks = false :
 	get: return _disable_strict_datatype_checks
 	set(val): _disable_strict_datatype_checks = val
-
 
 var _export_path = ''
 var export_path = '' :
@@ -72,7 +77,6 @@ var double_strategy = 1  :
 	set(val):
 		_double_strategy = val
 		_doubler.set_strategy(double_strategy)
-
 
 var _pre_run_script = ''
 var pre_run_script = '' :
@@ -109,6 +113,16 @@ var add_children_to = self :
 var paint_after = .2:
 	get: return paint_after
 	set(val): paint_after = val
+
+# This is populated by test.gd each time a paramterized test is encountered
+# for the first time.
+var _parameter_handler = null
+var parameter_handler = _parameter_handler :
+	get: return _parameter_handler
+	set(val):
+		_parameter_handler = val
+		_parameter_handler.set_logger(_lgr)
+
 # -- End Settings --
 
 # ###########################
@@ -124,8 +138,6 @@ const COMPLETED = 'completed'
 var _last_paint_time = 0.0
 var _lgr = _utils.get_logger()
 var _strutils = _utils.Strutils.new()
-# Used to prevent multiple messages for deprecated setup/teardown messages
-var _deprecated_tracker = _utils.ThingCounter.new()
 
 # The instantiate that is created from _pre_run_script.  Accessible from
 # get_pre_run_script_instance.
@@ -172,10 +184,6 @@ var _doubler = _utils.Doubler.new()
 var _spy = _utils.Spy.new()
 var _orphan_counter =  _utils.OrphanCounter.new()
 var _autofree = _utils.AutoFree.new()
-
-# This is populated by test.gd each time a paramterized test is encountered
-# for the first time.
-var _parameter_handler = null
 
 # Used to cancel importing scripts if an error has occurred in the setup.  This
 # prevents tests from being run if they were exported and ensures that the
@@ -1355,16 +1363,6 @@ func get_spy():
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-func get_temp_directory():
-	return _temp_directory
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func set_temp_directory(temp_directory):
-	_temp_directory = temp_directory
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
 func get_inner_class_name():
 	return _inner_class_name
 
@@ -1377,7 +1375,6 @@ func set_inner_class_name(inner_class_name):
 # ------------------------------------------------------------------------------
 func get_summary():
 	return _new_summary
-
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -1411,17 +1408,6 @@ func get_pre_run_script_instance():
 func get_post_run_script_instance():
 	return _post_run_script_instance
 
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_parameter_handler():
-	return _parameter_handler
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func set_parameter_handler(parameter_handler):
-	_parameter_handler = parameter_handler
-	_parameter_handler.set_logger(_lgr)
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------

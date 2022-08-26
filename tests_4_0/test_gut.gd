@@ -28,7 +28,9 @@ class TestProperties:
 			['junit_xml_file', '', 'user://somewhere.json'],
 			['junit_xml_timestamp', false, true],
 			['export_path', '', 'res://somewhere/cool'],
-			['color_output', false, true]
+			['color_output', false, true],
+			['temp_directory', 'user://gut_temp_directory', 'user://blahblah'],
+			['parameter_handler', null, _utils.ParameterHandler.new([])]
 		])
 
 	func test_check_backed_properties(p=use_parameters(_backed_properties)):
@@ -43,7 +45,9 @@ class TestProperties:
 	func test_basic_properties(p = use_parameters(_basic_properties)):
 		assert_property(_gut, p.property_name, p.default, p.new_value)
 
-	func test_add_children_to_backed_property():
+	# This must be its own test since _gut will not be anything at
+	# the time _backed_properties is assigned
+	func test_property_add_children_to_backed():
 		assert_property_with_backing_variable(_gut, 'add_children_to', _gut, self)
 
 	func test_get_set_ingore_pauses():
@@ -52,12 +56,6 @@ class TestProperties:
 	func test_get_current_script_object_returns_null_by_default():
 		assert_eq(_gut.get_current_script_object(), null)
 		# I don't know how to test this in other situations
-
-	func test_get_set_temp_directory():
-		assert_accessors(_gut, 'temp_directory', 'user://gut_temp_directory', 'user://blahblah')
-
-	func test_get_set_parameter_handler():
-		assert_accessors(_gut, 'parameter_handler', null, _utils.ParameterHandler.new([]))
 
 
 class TestEverythingElse:
@@ -187,7 +185,7 @@ class TestEverythingElse:
 		gr.test_gut.add_script('res://test/samples/test_before_after.gd')
 		gr.test_gut.get_doubler().set_strategy(_utils.DOUBLE_STRATEGY.FULL)
 		gr.test_gut.test_scripts()
-		assert_eq(gr.test_gut.get_double_strategy(), _utils.DOUBLE_STRATEGY.PARTIAL)
+		assert_eq(gr.test_gut.double_strategy, _utils.DOUBLE_STRATEGY.PARTIAL)
 
 	func test_clears_ignored_methods_between_tests():
 		gr.test_gut.get_doubler().add_ignored_method('ignore_script', 'ignore_method')
