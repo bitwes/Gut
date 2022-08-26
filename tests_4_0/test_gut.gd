@@ -128,25 +128,13 @@ class TestEverythingElse:
 		g.log_level = g.LOG_LEVEL_ALL_ASSERTS
 		return g
 
-	# Prints out gr.test_gut assert results, used by assert_fail and assert_pass
-	func print_test_gut_info():
-		var text_array = gr.test_gut._log_text.split("\n")
-		gut.p('Results of gr.test_gut asserts')
-		gut.p('------------------------------')
-		for i in range(text_array.size()):
-			gut.p(text_array[i])
-
 	# convenience method to assert the number of failures on the gr.test_gut object.
 	func assert_fail(count=1, msg=''):
 		assert_eq(gr.test.get_fail_count(), count, 'failures:  ' + msg)
-		if(gr.test.get_fail_count() != count):
-			print_test_gut_info()
 
 	# convenience method to assert the number of passes on the gr.test_gut object.
 	func assert_pass(count=1, msg=''):
 		assert_eq(gr.test.get_pass_count(), count, 'passes:  ' + msg)
-		if(gr.test.get_pass_count() != count):
-			print_test_gut_info()
 
 	# ------------------------------
 	# Setup/Teardown

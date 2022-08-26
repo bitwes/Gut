@@ -1112,20 +1112,20 @@ func _warn_for_public_accessors(obj, property_name):
 # and check the backing variable value.  It will then reset throught the setter
 # and set the backing variable and check the getter.
 # ------------------------------------------------------------------------------
-func assert_property_with_backing_variable(obj, property_name, default_value, new_value):
+func assert_property_with_backing_variable(obj, property_name, default_value, new_value, backed_by_name=null):
 	var setter_name = str('@', property_name, '_setter')
 	var getter_name = str('@', property_name, '_getter')
-	var backing_var_name = str('_', property_name)
+	var backing_name = _utils.nvl(backed_by_name, str('_', property_name))
 	var pre_fail_count = get_fail_count()
 
 	var props = obj.get_property_list()
 	var found = false
 	var idx = 0
 	while(idx < props.size() and !found):
-		found = props[idx].name == backing_var_name
+		found = props[idx].name == backing_name
 		idx += 1
 
-	assert_true(found, str(obj, ' has ', backing_var_name, ' variable.'))
+	assert_true(found, str(obj, ' has ', backing_name, ' variable.'))
 	assert_has_method(obj, setter_name)
 	assert_has_method(obj, getter_name)
 
@@ -1133,11 +1133,11 @@ func assert_property_with_backing_variable(obj, property_name, default_value, ne
 		var call_setter = Callable(obj, setter_name)
 		var call_getter = Callable(obj, getter_name)
 
-		assert_eq(obj.get(backing_var_name), default_value, str('Variable ', backing_var_name, ' has default value.'))
+		assert_eq(obj.get(backing_name), default_value, str('Variable ', backing_name, ' has default value.'))
 		assert_eq(call_getter.call(), default_value, 'Getter returns default value.')
 		call_setter.call(new_value)
 		assert_eq(call_getter.call(), new_value, 'Getter returns value from Setter.')
-		assert_eq(obj.get(backing_var_name), new_value, str('Variable ', backing_var_name, ' was set'))
+		assert_eq(obj.get(backing_name), new_value, str('Variable ', backing_name, ' was set'))
 
 	_warn_for_public_accessors(obj, property_name)
 
