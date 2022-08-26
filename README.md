@@ -1,3 +1,8 @@
+# Godot 4
+Porting of GUT to Godot 4 has begin.
+* You can find the status of GUT in 4.0 and a list of changes in the [GODOT_4_README](https://github.com/bitwes/Gut/blob/godot_4/GODOT_4_README.md)
+* The [godot_4 branch](https://github.com/bitwes/Gut/tree/godot_4) has all the new code.
+
 # Gut 7.4.1
 GUT (Godot Unit Test) is a unit testing framework for the [Godot Engine](https://godotengine.org/).  It allows you to write tests for your gdscript in gdscript.
 
