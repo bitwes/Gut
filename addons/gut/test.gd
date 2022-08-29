@@ -1457,8 +1457,8 @@ func stub(thing, p2, p3=null):
 # ------------------------------------------------------------------------------
 # convenience wrapper.
 # ------------------------------------------------------------------------------
-func simulate(obj, times, delta):
-	gut.simulate(obj, times, delta)
+func simulate(obj, times, delta, force_simulate_if_outside_tree: bool = true):
+	gut.simulate(obj, times, delta, force_simulate_if_outside_tree)
 
 # ------------------------------------------------------------------------------
 # Replace the node at base_node.get_node(path) with with_this.  All references
