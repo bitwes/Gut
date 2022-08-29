@@ -93,7 +93,7 @@ var _log_level = 1
 ## The log detail level.  Valid values are 0 - 2.  Larger values do not matter.
 var log_level = 1:
 	get: return _log_level
-	set(val):_set_log_level(val)
+	set(val): _set_log_level(val)
 
 # TODO 4.0
 # This appears to not be used anymore.  Going to wait for more tests to be

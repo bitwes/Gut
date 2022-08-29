@@ -1900,87 +1900,6 @@ class TestCompareDeepShallow:
 
 
 # ------------------------------------------------------------------------------
-class TestAssertSetgetCalled:
-	extends BaseTestClass
-
-	var skip_script = 'Not ready for 4.0'
-
-	const TestNode = preload("res://test/resources/test_assert_setget_test_objects/test_node.gd")
-	const TestScene = preload("res://test/resources/test_assert_setget_test_objects/TestScene.tscn")
-
-	var bad_input = [
-		# Passing instantiate instead of classe
-		[TestNode.new(), "has_both", "set_has_both", "get_has_both"],
-		# passing int instead of instantiate
-		[5, "has_both", "set_has_both", "get_has_both"],
-		# missing prop with existing setter/gettter
-		[TestNode, "wrong_field_name", "set_both", "get_has_both"],
-		# wrong setter
-		[TestNode, "has_both", "wrong_setter_name", "get_has_both"],
-		# wrong getter
-		[TestNode, "has_both", "set_has_both", "wrong_getter_name"],
-		# not passing setter/getter names
-		[TestNode, "has_both", "", ""],
-		# passing ints instead of strings
-		[TestNode, "has_both", 1, 1],
-		# passing nullsfor setter/getter names
-		[TestNode, "has_both", null, null],
-	]
-	func test_fails_with_bad_input_params(params=use_parameters(bad_input)):
-		var old_failed_count = gr.test_with_gut.get_fail_count() # issue parameterized tests
-		gr.test_with_gut._assert_setget_called(params[0],params[1], params[2], params[3])
-		assert_fail(gr.test_with_gut, old_failed_count + 1)
-		if params[0] is TestNode:
-			params[0].free()
-
-
-	func test_fails_with_no_setter_and_getter_names():
-		gr.test_with_gut._assert_setget_called(TestNode, "has_both")
-		assert_fail(gr.test_with_gut)
-
-
-	func test_fails_if_given_setter_is_not_called():
-		gr.test_with_gut._assert_setget_called(TestNode, "has_both_dnu_setget", "set_has_both_dnu_setget")
-		assert_fail(gr.test_with_gut)
-
-
-	func test_fails_if_given_getter_is_not_called():
-		gr.test_with_gut._assert_setget_called(TestNode, "has_both_dnu_setget", "", "get_has_both_dnu_setget")
-		assert_fail(gr.test_with_gut)
-
-
-	func test_passes_if_given_type_is_packed_scene():
-		gr.test_with_gut._assert_setget_called(TestScene, "node_with_setter_getter", "set_node_with_setter_getter", "get_node_with_setter_getter")
-		assert_pass(gr.test_with_gut)
-
-
-	func test_passes_if_given_setter_and_getter_is_called():
-		gr.test_with_gut._assert_setget_called(TestNode, "has_both", "set_has_both", "get_has_both")
-		assert_pass(gr.test_with_gut)
-
-
-	func test_passes_if_given_setter_is_called():
-		gr.test_with_gut._assert_setget_called(TestNode, "has_both", "set_has_both")
-		assert_pass(gr.test_with_gut)
-
-
-	func test_passes_if_given_getter_is_called():
-		gr.test_with_gut._assert_setget_called(TestNode, "has_both", "", "get_has_both")
-		assert_pass(gr.test_with_gut)
-
-
-	func test_fails_if_given_type_is_already_doubled():
-		var doubled_type = double(TestNode)
-		gr.test_with_gut._assert_setget_called(doubled_type, "has_both", "set_has_both", "get_has_both")
-		assert_fail(gr.test_with_gut)
-
-
-	func test_passes_if_given_setter_is_typed():
-		gr.test_with_gut._assert_setget_called(TestNode, "typed_setter", "set_typed_setter")
-		assert_pass(gr.test_with_gut)
-
-
-# ------------------------------------------------------------------------------
 class TestAssertProperty:
 	extends BaseTestClass
 
@@ -1994,7 +1913,7 @@ class TestAssertProperty:
 	# 1 for the total test fail count != 0
 	const SUB_ASSERT_COUNT = 4
 
-	func test_has_assert_setget_method():
+	func test_has_assert_property():
 		assert_has_method(gr.test, "assert_property")
 
 	func test_passes_if_given_input_is_valid():
