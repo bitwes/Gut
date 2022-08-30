@@ -7,11 +7,11 @@ func test_failing_test():
 	fail_test('did not do it!')
 
 func test_generates_error():
-	gut.get_logger().error('This is a manual error')
+	gut.logger.error('This is a manual error')
 	pass_test('passing')
 
 func test_generates_warning():
-	gut.get_logger().warn("This is a manual warning")
+	gut.logger.warn("This is a manual warning")
 	pass_test('passing')
 
 func test_multiple_passing_asserts():
@@ -33,7 +33,7 @@ func test_makes_orphan():
 	assert_true(true)
 
 func test_makes_an_info():
-	gut.get_logger().info("here is some info")
+	gut.logger.info("here is some info")
 	pass_test('info pass!')
 
 func test_pending():

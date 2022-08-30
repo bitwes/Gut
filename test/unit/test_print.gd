@@ -8,12 +8,11 @@ var _old_indent_string = ''
 
 func before_all():
 	gut.p('[before all]')
-	_old_indent_string = gut.get_logger().get_indent_string()
-	#gut.get_logger().set_indent_string('|---')
+	_old_indent_string = gut.logger.get_indent_string()
 
 func after_all():
 	gut.p('[after all]')
-	gut.get_logger().set_indent_string(_old_indent_string)
+	gut.logger.set_indent_string(_old_indent_string)
 
 func before_each():
 	gut.p('[before each]')
@@ -131,25 +130,25 @@ class TestLogLevels:
 
 	func before_all():
 		_orig_log_level = gut.log_level
-		_orig_indent_string = gut.get_logger().get_indent_string()
-		gut.get_logger().set_indent_string('--->')
+		_orig_indent_string = gut.logger.get_indent_string()
+		gut.logger.set_indent_string('--->')
 
 	func after_all():
 		gut.log_level = _orig_log_level
-		gut.get_logger().set_indent_string(_orig_indent_string)
+		gut.logger.set_indent_string(_orig_indent_string)
 
 	func test_log_types_at_levels_with_passing_test(level=use_parameters([-2, -1, 0, 1, 2, 3])):
 		gut.log_level = level
-		gut.get_logger().warn('test text')
-		gut.get_logger().error('test text')
-		gut.get_logger().info('test text')
-		gut.get_logger().debug('test text')
+		gut.logger.warn('test text')
+		gut.logger.error('test text')
+		gut.logger.info('test text')
+		gut.logger.debug('test text')
 		assert_true(true, 'this should pass')
 
 	func test_log_types_at_levels_with_failing_test(level=use_parameters([-2, -1, 0, 1, 2, 3])):
 		gut.log_level = level
-		gut.get_logger().warn('test text')
-		gut.get_logger().error('test text')
-		gut.get_logger().info('test text')
-		gut.get_logger().debug('test text')
+		gut.logger.warn('test text')
+		gut.logger.error('test text')
+		gut.logger.info('test text')
+		gut.logger.debug('test text')
 		assert_true(false, str('this should fail (', level, ')'))

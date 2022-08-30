@@ -63,27 +63,22 @@ signal end_test
 # gutconfig.
 # ###########################
 
-# -----------------------
-# To port to 4.0
-var _tests_like = ''
-
 var _inner_class_name = ''
-func get_inner_class_name():
-	return _inner_class_name
-func set_inner_class_name(inner_class_name):
-	_inner_class_name = inner_class_name
+## When set, GUT will only run Inner-Test-Classes that contain this string.
+var inner_class_name = _inner_class_name :
+	get: return _inner_class_name
+	set(val): _inner_class_name = val
 
-
+var _ignore_pause_before_teardown = false
 ## For batch processing purposes, you may want to ignore any calls to
 ## pause_before_teardown that you forgot to remove_at.
-var _ignore_pause_before_teardown = false
-func set_ignore_pause_before_teardown(should_ignore):
-	_ignore_pause_before_teardown = should_ignore
-func get_ignore_pause_before_teardown():
-	return _ignore_pause_before_teardown
-# -----------------------
+var ignore_pause_before_teardown = _ignore_pause_before_teardown :
+	get: return _ignore_pause_before_teardown
+	set(val): _ignore_pause_before_teardown = val
+
 
 var _temp_directory = 'user://gut_temp_directory'
+## The directory where GUT stores any temporary information during a run.
 var temp_directory = _temp_directory :
 	get: return _temp_directory
 	set(val): _temp_directory = val
@@ -104,6 +99,8 @@ var disable_strict_datatype_checks = false :
 	set(val): _disable_strict_datatype_checks = val
 
 var _export_path = ''
+## Path to file that GUT will create which holds a list of all test scripts so
+## that GUT can run tests when a project is exported.
 var export_path = '' :
 	get: return _export_path
 	set(val): _export_path = val
@@ -116,6 +113,7 @@ var include_subdirectories = _include_subdirectories :
 	set(val): _include_subdirectories = val
 
 var _double_strategy = 1
+## TODO rework what this is and then document it here.
 var double_strategy = 1  :
 	get: return _double_strategy
 	set(val):
@@ -137,6 +135,7 @@ var post_run_script = _post_run_script :
 	set(val): _post_run_script = val
 
 var _color_output = false
+## Flag to color output at the command line and in the GUT GUI.
 var color_output = false :
 	get: return _color_output
 	set(val):
@@ -144,45 +143,63 @@ var color_output = false :
 		_lgr.disable_formatting(!_color_output)
 
 var _junit_xml_file = ''
+## The full path to where GUT should write a JUnit compliant XML file to which
+## contains the results of all tests run.
 var junit_xml_file = '' :
 	get: return _junit_xml_file
 	set(val): _junit_xml_file = val
 
 var _junit_xml_timestamp = false
+## When true and junit_xml_file is set, the file name will include a
+## timestamp so that previous files are not overwritten.
 var junit_xml_timestamp = false :
 	get: return _junit_xml_timestamp
 	set(val): _junit_xml_timestamp = val
 
-var _add_children_to = self
-var add_children_to = self :
-	get: return _add_children_to
-	set(val): _add_children_to = val
-
-var paint_after = .2:
+## The minimum amout of time GUT will wait before pausing for 1 frame to allow
+## the screen to paint.  GUT checkes after each test to see if enough time has
+## passed.
+var paint_after = .1:
 	get: return paint_after
 	set(val): paint_after = val
 
+var _unit_test_name = ''
+## When set GUT will only run tests that contain this string.
+var unit_test_name = _unit_test_name :
+	get: return _unit_test_name
+	set(val): _unit_test_name = val
 
 # ###########################
 # Public Properties
 # ###########################
 
+var _parameter_handler = null
 # This is populated by test.gd each time a paramterized test is encountered
 # for the first time.
-var _parameter_handler = null
+## FOR INTERNAL USE ONLY
 var parameter_handler = _parameter_handler :
 	get: return _parameter_handler
 	set(val):
 		_parameter_handler = val
 		_parameter_handler.set_logger(_lgr)
 
-# var logger = null :
 var _lgr = _utils.get_logger()
-func get_logger():
-	return _lgr
-func set_logger(logger):
-	_lgr = logger
-	_lgr.set_gut(self)
+# Local reference for the common logger.
+## FOR INERNAL USE ONLY
+var logger = _lgr :
+	get: return _lgr
+	set(val):
+		_lgr = val
+		_lgr.set_gut(self)
+
+var _add_children_to = self
+# Sets the object that GUT will add test objects to as it creates them.  The
+# default is self, but can be set to other objects so that GUT is not obscured
+# by the objects added during tests.
+## FOR INERNAL USE ONLY
+var add_children_to = self :
+	get: return _add_children_to
+	set(val): _add_children_to = val
 
 
 # ------------
@@ -219,6 +236,7 @@ func get_spy():
 var _is_running = false
 func is_running():
 	return _is_running
+
 
 # ###########################
 # Private
@@ -260,7 +278,7 @@ var _was_yield_method_called = false
 var _yield_timer = Timer.new()
 var _yield_frames = 0
 
-var _unit_test_name = ''
+
 var _new_summary = null
 
 var _yielding_to = {
@@ -272,6 +290,9 @@ var _yielding_to = {
 # Used to cancel importing scripts if an error has occurred in the setup.  This
 # prevents tests from being run if they were exported and ensures that the
 # error displayed is seen since importing generates a lot of text.
+#
+# TODO this appears to only be checked and never set anywhere.  Verify that this
+# was not broken somewhere and remove if no longer used.
 var _cancel_import = false
 
 # Used for proper assert tracking and printing during before_all
@@ -333,9 +354,6 @@ func _ready():
 
 	if(_select_script != null):
 		select_script(_select_script)
-
-	if(_tests_like != null):
-		set_unit_test_name(_tests_like)
 
 	_print_versions()
 
@@ -1363,17 +1381,6 @@ func set_yield_signal_or_time(obj, signal_name, max_wait, text=''):
 	_lgr.yield_msg(str('-- Yielding to signal "', signal_name, '" or for ', max_wait, ' seconds -- ', text))
 	return self
 
-# ------------------------------------------------------------------------------
-# get the specific unit test that should be run
-# ------------------------------------------------------------------------------
-func get_unit_test_name():
-	return _unit_test_name
-
-# ------------------------------------------------------------------------------
-# set the specific unit test that should be run.
-# ------------------------------------------------------------------------------
-func set_unit_test_name(test_name):
-	_unit_test_name = test_name
 
 
 # ------------------------------------------------------------------------------

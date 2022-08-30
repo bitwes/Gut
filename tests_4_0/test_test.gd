@@ -1313,7 +1313,7 @@ class TestAssertCalled:
 		doubled.set_value(5)
 		gr.test_with_gut.assert_called(doubled, 'set_value', 5)
 		assert_fail(gr.test_with_gut)
-		assert_eq(gr.test_with_gut.get_logger().get_errors().size(), 1, 'Generates error')
+		assert_eq(gr.test_with_gut.logger.get_errors().size(), 1, 'Generates error')
 
 
 # ------------------------------------------------------------------------------
@@ -1422,7 +1422,7 @@ class TestGetCallParameters:
 	func test_generates_error_if_you_do_not_pass_a_doubled_object():
 		var thing = Node2D.new()
 		var _p = gr.test_with_gut.get_call_parameters(thing, 'something')
-		assert_eq(gr.test_with_gut.get_logger().get_errors().size(), 1)
+		assert_eq(gr.test_with_gut.logger.get_errors().size(), 1)
 
 
 # ------------------------------------------------------------------------------
@@ -1685,7 +1685,7 @@ class TestParameterizedTests:
 	func test_prameter_handler_has_logger_set_to_guts_logger():
 		gr.test_with_gut.use_parameters(['a'])
 		var ph = gr.test_with_gut.gut.parameter_handler
-		assert_eq(ph.get_logger(), gr.test_with_gut.gut.get_logger())
+		assert_eq(ph.get_logger(), gr.test_with_gut.gut.logger)
 
 	func test_when_gut_already_has_parameter_handler_it_does_not_make_a_new_one():
 		gr.test_with_gut.use_parameters(['a', 'b', 'c', 'd'])
@@ -1770,8 +1770,8 @@ class TestTestStateChecking:
 		return gut.get_current_test_object().name
 
 	func _run_test(inner_class, name=_same_name()):
-		_gut.set_inner_class_name(inner_class)
-		_gut.set_unit_test_name(name)
+		_gut.inner_class_name = inner_class
+		_gut.unit_test_name = name
 		_gut.test_scripts()
 
 	func _assert_pass_fail_count(passing, failing):
@@ -1812,19 +1812,19 @@ class TestTestStateChecking:
 
 	func test_error_generated_when_using_is_passing_in_before_all():
 		_run_test('TestUseIsPassingInBeforeAll', 'test_nothing')
-		assert_eq(_gut.get_logger().get_errors().size(), 1)
+		assert_eq(_gut.logger.get_errors().size(), 1)
 
 	func test_error_generated_when_using_is_passing_in_after_all():
 		_run_test('TestUseIsPassingInAfterAll', 'test_nothing')
-		assert_eq(_gut.get_logger().get_errors().size(), 1)
+		assert_eq(_gut.logger.get_errors().size(), 1)
 
 	func test_error_generated_when_using_is_failing_in_before_all():
 		_run_test('TestUseIsFailingInBeforeAll', 'test_nothing')
-		assert_eq(_gut.get_logger().get_errors().size(), 1)
+		assert_eq(_gut.logger.get_errors().size(), 1)
 
 	func test_error_generated_when_using_is_failing_in_after_all():
 		_run_test('TestUseIsFailingInAfterAll', 'test_nothing')
-		assert_eq(_gut.get_logger().get_errors().size(), 1)
+		assert_eq(_gut.logger.get_errors().size(), 1)
 
 
 # ------------------------------------------------------------------------------

@@ -56,10 +56,10 @@ func run_tests(show_gui=true):
 func _setup_gui(show_gui):
 	if(show_gui):
 		_gui.gut = _gut
-		var printer = _gut.get_logger().get_printer('gui')
+		var printer = _gut.logger.get_printer('gui')
 		printer.set_textbox(_gui.get_textbox())
 	else:
-		_gut.get_logger().disable_printer('gui', true)
+		_gut.logger.disable_printer('gui', true)
 		_gui.visible = false
 
 	var opts = _gut_config.options
@@ -79,7 +79,7 @@ func _setup_gui(show_gui):
 
 
 func _write_results():
-	var content = _gui.get_textbox().text #_gut.get_logger().get_gui_bbcode()
+	var content = _gui.get_textbox().text #_gut.logger.get_gui_bbcode()
 
 	var f = File.new()
 	var result = f.open(RESULT_FILE, f.WRITE)

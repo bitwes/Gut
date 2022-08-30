@@ -1126,8 +1126,8 @@ func assert_property_with_backing_variable(obj, property_name, default_value, ne
 		idx += 1
 
 	assert_true(found, str(obj, ' has ', backing_name, ' variable.'))
-	assert_has_method(obj, setter_name)
-	assert_has_method(obj, getter_name)
+	assert_true(obj.has_method(setter_name), str('There should be a setter for ', property_name))
+	assert_true(obj.has_method(getter_name), str('There should be a getter for ', property_name))
 
 	if(pre_fail_count == get_fail_count()):
 		var call_setter = Callable(obj, setter_name)

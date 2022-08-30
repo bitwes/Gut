@@ -127,9 +127,9 @@ func _apply_options(opts, _tester):
 	_tester.include_subdirectories = opts.include_subdirs
 
 	if(opts.inner_class != ''):
-		_tester.set_inner_class_name(opts.inner_class)
+		_tester.inner_class_name = opts.inner_class
 	_tester.log_level = opts.log_level
-	_tester.set_ignore_pause_before_teardown(opts.ignore_pause)
+	_tester.ignore_pause_before_teardown = opts.ignore_pause
 
 	if(opts.selected != ''):
 		_tester.select_script(opts.selected)
@@ -145,7 +145,7 @@ func _apply_options(opts, _tester):
 	elif(opts.double_strategy == 'partial'):
 		_tester.double_strategy = DOUBLE_STRATEGY.PARTIAL
 
-	_tester.set_unit_test_name(opts.unit_test_name)
+	_tester.unit_test_name = opts.unit_test_name
 	_tester.pre_run_script = opts.pre_run_script
 	_tester.post_run_script = opts.post_run_script
 	_tester.color_output = !opts.disable_colors

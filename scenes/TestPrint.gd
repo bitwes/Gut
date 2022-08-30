@@ -22,7 +22,7 @@ func _on_Gut_gut_ready():
 	#$Gut.get_gut().get_gui().set_font_size(30)
 	_gut = $Gut.get_gut()
 	_gut.add_directory('res://test/samples')
-	_gut.set_logger(_lgr)
+	_gut.logger = _lgr
 	_gut.maximize()
 
 	_lgr.disable_printer('console', false)
