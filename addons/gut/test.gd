@@ -625,7 +625,7 @@ func _is_connected(signaler_obj, connect_to_obj, signal_name, method_name=""):
 	else:
 		var connections = signaler_obj.get_signal_connection_list(signal_name)
 		for conn in connections:
-			if((conn.source == signaler_obj) and (conn.target == connect_to_obj)):
+			if(conn['signal'].get_name() == signal_name and conn['callable'].get_object() == connect_to_obj):
 				return true
 		return false
 # ------------------------------------------------------------------------------

@@ -47,7 +47,7 @@ class SignalObject:
 # ####################
 func before_each():
 	gr.sw = autofree(SignalWatcher.new())
-	gr.so = SignalObject.new()
+	gr.so = autofree(SignalObject.new())
 
 func after_each():
 	gr.sw = null
@@ -55,17 +55,12 @@ func after_each():
 
 
 # ####################
-# Tests
-# ####################
-func test_print_signals():
-	gr.sw.print_object_signals(gr.so)
-
-# ####################
 # Watch one signal
 # ####################
 func test_no_engine_errors_when_signal_does_not_exist():
 	gut.p('!! Look for Red !!')
 	gr.sw.watch_signal(gr.so, 'some_signal_that_does_not_exist')
+	pass_test('This should generate a GUT warning and not an engine error.')
 
 func test_when_signal_does_not_exist_watch_signal_returns_false():
 	var did = gr.sw.watch_signal(gr.so, 'some_signal_that_does_not_exist')
@@ -105,7 +100,7 @@ func test_when_object_was_not_being_watched_the_count_is_neg_1():
 	assert_eq(gr.sw.get_emit_count(gr.so, SIGNALS.SOME_SIGNAL), -1)
 
 func test_can_watch_signals_on_multiple_objects():
-	var other_so = SignalObject.new()
+	var other_so = autofree(SignalObject.new())
 	gr.sw.watch_signal(gr.so, SIGNALS.SOME_SIGNAL)
 	gr.sw.watch_signal(other_so, SIGNALS.NO_PARAMETERS)
 

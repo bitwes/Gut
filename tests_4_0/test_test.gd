@@ -657,10 +657,8 @@ class TestAssertHasMethod:
 
 
 # ------------------------------------------------------------------------------
-class TestGetSetAsserts:
+class TestAccessorAsserts:
 	extends BaseTestClass
-
-	var skip_script = 'Not ready for 4.0'
 
 	class NoGetNoSet:
 		var _thing = 'nothing'
@@ -870,7 +868,6 @@ class TestAssertFileNotEmpty:
 
 
 # ------------------------------------------------------------------------------
-# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestSignalAsserts:
 	extends BaseTestClass
 
@@ -899,8 +896,6 @@ class TestSignalAsserts:
 				{'name':'letters', 'type':TYPE_STRING}
 			])
 			add_user_signal(SIGNALS.SOME_SIGNAL)
-
-	var skip_script = 'Not ready for 4.0'
 
 	func before_each():
 		super.before_each()
@@ -1605,8 +1600,6 @@ class TestAssertIsFreed:
 class TestConnectionAsserts:
 	extends BaseTestClass
 
-	var skip_script = 'Not ready for 4.0'
-
 	const SIGNAL_NAME = 'test_signal'
 	const METHOD_NAME = 'test_signal_connector'
 
@@ -1704,7 +1697,7 @@ class TestParameterizedTests:
 class TestMemoryMgmt:
 	extends 'res://addons/gut/test.gd'
 
-	var skip_script = 'Not ready for 4.0'
+	var skip_script = 'Not ready for 4.0, waiting on yield but most probably work.'
 
 	func test_passes_when_no_orphans_introduced():
 		assert_no_new_orphans()

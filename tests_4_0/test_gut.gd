@@ -411,11 +411,10 @@ class TestEverythingElse:
 	# Signal tests
 	# ------------------------------
 	func test_when_moving_to_next_test_watched_signals_are_cleared():
-		pending('pending in 4.0')
-		# gr.test_gut.add_script('res://test/unit/verify_signal_watches_are_cleared.gd')
-		# gr.test_gut.test_scripts()
-		# assert_eq(gr.test_gut.get_pass_count(), 1, 'One test should have passed.')
-		# assert_eq(gr.test_gut.get_fail_count(), 1, 'One failure for not watching anymore.')
+		gr.test_gut.add_script('res://test/unit/verify_signal_watches_are_cleared.gd')
+		gr.test_gut.test_scripts()
+		assert_eq(gr.test_gut.get_pass_count(), 1, 'One test should have passed.')
+		assert_eq(gr.test_gut.get_fail_count(), 1, 'One failure for not watching anymore.')
 
 	# ------------------------------
 	# Inner Class
