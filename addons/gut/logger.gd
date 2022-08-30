@@ -126,6 +126,7 @@ func _should_print_to_printer(key_name):
 func _print_test_name():
 	if(_gut == null):
 		return
+
 	var cur_test = _gut.get_current_test_object()
 	if(cur_test == null):
 		return false

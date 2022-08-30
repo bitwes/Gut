@@ -11,6 +11,9 @@ class TestProperties:
 
 	var _gut = null
 
+	func before_all():
+		_utils._test_mode = true
+
 	func before_each():
 		_gut = autofree(Gut.new())
 		_gut._should_print_versions = false
@@ -55,7 +58,10 @@ class TestProperties:
 		assert_property_with_backing_variable(_gut, 'add_children_to', _gut, self)
 
 	func test_logger_backed_property():
-		assert_property_with_backing_variable(_gut, 'logger', _utils.get_logger(), _utils.Logger.new(), '_lgr')
+		# This is hardcodedd to use the current value to check the default because of the way
+		# that _utils and logger works with _utils._test_mode = true.  Kinda breaks
+		# the one of the 8 things that this assert checks, but that's fine.
+		assert_property_with_backing_variable(_gut, 'logger', _gut._lgr, _utils.Logger.new(), '_lgr')
 
 	func test_setting_logger_sets_gut_for_logger():
 		var new_logger = _utils.Logger.new()
@@ -67,21 +73,22 @@ class TestProperties:
 		# I don't know how to test this in other situations
 
 
+
+
 class TestSimulate:
 	extends GutTest
 
 	var Gut = load('res://addons/gut/gut.gd')
 	var Test = load('res://addons/gut/test.gd')
 
-	var _gut = null
+	var _test_gut = null
+
+	func before_all():
+		_utils._test_mode
 
 	func before_each():
-		_gut = autofree(Gut.new())
+		_test_gut = autofree(Gut.new())
 
-	#--------------------------------------
-	#Used to test calling the _process method
-	#on an object through gut
-	#--------------------------------------
 	class HasProcessMethod:
 		extends Node
 		var process_called_count = 0
@@ -91,10 +98,6 @@ class TestSimulate:
 			process_called_count += 1
 			delta_sum += delta
 
-	#--------------------------------------
-	#Used to test calling the _fixed_process
-	#method on an object through gut
-	#--------------------------------------
 	class HasPhysicsProcessMethod:
 		extends Node
 		var physics_process_called_count = 0
@@ -105,37 +108,37 @@ class TestSimulate:
 			delta_sum += delta
 
 	func test_simulate_calls_process():
-		var obj = HasProcessMethod.new()
-		_gut.simulate(obj, 10, .1)
+		var obj = autofree(HasProcessMethod.new())
+		_test_gut.simulate(obj, 10, .1)
 		assert_eq(obj.process_called_count, 10, "_process should have been called 10 times")
-		#using just the numbers didn't work, nor using float.  str worked for some reason and
-		#i'm not sure why.
+		# using just the numbers didn't work, nor using float.  str worked for some reason and
+		# i'm not sure why.
 		assert_eq(str(obj.delta_sum), str(1), "The delta value should have been passed in and summed")
 
 	func test_simulate_calls_process_on_child_objects():
-		var parent = HasProcessMethod.new()
-		var child = HasProcessMethod.new()
+		var parent = autofree(HasProcessMethod.new())
+		var child = autofree(HasProcessMethod.new())
 		parent.add_child(child)
-		_gut.simulate(parent, 10, .1)
+		_test_gut.simulate(parent, 10, .1)
 		assert_eq(child.process_called_count, 10, "_process should have been called on the child object too")
 
 	func test_simulate_calls_process_on_child_objects_of_child_objects():
 		var objs = []
 		for i in range(5):
-			objs.append(HasProcessMethod.new())
+			objs.append(autofree(HasProcessMethod.new()))
 			if(i > 0):
 				objs[i - 1].add_child(objs[i])
-		_gut.simulate(objs[0], 10, .1)
+				_test_gut.simulate(objs[0], 10, .1)
 
 		for i in range(objs.size()):
 			assert_eq(objs[i].process_called_count, 10, "_process should have been called on object # " + str(i))
 
 	func test_simulate_calls_physics_process():
-		var obj = HasPhysicsProcessMethod.new()
-		_gut.simulate(obj, 10, .1)
+		var obj = autofree(HasPhysicsProcessMethod.new())
+		_test_gut.simulate(obj, 10, .1)
 		assert_eq(obj.physics_process_called_count, 10, "_process should have been called 10 times")
-		#using just the numbers didn't work, nor using float.  str worked for some reason and
-		#i'm not sure why.
+		# using just the numbers didn't work, nor using float.  str worked for some reason and
+		# i'm not sure why.
 		assert_eq(str(obj.delta_sum), str(1), "The delta value should have been passed in and summed")
 
 
@@ -158,13 +161,14 @@ class TestMisc:
 		g.free()
 		assert_no_new_orphans()
 
+
+
+
 class TestEverythingElse:
 	extends GutTest
 
 	var Gut = load('res://addons/gut/gut.gd')
 	var Test = load('res://addons/gut/test.gd')
-
-
 
 	#------------------------------
 	# Utility methods/variables

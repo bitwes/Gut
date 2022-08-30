@@ -820,16 +820,12 @@ func test_assert_property():
 func test_assert_setget():
 	gut.p('-- passing --')
 	assert_setget(SetGetTestNode, 'has_both')
-	assert_setget(SetGetTestNode, 'has_setter', SETTER_ONLY)
-	assert_setget(SetGetTestNode, 'has_getter', GETTER_ONLY)
 	assert_setget(SetGetTestNode, 'non_default_both', '__set_default_both', '__get_default_both')
 	assert_setget(SetGetTestNode, 'non_default_getter', null, '__get_non_default_getter')
 	assert_setget(SetGetTestNode, 'non_default_setter', '__set_non_default_setter')
 
 	# These pass because it's not possible to check
 	# that a setter or getter does not exist
-	assert_setget(SetGetTestNode, 'has_both', SETTER_ONLY)
-	assert_setget(SetGetTestNode, 'has_both', GETTER_ONLY)
 
 
 	gut.p('-- failing --')
