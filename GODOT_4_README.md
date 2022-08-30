@@ -21,6 +21,7 @@ These are changes to Godot that affect how GUT is used/implemented.
 * Signal connection asserts
 * Orphan monitoring
 
+
 ## Broken Features
 * Doubling
 * Spying

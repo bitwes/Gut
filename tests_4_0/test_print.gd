@@ -20,11 +20,6 @@ func before_each():
 func after_each():
 	gut.p('[after each]')
 
-func test_print_indent():
-	gut.p('one')
-	gut.p('two', 1, 2)
-	gut.p('three', 1, 3)
-	gut.p('four', 1, 4)
 
 func test_print_non_strings():
 	gut.p([1, 2, 3])

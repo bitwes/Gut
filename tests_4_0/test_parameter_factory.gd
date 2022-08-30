@@ -1,4 +1,4 @@
-extends 'res://addons/gut/test.gd'
+extends GutTest
 
 class TestNamedParameters:
 	extends 'res://addons/gut/test.gd'

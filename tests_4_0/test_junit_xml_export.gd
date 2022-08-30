@@ -11,10 +11,10 @@ var _test_gut = null
 func get_a_gut():
 	var g = Gut.new()
 	g.log_level = g.LOG_LEVEL_ALL_ASSERTS
-	g.set_logger(_utils.Logger.new())
-	g.get_logger().disable_printer('terminal', true)
-	g.get_logger().disable_printer('gui', true)
-	g.get_logger().disable_printer('console', true)
+	g.logger = _utils.Logger.new()
+	g.logger.disable_printer('terminal', true)
+	g.logger.disable_printer('gui', true)
+	g.logger.disable_printer('console', true)
 	return g
 
 
