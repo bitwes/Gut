@@ -657,6 +657,69 @@ class TestAssertHasMethod:
 
 
 # ------------------------------------------------------------------------------
+class TestAccessorAsserts:
+	extends BaseTestClass
+
+	class NoGetNoSet:
+		var _thing = 'nothing'
+
+	class HasGetNotSet:
+		func get_thing():
+			pass
+
+	class HasGetAndSetThatDontWork:
+		func get_thing():
+			pass
+		func set_thing(new_thing):
+			pass
+
+	class HasGetSetThatWorks:
+		var _thing = 'something'
+
+		func get_thing():
+			return _thing
+		func set_thing(new_thing):
+			_thing = new_thing
+
+	class HasIsGetter:
+		var _flagged = true
+		func is_flagged():
+			return _flagged
+		func set_flagged(isit):
+			_flagged = isit
+
+	func test_fail_if_get_set_not_defined():
+		var obj = NoGetNoSet.new()
+		gr.test.assert_accessors(obj, 'thing', 'something', 'another thing')
+		assert_fail(gr.test, 2)
+
+	func test_fail_if_has_get_and_not_set():
+		var obj = HasGetNotSet.new()
+		gr.test.assert_accessors(obj, 'thing', 'something', 'another thing')
+		assert_fail_pass(gr.test, 1, 1)
+
+	func test_fail_if_default_wrong_and_get_dont_work():
+		var obj = HasGetAndSetThatDontWork.new()
+		gr.test.assert_accessors(obj, 'thing', 'something', 'another thing')
+		assert_fail_pass(gr.test, 2, 2)
+
+	func test_fail_if_default_wrong():
+		var obj = HasGetSetThatWorks.new()
+		gr.test.assert_accessors(obj, 'thing', 'not the right default', 'another thing')
+		assert_fail_pass(gr.test, 1, 3)
+
+	func test_pass_if_all_get_sets_are_aligned():
+		var obj = HasGetSetThatWorks.new()
+		gr.test.assert_accessors(obj, 'thing', 'something', 'another thing')
+		assert_pass(gr.test, 4)
+
+	func test_finds_getters_that_start_with_is():
+		var obj = HasIsGetter.new()
+		gr.test.assert_accessors(obj, 'flagged', true, false)
+		assert_pass(gr.test, 4)
+
+
+# ------------------------------------------------------------------------------
 class TestAssertExports:
 	extends BaseTestClass
 
