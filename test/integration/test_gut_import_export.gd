@@ -17,7 +17,7 @@ func test_export_test_exports_tests():
 
 func test_export_uses_export_path_if_no_path_sent():
 	_test_gut.add_directory('res://test/resources/parsing_and_loading_samples')
-	_test_gut.set_export_path(EXPORT_FILE)
+	_test_gut.export_path = EXPORT_FILE
 	_test_gut.export_tests()
 	assert_file_not_empty(EXPORT_FILE)
 
@@ -44,7 +44,7 @@ func test_import_tests_uses_export_path_by_default():
 	_test_gut.export_tests(EXPORT_FILE)
 
 	var _import_gut = add_child_autofree(Gut.new())
-	_import_gut.set_export_path(EXPORT_FILE)
+	_import_gut.export_path = EXPORT_FILE
 	_import_gut.import_tests()
 
 	assert_eq(
@@ -61,7 +61,7 @@ func test_gut_runs_the_imported_tests():
 
 	var _import_gut = Gut.new()
 	add_child(_import_gut)
-	_import_gut.set_export_path(EXPORT_FILE)
+	_import_gut.export_path = EXPORT_FILE
 	_import_gut.import_tests()
 	_import_gut.test_scripts()
 

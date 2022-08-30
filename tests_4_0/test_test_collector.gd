@@ -113,8 +113,10 @@ class TestTestsWithParameters:
 		assert_eq(script.get_test_named('test_inner_has_two_parameters').arg_count, 2)
 		assert_eq(script.get_test_named('test_inner_no_parameters').arg_count, 0)
 
-class __TestExportImport:
+class TestExportImport:
 	extends "res://test/gut_test.gd"
+
+	var skip_script = 'Not ready for 4.0'
 
 	var SCRIPTS_ROOT = 'res://test/resources/parsing_and_loading_samples/'
 	var EXPORT_FILE = 'user://exported_tests.cfg'

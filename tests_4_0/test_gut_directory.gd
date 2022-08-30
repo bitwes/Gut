@@ -16,7 +16,7 @@ class BaseTest:
 	# Returns a new gut object, all setup for testing.
 	func get_a_gut():
 		var g = Gut.new()
-		g.set_log_level(g.LOG_LEVEL_ALL_ASSERTS)
+		g.log_level = g.LOG_LEVEL_ALL_ASSERTS
 		add_child(g)
 		return g
 
@@ -155,15 +155,13 @@ class TestUsingDynamicDirs:
 		gr.gut.add_directory(_test_dirs[0])
 		assert_true(gr.gut._test_collector.has_script(TEST_BASE_DIR + 'root/test_script.gd'))
 
-	func test_include_subdirectories_accessors():
-		assert_accessors(gr.gut, 'include_subdirectories', false, true)
 
 	func test_when_subdir_true_it_finds_subdirectories():
-		gr.gut.set_include_subdirectories(true)
+		gr.gut.include_subdirectories = true
 		gr.gut.add_directory(TEST_BASE_DIR)
 		assert_true(gr.gut._test_collector.has_script(TEST_BASE_DIR + 'other_root/three/test_script.gd'))
 
 	func test_when_subdir_false_it_does_not_find_subdirectories():
-		gr.gut.set_include_subdirectories(false)
+		gr.gut.include_subdirectories= false
 		gr.gut.add_directory(TEST_BASE_DIR)
 		assert_false(gr.gut._test_collector.has_script(TEST_BASE_DIR + 'other_root/three/test_script.gd'))

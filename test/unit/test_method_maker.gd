@@ -40,7 +40,7 @@ class TestGetDecleration:
 		assert_true(true, 'we got here')
 
 	func test_unsupported_type_within_range_generates_error():
-		var err_count = gut.get_logger().get_errors().size()
+		var err_count = gut.logger.get_errors().size()
 
 		# Force an unsupported on a known supported
 		_mm._supported_defaults[TYPE_INT] = null
@@ -49,7 +49,7 @@ class TestGetDecleration:
 		var meta = make_meta('dummy', params)
 		meta.default_args.append(1)
 		var _txt = _mm.get_function_text(meta)
-		assert_eq(gut.get_logger().get_errors().size(), err_count + 1)
+		assert_eq(gut.logger.get_errors().size(), err_count + 1)
 
 	func test_if_unknonw_param_type_function_text_is_null():
 		var params = [make_param('value1', 999)]

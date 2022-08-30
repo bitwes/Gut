@@ -20,7 +20,7 @@ var _should_abort =  false
 # Virtual method that will be called by GUT after instantiating
 # this script.
 func run():
-	gut.get_logger().error("Run method not overloaded.  Create a 'run()' method in your hook script to run your code.")
+	gut.logger.error("Run method not overloaded.  Create a 'run()' method in your hook script to run your code.")
 
 
 # Set the exit code when running from the command line.  If not set then the

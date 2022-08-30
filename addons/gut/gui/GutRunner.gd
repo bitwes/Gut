@@ -39,7 +39,7 @@ func run_tests(show_gui=true):
 
 	_setup_gui(show_gui)
 
-	_gut.set_add_children_to(self)
+	_gut.add_children_to = self
 	if(_gut_config.options.gut_on_top):
 		_gut_layer.add_child(_gut)
 	else:
@@ -56,10 +56,10 @@ func run_tests(show_gui=true):
 func _setup_gui(show_gui):
 	if(show_gui):
 		_gui.gut = _gut
-		var printer = _gut.get_logger().get_printer('gui')
+		var printer = _gut.logger.get_printer('gui')
 		printer.set_textbox(_gui.get_textbox())
 	else:
-		_gut.get_logger().disable_printer('gui', true)
+		_gut.logger.disable_printer('gui', true)
 		_gui.visible = false
 
 	var opts = _gut_config.options
@@ -70,10 +70,16 @@ func _setup_gui(show_gui):
 	if(opts.background_color != null and opts.background_color.is_valid_html_color()):
 		_gui.set_background_color(Color(opts.background_color))
 
+	#_tester.set_modulate(Color(1.0, 1.0, 1.0, min(1.0, float(opts.opacity) / 100)))
+	# if(opts.should_maximize):
+	# 	_tester.maximize()
+	#if(opts.compact_mode):
+	#	_tester.get_gui().compact_mode(true)
+
 
 
 func _write_results():
-	var content = _gui.get_textbox().text #_gut.get_logger().get_gui_bbcode()
+	var content = _gui.get_textbox().text #_gut.logger.get_gui_bbcode()
 
 	var f = File.new()
 	var result = f.open(RESULT_FILE, f.WRITE)

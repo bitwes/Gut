@@ -142,7 +142,7 @@ func test_check_out_this_summary():
 	gut.p("---------------------------------------")
 	gut.p("- Start Summary Output")
 	gut.p("---------------------------------------")
-	gr.summary.log_summary_text(gut.get_logger())
+	gr.summary.log_summary_text(gut.logger)
 	gut.p("---------------------------------------")
 	gut.p("- End Summary Output")
 	gut.p("---------------------------------------")

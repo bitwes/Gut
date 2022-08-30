@@ -10,7 +10,7 @@ var _test_gut = null
 # Returns a new gut object, all setup for testing.
 func get_a_gut():
 	var g = Gut.new()
-	g.set_log_level(g.LOG_LEVEL_ALL_ASSERTS)
+	g.log_level = g.LOG_LEVEL_ALL_ASSERTS
 	g.set_logger(_utils.Logger.new())
 	g.get_logger().disable_printer('terminal', true)
 	g.get_logger().disable_printer('gui', true)

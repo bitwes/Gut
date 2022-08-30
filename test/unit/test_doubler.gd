@@ -271,7 +271,6 @@ class TestBuiltInOverloading:
 		assert_ne(inst.label, null, "Can get to a label on the instantiate")
 		# pause so _process gets called
 		await yield_for(3).YIELD
-		end_test()
 
 	func test_double_includes_methods_in_super():
 		assert_string_contains(_dbl_win_dia_text, 'connect(')
@@ -372,7 +371,7 @@ class TestDoubleInnerClasses:
 
 	func test_doubled_instances_extend_the_inner_class():
 		var inst = doubler.double_inner(INNER_CLASSES_PATH, 'InnerA').new()
-		assert_extends(inst, InnerClasses.InnerA)
+		assert_is(inst, InnerClasses.InnerA)
 
 	func test_doubled_inners_that_extend_inners_get_full_inheritance():
 		var inst = doubler.double_inner(INNER_CLASSES_PATH, 'InnerCA').new()

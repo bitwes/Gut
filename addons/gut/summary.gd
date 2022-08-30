@@ -57,6 +57,7 @@ class Test:
 # ------------------------------------------------------------------------------
 class TestScript:
 	var name = 'NOT_SET'
+	var was_skipped = false
 	var _tests = {}
 	var _test_order = []
 
@@ -93,13 +94,18 @@ class TestScript:
 		for key in _tests:
 			if(_tests[key].is_failing()):
 				count += 1
+		if(was_skipped):
+			count = 1
 		return count
 
 	func get_risky_count():
 		var count = 0
-		for key in _tests:
-			if(!_tests[key].did_something()):
-				count += 1
+		if(was_skipped):
+			count = 1
+		else:
+			for key in _tests:
+				if(!_tests[key].did_something()):
+					count += 1
 		return count
 
 
@@ -204,9 +210,13 @@ func log_summary_text(lgr):
 
 	for s in range(_scripts.size()):
 		lgr.set_indent_level(0)
-		if(_scripts[s].get_fail_count() > 0 or _scripts[s].get_pending_count() > 0):
+		if(_scripts[s].was_skipped or _scripts[s].get_fail_count() > 0 or _scripts[s].get_pending_count() > 0):
 			lgr.log(_scripts[s].name, lgr.fmts.underline)
 
+		if(_scripts[s].was_skipped):
+			lgr.inc_indent()
+			lgr.log('[Risky] Script was skipped', lgr.fmts.yellow)
+			lgr.dec_indent()
 
 		for t in range(_scripts[s]._test_order.size()):
 			var tname = _scripts[s]._test_order[t]
@@ -221,7 +231,7 @@ func log_summary_text(lgr):
 				for i in range(test.pending_texts.size()):
 					lgr.pending(test.pending_texts[i])
 				if(!test.did_something()):
-					lgr.log('[Did not assert]', lgr.fmts.yellow)
+					lgr.log('[Risky] Did not assert', lgr.fmts.yellow)
 				lgr.dec_indent()
 
 	lgr.set_indent_level(0)

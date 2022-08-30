@@ -29,109 +29,10 @@
 # View the readme at https://github.com/bitwes/Gut/blob/master/README.md for usage details.
 # You should also check out the github wiki at: https://github.com/bitwes/Gut/wiki
 # ##############################################################################
-extends Control
-
-# -- Settings --
-var _select_script = ''
-var _tests_like = ''
-var _inner_class_name = ''
-
-var _should_maximize = false
-var should_maximize = false :
-	get:
-		return get_should_maximize()
-	set(val):
-		set_should_maximize(val)
-
-var _log_level = 1
-var log_level :
-	get:
-		return get_log_level()
-	set(val):
-		set_log_level(val)
-var _disable_strict_datatype_checks = false :
-	get:
-		return is_strict_datatype_checks_disabled()
-	set(val):
-		disable_strict_datatype_checks(val)
-var _test_prefix = 'test_'
-var _file_prefix = 'test_'
-var _file_extension = '.gd'
-var _inner_class_prefix = 'Test'
-var _temp_directory = 'user://gut_temp_directory'
-var _export_path = '' :
-	get:
-		return get_export_path()
-	set(val):
-		set_export_path(val)
-
-var _include_subdirectories = false
-var include_subdirectories:
-	get:
-		return get_include_subdirectories()
-	set(val):
-		set_include_subdirectories(val)
-
-var _double_strategy = 1
-var double_strategy = 1  :
-	get:
-		return get_double_strategy()
-	set(val):
-		set_double_strategy(val)
-
-var _pre_run_script = ''
-var pre_run_script = '' :
-	get:
-		return get_pre_run_script()
-	set(val):
-		set_pre_run_script(val)
-
-var _post_run_script = ''
-var post_run_script = '' :
-	get:
-		return get_post_run_script()
-	set(val):
-		set_post_run_script(val)
-
-var _color_output = false
-var color_output = false :
-	get:
-		return get_color_output()
-	set(val):
-		set_color_output(val)
-
-var _junit_xml_file = ''
-var junit_xml_file = '' :
-	get:
-		return get_junit_xml_file()
-	set(val):
-		set_junit_xml_file(val)
-
-var _junit_xml_timestamp = false
-var junit_xml_timestamp = false :
-	get:
-		return get_junit_xml_timestamp()
-	set(val):
-		set_junit_xml_timestamp(val)
-
-var _add_children_to = self
-var add_children_to = self :
-	get:
-		return get_add_children_to()
-	set(val):
-		set_add_children_to(val)
-
-
-var paint_after = .2:
-	get:
-		return paint_after
-	set(val):
-		paint_after = val
-# -- End Settings --
-var _last_paint_time = 0.0
+extends 'res://addons/gut/gut_to_move.gd'
 
 # ###########################
-# Other Vars
+# Constants
 # ###########################
 const LOG_LEVEL_FAIL_ONLY = 0
 const LOG_LEVEL_TEST_AND_FAILURES = 1
@@ -139,73 +40,6 @@ const LOG_LEVEL_ALL_ASSERTS = 2
 const WAITING_MESSAGE = '/# waiting #/'
 const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
 const COMPLETED = 'completed'
-
-var _utils = load('res://addons/gut/utils.gd').get_instance()
-var _lgr = _utils.get_logger()
-var _strutils = _utils.Strutils.new()
-# Used to prevent multiple messages for deprecated setup/teardown messages
-var _deprecated_tracker = _utils.ThingCounter.new()
-
-# The instantiate that is created from _pre_run_script.  Accessible from
-# get_pre_run_script_instance.
-var _pre_run_script_instance = null
-var _post_run_script_instance = null # This is not used except in tests.
-
-
-var _script_name = null
-var _test_collector = _utils.TestCollector.new()
-
-# The instanced scripts.  This is populated as the scripts are run.
-var _test_script_objects = []
-
-var _waiting = false
-var _done = false
-var _is_running = false
-var _start_time = 0.0
-
-var _current_test = null
-var _log_text = ""
-
-var _pause_before_teardown = false
-# when true _pause_before_teardown will be ignored.  useful
-# when batch processing and you don't want to watch.
-var _ignore_pause_before_teardown = false
-var _wait_timer = Timer.new()
-
-var _was_yield_method_called = false
-# used when yielding to gut instead of some other
-# signal.  Start with set_yield_time()
-var _yield_timer = Timer.new()
-var _yield_frames = 0
-
-var _unit_test_name = ''
-var _new_summary = null
-
-var _yielding_to = {
-	obj = null,
-	signal_name = ''
-}
-
-var _stubber = _utils.Stubber.new()
-var _doubler = _utils.Doubler.new()
-var _spy = _utils.Spy.new()
-var _orphan_counter =  _utils.OrphanCounter.new()
-var _autofree = _utils.AutoFree.new()
-
-# This is populated by test.gd each time a paramterized test is encountered
-# for the first time.
-var _parameter_handler = null
-
-# Used to cancel importing scripts if an error has occurred in the setup.  This
-# prevents tests from being run if they were exported and ensures that the
-# error displayed is seen since importing generates a lot of text.
-var _cancel_import = false
-
-# Used for proper assert tracking and printing during before_all
-var _before_all_test_obj = load('res://addons/gut/test_collector.gd').Test.new()
-# Used for proper assert tracking and printing during after_all
-var _after_all_test_obj = load('res://addons/gut/test_collector.gd').Test.new()
-
 
 # ###########################
 # Signals
@@ -222,11 +56,253 @@ signal start_test(test_name)
 signal end_test
 
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
+# ###########################
+# Settings
+#
+# These are properties that are usually set before a run is started through
+# gutconfig.
+# ###########################
+
+var _inner_class_name = ''
+## When set, GUT will only run Inner-Test-Classes that contain this string.
+var inner_class_name = _inner_class_name :
+	get: return _inner_class_name
+	set(val): _inner_class_name = val
+
+var _ignore_pause_before_teardown = false
+## For batch processing purposes, you may want to ignore any calls to
+## pause_before_teardown that you forgot to remove_at.
+var ignore_pause_before_teardown = _ignore_pause_before_teardown :
+	get: return _ignore_pause_before_teardown
+	set(val): _ignore_pause_before_teardown = val
+
+
+var _temp_directory = 'user://gut_temp_directory'
+## The directory where GUT stores any temporary information during a run.
+var temp_directory = _temp_directory :
+	get: return _temp_directory
+	set(val): _temp_directory = val
+
+
+var _log_level = 1
+## The log detail level.  Valid values are 0 - 2.  Larger values do not matter.
+var log_level = 1:
+	get: return _log_level
+	set(val): _set_log_level(val)
+
+# TODO 4.0
+# This appears to not be used anymore.  Going to wait for more tests to be
+# ported before removing.
+var _disable_strict_datatype_checks = false
+var disable_strict_datatype_checks = false :
+	get: return _disable_strict_datatype_checks
+	set(val): _disable_strict_datatype_checks = val
+
+var _export_path = ''
+## Path to file that GUT will create which holds a list of all test scripts so
+## that GUT can run tests when a project is exported.
+var export_path = '' :
+	get: return _export_path
+	set(val): _export_path = val
+
+var _include_subdirectories = false
+## Setting this to true will make GUT search all subdirectories of any directory
+## you have configured GUT to search for tests in.
+var include_subdirectories = _include_subdirectories :
+	get: return _include_subdirectories
+	set(val): _include_subdirectories = val
+
+var _double_strategy = 1
+## TODO rework what this is and then document it here.
+var double_strategy = 1  :
+	get: return _double_strategy
+	set(val):
+		_double_strategy = val
+		_doubler.set_strategy(double_strategy)
+
+var _pre_run_script = ''
+## Path to the script that will be run before all tests are run.  This script
+## must extend GutHookScript
+var pre_run_script = _pre_run_script :
+	get: return _pre_run_script
+	set(val): _pre_run_script = val
+
+var _post_run_script = ''
+## Path to the script that will run after all tests have run.  The script
+## must extend GutHookScript
+var post_run_script = _post_run_script :
+	get: return _post_run_script
+	set(val): _post_run_script = val
+
+var _color_output = false
+## Flag to color output at the command line and in the GUT GUI.
+var color_output = false :
+	get: return _color_output
+	set(val):
+		_color_output = val
+		_lgr.disable_formatting(!_color_output)
+
+var _junit_xml_file = ''
+## The full path to where GUT should write a JUnit compliant XML file to which
+## contains the results of all tests run.
+var junit_xml_file = '' :
+	get: return _junit_xml_file
+	set(val): _junit_xml_file = val
+
+var _junit_xml_timestamp = false
+## When true and junit_xml_file is set, the file name will include a
+## timestamp so that previous files are not overwritten.
+var junit_xml_timestamp = false :
+	get: return _junit_xml_timestamp
+	set(val): _junit_xml_timestamp = val
+
+## The minimum amout of time GUT will wait before pausing for 1 frame to allow
+## the screen to paint.  GUT checkes after each test to see if enough time has
+## passed.
+var paint_after = .1:
+	get: return paint_after
+	set(val): paint_after = val
+
+var _unit_test_name = ''
+## When set GUT will only run tests that contain this string.
+var unit_test_name = _unit_test_name :
+	get: return _unit_test_name
+	set(val): _unit_test_name = val
+
+# ###########################
+# Public Properties
+# ###########################
+
+var _parameter_handler = null
+# This is populated by test.gd each time a paramterized test is encountered
+# for the first time.
+## FOR INTERNAL USE ONLY
+var parameter_handler = _parameter_handler :
+	get: return _parameter_handler
+	set(val):
+		_parameter_handler = val
+		_parameter_handler.set_logger(_lgr)
+
+var _lgr = _utils.get_logger()
+# Local reference for the common logger.
+## FOR INERNAL USE ONLY
+var logger = _lgr :
+	get: return _lgr
+	set(val):
+		_lgr = val
+		_lgr.set_gut(self)
+
+var _add_children_to = self
+# Sets the object that GUT will add test objects to as it creates them.  The
+# default is self, but can be set to other objects so that GUT is not obscured
+# by the objects added during tests.
+## FOR INERNAL USE ONLY
+var add_children_to = self :
+	get: return _add_children_to
+	set(val): _add_children_to = val
+
+
+# ------------
+# Read only
+# ------------
+var _test_collector = _utils.TestCollector.new()
+func get_test_collector():
+	return _test_collector
+
+# var version = null :
+func get_version():
+	return _utils.version
+
+var _orphan_counter =  _utils.OrphanCounter.new()
+func get_orphan_counter():
+	return _orphan_counter
+
+var _autofree = _utils.AutoFree.new()
+func get_autofree():
+	return _autofree
+
+var _stubber = _utils.Stubber.new()
+func get_stubber():
+	return _stubber
+
+var _doubler = _utils.Doubler.new()
+func get_doubler():
+	return _doubler
+
+var _spy = _utils.Spy.new()
+func get_spy():
+	return _spy
+
+var _is_running = false
+func is_running():
+	return _is_running
+
+
+# ###########################
+# Private
+# ###########################
 var  _should_print_versions = true # used to cut down on output in tests.
 
+var _test_prefix = 'test_'
+var _file_prefix = 'test_'
+var _inner_class_prefix = 'Test'
 
+var _select_script = ''
+var _last_paint_time = 0.0
+var _strutils = _utils.Strutils.new()
+
+# The instantiate that is created from _pre_run_script.  Accessible from
+# get_pre_run_script_instance.
+var _pre_run_script_instance = null
+var _post_run_script_instance = null # This is not used except in tests.
+
+var _script_name = null
+
+# The instanced scripts.  This is populated as the scripts are run.
+var _test_script_objects = []
+
+var _waiting = false
+var _done = false
+
+# msecs ticks when run was started
+var _start_time = 0.0
+
+var _current_test = null
+var _pause_before_teardown = false
+
+var _wait_timer = Timer.new()
+
+var _was_yield_method_called = false
+# used when yielding to gut instead of some other
+# signal.  Start with set_yield_time()
+var _yield_timer = Timer.new()
+var _yield_frames = 0
+
+
+var _new_summary = null
+
+var _yielding_to = {
+	obj = null,
+	signal_name = ''
+}
+
+
+# Used to cancel importing scripts if an error has occurred in the setup.  This
+# prevents tests from being run if they were exported and ensures that the
+# error displayed is seen since importing generates a lot of text.
+#
+# TODO this appears to only be checked and never set anywhere.  Verify that this
+# was not broken somewhere and remove if no longer used.
+var _cancel_import = false
+
+# Used for proper assert tracking and printing during before_all
+var _before_all_test_obj = load('res://addons/gut/test_collector.gd').Test.new()
+# Used for proper assert tracking and printing during after_all
+var _after_all_test_obj = load('res://addons/gut/test_collector.gd').Test.new()
+
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func _init():
 	_before_all_test_obj.name = 'before_all'
 	_after_all_test_obj.name = 'after_all'
@@ -268,12 +344,8 @@ func _ready():
 	if(_should_print_versions):
 		_lgr.info(str('using [', OS.get_user_data_dir(), '] for temporary output.'))
 
-	set_process_input(true)
-
 	add_child(_wait_timer)
 	_wait_timer.set_wait_time(1)
-	_wait_timer.set_one_shot(true)
-
 	_wait_timer.set_one_shot(true)
 
 	add_child(_yield_timer)
@@ -283,16 +355,6 @@ func _ready():
 	if(_select_script != null):
 		select_script(_select_script)
 
-	if(_tests_like != null):
-		set_unit_test_name(_tests_like)
-
-	if(_should_maximize):
-		# GUI checks for is_in_tree will not pass yet.
-		call_deferred('maximize')
-
-	# hide the panel that IS gut so that only the GUI is seen
-	self.self_modulate = Color(1,1,1,0)
-	show()
 	_print_versions()
 
 # ------------------------------------------------------------------------------
@@ -306,6 +368,11 @@ func _notification(what):
 
 		_test_script_objects = []
 
+		if(is_instance_valid(_wait_timer)):
+			_wait_timer.free()
+		if(is_instance_valid(_yield_timer)):
+			_yield_timer.free()
+
 func _print_versions(send_all = true):
 	if(!_should_print_versions):
 		return
@@ -314,16 +381,46 @@ func _print_versions(send_all = true):
 
 	if(send_all):
 		p(info)
-	# else:
-	# 	var printer = _lgr.get_printer('gui')
-	# 	printer.send(info + "\n")
+	else:
+		_lgr.get_printer('gui').send(info + "\n")
 
 
-#####################
+
+
+# ####################
+#
+# Accessor code
+#
+# ####################
+
+
+# ------------------------------------------------------------------------------
+# Set the log level.  Use one of the various LOG_LEVEL_* constants.
+# ------------------------------------------------------------------------------
+func _set_log_level(level):
+	_log_level = max(level, 0)
+
+	# Level 0 settings
+	_lgr.set_less_test_names(level == 0)
+	# Explicitly always enabled
+	_lgr.set_type_enabled(_lgr.types.normal, true)
+	_lgr.set_type_enabled(_lgr.types.error, true)
+	_lgr.set_type_enabled(_lgr.types.pending, true)
+
+	# Level 1 types
+	_lgr.set_type_enabled(_lgr.types.warn, level > 0)
+	_lgr.set_type_enabled(_lgr.types.deprecated, level > 0)
+
+	# Level 2 types
+	_lgr.set_type_enabled(_lgr.types.passed, level > 1)
+	_lgr.set_type_enabled(_lgr.types.info, level > 1)
+	_lgr.set_type_enabled(_lgr.types.debug, level > 1)
+
+# ####################
 #
 # Events
 #
-#####################
+# ####################
 
 # ------------------------------------------------------------------------------
 # Timeout for the built in timer.  emits the timeout signal.  Start timer
@@ -375,6 +472,7 @@ func end_teardown_pause():
 # Private
 #
 #####################
+
 func _log_test_children_warning(test_script):
 	if(!_lgr.is_type_enabled(_lgr.types.orphan)):
 		return
@@ -470,12 +568,7 @@ func _init_run():
 	_test_collector.set_test_class_prefix(_inner_class_prefix)
 	_test_script_objects = []
 	_new_summary = _utils.Summary.new()
-	print('NEW SUMMARY = ', _new_summary)
-
-	_log_text = ""
-
 	_current_test = null
-
 	_is_running = true
 
 	var pre_hook_result = _validate_hook_script(_pre_run_script)
@@ -513,7 +606,7 @@ func _end_run():
 		p('Ran Inner Classes matching "' + _inner_class_name + '"')
 
 	_is_running = false
-	update()
+
 	_run_hook_script(_post_run_script_instance)
 	_export_results()
 	end_run.emit()
@@ -628,19 +721,6 @@ func _wait_for_continue_button():
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-func _call_deprecated_script_method(script, method, alt):
-	if(script.has_method(method)):
-		var txt = str(script, '-', method)
-		if(!_deprecated_tracker.has(txt)):
-			# Removing the deprecated line.  I think it's still too early to
-			# start bothering people with this.  Left everything here though
-			# because I don't want to remember how I did this last time.
-			_lgr.deprecated(str('The method ', method, ' has been deprecated, use ', alt, ' instead.'))
-			_deprecated_tracker.add(txt)
-		script.call(method)
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
 func _get_indexes_matching_script_name(name):
 	var indexes = [] # empty runs all
 	for i in range(_test_collector.scripts.size()):
@@ -696,7 +776,6 @@ func _run_test(script_inst, test_name):
 	_orphan_counter.add_counter('test')
 	var script_result = null
 
-	_call_deprecated_script_method(script_inst, 'setup', 'before_each')
 	var before_each_result = script_inst.before_each()
 	if(_is_function_state(before_each_result)):
 		await _wait_for_done(before_each_result)
@@ -723,7 +802,6 @@ func _run_test(script_inst, test_name):
 	script_inst.clear_signal_watcher()
 
 	# call each post-each-test method until teardown is removed.
-	_call_deprecated_script_method(script_inst, 'teardown', 'after_each')
 	var after_each_result = script_inst.after_each()
 	if(_is_function_state(after_each_result)):
 		await _wait_for_done(after_each_result)
@@ -755,7 +833,6 @@ func _call_before_all(test_script):
 
 	# Next 3 lines can be removed when prerun_setup removed.
 	_current_test.name = 'prerun_setup'
-	_call_deprecated_script_method(test_script, 'prerun_setup', 'before_all')
 	_current_test.name = 'before_all'
 
 	var result = test_script.before_all()
@@ -778,7 +855,6 @@ func _call_after_all(test_script):
 
 	# Next 3 lines can be removed when postrun_teardown removed.
 	_current_test.name = 'postrun_teardown'
-	_call_deprecated_script_method(test_script, 'postrun_teardown', 'after_all')
 	_current_test.name = 'after_all'
 
 	var result = test_script.after_all()
@@ -838,6 +914,20 @@ func _test_the_scripts(indexes=[]):
 		start_script.emit(the_script)
 
 		var test_script = the_script.get_new()
+
+		# ----
+		# SHORTCIRCUIT
+		# skip_script logic
+		var skip_script = test_script.get('skip_script')
+		if(skip_script != null):
+			var msg = str('- [Script skipped]:  ', skip_script)
+			_lgr.inc_indent()
+			_lgr.log(msg, _lgr.fmts.yellow)
+			_lgr.dec_indent()
+			_new_summary.get_current_script().was_skipped = true
+			continue
+		# ----
+
 		var script_result = null
 		_setup_script(test_script)
 		_doubler.set_strategy(_double_strategy)
@@ -981,7 +1071,7 @@ func _pending(text=''):
 
 
 # ------------------------------------------------------------------------------
-# Gets all the files in a directory and all subdirectories if get_include_subdirectories
+# Gets all the files in a directory and all subdirectories if include_subdirectories
 # is true.  The files returned are all sorted by name.
 # ------------------------------------------------------------------------------
 func _get_files(path, prefix, suffix):
@@ -994,7 +1084,7 @@ func _get_files(path, prefix, suffix):
 	var d = Directory.new()
 	d.open(path)
 	# true parameter tells list_dir_begin not to include "." and ".." directories.
-	d.list_dir_begin() # TODOGODOT4 fill missing arguments https://github.com/godotengine/godot/pull/40547
+	d.list_dir_begin() # TODO 4.0 fill missing arguments https://github.com/godotengine/godot/pull/40547
 
 	# Traversing a directory is kinda odd.  You have to start the process of listing
 	# the contents of a directory with list_dir_begin then use get_next until it
@@ -1008,7 +1098,7 @@ func _get_files(path, prefix, suffix):
 		if(d.file_exists(full_path)):
 			if(fs_item.begins_with(prefix) and fs_item.ends_with(suffix)):
 				files.append(full_path)
-		elif(get_include_subdirectories() and d.dir_exists(full_path)):
+		elif(include_subdirectories and d.dir_exists(full_path)):
 			directories.append(full_path)
 
 		fs_item = d.get_next()
@@ -1035,6 +1125,7 @@ func get_elapsed_time():
 	to_return = to_return / 1000.0
 
 	return to_return
+
 # ------------------------------------------------------------------------------
 # Conditionally prints the text to the console/results variable based on the
 # current log level and what level is passed in.  Whenever currently in a test,
@@ -1055,9 +1146,6 @@ func p(text, level=0):
 # RUN TESTS/ADD SCRIPTS
 #
 ################
-func get_minimum_size():
-	return Vector2(810, 380)
-
 
 # ------------------------------------------------------------------------------
 # Runs all the scripts that were added using add_script
@@ -1184,30 +1272,10 @@ func export_if_tests_found():
 
 
 # ------------------------------------------------------------------------------
-# Maximize test runner window to fit the viewport.
-# ------------------------------------------------------------------------------
-func set_should_maximize(should):
-	_should_maximize = should
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_should_maximize():
-	return _should_maximize
-
-# ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func maximize():
 	_lgr.deprecated('gut.maximize')
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func disable_strict_datatype_checks(should):
-	_disable_strict_datatype_checks = should
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func is_strict_datatype_checks_disabled():
-	return _disable_strict_datatype_checks
 
 # ------------------------------------------------------------------------------
 # Pauses the test and waits for you to press a confirmation button.  Useful when
@@ -1254,40 +1322,6 @@ func get_fail_count():
 func get_pending_count():
 	return _new_summary.get_totals().pending
 
-# ------------------------------------------------------------------------------
-# Get the results of all tests ran as text.  This string is the same as is
-# displayed in the text box, and similar to what is printed to the console.
-# ------------------------------------------------------------------------------
-func get_result_text():
-	return _log_text
-
-# ------------------------------------------------------------------------------
-# Set the log level.  Use one of the various LOG_LEVEL_* constants.
-# ------------------------------------------------------------------------------
-func set_log_level(level):
-	_log_level = max(level, 0)
-
-	# Level 0 settings
-	_lgr.set_less_test_names(level == 0)
-	# Explicitly always enabled
-	_lgr.set_type_enabled(_lgr.types.normal, true)
-	_lgr.set_type_enabled(_lgr.types.error, true)
-	_lgr.set_type_enabled(_lgr.types.pending, true)
-
-	# Level 1 types
-	_lgr.set_type_enabled(_lgr.types.warn, level > 0)
-	_lgr.set_type_enabled(_lgr.types.deprecated, level > 0)
-
-	# Level 2 types
-	_lgr.set_type_enabled(_lgr.types.passed, level > 1)
-	_lgr.set_type_enabled(_lgr.types.info, level > 1)
-	_lgr.set_type_enabled(_lgr.types.debug, level > 1)
-
-# ------------------------------------------------------------------------------
-# Get the current log level.
-# ------------------------------------------------------------------------------
-func get_log_level():
-	return _log_level
 
 # ------------------------------------------------------------------------------
 # Call this method to make the test pause before teardown so that you can inspect
@@ -1296,30 +1330,7 @@ func get_log_level():
 func pause_before_teardown():
 	_pause_before_teardown = true;
 
-# ------------------------------------------------------------------------------
-# For batch processing purposes, you may want to ignore any calls to
-# pause_before_teardown that you forgot to remove_at.
-# ------------------------------------------------------------------------------
-func set_ignore_pause_before_teardown(should_ignore):
-	_ignore_pause_before_teardown = should_ignore
 
-func get_ignore_pause_before_teardown():
-	return _ignore_pause_before_teardown
-
-# ------------------------------------------------------------------------------
-# Call _process or _fixed_process, if they exist, on obj and all it's children
-# and their children and so and so forth.  Delta will be passed through to all
-# the _process or _fixed_process methods.
-# ------------------------------------------------------------------------------
-func simulate(obj, times, delta):
-	for _i in range(times):
-		if(obj.has_method("_process")):
-			obj._process(delta)
-		if(obj.has_method("_physics_process")):
-			obj._physics_process(delta)
-
-		for kid in obj.get_children():
-			simulate(kid, 1, delta)
 
 # ------------------------------------------------------------------------------
 # Starts an internal timer with a timeout of the passed in time.  A 'timeout'
@@ -1375,74 +1386,7 @@ func set_yield_signal_or_time(obj, signal_name, max_wait, text=''):
 	_lgr.yield_msg(str('-- Yielding to signal "', signal_name, '" or for ', max_wait, ' seconds -- ', text))
 	return self
 
-# ------------------------------------------------------------------------------
-# get the specific unit test that should be run
-# ------------------------------------------------------------------------------
-func get_unit_test_name():
-	return _unit_test_name
 
-# ------------------------------------------------------------------------------
-# set the specific unit test that should be run.
-# ------------------------------------------------------------------------------
-func set_unit_test_name(test_name):
-	_unit_test_name = test_name
-
-# ------------------------------------------------------------------------------
-# Creates an empty file at the specified path
-# ------------------------------------------------------------------------------
-func file_touch(path):
-	var f = File.new()
-	f.open(path, f.WRITE)
-	f.close()
-
-# ------------------------------------------------------------------------------
-# deletes the file at the specified path
-# ------------------------------------------------------------------------------
-func file_delete(path):
-	var d = Directory.new()
-	var result = d.open(path.get_base_dir())
-	if(result == OK):
-		d.remove(path)
-
-# ------------------------------------------------------------------------------
-# Checks to see if the passed in file has any data in it.
-# ------------------------------------------------------------------------------
-func is_file_empty(path):
-	var f = File.new()
-	f.open(path, f.READ)
-	var empty = f.get_length() == 0
-	f.close()
-	return empty
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_file_as_text(path):
-	return _utils.get_file_as_text(path)
-
-# ------------------------------------------------------------------------------
-# deletes all files in a given directory
-# ------------------------------------------------------------------------------
-func directory_delete_files(path):
-	var d = Directory.new()
-	var result = d.open(path)
-
-	# SHORTCIRCUIT
-	if(result != OK):
-		return
-
-	# Traversing a directory is kinda odd.  You have to start the process of listing
-	# the contents of a directory with list_dir_begin then use get_next until it
-	# returns an empty string.  Then I guess you should end it.
-	d.list_dir_begin() # TODOGODOT4 fill missing arguments https://github.com/godotengine/godot/pull/40547
-	var thing = d.get_next() # could be a dir or a file or something else maybe?
-	var full_path = ''
-	while(thing != ''):
-		full_path = path + "/" + thing
-		#file_exists returns fasle for directories
-		if(d.file_exists(full_path)):
-			d.remove(full_path)
-		thing = d.get_next()
-	d.list_dir_end()
 
 # ------------------------------------------------------------------------------
 # Returns the instantiated script object that is currently being run.
@@ -1458,117 +1402,11 @@ func get_current_script_object():
 func get_current_test_object():
 	return _current_test
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_stubber():
-	return _stubber
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_doubler():
-	return _doubler
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_spy():
-	return _spy
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_temp_directory():
-	return _temp_directory
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func set_temp_directory(temp_directory):
-	_temp_directory = temp_directory
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_inner_class_name():
-	return _inner_class_name
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func set_inner_class_name(inner_class_name):
-	_inner_class_name = inner_class_name
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
+## Returns a summary.gd object that contains all the information about
+## the run results.
 func get_summary():
 	return _new_summary
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_double_strategy():
-	return _double_strategy
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func set_double_strategy(double_strategy):
-	_double_strategy = double_strategy
-	_doubler.set_strategy(double_strategy)
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_include_subdirectories():
-	return _include_subdirectories
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_logger():
-	return _lgr
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func set_logger(logger):
-	_lgr = logger
-	_lgr.set_gut(self)
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func set_include_subdirectories(include_subdirectories):
-	_include_subdirectories = include_subdirectories
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_test_collector():
-	return _test_collector
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_export_path():
-	return _export_path
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func set_export_path(export_path):
-	_export_path = export_path
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_version():
-	return _utils.version
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_pre_run_script():
-	return _pre_run_script
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func set_pre_run_script(pre_run_script):
-	_pre_run_script = pre_run_script
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_post_run_script():
-	return _post_run_script
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func set_post_run_script(post_run_script):
-	_post_run_script = post_run_script
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -1582,74 +1420,6 @@ func get_post_run_script_instance():
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-func get_color_output():
-	return _color_output
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func set_color_output(color_output):
-	_color_output = color_output
-	_lgr.disable_formatting(!color_output)
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_parameter_handler():
-	return _parameter_handler
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func set_parameter_handler(parameter_handler):
-	_parameter_handler = parameter_handler
-	_parameter_handler.set_logger(_lgr)
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_orphan_counter():
-	return _orphan_counter
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
 func show_orphans(should):
 	_lgr.set_type_enabled(_lgr.types.orphan, should)
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_autofree():
-	return _autofree
-
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_junit_xml_file():
-	return _junit_xml_file
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func set_junit_xml_file(junit_xml_file):
-	_junit_xml_file = junit_xml_file
-
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_junit_xml_timestamp():
-	return _junit_xml_timestamp
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func set_junit_xml_timestamp(junit_xml_timestamp):
-	_junit_xml_timestamp = junit_xml_timestamp
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func get_add_children_to():
-	return _add_children_to
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func set_add_children_to(val):
-	_add_children_to = val
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func is_running():
-	return _is_running

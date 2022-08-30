@@ -19,10 +19,10 @@ class CoupledScriptTest:
 		_gut.add_script(script_path)
 
 		if(inner_class != null):
-			_gut.set_inner_class_name(inner_class)
+			_gut.inner_class_name = inner_class
 
 		if(test_name != null):
-			_gut.set_unit_test_name(test_name)
+			_gut.unit_test_name = test_name
 
 		_gut.test_scripts()
 

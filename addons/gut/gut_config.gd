@@ -124,25 +124,15 @@ func write_options(path):
 # Apply all the options specified to _tester.  This is where the rubber meets
 # the road.
 func _apply_options(opts, _tester):
-	_tester.set_modulate(Color(1.0, 1.0, 1.0, min(1.0, float(opts.opacity) / 100)))
-	_tester.show()
-
-	_tester.set_include_subdirectories(opts.include_subdirs)
-
-	if(opts.should_maximize):
-		_tester.maximize()
-
-#	if(opts.compact_mode):
-#		_tester.get_gui().compact_mode(true)
+	_tester.include_subdirectories = opts.include_subdirs
 
 	if(opts.inner_class != ''):
-		_tester.set_inner_class_name(opts.inner_class)
-	_tester.set_log_level(opts.log_level)
-	_tester.set_ignore_pause_before_teardown(opts.ignore_pause)
+		_tester.inner_class_name = opts.inner_class
+	_tester.log_level = opts.log_level
+	_tester.ignore_pause_before_teardown = opts.ignore_pause
 
 	if(opts.selected != ''):
 		_tester.select_script(opts.selected)
-		# _run_single = true
 
 	for i in range(opts.dirs.size()):
 		_tester.add_directory(opts.dirs[i], opts.prefix, opts.suffix)
@@ -150,21 +140,19 @@ func _apply_options(opts, _tester):
 	for i in range(opts.tests.size()):
 		_tester.add_script(opts.tests[i])
 
-
 	if(opts.double_strategy == 'full'):
-		_tester.set_double_strategy(DOUBLE_STRATEGY.FULL)
+		_tester.double_strategy = DOUBLE_STRATEGY.FULL
 	elif(opts.double_strategy == 'partial'):
-		_tester.set_double_strategy(DOUBLE_STRATEGY.PARTIAL)
+		_tester.double_strategy = DOUBLE_STRATEGY.PARTIAL
 
-	_tester.set_unit_test_name(opts.unit_test_name)
-	_tester.set_pre_run_script(opts.pre_run_script)
-	_tester.set_post_run_script(opts.post_run_script)
-	_tester.set_color_output(!opts.disable_colors)
+	_tester.unit_test_name = opts.unit_test_name
+	_tester.pre_run_script = opts.pre_run_script
+	_tester.post_run_script = opts.post_run_script
+	_tester.color_output = !opts.disable_colors
 	_tester.show_orphans(!opts.hide_orphans)
-	_tester.set_junit_xml_file(opts.junit_xml_file)
-	_tester.set_junit_xml_timestamp(opts.junit_xml_timestamp)
+	_tester.junit_xml_file = opts.junit_xml_file
+	_tester.junit_xml_timestamp = opts.junit_xml_timestamp
 	_tester.paint_after = str(opts.paint_after).to_float()
-
 
 	return _tester
 
