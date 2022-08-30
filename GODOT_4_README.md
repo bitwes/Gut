@@ -14,6 +14,22 @@ These are changes to Godot that affect how GUT is used/implemented.
 * `connect` has been significantly altered.  The signal related asserts will likely change to use `Callable` parameters instead of strings.  It is possible to use strings, so this may remain in some form.  More info in [#383](/../../issues/383).
 * `yield` has been replaced with `await`.  `yield_to`, `yield_for`, and `yield_frames` will be replaced with similar `await` methods.  The `yield_*` methods will be deprecated.  More info at [#382](/../../issues/382).
 
+## Working Features
+* The command line seems to be working fine.
+* Basic asserts (assert_eq, ne, between etc) with anything except array and dictionaries.
+* Signal asserts
+* Signal connection asserts
+* Orphan monitoring
+
+## Broken Features
+* Doubling
+* Spying
+* Stubbing
+* Gut Panel
+* Using `await` (the new `yield`) in tests, and all the GUT supplied `yield_` methods.
+* Input mocking (can't test until `await` fixed).
+* much much more.
+
 
 ## Changes
 * Any methods that were deprecated in GUT 7.x have been removed.

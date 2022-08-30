@@ -63,7 +63,7 @@ func _add_watched_signal(obj, name):
 		_watched_signals[obj] = {name:[]}
 	else:
 		_watched_signals[obj][name] = []
-	obj.connect(name,Callable(self,'_on_watched_signal'),[obj,name])
+	obj.connect(name,Callable(self,'_on_watched_signal').bind(obj,name))
 
 # This handles all the signals that are watched.  It supports up to 9 parameters
 # which could be emitted by the signal and the two parameters used when it is
@@ -126,6 +126,8 @@ func watch_signal(object, signal_name):
 	if(does_object_have_signal(object, signal_name)):
 		_add_watched_signal(object, signal_name)
 		did = true
+	else:
+		_utils.get_logger().warn(str(object, ' does not have signal ', signal_name))
 	return did
 
 func get_emit_count(object, signal_name):
