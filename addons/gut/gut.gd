@@ -368,6 +368,11 @@ func _notification(what):
 
 		_test_script_objects = []
 
+		if(is_instance_valid(_wait_timer)):
+			_wait_timer.free()
+		if(is_instance_valid(_yield_timer)):
+			_yield_timer.free()
+
 func _print_versions(send_all = true):
 	if(!_should_print_versions):
 		return

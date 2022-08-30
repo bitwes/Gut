@@ -43,7 +43,7 @@ class TestProperties:
 	var _basic_properties = ParameterFactory.named_parameters(
 		['property_name', 'default', 'new_value'],
 		[
-			['paint_after', .2, 1.5]
+			['paint_after', .1, 1.5]
 		])
 
 	func test_basic_properties(p = use_parameters(_basic_properties)):
@@ -67,11 +67,16 @@ class TestProperties:
 		# I don't know how to test this in other situations
 
 
-class TestEverythingElse:
+class TestSimulate:
 	extends GutTest
 
 	var Gut = load('res://addons/gut/gut.gd')
 	var Test = load('res://addons/gut/test.gd')
+
+	var _gut = null
+
+	func before_each():
+		_gut = autofree(Gut.new())
 
 	#--------------------------------------
 	#Used to test calling the _process method
@@ -98,6 +103,68 @@ class TestEverythingElse:
 		func _physics_process(delta):
 			physics_process_called_count += 1
 			delta_sum += delta
+
+	func test_simulate_calls_process():
+		var obj = HasProcessMethod.new()
+		_gut.simulate(obj, 10, .1)
+		assert_eq(obj.process_called_count, 10, "_process should have been called 10 times")
+		#using just the numbers didn't work, nor using float.  str worked for some reason and
+		#i'm not sure why.
+		assert_eq(str(obj.delta_sum), str(1), "The delta value should have been passed in and summed")
+
+	func test_simulate_calls_process_on_child_objects():
+		var parent = HasProcessMethod.new()
+		var child = HasProcessMethod.new()
+		parent.add_child(child)
+		_gut.simulate(parent, 10, .1)
+		assert_eq(child.process_called_count, 10, "_process should have been called on the child object too")
+
+	func test_simulate_calls_process_on_child_objects_of_child_objects():
+		var objs = []
+		for i in range(5):
+			objs.append(HasProcessMethod.new())
+			if(i > 0):
+				objs[i - 1].add_child(objs[i])
+		_gut.simulate(objs[0], 10, .1)
+
+		for i in range(objs.size()):
+			assert_eq(objs[i].process_called_count, 10, "_process should have been called on object # " + str(i))
+
+	func test_simulate_calls_physics_process():
+		var obj = HasPhysicsProcessMethod.new()
+		_gut.simulate(obj, 10, .1)
+		assert_eq(obj.physics_process_called_count, 10, "_process should have been called 10 times")
+		#using just the numbers didn't work, nor using float.  str worked for some reason and
+		#i'm not sure why.
+		assert_eq(str(obj.delta_sum), str(1), "The delta value should have been passed in and summed")
+
+
+
+class TestMisc:
+	extends GutTest
+
+	var Gut = load('res://addons/gut/gut.gd')
+	var Test = load('res://addons/gut/test.gd')
+
+
+	func test_gut_does_not_make_orphans_when_added_to_scene():
+		var g = Gut.new()
+		add_child(g)
+		g.free()
+		assert_no_new_orphans()
+
+	func test_gut_does_not_make_orphans_when_freed_before_in_tree():
+		var g = Gut.new()
+		g.free()
+		assert_no_new_orphans()
+
+class TestEverythingElse:
+	extends GutTest
+
+	var Gut = load('res://addons/gut/gut.gd')
+	var Test = load('res://addons/gut/test.gd')
+
+
 
 	#------------------------------
 	# Utility methods/variables
@@ -237,48 +304,6 @@ class TestEverythingElse:
 
 		assert_pass(2, 'both files should not exist')
 
-	# ------------------------------
-	# Misc tests
-	# ------------------------------
-
-	func test_simulate_calls_process():
-		var obj = HasProcessMethod.new()
-		gr.test_gut.simulate(obj, 10, .1)
-		gr.test.assert_eq(obj.process_called_count, 10, "_process should have been called 10 times")
-		#using just the numbers didn't work, nor using float.  str worked for some reason and
-		#i'm not sure why.
-		gr.test.assert_eq(str(obj.delta_sum), str(1), "The delta value should have been passed in and summed")
-		assert_pass(2)
-
-	func test_simulate_calls_process_on_child_objects():
-		var parent = HasProcessMethod.new()
-		var child = HasProcessMethod.new()
-		parent.add_child(child)
-		gr.test_gut.simulate(parent, 10, .1)
-		gr.test.assert_eq(child.process_called_count, 10, "_process should have been called on the child object too")
-		assert_pass()
-
-	func test_simulate_calls_process_on_child_objects_of_child_objects():
-		var objs = []
-		for i in range(5):
-			objs.append(HasProcessMethod.new())
-			if(i > 0):
-				objs[i - 1].add_child(objs[i])
-		gr.test_gut.simulate(objs[0], 10, .1)
-
-		for i in range(objs.size()):
-			gr.test.assert_eq(objs[i].process_called_count, 10, "_process should have been called on object # " + str(i))
-
-		assert_pass(objs.size())
-
-	func test_simulate_calls_physics_process():
-		var obj = HasPhysicsProcessMethod.new()
-		gr.test_gut.simulate(obj, 10, .1)
-		gr.test.assert_eq(obj.physics_process_called_count, 10, "_process should have been called 10 times")
-		#using just the numbers didn't work, nor using float.  str worked for some reason and
-		#i'm not sure why.
-		gr.test.assert_eq(str(obj.delta_sum), str(1), "The delta value should have been passed in and summed")
-		assert_pass(2)
 
 
 	# ------------------------------
