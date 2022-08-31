@@ -221,44 +221,206 @@ func test_delete_all_files_in_a_directory():
 func test_gut_sets_self_on_logger():
 	assert_eq(gr.test_gut.get_logger().get_gut(), gr.test_gut)
 
-func test_simulate_calls_process():
+# ------------------------------
+# Simulate tests
+# ------------------------------
+
+func test_simulate_calls_process_in_scene_tree_if_is_processing():
 	var obj = HasProcessMethod.new()
-	gr.test_gut.simulate(obj, 10, .1)
-	gr.test.assert_eq(obj.process_called_count, 10, "_process should have been called 10 times")
-	#using just the numbers didn't work, nor using float.  str worked for some reason and
-	#i'm not sure why.
-	gr.test.assert_eq(str(obj.delta_sum), str(1), "The delta value should have been passed in and summed")
+
+	add_child_autoqfree(obj)
+
+	obj.set_process(false)
+	gr.test_gut.simulate(obj, 5, 0.2)
+
+	gr.test.assert_eq(obj.process_called_count, 0, "_process should not have been called")
+
+	obj.set_process(true)
+	gr.test_gut.simulate(obj, 5, 0.2)
+
+	gr.test.assert_eq(obj.process_called_count, 5, "_process should have been called 5 times")
+	gr.test.assert_eq(obj.delta_sum, 1, "The delta value should have been passed in and summed")
+
+	assert_pass(3)
+
+
+func test_simulate_calls_process_outside_scene_tree_if_forced():
+	var obj = HasProcessMethod.new()
+
+	gr.test_gut.simulate(obj, 5, 0.2, false)  # force_simulate_if_outside_tree=false
+
+	gr.test.assert_eq(obj.process_called_count, 0, "_process should not have been called")
+
+	gr.test_gut.simulate(obj, 5, 0.2, true)  # force_simulate_if_outside_tree=true
+
+	# When 'obj' is outside the scene tree, 'obj.is_processing()' is 'false'. If the
+	# override parameter 'force_simulate_if_outside_tree' is set to 'false', then no simulation
+	# will occur.
+	gr.test.assert_eq(obj.process_called_count, 5, "_process should have been called 5 times")
+	gr.test.assert_eq(obj.delta_sum, 1, "The delta value should have been passed in and summed")
+
+	assert_pass(3)
+
+func test_simulate_calls_process_outside_scene_tree_if_is_processing_but_not_forced():
+	var obj = HasProcessMethod.new()
+
+	# This configuration is useful for simple unit testing (outside of the SceneTree)
+	# of an object that utilizes 'set_process(false)'. As long as the object has
+	# 'is_processing() == true', then 'simulate' will call the processing method.
+	obj.set_process(true)
+	gr.test_gut.simulate(obj, 5, 0.2, false)  # force_simulate_if_outside_tree=false
+
+	gr.test.assert_eq(obj.process_called_count, 5, "_process should have been called 5 times")
+	gr.test.assert_eq(obj.delta_sum, 1, "The delta value should have been passed in and summed")
+
 	assert_pass(2)
 
-func test_simulate_calls_process_on_child_objects():
-	var parent = HasProcessMethod.new()
-	var child = HasProcessMethod.new()
-	parent.add_child(child)
-	gr.test_gut.simulate(parent, 10, .1)
-	gr.test.assert_eq(child.process_called_count, 10, "_process should have been called on the child object too")
-	assert_pass()
-
-func test_simulate_calls_process_on_child_objects_of_child_objects():
+func test_simulate_calls_process_in_scene_tree_with_descendents_if_is_processing():
 	var objs = []
-	for i in range(5):
+	for i in 4:
 		objs.append(HasProcessMethod.new())
 		if(i > 0):
 			objs[i - 1].add_child(objs[i])
-	gr.test_gut.simulate(objs[0], 10, .1)
 
-	for i in range(objs.size()):
-		gr.test.assert_eq(objs[i].process_called_count, 10, "_process should have been called on object # " + str(i))
+	add_child_autoqfree(objs[0])
 
-	assert_pass(objs.size())
+	objs[0].set_process(false)
+	objs[1].set_process(true)
+	objs[2].set_process(false)
+	objs[3].set_process(true)
 
-func test_simulate_calls_physics_process():
+	gr.test_gut.simulate(objs[0], 5, 0.2)
+
+	gr.test.assert_eq(objs[0].process_called_count, 0, "_process should not have been called")
+
+	gr.test.assert_eq(objs[1].process_called_count, 5, "_process should have been called 5 times")
+	gr.test.assert_eq(objs[1].delta_sum, 1, "The delta value should have been passed in and summed")
+
+	gr.test.assert_eq(objs[2].process_called_count, 0, "_process should not have been called")
+
+	gr.test.assert_eq(objs[3].process_called_count, 5, "_process should have been called 5 times")
+	gr.test.assert_eq(objs[3].delta_sum, 1, "The delta value should have been passed in and summed")
+
+	assert_pass(6)
+
+func test_simulate_calls_process_outside_scene_tree_with_descendents_if_forced():
+	var objs = []
+	for i in 4:
+		objs.append(HasProcessMethod.new())
+		if(i > 0):
+			objs[i - 1].add_child(objs[i])
+
+	gr.test_gut.simulate(objs[0], 5, 0.2, false)
+
+	for obj in objs:
+		gr.test.assert_eq(obj.process_called_count, 0, "_process should not have been called")
+
+	gr.test_gut.simulate(objs[0], 5, 0.2, true)
+
+	for obj in objs:
+		gr.test.assert_eq(obj.process_called_count, 5, "_process should not have been called")
+		gr.test.assert_eq(obj.delta_sum, 1, "The delta value should have been passed in and summed")
+	
+	assert_pass(12)
+
+func test_simulate_calls_physics_process_in_scene_tree_if_is_processing():
 	var obj = HasPhysicsProcessMethod.new()
-	gr.test_gut.simulate(obj, 10, .1)
-	gr.test.assert_eq(obj.physics_process_called_count, 10, "_process should have been called 10 times")
-	#using just the numbers didn't work, nor using float.  str worked for some reason and
-	#i'm not sure why.
-	gr.test.assert_eq(str(obj.delta_sum), str(1), "The delta value should have been passed in and summed")
+
+	add_child_autoqfree(obj)
+
+	obj.set_physics_process(false)
+	gr.test_gut.simulate(obj, 5, 0.2)
+
+	gr.test.assert_eq(obj.physics_process_called_count, 0, "_physics_process should not have been called")
+
+	obj.set_physics_process(true)
+	gr.test_gut.simulate(obj, 5, 0.2)
+
+	gr.test.assert_eq(obj.physics_process_called_count, 5, "_physics_process should have been called 5 times")
+	gr.test.assert_eq(obj.delta_sum, 1, "The delta value should have been passed in and summed")
+
+	assert_pass(3)
+
+
+func test_simulate_calls_physics_process_outside_scene_tree_if_forced():
+	var obj = HasPhysicsProcessMethod.new()
+
+	gr.test_gut.simulate(obj, 5, 0.2, false)  # force_simulate_if_outside_tree=false
+
+	gr.test.assert_eq(obj.physics_process_called_count, 0, "_physics_process should not have been called")
+
+	gr.test_gut.simulate(obj, 5, 0.2, true)  # force_simulate_if_outside_tree=true
+
+	# When 'obj' is outside the scene tree, 'obj.is_processing()' is 'false'. If the
+	# override parameter 'force_simulate_if_outside_tree' is set to 'false', then no simulation
+	# will occur.
+	gr.test.assert_eq(obj.physics_process_called_count, 5, "_physics_process should have been called 5 times")
+	gr.test.assert_eq(obj.delta_sum, 1, "The delta value should have been passed in and summed")
+
+	assert_pass(3)
+
+func test_simulate_calls_physics_process_outside_scene_tree_if_is_processing_but_not_forced():
+	var obj = HasPhysicsProcessMethod.new()
+
+	# This configuration is useful for simple unit testing (outside of the SceneTree)
+	# of an object that utilizes 'set_physics_process(false)'. As long as the object has
+	# 'is_processing() == true', then 'simulate' will call the processing method.
+	obj.set_physics_process(true)
+	gr.test_gut.simulate(obj, 5, 0.2, false)  # force_simulate_if_outside_tree=false
+
+	gr.test.assert_eq(obj.physics_process_called_count, 5, "_physics_process should have been called 5 times")
+	gr.test.assert_eq(obj.delta_sum, 1, "The delta value should have been passed in and summed")
+
 	assert_pass(2)
+
+func test_simulate_calls_physics_process_in_scene_tree_with_descendents_if_is_processing():
+	var objs = []
+	for i in 4:
+		objs.append(HasPhysicsProcessMethod.new())
+		if(i > 0):
+			objs[i - 1].add_child(objs[i])
+
+	add_child_autoqfree(objs[0])
+
+	objs[0].set_physics_process(false)
+	objs[1].set_physics_process(true)
+	objs[2].set_physics_process(false)
+	objs[3].set_physics_process(true)
+
+	gr.test_gut.simulate(objs[0], 5, 0.2)
+
+	gr.test.assert_eq(objs[0].physics_process_called_count, 0, "_physics_process should not have been called")
+
+	gr.test.assert_eq(objs[1].physics_process_called_count, 5, "_physics_process should have been called 5 times")
+	gr.test.assert_eq(objs[1].delta_sum, 1, "The delta value should have been passed in and summed")
+
+	gr.test.assert_eq(objs[2].physics_process_called_count, 0, "_physics_process should not have been called")
+
+	gr.test.assert_eq(objs[3].physics_process_called_count, 5, "_physics_process should have been called 5 times")
+	gr.test.assert_eq(objs[3].delta_sum, 1, "The delta value should have been passed in and summed")
+
+	assert_pass(6)
+
+func test_simulate_calls_physics_process_outside_scene_tree_with_descendents_if_forced():
+	var objs = []
+	for i in 4:
+		objs.append(HasPhysicsProcessMethod.new())
+		if(i > 0):
+			objs[i - 1].add_child(objs[i])
+
+	gr.test_gut.simulate(objs[0], 5, 0.2, false)
+
+	for obj in objs:
+		gr.test.assert_eq(obj.physics_process_called_count, 0, "_physics_process should not have been called")
+
+	gr.test_gut.simulate(objs[0], 5, 0.2, true)
+
+	for obj in objs:
+		gr.test.assert_eq(obj.physics_process_called_count, 5, "_physics_process should not have been called")
+		gr.test.assert_eq(obj.delta_sum, 1, "The delta value should have been passed in and summed")
+	
+	assert_pass(12)
+
 
 
 # ------------------------------
