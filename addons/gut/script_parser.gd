@@ -1,9 +1,10 @@
-extends SceneTree
-
-
 # ------------------------------------------------------------------------------
+# Combins the meta for the method with additional information.
+# * flag for whether the method is local
+# * adds a 'default' property to all parameters that can be easily checked per
+#   parameter
 # ------------------------------------------------------------------------------
-class ParsedMethod:
+class MethodParser:
 	var _meta = {}
 	var _parameters = []
 	var is_local = false
@@ -22,6 +23,7 @@ class ParsedMethod:
 			else:
 				arg['default'] = NO_DEFAULT
 			_parameters.append(arg)
+
 
 	func to_s():
 		var s = _meta.name + "("
@@ -43,22 +45,35 @@ class ParsedMethod:
 		return s
 
 
+
+
 # ------------------------------------------------------------------------------
 # Doesn't know if a method is local and in super, but not sure if that will
 # ever matter.
 # ------------------------------------------------------------------------------
-class ParsedScript:
-
+class ScriptParser:
 	# All methods indexed by name.
 	var _methods_by_name = {}
 
+	var _script_path = null
+	var script_path = _script_path :
+		get: return _script_path
+		set(val): return;
+
 	func _init(thing):
+		var to_load = thing
 
-		print(thing.get_path())
+		if(!thing is Resource):
+			to_load = load(thing.get_script().get_path())
 
+		_script_path = to_load.resource_path
+		_parse_methods(to_load)
+
+
+	func _parse_methods(thing):
 		var methods = thing.get_method_list()
 		for m in methods:
-			var meth = ParsedMethod.new(m)
+			var meth = MethodParser.new(m)
 			_methods_by_name[m.name] = meth
 
 		# This loop will overwrite all entries in _methods_by_name with the local
@@ -66,32 +81,29 @@ class ParsedScript:
 		# the right "is_local" flag.
 		methods = thing.get_script_method_list()
 		for m in methods:
-			var meth = ParsedMethod.new(m)
+			var meth = MethodParser.new(m)
 			meth.is_local = true
 			_methods_by_name[m.name] = meth
 
-	func print_it():
-		var names = _methods_by_name.keys()
-		names.sort()
-		for n in names:
-			print(_methods_by_name[n].to_s())
-
-	func print_super():
-		var names = _methods_by_name.keys()
-		names.sort()
-		for n in names:
-			if(!_methods_by_name[n].is_local):
-				print(_methods_by_name[n].to_s())
-
-	func print_local():
-		var names = _methods_by_name.keys()
-		names.sort()
-		for n in names:
-			if(_methods_by_name[n].is_local):
-				print(_methods_by_name[n].to_s())
 
 	func get_method(name):
 		return _methods_by_name[name]
+
+
+	func get_super_method(name):
+		var to_return = get_method(name)
+		if(to_return.is_local):
+			to_return = null
+
+		return to_return
+
+	func get_local_method(name):
+		var to_return = get_method(name)
+		if(!to_return.is_local):
+			to_return = null
+
+		return to_return
+
 
 	func get_sorted_method_names():
 		var keys = _methods_by_name.keys()
@@ -99,44 +111,77 @@ class ParsedScript:
 		return keys
 
 
+	func get_local_method_names():
+		var names = []
+		for method in _methods_by_name:
+			if(_methods_by_name[method].is_local):
+				names.append(method)
+
+		return names
 
 
+	func get_super_method_names():
+		var names = []
+		for method in _methods_by_name:
+			if(!_methods_by_name[method].is_local):
+				names.append(method)
+
+		return names
+
+
+
+
+
+
+
+
+
+
+
+
+	# func print_it():
+	# 	var names = _methods_by_name.keys()
+	# 	names.sort()
+	# 	for n in names:
+	# 		print(_methods_by_name[n].to_s())
+
+	# func print_super():
+	# 	var names = _methods_by_name.keys()
+	# 	names.sort()
+	# 	for n in names:
+	# 		if(!_methods_by_name[n].is_local):
+	# 			print(_methods_by_name[n].to_s())
+
+	# func print_local():
+	# 	var names = _methods_by_name.keys()
+	# 	names.sort()
+	# 	for n in names:
+	# 		if(_methods_by_name[n].is_local):
+	# 			print(_methods_by_name[n].to_s())
 
 # ------------------------------------------------------------------------------
-# Issues
-# * without typed parameters, I'm not sure you can know what type the defaults
-# 	are.
-# * When the default is set to a class variable, you get null.  So this might
-#	mean we can never fully know what the default values are.  This is true for
-#	class and instance metadata.
-# * Appears you can get all info about a thing without having to make an
-#	instance.
 # ------------------------------------------------------------------------------
-const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
-var DoubleMe = load(DOUBLE_ME_PATH)
-var json = JSON.new()
+var scripts = {}
 
-func pp(dict):
-	print(json.stringify(dict, ' '))
+func parse(thing):
+	var path = _get_path(thing)
+	var parsed = null
 
-func _init():
-	var dbl_inst = DoubleMe.new()
-	print(dbl_inst.get_script().get_path())
+	if(!scripts.has(path)):
+		parsed = ScriptParser.new(thing)
+		scripts[path] = parsed
+	else:
+		parsed = scripts[path]
 
-	# print(DoubleMe.get_method_list())
-	print(DoubleMe.get_script_method_list())
-	print('************************************************')
-	print(DoubleMe.get_method_list())
+	return parsed
 
 
-	# var ps = ParsedScript.new(DoubleMe)
-	# print('************************************************')
-	# ps.print_super()
-	# print('************************************************')
-	# ps.print_local()
+func _get_path(thing):
+	var path = null
+	if(thing is Resource):
+		path = thing.resource_path
+	else:
+		path = thing.get_script().get_path()
 
-	# var m_assert_eq = ps.get_method('default_is_value')
-	# print(m_assert_eq.to_s())
-	# pp(m_assert_eq._meta)
+	return path
 
-	quit()

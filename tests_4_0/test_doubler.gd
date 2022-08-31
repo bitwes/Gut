@@ -33,6 +33,7 @@ class BaseTest:
 
 class TestTheBasics:
 	extends BaseTest
+	var skip_script = 'Not ready for 4.0'
 
 	var gr = {
 		doubler = null
