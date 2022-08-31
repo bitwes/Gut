@@ -1340,58 +1340,37 @@ func get_yield_between_tests():
 	return _yield_between.should
 
 # ------------------------------------------------------------------------------
-# Simulate a number of frames by calling '_process' and '_physics_process' on an
-# object and all of its descendents. The specified frame time, 'delta', will be
-# passed to each simulated call. Calls to '_process' or '_physics_process' on an
-# object will be skipped if its 'is_processing()' or 'is_physics_processing()'
-# methods return 'false', respectively.
-# 
-# NOTE: To call processing methods on objects outside of the scene tree,
-# regardless of whether the objects have them toggled on, call 'simulate' with
-# 'force_simulate_if_outside_tree' as 'true' (the default). When an object is
-# inside of the scene tree, 'force_simulate_if_outside_tree' has no effect.
+# Simulate a number of frames by calling '_process' and '_physics_process' (if
+# the methods exist) on an object and all of its descendents. The specified frame
+# time, 'delta', will be passed to each simulated call.
+#
+# NOTE: Objects can disable their processing methods using 'set_process(false)' and
+# 'set_physics_process(false)'. This is reflected in the 'Object' methods
+# 'is_processing()' and 'is_physics_processing()', respectively. To make 'simulate'
+# respect this status, for example if you are testing an object which toggles
+# processing, pass 'check_is_processing' as 'true'.
 # ------------------------------------------------------------------------------
-func simulate(obj, times, delta, force_simulate_if_outside_tree: bool = true):
+func simulate(obj, times, delta, check_is_processing: bool = false):
 	for _i in range(times):
 		if (
-			# As long as the object has 'is_processing() == true', then call the
-			# '_process' method.
-			obj.is_processing()
-			or (
-				# If the object is outside the scene tree, the user should
-				# specify whether 'simulate' can call '_process' based solely on
-				# whether the method is overridden.
-				#
-				# NOTE: To test objects which utilize 'set_process(false)', set
-				# 'force_simulate_if_outside_tree' to 'false' so that 'simulate'
-				# relies solely on the 'is_processing' method.
-				force_simulate_if_outside_tree
-				and not obj.is_inside_tree()
-				and obj.has_method("_process")
+			obj.has_method("_process")
+			and (
+				not check_is_processing
+				or obj.is_processing()
 			)
 		):
 			obj._process(delta)
 		if(
-			# As long as the object has 'is_physics_processing() == true', then
-			# call the '_physics_process' method.
-			obj.is_physics_processing()
-			or (
-				# If the object is outside the scene tree, the user should
-				# specify whether 'simulate' can call '_physics_process' based
-				# solely on whether the method is overridden.
-				#
-				# NOTE: To test objects which utilize 'set_physics_process(false)',
-				# set 'force_simulate_if_outside_tree' to 'false' so that 'simulate'
-				# relies solely on the 'is_physics_processing' method.
-				force_simulate_if_outside_tree
-				and not obj.is_inside_tree()
-				and obj.has_method("_physics_process")
+			obj.has_method("_physics_process")
+			and (
+				not check_is_processing
+				or obj.is_physics_processing()
 			)
 		):
 			obj._physics_process(delta)
 
 		for kid in obj.get_children():
-			simulate(kid, 1, delta, force_simulate_if_outside_tree)
+			simulate(kid, 1, delta, check_is_processing)
 
 # ------------------------------------------------------------------------------
 # Starts an internal timer with a timeout of the passed in time.  A 'timeout'
