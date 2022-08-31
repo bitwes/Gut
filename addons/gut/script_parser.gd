@@ -163,6 +163,17 @@ class ScriptParser:
 # ------------------------------------------------------------------------------
 var scripts = {}
 
+
+func _get_path(thing):
+	var path = null
+	if(thing is Resource):
+		path = thing.resource_path
+	else:
+		path = thing.get_script().get_path()
+
+	return path
+
+
 func parse(thing):
 	var path = _get_path(thing)
 	var parsed = null
@@ -175,13 +186,4 @@ func parse(thing):
 
 	return parsed
 
-
-func _get_path(thing):
-	var path = null
-	if(thing is Resource):
-		path = thing.resource_path
-	else:
-		path = thing.get_script().get_path()
-
-	return path
 

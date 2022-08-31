@@ -6,6 +6,8 @@ class TestScriptCollector:
 
 	const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
 	var DoubleMe = load(DOUBLE_ME_PATH)
+	var ExtendsNode = load('res://test/resources/doubler_test_objects/double_extends_node2d.gd')
+
 
 	var ScriptCollector = load('res://addons/gut/script_parser.gd')
 
@@ -45,6 +47,12 @@ class TestScriptCollector:
 		var result = collector.parse(DoubleMe)
 		assert_is(result, ScriptCollector.ScriptParser)
 		assert_eq(collector.scripts.keys().size(), 1)
+
+	func test_parsing_more_adds_more_scripts():
+		var collector = ScriptCollector.new()
+		collector.parse(DoubleMe)
+		collector.parse(ExtendsNode)
+		assert_eq(collector.scripts.keys().size(), 2)
 
 
 
