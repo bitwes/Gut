@@ -1,8 +1,8 @@
-extends "res://addons/gut/test.gd"
+extends GutTest
 
 
 class BaseTest:
-	extends "res://addons/gut/test.gd"
+	extends GutTest
 
 	var MethodMaker = load('res://addons/gut/method_maker.gd')
 

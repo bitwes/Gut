@@ -90,6 +90,10 @@ class ParsedScript:
 	func get_method(name):
 		return _methods_by_name[name]
 
+	func get_sorted_method_names():
+		var keys = names.keys()
+		keys.sort()
+		return keys
 
 
 
