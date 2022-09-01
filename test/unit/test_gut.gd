@@ -12,18 +12,6 @@ var Test = load('res://addons/gut/test.gd')
 #--------------------------------------
 class WithoutProcess:
 	extends Node
-	var call_count = 0
-	var delta_sum = 0.0
-
-	func _get(property):
-		match property:
-			"_process":
-				call_count += 1
-				return null
-			"call_count":
-				return call_count
-			_:
-				return null
 
 class WithProcess:
 	extends Node
@@ -40,17 +28,6 @@ class WithProcess:
 #--------------------------------------
 class WithoutPhysicsProcess:
 	extends Node
-	var call_count = 0
-
-	func _get(property):
-		match property:
-			"_physics_process":
-				call_count += 1
-				return null
-			"call_count":
-				return call_count
-			_:
-				return null
 
 class WithPhysicsProcess:
 	extends Node
@@ -255,75 +232,80 @@ func test_gut_sets_self_on_logger():
 # ------------------------------
 
 func test_simulate_calls_process_if_object_has_method():
-	var with_method = WithProcess.new()
-	
+	var with_method = autofree(WithProcess.new())
 	gr.test_gut.simulate(with_method, 5, 0.2)
 	gr.test.assert_eq(with_method.call_count, 5, "_process should have been called 5 times")
 	gr.test.assert_eq(with_method.delta_sum, 1.0, "The delta value should have been passed in and summed")
-	
-	var without_method = WithoutProcess.new()
+	assert_pass(2)
 
+func test_simulate_does_not_error_when_object_does_not_have_process():
+	var without_method = autofree(WithoutProcess.new())
 	gr.test_gut.simulate(without_method, 5, 0.2)
-	gr.test.assert_eq(without_method.call_count, 0, "_process should not have been called")
+	gr.test.pass_test('We got here')
+	assert_pass(1)
 
-	assert_pass(3)
-	with_method.queue_free()
-	without_method.queue_free()
-
-func test_simulate_calls_process_on_descendents_if_objects_have_method():
+func test_simulate_calls_process_on_child_objects_of_child_objects():
 	var objs = []
-	for i in 4:
-		# Odd indices will be 'WithoutProcess'
-		objs.append(WithProcess.new() if not i % 2 else WithoutProcess.new())
+	for i in range(5):
+		objs.append(autofree(WithProcess.new()))
 		if(i > 0):
 			objs[i - 1].add_child(objs[i])
-	
+	gr.test_gut.simulate(objs[0], 5, 0.2)
+
+	for i in range(objs.size()):
+		gr.test.assert_eq(objs[i].call_count, 5, "_process should have been called on object # " + str(i))
+		gr.test.assert_eq(objs[i].delta_sum, 1, "The delta value should have been summed on object # " + str(i))
+
+	assert_pass(2 * objs.size())
+
+func test_simulate_checks_process_on_all_nodes():
+	var objs = []
+	for i in 4:
+		if(i % 2 == 0):
+			objs.append(autofree(WithProcess.new()))
+		else:
+			objs.append(autofree(WithoutProcess.new()))
+		if(i > 0):
+			objs[i - 1].add_child(objs[i])
+
 	gr.test_gut.simulate(objs[0], 5, 0.2)
 
 	gr.test.assert_eq(objs[0].call_count, 5, "_process should have been called 5 times")
 	gr.test.assert_eq(objs[0].delta_sum, 1.0, "The delta value should have been passed in and summed")	
-	
-	gr.test.assert_eq(objs[1].call_count, 0, "_process should not have been called")
-
 	gr.test.assert_eq(objs[2].call_count, 5, "_process should have been called 5 times")
 	gr.test.assert_eq(objs[2].delta_sum, 1.0, "The delta value should have been passed in and summed")	
 
-	gr.test.assert_eq(objs[3].call_count, 0, "_process should not have been called")	
+	assert_pass(4)
 
-	assert_pass(6)
-	for obj in objs:
-		obj.queue_free()
-
-func test_simulate_calls_process_if_object_is_processing():
-	var is_processing = WithProcess.new()
+func test_simulate_calls_process_if_object_is_processing_and_check_is_true():
+	var is_processing = autofree(WithProcess.new())
 	is_processing.set_process(true)
-
 	gr.test_gut.simulate(is_processing, 5, 0.2, true)  # check_is_processing=false
 	gr.test.assert_eq(is_processing.call_count, 5, "_process should have been called 5 times")
 	gr.test.assert_eq(is_processing.delta_sum, 1.0, "The delta value should have been passed in and summed")
+	assert_pass(2)
 
-	var is_not_processing = WithProcess.new()
-	gr.test.assert_eq(is_not_processing.call_count, 0, "_process should not have been called")
+func test_simulate_does_not_call_process_if_object_is_not_processing_and_check_is_true():
+	var is_not_processing = autofree(WithProcess.new())
 	is_not_processing.set_process(false)
-
 	gr.test_gut.simulate(is_not_processing, 5, 0.2, true)  # check_is_processing=true
+	gr.test.assert_eq(is_not_processing.call_count, 0, "_process should not have been called")
+	assert_pass(1)
 
-	var is_processing_but_without_method = WithoutProcess.new()
+func test_simulate_does_not_error_if_object_is_processing_but_has_no_method():
+	var is_processing_but_without_method = autofree(WithoutProcess.new())
 	is_processing_but_without_method.set_process(true)
-
 	gr.test_gut.simulate(is_processing_but_without_method, 5, 0.2, true)  # check_is_processing=true
-	gr.test.assert_eq(is_processing_but_without_method.call_count, 0, "_process should not have been called")
-
-	assert_pass(4)
-	is_processing.queue_free()
-	is_not_processing.queue_free()
-	is_processing_but_without_method.queue_free()
+	gr.test.pass_test('We got here')
+	assert_pass(1)
 
 func test_simulate_calls_process_on_descendents_if_objects_are_processing():
 	var objs = []
 	for i in 4:
-		# Odd indices will be 'WithoutProcess'
-		objs.append(WithProcess.new() if not i % 2 else WithoutProcess.new())
+		if(i % 2 == 0):
+			objs.append(autofree(WithProcess.new()))
+		else:
+			objs.append(autofree(WithoutProcess.new()))
 		if(i > 0):
 			objs[i - 1].add_child(objs[i])
 
@@ -335,38 +317,45 @@ func test_simulate_calls_process_on_descendents_if_objects_are_processing():
 	gr.test_gut.simulate(objs[0], 5, 0.2, true)  # check_is_processing=true
 
 	gr.test.assert_eq(objs[0].call_count, 0, "_process should not have been called")
-	gr.test.assert_eq(objs[1].call_count, 0, "_process should not have been called")
-	
 	gr.test.assert_eq(objs[2].call_count, 5, "_process should have been called 5 times")
 	gr.test.assert_eq(objs[2].delta_sum, 1.0, "The delta value should have been passed in and summed")	
-	
-	gr.test.assert_eq(objs[3].call_count, 0, "_process should not have been called")
 
-	assert_pass(5)
-	for obj in objs:
-		obj.queue_free()
+	assert_pass(3)
 
 func test_simulate_calls_physics_process_if_object_has_method():
-	var with_method = WithPhysicsProcess.new()
-	
+	var with_method = autofree(WithPhysicsProcess.new())
 	gr.test_gut.simulate(with_method, 5, 0.2)
 	gr.test.assert_eq(with_method.call_count, 5, "_physics_process should have been called 5 times")
 	gr.test.assert_eq(with_method.delta_sum, 1.0, "The delta value should have been passed in and summed")
-	
-	var without_method = WithoutPhysicsProcess.new()
+	assert_pass(2)
 
+func test_simulate_does_not_error_when_object_does_not_have_physics_process():
+	var without_method = autofree(WithoutPhysicsProcess.new())
 	gr.test_gut.simulate(without_method, 5, 0.2)
-	gr.test.assert_eq(without_method.call_count, 0, "_physics_process should not have been called")
+	gr.test.pass_test('We got here')
+	assert_pass(1)
 
-	assert_pass(3)
-	with_method.queue_free()
-	without_method.queue_free()
+func test_simulate_calls_physics_process_on_child_objects_of_child_objects():
+	var objs = []
+	for i in range(5):
+		objs.append(autofree(WithPhysicsProcess.new()))
+		if(i > 0):
+			objs[i - 1].add_child(objs[i])
+	gr.test_gut.simulate(objs[0], 5, 0.2)
+
+	for i in range(objs.size()):
+		gr.test.assert_eq(objs[i].call_count, 5, "_physics_process should have been called on object # " + str(i))
+		gr.test.assert_eq(objs[i].delta_sum, 1, "The delta value should have been summed on object # " + str(i))
+
+	assert_pass(2 * objs.size())
 
 func test_simulate_calls_physics_process_on_descendents_if_objects_have_method():
 	var objs = []
 	for i in 4:
-		# Odd indices will be 'WithoutPhysicsProcess'
-		objs.append(WithPhysicsProcess.new() if not i % 2 else WithoutPhysicsProcess.new())
+		if(i % 2 == 0):
+			objs.append(autofree(WithPhysicsProcess.new()))
+		else:
+			objs.append(autofree(WithoutPhysicsProcess.new()))
 		if(i > 0):
 			objs[i - 1].add_child(objs[i])
 	
@@ -374,48 +363,40 @@ func test_simulate_calls_physics_process_on_descendents_if_objects_have_method()
 
 	gr.test.assert_eq(objs[0].call_count, 5, "_physics_process should have been called 5 times")
 	gr.test.assert_eq(objs[0].delta_sum, 1.0, "The delta value should have been passed in and summed")	
-	
-	gr.test.assert_eq(objs[1].call_count, 0, "_physics_process should not have been called")
-
 	gr.test.assert_eq(objs[2].call_count, 5, "_physics_process should have been called 5 times")
 	gr.test.assert_eq(objs[2].delta_sum, 1.0, "The delta value should have been passed in and summed")	
 
-	gr.test.assert_eq(objs[3].call_count, 0, "_physics_process should not have been called")	
+	assert_pass(4)
 
-	assert_pass(6)
-	for obj in objs:
-		obj.queue_free()
-
-func test_simulate_calls_physics_process_if_object_is_processing():
-	var is_processing = WithPhysicsProcess.new()
+func test_simulate_calls_physics_process_if_object_is_processing_and_check_is_true():
+	var is_processing = autofree(WithPhysicsProcess.new())
 	is_processing.set_physics_process(true)
-
 	gr.test_gut.simulate(is_processing, 5, 0.2, true)  # check_is_processing=false
 	gr.test.assert_eq(is_processing.call_count, 5, "_physics_process should have been called 5 times")
 	gr.test.assert_eq(is_processing.delta_sum, 1.0, "The delta value should have been passed in and summed")
+	assert_pass(2)
 
-	var is_not_processing = WithPhysicsProcess.new()
-	gr.test.assert_eq(is_not_processing.call_count, 0, "_physics_process should not have been called")
+func test_simulate_does_not_call_physics_process_if_object_is_not_processing_and_check_is_true():
+	var is_not_processing = autofree(WithPhysicsProcess.new())
 	is_not_processing.set_physics_process(false)
-
 	gr.test_gut.simulate(is_not_processing, 5, 0.2, true)  # check_is_processing=true
+	gr.test.assert_eq(is_not_processing.call_count, 0, "_physics_process should not have been called")
+	assert_pass(1)
 
-	var is_processing_but_without_method = WithoutPhysicsProcess.new()
+func test_simulate_does_not_error_if_object_is_physics_processing_but_has_no_method():
+	var is_processing_but_without_method = autofree(WithoutPhysicsProcess.new())
 	is_processing_but_without_method.set_physics_process(true)
-
 	gr.test_gut.simulate(is_processing_but_without_method, 5, 0.2, true)  # check_is_processing=true
-	gr.test.assert_eq(is_processing_but_without_method.call_count, 0, "_physics_process should not have been called")
-
-	assert_pass(4)
-	is_processing.queue_free()
-	is_not_processing.queue_free()
-	is_processing_but_without_method.queue_free()
+	gr.test.pass_test('We got here')
+	assert_pass(1)
 
 func test_simulate_calls_physics_process_on_descendents_if_objects_are_processing():
 	var objs = []
 	for i in 4:
-		# Odd indices will be 'WithoutPhysicsProcess'
-		objs.append(WithPhysicsProcess.new() if not i % 2 else WithoutPhysicsProcess.new())
+		if(i % 2 == 0):
+			objs.append(autofree(WithPhysicsProcess.new()))
+		else:
+			objs.append(autofree(WithoutPhysicsProcess.new()))
 		if(i > 0):
 			objs[i - 1].add_child(objs[i])
 
@@ -427,16 +408,10 @@ func test_simulate_calls_physics_process_on_descendents_if_objects_are_processin
 	gr.test_gut.simulate(objs[0], 5, 0.2, true)  # check_is_processing=true
 
 	gr.test.assert_eq(objs[0].call_count, 0, "_physics_process should not have been called")
-	gr.test.assert_eq(objs[1].call_count, 0, "_physics_process should not have been called")
-	
 	gr.test.assert_eq(objs[2].call_count, 5, "_physics_process should have been called 5 times")
 	gr.test.assert_eq(objs[2].delta_sum, 1.0, "The delta value should have been passed in and summed")	
-	
-	gr.test.assert_eq(objs[3].call_count, 0, "_physics_process should not have been called")
 
-	assert_pass(5)
-	for obj in objs:
-		obj.queue_free()
+	assert_pass(3)
 
 
 
