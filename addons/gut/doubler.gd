@@ -558,7 +558,7 @@ func _get_temp_path(object_info):
 
 	file_name += str('__dbl', _double_count, '__.', extension)
 
-	var to_return = _output_dir.plus_file(file_name)
+	var to_return = _output_dir.path_join(file_name)
 	return to_return
 
 
