@@ -325,28 +325,63 @@ class PackedSceneDouble:
 # START Doubler
 # ------------------------------------------------------------------------------
 var _utils = load('res://addons/gut/utils.gd').get_instance()
-
-var _ignored_methods = _utils.OneToMany.new()
-var _stubber = _utils.Stubber.new()
-var _lgr = _utils.get_logger()
-var _method_maker = _utils.MethodMaker.new()
-
 var _double_count = 0 # used in making files names unique
-var _spy = null
-var _gut = null
-var _strategy = null
 var _base_script_text = _utils.get_file_as_text('res://addons/gut/double_templates/script_template.txt')
 var _make_files = false
 # used by tests for debugging purposes.
 var _print_source = false
 
-func _init(strategy=_utils.DOUBLE_STRATEGY.PARTIAL):
-	set_logger(_utils.get_logger())
+
+# ###############
+# Properties
+# ###############
+var _stubber = _utils.Stubber.new()
+func get_stubber():
+	return _stubber
+func set_stubber(stubber):
+	_stubber = stubber
+
+var _lgr = _utils.get_logger()
+func get_logger():
+	return _lgr
+func set_logger(logger):
+	_lgr = logger
+	_method_maker.set_logger(logger)
+
+var _spy = null
+func get_spy():
+	return _spy
+func set_spy(spy):
+	_spy = spy
+
+var _gut = null
+func get_gut():
+	return _gut
+func set_gut(gut):
+	_gut = gut
+
+var _strategy = null
+func get_strategy():
+	return _strategy
+func set_strategy(strategy):
 	_strategy = strategy
+
+
+var _method_maker = _utils.MethodMaker.new()
+func get_method_maker():
+	return _method_maker
+
+var _ignored_methods = _utils.OneToMany.new()
+func get_ignored_methods():
+	return _ignored_methods
 
 # ###############
 # Private
 # ###############
+func _init(strategy=_utils.DOUBLE_STRATEGY.PARTIAL):
+	set_logger(_utils.get_logger())
+	_strategy = strategy
+
 func _get_indented_line(indents, text):
 	var to_return = ''
 	for _i in range(indents):
@@ -563,48 +598,6 @@ func _double_singleton(singleton_name, make_partial, strategy):
 # ###############
 # Public
 # ###############
-
-func get_spy():
-	return _spy
-
-
-func set_spy(spy):
-	_spy = spy
-
-
-func get_stubber():
-	return _stubber
-
-
-func set_stubber(stubber):
-	_stubber = stubber
-
-
-func get_logger():
-	return _lgr
-
-
-func set_logger(logger):
-	_lgr = logger
-	_method_maker.set_logger(logger)
-
-
-func get_strategy():
-	return _strategy
-
-
-func set_strategy(strategy):
-	_strategy = strategy
-
-
-func get_gut():
-	return _gut
-
-
-func set_gut(gut):
-	_gut = gut
-
-
 func partial_double_scene(path, strategy=_strategy):
 	return _double_scene(path, true, strategy)
 
@@ -654,11 +647,3 @@ func partial_double_singleton(name):
 
 func add_ignored_method(path, method_name):
 	_ignored_methods.add(path, method_name)
-
-
-func get_ignored_methods():
-	return _ignored_methods
-
-
-func get_method_maker():
-	return _method_maker
