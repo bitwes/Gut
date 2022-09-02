@@ -185,8 +185,7 @@ func test_can_get_params_for_a_specific_emission_of_signal():
 # ####################
 class ScriptSignalObject:
 	signal script_signal
-	func _init():
-		add_user_signal('user_signal')
+
 
 func test_can_see_script_signals():
 	var script_signaler = ScriptSignalObject.new()

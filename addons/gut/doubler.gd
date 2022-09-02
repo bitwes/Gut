@@ -549,10 +549,8 @@ func _get_func_text(method_hash, path, super_=""):
 
 
 func _double(obj_info, override_path=null):
-	print('---- start _double')
 	var result = _create_double(obj_info, override_path)
 	_double_count += 1
-	print('end _double ----')
 	return result
 
 
@@ -564,12 +562,10 @@ func _double_script(path, make_partial, strategy):
 
 
 func _double_inner(path, subpath, make_partial, strategy):
-	print('---- start _double_inner')
 	var oi = ObjectInfo.new(path, subpath)
 	oi.set_method_strategy(strategy)
 	oi.make_partial_double = make_partial
 	var to_return = _double(oi).load_it()
-	print('end _double_inner ----')
 	return to_return
 
 

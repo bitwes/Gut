@@ -36,8 +36,6 @@ class InnerCA:
 class InnerWithSignals:
 	signal signal_signal
 
-	func _init():
-		add_user_signal('user_signal')
 
 
 class InnerExtendsNode2D:
