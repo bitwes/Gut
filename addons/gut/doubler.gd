@@ -489,8 +489,6 @@ func _get_methods(object_info):
 
 	# first pass is for local methods only
 	for i in range(methods.size()):
-		print(i, '.  ', methods[i].name, ' ', methods[i].flags)
-		print('  ', methods[i])
 		if(object_info.is_singleton()):
 			#print(methods[i].name, " :: ", methods[i].flags, " :: ", methods[i].id)
 			#print("    ", methods[i])
@@ -723,7 +721,7 @@ func clear_output_directory():
 			d.list_dir_begin() # TODOGODOT4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 			var f = d.get_next()
 			while(f != ''):
-				d.remove_at(f)
+				d.remove(f)
 				f = d.get_next()
 				did = true
 	return did
@@ -732,7 +730,7 @@ func delete_output_directory():
 	var did = clear_output_directory()
 	if(did):
 		var d = Directory.new()
-		d.remove_at(_output_dir)
+		d.remove(_output_dir)
 
 
 func add_ignored_method(path, method_name):

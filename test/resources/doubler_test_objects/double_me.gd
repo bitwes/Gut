@@ -12,7 +12,7 @@ func _ready():
 	pass
 
 func _init():
-	add_user_signal("user_signal")
+	pass
 
 func get_value():
 	return _value

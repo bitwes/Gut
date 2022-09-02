@@ -157,8 +157,8 @@ func class_db_stuff():
 func _init_other():
 	var  dm   = DoubleMe.new()
 	var props = dm.get_property_list()
-	print(var2str(props))
-	print(var2str(dm.get_meta_list()))
+	print(str(props))
+	print(str(dm.get_meta_list()))
 	print('class = ', dm.get_class())
 	print('script = ', dm.get_script())
 	print(dm.get_script().get_path())

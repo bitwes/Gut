@@ -21,6 +21,8 @@ class BaseTest:
 		}
 		return to_return
 
+
+
 class TestGetDecleration:
 	extends BaseTest
 
@@ -113,6 +115,14 @@ class TestGetDecleration:
 		var txt = _mm.get_function_text(meta)
 		assert_string_contains(txt, 'func dummy(p_value1=Color(1,1,1,1)):')
 
+	func test_when_default_type_is_TYPE_NIL_null_is_used():
+		var params = [make_param('value1', TYPE_NIL)]
+		var meta = make_meta('dummy', params)
+		meta.default_args.append('asdf')
+		var txt = _mm.get_function_text(meta)
+		assert_string_contains(txt, 'func dummy(p_value1=null):')
+
+
 
 
 class TestSuperCall:
@@ -137,6 +147,7 @@ class TestSuperCall:
 		var meta = make_meta('dummy', params)
 		var text = _mm.get_function_text(meta)
 		assert_string_contains(text, '.dummy(p_value1, p_value2, p_value3)')
+
 
 
 class TestOverrideParameterList:

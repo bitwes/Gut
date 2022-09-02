@@ -129,11 +129,13 @@ func _make_arg_array(method_meta, override_size):
 			var dflt_idx = i - dflt_start
 			var t = method_meta.args[i]['type']
 			if(_is_supported_default(t)):
-				# strings are special, they need quotes around the value
-				if(t == TYPE_STRING):
+				if(t == TYPE_NIL):
+					dflt_text = 'null'
+				elif(t == TYPE_STRING):
+					# strings are special, they need quotes around the value
 					dflt_text = str("'", str(method_meta.default_args[dflt_idx]), "'")
-				# Colors need the parens but things like Vector2 and Rect2 don't
 				elif(t == TYPE_COLOR):
+					# Colors need the parens but things like Vector2 and Rect2 don't
 					dflt_text = str(_supported_defaults[t], '(', str(method_meta.default_args[dflt_idx]), ')')
 				elif(t == TYPE_OBJECT):
 					if(str(method_meta.default_args[dflt_idx]) == "[Object:null]"):
@@ -291,7 +293,6 @@ func get_function_text(meta, path=null, override_size=null, super_name=""):
 				"super_call":_get_super_call_text(meta.name, args, super_name)
 			})
 
-	print(text)
 	return text
 
 
