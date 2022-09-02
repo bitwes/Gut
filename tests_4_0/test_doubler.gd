@@ -3,8 +3,6 @@ extends GutTest
 class BaseTest:
 	extends GutTest
 
-	const TEMP_FILES = 'user://test_doubler_temp_file'
-
 	const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
 	const DOUBLE_ME_SCENE_PATH = 'res://test/resources/doubler_test_objects/double_me_scene.tscn'
 	const DOUBLE_EXTENDS_NODE2D = 'res://test/resources/doubler_test_objects/double_extends_node2d.gd'
@@ -43,15 +41,8 @@ class TestTheBasics:
 		stubber.clear()
 		gr.doubler = Doubler.new()
 		gr.doubler.set_stubber(stubber)
-		gr.doubler.set_output_dir(TEMP_FILES)
 		gr.doubler.set_gut(gut)
 
-	func after_each():
-		gr.doubler.clear_output_directory()
-
-	func test_get_set_output_dir():
-		assert_accessors(Doubler.new(), 'output_dir', 'user://gut_temp_directory', 'user://somewhere')
-		gut.file_delete('user://somewhere')
 
 	func test_get_set_stubber():
 		var dblr = Doubler.new()
@@ -109,21 +100,6 @@ class TestTheBasics:
 		# gr.doubler._print_source = true
 		# var doubled = gr.doubler.double(DOUBLE_EXTENDS_NODE2D).new()
 		# assert_is(doubled, Node2D)
-
-	# func test_can_clear_output_directory():
-	# 	gr.doubler.set_make_files(true)
-	# 	gut.file_touch(TEMP_FILES  + '/test_file.txt')
-	# 	gr.doubler.clear_output_directory()
-	# 	assert_file_does_not_exist(TEMP_FILES  + '/test_file.txt')
-
-	# func test_can_delete_output_directory():
-	# 	var d = Directory.new()
-	# 	d.open('user://')
-	# 	gr.doubler.set_make_files(true)
-	# 	gr.doubler.double(DOUBLE_ME_PATH)
-	# 	assert_true(d.dir_exists(TEMP_FILES))
-	# 	gr.doubler.delete_output_directory()
-	# 	assert_false(d.dir_exists(TEMP_FILES))
 
 	func test_can_double_scene():
 		var obj = gr.doubler.double_scene(DOUBLE_ME_SCENE_PATH)
@@ -228,13 +204,6 @@ class TestBuiltInOverloading:
 		stubber.clear()
 		doubler = Doubler.new(_utils.DOUBLE_STRATEGY.FULL)
 		doubler.set_stubber(stubber)
-		doubler.set_output_dir(TEMP_FILES)
-
-
-
-	func after_all():
-		if(doubler):
-			doubler.clear_output_directory()
 
 	func test_built_in_overloading_ony_happens_on_full_strategy():
 		doubler.set_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
@@ -311,7 +280,6 @@ class TestDefaultParameters:
 	func before_each():
 		doubler = Doubler.new(_utils.DOUBLE_STRATEGY.FULL)
 		doubler.set_stubber(_utils.Stubber.new())
-		doubler.set_output_dir(TEMP_FILES)
 
 	func test_parameters_are_doubled_for_connect():
 		pending('Has changed in Godot 4')
@@ -361,7 +329,6 @@ class TestDoubleInnerClasses:
 	func before_each():
 		doubler = Doubler.new()
 		doubler.set_stubber(_utils.Stubber.new())
-		doubler.set_output_dir(TEMP_FILES)
 
 	func test_can_instantiate_inner_double():
 		var Doubled = doubler.double_inner(INNER_CLASSES_PATH, 'InnerB/InnerB1')
@@ -377,6 +344,7 @@ class TestDoubleInnerClasses:
 
 	func test_doubled_inners_that_extend_inners_get_full_inheritance():
 		var inst = doubler.double_inner(INNER_CLASSES_PATH, 'InnerCA').new()
+		print('shit')
 		assert_has_method(inst, 'get_a')
 		assert_has_method(inst, 'get_ca')
 
@@ -413,11 +381,7 @@ class TestPartialDoubles:
 	func before_each():
 		stubber.clear()
 		doubler = Doubler.new()
-		doubler.set_output_dir(TEMP_FILES)
 		doubler.set_stubber(stubber)
-
-	func after_each():
-		doubler.clear_output_directory()
 
 	func test_can_make_partial_of_script():
 		var inst = doubler.partial_double(DOUBLE_ME_PATH).new()
@@ -473,11 +437,7 @@ class TestDoubleGDNaviteClasses:
 	func before_each():
 		_stubber.clear()
 		_doubler = Doubler.new()
-		_doubler.set_output_dir(TEMP_FILES)
 		_doubler.set_stubber(_stubber)
-
-	func after_each():
-		_doubler.clear_output_directory()
 
 	func test_can_double_Node2D():
 		var d_node_2d = _doubler.double_gdnative(Node2D)

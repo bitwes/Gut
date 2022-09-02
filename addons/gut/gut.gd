@@ -76,7 +76,7 @@ var ignore_pause_before_teardown = _ignore_pause_before_teardown :
 	get: return _ignore_pause_before_teardown
 	set(val): _ignore_pause_before_teardown = val
 
-
+# TODO remove this
 var _temp_directory = 'user://gut_temp_directory'
 ## The directory where GUT stores any temporary information during a run.
 var temp_directory = _temp_directory :
@@ -311,7 +311,6 @@ func _init():
 	# when creating test instances of GUT.
 	_lgr.set_gut(self)
 
-	_doubler.set_output_dir(_temp_directory)
 	_doubler.set_stubber(_stubber)
 	_doubler.set_spy(_spy)
 	_doubler.set_gut(self)
@@ -950,7 +949,6 @@ func _test_the_scripts(indexes=[]):
 		for i in range(the_script.tests.size()):
 			_stubber.clear()
 			_spy.clear()
-			_doubler.clear_output_directory()
 			_current_test = the_script.tests[i]
 			script_result = null
 

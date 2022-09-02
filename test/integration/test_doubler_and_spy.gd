@@ -18,7 +18,6 @@ class TestBoth:
 		_doubler.set_spy(_spy)
 
 	func after_each():
-		_doubler.clear_output_directory()
 		_spy.clear()
 
 	func test_spy_is_set_in_metadata():

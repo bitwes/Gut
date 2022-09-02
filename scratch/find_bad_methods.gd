@@ -75,7 +75,6 @@ func remove_methods_from_blacklist_one_by_one(obj, path):
 
 		doubler._blacklist.append(removed)
 
-	doubler.clear_output_directory()
 
 # given a path it will create a double of it and then create an instantiate of the
 # doubled object checking for nulls along the way.  Thi is what I used to test
@@ -93,7 +92,6 @@ func double_and_instance_it(path):
 			it_worked(path)
 		else:
 			it_didnt(path)
-	doubler.clear_output_directory()
 	return inst
 
 # main

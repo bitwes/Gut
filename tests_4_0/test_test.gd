@@ -71,7 +71,6 @@ class BaseTestClass:
 		add_child(gr.test_with_gut.gut)
 
 	func after_each():
-		gr.test_with_gut.gut.get_doubler().clear_output_directory()
 		gr.test_with_gut.gut.get_spy().clear()
 
 		gr.test.free()

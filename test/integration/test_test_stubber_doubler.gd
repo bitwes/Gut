@@ -17,7 +17,6 @@ class TestBasics:
 		add_child_autofree(gr.test)
 
 	func after_each():
-		gr.gut.get_doubler().clear_output_directory()
 		gr.gut.get_spy().clear()
 
 	func test_double_returns_a_class():
@@ -216,7 +215,6 @@ class TestPartialDoubleMethod:
 
 	func after_each():
 		_gut.get_stubber().clear()
-		_gut.get_doubler().clear_output_directory()
 
 	func after_all():
 		_gut.free()
@@ -302,7 +300,6 @@ class TestOverridingParameters:
 
 	func after_each():
 		_gut.get_stubber().clear()
-		_gut.get_doubler().clear_output_directory()
 
 	func after_all():
 		_gut.free()

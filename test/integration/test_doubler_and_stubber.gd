@@ -20,7 +20,6 @@ var gr = {
 func before_each():
 	gr.doubler = Doubler.new()
 	gr.doubler.set_output_dir(TEMP_FILES)
-	gr.doubler.clear_output_directory()
 
 	gr.stubber = Stubber.new()
 
@@ -29,8 +28,6 @@ func before_each():
 func after_all():
 	gut.file_delete(TEMP_FILES)
 
-# func after_each():
-# 	gr.doubler.clear_output_directory()
 
 func test_doubled_have_ref_to_stubber():
 	var d = gr.doubler.double(DOUBLE_ME_PATH).new()

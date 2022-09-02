@@ -268,48 +268,33 @@ class ObjectInfo:
 
 
 # ------------------------------------------------------------------------------
-# Allows for interacting with a file but only creating a string.  This was done
-# to ease the transition from files being created for doubles to loading
-# doubles from a string.  This allows the files to be created for debugging
-# purposes since reading a file is easier than reading a dumped out string.
+# This is what is left of stripping out the old "write a file" method of
+# creating doubles.  It's now just a string with the load_it function.
+# It seemed like there could be some utility in maintaining this little
+# class.
 # ------------------------------------------------------------------------------
-class FileOrString:
+class DoubledScript:
 	extends File
 
-	var _do_file = false
 	var _contents  = ''
-	var _path = null
 
-	func open(path, mode):
-		_path = path
-		if(_do_file):
-			return super.open(path, mode)
-		else:
-			return OK
-
-	func close():
-		if(_do_file):
-			return super.close()
-
-	func store_string(s):
-		if(_do_file):
-			super.store_string(s)
+	func append(s):
 		_contents += s
 
 	func get_contents():
 		return _contents
 
-	func get_path():
-		return _path
-
 	func load_it():
 		if(_contents != ''):
 			var script = GDScript.new()
-			script.set_source_code(get_contents())
-			script.reload()
+			script.source_code = _contents
+			# this is causing an error in 4.0 (print only)
+			# ERROR: Attempt to open script '' resulted in error 'File not found'.
+			# Everyting seems to work.  I suspect that the path is empty and it
+			# is throwing an erro that should not be thrown.
+			var result = script.reload()
 			return script
-		else:
-			return load(_path)
+
 
 # ------------------------------------------------------------------------------
 # A stroke of genius if I do say so.  This allows for doubling a scene without
@@ -346,7 +331,6 @@ var _stubber = _utils.Stubber.new()
 var _lgr = _utils.get_logger()
 var _method_maker = _utils.MethodMaker.new()
 
-var _output_dir = 'user://gut_temp_directory'
 var _double_count = 0 # used in making files names unique
 var _spy = null
 var _gut = null
@@ -421,7 +405,7 @@ func _get_base_script_text(obj_info, override_path, script_methods):
 	return _base_script_text.format(values)
 
 
-func _write_file(obj_info, dest_path, override_path=null):
+func _create_double(obj_info, override_path=null):
 	var script_methods = _get_methods(obj_info)
 	var base_script = _get_base_script_text(obj_info, override_path, script_methods)
 	var super_name = ""
@@ -432,30 +416,22 @@ func _write_file(obj_info, dest_path, override_path=null):
 	else:
 		path = obj_info.get_path()
 
-	var f = FileOrString.new()
-	f._do_file = _make_files
-	var f_result = f.open(dest_path, f.WRITE)
+	var dbl = DoubledScript.new()
 
-	if(f_result != OK):
-		_lgr.error(str('Error creating file ', dest_path))
-		_lgr.error(str('Could not create double for :', obj_info.to_s()))
-		return
-
-	f.store_string(base_script)
+	dbl.append(base_script)
 
 	# print('local method count = ', script_methods.local_methods.size())
 	for i in range(script_methods.local_methods.size()):
-		f.store_string(_get_func_text(script_methods.local_methods[i], path, super_name))
+		dbl.append(_get_func_text(script_methods.local_methods[i], path, super_name))
 
 	# print('built-in method count = ', script_methods.built_ins.size())
 	for i in range(script_methods.built_ins.size()):
 		_stub_to_call_super(obj_info, script_methods.built_ins[i].name)
-		f.store_string(_get_func_text(script_methods.built_ins[i], path, super_name))
+		dbl.append(_get_func_text(script_methods.built_ins[i], path, super_name))
 
-	f.close()
 	if(_print_source):
-		print(f.get_contents())
-	return f
+		print(dbl.get_contents())
+	return dbl
 
 
 func _double_scene_and_script(scene_info):
@@ -536,34 +512,12 @@ func _get_func_text(method_hash, path, super_=""):
 
 	return text
 
-# returns the path to write the double file to
-func _get_temp_path(object_info):
-	var file_name = null
-	var extension = null
-
-	if(object_info.is_singleton()):
-		file_name = str(object_info.get_singleton_instance())
-		extension = "gd"
-	elif(object_info.is_native()):
-		file_name = object_info.get_native_class_name()
-		extension = 'gd'
-	else:
-		file_name = object_info.get_path().get_file().get_basename()
-		extension = object_info.get_path().get_extension()
-
-	if(object_info.has_subpath()):
-		file_name += '__' + object_info.get_subpath().replace('/', '__')
-
-	file_name += str('__dbl', _double_count, '__.', extension)
-
-	var to_return = _output_dir.path_join(file_name)
-	return to_return
-
 
 func _double(obj_info, override_path=null):
-	var temp_path = _get_temp_path(obj_info)
-	var result = _write_file(obj_info, temp_path, override_path)
+	print('---- start _double')
+	var result = _create_double(obj_info, override_path)
 	_double_count += 1
+	print('end _double ----')
 	return result
 
 
@@ -575,10 +529,13 @@ func _double_script(path, make_partial, strategy):
 
 
 func _double_inner(path, subpath, make_partial, strategy):
+	print('---- start _double_inner')
 	var oi = ObjectInfo.new(path, subpath)
 	oi.set_method_strategy(strategy)
 	oi.make_partial_double = make_partial
-	return _double(oi).load_it()
+	var to_return = _double(oi).load_it()
+	print('end _double_inner ----')
+	return to_return
 
 
 func _double_scene(path, make_partial, strategy):
@@ -606,17 +563,6 @@ func _double_singleton(singleton_name, make_partial, strategy):
 # ###############
 # Public
 # ###############
-func get_output_dir():
-	return _output_dir
-
-
-func set_output_dir(output_dir):
-	if(output_dir !=  null):
-		_output_dir = output_dir
-		if(_make_files):
-			var d = Directory.new()
-			d.make_dir_recursive(output_dir)
-
 
 func get_spy():
 	return _spy
@@ -706,33 +652,6 @@ func partial_double_singleton(name):
 	return _double_singleton(name, true, _utils.DOUBLE_STRATEGY.PARTIAL)
 
 
-func clear_output_directory():
-	if(!_make_files):
-		return false
-
-	var did = false
-	if(_output_dir.find('user://') == 0):
-		var d = Directory.new()
-		var result = d.open(_output_dir)
-		# BIG GOTCHA HERE.  If it cannot open the dir w/ erro 31, then the
-		# directory becomes res:// and things go on normally and gut clears out
-		# out res:// which is SUPER BAD.
-		if(result == OK):
-			d.list_dir_begin() # TODOGODOT4 fill missing arguments https://github.com/godotengine/godot/pull/40547
-			var f = d.get_next()
-			while(f != ''):
-				d.remove(f)
-				f = d.get_next()
-				did = true
-	return did
-
-func delete_output_directory():
-	var did = clear_output_directory()
-	if(did):
-		var d = Directory.new()
-		d.remove(_output_dir)
-
-
 func add_ignored_method(path, method_name):
 	_ignored_methods.add(path, method_name)
 
@@ -740,14 +659,6 @@ func add_ignored_method(path, method_name):
 func get_ignored_methods():
 	return _ignored_methods
 
-
-func get_make_files():
-	return _make_files
-
-
-func set_make_files(make_files):
-	_make_files = make_files
-	set_output_dir(_output_dir)
 
 func get_method_maker():
 	return _method_maker
