@@ -1092,7 +1092,7 @@ func _get_files(path, prefix, suffix):
 	var fs_item = d.get_next()
 	var full_path = ''
 	while(fs_item != ''):
-		full_path = path.plus_file(fs_item)
+		full_path = path.path_join(fs_item)
 
 		#file_exists returns fasle for directories
 		if(d.file_exists(full_path)):
