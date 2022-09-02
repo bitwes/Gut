@@ -3,6 +3,8 @@
 
 
 ## Overview
+Ported to Godot 4 alpha 15
+
 GUT is currently not yet usable in 4.0.  Some features work, but many do not.
 
 This file tracks the changes that have occurred in porting GUT to Godot 4.0.  All issues related to the conversion have the [Godot 4.0](https://github.com/bitwes/Gut/issues?q=is%3Aissue+is%3Aopen+label%3A%22Godot+4.0%22) tag.
