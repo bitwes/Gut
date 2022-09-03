@@ -304,7 +304,7 @@ func load_result_output():
 	else:
 		_light_color = Color(0, 1, 0, .75)
 	_ctrls.light.visible = true
-	_ctrls.light.update()
+	_ctrls.light.queue_redraw()
 
 
 func set_current_script(script):
