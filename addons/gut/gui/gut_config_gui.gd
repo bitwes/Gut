@@ -144,7 +144,7 @@ func _new_row(key, disp_text, value_ctrl, hint):
 	ctrl.add_child(value_ctrl)
 
 	var rpad = CenterContainer.new()
-	# rpad.rect_min_size.x = 5
+	# rpad.custom_minimum_size.x = 5
 	ctrl.add_child(rpad)
 
 	return ctrl

@@ -9,7 +9,7 @@ anchor_right = 0.234
 anchor_bottom = 0.328
 offset_right = 195.384
 offset_bottom = 62.2
-rect_min_size = Vector2( 435, 305 )
+custom_minimum_size = Vector2( 435, 305 )
 exclusive = true
 window_title = "GUT Shortcuts"
 resizable = true
@@ -31,13 +31,13 @@ __meta__ = {
 [node name="TopPad" type="CenterContainer" parent="Layout"]
 offset_right = 425.0
 offset_bottom = 5.0
-rect_min_size = Vector2( 0, 5 )
+custom_minimum_size = Vector2( 0, 5 )
 
 [node name="Label2" type="Label" parent="Layout"]
 offset_top = 9.0
 offset_right = 425.0
 offset_bottom = 29.0
-rect_min_size = Vector2( 0, 20 )
+custom_minimum_size = Vector2( 0, 20 )
 text = "Always Active"
 align = 1
 valign = 1
@@ -60,7 +60,7 @@ offset_bottom = 58.0
 [node name="Label" type="Label" parent="Layout/CPanelButton"]
 offset_right = 138.0
 offset_bottom = 25.0
-rect_min_size = Vector2( 50, 0 )
+custom_minimum_size = Vector2( 50, 0 )
 size_flags_vertical = 7
 text = "Show/Hide GUT Panel"
 valign = 1
@@ -77,13 +77,13 @@ size_flags_horizontal = 3
 offset_top = 62.0
 offset_right = 425.0
 offset_bottom = 67.0
-rect_min_size = Vector2( 0, 5 )
+custom_minimum_size = Vector2( 0, 5 )
 
 [node name="Label" type="Label" parent="Layout"]
 offset_top = 71.0
 offset_right = 425.0
 offset_bottom = 91.0
-rect_min_size = Vector2( 0, 20 )
+custom_minimum_size = Vector2( 0, 20 )
 text = "Only Active When GUT Panel Shown"
 align = 1
 valign = 1
@@ -102,7 +102,7 @@ __meta__ = {
 offset_top = 95.0
 offset_right = 425.0
 offset_bottom = 100.0
-rect_min_size = Vector2( 0, 5 )
+custom_minimum_size = Vector2( 0, 5 )
 
 [node name="CRunAll" type="HBoxContainer" parent="Layout"]
 offset_top = 104.0
@@ -112,7 +112,7 @@ offset_bottom = 129.0
 [node name="Label" type="Label" parent="Layout/CRunAll"]
 offset_right = 50.0
 offset_bottom = 25.0
-rect_min_size = Vector2( 50, 0 )
+custom_minimum_size = Vector2( 50, 0 )
 size_flags_vertical = 7
 text = "Run All"
 valign = 1
@@ -133,7 +133,7 @@ offset_bottom = 158.0
 [node name="Label" type="Label" parent="Layout/CRunCurrentScript"]
 offset_right = 115.0
 offset_bottom = 25.0
-rect_min_size = Vector2( 50, 0 )
+custom_minimum_size = Vector2( 50, 0 )
 size_flags_vertical = 7
 text = "Run Current Script"
 valign = 1
@@ -154,7 +154,7 @@ offset_bottom = 187.0
 [node name="Label" type="Label" parent="Layout/CRunCurrentInner"]
 offset_right = 150.0
 offset_bottom = 25.0
-rect_min_size = Vector2( 50, 0 )
+custom_minimum_size = Vector2( 50, 0 )
 size_flags_vertical = 7
 text = "Run Current Inner Class"
 valign = 1
@@ -175,7 +175,7 @@ offset_bottom = 216.0
 [node name="Label" type="Label" parent="Layout/CRunCurrentTest"]
 offset_right = 106.0
 offset_bottom = 25.0
-rect_min_size = Vector2( 50, 0 )
+custom_minimum_size = Vector2( 50, 0 )
 size_flags_vertical = 7
 text = "Run Current Test"
 valign = 1
@@ -192,7 +192,7 @@ size_flags_horizontal = 3
 offset_top = 220.0
 offset_right = 425.0
 offset_bottom = 241.0
-rect_min_size = Vector2( 0, 5 )
+custom_minimum_size = Vector2( 0, 5 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -219,14 +219,14 @@ size_flags_vertical = 3
 offset_left = 365.0
 offset_right = 425.0
 offset_bottom = 30.0
-rect_min_size = Vector2( 60, 30 )
+custom_minimum_size = Vector2( 60, 30 )
 text = "Close"
 
 [node name="BottomPad" type="CenterContainer" parent="Layout"]
 offset_top = 297.0
 offset_right = 425.0
 offset_bottom = 307.0
-rect_min_size = Vector2( 0, 10 )
+custom_minimum_size = Vector2( 0, 10 )
 size_flags_horizontal = 3
 
 [connection signal="pressed" from="Layout/HBoxContainer/Hide" to="." method="_on_Hide_pressed"]
