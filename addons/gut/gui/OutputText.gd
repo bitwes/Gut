@@ -146,7 +146,7 @@ func _setup_colors():
 	_ctrls.output.add_theme_color_override("font_color_readonly", f_color)
 	_ctrls.output.add_theme_color_override("function_color", f_color)
 	_ctrls.output.add_theme_color_override("member_variable_color", f_color)
-	_ctrls.output.update()
+	_ctrls.output.queue_redraw()
 
 
 func _set_font(font_name, custom_name):
@@ -214,7 +214,7 @@ func _on_SearchTerm_gui_input(event):
 
 func _on_WordWrap_pressed():
 	_ctrls.output.wrap_enabled = _ctrls.word_wrap.pressed
-	_ctrls.output.update()
+	_ctrls.output.queue_redraw()
 
 # ------------------
 # Public
