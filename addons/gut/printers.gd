@@ -113,7 +113,7 @@ class GutGuiPrinter:
 	# This can be very very slow when the box has a lot of text.
 	func clear_line():
 		_textbox.remove_line(_textbox.get_line_count() - 1)
-		_textbox.update()
+		_textbox.queue_redraw()
 
 	func get_bbcode():
 		return _textbox.text
