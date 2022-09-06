@@ -17,13 +17,13 @@ class TestScriptCollector:
 	func test_can_parse_a_script():
 		var collector = ScriptCollector.new()
 		collector.parse(DoubleMe)
-		assert_eq(collector.scripts.keys().size(), 1)
+		assert_eq(collector.scripts.size(), 1)
 
 	func test_parsing_same_thing_does_not_add_to_scripts():
 		var collector = ScriptCollector.new()
 		collector.parse(DoubleMe)
 		collector.parse(DoubleMe)
-		assert_eq(collector.scripts.keys().size(), 1)
+		assert_eq(collector.scripts.size(), 1)
 
 	func test_parse_returns_script_parser():
 		var collector = ScriptCollector.new()
@@ -39,22 +39,30 @@ class TestScriptCollector:
 	func test_can_parse_instances():
 		var collector = ScriptCollector.new()
 		collector.parse(autofree(DoubleMe.new()))
-		assert_eq(collector.scripts.keys().size(), 1)
+		assert_eq(collector.scripts.size(), 1)
 
 	func test_can_get_instance_parse_result_from_gdscript():
 		var collector = ScriptCollector.new()
 		collector.parse(autofree(DoubleMe.new()))
 		var result = collector.parse(DoubleMe)
 		assert_is(result, ScriptCollector.ScriptParser)
-		assert_eq(collector.scripts.keys().size(), 1)
+		assert_eq(collector.scripts.size(), 1)
 
 	func test_parsing_more_adds_more_scripts():
 		var collector = ScriptCollector.new()
 		collector.parse(DoubleMe)
 		collector.parse(ExtendsNode)
-		assert_eq(collector.scripts.keys().size(), 2)
+		assert_eq(collector.scripts.size(), 2)
 
+	func test_can_parse_path_string():
+		var collector = ScriptCollector.new()
+		collector.parse(DOUBLE_ME_PATH)
+		assert_eq(collector.scripts.size(), 1)
 
+	func test_when_passed_an_invalid_path_null_is_returned():
+		var collector = ScriptCollector.new()
+		var result = collector.parse('res://foo.bar')
+		assert_null(result)
 
 
 class TestScriptParser:

@@ -115,7 +115,7 @@ class ObjectInfo:
 		if(subpath != null):
 			_subpaths = Array(subpath.split('/'))
 
-	# Returns an instantiate of the class/inner class
+	# Returns an instance of the class/inner class
 	func instantiate():
 		var to_return = null
 

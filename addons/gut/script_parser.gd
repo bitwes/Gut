@@ -162,11 +162,15 @@ class ScriptParser:
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 var scripts = {}
+var _file = File.new()
 
 
 func _get_path(thing):
 	var path = null
-	if(thing is Resource):
+
+	if(typeof(thing) == TYPE_STRING):
+		path = thing
+	elif(thing is Resource):
 		path = thing.resource_path
 	else:
 		path = thing.get_script().get_path()
@@ -179,11 +183,19 @@ func parse(thing):
 	var parsed = null
 
 	if(!scripts.has(path)):
-		parsed = ScriptParser.new(thing)
+		if(typeof(thing) == TYPE_STRING):
+			if(_file.file_exists(path)):
+				parsed = ScriptParser.new(load(thing))
+		else:
+			parsed = ScriptParser.new(thing)
 		scripts[path] = parsed
 	else:
 		parsed = scripts[path]
 
 	return parsed
+
+
+func size():
+	return
 
 
