@@ -13,7 +13,7 @@ dest_files=["res://.godot/imported/CourierPrime-BoldItalic.ttf-65ebcc61dd5e1dfa8
 [params]
 
 Rendering=null
-antialiased=true
+antialiasing=1
 generate_mipmaps=false
 multichannel_signed_distance_field=false
 msdf_pixel_range=8
