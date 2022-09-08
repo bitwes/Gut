@@ -122,7 +122,7 @@ class TestType2Str:
 
 
 class TestTruncateString:
-	extends 'res://addons/gut/test.gd'
+	extends GutTest
 
 	var strutils = load('res://addons/gut/strutils.gd').new()
 
@@ -141,7 +141,7 @@ class TestTruncateString:
 
 
 class TestIndent:
-	extends 'res://addons/gut/test.gd'
+	extends GutTest
 
 	var strutils = load('res://addons/gut/strutils.gd').new()
 

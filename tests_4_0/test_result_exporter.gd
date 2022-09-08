@@ -1,4 +1,4 @@
-extends 'res://addons/gut/test.gd'
+extends GutTest
 
 var Gut = load('res://addons/gut/gut.gd')
 var ResultExporter = _utils.ResultExporter
@@ -144,6 +144,9 @@ func test_totals_with_inner_classes():
 
 
 func test_script_totals_with_inner_classes():
+	pending('Broke in godot 4 a16')
+	return
+
 	run_scripts(_test_gut, 'test_with_inner_classes.gd')
 	var re = ResultExporter.new()
 	var result = re.get_results_dictionary(_test_gut).test_scripts.scripts

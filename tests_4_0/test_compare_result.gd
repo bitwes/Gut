@@ -1,4 +1,4 @@
-extends 'res://addons/gut/test.gd'
+extends GutTest
 
 func test_can_make_one():
 	var c  = CompareResult.new()

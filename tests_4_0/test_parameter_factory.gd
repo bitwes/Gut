@@ -1,7 +1,7 @@
 extends GutTest
 
 class TestNamedParameters:
-	extends 'res://addons/gut/test.gd'
+	extends GutTest
 
 	func test_creates_array_of_dictionaries():
 		var got = ParameterFactory.named_parameters(['a', 'b'], [[1, 2], [3, 4]])

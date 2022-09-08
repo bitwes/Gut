@@ -69,7 +69,7 @@ func test_yield():
 
 
 class TestGuiOutput:
-	extends 'res://addons/gut/test.gd'
+	extends GutTest
 
 	func test_pending_class():
 		pending("This is pending in 4.0")
@@ -118,7 +118,7 @@ class TestBasicLoggerOutput:
 
 
 class TestLogLevels:
-	extends 'res://addons/gut/test.gd' # this was on purpose
+	extends GutTest # this was on purpose
 
 	var _orig_log_level = -1
 	var _orig_indent_string = null
