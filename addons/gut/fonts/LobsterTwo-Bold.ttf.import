@@ -13,7 +13,7 @@ dest_files=["res://.godot/imported/LobsterTwo-Bold.ttf-7c7f734103b58a32491a47881
 [params]
 
 Rendering=null
-antialiased=true
+antialiasing=1
 generate_mipmaps=false
 multichannel_signed_distance_field=false
 msdf_pixel_range=8
