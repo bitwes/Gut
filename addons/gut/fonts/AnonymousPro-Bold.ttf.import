@@ -13,7 +13,7 @@ dest_files=["res://.godot/imported/AnonymousPro-Bold.ttf-9d8fef4d357af5b52cd60af
 [params]
 
 Rendering=null
-antialiased=true
+antialiasing=1
 generate_mipmaps=false
 multichannel_signed_distance_field=false
 msdf_pixel_range=8

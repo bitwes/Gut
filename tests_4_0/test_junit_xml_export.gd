@@ -1,4 +1,4 @@
-extends 'res://addons/gut/test.gd'
+extends GutTest
 
 var Gut = load('res://addons/gut/gut.gd')
 var JunitExporter = _utils.JunitXmlExport

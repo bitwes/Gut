@@ -126,7 +126,9 @@ class CmdLineParser:
 		for i in range(_opts.size()):
 			to_return.append(_opts[i][0])
 
-		var script_option = to_return.find('-s')
+		var script_option = to_return.find("-s")
+		if script_option == -1:
+			script_option = to_return.find("--script")
 		if script_option != -1:
 			to_return.remove_at(script_option + 1)
 			to_return.remove_at(script_option)

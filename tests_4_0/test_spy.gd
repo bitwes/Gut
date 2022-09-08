@@ -64,7 +64,7 @@ class TestSpy:
 		assert_eq(_spy._calls.keys().size(), 0, 'post count')
 
 class TestAddingCallsWithParameters:
-	extends 'res://addons/gut/test.gd'
+	extends GutTest
 
 	var Spy = load('res://addons/gut/spy.gd')
 	var Simple = load('res://test/resources/spy_test_objects/simple.gd')
@@ -123,7 +123,7 @@ class TestAddingCallsWithParameters:
 
 
 class TestGetCallCount:
-	extends 'res://addons/gut/test.gd'
+	extends GutTest
 
 	var Spy = load('res://addons/gut/spy.gd')
 	var Simple = load('res://test/resources/spy_test_objects/simple.gd')

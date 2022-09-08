@@ -1,7 +1,7 @@
-extends 'res://addons/gut/test.gd'
+extends GutTest
 
 class TestFormatter:
-	extends 'res://addons/gut/test.gd'
+	extends GutTest
 
 	var Formatter = load('res://addons/gut/diff_formatter.gd')
 	var DiffTool = _utils.DiffTool
@@ -137,7 +137,7 @@ class TestFormatter:
 		pass_test(formatter.make_it(diff))
 
 class TestUsingAssertNe:
-	extends 'res://addons/gut/test.gd'
+	extends GutTest
 
 	var DiffTool = _utils.DiffTool
 

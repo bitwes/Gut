@@ -1694,7 +1694,7 @@ class TestParameterizedTests:
 
 # ------------------------------------------------------------------------------
 class TestMemoryMgmt:
-	extends 'res://addons/gut/test.gd'
+	extends GutTest
 
 	var skip_script = 'Not ready for 4.0, waiting on yield but most probably work.'
 
@@ -1748,7 +1748,7 @@ class TestMemoryMgmt:
 
 # ------------------------------------------------------------------------------
 class TestTestStateChecking:
-	extends 'res://addons/gut/test.gd'
+	extends GutTest
 
 	var _gut = null
 

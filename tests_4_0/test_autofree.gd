@@ -1,4 +1,4 @@
-extends 'res://addons/gut/test.gd'
+extends GutTest
 
 var AutoFree = load('res://addons/gut/autofree.gd')
 

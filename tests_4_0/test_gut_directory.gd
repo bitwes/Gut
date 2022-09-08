@@ -110,7 +110,7 @@ class TestUsingDynamicDirs:
 		var file = File.new()
 
 		file.open(path, File.WRITE)
-		file.store_string("extends 'res://addons/gut/test.gd'\n")
+		file.store_string("extends GutTest\n")
 		file.store_string("func test_nothing():\n")
 		file.store_string("\tpending()\n")
 		file.close()
