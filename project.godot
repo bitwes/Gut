@@ -10,6 +10,11 @@ config_version=5
 
 _global_script_classes=[{
 "base": "RefCounted",
+"class": &"GutDoubleTestInnerClasses",
+"language": &"GDScript",
+"path": "res://test/resources/doubler_test_objects/inner_classes.gd"
+}, {
+"base": "RefCounted",
 "class": &"GutHookScript",
 "language": &"GDScript",
 "path": "res://addons/gut/hook_script.gd"
@@ -20,6 +25,7 @@ _global_script_classes=[{
 "path": "res://addons/gut/test.gd"
 }]
 _global_script_class_icons={
+"GutDoubleTestInnerClasses": "",
 "GutHookScript": "",
 "GutTest": ""
 }

@@ -1,3 +1,5 @@
+class_name GutDoubleTestInnerClasses
+
 var _value = 1
 
 

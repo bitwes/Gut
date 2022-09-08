@@ -28,24 +28,19 @@ class TestScriptCollector:
 	func test_parse_returns_script_parser():
 		var collector = ScriptCollector.new()
 		var result = collector.parse(DoubleMe)
-		assert_is(result, ScriptCollector.ScriptParser)
+		assert_is(result, ScriptCollector.ParsedScript)
 
 	func test_parse_returns_cached_version_on_2nd_parse():
 		var collector = ScriptCollector.new()
 		collector.parse(DoubleMe)
 		var result = collector.parse(DoubleMe)
-		assert_is(result, ScriptCollector.ScriptParser)
-
-	func test_can_parse_instances():
-		var collector = ScriptCollector.new()
-		collector.parse(autofree(DoubleMe.new()))
-		assert_eq(collector.scripts.size(), 1)
+		assert_is(result, ScriptCollector.ParsedScript)
 
 	func test_can_get_instance_parse_result_from_gdscript():
 		var collector = ScriptCollector.new()
 		collector.parse(autofree(DoubleMe.new()))
 		var result = collector.parse(DoubleMe)
-		assert_is(result, ScriptCollector.ScriptParser)
+		assert_is(result, ScriptCollector.ParsedScript)
 		assert_eq(collector.scripts.size(), 1)
 
 	func test_parsing_more_adds_more_scripts():
@@ -69,8 +64,12 @@ class TestScriptParser:
 	extends GutTest
 
 	const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
-	var ScriptParser = load('res://addons/gut/script_parser.gd').ScriptParser
+	var ScriptParser = load('res://addons/gut/script_parser.gd').ParsedScript
 	var DoubleMe = load(DOUBLE_ME_PATH)
+
+	class ClassWithInner:
+		class InnerClass:
+			var foo = 'bar'
 
 	func test_can_make_one_from_gdscript():
 		assert_not_null(ScriptParser.new(DoubleMe))
@@ -128,3 +127,16 @@ class TestScriptParser:
 		var parser = ScriptParser.new(DoubleMe)
 		var names = parser.get_super_method_names()
 		assert_does_not_have(names, 'has_string_and_array_defaults')
+
+	func test_is_blacklisted_returns_true_for_blacklisted_methods():
+		var parser = ScriptParser.new(DoubleMe)
+		assert_true(parser.is_method_blacklisted('_notification'))
+
+	func test_is_black_listed_returns_false_for_non_blacklisted_methods():
+		var parser = ScriptParser.new(DoubleMe)
+		assert_false(parser.is_method_blacklisted('has_string_and_array_defaults'))
+
+	func test_is_black_listed_returns_null_for_methods_that_DNE():
+		var parser = ScriptParser.new(DoubleMe)
+		assert_null(parser.is_method_blacklisted('this_does_not_exist'))
+

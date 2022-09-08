@@ -10,12 +10,14 @@ class BaseTest:
 	const DOUBLE_WITH_STATIC = 'res://test/resources/doubler_test_objects/has_static_method.gd'
 
 	var Doubler = load('res://addons/gut/doubler.gd')
+	var print_source_when_failing = true
 
 	func get_instance_source(thing):
 		var to_return = null
 		if(_utils.is_instance(thing)):
 			to_return = thing.get_script().get_source_code()
 		return to_return
+
 
 	func _pdflt(method, idx):
 		return str('__gut_default_val("', method, '",', idx, ')')
@@ -26,6 +28,21 @@ class BaseTest:
 		for i in range(no_defaults.size()):
 			to_return += str(no_defaults[i], '=', _pdflt(method, i), ', ')
 		return to_return
+
+
+	func assert_source_contains(thing, look_for, text=''):
+		var source = get_instance_source(thing)
+		var msg = str('Expected source for ', _strutils.type2str(thing), ' to contain "', look_for, '":  ', text)
+		if(source == null || source.find(look_for) == -1):
+			fail_test(msg)
+			if(print_source_when_failing):
+				var header = str('------ Source for ', _strutils.type2str(thing), ' ------')
+				gut.p(header)
+				gut.p(source)
+
+		else:
+			pass_test(msg)
+
 
 
 
@@ -72,8 +89,7 @@ class TestTheBasics:
 
 	func test_doubling_methods_have_parameters_1():
 		var inst = gr.doubler.double(DOUBLE_ME_PATH).new()
-		var text = get_instance_source(inst)
-		assert_string_contains(text, 'has_one_param(p_one=', 'first parameter for one param method is defined')
+		assert_source_contains(inst, 'has_one_param(p_one=', 'first parameter for one param method is defined')
 
 	# Don't see a way to see which have defaults and which do not, so we default
 	# everything.
@@ -82,8 +98,7 @@ class TestTheBasics:
 		return
 
 		var inst = gr.doubler.double(DOUBLE_ME_PATH).new()
-		var text = get_instance_source(inst)
-		assert_string_contains(text,
+		assert_source_contains(inst,
 			'has_two_params_one_default(' +
 			'p_one=__gut_default_val("has_two_params_one_default",0), '+
 			'p_two=__gut_default_val("has_two_params_one_default",1))')
@@ -220,16 +235,12 @@ class TestBuiltInOverloading:
 	func test_can_override_strategy_when_doubling_script():
 		doubler.set_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
 		var inst = doubler.double(DOUBLE_ME_PATH, DOUBLE_STRATEGY.FULL).new()
-		var txt = get_instance_source(inst)
-		assert_ne(txt, '', "text is not empty")
-		assert_ne(txt.find('func is_blocking_signals'), -1, 'HAS non-overloaded methods')
+		assert_source_contains(inst, 'func is_blocking_signals')
 
 	func test_can_override_strategy_when_doubling_scene():
 		doubler.set_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
 		var inst = autofree(doubler.double_scene(DOUBLE_ME_SCENE_PATH, DOUBLE_STRATEGY.FULL).instantiate())
-		var txt = get_instance_source(inst)
-		assert_ne(txt, '', "text is not empty")
-		assert_ne(txt.find('func is_blocking_signals'), -1, 'HAS non-overloaded methods')
+		assert_source_contains(inst, 'func is_blocking_signals')
 
 	func test_when_everything_included_you_can_still_make_an_a_new_object():
 		var inst = doubler.double(DOUBLE_ME_PATH).new()
@@ -249,7 +260,7 @@ class TestBuiltInOverloading:
 		# await yield_for(3).YIELD
 
 	func test_double_includes_methods_in_super():
-		assert_string_contains(_dbl_win_dia_text, 'connect(')
+		assert_source_contains(_dbl_win_dia, 'connect(')
 
 	func test_can_call_a_built_in_that_has_default_parameters():
 		var inst = autofree(doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG).new())
@@ -257,13 +268,14 @@ class TestBuiltInOverloading:
 		pass_test("if we got here, it worked")
 
 	func test_all_types_supported():
-		assert_string_contains(_dbl_win_dia_text, 'popup_centered(p_size=Vector2(0, 0)):', 'Vector2')
-		assert_string_contains(_dbl_win_dia_text, 'bounds=Rect2(0, 0, 0, 0)', 'Rect2')
+
+		assert_source_contains(_dbl_win_dia, 'popup_centered(p_size=Vector2(0, 0)):', 'Vector2')
+		assert_source_contains(_dbl_win_dia, 'bounds=Rect2(0, 0, 0, 0)', 'Rect2')
 
 	func test_doubled_builtins_call_super():
 		var inst = autofree(doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG).new())
 		# Make sure the function is in the doubled class definition
-		assert_string_contains(get_instance_source(inst), 'func add_user_signal(p_signal')
+		assert_source_contains(inst, 'func add_user_signal(p_signal')
 		# Make sure that when called it retains old functionality.
 		inst.add_user_signal('new_one')
 		inst.add_user_signal('new_two', ['a', 'b'])
@@ -290,19 +302,17 @@ class TestDefaultParameters:
 	func test_parameters_are_doubled_for_connect():
 		pending('Has changed in Godot 4')
 		# var inst = autofree(doubler.double_scene(DOUBLE_ME_SCENE_PATH).instantiate())
-		# var text = get_instance_source(inst)
 		# var no_defaults = _sig_gen('connect', ['p_signal', 'p_target', 'p_method'])
 		# var sig = str('func connect(',Callable(no_defaults,'p_binds=[]),p_flags=0):'))
 
-		# assert_string_contains(text, sig)
+		# assert_source_contains(inst, sig)
 
 	func test_parameters_are_doubled_for_draw_char():
 		var inst = autofree(doubler.double_scene(DOUBLE_ME_SCENE_PATH).instantiate())
-		var text = get_instance_source(inst)
 		var no_defaults = _sig_gen('draw_char', ['p_font', 'p_position', 'p_char', 'p_next'])
 		var sig = 'func draw_char(' + no_defaults + 'p_modulate=Color(1,1,1,1)):'
 
-		assert_string_contains(text, sig)
+		assert_source_contains(inst, sig)
 
 	func test_parameters_are_doubled_for_draw_multimesh():
 		var inst = autofree(doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG).new())
@@ -311,7 +321,7 @@ class TestDefaultParameters:
 			no_defaults,
 			'p_normal_map=null):')
 
-		assert_string_contains(get_instance_source(inst), sig)
+		assert_source_contains(inst, sig)
 
 	var singletons = [
 		"PhysicsServer2D",	# TYPE_TRANSFORM2D, TYPE_RID
@@ -365,12 +375,10 @@ class TestDoubleInnerClasses:
 		#doubler.set_strategy(DOUBLE_STRATEGY.FULL)
 		var d = doubler.double_inner(INNER_CLASSES_PATH, 'InnerA', DOUBLE_STRATEGY.FULL)
 		# make sure it has something from Object that isn't implemented
-		var text = get_instance_source(d.new())
-		assert_string_contains(text , 'func disconnect(p_signal')
+		assert_source_contains(d.new() , 'func disconnect(p_signal')
 		assert_eq(doubler.get_strategy(), DOUBLE_STRATEGY.PARTIAL, 'strategy should have been reset')
 
 	func test_doubled_inners_retain_signals():
-		doubler._print_source = true
 		var inst = doubler.double_inner(INNER_CLASSES_PATH, 'InnerWithSignals').new()
 		assert_has_signal(inst, 'signal_signal')
 

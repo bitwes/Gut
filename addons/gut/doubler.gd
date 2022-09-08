@@ -29,7 +29,27 @@
 # Description
 # -----------
 # ##############################################################################
-
+const BLACKLIST = [
+	'has_method',
+	'get_script',
+	'get',
+	'_notification',
+	'get_path',
+	'_enter_tree',
+	'_exit_tree',
+	'_process',
+	'_draw',
+	'_physics_process',
+	'_input',
+	'_unhandled_input',
+	'_unhandled_key_input',
+	'_set',
+	'_get', # probably
+	'emit_signal', # can't handle extra parameters to be sent with signal.
+	'draw_mesh', # issue with one parameter, value is `Null((..), (..), (..))``
+	'_to_string', # nonexistant function super._to_string
+	'_get_minimum_size', # Nonexistent function _get_minimum_size
+]
 # ------------------------------------------------------------------------------
 # Utility class to hold the local and built in methods separately.  Add all local
 # methods FIRST, then add built ins.
@@ -39,28 +59,7 @@ class ScriptMethods:
 	# in the class being doubled.  These either break things if they are
 	# overloaded or do not have a "super" equivalent so we can't just pass
 	# through.
-	var _blacklist = [
-		'has_method',
-		'get_script',
-		'get',
-		'_notification',
-		'get_path',
-		'_enter_tree',
-		'_exit_tree',
-		'_process',
-		'_draw',
-		'_physics_process',
-		'_input',
-		'_unhandled_input',
-		'_unhandled_key_input',
-		'_set',
-		'_get', # probably
-		'emit_signal', # can't handle extra parameters to be sent with signal.
-		'draw_mesh', # issue with one parameter, value is `Null((..), (..), (..))``
-		'_to_string', # nonexistant function super._to_string
-		'_get_minimum_size', # Nonexistent function _get_minimum_size
-	]
-
+	var _blacklist = BLACKLIST
 
 	var built_ins = []
 	var local_methods = []
@@ -288,10 +287,11 @@ class DoubledScript:
 		if(_contents != ''):
 			var script = GDScript.new()
 			script.source_code = _contents
-			# this is causing an error in 4.0 (print only)
+			# this is causing an error in 4.0 (does not halt execution, just prints it)
 			# ERROR: Attempt to open script '' resulted in error 'File not found'.
 			# Everyting seems to work.  I suspect that the path is empty and it
-			# is throwing an erro that should not be thrown.
+			# is throwing an erro that should not be thrown.  An issue has been
+			# created and marked as bug.
 			var result = script.reload()
 			return script
 

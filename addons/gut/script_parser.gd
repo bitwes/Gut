@@ -1,10 +1,38 @@
 # ------------------------------------------------------------------------------
+# List of methods that should not be overloaded when they are not defined
+# in the class being doubled.  These either break things if they are
+# overloaded or do not have a "super" equivalent so we can't just pass
+# through.
+const BLACKLIST = [
+	'has_method',
+	'get_script',
+	'get',
+	'_notification',
+	'get_path',
+	'_enter_tree',
+	'_exit_tree',
+	'_process',
+	'_draw',
+	'_physics_process',
+	'_input',
+	'_unhandled_input',
+	'_unhandled_key_input',
+	'_set',
+	'_get', # probably
+	'emit_signal', # can't handle extra parameters to be sent with signal.
+	'draw_mesh', # issue with one parameter, value is `Null((..), (..), (..))``
+	'_to_string', # nonexistant function super._to_string
+	'_get_minimum_size', # Nonexistent function _get_minimum_size
+]
+
+
+# ------------------------------------------------------------------------------
 # Combins the meta for the method with additional information.
 # * flag for whether the method is local
 # * adds a 'default' property to all parameters that can be easily checked per
 #   parameter
 # ------------------------------------------------------------------------------
-class MethodParser:
+class ParsedMethod:
 	var _meta = {}
 	var _parameters = []
 	var is_local = false
@@ -23,6 +51,10 @@ class MethodParser:
 			else:
 				arg['default'] = NO_DEFAULT
 			_parameters.append(arg)
+
+
+	func is_black_listed():
+		return BLACKLIST.find(_meta.name) != -1
 
 
 	func to_s():
@@ -51,7 +83,7 @@ class MethodParser:
 # Doesn't know if a method is local and in super, but not sure if that will
 # ever matter.
 # ------------------------------------------------------------------------------
-class ScriptParser:
+class ParsedScript:
 	# All methods indexed by name.
 	var _methods_by_name = {}
 
@@ -73,21 +105,25 @@ class ScriptParser:
 	func _parse_methods(thing):
 		var methods = thing.get_method_list()
 		for m in methods:
-			var meth = MethodParser.new(m)
-			_methods_by_name[m.name] = meth
+			_methods_by_name[m.name] = ParsedMethod.new(m)
 
 		# This loop will overwrite all entries in _methods_by_name with the local
 		# method object so there is only ever one listing for a function with
 		# the right "is_local" flag.
 		methods = thing.get_script_method_list()
 		for m in methods:
-			var meth = MethodParser.new(m)
-			meth.is_local = true
-			_methods_by_name[m.name] = meth
+			var parsed_method = ParsedMethod.new(m)
+			parsed_method.is_local = true
+			_methods_by_name[m.name] = parsed_method
 
 
 	func get_method(name):
 		return _methods_by_name[name]
+
+
+	func is_method_blacklisted(m_name):
+		if(_methods_by_name.has(m_name)):
+			return _methods_by_name[m_name].is_black_listed()
 
 
 	func get_super_method(name):
@@ -165,32 +201,30 @@ var scripts = {}
 var _file = File.new()
 
 
-func _get_path(thing):
-	var path = null
+func _get_instance_id(thing):
+	var inst_id = null
 
 	if(typeof(thing) == TYPE_STRING):
-		path = thing
-	elif(thing is Resource):
-		path = thing.resource_path
+		if(_file.file_exists(thing)):
+			inst_id = load(thing).get_instance_id()
 	else:
-		path = thing.get_script().get_path()
+		inst_id = thing.get_instance_id()
 
-	return path
+	return inst_id
 
 
 func parse(thing):
-	var path = _get_path(thing)
+	var inst_id = _get_instance_id(thing)
 	var parsed = null
 
-	if(!scripts.has(path)):
-		if(typeof(thing) == TYPE_STRING):
-			if(_file.file_exists(path)):
-				parsed = ScriptParser.new(load(thing))
+	if(inst_id != null):
+		var obj = instance_from_id(inst_id)
+		if(scripts.has(inst_id)):
+			parsed = scripts[inst_id]
 		else:
-			parsed = ScriptParser.new(thing)
-		scripts[path] = parsed
-	else:
-		parsed = scripts[path]
+			if(obj is Resource):
+				parsed = ParsedScript.new(obj)
+				scripts[inst_id] = parsed
 
 	return parsed
 

@@ -12,6 +12,7 @@ var DoubleMe = load(DOUBLE_ME_PATH)
 var DoubleMeScene = load('res://test/resources/doubler_test_objects/double_me_scene.tscn')
 var SetGetTestNode = load('res://test/resources/test_assert_setget_test_objects/test_node.gd')
 var json = JSON.new()
+var _strutils = load('res://addons/gut/strutils.gd').new()
 
 const DEFAULT_ARGS = 'default_args'
 const NAME = 'name'
@@ -58,6 +59,11 @@ class SimpleObject:
 	var a = 'a'
 
 
+class ExtendsAnInnerClassElsewhere:
+	extends 'res://test/resources/doubler_test_objects/inner_classes.gd'.InnerB
+
+	func foobar():
+		return 'foobar'
 
 func get_methods_by_flag(obj):
 	var methods_by_flags = {}
@@ -178,32 +184,53 @@ func does_inherit_from_test(thing):
 			to_return = does_inherit_from_test(base_script)
 	return to_return
 
-func print_other_info(loaded):
-	print('---------------------------------')
-	print(loaded)
-	print('path = ', loaded.get_path())
-	if(loaded.get_base_script() != null):
-		print('base script path = ', loaded.get_base_script().get_path())
-	else:
-		print('NO base_script')
-	print('class = ', loaded.get_class())
+func print_other_info(loaded, msg = '', indent=''):
+	print(indent, '--------------------- ', msg, ' ---------------------')
+	print(indent, loaded)
+
+	var base_script_path = 'NO base script'
+	if(loaded.has_method('get_base_script')):
+		if(loaded.get_base_script() != null):
+			base_script_path = str('"', loaded.get_base_script().get_path(), '"')
+		else:
+			base_script_path = 'Null base script'
+
+	print(indent, 'base_script path          ', base_script_path)
+	print(indent, 'class                     ', loaded.get_class())
+	print(indent, 'instance base type        ', loaded.get_instance_base_type())
+	print(indent, 'instance_id               ', loaded.get_instance_id())
+	print(indent, 'meta_list                 ', loaded.get_meta_list())
+	print(indent, 'name                      ', loaded.get_name())
+	print(indent, 'path                      ', loaded.get_path())
+	print(indent, 'resource local to scene   ', loaded.resource_local_to_scene)
+	print(indent, 'resource name             ', loaded.resource_name)
+	print(indent, 'resource path             ', loaded.resource_path)
+	print(indent, 'RID                       ', loaded.get_rid())
+	print(indent, 'script                    ', loaded.get_script())
+	print()
+
+
 	var const_map = loaded.new().get_script().get_script_constant_map()
+	if(const_map.size() > 0):
+		print(indent, '--- Constants ---')
 	for key in const_map:
 		var thing = const_map[key]
-		print(key, ' = ', thing)
+		print(indent, key, ' = ', thing)
 		if(typeof(thing) == TYPE_OBJECT):
-			print('  ', 'meta         ', thing.get_meta_list())
-			print('  ', 'class        ', thing.get_class())
-			print('  ', 'path         ', thing.get_path())
-			var base_script = thing.get_base_script()
-			print('  ', 'base script  ', base_script)
-			if(base_script != null):
-				print('  ', 'base id      ', base_script.get_instance_id())
-				print('  ', 'base path    ', base_script.get_path() )
-			print('  ', 'base type    ', thing.get_instance_base_type())
-			print('  ', 'can instantiate ', thing.can_instantiate())
-			print('  ', 'id           ', thing.get_instance_id())
-			print('  ', 'is test      ', does_inherit_from_test(thing))
+			print_other_info(thing, key, indent + '    ')
+			# print('  ', 'meta         ', thing.get_meta_list())
+			# print('  ', 'class        ', thing.get_class())
+			# print('  ', 'path         ', thing.get_path())
+			# var base_script = thing.get_base_script()
+			# print('  ', 'base script  ', base_script)
+			# if(base_script != null):
+			# 	print('  ', 'base id      ', base_script.get_instance_id())
+			# 	print('  ', 'base path    ', base_script.get_path() )
+			# print('  ', 'base type    ', thing.get_instance_base_type())
+			# print('  ', 'can instantiate ', thing.can_instantiate())
+			# print('  ', 'id           ', thing.get_instance_id())
+			# print('  ', 'is test      ', does_inherit_from_test(thing))
+
 
 
 func print_inner_test_classes(loaded, from=null):
@@ -243,34 +270,53 @@ func print_script_methods():
 		pp(methods[i])
 
 
+func print_methods(methods, print_all_meta = false):
+	var methods_by_name = {}
+	var method_names = []
+	for method in methods:
+		methods_by_name[method.name] = method
+		method_names.append(method.name)
+
+	method_names.sort()
+
+	for m_name in method_names:
+
+		print(m_name)
+		if(print_all_meta):
+			pp(methods_by_name[m_name], '  ')
+
+
+func print_properties(props, thing, print_all_meta=false):
+	for i in range(props.size()):
+		var prop_name = props[i].name
+		var prop_value = thing.get(props[i].name)
+		var print_value = str(prop_value)
+		if(print_value.length() > 100):
+			print_value = print_value.substr(0, 97) + '...'
+		elif(print_value == ''):
+			print_value = 'EMPTY'
+
+		print(prop_name, ' = ', print_value)
+		if(print_all_meta):
+			print('  ', props[i])
+
+
 func print_all_info(thing):
 	print('path = ', thing.get_path())
 
 	print('--- Methods (object) ---')
-	var methods = thing.get_method_list()
-	for i in range(methods.size()):
-		print('  ', methods[i].name)
-		# pp(methods[i])
+	print_methods(thing.get_method_list())
 
 	print('--- Methods (script) ---')
-	methods = thing.get_script_method_list()
-	for i in range(methods.size()):
-		print('  ', methods[i].name)
-		pp(methods[i])
+	print_methods(thing.get_script_method_list())
 
 	print('--- Properties (object) ---')
 	var props = thing.get_property_list()
-	for i in range(props.size()):
-		print('  ', props[i].name, props[i])
-		if(props[i].name != 'source_code' and props[i].name != 'script/source'):
-			print('    value = ', thing.get(props[i].name))
+	print_properties(props, thing)
 
 	print('--- Properties (script) ---')
 	props = thing.get_script_property_list()
-	for i in range(props.size()):
-		print('  ', props[i].name, props[i])
-		if(props[i].name != 'source_code' and props[i].name != 'script/source'):
-			print('    value = ', thing.get(props[i].name))
+	print_properties(props, thing, true)
 
 	print('--- Constants ---')
 	print_inner_test_classes(thing)
@@ -281,15 +327,51 @@ func print_all_info(thing):
 		print(sig['name'])
 		print('  ', sig)
 
+func print_class_db_class_list():
+	var list = ClassDB.get_class_list()
+	list.sort()
+	print("\n".join(list))
 
-func pp(dict):
-	print(json.stringify(dict, ' '))
+func pp(dict, indent=''):
+	var text = json.stringify(dict, '  ')
+	text = _strutils.indent_text(text, 1, indent)
+	print(text)
 
 func has_script_method(Class):
 	var methods = Class.get_script_method_list()
 
+func print_inner_classes(loaded, parent=''):
+	var const_map = loaded.get_script_constant_map()
+
+	for key in const_map:
+		var thing = const_map[key]
+
+		if(typeof(thing) == TYPE_OBJECT):
+			print(parent, key, ':  ', thing)
+			print_inner_classes(thing, key + '.')
+
+func print_inner_class_path(loaded):
+	pass
+
+
 func _init():
-	print_all_info(GutTest)
+	var ThatInnerClassScript = load('res://test/resources/doubler_test_objects/inner_classes.gd')
+	# print_other_info(HasSomeInners, 'HasSomeInners')
+	# print_other_info(HasSomeInners.Inner2.Inner2_a, 'Inner2_a')
+	# print_inner_classes(ThatInnerClassScript)
+	# print_other_info(ThatInnerClassScript, 'ThatInnerClassScript')
+	print_other_info(ThatInnerClassScript.AnotherInnerA, 'AnotherInnerA')
+	print_all_info(ThatInnerClassScript.AnotherInnerA)
+	# print_all_info(ExtendsAnInnerClassElsewhere)
+	# print_all_info(DoubleMe)
+
+	# print_class_db_class_list()
+
+	# print_other_info(HasSomeInners)
+	# print_other_info(HasSomeInners.Inner1)
+
+
+	# print_all_info(GutTest)
 	# print_all_info(SetGetTestNode)
 	# print(SetGetTestNode.has_method('has_setter_setter'))
 	# var inst = SetGetTestNode.new()
