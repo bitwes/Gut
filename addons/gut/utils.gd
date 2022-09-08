@@ -299,7 +299,7 @@ func is_instance(obj):
 # Checks if the passed in is a GDScript
 # ------------------------------------------------------------------------------
 func is_gdscript(obj):
-	return typeof(obj) == TYPE_OBJECT and str(obj).begins_with('[GDScript:')
+	return typeof(obj) == TYPE_OBJECT and str(obj).begins_with('<GDScript#')
 
 # ------------------------------------------------------------------------------
 # Returns an array of values by calling get(property) on each element in source
@@ -383,20 +383,14 @@ func search_array(ar, prop_method, value):
 	var found = false
 	var idx = 0
 
-	print('getting ', prop_method, ' with value ', value)
 	while(idx < ar.size() and !found):
 		var item = ar[idx]
 		var prop = item.get(prop_method)
-		print('  prop = ', prop)
 		if(!(prop is Callable)):
-			print('  prop is not callable')
 			if(item.get(prop_method) == value):
 				found = true
 		elif(prop != null):
 			var called_val = prop.call()
-			print('  called value = ', called_val)
-			print(typeof(called_val), '::', typeof(value))
-			print(called_val, '::', value)
 			if(called_val == value):
 				found = true
 
@@ -404,10 +398,8 @@ func search_array(ar, prop_method, value):
 			idx += 1
 
 	if(found):
-		print('  FOUND')
 		return ar[idx]
 	else:
-		print('  NOT FOUND')
 		return null
 
 

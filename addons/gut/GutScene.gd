@@ -38,7 +38,7 @@ class GuiHandler:
 		_ctrls.path_file.text = ''
 		_ctrls.time_label.text = ''
 
-		print(_ctrls)
+
 
 
 	# ------------------
