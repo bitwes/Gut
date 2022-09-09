@@ -91,6 +91,7 @@ var ParameterFactory = load('res://addons/gut/parameter_factory.gd')
 var ParameterHandler = load('res://addons/gut/parameter_handler.gd')
 var Printers = load('res://addons/gut/printers.gd')
 var ResultExporter = load('res://addons/gut/result_exporter.gd')
+var ScriptCollector = load('res://addons/gut/script_parser.gd')
 var Spy = load('res://addons/gut/spy.gd')
 var Strutils = load('res://addons/gut/strutils.gd')
 var Stubber = load('res://addons/gut/stubber.gd')
@@ -421,3 +422,33 @@ func get_singleton_by_name(name):
 	script.set_source_code(source)
 	script.reload()
 	return script.new().singleton
+
+
+func dec2bistr(decimal_value, max_bits = 31):
+	var binary_string = ""
+	var temp
+	var count = max_bits
+
+	while(count >= 0):
+		temp = decimal_value >> count
+		if(temp & 1):
+			binary_string = binary_string + "1"
+		else:
+			binary_string = binary_string + "0"
+		count -= 1
+
+	return binary_string
+
+
+func add_line_numbers(contents):
+	if(contents == null):
+		return ''
+
+	var to_return = ""
+	var lines = contents.split("\n")
+	var line_num = 1
+	for line in lines:
+		var line_str = str(line_num).lpad(6, ' ')
+		to_return += str(line_str, ' |', line, "\n")
+		line_num += 1
+	return to_return

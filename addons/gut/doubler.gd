@@ -330,7 +330,7 @@ var _base_script_text = _utils.get_file_as_text('res://addons/gut/double_templat
 var _make_files = false
 # used by tests for debugging purposes.
 var _print_source = false
-
+var _script_collector = _utils.ScriptCollector.new()
 
 # ###############
 # Properties
@@ -404,7 +404,7 @@ func _stub_to_call_super(obj_info, method_name):
 	_stubber.add_stub(params)
 
 
-func _get_base_script_text(obj_info, override_path, script_methods):
+func _get_base_script_text(obj_info, override_path):
 	var path = obj_info.get_path()
 	if(override_path != null):
 		path = override_path
@@ -441,8 +441,8 @@ func _get_base_script_text(obj_info, override_path, script_methods):
 
 
 func _create_double(obj_info, override_path=null):
-	var script_methods = _get_methods(obj_info)
-	var base_script = _get_base_script_text(obj_info, override_path, script_methods)
+	var parsed = _script_collector.parse(obj_info.get_loaded_class())
+	var base_script = _get_base_script_text(obj_info, override_path)
 	var super_name = ""
 	var path = ""
 
@@ -455,17 +455,19 @@ func _create_double(obj_info, override_path=null):
 
 	dbl.append(base_script)
 
-	# print('local method count = ', script_methods.local_methods.size())
-	for i in range(script_methods.local_methods.size()):
-		dbl.append(_get_func_text(script_methods.local_methods[i], path, super_name))
+	for method in parsed.get_local_methods():
+		if(!method.is_black_listed() && !_ignored_methods.has(parsed.script_path, method.meta.name)):
+			var mthd = parsed.get_local_method(method.meta.name)
+			dbl.append(_get_func_text(method.meta, path, super_name))
 
-	# print('built-in method count = ', script_methods.built_ins.size())
-	for i in range(script_methods.built_ins.size()):
-		_stub_to_call_super(obj_info, script_methods.built_ins[i].name)
-		dbl.append(_get_func_text(script_methods.built_ins[i], path, super_name))
+	if(obj_info.get_method_strategy() == _utils.DOUBLE_STRATEGY.FULL):
+		for method in parsed.get_super_methods():
+			if(!method.is_black_listed() && !_ignored_methods.has(parsed.script_path, method.meta.name)):
+				_stub_to_call_super(obj_info, method.meta.name)
+				dbl.append(_get_func_text(method.meta, path, super_name))
 
 	if(_print_source):
-		print(dbl.get_contents())
+		print(_utils.add_line_numbers(dbl.get_contents()))
 	return dbl
 
 
@@ -489,48 +491,6 @@ func _double_scene_and_script(scene_info):
 	return to_return
 
 
-func _get_methods(object_info):
-	var obj = object_info.get_loaded_class()
-	# any method in the script or super script
-	var script_methods = ScriptMethods.new()
-	var methods = obj.get_script_method_list()
-
-	# if(!object_info.is_singleton() and !(obj is RefCounted)):
-	# 	obj.free()
-
-	# first pass is for local methods only
-	for i in range(methods.size()):
-		if(object_info.is_singleton()):
-			#print(methods[i].name, " :: ", methods[i].flags, " :: ", methods[i].id)
-			#print("    ", methods[i])
-
-			# It appears that the ID for methods upstream from a singleton are
-			# below 200.  Initially it was thought that singleton specific methods
-			# were above 1000.  This was true for Input but not for OS.  I've
-			# changed the condition to be > 200 instead of > 1000.  It will take
-			# some investigation to figure out if this is right, but it works
-			# for now.  Someone either find an issue and open a bug, or this will
-			# just exist like this.  Sorry future me (or someone else).
-			if(methods[i].id > 200 and methods[i].flags in [1, 9]):
-				script_methods.add_local_method(methods[i])
-
-		# 65 is a magic number for methods in script, though documentation
-		# says 64.  This picks up local overloads of base class methods too.
-		# See MethodFlags in @GlobalScope
-		elif(!methods[i].name.begins_with('@') and !_ignored_methods.has(object_info.get_path(), methods[i]['name'])):
-			script_methods.add_local_method(methods[i])
-
-	if(object_info.get_method_strategy() == _utils.DOUBLE_STRATEGY.FULL):
-		# second pass is for anything not local
-		for j in range(methods.size()):
-			# 65 is a magic number for methods in script, though documentation
-			# says 64.  This picks up local overloads of base class methods too.
-			if(methods[j].flags != 65 and !_ignored_methods.has(object_info.get_path(), methods[j]['name'])):
-				script_methods.add_built_in_method(methods[j])
-
-	return script_methods
-
-
 func _get_inst_id_ref_str(inst):
 	var ref_str = 'null'
 	if(inst):
@@ -547,7 +507,7 @@ func _get_func_text(method_hash, path, super_=""):
 
 	return text
 
-
+# Override path is used with scenes.
 func _double(obj_info, override_path=null):
 	var result = _create_double(obj_info, override_path)
 	_double_count += 1

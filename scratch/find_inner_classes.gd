@@ -2,6 +2,7 @@ extends SceneTree
 
 var ThatInnerClassScript = load('res://test/resources/doubler_test_objects/inner_classes.gd')
 
+
 class HasSomeInners:
 	signal look_at_me_now
 
@@ -27,22 +28,21 @@ class HasSomeInners:
 		extends Inner1
 
 
-func get_extends_text(inner, outer):
-	if(outer.get_path() == ''):
+func get_extends_text(inner, parent_script):
+	if(parent_script.get_path() == ''):
 		return null
 
 	var to_return = null
-	var inner_string = get_inner_class_string(inner, outer)
+	var inner_string = get_inner_class_string(inner, parent_script)
 	if(inner_string != null):
-		to_return = str("extends '", outer.get_path(), "'.", inner_string)
+		to_return = str("extends '", parent_script.get_path(), "'.", inner_string)
 
 	return to_return
 
 
+func get_inner_class_string(inner, parent_script):
 
-func get_inner_class_string(inner, outermost):
-
-	var const_map = outermost.get_script_constant_map()
+	var const_map = parent_script.get_script_constant_map()
 	var consts = const_map.keys()
 	var const_idx = 0
 	var found = false
@@ -57,7 +57,6 @@ func get_inner_class_string(inner, outermost):
 				found = true
 				to_return = key
 			else:
-				print(consts[const_idx], ' = ', thing)
 				to_return = get_inner_class_string(inner, thing)
 				if(to_return != null):
 					to_return = str(key, '.', to_return)
@@ -77,11 +76,10 @@ func _init():
 	result = get_inner_class_string(ThatInnerClassScript.InnerWithSignals, ThatInnerClassScript)
 	print(result)
 
-	print("\n\n")
 	print(get_extends_text(HasSomeInners.Inner2.Inner2_b, self.get_script()))
 
-	print("\n\n")
 	print(get_extends_text(HasSomeInners.Inner2.Inner2_b, HasSomeInners))
 
+	print(get_extends_text(ThatInnerClassScript.InnerWithSignals, ThatInnerClassScript))
 
 	quit()

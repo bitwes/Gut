@@ -12,10 +12,12 @@ class BaseTest:
 	var Doubler = load('res://addons/gut/doubler.gd')
 	var print_source_when_failing = true
 
-	func get_instance_source(thing):
+	func get_source(thing):
 		var to_return = null
 		if(_utils.is_instance(thing)):
 			to_return = thing.get_script().get_source_code()
+		else:
+			to_return = thing.source_code
 		return to_return
 
 
@@ -31,19 +33,29 @@ class BaseTest:
 
 
 	func assert_source_contains(thing, look_for, text=''):
-		var source = get_instance_source(thing)
+		var source = get_source(thing)
 		var msg = str('Expected source for ', _strutils.type2str(thing), ' to contain "', look_for, '":  ', text)
 		if(source == null || source.find(look_for) == -1):
 			fail_test(msg)
 			if(print_source_when_failing):
 				var header = str('------ Source for ', _strutils.type2str(thing), ' ------')
 				gut.p(header)
-				gut.p(source)
+				gut.p(_utils.add_line_numbers(source))
 
 		else:
 			pass_test(msg)
 
-
+	func assert_source_not_contains(thing, look_for, text=''):
+		var source = get_source(thing)
+		var msg = str('Expected source for ', _strutils.type2str(thing), ' to not contain "', look_for, '":  ', text)
+		if(source == null || source.find(look_for) == -1):
+			pass_test(msg)
+		else:
+			fail_test(msg)
+			if(print_source_when_failing):
+				var header = str('------ Source for ', _strutils.type2str(thing), ' ------')
+				gut.p(header)
+				gut.p(_utils.add_line_numbers(source))
 
 
 class TestTheBasics:
@@ -60,7 +72,6 @@ class TestTheBasics:
 		gr.doubler.set_stubber(stubber)
 		gr.doubler.set_gut(gut)
 
-
 	func test_get_set_stubber():
 		var dblr = Doubler.new()
 		var default_stubber = dblr.get_stubber()
@@ -72,18 +83,9 @@ class TestTheBasics:
 	func test_get_set_gut():
 		assert_accessors(Doubler.new(), 'gut', null, GDScript.new())
 
-	# func test_setting_output_dir_creates_directory_if_it_does_not_exist():
-	# 	var d = Doubler.new()
-	# 	d.set_make_files(true)
-	# 	var path = 'user://doubler_temp_files/'
-	# 	d.set_output_dir(path)
-	# 	var dir = Directory.new()
-	# 	assert_true(dir.dir_exists(path))
-	# 	gut.file_delete(path)
-
 	func test_doubling_object_includes_methods():
 		var inst = gr.doubler.double(DOUBLE_ME_PATH).new()
-		var text = get_instance_source(inst)
+		var text = get_source(inst)
 		assert_true(text.match('*func get_value(*:\n*'), 'should have get method')
 		assert_true(text.match('*func set_value(*:\n*'), 'should have set method')
 
@@ -94,9 +96,6 @@ class TestTheBasics:
 	# Don't see a way to see which have defaults and which do not, so we default
 	# everything.
 	func test_all_parameters_are_defaulted_to_null():
-		pending('This is breaking because it is finding the 2nd default parameter')
-		return
-
 		var inst = gr.doubler.double(DOUBLE_ME_PATH).new()
 		assert_source_contains(inst,
 			'has_two_params_one_default(' +
@@ -117,9 +116,9 @@ class TestTheBasics:
 		assert_eq(doubled.__gut_metadata_.gut, gut)
 
 	func test_keeps_extends():
-		pending('Crashes hard in 4.0 a15')
-		# gr.doubler._print_source = true
-		# var doubled = gr.doubler.double(DOUBLE_EXTENDS_NODE2D).new()
+		pending('Crashes hard in 4.0 a16 on assert_is')
+		gr.doubler._print_source = true
+		var doubled = gr.doubler.double(DOUBLE_EXTENDS_NODE2D).new()
 		# assert_is(doubled, Node2D)
 
 	func test_can_double_scene():
@@ -180,16 +179,12 @@ class TestTheBasics:
 	func test_when_ignored_methods_are_a_local_method_mthey_are_not_present_in_double_code():
 		gr.doubler.add_ignored_method(DOUBLE_ME_PATH, 'has_one_param')
 		var c = gr.doubler.double(DOUBLE_ME_PATH)
-		var text = get_instance_source(c.new())
-		assert_ne(text, '', "text is not empty")
-		assert_eq(text.find('has_one_param'), -1)
+		assert_source_not_contains(c.new(), 'has_one_param')
 
 	func test_when_ignored_methods_are_a_super_method_mthey_are_not_present_in_double_code():
 		gr.doubler.add_ignored_method(DOUBLE_ME_PATH, 'is_connected')
 		var c = gr.doubler.double(DOUBLE_ME_PATH, _utils.DOUBLE_STRATEGY.FULL)
-		var text = get_instance_source(c.new())
-		assert_ne(text, '', "text is not empty")
-		assert_eq(text.find('is_connected'), -1)
+		assert_source_not_contains(c.new(), 'is_connected')
 
 	func test_can_double_classes_with_static_methods():
 		gr.doubler.add_ignored_method(DOUBLE_WITH_STATIC, 'this_is_a_static_method')
@@ -200,7 +195,6 @@ class TestTheBasics:
 class TestBuiltInOverloading:
 	extends BaseTest
 
-
 	var _dbl_win_dia_text = ''
 	var _dbl_win_dia = null
 
@@ -210,14 +204,13 @@ class TestBuiltInOverloading:
 	var doubler = null
 	var stubber = _utils.Stubber.new()
 
-
 	func before_all():
 		# Window has A LOT of the edge cases we need to check so it is used
 		# as the default.
 		var d = Doubler.new(_utils.DOUBLE_STRATEGY.FULL)
 		_dbl_win_dia = d.double(DOUBLE_EXTENDS_WINDOW_DIALOG)
 		var inst = _dbl_win_dia.new()
-		_dbl_win_dia_text = get_instance_source(inst)
+		_dbl_win_dia_text = get_source(inst)
 		inst.free()
 
 
@@ -228,7 +221,7 @@ class TestBuiltInOverloading:
 
 	func test_built_in_overloading_ony_happens_on_full_strategy():
 		doubler.set_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
-		var txt = get_instance_source(doubler.double(DOUBLE_ME_PATH).new())
+		var txt = get_source(doubler.double(DOUBLE_ME_PATH).new())
 		assert_ne(txt, '', "text is not empty")
 		assert_eq(txt.find('func is_blocking_signals'), -1, 'does not have non-overloaded methods')
 
@@ -240,6 +233,11 @@ class TestBuiltInOverloading:
 	func test_can_override_strategy_when_doubling_scene():
 		doubler.set_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
 		var inst = autofree(doubler.double_scene(DOUBLE_ME_SCENE_PATH, DOUBLE_STRATEGY.FULL).instantiate())
+		assert_source_contains(inst, 'func is_blocking_signals')
+
+	func test_full_start_has_block_signals():
+		doubler.set_strategy(_utils.DOUBLE_STRATEGY.FULL)
+		var inst = autofree(doubler.double_scene(DOUBLE_ME_SCENE_PATH).instantiate())
 		assert_source_contains(inst, 'func is_blocking_signals')
 
 	func test_when_everything_included_you_can_still_make_an_a_new_object():
@@ -263,6 +261,8 @@ class TestBuiltInOverloading:
 		assert_source_contains(_dbl_win_dia, 'connect(')
 
 	func test_can_call_a_built_in_that_has_default_parameters():
+		pending('pending in 4.0')
+		return
 		var inst = autofree(doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG).new())
 		inst.connect('hide',Callable(self,'_hide_call_back'))
 		pass_test("if we got here, it worked")
@@ -273,6 +273,8 @@ class TestBuiltInOverloading:
 		assert_source_contains(_dbl_win_dia, 'bounds=Rect2(0, 0, 0, 0)', 'Rect2')
 
 	func test_doubled_builtins_call_super():
+		pending('pending in 4.0')
+		return
 		var inst = autofree(doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG).new())
 		# Make sure the function is in the doubled class definition
 		assert_source_contains(inst, 'func add_user_signal(p_signal')
@@ -292,6 +294,7 @@ class TestBuiltInOverloading:
 # specific method parameters that were found to cause a problem.
 class TestDefaultParameters:
 	extends BaseTest
+	var skip_script = 'Not ready for 4.0'
 
 	var doubler = null
 
@@ -337,6 +340,7 @@ class TestDefaultParameters:
 
 class TestDoubleInnerClasses:
 	extends BaseTest
+	var skip_script = 'Not ready for 4.0'
 
 	var doubler = null
 	const INNER_CLASSES_PATH = 'res://test/resources/doubler_test_objects/inner_classes.gd'
@@ -385,6 +389,7 @@ class TestDoubleInnerClasses:
 
 class TestPartialDoubles:
 	extends BaseTest
+	var skip_script = 'Not ready for 4.0'
 
 	const INNER_CLASSES_PATH = 'res://test/resources/doubler_test_objects/inner_classes.gd'
 
@@ -427,7 +432,7 @@ class TestPartialDoubles:
 
 	func test_init_is_not_stubbed_to_call_super():
 		var inst = doubler.partial_double(DOUBLE_ME_PATH).new()
-		var text = get_instance_source(inst)
+		var text = get_source(inst)
 		assert_false(text.match("*__gut_should_call_super('_init'*"), 'should not call super _init')
 
 

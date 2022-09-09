@@ -19,6 +19,11 @@ _global_script_classes=[{
 "language": &"GDScript",
 "path": "res://addons/gut/hook_script.gd"
 }, {
+"base": "RefCounted",
+"class": &"GutStringUtils",
+"language": &"GDScript",
+"path": "res://addons/gut/strutils.gd"
+}, {
 "base": "Node",
 "class": &"GutTest",
 "language": &"GDScript",
@@ -27,6 +32,7 @@ _global_script_classes=[{
 _global_script_class_icons={
 "GutDoubleTestInnerClasses": "",
 "GutHookScript": "",
+"GutStringUtils": "",
 "GutTest": ""
 }
 

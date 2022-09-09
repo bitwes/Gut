@@ -4,25 +4,27 @@
 # overloaded or do not have a "super" equivalent so we can't just pass
 # through.
 const BLACKLIST = [
-	'has_method',
-	'get_script',
-	'get',
-	'_notification',
-	'get_path',
+	'_draw',
 	'_enter_tree',
 	'_exit_tree',
-	'_process',
-	'_draw',
-	'_physics_process',
+	'_get_minimum_size', # Nonexistent function _get_minimum_size
+	'_get', # probably
 	'_input',
+	'_notification',
+	'_physics_process',
+	'_process',
+	'_set',
+	'_to_string', # nonexistant function super._to_string
 	'_unhandled_input',
 	'_unhandled_key_input',
-	'_set',
-	'_get', # probably
-	'emit_signal', # can't handle extra parameters to be sent with signal.
 	'draw_mesh', # issue with one parameter, value is `Null((..), (..), (..))``
-	'_to_string', # nonexistant function super._to_string
-	'_get_minimum_size', # Nonexistent function _get_minimum_size
+	'emit_signal', # can't handle extra parameters to be sent with signal.
+	'get_path',
+	'get_script',
+	'get',
+	'has_method',
+
+	# Godot 4, not found in base
 ]
 
 
@@ -34,6 +36,10 @@ const BLACKLIST = [
 # ------------------------------------------------------------------------------
 class ParsedMethod:
 	var _meta = {}
+	var meta = _meta :
+		get: return _meta
+		set(val): return;
+
 	var _parameters = []
 	var is_local = false
 
@@ -86,26 +92,75 @@ class ParsedMethod:
 class ParsedScript:
 	# All methods indexed by name.
 	var _methods_by_name = {}
+	var _methods_by_order = []
+	var _utils = load('res://addons/gut/utils.gd').get_instance()
 
 	var _script_path = null
 	var script_path = _script_path :
 		get: return _script_path
 		set(val): return;
 
-	func _init(thing):
-		var to_load = thing
+	var _subpath = null
+	var subpath = null :
+		get: return _subpath
+		set(val): return;
 
-		if(!thing is Resource):
-			to_load = load(thing.get_script().get_path())
+	var _resource = null
+	var resource = null :
+		get: return _resource
+		set(val): return;
 
+
+	func _init(script_or_inst, inner_class=null):
+		var to_load = script_or_inst
+
+		if(!script_or_inst is Resource):
+			to_load = load(script_or_inst.get_script().get_path())
+
+		if(inner_class == null):
+			_resource = to_load
+		else:
+			_resource = inner_class
 		_script_path = to_load.resource_path
+
+		if(inner_class != null):
+			_subpath = _find_subpath(to_load, inner_class)
 		_parse_methods(to_load)
 
 
+	func _has_flag_to_be_ignored(flags):
+		return false
+		# I think this is getting anything that has the 1 flag set...I think
+		return 	flags & (1 << 2) == 0 && \
+				flags & (1 << 4) == 0 && \
+				flags & (1 << 6) == 0
+
+	func _print_flags(meta):
+		print(str(meta.name, ':').rpad(30), str(meta.flags).rpad(4), ' = ', _utils.dec2bistr(meta.flags, 10))
+
+
+	func _get_base_type_instance_methods(thing):
+		var base_type = thing.get_instance_base_type()
+		var to_return = []
+		if(base_type != null):
+			var source = str('extends ', base_type)
+			var script = GDScript.new()
+			script.source_code = source
+			script.reload()
+			var inst = script.new()
+			to_return = inst.get_method_list()
+			if(! inst is RefCounted):
+				inst.free()
+		return to_return
+
+
 	func _parse_methods(thing):
-		var methods = thing.get_method_list()
+		var methods = _get_base_type_instance_methods(thing)
 		for m in methods:
-			_methods_by_name[m.name] = ParsedMethod.new(m)
+			if(!_has_flag_to_be_ignored(m.flags)):
+			# if(!m.flags in bad_flags):
+				_methods_by_name[m.name] = ParsedMethod.new(m)
+				_methods_by_order.append(_methods_by_name[m.name])
 
 		# This loop will overwrite all entries in _methods_by_name with the local
 		# method object so there is only ever one listing for a function with
@@ -115,6 +170,32 @@ class ParsedScript:
 			var parsed_method = ParsedMethod.new(m)
 			parsed_method.is_local = true
 			_methods_by_name[m.name] = parsed_method
+			_methods_by_order.append(parsed_method)
+
+
+	func _find_subpath(parent_script, inner):
+		var const_map = parent_script.get_script_constant_map()
+		var consts = const_map.keys()
+		var const_idx = 0
+		var found = false
+		var to_return = null
+
+		while(const_idx < consts.size() and !found):
+			var key = consts[const_idx]
+			var const_val = const_map[key]
+			if(typeof(const_val) == TYPE_OBJECT):
+				if(const_val == inner):
+					found = true
+					to_return = key
+				else:
+					to_return = _find_subpath(const_val, inner)
+					if(to_return != null):
+						to_return = str(key, '.', to_return)
+						found = true
+
+			const_idx += 1
+
+		return to_return
 
 
 	func get_method(name):
@@ -163,6 +244,24 @@ class ParsedScript:
 				names.append(method)
 
 		return names
+
+	func get_local_methods():
+		var to_return = []
+		for key in _methods_by_name:
+			var method = _methods_by_name[key]
+			if(method.is_local):
+				to_return.append(method)
+		return to_return
+
+	func get_super_methods():
+		var to_return = []
+		for key in _methods_by_name:
+			var method = _methods_by_name[key]
+			if(!method.is_local):
+				to_return.append(method)
+		return to_return
+
+
 
 
 
