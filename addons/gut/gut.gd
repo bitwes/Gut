@@ -435,7 +435,7 @@ func _yielding_callback(from_obj=false,
 		__arg4=null, __arg5=null, __arg6=null,
 		__arg7=null, __arg8=null, __arg9=null):
 	_lgr.end_yield()
-	if(_yielding_to.obj):
+	if(_yielding_to.obj != null):
 		_yielding_to.obj.call_deferred(
 			"disconnect",
 			_yielding_to.signal_name, self,
@@ -782,8 +782,8 @@ func _run_test(script_inst, test_name):
 
 	start_test.emit(test_name)
 	# When the script yields it will return a GDScriptFunctionState object
-	script_result = script_inst.call(test_name)
-	var test_summary = _new_summary.add_test(test_name)
+	script_result = await script_inst.call(test_name)
+	var test_summary = await _new_summary.add_test(test_name)
 
 	# Cannot detect future yields since we never tell the method to resume.  If
 	# there was some way to tell the method to resume we could use what comes
@@ -1376,7 +1376,7 @@ func set_yield_frames(frames, text=''):
 # number of seconds, whichever comes first.
 # ------------------------------------------------------------------------------
 func set_yield_signal_or_time(obj, signal_name, max_wait, text=''):
-	obj.connect(signal_name,Callable(self,'_yielding_callback'),[true])
+	obj.connect(signal_name,Callable(self,'_yielding_callback'),true)
 	_yielding_to.obj = obj
 	_yielding_to.signal_name = signal_name
 
