@@ -92,7 +92,6 @@ class ParsedMethod:
 class ParsedScript:
 	# All methods indexed by name.
 	var _methods_by_name = {}
-	var _methods_by_order = []
 	var _utils = load('res://addons/gut/utils.gd').get_instance()
 
 	var _script_path = null
@@ -158,9 +157,13 @@ class ParsedScript:
 		var methods = _get_base_type_instance_methods(thing)
 		for m in methods:
 			if(!_has_flag_to_be_ignored(m.flags)):
-			# if(!m.flags in bad_flags):
-				_methods_by_name[m.name] = ParsedMethod.new(m)
-				_methods_by_order.append(_methods_by_name[m.name])
+				var parsed = ParsedMethod.new(m)
+				_methods_by_name[m.name] = parsed
+				# _init must always be included so that we can initialize
+				# double_tools
+				if(m.name == '_init'):
+					parsed.is_local = true
+
 
 		# This loop will overwrite all entries in _methods_by_name with the local
 		# method object so there is only ever one listing for a function with
@@ -170,7 +173,6 @@ class ParsedScript:
 			var parsed_method = ParsedMethod.new(m)
 			parsed_method.is_local = true
 			_methods_by_name[m.name] = parsed_method
-			_methods_by_order.append(parsed_method)
 
 
 	func _find_subpath(parent_script, inner):

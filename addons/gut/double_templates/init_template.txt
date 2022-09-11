@@ -1,3 +1,4 @@
 {func_decleration}{super_params}:
-	__gut_init()
-	__gut_spy('{method_name}', {param_array})
+	__gutdbl_init_vals()
+	__gutdbl.init()
+	__gutdbl.spy_on('{method_name}', {param_array})

@@ -108,14 +108,14 @@ func test_returns_can_be_layered():
 func test_will_use_metadata_for_class_path():
 	gr.stubber.set_return('some_path', 'some_method', 0)
 	var inst = HasStubMetadata.new()
-	inst.__gut_metadata_.path = 'some_path'
+	inst.__gutdbl.thepath = 'some_path'
 	var value = gr.stubber.get_return(inst, 'some_method')
 	assert_eq(value, 0)
 
 func test_will_use_instance_instead_of_metadata():
 	gr.stubber.set_return('some_path', 'some_method', 0)
 	var inst = HasStubMetadata.new()
-	inst.__gut_metadata_.path = 'some_path'
+	inst.__gutdbl.thepath = 'some_path'
 	gr.stubber.set_return(inst, 'some_method', 100)
 	assert_eq(gr.stubber.get_return(inst, 'some_method'), 100)
 

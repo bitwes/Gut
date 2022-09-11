@@ -18,12 +18,12 @@ var _strutils = _utils.Strutils.new()
 
 
 func _make_key_from_metadata(doubled):
-	var to_return = doubled.__gut_metadata_.path
+	var to_return = doubled.__gutdbl.thepath
 
-	if(doubled.__gut_metadata_.from_singleton != ''):
-		to_return = str(doubled.__gut_metadata_.from_singleton)
-	elif(doubled.__gut_metadata_.subpath != ''):
-		to_return += str('-', doubled.__gut_metadata_.subpath)
+	if(doubled.__gutdbl.from_singleton != ''):
+		to_return = str(doubled.__gutdbl.from_singleton)
+	elif(doubled.__gutdbl.subpath != ''):
+		to_return += str('-', doubled.__gutdbl.subpath)
 
 	return to_return
 
@@ -78,7 +78,7 @@ func _find_stub(obj, method, parameters=null, find_overloads=false):
 	if(_utils.is_instance(obj)):
 		if(returns.has(obj) and returns[obj].has(method)):
 			key = obj
-		elif(obj.get('__gut_metadata_')):
+		elif(obj.get('__gutdbl')):
 			key = _make_key_from_metadata(obj)
 
 	if(returns.has(key) and returns[key].has(method)):
@@ -151,7 +151,7 @@ func should_call_super(obj, method, parameters=null):
 
 	var is_partial = false
 	if(typeof(obj) != TYPE_STRING): # some stubber tests test with strings
-		is_partial = obj.__gut_metadata_.is_partial
+		is_partial = obj.__gutdbl.is_partial
 	var should = is_partial
 
 	if(stub_info != null):

@@ -21,17 +21,6 @@ class BaseTest:
 		return to_return
 
 
-	func _pdflt(method, idx):
-		return str('__gut_default_val("', method, '",', idx, ')')
-
-
-	func _sig_gen(method, no_defaults):
-		var to_return = ''
-		for i in range(no_defaults.size()):
-			to_return += str(no_defaults[i], '=', _pdflt(method, i), ', ')
-		return to_return
-
-
 	func assert_source_contains(thing, look_for, text=''):
 		var source = get_source(thing)
 		var msg = str('Expected source for ', _strutils.type2str(thing), ' to contain "', look_for, '":  ', text)
@@ -41,7 +30,6 @@ class BaseTest:
 				var header = str('------ Source for ', _strutils.type2str(thing), ' ------')
 				gut.p(header)
 				gut.p(_utils.add_line_numbers(source))
-
 		else:
 			pass_test(msg)
 
@@ -56,6 +44,11 @@ class BaseTest:
 				var header = str('------ Source for ', _strutils.type2str(thing), ' ------')
 				gut.p(header)
 				gut.p(_utils.add_line_numbers(source))
+
+	func print_source(thing):
+		var source = get_source(thing)
+		gut.p(_utils.add_line_numbers(source))
+
 
 
 class TestTheBasics:
@@ -99,25 +92,24 @@ class TestTheBasics:
 		var inst = gr.doubler.double(DOUBLE_ME_PATH).new()
 		assert_source_contains(inst,
 			'has_two_params_one_default(' +
-			'p_one=__gut_default_val("has_two_params_one_default",0), '+
-			'p_two=__gut_default_val("has_two_params_one_default",1))')
+			'p_one=__gutdbl.default_val("has_two_params_one_default",0), '+
+			'p_two=__gutdbl.default_val("has_two_params_one_default",1))')
 		# assert_true(text.match('*has_two_params_one_default(p_arg0=__gut_default_val("has_two_params_one_default",0), p_arg1=__gut_default_val("has_two_params_one_default",1))*'))
 
 	func test_doubled_thing_includes_stubber_metadata():
 		var doubled = gr.doubler.double(DOUBLE_ME_PATH).new()
-		assert_ne(doubled.get('__gut_metadata_'), null)
+		assert_ne(doubled.get('__gutdbl'), null)
 
 	func test_doubled_thing_has_original_path_in_metadata():
 		var doubled = gr.doubler.double(DOUBLE_ME_PATH).new()
-		assert_eq(doubled.__gut_metadata_.path, DOUBLE_ME_PATH)
+		assert_eq(doubled.__gutdbl.thepath, DOUBLE_ME_PATH)
 
 	func test_doublecd_thing_has_gut_metadata():
 		var doubled = gr.doubler.double(DOUBLE_ME_PATH).new()
-		assert_eq(doubled.__gut_metadata_.gut, gut)
+		assert_eq(doubled.__gutdbl.gut, gut)
 
 	func test_keeps_extends():
 		pending('Crashes hard in 4.0 a16 on assert_is')
-		gr.doubler._print_source = true
 		var doubled = gr.doubler.double(DOUBLE_EXTENDS_NODE2D).new()
 		# assert_is(doubled, Node2D)
 
@@ -134,7 +126,9 @@ class TestTheBasics:
 
 	func test_metadata_for_scenes_script_points_to_scene_not_script():
 		var inst = gr.doubler.double_scene(DOUBLE_ME_SCENE_PATH).instantiate()
-		assert_eq(inst.__gut_metadata_.path, DOUBLE_ME_SCENE_PATH)
+		assert_eq(inst.__gutdbl.thepath, DOUBLE_ME_SCENE_PATH)
+		if(is_failing()):
+			print_source(inst)
 
 	func test_does_not_add_duplicate_methods():
 		gr.doubler.double('res://test/resources/parsing_and_loading_samples/extends_another_thing.gd')
@@ -221,9 +215,10 @@ class TestBuiltInOverloading:
 
 	func test_built_in_overloading_ony_happens_on_full_strategy():
 		doubler.set_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
-		var txt = get_source(doubler.double(DOUBLE_ME_PATH).new())
-		assert_ne(txt, '', "text is not empty")
-		assert_eq(txt.find('func is_blocking_signals'), -1, 'does not have non-overloaded methods')
+		var inst = doubler.double(DOUBLE_ME_PATH).new()
+		var txt = get_source(inst)
+		assert_false(txt == '', "text is not empty")
+		assert_source_not_contains(inst, 'func is_blocking_signals', 'does not have non-overloaded methods')
 
 	func test_can_override_strategy_when_doubling_script():
 		doubler.set_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
@@ -250,31 +245,30 @@ class TestBuiltInOverloading:
 
 	func test_when_everything_included_you_can_still_double_a_scene():
 		pending('YIELD')
-		# var inst = autofree(doubler.double_scene(DOUBLE_ME_SCENE_PATH).instantiate())
-		# add_child(inst)
-		# assert_ne(inst, null, "instantiate is not null")
-		# assert_ne(inst.label, null, "Can get to a label on the instantiate")
-		# # pause so _process gets called
-		# await yield_for(3).YIELD
+		return
+		var inst = autofree(doubler.double_scene(DOUBLE_ME_SCENE_PATH).instantiate())
+		add_child(inst)
+		assert_ne(inst, null, "instantiate is not null")
+		assert_ne(inst.label, null, "Can get to a label on the instantiate")
+		# pause so _process gets called
+		await yield_for(3).YIELD
 
 	func test_double_includes_methods_in_super():
 		assert_source_contains(_dbl_win_dia, 'connect(')
 
 	func test_can_call_a_built_in_that_has_default_parameters():
-		pending('pending in 4.0')
+		pending('have to rework defaults')
 		return
+
 		var inst = autofree(doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG).new())
-		inst.connect('hide',Callable(self,'_hide_call_back'))
+		inst.connect('hide', self._hide_call_back)
 		pass_test("if we got here, it worked")
 
-	func test_all_types_supported():
-
-		assert_source_contains(_dbl_win_dia, 'popup_centered(p_size=Vector2(0, 0)):', 'Vector2')
-		assert_source_contains(_dbl_win_dia, 'bounds=Rect2(0, 0, 0, 0)', 'Rect2')
 
 	func test_doubled_builtins_call_super():
 		pending('pending in 4.0')
 		return
+
 		var inst = autofree(doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG).new())
 		# Make sure the function is in the doubled class definition
 		assert_source_contains(inst, 'func add_user_signal(p_signal')
@@ -288,54 +282,6 @@ class TestBuiltInOverloading:
 		#doubler.set_stubber(_utils.Stubber.new())
 		var inst = autofree(doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG).new())
 		assert_true(doubler.get_stubber().should_call_super(inst, 'add_user_signal'))
-
-
-# Since defaults are only available for built-in methods these tests verify
-# specific method parameters that were found to cause a problem.
-class TestDefaultParameters:
-	extends BaseTest
-	var skip_script = 'Not ready for 4.0'
-
-	var doubler = null
-
-	func before_each():
-		doubler = Doubler.new(_utils.DOUBLE_STRATEGY.FULL)
-		doubler.set_stubber(_utils.Stubber.new())
-
-	func test_parameters_are_doubled_for_connect():
-		pending('Has changed in Godot 4')
-		# var inst = autofree(doubler.double_scene(DOUBLE_ME_SCENE_PATH).instantiate())
-		# var no_defaults = _sig_gen('connect', ['p_signal', 'p_target', 'p_method'])
-		# var sig = str('func connect(',Callable(no_defaults,'p_binds=[]),p_flags=0):'))
-
-		# assert_source_contains(inst, sig)
-
-	func test_parameters_are_doubled_for_draw_char():
-		var inst = autofree(doubler.double_scene(DOUBLE_ME_SCENE_PATH).instantiate())
-		var no_defaults = _sig_gen('draw_char', ['p_font', 'p_position', 'p_char', 'p_next'])
-		var sig = 'func draw_char(' + no_defaults + 'p_modulate=Color(1,1,1,1)):'
-
-		assert_source_contains(inst, sig)
-
-	func test_parameters_are_doubled_for_draw_multimesh():
-		var inst = autofree(doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG).new())
-		var no_defaults = _sig_gen('draw_multimesh', ['p_multimesh', 'p_texture'])
-		var sig = str('func draw_multimesh()(',
-			no_defaults,
-			'p_normal_map=null):')
-
-		assert_source_contains(inst, sig)
-
-	var singletons = [
-		"PhysicsServer2D",	# TYPE_TRANSFORM2D, TYPE_RID
-		"PhysicsServer3D",	# TYPE_TRANSFORM3D
-		"RenderingServer"		# TYPE_PACKED_FLOAT32_ARRAY, TYPE_PACKED_INT32_ARRAY
-	]
-	func test_various_singletons_that_introduced_new_default_types(singleton = use_parameters(singletons)):
-		pending('Broke in 4.0'); return
-
-		var inst = doubler.double_singleton(singleton).new()
-		assert_not_null(inst)
 
 
 class TestDoubleInnerClasses:
@@ -369,11 +315,11 @@ class TestDoubleInnerClasses:
 
 	func test_doubled_inners_have_subpath_set_in_metadata():
 		var inst = doubler.double_inner(INNER_CLASSES_PATH, 'InnerCA').new()
-		assert_eq(inst.__gut_metadata_.subpath, 'InnerCA')
+		assert_eq(inst.__gutdbl.subpath, 'InnerCA')
 
 	func test_non_inners_have_empty_subpath():
 		var inst = doubler.double(INNER_CLASSES_PATH).new()
-		assert_eq(inst.__gut_metadata_.subpath, '')
+		assert_eq(inst.__gutdbl.subpath, '')
 
 	func test_can_override_strategy_when_doubling():
 		#doubler.set_strategy(DOUBLE_STRATEGY.FULL)
@@ -389,7 +335,6 @@ class TestDoubleInnerClasses:
 
 class TestPartialDoubles:
 	extends BaseTest
-	var skip_script = 'Not ready for 4.0'
 
 	const INNER_CLASSES_PATH = 'res://test/resources/doubler_test_objects/inner_classes.gd'
 
@@ -433,7 +378,7 @@ class TestPartialDoubles:
 	func test_init_is_not_stubbed_to_call_super():
 		var inst = doubler.partial_double(DOUBLE_ME_PATH).new()
 		var text = get_source(inst)
-		assert_false(text.match("*__gut_should_call_super('_init'*"), 'should not call super _init')
+		assert_false(text.match("*__gutdbl.should_call_super('_init'*"), 'should not call super _init')
 
 
 	func test_can_partial_and_normal_double_in_same_test():

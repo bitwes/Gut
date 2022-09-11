@@ -112,7 +112,7 @@ func _is_supported_default(type_flag):
 
 
 func _make_stub_default(method, index):
-	return str('__gut_default_val("', method, '",', index, ')')
+	return str('__gutdbl.default_val("', method, '",', index, ')')
 
 func _make_arg_array(method_meta, override_size):
 	var to_return = []
@@ -289,7 +289,7 @@ func get_function_text(meta, path=null, override_size=null, super_name=""):
 			text =  _get_init_text(meta, args, method_params, param_array)
 		else:
 			var decleration = str('func ', meta.name, '(', method_params, '):')
-			decleration = str('# ', meta, "\n", decleration)
+			# decleration = str('# ', meta, "\n", decleration)
 			text = _func_text.format({
 				"func_decleration":decleration,
 				"method_name":meta.name,
