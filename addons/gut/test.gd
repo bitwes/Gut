@@ -117,7 +117,7 @@ var _compare = _utils.Comparator.new()
 const YIELD = 'timeout'
 signal timeout
 
-# Need a reference to the instantiate that is running the tests.  This
+# Need a reference to the instance that is running the tests.  This
 # is set by the gut class when it runs the tests.  This gets you
 # access to the asserts in the tests you write.
 var gut = null
@@ -209,7 +209,7 @@ func _do_datatypes_match__fail_if_not(got, expected, text):
 
 # ------------------------------------------------------------------------------
 # Create a string that lists all the methods that were called on an spied
-# instantiate.
+# instance.
 # ------------------------------------------------------------------------------
 func _get_desc_of_calls_to_instance(inst):
 	var BULLET = '  * '
@@ -796,7 +796,7 @@ func get_call_count(object, method_name, parameters=null):
 
 
 # ------------------------------------------------------------------------------
-# Assert that object is an instantiate of a_class
+# Assert that object is an instance of a_class
 # ------------------------------------------------------------------------------
 func assert_is(object, a_class, text=''):
 	var disp  = ''#var disp = str('Expected [', _str(object), '] to be type of [', a_class, ']: ', text)
@@ -805,7 +805,7 @@ func assert_is(object, a_class, text=''):
 	var bad_param_2 = 'Parameter 2 must be a Class (like Node2D or Label).  You passed '
 
 	if(typeof(object) != TYPE_OBJECT):
-		_fail(str('Parameter 1 must be an instantiate of an object.  You passed:  ', _str(object)))
+		_fail(str('Parameter 1 must be an instance of an object.  You passed:  ', _str(object)))
 	elif(typeof(a_class) != TYPE_OBJECT):
 		_fail(str(bad_param_2, _str(a_class)))
 	else:
@@ -916,7 +916,7 @@ func assert_string_ends_with(text, search, match_case=true):
 			_fail(disp)
 
 # ------------------------------------------------------------------------------
-# Assert that a method was called on an instantiate of a doubled class.  If
+# Assert that a method was called on an instance of a doubled class.  If
 # parameters are supplied then the params passed in when called must match.
 # TODO make 3rd parameter "param_or_text" and add fourth parameter of "text" and
 #      then work some magic so this can have a "text" parameter without being
@@ -929,7 +929,7 @@ func assert_called(inst, method_name, parameters=null):
 		return
 
 	if(!_utils.is_double(inst)):
-		_fail('You must pass a doubled instantiate to assert_called.  Check the wiki for info on using double.')
+		_fail('You must pass a doubled instance to assert_called.  Check the wiki for info on using double.')
 	else:
 		if(gut.get_spy().was_called(inst, method_name, parameters)):
 			_pass(disp)
@@ -939,7 +939,7 @@ func assert_called(inst, method_name, parameters=null):
 			_fail(str(disp, "\n", _get_desc_of_calls_to_instance(inst)))
 
 # ------------------------------------------------------------------------------
-# Assert that a method was not called on an instantiate of a doubled class.  If
+# Assert that a method was not called on an instance of a doubled class.  If
 # parameters are specified then this will only fail if it finds a call that was
 # sent matching parameters.
 # ------------------------------------------------------------------------------
@@ -950,7 +950,7 @@ func assert_not_called(inst, method_name, parameters=null):
 		return
 
 	if(!_utils.is_double(inst)):
-		_fail('You must pass a doubled instantiate to assert_not_called.  Check the wiki for info on using double.')
+		_fail('You must pass a doubled instance to assert_not_called.  Check the wiki for info on using double.')
 	else:
 		if(gut.get_spy().was_called(inst, method_name, parameters)):
 			if(parameters != null):
@@ -960,7 +960,7 @@ func assert_not_called(inst, method_name, parameters=null):
 			_pass(disp)
 
 # ------------------------------------------------------------------------------
-# Assert that a method on an instantiate of a doubled class was called a number
+# Assert that a method on an instance of a doubled class was called a number
 # of times.  If parameters are specified then only calls with matching
 # parameter values will be counted.
 # ------------------------------------------------------------------------------
@@ -977,7 +977,7 @@ func assert_call_count(inst, method_name, expected_count, parameters=null):
 	disp = disp % [method_name, _str(inst), expected_count, param_text, count]
 
 	if(!_utils.is_double(inst)):
-		_fail('You must pass a doubled instantiate to assert_call_count.  Check the wiki for info on using double.')
+		_fail('You must pass a doubled instance to assert_call_count.  Check the wiki for info on using double.')
 	else:
 		if(count == expected_count):
 			_pass(disp)
@@ -1065,7 +1065,7 @@ func _validate_singleton_name(singleton_name):
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func assert_setget(
-	instantiate, name_property,
+	instance, name_property,
 	const_or_setter = null, getter="__not_set__"):
 	_lgr.deprecated('assert_setget')
 	_fail('assert_setget has been removed.  Use assert_property, assert_set_property, assert_readonly_property instead.')
@@ -1297,7 +1297,7 @@ func double(thing, p2=null, p3=null):
 	var double_info = DoubleInfo.new(thing, p2, p3)
 	print(double_info.to_s())
 	if(!double_info.is_valid):
-		_lgr.error('double requires a class or path, you passed an instantiate:  ' + _str(thing))
+		_lgr.error('double requires a class or path, you passed an instance:  ' + _str(thing))
 		return null
 
 	double_info.make_partial = false
@@ -1309,7 +1309,7 @@ func double(thing, p2=null, p3=null):
 func partial_double(thing, p2=null, p3=null):
 	var double_info = DoubleInfo.new(thing, p2, p3)
 	if(!double_info.is_valid):
-		_lgr.error('partial_double requires a class or path, you passed an instantiate:  ' + _str(thing))
+		_lgr.error('partial_double requires a class or path, you passed an instance:  ' + _str(thing))
 		return null
 
 	double_info.make_partial = true
@@ -1378,7 +1378,7 @@ func ignore_method_when_doubling(thing, method_name):
 # Stub something.
 #
 # Parameters
-# 1: the thing to stub, a file path or a instantiate or a class
+# 1: the thing to stub, a file path or an instance or a class
 # 2: either an inner class subpath or the method name
 # 3: the method name if an inner class subpath was specified
 # NOTE:  right now we cannot stub inner classes at the path level so this should

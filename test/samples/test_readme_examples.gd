@@ -574,7 +574,7 @@ func test_assert_called():
 	# ast least not yet.
 	assert_called(doubled, 'has_two_params_one_default', ['a'])
 	# This fails with a specific message indicating that you have to pass an
-	# instantiate of a doubled class.
+	# instance of a doubled class.
 	assert_called(GDScript.new(), 'some_method')
 
 func test_assert_call_count():
@@ -598,7 +598,7 @@ func test_assert_call_count():
 	assert_call_count(doubled, 'set_value', 2, [4])
 	assert_call_count(doubled, 'get_value', 1)
 	# This fails with a specific message indicating that you have to pass an
-	# instantiate of a doubled class even though technically the method was called.
+	# instance of a doubled class even though technically the method was called.
 	assert_call_count(GDScript.new(), 'some_method', 0)
 	# This fails b/c double_extends_node2d does not have it's own implementation
 	# of set_position.  The function is supplied by the parent class and these

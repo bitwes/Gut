@@ -63,8 +63,8 @@ func test_can_stub_doubled_instance_values():
 	var sp2 = StubParams.new(d1, 'get_value').to_return(10)
 	gr.stubber.add_stub(sp2)
 
-	assert_eq(d1.get_value(), 10, 'instantiate gets right value')
-	assert_eq(d2.get_value(), 5, 'other instantiate gets class value')
+	assert_eq(d1.get_value(), 10, 'Instance gets right value')
+	assert_eq(d2.get_value(), 5, 'other instance gets class value')
 
 func test_stubbed_methods_send_parameters_in_callback():
 	var sp = StubParams.new(DOUBLE_ME_PATH, 'has_one_param')

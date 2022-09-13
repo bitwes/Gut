@@ -251,7 +251,7 @@ var _select_script = ''
 var _last_paint_time = 0.0
 var _strutils = _utils.Strutils.new()
 
-# The instantiate that is created from _pre_run_script.  Accessible from
+# The instance that is created from _pre_run_script.  Accessible from
 # get_pre_run_script_instance.
 var _pre_run_script_instance = null
 var _post_run_script_instance = null # This is not used except in tests.
@@ -307,7 +307,7 @@ func _init():
 	_before_all_test_obj.name = 'before_all'
 	_after_all_test_obj.name = 'after_all'
 	# When running tests for GUT itself, _utils has been setup to always return
-	# a new logger so this does not set the gut instantiate on the base logger
+	# a new logger so this does not set the gut instance on the base logger
 	# when creating test instances of GUT.
 	_lgr.set_gut(self)
 
@@ -527,10 +527,10 @@ func _print_summary():
 func _validate_hook_script(path):
 	var result = {
 		valid = true,
-		instantiate = null
+		instance = null
 	}
 
-	# empty path is valid but will have a null instantiate
+	# empty path is valid but will have a null instance
 	if(path == ''):
 		return result
 
@@ -538,7 +538,7 @@ func _validate_hook_script(path):
 	if(f.file_exists(path)):
 		var inst = load(path).new()
 		if(inst and inst is _utils.HookScript):
-			result.instantiate = inst
+			result.instance = inst
 			result.valid = true
 		else:
 			result.valid = false
@@ -572,9 +572,9 @@ func _init_run():
 	_is_running = true
 
 	var pre_hook_result = _validate_hook_script(_pre_run_script)
-	_pre_run_script_instance = pre_hook_result.instantiate
+	_pre_run_script_instance = pre_hook_result.instance
 	var post_hook_result = _validate_hook_script(_post_run_script)
-	_post_run_script_instance  = post_hook_result.instantiate
+	_post_run_script_instance  = post_hook_result.instance
 
 	valid = pre_hook_result.valid and  post_hook_result.valid
 
@@ -768,7 +768,7 @@ func _run_parameterized_test(test_script, test_name):
 
 
 # ------------------------------------------------------------------------------
-# Runs a single test given a test.gd instantiate and the name of the test to run.
+# Runs a single test given a test.gd instance and the name of the test to run.
 # ------------------------------------------------------------------------------
 func _run_test(script_inst, test_name):
 	_lgr.log_test_name()
@@ -1389,7 +1389,7 @@ func set_yield_signal_or_time(obj, signal_name, max_wait, text=''):
 
 
 # ------------------------------------------------------------------------------
-# Returns the instantiated script object that is currently being run.
+# Returns the script object instance that is currently being run.
 # ------------------------------------------------------------------------------
 func get_current_script_object():
 	var to_return = null

@@ -267,8 +267,8 @@ class TestBuiltInOverloading:
 	func test_when_everything_included_you_can_still_double_a_scene():
 		var inst = autofree(doubler.double_scene(DOUBLE_ME_SCENE_PATH).instantiate())
 		add_child(inst)
-		assert_ne(inst, null, "instantiate is not null")
-		assert_ne(inst.label, null, "Can get to a label on the instantiate")
+		assert_ne(inst, null, "Instance is not null")
+		assert_ne(inst.label, null, "Can get to a label on the instance")
 		# pause so _process gets called
 		await yield_for(3).YIELD
 
