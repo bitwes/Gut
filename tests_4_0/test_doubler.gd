@@ -266,14 +266,11 @@ class TestBuiltInOverloading:
 
 
 	func test_doubled_builtins_call_super():
-		pending('pending in 4.0')
-		return
-
 		var inst = autofree(doubler.double(DOUBLE_EXTENDS_WINDOW_DIALOG).new())
 		# Make sure the function is in the doubled class definition
 		assert_source_contains(inst, 'func add_user_signal(p_signal')
 		# Make sure that when called it retains old functionality.
-		inst.add_user_signal('new_one')
+		inst.add_user_signal('new_one', [])
 		inst.add_user_signal('new_two', ['a', 'b'])
 		assert_has_signal(inst, 'new_one')
 		assert_has_signal(inst, 'new_two')
@@ -286,7 +283,7 @@ class TestBuiltInOverloading:
 
 class TestDoubleInnerClasses:
 	extends BaseTest
-	var skip_script = 'Not ready for 4.0'
+	var skip_script = 'Cannot extend inner classes godotengine #65666'
 
 	var doubler = null
 	const INNER_CLASSES_PATH = 'res://test/resources/doubler_test_objects/inner_classes.gd'
@@ -306,7 +303,9 @@ class TestDoubleInnerClasses:
 
 	func test_doubled_instances_extend_the_inner_class():
 		var inst = doubler.double_inner(INNER_CLASSES_PATH, 'InnerA').new()
-		assert_is(inst, InnerClasses.InnerA)
+		assert_true(inst is InnerClasses.InnerA, 'instance should be an InnerA')
+		if(is_failing()):
+			print_source(inst)
 
 	func test_doubled_inners_that_extend_inners_get_full_inheritance():
 		var inst = doubler.double_inner(INNER_CLASSES_PATH, 'InnerCA').new()
@@ -356,7 +355,7 @@ class TestPartialDoubles:
 		assert_eq(inst.get_value(), null)
 
 	func test_can_make_partial_of_inner_script():
-		pending('Broke in 4.0'); return
+		pending('Broke in 4.0 see TestDoubleInnerClasses'); return
 
 		var inst = doubler.partial_double_inner(INNER_CLASSES_PATH, 'InnerA').new()
 		assert_eq(inst.get_a(), 'a')
@@ -392,7 +391,6 @@ class TestPartialDoubles:
 
 class TestDoubleGDNaviteClasses:
 	extends BaseTest
-	var skip_script = 'Not ready for 4.0'
 
 	var _doubler = null
 	var _stubber = _utils.Stubber.new()

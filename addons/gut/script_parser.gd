@@ -109,21 +109,31 @@ class ParsedScript:
 		get: return _resource
 		set(val): return;
 
+	var _is_native = false
+	var is_native = _is_native :
+		get: return _is_native
+		set(val): return;
+
 
 	func _init(script_or_inst, inner_class=null):
 		var to_load = script_or_inst
 
-		if(!script_or_inst is Resource):
-			to_load = load(script_or_inst.get_script().get_path())
-
-		if(inner_class == null):
+		if(_utils.is_native_class(to_load)):
+			_is_native = true
 			_resource = to_load
 		else:
-			_resource = inner_class
-		_script_path = to_load.resource_path
+			if(!script_or_inst is Resource):
+				to_load = load(script_or_inst.get_script().get_path())
 
-		if(inner_class != null):
-			_subpath = _find_subpath(to_load, inner_class)
+			if(inner_class == null):
+				_resource = to_load
+			else:
+				_resource = inner_class
+			_script_path = to_load.resource_path
+
+			if(inner_class != null):
+				_subpath = _find_subpath(to_load, inner_class)
+
 		_parse_methods(to_load)
 
 
@@ -138,8 +148,7 @@ class ParsedScript:
 		print(str(meta.name, ':').rpad(30), str(meta.flags).rpad(4), ' = ', _utils.dec2bistr(meta.flags, 10))
 
 
-	func _get_base_type_instance_methods(thing):
-		var base_type = thing.get_instance_base_type()
+	func _get_native_methods(base_type):
 		var to_return = []
 		if(base_type != null):
 			var source = str('extends ', base_type)
@@ -154,7 +163,14 @@ class ParsedScript:
 
 
 	func _parse_methods(thing):
-		var methods = _get_base_type_instance_methods(thing)
+		var methods = []
+		if(_is_native):
+			var thing_name = _utils.get_native_class_name(thing)
+			methods = _get_native_methods(thing_name)
+		else:
+			var base_type = thing.get_instance_base_type()
+			methods = _get_native_methods(base_type)
+
 		for m in methods:
 			if(!_has_flag_to_be_ignored(m.flags)):
 				var parsed = ParsedMethod.new(m)
@@ -168,11 +184,12 @@ class ParsedScript:
 		# This loop will overwrite all entries in _methods_by_name with the local
 		# method object so there is only ever one listing for a function with
 		# the right "is_local" flag.
-		methods = thing.get_script_method_list()
-		for m in methods:
-			var parsed_method = ParsedMethod.new(m)
-			parsed_method.is_local = true
-			_methods_by_name[m.name] = parsed_method
+		if(!_is_native):
+			methods = thing.get_script_method_list()
+			for m in methods:
+				var parsed_method = ParsedMethod.new(m)
+				parsed_method.is_local = true
+				_methods_by_name[m.name] = parsed_method
 
 
 	func _find_subpath(parent_script, inner):
@@ -326,6 +343,18 @@ func parse(thing):
 			if(obj is Resource):
 				parsed = ParsedScript.new(obj)
 				scripts[inst_id] = parsed
+
+	return parsed
+
+
+func parse_native(which):
+	var parsed = null
+
+	if(scripts.has(which)):
+		parsed = scripts[which]
+	else:
+		parsed = ParsedScript.new(which)
+		scripts[which] = parsed
 
 	return parsed
 

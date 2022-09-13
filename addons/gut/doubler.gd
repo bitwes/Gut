@@ -441,7 +441,11 @@ func _get_base_script_text(obj_info, override_path):
 
 
 func _create_double(obj_info, override_path=null):
-	var parsed = _script_collector.parse(obj_info.get_loaded_class())
+	var parsed = null
+	if(obj_info.is_native()):
+		parsed = _script_collector.parse_native(obj_info._native_class)
+	else:
+		parsed = _script_collector.parse(obj_info.get_loaded_class())
 	var base_script = _get_base_script_text(obj_info, override_path)
 	var super_name = ""
 	var path = ""

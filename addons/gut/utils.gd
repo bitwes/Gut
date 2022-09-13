@@ -358,7 +358,7 @@ func get_native_class_name(thing):
 func is_native_class(thing):
 	var it_is = false
 	if(typeof(thing) == TYPE_OBJECT):
-		it_is = str(thing).begins_with("[GDScriptNativeClass:")
+		it_is = str(thing).begins_with("<GDScriptNativeClass#")
 	return it_is
 
 
