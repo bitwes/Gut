@@ -107,8 +107,6 @@ func _find_stub(obj, method, parameters=null, find_overloads=false):
 		elif(null_match != null and !null_match.is_param_override_only()):
 			to_return = null_match
 
-
-
 	return to_return
 
 
@@ -154,6 +152,7 @@ func should_call_super(obj, method, parameters=null):
 		is_partial = obj.__gutdbl.is_partial
 	var should = is_partial
 
+	print('stub_info = ', stub_info)
 	if(stub_info != null):
 		should = stub_info.call_super
 	elif(!is_partial):

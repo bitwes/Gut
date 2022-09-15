@@ -352,6 +352,7 @@ func _init(strategy=_utils.DOUBLE_STRATEGY.PARTIAL):
 	set_logger(_utils.get_logger())
 	_strategy = strategy
 
+
 func _get_indented_line(indents, text):
 	var to_return = ''
 	for _i in range(indents):

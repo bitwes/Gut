@@ -112,7 +112,6 @@ var _file_checker = File.new()
 var latest_version = null
 var should_display_latest_version = false
 
-
 # These methods all call super implicitly.  Stubbing them to call super causes
 # super to be called twice.
 var non_super_methods = [
@@ -160,7 +159,10 @@ const GUT_METADATA = '__gutdbl'
 
 enum DOUBLE_STRATEGY{
 	FULL,
-	PARTIAL
+	PARTIAL,
+
+	SCRIPT_ONLY,
+	INCLUDE_SUPER
 }
 
 enum DIFF {
@@ -452,3 +454,7 @@ func add_line_numbers(contents):
 		to_return += str(line_str, ' |', line, "\n")
 		line_num += 1
 	return to_return
+
+func pp(dict, indent=''):
+	var text = json.stringify(dict, '  ')
+	print(text)
