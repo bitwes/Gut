@@ -15,6 +15,8 @@ class BaseTest:
 	const DOUBLE_WITH_STATIC = 'res://test/resources/doubler_test_objects/has_static_method.gd'
 	const INIT_PARAMETERS = 'res://test/resources/stub_test_objects/init_parameters.gd'
 
+	var DoubleExtendsWindowDialog = load(DOUBLE_EXTENDS_WINDOW_DIALOG)
+
 	var print_source_when_failing = true
 
 	func get_source(thing):
@@ -25,6 +27,15 @@ class BaseTest:
 			to_return = thing.source_code
 		return to_return
 
+	func _pdflt(method, idx):
+		return str('__gut_default_val("', method, '",', idx, ')')
+
+
+	func _sig_gen(method, no_defaults):
+		var to_return = ''
+		for i in range(no_defaults.size()):
+			to_return += str(no_defaults[i], '=', _pdflt(method, i), ', ')
+		return to_return
 
 	func assert_source_contains(thing, look_for, text=''):
 		var source = get_source(thing)
@@ -212,6 +223,7 @@ class TestTheBasics:
 # specific method parameters that were found to cause a problem.
 class TestDefaultParameters:
 	extends BaseTest
+	var skip_script = 'Pending in 4.0'
 
 	var doubler = null
 
@@ -220,8 +232,9 @@ class TestDefaultParameters:
 		doubler.set_stubber(_utils.Stubber.new())
 
 	func test_all_types_supported():
-		assert_source_contains(_dbl_win_dia, 'popup_centered(p_size=Vector2(0, 0)):', 'Vector2')
-		assert_source_contains(_dbl_win_dia, 'bounds=Rect2(0, 0, 0, 0)', 'Rect2')
+		var dbl = doubler.double(DoubleExtendsWindowDialog).new()
+		assert_source_contains(dbl, 'popup_centered(p_size=Vector2(0, 0)):', 'Vector2')
+		assert_source_contains(dbl, 'bounds=Rect2(0, 0, 0, 0)', 'Rect2')
 
 
 	func test_parameters_are_doubled_for_connect():

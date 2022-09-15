@@ -23,8 +23,6 @@ const BLACKLIST = [
 	'get_script',
 	'get',
 	'has_method',
-
-	# Godot 4, not found in base
 ]
 
 
@@ -109,9 +107,10 @@ class ParsedScript:
 		get: return _resource
 		set(val): return;
 
-	var _is_native = false
-	var is_native = _is_native :
-		get: return _is_native
+	var _native_instance = null
+
+	var is_native = false :
+		get: return _native_instance != null
 		set(val): return;
 
 
@@ -119,8 +118,8 @@ class ParsedScript:
 		var to_load = script_or_inst
 
 		if(_utils.is_native_class(to_load)):
-			_is_native = true
 			_resource = to_load
+			_native_instance = to_load.new()
 		else:
 			if(!script_or_inst is Resource):
 				to_load = load(script_or_inst.get_script().get_path())
@@ -144,6 +143,7 @@ class ParsedScript:
 				flags & (1 << 4) == 0 && \
 				flags & (1 << 6) == 0
 
+
 	func _print_flags(meta):
 		print(str(meta.name, ':').rpad(30), str(meta.flags).rpad(4), ' = ', _utils.dec2bistr(meta.flags, 10))
 
@@ -164,9 +164,8 @@ class ParsedScript:
 
 	func _parse_methods(thing):
 		var methods = []
-		if(_is_native):
-			var thing_name = _utils.get_native_class_name(thing)
-			methods = _get_native_methods(thing_name)
+		if(is_native):
+			methods = _native_instance.get_method_list()
 		else:
 			var base_type = thing.get_instance_base_type()
 			methods = _get_native_methods(base_type)
@@ -184,7 +183,7 @@ class ParsedScript:
 		# This loop will overwrite all entries in _methods_by_name with the local
 		# method object so there is only ever one listing for a function with
 		# the right "is_local" flag.
-		if(!_is_native):
+		if(!is_native):
 			methods = thing.get_script_method_list()
 			for m in methods:
 				var parsed_method = ParsedMethod.new(m)
@@ -264,6 +263,7 @@ class ParsedScript:
 
 		return names
 
+
 	func get_local_methods():
 		var to_return = []
 		for key in _methods_by_name:
@@ -271,6 +271,7 @@ class ParsedScript:
 			if(method.is_local):
 				to_return.append(method)
 		return to_return
+
 
 	func get_super_methods():
 		var to_return = []
@@ -281,48 +282,31 @@ class ParsedScript:
 		return to_return
 
 
+	func get_extends_text():
+		var text = null
+		if(is_native):
+			text = str("extends ", _native_instance.get_class())
+		else:
+			text = str("extends '", _script_path, "'")
+			if(_subpath != null):
+				text += '.' + _subpath
+		return text
 
-
-
-
-
-
-
-
-
-
-
-
-	# func print_it():
-	# 	var names = _methods_by_name.keys()
-	# 	names.sort()
-	# 	for n in names:
-	# 		print(_methods_by_name[n].to_s())
-
-	# func print_super():
-	# 	var names = _methods_by_name.keys()
-	# 	names.sort()
-	# 	for n in names:
-	# 		if(!_methods_by_name[n].is_local):
-	# 			print(_methods_by_name[n].to_s())
-
-	# func print_local():
-	# 	var names = _methods_by_name.keys()
-	# 	names.sort()
-	# 	for n in names:
-	# 		if(_methods_by_name[n].is_local):
-	# 			print(_methods_by_name[n].to_s())
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 var scripts = {}
 var _file = File.new()
+var _utils = load('res://addons/gut/utils.gd').get_instance()
 
 
 func _get_instance_id(thing):
 	var inst_id = null
 
-	if(typeof(thing) == TYPE_STRING):
+	if(_utils.is_native_class(thing)):
+		var id_str = str(thing).replace("<", '').replace(">", '').split('#')[1]
+		inst_id = id_str.to_int()
+	elif(typeof(thing) == TYPE_STRING):
 		if(_file.file_exists(thing)):
 			inst_id = load(thing).get_instance_id()
 	else:
@@ -336,30 +320,12 @@ func parse(thing):
 	var parsed = null
 
 	if(inst_id != null):
-		var obj = instance_from_id(inst_id)
 		if(scripts.has(inst_id)):
 			parsed = scripts[inst_id]
 		else:
-			if(obj is Resource):
+			var obj = instance_from_id(inst_id)
+			if(obj is Resource or _utils.is_native_class(obj)):
 				parsed = ParsedScript.new(obj)
 				scripts[inst_id] = parsed
 
 	return parsed
-
-
-func parse_native(which):
-	var parsed = null
-
-	if(scripts.has(which)):
-		parsed = scripts[which]
-	else:
-		parsed = ParsedScript.new(which)
-		scripts[which] = parsed
-
-	return parsed
-
-
-func size():
-	return
-
-

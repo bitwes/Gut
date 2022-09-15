@@ -114,19 +114,6 @@ class ObjectInfo:
 		if(subpath != null):
 			_subpaths = Array(subpath.split('/'))
 
-	# Returns an instance of the class/inner class
-	func instantiate():
-		var to_return = null
-
-		if(_singleton_instance != null):
-			to_return = _singleton_instance
-		elif(is_native()):
-			to_return = _native_class.new()
-		else:
-			to_return = get_loaded_class().new()
-
-		return to_return
-
 
 	# Can't call it get_class because that is reserved so it gets this ugly name.
 	# Loads up the class and then any inner classes to give back a reference to
@@ -196,24 +183,6 @@ class ObjectInfo:
 		return _singleton_instance != null
 
 
-	func get_extends_text():
-		var extend = null
-		if(is_singleton()):
-			extend = str("# Double of singleton ", _singleton_name, ", base class is RefCounted")
-		elif(is_native()):
-			var native = get_native_class_name()
-			if(native.begins_with('_')):
-				native = native.substr(1)
-			extend = str("extends ", native)
-		else:
-			extend = str("extends '", get_path(), "'")
-
-		if(has_subpath()):
-			extend += str('.', get_subpath().replace('/', '.'))
-
-		return extend
-
-
 	func get_constants_text():
 		if(!is_singleton()):
 			return ""
@@ -229,6 +198,7 @@ class ObjectInfo:
 				text += str("const ", c, " = ", value, "\n")
 
 		return text
+
 
 	func get_properties_text():
 		if(!is_singleton()):
@@ -404,7 +374,7 @@ func _stub_to_call_super(obj_info, method_name):
 	_stubber.add_stub(params)
 
 
-func _get_base_script_text(obj_info, override_path):
+func _get_base_script_text(parsed, obj_info, override_path):
 	var path = obj_info.get_path()
 	if(override_path != null):
 		path = override_path
@@ -423,7 +393,7 @@ func _get_base_script_text(obj_info, override_path):
 
 	var values = {
 		# Top  sections
-		"extends":obj_info.get_extends_text(),
+		"extends":parsed.get_extends_text(),
 		"constants":obj_info.get_constants_text(),
 		"properties":obj_info.get_properties_text(),
 
@@ -443,10 +413,10 @@ func _get_base_script_text(obj_info, override_path):
 func _create_double(obj_info, override_path=null):
 	var parsed = null
 	if(obj_info.is_native()):
-		parsed = _script_collector.parse_native(obj_info._native_class)
+		parsed = _script_collector.parse(obj_info._native_class)
 	else:
 		parsed = _script_collector.parse(obj_info.get_loaded_class())
-	var base_script = _get_base_script_text(obj_info, override_path)
+	var base_script = _get_base_script_text(parsed, obj_info, override_path)
 	var super_name = ""
 	var path = ""
 
@@ -577,11 +547,15 @@ func partial_double(path, strategy=_strategy):
 
 
 func partial_double_inner(path, subpath, strategy=_strategy):
+	_lgr.error('Cannot double inner classes due to Godot bug.')
+	return null
 	return _double_inner(path, subpath, true, strategy)
 
 
 # double an inner class in a script
 func double_inner(path, subpath, strategy=_strategy):
+	_lgr.error('Cannot double inner classes due to Godot bug.')
+	return null
 	return _double_inner(path, subpath, false, strategy)
 
 

@@ -120,13 +120,25 @@ func pp(dict):
 	print(json.stringify(dict, ' '))
 
 func _init():
-	var dbl_inst = DoubleMe.new()
-	print(dbl_inst.get_script().get_path())
+	var Thing = Node2D
+	print(Thing)
+	print(Thing.new().get_class())
+	var id_str = str(Thing).replace("<", '').replace(">", '').split('#')[1]
+	print(id_str)
 
+	var by_id = instance_from_id(id_str.to_int())
+	print(by_id)
+
+
+
+
+	# var dbl_inst = DoubleMe.new()
+	# print(dbl_inst.get_script().get_path())
+
+	# # print(DoubleMe.get_method_list())
+	# print(DoubleMe.get_script_method_list())
+	# print('************************************************')
 	# print(DoubleMe.get_method_list())
-	print(DoubleMe.get_script_method_list())
-	print('************************************************')
-	print(DoubleMe.get_method_list())
 
 
 	# var ps = ParsedScript.new(DoubleMe)

@@ -331,6 +331,11 @@ class TestDoubleInnerClasses:
 		var inst = doubler.double_inner(INNER_CLASSES_PATH, 'InnerWithSignals').new()
 		assert_has_signal(inst, 'signal_signal')
 
+	func test_double_inner_does_not_call_supers():
+		var inst = doubler.double_inner(INNER_CLASSES_PATH, 'InnerA').new()
+		assert_eq(inst.get_a(), null)
+
+
 
 class TestPartialDoubles:
 	extends BaseTest
@@ -355,14 +360,11 @@ class TestPartialDoubles:
 		assert_eq(inst.get_value(), null)
 
 	func test_can_make_partial_of_inner_script():
-		pending('Broke in 4.0 see TestDoubleInnerClasses'); return
+		pending('Broke in 4.0 see TestDoubleInnerClasses');
+		return
 
 		var inst = doubler.partial_double_inner(INNER_CLASSES_PATH, 'InnerA').new()
 		assert_eq(inst.get_a(), 'a')
-
-	func test_double_inner_does_not_call_supers():
-		var inst = doubler.double_inner(INNER_CLASSES_PATH, 'InnerA').new()
-		assert_eq(inst.get_a(), null)
 
 	func test_can_make_partial_of_scene():
 		var inst = autofree(doubler.partial_double_scene(DOUBLE_ME_SCENE_PATH).instantiate())
@@ -373,12 +375,10 @@ class TestPartialDoubles:
 		assert_eq(inst.return_hello(), null)
 		pause_before_teardown()
 
-
 	func test_init_is_not_stubbed_to_call_super():
 		var inst = doubler.partial_double(DOUBLE_ME_PATH).new()
 		var text = get_source(inst)
 		assert_false(text.match("*__gutdbl.should_call_super('_init'*"), 'should not call super _init')
-
 
 	func test_can_partial_and_normal_double_in_same_test():
 		var double = doubler.double(DOUBLE_ME_PATH).new()
@@ -407,6 +407,10 @@ class TestDoubleGDNaviteClasses:
 	func test_can_partial_double_Node2D():
 		var pd_node_2d  = _doubler.partial_double_gdnative(Node2D)
 		assert_not_null(pd_node_2d)
+
+	func test_can_make_instances_of_native_doubles():
+		var crect_double_inst = _doubler.double_gdnative(ColorRect).new()
+		assert_not_null(crect_double_inst)
 
 
 class TestAutofree:

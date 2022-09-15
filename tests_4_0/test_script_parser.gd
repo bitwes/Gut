@@ -168,3 +168,22 @@ class TestParsedScript:
 		var InnerB1 = InnerClasses.InnerB.InnerB1
 		var parser = ParsedScript.new(InnerClasses, InnerB1)
 		assert_eq(parser.resource, InnerB1)
+
+	func test_extends_text_has_path_for_scripts():
+		var parsed = ParsedScript.new(DoubleMe)
+		assert_eq(parsed.get_extends_text(), str("extends '", DOUBLE_ME_PATH, "'"))
+
+	func test_extends_text_uses_class_name_for_natives():
+		var parsed = ParsedScript.new(Node2D)
+		assert_eq(parsed.get_extends_text(), 'extends Node2D')
+
+	func test_extends_text_adds_inner_classes_to_end():
+		var InnerB1 = InnerClasses.InnerB.InnerB1
+		var parsed = ParsedScript.new(InnerClasses, InnerB1)
+		assert_eq(parsed.get_extends_text(),
+			str("extends '", INNER_CLASSES_PATH, "'.InnerB.InnerB1"))
+
+	func test_parsing_native_does_not_generate_orphans():
+		var parsed = ParsedScript.new(Node2D)
+		# parsed.free()
+		assert_no_new_orphans()
