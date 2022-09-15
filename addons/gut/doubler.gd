@@ -247,7 +247,7 @@ class DoubledScript:
 
 	var _contents  = ''
 
-	func append(s):
+	func add_source(s):
 		_contents += s
 
 	func get_contents():
@@ -427,21 +427,22 @@ func _create_double(obj_info, override_path=null):
 
 	var dbl = DoubledScript.new()
 
-	dbl.append(base_script)
+	dbl.add_source(base_script)
 
 	for method in parsed.get_local_methods():
 		if(!method.is_black_listed() && !_ignored_methods.has(parsed.script_path, method.meta.name)):
 			var mthd = parsed.get_local_method(method.meta.name)
-			dbl.append(_get_func_text(method.meta, path, super_name))
+			dbl.add_source(_get_func_text(method.meta, path, super_name))
 
 	if(obj_info.get_method_strategy() == _utils.DOUBLE_STRATEGY.FULL):
 		for method in parsed.get_super_methods():
 			if(!method.is_black_listed() && !_ignored_methods.has(parsed.script_path, method.meta.name)):
 				_stub_to_call_super(obj_info, method.meta.name)
-				dbl.append(_get_func_text(method.meta, path, super_name))
+				dbl.add_source(_get_func_text(method.meta, path, super_name))
 
 	if(_print_source):
 		print(_utils.add_line_numbers(dbl.get_contents()))
+
 	return dbl
 
 
