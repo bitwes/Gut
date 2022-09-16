@@ -14,8 +14,15 @@ class BaseTest:
 	const TO_STUB_PATH = 'res://test/resources/stub_test_objects/to_stub.gd'
 	const DOUBLE_WITH_STATIC = 'res://test/resources/doubler_test_objects/has_static_method.gd'
 	const INIT_PARAMETERS = 'res://test/resources/stub_test_objects/init_parameters.gd'
+	const INNER_CLASSES_PATH = 'res://test/resources/doubler_test_objects/inner_classes.gd'
 
+	var DoubleMe = load(DOUBLE_ME_PATH)
+	var DoubleExtendsNode2D = load(DOUBLE_EXTENDS_NODE2D)
 	var DoubleExtendsWindowDialog = load(DOUBLE_EXTENDS_WINDOW_DIALOG)
+	var DoubleWithStatic = load(DOUBLE_WITH_STATIC)
+	var DoubleMeScene = load(DOUBLE_ME_SCENE_PATH)
+	var InnerClasses = load(INNER_CLASSES_PATH)
+
 
 	var print_source_when_failing = true
 
@@ -76,28 +83,28 @@ class TestTheBasics:
 		gr.doubler.set_stubber(gr.stubber)
 
 
-		var d = gr.doubler.double(DOUBLE_ME_PATH).new()
+		var d = gr.doubler.double(DoubleMe).new()
 		assert_eq(d.__gutdbl.stubber, gr.stubber)
 
 	func test_stubbing_method_returns_expected_value():
-		var D = gr.doubler.double(DOUBLE_ME_PATH)
+		var D = gr.doubler.double(DoubleMe)
 		var sp = StubParams.new(DOUBLE_ME_PATH, 'get_value').to_return(7)
 		gr.stubber.add_stub(sp)
 		assert_eq(D.new().get_value(), 7)
 
 	func test_can_stub_non_local_methods():
-		var D = gr.doubler.double(DOUBLE_ME_PATH)
+		var D = gr.doubler.double(DoubleMe)
 		var sp = StubParams.new(DOUBLE_ME_PATH, 'get_position').to_return(Vector2(11, 11))
 		gr.stubber.add_stub(sp)
 		assert_eq(D.new().get_position(), Vector2(11, 11))
 
 	func test_when_non_local_methods_not_stubbed_super_is_returned():
-		var D = gr.doubler.double(DOUBLE_EXTENDS_NODE2D)
+		var D = gr.doubler.double(DoubleMe)
 		var d = autofree(D.new())
-		assert_eq(d.get_rotation(), 0.0)
+		assert_eq(d.get_child_count(), 0)
 
 	func test_can_stub_doubled_instance_values():
-		var D = gr.doubler.double(DOUBLE_ME_PATH)
+		var D = gr.doubler.double(DoubleMe)
 		var d1 = D.new()
 		var d2 = D.new()
 
@@ -113,7 +120,7 @@ class TestTheBasics:
 		var sp = StubParams.new(DOUBLE_ME_PATH, 'has_one_param')
 		sp.to_return(10).when_passed(1)
 		gr.stubber.add_stub(sp)
-		var d = gr.doubler.double(DOUBLE_ME_PATH).new()
+		var d = gr.doubler.double(DoubleMe).new()
 		assert_eq(d.has_one_param(1), 10)
 		assert_eq(d.has_one_param('asdf'), null)
 
@@ -124,18 +131,18 @@ class TestTheBasics:
 		gr.stubber.add_stub(sp1)
 		gr.stubber.add_stub(sp2)
 
-		var d = gr.doubler.double(DOUBLE_ME_PATH).new()
+		var d = gr.doubler.double(DoubleMe).new()
 		assert_eq(d.has_one_param(), 5)
 
 	func test_can_stub_doubled_scenes():
 		var sp = StubParams.new(DOUBLE_ME_SCENE_PATH, 'return_hello')
 		sp.to_return('world')
 		gr.stubber.add_stub(sp)
-		var inst = autofree(gr.doubler.double_scene(DOUBLE_ME_SCENE_PATH).instantiate())
+		var inst = autofree(gr.doubler.double_scene(DoubleMeScene).instantiate())
 		assert_eq(inst.return_hello(), 'world')
 
 	func test_when_stubbed_to_call_super_then_super_is_called():
-		var doubled = gr.doubler.double(DOUBLE_ME_PATH).new()
+		var doubled = gr.doubler.double(DoubleMe).new()
 		var params = _utils.StubParams.new(doubled, 'set_value').to_call_super()
 		gr.stubber.add_stub(params)
 		doubled.set_value(99)
@@ -167,31 +174,31 @@ class TestTheBasics:
 		assert_eq(d_node2d.get_position(), -1)
 
 	func test_init_is_never_stubbed_to_call_super():
-		var inst =  gr.doubler.partial_double(DOUBLE_ME_PATH).new()
+		var inst =  gr.doubler.partial_double(DoubleMe).new()
 		assert_false(gr.stubber.should_call_super(inst, '_init', []))
 
 	func test_ready_is_never_stubbed_to_call_super():
-		var inst =  gr.doubler.partial_double(DOUBLE_ME_PATH).new()
+		var inst =  gr.doubler.partial_double(DoubleMe).new()
 		assert_false(gr.stubber.should_call_super(inst, '_ready', []))
 
 	func test_stubbing_init_to_call_super_generates_error():
 		var err_count = gr.stubber.get_logger().get_errors().size()
 
-		var inst =  gr.doubler.partial_double(DOUBLE_ME_PATH).new()
+		var inst =  gr.doubler.partial_double(DoubleMe).new()
 		var params = _utils.StubParams.new(inst, '_init')
 		gr.stubber.add_stub(params)
 		params.to_call_super()
 		assert_eq(gr.stubber.get_logger().get_errors().size(), err_count + 1)
 
 	func test_stubbing_init_to_call_super_does_not_generate_stub():
-		var inst =  gr.doubler.partial_double(DOUBLE_ME_PATH).new()
+		var inst =  gr.doubler.partial_double(DoubleMe).new()
 		var params = _utils.StubParams.new(inst, '_init').to_call_super()
 		gr.stubber.add_stub(params)
 		assert_false(gr.stubber.should_call_super(inst, '_init'))
 
 	func  test_you_cannot_stub_init_to_do_nothing():
 		var err_count = gr.stubber.get_logger().get_errors().size()
-		var inst =  gr.doubler.partial_double(DOUBLE_ME_PATH).new()
+		var inst =  gr.doubler.partial_double(DoubleMe).new()
 		var params = _utils.StubParams.new(inst, '_init')
 		gr.stubber.add_stub(params)
 		params.to_do_nothing()
@@ -200,7 +207,7 @@ class TestTheBasics:
 
 	func test_stubbing_return_value_of_init_results_in_error():
 		var err_count = gr.stubber.get_logger().get_errors().size()
-		var inst =  gr.doubler.partial_double(DOUBLE_ME_PATH).new()
+		var inst =  gr.doubler.partial_double(DoubleMe).new()
 		var params = _utils.StubParams.new(inst, '_init')
 		gr.stubber.add_stub(params)
 		params.to_return('abc')

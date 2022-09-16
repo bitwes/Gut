@@ -1269,8 +1269,6 @@ class TestStringEndsWith:
 class TestAssertCalled:
 	extends BaseTestClass
 
-	var skip_script = 'Not ready for 4.0'
-
 	func test_assert_called_fails_with_message_if_non_doubled_passed():
 		var obj = GDScript.new()
 		gr.test_with_gut.gut.get_spy().add_call(obj, 'method')
@@ -1307,7 +1305,7 @@ class TestAssertCalled:
 		doubled.set_value(5)
 		gr.test_with_gut.assert_called(doubled, 'set_value', 5)
 		assert_fail(gr.test_with_gut)
-		assert_eq(gr.test_with_gut.logger.get_errors().size(), 1, 'Generates error')
+		assert_eq(gr.test_with_gut.get_logger().get_errors().size(), 1, 'Generates error')
 
 
 # ------------------------------------------------------------------------------

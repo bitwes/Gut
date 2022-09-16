@@ -443,11 +443,6 @@ class TestEverythingElse:
 		assert_eq(instantiate.counts.after_all, 1, 'after_all')
 		assert_eq(instantiate.counts.after_each, 3, 'after_each')
 
-		assert_eq(instantiate.counts.prerun_setup, 1, 'prerun_setup')
-		assert_eq(instantiate.counts.setup, 3, 'setup')
-		assert_eq(instantiate.counts.postrun_teardown, 1, 'postrun_teardown')
-		assert_eq(instantiate.counts.teardown, 3, 'teardown')
-
 	func test_when_inner_class_skipped_none_of_the_before_after_are_called():
 		pending('pending in 4.0')
 		# gut.p('these tests sometimes fail.  Will have to add inner class names to test objects to make sure it passes.  GUT no longer guarantees the order in which the inner test classes are run so sometimes it works and sometimes it doesnt.')
