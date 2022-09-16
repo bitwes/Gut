@@ -169,7 +169,7 @@ func _stub_to_call_super(parsed, method_name):
 	_stubber.add_stub(params)
 
 
-func _get_base_script_text(parsed, override_path):
+func _get_base_script_text(parsed, override_path, partial):
 	var path = parsed.script_path
 	if(override_path != null):
 		path = override_path
@@ -199,15 +199,15 @@ func _get_base_script_text(parsed, override_path):
 		"spy_id":spy_id,
 		"gut_id":gut_id,
 		"singleton_name":'',#_utils.nvl(obj_info.get_singleton_name(), ''),
-		"is_partial":false,#str(obj_info.make_partial_double).to_lower()
+		"is_partial":partial,#str(obj_info.make_partial_double).to_lower()
 	}
 
 	return _base_script_text.format(values)
 
 
 
-func _create_double(parsed, strategy, override_path=null):
-	var base_script = _get_base_script_text(parsed, override_path)
+func _create_double(parsed, strategy, override_path, partial):
+	var base_script = _get_base_script_text(parsed, override_path, partial)
 	var super_name = ""
 	var path = ""
 
@@ -251,13 +251,17 @@ func _get_scene_script_object(scene):
 	return to_return
 
 
-func _double_scene_and_script(scene, strategy):
+func _double_scene_and_script(scene, strategy, partial):
 	var to_return = PackedSceneDouble.new()
 	to_return.load_scene(scene.get_path())
 
 	var script_obj = _get_scene_script_object(scene)
 	if(script_obj != null):
-		var script_dbl = _double(script_obj, strategy)
+		var script_dbl = null
+		if(partial):
+			script_dbl = _partial_double(script_obj, strategy, scene.get_path())
+		else:
+			script_dbl = _double(script_obj, strategy, scene.get_path())
 		to_return.set_script_obj(script_dbl)
 
 	return to_return
@@ -279,33 +283,54 @@ func _get_func_text(method_hash, path, super_=""):
 
 	return text
 
+
 # Override path is used with scenes.
 func _double(obj, strategy, override_path=null):
 	var parsed = _script_collector.parse(obj)
-	var result = _create_double(parsed, strategy, override_path)
+	var result = _create_double(parsed, strategy, override_path, false)
 	return result.load_it()
 
 
-func _double_script(obj, make_partial, strategy):
-	_double(obj, strategy)
-	# var oi = ObjectInfo.new(path)
-	# oi.make_partial_double = make_partial
-	# oi.set_method_strategy(strategy)
-	# return _double(oi).load_it()
+func _partial_double(obj, strategy, override_path=null):
+	var parsed = _script_collector.parse(obj)
+	var result = _create_double(parsed, strategy, override_path, true)
+	return result.load_it()
 
 
-func _double_scene(obj, make_partial, strategy):
-	return _double_scene_and_script(obj, strategy)
-
-
-# double a scene
-func double_scene(scene, strategy=_strategy):
-	return _double_scene(scene, false, strategy)
-
+# -------------------------
+# Public
+# -------------------------
 
 # double a script/object
 func double(obj, strategy=_strategy):
 	return _double(obj, strategy)
+
+func partial_double(obj, strategy=_strategy):
+	return _partial_double(obj, strategy)
+
+
+# double a scene
+func double_scene(scene, strategy=_strategy):
+	return _double_scene_and_script(scene, strategy, false)
+
+func partial_double_scene(scene, strategy=_strategy):
+	return _double_scene_and_script(scene, strategy, true)
+
+
+func double_gdnative(which):
+	return _double(which, _utils.DOUBLE_STRATEGY.INCLUDE_SUPER, false)
+
+func partial_double_gdnative(which):
+	return _double(which, _utils.DOUBLE_STRATEGY.INCLUDE_SUPER, true)
+
+
+func double_inner(path, subpath, strategy=_strategy):
+	_lgr.error('Cannot double inner classes due to Godot bug.')
+	return null
+
+func partial_double_inner(path, subpath, strategy=_strategy):
+	_lgr.error('Cannot double inner classes due to Godot bug.')
+	return null
 
 
 func add_ignored_method(obj, method_name):

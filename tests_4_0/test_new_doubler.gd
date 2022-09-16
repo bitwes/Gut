@@ -8,12 +8,14 @@ class BaseTest:
 	const DOUBLE_EXTENDS_NODE2D = 'res://test/resources/doubler_test_objects/double_extends_node2d.gd'
 	const DOUBLE_EXTENDS_WINDOW_DIALOG = 'res://test/resources/doubler_test_objects/double_extends_window_dialog.gd'
 	const DOUBLE_WITH_STATIC = 'res://test/resources/doubler_test_objects/has_static_method.gd'
+	const INNER_CLASSES_PATH = 'res://test/resources/doubler_test_objects/inner_classes.gd'
 
 	var DoubleMe = load(DOUBLE_ME_PATH)
 	var DoubleExtendsNode2D = load(DOUBLE_EXTENDS_NODE2D)
 	var DoubleExtendsWindowDialog = load(DOUBLE_EXTENDS_WINDOW_DIALOG)
 	var DoubleWithStatic = load(DOUBLE_WITH_STATIC)
 	var DoubleMeScene = load(DOUBLE_ME_SCENE_PATH)
+	var InnerClasses = load(INNER_CLASSES_PATH)
 
 	var Doubler = load('res://addons/gut/new_doubler.gd')
 	var print_source_when_failing = true
@@ -243,7 +245,6 @@ class TestDoubleScene:
 class TestDoubleStrategyIncludeSuper:
 	extends BaseTest
 
-
 	func _hide_call_back():
 		pass
 
@@ -317,3 +318,200 @@ class TestDoubleStrategyIncludeSuper:
 	func test_doubled_builtins_are_added_as_stubs_to_call_super():
 		var inst = autofree(doubler.double(DoubleExtendsWindowDialog).new())
 		assert_true(doubler.get_stubber().should_call_super(inst, 'add_user_signal'))
+
+class TestPartialDoubles:
+	extends BaseTest
+
+	var doubler = null
+	var stubber = _utils.Stubber.new()
+
+	func before_each():
+		stubber.clear()
+		doubler = Doubler.new()
+		doubler.set_stubber(stubber)
+
+	func test_can_make_partial_of_script():
+		var inst = doubler.partial_double(DoubleMe).new()
+		inst.set_value(10)
+		assert_eq(inst.get_value(), 10)
+
+	func test_double_script_does_not_make_partials():
+		var inst = doubler.double(DoubleMe).new()
+		assert_eq(inst.get_value(), null)
+
+	func test_can_make_partial_of_inner_script():
+		pending('Broke in 4.0 see TestDoubleInnerClasses');
+		return
+
+		var inst = doubler.partial_double_inner(InnerClasses, 'InnerA').new()
+		assert_eq(inst.get_a(), 'a')
+
+	func test_can_make_partial_of_scene():
+		var inst = autofree(doubler.partial_double_scene(DoubleMeScene).instantiate())
+		assert_eq(inst.return_hello(), 'hello')
+
+	func test_double_scene_does_not_call_supers():
+		var inst = autofree(doubler.double_scene(DoubleMeScene).instantiate())
+		assert_eq(inst.return_hello(), null)
+
+	func test_init_is_not_stubbed_to_call_super():
+		var inst = doubler.partial_double(DoubleMe).new()
+		var text = get_source(inst)
+		assert_false(text.match("*__gutdbl.should_call_super('_init'*"), 'should not call super _init')
+
+	func test_can_partial_and_normal_double_in_same_test():
+		var double = doubler.double(DoubleMe).new()
+		var p_double = doubler.partial_double(DoubleMe).new()
+
+		assert_null(double.get_value(), 'double get_value')
+		assert_eq(p_double.get_value(), 0, 'partial get_value')
+		if(is_failing()):
+			print(doubler.get_stubber().to_s())
+
+
+
+class TestDoubleGDNaviteClasses:
+	extends BaseTest
+
+	var _doubler = null
+	var _stubber = _utils.Stubber.new()
+
+	func before_each():
+		_stubber.clear()
+		_doubler = Doubler.new()
+		_doubler.set_stubber(_stubber)
+
+	func test_can_double_Node2D():
+		var d_node_2d = _doubler.double_gdnative(Node2D)
+		assert_not_null(d_node_2d)
+
+	func test_can_partial_double_Node2D():
+		var pd_node_2d  = _doubler.partial_double_gdnative(Node2D)
+		assert_not_null(pd_node_2d)
+
+	func test_can_make_instances_of_native_doubles():
+		var crect_double_inst = _doubler.double_gdnative(ColorRect).new()
+		assert_not_null(crect_double_inst)
+
+
+class TestDoubleInnerClasses:
+	extends BaseTest
+	var skip_script = 'Cannot extend inner classes godotengine #65666'
+
+	var doubler = null
+
+	func before_each():
+		doubler = Doubler.new()
+		doubler.set_stubber(_utils.Stubber.new())
+
+	func test_can_instantiate_inner_double():
+		var Doubled = doubler.double_inner(InnerClasses, InnerClasses.InnerB.InnerB1)
+		assert_has_method(Doubled.new(), 'get_b1')
+
+	func test_doubled_instance_returns_null_for_get_b1():
+		var dbld = doubler.double_inner(InnerClasses, InnerClasses.InnerB.InnerB1).new()
+		assert_null(dbld.get_b1())
+
+	func test_doubled_instances_extend_the_inner_class():
+		var inst = doubler.double_inner(InnerClasses, InnerClasses.InnerA).new()
+		assert_true(inst is InnerClasses.InnerA, 'instance should be an InnerA')
+		if(is_failing()):
+			print_source(inst)
+
+	func test_doubled_inners_that_extend_inners_get_full_inheritance():
+		var inst = doubler.double_inner(InnerClasses, InnerClasses.InnerCA).new()
+		assert_has_method(inst, 'get_a')
+		assert_has_method(inst, 'get_ca')
+
+	func test_doubled_inners_have_subpath_set_in_metadata():
+		var inst = doubler.double_inner(InnerClasses, InnerClasses.InnerCA).new()
+		assert_eq(inst.__gutdbl.subpath, 'InnerCA')
+
+	func test_non_inners_have_empty_subpath():
+		var inst = doubler.double(InnerClasses).new()
+		assert_eq(inst.__gutdbl.subpath, '')
+
+	func test_can_override_strategy_when_doubling():
+		#doubler.set_strategy(DOUBLE_STRATEGY.FULL)
+		var d = doubler.double_inner(InnerClasses, InnerClasses.InnerA, DOUBLE_STRATEGY.FULL)
+		# make sure it has something from Object that isn't implemented
+		assert_source_contains(d.new() , 'func disconnect(p_signal')
+		assert_eq(doubler.get_strategy(), DOUBLE_STRATEGY.SCRIPT_ONLY, 'strategy should have been reset')
+
+	func test_doubled_inners_retain_signals():
+		var inst = doubler.double_inner(InnerClasses, InnerClasses.InnerWithSignals).new()
+		assert_has_signal(inst, 'signal_signal')
+
+	func test_double_inner_does_not_call_supers():
+		var inst = doubler.double_inner(InnerClasses, InnerClasses.InnerA).new()
+		assert_eq(inst.get_a(), null)
+
+
+class TestAutofree:
+	extends BaseTest
+
+	class InitHasDefaultParams:
+		var a = 'b'
+
+		func _init(value='asdf'):
+			a = value
+
+	func test_doubles_are_autofreed():
+		var doubled = double(DoubleExtendsNode2D).new()
+		gut.get_autofree().free_all()
+		assert_no_new_orphans()
+
+	func test_partial_doubles_are_autofreed():
+		var doubled = partial_double(DoubleExtendsNode2D).new()
+		gut.get_autofree().free_all()
+		assert_no_new_orphans()
+
+
+class TestInitParameters:
+	extends BaseTest
+	var skip_script = 'Cannot extend inner classes, and this depends on inners for the object under test.  it could be moved instead.'
+
+	class InitDefaultParameters:
+		var value = 'start_value'
+
+		func _init(p_arg0='default_value'):
+			value = p_arg0
+
+	var _doubler = null
+
+
+	var DoubledClass = null
+	var PartialDoubledClass = null
+	var TestDoubler = load('res://tests_4_0/test_new_doubler.gd')
+
+	func before_each():
+		print('path = ', self.get_script().get_path())
+		print('resource_path = ', self.get_script().resource_path)
+		_doubler = Doubler.new()
+		_doubler.set_gut(gut)
+		_doubler.print_source = false
+
+		DoubledClass = _doubler.double_inner(
+			TestDoubler,
+			TestDoubler.TestInitParameters.InitDefaultParameters)
+		PartialDoubledClass = _doubler.partial_double_inner(
+			TestDoubler,
+			TestDoubler.TestInitParameters.InitDefaultParameters)
+
+	# This is due to the gut defaulting mechanism since the
+	# default value cannot be known
+	func test_double_gets_null_for_default_value():
+		var doubled = DoubledClass.new()
+		assert_null(doubled.value)
+
+	func test_double_gets_passed_value():
+		var doubled = DoubledClass.new('test')
+		assert_eq(doubled.value, 'test')
+
+	func test_partial_double_gets_passed_value():
+		var doubled = PartialDoubledClass.new('test')
+		assert_eq(doubled.value, 'test')
+
+	func test_partial_double_gets_null_for_default_value():
+		var doubled = PartialDoubledClass.new()
+		assert_null(doubled.value)

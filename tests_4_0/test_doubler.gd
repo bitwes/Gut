@@ -110,56 +110,7 @@ class TestDoubleInnerClasses:
 
 
 
-class TestPartialDoubles:
-	extends BaseTest
 
-	const INNER_CLASSES_PATH = 'res://test/resources/doubler_test_objects/inner_classes.gd'
-
-	var doubler = null
-	var stubber = _utils.Stubber.new()
-
-	func before_each():
-		stubber.clear()
-		doubler = Doubler.new()
-		doubler.set_stubber(stubber)
-
-	func test_can_make_partial_of_script():
-		var inst = doubler.partial_double(DOUBLE_ME_PATH).new()
-		inst.set_value(10)
-		assert_eq(inst.get_value(), 10)
-
-	func test_double_script_does_not_make_partials():
-		var inst = doubler.double(DOUBLE_ME_PATH).new()
-		assert_eq(inst.get_value(), null)
-
-	func test_can_make_partial_of_inner_script():
-		pending('Broke in 4.0 see TestDoubleInnerClasses');
-		return
-
-		var inst = doubler.partial_double_inner(INNER_CLASSES_PATH, 'InnerA').new()
-		assert_eq(inst.get_a(), 'a')
-
-	func test_can_make_partial_of_scene():
-		var inst = autofree(doubler.partial_double_scene(DOUBLE_ME_SCENE_PATH).instantiate())
-		assert_eq(inst.return_hello(), 'hello')
-
-	func test_double_scene_does_not_call_supers():
-		var inst = autofree(doubler.double_scene(DOUBLE_ME_SCENE_PATH).instantiate())
-		assert_eq(inst.return_hello(), null)
-		pause_before_teardown()
-
-	func test_init_is_not_stubbed_to_call_super():
-		var inst = doubler.partial_double(DOUBLE_ME_PATH).new()
-		var text = get_source(inst)
-		assert_false(text.match("*__gutdbl.should_call_super('_init'*"), 'should not call super _init')
-
-	func test_can_partial_and_normal_double_in_same_test():
-		var double = doubler.double(DOUBLE_ME_PATH).new()
-		var p_double = doubler.partial_double(DOUBLE_ME_PATH).new()
-
-		assert_null(double.get_value(), 'double get_value')
-		assert_eq(p_double.get_value(), 0, 'partial get_value')
-		print(doubler.get_stubber().to_s())
 
 
 class TestDoubleGDNaviteClasses:
