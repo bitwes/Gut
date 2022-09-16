@@ -29,211 +29,6 @@
 # Description
 # -----------
 # ##############################################################################
-const BLACKLIST = [
-	'has_method',
-	'get_script',
-	'get',
-	'_notification',
-	'get_path',
-	'_enter_tree',
-	'_exit_tree',
-	'_process',
-	'_draw',
-	'_physics_process',
-	'_input',
-	'_unhandled_input',
-	'_unhandled_key_input',
-	'_set',
-	'_get', # probably
-	'emit_signal', # can't handle extra parameters to be sent with signal.
-	'draw_mesh', # issue with one parameter, value is `Null((..), (..), (..))``
-	'_to_string', # nonexistant function super._to_string
-	'_get_minimum_size', # Nonexistent function _get_minimum_size
-]
-# ------------------------------------------------------------------------------
-# Utility class to hold the local and built in methods separately.  Add all local
-# methods FIRST, then add built ins.
-# ------------------------------------------------------------------------------
-class ScriptMethods:
-	# List of methods that should not be overloaded when they are not defined
-	# in the class being doubled.  These either break things if they are
-	# overloaded or do not have a "super" equivalent so we can't just pass
-	# through.
-	var _blacklist = BLACKLIST
-
-	var built_ins = []
-	var local_methods = []
-	var _method_names = []
-
-	func is_blacklisted(method_meta):
-		return _blacklist.find(method_meta.name) != -1
-
-	func _add_name_if_does_not_have(method_name):
-		var should_add = _method_names.find(method_name) == -1
-		if(should_add):
-			_method_names.append(method_name)
-		return should_add
-
-	func add_built_in_method(method_meta):
-		var did_add = _add_name_if_does_not_have(method_meta.name)
-		if(did_add and !is_blacklisted(method_meta)):
-			built_ins.append(method_meta)
-
-	func add_local_method(method_meta):
-		var did_add = _add_name_if_does_not_have(method_meta.name)
-		if(did_add):
-			local_methods.append(method_meta)
-
-	func to_s():
-		var text = "Locals\n"
-		for i in range(local_methods.size()):
-			text += str("  ", local_methods[i].name, "\n")
-		text += "Built-Ins\n"
-		for i in range(built_ins.size()):
-			text += str("  ", built_ins[i].name, "\n")
-		return text
-
-# ------------------------------------------------------------------------------
-# Helper class to deal with objects and inner classes.
-# ------------------------------------------------------------------------------
-class ObjectInfo:
-	var _path = null
-	var _subpaths = []
-	var _utils = load('res://addons/gut/utils.gd').get_instance()
-	var _lgr = _utils.get_logger()
-	var _method_strategy = null
-	var make_partial_double = false
-	var scene_path = null
-	var _native_class = null
-	var _native_class_name = null
-	var _singleton_instance = null
-	var _singleton_name = null
-
-	func _init(path,subpath=null):
-		_path = path
-		if(subpath != null):
-			_subpaths = Array(subpath.split('/'))
-
-
-	# Can't call it get_class because that is reserved so it gets this ugly name.
-	# Loads up the class and then any inner classes to give back a reference to
-	# the desired Inner class (if there is any)
-	func get_loaded_class():
-		var LoadedClass = load(_path)
-		for i in range(_subpaths.size()):
-			LoadedClass = LoadedClass.get(_subpaths[i])
-		return LoadedClass
-
-
-	func to_s():
-		return str(_path, '[', get_subpath(), ']')
-
-
-	func get_path():
-		return _path
-
-
-	func get_subpath():
-		return '/'.join(PackedStringArray(_subpaths))
-
-
-	func has_subpath():
-		return _subpaths.size() != 0
-
-
-	func get_method_strategy():
-		return _method_strategy
-
-
-	func set_method_strategy(method_strategy):
-		_method_strategy = method_strategy
-
-
-	func is_native():
-		return _native_class != null
-
-
-	func set_native_class(native_class):
-		_native_class = native_class
-		var inst = native_class.new()
-		_native_class_name = inst.get_class()
-		_path = _native_class_name
-		if(!inst is RefCounted):
-			inst.free()
-
-
-	func get_native_class_name():
-		return _native_class_name
-
-
-	func get_singleton_instance():
-		return _singleton_instance
-
-
-	func get_singleton_name():
-		return _singleton_name
-
-
-	func set_singleton_name(singleton_name):
-		_singleton_name = singleton_name
-		_singleton_instance = _utils.get_singleton_by_name(_singleton_name)
-
-
-	func is_singleton():
-		return _singleton_instance != null
-
-
-	func get_constants_text():
-		if(!is_singleton()):
-			return ""
-
-		# do not include constants defined in the super class which for
-		# singletons stubs is RefCounted.
-		var exclude_constants = Array(ClassDB.class_get_integer_constant_list("RefCounted"))
-		var text = str("# -----\n# ", _singleton_name, " Constants\n# -----\n")
-		var constants = ClassDB.class_get_integer_constant_list(_singleton_name)
-		for c in constants:
-			if(!exclude_constants.has(c)):
-				var value = ClassDB.class_get_integer_constant(_singleton_name, c)
-				text += str("const ", c, " = ", value, "\n")
-
-		return text
-
-
-	func get_properties_text():
-		if(!is_singleton()):
-			return ""
-
-		var text = str("# -----\n# ", _singleton_name, " Properties\n# -----\n")
-		var props = ClassDB.class_get_property_list(_singleton_name)
-		for prop in props:
-			var accessors = {"setter":null, "getter":null}
-			var prop_text = str("var ", prop["name"])
-
-			var getter_name = "get_" + prop["name"]
-			if(ClassDB.class_has_method(_singleton_name, getter_name)):
-				accessors.getter = getter_name
-			else:
-				getter_name = "is_" + prop["name"]
-				if(ClassDB.class_has_method(_singleton_name, getter_name)):
-					accessors.getter = getter_name
-
-			var setter_name = "set_" + prop["name"]
-			if(ClassDB.class_has_method(_singleton_name, setter_name)):
-				accessors.setter = setter_name
-
-			var setget_text = ""
-			if(accessors.setter != null and accessors.getter != null):
-				setget_text = str("setget ", accessors.setter, ", ", accessors.getter)
-			else:
-				# never seen this message show up, but it should show up if we
-				# get misbehaving singleton.
-				_lgr.error(str("Could not find setget methods for property:  ",
-					_singleton_name, ".",  prop["name"]))
-
-			text += str(prop_text, " ", setget_text, "\n")
-
-		return text
 
 
 # ------------------------------------------------------------------------------
@@ -295,12 +90,11 @@ class PackedSceneDouble:
 # START Doubler
 # ------------------------------------------------------------------------------
 var _utils = load('res://addons/gut/utils.gd').get_instance()
-var _double_count = 0 # used in making files names unique
 var _base_script_text = _utils.get_file_as_text('res://addons/gut/double_templates/script_template.txt')
-var _make_files = false
-# used by tests for debugging purposes.
-var _print_source = false
 var _script_collector = _utils.ScriptCollector.new()
+# used by tests for debugging purposes.
+var print_source = false
+
 
 # ###############
 # Properties
@@ -348,7 +142,7 @@ func get_ignored_methods():
 # ###############
 # Private
 # ###############
-func _init(strategy=_utils.DOUBLE_STRATEGY.PARTIAL):
+func _init(strategy=_utils.DOUBLE_STRATEGY.SCRIPT_ONLY):
 	set_logger(_utils.get_logger())
 	_strategy = strategy
 
@@ -360,23 +154,17 @@ func _get_indented_line(indents, text):
 	return str(to_return, text, "\n")
 
 
-func _stub_to_call_super(obj_info, method_name):
+func _stub_to_call_super(parsed, method_name):
 	if(_utils.non_super_methods.has(method_name)):
 		return
 
-	var path = obj_info.get_path()
-	if(obj_info.is_singleton()):
-		path = obj_info.get_singleton_name()
-	elif(obj_info.scene_path != null):
-		path = obj_info.scene_path
-
-	var params = _utils.StubParams.new(path, method_name, obj_info.get_subpath())
+	var params = _utils.StubParams.new(parsed.script_path, method_name, parsed.subpath)
 	params.to_call_super()
 	_stubber.add_stub(params)
 
 
-func _get_base_script_text(parsed, obj_info, override_path):
-	var path = obj_info.get_path()
+func _get_base_script_text(parsed, override_path, partial):
+	var path = parsed.script_path
 	if(override_path != null):
 		path = override_path
 
@@ -395,74 +183,80 @@ func _get_base_script_text(parsed, obj_info, override_path):
 	var values = {
 		# Top  sections
 		"extends":parsed.get_extends_text(),
-		"constants":obj_info.get_constants_text(),
-		"properties":obj_info.get_properties_text(),
+		"constants":'',#obj_info.get_constants_text(),
+		"properties":'',#obj_info.get_properties_text(),
 
 		# metadata values
 		"path":path,
-		"subpath":obj_info.get_subpath(),
+		"subpath":_utils.nvl(parsed.subpath, ''),
 		"stubber_id":stubber_id,
 		"spy_id":spy_id,
 		"gut_id":gut_id,
-		"singleton_name":_utils.nvl(obj_info.get_singleton_name(), ''),
-		"is_partial":str(obj_info.make_partial_double).to_lower()
+		"singleton_name":'',#_utils.nvl(obj_info.get_singleton_name(), ''),
+		"is_partial":partial,#str(obj_info.make_partial_double).to_lower()
 	}
 
 	return _base_script_text.format(values)
 
 
-func _create_double(obj_info, override_path=null):
-	var parsed = null
-	if(obj_info.is_native()):
-		parsed = _script_collector.parse(obj_info._native_class)
-	else:
-		parsed = _script_collector.parse(obj_info.get_loaded_class())
-	var base_script = _get_base_script_text(parsed, obj_info, override_path)
+
+func _create_double(parsed, strategy, override_path, partial):
+	var base_script = _get_base_script_text(parsed, override_path, partial)
 	var super_name = ""
 	var path = ""
 
-	if(obj_info.is_singleton()):
-		super_name = obj_info.get_singleton_name()
-	else:
-		path = obj_info.get_path()
-
+	path = parsed.script_path
 	var dbl = DoubledScript.new()
-
 	dbl.add_source(base_script)
 
 	for method in parsed.get_local_methods():
-		if(!method.is_black_listed() && !_ignored_methods.has(parsed.script_path, method.meta.name)):
+		if(!method.is_black_listed() && !_ignored_methods.has(parsed.resource, method.meta.name)):
 			var mthd = parsed.get_local_method(method.meta.name)
 			dbl.add_source(_get_func_text(method.meta, path, super_name))
 
-	if(obj_info.get_method_strategy() == _utils.DOUBLE_STRATEGY.FULL):
+	if(strategy == _utils.DOUBLE_STRATEGY.INCLUDE_SUPER):
 		for method in parsed.get_super_methods():
-			if(!method.is_black_listed() && !_ignored_methods.has(parsed.script_path, method.meta.name)):
-				_stub_to_call_super(obj_info, method.meta.name)
+			if(!method.is_black_listed() && !_ignored_methods.has(parsed.resource, method.meta.name)):
+				_stub_to_call_super(parsed, method.meta.name)
 				dbl.add_source(_get_func_text(method.meta, path, super_name))
 
-	if(_print_source):
+	if(print_source):
 		print(_utils.add_line_numbers(dbl.get_contents()))
 
 	return dbl
 
 
-func _double_scene_and_script(scene_info):
+func _get_scene_script_object(scene):
+	var state = scene.get_state()
+	var to_return = null
+	var root_node_path = NodePath(".")
+	var node_idx = 0
+
+	while(node_idx < state.get_node_count() and to_return == null):
+		# Assumes that the first node we encounter that has a root node path, one
+		# property, and that property is named 'script' is the GDScript for the
+		# scene.  This could be flawed.
+		if(state.get_node_path(node_idx) == root_node_path and state.get_node_property_count(node_idx) == 1):
+			if(state.get_node_property_name(node_idx, 0) == 'script'):
+				to_return = state.get_node_property_value(node_idx, 0)
+
+		node_idx += 1
+
+	return to_return
+
+
+func _double_scene_and_script(scene, strategy, partial):
 	var to_return = PackedSceneDouble.new()
-	to_return.load_scene(scene_info.get_path())
+	to_return.load_scene(scene.get_path())
 
-	var inst = load(scene_info.get_path()).instantiate()
-	var script_path = null
-	if(inst.get_script()):
-		script_path = inst.get_script().get_path()
-	inst.free()
-
-	if(script_path):
-		var oi = ObjectInfo.new(script_path)
-		oi.set_method_strategy(scene_info.get_method_strategy())
-		oi.make_partial_double = scene_info.make_partial_double
-		oi.scene_path = scene_info.get_path()
-		to_return.set_script_obj(_double(oi, scene_info.get_path()).load_it())
+	var script_obj = _get_scene_script_object(scene)
+	if(script_obj != null):
+		var script_dbl = null
+		if(partial):
+			script_dbl = _partial_double(script_obj, strategy, scene.get_path())
+		else:
+			script_dbl = _double(script_obj, strategy, scene.get_path())
+		to_return.set_script_obj(script_dbl)
 
 	return to_return
 
@@ -483,103 +277,55 @@ func _get_func_text(method_hash, path, super_=""):
 
 	return text
 
+
 # Override path is used with scenes.
-func _double(obj_info, override_path=null):
-	var result = _create_double(obj_info, override_path)
-	_double_count += 1
-	return result
+func _double(obj, strategy, override_path=null):
+	var parsed = _script_collector.parse(obj)
+	var result = _create_double(parsed, strategy, override_path, false)
+	return result.load_it()
 
 
-func _double_script(path, make_partial, strategy):
-	var oi = ObjectInfo.new(path)
-	oi.make_partial_double = make_partial
-	oi.set_method_strategy(strategy)
-	return _double(oi).load_it()
+func _partial_double(obj, strategy, override_path=null):
+	var parsed = _script_collector.parse(obj)
+	var result = _create_double(parsed, strategy, override_path, true)
+	return result.load_it()
 
 
-func _double_inner(path, subpath, make_partial, strategy):
-	var oi = ObjectInfo.new(path, subpath)
-	oi.set_method_strategy(strategy)
-	oi.make_partial_double = make_partial
-	var to_return = _double(oi).load_it()
-	return to_return
-
-
-func _double_scene(path, make_partial, strategy):
-	var oi = ObjectInfo.new(path)
-	oi.set_method_strategy(strategy)
-	oi.make_partial_double = make_partial
-	return _double_scene_and_script(oi)
-
-
-func _double_gdnative(native_class, make_partial, strategy):
-	var oi = ObjectInfo.new(null)
-	oi.set_native_class(native_class)
-	oi.set_method_strategy(strategy)
-	oi.make_partial_double = make_partial
-	return _double(oi).load_it()
-
-
-func _double_singleton(singleton_name, make_partial, strategy):
-	var oi = ObjectInfo.new(null)
-	oi.set_singleton_name(singleton_name)
-	oi.set_method_strategy(_utils.DOUBLE_STRATEGY.PARTIAL)
-	oi.make_partial_double = make_partial
-	return _double(oi).load_it()
-
-# ###############
+# -------------------------
 # Public
-# ###############
-func partial_double_scene(path, strategy=_strategy):
-	return _double_scene(path, true, strategy)
+# -------------------------
+
+# double a script/object
+func double(obj, strategy=_strategy):
+	return _double(obj, strategy)
+
+func partial_double(obj, strategy=_strategy):
+	return _partial_double(obj, strategy)
 
 
 # double a scene
-func double_scene(path, strategy=_strategy):
-	return _double_scene(path, false, strategy)
+func double_scene(scene, strategy=_strategy):
+	return _double_scene_and_script(scene, strategy, false)
+
+func partial_double_scene(scene, strategy=_strategy):
+	return _double_scene_and_script(scene, strategy, true)
 
 
-# double a script/object
-func double(path, strategy=_strategy):
-	return _double_script(path, false, strategy)
+func double_gdnative(which):
+	return _double(which, _utils.DOUBLE_STRATEGY.INCLUDE_SUPER, false)
+
+func partial_double_gdnative(which):
+	return _double(which, _utils.DOUBLE_STRATEGY.INCLUDE_SUPER, true)
 
 
-func partial_double(path, strategy=_strategy):
-	return _double_script(path, true, strategy)
-
+func double_inner(path, subpath, strategy=_strategy):
+	_lgr.error('Cannot double inner classes due to Godot bug.')
+	return null
 
 func partial_double_inner(path, subpath, strategy=_strategy):
 	_lgr.error('Cannot double inner classes due to Godot bug.')
 	return null
-	return _double_inner(path, subpath, true, strategy)
 
 
-# double an inner class in a script
-func double_inner(path, subpath, strategy=_strategy):
-	_lgr.error('Cannot double inner classes due to Godot bug.')
-	return null
-	return _double_inner(path, subpath, false, strategy)
-
-
-# must always use FULL strategy since this is a native class and you won't get
-# any methods if you don't use FULL
-func double_gdnative(native_class):
-	return _double_gdnative(native_class, false, _utils.DOUBLE_STRATEGY.FULL)
-
-
-# must always use FULL strategy since this is a native class and you won't get
-# any methods if you don't use FULL
-func partial_double_gdnative(native_class):
-	return _double_gdnative(native_class, true, _utils.DOUBLE_STRATEGY.FULL)
-
-
-func double_singleton(name):
-	return _double_singleton(name, false, _utils.DOUBLE_STRATEGY.PARTIAL)
-
-
-func partial_double_singleton(name):
-	return _double_singleton(name, true, _utils.DOUBLE_STRATEGY.PARTIAL)
-
-
-func add_ignored_method(path, method_name):
-	_ignored_methods.add(path, method_name)
+func add_ignored_method(obj, method_name):
+	_ignored_methods.add(obj, method_name)
