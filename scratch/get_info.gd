@@ -124,22 +124,6 @@ func print_method_info(obj):
 					print('  ', key, ':  ', methods[i][key])
 
 
-func print_a_bunch_of_methods_by_flags():
-	var e = ExtendsNode2D.new()
-	var n = get_methods_by_flag(e)
-	# print_methods_by_flags(n)
-
-	var s = SimpleObject.new()
-	var o = get_methods_by_flag(s)
-	# print_methods_by_flags(o)
-
-	#print_methods_by_flags(subtract_dictionary(n, o))
-	print("\n\n\n")
-	print_methods_by_flags(subtract_dictionary(o, n))
-	print("strays  ")
-	e.print_orphan_nodes()
-
-
 func get_defaults_and_types(method_meta):
 	var text = ""
 	text += method_meta[NAME] + "\n"
@@ -160,17 +144,6 @@ func class_db_stuff():
 	# print(ClassDB.get_class_list())
 
 
-func _init_other():
-	var  dm   = DoubleMe.new()
-	var props = dm.get_property_list()
-	print(str(props))
-	print(str(dm.get_meta_list()))
-	print('class = ', dm.get_class())
-	print('script = ', dm.get_script())
-	print(dm.get_script().get_path())
-	print(dm)
-	quit()
-
 func does_inherit_from_test(thing):
 	var base_script = thing.get_base_script()
 	var to_return = false
@@ -183,6 +156,7 @@ func does_inherit_from_test(thing):
 		else:
 			to_return = does_inherit_from_test(base_script)
 	return to_return
+
 
 func print_other_info(loaded, msg = '', indent=''):
 	print(indent, '--------------------- ', msg, ' ---------------------')
@@ -208,7 +182,6 @@ func print_other_info(loaded, msg = '', indent=''):
 	print(indent, 'RID                       ', loaded.get_rid())
 	print(indent, 'script                    ', loaded.get_script())
 	print()
-
 
 	var const_map = loaded.new().get_script().get_script_constant_map()
 	if(const_map.size() > 0):
@@ -305,10 +278,10 @@ func print_all_info(thing):
 	print('path = ', thing.get_path())
 
 	print('--- Methods (object) ---')
-	print_methods(thing.get_method_list())
+	print_methods(thing.get_method_list(), true)
 
 	print('--- Methods (script) ---')
-	print_methods(thing.get_script_method_list())
+	print_methods(thing.get_script_method_list(), true)
 
 	print('--- Properties (object) ---')
 	var props = thing.get_property_list()
@@ -326,6 +299,29 @@ func print_all_info(thing):
 	for sig in sigs:
 		print(sig['name'])
 		print('  ', sig)
+
+
+func print_methods_with_defaults(thing):
+	print('------------------------------------------------------------------')
+	print('--- Methods (object) ---')
+	print('------------------------------------------------------------------')
+	var methods = thing.get_method_list()
+	for m in methods:
+		if(m.default_args.size() > 0):
+			print(m.name)
+			pp(m, '  ')
+
+
+	print('------------------------------------------------------------------')
+	print('--- Methods (script) ---')
+	print('------------------------------------------------------------------')
+	methods  = thing.get_script_method_list()
+	for m in methods:
+		print(m.name)
+		pp(m, '  ')
+
+
+
 
 func print_class_db_class_list():
 	var list = ClassDB.get_class_list()
@@ -390,13 +386,13 @@ func get_scene_script_object(scene):
 
 
 
+
 func _init():
-	var TestScene = load('res://test/resources/doubler_test_objects/double_me_scene.tscn')
-	print_scene_info(TestScene)
-	print(get_scene_script_object(TestScene))
+	# var TestScene = load('res://test/resources/doubler_test_objects/double_me_scene.tscn')
+	# print_scene_info(TestScene)
+	# print(get_scene_script_object(TestScene))
 
-
-	var ThatInnerClassScript = load('res://test/resources/doubler_test_objects/inner_classes.gd')
+	# var ThatInnerClassScript = load('res://test/resources/doubler_test_objects/inner_classes.gd')
 	# print_other_info(HasSomeInners, 'HasSomeInners')
 	# print_other_info(HasSomeInners.Inner2.Inner2_a, 'Inner2_a')
 	# print_inner_classes(ThatInnerClassScript)
@@ -405,14 +401,12 @@ func _init():
 	# print_all_info(ThatInnerClassScript.AnotherInnerA)
 	# print_all_info(ExtendsAnInnerClassElsewhere)
 	# print_all_info(DoubleMe)
-
 	# print_class_db_class_list()
 
-	# print_other_info(HasSomeInners)
-	# print_other_info(HasSomeInners.Inner1)
-
-
 	# print_all_info(GutTest)
+	var WithDefaults = load('res://test/resources/doubler_test_objects/double_default_parameters.gd')
+	print_methods_with_defaults(WithDefaults)
+	# print_other_info(GutTest)
 	# print_all_info(SetGetTestNode)
 	# print(SetGetTestNode.has_method('has_setter_setter'))
 	# var inst = SetGetTestNode.new()
@@ -420,77 +414,8 @@ func _init():
 	# print(inst.has_method('@has_setter_setter'))
 	# print(inst.has_method('@has_getter_getter'))
 
-	# class_db_stuff()
-
-	# var r = RefCounted.new()
-	# var r2 = r
-	# var r3 = r
-	# var r4 = r
-	# print_all_info(r)
 
 
-	#print(r.get('RefCounted'))
 
-	# print_all_info(HasSomeInners)
-	# print_all_info(DoubleMe)
-	# var dm = DoubleMe.new()
-	# get_root().add_child(dm)
-	# var result = await dm.might_await_no_return()
-	# dm.might_await_no_return()
-	# dm.uses_await_response()
-
-	# pp(DoubleMe.get_script_method_list())
-	# var flag_methods = get_methods_by_flag(DoubleMe)
-	# print_methods_by_flags(flag_methods)
-	#print(DoubleMeScene.script)
-	#print(DoubleMeScene.resource_name)
-	# print(DoubleMeScene.get_meta_list())
-
-	# print_script_methods()
-	#var test = load('res://addons/gut/test.gd').new()
-	#print_method_info(test)
-
-	# var inners = load('res://test/resources/parsing_and_loading_samples/test_only_inner_classes.gd')
-	# print_other_info(inners)
-	# print('-----')
-	# print_other_info(HasSomeInners)
-	# print_other_info(load('res://test/gut_test.gd'))
-	#print_other_info(load('res://test/unit/test_test_collector.gd'))
-
-	# print_inner_test_classes(load('res://test/unit/test_test_collector.gd'))
-	# print("\n\n\n")
-	# print_inner_test_classes(HasSomeInners)
-	# print("\n\n\n")
-	# print_inner_test_classes(load('res://scratch/get_info.gd'))
-
-	# print_inner_test_classes(load('res://test/unit/test_doubler.gd'))
-	#print_inner_test_classes(HasSomeInners)
-	#print_other_info(HasSomeInners)
-	#print_other_info(HasSomeInners.ExtendsInner1)
-
-	# var double_me = load('res://test/resources/doubler_test_objects/double_me.gd')
-	# print_method_info(double_me)
-	# print_method_info(double_me.new())
-	# print("-------------\n-\n-\n-\n-------------")
-	# var methods = get_methods_by_flag(double_me)
-	# print_methods_by_flags(methods)
-
-	#print_a_bunch_of_methods_by_flags()
-	#var obj = RayCast2D.new() #ExtendsNode2D.new()
-	#var obj = load('res://addons/gut/gut.gd').new()
-	#var obj = load('res://test/resources/doubler_test_objects/double_extends_window_dialog.gd').new()
-	#ExtendsNode2D.set_meta('gut_ignore', 'something')
-	#print_method_info(obj)
-	# print_method_info(CodeTextEditor)
-	# print(CodeTextEditor.new().get_property_list())
-	#print(obj.get_meta_list())
-	#print(ExtendsNode2D.get_meta_list())
-	#print_method_info(ExtendsNode2D)
-
-	#var _methods = obj.get_method_list()
-	#print(str(JSON.print(methods, ' ')))
-	# for i in range(methods.size()):
-	# 	if(methods[i][DEFAULT_ARGS].size() > 0):
-	# 		pass#print(get_defaults_and_types(methods[i]))
 
 	quit()

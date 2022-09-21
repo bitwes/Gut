@@ -31,6 +31,7 @@ class TestGetDecleration:
 	func before_each():
 		_mm = MethodMaker.new()
 
+
 	func test_get_function_text_no_params():
 		assert_string_contains(_mm.get_function_text(make_meta('dummy')), 'func dummy():')
 
