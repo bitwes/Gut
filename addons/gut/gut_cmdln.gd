@@ -118,7 +118,7 @@ class OptionResolver:
 # ------------------------------------------------------------------------------
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _gut_config = load('res://addons/gut/gut_config.gd').new()
-# instantiate of gut
+# instance of gut
 var _tester = null
 # array of command line options specified
 var _final_opts = []
