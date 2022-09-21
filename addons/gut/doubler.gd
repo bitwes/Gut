@@ -36,6 +36,9 @@
 # creating doubles.  It's now just a string with the load_it function.
 # It seemed like there could be some utility in maintaining this little
 # class.
+#
+# Might not be worth it, now that I've moved the creating a script from source
+# logic to utils.  Now it's just a string.
 # ------------------------------------------------------------------------------
 class DoubledScript:
 	extends File
@@ -47,18 +50,6 @@ class DoubledScript:
 
 	func get_contents():
 		return _contents
-
-	func load_it():
-		if(_contents != ''):
-			var script = GDScript.new()
-			script.source_code = _contents
-			# this is causing an error in 4.0 (does not halt execution, just prints it)
-			# ERROR: Attempt to open script '' resulted in error 'File not found'.
-			# Everyting seems to work.  I suspect that the path is empty and it
-			# is throwing an erro that should not be thrown.  An issue has been
-			# created and marked as bug.
-			var result = script.reload()
-			return script
 
 
 # ------------------------------------------------------------------------------
@@ -282,13 +273,13 @@ func _get_func_text(method_hash, path, super_=""):
 func _double(obj, strategy, override_path=null):
 	var parsed = _script_collector.parse(obj)
 	var result = _create_double(parsed, strategy, override_path, false)
-	return result.load_it()
+	return _utils.create_script_from_source(result.get_contents())
 
 
 func _partial_double(obj, strategy, override_path=null):
 	var parsed = _script_collector.parse(obj)
 	var result = _create_double(parsed, strategy, override_path, true)
-	return result.load_it()
+	return _utils.create_script_from_source(result.get_contents())
 
 
 # -------------------------

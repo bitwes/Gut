@@ -152,10 +152,7 @@ class ParsedScript:
 		var to_return = []
 		if(base_type != null):
 			var source = str('extends ', base_type)
-			var script = GDScript.new()
-			script.source_code = source
-			script.reload()
-			var inst = script.new()
+			var inst = _utils.create_script_from_source(source).new()
 			to_return = inst.get_method_list()
 			if(! inst is RefCounted):
 				inst.free()

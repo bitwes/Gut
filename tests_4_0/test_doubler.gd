@@ -482,7 +482,7 @@ class TestInitParameters:
 
 	var DoubledClass = null
 	var PartialDoubledClass = null
-	var TestDoubler = load('res://tests_4_0/test_new_doubler.gd')
+	var TestDoubler = load('res://tests_4_0/test_doubler.gd')
 
 	func before_each():
 		print('path = ', self.get_script().get_path())

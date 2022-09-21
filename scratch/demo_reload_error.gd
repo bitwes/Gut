@@ -10,6 +10,7 @@ func _init():
 
 	var DynScript = GDScript.new()
 	DynScript.source_code = script_source
+	DynScript.resource_path = 'workaround for godot issue #65263'
 	print('pre-reload')
 	DynScript.reload()
 	print('post-reload')

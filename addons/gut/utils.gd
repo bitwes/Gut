@@ -458,3 +458,18 @@ func add_line_numbers(contents):
 func pp(dict, indent=''):
 	var text = json.stringify(dict, '  ')
 	print(text)
+
+
+var _created_script_count = 0
+func create_script_from_source(source):
+	_created_script_count += 1
+
+	var DynamicScript = GDScript.new()
+	DynamicScript.source_code = source
+	# The resource_path must be unique or Godot thinks it is trying
+	# to load something it has already loaded and generates an error like
+	# ERROR: Another resource is loaded from path 'workaround for godot issue #65263' (possible cyclic resource inclusion).
+	DynamicScript.resource_path = str('workaround for godot issue #65263 (', _created_script_count, ')')
+	var result = DynamicScript.reload()
+
+	return DynamicScript
