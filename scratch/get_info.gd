@@ -385,9 +385,9 @@ func get_scene_script_object(scene):
 	return to_return
 
 
-
-
 func _init():
+	pp(Button.new().get_method_list())
+	# print_all_info(DoubleMeScene)
 	# var TestScene = load('res://test/resources/doubler_test_objects/double_me_scene.tscn')
 	# print_scene_info(TestScene)
 	# print(get_scene_script_object(TestScene))
@@ -404,8 +404,8 @@ func _init():
 	# print_class_db_class_list()
 
 	# print_all_info(GutTest)
-	var WithDefaults = load('res://test/resources/doubler_test_objects/double_default_parameters.gd')
-	print_methods_with_defaults(WithDefaults)
+	# var WithDefaults = load('res://test/resources/doubler_test_objects/double_default_parameters.gd')
+	# print_methods_with_defaults(WithDefaults)
 	# print_other_info(GutTest)
 	# print_all_info(SetGetTestNode)
 	# print(SetGetTestNode.has_method('has_setter_setter'))

@@ -92,7 +92,9 @@ func _init():
 
 	# These require a prefix for whatever default is provided
 	_supported_defaults[TYPE_VECTOR2] = 'Vector2'
+	_supported_defaults[TYPE_VECTOR2I] = 'Vector2i'
 	_supported_defaults[TYPE_RECT2] = 'Rect2'
+	_supported_defaults[TYPE_RECT2I] = 'Rect2i'
 	_supported_defaults[TYPE_VECTOR3] = 'Vector3'
 	_supported_defaults[TYPE_COLOR] = 'Color'
 	_supported_defaults[TYPE_TRANSFORM2D] = 'Transform2D'
@@ -122,62 +124,7 @@ func _make_arg_array(method_meta, override_size):
 
 	for i in range(method_meta.args.size()):
 		var pname = method_meta.args[i].name
-		var dflt_text = ''
-
-		dflt_text = _make_stub_default(method_meta.name, i)
-		# if(i < dflt_start):
-		# 	dflt_text = _make_stub_default(method_meta.name, i)
-		# else:
-		# 	var dflt_idx = i - dflt_start
-		# 	var t = method_meta.args[i]['type']
-		# 	if(_is_supported_default(t)):
-		# 		if(t == TYPE_NIL):
-		# 			dflt_text = 'null'
-		# 		elif(t == TYPE_STRING):
-		# 			# strings are special, they need quotes around the value
-		# 			dflt_text = str("'", str(method_meta.default_args[dflt_idx]), "'")
-		# 		elif(t == TYPE_COLOR):
-		# 			# Colors need the parens but things like Vector2 and Rect2 don't
-		# 			dflt_text = str(_supported_defaults[t], '(', str(method_meta.default_args[dflt_idx]), ')')
-		# 		elif(t == TYPE_OBJECT):
-		# 			if(str(method_meta.default_args[dflt_idx]) == "[Object:null]"):
-		# 				dflt_text = str(_supported_defaults[t], 'null')
-		# 			else:
-		# 				dflt_text = str(_supported_defaults[t], str(method_meta.default_args[dflt_idx]).to_lower())
-		# 		elif(t == TYPE_TRANSFORM3D):
-		# 			# value will be 4 Vector3 and look like: 1, 0, 0, 0, 1, 0, 0, 0, 1 - 0, 0, 0
-		# 			var sections = str(method_meta.default_args[dflt_idx]).split("-")
-		# 			var vecs = sections[0].split(",")
-		# 			vecs.append_array(sections[1].split(","))
-		# 			var v1 = str("Vector3(", vecs[0], ", ", vecs[1], ", ", vecs[2], ")")
-		# 			var v2 = str("Vector3(", vecs[3], ", ", vecs[4], ", ", vecs[5], ")")
-		# 			var v3 = str("Vector3(", vecs[6], ", ", vecs[7], ", ", vecs[8], ")")
-		# 			var v4 = str("Vector3(", vecs[9], ", ", vecs[10], ", ", vecs[11], ")")
-		# 			dflt_text = str(_supported_defaults[t], "(", v1, ", ", v2, ", ", v3, ", ", v4, ")")
-		# 		elif(t == TYPE_TRANSFORM2D):
-		# 			# value will look like:  ((1, 0), (0, 1), (0, 0))
-		# 			var vectors = str(method_meta.default_args[dflt_idx])
-		# 			vectors = vectors.replace("((", "(")
-		# 			vectors = vectors.replace("))", ")")
-		# 			vectors = vectors.replace("(", "Vector2(")
-		# 			dflt_text = str(_supported_defaults[t], "(", vectors, ")")
-		# 		elif(t == TYPE_RID):
-		# 			dflt_text = str(_supported_defaults[t], 'null')
-		# 		elif(t in [TYPE_PACKED_FLOAT32_ARRAY, TYPE_PACKED_INT32_ARRAY, TYPE_PACKED_STRING_ARRAY]):
-		# 			dflt_text = str(_supported_defaults[t], "()")
-		# 		# Everything else puts the prefix (if one is there) from _supported_defaults
-		# 		# in front.  The to_lower is used b/c for some reason the defaults for
-		# 		# null, true, false are all "Null", "True", "False".
-		# 		else:
-		# 			dflt_text = str(_supported_defaults[t], str(method_meta.default_args[dflt_idx]).to_lower())
-		# 	else:
-		# 		_lgr.error(str(
-		# 			'Unsupported default param type in function "',method_meta.name, '", param #', i, ': ', method_meta.args[i].name, '<', t, '> = ', method_meta.default_args[dflt_idx]))
-		# 		_lgr.info(str(method_meta))
-		# 		dflt_text = str('unsupported=',t)
-		# 		has_unsupported_defaults = true
-
-		# Finally add in the parameter
+		var dflt_text = _make_stub_default(method_meta.name, i)
 		to_return.append(CallParameters.new(PARAM_PREFIX + pname, dflt_text))
 
 	# Add in extra parameters from stub settings.

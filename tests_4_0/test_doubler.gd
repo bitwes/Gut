@@ -251,14 +251,12 @@ class TestDoubleStrategyIncludeSuper:
 	var doubler = null
 	var stubber = _utils.Stubber.new()
 
-	func before_all():
-		var d = Doubler.new(_utils.DOUBLE_STRATEGY.INCLUDE_SUPER)
-
 
 	func before_each():
 		stubber.clear()
 		doubler = Doubler.new(_utils.DOUBLE_STRATEGY.INCLUDE_SUPER)
 		doubler.set_stubber(stubber)
+		doubler.print_source = true
 
 
 	func test_built_in_overloading_ony_happens_on_full_strategy():
@@ -380,6 +378,7 @@ class TestDoubleGDNaviteClasses:
 		_stubber.clear()
 		_doubler = Doubler.new()
 		_doubler.set_stubber(_stubber)
+		_doubler.print_source = false
 
 	func test_can_double_Node2D():
 		var d_node_2d = _doubler.double_gdnative(Node2D)
@@ -392,6 +391,7 @@ class TestDoubleGDNaviteClasses:
 	func test_can_make_instances_of_native_doubles():
 		var crect_double_inst = _doubler.double_gdnative(ColorRect).new()
 		assert_not_null(crect_double_inst)
+
 
 
 class TestDoubleInnerClasses:

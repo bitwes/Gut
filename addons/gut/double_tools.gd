@@ -7,6 +7,7 @@ var from_singleton = null
 var is_partial = null
 var double = null
 
+const NO_DEFAULT_VALUE = '!__gut__no__default__value__!'
 func from_id(inst_id):
 	if(inst_id ==  -1):
 		return null
@@ -29,7 +30,7 @@ func get_stubbed_return(method_name, called_with):
 	else:
 		return null
 
-func default_val(method_name, p_index):
+func default_val(method_name, p_index, default_val=NO_DEFAULT_VALUE):
 	if(stubber != null):
 		return stubber.get_default_value(double, method_name, p_index)
 	else:
