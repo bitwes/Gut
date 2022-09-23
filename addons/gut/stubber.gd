@@ -95,7 +95,8 @@ func _find_stub(obj, method, parameters=null, find_overloads=false):
 				null_match = cur_stub
 
 			if(cur_stub.has_param_override()):
-				overload_match = cur_stub
+				if(overload_match == null || overload_match.is_script_default):
+					overload_match = cur_stub
 
 		if(find_overloads and overload_match != null):
 			to_return = overload_match
@@ -217,4 +218,5 @@ func to_s():
 
 func stub_defaults_from_meta(target, method_meta):
 	var params = _utils.StubParams.new(target, method_meta)
+	params.is_script_default = true
 	add_stub(params)

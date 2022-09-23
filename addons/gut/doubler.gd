@@ -312,10 +312,10 @@ func partial_double_scene(scene, strategy=_strategy):
 
 
 func double_gdnative(which):
-	return _double(which, _utils.DOUBLE_STRATEGY.INCLUDE_SUPER, false)
+	return _double(which, _utils.DOUBLE_STRATEGY.INCLUDE_SUPER)
 
 func partial_double_gdnative(which):
-	return _double(which, _utils.DOUBLE_STRATEGY.INCLUDE_SUPER, true)
+	return _partial_double(which, _utils.DOUBLE_STRATEGY.INCLUDE_SUPER)
 
 
 func double_inner(path, subpath, strategy=_strategy):

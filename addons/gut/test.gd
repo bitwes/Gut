@@ -1295,7 +1295,6 @@ func _smart_double(double_info):
 # ------------------------------------------------------------------------------
 func double(thing, p2=null, p3=null):
 	var double_info = DoubleInfo.new(thing, p2, p3)
-	print(double_info.to_s())
 	if(!double_info.is_valid):
 		_lgr.error('double requires a class or path, you passed an instantiate:  ' + _str(thing))
 		return null

@@ -105,7 +105,7 @@ class TestBasics:
 
 class TestIgnoreMethodsWhenDoubling:
 	extends "res://test/gut_test.gd"
-	var skip_script = 'skip for now'
+	var skip_script = 'skip for now, array compares are broke.'
 
 	var _test_gut = null
 	var _test = null
@@ -148,7 +148,7 @@ class TestIgnoreMethodsWhenDoubling:
 
 class TestTestsSmartDoubleMethod:
 	extends "res://test/gut_test.gd"
-	var skip_script = 'skip for now'
+	# var skip_script = 'skip for now'
 
 	var _test = null
 
@@ -161,18 +161,24 @@ class TestTestsSmartDoubleMethod:
 
 	func test_when_passed_a_script_it_doubles_script():
 		var inst = _test.double(DOUBLE_ME_PATH).new()
-		assert_eq(inst.__gut_metadata_.path, DOUBLE_ME_PATH)
+		assert_eq(inst.__gutdbl.thepath, DOUBLE_ME_PATH)
 
 	func test_when_passed_a_scene_it_doubles_a_scene():
 		var inst = _test.double(DOUBLE_ME_SCENE_PATH).instantiate()
-		assert_eq(inst.__gut_metadata_.path, DOUBLE_ME_SCENE_PATH)
+		assert_eq(inst.__gutdbl.thepath, DOUBLE_ME_SCENE_PATH)
 
 	func test_when_passed_script_and_inner_it_doulbes_it():
+		pending('Inner class doubles broke 4.0')
+		return
+
 		var inst = _test.double(INNER_CLASSES_PATH, 'InnerA').new()
-		assert_eq(inst.__gut_metadata_.path, INNER_CLASSES_PATH, 'check path')
-		assert_eq(inst.__gut_metadata_.subpath, 'InnerA', 'check subpath')
+		assert_eq(inst.__gutdbl.thepath, INNER_CLASSES_PATH, 'check path')
+		assert_eq(inst.__gutdbl.subpath, 'InnerA', 'check subpath')
 
 	func test_full_strategy_used_for_scripts():
+		pending('Inner class doubles broke 4.0')
+		return
+
 		var inst = _test.double(DOUBLE_ME_PATH, DOUBLE_STRATEGY.INCLUDE_SUPER).new()
 		inst.get_instance_id()
 		assert_called(inst, 'get_instance_id')
@@ -183,24 +189,33 @@ class TestTestsSmartDoubleMethod:
 		assert_called(inst, 'get_instance_id')
 
 	func test_full_strategy_used_with_inners():
+		pending('Inner class doubles broke 4.0')
+		return
+
 		var inst = _test.double(INNER_CLASSES_PATH, 'InnerA', DOUBLE_STRATEGY.INCLUDE_SUPER).new()
 		inst.get_instance_id()
 		assert_called(inst, 'get_instance_id')
 
 	func test_when_passing_a_class_of_a_script_it_doubles_it():
 		var inst = _test.double(DoubleMe).new()
-		assert_eq(inst.__gut_metadata_.path, DOUBLE_ME_PATH)
+		assert_eq(inst.__gutdbl.thepath, DOUBLE_ME_PATH)
 
 	func test_when_passing_a_class_of_a_scene_it_doubles_it():
 		var inst = _test.double(DoubleMeScene).instantiate()
-		assert_eq(inst.__gut_metadata_.path, DOUBLE_ME_SCENE_PATH)
+		assert_eq(inst.__gutdbl.thepath, DOUBLE_ME_SCENE_PATH)
 
 	func test_when_passing_a_class_of_an_inner_it_doubles_it():
+		pending('Inner class doubles broke 4.0')
+		return
+
 		var inst = _test.double(InnerClasses, 'InnerA').new()
-		assert_eq(inst.__gut_metadata_.path, INNER_CLASSES_PATH, 'check path')
-		assert_eq(inst.__gut_metadata_.subpath, 'InnerA', 'check subpath')
+		assert_eq(inst.__gutdbl.thepath, INNER_CLASSES_PATH, 'check path')
+		assert_eq(inst.__gutdbl.subpath, 'InnerA', 'check subpath')
 
 	func test_can_double_native_classes():
+		pending('Crashes hard 4.0')
+		return
+
 		var inst = _test.double(Node2D).new()
 		assert_not_null(inst)
 
@@ -213,7 +228,6 @@ class TestTestsSmartDoubleMethod:
 
 class TestPartialDoubleMethod:
 	extends "res://test/gut_test.gd"
-	var skip_script = 'skip for now'
 
 	var _gut = null
 	var _test = null
@@ -246,6 +260,9 @@ class TestPartialDoubleMethod:
 		assert_eq(inst.return_hello(), 'hello', 'sometimes fails, should be fixed.')
 
 	func test_partial_double_inner():
+		pending('Inner class doubles broke 4.0')
+		return
+
 		var inst = _test.partial_double(INNER_CLASSES_PATH, 'InnerA').new()
 		assert_eq(inst.get_a(), 'a')
 
@@ -260,6 +277,9 @@ class TestPartialDoubleMethod:
 		assert_eq(inst.return_hello(), null)
 
 	func test_double_inner_not_a_partial():
+		pending('Inner class doubles broke 4.0')
+		return
+
 		var inst = _test.double(INNER_CLASSES_PATH, 'InnerA').new()
 		assert_eq(inst.get_a(), null)
 
@@ -272,12 +292,18 @@ class TestPartialDoubleMethod:
 		assert_eq(_test.get_pass_count(), pass_count + 2)
 
 	func test_can_stub_partial_doubled_native_class():
+		pending('Crashes hard 4.0')
+		return
+
 		var inst = _test.partial_double(Node2D).new()
 		autofree(inst)
 		_test.stub(inst, 'get_position').to_return(-1)
 		assert_eq(inst.get_position(), -1)
 
 	func test_can_spy_on_partial_doubled_native_class():
+		pending('Crashes hard 4.0')
+		return
+
 		var pass_count = _test.get_pass_count()
 		var inst = autofree(_test.partial_double(Node2D).new())
 		inst.set_position(Vector2(100, 100))
@@ -286,6 +312,9 @@ class TestPartialDoubleMethod:
 
 	# Test issue 147
 	func test_can_double_file():
+		pending('Crashes hard 4.0')
+		return
+
 		var f = File.new()
 		var inst = _test.partial_double(File)
 		assert_not_null(inst)
@@ -299,7 +328,7 @@ class TestPartialDoubleMethod:
 
 class TestOverridingParameters:
 	extends "res://test/gut_test.gd"
-	var skip_script = 'skip for now'
+	var skip_script = 'skip for now, crashing hard, not sure cause.'
 
 	var _gut = null
 	var _test = null
@@ -331,7 +360,6 @@ class TestOverridingParameters:
 		var inst =  _test.double(DEFAULT_PARAMS_PATH).new()
 		var ret_val = inst.return_passed()
 		assert_eq(ret_val, '12')
-		print(_gut.get_stubber().to_s())
 
 
 	func test_issue_246_rpc_id_varargs():

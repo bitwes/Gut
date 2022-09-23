@@ -18,7 +18,6 @@ var __gutdbl = load('res://addons/gut/double_tools.gd').new(__gutdbl_values)
 func __gutbl_check_method__():
 	pass
 # ------------------------------------------------------------------------------
-
 var value = 4
 func get_value():
 	return value

@@ -115,7 +115,6 @@ class TestTheBasics:
 
 	func test_partial_double_of_Node2D_returns_super_values():
 		var pd_node_2d  = autofree(gr.doubler.partial_double_gdnative(Node2D).new())
-		#pd_node_2d  = gr.doubler.partial_double_gdnative(Node2D).new()
 		assert_eq(pd_node_2d.is_blocking_signals(), false)
 
 	func test_can_stub_all_Node2D_doubles():
@@ -169,16 +168,23 @@ class TestTheBasics:
 		assert_eq(gr.stubber.get_logger().get_errors().size(), err_count + 1, 'error generated')
 
 	func test_double_can_have_default_param_values_stubbed():
-		gr.doubler.print_source = true
 		var params = _utils.StubParams.new(INIT_PARAMETERS, '_init')
 		params.param_defaults(["override_default"])
 		gr.stubber.add_stub(params)
-		print('default val = ', gr.stubber.get_default_value(INIT_PARAMETERS, '_init', 0))
 		var inst = gr.doubler.double(InitParameters).new()
 		assert_eq(inst.value, 'override_default')
 		if(is_failing()):
 			print(gr.stubber.to_s())
 
+	func test_double_can_have_default_param_values_stubbed_after_double_created():
+		var Dbl = gr.doubler.double(InitParameters)
+		var params = _utils.StubParams.new(INIT_PARAMETERS, '_init')
+		params.param_defaults(["override_default"])
+		gr.stubber.add_stub(params)
+		var inst = Dbl.new()
+		assert_eq(inst.value, 'override_default')
+		if(is_failing()):
+			print(gr.stubber.to_s())
 
 
 # Since defaults are only available for built-in methods these tests verify
