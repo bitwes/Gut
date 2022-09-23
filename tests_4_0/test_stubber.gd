@@ -282,12 +282,10 @@ func test_draw_parameter_method_meta():
 	# 5 parameters, 2 defaults
 	# index 3 = null object
 	# index 4 = 1
-	var inst = autofree(Button.new())
-	var meta = find_method_meta(inst.get_method_list(), 'draw_primitive')
-	gr.stubber.stub_defaults_from_meta(inst, meta)
-	assert_eq(gr.stubber.get_default_value(TO_STUB_PATH, 'draw_primitive', 3), null)
-	assert_eq(gr.stubber.get_default_value(TO_STUB_PATH, 'draw_primitive', 4), 1)
-	_utils.pretty_print(meta)
+	var inst = autofree(ToStub.new())
+	var meta = find_method_meta(ToStub.get_script_method_list(), 'default_value_method')
+	gr.stubber.stub_defaults_from_meta(ToStub, meta)
+	assert_eq(gr.stubber.get_default_value(ToStub, 'default_value_method', 0), 'a')
 
 
 # func test_draw_primitive():

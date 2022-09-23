@@ -31,7 +31,8 @@ class BaseTest:
 
 	func assert_source_contains(thing, look_for, text=''):
 		var source = get_source(thing)
-		var msg = str('Expected source for ', _strutils.type2str(thing), ' to contain "', look_for, '":  ', text)
+		# var msg = str('Expected source for ', _strutils.type2str(thing), ' to contain "', look_for, '":  ', text)
+		var msg = str('Expected source for ', str(thing), ' to contain "', look_for, '":  ', text)
 		if(source == null || source.find(look_for) == -1):
 			fail_test(msg)
 			if(print_source_when_failing):

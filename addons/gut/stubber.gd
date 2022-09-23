@@ -87,14 +87,15 @@ func _find_stub(obj, method, parameters=null, find_overloads=false):
 		var overload_match = null
 
 		for i in range(returns[key][method].size()):
-			if(returns[key][method][i].parameters == parameters):
-				param_match = returns[key][method][i]
+			var cur_stub = returns[key][method][i]
+			if(cur_stub.parameters == parameters):
+				param_match = cur_stub
 
-			if(returns[key][method][i].parameters == null):
-				null_match = returns[key][method][i]
+			if(cur_stub.parameters == null and !cur_stub.is_param_override_only()):
+				null_match = cur_stub
 
-			if(returns[key][method][i].has_param_override()):
-				overload_match = returns[key][method][i]
+			if(cur_stub.has_param_override()):
+				overload_match = cur_stub
 
 		if(find_overloads and overload_match != null):
 			to_return = overload_match
@@ -104,7 +105,7 @@ func _find_stub(obj, method, parameters=null, find_overloads=false):
 		# We found a case where the parameters were not specified so return
 		# parameters for that.  Only do this if the null match is not *just*
 		# a paramerter override stub.
-		elif(null_match != null and !null_match.is_param_override_only()):
+		elif(null_match != null):
 			to_return = null_match
 
 	return to_return
@@ -152,7 +153,6 @@ func should_call_super(obj, method, parameters=null):
 		is_partial = obj.__gutdbl.is_partial
 	var should = is_partial
 
-	print('stub_info = ', stub_info)
 	if(stub_info != null):
 		should = stub_info.call_super
 	elif(!is_partial):
@@ -216,4 +216,5 @@ func to_s():
 
 
 func stub_defaults_from_meta(target, method_meta):
-	pass
+	var params = _utils.StubParams.new(target, method_meta)
+	add_stub(params)

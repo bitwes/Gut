@@ -1,4 +1,3 @@
-var node_default = Node2D.new()
 const SOME_CONSTANT = 5
 
 enum SOME_VALUES {
@@ -40,20 +39,10 @@ func default_color(p1=Color(.5, .5, .5)):
 func default_typed_color(p1:Color=Color(.6, .6, .6)):
     pass
 
-func default_node(p1=node_default):
-    pass
-
-func default_typed_node(p1:Object=node_default):
-    pass
-
 func default_enum(p1=SOME_VALUES.VALUE_1):
     pass
 
 func default_typed_enum(p1:SOME_VALUES = SOME_VALUES.VALUE_1):
-    pass
-
-
-func mixed_defaults(p0, p1=3, p2=node_default, p3=Color(.2, .2, .2)):
     pass
 
 

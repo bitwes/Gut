@@ -11,18 +11,21 @@
 # ------------------------------------------------------------------------------
 # THE NEW STYLE
 # ------------------------------------------------------------------------------
-var __gutdbl = load('res://addons/gut/double_tools.gd').new()
+var __gutdbl_values = {
+	double = self,
+	thepath = '{path}',
+	subpath = '{subpath}',
+	stubber = {stubber_id},
+	spy = {spy_id},
+	gut = {gut_id},
+	from_singleton = '{singleton_name}',
+	is_partial = {is_partial},
+}
+var __gutdbl = load('res://addons/gut/double_tools.gd').new(__gutdbl_values)
 
-func __gutdbl_init_vals():
-	__gutdbl.double = self
-	__gutdbl.thepath = '{path}'
-	__gutdbl.subpath = '{subpath}'
-	__gutdbl.stubber = __gutdbl.from_id({stubber_id})
-	__gutdbl.spy = __gutdbl.from_id({spy_id})
-	__gutdbl.gut = __gutdbl.from_id({gut_id})
-	__gutdbl.from_singleton = '{singleton_name}'
-	__gutdbl.is_partial = {is_partial}
-
+# Here so other things can check for a method to know if this is a double.
+func __gutbl_check_method__():
+	pass
 
 # ------------------------------------------------------------------------------
 # Methods start here

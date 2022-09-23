@@ -62,7 +62,7 @@ func _get_obj_filename(thing):
 
 	if(thing == null or
 		!is_instance_valid(thing) or
-		str(thing) == '[Object:null]' or
+		str(thing) == '<Object#null>' or
 		typeof(thing) != TYPE_OBJECT or
 		thing.has_method('__gutdbl_init_vals')):
 		return
@@ -75,10 +75,11 @@ func _get_obj_filename(thing):
 			# we do nothing.  This just read better.
 			pass
 	elif(!_utils.is_native_class(thing)):
-		var dict = inst_to_dict(thing)
-		filename = _get_filename(dict['@path'])
-		if(str(dict['@subpath']) != ''):
-			filename += str('/', dict['@subpath'])
+		filename = 'this method broke somehow'
+		# var dict = inst_to_dict(thing)
+		# filename = _get_filename(dict['@path'])
+		# if(str(dict['@subpath']) != ''):
+		# 	filename += str('/', dict['@subpath'])
 
 	return filename
 

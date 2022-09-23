@@ -214,7 +214,18 @@ func _create_double(parsed, strategy, override_path, partial):
 	if(print_source):
 		print(_utils.add_line_numbers(dbl.get_contents()))
 
-	return dbl
+	var DblClass = _utils.create_script_from_source(dbl.get_contents())
+	if(_stubber != null):
+		_stub_method_default_values(DblClass, parsed, strategy)
+
+	return DblClass
+
+
+func _stub_method_default_values(which, parsed, strategy):
+	for method in parsed.get_local_methods():
+		if(!method.is_black_listed() && !_ignored_methods.has(parsed.resource, method.meta.name)):
+			_stubber.stub_defaults_from_meta(parsed.script_path, method.meta)
+
 
 
 func _get_scene_script_object(scene):
@@ -272,14 +283,12 @@ func _get_func_text(method_hash, path, super_=""):
 # Override path is used with scenes.
 func _double(obj, strategy, override_path=null):
 	var parsed = _script_collector.parse(obj)
-	var result = _create_double(parsed, strategy, override_path, false)
-	return _utils.create_script_from_source(result.get_contents())
+	return _create_double(parsed, strategy, override_path, false)
 
 
 func _partial_double(obj, strategy, override_path=null):
 	var parsed = _script_collector.parse(obj)
-	var result = _create_double(parsed, strategy, override_path, true)
-	return _utils.create_script_from_source(result.get_contents())
+	return _create_double(parsed, strategy, override_path, true)
 
 
 # -------------------------

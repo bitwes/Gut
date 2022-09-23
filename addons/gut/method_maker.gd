@@ -189,12 +189,11 @@ func _get_init_text(meta, args, method_params, param_array):
 	var decleration = str('func ', meta.name, '(', method_params, ')')
 	var super_params = ''
 	if(args.size() > 0):
-		super_params = '.('
 		for i in range(args.size()):
 			super_params += args[i].p_name
 			if(i != args.size() -1):
 				super_params += ', '
-		super_params += ')'
+
 
 	text = _init_text.format({
 		"func_decleration":decleration,

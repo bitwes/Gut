@@ -119,5 +119,7 @@ func to_s():
 
 	if(parameters != null):
 		base_string += str(' with params (', parameters, ') returns ', return_val)
+	else:
+		base_string += str(' returns ', return_val)
 
 	return base_string

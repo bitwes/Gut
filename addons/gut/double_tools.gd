@@ -36,7 +36,17 @@ func default_val(method_name, p_index, default_val=NO_DEFAULT_VALUE):
 	else:
 		return null
 
-func init():
+func _init(values=null):
+	if(values != null):
+		double = values.double
+		thepath = values.thepath
+		subpath = values.subpath
+		stubber = from_id(values.stubber)
+		spy = from_id(values.spy)
+		gut = from_id(values.gut)
+		from_singleton = values.from_singleton
+		is_partial = values.is_partial
+
 	if(gut != null):
 		gut.get_autofree().add_free(double)
 
