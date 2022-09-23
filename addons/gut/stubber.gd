@@ -213,3 +213,7 @@ func to_s():
 		text = 'Stubber is empty';
 
 	return text
+
+
+func stub_defaults_from_meta(target, method_meta):
+	pass

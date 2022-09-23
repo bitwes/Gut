@@ -21,16 +21,6 @@ class BaseTest:
 		}
 		return to_return
 
-	func find_method_meta(methods, method_name):
-		var meta = null
-		var idx = 0
-		while (idx < methods.size() and meta == null):
-			var m = methods[idx]
-			if(m.name == method_name):
-				meta = m
-			idx += 1
-
-		return meta
 
 
 class TestGetDecleration:

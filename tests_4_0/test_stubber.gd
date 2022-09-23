@@ -26,6 +26,18 @@ class HackedStubber:
 		return sp
 
 
+func find_method_meta(methods, method_name):
+	var meta = null
+	var idx = 0
+	while (idx < methods.size() and meta == null):
+		var m = methods[idx]
+		if(m.name == method_name):
+			meta = m
+		idx += 1
+
+	return meta
+
+
 var gr = {
 	stubber = null
 }
@@ -261,3 +273,27 @@ func test_get_default_values_finds_values_when_another_stub_exists():
 	gr.stubber.add_stub(second_sp)
 
 	assert_eq(gr.stubber.get_default_value('thing', 'method', 1), 2)
+
+
+# ----------------
+# Default Parameter Values from meta
+# ----------------
+func test_draw_parameter_method_meta():
+	# 5 parameters, 2 defaults
+	# index 3 = null object
+	# index 4 = 1
+	var inst = autofree(Button.new())
+	var meta = find_method_meta(inst.get_method_list(), 'draw_primitive')
+	gr.stubber.stub_defaults_from_meta(inst, meta)
+	assert_eq(gr.stubber.get_default_value(TO_STUB_PATH, 'draw_primitive', 3), null)
+	assert_eq(gr.stubber.get_default_value(TO_STUB_PATH, 'draw_primitive', 4), 1)
+	_utils.pretty_print(meta)
+
+
+# func test_draw_primitive():
+# 	var inst = autofree(Button.new())
+# 	var meta = find_method_meta(inst.get_method_list(), 'draw_primitive')
+# 	var txt = _mm.get_function_text(meta)
+# 	assert_string_contains(txt, 'p_texture=null')
+# 	if(is_failing()):
+# 		_utils.pretty_print(meta)

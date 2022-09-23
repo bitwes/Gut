@@ -5,6 +5,17 @@ extends GutTest
 # that test.gd has
 var StubParamsClass = load('res://addons/gut/stub_params.gd')
 
+func find_method_meta(methods, method_name):
+	var meta = null
+	var idx = 0
+	while (idx < methods.size() and meta == null):
+		var m = methods[idx]
+		if(m.name == method_name):
+			meta = m
+		idx += 1
+
+	return meta
+
 var gr = {
 	stub_params = null
 }
@@ -146,3 +157,47 @@ func test_when_passed_does_not_set_flag():
 	sp.param_count(10)
 	sp.when_passed(1, 2, 3)
 	assert_true(sp.is_param_override_only())
+
+
+func test_draw_parameter_method_meta():
+	# 5 parameters, 2 defaults
+	# index 3 = null object
+	# index 4 = 1
+	var inst = autofree(Button.new())
+	var meta = find_method_meta(inst.get_method_list(), 'draw_primitive')
+	var sp = StubParamsClass.new(inst, meta)
+	assert_eq(sp.stub_method, meta.name)
+
+
+func test_draw_parameter_method_meta2():
+	# 5 parameters, 2 defaults
+	# index 3 = null object
+	# index 4 = 1
+	var inst = autofree(Button.new())
+	var meta = find_method_meta(inst.get_method_list(), 'draw_primitive')
+	var sp = StubParamsClass.new(inst, meta)
+	# meta = find_method_meta(inst.get_method_list(), 'draw_primitive')
+	assert_eq(sp.parameter_defaults, [null, null, null, meta.default_args[0], meta.default_args[1]])
+	if(is_failing()):
+		print(sp.parameter_defaults)
+		meta = find_method_meta(inst.get_method_list(), 'draw_primitive')
+		print(meta.default_args)
+
+func test_draw_parameter_method_meta3():
+	# 5 parameters, 2 defaults
+	# index 3 = null object
+	# index 4 = 1
+	var inst = autofree(Button.new())
+	var meta = find_method_meta(inst.get_method_list(), 'draw_primitive')
+	var sp = StubParamsClass.new(inst, meta)
+	assert_true(sp.is_param_override_only())
+
+
+func test_draw_parameter_method_meta4():
+	# 5 parameters, 2 defaults
+	# index 3 = null object
+	# index 4 = 1
+	var inst = autofree(Button.new())
+	var meta = find_method_meta(inst.get_method_list(), 'draw_primitive')
+	var sp = StubParamsClass.new(inst, meta)
+	assert_eq(sp.parameter_defaults.size(), 5)

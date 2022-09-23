@@ -14,6 +14,7 @@ func __gutdbl_init_vals():
 		__gutdbl.from_singleton = ''
 		__gutdbl.is_partial = false
 
+
 func _init():
 		__gutdbl_init_vals()
 		__gutdbl.init()

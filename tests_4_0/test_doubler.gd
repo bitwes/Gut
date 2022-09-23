@@ -256,7 +256,7 @@ class TestDoubleStrategyIncludeSuper:
 		stubber.clear()
 		doubler = Doubler.new(_utils.DOUBLE_STRATEGY.INCLUDE_SUPER)
 		doubler.set_stubber(stubber)
-		doubler.print_source = true
+		doubler.print_source = false
 
 
 	func test_built_in_overloading_ony_happens_on_full_strategy():

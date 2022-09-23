@@ -29,9 +29,19 @@ const NOT_SET = '|_1_this_is_not_set_1_|'
 
 func _init(target=null,method=null,subpath=null):
 	stub_target = target
-	stub_method = method
 	target_subpath = subpath
+	stub_method = method
 
+	if(typeof(method) == TYPE_DICTIONARY):
+		_load_metadata(method)
+
+func _load_metadata(meta):
+	stub_method = meta.name
+	var values = meta.default_args.duplicate()
+	while (values.size() < meta.args.size()):
+		values.push_front(null)
+
+	param_defaults(values)
 
 func to_return(val):
 	if(stub_method == '_init'):
