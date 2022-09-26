@@ -91,6 +91,7 @@ var ParameterFactory = load('res://addons/gut/parameter_factory.gd')
 var ParameterHandler = load('res://addons/gut/parameter_handler.gd')
 var Printers = load('res://addons/gut/printers.gd')
 var ResultExporter = load('res://addons/gut/result_exporter.gd')
+var ScriptCollector = load('res://addons/gut/script_parser.gd')
 var Spy = load('res://addons/gut/spy.gd')
 var Strutils = load('res://addons/gut/strutils.gd')
 var Stubber = load('res://addons/gut/stubber.gd')
@@ -110,7 +111,6 @@ var _file_checker = File.new()
 # Online fetch of the latest version available on github
 var latest_version = null
 var should_display_latest_version = false
-
 
 # These methods all call super implicitly.  Stubbing them to call super causes
 # super to be called twice.
@@ -155,11 +155,11 @@ func _on_http_request_latest_version_completed(result, response_code, headers, b
 
 
 
-const GUT_METADATA = '__gut_metadata_'
+const GUT_METADATA = '__gutdbl'
 
 enum DOUBLE_STRATEGY{
-	FULL,
-	PARTIAL
+	SCRIPT_ONLY,
+	INCLUDE_SUPER
 }
 
 enum DIFF {
@@ -285,7 +285,7 @@ func is_not_freed(obj):
 func is_double(obj):
 	var to_return = false
 	if(typeof(obj) == TYPE_OBJECT and is_instance_valid(obj)):
-		to_return = obj.has_method('__gut_instance_from_id')
+		to_return = obj.has_method('__gutbl_check_method__')
 	return to_return
 
 
@@ -357,7 +357,7 @@ func get_native_class_name(thing):
 func is_native_class(thing):
 	var it_is = false
 	if(typeof(thing) == TYPE_OBJECT):
-		it_is = str(thing).begins_with("[GDScriptNativeClass:")
+		it_is = str(thing).begins_with("<GDScriptNativeClass#")
 	return it_is
 
 
@@ -421,3 +421,55 @@ func get_singleton_by_name(name):
 	script.set_source_code(source)
 	script.reload()
 	return script.new().singleton
+
+
+func dec2bistr(decimal_value, max_bits = 31):
+	var binary_string = ""
+	var temp
+	var count = max_bits
+
+	while(count >= 0):
+		temp = decimal_value >> count
+		if(temp & 1):
+			binary_string = binary_string + "1"
+		else:
+			binary_string = binary_string + "0"
+		count -= 1
+
+	return binary_string
+
+
+func add_line_numbers(contents):
+	if(contents == null):
+		return ''
+
+	var to_return = ""
+	var lines = contents.split("\n")
+	var line_num = 1
+	for line in lines:
+		var line_str = str(line_num).lpad(6, ' ')
+		to_return += str(line_str, ' |', line, "\n")
+		line_num += 1
+	return to_return
+
+func pp(dict, indent=''):
+	var text = json.stringify(dict, '  ')
+	print(text)
+
+
+var _created_script_count = 0
+func create_script_from_source(source, override_path=null):
+	_created_script_count += 1
+	var r_path = str('workaround for godot issue #65263 (', _created_script_count, ')')
+	if(override_path != null):
+		r_path = override_path
+
+	var DynamicScript = GDScript.new()
+	DynamicScript.source_code = source
+	# The resource_path must be unique or Godot thinks it is trying
+	# to load something it has already loaded and generates an error like
+	# ERROR: Another resource is loaded from path 'workaround for godot issue #65263' (possible cyclic resource inclusion).
+	DynamicScript.resource_path = r_path
+	var result = DynamicScript.reload()
+
+	return DynamicScript

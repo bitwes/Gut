@@ -71,7 +71,6 @@ class BaseTestClass:
 		add_child(gr.test_with_gut.gut)
 
 	func after_each():
-		gr.test_with_gut.gut.get_doubler().clear_output_directory()
 		gr.test_with_gut.gut.get_spy().clear()
 
 		gr.test.free()
@@ -89,11 +88,10 @@ class TestMiscTests:
 		assert_pass(gr.test)
 
 	func test_get_set_logger():
-		pending('pending in 4.0')
-		# assert_ne(gr.test.get_logger(), null)
-		# var dlog = double(Logger).new()
-		# gr.test.set_logger(dlog)
-		# assert_eq(gr.test.get_logger(), dlog)
+		assert_ne(gr.test.get_logger(), null)
+		var dlog = double(Logger).new()
+		gr.test.set_logger(dlog)
+		assert_eq(gr.test.get_logger(), dlog)
 
 	func test_not_freeing_children_generates_warning():
 		pass
@@ -1270,8 +1268,6 @@ class TestStringEndsWith:
 class TestAssertCalled:
 	extends BaseTestClass
 
-	var skip_script = 'Not ready for 4.0'
-
 	func test_assert_called_fails_with_message_if_non_doubled_passed():
 		var obj = GDScript.new()
 		gr.test_with_gut.gut.get_spy().add_call(obj, 'method')
@@ -1308,14 +1304,12 @@ class TestAssertCalled:
 		doubled.set_value(5)
 		gr.test_with_gut.assert_called(doubled, 'set_value', 5)
 		assert_fail(gr.test_with_gut)
-		assert_eq(gr.test_with_gut.logger.get_errors().size(), 1, 'Generates error')
+		assert_eq(gr.test_with_gut.get_logger().get_errors().size(), 1, 'Generates error')
 
 
 # ------------------------------------------------------------------------------
 class TestAssertNotCalled:
 	extends BaseTestClass
-
-	var skip_script = 'Not ready for 4.0'
 
 	func test_passes_when_no_calls_have_been_made():
 		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
@@ -1354,8 +1348,6 @@ class TestAssertNotCalled:
 # ------------------------------------------------------------------------------
 class TestAssertCallCount:
 	extends BaseTestClass
-
-	var skip_script = 'Not ready for 4.0'
 
 	func test_passes_when_nothing_called_and_expected_count_zero():
 		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
@@ -1405,8 +1397,6 @@ class TestAssertCallCount:
 class TestGetCallParameters:
 	extends BaseTestClass
 
-	var skip_script = 'Not ready for 4.0'
-
 	func test_it_works():
 		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
 		doubled.set_value(5)
@@ -1417,14 +1407,12 @@ class TestGetCallParameters:
 	func test_generates_error_if_you_do_not_pass_a_doubled_object():
 		var thing = Node2D.new()
 		var _p = gr.test_with_gut.get_call_parameters(thing, 'something')
-		assert_eq(gr.test_with_gut.logger.get_errors().size(), 1)
+		assert_eq(gr.test_with_gut.get_logger().get_errors().size(), 1)
 
 
 # ------------------------------------------------------------------------------
 class TestGetCallCount:
 	extends BaseTestClass
-
-	var skip_script = 'Not ready for 4.0'
 
 	func test_it_works():
 		var doubled = gr.test_with_gut.partial_double(DOUBLE_ME_PATH).new()

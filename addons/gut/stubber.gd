@@ -18,12 +18,12 @@ var _strutils = _utils.Strutils.new()
 
 
 func _make_key_from_metadata(doubled):
-	var to_return = doubled.__gut_metadata_.path
+	var to_return = doubled.__gutdbl.thepath
 
-	if(doubled.__gut_metadata_.from_singleton != ''):
-		to_return = str(doubled.__gut_metadata_.from_singleton)
-	elif(doubled.__gut_metadata_.subpath != ''):
-		to_return += str('-', doubled.__gut_metadata_.subpath)
+	if(doubled.__gutdbl.from_singleton != ''):
+		to_return = str(doubled.__gutdbl.from_singleton)
+	elif(doubled.__gutdbl.subpath != ''):
+		to_return += str('-', doubled.__gutdbl.subpath)
 
 	return to_return
 
@@ -78,7 +78,7 @@ func _find_stub(obj, method, parameters=null, find_overloads=false):
 	if(_utils.is_instance(obj)):
 		if(returns.has(obj) and returns[obj].has(method)):
 			key = obj
-		elif(obj.get('__gut_metadata_')):
+		elif(obj.get('__gutdbl')):
 			key = _make_key_from_metadata(obj)
 
 	if(returns.has(key) and returns[key].has(method)):
@@ -87,14 +87,16 @@ func _find_stub(obj, method, parameters=null, find_overloads=false):
 		var overload_match = null
 
 		for i in range(returns[key][method].size()):
-			if(returns[key][method][i].parameters == parameters):
-				param_match = returns[key][method][i]
+			var cur_stub = returns[key][method][i]
+			if(cur_stub.parameters == parameters):
+				param_match = cur_stub
 
-			if(returns[key][method][i].parameters == null):
-				null_match = returns[key][method][i]
+			if(cur_stub.parameters == null and !cur_stub.is_param_override_only()):
+				null_match = cur_stub
 
-			if(returns[key][method][i].has_param_override()):
-				overload_match = returns[key][method][i]
+			if(cur_stub.has_param_override()):
+				if(overload_match == null || overload_match.is_script_default):
+					overload_match = cur_stub
 
 		if(find_overloads and overload_match != null):
 			to_return = overload_match
@@ -104,10 +106,8 @@ func _find_stub(obj, method, parameters=null, find_overloads=false):
 		# We found a case where the parameters were not specified so return
 		# parameters for that.  Only do this if the null match is not *just*
 		# a paramerter override stub.
-		elif(null_match != null and !null_match.is_param_override_only()):
+		elif(null_match != null):
 			to_return = null_match
-
-
 
 	return to_return
 
@@ -151,7 +151,7 @@ func should_call_super(obj, method, parameters=null):
 
 	var is_partial = false
 	if(typeof(obj) != TYPE_STRING): # some stubber tests test with strings
-		is_partial = obj.__gut_metadata_.is_partial
+		is_partial = obj.__gutdbl.is_partial
 	var should = is_partial
 
 	if(stub_info != null):
@@ -214,3 +214,9 @@ func to_s():
 		text = 'Stubber is empty';
 
 	return text
+
+
+func stub_defaults_from_meta(target, method_meta):
+	var params = _utils.StubParams.new(target, method_meta)
+	params.is_script_default = true
+	add_stub(params)

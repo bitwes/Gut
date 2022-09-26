@@ -1,3 +1,4 @@
+class_name GutStringUtils
 
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 # Hash containing all the built in types in Godot.  This provides an English
@@ -61,9 +62,9 @@ func _get_obj_filename(thing):
 
 	if(thing == null or
 		!is_instance_valid(thing) or
-		str(thing) == '[Object:null]' or
+		str(thing) == '<Object#null>' or
 		typeof(thing) != TYPE_OBJECT or
-		thing.has_method('__gut_instance_from_id')):
+		thing.has_method('__gutdbl_init_vals')):
 		return
 
 	if(thing.get_script() == null):
@@ -74,10 +75,11 @@ func _get_obj_filename(thing):
 			# we do nothing.  This just read better.
 			pass
 	elif(!_utils.is_native_class(thing)):
-		var dict = inst_to_dict(thing)
-		filename = _get_filename(dict['@path'])
-		if(str(dict['@subpath']) != ''):
-			filename += str('/', dict['@subpath'])
+		filename = 'this method broke somehow'
+		# var dict = inst_to_dict(thing)
+		# filename = _get_filename(dict['@path'])
+		# if(str(dict['@subpath']) != ''):
+		# 	filename += str('/', dict['@subpath'])
 
 	return filename
 
@@ -110,14 +112,14 @@ func type2str(thing):
 		if(_utils.is_native_class(thing)):
 			str_thing = _utils.get_native_class_name(thing)
 		elif(_utils.is_double(thing)):
-			var double_path = _get_filename(thing.__gut_metadata_.path)
-			if(thing.__gut_metadata_.subpath != ''):
-				double_path += str('/', thing.__gut_metadata_.subpath)
-			elif(thing.__gut_metadata_.from_singleton != ''):
-				double_path = thing.__gut_metadata_.from_singleton + " Singleton"
+			var double_path = _get_filename(thing.__gutdbl.thepath)
+			if(thing.__gutdbl.subpath != ''):
+				double_path += str('/', thing.__gutdbl.subpath)
+			elif(thing.__gutdbl.from_singleton != ''):
+				double_path = thing.__gutdbl.from_singleton + " Singleton"
 
 			var double_type = "double"
-			if(thing.__gut_metadata_.is_partial):
+			if(thing.__gutdbl.is_partial):
 				double_type = "partial-double"
 
 			str_thing += str("(", double_type, " of ", double_path, ")")

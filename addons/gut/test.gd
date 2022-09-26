@@ -44,14 +44,13 @@ extends Node
 # method which makes doubling much easier for the user.
 # -----------------------------------------------------------------------------
 class DoubleInfo:
-	var path
-	var subpath
+	var subpath = null
 	var strategy
 	var make_partial
-	var extension
 	var _utils = load('res://addons/gut/utils.gd').get_instance()
 	var _is_native = false
 	var is_valid = false
+	var resource  = null
 
 	# Flexible init method.  p2 can be subpath or stategy unless p3 is
 	# specified, then p2 must be subpath and p3 is strategy.
@@ -63,7 +62,6 @@ class DoubleInfo:
 	#   (object_to_double, subpath, strategy)
 	func _init(thing,p2=null,p3=null):
 		strategy = p2
-		print(thing, ' is ', typeof(thing), ' = ', TYPE_OBJECT)
 		# short-circuit and ensure that is_valid
 		# is not set to true.
 		if(_utils.is_instance(thing)):
@@ -75,36 +73,36 @@ class DoubleInfo:
 
 		if(typeof(thing) == TYPE_OBJECT):
 			if(_utils.is_native_class(thing)):
-				path = thing
 				_is_native = true
-				extension = 'native_class_not_used'
-			else:
-				path = thing.get('resource_path')
-		else:
-			path = thing
-
-		if(!_is_native):
-			extension = path.get_extension()
+			resource = thing
+		elif(typeof(thing) == TYPE_STRING):
+			resource = load(thing)
+			if(subpath != null and typeof(subpath) == TYPE_STRING):
+				var parts = subpath.split('/')
+				for i in range(parts.size()):
+					resource = resource.get(parts[i])
+			elif(subpath != null):
+				resource = subpath
 
 		is_valid = true
 
 	func is_scene():
-		return extension == 'tscn'
+		return resource is PackedScene
 
 	func is_script():
-		return extension == 'gd'
+		return resource is GDScript
 
 	func is_native():
 		return _is_native
 
 	func to_s():
-		return str(path, "\n",
-			subpath, "\n",
-			strategy, "\n",
-			make_partial, "\n",
-			extension, "\n",
-			_is_native, "\n",
-			is_valid, "\n")
+		return str(
+			'resource   ', resource, "\n",
+			'subpath    ', subpath, "\n",
+			'strategy   ', strategy, "\n",
+			'partial    ', make_partial, "\n",
+			'native     ', _is_native, "\n",
+			'valid      ', is_valid, "\n")
 
 
 # ------------------------------------------------------------------------------
@@ -143,7 +141,8 @@ var _summary = {
 var _signal_watcher = load('res://addons/gut/signal_watcher.gd').new()
 
 # Convenience copy of _utils.DOUBLE_STRATEGY
-var DOUBLE_STRATEGY = null
+var DOUBLE_STRATEGY = _utils.DOUBLE_STRATEGY
+
 var _lgr = _utils.get_logger()
 var _strutils = _utils.Strutils.new()
 
@@ -154,7 +153,8 @@ var InputFactory = _utils.InputFactory
 var InputSender = _utils.InputSender
 
 func _init():
-	DOUBLE_STRATEGY = _utils.DOUBLE_STRATEGY # yes, this is right
+	pass
+
 
 func _str(thing):
 	return _strutils.type2str(thing)
@@ -1266,36 +1266,35 @@ func _smart_double(double_info):
 	var override_strat = _utils.nvl(double_info.strategy, gut.get_doubler().get_strategy())
 	var to_return = null
 
-	if(double_info.is_scene()):
+	if(double_info.resource is PackedScene):
 		if(double_info.make_partial):
-			to_return =  gut.get_doubler().partial_double_scene(double_info.path, override_strat)
+			to_return =  gut.get_doubler().partial_double_scene(double_info.resource, override_strat)
 		else:
-			to_return =  gut.get_doubler().double_scene(double_info.path, override_strat)
+			to_return =  gut.get_doubler().double_scene(double_info.resource, override_strat)
 
 	elif(double_info.is_native()):
 		if(double_info.make_partial):
 			to_return = gut.get_doubler().partial_double_gdnative(double_info.path)
 		else:
-			to_return = gut.get_doubler().double_gdnative(double_info.path)
+			to_return = gut.get_doubler().double_gdnative(double_info.resource)
 
 	elif(double_info.is_script()):
 		if(double_info.subpath == null):
 			if(double_info.make_partial):
-				to_return = gut.get_doubler().partial_double(double_info.path, override_strat)
+				to_return = gut.get_doubler().partial_double(double_info.resource, override_strat)
 			else:
-				to_return = gut.get_doubler().double(double_info.path, override_strat)
+				to_return = gut.get_doubler().double(double_info.resource, override_strat)
 		else:
 			if(double_info.make_partial):
-				to_return = gut.get_doubler().partial_double_inner(double_info.path, double_info.subpath, override_strat)
+				to_return = gut.get_doubler().partial_double_inner(double_info.resource, double_info.subpath, override_strat)
 			else:
-				to_return = gut.get_doubler().double_inner(double_info.path, double_info.subpath, override_strat)
+				to_return = gut.get_doubler().double_inner(double_info.resource, double_info.subpath, override_strat)
 	return to_return
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func double(thing, p2=null, p3=null):
 	var double_info = DoubleInfo.new(thing, p2, p3)
-	print(double_info.to_s())
 	if(!double_info.is_valid):
 		_lgr.error('double requires a class or path, you passed an instance:  ' + _str(thing))
 		return null
@@ -1365,14 +1364,14 @@ func double_inner(path, subpath, strategy=null):
 # ------------------------------------------------------------------------------
 func ignore_method_when_doubling(thing, method_name):
 	var double_info = DoubleInfo.new(thing)
-	var path = double_info.path
+	var r = double_info.resource
 
 	if(double_info.is_scene()):
 		var inst = thing.instantiate()
 		if(inst.get_script()):
-			path = inst.get_script().get_path()
+			r = inst.get_script()
 
-	gut.get_doubler().add_ignored_method(path, method_name)
+	gut.get_doubler().add_ignored_method(r, method_name)
 
 # ------------------------------------------------------------------------------
 # Stub something.

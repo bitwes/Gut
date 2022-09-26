@@ -1,3 +1,5 @@
+class_name GutDoubleTestInnerClasses
+
 var _value = 1
 
 
@@ -36,8 +38,6 @@ class InnerCA:
 class InnerWithSignals:
 	signal signal_signal
 
-	func _init():
-		add_user_signal('user_signal')
 
 
 class InnerExtendsNode2D:

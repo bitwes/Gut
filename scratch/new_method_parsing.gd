@@ -53,6 +53,9 @@ class ParsedScript:
 	var _methods_by_name = {}
 
 	func _init(thing):
+
+		print(thing.get_path())
+
 		var methods = thing.get_method_list()
 		for m in methods:
 			var meth = ParsedMethod.new(m)
@@ -90,6 +93,10 @@ class ParsedScript:
 	func get_method(name):
 		return _methods_by_name[name]
 
+	func get_sorted_method_names():
+		var keys = _methods_by_name.keys()
+		keys.sort()
+		return keys
 
 
 
@@ -113,14 +120,35 @@ func pp(dict):
 	print(json.stringify(dict, ' '))
 
 func _init():
-	var ps = ParsedScript.new(DoubleMe)
-	print('************************************************')
-	ps.print_super()
-	print('************************************************')
-	ps.print_local()
+	var Thing = Node2D
+	print(Thing)
+	print(Thing.new().get_class())
+	var id_str = str(Thing).replace("<", '').replace(">", '').split('#')[1]
+	print(id_str)
 
-	var m_assert_eq = ps.get_method('default_is_value')
-	print(m_assert_eq.to_s())
-	pp(m_assert_eq._meta)
+	var by_id = instance_from_id(id_str.to_int())
+	print(by_id)
+
+
+
+
+	# var dbl_inst = DoubleMe.new()
+	# print(dbl_inst.get_script().get_path())
+
+	# # print(DoubleMe.get_method_list())
+	# print(DoubleMe.get_script_method_list())
+	# print('************************************************')
+	# print(DoubleMe.get_method_list())
+
+
+	# var ps = ParsedScript.new(DoubleMe)
+	# print('************************************************')
+	# ps.print_super()
+	# print('************************************************')
+	# ps.print_local()
+
+	# var m_assert_eq = ps.get_method('default_is_value')
+	# print(m_assert_eq.to_s())
+	# pp(m_assert_eq._meta)
 
 	quit()

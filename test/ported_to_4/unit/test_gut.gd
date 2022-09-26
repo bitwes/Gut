@@ -249,11 +249,11 @@ class TestEverythingElse:
 	# Doubler
 	# ------------------------------
 	func test_when_test_overrides_strategy_it_is_reset_after_test_finishes():
-		gr.test_gut.double_strategy = _utils.DOUBLE_STRATEGY.PARTIAL
+		gr.test_gut.double_strategy = _utils.DOUBLE_STRATEGY.SCRIPT_ONLY
 		gr.test_gut.add_script('res://test/samples/test_before_after.gd')
-		gr.test_gut.get_doubler().set_strategy(_utils.DOUBLE_STRATEGY.FULL)
+		gr.test_gut.get_doubler().set_strategy(_utils.DOUBLE_STRATEGY.INCLUDE_SUPER)
 		gr.test_gut.test_scripts()
-		assert_eq(gr.test_gut.double_strategy, _utils.DOUBLE_STRATEGY.PARTIAL)
+		assert_eq(gr.test_gut.double_strategy, _utils.DOUBLE_STRATEGY.SCRIPT_ONLY)
 
 	func test_clears_ignored_methods_between_tests():
 		gr.test_gut.get_doubler().add_ignored_method('ignore_script', 'ignore_method')
@@ -442,11 +442,6 @@ class TestEverythingElse:
 		assert_eq(instance.counts.before_each, 3, 'before_each')
 		assert_eq(instance.counts.after_all, 1, 'after_all')
 		assert_eq(instance.counts.after_each, 3, 'after_each')
-
-		assert_eq(instance.counts.prerun_setup, 1, 'prerun_setup')
-		assert_eq(instance.counts.setup, 3, 'setup')
-		assert_eq(instance.counts.postrun_teardown, 1, 'postrun_teardown')
-		assert_eq(instance.counts.teardown, 3, 'teardown')
 
 	func test_when_inner_class_skipped_none_of_the_before_after_are_called():
 		pending('pending in 4.0')

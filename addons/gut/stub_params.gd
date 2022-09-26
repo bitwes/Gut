@@ -8,6 +8,9 @@ var target_subpath = null
 var parameters = null
 var stub_method = null
 var call_super = false
+# Whether this is a stub for default parameter values as they are defined in
+# the script, and not an overridden ddefault value.
+var is_script_default = false
 
 # -- Paramter Override --
 # Parmater overrides are stored in here along with all the other stub info
@@ -29,9 +32,19 @@ const NOT_SET = '|_1_this_is_not_set_1_|'
 
 func _init(target=null,method=null,subpath=null):
 	stub_target = target
-	stub_method = method
 	target_subpath = subpath
+	stub_method = method
 
+	if(typeof(method) == TYPE_DICTIONARY):
+		_load_metadata(method)
+
+func _load_metadata(meta):
+	stub_method = meta.name
+	var values = meta.default_args.duplicate()
+	while (values.size() < meta.args.size()):
+		values.push_front(null)
+
+	param_defaults(values)
 
 func to_return(val):
 	if(stub_method == '_init'):
@@ -102,6 +115,8 @@ func to_s():
 		base_string += str(' (param count override=', parameter_count, ' defaults=', parameter_defaults)
 		if(is_param_override_only()):
 			base_string += " ONLY"
+		if(is_script_default):
+			base_string += " script default"
 		base_string += ') '
 
 	if(call_super):
@@ -109,5 +124,7 @@ func to_s():
 
 	if(parameters != null):
 		base_string += str(' with params (', parameters, ') returns ', return_val)
+	else:
+		base_string += str(' returns ', return_val)
 
 	return base_string

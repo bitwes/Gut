@@ -39,8 +39,6 @@ class GuiHandler:
 		_ctrls.time_label.text = ''
 
 
-
-
 	# ------------------
 	# Events
 	# ------------------
