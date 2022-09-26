@@ -894,9 +894,6 @@ func _test_the_scripts(indexes=[]):
 		indexes_to_run = indexes
 
 
-	if(_doubler.get_strategy() == _utils.DOUBLE_STRATEGY.FULL):
-		_lgr.info("Using Double Strategy FULL as default strategy.  Keep an eye out for weirdness, this is still experimental.")
-
 	# loop through scripts
 	for test_indexes in range(indexes_to_run.size()):
 		var the_script = _test_collector.scripts[indexes_to_run[test_indexes]]

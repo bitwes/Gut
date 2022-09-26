@@ -296,11 +296,9 @@ class TestDoubleStrategyIncludeSuper:
 		assert_source_contains(inst, 'connect(')
 
 	func test_can_call_a_built_in_that_has_default_parameters():
-		pending('have to rework defaults')
-		return
 
 		var inst = autofree(doubler.double(DoubleExtendsWindowDialog).new())
-		inst.connect('hide', self._hide_call_back)
+		inst.size_changed.connect(self._hide_call_back)
 		pass_test("if we got here, it worked")
 
 
@@ -433,8 +431,7 @@ class TestDoubleInnerClasses:
 		assert_eq(inst.__gutdbl.subpath, '')
 
 	func test_can_override_strategy_when_doubling():
-		#doubler.set_strategy(DOUBLE_STRATEGY.FULL)
-		var d = doubler.double_inner(InnerClasses, InnerClasses.InnerA, DOUBLE_STRATEGY.FULL)
+		var d = doubler.double_inner(InnerClasses, InnerClasses.InnerA, DOUBLE_STRATEGY.INCLUDE_SUPER)
 		# make sure it has something from Object that isn't implemented
 		assert_source_contains(d.new() , 'func disconnect(p_signal')
 		assert_eq(doubler.get_strategy(), DOUBLE_STRATEGY.SCRIPT_ONLY, 'strategy should have been reset')

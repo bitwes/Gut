@@ -140,10 +140,10 @@ func _apply_options(opts, _tester):
 	for i in range(opts.tests.size()):
 		_tester.add_script(opts.tests[i])
 
-	if(opts.double_strategy == 'full'):
-		_tester.double_strategy = DOUBLE_STRATEGY.FULL
-	elif(opts.double_strategy == 'partial'):
-		_tester.double_strategy = DOUBLE_STRATEGY.PARTIAL
+	if(opts.double_strategy == 'include super'):
+		_tester.double_strategy = DOUBLE_STRATEGY.INCLUDE_SUPER
+	elif(opts.double_strategy == 'script only'):
+		_tester.double_strategy = DOUBLE_STRATEGY.SCRIPT_ONLY
 
 	_tester.unit_test_name = opts.unit_test_name
 	_tester.pre_run_script = opts.pre_run_script

@@ -158,9 +158,6 @@ func _on_http_request_latest_version_completed(result, response_code, headers, b
 const GUT_METADATA = '__gutdbl'
 
 enum DOUBLE_STRATEGY{
-	FULL,
-	PARTIAL,
-
 	SCRIPT_ONLY,
 	INCLUDE_SUPER
 }
