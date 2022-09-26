@@ -12,7 +12,7 @@ func test_can_get_stubber():
 	assert_ne(g.get_stubber(), null)
 
 # ---------------------------------
-# these two tests use the gut instantiate that is passed to THIS test.  This isn't
+# these two tests use the gut instance that is passed to THIS test.  This isn't
 # PURE testing but it appears to cover the bases ok.
 # ------
 func test_stubber_cleared_between_tests_setup():

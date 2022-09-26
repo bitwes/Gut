@@ -34,7 +34,7 @@
 extends Node
 
 # ------------------------------------------------------------------------------
-# The instantiate name as a function since you can't have static variables.
+# The instance name as a function since you can't have static variables.
 # ------------------------------------------------------------------------------
 static func INSTANCE_NAME():
 	return '__GutUtilsInstName__'
@@ -52,7 +52,7 @@ static func get_root_node():
 		return null
 
 # ------------------------------------------------------------------------------
-# Get the ONE instantiate of utils
+# Get the ONE instance of utils
 # Since we can't have static variables we have to store the instance in the
 # tree.  This means you have to wait a bit for the main loop to be up and
 # running.
@@ -290,7 +290,7 @@ func is_double(obj):
 
 
 # ------------------------------------------------------------------------------
-# Checks if the passed in is an instantiate of a class
+# Checks if the passed in is an instance of a class
 # ------------------------------------------------------------------------------
 func is_instance(obj):
 	return typeof(obj) == TYPE_OBJECT and !obj.has_method('new') and !obj.has_method('instantiate')

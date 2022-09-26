@@ -14,7 +14,7 @@ func test_spy_for_doubler_is_guts_spy():
 
 
 # ---------------------------------
-# these two tests use the gut instantiate that is passed to THIS test.  This isn't
+# these two tests use the gut instance that is passed to THIS test.  This isn't
 # PURE testing but it appears to cover the bases ok.
 class TestGutClearsSpyBetweenTests:
 	extends 'res://addons/gut/test.gd'

@@ -76,7 +76,7 @@ func remove_methods_from_blacklist_one_by_one(obj, path):
 		doubler._blacklist.append(removed)
 
 
-# given a path it will create a double of it and then create an instantiate of the
+# given a path it will create a double of it and then create an instance of the
 # doubled object checking for nulls along the way.  Thi is what I used to test
 # the black lists for various objects.
 func double_and_instance_it(path):

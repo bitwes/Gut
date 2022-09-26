@@ -61,7 +61,7 @@ func create_instance():
 	obj.set_script(get_script_for_text(make_class()))
 
 	var inner_class = obj.MadeIt.new()
-	print('create instantiate  = ', inner_class.do_something())
+	print('create instance  = ', inner_class.do_something())
 
 func create_scene():
 	var s2 = SuperPack.new()

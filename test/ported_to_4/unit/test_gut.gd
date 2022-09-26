@@ -437,11 +437,11 @@ class TestEverythingElse:
 	func test_after_running_script_everything_checks_out():
 		gr.test_gut.add_script('res://test/samples/test_before_after.gd')
 		gr.test_gut.test_scripts()
-		var instantiate = gr.test_gut.get_current_script_object()
-		assert_eq(instantiate.counts.before_all, 1, 'before_all')
-		assert_eq(instantiate.counts.before_each, 3, 'before_each')
-		assert_eq(instantiate.counts.after_all, 1, 'after_all')
-		assert_eq(instantiate.counts.after_each, 3, 'after_each')
+		var instance = gr.test_gut.get_current_script_object()
+		assert_eq(instance.counts.before_all, 1, 'before_all')
+		assert_eq(instance.counts.before_each, 3, 'before_each')
+		assert_eq(instance.counts.after_all, 1, 'after_all')
+		assert_eq(instance.counts.after_each, 3, 'after_each')
 
 	func test_when_inner_class_skipped_none_of_the_before_after_are_called():
 		pending('pending in 4.0')

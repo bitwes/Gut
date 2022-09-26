@@ -21,7 +21,7 @@ class TestLogging:
 	func test_gut_sets_stubber_logger():
 		assert_eq(_gut.get_stubber().get_logger(), _gut.logger)
 
-	# This test makes assertion using THIS test script instantiate since it would
+	# This test makes assertion using THIS test script instance since it would
 	# be super hard to get a test object that was being run.
 	func test_gut_sets_logger_on_tests():
 		assert_eq(gut.logger, get_logger())
