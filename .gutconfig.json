@@ -7,8 +7,8 @@
   "_post_run_script": "res://test/post_run_export_json.gd",
 
   "dirs":[
-    "res://tests_4_0",
-    "res://tests_4_0_integration"
+    "res://test/ported_to_4/unit",
+    "res://test/ported_to_4/integration"
   ],
   "should_maximize": false,
   "should_exit": true,
