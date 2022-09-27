@@ -270,21 +270,22 @@ var _start_time = 0.0
 var _current_test = null
 var _pause_before_teardown = false
 
-var _wait_timer = Timer.new()
 
+
+var _new_summary = null
+
+# This is set to true when one of the various yield_ functions are called.  Gut
+# uses this to determine what kind of yield it has encountered.
 var _was_yield_method_called = false
 # used when yielding to gut instead of some other
 # signal.  Start with set_yield_time()
 var _yield_timer = Timer.new()
 var _yield_frames = 0
-
-
-var _new_summary = null
-
 var _yielding_to = {
 	obj = null,
 	signal_name = ''
 }
+var _awaiter = load('res://addons/gut/awaiter.gd').new()
 
 
 # Used to cancel importing scripts if an error has occurred in the setup.  This
@@ -343,10 +344,6 @@ func _ready():
 	if(_should_print_versions):
 		_lgr.info(str('using [', OS.get_user_data_dir(), '] for temporary output.'))
 
-	add_child(_wait_timer)
-	_wait_timer.set_wait_time(1)
-	_wait_timer.set_one_shot(true)
-
 	add_child(_yield_timer)
 	_yield_timer.set_one_shot(true)
 	_yield_timer.connect('timeout',Callable(self,'_yielding_callback'))
@@ -354,6 +351,8 @@ func _ready():
 	if(_select_script != null):
 		select_script(_select_script)
 
+	add_child(_awaiter)
+	_awaiter.pause_ended.connect(_yielding_callback)
 	_print_versions()
 
 # ------------------------------------------------------------------------------
@@ -367,10 +366,10 @@ func _notification(what):
 
 		_test_script_objects = []
 
-		if(is_instance_valid(_wait_timer)):
-			_wait_timer.free()
 		if(is_instance_valid(_yield_timer)):
 			_yield_timer.free()
+		if(is_instance_valid(_awaiter)):
+			_awaiter.free()
 
 func _print_versions(send_all = true):
 	if(!_should_print_versions):
