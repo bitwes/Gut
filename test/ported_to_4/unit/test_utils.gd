@@ -11,17 +11,11 @@ func test_is_double_returns_false_for_non_doubles():
 	assert_false(utils.is_double(autofree(Node.new())))
 
 func test_is_double_returns_true_for_doubles():
-	pending('crashes hard in 4.0')
-	return
-
 	var utils = autofree(Utils.new())
 	var d = double(Node).new()
 	assert_true(utils.is_double(d))
 
 func test_is_double_returns_false_for_primitives():
-	pending('crashes hard in 4.0')
-	return
-
 	var utils = autofree(Utils.new())
 	assert_false(utils.is_double('hello'), 'string')
 	assert_false(utils.is_double(1), 'int')
@@ -42,27 +36,19 @@ func test_is_double_works_with_classes_that_overload_get():
 	assert_false(utils.is_double(og))
 
 func test_is_instance_false_for_classes():
-	pending('crashes hard in 4.0')
-	return
-
 	var utils = autofree(Utils.new())
 	assert_false(utils.is_instance(Node2D))
 
 func test_is_instance_true_for_new():
-	pending('crashes hard in 4.0')
-	return
-
 	var utils = autofree(Utils.new())
 	var n = Node.new()
 	assert_true(utils.is_instance(n))
 
 func test_is_instance_false_for_instanced_things():
-	pending('crashes hard in 4.0')
-	return
-
 	var utils = autofree(Utils.new())
 	var i = load('res://test/resources/SceneNoScript.tscn')
 	assert_false(utils.is_instance(i))
+
 
 func test_get_native_class_name_does_not_generate_orphans():
 	var utils = Utils.new()
@@ -74,6 +60,10 @@ func test_get_native_class_name_does_not_free_references():
 	var utils = autofree(Utils.new())
 	var n = utils.get_native_class_name(InputEventKey)
 	pass_test("we got here")
+
+func test_is_native_class_returns_true_for_native_classes():
+	var utils = autofree(Utils.new())
+	assert_true(utils.is_native_class(Node))
 
 
 

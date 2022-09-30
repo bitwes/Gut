@@ -269,7 +269,7 @@ func nvl(value, if_null):
 # ------------------------------------------------------------------------------
 func is_freed(obj):
 	var wr = weakref(obj)
-	return !(wr.get_ref() and str(obj) != '[Deleted Object]')
+	return !(wr.get_ref() and str(obj) != '<Freed Object>')
 
 
 # ------------------------------------------------------------------------------
@@ -293,7 +293,7 @@ func is_double(obj):
 # Checks if the passed in is an instance of a class
 # ------------------------------------------------------------------------------
 func is_instance(obj):
-	return typeof(obj) == TYPE_OBJECT and !obj.has_method('new') and !obj.has_method('instantiate')
+	return typeof(obj) == TYPE_OBJECT and !is_native_class(obj) and !obj.has_method('new') and !obj.has_method('instantiate')
 
 # ------------------------------------------------------------------------------
 # Checks if the passed in is a GDScript

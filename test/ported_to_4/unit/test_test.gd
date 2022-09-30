@@ -1078,7 +1078,7 @@ class TestSignalAsserts:
 class TestExtendAsserts:
 	extends BaseTestClass
 
-	var skip_script = 'Not implemented in 4.0'
+	var skip_script = 'skipping'
 
 	class BaseClass:
 		extends Node2D
