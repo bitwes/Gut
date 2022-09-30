@@ -30,14 +30,15 @@ Warnings/Errors:
 
 
 ## Contributing
-Pull requests are welcome.  You can look at the [Godot 4.0](https://github.com/bitwes/Gut/issues?q=is%3Aissue+is%3Aopen+label%3A%22Godot+4.0%22) issues for items that need to be addressed.  If you find something that is not mentioned, please make an issue.  Running tests for GUT requires using the CLI or VSCode plugin currently.
+Pull requests are welcome.  You can look at the [Godot 4.0](https://github.com/bitwes/Gut/issues?q=is%3Aissue+is%3Aopen+label%3A%22Godot+4.0%22) issues for items that need to be addressed.  If you find something that is not mentioned, please make an issue.  There are also a lot of pending and failing tests that need to be addressed.
+
+Running tests for GUT requires using the CLI or VSCode plugin currently.
 
 Read the "Working" and "Broken" features section before starting.  There are some major features that are not working.  These features might be required before other features can be fixed.  `yield`/`await` and doubling inner classes are big ones.
 
 * Tests that are mostly working in 4.0 have been moved to `res://tests/ported_to_4/`.  Anything you fix/implement should have tests in the `unit` or `integration` directory.
 * Move any existing tests related to your work from the various directories below.
 * Tests in `res://test/unit` or `res://test/integration` have not been ported yet.
-* Tests in `res://test/broken_in_4` do not run in 4.0 yet.
 * You can use the `skip_script` variable (details below) to skip inner classes in a test script.
 * Use the following format for skipping individual tests in a script:
 ```gdscript
@@ -52,9 +53,9 @@ return
 ## Godot 4 Changes
 These are changes to Godot that affect how GUT is used/implemented.
 
-* `setget` has been replaced with a completely new syntax.  More info at [#380](/../../issues/380).
+* `setget` has been replaced with a completely new syntax.  More info at [#380](/../../issues/380).  Examples of the new way and the new `assert_property` method below.
 * `connect` has been significantly altered.  The signal related asserts will likely change to use `Callable` parameters instead of strings.  It is possible to use strings, so this may remain in some form.  More info in [#383](/../../issues/383).
-* `yield` has been replaced with `await`.  `yield_to`, `yield_for`, and `yield_frames` will be replaced with similar `await` methods.  The `yield_*` methods will be deprecated.  More info at [#382](/../../issues/382).
+* `yield` has been replaced with `await`.  `yield_to`, `yield_for`, and `yield_frames` have been deprecated, the new methods are `wait_seconds`, `wait_frams` and `wait_for_signal`.  There are exampels below and more info at [#382](/../../issues/382).
 * Arrays are pass by reference now.
 
 ## Working Features
@@ -64,7 +65,7 @@ These are changes to Godot that affect how GUT is used/implemented.
 * Signal connection asserts
 * Orphan monitoring
 * Doubling, Spying, Stubbing (mostly).  Cannot double inner classes.
-* Using `await` (the new `yield`) in tests, and all the GUT supplied `yield_` methods.
+* Using `await` (the new `yield`) in tests, and all the GUT supplied `yield_` methods.  See notes in Changes section.
 * Input mocking.
 
 ## Broken Features
@@ -93,7 +94,7 @@ await yield_to(signaler, 'the_signal_name', 5, 'optional message')
 await yield_for(1.5, 'optional message')
 await yield_frames(30, 'optional message')
 ```
-* The new `yield_` methods are `pause_for`, `pause_frames`, and `pause_until`.
+* The new `yield_` methods are `wait_seconds`, `wait_frames`, and `wait_for_signal`.
 ```
 await wait_for_signal(signaler.the_signal, 5, 'optional message')
 await wait_seconds(1.5, 'optional message')
@@ -101,11 +102,13 @@ await wait_frames(30, 'optional message')
 ```
 
 
-### Implementation
+### Implementation Changes
 * The `Gut` control has been removed.  Adding a `Gut` node to a scene to run tests will no longer work.  This control dates back to Godot 2.x days.  With GUT 7.4.1 I believe the in-editor Gut Panel has enough features to discontinue using a Scene/`Gut` control to run tests.  Another approach for running tests in a deployed project will be added at some point.
 * The GUI for GUT has been simplified to reflect that it is no longer used to run tests, just display progress and output.  It has also been decoupled from `gut.gd`.  `gut.gd` is now a `Node` instead of a `Control` and all GUI logic has been removed.  New signals have been added so that a GUI can be made without `gut.gd` having to know anything about it.  As a result, GUT can now be run without a GUI if that ever becomes something we want to do.
 * Replaced the old `yield_between_tests` flag with `paint_after`.  This property (initially set to .1s) tells GUT how long to wait before it pauses for 1 frame to allow for painting the screen.  This value is checked after each test, so longer tests can still cause a delay in the painting of the screen.  This has made the painting a little choppier but has cut down the time it takes to run tests (200 simple tests in 20 scripts dropped from 2+ seconds to .5 seconds to run).  This feature is settable from the command line, .gutconfig.json, and GutPanel.
 * The doubling implementation has changed significantly but usage has remained the same.
+
+
 
 ## setget vs set: and get:
 In godot 4.0 `setget` has been replaced with `set(val):` and `get():` psuedo methods which make properties more concrete.  This is a welcome change, but comes with a few caveats.
