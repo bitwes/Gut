@@ -49,19 +49,18 @@ func test_add_queue_free():
 	n1.free()
 
 func test_calling_free_all_queues_free():
-	pending('** YIELD **')
-	# var af = AutoFree.new()
-	# var to_free1 = Node2D.new()
-	# var to_free2 = Node.new()
-	# af.add_queue_free(to_free1)
-	# af.add_queue_free(to_free2)
-	# af.free_all()
-	# assert_not_freed(to_free1, 'free1')
-	# assert_not_freed(to_free2, 'free2')
-	# assert_eq(af.get_queue_free_count(), 0)
-	# await yield_for(1).YIELD
-	# assert_freed(to_free1, 'free1')
-	# assert_freed(to_free2, 'free2')
+	var af = AutoFree.new()
+	var to_free1 = Node2D.new()
+	var to_free2 = Node.new()
+	af.add_queue_free(to_free1)
+	af.add_queue_free(to_free2)
+	af.free_all()
+	assert_not_freed(to_free1, 'free1')
+	assert_not_freed(to_free2, 'free2')
+	assert_eq(af.get_queue_free_count(), 0)
+	await yield_for(1)
+	assert_freed(to_free1, 'free1')
+	assert_freed(to_free2, 'free2')
 
 func test_can_free_things_in_tree():
 	var af = AutoFree.new()

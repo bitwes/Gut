@@ -62,30 +62,28 @@ func test_show_info():
 	assert_true(true)
 
 func test_yield():
-	pending("** YIELD **")
-	# gut.p('starting yield')
-	# await yield_for(2).timeout
-	# gut.p('end yield')
+	gut.p('starting yield')
+	await yield_for(2)
+	gut.p('end yield')
 
 
 class TestGuiOutput:
 	extends GutTest
 
-	func test_pending_class():
-		pending("This is pending in 4.0")
+	var skip_script = 'Not implemented in 4.0'
 
-	# func test_embedded_bbcode():
-	# 	_lgr.log('[u]this should not be underlined')
-	# 	assert_string_contains(gut.get_gui().get_text_box().get_text(), '[u]this should')
+	func test_embedded_bbcode():
+		_lgr.log('[u]this should not be underlined')
+		assert_string_contains(gut.get_gui().get_text_box().get_text(), '[u]this should')
 
-	# func test_embedded_bbcode_with_format():
-	# 	_lgr.log('[i]this should not be italic but should be yellow', _lgr.fmts.yellow)
-	# 	assert_string_contains(gut.get_gui().get_text_box().get_text(), '[i]this should')
+	func test_embedded_bbcode_with_format():
+		_lgr.log('[i]this should not be italic but should be yellow', _lgr.fmts.yellow)
+		assert_string_contains(gut.get_gui().get_text_box().get_text(), '[i]this should')
 
-	# func test_embedded_bbcode_with_closing_tag():
-	# 	_lgr.log('all of this [/b] should be bold', _lgr.fmts.bold)
-	# 	_lgr.log('thi should not be bold')
-	# 	assert_string_contains(gut.get_gui().get_text_box().get_text(), '[/b] should be bold')
+	func test_embedded_bbcode_with_closing_tag():
+		_lgr.log('all of this [/b] should be bold', _lgr.fmts.bold)
+		_lgr.log('thi should not be bold')
+		assert_string_contains(gut.get_gui().get_text_box().get_text(), '[/b] should be bold')
 
 
 class TestBasicLoggerOutput:

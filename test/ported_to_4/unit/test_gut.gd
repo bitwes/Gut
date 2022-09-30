@@ -444,7 +444,7 @@ class TestEverythingElse:
 		assert_eq(instance.counts.after_each, 3, 'after_each')
 
 	func test_when_inner_class_skipped_none_of_the_before_after_are_called():
-		pending('pending in 4.0')
+		pending('pending in 4.0, inner classes')
 		# gut.p('these tests sometimes fail.  Will have to add inner class names to test objects to make sure it passes.  GUT no longer guarantees the order in which the inner test classes are run so sometimes it works and sometimes it doesnt.')
 		# gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/inner_classes_check_before_after.gd')
 		# gr.test_gut.inner_class_name = 'Inner1'
@@ -512,23 +512,21 @@ class TestEverythingElse:
 		assert_gt(gr.test_gut.logger.get_errors().size(), 0, 'there should be errors')
 
 	func test_post_hook_is_run_after_tests():
-		pending('pending in 4.0 yield')
-		# var PostRunScript = load('res://test/resources/post_run_script.gd')
-		# gr.test_gut.post_run_script = 'res://test/resources/post_run_script.gd'
-		# gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
-		# gr.test_gut.test_scripts()
-		# await yield_for(1).YIELD
-		# assert_is(gr.test_gut._post_run_script_instance, PostRunScript, 'Instance is set')
-		# assert_true(gr.test_gut._post_run_script_instance.run_called, 'run was called')
+		var PostRunScript = load('res://test/resources/post_run_script.gd')
+		gr.test_gut.post_run_script = 'res://test/resources/post_run_script.gd'
+		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
+		gr.test_gut.test_scripts()
+		await yield_for(1)
+		assert_is(gr.test_gut._post_run_script_instance, PostRunScript, 'Instance is set')
+		assert_true(gr.test_gut._post_run_script_instance.run_called, 'run was called')
 
 	func test_when_post_hook_set_to_invalid_script_no_tests_are_ran():
-		pending('pending in 4.0')
-		# watch_signals(gr.test_gut)
-		# gr.test_gut.post_run_script = 'res://does_not_exist.gd'
-		# gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
-		# gr.test_gut.test_scripts()
-		# assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test should not be run')
-		# assert_gt(gr.test_gut.logger.get_errors().size(), 0, 'there should be errors')
+		watch_signals(gr.test_gut)
+		gr.test_gut.post_run_script = 'res://does_not_exist.gd'
+		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
+		gr.test_gut.test_scripts()
+		assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test should not be run')
+		assert_gt(gr.test_gut.logger.get_errors().size(), 0, 'there should be errors')
 
 	# ------------------------------
 	# Parameterized Test Tests
@@ -573,12 +571,11 @@ class TestEverythingElse:
 
 	# if you really think about this, it is a very very inception like test.
 	func test_parameterized_test_that_yield_are_called_correctly():
-		pending('pending in 4.0 yield')
-		# gr.test_gut.add_script(TEST_WITH_PARAMETERS)
-		# gr.test_gut.unit_test_name = 'test_three_values_and_a_yield'
-		# gr.test_gut.test_scripts()
-		# await yield_to(gr.test_gut, 'test_finished', 10).YIELD
-		# assert_eq(gr.test_gut.get_pass_count(), 3)
+		gr.test_gut.add_script(TEST_WITH_PARAMETERS)
+		gr.test_gut.unit_test_name = 'test_three_values_and_a_yield'
+		gr.test_gut.test_scripts()
+		await yield_to(gr.test_gut, 'test_finished', 10)
+		assert_eq(gr.test_gut.get_pass_count(), 3)
 
 	func test_parameterized_test_calls_before_each_before_each_test():
 		gr.test_gut.add_script(TEST_WITH_PARAMETERS)

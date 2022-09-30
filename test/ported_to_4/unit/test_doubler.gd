@@ -281,15 +281,12 @@ class TestDoubleStrategyIncludeSuper:
 		assert_ne(inst, null)
 
 	func test_when_everything_included_you_can_still_double_a_scene():
-		pending('YIELD')
-		return
-
-		var inst = autofree(doubler.double_scene(DOUBLE_ME_SCENE_PATH).instantiate())
+		var inst = autofree(doubler.double_scene(DoubleMeScene).instantiate())
 		add_child(inst)
 		assert_ne(inst, null, "instantiate is not null")
 		assert_ne(inst.label, null, "Can get to a label on the instantiate")
 		# pause so _process gets called
-		await yield_for(3).YIELD
+		await yield_for(3)
 
 	func test_double_includes_methods_in_super():
 		var inst = doubler.double(DoubleExtendsWindowDialog).new()

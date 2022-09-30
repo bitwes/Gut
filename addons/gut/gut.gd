@@ -270,17 +270,17 @@ var _start_time = 0.0
 var _current_test = null
 var _pause_before_teardown = false
 
-var _wait_timer = Timer.new()
 
+
+var _new_summary = null
+
+# This is set to true when one of the various yield_ functions are called.  Gut
+# uses this to determine what kind of yield it has encountered.
 var _was_yield_method_called = false
 # used when yielding to gut instead of some other
 # signal.  Start with set_yield_time()
 var _yield_timer = Timer.new()
 var _yield_frames = 0
-
-
-var _new_summary = null
-
 var _yielding_to = {
 	obj = null,
 	signal_name = ''
@@ -343,10 +343,6 @@ func _ready():
 	if(_should_print_versions):
 		_lgr.info(str('using [', OS.get_user_data_dir(), '] for temporary output.'))
 
-	add_child(_wait_timer)
-	_wait_timer.set_wait_time(1)
-	_wait_timer.set_one_shot(true)
-
 	add_child(_yield_timer)
 	_yield_timer.set_one_shot(true)
 	_yield_timer.connect('timeout',Callable(self,'_yielding_callback'))
@@ -367,8 +363,6 @@ func _notification(what):
 
 		_test_script_objects = []
 
-		if(is_instance_valid(_wait_timer)):
-			_wait_timer.free()
 		if(is_instance_valid(_yield_timer)):
 			_yield_timer.free()
 
@@ -437,8 +431,8 @@ func _yielding_callback(from_obj=false,
 	if(_yielding_to.obj != null):
 		_yielding_to.obj.call_deferred(
 			"disconnect",
-			_yielding_to.signal_name, self,
-			'_yielding_callback')
+			_yielding_to.signal_name,
+			_yielding_callback)
 		_yielding_to.obj = null
 		_yielding_to.signal_name = ''
 
@@ -449,7 +443,7 @@ func _yielding_callback(from_obj=false,
 		# the yield returns and processing finishes before the rest of the
 		# objects can get the signal.  This works b/c the timer will timeout
 		# and come back into this method but from_obj will be false.
-		_yield_timer.set_wait_time(.1)
+		_yield_timer.set_wait_time(.05)
 		_yield_timer.start()
 	else:
 		emit_signal('timeout')
@@ -643,10 +637,13 @@ func _export_junit_xml():
 # returned when a function yields.
 # ------------------------------------------------------------------------------
 func _is_function_state(script_result):
-	return script_result != null and \
-		typeof(script_result) == TYPE_OBJECT and \
-		script_result is GDScript and \
-		script_result.is_valid()
+	return false
+	# TODO 4.0 Keep this until we know how they are going to handle the
+	# 4.0 equivalent of GDScriptFunctionState
+	# return script_result != null and \
+	# 	typeof(script_result) == TYPE_OBJECT and \
+	# 	script_result is GDScriptFunctionState and \
+	# 	script_result.is_valid()
 
 # ------------------------------------------------------------------------------
 # Print out the heading for a new script
@@ -740,13 +737,16 @@ func _get_indexes_matching_path(path):
 # Execute all calls of a parameterized test.
 # ------------------------------------------------------------------------------
 func _run_parameterized_test(test_script, test_name):
-	var script_result = await _run_test(test_script, test_name)
+	await _run_test(test_script, test_name)
+	# TODO 4.0 GDScriptFunctionState? ----
+	# var script_result = await _run_test(test_script, test_name)
+	# if(_is_function_state(script_result)):
+	# 	# _run_tests does _wait_for_done so just wait on it to  complete
+	# 	await script_result.COMPLETED
+	# ----
+
 	if(_current_test.assert_count == 0 and !_current_test.pending):
 		_lgr.warn('Test did not assert')
-
-	if(_is_function_state(script_result)):
-		# _run_tests does _wait_for_done so just wait on it to  complete
-		await script_result.COMPLETED
 
 	if(_parameter_handler == null):
 		_lgr.error(str('Parameterized test ', _current_test.name, ' did not call use_parameters for the default value of the parameter.'))
@@ -754,14 +754,15 @@ func _run_parameterized_test(test_script, test_name):
 	else:
 		while(!_parameter_handler.is_done()):
 			var cur_assert_count = _current_test.assert_count
-			script_result = await _run_test(test_script, test_name)
-			if(_is_function_state(script_result)):
-				# _run_tests does _wait_for_done so just wait on it to  complete
-				await script_result.COMPLETED
-
+			await _run_test(test_script, test_name)
+			# TODO 4.0 GDScriptFunctionState? ----
+			# script_result = await _run_test(test_script, test_name)
+			# if(_is_function_state(script_result)):
+			# 	# _run_tests does _wait_for_done so just wait on it to  complete
+			# 	await script_result.COMPLETED
+			# ----
 			if(_current_test.assert_count == cur_assert_count and !_current_test.pending):
 				_lgr.warn('Test did not assert')
-
 
 	_parameter_handler = null
 
@@ -775,22 +776,23 @@ func _run_test(script_inst, test_name):
 	_orphan_counter.add_counter('test')
 	var script_result = null
 
-	var before_each_result = script_inst.before_each()
-	if(_is_function_state(before_each_result)):
-		await _wait_for_done(before_each_result)
+	await script_inst.before_each()
+	# TODO 4.0 GDScriptFunctionState? ----
+	# var before_each_result = script_inst.before_each()
+	# if(_is_function_state(before_each_result)):
+	# 	await _wait_for_done(before_each_result)
+	# ----
 
 	start_test.emit(test_name)
 	# When the script yields it will return a GDScriptFunctionState object
-	script_result = await script_inst.call(test_name)
-	var test_summary = await _new_summary.add_test(test_name)
 
-	# Cannot detect future yields since we never tell the method to resume.  If
-	# there was some way to tell the method to resume we could use what comes
-	# back from that to detect additional yields.  I don't think this is
-	# possible since we only know what the yield was for except when yield_for
-	# and yield_to are used.
-	if(_is_function_state(script_result)):
-		await _wait_for_done(script_result)
+	await script_inst.call(test_name)
+	# TODO 4.0 GDScriptFunctionState? ----
+	# script_result = await script_inst.call(test_name)
+	# if(_is_function_state(script_result)):
+	# 	await _wait_for_done(script_result)
+	# ----
+	var test_summary = _new_summary.add_test(test_name)
 
 	# if the test called pause_before_teardown then yield until
 	# the continue button is pressed.
@@ -801,9 +803,12 @@ func _run_test(script_inst, test_name):
 	script_inst.clear_signal_watcher()
 
 	# call each post-each-test method until teardown is removed.
-	var after_each_result = script_inst.after_each()
-	if(_is_function_state(after_each_result)):
-		await _wait_for_done(after_each_result)
+	await script_inst.after_each()
+	# TODO 4.0 GDScriptFunctionState? ----
+	# var after_each_result = await script_inst.after_each()
+	# if(_is_function_state(after_each_result)):
+	# 	await _wait_for_done(after_each_result)
+	# ----
 
 	# Free up everything in the _autofree.  Yield for a bit if we
 	# have anything with a queue_free so that they have time to
@@ -834,9 +839,12 @@ func _call_before_all(test_script):
 	_current_test.name = 'prerun_setup'
 	_current_test.name = 'before_all'
 
-	var result = test_script.before_all()
-	if(_is_function_state(result)):
-		await _wait_for_done(result)
+	await test_script.before_all()
+	# TODO 4.0 GDScriptFunctionState? ----
+	# var result = test_script.before_all()
+	# if(_is_function_state(result)):
+	# 	await _wait_for_done(result)
+	# ----
 
 	_lgr.dec_indent()
 	_current_test = null
@@ -856,10 +864,13 @@ func _call_after_all(test_script):
 	_current_test.name = 'postrun_teardown'
 	_current_test.name = 'after_all'
 
-	var result = test_script.after_all()
-	if(_is_function_state(result)):
-		await _wait_for_done(result)
 
+	await test_script.after_all()
+	# TODO 4.0 GDScriptFunctionState? ----
+	# var result = test_script.after_all()
+	# if(_is_function_state(result)):
+	# 	await _wait_for_done(result)
+	# ----
 
 	_lgr.dec_indent()
 	_current_test = null
@@ -936,10 +947,13 @@ func _test_the_scripts(indexes=[]):
 		if(!_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
 			the_script.tests = []
 		else:
-			var before_all_result = await _call_before_all(test_script)
-			if(_is_function_state(before_all_result)):
-				# _call_before_all calls _wait for done, just wait for that to finish
-				await before_all_result.COMPLETED
+			await _call_before_all(test_script)
+			# TODO 4.0 GDScriptFunctionState? ----
+			# var before_all_result = await _call_before_all(test_script)
+			# if(_is_function_state(before_all_result)):
+			# 	# _call_before_all calls _wait for done, just wait for that to finish
+			# 	await before_all_result.COMPLETED
+			# ----
 
 
 		# Each test in the script
@@ -960,9 +974,11 @@ func _test_the_scripts(indexes=[]):
 				else:
 					script_result = await _run_test(test_script, _current_test.name)
 
-				if(_is_function_state(script_result)):
-					# _run_test calls _wait for done, just wait for that to finish
-					await script_result.COMPLETED
+				# TODO 4.0 GDScriptFunctionState? ----
+				# if(_is_function_state(script_result)):
+				# 	# _run_test calls _wait for done, just wait for that to finish
+				# 	await script_result.COMPLETED
+				# ----
 
 				if(!_current_test.did_assert()):
 					_lgr.warn('Test did not assert')
@@ -984,10 +1000,13 @@ func _test_the_scripts(indexes=[]):
 		_orphan_counter.print_orphans('script', _lgr)
 
 		if(_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
-			var after_all_result = await _call_after_all(test_script)
-			if(_is_function_state(after_all_result)):
-				# _call_after_all calls _wait for done, just wait for that to finish
-				await after_all_result.COMPLETED
+			await _call_after_all(test_script)
+			# TODO 4.0 GDScriptFunctionState? ----
+			# var after_all_result = await _call_after_all(test_script)
+			# if(_is_function_state(after_all_result)):
+			# 	# _call_after_all calls _wait for done, just wait for that to finish
+			# 	await after_all_result.COMPLETED
+			# ----
 
 
 		_log_test_children_warning(test_script)
@@ -1333,7 +1352,7 @@ func pause_before_teardown():
 # used in a call to yield...cutting down on lines of code.
 #
 # Example, yield to the Gut object for 10 seconds:
-#  await gut.set_yield_time(10).timeout
+#  await gut.set_yield_time(10)
 # ------------------------------------------------------------------------------
 func set_yield_time(time, text=''):
 	_yield_timer.set_wait_time(time)

@@ -33,10 +33,10 @@ func has_string_and_array_defaults(string_param = "asdf", array_param = [1]):
 	pass
 
 func this_just_does_an_await():
-	await get_tree().create_timer(1).timeout
+	await get_tree().create_timer(1)
 
 func this_is_a_coroutine():
-	return await get_tree().create_timer(1).timeout
+	return await get_tree().create_timer(1)
 
 func calls_coroutine():
 	return await this_is_a_coroutine()
