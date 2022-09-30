@@ -1522,7 +1522,7 @@ class TestReplaceNode:
 		var old = _arena.get_sword()
 		gr.test.replace_node(_arena, 'Player1/Sword', replacement)
 		# object is freed using queue_free, so we have to wait for it to go away
-		await yield_for(0.5).timeout
+		await yield_for(0.5)
 		assert_true(_utils.is_freed(old))
 
 	func test_replaced_node_retains_groups():
@@ -1703,7 +1703,7 @@ class TestMemoryMgmt:
 	func test_passes_with_queue_free():
 		var n2d = Node2D.new()
 		n2d.queue_free()
-		await yield_for(.5, 'must yield for queue_free to take hold').timeout
+		await yield_for(.5, 'must yield for queue_free to take hold')
 		assert_no_new_orphans()
 		assert_true(gut._current_test.passed, 'this should be passing')
 
@@ -1721,7 +1721,7 @@ class TestMemoryMgmt:
 		assert_eq(n.get_parent(), self, 'added as child')
 		gut.get_autofree().free_all()
 		assert_not_freed(n, 'node') # should not be freed until yield
-		await yield_for(.5).timeout
+		await yield_for(.5)
 		assert_freed(n, 'node')
 		assert_no_new_orphans()
 

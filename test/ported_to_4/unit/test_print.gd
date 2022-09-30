@@ -63,7 +63,7 @@ func test_show_info():
 
 func test_yield():
 	gut.p('starting yield')
-	await yield_for(2).timeout
+	await yield_for(2)
 	gut.p('end yield')
 
 

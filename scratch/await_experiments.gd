@@ -7,7 +7,7 @@ class Awaiter:
     func might_await(should):
         if(should):
             print('awaiting')
-            await get_tree().create_timer(.5).timeout
+            await get_tree().create_timer(.5)
             print('awaited')
         else:
             print('not awaiting')

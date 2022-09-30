@@ -1194,7 +1194,7 @@ func wait_seconds(time, msg=''):
 
 func yield_for(time, msg=''):
 	_lgr.deprecated('yield_for', 'wait_seconds')
-	return gut.set_yield_time(time, msg)
+	return gut.set_yield_time(time, msg).timeout
 
 
 # ------------------------------------------------------------------------------
@@ -1211,7 +1211,7 @@ func yield_to(obj, signal_name, max_wait, msg=''):
 	_lgr.deprecated('yield_to', 'wait_for_signal')
 	watch_signals(obj)
 	gut.set_yield_signal_or_time(obj, signal_name, max_wait, msg)
-	return gut
+	return gut.timeout
 
 # ------------------------------------------------------------------------------
 # Yield for a number of frames.  The optional message will be printed. when
@@ -1231,7 +1231,7 @@ func wait_frames(frames, msg=''):
 func yield_frames(frames, msg=''):
 	_lgr.deprecated("yield_frames", "wait_frames")
 	wait_frames(frames, msg)
-	return gut
+	return gut.timeout
 
 func get_summary():
 	return _summary

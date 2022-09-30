@@ -1352,7 +1352,7 @@ func pause_before_teardown():
 # used in a call to yield...cutting down on lines of code.
 #
 # Example, yield to the Gut object for 10 seconds:
-#  await gut.set_yield_time(10).timeout
+#  await gut.set_yield_time(10)
 # ------------------------------------------------------------------------------
 func set_yield_time(time, text=''):
 	_yield_timer.set_wait_time(time)

@@ -89,9 +89,9 @@ var skip_script = 'The reason for skipping.  This will be printed in the output.
 ```
 * When using `yield_to`, `yield_for`, or `yield_frames` (deprecated) the new syntax is:
 ```
-await yield_to(signaler, 'the_signal_name', 5, 'optional message').timeout
-await yield_for(1.5, 'optional message').timeout
-await yield_frames(30, 'optional message').timeout
+await yield_to(signaler, 'the_signal_name', 5, 'optional message')
+await yield_for(1.5, 'optional message')
+await yield_frames(30, 'optional message')
 ```
 * The new `yield_` methods are `pause_for`, `pause_frames`, and `pause_until`.
 ```

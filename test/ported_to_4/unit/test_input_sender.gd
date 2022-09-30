@@ -474,7 +474,7 @@ class TestSequence:
 		sender.send_event(e1)
 		sender.send_event(e2)
 
-		await yield_to(sender, "idle", 2).timeout
+		await yield_to(sender, "idle", 2)
 		assert_signal_emitted(sender, 'idle')
 
 	func test_playback_adds_delays():
@@ -493,10 +493,10 @@ class TestSequence:
 
 		assert_eq(r.inputs.size(), 1, "first input sent")
 
-		await yield_for(.7).timeout
+		await yield_for(.7)
 		assert_eq(r.inputs.size(), 2, "second input sent")
 
-		await yield_to(sender, 'idle', 5).timeout
+		await yield_to(sender, 'idle', 5)
 		assert_eq(r.inputs.size(), 3, "last input sent")
 
 	func test_can_wait_frames():
@@ -515,10 +515,10 @@ class TestSequence:
 
 		assert_eq(r.inputs.size(), 1, "first input sent")
 
-		await yield_for(.7).timeout
+		await yield_for(.7)
 		assert_eq(r.inputs.size(), 2, "second input sent")
 
-		await yield_to(sender, "idle", 5).timeout
+		await yield_to(sender, "idle", 5)
 		assert_eq(r.inputs.size(), 3, "last input sent")
 
 	func test_non_delayed_events_happen_on_the_same_frame_when_delayed_seconds():
@@ -533,7 +533,7 @@ class TestSequence:
 			.wait(.5)\
 			.key_down("c")
 
-		await yield_to(sender, "idle", 2).timeout
+		await yield_to(sender, "idle", 2)
 		assert_eq(r.input_frames[1], r.input_frames[2])
 		assert_eq(r.inputs[1].keycode, KEY_A)
 		assert_eq(r.inputs[2].keycode, KEY_B)
@@ -550,7 +550,7 @@ class TestSequence:
 			.wait_frames(20)\
 			.key_down("c")
 
-		await yield_to(sender, "idle", 2).timeout
+		await yield_to(sender, "idle", 2)
 		assert_eq(r.input_frames[1], r.input_frames[2])
 		assert_eq(r.inputs[1].keycode, KEY_A)
 		assert_eq(r.inputs[2].keycode, KEY_B)
@@ -566,7 +566,7 @@ class TestSequence:
 			.wait_frames(1)\
 			.mouse_relative_motion(Vector2(3, 3))
 
-		await yield_to(sender, "idle", 5).timeout
+		await yield_to(sender, "idle", 5)
 		assert_eq(r.inputs[2].position, Vector2(6, 6))
 
 
@@ -578,7 +578,7 @@ class TestHoldFor:
 		var sender = InputSender.new(r)
 
 		sender.action_down("jump").hold_for('3f')
-		await yield_to(sender, "idle", 5).timeout
+		await yield_to(sender, "idle", 5)
 
 		assert_eq(r.inputs.size(), 2, 'input size')
 		var jump_pressed = r.inputs[0].action == "jump" and r.inputs[0].pressed
@@ -591,7 +591,7 @@ class TestHoldFor:
 		var sender = InputSender.new(r)
 
 		sender.key_down("F").hold_for('.5s')
-		await yield_to(sender, "idle", 5).timeout
+		await yield_to(sender, "idle", 5)
 
 		assert_eq(r.inputs.size(), 2, 'input size')
 		var f_pressed = r.inputs[0].keycode == KEY_F and r.inputs[0].pressed
@@ -604,7 +604,7 @@ class TestHoldFor:
 		var sender = InputSender.new(r)
 
 		sender.mouse_left_button_down(Vector2(1, 1)).hold_for('.5s')
-		await yield_to(sender, "idle", 5).timeout
+		await yield_to(sender, "idle", 5)
 
 		assert_eq(r.inputs.size(), 2, 'input size')
 		var left_pressed = r.inputs[0].button_index == MOUSE_BUTTON_LEFT and r.inputs[0].pressed
@@ -719,7 +719,7 @@ class TestClear:
 		sender.key_down("Q")
 		sender.clear()
 		sender.hold_for(.1)
-		await yield_for(.5).timeout
+		await yield_for(.5)
 		assert_eq(r.inputs.size(), 1)
 
 	func test_relative_mouse_motion_uses_0_0_after_clear():

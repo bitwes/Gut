@@ -236,7 +236,7 @@ func test_clearing_ignores_freed_objecdts():
 	add_child(gr.so)
 	gr.sw.watch_signals(gr.so)
 	gr.so.free()
-	await yield_for(0.5).timeout
+	await yield_for(0.5)
 	gr.sw.clear()
 
 # ####################

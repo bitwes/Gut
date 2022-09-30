@@ -16,7 +16,7 @@ func test_does_not_use_use_parameters(p=null):
 	assert_true(true, 'this passes but should never be called more than once.')
 
 func test_three_values_and_a_yield(p=use_parameters([['a', 'a'], ['b', 'b'], ['c', 'c']])):
-	await yield_for(.2).timeout
+	await yield_for(.2)
 	assert_eq(p[0], p[1])
 
 
