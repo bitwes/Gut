@@ -26,37 +26,37 @@ func after_all():
 
 func test_yield1():
 	_max_acceptable_time += 20
-	await get_tree().idle_frame
+	await wait_frames(1)
 	pass_test('no test')
 
 func test_yield2():
 	_max_acceptable_time += 20
-	await get_tree().idle_frame
+	await wait_frames(1)
 	pass_test('no test')
 
 func test_yield3():
 	_max_acceptable_time += 20
-	await get_tree().idle_frame
+	await wait_frames(1)
 	pass_test('no test')
 
 func test_yield4():
 	_max_acceptable_time += 20
-	await get_tree().idle_frame
+	await wait_frames(1)
 	pass_test('no test')
 
 func test_yield5():
 	_max_acceptable_time += 20
-	await get_tree().idle_frame
+	await wait_frames(1)
 	pass_test('no test')
 
 var yield_params = [1, 2, 3, 4, 5, 6, 7, 8]
 func test_parameterized(p=use_parameters(yield_params)):
 	_max_acceptable_time += 20
-	await get_tree().idle_frame
+	await wait_frames(1)
 	pass_test('no test')
 
 
 func test_yield_for_some_seconds_to_watch_animation():
 	_max_acceptable_time += 3050
-	await yield_for(3).YIELD
+	await wait_seconds(3)
 	pass_test('no test')

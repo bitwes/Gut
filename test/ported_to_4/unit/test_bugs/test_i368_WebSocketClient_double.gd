@@ -14,6 +14,9 @@ func test_can_spy_on_connect_to_url():
 	assert_called(pd, 'connect_to_url')
 
 func test_can_spy_on_partial_connect_to_url():
+	pending("'connect_to_url'. Cannot convert argument 4 from Nil to PackedStringArray in 4.0")
+	return
+
 	var pd = partial_double(WebSocketClient).new()
 	pd.connect_to_url('somewhere.biz')
 	assert_called(pd, 'connect_to_url')

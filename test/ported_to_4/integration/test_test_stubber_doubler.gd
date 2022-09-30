@@ -63,7 +63,7 @@ class TestBasics:
 		assert_eq(gr.test.get_pass_count(), 1)
 
 	func test_can_stub_inner_class_methods():
-		pending('Inner Class')
+		pending('Inner Class 4.0')
 		return
 
 		var d = gr.gut.get_doubler().double_inner(InnerClasses, 'InnerA').new()
@@ -71,7 +71,7 @@ class TestBasics:
 		assert_eq(d.get_a(), 10)
 
 	func test_can_stub_multiple_inner_classes():
-		pending('Inner Class')
+		pending('Inner Class 4.0')
 		return
 
 		var a = gr.gut.get_doubler().double_inner(InnerClasses, 'InnerA').new()
@@ -82,7 +82,7 @@ class TestBasics:
 		assert_eq(anotherA.get_a(), 20)
 
 	func test_can_stub_multiple_inners_using_class_path_and_inner_names():
-		pending('Inner Class')
+		pending('Inner Class 4.0')
 		return
 
 		var a = gr.gut.get_doubler().double_inner(InnerClasses, 'InnerA').new()
@@ -212,9 +212,6 @@ class TestTestsSmartDoubleMethod:
 		assert_eq(inst.__gutdbl.subpath, 'InnerA', 'check subpath')
 
 	func test_can_double_native_classes():
-		pending('Crashes hard 4.0')
-		return
-
 		var inst = _test.double(Node2D).new()
 		assert_not_null(inst)
 

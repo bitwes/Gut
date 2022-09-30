@@ -8,7 +8,8 @@
 
   "dirs":[
     "res://test/ported_to_4/unit",
-    "res://test/ported_to_4/integration"
+    "res://test/ported_to_4/integration",
+    "res://test/unit"
   ],
   "should_maximize": false,
   "should_exit": true,
