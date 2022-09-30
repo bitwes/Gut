@@ -4,8 +4,8 @@ var Gut = load('res://addons/gut/gut.gd')
 var Test = load('res://addons/gut/test.gd')
 var StubParams = load('res://addons/gut/stub_params.gd')
 
-const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
 const DOUBLE_ME_SCENE_PATH = 'res://test/resources/doubler_test_objects/double_me_scene.tscn'
+var DoubleMeScene = load(DOUBLE_ME_SCENE_PATH)
 
 func test_can_get_stubber():
 	var g = Gut.new()
@@ -38,7 +38,7 @@ func test_doublers_stubber_is_guts_stubber():
 func test_can_stub_scene_script_and_scene_at_same_time():
 	var script_path = DOUBLE_ME_SCENE_PATH.replace('.tscn', '.gd')
 
-	var scene = double_scene(DOUBLE_ME_SCENE_PATH).instantiate()
+	var scene = double_scene(DoubleMeScene).instantiate()
 	var script = double(script_path).new()
 
 	stub(DOUBLE_ME_SCENE_PATH, 'return_hello').to_return('scene')

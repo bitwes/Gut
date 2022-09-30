@@ -5,7 +5,7 @@ class TestYieldInBeforeAll:
 
 	var value = 'NOT_SET'
 	func before_all():
-		await yield_for(1).YIELD
+		await yield_for(1).timeout
 		value = 'set'
 
 	func test_assert_value_set_in_before_all():
@@ -16,7 +16,7 @@ class TestYieldInAfterAll:
 
 	var after_all_value = 'NOT_SET'
 	func after_all():
-		await yield_for(1).YIELD
+		await yield_for(1).timeout
 		after_all_value = 'set'
 
 	func test_nothing():
@@ -31,7 +31,7 @@ class TestYieldInAfterEach:
 
 	func after_each():
 		after_each_called = true
-		await yield_for(1).YIELD
+		await yield_for(1).timeout
 		value = 'set'
 
 	# --------------
@@ -56,7 +56,7 @@ class TestYieldInBeforeEach:
 	var value = 'NOT_SET'
 
 	func before_each():
-		await yield_for(1).YIELD
+		await yield_for(1).timeout
 		value = 'set'
 
 	func test_value_is_set():

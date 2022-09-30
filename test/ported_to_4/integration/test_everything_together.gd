@@ -16,7 +16,7 @@ class TestLogging:
 
 	func test_gut_sets_doublers_logger():
 		assert_eq(_gut.get_doubler().get_logger(), _gut.logger, 'Doubler logger')
-		assert_eq(_gut.get_doubler()._method_maker.logger(), _gut.logger, 'MethodMaker logger')
+		assert_eq(_gut.get_doubler()._method_maker.get_logger(), _gut.logger, 'MethodMaker logger')
 
 	func test_gut_sets_stubber_logger():
 		assert_eq(_gut.get_stubber().get_logger(), _gut.logger)
