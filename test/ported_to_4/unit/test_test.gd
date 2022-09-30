@@ -1518,13 +1518,12 @@ class TestReplaceNode:
 		assert_eq(_arena.get_sword_ds(), replacement)
 
 	func test_replaced_node_is_freed():
-		pending('** YIELD **')
-		# var replacement = Node2D.new()
-		# var old = _arena.get_sword()
-		# gr.test.replace_node(_arena, 'Player1/Sword', replacement)
-		# # object is freed using queue_free, so we have to wait for it to go away
-		# await yield_for(0.5).YIELD
-		# assert_true(_utils.is_freed(old))
+		var replacement = Node2D.new()
+		var old = _arena.get_sword()
+		gr.test.replace_node(_arena, 'Player1/Sword', replacement)
+		# object is freed using queue_free, so we have to wait for it to go away
+		await yield_for(0.5).timeout
+		assert_true(_utils.is_freed(old))
 
 	func test_replaced_node_retains_groups():
 		var replacement = Node2D.new()
@@ -1731,6 +1730,7 @@ class TestMemoryMgmt:
 		for i in range(3):
 			var extra_test = TestClass.new()
 			add_child(extra_test)
+		pass_test('Check for warning')
 
 
 # ------------------------------------------------------------------------------

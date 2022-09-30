@@ -1,6 +1,6 @@
 #A sample script for illustrating multiple scripts and what it looks like
 #when all tests pass.
-extends "res://addons/gut/test.gd"
+extends GutTest
 
 func test_works():
 	assert_true(true, 'This is true')

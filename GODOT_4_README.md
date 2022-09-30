@@ -9,6 +9,26 @@ GUT is currently somewhat usable in 4.0.  Some features work, but many do not.  
 
 This file tracks the changes that have occurred in porting GUT to Godot 4.0.  All issues related to the conversion have the [Godot 4.0](https://github.com/bitwes/Gut/issues?q=is%3Aissue+is%3Aopen+label%3A%22Godot+4.0%22) tag.
 
+<ins>Current results of all GUT tests</ins>
+```
+Totals
+Scripts:          160
+Passing tests     934
+Failing tests     37
+Risky tests       16
+Pending:          64
+Asserts:          1431 of 1477 passed
+
+Warnings/Errors:
+* 15 Errors.
+* 6 Warnings.
+
+
+934 passed 37 failed.  Tests finished in 120.166s
+```
+
+
+
 ## Contributing
 Pull requests are welcome.  You can look at the [Godot 4.0](https://github.com/bitwes/Gut/issues?q=is%3Aissue+is%3Aopen+label%3A%22Godot+4.0%22) issues for items that need to be addressed.  If you find something that is not mentioned, please make an issue.  Running tests for GUT requires using the CLI or VSCode plugin currently.
 
@@ -27,6 +47,8 @@ return
 <rest of test code here>
 ```
 
+
+
 ## Godot 4 Changes
 These are changes to Godot that affect how GUT is used/implemented.
 
@@ -42,17 +64,16 @@ These are changes to Godot that affect how GUT is used/implemented.
 * Signal connection asserts
 * Orphan monitoring
 * Doubling, Spying, Stubbing (mostly).  Cannot double inner classes.
-
+* Using `await` (the new `yield`) in tests, and all the GUT supplied `yield_` methods.
+* Input mocking.
 
 ## Broken Features
+* Gut Panel.  The in-editor panel is not working, you must use the CLI for now.
 * `assert_is` seems to be causing crashes, not sure why yet.
 * Cannot double inner classes due to Godot bug #65666.
-* Some doubling features cannot be tested until `yield` has been fully ported.
-* Gut Panel.  The in-editor panel is not working, you must use the CLI for now.
-* Using `await` (the new `yield`) in tests, and all the GUT supplied `yield_` methods.
-* Input mocking (can't test until `await` fixed).
 * Dictionary/array asserts are broke in some cases.
 * Probably much much more.
+
 
 
 ## Changes
@@ -66,7 +87,18 @@ These are changes to Godot that affect how GUT is used/implemented.
 ```
 var skip_script = 'The reason for skipping.  This will be printed in the output.'
 ```
-
+* When using `yield_to`, `yield_for`, or `yield_frames` (deprecated) the new syntax is:
+```
+await yield_to(signaler, 'the_signal_name', 5, 'optional message').timeout
+await yield_for(1.5, 'optional message').timeout
+await yield_frames(30, 'optional message').timeout
+```
+* The new `yield_` methods are `pause_for`, `pause_frames`, and `pause_until`.
+```
+await wait_for_signal(signaler.the_signal, 5, 'optional message')
+await wait_seconds(1.5, 'optional message')
+await wait_frames(30, 'optional message')
+```
 
 
 ### Implementation

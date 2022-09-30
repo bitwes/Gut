@@ -8,13 +8,12 @@
 
   "dirs":[
     "res://test/ported_to_4/unit",
-    "res://test/ported_to_4/integration",
-    "res://test/integration/"
+    "res://test/ported_to_4/integration"
   ],
   "should_maximize": false,
   "should_exit": true,
   "ignore_pause": true,
-  "log_level": 0,
+  "log_level": 3,
   "opacity": 100,
   "double_strategy": "partial",
   "include_subdirs": true,
