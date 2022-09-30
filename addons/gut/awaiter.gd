@@ -10,7 +10,7 @@ var _pause_until_signal = null
 var _elapsed_time = 0.0
 var _elapsed_frames = 0
 
-func _process(delta):
+func _physics_process(delta):
     if(_pause_time != 0.0):
         _elapsed_time += delta
         if(_elapsed_time >= _pause_time):

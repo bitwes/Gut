@@ -49,4 +49,4 @@ func assert_has_logger(obj):
 			assert_eq(obj.get_logger(), l, 'Set/get works')
 
 func get_error_count(obj):
-	return obj.get_logger().get_errors().size()
+	return obj.logger.get_errors().size()

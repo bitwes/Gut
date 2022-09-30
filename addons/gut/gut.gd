@@ -436,8 +436,8 @@ func _yielding_callback(from_obj=false,
 	if(_yielding_to.obj != null):
 		_yielding_to.obj.call_deferred(
 			"disconnect",
-			_yielding_to.signal_name, self,
-			'_yielding_callback')
+			_yielding_to.signal_name,
+			_yielding_callback)
 		_yielding_to.obj = null
 		_yielding_to.signal_name = ''
 
@@ -448,7 +448,7 @@ func _yielding_callback(from_obj=false,
 		# the yield returns and processing finishes before the rest of the
 		# objects can get the signal.  This works b/c the timer will timeout
 		# and come back into this method but from_obj will be false.
-		_yield_timer.set_wait_time(.1)
+		_yield_timer.set_wait_time(.05)
 		_yield_timer.start()
 	else:
 		emit_signal('timeout')
@@ -749,6 +749,8 @@ func _run_parameterized_test(test_script, test_name):
 	# 	# _run_tests does _wait_for_done so just wait on it to  complete
 	# 	await script_result.COMPLETED
 	# ----
+	# if(_awaiter.is_paused):
+	# 	await _awaiter.pause_ended
 
 	if(_current_test.assert_count == 0 and !_current_test.pending):
 		_lgr.warn('Test did not assert')
@@ -768,7 +770,6 @@ func _run_parameterized_test(test_script, test_name):
 			# ----
 			if(_current_test.assert_count == cur_assert_count and !_current_test.pending):
 				_lgr.warn('Test did not assert')
-
 
 	_parameter_handler = null
 

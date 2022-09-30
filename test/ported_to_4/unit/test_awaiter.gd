@@ -8,7 +8,7 @@ class Counter:
     var time = 0.0
     var frames = 0
 
-    func _process(delta):
+    func _physics_process(delta):
         time += delta
         frames += 1
 

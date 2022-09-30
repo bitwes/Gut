@@ -43,8 +43,8 @@ class GuiHandler:
 	# Events
 	# ------------------
 	func _on_continue_pressed():
-		_gut.end_teardown_pause()
 		_ctrls.btn_continue.visible = false
+		_gut.end_teardown_pause()
 
 
 	func _on_gut_start_run():
