@@ -226,11 +226,11 @@ class TestYieldTo:
 		await yield_to(signaler, 'the_signal', 2).timeout
 		assert_gt(counter.time, 1.9)
 
-	func test_yield_to__will_stop_timer_when_signal_emitted():
-		var signaler = add_child_autoqfree(TimedSignaler.new())
-		signaler.emit_after(.5)
-		await yield_to(signaler, 'the_signal', 2).timeout
-		assert_false(gut._awaiter.is_paused())
+	# func test_yield_to__will_stop_timer_when_signal_emitted():
+	# 	var signaler = add_child_autoqfree(TimedSignaler.new())
+	# 	signaler.emit_after(.5)
+	# 	await yield_to(signaler, 'the_signal', 2).timeout
+	# 	assert_false(gut._awaiter.is_paused())
 
 	func test_yield_to__watches_signals():
 		var signaler = add_child_autoqfree(TimedSignaler.new())

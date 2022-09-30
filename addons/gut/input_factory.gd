@@ -67,14 +67,14 @@ static func new_mouse_button_event(position, global_position, pressed, button_in
 
 static func key_up(which):
 	var event = InputEventKey.new()
-	event.scancode = _to_scancode(which)
+	event.keycode = _to_scancode(which)
 	event.pressed = false
 	return event
 
 
 static func key_down(which):
 	var event = InputEventKey.new()
-	event.scancode = _to_scancode(which)
+	event.keycode = _to_scancode(which)
 	event.pressed = true
 	return event
 
@@ -106,7 +106,7 @@ static func mouse_left_button_up(position, global_position=null):
 
 static func mouse_double_click(position, global_position=null):
 	var event = new_mouse_button_event(position, global_position, false, MOUSE_BUTTON_LEFT)
-	event.doubleclick = true
+	event.double_click = true
 	return event
 
 
@@ -132,11 +132,11 @@ static func mouse_relative_motion(offset, last_motion_event=null, speed=Vector2(
 	var event = null
 	if(last_motion_event == null):
 		event = mouse_motion(offset)
-		event.speed = speed
+		event.velocity = speed
 	else:
 		event = last_motion_event.duplicate()
 		event.position += offset
 		event.global_position += offset
 		event.relative = offset
-		event.speed = speed
+		event.velocity = speed
 	return event
