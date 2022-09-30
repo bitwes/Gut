@@ -61,6 +61,7 @@ These are changes to Godot that affect how GUT is used/implemented.
 ## Working Features
 * The command line seems to be working fine.
 * Basic asserts (assert_eq, ne, between etc) with anything except arrays and dictionaries.
+* `assert_is` seems is working now.
 * Signal asserts
 * Signal connection asserts
 * Orphan monitoring
@@ -70,7 +71,6 @@ These are changes to Godot that affect how GUT is used/implemented.
 
 ## Broken Features
 * Gut Panel.  The in-editor panel is not working, you must use the CLI for now.
-* `assert_is` seems to be causing crashes, not sure why yet.
 * Cannot double inner classes due to Godot bug #65666.
 * Dictionary/array asserts are broke in some cases.
 * Probably much much more.

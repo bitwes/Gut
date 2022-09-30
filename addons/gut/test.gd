@@ -1292,7 +1292,7 @@ func _smart_double(double_info):
 
 	elif(double_info.is_native()):
 		if(double_info.make_partial):
-			to_return = gut.get_doubler().partial_double_gdnative(double_info.path)
+			to_return = gut.get_doubler().partial_double_gdnative(double_info.resource)
 		else:
 			to_return = gut.get_doubler().double_gdnative(double_info.resource)
 

@@ -74,17 +74,11 @@ class TestSimpleCompare:
 
 	var incompatible_types = [[1, 'a'], ['text', Node], [false, []], [{}, []], [[], 12]]
 	func test_incompatible_types(p=use_parameters(incompatible_types)):
-		pending('crashes in 4.0')
-		return
-
 		var result = _comparator.simple(p[0], p[1])
 		assert_not_null(result.are_equal,  result.summary)
 		assert_false(result.are_equal,  result.summary)
 
 	func test_incompatible_types_summary(p=use_parameters(incompatible_types)):
-		pending('crashes in 4.0')
-		return
-
 		var result = _comparator.simple(p[0], p[1])
 		assert_string_contains(result.summary, 'Cannot')
 		assert_string_contains(result.summary, '!=')

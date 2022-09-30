@@ -5,9 +5,6 @@ class TestCreateKeyEvents:
 	extends "res://addons/gut/test.gd"
 
 	func test_key_up_creates_event_for_key():
-		pending('assert_is crashes in 4.0')
-		return
-
 		var event = InputFactory.key_up(KEY_A)
 		assert_is(event, InputEventKey, 'is InputEventKey')
 		assert_eq(event.keycode, KEY_A)
@@ -22,9 +19,6 @@ class TestCreateKeyEvents:
 		assert_eq(event.keycode, KEY_A)
 
 	func test_key_down_creates_event_for_key():
-		pending('assert_is crashes in 4.0')
-		return
-
 		var event = InputFactory.key_down(KEY_B)
 		assert_is(event, InputEventKey, 'is InputEventKey')
 		assert_eq(event.keycode, KEY_B)
@@ -39,9 +33,6 @@ class TestCreateActionEvents:
 	extends "res://addons/gut/test.gd"
 
 	func test_action_up_creates_correct_class():
-		pending('assert_is crashes in 4.0')
-		return
-
 		var e = InputFactory.action_up("foo", 1.0)
 		assert_is(e, InputEventAction)
 
@@ -56,9 +47,6 @@ class TestCreateActionEvents:
 		assert_eq(e.strength, 1.0)
 
 	func test_action_down_creates_correct_class():
-		pending('assert_is crashes in 4.0')
-		return
-
 		var e = InputFactory.action_down("foo", 1.0)
 		assert_is(e, InputEventAction)
 
@@ -77,9 +65,6 @@ class TestMouseButtons:
 	extends "res://addons/gut/test.gd"
 
 	func assert_mouse_event_props(method, pressed, button_index):
-		pending('assert_is crashes in 4.0')
-		return
-
 		var event = InputFactory.call(method, (Vector2(10, 10)))
 		assert_is(event, InputEventMouseButton, 'correct class')
 		assert_eq(event.position, Vector2(10, 10), 'position')
@@ -117,9 +102,6 @@ class TestMouseMotion:
 	extends "res://addons/gut/test.gd"
 
 	func test_creates_correct_event_type():
-		pending('assert_is crashes in 4.0')
-		return
-
 		var e = InputFactory.mouse_motion(Vector2(1, 1))
 		assert_is(e, InputEventMouseMotion)
 

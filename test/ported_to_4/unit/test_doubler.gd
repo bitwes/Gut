@@ -152,9 +152,8 @@ class TestDoublingScripts:
 		assert_eq(doubled.__gutdbl.gut, gut)
 
 	func test_keeps_extends():
-		pending('Crashes hard in 4.0 a16 on assert_is')
 		var doubled = _doubler.double(DoubleExtendsNode2D).new()
-		# assert_is(doubled, Node2D)
+		assert_is(doubled, Node2D)
 
 	func test_does_not_add_duplicate_methods():
 		var TheClass = load('res://test/resources/parsing_and_loading_samples/extends_another_thing.gd')
