@@ -805,15 +805,13 @@ func assert_is(object, a_class, text=''):
 	var bad_param_2 = 'Parameter 2 must be a Class (like Node2D or Label).  You passed '
 
 	if(typeof(object) != TYPE_OBJECT):
-		print('object is not an object')
 		_fail(str('Parameter 1 must be an instance of an object.  You passed:  ', _str(object)))
 	elif(typeof(a_class) != TYPE_OBJECT):
-		print('calls is not an object')
 		_fail(str(bad_param_2, _str(a_class)))
 	else:
 		var a_str = _str(a_class)
 		disp = str('Expected [', _str(object), '] to extend [', a_str, ']: ', text)
-		if(a_class.get_class() != NATIVE_CLASS and a_class.get_class() != GDSCRIPT_CLASS):
+		if(!_utils.is_native_class(a_class) and !_utils.is_gdscript(a_class)):
 			_fail(str(bad_param_2, a_str))
 		else:
 			if(object is a_class):

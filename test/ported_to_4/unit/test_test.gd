@@ -1078,8 +1078,6 @@ class TestSignalAsserts:
 class TestExtendAsserts:
 	extends BaseTestClass
 
-	var skip_script = 'skipping'
-
 	class BaseClass:
 		extends Node2D
 
