@@ -197,9 +197,10 @@ func is_version_ok(engine_info=Engine.get_version_info(),required=req_godot):
 
 	var idx = 0
 	while(is_ok == null and idx < engine_array.size()):
-		if(int(engine_array[idx]) > int(required[idx])):
+		print(engine_array[idx], '::', required[idx])
+		if(engine_array[idx] > required[idx]):
 			is_ok = true
-		elif(int(engine_array[idx]) < int(required[idx])):
+		elif(engine_array[idx] < required[idx]):
 			is_ok = false
 
 		idx += 1
