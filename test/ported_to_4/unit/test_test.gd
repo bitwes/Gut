@@ -721,7 +721,7 @@ class TestAccessorAsserts:
 class TestAssertExports:
 	extends BaseTestClass
 
-	var skip_script = 'Not ready for 4.0'
+	var skip_script = 'Not implemented in 4.0'
 
 	class NoProperty:
 		func _unused():
@@ -1078,7 +1078,7 @@ class TestSignalAsserts:
 class TestExtendAsserts:
 	extends BaseTestClass
 
-	var skip_script = 'Not ready for 4.0'
+	var skip_script = 'Not implemented in 4.0'
 
 	class BaseClass:
 		extends Node2D
@@ -1685,8 +1685,6 @@ class TestParameterizedTests:
 class TestMemoryMgmt:
 	extends GutTest
 
-	var skip_script = 'Not ready for 4.0, waiting on yield but most probably work.'
-
 	func test_passes_when_no_orphans_introduced():
 		assert_no_new_orphans()
 		assert_true(gut._current_test.passed, 'test should be passing')
@@ -1706,7 +1704,7 @@ class TestMemoryMgmt:
 	func test_passes_with_queue_free():
 		var n2d = Node2D.new()
 		n2d.queue_free()
-		await yield_for(.5, 'must yield for queue_free to take hold').YIELD
+		await yield_for(.5, 'must yield for queue_free to take hold').timeout
 		assert_no_new_orphans()
 		assert_true(gut._current_test.passed, 'this should be passing')
 
@@ -1724,7 +1722,7 @@ class TestMemoryMgmt:
 		assert_eq(n.get_parent(), self, 'added as child')
 		gut.get_autofree().free_all()
 		assert_not_freed(n, 'node') # should not be freed until yield
-		await yield_for(.5).YIELD
+		await yield_for(.5).timeout
 		assert_freed(n, 'node')
 		assert_no_new_orphans()
 
@@ -1825,7 +1823,7 @@ class TestPassFailTestMethods:
 class TestCompareDeepShallow:
 	extends BaseTestClass
 
-	var skip_script = 'Not ready for 4.0'
+	var skip_script = 'Not implemented in 4.0'
 
 	func test_compare_shallow_uses_compare():
 		var d_compare = double(_utils.Comparator).new()

@@ -148,7 +148,6 @@ class TestIgnoreMethodsWhenDoubling:
 
 class TestTestsSmartDoubleMethod:
 	extends "res://test/gut_test.gd"
-	# var skip_script = 'skip for now'
 
 	var _test = null
 

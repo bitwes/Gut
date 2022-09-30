@@ -285,7 +285,6 @@ var _yielding_to = {
 	obj = null,
 	signal_name = ''
 }
-var _awaiter = load('res://addons/gut/awaiter.gd').new()
 
 
 # Used to cancel importing scripts if an error has occurred in the setup.  This
@@ -351,8 +350,6 @@ func _ready():
 	if(_select_script != null):
 		select_script(_select_script)
 
-	add_child(_awaiter)
-	_awaiter.pause_ended.connect(_yielding_callback)
 	_print_versions()
 
 # ------------------------------------------------------------------------------
@@ -368,8 +365,6 @@ func _notification(what):
 
 		if(is_instance_valid(_yield_timer)):
 			_yield_timer.free()
-		if(is_instance_valid(_awaiter)):
-			_awaiter.free()
 
 func _print_versions(send_all = true):
 	if(!_should_print_versions):
@@ -749,8 +744,6 @@ func _run_parameterized_test(test_script, test_name):
 	# 	# _run_tests does _wait_for_done so just wait on it to  complete
 	# 	await script_result.COMPLETED
 	# ----
-	# if(_awaiter.is_paused):
-	# 	await _awaiter.pause_ended
 
 	if(_current_test.assert_count == 0 and !_current_test.pending):
 		_lgr.warn('Test did not assert')
