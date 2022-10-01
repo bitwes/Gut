@@ -811,7 +811,7 @@ func assert_is(object, a_class, text=''):
 	else:
 		var a_str = _str(a_class)
 		disp = str('Expected [', _str(object), '] to extend [', a_str, ']: ', text)
-		if(a_class.get_class() != NATIVE_CLASS and a_class.get_class() != GDSCRIPT_CLASS):
+		if(!_utils.is_native_class(a_class) and !_utils.is_gdscript(a_class)):
 			_fail(str(bad_param_2, a_str))
 		else:
 			if(object is a_class):
@@ -1292,7 +1292,7 @@ func _smart_double(double_info):
 
 	elif(double_info.is_native()):
 		if(double_info.make_partial):
-			to_return = gut.get_doubler().partial_double_gdnative(double_info.path)
+			to_return = gut.get_doubler().partial_double_gdnative(double_info.resource)
 		else:
 			to_return = gut.get_doubler().double_gdnative(double_info.resource)
 

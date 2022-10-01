@@ -65,15 +65,9 @@ class TestBoth:
 
 
 	func test_can_spy_on_init():
-		pending('init parameters broke')
-		return
-
 		var inst = _doubler.double(InitParameters).new('test_value')
 		assert_true(_spy.was_called(inst, '_init'))
 
 	func test_can_spy_on_init_parameters():
-		pending('init parameters broke')
-		return
-
 		var inst = _doubler.double(InitParameters).new('test_value')
 		assert_true(_spy.was_called(inst, '_init', ['test_value']))

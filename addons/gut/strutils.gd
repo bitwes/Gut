@@ -61,10 +61,11 @@ func _get_obj_filename(thing):
 	var filename = null
 
 	if(thing == null or
+		_utils.is_native_class(thing) or
 		!is_instance_valid(thing) or
 		str(thing) == '<Object#null>' or
 		typeof(thing) != TYPE_OBJECT or
-		thing.has_method('__gutdbl_init_vals')):
+		_utils.is_double(thing)):
 		return
 
 	if(thing.get_script() == null):
@@ -72,14 +73,13 @@ func _get_obj_filename(thing):
 			filename = _get_filename(thing.resource_path)
 		else:
 			# If it isn't a packed scene and it doesn't have a script then
-			# we do nothing.  This just read better.
+			# we do nothing.  This just reads better.
 			pass
 	elif(!_utils.is_native_class(thing)):
-		filename = 'this method broke somehow'
-		# var dict = inst_to_dict(thing)
-		# filename = _get_filename(dict['@path'])
-		# if(str(dict['@subpath']) != ''):
-		# 	filename += str('/', dict['@subpath'])
+		var dict = inst_to_dict(thing)
+		filename = _get_filename(dict['@path'])
+		if(str(dict['@subpath']) != ''):
+			filename += str('/', dict['@subpath'])
 
 	return filename
 
@@ -108,7 +108,7 @@ func type2str(thing):
 		# to_return.  I think this just reads a little
 		# better this way.
 		pass
-	elif(typeof(thing) ==  TYPE_OBJECT):
+	elif(typeof(thing) == TYPE_OBJECT):
 		if(_utils.is_native_class(thing)):
 			str_thing = _utils.get_native_class_name(thing)
 		elif(_utils.is_double(thing)):

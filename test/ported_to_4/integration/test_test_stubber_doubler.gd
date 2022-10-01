@@ -63,7 +63,7 @@ class TestBasics:
 		assert_eq(gr.test.get_pass_count(), 1)
 
 	func test_can_stub_inner_class_methods():
-		pending('Inner Class')
+		pending('Inner Class 4.0')
 		return
 
 		var d = gr.gut.get_doubler().double_inner(InnerClasses, 'InnerA').new()
@@ -71,7 +71,7 @@ class TestBasics:
 		assert_eq(d.get_a(), 10)
 
 	func test_can_stub_multiple_inner_classes():
-		pending('Inner Class')
+		pending('Inner Class 4.0')
 		return
 
 		var a = gr.gut.get_doubler().double_inner(InnerClasses, 'InnerA').new()
@@ -82,7 +82,7 @@ class TestBasics:
 		assert_eq(anotherA.get_a(), 20)
 
 	func test_can_stub_multiple_inners_using_class_path_and_inner_names():
-		pending('Inner Class')
+		pending('Inner Class 4.0')
 		return
 
 		var a = gr.gut.get_doubler().double_inner(InnerClasses, 'InnerA').new()
@@ -212,9 +212,6 @@ class TestTestsSmartDoubleMethod:
 		assert_eq(inst.__gutdbl.subpath, 'InnerA', 'check subpath')
 
 	func test_can_double_native_classes():
-		pending('Crashes hard 4.0')
-		return
-
 		var inst = _test.double(Node2D).new()
 		assert_not_null(inst)
 
@@ -291,18 +288,12 @@ class TestPartialDoubleMethod:
 		assert_eq(_test.get_pass_count(), pass_count + 2)
 
 	func test_can_stub_partial_doubled_native_class():
-		pending('Crashes hard 4.0')
-		return
-
 		var inst = _test.partial_double(Node2D).new()
 		autofree(inst)
 		_test.stub(inst, 'get_position').to_return(-1)
 		assert_eq(inst.get_position(), -1)
 
 	func test_can_spy_on_partial_doubled_native_class():
-		pending('Crashes hard 4.0')
-		return
-
 		var pass_count = _test.get_pass_count()
 		var inst = autofree(_test.partial_double(Node2D).new())
 		inst.set_position(Vector2(100, 100))
@@ -311,10 +302,11 @@ class TestPartialDoubleMethod:
 
 	# Test issue 147
 	func test_can_double_file():
-		pending('Crashes hard 4.0')
+		pending('return value not included so signature does not match on file_exists 4.0')
 		return
 
 		var f = File.new()
+		_test.gut.get_doubler().print_source = true
 		var inst = _test.partial_double(File)
 		assert_not_null(inst)
 

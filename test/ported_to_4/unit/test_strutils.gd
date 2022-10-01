@@ -5,8 +5,6 @@ class TestType2Str:
 
 	var strutils = load('res://addons/gut/strutils.gd').new()
 
-	func test_pending_class():
-		pending("This is pending in 4.0")
 
 	class ExtendsControl:
 		extends Control
@@ -31,14 +29,12 @@ class TestType2Str:
 		assert_eq(strutils.type2str(self), str(self, '(test_strutils.gd/TestType2Str)'))
 
 	func test_script_2():
-		pending("pending in 4.0")
-		# var dm = autofree(DoubleMe.new())
-		# assert_eq(strutils.type2str(dm), str(dm) + '(double_me.gd)')
+		var dm = autofree(DoubleMe.new())
+		assert_eq(strutils.type2str(dm), str(dm) + '(double_me.gd)')
 
 	func test_scene():
-		pending("pending in 4.0")
-		# var scene = autofree(DoubleMeScene.instantiate())
-		# assert_eq(strutils.type2str(scene),  str(scene, '(double_me_scene.gd)'))
+		var scene = autofree(DoubleMeScene.instantiate())
+		assert_eq(strutils.type2str(scene),  str(scene, '(double_me_scene.gd)'))
 
 	func test_file_instance():
 		var f = File.new()
@@ -57,30 +53,29 @@ class TestType2Str:
 
 	func test_color():
 		var c  = Color(.1, .2, .3)
-		assert_eq(strutils.type2str(c), 'Color(0.1,0.2,0.3,1)')
+		assert_eq(strutils.type2str(c), 'Color(0.1, 0.2, 0.3, 1)')
 
 	func test_loaded_scene():
 		assert_eq(strutils.type2str(DoubleMeScene), str(DoubleMeScene) + '(double_me_scene.tscn)')
 
 	func test_doubles():
-		pending("pending in 4.0")
-	# 	var d = double(DOUBLE_ME_PATH).new()
-	# 	assert_eq(strutils.type2str(d), str(d) + '(double of double_me.gd)')
+		var d = double(DOUBLE_ME_PATH).new()
+		assert_eq(strutils.type2str(d), str(d) + '(double of double_me.gd)')
 
 	func test_another_double():
-		pending("pending in 4.0")
-	# 	var d = double(DOUBLE_EXTENDS_NODE2D).new()
-	# 	assert_eq(strutils.type2str(d), str(d) + '(double of double_extends_node2d.gd)')
+		var d = double(DOUBLE_EXTENDS_NODE2D).new()
+		assert_eq(strutils.type2str(d), str(d) + '(double of double_extends_node2d.gd)')
 
 	func test_double_inner():
-		pending("pending in 4.0")
-	# 	var d = double(InnerClasses, 'InnerA').new()
-	# 	assert_eq(strutils.type2str(d), str(d) + '(double of inner_classes.gd/InnerA)')
+		pending('pending 4.0, inner classes')
+		return
+
+		var d = double(InnerClasses, 'InnerA').new()
+		assert_eq(strutils.type2str(d), str(d) + '(double of inner_classes.gd/InnerA)')
 
 	func test_partial_double():
-		pending("pending in 4.0")
-	# 	var d = partial_double(DOUBLE_ME_PATH).new()
-	# 	assert_string_contains(strutils.type2str(d), "partial-double")
+		var d = partial_double(DOUBLE_ME_PATH).new()
+		assert_string_contains(strutils.type2str(d), "partial-double")
 
 	# # func test_singleton_double_includes_singleton_name():
 	# # 	var d = double_singleton("Input").new()
@@ -95,7 +90,7 @@ class TestType2Str:
 
 	func test_object_null():
 		var scene = autofree(load(DOUBLE_ME_SCENE_PATH).instantiate())
-		assert_eq(strutils.type2str(scene.get_parent()), 'Null')
+		assert_eq(strutils.type2str(scene.get_parent()), "<null>")
 
 	# # currently does not print the inner class, maybe later.
 	func test_inner_class():
@@ -109,16 +104,23 @@ class TestType2Str:
 	func test_returns_null_for_just_freed_objects():
 		var n = autofree(Node.new())
 		n.free()
-		assert_eq(str(n), '[Deleted Object]', 'sometimes fails based on timing.')
+		assert_eq(str(n), '<Freed Object>', 'sometimes fails based on timing.')
 
 	func test_memory_leak():
-		pending("pending in 4.0")
-		# print(gut.get_orphan_counter().orphan_count(), ' t-1')
-		# var a = Node
-		# print(gut.get_orphan_counter().orphan_count(), ' t-2')
-		# var txt = strutils.type2str(a)
-		# print(gut.get_orphan_counter().orphan_count(), ' t-3')
-		# assert_no_new_orphans()
+		print(gut.get_orphan_counter().orphan_count(), ' t-1')
+		var a = Node
+		print(gut.get_orphan_counter().orphan_count(), ' t-2')
+		print(gut.get_orphan_counter().orphan_count(), ' t-3')
+		assert_no_new_orphans()
+
+	func test_can_use_type2str_on_a_node_instance():
+		var a = autofree(Node.new())
+		var txt = strutils.type2str(a)
+		assert_eq(txt, str(a))
+
+	func test_can_use_type2str_on_Node():
+		var txt = strutils.type2str(Node)
+		assert_eq(txt, 'Node')
 
 
 class TestTruncateString:
