@@ -37,9 +37,6 @@ Running tests for GUT requires using the CLI or VSCode plugin currently.
 
 Read the "Working" and "Broken" features section before starting.  There are some major features that are not working.  These features might be required before other features can be fixed.  `yield`/`await` and doubling inner classes are big ones.
 
-* Tests that are mostly working in 4.0 have been moved to `res://tests/ported_to_4/`.  Anything you fix/implement should have tests in the `unit` or `integration` directory.
-* Move any existing tests related to your work from the various directories below.
-* Tests in `res://test/unit` or `res://test/integration` have not been ported yet.
 * You can use the `skip_script` variable (details below) to skip inner classes in a test script.
 * Use the following format for skipping individual tests in a script:
 ```gdscript
