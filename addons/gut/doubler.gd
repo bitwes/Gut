@@ -104,6 +104,7 @@ class ObjectInfo:
 	var _lgr = _utils.get_logger()
 	var _method_strategy = null
 	var make_partial_double = false
+	var recursive = false
 	var scene_path = null
 	var _native_class = null
 	var _native_class_name = null
@@ -320,6 +321,12 @@ class PackedSceneDouble:
 	extends PackedScene
 	var _script =  null
 	var _scene = null
+	#back-reference to doubler, so we can call its functions
+	var recursive = false
+	var doubler = null
+	var make_partial_double = false
+	var strategy
+
 
 	func set_script_obj(obj):
 		_script = obj
@@ -328,6 +335,9 @@ class PackedSceneDouble:
 		var inst = _scene.instance(edit_state)
 		if(_script !=  null):
 			inst.set_script(_script)
+		if (recursive):
+			for child in inst.get_children():
+				doubler._double_nodes_recursive(child, make_partial_double, strategy)
 		return inst
 
 	func load_scene(path):
@@ -459,6 +469,10 @@ func _write_file(obj_info, dest_path, override_path=null):
 func _double_scene_and_script(scene_info):
 	var to_return = PackedSceneDouble.new()
 	to_return.load_scene(scene_info.get_path())
+	to_return.doubler = self #TODO: maybe private with setget?
+	to_return.make_partial_double = scene_info.make_partial_double
+	to_return.strategy = scene_info.get_method_strategy()
+	to_return.recursive = scene_info.recursive
 
 	var inst = load(scene_info.get_path()).instance()
 	var script_path = null
@@ -579,12 +593,21 @@ func _double_inner(path, subpath, make_partial, strategy):
 	return _double(oi).load_it()
 
 
-func _double_scene(path, make_partial, strategy):
+func _double_scene(path, make_partial, strategy, recursive):
 	var oi = ObjectInfo.new(path)
 	oi.set_method_strategy(strategy)
 	oi.make_partial_double = make_partial
+	oi.recursive = recursive
 	return _double_scene_and_script(oi)
 
+func _double_nodes_recursive(node, make_partial, strategy):
+	var script_path = null
+	if(node.get_script()):
+		script_path = node.get_script().get_path()
+	if script_path:
+		node.set_script(_double_script(script_path, make_partial, strategy))
+	for child in node.get_children():
+		_double_nodes_recursive(child, make_partial, strategy)
 
 func _double_gdnative(native_class, make_partial, strategy):
 	var oi = ObjectInfo.new(null)
@@ -657,13 +680,13 @@ func set_gut(gut):
 	_gut = gut
 
 
-func partial_double_scene(path, strategy=_strategy):
-	return _double_scene(path, true, strategy)
+func partial_double_scene(path, strategy=_strategy, recursive=false):
+	return _double_scene(path, true, strategy, recursive)
 
 
 # double a scene
-func double_scene(path, strategy=_strategy):
-	return _double_scene(path, false, strategy)
+func double_scene(path, strategy=_strategy, recursive=false):
+	return _double_scene(path, false, strategy, recursive)
 
 
 # double a script/object

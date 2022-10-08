@@ -483,6 +483,24 @@ class TestDoubleGDNaviteClasses:
 		var pd_node_2d  = _doubler.partial_double_gdnative(Node2D)
 		assert_not_null(pd_node_2d)
 
+class TestDoubleSceneRecursively:
+	extends BaseTest
+
+	var _doubler = null
+	var _stubber = _utils.Stubber.new()
+	# func check_
+
+	func before_all():
+		_doubler = Doubler.new()
+
+	func test_can_double_recursively():
+		var inst = _doubler.double_scene(DOUBLE_ME_SCENE_PATH, _utils.DOUBLE_STRATEGY.PARTIAL, true).instance()
+		add_child(inst)
+		assert_ne(inst.get('__gut_metadata_'), null)
+		for child in inst.get_children():
+			assert_ne(child.get('__gut_metadata_'), null)
+			for grandchild in child.get_children():
+				assert_ne(grandchild.get('__gut_metadata_'), null)
 
 class TestAutofree:
 	extends BaseTest

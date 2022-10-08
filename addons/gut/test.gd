@@ -48,19 +48,22 @@ class DoubleInfo:
 	var subpath
 	var strategy
 	var make_partial
+	var recursive
 	var extension
 	var _utils = load('res://addons/gut/utils.gd').get_instance()
 	var _is_native = false
 	var is_valid = false
 
-	# Flexible init method.  p2 can be subpath or stategy unless p3 is
+	# Flexible init method.  p2 can be subpath, recursive or stategy unless p3 is
 	# specified, then p2 must be subpath and p3 is strategy.
 	#
 	# Examples:
 	#   (object_to_double)
 	#   (object_to_double, subpath)
+	#   (object_to_double, recursive)
 	#   (object_to_double, strategy)
 	#   (object_to_double, subpath, strategy)
+	#   (object_to_double, recursive, strategy)
 	func _init(thing, p2=null, p3=null):
 		strategy = p2
 
@@ -69,22 +72,29 @@ class DoubleInfo:
 		if(_utils.is_instance(thing)):
 			return
 
-		if(typeof(p2) == TYPE_STRING):
-			strategy = p3
-			subpath = p2
-
 		if(typeof(thing) == TYPE_OBJECT):
 			if(_utils.is_native_class(thing)):
 				path = thing
 				_is_native = true
 				extension = 'native_class_not_used'
 			else:
-				path = thing.resource_path
+				path = thing.resource_pathtscn
 		else:
 			path = thing
 
 		if(!_is_native):
 			extension = path.get_extension()
+
+		if(typeof(p2) == TYPE_STRING):
+			strategy = p3
+			subpath = p2
+		
+		if(typeof(p2) == TYPE_BOOL):
+			#short-circuit and say we're invalid
+			if not is_scene():
+				return
+			strategy = p3
+			recursive = p2
 
 		is_valid = true
 
