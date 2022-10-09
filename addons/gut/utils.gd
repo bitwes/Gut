@@ -105,9 +105,7 @@ var ThingCounter = load('res://addons/gut/thing_counter.gd')
 var version = '7.4.1'
 # The required Godot version as an array.
 var req_godot = [3, 2, 0]
-# Used for doing file manipulation stuff so as to not keep making File instances.
-# could be a bit of overkill but who cares.
-var _file_checker = File.new()
+
 # Online fetch of the latest version available on github
 var latest_version = null
 var should_display_latest_version = false
@@ -315,20 +313,19 @@ func extract_property_from_array(source, property):
 # true if file exists, false if not.
 # ------------------------------------------------------------------------------
 func file_exists(path):
-	return _file_checker.file_exists(path)
+	return FileAccess.file_exists(path)
 
 
 # ------------------------------------------------------------------------------
 # Write a file.
 # ------------------------------------------------------------------------------
 func write_file(path, content):
-	var f = File.new()
-	var result = f.open(path, f.WRITE)
-	if(result == OK):
+	var f = FileAccess.open(path, FileAccess.WRITE)
+	if(f != null):
 		f.store_string(content)
-		f.close()
+	f = null;
 
-	return result
+	return FileAccess.get_open_error()
 
 # ------------------------------------------------------------------------------
 # true if what is passed in is null or an empty string.
@@ -366,11 +363,10 @@ func is_native_class(thing):
 # ------------------------------------------------------------------------------
 func get_file_as_text(path):
 	var to_return = ''
-	var f = File.new()
-	var result = f.open(path, f.READ)
-	if(result == OK):
+	var f = FileAccess.open(path, FileAccess.READ)
+	if(f != null):
 		to_return = f.get_as_text()
-		f.close()
+	f = null
 	return to_return
 
 

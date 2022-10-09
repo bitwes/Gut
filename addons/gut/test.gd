@@ -496,8 +496,7 @@ func assert_does_not_have(obj, element, text=""):
 # ------------------------------------------------------------------------------
 func assert_file_exists(file_path):
 	var disp = 'expected [' + file_path + '] to exist.'
-	var f = File.new()
-	if(f.file_exists(file_path)):
+	if(FileAccess.file_exists(file_path)):
 		_pass(disp)
 	else:
 		_fail(disp)
@@ -507,8 +506,7 @@ func assert_file_exists(file_path):
 # ------------------------------------------------------------------------------
 func assert_file_does_not_exist(file_path):
 	var disp = 'expected [' + file_path + '] to NOT exist'
-	var f = File.new()
-	if(!f.file_exists(file_path)):
+	if(!FileAccess.file_exists(file_path)):
 		_pass(disp)
 	else:
 		_fail(disp)
@@ -518,8 +516,7 @@ func assert_file_does_not_exist(file_path):
 # ------------------------------------------------------------------------------
 func assert_file_empty(file_path):
 	var disp = 'expected [' + file_path + '] to be empty'
-	var f = File.new()
-	if(f.file_exists(file_path) and gut.is_file_empty(file_path)):
+	if(FileAccess.file_exists(file_path) and gut.is_file_empty(file_path)):
 		_pass(disp)
 	else:
 		_fail(disp)

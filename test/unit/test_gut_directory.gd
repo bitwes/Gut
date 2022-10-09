@@ -100,24 +100,20 @@ class TestUsingDynamicDirs:
 	# Create a directory in a test location.  directories are added to _test_dirs
 	# in the order they are created so they can be deleted later.
 	func _create_test_dir(rel_path):
-		var dir = Directory.new()
-		dir.open(TEST_BASE_DIR)
+		var dir = DirAccess.open(TEST_BASE_DIR)
 		dir.make_dir(rel_path)
 		_test_dirs.append(TEST_BASE_DIR + rel_path)
 
 	func _create_test_script(rel_path):
 		var path = TEST_BASE_DIR + rel_path
-		var file = File.new()
 
-		file.open(path, File.WRITE)
+		var file = FileAccess.open(path, FileAccess.WRITE)
 		file.store_string("extends GutTest\n")
 		file.store_string("func test_nothing():\n")
 		file.store_string("\tpending()\n")
-		file.close()
 
 	func _create_all_dirs_and_files():
-		var dir = Directory.new()
-		dir.open('user://')
+		var dir = DirAccess.open('user://')
 		dir.make_dir('test_directories')
 
 		_create_test_dir('root')
@@ -138,14 +134,13 @@ class TestUsingDynamicDirs:
 		_create_all_dirs_and_files()
 
 	func after_each():
-		var dir = Directory.new()
 		var i = _test_dirs.size() -1
 		# delete the directories in reverse order since it is easier than
 		# recursively deleting a directory and everything in it.
 		while(i > 0):
 			gut.directory_delete_files(_test_dirs[i])
-			var result = dir.open(_test_dirs[i])
-			if(result == OK):
+			var dir = DirAccess.open(_test_dirs[i])
+			if(dir != null):
 				dir.remove(_test_dirs[i])
 			i -= 1
 

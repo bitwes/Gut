@@ -527,8 +527,7 @@ func _validate_hook_script(path):
 	if(path == ''):
 		return result
 
-	var f = File.new()
-	if(f.file_exists(path)):
+	if(FileAccess.file_exists(path)):
 		var inst = load(path).new()
 		if(inst and inst is _utils.HookScript):
 			result.instance = inst
@@ -1095,8 +1094,7 @@ func _get_files(path, prefix, suffix):
 	if(path == 'res://addons/gut'):
 		return [];
 
-	var d = Directory.new()
-	d.open(path)
+	var d = DirAccess.open(path)
 	# true parameter tells list_dir_begin not to include "." and ".." directories.
 	d.list_dir_begin() # TODO 4.0 fill missing arguments https://github.com/godotengine/godot/pull/40547
 
@@ -1214,8 +1212,8 @@ func add_directory(path, prefix=_file_prefix, suffix=".gd"):
 	if(path == '' or path == null):
 		return
 
-	var d = Directory.new()
-	if(!d.dir_exists(path)):
+	var dir = DirAccess.open(path)
+	if(dir == null):
 		_lgr.error(str('The path [', path, '] does not exist.'))
 		# !4.0 exit code does not exist anymore
 		# OS.exit_code = 1

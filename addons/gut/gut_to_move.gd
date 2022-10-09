@@ -7,11 +7,10 @@ var _utils = load('res://addons/gut/utils.gd').get_instance()
 # deletes all files in a given directory
 # ------------------------------------------------------------------------------
 func directory_delete_files(path):
-	var d = Directory.new()
-	var result = d.open(path)
+	var d = DirAccess.open(path)
 
 	# SHORTCIRCUIT
-	if(result != OK):
+	if(d == null):
 		return
 
 	# Traversing a directory is kinda odd.  You have to start the process of listing
@@ -26,25 +25,24 @@ func directory_delete_files(path):
 		if(d.file_exists(full_path)):
 			d.remove(full_path)
 		thing = d.get_next()
+
 	d.list_dir_end()
 
 # ------------------------------------------------------------------------------
 # deletes the file at the specified path
 # ------------------------------------------------------------------------------
 func file_delete(path):
-	var d = Directory.new()
-	var result = d.open(path.get_base_dir())
-	if(result == OK):
+	var d = DirAccess.open(path.get_base_dir())
+	if(d != null):
 		d.remove(path)
 
 # ------------------------------------------------------------------------------
 # Checks to see if the passed in file has any data in it.
 # ------------------------------------------------------------------------------
 func is_file_empty(path):
-	var f = File.new()
-	f.open(path, f.READ)
-	var empty = f.get_length() == 0
-	f.close()
+	var f = FileAccess.open(path, FileAccess.READ)
+	var empty = f == null || f.get_length() == 0
+	f = null
 	return empty
 
 # ------------------------------------------------------------------------------
@@ -56,9 +54,7 @@ func get_file_as_text(path):
 # Creates an empty file at the specified path
 # ------------------------------------------------------------------------------
 func file_touch(path):
-	var f = File.new()
-	f.open(path, f.WRITE)
-	f.close()
+	FileAccess.open(path, FileAccess.WRITE)
 
 # ------------------------------------------------------------------------------
 # Call _process or _fixed_process, if they exist, on obj and all it's children

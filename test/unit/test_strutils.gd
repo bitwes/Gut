@@ -37,8 +37,9 @@ class TestType2Str:
 		assert_eq(strutils.type2str(scene),  str(scene, '(double_me_scene.gd)'))
 
 	func test_file_instance():
-		var f = File.new()
-		assert_eq(strutils.type2str(f), str(f))
+		pending("4.0 This might not need to exist anymore due to FileAccess Changes")
+		# var f = File.new()
+		# assert_eq(strutils.type2str(f), str(f))
 
 	func test_vector2():
 		var v2 = Vector2(20, 30)

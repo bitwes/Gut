@@ -294,9 +294,8 @@ class TestEverythingElse:
 
 	func test_delete_all_files_in_a_directory():
 		var path = 'user://gut_dir_tests'
-		var d = Directory.new()
-		var result = d.open('user://')
-		if(result ==  OK):
+		var d = DirAccess.open('user://')
+		if(d != null):
 			d.make_dir('gut_dir_tests')
 			gr.test_gut.file_touch(path + '/helloworld.txt')
 			gr.test_gut.file_touch(path + '/file2.txt')
@@ -382,22 +381,20 @@ class TestEverythingElse:
 		assert_file_does_not_exist('res://doesnotexist')
 
 		var path = 'user://gut_test_file.txt'
-		var f = File.new()
-		f.open(path, f.WRITE)
-		f.close()
+
+		var f = FileAccess.open(path, FileAccess.WRITE)
+		f = null
 		assert_file_exists(path)
 
 		path = 'user://gut_test_empty.txt'
-		f = File.new()
-		f.open(path, f.WRITE)
-		f.close()
+		f = FileAccess.open(path, FileAccess.WRITE)
 		assert_file_empty(path)
+		f = null
 
 		path = 'user://gut_test_not_empty3.txt'
-		f = File.new()
-		f.open(path, f.WRITE)
+		f = FileAccess.open(path, FileAccess.WRITE)
 		f.store_8(1)
-		f.close()
+		f = null
 		assert_file_not_empty(path)
 
 	func test_gut_clears_test_instances_between_runs():

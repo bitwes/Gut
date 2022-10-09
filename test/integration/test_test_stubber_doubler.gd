@@ -302,12 +302,11 @@ class TestPartialDoubleMethod:
 
 	# Test issue 147
 	func test_can_double_file():
-		pending('return value not included so signature does not match on file_exists 4.0')
+		pending('return value not included so signature does not match on file_exists 4.0.  Also File no longer exists.')
 		return
 
-		var f = File.new()
 		_test.gut.get_doubler().print_source = true
-		var inst = _test.partial_double(File)
+		var inst = _test.partial_double(FileAccess)
 		assert_not_null(inst)
 
 	func test_when_an_instance_is_passed_null_is_returned_and_an_error_is_generated():
