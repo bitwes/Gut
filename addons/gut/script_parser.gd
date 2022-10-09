@@ -113,6 +113,11 @@ class ParsedScript:
 		get: return _native_instance != null
 		set(val): return;
 
+	func unreference():
+		if(_native_instance != null):
+			_native_instance.free()
+		return super()
+
 
 	func _init(script_or_inst, inner_class=null):
 		var to_load = script_or_inst
