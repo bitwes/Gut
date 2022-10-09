@@ -7,7 +7,6 @@ var _utils = load('res://addons/gut/utils.gd').get_instance()
 # deletes all files in a given directory
 # ------------------------------------------------------------------------------
 func directory_delete_files(path):
-
 	var d = DirAccess.open(path)
 
 	# SHORTCIRCUIT
@@ -26,6 +25,7 @@ func directory_delete_files(path):
 		if(d.file_exists(full_path)):
 			d.remove(full_path)
 		thing = d.get_next()
+
 	d.list_dir_end()
 
 # ------------------------------------------------------------------------------
