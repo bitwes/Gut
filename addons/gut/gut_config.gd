@@ -66,21 +66,22 @@ func _null_copy(h):
 
 func _load_options_from_config_file(file_path, into):
 	# SHORTCIRCUIT
-	var f = File.new()
-	if(!f.file_exists(file_path)):
+
+	if(!FileAccess.file_exists(file_path)):
 		if(file_path != 'res://.gutconfig.json'):
 			print('ERROR:  Config File "', file_path, '" does not exist.')
 			return -1
 		else:
 			return 1
 
-	var result = f.open(file_path, f.READ)
-	if(result != OK):
+	var f = FileAccess.open(file_path, FileAccess.READ)
+	if(f == null):
+		var result = FileAccess.get_open_error()
 		push_error(str("Could not load data ", file_path, ' ', result))
 		return result
 
 	var json = f.get_as_text()
-	f.close()
+	f = null # close file
 
 	var test_json_conv = JSON.new()
 	test_json_conv.parse(json)
@@ -113,11 +114,13 @@ func _load_dict_into(source, dest):
 func write_options(path):
 	var content = json.stringify(options, ' ')
 
-	var f = File.new()
-	var result = f.open(path, f.WRITE)
-	if(result == OK):
+	var f = FileAccess.open(path, FileAccess.WRITE)
+	var result = FileAccess.get_open_error()
+	if(f != null):
 		f.store_string(content)
 		f.close()
+	else:
+		print('ERROR:  could not open file ', path, ' ', result)
 	return result
 
 

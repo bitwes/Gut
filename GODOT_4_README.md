@@ -13,19 +13,18 @@ This file tracks the changes that have occurred in porting GUT to Godot 4.0.  Al
 ```
 Totals
 Scripts:          172
-Passing tests     1060
-Failing tests     35
+Passing tests     1057
+Failing tests     37
 Risky tests       14
-Pending:          26
-Asserts:          1623 of 1664 passed
+Pending:          28
+Asserts:          1618 of 1661 passed
 
 Warnings/Errors:
 * 15 Errors.
-* 39 Warnings.
-* 52 Deprecated calls.
+* 6 Warnings.
 
 
-1060 passed 35 failed.  Tests finished in 126.682s
+1057 passed 37 failed.  Tests finished in 132.005s
 ```
 
 
@@ -55,6 +54,7 @@ These are changes to Godot that affect how GUT is used/implemented.
 * `connect` has been significantly altered.  The signal related asserts will likely change to use `Callable` parameters instead of strings.  It is possible to use strings, so this may remain in some form.  More info in [#383](/../../issues/383).
 * `yield` has been replaced with `await`.  `yield_to`, `yield_for`, and `yield_frames` have been deprecated, the new methods are `wait_seconds`, `wait_frams` and `wait_for_signal`.  There are exampels below and more info at [#382](/../../issues/382).
 * Arrays are pass by reference now.
+* `File` and `Directory` have been replaced with `FileAccess` and `DirAccess`.
 
 ## Working Features
 * The command line seems to be working fine.

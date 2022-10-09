@@ -4,13 +4,11 @@ extends Window
 
 func _get_file_as_text(path):
 	var to_return = null
-	var f = File.new()
-	var result = f.open(path, f.READ)
-	if(result == OK):
+	var f = FileAccess.open(path, FileAccess.READ)
+	if(f != null):
 		to_return = f.get_as_text()
-		f.close()
 	else:
-		to_return = str('ERROR:  Could not open file.  Error code ', result)
+		to_return = str('ERROR:  Could not open file.  Error code ', FileAccess.get_open_error())
 	return to_return
 
 func _ready():

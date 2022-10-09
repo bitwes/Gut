@@ -281,9 +281,9 @@ func get_rich_text_edit():
 
 
 func load_file(path):
-	var f = File.new()
-	var result = f.open(path, f.READ)
-	if(result != OK):
+
+	var f = FileAccess.open(path, FileAccess.READ)
+	if(f == null):
 		return
 
 	var t = f.get_as_text()

@@ -784,9 +784,7 @@ class TestAssertFileExists:
 
 	func test__assert_file_exists__with_file_exists():
 		var path = 'user://gut_test_file.txt'
-		var f = File.new()
-		f.open(path, f.WRITE)
-		f.close()
+		FileAccess.open(path, FileAccess.WRITE)
 		gr.test_with_gut.assert_file_exists(path)
 		assert_pass(gr.test_with_gut)
 
@@ -802,9 +800,7 @@ class TestAssertFileDne:
 
 	func test__assert_file_dne__with_file_exists():
 		var path = 'user://gut_test_file2.txt'
-		var f = File.new()
-		f.open(path, f.WRITE)
-		f.close()
+		FileAccess.open(path, FileAccess.WRITE)
 		gr.test_with_gut.assert_file_does_not_exist(path)
 		assert_fail(gr.test_with_gut)
 
@@ -816,18 +812,14 @@ class TestAssertFileEmpty:
 
 	func test__assert_file_empty__with_empty_file():
 		var path = 'user://gut_test_empty.txt'
-		var f = File.new()
-		f.open(path, f.WRITE)
-		f.close()
+		FileAccess.open(path, FileAccess.WRITE)
 		gr.test_with_gut.assert_file_empty(path)
 		assert_pass(gr.test_with_gut)
 
 	func test__assert_file_empty__with_not_empty_file():
 		var path = 'user://gut_test_empty2.txt'
-		var f = File.new()
-		f.open(path, f.WRITE)
+		var f = FileAccess.open(path, FileAccess.WRITE)
 		f.store_8(1)
-		f.close()
 		gr.test_with_gut.assert_file_empty(path)
 		assert_fail(gr.test_with_gut)
 
@@ -844,18 +836,14 @@ class TestAssertFileNotEmpty:
 
 	func test__assert_file_not_empty__with_empty_file():
 		var path = 'user://gut_test_empty3.txt'
-		var f = File.new()
-		f.open(path, f.WRITE)
-		f.close()
+		var f = FileAccess.open(path, FileAccess.WRITE)
 		gr.test_with_gut.assert_file_not_empty(path)
 		assert_fail(gr.test_with_gut)
 
 	func test__assert_file_not_empty__with_populated_file():
 		var path = 'user://gut_test_empty4.txt'
-		var f = File.new()
-		f.open(path, f.WRITE)
+		var f = FileAccess.open(path, FileAccess.WRITE)
 		f.store_8(1)
-		f.close()
 		gr.test_with_gut.assert_file_not_empty(path)
 		assert_pass(gr.test_with_gut)
 
@@ -1928,9 +1916,10 @@ class TestAssertProperty:
 		assert_fail_pass(gr.test_with_gut, 1, 1)
 
 	func test_fails_if_obj_is_something_unexpected():
-		var inst = Directory.new()
-		gr.test_with_gut.assert_property(inst, "current_dir", "", "new_dir")
-		assert_fail_pass(gr.test_with_gut, 2, 0)
+		pending('need a different object to test with since Directory does not exist anymore.')
+		# var inst = Directory.new()
+		# gr.test_with_gut.assert_property(inst, "current_dir", "", "new_dir")
+		# assert_fail_pass(gr.test_with_gut, 2, 0)
 
 	func test_other_fails_do_not_cause_false_negative():
 		gr.test_with_gut.fail_test('fail')

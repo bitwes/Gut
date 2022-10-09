@@ -204,7 +204,7 @@ func _on_RunAll_pressed():
 
 func _on_Shortcuts_pressed():
 	_ctrls.shortcut_dialog.popup_centered()
-	
+
 func _on_bottom_panel_shortcuts_visibility_changed():
 	_apply_shortcuts()
 	_ctrls.shortcut_dialog.save_shortcuts(SHORTCUTS_PATH)
@@ -337,12 +337,12 @@ func set_panel_button(value):
 # Write a file.
 # ------------------------------------------------------------------------------
 func write_file(path, content):
-	var f = File.new()
-	var result = f.open(path, f.WRITE)
-	if(result == OK):
+	var f = FileAccess.open(path, FileAccess.WRITE)
+	if(f != null):
 		f.store_string(content)
-		f.close()
-	return result
+	f = null;
+
+	return FileAccess.get_open_error()
 
 
 # ------------------------------------------------------------------------------
@@ -350,11 +350,10 @@ func write_file(path, content):
 # ------------------------------------------------------------------------------
 func get_file_as_text(path):
 	var to_return = ''
-	var f = File.new()
-	var result = f.open(path, f.READ)
-	if(result == OK):
+	var f = FileAccess.open(path, FileAccess.READ)
+	if(f != null):
 		to_return = f.get_as_text()
-		f.close()
+	f = null
 	return to_return
 
 

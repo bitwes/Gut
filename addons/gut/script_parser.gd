@@ -293,7 +293,6 @@ class ParsedScript:
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 var scripts = {}
-var _file = File.new()
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 
 
@@ -304,7 +303,7 @@ func _get_instance_id(thing):
 		var id_str = str(thing).replace("<", '').replace(">", '').split('#')[1]
 		inst_id = id_str.to_int()
 	elif(typeof(thing) == TYPE_STRING):
-		if(_file.file_exists(thing)):
+		if(FileAccess.file_exists(thing)):
 			inst_id = load(thing).get_instance_id()
 	else:
 		inst_id = thing.get_instance_id()

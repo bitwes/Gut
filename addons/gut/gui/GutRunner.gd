@@ -83,13 +83,12 @@ func _setup_gui(show_gui):
 func _write_results():
 	var content = _gui.get_textbox().text #_gut.logger.get_gui_bbcode()
 
-	var f = File.new()
-	var result = f.open(RESULT_FILE, f.WRITE)
-	if(result == OK):
+	var f = FileAccess.open(RESULT_FILE, FileAccess.WRITE)
+	if(f != null):
 		f.store_string(content)
 		f.close()
 	else:
-		push_error('Could not save bbcode, result = ', result)
+		push_error('Could not save bbcode, result = ', FileAccess.get_open_error())
 
 	var exporter = ResultExporter.new()
 	var f_result = exporter.write_json_file(_gut, RESULT_JSON)

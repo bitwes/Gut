@@ -41,7 +41,6 @@
 # logic to utils.  Now it's just a string.
 # ------------------------------------------------------------------------------
 class DoubledScript:
-	extends File
 
 	var _contents  = ''
 
