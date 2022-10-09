@@ -5,10 +5,7 @@ extends GutTest
 
 
 class TestProperties:
-	extends GutTest
-	var Gut = load('res://addons/gut/gut.gd')
-	var Test = load('res://addons/gut/test.gd')
-
+	extends 'res://test/gut_test.gd'
 	var _gut = null
 
 	func before_all():
@@ -76,10 +73,7 @@ class TestProperties:
 
 
 class TestSimulate:
-	extends GutTest
-
-	var Gut = load('res://addons/gut/gut.gd')
-	var Test = load('res://addons/gut/test.gd')
+	extends 'res://test/gut_test.gd'
 
 	var _test_gut = null
 
@@ -87,7 +81,7 @@ class TestSimulate:
 		_utils._test_mode
 
 	func before_each():
-		_test_gut = autofree(Gut.new())
+		_test_gut = autofree(new_gut())
 
 	class HasProcessMethod:
 		extends Node
@@ -128,7 +122,8 @@ class TestSimulate:
 			objs.append(autofree(HasProcessMethod.new()))
 			if(i > 0):
 				objs[i - 1].add_child(objs[i])
-				_test_gut.simulate(objs[0], 10, .1)
+
+		_test_gut.simulate(objs[0], 10, .1)
 
 		for i in range(objs.size()):
 			assert_eq(objs[i].process_called_count, 10, "_process should have been called on object # " + str(i))
@@ -144,20 +139,16 @@ class TestSimulate:
 
 
 class TestMisc:
-	extends GutTest
-
-	var Gut = load('res://addons/gut/gut.gd')
-	var Test = load('res://addons/gut/test.gd')
-
+	extends 'res://test/gut_test.gd'
 
 	func test_gut_does_not_make_orphans_when_added_to_scene():
-		var g = Gut.new()
+		var g = new_gut()
 		add_child(g)
 		g.free()
 		assert_no_new_orphans()
 
 	func test_gut_does_not_make_orphans_when_freed_before_in_tree():
-		var g = Gut.new()
+		var g = new_gut()
 		g.free()
 		assert_no_new_orphans()
 
@@ -165,10 +156,7 @@ class TestMisc:
 
 
 class TestEverythingElse:
-	extends GutTest
-
-	var Gut = load('res://addons/gut/gut.gd')
-	var Test = load('res://addons/gut/test.gd')
+	extends 'res://test/gut_test.gd'
 
 	#------------------------------
 	# Utility methods/variables
@@ -204,7 +192,11 @@ class TestEverythingElse:
 
 	# Returns a new gut object, all setup for testing.
 	func get_a_gut():
-		var g = Gut.new()
+		var g = new_gut()
+		# Hides output.  remove this when things start failing.
+		g.logger.disable_all_printers(true)
+		g.logger.disable_formatting(true)
+		# For checking warnings etc, this has to be ALL_ASSERTS
 		g.log_level = g.LOG_LEVEL_ALL_ASSERTS
 		return g
 
@@ -313,6 +305,7 @@ class TestEverythingElse:
 	# No Assert Warning
 	# ------------------------------
 	func test_when_a_test_has_no_asserts_a_warning_is_generated():
+
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name =  'test_no_asserts'
 		gr.test_gut.test_scripts()
@@ -391,9 +384,10 @@ class TestEverythingElse:
 		assert_file_empty(path)
 		f = null
 
-		path = 'user://gut_test_not_empty3.txt'
+		path = 'user://gut_test_not_empty.txt'
 		f = FileAccess.open(path, FileAccess.WRITE)
-		f.store_8(1)
+		f.store_8(100)
+		f.flush()
 		f = null
 		assert_file_not_empty(path)
 
@@ -633,9 +627,9 @@ class TestEverythingElse:
 	func test_before_all_after_all_printing_all_classes_in_script():
 		gr.test_gut.add_script('res://test/resources/has_asserts_in_beforeall_and_afterall.gd')
 		gr.test_gut.test_scripts()
-		assert_eq(gr.test_gut.get_pass_count(), 11, 'pass count')
-		assert_eq(gr.test_gut.get_fail_count(), 11, 'fail count')
-		assert_eq(gr.test_gut.get_assert_count(), 22, 'assert count`')
+		assert_eq(gr.test_gut.get_pass_count(), 10, 'pass count')
+		assert_eq(gr.test_gut.get_fail_count(), 10, 'fail count')
+		assert_eq(gr.test_gut.get_assert_count(), 20, 'assert count`')
 
 
 	# ------------------------------------------------------------------------------

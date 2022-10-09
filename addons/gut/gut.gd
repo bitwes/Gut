@@ -488,7 +488,10 @@ func _log_test_children_warning(test_script):
 # Convert the _summary dictionary into text
 # ------------------------------------------------------------------------------
 func _print_summary():
-	_lgr.log("\n\n*** Run Summary ***", _lgr.fmts.yellow)
+	_lgr.log("\n\n\n")
+	_lgr.log('==============================================', _lgr.fmts.yellow)
+	_lgr.log("= Run Summary", _lgr.fmts.yellow)
+	_lgr.log('==============================================', _lgr.fmts.yellow)
 
 	_new_summary.log_summary_text(_lgr)
 

@@ -1,13 +1,5 @@
-extends 'res://addons/gut/test.gd'
+extends GutTest
 
-class TestUsesDeprecatedPreAndPostMethods:
-	extends 'res://addons/gut/test.gd'
-
-	func prerun_setup():
-		assert_true(true, 'prerun_setup this passes')
-
-	func postrun_teardown():
-		assert_true(false, 'postrun_teardown this fails')
 
 class TestPassingBeforeAllAssertNoOtherTests:
 	extends 'res://addons/gut/test.gd'
