@@ -242,6 +242,7 @@ func is_running():
 # Private
 # ###########################
 var  _should_print_versions = true # used to cut down on output in tests.
+var _should_print_summary = true
 
 var _test_prefix = 'test_'
 var _file_prefix = 'test_'
@@ -488,6 +489,9 @@ func _log_test_children_warning(test_script):
 # Convert the _summary dictionary into text
 # ------------------------------------------------------------------------------
 func _print_summary():
+	if(!_should_print_summary):
+		return
+
 	_lgr.log("\n\n\n")
 	_lgr.log('==============================================', _lgr.fmts.yellow)
 	_lgr.log("= Run Summary", _lgr.fmts.yellow)
