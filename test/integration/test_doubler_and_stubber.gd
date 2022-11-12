@@ -118,13 +118,11 @@ class TestTheBasics:
 		assert_eq(pd_node_2d.is_blocking_signals(), false)
 
 	func test_can_stub_all_Node2D_doubles():
-		pending('pending in 4.0')
-		return
-
 		var d_node2d = autofree(gr.doubler.double_gdnative(Node2D).new())
 		var params = _utils.StubParams.new(Node2D, 'get_position').to_return(-1)
 		gr.stubber.add_stub(params)
 		assert_eq(d_node2d.get_position(), -1)
+		print(gr.stubber.to_s())
 
 	func test_init_is_never_stubbed_to_call_super():
 		var inst =  gr.doubler.partial_double(DoubleMe).new()

@@ -273,6 +273,8 @@ func _get_func_text(method_hash, path, super_=""):
 	var override_count = null;
 	if(_stubber != null):
 		override_count = _stubber.get_parameter_count(path, method_hash.name)
+		if(override_count != null):
+			print(method_hash.name, ' override:  ', override_count)
 
 	var text = _method_maker.get_function_text(method_hash, path, override_count, super_) + "\n"
 

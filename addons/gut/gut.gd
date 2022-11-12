@@ -938,6 +938,7 @@ func _test_the_scripts(indexes=[]):
 			_lgr.log(msg, _lgr.fmts.yellow)
 			_lgr.dec_indent()
 			_new_summary.get_current_script().was_skipped = true
+			_new_summary.get_current_script().skip_reason = skip_script
 			continue
 		# ----
 
@@ -963,11 +964,20 @@ func _test_the_scripts(indexes=[]):
 
 
 		# Each test in the script
+		var skip_suffix = '_skip__'
+		the_script.mark_tests_to_skip_with_suffix(skip_suffix)
 		for i in range(the_script.tests.size()):
 			_stubber.clear()
 			_spy.clear()
 			_current_test = the_script.tests[i]
 			script_result = null
+
+			# ------------------
+			# SHORTCIRCUI
+			if(_current_test.should_skip):
+				_new_summary.add_pending(_current_test.name, 'SKIPPED because it ends with ' + skip_suffix)
+				continue
+			# ------------------
 
 			if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
 				(_unit_test_name == '')):

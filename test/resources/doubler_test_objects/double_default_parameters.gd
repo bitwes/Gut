@@ -6,7 +6,6 @@ enum SOME_VALUES {
     VALUE_3
 }
 func return_passed(p1='a', p2='b'):
-    print('** super called **')
     return str(p1, p2)
 
 func call_me(p1, p2 = 2):

@@ -18,6 +18,8 @@ class Test:
 	var pending = false
 	# the line number when the  test fails
 	var line_number = -1
+	# Set this to true to prevent GUT from running the test.
+	var should_skip = false
 
 	func did_pass():
 		return passed and !pending and assert_count > 0
@@ -128,6 +130,12 @@ class TestScript:
 
 	func get_test_named(name):
 		return _utils.search_array(tests, 'name', name)
+
+	func mark_tests_to_skip_with_suffix(suffix):
+		for single_test in tests:
+			single_test.should_skip = single_test.name.ends_with(suffix)
+
+
 
 # ------------------------------------------------------------------------------
 # start test_collector, I don't think I like the name.

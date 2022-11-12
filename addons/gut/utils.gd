@@ -369,13 +369,12 @@ func get_file_as_text(path):
 	f = null
 	return to_return
 
-
 # ------------------------------------------------------------------------------
 # Loops through an array of things and calls a method or checks a property on
-# each element until it finds the returned value.  The item in the array is
-# returned or null if it is not found.
+# each element until it finds the returned value.  -1 is returned if not found
+# or the index is returned if found.
 # ------------------------------------------------------------------------------
-func search_array(ar, prop_method, value):
+func search_array_idx(ar, prop_method, value):
 	var found = false
 	var idx = 0
 
@@ -394,6 +393,19 @@ func search_array(ar, prop_method, value):
 			idx += 1
 
 	if(found):
+		return idx
+	else:
+		return -1
+
+# ------------------------------------------------------------------------------
+# Loops through an array of things and calls a method or checks a property on
+# each element until it finds the returned value.  The item in the array is
+# returned or null if it is not found (this method originally came first).
+# ------------------------------------------------------------------------------
+func search_array(ar, prop_method, value):
+	var idx = search_array_idx(ar, prop_method, value)
+
+	if(idx != -1):
 		return ar[idx]
 	else:
 		return null

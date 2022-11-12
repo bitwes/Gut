@@ -172,6 +172,7 @@ func get_parameter_count(obj, method):
 
 	if(stub_info != null and stub_info.has_param_override()):
 		to_return = stub_info.parameter_count
+		print("!! ", to_return)
 
 	return to_return
 
