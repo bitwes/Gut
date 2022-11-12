@@ -3,7 +3,7 @@
 
 
 ## Overview
-Ported to Godot 4 Beta 2
+Ported to Godot 4 Beta 4
 
 GUT is currently somewhat usable in 4.0.  Some features work, but many do not.  The CLI works, but the in-editor panel does not.
 

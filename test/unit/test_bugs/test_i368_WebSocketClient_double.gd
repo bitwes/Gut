@@ -1,5 +1,5 @@
 extends GutTest
-var skip_script = 'WebSocketClient does not exist in b4, removed in b3'
+var skip_script = 'WebSocket changed in beta 3, not sure if these are valid anymore.'
 
 # func test_make_double_of_WebSocketClient():
 # 	var WebSocketClientPD = partial_double(WebSocketClient)
