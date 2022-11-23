@@ -3,7 +3,7 @@
 
 
 ## Overview
-Ported to Godot 4 Beta 4
+Ported to Godot 4 Beta 5
 
 GUT is currently somewhat usable in 4.0.  Some features work, but many do not.  The CLI works, but the in-editor panel does not.
 
@@ -13,18 +13,17 @@ This file tracks the changes that have occurred in porting GUT to Godot 4.0.  Al
 ```
 Totals
 Scripts:          172
-Passing tests     1057
-Failing tests     37
-Risky tests       14
-Pending:          28
-Asserts:          1618 of 1661 passed
+Passing tests     1042
+Failing tests     14
+Risky tests       16
+Pending:          27
+Asserts:          1608 of 1630 passed
 
 Warnings/Errors:
 * 15 Errors.
-* 6 Warnings.
+* 36 Warnings.
 
-
-1057 passed 37 failed.  Tests finished in 132.005s
+1042 passed 14 failed.  Tests finished in 132.377s
 ```
 
 
@@ -66,12 +65,12 @@ These are changes to Godot that affect how GUT is used/implemented.
 * Doubling, Spying, Stubbing (mostly).  Cannot double inner classes.
 * Using `await` (the new `yield`) in tests, and all the GUT supplied `yield_` methods.  See notes in Changes section.
 * Input mocking.
+* Doubling Inner Classes has been fixed and all the tests have been restored.
 
 ## Broken Features
-* Gut Panel.  The in-editor panel is not working, you must use the CLI for now.
-* Cannot double inner classes due to Godot bug #65666.
-* Dictionary/array asserts are broke in some cases.
-* Probably much much more.
+* Gut Panel.  The in-editor panel is not working, you must use the CLI or the VSCode plugin (which uses the cli) for now.
+* Dictionary/array asserts are broke in some cases.  Godot 4 passes all arrays and dictionaries by reference now (arrays were by value, dictionaries were by reference).  This has broken a lot of the logic for comparing dictionaris, arrays, arrays in dictionaries, dictionaries in arrays.
+* Probably somewhat more.
 
 
 
