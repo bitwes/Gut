@@ -41,7 +41,10 @@ func file_delete(path):
 # ------------------------------------------------------------------------------
 func is_file_empty(path):
 	var f = FileAccess.open(path, FileAccess.READ)
-	var empty = f == null || f.get_length() == 0
+	var result = FileAccess.get_open_error()
+	var empty = true
+	if(result == OK):
+		empty = f.get_length() == 0
 	f = null
 	return empty
 

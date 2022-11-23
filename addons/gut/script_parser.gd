@@ -113,6 +113,11 @@ class ParsedScript:
 		get: return _native_instance != null
 		set(val): return;
 
+	func unreference():
+		if(_native_instance != null):
+			_native_instance.free()
+		return super()
+
 
 	func _init(script_or_inst, inner_class=null):
 		var to_load = script_or_inst
@@ -311,7 +316,7 @@ func _get_instance_id(thing):
 	return inst_id
 
 
-func parse(thing):
+func parse(thing, inner_thing=null):
 	var inst_id = _get_instance_id(thing)
 	var parsed = null
 
@@ -321,7 +326,7 @@ func parse(thing):
 		else:
 			var obj = instance_from_id(inst_id)
 			if(obj is Resource or _utils.is_native_class(obj)):
-				parsed = ParsedScript.new(obj)
+				parsed = ParsedScript.new(obj, inner_thing)
 				scripts[inst_id] = parsed
 
 	return parsed

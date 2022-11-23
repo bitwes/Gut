@@ -273,6 +273,8 @@ func _get_func_text(method_hash, path, super_=""):
 	var override_count = null;
 	if(_stubber != null):
 		override_count = _stubber.get_parameter_count(path, method_hash.name)
+		if(override_count != null):
+			print(method_hash.name, ' override:  ', override_count)
 
 	var text = _method_maker.get_function_text(method_hash, path, override_count, super_) + "\n"
 
@@ -317,8 +319,9 @@ func partial_double_gdnative(which):
 	return _partial_double(which, _utils.DOUBLE_STRATEGY.INCLUDE_SUPER)
 
 
-func double_inner(path, subpath, strategy=_strategy):
-	_lgr.error('Cannot double inner classes due to Godot bug.')
+func double_inner(parent, inner, strategy=_strategy):
+	var parsed = _script_collector.parse(parent, inner)
+	return _create_double(parsed, strategy, null, false)
 	return null
 
 func partial_double_inner(path, subpath, strategy=_strategy):

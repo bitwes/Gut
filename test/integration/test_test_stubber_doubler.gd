@@ -166,7 +166,7 @@ class TestTestsSmartDoubleMethod:
 		var inst = _test.double(DOUBLE_ME_SCENE_PATH).instantiate()
 		assert_eq(inst.__gutdbl.thepath, DOUBLE_ME_SCENE_PATH)
 
-	func test_when_passed_script_and_inner_it_doulbes_it():
+	func test_when_passed_script_and_inner_it_doubles_it():
 		pending('Inner class doubles broke 4.0')
 		return
 
@@ -255,9 +255,9 @@ class TestPartialDoubleMethod:
 		autofree(inst)
 		assert_eq(inst.return_hello(), 'hello', 'sometimes fails, should be fixed.')
 
-	func test_partial_double_inner():
+
+	func test_partial_double_inner_skip__():
 		pending('Inner class doubles broke 4.0')
-		return
 
 		var inst = _test.partial_double(INNER_CLASSES_PATH, 'InnerA').new()
 		assert_eq(inst.get_a(), 'a')
@@ -272,9 +272,8 @@ class TestPartialDoubleMethod:
 		autofree(inst)
 		assert_eq(inst.return_hello(), null)
 
-	func test_double_inner_not_a_partial():
+	func test_double_inner_not_a_partial_skip__():
 		pending('Inner class doubles broke 4.0')
-		return
 
 		var inst = _test.double(INNER_CLASSES_PATH, 'InnerA').new()
 		assert_eq(inst.get_a(), null)
@@ -301,9 +300,8 @@ class TestPartialDoubleMethod:
 		assert_eq(_test.get_pass_count(), pass_count + 1, 'tests have passed')
 
 	# Test issue 147
-	func test_can_double_file():
+	func test_can_double_file_skip__():
 		pending('return value not included so signature does not match on file_exists 4.0.  Also File no longer exists.')
-		return
 
 		_test.gut.get_doubler().print_source = true
 		var inst = _test.partial_double(FileAccess)
@@ -318,7 +316,7 @@ class TestPartialDoubleMethod:
 
 class TestOverridingParameters:
 	extends "res://test/gut_test.gd"
-	var skip_script = 'skip for now, crashing hard, not sure cause.'
+	# var skip_script = 'skip for now, crashing hard, not sure cause.'
 
 	var _gut = null
 	var _test = null
@@ -352,18 +350,20 @@ class TestOverridingParameters:
 		assert_eq(ret_val, '12')
 
 
-	func test_issue_246_rpc_id_varargs():
+	func test_issue_246_rpc_id_varargs_skip__():
 		_test.stub(Node, 'rpc_id').to_do_nothing().param_count(5)
 		_test.stub(Node, '_ready').to_do_nothing()
 
 		var inst =  _test.double(Node).new()
 		add_child_autofree(inst)
+		print(_test.gut.get_stubber().to_s())
 		var ret_val = inst.rpc_id(1, 'foo', '3', '4', '5')
 		_test.assert_called(inst, 'rpc_id', [1, 'foo', '3', '4', '5'])
 		assert_eq(_test.get_pass_count(), 1)
 
 
-	func test_issue_246_rpc_id_varargs2():
+
+	func test_issue_246_rpc_id_varargs2_skip__():
 		stub(Node, 'rpc_id').to_do_nothing().param_count(5)
 
 		var inst = double(Node).new()
@@ -371,7 +371,7 @@ class TestOverridingParameters:
 		inst.rpc_id(1, 'foo', '3', '4', '5')
 		assert_called(inst, 'rpc_id', [1, 'foo', '3', '4', '5'])
 
-	func test_issue_246_rpc_id_varargs_with_defaults():
+	func test_issue_246_rpc_id_varargs_with_defaults_skip__():
 		stub(Node, 'rpc_id').to_do_nothing().param_defaults([null, null, 'a', 'b', 'c'])
 
 		var inst = double(Node).new()

@@ -309,6 +309,10 @@ func disable_formatting(is_disabled):
 	for key in _printers:
 		_printers[key].set_format_enabled(!is_disabled)
 
+func disable_all_printers(is_disabled):
+	for p in _printers:
+		disable_printer(p, is_disabled)
+
 func get_printer(printer_key):
 	return _printers[printer_key]
 

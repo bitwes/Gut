@@ -156,6 +156,9 @@ class TestAssertEq:
 		]
 	]
 	func test_with_array(p = use_parameters(array_vals)):
+		pending('4.0 Dictionary and array compare broke')
+		return
+
 		gr.test.assert_eq(p[0], p[1])
 		if(p[2]):
 			assert_pass(gr.test)
@@ -170,6 +173,9 @@ class TestAssertEq:
 		assert_string_contains(gr.test._fail_pass_text[0], _compare.DICTIONARY_DISCLAIMER)
 
 	func test_dictionary_not_compared_by_value():
+		pending('4.0 Dictionary and array compare broke')
+		return
+
 		var d  = {'a':1}
 		var d2 = {'a':1}
 		gr.test.assert_eq(d, d2)
@@ -220,6 +226,9 @@ class TestAssertNe:
 		assert_string_contains(gr.test._fail_pass_text[0], _compare.DICTIONARY_DISCLAIMER)
 
 	func test_dictionary_not_compared_by_value():
+		pending('4.0 Dictionary and array compare broke')
+		return
+
 		var d  = {'a':1}
 		var d2 = {'a':1}
 		gr.test.assert_ne(d, d2)
@@ -610,8 +619,8 @@ class TestFailingDatatypeChecks:
 		assert_fail(gr.test, 2)
 
 	func test_dt_can_compare_to_null():
-		gr.test.assert_ne(Node2D.new(), null)
-		gr.test.assert_ne(null, Node2D.new())
+		gr.test.assert_ne(autofree(Node2D.new()), null)
+		gr.test.assert_ne(null, autofree(Node2D.new()))
 		assert_pass(gr.test, 2)
 
 
@@ -820,6 +829,7 @@ class TestAssertFileEmpty:
 		var path = 'user://gut_test_empty2.txt'
 		var f = FileAccess.open(path, FileAccess.WRITE)
 		f.store_8(1)
+		f.flush()
 		gr.test_with_gut.assert_file_empty(path)
 		assert_fail(gr.test_with_gut)
 
@@ -844,6 +854,7 @@ class TestAssertFileNotEmpty:
 		var path = 'user://gut_test_empty4.txt'
 		var f = FileAccess.open(path, FileAccess.WRITE)
 		f.store_8(1)
+		f.flush()
 		gr.test_with_gut.assert_file_not_empty(path)
 		assert_pass(gr.test_with_gut)
 
@@ -1081,12 +1092,12 @@ class TestExtendAsserts:
 			var a = 2
 
 	func test_passes_when_class_extends_parent():
-		var node2d = Node2D.new()
+		var node2d = autofree(Node2D.new())
 		gr.test.assert_is(node2d, Node2D)
 		assert_pass(gr.test)
 
 	func test_fails_when_class_does_not_extend_parent():
-		var lbl = Label.new()
+		var lbl = autofree(Label.new())
 		gr.test.assert_is(lbl, TextEdit)
 		assert_fail(gr.test)
 
@@ -1095,18 +1106,18 @@ class TestExtendAsserts:
 		assert_fail(gr.test)
 
 	func test_fails_when_compareing_object_to_primitives():
-		gr.test.assert_is(Node2D.new(), [])
-		gr.test.assert_is(TextEdit.new(), {})
+		gr.test.assert_is(autofree(Node2D.new()), [])
+		gr.test.assert_is(autofree(TextEdit.new()), {})
 		assert_fail(gr.test, 2)
 
 	func test_fails_with_another_instance():
-		var node1 = Node2D.new()
-		var node2 = Node2D.new()
+		var node1 = autofree(Node2D.new())
+		var node2 = autofree(Node2D.new())
 		gr.test.assert_is(node1, node2)
 		assert_fail(gr.test)
 
 	func test_passes_with_deeper_inheritance():
-		var eb = ExtendsBaseClass.new()
+		var eb =autofree(ExtendsBaseClass.new())
 		gr.test.assert_is(eb, Node2D)
 		assert_pass(gr.test)
 
@@ -1129,7 +1140,7 @@ class TestExtendAsserts:
 		assert_pass(gr.test)
 
 	func test_works_with_resources():
-		var res = Resource.new()
+		var res = autofree(Resource.new())
 		gr.test.assert_is(res, Resource)
 		assert_pass(gr.test)
 
@@ -1262,31 +1273,31 @@ class TestAssertCalled:
 		assert_fail(gr.test_with_gut)
 
 	func test_assert_called_passes_when_call_occurred():
-		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		var doubled = autofree(gr.test_with_gut.double(DOUBLE_ME_PATH).new())
 		doubled.get_value()
 		gr.test_with_gut.assert_called(doubled, 'get_value')
 		assert_pass(gr.test_with_gut)
 
 	func test_assert_called_passes_with_parameters():
-		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		var doubled = autofree(gr.test_with_gut.double(DOUBLE_ME_PATH).new())
 		doubled.set_value(5)
 		gr.test_with_gut.assert_called(doubled, 'set_value', [5])
 		assert_pass(gr.test_with_gut)
 
 	func test_fails_when_parameters_do_not_match():
-		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		var doubled = autofree(gr.test_with_gut.double(DOUBLE_ME_PATH).new())
 		doubled.set_value('a')
 		gr.test_with_gut.assert_called(doubled, 'set_value', [5])
 		assert_fail(gr.test_with_gut)
 
 	func test_assert_called_works_with_defaults():
-		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		var doubled = autofree(gr.test_with_gut.double(DOUBLE_ME_PATH).new())
 		doubled.has_two_params_one_default(10)
 		gr.test_with_gut.assert_called(doubled, 'has_two_params_one_default', [10, null])
 		assert_pass(gr.test_with_gut)
 
 	func test_assert_called_generates_error_if_third_parameter_not_an_array():
-		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		var doubled = autofree(gr.test_with_gut.double(DOUBLE_ME_PATH).new())
 		doubled.set_value(5)
 		gr.test_with_gut.assert_called(doubled, 'set_value', 5)
 		assert_fail(gr.test_with_gut)
@@ -1299,11 +1310,13 @@ class TestAssertNotCalled:
 
 	func test_passes_when_no_calls_have_been_made():
 		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		autofree(doubled)
 		gr.test_with_gut.assert_not_called(doubled, 'get_value')
 		assert_pass(gr.test_with_gut)
 
 	func test_fails_when_a_call_has_been_made():
 		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		autofree(doubled)
 		doubled.get_value()
 		gr.test_with_gut.assert_not_called(doubled, 'get_value')
 		assert_fail(gr.test_with_gut)
@@ -1314,18 +1327,21 @@ class TestAssertNotCalled:
 
 	func test_passes_if_parameters_do_not_match():
 		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		autofree(doubled)
 		doubled.set_value(4)
 		gr.test_with_gut.assert_not_called(doubled, 'set_value', [5])
 		assert_pass(gr.test_with_gut)
 
 	func test_fails_if_parameters_do_match():
 		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		autofree(doubled)
 		doubled.set_value('a')
 		gr.test_with_gut.assert_not_called(doubled, 'set_value', ['a'])
 		assert_fail(gr.test_with_gut)
 
 	func test_fails_if_no_params_specified_and_a_call_was_made():
 		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		autofree(doubled)
 		doubled.set_value('a')
 		gr.test_with_gut.assert_not_called(doubled, 'set_value')
 		assert_fail(gr.test_with_gut)
@@ -1337,11 +1353,13 @@ class TestAssertCallCount:
 
 	func test_passes_when_nothing_called_and_expected_count_zero():
 		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		autofree(doubled)
 		gr.test_with_gut.assert_call_count(doubled, 'set_value', 0)
 		assert_pass(gr.test_with_gut)
 
 	func test_fails_when_count_does_not_match():
 		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		autofree(doubled)
 		doubled.set_value(5)
 		doubled.set_value(10)
 		gr.test_with_gut.assert_call_count(doubled, 'set_value', 1)
@@ -1355,6 +1373,7 @@ class TestAssertCallCount:
 
 	func test_fails_if_parameters_do_not_match():
 		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		autofree(doubled)
 		doubled.set_value(5)
 		doubled.set_value(10)
 		gr.test_with_gut.assert_call_count(doubled, 'set_value', 2, [5])
@@ -1362,6 +1381,7 @@ class TestAssertCallCount:
 
 	func test_it_passes_if_parameters_do_match():
 		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		autofree(doubled)
 		doubled.set_value(5)
 		doubled.set_value(10)
 		doubled.set_value(5)
@@ -1371,6 +1391,7 @@ class TestAssertCallCount:
 
 	func test_when_parameters_not_sent_all_calls_count():
 		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		autofree(doubled)
 		doubled.set_value(5)
 		doubled.set_value(10)
 		doubled.set_value(6)
@@ -1385,13 +1406,14 @@ class TestGetCallParameters:
 
 	func test_it_works():
 		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		autofree(doubled)
 		doubled.set_value(5)
 		assert_eq(gr.test_with_gut.get_call_parameters(doubled, 'set_value'), [5])
 		gr.test_with_gut.assert_called(doubled, 'set_value')
 		assert_pass(gr.test_with_gut)
 
 	func test_generates_error_if_you_do_not_pass_a_doubled_object():
-		var thing = Node2D.new()
+		var thing = autofree(Node2D.new())
 		var _p = gr.test_with_gut.get_call_parameters(thing, 'something')
 		assert_eq(gr.test_with_gut.get_logger().get_errors().size(), 1)
 
@@ -1402,12 +1424,14 @@ class TestGetCallCount:
 
 	func test_it_works():
 		var doubled = gr.test_with_gut.partial_double(DOUBLE_ME_PATH).new()
+		autofree(doubled)
 		for i in range(10):
 			doubled.set_value(5)
 		assert_eq(gr.test_with_gut.get_call_count(doubled, 'set_value'), 10)
 
 	func test_it_works_with_parameters():
 		var doubled = gr.test_with_gut.partial_double(DOUBLE_ME_PATH).new()
+		autofree(doubled)
 		for i in range(3):
 			doubled.set_value(3)
 
@@ -1433,7 +1457,7 @@ class TestAssertNull:
 		assert_fail(gr.test)
 
 	func test_does_not_blow_up_on_different_kinds_of_input():
-		gr.test.assert_null(Node2D.new())
+		gr.test.assert_null(autofree(Node2D.new()))
 		gr.test.assert_null(1)
 		gr.test.assert_null([])
 		gr.test.assert_null({})
@@ -1458,7 +1482,7 @@ class TestAssertNotNull:
 		assert_pass(gr.test)
 
 	func test_does_not_blow_up_on_different_kinds_of_input():
-		gr.test.assert_not_null(Node2D.new())
+		gr.test.assert_not_null(autofree(Node2D.new()))
 		gr.test.assert_not_null(1)
 		gr.test.assert_not_null([])
 		gr.test.assert_not_null({})
@@ -1484,49 +1508,49 @@ class TestReplaceNode:
 		_arena.queue_free()
 
 	func test_can_replace_node():
-		var replacement = Node2D.new()
+		var replacement = autofree(Node2D.new())
 		gr.test.replace_node(_arena, 'Player1/Sword', replacement)
 		assert_eq(_arena.get_sword(), replacement)
 
 	func test_when_node_does_not_exist_error_is_generated():
-		var replacement = Node2D.new()
+		var replacement = autofree(Node2D.new())
 		gr.test.replace_node(_arena, 'DoesNotExist', replacement)
 		assert_errored(gr.test)
 
 	func test_replacement_works_with_dollar_sign_references():
-		var replacement = Node2D.new()
+		var replacement = autofree(Node2D.new())
 		gr.test.replace_node(_arena, 'Player1', replacement)
 		assert_eq(_arena.get_player1_ds(), replacement)
 
 	func test_replacement_works_with_dollar_sign_references_2():
-		var replacement = Node2D.new()
+		var replacement = autofree(Node2D.new())
 		gr.test.replace_node(_arena, 'Player1/Sword', replacement)
 		assert_eq(_arena.get_sword_ds(), replacement)
 
 	func test_replaced_node_is_freed():
-		var replacement = Node2D.new()
+		var replacement = autofree(Node2D.new())
 		var old = _arena.get_sword()
 		gr.test.replace_node(_arena, 'Player1/Sword', replacement)
 		# object is freed using queue_free, so we have to wait for it to go away
-		await yield_for(0.5)
+		await wait_frames(20)
 		assert_true(_utils.is_freed(old))
 
 	func test_replaced_node_retains_groups():
-		var replacement = Node2D.new()
+		var replacement = autofree(Node2D.new())
 		var old = _arena.get_sword()
 		old.add_to_group('Swords')
 		gr.test.replace_node(_arena, 'Player1/Sword', replacement)
 		assert_true(replacement.is_in_group('Swords'))
 
 	func test_works_with_node_and_not_path():
-		var replacement = Node2D.new()
+		var replacement = autofree(Node2D.new())
 		var old = _arena.get_sword_ds()
 		gr.test.replace_node(_arena, old, replacement)
 		assert_eq(_arena.get_sword(), replacement)
 
 	func test_generates_error_if_base_node_does_not_have_node_to_replace():
-		var replacement = Node2D.new()
-		var old = Node2D.new()
+		var replacement = autofree(Node2D.new())
+		var old = autofree(Node2D.new())
 		gr.test.replace_node(_arena, old, replacement)
 		assert_errored(gr.test)
 
@@ -1544,16 +1568,14 @@ class TestAssertIsFreed:
 	func test_object_is_freed_should_fail():
 		var obj = Node.new()
 		gr.test.assert_freed(obj, "Object2")
-		# free after test
-		obj.queue_free()
 		assert_fail(gr.test)
+		obj.free()
 
 	func test_object_is_not_freed_should_pass():
 		var obj = Node.new()
 		gr.test.assert_not_freed(obj, "Object3")
-		# free after test
-		obj.queue_free()
 		assert_pass(gr.test)
+		obj.free()
 
 	func test_object_is_not_freed_should_fail():
 		var obj = Node.new()
@@ -1689,7 +1711,7 @@ class TestMemoryMgmt:
 	func test_passes_with_queue_free():
 		var n2d = Node2D.new()
 		n2d.queue_free()
-		await yield_for(.5, 'must yield for queue_free to take hold')
+		await wait_seconds(.5, 'must wait for queue_free to take hold')
 		assert_no_new_orphans()
 		assert_true(gut._current_test.passed, 'this should be passing')
 
@@ -1706,8 +1728,8 @@ class TestMemoryMgmt:
 		add_child_autoqfree(n)
 		assert_eq(n.get_parent(), self, 'added as child')
 		gut.get_autofree().free_all()
-		assert_not_freed(n, 'node') # should not be freed until yield
-		await yield_for(.5)
+		assert_not_freed(n, 'node') # should not be freed until we wait
+		await wait_frames(10)
 		assert_freed(n, 'node')
 		assert_no_new_orphans()
 
@@ -1721,13 +1743,14 @@ class TestMemoryMgmt:
 
 # ------------------------------------------------------------------------------
 class TestTestStateChecking:
-	extends GutTest
+	extends 'res://test/gut_test.gd'
 
 	var _gut = null
 
 	func before_each():
 		super.before_each()
-		_gut = _utils.Gut.new()
+		_gut = new_gut()
+		_gut.logger._indent_level = 3
 		add_child_autoqfree(_gut)
 		_gut.add_script('res://test/resources/state_check_tests.gd')
 
@@ -1882,48 +1905,50 @@ class TestAssertProperty:
 		assert_has_method(gr.test, "assert_property")
 
 	func test_passes_if_given_input_is_valid():
-		gr.test_with_gut.assert_property(TestNode.new(), "has_both", 4, 0)
+		var test_node = autofree(TestNode.new())
+		gr.test_with_gut.assert_property(test_node, "has_both", 4, 0)
 		assert_pass(gr.test_with_gut, SUB_ASSERT_COUNT)
 
 	func test_passes_if_instance_is_script():
-		gr.test_with_gut.assert_property(TestNode.new(), "has_both", 4, 0)
+		var test_node = autofree(TestNode.new())
+		gr.test_with_gut.assert_property(test_node, "has_both", 4, 0)
 		assert_pass(gr.test_with_gut, SUB_ASSERT_COUNT)
 
 	func test_passes_if_instance_is_packed_scene():
-		var new_node_child_mock = TestNode.new()
+		var new_node_child_mock = autofree(TestNode.new())
 		add_child_autofree(new_node_child_mock)
-		gr.test_with_gut.assert_property(TestScene.instantiate(), "node_with_setter_getter", null, new_node_child_mock)
+		gr.test_with_gut.assert_property(autofree(TestScene.instantiate()), "node_with_setter_getter", null, new_node_child_mock)
 		assert_pass(gr.test_with_gut, SUB_ASSERT_COUNT)
 
 	func test_passes_if_instance_is_obj_from_script():
-		var node_child_mock = TestNode.new()
+		var node_child_mock = autofree(TestNode.new())
 		add_child_autofree(node_child_mock)
 		gr.test_with_gut.assert_property(node_child_mock, "has_both", 4, 5)
 		assert_pass(gr.test_with_gut, SUB_ASSERT_COUNT)
 
 	func test_passes_if_instance_is_obj_from_packed_scene():
-		var scene_mock = TestScene.instantiate()
+		var scene_mock = autofree(TestScene.instantiate())
 		add_child_autoqfree(scene_mock)
 		var dflt_node_with_setter = scene_mock.node_with_setter_getter
-		var new_node_child_mock = TestNode.new()
+		var new_node_child_mock = autofree(TestNode.new())
 		add_child_autofree(new_node_child_mock)
 		gr.test_with_gut.assert_property(scene_mock, "node_with_setter_getter", dflt_node_with_setter, new_node_child_mock)
 		assert_pass(gr.test_with_gut, SUB_ASSERT_COUNT)
 
 	func test_fails_if_getter_does_not_exist():
-		var test_node = TestNode.new()
+		var test_node = autofree(TestNode.new())
 		gr.test_with_gut.assert_property(test_node, 'has_setter', 2, 0)
 		assert_fail_pass(gr.test_with_gut, 1, 1)
 
 	func test_fails_if_obj_is_something_unexpected():
-		pending('need a different object to test with since Directory does not exist anymore.')
-		# var inst = Directory.new()
-		# gr.test_with_gut.assert_property(inst, "current_dir", "", "new_dir")
-		# assert_fail_pass(gr.test_with_gut, 2, 0)
+		var inst = "asdf"
+		gr.test_with_gut.assert_property(inst, "current_dir", "", "new_dir")
+		assert_fail_pass(gr.test_with_gut, 1, 0)
 
 	func test_other_fails_do_not_cause_false_negative():
 		gr.test_with_gut.fail_test('fail')
-		gr.test_with_gut.assert_property(TestNode.new(), "has_both", 4, 0)
+		var test_node = autofree(TestNode.new())
+		gr.test_with_gut.assert_property(test_node, "has_both", 4, 0)
 		assert_fail_pass(gr.test_with_gut, 1, SUB_ASSERT_COUNT)
 
 
@@ -1958,4 +1983,4 @@ class TestAssertBackedProperty:
 	func test_fails_when_setter_does_not_set_backing_var():
 		var test_node = autofree(TestNode.new())
 		gr.test_with_gut.assert_property_with_backing_variable(test_node, "backed_set_broke", 12, 0)
-		assert_fail_pass(gr.test_with_gut, 1, SUB_ASSERT_COUNT - 1)
+		assert_fail_pass(gr.test_with_gut, 2, SUB_ASSERT_COUNT - 2)

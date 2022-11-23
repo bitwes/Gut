@@ -1152,6 +1152,10 @@ func assert_property(obj, property_name, default_value, new_value) -> void:
 	var setter_name = str('@', property_name, '_setter')
 	var getter_name = str('@', property_name, '_getter')
 
+	if(typeof(obj) != TYPE_OBJECT):
+		_fail(str(_str(obj), ' is not an object'))
+		return
+
 	assert_has_method(obj, setter_name)
 	assert_has_method(obj, getter_name)
 

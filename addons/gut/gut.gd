@@ -242,6 +242,7 @@ func is_running():
 # Private
 # ###########################
 var  _should_print_versions = true # used to cut down on output in tests.
+var _should_print_summary = true
 
 var _test_prefix = 'test_'
 var _file_prefix = 'test_'
@@ -488,7 +489,13 @@ func _log_test_children_warning(test_script):
 # Convert the _summary dictionary into text
 # ------------------------------------------------------------------------------
 func _print_summary():
-	_lgr.log("\n\n*** Run Summary ***", _lgr.fmts.yellow)
+	if(!_should_print_summary):
+		return
+
+	_lgr.log("\n\n\n")
+	_lgr.log('==============================================', _lgr.fmts.yellow)
+	_lgr.log("= Run Summary", _lgr.fmts.yellow)
+	_lgr.log('==============================================', _lgr.fmts.yellow)
 
 	_new_summary.log_summary_text(_lgr)
 
@@ -931,6 +938,7 @@ func _test_the_scripts(indexes=[]):
 			_lgr.log(msg, _lgr.fmts.yellow)
 			_lgr.dec_indent()
 			_new_summary.get_current_script().was_skipped = true
+			_new_summary.get_current_script().skip_reason = skip_script
 			continue
 		# ----
 
@@ -956,11 +964,20 @@ func _test_the_scripts(indexes=[]):
 
 
 		# Each test in the script
+		var skip_suffix = '_skip__'
+		the_script.mark_tests_to_skip_with_suffix(skip_suffix)
 		for i in range(the_script.tests.size()):
 			_stubber.clear()
 			_spy.clear()
 			_current_test = the_script.tests[i]
 			script_result = null
+
+			# ------------------
+			# SHORTCIRCUI
+			if(_current_test.should_skip):
+				_new_summary.add_pending(_current_test.name, 'SKIPPED because it ends with ' + skip_suffix)
+				continue
+			# ------------------
 
 			if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
 				(_unit_test_name == '')):

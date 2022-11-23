@@ -58,6 +58,7 @@ class Test:
 class TestScript:
 	var name = 'NOT_SET'
 	var was_skipped = false
+	var skip_reason = ''
 	var _tests = {}
 	var _test_order = []
 
@@ -94,8 +95,6 @@ class TestScript:
 		for key in _tests:
 			if(_tests[key].is_failing()):
 				count += 1
-		if(was_skipped):
-			count = 1
 		return count
 
 	func get_risky_count():
@@ -204,6 +203,7 @@ func get_totals():
 
 	return totals
 
+
 func log_summary_text(lgr):
 	var orig_indent = lgr.get_indent_level()
 	var found_failing_or_pending = false
@@ -215,7 +215,8 @@ func log_summary_text(lgr):
 
 		if(_scripts[s].was_skipped):
 			lgr.inc_indent()
-			lgr.log('[Risky] Script was skipped', lgr.fmts.yellow)
+			var skip_msg = str('[Risky] Script was skipped:  ', _scripts[s].skip_reason)
+			lgr.log(skip_msg, lgr.fmts.yellow)
 			lgr.dec_indent()
 
 		for t in range(_scripts[s]._test_order.size()):

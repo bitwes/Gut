@@ -176,6 +176,8 @@ class TestParsedScript:
 	func test_extends_text_uses_class_name_for_natives():
 		var parsed = ParsedScript.new(Node2D)
 		assert_eq(parsed.get_extends_text(), 'extends Node2D')
+		parsed.unreference()
+		parsed = null
 
 	func test_extends_text_adds_inner_classes_to_end():
 		var InnerB1 = InnerClasses.InnerB.InnerB1
@@ -185,5 +187,6 @@ class TestParsedScript:
 
 	func test_parsing_native_does_not_generate_orphans():
 		var parsed = ParsedScript.new(Node2D)
-		# parsed.free()
+		parsed.unreference()
+		parsed = null
 		assert_no_new_orphans()

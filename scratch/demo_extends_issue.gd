@@ -29,9 +29,9 @@ func demo_node2d():
 
 	var inst = make_script(script_source).new()
 	if(inst is Node2D):
-		print('yes it is')
+		print('pass - yes it is')
 	else:
-		print('unfortunately it is not')
+		print('fail - unfortunately it is not')
 
 	inst.free()
 
@@ -43,9 +43,9 @@ func demo_dyn_inner_class():
 	var inst = make_script(script_source).new()
 
 	if(inst is InnerClasses):
-		print('is InnerClasses')
+		print('fail - is InnerClasses')
 	if(inst is InnerClasses.InnerA):
-		print('is InnerA')
+		print('pass - is InnerA')
 
 
 func demo_inner_extends_full_path():
@@ -53,14 +53,14 @@ func demo_inner_extends_full_path():
 	var inst = ExtendsInnerClassesInnerAWithPath.new()
 	print(inst.get_a())
 	if(inst is InnerClasses):
-		print('2 is InnerClasses')
+		print('fail - 2 is InnerClasses')
 	if(inst is InnerClasses.InnerA):
-		print('2 is InnerA')
+		print('pass - 2 is InnerA')
 
 
 # Currently not demoing anything wrong.
 func _init():
 	demo_dyn_inner_class()
 	demo_inner_extends_full_path()
-
+	demo_node2d()
 	quit()

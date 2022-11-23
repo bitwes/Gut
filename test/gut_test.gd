@@ -50,3 +50,11 @@ func assert_has_logger(obj):
 
 func get_error_count(obj):
 	return obj.logger.get_errors().size()
+
+
+func new_gut():
+	var g = Gut.new()
+	g._should_print_versions = false
+	g._should_print_summary = false
+	g.log_level = g.LOG_LEVEL_FAIL_ONLY
+	return g
