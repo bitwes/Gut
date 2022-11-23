@@ -166,7 +166,7 @@ class TestTestsSmartDoubleMethod:
 		var inst = _test.double(DOUBLE_ME_SCENE_PATH).instantiate()
 		assert_eq(inst.__gutdbl.thepath, DOUBLE_ME_SCENE_PATH)
 
-	func test_when_passed_script_and_inner_it_doulbes_it():
+	func test_when_passed_script_and_inner_it_doubles_it():
 		pending('Inner class doubles broke 4.0')
 		return
 

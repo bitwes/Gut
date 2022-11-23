@@ -319,8 +319,9 @@ func partial_double_gdnative(which):
 	return _partial_double(which, _utils.DOUBLE_STRATEGY.INCLUDE_SUPER)
 
 
-func double_inner(path, subpath, strategy=_strategy):
-	_lgr.error('Cannot double inner classes due to Godot bug.')
+func double_inner(parent, inner, strategy=_strategy):
+	var parsed = _script_collector.parse(parent, inner)
+	return _create_double(parsed, strategy, null, false)
 	return null
 
 func partial_double_inner(path, subpath, strategy=_strategy):
