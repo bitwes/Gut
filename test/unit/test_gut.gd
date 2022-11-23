@@ -435,35 +435,37 @@ class TestEverythingElse:
 		assert_eq(instance.counts.after_each, 3, 'after_each')
 
 	func test_when_inner_class_skipped_none_of_the_before_after_are_called():
-		pending('pending in 4.0, inner classes')
-		# gut.p('these tests sometimes fail.  Will have to add inner class names to test objects to make sure it passes.  GUT no longer guarantees the order in which the inner test classes are run so sometimes it works and sometimes it doesnt.')
-		# gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/inner_classes_check_before_after.gd')
-		# gr.test_gut.inner_class_name = 'Inner1'
-		# gr.test_gut.test_scripts()
-		# var instances = gr.test_gut._test_script_objects
+		gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/inner_classes_check_before_after.gd')
+		gr.test_gut.inner_class_name = 'Inner1'
+		gr.test_gut.test_scripts()
+		var instances = gr.test_gut._test_script_objects
 
-		# var inner1_inst = null
-		# var inner2_inst = null
+		var inner1_inst = null
+		var inner2_inst = null
 
-		# # order in which the inner classes will be run is unknown  so  we
-		# # have to go looking for them.
-		# for i in range(instances.size()):
-		# 	var dict = inst2dict(instances[i])
-		# 	print('subpath  = ', dict['@subpath'])
-		# 	if(dict['@subpath'] == 'TestInner1'):
-		# 		inner1_inst = instances[i]
-		# 	elif(dict['@subpath'] == 'TestInner2'):
-		# 		inner2_inst = instances[i]
+		# order in which the inner classes will be run is unknown  so  we
+		# have to go looking for them.
+		for i in range(instances.size()):
+			var dict = inst_to_dict(instances[i])
+			var subpath = str(dict['@subpath'])
 
-		# assert_eq(inner1_inst.before_all_calls, 1, 'TestInner1 before_all calls')
-		# assert_eq(inner1_inst.after_all_calls, 1, 'TestInner1 after_all calls')
-		# assert_eq(inner1_inst.before_each_calls, 1, 'TestInner1 before_each_calls')
-		# assert_eq(inner1_inst.after_each_calls, 1, 'TestInner1 after_each calls')
+			if(subpath == 'TestInner1'):
+				inner1_inst = instances[i]
+			elif(subpath == 'TestInner2'):
+				inner2_inst = instances[i]
 
-		# assert_eq(inner2_inst.before_all_calls, 0, 'TestInner2 before_all calls')
-		# assert_eq(inner2_inst.after_all_calls, 0, 'TestInner2 after_all calls')
-		# assert_eq(inner2_inst.before_each_calls, 0, 'TestInner2 before_each_calls')
-		# assert_eq(inner2_inst.after_each_calls, 0, 'TestInner2 after_each calls')
+		assert_eq(inner1_inst.before_all_calls, 1, 'TestInner1 before_all calls')
+		assert_eq(inner1_inst.after_all_calls, 1, 'TestInner1 after_all calls')
+		assert_eq(inner1_inst.before_each_calls, 1, 'TestInner1 before_each_calls')
+		assert_eq(inner1_inst.after_each_calls, 1, 'TestInner1 after_each calls')
+
+		assert_eq(inner2_inst.before_all_calls, 0, 'TestInner2 before_all calls')
+		assert_eq(inner2_inst.after_all_calls, 0, 'TestInner2 after_all calls')
+		assert_eq(inner2_inst.before_each_calls, 0, 'TestInner2 before_each_calls')
+		assert_eq(inner2_inst.after_each_calls, 0, 'TestInner2 after_each calls')
+
+		if(is_passing()):
+			gut.p('These sometimes fail due to the order tests are run.')
 
 	# ------------------------------
 	# Pre and post hook tests
