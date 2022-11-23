@@ -76,11 +76,17 @@ class TestBasics:
 		assert_eq(anotherA.get_a(), 20)
 
 	func test_can_stub_multiple_inners_using_class_path_and_inner_names():
+		print('---- double inner_a')
 		var inner_a = gr.gut.get_doubler().double_inner(InnerClasses, InnerClasses.InnerA).new()
+		print('---- double another_a')
 		var another_a = gr.gut.get_doubler().double_inner(InnerClasses, InnerClasses.AnotherInnerA).new()
-		gr.test.stub(InnerClasses, 'InnerA', 'get_a').to_return(10)
+		print('---- start stub')
+		gr.test.stub(INNER_CLASSES_PATH, 'InnerA', 'get_a').to_return(10)
+		print('---- end stub')
 		assert_eq(inner_a.get_a(), 10, 'InnerA should be stubbed')
 		assert_eq(another_a.get_a(), null, 'AnotherA should NOT be stubbed')
+		if(is_failing()):
+			gut.p(gr.gut.get_stubber().to_s())
 
 	func test_when_stub_passed_a_non_doubled_instance_it_generates_an_error():
 		var n = autofree(Node.new())
@@ -301,7 +307,6 @@ class TestPartialDoubleMethod:
 
 class TestOverridingParameters:
 	extends "res://test/gut_test.gd"
-	# var skip_script = 'skip for now, crashing hard, not sure cause.'
 
 	var _gut = null
 	var _test = null

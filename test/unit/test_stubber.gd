@@ -83,10 +83,6 @@ func test_can_call_super_for_dne_generates_info():
 	var value = gr.stubber.should_call_super('nothing', 'something')
 	assert_eq(gr.stubber.get_logger().get_infos().size(), 1)
 
-func test_can_get_return_value_for_class_using_path():
-	gr.stubber.set_return(ToStub, 'get_value', 0)
-	var value = gr.stubber.get_return(TO_STUB_PATH, 'get_value')
-	assert_eq(value, 0)
 
 func test_can_get_return_value_using_an_instance_of_class():
 	gr.stubber.set_return(ToStub, 'get_value', 0)
@@ -109,20 +105,20 @@ func test_instance_stub_not_used_for_path_stub():
 	assert_eq(value, 0)
 
 func test_returns_can_be_layered():
-	gr.stubber.set_return(TO_STUB_PATH, 'get_value', 0)
+	gr.stubber.set_return(ToStub, 'get_value', 0)
 	var inst = ToStub.new()
 	gr.stubber.set_return(inst, 'get_other', 100)
 	assert_eq(gr.stubber.get_return(inst, 'get_value'), 0, 'unstubbed instance method should get class value')
 	assert_eq(gr.stubber.get_return(inst, 'get_other'), 100, 'stubbed instance method should get inst value')
-	assert_eq(gr.stubber.get_return(TO_STUB_PATH, 'get_value'), 0, 'stubbed path method should get path value')
-	assert_eq(gr.stubber.get_return(TO_STUB_PATH ,'get_other'), null, 'unstubbed path method should get null')
+	assert_eq(gr.stubber.get_return(ToStub, 'get_value'), 0, 'stubbed path method should get path value')
+	assert_eq(gr.stubber.get_return(ToStub ,'get_other'), null, 'unstubbed path method should get null')
 
-func test_will_use_metadata_for_class_path():
-	gr.stubber.set_return('some_path', 'some_method', 0)
-	var inst = HasStubMetadata.new()
-	inst.__gutdbl.thepath = 'some_path'
-	var value = gr.stubber.get_return(inst, 'some_method')
-	assert_eq(value, 0)
+# func test_will_use_metadata_for_class_path():
+# 	gr.stubber.set_return('some_path', 'some_method', 0)
+# 	var inst = HasStubMetadata.new()
+# 	inst.__gutdbl.thepath = 'some_path'
+# 	var value = gr.stubber.get_return(inst, 'some_method')
+# 	assert_eq(value, 0)
 
 func test_will_use_instance_instead_of_metadata():
 	gr.stubber.set_return('some_path', 'some_method', 0)
@@ -206,6 +202,7 @@ func test_should_call_super_overriden_by_setting_return():
 	sp.to_return(null)
 	gr.stubber.add_stub(sp)
 	assert_false(gr.stubber.should_call_super('thing', 'method'))
+
 
 
 

@@ -185,6 +185,25 @@ class TestTheBasics:
 			print(gr.stubber.to_s())
 
 
+class TestInnerClasses:
+	extends BaseTest
+
+	var doubler = null
+	var stubber = null
+
+	func before_each():
+		doubler = Doubler.new()
+		stubber = _utils.Stubber.new()
+		doubler.set_stubber(stubber)
+
+
+	func test_can_stub_inner_using_loaded_inner_class():
+		var sp = StubParams.new(InnerClasses.InnerA, 'get_a').to_return(5)
+		stubber.add_stub(sp)
+		var dbl_inner_a = doubler.double_inner(InnerClasses, InnerClasses.InnerA).new()
+		assert_eq(stubber.get_return(dbl_inner_a, 'get_a'), 5)
+
+
 # Since defaults are only available for built-in methods these tests verify
 # specific method parameters that were found to cause a problem.
 class TestDefaultParameters:

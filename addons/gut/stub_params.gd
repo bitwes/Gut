@@ -9,7 +9,7 @@ var parameters = null
 var stub_method = null
 var call_super = false
 # Whether this is a stub for default parameter values as they are defined in
-# the script, and not an overridden ddefault value.
+# the script, and not an overridden default value.
 var is_script_default = false
 
 # -- Paramter Override --

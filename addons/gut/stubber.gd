@@ -17,7 +17,7 @@ var _lgr = _utils.get_logger()
 var _strutils = _utils.Strutils.new()
 
 
-func _make_key_from_metadata(doubled):
+func _make_key_from_double(doubled):
 	var to_return = doubled.__gutdbl.thepath
 
 	if(doubled.__gutdbl.from_singleton != ''):
@@ -42,7 +42,7 @@ func _make_key_from_variant(obj, subpath=null):
 				to_return += str('-', subpath)
 		TYPE_OBJECT:
 			if(_utils.is_instance(obj)):
-				to_return = _make_key_from_metadata(obj)
+				to_return = _make_key_from_double(obj)
 			elif(_utils.is_native_class(obj)):
 				to_return = _utils.get_native_class_name(obj)
 			else:
@@ -51,71 +51,80 @@ func _make_key_from_variant(obj, subpath=null):
 	return to_return
 
 
-func _add_obj_method(obj, method, subpath=null):
-	var key = _make_key_from_variant(obj, subpath)
-	if(_utils.is_instance(obj)):
-		key = obj
-
-	if(!returns.has(key)):
-		returns[key] = {}
-	if(!returns[key].has(method)):
-		returns[key][method] = []
-
-	return key
-
 # ##############
 # Public
 # ##############
+
+func _find_matches(obj, method):
+	var matches = null
+
+	# Search for what is passed in first.  This could be a class or an instance.
+	# We want to find the instance before we find the class.  If we do not have
+	# an entry for the instance then see if we have an entry for the class.
+	if(returns.has(obj) and returns[obj].has(method)):
+		matches = returns[obj][method]
+	elif(_utils.is_instance(obj)):
+		var inst_class = obj.get_script()
+		if(returns.has(inst_class) and returns[inst_class].has(method)):
+			matches = returns[inst_class][method]
+
+	return matches
+
 
 # Searches returns for an entry that matches the instance or the class that
 # passed in obj is.
 #
 # obj can be an instance, class, or a path.
 func _find_stub(obj, method, parameters=null, find_overloads=false):
-	var key = _make_key_from_variant(obj)
 	var to_return = null
+	var matches = _find_matches(obj, method)
 
-	if(_utils.is_instance(obj)):
-		if(returns.has(obj) and returns[obj].has(method)):
-			key = obj
-		elif(obj.get('__gutdbl')):
-			key = _make_key_from_metadata(obj)
+	if(matches == null):
+		return null
 
-	if(returns.has(key) and returns[key].has(method)):
-		var param_match = null
-		var null_match = null
-		var overload_match = null
+	var param_match = null
+	var null_match = null
+	var overload_match = null
 
-		for i in range(returns[key][method].size()):
-			var cur_stub = returns[key][method][i]
-			if(cur_stub.parameters == parameters):
-				param_match = cur_stub
+	for i in range(matches.size()):
+		var cur_stub = matches[i]
+		if(cur_stub.parameters == parameters):
+			param_match = cur_stub
 
-			if(cur_stub.parameters == null and !cur_stub.is_param_override_only()):
-				null_match = cur_stub
+		if(cur_stub.parameters == null and !cur_stub.is_param_override_only()):
+			null_match = cur_stub
 
-			if(cur_stub.has_param_override()):
-				if(overload_match == null || overload_match.is_script_default):
-					overload_match = cur_stub
+		if(cur_stub.has_param_override()):
+			if(overload_match == null || overload_match.is_script_default):
+				overload_match = cur_stub
 
-		if(find_overloads and overload_match != null):
-			to_return = overload_match
-		# We have matching parameter values so return the stub value for that
-		elif(param_match != null):
-			to_return = param_match
-		# We found a case where the parameters were not specified so return
-		# parameters for that.  Only do this if the null match is not *just*
-		# a paramerter override stub.
-		elif(null_match != null):
-			to_return = null_match
+	if(find_overloads and overload_match != null):
+		to_return = overload_match
+	# We have matching parameter values so return the stub value for that
+	elif(param_match != null):
+		to_return = param_match
+	# We found a case where the parameters were not specified so return
+	# parameters for that.  Only do this if the null match is not *just*
+	# a paramerter override stub.
+	elif(null_match != null):
+		to_return = null_match
 
 	return to_return
 
 
 func add_stub(stub_params):
 	stub_params._lgr = _lgr
-	var key = _add_obj_method(stub_params.stub_target, stub_params.stub_method, stub_params.target_subpath)
+	var key = stub_params.stub_target
+
+	if(!returns.has(key)):
+		returns[key] = {}
+
+	if(!returns[key].has(stub_params.stub_method)):
+		returns[key][stub_params.stub_method] = []
+
 	returns[key][stub_params.stub_method].append(stub_params)
+	# var key = _add_obj_method(stub_params.stub_target, stub_params.stub_method, stub_params.target_subpath)
+	# returns[key][stub_params.stub_method].append(stub_params)
 
 
 # Gets a stubbed return value for the object and method passed in.  If the
