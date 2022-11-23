@@ -63,18 +63,12 @@ class TestBasics:
 		assert_eq(gr.test.get_pass_count(), 1)
 
 	func test_can_stub_inner_class_methods():
-		pending('Inner Class 4.0')
-		return
-
-		var d = gr.gut.get_doubler().double_inner(InnerClasses, 'InnerA').new()
+		var d = gr.gut.get_doubler().double_inner(InnerClasses, InnerClasses.InnerA).new()
 		gr.test.stub(INNER_CLASSES_PATH, 'InnerA', 'get_a').to_return(10)
 		assert_eq(d.get_a(), 10)
 
 	func test_can_stub_multiple_inner_classes():
-		pending('Inner Class 4.0')
-		return
-
-		var a = gr.gut.get_doubler().double_inner(InnerClasses, 'InnerA').new()
+		var a = gr.gut.get_doubler().double_inner(InnerClasses, InnerClasses.InnerA).new()
 		var anotherA = gr.gut.get_doubler().double_inner(INNER_CLASSES_PATH, 'AnotherInnerA').new()
 		gr.test.stub(a, 'get_a').to_return(10)
 		gr.test.stub(anotherA, 'get_a').to_return(20)
@@ -82,14 +76,11 @@ class TestBasics:
 		assert_eq(anotherA.get_a(), 20)
 
 	func test_can_stub_multiple_inners_using_class_path_and_inner_names():
-		pending('Inner Class 4.0')
-		return
-
-		var a = gr.gut.get_doubler().double_inner(InnerClasses, 'InnerA').new()
-		var anotherA = gr.gut.get_doubler().double_inner(INNER_CLASSES_PATH, 'AnotherInnerA').new()
-		gr.test.stub(INNER_CLASSES_PATH, 'InnerA', 'get_a').to_return(10)
-		assert_eq(a.get_a(), 10)
-		assert_eq(anotherA.get_a(), null)
+		var inner_a = gr.gut.get_doubler().double_inner(InnerClasses, InnerClasses.InnerA).new()
+		var another_a = gr.gut.get_doubler().double_inner(InnerClasses, InnerClasses.AnotherInnerA).new()
+		gr.test.stub(InnerClasses, 'InnerA', 'get_a').to_return(10)
+		assert_eq(inner_a.get_a(), 10, 'InnerA should be stubbed')
+		assert_eq(another_a.get_a(), null, 'AnotherA should NOT be stubbed')
 
 	func test_when_stub_passed_a_non_doubled_instance_it_generates_an_error():
 		var n = autofree(Node.new())
@@ -167,17 +158,11 @@ class TestTestsSmartDoubleMethod:
 		assert_eq(inst.__gutdbl.thepath, DOUBLE_ME_SCENE_PATH)
 
 	func test_when_passed_script_and_inner_it_doubles_it():
-		pending('Inner class doubles broke 4.0')
-		return
-
 		var inst = _test.double(INNER_CLASSES_PATH, 'InnerA').new()
 		assert_eq(inst.__gutdbl.thepath, INNER_CLASSES_PATH, 'check path')
 		assert_eq(inst.__gutdbl.subpath, 'InnerA', 'check subpath')
 
 	func test_full_strategy_used_for_scripts():
-		pending('Inner class doubles broke 4.0')
-		return
-
 		var inst = _test.double(DOUBLE_ME_PATH, DOUBLE_STRATEGY.INCLUDE_SUPER).new()
 		inst.get_instance_id()
 		assert_called(inst, 'get_instance_id')
@@ -188,9 +173,6 @@ class TestTestsSmartDoubleMethod:
 		assert_called(inst, 'get_instance_id')
 
 	func test_full_strategy_used_with_inners():
-		pending('Inner class doubles broke 4.0')
-		return
-
 		var inst = _test.double(INNER_CLASSES_PATH, 'InnerA', DOUBLE_STRATEGY.INCLUDE_SUPER).new()
 		inst.get_instance_id()
 		assert_called(inst, 'get_instance_id')
@@ -204,9 +186,6 @@ class TestTestsSmartDoubleMethod:
 		assert_eq(inst.__gutdbl.thepath, DOUBLE_ME_SCENE_PATH)
 
 	func test_when_passing_a_class_of_an_inner_it_doubles_it():
-		pending('Inner class doubles broke 4.0')
-		return
-
 		var inst = _test.double(InnerClasses, 'InnerA').new()
 		assert_eq(inst.__gutdbl.thepath, INNER_CLASSES_PATH, 'check path')
 		assert_eq(inst.__gutdbl.subpath, 'InnerA', 'check subpath')
@@ -256,9 +235,7 @@ class TestPartialDoubleMethod:
 		assert_eq(inst.return_hello(), 'hello', 'sometimes fails, should be fixed.')
 
 
-	func test_partial_double_inner_skip__():
-		pending('Inner class doubles broke 4.0')
-
+	func test_partial_double_inner():
 		var inst = _test.partial_double(INNER_CLASSES_PATH, 'InnerA').new()
 		assert_eq(inst.get_a(), 'a')
 
@@ -272,9 +249,7 @@ class TestPartialDoubleMethod:
 		autofree(inst)
 		assert_eq(inst.return_hello(), null)
 
-	func test_double_inner_not_a_partial_skip__():
-		pending('Inner class doubles broke 4.0')
-
+	func test_double_inner_not_a_partial():
 		var inst = _test.double(INNER_CLASSES_PATH, 'InnerA').new()
 		assert_eq(inst.get_a(), null)
 
