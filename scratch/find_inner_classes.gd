@@ -67,19 +67,67 @@ func get_inner_class_string(inner, parent_script):
 	return to_return
 
 
+func print_other_info(loaded, msg = '', indent=''):
+	print(indent, loaded)
+
+	var base_script_path = 'NO base script'
+	if(loaded.has_method('get_base_script')):
+		if(loaded.get_base_script() != null):
+			base_script_path = str('"', loaded.get_base_script().get_path(), '"')
+		else:
+			base_script_path = 'Null base script'
+
+	print(indent, 'base_script path          ', base_script_path)
+	print(indent, 'class                     ', loaded.get_class())
+	print(indent, 'instance base type        ', loaded.get_instance_base_type())
+	print(indent, 'instance_id               ', loaded.get_instance_id())
+	print(indent, 'meta_list                 ', loaded.get_meta_list())
+	print(indent, 'name                      ', loaded.get_name())
+	print(indent, 'path                      ', loaded.get_path())
+	print(indent, 'resource local to scene   ', loaded.resource_local_to_scene)
+	print(indent, 'resource name             ', loaded.resource_name)
+	print(indent, 'resource path             ', loaded.resource_path)
+	print(indent, 'RID                       ', loaded.get_rid())
+	print(indent, 'script                    ', loaded.get_script())
+	print()
+
+
+
+
+
+func find_parent_script(InnerClass):
+	var max_search = 20
+	var start_id = InnerClass.get_instance_id()
+	var search_id = start_id + 1
+	var found = false
+
+	while(search_id < start_id + max_search and !found):
+		print(search_id)
+		var search_obj = instance_from_id(search_id)
+		print(search_obj)
+		if(search_obj != null):
+			print(search_obj)
+		search_id += 1
+
 
 func _init():
-	var result = get_inner_class_string(HasSomeInners.Inner2.Inner2_b, self.get_script())
-	print(result)
-
-	print()
-	result = get_inner_class_string(ThatInnerClassScript.InnerWithSignals, ThatInnerClassScript)
-	print(result)
-
-	print(get_extends_text(HasSomeInners.Inner2.Inner2_b, self.get_script()))
-
-	print(get_extends_text(HasSomeInners.Inner2.Inner2_b, HasSomeInners))
-
-	print(get_extends_text(ThatInnerClassScript.InnerWithSignals, ThatInnerClassScript))
-
+	print(GutDoubleTestInnerClasses)
+	print(GutDoubleTestInnerClasses.InnerA)
+	print(ThatInnerClassScript.get_instance_id() + ThatInnerClassScript.InnerA.get_instance_id())
+	find_parent_script(GutDoubleTestInnerClasses.InnerA)
 	quit()
+
+	# var result = get_inner_class_string(HasSomeInners.Inner2.Inner2_b, self.get_script())
+	# print(result)
+
+	# print()
+	# result = get_inner_class_string(ThatInnerClassScript.InnerWithSignals, ThatInnerClassScript)
+	# print(result)
+
+	# print(get_extends_text(HasSomeInners.Inner2.Inner2_b, self.get_script()))
+
+	# print(get_extends_text(HasSomeInners.Inner2.Inner2_b, HasSomeInners))
+
+	# print(get_extends_text(ThatInnerClassScript.InnerWithSignals, ThatInnerClassScript))
+
+	# quit()

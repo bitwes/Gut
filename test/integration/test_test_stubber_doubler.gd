@@ -157,8 +157,18 @@ class TestTestsSmartDoubleMethod:
 		var inst = _test.double(DOUBLE_ME_SCENE_PATH).instantiate()
 		assert_eq(inst.__gutdbl.thepath, DOUBLE_ME_SCENE_PATH)
 
-	func test_when_passed_script_and_inner_it_doubles_it():
+	func test_when_doubling_inners_with_strings():
 		var inst = _test.double(INNER_CLASSES_PATH, 'InnerA').new()
+		assert_eq(inst.__gutdbl.thepath, INNER_CLASSES_PATH, 'check path')
+		assert_eq(inst.__gutdbl.subpath, 'InnerA', 'check subpath')
+
+	func test_doulbing_inners_with_objects():
+		var inst = _test.double(InnerClasses, InnerClasses.InnerA).new()
+		assert_eq(inst.__gutdbl.thepath, INNER_CLASSES_PATH, 'check path')
+		assert_eq(inst.__gutdbl.subpath, 'InnerA', 'check subpath')
+
+	func test_partial_doubling_inners_with_mixed():
+		var inst = _test.partial_double(InnerClasses, 'InnerA').new()
 		assert_eq(inst.__gutdbl.thepath, INNER_CLASSES_PATH, 'check path')
 		assert_eq(inst.__gutdbl.subpath, 'InnerA', 'check subpath')
 

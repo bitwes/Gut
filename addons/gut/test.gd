@@ -68,7 +68,7 @@ class DoubleInfo:
 		if(_utils.is_instance(thing)):
 			return
 
-		if(typeof(p2) == TYPE_STRING):
+		if(typeof(p2) != TYPE_INT):
 			strategy = p3
 			subpath = p2
 
@@ -78,12 +78,13 @@ class DoubleInfo:
 			resource = thing
 		elif(typeof(thing) == TYPE_STRING):
 			resource = load(thing)
-			if(subpath != null and typeof(subpath) == TYPE_STRING):
-				var parts = subpath.split('/')
-				for i in range(parts.size()):
-					inner_resource = resource.get(parts[i])
-			elif(subpath != null):
-				inner_resource = subpath
+
+		if(subpath != null and typeof(subpath) == TYPE_STRING):
+			var parts = subpath.split('/')
+			for i in range(parts.size()):
+				inner_resource = resource.get(parts[i])
+		elif(subpath != null):
+			inner_resource = subpath
 
 		is_valid = true
 
