@@ -1,7 +1,7 @@
-extends 'res://addons/gut/test.gd'
+extends GutTest
 
 class CoupledScriptTest:
-	extends 'res://addons/gut/test.gd'
+	extends GutTest
 
 	var _gut = null
 
@@ -54,9 +54,6 @@ class TestYieldInBeforeAfterMethods:
 		_assert_pass_fail_count(1, 0)
 
 	func test_gut_waits_for_yield_in_after_all():
-		pending('local method _get_inner_class_script_instance is broke in 4.0')
-		return
-
 		_run_tests(SCRIPT_PATH, 'TestYieldInAfterAll', null)
 		await yield_to(_gut, 'end_run', 10)
 		var test_script = _get_inner_class_script_instance('TestYieldInAfterAll')
@@ -80,7 +77,7 @@ class TestYieldInBeforeAfterMethods:
 	# 	assert_eq(test_script.before_each_value, 'set', 'before_each_value')
 
 class TestOutputWhenRunDirectly:
-	extends 'res://addons/gut/test.gd'
+	extends GutTest
 
 	var before_all_value = 'NOT_SET'
 	var before_each_value = 'NOT_SET'

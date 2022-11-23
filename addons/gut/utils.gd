@@ -155,6 +155,8 @@ func _on_http_request_latest_version_completed(result, response_code, headers, b
 
 const GUT_METADATA = '__gutdbl'
 
+# Note, these cannot change since places are checking for TYPE_INT to determine
+# how to process parameters.
 enum DOUBLE_STRATEGY{
 	SCRIPT_ONLY,
 	INCLUDE_SUPER

@@ -11,6 +11,9 @@ const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
 var DoubleMe = load(DOUBLE_ME_PATH)
 var DoubleMeScene = load('res://test/resources/doubler_test_objects/double_me_scene.tscn')
 var SetGetTestNode = load('res://test/resources/test_assert_setget_test_objects/test_node.gd')
+# const INNER_CLASSES_PATH = 'res://test/resources/doubler_test_objects/inner_classes.gd'
+# var InnerClasses = load(INNER_CLASSES_PATH)
+
 var json = JSON.new()
 var _strutils = load('res://addons/gut/strutils.gd').new()
 
@@ -138,10 +141,10 @@ func get_defaults_and_types(method_meta):
 
 func class_db_stuff():
 	print(ClassDB.class_exists('Node2D'))
-	#print('category = ',  ClassDB.('Node2D'))
-	#print(str(JSON.print(ClassDB.class_get_method_list('Node2D'), ' ')))
+	# print('category = ',  ClassDB.('Node2D'))
+	# print(str(JSON.print(ClassDB.class_get_method_list('Node2D'), ' ')))
 	# print(ClassDB.class_get_integer_constant_list('Node2D'))
-	# print(ClassDB.get_class_list())
+	print(ClassDB.get_class_list())
 
 
 func does_inherit_from_test(thing):
@@ -186,6 +189,7 @@ func print_other_info(loaded, msg = '', indent=''):
 	var const_map = loaded.new().get_script().get_script_constant_map()
 	if(const_map.size() > 0):
 		print(indent, '--- Constants ---')
+
 	for key in const_map:
 		var thing = const_map[key]
 		print(indent, key, ' = ', thing)
@@ -385,8 +389,14 @@ func get_scene_script_object(scene):
 	return to_return
 
 
+
+
 func _init():
-	pp(Button.new().get_method_list())
+	# pp(Button.new().get_method_list())
+	print_other_info(GutDoubleTestInnerClasses)
+	# print("---------------\n\n\n\n-------------------")
+	# print_other_info(GutDoubleTestInnerClasses.InnerA)
+	# class_db_stuff()
 	# print_all_info(DoubleMeScene)
 	# var TestScene = load('res://test/resources/doubler_test_objects/double_me_scene.tscn')
 	# print_scene_info(TestScene)

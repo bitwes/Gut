@@ -129,14 +129,16 @@ class ParsedScript:
 			if(!script_or_inst is Resource):
 				to_load = load(script_or_inst.get_script().get_path())
 
+			_script_path = to_load.resource_path
+			if(inner_class != null):
+				_subpath = _find_subpath(to_load, inner_class)
+
 			if(inner_class == null):
 				_resource = to_load
 			else:
 				_resource = inner_class
-			_script_path = to_load.resource_path
+				to_load = inner_class
 
-			if(inner_class != null):
-				_subpath = _find_subpath(to_load, inner_class)
 
 		_parse_methods(to_load)
 

@@ -144,9 +144,6 @@ func test_totals_with_inner_classes():
 
 
 func test_script_totals_with_inner_classes():
-	pending('Broke in godot 4 a16')
-	return
-
 	run_scripts(_test_gut, 'test_with_inner_classes.gd')
 	var re = ResultExporter.new()
 	var result = re.get_results_dictionary(_test_gut).test_scripts.scripts
@@ -214,3 +211,4 @@ func test_spot_check():
 	var re = ResultExporter.new()
 	var result = re.get_results_dictionary(_test_gut)
 	_utils.pretty_print(result)
+	pass_test("Check output")

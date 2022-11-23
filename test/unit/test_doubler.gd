@@ -333,10 +333,7 @@ class TestPartialDoubles:
 		assert_eq(inst.get_value(), null)
 
 	func test_can_make_partial_of_inner_script():
-		pending('Broke in 4.0 see TestDoubleInnerClasses');
-		return
-
-		var inst = doubler.partial_double_inner(InnerClasses, 'InnerA').new()
+		var inst = doubler.partial_double_inner(InnerClasses, InnerClasses.InnerA).new()
 		assert_eq(inst.get_a(), 'a')
 
 	func test_can_make_partial_of_scene():
@@ -391,7 +388,7 @@ class TestDoubleGDNaviteClasses:
 
 class TestDoubleInnerClasses:
 	extends BaseTest
-	var skip_script = 'Cannot extend inner classes godotengine #65666'
+	# var skip_script = 'Cannot extend inner classes godotengine #65666'
 
 	var doubler = null
 
@@ -403,40 +400,40 @@ class TestDoubleInnerClasses:
 		var Doubled = doubler.double_inner(InnerClasses, InnerClasses.InnerB.InnerB1)
 		assert_has_method(Doubled.new(), 'get_b1')
 
-	func test_doubled_instance_returns_null_for_get_b1__skip_():
+	func test_doubled_instance_returns_null_for_get_b1():
 		var dbld = doubler.double_inner(InnerClasses, InnerClasses.InnerB.InnerB1).new()
 		assert_null(dbld.get_b1())
 
-	func test_doubled_instances_extend_the_inner_class__skip_():
+	func test_doubled_instances_extend_the_inner_class():
 		var inst = doubler.double_inner(InnerClasses, InnerClasses.InnerA).new()
 		assert_true(inst is InnerClasses.InnerA, 'instance should be an InnerA')
 		if(is_failing()):
 			print_source(inst)
 
-	func test_doubled_inners_that_extend_inners_get_full_inheritance__skip_():
+	func test_doubled_inners_that_extend_inners_get_full_inheritance():
 		var inst = doubler.double_inner(InnerClasses, InnerClasses.InnerCA).new()
 		assert_has_method(inst, 'get_a')
 		assert_has_method(inst, 'get_ca')
 
-	func test_doubled_inners_have_subpath_set_in_metadata__skip_():
+	func test_doubled_inners_have_subpath_set_in_metadata():
 		var inst = doubler.double_inner(InnerClasses, InnerClasses.InnerCA).new()
 		assert_eq(inst.__gutdbl.subpath, 'InnerCA')
 
-	func test_non_inners_have_empty_subpath__skip_():
+	func test_non_inners_have_empty_subpath():
 		var inst = doubler.double(InnerClasses).new()
 		assert_eq(inst.__gutdbl.subpath, '')
 
-	func test_can_override_strategy_when_doubling__skip_():
+	func test_can_override_strategy_when_doubling():
 		var d = doubler.double_inner(InnerClasses, InnerClasses.InnerA, DOUBLE_STRATEGY.INCLUDE_SUPER)
 		# make sure it has something from Object that isn't implemented
 		assert_source_contains(d.new() , 'func disconnect(p_signal')
 		assert_eq(doubler.get_strategy(), DOUBLE_STRATEGY.SCRIPT_ONLY, 'strategy should have been reset')
 
-	func test_doubled_inners_retain_signals__skip_():
+	func test_doubled_inners_retain_signals():
 		var inst = doubler.double_inner(InnerClasses, InnerClasses.InnerWithSignals).new()
 		assert_has_signal(inst, 'signal_signal')
 
-	func test_double_inner_does_not_call_supers__skip_():
+	func test_double_inner_does_not_call_supers():
 		var inst = doubler.double_inner(InnerClasses, InnerClasses.InnerA).new()
 		assert_eq(inst.get_a(), null)
 

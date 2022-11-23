@@ -322,11 +322,11 @@ func partial_double_gdnative(which):
 func double_inner(parent, inner, strategy=_strategy):
 	var parsed = _script_collector.parse(parent, inner)
 	return _create_double(parsed, strategy, null, false)
-	return null
 
-func partial_double_inner(path, subpath, strategy=_strategy):
-	_lgr.error('Cannot double inner classes due to Godot bug.')
-	return null
+
+func partial_double_inner(parent, inner, strategy=_strategy):
+	var parsed = _script_collector.parse(parent, inner)
+	return _create_double(parsed, strategy, null, true)
 
 
 func add_ignored_method(obj, method_name):

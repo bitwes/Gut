@@ -51,6 +51,7 @@ class DoubleInfo:
 	var _is_native = false
 	var is_valid = false
 	var resource  = null
+	var inner_resource = null
 
 	# Flexible init method.  p2 can be subpath or stategy unless p3 is
 	# specified, then p2 must be subpath and p3 is strategy.
@@ -67,7 +68,7 @@ class DoubleInfo:
 		if(_utils.is_instance(thing)):
 			return
 
-		if(typeof(p2) == TYPE_STRING):
+		if(typeof(p2) != TYPE_INT):
 			strategy = p3
 			subpath = p2
 
@@ -77,12 +78,13 @@ class DoubleInfo:
 			resource = thing
 		elif(typeof(thing) == TYPE_STRING):
 			resource = load(thing)
-			if(subpath != null and typeof(subpath) == TYPE_STRING):
-				var parts = subpath.split('/')
-				for i in range(parts.size()):
-					resource = resource.get(parts[i])
-			elif(subpath != null):
-				resource = subpath
+
+		if(subpath != null and typeof(subpath) == TYPE_STRING):
+			var parts = subpath.split('/')
+			for i in range(parts.size()):
+				inner_resource = resource.get(parts[i])
+		elif(subpath != null):
+			inner_resource = subpath
 
 		is_valid = true
 
@@ -1305,9 +1307,9 @@ func _smart_double(double_info):
 				to_return = gut.get_doubler().double(double_info.resource, override_strat)
 		else:
 			if(double_info.make_partial):
-				to_return = gut.get_doubler().partial_double_inner(double_info.resource, double_info.subpath, override_strat)
+				to_return = gut.get_doubler().partial_double_inner(double_info.resource, double_info.inner_resource, override_strat)
 			else:
-				to_return = gut.get_doubler().double_inner(double_info.resource, double_info.subpath, override_strat)
+				to_return = gut.get_doubler().double_inner(double_info.resource, double_info.inner_resource, override_strat)
 	return to_return
 
 # ------------------------------------------------------------------------------
