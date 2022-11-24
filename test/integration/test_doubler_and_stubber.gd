@@ -211,11 +211,11 @@ class TestInnerClasses:
 		assert_eq(stubber.get_return(dbl_inner_a, 'get_a'), 5)
 
 
+
 # Since defaults are only available for built-in methods these tests verify
 # specific method parameters that were found to cause a problem.
 class TestDefaultParameters:
 	extends BaseTest
-
 
 	var doubler = null
 	var stubber = null

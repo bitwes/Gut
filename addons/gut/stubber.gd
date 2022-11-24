@@ -41,10 +41,12 @@ func _find_matches(obj, method):
 	var matches = null
 	var last_not_null_parent = null
 
+	print("Searching for ", _strutils.type2str(obj))
 	# Search for what is passed in first.  This could be a class or an instance.
 	# We want to find the instance before we find the class.  If we do not have
 	# an entry for the instance then see if we have an entry for the class.
 	if(returns.has(obj) and returns[obj].has(method)):
+		print("  Exact match ", obj)
 		matches = returns[obj][method]
 	elif(_utils.is_instance(obj)):
 		var parent = obj.get_script()
@@ -64,6 +66,7 @@ func _find_matches(obj, method):
 				found = returns.has(parent)
 
 		if(found and returns[parent].has(method)):
+			print("  Found ", parent)
 			matches = returns[parent][method]
 
 	return matches

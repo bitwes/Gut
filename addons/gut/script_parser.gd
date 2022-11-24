@@ -319,7 +319,13 @@ func _get_instance_id(thing):
 
 
 func parse(thing, inner_thing=null):
-	var inst_id = _get_instance_id(thing)
+	var inst_id = -1
+	if(inner_thing == null):
+		inst_id = _get_instance_id(thing)
+	else:
+		inst_id = _get_instance_id(inner_thing)
+
+	print('inst_id = ', inst_id)
 	var parsed = null
 
 	if(inst_id != null):

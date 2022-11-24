@@ -64,7 +64,7 @@ class TestBasics:
 
 	func test_can_stub_inner_class_methods():
 		var d = gr.gut.get_doubler().double_inner(InnerClasses, InnerClasses.InnerA).new()
-		gr.test.stub(INNER_CLASSES_PATH, 'InnerA', 'get_a').to_return(10)
+		gr.test.stub(InnerClasses.InnerA, 'get_a').to_return(10)
 		assert_eq(d.get_a(), 10)
 
 	func test_can_stub_multiple_inner_classes():
@@ -76,13 +76,10 @@ class TestBasics:
 		assert_eq(anotherA.get_a(), 20)
 
 	func test_can_stub_multiple_inners_using_class_path_and_inner_names():
-		print('---- double inner_a')
+		gr.gut.get_doubler().print_source = true
 		var inner_a = gr.gut.get_doubler().double_inner(InnerClasses, InnerClasses.InnerA).new()
-		print('---- double another_a')
-		var another_a = gr.gut.get_doubler().double_inner(InnerClasses, InnerClasses.AnotherInnerA).new()
-		print('---- start stub')
-		gr.test.stub(INNER_CLASSES_PATH, 'InnerA', 'get_a').to_return(10)
-		print('---- end stub')
+		var another_a = gr.gut.get_doubler().double_inner(InnerClasses, InnerClasses.InnerCA).new()
+		gr.test.stub(InnerClasses.InnerA, 'get_a').to_return(10)
 		assert_eq(inner_a.get_a(), 10, 'InnerA should be stubbed')
 		assert_eq(another_a.get_a(), null, 'AnotherA should NOT be stubbed')
 		if(is_failing()):
