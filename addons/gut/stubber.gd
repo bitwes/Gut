@@ -15,7 +15,10 @@ var returns = {}
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
 var _strutils = _utils.Strutils.new()
-var class_db_name_hash = _make_crazy_dynamic_over_engineered_class_db_hash()
+var _class_db_name_hash = {}
+
+func _init():
+	_class_db_name_hash = _make_crazy_dynamic_over_engineered_class_db_hash()
 
 # So, I couldn't figure out how to get to a reference for a GDNative Class
 # using a string.  ClassDB has all thier names...so I made a hash using those
@@ -23,19 +26,20 @@ var class_db_name_hash = _make_crazy_dynamic_over_engineered_class_db_hash()
 # the source and grab the hash out of it and return it.  Super Rube Golbergery,
 # but tons of fun.
 func _make_crazy_dynamic_over_engineered_class_db_hash():
-	var text = "var all_classes = {\n"
+	var text = "var all_the_classes = {\n"
 	for classname in ClassDB.get_class_list():
 		if(ClassDB.can_instantiate(classname)):
-			text += str('    "', classname, '": ', classname, ", \n")
+			text += str('"', classname, '": ', classname, ", \n")
 		else:
-			text += str('    # ', classname, "\n")
+			text += str('# ', classname, "\n")
 	text += "}"
-	return _utils.create_script_from_source(text).new().all_classes
+	var inst =  _utils.create_script_from_source(text).new()
+	return inst.all_the_classes
 
 
 func _find_matches(obj, method):
 	var matches = null
-	var last_parent = null
+	var last_not_null_parent = null
 
 	# Search for what is passed in first.  This could be a class or an instance.
 	# We want to find the instance before we find the class.  If we do not have
@@ -48,12 +52,16 @@ func _find_matches(obj, method):
 		while(parent != null and !found):
 			found = returns.has(parent)
 			if(!found):
-				last_parent = parent
+				last_not_null_parent = parent
 				parent = parent.get_base_script()
 
+		# Could not find the script so check to see if a native class of this
+		# type was stubbed.
 		if(!found):
-			parent = class_db_name_hash[last_parent.get_instance_base_type()]
-			found = returns.has(parent)
+			var base_type = last_not_null_parent.get_instance_base_type()
+			if(_class_db_name_hash.has(base_type)):
+				parent = _class_db_name_hash[base_type]
+				found = returns.has(parent)
 
 		if(found and returns[parent].has(method)):
 			matches = returns[parent][method]
