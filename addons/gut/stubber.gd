@@ -15,48 +15,27 @@ var returns = {}
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
 var _strutils = _utils.Strutils.new()
+var class_db_name_hash = _make_crazy_dynamic_over_engineered_class_db_hash()
 
+# So, I couldn't figure out how to get to a reference for a GDNative Class
+# using a string.  ClassDB has all thier names...so I made a hash using those
+# names and the classes.  Then I dynmaically make a script that has that as
+# the source and grab the hash out of it and return it.  Super Rube Golbergery,
+# but tons of fun.
+func _make_crazy_dynamic_over_engineered_class_db_hash():
+	var text = "var all_classes = {\n"
+	for classname in ClassDB.get_class_list():
+		if(ClassDB.can_instantiate(classname)):
+			text += str('    "', classname, '": ', classname, ", \n")
+		else:
+			text += str('    # ', classname, "\n")
+	text += "}"
+	return _utils.create_script_from_source(text).new().all_classes
 
-func _make_key_from_double(doubled):
-	var to_return = doubled.__gutdbl.thepath
-
-	if(doubled.__gutdbl.from_singleton != ''):
-		to_return = str(doubled.__gutdbl.from_singleton)
-	elif(doubled.__gutdbl.subpath != ''):
-		to_return += str('-', doubled.__gutdbl.subpath)
-
-	return to_return
-
-
-# Creates they key for the returns hash based on the type of object passed in
-# obj could be a string of a path to a script with an optional subpath or
-# it could be an instance of a doubled object.
-func _make_key_from_variant(obj, subpath=null):
-	var to_return = null
-
-	match typeof(obj):
-		TYPE_STRING:
-			# this has to match what is done in _make_key_from_metadata
-			to_return = obj
-			if(subpath != null and subpath != ''):
-				to_return += str('-', subpath)
-		TYPE_OBJECT:
-			if(_utils.is_instance(obj)):
-				to_return = _make_key_from_double(obj)
-			elif(_utils.is_native_class(obj)):
-				to_return = _utils.get_native_class_name(obj)
-			else:
-				to_return = obj.resource_path
-
-	return to_return
-
-
-# ##############
-# Public
-# ##############
 
 func _find_matches(obj, method):
 	var matches = null
+	var last_parent = null
 
 	# Search for what is passed in first.  This could be a class or an instance.
 	# We want to find the instance before we find the class.  If we do not have
@@ -64,9 +43,20 @@ func _find_matches(obj, method):
 	if(returns.has(obj) and returns[obj].has(method)):
 		matches = returns[obj][method]
 	elif(_utils.is_instance(obj)):
-		var inst_class = obj.get_script()
-		if(returns.has(inst_class) and returns[inst_class].has(method)):
-			matches = returns[inst_class][method]
+		var parent = obj.get_script()
+		var found = false
+		while(parent != null and !found):
+			found = returns.has(parent)
+			if(!found):
+				last_parent = parent
+				parent = parent.get_base_script()
+
+		if(!found):
+			parent = class_db_name_hash[last_parent.get_instance_base_type()]
+			found = returns.has(parent)
+
+		if(found and returns[parent].has(method)):
+			matches = returns[parent][method]
 
 	return matches
 
@@ -112,6 +102,11 @@ func _find_stub(obj, method, parameters=null, find_overloads=false):
 	return to_return
 
 
+
+# ##############
+# Public
+# ##############
+
 func add_stub(stub_params):
 	stub_params._lgr = _lgr
 	var key = stub_params.stub_target
@@ -123,8 +118,6 @@ func add_stub(stub_params):
 		returns[key][stub_params.stub_method] = []
 
 	returns[key][stub_params.stub_method].append(stub_params)
-	# var key = _add_obj_method(stub_params.stub_target, stub_params.stub_method, stub_params.target_subpath)
-	# returns[key][stub_params.stub_method].append(stub_params)
 
 
 # Gets a stubbed return value for the object and method passed in.  If the

@@ -97,12 +97,6 @@ func test_instance_stub_takes_precedence_over_path_stub():
 	var value = gr.stubber.get_return(inst, 'get_value')
 	assert_eq(value, 100)
 
-func test_instance_stub_not_used_for_path_stub():
-	gr.stubber.set_return(TO_STUB_PATH, 'get_value', 0)
-	var inst = ToStub.new()
-	gr.stubber.set_return(inst, 'get_value', 100)
-	var value = gr.stubber.get_return(TO_STUB_PATH, 'get_value')
-	assert_eq(value, 0)
 
 func test_returns_can_be_layered():
 	gr.stubber.set_return(ToStub, 'get_value', 0)

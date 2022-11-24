@@ -47,7 +47,12 @@ class TestTheBasics:
 		var D = gr.doubler.double(DoubleMe)
 		var sp = StubParams.new(DOUBLE_ME_PATH, 'get_value').to_return(7)
 		gr.stubber.add_stub(sp)
-		assert_eq(autofree(D.new()).get_value(), 7)
+		var dbl = autofree(D.new())
+		assert_true(dbl is DoubleMe, 'it is a DoubleMe')
+		assert_eq(dbl.get_value(), 7)
+		if(is_failing()):
+			print(DoubleMe, D, dbl)
+			# print(gr.stubber.to_s())
 
 	func test_can_stub_non_local_methods():
 		var D = autofree(gr.doubler.double(DoubleMe))
@@ -122,7 +127,9 @@ class TestTheBasics:
 		var params = _utils.StubParams.new(Node2D, 'get_position').to_return(-1)
 		gr.stubber.add_stub(params)
 		assert_eq(d_node2d.get_position(), -1)
-		print(gr.stubber.to_s())
+		if(is_failing()):
+			print("Node2D = ", Node2D)
+			# print(gr.stubber.to_s())
 
 	func test_init_is_never_stubbed_to_call_super():
 		var inst =  gr.doubler.partial_double(DoubleMe).new()

@@ -483,3 +483,22 @@ func create_script_from_source(source, override_path=null):
 	var result = DynamicScript.reload()
 
 	return DynamicScript
+
+
+func get_scene_script_object(scene):
+	var state = scene.get_state()
+	var to_return = null
+	var root_node_path = NodePath(".")
+	var node_idx = 0
+
+	while(node_idx < state.get_node_count() and to_return == null):
+		# Assumes that the first node we encounter that has a root node path, one
+		# property, and that property is named 'script' is the GDScript for the
+		# scene.  This could be flawed.
+		if(state.get_node_path(node_idx) == root_node_path and state.get_node_property_count(node_idx) == 1):
+			if(state.get_node_property_name(node_idx, 0) == 'script'):
+				to_return = state.get_node_property_value(node_idx, 0)
+
+		node_idx += 1
+
+	return to_return
