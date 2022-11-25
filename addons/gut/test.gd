@@ -1307,9 +1307,9 @@ func _smart_double(double_info):
 				to_return = gut.get_doubler().double(double_info.resource, override_strat)
 		else:
 			if(double_info.make_partial):
-				to_return = gut.get_doubler().partial_double_inner(double_info.resource, double_info.inner_resource, override_strat)
+				to_return = gut.get_doubler().partial_double(double_info.inner_resource, override_strat)
 			else:
-				to_return = gut.get_doubler().double_inner(double_info.resource, double_info.inner_resource, override_strat)
+				to_return = gut.get_doubler().double(double_info.inner_resource, override_strat)
 	return to_return
 
 # ------------------------------------------------------------------------------

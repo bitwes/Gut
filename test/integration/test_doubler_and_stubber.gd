@@ -205,9 +205,10 @@ class TestInnerClasses:
 
 
 	func test_can_stub_inner_using_loaded_inner_class():
+		doubler.inner_class_registry.add_inner_classes(InnerClasses)
 		var sp = StubParams.new(InnerClasses.InnerA, 'get_a').to_return(5)
 		stubber.add_stub(sp)
-		var dbl_inner_a = doubler.double_inner(InnerClasses, InnerClasses.InnerA).new()
+		var dbl_inner_a = doubler.double(InnerClasses.InnerA).new()
 		assert_eq(stubber.get_return(dbl_inner_a, 'get_a'), 5)
 
 

@@ -332,10 +332,6 @@ class TestPartialDoubles:
 		var inst = doubler.double(DoubleMe).new()
 		assert_eq(inst.get_value(), null)
 
-	func test_can_make_partial_of_inner_script():
-		var inst = doubler.partial_double_inner(InnerClasses, InnerClasses.InnerA).new()
-		assert_eq(inst.get_a(), 'a')
-
 	func test_can_make_partial_of_scene():
 		var inst = autofree(doubler.partial_double_scene(DoubleMeScene).instantiate())
 		assert_eq(inst.return_hello(), 'hello')
@@ -385,38 +381,46 @@ class TestDoubleGDNaviteClasses:
 		assert_not_null(crect_double_inst)
 
 
-
 class TestDoubleInnerClasses:
 	extends BaseTest
-	# var skip_script = 'Cannot extend inner classes godotengine #65666'
 
 	var doubler = null
 
 	func before_each():
 		doubler = Doubler.new()
 		doubler.set_stubber(_utils.Stubber.new())
+		doubler.set_logger(_utils.Logger.new())
 
-	func test_can_instantiate_inner_double():
-		var Doubled = doubler.double_inner(InnerClasses, InnerClasses.InnerB.InnerB1)
-		assert_has_method(Doubled.new(), 'get_b1')
+	func test_when_inner_class_not_registered_it_generates_error():
+		var  Dbl = doubler.double(InnerClasses.InnerA)
+		assert_eq(doubler.get_logger().get_errors().size(), 1)
+
+	func test_when_inner_class_registered_it_makes_a_double():
+		doubler.inner_class_registry.add_inner_classes(InnerClasses)
+		var  Dbl = doubler.double(InnerClasses.InnerA)
+		assert_eq(doubler.get_logger().get_errors().size(), 0, 'no errors')
+		assert_not_null(Dbl, 'made a double')
 
 	func test_doubled_instance_returns_null_for_get_b1():
-		var dbld = doubler.double_inner(InnerClasses, InnerClasses.InnerB.InnerB1).new()
+		doubler.inner_class_registry.add_inner_classes(InnerClasses)
+		var dbld = doubler.double(InnerClasses.InnerB.InnerB1).new()
 		assert_null(dbld.get_b1())
 
-	func test_doubled_instances_extend_the_inner_class():
-		var inst = doubler.double_inner(InnerClasses, InnerClasses.InnerA).new()
-		assert_true(inst is InnerClasses.InnerA, 'instance should be an InnerA')
-		if(is_failing()):
-			print_source(inst)
+	func test_can_make_an_instance_of_a_double_of_a_registered_inner_class():
+		doubler.inner_class_registry.add_inner_classes(InnerClasses)
+		var  inst = doubler.double(InnerClasses.InnerB.InnerB1).new()
+		assert_not_null(inst, 'inst is not null')
+		assert_is(inst, InnerClasses.InnerB.InnerB1)
 
 	func test_doubled_inners_that_extend_inners_get_full_inheritance():
-		var inst = doubler.double_inner(InnerClasses, InnerClasses.InnerCA).new()
+		doubler.inner_class_registry.add_inner_classes(InnerClasses)
+		var inst = doubler.double(InnerClasses.InnerCA).new()
 		assert_has_method(inst, 'get_a')
 		assert_has_method(inst, 'get_ca')
 
 	func test_doubled_inners_have_subpath_set_in_metadata():
-		var inst = doubler.double_inner(InnerClasses, InnerClasses.InnerCA).new()
+		doubler.inner_class_registry.add_inner_classes(InnerClasses)
+		var inst = doubler.double(InnerClasses.InnerCA).new()
 		assert_eq(inst.__gutdbl.subpath, 'InnerCA')
 
 	func test_non_inners_have_empty_subpath():
@@ -424,18 +428,34 @@ class TestDoubleInnerClasses:
 		assert_eq(inst.__gutdbl.subpath, '')
 
 	func test_can_override_strategy_when_doubling():
-		var d = doubler.double_inner(InnerClasses, InnerClasses.InnerA, DOUBLE_STRATEGY.INCLUDE_SUPER)
+		doubler.inner_class_registry.add_inner_classes(InnerClasses)
+		var d = doubler.double(InnerClasses.InnerA, DOUBLE_STRATEGY.INCLUDE_SUPER)
 		# make sure it has something from Object that isn't implemented
 		assert_source_contains(d.new() , 'func disconnect(p_signal')
 		assert_eq(doubler.get_strategy(), DOUBLE_STRATEGY.SCRIPT_ONLY, 'strategy should have been reset')
 
 	func test_doubled_inners_retain_signals():
-		var inst = doubler.double_inner(InnerClasses, InnerClasses.InnerWithSignals).new()
+		doubler.inner_class_registry.add_inner_classes(InnerClasses)
+		var inst = doubler.double(InnerClasses.InnerWithSignals).new()
 		assert_has_signal(inst, 'signal_signal')
 
 	func test_double_inner_does_not_call_supers():
-		var inst = doubler.double_inner(InnerClasses, InnerClasses.InnerA).new()
+		doubler.inner_class_registry.add_inner_classes(InnerClasses)
+		var inst = doubler.double(InnerClasses.InnerA).new()
 		assert_eq(inst.get_a(), null)
+
+	func test_can_make_partial_of_inner_script():
+		doubler.print_source = true
+		doubler.inner_class_registry.add_inner_classes(InnerClasses)
+		var inst = doubler.partial_double(InnerClasses.InnerA).new()
+		assert_eq(inst.get_a(), 'a')
+
+	func test_partial_double_errors_if_inner_not_registered():
+		var inst = doubler.partial_double(InnerClasses.InnerA)
+		assert_eq(doubler.get_logger().get_errors().size(), 1)
+
+
+
 
 
 class TestAutofree:

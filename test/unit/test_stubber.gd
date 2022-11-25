@@ -13,6 +13,8 @@ const HAS_STUB_METADATA_PATH = 'res://test/resources/stub_test_objects/has_stub_
 var HasStubMetadata = load(HAS_STUB_METADATA_PATH)
 
 
+
+
 # The set_return method on Stubber was only used in tests.  I got lazy and
 # made this to circumvent it being removed.
 class HackedStubber:
@@ -97,7 +99,6 @@ func test_instance_stub_takes_precedence_over_path_stub():
 	var value = gr.stubber.get_return(inst, 'get_value')
 	assert_eq(value, 100)
 
-
 func test_returns_can_be_layered():
 	gr.stubber.set_return(ToStub, 'get_value', 0)
 	var inst = ToStub.new()
@@ -107,12 +108,6 @@ func test_returns_can_be_layered():
 	assert_eq(gr.stubber.get_return(ToStub, 'get_value'), 0, 'stubbed path method should get path value')
 	assert_eq(gr.stubber.get_return(ToStub ,'get_other'), null, 'unstubbed path method should get null')
 
-# func test_will_use_metadata_for_class_path():
-# 	gr.stubber.set_return('some_path', 'some_method', 0)
-# 	var inst = HasStubMetadata.new()
-# 	inst.__gutdbl.thepath = 'some_path'
-# 	var value = gr.stubber.get_return(inst, 'some_method')
-# 	assert_eq(value, 0)
 
 func test_will_use_instance_instead_of_metadata():
 	gr.stubber.set_return('some_path', 'some_method', 0)
@@ -197,8 +192,24 @@ func test_should_call_super_overriden_by_setting_return():
 	gr.stubber.add_stub(sp)
 	assert_false(gr.stubber.should_call_super('thing', 'method'))
 
+func test_when_inner_class_stubbed_instances_of_other_inner_classes_are_not_stubbed():
+	var sp = StubParamsClass.new(InnerClasses.InnerA, 'get_a')
+	sp.to_return(5)
+	gr.stubber.add_stub(sp)
 
+	var another_a = InnerClasses.AnotherInnerA.new()
+	var inner_a = InnerClasses.InnerA.new()
+	assert_null(gr.stubber.get_return(another_a, 'get_a'), 'AnotherInnerA not stubbed')
+	assert_eq(gr.stubber.get_return(inner_a, 'get_a'), 5, 'InnerA is stubbed')
 
+func test_when_instances_of_inner_classes_are_stubbed_only_the_stubbed_instance_is_found():
+	var inner_a = InnerClasses.InnerA.new()
+	var another_a = InnerClasses.AnotherInnerA.new()
+
+	var sp = StubParamsClass.new(inner_a, 'get_a').to_return('foo')
+	gr.stubber.add_stub(sp)
+	assert_null(gr.stubber.get_return(another_a, 'get_a'), 'AnotherInnerA not stubbed')
+	assert_eq(gr.stubber.get_return(inner_a, 'get_a'), 'foo', 'InnerA is stubbed')
 
 # ----------------
 # Parameter Count
@@ -264,6 +275,7 @@ func test_get_default_values_finds_values_when_another_stub_exists():
 	gr.stubber.add_stub(second_sp)
 
 	assert_eq(gr.stubber.get_default_value('thing', 'method', 1), 2)
+
 
 
 # ----------------
