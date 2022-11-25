@@ -79,8 +79,7 @@ class TestBasics:
 
 	func test_can_stub_multiple_inners_using_class_path_and_inner_names():
 		print("base = ", InnerClasses)
-		gr.gut.get_doubler().inner_class_registry.add_inner_classes(InnerClasses)
-		print(gr.gut.get_doubler().inner_class_registry.to_s())
+		gr.test.register_inner_classes(InnerClasses)
 
 		var inner_a = gr.gut.get_doubler().double(InnerClasses.InnerA).new()
 		var another_a = gr.gut.get_doubler().double(InnerClasses.AnotherInnerA).new()

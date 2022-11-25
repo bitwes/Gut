@@ -325,7 +325,6 @@ func parse(thing, inner_thing=null):
 	else:
 		inst_id = _get_instance_id(inner_thing)
 
-	print('inst_id = ', inst_id)
 	var parsed = null
 
 	if(inst_id != null):

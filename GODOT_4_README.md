@@ -97,6 +97,18 @@ await wait_for_signal(signaler.the_signal, 5, 'optional message')
 await wait_seconds(1.5, 'optional message')
 await wait_frames(30, 'optional message')
 ```
+* Doubling Inner Classes now requires you to call `register_inner_classes` first.  It no longer supports sending strings for the path of the base script or a string of the name of the Inner Class.  You only have to do this once, so it is best to call it in `before_all` or a pre-hook script.  Registering multiple times does nothing.  Failing to call `register_inner_classes` will result in a GUT error and a runtime error.
+Given that `SomeScript` contains the class `InnerClass` that you wish to to double:
+```gdscript
+var SomeScript = load('res://some_script.gd')
+
+func before_all():
+    register_inner_classes(SomeScript)
+
+func test_foo():
+    var dbl = double(SomeScript.InnerClass).new()
+```
+
 
 
 ### Implementation Changes

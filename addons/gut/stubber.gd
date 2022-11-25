@@ -51,7 +51,7 @@ func _find_matches(obj, method):
 		var found = false
 		while(parent != null and !found):
 			found = returns.has(parent)
-			print(obj, ' as parent ', parent, ' is found = ', found)
+
 			if(!found):
 				last_not_null_parent = parent
 				parent = parent.get_base_script()

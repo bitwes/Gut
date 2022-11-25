@@ -249,24 +249,18 @@ func _get_func_text(method_hash, path, super_=""):
 
 # Override path is used with scenes.
 func _double(obj, strategy, override_path=null):
-	if(_utils.is_inner_class(obj)):
-		if(inner_class_registry.has(obj)):
-			pass
-		else:
-			_lgr.error('Doubling Inner Classes requies you register them first.  Call register_inner_classes passing the script that contains the inner class.')
-			return null
+	if(_utils.is_inner_class(obj) and !inner_class_registry.has(obj)):
+		_lgr.error('Doubling Inner Classes requies you register them first.  Call register_inner_classes passing the script that contains the inner class.')
+		return null
 
 	var parsed = _script_collector.parse(obj)
 	return _create_double(parsed, strategy, override_path, false)
 
 
 func _partial_double(obj, strategy, override_path=null):
-	if(_utils.is_inner_class(obj)):
-		if(inner_class_registry.has(obj)):
-			pass
-		else:
-			_lgr.error('Doubling Inner Classes requies you register them first.  Call register_inner_classes passing the script that contains the inner class.')
-			return null
+	if(_utils.is_inner_class(obj) and !inner_class_registry.has(obj)):
+		_lgr.error('Doubling Inner Classes requies you register them first.  Call register_inner_classes passing the script that contains the inner class.')
+		return null
 
 	var parsed = _script_collector.parse(obj)
 	return _create_double(parsed, strategy, override_path, true)

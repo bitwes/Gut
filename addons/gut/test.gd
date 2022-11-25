@@ -1651,3 +1651,10 @@ func skip_if_godot_version_ne(expected):
 	if(should_skip):
 		_pass(str('Skipping ', _utils.godot_version(), ' is not ', expected))
 	return should_skip
+
+# ------------------------------------------------------------------------------
+# Registers all the inner classes in a script with the doubler.  This is required
+# before you can double any inner class.
+# ------------------------------------------------------------------------------
+func register_inner_classes(base_script):
+	gut.get_doubler().inner_class_registry.add_inner_classes(base_script)

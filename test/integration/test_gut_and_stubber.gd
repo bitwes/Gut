@@ -42,7 +42,7 @@ func test_can_stub_scene_script_and_scene_at_same_time():
 	var script = double(script_path).new()
 
 	stub(DOUBLE_ME_SCENE_PATH, 'return_hello').to_return('scene')
-	stub(script_path, 'return_hello').to_return('script')
+	stub(script, 'return_hello').to_return('script')
 
 	assert_eq(scene.return_hello(), 'scene')
 	assert_eq(script.return_hello(), 'script')
