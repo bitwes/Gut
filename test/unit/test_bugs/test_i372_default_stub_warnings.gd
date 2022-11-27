@@ -4,7 +4,7 @@ extends GutTest
 const DEFAULT_PARAMS_PATH = 'res://test/resources/doubler_test_objects/double_default_parameters.gd'
 
 func test_for_warnings():
-    var Dbl = partial_double(DEFAULT_PARAMS_PATH)
+    var Dbl = partial_double(load(DEFAULT_PARAMS_PATH))
     var inst = Dbl.new()
     var start_warn_count = gut.logger.get_warnings().size()
 

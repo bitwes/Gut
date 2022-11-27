@@ -45,7 +45,7 @@ func test_scene_and_script_are_the_same_when_stubbing_resource():
 	var script_path = DOUBLE_ME_SCENE_PATH.replace('.tscn', '.gd')
 
 	var scene = double(DoubleMeScene).instantiate()
-	var script = double(script_path).new()
+	var script = double(load(script_path)).new()
 
 	# order here matters.  The 2nd will overwrite the first.
 	stub(DOUBLE_ME_SCENE_PATH, 'return_hello').to_return('scene')

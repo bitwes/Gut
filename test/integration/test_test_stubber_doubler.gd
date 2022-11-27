@@ -157,11 +157,11 @@ class TestTestsSmartDoubleMethod:
 		gut.get_stubber().clear()
 
 	func test_when_passed_a_script_it_doubles_script():
-		var inst = _test.double(DOUBLE_ME_PATH).new()
+		var inst = _test.double(DoubleMe).new()
 		assert_eq(inst.__gutdbl.thepath, DOUBLE_ME_PATH)
 
 	func test_when_passed_a_scene_it_doubles_a_scene():
-		var inst = _test.double(DOUBLE_ME_SCENE_PATH).instantiate()
+		var inst = _test.double(DoubleMeScene).instantiate()
 		assert_eq(inst.__gutdbl.thepath, DOUBLE_ME_SCENE_PATH)
 
 
@@ -173,12 +173,12 @@ class TestTestsSmartDoubleMethod:
 
 
 	func test_full_strategy_used_for_scripts():
-		var inst = _test.double(DOUBLE_ME_PATH, DOUBLE_STRATEGY.INCLUDE_SUPER).new()
+		var inst = _test.double(DoubleMe, DOUBLE_STRATEGY.INCLUDE_SUPER).new()
 		inst.get_instance_id()
 		assert_called(inst, 'get_instance_id')
 
 	func test_full_strategy_used_with_scenes():
-		var inst = _test.double(DOUBLE_ME_SCENE_PATH, DOUBLE_STRATEGY.INCLUDE_SUPER).instantiate()
+		var inst = _test.double(DoubleMeScene, DOUBLE_STRATEGY.INCLUDE_SUPER).instantiate()
 		inst.get_instance_id()
 		assert_called(inst, 'get_instance_id')
 
@@ -231,45 +231,41 @@ class TestPartialDoubleMethod:
 		_test.free()
 
 	func test_partial_double_script():
-		var inst = _test.partial_double(DOUBLE_ME_PATH).new()
+		var inst = _test.partial_double(DoubleMe).new()
 		inst.set_value(10)
 		assert_eq(inst.get_value(), 10)
 
 	# TODO this test is tempramental.  It has something to do with the loading
 	# of the doubles I think.  Should be fixed.
 	func test_partial_double_scene():
-		var inst = _test.partial_double(DOUBLE_ME_SCENE_PATH).instantiate()
+		var inst = _test.partial_double(DoubleMeScene).instantiate()
 		autofree(inst)
 		assert_eq(inst.return_hello(), 'hello', 'sometimes fails, should be fixed.')
 
 
 	func test_partial_double_inner():
-		pending('New inner double tech')
-		return
-
-		var inst = _test.partial_double(INNER_CLASSES_PATH, 'InnerA').new()
+		_test.register_inner_classes(InnerClasses)
+		var inst = _test.partial_double(InnerClasses.InnerA).new()
 		assert_eq(inst.get_a(), 'a')
 
 	func test_double_script_not_a_partial():
-		var inst = _test.double(DOUBLE_ME_PATH).new()
+		var inst = _test.double(DoubleMe).new()
 		inst.set_value(10)
 		assert_eq(inst.get_value(), null)
 
 	func test_double_scene_not_a_partial():
-		var inst = _test.double(DOUBLE_ME_SCENE_PATH).instantiate()
+		var inst = _test.double(DoubleMeScene).instantiate()
 		autofree(inst)
 		assert_eq(inst.return_hello(), null)
 
 	func test_double_inner_not_a_partial():
-		pending('needs new inner class implementation')
-		return
-
-		var inst = _test.double(INNER_CLASSES_PATH, 'InnerA').new()
+		_test.register_inner_classes(InnerClasses)
+		var inst = _test.double(InnerClasses.InnerA).new()
 		assert_eq(inst.get_a(), null)
 
 	func test_can_spy_on_partial_doubles():
 		var pass_count = _test.get_pass_count()
-		var inst = _test.partial_double(DOUBLE_ME_PATH).new()
+		var inst = _test.partial_double(DoubleMe).new()
 		inst.set_value(10)
 		_test.assert_called(inst, 'set_value')
 		_test.assert_called(inst, 'set_value', [10])
@@ -326,6 +322,7 @@ class TestOverridingParameters:
 
 	const INIT_PARAMETERS = 'res://test/resources/stub_test_objects/init_parameters.gd'
 	const DEFAULT_PARAMS_PATH = 'res://test/resources/doubler_test_objects/double_default_parameters.gd'
+	var DefaultParams = load(DEFAULT_PARAMS_PATH)
 	# -------------------
 	# Default parameters and override parameter count
 	func test_can_stub_default_values():
@@ -333,7 +330,7 @@ class TestOverridingParameters:
 		var s = _test.stub(TestClass, 'return_passed').to_call_super()
 		s.param_defaults(['1', '2'])
 
-		var inst =  _test.double(DEFAULT_PARAMS_PATH).new()
+		var inst =  _test.double(DefaultParams).new()
 		var ret_val = inst.return_passed()
 		assert_eq(ret_val, '12')
 
@@ -371,7 +368,7 @@ class TestOverridingParameters:
 		var TestClass = load(DEFAULT_PARAMS_PATH)
 		var s = _test.stub(TestClass, 'return_passed').param_count(0)
 
-		var inst =  _test.partial_double(DEFAULT_PARAMS_PATH).new()
+		var inst =  _test.partial_double(DefaultParams).new()
 		var ret_val = inst.return_passed('a', 'b')
 		assert_eq(ret_val, 'ab')
 

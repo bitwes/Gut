@@ -152,10 +152,7 @@ func _get_base_script_text(parsed, override_path, partial):
 		gut_id = _gut.get_instance_id()
 
 	var extends_text  = parsed.get_extends_text()
-	if(_utils.is_inner_class(parsed.resource)):
-		extends_text = 'extends ' + inner_class_registry.get_extends_path(parsed.resource)
 
-	print('subpath = ', parsed.subpath)
 	var values = {
 		# Top  sections
 		"extends":extends_text,
@@ -169,7 +166,7 @@ func _get_base_script_text(parsed, override_path, partial):
 		"spy_id":spy_id,
 		"gut_id":gut_id,
 		"singleton_name":'',#_utils.nvl(obj_info.get_singleton_name(), ''),
-		"is_partial":partial,#str(obj_info.make_partial_double).to_lower()
+		"is_partial":partial,
 	}
 
 	return _base_script_text.format(values)
@@ -255,7 +252,7 @@ func _parse_script(obj):
 		if(inner_class_registry.has(obj)):
 			parsed = _script_collector.parse(inner_class_registry.get_base_resource(obj), obj)
 		else:
-			_lgr.error('Doubling Inner Classes requies you register them first.  Call register_inner_classes passing the script that contains the inner class.')
+			_lgr.error('Doubling Inner Classes requires you register them first.  Call register_inner_classes passing the script that contains the inner class.')
 	else:
 		parsed = _script_collector.parse(obj)
 

@@ -1273,31 +1273,31 @@ class TestAssertCalled:
 		assert_fail(gr.test_with_gut)
 
 	func test_assert_called_passes_when_call_occurred():
-		var doubled = autofree(gr.test_with_gut.double(DOUBLE_ME_PATH).new())
+		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
 		doubled.get_value()
 		gr.test_with_gut.assert_called(doubled, 'get_value')
 		assert_pass(gr.test_with_gut)
 
 	func test_assert_called_passes_with_parameters():
-		var doubled = autofree(gr.test_with_gut.double(DOUBLE_ME_PATH).new())
+		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
 		doubled.set_value(5)
 		gr.test_with_gut.assert_called(doubled, 'set_value', [5])
 		assert_pass(gr.test_with_gut)
 
 	func test_fails_when_parameters_do_not_match():
-		var doubled = autofree(gr.test_with_gut.double(DOUBLE_ME_PATH).new())
+		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
 		doubled.set_value('a')
 		gr.test_with_gut.assert_called(doubled, 'set_value', [5])
 		assert_fail(gr.test_with_gut)
 
 	func test_assert_called_works_with_defaults():
-		var doubled = autofree(gr.test_with_gut.double(DOUBLE_ME_PATH).new())
+		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
 		doubled.has_two_params_one_default(10)
 		gr.test_with_gut.assert_called(doubled, 'has_two_params_one_default', [10, null])
 		assert_pass(gr.test_with_gut)
 
 	func test_assert_called_generates_error_if_third_parameter_not_an_array():
-		var doubled = autofree(gr.test_with_gut.double(DOUBLE_ME_PATH).new())
+		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
 		doubled.set_value(5)
 		gr.test_with_gut.assert_called(doubled, 'set_value', 5)
 		assert_fail(gr.test_with_gut)
@@ -1309,13 +1309,13 @@ class TestAssertNotCalled:
 	extends BaseTestClass
 
 	func test_passes_when_no_calls_have_been_made():
-		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		var doubled = gr.test_with_gut.double(DoubleMe).new()
 		autofree(doubled)
 		gr.test_with_gut.assert_not_called(doubled, 'get_value')
 		assert_pass(gr.test_with_gut)
 
 	func test_fails_when_a_call_has_been_made():
-		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		var doubled = gr.test_with_gut.double(DoubleMe).new()
 		autofree(doubled)
 		doubled.get_value()
 		gr.test_with_gut.assert_not_called(doubled, 'get_value')
@@ -1326,21 +1326,21 @@ class TestAssertNotCalled:
 		assert_fail(gr.test_with_gut)
 
 	func test_passes_if_parameters_do_not_match():
-		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		var doubled = gr.test_with_gut.double(DoubleMe).new()
 		autofree(doubled)
 		doubled.set_value(4)
 		gr.test_with_gut.assert_not_called(doubled, 'set_value', [5])
 		assert_pass(gr.test_with_gut)
 
 	func test_fails_if_parameters_do_match():
-		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		var doubled = gr.test_with_gut.double(DoubleMe).new()
 		autofree(doubled)
 		doubled.set_value('a')
 		gr.test_with_gut.assert_not_called(doubled, 'set_value', ['a'])
 		assert_fail(gr.test_with_gut)
 
 	func test_fails_if_no_params_specified_and_a_call_was_made():
-		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		var doubled = gr.test_with_gut.double(DoubleMe).new()
 		autofree(doubled)
 		doubled.set_value('a')
 		gr.test_with_gut.assert_not_called(doubled, 'set_value')
@@ -1352,13 +1352,13 @@ class TestAssertCallCount:
 	extends BaseTestClass
 
 	func test_passes_when_nothing_called_and_expected_count_zero():
-		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		var doubled = gr.test_with_gut.double(DoubleMe).new()
 		autofree(doubled)
 		gr.test_with_gut.assert_call_count(doubled, 'set_value', 0)
 		assert_pass(gr.test_with_gut)
 
 	func test_fails_when_count_does_not_match():
-		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		var doubled = gr.test_with_gut.double(DoubleMe).new()
 		autofree(doubled)
 		doubled.set_value(5)
 		doubled.set_value(10)
@@ -1372,7 +1372,7 @@ class TestAssertCallCount:
 		assert_fail(gr.test_with_gut)
 
 	func test_fails_if_parameters_do_not_match():
-		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		var doubled = gr.test_with_gut.double(DoubleMe).new()
 		autofree(doubled)
 		doubled.set_value(5)
 		doubled.set_value(10)
@@ -1380,7 +1380,7 @@ class TestAssertCallCount:
 		assert_fail(gr.test_with_gut)
 
 	func test_it_passes_if_parameters_do_match():
-		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		var doubled = gr.test_with_gut.double(DoubleMe).new()
 		autofree(doubled)
 		doubled.set_value(5)
 		doubled.set_value(10)
@@ -1390,7 +1390,7 @@ class TestAssertCallCount:
 		assert_pass(gr.test_with_gut)
 
 	func test_when_parameters_not_sent_all_calls_count():
-		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		var doubled = gr.test_with_gut.double(DoubleMe).new()
 		autofree(doubled)
 		doubled.set_value(5)
 		doubled.set_value(10)
@@ -1405,7 +1405,7 @@ class TestGetCallParameters:
 	extends BaseTestClass
 
 	func test_it_works():
-		var doubled = gr.test_with_gut.double(DOUBLE_ME_PATH).new()
+		var doubled = gr.test_with_gut.double(DoubleMe).new()
 		autofree(doubled)
 		doubled.set_value(5)
 		assert_eq(gr.test_with_gut.get_call_parameters(doubled, 'set_value'), [5])
@@ -1423,14 +1423,14 @@ class TestGetCallCount:
 	extends BaseTestClass
 
 	func test_it_works():
-		var doubled = gr.test_with_gut.partial_double(DOUBLE_ME_PATH).new()
+		var doubled = gr.test_with_gut.partial_double(DoubleMe).new()
 		autofree(doubled)
 		for i in range(10):
 			doubled.set_value(5)
 		assert_eq(gr.test_with_gut.get_call_count(doubled, 'set_value'), 10)
 
 	func test_it_works_with_parameters():
-		var doubled = gr.test_with_gut.partial_double(DOUBLE_ME_PATH).new()
+		var doubled = gr.test_with_gut.partial_double(DoubleMe).new()
 		autofree(doubled)
 		for i in range(3):
 			doubled.set_value(3)
