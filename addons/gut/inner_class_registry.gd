@@ -27,7 +27,7 @@ func _register_inners(base_path, obj, prev_inner = ''):
 		const_idx += 1
 
 
-func add_inner_classes(base_script):
+func register(base_script):
 	var base_path = base_script.resource_path
 	_register_inners(base_path, base_script)
 

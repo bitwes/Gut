@@ -1664,4 +1664,4 @@ func skip_if_godot_version_ne(expected):
 # before you can double any inner class.
 # ------------------------------------------------------------------------------
 func register_inner_classes(base_script):
-	gut.get_doubler().inner_class_registry.add_inner_classes(base_script)
+	gut.get_doubler().inner_class_registry.register(base_script)

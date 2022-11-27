@@ -63,13 +63,13 @@ class TestBasics:
 		assert_eq(gr.test.get_pass_count(), 1)
 
 	func test_can_stub_inner_class_methods():
-		gr.gut.get_doubler().inner_class_registry.add_inner_classes(InnerClasses)
+		gr.gut.get_doubler().inner_class_registry.register(InnerClasses)
 		var d = gr.gut.get_doubler().double(InnerClasses.InnerA).new()
 		gr.test.stub(InnerClasses.InnerA, 'get_a').to_return(10)
 		assert_eq(d.get_a(), 10)
 
 	func test_can_stub_multiple_inner_classes():
-		gr.gut.get_doubler().inner_class_registry.add_inner_classes(InnerClasses)
+		gr.gut.get_doubler().inner_class_registry.register(InnerClasses)
 		var a = gr.gut.get_doubler().double(InnerClasses.InnerA).new()
 		var anotherA = gr.gut.get_doubler().double(InnerClasses.AnotherInnerA).new()
 		gr.test.stub(a, 'get_a').to_return(10)

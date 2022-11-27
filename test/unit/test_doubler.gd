@@ -396,30 +396,30 @@ class TestDoubleInnerClasses:
 		assert_eq(doubler.get_logger().get_errors().size(), 1)
 
 	func test_when_inner_class_registered_it_makes_a_double():
-		doubler.inner_class_registry.add_inner_classes(InnerClasses)
+		doubler.inner_class_registry.register(InnerClasses)
 		var  Dbl = doubler.double(InnerClasses.InnerA)
 		assert_eq(doubler.get_logger().get_errors().size(), 0, 'no errors')
 		assert_not_null(Dbl, 'made a double')
 
 	func test_doubled_instance_returns_null_for_get_b1():
-		doubler.inner_class_registry.add_inner_classes(InnerClasses)
+		doubler.inner_class_registry.register(InnerClasses)
 		var dbld = doubler.double(InnerClasses.InnerB.InnerB1).new()
 		assert_null(dbld.get_b1())
 
 	func test_can_make_an_instance_of_a_double_of_a_registered_inner_class():
-		doubler.inner_class_registry.add_inner_classes(InnerClasses)
+		doubler.inner_class_registry.register(InnerClasses)
 		var  inst = doubler.double(InnerClasses.InnerB.InnerB1).new()
 		assert_not_null(inst, 'inst is not null')
 		assert_is(inst, InnerClasses.InnerB.InnerB1)
 
 	func test_doubled_inners_that_extend_inners_get_full_inheritance():
-		doubler.inner_class_registry.add_inner_classes(InnerClasses)
+		doubler.inner_class_registry.register(InnerClasses)
 		var inst = doubler.double(InnerClasses.InnerCA).new()
 		assert_has_method(inst, 'get_a')
 		assert_has_method(inst, 'get_ca')
 
 	func test_doubled_inners_have_subpath_set_in_metadata():
-		doubler.inner_class_registry.add_inner_classes(InnerClasses)
+		doubler.inner_class_registry.register(InnerClasses)
 		var inst = doubler.double(InnerClasses.InnerCA).new()
 		assert_eq(inst.__gutdbl.subpath, 'InnerCA')
 
@@ -428,24 +428,24 @@ class TestDoubleInnerClasses:
 		assert_eq(inst.__gutdbl.subpath, '')
 
 	func test_can_override_strategy_when_doubling():
-		doubler.inner_class_registry.add_inner_classes(InnerClasses)
+		doubler.inner_class_registry.register(InnerClasses)
 		var d = doubler.double(InnerClasses.InnerA, DOUBLE_STRATEGY.INCLUDE_SUPER)
 		# make sure it has something from Object that isn't implemented
 		assert_source_contains(d.new() , 'func disconnect(p_signal')
 		assert_eq(doubler.get_strategy(), DOUBLE_STRATEGY.SCRIPT_ONLY, 'strategy should have been reset')
 
 	func test_doubled_inners_retain_signals():
-		doubler.inner_class_registry.add_inner_classes(InnerClasses)
+		doubler.inner_class_registry.register(InnerClasses)
 		var inst = doubler.double(InnerClasses.InnerWithSignals).new()
 		assert_has_signal(inst, 'signal_signal')
 
 	func test_double_inner_does_not_call_supers():
-		doubler.inner_class_registry.add_inner_classes(InnerClasses)
+		doubler.inner_class_registry.register(InnerClasses)
 		var inst = doubler.double(InnerClasses.InnerA).new()
 		assert_eq(inst.get_a(), null)
 
 	func test_can_make_partial_of_inner_script():
-		doubler.inner_class_registry.add_inner_classes(InnerClasses)
+		doubler.inner_class_registry.register(InnerClasses)
 		var inst = doubler.partial_double(InnerClasses.InnerA).new()
 		assert_eq(inst.get_a(), 'a')
 
