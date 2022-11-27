@@ -34,15 +34,22 @@ func test_doublers_stubber_is_guts_stubber():
 
 # Since the stubber and doubler are "global" to gut, this is the best place
 # to test this so that the _double_count in the doubler isn't reset which
-# causes some super confusing side effects.
-func test_can_stub_scene_script_and_scene_at_same_time():
+# causes some super confusing side effects.  This test is here because the
+# opposite used to be true when things were indexed in the stubber by their
+# path.  This is no longer possible to do, but it doesn't seem like a big
+# loss, you can still stub instances just fine.  Not sure of a scenario where
+# you would want to stub all instances of a scene one way and all instances
+# of a script another way.  And if there is a scenrio where this is needed, you
+# can just stub all the instances.
+func test_scene_and_script_are_the_same_when_stubbing_resource():
 	var script_path = DOUBLE_ME_SCENE_PATH.replace('.tscn', '.gd')
 
-	var scene = double_scene(DoubleMeScene).instantiate()
-	var script = double(script_path).new()
+	var scene = double(DoubleMeScene).instantiate()
+	var script = double(load(script_path)).new()
 
+	# order here matters.  The 2nd will overwrite the first.
 	stub(DOUBLE_ME_SCENE_PATH, 'return_hello').to_return('scene')
 	stub(script_path, 'return_hello').to_return('script')
 
-	assert_eq(scene.return_hello(), 'scene')
+	assert_eq(scene.return_hello(), 'script')
 	assert_eq(script.return_hello(), 'script')

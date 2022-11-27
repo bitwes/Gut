@@ -319,16 +319,26 @@ func _get_instance_id(thing):
 
 
 func parse(thing, inner_thing=null):
-	var inst_id = _get_instance_id(thing)
+	var key = -1
+	if(inner_thing == null):
+		key = _get_instance_id(thing)
+	else:
+		key = _get_instance_id(inner_thing)
+
 	var parsed = null
 
-	if(inst_id != null):
-		if(scripts.has(inst_id)):
-			parsed = scripts[inst_id]
+	if(key != null):
+		if(scripts.has(key)):
+			parsed = scripts[key]
 		else:
-			var obj = instance_from_id(inst_id)
+			var obj = instance_from_id(_get_instance_id(thing))
+			var inner = null
+			if(inner_thing != null):
+				inner = instance_from_id(_get_instance_id(inner_thing))
+
 			if(obj is Resource or _utils.is_native_class(obj)):
-				parsed = ParsedScript.new(obj, inner_thing)
-				scripts[inst_id] = parsed
+				parsed = ParsedScript.new(obj, inner)
+				scripts[key] = parsed
 
 	return parsed
+

@@ -7,6 +7,8 @@ class TestScriptCollector:
 	const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
 	var DoubleMe = load(DOUBLE_ME_PATH)
 	var ExtendsNode = load('res://test/resources/doubler_test_objects/double_extends_node2d.gd')
+	const INNER_CLASSES_PATH = 'res://test/resources/doubler_test_objects/inner_classes.gd'
+	var InnerClasses = load(INNER_CLASSES_PATH)
 
 
 	var ScriptCollector = load('res://addons/gut/script_parser.gd')
@@ -58,6 +60,17 @@ class TestScriptCollector:
 		var collector = ScriptCollector.new()
 		var result = collector.parse('res://foo.bar')
 		assert_null(result)
+
+	func test_inner_class_sets_subpath():
+		var collector = ScriptCollector.new()
+		var parsed = collector.parse(InnerClasses, InnerClasses.InnerCA)
+		assert_eq(parsed.subpath, 'InnerCA')
+
+	func test_inner_class_sets_script_path():
+		var collector = ScriptCollector.new()
+		var parsed = collector.parse(InnerClasses, InnerClasses.InnerCA)
+		assert_eq(parsed.script_path, INNER_CLASSES_PATH)
+
 
 
 class TestParsedScript:

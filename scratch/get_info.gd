@@ -185,10 +185,12 @@ func print_other_info(loaded, msg = '', indent=''):
 	print(indent, 'RID                       ', loaded.get_rid())
 	print(indent, 'script                    ', loaded.get_script())
 	print()
+	print(loaded.get_script_property_list())
+	print_properties(loaded.get_property_list(), loaded)
 
 	var const_map = loaded.new().get_script().get_script_constant_map()
-	if(const_map.size() > 0):
-		print(indent, '--- Constants ---')
+	# if(const_map.size() > 0):
+	print(indent, '--- Constants ---')
 
 	for key in const_map:
 		var thing = const_map[key]

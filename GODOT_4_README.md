@@ -12,18 +12,19 @@ This file tracks the changes that have occurred in porting GUT to Godot 4.0.  Al
 <ins>Current results of all GUT tests</ins>
 ```
 Totals
-Scripts:          172
-Passing tests     1042
-Failing tests     14
+Scripts:          174
+Passing tests     1057
+Failing tests     12
 Risky tests       16
 Pending:          27
-Asserts:          1608 of 1630 passed
+Asserts:          1625 of 1645 passed
 
 Warnings/Errors:
 * 15 Errors.
-* 36 Warnings.
+* 35 Warnings.
+* 50 Deprecated calls.
 
-1042 passed 14 failed.  Tests finished in 132.377s
+1057 passed 12 failed.  Tests finished in 149.371s
 ```
 
 
@@ -82,29 +83,49 @@ These are changes to Godot that affect how GUT is used/implemented.
 * `assert_property` now requires an instance instead of also working with a loaded objects.
 * Doubling strategy flags have been renamed to `INCLUDE_SUPER` (was `FULL`) and `SCRIPT_ONLY` (was `PARTIAL`).  The default is `SCRIPT_ONLY`.  These names may change again before release.  I wanted something more descriptive and less likely to be confused with partial doubles.
 * Added support for a `skip_script` test-script variable.  This can be added to any test-script or inner-class causing GUT to skip running tests in that script.  The script will be included in the "risky" count and appear in the summary as skipped.  This was done to help porting tests to 4.0 but might stick around as a permanent feature.
-```
+```gdscript
 var skip_script = 'The reason for skipping.  This will be printed in the output.'
 ```
-* When using `yield_to`, `yield_for`, or `yield_frames` (deprecated) the new syntax is:
-```
+* The various `yield_` methods have been deprecated but are still supported to make conversions easier.  The new syntax for `yield_to`, `yield_for`, or `yield_frames` is:
+```gdscript
 await yield_to(signaler, 'the_signal_name', 5, 'optional message')
 await yield_for(1.5, 'optional message')
 await yield_frames(30, 'optional message')
 ```
-* The new `yield_` methods are `wait_seconds`, `wait_frames`, and `wait_for_signal`.
-```
-await wait_for_signal(signaler.the_signal, 5, 'optional message')
+* The replacement methods for the various `yield_` methods are `wait_seconds`, `wait_frames`, and `wait_for_signal`.
+```gdscript
+await wait_for_signal(signaler.the_signal, 5, 'optional message') # wait for signal or 5 seconds
 await wait_seconds(1.5, 'optional message')
 await wait_frames(30, 'optional message')
 ```
+* Doubling no longer supports paths to a script or scene.  Load the script or scene first and pass that to `double`.  See the "Doubling Changes" section for more details.
+* Doubling Inner Classes now requires you to call `register_inner_classes` first.  See the "Doubling Changes" sedtion for more details.
 
+### Doubling Changes
+#### Doubling scripts and scenes
+The `double` method no longer supports paths to scripts or scenes.  You should `load` the script or scene first, and then pass that to `double` instead.
+```
+var MyScript = load('res://my_script.gd')
+var dbl = double(MyScript).new()
+```
+If you pass a string then an error message will be printed and `double` will return `null`.  This will most likely result in a runtime error when you attempt to instantiate your double.
+```
+'Invalid call. Nonexistent function 'new' in base 'Nil'.'
+```
 
-### Implementation Changes
-* The `Gut` control has been removed.  Adding a `Gut` node to a scene to run tests will no longer work.  This control dates back to Godot 2.x days.  With GUT 7.4.1 I believe the in-editor Gut Panel has enough features to discontinue using a Scene/`Gut` control to run tests.  Another approach for running tests in a deployed project will be added at some point.
-* The GUI for GUT has been simplified to reflect that it is no longer used to run tests, just display progress and output.  It has also been decoupled from `gut.gd`.  `gut.gd` is now a `Node` instead of a `Control` and all GUI logic has been removed.  New signals have been added so that a GUI can be made without `gut.gd` having to know anything about it.  As a result, GUT can now be run without a GUI if that ever becomes something we want to do.
-* Replaced the old `yield_between_tests` flag with `paint_after`.  This property (initially set to .1s) tells GUT how long to wait before it pauses for 1 frame to allow for painting the screen.  This value is checked after each test, so longer tests can still cause a delay in the painting of the screen.  This has made the painting a little choppier but has cut down the time it takes to run tests (200 simple tests in 20 scripts dropped from 2+ seconds to .5 seconds to run).  This feature is settable from the command line, .gutconfig.json, and GutPanel.
-* The doubling implementation has changed significantly but usage has remained the same.
+#### Doubling Inner Classes
+The `double` method no longer supports strings for the path of the base script or a string of the name of the Inner Class.  You must call `register_inner_classes` then pass the Inner Class to `double`.  You only have to do this once, so it is best to call it in `before_all` or a pre-hook script.  Registering multiple times does nothing.  Failing to call `register_inner_classes` will result in a GUT error and a runtime error.
+```gdscript
+# Given that SomeScript contains the class InnerClass that you wish to to double:
+var SomeScript = load('res://some_script.gd')
 
+func before_all():
+    register_inner_classes(SomeScript)
+
+func test_foo():
+    var dbl = double(SomeScript.InnerClass).new()
+```
+This approach was used to make tests cleaner and less susceptible to typos.  If Godot adds meta data to inner classes that point back to the source script, then `register_inner_classes` can be removed later and no other changes will need to be made.
 
 
 ## setget vs set: and get:
@@ -135,3 +156,10 @@ With this approach you can set `_foo` internally in your class without triggerin
 To test this new paradigm `assert_setget` has been removed.  `assert_property` has changed to work with the new syntax.  Added `assert_property_with_backing_variable` to validate the backing variable wiring....etc.
 
 `assert_property` will generate a warning when it finds "public" accessors for these properties (`get_foo`, `set_foo`).
+
+
+## Implementation Changes
+* The `Gut` control has been removed.  Adding a `Gut` node to a scene to run tests will no longer work.  This control dates back to Godot 2.x days.  With GUT 7.4.1 I believe the in-editor Gut Panel has enough features to discontinue using a Scene/`Gut` control to run tests.  Another approach for running tests in a deployed project will be added at some point.
+* The GUI for GUT has been simplified to reflect that it is no longer used to run tests, just display progress and output.  It has also been decoupled from `gut.gd`.  `gut.gd` is now a `Node` instead of a `Control` and all GUI logic has been removed.  New signals have been added so that a GUI can be made without `gut.gd` having to know anything about it.  As a result, GUT can now be run without a GUI if that ever becomes something we want to do.
+* Replaced the old `yield_between_tests` flag with `paint_after`.  This property (initially set to .1s) tells GUT how long to wait before it pauses for 1 frame to allow for painting the screen.  This value is checked after each test, so longer tests can still cause a delay in the painting of the screen.  This has made the painting a little choppier but has cut down the time it takes to run tests (200 simple tests in 20 scripts dropped from 2+ seconds to .5 seconds to run).  This feature is settable from the command line, .gutconfig.json, and GutPanel.
+* Doubling has changed significantly.

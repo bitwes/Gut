@@ -47,7 +47,12 @@ class TestTheBasics:
 		var D = gr.doubler.double(DoubleMe)
 		var sp = StubParams.new(DOUBLE_ME_PATH, 'get_value').to_return(7)
 		gr.stubber.add_stub(sp)
-		assert_eq(autofree(D.new()).get_value(), 7)
+		var dbl = autofree(D.new())
+		assert_true(dbl is DoubleMe, 'it is a DoubleMe')
+		assert_eq(dbl.get_value(), 7)
+		if(is_failing()):
+			print(DoubleMe, D, dbl)
+			# print(gr.stubber.to_s())
 
 	func test_can_stub_non_local_methods():
 		var D = autofree(gr.doubler.double(DoubleMe))
@@ -122,7 +127,9 @@ class TestTheBasics:
 		var params = _utils.StubParams.new(Node2D, 'get_position').to_return(-1)
 		gr.stubber.add_stub(params)
 		assert_eq(d_node2d.get_position(), -1)
-		print(gr.stubber.to_s())
+		if(is_failing()):
+			print("Node2D = ", Node2D)
+			# print(gr.stubber.to_s())
 
 	func test_init_is_never_stubbed_to_call_super():
 		var inst =  gr.doubler.partial_double(DoubleMe).new()
@@ -185,11 +192,31 @@ class TestTheBasics:
 			print(gr.stubber.to_s())
 
 
+class TestInnerClasses:
+	extends BaseTest
+
+	var doubler = null
+	var stubber = null
+
+	func before_each():
+		doubler = Doubler.new()
+		stubber = _utils.Stubber.new()
+		doubler.set_stubber(stubber)
+
+
+	func test_can_stub_inner_using_loaded_inner_class():
+		doubler.inner_class_registry.register(InnerClasses)
+		var sp = StubParams.new(InnerClasses.InnerA, 'get_a').to_return(5)
+		stubber.add_stub(sp)
+		var dbl_inner_a = doubler.double(InnerClasses.InnerA).new()
+		assert_eq(stubber.get_return(dbl_inner_a, 'get_a'), 5)
+
+
+
 # Since defaults are only available for built-in methods these tests verify
 # specific method parameters that were found to cause a problem.
 class TestDefaultParameters:
 	extends BaseTest
-
 
 	var doubler = null
 	var stubber = null

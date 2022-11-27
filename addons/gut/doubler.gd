@@ -31,25 +31,6 @@
 # ##############################################################################
 
 
-# ------------------------------------------------------------------------------
-# This is what is left of stripping out the old "write a file" method of
-# creating doubles.  It's now just a string with the load_it function.
-# It seemed like there could be some utility in maintaining this little
-# class.
-#
-# Might not be worth it, now that I've moved the creating a script from source
-# logic to utils.  Now it's just a string.
-# ------------------------------------------------------------------------------
-class DoubledScript:
-
-	var _contents  = ''
-
-	func add_source(s):
-		_contents += s
-
-	func get_contents():
-		return _contents
-
 
 # ------------------------------------------------------------------------------
 # A stroke of genius if I do say so.  This allows for doubling a scene without
@@ -84,7 +65,7 @@ var _base_script_text = _utils.get_file_as_text('res://addons/gut/double_templat
 var _script_collector = _utils.ScriptCollector.new()
 # used by tests for debugging purposes.
 var print_source = false
-
+var inner_class_registry = _utils.InnerClassRegistry.new()
 
 # ###############
 # Properties
@@ -170,9 +151,11 @@ func _get_base_script_text(parsed, override_path, partial):
 	if(_gut != null):
 		gut_id = _gut.get_instance_id()
 
+	var extends_text  = parsed.get_extends_text()
+
 	var values = {
 		# Top  sections
-		"extends":parsed.get_extends_text(),
+		"extends":extends_text,
 		"constants":'',#obj_info.get_constants_text(),
 		"properties":'',#obj_info.get_properties_text(),
 
@@ -183,7 +166,7 @@ func _get_base_script_text(parsed, override_path, partial):
 		"spy_id":spy_id,
 		"gut_id":gut_id,
 		"singleton_name":'',#_utils.nvl(obj_info.get_singleton_name(), ''),
-		"is_partial":partial,#str(obj_info.make_partial_double).to_lower()
+		"is_partial":partial,
 	}
 
 	return _base_script_text.format(values)
@@ -196,24 +179,24 @@ func _create_double(parsed, strategy, override_path, partial):
 	var path = ""
 
 	path = parsed.script_path
-	var dbl = DoubledScript.new()
-	dbl.add_source(base_script)
+	var dbl_src = ""
+	dbl_src += base_script
 
 	for method in parsed.get_local_methods():
 		if(!method.is_black_listed() && !_ignored_methods.has(parsed.resource, method.meta.name)):
 			var mthd = parsed.get_local_method(method.meta.name)
-			dbl.add_source(_get_func_text(method.meta, path, super_name))
+			dbl_src += _get_func_text(method.meta, path, super_name)
 
 	if(strategy == _utils.DOUBLE_STRATEGY.INCLUDE_SUPER):
 		for method in parsed.get_super_methods():
 			if(!method.is_black_listed() && !_ignored_methods.has(parsed.resource, method.meta.name)):
 				_stub_to_call_super(parsed, method.meta.name)
-				dbl.add_source(_get_func_text(method.meta, path, super_name))
+				dbl_src += _get_func_text(method.meta, path, super_name)
 
 	if(print_source):
-		print(_utils.add_line_numbers(dbl.get_contents()))
+		print(_utils.add_line_numbers(dbl_src))
 
-	var DblClass = _utils.create_script_from_source(dbl.get_contents())
+	var DblClass = _utils.create_script_from_source(dbl_src)
 	if(_stubber != null):
 		_stub_method_default_values(DblClass, parsed, strategy)
 
@@ -227,30 +210,11 @@ func _stub_method_default_values(which, parsed, strategy):
 
 
 
-func _get_scene_script_object(scene):
-	var state = scene.get_state()
-	var to_return = null
-	var root_node_path = NodePath(".")
-	var node_idx = 0
-
-	while(node_idx < state.get_node_count() and to_return == null):
-		# Assumes that the first node we encounter that has a root node path, one
-		# property, and that property is named 'script' is the GDScript for the
-		# scene.  This could be flawed.
-		if(state.get_node_path(node_idx) == root_node_path and state.get_node_property_count(node_idx) == 1):
-			if(state.get_node_property_name(node_idx, 0) == 'script'):
-				to_return = state.get_node_property_value(node_idx, 0)
-
-		node_idx += 1
-
-	return to_return
-
-
 func _double_scene_and_script(scene, strategy, partial):
 	var to_return = PackedSceneDouble.new()
 	to_return.load_scene(scene.get_path())
 
-	var script_obj = _get_scene_script_object(scene)
+	var script_obj = _utils.get_scene_script_object(scene)
 	if(script_obj != null):
 		var script_dbl = null
 		if(partial):
@@ -281,15 +245,31 @@ func _get_func_text(method_hash, path, super_=""):
 	return text
 
 
+func _parse_script(obj):
+	var parsed = null
+
+	if(_utils.is_inner_class(obj)):
+		if(inner_class_registry.has(obj)):
+			parsed = _script_collector.parse(inner_class_registry.get_base_resource(obj), obj)
+		else:
+			_lgr.error('Doubling Inner Classes requires you register them first.  Call register_inner_classes passing the script that contains the inner class.')
+	else:
+		parsed = _script_collector.parse(obj)
+
+	return parsed
+
+
 # Override path is used with scenes.
 func _double(obj, strategy, override_path=null):
-	var parsed = _script_collector.parse(obj)
-	return _create_double(parsed, strategy, override_path, false)
+	var parsed = _parse_script(obj)
+	if(parsed != null):
+		return _create_double(parsed, strategy, override_path, false)
 
 
 func _partial_double(obj, strategy, override_path=null):
-	var parsed = _script_collector.parse(obj)
-	return _create_double(parsed, strategy, override_path, true)
+	var parsed = _parse_script(obj)
+	if(parsed != null):
+		return _create_double(parsed, strategy, override_path, true)
 
 
 # -------------------------

@@ -60,20 +60,21 @@ class TestType2Str:
 		assert_eq(strutils.type2str(DoubleMeScene), str(DoubleMeScene) + '(double_me_scene.tscn)')
 
 	func test_doubles():
-		var d = double(DOUBLE_ME_PATH).new()
+		var d = double(DoubleMe).new()
 		assert_eq(strutils.type2str(d), str(d) + '(double of double_me.gd)')
 
 	func test_another_double():
-		var d = double(DOUBLE_EXTENDS_NODE2D).new()
+		var d = double(DoubleExtendsNode2D).new()
 		assert_eq(strutils.type2str(d), str(d) + '(double of double_extends_node2d.gd)')
 
 	func test_double_inner():
 		gut.get_doubler().print_source = true
-		var d = double(InnerClasses, 'InnerA').new()
+		gut.get_doubler().inner_class_registry.register(InnerClasses)
+		var d = double(InnerClasses.InnerA).new()
 		assert_eq(strutils.type2str(d), str(d) + '(double of inner_classes.gd/InnerA)')
 
 	func test_partial_double():
-		var d = partial_double(DOUBLE_ME_PATH).new()
+		var d = partial_double(DoubleMe).new()
 		assert_string_contains(strutils.type2str(d), "partial-double")
 
 	# # func test_singleton_double_includes_singleton_name():

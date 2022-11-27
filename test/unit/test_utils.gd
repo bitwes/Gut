@@ -1,5 +1,8 @@
 extends 'res://addons/gut/test.gd'
 
+const INNER_CLASSES_PATH = 'res://test/resources/doubler_test_objects/inner_classes.gd'
+
+var InnerClasses = load(INNER_CLASSES_PATH)
 var Utils = load('res://addons/gut/utils.gd')
 
 
@@ -134,4 +137,17 @@ func test_latest_version_if_version_is_old_warning_is_on():
 	assert_not_null(p, "should have a child http request")
 	await yield_to(p,"request_completed",2)
 	assert_true(utils.should_display_latest_version,"this should fail only if you dont have internet connection")
+
+func test_is_inner_class_true_for_inner_classes():
+	var utils = autofree(Utils.new())
+	assert_true(utils.is_inner_class(InnerClasses.InnerA))
+
+func test_is_inner_class_false_for_base_scripts():
+	var utils = autofree(Utils.new())
+	assert_false(utils.is_inner_class(InnerClasses))
+
+func test_is_inner_class_false_for_non_objs():
+	var utils = autofree(Utils.new())
+	assert_false(utils.is_inner_class('foo'))
+
 

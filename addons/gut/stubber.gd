@@ -15,106 +15,117 @@ var returns = {}
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
 var _strutils = _utils.Strutils.new()
+var _class_db_name_hash = {}
+
+func _init():
+	_class_db_name_hash = _make_crazy_dynamic_over_engineered_class_db_hash()
+
+# So, I couldn't figure out how to get to a reference for a GDNative Class
+# using a string.  ClassDB has all thier names...so I made a hash using those
+# names and the classes.  Then I dynmaically make a script that has that as
+# the source and grab the hash out of it and return it.  Super Rube Golbergery,
+# but tons of fun.
+func _make_crazy_dynamic_over_engineered_class_db_hash():
+	var text = "var all_the_classes = {\n"
+	for classname in ClassDB.get_class_list():
+		if(ClassDB.can_instantiate(classname)):
+			text += str('"', classname, '": ', classname, ", \n")
+		else:
+			text += str('# ', classname, "\n")
+	text += "}"
+	var inst =  _utils.create_script_from_source(text).new()
+	return inst.all_the_classes
 
 
-func _make_key_from_metadata(doubled):
-	var to_return = doubled.__gutdbl.thepath
+func _find_matches(obj, method):
+	var matches = null
+	var last_not_null_parent = null
 
-	if(doubled.__gutdbl.from_singleton != ''):
-		to_return = str(doubled.__gutdbl.from_singleton)
-	elif(doubled.__gutdbl.subpath != ''):
-		to_return += str('-', doubled.__gutdbl.subpath)
+	# Search for what is passed in first.  This could be a class or an instance.
+	# We want to find the instance before we find the class.  If we do not have
+	# an entry for the instance then see if we have an entry for the class.
+	if(returns.has(obj) and returns[obj].has(method)):
+		matches = returns[obj][method]
+	elif(_utils.is_instance(obj)):
+		var parent = obj.get_script()
+		var found = false
+		while(parent != null and !found):
+			found = returns.has(parent)
 
-	return to_return
+			if(!found):
+				last_not_null_parent = parent
+				parent = parent.get_base_script()
 
+		# Could not find the script so check to see if a native class of this
+		# type was stubbed.
+		if(!found):
+			var base_type = last_not_null_parent.get_instance_base_type()
+			if(_class_db_name_hash.has(base_type)):
+				parent = _class_db_name_hash[base_type]
+				found = returns.has(parent)
 
-# Creates they key for the returns hash based on the type of object passed in
-# obj could be a string of a path to a script with an optional subpath or
-# it could be an instance of a doubled object.
-func _make_key_from_variant(obj, subpath=null):
-	var to_return = null
+		if(found and returns[parent].has(method)):
+			matches = returns[parent][method]
 
-	match typeof(obj):
-		TYPE_STRING:
-			# this has to match what is done in _make_key_from_metadata
-			to_return = obj
-			if(subpath != null and subpath != ''):
-				to_return += str('-', subpath)
-		TYPE_OBJECT:
-			if(_utils.is_instance(obj)):
-				to_return = _make_key_from_metadata(obj)
-			elif(_utils.is_native_class(obj)):
-				to_return = _utils.get_native_class_name(obj)
-			else:
-				to_return = obj.resource_path
+	return matches
 
-	return to_return
-
-
-func _add_obj_method(obj, method, subpath=null):
-	var key = _make_key_from_variant(obj, subpath)
-	if(_utils.is_instance(obj)):
-		key = obj
-
-	if(!returns.has(key)):
-		returns[key] = {}
-	if(!returns[key].has(method)):
-		returns[key][method] = []
-
-	return key
-
-# ##############
-# Public
-# ##############
 
 # Searches returns for an entry that matches the instance or the class that
 # passed in obj is.
 #
 # obj can be an instance, class, or a path.
 func _find_stub(obj, method, parameters=null, find_overloads=false):
-	var key = _make_key_from_variant(obj)
 	var to_return = null
+	var matches = _find_matches(obj, method)
 
-	if(_utils.is_instance(obj)):
-		if(returns.has(obj) and returns[obj].has(method)):
-			key = obj
-		elif(obj.get('__gutdbl')):
-			key = _make_key_from_metadata(obj)
+	if(matches == null):
+		return null
 
-	if(returns.has(key) and returns[key].has(method)):
-		var param_match = null
-		var null_match = null
-		var overload_match = null
+	var param_match = null
+	var null_match = null
+	var overload_match = null
 
-		for i in range(returns[key][method].size()):
-			var cur_stub = returns[key][method][i]
-			if(cur_stub.parameters == parameters):
-				param_match = cur_stub
+	for i in range(matches.size()):
+		var cur_stub = matches[i]
+		if(cur_stub.parameters == parameters):
+			param_match = cur_stub
 
-			if(cur_stub.parameters == null and !cur_stub.is_param_override_only()):
-				null_match = cur_stub
+		if(cur_stub.parameters == null and !cur_stub.is_param_override_only()):
+			null_match = cur_stub
 
-			if(cur_stub.has_param_override()):
-				if(overload_match == null || overload_match.is_script_default):
-					overload_match = cur_stub
+		if(cur_stub.has_param_override()):
+			if(overload_match == null || overload_match.is_script_default):
+				overload_match = cur_stub
 
-		if(find_overloads and overload_match != null):
-			to_return = overload_match
-		# We have matching parameter values so return the stub value for that
-		elif(param_match != null):
-			to_return = param_match
-		# We found a case where the parameters were not specified so return
-		# parameters for that.  Only do this if the null match is not *just*
-		# a paramerter override stub.
-		elif(null_match != null):
-			to_return = null_match
+	if(find_overloads and overload_match != null):
+		to_return = overload_match
+	# We have matching parameter values so return the stub value for that
+	elif(param_match != null):
+		to_return = param_match
+	# We found a case where the parameters were not specified so return
+	# parameters for that.  Only do this if the null match is not *just*
+	# a paramerter override stub.
+	elif(null_match != null):
+		to_return = null_match
 
 	return to_return
 
 
+
+# ##############
+# Public
+# ##############
+
 func add_stub(stub_params):
 	stub_params._lgr = _lgr
-	var key = _add_obj_method(stub_params.stub_target, stub_params.stub_method, stub_params.target_subpath)
+	var key = stub_params.stub_target
+
+	if(!returns.has(key)):
+		returns[key] = {}
+
+	if(!returns[key].has(stub_params.stub_method)):
+		returns[key][stub_params.stub_method] = []
+
 	returns[key][stub_params.stub_method].append(stub_params)
 
 
@@ -172,7 +183,6 @@ func get_parameter_count(obj, method):
 
 	if(stub_info != null and stub_info.has_param_override()):
 		to_return = stub_info.parameter_count
-		print("!! ", to_return)
 
 	return to_return
 

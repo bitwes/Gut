@@ -81,6 +81,7 @@ var DiffTool = load('res://addons/gut/diff_tool.gd')
 var Doubler = load('res://addons/gut/doubler.gd')
 var Gut = load('res://addons/gut/gut.gd')
 var HookScript = load('res://addons/gut/hook_script.gd')
+var InnerClassRegistry = load('res://addons/gut/inner_class_registry.gd')
 var InputFactory = load("res://addons/gut/input_factory.gd")
 var InputSender = load("res://addons/gut/input_sender.gd")
 var JunitXmlExport = load('res://addons/gut/junit_xml_export.gd')
@@ -100,6 +101,7 @@ var Summary = load('res://addons/gut/summary.gd')
 var Test = load('res://addons/gut/test.gd')
 var TestCollector = load('res://addons/gut/test_collector.gd')
 var ThingCounter = load('res://addons/gut/thing_counter.gd')
+
 
 # Source of truth for the GUT version
 var version = '7.4.1'
@@ -301,6 +303,17 @@ func is_instance(obj):
 func is_gdscript(obj):
 	return typeof(obj) == TYPE_OBJECT and str(obj).begins_with('<GDScript#')
 
+
+# ------------------------------------------------------------------------------
+# Checks if the passed in is an inner class
+#
+# Looks like the resource_path will be populated for gdscripts, and not populated
+# for gdscripts inside a gdscript.
+# ------------------------------------------------------------------------------
+func is_inner_class(obj):
+	return is_gdscript(obj) and obj.resource_path == ''
+
+
 # ------------------------------------------------------------------------------
 # Returns an array of values by calling get(property) on each element in source
 # ------------------------------------------------------------------------------
@@ -483,3 +496,22 @@ func create_script_from_source(source, override_path=null):
 	var result = DynamicScript.reload()
 
 	return DynamicScript
+
+
+func get_scene_script_object(scene):
+	var state = scene.get_state()
+	var to_return = null
+	var root_node_path = NodePath(".")
+	var node_idx = 0
+
+	while(node_idx < state.get_node_count() and to_return == null):
+		# Assumes that the first node we encounter that has a root node path, one
+		# property, and that property is named 'script' is the GDScript for the
+		# scene.  This could be flawed.
+		if(state.get_node_path(node_idx) == root_node_path and state.get_node_property_count(node_idx) == 1):
+			if(state.get_node_property_name(node_idx, 0) == 'script'):
+				to_return = state.get_node_property_value(node_idx, 0)
+
+		node_idx += 1
+
+	return to_return

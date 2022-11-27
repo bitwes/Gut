@@ -3,6 +3,7 @@ extends GutTest
 # test.gd has a StubParams variable already so this has to have a
 # different name.  I thought it was too vague to just use the one
 # that test.gd has
+const STUB_PARAMS_PATH = 'res://addons/gut/stub_params.gd'
 var StubParamsClass = load('res://addons/gut/stub_params.gd')
 
 func find_method_meta(methods, method_name):
@@ -35,10 +36,6 @@ func test_init_sets_stub_target():
 	var s = StubParamsClass.new('thing')
 	assert_eq(s.stub_target, 'thing')
 
-func test_init_sets_subpath():
-	var s = StubParamsClass.new('thing', 'method', 'inner1/inner2')
-	assert_eq(s.target_subpath, 'inner1/inner2')
-
 func test_init_sets_method():
 	var s = StubParamsClass.new('thing', 'method')
 	assert_eq(s.stub_method, 'method')
@@ -70,6 +67,10 @@ func test_to_call_super_returns_self():
 func test_to_do_nothing_returns_self():
 	var sp = StubParamsClass.new('thing', 'method')
 	assert_eq(sp.to_do_nothing(), sp)
+
+func test_turns_paths_into_classes():
+	var sp = StubParamsClass.new(STUB_PARAMS_PATH, 'to_return')
+	assert_eq(sp.stub_target, StubParamsClass)
 
 # --------------
 # Parameter Count and Defaults
@@ -201,3 +202,6 @@ func test_draw_parameter_method_meta4():
 	var meta = find_method_meta(inst.get_method_list(), 'draw_primitive')
 	var sp = StubParamsClass.new(inst, meta)
 	assert_eq(sp.parameter_defaults.size(), 5)
+
+
+

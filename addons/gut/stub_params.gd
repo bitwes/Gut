@@ -3,13 +3,12 @@ var _lgr = _utils.get_logger()
 
 var return_val = null
 var stub_target = null
-var target_subpath = null
 # the parameter values to match method call on.
 var parameters = null
 var stub_method = null
 var call_super = false
 # Whether this is a stub for default parameter values as they are defined in
-# the script, and not an overridden ddefault value.
+# the script, and not an overridden default value.
 var is_script_default = false
 
 # -- Paramter Override --
@@ -32,13 +31,26 @@ const NOT_SET = '|_1_this_is_not_set_1_|'
 
 func _init(target=null,method=null,subpath=null):
 	stub_target = target
-	target_subpath = subpath
 	stub_method = method
 
-	if(typeof(method) == TYPE_DICTIONARY):
-		_load_metadata(method)
+	if(typeof(target) == TYPE_STRING):
+		if(target.is_absolute_path()):
+			stub_target = load(str(target))
+		else:
+			_lgr.warn(str(target, ' is not a valid path'))
 
-func _load_metadata(meta):
+	if(stub_target is PackedScene):
+		stub_target = _utils.get_scene_script_object(stub_target)
+	elif(_utils.is_native_class(stub_target)):
+		print("Got a native class:  ", stub_target)
+
+	# this is used internally to stub default parameters for everything that is
+	# doubled...or something.  Look for stub_defaults_from_meta for usage.  This
+	# behavior is not to be used by end users.
+	if(typeof(method) == TYPE_DICTIONARY):
+		_load_defaults_from_metadata(method)
+
+func _load_defaults_from_metadata(meta):
 	stub_method = meta.name
 	var values = meta.default_args.duplicate()
 	while (values.size() < meta.args.size()):
@@ -104,12 +116,7 @@ func is_param_override_only():
 
 
 func to_s():
-	var base_string = str(stub_target)
-	if(target_subpath != null):
-		base_string += str('[', target_subpath, '].')
-	else:
-		base_string += '.'
-	base_string += stub_method
+	var base_string = str(stub_target, '.', stub_method)
 
 	if(has_param_override()):
 		base_string += str(' (param count override=', parameter_count, ' defaults=', parameter_defaults)
