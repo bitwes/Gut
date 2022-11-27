@@ -155,6 +155,7 @@ func _get_base_script_text(parsed, override_path, partial):
 	if(_utils.is_inner_class(parsed.resource)):
 		extends_text = 'extends ' + inner_class_registry.get_extends_path(parsed.resource)
 
+	print('subpath = ', parsed.subpath)
 	var values = {
 		# Top  sections
 		"extends":extends_text,
@@ -247,23 +248,31 @@ func _get_func_text(method_hash, path, super_=""):
 	return text
 
 
+func _parse_script(obj):
+	var parsed = null
+
+	if(_utils.is_inner_class(obj)):
+		if(inner_class_registry.has(obj)):
+			parsed = _script_collector.parse(inner_class_registry.get_base_resource(obj), obj)
+		else:
+			_lgr.error('Doubling Inner Classes requies you register them first.  Call register_inner_classes passing the script that contains the inner class.')
+	else:
+		parsed = _script_collector.parse(obj)
+
+	return parsed
+
+
 # Override path is used with scenes.
 func _double(obj, strategy, override_path=null):
-	if(_utils.is_inner_class(obj) and !inner_class_registry.has(obj)):
-		_lgr.error('Doubling Inner Classes requies you register them first.  Call register_inner_classes passing the script that contains the inner class.')
-		return null
-
-	var parsed = _script_collector.parse(obj)
-	return _create_double(parsed, strategy, override_path, false)
+	var parsed = _parse_script(obj)
+	if(parsed != null):
+		return _create_double(parsed, strategy, override_path, false)
 
 
 func _partial_double(obj, strategy, override_path=null):
-	if(_utils.is_inner_class(obj) and !inner_class_registry.has(obj)):
-		_lgr.error('Doubling Inner Classes requies you register them first.  Call register_inner_classes passing the script that contains the inner class.')
-		return null
-
-	var parsed = _script_collector.parse(obj)
-	return _create_double(parsed, strategy, override_path, true)
+	var parsed = _parse_script(obj)
+	if(parsed != null):
+		return _create_double(parsed, strategy, override_path, true)
 
 
 # -------------------------

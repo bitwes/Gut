@@ -1360,20 +1360,27 @@ func partial_double_singleton(singleton_name):
 # Specifically double a scene
 # ------------------------------------------------------------------------------
 func double_scene(path, strategy=null):
-	var override_strat = _utils.nvl(strategy, gut.get_doubler().get_strategy())
-	return gut.get_doubler().double_scene(path, override_strat)
+	_lgr.deprecated('test.double_scene has been removed.', 'double')
+	return null
+
+	# var override_strat = _utils.nvl(strategy, gut.get_doubler().get_strategy())
+	# return gut.get_doubler().double_scene(path, override_strat)
 
 # ------------------------------------------------------------------------------
 # Specifically double a script
 # ------------------------------------------------------------------------------
 func double_script(path, strategy=null):
-	var override_strat = _utils.nvl(strategy, gut.get_doubler().get_strategy())
-	return gut.get_doubler().double(path, override_strat)
+	_lgr.deprecated('test.double_script has been removed.', 'double')
+	return null
+
+	# var override_strat = _utils.nvl(strategy, gut.get_doubler().get_strategy())
+	# return gut.get_doubler().double(path, override_strat)
 
 # ------------------------------------------------------------------------------
 # Specifically double an Inner class in a a script
 # ------------------------------------------------------------------------------
 func double_inner(path, subpath, strategy=null):
+	_lgr.deprecated('test.double_inner should not be used.', 'double')
 	var override_strat = _utils.nvl(strategy, gut.get_doubler().get_strategy())
 	return gut.get_doubler().double_inner(path, subpath, override_strat)
 

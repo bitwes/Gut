@@ -28,3 +28,31 @@ func test_get_AnotherA_back_for_AnotherA():
 	reg.add_inner_classes(InnerClasses)
 	var ext_txt = reg.get_extends_path(InnerClasses.AnotherInnerA)
 	assert_eq(ext_txt, str("'", INNER_CLASSES_PATH, "'.AnotherInnerA" ))
+
+func test_can_get_subpath_for_registered():
+	var reg = _utils.InnerClassRegistry.new()
+	reg.add_inner_classes(InnerClasses)
+	var subpath = reg.get_subpath(InnerClasses.InnerB.InnerB1)
+	assert_eq(subpath, ".InnerB.InnerB1" )
+
+func tet_subpath_is_empty_string_when_not_registered():
+	var reg = _utils.InnerClassRegistry.new()
+	var subpath = reg.get_subpath(InnerClasses.InnerB.InnerB1)
+	assert_eq(subpath, "" )
+
+func test_base_path_is_the_path_to_the_script():
+	var reg = _utils.InnerClassRegistry.new()
+	reg.add_inner_classes(InnerClasses)
+	var base_path = reg.get_base_path(InnerClasses.InnerCA)
+	assert_eq(base_path, INNER_CLASSES_PATH)
+
+func test_can_get_base_resource_for_inner_class():
+	var reg = _utils.InnerClassRegistry.new()
+	reg.add_inner_classes(InnerClasses)
+	var resource = reg.get_base_resource(InnerClasses.InnerCA)
+	assert_eq(resource, InnerClasses)
+
+func test_get_base_resource_returns_null_when_not_registered():
+	var reg = _utils.InnerClassRegistry.new()
+	var resource = reg.get_base_resource(InnerClasses.InnerCA)
+	assert_eq(resource, null)

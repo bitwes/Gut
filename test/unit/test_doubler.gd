@@ -445,7 +445,6 @@ class TestDoubleInnerClasses:
 		assert_eq(inst.get_a(), null)
 
 	func test_can_make_partial_of_inner_script():
-		doubler.print_source = true
 		doubler.inner_class_registry.add_inner_classes(InnerClasses)
 		var inst = doubler.partial_double(InnerClasses.InnerA).new()
 		assert_eq(inst.get_a(), 'a')

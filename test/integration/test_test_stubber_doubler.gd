@@ -48,7 +48,7 @@ class TestBasics:
 		assert_eq(gr.test.get_pass_count(), 1)
 
 	func test_can_override_strategy_when_doubling_scene():
-		var doubled = gr.test.double_scene(DoubleMeScene, gr.test.DOUBLE_STRATEGY.INCLUDE_SUPER).instantiate()
+		var doubled = gr.test.double(DoubleMeScene, gr.test.DOUBLE_STRATEGY.INCLUDE_SUPER).instantiate()
 		autofree(doubled)
 		doubled.is_blocking_signals()
 		gr.test.assert_called(doubled, 'is_blocking_signals')
@@ -56,7 +56,7 @@ class TestBasics:
 		pause_before_teardown()
 
 	func test_when_strategy_is_partial_then_supers_are_NOT_spied_in_scenes():
-		var doubled = gr.test.double_scene(DoubleMeScene, gr.test.DOUBLE_STRATEGY.SCRIPT_ONLY).instantiate()
+		var doubled = gr.test.double(DoubleMeScene, gr.test.DOUBLE_STRATEGY.SCRIPT_ONLY).instantiate()
 		autofree(doubled)
 		doubled.is_blocking_signals()
 		gr.test.assert_not_called(doubled, 'is_blocking_signals')
@@ -164,29 +164,13 @@ class TestTestsSmartDoubleMethod:
 		var inst = _test.double(DOUBLE_ME_SCENE_PATH).instantiate()
 		assert_eq(inst.__gutdbl.thepath, DOUBLE_ME_SCENE_PATH)
 
-	func test_when_doubling_inners_with_strings():
-		pending('New inner double tech')
-		return
-
-		var inst = _test.double(INNER_CLASSES_PATH, 'InnerA').new()
-		assert_eq(inst.__gutdbl.thepath, INNER_CLASSES_PATH, 'check path')
-		assert_eq(inst.__gutdbl.subpath, 'InnerA', 'check subpath')
 
 	func test_doulbing_inners_with_objects():
-		pending('New inner double tech')
-		return
-
-		var inst = _test.double(InnerClasses, InnerClasses.InnerA).new()
+		_test.register_inner_classes(InnerClasses)
+		var inst = _test.double(InnerClasses.InnerA).new()
 		assert_eq(inst.__gutdbl.thepath, INNER_CLASSES_PATH, 'check path')
 		assert_eq(inst.__gutdbl.subpath, 'InnerA', 'check subpath')
 
-	func test_partial_doubling_inners_with_mixed():
-		pending('New inner double tech')
-		return
-
-		var inst = _test.partial_double(InnerClasses, 'InnerA').new()
-		assert_eq(inst.__gutdbl.thepath, INNER_CLASSES_PATH, 'check path')
-		assert_eq(inst.__gutdbl.subpath, 'InnerA', 'check subpath')
 
 	func test_full_strategy_used_for_scripts():
 		var inst = _test.double(DOUBLE_ME_PATH, DOUBLE_STRATEGY.INCLUDE_SUPER).new()
@@ -199,10 +183,9 @@ class TestTestsSmartDoubleMethod:
 		assert_called(inst, 'get_instance_id')
 
 	func test_full_strategy_used_with_inners():
-		pending('New inner double tech')
-		return
+		_test.register_inner_classes(InnerClasses)
+		var inst = _test.double(InnerClasses.InnerA, DOUBLE_STRATEGY.INCLUDE_SUPER).new()
 
-		var inst = _test.double(INNER_CLASSES_PATH, 'InnerA', DOUBLE_STRATEGY.INCLUDE_SUPER).new()
 		inst.get_instance_id()
 		assert_called(inst, 'get_instance_id')
 
@@ -214,14 +197,6 @@ class TestTestsSmartDoubleMethod:
 		var inst = _test.double(DoubleMeScene).instantiate()
 		assert_eq(inst.__gutdbl.thepath, DOUBLE_ME_SCENE_PATH)
 
-	func test_when_passing_a_class_of_an_inner_it_doubles_it():
-		pending('New inner double tech')
-		return
-
-
-		var inst = _test.double(InnerClasses, 'InnerA').new()
-		assert_eq(inst.__gutdbl.thepath, INNER_CLASSES_PATH, 'check path')
-		assert_eq(inst.__gutdbl.subpath, 'InnerA', 'check subpath')
 
 	func test_can_double_native_classes():
 		var inst = _test.double(Node2D).new()
