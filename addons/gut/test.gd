@@ -1247,7 +1247,7 @@ func _are_double_parameters_valid(thing, p2, p3):
 		bad_msg += "Doubling using a subpath is not supported.  Call register_inner_class and then pass the Inner Class to double().\n"
 
 	if(typeof(thing) == TYPE_STRING):
-		bad_msg += "Doubling using the path to a script is no longer supported.  Load the script and pass that to double instead.\n"
+		bad_msg += "Doubling using the path to a script or scene is no longer supported.  Load the script or scene and pass that to double instead.\n"
 
 	if(_utils.is_instance(thing)):
 		bad_msg += "double requires a script, you passed an instance:  " + _str(thing)
