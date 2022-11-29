@@ -11,6 +11,8 @@ class TestBasics:
 
 	func before_each():
 		gr.gut = Gut.new()
+		gr.gut._should_print_versions = false
+
 		gr.test = Test.new()
 		gr.test.gut = gr.gut
 		add_child_autofree(gr.gut)

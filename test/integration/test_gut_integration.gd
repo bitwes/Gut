@@ -7,6 +7,8 @@ class CoupledScriptTest:
 
 	func before_each():
 		_gut = _utils.Gut.new()
+		_gut._should_print_versions = false
+		_gut._should_print_summary = false
 		add_child(_gut)
 
 	func after_each():
