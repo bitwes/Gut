@@ -8,6 +8,7 @@ class TestLogging:
 
 	func before_each():
 		_gut = Gut.new()
+		_gut._should_print_versions = false
 		_gut.log_level = 0
 		add_child(_gut)
 

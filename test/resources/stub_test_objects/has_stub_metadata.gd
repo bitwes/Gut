@@ -15,5 +15,5 @@ var __gutdbl_values = {
 var __gutdbl = load('res://addons/gut/double_tools.gd').new(__gutdbl_values)
 
 # Here so other things can check for a method to know if this is a double.
-func __gutbl_check_method__():
+func __gutdbl_check_method__():
 	pass

@@ -5,10 +5,12 @@ const EXPORT_FILE = 'res://test/exported_tests.cfg'
 
 func before_each():
 	_test_gut = Gut.new()
+	_test_gut._should_print_versions = false
 	add_child_autofree(_test_gut)
 
 func after_each():
 	gut.file_delete(EXPORT_FILE)
+	_test_gut = null
 
 func test_export_test_exports_tests():
 	_test_gut.add_directory('res://test/resources/parsing_and_loading_samples')
