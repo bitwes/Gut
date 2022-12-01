@@ -790,7 +790,6 @@ func _run_test(script_inst, test_name):
 	# ----
 
 	start_test.emit(test_name)
-	# When the script yields it will return a GDScriptFunctionState object
 
 	await script_inst.call(test_name)
 	# TODO 4.0 GDScriptFunctionState? ----
@@ -799,6 +798,17 @@ func _run_test(script_inst, test_name):
 	# 	await _wait_for_done(script_result)
 	# ----
 	var test_summary = _new_summary.add_test(test_name)
+	if(test_summary == null):
+		var msg = "Summary was null.  This has been seen to happen when a test \n"
+		msg += "calls unreference.  Adding 'await get_tree().process_frame' somewhere between\n"
+		msg += "instantiation and calling unreference, in your test, may fix this issue.\n"
+		msg += "More info at https://github.com/godotengine/godot/issues/69411"
+		_lgr.error(msg)
+		test_summary.force_a_runtime_error_to_stop_things_from_progressing_see_error_above = 1
+		# print(_new_summary.log_summary_text(_lgr))
+		# set_yield_frames(4)
+		# await timeout
+		# test_summary = _new_summary.get_current_script().get_test_obj(test_name)
 
 	# if the test called pause_before_teardown then yield until
 	# the continue button is pressed.

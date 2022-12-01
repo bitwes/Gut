@@ -147,3 +147,49 @@ func test_check_out_this_summary():
 	gut.p("- End Summary Output")
 	gut.p("---------------------------------------")
 	pass_test('Must be visually checked')
+
+
+func test_adding_bunch_of_names():
+	var func_names = [
+	'test_can_make_one',
+	'test_can_parse_a_script',
+	'test_parsing_same_thing_does_not_add_to_scripts',
+	'test_parse_returns_script_parser',
+	'test_parse_returns_cached_version_on_2nd_parse',
+	'test_can_get_instance_parse_result_from_gdscript',
+	'test_parsing_more_adds_more_scripts',
+	'test_can_parse_path_string',
+	'test_when_passed_an_invalid_path_null_is_returned',
+	'test_inner_class_sets_subpath',
+	'test_inner_class_sets_script_path',
+	'test_can_make_one_from_gdscript',
+	'test_can_make_one_from_instance',
+	'test_instance_and_gdscript_have_same_methods',
+	'test_new_from_gdscript_sets_path',
+	'test_new_from_inst_sets_path',
+	'test_can_get_method_by_name',
+	'test_can_get_super_method_by_name',
+	'test_non_super_methods_are_not_in_get_super_method_by_name',
+	'test_can_get_local_method_by_name',
+	'test_can_super_methods_not_included_in_local_method_by_name',
+	'test_overloaded_local_methods_are_local',
+	'test_get_local_method_names_excludes_supers',
+	'test_get_super_method_names_excludes_locals',
+	'test_is_blacklisted_returns_true_for_blacklisted_methods',
+	'test_is_black_listed_returns_false_for_non_blacklisted_methods',
+	'test_is_black_listed_returns_null_for_methods_that_DNE',
+	'test_subpath_is_null_by_default',
+	'test_cannot_set_subpath',
+	'test_subpath_set_when_passing_inner_and_parent',
+	'test_subpath_set_for_deeper_inner_classes',
+	'test_resource_is_loaded_script',
+	'test_resource_is_loaded_inner',
+	'test_extends_text_has_path_for_scripts',
+	'test_extends_text_uses_class_name_for_natives',
+	'test_extends_text_adds_inner_classes_to_end',
+	'test_parsing_native_does_not_generate_orphans',
+	]
+	gr.summary.add_script('res://something.gd')
+	for fn in func_names:
+		var result = gr.summary.add_test(fn)
+		assert_not_null(result, fn)
