@@ -33,20 +33,20 @@ func _signal_callback():
 	_pause_until_signal.disconnect(_signal_callback)
 	_end_pause()
 
-func pause_for(x):
+func wait_for(x):
 	_pause_time = x
 	pause_started.emit()
 
-func pause_frames(x):
+func wait_frames(x):
 	_pause_frames = x
 	pause_started.emit()
 
-func pause_until(the_signal, x):
+func wait_for_signal(the_signal, x):
 	the_signal.connect(_signal_callback)
 	_pause_until_signal = the_signal
 	_pause_time = x
 	pause_started.emit()
 
-func is_paused():
+func is_waiting():
 	return _pause_time != 0.0 || _pause_frames != 0
 
