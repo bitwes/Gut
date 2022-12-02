@@ -1273,8 +1273,8 @@ func export_tests(path=_export_path):
 	else:
 		var result = _test_collector.export_tests(path)
 		if(result):
-			p(_test_collector.to_s())
-			p("Exported to " + path)
+			_lgr.info(_test_collector.to_s())
+			_lgr.info("Exported to " + path)
 
 
 # ------------------------------------------------------------------------------
@@ -1286,8 +1286,8 @@ func import_tests(path=_export_path):
 		_test_collector.clear()
 		var result = _test_collector.import_tests(path)
 		if(result):
-			p(_test_collector.to_s())
-			p("Imported from " + path)
+			_lgr.info(_test_collector.to_s())
+			_lgr.info("Importd from " + path)
 
 
 # ------------------------------------------------------------------------------
