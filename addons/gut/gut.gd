@@ -1382,7 +1382,7 @@ func pause_before_teardown():
 func set_yield_time(time, text=''):
 	_yield_timer.set_wait_time(time)
 	_yield_timer.start()
-	var msg = '-- Yielding (' + str(time) + 's)'
+	var msg = '-- Awaiting (' + str(time) + 's)'
 	if(text == ''):
 		msg += ' --'
 	else:
@@ -1399,7 +1399,7 @@ func set_yield_time(time, text=''):
 # required for _process in test.gd scripts to count N frames.
 # ------------------------------------------------------------------------------
 func set_yield_frames(frames, text=''):
-	var msg = '-- Yielding (' + str(frames) + ' frames)'
+	var msg = '-- Awaiting (' + str(frames) + ' frames)'
 	if(text == ''):
 		msg += ' --'
 	else:
@@ -1422,7 +1422,7 @@ func set_yield_signal_or_time(obj, signal_name, max_wait, text=''):
 	_yield_timer.set_wait_time(max_wait)
 	_yield_timer.start()
 	_was_yield_method_called = true
-	_lgr.yield_msg(str('-- Yielding to signal "', signal_name, '" or for ', max_wait, ' seconds -- ', text))
+	_lgr.yield_msg(str('-- Awaiting signal "', signal_name, '" or for ', max_wait, ' seconds -- ', text))
 	return self
 
 

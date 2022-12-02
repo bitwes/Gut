@@ -30,6 +30,36 @@ class Counter:
 		time += delta
 		frames += 1
 
+
+
+class TestOldYieldMethods:
+	extends GutTest
+
+	var counter = null
+	func before_each():
+		counter = add_child_autoqfree(Counter.new())
+
+	func test_wait_frames_waits_for_x_frames():
+		await yield_frames(30)
+		assert_between(counter.frames, 29, 31)
+
+	func test_wait_to_ends_when_signal_emitted():
+		var signaler = add_child_autoqfree(TimedSignaler.new())
+		signaler.emit_after(.5)
+		await yield_to(signaler, 'the_signal', 10)
+		assert_between(counter.time, .49, .52)
+
+	func test_wait_to_ends_at_max_wait_if_signal_not_emitted():
+		var signaler = add_child_autoqfree(TimedSignaler.new())
+		await yield_to(signaler, 'the_signal', 1)
+		assert_between(counter.time, .9, 1.1)
+
+	func test_wait_for_waits_for_x_seconds():
+		await yield_for(.5)
+		assert_between(counter.time, .49, .52)
+
+
+
 class TestTheNewWaitMethods:
 	extends GutTest
 
@@ -54,31 +84,4 @@ class TestTheNewWaitMethods:
 	func test_wait_to_ends_at_max_wait_if_signal_not_emitted():
 		var signaler = add_child_autoqfree(TimedSignaler.new())
 		await wait_for_signal(signaler.the_signal, 1)
-		assert_between(counter.time, .9, 1.1)
-
-
-class TestOldYieldMethods:
-	extends GutTest
-
-	var counter = null
-	func before_each():
-		counter = add_child_autoqfree(Counter.new())
-
-	func test_wait_for_waits_for_x_seconds():
-		await yield_for(.5)
-		assert_between(counter.time, .49, .52)
-
-	func test_wait_frames_waits_for_x_frames():
-		await yield_frames(30)
-		assert_between(counter.frames, 29, 31)
-
-	func test_wait_to_ends_when_signal_emitted():
-		var signaler = add_child_autoqfree(TimedSignaler.new())
-		signaler.emit_after(.5)
-		await yield_to(signaler, 'the_signal', 10)
-		assert_between(counter.time, .49, .52)
-
-	func test_wait_to_ends_at_max_wait_if_signal_not_emitted():
-		var signaler = add_child_autoqfree(TimedSignaler.new())
-		await yield_to(signaler, 'the_signal', 1)
 		assert_between(counter.time, .9, 1.1)
