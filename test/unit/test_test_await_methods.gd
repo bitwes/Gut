@@ -85,3 +85,40 @@ class TestTheNewWaitMethods:
 		var signaler = add_child_autoqfree(TimedSignaler.new())
 		await wait_for_signal(signaler.the_signal, 1)
 		assert_between(counter.time, .9, 1.1)
+
+
+
+# ------------------------------------
+# Could not get these to trigger the error I was trying to replicate.  This was
+# a useful exercies though and I'm not ready to part with this code.  So it is
+# here as an example of using parameterized tests to control the order of the
+# execution of tests with different behavior per iteration.
+# ------------------------------------
+# class TestYieldTimerResetAfterSignalEmitted:
+# 	extends GutTest
+
+# 	var _wait_data = ParameterFactory.named_parameters(
+# 		['kind', 'time'],
+# 		[
+# 			['s', 3.0],
+# 			['t', 4.0],
+# 		])
+
+# 	var _counter = null
+# 	func before_each():
+# 		_counter = add_child_autoqfree(Counter.new())
+
+
+# 	func test_one(param=use_parameters(_wait_data)):
+# 		print('time left = ', gut._yield_timer.time_left)
+# 		var signaler = add_child_autoqfree(TimedSignaler.new())
+# 		var t = param.time
+
+# 		if(param.kind == 's'):
+# 			signaler.emit_after(t)
+# 			await wait_for_signal(signaler.the_signal, t + 2)
+# 		else:
+# 			await wait_seconds(t)
+
+# 		assert_between(_counter.time, t - 0.1, t + 0.1)
+# 		print('time left = ', gut._yield_timer.time_left)

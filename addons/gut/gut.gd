@@ -417,18 +417,21 @@ func _set_log_level(level):
 # ####################
 
 # ------------------------------------------------------------------------------
-# Timeout for the built in timer.  emits the timeout signal.  Start timer
-# with set_yield_time()
-#
-# signal_watcher._on_watched_signal supports up to 9 additional arguments.
-# This is the most number of parameters GUT supports on signals.  The comment
-# on _on_watched_signal explains reasoning.
+# Timeout for the built in timer.  Emits the timeout signal.  Start timer
+# with set_yield_time().  This is also connected to signals in other objects
+# when set_yield_signal_or_time is called.  Since we can't know how many
+# parameters these other signals will have, this has 9 optional parameters that
+# are not used so that we don't generate errors.  9 was chosen because that is
+# also the limit for parameters supported by signal_watcher.gd.  If we need more
+# parameters then this and signal_watcher should be updated.  See signal_watcher
+# for more info on why 9 was chosen.
 # ------------------------------------------------------------------------------
 func _yielding_callback(from_obj=false,
 		__arg1=null, __arg2=null, __arg3=null,
 		__arg4=null, __arg5=null, __arg6=null,
 		__arg7=null, __arg8=null, __arg9=null):
 	_lgr.end_yield()
+	_yield_timer.stop()
 	if(_yielding_to.obj != null):
 		_yielding_to.obj.call_deferred(
 			"disconnect",
@@ -437,6 +440,8 @@ func _yielding_callback(from_obj=false,
 		_yielding_to.obj = null
 		_yielding_to.signal_name = ''
 
+	# TODO: from_obj never appears to be true anymore.  I never saw I print
+	# statement I put in the first part of this if.
 	if(from_obj):
 		# we must yield for a little longer after the signal is emitted so that
 		# the signal can propagate to other objects.  This was discovered trying
