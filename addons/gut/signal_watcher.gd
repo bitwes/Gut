@@ -95,7 +95,6 @@ func _on_watched_signal(arg1=ARG_NOT_SET, arg2=ARG_NOT_SET, arg3=ARG_NOT_SET, \
 	args.pop_back()
 
 	if(_watched_signals.has(object)):
-		_lgr.info(str('watched ', object, '::', signal_name))
 		_watched_signals[object][signal_name].append(args)
 	else:
 		_lgr.error(str("signal_watcher._on_watched_signal:  Got signal for unwatched object:  ", object, '::', signal_name))

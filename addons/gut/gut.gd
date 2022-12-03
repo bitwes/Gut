@@ -275,18 +275,6 @@ var _pause_before_teardown = false
 var _awaiter = _utils.Awaiter.new()
 var _new_summary = null
 
-# This is set to true when one of the various yield_ functions are called.  Gut
-# uses this to determine what kind of yield it has encountered.
-var _was_yield_method_called = false
-# used when yielding to gut instead of some other
-# signal.  Start with set_yield_time()
-var _yield_timer = Timer.new()
-var _yield_frames = 0
-var _yielding_to = {
-	obj = null,
-	signal_name = ''
-}
-
 
 # Used to cancel importing scripts if an error has occurred in the setup.  This
 # prevents tests from being run if they were exported and ensures that the
@@ -323,12 +311,6 @@ func _init():
 	_test_collector.set_logger(_lgr)
 
 
-func _physics_process(delta):
-	if(_yield_frames > 0):
-		_yield_frames -= 1
-
-		if(_yield_frames <= 0):
-			emit_signal('timeout')
 
 # ------------------------------------------------------------------------------
 # Initialize controls
@@ -345,9 +327,6 @@ func _ready():
 		_lgr.info(str('using [', OS.get_user_data_dir(), '] for temporary output.'))
 
 	add_child(_awaiter)
-	add_child(_yield_timer)
-	_yield_timer.set_one_shot(true)
-	_yield_timer.connect('timeout',Callable(self,'_yielding_callback'))
 
 	if(_select_script != null):
 		select_script(_select_script)
@@ -365,8 +344,6 @@ func _notification(what):
 
 		_test_script_objects = []
 
-		if(is_instance_valid(_yield_timer)):
-			_yield_timer.free()
 
 func _print_versions(send_all = true):
 	if(!_should_print_versions):
@@ -416,52 +393,6 @@ func _set_log_level(level):
 # Events
 #
 # ####################
-
-# ------------------------------------------------------------------------------
-# Timeout for the built in timer.  Emits the timeout signal.  Start timer
-# with set_yield_time().  This is also connected to signals in other objects
-# when set_yield_signal_or_time is called.  Since we can't know how many
-# parameters these other signals will have, this has 9 optional parameters that
-# are not used so that we don't generate errors.  9 was chosen because that is
-# also the limit for parameters supported by signal_watcher.gd.  If we need more
-# parameters then this and signal_watcher should be updated.  See signal_watcher
-# for more info on why 9 was chosen.
-# ------------------------------------------------------------------------------
-func _yielding_callback(from_obj=false,
-		__arg1=null, __arg2=null, __arg3=null,
-		__arg4=null, __arg5=null, __arg6=null,
-		__arg7=null, __arg8=null, __arg9=null):
-	_lgr.end_yield()
-	_yield_timer.stop()
-	if(_yielding_to.obj != null):
-		_yielding_to.obj.call_deferred(
-			"disconnect",
-			_yielding_to.signal_name,
-			_yielding_callback)
-		_yielding_to.obj = null
-		_yielding_to.signal_name = ''
-
-	# TODO: from_obj never appears to be true anymore.  I never saw I print
-	# statement I put in the first part of this if.
-	if(from_obj):
-		# we must yield for a little longer after the signal is emitted so that
-		# the signal can propagate to other objects.  This was discovered trying
-		# to assert that obj/signal_name was emitted.  Without this extra delay
-		# the yield returns and processing finishes before the rest of the
-		# objects can get the signal.  This works b/c the timer will timeout
-		# and come back into this method but from_obj will be false.
-		_yield_timer.set_wait_time(.05)
-		_yield_timer.start()
-	else:
-		emit_signal('timeout')
-
-# ------------------------------------------------------------------------------
-# completed signal for GDScriptFucntionState returned from a test script that
-# has yielded
-# ------------------------------------------------------------------------------
-func _on_test_script_yield_completed():
-	_waiting = false
-
 func end_teardown_pause():
 	_pause_before_teardown = false
 	_waiting = false
@@ -690,35 +621,6 @@ func _setup_script(test_script):
 
 
 # ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func _wait_for_done(result):
-	# callback method sets waiting to false.
-	result.connect(COMPLETED,Callable(self,'_on_test_script_yield_completed'))
-	if(!_was_yield_method_called):
-		_lgr.yield_msg('-- Yield detected, waiting --')
-
-	_was_yield_method_called = false
-	_waiting = true
-
-	var cycles_per_dot = 500
-	var cycles = 0
-	var dots = ''
-
-	while(_waiting):
-		await get_tree().idle_frame
-		cycles += 1
-
-		if(cycles >= cycles_per_dot):
-			cycles = 0
-			dots += '.'
-			if(dots.length() > 5):
-				dots = ''
-			_lgr.yield_text('waiting' + dots)
-
-	_lgr.end_yield()
-
-
-# ------------------------------------------------------------------------------
 # returns self so it can be integrated into the yield call.
 # ------------------------------------------------------------------------------
 func _wait_for_continue_button():
@@ -811,10 +713,6 @@ func _run_test(script_inst, test_name):
 		msg += "More info at https://github.com/godotengine/godot/issues/69411"
 		_lgr.error(msg)
 		test_summary.force_a_runtime_error_to_stop_things_from_progressing_see_error_above = 1
-		# print(_new_summary.log_summary_text(_lgr))
-		# set_yield_frames(4)
-		# await timeout
-		# test_summary = _new_summary.get_current_script().get_test_obj(test_name)
 
 	# if the test called pause_before_teardown then yield until
 	# the continue button is pressed.
@@ -1323,13 +1221,6 @@ func maximize():
 
 
 # ------------------------------------------------------------------------------
-# Pauses the test and waits for you to press a confirmation button.  Useful when
-# you want to watch a test play out onscreen or inspect results.
-# ------------------------------------------------------------------------------
-func end_yielded_test():
-	_lgr.deprecated('end_yielded_test is no longer necessary, you can remove_at it.')
-
-# ------------------------------------------------------------------------------
 # Clears the text of the text box.  This resets all counters.
 # ------------------------------------------------------------------------------
 func clear_text():
@@ -1387,15 +1278,14 @@ func pause_before_teardown():
 # ------------------------------------------------------------------------------
 func set_yield_time(time, text=''):
 	_awaiter.wait_for(time)
-	# _yield_timer.set_wait_time(time)
-	# _yield_timer.start()
+
 	var msg = '-- Awaiting (' + str(time) + 's)'
 	if(text == ''):
 		msg += ' --'
 	else:
 		msg +=  ':  ' + text + ' --'
 	_lgr.yield_msg(msg)
-	_was_yield_method_called = true
+
 	return _awaiter.timeout
 
 # ------------------------------------------------------------------------------
@@ -1407,6 +1297,7 @@ func set_yield_time(time, text=''):
 # ------------------------------------------------------------------------------
 func set_yield_frames(frames, text=''):
 	_awaiter.wait_frames(frames)
+
 	var msg = '-- Awaiting (' + str(frames) + ' frames)'
 	if(text == ''):
 		msg += ' --'
@@ -1414,8 +1305,6 @@ func set_yield_frames(frames, text=''):
 		msg +=  ':  ' + text + ' --'
 	_lgr.yield_msg(msg)
 
-	_was_yield_method_called = true
-	# _yield_frames = max(frames + 1, 1)
 	return _awaiter.timeout
 
 # ------------------------------------------------------------------------------
@@ -1424,13 +1313,6 @@ func set_yield_frames(frames, text=''):
 # ------------------------------------------------------------------------------
 func set_yield_signal_or_time(obj, signal_name, max_wait, text=''):
 	_awaiter.wait_for_signal(Signal(obj, signal_name), max_wait)
-	# obj.connect(signal_name,Callable(self,'_yielding_callback'),true)
-	# _yielding_to.obj = obj
-	# _yielding_to.signal_name = signal_name
-
-	# _yield_timer.set_wait_time(max_wait)
-	# _yield_timer.start()
-	_was_yield_method_called = true
 	_lgr.yield_msg(str('-- Awaiting signal "', signal_name, '" or for ', max_wait, ' second(s) -- ', text))
 	return _awaiter.timeout
 
