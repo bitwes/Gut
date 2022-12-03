@@ -19,7 +19,9 @@ class TimedSignaler:
 		_timer.one_shot = true
 
 	func _on_timer_timeout():
-		emit_signal('the_signal')
+		print(self, ':  emitting the_signal')
+		the_signal.emit()
+		# emit_signal('the_signal')
 
 	func emit_after(time):
 		_timer.set_wait_time(time)
@@ -29,6 +31,7 @@ class TimeSignalerParam:
 	extends TimedSignaler
 
 	func _on_timer_timeout():
+		print(self, ':  emitting the_signal')
 		emit_signal('the_signal', 1)
 
 class TimedSignalerMaxParams:
@@ -123,8 +126,7 @@ class TestYieldsInTests:
 		pass_test('should have seen a pause')
 		gut.p('yielding for 1 second')
 		gut.set_yield_time(10)
-		gut.set_yield_time(1)
-		await gut.timeout
+		await gut.set_yield_time(1)
 		gut.p('done yielding')
 
 	func test_will_wait_when_yielding():
@@ -195,6 +197,7 @@ class TestYieldFor:
 class TestYieldTo:
 	extends "res://addons/gut/test.gd"
 
+
 	var counter = null
 
 	func before_each():
@@ -226,11 +229,11 @@ class TestYieldTo:
 		await yield_to(signaler, 'the_signal', 2)
 		assert_gt(counter.time, 1.9)
 
-	# func test_yield_to__will_stop_timer_when_signal_emitted():
-	# 	var signaler = add_child_autoqfree(TimedSignaler.new())
-	# 	signaler.emit_after(.5)
-	# 	await yield_to(signaler, 'the_signal', 2)
-	# 	assert_false(gut._awaiter.is_paused())
+	func test_yield_to__will_stop_timer_when_signal_emitted():
+		var signaler = add_child_autoqfree(TimedSignaler.new())
+		signaler.emit_after(.5)
+		await yield_to(signaler, 'the_signal', 2)
+		assert_false(gut._awaiter.is_waiting())
 
 	func test_yield_to__watches_signals():
 		var signaler = add_child_autoqfree(TimedSignaler.new())
@@ -238,6 +241,7 @@ class TestYieldTo:
 		signaler.emit_after(.5)
 		await yield_to(signaler, 'the_signal', 5)
 		assert_signal_emitted(signaler, 'the_signal')
+		assert_between(counter.time, .48, .54)
 
 	func test_yield_to_works_on_signals_with_parameters():
 		var signaler = add_child_autoqfree(TimeSignalerParam.new())
@@ -276,9 +280,9 @@ class TestYieldFrames:
 		await gut.set_yield_frames(10)
 		pass_test('we got here')
 
-	func test_yield_frames_waits_x_frames():
-		await yield_frames(5)
-		assert_eq(_frame_count, 5)
+	func test_yield_frames_waits_x_frames(p=use_parameters([5, 10, 15, 20])):
+		await yield_frames(p)
+		assert_between(_frame_count, p - 1, p + 1)
 
 	func test_renders_message():
 		await yield_frames(120, 'this is the output.')

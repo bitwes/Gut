@@ -75,6 +75,7 @@ var json = JSON.new()
 var _test_mode = false
 
 var AutoFree = load('res://addons/gut/autofree.gd')
+var Awaiter = load('res://addons/gut/awaiter.gd')
 var Comparator = load('res://addons/gut/comparator.gd')
 var CompareResult = load('res://addons/gut/compare_result.gd')
 var DiffTool = load('res://addons/gut/diff_tool.gd')

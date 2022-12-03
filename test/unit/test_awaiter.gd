@@ -14,6 +14,7 @@ class Counter:
 
 class Signaler:
 	signal the_signal
+	signal with_parameters(foo, bar)
 
 func test_is_not_paused_by_default():
 	var a = add_child_autofree(Awaiter.new())
@@ -82,7 +83,21 @@ func test_can_wait_for_signal():
 	a.wait_for_signal(s.the_signal, 10)
 	await get_tree().create_timer(.5).timeout
 	s.the_signal.emit()
+	# gotta wait for the 2 additional frames
+	await get_tree().create_timer(.05).timeout
 	assert_signal_emitted(a, 'timeout')
+
+func test_can_wait_for_signal_with_parameters():
+	var s = Signaler.new()
+	var a = add_child_autoqfree(Awaiter.new())
+	watch_signals(a)
+	a.wait_for_signal(s.with_parameters, 10)
+	await get_tree().create_timer(.5).timeout
+	s.with_parameters.emit(1, 2)
+	# gotta wait for the 2 additional frames
+	await get_tree().create_timer(.05).timeout
+	assert_signal_emitted(a, 'timeout')
+
 
 func test_after_wait_for_signal_signal_is_disconnected():
 	var s = Signaler.new()
@@ -117,4 +132,6 @@ func test_is_not_paused_when_signal_emitted_before_max_time():
 	a.wait_for_signal(s.the_signal, 10)
 	await get_tree().create_timer(.5).timeout
 	s.the_signal.emit()
+	# gotta wait for the 2 additional frames
+	await get_tree().create_timer(.05).timeout
 	assert_false(a.is_waiting())

@@ -272,7 +272,7 @@ var _current_test = null
 var _pause_before_teardown = false
 
 
-
+var _awaiter = _utils.Awaiter.new()
 var _new_summary = null
 
 # This is set to true when one of the various yield_ functions are called.  Gut
@@ -344,6 +344,7 @@ func _ready():
 	if(_should_print_versions):
 		_lgr.info(str('using [', OS.get_user_data_dir(), '] for temporary output.'))
 
+	add_child(_awaiter)
 	add_child(_yield_timer)
 	_yield_timer.set_one_shot(true)
 	_yield_timer.connect('timeout',Callable(self,'_yielding_callback'))
@@ -1385,8 +1386,9 @@ func pause_before_teardown():
 #  await gut.set_yield_time(10)
 # ------------------------------------------------------------------------------
 func set_yield_time(time, text=''):
-	_yield_timer.set_wait_time(time)
-	_yield_timer.start()
+	_awaiter.wait_for(time)
+	# _yield_timer.set_wait_time(time)
+	# _yield_timer.start()
 	var msg = '-- Awaiting (' + str(time) + 's)'
 	if(text == ''):
 		msg += ' --'
@@ -1394,7 +1396,7 @@ func set_yield_time(time, text=''):
 		msg +=  ':  ' + text + ' --'
 	_lgr.yield_msg(msg)
 	_was_yield_method_called = true
-	return self
+	return _awaiter.timeout
 
 # ------------------------------------------------------------------------------
 # Sets a counter that is decremented each time _process is called.  When the
@@ -1404,6 +1406,7 @@ func set_yield_time(time, text=''):
 # required for _process in test.gd scripts to count N frames.
 # ------------------------------------------------------------------------------
 func set_yield_frames(frames, text=''):
+	_awaiter.wait_frames(frames)
 	var msg = '-- Awaiting (' + str(frames) + ' frames)'
 	if(text == ''):
 		msg += ' --'
@@ -1412,23 +1415,24 @@ func set_yield_frames(frames, text=''):
 	_lgr.yield_msg(msg)
 
 	_was_yield_method_called = true
-	_yield_frames = max(frames + 1, 1)
-	return self
+	# _yield_frames = max(frames + 1, 1)
+	return _awaiter.timeout
 
 # ------------------------------------------------------------------------------
 # This method handles yielding to a signal from an object or a maximum
 # number of seconds, whichever comes first.
 # ------------------------------------------------------------------------------
 func set_yield_signal_or_time(obj, signal_name, max_wait, text=''):
-	obj.connect(signal_name,Callable(self,'_yielding_callback'),true)
-	_yielding_to.obj = obj
-	_yielding_to.signal_name = signal_name
+	_awaiter.wait_for_signal(Signal(obj, signal_name), max_wait)
+	# obj.connect(signal_name,Callable(self,'_yielding_callback'),true)
+	# _yielding_to.obj = obj
+	# _yielding_to.signal_name = signal_name
 
-	_yield_timer.set_wait_time(max_wait)
-	_yield_timer.start()
+	# _yield_timer.set_wait_time(max_wait)
+	# _yield_timer.start()
 	_was_yield_method_called = true
-	_lgr.yield_msg(str('-- Awaiting signal "', signal_name, '" or for ', max_wait, ' seconds -- ', text))
-	return self
+	_lgr.yield_msg(str('-- Awaiting signal "', signal_name, '" or for ', max_wait, ' second(s) -- ', text))
+	return _awaiter.timeout
 
 
 
