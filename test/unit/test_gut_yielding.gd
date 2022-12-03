@@ -181,7 +181,7 @@ class TestYieldFor:
 
 	func test_failing_assert_ends_yield():
 		await yield_for(0.5)
-		assert_gt(counter.time, 999.0, 'Ignore failing unless value not ~.5.  Testing Gut continues after failing assert.')
+		assert_gt(counter.time, 999.0, 'Testing that GUT continues after failing assert; ignore failing unless value not ~.5.')
 
 	func test_pending_ends_yield():
 		await yield_for(0.5)
@@ -241,6 +241,8 @@ class TestYieldTo:
 		signaler.emit_after(.5)
 		await yield_to(signaler, 'the_signal', 5)
 		assert_signal_emitted(signaler, 'the_signal')
+		# Note, Gut waits another 4 frames for the signal to propigate to other
+		# objects so we check agains.58
 		assert_between(counter.time, .48, .54)
 
 	func test_yield_to_works_on_signals_with_parameters():
@@ -249,9 +251,9 @@ class TestYieldTo:
 		signaler.emit_after(.5)
 		await yield_to(signaler, 'the_signal', 5)
 		assert_signal_emitted(signaler, 'the_signal')
-		# Note, Gut waits another .05 for the signal to propigate to other
+		# Note, Gut waits another 4 frames for the signal to propigate to other
 		# objects so we check agains.58
-		assert_lt(counter.time, .58)
+		assert_lt(counter.time, .54)
 
 	func test_yield_to_works_on_signals_with_max_parameters():
 		var signaler = add_child_autoqfree(TimedSignalerMaxParams.new())
