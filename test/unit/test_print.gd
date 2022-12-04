@@ -61,10 +61,10 @@ func test_show_info():
 	_lgr.info('Something happened')
 	assert_true(true)
 
-func test_yield():
-	gut.p('starting yield')
-	await yield_for(2)
-	gut.p('end yield')
+func test_await():
+	gut.p('starting awaiting')
+	await wait_seconds(2)
+	gut.p('end await')
 
 
 class TestGuiOutput:

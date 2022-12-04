@@ -375,7 +375,7 @@ func test_illustrate_yield_to_with_less_time():
 	var t = TimedSignaler.new(5)
 	add_child_autofree(t)
 	t.start()
-	await yield_to(t, 'the_signal', 1)
+	await wait_for_signal(t.the_signal, 1)
 	# since we setup t to emit after 5 seconds, this will fail because we
 	# only yielded for 1 second vail yield_to
 	assert_signal_emitted(t, 'the_signal', 'This will fail')
@@ -384,7 +384,7 @@ func test_illustrate_yield_to_with_more_time():
 	var t = TimedSignaler.new(1)
 	add_child_autofree(t)
 	t.start()
-	await yield_to(t, 'the_signal', 5)
+	await wait_for_signal(t.the_signal, 5)
 	# since we wait longer than it will take to emit the signal, this assert
 	# will pass
 	assert_signal_emitted(t, 'the_signal', 'This will pass')

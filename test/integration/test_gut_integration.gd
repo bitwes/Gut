@@ -52,23 +52,23 @@ class TestYieldInBeforeAfterMethods:
 
 	func test_gut_waits_for_yield_in_before_all():
 		_run_tests(SCRIPT_PATH, 'TestYieldInBeforeAll', null)
-		await yield_to(_gut, 'end_run', 10)
+		await wait_for_signal(_gut.end_run, 10)
 		_assert_pass_fail_count(1, 0)
 
 	func test_gut_waits_for_yield_in_after_all():
 		_run_tests(SCRIPT_PATH, 'TestYieldInAfterAll', null)
-		await yield_to(_gut, 'end_run', 10)
+		await wait_for_signal(_gut.end_run, 10)
 		var test_script = _get_inner_class_script_instance('TestYieldInAfterAll')
 		assert_eq(test_script.after_all_value, 'set')
 
 	func test_gut_waits_for_yield_in_after_each():
 		_run_tests(SCRIPT_PATH, 'TestYieldInAfterEach', null)
-		await yield_to(_gut, 'end_run', 10)
+		await wait_for_signal(_gut.end_run, 10)
 		_assert_pass_fail_count(1, 1)
 
 	func test_gut_waits_for_yield_in_before_each():
 		_run_tests(SCRIPT_PATH, 'TestYieldInBeforeEach', null)
-		await yield_to(_gut, 'end_run', 10)
+		await wait_for_signal(_gut.end_run, 10)
 		_assert_pass_fail_count(1, 0)
 
 	# func test_all_with_non_gut_yield_methods():

@@ -56,7 +56,7 @@ class TestOldYieldMethods:
 		assert_between(counter.time, .9, 1.1)
 
 	func test_wait_for_waits_for_x_seconds():
-		await yield_for(.5)
+		await wait_seconds(.5)
 		assert_between(counter.time, .49, .52)
 
 

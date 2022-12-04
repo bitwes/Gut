@@ -154,16 +154,16 @@ class TestYieldsInTests:
 		var signaler = add_child_autoqfree(TimedSignaler.new())
 		watch_signals(signaler)
 		signaler.emit_after(0.5)
-		await yield_for(1)
+		await wait_seconds(1)
 		assert_signal_emitted(signaler, 'the_signal')
 
 	func test_with_parameters(p=use_parameters([['a', 'a'], ['b', 'b'], ['c', 'c']])):
-		await yield_for(1)
+		await wait_seconds(1)
 		assert_eq(p[0], p[1])
 
 
 
-class TestYieldFor:
+class TestWaitSeconds:
 	extends "res://addons/gut/test.gd"
 	var counter = null
 
@@ -171,25 +171,25 @@ class TestYieldFor:
 		counter = add_child_autoqfree(Counter.new())
 
 	func test_new_yield():
-		await yield_for(1, 'first yield')
-		await yield_for(1, 'waiting around for stuff')
+		await wait_seconds(1, 'first yield')
+		await wait_seconds(1, 'waiting around for stuff')
 		assert_gt(counter.time, 1.9, 'should  see two 1 second pauses')
 
 	func test_passing_assert_ends_yield():
-		await yield_for(0.5)
+		await wait_seconds(0.5)
 		assert_gt(counter.time, .49, 'yield should stop')
 
 	func test_failing_assert_ends_yield():
-		await yield_for(0.5)
+		await wait_seconds(0.5)
 		assert_gt(counter.time, 999.0, 'Testing that GUT continues after failing assert; ignore failing unless value not ~.5.')
 
 	func test_pending_ends_yield():
-		await yield_for(0.5)
+		await wait_seconds(0.5)
 		pending(str('Testing Gut continues after yield.  ', counter.time, ' should be ~.5.'))
 
 	func test_output_for_long_yields():
 		gut.p('Visually check this')
-		await yield_for(2)
+		await wait_seconds(2)
 		assert_gt(counter.time, 1.9, 'Visually check this')
 
 
@@ -206,40 +206,40 @@ class TestYieldTo:
 	func test_can_yield_to_signal():
 		var signaler = add_child_autoqfree(TimedSignaler.new())
 		signaler.emit_after(.5)
-		await yield_to(signaler, 'the_signal', 10)
+		await wait_for_signal(signaler.the_signal, 10)
 		assert_gt(counter.time, .49)
 
 	func test_after_yield_to_gut_disconnects_from_signal():
 		var signaler = add_child_autoqfree(TimedSignaler.new())
 		signaler.emit_after(.5)
-		await yield_to(signaler, 'the_signal', 1)
-		await yield_for(.1)
+		await wait_for_signal(signaler.the_signal, 1)
+		await wait_seconds(.1)
 		assert_false(signaler.is_connected('the_signal',Callable(gut,'_yielding_callback')))
 
 	func test_yield_to__will_disconnect_after_yield_finishes_and_signal_wasnt_emitted():
 		var signaler = add_child_autoqfree(TimedSignaler.new())
-		await yield_to(signaler, 'the_signal', 1)
+		await wait_for_signal(signaler.the_signal, 1)
 		# Changing the yield to be deferred means that we have to wait again for
 		# the deferred to kick in before checking this.
-		await yield_for(.1)
+		await wait_seconds(.1)
 		assert_false(signaler.is_connected('the_signal',Callable(gut,'_yielding_callback')))
 
 	func test_yield_to__will_wait_max_time():
 		var signaler = add_child_autoqfree(TimedSignaler.new())
-		await yield_to(signaler, 'the_signal', 2)
+		await wait_for_signal(signaler.the_signal, 2)
 		assert_gt(counter.time, 1.9)
 
 	func test_yield_to__will_stop_timer_when_signal_emitted():
 		var signaler = add_child_autoqfree(TimedSignaler.new())
 		signaler.emit_after(.5)
-		await yield_to(signaler, 'the_signal', 2)
+		await wait_for_signal(signaler.the_signal, 2)
 		assert_false(gut._awaiter.is_waiting())
 
 	func test_yield_to__watches_signals():
 		var signaler = add_child_autoqfree(TimedSignaler.new())
 		watch_signals(signaler)
 		signaler.emit_after(.5)
-		await yield_to(signaler, 'the_signal', 5)
+		await wait_for_signal(signaler.the_signal, 5)
 		assert_signal_emitted(signaler, 'the_signal')
 		# Note, Gut waits another 4 frames for the signal to propigate to other
 		# objects so we check agains.58
@@ -249,7 +249,7 @@ class TestYieldTo:
 		var signaler = add_child_autoqfree(TimeSignalerParam.new())
 		watch_signals(signaler)
 		signaler.emit_after(.5)
-		await yield_to(signaler, 'the_signal', 5)
+		await wait_for_signal(signaler.the_signal, 5)
 		assert_signal_emitted(signaler, 'the_signal')
 		# Note, Gut waits another 4 frames for the signal to propigate to other
 		# objects so we check agains.58
@@ -259,7 +259,7 @@ class TestYieldTo:
 		var signaler = add_child_autoqfree(TimedSignalerMaxParams.new())
 		watch_signals(signaler)
 		signaler.emit_after(.5)
-		await yield_to(signaler, 'the_signal', 5)
+		await wait_for_signal(signaler.the_signal, 5)
 		assert_signal_emitted(signaler, 'the_signal')
 		# Note, Gut waits another .05 for the signal to propigate to other
 		# objects so we check agains.58

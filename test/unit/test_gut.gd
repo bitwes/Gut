@@ -509,7 +509,7 @@ class TestEverythingElse:
 		gr.test_gut.post_run_script = 'res://test/resources/post_run_script.gd'
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		gr.test_gut.test_scripts()
-		await yield_for(1)
+		await wait_seconds(1)
 		assert_is(gr.test_gut._post_run_script_instance, PostRunScript, 'Instance is set')
 		assert_true(gr.test_gut._post_run_script_instance.run_called, 'run was called')
 
@@ -567,7 +567,7 @@ class TestEverythingElse:
 		gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 		gr.test_gut.unit_test_name = 'test_three_values_and_a_yield'
 		gr.test_gut.test_scripts()
-		await yield_to(gr.test_gut, 'end_run', 10)
+		await wait_for_signal(gr.test_gut.end_run, 10)
 		assert_eq(gr.test_gut.get_pass_count(), 3)
 
 	func test_parameterized_test_calls_before_each_before_each_test():

@@ -713,7 +713,7 @@ func _run_test(script_inst, test_name):
 		_lgr.error(msg)
 		test_summary.force_a_runtime_error_to_stop_things_from_progressing_see_error_above = 1
 
-	# if the test called pause_before_teardown then yield until
+	# if the test called pause_before_teardown then await until
 	# the continue button is pressed.
 	if(_pause_before_teardown and !_ignore_pause_before_teardown):
 		start_pause_before_teardown.emit()

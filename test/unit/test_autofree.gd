@@ -58,7 +58,7 @@ func test_calling_free_all_queues_free():
 	assert_not_freed(to_free1, 'free1')
 	assert_not_freed(to_free2, 'free2')
 	assert_eq(af.get_queue_free_count(), 0)
-	await yield_for(1)
+	await wait_seconds(1)
 	assert_freed(to_free1, 'free1')
 	assert_freed(to_free2, 'free2')
 
