@@ -44,7 +44,6 @@ const COMPLETED = 'completed'
 # ###########################
 # Signals
 # ###########################
-signal timeout
 signal start_pause_before_teardown
 signal end_pause_before_teardown
 
