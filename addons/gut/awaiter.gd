@@ -10,6 +10,7 @@ var _signal_to_wait_on = null
 var _elapsed_time = 0.0
 var _elapsed_frames = 0
 
+
 func _physics_process(delta):
 	if(_wait_time != 0.0):
 		_elapsed_time += delta
@@ -21,6 +22,7 @@ func _physics_process(delta):
 		if(_elapsed_frames >= _wait_frames):
 			_end_wait()
 
+
 func _end_wait():
 	_wait_time = 0.0
 	_wait_frames = 0
@@ -28,6 +30,7 @@ func _end_wait():
 	_elapsed_time = 0.0
 	_elapsed_frames = 0
 	timeout.emit()
+
 
 const ARG_NOT_SET = '_*_argument_*_is_*_not_set_*_'
 func _signal_callback(
@@ -46,15 +49,18 @@ func wait_for(x):
 	_wait_time = x
 	wait_started.emit()
 
+
 func wait_frames(x):
 	_wait_frames = x
 	wait_started.emit()
+
 
 func wait_for_signal(the_signal, x):
 	the_signal.connect(_signal_callback)
 	_signal_to_wait_on = the_signal
 	_wait_time = x
 	wait_started.emit()
+
 
 func is_waiting():
 	return _wait_time != 0.0 || _wait_frames != 0

@@ -42,9 +42,6 @@ extends Node
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _compare = _utils.Comparator.new()
 
-# constant for signal when calling yield_for
-const YIELD = 'timeout'
-signal timeout
 
 # Need a reference to the instance that is running the tests.  This
 # is set by the gut class when it runs the tests.  This gets you
@@ -1118,8 +1115,7 @@ func pending(text=""):
 
 # ------------------------------------------------------------------------------
 # Yield for the time sent in.  The optional message will be printed when
-# Gut detects the yield.  When the time expires the YIELD signal will be
-# emitted.
+# Gut detects the yield.
 # ------------------------------------------------------------------------------
 func wait_seconds(time, msg=''):
 	var to_return = gut.set_yield_time(time, msg)
@@ -1132,8 +1128,7 @@ func yield_for(time, msg=''):
 
 
 # ------------------------------------------------------------------------------
-# Yield to a signal or a maximum amount of time, whichever comes first.  When
-# the conditions are met the YIELD signal will be emitted.
+# Yield to a signal or a maximum amount of time, whichever comes first.
 # ------------------------------------------------------------------------------
 func wait_for_signal(sig, max_wait, msg=''):
 	watch_signals(sig.get_object())
@@ -1149,8 +1144,7 @@ func yield_to(obj, signal_name, max_wait, msg=''):
 
 # ------------------------------------------------------------------------------
 # Yield for a number of frames.  The optional message will be printed. when
-# Gut detects a yield.  When the number of frames have elapsed (counted in gut's
-# _process function) the YIELD signal will be emitted.
+# Gut detects a yield.
 # ------------------------------------------------------------------------------
 func wait_frames(frames, msg=''):
 	if(frames <= 0):

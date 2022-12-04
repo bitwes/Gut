@@ -340,12 +340,12 @@ func test_illustrate_yield():
 	moving_node.set_position(Vector2(0, 0))
 
 	# While the yield happens, the node should move
-	await yield_for(2).YIELD
+	await yield_for(2)
 	assert_gt(moving_node.get_position().x, 0)
 	assert_between(moving_node.get_position().x, 3.9, 4, 'it should move almost 4 whatevers at speed 2')
 
 func test_illustrate_end_test():
-	await yield_for(1).YIELD
+	await yield_for(1)
 	# we don't have anything to test yet, or at all.  So we
 	# call end_test so that Gut knows all the yielding has
 	# finished.
@@ -375,7 +375,7 @@ func test_illustrate_yield_to_with_less_time():
 	var t = TimedSignaler.new(5)
 	add_child_autofree(t)
 	t.start()
-	await yield_to(t, 'the_signal', 1).YIELD
+	await yield_to(t, 'the_signal', 1)
 	# since we setup t to emit after 5 seconds, this will fail because we
 	# only yielded for 1 second vail yield_to
 	assert_signal_emitted(t, 'the_signal', 'This will fail')
@@ -384,7 +384,7 @@ func test_illustrate_yield_to_with_more_time():
 	var t = TimedSignaler.new(1)
 	add_child_autofree(t)
 	t.start()
-	await yield_to(t, 'the_signal', 5).YIELD
+	await yield_to(t, 'the_signal', 5)
 	# since we wait longer than it will take to emit the signal, this assert
 	# will pass
 	assert_signal_emitted(t, 'the_signal', 'This will pass')
