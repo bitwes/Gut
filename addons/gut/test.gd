@@ -678,6 +678,7 @@ func assert_has_signal(object, signal_name, text=""):
 	else:
 		_fail(disp)
 
+
 # ------------------------------------------------------------------------------
 # Returns the number of times a signal was emitted.  -1 returned if the object
 # is not being watched.
@@ -1106,11 +1107,6 @@ func pending(text=""):
 	if(gut):
 		_lgr.pending(text)
 		gut._pending(text)
-
-# ------------------------------------------------------------------------------
-# Returns the number of times a signal was emitted.  -1 returned if the object
-# is not being watched.
-# ------------------------------------------------------------------------------
 
 
 # ------------------------------------------------------------------------------

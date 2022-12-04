@@ -1266,14 +1266,9 @@ func pause_before_teardown():
 	_pause_before_teardown = true;
 
 
-
 # ------------------------------------------------------------------------------
-# Starts an internal timer with a timeout of the passed in time.  A 'timeout'
-# signal will be sent when the timer ends.  Returns itself so that it can be
-# used in a call to yield...cutting down on lines of code.
-#
-# Example, yield to the Gut object for 10 seconds:
-#  await gut.set_yield_time(10)
+# Uses the awaiter to wait for x amount of time.  The signal emitted when the
+# time has expired is returned (_awaiter.timeout).
 # ------------------------------------------------------------------------------
 func set_yield_time(time, text=''):
 	_awaiter.wait_for(time)
@@ -1287,12 +1282,9 @@ func set_yield_time(time, text=''):
 
 	return _awaiter.timeout
 
+
 # ------------------------------------------------------------------------------
-# Sets a counter that is decremented each time _process is called.  When the
-# counter reaches 0 the 'timeout' signal is emitted.
-#
-# This actually results in waiting N+1 frames since that appears to be what is
-# required for _process in test.gd scripts to count N frames.
+# Uses the awaiter to wait for x frammes.  The signal emitted is returned.
 # ------------------------------------------------------------------------------
 func set_yield_frames(frames, text=''):
 	_awaiter.wait_frames(frames)
@@ -1306,15 +1298,14 @@ func set_yield_frames(frames, text=''):
 
 	return _awaiter.timeout
 
+
 # ------------------------------------------------------------------------------
-# This method handles yielding to a signal from an object or a maximum
-# number of seconds, whichever comes first.
+# Wait for a signal or a maximum amount of time.  The signal emitted is returned.
 # ------------------------------------------------------------------------------
 func set_yield_signal_or_time(obj, signal_name, max_wait, text=''):
 	_awaiter.wait_for_signal(Signal(obj, signal_name), max_wait)
 	_lgr.yield_msg(str('-- Awaiting signal "', signal_name, '" or for ', max_wait, ' second(s) -- ', text))
 	return _awaiter.timeout
-
 
 
 # ------------------------------------------------------------------------------
@@ -1325,6 +1316,7 @@ func get_current_script_object():
 	if(_test_script_objects.size() > 0):
 		to_return = _test_script_objects[-1]
 	return to_return
+
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
