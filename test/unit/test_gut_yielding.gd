@@ -267,7 +267,7 @@ class TestYieldTo:
 
 
 
-class TestYieldFrames:
+class TestWaitFrames:
 	extends "res://test/gut_test.gd"
 
 	var _frame_count = 0
@@ -278,27 +278,27 @@ class TestYieldFrames:
 	func before_each():
 		_frame_count = 0
 
-	func test_can_yield_using_set_yield_frames():
+	func test_can_await_using_wait_frames():
 		await gut.set_yield_frames(10)
 		pass_test('we got here')
 
-	func test_yield_frames_waits_x_frames(p=use_parameters([5, 10, 15, 20])):
-		await yield_frames(p)
+	func test_waits_x_frames(p=use_parameters([5, 10, 15, 20])):
+		await wait_frames(p)
 		assert_between(_frame_count, p - 1, p + 1)
 
 	func test_renders_message():
-		await yield_frames(120, 'this is the output.')
+		await wait_frames(120, 'this is the output.')
 		assert_between(_frame_count, 118, 122)
 		pass_test("did you look at the output?")
 
-	func test_yield_frames_zero_generates_error():
+	func test_zero_generates_error():
 		var err_count = get_error_count(gut)
-		await yield_frames(0, 'whaterver')
+		await wait_frames(0, 'whaterver')
 		assert_eq(get_error_count(gut), err_count + 1)
 
-	func test_yield_frames_neg_number_generates_error():
+	func test_neg_number_generates_error():
 		var err_count = get_error_count(gut)
-		await yield_frames(-1, 'whatever')
+		await wait_frames(-1, 'whatever')
 		assert_eq(get_error_count(gut), err_count + 1)
 
 
