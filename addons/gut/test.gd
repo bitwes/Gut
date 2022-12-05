@@ -1114,12 +1114,12 @@ func pending(text=""):
 # Gut detects the yield.
 # ------------------------------------------------------------------------------
 func wait_seconds(time, msg=''):
-	var to_return = gut.set_yield_time(time, msg)
+	var to_return = gut.set_wait_time(time, msg)
 	return to_return
 
 func yield_for(time, msg=''):
 	_lgr.deprecated('yield_for', 'wait_seconds')
-	var to_return = gut.set_yield_time(time, msg)
+	var to_return = gut.set_wait_time(time, msg)
 	return to_return
 
 
@@ -1128,14 +1128,14 @@ func yield_for(time, msg=''):
 # ------------------------------------------------------------------------------
 func wait_for_signal(sig, max_wait, msg=''):
 	watch_signals(sig.get_object())
-	var to_return = gut.set_yield_signal_or_time(sig.get_object(), sig.get_name(), max_wait, msg)
+	var to_return = gut.set_wait_for_signal_or_time(sig.get_object(), sig.get_name(), max_wait, msg)
 	return to_return
 
 
 func yield_to(obj, signal_name, max_wait, msg=''):
 	_lgr.deprecated('yield_to', 'wait_for_signal')
 	watch_signals(obj)
-	var to_return = gut.set_yield_signal_or_time(obj, signal_name, max_wait, msg)
+	var to_return = gut.set_wait_for_signal_or_time(obj, signal_name, max_wait, msg)
 	return to_return
 
 # ------------------------------------------------------------------------------
@@ -1148,7 +1148,7 @@ func wait_frames(frames, msg=''):
 		_lgr.error(text)
 		frames = 1
 
-	var to_return = gut.set_yield_frames(frames, msg)
+	var to_return = gut.set_wait_frames(frames, msg)
 	return to_return
 
 

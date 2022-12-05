@@ -1270,39 +1270,25 @@ func pause_before_teardown():
 # Uses the awaiter to wait for x amount of time.  The signal emitted when the
 # time has expired is returned (_awaiter.timeout).
 # ------------------------------------------------------------------------------
-func set_yield_time(time, text=''):
+func set_wait_time(time, text=''):
 	_awaiter.wait_for(time)
-
-	var msg = '-- Awaiting (' + str(time) + 's)'
-	if(text == ''):
-		msg += ' --'
-	else:
-		msg +=  ':  ' + text + ' --'
-	_lgr.yield_msg(msg)
-
+	_lgr.yield_msg(str('-- Awaiting ', time, ' second(s) -- ', text))
 	return _awaiter.timeout
 
 
 # ------------------------------------------------------------------------------
-# Uses the awaiter to wait for x frammes.  The signal emitted is returned.
+# Uses the awaiter to wait for x frames.  The signal emitted is returned.
 # ------------------------------------------------------------------------------
-func set_yield_frames(frames, text=''):
+func set_wait_frames(frames, text=''):
 	_awaiter.wait_frames(frames)
-
-	var msg = '-- Awaiting (' + str(frames) + ' frames)'
-	if(text == ''):
-		msg += ' --'
-	else:
-		msg +=  ':  ' + text + ' --'
-	_lgr.yield_msg(msg)
-
+	_lgr.yield_msg(str('-- Awaiting ', frames, ' frame(s) -- ', text))
 	return _awaiter.timeout
 
 
 # ------------------------------------------------------------------------------
 # Wait for a signal or a maximum amount of time.  The signal emitted is returned.
 # ------------------------------------------------------------------------------
-func set_yield_signal_or_time(obj, signal_name, max_wait, text=''):
+func set_wait_for_signal_or_time(obj, signal_name, max_wait, text=''):
 	_awaiter.wait_for_signal(Signal(obj, signal_name), max_wait)
 	_lgr.yield_msg(str('-- Awaiting signal "', signal_name, '" or for ', max_wait, ' second(s) -- ', text))
 	return _awaiter.timeout

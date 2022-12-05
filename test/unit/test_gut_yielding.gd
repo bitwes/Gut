@@ -21,7 +21,6 @@ class TimedSignaler:
 	func _on_timer_timeout():
 		print(self, ':  emitting the_signal')
 		the_signal.emit()
-		# emit_signal('the_signal')
 
 	func emit_after(time):
 		_timer.set_wait_time(time)
@@ -119,14 +118,14 @@ class TestYieldsInTests:
 	func test_can_yield_using_built_in_timer():
 		pass_test('should have seen a pause')
 		gut.p('yielding for 1 second')
-		await gut.set_yield_time(1)
+		await gut.set_wait_time(1)
 		gut.p('done yielding')
 
 	func test_setting_yield_time_twice_resets_time():
 		pass_test('should have seen a pause')
 		gut.p('yielding for 1 second')
-		gut.set_yield_time(10)
-		await gut.set_yield_time(1)
+		gut.set_wait_time(10)
+		await gut.set_wait_time(1)
 		gut.p('done yielding')
 
 	func test_will_wait_when_yielding():
@@ -279,7 +278,7 @@ class TestWaitFrames:
 		_frame_count = 0
 
 	func test_can_await_using_wait_frames():
-		await gut.set_yield_frames(10)
+		await gut.set_wait_frames(10)
 		pass_test('we got here')
 
 	func test_waits_x_frames(p=use_parameters([5, 10, 15, 20])):
