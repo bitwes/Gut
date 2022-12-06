@@ -567,7 +567,7 @@ class TestEverythingElse:
 		gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 		gr.test_gut.unit_test_name = 'test_three_values_and_a_yield'
 		gr.test_gut.test_scripts()
-		await yield_to(gr.test_gut, 'test_finished', 10)
+		await yield_to(gr.test_gut, 'end_run', 10)
 		assert_eq(gr.test_gut.get_pass_count(), 3)
 
 	func test_parameterized_test_calls_before_each_before_each_test():

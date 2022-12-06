@@ -25,11 +25,11 @@ func test_stubber_cleared_between_tests():
 # ---------------------------------
 
 func test_can_get_doubler():
-	var g = Gut.new()
+	var g = autofree(Gut.new())
 	assert_ne(g.get_doubler(), null)
 
 func test_doublers_stubber_is_guts_stubber():
-	var g = Gut.new()
+	var g = autofree(Gut.new())
 	assert_eq(g.get_doubler().get_stubber(), g.get_stubber())
 
 # Since the stubber and doubler are "global" to gut, this is the best place

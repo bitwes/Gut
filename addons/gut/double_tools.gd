@@ -25,7 +25,6 @@ func spy_on(method_name, called_with):
 		spy.add_call(double, method_name, called_with)
 
 func get_stubbed_return(method_name, called_with):
-	print("double = ", double)
 	if(stubber != null):
 		return stubber.get_return(double, method_name, called_with)
 	else:

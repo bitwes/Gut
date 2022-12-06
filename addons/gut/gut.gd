@@ -417,18 +417,21 @@ func _set_log_level(level):
 # ####################
 
 # ------------------------------------------------------------------------------
-# Timeout for the built in timer.  emits the timeout signal.  Start timer
-# with set_yield_time()
-#
-# signal_watcher._on_watched_signal supports up to 9 additional arguments.
-# This is the most number of parameters GUT supports on signals.  The comment
-# on _on_watched_signal explains reasoning.
+# Timeout for the built in timer.  Emits the timeout signal.  Start timer
+# with set_yield_time().  This is also connected to signals in other objects
+# when set_yield_signal_or_time is called.  Since we can't know how many
+# parameters these other signals will have, this has 9 optional parameters that
+# are not used so that we don't generate errors.  9 was chosen because that is
+# also the limit for parameters supported by signal_watcher.gd.  If we need more
+# parameters then this and signal_watcher should be updated.  See signal_watcher
+# for more info on why 9 was chosen.
 # ------------------------------------------------------------------------------
 func _yielding_callback(from_obj=false,
 		__arg1=null, __arg2=null, __arg3=null,
 		__arg4=null, __arg5=null, __arg6=null,
 		__arg7=null, __arg8=null, __arg9=null):
 	_lgr.end_yield()
+	_yield_timer.stop()
 	if(_yielding_to.obj != null):
 		_yielding_to.obj.call_deferred(
 			"disconnect",
@@ -437,6 +440,8 @@ func _yielding_callback(from_obj=false,
 		_yielding_to.obj = null
 		_yielding_to.signal_name = ''
 
+	# TODO: from_obj never appears to be true anymore.  I never saw I print
+	# statement I put in the first part of this if.
 	if(from_obj):
 		# we must yield for a little longer after the signal is emitted so that
 		# the signal can propagate to other objects.  This was discovered trying
@@ -790,7 +795,6 @@ func _run_test(script_inst, test_name):
 	# ----
 
 	start_test.emit(test_name)
-	# When the script yields it will return a GDScriptFunctionState object
 
 	await script_inst.call(test_name)
 	# TODO 4.0 GDScriptFunctionState? ----
@@ -799,6 +803,17 @@ func _run_test(script_inst, test_name):
 	# 	await _wait_for_done(script_result)
 	# ----
 	var test_summary = _new_summary.add_test(test_name)
+	if(test_summary == null):
+		var msg = "Summary was null.  This has been seen to happen when a test \n"
+		msg += "calls unreference.  Adding 'await get_tree().process_frame' somewhere between\n"
+		msg += "instantiation and calling unreference, in your test, may fix this issue.\n"
+		msg += "More info at https://github.com/godotengine/godot/issues/69411"
+		_lgr.error(msg)
+		test_summary.force_a_runtime_error_to_stop_things_from_progressing_see_error_above = 1
+		# print(_new_summary.log_summary_text(_lgr))
+		# set_yield_frames(4)
+		# await timeout
+		# test_summary = _new_summary.get_current_script().get_test_obj(test_name)
 
 	# if the test called pause_before_teardown then yield until
 	# the continue button is pressed.
@@ -1263,8 +1278,8 @@ func export_tests(path=_export_path):
 	else:
 		var result = _test_collector.export_tests(path)
 		if(result):
-			p(_test_collector.to_s())
-			p("Exported to " + path)
+			_lgr.info(_test_collector.to_s())
+			_lgr.info("Exported to " + path)
 
 
 # ------------------------------------------------------------------------------
@@ -1276,8 +1291,8 @@ func import_tests(path=_export_path):
 		_test_collector.clear()
 		var result = _test_collector.import_tests(path)
 		if(result):
-			p(_test_collector.to_s())
-			p("Imported from " + path)
+			_lgr.info(_test_collector.to_s())
+			_lgr.info("Importd from " + path)
 
 
 # ------------------------------------------------------------------------------
@@ -1372,7 +1387,7 @@ func pause_before_teardown():
 func set_yield_time(time, text=''):
 	_yield_timer.set_wait_time(time)
 	_yield_timer.start()
-	var msg = '-- Yielding (' + str(time) + 's)'
+	var msg = '-- Awaiting (' + str(time) + 's)'
 	if(text == ''):
 		msg += ' --'
 	else:
@@ -1389,7 +1404,7 @@ func set_yield_time(time, text=''):
 # required for _process in test.gd scripts to count N frames.
 # ------------------------------------------------------------------------------
 func set_yield_frames(frames, text=''):
-	var msg = '-- Yielding (' + str(frames) + ' frames)'
+	var msg = '-- Awaiting (' + str(frames) + ' frames)'
 	if(text == ''):
 		msg += ' --'
 	else:
@@ -1412,7 +1427,7 @@ func set_yield_signal_or_time(obj, signal_name, max_wait, text=''):
 	_yield_timer.set_wait_time(max_wait)
 	_yield_timer.start()
 	_was_yield_method_called = true
-	_lgr.yield_msg(str('-- Yielding to signal "', signal_name, '" or for ', max_wait, ' seconds -- ', text))
+	_lgr.yield_msg(str('-- Awaiting signal "', signal_name, '" or for ', max_wait, ' seconds -- ', text))
 	return self
 
 

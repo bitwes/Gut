@@ -110,9 +110,13 @@ class TestScript:
 
 	func get_test_obj(obj_name):
 		if(!_tests.has(obj_name)):
-			_tests[obj_name] = Test.new()
+			var to_add = Test.new()
+			_tests[obj_name] = to_add
 			_test_order.append(obj_name)
-		return _tests[obj_name]
+
+		var to_return = _tests[obj_name]
+
+		return to_return
 
 	func add_pass(test_name, reason):
 		var t = get_test_obj(test_name)
@@ -147,6 +151,9 @@ func get_current_script():
 	return _scripts[_scripts.size() - 1]
 
 func add_test(test_name):
+	# print('-- test_name = ', test_name)
+	# print('-- current script = ', get_current_script())
+	# print('-- test_obj = ', get_current_script().get_test_obj(test_name))
 	return get_current_script().get_test_obj(test_name)
 
 func add_pass(test_name, reason = ''):
@@ -165,15 +172,15 @@ func get_test_text(test_name):
 # end.  Used for displaying the number of scripts without including all the
 # Inner Classes.
 func get_non_inner_class_script_count():
-	var unique_scripts = {}
+	var counter = load('res://addons/gut/thing_counter.gd').new()
 	for i in range(_scripts.size()):
-		unique_scripts[_scripts[i].name] = 1
-		# var ext_loc = _scripts[i].name.find_last('.gd.')
-		# if(ext_loc == -1):
-		# 	unique_scripts[_scripts[i].name] = 1
-		# else:
-		# 	unique_scripts[_scripts[i].name.substr(0, ext_loc + 3)] = 1
-	return unique_scripts.keys().size()
+		var ext_loc = _scripts[i].name.rfind('.gd.')
+		var to_add = _scripts[i].name
+		if(ext_loc != -1):
+			to_add = _scripts[i].name.substr(0, ext_loc + 3)
+
+		counter.add(to_add)
+	return counter.get_unique_count()
 
 func get_totals():
 	var totals = {

@@ -117,11 +117,11 @@ class TestDoublingScripts:
 		_doubler = Doubler.new()
 		_doubler.set_stubber(stubber)
 		_doubler.set_gut(gut)
-		_doubler.print_source = false
 
 
 	func test_doubling_object_includes_methods():
-		var inst = _doubler.double(DoubleMe).new()
+		var inst = _doubler.double(DoubleMe)
+		inst = inst.new()
 		assert_source_contains(inst, 'func get_value(')
 		assert_source_contains(inst, 'func set_value(')
 
@@ -261,7 +261,7 @@ class TestDoubleStrategyIncludeSuper:
 
 	func test_built_in_overloading_ony_happens_on_full_strategy():
 		doubler.set_strategy(_utils.DOUBLE_STRATEGY.SCRIPT_ONLY)
-		var inst = doubler.double(DoubleMe).new()
+		var inst = autofree(doubler.double(DoubleMe).new())
 		var txt = get_source(inst)
 		assert_false(txt == '', "text is not empty")
 		assert_source_not_contains(inst, 'func is_blocking_signals', 'does not have non-overloaded methods')
@@ -269,10 +269,11 @@ class TestDoubleStrategyIncludeSuper:
 	func test_can_override_strategy_when_doubling_script():
 		doubler.set_strategy(_utils.DOUBLE_STRATEGY.SCRIPT_ONLY)
 		var inst = doubler.double(DoubleMe, _utils.DOUBLE_STRATEGY.INCLUDE_SUPER).new()
+		autofree(inst)
 		assert_source_contains(inst, 'func is_blocking_signals')
 
 	func test_when_everything_included_you_can_still_make_an_a_new_object():
-		var inst = doubler.double(DoubleMe).new()
+		var inst = autofree(doubler.double(DoubleMe).new())
 		assert_ne(inst, null)
 
 	func test_when_everything_included_you_can_still_make_a_new_node2d():
@@ -288,7 +289,7 @@ class TestDoubleStrategyIncludeSuper:
 		await yield_for(3)
 
 	func test_double_includes_methods_in_super():
-		var inst = doubler.double(DoubleExtendsWindowDialog).new()
+		var inst = autofree(doubler.double(DoubleExtendsWindowDialog).new())
 		assert_source_contains(inst, 'connect(')
 
 	func test_can_call_a_built_in_that_has_default_parameters():
@@ -324,12 +325,12 @@ class TestPartialDoubles:
 		doubler.set_stubber(stubber)
 
 	func test_can_make_partial_of_script():
-		var inst = doubler.partial_double(DoubleMe).new()
+		var inst = autofree(doubler.partial_double(DoubleMe).new())
 		inst.set_value(10)
 		assert_eq(inst.get_value(), 10)
 
 	func test_double_script_does_not_make_partials():
-		var inst = doubler.double(DoubleMe).new()
+		var inst = autofree(doubler.double(DoubleMe).new())
 		assert_eq(inst.get_value(), null)
 
 	func test_can_make_partial_of_scene():
@@ -341,15 +342,15 @@ class TestPartialDoubles:
 		assert_eq(inst.return_hello(), null)
 
 	func test_init_is_not_stubbed_to_call_super():
-		var inst = doubler.partial_double(DoubleMe).new()
+		var inst = autofree(doubler.partial_double(DoubleMe).new())
 		var text = get_source(inst)
 		assert_false(text.match("*__gutdbl.should_call_super('_init'*"), 'should not call super _init')
 
 	func test_can_partial_and_normal_double_in_same_test():
-		var double = doubler.double(DoubleMe).new()
-		var p_double = doubler.partial_double(DoubleMe).new()
+		var dbl = autofree(doubler.double(DoubleMe).new())
+		var p_double = autofree(doubler.partial_double(DoubleMe).new())
 
-		assert_null(double.get_value(), 'double get_value')
+		assert_null(dbl.get_value(), 'double get_value')
 		assert_eq(p_double.get_value(), 0, 'partial get_value')
 		if(is_failing()):
 			print(doubler.get_stubber().to_s())
@@ -368,6 +369,12 @@ class TestDoubleGDNaviteClasses:
 		_doubler.set_stubber(_stubber)
 		_doubler.print_source = false
 
+	# ---------
+	# Note:  Orphans in these tests are caused by the script parser holding onto
+	# the native instances it creates.  These are released when the script parser
+	# is unreferenced.  See test_script_parser.gd for more info.  Decided not to
+	# fight the orhpans here.
+	# ---------
 	func test_can_double_Node2D():
 		var d_node_2d = _doubler.double_gdnative(Node2D)
 		assert_not_null(d_node_2d)

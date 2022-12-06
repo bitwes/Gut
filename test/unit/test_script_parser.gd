@@ -200,6 +200,7 @@ class TestParsedScript:
 
 	func test_parsing_native_does_not_generate_orphans():
 		var parsed = ParsedScript.new(Node2D)
+		await get_tree().process_frame # avoids error godot:69411
 		parsed.unreference()
 		parsed = null
 		assert_no_new_orphans()

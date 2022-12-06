@@ -68,7 +68,6 @@ class TestType2Str:
 		assert_eq(strutils.type2str(d), str(d) + '(double of double_extends_node2d.gd)')
 
 	func test_double_inner():
-		gut.get_doubler().print_source = true
 		gut.get_doubler().inner_class_registry.register(InnerClasses)
 		var d = double(InnerClasses.InnerA).new()
 		assert_eq(strutils.type2str(d), str(d) + '(double of inner_classes.gd/InnerA)')

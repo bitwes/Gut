@@ -1,6 +1,6 @@
 # ------------------------------------------------------------------------------
-# this class is used by test_stubber and represents a doubled object
-# which is why we have __gutdbl in here.
+# this class is used by test_stubber and represents a doubled object.
+# This top section must be kept in line with script_template.txt
 # ------------------------------------------------------------------------------
 var __gutdbl_values = {
 	double = self,
@@ -15,8 +15,10 @@ var __gutdbl_values = {
 var __gutdbl = load('res://addons/gut/double_tools.gd').new(__gutdbl_values)
 
 # Here so other things can check for a method to know if this is a double.
-func __gutbl_check_method__():
+func __gutdbl_check_method__():
 	pass
+# ------------------------------------------------------------------------------
+# These are some methods and vars to be used in tests.
 # ------------------------------------------------------------------------------
 var value = 4
 func get_value():
