@@ -286,7 +286,7 @@ class TestDoubleStrategyIncludeSuper:
 		assert_ne(inst, null, "instantiate is not null")
 		assert_ne(inst.label, null, "Can get to a label on the instantiate")
 		# pause so _process gets called
-		await yield_for(3)
+		await wait_seconds(3)
 
 	func test_double_includes_methods_in_super():
 		var inst = autofree(doubler.double(DoubleExtendsWindowDialog).new())

@@ -42,9 +42,6 @@ extends Node
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _compare = _utils.Comparator.new()
 
-# constant for signal when calling yield_for
-const YIELD = 'timeout'
-signal timeout
 
 # Need a reference to the instance that is running the tests.  This
 # is set by the gut class when it runs the tests.  This gets you
@@ -681,6 +678,7 @@ func assert_has_signal(object, signal_name, text=""):
 	else:
 		_fail(disp)
 
+
 # ------------------------------------------------------------------------------
 # Returns the number of times a signal was emitted.  -1 returned if the object
 # is not being watched.
@@ -1110,60 +1108,54 @@ func pending(text=""):
 		_lgr.pending(text)
 		gut._pending(text)
 
-# ------------------------------------------------------------------------------
-# Returns the number of times a signal was emitted.  -1 returned if the object
-# is not being watched.
-# ------------------------------------------------------------------------------
-
 
 # ------------------------------------------------------------------------------
 # Yield for the time sent in.  The optional message will be printed when
-# Gut detects the yield.  When the time expires the YIELD signal will be
-# emitted.
+# Gut detects the yield.
 # ------------------------------------------------------------------------------
 func wait_seconds(time, msg=''):
-	return gut.set_yield_time(time, msg).timeout
+	var to_return = gut.set_wait_time(time, msg)
+	return to_return
 
 func yield_for(time, msg=''):
 	_lgr.deprecated('yield_for', 'wait_seconds')
-	return gut.set_yield_time(time, msg).timeout
+	var to_return = gut.set_wait_time(time, msg)
+	return to_return
 
 
 # ------------------------------------------------------------------------------
-# Yield to a signal or a maximum amount of time, whichever comes first.  When
-# the conditions are met the YIELD signal will be emitted.
+# Yield to a signal or a maximum amount of time, whichever comes first.
 # ------------------------------------------------------------------------------
 func wait_for_signal(sig, max_wait, msg=''):
 	watch_signals(sig.get_object())
-	gut.set_yield_signal_or_time(sig.get_object(), sig.get_name(), max_wait, msg)
-	return gut.timeout
+	var to_return = gut.set_wait_for_signal_or_time(sig.get_object(), sig.get_name(), max_wait, msg)
+	return to_return
 
 
 func yield_to(obj, signal_name, max_wait, msg=''):
 	_lgr.deprecated('yield_to', 'wait_for_signal')
 	watch_signals(obj)
-	gut.set_yield_signal_or_time(obj, signal_name, max_wait, msg)
-	return gut.timeout
+	var to_return = gut.set_wait_for_signal_or_time(obj, signal_name, max_wait, msg)
+	return to_return
 
 # ------------------------------------------------------------------------------
 # Yield for a number of frames.  The optional message will be printed. when
-# Gut detects a yield.  When the number of frames have elapsed (counted in gut's
-# _process function) the YIELD signal will be emitted.
+# Gut detects a yield.
 # ------------------------------------------------------------------------------
 func wait_frames(frames, msg=''):
 	if(frames <= 0):
 		var text = str('yeild_frames:  frames must be > 0, you passed  ', frames, '.  0 frames waited.')
 		_lgr.error(text)
-		frames = 0
-	gut.set_yield_frames(frames, msg)
+		frames = 1
 
-	return gut.timeout
+	var to_return = gut.set_wait_frames(frames, msg)
+	return to_return
 
 
 func yield_frames(frames, msg=''):
 	_lgr.deprecated("yield_frames", "wait_frames")
-	wait_frames(frames, msg)
-	return gut.timeout
+	var to_return = wait_frames(frames, msg)
+	return to_return
 
 func get_summary():
 	return _summary

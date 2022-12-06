@@ -14,7 +14,8 @@ class TimedSignaler:
 		_timer.one_shot = true
 
 	func _on_timer_timeout():
-		emit_signal('the_signal')
+		print(self, " emitting the_signal")
+		the_signal.emit()
 
 	func emit_after(time):
 		_timer.set_wait_time(time)
@@ -55,7 +56,7 @@ class TestOldYieldMethods:
 		assert_between(counter.time, .9, 1.1)
 
 	func test_wait_for_waits_for_x_seconds():
-		await yield_for(.5)
+		await wait_seconds(.5)
 		assert_between(counter.time, .49, .52)
 
 

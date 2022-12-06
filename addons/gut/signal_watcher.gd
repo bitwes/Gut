@@ -53,6 +53,7 @@ const ARG_NOT_SET = '_*_argument_*_is_*_not_set_*_'
 #	- other_signal on ref2 was emitted 3 times, each time with 3 parameters.
 var _watched_signals = {}
 var _utils = load('res://addons/gut/utils.gd').get_instance()
+var _lgr = _utils.get_logger()
 
 func _add_watched_signal(obj, name):
 	# SHORTCIRCUIT - ignore dupes
@@ -93,7 +94,10 @@ func _on_watched_signal(arg1=ARG_NOT_SET, arg2=ARG_NOT_SET, arg3=ARG_NOT_SET, \
 	var object = args[args.size() -1]
 	args.pop_back()
 
-	_watched_signals[object][signal_name].append(args)
+	if(_watched_signals.has(object)):
+		_watched_signals[object][signal_name].append(args)
+	else:
+		_lgr.error(str("signal_watcher._on_watched_signal:  Got signal for unwatched object:  ", object, '::', signal_name))
 
 # This parameter stuff should go into test.gd not here.  This thing works
 # just fine the way it is.
@@ -168,7 +172,7 @@ func clear():
 	for obj in _watched_signals:
 		if(_utils.is_not_freed(obj)):
 			for signal_name in _watched_signals[obj]:
-				obj.disconnect(signal_name,Callable(self,'_on_watched_signal'))
+				obj.disconnect(signal_name, Callable(self,'_on_watched_signal'))
 	_watched_signals.clear()
 
 # Returns a list of all the signal names that were emitted by the object.

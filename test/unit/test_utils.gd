@@ -135,7 +135,7 @@ func test_latest_version_if_version_is_old_warning_is_on():
 	utils._http_request_latest_version()
 	var p = utils.get_node("http_request")
 	assert_not_null(p, "should have a child http request")
-	await yield_to(p,"request_completed",2)
+	await wait_for_signal(p.request_completed,2)
 	assert_true(utils.should_display_latest_version,"this should fail only if you dont have internet connection")
 
 func test_is_inner_class_true_for_inner_classes():
