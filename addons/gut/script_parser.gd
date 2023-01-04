@@ -23,6 +23,8 @@ const BLACKLIST = [
 	'get_script',
 	'get',
 	'has_method',
+
+	'print_orphan_nodes'
 ]
 
 
