@@ -28,8 +28,13 @@ class TimedSignaler:
 class TimeSignalerParam:
 	extends TimedSignaler
 
+	var _emitted_param
+
+	func _init(emitted_param = 1):
+		_emitted_param = emitted_param
+
 	func _on_timer_timeout():
-		emit_signal('the_signal', 1)
+		emit_signal('the_signal', _emitted_param)
 
 class TimedSignalerMaxParams:
 	extends TimedSignaler
@@ -230,6 +235,12 @@ class TestYieldTo:
 		yield(yield_to(signaler, 'the_signal', 5), YIELD)
 		assert_signal_emitted(signaler, 'the_signal')
 
+	func test_yield_to_works_on_signals_that_emit_false():
+		var signaler = add_child_autoqfree(TimeSignalerParam.new(false))
+		watch_signals(signaler)
+		signaler.emit_after(.5)
+		yield(yield_to(signaler, 'the_signal', 5), YIELD)
+		assert_signal_emitted(signaler, 'the_signal')
 
 
 class TestYieldFrames:
