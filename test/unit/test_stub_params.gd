@@ -169,7 +169,9 @@ func test_draw_parameter_method_meta():
 	var sp = StubParamsClass.new(inst, meta)
 	assert_eq(sp.stub_method, meta.name)
 
-
+# !TODO draw_primitive does not have 2 defaults anymore which is why
+# this is breaking.  Need to get a different method to test this
+# with.
 func test_draw_parameter_method_meta2():
 	# 5 parameters, 2 defaults
 	# index 3 = null object
@@ -177,6 +179,7 @@ func test_draw_parameter_method_meta2():
 	var inst = autofree(Button.new())
 	var meta = find_method_meta(inst.get_method_list(), 'draw_primitive')
 	var sp = StubParamsClass.new(inst, meta)
+	print(meta.default_args)
 	# meta = find_method_meta(inst.get_method_list(), 'draw_primitive')
 	assert_eq(sp.parameter_defaults, [null, null, null, meta.default_args[0], meta.default_args[1]])
 	if(is_failing()):

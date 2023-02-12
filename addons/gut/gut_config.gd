@@ -4,8 +4,8 @@ var Gut = load('res://addons/gut/gut.gd')
 # _utils needs to be split so that constants and what not do not
 # have to rely on the weird singleton thing I made.
 enum DOUBLE_STRATEGY{
-	FULL,
-	PARTIAL
+	SCRIPT_ONLY,
+	INCLUDE_SUPER
 }
 
 
