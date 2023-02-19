@@ -105,7 +105,6 @@ class TestBasics:
 
 class TestIgnoreMethodsWhenDoubling:
 	extends "res://test/gut_test.gd"
-	var skip_script = 'skip for now, array compares are broke.'
 
 	var _test_gut = null
 	var _test = null
@@ -118,23 +117,18 @@ class TestIgnoreMethodsWhenDoubling:
 		add_child_autofree(_test_gut)
 		add_child_autofree(_test)
 
-	func test_when_calling_with_path_it_sends_path_to_doubler():
-		var m_doubler = double(_utils.Doubler).new()
-		_test_gut._doubler = m_doubler
-		_test.ignore_method_when_doubling('one', 'two')
-		assert_called(m_doubler, 'add_ignored_method', ['one', 'two'])
-
-	func test_when_calling_with_loaded_script_the_path_is_sent_to_doubler():
+	func test_sends_loaded_script_to_the_doubler():
 		var m_doubler = double(_utils.Doubler).new()
 		_test_gut._doubler = m_doubler
 		_test.ignore_method_when_doubling(DoubleMe, 'two')
-		assert_called(m_doubler, 'add_ignored_method', [DOUBLE_ME_PATH, 'two'])
+		assert_called(m_doubler, 'add_ignored_method', [DoubleMe, 'two'])
 
-	func test_when_calling_with_scene_the_script_path_is_sent_to_doubler():
+	func test_sends_loaded_scene_to_the_doubler():
 		var m_doubler = double(_utils.Doubler).new()
 		_test_gut._doubler = m_doubler
 		_test.ignore_method_when_doubling(DoubleMeScene, 'two')
-		assert_called(m_doubler, 'add_ignored_method', ['res://test/resources/doubler_test_objects/double_me_scene.gd', 'two'])
+		assert_called(m_doubler, 'add_ignored_method',
+			[_utils.get_scene_script_object(DoubleMeScene), 'two'])
 
 	func test_when_ignoring_scene_methods_they_are_not_doubled():
 		_test.ignore_method_when_doubling(DoubleMeScene, 'return_hello')

@@ -55,8 +55,6 @@ class TestArrayCompareResultInterace:
 class TestArrayDiff:
 	extends 'res://addons/gut/test.gd'
 
-	var skip_script = '4.0 Dictionary and array compare broke'
-
 	var DiffTool = _utils.DiffTool
 
 	func test_can_instantiate_with_two_arrays():
@@ -118,7 +116,7 @@ class TestArrayDiff:
 		assert_string_contains(ad.summarize(), ' == ')
 
 	func test_diff_display_with_classes():
-		var d_test = double('res://addons/gut/test.gd').new()
+		var d_test = double(GutTest).new()
 		var a1 = [gut, d_test]
 		var a2 = [d_test, gut]
 		var ad  = DiffTool.new(a1, a2)
@@ -126,8 +124,8 @@ class TestArrayDiff:
 		assert_string_contains(ad.summarize(), 'double of test.gd')
 
 	func test_diff_display_with_classes2():
-		var d_test_1 = double('res://addons/gut/test.gd').new()
-		var d_test_2 = double('res://addons/gut/test.gd').new()
+		var d_test_1 = double(GutTest).new()
+		var d_test_2 = double(GutTest).new()
 		var a1 = [d_test_1, d_test_2]
 		var a2 = [d_test_2, d_test_1]
 		var ad  = DiffTool.new(a1, a2)
@@ -150,8 +148,6 @@ class TestArrayDiff:
 
 class TestArrayDeepDiff:
 	extends 'res://addons/gut/test.gd'
-
-	var skip_script = '4.0 Dictionary and array compare broke'
 
 	var DiffTool = _utils.DiffTool
 
@@ -188,8 +184,6 @@ class TestArrayDeepDiff:
 
 class TestDictionaryCompareResultInterace:
 	extends 'res://addons/gut/test.gd'
-
-	var skip_script = '4.0 Dictionary and array compare broke'
 
 	var DiffTool = _utils.DiffTool
 
@@ -236,8 +230,6 @@ class TestDictionaryCompareResultInterace:
 
 class TestDictionaryDiff:
 	extends 'res://addons/gut/test.gd'
-
-	var skip_script = '4.0 Dictionary and array compare broke'
 
 	var DiffTool = _utils.DiffTool
 

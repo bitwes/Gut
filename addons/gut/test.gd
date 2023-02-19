@@ -1327,11 +1327,8 @@ func ignore_method_when_doubling(thing, method_name):
 		return
 
 	var r = thing
-
 	if(thing is PackedScene):
-		var inst = thing.instantiate()
-		if(inst.get_script()):
-			r = inst.get_script()
+		r = _utils.get_scene_script_object(thing)
 
 	gut.get_doubler().add_ignored_method(r, method_name)
 

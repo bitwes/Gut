@@ -91,9 +91,6 @@ class TestSimpleCompare:
 		assert_string_contains(result.summary, _comparator.DICTIONARY_DISCLAIMER)
 
 	func test_comparing_different_dictionaries_includes_disclaimer():
-		pending('4.0 Dictionary and array compare broke')
-		return
-
 		var result = _comparator.simple({}, {})
 		assert_false(result.are_equal, result.summary)
 		assert_string_contains(result.summary, _comparator.DICTIONARY_DISCLAIMER)
@@ -161,16 +158,10 @@ class TestShallowCompare:
 		assert_not_null(result.summary)
 
 	func test_comparing_dictionaries_does_not_include_sub_dictionaries():
-		pending('4.0 Dictionary and array compare broke')
-		return
-
 		var result = _comparator.shallow({'a':{}}, {'a':{}})
 		assert_false(result.are_equal)
 
 	func test_comparing_arrays_does_not_include_sub_dictionaries():
-		pending('4.0 Dictionary and array compare broke')
-		return
-
 		var result = _comparator.shallow([{'a':1}], [{'a':1}])
 		assert_false(result.are_equal)
 

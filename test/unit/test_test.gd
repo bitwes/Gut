@@ -156,9 +156,6 @@ class TestAssertEq:
 		]
 	]
 	func test_with_array(p = use_parameters(array_vals)):
-		pending('4.0 Dictionary and array compare broke')
-		return
-
 		gr.test.assert_eq(p[0], p[1])
 		if(p[2]):
 			assert_pass(gr.test)
@@ -173,9 +170,6 @@ class TestAssertEq:
 		assert_string_contains(gr.test._fail_pass_text[0], _compare.DICTIONARY_DISCLAIMER)
 
 	func test_dictionary_not_compared_by_value():
-		pending('4.0 Dictionary and array compare broke')
-		return
-
 		var d  = {'a':1}
 		var d2 = {'a':1}
 		gr.test.assert_eq(d, d2)
@@ -226,9 +220,6 @@ class TestAssertNe:
 		assert_string_contains(gr.test._fail_pass_text[0], _compare.DICTIONARY_DISCLAIMER)
 
 	func test_dictionary_not_compared_by_value():
-		pending('4.0 Dictionary and array compare broke')
-		return
-
 		var d  = {'a':1}
 		var d2 = {'a':1}
 		gr.test.assert_ne(d, d2)
@@ -1831,8 +1822,6 @@ class TestPassFailTestMethods:
 # ------------------------------------------------------------------------------
 class TestCompareDeepShallow:
 	extends BaseTestClass
-
-	var skip_script = 'Not implemented in 4.0'
 
 	func test_compare_shallow_uses_compare():
 		var d_compare = double(_utils.Comparator).new()
