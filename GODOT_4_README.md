@@ -3,26 +3,27 @@
 
 
 ## Overview
-Ported to Godot 4 Beta 5
+Ported to Godot 4 RC 2
 
 GUT is currently somewhat usable in 4.0.  Some features work, but many do not.  The CLI works, but the in-editor panel does not.
 
 This file tracks the changes that have occurred in porting GUT to Godot 4.0.  All issues related to the conversion have the [Godot 4.0](https://github.com/bitwes/Gut/issues?q=is%3Aissue+is%3Aopen+label%3A%22Godot+4.0%22) tag.
 
 <ins>Current results of all GUT tests</ins>
+
 ```
 Totals
-Scripts:          174
-Passing tests     1057
-Failing tests     12
+Scripts:          48
+Passing tests     1062
+Failing tests     8
 Risky tests       16
-Pending:          27
-Asserts:          1625 of 1645 passed
+Pending:          29
+Asserts:          1671 of 1686 passed
 
 Warnings/Errors:
 * 15 Errors.
 * 35 Warnings.
-* 50 Deprecated calls.
+* 4 Deprecated calls.
 
 1057 passed 12 failed.  Tests finished in 149.371s
 ```

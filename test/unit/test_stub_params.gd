@@ -173,11 +173,15 @@ func test_draw_parameter_method_meta():
 # this is breaking.  Need to get a different method to test this
 # with.
 func test_draw_parameter_method_meta2():
+	pending("defaults for draw_primitive have changed, need a better fit.")
+	return
+
 	# 5 parameters, 2 defaults
 	# index 3 = null object
 	# index 4 = 1
 	var inst = autofree(Button.new())
 	var meta = find_method_meta(inst.get_method_list(), 'draw_primitive')
+	_utils.pp(meta)
 	var sp = StubParamsClass.new(inst, meta)
 	print(meta.default_args)
 	# meta = find_method_meta(inst.get_method_list(), 'draw_primitive')
@@ -198,11 +202,15 @@ func test_draw_parameter_method_meta3():
 
 
 func test_draw_parameter_method_meta4():
+	pending('Parameters for draw_pimitive have changed. Need a different method to test with')
+	return
+
 	# 5 parameters, 2 defaults
 	# index 3 = null object
 	# index 4 = 1
 	var inst = autofree(Button.new())
 	var meta = find_method_meta(inst.get_method_list(), 'draw_primitive')
+	_utils.pp(meta)
 	var sp = StubParamsClass.new(inst, meta)
 	assert_eq(sp.parameter_defaults.size(), 5)
 
