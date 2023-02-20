@@ -1,8 +1,8 @@
-extends 'res://addons/gut/test.gd'
+extends GutTest
 
 
 class TestTheBasics:
-	extends 'res://addons/gut/test.gd'
+	extends GutTest
 
 	func test_can_make_one():
 		var c = _utils.Comparator.new()
@@ -14,7 +14,7 @@ class TestTheBasics:
 
 
 class TestMissing:
-	extends 'res://addons/gut/test.gd'
+	extends GutTest
 
 	func test_when_first_value_is_missing_it_uses_missing_string_in_summary():
 		var c = _utils.Comparator.new()
@@ -44,7 +44,7 @@ class TestMissing:
 
 
 class TestSimpleCompare:
-	extends 'res://addons/gut/test.gd'
+	extends GutTest
 
 	var _comparator  = null
 
@@ -101,7 +101,7 @@ class TestSimpleCompare:
 
 
 class TestShouldCompareIntToFloat:
-	extends 'res://addons/gut/test.gd'
+	extends GutTest
 
 	var _comparator  = null
 
@@ -130,7 +130,7 @@ class TestShouldCompareIntToFloat:
 
 
 class TestShallowCompare:
-	extends 'res://addons/gut/test.gd'
+	extends GutTest
 
 	var _comparator  = null
 
@@ -175,7 +175,7 @@ class TestShallowCompare:
 
 
 class TestDeepCompare:
-	extends 'res://addons/gut/test.gd'
+	extends GutTest
 
 	var _comparator  = null
 
@@ -217,3 +217,31 @@ class TestDeepCompare:
 	func test_works_with_primitives():
 		var result =  _comparator.deep(1, 1)
 		assert_true(result.are_equal)
+
+
+class TestGodot4ArrayDictionary:
+	extends GutTest
+
+	var _comparator  = null
+
+	func before_each():
+		_comparator = _utils.Comparator.new()
+
+	var _same_arrays = [
+		[[1, 2, 3], [1, 2, 3]],
+		[['a', 2, 'c'], ['a', 2, 'c']],
+		[['one', [1, 2], 'three'], ['one', [1, 2], 'three']]
+	]
+
+	var _same_dicts = [
+		[{'a':1, 'b':2}, {'a':1, 'b':2}],
+		[{'one':'one', 'two':[1, 2]},  {'one':'one', 'two':[1, 2]}]
+	]
+	func test_simple_compares_arrays_by_value(p = use_parameters(_same_arrays)):
+		var result = _comparator.simple(p[0], p[1])
+		assert_true(result.are_equal, result.summary)
+
+	func test_simple_compares_dictionaries_by_value(p = use_parameters(_same_dicts)):
+		var result = _comparator.simple(p[0], p[1])
+		assert_true(result.are_equal, result.summary)
+

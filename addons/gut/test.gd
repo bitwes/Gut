@@ -1558,6 +1558,23 @@ func assert_ne_shallow(v1, v2):
 
 
 # ------------------------------------------------------------------------------
+# Assert wrapper for is_same
+# ------------------------------------------------------------------------------
+func assert_same(v1, v2, text=''):
+	var disp = "[" + _str(v1) + "] expected to be same as  [" + _str(v2) + "]:  " + text
+	if(is_same(v1, v2)):
+		_pass(disp)
+	else:
+		_fail(disp)
+
+func assert_not_same(v1, v2, text=''):
+	var disp = "[" + _str(v1) + "] expected to not be same as  [" + _str(v2) + "]:  " + text
+	if(is_same(v1, v2)):
+		_fail(disp)
+	else:
+		_pass(disp)
+
+# ------------------------------------------------------------------------------
 # Checks the passed in version string (x.x.x) against the engine version to see
 # if the engine version is less than the expected version.  If it is then the
 # test is mareked as passed (for a lack of anything better to do).  The result
@@ -1589,6 +1606,7 @@ func skip_if_godot_version_ne(expected):
 	if(should_skip):
 		_pass(str('Skipping ', _utils.godot_version(), ' is not ', expected))
 	return should_skip
+
 
 # ------------------------------------------------------------------------------
 # Registers all the inner classes in a script with the doubler.  This is required

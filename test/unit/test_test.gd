@@ -1973,3 +1973,48 @@ class TestAssertBackedProperty:
 		var test_node = autofree(TestNode.new())
 		gr.test_with_gut.assert_property_with_backing_variable(test_node, "backed_set_broke", 12, 0)
 		assert_fail_pass(gr.test_with_gut, 2, SUB_ASSERT_COUNT - 2)
+
+
+# ------------------------------------------------------------------------------
+class TestAssertSameAndAssertNotSame:
+	extends BaseTestClass
+
+	var _a1 = []
+	var _a2 = []
+	var _d1 = {}
+	var _d2 = {}
+	var _same_values = [
+		[1, 1],
+		['a', 'a'],
+		[Vector3(1, 2, 3), Vector3(1, 2, 3)],
+		[_a1, _a1],
+		[_d1, _d1]
+	]
+
+	var _not_same_values = [
+		[1, 2],
+		['a', 'b'],
+		[Vector3(1, 1, 1), Vector3(5, 5, 5)],
+		[_a1, _a2],
+		[_d1, _d2],
+		[1, _a1],
+		['b', _d2]
+	]
+
+	func test_assert_same_passes_when_values_are_same(p = use_parameters(_same_values)):
+		gr.test_with_gut.assert_same(p[0], p[1])
+		assert_pass(gr.test_with_gut)
+
+	func test_assert_same_fails_when_values_are_not_the_same(p = use_parameters(_not_same_values)):
+		gr.test_with_gut.assert_same(p[0], p[1])
+		assert_fail(gr.test_with_gut)
+
+	func test_assert_not_same_fails_when_values_are_same(p = use_parameters(_same_values)):
+		gr.test_with_gut.assert_not_same(p[0], p[1])
+		assert_fail(gr.test_with_gut)
+
+	func test_assert_not_same_fails_when_values_are_not_the_same(p = use_parameters(_not_same_values)):
+		gr.test_with_gut.assert_not_same(p[0], p[1])
+		assert_pass(gr.test_with_gut)
+
+

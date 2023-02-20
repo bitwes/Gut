@@ -50,7 +50,7 @@ func simple(v1, v2, missing_string=''):
 	elif([TYPE_STRING, TYPE_STRING_NAME].has(tv1) and [TYPE_STRING, TYPE_STRING_NAME].has(tv2)):
 		result.are_equal = v1 == v2
 	elif(_utils.are_datatypes_same(v1, v2)):
-		result.are_equal = is_same(v1, v2)
+		result.are_equal = v1 == v2
 		if(typeof(v1) == TYPE_DICTIONARY):
 			if(result.are_equal):
 				extra = '.  Same dictionary ref.  '

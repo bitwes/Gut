@@ -57,6 +57,10 @@ These are changes to Godot that affect how GUT is used/implemented.
 * Arrays are pass by reference now.
 * `File` and `Directory` have been replaced with `FileAccess` and `DirAccess`.
 
+
+
+
+
 ## Working Features
 * The command line seems to be working fine.
 * Basic asserts (assert_eq, ne, between etc) with anything except arrays and dictionaries.
@@ -101,6 +105,12 @@ await wait_frames(30, 'optional message')
 ```
 * Doubling no longer supports paths to a script or scene.  Load the script or scene first and pass that to `double`.  See the "Doubling Changes" section for more details.
 * Doubling Inner Classes now requires you to call `register_inner_classes` first.  See the "Doubling Changes" sedtion for more details.
+
+### Comparing Dictionaries and Arrays
+In Godot 3.x dictionaries were compared by reference and arrays were compared by value.  In 4.0 both are compared by value.  In Godot 4.0 you can compare dictionaries and arrays by reference using `is_same`.
+
+GUT honored the default comparing logic in 3.x, so it does the same in 4.0.  This means that `assert_eq` will use Godot's `==` logic for dictionaries and arrays (comparing by value).  If you want to compare by reference you can use the new `assert_same`.  `assert_same`
+
 
 ### Doubling Changes
 #### Doubling scripts and scenes
