@@ -83,21 +83,11 @@ class TestSimpleCompare:
 		assert_string_contains(result.summary, 'Cannot')
 		assert_string_contains(result.summary, '!=')
 
-	func test_comparing_equal_dictionaries_includes_disclaimer():
-		var d1 = {}
-		var d2 = d1
-		var result = _comparator.simple(d1, d2)
-		assert_true(result.are_equal, result.summary)
-		assert_string_contains(result.summary, _comparator.DICTIONARY_DISCLAIMER)
-
-	func test_comparing_different_dictionaries_includes_disclaimer():
-		var result = _comparator.simple({}, {})
-		assert_false(result.are_equal, result.summary)
-		assert_string_contains(result.summary, _comparator.DICTIONARY_DISCLAIMER)
-
 	func test_comparing_arrays_returns_array_diff_simple_summary():
 		var result = _comparator.simple([1, 2], [3, 4])
 		assert_string_contains(result.summary, '[1, 2] != [3, 4]')
+
+
 
 
 class TestShouldCompareIntToFloat:
@@ -125,53 +115,9 @@ class TestShouldCompareIntToFloat:
 
 	func test_when_enabled_does_not_change_how_dicts_treat_float_int():
 		_comparator.set_should_compare_int_to_float(true)
-		var result = _comparator.shallow({'a':1}, {'a':1.0})
+		var result = _comparator.deep({'a':1}, {'a':1.0})
 		assert_false(result.are_equal, result.summary)
 
-
-class TestShallowCompare:
-	extends GutTest
-
-	var _comparator  = null
-
-	func before_each():
-		_comparator = _utils.Comparator.new()
-
-	func test_comparing_arrays_are_equal_true_when_equal():
-		var result = _comparator.shallow([1], [1])
-		assert_true(result.are_equal)
-
-	func test_comparing_arrays_sets_summary():
-		var result = _comparator.shallow([2], [3])
-		assert_not_null(result.summary)
-
-	func test_comparing_dictionaries_populates_different_keys():
-		var result = _comparator.shallow({'a':1}, {'b':2})
-		assert_true(result.differences.size() == 2)
-
-	func test_comparing_dictionaries_populates_are_equal():
-		var result = _comparator.shallow({}, {})
-		assert_true(result.are_equal)
-
-	func test_comparing_dictionaries_populates_summary():
-		var result = _comparator.shallow({}, {'a':1})
-		assert_not_null(result.summary)
-
-	func test_comparing_dictionaries_does_not_include_sub_dictionaries():
-		var result = _comparator.shallow({'a':{}}, {'a':{}})
-		assert_false(result.are_equal)
-
-	func test_comparing_arrays_does_not_include_sub_dictionaries():
-		var result = _comparator.shallow([{'a':1}], [{'a':1}])
-		assert_false(result.are_equal)
-
-	func test_works_with_different_datatypes():
-		var result = _comparator.shallow({}, [])
-		assert_false(result.are_equal)
-
-	func test_works_with_primitives():
-		var result =  _comparator.shallow(1, 1)
-		assert_true(result.are_equal)
 
 
 class TestDeepCompare:
@@ -220,7 +166,7 @@ class TestDeepCompare:
 
 
 class TestGodot4ArrayDictionary:
-	extends GutTest
+	extends 'res://test/gut_test.gd'
 
 	var _comparator  = null
 

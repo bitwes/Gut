@@ -6,18 +6,17 @@ class TestFormatter:
 	var Formatter = load('res://addons/gut/diff_formatter.gd')
 	var DiffTool = _utils.DiffTool
 
+	func test_demo_eq_format():
+		assert_eq([], [])
+		assert_eq([1, 2, 3], [1, 2, 3])
+		assert_eq({}, {})
+		assert_eq({'a':1}, {'a':1})
+
 	func test_equal_arrays():
 		pass_test(Formatter.new().make_it(DiffTool.new([1, 2, 3], [1, 2, 3])))
 
 	func test_equal_dictionaries():
 		pass_test(Formatter.new().make_it(DiffTool.new({}, {})))
-
-	func test_when_shallow_ditionaries_in_arrays_are_not_checked_for_values():
-		var d1 = {'a': 1, 'dne_in_d2':{'x':'x', 'y':'y', 'z':'z'}, 'r':1}
-		var d2 = {'a': 2, 'dne_in_d1':{'xx':'x', 'yy':'y', 'zz':'z'}, 'r':2}
-
-		var diff = DiffTool.new(d1, d2, _utils.DIFF.DEEP)
-		pass_test(Formatter.new().make_it(diff))
 
 
 	func test_works_with_strings_and_numbers():
@@ -71,24 +70,6 @@ class TestFormatter:
 		var diff = DiffTool.new(a1, a2, _utils.DIFF.DEEP)
 		pass_test(Formatter.new().make_it(diff))
 
-	func test_mix_of_array_and_dictionaries_shallow():
-		var a1 = [
-			'a', 'b', 'c',
-			[1, 2, 3, 4],
-			{'a':1, 'b':2, 'c':3},
-			[{'a':1}, {'b':2}]
-		]
-		var a2 = [
-			'a', 2, 'c',
-			['a', 2, 3, 'd'],
-			{'a':11, 'b':12, 'c':13},
-			[{'a':'diff'}, {'b':2}]
-		]
-		var diff = DiffTool.new(a1, a2, _utils.DIFF.SHALLOW)
-		print(_strutils.type2str(diff.differences[3]))
-		print('brackets = ', diff.differences[3].get_brackets())
-		pass_test(Formatter.new().make_it(diff))
-
 
 	func test_multiple_sub_arrays():
 		var a1 = [
@@ -140,12 +121,6 @@ class TestUsingAssertNe:
 	extends GutTest
 
 	var DiffTool = _utils.DiffTool
-
-	func test_when_shallow_ditionaries_in_arrays_are_not_checked_for_values():
-		var d1 = {'a': 1, 'dne_in_d2':{'x':'x', 'y':'y', 'z':'z'}, 'r':1}
-		var d2 = {'a': 2, 'dne_in_d1':{'xx':'x', 'yy':'y', 'zz':'z'}, 'r':2}
-		assert_ne(d1, d2)
-
 
 	func test_works_with_strings_and_numbers():
 		var a1 = [0, 1, 2, 3, 4]

@@ -685,38 +685,6 @@ func test_assert_connected():
 	assert_connected(signaler, foo, 'the_signal')
 
 
-func test_shallow_array_compare_1():
-	var a1 = [
-		'a', 'b', 'c',
-		[1, 2, 3, 4],
-		{'a':1, 'b':2, 'c':3},
-		[{'a':1}, {'b':2}]
-	]
-	var a2 = [
-		'a', 2, 'c',
-		['a', 2, 3, 'd'],
-		{'a':11, 'b':12, 'c':13},
-		[{'a':'diff'}, {'b':2}]
-	]
-	var result = compare_shallow(a1, a2)
-	assert_true(result.are_equal, result.summary)
-
-
-func test_shallow_array_compare_2():
-	var a1 = [
-		[1, 2, 3, 4],
-		[[4, 5, 6], ['same'], [7, 8, 9]]
-	]
-	var a2 = [
-		["1", 2.0, 13],
-		[[14, 15, 16], ['same'], [17, 18, 19]]
-	]
-	var result = compare_deep(a1, a2)
-	gut.p(result.summary)
-
-	gut.p('Traversing differences:')
-	gut.p(result.differences[1].differences[2].differences[0])
-
 func test_nested_difference():
 	var v1 = {'a':{'b':{'c':{'d':1}}}}
 	var v2 = {'a':{'b':{'c':{'d':2}}}}
@@ -747,35 +715,6 @@ func test_mix_of_array_and_dictionaries_deep():
 	gut.p(result.differences[5].differences[0].differences['a'])
 
 
-func test_assert_eq_shallow():
-	var complex_example = [
-		'a', 'b', 'c',
-		[1, 2, 3, 4],
-		{'a':1, 'b':2, 'c':3},
-		[{'a':1}, {'b':2}]
-	]
-
-	# Passing
-	assert_eq_shallow([1, 2, 3], [1, 2, 3])
-	assert_eq_shallow([1, [2, 3], 4], [1, [2, 3], 4])
-	var d1 = {'foo':'bar'}
-	assert_eq_shallow([1, 2, d1], [1, 2, d1])
-	assert_eq_shallow({'a':1}, {'a':1})
-	assert_eq_shallow({'a':[1, 2, 3, d1]}, {'a':[1, 2, 3, d1]})
-
-	var shallow_copy = complex_example.duplicate(false)
-	assert_eq_shallow(complex_example, shallow_copy)
-
-	# Failing
-	assert_eq_shallow([1, 2], [1, 2 ,3]) # missing index
-	assert_eq_shallow({'a':1}, {'a':1, 'b':2}) # missing key
-	assert_eq_shallow([1, 2], [1.0, 2.0]) # floats != ints
-	assert_eq_shallow([1, 2, {'a':1}], [1, 2, {'a':1}]) # compare [2] by ref
-	assert_eq_shallow({'a':1}, {'a':1.0}) # floats != ints
-	assert_eq_shallow({'a':1, 'b':{'c':1}}, {'a':1, 'b':{'c':1}}) # compare 'b' by ref
-
-	var deep_copy = complex_example.duplicate(true)
-	assert_eq_shallow(complex_example, deep_copy)
 
 
 
@@ -798,8 +737,6 @@ func test_assert_eq_deep():
 	assert_eq_deep(shallow_copy, deep_copy)
 
 	# Failing
-	assert_eq_shallow([1, 2], [1, 2 ,3]) # missing index
-	assert_eq_shallow({'a':1}, {'a':1, 'b':2}) # missing key
 	assert_eq_deep([1, 2, {'a':1}], [1, 2, {'a':1.0}]) # floats != ints
 
 

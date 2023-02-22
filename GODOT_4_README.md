@@ -109,7 +109,13 @@ await wait_frames(30, 'optional message')
 ### Comparing Dictionaries and Arrays
 In Godot 3.x dictionaries were compared by reference and arrays were compared by value.  In 4.0 both are compared by value.  In Godot 4.0 you can compare dictionaries and arrays by reference using `is_same`.
 
-GUT honored the default comparing logic in 3.x, so it does the same in 4.0.  This means that `assert_eq` will use Godot's `==` logic for dictionaries and arrays (comparing by value).  If you want to compare by reference you can use the new `assert_same`.  `assert_same`
+GUT honored the default comparing logic in 3.x, so it does the same in 4.0.  This means that `assert_eq` will use Godot's `==` logic for dictionaries and arrays (comparing by value).  If you want to compare by reference you can use the new `assert_same` or `assert_not_same`.
+
+The shallow compare functionanlity has been removed since it no longer applies.  Shallow compares would compare the elements of an array or dictionary by value.  In Godot 3.x this meant that dictionaries inside of arrays or dictionaries would be compared by reference.  Since everything is compared by value now, shallow compares do not apply.  The following methods have been removed.  Calling these methods will generate a failure and a warning.
+* `compare_shallow`
+* `assert_eq_shallow`
+* `assert_ne_shallow`
+
 
 
 ### Doubling Changes

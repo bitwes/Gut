@@ -242,13 +242,11 @@ func assert_eq(got, expected, text=""):
 		var disp = "[" + _str(got) + "] expected to equal [" + _str(expected) + "]:  " + text
 		var result = null
 
-		if(typeof(got) == TYPE_ARRAY):
-			result = _compare.shallow(got, expected)
-		else:
-			result = _compare.simple(got, expected)
+		result = _compare.simple(got, expected)
 
 		if(typeof(got) in [TYPE_ARRAY, TYPE_DICTIONARY]):
 			disp = str(result.summary, '  ', text)
+			_lgr.info('Array/Dictionary compared by value.  Use assert_same to compare references.  Use assert_eq_deep to see diff when failing.')
 
 		if(result.are_equal):
 			_pass(disp)
@@ -264,13 +262,11 @@ func assert_ne(got, not_expected, text=""):
 		var disp = "[" + _str(got) + "] expected to not equal [" + _str(not_expected) + "]:  " + text
 		var result = null
 
-		if(typeof(got) == TYPE_ARRAY):
-			result = _compare.shallow(got, not_expected)
-		else:
-			result = _compare.simple(got, not_expected)
+		result = _compare.simple(got, not_expected)
 
 		if(typeof(got) in [TYPE_ARRAY, TYPE_DICTIONARY]):
 			disp = str(result.summary, '  ', text)
+			_lgr.info('Array/Dictionary compared by value.  Use assert_not_same to compare references.  Use assert_ne_deep to see diff.')
 
 		if(result.are_equal):
 			_fail(disp)
@@ -1507,14 +1503,13 @@ func compare_deep(v1, v2, max_differences=null):
 	return result
 
 # ------------------------------------------------------------------------------
-# Peforms a shallow compare on both values, a CompareResult instnace is returned.
-# The optional max_differences paramter sets the max_differences to be displayed.
+# REMOVED
 # ------------------------------------------------------------------------------
 func compare_shallow(v1, v2, max_differences=null):
-	var result = _compare.shallow(v1, v2)
-	if(max_differences != null):
-		result.max_differences = max_differences
-	return result
+	_fail('compare_shallow has been removed.  Use compare_deep or just compare using == instead.')
+	_lgr.error('compare_shallow has been removed.  Use compare_deep or just compare using == instead.')
+	return null
+
 
 # ------------------------------------------------------------------------------
 # Performs a deep compare and asserts the  values are equal
@@ -1537,24 +1532,16 @@ func assert_ne_deep(v1, v2):
 		_fail(result.get_short_summary())
 
 # ------------------------------------------------------------------------------
-# Performs a shallow compare and asserts the values are equal
+# REMOVED
 # ------------------------------------------------------------------------------
 func assert_eq_shallow(v1, v2):
-	var result = compare_shallow(v1, v2)
-	if(result.are_equal):
-		_pass(result.get_short_summary())
-	else:
-		_fail(result.summary)
+	_fail('assert_eq_shallow has been removed.  Use assert_eq/assert_same/assert_eq_deep')
 
 # ------------------------------------------------------------------------------
-# Performs a shallow compare and asserts the values are not equal
+# REMOVED
 # ------------------------------------------------------------------------------
 func assert_ne_shallow(v1, v2):
-	var result = compare_shallow(v1, v2)
-	if(!result.are_equal):
-		_pass(result.get_short_summary())
-	else:
-		_fail(result.get_short_summary())
+	_fail('assert_eq_shallow has been removed.  Use assert_eq/assert_same/assert_eq_deep')
 
 
 # ------------------------------------------------------------------------------

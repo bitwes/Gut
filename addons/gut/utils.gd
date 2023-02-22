@@ -167,7 +167,6 @@ enum DOUBLE_STRATEGY{
 
 enum DIFF {
 	DEEP,
-	SHALLOW,
 	SIMPLE
 }
 
