@@ -2,7 +2,6 @@ extends 'res://addons/gut/compare_result.gd'
 const INDENT = '    '
 enum {
 	DEEP,
-	SHALLOW,
 	SIMPLE
 }
 

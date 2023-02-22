@@ -93,11 +93,6 @@ class TestMiscTests:
 		gr.test.set_logger(dlog)
 		assert_eq(gr.test.get_logger(), dlog)
 
-	func test_not_freeing_children_generates_warning():
-		pass
-		# I cannot think of a way to test this without some giant amount of
-		# testing legwork.
-
 
 # ------------------------------------------------------------------------------
 class TestAssertEq:
@@ -147,7 +142,7 @@ class TestAssertEq:
 		[[10, 20.0, 30], [10.0, 20, 30.0], false],
 		[[1, 2], [1, 2, 3, 4, 5], false],
 		[[1, 2, 3, 4, 5], [1, 2], false],
-		[[{'a':1}], [{'a':1}], false],
+		[[{'a':1}], [{'a':1}], true],
 		[[[1, 2], [3, 4]], [[5, 6], [7, 8]], false],
 		[
 			[[1, [2, 3]], [4, [5, 6]]],
@@ -156,9 +151,6 @@ class TestAssertEq:
 		]
 	]
 	func test_with_array(p = use_parameters(array_vals)):
-		pending('4.0 Dictionary and array compare broke')
-		return
-
 		gr.test.assert_eq(p[0], p[1])
 		if(p[2]):
 			assert_pass(gr.test)
@@ -170,17 +162,12 @@ class TestAssertEq:
 		var d_pointer = d
 		gr.test.assert_eq(d, d_pointer)
 		assert_pass(gr.test)
-		assert_string_contains(gr.test._fail_pass_text[0], _compare.DICTIONARY_DISCLAIMER)
 
-	func test_dictionary_not_compared_by_value():
-		pending('4.0 Dictionary and array compare broke')
-		return
-
+	func test_dictionary_are_compared_by_value():
 		var d  = {'a':1}
 		var d2 = {'a':1}
 		gr.test.assert_eq(d, d2)
-		assert_fail(gr.test)
-		assert_string_contains(gr.test._fail_pass_text[0], _compare.DICTIONARY_DISCLAIMER)
+		assert_pass(gr.test)
 
 
 # ------------------------------------------------------------------------------
@@ -210,7 +197,8 @@ class TestAssertNe:
 	var array_vals = [
 		[[1, 2, 3], ['1', '2', '3'], true],
 		[[1, 2, 3], [1, 2, 3], false],
-		[[1, 2.0, 3], [1.0, 2, 3.0], true]]
+		[[1, 2.0, 3], [1.0, 2, 3.0], true]
+	]
 	func test_with_array(p = use_parameters(array_vals)):
 		gr.test.assert_ne(p[0], p[1])
 		if(p[2]):
@@ -223,17 +211,12 @@ class TestAssertNe:
 		var d_pointer = d
 		gr.test.assert_ne(d, d_pointer)
 		assert_fail(gr.test)
-		assert_string_contains(gr.test._fail_pass_text[0], _compare.DICTIONARY_DISCLAIMER)
 
-	func test_dictionary_not_compared_by_value():
-		pending('4.0 Dictionary and array compare broke')
-		return
-
-		var d  = {'a':1}
+	func test_dictionary_are_compared_by_value():
+		var d  = {'a':2}
 		var d2 = {'a':1}
 		gr.test.assert_ne(d, d2)
 		assert_pass(gr.test)
-		assert_string_contains(gr.test._fail_pass_text[0], _compare.DICTIONARY_DISCLAIMER)
 
 
 # ------------------------------------------------------------------------------
@@ -1832,18 +1815,6 @@ class TestPassFailTestMethods:
 class TestCompareDeepShallow:
 	extends BaseTestClass
 
-	var skip_script = 'Not implemented in 4.0'
-
-	func test_compare_shallow_uses_compare():
-		var d_compare = double(_utils.Comparator).new()
-		gr.test._compare = d_compare
-		var result = gr.test.compare_shallow([], [])
-		assert_called(d_compare, 'shallow')
-
-	func test_compare_shallow_sets_max_differences():
-		var result = gr.test.compare_shallow([], [], 10)
-		assert_eq(result.max_differences, 10)
-
 	func test_compare_deep_uses_compare():
 		var d_compare = double(_utils.Comparator).new()
 		gr.test._compare = d_compare
@@ -1870,20 +1841,16 @@ class TestCompareDeepShallow:
 		gr.test.assert_ne_deep({'a':1}, {'a':1})
 		assert_fail(gr.test)
 
-	func test_assert_eq_shallow_pass_with_same():
+	func test_assert_shallow_fails_due_to_removed():
 		gr.test.assert_eq_shallow({'a':1}, {'a':1})
-		assert_pass(gr.test)
-
-	func test_assert_eq_shallow_fails_with_different():
-		gr.test.assert_eq_shallow({'a':12}, {'a':1})
 		assert_fail(gr.test)
 
-	func test_assert_ne_shallow_passes_with_different():
-		gr.test.assert_ne_shallow({'a':12}, {'a':1})
-		assert_pass(gr.test)
+	func test_assert_ne_shallow_fails_due_to_removed():
+		gr.test.assert_ne_shallow({'a':1}, {'a':2})
+		assert_fail(gr.test)
 
-	func test_assert_ne_shallow_fails_with_same():
-		gr.test.assert_ne_shallow({'a':1}, {'a':1})
+	func test_compare_shallow_results_in_fail_and_warning():
+		gr.test.compare_shallow([], [])
 		assert_fail(gr.test)
 
 
@@ -1984,3 +1951,48 @@ class TestAssertBackedProperty:
 		var test_node = autofree(TestNode.new())
 		gr.test_with_gut.assert_property_with_backing_variable(test_node, "backed_set_broke", 12, 0)
 		assert_fail_pass(gr.test_with_gut, 2, SUB_ASSERT_COUNT - 2)
+
+
+# ------------------------------------------------------------------------------
+class TestAssertSameAndAssertNotSame:
+	extends BaseTestClass
+
+	var _a1 = []
+	var _a2 = []
+	var _d1 = {}
+	var _d2 = {}
+	var _same_values = [
+		[1, 1],
+		['a', 'a'],
+		[Vector3(1, 2, 3), Vector3(1, 2, 3)],
+		[_a1, _a1],
+		[_d1, _d1]
+	]
+
+	var _not_same_values = [
+		[1, 2],
+		['a', 'b'],
+		[Vector3(1, 1, 1), Vector3(5, 5, 5)],
+		[_a1, _a2],
+		[_d1, _d2],
+		[1, _a1],
+		['b', _d2]
+	]
+
+	func test_assert_same_passes_when_values_are_same(p = use_parameters(_same_values)):
+		gr.test_with_gut.assert_same(p[0], p[1])
+		assert_pass(gr.test_with_gut)
+
+	func test_assert_same_fails_when_values_are_not_the_same(p = use_parameters(_not_same_values)):
+		gr.test_with_gut.assert_same(p[0], p[1])
+		assert_fail(gr.test_with_gut)
+
+	func test_assert_not_same_fails_when_values_are_same(p = use_parameters(_same_values)):
+		gr.test_with_gut.assert_not_same(p[0], p[1])
+		assert_fail(gr.test_with_gut)
+
+	func test_assert_not_same_fails_when_values_are_not_the_same(p = use_parameters(_not_same_values)):
+		gr.test_with_gut.assert_not_same(p[0], p[1])
+		assert_pass(gr.test_with_gut)
+
+

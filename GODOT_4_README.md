@@ -55,7 +55,9 @@ These are changes to Godot that affect how GUT is used/implemented.
 * `connect` has been significantly altered.  The signal related asserts will likely change to use `Callable` parameters instead of strings.  It is possible to use strings, so this may remain in some form.  More info in [#383](/../../issues/383).
 * `yield` has been replaced with `await`.  `yield_to`, `yield_for`, and `yield_frames` have been deprecated, the new methods are `wait_seconds`, `wait_frams` and `wait_for_signal`.  There are exampels below and more info at [#382](/../../issues/382).
 * Arrays are pass by reference now.
+* Dictionaries are compared by value now.
 * `File` and `Directory` have been replaced with `FileAccess` and `DirAccess`.
+
 
 ## Working Features
 * The command line seems to be working fine.
@@ -68,11 +70,12 @@ These are changes to Godot that affect how GUT is used/implemented.
 * Using `await` (the new `yield`) in tests, and all the GUT supplied `yield_` methods.  See notes in Changes section.
 * Input mocking.
 * Doubling Inner Classes has been fixed and all the tests have been restored.
+* Comparing Dictionary/Arrys with `assert_eq`, `assert_eq_deep`, and the new `assert_same` and `assert_not_same` for comparing references.  See Godot's new `is_same` function for details on how `assert_same` works (it's just an assertion wrapper around `is_same`).  See the section "Comparing Dictionaries and Arrays" below for more details.
+
 
 ## Broken Features
 * Gut Panel.  The in-editor panel is not working, you must use the CLI or the VSCode plugin (which uses the cli) for now.
-* Dictionary/array asserts are broke in some cases.  Godot 4 passes all arrays and dictionaries by reference now (arrays were by value, dictionaries were by reference).  This has broken a lot of the logic for comparing dictionaris, arrays, arrays in dictionaries, dictionaries in arrays.
-* Probably somewhat more.
+* Other misc items.
 
 
 
@@ -101,6 +104,19 @@ await wait_frames(30, 'optional message')
 ```
 * Doubling no longer supports paths to a script or scene.  Load the script or scene first and pass that to `double`.  See the "Doubling Changes" section for more details.
 * Doubling Inner Classes now requires you to call `register_inner_classes` first.  See the "Doubling Changes" sedtion for more details.
+
+### Comparing Dictionaries and Arrays
+In Godot 3.x dictionaries were compared by reference and arrays were compared by value.  In 4.0 both are compared by value.  Godot 4.0 introduces the `is_same` method which (amongst other things) will compare dictionaries and arrays by reference.
+
+GUT's `assert_eq` and `asssert_ne` changed to match Godot's behavior.  To compare by reference you can use the new `assert_same` or `assert_not_same`.  This works with arrays and dictionaries.  Review Godot's documentation for `is_same`.  When comparing dictionaries and arrays it is recommended that you use `assert_eq_deep` since it provides more detailed output than `assert_eq`.
+
+The shallow compare functionanlity has been removed since it no longer applies.  Shallow compares would compare the elements of an array or dictionary by value.  In Godot 3.x this meant that dictionaries inside of arrays or dictionaries would be compared by reference and everything else would be compared by value.  Since arrays and dictionaries are both cmpared by value now, shallow compares are no different (functionally) than deep compares.  The following methods have been removed.  Calling these methods will generate a failure and an error.
+* `compare_shallow` (causes failure and returns `null` which will likely result in a runtime error)
+* `assert_eq_shallow`
+* `assert_ne_shallow`
+
+Final note: `assert_eq` does not use `assert_eq_deep` since `assert_eq_deep` compares each element of both arrays/dictionaries and provides detailed info about what is different.  This can be slow for large arrays/dictionaries.  Godot's `==` operator uses a hashing function which is much faster but does not provide information about what is different in each array/dictionary.  With `assert_eq`, `assert_eq_deep`, and `assert_same` (and their inverses) you have fine grained control over the type of comparision that is performed.
+
 
 ### Doubling Changes
 #### Doubling scripts and scenes

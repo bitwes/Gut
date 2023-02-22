@@ -1,3 +1,5 @@
+class_name GutInternalTester
+
 extends GutTest
 
 const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
@@ -38,6 +40,14 @@ func assert_errored(obj, times=1):
 	else:
 		_fail('Does not have get_logger method')
 
+func assert_deprecated(obj, times=1):
+	if(obj.has_method('get_logger')):
+		var msg = str('Should have ', times, ' deprecations.')
+		assert_eq(obj.get_logger().get_deprecated().size(), times, msg)
+	else:
+		_fail('Does not have get_logger method')
+
+
 func assert_has_logger(obj):
 	assert_has_method(obj, 'get_logger')
 	assert_has_method(obj, 'set_logger')
@@ -58,3 +68,22 @@ func new_gut():
 	g._should_print_summary = false
 	g.log_level = g.LOG_LEVEL_FAIL_ONLY
 	return g
+
+# ----------------------------
+# Not used yet, but will be used eventually
+
+# func new_test():
+# 	var t = GutTest.new()
+# 	var logger = _utils.Logger.new()
+# 	t.set_logger(logger)
+# 	return t
+
+
+# func new_test_double():
+# 	var t = double(GutTest).new()
+# 	var logger = double(_utils.Logger).new()
+# 	stub(t, 'set_logger').to_call_super()
+# 	stub(t, 'get_logger').to_call_super()
+# 	t.set_logger(logger)
+# 	return t
+# ----------------------------

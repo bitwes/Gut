@@ -217,8 +217,9 @@ func log_summary_text(lgr):
 
 	for s in range(_scripts.size()):
 		lgr.set_indent_level(0)
+
 		if(_scripts[s].was_skipped or _scripts[s].get_fail_count() > 0 or _scripts[s].get_pending_count() > 0):
-			lgr.log(_scripts[s].name, lgr.fmts.underline)
+			lgr.log("\n" + _scripts[s].name, lgr.fmts.underline)
 
 		if(_scripts[s].was_skipped):
 			lgr.inc_indent()
