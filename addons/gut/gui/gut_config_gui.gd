@@ -273,7 +273,7 @@ func get_config_issues():
 		var path = _cfg_ctrls[key].text
 		if(path != null and path != ''):
 			has_directory = true
-			if(!DirAccess.dir_exists(path)):
+			if(!DirAccess.dir_exists_absolute(path)):
 				to_return.append(str('Test directory ', path, ' does not exist.'))
 
 	if(!has_directory):
