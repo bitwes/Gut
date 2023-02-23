@@ -118,7 +118,7 @@ func write_options(path):
 	var result = FileAccess.get_open_error()
 	if(f != null):
 		f.store_string(content)
-		f.close()
+		f = null # closes file
 	else:
 		print('ERROR:  could not open file ', path, ' ', result)
 	return result

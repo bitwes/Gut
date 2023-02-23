@@ -17,7 +17,12 @@ var _editors = null
 var _cur_editor = null
 var _last_line = -1
 var _cur_script_path = null
-var _last_info = null
+var _last_info = {
+	script = null,
+	inner_class = null,
+	test_method = null
+}
+
 
 signal run_tests(what)
 
@@ -52,13 +57,13 @@ func _update_buttons(info):
 	_ctrls.btn_inner.visible = info.inner_class != null
 	_ctrls.arrow_1.visible = info.inner_class != null
 	_ctrls.btn_inner.text = str(info.inner_class)
-	_ctrls.btn_inner.hint_tooltip = str("Run all tests in Inner-Test-Class ", info.inner_class)
+	_ctrls.btn_inner.tooltip_text = str("Run all tests in Inner-Test-Class ", info.inner_class)
 
 	_ctrls.btn_method.visible = info.test_method != null
 	_ctrls.arrow_2.visible = info.test_method != null
 	_ctrls.btn_method.text = str(info.test_method)
-	_ctrls.btn_method.hint_tooltip = str("Run test ", info.test_method)
-	
+	_ctrls.btn_method.tooltip_text = str("Run test ", info.test_method)
+
 	# The button's new size won't take effect until the next frame.
 	# This appears to be what was causing the button to not be clickable the
 	# first time.
@@ -108,7 +113,7 @@ func set_script_text_editors(value):
 func activate_for_script(path):
 	_ctrls.btn_script.visible = true
 	_ctrls.btn_script.text = path.get_file()
-	_ctrls.btn_script.hint_tooltip = str("Run all tests in script ", path)
+	_ctrls.btn_script.tooltip_text = str("Run all tests in script ", path)
 	_cur_script_path = path
 	_editors.refresh()
 	_set_editor(_editors.get_current_text_edit())

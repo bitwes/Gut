@@ -86,7 +86,7 @@ func _write_results():
 	var f = FileAccess.open(RESULT_FILE, FileAccess.WRITE)
 	if(f != null):
 		f.store_string(content)
-		f.close()
+		f = null # closes file
 	else:
 		push_error('Could not save bbcode, result = ', FileAccess.get_open_error())
 

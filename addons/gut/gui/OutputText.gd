@@ -1,5 +1,6 @@
-extends VBoxContainer
 @tool
+extends VBoxContainer
+
 
 class SearchResults:
 	var L = 0
@@ -232,11 +233,12 @@ func search(text, start_pos, highlight=true):
 
 
 func copy_to_clipboard():
-	var selected = _ctrls.output.get_selection_text()
-	if(selected != ''):
-		OS.clipboard = selected
-	else:
-		OS.clipboard = _ctrls.output.text
+	return
+	# var selected = _ctrls.output.get_selection_text()
+	#if(selected != ''):
+	#	OS.clipboard = selected
+	#else:
+	#	OS.clipboard = _ctrls.output.text
 
 
 func clear():
@@ -287,7 +289,7 @@ func load_file(path):
 		return
 
 	var t = f.get_as_text()
-	f.close()
+	f = null # closes file
 	_ctrls.output.text = t
 	_ctrls.output.scroll_vertical = _ctrls.output.get_line_count()
 	_ctrls.output.set_deferred('scroll_vertical', _ctrls.output.get_line_count())

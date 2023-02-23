@@ -1,5 +1,5 @@
-extends Control
 @tool
+extends Control
 
 var _interface = null
 var _utils = load('res://addons/gut/utils.gd').new()

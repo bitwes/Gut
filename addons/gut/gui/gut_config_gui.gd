@@ -136,7 +136,7 @@ func _new_row(key, disp_text, value_ctrl, hint):
 	var ctrl = _base_control.duplicate()
 	var lbl = ctrl.get_child(0)
 
-	lbl.hint_tooltip = hint
+	lbl.tooltip_text = hint
 	lbl.text = disp_text
 	_base_container.add_child(ctrl)
 
