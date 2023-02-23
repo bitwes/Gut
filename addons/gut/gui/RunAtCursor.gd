@@ -148,8 +148,8 @@ func search_current_editor_for_text(txt):
 	var result = te.search(txt, 0, 0, 0)
 	var to_return = -1
 
-	if result.size() > 0:
-		to_return = result[TextEdit.SEARCH_RESULT_LINE]
+	# if result.size() > 0:
+	# 	to_return = result[TextEdit.SEARCH_RESULT_LINE]
 
 	return to_return
 

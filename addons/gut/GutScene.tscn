@@ -13,7 +13,7 @@ offset_bottom = 388.0
 theme = ExtResource("1_s37wl")
 
 [node name="MainBox" type="VBoxContainer" parent="Large"]
-anchors_preset = 15
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -22,11 +22,10 @@ metadata/_edit_layout_mode = 1
 
 [node name="TitleBar" type="Panel" parent="Large/MainBox"]
 custom_minimum_size = Vector2(0, 25)
-offset_right = 717.0
-offset_bottom = 25.0
+layout_mode = 2
 
 [node name="TitleBox" type="HBoxContainer" parent="Large/MainBox/TitleBar"]
-anchors_preset = 15
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = 2.0
@@ -36,53 +35,38 @@ grow_vertical = 2
 metadata/_edit_layout_mode = 1
 
 [node name="Spacer1" type="CenterContainer" parent="Large/MainBox/TitleBar/TitleBox"]
-offset_right = 285.0
-offset_bottom = 26.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Title" type="Label" parent="Large/MainBox/TitleBar/TitleBox"]
-offset_left = 289.0
-offset_top = 3.0
-offset_right = 334.0
-offset_bottom = 23.0
+layout_mode = 2
 text = "Title"
 
 [node name="Spacer2" type="CenterContainer" parent="Large/MainBox/TitleBar/TitleBox"]
-offset_left = 338.0
-offset_right = 623.0
-offset_bottom = 26.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="TimeLabel" type="Label" parent="Large/MainBox/TitleBar/TitleBox"]
 custom_minimum_size = Vector2(90, 0)
-offset_left = 627.0
-offset_top = 3.0
-offset_right = 717.0
-offset_bottom = 23.0
+layout_mode = 2
 text = "999.999s"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Large/MainBox"]
-offset_top = 29.0
-offset_right = 717.0
-offset_bottom = 379.0
+layout_mode = 2
 size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Large/MainBox/HBoxContainer"]
-offset_right = 717.0
-offset_bottom = 350.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="OutputBG" type="ColorRect" parent="Large/MainBox/HBoxContainer/VBoxContainer"]
-offset_right = 717.0
-offset_bottom = 300.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 size_flags_vertical = 3
 color = Color(0.0745098, 0.0705882, 0.0784314, 1)
 metadata/_edit_layout_mode = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/OutputBG"]
-anchors_preset = 15
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -90,13 +74,10 @@ grow_vertical = 2
 
 [node name="S2" type="CenterContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/OutputBG/HBoxContainer"]
 custom_minimum_size = Vector2(5, 0)
-offset_right = 5.0
-offset_bottom = 300.0
+layout_mode = 2
 
-[node name="Output" type="RichTextLabel" parent="Large/MainBox/HBoxContainer/VBoxContainer/OutputBG/HBoxContainer"]
-offset_left = 9.0
-offset_right = 708.0
-offset_bottom = 300.0
+[node name="TestOutput" type="RichTextLabel" parent="Large/MainBox/HBoxContainer/VBoxContainer/OutputBG/HBoxContainer"]
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 focus_mode = 2
@@ -106,117 +87,84 @@ selection_enabled = true
 
 [node name="S1" type="CenterContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/OutputBG/HBoxContainer"]
 custom_minimum_size = Vector2(5, 0)
-offset_left = 712.0
-offset_right = 717.0
-offset_bottom = 300.0
+layout_mode = 2
 
 [node name="ControlBox" type="HBoxContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer"]
-offset_top = 304.0
-offset_right = 717.0
-offset_bottom = 350.0
+layout_mode = 2
 
 [node name="S1" type="CenterContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
 custom_minimum_size = Vector2(5, 0)
-offset_right = 5.0
-offset_bottom = 46.0
+layout_mode = 2
 
 [node name="ProgressBars" type="VBoxContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
-offset_left = 9.0
-offset_right = 176.0
-offset_bottom = 46.0
+layout_mode = 2
 
 [node name="TestBox" type="HBoxContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/ProgressBars"]
-offset_right = 167.0
-offset_bottom = 21.0
+layout_mode = 2
 
 [node name="Label" type="Label" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/ProgressBars/TestBox"]
 custom_minimum_size = Vector2(60, 0)
-offset_right = 60.0
-offset_bottom = 20.0
+layout_mode = 2
 text = "Tests"
 
 [node name="ProgressTest" type="ProgressBar" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/ProgressBars/TestBox"]
 custom_minimum_size = Vector2(100, 0)
-offset_left = 64.0
-offset_right = 164.0
-offset_bottom = 21.0
+layout_mode = 2
 value = 25.0
 
 [node name="ScriptBox" type="HBoxContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/ProgressBars"]
-offset_top = 25.0
-offset_right = 167.0
-offset_bottom = 46.0
+layout_mode = 2
 
 [node name="Label" type="Label" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/ProgressBars/ScriptBox"]
 custom_minimum_size = Vector2(60, 0)
-offset_right = 63.0
-offset_bottom = 20.0
+layout_mode = 2
 text = "Scripts"
 
 [node name="ProgressScript" type="ProgressBar" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/ProgressBars/ScriptBox"]
 custom_minimum_size = Vector2(100, 0)
-offset_left = 67.0
-offset_right = 167.0
-offset_bottom = 21.0
+layout_mode = 2
 value = 75.0
 
 [node name="PathDisplay" type="VBoxContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
-offset_left = 180.0
-offset_right = 385.0
-offset_bottom = 46.0
+layout_mode = 2
 size_flags_vertical = 3
 
 [node name="Path" type="Label" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/PathDisplay"]
-offset_right = 205.0
-offset_bottom = 16.0
+layout_mode = 2
 theme_override_fonts/font = ExtResource("3_qvb8f")
 theme_override_font_sizes/font_size = 11
 text = "res://test/integration/whatever"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/PathDisplay"]
-offset_top = 20.0
-offset_right = 205.0
-offset_bottom = 36.0
+layout_mode = 2
 
 [node name="S3" type="CenterContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/PathDisplay/HBoxContainer"]
 custom_minimum_size = Vector2(5, 0)
-offset_right = 5.0
-offset_bottom = 16.0
+layout_mode = 2
 
 [node name="File" type="Label" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/PathDisplay/HBoxContainer"]
-offset_left = 9.0
-offset_right = 128.0
-offset_bottom = 16.0
+layout_mode = 2
 theme_override_fonts/font = ExtResource("3_qvb8f")
 theme_override_font_sizes/font_size = 11
 text = "test_this_thing.gd"
 
 [node name="Spacer1" type="CenterContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
-offset_left = 389.0
-offset_right = 624.0
-offset_bottom = 46.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Continue" type="Button" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
-offset_left = 628.0
-offset_top = 10.0
-offset_right = 708.0
-offset_bottom = 35.0
+layout_mode = 2
 size_flags_vertical = 4
 text = "Continue
 "
 
 [node name="S3" type="CenterContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
 custom_minimum_size = Vector2(5, 0)
-offset_left = 712.0
-offset_right = 717.0
-offset_bottom = 46.0
+layout_mode = 2
 
 [node name="BottomPad" type="CenterContainer" parent="Large/MainBox"]
 custom_minimum_size = Vector2(0, 5)
-offset_top = 383.0
-offset_right = 717.0
-offset_bottom = 388.0
+layout_mode = 2
 
 [node name="Min" type="Panel" parent="."]
 clip_contents = true
@@ -228,7 +176,7 @@ theme = ExtResource("1_s37wl")
 metadata/_edit_group_ = true
 
 [node name="MainBox" type="VBoxContainer" parent="Min"]
-anchors_preset = 15
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -237,11 +185,10 @@ metadata/_edit_layout_mode = 1
 
 [node name="TitleBar" type="Panel" parent="Min/MainBox"]
 custom_minimum_size = Vector2(0, 25)
-offset_right = 266.0
-offset_bottom = 25.0
+layout_mode = 2
 
 [node name="TitleBox" type="HBoxContainer" parent="Min/MainBox/TitleBar"]
-anchors_preset = 15
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = 2.0
@@ -251,125 +198,89 @@ grow_vertical = 2
 metadata/_edit_layout_mode = 1
 
 [node name="Spacer1" type="CenterContainer" parent="Min/MainBox/TitleBar/TitleBox"]
-offset_right = 77.0
-offset_bottom = 26.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Title" type="Label" parent="Min/MainBox/TitleBar/TitleBox"]
-offset_left = 81.0
-offset_top = 3.0
-offset_right = 126.0
-offset_bottom = 23.0
+layout_mode = 2
 text = "Title"
 
 [node name="Spacer2" type="CenterContainer" parent="Min/MainBox/TitleBar/TitleBox"]
-offset_left = 130.0
-offset_right = 208.0
-offset_bottom = 26.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="TimeLabel" type="Label" parent="Min/MainBox/TitleBar/TitleBox"]
-offset_left = 212.0
-offset_top = 3.0
-offset_right = 266.0
-offset_bottom = 23.0
+layout_mode = 2
 text = "0.000s"
 
 [node name="Body" type="HBoxContainer" parent="Min/MainBox"]
-offset_top = 29.0
-offset_right = 266.0
-offset_bottom = 119.0
+layout_mode = 2
 size_flags_vertical = 3
 
 [node name="LeftMargin" type="CenterContainer" parent="Min/MainBox/Body"]
 custom_minimum_size = Vector2(5, 0)
-offset_right = 5.0
-offset_bottom = 90.0
+layout_mode = 2
 
 [node name="BodyRows" type="VBoxContainer" parent="Min/MainBox/Body"]
-offset_left = 9.0
-offset_right = 257.0
-offset_bottom = 90.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="ProgressBars" type="HBoxContainer" parent="Min/MainBox/Body/BodyRows"]
-offset_right = 248.0
-offset_bottom = 21.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Min/MainBox/Body/BodyRows/ProgressBars"]
-offset_right = 122.0
-offset_bottom = 21.0
+layout_mode = 2
 
 [node name="Label" type="Label" parent="Min/MainBox/Body/BodyRows/ProgressBars/HBoxContainer"]
-offset_right = 18.0
-offset_bottom = 20.0
+layout_mode = 2
 text = "T:"
 
 [node name="ProgressTest" type="ProgressBar" parent="Min/MainBox/Body/BodyRows/ProgressBars/HBoxContainer"]
 custom_minimum_size = Vector2(100, 0)
-offset_left = 22.0
-offset_right = 122.0
-offset_bottom = 21.0
+layout_mode = 2
 value = 25.0
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="Min/MainBox/Body/BodyRows/ProgressBars"]
-offset_left = 126.0
-offset_right = 248.0
-offset_bottom = 21.0
+layout_mode = 2
 
 [node name="Label" type="Label" parent="Min/MainBox/Body/BodyRows/ProgressBars/HBoxContainer2"]
-offset_right = 18.0
-offset_bottom = 20.0
+layout_mode = 2
 text = "S:"
 
 [node name="ProgressScript" type="ProgressBar" parent="Min/MainBox/Body/BodyRows/ProgressBars/HBoxContainer2"]
 custom_minimum_size = Vector2(100, 0)
-offset_left = 22.0
-offset_right = 122.0
-offset_bottom = 21.0
+layout_mode = 2
 value = 75.0
 
 [node name="PathDisplay" type="VBoxContainer" parent="Min/MainBox/Body/BodyRows"]
-offset_top = 25.0
-offset_right = 248.0
-offset_bottom = 61.0
+layout_mode = 2
 size_flags_vertical = 3
 
 [node name="Path" type="Label" parent="Min/MainBox/Body/BodyRows/PathDisplay"]
-offset_right = 248.0
-offset_bottom = 16.0
+layout_mode = 2
 theme_override_fonts/font = ExtResource("3_qvb8f")
 theme_override_font_sizes/font_size = 11
 text = "res://test/integration/whatever"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Min/MainBox/Body/BodyRows/PathDisplay"]
-offset_top = 20.0
-offset_right = 248.0
-offset_bottom = 36.0
+layout_mode = 2
 
 [node name="S3" type="CenterContainer" parent="Min/MainBox/Body/BodyRows/PathDisplay/HBoxContainer"]
 custom_minimum_size = Vector2(5, 0)
-offset_right = 5.0
-offset_bottom = 16.0
+layout_mode = 2
 
 [node name="File" type="Label" parent="Min/MainBox/Body/BodyRows/PathDisplay/HBoxContainer"]
-offset_left = 9.0
-offset_right = 128.0
-offset_bottom = 16.0
+layout_mode = 2
 theme_override_fonts/font = ExtResource("3_qvb8f")
 theme_override_font_sizes/font_size = 11
 text = "test_this_thing.gd"
 
 [node name="Continue" type="Button" parent="Min/MainBox/Body/BodyRows"]
-offset_top = 65.0
-offset_right = 248.0
-offset_bottom = 90.0
+layout_mode = 2
 text = "Continue
 "
 
 [node name="RightMargin" type="CenterContainer" parent="Min/MainBox/Body"]
 custom_minimum_size = Vector2(5, 0)
-offset_left = 261.0
-offset_right = 266.0
-offset_bottom = 90.0
+layout_mode = 2

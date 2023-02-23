@@ -96,7 +96,7 @@ func _open_file(path, line_number):
 		return
 
 	var r = load(path)
-	if(line_number != -1):
+	if(line_number != null and line_number != -1):
 		_interface.edit_script(r, line_number)
 	else:
 		_interface.edit_script(r)
@@ -320,7 +320,10 @@ func _handle_tree_item_select(item, force_scroll):
 # inner class that may have be a duplicate of a method name in a different
 # inner class)
 func _get_line_number_for_seq_search(search_strings, te):
-#	var te = _editors.get_current_text_edit()
+	if(te == null):
+		print("No Text editor to get line number for")
+		return 0;
+
 	var result = null
 	var line = Vector2i(-1, -1)
 	var s_flags = 0
@@ -353,7 +356,7 @@ func _goto_code(path, line, method_name='', inner_class =''):
 			search_strings.append(method_name)
 
 		line = _get_line_number_for_seq_search(search_strings, _editors.get_current_text_edit())
-		if(line != -1):
+		if(line != null and line != -1):
 			_interface.get_script_editor().goto_line(line)
 
 
@@ -370,7 +373,7 @@ func _goto_output(path, method_name, inner_class):
 		search_strings.append(method_name)
 
 	var line = _get_line_number_for_seq_search(search_strings, _output_control.get_rich_text_edit())
-	if(line != -1):
+	if(line != null and line != -1):
 		_output_control.scroll_to_line(line)
 
 
@@ -380,13 +383,9 @@ func _show_all_passed():
 
 
 func _set_collapsed_on_all(item, value):
-	if(item == _root):
-		var node = _root.get_children()
-		while(node != null):
-			node.call_recursive('set_collapsed', value)
-			node = node.get_next()
-	else:
-		item.call_recursive('set_collapsed', value)
+	item.set_collapsed_recursive(value)
+	if(item == _root and value):
+		item.set_collapsed(false)
 
 # --------------
 # Events
@@ -403,7 +402,6 @@ func _on_Tree_item_selected():
 
 func _on_Tree_item_activated():
 	# force scroll
-	print('double clicked')
 	_handle_tree_item_select(_ctrls.tree.get_selected(), true)
 
 func _on_Collapse_pressed():

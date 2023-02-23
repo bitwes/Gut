@@ -25,7 +25,7 @@ class GuiHandler:
 		_ctrls.path_file = _get_first_child_named('File', _gui)
 		_ctrls.prog_script = _get_first_child_named('ProgressScript', _gui)
 		_ctrls.prog_test = _get_first_child_named('ProgressTest', _gui)
-		_ctrls.rtl = _get_first_child_named('Output', _gui)
+		_ctrls.rtl = _get_first_child_named('TestOutput', _gui)
 		_ctrls.rtl_bg = _get_first_child_named('OutputBG', _gui)
 		_ctrls.time_label = _get_first_child_named('TimeLabel', _gui)
 
