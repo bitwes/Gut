@@ -62,6 +62,10 @@ const WAITING_MESSAGE = '/# waiting #/'
 const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
 const COMPLETED = 'completed'
 
+# use a class as a sentinel value since it can be used in expressions that require a const value
+class YIELD_FROM_OBJ:
+	pass
+
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
 var _strutils = _utils.Strutils.new()
@@ -320,10 +324,18 @@ func _on_log_level_changed(value):
 # This is the most number of parameters GUT supports on signals.  The comment
 # on _on_watched_signal explains reasoning.
 # ------------------------------------------------------------------------------
-func _yielding_callback(from_obj=false,
+func _yielding_callback(
 		__arg1=null, __arg2=null, __arg3=null,
 		__arg4=null, __arg5=null, __arg6=null,
-		__arg7=null, __arg8=null, __arg9=null):
+		__arg7=null, __arg8=null, __arg9=null,
+		# one extra for the sentinel
+		__arg10=null):
+	var args = [
+		__arg1, __arg2, __arg3, __arg4, __arg5,
+		__arg6, __arg7, __arg8, __arg9, __arg10
+	]
+	var from_obj = YIELD_FROM_OBJ in args
+
 	_lgr.end_yield()
 	if(_yielding_to.obj):
 		_yielding_to.obj.call_deferred(
@@ -1416,7 +1428,7 @@ func set_yield_frames(frames, text=''):
 # number of seconds, whichever comes first.
 # ------------------------------------------------------------------------------
 func set_yield_signal_or_time(obj, signal_name, max_wait, text=''):
-	obj.connect(signal_name, self, '_yielding_callback', [true])
+	obj.connect(signal_name, self, '_yielding_callback', [YIELD_FROM_OBJ])
 	_yielding_to.obj = obj
 	_yielding_to.signal_name = signal_name
 
