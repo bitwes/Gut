@@ -1,51 +1,19 @@
 # Porting GUT to Godot 4.0
 
-
+IT'S MOSTLY USABLE!!
 
 ## Overview
 Ported to Godot 4 RC 2
 
-GUT is currently somewhat usable in 4.0.  Some features work, but many do not.  The CLI works, but the in-editor panel does not.
+GUT is currently mostly usable in 4.0.  The panel works for the most part but still has bugs.  The CLI and VSCode Plugin work fine.
 
 This file tracks the changes that have occurred in porting GUT to Godot 4.0.  All issues related to the conversion have the [Godot 4.0](https://github.com/bitwes/Gut/issues?q=is%3Aissue+is%3Aopen+label%3A%22Godot+4.0%22) tag.
-
-<ins>Current results of all GUT tests</ins>
-
-```
-Totals
-Scripts:          48
-Passing tests     1062
-Failing tests     8
-Risky tests       16
-Pending:          29
-Asserts:          1671 of 1686 passed
-
-Warnings/Errors:
-* 15 Errors.
-* 35 Warnings.
-* 4 Deprecated calls.
-
-1057 passed 12 failed.  Tests finished in 149.371s
-```
-
 
 
 ## Contributing
 Pull requests are welcome.  You can look at the [Godot 4.0](https://github.com/bitwes/Gut/issues?q=is%3Aissue+is%3Aopen+label%3A%22Godot+4.0%22) issues for items that need to be addressed.  If you find something that is not mentioned, please make an issue.  There are also a lot of pending and failing tests that need to be addressed.
 
-Running tests for GUT requires using the CLI or VSCode plugin currently.
-
-Read the "Working" and "Broken" features section before starting.  There are some major features that are not working.  These features might be required before other features can be fixed.  `yield`/`await` and doubling inner classes are big ones.
-
-* You can use the `skip_script` variable (details below) to skip inner classes in a test script.
-* Use the following format for skipping individual tests in a script:
-```gdscript
-pending('<put reason here> 4.0')
-return
-
-<rest of test code here>
-```
-
+Read the "Working" and "Broken" features section before starting.
 
 
 ## Godot 4 Changes
@@ -61,20 +29,21 @@ These are changes to Godot that affect how GUT is used/implemented.
 
 ## Working Features
 * The command line seems to be working fine.
-* Basic asserts (assert_eq, ne, between etc) with anything except arrays and dictionaries.
+* The in-editor panel is usable, but not bug free yet.
+* Most all asserts are working now.
 * `assert_is` seems is working now.
 * Signal asserts
 * Signal connection asserts
 * Orphan monitoring
-* Doubling, Spying, Stubbing (mostly).  Cannot double inner classes.
+* Doubling, Spying, Stubbing (mostly).  Doubling Inner Classes has changed.
 * Using `await` (the new `yield`) in tests, and all the GUT supplied `yield_` methods.  See notes in Changes section.
 * Input mocking.
 * Doubling Inner Classes has been fixed and all the tests have been restored.
-* Comparing Dictionary/Arrys with `assert_eq`, `assert_eq_deep`, and the new `assert_same` and `assert_not_same` for comparing references.  See Godot's new `is_same` function for details on how `assert_same` works (it's just an assertion wrapper around `is_same`).  See the section "Comparing Dictionaries and Arrays" below for more details.
+* Comparing Dictionary/Arrays with `assert_eq`, `assert_eq_deep`, and the new `assert_same` and `assert_not_same` for comparing references.  See Godot's new `is_same` function for details on how `assert_same` works (it's just an assertion wrapper around `is_same`).  See the section "Comparing Dictionaries and Arrays" below for more details.
 
 
 ## Broken Features
-* Gut Panel.  The in-editor panel is not working, you must use the CLI or the VSCode plugin (which uses the cli) for now.
+* Gut Panel.  The in-editor panel has a lot of bugs, but you can run individual scripts or your entire test suite from the panel.
 * Other misc items.
 
 
