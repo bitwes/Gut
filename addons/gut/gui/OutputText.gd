@@ -113,7 +113,10 @@ func _test_running_setup():
 	_ctrls.word_wrap.text = 'ww'
 
 	set_all_fonts("CourierPrime")
-	set_font_size(20)
+#	set_all_fonts("LobsterTwo")
+	set_font_size(5)
+	print(_ctrls.output.get_theme_font_size("normal_font"))
+	_ctrls.output.queue_redraw()
 
 	load_file('user://.gut_editor.bbcode')
 
@@ -125,8 +128,8 @@ func _ready():
 	_ctrls.word_wrap.icon = get_theme_icon('Loop', 'EditorIcons')
 
 	_ctrls.use_colors.button_pressed = true
-
 	_setup_colors()
+	
 	if(get_parent() == get_tree().root):
 		_test_running_setup()
 
@@ -180,16 +183,11 @@ func _setup_colors():
 func _set_font(font_name, custom_name):
 	var rtl = _ctrls.output
 	if(font_name == null):
-		rtl.set('custom_fonts/' + custom_name, null)
+		rtl.add_theme_font_override(custom_name, null)
 	else:
-		pass
-		# cuasing issues in 4.0
-		# var dyn_font = FontFile.new()
-		# var font_data = FontFile.new()
-		# font_data.font_path = 'res://addons/gut/fonts/' + font_name + '.ttf'
-		# font_data.antialiased = true
-		# dyn_font.font_data = font_data
-		# rtl.set('custom_fonts/' + custom_name, dyn_font)
+		var dyn_font = FontFile.new()
+		dyn_font.load_dynamic_font('res://addons/gut/fonts/' + font_name + '.ttf')
+		rtl.add_theme_font_override(custom_name, dyn_font)
 
 
 # ------------------
@@ -282,22 +280,31 @@ func clear():
 func set_all_fonts(base_name):
 	if(base_name == 'Default'):
 		_set_font(null, 'font')
-#		_set_font(null, 'normal_font')
-#		_set_font(null, 'bold_font')
-#		_set_font(null, 'italics_font')
-#		_set_font(null, 'bold_italics_font')
+		_set_font(null, 'normal_font')
+		_set_font(null, 'bold_font')
+		_set_font(null, 'italics_font')
+		_set_font(null, 'bold_italics_font')
 	else:
 		_set_font(base_name + '-Regular', 'font')
-#		_set_font(base_name + '-Regular', 'normal_font')
-#		_set_font(base_name + '-Bold', 'bold_font')
-#		_set_font(base_name + '-Italic', 'italics_font')
-#		_set_font(base_name + '-BoldItalic', 'bold_italics_font')
+		_set_font(base_name + '-Regular', 'normal_font')
+		_set_font(base_name + '-Bold', 'bold_font')
+		_set_font(base_name + '-Italic', 'italics_font')
+		_set_font(base_name + '-BoldItalic', 'bold_italics_font')
 
 
 func set_font_size(new_size):
+	return # this isn't working.
 	var rtl = _ctrls.output
-	if(rtl.get('custom_fonts/font') != null):
-		rtl.get('custom_fonts/font').size = new_size
+#	rtl.add_theme_font_size_override("font", new_size)
+#	rtl.add_theme_font_size_override("normal_font", new_size)
+#	rtl.add_theme_font_size_override("bold_font", new_size)
+#	rtl.add_theme_font_size_override("italics_font", new_size)
+#	rtl.add_theme_font_size_override("bold_italics_font", new_size)
+	rtl.set("theme_override_font_sizes/size", new_size)
+	print(rtl.get("theme_override_font_sizes/size"))
+	
+#	if(rtl.get('custom_fonts/font') != null):
+#		rtl.get('custom_fonts/font').size = new_size
 #		rtl.get('custom_fonts/bold_italics_font').size = new_size
 #		rtl.get('custom_fonts/bold_font').size = new_size
 #		rtl.get('custom_fonts/italics_font').size = new_size
@@ -312,7 +319,7 @@ func get_use_colors():
 	return false;
 
 
-func get_rich_text_edit():
+func get_rich_text_edit():df
 	return _ctrls.output
 
 
