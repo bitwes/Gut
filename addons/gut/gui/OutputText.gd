@@ -268,12 +268,11 @@ func search(text, start_pos, highlight=true):
 
 
 func copy_to_clipboard():
-	return
-	# var selected = _ctrls.output.get_selection_text()
-	#if(selected != ''):
-	#	OS.clipboard = selected
-	#else:
-	#	OS.clipboard = _ctrls.output.text
+	var selected = _ctrls.output.get_selected_text()
+	if(selected != ''):
+		DisplayServer.clipboard_set(selected)
+	else:
+		DisplayServer.clipboard_set(_ctrls.output.text)
 
 
 func clear():

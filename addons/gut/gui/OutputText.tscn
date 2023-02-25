@@ -66,6 +66,8 @@ text = "  Clear  "
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+deselect_on_focus_loss_enabled = false
+virtual_keyboard_enabled = false
 highlight_current_line = true
 syntax_highlighter = SubResource("CodeHighlighter_qilgn")
 
