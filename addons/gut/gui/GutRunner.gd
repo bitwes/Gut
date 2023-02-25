@@ -82,7 +82,6 @@ func _setup_gui(show_gui):
 
 func _write_results():
 	var content = _gui.get_textbox().get_parsed_text() #_gut.logger.get_gui_bbcode()
-	print('content = ', content)
 	var f = FileAccess.open(RESULT_FILE, FileAccess.WRITE)
 	if(f != null):
 		f.store_string(content)

@@ -1,5 +1,5 @@
 # Holds weakrefs to a ScriptTextEditor and related children nodes
-# that might be useful.  Though the TextEdit is really the only one, but
+# that might be useful.  Though the CodeEdit is really the only one, but
 # since the tree may change, the first TextEdit under a CodeTextEditor is
 # the one we use...so we hold a ref to the CodeTextEditor too.
 class ScriptEditorControlRef:
@@ -10,6 +10,7 @@ class ScriptEditorControlRef:
 	func _init(script_edit):
 		_script_editor = weakref(script_edit)
 		_populate_controls()
+		# print("_script_editor = ", script_edit, ' vis = ', is_visible())
 
 
 	func _populate_controls():
@@ -29,7 +30,7 @@ class ScriptEditorControlRef:
 		var to_return = null
 
 		while(index < kids.size() and to_return == null):
-			if(str(kids[index]).find(str("[", obj_name)) != -1):
+			if(str(kids[index]).find(str("<", obj_name)) != -1):
 				to_return = kids[index]
 			else:
 				to_return = _get_first_child_named(obj_name, kids[index])
@@ -83,7 +84,7 @@ func _init(script_edit):
 
 
 func _is_script_editor(obj):
-	return str(obj).find('[ScriptTextEditor') != -1
+	return str(obj).find('<ScriptTextEditor') != -1
 
 
 # Find the first ScriptTextEditor and then get its parent.  Done this way
@@ -109,14 +110,19 @@ func _populate_editors():
 # easier than trying to find a place where it could be used by both.
 func _get_first_child_of_type_name(obj_name, parent_obj):
 	if(parent_obj == null):
+		# print('aborting search for ', obj_name, ' parent is null')
 		return null
 
 	var kids = parent_obj.get_children()
 	var index = 0
 	var to_return = null
 
+	var search_for = str("<", obj_name)
+	# print('searching for ', search_for, ' in ', parent_obj, ' kids ', kids.size())
 	while(index < kids.size() and to_return == null):
-		if(str(kids[index]).find(str("[", obj_name)) != -1):
+		var this_one = str(kids[index])
+		# print(search_for, ' :: ', this_one)
+		if(this_one.find(search_for) != -1):
 			to_return = kids[index]
 		else:
 			to_return = _get_first_child_of_type_name(obj_name, kids[index])
@@ -142,9 +148,12 @@ func _get_class_name_from_line(text):
 func refresh():
 	if(_script_editors_parent == null):
 		_find_script_editors_parent()
+		# print("script editors parent = ", _script_editors_parent)
 
 	if(_script_editors_parent != null):
 		_populate_editors()
+
+	# print("script editor controls = ", _script_editor_controls)
 
 
 func get_current_text_edit():
