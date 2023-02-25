@@ -245,7 +245,11 @@ func _on_SearchTerm_gui_input(event):
 		show_search(false)
 
 func _on_WordWrap_pressed():
-	_ctrls.output.wrap_enabled = _ctrls.word_wrap.pressed
+	if(_ctrls.word_wrap.button_pressed):
+		_ctrls.output.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
+	else:
+		_ctrls.output.wrap_mode = TextEdit.LINE_WRAPPING_NONE
+	
 	_ctrls.output.queue_redraw()
 
 # ------------------
