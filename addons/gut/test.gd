@@ -736,7 +736,7 @@ func assert_is(object, a_class, text=''):
 		if(!_utils.is_native_class(a_class) and !_utils.is_gdscript(a_class)):
 			_fail(str(bad_param_2, a_str))
 		else:
-			if(object is a_class):
+			if(is_instance_of(object, a_class)):
 				_pass(disp)
 			else:
 				_fail(disp)

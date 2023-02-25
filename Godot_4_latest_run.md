@@ -19,10 +19,10 @@ res://test/unit/test_gut.gd.TestEverythingElse
 
 res://test/unit/test_gut_yielding.gd.TestWaitSeconds
 - test_failing_assert_ends_yield
-    [Failed]:  [0.516293] expected to be > than [999.0]:  Testing that GUT continues after failing assert; ignore failing unless value not ~.5.
+    [Failed]:  [0.51062822222222] expected to be > than [999.0]:  Testing that GUT continues after failing assert; ignore failing unless value not ~.5.
           at line 183
 - test_pending_ends_yield
-    [Pending]:  Testing Gut continues after yield.  0.516739 should be ~.5.
+    [Pending]:  Testing Gut continues after yield.  0.51090922222222 should be ~.5.
 
 res://test/unit/test_logger.gd
 - test_get_set_gut
@@ -147,5 +147,5 @@ Warnings/Errors:
 * 4 Deprecated calls.
 
 
-1118 passed 8 failed.  Tests finished in 115.214s
+1118 passed 8 failed.  Tests finished in 117.669s
 ```

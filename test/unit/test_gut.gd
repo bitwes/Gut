@@ -529,7 +529,7 @@ class TestEverythingElse:
 		var objs = gr.test_gut._test_script_objects
 		var obj = null
 		for i in range(objs.size()):
-			if(objs[i] is the_type):
+			if(is_instance_of(objs[i], the_type)):
 				obj = objs[i]
 			print('- ', _str(objs[i]))
 		return obj

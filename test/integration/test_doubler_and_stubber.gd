@@ -48,7 +48,7 @@ class TestTheBasics:
 		var sp = StubParams.new(DOUBLE_ME_PATH, 'get_value').to_return(7)
 		gr.stubber.add_stub(sp)
 		var dbl = autofree(D.new())
-		assert_true(dbl is DoubleMe, 'it is a DoubleMe')
+		assert_is(dbl, DoubleMe, 'it is a DoubleMe')
 		assert_eq(dbl.get_value(), 7)
 		if(is_failing()):
 			print(DoubleMe, D, dbl)
