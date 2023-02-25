@@ -1,7 +1,9 @@
 @tool
 extends VBoxContainer
 
-
+# ##############################################################################
+# Keeps search results from teh TextEdit
+# ##############################################################################
 class SearchResults:
 	var L = 0
 	var C = 0
@@ -82,6 +84,9 @@ class SearchResults:
 
 
 
+# ##############################################################################
+# Start OutputText control code
+# ##############################################################################
 @onready var _ctrls = {
 	output = $Output,
 
@@ -96,8 +101,12 @@ class SearchResults:
 		search_term = $Search/SearchTerm,
 	}
 }
-var _sr = SearchResults.new()
 
+var _sr = SearchResults.new()
+var _highlighter = _create_highlighter()
+
+# Automatically used when running the OutputText scene from the editor.  Changes
+# to this method only affect test-running the control through the editor.
 func _test_running_setup():
 	_ctrls.use_colors.text = 'use colors'
 	_ctrls.show_search.text = 'search'
@@ -115,16 +124,29 @@ func _ready():
 	_ctrls.show_search.icon = get_theme_icon('Search', 'EditorIcons')
 	_ctrls.word_wrap.icon = get_theme_icon('Loop', 'EditorIcons')
 
+	_ctrls.use_colors.button_pressed = true
+
 	_setup_colors()
 	if(get_parent() == get_tree().root):
 		_test_running_setup()
 
-
 # ------------------
 # Private
 # ------------------
-func _setup_colors():
-	_ctrls.output.clear()
+
+# Call this after changes in colors and the like to get them to apply.  reloads
+# the text of the output control.
+func _refresh_output():
+	var orig_pos = _ctrls.output.scroll_vertical
+	var text = _ctrls.output.text
+
+	_ctrls.output.text = text
+	_ctrls.output.scroll_vertical = orig_pos
+
+
+func _create_highlighter():
+	var to_return = CodeHighlighter.new()
+
 	var keywords = [
 		['Failed', Color.RED],
 		['Passed', Color.GREEN],
@@ -135,15 +157,20 @@ func _setup_colors():
 	]
 
 	for keyword in keywords:
-		if (_ctrls.output.syntax_highlighter == null) :
-			_ctrls.output.syntax_highlighter = CodeHighlighter.new()
-		_ctrls.output.syntax_highlighter.add_keyword_color(keyword[0], keyword[1])
+		to_return.add_keyword_color(keyword[0], keyword[1])
+
+	return to_return
+
+
+func _setup_colors():
+	_ctrls.output.clear()
 
 	var f_color = null
 	if (_ctrls.output.theme == null) :
 		f_color = get_theme_color("font_color")
 	else :
 		f_color = _ctrls.output.theme.font_color
+
 	_ctrls.output.add_theme_color_override("font_color_readonly", f_color)
 	_ctrls.output.add_theme_color_override("function_color", f_color)
 	_ctrls.output.add_theme_color_override("member_variable_color", f_color)
@@ -173,7 +200,11 @@ func _on_CopyButton_pressed():
 
 
 func _on_UseColors_pressed():
-	_ctrls.output.syntax_highlighter = _ctrls.use_colors.button_pressed
+	if(_ctrls.use_colors.button_pressed):
+		_ctrls.output.syntax_highlighter = _highlighter
+	else:
+		_ctrls.output.syntax_highlighter = null
+	_refresh_output()
 
 
 func _on_ClearButton_pressed():
@@ -283,7 +314,6 @@ func get_rich_text_edit():
 
 
 func load_file(path):
-
 	var f = FileAccess.open(path, FileAccess.READ)
 	if(f == null):
 		return
