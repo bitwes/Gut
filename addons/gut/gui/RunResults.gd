@@ -39,8 +39,8 @@ signal search_for_text(text)
 }
 
 func _test_running_setup():
-	_hide_passing = true
-	_show_orphans = true
+	_hide_passing = false
+	_show_orphans = false
 	var _gut_config = load('res://addons/gut/gut_config.gd').new()
 	_gut_config.load_panel_options('res://.gut_editor_config.json')
 	set_font(
@@ -71,6 +71,7 @@ func _ready():
 	_ctrls.tree.set_column_expand(0, true)
 	_ctrls.tree.set_column_expand(1, false)
 	_ctrls.tree.set_column_custom_minimum_width(1, s_size.x)
+	_ctrls.tree.set_column_clip_content(0, true)
 
 	_set_toolbutton_icon(_ctrls.toolbar.collapse, 'CollapseTree', 'c')
 	_set_toolbutton_icon(_ctrls.toolbar.collapse_all, 'CollapseTree', 'c')
@@ -87,8 +88,10 @@ func _ready():
 
 	call_deferred('_update_min_width')
 
+
 func _update_min_width():
 	custom_minimum_size.x = _ctrls.toolbar.toolbar.size.x
+
 
 func _open_file(path, line_number):
 	if(_interface == null):
@@ -117,13 +120,26 @@ func _add_script_tree_item(script_path, script_json):
 		if(parent == null):
 			parent = _add_script_tree_item(path_info.path, {})
 
+		parent.get_metadata(0).inner_tests += script_json['props']['tests']
+		parent.get_metadata(0).inner_passing += script_json['props']['tests']
+		parent.get_metadata(0).inner_passing -= script_json['props']['failures']
+		parent.get_metadata(0).inner_passing -= script_json['props']['pending']
+		
+		var total_text = str("All ", parent.get_metadata(0).inner_tests, " passed")
+		if(parent.get_metadata(0).inner_passing != parent.get_metadata(0).inner_tests):
+			total_text = str(parent.get_metadata(0).inner_passing, '/', parent.get_metadata(0).inner_tests, ' passed.')
+		parent.set_text(1, total_text)
+
 	var item = _ctrls.tree.create_item(parent)
 	item.set_text(0, item_text)
 	var meta = {
 		"type":"script",
 		"path":path_info.path,
 		"inner_class":path_info.inner_class,
-		"json":script_json}
+		"json":script_json,
+		"inner_passing":0,
+		"inner_tests":0
+	}
 	item.set_metadata(0, meta)
 	item.set_custom_bg_color(1, _col_1_bg_color)
 
@@ -192,6 +208,35 @@ func _add_test_tree_item(test_name, test_json, script_item):
 	return item
 
 
+
+func _add_script_to_tree(key, script_json):
+	var tests = script_json['tests']
+	var test_keys = tests.keys()
+	var s_item = _add_script_tree_item(key, script_json)
+	var bad_count = 0
+
+	for test_key in test_keys:
+		var t_item = _add_test_tree_item(test_key, tests[test_key], s_item)
+		if(tests[test_key].status != 'pass'):
+			bad_count += 1
+		elif(t_item != null):
+			t_item.collapsed = true
+
+	# get_children returns the first child or null.  its a dumb name.
+	if(s_item.get_children() == null):
+		# var m = s_item.get_metadata(0)
+		# print('!! Deleting ', m.path, ' ', m.inner_class)
+		s_item.free()
+	else:
+		var total_text = str('All ', test_keys.size(), ' passed')
+		if(bad_count == 0):
+			s_item.collapsed = true
+		else:
+			total_text = str(test_keys.size() - bad_count, '/', test_keys.size(), ' passed')
+		s_item.set_text(1, total_text)
+
+
+
 func _load_result_tree(j):
 	var scripts = j['test_scripts']['scripts']
 	var script_keys = scripts.keys()
@@ -199,33 +244,9 @@ func _load_result_tree(j):
 	# 'nothing to see here' should be visible.
 	clear_centered_text()
 
-	var _last_script_item = null
-	for key in script_keys:
-		var tests = scripts[key]['tests']
-		var test_keys = tests.keys()
-		var s_item = _add_script_tree_item(key, scripts[key])
-		var bad_count = 0
-
-		for test_key in test_keys:
-			var t_item = _add_test_tree_item(test_key, tests[test_key], s_item)
-			if(tests[test_key].status != 'pass'):
-				bad_count += 1
-			elif(t_item != null):
-				t_item.collapsed = true
-
-		# get_children returns the first child or null.  its a dumb name.
-		if(s_item.get_children() == null):
-			# var m = s_item.get_metadata(0)
-			# print('!! Deleting ', m.path, ' ', m.inner_class)
-			s_item.free()
-		else:
-			var total_text = str(test_keys.size(), ' passed')
-#			s_item.set_text_alignment(1, s_item.ALIGN_LEFT)
-			if(bad_count == 0):
-				s_item.collapsed = true
-			else:
-				total_text = str(test_keys.size() - bad_count, ' of ', test_keys.size(), ' passed')
-			s_item.set_text(1, total_text)
+	for key in script_keys:		
+		if(scripts[key]['props']['tests'] > 0):
+			_add_script_to_tree(key, scripts[key])
 
 	_free_childless_scripts()
 	_show_all_passed()
@@ -277,7 +298,13 @@ func _get_path_and_inner_class_name_from_test_path(path):
 
 
 func _handle_tree_item_select(item, force_scroll):
-	var item_type = item.get_metadata(0).type
+	var item_meta = item.get_metadata(0)
+	var item_type = null
+	
+	if(item_meta == null):
+		return
+	else:
+		item_type = item_meta.type
 
 	var path = '';
 	var line = -1;
@@ -430,15 +457,15 @@ func load_json_file(path):
 	var text = _utils.get_file_as_text(path)
 	if(text != ''):
 		var test_json_conv = JSON.new()
-		test_json_conv.parse(text)
-		var result = test_json_conv.get_data()
-		if(result.error != OK):
+		var result = test_json_conv.parse(text)
+		if(result != OK):
 			add_centered_text(str(path, " has invalid json in it \n",
-				'Error ', result.error, "@", result.error_line, "\n",
-				result.error_string))
+				'Error ', result, "@", test_json_conv.get_error_line(), "\n",
+				test_json_conv.get_error_message()))
 			return
-
-		load_json_results(result.result)
+			
+		var data = test_json_conv.get_data()
+		load_json_results(data)
 	else:
 		add_centered_text(str(path, ' was empty or does not exist.'))
 
@@ -483,6 +510,7 @@ func collapse_selected():
 	var item = _ctrls.tree.get_selected()
 	if(item != null):
 		_set_collapsed_on_all(item, true)
+
 
 func expand_selected():
 	var item = _ctrls.tree.get_selected()
