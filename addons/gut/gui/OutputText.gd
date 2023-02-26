@@ -2,85 +2,61 @@
 extends VBoxContainer
 
 # ##############################################################################
-# Keeps search results from teh TextEdit
+# Keeps search results from the TextEdit
 # ##############################################################################
-class SearchResults:
-	var L = 0
-	var C = 0
-
-	var positions = []
-	var te = null
+class TextEditSearcher:
+	var te : TextEdit
 	var _last_term = ''
-
-	func _search_te(text, start_position, flags=0):
-		var start_pos = start_position
-		if(start_pos[L] < 0 or start_pos[L] > te.get_line_count()):
-			start_pos[L] = 0
-		if(start_pos[C] < 0):
-			start_pos[L] = 0
-
-		var result = te.search(text, flags, start_pos[L], start_pos[C])
-		if(result.size() == 2 and result[L] == start_position[L] and
-			result[C] == start_position[C] and text == _last_term):
-			if(flags == TextEdit.SEARCH_BACKWARDS):
-				result[C] -= 1
+	var _last_pos = Vector2(-1, -1)
+	var _ignore_caret_change = false
+		
+	func set_text_edit(which):
+		te = which
+		te.caret_changed.connect(_on_caret_changed)
+		
+		
+	func _on_caret_changed():
+		if(_ignore_caret_change):
+			_ignore_caret_change = false
+		else:
+			_last_pos = _get_caret();
+		
+			
+	func _get_caret():
+		return Vector2(te.get_caret_column(), te.get_caret_line())
+	
+	
+	func _set_caret_and_sel(pos, len):
+		te.set_caret_line(pos.y)
+		te.set_caret_column(pos.x)
+		if(len > 0):
+			te.select(pos.y, pos.x, pos.y, pos.x + len)
+		
+		
+	func _find(term, search_flags):
+		var pos = _get_caret()
+		if(term == _last_term):
+			if(search_flags == 0):
+				pos = _last_pos
+				pos.x += 1
 			else:
-				result[C] += 1
-			result = _search_te(text, result, flags)
-			L = result.y
-			C = result.x
-		elif(result.size() == 2):
-			te.scroll_vertical = result[L]
-			te.select(result[L], result[C], result[L], result[C] + text.length())
-			te.set_caret_column(result[C])
-			te.set_caret_line(result[L])
-			te.center_viewport_to_caret()
-			L = result.y
-			C = result.x
+				pos = _last_pos
+				pos.x -= 1
 
-		_last_term = text
-		te.center_viewport_to_caret()
-		return result
-
-	func _cursor_to_pos():
-		var to_return = [0, 0]
-		to_return[L] = te.get_caret_line()
-		to_return[C] = te.get_caret_column()
-		return to_return
-
+		var result = te.search(term, search_flags, pos.y, pos.x)
+#		print('searching from ', pos, ' for "', term, '" = ', result)
+		if(result.y != -1):
+			_ignore_caret_change = true
+			_set_caret_and_sel(result, term.length())
+			_last_pos = result
+			
+		_last_term = term	
+	
 	func find_next(term):
-		return _search_te(term, _cursor_to_pos())
-
+		_find(term, 0)
+		
 	func find_prev(term):
-		var new_pos = _search_te(term, _cursor_to_pos(), TextEdit.SEARCH_BACKWARDS)
-		return new_pos
-
-	func get_next_pos():
-		pass
-
-	func get_prev_pos():
-		pass
-
-	func clear():
-		pass
-
-	func find_all(text):
-		var c_pos = [0, 0]
-		var found = true
-		var last_pos = [0, 0]
-		positions.clear()
-
-		while(found):
-			c_pos = te.search(text, 0, c_pos[L], c_pos[C])
-
-			if(c_pos.size() > 0 and
-				(c_pos[L] > last_pos[L] or
-					(c_pos[L] == last_pos[L] and c_pos[C] > last_pos[C]))):
-				positions.append([c_pos[L], c_pos[C]])
-				c_pos[C] += 1
-				last_pos = c_pos
-			else:
-				found = false
+		_find(term, te.SEARCH_BACKWARDS)
 
 
 
@@ -95,6 +71,7 @@ class SearchResults:
 	clear_button = $Toolbar/ClearButton,
 	word_wrap = $Toolbar/WordWrap,
 	show_search = $Toolbar/ShowSearch,
+	caret_position = $Toolbar/LblPosition,
 
 	search_bar = {
 		bar = $Search,
@@ -102,8 +79,8 @@ class SearchResults:
 	}
 }
 
-var _sr = SearchResults.new()
-var _highlighter = _create_highlighter()
+var _sr = TextEditSearcher.new()
+var _highlighter : CodeHighlighter
 
 # Automatically used when running the OutputText scene from the editor.  Changes
 # to this method only affect test-running the control through the editor.
@@ -113,22 +90,34 @@ func _test_running_setup():
 	_ctrls.word_wrap.text = 'ww'
 
 	set_all_fonts("CourierPrime")
-#	set_all_fonts("LobsterTwo")
 	set_font_size(5)
-	print(_ctrls.output.get_theme_font_size("normal_font"))
+#	print(_ctrls.output.get_theme_font_size("normal_font"))
 	_ctrls.output.queue_redraw()
 
 	load_file('user://.gut_editor.bbcode')
+	await get_tree().process_frame
+	
+	show_search(true)
+	_ctrls.output.set_caret_line(0)
+	_ctrls.output.scroll_vertical = 0
+	
+	_ctrls.output.caret_changed.connect(_on_caret_changed)
+
+
+func _on_caret_changed():
+	var txt = str("line:",_ctrls.output.get_caret_line(), ' col:', _ctrls.output.get_caret_column())
+	_ctrls.caret_position.text = str(txt)
 
 
 func _ready():
-	_sr.te = _ctrls.output
+	_sr.set_text_edit(_ctrls.output)
 	_ctrls.use_colors.icon = get_theme_icon('RichTextEffect', 'EditorIcons')
 	_ctrls.show_search.icon = get_theme_icon('Search', 'EditorIcons')
 	_ctrls.word_wrap.icon = get_theme_icon('Loop', 'EditorIcons')
 
-	_ctrls.use_colors.button_pressed = true
 	_setup_colors()
+	_ctrls.use_colors.button_pressed = true
+	_use_highlighting(true)
 	
 	if(get_parent() == get_tree().root):
 		_test_running_setup()
@@ -147,9 +136,14 @@ func _refresh_output():
 	_ctrls.output.scroll_vertical = orig_pos
 
 
-func _create_highlighter():
+func _create_highlighter(default_color=Color(1, 1, 1, 1)):
 	var to_return = CodeHighlighter.new()
-
+	
+	to_return.function_color = default_color
+	to_return.number_color = default_color
+	to_return.symbol_color = default_color
+	to_return.member_variable_color = default_color
+		
 	var keywords = [
 		['Failed', Color.RED],
 		['Passed', Color.GREEN],
@@ -174,10 +168,9 @@ func _setup_colors():
 	else :
 		f_color = _ctrls.output.theme.font_color
 
-	_ctrls.output.add_theme_color_override("font_color_readonly", f_color)
-	_ctrls.output.add_theme_color_override("function_color", f_color)
-	_ctrls.output.add_theme_color_override("member_variable_color", f_color)
 	_ctrls.output.queue_redraw()
+	
+	_highlighter = _create_highlighter(f_color)
 
 
 func _set_font(font_name, custom_name):
@@ -189,6 +182,12 @@ func _set_font(font_name, custom_name):
 		dyn_font.load_dynamic_font('res://addons/gut/fonts/' + font_name + '.ttf')
 		rtl.add_theme_font_override(custom_name, dyn_font)
 
+func _use_highlighting(should):
+	if(should):
+		_ctrls.output.syntax_highlighter = _highlighter
+	else:
+		_ctrls.output.syntax_highlighter = null
+	_refresh_output()
 
 # ------------------
 # Events
@@ -198,12 +197,8 @@ func _on_CopyButton_pressed():
 
 
 func _on_UseColors_pressed():
-	if(_ctrls.use_colors.button_pressed):
-		_ctrls.output.syntax_highlighter = _highlighter
-	else:
-		_ctrls.output.syntax_highlighter = null
-	_refresh_output()
-
+	_use_highlighting(_ctrls.use_colors.button_pressed)
+	
 
 func _on_ClearButton_pressed():
 	clear()
@@ -239,15 +234,16 @@ func _on_SearchTerm_text_entered(new_text):
 
 
 func _on_SearchTerm_gui_input(event):
-	if(event is InputEventKey and !event.pressed and event.scancode == KEY_ESCAPE):
+	if(event is InputEventKey and !event.pressed and event.keycode == KEY_ESCAPE):
 		show_search(false)
+
 
 func _on_WordWrap_pressed():
 	if(_ctrls.word_wrap.button_pressed):
 		_ctrls.output.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
 	else:
 		_ctrls.output.wrap_mode = TextEdit.LINE_WRAPPING_NONE
-	
+
 	_ctrls.output.queue_redraw()
 
 # ------------------
@@ -301,8 +297,8 @@ func set_font_size(new_size):
 #	rtl.add_theme_font_size_override("italics_font", new_size)
 #	rtl.add_theme_font_size_override("bold_italics_font", new_size)
 	rtl.set("theme_override_font_sizes/size", new_size)
-	print(rtl.get("theme_override_font_sizes/size"))
-	
+#	print(rtl.get("theme_override_font_sizes/size"))
+
 #	if(rtl.get('custom_fonts/font') != null):
 #		rtl.get('custom_fonts/font').size = new_size
 #		rtl.get('custom_fonts/bold_italics_font').size = new_size
@@ -319,7 +315,7 @@ func get_use_colors():
 	return false;
 
 
-func get_rich_text_edit():df
+func get_rich_text_edit():
 	return _ctrls.output
 
 
