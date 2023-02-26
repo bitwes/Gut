@@ -9,7 +9,7 @@
   ],
   "should_maximize": false,
   "should_exit": true,
-  "ignore_pause": true,
+  "ignore_pause": false,
   "log_level": 3,
   "opacity": 100,
   "double_strategy": "partial",
