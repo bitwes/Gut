@@ -35,15 +35,15 @@ func _display_shortcut():
 
 func _is_shift_only_modifier():
 	return _source_event.shift_pressed and \
-		!(_source_event.alt_pressed or _source_event.command_pressed or \
-		_source_event.ctrl_pressed or _source_event.meta_pressed) and \
-		!_is_modifier(_source_event.keycode)
+		!(_source_event.alt_pressed or \
+			_source_event.ctrl_pressed or \
+			_source_event.meta_pressed) \
+		and !_is_modifier(_source_event.keycode)
 
 
 func _has_modifier(event):
-	return event.alt_pressed or event.command_pressed or \
-		event.ctrl_pressed or event.meta_pressed or \
-		event.shift_pressed
+	return event.alt_pressed or event.ctrl_pressed or \
+		event.meta_pressed or event.shift_pressed
 
 
 func _is_modifier(keycode):
