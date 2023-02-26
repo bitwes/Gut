@@ -168,9 +168,8 @@ func _setup_colors():
 	else :
 		f_color = _ctrls.output.theme.font_color
 
+	_highlighter = _create_highlighter()
 	_ctrls.output.queue_redraw()
-	
-	_highlighter = _create_highlighter(f_color)
 
 
 func _set_font(font_name, custom_name):
@@ -181,6 +180,7 @@ func _set_font(font_name, custom_name):
 		var dyn_font = FontFile.new()
 		dyn_font.load_dynamic_font('res://addons/gut/fonts/' + font_name + '.ttf')
 		rtl.add_theme_font_override(custom_name, dyn_font)
+
 
 func _use_highlighting(should):
 	if(should):
