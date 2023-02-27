@@ -1,15 +1,11 @@
 @tool
 extends Control
-var _interface = null
-var _utils = load('res://addons/gut/utils.gd').new()
 
+var _interface = null
 var _font = null
 var _font_size = null
-var _root = null
 var _editors = null # script_text_editor_controls.gd
 var _output_control = null
-
-signal search_for_text(text)
 
 @onready var _ctrls = {
 	tree = $VBox/Output/Scroll/Tree,
@@ -32,7 +28,6 @@ func _ready():
 	else :
 		f = $FontSampler.get_label_settings().font
 	var s_size = f.get_string_size("000 of 000 passed")
-
 	_ctrls.tree.set_summary_min_width(s_size.x)
 
 	_set_toolbutton_icon(_ctrls.toolbar.collapse, 'CollapseTree', 'c')
@@ -41,9 +36,6 @@ func _ready():
 	_set_toolbutton_icon(_ctrls.toolbar.expand_all, 'ExpandTree', 'e')
 	_set_toolbutton_icon(_ctrls.toolbar.show_script, 'Script', 'ss')
 	_set_toolbutton_icon(_ctrls.toolbar.scroll_output, 'Font', 'so')
-
-	# _ctrls.toolbar.hide_passing.set('custom_icons/checked', get_theme_icon('GuiVisibilityHidden', 'EditorIcons'))
-	# _ctrls.toolbar.hide_passing.set('custom_icons/unchecked', get_theme_icon('GuiVisibilityVisible', 'EditorIcons'))
 
 	_ctrls.tree.hide_passing = true
 	_ctrls.toolbar.hide_passing.button_pressed = false
@@ -80,7 +72,7 @@ func _update_min_width():
 	custom_minimum_size.x = _ctrls.toolbar.toolbar.size.x
 
 
-func _open_file(path, line_number):
+func _open_script_in_editor(path, line_number):
 	if(_interface == null):
 		print('Too soon, wait a bit and try again.')
 		return
@@ -95,15 +87,6 @@ func _open_file(path, line_number):
 		_interface.set_main_screen_editor('Script')
 
 
-func _on_item_selected(script_path, inner_class, test_name, line):
-	if(_ctrls.toolbar.show_script.button_pressed):
-		_goto_code(script_path, line, test_name, inner_class)
-	if(_ctrls.toolbar.scroll_output.button_pressed):
-		_goto_output(script_path, test_name, inner_class)
-
-
-
-
 # starts at beginning of text edit and searches for each search term, moving
 # through the text as it goes; ensuring that, when done, it found the first
 # occurance of the last srting that happend after the first occurance of
@@ -111,7 +94,6 @@ func _on_item_selected(script_path, inner_class, test_name, line):
 # inner class that may have be a duplicate of a method name in a different
 # inner class)
 func _get_line_number_for_seq_search(search_strings, te):
-	print('starting')
 	if(te == null):
 		print("No Text editor to get line number for")
 		return 0;
@@ -124,14 +106,12 @@ func _get_line_number_for_seq_search(search_strings, te):
 	var string_found = true
 	while(i < search_strings.size() and string_found):
 		result = te.search(search_strings[i], s_flags, line.y, line.x)
-		print('search for ', search_strings[i], ' from ', line, ' = ', result)
 		if(result.x != -1):
 			line = result
 		else:
 			string_found = false
 		i += 1
 
-	print('ending')
 	return line.y
 
 
@@ -140,7 +120,7 @@ func _goto_code(path, line, method_name='', inner_class =''):
 		print('going to ', [path, line, method_name, inner_class])
 		return
 
-	_open_file(path, line)
+	_open_script_in_editor(path, line)
 	if(line == -1):
 		var search_strings = []
 		if(inner_class != ''):
@@ -155,7 +135,6 @@ func _goto_code(path, line, method_name='', inner_class =''):
 
 
 func _goto_output(path, method_name, inner_class):
-	print('start _goto_output')
 	if(_output_control == null):
 		return
 
@@ -166,11 +145,10 @@ func _goto_output(path, method_name, inner_class):
 
 	if(method_name != ''):
 		search_strings.append(method_name)
-	
+
 	var line = _get_line_number_for_seq_search(search_strings, _output_control.get_rich_text_edit())
 	if(line != null and line != -1):
 		_output_control.scroll_to_line(line)
-	print('end _goto_output')
 
 
 
@@ -178,21 +156,6 @@ func _goto_output(path, method_name, inner_class):
 # --------------
 # Events
 # --------------
-func _on_Tree_item_selected():
-	# do not force scroll
-	var item = _ctrls.tree.get_selected()
-#	_handle_tree_item_select(item, false)
-	# it just looks better if the left is always selected.
-	if(item.is_selected(1)):
-		item.deselect(1)
-		item.select(0)
-
-
-func _on_Tree_item_activated():
-	pass
-	# force scroll
-#	_handle_tree_item_select(_ctrls.tree.get_selected(), true)
-
 func _on_Collapse_pressed():
 	collapse_selected()
 
@@ -212,11 +175,19 @@ func _on_ExpandAll_pressed():
 func _on_Hide_Passing_pressed():
 	_ctrls.tree.hide_passing = !_ctrls.toolbar.hide_passing.button_pressed
 
+
+func _on_item_selected(script_path, inner_class, test_name, line):
+	if(_ctrls.toolbar.show_script.button_pressed):
+		_goto_code(script_path, line, test_name, inner_class)
+	if(_ctrls.toolbar.scroll_output.button_pressed):
+		_goto_output(script_path, test_name, inner_class)
+
+
+
+
 # --------------
 # Public
 # --------------
-
-
 func add_centered_text(t):
 	_ctrls.tree.add_centered_text(t)
 
@@ -227,7 +198,7 @@ func clear_centered_text():
 
 func clear():
 	_ctrls.tree.clear()
-#	clear_centered_text()
+	clear_centered_text()
 
 
 func set_interface(which):

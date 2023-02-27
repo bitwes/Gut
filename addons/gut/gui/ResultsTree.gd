@@ -20,9 +20,8 @@ var _icons = {
 }
 const _col_1_bg_color = Color(0, 0, 0, .1)
 var _max_icon_width = 10
-
-
 var _root : TreeItem
+
 @onready var _ctrls = {
 	tree = $Tree,
 	lbl_overlay = $Tree/TextOverlay
@@ -41,13 +40,20 @@ func _ready():
 	_ctrls.tree.set_column_expand(0, true)
 	_ctrls.tree.set_column_expand(1, false)
 	_ctrls.tree.set_column_clip_content(0, true)
-	
+
 	$Tree.item_selected.connect(_on_tree_item_selected)
+
 
 func _on_tree_item_selected():
 	var item = _ctrls.tree.get_selected()
 	var item_meta = item.get_metadata(0)
 	var item_type = null
+
+	# Only select the left side of the tree item, cause I like that better.
+	# you can still click the right, but only the left gets highlighted.
+	if(item.is_selected(1)):
+		item.deselect(1)
+		item.select(0)
 
 	if(item_meta == null):
 		return
@@ -79,15 +85,15 @@ func _on_tree_item_selected():
 		test_name = ''
 	else:
 		return
-	
+
 	item_selected.emit(script_path, inner_class, test_name, line)
+
 
 func _get_line_number_from_assert_msg(msg):
 	var line = -1
 	if(msg.find('at line') > 0):
 		line = msg.split("at line")[-1].split(" ")[-1].to_int()
 	return line
-
 
 
 func _get_path_and_inner_class_name_from_test_path(path):
@@ -121,7 +127,6 @@ func _find_script_item_with_path(path):
 
 func _add_script_tree_item(script_path, script_json):
 	var path_info = _get_path_and_inner_class_name_from_test_path(script_path)
-	# print('* adding script ', path_info)
 	var item_text = script_path
 	var parent = _root
 
@@ -233,8 +238,6 @@ func _add_script_to_tree(key, script_json):
 
 	# get_children returns the first child or null.  its a dumb name.
 	if(s_item.get_children() == null):
-		# var m = s_item.get_metadata(0)
-		# print('!! Deleting ', m.path, ' ', m.inner_class)
 		s_item.free()
 	else:
 		var total_text = str('All ', test_keys.size(), ' passed')
