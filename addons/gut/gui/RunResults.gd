@@ -1,6 +1,5 @@
 @tool
 extends Control
-var _results_tree = load('res://addons/gut/gui/ResultsTree.gd').new()
 var _interface = null
 var _utils = load('res://addons/gut/utils.gd').new()
 
@@ -8,15 +7,12 @@ var _font = null
 var _font_size = null
 var _root = null
 var _editors = null # script_text_editor_controls.gd
-
 var _output_control = null
-
 
 signal search_for_text(text)
 
 @onready var _ctrls = {
 	tree = $VBox/Output/Scroll/Tree,
-	lbl_overlay = $VBox/Output/OverlayMessage,
 	chk_hide_passing = $VBox/Toolbar/HidePassing,
 	toolbar = {
 		toolbar = $VBox/Toolbar,
@@ -31,8 +27,8 @@ signal search_for_text(text)
 }
 
 func _test_running_setup():
-	_results_tree._hide_passing = false
-	_results_tree._show_orphans = false
+	_ctrls.tree._hide_passing = false
+	_ctrls.tree._show_orphans = false
 	var _gut_config = load('res://addons/gut/gut_config.gd').new()
 	_gut_config.load_panel_options('res://.gut_editor_config.json')
 	set_font(
@@ -40,7 +36,7 @@ func _test_running_setup():
 		_gut_config.options.panel_options.font_size)
 
 	_ctrls.toolbar.hide_passing.text = '[hp]'
-	_results_tree.load_json_file('user://.gut_editor.json')
+	_ctrls.tree.load_json_file('user://.gut_editor.json')
 
 
 func _set_toolbutton_icon(btn, icon_name, text):
@@ -58,8 +54,7 @@ func _ready():
 		f = $FontSampler.get_label_settings().font
 	var s_size = f.get_string_size("000 of 000 passed")
 
-	_results_tree.set_tree(_ctrls.tree)
-	_results_tree.set_summary_min_width(s_size.x)
+	_ctrls.tree.set_summary_min_width(s_size.x)
 
 	_set_toolbutton_icon(_ctrls.toolbar.collapse, 'CollapseTree', 'c')
 	_set_toolbutton_icon(_ctrls.toolbar.collapse_all, 'CollapseTree', 'c')
@@ -224,10 +219,6 @@ func _goto_output(path, method_name, inner_class):
 
 
 
-func _set_collapsed_on_all(item, value):
-	item.set_collapsed_recursive(value)
-	if(item == _root and value):
-		item.set_collapsed(false)
 
 # --------------
 # Events
@@ -264,24 +255,24 @@ func _on_ExpandAll_pressed():
 
 
 func _on_Hide_Passing_pressed():
-	_results_tree._hide_passing = _ctrls.toolbar.hide_passing.button_pressed
+	_ctrls.tree._hide_passing = _ctrls.toolbar.hide_passing.button_pressed
 
 # --------------
 # Public
 # --------------
 
 
-func add_centered_text(t):
-	_ctrls.lbl_overlay.text = t
-
-
-func clear_centered_text():
-	_ctrls.lbl_overlay.text = ''
+#func add_centered_text(t):
+#	_ctrls.lbl_overlay.text = t
+#
+#
+#func clear_centered_text():
+#	_ctrls.lbl_overlay.text = ''
 
 
 func clear():
-	_results_tree.clear()
-	clear_centered_text()
+	_ctrls.tree.clear()
+#	clear_centered_text()
 
 
 func set_interface(which):
@@ -293,27 +284,27 @@ func set_script_text_editors(value):
 
 
 func collapse_all():
-	_set_collapsed_on_all(_root, true)
+	_ctrls.tree.collapse_all()
 
 
 func expand_all():
-	_set_collapsed_on_all(_root, false)
+	_ctrls.tree.expand_all()
 
 
 func collapse_selected():
 	var item = _ctrls.tree.get_selected()
 	if(item != null):
-		_set_collapsed_on_all(item, true)
+		_ctrls.tree.set_collapsed_on_all(item, true)
 
 
 func expand_selected():
 	var item = _ctrls.tree.get_selected()
 	if(item != null):
-		_set_collapsed_on_all(item, false)
+		_ctrls.tree.set_collapsed_on_all(item, false)
 
 
 func set_show_orphans(should):
-	_results_tree._show_orphans = should
+	_ctrls.tree._show_orphans = should
 
 
 func set_font(font_name, size):
@@ -331,3 +322,9 @@ func set_font(font_name, size):
 
 func set_output_control(value):
 	_output_control = value
+
+func load_json_results(j):
+	_ctrls.tree.load_json_results(j)
+
+func add_centered_text(text):
+	pass

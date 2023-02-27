@@ -17,5 +17,6 @@
   "inner_class": "",
   "disable_colors": false,
   "compact_mode": true,
-  "gut_on_top": true
+  "gut_on_top": true,
+  "opacity":0.5
 }

@@ -1,12 +1,15 @@
-extends Tree
+@tool
+extends Control
 
 const _col_1_bg_color = Color(0, 0, 0, .1)
 var _max_icon_width = 10
+
 
 var _show_orphans = true
 var show_orphans = true :
 	get: return _show_orphans
 	set(val): _show_orphans = val
+
 
 var _hide_passing = true
 var hide_passing = true :
@@ -20,9 +23,11 @@ var _icons = {
 	yellow = load('res://addons/gut/images/yellow.png'),
 }
 
+
 var _root : TreeItem
-var _ctrls = {
-	tree = self
+@onready var _ctrls = {
+	tree = $Tree,
+	lbl_overlay = $Tree/TextOverlay
 }
 
 # -------------------
@@ -30,7 +35,6 @@ var _ctrls = {
 # -------------------
 func _ready():
 	_root = _ctrls.tree.create_item()
-
 	_root = _ctrls.tree.create_item()
 	_ctrls.tree.set_hide_root(true)
 	_ctrls.tree.columns = 2
@@ -67,7 +71,6 @@ func _find_script_item_with_path(path):
 			idx += 1
 
 	return to_return
-
 
 
 func _add_script_tree_item(script_path, script_json):
@@ -143,7 +146,6 @@ func _add_test_tree_item(test_name, test_json, script_item):
 		orphan_text = 'orphan'
 	orphan_text = str(test_json.orphans, ' ', orphan_text)
 
-
 	if(status == 'pass' and no_orphans_to_show):
 		item.set_icon(0, _icons.green)
 	elif(status == 'pass' and !no_orphans_to_show):
@@ -208,8 +210,7 @@ func _free_childless_scripts():
 
 func _show_all_passed():
 	if(_root.get_children() == null):
-		print('all passed')
-#		add_centered_text('Everything passed!')
+		add_centered_text('Everything passed!')
 
 
 func _load_result_tree(j):
@@ -217,7 +218,7 @@ func _load_result_tree(j):
 	var script_keys = scripts.keys()
 	# if we made it here, the json is valid and we did something, otherwise the
 	# 'nothing to see here' should be visible.
-#	clear_centered_text()
+	clear_centered_text()
 
 	for key in script_keys:
 		if(scripts[key]['props']['tests'] > 0):
@@ -227,14 +228,9 @@ func _load_result_tree(j):
 	_show_all_passed()
 
 
-
-
-
 # -------------------
 # Public
 # -------------------
-
-
 func load_json_file(path):
 	var file = FileAccess.open(path, FileAccess.READ)
 	var text = ''
@@ -245,17 +241,15 @@ func load_json_file(path):
 		var test_json_conv = JSON.new()
 		var result = test_json_conv.parse(text)
 		if(result != OK):
-			print('not ok')
-#			add_centered_text(str(path, " has invalid json in it \n",
-#				'Error ', result, "@", test_json_conv.get_error_line(), "\n",
-#				test_json_conv.get_error_message()))
-#			return
+			add_centered_text(str(path, " has invalid json in it \n",
+				'Error ', result, "@", test_json_conv.get_error_line(), "\n",
+				test_json_conv.get_error_message()))
+			return
 
 		var data = test_json_conv.get_data()
 		load_json_results(data)
 	else:
-		print('empty file')
-#		add_centered_text(str(path, ' was empty or does not exist.'))
+		add_centered_text(str(path, ' was empty or does not exist.'))
 
 
 func load_json_results(j):
@@ -266,7 +260,35 @@ func load_json_results(j):
 func clear():
 	_ctrls.tree.clear()
 	_root = _ctrls.tree.create_item()
-	
+
 
 func set_summary_min_width(width):
 	_ctrls.tree.set_column_custom_minimum_width(1, width)
+
+
+func add_centered_text(t):
+	_ctrls.lbl_overlay.visible = true
+	_ctrls.lbl_overlay.text = t
+
+
+func clear_centered_text():
+	_ctrls.lbl_overlay.visible = false
+	_ctrls.lbl_overlay.text = ''
+
+
+func collapse_all():
+	set_collapsed_on_all(_root, true)
+
+
+func expand_all():
+	set_collapsed_on_all(_root, false)
+
+
+func set_collapsed_on_all(item, value):
+	item.set_collapsed_recursive(value)
+	if(item == _root and value):
+		item.set_collapsed(false)
+
+
+func get_selected():
+	return _ctrls.tree.get_selected()
