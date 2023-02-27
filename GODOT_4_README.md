@@ -3,7 +3,7 @@
 IT'S MOSTLY USABLE!!
 
 ## Overview
-Ported to Godot 4 RC 5
+Ported to Godot 4 RC 6
 
 GUT is currently mostly usable in 4.0.  The panel works for the most part but still has bugs.  The CLI and VSCode Plugin work fine.
 
