@@ -13,7 +13,6 @@ signal search_for_text(text)
 
 @onready var _ctrls = {
 	tree = $VBox/Output/Scroll/Tree,
-	chk_hide_passing = $VBox/Toolbar/HidePassing,
 	toolbar = {
 		toolbar = $VBox/Toolbar,
 		collapse = $VBox/Toolbar/Collapse,
@@ -25,26 +24,6 @@ signal search_for_text(text)
 		scroll_output = $VBox/Toolbar/ScrollOutput
 	}
 }
-
-func _test_running_setup():
-	_ctrls.tree._hide_passing = false
-	_ctrls.tree._show_orphans = false
-	var _gut_config = load('res://addons/gut/gut_config.gd').new()
-	_gut_config.load_panel_options('res://.gut_editor_config.json')
-	set_font(
-		_gut_config.options.panel_options.font_name,
-		_gut_config.options.panel_options.font_size)
-
-	_ctrls.toolbar.hide_passing.text = '[hp]'
-	_ctrls.tree.load_json_file('user://.gut_editor.json')
-
-
-func _set_toolbutton_icon(btn, icon_name, text):
-	if(Engine.is_editor_hint()):
-		btn.icon = get_theme_icon(icon_name, 'EditorIcons')
-	else:
-		btn.text = str('[', text, ']')
-
 
 func _ready():
 	var f = null
@@ -63,13 +42,38 @@ func _ready():
 	_set_toolbutton_icon(_ctrls.toolbar.show_script, 'Script', 'ss')
 	_set_toolbutton_icon(_ctrls.toolbar.scroll_output, 'Font', 'so')
 
-	_ctrls.toolbar.hide_passing.set('custom_icons/checked', get_theme_icon('GuiVisibilityHidden', 'EditorIcons'))
-	_ctrls.toolbar.hide_passing.set('custom_icons/unchecked', get_theme_icon('GuiVisibilityVisible', 'EditorIcons'))
+	# _ctrls.toolbar.hide_passing.set('custom_icons/checked', get_theme_icon('GuiVisibilityHidden', 'EditorIcons'))
+	# _ctrls.toolbar.hide_passing.set('custom_icons/unchecked', get_theme_icon('GuiVisibilityVisible', 'EditorIcons'))
+
+	_ctrls.tree.hide_passing = true
+	_ctrls.toolbar.hide_passing.button_pressed = false
+	_ctrls.tree.show_orphans = true
+	_ctrls.tree.item_selected.connect(_on_item_selected)
 
 	if(get_parent() == get_tree().root):
 		_test_running_setup()
 
 	call_deferred('_update_min_width')
+
+
+func _test_running_setup():
+	_ctrls.tree.hide_passing = false
+	_ctrls.tree.show_orphans = false
+	var _gut_config = load('res://addons/gut/gut_config.gd').new()
+	_gut_config.load_panel_options('res://.gut_editor_config.json')
+	set_font(
+		_gut_config.options.panel_options.font_name,
+		_gut_config.options.panel_options.font_size)
+
+	_ctrls.toolbar.hide_passing.text = '[hp]'
+	_ctrls.tree.load_json_file('user://.gut_editor.json')
+
+
+func _set_toolbutton_icon(btn, icon_name, text):
+	if(Engine.is_editor_hint()):
+		btn.icon = get_theme_icon(icon_name, 'EditorIcons')
+	else:
+		btn.text = str('[', text, ']')
 
 
 func _update_min_width():
@@ -91,65 +95,11 @@ func _open_file(path, line_number):
 		_interface.set_main_screen_editor('Script')
 
 
-
-
-
-
-
-
-
-
-
-func _get_line_number_from_assert_msg(msg):
-	var line = -1
-	if(msg.find('at line') > 0):
-		line = msg.split("at line")[-1].split(" ")[-1].to_int()
-	return line
-
-
-
-
-#func _handle_tree_item_select(item, force_scroll):
-#	var item_meta = item.get_metadata(0)
-#	var item_type = null
-#
-#	if(item_meta == null):
-#		return
-#	else:
-#		item_type = item_meta.type
-#
-#	var path = '';
-#	var line = -1;
-#	var method_name = ''
-#	var inner_class = ''
-#
-#	if(item_type == 'test'):
-#		var s_item = item.get_parent()
-#		path = s_item.get_metadata(0)['path']
-#		inner_class = s_item.get_metadata(0)['inner_class']
-#		line = -1
-#		method_name = item.get_text(0)
-#	elif(item_type == 'assert'):
-#		var s_item = item.get_parent().get_parent()
-#		path = s_item.get_metadata(0)['path']
-#		inner_class = s_item.get_metadata(0)['inner_class']
-#
-#		line = _get_line_number_from_assert_msg(item.get_text(0))
-#		method_name = item.get_parent().get_text(0)
-#	elif(item_type == 'script'):
-#		path = item.get_metadata(0)['path']
-#		if(item.get_parent() != _root):
-#			inner_class = item.get_text(0)
-#		line = -1
-#		method_name = ''
-#	else:
-#		return
-#
-#	var path_info = _get_path_and_inner_class_name_from_test_path(path)
-#	if(force_scroll or _ctrls.toolbar.show_script.pressed):
-#		_goto_code(path, line, method_name, inner_class)
-#	if(force_scroll or _ctrls.toolbar.scroll_output.pressed):
-#		_goto_output(path, method_name, inner_class)
+func _on_item_selected(script_path, inner_class, test_name, line):
+	if(_ctrls.toolbar.show_script.button_pressed):
+		_goto_code(script_path, line, test_name, inner_class)
+	if(_ctrls.toolbar.scroll_output.button_pressed):
+		_goto_output(script_path, test_name, inner_class)
 
 
 
@@ -161,24 +111,27 @@ func _get_line_number_from_assert_msg(msg):
 # inner class that may have be a duplicate of a method name in a different
 # inner class)
 func _get_line_number_for_seq_search(search_strings, te):
+	print('starting')
 	if(te == null):
 		print("No Text editor to get line number for")
 		return 0;
 
 	var result = null
-	var line = Vector2i(-1, -1)
+	var line = Vector2i(0, 0)
 	var s_flags = 0
 
 	var i = 0
 	var string_found = true
 	while(i < search_strings.size() and string_found):
 		result = te.search(search_strings[i], s_flags, line.y, line.x)
+		print('search for ', search_strings[i], ' from ', line, ' = ', result)
 		if(result.x != -1):
 			line = result
 		else:
 			string_found = false
 		i += 1
 
+	print('ending')
 	return line.y
 
 
@@ -202,6 +155,7 @@ func _goto_code(path, line, method_name='', inner_class =''):
 
 
 func _goto_output(path, method_name, inner_class):
+	print('start _goto_output')
 	if(_output_control == null):
 		return
 
@@ -212,10 +166,11 @@ func _goto_output(path, method_name, inner_class):
 
 	if(method_name != ''):
 		search_strings.append(method_name)
-
+	
 	var line = _get_line_number_for_seq_search(search_strings, _output_control.get_rich_text_edit())
 	if(line != null and line != -1):
 		_output_control.scroll_to_line(line)
+	print('end _goto_output')
 
 
 
@@ -255,19 +210,19 @@ func _on_ExpandAll_pressed():
 
 
 func _on_Hide_Passing_pressed():
-	_ctrls.tree._hide_passing = _ctrls.toolbar.hide_passing.button_pressed
+	_ctrls.tree.hide_passing = !_ctrls.toolbar.hide_passing.button_pressed
 
 # --------------
 # Public
 # --------------
 
 
-#func add_centered_text(t):
-#	_ctrls.lbl_overlay.text = t
-#
-#
-#func clear_centered_text():
-#	_ctrls.lbl_overlay.text = ''
+func add_centered_text(t):
+	_ctrls.tree.add_centered_text(t)
+
+
+func clear_centered_text():
+	_ctrls.tree.clear_centered_text()
 
 
 func clear():
@@ -304,7 +259,7 @@ func expand_selected():
 
 
 func set_show_orphans(should):
-	_ctrls.tree._show_orphans = should
+	_ctrls.tree.show_orphans = should
 
 
 func set_font(font_name, size):
@@ -323,8 +278,6 @@ func set_font(font_name, size):
 func set_output_control(value):
 	_output_control = value
 
+
 func load_json_results(j):
 	_ctrls.tree.load_json_results(j)
-
-func add_centered_text(text):
-	pass

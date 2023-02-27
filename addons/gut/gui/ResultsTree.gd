@@ -1,10 +1,6 @@
 @tool
 extends Control
 
-const _col_1_bg_color = Color(0, 0, 0, .1)
-var _max_icon_width = 10
-
-
 var _show_orphans = true
 var show_orphans = true :
 	get: return _show_orphans
@@ -22,6 +18,8 @@ var _icons = {
 	green = load('res://addons/gut/images/green.png'),
 	yellow = load('res://addons/gut/images/yellow.png'),
 }
+const _col_1_bg_color = Color(0, 0, 0, .1)
+var _max_icon_width = 10
 
 
 var _root : TreeItem
@@ -30,6 +28,8 @@ var _root : TreeItem
 	lbl_overlay = $Tree/TextOverlay
 }
 
+
+signal item_selected(script_path, inner_class, test_name, line_number)
 # -------------------
 # Private
 # -------------------
@@ -40,8 +40,54 @@ func _ready():
 	_ctrls.tree.columns = 2
 	_ctrls.tree.set_column_expand(0, true)
 	_ctrls.tree.set_column_expand(1, false)
-
 	_ctrls.tree.set_column_clip_content(0, true)
+	
+	$Tree.item_selected.connect(_on_tree_item_selected)
+
+func _on_tree_item_selected():
+	var item = _ctrls.tree.get_selected()
+	var item_meta = item.get_metadata(0)
+	var item_type = null
+
+	if(item_meta == null):
+		return
+	else:
+		item_type = item_meta.type
+
+	var script_path = '';
+	var line = -1;
+	var test_name = ''
+	var inner_class = ''
+
+	if(item_type == 'test'):
+		var s_item = item.get_parent()
+		script_path = s_item.get_metadata(0)['path']
+		inner_class = s_item.get_metadata(0)['inner_class']
+		line = -1
+		test_name = item.get_text(0)
+	elif(item_type == 'assert'):
+		var s_item = item.get_parent().get_parent()
+		script_path = s_item.get_metadata(0)['path']
+		inner_class = s_item.get_metadata(0)['inner_class']
+		line = _get_line_number_from_assert_msg(item.get_text(0))
+		test_name = item.get_parent().get_text(0)
+	elif(item_type == 'script'):
+		script_path = item.get_metadata(0)['path']
+		if(item.get_parent() != _root):
+			inner_class = item.get_text(0)
+		line = -1
+		test_name = ''
+	else:
+		return
+	
+	item_selected.emit(script_path, inner_class, test_name, line)
+
+func _get_line_number_from_assert_msg(msg):
+	var line = -1
+	if(msg.find('at line') > 0):
+		line = msg.split("at line")[-1].split(" ")[-1].to_int()
+	return line
+
 
 
 func _get_path_and_inner_class_name_from_test_path(path):
