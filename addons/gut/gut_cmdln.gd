@@ -284,7 +284,7 @@ func _run_gut():
 func _on_tests_finished(should_exit, should_exit_on_success):
 	if(_final_opts.dirs.size() == 0):
 		if(_tester.get_summary().get_totals().scripts == 0):
-			var lgr = _tester.get_logger()
+			var lgr = _tester.logger
 			lgr.error('No directories configured.  Add directories with options or a super.gutconfig.json file.  Use the -gh option for more information.')
 
 	if(_tester.get_fail_count()):
