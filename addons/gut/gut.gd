@@ -1093,8 +1093,6 @@ func p(text, level=0):
 # Runs all the scripts that were added using add_script
 # ------------------------------------------------------------------------------
 func test_scripts(run_rest=false):
-	clear_text()
-
 	if(_script_name != null and _script_name != ''):
 		var indexes = _get_indexes_matching_script_name(_script_name)
 		if(indexes == []):
