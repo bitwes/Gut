@@ -26,12 +26,6 @@ func _ready():
 	use_compact_mode(false)
 
 
-func _process(_delta):
-	if(gut != null and gut.is_running()):
-		_normal_gui.set_elapsed_time(gut.get_elapsed_time())
-		_compact_gui.set_elapsed_time(gut.get_elapsed_time())
-
-
 # ------------------------
 # Private
 # ------------------------

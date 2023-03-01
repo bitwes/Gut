@@ -27,7 +27,17 @@ var _ctrls = {
 	title_bar = null,
 }
 
+var _title_mouse = {
+	down = false
+}
+
+var _resize_mouse = {
+	down = false
+}
+
 signal switch_modes()
+
+var _max_position = Vector2(100, 100)
 
 func _ready():
 	_populate_ctrls()
@@ -38,13 +48,20 @@ func _ready():
 	_ctrls.title_bar.gui_input.connect(_on_title_bar_input)
 	if(_ctrls.resize_handle != null):
 		_ctrls.resize_handle.gui_input.connect(_on_resize_handle_input)
-		_ctrls.resize_handle.draw.connect(_draw_resize_handle)
+		_ctrls.resize_handle.draw.connect(_on_resize_handle_draw)
 
 	_ctrls.prog_script.value = 0
 	_ctrls.prog_test.value = 0
 	_ctrls.path_dir.text = ''
 	_ctrls.path_file.text = ''
 	_ctrls.time_label.text = ''
+	
+	_max_position = DisplayServer.window_get_size() - Vector2i(30, _ctrls.title_bar.size.y)
+
+
+func _process(_delta):
+	if(_gut != null and _gut.is_running()):
+		set_elapsed_time(_gut.get_elapsed_time())
 
 
 # ------------------
@@ -86,23 +103,35 @@ func _get_first_child_named(obj_name, parent_obj):
 
 	return to_return
 
+
+# Draw the lines in the corner to show where you can
+# drag to resize the dialog
+func _draw_resize_handle_right(draw_on):
+	var grab_margin = 2
+	var line_space = 4
+	var grab_line_color = Color(.4, .4, .4)
+	var rect_size = draw_on.size
+
+	for i in range(1, 10):
+		var x = rect_size - Vector2(i * line_space, grab_margin)
+		var y = rect_size - Vector2(grab_margin, i * line_space)
+		draw_on.draw_line(x, y, grab_line_color, 1, true)
+
+
 # ------------------
 # Events
 # ------------------
-var _title_mouse = {
-	down = false
-}
 func _on_title_bar_input(event : InputEvent):
 	if(event is InputEventMouseMotion):
 		if(_title_mouse.down):
-			self.position += event.relative
+			position += event.relative
+			position.x = clamp(position.x, 0, _max_position.x)
+			position.y = clamp(position.y, 0, _max_position.y)
 	elif(event is InputEventMouseButton):
 		if(event.button_index == MOUSE_BUTTON_LEFT):
 			_title_mouse.down = event.pressed
 
-var _resize_mouse = {
-	down = false
-}
+
 func _on_resize_handle_input(event : InputEvent):
 	if(event is InputEventMouseMotion):
 		if(_resize_mouse.down):
@@ -112,18 +141,8 @@ func _on_resize_handle_input(event : InputEvent):
 			_resize_mouse.down = event.pressed
 
 
-func _draw_resize_handle(): # needs get_size()
-	# Draw the lines in the corner to show where you can
-	# drag to resize the dialog
-	var grab_margin = 2
-	var line_space = 4
-	var grab_line_color = Color(.4, .4, .4)
-	var rect_size = _ctrls.resize_handle.size
-
-	for i in range(1, 10):
-		var x = rect_size - Vector2(i * line_space, grab_margin)
-		var y = rect_size - Vector2(grab_margin, i * line_space)
-		_ctrls.resize_handle.draw_line(x, y, grab_line_color, 1, true)
+func _on_resize_handle_draw():
+	_draw_resize_handle_right(_ctrls.resize_handle)
 
 
 func _on_continue_pressed():
@@ -137,7 +156,6 @@ func _on_gut_start_run():
 
 
 func _on_gut_end_run():
-	_ctrls.time_label.text = ''
 	_ctrls.prog_test.value = _ctrls.prog_test.max_value
 	_ctrls.prog_script.value = _ctrls.prog_script.max_value
 
