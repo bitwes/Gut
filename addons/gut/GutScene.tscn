@@ -8,8 +8,9 @@
 script = ExtResource("1_b4m8y")
 
 [node name="Large" type="Panel" parent="."]
-offset_right = 717.0
-offset_bottom = 388.0
+custom_minimum_size = Vector2(500, 150)
+offset_right = 632.0
+offset_bottom = 260.0
 theme = ExtResource("1_s37wl")
 
 [node name="MainBox" type="VBoxContainer" parent="Large"]
@@ -152,11 +153,18 @@ text = "test_this_thing.gd"
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Continue" type="Button" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
+layout_mode = 2
+
+[node name="Continue" type="Button" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 4
 text = "Continue
 "
+
+[node name="SwitchModes" type="Button" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/VBoxContainer"]
+layout_mode = 2
+text = "Minimal"
 
 [node name="S3" type="CenterContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
 custom_minimum_size = Vector2(5, 0)
@@ -166,12 +174,25 @@ layout_mode = 2
 custom_minimum_size = Vector2(0, 5)
 layout_mode = 2
 
+[node name="Footer" type="HBoxContainer" parent="Large/MainBox"]
+layout_mode = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="Large/MainBox/Footer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ResizeHandle" type="ColorRect" parent="Large/MainBox/Footer"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+color = Color(1, 1, 1, 0)
+
 [node name="Min" type="Panel" parent="."]
 clip_contents = true
-offset_left = 456.0
-offset_top = 396.0
-offset_right = 719.0
-offset_bottom = 515.0
+custom_minimum_size = Vector2(260, 150)
+offset_left = 660.0
+offset_top = 12.0
+offset_right = 920.0
+offset_bottom = 162.0
 theme = ExtResource("1_s37wl")
 metadata/_edit_group_ = true
 
@@ -280,6 +301,10 @@ text = "test_this_thing.gd"
 layout_mode = 2
 text = "Continue
 "
+
+[node name="SwitchModes" type="Button" parent="Min/MainBox/Body/BodyRows"]
+layout_mode = 2
+text = "Expand"
 
 [node name="RightMargin" type="CenterContainer" parent="Min/MainBox/Body"]
 custom_minimum_size = Vector2(5, 0)
