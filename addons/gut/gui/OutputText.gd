@@ -9,30 +9,30 @@ class TextEditSearcher:
 	var _last_term = ''
 	var _last_pos = Vector2(-1, -1)
 	var _ignore_caret_change = false
-		
+
 	func set_text_edit(which):
 		te = which
 		te.caret_changed.connect(_on_caret_changed)
-		
-		
+
+
 	func _on_caret_changed():
 		if(_ignore_caret_change):
 			_ignore_caret_change = false
 		else:
 			_last_pos = _get_caret();
-		
-			
+
+
 	func _get_caret():
 		return Vector2(te.get_caret_column(), te.get_caret_line())
-	
-	
+
+
 	func _set_caret_and_sel(pos, len):
 		te.set_caret_line(pos.y)
 		te.set_caret_column(pos.x)
 		if(len > 0):
 			te.select(pos.y, pos.x, pos.y, pos.x + len)
-		
-		
+
+
 	func _find(term, search_flags):
 		var pos = _get_caret()
 		if(term == _last_term):
@@ -49,12 +49,12 @@ class TextEditSearcher:
 			_ignore_caret_change = true
 			_set_caret_and_sel(result, term.length())
 			_last_pos = result
-			
-		_last_term = term	
-	
+
+		_last_term = term
+
 	func find_next(term):
 		_find(term, 0)
-		
+
 	func find_prev(term):
 		_find(term, te.SEARCH_BACKWARDS)
 
@@ -96,11 +96,11 @@ func _test_running_setup():
 
 	load_file('user://.gut_editor.bbcode')
 	await get_tree().process_frame
-	
+
 	show_search(true)
 	_ctrls.output.set_caret_line(0)
 	_ctrls.output.scroll_vertical = 0
-	
+
 	_ctrls.output.caret_changed.connect(_on_caret_changed)
 
 
@@ -118,7 +118,7 @@ func _ready():
 	_setup_colors()
 	_ctrls.use_colors.button_pressed = true
 	_use_highlighting(true)
-	
+
 	if(get_parent() == get_tree().root):
 		_test_running_setup()
 
@@ -138,12 +138,12 @@ func _refresh_output():
 
 func _create_highlighter(default_color=Color(1, 1, 1, 1)):
 	var to_return = CodeHighlighter.new()
-	
+
 	to_return.function_color = default_color
 	to_return.number_color = default_color
 	to_return.symbol_color = default_color
 	to_return.member_variable_color = default_color
-		
+
 	var keywords = [
 		['Failed', Color.RED],
 		['Passed', Color.GREEN],
@@ -198,7 +198,7 @@ func _on_CopyButton_pressed():
 
 func _on_UseColors_pressed():
 	_use_highlighting(_ctrls.use_colors.button_pressed)
-	
+
 
 func _on_ClearButton_pressed():
 	clear()

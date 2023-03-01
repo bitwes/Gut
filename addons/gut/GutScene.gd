@@ -3,6 +3,10 @@ extends Node2D
 
 class GuiHandler:
 	var _gui = null
+	var gui = null :
+		get: return _gui
+		set(val): _gui = val
+
 	var _gut = null
 
 	var _ctrls = {
@@ -16,8 +20,8 @@ class GuiHandler:
 		time_label = null
 	}
 
-	func _init(gui):
-		_gui = gui
+	func _init(gui_node):
+		_gui = gui_node
 
 		# Brute force, but flexible.
 		_ctrls.btn_continue = _get_first_child_named('Continue', _gui)
@@ -148,6 +152,8 @@ class GuiHandler:
 	func set_bg_color(c):
 		_ctrls.rtl_bg.color = c
 
+
+
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 var _large_handler = null
@@ -161,9 +167,7 @@ var gut = null :
 func _ready():
 	_large_handler = GuiHandler.new($Large)
 	_min_handler = GuiHandler.new($Min)
-
-	$Min.visible = false
-	$Large.visible = !$Min.visible
+	use_minimal_mode()
 
 func _process(_delta):
 	if(gut != null and gut.is_running()):
@@ -179,6 +183,7 @@ func get_textbox():
 
 
 func set_font_size(new_size):
+	return
 	var rtl = _large_handler.get_textbox()
 	if(rtl.get('custom_fonts/normal_font') != null):
 		rtl.get('custom_fonts/bold_italics_font').size = new_size
@@ -187,21 +192,16 @@ func set_font_size(new_size):
 		rtl.get('custom_fonts/normal_font').size = new_size
 
 func set_font(font_name):
-	pass
-	#_set_all_fonts_in_rtl(_large_handler.get_textbox(), font_name)
+	_set_all_fonts_in_rtl(_large_handler.get_textbox(), font_name)
 
 # Needs rework for 4.0, DynamicFont DNE
 func _set_font(rtl, font_name, custom_name):
-	pass
-	# if(font_name == null):
-	# 	rtl.set('custom_fonts/' + custom_name, null)
-	# else:
-	# 	var dyn_font = DynamicFont.new()
-	# 	var font_data = DynamicFontData.new()
-	# 	font_data.font_path = 'res://addons/gut/fonts/' + font_name + '.ttf'
-	# 	font_data.antialiased = true
-	# 	dyn_font.font_data = font_data
-	# 	rtl.set('custom_fonts/' + custom_name, dyn_font)
+	if(font_name == null):
+		rtl.add_theme_font_override(custom_name, null)
+	else:
+		var dyn_font = FontFile.new()
+		dyn_font.load_dynamic_font('res://addons/gut/fonts/' + font_name + '.ttf')
+		rtl.add_theme_font_override(custom_name, dyn_font)
 
 
 func _set_all_fonts_in_rtl(rtl, base_name):
@@ -223,3 +223,8 @@ func set_default_font_color(color):
 
 func set_background_color(color):
 	_large_handler.set_bg_color(color)
+
+
+func use_minimal_mode(should=true):
+	_min_handler.gui.visible = should
+	_large_handler.gui.visible = !should
