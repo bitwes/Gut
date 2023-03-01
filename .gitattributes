@@ -23,4 +23,5 @@
 # /templates             export-ignore
 # /test                  export-ignore
 *                     export-ignore
-/addons/gut/**          -export-ignore
+/addons                -export-ignore
+/addons/gut/**            -export-ignore
