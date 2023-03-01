@@ -206,7 +206,7 @@ class GuiHandler:
 		return _ctrls.rtl
 
 	func set_elapsed_time(t):
-		_ctrls.time_label.text = str(t, 's')
+		_ctrls.time_label.text = str("%6.1f" % t, 's')
 
 
 	func set_bg_color(c):
@@ -272,22 +272,22 @@ func _set_gut(val):
 	val.start_pause_before_teardown.connect(_on_gut_pause)
 	val.end_pause_before_teardown.connect(_on_pause_end)
 
+func _set_both_titles(text):
+	_large_handler.set_title(text)
+	_min_handler.set_title(text)
+	
 
 func _on_gut_start_run():
-	_large_handler.set_title('Running')
-	_min_handler.set_title('Running')
+	_set_both_titles('Running')
 	
 func _on_gut_end_run():
-	_large_handler.set_title('Finished')
-	_min_handler.set_title('Finished')
+	_set_both_titles('Finished')
 	
 func _on_gut_pause():
-	_large_handler.set_title('Paused')
-	_min_handler.set_title('Paused')
+	_set_both_titles('-- Paused --')
 
 func _on_pause_end():
-	_large_handler.set_title('Running')
-	_min_handler.set_title('Running')
+	_set_both_titles('Running')
 
 	
 
