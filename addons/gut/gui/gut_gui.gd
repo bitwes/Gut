@@ -122,29 +122,38 @@ var _hndl_specs = {
 	grab_margin = 2,
 	line_space = 4,
 	line_color = Color(.4, .4, .4),
-	num_lines = 7
+	num_lines = 7,
+	active_line_color = Color(.3, .3, .3)
 }
 
 # Draw the lines in the corner to show where you can
 # drag to resize the dialog
-func _draw_resize_handle_right(draw_on):
+func _draw_resize_handle_right(draw_on, is_active):
+	var color = _hndl_specs.line_color
+	if(is_active):
+		color = _hndl_specs.active_line_color
+		
 	var bl = Vector2(0, draw_on.size.y)
 	var tr = Vector2(draw_on.size.x, 0)
 	
 	for i in range(_hndl_specs.num_lines):
 		var start = bl + Vector2(i * _hndl_specs.line_space, 0)
 		var end = tr + Vector2(0, i * _hndl_specs.line_space)
-		draw_on.draw_line(start, end, _hndl_specs.line_color, 1, true)
+		draw_on.draw_line(start, end, color, 1, true)
 	
 
-func _draw_resize_handle_left(draw_on):
+func _draw_resize_handle_left(draw_on, is_active):
+	var color = _hndl_specs.line_color
+	if(is_active):
+		color = _hndl_specs.active_line_color
+
 	var tl = Vector2(0, 0)
 	var br = draw_on.size
 	
 	for i in range(_hndl_specs.num_lines):
 		var start = br - Vector2(i * _hndl_specs.line_space, 0)
 		var end = tl +  Vector2(0, i * _hndl_specs.line_space)
-		draw_on.draw_line(start, end, _hndl_specs.line_color, 1, true)
+		draw_on.draw_line(start, end, color, 1, true)
 	
 
 # ------------------
@@ -168,10 +177,11 @@ func _on_resize_handle_input(event : InputEvent):
 	elif(event is InputEventMouseButton):
 		if(event.button_index == MOUSE_BUTTON_LEFT):
 			_resize_mouse.down = event.pressed
+			_ctrls.resize_handle.queue_redraw()
 
 
 func _on_resize_handle_draw():
-	_draw_resize_handle_right(_ctrls.resize_handle)
+	_draw_resize_handle_right(_ctrls.resize_handle, _resize_mouse.down)
 
 
 func _on_resize_handle_left_input(event : InputEvent):
@@ -186,11 +196,12 @@ func _on_resize_handle_left_input(event : InputEvent):
 	elif(event is InputEventMouseButton):
 		if(event.button_index == MOUSE_BUTTON_LEFT):
 			_resize_left_mouse.down = event.pressed
+			_ctrls.resize_handle_left.queue_redraw()
 
 
 
 func _on_resize_handle_left_draw():
-	_draw_resize_handle_left(_ctrls.resize_handle_left)
+	_draw_resize_handle_left(_ctrls.resize_handle_left, _resize_left_mouse.down)
 
 
 func _on_continue_pressed():
