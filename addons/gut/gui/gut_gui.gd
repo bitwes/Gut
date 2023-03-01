@@ -10,11 +10,6 @@ extends Control
 # Optional controls are marked as such in the _ctrls dictionary.  The names
 # of the controls can be found in _populate_ctrls.
 # ##############################################################################
-var _gui = self
-var gui = null :
-	get: return _gui
-	set(val): _gui = val
-
 var _gut = null
 
 var _ctrls = {
@@ -35,7 +30,7 @@ var _ctrls = {
 signal switch_modes()
 
 func _ready():
-    _populate_ctrls()
+	_populate_ctrls()
 
 	_ctrls.btn_continue.visible = false
 	_ctrls.btn_continue.pressed.connect(_on_continue_pressed)
@@ -57,20 +52,20 @@ func _ready():
 # ------------------
 func _populate_ctrls():
 	# Brute force, but flexible.  This allows for all the controls to exist
-    # anywhere, and as long as they all have the right name, they will be
-    # found.
-	_ctrls.btn_continue = _get_first_child_named('Continue', _gui)
-	_ctrls.path_dir = _get_first_child_named('Path', _gui)
-	_ctrls.path_file = _get_first_child_named('File', _gui)
-	_ctrls.prog_script = _get_first_child_named('ProgressScript', _gui)
-	_ctrls.prog_test = _get_first_child_named('ProgressTest', _gui)
-	_ctrls.resize_handle = _get_first_child_named("ResizeHandle", _gui)
-	_ctrls.rtl = _get_first_child_named('TestOutput', _gui)
-	_ctrls.rtl_bg = _get_first_child_named('OutputBG', _gui)
-	_ctrls.switch_modes = _get_first_child_named("SwitchModes", _gui)
-	_ctrls.time_label = _get_first_child_named('TimeLabel', _gui)
-	_ctrls.title = _get_first_child_named("Title", _gui)
-	_ctrls.title_bar = _get_first_child_named("TitleBar", _gui)
+	# anywhere, and as long as they all have the right name, they will be
+	# found.
+	_ctrls.btn_continue = _get_first_child_named('Continue', self)
+	_ctrls.path_dir = _get_first_child_named('Path', self)
+	_ctrls.path_file = _get_first_child_named('File', self)
+	_ctrls.prog_script = _get_first_child_named('ProgressScript', self)
+	_ctrls.prog_test = _get_first_child_named('ProgressTest', self)
+	_ctrls.resize_handle = _get_first_child_named("ResizeHandle", self)
+	_ctrls.rtl = _get_first_child_named('TestOutput', self)
+	_ctrls.rtl_bg = _get_first_child_named('OutputBG', self)
+	_ctrls.switch_modes = _get_first_child_named("SwitchModes", self)
+	_ctrls.time_label = _get_first_child_named('TimeLabel', self)
+	_ctrls.title = _get_first_child_named("Title", self)
+	_ctrls.title_bar = _get_first_child_named("TitleBar", self)
 
 
 func _get_first_child_named(obj_name, parent_obj):
@@ -100,7 +95,7 @@ var _title_mouse = {
 func _on_title_bar_input(event : InputEvent):
 	if(event is InputEventMouseMotion):
 		if(_title_mouse.down):
-			_gui.position += event.relative
+			self.position += event.relative
 	elif(event is InputEventMouseButton):
 		if(event.button_index == MOUSE_BUTTON_LEFT):
 			_title_mouse.down = event.pressed
@@ -111,7 +106,7 @@ var _resize_mouse = {
 func _on_resize_handle_input(event : InputEvent):
 	if(event is InputEventMouseMotion):
 		if(_resize_mouse.down):
-			_gui.size += event.relative
+			self.size += event.relative
 	elif(event is InputEventMouseButton):
 		if(event.button_index == MOUSE_BUTTON_LEFT):
 			_resize_mouse.down = event.pressed
@@ -230,16 +225,16 @@ func set_title(text):
 
 
 func to_top_left():
-	_gui.position = Vector2(5, 5)
+	self.position = Vector2(5, 5)
 
 
 func to_bottom_right():
 	var win_size = DisplayServer.window_get_size()
-	_gui.position = win_size - Vector2i(_gui.size) - Vector2i(5, 5)
+	self.position = win_size - Vector2i(self.size) - Vector2i(5, 5)
 
 
 func align_right():
 	var win_size = DisplayServer.window_get_size()
-	_gui.position.x = win_size.x - _gui.size.x -5
-	_gui.position.y = 5
-	_gui.size.y = win_size.y - 10
+	self.position.x = win_size.x - self.size.x -5
+	self.position.y = 5
+	self.size.y = win_size.y - 10

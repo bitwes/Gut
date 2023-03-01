@@ -117,10 +117,10 @@ func set_background_color(color):
 
 
 func use_compact_mode(should=true):
-	_compact_gui.gui.visible = should
-	_normal_gui.gui.visible = !should
+	_compact_gui.visible = should
+	_normal_gui.visible = !should
 
 
 func set_opacity(val):
-	_normal_gui.gui.modulate.a = val
-	_compact_gui.gui.modulate.a = val
+	_normal_gui.modulate.a = val
+	_compact_gui.modulate.a = val
