@@ -164,7 +164,8 @@ text = "Continue
 
 [node name="SwitchModes" type="Button" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/VBoxContainer"]
 layout_mode = 2
-text = "Minimal"
+text = "Compact
+"
 
 [node name="S3" type="CenterContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
 custom_minimum_size = Vector2(5, 0)

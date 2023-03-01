@@ -59,6 +59,27 @@ class GuiHandler:
 
 
 	# ------------------
+	# Private
+	# ------------------
+	func _get_first_child_named(obj_name, parent_obj):
+		if(parent_obj == null):
+			return null
+
+		var kids = parent_obj.get_children()
+		var index = 0
+		var to_return = null
+
+		while(index < kids.size() and to_return == null):
+			if(str(kids[index]).find(str(obj_name, ':')) != -1):
+				to_return = kids[index]
+			else:
+				to_return = _get_first_child_named(obj_name, kids[index])
+				if(to_return == null):
+					index += 1
+
+		return to_return
+
+	# ------------------
 	# Events
 	# ------------------
 	var _title_mouse = {
@@ -99,7 +120,6 @@ class GuiHandler:
 
 
 	func _on_continue_pressed():
-		_ctrls.btn_continue.visible = false
 		_gut.end_teardown_pause()
 
 
@@ -111,6 +131,8 @@ class GuiHandler:
 
 	func _on_gut_end_run():
 		_ctrls.time_label.text = ''
+		_ctrls.prog_test.value = _ctrls.prog_test.max_value
+		_ctrls.prog_script.value = _ctrls.prog_script.max_value
 
 
 	func _on_gut_start_script(script_obj):
@@ -132,34 +154,13 @@ class GuiHandler:
 	func _on_gut_start_pause():
 		pause_before_teardown()
 
+
 	func _on_gut_end_pause():
-		pass
+		_ctrls.btn_continue.visible = false
+
 
 	func _on_switch_modes_pressed():
 		switch_modes.emit()
-
-	# ------------------
-	# Private
-	# ------------------
-
-	
-	func _get_first_child_named(obj_name, parent_obj):
-		if(parent_obj == null):
-			return null
-
-		var kids = parent_obj.get_children()
-		var index = 0
-		var to_return = null
-
-		while(index < kids.size() and to_return == null):
-			if(str(kids[index]).find(str(obj_name, ':')) != -1):
-				to_return = kids[index]
-			else:
-				to_return = _get_first_child_named(obj_name, kids[index])
-				if(to_return == null):
-					index += 1
-
-		return to_return
 
 	# ------------------
 	# Public
@@ -199,6 +200,7 @@ class GuiHandler:
 
 		g.start_pause_before_teardown.connect(_on_gut_start_pause)
 		g.end_pause_before_teardown.connect(_on_gut_end_pause)
+
 
 	func get_textbox():
 		return _ctrls.rtl
@@ -243,8 +245,8 @@ func _ready():
 	_large_handler = GuiHandler.new($Large)
 	_min_handler = GuiHandler.new($Min)
 
-	_large_handler.switch_modes.connect(use_minimal_mode.bind(true))
-	_min_handler.switch_modes.connect(use_minimal_mode.bind(false))
+	_large_handler.switch_modes.connect(use_compact_mode.bind(true))
+	_min_handler.switch_modes.connect(use_compact_mode.bind(false))
 
 	_large_handler.set_title("GUT")
 	_min_handler.set_title("GUT")
@@ -252,8 +254,7 @@ func _ready():
 	_large_handler.align_right()
 	_min_handler.to_bottom_right()
 	
-	set_opacity(.5)
-	use_minimal_mode(false)
+	use_compact_mode(false)
 
 
 func _process(_delta):
@@ -265,6 +266,32 @@ func _process(_delta):
 func _set_gut(val):
 	_large_handler.set_gut(val)
 	_min_handler.set_gut(val)
+	
+	val.start_run.connect(_on_gut_start_run)
+	val.end_run.connect(_on_gut_end_run)
+	val.start_pause_before_teardown.connect(_on_gut_pause)
+	val.end_pause_before_teardown.connect(_on_pause_end)
+
+
+func _on_gut_start_run():
+	_large_handler.set_title('Running')
+	_min_handler.set_title('Running')
+	
+func _on_gut_end_run():
+	_large_handler.set_title('Finished')
+	_min_handler.set_title('Finished')
+	
+func _on_gut_pause():
+	_large_handler.set_title('Paused')
+	_min_handler.set_title('Paused')
+
+func _on_pause_end():
+	_large_handler.set_title('Running')
+	_min_handler.set_title('Running')
+
+	
+
+
 
 
 func get_textbox():
@@ -315,7 +342,7 @@ func set_background_color(color):
 	_large_handler.set_bg_color(color)
 
 
-func use_minimal_mode(should=true):
+func use_compact_mode(should=true):
 	_min_handler.gui.visible = should
 	_large_handler.gui.visible = !should
 
