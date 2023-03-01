@@ -23,7 +23,12 @@ func _ready():
 	_compact_gui.to_bottom_right()
 
 	use_compact_mode(false)
+	
+	if(get_parent() == get_tree().root):
+		_test_running_setup()
 
+func _test_running_setup():
+	_normal_gui.get_textbox().text = "hello world, how are you doing?"
 
 # ------------------------
 # Private
