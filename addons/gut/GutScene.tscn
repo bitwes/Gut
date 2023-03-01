@@ -128,16 +128,20 @@ value = 75.0
 
 [node name="PathDisplay" type="VBoxContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Path" type="Label" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/PathDisplay"]
 layout_mode = 2
+size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("3_qvb8f")
 theme_override_font_sizes/font_size = 11
 text = "res://test/integration/whatever"
+text_overrun_behavior = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/PathDisplay"]
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="S3" type="CenterContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/PathDisplay/HBoxContainer"]
 custom_minimum_size = Vector2(5, 0)
@@ -145,26 +149,21 @@ layout_mode = 2
 
 [node name="File" type="Label" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/PathDisplay/HBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("3_qvb8f")
 theme_override_font_sizes/font_size = 11
 text = "test_this_thing.gd"
+text_overrun_behavior = 3
 
 [node name="Spacer1" type="CenterContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
+visible = false
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
-layout_mode = 2
-
-[node name="Continue" type="Button" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/VBoxContainer"]
+[node name="Continue" type="Button" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
 layout_mode = 2
 size_flags_vertical = 4
 text = "Continue
-"
-
-[node name="SwitchModes" type="Button" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox/VBoxContainer"]
-layout_mode = 2
-text = "Compact
 "
 
 [node name="S3" type="CenterContainer" parent="Large/MainBox/HBoxContainer/VBoxContainer/ControlBox"]
@@ -178,6 +177,11 @@ layout_mode = 2
 [node name="Footer" type="HBoxContainer" parent="Large/MainBox"]
 layout_mode = 2
 
+[node name="SwitchModes" type="Button" parent="Large/MainBox/Footer"]
+layout_mode = 2
+text = "Compact
+"
+
 [node name="CenterContainer" type="CenterContainer" parent="Large/MainBox/Footer"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -189,11 +193,11 @@ color = Color(1, 1, 1, 0)
 
 [node name="Min" type="Panel" parent="."]
 clip_contents = true
-custom_minimum_size = Vector2(260, 150)
-offset_left = 660.0
-offset_top = 12.0
-offset_right = 920.0
-offset_bottom = 162.0
+custom_minimum_size = Vector2(260, 130)
+offset_left = 1.0
+offset_top = 271.0
+offset_right = 261.0
+offset_bottom = 401.0
 theme = ExtResource("1_s37wl")
 metadata/_edit_group_ = true
 
@@ -276,6 +280,7 @@ layout_mode = 2
 value = 75.0
 
 [node name="PathDisplay" type="VBoxContainer" parent="Min/MainBox/Body/BodyRows"]
+clip_contents = true
 layout_mode = 2
 size_flags_vertical = 3
 
@@ -284,8 +289,11 @@ layout_mode = 2
 theme_override_fonts/font = ExtResource("3_qvb8f")
 theme_override_font_sizes/font_size = 11
 text = "res://test/integration/whatever"
+clip_text = true
+text_overrun_behavior = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Min/MainBox/Body/BodyRows/PathDisplay"]
+clip_contents = true
 layout_mode = 2
 
 [node name="S3" type="CenterContainer" parent="Min/MainBox/Body/BodyRows/PathDisplay/HBoxContainer"]
@@ -294,18 +302,27 @@ layout_mode = 2
 
 [node name="File" type="Label" parent="Min/MainBox/Body/BodyRows/PathDisplay/HBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("3_qvb8f")
 theme_override_font_sizes/font_size = 11
 text = "test_this_thing.gd"
+text_overrun_behavior = 3
 
-[node name="Continue" type="Button" parent="Min/MainBox/Body/BodyRows"]
+[node name="Footer" type="HBoxContainer" parent="Min/MainBox/Body/BodyRows"]
+layout_mode = 2
+
+[node name="SwitchModes" type="Button" parent="Min/MainBox/Body/BodyRows/Footer"]
+layout_mode = 2
+text = "Expand"
+
+[node name="CenterContainer" type="CenterContainer" parent="Min/MainBox/Body/BodyRows/Footer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Continue" type="Button" parent="Min/MainBox/Body/BodyRows/Footer"]
 layout_mode = 2
 text = "Continue
 "
-
-[node name="SwitchModes" type="Button" parent="Min/MainBox/Body/BodyRows"]
-layout_mode = 2
-text = "Expand"
 
 [node name="RightMargin" type="CenterContainer" parent="Min/MainBox/Body"]
 custom_minimum_size = Vector2(5, 0)
