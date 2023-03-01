@@ -13,7 +13,6 @@ var gut = null :
 
 
 func _ready():
-
 	_normal_gui.switch_modes.connect(use_compact_mode.bind(true))
 	_compact_gui.switch_modes.connect(use_compact_mode.bind(false))
 

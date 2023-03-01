@@ -97,6 +97,7 @@ custom_minimum_size = Vector2(5, 0)
 layout_mode = 2
 
 [node name="ProgressBars" type="VBoxContainer" parent="MainBox/HBoxContainer/VBoxContainer/ControlBox"]
+custom_minimum_size = Vector2(2.08165e-12, 2.08165e-12)
 layout_mode = 2
 
 [node name="TestBox" type="HBoxContainer" parent="MainBox/HBoxContainer/VBoxContainer/ControlBox/ProgressBars"]
@@ -105,6 +106,7 @@ layout_mode = 2
 [node name="Label" type="Label" parent="MainBox/HBoxContainer/VBoxContainer/ControlBox/ProgressBars/TestBox"]
 custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Tests"
 
 [node name="ProgressTest" type="ProgressBar" parent="MainBox/HBoxContainer/VBoxContainer/ControlBox/ProgressBars/TestBox"]
@@ -118,6 +120,7 @@ layout_mode = 2
 [node name="Label" type="Label" parent="MainBox/HBoxContainer/VBoxContainer/ControlBox/ProgressBars/ScriptBox"]
 custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Scripts"
 
 [node name="ProgressScript" type="ProgressBar" parent="MainBox/HBoxContainer/VBoxContainer/ControlBox/ProgressBars/ScriptBox"]
@@ -176,6 +179,17 @@ layout_mode = 2
 [node name="Footer" type="HBoxContainer" parent="MainBox"]
 layout_mode = 2
 
+[node name="SidePad1" type="CenterContainer" parent="MainBox/Footer"]
+custom_minimum_size = Vector2(2, 2.08165e-12)
+layout_mode = 2
+
+[node name="ResizeHandleLeft" type="ColorRect" parent="MainBox/Footer"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+color = Color(1, 1, 1, 0.972549)
+
 [node name="SwitchModes" type="Button" parent="MainBox/Footer"]
 layout_mode = 2
 text = "Compact
@@ -186,6 +200,16 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="ResizeHandle" type="ColorRect" parent="MainBox/Footer"]
-custom_minimum_size = Vector2(20, 20)
+custom_minimum_size = Vector2(25, 25)
 layout_mode = 2
-color = Color(1, 1, 1, 0)
+size_flags_horizontal = 0
+size_flags_vertical = 0
+color = Color(1, 1, 1, 0.972549)
+
+[node name="SidePad2" type="CenterContainer" parent="MainBox/Footer"]
+custom_minimum_size = Vector2(2, 2.08165e-12)
+layout_mode = 2
+
+[node name="BottomPad2" type="CenterContainer" parent="MainBox"]
+custom_minimum_size = Vector2(2.08165e-12, 2)
+layout_mode = 2

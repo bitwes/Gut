@@ -6,15 +6,16 @@
 
 [node name="Min" type="Panel"]
 clip_contents = true
-custom_minimum_size = Vector2(260, 130)
-offset_right = 260.0
-offset_bottom = 130.0
+custom_minimum_size = Vector2(280, 145)
+offset_right = 280.0
+offset_bottom = 145.0
 theme = ExtResource("1_farmq")
 script = ExtResource("2_eokrf")
 metadata/_edit_group_ = true
 
 [node name="MainBox" type="VBoxContainer" parent="."]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -138,4 +139,8 @@ text = "Continue
 
 [node name="RightMargin" type="CenterContainer" parent="MainBox/Body"]
 custom_minimum_size = Vector2(5, 0)
+layout_mode = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="MainBox"]
+custom_minimum_size = Vector2(2.08165e-12, 2)
 layout_mode = 2
