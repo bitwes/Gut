@@ -12,6 +12,7 @@ offset_right = 1010.0
 offset_bottom = 400.0
 
 [node name="StartRun" type="Button" parent="Controls"]
+layout_mode = 0
 offset_left = 30.0
 offset_top = 10.0
 offset_right = 190.0
@@ -21,6 +22,7 @@ clip_text = true
 
 [node name="PauseBeforeTeardown" type="Button" parent="Controls"]
 visible = false
+layout_mode = 0
 offset_left = 30.0
 offset_top = 70.0
 offset_right = 191.0
@@ -29,6 +31,7 @@ text = "Pause Before Teardown"
 
 [node name="Clear Summary" type="Button" parent="Controls"]
 visible = false
+layout_mode = 0
 offset_left = 30.0
 offset_top = 190.0
 offset_right = 191.0
@@ -37,6 +40,7 @@ text = "Clear Summary"
 
 [node name="Pass" type="Button" parent="Controls"]
 visible = false
+layout_mode = 0
 offset_left = 110.0
 offset_top = 130.0
 offset_right = 191.0
@@ -45,6 +49,7 @@ text = "Pass"
 
 [node name="Fail" type="Button" parent="Controls"]
 visible = false
+layout_mode = 0
 offset_left = 30.0
 offset_top = 130.0
 offset_right = 99.0

@@ -4,8 +4,10 @@ var GutRunner = load('res://addons/gut/gui/GutRunner.tscn')
 
 var _runner = GutRunner.instantiate()
 
+
 func _init():
 	_runner.auto_run_tests = false
+
 
 func _ready():
 	# wait a bit for _utils to be happy.

@@ -63,16 +63,3 @@ func test_load_a_single_script():
 	var t1 = add_test_to_json("test_foo", s1)
 	rt.load_json_results(j)
 	pause_before_teardown()
-
-
-
-
-
-
-
-
-
-# func test_test_load_some_shit():
-# 	var rt = add_child_autofree(ResultTree.instantiate())
-# 	rt.load_json_file('res://test/resources/gut_full_run.json')
-
