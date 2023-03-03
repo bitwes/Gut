@@ -150,6 +150,7 @@ class TestMisc:
 	func test_gut_does_not_make_orphans_when_freed_before_in_tree():
 		var g = new_gut()
 		g.free()
+		await wait_frames(2)
 		assert_no_new_orphans()
 
 
@@ -222,7 +223,7 @@ class TestEverythingElse:
 		gr.test_finished_called = false
 		gr.test_gut = get_a_gut()
 		add_child_autoqfree(gr.test_gut)
-		gr.test = Test.new()
+		gr.test = autofree(Test.new())
 		gr.test.gut = gr.test_gut
 
 	func after_each():

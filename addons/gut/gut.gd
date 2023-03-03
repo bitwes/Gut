@@ -342,6 +342,8 @@ func _notification(what):
 				test_script.free()
 
 		_test_script_objects = []
+		if(is_instance_valid(_awaiter)):
+			_awaiter.free()
 
 
 func _print_versions(send_all = true):
