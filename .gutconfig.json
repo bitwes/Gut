@@ -10,7 +10,7 @@
   "should_maximize": false,
   "should_exit": true,
   "ignore_pause": false,
-  "log_level": 0,
+  "log_level": 3,
   "double_strategy": "partial",
   "include_subdirs": true,
   "inner_class": "",

@@ -18,7 +18,8 @@ func test_can_get_stubber():
 func test_stubber_cleared_between_tests_setup():
 	var sp = StubParams.new('thing', 'method').to_return(5)
 	gut.get_stubber().add_stub(sp)
-	gut.p('this sets up for next test')
+	pass_test('this sets up for next test')
+
 
 func test_stubber_cleared_between_tests():
 	assert_eq(gut.get_stubber().get_return('thing', 'method'), null)

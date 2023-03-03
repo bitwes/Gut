@@ -55,7 +55,6 @@ class TestBasics:
 		doubled.is_blocking_signals()
 		gr.test.assert_called(doubled, 'is_blocking_signals')
 		assert_eq(gr.test.get_pass_count(), 1)
-		pause_before_teardown()
 
 	func test_when_strategy_is_partial_then_supers_are_NOT_spied_in_scenes():
 		var doubled = gr.test.double(DoubleMeScene, gr.test.DOUBLE_STRATEGY.SCRIPT_ONLY).instantiate()
@@ -80,7 +79,6 @@ class TestBasics:
 		assert_eq(anotherA.get_a(), 20)
 
 	func test_can_stub_multiple_inners_using_class_path_and_inner_names():
-		print("base = ", InnerClasses)
 		gr.test.register_inner_classes(InnerClasses)
 
 		var inner_a = gr.gut.get_doubler().double(InnerClasses.InnerA).new()
@@ -280,13 +278,6 @@ class TestPartialDoubleMethod:
 		_test.assert_called(inst, 'set_position', [Vector2(100, 100)])
 		assert_eq(_test.get_pass_count(), pass_count + 1, 'tests have passed')
 
-	# Test issue 147
-	func test_can_double_file_skip__():
-		pending('return value not included so signature does not match on file_exists 4.0.  Also File no longer exists.')
-
-		_test.gut.get_doubler().print_source = true
-		var inst = _test.partial_double(FileAccess)
-		assert_not_null(inst)
 
 	func test_when_an_instance_is_passed_null_is_returned_and_an_error_is_generated():
 		var inst = autofree(Node2D.new())
@@ -331,20 +322,19 @@ class TestOverridingParameters:
 		assert_eq(ret_val, '12')
 
 
-	func test_issue_246_rpc_id_varargs_skip__():
+	func test_issue_246_rpc_id_varargs():
 		_test.stub(Node, 'rpc_id').to_do_nothing().param_count(5)
 		_test.stub(Node, '_ready').to_do_nothing()
 
 		var inst =  _test.double(Node).new()
 		add_child_autofree(inst)
-		print(_test.gut.get_stubber().to_s())
+
 		var ret_val = inst.rpc_id(1, 'foo', '3', '4', '5')
 		_test.assert_called(inst, 'rpc_id', [1, 'foo', '3', '4', '5'])
 		assert_eq(_test.get_pass_count(), 1)
 
 
-
-	func test_issue_246_rpc_id_varargs2_skip__():
+	func test_issue_246_rpc_id_varargs2():
 		stub(Node, 'rpc_id').to_do_nothing().param_count(5)
 
 		var inst = double(Node).new()
@@ -352,7 +342,7 @@ class TestOverridingParameters:
 		inst.rpc_id(1, 'foo', '3', '4', '5')
 		assert_called(inst, 'rpc_id', [1, 'foo', '3', '4', '5'])
 
-	func test_issue_246_rpc_id_varargs_with_defaults_skip__():
+	func test_issue_246_rpc_id_varargs_with_defaults():
 		stub(Node, 'rpc_id').to_do_nothing().param_defaults([null, null, 'a', 'b', 'c'])
 
 		var inst = double(Node).new()

@@ -131,6 +131,13 @@ class TestTheBasics:
 			print("Node2D = ", Node2D)
 			# print(gr.stubber.to_s())
 
+	func test_can_stub_param_count_on_gdnatives():
+		var params = _utils.StubParams.new(Node2D, 'rpc_id').param_count(5)
+		gr.stubber.add_stub(params)
+		var d_node2d = autofree(gr.doubler.double_gdnative(Node2D).new())
+		assert_eq(gr.stubber.get_parameter_count(d_node2d, 'rpc_id'), 5)
+
+
 	func test_init_is_never_stubbed_to_call_super():
 		var inst =  gr.doubler.partial_double(DoubleMe).new()
 		assert_false(gr.stubber.should_call_super(inst, '_init', []))

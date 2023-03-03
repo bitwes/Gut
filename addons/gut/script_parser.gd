@@ -141,7 +141,6 @@ class ParsedScript:
 				_resource = inner_class
 				to_load = inner_class
 
-
 		_parse_methods(to_load)
 
 

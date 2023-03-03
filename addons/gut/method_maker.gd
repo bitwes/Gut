@@ -131,7 +131,6 @@ func _make_arg_array(method_meta, override_size):
 	if(override_size != null):
 		for i in range(method_meta.args.size(), override_size):
 			var pname = str(PARAM_PREFIX, 'arg', i)
-			print('-------- ', i, ' ', pname)
 			var dflt_text = _make_stub_default(method_meta.name, i)
 			to_return.append(CallParameters.new(pname, dflt_text))
 
@@ -215,8 +214,6 @@ func _get_init_text(meta, args, method_params, param_array):
 func get_function_text(meta, path=null, override_size=null, super_name=""):
 	var method_params = ''
 	var text = null
-	if(override_size != null):
-		print('!!!!!! ', override_size)
 	var result = _make_arg_array(meta, override_size)
 	var has_unsupported = result[0]
 	var args = result[1]

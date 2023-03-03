@@ -240,6 +240,17 @@ func test_get_parameter_count_finds_count_when_another_stub_exists():
 
 	assert_eq(gr.stubber.get_parameter_count(DoubleMe, 'method'), 3)
 
+func test_can_stub_parameter_count_for_gdnatives():
+	var sp = StubParamsClass.new(Node, 'rpc_id').param_count(5)
+	gr.stubber.add_stub(sp)
+	assert_eq(gr.stubber.get_parameter_count(Node, 'rpc_id'), 5)
+
+func test_can_get_parameter_count_from_instance_of_gdnatives():
+	var sp = StubParamsClass.new(Node, 'rpc_id').param_count(5)
+	gr.stubber.add_stub(sp)
+	var n = double(Node).new()
+	assert_eq(gr.stubber.get_parameter_count(n, 'rpc_id'), 5)
+
 
 
 # ----------------
@@ -299,3 +310,5 @@ func test_draw_parameter_method_meta():
 # 	assert_string_contains(txt, 'p_texture=null')
 # 	if(is_failing()):
 # 		_utils.pretty_print(meta)
+
+

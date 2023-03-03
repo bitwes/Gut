@@ -41,8 +41,6 @@ func _init(target=null,method=null,subpath=null):
 
 	if(stub_target is PackedScene):
 		stub_target = _utils.get_scene_script_object(stub_target)
-	elif(_utils.is_native_class(stub_target)):
-		print("Got a native class:  ", stub_target)
 
 	# this is used internally to stub default parameters for everything that is
 	# doubled...or something.  Look for stub_defaults_from_meta for usage.  This
