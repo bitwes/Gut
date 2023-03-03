@@ -18,8 +18,6 @@ var _ctrls = {
 	path_file = null,
 	prog_script = null,
 	prog_test = null,
-	resize_handle = null,       # optional
-	resize_handle_left = null,	# optional
 	rtl = null,                 # optional
 	rtl_bg = null,              # required if rtl exists
 	switch_modes = null,
@@ -53,16 +51,6 @@ func _ready():
 	_ctrls.switch_modes.pressed.connect(_on_switch_modes_pressed)
 	_ctrls.title_bar.gui_input.connect(_on_title_bar_input)
 	
-	if(_ctrls.resize_handle != null):
-		_ctrls.resize_handle.gui_input.connect(_on_resize_handle_input)
-		_ctrls.resize_handle.draw.connect(_on_resize_handle_draw)
-		_ctrls.resize_handle.color.a = 0
-
-	if(_ctrls.resize_handle_left != null):
-		_ctrls.resize_handle_left.gui_input.connect(_on_resize_handle_left_input)
-		_ctrls.resize_handle_left.draw.connect(_on_resize_handle_left_draw)
-		_ctrls.resize_handle_left.color.a = 0
-
 	_ctrls.prog_script.value = 0
 	_ctrls.prog_test.value = 0
 	_ctrls.path_dir.text = ''
@@ -89,8 +77,6 @@ func _populate_ctrls():
 	_ctrls.path_file = _get_first_child_named('File', self)
 	_ctrls.prog_script = _get_first_child_named('ProgressScript', self)
 	_ctrls.prog_test = _get_first_child_named('ProgressTest', self)
-	_ctrls.resize_handle = _get_first_child_named("ResizeHandle", self)
-	_ctrls.resize_handle_left = _get_first_child_named("ResizeHandleLeft", self)
 	_ctrls.rtl = _get_first_child_named('TestOutput', self)
 	_ctrls.rtl_bg = _get_first_child_named('OutputBG', self)
 	_ctrls.switch_modes = _get_first_child_named("SwitchModes", self)
@@ -117,44 +103,7 @@ func _get_first_child_named(obj_name, parent_obj):
 
 	return to_return
 
-# used to draw resize handles below.
-var _hndl_specs = {
-	grab_margin = 2,
-	line_space = 4,
-	line_color = Color(.4, .4, .4),
-	num_lines = 7,
-	active_line_color = Color(.3, .3, .3)
-}
 
-# Draw the lines in the corner to show where you can
-# drag to resize the dialog
-func _draw_resize_handle_right(draw_on, is_active):
-	var color = _hndl_specs.line_color
-	if(is_active):
-		color = _hndl_specs.active_line_color
-		
-	var bl = Vector2(0, draw_on.size.y)
-	var tr = Vector2(draw_on.size.x, 0)
-	
-	for i in range(_hndl_specs.num_lines):
-		var start = bl + Vector2(i * _hndl_specs.line_space, 0)
-		var end = tr + Vector2(0, i * _hndl_specs.line_space)
-		draw_on.draw_line(start, end, color, 1, true)
-	
-
-func _draw_resize_handle_left(draw_on, is_active):
-	var color = _hndl_specs.line_color
-	if(is_active):
-		color = _hndl_specs.active_line_color
-
-	var tl = Vector2(0, 0)
-	var br = draw_on.size
-	
-	for i in range(_hndl_specs.num_lines):
-		var start = br - Vector2(i * _hndl_specs.line_space, 0)
-		var end = tl +  Vector2(0, i * _hndl_specs.line_space)
-		draw_on.draw_line(start, end, color, 1, true)
-	
 
 # ------------------
 # Events
@@ -168,40 +117,6 @@ func _on_title_bar_input(event : InputEvent):
 	elif(event is InputEventMouseButton):
 		if(event.button_index == MOUSE_BUTTON_LEFT):
 			_title_mouse.down = event.pressed
-
-
-func _on_resize_handle_input(event : InputEvent):
-	if(event is InputEventMouseMotion):
-		if(_resize_mouse.down and event.global_position.x > 0 and event.global_position.y < DisplayServer.window_get_size().y):
-			self.size += event.relative
-	elif(event is InputEventMouseButton):
-		if(event.button_index == MOUSE_BUTTON_LEFT):
-			_resize_mouse.down = event.pressed
-			_ctrls.resize_handle.queue_redraw()
-
-
-func _on_resize_handle_draw():
-	_draw_resize_handle_right(_ctrls.resize_handle, _resize_mouse.down)
-
-
-func _on_resize_handle_left_input(event : InputEvent):
-	if(event is InputEventMouseMotion):
-		if(_resize_left_mouse.down and event.global_position.x > 0 and event.global_position.y < DisplayServer.window_get_size().y):
-			var start_size = size
-			self.size.x -= event.relative.x
-			if(size.x != start_size.x):
-				global_position.x += event.relative.x
-			
-			self.size.y += event.relative.y
-	elif(event is InputEventMouseButton):
-		if(event.button_index == MOUSE_BUTTON_LEFT):
-			_resize_left_mouse.down = event.pressed
-			_ctrls.resize_handle_left.queue_redraw()
-
-
-
-func _on_resize_handle_left_draw():
-	_draw_resize_handle_left(_ctrls.resize_handle_left, _resize_left_mouse.down)
 
 
 func _on_continue_pressed():
