@@ -37,8 +37,11 @@ func assert_errored(obj, times=1):
 	if(obj.has_method('get_logger')):
 		var msg = str('Should have ', times, ' errors.')
 		assert_eq(obj.get_logger().get_errors().size(), times, msg)
+	elif(obj.get('logger') != null):
+		var msg = str('Should have ', times, ' errors.')
+		assert_eq(obj.logger.get_errors().size(), times, msg)
 	else:
-		_fail('Does not have get_logger method')
+		_fail(str('Cannot assert_errored, ', obj, ' does not have get_logger method or logger property'))
 
 func assert_deprecated(obj, times=1):
 	if(obj.has_method('get_logger')):

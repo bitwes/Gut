@@ -1682,7 +1682,7 @@ class TestMemoryMgmt:
 	func test_failing_orphan_assert_marks_test_as_failing():
 		var n2d = Node2D.new()
 		assert_no_new_orphans('this should fail')
-		assert_true(is_failing(), 'test should be failing')
+		assert_true(is_failing(), 'SHOULD FAIL')
 		n2d.free()
 
 	func test_passes_when_orphans_released():

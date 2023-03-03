@@ -546,10 +546,6 @@ func _end_run():
 	_export_results()
 	end_run.emit()
 
-	if _utils.should_display_latest_version:
-		p("")
-		p(str("GUT version ",_utils.latest_version," is now available."))
-
 
 # ------------------------------------------------------------------------------
 # Add additional export types here.
