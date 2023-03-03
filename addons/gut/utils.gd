@@ -105,9 +105,9 @@ var ThingCounter = load('res://addons/gut/thing_counter.gd')
 
 
 # Source of truth for the GUT version
-var version = '7.4.1'
+var version = '9.0.0'
 # The required Godot version as an array.
-var req_godot = [3, 2, 0]
+var req_godot = [4, 0, 0]
 
 # Online fetch of the latest version available on github
 var latest_version = null
