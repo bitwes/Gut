@@ -1,13 +1,15 @@
-# Godot 4
-[IT HAS BEGUN!](https://www.youtube.com/watch?v=2U_OkCsexjw). The porting of GUT to Godot 4.0 has been started.
-* You can find the status of GUT in 4.0 and a list of changes in the [GODOT_4_README](https://github.com/bitwes/Gut/blob/godot_4/GODOT_4_README.md)
-* The [godot_4 branch](https://github.com/bitwes/Gut/tree/godot_4) is where all the changes will take place.
-
-# Gut 7.4.1
+# Gut 7.4.1 (Godot 3.x)
 GUT (Godot Unit Test) is a unit testing framework for the [Godot Engine](https://godotengine.org/).  It allows you to write tests for your gdscript in gdscript.
 
-### Donate/Shameless Plug
+## Godot 4
+The first version of GUT for Godot 4.0 has been released!  GUT version 9.0.0 can be found in the releases and in the Asset Library.  There are a lot of changes to GUT for Godot 4.0.  You can find a list of them in the [GODOT_4_README.md](https://github.com/bitwes/Gut/blob/godot_4/GODOT_4_README.md).
+
+For now Godot 4.0 versions of GUT will live in the [godot_4 branch](https://github.com/bitwes/Gut/tree/godot_4).  At some point in the future (when people are using 4.0 more than 3.x) things will get reorganzied.
+
+
+## Donate/Shameless Plug
 If you would like to help support GUT check out my game [Country or State](https://www.youtube.com/watch?v=iCAROKgN9xw&t=4s) on [Android](https://play.google.com/store/apps/details?id=com.butchwesley.country_or_state&hl=en_US&gl=US) and [iOS](https://apps.apple.com/us/app/country-or-state/id1504122706).  Then, purchase the full version even if you don't like it.  Thanks!
+
 
 # Features
 * Godot 3.4.x, 3.5.x compatible.
@@ -23,6 +25,7 @@ If you would like to help support GUT check out my game [Country or State](https
 More info can be found in the [wiki](https://github.com/bitwes/Gut/wiki).
 
 ![Panel](https://raw.githubusercontent.com/bitwes/Gut/master/gut_panel.png)
+
 
 # Getting Started
 * [Install](https://github.com/bitwes/Gut/wiki/Install)
