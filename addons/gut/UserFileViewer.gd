@@ -44,7 +44,8 @@ func _on_End_pressed():
 	rtl.scroll_to_line(rtl.get_line_count() -1)
 
 func _on_Copy_pressed():
-	OS.clipboard = rtl.text
+	return
+	# OS.clipboard = rtl.text
 
 func _on_file_dialog_visibility_changed():
 	if rtl.text.length() == 0 and not $FileDialog.visible:

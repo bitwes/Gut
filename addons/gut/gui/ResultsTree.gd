@@ -43,7 +43,13 @@ func _ready():
 
 	$Tree.item_selected.connect(_on_tree_item_selected)
 
+	if(get_parent() == get_tree().root):
+		_test_running_setup()
 
+func _test_running_setup():
+	load_json_file('user://.gut_editor.json')
+	
+	
 func _on_tree_item_selected():
 	var item = _ctrls.tree.get_selected()
 	var item_meta = item.get_metadata(0)
@@ -236,8 +242,7 @@ func _add_script_to_tree(key, script_json):
 		elif(t_item != null):
 			t_item.collapsed = true
 
-	# get_children returns the first child or null.  its a dumb name.
-	if(s_item.get_children() == null):
+	if(s_item.get_children().size() == 0):
 		s_item.free()
 	else:
 		var total_text = str('All ', test_keys.size(), ' passed')
@@ -252,7 +257,7 @@ func _free_childless_scripts():
 	var items = _root.get_children()
 	for item in items:
 		var next_item = item.get_next()
-		if(item.get_children() == null):
+		if(item.get_children().size() == 0):
 			item.free()
 		item = next_item
 
