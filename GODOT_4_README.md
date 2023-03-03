@@ -1,23 +1,13 @@
-# Porting GUT to Godot 4.0
+# GUT has been ported to Godot 4.0
+GUT 9.0.0 is the first release to support Godot 4.  Going forward two versions will be maintainted until Godot 3.x becomes obsolete.  GUT versions >= 9.0.0 will work with Godot 4.  GUT versions < 9.0.0 (currently 7.4.2) will work with Godot 3.x.
 
-IT'S MOSTLY USABLE!!
+All issues related to the Godot 4 have the [Godot 4.0](https://github.com/bitwes/Gut/issues?q=is%3Aissue+is%3Aopen+label%3A%22Godot+4.0%22) tag.
 
-## Overview
-Ported to Godot 4 RC 6
-
-GUT is currently mostly usable in 4.0.  The panel works for the most part but still has bugs.  The CLI and VSCode Plugin work fine.
-
-This file tracks the changes that have occurred in porting GUT to Godot 4.0.  All issues related to the conversion have the [Godot 4.0](https://github.com/bitwes/Gut/issues?q=is%3Aissue+is%3Aopen+label%3A%22Godot+4.0%22) tag.
+__!! NOTE !!__ The wiki has not yet been updated for GUT 9.0.0 and Godot 4.  I need to find a solution for maintaining two wikis first.
 
 
-## Contributing
-Pull requests are welcome.  You can look at the [Godot 4.0](https://github.com/bitwes/Gut/issues?q=is%3Aissue+is%3Aopen+label%3A%22Godot+4.0%22) issues for items that need to be addressed.  If you find something that is not mentioned, please make an issue.  There are also a lot of pending and failing tests that need to be addressed.
-
-Read the "Working" and "Broken" features section before starting.
-
-
-## Godot 4 Changes
-These are changes to Godot that affect how GUT is used/implemented.
+# Godot 4 Changes
+These are changes to Godot that affect how GUT is used/implemented.  There is more information about these changes and how GUT has been altered below.
 
 * `setget` has been replaced with a completely new syntax.  More info at [#380](/../../issues/380).  Examples of the new way and the new `assert_property` method below.
 * `connect` has been significantly altered.  The signal related asserts will likely change to use `Callable` parameters instead of strings.  It is possible to use strings, so this may remain in some form.  More info in [#383](/../../issues/383).
@@ -25,36 +15,15 @@ These are changes to Godot that affect how GUT is used/implemented.
 * Arrays are pass by reference now.
 * Dictionaries are compared by value now.
 * `File` and `Directory` have been replaced with `FileAccess` and `DirAccess`.
+* `is` no longer accepts a variable for a class.  You must use `is_instance_of` instead.
 
 
-## Working Features
-* The command line seems to be working fine.
-* The in-editor panel is usable, but not bug free yet.
-* Most all asserts are working now.
-* `assert_is` seems is working now.
-* Signal asserts
-* Signal connection asserts
-* Orphan monitoring
-* Doubling, Spying, Stubbing (mostly).  Doubling Inner Classes has changed.
-* Using `await` (the new `yield`) in tests, and all the GUT supplied `yield_` methods.  See notes in Changes section.
-* Input mocking.
-* Doubling Inner Classes has been fixed and all the tests have been restored.
-* Comparing Dictionary/Arrays with `assert_eq`, `assert_eq_deep`, and the new `assert_same` and `assert_not_same` for comparing references.  See Godot's new `is_same` function for details on how `assert_same` works (it's just an assertion wrapper around `is_same`).  See the section "Comparing Dictionaries and Arrays" below for more details.
-
-
-## Broken Features
-* Gut Panel.  The in-editor panel has a lot of bugs, but you can run individual scripts or your entire test suite from the panel.
-* Other misc items.
-
-
-
-## Changes
-### Usage
+# What's new/changed in GUT 9.0.0 for Godot 4.0
 * Any methods that were deprecated in GUT 7.x have been removed.
 * `assert_setget` no longer works (it now just fails with a message).  `assert_property` has been altered to work with the new setter/getter syntax.  `assert_set_property`, `assert_readonly_property`, and `assert_property_with_backing_variable` have been added.
 * To aid refactoring, `assert_property` and `assert_property_with_backing_variable` will warn if any "public accessors" are found for the property ('get_' and 'set_' methods).
 * `assert_property` now requires an instance instead of also working with a loaded objects.
-* Doubling strategy flags have been renamed to `INCLUDE_SUPER` (was `FULL`) and `SCRIPT_ONLY` (was `PARTIAL`).  The default is `SCRIPT_ONLY`.  These names may change again before release.  I wanted something more descriptive and less likely to be confused with partial doubles.
+* Doubling strategy flags have been renamed to `INCLUDE_SUPER` (was `FULL`) and `SCRIPT_ONLY` (was `PARTIAL`).  The default is `SCRIPT_ONLY`.  I wanted something more descriptive and less likely to be confused with partial doubles.
 * Added support for a `skip_script` test-script variable.  This can be added to any test-script or inner-class causing GUT to skip running tests in that script.  The script will be included in the "risky" count and appear in the summary as skipped.  This was done to help porting tests to 4.0 but might stick around as a permanent feature.
 ```gdscript
 var skip_script = 'The reason for skipping.  This will be printed in the output.'
@@ -73,8 +42,10 @@ await wait_frames(30, 'optional message')
 ```
 * Doubling no longer supports paths to a script or scene.  Load the script or scene first and pass that to `double`.  See the "Doubling Changes" section for more details.
 * Doubling Inner Classes now requires you to call `register_inner_classes` first.  See the "Doubling Changes" sedtion for more details.
+* Comparing Dictionary/Arrays with `assert_eq`, `assert_eq_deep`, and the new `assert_same` and `assert_not_same` for comparing references.  See Godot's new `is_same` function for details on how `assert_same` works (it's just an assertion wrapper around `is_same`).  See the section "Comparing Dictionaries and Arrays" below for more details.
 
-### Comparing Dictionaries and Arrays
+
+## Comparing Dictionaries and Arrays
 In Godot 3.x dictionaries were compared by reference and arrays were compared by value.  In 4.0 both are compared by value.  Godot 4.0 introduces the `is_same` method which (amongst other things) will compare dictionaries and arrays by reference.
 
 GUT's `assert_eq` and `asssert_ne` changed to match Godot's behavior.  To compare by reference you can use the new `assert_same` or `assert_not_same`.  This works with arrays and dictionaries.  Review Godot's documentation for `is_same`.  When comparing dictionaries and arrays it is recommended that you use `assert_eq_deep` since it provides more detailed output than `assert_eq`.
@@ -87,7 +58,7 @@ The shallow compare functionanlity has been removed since it no longer applies. 
 Final note: `assert_eq` does not use `assert_eq_deep` since `assert_eq_deep` compares each element of both arrays/dictionaries and provides detailed info about what is different.  This can be slow for large arrays/dictionaries.  Godot's `==` operator uses a hashing function which is much faster but does not provide information about what is different in each array/dictionary.  With `assert_eq`, `assert_eq_deep`, and `assert_same` (and their inverses) you have fine grained control over the type of comparision that is performed.
 
 
-### Doubling Changes
+## Doubling Changes
 #### Doubling scripts and scenes
 The `double` method no longer supports paths to scripts or scenes.  You should `load` the script or scene first, and then pass that to `double` instead.
 ```
@@ -99,7 +70,7 @@ If you pass a string then an error message will be printed and `double` will ret
 'Invalid call. Nonexistent function 'new' in base 'Nil'.'
 ```
 
-#### Doubling Inner Classes
+### Doubling Inner Classes
 The `double` method no longer supports strings for the path of the base script or a string of the name of the Inner Class.  You must call `register_inner_classes` then pass the Inner Class to `double`.  You only have to do this once, so it is best to call it in `before_all` or a pre-hook script.  Registering multiple times does nothing.  Failing to call `register_inner_classes` will result in a GUT error and a runtime error.
 ```gdscript
 # Given that SomeScript contains the class InnerClass that you wish to to double:
@@ -139,7 +110,7 @@ var foo = 10:
 ```
 With this approach you can set `_foo` internally in your class without triggering the `foo_changed` signal.  When you see `foo =` anywhere in your code, it will be going through the accessor.  When you see `_foo =` you are only setting the backing variable.
 
-To test this new paradigm `assert_setget` has been removed.  `assert_property` has changed to work with the new syntax.  Added `assert_property_with_backing_variable` to validate the backing variable wiring....etc.
+To test this new paradigm `assert_setget` has been removed.  `assert_property` has changed to work with the new syntax.  `assert_property_with_backing_variable` was added to validate the backing variable wiring.  If you use `assert_property_with_backing_variable` it will verify that the proeperty has accessors and will also look for a `_<varname>` variable with the same name and verify it is being set.
 
 `assert_property` will generate a warning when it finds "public" accessors for these properties (`get_foo`, `set_foo`).
 
