@@ -160,59 +160,45 @@ func test_when_passed_does_not_set_flag():
 	assert_true(sp.is_param_override_only())
 
 
-func test_draw_parameter_method_meta():
-	# 5 parameters, 2 defaults
-	# index 3 = null object
-	# index 4 = 1
+# ------------------------------------------------------------------------------
+# Stubbing complex parameter lists
+#
+# The following tests use the draw_polyline_colors method to test various
+# parameter stubbing tasks.
+#
+# draw_polyline_colors has:
+# 	4 parameters, 2 defaults
+# 	parameter 3 = -1.0
+# 	parameter 4 = false
+# ------------------------------------------------------------------------------
+func test__draw_polyline_colors__method_meta_1():
 	var inst = autofree(Button.new())
-	var meta = find_method_meta(inst.get_method_list(), 'draw_primitive')
+	var meta = find_method_meta(inst.get_method_list(), 'draw_polyline_colors')
 	var sp = StubParamsClass.new(inst, meta)
 	assert_eq(sp.stub_method, meta.name)
 
-# !TODO draw_primitive does not have 2 defaults anymore which is why
-# this is breaking.  Need to get a different method to test this
-# with.
-func test_draw_parameter_method_meta2():
-	pending("defaults for draw_primitive have changed, need a better fit.")
-	return
-
-	# 5 parameters, 2 defaults
-	# index 3 = null object
-	# index 4 = 1
+func test__draw_polyline_colors__method_meta_2():
 	var inst = autofree(Button.new())
-	var meta = find_method_meta(inst.get_method_list(), 'draw_primitive')
-	_utils.pp(meta)
+	var meta = find_method_meta(inst.get_method_list(), 'draw_polyline_colors')
 	var sp = StubParamsClass.new(inst, meta)
-	print(meta.default_args)
-	# meta = find_method_meta(inst.get_method_list(), 'draw_primitive')
-	assert_eq(sp.parameter_defaults, [null, null, null, meta.default_args[0], meta.default_args[1]])
+
+	assert_eq(sp.parameter_defaults, [null, null, meta.default_args[0], meta.default_args[1]])
 	if(is_failing()):
 		print(sp.parameter_defaults)
-		meta = find_method_meta(inst.get_method_list(), 'draw_primitive')
+		meta = find_method_meta(inst.get_method_list(), 'draw_polyline_colors')
 		print(meta.default_args)
 
-func test_draw_parameter_method_meta3():
-	# 5 parameters, 2 defaults
-	# index 3 = null object
-	# index 4 = 1
+func test__draw_polyline_colors__method_meta_3():
 	var inst = autofree(Button.new())
-	var meta = find_method_meta(inst.get_method_list(), 'draw_primitive')
+	var meta = find_method_meta(inst.get_method_list(), 'draw_polyline_colors')
 	var sp = StubParamsClass.new(inst, meta)
 	assert_true(sp.is_param_override_only())
 
-
-func test_draw_parameter_method_meta4():
-	pending('Parameters for draw_pimitive have changed. Need a different method to test with')
-	return
-
-	# 5 parameters, 2 defaults
-	# index 3 = null object
-	# index 4 = 1
+func test__draw_polyline_colors__method_meta_4():
 	var inst = autofree(Button.new())
-	var meta = find_method_meta(inst.get_method_list(), 'draw_primitive')
-	_utils.pp(meta)
+	var meta = find_method_meta(inst.get_method_list(), 'draw_polyline_colors')
 	var sp = StubParamsClass.new(inst, meta)
-	assert_eq(sp.parameter_defaults.size(), 5)
+	assert_eq(sp.parameter_defaults.size(), 4)
 
 
 
