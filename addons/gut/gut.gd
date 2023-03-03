@@ -342,6 +342,8 @@ func _notification(what):
 				test_script.free()
 
 		_test_script_objects = []
+		if(is_instance_valid(_awaiter)):
+			_awaiter.free()
 
 
 func _print_versions(send_all = true):
@@ -545,10 +547,6 @@ func _end_run():
 	_run_hook_script(_post_run_script_instance)
 	_export_results()
 	end_run.emit()
-
-	if _utils.should_display_latest_version:
-		p("")
-		p(str("GUT version ",_utils.latest_version," is now available."))
 
 
 # ------------------------------------------------------------------------------

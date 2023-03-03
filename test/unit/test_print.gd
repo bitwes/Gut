@@ -26,10 +26,12 @@ func test_print_non_strings():
 	var n2d = Node2D.new()
 	gut.p(n2d)
 	n2d.free()
+	pass_test('check output')
 
 func test_print_multiple_lines():
 	var lines = "hello\nworld\nhow\nare\nyou?"
 	gut.p(lines)
+	pass_test('check output')
 
 func test_no_parameters():
 	assert_true(true, 'this passes')
@@ -40,11 +42,11 @@ func test_multiple_passing_no_params():
 	assert_false(false, 'passing test two')
 
 func test_multiple_failing_no_params():
-	assert_false(true, 'failing test one')
-	assert_true(false, 'failing test two')
+	assert_false(true, 'SHOULD FAIL')
+	assert_true(false, 'SHOULD FAIL')
 
 func test_basic_array(p=use_parameters([1, 2, 1, 4])):
-	assert_eq(p, 1, 'output test may fail')
+	assert_eq(p, 1, '2 and 4 expected to equal 1 SHOULD FAIL')
 
 func test_all_passing(p=use_parameters([[1, 2], [3, 4], [5, 6]])):
 	assert_eq(p[0], p[1 -1], 'output test, should all pass.')
@@ -65,25 +67,45 @@ func test_await():
 	gut.p('starting awaiting')
 	await wait_seconds(2)
 	gut.p('end await')
+	pass_test('check output')
 
 
 class TestGuiOutput:
 	extends GutTest
 
-	var skip_script = 'Not implemented in 4.0'
+	var _gui = null
+	var _logger = null
+
+	func before_each():
+		_gui = add_child_autofree(_utils.GutScene.instantiate())
+		_logger = _utils.Logger.new()
+		_logger._printers.gui = _utils.Printers.GutGuiPrinter.new()
+		_logger.disable_printer('gui', false)
+		var printer = _logger.get_printer('gui')
+		printer.set_textbox(_gui.get_textbox())
+
 
 	func test_embedded_bbcode():
-		_lgr.log('[u]this should not be underlined')
-		assert_string_contains(gut.get_gui().get_text_box().get_text(), '[u]this should')
+		_logger.log('[u]this should not be underlined')
+		await wait_frames(10)
+		# assert_string_contains(_gui.get_textbox().text, '[u]this should')
+		pass_test('Check output, cannot get bbcode out of RTL')
+		pause_before_teardown()
 
 	func test_embedded_bbcode_with_format():
-		_lgr.log('[i]this should not be italic but should be yellow', _lgr.fmts.yellow)
-		assert_string_contains(gut.get_gui().get_text_box().get_text(), '[i]this should')
+		_logger.log('[i]this should not be italic but should be yellow', _logger.fmts.yellow)
+		# assert_string_contains(_gui.get_textbox().text, '[i]this should')
+		pass_test('Check output, cannot get bbcode out of RTL')
+		pause_before_teardown()
+
 
 	func test_embedded_bbcode_with_closing_tag():
-		_lgr.log('all of this [/b] should be bold', _lgr.fmts.bold)
-		_lgr.log('thi should not be bold')
-		assert_string_contains(gut.get_gui().get_text_box().get_text(), '[/b] should be bold')
+		_logger.log('all of this [/b] should be bold', _logger.fmts.bold)
+		_logger.log('this should not be bold')
+		# assert_string_contains(_gui.get_textbox().text, '[/b] should be bold')
+		pass_test('Check output, cannot get bbcode out of RTL')
+		pause_before_teardown()
+
 
 
 class TestBasicLoggerOutput:
@@ -144,4 +166,4 @@ class TestLogLevels:
 		gut.logger.error('test text')
 		gut.logger.info('test text')
 		gut.logger.debug('test text')
-		assert_true(false, str('this should fail (', level, ')'))
+		assert_true(false, str('SHOULD FAIL (', level, ')'))

@@ -62,4 +62,4 @@ func test_load_a_single_script():
 	var s1 = add_script_to_json("res://some_script.gd", j)
 	var t1 = add_test_to_json("test_foo", s1)
 	rt.load_json_results(j)
-	pause_before_teardown()
+	pass_test('made it here')

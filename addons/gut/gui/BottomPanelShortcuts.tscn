@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://bsk32dh41b4gs"]
 
-[ext_resource type="PackedScene" path="res://addons/gut/gui/ShortcutButton.tscn" id="1"]
+[ext_resource type="PackedScene" uid="uid://sfb1fw8j6ufu" path="res://addons/gut/gui/ShortcutButton.tscn" id="1"]
 [ext_resource type="Script" path="res://addons/gut/gui/BottomPanelShortcuts.gd" id="2"]
 
 [node name="BottomPanelShortcuts" type="Popup"]

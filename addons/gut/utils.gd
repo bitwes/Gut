@@ -103,15 +103,12 @@ var Test = load('res://addons/gut/test.gd')
 var TestCollector = load('res://addons/gut/test_collector.gd')
 var ThingCounter = load('res://addons/gut/thing_counter.gd')
 
+var GutScene = load('res://addons/gut/GutScene.tscn')
 
 # Source of truth for the GUT version
-var version = '7.4.1'
+var version = '9.0.0'
 # The required Godot version as an array.
-var req_godot = [3, 2, 0]
-
-# Online fetch of the latest version available on github
-var latest_version = null
-var should_display_latest_version = false
+var req_godot = [4, 0, 0]
 
 # These methods all call super implicitly.  Stubbing them to call super causes
 # super to be called twice.
@@ -126,35 +123,6 @@ var non_super_methods = [
 	"_exit_tree",
 	"_gui_input	",
 ]
-
-
-func _ready() -> void:
-	_http_request_latest_version()
-
-func _http_request_latest_version() -> void:
-	return
-	var http_request = HTTPRequest.new()
-	http_request.name = "http_request"
-	add_child(http_request)
-	http_request.connect("request_completed",Callable(self,"_on_http_request_latest_version_completed"))
-	# Perform a GET request. The URL below returns JSON as of writing.
-	var __error = http_request.request("https://api.github.com/repos/bitwes/Gut/releases/latest")
-
-func _on_http_request_latest_version_completed(result, response_code, headers, body):
-	if not result == HTTPRequest.RESULT_SUCCESS:
-		return
-
-	var test_json_conv = JSON.new()
-	test_json_conv.parse(body.get_string_from_utf8())
-	var response = test_json_conv.get_data()
-	# Will print the user agent string used by the HTTPRequest node (as recognized by httpbin.org).
-	if response:
-		if response.get("html_url"):
-			latest_version = Array(response.html_url.split("/")).pop_back().right(1)
-			if latest_version != version:
-				should_display_latest_version = true
-
-
 
 const GUT_METADATA = '__gutdbl'
 

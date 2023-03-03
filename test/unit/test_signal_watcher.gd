@@ -238,6 +238,7 @@ func test_clearing_ignores_freed_objecdts():
 	gr.so.free()
 	await wait_seconds(0.5)
 	gr.sw.clear()
+	pass_test('we got here')
 
 # ####################
 # Get signals emitted

@@ -49,8 +49,8 @@ func _ready():
 
 
 func _test_running_setup():
-	_ctrls.tree.hide_passing = false
-	_ctrls.tree.show_orphans = false
+	_ctrls.tree.hide_passing = true
+	_ctrls.tree.show_orphans = true
 	var _gut_config = load('res://addons/gut/gut_config.gd').new()
 	_gut_config.load_panel_options('res://.gut_editor_config.json')
 	set_font(
@@ -174,6 +174,7 @@ func _on_ExpandAll_pressed():
 
 func _on_Hide_Passing_pressed():
 	_ctrls.tree.hide_passing = !_ctrls.toolbar.hide_passing.button_pressed
+	_ctrls.tree.load_json_file('user://.gut_editor.json')
 
 
 func _on_item_selected(script_path, inner_class, test_name, line):

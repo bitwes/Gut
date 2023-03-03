@@ -125,19 +125,6 @@ class TestVersionCheck:
 			str(p.engine_version, ' is ', p.expected_version))
 
 
-func test_latest_version_if_version_is_old_warning_is_on():
-	pending('http_request node does not exist?')
-	return
-
-	var utils = autofree(Utils.new())
-	utils.version = "1.0.0"
-	add_child(utils)
-	utils._http_request_latest_version()
-	var p = utils.get_node("http_request")
-	assert_not_null(p, "should have a child http request")
-	await wait_for_signal(p.request_completed,2)
-	assert_true(utils.should_display_latest_version,"this should fail only if you dont have internet connection")
-
 func test_is_inner_class_true_for_inner_classes():
 	var utils = autofree(Utils.new())
 	assert_true(utils.is_inner_class(InnerClasses.InnerA))

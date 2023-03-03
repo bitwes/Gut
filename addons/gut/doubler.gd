@@ -185,13 +185,19 @@ func _create_double(parsed, strategy, override_path, partial):
 	for method in parsed.get_local_methods():
 		if(!method.is_black_listed() && !_ignored_methods.has(parsed.resource, method.meta.name)):
 			var mthd = parsed.get_local_method(method.meta.name)
-			dbl_src += _get_func_text(method.meta, path, super_name)
+			if(parsed.is_native):
+				dbl_src += _get_func_text(method.meta, parsed.resource, super_name)
+			else:
+				dbl_src += _get_func_text(method.meta, path, super_name)
 
 	if(strategy == _utils.DOUBLE_STRATEGY.INCLUDE_SUPER):
 		for method in parsed.get_super_methods():
 			if(!method.is_black_listed() && !_ignored_methods.has(parsed.resource, method.meta.name)):
 				_stub_to_call_super(parsed, method.meta.name)
-				dbl_src += _get_func_text(method.meta, path, super_name)
+				if(parsed.is_native):
+					dbl_src += _get_func_text(method.meta, parsed.resource, super_name)
+				else:
+					dbl_src += _get_func_text(method.meta, path, super_name)
 
 	if(print_source):
 		print(_utils.add_line_numbers(dbl_src))
@@ -237,8 +243,6 @@ func _get_func_text(method_hash, path, super_=""):
 	var override_count = null;
 	if(_stubber != null):
 		override_count = _stubber.get_parameter_count(path, method_hash.name)
-		if(override_count != null):
-			print(method_hash.name, ' override:  ', override_count)
 
 	var text = _method_maker.get_function_text(method_hash, path, override_count, super_) + "\n"
 

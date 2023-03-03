@@ -1,4 +1,6 @@
 # ------------------------------------------------------------------------------
+# Choose an existing directory from res://.  Dialog allows for creating a 
+# directory.
 # ------------------------------------------------------------------------------
 class DirectoryCtrl:
 	extends HBoxContainer
@@ -9,21 +11,22 @@ class DirectoryCtrl:
 		set(val):
 			_txt_path.text = val
 
-	var _txt_path = LineEdit.new()
-	var _btn_dir = Button.new()
-	var _dialog = FileDialog.new()
+	var _txt_path := LineEdit.new()
+	var _btn_dir := Button.new()
+	var _dialog := FileDialog.new()
 
 	func _init():
 		_btn_dir.text = '...'
-		_btn_dir.connect('pressed',Callable(self,'_on_dir_button_pressed'))
+		_btn_dir.pressed.connect(_on_dir_button_pressed)
 
 		_txt_path.size_flags_horizontal = _txt_path.SIZE_EXPAND_FILL
 
-		_dialog.mode = _dialog.FILE_MODE_OPEN_DIR
+		_dialog.file_mode = _dialog.FILE_MODE_OPEN_DIR
 		_dialog.unresizable = false
-		_dialog.connect("dir_selected",Callable(self,'_on_selected'))
-		_dialog.connect("file_selected",Callable(self,'_on_selected'))
+		_dialog.dir_selected.connect(_on_selected)
+		_dialog.file_selected.connect(_on_selected)
 		_dialog.size = Vector2(1000, 700)
+
 
 	func _on_selected(path):
 		text = path
@@ -43,13 +46,30 @@ class DirectoryCtrl:
 	func get_line_edit():
 		return _txt_path
 
+
 # ------------------------------------------------------------------------------
+# Choose an existing file in res://
 # ------------------------------------------------------------------------------
 class FileCtrl:
 	extends DirectoryCtrl
 
 	func _init():
-		_dialog.mode = _dialog.FILE_MODE_OPEN_FILE
+		super._init()
+		_dialog.file_mode = _dialog.FILE_MODE_OPEN_FILE
+
+
+# ------------------------------------------------------------------------------
+# Choose a save location.  Can pick anywhere on file system.  Will warn if you
+# pick a file that already exists.
+# ------------------------------------------------------------------------------
+class SaveFileAnywhere:
+	extends DirectoryCtrl
+
+	func _init():
+		super._init()
+		_dialog.file_mode = _dialog.FILE_MODE_SAVE_FILE
+		_dialog.access = _dialog.ACCESS_FILESYSTEM
+	
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -218,6 +238,15 @@ func _add_file(key, value, disp_text, hint=''):
 
 	return _new_row(key, disp_text, value_ctrl, hint)
 
+func _add_save_file_anywhere(key, value, disp_text, hint=''):
+	var value_ctrl = SaveFileAnywhere.new()
+	value_ctrl.size_flags_horizontal = value_ctrl.SIZE_EXPAND_FILL
+	value_ctrl.text = value
+	_wire_select_on_focus(value_ctrl.get_line_edit())
+
+	return _new_row(key, disp_text, value_ctrl, hint)
+	
+
 
 func _add_color(key, value, disp_text, hint=''):
 	var value_ctrl = ColorPickerButton.new()
@@ -356,7 +385,7 @@ func set_options(options):
 		_add_directory(str('directory_', i), value, str('Directory ', i))
 
 	_add_title("XML Output")
-	_add_value("junit_xml_file", options.junit_xml_file, "Output Path3D",
+	_add_save_file_anywhere("junit_xml_file", options.junit_xml_file, "Output Path",
 		"Path3D and filename where GUT should create a JUnit compliant XML file.  " +
 		"This file will contain the results of the last test run.  To avoid " +
 		"overriding the file use Include Timestamp.")

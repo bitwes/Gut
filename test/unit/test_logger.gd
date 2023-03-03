@@ -40,8 +40,7 @@ func test_clear_clears_all_buffers():
 	assert_eq(l.get_deprecated().size(), 0, 'deprecated')
 
 func test_get_set_gut():
-	pending('pending in 4.0')
-	# assert_accessors(Logger.new(), 'gut', null, double(Gut).new())
+	assert_accessors(Logger.new(), 'gut', null, Gut.new())
 
 func test_can_get_count_using_type():
 	var l = Logger.new()
