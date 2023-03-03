@@ -14,7 +14,7 @@ data = {
 [sub_resource type="ImageTexture" id="ImageTexture_uk57o"]
 image = SubResource("Image_o4jv5")
 
-[sub_resource type="CodeHighlighter" id="CodeHighlighter_kt0hf"]
+[sub_resource type="CodeHighlighter" id="CodeHighlighter_sv352"]
 number_color = Color(1, 1, 1, 1)
 symbol_color = Color(1, 1, 1, 1)
 function_color = Color(1, 1, 1, 1)
@@ -82,9 +82,8 @@ virtual_keyboard_enabled = false
 middle_mouse_paste_enabled = false
 highlight_all_occurrences = true
 highlight_current_line = true
-syntax_highlighter = SubResource("CodeHighlighter_kt0hf")
+syntax_highlighter = SubResource("CodeHighlighter_sv352")
 scroll_smooth = true
-scroll_past_end_of_file = true
 
 [node name="Search" type="HBoxContainer" parent="."]
 visible = false
