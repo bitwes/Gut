@@ -103,6 +103,7 @@ var Test = load('res://addons/gut/test.gd')
 var TestCollector = load('res://addons/gut/test_collector.gd')
 var ThingCounter = load('res://addons/gut/thing_counter.gd')
 
+var GutScene = load('res://addons/gut/GutScene.tscn')
 
 # Source of truth for the GUT version
 var version = '9.0.0'

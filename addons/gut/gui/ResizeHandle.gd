@@ -9,6 +9,7 @@ enum ORIENTATION {
 	LEFT,
 	RIGHT
 }
+
 @export var orientation := ORIENTATION.RIGHT :
 	get: return orientation
 	set(val):

@@ -76,7 +76,6 @@ func _setup_gui(show_gui):
 	# if(opts.should_maximize):
 	# 	_tester.maximize()
 	_gui.use_compact_mode(opts.compact_mode)
-		
 
 
 

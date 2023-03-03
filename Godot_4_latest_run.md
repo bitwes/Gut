@@ -19,10 +19,10 @@ res://test/unit/test_gut.gd.TestEverythingElse
 
 res://test/unit/test_gut_yielding.gd.TestWaitSeconds
 - test_failing_assert_ends_yield
-    [Failed]:  [0.51062822222222] expected to be > than [999.0]:  Testing that GUT continues after failing assert; ignore failing unless value not ~.5.
+    [Failed]:  [0.510686] expected to be > than [999.0]:  Testing that GUT continues after failing assert; ignore failing unless value not ~.5.
           at line 183
 - test_pending_ends_yield
-    [Pending]:  Testing Gut continues after yield.  0.51090922222222 should be ~.5.
+    [Pending]:  Testing Gut continues after yield.  0.51038133333333 should be ~.5.
 
 res://test/unit/test_logger.gd
 - test_get_set_gut
@@ -63,6 +63,8 @@ res://test/unit/test_print.gd.TestLogLevels
           at line 147
     [Failed]:  (call #6) this should fail (3)
           at line 147
+- test_load_a_single_script
+    [Risky] Did not assert
 - test_clearing_ignores_freed_objecdts
     [Risky] Did not assert
 
@@ -134,18 +136,17 @@ res://test/integration/test_this_script_has_a_really_long_name_to_test_display.g
     [Pending]:  do not need a test, but felt weird to not have one.
 
 Totals
-Scripts:          48
-Passing tests     1118
+Scripts:          49
+Passing tests     1121
 Failing tests     8
-Risky tests       9
+Risky tests       10
 Pending:          16
-Asserts:          1766 of 1781 passed
+Asserts:          1775 of 1790 passed
 
 Warnings/Errors:
 * 15 Errors.
-* 31 Warnings.
-* 4 Deprecated calls.
+* 6 Warnings.
 
 
-1118 passed 8 failed.  Tests finished in 117.669s
+1121 passed 8 failed.  Tests finished in 116.916s
 ```
