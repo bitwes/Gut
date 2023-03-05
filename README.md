@@ -4,7 +4,7 @@ GUT (Godot Unit Test) is a unit testing framework for the [Godot Engine](https:/
 Version 9.0.0 is for Godot 4.0
 Versions below 9.0.0 (currently 7.4.2) are for Godot 3.x
 
-__NOTE__ The wiki has not yet been updated for GUT 9.0.0 and Godot 4.
+__NOTE__ The wiki has not yet been updated for GUT 9.0.0 and Godot 4.  See Wiki section in [GODOT_4_README.md](https://github.com/bitwes/Gut/blob/godot_4/GODOT_4_README.md)
 
 See the [GODOT_4_README.md](https://github.com/bitwes/Gut/blob/godot_4/GODOT_4_README.md) for information about how things have changed in Godot 4.
 
