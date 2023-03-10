@@ -1,3 +1,4 @@
+# !! Not Updated for GUT 9.0.0 Yet !!
 # <a name="gut_settings"> Gut Settings
 These settings are for the GUT node that can be added to a scene.  The most common scenario for using a scene (now that we have the GutPanel) is to run tests in a depoloyed build.  These are not the settings for the in-editor GutPanel.  Mouse over settings in the GutPanel for description.
 
