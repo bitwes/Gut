@@ -115,7 +115,7 @@ To test this new paradigm `assert_setget` has been removed.  `assert_property` h
 `assert_property` will generate a warning when it finds "public" accessors for these properties (`get_foo`, `set_foo`).
 
 # Wiki
-The wiki has been copied into the `godot_4` branch and can be edited through this repo.  It will be exported to https://bitwes.github.io/GutWiki/Godot4/ when a release happens.  Eventually 3.x GUT will get moved there as well.
+The wiki has been copied into the `godot_4` branch and can be edited through this repo.  It is hosted at https://bitwes.github.io/GutWiki/Godot4/.  Eventually 3.x GUT will get moved there as well.
 
 
 # Implementation Changes
