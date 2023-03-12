@@ -1,4 +1,4 @@
-# !! Not Updated for GUT 9.0.0 Yet !!
+# <div class="warning">This page has not been updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
 Remember all that stuff I said earlier about not being able to double Godot Built-Ins?  Forget about it...or forget half of it, maybe 45% of it.
 
 You can [spy on](Spies) and stub most of the Built-Ins in Godot if you enable the `FULL` Doubling Strategy. I've enabled this feature in my own game and it didn't crash (I currently have 75 test scripts and 3633 asserts).  As reassuring as that was I'm still not sure that it won't blow up for someone so it is off by default.

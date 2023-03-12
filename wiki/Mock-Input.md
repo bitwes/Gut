@@ -1,4 +1,4 @@
-# !! Not Updated for GUT 9.0.0 Yet !!
+# <div class="warning">This page has not been updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
 # Input Sender
 The `InputSender` class can be used to send `InputEvent*` events to various objects.  It also allows you to script out a series of inputs and play them back in real time.  You could use it to:
 * Verify that jump height depends on how long the jump button is pressed.

@@ -1,4 +1,4 @@
-# !! Not Updated for GUT 9.0.0 Yet !!
+# <div class="warning">This page has not been updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
 You can define test classes inside a test script that will be treated as test scripts themselves.  This allows you to create different contexts for your tests in a single script.  These Inner Classes have thier own `before_all`, `before_each`, `after_each`, and `after_all` methods that will be called.  Only the methods defined in the class are used, the methods defined in the containing script will not be called.
 
 The Inner Classes must also extend `GutTest` and their constructor cannot take any parameters.  The Classes will be loaded and ran in the order they are defined _after_ all the tests in the containing script are run.  If the script does not contain any tests then only the Inner Classes will be listed in the output.
