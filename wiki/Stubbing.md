@@ -1,11 +1,12 @@
 # !! Not Updated for GUT 9.0.0 Yet !!
+
 ##### Table of Contents
 * The Fine Print
 * Syntax
 * Stubbing based off of parameter values
-* Stubbing Packed Scenes
-* Stubbing Method Paramter Defaults
-* Stubbing Method Paramter Count
+* [Stubbing Packed Scenes](#stubbing-packed-scenes)
+* [Stubbing Method Parameter Defaults](#stubbing-method-parameter-defaults)
+* [Stubbing Method Parameter Count](#stubbing-method-parameter-count)
 ---
 
 
@@ -13,8 +14,6 @@ The `stub` function allows you to set return values for methods for a doubled sc
 
 You can also use `stub` to set default parameter values and change the parameter count for a method.
 
-# The fine print
-Because of how doubling works, you can only stub methods that are implemented in your script or any scripts that inherits from.  You can stub most built-in methods if you use the experimental FULL doubling strategy.  Check the bottom of the doubling page for more information.
 
 # Syntax
 ```
@@ -122,7 +121,7 @@ func test_illustrate_stubbing_scenes():
   assert_eq(script.return_hello(), 'goodbye')
 ```
 
-# Stubbing Method Paramter Defaults
+# Stubbing Method Parameter Defaults
 Godot only provides information about default values for built in methods so Gut doesn't know what any default values are for methods you have created.  Since it can't know, Gut defaults all parameters to `null`.  This can cause issues in specific cases (probably all invovling calling super).  You can use `.param_defaults` to specify default values to be used.
 
 Here's an example where things go wrong
@@ -155,7 +154,7 @@ The fix is to add a `param_defaults` stub
 stub(dbl_foo, 'increment').param_defaults([1])
 ```
 
-# Stubbing Method Paramter Count
+# Stubbing Method Parameter Count
 <u>__Changing the number of parameters must be done before `double` is called__</u>
 
 Some built-in methods  have `vararg` parameters.  This makes the paramter list dynamic.  Godot does not provide this information.  This can cause errors due to a signature mismatch.  Your code might be calling a method using 10 parameter values but Gut only sees two.

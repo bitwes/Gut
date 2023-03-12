@@ -1,4 +1,3 @@
-# !! Not Updated for GUT 9.0.0 Yet !!
 This page contains brief descrptions of many of GUT's features.  Most sections have a "More information" link where more in depth documentation can be found.
 
 * [Setup](#setup)
@@ -6,7 +5,7 @@ This page contains brief descrptions of many of GUT's features.  Most sections h
 * [Doubles/Stubbing/Spies](#doubles)
 * [Partial Doubles](#partial_doubles)
 * [Parameterized Tests](#parameterized_tests)
-* [Yielding](#yielding)
+* [Await](#await)
 * [Memory Leak Testing and Memory Management](#memory_management)
 
 
@@ -15,12 +14,14 @@ Setup doesn't get any simplier than what is already on the [install page.](Insta
 
 
 # <a name = "run"> Run Tests
-Configure the GUT Panel to find your tests and use the various "Run" buttons to run your entire test suite or specific scripts/tests.
-[[https://raw.githubusercontent.com/wiki/bitwes/Gut/images/gut_panel.png|alt=gut_panel]]
+* Configure the directories where your tests are in the Gut Panel settings.
+* Open a test script.
+* use the various buttons to run a script, inner class, or test.
+![Gut Panel](images/gut_panel.png)
 
 Mouse-over labels and buttons in the GUT panel for more information.  You can even set keyboard shortcuts for all of the GUT panel actions.
 
-You can also run tests via the [command line](Command-Line) or by [creating a scene]((Install)).
+You can also run tests via the [command line](Command-Line) and through [VSCode](https://marketplace.visualstudio.com/items?itemName=bitwes.gut-extension)
 
 # <a name = "creating_tests">Creating Tests
 [More Information](Creating-Tests)
@@ -83,22 +84,19 @@ class TestOtherAspects:
 # <a name="doubles">Doubles/Spies/Stubs
 More Information:  [Doubles](Doubles), [Spies](Spies), [Stubs](Stubbing)
 
-You can make a double of just about anything.  `double` returns a loaded class, not an instance.  Doubles extend the object to be doubled and have empty implmenetations for all methods defined in the script or parent scripts, but not parent GDScript methods that are not overloaded.
+You can make a double of just about anything.  `double` returns a loaded class, not an instance.  Doubles extend the object to be doubled and have empty implmenetations for all methods defined in the script or parent scripts, but not parent Godot methods that are not overloaded.
 
 ```gdscript
 var Foo = load('res://foo.gd')
 var MyScene = load('res://my_scene.tscn')
 
 var double_foo = double(Foo).new()
-var double_scene = double(MyScene).instance()
-var DoubleOther = double('res://other.gd')
-var double_other1 = DoubleOther.new()
-var double_other2 = DoubleOther.new()
+var double_scene = double(MyScene).instantiate()
 ```
 
 You can stub your double to do different things.  Any unstubbed method that is called will generate a warning.
 ```gdscript
-var double_foo = double('res://foo.gd').new()
+var double_foo = double(Foo).new()
 stub(double_foo, 'bar').to_return(42)
 stub(double_foo, 'something').to_call_super() # do what method would normally do
 stub(double_foo, 'other_thing').to_return(null).when_passed(1, 2, 'c')
@@ -107,16 +105,21 @@ stub(double_foo, 'method').to_do_nothing()
 
 You can spy on your doubles with various asserts and helpers.
 ```gdscript
-var double_foo = double('res://foo.gd').new()
-# do some actions
+var double_foo = double(Foo).new()
+
+...
+
 assert_called(double_foo, 'bar')
 assert_not_called(double_foo, 'something')
 assert_call_count(double_foo, 'call_me', 10)
+
 # assert other_thing called with parameters in array.
 assert_called(double_foo, 'other_thing', [1, 2, 'c'])
+
 # Get an array of the parameters sent to the last
 # call to call_me
 var called_with_last = get_call_parameters(double_foo, 'call_me')
+
 # get the parameters passed to the 4th call of `call_me`
 var called_with_4 = get_call_parameters(double_foo, 'call_me', 4))
 ```
@@ -126,12 +129,15 @@ var called_with_4 = get_call_parameters(double_foo, 'call_me', 4))
 
 Partial doubles have all the same properties of a double except they retain the source functionality by default.  You can stub and spy on them just like a double, but anything not stubbed will behave as if it wasn't a double.
 ```gdscript
-var double_bar = partial_double('res://bar.tscn').instance()
+var double_bar = partial_double(Bar).instance()
+
 # the foo method will do nothing always now
 stub(double_bar, 'foo').to_do_nothing()
+
 # the something method will return 27 when passed 32,
 # but act normally when passed anything else.
 stub(double_bar, 'something').to_return(27).when_passed(32)
+
 # example of spying
 assert_called(double_bar, 'other_thing')
 ```
@@ -158,19 +164,24 @@ func test_with_named_params(p=use_parameters(better_params)):
 There are helpers to make your parameters more readable.
 
 
-# <a name="yielding">Yielding
-[More Information](Yielding)
+# <a name="await">Await
+[More Information](Await)
 
-You can use `yield` in your tests if you need to.  If you want to wait for a cetain amount of time you can use `yield_for`.
+You can use `await` in your tests to allow time to pass before making assertions.  This can be useful if you need to wait for some interaction to play out, a signal to be emitted, or wait for things to happen in the next frames, such as physics process or draw.
+
+If you want to wait for a cetain amount of time you can use `wait_seconds`.
 ```gdscript
-yield(yield_for(10), YIELD)
+await wait_seconds(10)
 ```
-You can yield to a signal or an amount of time, whichever comes first with `yield_to`.  This ensures that your tests do not hang when a signal is not emitted.
+You can `await` to a signal or an amount of time, whichever comes first with `wait_for_signal`.  This ensures that your tests do not hang when a signal is not emitted.
 ```gdscript
 var my_obj = load('res://my_obj.gd').new()
-yield(yield_to(my_obj, 'some_signal', 3), YIELD)
+await wait_for_signal(my_obj.some_signal, 3)
 ```
-All of the magic of `yield_to`, `yield_for` and the `YIELD` constant is covered on the yielding page.
+You can also `await` for a number of frames using `wait_frames`.  It's best to wait at least 2 frames as waiting one frame can be flakey.
+```
+await wait_frames(5)
+```
 
 # <a name="memory_management">Leak Testing and Memory Management
 [More Information](Memory-Management)

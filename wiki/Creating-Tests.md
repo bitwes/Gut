@@ -1,9 +1,5 @@
-# !! Not Updated for GUT 9.0.0 Yet !!
 
-# <a name="creating_tests"> Making Tests
-
-# Sample for Setup
-Here's a sample test script.  Copy the contents into the file `res://test/unit/test_example.gd` then run your scene.  If everything is setup correctly then you'll see some passing and failing tests.  If you don't have "Run on Load" checked in the editor, you'll have to hit the ">" button on the dialog window.
+Here's a sample test script.  Copy the contents into the file `res://test/unit/test_example.gd` then run the script.  If everything is setup correctly then you'll see some passing and failing tests.
 
 ``` gdscript
 extends GutTest
@@ -45,15 +41,16 @@ Each test script has optional setup and teardown methods that you can provide an
  * `before_all()`:  Runs once before any test starts running.
  * `after_all()`:  Runs once after all tests finish running.
 
-All tests in the test script must start with the prefix `test_` in order for them to be run.  The methods must not have any parameters.
+All tests in the test script must start with the prefix `test_` in order for them to be run.  The methods must not have any parameters (excpet [Parameterized-Tests](Parameterized-Tests)).
 * `func test_this_is_only_a_test():`
 
-Each test should perform at least one assert or call `pending` to indicate the test hasn't been implemented yet.
+Each test should perform at least one assert or call `pending`, `pass_test` or `fail_test` or it will be marked risky.
 
-A list of all `asserts` and other helper functions available in your test script can be found in [Methods](https://github.com/bitwes/Gut/wiki/Methods).  There's also some helpful methods in the Gut object itself.  They are listed in [Gut Settings and Methods](https://github.com/bitwes/Gut/wiki/Gut-Settings-And-Methods)
+A list of all `asserts` and other helper functions available in your test script can be found in [Asserts and Methods](Asserts-and-Methods).
+
 
 # Inner Test Classes
-You can group tests together using Inner Classes. These classes must start with the prefix `'Test'` (this is configurable) and they must also extend `GutTest`.  You cannot create Inner Test Classes inside Inner Test Classes.  More info can be found at [Inner Test Classes](https://github.com/bitwes/Gut/wiki/Inner-Test-Classes).
+You can group tests together using Inner Classes. These classes must start with the prefix `'Test'` (this is configurable) and they must also extend `GutTest`.  You cannot create Inner Test Classes inside Inner Test Classes.  More info can be found at [Inner Test Classes](Inner-Test-Classes).
 
 ## Simple Example
 ```
@@ -84,9 +81,6 @@ class TestFeatureB:
 		assert_eq(_obj.foo(), 'bar', 'Foo should return bar')
 ```
 # Where to next?
-* [Gut Settings and Methods](https://github.com/bitwes/Gut/wiki/Gut-Settings-And-Methods)
-* [Inner Test Classes](https://github.com/bitwes/Gut/wiki/Inner-Test-Classes)
-* [Methods](https://github.com/bitwes/Gut/wiki/Methods)
-* [Command Line](https://github.com/bitwes/Gut/wiki/Command-Line)
-* [Simulate](https://github.com/bitwes/Gut/wiki/Simulate)
-* [Yielding during tests](https://github.com/bitwes/Gut/wiki/Yielding)
+* [Asserts and Methods](Asserts-and-Methods)
+* [Inner Test Classes](Inner-Test-Classes)
+* [Command Line](Command-Line)

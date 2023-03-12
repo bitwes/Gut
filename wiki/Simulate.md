@@ -69,4 +69,4 @@ func test_does_something_each_loop():
 ```
 
 # Where to next?
-* [Yielding](https://github.com/bitwes/Gut/wiki/Yielding)<br/>
+* [Yielding](Yielding)<br/>
