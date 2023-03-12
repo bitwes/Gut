@@ -69,8 +69,3 @@ func test_partial_double_works():
     dbl_ha.string_accessor_method = 'bar'
     assert_eq(dbl_ha.string_normal_accessors, 'foo')
     assert_eq(dbl_ha.string_accessor_method, 'bar')
-
-func test_print_methods():
-    var ha = HasAccessors.new()
-    _utils.pp(ha.get_method_list())
-    _utils.pp(ha.get_property_list())
