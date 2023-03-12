@@ -1,7 +1,7 @@
 extends GutTest
 
 
-class TestScriptCollector:
+class TestScriptParser:
 	extends GutTest
 
 	const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
@@ -11,66 +11,71 @@ class TestScriptCollector:
 	var InnerClasses = load(INNER_CLASSES_PATH)
 
 
-	var ScriptCollector = load('res://addons/gut/script_parser.gd')
+	var ScriptParser = load('res://addons/gut/script_parser.gd')
 
 	func test_can_make_one():
-		assert_not_null(ScriptCollector.new())
+		assert_not_null(ScriptParser.new())
 
 	func test_can_parse_a_script():
-		var collector = ScriptCollector.new()
+		var collector = ScriptParser.new()
 		collector.parse(DoubleMe)
 		assert_eq(collector.scripts.size(), 1)
 
 	func test_parsing_same_thing_does_not_add_to_scripts():
-		var collector = ScriptCollector.new()
+		var collector = ScriptParser.new()
 		collector.parse(DoubleMe)
 		collector.parse(DoubleMe)
 		assert_eq(collector.scripts.size(), 1)
 
 	func test_parse_returns_script_parser():
-		var collector = ScriptCollector.new()
+		var collector = ScriptParser.new()
 		var result = collector.parse(DoubleMe)
-		assert_is(result, ScriptCollector.ParsedScript)
+		assert_is(result, ScriptParser.ParsedScript)
 
 	func test_parse_returns_cached_version_on_2nd_parse():
-		var collector = ScriptCollector.new()
+		var collector = ScriptParser.new()
 		collector.parse(DoubleMe)
 		var result = collector.parse(DoubleMe)
-		assert_is(result, ScriptCollector.ParsedScript)
+		assert_is(result, ScriptParser.ParsedScript)
 
 	func test_can_get_instance_parse_result_from_gdscript():
-		var collector = ScriptCollector.new()
+		var collector = ScriptParser.new()
 		collector.parse(autofree(DoubleMe.new()))
 		var result = collector.parse(DoubleMe)
-		assert_is(result, ScriptCollector.ParsedScript)
+		assert_is(result, ScriptParser.ParsedScript)
 		assert_eq(collector.scripts.size(), 1)
 
 	func test_parsing_more_adds_more_scripts():
-		var collector = ScriptCollector.new()
+		var collector = ScriptParser.new()
 		collector.parse(DoubleMe)
 		collector.parse(ExtendsNode)
 		assert_eq(collector.scripts.size(), 2)
 
 	func test_can_parse_path_string():
-		var collector = ScriptCollector.new()
+		var collector = ScriptParser.new()
 		collector.parse(DOUBLE_ME_PATH)
 		assert_eq(collector.scripts.size(), 1)
 
 	func test_when_passed_an_invalid_path_null_is_returned():
-		var collector = ScriptCollector.new()
+		var collector = ScriptParser.new()
 		var result = collector.parse('res://foo.bar')
 		assert_null(result)
 
 	func test_inner_class_sets_subpath():
-		var collector = ScriptCollector.new()
+		var collector = ScriptParser.new()
 		var parsed = collector.parse(InnerClasses, InnerClasses.InnerCA)
 		assert_eq(parsed.subpath, 'InnerCA')
 
 	func test_inner_class_sets_script_path():
-		var collector = ScriptCollector.new()
+		var collector = ScriptParser.new()
 		var parsed = collector.parse(InnerClasses, InnerClasses.InnerCA)
 		assert_eq(parsed.script_path, INNER_CLASSES_PATH)
 
+
+class HasAccessors:
+	var my_property = 'default' :
+		get: return my_property
+		set(val): my_property = val
 
 
 class TestParsedScript:
@@ -204,3 +209,14 @@ class TestParsedScript:
 		parsed.unreference()
 		parsed = null
 		assert_no_new_orphans()
+
+	func test_get_accessor_marked_as_accessor():
+		var parsed = ParsedScript.new(HasAccessors)
+		var method = parsed.get_method('@my_property_getter')
+		assert_true(method.is_accessor())
+
+
+	func test_set_accessor_marked_as_accessor():
+		var parsed = ParsedScript.new(HasAccessors)
+		var method = parsed.get_method('@my_property_setter')
+		assert_true(method.is_accessor())

@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# 9.0.1
+* Fix #475, you can now double scripts that use the new accessors.
+
 # 9.0.0
 9.0.0 is the first version of GUT released for Godot 4.  Any version below 9.0.0 is for 3.x.  See the [GODOT_4_README.md](https://github.com/bitwes/Gut/blob/godot_4/GODOT_4_README.md) in the `godot_4` branch for changes to GUT from 3.x.
 

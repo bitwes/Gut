@@ -62,6 +62,9 @@ class ParsedMethod:
 	func is_black_listed():
 		return BLACKLIST.find(_meta.name) != -1
 
+	func is_accessor():
+		return _meta.name.begins_with('@') and \
+			(_meta.name.ends_with('_getter') or _meta.name.ends_with('_setter'))
 
 	func to_s():
 		var s = _meta.name + "("

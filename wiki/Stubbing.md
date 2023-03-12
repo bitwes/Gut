@@ -1,12 +1,10 @@
-# <div class="warning">This page has not been updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
-
 ##### Table of Contents
-* The Fine Print
-* Syntax
-* Stubbing based off of parameter values
+* [Syntax](#syntax)
+* [Stubbing based off of parameter values](#stubbing-based-off-of-parameter-values)
 * [Stubbing Packed Scenes](#stubbing-packed-scenes)
 * [Stubbing Method Parameter Defaults](#stubbing-method-parameter-defaults)
 * [Stubbing Method Parameter Count](#stubbing-method-parameter-count)
+* [Stubbing Accessors](#stubbing-accessors)
 ---
 
 
@@ -16,8 +14,9 @@ You can also use `stub` to set default parameter values and change the parameter
 
 
 # Syntax
-```
-var inst = double('res://script.gd').new()
+```gdscript
+var MyScript = load('res://my_script.gd')
+var inst = double(MyScript).new()
 stub(inst, 'some_method').to_return("I'm stubbed!")
 ```
 * `stub(obj, method)`  This stubs the value for a method.  You must chain in a call to one of the "to" methods such as `to_return(...)`.  The first parameter can be a path to a script or a loaded script or an instance of a doubled object.  When you pass in a path or class, then all doubles of that script will have the stub by default.  You can override this by calling `stub` on an instance of a doubled object.
@@ -50,7 +49,7 @@ extends Node2D
 var foo = -1
 var bar = 10
 
-func return_seven():
+func returns_seven():
   return 7
 
 func return_hello(param=1):
@@ -59,36 +58,46 @@ func return_hello(param=1):
 class InnerClass:
   var another_foo = 100
 ```
-Then, from inside your test script you can do the following to alter the `return_seven` method to return `500`
+Then, from inside your test script you can do the following to alter the `returns_seven` method to return `500`
 ```gdscript
+var DoubleThis = load('res://scripts/double_this.gd')
+
 func test_something():
-  var inst = double('res://scripts/double_this.gd').new()
-  stub('res://scripts/double_this.gd', 'return_seven').to_return(500)
-  assert_eq(inst.return_seven(), 500)
+  var inst = double(DoubleThis).new()
+  stub(inst, 'returns_seven').to_return(500)
+  assert_eq(inst.returns_seven(), 500)
 ```
 The `stub` method is pretty smart about what you pass it.  You can pass it a path, an Object or an instance.  If you pass an instance, it __must__ be an instance of a double.
 
 When passed an Object or a path, it will stub the value for __all__ instances that do not have explicitly defined stubs.  When you pass it an instance of a doubled class, then the stubbed return will only be set for that instance.
 ```gdscript
 var DoubleThis = load('res://scripts/double_this.gd')
-var Doubled = double('res://scripts/double_this.gd')
+var Doubled = double(DoubleThis)
 
-# these two are equivalent
-stub('res://scripts/double_this.gd', 'return_seven').to_return(500)
-stub(DoubleThis, 'return_seven').to_return(500)
+# These two are equivalent, and stub returns_seven for any doubles of
+# DoubleThis to return 500.
+stub('res://scripts/double_this.gd', 'returns_seven').to_return(500)
+stub(DoubleThis, 'returns_seven').to_return(500)
+var inst = Doubled.new()
+assert_eq(inst.returns_seven(), 500)
 
-# This will stub the value for the passed in instance ONLY.
+# This will stub returns_seven on the passed in instance ONLY.
 # Any other instances will return 500 from the lines above.
-var doubled_inst = Doubled.new()
-stub(doubled_inst, 'return_seven').to_return('words')
+var stub_again = Doubled.new()
+stub(stub_again, 'returns_seven').to_return('words')
+assert_eq(stub_again.returns_seven(), 'words')
 ```
 
 # Stubbing based off of parameter values
 You can stub a method to return a specific value based on what was passed in.
 ```gdscript
-const DOUBLE_THIS_PATH = 'res://scripts/double_this.gd'
-var Doubled = double(DOUBLE_THI_PATH)
-stub(DOUBLE_THIS_PATH, 'return_hello').to_return('world').when_passed(7)
+var DoubleThis = load('res://scripts/double_this.gd')
+var Doubled = double(DoubleThis)
+stub(DoubleThis, 'return_hello').to_return('world').when_passed('hello')
+
+var inst = Doubled.new()
+assert_eq(inst.return_hello(), 'hello')
+assert_eq(inst.return_hello('hello'), 'world')
 ```
 The ordering of `when_passed` and `to_return` does not matter.
 
@@ -99,26 +108,20 @@ In order for a scene to be doubled, the scene's script must be able to be instan
 
 ## Example
 Given the script `res://the_script.gd`:
-```gdscript
+``` gdscript
 func return_hello():
   return 'hello'
 ```
 And given a scene with the path `res://double_this_scene.tscn` which has its script set to `res://the_script.gd`.
 
-The following asserts will pass
 ``` gdscript
+var DoubleThisScene = load('res://double_this_scene.tscn')
+
 func test_illustrate_stubbing_scenes():
-  const SCENE_PATH = 'res://double_this_scene.tscn'
-  const SCRIPT_PATH = 'res://the_script.gd'
+  var doubled_scene = double(DoubleThisScene).instantiate()
+  stub(doubled_scene, 'return_hello').to_return('world')
 
-  var scene = double_scene(SCENE_PATH).instance()
-  var script = double(SCRIPT_PATH).new()
-
-  stub(SCENE_PATH, 'return_hello').to_return('world')
-  stub(SCRIPT_PATH, 'return_hello').to_return('goodbye')
-
-  assert_eq(scene.return_hello(), 'world')
-  assert_eq(script.return_hello(), 'goodbye')
+  assert_eq(doubled_scene.return_hello(), 'world')
 ```
 
 # Stubbing Method Parameter Defaults
@@ -190,7 +193,31 @@ func test_issue_246_rpc_id_varargs_with_defaults():
 You cannot make a method have less parameters, only more.
 
 
+# Stubbing Accessors
+It is not possible to stub the accessors for properties if you do not use a secondary method for the accessors.  This means that doubles retain the functionality of the accessors, and it cannot be changed.
+``` gdscript
+# The get and set for my_property cannot be stubbed.  Doubles retain the
+# functionality of the get and set methods.
+var my_property = 'foo' :
+  get: return my_property
+  set(val): my_property = val
+```
 
+If you use secondary methods, you can stub the behavior, but all doubles will not have any functionality for the accessors by default.
+```gdscript
+# You can stub _get_my_property and _set_my_property.  Doubles of this do not
+# retain the functionality of the accessors.  _get_my_property and
+# _set_my_property must be stubbed to_call_super to actually return or set
+# the value of my_property.
+var my_property = 'foo' :
+  get: _get_my_property, set: _set_my_property
+
+func _get_my_property():
+  return my_property
+
+func _set_my_property(val):
+  my_property = val
+```
 
 
 
