@@ -1,5 +1,3 @@
-# <div class="warning">This page has not been updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
-
 ##### Table of Contents
 * [Syntax](#syntax)
 * [Stubbing based off of parameter values](#stubbing-based-off-of-parameter-values)
