@@ -16,8 +16,8 @@ class BaseTest:
 	var DoubleWithStatic = load(DOUBLE_WITH_STATIC)
 	var DoubleMeScene = load(DOUBLE_ME_SCENE_PATH)
 	var InnerClasses = load(INNER_CLASSES_PATH)
-
 	var Doubler = load('res://addons/gut/doubler.gd')
+
 	var print_source_when_failing = true
 
 	func get_source(thing):

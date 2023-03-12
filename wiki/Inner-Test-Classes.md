@@ -1,4 +1,4 @@
-# !! Not Updated for GUT 9.0.0 Yet !!
+# <div class="warning">This page has not been updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
 You can define test classes inside a test script that will be treated as test scripts themselves.  This allows you to create different contexts for your tests in a single script.  These Inner Classes have thier own `before_all`, `before_each`, `after_each`, and `after_all` methods that will be called.  Only the methods defined in the class are used, the methods defined in the containing script will not be called.
 
 The Inner Classes must also extend `GutTest` and their constructor cannot take any parameters.  The Classes will be loaded and ran in the order they are defined _after_ all the tests in the containing script are run.  If the script does not contain any tests then only the Inner Classes will be listed in the output.
@@ -6,8 +6,6 @@ The Inner Classes must also extend `GutTest` and their constructor cannot take a
 The order the tests are run are not guaranteed to be in the same order they are defined (I don't know why yet).  Also the line number for the tests cannot currently be reported when they fail or are pending (they aren't parsed the same way as normal script tests, I'll probably add this in later since it bugs me).
 
 Inner Classes are parsed out of the script by looking for a classes that start with `'Test'` and also extend `test.gd`.  You can change the name that Gut looks for using the `inner_class_prefix` property.
-
-There are options for the command line and editor node to specify an Inner Test Class name to run.  This allows you to easily run a subset of tests in a script as you develop a feature.  See [Gut Settings and Methods](https://github.com/bitwes/Gut/wiki/Gut-Settings-And-Methods) and  [Using Gut at the command line](https://github.com/bitwes/Gut/wiki/Command-Line) for more information.
 
 # Example
 Given the following test script defined at `res://test/unit/some_example.gd`

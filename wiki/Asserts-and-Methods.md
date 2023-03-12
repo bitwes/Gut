@@ -1,4 +1,4 @@
-# !! Not Updated for GUT 9.0.0 Yet !!
+<div class="warning">This page has not been updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
 These are all the methods, bells, whistles and blinky lights you get when you extend the Gut Test Class (`extends GutTest`).
 
 All sample code listed for the methods can be found here in [test_readme_examples.gd](https://github.com/bitwes/Gut/blob/master/test/samples/test_readme_examples.gd)
@@ -1387,7 +1387,7 @@ assert_setget_called(5, 'current_hp', 'set_current_hp')  # FAIL => type has to b
 assert_setget_called(double(Health), 'current_hp', 'set_current_hp') # FAIL => type has to be a Resource that can be doubled
 ```
 
-Please note the last example. So far an already doubled type cannot be doubled again. Since the class under test will be doubled within the assert procession it is important to only feed in types that can be doubled. For more information about doubling its restrictions see the wiki page about [Doubles](https://github.com/bitwes/Gut/wiki/Doubles).
+Please note the last example. So far an already doubled type cannot be doubled again. Since the class under test will be doubled within the assert procession it is important to only feed in types that can be doubled. For more information about doubling its restrictions see the wiki page about [Doubles](Doubles).
 
 
 #### <a name="assert_setget"> assert_property(obj, name_property, has_setter=false, has_getter=false) </a>

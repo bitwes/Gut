@@ -172,6 +172,10 @@ func _get_base_script_text(parsed, override_path, partial):
 	return _base_script_text.format(values)
 
 
+func _is_valid_double_method(parsed_script, parsed_method):
+	return !parsed_method.is_accessor() and \
+		!parsed_method.is_black_listed() and \
+		!_ignored_methods.has(parsed_script.resource, parsed_method.meta.name)
 
 func _create_double(parsed, strategy, override_path, partial):
 	var base_script = _get_base_script_text(parsed, override_path, partial)
@@ -183,7 +187,7 @@ func _create_double(parsed, strategy, override_path, partial):
 	dbl_src += base_script
 
 	for method in parsed.get_local_methods():
-		if(!method.is_black_listed() && !_ignored_methods.has(parsed.resource, method.meta.name)):
+		if(_is_valid_double_method(parsed, method)):
 			var mthd = parsed.get_local_method(method.meta.name)
 			if(parsed.is_native):
 				dbl_src += _get_func_text(method.meta, parsed.resource, super_name)
@@ -192,7 +196,7 @@ func _create_double(parsed, strategy, override_path, partial):
 
 	if(strategy == _utils.DOUBLE_STRATEGY.INCLUDE_SUPER):
 		for method in parsed.get_super_methods():
-			if(!method.is_black_listed() && !_ignored_methods.has(parsed.resource, method.meta.name)):
+			if(_is_valid_double_method(parsed, method)):
 				_stub_to_call_super(parsed, method.meta.name)
 				if(parsed.is_native):
 					dbl_src += _get_func_text(method.meta, parsed.resource, super_name)

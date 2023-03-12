@@ -1,5 +1,6 @@
 extends "res://addons/gut/test.gd"
 
+
 class BaseTest:
 	extends GutTest
 	var Stubber = load('res://addons/gut/stubber.gd')
