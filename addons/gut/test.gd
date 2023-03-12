@@ -1389,7 +1389,7 @@ func replace_node(base_node, path_or_node, with_this):
 	var to_replace = base_node.get_node(path)
 	var parent = to_replace.get_parent()
 	var replace_name = to_replace.get_name()
- 
+
 	parent.remove_child(to_replace)
 	parent.add_child(with_this)
 	with_this.set_name(replace_name)
