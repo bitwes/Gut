@@ -1,3 +1,4 @@
+![gut logo](images/gut_logo_256x256.png)
 # Gut 9.0.0 (Godot 4.0)
 GUT (Godot Unit Test) is a unit testing framework for the [Godot Engine](https://godotengine.org/).  It allows you to write tests for your gdscript in gdscript.
 
