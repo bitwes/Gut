@@ -23,6 +23,7 @@
 #THE SOFTWARE.
 #
 # ##############################################################################
+@tool
 extends Control
 
 # ##############################################################################
@@ -53,6 +54,13 @@ var _tree_scripts = {}
 	tabs = $VBox/Tabs
 }
 
+@export var bg_color : Color = Color(.36, .36, .36) :
+	get: return bg_color
+	set(val):
+		bg_color = val
+		$Bg.color = bg_color
+
+
 func _ready():
 	_config_gui = GutConfigGui.new(_ctrls.settings_vbox)
 	
@@ -68,8 +76,10 @@ func _ready():
 	# a bunch of errors.  The errors don't matter, but it looks bad.
 	call_deferred('_wire_up_gut')
 
+
 func _draw():
-	draw_rect(get_rect(), Color.BLACK, false, 2)
+	var r = Rect2(Vector2(0, 0), get_rect().size)
+	draw_rect(r, Color.BLACK, false, 2)
 
 
 func _wire_up_gut():
@@ -196,6 +206,13 @@ func refresh():
 	_gut_runner.set_gut_config(_config)
 	_populate_tree()
 
+
+func load_config_file(path):
+	_config.load_panel_options(path)
+	_config.options.selected = ''
+	_config.options.inner_class_name = ''
+	_config.options.unit_test_name = ''
+	
 
 
 

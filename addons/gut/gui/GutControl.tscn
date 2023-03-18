@@ -16,7 +16,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.176471, 0.176471, 0.176471, 1)
+color = Color(0.360784, 0.356863, 0.34902, 1)
 
 [node name="VBox" type="VBoxContainer" parent="."]
 layout_mode = 1
