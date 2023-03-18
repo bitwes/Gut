@@ -51,7 +51,8 @@ var _tree_scripts = {}
 	run_selected = $VBox/RunSelected,
 	test_tree = $VBox/Tabs/Tests,
 	settings_vbox = $VBox/Tabs/SettingsScroll/Settings,
-	tabs = $VBox/Tabs
+	tabs = $VBox/Tabs,
+	bg = $Bg
 }
 
 @export var bg_color : Color = Color(.36, .36, .36) :
@@ -62,6 +63,9 @@ var _tree_scripts = {}
 
 
 func _ready():
+	_ctrls.tabs.set_tab_title(0, 'Tests')
+	_ctrls.tabs.set_tab_title(1, 'Settings')
+	
 	_config_gui = GutConfigGui.new(_ctrls.settings_vbox)
 	
 	_ctrls.test_tree.hide_root = true
@@ -78,8 +82,10 @@ func _ready():
 
 
 func _draw():
-	var r = Rect2(Vector2(0, 0), get_rect().size)
-	draw_rect(r, Color.BLACK, false, 2)
+	var gut = _gut_runner.get_gut()
+	if(!gut.is_running()):
+		var r = Rect2(Vector2(0, 0), get_rect().size)
+		draw_rect(r, Color.BLACK, false, 2)
 
 
 func _wire_up_gut():
@@ -160,14 +166,18 @@ func _on_gut_run_started():
 	_ctrls.run_tests_button.disabled = true
 	_ctrls.run_selected.visible = false
 	_ctrls.tabs.visible = false
+	_ctrls.bg.visible = false
 	_ctrls.run_tests_button.text = 'Running'
+	queue_redraw()
 
 
 func _on_gut_run_ended():
 	_ctrls.run_tests_button.disabled = false
 	_ctrls.run_selected.visible = true
 	_ctrls.tabs.visible = true
+	_ctrls.bg.visible = true
 	_ctrls.run_tests_button.text = 'Run All'
+	queue_redraw()
 
 
 func _on_run_tests_pressed():
