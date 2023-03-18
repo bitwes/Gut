@@ -8,6 +8,7 @@ func _ready():
 	# Here we use the Gut Panel settings file.  This can be any
 	# gutconfig file, but this one is most likely to exist.
 	# You can create your own just for deployed settings.
+	# Some settings may not work.
 	#
 	# Settings are not saved, so any changes will be lost.
 	# The idea is that you want to deploy the settings and 

@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------------------
-# Choose an existing directory from res://.  Dialog allows for creating a 
+# Choose an existing directory from res://.  Dialog allows for creating a
 # directory.
 # ------------------------------------------------------------------------------
 class DirectoryCtrl:
@@ -69,7 +69,7 @@ class SaveFileAnywhere:
 		super._init()
 		_dialog.file_mode = _dialog.FILE_MODE_SAVE_FILE
 		_dialog.access = _dialog.ACCESS_FILESYSTEM
-	
+
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -245,7 +245,7 @@ func _add_save_file_anywhere(key, value, disp_text, hint=''):
 	_wire_select_on_focus(value_ctrl.get_line_edit())
 
 	return _new_row(key, disp_text, value_ctrl, hint)
-	
+
 
 
 func _add_color(key, value, disp_text, hint=''):
@@ -317,14 +317,14 @@ func get_config_issues():
 # --------------
 # SUPER dumb but VERY fun hack to hide settings.  The various _add methods will
 # return what they add.  If you want to hide it, just assign the result to this.
-# YES, I could have just put .visible at the end, but I didn't think of that 
+# YES, I could have just put .visible at the end, but I didn't think of that
 # until just now, and this was fun, non-permanent and the .visible at the end
 # isn't as obvious as hide_this =
-# 
+#
 # Also, we can't just skip adding the controls because other things are looking
 # for them and things start to blow up if you don't add them.
 var hide_this = null :
-	set(val): 
+	set(val):
 		val.visible = false
 # --------------
 func set_options(options):
