@@ -34,6 +34,8 @@ func _test_running_setup():
 # Private
 # ------------------------
 func _set_gut(val):
+	if(_normal_gui.get_gut() == val):
+		return
 	_normal_gui.set_gut(val)
 	_compact_gui.set_gut(val)
 

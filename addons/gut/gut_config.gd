@@ -164,8 +164,7 @@ func _apply_options(opts, _tester):
 	_tester.log_level = opts.log_level
 	_tester.ignore_pause_before_teardown = opts.ignore_pause
 
-	if(opts.selected != ''):
-		_tester.select_script(opts.selected)
+	_tester.select_script(opts.selected)
 
 	for i in range(opts.dirs.size()):
 		_tester.add_directory(opts.dirs[i], opts.prefix, opts.suffix)

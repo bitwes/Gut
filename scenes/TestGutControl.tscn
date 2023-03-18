@@ -9,5 +9,5 @@ script = ExtResource("1_1k2gg")
 [node name="GutControl" parent="." instance=ExtResource("1_iog3j")]
 offset_left = 22.0
 offset_top = 24.0
-offset_right = 235.0
-offset_bottom = 89.0
+offset_right = 485.0
+offset_bottom = 443.0

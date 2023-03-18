@@ -14,7 +14,7 @@ func _ready():
 	# the default_options dictionary in gut_config.gd
 	config.options.should_exit = false
 	config.options.compact_mode = false
-	config.options.selected = 'test_test.gd'
+#	config.options.selected = 'test_test.gd'
 
 	# The gut instance in the GutRunner is not avialable 
 	# until after ready (due to some janky psuedo-global-singleton
@@ -24,9 +24,11 @@ func _ready():
 func _wire_gut():
 	var gut = _gut_control.get_gut()
 	gut.start_run.connect(_on_gut_run_start)
-	gut.start_script.connect(_on_gut_start_script)
-	gut.start_test.connect(_on_gut_test_started)
+#	gut.start_script.connect(_on_gut_start_script)
+#	gut.start_test.connect(_on_gut_test_started)
 	gut.end_run.connect(_on_gut_run_end)
+	
+	_gut_control.refresh()
 
 
 func _on_gut_run_start():
@@ -43,3 +45,4 @@ func _on_gut_test_started(test_name):
 
 func _on_gut_run_end():
 	print('Tests Done')
+#

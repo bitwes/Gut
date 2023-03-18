@@ -50,13 +50,13 @@ func _ready():
 	_ctrls.btn_continue.pressed.connect(_on_continue_pressed)
 	_ctrls.switch_modes.pressed.connect(_on_switch_modes_pressed)
 	_ctrls.title_bar.gui_input.connect(_on_title_bar_input)
-	
+
 	_ctrls.prog_script.value = 0
 	_ctrls.prog_test.value = 0
 	_ctrls.path_dir.text = ''
 	_ctrls.path_file.text = ''
 	_ctrls.time_label.text = ''
-	
+
 	_max_position = DisplayServer.window_get_size() - Vector2i(30, _ctrls.title_bar.size.y)
 
 
@@ -187,6 +187,8 @@ func pause_before_teardown():
 
 
 func set_gut(g):
+	if(_gut == g):
+		return
 	_gut = g
 	g.start_run.connect(_on_gut_start_run)
 	g.end_run.connect(_on_gut_end_run)
@@ -200,6 +202,8 @@ func set_gut(g):
 	g.start_pause_before_teardown.connect(_on_gut_start_pause)
 	g.end_pause_before_teardown.connect(_on_gut_end_pause)
 
+func get_gut():
+	return _gut
 
 func get_textbox():
 	return _ctrls.rtl
