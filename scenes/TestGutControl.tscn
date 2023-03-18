@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://cvpbqdkdvsloh"]
+
+[ext_resource type="Script" path="res://scenes/TestGutControl.gd" id="1_1k2gg"]
+[ext_resource type="PackedScene" uid="uid://4jb53yqktyfg" path="res://addons/gut/gui/GutControl.tscn" id="1_iog3j"]
+
+[node name="TestGutControl" type="Node2D"]
+script = ExtResource("1_1k2gg")
+
+[node name="GutControl" parent="." instance=ExtResource("1_iog3j")]
+offset_left = 22.0
+offset_top = 24.0
+offset_right = 235.0
+offset_bottom = 89.0

@@ -23,7 +23,7 @@
 #THE SOFTWARE.
 #
 # ##############################################################################
-extends Node2D
+extends Control
 
 # ##############################################################################
 #
@@ -38,58 +38,54 @@ var GutRunnerScene = load('res://addons/gut/gui/GutRunner.tscn')
 
 var _config = GutConfig.new()
 var _gut_runner = GutRunnerScene.instantiate()
-var _gut = null
+var _has_connected = false
 
+@onready var _ctrls = {
+	run_tests_button = $RunTests
+}
 
 func _ready():
-	# Setup all the GUT options from a file.
-	_config.load_options('res://.gutconfig.json')
+	# Stop tests from kicking off when the runner is "ready" and
+	# prevents it from writing results file that is used by
+	# the panel.
+	_gut_runner.set_cmdln_mode(true)
+	add_child(_gut_runner)
+	
+	# Becuase of the janky _utils psuedo-global script, we cannot
+	# do all this in _ready.  If we do this in _ready, it generates
+	# a bunch of errors.  The errors don't matter, but it looks bad.
+	call_deferred('_wire_up_gut')
 
-	# Override soecific values for the purposes of this
-	# scene.  You can see all the options available in
-	# the default_options dictionary in gut_config.gd
-	_config.options.selected = 'test_test.gd'
-	_config.options.should_exit = false
-	_config.options.compact_mode = false
 
+func _wire_up_gut():
+	var gut = _gut_runner.get_gut()
+	gut.start_run.connect(_on_gut_run_started)
+	gut.end_run.connect(_on_gut_run_ended)
+		
+	
+func _on_gut_run_started():
+	_ctrls.run_tests_button.disabled = true
+	_ctrls.run_tests_button.text = 'Running'
+#
+#
+func _on_gut_run_ended():
+	_ctrls.run_tests_button.disabled = false
+	_ctrls.run_tests_button.text = 'Run Tests'
+
+
+func _on_run_tests_pressed():
+	run_tests()
+
+
+func get_gut():
+	return _gut_runner.get_gut()
+
+	
+func get_config():
+	return _config
+
+	
+func run_tests():
 	# apply the config
 	_gut_runner.set_gut_config(_config)
-	# Stop tests from kicking off when the runner is "ready"
-	_gut_runner.auto_run_tests = false
-	add_child(_gut_runner)
-
-
-func _run_tests():
-	# Becuase of the janky _utils psuedo-global script, we cannot
-	# do all this in _ready, so we do it before we run tests for
-	# the first time.  If we do this in _ready, it generates
-	# a bunch of errors.  The errors don't matter, but it looks bad.
-	if(_gut == null):
-		_gut = _gut_runner.get_gut()
-		_gut.start_run.connect(_on_gut_run_started)
-		_gut.start_script.connect(_on_gut_start_script)
-		_gut.start_test.connect(_on_gut_test_started)
-		_gut.end_run.connect(_on_gut_run_ended)
-
 	_gut_runner.run_tests()
-
-
-func _on_RunGutTestsButton_pressed():
-	_run_tests()
-
-
-func _on_gut_run_started():
-	print('Gut Run Started')
-
-
-func _on_gut_run_ended():
-	print('Gut Run Ended')
-
-
-# This signal passes a TestCollector.gd/TestScript instance
-func _on_gut_start_script(script_obj):
-	print(script_obj.get_full_name(), ' has ', script_obj.tests.size(), ' tests')
-
-
-func _on_gut_test_started(test_name):
-	print('  ', test_name)
