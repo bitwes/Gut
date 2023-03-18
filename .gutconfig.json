@@ -1,18 +1,15 @@
 {
   "_post_run_script": "res://test/post_run_export_json.gd",
 
-
+  "include_subdirs": true,
   "dirs": [
     "res://test/unit/",
-    "res://test/unit/test_bugs/",
     "res://test/integration/"
   ],
   "should_maximize": false,
   "should_exit": true,
   "ignore_pause": true,
   "log_level": 3,
-  "double_strategy": "partial",
-  "include_subdirs": true,
   "inner_class": "",
   "disable_colors": false,
   "compact_mode": true,

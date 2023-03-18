@@ -34,6 +34,8 @@ extends Control
 # and some of the ways to interact with GUT, the runner, and a config.
 #
 # ##############################################################################
+const RUNNER_JSON_PATH = 'res://.gut_editor_config.json'
+
 var GutConfig = load('res://addons/gut/gut_config.gd')
 var GutRunnerScene = load('res://addons/gut/gui/GutRunner.tscn')
 var GutConfigGui = load('res://addons/gut/gui/gut_config_gui.gd')
@@ -63,6 +65,9 @@ var _tree_scripts = {}
 
 
 func _ready():
+	if Engine.is_editor_hint():
+		return
+		
 	_ctrls.tabs.set_tab_title(0, 'Tests')
 	_ctrls.tabs.set_tab_title(1, 'Settings')
 	
@@ -78,20 +83,24 @@ func _ready():
 	# Becuase of the janky _utils psuedo-global script, we cannot
 	# do all this in _ready.  If we do this in _ready, it generates
 	# a bunch of errors.  The errors don't matter, but it looks bad.
-	call_deferred('_wire_up_gut')
+	call_deferred('_post_ready')
 
 
 func _draw():
+	if Engine.is_editor_hint():
+		return
+		
 	var gut = _gut_runner.get_gut()
 	if(!gut.is_running()):
 		var r = Rect2(Vector2(0, 0), get_rect().size)
 		draw_rect(r, Color.BLACK, false, 2)
 
 
-func _wire_up_gut():
+func _post_ready():
 	var gut = _gut_runner.get_gut()
 	gut.start_run.connect(_on_gut_run_started)
 	gut.end_run.connect(_on_gut_run_ended)
+	_refresh_tree_and_settings()
 		
 
 func _set_meta_for_tree_item(item, script, test=null):
@@ -153,11 +162,21 @@ func _run_all():
 
 func _run_selected():
 	var sel_item = _ctrls.test_tree.get_selected()
+	if(sel_item == null):
+		return
+		
 	var meta = sel_item.get_metadata(0)
 	_config.options.selected = meta.script.get_file()
 	_config.options.inner_class_name = meta.inner_class
 	_config.options.unit_test_name = meta.test
 	run_tests()
+
+func _refresh_tree_and_settings():
+	if(_config.options.has('panel_options')):
+		_config_gui.set_options(_config.options)
+	_config.config_gut(_gut_runner.get_gut())
+	_gut_runner.set_gut_config(_config)
+	_populate_tree()
 
 # ---------------------------
 # Events
@@ -191,7 +210,6 @@ func _on_run_selected_pressed():
 func _on_tests_item_activated():
 	_run_selected()
 
-
 # ---------------------------
 # Public 
 # ---------------------------
@@ -208,14 +226,7 @@ func run_tests():
 	_config.options = _config_gui.get_options(_config.options)
 	_gut_runner.set_gut_config(_config)
 	_gut_runner.run_tests()
-
-
-func refresh():
-	_config_gui.set_options(_config.options)
-	_config.config_gut(_gut_runner.get_gut())
-	_gut_runner.set_gut_config(_config)
-	_populate_tree()
-
+	
 
 func load_config_file(path):
 	_config.load_panel_options(path)
@@ -223,6 +234,3 @@ func load_config_file(path):
 	_config.options.inner_class_name = ''
 	_config.options.unit_test_name = ''
 	
-
-
-

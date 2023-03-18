@@ -28,6 +28,7 @@ grow_vertical = 2
 
 [node name="RunTests" type="Button" parent="VBox"]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Run All"
 
 [node name="Tabs" type="TabContainer" parent="VBox"]
