@@ -1,34 +1,41 @@
 extends Node2D
-
+const RUNNER_JSON_PATH = 'res://.gut_editor_config.json'
 @onready var _gut_control = $GutControl
 
 func _ready():
 	# Returns a gut_config.gd instance.
 	var config = _gut_control.get_config()
 	
-	# Setup all the GUT options from a file.
-	config.load_options('res://.gutconfig.json')
+	# Load the Gut Panel settings file.  This can be any
+	# gutconfig file.  Must call load_panel_options instead
+	# of load_options since we are using the panel's settings
+	# control.
+	config.load_panel_options(RUNNER_JSON_PATH)
 
 	# Override soecific values for the purposes of this
 	# scene.  You can see all the options available in
 	# the default_options dictionary in gut_config.gd
 	config.options.should_exit = false
 	config.options.compact_mode = false
-#	config.options.selected = 'test_test.gd'
 
-	# The gut instance in the GutRunner is not avialable 
-	# until after ready (due to some janky psuedo-global-singleton
-	# I made and haven't refactored yet, you're welcome).
-	call_deferred('_wire_gut')
+	call_deferred('_post_ready_setup')
+
+
+# The control must be refreshed after _ready for all the tests
+# to populate.  This is due to some timing issues with gut.gd.
+#
+# This is also where you would connect to any signals provided by
+# the gut.gd instance held in the GutRunner.
+func _post_ready_setup():
+	# This method will populate the tree and also the settings
+	# panel.  This cannot be called until _ready has finished.
+	_gut_control.refresh()
 	
-func _wire_gut():
 	var gut = _gut_control.get_gut()
 	gut.start_run.connect(_on_gut_run_start)
-#	gut.start_script.connect(_on_gut_start_script)
-#	gut.start_test.connect(_on_gut_test_started)
+	gut.start_script.connect(_on_gut_start_script)
+	gut.start_test.connect(_on_gut_test_started)
 	gut.end_run.connect(_on_gut_run_end)
-	
-	_gut_control.refresh()
 
 
 func _on_gut_run_start():
@@ -42,6 +49,7 @@ func _on_gut_start_script(script_obj):
 
 func _on_gut_test_started(test_name):
 	print('  ', test_name)
+
 
 func _on_gut_run_end():
 	print('Tests Done')

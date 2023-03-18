@@ -35,8 +35,10 @@ extends Control
 # ##############################################################################
 var GutConfig = load('res://addons/gut/gut_config.gd')
 var GutRunnerScene = load('res://addons/gut/gui/GutRunner.tscn')
+var GutConfigGui = load('res://addons/gut/gui/gut_config_gui.gd')
 
 var _config = GutConfig.new()
+var _config_gui = null
 var _gut_runner = GutRunnerScene.instantiate()
 var _has_connected = false
 var _tree_root : TreeItem = null
@@ -46,10 +48,14 @@ var _tree_scripts = {}
 @onready var _ctrls = {
 	run_tests_button = $VBox/RunTests,
 	run_selected = $VBox/RunSelected,
-	test_tree = $VBox/Tests
+	test_tree = $VBox/Tabs/Tests,
+	settings_vbox = $VBox/Tabs/SettingsScroll/Settings,
+	tabs = $VBox/Tabs
 }
 
 func _ready():
+	_config_gui = GutConfigGui.new(_ctrls.settings_vbox)
+	
 	_ctrls.test_tree.hide_root = true
 	# Stop tests from kicking off when the runner is "ready" and
 	# prevents it from writing results file that is used by
@@ -61,6 +67,9 @@ func _ready():
 	# do all this in _ready.  If we do this in _ready, it generates
 	# a bunch of errors.  The errors don't matter, but it looks bad.
 	call_deferred('_wire_up_gut')
+
+func _draw():
+	draw_rect(get_rect(), Color.BLACK, false, 2)
 
 
 func _wire_up_gut():
@@ -119,38 +128,49 @@ func _populate_tree():
 	_tree_root.set_collapsed(false)
 
 
-# ---------------------------
-# Events
-# ---------------------------
-func _on_gut_run_started():
-	_ctrls.run_tests_button.disabled = true
-	_ctrls.run_selected.visible = false
-	_ctrls.test_tree.visible = false
-	_ctrls.run_tests_button.text = 'Running'
-
-
-func _on_gut_run_ended():
-	_ctrls.run_tests_button.disabled = false
-	_ctrls.run_selected.visible = true
-	_ctrls.test_tree.visible = true
-	_ctrls.run_tests_button.text = 'Run All'
-
-
-func _on_run_tests_pressed():
+func _run_all():
 	_config.options.selected = ''
 	_config.options.inner_class_name = ''
 	_config.options.unit_test_name = ''
 	run_tests()
 
 
-func _on_run_selected_pressed():
+func _run_selected():
 	var sel_item = _ctrls.test_tree.get_selected()
 	var meta = sel_item.get_metadata(0)
 	_config.options.selected = meta.script.get_file()
 	_config.options.inner_class_name = meta.inner_class
 	_config.options.unit_test_name = meta.test
 	run_tests()
+
+# ---------------------------
+# Events
+# ---------------------------
+func _on_gut_run_started():
+	_ctrls.run_tests_button.disabled = true
+	_ctrls.run_selected.visible = false
+	_ctrls.tabs.visible = false
+	_ctrls.run_tests_button.text = 'Running'
+
+
+func _on_gut_run_ended():
+	_ctrls.run_tests_button.disabled = false
+	_ctrls.run_selected.visible = true
+	_ctrls.tabs.visible = true
+	_ctrls.run_tests_button.text = 'Run All'
+
+
+func _on_run_tests_pressed():
+	_run_all()
+
+
+func _on_run_selected_pressed():
+	_run_selected()
 	
+	
+func _on_tests_item_activated():
+	_run_selected()
+
 
 # ---------------------------
 # Public 
@@ -165,13 +185,17 @@ func get_config():
 	
 func run_tests():
 	# apply the config
+	_config.options = _config_gui.get_options(_config.options)
 	_gut_runner.set_gut_config(_config)
 	_gut_runner.run_tests()
 
 
 func refresh():
+	_config_gui.set_options(_config.options)
 	_config.config_gut(_gut_runner.get_gut())
 	_gut_runner.set_gut_config(_config)
 	_populate_tree()
+
+
 
 

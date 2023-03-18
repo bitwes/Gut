@@ -9,6 +9,15 @@ offset_right = 213.0
 offset_bottom = 423.0
 script = ExtResource("1_eprql")
 
+[node name="Bg" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.176471, 0.176471, 0.176471, 1)
+
 [node name="VBox" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
@@ -21,8 +30,22 @@ grow_vertical = 2
 layout_mode = 2
 text = "Run All"
 
-[node name="Tests" type="Tree" parent="VBox"]
+[node name="Tabs" type="TabContainer" parent="VBox"]
 layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Tests" type="Tree" parent="VBox/Tabs"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="SettingsScroll" type="ScrollContainer" parent="VBox/Tabs"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Settings" type="VBoxContainer" parent="VBox/Tabs/SettingsScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="RunSelected" type="Button" parent="VBox"]
@@ -30,4 +53,5 @@ layout_mode = 2
 text = "Run Selected"
 
 [connection signal="pressed" from="VBox/RunTests" to="." method="_on_run_tests_pressed"]
+[connection signal="item_activated" from="VBox/Tabs/Tests" to="." method="_on_tests_item_activated"]
 [connection signal="pressed" from="VBox/RunSelected" to="." method="_on_run_selected_pressed"]
