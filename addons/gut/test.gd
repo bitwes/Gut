@@ -69,7 +69,7 @@ var _summary = {
 var _signal_watcher = load('res://addons/gut/signal_watcher.gd').new()
 
 # Convenience copy of _utils.DOUBLE_STRATEGY
-var DOUBLE_STRATEGY = _utils.DOUBLE_STRATEGY
+var DOUBLE_STRATEGY = GutUtils.DOUBLE_STRATEGY
 
 var _lgr = _utils.get_logger()
 var _strutils = _utils.Strutils.new()

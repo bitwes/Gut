@@ -99,7 +99,10 @@ var _strategy = null
 func get_strategy():
 	return _strategy
 func set_strategy(strategy):
-	_strategy = strategy
+	if(GutUtils.DOUBLE_STRATEGY.values().has(strategy)):
+		_strategy = strategy
+	else:
+		_lgr.error(str('doubler.gd:  invalid double strategy ', strategy))
 
 
 var _method_maker = _utils.MethodMaker.new()
@@ -176,6 +179,7 @@ func _is_valid_double_method(parsed_script, parsed_method):
 	return !parsed_method.is_accessor() and \
 		!parsed_method.is_black_listed() and \
 		!_ignored_methods.has(parsed_script.resource, parsed_method.meta.name)
+
 
 func _create_double(parsed, strategy, override_path, partial):
 	var base_script = _get_base_script_text(parsed, override_path, partial)

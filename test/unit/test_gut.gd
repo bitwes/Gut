@@ -22,7 +22,7 @@ class TestProperties:
 			['log_level', 1, 3],
 			['disable_strict_datatype_checks', false, true],
 			['include_subdirectories', false, true],
-			['double_strategy', 1, 2],
+			['double_strategy', 1, 0],
 			['pre_run_script', '', 'res://something.gd'],
 			['post_run_script', '', 'res://something_else.gd'],
 			['color_output', false, true],
@@ -69,6 +69,12 @@ class TestProperties:
 		assert_eq(_gut.get_current_script_object(), null)
 		# I don't know how to test this in other situations
 
+	func test_set_double_strategy_does_not_accept_invalid_values():
+		var default = _gut.double_strategy
+		_gut.double_strategy = -1
+		assert_eq(_gut.double_strategy, default, 'did not accept -1')
+		_gut.double_strategy = 22
+		assert_eq(_gut.double_strategy, default, 'did not accept 22')
 
 
 

@@ -1,3 +1,5 @@
+class_name GutUtils
+extends Node
 # ##############################################################################
 #(G)odot (U)nit (T)est class
 #
@@ -31,7 +33,7 @@
 # This class is a PSUEDO SINGLETON.  You should not make instances of it but use
 # the get_instance static method.
 # ##############################################################################
-extends Node
+
 
 # ------------------------------------------------------------------------------
 # The instance name as a function since you can't have static variables.

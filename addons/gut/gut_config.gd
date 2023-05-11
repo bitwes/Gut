@@ -1,13 +1,5 @@
 var Gut = load('res://addons/gut/gut.gd')
 
-# Do not want a ref to _utils here due to use by editor plugin.
-# _utils needs to be split so that constants and what not do not
-# have to rely on the weird singleton thing I made.
-enum DOUBLE_STRATEGY{
-	SCRIPT_ONLY,
-	INCLUDE_SUPER
-}
-
 
 var valid_fonts = ['AnonymousPro', 'CourierPro', 'LobsterTwo', 'Default']
 var default_options = {
@@ -15,7 +7,7 @@ var default_options = {
 	config_file = 'res://.gutconfig.json',
 	dirs = [],
 	disable_colors = false,
-	double_strategy = 'partial',
+	double_strategy = 'include super',
 	font_color = Color(.8, .8, .8, 1).to_html(),
 	font_name = 'CourierPrime',
 	font_size = 16,
@@ -144,9 +136,9 @@ func _apply_options(opts, _tester):
 		_tester.add_script(opts.tests[i])
 
 	if(opts.double_strategy == 'include super'):
-		_tester.double_strategy = DOUBLE_STRATEGY.INCLUDE_SUPER
+		_tester.double_strategy = GutUtils.DOUBLE_STRATEGY.INCLUDE_SUPER
 	elif(opts.double_strategy == 'script only'):
-		_tester.double_strategy = DOUBLE_STRATEGY.SCRIPT_ONLY
+		_tester.double_strategy = GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY
 
 	_tester.unit_test_name = opts.unit_test_name
 	_tester.pre_run_script = opts.pre_run_script

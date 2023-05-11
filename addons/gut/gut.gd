@@ -111,13 +111,17 @@ var include_subdirectories = _include_subdirectories :
 	get: return _include_subdirectories
 	set(val): _include_subdirectories = val
 
-var _double_strategy = 1
+
+var _double_strategy = GutUtils.DOUBLE_STRATEGY.INCLUDE_SUPER
 ## TODO rework what this is and then document it here.
-var double_strategy = 1  :
+var double_strategy = _double_strategy  :
 	get: return _double_strategy
 	set(val):
-		_double_strategy = val
-		_doubler.set_strategy(double_strategy)
+		if(GutUtils.DOUBLE_STRATEGY.values().has(val)):
+			_double_strategy = val
+			_doubler.set_strategy(double_strategy)
+		else:
+			_lgr.error(str("gut.gd:  invalid double_strategy ", val))
 
 var _pre_run_script = ''
 ## Path to the script that will be run before all tests are run.  This script

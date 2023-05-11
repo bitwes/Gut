@@ -101,6 +101,11 @@ class TestTheBasics:
 	func test_get_set_strategy():
 		assert_accessors(_doubler, 'strategy', _utils.DOUBLE_STRATEGY.SCRIPT_ONLY,  _utils.DOUBLE_STRATEGY.INCLUDE_SUPER)
 
+	func test_cannot_set_strategy_to_invalid_values():
+		var default = _doubler.get_strategy()
+		_doubler.set_strategy(-1)
+		assert_eq(_doubler.get_strategy(), default)
+
 	func test_can_set_strategy_in_constructor():
 		var d = Doubler.new(_utils.DOUBLE_STRATEGY.INCLUDE_SUPER)
 		assert_eq(d.get_strategy(), _utils.DOUBLE_STRATEGY.INCLUDE_SUPER)

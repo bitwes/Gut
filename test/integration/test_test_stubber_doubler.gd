@@ -166,22 +166,38 @@ class TestTestsSmartDoubleMethod:
 		assert_eq(inst.__gutdbl.subpath, 'InnerA', 'check subpath')
 
 
-	func test_full_strategy_used_for_scripts():
+	func test_include_super_strategy_used_for_scripts():
 		var inst = _test.double(DoubleMe, DOUBLE_STRATEGY.INCLUDE_SUPER).new()
 		inst.get_instance_id()
 		assert_called(inst, 'get_instance_id')
 
-	func test_full_strategy_used_with_scenes():
+	func test_script_only_strategy_used_for_scripts():
+		var inst = _test.double(DoubleMe, DOUBLE_STRATEGY.SCRIPT_ONLY).new()
+		inst.get_instance_id()
+		assert_not_called(inst, 'get_instance_id')
+
+	func test_include_super_strategy_used_with_scenes():
 		var inst = _test.double(DoubleMeScene, DOUBLE_STRATEGY.INCLUDE_SUPER).instantiate()
 		inst.get_instance_id()
 		assert_called(inst, 'get_instance_id')
 
-	func test_full_strategy_used_with_inners():
+	func test_script_ony_strategy_used_with_scenes():
+		var inst = _test.double(DoubleMeScene, DOUBLE_STRATEGY.SCRIPT_ONLY).instantiate()
+		inst.get_instance_id()
+		assert_not_called(inst, 'get_instance_id')
+
+	func test_include_super_strategy_used_with_inners():
 		_test.register_inner_classes(InnerClasses)
 		var inst = _test.double(InnerClasses.InnerA, DOUBLE_STRATEGY.INCLUDE_SUPER).new()
-
 		inst.get_instance_id()
 		assert_called(inst, 'get_instance_id')
+
+	func test_script_only_strategy_used_with_inners():
+		_test.register_inner_classes(InnerClasses)
+		var inst = _test.double(InnerClasses.InnerA, DOUBLE_STRATEGY.SCRIPT_ONLY).new()
+		inst.get_instance_id()
+		assert_not_called(inst, 'get_instance_id')
+
 
 	func test_when_passing_a_class_of_a_script_it_doubles_it():
 		var inst = _test.double(DoubleMe).new()
