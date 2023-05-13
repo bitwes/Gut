@@ -23,4 +23,5 @@ func print_settings():
 
 func _init():
 	print_settings()
+	ProjectSettings.save_custom('res://butch.godot')
 	quit()
