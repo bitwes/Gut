@@ -1,10 +1,15 @@
 extends GutTest
 
-class TestTheBasics:
+class TestIncludeSuper:
 	extends GutTest
+	var native_method_override = 'debug/gdscript/warnings/native_method_override'
 
 	func before_all():
-		set_double_strategy(DOUBLE_STRATEGY.SCRIPT_ONLY)
+		ProjectSettings.set_setting(native_method_override, 2)
+		set_double_strategy(DOUBLE_STRATEGY.INCLUDE_SUPER)
+
+	func after_all():
+		ProjectSettings.set_setting(native_method_override, 0)
 
 	func test_double_extends_resource():
 		var dbl = double(TestI482).new()
@@ -36,14 +41,12 @@ class TestTheBasics:
 		var dbl = partial_double(TestI482).new()
 		assert_eq(dbl.add(1, 2), 3)
 
-
-
-class TestSwitchingFromIncludeSuperToScriptOnly:
-	extends GutTest
+class TestScriptOnly:
+	extends TestIncludeSuper
 
 	func before_all():
-		set_double_strategy(DOUBLE_STRATEGY.INCLUDE_SUPER)
+		ProjectSettings.set_setting(native_method_override, 1)
+		set_double_strategy(DOUBLE_STRATEGY.SCRIPT_ONLY)
 
-	func test_double_extends_resource():
-		var dbl = double(TestI482, DOUBLE_STRATEGY.SCRIPT_ONLY).new()
-		assert_not_null(dbl)
+
+

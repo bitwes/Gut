@@ -181,6 +181,17 @@ func _is_valid_double_method(parsed_script, parsed_method):
 		!_ignored_methods.has(parsed_script.resource, parsed_method.meta.name)
 
 
+# Disable the native_method_override setting so that doubles do not generate
+# errors or warnings when doubling with INCLUDE_SUPER
+func _create_script_no_warnings(src):
+	var native_method_override = 'debug/gdscript/warnings/native_method_override'
+	var prev_value = ProjectSettings.get_setting(native_method_override)
+	ProjectSettings.set_setting(native_method_override, 0)
+	var DblClass = _utils.create_script_from_source(src)
+	ProjectSettings.set_setting(native_method_override, prev_value)
+	return DblClass
+
+
 func _create_double(parsed, strategy, override_path, partial):
 	var base_script = _get_base_script_text(parsed, override_path, partial)
 	var super_name = ""
@@ -210,7 +221,7 @@ func _create_double(parsed, strategy, override_path, partial):
 	if(print_source):
 		print(_utils.add_line_numbers(dbl_src))
 
-	var DblClass = _utils.create_script_from_source(dbl_src)
+	var DblClass = _create_script_no_warnings(dbl_src)
 	if(_stubber != null):
 		_stub_method_default_values(DblClass, parsed, strategy)
 
