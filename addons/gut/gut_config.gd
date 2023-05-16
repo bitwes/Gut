@@ -135,10 +135,9 @@ func _apply_options(opts, _tester):
 	for i in range(opts.tests.size()):
 		_tester.add_script(opts.tests[i])
 
-	if(opts.double_strategy == 'include super'):
-		_tester.double_strategy = GutUtils.DOUBLE_STRATEGY.INCLUDE_SUPER
-	elif(opts.double_strategy == 'script only'):
-		_tester.double_strategy = GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY
+	# Sometimes it is the index, sometimes it's a string.  This sets it regardless
+	_tester.double_strategy = GutUtils.get_enum_value(
+		opts.double_strategy, GutUtils.DOUBLE_STRATEGY)
 
 	_tester.unit_test_name = opts.unit_test_name
 	_tester.pre_run_script = opts.pre_run_script

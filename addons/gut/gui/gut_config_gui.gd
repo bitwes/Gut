@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------------------
-# Choose an existing directory from res://.  Dialog allows for creating a 
+# Choose an existing directory from res://.  Dialog allows for creating a
 # directory.
 # ------------------------------------------------------------------------------
 class DirectoryCtrl:
@@ -69,7 +69,7 @@ class SaveFileAnywhere:
 		super._init()
 		_dialog.file_mode = _dialog.FILE_MODE_SAVE_FILE
 		_dialog.access = _dialog.ACCESS_FILESYSTEM
-	
+
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -245,7 +245,7 @@ func _add_save_file_anywhere(key, value, disp_text, hint=''):
 	_wire_select_on_focus(value_ctrl.get_line_edit())
 
 	return _new_row(key, disp_text, value_ctrl, hint)
-	
+
 
 
 func _add_color(key, value, disp_text, hint=''):
@@ -317,18 +317,20 @@ func get_config_issues():
 # --------------
 # SUPER dumb but VERY fun hack to hide settings.  The various _add methods will
 # return what they add.  If you want to hide it, just assign the result to this.
-# YES, I could have just put .visible at the end, but I didn't think of that 
+# YES, I could have just put .visible at the end, but I didn't think of that
 # until just now, and this was fun, non-permanent and the .visible at the end
 # isn't as obvious as hide_this =
-# 
+#
 # Also, we can't just skip adding the controls because other things are looking
 # for them and things start to blow up if you don't add them.
 var hide_this = null :
-	set(val): 
+	set(val):
 		val.visible = false
 # --------------
+
 func set_options(options):
-	_add_title("Settings")
+
+	_add_title("Settings") # ----------------------------------
 	_add_number("log_level", options.log_level, "Log Level", 0, 3,
 		"Detail level for log messages.\n" + \
 		"\t0: Errors and failures only.\n" + \
@@ -343,16 +345,21 @@ func set_options(options):
 		"Exit when tests finished.")
 	_add_boolean('should_exit_on_success', options.should_exit_on_success, 'Exit on Success',
 		"Exit if there are no failures.  Does nothing if 'Exit on Finish' is enabled.")
+	var ds = _add_select('double_strategy', 'include super', ['include super', 'script only'], 'Double Strategy',
+		'"include super" will include native methods in Doubles.  "script only" will not.  ' + "\n" + \
+		'The native method override warning is disabled when creating Doubles.' + "\n" + \
+		'This is the default, you can override this at the script level or when creating doubles.')
+	_cfg_ctrls['double_strategy'].selected = options.double_strategy
 
 
-	_add_title("Panel Output")
+	_add_title("Panel Output") # ----------------------------------
 	_add_select('output_font_name', options.panel_options.font_name, _avail_fonts, 'Font',
 		"The name of the font to use when running tests and in the output panel to the left.")
 	hide_this = _add_number('output_font_size', options.panel_options.font_size, 'Font Size', 5, 100,
 		"The font size to use when running tests and in the output panel to the left.")
 
 
-	_add_title('Runner Window')
+	_add_title('Runner Window') # ----------------------------------
 	hide_this = _add_boolean("gut_on_top", options.gut_on_top, "On Top",
 		"The GUT Runner appears above children added during tests.")
 	_add_number('opacity', options.opacity, 'Opacity', 0, 100,
@@ -362,7 +369,7 @@ func set_options(options):
 	_add_boolean('compact_mode', options.compact_mode, 'Compact Mode',
 		'The runner will be in compact mode.  This overrides Maximize.')
 
-	_add_title('Runner Appearance')
+	_add_title('Runner Appearance') # ----------------------------------
 	_add_select('font_name', options.font_name, _avail_fonts, 'Font',
 		"The font to use for text output in the Gut Runner.")
 	hide_this = _add_number('font_size', options.font_size, 'Font Size', 5, 100,
@@ -374,7 +381,7 @@ func set_options(options):
 	_add_boolean('disable_colors', options.disable_colors, 'Disable Formatting',
 		'Disable formatting and colors used in the Runner.  Does not affect panel output.')
 
-	_add_title('Test Directories')
+	_add_title('Test Directories') # ----------------------------------
 	_add_boolean('include_subdirs', options.include_subdirs, 'Include Subdirs',
 		"Include subdirectories of the directories configured below.")
 	for i in range(DIRS_TO_LIST):
@@ -384,7 +391,7 @@ func set_options(options):
 
 		_add_directory(str('directory_', i), value, str('Directory ', i))
 
-	_add_title("XML Output")
+	_add_title("XML Output") # ----------------------------------
 	_add_save_file_anywhere("junit_xml_file", options.junit_xml_file, "Output Path",
 		"Path3D and filename where GUT should create a JUnit compliant XML file.  " +
 		"This file will contain the results of the last test run.  To avoid " +
@@ -393,14 +400,14 @@ func set_options(options):
 		"Include a timestamp in the filename so that each run gets its own xml file.")
 
 
-	_add_title('Hooks')
+	_add_title('Hooks') # ----------------------------------
 	_add_file('pre_run_script', options.pre_run_script, 'Pre-Run Hook',
 		'This script will be run by GUT before any tests are run.')
 	_add_file('post_run_script', options.post_run_script, 'Post-Run Hook',
 		'This script will be run by GUT after all tests are run.')
 
 
-	_add_title('Misc')
+	_add_title('Misc') # ----------------------------------
 	_add_value('prefix', options.prefix, 'Script Prefix',
 		"The filename prefix for all test scripts.")
 	_add_value('suffix', options.suffix, 'Script Suffix',
@@ -423,6 +430,7 @@ func get_options(base_opts):
 	to_return.hide_orphans = _cfg_ctrls.hide_orphans.button_pressed
 	to_return.should_exit = _cfg_ctrls.should_exit.button_pressed
 	to_return.should_exit_on_success = _cfg_ctrls.should_exit_on_success.button_pressed
+	to_return.double_strategy = _cfg_ctrls.double_strategy.selected
 
 	#Output
 	to_return.panel_options.font_name = _cfg_ctrls.output_font_name.get_item_text(

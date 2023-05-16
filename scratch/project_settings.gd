@@ -15,13 +15,28 @@ func print_properties(props, thing, print_all_meta=false):
 			print('  ', props[i])
 
 
+
 # debug/gdscript/warnings/native_method_override = 1
-func print_settings():
+func print_project_settings():
 	print(ProjectSettings)
 	print_properties(ProjectSettings.get_property_list(), ProjectSettings)
 
 
+func print_enum(e):
+	print(e)
+	print(e.keys())
+
+
+enum Enum1 {
+	ONE,
+	TWO,
+	THREE,
+	FOUR,
+	FIVE
+}
+
 func _init():
-	print_settings()
-	ProjectSettings.save_custom('res://butch.godot')
+	print_enum(GutUtils.DIFF)
+	print_enum(GutUtils.DOUBLE_STRATEGY)
+	print_enum(Enum1)
 	quit()

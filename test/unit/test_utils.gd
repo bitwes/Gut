@@ -69,6 +69,19 @@ func test_is_native_class_returns_true_for_native_classes():
 	assert_true(utils.is_native_class(Node))
 
 
+func test_is_inner_class_true_for_inner_classes():
+	var utils = autofree(Utils.new())
+	assert_true(utils.is_inner_class(InnerClasses.InnerA))
+
+func test_is_inner_class_false_for_base_scripts():
+	var utils = autofree(Utils.new())
+	assert_false(utils.is_inner_class(InnerClasses))
+
+func test_is_inner_class_false_for_non_objs():
+	var utils = autofree(Utils.new())
+	assert_false(utils.is_inner_class('foo'))
+
+
 
 class TestVersionCheck:
 	extends 'res://addons/gut/test.gd'
@@ -125,16 +138,40 @@ class TestVersionCheck:
 			str(p.engine_version, ' is ', p.expected_version))
 
 
-func test_is_inner_class_true_for_inner_classes():
-	var utils = autofree(Utils.new())
-	assert_true(utils.is_inner_class(InnerClasses.InnerA))
+class TestGetEnumValue:
+	extends GutTest
 
-func test_is_inner_class_false_for_base_scripts():
-	var utils = autofree(Utils.new())
-	assert_false(utils.is_inner_class(InnerClasses))
+	enum TEST1{
+		ZERO,
+		ONE,
+		TWO,
+		THREE,
+		TWENTY_ONE
+	}
 
-func test_is_inner_class_false_for_non_objs():
-	var utils = autofree(Utils.new())
-	assert_false(utils.is_inner_class('foo'))
+
+	func test_returns_index_when_given_index():
+		var val = GutUtils.get_enum_value(0, TEST1)
+		assert_eq(val, 0)
+
+	func test_returns_null_when_invalid_index():
+		var val = GutUtils.get_enum_value(99, TEST1)
+		assert_eq(val, null)
+
+	func test_returns_value_when_given_string():
+		var val = GutUtils.get_enum_value('TWO', TEST1)
+		assert_eq(val, 2)
+
+	func test_returns_value_when_given_lowercase_string():
+		var val = GutUtils.get_enum_value('three', TEST1)
+		assert_eq(val, 3)
+
+	func test_replaces_spaces_with_underscores():
+		var val = GutUtils.get_enum_value('twenty ONE', TEST1)
+		assert_eq(val, TEST1.TWENTY_ONE)
+
+	func test_returns_null_if_string_not_a_key():
+		var val = GutUtils.get_enum_value('not a key', TEST1)
+		assert_null(val)
 
 

@@ -33,6 +33,20 @@ extends Node
 # This class is a PSUEDO SINGLETON.  You should not make instances of it but use
 # the get_instance static method.
 # ##############################################################################
+const GUT_METADATA = '__gutdbl'
+
+# Note, these cannot change since places are checking for TYPE_INT to determine
+# how to process parameters.
+enum DOUBLE_STRATEGY{
+	SCRIPT_ONLY,
+	INCLUDE_SUPER
+}
+
+
+enum DIFF {
+	DEEP,
+	SIMPLE
+}
 
 
 # ------------------------------------------------------------------------------
@@ -40,6 +54,7 @@ extends Node
 # ------------------------------------------------------------------------------
 static func INSTANCE_NAME():
 	return '__GutUtilsInstName__'
+
 
 # ------------------------------------------------------------------------------
 # Gets the root node without having to be in the tree and pushing out an error
@@ -52,6 +67,7 @@ static func get_root_node():
 	else:
 		push_error('No Main Loop Yet')
 		return null
+
 
 # ------------------------------------------------------------------------------
 # Get the ONE instance of utils
@@ -70,6 +86,29 @@ static func get_instance():
 		the_root.add_child(inst)
 	return inst
 
+
+# ------------------------------------------------------------------------------
+# Gets the value from an enum.  If passed an int it will return it if the enum
+# contains it.  If passed a string it will convert it to upper case and replace
+# spaces with underscores.  If the enum contains the key, it will return the
+# value for they key.  When keys or ints are not found, NULL is returned.
+# ------------------------------------------------------------------------------
+static func get_enum_value(thing, e):
+	var to_return = null
+	if(typeof(thing) == TYPE_STRING):
+		var converted = thing.to_upper().replace(' ', '_')
+		if(e.keys().has(converted)):
+			to_return = e[converted]
+	else:
+		if(e.values().has(thing)):
+			to_return = thing
+	return to_return
+
+
+
+# ##############################################################################
+# Start Class
+# ##############################################################################
 var Logger = load('res://addons/gut/logger.gd') # everything should use get_logger
 var _lgr = null
 var json = JSON.new()
@@ -126,19 +165,6 @@ var non_super_methods = [
 	"_gui_input	",
 ]
 
-const GUT_METADATA = '__gutdbl'
-
-# Note, these cannot change since places are checking for TYPE_INT to determine
-# how to process parameters.
-enum DOUBLE_STRATEGY{
-	SCRIPT_ONLY,
-	INCLUDE_SUPER
-}
-
-enum DIFF {
-	DEEP,
-	SIMPLE
-}
 
 # ------------------------------------------------------------------------------
 # Blurb of text with GUT and Godot versions.
