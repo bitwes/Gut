@@ -20,7 +20,7 @@ Starting in 7.0.0 GUT also provides utilities for tracking down memory leaks and
   * `add_child_autofree`
   * `add_child_autoqfree`
 
-At the [bottom of the page](#memory_mgmt) is my attempt to describe how Godot does memory management.  If any of these sections seem confusing, read that part first.  The [Godot docs](https://docs.godotengine.org/en/stable/getting_started/scripting/gdscript/gdscript_basics.html#memory-management) have some infomration.  Also, here's a [tutorial](https://www.youtube.com/watch?v=cl2PxGkpJdo) on memory management I found.
+At the [bottom of the page](#memory_mgmt) is my attempt to describe how Godot does memory management.  If any of these sections seem confusing, read that part first.  The [Godot docs](https://docs.godotengine.org/en/stable/getting_started/scripting/gdscript/gdscript_basics.html#memory-management) have some information.  Also, here's a [tutorial](https://www.youtube.com/watch?v=cl2PxGkpJdo) on memory management I found.
 
 
 # GUT Orphan Count
@@ -46,7 +46,7 @@ These functions can be used in a test or the `before_each` but should NOT be use
 
 
 # Using `add_child` in Tests
-When you call `add_child` from within a test the object is added as a child of the test script.  The test script is a child of the GUT gui.  Any child you add to a test will not be freed until the end of the test run.  GUT holds onto the test scripts until the end for summary inforation.  GUT will output a warning if a test script has children when it finishes running.
+When you call `add_child` from within a test the object is added as a child of the test script.  The test script is a child of the GUT GUI.  Any child you add to a test will not be freed until the end of the test run.  GUT holds onto the test scripts until the end for summary information.  GUT will output a warning if a test script has children when it finishes running.
 
 It is best to free any children you add in a test in that same test.  GUT has two helper functions that will add the child and free the child after the test.  These are `add_child_autofree` and `add_child_autoqfree`.  These work the same way as `autofree` and `autoqfree` but take the additional step of calling `add_child`.  These methods also return whatever is passed to them so you can cut down on lines of code.
 ```

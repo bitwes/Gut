@@ -3,7 +3,7 @@
 You can export test results in the JUnit XML format specified [here](https://llg.cubic.org/docs/junit/).  You can specify a file name to export to, or kick off an export in a [post-run hook](Hooks).
 
 # Setting the export file
-There are two settings, the file name and a flag to include an epoch timestamp in the filename.  The epoch timestamp will prevent runs from overwritting the last run's file.
+There are two settings, the file name and a flag to include an epoch timestamp in the filename.  The epoch timestamp will prevent runs from overwriting the last run's file.
 
 * Gut Panel
     * Set `Output Path` in the XML Output section in the Gut Panel

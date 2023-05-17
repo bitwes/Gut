@@ -7,7 +7,7 @@ __NOTE__ Do not use the in-editor __GUT toolbar__ to run tests for GUT.  I recom
 * Include any wiki text in the PR.  You cannot make PRs against the wiki so this is probably the best approach.  You can also NOT include wiki text and I'll add it, no problem.  Any typing you can save me is wonderful.
 * CHANGES.md
   * I will take care of making any changes to CHANGES.md.
-  * I will credit you in the CHANGES.md.  If you have a handle you would like me to use (other than your github username) then let me know in the PR
+  * I will credit you in the CHANGES.md.  If you have a handle you would like me to use (other than your GitHub username) then let me know in the PR
 
 # Creating Tests for GUT
 #### All GUT tests are found in
@@ -33,7 +33,7 @@ If you are more of a Godot IDE fan then use `main.tscn` to run your tests. This 
 # GUT Panel issues
 When developing the GUT Panel (against version Godot 3.3.2) I had bunch of problems.  These only occurred when attempting to use the GUT Panel within the GUT project.  I have not seen these issues when using the panel in other projects.
 
-__reload the plugin__  = Goto Project Settings->Plugins Tab.  Uncheck then check "enabled" for Gut.
+__reload the plugin__  = Go to Project Settings->Plugins Tab.  Uncheck then check "enabled" for Gut.
 
 ##### Godot crashes upon running tests.
 Sometimes Godot will crash and burn hard when using the various "run" buttons on the GUT panel.

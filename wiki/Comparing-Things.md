@@ -40,7 +40,7 @@ A deep compare of arrays will compare all indexes and the values in all sub-arra
 # <a name=ComparingDictionaries>Comparing Dictionaries</a>
 * Godot compares dictionaries by reference.
 * Dictionary keys are ordered (which is unusual).
-* The dictionary `hash` fuction requires dictionary keys be in the same order to generate the same hash so comparing dictionaries by value cannot be done reliably without additional coding.
+* The dictionary `hash` function requires dictionary keys be in the same order to generate the same hash so comparing dictionaries by value cannot be done reliably without additional coding.
 * In order to compare values in dictionary you must use one of the shallow or deep methods listed above.
 
 ### Asserts and Dictionaries
@@ -60,7 +60,7 @@ A CompareResult object is returned from `compare_shallow` and `compare_deep`.  Y
 
 ### Properties
 * `are_equal`: returns `true`/`false` if the two objects are equal based on the kind of comparison performed.
-* `summary`: returrns a string of all the differences found.  This will display `max_differences` differences.  When performing a deep compare, it will also display `max_differences` per each sub-array/sub-dictionary. This is returned if you use `str` on a `CompareResult`.
+* `summary`: returns a string of all the differences found.  This will display `max_differences` differences.  When performing a deep compare, it will also display `max_differences` per each sub-array/sub-dictionary. This is returned if you use `str` on a `CompareResult`.
 * `max_differences`:  The number of differences to display.  This only affects output, all differences are accessible from the `differences` property.  Set this to -1 to show the maximum number of differences (10,000)
 * `differences`:  This is a dictionary of all the keys/indexes that are different between the compared items.  The key is the key/index that is different.  Keys/indexes that are missing from one of the compared objects are included.  The value of each index is a `CompareResult`.
 <br/><br/>

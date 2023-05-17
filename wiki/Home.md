@@ -49,5 +49,5 @@ Gut is provided under the MIT license.  [The license is distributed with Gut so 
 # Who do I talk to?
 You can talk to me, Butch Wesley
 
-* Github:  bitwes
+* GitHub:  bitwes
 * Godot Discord:  bitwes
