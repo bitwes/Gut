@@ -1082,7 +1082,7 @@ func get_elapsed_time():
 func p(text, level=0):
 	var str_text = str(text)
 
-	if(level <= _utils.nvl(_log_level, 0)):
+	if(level <= GutUtils.nvl(_log_level, 0)):
 		_lgr.log(str_text)
 
 ################

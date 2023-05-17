@@ -1037,7 +1037,7 @@ func _warn_for_public_accessors(obj, property_name):
 func assert_property_with_backing_variable(obj, property_name, default_value, new_value, backed_by_name=null):
 	var setter_name = str('@', property_name, '_setter')
 	var getter_name = str('@', property_name, '_getter')
-	var backing_name = _utils.nvl(backed_by_name, str('_', property_name))
+	var backing_name = GutUtils.nvl(backed_by_name, str('_', property_name))
 	var pre_fail_count = get_fail_count()
 
 	var props = obj.get_property_list()
@@ -1201,7 +1201,7 @@ func get_summary_text():
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func _smart_double(thing, double_strat, partial):
-	var override_strat = _utils.nvl(double_strat, gut.get_doubler().get_strategy())
+	var override_strat = GutUtils.nvl(double_strat, gut.get_doubler().get_strategy())
 	var to_return = null
 
 	if(thing is PackedScene):
@@ -1289,7 +1289,7 @@ func double_scene(path, strategy=null):
 	_lgr.deprecated('test.double_scene has been removed.', 'double')
 	return null
 
-	# var override_strat = _utils.nvl(strategy, gut.get_doubler().get_strategy())
+	# var override_strat = GutUtils.nvl(strategy, gut.get_doubler().get_strategy())
 	# return gut.get_doubler().double_scene(path, override_strat)
 
 # ------------------------------------------------------------------------------
@@ -1299,7 +1299,7 @@ func double_script(path, strategy=null):
 	_lgr.deprecated('test.double_script has been removed.', 'double')
 	return null
 
-	# var override_strat = _utils.nvl(strategy, gut.get_doubler().get_strategy())
+	# var override_strat = GutUtils.nvl(strategy, gut.get_doubler().get_strategy())
 	# return gut.get_doubler().double(path, override_strat)
 
 # ------------------------------------------------------------------------------
@@ -1309,7 +1309,7 @@ func double_inner(path, subpath, strategy=null):
 	_lgr.deprecated('double_inner should not be used.  Use register_inner_classes and double instead.', 'double')
 	return null
 
-	var override_strat = _utils.nvl(strategy, gut.get_doubler().get_strategy())
+	var override_strat = GutUtils.nvl(strategy, gut.get_doubler().get_strategy())
 	return gut.get_doubler().double_inner(path, subpath, override_strat)
 
 

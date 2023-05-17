@@ -164,11 +164,11 @@ func _get_base_script_text(parsed, override_path, partial):
 
 		# metadata values
 		"path":path,
-		"subpath":_utils.nvl(parsed.subpath, ''),
+		"subpath":GutUtils.nvl(parsed.subpath, ''),
 		"stubber_id":stubber_id,
 		"spy_id":spy_id,
 		"gut_id":gut_id,
-		"singleton_name":'',#_utils.nvl(obj_info.get_singleton_name(), ''),
+		"singleton_name":'',#GutUtils.nvl(obj_info.get_singleton_name(), ''),
 		"is_partial":partial,
 	}
 

@@ -174,4 +174,8 @@ class TestGetEnumValue:
 		var val = GutUtils.get_enum_value('not a key', TEST1)
 		assert_null(val)
 
+	func test_can_provide_default_value():
+		var val = GutUtils.get_enum_value('not a key', TEST1, 'asdf')
+		assert_eq(val, 'asdf')
+
 

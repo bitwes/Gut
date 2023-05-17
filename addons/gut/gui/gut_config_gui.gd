@@ -345,8 +345,8 @@ func set_options(options):
 		"Exit when tests finished.")
 	_add_boolean('should_exit_on_success', options.should_exit_on_success, 'Exit on Success',
 		"Exit if there are no failures.  Does nothing if 'Exit on Finish' is enabled.")
-	var ds = _add_select('double_strategy', 'include super', ['include super', 'script only'], 'Double Strategy',
-		'"include super" will include native methods in Doubles.  "script only" will not.  ' + "\n" + \
+	var ds = _add_select('double_strategy', 'Include Super', ['Include Super', 'Script Only'], 'Double Strategy',
+		'"Include Super" will include native methods in Doubles.  "Script Only" will not.  ' + "\n" + \
 		'The native method override warning is disabled when creating Doubles.' + "\n" + \
 		'This is the default, you can override this at the script level or when creating doubles.')
 	_cfg_ctrls['double_strategy'].selected = options.double_strategy

@@ -91,10 +91,11 @@ static func get_instance():
 # Gets the value from an enum.  If passed an int it will return it if the enum
 # contains it.  If passed a string it will convert it to upper case and replace
 # spaces with underscores.  If the enum contains the key, it will return the
-# value for they key.  When keys or ints are not found, NULL is returned.
+# value for they key.  When keys or ints are not found, the default is returned.
 # ------------------------------------------------------------------------------
-static func get_enum_value(thing, e):
-	var to_return = null
+static func get_enum_value(thing, e, default=null):
+	var to_return = default
+
 	if(typeof(thing) == TYPE_STRING):
 		var converted = thing.to_upper().replace(' ', '_')
 		if(e.keys().has(converted)):
@@ -102,7 +103,18 @@ static func get_enum_value(thing, e):
 	else:
 		if(e.values().has(thing)):
 			to_return = thing
+
 	return to_return
+
+
+# ------------------------------------------------------------------------------
+# return if_null if value is null otherwise return value
+# ------------------------------------------------------------------------------
+static func nvl(value, if_null):
+	if(value == null):
+		return if_null
+	else:
+		return value
 
 
 
@@ -122,6 +134,7 @@ var CompareResult = load('res://addons/gut/compare_result.gd')
 var DiffTool = load('res://addons/gut/diff_tool.gd')
 var Doubler = load('res://addons/gut/doubler.gd')
 var Gut = load('res://addons/gut/gut.gd')
+var GutConfig = load('res://addons/gut/gut_config.gd')
 var HookScript = load('res://addons/gut/hook_script.gd')
 var InnerClassRegistry = load('res://addons/gut/inner_class_registry.gd')
 var InputFactory = load("res://addons/gut/input_factory.gd")
@@ -245,17 +258,6 @@ func get_logger():
 		if(_lgr == null):
 			_lgr = Logger.new()
 		return _lgr
-
-
-
-# ------------------------------------------------------------------------------
-# return if_null if value is null otherwise return value
-# ------------------------------------------------------------------------------
-func nvl(value, if_null):
-	if(value == null):
-		return if_null
-	else:
-		return value
 
 
 # ------------------------------------------------------------------------------

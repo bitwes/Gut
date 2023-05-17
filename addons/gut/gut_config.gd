@@ -7,7 +7,7 @@ var default_options = {
 	config_file = 'res://.gutconfig.json',
 	dirs = [],
 	disable_colors = false,
-	double_strategy = 'include super',
+	double_strategy = 'INCLUDE_SUPER',
 	font_color = Color(.8, .8, .8, 1).to_html(),
 	font_name = 'CourierPrime',
 	font_size = 16,
@@ -58,7 +58,6 @@ func _null_copy(h):
 
 func _load_options_from_config_file(file_path, into):
 	# SHORTCIRCUIT
-
 	if(!FileAccess.file_exists(file_path)):
 		if(file_path != 'res://.gutconfig.json'):
 			print('ERROR:  Config File "', file_path, '" does not exist.')
@@ -137,7 +136,8 @@ func _apply_options(opts, _tester):
 
 	# Sometimes it is the index, sometimes it's a string.  This sets it regardless
 	_tester.double_strategy = GutUtils.get_enum_value(
-		opts.double_strategy, GutUtils.DOUBLE_STRATEGY)
+		opts.double_strategy, GutUtils.DOUBLE_STRATEGY,
+		GutUtils.DOUBLE_STRATEGY.INCLUDE_SUPER)
 
 	_tester.unit_test_name = opts.unit_test_name
 	_tester.pre_run_script = opts.pre_run_script
