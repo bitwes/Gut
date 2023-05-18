@@ -1,32 +1,16 @@
-# <div class="warning">This page has not been updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
-Remember all that stuff I said earlier about not being able to double Godot Built-Ins?  Forget about it...or forget half of it, maybe 45% of it.
+When creating doubles, GUT will create overrides for all the methods defined in the source script/scene's script.  By default, GUT will also create overrides for all the Native methods from the object in inherits from (`Node2D` for example).  Native methods aren't really supposed to overridden though due to how Godot calls them internally.  This doesn't matter much for Doubles and Partial Doubles since you probably won't be using them in a manner in which the Engine would interact with them directly.  In the rare occassions where the Engine does interact with them, you will not be able to spy on the calls or stub returns since the engine will not be calling the methods defined in the double.
 
-` Doubling Strategy. I've enabled this feature in my own game and it didn't crash (I currently have 75 test scripts and 3633 asserts).  As reassuring as that was I'm still not sure that it won't blow up for someone so it is off by default.
+You can change the default behavior by setting the Double Strategy.  You can change the default for all scripts.  You can also set the strategy for a single script or a single Double/Partial Double.
 
-The following methods cannot be spied on due to implementation details with either Gut or GDScript.  There might be more.
+When set to `SCRIPT_ONLY` native methods will not be included in the Double or Partial Double.
 
-```
-has_method      _draw
-get_script      _physics_process
-get             _input
-_notification   _unhandled_input
-get_path        _unhandled_key_input
-_enter_tree     _get
-_exit_tree      emit_signal
-_process        _set
-```
-## Remember
-If you've defined one of these methods in your class then you can double/spy on them just as you normally would.
-
-# Setting the Doubling Strategy
-You can set the default strategy from the command line, .gutconfig, or by calling `set_double_strategy` on your Gut instance.
-
-You can also override the default strategy at the Test Script level or for a specific call to `double`.  When set at the script level, it will reset at the end of the script or Inner Test Class.  When passed to `double` it will only take effect for that one double.
+# Set the Default Strategy
+The default is `INCLUDE_NATIVE`.  You can change the default through the GutPanel or the `.gutconfig.json` file for the command line.
 
 ### .gutconfig
 Valid values are `SCRIPT_ONLY`(default) or `INCLUDE_NATIVE`
 ```
-"double_strategy":"script only"
+"double_strategy":"SCRIPT_ONLY"
 ```
 
 ### Command Line
@@ -35,16 +19,18 @@ Use the `-gdouble_strategy` option with the values `INCLUDE_NATIVE` or `SCRIPT_O
 -gdouble_strategy='script only' ??? TODO IDK IF THIS WORKS
 ```
 
+# Overriding the Default
 ### Script Level
+From withing a `GutTest` you can call `set_double_strategy` to change the strategy to use for the script.  This value will be reset to the default after the script has finished.  It's best to use this in `before_all`.
 ```
 set_double_strategy(DOUBLE_STRATEGY.INCLUDE_NATIVE)
 set_double_strategy(DOUBLE_STRATEGY.SCRIPT_ONLY)
 ```
 
-### When Calling `double`
-Just add another parameter to your call to `double` using the `DOUBLE_STRATEGY` enum.
+### Set for Single Double
+When calling `double` or `partial_double` you can pass an optional parameter to set the double strategy for just that double.
 ```
-double('res://thing.gd', DOUBLE_STRATEGY.PARTIAL)
-double('res://inners.gd', 'InnerA', DOUBLE_STRATEGY.INCLUDE_NATIVE)
-double('res://my_scene.tscn', DOUBLE_STRATEGY.SCRIPT_ONLY)
+double(Foo, DOUBLE_STRATEGY.SCRIPT_ONLY)
+double(Bar, DOUBLE_STRATEGY.INCLUDE_NATIVE)
+double(MyScene, DOUBLE_STRATEGY.SCRIPT_ONLY)
 ```

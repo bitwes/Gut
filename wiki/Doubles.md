@@ -9,6 +9,20 @@ Using your double, you can:
 * Assert a method was called with specific parameters.
 * And much much more.  See [Stubbing](Stubbing) and [Spies](Spies) for more information.
 
+The following methods cannot be spied on due to implementation details with either Gut or GDScript.  There might be more.
+
+
+```
+has_method      _draw
+get_script      _physics_process
+get             _input
+_notification   _unhandled_input
+get_path        _unhandled_key_input
+_enter_tree     _get
+_exit_tree      emit_signal
+_process        _set
+```
+
 
 # Characteristics of a Double
 * The double inherits (`extends`) the source.
