@@ -156,7 +156,7 @@ func setup_options(options, font_names):
 	opts.add('-gopacity', options.opacity, 'Set opacity of test runner window. Use range 0 - 100. 0 = transparent, 100 = opaque.')
 	opts.add('-gpo', false, 'Print option values from all sources and the value used, then quit.')
 	opts.add('-ginclude_subdirs', false, 'Include subdirectories of -gdir.')
-	opts.add('-gdouble_strategy', 'SCRIPT_ONLY', 'Default strategy to use when doubling.  Valid values are [INCLUDE_SUPER, SCRIPT_ONLY].  Default "[default]"')
+	opts.add('-gdouble_strategy', 'SCRIPT_ONLY', 'Default strategy to use when doubling.  Valid values are [INCLUDE_NATIVE, SCRIPT_ONLY].  Default "[default]"')
 	opts.add('-gdisable_colors', false, 'Disable command line colors.')
 	opts.add('-gpre_run_script', '', 'pre-run hook script path')
 	opts.add('-gpost_run_script', '', 'post-run hook script path')

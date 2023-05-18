@@ -39,7 +39,7 @@ const GUT_METADATA = '__gutdbl'
 # how to process parameters.
 enum DOUBLE_STRATEGY{
 	SCRIPT_ONLY,
-	INCLUDE_SUPER
+	INCLUDE_NATIVE
 }
 
 

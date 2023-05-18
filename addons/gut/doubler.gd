@@ -182,7 +182,7 @@ func _is_valid_double_method(parsed_script, parsed_method):
 
 
 # Disable the native_method_override setting so that doubles do not generate
-# errors or warnings when doubling with INCLUDE_SUPER
+# errors or warnings when doubling with INCLUDE_NATIVE
 func _create_script_no_warnings(src):
 	var native_method_override = 'debug/gdscript/warnings/native_method_override'
 	var prev_value = ProjectSettings.get_setting(native_method_override)
@@ -209,7 +209,7 @@ func _create_double(parsed, strategy, override_path, partial):
 			else:
 				dbl_src += _get_func_text(method.meta, path, super_name)
 
-	if(strategy == _utils.DOUBLE_STRATEGY.INCLUDE_SUPER):
+	if(strategy == _utils.DOUBLE_STRATEGY.INCLUDE_NATIVE):
 		for method in parsed.get_super_methods():
 			if(_is_valid_double_method(parsed, method)):
 				_stub_to_call_super(parsed, method.meta.name)
@@ -316,10 +316,10 @@ func partial_double_scene(scene, strategy=_strategy):
 
 
 func double_gdnative(which):
-	return _double(which, _utils.DOUBLE_STRATEGY.INCLUDE_SUPER)
+	return _double(which, _utils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
 
 func partial_double_gdnative(which):
-	return _partial_double(which, _utils.DOUBLE_STRATEGY.INCLUDE_SUPER)
+	return _partial_double(which, _utils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
 
 
 func double_inner(parent, inner, strategy=_strategy):

@@ -250,7 +250,7 @@ class TestEverythingElse:
 	func test_when_test_overrides_strategy_it_is_reset_after_test_finishes():
 		gr.test_gut.double_strategy = _utils.DOUBLE_STRATEGY.SCRIPT_ONLY
 		gr.test_gut.add_script('res://test/samples/test_before_after.gd')
-		gr.test_gut.get_doubler().set_strategy(_utils.DOUBLE_STRATEGY.INCLUDE_SUPER)
+		gr.test_gut.get_doubler().set_strategy(_utils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
 		gr.test_gut.test_scripts()
 		assert_eq(gr.test_gut.double_strategy, _utils.DOUBLE_STRATEGY.SCRIPT_ONLY)
 

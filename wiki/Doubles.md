@@ -96,7 +96,7 @@ For even more reading see issues #252 and #246.
 GUT stubs all parameters in doubled user methods to be `null`.  This is because Godot only provides defaults for built-in methods.  When using partial-doubles or stubbing a method `to_call_super` `null` can get passed around when you wouldn't expect it causing errors such as `Invalid operands 'int' and 'Nil'`.  See the "Stubbing Method Parameter Defaults" in [Stubbing](Stubbing) for a way to stub method default values.
 
 # Doubling Built-Ins
-You can `double` built-in objects that are not inherited by a script such as a `Node2D` or a `Raycast2D`.  These doubles are always created using the Doubling Strategy of "INCLUDE_SUPER" (see [Double-Strategy](Double-Strategy)).
+You can `double` built-in objects that are not inherited by a script such as a `Node2D` or a `Raycast2D`.  These doubles are always created using the Doubling Strategy of "INCLUDE_NATIVE" (see [Double-Strategy](Double-Strategy)).
 
 For example you can `double` or `partial_double` like this:
 ``` gdscript

@@ -24,20 +24,20 @@ You can set the default strategy from the command line, .gutconfig, or by callin
 You can also override the default strategy at the Test Script level or for a specific call to `double`.  When set at the script level, it will reset at the end of the script or Inner Test Class.  When passed to `double` it will only take effect for that one double.
 
 ### .gutconfig
-Valid values are `SCRIPT_ONLY`(default) or `INCLUDE_SUPER`
+Valid values are `SCRIPT_ONLY`(default) or `INCLUDE_NATIVE`
 ```
 "double_strategy":"script only"
 ```
 
 ### Command Line
-Use the `-gdouble_strategy` option with the values `INCLUDE_SUPER` or `SCRIPT_ONLY`
+Use the `-gdouble_strategy` option with the values `INCLUDE_NATIVE` or `SCRIPT_ONLY`
 ```
 -gdouble_strategy='script only' ??? TODO IDK IF THIS WORKS
 ```
 
 ### Script Level
 ```
-set_double_strategy(DOUBLE_STRATEGY.INCLUDE_SUPER)
+set_double_strategy(DOUBLE_STRATEGY.INCLUDE_NATIVE)
 set_double_strategy(DOUBLE_STRATEGY.SCRIPT_ONLY)
 ```
 
@@ -45,6 +45,6 @@ set_double_strategy(DOUBLE_STRATEGY.SCRIPT_ONLY)
 Just add another parameter to your call to `double` using the `DOUBLE_STRATEGY` enum.
 ```
 double('res://thing.gd', DOUBLE_STRATEGY.PARTIAL)
-double('res://inners.gd', 'InnerA', DOUBLE_STRATEGY.INCLUDE_SUPER)
+double('res://inners.gd', 'InnerA', DOUBLE_STRATEGY.INCLUDE_NATIVE)
 double('res://my_scene.tscn', DOUBLE_STRATEGY.SCRIPT_ONLY)
 ```

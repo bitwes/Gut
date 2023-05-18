@@ -6,7 +6,7 @@ class TestIncludeSuper:
 
 	func before_all():
 		ProjectSettings.set_setting(native_method_override, 2)
-		set_double_strategy(DOUBLE_STRATEGY.INCLUDE_SUPER)
+		set_double_strategy(DOUBLE_STRATEGY.INCLUDE_NATIVE)
 
 	func after_all():
 		ProjectSettings.set_setting(native_method_override, 0)

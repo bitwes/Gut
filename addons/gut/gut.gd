@@ -85,7 +85,7 @@ var temp_directory = _temp_directory :
 
 var _log_level = 1
 ## The log detail level.  Valid values are 0 - 2.  Larger values do not matter.
-var log_level = 1:
+var log_level = _log_level:
 	get: return _log_level
 	set(val): _set_log_level(val)
 
@@ -112,7 +112,7 @@ var include_subdirectories = _include_subdirectories :
 	set(val): _include_subdirectories = val
 
 
-var _double_strategy = GutUtils.DOUBLE_STRATEGY.INCLUDE_SUPER
+var _double_strategy = GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE
 ## TODO rework what this is and then document it here.
 var double_strategy = _double_strategy  :
 	get: return _double_strategy

@@ -7,7 +7,7 @@ var default_options = {
 	config_file = 'res://.gutconfig.json',
 	dirs = [],
 	disable_colors = false,
-	double_strategy = 'INCLUDE_SUPER',
+	double_strategy = 'INCLUDE_NATIVE',
 	font_color = Color(.8, .8, .8, 1).to_html(),
 	font_name = 'CourierPrime',
 	font_size = 16,
@@ -137,7 +137,7 @@ func _apply_options(opts, _tester):
 	# Sometimes it is the index, sometimes it's a string.  This sets it regardless
 	_tester.double_strategy = GutUtils.get_enum_value(
 		opts.double_strategy, GutUtils.DOUBLE_STRATEGY,
-		GutUtils.DOUBLE_STRATEGY.INCLUDE_SUPER)
+		GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
 
 	_tester.unit_test_name = opts.unit_test_name
 	_tester.pre_run_script = opts.pre_run_script
