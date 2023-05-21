@@ -1,3 +1,5 @@
+class_name GutUtils
+extends Node
 # ##############################################################################
 #(G)odot (U)nit (T)est class
 #
@@ -31,13 +33,28 @@
 # This class is a PSUEDO SINGLETON.  You should not make instances of it but use
 # the get_instance static method.
 # ##############################################################################
-extends Node
+const GUT_METADATA = '__gutdbl'
+
+# Note, these cannot change since places are checking for TYPE_INT to determine
+# how to process parameters.
+enum DOUBLE_STRATEGY{
+	INCLUDE_NATIVE,
+	SCRIPT_ONLY,
+}
+
+
+enum DIFF {
+	DEEP,
+	SIMPLE
+}
+
 
 # ------------------------------------------------------------------------------
 # The instance name as a function since you can't have static variables.
 # ------------------------------------------------------------------------------
 static func INSTANCE_NAME():
 	return '__GutUtilsInstName__'
+
 
 # ------------------------------------------------------------------------------
 # Gets the root node without having to be in the tree and pushing out an error
@@ -50,6 +67,7 @@ static func get_root_node():
 	else:
 		push_error('No Main Loop Yet')
 		return null
+
 
 # ------------------------------------------------------------------------------
 # Get the ONE instance of utils
@@ -68,6 +86,41 @@ static func get_instance():
 		the_root.add_child(inst)
 	return inst
 
+
+# ------------------------------------------------------------------------------
+# Gets the value from an enum.  If passed an int it will return it if the enum
+# contains it.  If passed a string it will convert it to upper case and replace
+# spaces with underscores.  If the enum contains the key, it will return the
+# value for they key.  When keys or ints are not found, the default is returned.
+# ------------------------------------------------------------------------------
+static func get_enum_value(thing, e, default=null):
+	var to_return = default
+
+	if(typeof(thing) == TYPE_STRING):
+		var converted = thing.to_upper().replace(' ', '_')
+		if(e.keys().has(converted)):
+			to_return = e[converted]
+	else:
+		if(e.values().has(thing)):
+			to_return = thing
+
+	return to_return
+
+
+# ------------------------------------------------------------------------------
+# return if_null if value is null otherwise return value
+# ------------------------------------------------------------------------------
+static func nvl(value, if_null):
+	if(value == null):
+		return if_null
+	else:
+		return value
+
+
+
+# ##############################################################################
+# Start Class
+# ##############################################################################
 var Logger = load('res://addons/gut/logger.gd') # everything should use get_logger
 var _lgr = null
 var json = JSON.new()
@@ -81,6 +134,7 @@ var CompareResult = load('res://addons/gut/compare_result.gd')
 var DiffTool = load('res://addons/gut/diff_tool.gd')
 var Doubler = load('res://addons/gut/doubler.gd')
 var Gut = load('res://addons/gut/gut.gd')
+var GutConfig = load('res://addons/gut/gut_config.gd')
 var HookScript = load('res://addons/gut/hook_script.gd')
 var InnerClassRegistry = load('res://addons/gut/inner_class_registry.gd')
 var InputFactory = load("res://addons/gut/input_factory.gd")
@@ -124,19 +178,6 @@ var non_super_methods = [
 	"_gui_input	",
 ]
 
-const GUT_METADATA = '__gutdbl'
-
-# Note, these cannot change since places are checking for TYPE_INT to determine
-# how to process parameters.
-enum DOUBLE_STRATEGY{
-	SCRIPT_ONLY,
-	INCLUDE_SUPER
-}
-
-enum DIFF {
-	DEEP,
-	SIMPLE
-}
 
 # ------------------------------------------------------------------------------
 # Blurb of text with GUT and Godot versions.
@@ -217,17 +258,6 @@ func get_logger():
 		if(_lgr == null):
 			_lgr = Logger.new()
 		return _lgr
-
-
-
-# ------------------------------------------------------------------------------
-# return if_null if value is null otherwise return value
-# ------------------------------------------------------------------------------
-func nvl(value, if_null):
-	if(value == null):
-		return if_null
-	else:
-		return value
 
 
 # ------------------------------------------------------------------------------

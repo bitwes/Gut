@@ -43,8 +43,6 @@ The built in `abort()` method will cause the run to end immediately after the `r
 ### Exit Code (post-run only)
 The `set_exit_code(code)` method will set an exit code that will be used when running from the command line.  The default behavior is to return `0` when all tests pass and `1` if any  tests fail (pending tests do not affect the exit code).  If you call `set_exit_code` then the value passed will be used.
 
-**Note** Any call directly to `OS.exit_code` will be overwritten by `gut_cmdln`.
-
 **Note** Calling `set_exit_code` in the pre-run script will not affect the actual exit code.  You could use `gut.get_pre_run_script_instance().get_exit_code()` in your post-run script to get you any value you've set via `set_exit_code` in your pre-run script.
 
 
@@ -68,7 +66,7 @@ The post-run hook can access the pre-run hook instance via `gut.get_pre_run_scri
 # <a name="postrun">Post-Run Hook
 The post-run hook is run after all tests are run and all output has been generated.  The post-run hook can access the pre-run script instance (if one was specified) via `gut.get_pre_run_script_instance()`.
 
-The post-run hook could be useful in writing files used by CICD pipelines to verify the status fo the run.
+The post-run hook could be useful in writing files used by CICD pipelines to verify the status of the run.
 
 
 

@@ -1,4 +1,4 @@
-This page contains brief descrptions of many of GUT's features.  Most sections have a "More information" link where more in depth documentation can be found.
+This page contains brief descriptions of many of GUT's features.  Most sections have a "More information" link where more in depth documentation can be found.
 
 * [Setup](#setup)
 * [Creating Tests](#creating_tests)
@@ -10,7 +10,7 @@ This page contains brief descrptions of many of GUT's features.  Most sections h
 
 
 # <a name = "setup"> Setup
-Setup doesn't get any simplier than what is already on the [install page.](Install)
+Setup doesn't get any simpler than what is already on the [install page.](Install)
 
 
 # <a name = "run"> Run Tests
@@ -84,7 +84,7 @@ class TestOtherAspects:
 # <a name="doubles">Doubles/Spies/Stubs
 More Information:  [Doubles](Doubles), [Spies](Spies), [Stubs](Stubbing)
 
-You can make a double of just about anything.  `double` returns a loaded class, not an instance.  Doubles extend the object to be doubled and have empty implmenetations for all methods defined in the script or parent scripts, but not parent Godot methods that are not overloaded.
+You can make a double of just about anything.  `double` returns a loaded class, not an instance.  Doubles extend the object to be doubled and have empty implementations for all methods defined in the script or parent scripts, but not parent Godot methods that are not overloaded.
 
 ```gdscript
 var Foo = load('res://foo.gd')
@@ -169,7 +169,7 @@ There are helpers to make your parameters more readable.
 
 You can use `await` in your tests to allow time to pass before making assertions.  This can be useful if you need to wait for some interaction to play out, a signal to be emitted, or wait for things to happen in the next frames, such as physics process or draw.
 
-If you want to wait for a cetain amount of time you can use `wait_seconds`.
+If you want to wait for a certain amount of time you can use `wait_seconds`.
 ```gdscript
 await wait_seconds(10)
 ```
@@ -178,7 +178,7 @@ You can `await` to a signal or an amount of time, whichever comes first with `wa
 var my_obj = load('res://my_obj.gd').new()
 await wait_for_signal(my_obj.some_signal, 3)
 ```
-You can also `await` for a number of frames using `wait_frames`.  It's best to wait at least 2 frames as waiting one frame can be flakey.
+You can also `await` for a number of frames using `wait_frames`.  It's best to wait at least 2 frames as waiting one frame can be flaky.
 ```
 await wait_frames(5)
 ```

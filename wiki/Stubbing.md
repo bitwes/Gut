@@ -125,7 +125,7 @@ func test_illustrate_stubbing_scenes():
 ```
 
 # Stubbing Method Parameter Defaults
-Godot only provides information about default values for built in methods so Gut doesn't know what any default values are for methods you have created.  Since it can't know, Gut defaults all parameters to `null`.  This can cause issues in specific cases (probably all invovling calling super).  You can use `.param_defaults` to specify default values to be used.
+Godot only provides information about default values for built in methods so Gut doesn't know what any default values are for methods you have created.  Since it can't know, Gut defaults all parameters to `null`.  This can cause issues in specific cases (probably all involving calling super).  You can use `.param_defaults` to specify default values to be used.
 
 Here's an example where things go wrong
 ```
@@ -160,13 +160,13 @@ stub(dbl_foo, 'increment').param_defaults([1])
 # Stubbing Method Parameter Count
 <u>__Changing the number of parameters must be done before `double` is called__</u>
 
-Some built-in methods  have `vararg` parameters.  This makes the paramter list dynamic.  Godot does not provide this information.  This can cause errors due to a signature mismatch.  Your code might be calling a method using 10 parameter values but Gut only sees two.
+Some built-in methods  have `vararg` parameters.  This makes the parameter list dynamic.  Godot does not provide this information.  This can cause errors due to a signature mismatch.  Your code might be calling a method using 10 parameter values but Gut only sees two.
 
-Let's take `Node.rpc_id` for example.  It has two normal parameters and then a vararg of strings as the last paramter.
+Let's take `Node.rpc_id` for example.  It has two normal parameters and then a vararg of strings as the last parameter.
 ```
 Variant rpc_id(peer_id: int, method: String, ...) vararg
 ```
-If this method gets called in a parital double with more than 2 parameters Godot will will throw _Invalid call to function 'rpc_id' in base 'Control ()'. Expected 2 arguments._
+If this method gets called in a partial double with more than 2 parameters Godot will will throw _Invalid call to function 'rpc_id' in base 'Control ()'. Expected 2 arguments._
 
 You can use `.param_count(x)` to tell Gut to give the method any number of extra parameters.  You cannot make the method have less parameters.  You must do this before you call `double`.
 ``` gdscript
