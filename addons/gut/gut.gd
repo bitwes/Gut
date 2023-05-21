@@ -88,7 +88,7 @@ var temp_directory = _temp_directory :
 
 var _log_level = 1
 ## The log detail level.  Valid values are 0 - 2.  Larger values do not matter.
-var log_level = 1:
+var log_level = _log_level:
 	get: return _log_level
 	set(val): _set_log_level(val)
 
@@ -114,13 +114,17 @@ var include_subdirectories = _include_subdirectories :
 	get: return _include_subdirectories
 	set(val): _include_subdirectories = val
 
-var _double_strategy = 1
+
+var _double_strategy = GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY
 ## TODO rework what this is and then document it here.
-var double_strategy = 1  :
+var double_strategy = _double_strategy  :
 	get: return _double_strategy
 	set(val):
-		_double_strategy = val
-		_doubler.set_strategy(double_strategy)
+		if(GutUtils.DOUBLE_STRATEGY.values().has(val)):
+			_double_strategy = val
+			_doubler.set_strategy(double_strategy)
+		else:
+			_lgr.error(str("gut.gd:  invalid double_strategy ", val))
 
 var _pre_run_script = ''
 ## Path to the script that will be run before all tests are run.  This script
@@ -1081,7 +1085,7 @@ func get_elapsed_time():
 func p(text, level=0):
 	var str_text = str(text)
 
-	if(level <= _utils.nvl(_log_level, 0)):
+	if(level <= GutUtils.nvl(_log_level, 0)):
 		_lgr.log(str_text)
 
 ################

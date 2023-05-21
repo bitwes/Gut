@@ -1,9 +1,9 @@
-There are some scenarios where it is desireable to run a test numerous times with different parameters.  You can do this in GUT by creating a test that has a single parameter that is defaulted to the GUT method `use_parameters`.
+There are some scenarios where it is desirable to run a test numerous times with different parameters.  You can do this in GUT by creating a test that has a single parameter that is defaulted to the GUT method `use_parameters`.
 
 `use_parameters` expects and array.  The test will be called once for each element in the array, passing the value of each element to the parameter of the function.
 
 # Requirements:
-* The test must have one and only one paramter.
+* The test must have one and only one parameter.
 * The parameter must be defaulted to call `use_parameters`.
 * You must pass an array to `use_parameters`.  The test will be called once for each element in the array.
 * If the parameter is not defaulted then it will cause a runtime error.
@@ -21,7 +21,7 @@ class Foo:
 
 # Define one array, with two arrays as the elements in the array.
 # This will cause the test to be called twice.  The first
-# call will get [1, 2, 3] as the value of the paramter.
+# call will get [1, 2, 3] as the value of the parameter.
 # The second call will get ['a', 'b', 'c']
 var foo_params = [[1, 2, 3], ['a', 'b', 'c']]
 

@@ -7,7 +7,21 @@ Using your double, you can:
 * Stub them to call the super method.
 * Assert how many times a method was called.
 * Assert a method was called with specific parameters.
-* And much much more.  See [Stubbing](Stubbing) and [Spies](Spies) for more infomration.
+* And much much more.  See [Stubbing](Stubbing) and [Spies](Spies) for more information.
+
+The following methods cannot be spied on due to implementation details with either Gut or GDScript.  There might be more.
+
+
+```
+has_method      _draw
+get_script      _physics_process
+get             _input
+_notification   _unhandled_input
+get_path        _unhandled_key_input
+_enter_tree     _get
+_exit_tree      emit_signal
+_process        _set
+```
 
 
 # Characteristics of a Double
@@ -18,12 +32,12 @@ Using your double, you can:
   * Do nothing (unless stubbed).
   * Will return `null` (unless stubbed).
   * __All__ parameters are defaulted to `null`, even if they did not have a default value originally.  You can stub parameter defaults.
-* Methods defined in any Godot super class (such as `Node` or `Control`) are not altered unless those methos have been overridden.  This is overridable by chaninging the [Double-Strategy](Double-Strategy).
+* Methods defined in any Godot super class (such as `Node` or `Control`) are not altered unless those methods have been overridden.  This is overridable by changing the [Double-Strategy](Double-Strategy).
 * Inner Classes of the source are not doubled and will retain their functionality.
 * You can double Inner Classes, but it requires an extra step.  See the Inner Class section below.
 * If your `_init` method has required parameters you must [stub](Stubbing) default values before trying to `double` the object.
-* Static mehtods must be ignored before doubling using `ignore_method_when_doubling`.  More information about this below.
-* All __instances__ of Doubles and Partial Dobules are freed after a test finishes.  This means you do not have to free them manually and you should not use them in `before_all`.
+* Static methods must be ignored before doubling using `ignore_method_when_doubling`.  More information about this below.
+* All __instances__ of Doubles and Partial Doubles are freed after a test finishes.  This means you do not have to free them manually and you should not use them in `before_all`.
 * You can double Scripts, Inner Classes, and Packed Scenes.  Once you have a double, you can then call `new` or `instantiate` on it to create instances of a doubled object.
 
 
@@ -86,17 +100,17 @@ These ignored methods are cleared after each test is ran to avoid any unexpected
 There's more info and examples on this method on the [[Methods|Asserts-and-Methods]] page.
 
 # Methods with varargs and NativeScript parameter mismatches
-Some methods provided by Godot can contain and endless list of parameters (varargs).  Trying to call one of these methods on a double can result in runtime errors due to a paramter mismatch.  See the sections in [Stubbing](Stubbing) that address parameters.
+Some methods provided by Godot can contain and endless list of parameters (varargs).  Trying to call one of these methods on a double can result in runtime errors due to a parameter mismatch.  See the sections in [Stubbing](Stubbing) that address parameters.
 
 Sometimes NativeScript parameters aren't found in doubles (maybe always).  This helps there too.
 
 For even more reading see issues #252 and #246.
 
 # Doubled method default parameters
-GUT stubs all parameters in doubled user methods to be `null`.  This is because Godot only provides defaults for built-in methods.  When using partial-doubles or stubbing a method `to_call_super` `null` can get passed around when you wouldn't expect it causing errors such as `Invalid operands 'int' and 'Nil'`.  See the "Stubbing Method Paramter Defaults" in [Stubbing](Stubbing) for a way to stub method default values.
+GUT stubs all parameters in doubled user methods to be `null`.  This is because Godot only provides defaults for built-in methods.  When using partial-doubles or stubbing a method `to_call_super` `null` can get passed around when you wouldn't expect it causing errors such as `Invalid operands 'int' and 'Nil'`.  See the "Stubbing Method Parameter Defaults" in [Stubbing](Stubbing) for a way to stub method default values.
 
 # Doubling Built-Ins
-You can `double` built-in objects that are not inherited by a script such as a `Node2D` or a `Raycast2D`.  These doubles are always created using the Doubling Strategy of "INCLUDE_SUPER" (see [Double-Strategy](Double-Strategy)).
+You can `double` built-in objects that are not inherited by a script such as a `Node2D` or a `Raycast2D`.  These doubles are always created using the Doubling Strategy of "INCLUDE_NATIVE" (see [Double-Strategy](Double-Strategy)).
 
 For example you can `double` or `partial_double` like this:
 ``` gdscript
@@ -142,5 +156,5 @@ Then:
 # Where to next?
 * [Stubbing](Stubbing)
 * [Spies](Spies)
-* [Parital-Doubles](Partial-Doubles)
+* [Partial-Doubles](Partial-Doubles)
 * [Double-Strategy](Double-Strategy)

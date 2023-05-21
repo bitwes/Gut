@@ -3,7 +3,7 @@ These are changes to Godot that affect how GUT is used/implemented.  There is mo
 
 * `setget` has been replaced with a completely new syntax.  More info at [#380](https://github.com/bitwes/Gut/issues/380).  Examples of the new way and the new `assert_property` method below.
 * `connect` has been significantly altered.  The signal related asserts will likely change to use `Callable` parameters instead of strings.  It is possible to use strings, so this may remain in some form.  More info in [#383](https://github.com/bitwes/Gut/issues/383).
-* `yield` has been replaced with `await`.  `yield_to`, `yield_for`, and `yield_frames` have been deprecated, the new methods are `wait_seconds`, `wait_frams` and `wait_for_signal`.  There are exampels below and more info at [#382](https://github.com/bitwes/Gut/issues/382).
+* `yield` has been replaced with `await`.  `yield_to`, `yield_for`, and `yield_frames` have been deprecated, the new methods are `wait_seconds`, `wait_frames` and `wait_for_signal`.  There are examples below and more info at [#382](https://github.com/bitwes/Gut/issues/382).
 * Arrays are pass by reference now.
 * Dictionaries are compared by value now.
 * `File` and `Directory` have been replaced with `FileAccess` and `DirAccess`.
@@ -15,7 +15,7 @@ These are changes to Godot that affect how GUT is used/implemented.  There is mo
 * `assert_setget` no longer works (it now just fails with a message).  `assert_property` has been altered to work with the new setter/getter syntax.  `assert_set_property`, `assert_readonly_property`, and `assert_property_with_backing_variable` have been added.
 * To aid refactoring, `assert_property` and `assert_property_with_backing_variable` will warn if any "public accessors" are found for the property ('get_' and 'set_' methods).
 * `assert_property` now requires an instance instead of also working with a loaded objects.
-* Doubling strategy flags have been renamed to `INCLUDE_SUPER` (was `FULL`) and `SCRIPT_ONLY` (was `PARTIAL`).  The default is `SCRIPT_ONLY`.  I wanted something more descriptive and less likely to be confused with partial doubles.
+* Doubling strategy flags have been renamed to `INCLUDE_NATIVE` (was `FULL`) and `SCRIPT_ONLY` (was `PARTIAL`).  The default is `SCRIPT_ONLY`.  I wanted something more descriptive and less likely to be confused with partial doubles.
 * Added support for a `skip_script` test-script variable.  This can be added to any test-script or inner-class causing GUT to skip running tests in that script.  The script will be included in the "risky" count and appear in the summary as skipped.  This was done to help porting tests to 4.0 but might stick around as a permanent feature.
 ```gdscript
 var skip_script = 'The reason for skipping.  This will be printed in the output.'
@@ -33,21 +33,21 @@ await wait_seconds(1.5, 'optional message')
 await wait_frames(30, 'optional message')
 ```
 * Doubling no longer supports paths to a script or scene.  Load the script or scene first and pass that to `double`.  See the "Doubling Changes" section for more details.
-* Doubling Inner Classes now requires you to call `register_inner_classes` first.  See the "Doubling Changes" sedtion for more details.
+* Doubling Inner Classes now requires you to call `register_inner_classes` first.  See the "Doubling Changes" section for more details.
 * Comparing Dictionary/Arrays with `assert_eq`, `assert_eq_deep`, and the new `assert_same` and `assert_not_same` for comparing references.  See Godot's new `is_same` function for details on how `assert_same` works (it's just an assertion wrapper around `is_same`).  See the section "Comparing Dictionaries and Arrays" below for more details.
 
 
 ## Comparing Dictionaries and Arrays
 In Godot 3.x dictionaries were compared by reference and arrays were compared by value.  In 4.0 both are compared by value.  Godot 4.0 introduces the `is_same` method which (amongst other things) will compare dictionaries and arrays by reference.
 
-GUT's `assert_eq` and `asssert_ne` changed to match Godot's behavior.  To compare by reference you can use the new `assert_same` or `assert_not_same`.  This works with arrays and dictionaries.  Review Godot's documentation for `is_same`.  When comparing dictionaries and arrays it is recommended that you use `assert_eq_deep` since it provides more detailed output than `assert_eq`.
+GUT's `assert_eq` and `assert_ne` changed to match Godot's behavior.  To compare by reference you can use the new `assert_same` or `assert_not_same`.  This works with arrays and dictionaries.  Review Godot's documentation for `is_same`.  When comparing dictionaries and arrays it is recommended that you use `assert_eq_deep` since it provides more detailed output than `assert_eq`.
 
-The shallow compare functionanlity has been removed since it no longer applies.  Shallow compares would compare the elements of an array or dictionary by value.  In Godot 3.x this meant that dictionaries inside of arrays or dictionaries would be compared by reference and everything else would be compared by value.  Since arrays and dictionaries are both cmpared by value now, shallow compares are no different (functionally) than deep compares.  The following methods have been removed.  Calling these methods will generate a failure and an error.
+The shallow compare functionality has been removed since it no longer applies.  Shallow compares would compare the elements of an array or dictionary by value.  In Godot 3.x this meant that dictionaries inside of arrays or dictionaries would be compared by reference and everything else would be compared by value.  Since arrays and dictionaries are both compared by value now, shallow compares are no different (functionally) than deep compares.  The following methods have been removed.  Calling these methods will generate a failure and an error.
 * `compare_shallow` (causes failure and returns `null` which will likely result in a runtime error)
 * `assert_eq_shallow`
 * `assert_ne_shallow`
 
-Final note: `assert_eq` does not use `assert_eq_deep` since `assert_eq_deep` compares each element of both arrays/dictionaries and provides detailed info about what is different.  This can be slow for large arrays/dictionaries.  Godot's `==` operator uses a hashing function which is much faster but does not provide information about what is different in each array/dictionary.  With `assert_eq`, `assert_eq_deep`, and `assert_same` (and their inverses) you have fine grained control over the type of comparision that is performed.
+Final note: `assert_eq` does not use `assert_eq_deep` since `assert_eq_deep` compares each element of both arrays/dictionaries and provides detailed info about what is different.  This can be slow for large arrays/dictionaries.  Godot's `==` operator uses a hashing function which is much faster but does not provide information about what is different in each array/dictionary.  With `assert_eq`, `assert_eq_deep`, and `assert_same` (and their inverses) you have fine grained control over the type of comparison that is performed.
 
 
 ## Doubling Changes
@@ -78,7 +78,7 @@ This approach was used to make tests cleaner and less susceptible to typos.  If 
 
 
 ## setget vs set: and get:
-In godot 4.0 `setget` has been replaced with `set(val):` and `get():` psuedo methods which make properties more concrete.  This is a welcome change, but comes with a few caveats.
+In godot 4.0 `setget` has been replaced with `set(val):` and `get():` pseudo methods which make properties more concrete.  This is a welcome change, but comes with a few caveats.
 
 Here's an example of usage:
 ```
@@ -102,7 +102,7 @@ var foo = 10:
 ```
 With this approach you can set `_foo` internally in your class without triggering the `foo_changed` signal.  When you see `foo =` anywhere in your code, it will be going through the accessor.  When you see `_foo =` you are only setting the backing variable.
 
-To test this new paradigm `assert_setget` has been removed.  `assert_property` has changed to work with the new syntax.  `assert_property_with_backing_variable` was added to validate the backing variable wiring.  If you use `assert_property_with_backing_variable` it will verify that the proeperty has accessors and will also look for a `_<varname>` variable with the same name and verify it is being set.
+To test this new paradigm `assert_setget` has been removed.  `assert_property` has changed to work with the new syntax.  `assert_property_with_backing_variable` was added to validate the backing variable wiring.  If you use `assert_property_with_backing_variable` it will verify that the property has accessors and will also look for a `_<varname>` variable with the same name and verify it is being set.
 
 `assert_property` will generate a warning when it finds "public" accessors for these properties (`get_foo`, `set_foo`).
 

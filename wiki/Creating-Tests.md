@@ -41,7 +41,7 @@ Each test script has optional setup and teardown methods that you can provide an
  * `before_all()`:  Runs once before any test starts running.
  * `after_all()`:  Runs once after all tests finish running.
 
-All tests in the test script must start with the prefix `test_` in order for them to be run.  The methods must not have any parameters (excpet [Parameterized-Tests](Parameterized-Tests)).
+All tests in the test script must start with the prefix `test_` in order for them to be run.  The methods must not have any parameters (except [Parameterized-Tests](Parameterized-Tests)).
 * `func test_this_is_only_a_test():`
 
 Each test should perform at least one assert or call `pending`, `pass_test` or `fail_test` or it will be marked risky.
