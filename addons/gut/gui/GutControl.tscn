@@ -8,6 +8,7 @@ anchors_preset = 0
 offset_right = 213.0
 offset_bottom = 423.0
 script = ExtResource("1_eprql")
+bg_color = Color(0, 0, 0, 1)
 
 [node name="Bg" type="ColorRect" parent="."]
 layout_mode = 1

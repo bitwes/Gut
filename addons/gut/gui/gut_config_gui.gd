@@ -352,7 +352,8 @@ func set_options(options):
 		'"Include Native" will include native methods in Doubles.  "Script Only" will not.  ' + "\n" + \
 		'The native method override warning is disabled when creating Doubles.' + "\n" + \
 		'This is the default, you can override this at the script level or when creating doubles.')
-	_cfg_ctrls['double_strategy'].selected = options.double_strategy
+	_cfg_ctrls['double_strategy'].selected = GutUtils.get_enum_value(
+		options.double_strategy, GutUtils.DOUBLE_STRATEGY, GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY)
 
 
 	_add_title("Panel Output") # ----------------------------------

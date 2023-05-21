@@ -61,7 +61,8 @@ var _tree_scripts = {}
 	get: return bg_color
 	set(val):
 		bg_color = val
-		$Bg.color = bg_color
+		if(is_inside_tree()):
+			$Bg.color = bg_color
 
 
 func _ready():

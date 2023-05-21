@@ -9,6 +9,6 @@ script = ExtResource("1_1k2gg")
 [node name="GutControl" parent="." instance=ExtResource("1_iog3j")]
 offset_left = 10.0
 offset_top = 12.0
-offset_right = 473.0
-offset_bottom = 431.0
+offset_right = 691.0
+offset_bottom = 635.0
 bg_color = Color(0.0627451, 0.584314, 0.74902, 1)
