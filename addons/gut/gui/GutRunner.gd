@@ -139,7 +139,7 @@ func run_tests(show_gui=true):
 
 	_gut.add_children_to = self
 	if(_gut.get_parent() == null):
-		if(_gut_config.options.gut_on_top):		
+		if(_gut_config.options.gut_on_top):
 			_gut_layer.add_child(_gut)
 		else:
 			add_child(_gut)
@@ -147,7 +147,7 @@ func run_tests(show_gui=true):
 	if(!_cmdln_mode):
 		_gut.end_run.connect(_on_tests_finished.bind(_gut_config.options.should_exit, _gut_config.options.should_exit_on_success))
 
-	_gut_config.config_gut(_gut)
+	_gut_config.apply_options(_gut)
 	var run_rest_of_scripts = _gut_config.options.unit_test_name == ''
 
 	_gut.test_scripts(run_rest_of_scripts)

@@ -136,21 +136,6 @@ func _load_dict_into(source, dest):
 					dest[key] = source[key]
 
 
-
-
-func write_options(path):
-	var content = json.stringify(options, ' ')
-
-	var f = FileAccess.open(path, FileAccess.WRITE)
-	var result = FileAccess.get_open_error()
-	if(f != null):
-		f.store_string(content)
-		f = null # closes file
-	else:
-		print('ERROR:  could not open file ', path, ' ', result)
-	return result
-
-
 # Apply all the options specified to _tester.  This is where the rubber meets
 # the road.
 func _apply_options(opts, _tester):
@@ -185,21 +170,35 @@ func _apply_options(opts, _tester):
 
 	return _tester
 
+# --------------------------
+# Public
+# --------------------------
+func write_options(path):
+	var content = json.stringify(options, ' ')
 
-func config_gut(gut):
-	return _apply_options(options, gut)
+	var f = FileAccess.open(path, FileAccess.WRITE)
+	var result = FileAccess.get_open_error()
+	if(f != null):
+		f.store_string(content)
+		f = null # closes file
+	else:
+		print('ERROR:  could not open file ', path, ' ', result)
+	return result
 
 
 func load_options(path):
 	return _load_options_from_config_file(path, options)
 
+
 func load_panel_options(path):
 	options['panel_options'] = default_panel_options.duplicate()
 	return _load_options_from_config_file(path, options)
 
+
 func load_options_no_defaults(path):
 	options = _null_copy(default_options)
 	return _load_options_from_config_file(path, options)
+
 
 func apply_options(gut):
 	_apply_options(options, gut)

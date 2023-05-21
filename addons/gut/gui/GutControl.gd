@@ -47,6 +47,10 @@ var _has_connected = false
 var _tree_root : TreeItem = null
 
 var _tree_scripts = {}
+var _tree_directories = {}
+
+const TREE_SCRIPT = 'Script'
+const TREE_DIR = 'Directory'
 
 @onready var _ctrls = {
 	run_tests_button = $VBox/RunTests,
@@ -104,8 +108,9 @@ func _post_ready():
 	_refresh_tree_and_settings()
 
 
-func _set_meta_for_tree_item(item, script, test=null):
+func _set_meta_for_script_tree_item(item, script, test=null):
 	var meta = {
+		type = TREE_SCRIPT,
 		script = script.path,
 		inner_class = script.inner_class_name,
 		test = ''
@@ -117,18 +122,78 @@ func _set_meta_for_tree_item(item, script, test=null):
 	item.set_metadata(0, meta)
 
 
-func _get_script_tree_item(script):
-	var to_return : TreeItem = null
-	if(_tree_scripts.has(script.path)):
-		to_return = _tree_scripts[script.path]
-	else:
-		to_return = _ctrls.test_tree.create_item(_tree_root)
-		to_return.set_text(0, script.path)
-		_tree_scripts[script.path] = to_return
+func _set_meta_for_directory_tree_item(item, path, temp_item):
+	var meta = {
+		type = TREE_DIR,
+		path = path,
+		temp_item = temp_item
+	}
+	item.set_metadata(0, meta)
 
-	_set_meta_for_tree_item(to_return, script)
+
+func _get_script_tree_item(script, parent_item):
+	if(!_tree_scripts.has(script.path)):
+		var item = _ctrls.test_tree.create_item(parent_item)
+		item.set_text(0, script.path.get_file())
+		_tree_scripts[script.path] = item
+		_set_meta_for_script_tree_item(item, script)
+
+	return _tree_scripts[script.path]
+
+
+func _get_directory_tree_item(path):
+	var parent = _tree_root
+	if(!_tree_directories.has(path)):
+
+		var item = null
+		if(parent != _tree_root):
+			item = parent.create_child(0)
+		else:
+			item = parent.create_child()
+
+		_tree_directories[path] = item
+		item.collapsed = false
+		item.set_text(0, path)
+		var temp_item = item.create_child()
+		temp_item.set_text(0, '<temp>')
+
+		_set_meta_for_directory_tree_item(item, path, temp_item)
+
+	return _tree_directories[path]
+
+
+func _find_best_parent_for_dir_node(path):
+	var max_matching_len = 0
+	var best_parent = null
+	for key in _tree_directories.keys():
+		if(path != key and path.begins_with(key) and key.length() > max_matching_len):
+				max_matching_len = key.length()
+				best_parent = _tree_directories[key]
+
+
+	var to_return = null
+	if(best_parent != null):
+		to_return = best_parent.get_metadata(0).temp_item
 	return to_return
 
+
+func _reorder_dir_items():
+	var the_keys = _tree_directories.keys()
+	the_keys.sort()
+	for key in _tree_directories.keys():
+		var new_parent = _find_best_parent_for_dir_node(key)
+		if(new_parent != null):
+			var to_move = _tree_directories[key]
+			to_move.move_before(new_parent)
+			var new_text = key.substr(new_parent.get_parent().get_metadata(0).path.length())
+			to_move.set_text(0, new_text)
+			
+
+
+func _remove_temp_items():
+	for key in _tree_directories.keys():
+		var item = _tree_directories[key].get_metadata(0).temp_item
+		_tree_directories[key].remove_child(item)
 
 func _populate_tree():
 	var tree : Tree = _ctrls.test_tree
@@ -138,20 +203,24 @@ func _populate_tree():
 
 	var scripts = _gut_runner.get_gut().get_test_collector().scripts
 	for script in scripts:
-		var item = _get_script_tree_item(script)
+		var dir_item = _get_directory_tree_item(script.path.get_base_dir())
+		var item = _get_script_tree_item(script, dir_item)
+
 		if(script.inner_class_name != ''):
 			var inner_item = tree.create_item(item)
 			inner_item.set_text(0, script.inner_class_name)
-			_set_meta_for_tree_item(inner_item, script)
+			_set_meta_for_script_tree_item(inner_item, script)
 			item = inner_item
 
 		for test in script.tests:
 			var test_item = tree.create_item(item)
 			test_item.set_text(0, test.name)
-			_set_meta_for_tree_item(test_item, script, test)
+			_set_meta_for_script_tree_item(test_item, script, test)
 
 	_tree_root.set_collapsed_recursive(true)
 	_tree_root.set_collapsed(false)
+	_reorder_dir_items()
+	_remove_temp_items()
 
 
 func _run_all():
@@ -166,16 +235,26 @@ func _run_selected():
 	if(sel_item == null):
 		return
 
+	var options = _config_gui.get_options(_config.options)
 	var meta = sel_item.get_metadata(0)
-	_config.options.selected = meta.script.get_file()
-	_config.options.inner_class_name = meta.inner_class
-	_config.options.unit_test_name = meta.test
-	run_tests()
+	if(meta.type == TREE_SCRIPT):
+		options.selected = meta.script.get_file()
+		options.inner_class_name = meta.inner_class
+		options.unit_test_name = meta.test
+	elif(meta.type == TREE_DIR):
+		options.dirs = [meta.path]
+		options.include_subdirectories = true
+		options.selected = ''
+		options.inner_class_name = ''
+		options.unit_test_name = ''
+
+	run_tests(options)
+
 
 func _refresh_tree_and_settings():
 	if(_config.options.has('panel_options')):
 		_config_gui.set_options(_config.options)
-	_config.config_gut(_gut_runner.get_gut())
+	_config.apply_options(_gut_runner.get_gut())
 	_gut_runner.set_gut_config(_config)
 	_populate_tree()
 
@@ -222,8 +301,13 @@ func get_config():
 	return _config
 
 
-func run_tests():
-	_config.options = _config_gui.get_options(_config.options)
+func run_tests(options = null):
+	if(options == null):
+		_config.options = _config_gui.get_options(_config.options)
+	else:
+		_config.options = options
+
+	_gut_runner.get_gut().get_test_collector().clear()
 	_gut_runner.set_gut_config(_config)
 	_gut_runner.run_tests()
 

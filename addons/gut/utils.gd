@@ -117,6 +117,8 @@ static func nvl(value, if_null):
 		return value
 
 
+static func pretty_print(dict):
+	print(JSON.stringify(dict, ' '))
 
 # ##############################################################################
 # Start Class
@@ -426,10 +428,6 @@ func search_array(ar, prop_method, value):
 
 func are_datatypes_same(got, expected):
 	return !(typeof(got) != typeof(expected) and got != null and expected != null)
-
-
-func pretty_print(dict):
-	print(json.stringify(dict, ' '))
 
 
 func get_script_text(obj):

@@ -6,7 +6,7 @@ var _current_test_name = null
 
 
 func _ready():
-	_gut_control.load_config_file('res://.gut_editor_config.json')
+	_gut_control.load_config_file('res://test/resources/GutControlDirs/gut_control_config.json')
 
 	# Returns a gut_config.gd instance.
 	var config = _gut_control.get_config()
