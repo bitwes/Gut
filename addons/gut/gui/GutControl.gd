@@ -46,6 +46,9 @@ var _gut_runner = GutRunnerScene.instantiate()
 var _has_connected = false
 var _tree_root : TreeItem = null
 
+var _script_icon = load('res://addons/gut/images/Script.svg')
+var _folder_icon = load('res://addons/gut/images/Folder.svg')
+
 var _tree_scripts = {}
 var _tree_directories = {}
 
@@ -135,6 +138,7 @@ func _get_script_tree_item(script, parent_item):
 	if(!_tree_scripts.has(script.path)):
 		var item = _ctrls.test_tree.create_item(parent_item)
 		item.set_text(0, script.path.get_file())
+		item.set_icon(0, _script_icon)
 		_tree_scripts[script.path] = item
 		_set_meta_for_script_tree_item(item, script)
 
@@ -145,7 +149,7 @@ func _get_directory_tree_item(path):
 	var parent = _tree_root
 	if(!_tree_directories.has(path)):
 
-		var item = null
+		var item : TreeItem = null
 		if(parent != _tree_root):
 			item = parent.create_child(0)
 		else:
@@ -154,6 +158,8 @@ func _get_directory_tree_item(path):
 		_tree_directories[path] = item
 		item.collapsed = false
 		item.set_text(0, path)
+		item.set_icon(0, _folder_icon)
+		item.set_icon_modulate(0, Color.ROYAL_BLUE)
 		var temp_item = item.create_child()
 		temp_item.set_text(0, '<temp>')
 
@@ -184,6 +190,7 @@ func _reorder_dir_items():
 		var new_parent = _find_best_parent_for_dir_node(key)
 		if(new_parent != null):
 			var to_move = _tree_directories[key]
+			to_move.collapsed = false
 			to_move.move_before(new_parent)
 			var new_text = key.substr(new_parent.get_parent().get_metadata(0).path.length())
 			to_move.set_text(0, new_text)
