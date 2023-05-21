@@ -26,14 +26,6 @@
 @tool
 extends Control
 
-# ##############################################################################
-#
-# Description:
-# ------------
-# This file is used to illustrate how you would Run tests on a deployed project
-# and some of the ways to interact with GUT, the runner, and a config.
-#
-# ##############################################################################
 const RUNNER_JSON_PATH = 'res://.gut_editor_config.json'
 
 var GutConfig = load('res://addons/gut/gut_config.gd')
@@ -160,6 +152,9 @@ func _get_directory_tree_item(path):
 		item.set_text(0, path)
 		item.set_icon(0, _folder_icon)
 		item.set_icon_modulate(0, Color.ROYAL_BLUE)
+		# temp_item is used in calls with move_before since you must use 
+		# move_before or move_after to reparent tree items. This ensures that
+		# there is an item on all directories.  These are deleted later.
 		var temp_item = item.create_child()
 		temp_item.set_text(0, '<temp>')
 
@@ -168,14 +163,16 @@ func _get_directory_tree_item(path):
 	return _tree_directories[path]
 
 
-func _find_best_parent_for_dir_node(path):
+func _find_dir_item_to_move_before(path):
 	var max_matching_len = 0
 	var best_parent = null
+	
+	# Go through all the directory items finding the one that has the longest
+	# path that contains our path.
 	for key in _tree_directories.keys():
 		if(path != key and path.begins_with(key) and key.length() > max_matching_len):
 				max_matching_len = key.length()
 				best_parent = _tree_directories[key]
-
 
 	var to_return = null
 	if(best_parent != null):
@@ -187,24 +184,23 @@ func _reorder_dir_items():
 	var the_keys = _tree_directories.keys()
 	the_keys.sort()
 	for key in _tree_directories.keys():
-		var new_parent = _find_best_parent_for_dir_node(key)
-		if(new_parent != null):
+		var move_before = _find_dir_item_to_move_before(key)
+		if(move_before != null):
 			var to_move = _tree_directories[key]
 			to_move.collapsed = false
-			to_move.move_before(new_parent)
-			var new_text = key.substr(new_parent.get_parent().get_metadata(0).path.length())
+			to_move.move_before(move_before)
+			var new_text = key.substr(move_before.get_parent().get_metadata(0).path.length())
 			to_move.set_text(0, new_text)
-			
 
 
-func _remove_temp_items():
+func _remove_dir_temp_items():
 	for key in _tree_directories.keys():
 		var item = _tree_directories[key].get_metadata(0).temp_item
 		_tree_directories[key].remove_child(item)
 
-func _populate_tree():
-	var tree : Tree = _ctrls.test_tree
 
+func _add_dir_and_script_tree_items():
+	var tree : Tree = _ctrls.test_tree
 	tree.clear()
 	_tree_root = _ctrls.test_tree.create_item()
 
@@ -224,10 +220,13 @@ func _populate_tree():
 			test_item.set_text(0, test.name)
 			_set_meta_for_script_tree_item(test_item, script, test)
 
+
+func _populate_tree():
+	_add_dir_and_script_tree_items()
 	_tree_root.set_collapsed_recursive(true)
 	_tree_root.set_collapsed(false)
 	_reorder_dir_items()
-	_remove_temp_items()
+	_remove_dir_temp_items()
 
 
 func _run_all():
