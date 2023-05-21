@@ -1,5 +1,5 @@
 ![gut logo](images/gut_logo_256x256.png)
-# Gut 9.0.0 (Godot 4.0)
+# Gut 9.1.0 (Godot 4.0)
 GUT (Godot Unit Test) is a unit testing framework for the [Godot Engine](https://godotengine.org/).  It allows you to write tests for your gdscript in gdscript.
 
 Version 9.0.0 is for Godot 4.0
@@ -16,14 +16,13 @@ If you would like to help support GUT check out my game [Country or State](https
 
 # Features
 * Godot 4.0
-* [Simple install](https://github.com/bitwes/Gut/wiki/Install) via the Asset Library.
-* A plethora of [asserts and utility methods](https://github.com/bitwes/Gut/wiki/Asserts-and-Methods) to help make your tests simple and concise.
-* Support for [Inner Test Classes](https://github.com/bitwes/Gut/wiki/Inner-Test-Classes) to give your tests some extra context and maintainability.
-* Doubling:  [Full](https://github.com/bitwes/Gut/wiki/Doubles) and [Partial](https://github.com/bitwes/Gut/wiki/Partial-Doubles), [Stubbing](https://github.com/bitwes/Gut/wiki/Stubbing), [Spies](https://github.com/bitwes/Gut/wiki/Spies)
-* Command Line Interface [(CLI)](https://github.com/bitwes/Gut/wiki/Command-Line)
-* [Parameterized Tests](https://github.com/bitwes/Gut/wiki/ParameterizedTests)
-* [Export results](https://github.com/bitwes/Gut/wiki/Export-Test-Results) in standard JUnit XML format.
-* [Distribute your tests](https://github.com/bitwes/Gut/wiki/Running-On-Devices) with your project and run them on any platform Godot supports.
+* [Simple install](https://bitwes.github.io/GutWiki/Godot4/Install) via the Asset Library.
+* A plethora of [asserts and utility methods](https://bitwes.github.io/GutWiki/Godot4/Asserts-and-Methods) to help make your tests simple and concise.
+* Support for [Inner Test Classes](https://bitwes.github.io/GutWiki/Godot4/Inner-Test-Classes) to give your tests some extra context and maintainability.
+* Doubling:  [Full](https://bitwes.github.io/GutWiki/Godot4/Doubles) and [Partial](https://bitwes.github.io/GutWiki/Godot4/Partial-Doubles), [Stubbing](https://bitwes.github.io/GutWiki/Godot4/Stubbing), [Spies](https://bitwes.github.io/GutWiki/Godot4/Spies)
+* Command Line Interface [(CLI)](https://bitwes.github.io/GutWiki/Godot4/Command-Line)
+* [Parameterized Tests](https://bitwes.github.io/GutWiki/Godot4/ParameterizedTests)
+* [Export results](https://bitwes.github.io/GutWiki/Godot4/Export-Test-Results) in standard JUnit XML format.
 
 More info can be found in the [wiki](https://github.com/bitwes/Gut/wiki).
 
@@ -31,10 +30,10 @@ More info can be found in the [wiki](https://github.com/bitwes/Gut/wiki).
 
 
 # Getting Started
-* [Install](https://github.com/bitwes/Gut/wiki/Install)
-* [Quick Start](https://github.com/bitwes/Gut/wiki/Quick-Start)
-* [Creating Tests](https://github.com/bitwes/Gut/wiki/Creating-Tests)
-* [Asserts and Methods](https://github.com/bitwes/Gut/wiki/Asserts-and-Methods)
+* [Install](https://bitwes.github.io/GutWiki/Godot4/Install)
+* [Quick Start](https://bitwes.github.io/GutWiki/Godot4/Quick-Start)
+* [Creating Tests](https://bitwes.github.io/GutWiki/Godot4/Creating-Tests)
+* [Asserts and Methods](https://bitwes.github.io/GutWiki/Godot4/Asserts-and-Methods)
 
 
 # VSCode Extension
