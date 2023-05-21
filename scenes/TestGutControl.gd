@@ -1,34 +1,11 @@
-# ------------------------------------------------------------------------------
-# This is an example of using the GutControl (res://addons/gut/gui/GutContro.tscn)
-# to execute tests in a deployed game.
-#
-# Setup:
-# Add a GutControl to your scene, name it GutControl.
-# Add this script to your scene.
-# Run it.
-# ------------------------------------------------------------------------------
 extends Node2D
 @onready var _gut_control = $GutControl
 
-# Holds a reference to the current test script object being run.  Set in 
-# signal callbacks.
 var _current_script_object = null
-# Holds the name of the current test being run.  Set in signal callbacks.
 var _current_test_name = null
 
 
 func _ready():
-	# You must load a gut config file to use this
-	# control.
-	#
-	# Here we use the Gut Panel settings file.  This can be any
-	# gutconfig file, but this one is most likely to exist.
-	# You can create your own just for deployed settings.
-	# Some settings may not work.
-	#
-	# Settings are not saved, so any changes will be lost.
-	# The idea is that you want to deploy the settings and 
-	# users should not be able to save them.
 	_gut_control.load_config_file('res://.gut_editor_config.json')
 
 	# Returns a gut_config.gd instance.
@@ -42,10 +19,6 @@ func _ready():
 	call_deferred('_post_ready_setup')
 
 
-# If you would like to connect to signals provided by gut.gd
-# then you must do so after _ready.  This is an example of
-# getting a reference to gut and some of the signals it 
-# provieds.
 func _post_ready_setup():
 	var gut = _gut_control.get_gut()
 	gut.start_run.connect(_on_gut_run_start)

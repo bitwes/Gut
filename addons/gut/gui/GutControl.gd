@@ -68,19 +68,19 @@ var _tree_scripts = {}
 func _ready():
 	if Engine.is_editor_hint():
 		return
-		
+
 	_ctrls.tabs.set_tab_title(0, 'Tests')
 	_ctrls.tabs.set_tab_title(1, 'Settings')
-	
+
 	_config_gui = GutConfigGui.new(_ctrls.settings_vbox)
-	
+
 	_ctrls.test_tree.hide_root = true
 	# Stop tests from kicking off when the runner is "ready" and
 	# prevents it from writing results file that is used by
 	# the panel.
 	_gut_runner.set_cmdln_mode(true)
 	add_child(_gut_runner)
-	
+
 	# Becuase of the janky _utils psuedo-global script, we cannot
 	# do all this in _ready.  If we do this in _ready, it generates
 	# a bunch of errors.  The errors don't matter, but it looks bad.
@@ -90,7 +90,7 @@ func _ready():
 func _draw():
 	if Engine.is_editor_hint():
 		return
-		
+
 	var gut = _gut_runner.get_gut()
 	if(!gut.is_running()):
 		var r = Rect2(Vector2(0, 0), get_rect().size)
@@ -102,7 +102,7 @@ func _post_ready():
 	gut.start_run.connect(_on_gut_run_started)
 	gut.end_run.connect(_on_gut_run_ended)
 	_refresh_tree_and_settings()
-		
+
 
 func _set_meta_for_tree_item(item, script, test=null):
 	var meta = {
@@ -110,10 +110,10 @@ func _set_meta_for_tree_item(item, script, test=null):
 		inner_class = script.inner_class_name,
 		test = ''
 	}
-	
+
 	if(test != null):
 		meta.test = test.name
-		
+
 	item.set_metadata(0, meta)
 
 
@@ -125,14 +125,14 @@ func _get_script_tree_item(script):
 		to_return = _ctrls.test_tree.create_item(_tree_root)
 		to_return.set_text(0, script.path)
 		_tree_scripts[script.path] = to_return
-	
+
 	_set_meta_for_tree_item(to_return, script)
 	return to_return
 
 
 func _populate_tree():
 	var tree : Tree = _ctrls.test_tree
-	
+
 	tree.clear()
 	_tree_root = _ctrls.test_tree.create_item()
 
@@ -144,12 +144,12 @@ func _populate_tree():
 			inner_item.set_text(0, script.inner_class_name)
 			_set_meta_for_tree_item(inner_item, script)
 			item = inner_item
-			
+
 		for test in script.tests:
 			var test_item = tree.create_item(item)
 			test_item.set_text(0, test.name)
 			_set_meta_for_tree_item(test_item, script, test)
-	
+
 	_tree_root.set_collapsed_recursive(true)
 	_tree_root.set_collapsed(false)
 
@@ -165,7 +165,7 @@ func _run_selected():
 	var sel_item = _ctrls.test_tree.get_selected()
 	if(sel_item == null):
 		return
-		
+
 	var meta = sel_item.get_metadata(0)
 	_config.options.selected = meta.script.get_file()
 	_config.options.inner_class_name = meta.inner_class
@@ -206,32 +206,31 @@ func _on_run_tests_pressed():
 
 func _on_run_selected_pressed():
 	_run_selected()
-	
-	
+
+
 func _on_tests_item_activated():
 	_run_selected()
 
 # ---------------------------
-# Public 
+# Public
 # ---------------------------
 func get_gut():
 	return _gut_runner.get_gut()
 
-	
+
 func get_config():
 	return _config
 
-	
+
 func run_tests():
-	# apply the config
 	_config.options = _config_gui.get_options(_config.options)
 	_gut_runner.set_gut_config(_config)
 	_gut_runner.run_tests()
-	
+
 
 func load_config_file(path):
 	_config.load_panel_options(path)
 	_config.options.selected = ''
 	_config.options.inner_class_name = ''
 	_config.options.unit_test_name = ''
-	
+
