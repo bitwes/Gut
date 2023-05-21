@@ -230,7 +230,7 @@ class TestDefaultParameters:
 	var stubber = null
 
 	func before_each():
-		doubler = Doubler.new(_utils.DOUBLE_STRATEGY.INCLUDE_SUPER)
+		doubler = Doubler.new(_utils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
 		stubber = _utils.Stubber.new()
 		doubler.set_stubber(stubber)
 

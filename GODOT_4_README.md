@@ -23,7 +23,7 @@ These are changes to Godot that affect how GUT is used/implemented.  There is mo
 * `assert_setget` no longer works (it now just fails with a message).  `assert_property` has been altered to work with the new setter/getter syntax.  `assert_set_property`, `assert_readonly_property`, and `assert_property_with_backing_variable` have been added.
 * To aid refactoring, `assert_property` and `assert_property_with_backing_variable` will warn if any "public accessors" are found for the property ('get_' and 'set_' methods).
 * `assert_property` now requires an instance instead of also working with a loaded objects.
-* Doubling strategy flags have been renamed to `INCLUDE_SUPER` (was `FULL`) and `SCRIPT_ONLY` (was `PARTIAL`).  The default is `SCRIPT_ONLY`.  I wanted something more descriptive and less likely to be confused with partial doubles.
+* Doubling strategy flags have been renamed to `INCLUDE_NATIVE` (was `FULL`) and `SCRIPT_ONLY` (was `PARTIAL`).  The default is `SCRIPT_ONLY`.  I wanted something more descriptive and less likely to be confused with partial doubles.
 * Added support for a `skip_script` test-script variable.  This can be added to any test-script or inner-class causing GUT to skip running tests in that script.  The script will be included in the "risky" count and appear in the summary as skipped.  This was done to help porting tests to 4.0 but might stick around as a permanent feature.
 ```gdscript
 var skip_script = 'The reason for skipping.  This will be printed in the output.'

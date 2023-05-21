@@ -99,11 +99,16 @@ class TestTheBasics:
 		assert_eq(_doubler.get_logger(), _doubler._method_maker.get_logger())
 
 	func test_get_set_strategy():
-		assert_accessors(_doubler, 'strategy', _utils.DOUBLE_STRATEGY.SCRIPT_ONLY,  _utils.DOUBLE_STRATEGY.INCLUDE_SUPER)
+		assert_accessors(_doubler, 'strategy', _utils.DOUBLE_STRATEGY.SCRIPT_ONLY,  _utils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
+
+	func test_cannot_set_strategy_to_invalid_values():
+		var default = _doubler.get_strategy()
+		_doubler.set_strategy(-1)
+		assert_eq(_doubler.get_strategy(), default)
 
 	func test_can_set_strategy_in_constructor():
-		var d = Doubler.new(_utils.DOUBLE_STRATEGY.INCLUDE_SUPER)
-		assert_eq(d.get_strategy(), _utils.DOUBLE_STRATEGY.INCLUDE_SUPER)
+		var d = Doubler.new(_utils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
+		assert_eq(d.get_strategy(), _utils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
 
 
 class TestDoublingScripts:
@@ -195,7 +200,7 @@ class TestAddingIgnoredMethods:
 
 	func test_when_ignored_methods_are_a_super_method_they_are_not_present_in_double_code():
 		_doubler.add_ignored_method(DoubleMe, 'is_connected')
-		var c = _doubler.double(DoubleMe, _utils.DOUBLE_STRATEGY.INCLUDE_SUPER)
+		var c = _doubler.double(DoubleMe, _utils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
 		assert_source_not_contains(c.new(), 'is_connected')
 
 	func test_can_double_classes_with_static_methods():
@@ -233,11 +238,11 @@ class TestDoubleScene:
 
 	func test_can_override_strategy_when_doubling_scene():
 		_doubler.set_strategy(_utils.DOUBLE_STRATEGY.SCRIPT_ONLY)
-		var inst = autofree(_doubler.double_scene(DoubleMeScene, _utils.DOUBLE_STRATEGY.INCLUDE_SUPER).instantiate())
+		var inst = autofree(_doubler.double_scene(DoubleMeScene, _utils.DOUBLE_STRATEGY.INCLUDE_NATIVE).instantiate())
 		assert_source_contains(inst, 'func is_blocking_signals')
 
 	func test_full_start_has_block_signals():
-		_doubler.set_strategy(_utils.DOUBLE_STRATEGY.INCLUDE_SUPER)
+		_doubler.set_strategy(_utils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
 		var inst = autofree(_doubler.double_scene(DoubleMeScene).instantiate())
 		assert_source_contains(inst, 'func is_blocking_signals')
 
@@ -254,7 +259,7 @@ class TestDoubleStrategyIncludeSuper:
 
 	func before_each():
 		stubber.clear()
-		doubler = Doubler.new(_utils.DOUBLE_STRATEGY.INCLUDE_SUPER)
+		doubler = Doubler.new(_utils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
 		doubler.set_stubber(stubber)
 		doubler.print_source = false
 
@@ -268,7 +273,7 @@ class TestDoubleStrategyIncludeSuper:
 
 	func test_can_override_strategy_when_doubling_script():
 		doubler.set_strategy(_utils.DOUBLE_STRATEGY.SCRIPT_ONLY)
-		var inst = doubler.double(DoubleMe, _utils.DOUBLE_STRATEGY.INCLUDE_SUPER).new()
+		var inst = doubler.double(DoubleMe, _utils.DOUBLE_STRATEGY.INCLUDE_NATIVE).new()
 		autofree(inst)
 		assert_source_contains(inst, 'func is_blocking_signals')
 
@@ -436,7 +441,7 @@ class TestDoubleInnerClasses:
 
 	func test_can_override_strategy_when_doubling():
 		doubler.inner_class_registry.register(InnerClasses)
-		var d = doubler.double(InnerClasses.InnerA, DOUBLE_STRATEGY.INCLUDE_SUPER)
+		var d = doubler.double(InnerClasses.InnerA, DOUBLE_STRATEGY.INCLUDE_NATIVE)
 		# make sure it has something from Object that isn't implemented
 		assert_source_contains(d.new() , 'func disconnect(p_signal')
 		assert_eq(doubler.get_strategy(), DOUBLE_STRATEGY.SCRIPT_ONLY, 'strategy should have been reset')

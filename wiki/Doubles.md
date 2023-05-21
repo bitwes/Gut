@@ -9,6 +9,20 @@ Using your double, you can:
 * Assert a method was called with specific parameters.
 * And much much more.  See [Stubbing](Stubbing) and [Spies](Spies) for more information.
 
+The following methods cannot be spied on due to implementation details with either Gut or GDScript.  There might be more.
+
+
+```
+has_method      _draw
+get_script      _physics_process
+get             _input
+_notification   _unhandled_input
+get_path        _unhandled_key_input
+_enter_tree     _get
+_exit_tree      emit_signal
+_process        _set
+```
+
 
 # Characteristics of a Double
 * The double inherits (`extends`) the source.
@@ -96,7 +110,7 @@ For even more reading see issues #252 and #246.
 GUT stubs all parameters in doubled user methods to be `null`.  This is because Godot only provides defaults for built-in methods.  When using partial-doubles or stubbing a method `to_call_super` `null` can get passed around when you wouldn't expect it causing errors such as `Invalid operands 'int' and 'Nil'`.  See the "Stubbing Method Parameter Defaults" in [Stubbing](Stubbing) for a way to stub method default values.
 
 # Doubling Built-Ins
-You can `double` built-in objects that are not inherited by a script such as a `Node2D` or a `Raycast2D`.  These doubles are always created using the Doubling Strategy of "INCLUDE_SUPER" (see [Double-Strategy](Double-Strategy)).
+You can `double` built-in objects that are not inherited by a script such as a `Node2D` or a `Raycast2D`.  These doubles are always created using the Doubling Strategy of "INCLUDE_NATIVE" (see [Double-Strategy](Double-Strategy)).
 
 For example you can `double` or `partial_double` like this:
 ``` gdscript
