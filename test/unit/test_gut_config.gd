@@ -17,7 +17,7 @@ func test_can_make_one():
 
 func test_double_strategy_defaults_to_include_native():
     var gc = _utils.GutConfig.new()
-    assert_eq(gc.default_options.double_strategy, 'INCLUDE_NATIVE')
+    assert_eq(gc.default_options.double_strategy, 'SCRIPT_ONLY')
 
 func test_gut_gets_double_strategy_when_applied():
     var gc = _utils.GutConfig.new()

@@ -182,13 +182,17 @@ func _is_valid_double_method(parsed_script, parsed_method):
 
 
 # Disable the native_method_override setting so that doubles do not generate
-# errors or warnings when doubling with INCLUDE_NATIVE
+# errors or warnings when doubling with INCLUDE_NATIVE or when a method has
+# been added because of param_count stub.
 func _create_script_no_warnings(src):
+	var prev_native_override_value = null
 	var native_method_override = 'debug/gdscript/warnings/native_method_override'
-	var prev_value = ProjectSettings.get_setting(native_method_override)
+	prev_native_override_value = ProjectSettings.get_setting(native_method_override)
 	ProjectSettings.set_setting(native_method_override, 0)
+
 	var DblClass = _utils.create_script_from_source(src)
-	ProjectSettings.set_setting(native_method_override, prev_value)
+
+	ProjectSettings.set_setting(native_method_override, prev_native_override_value)
 	return DblClass
 
 

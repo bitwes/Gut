@@ -7,7 +7,11 @@ var default_options = {
 	config_file = 'res://.gutconfig.json',
 	dirs = [],
 	disable_colors = false,
-	double_strategy = 'INCLUDE_NATIVE',
+	# double strategy can be the name of the enum value, the enum value or
+	# lowercase name with spaces:  0/SCRIPT_ONLY/script only
+	# The GUI gut config expects the value to be the enum value and not a string
+	# when saved.
+	double_strategy = 'SCRIPT_ONLY',
 	font_color = Color(.8, .8, .8, 1).to_html(),
 	font_name = 'CourierPrime',
 	font_size = 16,

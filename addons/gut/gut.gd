@@ -112,7 +112,7 @@ var include_subdirectories = _include_subdirectories :
 	set(val): _include_subdirectories = val
 
 
-var _double_strategy = GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE
+var _double_strategy = GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY
 ## TODO rework what this is and then document it here.
 var double_strategy = _double_strategy  :
 	get: return _double_strategy

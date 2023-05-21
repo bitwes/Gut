@@ -38,8 +38,8 @@ const GUT_METADATA = '__gutdbl'
 # Note, these cannot change since places are checking for TYPE_INT to determine
 # how to process parameters.
 enum DOUBLE_STRATEGY{
+	INCLUDE_NATIVE,
 	SCRIPT_ONLY,
-	INCLUDE_NATIVE
 }
 
 

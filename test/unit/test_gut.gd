@@ -22,7 +22,7 @@ class TestProperties:
 			['log_level', 1, 3],
 			['disable_strict_datatype_checks', false, true],
 			['include_subdirectories', false, true],
-			['double_strategy', 1, 0],
+			['double_strategy', GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY, GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE],
 			['pre_run_script', '', 'res://something.gd'],
 			['post_run_script', '', 'res://something_else.gd'],
 			['color_output', false, true],

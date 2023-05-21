@@ -149,6 +149,10 @@ func _init(cont):
 	_base_control.add_child(lbl)
 
 
+func _notification(what):
+	if(what == NOTIFICATION_PREDELETE):
+		_base_control.free()
+
 # ------------------
 # Private
 # ------------------
@@ -271,7 +275,6 @@ func _add_vector2(key, value, disp_text, hint=''):
 # Events
 # ------------------
 func _wire_select_on_focus(which):
-	pass
 	which.connect('focus_entered', _on_ctrl_focus_highlight.bind(which))
 	which.connect('focus_exited', _on_ctrl_focus_unhighlight.bind(which))
 
@@ -345,7 +348,7 @@ func set_options(options):
 		"Exit when tests finished.")
 	_add_boolean('should_exit_on_success', options.should_exit_on_success, 'Exit on Success',
 		"Exit if there are no failures.  Does nothing if 'Exit on Finish' is enabled.")
-	var ds = _add_select('double_strategy', 'Include Native', ['Include Native', 'Script Only'], 'Double Strategy',
+	var ds = _add_select('double_strategy', 'Script Only', ['Include Native', 'Script Only'], 'Double Strategy',
 		'"Include Native" will include native methods in Doubles.  "Script Only" will not.  ' + "\n" + \
 		'The native method override warning is disabled when creating Doubles.' + "\n" + \
 		'This is the default, you can override this at the script level or when creating doubles.')
