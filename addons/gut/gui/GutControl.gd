@@ -48,8 +48,8 @@ const TREE_SCRIPT = 'Script'
 const TREE_DIR = 'Directory'
 
 @onready var _ctrls = {
-	run_tests_button = $VBox/RunTests,
-	run_selected = $VBox/RunSelected,
+	run_tests_button = $VBox/Buttons/RunTests,
+	run_selected = $VBox/Buttons/RunSelected,
 	test_tree = $VBox/Tabs/Tests,
 	settings_vbox = $VBox/Tabs/SettingsScroll/Settings,
 	tabs = $VBox/Tabs,
@@ -67,7 +67,8 @@ const TREE_DIR = 'Directory'
 func _ready():
 	if Engine.is_editor_hint():
 		return
-
+	
+	$Bg.color = bg_color
 	_ctrls.tabs.set_tab_title(0, 'Tests')
 	_ctrls.tabs.set_tab_title(1, 'Settings')
 
@@ -184,10 +185,10 @@ func _reorder_dir_items():
 	var the_keys = _tree_directories.keys()
 	the_keys.sort()
 	for key in _tree_directories.keys():
+		var to_move = _tree_directories[key]
+		to_move.collapsed = false
 		var move_before = _find_dir_item_to_move_before(key)
 		if(move_before != null):
-			var to_move = _tree_directories[key]
-			to_move.collapsed = false
 			to_move.move_before(move_before)
 			var new_text = key.substr(move_before.get_parent().get_metadata(0).path.length())
 			to_move.set_text(0, new_text)
@@ -229,34 +230,6 @@ func _populate_tree():
 	_remove_dir_temp_items()
 
 
-func _run_all():
-	_config.options.selected = ''
-	_config.options.inner_class_name = ''
-	_config.options.unit_test_name = ''
-	run_tests()
-
-
-func _run_selected():
-	var sel_item = _ctrls.test_tree.get_selected()
-	if(sel_item == null):
-		return
-
-	var options = _config_gui.get_options(_config.options)
-	var meta = sel_item.get_metadata(0)
-	if(meta.type == TREE_SCRIPT):
-		options.selected = meta.script.get_file()
-		options.inner_class_name = meta.inner_class
-		options.unit_test_name = meta.test
-	elif(meta.type == TREE_DIR):
-		options.dirs = [meta.path]
-		options.include_subdirectories = true
-		options.selected = ''
-		options.inner_class_name = ''
-		options.unit_test_name = ''
-
-	run_tests(options)
-
-
 func _refresh_tree_and_settings():
 	if(_config.options.has('panel_options')):
 		_config_gui.set_options(_config.options)
@@ -286,15 +259,15 @@ func _on_gut_run_ended():
 
 
 func _on_run_tests_pressed():
-	_run_all()
+	run_all()
 
 
 func _on_run_selected_pressed():
-	_run_selected()
+	run_selected()
 
 
 func _on_tests_item_activated():
-	_run_selected()
+	run_selected()
 
 # ---------------------------
 # Public
@@ -307,6 +280,13 @@ func get_config():
 	return _config
 
 
+func run_all():
+	_config.options.selected = ''
+	_config.options.inner_class_name = ''
+	_config.options.unit_test_name = ''
+	run_tests()
+
+
 func run_tests(options = null):
 	if(options == null):
 		_config.options = _config_gui.get_options(_config.options)
@@ -316,6 +296,27 @@ func run_tests(options = null):
 	_gut_runner.get_gut().get_test_collector().clear()
 	_gut_runner.set_gut_config(_config)
 	_gut_runner.run_tests()
+
+
+func run_selected():
+	var sel_item = _ctrls.test_tree.get_selected()
+	if(sel_item == null):
+		return
+
+	var options = _config_gui.get_options(_config.options)
+	var meta = sel_item.get_metadata(0)
+	if(meta.type == TREE_SCRIPT):
+		options.selected = meta.script.get_file()
+		options.inner_class_name = meta.inner_class
+		options.unit_test_name = meta.test
+	elif(meta.type == TREE_DIR):
+		options.dirs = [meta.path]
+		options.include_subdirectories = true
+		options.selected = ''
+		options.inner_class_name = ''
+		options.unit_test_name = ''
+
+	run_tests(options)
 
 
 func load_config_file(path):

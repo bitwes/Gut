@@ -11,4 +11,4 @@ offset_left = 10.0
 offset_top = 12.0
 offset_right = 691.0
 offset_bottom = 635.0
-bg_color = Color(0.0627451, 0.584314, 0.74902, 1)
+bg_color = Color(0.152941, 0.572549, 0.788235, 1)

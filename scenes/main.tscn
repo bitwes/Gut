@@ -19,5 +19,6 @@ offset_left = 11.0
 offset_top = 104.0
 offset_right = 349.0
 offset_bottom = 628.0
+bg_color = Color(0.227451, 0.270588, 0.376471, 1)
 
 [connection signal="pressed" from="RunTestsButton" to="." method="_on_run_gut_tests_button_pressed"]
