@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
     * The doubling strategy `INCLUDE_SUPER` has been renamed to `INCLUDE_NATIVE`.
     * If you have an invalid Double Strategy set via command line or gutconfig, the default will be used.  So if you are explicity setting it to the old `INCLUDE_SUPER`, it will use `SCRIPT_ONLY`.
     * You can now set the default double strategy in the GutPanel in the Editor.
+* Added `GutControl` to aid in running tests in a deployed game.  Instructions and sample code can be found [in the wiki](https://bitwes.github.io/GutWiki/Godot4/Running-On-Devices.html).
 
 
 # 9.0.1
