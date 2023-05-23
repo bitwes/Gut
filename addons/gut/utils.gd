@@ -115,8 +115,10 @@ static func nvl(value, if_null):
 		return if_null
 	else:
 		return value
-
-
+	
+	
+static func pretty_print(dict):
+	print(JSON.stringify(dict, ' '))
 
 # ##############################################################################
 # Start Class
@@ -428,10 +430,6 @@ func are_datatypes_same(got, expected):
 	return !(typeof(got) != typeof(expected) and got != null and expected != null)
 
 
-func pretty_print(dict):
-	print(json.stringify(dict, ' '))
-
-
 func get_script_text(obj):
 	return obj.get_script().get_source_code()
 
@@ -513,3 +511,7 @@ func get_scene_script_object(scene):
 		node_idx += 1
 
 	return to_return
+
+
+func get_display_size():
+	return get_viewport().get_visible_rect()

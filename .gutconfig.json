@@ -1,10 +1,9 @@
 {
   "_post_run_script": "res://test/post_run_export_json.gd",
 
-
+  "include_subdirs": true,
   "dirs": [
     "res://test/unit/",
-    "res://test/unit/test_bugs/",
     "res://test/integration/"
   ],
   "should_maximize": false,

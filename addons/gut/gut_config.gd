@@ -1,3 +1,9 @@
+# ##############################################################################
+#
+# This holds all the configuratoin values for GUT.  It can load and save values
+# to a json file.  It is also responsible for applying these settings to GUT.
+#
+# ##############################################################################
 var Gut = load('res://addons/gut/gut.gd')
 
 
@@ -104,21 +110,6 @@ func _load_dict_into(source, dest):
 					dest[key] = source[key]
 
 
-
-
-func write_options(path):
-	var content = json.stringify(options, ' ')
-
-	var f = FileAccess.open(path, FileAccess.WRITE)
-	var result = FileAccess.get_open_error()
-	if(f != null):
-		f.store_string(content)
-		f = null # closes file
-	else:
-		print('ERROR:  could not open file ', path, ' ', result)
-	return result
-
-
 # Apply all the options specified to _tester.  This is where the rubber meets
 # the road.
 func _apply_options(opts, _tester):
@@ -129,8 +120,7 @@ func _apply_options(opts, _tester):
 	_tester.log_level = opts.log_level
 	_tester.ignore_pause_before_teardown = opts.ignore_pause
 
-	if(opts.selected != ''):
-		_tester.select_script(opts.selected)
+	_tester.select_script(opts.selected)
 
 	for i in range(opts.dirs.size()):
 		_tester.add_directory(opts.dirs[i], opts.prefix, opts.suffix)
@@ -154,21 +144,64 @@ func _apply_options(opts, _tester):
 
 	return _tester
 
+# --------------------------
+# Public
+# --------------------------
+func write_options(path):
+	var content = json.stringify(options, ' ')
 
-func config_gut(gut):
-	return _apply_options(options, gut)
+	var f = FileAccess.open(path, FileAccess.WRITE)
+	var result = FileAccess.get_open_error()
+	if(f != null):
+		f.store_string(content)
+		f = null # closes file
+	else:
+		print('ERROR:  could not open file ', path, ' ', result)
+	return result
 
 
 func load_options(path):
 	return _load_options_from_config_file(path, options)
 
+
 func load_panel_options(path):
 	options['panel_options'] = default_panel_options.duplicate()
 	return _load_options_from_config_file(path, options)
+
 
 func load_options_no_defaults(path):
 	options = _null_copy(default_options)
 	return _load_options_from_config_file(path, options)
 
+
 func apply_options(gut):
 	_apply_options(options, gut)
+
+
+
+
+# ##############################################################################
+# The MIT License (MIT)
+# =====================
+#
+# Copyright (c) 2023 Tom "Butch" Wesley
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+# ##############################################################################

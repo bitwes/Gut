@@ -1,143 +1,156 @@
+# ------------------------------------------------------------------------------
+# This is an example of using the GutControl (res://addons/gut/gui/GutContro.tscn)
+# to execute tests in a deployed game.
+#
+# Setup:
+# Create a scene.
+# Add a GutControl to your scene, name it GutControl.
+# Add this script to your scene.
+# Run it.
+# ------------------------------------------------------------------------------
 extends Node2D
-# ##############################################################################
-#The MIT License (MIT)
-#=====================
-#
-#Copyright (c) 2015 Tom "Butch" Wesley
-#
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
-#
-#The above copyright notice and this permission notice shall be included in
-#all copies or substantial portions of the Software.
-#
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-#THE SOFTWARE.
-#
-# ##############################################################################
+@onready var _gut_control = $GutControl
 
-# ##############################################################################
-# Description:
-# ------------
-# This file is used to illustrate a couple ways of loading scripts and running
-# them.  This is also the method used to execute the tests of the Gut object
-# itself.
-#
-# The Gut object in the scene has already been configured through the editor
-# to load up various scripts.  You can experiment with the settings in the
-# scene or edit the code in this script.
-# ##############################################################################
+# Holds a reference to the current test script object being run.  Set in
+# signal callbacks.
+var _current_script_object = null
+# Holds the name of the current test being run.  Set in signal callbacks.
+var _current_test_name = null
 
-var tester = null
 
 func _ready():
-	# DO NOTHING HERE, connect to gut_ready instead.
-	pass
-
-func _on_Gut_gut_ready():
-	#$Gut.export_if_tests_found()
-	#$Gut.import_tests_if_none_found()
-
-	# This line makes Gut use the export_path to load up the exported list
-	# of tests if it didn't find any tests.  This will occur after it has tried
-	# to load up all the configured directories.
+	# You must load a gut config file to use this
+	# control.
 	#
-	# Using this line, you won't have to do anything to your test scene when
-	# running after being exported.
+	# Here we use the Gut Panel settings file.  This can be any gutconfig file,
+	# but this one is most likely to exist.  You can create your own just for
+	# deployed settings.  You could even create multiple and have buttons to
+	# load different configs.
 	#
-	# You must have set export_path on the Gut object, exported your tests, and
-	# changed your project's export settings to include whatever file extension
-	# you gave your export file name.
-#	$Gut.import_tests_if_none_found()
+	# Some settings may not work.  For example, the exit flags do not have any
+	# effect.
+	#
+	# Settings are not saved, so any changes will be lost. The idea is that you
+	# want to deploy the settings and users should not be able to save them.  If
+	# you want to save changes, you can call:
+	# 	_gut_control.get_config().write_options(path).
+	# Note that you cannot to write to res:// on mobile platforms, so you will
+	# have to juggle the initial loading from res:// or user:// and save to
+	# user://.
+	_gut_control.load_config_file('res://.gut_editor_config.json')
 
-	# -----
-	# Uncomment these lines to see various behaviors
-	# -----
-	#_run_test_one_line()
-	#_run_gut_tests(get_node('Gut'))
-	#_run_all_tests()
-	pass
+	# Returns a gut_config.gd instance.
+	var config = _gut_control.get_config()
 
-# Show that the signal is working.
-func _on_tests_finished():
-	tester.p("Tests done callback called")
+	# Override specific values for the purposes of this scene.  You can see all
+	# the options available in the default_options dictionary in gut_config.gd.
+	# Changing settings AFTER _ready will not have any effect.
+	config.options.should_exit = false
+	config.options.should_exit_on_success = false
+	config.options.compact_mode = false
+	# Note that if you are exporting xml results you may want to set the path to
+	# a file in user:// instead of an absolute path.  Your game may not have
+	# permissions to save files elsewhere when running on a mobile device.
+	config.options.junit_xml_file = 'user://deployed_results.xml'
 
-#------------------------------------
-# Example:
-# This creates an instance of Gut and runs a single script.  The output will
-# be visible in the console, not the Gut instance on the screen.
-#------------------------------------
-func _run_test_one_line():
-	load('res://addons/gut/gut.gd').new().test_script('res://test/samples/test_sample_all_passed.gd')
-
-#------------------------------------
-# Example:
-# More lines, get result text out manually.  Can also inspect the results further
-# with a reference to the class.
-#------------------------------------
-func _run_all_tests():
-	# get an instance of gut
-	tester = get_node("Gut")
-
-	tester.connect('tests_finished',Callable(self,'_on_tests_finished'))
-	tester.show()
-	tester.set_position(Vector2(100, 100))
-
-	tester.set_should_print_to_console(true)
-
-	# Add all scripts in two directories.
-	tester.add_directory('res://test/unit')
-	tester.add_directory('res://test/integration')
-
-	# Automatcially run all scripts when loaded.
-	tester.test_scripts(true)
-
-	# Insepect the results, put out some more text conditionally.
-	if(tester.get_fail_count() > 0):
-		tester.p("SOMEBODY BROKE SOMETHIN'!!\n")
-
-# These are all the tests that MUST be run to verify Gut is working as expected.
-# Some methods may include tests that are expected to fail.  Closely inspect
-# the resutls.
-func _run_gut_tests(gut):
-	gut.set_should_print_to_console(false)
-	gut.add_script('res://test/unit/test_doubler.gd')
-	gut.add_script('res://test/unit/test_gut_yielding.gd')
-	gut.add_script('res://test/unit/test_gut.gd')
-	gut.add_script('res://test/unit/test_signal_watcher.gd')
-	gut.add_script('res://test/unit/test_spy.gd')
-	gut.add_script('res://test/unit/test_stubber.gd')
-	gut.add_script('res://test/unit/test_summary.gd')
-	gut.add_script('res://test/unit/test_test_collector.gd')
-	gut.add_script('res://test/unit/test_test.gd')
-
-	gut.add_script('res://test/integration/test_test_stubber_doubler.gd')
-	gut.add_script('res://test/integration/test_doubler_and_stubber.gd')
-	gut.add_script('res://test/integration/test_gut_and_stubber.gd')
-	gut.add_script('res://test/integration/test_doubler_and_spy.gd')
-	gut.add_script('res://test/integration/test_gut_and_spy.gd')
-
-	# true says to run all the scripts, not just the first or
-	# the selected script.
-	gut.test_scripts()
-
-# Make a new Gut and run all the Gut specific tests.
-func _on_RunGutTestsButton_pressed():
-	var gut = load('res://addons/gut/gut.gd').new()
-	add_child(gut)
-	gut.set_position(Vector2(0, 0))
-	_run_gut_tests(gut)
-
-func _on_ExportTests_pressed():
-	$Gut.export_tests()
+	# Some actions cannot be done until after _ready has finished in all objects
+	call_deferred('_post_ready_setup')
 
 
+# If you would like to connect to signals provided by gut.gd then you must do
+# so after _ready.  This is an example of getting a reference to gut and all
+# of the signals it provides.
+func _post_ready_setup():
+	var gut = _gut_control.get_gut()
+	gut.start_run.connect(_on_gut_run_start)
+
+	gut.start_script.connect(_on_gut_start_script)
+	gut.end_script.connect(_on_gut_end_script)
+
+	gut.start_test.connect(_on_gut_start_test)
+	gut.end_test.connect(_on_gut_end_test)
+
+	gut.end_run.connect(_on_gut_run_end)
+
+
+# -----------------------
+# Events
+# -----------------------
+func _on_gut_run_start():
+	print('Starting tests')
+
+
+# This signal passes a TestCollector.gd/TestScript instance
+func _on_gut_start_script(script_obj):
+	print(script_obj.get_full_name(), ' has ', script_obj.tests.size(), ' tests')
+	_current_script_object = script_obj
+
+
+func _on_gut_end_script():
+	var pass_count = 0
+	for test in _current_script_object.tests:
+		if(test.did_pass()):
+			pass_count += 1
+	print(pass_count, '/', _current_script_object.tests.size(), " passed\n")
+	_current_script_object = null
+
+
+func _on_gut_start_test(test_name):
+	_current_test_name = test_name
+	print('  ', test_name)
+
+
+func _on_gut_end_test():
+	# get_test_named returns a TestCollector.gd/Test instance for the name
+	# passed in.
+	var test_object = _current_script_object.get_test_named(_current_test_name)
+	var status = "failed"
+	if(test_object.did_pass()):
+		status = "passed"
+	elif(test_object.pending):
+		status = "pending"
+
+	print('    ', status)
+	_current_test_name = null
+
+
+func _on_gut_run_end():
+	print('Tests Done')
+
+
+# You can kick of the tests via code if you want.
+func _on_run_gut_tests_button_pressed():
+	_gut_control.run_tests()
+
+
+
+
+
+
+
+
+# ##############################################################################
+# The MIT License (MIT)
+# =====================
+#
+# Copyright (c) 2023 Tom "Butch" Wesley
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+# ##############################################################################

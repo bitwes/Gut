@@ -26,8 +26,8 @@ func run_scripts(g, one_or_more):
 	g.test_scripts()
 
 
-func export_script(name):
-	return str('res://test/resources/exporter_test_files/', name)
+func export_script(script_name):
+	return str('res://test/resources/exporter_test_files/', script_name)
 
 func before_all():
 	_utils._test_mode = true
@@ -210,5 +210,5 @@ func test_spot_check():
 	run_scripts(_test_gut, ['test_simple_2.gd', 'test_simple.gd', 'test_with_inner_classes.gd'])
 	var re = ResultExporter.new()
 	var result = re.get_results_dictionary(_test_gut)
-	_utils.pretty_print(result)
+	GutUtils.pretty_print(result)
 	pass_test("Check output")
