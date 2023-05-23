@@ -1,28 +1,3 @@
-# ##############################################################################
-#The MIT License (MIT)
-#=====================
-#
-#Copyright (c) 2023 Tom "Butch" Wesley
-#
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
-#
-#The above copyright notice and this permission notice shall be included in
-#all copies or substantial portions of the Software.
-#
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-#THE SOFTWARE.
-#
-# ##############################################################################
 @tool
 extends Control
 
@@ -67,7 +42,7 @@ const TREE_DIR = 'Directory'
 func _ready():
 	if Engine.is_editor_hint():
 		return
-	
+
 	$Bg.color = bg_color
 	_ctrls.tabs.set_tab_title(0, 'Tests')
 	_ctrls.tabs.set_tab_title(1, 'Settings')
@@ -153,7 +128,7 @@ func _get_directory_tree_item(path):
 		item.set_text(0, path)
 		item.set_icon(0, _folder_icon)
 		item.set_icon_modulate(0, Color.ROYAL_BLUE)
-		# temp_item is used in calls with move_before since you must use 
+		# temp_item is used in calls with move_before since you must use
 		# move_before or move_after to reparent tree items. This ensures that
 		# there is an item on all directories.  These are deleted later.
 		var temp_item = item.create_child()
@@ -167,7 +142,7 @@ func _get_directory_tree_item(path):
 func _find_dir_item_to_move_before(path):
 	var max_matching_len = 0
 	var best_parent = null
-	
+
 	# Go through all the directory items finding the one that has the longest
 	# path that contains our path.
 	for key in _tree_directories.keys():
@@ -325,3 +300,29 @@ func load_config_file(path):
 	_config.options.inner_class_name = ''
 	_config.options.unit_test_name = ''
 
+
+# ##############################################################################
+# The MIT License (MIT)
+# =====================
+#
+# Copyright (c) 2023 Tom "Butch" Wesley
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+# ##############################################################################
