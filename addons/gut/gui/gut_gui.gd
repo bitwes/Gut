@@ -42,6 +42,7 @@ var _resize_left_mouse = {
 signal switch_modes()
 
 var _max_position = Vector2(100, 100)
+var _utils = null
 
 func _ready():
 	_populate_ctrls()
@@ -57,7 +58,7 @@ func _ready():
 	_ctrls.path_file.text = ''
 	_ctrls.time_label.text = ''
 
-	_max_position = DisplayServer.window_get_size() - Vector2i(30, _ctrls.title_bar.size.y)
+	_max_position = get_display_size() - Vector2(30, _ctrls.title_bar.size.y)
 
 
 func _process(_delta):
@@ -68,6 +69,10 @@ func _process(_delta):
 # ------------------
 # Private
 # ------------------
+func get_display_size():
+	return get_viewport().get_visible_rect().size
+
+
 func _populate_ctrls():
 	# Brute force, but flexible.  This allows for all the controls to exist
 	# anywhere, and as long as they all have the right name, they will be
@@ -225,12 +230,12 @@ func to_top_left():
 
 
 func to_bottom_right():
-	var win_size = DisplayServer.window_get_size()
-	self.position = win_size - Vector2i(self.size) - Vector2i(5, 5)
+	var win_size = get_display_size()
+	self.position = win_size - Vector2(self.size) - Vector2(5, 5)
 
 
 func align_right():
-	var win_size = DisplayServer.window_get_size()
+	var win_size = get_display_size()
 	self.position.x = win_size.x - self.size.x -5
 	self.position.y = 5
 	self.size.y = win_size.y - 10

@@ -1,59 +1,135 @@
-# <div class="warning">This page has not been updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
-You may find yourself wanting to run your tests on an Android or iOS device or you may want your testers to run the tests on their device.  To do this you will have to give the users access to the GUT instance through your GUI and you'll have to export your tests.  You can also enable file logging so that if running the tests causes a crash you can still get to the output from the run.
+You may want to deploy your tests with your game so you can run tests on different devices and platforms.  In order to run tests in a deployed game you must create a scene to kick off the tests from within the game.  Here's the steps:
+* Create a scene
+* Add a `GutControl` to the scene.
+* Add a script to your scene and paste in the code below.
+* You're off to the races.
 
-# Godot 3.1+ Export As Text
-In Godot 3.1 an old 2.x feature was reintroduced that allows you to export your scripts as text.  Normally Godot will compile your tests and GUT cannot parse compiled tests.  If you change the setting below then GUT will be able to find and parse all your tests when the project is exported.
+Remember to add `*.json` in your export settings (resources tab), or your config file will not be exported with your game.
 
-Just change the following setting in your exports settings form `compiled` to `text`
-[[https://raw.githubusercontent.com/wiki/bitwes/Gut/images/export_as_text.png|alt=export_as_text]]
+``` gdscript
+# from https://github.com/bitwes/Gut/blob/godot_4/scripts/main.gd
+#  and https://github.com/bitwes/Gut/blob/godot_4/scenes/main.tscn
+# ------------------------------------------------------------------------------
+# This is an example of using the GutControl (res://addons/gut/gui/GutContro.tscn)
+# to execute tests in a deployed game.
+#
+# Setup:
+# Create a scene.
+# Add a GutControl to your scene, name it GutControl.
+# Add this script to your scene.
+# Run it.
+# ------------------------------------------------------------------------------
+extends Node2D
+@onready var _gut_control = $GutControl
 
-If you don't want to pass out your code in plain text or you are using Godot 3.0, then you can use the next section to export your tests.
+# Holds a reference to the current test script object being run.  Set in
+# signal callbacks.
+var _current_script_object = null
+# Holds the name of the current test being run.  Set in signal callbacks.
+var _current_test_name = null
 
-# Exporting Compiled/Encrypted/Godot 3.0 Tests
-When you export your project, all the scripts get compiled and Gut cannot parse them anymore.  To address this Gut has some methods and settings that make it possible to run your tests on any device.
 
-Exporting is only supported through a scene since there is no built-in way to run the tests in your exported game via the command line.  To that end, you will have to have a scene in your game that has a Gut node (See the Setup section on the Install page).  I'm going to assume the node name is `$Gut`.
+func _ready():
+	# You must load a gut config file to use this
+	# control.
+	#
+	# Here we use the Gut Panel settings file.  This can be any gutconfig file,
+	# but this one is most likely to exist.  You can create your own just for
+	# deployed settings.  You could even create multiple and have buttons to
+	# load different configs.
+	#
+	# Some settings may not work.  For example, the exit flags do not have any
+	# effect.
+	#
+	# Settings are not saved, so any changes will be lost. The idea is that you
+	# want to deploy the settings and users should not be able to save them.  If
+	# you want to save changes, you can call:
+	# 	_gut_control.get_config().write_options(path).
+	# Note that you cannot to write to res:// on mobile platforms, so you will
+	# have to juggle the initial loading from res:// or user:// and save to
+	# user://.
+	_gut_control.load_config_file('res://.gut_editor_config.json')
 
-## Configuring Gut to Export
-Select the Gut node and set the and set the `Export Path` setting in the Inspector.  This must be a file in the `res://` directory.  I've been using `res://test/exported_tests.cfg`.  This way the file won't be included when you create a production export which, of course, excludes the `test` directory from the build.
+	# Returns a gut_config.gd instance.
+	var config = _gut_control.get_config()
 
-You must also be sure that your project is configured to export files with the extension you give in the setting.
-* Click Project->Export
-* Select the Preset to configure.
-* Under the Resources tab make sure that `*.cfg` is in the list (or whatever extension you used when setting `Export Path`).
+	# Override specific values for the purposes of this scene.  You can see all
+	# the options available in the default_options dictionary in gut_config.gd.
+	# Changing settings AFTER _ready will not have any effect.
+	config.options.should_exit = false
+	config.options.should_exit_on_success = false
+	config.options.compact_mode = false
+	# Note that if you are exporting xml results you may want to set the path to
+	# a file in user:// instead of an absolute path.  Your game may not have
+	# permissions to save files elsewhere when running on a mobile device.
+	config.options.junit_xml_file = 'user://deployed_results.xml'
+
+	# Some actions cannot be done until after _ready has finished in all objects
+	call_deferred('_post_ready_setup')
+
+
+# If you would like to connect to signals provided by gut.gd then you must do
+# so after _ready.  This is an example of getting a reference to gut and all
+# of the signals it provides.
+func _post_ready_setup():
+	var gut = _gut_control.get_gut()
+	gut.start_run.connect(_on_gut_run_start)
+
+	gut.start_script.connect(_on_gut_start_script)
+	gut.end_script.connect(_on_gut_end_script)
+
+	gut.start_test.connect(_on_gut_start_test)
+	gut.end_test.connect(_on_gut_end_test)
+
+	gut.end_run.connect(_on_gut_run_end)
+
+
+# -----------------------
+# Events
+# -----------------------
+func _on_gut_run_start():
+	print('Starting tests')
+
+
+# This signal passes a TestCollector.gd/TestScript instance
+func _on_gut_start_script(script_obj):
+	print(script_obj.get_full_name(), ' has ', script_obj.tests.size(), ' tests')
+	_current_script_object = script_obj
+
+
+func _on_gut_end_script():
+	var pass_count = 0
+	for test in _current_script_object.tests:
+		if(test.did_pass()):
+			pass_count += 1
+	print(pass_count, '/', _current_script_object.tests.size(), " passed\n")
+	_current_script_object = null
+
+
+func _on_gut_start_test(test_name):
+	_current_test_name = test_name
+	print('  ', test_name)
+
+
+func _on_gut_end_test():
+	# get_test_named returns a TestCollector.gd/Test instance for the name
+	# passed in.
+	var test_object = _current_script_object.get_test_named(_current_test_name)
+	var status = "failed"
+	if(test_object.did_pass()):
+		status = "passed"
+	elif(test_object.pending):
+		status = "pending"
+
+	print('    ', status)
+	_current_test_name = null
+
+
+func _on_gut_run_end():
+	print('Tests Done')
+
+
+# You can kick of the tests via code if you want.
+func _on_run_gut_tests_button_pressed():
+	_gut_control.run_tests()
 ```
-*.txt, *.cfg
-```
-
-## Auto Export/Import
-__When interacting with the GUT scene you must wait until it has completed initialization.  GUT will emit the `gut_ready` signal.  Do not interact with GUT until this signal has been emitted.__
-
-Gut has a couple of methods that should allow you to automatically export and import your settings in most cases.  They are:
-* `export_if_tests_found()`
-* `import_tests_if_none_found()`
-
-When you add these methods to the `_ready()` of your scene then Gut should take the proper action based on whether you are running from the editor or on some other device.
-```
-func _on_gut_ready():
-  # always put them in this order
-  $Gut.export_if_tests_found()
-  $Gut.import_tests_if_none_found()
-```
-Both methods will either print an error if something went wrong or a complete list of everything they exported/imported and the name of the file it used.
-
-Both of these methods __require__ that the `Export Path` property has been set.  The `gut_ready` signal will be emitted after Gut has loaded up all the directories you have configured in the editor.  If Gut has found tests it was able to parse then `export_if_tests_found` will write them to the `Export Path`.  If it cannot find any tests then the `import_tests_if_none_found` line will load the file at `Export Path` and all your tests will be ready to go.
-
-__NOTE__:  It is recommended that you do not configure your scene to `Run On Load` when you are exporting your tests.  If a test causes a crash on a device, then you won't be able to use the GUI to run other tests, it will just run until it crashes.
-
-## Manually Exporting/Importing
-Gut also has methods that you can use to have full control over when and where you export/import tests.
-* `set/get_export_path(...)`
-* `export_tests(path=export_path)`
-* `import_tests(path=export_path)`
-
-`export_tests` and `import_tests` will use any path you give them or the value set by `set_export_path` if no path is passed.
-
-## <a name="logging">Logging and Viewing Logs
-If you enable file logging in ProjectSettings->Logging->FileLogging then output will be put into the `user://logs` directory by default.  GUT has a built-in file viewer in the extra options button on the right of the dialog.  This allows you to view logs or any other user file from GUT.
-
-[[https://raw.githubusercontent.com/wiki/bitwes/Gut/images/view_user_files.png|alt=view_user_files]]

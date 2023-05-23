@@ -29,6 +29,7 @@ gdscript/warnings/native_method_override=1
 
 [display]
 
+window/stretch/mode="canvas_items"
 window/dpi/allow_hidpi=false
 
 [editor_plugins]

@@ -115,8 +115,8 @@ static func nvl(value, if_null):
 		return if_null
 	else:
 		return value
-
-
+	
+	
 static func pretty_print(dict):
 	print(JSON.stringify(dict, ' '))
 
@@ -511,3 +511,7 @@ func get_scene_script_object(scene):
 		node_idx += 1
 
 	return to_return
+
+
+func get_display_size():
+	return get_viewport().get_visible_rect()

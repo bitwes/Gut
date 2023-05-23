@@ -6,6 +6,7 @@ extends Node2D
 # ##############################################################################
 @onready var _normal_gui = $Normal
 @onready var _compact_gui = $Compact
+
 var gut = null :
 	set(val):
 		gut = val
@@ -23,7 +24,7 @@ func _ready():
 	_compact_gui.to_bottom_right()
 
 	use_compact_mode(false)
-	
+
 	if(get_parent() == get_tree().root):
 		_test_running_setup()
 
