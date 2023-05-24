@@ -245,7 +245,7 @@ func add_script(path):
 
 	if(parse_results.find(path) == -1):
 		_lgr.warn(str('Ignoring script ', path, ' because it does not extend GutTest'))
-		scripts.remove(scripts.find(ts))
+		scripts.remove_at(scripts.find(ts))
 
 	return parse_results
 
