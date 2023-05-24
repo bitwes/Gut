@@ -166,7 +166,7 @@ func _get_inner_test_class_names(loaded):
 					inner_classes.append(key)
 				else:
 					_lgr.warn(str('Ignoring Inner Class ', key,
-						' because it does not extend res://addons/gut/test.gd'))
+						' because it does not extend GutTest'))
 
 			# This could go deeper and find inner classes within inner classes
 			# but requires more experimentation.  Right now I'm keeping it at
@@ -211,10 +211,18 @@ func add_script(path):
 		_lgr.error('Could not find script:  ' + path)
 		return
 
+
+
 	var ts = TestScript.new(_utils, _lgr)
 	ts.path = path
-	scripts.append(ts)
-	return _parse_script(ts)
+	var parse_results = _parse_script(ts)
+	if(parse_results.find(path) == -1):
+		_lgr.warn(str('Ignoring script ', path,
+		' because it does not extend GutTest'))
+	else:
+		scripts.append(ts)
+
+	return parse_results
 
 func clear():
 	scripts.clear()
