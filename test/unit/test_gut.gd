@@ -271,9 +271,9 @@ func test_simulate_checks_process_on_all_nodes():
 	gr.test_gut.simulate(objs[0], 5, 0.2)
 
 	gr.test.assert_eq(objs[0].call_count, 5, "_process should have been called 5 times")
-	gr.test.assert_eq(objs[0].delta_sum, 1.0, "The delta value should have been passed in and summed")	
+	gr.test.assert_eq(objs[0].delta_sum, 1.0, "The delta value should have been passed in and summed")
 	gr.test.assert_eq(objs[2].call_count, 5, "_process should have been called 5 times")
-	gr.test.assert_eq(objs[2].delta_sum, 1.0, "The delta value should have been passed in and summed")	
+	gr.test.assert_eq(objs[2].delta_sum, 1.0, "The delta value should have been passed in and summed")
 
 	assert_pass(4)
 
@@ -318,7 +318,7 @@ func test_simulate_calls_process_on_descendents_if_objects_are_processing():
 
 	gr.test.assert_eq(objs[0].call_count, 0, "_process should not have been called")
 	gr.test.assert_eq(objs[2].call_count, 5, "_process should have been called 5 times")
-	gr.test.assert_eq(objs[2].delta_sum, 1.0, "The delta value should have been passed in and summed")	
+	gr.test.assert_eq(objs[2].delta_sum, 1.0, "The delta value should have been passed in and summed")
 
 	assert_pass(3)
 
@@ -358,13 +358,13 @@ func test_simulate_calls_physics_process_on_descendents_if_objects_have_method()
 			objs.append(autofree(WithoutPhysicsProcess.new()))
 		if(i > 0):
 			objs[i - 1].add_child(objs[i])
-	
+
 	gr.test_gut.simulate(objs[0], 5, 0.2)
 
 	gr.test.assert_eq(objs[0].call_count, 5, "_physics_process should have been called 5 times")
-	gr.test.assert_eq(objs[0].delta_sum, 1.0, "The delta value should have been passed in and summed")	
+	gr.test.assert_eq(objs[0].delta_sum, 1.0, "The delta value should have been passed in and summed")
 	gr.test.assert_eq(objs[2].call_count, 5, "_physics_process should have been called 5 times")
-	gr.test.assert_eq(objs[2].delta_sum, 1.0, "The delta value should have been passed in and summed")	
+	gr.test.assert_eq(objs[2].delta_sum, 1.0, "The delta value should have been passed in and summed")
 
 	assert_pass(4)
 
@@ -409,7 +409,7 @@ func test_simulate_calls_physics_process_on_descendents_if_objects_are_processin
 
 	gr.test.assert_eq(objs[0].call_count, 0, "_physics_process should not have been called")
 	gr.test.assert_eq(objs[2].call_count, 5, "_physics_process should have been called 5 times")
-	gr.test.assert_eq(objs[2].delta_sum, 1.0, "The delta value should have been passed in and summed")	
+	gr.test.assert_eq(objs[2].delta_sum, 1.0, "The delta value should have been passed in and summed")
 
 	assert_pass(3)
 

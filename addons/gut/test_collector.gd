@@ -166,7 +166,7 @@ func _get_inner_test_class_names(loaded):
 					inner_classes.append(key)
 				else:
 					_lgr.warn(str('Ignoring Inner Class ', key,
-						' because it does not extend res://addons/gut/test.gd'))
+						' because it does not extend GutTest'))
 
 			# This could go deeper and find inner classes within inner classes
 			# but requires more experimentation.  Right now I'm keeping it at
@@ -184,6 +184,8 @@ func _parse_script(test_script):
 		_populate_tests(test_script)
 		scripts_found.append(test_script.path)
 		inner_classes = _get_inner_test_class_names(loaded)
+	else:
+		return []
 
 	for i in range(inner_classes.size()):
 		var loaded_inner = loaded.get(inner_classes[i])
@@ -213,8 +215,20 @@ func add_script(path):
 
 	var ts = TestScript.new(_utils, _lgr)
 	ts.path = path
+	# Append right away because if we don't test_doubler.gd.TestInitParameters
+	# will HARD crash.  I couldn't figure out what was causing the issue but
+	# appending right away, and then removing if it's not valid seems to fix
+	# things.  It might have to do with the ordering of the test classes in
+	# the test collecter.  I'm not really sure.
 	scripts.append(ts)
-	return _parse_script(ts)
+	var parse_results = _parse_script(ts)
+
+	if(parse_results.find(path) == -1):
+		_lgr.warn(str('Ignoring script ', path, ' because it does not extend GutTest'))
+		scripts.remove(scripts.find(ts))
+
+	return parse_results
+
 
 func clear():
 	scripts.clear()
