@@ -115,10 +115,29 @@ static func nvl(value, if_null):
 		return if_null
 	else:
 		return value
-	
-	
+
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 static func pretty_print(dict):
 	print(JSON.stringify(dict, ' '))
+
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+static func print_properties(props, thing, print_all_meta=false):
+	for i in range(props.size()):
+		var prop_name = props[i].name
+		var prop_value = thing.get(props[i].name)
+		var print_value = str(prop_value)
+		if(print_value.length() > 100):
+			print_value = print_value.substr(0, 97) + '...'
+		elif(print_value == ''):
+			print_value = 'EMPTY'
+
+		print(prop_name, ' = ', print_value)
+		if(print_all_meta):
+			print('  ', props[i])
 
 # ##############################################################################
 # Start Class

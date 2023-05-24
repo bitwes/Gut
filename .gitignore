@@ -6,6 +6,8 @@ logs/
 .import/
 export.cfg
 export_presets.cfg
+addons/*
+!addons/gut
 
 # Imported translations (automatically generated from CSV files)
 *.translation

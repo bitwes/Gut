@@ -81,6 +81,7 @@ class TextEditSearcher:
 
 var _sr = TextEditSearcher.new()
 var _highlighter : CodeHighlighter
+var _font_name = null
 
 # Automatically used when running the OutputText scene from the editor.  Changes
 # to this method only affect test-running the control through the editor.
@@ -90,23 +91,16 @@ func _test_running_setup():
 	_ctrls.word_wrap.text = 'ww'
 
 	set_all_fonts("CourierPrime")
-	set_font_size(5)
-#	print(_ctrls.output.get_theme_font_size("normal_font"))
+	set_font_size(30)
+	
 	_ctrls.output.queue_redraw()
-
 	load_file('user://.gut_editor.bbcode')
 	await get_tree().process_frame
 
 	show_search(true)
 	_ctrls.output.set_caret_line(0)
 	_ctrls.output.scroll_vertical = 0
-
 	_ctrls.output.caret_changed.connect(_on_caret_changed)
-
-
-func _on_caret_changed():
-	var txt = str("line:",_ctrls.output.get_caret_line(), ' col:', _ctrls.output.get_caret_column())
-	_ctrls.caret_position.text = str(txt)
 
 
 func _ready():
@@ -121,6 +115,11 @@ func _ready():
 
 	if(get_parent() == get_tree().root):
 		_test_running_setup()
+		
+
+func _on_caret_changed():
+	var txt = str("line:",_ctrls.output.get_caret_line(), ' col:', _ctrls.output.get_caret_column())
+	_ctrls.caret_position.text = str(txt)
 
 # ------------------
 # Private
@@ -171,15 +170,6 @@ func _setup_colors():
 	_highlighter = _create_highlighter()
 	_ctrls.output.queue_redraw()
 
-
-func _set_font(font_name, custom_name):
-	var rtl = _ctrls.output
-	if(font_name == null):
-		rtl.add_theme_font_override(custom_name, null)
-	else:
-		var dyn_font = FontFile.new()
-		dyn_font.load_dynamic_font('res://addons/gut/fonts/' + font_name + '.ttf')
-		rtl.add_theme_font_override(custom_name, dyn_font)
 
 
 func _use_highlighting(should):
@@ -273,7 +263,19 @@ func clear():
 	_ctrls.output.text = ''
 
 
+func _set_font(font_name, custom_name):
+	var rtl = _ctrls.output
+	if(font_name == null):
+		rtl.add_theme_font_override(custom_name, null)
+	else:
+		var dyn_font = FontFile.new()
+		dyn_font.load_dynamic_font('res://addons/gut/fonts/' + font_name + '.ttf')
+		rtl.add_theme_font_override(custom_name, dyn_font)
+
+
 func set_all_fonts(base_name):
+	_font_name = GutUtils.nvl(base_name, 'Default')
+	
 	if(base_name == 'Default'):
 		_set_font(null, 'font')
 		_set_font(null, 'normal_font')
@@ -289,15 +291,14 @@ func set_all_fonts(base_name):
 
 
 func set_font_size(new_size):
-	return # this isn't working.
 	var rtl = _ctrls.output
+	rtl.set("theme_override_font_sizes/font_size", new_size)
+
 #	rtl.add_theme_font_size_override("font", new_size)
 #	rtl.add_theme_font_size_override("normal_font", new_size)
 #	rtl.add_theme_font_size_override("bold_font", new_size)
 #	rtl.add_theme_font_size_override("italics_font", new_size)
 #	rtl.add_theme_font_size_override("bold_italics_font", new_size)
-	rtl.set("theme_override_font_sizes/size", new_size)
-#	print(rtl.get("theme_override_font_sizes/size"))
 
 #	if(rtl.get('custom_fonts/font') != null):
 #		rtl.get('custom_fonts/font').size = new_size
