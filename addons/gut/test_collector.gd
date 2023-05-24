@@ -184,6 +184,8 @@ func _parse_script(test_script):
 		_populate_tests(test_script)
 		scripts_found.append(test_script.path)
 		inner_classes = _get_inner_test_class_names(loaded)
+	else:
+		return []
 
 	for i in range(inner_classes.size()):
 		var loaded_inner = loaded.get(inner_classes[i])
@@ -201,6 +203,7 @@ func _parse_script(test_script):
 # Public
 # -----------------
 func add_script(path):
+	print('adding ', path)
 	# SHORTCIRCUIT
 	if(has_script(path)):
 		return []
@@ -211,18 +214,22 @@ func add_script(path):
 		_lgr.error('Could not find script:  ' + path)
 		return
 
-
-
 	var ts = TestScript.new(_utils, _lgr)
 	ts.path = path
+	# Append right away because if we don't test_doubler.gd.TestInitParameters
+	# will HARD crash.  I couldn't figure out what was causing the issue but
+	# appending right away, and then removing if it's not valid seems to fix
+	# things.  It might have to do with the ordering of the test classes in
+	# the test collecter.  I'm not really sure.
+	scripts.append(ts)
 	var parse_results = _parse_script(ts)
+
 	if(parse_results.find(path) == -1):
-		_lgr.warn(str('Ignoring script ', path,
-		' because it does not extend GutTest'))
-	else:
-		scripts.append(ts)
+		_lgr.warn(str('Ignoring script ', path, ' because it does not extend GutTest'))
+		scripts.remove(scripts.find(ts))
 
 	return parse_results
+
 
 func clear():
 	scripts.clear()

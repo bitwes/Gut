@@ -519,6 +519,7 @@ class TestInitParameters:
 
 	func before_all():
 		gut.get_doubler()._print_source = false
+		print(gut.get_test_collector().to_s())
 
 	func before_each():
 		DoubledClass = double(
