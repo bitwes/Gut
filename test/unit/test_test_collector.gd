@@ -50,6 +50,16 @@ class TestTestCollector:
 
 		assert_eq(gr.tc.scripts.size(), 3)
 
+	func test_add_script_ignores_non_guttest_scripts():
+		var script_path = SCRIPTS_ROOT + 'test_does_not_extend_guttest.gd'
+		var result = gr.tc.add_script(script_path)
+		assert_false(gr.tc.has_script(script_path), 'does not have the script')
+		assert_eq(result, [], 'No scripts or inner classes should have been found')
+
+	func test_add_script_ignores_inner_classes_in_non_guttest_scripts():
+		var script_path = SCRIPTS_ROOT + 'test_does_not_extend_guttest.gd'
+		gr.tc.add_script(script_path)
+		assert_false(gr.tc.has_script(script_path + '.TestExtendsButShouldBeIgnored'))
 
 	func test_can_change_test_class_prefix():
 		gr.tc.set_test_class_prefix('DifferentPrefix')
