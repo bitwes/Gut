@@ -68,12 +68,12 @@ layout_mode = 2
 [node name="RunResultsBtn" type="Button" parent="layout/ControlBar"]
 layout_mode = 2
 toggle_mode = true
+button_pressed = true
 icon = SubResource("ImageTexture_x655i")
 
 [node name="OutputBtn" type="Button" parent="layout/ControlBar"]
 layout_mode = 2
 toggle_mode = true
-button_pressed = true
 icon = SubResource("ImageTexture_x655i")
 
 [node name="Settings" type="Button" parent="layout/ControlBar"]
@@ -218,12 +218,12 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="RunResults" parent="layout/RSplit/CResults/TabBar" instance=ExtResource("5")]
-visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="OutputText" parent="layout/RSplit/CResults/TabBar" instance=ExtResource("6")]
+visible = false
 layout_mode = 2
 
 [node name="sc" type="ScrollContainer" parent="layout/RSplit"]

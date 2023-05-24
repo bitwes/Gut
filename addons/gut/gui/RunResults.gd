@@ -76,7 +76,7 @@ func _open_script_in_editor(path, line_number):
 	if(_interface == null):
 		print('Too soon, wait a bit and try again.')
 		return
-
+	
 	var r = load(path)
 	if(line_number != null and line_number != -1):
 		_interface.edit_script(r, line_number)
@@ -129,6 +129,7 @@ func _goto_code(path, line, method_name='', inner_class =''):
 		if(method_name != ''):
 			search_strings.append(method_name)
 
+		await get_tree().process_frame
 		line = _get_line_number_for_seq_search(search_strings, _editors.get_current_text_edit())
 		if(line != null and line != -1):
 			_interface.get_script_editor().goto_line(line)
