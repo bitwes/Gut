@@ -189,7 +189,6 @@ custom_minimum_size = Vector2(25, 25)
 layout_mode = 2
 orientation = 0
 resize_control = NodePath("../../..")
-vertical_resize = null
 
 [node name="SwitchModes" type="Button" parent="MainBox/Footer"]
 layout_mode = 2
@@ -203,9 +202,7 @@ size_flags_horizontal = 3
 [node name="ResizeHandle2" parent="MainBox/Footer" node_paths=PackedStringArray("resize_control") instance=ExtResource("4_2r8a8")]
 custom_minimum_size = Vector2(25, 25)
 layout_mode = 2
-orientation = 1
 resize_control = NodePath("../../..")
-vertical_resize = null
 
 [node name="SidePad2" type="CenterContainer" parent="MainBox/Footer"]
 custom_minimum_size = Vector2(2, 2.08165e-12)

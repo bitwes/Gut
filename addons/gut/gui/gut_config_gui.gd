@@ -357,9 +357,9 @@ func set_options(options):
 
 
 	_add_title("Panel Output") # ----------------------------------
-	_add_select('output_font_name', options.panel_options.font_name, _avail_fonts, 'Font',
+	_add_select('output_font_name', options.panel_options.output_font_name, _avail_fonts, 'Font',
 		"The name of the font to use when running tests and in the output panel to the left.")
-	_add_number('output_font_size', options.panel_options.font_size, 'Font Size', 5, 100,
+	_add_number('output_font_size', options.panel_options.output_font_size, 'Font Size', 5, 100,
 		"The font size to use when running tests and in the output panel to the left.")
 
 
@@ -376,7 +376,7 @@ func set_options(options):
 	_add_title('Runner Appearance') # ----------------------------------
 	_add_select('font_name', options.font_name, _avail_fonts, 'Font',
 		"The font to use for text output in the Gut Runner.")
-	hide_this = _add_number('font_size', options.font_size, 'Font Size', 5, 100,
+	_add_number('font_size', options.font_size, 'Font Size', 5, 100,
 		"The font size for text output in the Gut Runner.")
 	hide_this = _add_color('font_color', options.font_color, 'Font Color',
 		"The font color for text output in the Gut Runner.")

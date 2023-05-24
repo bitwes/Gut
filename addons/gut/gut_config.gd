@@ -48,7 +48,9 @@ var default_options = {
 
 var default_panel_options = {
 	font_name = 'CourierPrime',
-	font_size = 30,
+	font_size = 16,
+	output_font_name = 'CourierPrime',
+	output_font_size = 30,
 	hide_result_tree = false,
 	hide_output_text = false,
 	hide_settings = false,
