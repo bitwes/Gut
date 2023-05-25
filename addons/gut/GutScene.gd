@@ -29,6 +29,7 @@ func _ready():
 		_test_running_setup()
 
 func _test_running_setup():
+	set_font_size(100)
 	_normal_gui.get_textbox().text = "hello world, how are you doing?"
 
 # ------------------------
@@ -74,13 +75,12 @@ func get_textbox():
 
 
 func set_font_size(new_size):
-	return
 	var rtl = _normal_gui.get_textbox()
-	if(rtl.get('custom_fonts/normal_font') != null):
-		rtl.get('custom_fonts/bold_italics_font').size = new_size
-		rtl.get('custom_fonts/bold_font').size = new_size
-		rtl.get('custom_fonts/italics_font').size = new_size
-		rtl.get('custom_fonts/normal_font').size = new_size
+
+	rtl.set('theme_override_font_sizes/bold_italics_font_size', new_size)
+	rtl.set('theme_override_font_sizes/bold_font_size', new_size)
+	rtl.set('theme_override_font_sizes/italics_font_size', new_size)
+	rtl.set('theme_override_font_sizes/normal_font_size', new_size)
 
 
 func set_font(font_name):
