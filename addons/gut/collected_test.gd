@@ -54,27 +54,34 @@ func did_assert():
 func add_fail(fail_text):
     fail_texts.append(fail_text)
 
+
 func add_pending(pending_text):
     pending_texts.append(pending_text)
+
 
 func add_pass(passing_text):
     pass_texts.append(passing_text)
 
+
 # must have passed an assert and not have any other status to be passing
 func is_passing():
     return pass_texts.size() > 0 and fail_texts.size() == 0 and pending_texts.size() == 0
+
 
 # failing takes precedence over everything else, so any failures makes the
 # test a failure.
 func is_failing():
     return fail_texts.size() > 0
 
+
 # test is only pending if pending was called and the test is not failing.
 func is_pending():
     return pending_texts.size() > 0 and fail_texts.size() == 0
 
+
 func is_risky():
     return !did_something()
+
 
 func did_something():
     return is_passing() or is_failing() or is_pending()
@@ -82,6 +89,7 @@ func did_something():
 
 func get_status_text():
     var to_return = 'no asserts'
+
     if(should_skip):
         to_return = 'skipped'
     elif(pending_texts.size() > 0):
@@ -92,6 +100,12 @@ func get_status_text():
         to_return = 'pass'
 
     return to_return
+
+
+# Deprecated
+func get_status():
+    return get_status_text()
+
 
 # NOTE:  The "failed" and "pending" text must match what is outputted by
 # the logger in order for text highlighting to occur in summary.
@@ -105,6 +119,3 @@ func to_s():
     return to_return
 
 
-# Deprecated
-func get_status():
-    return get_status_text()
