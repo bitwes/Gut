@@ -91,10 +91,10 @@ func did_something():
 func get_status_text():
     var to_return = 'no asserts'
 
-    if(!was_run):
-        to_return = "not run"
-    elif(should_skip):
+    if(should_skip):
         to_return = 'skipped'
+    elif(!was_run):
+        to_return = "not run"
     elif(pending_texts.size() > 0):
         to_return = 'pending'
     elif(fail_texts.size() > 0):

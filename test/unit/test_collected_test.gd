@@ -42,20 +42,24 @@ func test_add_pass_and_pending_results_in_passing_false():
 
 func test_get_status_text_is_no_asserts_when_nothing_happened():
     var t = CollectedTest.new()
+    t.was_run = true
     assert_eq(t.get_status_text(), 'no asserts')
 
 func test_when_one_pass_added_status_is_pass():
     var t = CollectedTest.new()
+    t.was_run = true
     t.add_pass('pass')
     assert_eq(t.get_status_text(), 'pass')
 
 func test_when_one_failed_status_is_fail():
     var t = CollectedTest.new()
+    t.was_run = true
     t.add_fail('fail')
     assert_eq(t.get_status_text(), 'fail')
 
 func test_when_one_pending_status_is_pending():
     var t = CollectedTest.new()
+    t.was_run = true
     t.add_pending('pending')
     assert_eq(t.get_status_text(), 'pending')
 
