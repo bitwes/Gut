@@ -732,20 +732,12 @@ func _run_test(script_inst, test_name):
 func _call_before_all(test_script):
 	_current_test = _before_all_test_obj
 	_current_test.has_printed_name = false
-	_lgr.inc_indent()
-
-	# Next 3 lines can be removed when prerun_setup removed.
-	_current_test.name = 'prerun_setup'
 	_current_test.name = 'before_all'
 
+	_lgr.inc_indent()
 	await test_script.before_all()
-	# TODO 4.0 GDScriptFunctionState? ----
-	# var result = test_script.before_all()
-	# if(_is_function_state(result)):
-	# 	await _wait_for_done(result)
-	# ----
-
 	_lgr.dec_indent()
+
 	_current_test = null
 
 # ------------------------------------------------------------------------------
@@ -757,21 +749,12 @@ func _call_before_all(test_script):
 func _call_after_all(test_script):
 	_current_test = _after_all_test_obj
 	_current_test.has_printed_name = false
-	_lgr.inc_indent()
-
-	# Next 3 lines can be removed when postrun_teardown removed.
-	_current_test.name = 'postrun_teardown'
 	_current_test.name = 'after_all'
 
-
+	_lgr.inc_indent()
 	await test_script.after_all()
-	# TODO 4.0 GDScriptFunctionState? ----
-	# var result = test_script.after_all()
-	# if(_is_function_state(result)):
-	# 	await _wait_for_done(result)
-	# ----
-
 	_lgr.dec_indent()
+
 	_current_test = null
 
 # ------------------------------------------------------------------------------
