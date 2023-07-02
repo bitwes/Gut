@@ -203,18 +203,58 @@ func set_test_class_prefix(test_class_prefix):
 func get_scripts():
 	return scripts
 
-func get_current_script():
-	return scripts[scripts.size() -1]
+# func get_current_script():
+# 	return scripts[scripts.size() -1]
 
 
-func add_pass(test_name, reason = ''):
-	get_current_script().add_pass(test_name, reason)
+# func add_pass(test_name, reason = ''):
+# 	get_current_script().add_pass(test_name, reason)
 
-func add_fail(test_name, reason = ''):
-	get_current_script().add_fail(test_name, reason)
+# func add_fail(test_name, reason = ''):
+# 	get_current_script().add_fail(test_name, reason)
 
-func get_test_text(test_name):
-	return test_name + "\n" + get_current_script().get_test_obj(test_name).to_s()
+# func get_test_text(test_name):
+# 	return test_name + "\n" + get_current_script().get_test_obj(test_name).to_s()
 
-func add_pending(test_name, reason = ''):
-	get_current_script().add_pending(test_name, reason)
+# func add_pending(test_name, reason = ''):
+# 	get_current_script().add_pending(test_name, reason)
+
+func get_ran_test_count():
+	var count = 0
+	for s in scripts:
+		count += s.get_ran_test_count()
+	return count
+
+
+func get_test_count():
+	var count = 0
+	for s in scripts:
+		count += s.tests.size()
+	return count
+
+
+func get_assert_count():
+	var count = 0
+	for s in scripts:
+		count += s.get_assert_count()
+	return count
+
+
+func get_pass_count():
+	var count = 0
+	for s in scripts:
+		count += s.get_pass_count()
+	return count
+
+
+func get_fail_count():
+	var count = 0
+	for s in scripts:
+		count += s.get_fail_count()
+	return count
+
+func get_pending_count():
+	var count = 0
+	for s in scripts:
+		count += s.get_pending_count()
+	return count

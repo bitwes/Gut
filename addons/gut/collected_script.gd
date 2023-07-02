@@ -2,7 +2,9 @@ var CollectedTest = load('res://addons/gut/collected_test.gd')
 
 # ------------------------------------------------------------------------------
 # This holds all the meta information for a test script.  It contains the
-# name of the inner class and an array of Test "structs".
+# name of the inner class and an array of CollectedTests.  This does not parse
+# anything, it just holds the data about parsed scripts and tests.  The
+# TestCollector is responsible for populating this object.
 #
 # This class also facilitates all the exporting and importing of tests.
 # ------------------------------------------------------------------------------
@@ -11,7 +13,13 @@ var tests = []
 var path:String
 var _utils = null
 var _lgr = null
+# Set externally by test_collector after it can verify that the script was
+# actually loaded.  This could probably be changed to just hold the GutTest
+# script that was loaded, cutting down on complexity elsewhere.
 var is_loaded = false
+
+var was_skipped = false
+var skip_reason = ''
 
 var name = '' :
     get: return path
@@ -29,7 +37,7 @@ func to_s():
         to_return += str('.', inner_class_name)
     to_return += "\n"
     for i in range(tests.size()):
-        to_return += str('  ', tests[i].name, "\n")
+        to_return += str('  ', tests[i].to_s(), "\n")
     return to_return
 
 
@@ -121,15 +129,19 @@ func mark_tests_to_skip_with_suffix(suffix):
         single_test.should_skip = single_test.name.ends_with(suffix)
 
 
+func get_ran_test_count():
+    var count = 0
+    for t in tests:
+        if(t.was_run):
+            count += 1
+    return count
 
-# _______________ Summary ____________________
-var was_skipped = false
-var skip_reason = ''
-var _tests = {}			# - These two replace tests[]
-var _test_order = []	# -
-# var name = 'NOT_SET' # <- this is path
-
-
+func get_assert_count():
+    var count = 0
+    for t in tests:
+        count += t.pass_texts.size()
+        count += t.fail_texts.size()
+    return count
 
 func get_pass_count():
     var count = 0
@@ -179,31 +191,3 @@ func get_risky_count():
     return count
 
 
-func get_test_obj(obj_name): # <- this should be get_test_named I think
-    if(!_tests.has(obj_name)):
-        var to_add = CollectedTest.new()
-        _tests[obj_name] = to_add
-        _test_order.append(obj_name)
-
-    var to_return = _tests[obj_name]
-
-    return to_return
-
-
-func add_pass(test_name, reason):
-    var t = get_test_obj(test_name)
-    t.pass_texts.append(reason)
-
-
-func add_fail(test_name, reason):
-    var t = get_test_obj(test_name)
-    t.fail_texts.append(reason)
-
-
-func add_pending(test_name, reason):
-    var t = get_test_obj(test_name)
-    t.pending_texts.append(reason)
-
-
-func get_tests():
-    return _tests

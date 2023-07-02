@@ -6,59 +6,59 @@ var script2 = 'res://test/resources/parsing_and_loading_samples/test_samples2.gd
 var script3 = 'res://test/resources/parsing_and_loading_samples/test_samples3.gd'
 var script_has_inner = 'res://test/resources/parsing_and_loading_samples/has_inner_class.gd'
 
-var gr = {
-	summary = null
-}
+# var gr = {
+# 	summary = null
+# }
 
 
-func before_each():
-	gr.summary = Summary.new()
+# func before_each():
+# 	gr.summary = Summary.new()
 
-func test_can_add_script():
-	gr.summary.add_script(script1)
-	pass_test('no error')
+# func test_can_add_script():
+# 	gr.summary.add_script(script1)
+# 	pass_test('no error')
 
-func test_can_get_scripts():
-	gr.summary.add_script(script1)
-	gr.summary.add_script(script2)
-	assert_eq(gr.summary.get_scripts().size(), 2)
+# func test_can_get_scripts():
+# 	gr.summary.add_script(script1)
+# 	gr.summary.add_script(script2)
+# 	assert_eq(gr.summary.get_scripts().size(), 2)
 
-func test_get_current_script_returns_the_most_recent_script():
-	gr.summary.add_script(script1)
-	gr.summary.add_script(script2)
-	assert_eq(gr.summary.get_current_script().name, script2)
+# func test_get_current_script_returns_the_most_recent_script():
+# 	gr.summary.add_script(script1)
+# 	gr.summary.add_script(script2)
+# 	assert_eq(gr.summary.get_current_script().name, script2)
 
-func test_adding_a_new_script_changes_current():
-	gr.summary.add_script(script1)
-	gr.summary.add_script(script2)
-	gr.summary.add_script(script3)
-	assert_eq(gr.summary.get_current_script().name, script3)
+# func test_adding_a_new_script_changes_current():
+# 	gr.summary.add_script(script1)
+# 	gr.summary.add_script(script2)
+# 	gr.summary.add_script(script3)
+# 	assert_eq(gr.summary.get_current_script().name, script3)
 
-func test_can_add_pass():
-	gr.summary.add_script(script1)
-	gr.summary.add_pass('test_assert_eq_number_not_equal')
-	assert_eq(gr.summary.get_current_script().get_pass_count(), 1)
+# func test_can_add_pass():
+# 	gr.summary.add_script(script1)
+# 	gr.summary.add_pass('test_assert_eq_number_not_equal')
+# 	assert_eq(gr.summary.get_current_script().get_pass_count(), 1)
 
-func test_can_add_fail():
-	gr.summary.add_script(script1)
-	gr.summary.add_fail('test_assert_eq_number_not_equal', 'reason')
-	assert_eq(gr.summary.get_current_script().get_fail_count(), 1)
+# func test_can_add_fail():
+# 	gr.summary.add_script(script1)
+# 	gr.summary.add_fail('test_assert_eq_number_not_equal', 'reason')
+# 	assert_eq(gr.summary.get_current_script().get_fail_count(), 1)
 
-func test_can_get_failure_reason():
-	gr.summary.add_script(script1)
-	gr.summary.add_fail('test_assert_eq_number_not_equal', 'reason')
-	assert_ne(gr.summary.get_test_text('test_assert_eq_number_not_equal').find('reason'), -1)
+# func test_can_get_failure_reason():
+# 	gr.summary.add_script(script1)
+# 	gr.summary.add_fail('test_assert_eq_number_not_equal', 'reason')
+# 	assert_ne(gr.summary.get_test_text('test_assert_eq_number_not_equal').find('reason'), -1)
 
-func test_can_add_pending():
-	gr.summary.add_script(script2)
-	gr.summary.add_pending('test_something_else', 'reason')
-	assert_eq(gr.summary.get_current_script().get_pending_count(), 1)
-	assert_ne(gr.summary.get_test_text('test_something_else').find('reason'), -1)
+# func test_can_add_pending():
+# 	gr.summary.add_script(script2)
+# 	gr.summary.add_pending('test_something_else', 'reason')
+# 	assert_eq(gr.summary.get_current_script().get_pending_count(), 1)
+# 	assert_ne(gr.summary.get_test_text('test_something_else').find('reason'), -1)
 
-func test_get_test_text_returns_test_name():
-	gr.summary.add_script(script1)
-	gr.summary.add_pass('test_something_else', 'reason')
-	assert_ne(gr.summary.get_test_text('test_something_else').find('test_something_else'), -1)
+# func test_get_test_text_returns_test_name():
+# 	gr.summary.add_script(script1)
+# 	gr.summary.add_pass('test_something_else', 'reason')
+# 	assert_ne(gr.summary.get_test_text('test_something_else').find('test_something_else'), -1)
 
 
 

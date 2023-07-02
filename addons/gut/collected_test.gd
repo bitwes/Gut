@@ -41,6 +41,7 @@ var fail_texts = []
 var pending_texts = []
 var orphans = 0
 
+var was_run = false
 
 # Deprecate probably
 func did_pass():
@@ -80,7 +81,7 @@ func is_pending():
 
 
 func is_risky():
-    return !did_something()
+    return should_skip or (was_run and !did_something())
 
 
 func did_something():
@@ -107,15 +108,19 @@ func get_status():
     return get_status_text()
 
 
-# NOTE:  The "failed" and "pending" text must match what is outputted by
-# the logger in order for text highlighting to occur in summary.
 func to_s():
     var pad = '     '
-    var to_return = ''
+    var to_return = str(name, "(", get_status_text(), ")")
+    if(!was_run):
+        to_return += "NOT RUN"
+    to_return += ":\n"
+
     for i in range(fail_texts.size()):
-        to_return += str(pad, '[Failed]:  ', fail_texts[i], "\n")
+        to_return += str(pad, 'Fail:  ', fail_texts[i], "\n")
     for i in range(pending_texts.size()):
-        to_return += str(pad, '[Pending]:  ', pending_texts[i], "\n")
+        to_return += str(pad, 'Pending:  ', pending_texts[i], "\n")
+    for i in range(pass_texts.size()):
+        to_return += str(pad, 'Pass:  ', pass_texts[i], "\n")
     return to_return
 
 

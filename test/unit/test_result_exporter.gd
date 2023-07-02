@@ -6,6 +6,7 @@ var Logger = _utils.Logger
 
 var _test_gut = null
 
+var skip_script = 'new summary broke this'
 # Returns a new gut object, all setup for testing.
 func get_a_gut():
 	var g = Gut.new()

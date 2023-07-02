@@ -201,8 +201,9 @@ class TestEverythingElse:
 	func get_a_gut():
 		var g = new_gut()
 		# Hides output.  remove this when things start failing.
-		g.logger.disable_all_printers(true)
-		g.logger.disable_formatting(true)
+		var print_sub_tests = true
+		g.logger.disable_all_printers(!print_sub_tests)
+		g.logger.disable_formatting(!print_sub_tests)
 		# For checking warnings etc, this has to be ALL_ASSERTS
 		g.log_level = g.LOG_LEVEL_ALL_ASSERTS
 		return g
@@ -242,6 +243,13 @@ class TestEverythingElse:
 		# is a bad idea in general.
 		assert_true(true, 'POSTTEARDOWN RAN')
 		gut.directory_delete_files('user://')
+
+		gut.p("/*THESE SHOULD ALL PASS, IF NOT THEN SOMETHING IS BROKEN*/")
+		gut.p("/*These counts will be off if another script was run before this one.*/")
+		assert_eq(1, counts.prerun_setup_count, "Prerun setup should have been called once")
+		assert_eq(gut.get_test_count() - starting_counts.setup_count, counts.setup_count, "Setup should have been called once for each test")
+		# teardown for this test hasn't been run yet.
+		assert_eq(gut.get_test_count() - starting_counts.teardown_count, counts.teardown_count, "Teardown for all tests.")
 
 
 	# ------------------------------
@@ -413,6 +421,7 @@ class TestEverythingElse:
 		gr.test_gut.test_scripts()
 		assert_eq(gr.test_gut.get_pass_count(), 1, 'One test should have passed.')
 		assert_eq(gr.test_gut.get_fail_count(), 1, 'One failure for not watching anymore.')
+		assert_eq(gr.test_gut.get_test_count(), 2, 'should have ran two tests')
 
 	# ------------------------------
 	# Inner Class
@@ -495,7 +504,7 @@ class TestEverythingElse:
 		gr.test_gut.pre_run_script = 'res://does_not_exist.gd'
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		gr.test_gut.test_scripts()
-		assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test should not be run')
+		assert_eq(gr.test_gut.get_test_count(), 0, 'test should not be run')
 		assert_gt(gr.test_gut.logger.get_errors().size(), 0, 'there should be errors')
 
 	func test_pre_hook_sets_gut_instance():
@@ -508,7 +517,7 @@ class TestEverythingElse:
 		gr.test_gut.pre_run_script = 'res://test/resources/non_hook_script.gd'
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		gr.test_gut.test_scripts()
-		assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test should not be run')
+		assert_eq(gr.test_gut.get_test_count(), 0, 'test should not be run')
 		assert_gt(gr.test_gut.logger.get_errors().size(), 0, 'there should be errors')
 
 	func test_post_hook_is_run_after_tests():
@@ -525,7 +534,7 @@ class TestEverythingElse:
 		gr.test_gut.post_run_script = 'res://does_not_exist.gd'
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		gr.test_gut.test_scripts()
-		assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test should not be run')
+		assert_eq(gr.test_gut.get_test_count(), 0, 'test should not be run')
 		assert_gt(gr.test_gut.logger.get_errors().size(), 0, 'there should be errors')
 
 	# ------------------------------
@@ -545,16 +554,15 @@ class TestEverythingElse:
 		gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 		gr.test_gut.unit_test_name = 'test_has_one_defaulted_parameter'
 		gr.test_gut.test_scripts()
-		var totals = gr.test_gut.get_summary().get_totals()
-		assert_eq(totals.passing, 1, 'pass count')
-		assert_eq(totals.tests, 1, 'test count')
+		assert_eq(gr.test_gut.get_pass_count(), 1, 'pass count')
+		assert_eq(gr.test_gut.get_test_count(), 1, 'test count')
 
 	func test_too_many_parameters_generates_an_error():
 		gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 		gr.test_gut.unit_test_name = 'test_has_two_parameters'
 		gr.test_gut.test_scripts()
 		assert_eq(gr.test_gut.logger.get_errors().size(), 1, 'error size')
-		assert_eq(gr.test_gut.get_summary().get_totals().tests, 0, 'test count')
+		assert_eq(gr.test_gut.get_test_count(), 0, 'test count')
 
 	func test_parameterized_tests_are_called_multiple_times():
 		gr.test_gut.add_script(TEST_WITH_PARAMETERS)
@@ -639,19 +647,3 @@ class TestEverythingElse:
 		assert_eq(gr.test_gut.get_pass_count(), 10, 'pass count')
 		assert_eq(gr.test_gut.get_fail_count(), 10, 'fail count')
 		assert_eq(gr.test_gut.get_assert_count(), 20, 'assert count`')
-
-
-	# ------------------------------------------------------------------------------
-	#
-	#
-	# This must be the LAST test (but i don't think it always will be anymore)
-	# TODO Is this still valid and is it always the last test?  It will not be.
-	#
-	# ------------------------------------------------------------------------------
-	func test_verify_results():
-		gut.p("/*THESE SHOULD ALL PASS, IF NOT THEN SOMETHING IS BROKEN*/")
-		gut.p("/*These counts will be off if another script was run before this one.*/")
-		assert_eq(1, counts.prerun_setup_count, "Prerun setup should have been called once")
-		assert_eq(gut.get_test_count() - starting_counts.setup_count, counts.setup_count, "Setup should have been called once for each test")
-		# teardown for this test hasn't been run yet.
-		assert_eq(gut.get_test_count() -1 - starting_counts.teardown_count, counts.teardown_count, "Teardown should have been called one less time.")

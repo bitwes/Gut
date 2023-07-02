@@ -254,8 +254,6 @@ var _pause_before_teardown = false
 
 
 var _awaiter = _utils.Awaiter.new()
-var _new_summary = null
-
 
 # Used to cancel importing scripts if an error has occurred in the setup.  This
 # prevents tests from being run if they were exported and ensures that the
@@ -265,17 +263,13 @@ var _new_summary = null
 # was not broken somewhere and remove if no longer used.
 var _cancel_import = false
 
-# Used for proper assert tracking and printing during before_all
-var _before_all_test_obj = load('res://addons/gut/collected_test.gd').new()
-# Used for proper assert tracking and printing during after_all
-var _after_all_test_obj = load('res://addons/gut/collected_test.gd').new()
-
+# this is how long Gut will wait when there are items that must be queued free
+# when a test completes (due to calls to add_child_autoqfree)
+var _auto_queue_free_delay = .1
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func _init():
-	_before_all_test_obj.name = 'before_all'
-	_after_all_test_obj.name = 'after_all'
 	# When running tests for GUT itself, _utils has been setup to always return
 	# a new logger so this does not set the gut instance on the base logger
 	# when creating test instances of GUT.
@@ -417,9 +411,8 @@ func _print_summary():
 	_lgr.log("= Run Summary", _lgr.fmts.yellow)
 	_lgr.log('==============================================', _lgr.fmts.yellow)
 
-	# _new_summary.log_summary_text(_lgr)
-	# _new_summary._test_collector = _test_collector
-	_new_summary.log_collector_summary_text(_test_collector, _lgr)
+	var summary = _utils.Summary.new()
+	summary.log_collector_summary_text(_test_collector, _lgr)
 
 	var logger_text = ''
 	if(_lgr.get_errors().size() > 0):
@@ -432,18 +425,7 @@ func _print_summary():
 		logger_text = "\nWarnings/Errors:" + logger_text + "\n\n"
 	_lgr.log(logger_text)
 
-	if(_new_summary.get_totals().tests > 0):
-		var fmt = _lgr.fmts.green
-		var msg = str(_new_summary.get_totals().passing_tests) + ' passed ' + str(_new_summary.get_totals().failing_tests) + ' failed.  ' + \
-			str("Tests finished in ", get_elapsed_time(), 's')
-		if(_new_summary.get_totals().failing > 0):
-			fmt = _lgr.fmts.red
-		elif(_new_summary.get_totals().pending > 0):
-			fmt = _lgr.fmts.yellow
-
-		_lgr.log(msg, fmt)
-	else:
-		_lgr.log('No tests ran', _lgr.fmts.red)
+	_lgr.log(str("Tests finished in ", get_elapsed_time(), 's'))
 
 
 func _validate_hook_script(path):
@@ -488,7 +470,6 @@ func _init_run():
 	var valid = true
 	_test_collector.set_test_class_prefix(_inner_class_prefix)
 	_test_script_objects = []
-	_new_summary = _utils.Summary.new()
 	_current_test = null
 	_is_running = true
 
@@ -507,7 +488,13 @@ func _init_run():
 # ------------------------------------------------------------------------------
 func _end_run():
 	_print_summary()
-	p("\n")
+
+	if(!_utils.is_null_or_empty(_select_script)):
+		p('Ran Scripts matching "' + _select_script + '"')
+	if(!_utils.is_null_or_empty(_unit_test_name)):
+		p('Ran Tests matching "' + _unit_test_name + '"')
+	if(!_utils.is_null_or_empty(_inner_class_name)):
+		p('Ran Inner Classes matching "' + _inner_class_name + '"')
 
 	# Do not count any of the _test_script_objects since these will be released
 	# when GUT is released.
@@ -518,13 +505,6 @@ func _end_run():
 		p("       It also does not include any orphans created by global scripts")
 		p("       loaded before tests were ran.")
 		p(str("Total orphans = ", _orphan_counter.orphan_count()))
-
-	if(!_utils.is_null_or_empty(_select_script)):
-		p('Ran Scripts matching "' + _select_script + '"')
-	if(!_utils.is_null_or_empty(_unit_test_name)):
-		p('Ran Tests matching "' + _unit_test_name + '"')
-	if(!_utils.is_null_or_empty(_inner_class_name)):
-		p('Ran Inner Classes matching "' + _inner_class_name + '"')
 
 	_is_running = false
 
@@ -672,28 +652,10 @@ func _run_test(script_inst, test_name):
 	var script_result = null
 
 	await script_inst.before_each()
-	# TODO 4.0 GDScriptFunctionState? ----
-	# var before_each_result = script_inst.before_each()
-	# if(_is_function_state(before_each_result)):
-	# 	await _wait_for_done(before_each_result)
-	# ----
 
 	start_test.emit(test_name)
 
 	await script_inst.call(test_name)
-	# TODO 4.0 GDScriptFunctionState? ----
-	# script_result = await script_inst.call(test_name)
-	# if(_is_function_state(script_result)):
-	# 	await _wait_for_done(script_result)
-	# ----
-	var test_summary = _new_summary.add_test(test_name)
-	if(test_summary == null):
-		var msg = "Summary was null.  This has been seen to happen when a test \n"
-		msg += "calls unreference.  Adding 'await get_tree().process_frame' somewhere between\n"
-		msg += "instantiation and calling unreference, in your test, may fix this issue.\n"
-		msg += "More info at https://github.com/godotengine/godot/issues/69411"
-		_lgr.error(msg)
-		test_summary.force_a_runtime_error_to_stop_things_from_progressing_see_error_above = 1
 
 	# if the test called pause_before_teardown then await until
 	# the continue button is pressed.
@@ -705,11 +667,6 @@ func _run_test(script_inst, test_name):
 
 	# call each post-each-test method until teardown is removed.
 	await script_inst.after_each()
-	# TODO 4.0 GDScriptFunctionState? ----
-	# var after_each_result = await script_inst.after_each()
-	# if(_is_function_state(after_each_result)):
-	# 	await _wait_for_done(after_each_result)
-	# ----
 
 	# Free up everything in the _autofree.  Yield for a bit if we
 	# have anything with a queue_free so that they have time to
@@ -717,9 +674,8 @@ func _run_test(script_inst, test_name):
 	var aqf_count = _autofree.get_queue_free_count()
 	_autofree.free_all()
 	if(aqf_count > 0):
-		await get_tree().create_timer(.25).timeout
+		await get_tree().create_timer(_auto_queue_free_delay).timeout
 
-	test_summary.orphans = _orphan_counter.get_counter('test')
 	if(_log_level > 0):
 		_orphan_counter.print_orphans('test', _lgr)
 
@@ -731,16 +687,22 @@ func _run_test(script_inst, test_name):
 #
 # Calls both pre-all-tests methods until prerun_setup is removed
 # ------------------------------------------------------------------------------
-func _call_before_all(test_script):
-	_current_test = _before_all_test_obj
-	_current_test.has_printed_name = false
-	_current_test.name = 'before_all'
+func _call_before_all(test_script, collected_script):
+	var before_all_test_obj = _utils.CollectedTest.new()
+	before_all_test_obj.has_printed_name = false
+	before_all_test_obj.name = 'before_all'
+
+	collected_script.tests.append(before_all_test_obj)
+	_current_test = before_all_test_obj
 
 	_lgr.inc_indent()
 	await test_script.before_all()
+	before_all_test_obj.was_run = before_all_test_obj.did_something()
+
 	_lgr.dec_indent()
 
 	_current_test = null
+	print("**********\n", collected_script.to_s(), "\n**********")
 
 # ------------------------------------------------------------------------------
 # Calls after_all on the passed in test script and takes care of settings so all
@@ -748,13 +710,17 @@ func _call_before_all(test_script):
 #
 # Calls both post-all-tests methods until postrun_teardown is removed.
 # ------------------------------------------------------------------------------
-func _call_after_all(test_script):
-	_current_test = _after_all_test_obj
-	_current_test.has_printed_name = false
-	_current_test.name = 'after_all'
+func _call_after_all(test_script, collected_script):
+	var after_all_test_obj = _utils.CollectedTest.new()
+	after_all_test_obj.has_printed_name = false
+	after_all_test_obj.name = 'after_all'
+
+	collected_script.tests.append(after_all_test_obj)
+	_current_test = after_all_test_obj
 
 	_lgr.inc_indent()
 	await test_script.after_all()
+	after_all_test_obj.was_run = after_all_test_obj.did_something()
 	_lgr.dec_indent()
 
 	_current_test = null
@@ -797,7 +763,6 @@ func _test_the_scripts(indexes=[]):
 		if(the_script.tests.size() > 0):
 			_lgr.set_indent_level(0)
 			_print_script_heading(the_script)
-		_new_summary.add_script(the_script.get_full_name())
 
 		if(!the_script.is_loaded):
 			break
@@ -815,8 +780,8 @@ func _test_the_scripts(indexes=[]):
 			_lgr.inc_indent()
 			_lgr.log(msg, _lgr.fmts.yellow)
 			_lgr.dec_indent()
-			_new_summary.get_current_script().was_skipped = true
-			_new_summary.get_current_script().skip_reason = skip_script
+			the_script.skip_reason = skip_script
+			the_script.was_skipped = true
 			continue
 		# ----
 
@@ -832,7 +797,7 @@ func _test_the_scripts(indexes=[]):
 		if(!_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
 			the_script.tests = []
 		else:
-			await _call_before_all(test_script)
+			await _call_before_all(test_script, the_script)
 			# TODO 4.0 GDScriptFunctionState? ----
 			# var before_all_result = await _call_before_all(test_script)
 			# if(_is_function_state(before_all_result)):
@@ -853,7 +818,6 @@ func _test_the_scripts(indexes=[]):
 			# ------------------
 			# SHORTCIRCUI
 			if(_current_test.should_skip):
-				_new_summary.add_pending(_current_test.name, 'SKIPPED because it ends with ' + skip_suffix)
 				continue
 			# ------------------
 
@@ -864,18 +828,14 @@ func _test_the_scripts(indexes=[]):
 					_lgr.error(str('Parameterized test ', _current_test.name,
 						' has too many parameters:  ', _current_test.arg_count, '.'))
 				elif(_current_test.arg_count == 1):
+					_current_test.was_run = true
 					script_result = await _run_parameterized_test(test_script, _current_test.name)
 				else:
+					_current_test.was_run = true
 					script_result = await _run_test(test_script, _current_test.name)
 
-				# TODO 4.0 GDScriptFunctionState? ----
-				# if(_is_function_state(script_result)):
-				# 	# _run_test calls _wait for done, just wait for that to finish
-				# 	await script_result.COMPLETED
-				# ----
-
 				if(!_current_test.did_assert()):
-					_lgr.warn('Test did not assert')
+					_lgr.warn(str(_current_test.name, ' did not assert'))
 
 				_current_test.has_printed_name = false
 				end_test.emit()
@@ -894,7 +854,7 @@ func _test_the_scripts(indexes=[]):
 		_orphan_counter.print_orphans('script', _lgr)
 
 		if(_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
-			await _call_after_all(test_script)
+			await _call_after_all(test_script, the_script)
 			# TODO 4.0 GDScriptFunctionState? ----
 			# var after_all_result = await _call_after_all(test_script)
 			# if(_is_function_state(after_all_result)):
@@ -926,14 +886,10 @@ func _test_the_scripts(indexes=[]):
 # ------------------------------------------------------------------------------
 func _pass(text=''):
 	if(_current_test):
-		# _current_test.assert_count += 1
-		# _new_summary.add_pass(_current_test.name, text)
 		_current_test.add_pass(text)
 	else:
 		# I don't think this is valid anymore.
 		_lgr.error('Encountered a call to _pass when there is no current test')
-		# if(_new_summary != null): # b/c of tests.
-		# 	_new_summary.add_pass('script level', text)
 
 
 # ------------------------------------------------------------------------------
@@ -948,16 +904,11 @@ func _fail(text=''):
 		var call_count_text = ''
 		if(_parameter_handler != null):
 			call_count_text = str('(call #', _parameter_handler.get_call_count(), ') ')
-		# _new_summary.add_fail(_current_test.name, call_count_text + text + line_text)
-		# _current_test.passed = false
-		# _current_test.assert_count += 1
 		_current_test.line_number = line_number
 		_current_test.add_fail(call_count_text + text + line_text)
 	else:
 		# I don't think this is valid anymore.
 		_lgr.error('Encountered a call to _fail when there is no current test')
-		# if(_new_summary != null): # b/c of tests.
-		# 	_new_summary.add_fail('script level', text)
 
 
 # ------------------------------------------------------------------------------
@@ -981,8 +932,6 @@ func _extract_line_number(current_test):
 func _pending(text=''):
 	if(_current_test):
 		_current_test.add_pending(text)
-		# _current_test.pending = true
-		# _new_summary.add_pending(_current_test.name, text)
 
 
 # ------------------------------------------------------------------------------
@@ -1200,32 +1149,31 @@ func clear_text():
 # Get the number of tests that were ran
 # ------------------------------------------------------------------------------
 func get_test_count():
-	return _new_summary.get_totals().tests
+	return _test_collector.get_ran_test_count()
 
 # ------------------------------------------------------------------------------
 # Get the number of assertions that were made
 # ------------------------------------------------------------------------------
 func get_assert_count():
-	var t = _new_summary.get_totals()
-	return t.passing + t.failing
+	return _test_collector.get_assert_count()
 
 # ------------------------------------------------------------------------------
 # Get the number of assertions that passed
 # ------------------------------------------------------------------------------
 func get_pass_count():
-	return _new_summary.get_totals().passing
+	return _test_collector.get_pass_count()
 
 # ------------------------------------------------------------------------------
 # Get the number of assertions that failed
 # ------------------------------------------------------------------------------
 func get_fail_count():
-	return _new_summary.get_totals().failing
+	return _test_collector.get_fail_count()
 
 # ------------------------------------------------------------------------------
 # Get the number of tests flagged as pending
 # ------------------------------------------------------------------------------
 func get_pending_count():
-	return _new_summary.get_totals().pending
+	return _test_collector.get_pending_count()
 
 
 # ------------------------------------------------------------------------------
@@ -1283,7 +1231,7 @@ func get_current_test_object():
 ## Returns a summary.gd object that contains all the information about
 ## the run results.
 func get_summary():
-	return _new_summary
+	return _utils.Summary.new(_test_collector)
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
