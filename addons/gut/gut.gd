@@ -417,7 +417,9 @@ func _print_summary():
 	_lgr.log("= Run Summary", _lgr.fmts.yellow)
 	_lgr.log('==============================================', _lgr.fmts.yellow)
 
-	_new_summary.log_summary_text(_lgr)
+	# _new_summary.log_summary_text(_lgr)
+	# _new_summary._test_collector = _test_collector
+	_new_summary.log_collector_summary_text(_test_collector, _lgr)
 
 	var logger_text = ''
 	if(_lgr.get_errors().size() > 0):
@@ -924,11 +926,14 @@ func _test_the_scripts(indexes=[]):
 # ------------------------------------------------------------------------------
 func _pass(text=''):
 	if(_current_test):
-		_current_test.assert_count += 1
-		_new_summary.add_pass(_current_test.name, text)
+		# _current_test.assert_count += 1
+		# _new_summary.add_pass(_current_test.name, text)
+		_current_test.add_pass(text)
 	else:
-		if(_new_summary != null): # b/c of tests.
-			_new_summary.add_pass('script level', text)
+		# I don't think this is valid anymore.
+		_lgr.error('Encountered a call to _pass when there is no current test')
+		# if(_new_summary != null): # b/c of tests.
+		# 	_new_summary.add_pass('script level', text)
 
 
 # ------------------------------------------------------------------------------
@@ -943,13 +948,16 @@ func _fail(text=''):
 		var call_count_text = ''
 		if(_parameter_handler != null):
 			call_count_text = str('(call #', _parameter_handler.get_call_count(), ') ')
-		_new_summary.add_fail(_current_test.name, call_count_text + text + line_text)
-		_current_test.passed = false
-		_current_test.assert_count += 1
+		# _new_summary.add_fail(_current_test.name, call_count_text + text + line_text)
+		# _current_test.passed = false
+		# _current_test.assert_count += 1
 		_current_test.line_number = line_number
+		_current_test.add_fail(call_count_text + text + line_text)
 	else:
-		if(_new_summary != null): # b/c of tests.
-			_new_summary.add_fail('script level', text)
+		# I don't think this is valid anymore.
+		_lgr.error('Encountered a call to _fail when there is no current test')
+		# if(_new_summary != null): # b/c of tests.
+		# 	_new_summary.add_fail('script level', text)
 
 
 # ------------------------------------------------------------------------------
@@ -972,8 +980,9 @@ func _extract_line_number(current_test):
 # ------------------------------------------------------------------------------
 func _pending(text=''):
 	if(_current_test):
-		_current_test.pending = true
-		_new_summary.add_pending(_current_test.name, text)
+		_current_test.add_pending(text)
+		# _current_test.pending = true
+		# _new_summary.add_pending(_current_test.name, text)
 
 
 # ------------------------------------------------------------------------------

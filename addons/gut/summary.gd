@@ -265,3 +265,109 @@ func log_summary_text(lgr):
 
 	lgr.set_indent_level(orig_indent)
 
+
+
+# ------------------------------------------------------------------------------
+# It's the new style
+# ------------------------------------------------------------------------------
+func _get_collector_totals(test_collector):
+	var totals = {
+		passing = 0,
+		pending = 0,
+		failing = 0,
+		risky = 0,
+		tests = 0,
+		scripts = 0,
+		passing_tests = 0,
+		failing_tests = 0
+	}
+
+	for s in test_collector.scripts:
+		# assert totals
+		totals.passing += s.get_pass_count()
+		totals.pending += s.get_pending_count()
+		totals.failing += s.get_fail_count()
+
+		# test totals
+		totals.tests += s._test_order.size()
+		totals.passing_tests += s.get_passing_test_count()
+		totals.failing_tests += s.get_failing_test_count()
+		totals.risky += s.get_risky_count()
+
+	totals.scripts = get_non_inner_class_script_count()
+
+	return totals
+
+
+func _count_tests_and_log_non_passing_tests(test_collector, lgr):
+	var to_return = {
+		passing = 0,
+		non_passing = 0
+	}
+
+	for test_script in test_collector.scripts:
+		lgr.set_indent_level(0)
+
+		if(test_script.was_skipped or test_script.get_fail_count() > 0 or test_script.get_pending_count() > 0):
+			lgr.log("\n" + test_script.name, lgr.fmts.underline)
+
+		if(test_script.was_skipped):
+			lgr.inc_indent()
+			var skip_msg = str('[Risky] Script was skipped:  ', test_script.skip_reason)
+			lgr.log(skip_msg, lgr.fmts.yellow)
+			lgr.dec_indent()
+
+		for test in test_script.tests:
+			if(test.is_passing()):
+				to_return.passing += 1
+			else:
+				to_return.non_passing += 1
+				lgr.log(str('- ', test.name))
+				lgr.inc_indent()
+
+				for i in range(test.fail_texts.size()):
+					lgr.failed(test.fail_texts[i])
+				for i in range(test.pending_texts.size()):
+					lgr.pending(test.pending_texts[i])
+				if(test.is_risky()):
+					lgr.log('[Risky] Did not assert', lgr.fmts.yellow)
+				lgr.dec_indent()
+
+	return to_return
+
+
+func _log_totals(test_collector, lgr):
+	# just picked a non-printable char, dunno if it is a good or bad choice.
+	var npws = PackedByteArray([31]).get_string_from_ascii()
+	lgr.log()
+	var totals = _get_collector_totals(test_collector)
+	lgr.log("Totals", lgr.fmts.yellow)
+	lgr.log(str('Scripts:          ', get_non_inner_class_script_count()))
+	lgr.log(str('Passing Tests     ', totals.passing_tests))
+	lgr.log(str('Failing Tests     ', totals.failing_tests))
+	lgr.log(str('Risky Tests       ', totals.risky))
+	var pnd=str('Pending Tests     ', totals.pending)
+	# add a non printable character so this "pending" isn't highlighted in the
+	# editor's output panel.
+	lgr.log(str(npws, pnd))
+	lgr.log(str('Asserts:          ', totals.passing, ' of ', totals.passing + totals.failing, ' passed'))
+
+	if(totals.failing_tests > 0):
+		lgr.log("Some tests failed", lgr.fmts.red)
+	elif(totals.risky > 0 or totals.pending > 0):
+		lgr.log("Some tests are risky/pending", lgr.fmts.yellow)
+	else:
+		lgr.log("All tests passed.", lgr.fmts.green)
+
+	return totals
+
+
+func log_collector_summary_text(test_collector, lgr):
+	var orig_indent = lgr.get_indent_level()
+	var found_failing_or_pending = false
+
+	var pass_no_pass_counts = _count_tests_and_log_non_passing_tests(test_collector, lgr)
+	lgr.set_indent_level(0)
+
+	_log_totals(test_collector, lgr)
+	lgr.set_indent_level(orig_indent)

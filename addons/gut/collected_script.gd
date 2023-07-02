@@ -133,37 +133,37 @@ var _test_order = []	# -
 
 func get_pass_count():
     var count = 0
-    for key in _tests:
-        count += _tests[key].pass_texts.size()
+    for t in tests:
+        count += t.pass_texts.size()
     return count
 
 
 func get_fail_count():
     var count = 0
-    for key in _tests:
-        count += _tests[key].fail_texts.size()
+    for t in tests:
+        count += t.fail_texts.size()
     return count
 
 
 func get_pending_count():
     var count = 0
-    for key in _tests:
-        count += _tests[key].pending_texts.size()
+    for t in tests:
+        count += t.pending_texts.size()
     return count
 
 
 func get_passing_test_count():
     var count = 0
-    for key in _tests:
-        if(_tests[key].is_passing()):
+    for t in tests:
+        if(t.is_passing()):
             count += 1
     return count
 
 
 func get_failing_test_count():
     var count = 0
-    for key in _tests:
-        if(_tests[key].is_failing()):
+    for t in tests:
+        if(t.is_failing()):
             count += 1
     return count
 
@@ -173,8 +173,8 @@ func get_risky_count():
     if(was_skipped):
         count = 1
     else:
-        for key in _tests:
-            if(!_tests[key].did_something()):
+        for t in tests:
+            if(t.is_risky()):
                 count += 1
     return count
 
