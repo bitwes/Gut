@@ -39,7 +39,7 @@ func to_s():
         to_return += str('.', inner_class_name)
     to_return += "\n"
     for i in range(tests.size()):
-        to_return += str('  ', tests[i].to_s(), "\n")
+        to_return += str('  ', tests[i].to_s())
     return to_return
 
 

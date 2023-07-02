@@ -91,7 +91,9 @@ func did_something():
 func get_status_text():
     var to_return = 'no asserts'
 
-    if(should_skip):
+    if(!was_run):
+        to_return = "not run"
+    elif(should_skip):
         to_return = 'skipped'
     elif(pending_texts.size() > 0):
         to_return = 'pending'
@@ -110,13 +112,10 @@ func get_status():
 
 func to_s():
     var pad = '     '
-    var to_return = str(name, "(", get_status_text(), ")")
-    if(!was_run):
-        to_return += "NOT RUN"
-    to_return += ":\n"
+    var to_return = str(name, "[", get_status_text(), "]\n")
 
     for i in range(fail_texts.size()):
-        to_return += str(pad, 'Fail:  ', fail_texts[i], "\n")
+        to_return += str(pad, 'Fail:  ', fail_texts[i])
     for i in range(pending_texts.size()):
         to_return += str(pad, 'Pending:  ', pending_texts[i], "\n")
     for i in range(pass_texts.size()):

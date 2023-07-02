@@ -1111,8 +1111,8 @@ func import_tests(path=_export_path):
 		_test_collector.clear()
 		var result = _test_collector.import_tests(path)
 		if(result):
-			_lgr.info(_test_collector.to_s())
-			_lgr.info("Importd from " + path)
+			_lgr.info("\n" + _test_collector.to_s())
+			_lgr.info("Imported from " + path)
 
 
 # ------------------------------------------------------------------------------
