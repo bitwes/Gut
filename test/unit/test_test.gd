@@ -1740,6 +1740,12 @@ class TestTestStateChecking:
 	func _same_name():
 		return gut.get_current_test_object().name
 
+	# Well, old me was insane.  This runs a test in the _gut variable created
+	# before each test.  The script is state_check_tests.gd.  The name of the
+	# test is either passed in, OR it's the SAME NAME as the test that is
+	# currently being run.  So, when you see five tests in a row that look
+	# like they are doing the same thing and asserting different things...THIS
+	# is why they are not testing the same thing.  Crazy.
 	func _run_test(inner_class, name=_same_name()):
 		_gut.inner_class_name = inner_class
 		_gut.unit_test_name = name

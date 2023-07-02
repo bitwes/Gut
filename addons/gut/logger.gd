@@ -83,6 +83,7 @@ var _printers = {
 var _gut = null
 var _utils = null
 var _indent_level = 0
+var _min_indent_level = 0
 var _indent_string = '    '
 var _skip_test_name_for_testing = false
 var _less_test_names = false
@@ -269,7 +270,7 @@ func get_indent_level():
 	return _indent_level
 
 func set_indent_level(indent_level):
-	_indent_level = indent_level
+	_indent_level = max(_min_indent_level, indent_level)
 
 func get_indent_string():
 	return _indent_string
@@ -285,7 +286,7 @@ func inc_indent():
 	_indent_level += 1
 
 func dec_indent():
-	_indent_level = max(0, _indent_level -1)
+	_indent_level = max(_min_indent_level, _indent_level -1)
 
 func is_type_enabled(type):
 	return _type_data[type].enabled

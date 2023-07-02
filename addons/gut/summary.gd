@@ -45,7 +45,7 @@ func _count_tests_and_log_non_passing_tests(test_collector, lgr):
 		lgr.set_indent_level(0)
 
 		if(test_script.was_skipped or test_script.get_fail_count() > 0 or test_script.get_pending_count() > 0):
-			lgr.log("\n" + test_script.name, lgr.fmts.underline)
+			lgr.log("\n" + test_script.get_full_name(), lgr.fmts.underline)
 
 		if(test_script.was_skipped):
 			lgr.inc_indent()

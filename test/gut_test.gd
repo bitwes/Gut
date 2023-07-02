@@ -65,11 +65,24 @@ func get_error_count(obj):
 	return obj.logger.get_errors().size()
 
 
-func new_gut():
+func new_gut(print_sub_tests=false):
 	var g = Gut.new()
+	g.logger = _utils.Logger.new()
+	if(print_sub_tests):
+		g.log_level = 3
+		g.logger.disable_all_printers(true)
+		g.logger.disable_printer("terminal", false)
+		g.logger._min_indent_level = 1
+		g.logger.dec_indent()
+		g.logger.set_indent_string('|##| ')
+		g.logger.disable_formatting(!print_sub_tests)
+	else:
+		g.log_level = g.LOG_LEVEL_FAIL_ONLY
+		g.logger.disable_all_printers(true)
+
 	g._should_print_versions = false
 	g._should_print_summary = false
-	g.log_level = g.LOG_LEVEL_FAIL_ONLY
+
 	return g
 
 # ----------------------------

@@ -201,5 +201,3 @@ func get_risky_count():
             if(t.is_risky()):
                 count += 1
     return count
-
-

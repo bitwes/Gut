@@ -178,7 +178,7 @@ var Test = load('res://addons/gut/test.gd')
 var TestCollector = load('res://addons/gut/test_collector.gd')
 var ThingCounter = load('res://addons/gut/thing_counter.gd')
 var CollectedTest = load('res://addons/gut/collected_test.gd')
-var CollectedScript = load('res://addons/gut/collected_script.gd')
+var CollectedScript = load('res://addons/gut/collected_test.gd')
 
 var GutScene = load('res://addons/gut/GutScene.tscn')
 
