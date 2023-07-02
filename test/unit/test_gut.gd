@@ -201,7 +201,7 @@ class TestEverythingElse:
 	func get_a_gut():
 		var g = new_gut()
 		# Hides output.  remove this when things start failing.
-		var print_sub_tests = true
+		var print_sub_tests = false
 		g.logger.disable_all_printers(!print_sub_tests)
 		g.logger.disable_formatting(!print_sub_tests)
 		# For checking warnings etc, this has to be ALL_ASSERTS

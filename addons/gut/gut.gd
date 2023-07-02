@@ -692,17 +692,18 @@ func _call_before_all(test_script, collected_script):
 	before_all_test_obj.has_printed_name = false
 	before_all_test_obj.name = 'before_all'
 
-	collected_script.tests.append(before_all_test_obj)
+	collected_script.setup_teardown_tests.append(before_all_test_obj)
 	_current_test = before_all_test_obj
 
 	_lgr.inc_indent()
 	await test_script.before_all()
+	# before all does not need to assert anything so only mark it as run if
+	# some assert was done.
 	before_all_test_obj.was_run = before_all_test_obj.did_something()
 
 	_lgr.dec_indent()
 
 	_current_test = null
-	print("**********\n", collected_script.to_s(), "\n**********")
 
 # ------------------------------------------------------------------------------
 # Calls after_all on the passed in test script and takes care of settings so all
@@ -715,11 +716,13 @@ func _call_after_all(test_script, collected_script):
 	after_all_test_obj.has_printed_name = false
 	after_all_test_obj.name = 'after_all'
 
-	collected_script.tests.append(after_all_test_obj)
+	collected_script.setup_teardown_tests.append(after_all_test_obj)
 	_current_test = after_all_test_obj
 
 	_lgr.inc_indent()
 	await test_script.after_all()
+	# after all does not need to assert anything so only mark it as run if
+	# some assert was done.
 	after_all_test_obj.was_run = after_all_test_obj.did_something()
 	_lgr.dec_indent()
 

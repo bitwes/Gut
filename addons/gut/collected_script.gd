@@ -13,6 +13,8 @@ var tests = []
 var path:String
 var _utils = null
 var _lgr = null
+var setup_teardown_tests = []
+
 # Set externally by test_collector after it can verify that the script was
 # actually loaded.  This could probably be changed to just hold the GutTest
 # script that was loaded, cutting down on complexity elsewhere.
@@ -141,11 +143,19 @@ func get_assert_count():
     for t in tests:
         count += t.pass_texts.size()
         count += t.fail_texts.size()
+
+    for t in setup_teardown_tests:
+        count += t.pass_texts.size()
+        count += t.fail_texts.size()
+
     return count
 
 func get_pass_count():
     var count = 0
     for t in tests:
+        count += t.pass_texts.size()
+
+    for t in setup_teardown_tests:
         count += t.pass_texts.size()
     return count
 
@@ -153,6 +163,8 @@ func get_pass_count():
 func get_fail_count():
     var count = 0
     for t in tests:
+        count += t.fail_texts.size()
+    for t in setup_teardown_tests:
         count += t.fail_texts.size()
     return count
 
