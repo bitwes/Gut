@@ -1,0 +1,110 @@
+# ------------------------------------------------------------------------------
+# Used to keep track of info about each test ran.
+# ------------------------------------------------------------------------------
+# Converted to property for backwards compatibility.  This cannot be set
+# externally
+var passed = true :
+    get: return is_passing()
+    set(val): pass
+
+# the name of the function
+var name = ""
+
+# flag to know if the name has been printed yet.  Used by the logger.
+var has_printed_name = false
+
+# the number of arguments the method has
+var arg_count = 0
+
+# The number of asserts in the test.  Converted to a property for backwards
+# compatibility.  This now reflects the text sizes instead of being a value
+# that can be altered externally.
+var assert_count = 0 :
+    get: return pass_texts.size() + fail_texts.size()
+    set(val): pass
+
+# Converted to propety for backwards compatibility.  This now cannot be set
+# externally
+var pending = false :
+    get: return is_pending()
+    set(val): pass
+
+# the line number when the test fails
+var line_number = -1
+
+# Set internally by Gut using whatever reason Gut wants to use to set this.
+# Gut will skip these marked true and the test will be listed as risky.
+var should_skip = false
+
+var pass_texts = []
+var fail_texts = []
+var pending_texts = []
+var orphans = 0
+
+
+# Deprecate probably
+func did_pass():
+    return passed and !pending and assert_count > 0
+
+# Deprecate probably
+func did_assert():
+    return assert_count > 0 or pending
+
+
+func add_fail(fail_text):
+    fail_texts.append(fail_text)
+
+func add_pending(pending_text):
+    pending_texts.append(pending_text)
+
+func add_pass(passing_text):
+    pass_texts.append(passing_text)
+
+# must have passed an assert and not have any other status to be passing
+func is_passing():
+    return pass_texts.size() > 0 and fail_texts.size() == 0 and pending_texts.size() == 0
+
+# failing takes precedence over everything else, so any failures makes the
+# test a failure.
+func is_failing():
+    return fail_texts.size() > 0
+
+# test is only pending if pending was called and the test is not failing.
+func is_pending():
+    return pending_texts.size() > 0 and fail_texts.size() == 0
+
+func is_risky():
+    return !did_something()
+
+func did_something():
+    return is_passing() or is_failing() or is_pending()
+
+
+func get_status_text():
+    var to_return = 'no asserts'
+    if(should_skip):
+        to_return = 'skipped'
+    elif(pending_texts.size() > 0):
+        to_return = 'pending'
+    elif(fail_texts.size() > 0):
+        to_return = 'fail'
+    elif(pass_texts.size() > 0):
+        to_return = 'pass'
+
+    return to_return
+
+# NOTE:  The "failed" and "pending" text must match what is outputted by
+# the logger in order for text highlighting to occur in summary.
+func to_s():
+    var pad = '     '
+    var to_return = ''
+    for i in range(fail_texts.size()):
+        to_return += str(pad, '[Failed]:  ', fail_texts[i], "\n")
+    for i in range(pending_texts.size()):
+        to_return += str(pad, '[Pending]:  ', pending_texts[i], "\n")
+    return to_return
+
+
+# Deprecated
+func get_status():
+    return get_status_text()

@@ -266,9 +266,9 @@ var _new_summary = null
 var _cancel_import = false
 
 # Used for proper assert tracking and printing during before_all
-var _before_all_test_obj = load('res://addons/gut/test_collector.gd').Test.new()
+var _before_all_test_obj = load('res://addons/gut/collected_test.gd').new()
 # Used for proper assert tracking and printing during after_all
-var _after_all_test_obj = load('res://addons/gut/test_collector.gd').Test.new()
+var _after_all_test_obj = load('res://addons/gut/collected_test.gd').new()
 
 
 # ------------------------------------------------------------------------------
