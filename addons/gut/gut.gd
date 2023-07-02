@@ -837,7 +837,7 @@ func _test_the_scripts(indexes=[]):
 					_current_test.was_run = true
 					script_result = await _run_test(test_script, _current_test.name)
 
-				if(!_current_test.did_assert()):
+				if(!_current_test.did_something()):
 					_lgr.warn(str(_current_test.name, ' did not assert'))
 
 				_current_test.has_printed_name = false

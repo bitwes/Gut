@@ -1,12 +1,6 @@
 # ------------------------------------------------------------------------------
 # Used to keep track of info about each test ran.
 # ------------------------------------------------------------------------------
-# Converted to property for backwards compatibility.  This cannot be set
-# externally
-var passed = true :
-    get: return is_passing()
-    set(val): pass
-
 # the name of the function
 var name = ""
 
@@ -43,13 +37,9 @@ var orphans = 0
 
 var was_run = false
 
-# Deprecate probably
-func did_pass():
-    return passed and !pending and assert_count > 0
 
-# Deprecate probably
-func did_assert():
-    return assert_count > 0 or pending
+func did_pass():
+    return is_passing()
 
 
 func add_fail(fail_text):

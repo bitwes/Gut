@@ -90,7 +90,6 @@ func _parse_script(test_script):
 # Public
 # -----------------
 func add_script(path):
-	# print('Adding ', path)
 	# SHORTCIRCUIT
 	if(has_script(path)):
 		return []
@@ -185,39 +184,30 @@ func to_s():
 func get_logger():
 	return _lgr
 
+
 func set_logger(logger):
 	_lgr = logger
+
 
 func get_test_prefix():
 	return _test_prefix
 
+
 func set_test_prefix(test_prefix):
 	_test_prefix = test_prefix
+
 
 func get_test_class_prefix():
 	return _test_class_prefix
 
+
 func set_test_class_prefix(test_class_prefix):
 	_test_class_prefix = test_class_prefix
+
 
 func get_scripts():
 	return scripts
 
-# func get_current_script():
-# 	return scripts[scripts.size() -1]
-
-
-# func add_pass(test_name, reason = ''):
-# 	get_current_script().add_pass(test_name, reason)
-
-# func add_fail(test_name, reason = ''):
-# 	get_current_script().add_fail(test_name, reason)
-
-# func get_test_text(test_name):
-# 	return test_name + "\n" + get_current_script().get_test_obj(test_name).to_s()
-
-# func add_pending(test_name, reason = ''):
-# 	get_current_script().add_pending(test_name, reason)
 
 func get_ran_test_count():
 	var count = 0
@@ -252,6 +242,7 @@ func get_fail_count():
 	for s in scripts:
 		count += s.get_fail_count()
 	return count
+
 
 func get_pending_count():
 	var count = 0

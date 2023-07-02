@@ -1,40 +1,16 @@
 # ------------------------------------------------------------------------------
-# It's the new style
+# Prints things mostly.
 # ------------------------------------------------------------------------------
+# a _test_collector to use when one is not provided.
 var _collector = null
+
 
 func _init(tc = null):
 	_collector = tc
 
-func get_totals(test_collector=_collector):
-	var totals = {
-		passing = 0,
-		pending = 0,
-		failing = 0,
-		risky = 0,
-		tests = 0,
-		scripts = 0,
-		passing_tests = 0,
-		failing_tests = 0
-	}
-
-	for s in test_collector.scripts:
-		# assert totals
-		totals.passing += s.get_pass_count()
-		totals.pending += s.get_pending_count()
-		totals.failing += s.get_fail_count()
-
-		# test totals
-		totals.tests += s.tests.size()
-		totals.passing_tests += s.get_passing_test_count()
-		totals.failing_tests += s.get_failing_test_count()
-		totals.risky += s.get_risky_count()
-
-	totals.scripts = test_collector.scripts.size()
-
-	return totals
-
-
+# ---------------------
+# Private
+# ---------------------
 func _count_tests_and_log_non_passing_tests(test_collector, lgr):
 	var to_return = {
 		passing = 0,
@@ -105,7 +81,9 @@ func _log_totals(test_collector, lgr):
 
 	return totals
 
-
+# ---------------------
+# Public
+# ---------------------
 func log_collector_summary_text(test_collector, lgr):
 	var orig_indent = lgr.get_indent_level()
 	var found_failing_or_pending = false
@@ -115,3 +93,34 @@ func log_collector_summary_text(test_collector, lgr):
 
 	_log_totals(test_collector, lgr)
 	lgr.set_indent_level(orig_indent)
+
+
+# For backwards compat, this will use the collector set.  It was just a lot
+# easier to use a local var than pass more things around.
+func get_totals(test_collector=_collector):
+	var totals = {
+		passing = 0,
+		pending = 0,
+		failing = 0,
+		risky = 0,
+		tests = 0,
+		scripts = 0,
+		passing_tests = 0,
+		failing_tests = 0
+	}
+
+	for s in test_collector.scripts:
+		# assert totals
+		totals.passing += s.get_pass_count()
+		totals.pending += s.get_pending_count()
+		totals.failing += s.get_fail_count()
+
+		# test totals
+		totals.tests += s.tests.size()
+		totals.passing_tests += s.get_passing_test_count()
+		totals.failing_tests += s.get_failing_test_count()
+		totals.risky += s.get_risky_count()
+
+	totals.scripts = test_collector.scripts.size()
+
+	return totals

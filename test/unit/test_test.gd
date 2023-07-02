@@ -1677,7 +1677,7 @@ class TestMemoryMgmt:
 
 	func test_passes_when_no_orphans_introduced():
 		assert_no_new_orphans()
-		assert_true(gut._current_test.passed, 'test should be passing')
+		assert_true(is_passing(), 'test should be passing')
 
 	func test_failing_orphan_assert_marks_test_as_failing():
 		var n2d = Node2D.new()
@@ -1689,14 +1689,14 @@ class TestMemoryMgmt:
 		var n2d = Node2D.new()
 		n2d.free()
 		assert_no_new_orphans()
-		assert_true(gut._current_test.passed, 'this should be passing')
+		assert_true(is_passing(), 'this should be passing')
 
 	func test_passes_with_queue_free():
 		var n2d = Node2D.new()
 		n2d.queue_free()
 		await wait_seconds(.5, 'must wait for queue_free to take hold')
 		assert_no_new_orphans()
-		assert_true(gut._current_test.passed, 'this should be passing')
+		assert_true(is_passing(), 'this should be passing')
 
 	func test_autofree_children():
 		var n = Node.new()
