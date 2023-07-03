@@ -1,14 +1,21 @@
-var CollectedTest = load('res://addons/gut/collected_test.gd')
+# ------------------------------------------------------------------------------
+# This class handles calling out to the test parser and maintaining an array of
+# collected_script.gd.  This is used for both calling the tests and tracking
+# the results of each script and test's execution.
+#
+# This also handles exporting and importing tests.
+# ------------------------------------------------------------------------------
 var CollectedScript = load('res://addons/gut/collected_script.gd')
+var CollectedTest = load('res://addons/gut/collected_test.gd')
 
-# ------------------------------------------------------------------------------
-# start test_collector, I don't think I like the name.
-# ------------------------------------------------------------------------------
-var scripts = []
 var _test_prefix = 'test_'
 var _test_class_prefix = 'Test'
 var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _lgr = _utils.get_logger()
+
+
+# Array of CollectedScripts.
+var scripts = []
 
 
 func _does_inherit_from_test(thing):

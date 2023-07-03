@@ -412,7 +412,7 @@ func _print_summary():
 	_lgr.log('==============================================', _lgr.fmts.yellow)
 
 	var summary = _utils.Summary.new()
-	summary.log_collector_summary_text(_test_collector, _lgr)
+	summary.log_summary(_test_collector, _lgr)
 
 	var logger_text = ''
 	if(_lgr.get_errors().size() > 0):

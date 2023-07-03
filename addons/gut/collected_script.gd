@@ -1,5 +1,3 @@
-var CollectedTest = load('res://addons/gut/collected_test.gd')
-
 # ------------------------------------------------------------------------------
 # This holds all the meta information for a test script.  It contains the
 # name of the inner class and an array of CollectedTests.  This does not parse
@@ -8,20 +6,31 @@ var CollectedTest = load('res://addons/gut/collected_test.gd')
 #
 # This class also facilitates all the exporting and importing of tests.
 # ------------------------------------------------------------------------------
-var inner_class_name:StringName
-var tests = []
-var path:String
+var CollectedTest = load('res://addons/gut/collected_test.gd')
+
 var _utils = null
 var _lgr = null
+
+# One entry per test found in the script.  Added externally by TestCollector
+var tests = []
+# One entry for before_all and after_all (maybe add before_each and after_each).
+# These are added by Gut when running before_all and after_all for the script.
 var setup_teardown_tests = []
+var inner_class_name:StringName
+var path:String
+
 
 # Set externally by test_collector after it can verify that the script was
 # actually loaded.  This could probably be changed to just hold the GutTest
 # script that was loaded, cutting down on complexity elsewhere.
 var is_loaded = false
 
+# Set by Gut when it decides that a script should be skipped.
+# Right now this is whenever the script has the variable skip_script declared.
+# the value of skip_script is put into skip_reason.
 var was_skipped = false
 var skip_reason = ''
+
 
 var name = '' :
     get: return path
@@ -31,16 +40,6 @@ var name = '' :
 func _init(utils=null,logger=null):
     _utils = utils
     _lgr = logger
-
-
-func to_s():
-    var to_return = path
-    if(inner_class_name != null):
-        to_return += str('.', inner_class_name)
-    to_return += "\n"
-    for i in range(tests.size()):
-        to_return += str('  ', tests[i].to_s())
-    return to_return
 
 
 func get_new():
@@ -60,7 +59,7 @@ func load_script():
 
     return to_return
 
-
+# script.gd.InnerClass
 func get_filename_and_inner():
     var to_return = get_filename()
     if(inner_class_name != ''):
@@ -68,6 +67,7 @@ func get_filename_and_inner():
     return to_return
 
 
+# res://foo/bar.gd.FooBar
 func get_full_name():
     var to_return = path
     if(inner_class_name != ''):
@@ -138,23 +138,22 @@ func get_ran_test_count():
             count += 1
     return count
 
+
 func get_assert_count():
     var count = 0
     for t in tests:
         count += t.pass_texts.size()
         count += t.fail_texts.size()
-
     for t in setup_teardown_tests:
         count += t.pass_texts.size()
         count += t.fail_texts.size()
-
     return count
+
 
 func get_pass_count():
     var count = 0
     for t in tests:
         count += t.pass_texts.size()
-
     for t in setup_teardown_tests:
         count += t.pass_texts.size()
     return count
@@ -201,3 +200,13 @@ func get_risky_count():
             if(t.is_risky()):
                 count += 1
     return count
+
+
+func to_s():
+    var to_return = path
+    if(inner_class_name != null):
+        to_return += str('.', inner_class_name)
+    to_return += "\n"
+    for i in range(tests.size()):
+        to_return += str('  ', tests[i].to_s())
+    return to_return

@@ -84,7 +84,7 @@ func _log_totals(test_collector, lgr):
 # ---------------------
 # Public
 # ---------------------
-func log_collector_summary_text(test_collector, lgr):
+func log_summary(test_collector, lgr):
 	var orig_indent = lgr.get_indent_level()
 	var found_failing_or_pending = false
 
