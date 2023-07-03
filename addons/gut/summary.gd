@@ -1,12 +1,13 @@
 # ------------------------------------------------------------------------------
-# Prints things mostly.
+# Prints things, mostly.  Knows too much about gut.gd, but it's only supposed to
+# work with gut.gd, so I'm fine with that.
 # ------------------------------------------------------------------------------
 # a _test_collector to use when one is not provided.
-var _collector = null
+var _gut = null
 
 
-func _init(tc = null):
-	_collector = tc
+func _init(gut = null):
+	_gut = gut
 
 # ---------------------
 # Private
@@ -42,32 +43,29 @@ func _log_orphans_and_disclaimer(gut):
 		gut.p(str("Total orphans = ", orphan_count.orphan_count()))
 
 
-func _log_warnings_errors_etc(_lgr):
-	var logger_text = ''
-	if(_lgr.get_errors().size() > 0):
-		logger_text += str("\n* ", _lgr.get_errors().size(), ' Errors.')
-	if(_lgr.get_warnings().size() > 0):
-		logger_text += str("\n* ", _lgr.get_warnings().size(), ' Warnings.')
-	if(_lgr.get_deprecated().size() > 0):
-		logger_text += str("\n* ", _lgr.get_deprecated().size(), ' Deprecated calls.')
-	if(logger_text != ''):
-		logger_text = "\nWarnings/Errors:" + logger_text + "\n\n"
-	_lgr.log(logger_text)
-
-
-
-
 func _log_totals(gut, totals, lgr):
 	# just picked a non-printable char, dunno if it is a good or bad choice.
 	var npws = PackedByteArray([31]).get_string_from_ascii()
 	lgr.log()
 
 	lgr.log("Totals", lgr.fmts.yellow)
+	var col1 = 18
+	var issue_count = 0
+	if(totals.errors > 0):
+		lgr.log(str('Errors:'.rpad(col1),       totals.errors))
+		issue_count += 1
+	if(totals.warnings > 0):
+		lgr.log(str('Warnings:'.rpad(col1),     totals.warnings))
+		issue_count += 1
+	if(totals.deprecated > 0):
+		lgr.log(str('Deprecated:'.rpad(col1),   totals.deprecated))
+		issue_count += 1
+	if(issue_count > 0):
+		lgr.log("")
 	# This line must use _test_script_objects since it holds the scripts that
 	# were run.  totals has the total number of scripts that were found.  It was
 	# either this, or create another mechanism for tracking which scripts were
 	# run and where were not.  This was much much easier.
-	var col1 = 18
 	lgr.log(str('Scripts:'.rpad(col1),          gut._test_script_objects.size()))
 	lgr.log(str('Passing Tests'.rpad(col1),     totals.passing_tests))
 	lgr.log(str('Failing Tests'.rpad(col1),     totals.failing_tests))
@@ -81,13 +79,13 @@ func _log_totals(gut, totals, lgr):
 	return totals
 
 
-
-
-
 # ---------------------
 # Public
 # ---------------------
-func log_all_non_passing_tests(test_collector, lgr):
+func log_all_non_passing_tests(gut=_gut):
+	var test_collector = gut.get_test_collector()
+	var lgr = gut.get_logger()
+
 	var to_return = {
 		passing = 0,
 		non_passing = 0
@@ -125,7 +123,8 @@ func log_all_non_passing_tests(test_collector, lgr):
 	return to_return
 
 
-func log_the_final_line(totals, lgr):
+func log_the_final_line(totals, gut):
+	var lgr = gut.get_logger()
 	var grand_total_text = ""
 	var grand_total_fmt = lgr.fmts.none
 	if(totals.failing_tests > 0):
@@ -141,7 +140,8 @@ func log_the_final_line(totals, lgr):
 	lgr.log(str("---- ", grand_total_text, " ----"), grand_total_fmt)
 
 
-func log_totals(gut, totals, lgr):
+func log_totals(gut, totals):
+	var lgr = gut.get_logger()
 	var orig_indent = lgr.get_indent_level()
 	lgr.set_indent_level(0)
 	_log_totals(gut, totals, lgr)
@@ -150,7 +150,10 @@ func log_totals(gut, totals, lgr):
 
 # For backwards compat, this will use the collector set.  It was just a lot
 # easier to use a local var than pass more things around.
-func get_totals(test_collector=_collector):
+func get_totals(gut=_gut):
+	var test_collector = gut.get_test_collector()
+	var lgr = gut.get_logger()
+
 	var totals = {
 		passing = 0,
 		pending = 0,
@@ -159,7 +162,11 @@ func get_totals(test_collector=_collector):
 		tests = 0,
 		scripts = 0,
 		passing_tests = 0,
-		failing_tests = 0
+		failing_tests = 0,
+
+		errors = lgr.get_errors().size(),
+		warnings = lgr.get_warnings().size(),
+		deprecated = lgr.get_deprecated().size()
 	}
 
 	for s in test_collector.scripts:
@@ -179,21 +186,19 @@ func get_totals(test_collector=_collector):
 	return totals
 
 
-func log_end_run(gut):
+func log_end_run(gut=_gut):
 	_log_end_run_header(gut)
 
-	var totals = get_totals(gut.get_test_collector())
+	var totals = get_totals(gut)
 	var tc = gut.get_test_collector()
 	var lgr = gut.get_logger()
 
-	log_all_non_passing_tests(tc, lgr)
-
-	_log_warnings_errors_etc(gut.get_logger())
-	log_totals(gut, totals, lgr)
+	log_all_non_passing_tests(gut)
+	log_totals(gut, totals)
 	lgr.log("\n")
 
 	_log_orphans_and_disclaimer(gut)
 	lgr.log(str("Tests finished in ", gut.get_elapsed_time(), 's'))
 	_log_what_was_run(gut)
-	log_the_final_line(totals, lgr)
+	log_the_final_line(totals, gut)
 	lgr.log("")

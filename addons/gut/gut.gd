@@ -401,8 +401,8 @@ func _log_test_children_warning(test_script):
 
 func _log_end_run():
 	if(_should_print_summary):
-		var summary = _utils.Summary.new()
-		summary.log_end_run(self)
+		var summary = _utils.Summary.new(self)
+		summary.log_end_run()
 
 
 func _validate_hook_script(path):
@@ -1193,7 +1193,7 @@ func get_current_test_object():
 ## Returns a summary.gd object that contains all the information about
 ## the run results.
 func get_summary():
-	return _utils.Summary.new(_test_collector)
+	return _utils.Summary.new(self)
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
