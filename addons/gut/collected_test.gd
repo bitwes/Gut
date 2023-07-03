@@ -79,18 +79,18 @@ func did_something():
 
 
 func get_status_text():
-    var to_return = 'no asserts'
+    var to_return = GutUtils.TEST_STATUSES.NO_ASSERTS
 
     if(should_skip):
-        to_return = 'skipped'
+        to_return = GutUtils.TEST_STATUSES.SKIPPED
     elif(!was_run):
-        to_return = "not run"
+        to_return = GutUtils.TEST_STATUSES.NOT_RUN
     elif(pending_texts.size() > 0):
-        to_return = 'pending'
+        to_return = GutUtils.TEST_STATUSES.PENDING
     elif(fail_texts.size() > 0):
-        to_return = 'fail'
+        to_return = GutUtils.TEST_STATUSES.FAILED
     elif(pass_texts.size() > 0):
-        to_return = 'pass'
+        to_return = GutUtils.TEST_STATUSES.PASSED
 
     return to_return
 

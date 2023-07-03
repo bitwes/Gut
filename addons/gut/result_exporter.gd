@@ -11,13 +11,14 @@ func _export_tests(collected_script):
 	var to_return = {}
 	var tests = collected_script.tests
 	for test in tests:
-		to_return[test.name] = {
-			"status":test.get_status_text(),
-			"passing":test.pass_texts,
-			"failing":test.fail_texts,
-			"pending":test.pending_texts,
-			"orphans":test.orphans
-		}
+		if(test.get_status_text() != GutUtils.TEST_STATUSES.NOT_RUN):
+			to_return[test.name] = {
+				"status":test.get_status_text(),
+				"passing":test.pass_texts,
+				"failing":test.fail_texts,
+				"pending":test.pending_texts,
+				"orphans":test.orphans
+			}
 
 	return to_return
 
@@ -30,13 +31,14 @@ func _export_scripts(collector):
 	var scripts = {}
 
 	for s in collector.scripts:
+		var test_data = _export_tests(s)
 		scripts[s.get_full_name()] = {
 			'props':{
-				"tests":s.tests.size(),
+				"tests":test_data.keys().size(),
 				"pending":s.get_pending_count(),
 				"failures":s.get_fail_count(),
 			},
-			"tests":_export_tests(s)
+			"tests":test_data
 		}
 	return scripts
 

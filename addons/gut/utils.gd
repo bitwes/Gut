@@ -48,7 +48,16 @@ enum DIFF {
 	SIMPLE
 }
 
-
+const TEST_STATUSES = {
+	NO_ASSERTS = 'no asserts',
+	SKIPPED = 'skipped',
+	NOT_RUN = 'not run',
+	PENDING = 'pending',
+	# These two got the "ed" b/c pass is a reserved word and I could not
+	# think of better words.
+	FAILED = 'fail',
+	PASSED = 'pass'
+}
 # ------------------------------------------------------------------------------
 # The instance name as a function since you can't have static variables.
 # ------------------------------------------------------------------------------
