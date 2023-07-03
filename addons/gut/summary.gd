@@ -11,7 +11,83 @@ func _init(tc = null):
 # ---------------------
 # Private
 # ---------------------
-func _count_tests_and_log_non_passing_tests(test_collector, lgr):
+func _log_end_run_header(gut):
+	var lgr = gut.get_logger()
+	lgr.log("\n\n\n")
+	lgr.log('==============================================', lgr.fmts.yellow)
+	lgr.log("= Run Summary", lgr.fmts.yellow)
+	lgr.log('==============================================', lgr.fmts.yellow)
+
+
+func _log_what_was_run(gut):
+	if(!gut._utils.is_null_or_empty(gut._select_script)):
+		gut.p('Ran Scripts matching "' + gut._select_script + '"')
+	if(!gut._utils.is_null_or_empty(gut._unit_test_name)):
+		gut.p('Ran Tests matching "' + gut._unit_test_name + '"')
+	if(!gut._utils.is_null_or_empty(gut._inner_class_name)):
+		gut.p('Ran Inner Classes matching "' + gut._inner_class_name + '"')
+
+
+func _log_orphans_and_disclaimer(gut):
+	var orphan_count = gut.get_orphan_counter()
+	var lgr = gut.get_logger()
+	# Do not count any of the _test_script_objects since these will be released
+	# when GUT is released.
+	orphan_count._counters.total += gut._test_script_objects.size()
+	if(orphan_count.get_counter('total') > 0 and lgr.is_type_enabled('orphan')):
+		orphan_count.print_orphans('total', lgr)
+		gut.p("Note:  This count does not include GUT objects that will be freed upon exit.")
+		gut.p("       It also does not include any orphans created by global scripts")
+		gut.p("       loaded before tests were ran.")
+		gut.p(str("Total orphans = ", orphan_count.orphan_count()))
+
+
+func _log_warnings_errors_etc(_lgr):
+	var logger_text = ''
+	if(_lgr.get_errors().size() > 0):
+		logger_text += str("\n* ", _lgr.get_errors().size(), ' Errors.')
+	if(_lgr.get_warnings().size() > 0):
+		logger_text += str("\n* ", _lgr.get_warnings().size(), ' Warnings.')
+	if(_lgr.get_deprecated().size() > 0):
+		logger_text += str("\n* ", _lgr.get_deprecated().size(), ' Deprecated calls.')
+	if(logger_text != ''):
+		logger_text = "\nWarnings/Errors:" + logger_text + "\n\n"
+	_lgr.log(logger_text)
+
+
+
+
+func _log_totals(gut, totals, lgr):
+	# just picked a non-printable char, dunno if it is a good or bad choice.
+	var npws = PackedByteArray([31]).get_string_from_ascii()
+	lgr.log()
+
+	lgr.log("Totals", lgr.fmts.yellow)
+	# This line must use _test_script_objects since it holds the scripts that
+	# were run.  totals has the total number of scripts that were found.  It was
+	# either this, or create another mechanism for tracking which scripts were
+	# run and where were not.  This was much much easier.
+	var col1 = 18
+	lgr.log(str('Scripts:'.rpad(col1),          gut._test_script_objects.size()))
+	lgr.log(str('Passing Tests'.rpad(col1),     totals.passing_tests))
+	lgr.log(str('Failing Tests'.rpad(col1),     totals.failing_tests))
+	lgr.log(str('Risky Tests'.rpad(col1),       totals.risky))
+	var pnd=str('Pending Tests'.rpad(col1),     totals.pending)
+	# add a non printable character so this "pending" isn't highlighted in the
+	# editor's output panel.
+	lgr.log(str(npws, pnd))
+	lgr.log(str('Asserts:'.rpad(col1), totals.passing, ' of ', totals.passing + totals.failing, ' passed'))
+
+	return totals
+
+
+
+
+
+# ---------------------
+# Public
+# ---------------------
+func log_all_non_passing_tests(test_collector, lgr):
 	var to_return = {
 		passing = 0,
 		non_passing = 0
@@ -49,22 +125,7 @@ func _count_tests_and_log_non_passing_tests(test_collector, lgr):
 	return to_return
 
 
-func _log_totals(test_collector, lgr):
-	# just picked a non-printable char, dunno if it is a good or bad choice.
-	var npws = PackedByteArray([31]).get_string_from_ascii()
-	lgr.log()
-	var totals = get_totals(test_collector)
-	lgr.log("Totals", lgr.fmts.yellow)
-	lgr.log(str('Scripts:          ', test_collector.scripts.size()))
-	lgr.log(str('Passing Tests     ', totals.passing_tests))
-	lgr.log(str('Failing Tests     ', totals.failing_tests))
-	lgr.log(str('Risky Tests       ', totals.risky))
-	var pnd=str('Pending Tests     ', totals.pending)
-	# add a non printable character so this "pending" isn't highlighted in the
-	# editor's output panel.
-	lgr.log(str(npws, pnd))
-	lgr.log(str('Asserts:          ', totals.passing, ' of ', totals.passing + totals.failing, ' passed'))
-
+func log_the_final_line(totals, lgr):
 	var grand_total_text = ""
 	var grand_total_fmt = lgr.fmts.none
 	if(totals.failing_tests > 0):
@@ -79,19 +140,11 @@ func _log_totals(test_collector, lgr):
 
 	lgr.log(str("---- ", grand_total_text, " ----"), grand_total_fmt)
 
-	return totals
 
-# ---------------------
-# Public
-# ---------------------
-func log_summary(test_collector, lgr):
+func log_totals(gut, totals, lgr):
 	var orig_indent = lgr.get_indent_level()
-	var found_failing_or_pending = false
-
-	var pass_no_pass_counts = _count_tests_and_log_non_passing_tests(test_collector, lgr)
 	lgr.set_indent_level(0)
-
-	_log_totals(test_collector, lgr)
+	_log_totals(gut, totals, lgr)
 	lgr.set_indent_level(orig_indent)
 
 
@@ -124,3 +177,23 @@ func get_totals(test_collector=_collector):
 	totals.scripts = test_collector.scripts.size()
 
 	return totals
+
+
+func log_end_run(gut):
+	_log_end_run_header(gut)
+
+	var totals = get_totals(gut.get_test_collector())
+	var tc = gut.get_test_collector()
+	var lgr = gut.get_logger()
+
+	log_all_non_passing_tests(tc, lgr)
+
+	_log_warnings_errors_etc(gut.get_logger())
+	log_totals(gut, totals, lgr)
+	lgr.log("\n")
+
+	_log_orphans_and_disclaimer(gut)
+	lgr.log(str("Tests finished in ", gut.get_elapsed_time(), 's'))
+	_log_what_was_run(gut)
+	log_the_final_line(totals, lgr)
+	lgr.log("")

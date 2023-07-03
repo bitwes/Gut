@@ -60,6 +60,7 @@ func test_import_errors_if_file_does_not_exist():
 func test_gut_runs_the_imported_tests():
 	_test_gut.add_directory('res://test/resources/parsing_and_loading_samples')
 	_test_gut.export_tests(EXPORT_FILE)
+	var export_totals = _test_gut.get_summary().get_totals()
 
 	var _import_gut = new_gut()
 	add_child(_import_gut)
@@ -67,11 +68,13 @@ func test_gut_runs_the_imported_tests():
 	_import_gut.import_tests()
 	_import_gut.test_scripts()
 
-	var totals = _import_gut.get_summary().get_totals()
-	assert_eq(totals.scripts, 6, 'total scripts')
+	var import_totals = _import_gut.get_summary().get_totals()
+	assert_eq(import_totals.scripts, export_totals.scripts, 'total scripts')
+	assert_eq(import_totals.tests, export_totals.tests, 'total tests')
+
 	# picked some arbitrary number since these assert counts could change
 	# over time.  Last run was 16 passing.  This is probably a sign that this
 	# shouldn't be reusing parsing_and_loading_samples but the world isn't
 	# perfect alright?  I'm trying here, but lay off a bit why dontcha.
-	assert_gt(totals.passing, 10, 'min total passing')
+	assert_gt(import_totals.passing, 10, 'min total passing')
 	_import_gut.free()

@@ -380,7 +380,6 @@ func end_teardown_pause():
 # Private
 #
 #####################
-
 func _log_test_children_warning(test_script):
 	if(!_lgr.is_type_enabled(_lgr.types.orphan)):
 		return
@@ -399,33 +398,11 @@ func _log_test_children_warning(test_script):
 
 		_lgr.warn(msg)
 
-# ------------------------------------------------------------------------------
-# Convert the _summary dictionary into text
-# ------------------------------------------------------------------------------
-func _print_summary():
-	if(!_should_print_summary):
-		return
 
-	_lgr.log("\n\n\n")
-	_lgr.log('==============================================', _lgr.fmts.yellow)
-	_lgr.log("= Run Summary", _lgr.fmts.yellow)
-	_lgr.log('==============================================', _lgr.fmts.yellow)
-
-	var summary = _utils.Summary.new()
-	summary.log_summary(_test_collector, _lgr)
-
-	var logger_text = ''
-	if(_lgr.get_errors().size() > 0):
-		logger_text += str("\n* ", _lgr.get_errors().size(), ' Errors.')
-	if(_lgr.get_warnings().size() > 0):
-		logger_text += str("\n* ", _lgr.get_warnings().size(), ' Warnings.')
-	if(_lgr.get_deprecated().size() > 0):
-		logger_text += str("\n* ", _lgr.get_deprecated().size(), ' Deprecated calls.')
-	if(logger_text != ''):
-		logger_text = "\nWarnings/Errors:" + logger_text + "\n\n"
-	_lgr.log(logger_text)
-
-	_lgr.log(str("Tests finished in ", get_elapsed_time(), 's'))
+func _log_end_run():
+	if(_should_print_summary):
+		var summary = _utils.Summary.new()
+		summary.log_end_run(self)
 
 
 func _validate_hook_script(path):
@@ -487,25 +464,7 @@ func _init_run():
 # Print out run information and close out the run.
 # ------------------------------------------------------------------------------
 func _end_run():
-	_print_summary()
-
-	if(!_utils.is_null_or_empty(_select_script)):
-		p('Ran Scripts matching "' + _select_script + '"')
-	if(!_utils.is_null_or_empty(_unit_test_name)):
-		p('Ran Tests matching "' + _unit_test_name + '"')
-	if(!_utils.is_null_or_empty(_inner_class_name)):
-		p('Ran Inner Classes matching "' + _inner_class_name + '"')
-
-	# Do not count any of the _test_script_objects since these will be released
-	# when GUT is released.
-	_orphan_counter._counters.total += _test_script_objects.size()
-	if(_orphan_counter.get_counter('total') > 0 and _lgr.is_type_enabled('orphan')):
-		_orphan_counter.print_orphans('total', _lgr)
-		p("Note:  This count does not include GUT objects that will be freed upon exit.")
-		p("       It also does not include any orphans created by global scripts")
-		p("       loaded before tests were ran.")
-		p(str("Total orphans = ", _orphan_counter.orphan_count()))
-
+	_log_end_run()
 	_is_running = false
 
 	_run_hook_script(_post_run_script_instance)
@@ -1252,7 +1211,8 @@ func show_orphans(should):
 	_lgr.set_type_enabled(_lgr.types.orphan, should)
 
 
-
+func get_logger():
+	return _lgr
 
 
 # ##############################################################################
