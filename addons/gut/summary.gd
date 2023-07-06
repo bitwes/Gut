@@ -41,6 +41,7 @@ func _log_orphans_and_disclaimer(gut):
 		gut.p("       It also does not include any orphans created by global scripts")
 		gut.p("       loaded before tests were ran.")
 		gut.p(str("Total orphans = ", orphan_count.orphan_count()))
+		gut.p('')
 
 
 func _total_fmt(text, value):
@@ -59,8 +60,6 @@ func _log_non_zero_total(text, value, lgr):
 
 func _log_totals(gut, totals):
 	var lgr = gut.get_logger()
-	# just picked a non-printable char, dunno if it is a good or bad choice.
-	var npws = PackedByteArray([31]).get_string_from_ascii()
 	lgr.log()
 
 	lgr.log("---- Totals ----")
@@ -78,15 +77,7 @@ func _log_totals(gut, totals):
 	lgr.log(_total_fmt('  Failing', totals.failing_tests))
 	lgr.log(_total_fmt('  Risky/Pending', totals.risky + totals.pending))
 	lgr.log(_total_fmt('Asserts', totals.passing + totals.failing))
-
-	lgr.log("")
-
-	# var pnd=str('Pending Tests'.rpad(col1),     totals.pending)
-	# add a non printable character so this "pending" isn't highlighted in the
-	# editor's output panel.
-	# lgr.log(str(npws, pnd))
-	# lgr.log(_total_fmt('Asserts', str(totals.passing, ' of ', totals.passing + totals.failing, ' passed')))
-
+	lgr.log(_total_fmt('Time', str(gut.get_elapsed_time(), 's')))
 
 	return totals
 
@@ -206,7 +197,6 @@ func log_end_run(gut=_gut):
 	lgr.log("\n")
 
 	_log_orphans_and_disclaimer(gut)
-	lgr.log(str("Tests finished in ", gut.get_elapsed_time(), 's'))
 	_log_what_was_run(gut)
 	log_the_final_line(totals, gut)
 	lgr.log("")

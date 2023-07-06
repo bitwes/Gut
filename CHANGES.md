@@ -4,6 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 
 # 9.1.0
+* Tested and verified in 4.1
 * Changes to Double Strategy and Double/Partial Double creation to fix #482.
     * See [Double-Strategy](https://bitwes.github.io/GutWiki/Godot4/Double-Strategy.html) in the wiki for more information.
     * The default strategy has been changed back to `SCRIPT_ONLY` (a bug caused it to change).  Due to how the Godot Engine calls native methods, the overrides may not be called by the engine so spying and stubbing may not work in some scenarios.
@@ -13,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
     * You can now set the default double strategy in the GutPanel in the Editor.
 * Added `GutControl` to aid in running tests in a deployed game.  Instructions and sample code can be found [in the wiki](https://bitwes.github.io/GutWiki/Godot4/Running-On-Devices.html).
 * __Issue i485__ GUT prints a warning and ignores scripts that do not extend `GutTest`.
+* A lot of internal reworkings to simplify logging and info about test statuses.  The summary changed and the final line printed by GUT is now the highest severity status of the run (i.e. failed > pending/risky > passed).
 
 
 # 9.0.1
