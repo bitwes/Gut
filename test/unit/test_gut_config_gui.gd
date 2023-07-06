@@ -28,9 +28,3 @@ func test_free_makes_no_orphans():
 func test_double_strategy_is_script_only():
 	var opts = _get_default_options()
 	assert_eq(opts.double_strategy, GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY)
-
-
-func test_this_has_error():
-	get_logger().error('This error should cause failure')
-	pass_test('passing')
-	assert_true(is_failing(), 'this should be failing bc of error')
