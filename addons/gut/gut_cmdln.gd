@@ -126,50 +126,68 @@ var _final_opts = []
 
 func setup_options(options, font_names):
 	var opts = Optparse.new()
-	opts.set_banner(('This is the command line interface for the unit testing tool Gut.  With this ' +
-					'interface you can run one or more test scripts from the command line.  In order ' +
-					'for the Gut options to not clash with any other godot options, each option starts ' +
-					'with a "g".  Also, any option that requires a value will take the form of ' +
-					'"-g<name>=<value>".  There cannot be any spaces between the option, the "=", or ' +
-					'inside a specified value or godot will think you are trying to run a scene.'))
+	opts.set_banner(
+"""
+The GUT CLI
+-----------
+The default behavior for GUT is to load options from a res://.gutconfig.json if
+it exists.  Any options specified on the command line will take precedence over
+options specified in the gutconfig file.  You can specify a different gutconfig
+file with the -gconfig option.
 
-	opts.add('-gtest', [], 'Comma delimited list of full paths to test scripts to run.')
+To generate a .gutconfig.json file you can use -gprint_gutconfig_sample
+To see the effective values of a CLI command and a gutconfig use -gpo
+
+Any option that requires a value will take the form of \"-g<name>=<value>\".
+There cannot be any spaces between the option, the \"=\", or ' + 'inside a
+specified value or godot will think you are trying to run a scene.
+""")
+	# Run specific things
+	opts.add('-gselect', '', ('All scripts that contain the specified string in their filename will be ran'))
+	opts.add('-ginner_class', '', 'Only run inner classes that contain the specified string int their name.')
+	opts.add('-gunit_test_name', '', ('Any test that contains the specified text will be run, all others will be skipped.'))
+
+	# Run Config
+	opts.add('-ginclude_subdirs', false, 'Include subdirectories of -gdir.')
 	opts.add('-gdir', options.dirs, 'Comma delimited list of directories to add tests from.')
+	opts.add('-gtest', [], 'Comma delimited list of full paths to test scripts to run.')
 	opts.add('-gprefix', options.prefix, 'Prefix used to find tests when specifying -gdir.  Default "[default]".')
 	opts.add('-gsuffix', options.suffix, 'Test script suffix, including .gd extension.  Default "[default]".')
+	opts.add('-gconfig', 'res://.gutconfig.json', 'A config file that contains configuration information.  Default is res://.gutconfig.json')
+	opts.add('-gpre_run_script', '', 'pre-run hook script path')
+	opts.add('-gpost_run_script', '', 'post-run hook script path')
+	opts.add('-gerrors_do_not_cause_failure', false, 'When an internal GUT error occurs tests will fail.  With this option set, that does not happen.')
+	opts.add('-gdouble_strategy', 'SCRIPT_ONLY', 'Default strategy to use when doubling.  Valid values are [INCLUDE_NATIVE, SCRIPT_ONLY].  Default "[default]"')
+
+	# Misc
+	opts.add('-gpaint_after', options.paint_after, 'Delay before GUT will add a 1 frame pause to paint the screen/GUI.  default [default]')
+
+	# Display options
+	opts.add('-glog', options.log_level, 'Log level.  Default [default]')
 	opts.add('-ghide_orphans', false, 'Display orphan counts for tests and scripts.  Default "[default]".')
 	opts.add('-gmaximize', false, 'Maximizes test runner window to fit the viewport.')
 	opts.add('-gcompact_mode', false, 'The runner will be in compact mode.  This overrides -gmaximize.')
-	opts.add('-gexit', false, 'Exit after running tests.  If not specified you have to manually close the window.')
-	opts.add('-gexit_on_success', false, 'Only exit if all tests pass.')
-	opts.add('-glog', options.log_level, 'Log level.  Default [default]')
-	opts.add('-gignore_pause', false, 'Ignores any calls to gut.pause_before_teardown.')
-	opts.add('-gselect', '', ('Select a script to run initially.  The first script that ' +
-							'was loaded using -gtest or -gdir that contains the specified ' +
-							'string will be executed.  You may run others by interacting ' +
-							'with the GUI.'))
-	opts.add('-gunit_test_name', '', ('Name of a test to run.  Any test that contains the specified ' +
-								'text will be run, all others will be skipped.'))
-	opts.add('-gh', false, 'Print this help, then quit')
-	opts.add('-gconfig', 'res://.gutconfig.json', 'A config file that contains configuration information.  Default is res://.gutconfig.json')
-	opts.add('-ginner_class', '', 'Only run inner classes that contain this string')
 	opts.add('-gopacity', options.opacity, 'Set opacity of test runner window. Use range 0 - 100. 0 = transparent, 100 = opaque.')
-	opts.add('-gpo', false, 'Print option values from all sources and the value used, then quit.')
-	opts.add('-ginclude_subdirs', false, 'Include subdirectories of -gdir.')
-	opts.add('-gdouble_strategy', 'SCRIPT_ONLY', 'Default strategy to use when doubling.  Valid values are [INCLUDE_NATIVE, SCRIPT_ONLY].  Default "[default]"')
 	opts.add('-gdisable_colors', false, 'Disable command line colors.')
-	opts.add('-gpre_run_script', '', 'pre-run hook script path')
-	opts.add('-gpost_run_script', '', 'post-run hook script path')
-	opts.add('-gprint_gutconfig_sample', false, 'Print out json that can be used to make a gutconfig file then quit.')
-
 	opts.add('-gfont_name', options.font_name, str('Valid values are:  ', font_names, '.  Default "[default]"'))
 	opts.add('-gfont_size', options.font_size, 'Font size, default "[default]"')
 	opts.add('-gbackground_color', options.background_color, 'Background color as an html color, default "[default]"')
 	opts.add('-gfont_color',options.font_color, 'Font color as an html color, default "[default]"')
-	opts.add('-gpaint_after', options.paint_after, 'Delay before GUT will add a 1 frame pause to paint the screen/GUI.  default [default]')
 
+	# End Behavior
+	opts.add('-gexit', false, 'Exit after running tests.  If not specified you have to manually close the window.')
+	opts.add('-gexit_on_success', false, 'Only exit if all tests pass.')
+	opts.add('-gignore_pause', false, 'Ignores any calls to gut.pause_before_teardown.')
+
+	# Helpish options
+	opts.add('-gh', false, 'Print this help.  You did this to see this, so you probably understand.')
+	opts.add('-gpo', false, 'Print option values from all sources and the value used.')
+	opts.add('-gprint_gutconfig_sample', false, 'Print out json that can be used to make a gutconfig file.')
+
+	# Output options
 	opts.add('-gjunit_xml_file', options.junit_xml_file, 'Export results of run to this file in the Junit XML format.')
 	opts.add('-gjunit_xml_timestamp', options.junit_xml_timestamp, 'Include a timestamp in the -gjunit_xml_file, default [default]')
+
 	return opts
 
 
@@ -195,6 +213,7 @@ func extract_command_line_options(from, to):
 	to.compact_mode = from.get_value('-gcompact_mode')
 	to.hide_orphans = from.get_value('-ghide_orphans')
 	to.suffix = from.get_value('-gsuffix')
+	to.errors_do_not_cause_failure = from.get_value('-gerrors_do_not_cause_failure')
 	to.tests = from.get_value('-gtest')
 	to.unit_test_name = from.get_value('-gunit_test_name')
 

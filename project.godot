@@ -35,7 +35,7 @@ window/dpi/allow_hidpi=false
 [editor_plugins]
 
 disabled=PackedStringArray("res://addons/gut/plugin.cfg")
-enabled=PackedStringArray("res://addons/plugin_refresher/plugin.cfg", "res://addons/gut/plugin.cfg")
+enabled=PackedStringArray("res://addons/gut/plugin.cfg", "res://addons/plugin_refresher/plugin.cfg")
 
 [network]
 
