@@ -30,6 +30,7 @@ var is_loaded = false
 # the value of skip_script is put into skip_reason.
 var was_skipped = false
 var skip_reason = ''
+var was_run = false
 
 
 var name = '' :

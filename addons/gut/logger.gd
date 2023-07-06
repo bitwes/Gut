@@ -39,7 +39,8 @@ var types = {
 	orphan = 'orphan',
 	passed = 'passed',
 	pending = 'pending',
-	warn ='warn',
+	risky = 'risky',
+	warn = 'warn',
 }
 
 var fmts = {
@@ -63,6 +64,7 @@ var _type_data = {
 	types.orphan:		{disp='Orphans',	enabled=true, fmt=fmts.yellow},
 	types.passed:		{disp='Passed', 	enabled=true, fmt=fmts.green},
 	types.pending:		{disp='Pending',	enabled=true, fmt=fmts.yellow},
+	types.risky:		{disp='Risky',		enabled=true, fmt=fmts.yellow},
 	types.warn:			{disp='WARNING', 	enabled=true, fmt=fmts.yellow},
 }
 
@@ -228,6 +230,9 @@ func passed(text):
 
 func pending(text):
 	_output_type(types.pending, text)
+
+func risky(text):
+	_output_type(types.risky, text)
 
 func warn(text):
 	_output_type(types.warn, text)

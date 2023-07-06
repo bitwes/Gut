@@ -319,12 +319,15 @@ class TestEverythingElse:
 	# ------------------------------
 	# No Assert Warning
 	# ------------------------------
-	func test_when_a_test_has_no_asserts_a_warning_is_generated():
-
+	# no assert was moved to risky, so this test changed to make sure the warning
+	# was no longer generated.
+	func test_when_a_test_has_no_asserts_risky_count_and_no_warning():
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name =  'test_no_asserts'
 		gr.test_gut.test_scripts()
-		assert_eq(gr.test_gut.logger.get_warnings().size(), 1)
+		assert_eq(gr.test_gut.logger.get_warnings().size(), 0, 'no warnings')
+		var risky_count = gr.test_gut.get_test_collector().scripts[0].get_risky_count()
+		assert_eq(risky_count, 1, 'Risky count')
 
 	func test_with_passing_assert_no_assert_warning_is_not_generated():
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')

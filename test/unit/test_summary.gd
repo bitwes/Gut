@@ -56,3 +56,21 @@ func test_output_with_scripts_that_have_issues():
     await _run_test_gut_tests(test_gut)
     pass_test("Look at the output, or don't if you aren't interested.")
 
+func test_output_with_risky_tests():
+    var test_gut = _make_a_gut()
+    test_gut.add_directory(SUMMARY_SCRIPTS)
+
+    test_gut.log_level = 99
+    test_gut.select_script('risky_and_passing')
+
+    await _run_test_gut_tests(test_gut)
+    pass_test("Look at the output, or don't if you aren't interested.")
+
+func test_output_with_all_test_scripts():
+    var test_gut = _make_a_gut()
+    test_gut.add_directory(SUMMARY_SCRIPTS)
+    test_gut.add_directory(PARSING_AND_LOADING)
+
+    test_gut.log_level = 99
+    await _run_test_gut_tests(test_gut)
+    pass_test("Look at the output, or don't if you aren't interested.")

@@ -572,15 +572,9 @@ func _get_indexes_matching_path(path):
 # ------------------------------------------------------------------------------
 func _run_parameterized_test(test_script, test_name):
 	await _run_test(test_script, test_name)
-	# TODO 4.0 GDScriptFunctionState? ----
-	# var script_result = await _run_test(test_script, test_name)
-	# if(_is_function_state(script_result)):
-	# 	# _run_tests does _wait_for_done so just wait on it to  complete
-	# 	await script_result.COMPLETED
-	# ----
 
 	if(_current_test.assert_count == 0 and !_current_test.pending):
-		_lgr.warn('Test did not assert')
+		_lgr.risky('Test did not assert')
 
 	if(_parameter_handler == null):
 		_lgr.error(str('Parameterized test ', _current_test.name, ' did not call use_parameters for the default value of the parameter.'))
@@ -589,14 +583,8 @@ func _run_parameterized_test(test_script, test_name):
 		while(!_parameter_handler.is_done()):
 			var cur_assert_count = _current_test.assert_count
 			await _run_test(test_script, test_name)
-			# TODO 4.0 GDScriptFunctionState? ----
-			# script_result = await _run_test(test_script, test_name)
-			# if(_is_function_state(script_result)):
-			# 	# _run_tests does _wait_for_done so just wait on it to  complete
-			# 	await script_result.COMPLETED
-			# ----
 			if(_current_test.assert_count == cur_assert_count and !_current_test.pending):
-				_lgr.warn('Test did not assert')
+				_lgr.risky('Test did not assert')
 
 	_parameter_handler = null
 
@@ -759,14 +747,8 @@ func _test_the_scripts(indexes=[]):
 		if(!_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
 			the_script.tests = []
 		else:
+			the_script.was_run = true
 			await _call_before_all(test_script, the_script)
-			# TODO 4.0 GDScriptFunctionState? ----
-			# var before_all_result = await _call_before_all(test_script)
-			# if(_is_function_state(before_all_result)):
-			# 	# _call_before_all calls _wait for done, just wait for that to finish
-			# 	await before_all_result.COMPLETED
-			# ----
-
 
 		# Each test in the script
 		var skip_suffix = '_skip__'
@@ -797,7 +779,7 @@ func _test_the_scripts(indexes=[]):
 					script_result = await _run_test(test_script, _current_test.name)
 
 				if(!_current_test.did_something()):
-					_lgr.warn(str(_current_test.name, ' did not assert'))
+					_lgr.risky(str(_current_test.name, ' did not assert'))
 
 				_current_test.has_printed_name = false
 				end_test.emit()
@@ -817,13 +799,6 @@ func _test_the_scripts(indexes=[]):
 
 		if(_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
 			await _call_after_all(test_script, the_script)
-			# TODO 4.0 GDScriptFunctionState? ----
-			# var after_all_result = await _call_after_all(test_script)
-			# if(_is_function_state(after_all_result)):
-			# 	# _call_after_all calls _wait for done, just wait for that to finish
-			# 	await after_all_result.COMPLETED
-			# ----
-
 
 		_log_test_children_warning(test_script)
 		# This might end up being very resource intensive if the scripts
@@ -834,7 +809,7 @@ func _test_the_scripts(indexes=[]):
 
 		_lgr.set_indent_level(0)
 		if(test_script.get_assert_count() > 0):
-			var script_sum = str(test_script.get_pass_count(), '/', test_script.get_assert_count(), ' passed.')
+			var script_sum = str(the_script.get_passing_test_count(), '/', the_script.get_ran_test_count(), ' passed.')
 			_lgr.log(script_sum, _lgr.fmts.bold)
 
 		end_script.emit()

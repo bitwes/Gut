@@ -223,6 +223,13 @@ func get_ran_test_count():
 	return count
 
 
+func get_ran_script_count():
+	var count = 0
+	for s in scripts:
+		if(s.was_run):
+			count += 1
+	return count
+
 func get_test_count():
 	var count = 0
 	for s in scripts:
@@ -256,3 +263,4 @@ func get_pending_count():
 	for s in scripts:
 		count += s.get_pending_count()
 	return count
+

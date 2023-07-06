@@ -6,7 +6,7 @@
 var _gut = null
 
 
-func _init(gut = null):
+func _init(gut=null):
 	_gut = gut
 
 # ---------------------
@@ -43,38 +43,50 @@ func _log_orphans_and_disclaimer(gut):
 		gut.p(str("Total orphans = ", orphan_count.orphan_count()))
 
 
-func _log_totals(gut, totals, lgr):
+func _total_fmt(text, value):
+	var space = 18
+	if(str(value) == '0'):
+		value = 'none'
+	return str(text.rpad(space), value)
+
+
+func _log_non_zero_total(text, value, lgr):
+	if(str(value) != '0'):
+		lgr.log(_total_fmt(text, value))
+		return 1
+	else:
+		return 0
+
+func _log_totals(gut, totals):
+	var lgr = gut.get_logger()
 	# just picked a non-printable char, dunno if it is a good or bad choice.
 	var npws = PackedByteArray([31]).get_string_from_ascii()
 	lgr.log()
 
-	lgr.log("Totals", lgr.fmts.yellow)
+	lgr.log("---- Totals ----")
 	var col1 = 18
 	var issue_count = 0
-	if(totals.errors > 0):
-		lgr.log(str('Errors:'.rpad(col1),       totals.errors))
-		issue_count += 1
-	if(totals.warnings > 0):
-		lgr.log(str('Warnings:'.rpad(col1),     totals.warnings))
-		issue_count += 1
-	if(totals.deprecated > 0):
-		lgr.log(str('Deprecated:'.rpad(col1),   totals.deprecated))
-		issue_count += 1
+	issue_count += _log_non_zero_total('Errors', totals.errors, lgr)
+	issue_count += _log_non_zero_total('Warnings', totals.warnings, lgr)
+	issue_count += _log_non_zero_total('Deprecated', totals.deprecated, lgr)
 	if(issue_count > 0):
 		lgr.log("")
-	# This line must use _test_script_objects since it holds the scripts that
-	# were run.  totals has the total number of scripts that were found.  It was
-	# either this, or create another mechanism for tracking which scripts were
-	# run and where were not.  This was much much easier.
-	lgr.log(str('Scripts:'.rpad(col1),          gut._test_script_objects.size()))
-	lgr.log(str('Passing Tests'.rpad(col1),     totals.passing_tests))
-	lgr.log(str('Failing Tests'.rpad(col1),     totals.failing_tests))
-	lgr.log(str('Risky Tests'.rpad(col1),       totals.risky))
-	var pnd=str('Pending Tests'.rpad(col1),     totals.pending)
+
+	lgr.log(_total_fmt('Scripts', totals.scripts))
+	lgr.log(_total_fmt('Tests', gut.get_test_collector().get_ran_test_count()))
+	lgr.log(_total_fmt('  Passing', totals.passing_tests))
+	lgr.log(_total_fmt('  Failing', totals.failing_tests))
+	lgr.log(_total_fmt('  Risky/Pending', totals.risky + totals.pending))
+	lgr.log(_total_fmt('Asserts', totals.passing + totals.failing))
+
+	lgr.log("")
+
+	# var pnd=str('Pending Tests'.rpad(col1),     totals.pending)
 	# add a non printable character so this "pending" isn't highlighted in the
 	# editor's output panel.
-	lgr.log(str(npws, pnd))
-	lgr.log(str('Asserts:'.rpad(col1), totals.passing, ' of ', totals.passing + totals.failing, ' passed'))
+	# lgr.log(str(npws, pnd))
+	# lgr.log(_total_fmt('Asserts', str(totals.passing, ' of ', totals.passing + totals.failing, ' passed')))
+
 
 	return totals
 
@@ -117,7 +129,7 @@ func log_all_non_passing_tests(gut=_gut):
 					for i in range(test.pending_texts.size()):
 						lgr.pending(test.pending_texts[i])
 					if(test.is_risky()):
-						lgr.log('[Risky] Did not assert', lgr.fmts.yellow)
+						lgr.risky('Did not assert')
 					lgr.dec_indent()
 
 	return to_return
@@ -131,10 +143,10 @@ func log_the_final_line(totals, gut):
 		grand_total_text = str(totals.failing_tests, " failing tests")
 		grand_total_fmt = lgr.fmts.red
 	elif(totals.risky > 0 or totals.pending > 0):
-		grand_total_text = str("All tests passed but there are ", totals.risky + totals.pending, " pending/risky tests.")
+		grand_total_text = str(totals.risky + totals.pending, " pending/risky tests.")
 		grand_total_fmt = lgr.fmts.yellow
 	else:
-		grand_total_text = "All Tests Passed!"
+		grand_total_text = "All tests passed!"
 		grand_total_fmt = lgr.fmts.green
 
 	lgr.log(str("---- ", grand_total_text, " ----"), grand_total_fmt)
@@ -144,44 +156,40 @@ func log_totals(gut, totals):
 	var lgr = gut.get_logger()
 	var orig_indent = lgr.get_indent_level()
 	lgr.set_indent_level(0)
-	_log_totals(gut, totals, lgr)
+	_log_totals(gut, totals)
 	lgr.set_indent_level(orig_indent)
 
 
-# For backwards compat, this will use the collector set.  It was just a lot
-# easier to use a local var than pass more things around.
 func get_totals(gut=_gut):
-	var test_collector = gut.get_test_collector()
+	var tc = gut.get_test_collector()
 	var lgr = gut.get_logger()
 
 	var totals = {
-		passing = 0,
-		pending = 0,
 		failing = 0,
-		risky = 0,
-		tests = 0,
-		scripts = 0,
-		passing_tests = 0,
 		failing_tests = 0,
+		passing = 0,
+		passing_tests = 0,
+		pending = 0,
+		risky = 0,
+		scripts = tc.get_ran_script_count(),
+		tests = 0,
 
+		deprecated = lgr.get_deprecated().size(),
 		errors = lgr.get_errors().size(),
 		warnings = lgr.get_warnings().size(),
-		deprecated = lgr.get_deprecated().size()
 	}
 
-	for s in test_collector.scripts:
+	for s in tc.scripts:
 		# assert totals
 		totals.passing += s.get_pass_count()
 		totals.pending += s.get_pending_count()
 		totals.failing += s.get_fail_count()
 
 		# test totals
-		totals.tests += s.tests.size()
+		totals.tests += s.get_ran_test_count()
 		totals.passing_tests += s.get_passing_test_count()
 		totals.failing_tests += s.get_failing_test_count()
 		totals.risky += s.get_risky_count()
-
-	totals.scripts = test_collector.scripts.size()
 
 	return totals
 
