@@ -48,7 +48,16 @@ enum DIFF {
 	SIMPLE
 }
 
-
+const TEST_STATUSES = {
+	NO_ASSERTS = 'no asserts',
+	SKIPPED = 'skipped',
+	NOT_RUN = 'not run',
+	PENDING = 'pending',
+	# These two got the "ed" b/c pass is a reserved word and I could not
+	# think of better words.
+	FAILED = 'fail',
+	PASSED = 'pass'
+}
 # ------------------------------------------------------------------------------
 # The instance name as a function since you can't have static variables.
 # ------------------------------------------------------------------------------
@@ -177,6 +186,8 @@ var Summary = load('res://addons/gut/summary.gd')
 var Test = load('res://addons/gut/test.gd')
 var TestCollector = load('res://addons/gut/test_collector.gd')
 var ThingCounter = load('res://addons/gut/thing_counter.gd')
+var CollectedTest = load('res://addons/gut/collected_test.gd')
+var CollectedScript = load('res://addons/gut/collected_test.gd')
 
 var GutScene = load('res://addons/gut/GutScene.tscn')
 

@@ -94,6 +94,9 @@ class TestTestCollector:
 		for i in range(gr.tc.scripts.size()):
 			assert_ne(gr.tc.scripts[i].inner_class_name, 'TestDoesNotExtendTest')
 
+
+
+
 class TestTestsWithParameters:
 	extends "res://test/gut_test.gd"
 
@@ -120,6 +123,9 @@ class TestTestsWithParameters:
 		assert_eq(script.get_test_named('test_inner_has_one_defaulted_parameter').arg_count, 1)
 		assert_eq(script.get_test_named('test_inner_has_two_parameters').arg_count, 2)
 		assert_eq(script.get_test_named('test_inner_no_parameters').arg_count, 0)
+
+
+
 
 class TestExportImport:
 	extends "res://test/gut_test.gd"
@@ -237,3 +243,4 @@ class TestExportImport:
 		# This is 2 for some reason.  it is only 1 in the other test.  One of
 		# them is wrong but everything else checks out ok.
 		assert_eq(totals.scripts, 2, 'script count')
+

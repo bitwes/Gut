@@ -1677,7 +1677,7 @@ class TestMemoryMgmt:
 
 	func test_passes_when_no_orphans_introduced():
 		assert_no_new_orphans()
-		assert_true(gut._current_test.passed, 'test should be passing')
+		assert_true(is_passing(), 'test should be passing')
 
 	func test_failing_orphan_assert_marks_test_as_failing():
 		var n2d = Node2D.new()
@@ -1689,14 +1689,14 @@ class TestMemoryMgmt:
 		var n2d = Node2D.new()
 		n2d.free()
 		assert_no_new_orphans()
-		assert_true(gut._current_test.passed, 'this should be passing')
+		assert_true(is_passing(), 'this should be passing')
 
 	func test_passes_with_queue_free():
 		var n2d = Node2D.new()
 		n2d.queue_free()
 		await wait_seconds(.5, 'must wait for queue_free to take hold')
 		assert_no_new_orphans()
-		assert_true(gut._current_test.passed, 'this should be passing')
+		assert_true(is_passing(), 'this should be passing')
 
 	func test_autofree_children():
 		var n = Node.new()
@@ -1740,6 +1740,12 @@ class TestTestStateChecking:
 	func _same_name():
 		return gut.get_current_test_object().name
 
+	# Well, old me was insane.  This runs a test in the _gut variable created
+	# before each test.  The script is state_check_tests.gd.  The name of the
+	# test is either passed in, OR it's the SAME NAME as the test that is
+	# currently being run.  So, when you see five tests in a row that look
+	# like they are doing the same thing and asserting different things...THIS
+	# is why they are not testing the same thing.  Crazy.
 	func _run_test(inner_class, name=_same_name()):
 		_gut.inner_class_name = inner_class
 		_gut.unit_test_name = name
