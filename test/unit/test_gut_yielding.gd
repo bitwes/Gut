@@ -271,6 +271,9 @@ class TestWaitFrames:
 
 	var _frame_count = 0
 
+	func after_each():
+		gut.treat_error_as_failure = true
+
 	func _physics_process(delta):
 		_frame_count += 1
 
@@ -291,11 +294,13 @@ class TestWaitFrames:
 		pass_test("did you look at the output?")
 
 	func test_zero_generates_error():
+		gut.treat_error_as_failure = false
 		var err_count = get_error_count(gut)
 		await wait_frames(0, 'whaterver')
 		assert_eq(get_error_count(gut), err_count + 1)
 
 	func test_neg_number_generates_error():
+		gut.treat_error_as_failure = false
 		var err_count = get_error_count(gut)
 		await wait_frames(-1, 'whatever')
 		assert_eq(get_error_count(gut), err_count + 1)

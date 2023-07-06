@@ -1925,6 +1925,7 @@ class TestAssertProperty:
 		assert_fail_pass(gr.test_with_gut, 1, SUB_ASSERT_COUNT)
 
 
+# ------------------------------------------------------------------------------
 class TestAssertBackedProperty:
 	extends BaseTestClass
 
@@ -2000,5 +2001,3 @@ class TestAssertSameAndAssertNotSame:
 	func test_assert_not_same_fails_when_values_are_not_the_same(p = use_parameters(_not_same_values)):
 		gr.test_with_gut.assert_not_same(p[0], p[1])
 		assert_pass(gr.test_with_gut)
-
-

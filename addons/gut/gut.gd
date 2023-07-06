@@ -150,10 +150,6 @@ var unit_test_name = _unit_test_name :
 	get: return _unit_test_name
 	set(val): _unit_test_name = val
 
-# ###########################
-# Public Properties
-# ###########################
-
 var _parameter_handler = null
 # This is populated by test.gd each time a paramterized test is encountered
 # for the first time.
@@ -182,6 +178,11 @@ var add_children_to = self :
 	get: return _add_children_to
 	set(val): _add_children_to = val
 
+
+var _treat_error_as_failure = true
+var treat_error_as_failure = _treat_error_as_failure:
+	get: return _treat_error_as_failure
+	set(val): _treat_error_as_failure = val
 
 # ------------
 # Read only
@@ -249,6 +250,7 @@ var _done = false
 # msecs ticks when run was started
 var _start_time = 0.0
 
+# Collected Test instance for the current test being run.
 var _current_test = null
 var _pause_before_teardown = false
 
@@ -826,7 +828,7 @@ func _pass(text=''):
 		_current_test.add_pass(text)
 	else:
 		# I don't think this is valid anymore.
-		_lgr.error('Encountered a call to _pass when there is no current test')
+		_lgr.warn('Encountered a call to _pass when there is no current test')
 
 
 # ------------------------------------------------------------------------------
@@ -845,7 +847,24 @@ func _fail(text=''):
 		_current_test.add_fail(call_count_text + text + line_text)
 	else:
 		# I don't think this is valid anymore.
-		_lgr.error('Encountered a call to _fail when there is no current test')
+		_lgr.warn('Encountered a call to _fail when there is no current test')
+
+
+# ------------------------------------------------------------------------------
+# This is "private" but is only used by the logger, it is not used internally.
+# It was either, make this weird method or "do it the right way" with signals
+# or some other crazy mechanism.
+# ------------------------------------------------------------------------------
+func _fail_for_error(err_text):
+	if(_current_test != null and treat_error_as_failure):
+		_fail(err_text)
+
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func _pending(text=''):
+	if(_current_test):
+		_current_test.add_pending(text)
 
 
 # ------------------------------------------------------------------------------
@@ -862,13 +881,6 @@ func _extract_line_number(current_test):
 			if function == current_test.name:
 				line_number = line.get("line")
 	return line_number
-
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func _pending(text=''):
-	if(_current_test):
-		_current_test.add_pending(text)
 
 
 # ------------------------------------------------------------------------------

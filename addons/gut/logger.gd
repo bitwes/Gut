@@ -203,6 +203,7 @@ func _output_type(type, text):
 		_output(indented_start, td.fmt)
 		_output(indented_end + "\n")
 
+
 func debug(text):
 	_output_type(types.debug, text)
 
@@ -215,6 +216,8 @@ func deprecated(text, alt_method=null):
 
 func error(text):
 	_output_type(types.error, text)
+	if(_gut != null):
+		_gut._fail_for_error(text)
 
 func failed(text):
 	_output_type(types.failed, text)
