@@ -707,19 +707,19 @@ func _test_the_scripts(indexes=[]):
 
 	# loop through scripts
 	for test_indexes in range(indexes_to_run.size()):
-		var the_script = _test_collector.scripts[indexes_to_run[test_indexes]]
+		var coll_script = _test_collector.scripts[indexes_to_run[test_indexes]]
 		_orphan_counter.add_counter('script')
 
-		if(the_script.tests.size() > 0):
+		if(coll_script.tests.size() > 0):
 			_lgr.set_indent_level(0)
-			_print_script_heading(the_script)
+			_print_script_heading(coll_script)
 
-		if(!the_script.is_loaded):
+		if(!coll_script.is_loaded):
 			break
 
-		start_script.emit(the_script)
+		start_script.emit(coll_script)
 
-		var test_script = the_script.get_new()
+		var test_script = coll_script.get_new()
 
 		# ----
 		# SHORTCIRCUIT
@@ -730,8 +730,8 @@ func _test_the_scripts(indexes=[]):
 			_lgr.inc_indent()
 			_lgr.log(msg, _lgr.fmts.yellow)
 			_lgr.dec_indent()
-			the_script.skip_reason = skip_script
-			the_script.was_skipped = true
+			coll_script.skip_reason = skip_script
+			coll_script.was_skipped = true
 			continue
 		# ----
 
@@ -744,19 +744,19 @@ func _test_the_scripts(indexes=[]):
 		# inner class is set and we do not have a match then empty the tests
 		# for the current test.
 		# !!!
-		if(!_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
-			the_script.tests = []
+		if(!_does_class_name_match(_inner_class_name, coll_script.inner_class_name)):
+			coll_script.tests = []
 		else:
-			the_script.was_run = true
-			await _call_before_all(test_script, the_script)
+			coll_script.was_run = true
+			await _call_before_all(test_script, coll_script)
 
 		# Each test in the script
 		var skip_suffix = '_skip__'
-		the_script.mark_tests_to_skip_with_suffix(skip_suffix)
-		for i in range(the_script.tests.size()):
+		coll_script.mark_tests_to_skip_with_suffix(skip_suffix)
+		for i in range(coll_script.tests.size()):
 			_stubber.clear()
 			_spy.clear()
-			_current_test = the_script.tests[i]
+			_current_test = coll_script.tests[i]
 			script_result = null
 
 			# ------------------
@@ -797,8 +797,8 @@ func _test_the_scripts(indexes=[]):
 		_lgr.dec_indent()
 		_orphan_counter.print_orphans('script', _lgr)
 
-		if(_does_class_name_match(_inner_class_name, the_script.inner_class_name)):
-			await _call_after_all(test_script, the_script)
+		if(_does_class_name_match(_inner_class_name, coll_script.inner_class_name)):
+			await _call_after_all(test_script, coll_script)
 
 		_log_test_children_warning(test_script)
 		# This might end up being very resource intensive if the scripts
@@ -809,7 +809,7 @@ func _test_the_scripts(indexes=[]):
 
 		_lgr.set_indent_level(0)
 		if(test_script.get_assert_count() > 0):
-			var script_sum = str(the_script.get_passing_test_count(), '/', the_script.get_ran_test_count(), ' passed.')
+			var script_sum = str(coll_script.get_passing_test_count(), '/', coll_script.get_ran_test_count(), ' passed.')
 			_lgr.log(script_sum, _lgr.fmts.bold)
 
 		end_script.emit()
