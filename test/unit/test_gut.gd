@@ -18,22 +18,22 @@ class TestProperties:
 	var _backed_properties = ParameterFactory.named_parameters(
 		['property_name', 'default', 'new_value'],
 		[
-			['disable_strict_datatype_checks', false, true],
-			['log_level', 1, 3],
-			['disable_strict_datatype_checks', false, true],
-			['include_subdirectories', false, true],
-			['double_strategy', GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY, GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE],
-			['pre_run_script', '', 'res://something.gd'],
-			['post_run_script', '', 'res://something_else.gd'],
 			['color_output', false, true],
+			['disable_strict_datatype_checks', false, true],
+			['disable_strict_datatype_checks', false, true],
+			['double_strategy', GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY, GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE],
+			['export_path', '', 'res://somewhere/cool'],
+			['ignore_pause_before_teardown', false, true],
+			['include_subdirectories', false, true],
+			['inner_class_name', '', 'TestSomeInnerClass'],
 			['junit_xml_file', '', 'user://somewhere.json'],
 			['junit_xml_timestamp', false, true],
-			['export_path', '', 'res://somewhere/cool'],
-			['color_output', false, true],
-			['temp_directory', 'user://gut_temp_directory', 'user://blahblah'],
+			['log_level', 1, 3],
 			['parameter_handler', null, _utils.ParameterHandler.new([])],
-			['ignore_pause_before_teardown', false, true],
-			['inner_class_name', '', 'TestSomeInnerClass'],
+			['post_run_script', '', 'res://something_else.gd'],
+			['pre_run_script', '', 'res://something.gd'],
+			['temp_directory', 'user://gut_temp_directory', 'user://blahblah'],
+			['treat_error_as_failure', true, false],
 			['unit_test_name', '', 'test_something_cool'],
 		])
 
@@ -578,7 +578,7 @@ class TestEverythingElse:
 		gr.test_gut.unit_test_name = 'test_does_not_use_use_parameters'
 		gr.test_gut.test_scripts()
 		assert_eq(gr.test_gut.logger.get_errors().size(), 1, 'error size')
-		assert_eq(gr.test_gut.get_fail_count(), 1)
+		assert_eq(gr.test_gut.get_fail_count(), 2)
 
 	# if you really think about this, it is a very very inception like test.
 	func test_parameterized_test_that_yield_are_called_correctly():
@@ -650,3 +650,42 @@ class TestEverythingElse:
 		assert_eq(gr.test_gut.get_pass_count(), 10, 'pass count')
 		assert_eq(gr.test_gut.get_fail_count(), 10, 'fail count')
 		assert_eq(gr.test_gut.get_assert_count(), 20, 'assert count`')
+
+
+
+
+class TestErrorsTreatedAsFailure:
+	extends 'res://test/gut_test.gd'
+
+	var _test_gut = null
+
+	func before_each():
+		_test_gut = add_child_autofree(new_gut())
+
+	func test_logger_calls__fail_for_error_when_error_occurs():
+		var logger = _utils.Logger.new()
+		var dgut = double(_utils.Gut).new()
+		logger.set_gut(dgut)
+		logger.error('this is an error')
+		assert_called(dgut, '_fail_for_error')
+
+	func test_gut_does_not_call__fail_when_flag_false():
+		var dgut = double(_utils.Gut).new()
+		stub(dgut, '_fail_for_error').to_call_super()
+		dgut._fail_for_error('error text')
+		assert_not_called(dgut, '_fail')
+
+	func test_gut_calls__fail_when_flag_true():
+		var dgut = double(_utils.Gut).new()
+		dgut._current_test = 'something'
+		dgut.treat_error_as_failure = true
+		stub(dgut, '_fail_for_error').to_call_super()
+		dgut._fail_for_error('error text')
+		assert_called(dgut, '_fail')
+
+	func test_gut_does_not_call__fail_when_there_is_no_test_object():
+		var dgut = double(_utils.Gut).new()
+		dgut.treat_error_as_failure = true
+		stub(dgut, '_fail_for_error').to_call_super()
+		dgut._fail_for_error('error text')
+		assert_not_called(dgut, '_fail')

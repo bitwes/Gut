@@ -18,6 +18,8 @@ var default_options = {
 	# The GUI gut config expects the value to be the enum value and not a string
 	# when saved.
 	double_strategy = 'SCRIPT_ONLY',
+	# named differently than gut option so we can use it as a flag in the cli
+	errors_do_not_cause_failure = false,
 	font_color = Color(.8, .8, .8, 1).to_html(),
 	font_name = 'CourierPrime',
 	font_size = 16,
@@ -112,39 +114,40 @@ func _load_dict_into(source, dest):
 					dest[key] = source[key]
 
 
-# Apply all the options specified to _tester.  This is where the rubber meets
+# Apply all the options specified to tester.  This is where the rubber meets
 # the road.
-func _apply_options(opts, _tester):
-	_tester.include_subdirectories = opts.include_subdirs
+func _apply_options(opts, gut):
+	gut.include_subdirectories = opts.include_subdirs
 
 	if(opts.inner_class != ''):
-		_tester.inner_class_name = opts.inner_class
-	_tester.log_level = opts.log_level
-	_tester.ignore_pause_before_teardown = opts.ignore_pause
+		gut.inner_class_name = opts.inner_class
+	gut.log_level = opts.log_level
+	gut.ignore_pause_before_teardown = opts.ignore_pause
 
-	_tester.select_script(opts.selected)
+	gut.select_script(opts.selected)
 
 	for i in range(opts.dirs.size()):
-		_tester.add_directory(opts.dirs[i], opts.prefix, opts.suffix)
+		gut.add_directory(opts.dirs[i], opts.prefix, opts.suffix)
 
 	for i in range(opts.tests.size()):
-		_tester.add_script(opts.tests[i])
+		gut.add_script(opts.tests[i])
 
 	# Sometimes it is the index, sometimes it's a string.  This sets it regardless
-	_tester.double_strategy = GutUtils.get_enum_value(
+	gut.double_strategy = GutUtils.get_enum_value(
 		opts.double_strategy, GutUtils.DOUBLE_STRATEGY,
 		GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
 
-	_tester.unit_test_name = opts.unit_test_name
-	_tester.pre_run_script = opts.pre_run_script
-	_tester.post_run_script = opts.post_run_script
-	_tester.color_output = !opts.disable_colors
-	_tester.show_orphans(!opts.hide_orphans)
-	_tester.junit_xml_file = opts.junit_xml_file
-	_tester.junit_xml_timestamp = opts.junit_xml_timestamp
-	_tester.paint_after = str(opts.paint_after).to_float()
+	gut.unit_test_name = opts.unit_test_name
+	gut.pre_run_script = opts.pre_run_script
+	gut.post_run_script = opts.post_run_script
+	gut.color_output = !opts.disable_colors
+	gut.show_orphans(!opts.hide_orphans)
+	gut.junit_xml_file = opts.junit_xml_file
+	gut.junit_xml_timestamp = opts.junit_xml_timestamp
+	gut.paint_after = str(opts.paint_after).to_float()
+	gut.treat_error_as_failure = !opts.errors_do_not_cause_failure
 
-	return _tester
+	return gut
 
 # --------------------------
 # Public

@@ -150,10 +150,6 @@ var unit_test_name = _unit_test_name :
 	get: return _unit_test_name
 	set(val): _unit_test_name = val
 
-# ###########################
-# Public Properties
-# ###########################
-
 var _parameter_handler = null
 # This is populated by test.gd each time a paramterized test is encountered
 # for the first time.
@@ -182,6 +178,11 @@ var add_children_to = self :
 	get: return _add_children_to
 	set(val): _add_children_to = val
 
+
+var _treat_error_as_failure = true
+var treat_error_as_failure = _treat_error_as_failure:
+	get: return _treat_error_as_failure
+	set(val): _treat_error_as_failure = val
 
 # ------------
 # Read only
@@ -249,6 +250,7 @@ var _done = false
 # msecs ticks when run was started
 var _start_time = 0.0
 
+# Collected Test instance for the current test being run.
 var _current_test = null
 var _pause_before_teardown = false
 
@@ -494,34 +496,12 @@ func _export_junit_xml():
 		p(str("Results saved to ", output_file))
 
 
-
-# ------------------------------------------------------------------------------
-# Checks the passed in thing to see if it is a "function state" object that gets
-# returned when a function yields.
-# ------------------------------------------------------------------------------
-func _is_function_state(script_result):
-	return false
-	# TODO 4.0 Keep this until we know how they are going to handle the
-	# 4.0 equivalent of GDScriptFunctionState
-	# return script_result != null and \
-	# 	typeof(script_result) == TYPE_OBJECT and \
-	# 	script_result is GDScriptFunctionState and \
-	# 	script_result.is_valid()
-
 # ------------------------------------------------------------------------------
 # Print out the heading for a new script
 # ------------------------------------------------------------------------------
-func _print_script_heading(script):
-	if(_does_class_name_match(_inner_class_name, script.inner_class_name)):
-		var fmt = _lgr.fmts.underline
-		var divider = '-----------------------------------------'
-
-		var text = ''
-		if(script.inner_class_name == null):
-			text = script.path
-		else:
-			text = str(script.path, '.', script.inner_class_name)
-		_lgr.log("\n\n" + text, fmt)
+func _print_script_heading(coll_script):
+	if(_does_class_name_match(_inner_class_name, coll_script.inner_class_name)):
+		_lgr.log(str("\n\n", coll_script.get_full_name()), _lgr.fmts.underline)
 
 
 # ------------------------------------------------------------------------------
@@ -530,6 +510,7 @@ func _print_script_heading(script):
 func _does_class_name_match(the_class_name, script_class_name):
 	return (the_class_name == null or the_class_name == '') or \
 		(script_class_name != null and str(script_class_name).findn(the_class_name) != -1)
+
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -558,6 +539,7 @@ func _get_indexes_matching_script_name(name):
 			indexes.append(i)
 	return indexes
 
+
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func _get_indexes_matching_path(path):
@@ -566,6 +548,7 @@ func _get_indexes_matching_path(path):
 		if(_test_collector.scripts[i].path == path):
 			indexes.append(i)
 	return indexes
+
 
 # ------------------------------------------------------------------------------
 # Execute all calls of a parameterized test.
@@ -628,6 +611,7 @@ func _run_test(script_inst, test_name):
 
 	_doubler.get_ignored_methods().clear()
 
+
 # ------------------------------------------------------------------------------
 # Calls after_all on the passed in test script and takes care of settings so all
 # logger output appears indented and with a proper heading
@@ -652,6 +636,7 @@ func _call_before_all(test_script, collected_script):
 
 	_current_test = null
 
+
 # ------------------------------------------------------------------------------
 # Calls after_all on the passed in test script and takes care of settings so all
 # logger output appears indented and with a proper heading
@@ -674,6 +659,7 @@ func _call_after_all(test_script, collected_script):
 	_lgr.dec_indent()
 
 	_current_test = null
+
 
 # ------------------------------------------------------------------------------
 # Run all tests in a script.  This is the core logic for running tests.
@@ -824,9 +810,21 @@ func _test_the_scripts(indexes=[]):
 func _pass(text=''):
 	if(_current_test):
 		_current_test.add_pass(text)
-	else:
-		# I don't think this is valid anymore.
-		_lgr.error('Encountered a call to _pass when there is no current test')
+
+
+# ------------------------------------------------------------------------------
+# Returns an empty string or "(call #x) " if the current test being run has
+# parameters.  The
+# ------------------------------------------------------------------------------
+func get_call_count_text():
+	var to_return = ''
+	if(_parameter_handler != null):
+		# This uses get_call_count -1 because test.gd's use_parameters method
+		# should have been called before we get to any calls for this method
+		# just due to how use_parameters works.  There isn't a way to know
+		# whether we are before or after that call.
+		to_return = str('params[', _parameter_handler.get_call_count() -1, '] ')
+	return to_return
 
 
 # ------------------------------------------------------------------------------
@@ -838,14 +836,26 @@ func _fail(text=''):
 		p(line_text, LOG_LEVEL_FAIL_ONLY)
 		# format for summary
 		line_text =  "\n    " + line_text
-		var call_count_text = ''
-		if(_parameter_handler != null):
-			call_count_text = str('(call #', _parameter_handler.get_call_count(), ') ')
+		var call_count_text = get_call_count_text()
 		_current_test.line_number = line_number
 		_current_test.add_fail(call_count_text + text + line_text)
-	else:
-		# I don't think this is valid anymore.
-		_lgr.error('Encountered a call to _fail when there is no current test')
+
+
+# ------------------------------------------------------------------------------
+# This is "private" but is only used by the logger, it is not used internally.
+# It was either, make this weird method or "do it the right way" with signals
+# or some other crazy mechanism.
+# ------------------------------------------------------------------------------
+func _fail_for_error(err_text):
+	if(_current_test != null and treat_error_as_failure):
+		_fail(err_text)
+
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func _pending(text=''):
+	if(_current_test):
+		_current_test.add_pending(text)
 
 
 # ------------------------------------------------------------------------------
@@ -862,13 +872,6 @@ func _extract_line_number(current_test):
 			if function == current_test.name:
 				line_number = line.get("line")
 	return line_number
-
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func _pending(text=''):
-	if(_current_test):
-		_current_test.add_pending(text)
 
 
 # ------------------------------------------------------------------------------

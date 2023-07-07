@@ -71,13 +71,13 @@ func _log_totals(gut, totals):
 	if(issue_count > 0):
 		lgr.log("")
 
-	lgr.log(_total_fmt('Scripts', totals.scripts))
-	lgr.log(_total_fmt('Tests', gut.get_test_collector().get_ran_test_count()))
-	lgr.log(_total_fmt('  Passing', totals.passing_tests))
-	lgr.log(_total_fmt('  Failing', totals.failing_tests))
-	lgr.log(_total_fmt('  Risky/Pending', totals.risky + totals.pending))
-	lgr.log(_total_fmt('Asserts', totals.passing + totals.failing))
-	lgr.log(_total_fmt('Time', str(gut.get_elapsed_time(), 's')))
+	lgr.log(_total_fmt( 'Scripts', totals.scripts))
+	lgr.log(_total_fmt( 'Tests', gut.get_test_collector().get_ran_test_count()))
+	lgr.log(_total_fmt( '  Passing', totals.passing_tests))
+	_log_non_zero_total('  Failing', totals.failing_tests, lgr)
+	_log_non_zero_total('  Risky/Pending', totals.risky + totals.pending, lgr)
+	lgr.log(_total_fmt( 'Asserts', totals.passing + totals.failing))
+	lgr.log(_total_fmt( 'Time', str(gut.get_elapsed_time(), 's')))
 
 	return totals
 

@@ -48,8 +48,8 @@ func _ready():
 
 func _test_running_setup():
 	load_json_file('user://.gut_editor.json')
-	
-	
+
+
 func _on_tree_item_selected():
 	var item = _ctrls.tree.get_selected()
 	var item_meta = item.get_metadata(0)
@@ -263,7 +263,7 @@ func _free_childless_scripts():
 
 
 func _show_all_passed():
-	if(_root.get_children() == null):
+	if(_root.get_children().size() == 0):
 		add_centered_text('Everything passed!')
 
 

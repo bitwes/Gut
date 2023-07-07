@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 
 # 9.1.0
-* Tested and verified in 4.1
+* GUT generated errors now cause tests to fail (not engine errors, just things GUT thinks are bad).  You can disable this through the CLI, .gutconfig, or the panel.
 * Changes to Double Strategy and Double/Partial Double creation to fix #482.
     * See [Double-Strategy](https://bitwes.github.io/GutWiki/Godot4/Double-Strategy.html) in the wiki for more information.
     * The default strategy has been changed back to `SCRIPT_ONLY` (a bug caused it to change).  Due to how the Godot Engine calls native methods, the overrides may not be called by the engine so spying and stubbing may not work in some scenarios.

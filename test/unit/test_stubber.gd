@@ -155,11 +155,11 @@ func test_withStubParams_can_get_return_based_on_complex_parameters():
 	var with_params = gr.stubber.get_return(DoubleMe, 'method', ['a', 1, ['a', 1], sp])
 	assert_eq(with_params, 10)
 
-func test_when_parameters_do_not_match_any_stub_then_warning_generated():
+func test_when_parameters_do_not_match_any_stub_then_info_generated():
 	var sp = StubParamsClass.new(DoubleMe, 'method').to_return(10).when_passed('a')
 	gr.stubber.add_stub(sp)
 	var result = gr.stubber.get_return(DoubleMe, 'method', ['b'])
-	assert_eq(gr.stubber.get_logger().get_warnings().size(), 1)
+	assert_eq(gr.stubber.get_logger().get_infos().size(), 1)
 
 func test_withStubParams_param_layering_works():
 	var sp1 = StubParamsClass.new(DoubleMe, 'method').to_return(10).when_passed(10)

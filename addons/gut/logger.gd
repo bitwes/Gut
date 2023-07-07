@@ -135,7 +135,12 @@ func _print_test_name():
 		return false
 
 	if(!cur_test.has_printed_name):
-		_output('* ' + cur_test.name + "\n")
+		var param_text = ''
+		if(cur_test.arg_count > 0):
+			# Just an FYI, parameter_handler in gut might not be set yet so can't
+			# use it here for cooler output.
+			param_text = '<parameterized>'
+		_output(str('* ', cur_test.name, param_text, "\n"))
 		cur_test.has_printed_name = true
 
 func _output(text, fmt=null):
@@ -203,6 +208,7 @@ func _output_type(type, text):
 		_output(indented_start, td.fmt)
 		_output(indented_end + "\n")
 
+
 func debug(text):
 	_output_type(types.debug, text)
 
@@ -215,6 +221,8 @@ func deprecated(text, alt_method=null):
 
 func error(text):
 	_output_type(types.error, text)
+	if(_gut != null):
+		_gut._fail_for_error(text)
 
 func failed(text):
 	_output_type(types.failed, text)

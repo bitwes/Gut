@@ -354,6 +354,8 @@ func set_options(options):
 		'This is the default, you can override this at the script level or when creating doubles.')
 	_cfg_ctrls['double_strategy'].selected = GutUtils.get_enum_value(
 		options.double_strategy, GutUtils.DOUBLE_STRATEGY, GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY)
+	_add_boolean('errors_cause_failure', !options.errors_do_not_cause_failure, 'Errors cause failures.',
+		"When GUT generates an error (not an engine error) it causes tests to fail.")
 
 
 	_add_title("Panel Output") # ----------------------------------
@@ -425,6 +427,7 @@ func set_options(options):
 
 	print('GUT config loaded')
 
+
 func get_options(base_opts):
 	var to_return = base_opts.duplicate()
 
@@ -435,6 +438,7 @@ func get_options(base_opts):
 	to_return.should_exit = _cfg_ctrls.should_exit.button_pressed
 	to_return.should_exit_on_success = _cfg_ctrls.should_exit_on_success.button_pressed
 	to_return.double_strategy = _cfg_ctrls.double_strategy.selected
+	to_return.errors_do_not_cause_failure = !_cfg_ctrls.errors_cause_failure.button_pressed
 
 	#Output
 	to_return.panel_options.font_name = _cfg_ctrls.output_font_name.get_item_text(
