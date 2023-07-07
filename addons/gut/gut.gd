@@ -496,34 +496,12 @@ func _export_junit_xml():
 		p(str("Results saved to ", output_file))
 
 
-
-# ------------------------------------------------------------------------------
-# Checks the passed in thing to see if it is a "function state" object that gets
-# returned when a function yields.
-# ------------------------------------------------------------------------------
-func _is_function_state(script_result):
-	return false
-	# TODO 4.0 Keep this until we know how they are going to handle the
-	# 4.0 equivalent of GDScriptFunctionState
-	# return script_result != null and \
-	# 	typeof(script_result) == TYPE_OBJECT and \
-	# 	script_result is GDScriptFunctionState and \
-	# 	script_result.is_valid()
-
 # ------------------------------------------------------------------------------
 # Print out the heading for a new script
 # ------------------------------------------------------------------------------
-func _print_script_heading(script):
-	if(_does_class_name_match(_inner_class_name, script.inner_class_name)):
-		var fmt = _lgr.fmts.underline
-		var divider = '-----------------------------------------'
-
-		var text = ''
-		if(script.inner_class_name == null):
-			text = script.path
-		else:
-			text = str(script.path, '.', script.inner_class_name)
-		_lgr.log("\n\n" + text, fmt)
+func _print_script_heading(coll_script):
+	if(_does_class_name_match(_inner_class_name, coll_script.inner_class_name)):
+		_lgr.log(str("\n\n", coll_script.get_full_name()), _lgr.fmts.underline)
 
 
 # ------------------------------------------------------------------------------
@@ -532,6 +510,7 @@ func _print_script_heading(script):
 func _does_class_name_match(the_class_name, script_class_name):
 	return (the_class_name == null or the_class_name == '') or \
 		(script_class_name != null and str(script_class_name).findn(the_class_name) != -1)
+
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -560,6 +539,7 @@ func _get_indexes_matching_script_name(name):
 			indexes.append(i)
 	return indexes
 
+
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func _get_indexes_matching_path(path):
@@ -568,6 +548,7 @@ func _get_indexes_matching_path(path):
 		if(_test_collector.scripts[i].path == path):
 			indexes.append(i)
 	return indexes
+
 
 # ------------------------------------------------------------------------------
 # Execute all calls of a parameterized test.
@@ -630,6 +611,7 @@ func _run_test(script_inst, test_name):
 
 	_doubler.get_ignored_methods().clear()
 
+
 # ------------------------------------------------------------------------------
 # Calls after_all on the passed in test script and takes care of settings so all
 # logger output appears indented and with a proper heading
@@ -654,6 +636,7 @@ func _call_before_all(test_script, collected_script):
 
 	_current_test = null
 
+
 # ------------------------------------------------------------------------------
 # Calls after_all on the passed in test script and takes care of settings so all
 # logger output appears indented and with a proper heading
@@ -676,6 +659,7 @@ func _call_after_all(test_script, collected_script):
 	_lgr.dec_indent()
 
 	_current_test = null
+
 
 # ------------------------------------------------------------------------------
 # Run all tests in a script.  This is the core logic for running tests.
@@ -830,12 +814,16 @@ func _pass(text=''):
 
 # ------------------------------------------------------------------------------
 # Returns an empty string or "(call #x) " if the current test being run has
-# parameters.
+# parameters.  The
 # ------------------------------------------------------------------------------
 func get_call_count_text():
 	var to_return = ''
 	if(_parameter_handler != null):
-		to_return = str('(call #', _parameter_handler.get_call_count(), ') ')
+		# This uses get_call_count -1 because test.gd's use_parameters method
+		# should have been called before we get to any calls for this method
+		# just due to how use_parameters works.  There isn't a way to know
+		# whether we are before or after that call.
+		to_return = str('params[', _parameter_handler.get_call_count() -1, '] ')
 	return to_return
 
 

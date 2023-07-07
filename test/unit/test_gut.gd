@@ -19,7 +19,6 @@ class TestProperties:
 		['property_name', 'default', 'new_value'],
 		[
 			['color_output', false, true],
-			['color_output', false, true],
 			['disable_strict_datatype_checks', false, true],
 			['disable_strict_datatype_checks', false, true],
 			['double_strategy', GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY, GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE],
@@ -34,9 +33,8 @@ class TestProperties:
 			['post_run_script', '', 'res://something_else.gd'],
 			['pre_run_script', '', 'res://something.gd'],
 			['temp_directory', 'user://gut_temp_directory', 'user://blahblah'],
-			['unit_test_name', '', 'test_something_cool'],
-
 			['treat_error_as_failure', true, false],
+			['unit_test_name', '', 'test_something_cool'],
 		])
 
 	func test_check_backed_properties(p=use_parameters(_backed_properties)):
