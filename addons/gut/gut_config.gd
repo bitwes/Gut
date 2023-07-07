@@ -18,6 +18,8 @@ var default_options = {
 	# The GUI gut config expects the value to be the enum value and not a string
 	# when saved.
 	double_strategy = 'SCRIPT_ONLY',
+	# named differently than gut option so we can use it as a flag in the cli
+	errors_do_not_cause_failure = false,
 	font_color = Color(.8, .8, .8, 1).to_html(),
 	font_name = 'CourierPrime',
 	font_size = 16,
@@ -41,7 +43,6 @@ var default_options = {
 	show_help = false,
 	suffix = '.gd',
 	tests = [],
-	errors_do_not_cause_failure = false,
 	unit_test_name = '',
 
 	gut_on_top = true,

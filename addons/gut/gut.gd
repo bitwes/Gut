@@ -826,9 +826,17 @@ func _test_the_scripts(indexes=[]):
 func _pass(text=''):
 	if(_current_test):
 		_current_test.add_pass(text)
-	else:
-		# I don't think this is valid anymore.
-		_lgr.warn('Encountered a call to _pass when there is no current test')
+
+
+# ------------------------------------------------------------------------------
+# Returns an empty string or "(call #x) " if the current test being run has
+# parameters.
+# ------------------------------------------------------------------------------
+func get_call_count_text():
+	var to_return = ''
+	if(_parameter_handler != null):
+		to_return = str('(call #', _parameter_handler.get_call_count(), ') ')
+	return to_return
 
 
 # ------------------------------------------------------------------------------
@@ -840,14 +848,9 @@ func _fail(text=''):
 		p(line_text, LOG_LEVEL_FAIL_ONLY)
 		# format for summary
 		line_text =  "\n    " + line_text
-		var call_count_text = ''
-		if(_parameter_handler != null):
-			call_count_text = str('(call #', _parameter_handler.get_call_count(), ') ')
+		var call_count_text = get_call_count_text()
 		_current_test.line_number = line_number
 		_current_test.add_fail(call_count_text + text + line_text)
-	else:
-		# I don't think this is valid anymore.
-		_lgr.warn('Encountered a call to _fail when there is no current test')
 
 
 # ------------------------------------------------------------------------------

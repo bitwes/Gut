@@ -95,7 +95,7 @@ func _fail(text):
 	_summary.failed += 1
 	_fail_pass_text.append('failed:  ' + text)
 	if(gut):
-		_lgr.failed(text)
+		_lgr.failed(gut.get_call_count_text() + text)
 		gut._fail(text)
 
 
@@ -1414,9 +1414,10 @@ func use_parameters(params):
 		ph = _utils.ParameterHandler.new(params)
 		gut.parameter_handler = ph
 
-	var output = str('(call #', ph.get_call_count() + 1, ') with parameters:  ', ph.get_current_parameters())
-	_lgr.log(output)
-	_lgr.inc_indent()
+	var count =  ph.get_call_count()
+	var output = str('- params[', count, ']','(', ph.get_current_parameters(), ')')
+	gut.p(output, gut.LOG_LEVEL_TEST_AND_FAILURES)
+
 	return ph.next_parameters()
 
 # ------------------------------------------------------------------------------

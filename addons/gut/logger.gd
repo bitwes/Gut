@@ -135,7 +135,12 @@ func _print_test_name():
 		return false
 
 	if(!cur_test.has_printed_name):
-		_output('* ' + cur_test.name + "\n")
+		var param_text = ''
+		if(cur_test.arg_count > 0):
+			# Just an FYI, parameter_handler in gut might not be set yet so can't
+			# use it here for cooler output.
+			param_text = '<parameterized>'
+		_output(str('* ', cur_test.name, param_text, "\n"))
 		cur_test.has_printed_name = true
 
 func _output(text, fmt=null):

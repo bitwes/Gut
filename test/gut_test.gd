@@ -26,12 +26,14 @@ var TestCollector = load('res://addons/gut/test_collector.gd')
 func _init():
 	load('res://addons/gut/utils.gd').get_instance()._test_mode = true
 
+
 func assert_warn(obj, times=1):
 	if(obj.has_method('get_logger')):
 		var msg = str('Should have ', times, ' warnings.')
 		assert_eq(obj.get_logger().get_warnings().size(), times, msg)
 	else:
 		_fail('Does not have get_logger method')
+
 
 func assert_errored(obj, times=1):
 	if(obj.has_method('get_logger')):
@@ -42,6 +44,7 @@ func assert_errored(obj, times=1):
 		assert_eq(obj.logger.get_errors().size(), times, msg)
 	else:
 		_fail(str('Cannot assert_errored, ', obj, ' does not have get_logger method or logger property'))
+
 
 func assert_deprecated(obj, times=1):
 	if(obj.has_method('get_logger')):
@@ -61,6 +64,7 @@ func assert_has_logger(obj):
 			obj.set_logger(l)
 			assert_eq(obj.get_logger(), l, 'Set/get works')
 
+
 func get_error_count(obj):
 	return obj.logger.get_errors().size()
 
@@ -68,9 +72,10 @@ func get_error_count(obj):
 func new_gut(print_sub_tests=false):
 	var g = Gut.new()
 	g.logger = _utils.Logger.new()
+	g.logger.disable_all_printers(true)
+
 	if(print_sub_tests):
 		g.log_level = 3
-		g.logger.disable_all_printers(true)
 		g.logger.disable_printer("terminal", false)
 		g.logger._min_indent_level = 1
 		g.logger.dec_indent()
@@ -78,7 +83,6 @@ func new_gut(print_sub_tests=false):
 		g.logger.disable_formatting(!print_sub_tests)
 	else:
 		g.log_level = g.LOG_LEVEL_FAIL_ONLY
-		g.logger.disable_all_printers(true)
 
 	g._should_print_versions = false
 	g._should_print_summary = false
