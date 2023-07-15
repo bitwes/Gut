@@ -217,7 +217,7 @@ var CollectedScript = load('res://addons/gut/collected_test.gd')
 var GutScene = load('res://addons/gut/GutScene.tscn')
 
 # Source of truth for the GUT version
-var version = '9.0.1'
+var version = '9.1.0'
 # The required Godot version as an array.
 var req_godot = [4, 1, 0]
 
