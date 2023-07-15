@@ -24,7 +24,7 @@ GUT 9 requires Godot 4.  GUT 7 requires Godot 3.4.
 * [Stubbing](Stubbing)
 * [Parameterized Tests](Parameterized-Tests)
 * [Simulate](Simulate)
-* ~~[Yielding during tests](Yielding)~~
+* [Coroutines and `await` in tests](Awaiting)
 * [Pre/Post Run Hooks](Hooks)
 * [Exporting Results](Export-Test-Results)
 
