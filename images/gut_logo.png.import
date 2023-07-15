@@ -2,23 +2,23 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cjrdostd274gh"
-path="res://.godot/imported/gut_panel.png-51315c4dbef24e14bb14c0ee0272b7be.ctex"
+uid="uid://dr6c18jg6w3pv"
+path="res://.godot/imported/gut_logo.png-647a0efbdd5e0d8d00cef1c7cc7aff8d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://gut_panel.png"
-dest_files=["res://.godot/imported/gut_panel.png-51315c4dbef24e14bb14c0ee0272b7be.ctex"]
+source_file="res://images/gut_logo.png"
+dest_files=["res://.godot/imported/gut_logo.png-647a0efbdd5e0d8d00cef1c7cc7aff8d.ctex"]
 
 [params]
 
 compress/mode=0
+compress/high_quality=false
 compress/lossy_quality=0.7
 compress/hdr_compression=1
-compress/bptc_ldr=0
 compress/normal_map=0
 compress/channel_pack=0
 mipmaps/generate=false
