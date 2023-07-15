@@ -89,58 +89,189 @@ class TestSimulate:
 	func before_each():
 		_test_gut = autofree(new_gut())
 
-	class HasProcessMethod:
+	class WithoutProcess:
 		extends Node
-		var process_called_count = 0
+	
+	class WithProcess:
+		extends Node
+		var call_count = 0
 		var delta_sum = 0.0
-
+	
 		func _process(delta):
-			process_called_count += 1
+			call_count += 1
 			delta_sum += delta
 
-	class HasPhysicsProcessMethod:
+	class WithoutPhysicsProcess:
 		extends Node
-		var physics_process_called_count = 0
+	
+	class WithPhysicsProcess:
+		extends Node
+		var call_count = 0
 		var delta_sum = 0.0
-
+	
 		func _physics_process(delta):
-			physics_process_called_count += 1
+			call_count += 1
 			delta_sum += delta
 
-	func test_simulate_calls_process():
-		var obj = autofree(HasProcessMethod.new())
-		_test_gut.simulate(obj, 10, .1)
-		assert_eq(obj.process_called_count, 10, "_process should have been called 10 times")
-		# using just the numbers didn't work, nor using float.  str worked for some reason and
-		# i'm not sure why.
-		assert_eq(str(obj.delta_sum), str(1), "The delta value should have been passed in and summed")
-
-	func test_simulate_calls_process_on_child_objects():
-		var parent = autofree(HasProcessMethod.new())
-		var child = autofree(HasProcessMethod.new())
-		parent.add_child(child)
-		_test_gut.simulate(parent, 10, .1)
-		assert_eq(child.process_called_count, 10, "_process should have been called on the child object too")
-
+	func test_simulate_calls_process_if_object_has_method():
+		var with_method = autofree(WithProcess.new())
+		_test_gut.simulate(with_method, 5, 0.2)
+		assert_eq(with_method.call_count, 5, '_process should have been called 5 times')
+		assert_eq(with_method.delta_sum, 1.0, 'The delta value should have been passed in and summed')
+	
+	func test_simulate_does_not_error_when_object_does_not_have_process():
+		var without_method = autofree(WithoutProcess.new())
+		_test_gut.simulate(without_method, 5, 0.2)
+		pass_test('We got here')
+	
 	func test_simulate_calls_process_on_child_objects_of_child_objects():
 		var objs = []
 		for i in range(5):
-			objs.append(autofree(HasProcessMethod.new()))
+			objs.append(autofree(WithProcess.new()))
 			if(i > 0):
 				objs[i - 1].add_child(objs[i])
-
-		_test_gut.simulate(objs[0], 10, .1)
+		_test_gut.simulate(objs[0], 5, 0.2)
 
 		for i in range(objs.size()):
-			assert_eq(objs[i].process_called_count, 10, "_process should have been called on object # " + str(i))
+			assert_eq(objs[i].call_count, 5, '_process should have been called on object # ' + str(i))
+			assert_eq(objs[i].delta_sum, 1, 'The delta value should have been summed on object # ' + str(i))
+	
+	func test_simulate_checks_process_on_all_nodes():
+		var objs = [
+			autofree(WithProcess.new()),
+			autofree(WithoutProcess.new()),
+			autofree(WithProcess.new()),
+			autofree(WithoutProcess.new()),
+		]
+		for i in range(1, 4):
+			objs[i - 1].add_child(objs[i])
+		
+		_test_gut.simulate(objs[0], 5, 0.2)
+	
+		assert_eq(objs[0].call_count, 5, '_process should have been called 5 times')
+		assert_eq(objs[0].delta_sum, 1.0, 'The delta value should have been passed in and summed')	
+		assert_eq(objs[2].call_count, 5, '_process should have been called 5 times')
+		assert_eq(objs[2].delta_sum, 1.0, 'The delta value should have been passed in and summed')	
+	
+	func test_simulate_calls_process_if_object_is_processing_and_check_is_true():
+		var with_processing = autofree(WithProcess.new())
+		with_processing.set_process(true)
+		_test_gut.simulate(with_processing, 5, 0.2, true)  # check_is_processing=false
+		assert_eq(with_processing.call_count, 5, '_process should have been called 5 times')
+		assert_eq(with_processing.delta_sum, 1.0, 'The delta value should have been passed in and summed')
+	
+	func test_simulate_does_not_call_process_if_object_is_not_processing_and_check_is_true():
+		var without_processing = autofree(WithProcess.new())
+		without_processing.set_process(false)
+		_test_gut.simulate(without_processing, 5, 0.2, true)  # check_is_processing=true
+		assert_eq(without_processing.call_count, 0, '_process should not have been called')
+	
+	func test_simulate_does_not_error_if_object_is_processing_but_has_no_method():
+		var with_processing_but_without_method = autofree(WithoutProcess.new())
+		with_processing_but_without_method.set_process(true)
+		_test_gut.simulate(with_processing_but_without_method, 5, 0.2, true)  # check_is_processing=true
+		pass_test('We got here')
+	
+	func test_simulate_calls_process_on_descendents_if_objects_are_processing():
+		var objs = [
+			autofree(WithProcess.new()),
+			autofree(WithoutProcess.new()),
+			autofree(WithProcess.new()),
+			autofree(WithoutProcess.new()),
+		]
+		for i in range(1, 4):
+			objs[i - 1].add_child(objs[i])
+	
+		objs[0].set_process(false)
+		objs[1].set_process(false)
+		objs[2].set_process(true)
+		objs[3].set_process(true)
+	
+		_test_gut.simulate(objs[0], 5, 0.2, true)  # check_is_processing=true
+	
+		assert_eq(objs[0].call_count, 0, '_process should not have been called')
+		assert_eq(objs[2].call_count, 5, '_process should have been called 5 times')
+		assert_eq(objs[2].delta_sum, 1.0, 'The delta value should have been passed in and summed')	
+	
+	func test_simulate_calls_physics_process_if_object_has_method():
+		var with_method = autofree(WithPhysicsProcess.new())
+		_test_gut.simulate(with_method, 5, 0.2)
+		assert_eq(with_method.call_count, 5, '_physics_process should have been called 5 times')
+		assert_eq(with_method.delta_sum, 1.0, 'The delta value should have been passed in and summed')
 
-	func test_simulate_calls_physics_process():
-		var obj = autofree(HasPhysicsProcessMethod.new())
-		_test_gut.simulate(obj, 10, .1)
-		assert_eq(obj.physics_process_called_count, 10, "_process should have been called 10 times")
-		# using just the numbers didn't work, nor using float.  str worked for some reason and
-		# i'm not sure why.
-		assert_eq(str(obj.delta_sum), str(1), "The delta value should have been passed in and summed")
+	func test_simulate_does_not_error_when_object_does_not_have_physics_process():
+		var without_method = autofree(WithoutPhysicsProcess.new())
+		_test_gut.simulate(without_method, 5, 0.2)
+		pass_test('We got here')
+	
+	func test_simulate_calls_physics_process_on_child_objects_of_child_objects():
+		var objs = []
+		for i in range(5):
+			objs.append(autofree(WithPhysicsProcess.new()))
+			if(i > 0):
+				objs[i - 1].add_child(objs[i])
+		_test_gut.simulate(objs[0], 5, 0.2)
+	
+		for i in range(objs.size()):
+			assert_eq(objs[i].call_count, 5, '_physics_process should have been called on object # ' + str(i))
+			assert_eq(objs[i].delta_sum, 1, 'The delta value should have been summed on object # ' + str(i))
+	
+	func test_simulate_calls_physics_process_on_descendents_if_objects_have_method():
+		var objs = [
+			autofree(WithPhysicsProcess.new()),
+			autofree(WithoutPhysicsProcess.new()),
+			autofree(WithPhysicsProcess.new()),
+			autofree(WithoutPhysicsProcess.new()),
+		]
+		for i in range(1, 4):
+			objs[i - 1].add_child(objs[i])
+		
+		_test_gut.simulate(objs[0], 5, 0.2)
+	
+		assert_eq(objs[0].call_count, 5, '_physics_process should have been called 5 times')
+		assert_eq(objs[0].delta_sum, 1.0, 'The delta value should have been passed in and summed')	
+		assert_eq(objs[2].call_count, 5, '_physics_process should have been called 5 times')
+		assert_eq(objs[2].delta_sum, 1.0, 'The delta value should have been passed in and summed')	
+	
+	func test_simulate_calls_physics_process_if_object_is_processing_and_check_is_true():
+		var with_processing = autofree(WithPhysicsProcess.new())
+		with_processing.set_physics_process(true)
+		_test_gut.simulate(with_processing, 5, 0.2, true)  # check_is_processing=false
+		assert_eq(with_processing.call_count, 5, '_physics_process should have been called 5 times')
+		assert_eq(with_processing.delta_sum, 1.0, 'The delta value should have been passed in and summed')
+	
+	func test_simulate_does_not_call_physics_process_if_object_is_not_processing_and_check_is_true():
+		var without_processing = autofree(WithPhysicsProcess.new())
+		without_processing.set_physics_process(false)
+		_test_gut.simulate(without_processing, 5, 0.2, true)  # check_is_processing=true
+		assert_eq(without_processing.call_count, 0, '_physics_process should not have been called')
+	
+	func test_simulate_does_not_error_if_object_is_physics_processing_but_has_no_method():
+		var with_processing_but_without_method = autofree(WithoutPhysicsProcess.new())
+		with_processing_but_without_method.set_physics_process(true)
+		_test_gut.simulate(with_processing_but_without_method, 5, 0.2, true)  # check_is_processing=true
+		pass_test('We got here')
+	
+	func test_simulate_calls_physics_process_on_descendents_if_objects_are_processing():
+		var objs = [
+			autofree(WithPhysicsProcess.new()),
+			autofree(WithoutPhysicsProcess.new()),
+			autofree(WithPhysicsProcess.new()),
+			autofree(WithoutPhysicsProcess.new()),
+		]
+		for i in range(1, 4):
+			objs[i - 1].add_child(objs[i])
+	
+		objs[0].set_physics_process(false)
+		objs[1].set_physics_process(false)
+		objs[2].set_physics_process(true)
+		objs[3].set_physics_process(true)
+	
+		_test_gut.simulate(objs[0], 5, 0.2, true)  # check_is_processing=true
+	
+		assert_eq(objs[0].call_count, 0, '_physics_process should not have been called')
+		assert_eq(objs[2].call_count, 5, '_physics_process should have been called 5 times')
+		assert_eq(objs[2].delta_sum, 1.0, 'The delta value should have been passed in and summed')
 
 
 

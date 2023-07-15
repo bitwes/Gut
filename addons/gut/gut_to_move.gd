@@ -60,16 +60,34 @@ func file_touch(path):
 	FileAccess.open(path, FileAccess.WRITE)
 
 # ------------------------------------------------------------------------------
-# Call _process or _fixed_process, if they exist, on obj and all it's children
-# and their children and so and so forth.  Delta will be passed through to all
-# the _process or _fixed_process methods.
+# Simulate a number of frames by calling '_process' and '_physics_process' (if
+# the methods exist) on an object and all of its descendents. The specified frame
+# time, 'delta', will be passed to each simulated call.
+#
+# NOTE: Objects can disable their processing methods using 'set_process(false)' and
+# 'set_physics_process(false)'. This is reflected in the 'Object' methods
+# 'is_processing()' and 'is_physics_processing()', respectively. To make 'simulate'
+# respect this status, for example if you are testing an object which toggles
+# processing, pass 'check_is_processing' as 'true'.
 # ------------------------------------------------------------------------------
-func simulate(obj, times, delta):
+func simulate(obj, times, delta, check_is_processing: bool = false):
 	for _i in range(times):
-		if(obj.has_method("_process")):
+		if (
+			obj.has_method("_process")
+			and (
+				not check_is_processing
+				or obj.is_processing()
+			)
+		):
 			obj._process(delta)
-		if(obj.has_method("_physics_process")):
+		if(
+			obj.has_method("_physics_process")
+			and (
+				not check_is_processing
+				or obj.is_physics_processing()
+			)
+		):
 			obj._physics_process(delta)
 
 		for kid in obj.get_children():
-			simulate(kid, 1, delta)
+			simulate(kid, 1, delta, check_is_processing)
