@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://toirmiqhlcnb"
-path="res://.godot/imported/asset_lib_icon.png-195a8230d8f4e21994f87ec4f754d7d9.ctex"
+uid="uid://cmsh3ev2pqahl"
+path="res://.godot/imported/gut_panel.png-587ffcd50edbcc5c28984221e6ef72b7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset_lib_icon.png"
-dest_files=["res://.godot/imported/asset_lib_icon.png-195a8230d8f4e21994f87ec4f754d7d9.ctex"]
+source_file="res://images/gut_panel.png"
+dest_files=["res://.godot/imported/gut_panel.png-587ffcd50edbcc5c28984221e6ef72b7.ctex"]
 
 [params]
 

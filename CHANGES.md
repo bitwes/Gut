@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * __Issue 485__ GUT prints a warning and ignores scripts that do not extend `GutTest`.
 * A lot of internal reworkings to simplify logging and info about test statuses.  The summary changed and the final line printed by GUT is now the highest severity status of the run (i.e. failed > pending/risky > passed).
 * __Issue 503__ Fixed issue where GUT would not find script object when doubling PackedScenes.
+* __Port PR 409__ GUT's simulate function can now check `is_processing` and `is_physics_processing` when running thier respective methods.
 
 
 # 9.0.1

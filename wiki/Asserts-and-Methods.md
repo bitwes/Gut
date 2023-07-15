@@ -1,4 +1,4 @@
-<div class="warning">This page has not been updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
+<div class="warning">This page has not been <b>completely</b> updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
 These are all the methods, bells, whistles and blinky lights you get when you extend the Gut Test Class (`extends GutTest`).
 
 All sample code listed for the methods can be found here in [test_readme_examples.gd](https://github.com/bitwes/Gut/blob/master/test/samples/test_readme_examples.gd)
@@ -25,10 +25,10 @@ All sample code listed for the methods can be found here in [test_readme_example
 [replace_node](#replace_node) |
 [simulate](#simulate) |
 [stub](#stub) |
+[wait_for_signal](#wait_for_signal) |
+[wait_frames](#wait_frames) |
+[wait_seconds](#wait_seconds) |
 [watch_signals](#watch_signals) |
-[yield_for](#yield_for) |
-[yield_frames](#yield_frames) |
-[yield_to](#yield_to) |
 
 
 # Gut Utilities
@@ -84,6 +84,7 @@ These methods exist on the GUT instance, and not in `test.gd`.  They must all be
 [assert_typeof](#assert_typeof) | [assert_not_typeof](#assert_not_typeof)|
 [fail_test](#fail_test) |
 [pass_test](#pass_test) |
+
 
 
 
@@ -998,76 +999,17 @@ Print info to the GUI and console (if enabled).  You can see examples if this in
 #### <a name="pause_before_teardown"> pause_before_teardown() </a>
 This method will cause Gut to pause before it moves on to the next test.  This is useful for debugging, for instance if you want to investigate the screen or anything else after a test has finished executing.  See also `set_ignore_pause_before_teardown`
 
-#### <a name="yield_for"> yield_for(time_in_seconds) </a>
-This simplifies the code needed to pause the test execution for a number of seconds so the thing that you are testing can run its course in real time.  There are more details in the Yielding section.  It is designed to be used with the `yield` built in.  The following example will pause your test execution (and only the test execution) for 2 seconds before continuing.
-``` gdscript
-class MovingNode:
-	extends Node2D
-	var _speed = 2
-
-	func _ready():
-		set_process(true)
-
-	func _process(delta):
-		set_pos(get_pos() + Vector2(_speed * delta, 0))
-
-func test_illustrate_yield():
-	var moving_node = MovingNode.new()
-	add_child_autofree(moving_node)
-	moving_node.set_pos(Vector2(0, 0))
-
-	# While the yield happens, the node should move
-	yield(yield_for(2), YIELD)
-	assert_gt(moving_node.get_pos().x, 0)
-	assert_between(moving_node.get_pos().x, 3.9, 4, 'it should move almost 4 whatevers at speed 2')
-```
-
-#### <a name="yield_frames"> yield_for(num_frames) </a>
-This works similar to `yield_for` except that it will wait for a number of frames to elapse instead of a set amount of time.  The frames are counted down by Gut's `_process` method.  When the count reaches 0 the `YIELD` signal is emitted.
+#### <a name="wait_seconds"> wait_seconds(time, msg='') </a>
+See [Awaiting](Awaiting)
 
 
-#### <a name="yield_to"> yield_to(object, signal_name, max_time) </a>
-`yield_to` allows you to yield to a signal just like `yield` but for a maximum amount of time.  This keeps tests moving along when signals are not emitted.
+#### <a name="wait_seconds"> wait_frames(frames, msg='') </a>
+See [Awaiting](Awaiting)
 
-As a bonus, `yield_to` does an implicit call to `watch_signals` so you can easily make signal based assertions afterwards.
-``` gdscript
-class TimedSignaler:
-	extends Node2D
-	var _time = 0
 
-	signal the_signal
-	func _init(time):
-		_time = time
+#### <a name="wait_for_signal"> wait_for_signal(sig, max_wait, msg='') </a>
+See [Awaiting](Awaiting)
 
-	func start():
-		var t = Timer.new()
-		add_child(t)
-		t.set_wait_time(_time)
-		t.connect('timeout', self, '_on_timer_timeout')
-		t.set_one_shot(true)
-		t.start()
-
-	func _on_timer_timeout():
-		emit_signal('the_signal')
-
-func test_illustrate_yield_to_with_less_time():
-	var t = TimedSignaler.new(5)
-	add_child_autofree(t)
-	t.start()
-	yield(yield_to(t, 'the_signal', 1), YIELD)
-	# since we setup t to emit after 5 seconds, this will fail because we
-	# only yielded for 1 second via yield_to
-	assert_signal_emitted(t, 'the_signal', 'This will fail')
-
-func test_illustrate_yield_to_with_more_time():
-	var t = TimedSignaler.new(1)
-	add_child_autofree(t)
-	t.start()
-	yield(yield_to(t, 'the_signal', 5), YIELD)
-	# since we wait longer than it will take to emit the signal, this assert
-	# will pass
-	assert_signal_emitted(t, 'the_signal', 'This will pass')
-```
 
 #### <a name="double"> double(path_or_class, inner_class_path=null) </a>
 This will return a double of a class.  See [Doubles](Doubles) for more information.
