@@ -44,7 +44,7 @@ func test_is_instance_false_for_classes():
 
 func test_is_instance_true_for_new():
 	var utils = autofree(Utils.new())
-	var n = Node.new()
+	var n = autofree(Node.new())
 	assert_true(utils.is_instance(n))
 
 func test_is_instance_false_for_instanced_things():
@@ -80,6 +80,83 @@ func test_is_inner_class_false_for_base_scripts():
 func test_is_inner_class_false_for_non_objs():
 	var utils = autofree(Utils.new())
 	assert_false(utils.is_inner_class('foo'))
+
+
+
+
+class TestGetSceneScript:
+	extends 'res://addons/gut/test.gd'
+
+	class MockSceneState:
+		# ------------------------------
+		# Tools for faking out SceneState functionality
+		# ------------------------------
+		var nodes = []
+
+		func add_node(path):
+			var to_add = {
+				node_path = NodePath(path),
+				props = []
+			}
+			nodes.append(to_add)
+			return nodes.size() -1
+
+		func add_node_prop(index, name, value):
+			nodes[index].props.append({name = name, value = value})
+
+		# ------------------------------
+		# Mocked PackedScene methods
+		# ------------------------------
+		func get_node_count():
+			return nodes.size()
+
+		func get_node_path(index):
+			return nodes[index].node_path
+
+		func get_node_property_name(index, prop_index):
+			return nodes[index].props[prop_index].name
+
+		func get_node_property_value(index, prop_index):
+			return nodes[index].props[prop_index].value
+
+		func get_node_property_count(index):
+			return nodes[index].props.size()
+
+
+	class MockScene:
+		var state = MockSceneState.new()
+		func get_state():
+			return state
+
+
+	func test_gets_scene_script_when_script_is_first_property():
+		var mock_scene = MockScene.new()
+		mock_scene.state.add_node('.')
+		mock_scene.state.add_node_prop(0, 'script', 'foo')
+		var result = GutUtils.get_scene_script_object(mock_scene)
+		assert_eq(result, 'foo')
+
+	func test_gets_scene_script_when_script_is_second_property():
+		var mock_scene = MockScene.new()
+		mock_scene.state.add_node('.')
+		mock_scene.state.add_node_prop(0, 'something', 'else')
+		mock_scene.state.add_node_prop(0, 'script', 'foo')
+		var result = GutUtils.get_scene_script_object(mock_scene)
+		assert_eq(result, 'foo')
+
+	func test_gets_scene_script_when_root_node_is_not_first_node():
+		var mock_scene = MockScene.new()
+		mock_scene.state.add_node('/some/path')
+
+		mock_scene.state.add_node('.')
+		mock_scene.state.add_node_prop(1, 'something', 'else')
+		mock_scene.state.add_node_prop(1, 'script', 'foo')
+
+		var result = GutUtils.get_scene_script_object(mock_scene)
+		assert_eq(result, 'foo')
+
+
+
 
 
 
