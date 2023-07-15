@@ -148,6 +148,31 @@ static func print_properties(props, thing, print_all_meta=false):
 		if(print_all_meta):
 			print('  ', props[i])
 
+
+
+# ------------------------------------------------------------------------------
+# Gets the value of the node_property 'script' from a PackedScene's root node.
+# This does not assume the location of the root node in the PackedScene's node
+# list.  This also does not assume the index of the 'script' node property in
+# a nodes's property list.
+# ------------------------------------------------------------------------------
+static func get_scene_script_object(scene):
+	var state = scene.get_state()
+	var to_return = null
+	var root_node_path = NodePath(".")
+	var node_idx = 0
+
+	while(node_idx < state.get_node_count() and to_return == null):
+		if(state.get_node_path(node_idx) == root_node_path):
+			for i in range(state.get_node_property_count(node_idx)):
+				if(state.get_node_property_name(node_idx, i) == 'script'):
+					to_return = state.get_node_property_value(node_idx, i)
+
+		node_idx += 1
+
+	return to_return
+
+
 # ##############################################################################
 # Start Class
 # ##############################################################################
@@ -194,7 +219,7 @@ var GutScene = load('res://addons/gut/GutScene.tscn')
 # Source of truth for the GUT version
 var version = '9.0.1'
 # The required Godot version as an array.
-var req_godot = [4, 0, 0]
+var req_godot = [4, 1, 0]
 
 # These methods all call super implicitly.  Stubbing them to call super causes
 # super to be called twice.
@@ -522,25 +547,6 @@ func create_script_from_source(source, override_path=null):
 	var result = DynamicScript.reload()
 
 	return DynamicScript
-
-
-func get_scene_script_object(scene):
-	var state = scene.get_state()
-	var to_return = null
-	var root_node_path = NodePath(".")
-	var node_idx = 0
-
-	while(node_idx < state.get_node_count() and to_return == null):
-		# Assumes that the first node we encounter that has a root node path, one
-		# property, and that property is named 'script' is the GDScript for the
-		# scene.  This could be flawed.
-		if(state.get_node_path(node_idx) == root_node_path and state.get_node_property_count(node_idx) == 1):
-			if(state.get_node_property_name(node_idx, 0) == 'script'):
-				to_return = state.get_node_property_value(node_idx, 0)
-
-		node_idx += 1
-
-	return to_return
 
 
 func get_display_size():

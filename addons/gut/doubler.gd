@@ -243,7 +243,7 @@ func _double_scene_and_script(scene, strategy, partial):
 	var to_return = PackedSceneDouble.new()
 	to_return.load_scene(scene.get_path())
 
-	var script_obj = _utils.get_scene_script_object(scene)
+	var script_obj = GutUtils.get_scene_script_object(scene)
 	if(script_obj != null):
 		var script_dbl = null
 		if(partial):

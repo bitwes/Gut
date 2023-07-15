@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 
-# 9.1.0
+# 9.1.0 (requires Godot 4.1)
 * GUT generated errors now cause tests to fail (not engine errors, just things GUT thinks are bad).  You can disable this through the CLI, .gutconfig, or the panel.
 * Changes to Double Strategy and Double/Partial Double creation to fix #482.
     * See [Double-Strategy](https://bitwes.github.io/GutWiki/Godot4/Double-Strategy.html) in the wiki for more information.
@@ -13,8 +13,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
     * If you have an invalid Double Strategy set via command line or gutconfig, the default will be used.  So if you are explicity setting it to the old `INCLUDE_SUPER`, it will use `SCRIPT_ONLY`.
     * You can now set the default double strategy in the GutPanel in the Editor.
 * Added `GutControl` to aid in running tests in a deployed game.  Instructions and sample code can be found [in the wiki](https://bitwes.github.io/GutWiki/Godot4/Running-On-Devices.html).
-* __Issue i485__ GUT prints a warning and ignores scripts that do not extend `GutTest`.
+* __Issue 485__ GUT prints a warning and ignores scripts that do not extend `GutTest`.
 * A lot of internal reworkings to simplify logging and info about test statuses.  The summary changed and the final line printed by GUT is now the highest severity status of the run (i.e. failed > pending/risky > passed).
+* __Issue 503__ Fixed issue where GUT would not find script object when doubling PackedScenes.
 
 
 # 9.0.1

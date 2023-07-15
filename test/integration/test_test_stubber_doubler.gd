@@ -98,6 +98,11 @@ class TestBasics:
 		gr.test.stub(Input, "is_action_just_pressed").to_return(true)
 		assert_eq(gr.test.get_logger().get_errors().size(), 1)
 
+	func test_can_stub_scenes():
+		var dbl_scn = gr.test.double(DoubleMeScene).instantiate()
+		gr.test.stub(dbl_scn, 'return_hello').to_return('world')
+		assert_eq(dbl_scn.return_hello(), 'world')
+
 
 
 
@@ -126,7 +131,7 @@ class TestIgnoreMethodsWhenDoubling:
 		_test_gut._doubler = m_doubler
 		_test.ignore_method_when_doubling(DoubleMeScene, 'two')
 		assert_called(m_doubler, 'add_ignored_method',
-			[_utils.get_scene_script_object(DoubleMeScene), 'two'])
+			[GutUtils.get_scene_script_object(DoubleMeScene), 'two'])
 
 	func test_when_ignoring_scene_methods_they_are_not_doubled():
 		_test.ignore_method_when_doubling(DoubleMeScene, 'return_hello')
