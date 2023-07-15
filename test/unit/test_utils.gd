@@ -105,7 +105,7 @@ class TestGetSceneScript:
 			nodes[index].props.append({name = name, value = value})
 
 		# ------------------------------
-		# Mocked PackedScene methods
+		# Mocked SceneState methods
 		# ------------------------------
 		func get_node_count():
 			return nodes.size()

@@ -1,8 +1,8 @@
-# Gut 9.0.0 (Godot 4.0)
+# Gut 9.1.0 (Godot 4.1)
 GUT (Godot Unit Test) is a unit testing framework for the [Godot Engine](https://godotengine.org/).  It allows you to write tests for your gdscript in gdscript.
 
-Version 9.0.0 is for Godot 4.0
-Versions below 9.0.0 (currently 7.4.2) are for Godot 3.x
+GUT versions 9.x are for Godot 4.x
+GUT versions below 9.0.0 (currently 7.4.2) are for Godot 3.x
 
 __NOTE__ The wiki for this version has moved to https://bitwes.github.io/GutWiki/Godot4/.  It has not been fully updated yet.  The Wiki source is now [located in the `godot_4` branch](https://github.com/bitwes/Gut/tree/godot_4/wiki) and Pull Requests are encouraged.  See Wiki section in [GODOT_4_README.md](https://github.com/bitwes/Gut/blob/godot_4/GODOT_4_README.md) for details.
 
