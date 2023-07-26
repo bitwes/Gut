@@ -118,6 +118,8 @@ var _pressed_actions = {}
 var _pressed_mouse_buttons = {}
 
 var _auto_flush_input = false
+var _queue_item_parent = null
+var mouse_warp = true
 
 signal idle
 
@@ -126,8 +128,15 @@ func _init(r=null):
 	if(r != null):
 		add_receiver(r)
 
+	_queue_item_parent = Node.new()
+	Engine.get_main_loop().root.add_child(_queue_item_parent)
+
 
 func _send_event(event):
+	print(event)
+	if(mouse_warp and event is InputEventMouse):
+		DisplayServer.warp_mouse(event.position)
+
 	if(event is InputEventKey):
 		if((event.pressed and !event.echo) and is_key_pressed(event.keycode)):
 			_lgr.warn(str("InputSender:  key_down called for ", event.as_text(), " when that key is already pressed.  ", INPUT_WARN))
@@ -183,7 +192,7 @@ func _add_queue_item(item):
 	item.connect("event_ready", _on_queue_item_ready.bind(item))
 	_next_queue_item = item
 	_input_queue.append(item)
-	Engine.get_main_loop().root.add_child(item)
+	_queue_item_parent.add_child(item)
 	if(_input_queue.size() == 1):
 		item.start()
 
@@ -367,7 +376,7 @@ func is_action_pressed(which):
 	return _pressed_actions.has(which) and _pressed_actions[which]
 
 func is_mouse_button_pressed(which):
-	return _pressed_mouse_buttons.has(which) and _pressed_mouse_buttons[which]
+	return _pressed_mouse_buttons.has(which) and _pressed_mouse_buttons[which].pressed
 
 
 func get_auto_flush_input():
