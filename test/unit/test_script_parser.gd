@@ -151,7 +151,7 @@ class TestParsedScript:
 
 	func test_is_blacklisted_returns_true_for_blacklisted_methods():
 		var parser = ParsedScript.new(DoubleMe)
-		assert_true(parser.is_method_blacklisted('_notification'))
+		assert_true(parser.is_method_blacklisted('has_method'))
 
 	func test_is_black_listed_returns_false_for_non_blacklisted_methods():
 		var parser = ParsedScript.new(DoubleMe)

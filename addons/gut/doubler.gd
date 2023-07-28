@@ -129,7 +129,7 @@ func _get_indented_line(indents, text):
 
 
 func _stub_to_call_super(parsed, method_name):
-	if(_utils.non_super_methods.has(method_name)):
+	if(parsed.get_method(method_name).is_black_listed()):
 		return
 
 	var params = _utils.StubParams.new(parsed.script_path, method_name, parsed.subpath)

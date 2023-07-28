@@ -58,6 +58,9 @@ class ExtendsNode2D:
 	func get_position():
 		return Vector2(0, 0)
 
+	func _input(event):
+		print(event)
+
 class SimpleObject:
 	var a = 'a'
 
@@ -67,6 +70,7 @@ class ExtendsAnInnerClassElsewhere:
 
 	func foobar():
 		return 'foobar'
+
 
 func get_methods_by_flag(obj):
 	var methods_by_flags = {}
@@ -83,7 +87,6 @@ func get_methods_by_flag(obj):
 
 
 func print_methods_by_flags(methods_by_flags):
-
 	for flag in methods_by_flags:
 		for i in range(methods_by_flags[flag].size()):
 			print(flag, ":  ", methods_by_flags[flag][i])
@@ -94,6 +97,43 @@ func print_methods_by_flags(methods_by_flags):
 			print("-- ", flag, " (", methods_by_flags[flag].size(), ") --")
 			total += methods_by_flags[flag].size()
 	print("Total:  ", total)
+
+
+func print_methods_with_defaults(thing):
+	print('------------------------------------------------------------------')
+	print('--- Methods (object) ---')
+	print('------------------------------------------------------------------')
+	var methods = thing.get_method_list()
+	for m in methods:
+		if(m.default_args.size() > 0):
+			print(m.name)
+			pp(m, '  ')
+
+
+	print('------------------------------------------------------------------')
+	print('--- Methods (script) ---')
+	print('------------------------------------------------------------------')
+	methods  = thing.get_script_method_list()
+	for m in methods:
+		print(m.name)
+		pp(m, '  ')
+
+
+func print_methods_with_flags(obj, flags, print_all = true):
+	var methods = obj.get_method_list()
+	for i in range(methods.size()):
+		var mflags = methods[i]['flags']
+		if(is_flagged(mflags, flags)):
+			print(methods[i]['name'], ':', mflags)
+			print_method_flags(mflags, print_all)
+
+func print_methods_named(obj, name):
+	var methods = obj.get_method_list()
+	for i in range(methods.size()):
+		if(methods[i]['name'] == name):
+			print(methods[i]['name'], ':')
+			print_method_flags(methods[i]['flags'], false)
+
 
 
 func subtract_dictionary(sub_this, from_this):
@@ -109,22 +149,42 @@ func subtract_dictionary(sub_this, from_this):
 	return result
 
 
+func is_flagged(mask, index):
+	return mask & index != 0
+
+func print_flag(name, flags, flag, print_all=true):
+	var is_set = is_flagged(flags, flag)
+	if(print_all or is_set):
+		print(name,'(', flag, ') = ', is_set)
+
+func print_method_flags(flags, print_all=true):
+	print_flag('  normal', flags, METHOD_FLAG_NORMAL, print_all)
+	print_flag('  editor', flags, METHOD_FLAG_EDITOR, print_all)
+	print_flag('  const', flags, METHOD_FLAG_CONST, print_all)
+	print_flag('  virtual', flags, METHOD_FLAG_VIRTUAL, print_all)
+	print_flag('  vararg', flags, METHOD_FLAG_VARARG, print_all)
+	print_flag('  static', flags, METHOD_FLAG_STATIC, print_all)
+	print_flag('  core', flags, METHOD_FLAG_OBJECT_CORE, print_all)
+	print_flag('  default', flags, METHOD_FLAGS_DEFAULT, print_all)
+
+
 func print_method_info(obj):
 	var methods = obj.get_method_list()
-	print('methods = ',   methods)
 	for i in range(methods.size()):
-		print(methods[i]['name'])
-		if(methods[i]['default_args'].size() > 0):
-			print(" *** here be defaults ***")
+		print(methods[i]['name'], ' ', methods[i]['flags'])
+		# if(methods[i]['default_args'].size() > 0):
+		# 	print(" *** here be defaults ***")
 
-		if(methods[i]['flags'] == 65):
-			for key in methods[i]:
-				if(key == 'args'):
-					print('  args:')
-					for argname in range(methods[i][key].size()):
-						print('    ',  methods[i][key][argname]['name'], ':  ', methods[i][key][argname])
-				else:
-					print('  ', key, ':  ', methods[i][key])
+
+		print_method_flags(methods[i]['flags'], false)
+		# if(methods[i]['flags'] == 65):
+		# 	for key in methods[i]:
+		# 		if(key == 'args'):
+		# 			print('  args:')
+		# 			for argname in range(methods[i][key].size()):
+		# 				print('    ',  methods[i][key][argname]['name'], ':  ', methods[i][key][argname])
+		# 		else:
+		# 			print('  ', key, ':  ', methods[i][key])
 
 
 func get_defaults_and_types(method_meta):
@@ -307,26 +367,6 @@ func print_all_info(thing):
 		print('  ', sig)
 
 
-func print_methods_with_defaults(thing):
-	print('------------------------------------------------------------------')
-	print('--- Methods (object) ---')
-	print('------------------------------------------------------------------')
-	var methods = thing.get_method_list()
-	for m in methods:
-		if(m.default_args.size() > 0):
-			print(m.name)
-			pp(m, '  ')
-
-
-	print('------------------------------------------------------------------')
-	print('--- Methods (script) ---')
-	print('------------------------------------------------------------------')
-	methods  = thing.get_script_method_list()
-	for m in methods:
-		print(m.name)
-		pp(m, '  ')
-
-
 
 
 func print_class_db_class_list():
@@ -379,11 +419,20 @@ func get_scene_script_object(scene):
 	return GutUtils.get_scene_script_object(scene)
 
 
-
-
 func _init():
+	# print_method_info(ExtendsNode2D.new())
+	# print_methods_with_flags(ExtendsNode2D.new(), METHOD_FLAG_STATIC, false)
+	print_methods_with_flags(ExtendsNode2D.new(), METHOD_FLAG_OBJECT_CORE, false)
+	# print_methods_named(ExtendsNode2D.new(), '_input')
+	# print_methods_named(ExtendsNode2D.new(), '_notification')
+	# print_methods_named(ExtendsNode2D.new(), '_to_string')
+	# print_methods_named(ExtendsNode2D.new(), 'get_script')
+	# print_methods_named(ExtendsNode2D.new(), 'has_method')
+	# print_methods_named(ExtendsNode2D.new(), 'print_orphan_nodes')
+
+
 	# pp(Button.new().get_method_list())
-	print_other_info(GutDoubleTestInnerClasses)
+	# print_other_info(GutDoubleTestInnerClasses)
 	# print("---------------\n\n\n\n-------------------")
 	# print_other_info(GutDoubleTestInnerClasses.InnerA)
 	# class_db_stuff()

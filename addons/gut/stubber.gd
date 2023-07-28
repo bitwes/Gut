@@ -155,9 +155,6 @@ func get_return(obj, method, parameters=null):
 
 
 func should_call_super(obj, method, parameters=null):
-	if(_utils.non_super_methods.has(method)):
-		return false
-
 	var stub_info = _find_stub(obj, method, parameters)
 
 	var is_partial = false

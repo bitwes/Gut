@@ -286,6 +286,7 @@ class TestDoubleStrategyIncludeSuper:
 		assert_ne(inst, null)
 
 	func test_when_everything_included_you_can_still_double_a_scene():
+		doubler.print_source = true
 		var inst = autofree(doubler.double_scene(DoubleMeScene).instantiate())
 		add_child(inst)
 		assert_ne(inst, null, "instantiate is not null")

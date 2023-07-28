@@ -221,20 +221,6 @@ var version = '9.1.0'
 # The required Godot version as an array.
 var req_godot = [4, 1, 0]
 
-# These methods all call super implicitly.  Stubbing them to call super causes
-# super to be called twice.
-var non_super_methods = [
-	"_init",
-	"_ready",
-	"_notification",
-	"_enter_world",
-	"_exit_world",
-	"_process",
-	"_physics_process",
-	"_exit_tree",
-	"_gui_input	",
-]
-
 
 # ------------------------------------------------------------------------------
 # Blurb of text with GUT and Godot versions.

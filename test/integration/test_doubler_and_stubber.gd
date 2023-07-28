@@ -138,15 +138,6 @@ class TestTheBasics:
 		var d_node2d = autofree(gr.doubler.double_gdnative(Node2D).new())
 		assert_eq(gr.stubber.get_parameter_count(d_node2d, 'rpc_id'), 5)
 
-
-	func test_init_is_never_stubbed_to_call_super():
-		var inst =  gr.doubler.partial_double(DoubleMe).new()
-		assert_false(gr.stubber.should_call_super(inst, '_init', []))
-
-	func test_ready_is_never_stubbed_to_call_super():
-		var inst =  autofree(gr.doubler.partial_double(DoubleMe).new())
-		assert_false(gr.stubber.should_call_super(inst, '_ready', []))
-
 	func test_stubbing_init_to_call_super_generates_error():
 		var err_count = gr.stubber.get_logger().get_errors().size()
 

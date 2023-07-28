@@ -4,27 +4,8 @@
 # overloaded or do not have a "super" equivalent so we can't just pass
 # through.
 const BLACKLIST = [
-	'_draw',
-	'_enter_tree',
-	'_exit_tree',
-	'_get_minimum_size', # Nonexistent function _get_minimum_size
-	'_get', # probably
-	'_input',
-	'_notification',
-	'_physics_process',
-	'_process',
-	'_set',
-	'_to_string', # nonexistant function super._to_string
-	'_unhandled_input',
-	'_unhandled_key_input',
-	'draw_mesh', # issue with one parameter, value is `Null((..), (..), (..))``
-	'emit_signal', # can't handle extra parameters to be sent with signal.
-	'get_path',
 	'get_script',
-	'get',
 	'has_method',
-
-	'print_orphan_nodes'
 ]
 
 
@@ -58,9 +39,30 @@ class ParsedMethod:
 				arg['default'] = NO_DEFAULT
 			_parameters.append(arg)
 
+	func is_virtual():
+		return _meta['flags'] & METHOD_FLAG_VIRTUAL != 0
+
+	func is_object_core():
+		return _meta['flags'] & METHOD_FLAG_OBJECT_CORE != 0
+
+	func is_static():
+		return _meta['flags'] & METHOD_FLAG_STATIC != 0
 
 	func is_black_listed():
-		return BLACKLIST.find(_meta.name) != -1
+		if(is_virtual()):
+			print('!!', meta.name, ' IS VIRTUAL!!')
+			return true
+		elif(is_object_core()):
+			print('!!', meta.name, " IS OBJECT CORE!!")
+			return true
+		elif is_static():
+			print('!!', meta.name, ' is STATIC!!')
+			return true
+		elif BLACKLIST.find(_meta.name) != -1:
+			print('!!', meta.name, " BLACK LISTED!!")
+			return true
+		else:
+			return false
 
 	func is_accessor():
 		return _meta.name.begins_with('@') and \
