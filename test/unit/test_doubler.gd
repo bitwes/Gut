@@ -71,6 +71,8 @@ class TestTheBasics:
 		_doubler = Doubler.new()
 		_doubler.set_stubber(stubber)
 		_doubler.set_gut(gut)
+		_doubler.set_strategy(DOUBLE_STRATEGY.SCRIPT_ONLY)
+		_doubler.set_logger(_utils.Logger.new())
 		_doubler.print_source = false
 
 	func test_get_set_stubber():
@@ -104,7 +106,8 @@ class TestTheBasics:
 	func test_cannot_set_strategy_to_invalid_values():
 		var default = _doubler.get_strategy()
 		_doubler.set_strategy(-1)
-		assert_eq(_doubler.get_strategy(), default)
+		assert_eq(_doubler.get_strategy(), default, 'original value retained')
+		assert_ne(_doubler.get_logger().get_errors().size(), 0, 'should have made an error')
 
 	func test_can_set_strategy_in_constructor():
 		var d = Doubler.new(_utils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
@@ -165,7 +168,6 @@ class TestDoublingScripts:
 		_doubler.double(TheClass)
 		assert_true(true, 'If we get here then the duplicates were removed.')
 
-
 	func test_returns_class_that_can_be_instanced():
 		var Doubled = _doubler.double(DoubleMe)
 		var doubled = Doubled.new()
@@ -174,6 +176,25 @@ class TestDoublingScripts:
 	func test_doubles_retain_signals():
 		var d = _doubler.double(DOUBLE_ME_PATH).new()
 		assert_has_signal(d, 'signal_signal')
+
+	func test_double_includes_list_of_doubled_methods():
+		var d = _doubler.double(DOUBLE_ME_PATH).new()
+		assert_ne(d.__gutdbl_values.doubled_methods.size(), 0)
+
+	func test_doubled_methods_includes_overloaded_methods():
+		var d = _doubler.double(DOUBLE_ME_PATH).new()
+		assert_has(d.__gutdbl_values.doubled_methods, '_ready')
+
+	func test_doubled_methods_includes_script_methods():
+		var d = _doubler.double(DOUBLE_ME_PATH).new()
+		assert_has(d.__gutdbl_values.doubled_methods, 'might_await')
+
+	func test_doubled_methods_does_not_included_non_overloaded_methods():
+		var d = _doubler.double(DOUBLE_ME_PATH).new()
+		assert_does_not_have(d.__gutdbl_values.doubled_methods, '_input')
+
+
+
 
 
 class TestAddingIgnoredMethods:
@@ -247,7 +268,7 @@ class TestDoubleScene:
 		assert_source_contains(inst, 'func is_blocking_signals')
 
 
-class TestDoubleStrategyIncludeSuper:
+class TestDoubleStrategyIncludeNative:
 	extends BaseTest
 
 	func _hide_call_back():
@@ -286,7 +307,6 @@ class TestDoubleStrategyIncludeSuper:
 		assert_ne(inst, null)
 
 	func test_when_everything_included_you_can_still_double_a_scene():
-		doubler.print_source = true
 		var inst = autofree(doubler.double_scene(DoubleMeScene).instantiate())
 		add_child(inst)
 		assert_ne(inst, null, "instantiate is not null")
@@ -318,6 +338,16 @@ class TestDoubleStrategyIncludeSuper:
 	func test_doubled_builtins_are_added_as_stubs_to_call_super():
 		var inst = autofree(doubler.double(DoubleExtendsWindowDialog).new())
 		assert_true(doubler.get_stubber().should_call_super(inst, 'add_user_signal'))
+
+	func test_doubled_methods_includes_non_overloaded_methods():
+		var inst = autofree(doubler.double(DoubleMe).new())
+		assert_has(inst.__gutdbl_values.doubled_methods, 'get_parent')
+
+	func test_doubled_methods_does_not_included_non_overloaded_virtual_methods():
+		var inst = autofree(doubler.double(DoubleMe).new())
+		assert_does_not_have(inst.__gutdbl_values.doubled_methods, '_input')
+
+
 
 class TestPartialDoubles:
 	extends BaseTest
@@ -465,7 +495,6 @@ class TestDoubleInnerClasses:
 	func test_partial_double_errors_if_inner_not_registered():
 		var inst = doubler.partial_double(InnerClasses.InnerA)
 		assert_eq(doubler.get_logger().get_errors().size(), 1)
-
 
 
 

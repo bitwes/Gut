@@ -24,6 +24,11 @@ var gr = {
 func before_each():
 	gr.stub_params = StubParamsClass.new()
 
+
+func test_can_make_one():
+	assert_not_null(StubParamsClass.new())
+
+
 func test_to_return_sets_return_value():
 	gr.stub_params.to_return(7)
 	assert_eq(gr.stub_params.return_val, 7)

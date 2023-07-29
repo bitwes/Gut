@@ -138,38 +138,6 @@ class TestTheBasics:
 		var d_node2d = autofree(gr.doubler.double_gdnative(Node2D).new())
 		assert_eq(gr.stubber.get_parameter_count(d_node2d, 'rpc_id'), 5)
 
-	func test_stubbing_init_to_call_super_generates_error():
-		var err_count = gr.stubber.get_logger().get_errors().size()
-
-		var inst =  autofree(gr.doubler.partial_double(DoubleMe).new())
-		var params = _utils.StubParams.new(inst, '_init')
-		gr.stubber.add_stub(params)
-		params.to_call_super()
-		assert_eq(gr.stubber.get_logger().get_errors().size(), err_count + 1)
-
-	func test_stubbing_init_to_call_super_does_not_generate_stub():
-		var inst =  autofree(gr.doubler.partial_double(DoubleMe).new())
-		var params = _utils.StubParams.new(inst, '_init').to_call_super()
-		gr.stubber.add_stub(params)
-		assert_false(gr.stubber.should_call_super(inst, '_init'))
-
-	func  test_you_cannot_stub_init_to_do_nothing():
-		var err_count = gr.stubber.get_logger().get_errors().size()
-		var inst =  autofree(gr.doubler.partial_double(DoubleMe).new())
-		var params = _utils.StubParams.new(inst, '_init')
-		gr.stubber.add_stub(params)
-		params.to_do_nothing()
-		assert_false(gr.stubber.should_call_super(inst, '_init'), 'stub not created')
-		assert_eq(gr.stubber.get_logger().get_errors().size(), err_count + 1, 'error generated')
-
-	func test_stubbing_return_value_of_init_results_in_error():
-		var err_count = gr.stubber.get_logger().get_errors().size()
-		var inst =  autofree(gr.doubler.partial_double(DoubleMe).new())
-		var params = _utils.StubParams.new(inst, '_init')
-		gr.stubber.add_stub(params)
-		params.to_return('abc')
-		assert_eq(gr.stubber.get_return(inst, '_init'), null, 'return value')
-		assert_eq(gr.stubber.get_logger().get_errors().size(), err_count + 1, 'error generated')
 
 	func test_double_can_have_default_param_values_stubbed():
 		var params = _utils.StubParams.new(INIT_PARAMETERS, '_init')

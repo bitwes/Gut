@@ -43,11 +43,11 @@ class TestBasics:
 		gr.test.assert_called(doubled, 'is_blocking_signals')
 		assert_eq(gr.test.get_pass_count(), 1)
 
-	func test_when_strategy_is_partial_then_supers_are_NOT_spied_in_scripts():
+	func test_when_strategy_is_partial_then_spying_on_non_overloaded_fails():
 		var doubled = gr.test.double(DoubleMe, gr.test.DOUBLE_STRATEGY.SCRIPT_ONLY).new()
 		doubled.is_blocking_signals()
 		gr.test.assert_not_called(doubled, 'is_blocking_signals')
-		assert_eq(gr.test.get_pass_count(), 1)
+		assert_eq(gr.test.get_fail_count(), 1)
 
 	func test_can_override_strategy_when_doubling_scene():
 		var doubled = gr.test.double(DoubleMeScene, gr.test.DOUBLE_STRATEGY.INCLUDE_NATIVE).instantiate()
@@ -56,12 +56,12 @@ class TestBasics:
 		gr.test.assert_called(doubled, 'is_blocking_signals')
 		assert_eq(gr.test.get_pass_count(), 1)
 
-	func test_when_strategy_is_partial_then_supers_are_NOT_spied_in_scenes():
+	func test_when_strategy_is_partial_then_spying_on_non_overloaded_fails_with_scenes():
 		var doubled = gr.test.double(DoubleMeScene, gr.test.DOUBLE_STRATEGY.SCRIPT_ONLY).instantiate()
 		autofree(doubled)
 		doubled.is_blocking_signals()
 		gr.test.assert_not_called(doubled, 'is_blocking_signals')
-		assert_eq(gr.test.get_pass_count(), 1)
+		assert_eq(gr.test.get_fail_count(), 1)
 
 	func test_can_stub_inner_class_methods():
 		gr.gut.get_doubler().inner_class_registry.register(InnerClasses)
@@ -106,6 +106,7 @@ class TestBasics:
 
 
 
+
 class TestIgnoreMethodsWhenDoubling:
 	extends "res://test/gut_test.gd"
 
@@ -140,7 +141,7 @@ class TestIgnoreMethodsWhenDoubling:
 		m_inst.return_hello()
 		# since it is ignored it should not have been caught by the stubber
 		_test.assert_not_called(m_inst, 'return_hello')
-		assert_eq(_test.get_fail_count(), 0)
+		assert_eq(_test.get_fail_count(), 1)
 
 
 class TestTestsSmartDoubleMethod:
@@ -178,30 +179,25 @@ class TestTestsSmartDoubleMethod:
 
 	func test_script_only_strategy_used_for_scripts():
 		var inst = _test.double(DoubleMe, DOUBLE_STRATEGY.SCRIPT_ONLY).new()
-		inst.get_instance_id()
-		assert_not_called(inst, 'get_instance_id')
+		assert_does_not_have(inst.__gutdbl_values.doubled_methods, 'get_instance_id')
 
 	func test_include_native_strategy_used_with_scenes():
 		var inst = _test.double(DoubleMeScene, DOUBLE_STRATEGY.INCLUDE_NATIVE).instantiate()
-		inst.get_instance_id()
-		assert_called(inst, 'get_instance_id')
+		assert_has(inst.__gutdbl_values.doubled_methods, 'get_instance_id')
 
 	func test_script_ony_strategy_used_with_scenes():
 		var inst = _test.double(DoubleMeScene, DOUBLE_STRATEGY.SCRIPT_ONLY).instantiate()
-		inst.get_instance_id()
-		assert_not_called(inst, 'get_instance_id')
+		assert_does_not_have(inst.__gutdbl_values.doubled_methods, 'get_instance_id')
 
 	func test_include_native_strategy_used_with_inners():
 		_test.register_inner_classes(InnerClasses)
 		var inst = _test.double(InnerClasses.InnerA, DOUBLE_STRATEGY.INCLUDE_NATIVE).new()
-		inst.get_instance_id()
-		assert_called(inst, 'get_instance_id')
+		assert_has(inst.__gutdbl_values.doubled_methods, 'get_instance_id')
 
 	func test_script_only_strategy_used_with_inners():
 		_test.register_inner_classes(InnerClasses)
 		var inst = _test.double(InnerClasses.InnerA, DOUBLE_STRATEGY.SCRIPT_ONLY).new()
-		inst.get_instance_id()
-		assert_not_called(inst, 'get_instance_id')
+		assert_does_not_have(inst.__gutdbl_values.doubled_methods, 'get_instance_id')
 
 
 	func test_when_passing_a_class_of_a_script_it_doubles_it():
@@ -385,6 +381,38 @@ class TestOverridingParameters:
 		var inst = _test.double(InitParams).new()
 		assert_eq(inst.value, 'override_default')
 
+class TestStub:
+	extends "res://test/gut_test.gd"
+
+	var _gut = null
+	var _test = null
+
+	func before_all():
+		_gut = Gut.new()
+		_gut.logger = _utils.Logger.new()
+		_test = Test.new()
+		_test.gut = _gut
+
+		add_child(_gut)
+		add_child(_test)
+
+	func after_each():
+		_gut.get_stubber().clear()
+
+	func after_all():
+		_gut.free()
+		_test.free()
+
+	func test_stub_of_valid_stuff_is_fine():
+		var dbl = _test.double(DoubleMe).new()
+		_test.stub(dbl, 'get_value').to_return(9)
+		assert_eq(_test.get_logger().get_errors().size(), 0)
+
+
+	func test_stub_of_double_method_generates_error_when_method_does_not_exist():
+		var dbl = _test.double(DoubleMe).new()
+		_test.stub(dbl, 'foo').to_do_nothing()
+		assert_eq(_test.get_logger().get_errors().size(), 1)
 
 
 # class TestSingletonDoubling:

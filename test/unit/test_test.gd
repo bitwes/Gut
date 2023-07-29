@@ -1243,25 +1243,23 @@ class TestStringEndsWith:
 		assert_pass(gr.test)
 
 
-# ------------------------------------------------------------------------------
-# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestAssertCalled:
 	extends BaseTestClass
 
-	func test_assert_called_fails_with_message_if_non_doubled_passed():
+	func test_fails_with_message_if_non_doubled_passed():
 		var obj = GDScript.new()
 		gr.test_with_gut.gut.get_spy().add_call(obj, 'method')
 		gr.test_with_gut.assert_called(obj, 'method1')
 		gut.p('!! Check output !!')
 		assert_fail(gr.test_with_gut)
 
-	func test_assert_called_passes_when_call_occurred():
+	func test_passes_when_call_occurred():
 		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
 		doubled.get_value()
 		gr.test_with_gut.assert_called(doubled, 'get_value')
 		assert_pass(gr.test_with_gut)
 
-	func test_assert_called_passes_with_parameters():
+	func test_passes_with_parameters():
 		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
 		doubled.set_value(5)
 		gr.test_with_gut.assert_called(doubled, 'set_value', [5])
@@ -1273,18 +1271,30 @@ class TestAssertCalled:
 		gr.test_with_gut.assert_called(doubled, 'set_value', [5])
 		assert_fail(gr.test_with_gut)
 
-	func test_assert_called_works_with_defaults():
+	func test_works_with_defaults():
 		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
 		doubled.has_two_params_one_default(10)
 		gr.test_with_gut.assert_called(doubled, 'has_two_params_one_default', [10, null])
 		assert_pass(gr.test_with_gut)
 
-	func test_assert_called_generates_error_if_third_parameter_not_an_array():
+	func test_generates_error_if_third_parameter_not_an_array():
 		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
 		doubled.set_value(5)
 		gr.test_with_gut.assert_called(doubled, 'set_value', 5)
 		assert_fail(gr.test_with_gut)
 		assert_eq(gr.test_with_gut.get_logger().get_errors().size(), 1, 'Generates error')
+
+	func test_fail_message_indicates_method_does_not_exist():
+		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
+		gr.test_with_gut.assert_called(doubled, 'foo')
+		assert_string_contains(gr.test_with_gut._fail_pass_text[0], 'does not exist')
+
+	func test_fail_message_indicates_non_included_methods():
+		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
+		gr.test_with_gut.assert_called(doubled, 'get_parent')
+		assert_string_contains(gr.test_with_gut._fail_pass_text[0], 'does not overload')
+
+
 
 
 # ------------------------------------------------------------------------------
@@ -1328,6 +1338,16 @@ class TestAssertNotCalled:
 		doubled.set_value('a')
 		gr.test_with_gut.assert_not_called(doubled, 'set_value')
 		assert_fail(gr.test_with_gut)
+
+	func test_fail_message_indicates_method_does_not_exist():
+		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
+		gr.test_with_gut.assert_called(doubled, 'foo')
+		assert_string_contains(gr.test_with_gut._fail_pass_text[0], 'does not exist')
+
+	func test_fail_message_indicates_non_included_methods():
+		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
+		gr.test_with_gut.assert_called(doubled, 'get_parent')
+		assert_string_contains(gr.test_with_gut._fail_pass_text[0], 'does not overload')
 
 
 # ------------------------------------------------------------------------------
@@ -1381,6 +1401,16 @@ class TestAssertCallCount:
 		doubled.set_value(12)
 		gr.test_with_gut.assert_call_count(doubled, 'set_value', 4)
 		assert_pass(gr.test_with_gut)
+
+	func test_fail_message_indicates_method_does_not_exist():
+		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
+		gr.test_with_gut.assert_called(doubled, 'foo')
+		assert_string_contains(gr.test_with_gut._fail_pass_text[0], 'does not exist')
+
+	func test_fail_message_indicates_non_included_methods():
+		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
+		gr.test_with_gut.assert_called(doubled, 'get_parent')
+		assert_string_contains(gr.test_with_gut._fail_pass_text[0], 'does not overload')
 
 
 # ------------------------------------------------------------------------------

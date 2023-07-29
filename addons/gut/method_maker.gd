@@ -155,14 +155,14 @@ func _get_arg_text(arg_array):
 
 
 # creates a call to the function in meta in the super's class.
-func _get_super_call_text(method_name, args, super_name=""):
+func _get_super_call_text(method_name, args):
 	var params = ''
 	for i in range(args.size()):
 		params += args[i].p_name
 		if(i != args.size() -1):
 			params += ', '
 
-	return str(super_name, 'await super(', params, ')')
+	return str('await super(', params, ')')
 
 
 func _get_spy_call_parameters_text(args):
@@ -211,7 +211,7 @@ func _get_init_text(meta, args, method_params, param_array):
 # printed and the declaration will return null.
 #
 # path is no longer used
-func get_function_text(meta, path=null, override_size=null, super_name=""):
+func get_function_text(meta, path=null, override_size=null):
 	var method_params = ''
 	var text = null
 	var result = _make_arg_array(meta, override_size)
@@ -240,7 +240,7 @@ func get_function_text(meta, path=null, override_size=null, super_name=""):
 				"func_decleration":decleration,
 				"method_name":meta.name,
 				"param_array":param_array,
-				"super_call":_get_super_call_text(meta.name, args, super_name)
+				"super_call":_get_super_call_text(meta.name, args)
 			})
 
 	return text

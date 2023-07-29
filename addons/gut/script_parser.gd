@@ -50,16 +50,16 @@ class ParsedMethod:
 
 	func is_black_listed():
 		if(is_virtual()):
-			print('!!', meta.name, ' IS VIRTUAL!!')
+			# print('!!', meta.name, ' IS VIRTUAL!!')
 			return true
 		elif(is_object_core()):
-			print('!!', meta.name, " IS OBJECT CORE!!")
+			# print('!!', meta.name, " IS OBJECT CORE!!")
 			return true
 		elif is_static():
-			print('!!', meta.name, ' is STATIC!!')
+			# print('!!', meta.name, ' is STATIC!!')
 			return true
 		elif BLACKLIST.find(_meta.name) != -1:
-			print('!!', meta.name, " BLACK LISTED!!")
+			# print('!!', meta.name, " BLACK LISTED!!")
 			return true
 		else:
 			return false
@@ -149,14 +149,6 @@ class ParsedScript:
 		_parse_methods(to_load)
 
 
-	func _has_flag_to_be_ignored(flags):
-		return false
-		# I think this is getting anything that has the 1 flag set...I think
-		return 	flags & (1 << 2) == 0 && \
-				flags & (1 << 4) == 0 && \
-				flags & (1 << 6) == 0
-
-
 	func _print_flags(meta):
 		print(str(meta.name, ':').rpad(30), str(meta.flags).rpad(4), ' = ', _utils.dec2bistr(meta.flags, 10))
 
@@ -181,13 +173,12 @@ class ParsedScript:
 			methods = _get_native_methods(base_type)
 
 		for m in methods:
-			if(!_has_flag_to_be_ignored(m.flags)):
-				var parsed = ParsedMethod.new(m)
-				_methods_by_name[m.name] = parsed
-				# _init must always be included so that we can initialize
-				# double_tools
-				if(m.name == '_init'):
-					parsed.is_local = true
+			var parsed = ParsedMethod.new(m)
+			_methods_by_name[m.name] = parsed
+			# _init must always be included so that we can initialize
+			# double_tools
+			if(m.name == '_init'):
+				parsed.is_local = true
 
 
 		# This loop will overwrite all entries in _methods_by_name with the local

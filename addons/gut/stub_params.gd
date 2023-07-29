@@ -72,11 +72,8 @@ func to_do_nothing():
 
 
 func to_call_super():
-	if(stub_method == '_init'):
-		_lgr.error("You cannot stub _init to call super.  Super's _init is always called.")
-	else:
-		call_super = true
-		_parameter_override_only = false
+	call_super = true
+	_parameter_override_only = false
 	return self
 
 
