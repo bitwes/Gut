@@ -129,7 +129,7 @@ func _get_indented_line(indents, text):
 
 
 func _stub_to_call_super(parsed, method_name):
-	if(parsed.get_method(method_name).is_black_listed()):
+	if(!parsed.get_method(method_name).is_eligible_for_doubling()):
 		return
 
 	var params = _utils.StubParams.new(parsed.script_path, method_name, parsed.subpath)
@@ -178,7 +178,7 @@ func _get_base_script_text(parsed, override_path, partial, included_methods):
 
 func _is_method_eligible_for_doubling(parsed_script, parsed_method):
 	return !parsed_method.is_accessor() and \
-		!parsed_method.is_black_listed() and \
+		parsed_method.is_eligible_for_doubling() and \
 		!_ignored_methods.has(parsed_script.resource, parsed_method.meta.name)
 
 
@@ -239,7 +239,7 @@ func _create_double(parsed, strategy, override_path, partial):
 
 func _stub_method_default_values(which, parsed, strategy):
 	for method in parsed.get_local_methods():
-		if(!method.is_black_listed() && !_ignored_methods.has(parsed.resource, method.meta.name)):
+		if(method.is_eligible_for_doubling() && !_ignored_methods.has(parsed.resource, method.meta.name)):
 			_stubber.stub_defaults_from_meta(parsed.script_path, method.meta)
 
 
