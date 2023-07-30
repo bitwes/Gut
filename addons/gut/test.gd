@@ -189,6 +189,42 @@ func _fail_if_parameters_not_array(parameters):
 	return invalid
 
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func _get_bad_double_or_method_message(inst, method_name, action):
+	var to_return = ''
+
+	if(!_utils.is_double(inst)):
+		to_return = str("An instance of a double was expected, you passed:  ", _str(inst))
+	elif(!inst.has_method(method_name)):
+		to_return = str("You cannot ", action, " [", method_name, "] because the method does not exist.  ",
+			"This can happen if the method is virtual and not overloaded (i.e. _ready) ",
+			"or you have mistyped the name of the method.")
+	elif(!inst.__gutdbl_values.doubled_methods.has(method_name)):
+		to_return = str("You cannot ", action, " [", method_name, "] because ",
+			_str(inst), ' does not overload it or it was ignored with ',
+			'ignore_method_when_doubling.  See Doubling ',
+			'Strategy in the wiki for details on including non-overloaded ',
+			'methods in a double.')
+
+	return to_return
+
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func _fail_if_not_double_or_does_not_have_method(inst, method_name):
+	var to_return = OK
+
+	var msg = _get_bad_double_or_method_message(inst, method_name, 'spy on')
+	if(msg != ''):
+		_fail(msg)
+		to_return = ERR_INVALID_DATA
+
+	return to_return
+
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func _create_obj_from_type(type):
 	var obj = null
 	if type.is_class("PackedScene"):
@@ -837,38 +873,6 @@ func assert_string_ends_with(text, search, match_case=true):
 			_pass(disp)
 		else:
 			_fail(disp)
-
-
-
-func _get_bad_double_or_method_message(inst, method_name, action):
-	var to_return = ''
-
-	if(!_utils.is_double(inst)):
-		to_return = str("An instance of a double was expected, you passed:  ", _str(inst))
-	elif(!inst.has_method(method_name)):
-		to_return = str("You cannot ", action, " [", method_name, "] because the method does not exist.  ",
-			"This can happen if the method is virtual and not overloaded (i.e. _ready) ",
-			"or you have mistyped the name of the method.")
-	elif(!inst.__gutdbl_values.doubled_methods.has(method_name)):
-		to_return = str("You cannot ", action, " [", method_name, "] because ",
-			_str(inst), ' does not overload it or it was ignored with ',
-			'ignore_method_when_doubling.  See Doubling ',
-			'Strategy in the wiki for details on including non-overloaded ',
-			'methods in a double.')
-
-	return to_return
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func _fail_if_not_double_or_does_not_have_method(inst, method_name):
-	var to_return = OK
-
-	var msg = _get_bad_double_or_method_message(inst, method_name, 'spy on')
-	if(msg != ''):
-		_fail(msg)
-		to_return = ERR_INVALID_DATA
-
-	return to_return
 
 
 # ------------------------------------------------------------------------------

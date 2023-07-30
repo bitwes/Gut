@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# 9.1.0
+* Fixed numerous issues with doubling that were caused by the port from 3.x.  Most of these involved using the INCLUDE_NATIVE doubling strategy.
+* Added errors and better failure messages when trying to stub or spy on an invalid method.
+
 
 # 9.1.0 (requires Godot 4.1)
 * GUT generated errors now cause tests to fail (not engine errors, just things GUT thinks are bad).  You can disable this through the CLI, .gutconfig, or the panel.
