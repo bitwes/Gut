@@ -149,18 +149,6 @@ class TestParsedScript:
 		var names = parser.get_super_method_names()
 		assert_does_not_have(names, 'has_string_and_array_defaults')
 
-	func test_is_blacklisted_returns_true_for_blacklisted_methods():
-		var parser = ParsedScript.new(DoubleMe)
-		assert_true(parser.is_method_blacklisted('_notification'))
-
-	func test_is_black_listed_returns_false_for_non_blacklisted_methods():
-		var parser = ParsedScript.new(DoubleMe)
-		assert_false(parser.is_method_blacklisted('has_string_and_array_defaults'))
-
-	func test_is_black_listed_returns_null_for_methods_that_DNE():
-		var parser = ParsedScript.new(DoubleMe)
-		assert_null(parser.is_method_blacklisted('this_does_not_exist'))
-
 	func test_subpath_is_null_by_default():
 		var parser = ParsedScript.new(DoubleMe)
 		assert_null(parser.subpath)
@@ -220,3 +208,45 @@ class TestParsedScript:
 		var parsed = ParsedScript.new(HasAccessors)
 		var method = parsed.get_method('@my_property_setter')
 		assert_true(method.is_accessor())
+
+class TestParsedMethod:
+	extends GutTest
+
+	var ScriptParser = load('res://addons/gut/script_parser.gd')
+	var _empty_meta = {
+		"args":[],
+		"default_args": [],
+		"flags":0,
+		"name":"empty"
+	}
+
+	func test_can_make_one():
+		var pm = ScriptParser.ParsedMethod.new(_empty_meta)
+		assert_not_null(pm)
+
+	func test_is_eligible_for_doubling_by_default():
+		var pm = ScriptParser.ParsedMethod.new(_empty_meta)
+		assert_true(pm.is_eligible_for_doubling())
+
+	var flag_arr = [METHOD_FLAG_STATIC, METHOD_FLAG_VIRTUAL, METHOD_FLAG_OBJECT_CORE]
+	func test_when_has_bad_flag_it_is_not_eligible_for_doubling(p = use_parameters(flag_arr)):
+		var meta = _empty_meta.duplicate()
+		meta.flags = meta.flags | p
+		var pm = ScriptParser.ParsedMethod.new(meta)
+		assert_false(pm.is_eligible_for_doubling())
+
+	var flag_arr2 = [METHOD_FLAG_EDITOR, METHOD_FLAG_NORMAL, METHOD_FLAGS_DEFAULT, METHOD_FLAG_VARARG,
+		METHOD_FLAG_EDITOR | METHOD_FLAG_NORMAL | METHOD_FLAGS_DEFAULT | METHOD_FLAG_VARARG]
+	func test_when_has_ok_flag_it_is_eligible_for_doubling(p = use_parameters(flag_arr2)):
+		var meta = _empty_meta.duplicate()
+		meta.flags = meta.flags | p
+		var pm = ScriptParser.ParsedMethod.new(meta)
+		assert_true(pm.is_eligible_for_doubling())
+
+	func test_when_method_black_listed_it_is_not_eligible_for_doubling():
+		var meta = _empty_meta.duplicate()
+		meta.name = ScriptParser.BLACKLIST[0]
+		var pm = ScriptParser.ParsedMethod.new(meta)
+		assert_false(pm.is_eligible_for_doubling())
+
+

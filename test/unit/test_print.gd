@@ -114,7 +114,7 @@ class TestGuiOutput:
 
 
 class TestBasicLoggerOutput:
-	extends 'res://test/gut_test.gd'
+	extends GutInternalTester
 
 	var _test_logger = null
 	func before_each():

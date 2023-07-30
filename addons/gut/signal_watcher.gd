@@ -185,3 +185,35 @@ func get_signals_emitted(obj):
 				emitted.append(signal_name)
 
 	return emitted
+
+
+func get_signal_summary(obj):
+	var emitted = {}
+	if(is_watching_object(obj)):
+		for signal_name in _watched_signals[obj]:
+			if(_watched_signals[obj][signal_name].size() > 0):
+				# maybe this could return parameters if any were sent.  should
+				# have an empty list if no parameters were ever sent to the
+				# signal.  Or this all just gets moved into print_signal_summary
+				# since this wouldn't be that useful without more data in the
+				# summary.
+				var entry = {
+					emit_count = get_emit_count(obj, signal_name)
+				}
+				emitted[signal_name] = entry
+
+	return emitted
+
+
+func print_signal_summary(obj):
+	if(!is_watching_object(obj)):
+		var msg = str('Not watching signals for ', obj)
+		_utils.get_logger().warn(msg)
+		return
+
+	var summary = get_signal_summary(obj)
+	print(obj, '::Signals')
+	var sorted = summary.keys()
+	sorted.sort()
+	for key in sorted:
+		print(' -  ', key, ' x ', summary[key].emit_count)

@@ -1,7 +1,7 @@
 extends GutTest
 
 class TestSpy:
-	extends 'res://test/gut_test.gd'
+	extends GutInternalTester
 
 	var Simple = load('res://test/resources/spy_test_objects/simple.gd')
 

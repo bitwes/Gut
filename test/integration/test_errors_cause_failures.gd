@@ -1,4 +1,4 @@
-extends 'res://test/gut_test.gd'
+extends GutInternalTester
 
 const TEST_SCRIPT = 'res://test/resources/errors_cause_failures/errors_cause_failures_tests.gd'
 var _test_gut = null

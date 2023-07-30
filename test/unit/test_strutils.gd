@@ -1,7 +1,7 @@
-extends 'res://test/gut_test.gd'
+extends GutInternalTester
 
 class TestType2Str:
-	extends 'res://test/gut_test.gd'
+	extends GutInternalTester
 
 	var strutils = load('res://addons/gut/strutils.gd').new()
 

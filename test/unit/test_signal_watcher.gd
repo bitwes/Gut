@@ -1,4 +1,4 @@
-extends "res://test/gut_test.gd"
+extends GutInternalTester
 # ##############################################################################
 # Some notes about signals:
 # 	* The parameters appear to be completely optional when defined via

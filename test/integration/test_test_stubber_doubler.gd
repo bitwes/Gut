@@ -1,7 +1,7 @@
-extends "res://test/gut_test.gd"
+extends GutInternalTester
 
 class TestBasics:
-	extends "res://test/gut_test.gd"
+	extends GutInternalTester
 	const TEMP_FILES = 'user://test_doubler_temp_file'
 
 	var gr = {
@@ -43,11 +43,11 @@ class TestBasics:
 		gr.test.assert_called(doubled, 'is_blocking_signals')
 		assert_eq(gr.test.get_pass_count(), 1)
 
-	func test_when_strategy_is_partial_then_supers_are_NOT_spied_in_scripts():
+	func test_when_strategy_is_partial_then_spying_on_non_overloaded_fails():
 		var doubled = gr.test.double(DoubleMe, gr.test.DOUBLE_STRATEGY.SCRIPT_ONLY).new()
 		doubled.is_blocking_signals()
 		gr.test.assert_not_called(doubled, 'is_blocking_signals')
-		assert_eq(gr.test.get_pass_count(), 1)
+		assert_eq(gr.test.get_fail_count(), 1)
 
 	func test_can_override_strategy_when_doubling_scene():
 		var doubled = gr.test.double(DoubleMeScene, gr.test.DOUBLE_STRATEGY.INCLUDE_NATIVE).instantiate()
@@ -56,12 +56,12 @@ class TestBasics:
 		gr.test.assert_called(doubled, 'is_blocking_signals')
 		assert_eq(gr.test.get_pass_count(), 1)
 
-	func test_when_strategy_is_partial_then_supers_are_NOT_spied_in_scenes():
+	func test_when_strategy_is_partial_then_spying_on_non_overloaded_fails_with_scenes():
 		var doubled = gr.test.double(DoubleMeScene, gr.test.DOUBLE_STRATEGY.SCRIPT_ONLY).instantiate()
 		autofree(doubled)
 		doubled.is_blocking_signals()
 		gr.test.assert_not_called(doubled, 'is_blocking_signals')
-		assert_eq(gr.test.get_pass_count(), 1)
+		assert_eq(gr.test.get_fail_count(), 1)
 
 	func test_can_stub_inner_class_methods():
 		gr.gut.get_doubler().inner_class_registry.register(InnerClasses)
@@ -92,11 +92,11 @@ class TestBasics:
 	func test_when_stub_passed_a_non_doubled_instance_it_generates_an_error():
 		var n = autofree(Node.new())
 		gr.test.stub(n, 'something').to_return(3)
-		assert_eq(gr.test.get_logger().get_errors().size(), 1)
+		assert_errored(gr.test, 1)
 
 	func test_when_stub_passed_singleton_it_generates_error():
 		gr.test.stub(Input, "is_action_just_pressed").to_return(true)
-		assert_eq(gr.test.get_logger().get_errors().size(), 1)
+		assert_errored(gr.test, 1)
 
 	func test_can_stub_scenes():
 		var dbl_scn = gr.test.double(DoubleMeScene).instantiate()
@@ -106,8 +106,9 @@ class TestBasics:
 
 
 
+
 class TestIgnoreMethodsWhenDoubling:
-	extends "res://test/gut_test.gd"
+	extends GutInternalTester
 
 	var _test_gut = null
 	var _test = null
@@ -140,11 +141,11 @@ class TestIgnoreMethodsWhenDoubling:
 		m_inst.return_hello()
 		# since it is ignored it should not have been caught by the stubber
 		_test.assert_not_called(m_inst, 'return_hello')
-		assert_eq(_test.get_fail_count(), 0)
+		assert_eq(_test.get_fail_count(), 1)
 
 
 class TestTestsSmartDoubleMethod:
-	extends "res://test/gut_test.gd"
+	extends GutInternalTester
 
 	var _test = null
 
@@ -178,30 +179,25 @@ class TestTestsSmartDoubleMethod:
 
 	func test_script_only_strategy_used_for_scripts():
 		var inst = _test.double(DoubleMe, DOUBLE_STRATEGY.SCRIPT_ONLY).new()
-		inst.get_instance_id()
-		assert_not_called(inst, 'get_instance_id')
+		assert_does_not_have(inst.__gutdbl_values.doubled_methods, 'get_instance_id')
 
 	func test_include_native_strategy_used_with_scenes():
 		var inst = _test.double(DoubleMeScene, DOUBLE_STRATEGY.INCLUDE_NATIVE).instantiate()
-		inst.get_instance_id()
-		assert_called(inst, 'get_instance_id')
+		assert_has(inst.__gutdbl_values.doubled_methods, 'get_instance_id')
 
 	func test_script_ony_strategy_used_with_scenes():
 		var inst = _test.double(DoubleMeScene, DOUBLE_STRATEGY.SCRIPT_ONLY).instantiate()
-		inst.get_instance_id()
-		assert_not_called(inst, 'get_instance_id')
+		assert_does_not_have(inst.__gutdbl_values.doubled_methods, 'get_instance_id')
 
 	func test_include_native_strategy_used_with_inners():
 		_test.register_inner_classes(InnerClasses)
 		var inst = _test.double(InnerClasses.InnerA, DOUBLE_STRATEGY.INCLUDE_NATIVE).new()
-		inst.get_instance_id()
-		assert_called(inst, 'get_instance_id')
+		assert_has(inst.__gutdbl_values.doubled_methods, 'get_instance_id')
 
 	func test_script_only_strategy_used_with_inners():
 		_test.register_inner_classes(InnerClasses)
 		var inst = _test.double(InnerClasses.InnerA, DOUBLE_STRATEGY.SCRIPT_ONLY).new()
-		inst.get_instance_id()
-		assert_not_called(inst, 'get_instance_id')
+		assert_does_not_have(inst.__gutdbl_values.doubled_methods, 'get_instance_id')
 
 
 	func test_when_passing_a_class_of_a_script_it_doubles_it():
@@ -221,11 +217,11 @@ class TestTestsSmartDoubleMethod:
 		var inst = autofree(Node2D.new())
 		var d = _test.double(inst)
 		assert_null(d, 'double is null')
-		assert_eq(_test.get_logger().get_errors().size(), 1, 'generates error')
+		assert_errored(_test, 1)
 
 
 class TestPartialDoubleMethod:
-	extends "res://test/gut_test.gd"
+	extends GutInternalTester
 
 	var _gut = null
 	var _test = null
@@ -304,17 +300,18 @@ class TestPartialDoubleMethod:
 		var inst = autofree(Node2D.new())
 		var d = _test.partial_double(inst)
 		assert_null(d, 'double is null')
-		assert_eq(_test.get_logger().get_errors().size(), 1, 'generates error')
+		assert_errored(_test, 1)
 
 
 class TestOverridingParameters:
-	extends "res://test/gut_test.gd"
+	extends GutInternalTester
 
 	var _gut = null
 	var _test = null
 
-	func before_all():
-		_gut = Gut.new()
+	func before_each():
+		_gut = new_gut(true)
+		_gut.log_level = 3
 		_test = Test.new()
 		_test.gut = _gut
 
@@ -322,11 +319,9 @@ class TestOverridingParameters:
 		add_child(_test)
 
 	func after_each():
-		_gut.get_stubber().clear()
-
-	func after_all():
 		_gut.free()
 		_test.free()
+
 
 	const INIT_PARAMETERS = 'res://test/resources/stub_test_objects/init_parameters.gd'
 	const DEFAULT_PARAMS_PATH = 'res://test/resources/doubler_test_objects/double_default_parameters.gd'
@@ -342,10 +337,32 @@ class TestOverridingParameters:
 		var ret_val = inst.return_passed()
 		assert_eq(ret_val, '12')
 
+	func test_vararg_methods_get_extra_parameters_by_default():
+		_test.stub(Node, 'rpc_id').to_do_nothing()
+		var inst =  _test.double(Node).new()
+		add_child_autofree(inst)
+
+		var ret_val = inst.rpc_id(1, 'foo', '3', '4', '5')
+		pass_test('we got here')
+
+	func test_vararg_methods_generate_warning_when_called_and_param_count_not_overridden():
+		_test.stub(Node, 'rpc_id').to_do_nothing()
+		var inst = _test.double(Node).new()
+		add_child_autofree(inst)
+
+		var ret_val = inst.rpc_id(1, 'foo', '3', '4', '5')
+		assert_warn(_test.gut, 1)
+
+	func test_vararg_methods_do_not_generate_warnings_when_param_count_overridden():
+		_test.stub(Node, 'rpc_id').to_do_nothing().param_count(5)
+		var inst = _test.double(Node).new()
+		add_child_autofree(inst)
+
+		var ret_val = inst.rpc_id(1, 'foo', '3', '4', '5')
+		assert_warn(_test.gut, 0)
 
 	func test_issue_246_rpc_id_varargs():
 		_test.stub(Node, 'rpc_id').to_do_nothing().param_count(5)
-		_test.stub(Node, '_ready').to_do_nothing()
 
 		var inst =  _test.double(Node).new()
 		add_child_autofree(inst)
@@ -353,7 +370,6 @@ class TestOverridingParameters:
 		var ret_val = inst.rpc_id(1, 'foo', '3', '4', '5')
 		_test.assert_called(inst, 'rpc_id', [1, 'foo', '3', '4', '5'])
 		assert_eq(_test.get_pass_count(), 1)
-
 
 	func test_issue_246_rpc_id_varargs2():
 		stub(Node, 'rpc_id').to_do_nothing().param_count(5)
@@ -385,10 +401,42 @@ class TestOverridingParameters:
 		var inst = _test.double(InitParams).new()
 		assert_eq(inst.value, 'override_default')
 
+class TestStub:
+	extends GutInternalTester
+
+	var _gut = null
+	var _test = null
+
+	func before_all():
+		_gut = Gut.new()
+		_gut.logger = _utils.Logger.new()
+		_test = Test.new()
+		_test.gut = _gut
+
+		add_child(_gut)
+		add_child(_test)
+
+	func after_each():
+		_gut.get_stubber().clear()
+
+	func after_all():
+		_gut.free()
+		_test.free()
+
+	func test_stub_of_valid_stuff_is_fine():
+		var dbl = _test.double(DoubleMe).new()
+		_test.stub(dbl, 'get_value').to_return(9)
+		assert_errored(_test, 0)
+
+
+	func test_stub_of_double_method_generates_error_when_method_does_not_exist():
+		var dbl = _test.double(DoubleMe).new()
+		_test.stub(dbl, 'foo').to_do_nothing()
+		assert_errored(_test, 1)
 
 
 # class TestSingletonDoubling:
-# 	extends "res://test/gut_test.gd"
+# 	extends GutInternalTester
 
 # 	var _test_gut = null
 # 	var _test = null

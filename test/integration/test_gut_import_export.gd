@@ -1,4 +1,4 @@
-extends 'res://test/gut_test.gd'
+extends GutInternalTester
 
 var _test_gut = null
 const EXPORT_FILE = 'res://test/exported_tests.cfg'

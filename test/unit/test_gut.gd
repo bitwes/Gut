@@ -5,7 +5,7 @@ extends GutTest
 
 
 class TestProperties:
-	extends 'res://test/gut_test.gd'
+	extends GutInternalTester
 	var _gut = null
 
 	func before_all():
@@ -79,7 +79,7 @@ class TestProperties:
 
 
 class TestSimulate:
-	extends 'res://test/gut_test.gd'
+	extends GutInternalTester
 
 	var _test_gut = null
 
@@ -91,24 +91,24 @@ class TestSimulate:
 
 	class WithoutProcess:
 		extends Node
-	
+
 	class WithProcess:
 		extends Node
 		var call_count = 0
 		var delta_sum = 0.0
-	
+
 		func _process(delta):
 			call_count += 1
 			delta_sum += delta
 
 	class WithoutPhysicsProcess:
 		extends Node
-	
+
 	class WithPhysicsProcess:
 		extends Node
 		var call_count = 0
 		var delta_sum = 0.0
-	
+
 		func _physics_process(delta):
 			call_count += 1
 			delta_sum += delta
@@ -118,12 +118,12 @@ class TestSimulate:
 		_test_gut.simulate(with_method, 5, 0.2)
 		assert_eq(with_method.call_count, 5, '_process should have been called 5 times')
 		assert_eq(with_method.delta_sum, 1.0, 'The delta value should have been passed in and summed')
-	
+
 	func test_simulate_does_not_error_when_object_does_not_have_process():
 		var without_method = autofree(WithoutProcess.new())
 		_test_gut.simulate(without_method, 5, 0.2)
 		pass_test('We got here')
-	
+
 	func test_simulate_calls_process_on_child_objects_of_child_objects():
 		var objs = []
 		for i in range(5):
@@ -135,7 +135,7 @@ class TestSimulate:
 		for i in range(objs.size()):
 			assert_eq(objs[i].call_count, 5, '_process should have been called on object # ' + str(i))
 			assert_eq(objs[i].delta_sum, 1, 'The delta value should have been summed on object # ' + str(i))
-	
+
 	func test_simulate_checks_process_on_all_nodes():
 		var objs = [
 			autofree(WithProcess.new()),
@@ -145,33 +145,33 @@ class TestSimulate:
 		]
 		for i in range(1, 4):
 			objs[i - 1].add_child(objs[i])
-		
+
 		_test_gut.simulate(objs[0], 5, 0.2)
-	
+
 		assert_eq(objs[0].call_count, 5, '_process should have been called 5 times')
-		assert_eq(objs[0].delta_sum, 1.0, 'The delta value should have been passed in and summed')	
+		assert_eq(objs[0].delta_sum, 1.0, 'The delta value should have been passed in and summed')
 		assert_eq(objs[2].call_count, 5, '_process should have been called 5 times')
-		assert_eq(objs[2].delta_sum, 1.0, 'The delta value should have been passed in and summed')	
-	
+		assert_eq(objs[2].delta_sum, 1.0, 'The delta value should have been passed in and summed')
+
 	func test_simulate_calls_process_if_object_is_processing_and_check_is_true():
 		var with_processing = autofree(WithProcess.new())
 		with_processing.set_process(true)
 		_test_gut.simulate(with_processing, 5, 0.2, true)  # check_is_processing=false
 		assert_eq(with_processing.call_count, 5, '_process should have been called 5 times')
 		assert_eq(with_processing.delta_sum, 1.0, 'The delta value should have been passed in and summed')
-	
+
 	func test_simulate_does_not_call_process_if_object_is_not_processing_and_check_is_true():
 		var without_processing = autofree(WithProcess.new())
 		without_processing.set_process(false)
 		_test_gut.simulate(without_processing, 5, 0.2, true)  # check_is_processing=true
 		assert_eq(without_processing.call_count, 0, '_process should not have been called')
-	
+
 	func test_simulate_does_not_error_if_object_is_processing_but_has_no_method():
 		var with_processing_but_without_method = autofree(WithoutProcess.new())
 		with_processing_but_without_method.set_process(true)
 		_test_gut.simulate(with_processing_but_without_method, 5, 0.2, true)  # check_is_processing=true
 		pass_test('We got here')
-	
+
 	func test_simulate_calls_process_on_descendents_if_objects_are_processing():
 		var objs = [
 			autofree(WithProcess.new()),
@@ -181,18 +181,18 @@ class TestSimulate:
 		]
 		for i in range(1, 4):
 			objs[i - 1].add_child(objs[i])
-	
+
 		objs[0].set_process(false)
 		objs[1].set_process(false)
 		objs[2].set_process(true)
 		objs[3].set_process(true)
-	
+
 		_test_gut.simulate(objs[0], 5, 0.2, true)  # check_is_processing=true
-	
+
 		assert_eq(objs[0].call_count, 0, '_process should not have been called')
 		assert_eq(objs[2].call_count, 5, '_process should have been called 5 times')
-		assert_eq(objs[2].delta_sum, 1.0, 'The delta value should have been passed in and summed')	
-	
+		assert_eq(objs[2].delta_sum, 1.0, 'The delta value should have been passed in and summed')
+
 	func test_simulate_calls_physics_process_if_object_has_method():
 		var with_method = autofree(WithPhysicsProcess.new())
 		_test_gut.simulate(with_method, 5, 0.2)
@@ -203,7 +203,7 @@ class TestSimulate:
 		var without_method = autofree(WithoutPhysicsProcess.new())
 		_test_gut.simulate(without_method, 5, 0.2)
 		pass_test('We got here')
-	
+
 	func test_simulate_calls_physics_process_on_child_objects_of_child_objects():
 		var objs = []
 		for i in range(5):
@@ -211,11 +211,11 @@ class TestSimulate:
 			if(i > 0):
 				objs[i - 1].add_child(objs[i])
 		_test_gut.simulate(objs[0], 5, 0.2)
-	
+
 		for i in range(objs.size()):
 			assert_eq(objs[i].call_count, 5, '_physics_process should have been called on object # ' + str(i))
 			assert_eq(objs[i].delta_sum, 1, 'The delta value should have been summed on object # ' + str(i))
-	
+
 	func test_simulate_calls_physics_process_on_descendents_if_objects_have_method():
 		var objs = [
 			autofree(WithPhysicsProcess.new()),
@@ -225,33 +225,33 @@ class TestSimulate:
 		]
 		for i in range(1, 4):
 			objs[i - 1].add_child(objs[i])
-		
+
 		_test_gut.simulate(objs[0], 5, 0.2)
-	
+
 		assert_eq(objs[0].call_count, 5, '_physics_process should have been called 5 times')
-		assert_eq(objs[0].delta_sum, 1.0, 'The delta value should have been passed in and summed')	
+		assert_eq(objs[0].delta_sum, 1.0, 'The delta value should have been passed in and summed')
 		assert_eq(objs[2].call_count, 5, '_physics_process should have been called 5 times')
-		assert_eq(objs[2].delta_sum, 1.0, 'The delta value should have been passed in and summed')	
-	
+		assert_eq(objs[2].delta_sum, 1.0, 'The delta value should have been passed in and summed')
+
 	func test_simulate_calls_physics_process_if_object_is_processing_and_check_is_true():
 		var with_processing = autofree(WithPhysicsProcess.new())
 		with_processing.set_physics_process(true)
 		_test_gut.simulate(with_processing, 5, 0.2, true)  # check_is_processing=false
 		assert_eq(with_processing.call_count, 5, '_physics_process should have been called 5 times')
 		assert_eq(with_processing.delta_sum, 1.0, 'The delta value should have been passed in and summed')
-	
+
 	func test_simulate_does_not_call_physics_process_if_object_is_not_processing_and_check_is_true():
 		var without_processing = autofree(WithPhysicsProcess.new())
 		without_processing.set_physics_process(false)
 		_test_gut.simulate(without_processing, 5, 0.2, true)  # check_is_processing=true
 		assert_eq(without_processing.call_count, 0, '_physics_process should not have been called')
-	
+
 	func test_simulate_does_not_error_if_object_is_physics_processing_but_has_no_method():
 		var with_processing_but_without_method = autofree(WithoutPhysicsProcess.new())
 		with_processing_but_without_method.set_physics_process(true)
 		_test_gut.simulate(with_processing_but_without_method, 5, 0.2, true)  # check_is_processing=true
 		pass_test('We got here')
-	
+
 	func test_simulate_calls_physics_process_on_descendents_if_objects_are_processing():
 		var objs = [
 			autofree(WithPhysicsProcess.new()),
@@ -261,14 +261,14 @@ class TestSimulate:
 		]
 		for i in range(1, 4):
 			objs[i - 1].add_child(objs[i])
-	
+
 		objs[0].set_physics_process(false)
 		objs[1].set_physics_process(false)
 		objs[2].set_physics_process(true)
 		objs[3].set_physics_process(true)
-	
+
 		_test_gut.simulate(objs[0], 5, 0.2, true)  # check_is_processing=true
-	
+
 		assert_eq(objs[0].call_count, 0, '_physics_process should not have been called')
 		assert_eq(objs[2].call_count, 5, '_physics_process should have been called 5 times')
 		assert_eq(objs[2].delta_sum, 1.0, 'The delta value should have been passed in and summed')
@@ -276,7 +276,7 @@ class TestSimulate:
 
 
 class TestMisc:
-	extends 'res://test/gut_test.gd'
+	extends GutInternalTester
 
 	func test_gut_does_not_make_orphans_when_added_to_scene():
 		var g = new_gut()
@@ -294,7 +294,7 @@ class TestMisc:
 
 
 class TestEverythingElse:
-	extends 'res://test/gut_test.gd'
+	extends GutInternalTester
 
 	#------------------------------
 	# Utility methods/variables
@@ -456,7 +456,7 @@ class TestEverythingElse:
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name =  'test_no_asserts'
 		gr.test_gut.test_scripts()
-		assert_eq(gr.test_gut.logger.get_warnings().size(), 0, 'no warnings')
+		assert_warn(gr.test_gut, 0)
 		var risky_count = gr.test_gut.get_test_collector().scripts[0].get_risky_count()
 		assert_eq(risky_count, 1, 'Risky count')
 
@@ -464,31 +464,31 @@ class TestEverythingElse:
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name = 'test_passing_assert'
 		gr.test_gut.test_scripts()
-		assert_eq(gr.test_gut.logger.get_warnings().size(), 0)
+		assert_warn(gr.test_gut, 0)
 
 	func test_with_failing_assert_no_assert_warning_is_not_generated():
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name = 'test_failing_assert'
 		gr.test_gut.test_scripts()
-		assert_eq(gr.test_gut.logger.get_warnings().size(), 0)
+		assert_warn(gr.test_gut, 0)
 
 	func test_with_pass_test_call_no_assert_warning_is_not_generated():
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name = 'test_use_pass_test'
 		gr.test_gut.test_scripts()
-		assert_eq(gr.test_gut.logger.get_warnings().size(), 0)
+		assert_warn(gr.test_gut, 0)
 
 	func test_with_fail_test_call_no_assert_warning_is_not_generated():
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name = 'test_use_fail_test'
 		gr.test_gut.test_scripts()
-		assert_eq(gr.test_gut.logger.get_warnings().size(), 0)
+		assert_warn(gr.test_gut, 0)
 
 	func test_with_pending_call_no_assert_warning_is_no_generated():
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name = 'test_use_pending'
 		gr.test_gut.test_scripts()
-		assert_eq(gr.test_gut.logger.get_warnings().size(), 0)
+		assert_warn(gr.test_gut, 0)
 
 
 	# ------------------------------
@@ -639,7 +639,7 @@ class TestEverythingElse:
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		gr.test_gut.test_scripts()
 		assert_eq(gr.test_gut.get_test_count(), 0, 'test should not be run')
-		assert_gt(gr.test_gut.logger.get_errors().size(), 0, 'there should be errors')
+		assert_errored(gr.test_gut, 2)
 
 	func test_pre_hook_sets_gut_instance():
 		gr.test_gut.pre_run_script = 'res://test/resources/pre_run_script.gd'
@@ -652,7 +652,7 @@ class TestEverythingElse:
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		gr.test_gut.test_scripts()
 		assert_eq(gr.test_gut.get_test_count(), 0, 'test should not be run')
-		assert_gt(gr.test_gut.logger.get_errors().size(), 0, 'there should be errors')
+		assert_errored(gr.test_gut, 2)
 
 	func test_post_hook_is_run_after_tests():
 		var PostRunScript = load('res://test/resources/post_run_script.gd')
@@ -669,7 +669,7 @@ class TestEverythingElse:
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		gr.test_gut.test_scripts()
 		assert_eq(gr.test_gut.get_test_count(), 0, 'test should not be run')
-		assert_gt(gr.test_gut.logger.get_errors().size(), 0, 'there should be errors')
+		assert_errored(gr.test_gut, -1)
 
 	# ------------------------------
 	# Parameterized Test Tests
@@ -695,7 +695,7 @@ class TestEverythingElse:
 		gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 		gr.test_gut.unit_test_name = 'test_has_two_parameters'
 		gr.test_gut.test_scripts()
-		assert_eq(gr.test_gut.logger.get_errors().size(), 1, 'error size')
+		assert_errored(gr.test_gut, 1)
 		assert_eq(gr.test_gut.get_test_count(), 0, 'test count')
 
 	func test_parameterized_tests_are_called_multiple_times():
@@ -708,7 +708,7 @@ class TestEverythingElse:
 		gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 		gr.test_gut.unit_test_name = 'test_does_not_use_use_parameters'
 		gr.test_gut.test_scripts()
-		assert_eq(gr.test_gut.logger.get_errors().size(), 1, 'error size')
+		assert_errored(gr.test_gut, 1)
 		assert_eq(gr.test_gut.get_fail_count(), 2)
 
 	# if you really think about this, it is a very very inception like test.
@@ -786,7 +786,7 @@ class TestEverythingElse:
 
 
 class TestErrorsTreatedAsFailure:
-	extends 'res://test/gut_test.gd'
+	extends GutInternalTester
 
 	var _test_gut = null
 

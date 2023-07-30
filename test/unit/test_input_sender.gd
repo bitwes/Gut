@@ -85,22 +85,30 @@ class TestTheBasics:
 
 	func test_idle_by_default():
 		var sender = InputSender.new()
-
 		assert_true(sender.is_idle())
 
 	func test_not_idle_when_items_in_queue():
 		var sender = InputSender.new()
-
 		sender.key_down("A").hold_for(.1)
 		assert_false(sender.is_idle())
 
 	func test_is_idle_when_an_event_sent_without_wait():
 		var sender = InputSender.new()
-
 		sender.key_down("B")
 		assert_true(sender.is_idle())
 
-
+	# knows too much, dunno a better way.
+	func test_when_freed_all_tree_items_are_freed():
+		var sender = InputSender.new()
+		sender.key_down("B").wait(8)
+		sender.key_up("B").wait(8)
+		sender.key_down("B").wait(8)
+		sender.key_up("B").wait(8)
+		var parent_item = sender._tree_items_parent
+		assert_gt(parent_item.get_child_count(), 0, 'just making sure there is something to free')
+		# could not find a way to trigger this by unreferencing
+		sender._notification(NOTIFICATION_PREDELETE)
+		assert_freed(parent_item, 'sender item node parent')
 
 
 	func test_is_key_pressed_false_by_default():
@@ -185,6 +193,15 @@ class TestTheBasics:
 		sender._lgr = lgr
 		sender.mouse_right_button_down(Vector2(1,1))
 		sender.mouse_right_button_up(Vector2(1,1))
+		assert_eq(lgr.get_warnings().size(), 0)
+
+	func test_does_not_warn_when_mouse_button_released():
+		var sender = InputSender.new()
+		var lgr = _utils.Logger.new()
+		sender._lgr = lgr
+		sender.mouse_right_button_down(Vector2(1,1))
+		sender.mouse_right_button_up(Vector2(1,1))
+		sender.mouse_right_button_down(Vector2(1,1))
 		assert_eq(lgr.get_warnings().size(), 0)
 
 	func test_warns_for_2nd_down_event_after_idle():
@@ -281,27 +298,45 @@ class TestCreateActionEvents:
 class TestMouseButtons:
 	extends "res://addons/gut/test.gd"
 
-	func assert_mouse_event_sends_event(method):
+	var events = ParameterFactory.named_parameters(
+		['method_name', 'button_index', 'pressed'],
+		[
+			["mouse_left_button_down", MOUSE_BUTTON_LEFT, true],
+			["mouse_left_button_up", MOUSE_BUTTON_LEFT, false],
+			["mouse_right_button_down", MOUSE_BUTTON_RIGHT, true],
+			["mouse_right_button_up", MOUSE_BUTTON_RIGHT, false],
+			["mouse_double_click", MOUSE_BUTTON_LEFT, false]
+		])
+	func test_event_properties(p=use_parameters(events)):
 		var r = autofree(HasInputEvents.new())
 		var sender = InputSender.new(r)
-		var returned = sender.call(method, Vector2(22, 22))
+		var returned = sender.call(p.method_name, Vector2(22, 22))
 		assert_eq(r.input_event.position, Vector2(22, 22), 'event sent')
 		assert_eq(returned, sender, "self returned")
+		assert_eq(r.input_event.pressed, p.pressed, 'pressed')
+		assert_eq(r.input_event.button_index, p.button_index, 'button index')
 
-	func test_lmb_down():
-		assert_mouse_event_sends_event("mouse_left_button_down")
+	func test_lmb_down_uses_default_mouse_positions():
+		var r = autofree(HasInputEvents.new())
+		var sender = InputSender.new(r)
+		sender.mouse_left_button_down()
+		assert_eq(r.input_event.position, Vector2(0, 0))
 
-	func test_lmb_up():
-		assert_mouse_event_sends_event("mouse_left_button_up")
+	func test_lmb_up_uses_default_mouse_positions():
+		var r = autofree(HasInputEvents.new())
+		var sender = InputSender.new(r)
+		sender.mouse_left_button_up()
+		assert_eq(r.input_event.position, Vector2(0, 0))
 
-	func test_double_click():
-		assert_mouse_event_sends_event("mouse_double_click")
+	func test_lmb_uses_last_mouse_position():
+		var r = autofree(HasInputEvents.new())
+		var sender = InputSender.new(r)
+		sender.mouse_left_button_down(Vector2(1, 1), Vector2(2, 2))
+		sender.mouse_left_button_up()
+		sender.mouse_left_button_down()
+		assert_eq(r.input_event.position, Vector2(1, 1))
 
-	func test_rmb_down():
-		assert_mouse_event_sends_event("mouse_right_button_down")
 
-	func test_rmb_up():
-		assert_mouse_event_sends_event("mouse_right_button_up")
 
 
 class TestMouseMotion:
@@ -625,6 +660,11 @@ class TestReleaseAll:
 	func after_all():
 		InputMap.erase_action("jump")
 
+
+	func test_release_all_returns_self():
+		var sender = InputSender.new(Input)
+		var result = sender.release_all()
+		assert_eq(result, sender)
 
 	func test_release_key():
 		var sender = InputSender.new(Input)
