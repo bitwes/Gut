@@ -191,18 +191,21 @@ func _fail_if_parameters_not_array(parameters):
 
 
 # ------------------------------------------------------------------------------
+# A bunch of common checkes used when validating a double/method pair.  If
+# everything is ok then an empty string is returned, otherwise the message
+# is returned.
 # ------------------------------------------------------------------------------
-func _get_bad_double_or_method_message(inst, method_name, action):
+func _get_bad_double_or_method_message(inst, method_name, what_you_cant_do):
 	var to_return = ''
 
 	if(!_utils.is_double(inst)):
-		to_return = str("An instance of a double was expected, you passed:  ", _str(inst))
+		to_return = str("An instance of a Double was expected, you passed:  ", _str(inst))
 	elif(!inst.has_method(method_name)):
-		to_return = str("You cannot ", action, " [", method_name, "] because the method does not exist.  ",
+		to_return = str("You cannot ", what_you_cant_do, " [", method_name, "] because the method does not exist.  ",
 			"This can happen if the method is virtual and not overloaded (i.e. _ready) ",
 			"or you have mistyped the name of the method.")
 	elif(!inst.__gutdbl_values.doubled_methods.has(method_name)):
-		to_return = str("You cannot ", action, " [", method_name, "] because ",
+		to_return = str("You cannot ", what_you_cant_do, " [", method_name, "] because ",
 			_str(inst), ' does not overload it or it was ignored with ',
 			'ignore_method_when_doubling.  See Doubling ',
 			'Strategy in the wiki for details on including non-overloaded ',
