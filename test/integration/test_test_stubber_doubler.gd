@@ -309,8 +309,9 @@ class TestOverridingParameters:
 	var _gut = null
 	var _test = null
 
-	func before_all():
-		_gut = Gut.new()
+	func before_each():
+		_gut = new_gut(true)
+		_gut.log_level = 3
 		_test = Test.new()
 		_test.gut = _gut
 
@@ -318,11 +319,9 @@ class TestOverridingParameters:
 		add_child(_test)
 
 	func after_each():
-		_gut.get_stubber().clear()
-
-	func after_all():
 		_gut.free()
 		_test.free()
+
 
 	const INIT_PARAMETERS = 'res://test/resources/stub_test_objects/init_parameters.gd'
 	const DEFAULT_PARAMS_PATH = 'res://test/resources/doubler_test_objects/double_default_parameters.gd'
@@ -338,10 +337,32 @@ class TestOverridingParameters:
 		var ret_val = inst.return_passed()
 		assert_eq(ret_val, '12')
 
+	func test_vararg_methods_get_extra_parameters_by_default():
+		_test.stub(Node, 'rpc_id').to_do_nothing()
+		var inst =  _test.double(Node).new()
+		add_child_autofree(inst)
+
+		var ret_val = inst.rpc_id(1, 'foo', '3', '4', '5')
+		pass_test('we got here')
+
+	func test_vararg_methods_generate_warning_when_called_and_param_count_not_overridden():
+		_test.stub(Node, 'rpc_id').to_do_nothing()
+		var inst = _test.double(Node).new()
+		add_child_autofree(inst)
+
+		var ret_val = inst.rpc_id(1, 'foo', '3', '4', '5')
+		assert_warn(_test.gut, 1)
+
+	func test_vararg_methods_do_not_generate_warnings_when_param_count_overridden():
+		_test.stub(Node, 'rpc_id').to_do_nothing().param_count(5)
+		var inst = _test.double(Node).new()
+		add_child_autofree(inst)
+
+		var ret_val = inst.rpc_id(1, 'foo', '3', '4', '5')
+		assert_warn(_test.gut, 0)
 
 	func test_issue_246_rpc_id_varargs():
 		_test.stub(Node, 'rpc_id').to_do_nothing().param_count(5)
-		_test.stub(Node, '_ready').to_do_nothing()
 
 		var inst =  _test.double(Node).new()
 		add_child_autofree(inst)
@@ -349,7 +370,6 @@ class TestOverridingParameters:
 		var ret_val = inst.rpc_id(1, 'foo', '3', '4', '5')
 		_test.assert_called(inst, 'rpc_id', [1, 'foo', '3', '4', '5'])
 		assert_eq(_test.get_pass_count(), 1)
-
 
 	func test_issue_246_rpc_id_varargs2():
 		stub(Node, 'rpc_id').to_do_nothing().param_count(5)

@@ -36,7 +36,7 @@ _process        _set
 * Inner Classes of the source are not doubled and will retain their functionality.
 * You can double Inner Classes, but it requires an extra step.  See the Inner Class section below.
 * If your `_init` method has required parameters you must [stub](Stubbing) default values before trying to `double` the object.
-* Static methods must be ignored before doubling using `ignore_method_when_doubling`.  More information about this below.
+* Any static methods you add to your scripts must be ignored before doubling using `ignore_method_when_doubling`.  More information about this below.
 * All __instances__ of Doubles and Partial Doubles are freed after a test finishes.  This means you do not have to free them manually and you should not use them in `before_all`.
 * You can double Scripts, Inner Classes, and Packed Scenes.  Once you have a double, you can then call `new` or `instantiate` on it to create instances of a doubled object.
 

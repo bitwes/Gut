@@ -39,7 +39,8 @@ class ParsedMethod:
 
 
 	func is_eligible_for_doubling():
-		var has_bad_flag = _meta.flags & (METHOD_FLAG_OBJECT_CORE | METHOD_FLAG_VIRTUAL | METHOD_FLAG_STATIC)
+		var has_bad_flag = _meta.flags & \
+			(METHOD_FLAG_OBJECT_CORE | METHOD_FLAG_VIRTUAL | METHOD_FLAG_STATIC)
 		return !has_bad_flag and BLACKLIST.find(_meta.name) == -1
 
 

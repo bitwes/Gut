@@ -420,8 +420,8 @@ func get_scene_script_object(scene):
 
 
 func _init():
-	print_method_info(ExtendsNode2D.new())
-	# print_methods_with_flags(ExtendsNode2D.new(), METHOD_FLAG_STATIC, false)
+	# print_method_info(ExtendsNode2D.new())
+	print_methods_with_flags(ExtendsNode2D.new(), METHOD_FLAG_VARARG, false)
 	# print_methods_with_flags(ExtendsNode2D.new(), METHOD_FLAG_OBJECT_CORE, false)
 	# print_methods_named(ExtendsNode2D.new(), '_input')
 	# print_methods_named(ExtendsNode2D.new(), '_notification')

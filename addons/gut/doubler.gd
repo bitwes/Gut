@@ -272,7 +272,7 @@ func _get_func_text(method_hash, path):
 	if(_stubber != null):
 		override_count = _stubber.get_parameter_count(path, method_hash.name)
 
-	var text = _method_maker.get_function_text(method_hash, path, override_count) + "\n"
+	var text = _method_maker.get_function_text(method_hash, override_count) + "\n"
 
 	return text
 

@@ -8,34 +8,6 @@ var is_partial = null
 var double = null
 
 const NO_DEFAULT_VALUE = '!__gut__no__default__value__!'
-func from_id(inst_id):
-	if(inst_id ==  -1):
-		return null
-	else:
-		return instance_from_id(inst_id)
-
-func should_call_super(method_name, called_with):
-	if(stubber != null):
-		return stubber.should_call_super(double, method_name, called_with)
-	else:
-		return false
-
-func spy_on(method_name, called_with):
-	if(spy != null):
-		spy.add_call(double, method_name, called_with)
-
-func get_stubbed_return(method_name, called_with):
-	if(stubber != null):
-		return stubber.get_return(double, method_name, called_with)
-	else:
-		return null
-
-func default_val(method_name, p_index, default_val=NO_DEFAULT_VALUE):
-	if(stubber != null):
-		return stubber.get_default_value(double, method_name, p_index)
-	else:
-		return null
-
 func _init(values=null):
 	if(values != null):
 		double = values.double
@@ -50,3 +22,44 @@ func _init(values=null):
 	if(gut != null):
 		gut.get_autofree().add_free(double)
 
+
+func from_id(inst_id):
+	if(inst_id ==  -1):
+		return null
+	else:
+		return instance_from_id(inst_id)
+
+
+func should_call_super(method_name, called_with):
+	if(stubber != null):
+		return stubber.should_call_super(double, method_name, called_with)
+	else:
+		return false
+
+
+func spy_on(method_name, called_with):
+	if(spy != null):
+		spy.add_call(double, method_name, called_with)
+
+
+func get_stubbed_return(method_name, called_with):
+	if(stubber != null):
+		return stubber.get_return(double, method_name, called_with)
+	else:
+		return null
+
+
+func default_val(method_name, p_index, default_val=NO_DEFAULT_VALUE):
+	if(stubber != null):
+		return stubber.get_default_value(double, method_name, p_index)
+	else:
+		return null
+
+
+func vararg_warning():
+	if(gut != null):
+		gut.get_logger().warn(
+			"This method contains a vararg argument and the paramter count was not stubbed.  " + \
+			"GUT adds extra parameters to this method which should fill most needs.  " + \
+			"It is recommended that you stub param_count for this object's class to ensure " + \
+			"that there are not any parameter count mismatch errors.")
