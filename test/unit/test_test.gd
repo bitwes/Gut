@@ -63,11 +63,18 @@ class BaseTestClass:
 	# Seutp/Teardown
 	# #############
 	func before_each():
+		# Everything in here uses the same logger (the one in `g`) since there
+		# should not be any times when they would need to be different and
+		# `new_gut` sets up the logger to be more quiet.
+		var g = autofree(new_gut(_print_all_subtests))
+		g.log_level = 3
+
 		gr.test = Test.new()
+		gr.test.set_logger(g.logger)
+
 		gr.test_with_gut = Test.new()
-		var g = autofree(Gut.new())
-		g._should_print_versions = false
 		gr.test_with_gut.gut = g
+		gr.test_with_gut.set_logger(g.logger)
 		add_child(gr.test_with_gut.gut)
 
 	func after_each():
