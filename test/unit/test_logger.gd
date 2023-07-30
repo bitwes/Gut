@@ -1,4 +1,4 @@
-extends 'res://test/gut_test.gd'
+extends GutInternalTester
 
 func test_can_warn():
 	var l = Logger.new()

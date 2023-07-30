@@ -80,6 +80,7 @@ var CompareResult = _utils.CompareResult
 var InputFactory = _utils.InputFactory
 var InputSender = _utils.InputSender
 
+
 func _init():
 	pass
 
@@ -189,6 +190,45 @@ func _fail_if_parameters_not_array(parameters):
 	return invalid
 
 
+# ------------------------------------------------------------------------------
+# A bunch of common checkes used when validating a double/method pair.  If
+# everything is ok then an empty string is returned, otherwise the message
+# is returned.
+# ------------------------------------------------------------------------------
+func _get_bad_double_or_method_message(inst, method_name, what_you_cant_do):
+	var to_return = ''
+
+	if(!_utils.is_double(inst)):
+		to_return = str("An instance of a Double was expected, you passed:  ", _str(inst))
+	elif(!inst.has_method(method_name)):
+		to_return = str("You cannot ", what_you_cant_do, " [", method_name, "] because the method does not exist.  ",
+			"This can happen if the method is virtual and not overloaded (i.e. _ready) ",
+			"or you have mistyped the name of the method.")
+	elif(!inst.__gutdbl_values.doubled_methods.has(method_name)):
+		to_return = str("You cannot ", what_you_cant_do, " [", method_name, "] because ",
+			_str(inst), ' does not overload it or it was ignored with ',
+			'ignore_method_when_doubling.  See Doubling ',
+			'Strategy in the wiki for details on including non-overloaded ',
+			'methods in a double.')
+
+	return to_return
+
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func _fail_if_not_double_or_does_not_have_method(inst, method_name):
+	var to_return = OK
+
+	var msg = _get_bad_double_or_method_message(inst, method_name, 'spy on')
+	if(msg != ''):
+		_fail(msg)
+		to_return = ERR_INVALID_DATA
+
+	return to_return
+
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func _create_obj_from_type(type):
 	var obj = null
 	if type.is_class("PackedScene"):
@@ -838,6 +878,7 @@ func assert_string_ends_with(text, search, match_case=true):
 		else:
 			_fail(disp)
 
+
 # ------------------------------------------------------------------------------
 # Assert that a method was called on an instance of a doubled class.  If
 # parameters are supplied then the params passed in when called must match.
@@ -851,9 +892,7 @@ func assert_called(inst, method_name, parameters=null):
 	if(_fail_if_parameters_not_array(parameters)):
 		return
 
-	if(!_utils.is_double(inst)):
-		_fail('You must pass a doubled instance to assert_called.  Check the wiki for info on using double.')
-	else:
+	if(_fail_if_not_double_or_does_not_have_method(inst, method_name) == OK):
 		if(gut.get_spy().was_called(inst, method_name, parameters)):
 			_pass(disp)
 		else:
@@ -872,9 +911,7 @@ func assert_not_called(inst, method_name, parameters=null):
 	if(_fail_if_parameters_not_array(parameters)):
 		return
 
-	if(!_utils.is_double(inst)):
-		_fail('You must pass a doubled instance to assert_not_called.  Check the wiki for info on using double.')
-	else:
+	if(_fail_if_not_double_or_does_not_have_method(inst, method_name) == OK):
 		if(gut.get_spy().was_called(inst, method_name, parameters)):
 			if(parameters != null):
 				disp += str(' with parameters ', parameters)
@@ -899,9 +936,7 @@ func assert_call_count(inst, method_name, expected_count, parameters=null):
 	var disp = 'Expected [%s] on %s to be called [%s] times%s.  It was called [%s] times.'
 	disp = disp % [method_name, _str(inst), expected_count, param_text, count]
 
-	if(!_utils.is_double(inst)):
-		_fail('You must pass a doubled instance to assert_call_count.  Check the wiki for info on using double.')
-	else:
+	if(_fail_if_not_double_or_does_not_have_method(inst, method_name) == OK):
 		if(count == expected_count):
 			_pass(disp)
 		else:
@@ -1341,15 +1376,17 @@ func ignore_method_when_doubling(thing, method_name):
 #        to leave it but not update the wiki.
 # ------------------------------------------------------------------------------
 func stub(thing, p2, p3=null):
-	if(_utils.is_instance(thing) and !_utils.is_double(thing)):
-		_lgr.error(str('You cannot use stub on ', _str(thing), ' because it is not a double.'))
-		return _utils.StubParams.new()
-
 	var method_name = p2
 	var subpath = null
 	if(p3 != null):
 		subpath = p2
 		method_name = p3
+
+	if(_utils.is_instance(thing)):
+		var msg = _get_bad_double_or_method_message(thing, method_name, 'stub')
+		if(msg != ''):
+			_lgr.error(msg)
+			return _utils.StubParams.new()
 
 	var sp = _utils.StubParams.new(thing, method_name, subpath)
 	gut.get_stubber().add_stub(sp)

@@ -1,4 +1,4 @@
-extends GutTest
+extends GutInternalTester
 
 
 const DEFAULT_PARAMS_PATH = 'res://test/resources/doubler_test_objects/double_default_parameters.gd'

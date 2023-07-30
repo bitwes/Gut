@@ -6,7 +6,7 @@ extends GutTest
 
 # ------------------------------------------------------------------------------
 class BaseTestClass:
-	extends "res://test/gut_test.gd"
+	extends GutInternalTester
 	# !! Use this for debugging to see the results of all the subtests that
 	# are run using assert_fail_pass, assert_fail and assert_pass that are
 	# built into this class
@@ -63,11 +63,18 @@ class BaseTestClass:
 	# Seutp/Teardown
 	# #############
 	func before_each():
+		# Everything in here uses the same logger (the one in `g`) since there
+		# should not be any times when they would need to be different and
+		# `new_gut` sets up the logger to be more quiet.
+		var g = autofree(new_gut(_print_all_subtests))
+		g.log_level = 3
+
 		gr.test = Test.new()
+		gr.test.set_logger(g.logger)
+
 		gr.test_with_gut = Test.new()
-		var g = autofree(Gut.new())
-		g._should_print_versions = false
 		gr.test_with_gut.gut = g
+		gr.test_with_gut.set_logger(g.logger)
 		add_child(gr.test_with_gut.gut)
 
 	func after_each():
@@ -1243,25 +1250,23 @@ class TestStringEndsWith:
 		assert_pass(gr.test)
 
 
-# ------------------------------------------------------------------------------
-# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
 class TestAssertCalled:
 	extends BaseTestClass
 
-	func test_assert_called_fails_with_message_if_non_doubled_passed():
+	func test_fails_with_message_if_non_doubled_passed():
 		var obj = GDScript.new()
 		gr.test_with_gut.gut.get_spy().add_call(obj, 'method')
 		gr.test_with_gut.assert_called(obj, 'method1')
 		gut.p('!! Check output !!')
 		assert_fail(gr.test_with_gut)
 
-	func test_assert_called_passes_when_call_occurred():
+	func test_passes_when_call_occurred():
 		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
 		doubled.get_value()
 		gr.test_with_gut.assert_called(doubled, 'get_value')
 		assert_pass(gr.test_with_gut)
 
-	func test_assert_called_passes_with_parameters():
+	func test_passes_with_parameters():
 		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
 		doubled.set_value(5)
 		gr.test_with_gut.assert_called(doubled, 'set_value', [5])
@@ -1273,18 +1278,30 @@ class TestAssertCalled:
 		gr.test_with_gut.assert_called(doubled, 'set_value', [5])
 		assert_fail(gr.test_with_gut)
 
-	func test_assert_called_works_with_defaults():
+	func test_works_with_defaults():
 		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
 		doubled.has_two_params_one_default(10)
 		gr.test_with_gut.assert_called(doubled, 'has_two_params_one_default', [10, null])
 		assert_pass(gr.test_with_gut)
 
-	func test_assert_called_generates_error_if_third_parameter_not_an_array():
+	func test_generates_error_if_third_parameter_not_an_array():
 		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
 		doubled.set_value(5)
 		gr.test_with_gut.assert_called(doubled, 'set_value', 5)
 		assert_fail(gr.test_with_gut)
-		assert_eq(gr.test_with_gut.get_logger().get_errors().size(), 1, 'Generates error')
+		assert_errored(gr.test_with_gut, 1)
+
+	func test_fail_message_indicates_method_does_not_exist():
+		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
+		gr.test_with_gut.assert_called(doubled, 'foo')
+		assert_string_contains(gr.test_with_gut._fail_pass_text[0], 'does not exist')
+
+	func test_fail_message_indicates_non_included_methods():
+		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
+		gr.test_with_gut.assert_called(doubled, 'get_parent')
+		assert_string_contains(gr.test_with_gut._fail_pass_text[0], 'does not overload')
+
+
 
 
 # ------------------------------------------------------------------------------
@@ -1328,6 +1345,16 @@ class TestAssertNotCalled:
 		doubled.set_value('a')
 		gr.test_with_gut.assert_not_called(doubled, 'set_value')
 		assert_fail(gr.test_with_gut)
+
+	func test_fail_message_indicates_method_does_not_exist():
+		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
+		gr.test_with_gut.assert_called(doubled, 'foo')
+		assert_string_contains(gr.test_with_gut._fail_pass_text[0], 'does not exist')
+
+	func test_fail_message_indicates_non_included_methods():
+		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
+		gr.test_with_gut.assert_called(doubled, 'get_parent')
+		assert_string_contains(gr.test_with_gut._fail_pass_text[0], 'does not overload')
 
 
 # ------------------------------------------------------------------------------
@@ -1382,6 +1409,16 @@ class TestAssertCallCount:
 		gr.test_with_gut.assert_call_count(doubled, 'set_value', 4)
 		assert_pass(gr.test_with_gut)
 
+	func test_fail_message_indicates_method_does_not_exist():
+		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
+		gr.test_with_gut.assert_called(doubled, 'foo')
+		assert_string_contains(gr.test_with_gut._fail_pass_text[0], 'does not exist')
+
+	func test_fail_message_indicates_non_included_methods():
+		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
+		gr.test_with_gut.assert_called(doubled, 'get_parent')
+		assert_string_contains(gr.test_with_gut._fail_pass_text[0], 'does not overload')
+
 
 # ------------------------------------------------------------------------------
 class TestGetCallParameters:
@@ -1398,7 +1435,7 @@ class TestGetCallParameters:
 	func test_generates_error_if_you_do_not_pass_a_doubled_object():
 		var thing = autofree(Node2D.new())
 		var _p = gr.test_with_gut.get_call_parameters(thing, 'something')
-		assert_eq(gr.test_with_gut.get_logger().get_errors().size(), 1)
+		assert_errored(gr.test_with_gut, 1)
 
 
 # ------------------------------------------------------------------------------
@@ -1726,7 +1763,7 @@ class TestMemoryMgmt:
 
 # ------------------------------------------------------------------------------
 class TestTestStateChecking:
-	extends 'res://test/gut_test.gd'
+	extends GutInternalTester
 
 	var _gut = null
 
@@ -1789,19 +1826,19 @@ class TestTestStateChecking:
 
 	func test_error_generated_when_using_is_passing_in_before_all():
 		_run_test('TestUseIsPassingInBeforeAll', 'test_nothing')
-		assert_eq(_gut.logger.get_errors().size(), 1)
+		assert_errored(_gut, 1)
 
 	func test_error_generated_when_using_is_passing_in_after_all():
 		_run_test('TestUseIsPassingInAfterAll', 'test_nothing')
-		assert_eq(_gut.logger.get_errors().size(), 1)
+		assert_errored(_gut, 1)
 
 	func test_error_generated_when_using_is_failing_in_before_all():
 		_run_test('TestUseIsFailingInBeforeAll', 'test_nothing')
-		assert_eq(_gut.logger.get_errors().size(), 1)
+		assert_errored(_gut, 1)
 
 	func test_error_generated_when_using_is_failing_in_after_all():
 		_run_test('TestUseIsFailingInAfterAll', 'test_nothing')
-		assert_eq(_gut.logger.get_errors().size(), 1)
+		assert_errored(_gut, 1)
 
 
 # ------------------------------------------------------------------------------

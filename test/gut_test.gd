@@ -26,32 +26,43 @@ var TestCollector = load('res://addons/gut/test_collector.gd')
 func _init():
 	load('res://addons/gut/utils.gd').get_instance()._test_mode = true
 
+func _get_logger_from_obj(obj):
+	var to_return = null
+	if(obj.has_method('get_logger')):
+		to_return = obj.get_logger()
+	elif(obj.get('logger') != null):
+		to_return = obj.logger
+	return to_return
+
+func _assert_log_count(entries, type, count):
+	if(count == -1):
+		assert_gt(entries.size(), 0, str('There should be at least 1 ' + type))
+	else:
+		assert_eq(entries.size(), count, str('There should be ', count, ' ', type))
+
 
 func assert_warn(obj, times=1):
-	if(obj.has_method('get_logger')):
-		var msg = str('Should have ', times, ' warnings.')
-		assert_eq(obj.get_logger().get_warnings().size(), times, msg)
+	var lgr = _get_logger_from_obj(obj)
+	if(lgr != null):
+		_assert_log_count(lgr.get_warnings(), 'warnings', times)
 	else:
-		_fail('Does not have get_logger method')
+		_fail(str('Cannot assert_errored, ', obj, ' does not have get_logger method or logger property'))
 
 
 func assert_errored(obj, times=1):
-	if(obj.has_method('get_logger')):
-		var msg = str('Should have ', times, ' errors.')
-		assert_eq(obj.get_logger().get_errors().size(), times, msg)
-	elif(obj.get('logger') != null):
-		var msg = str('Should have ', times, ' errors.')
-		assert_eq(obj.logger.get_errors().size(), times, msg)
+	var lgr = _get_logger_from_obj(obj)
+	if(lgr != null):
+		_assert_log_count(lgr.get_errors(), 'errors', times)
 	else:
 		_fail(str('Cannot assert_errored, ', obj, ' does not have get_logger method or logger property'))
 
 
 func assert_deprecated(obj, times=1):
-	if(obj.has_method('get_logger')):
-		var msg = str('Should have ', times, ' deprecations.')
-		assert_eq(obj.get_logger().get_deprecated().size(), times, msg)
+	var lgr = _get_logger_from_obj(obj)
+	if(lgr != null):
+		_assert_log_count(lgr.get_deprecated(), 'deprecated', times)
 	else:
-		_fail('Does not have get_logger method')
+		_fail(str('Cannot assert_errored, ', obj, ' does not have get_logger method or logger property'))
 
 
 func assert_has_logger(obj):

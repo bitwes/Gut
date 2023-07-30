@@ -1,7 +1,7 @@
-extends "res://test/gut_test.gd"
+extends GutInternalTester
 
 class TestTestCollector:
-	extends "res://test/gut_test.gd"
+	extends GutInternalTester
 
 	var SCRIPTS_ROOT = 'res://test/resources/parsing_and_loading_samples/'
 
@@ -98,7 +98,7 @@ class TestTestCollector:
 
 
 class TestTestsWithParameters:
-	extends "res://test/gut_test.gd"
+	extends GutInternalTester
 
 	var SCRIPTS_ROOT = 'res://test/resources/parsing_and_loading_samples/'
 
@@ -128,7 +128,7 @@ class TestTestsWithParameters:
 
 
 class TestExportImport:
-	extends "res://test/gut_test.gd"
+	extends GutInternalTester
 
 	var skip_script = 'Not implemented in 4.0'
 

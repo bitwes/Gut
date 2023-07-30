@@ -1,8 +1,8 @@
-extends 'res://test/gut_test.gd'
+extends GutInternalTester
 
 
 class TestBoth:
-	extends 'res://test/gut_test.gd'
+	extends GutInternalTester
 
 	const INIT_PARAMETERS = 'res://test/resources/stub_test_objects/init_parameters.gd'
 	var InitParameters = load(INIT_PARAMETERS)

@@ -1,4 +1,4 @@
-extends 'res://test/gut_test.gd'
+extends GutInternalTester
 
 var ParameterHandler = load('res://addons/gut/parameter_handler.gd')
 

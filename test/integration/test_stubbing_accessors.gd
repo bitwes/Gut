@@ -30,8 +30,8 @@ var stubber = null
 
 func before_each():
     doubler = Doubler.new(_utils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
-    doubler.inner_class_registry.register(self.get_script())
     # doubler.print_source = true
+    doubler.inner_class_registry.register(self.get_script())
     stubber = _utils.Stubber.new()
     doubler.set_stubber(stubber)
 

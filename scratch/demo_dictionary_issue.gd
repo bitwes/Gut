@@ -91,7 +91,6 @@ var func_names = [
 	'test_new_from_inst_sets_path',
 	'test_can_get_method_by_name',
 	'test_can_get_super_method_by_name',
-	'test_non_super_methods_are_not_in_get_super_method_by_name',
 	'test_can_get_local_method_by_name',
 	'test_can_super_methods_not_included_in_local_method_by_name',
 	'test_overloaded_local_methods_are_local',

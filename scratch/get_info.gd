@@ -41,7 +41,7 @@ class HasSomeInners:
 			var foo = 'bar'
 
 	class Inner3:
-		extends 'res://test/gut_test.gd'
+		extends GutInternalTester
 
 	class ExtendsInner1:
 		extends Inner1
@@ -421,8 +421,8 @@ func get_scene_script_object(scene):
 
 func _init():
 	# print_method_info(ExtendsNode2D.new())
-	# print_methods_with_flags(ExtendsNode2D.new(), METHOD_FLAG_STATIC, false)
-	print_methods_with_flags(ExtendsNode2D.new(), METHOD_FLAG_OBJECT_CORE, false)
+	print_methods_with_flags(ExtendsNode2D.new(), METHOD_FLAG_VARARG, false)
+	# print_methods_with_flags(ExtendsNode2D.new(), METHOD_FLAG_OBJECT_CORE, false)
 	# print_methods_named(ExtendsNode2D.new(), '_input')
 	# print_methods_named(ExtendsNode2D.new(), '_notification')
 	# print_methods_named(ExtendsNode2D.new(), '_to_string')

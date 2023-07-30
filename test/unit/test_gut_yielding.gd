@@ -267,7 +267,7 @@ class TestYieldTo:
 
 
 class TestWaitFrames:
-	extends "res://test/gut_test.gd"
+	extends GutInternalTester
 
 	var _frame_count = 0
 

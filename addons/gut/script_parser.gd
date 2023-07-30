@@ -1,8 +1,5 @@
-# ------------------------------------------------------------------------------
-# List of methods that should not be overloaded when they are not defined
-# in the class being doubled.  These either break things if they are
-# overloaded or do not have a "super" equivalent so we can't just pass
-# through.
+# These methods didn't have flags that would exclude them from being used
+# in a double and they appear to break things if they are included.
 const BLACKLIST = [
 	'get_script',
 	'has_method',
@@ -16,15 +13,16 @@ const BLACKLIST = [
 #   parameter
 # ------------------------------------------------------------------------------
 class ParsedMethod:
+	const NO_DEFAULT = '__no__default__'
+
 	var _meta = {}
 	var meta = _meta :
 		get: return _meta
 		set(val): return;
-
-	var _parameters = []
 	var is_local = false
 
-	const NO_DEFAULT = '__no__default__'
+	var _parameters = []
+
 
 	func _init(metadata):
 		_meta = metadata
@@ -32,7 +30,7 @@ class ParsedMethod:
 		for i in range(_meta.args.size()):
 			var arg = _meta.args[i]
 			# Add a "default" property to the metadata so we don't have to do
-			# weird default position math again.
+			# weird default paramter position math again.
 			if(i >= start_default):
 				arg['default'] = _meta.default_args[start_default - i]
 			else:
@@ -48,25 +46,16 @@ class ParsedMethod:
 	func is_static():
 		return _meta['flags'] & METHOD_FLAG_STATIC != 0
 
-	func is_black_listed():
-		if(is_virtual()):
-			print('!!', meta.name, ' IS VIRTUAL!!')
-			return true
-		elif(is_object_core()):
-			print('!!', meta.name, " IS OBJECT CORE!!")
-			return true
-		elif is_static():
-			print('!!', meta.name, ' is STATIC!!')
-			return true
-		elif BLACKLIST.find(_meta.name) != -1:
-			print('!!', meta.name, " BLACK LISTED!!")
-			return true
-		else:
-			return false
+	func is_eligible_for_doubling():
+		var has_bad_flag = _meta.flags & \
+			(METHOD_FLAG_OBJECT_CORE | METHOD_FLAG_VIRTUAL | METHOD_FLAG_STATIC)
+		return !has_bad_flag and BLACKLIST.find(_meta.name) == -1
+
 
 	func is_accessor():
 		return _meta.name.begins_with('@') and \
 			(_meta.name.ends_with('_getter') or _meta.name.ends_with('_setter'))
+
 
 	func to_s():
 		var s = _meta.name + "("
@@ -91,8 +80,6 @@ class ParsedMethod:
 
 
 # ------------------------------------------------------------------------------
-# Doesn't know if a method is local and in super, but not sure if that will
-# ever matter.
 # ------------------------------------------------------------------------------
 class ParsedScript:
 	# All methods indexed by name.
@@ -149,14 +136,6 @@ class ParsedScript:
 		_parse_methods(to_load)
 
 
-	func _has_flag_to_be_ignored(flags):
-		return false
-		# I think this is getting anything that has the 1 flag set...I think
-		return 	flags & (1 << 2) == 0 && \
-				flags & (1 << 4) == 0 && \
-				flags & (1 << 6) == 0
-
-
 	func _print_flags(meta):
 		print(str(meta.name, ':').rpad(30), str(meta.flags).rpad(4), ' = ', _utils.dec2bistr(meta.flags, 10))
 
@@ -181,13 +160,12 @@ class ParsedScript:
 			methods = _get_native_methods(base_type)
 
 		for m in methods:
-			if(!_has_flag_to_be_ignored(m.flags)):
-				var parsed = ParsedMethod.new(m)
-				_methods_by_name[m.name] = parsed
-				# _init must always be included so that we can initialize
-				# double_tools
-				if(m.name == '_init'):
-					parsed.is_local = true
+			var parsed = ParsedMethod.new(m)
+			_methods_by_name[m.name] = parsed
+			# _init must always be included so that we can initialize
+			# double_tools
+			if(m.name == '_init'):
+				parsed.is_local = true
 
 
 		# This loop will overwrite all entries in _methods_by_name with the local
@@ -228,11 +206,6 @@ class ParsedScript:
 
 	func get_method(name):
 		return _methods_by_name[name]
-
-
-	func is_method_blacklisted(m_name):
-		if(_methods_by_name.has(m_name)):
-			return _methods_by_name[m_name].is_black_listed()
 
 
 	func get_super_method(name):

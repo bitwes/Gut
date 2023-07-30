@@ -1,4 +1,4 @@
-extends "res://test/gut_test.gd"
+extends GutInternalTester
 
 var Summary = load('res://addons/gut/test_collector.gd')
 const PARSING_AND_LOADING = 'res://test/resources/parsing_and_loading_samples'
