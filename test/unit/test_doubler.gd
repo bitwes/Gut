@@ -21,7 +21,6 @@ class BaseTest:
 
 	func assert_source_contains(thing, look_for, text=''):
 		var source = get_source(thing)
-		# var msg = str('Expected source for ', _strutils.type2str(thing), ' to contain "', look_for, '":  ', text)
 		var msg = str('Expected source for ', str(thing), ' to contain "', look_for, '":  ', text)
 		if(source == null || source.find(look_for) == -1):
 			fail_test(msg)
@@ -31,6 +30,7 @@ class BaseTest:
 				gut.p(_utils.add_line_numbers(source))
 		else:
 			pass_test(msg)
+
 
 	func assert_source_not_contains(thing, look_for, text=''):
 		var source = get_source(thing)
@@ -43,6 +43,7 @@ class BaseTest:
 				var header = str('------ Source for ', _strutils.type2str(thing), ' ------')
 				gut.p(header)
 				gut.p(_utils.add_line_numbers(source))
+
 
 	func print_source(thing):
 		var source = get_source(thing)
