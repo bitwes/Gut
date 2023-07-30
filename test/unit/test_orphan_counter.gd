@@ -1,4 +1,4 @@
-extends 'res://test/gut_test.gd'
+extends GutInternalTester
 
 func test_can_make_one():
 	assert_not_null(_utils.OrphanCounter.new())

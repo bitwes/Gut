@@ -1,4 +1,4 @@
-extends "res://test/gut_test.gd"
+extends GutInternalTester
 
 var Stubber = load('res://addons/gut/stubber.gd')
 # test.gd has a StubParams variable already so this has to have a

@@ -1,7 +1,7 @@
-extends "res://test/gut_test.gd"
+extends GutInternalTester
 
 class TestBasics:
-	extends "res://test/gut_test.gd"
+	extends GutInternalTester
 	const TEMP_FILES = 'user://test_doubler_temp_file'
 
 	var gr = {
@@ -92,11 +92,11 @@ class TestBasics:
 	func test_when_stub_passed_a_non_doubled_instance_it_generates_an_error():
 		var n = autofree(Node.new())
 		gr.test.stub(n, 'something').to_return(3)
-		assert_eq(gr.test.get_logger().get_errors().size(), 1)
+		assert_errored(gr.test, 1)
 
 	func test_when_stub_passed_singleton_it_generates_error():
 		gr.test.stub(Input, "is_action_just_pressed").to_return(true)
-		assert_eq(gr.test.get_logger().get_errors().size(), 1)
+		assert_errored(gr.test, 1)
 
 	func test_can_stub_scenes():
 		var dbl_scn = gr.test.double(DoubleMeScene).instantiate()
@@ -108,7 +108,7 @@ class TestBasics:
 
 
 class TestIgnoreMethodsWhenDoubling:
-	extends "res://test/gut_test.gd"
+	extends GutInternalTester
 
 	var _test_gut = null
 	var _test = null
@@ -145,7 +145,7 @@ class TestIgnoreMethodsWhenDoubling:
 
 
 class TestTestsSmartDoubleMethod:
-	extends "res://test/gut_test.gd"
+	extends GutInternalTester
 
 	var _test = null
 
@@ -217,11 +217,11 @@ class TestTestsSmartDoubleMethod:
 		var inst = autofree(Node2D.new())
 		var d = _test.double(inst)
 		assert_null(d, 'double is null')
-		assert_eq(_test.get_logger().get_errors().size(), 1, 'generates error')
+		assert_errored(_test, 1)
 
 
 class TestPartialDoubleMethod:
-	extends "res://test/gut_test.gd"
+	extends GutInternalTester
 
 	var _gut = null
 	var _test = null
@@ -300,11 +300,11 @@ class TestPartialDoubleMethod:
 		var inst = autofree(Node2D.new())
 		var d = _test.partial_double(inst)
 		assert_null(d, 'double is null')
-		assert_eq(_test.get_logger().get_errors().size(), 1, 'generates error')
+		assert_errored(_test, 1)
 
 
 class TestOverridingParameters:
-	extends "res://test/gut_test.gd"
+	extends GutInternalTester
 
 	var _gut = null
 	var _test = null
@@ -382,7 +382,7 @@ class TestOverridingParameters:
 		assert_eq(inst.value, 'override_default')
 
 class TestStub:
-	extends "res://test/gut_test.gd"
+	extends GutInternalTester
 
 	var _gut = null
 	var _test = null
@@ -406,17 +406,17 @@ class TestStub:
 	func test_stub_of_valid_stuff_is_fine():
 		var dbl = _test.double(DoubleMe).new()
 		_test.stub(dbl, 'get_value').to_return(9)
-		assert_eq(_test.get_logger().get_errors().size(), 0)
+		assert_errored(_test, 0)
 
 
 	func test_stub_of_double_method_generates_error_when_method_does_not_exist():
 		var dbl = _test.double(DoubleMe).new()
 		_test.stub(dbl, 'foo').to_do_nothing()
-		assert_eq(_test.get_logger().get_errors().size(), 1)
+		assert_errored(_test, 1)
 
 
 # class TestSingletonDoubling:
-# 	extends "res://test/gut_test.gd"
+# 	extends GutInternalTester
 
 # 	var _test_gut = null
 # 	var _test = null

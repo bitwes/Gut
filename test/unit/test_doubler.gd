@@ -1,21 +1,11 @@
 extends GutTest
 
 class BaseTest:
-	extends GutTest
+	extends GutInternalTester
 
-	const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
-	const DOUBLE_ME_SCENE_PATH = 'res://test/resources/doubler_test_objects/double_me_scene.tscn'
-	const DOUBLE_EXTENDS_NODE2D = 'res://test/resources/doubler_test_objects/double_extends_node2d.gd'
-	const DOUBLE_EXTENDS_WINDOW_DIALOG = 'res://test/resources/doubler_test_objects/double_extends_window_dialog.gd'
 	const DOUBLE_WITH_STATIC = 'res://test/resources/doubler_test_objects/has_static_method.gd'
-	const INNER_CLASSES_PATH = 'res://test/resources/doubler_test_objects/inner_classes.gd'
 
-	var DoubleMe = load(DOUBLE_ME_PATH)
-	var DoubleExtendsNode2D = load(DOUBLE_EXTENDS_NODE2D)
-	var DoubleExtendsWindowDialog = load(DOUBLE_EXTENDS_WINDOW_DIALOG)
 	var DoubleWithStatic = load(DOUBLE_WITH_STATIC)
-	var DoubleMeScene = load(DOUBLE_ME_SCENE_PATH)
-	var InnerClasses = load(INNER_CLASSES_PATH)
 	var Doubler = load('res://addons/gut/doubler.gd')
 
 	var print_source_when_failing = true
@@ -107,7 +97,7 @@ class TestTheBasics:
 		var default = _doubler.get_strategy()
 		_doubler.set_strategy(-1)
 		assert_eq(_doubler.get_strategy(), default, 'original value retained')
-		assert_ne(_doubler.get_logger().get_errors().size(), 0, 'should have made an error')
+		assert_errored(_doubler, 1)
 
 	func test_can_set_strategy_in_constructor():
 		var d = Doubler.new(_utils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
@@ -436,12 +426,12 @@ class TestDoubleInnerClasses:
 
 	func test_when_inner_class_not_registered_it_generates_error():
 		var  Dbl = doubler.double(InnerClasses.InnerA)
-		assert_eq(doubler.get_logger().get_errors().size(), 1)
+		assert_errored(doubler, 1)
 
 	func test_when_inner_class_registered_it_makes_a_double():
 		doubler.inner_class_registry.register(InnerClasses)
 		var  Dbl = doubler.double(InnerClasses.InnerA)
-		assert_eq(doubler.get_logger().get_errors().size(), 0, 'no errors')
+		assert_errored(doubler, 0)
 		assert_not_null(Dbl, 'made a double')
 
 	func test_doubled_instance_returns_null_for_get_b1():
@@ -494,8 +484,7 @@ class TestDoubleInnerClasses:
 
 	func test_partial_double_errors_if_inner_not_registered():
 		var inst = doubler.partial_double(InnerClasses.InnerA)
-		assert_eq(doubler.get_logger().get_errors().size(), 1)
-
+		assert_errored(doubler, 1)
 
 
 

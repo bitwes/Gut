@@ -41,7 +41,7 @@ class HasSomeInners:
 			var foo = 'bar'
 
 	class Inner3:
-		extends 'res://test/gut_test.gd'
+		extends GutInternalTester
 
 	class ExtendsInner1:
 		extends Inner1

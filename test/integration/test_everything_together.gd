@@ -1,8 +1,8 @@
-extends 'res://test/gut_test.gd'
+extends GutInternalTester
 
 
 class TestLogging:
-	extends 'res://test/gut_test.gd'
+	extends GutInternalTester
 
 	var _gut = null
 

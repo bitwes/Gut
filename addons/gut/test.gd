@@ -80,6 +80,7 @@ var CompareResult = _utils.CompareResult
 var InputFactory = _utils.InputFactory
 var InputSender = _utils.InputSender
 
+
 func _init():
 	pass
 

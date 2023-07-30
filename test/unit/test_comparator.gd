@@ -166,7 +166,7 @@ class TestDeepCompare:
 
 
 class TestGodot4ArrayDictionary:
-	extends 'res://test/gut_test.gd'
+	extends GutInternalTester
 
 	var _comparator  = null
 
