@@ -91,6 +91,7 @@ var _skip_test_name_for_testing = false
 var _less_test_names = false
 var _yield_calls = 0
 var _last_yield_text = ''
+var _deprecated_calls = {}
 
 
 func _init():
@@ -212,8 +213,38 @@ func _output_type(type, text):
 func debug(text):
 	_output_type(types.debug, text)
 
+
+func _get_call_stack_text():
+	var stack = get_stack()
+	var idx = 0
+	var text = ''
+	while(idx < stack.size() and stack[idx].source != "res://addons/gut/gut.gd"):
+		text +=  str(stack[idx].source, '::', stack[idx].function, "\n")
+		idx += 1
+	return text.hash()
+
+
+
+func _has_deprecated_already(text):
+	var to_return = false
+	if(_deprecated_calls.has(text)):
+		var stack_text = _get_call_stack_text()
+		if(_deprecated_calls[text].has(stack_text)):
+			_deprecated_calls[text][stack_text] += 1
+			to_return = true
+		else:
+			_deprecated_calls[text][stack_text] = 1
+	else:
+		_deprecated_calls[text] = {}
+	return to_return
+
+
+
 # supply some text or the name of the deprecated method and the replacement.
 func deprecated(text, alt_method=null):
+	if(_has_deprecated_already(text)):
+		return
+
 	var msg = text
 	if(alt_method):
 		msg = str('The method ', text, ' is deprecated, use ', alt_method , ' instead.')

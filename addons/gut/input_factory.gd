@@ -36,15 +36,16 @@
 # 	InputEventKey
 # 	InputEventMouseButton
 # 	InputEventMouseMotion
-
-# Yet to implement InputEvents
 # 	InputEventJoypadButton
 # 	InputEventJoypadMotion
-# 	InputEventMagnifyGesture
+
+# Yet to implement InputEvents
 # 	InputEventMIDI
+# 	InputEventMagnifyGesture
 # 	InputEventPanGesture
 # 	InputEventScreenDrag
 # 	InputEventScreenTouch
+#	InputEventShortcut
 
 
 static func _to_scancode(which):
@@ -139,4 +140,19 @@ static func mouse_relative_motion(offset, last_motion_event=null, speed=Vector2(
 		event.global_position += offset
 		event.relative = offset
 		event.velocity = speed
+	return event
+
+
+static func joypad_button(button_index, pressed, pressure = 0.0):
+	var event = InputEventJoypadButton.new()
+	event.button_index = button_index
+	event.pressed = pressed
+	event.pressure = pressure
+	return event
+
+
+static func joypad_motion(axis, axis_value):
+	var event = InputEventJoypadMotion.new()
+	event.axis = axis
+	event.axis_value = axis_value
 	return event

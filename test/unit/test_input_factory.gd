@@ -1,8 +1,8 @@
-extends "res://addons/gut/test.gd"
+extends GutTest
 
 
 class TestCreateKeyEvents:
-	extends "res://addons/gut/test.gd"
+	extends GutTest
 
 	func test_key_up_creates_event_for_key():
 		var event = InputFactory.key_up(KEY_A)
@@ -30,7 +30,7 @@ class TestCreateKeyEvents:
 
 
 class TestCreateActionEvents:
-	extends "res://addons/gut/test.gd"
+	extends GutTest
 
 	func test_action_up_creates_correct_class():
 		var e = InputFactory.action_up("foo", 1.0)
@@ -62,7 +62,7 @@ class TestCreateActionEvents:
 
 
 class TestMouseButtons:
-	extends "res://addons/gut/test.gd"
+	extends GutTest
 
 	func assert_mouse_event_props(method, pressed, button_index):
 		var event = InputFactory.call(method, (Vector2(10, 10)))
@@ -99,7 +99,7 @@ class TestMouseButtons:
 		assert_mouse_event_positions("mouse_right_button_up")
 
 class TestMouseMotion:
-	extends "res://addons/gut/test.gd"
+	extends GutTest
 
 	func test_creates_correct_event_type():
 		var e = InputFactory.mouse_motion(Vector2(1, 1))
@@ -144,6 +144,46 @@ class TestMouseMotion:
 		assert_eq(event.velocity, Vector2(10, 10))
 
 
+class TestJoypadButton:
+	extends GutTest
+
+	func test_creates_joypad_button_event():
+		var e = InputFactory.joypad_button(1, true)
+		assert_is(e, InputEventJoypadButton)
+
+	func test_sets_values():
+		var e = InputFactory.joypad_button(1, true, .5)
+		assert_eq(e.button_index, 1, 'button index')
+		assert_eq(e.pressed, true, 'pressed')
+		assert_eq(e.pressure, .5, 'pressure')
+
+	# Ensure that values are ok with the engine, if this fails then the method
+	# should validate input.
+	func test_can_make_event_with_invalid_button_indexes():
+		var e = InputFactory.joypad_button(-5, true)
+		assert_eq(e.button_index, -5, 'less than -1')
+
+		e = InputFactory.joypad_button(JOY_BUTTON_MAX + 1, false)
+		assert_eq(e.button_index, JOY_BUTTON_MAX + 1, 'more than max')
 
 
+class TestJoypadMotion:
+	extends GutTest
 
+	func test_creates_joypad_motion_event():
+		var e = InputFactory.joypad_motion(1, .5)
+		assert_is(e, InputEventJoypadMotion)
+
+	func test_sets_values():
+		var e = InputFactory.joypad_motion(2, .9)
+		assert_eq(e.axis, 2, 'axis')
+		assert_between(e.axis_value, .89, .91, 'axis_valued')
+
+	# This test generates an engine error.
+	func test_can_make_event_with_invalid_values():
+		var e = InputFactory.joypad_motion(JOY_AXIS_MAX + 1, 5.0)
+		assert_eq(e.axis_value, 5.0, 'axis_value')
+		# Engine prevents this from being set to an invalid value.  If this
+		# assert fails then the behavior of joypad_motion should be re-evaluated
+		# since the engine behavior has changed.
+		assert_eq(e.axis, 0, 'axis')

@@ -37,107 +37,50 @@ class DraggableButton:
 			position += event.relative
 
 
+var _sender_inp = InputSender.new(Input)
+
+func after_each():
+	_sender_inp.release_all()
+	_sender_inp.clear()
+
+
 func _print_emitted_signals(thing):
 	_signal_watcher.print_signal_summary(thing)
 	return
 
 
-func test_draw_mouse():
-	var sender = InputSender.new(Input)
-	sender.mouse_warp = false
-	sender.draw_mouse = true
-	var pos = Vector2(200, 200)
-	sender\
-		.mouse_left_button_down(pos)\
-		.wait(1)\
-		.mouse_left_button_up()\
-		.mouse_right_button_down()\
-		.wait(1)\
-		.mouse_right_button_up()\
-		.mouse_relative_motion(Vector2(10, 10)).wait(.5)\
-		.mouse_relative_motion(Vector2(10, 10)).wait(.5)\
-		.mouse_left_button_down().hold_for(.5)\
-		.mouse_relative_motion(Vector2(10, 10)).wait(.5)\
-		.mouse_relative_motion(Vector2(10, 10)).wait(.5)\
-		.mouse_right_button_down().hold_for(.5)\
-		.mouse_relative_motion(Vector2(10, 10)).wait(.5)\
-		.mouse_left_button_down()\
-		.mouse_right_button_down()\
-		.wait(2)
-
-	await sender.idle
 
 
-func test_drag_something():
+var drag_durations = ParameterFactory.named_parameters(['duration'], [0, .5, 1])
+func test_drag_something_with_drag(p = use_parameters(drag_durations)):
 	var btn = DraggableButton.new()
 	watch_signals(btn)
 	btn.size = Vector2(100, 100)
 	btn.position = Vector2(50, 50)
 	add_child_autofree(btn)
 
-	# works with Input and btn, btn does not fire signals, Input seems to be
-	# having some trouble firigin the button up event.
-	var sender = InputSender.new(Input)
+	var sender = _sender_inp
 	sender.set_auto_flush_input(true)
 	sender.mouse_warp = false
 	sender.draw_mouse = true
 
-	sender.mouse_left_button_down(btn.position + Vector2(10, 10)).wait(.1)
-	for i in range(10):
-		await sender.mouse_relative_motion(Vector2(10, 10)).wait(.1).idle
-		print('-- ', btn.position, ' --')
+	var expected_pos = btn.position + Vector2(30, 0)
+	sender.mouse_left_button_drag(btn.position + Vector2(10, 10), Vector2(30, 0), p.duration)
+	await sender.idle
+	assert_eq(btn.position, expected_pos, 'After first drag')
 
-	assert_true(Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT), 'left button is down')
-	await sender\
-		.mouse_left_button_up()\
-		.wait('1f')\
-		.mouse_relative_motion(Vector2(1, 1))\
-		.wait(.2).idle
+	expected_pos = btn.position + Vector2(0, 50)
+	sender.mouse_left_button_drag_control(btn, Vector2(0, 50), p.duration)
+	await sender.idle
+	assert_eq(btn.position, expected_pos, 'After second drag')
 
-	assert_false(Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT), 'left button is up')
-	var after_first_drag_pos = btn.position
-	# drag again after mouse up which shouldn't move
-	for i in range(10):
-		await sender.mouse_relative_motion(Vector2(10, 10)).wait(.1).idle
-		print('-- ', btn.position, ' --')
-
-	_print_emitted_signals(btn)
-
-	assert_signal_emitted(btn, 'button_down')
-	assert_signal_emitted(btn, 'button_up')
-	assert_ne(btn.position, Vector2(50, 50), 'has moved')
-	assert_false(btn._mouse_down, 'button mouse down')
-	assert_eq(btn.position, after_first_drag_pos, 'does not move after releasing button')
+	expected_pos = btn.position + Vector2(50, 50)
+	sender.mouse_left_button_drag_control(btn, Vector2(50, 50), p.duration)
+	await sender.idle
+	assert_eq(btn.position, expected_pos, 'After third drag')
 
 
-
-#     50 ->|         |<- 150
-func test_clicking_things_with_input_as_receiver():
-	var btn = SuperButton.new()
-	watch_signals(btn)
-	btn.size = Vector2(100, 100)
-	btn.position = Vector2(50, 50)
-	add_child_autofree(btn)
-
-	var sender = InputSender.new(Input)
-	sender.mouse_warp = true
-
-	var start_pos = Vector2i(25, 75)
-	for i in 15:
-		var new_pos = start_pos + Vector2i(i * 10, 0)
-		await sender.wait(.1)\
-			.mouse_left_button_down(new_pos)\
-			.hold_for(.1)\
-			.wait(.1).idle
-
-	_print_emitted_signals(btn)
-	assert_signal_emitted(btn, 'pressed')
-	assert_signal_emitted(btn, 'button_down')
-	assert_signal_emitted(btn, 'button_up')
-	assert_signal_emitted(btn, 'gui_input')
-
-
-func test_clicking_two_buttons_triggers_focus_events():
+func test_clicking_two_buttons_triggers_focus_events_with_click_at():
 	var btn = SuperButton.new()
 	watch_signals(btn)
 	btn.size = Vector2(100, 100)
@@ -150,17 +93,82 @@ func test_clicking_two_buttons_triggers_focus_events():
 	btn2.position = Vector2(160, 50)
 	add_child_autofree(btn2)
 
-	var sender = InputSender.new(Input)
+	var sender = _sender_inp
+	sender.mouse_warp = true
+
+	var start_pos = Vector2(100, 75)
+	for i in 11:
+		var new_pos = start_pos + Vector2(i * 10, 0)
+		await sender.mouse_left_click_at(new_pos).idle
+
+	assert_signal_emitted(btn, 'focus_entered')
+	assert_signal_emitted(btn, 'focus_exited')
+	assert_signal_emitted(btn2, 'focus_entered')
+	if(is_failing()):
+		_print_emitted_signals(btn)
+		_print_emitted_signals(btn2)
+
+
+func test_clicking_two_buttons_triggers_focus_events_with_click_ctrl():
+	var btn = SuperButton.new()
+	watch_signals(btn)
+	btn.size = Vector2(100, 100)
+	btn.position = Vector2(50, 50)
+	add_child_autofree(btn)
+
+	var btn2 = SuperButton.new()
+	watch_signals(btn2)
+	btn2.size = Vector2(100, 100)
+	btn2.position = Vector2(160, 50)
+	add_child_autofree(btn2)
+
+	var sender = _sender_inp
 	sender.mouse_warp = true
 
 	var start_pos = Vector2(100, 75)
 	for i in 10:
-		var new_pos = start_pos + Vector2(i * 10, 0)
-		await sender.mouse_left_click_at(new_pos).idle
+		if(i % 2 ==0):
+			sender.mouse_left_click_ctrl(btn)
+		else:
+			sender.mouse_left_click_ctrl(btn2)
+
+	await sender.idle
+	assert_signal_emit_count(btn, 'focus_entered', 5)
+	assert_signal_emit_count(btn, 'focus_exited', 5)
+	assert_signal_emit_count(btn2, 'focus_entered', 5)
+	assert_signal_emit_count(btn2, 'focus_exited', 4)
+
+	if(is_failing()):
+		_print_emitted_signals(btn)
+		_print_emitted_signals(btn2)
+
+
+
+
+#     50 ->|         |<- 150
+func test_clicking_things_with_input_as_receiver():
+	var btn = SuperButton.new()
+	watch_signals(btn)
+	btn.size = Vector2(100, 100)
+	btn.position = Vector2(50, 50)
+	add_child_autofree(btn)
+
+	var sender = _sender_inp
+	sender.mouse_warp = false
+
+	var start_pos = Vector2i(25, 75)
+	for i in 15:
+		var new_pos = start_pos + Vector2i(i * 10, 0)
+		await sender.wait_frames(1)\
+			.mouse_left_button_down(new_pos)\
+			.hold_frames(1)\
+			.wait_frames(1).idle
 
 	_print_emitted_signals(btn)
-	_print_emitted_signals(btn2)
-
+	assert_signal_emitted(btn, 'pressed')
+	assert_signal_emitted(btn, 'button_down')
+	assert_signal_emitted(btn, 'button_up')
+	assert_signal_emitted(btn, 'gui_input')
 
 
 func test_clicking_things_with_button_as_receiver():
@@ -176,14 +184,16 @@ func test_clicking_things_with_button_as_receiver():
 	var start_pos = Vector2i(25, 75)
 	for i in 15:
 		var new_pos = start_pos + Vector2i(i * 10, 0)
-		await sender.wait(.1)\
+		await sender.wait_frames(1)\
 			.mouse_left_button_down(new_pos)\
-			.hold_for(.1)\
-			.wait(.1).idle
+			.hold_frames(1)\
+			.wait_frames(1).idle
 
 	_print_emitted_signals(btn)
 	assert_signal_not_emitted(btn, 'pressed')
 	assert_signal_not_emitted(btn, 'button_down')
 	assert_signal_not_emitted(btn, 'button_up')
 	assert_signal_not_emitted(btn, 'gui_input')
+
+	GutUtils.pretty_print(_lgr._deprecated_calls)
 

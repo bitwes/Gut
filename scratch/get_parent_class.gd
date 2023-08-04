@@ -26,7 +26,7 @@ func test_someting():
     dict[InnerClasses] = 'foobar'
     dict[InnerClasses.AnotherInnerA] = 'bar -> foo'
 
-    print(ic_ia, ' is InnerClasses ', ic_ia is InnerClasses)
+    print(ic_ia, ' is InnerClasses ', is_instance_of(ic_ia, InnerClasses))
     print(ic_ia.get_class())
     print(ic_ia.get_script())
     print(dict[ic_ia.get_script()])
@@ -72,10 +72,11 @@ func test_something_else():
     find_top_of_inheritance(two)
 
 
-
 func make_class_db_hash_text():
     var text = "var all_classes = {\n"
-    for classname in ClassDB.get_class_list():
+    var class_list = ClassDB.get_class_list()
+    class_list.sort()
+    for classname in class_list:
         if(ClassDB.can_instantiate(classname)):
             text += str('    "', classname, '": ', classname, ", \n")
         else:
@@ -84,12 +85,13 @@ func make_class_db_hash_text():
     print(_utils.add_line_numbers(text))
     return text
 
+
 func make_class_db_hash():
     var source = make_class_db_hash_text()
     return _utils.create_script_from_source(source).new().all_classes
 
 
 func _init():
-
-    test_something_else()
+    # test_something_else()
+    find_top_of_inheritance(Input)
     quit();

@@ -13,8 +13,6 @@
 - [ ] test mouse_click what and where
 - [ ] formalize print_signal_summary (add accessor to test probably too)
 
-- [ ] Formalize all this doubling stuff.
-
 
 
 # Notes

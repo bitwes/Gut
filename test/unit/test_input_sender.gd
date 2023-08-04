@@ -45,8 +45,36 @@ class InputTracker:
 		for e in inputs:
 			print(e)
 
+
+
+class TestDeprecatedMethods:
+	extends GutInternalTester
+
+	func _new_sender():
+		var sender = InputSender.new(self)
+		sender.logger = _utils.Logger.new()
+		return sender
+
+	func test_wait():
+		var sender = _new_sender()
+		sender.wait(1)
+		assert_deprecated(sender, 1)
+
+	func test_wait_secs():
+		var sender = _new_sender()
+		sender.wait_secs(1)
+		assert_deprecated(sender, 1)
+
+	func test_hold_for():
+		var sender = _new_sender()
+		sender.hold_for(1)
+		assert_deprecated(sender, 1)
+
+
+
+
 class TestTheBasics:
-	extends "res://addons/gut/test.gd"
+	extends GutTest
 
 	func before_all():
 		InputMap.add_action("jump")
@@ -56,6 +84,10 @@ class TestTheBasics:
 
 	func test_can_make_one():
 		assert_not_null(InputSender.new())
+
+	func test_logger_accessors():
+		var sender = InputSender.new()
+		assert_property(sender, 'logger', sender._lgr, _utils.Logger.new())
 
 	func test_set_get_auto_flush_input():
 		assert_accessors(InputSender.new(), 'auto_flush_input', false, true)
@@ -72,14 +104,12 @@ class TestTheBasics:
 		assert_eq(sender.get_receivers(), [r])
 
 	func test_wait_parses_seconds():
-		var sender = double(InputSender).new()
-		stub(sender, 'wait').to_call_super()
+		var sender = partial_double(InputSender).new()
 		sender.wait('2s')
-		assert_called(sender, 'wait_secs', [2.0])
+		assert_called(sender, 'wait_seconds', [2.0])
 
 	func test_wait_parses_frames():
-		var sender = double(InputSender).new()
-		stub(sender, 'wait').to_call_super()
+		var sender = partial_double(InputSender).new()
 		sender.wait('3f')
 		assert_called(sender, 'wait_frames', [3.0])
 
@@ -89,7 +119,7 @@ class TestTheBasics:
 
 	func test_not_idle_when_items_in_queue():
 		var sender = InputSender.new()
-		sender.key_down("A").hold_for(.1)
+		sender.key_down("A").hold_seconds(.1)
 		assert_false(sender.is_idle())
 
 	func test_is_idle_when_an_event_sent_without_wait():
@@ -100,16 +130,17 @@ class TestTheBasics:
 	# knows too much, dunno a better way.
 	func test_when_freed_all_tree_items_are_freed():
 		var sender = InputSender.new()
-		sender.key_down("B").wait(8)
-		sender.key_up("B").wait(8)
-		sender.key_down("B").wait(8)
-		sender.key_up("B").wait(8)
+		sender.key_down("B").wait_seconds(8)
+		sender.key_up("B").wait_seconds(8)
+		sender.key_down("B").wait_seconds(8)
+		sender.key_up("B").wait_seconds(8)
 		var parent_item = sender._tree_items_parent
 		assert_gt(parent_item.get_child_count(), 0, 'just making sure there is something to free')
+
 		# could not find a way to trigger this by unreferencing
 		sender._notification(NOTIFICATION_PREDELETE)
+		await wait_frames(5) # queue_free
 		assert_freed(parent_item, 'sender item node parent')
-
 
 	func test_is_key_pressed_false_by_default():
 		var sender = InputSender.new()
@@ -209,11 +240,41 @@ class TestTheBasics:
 		var lgr = _utils.Logger.new()
 		sender._lgr = lgr
 
-		sender.key_down("R").wait(.2)
+		sender.key_down("R").wait_seconds(.2)
 		await sender.idle
 
 		sender.key_down("R")
 		assert_eq(lgr.get_warnings().size(), 1)
+
+	func test_draw_mouse():
+		var sender = InputSender.new(self)
+		sender.mouse_warp = false
+		sender.draw_mouse = true
+		var pos = Vector2(200, 200)
+
+		sender\
+			.mouse_left_button_down(pos).wait_seconds(1)\
+			.mouse_left_button_up()\
+			.mouse_right_button_down().wait_seconds(1)\
+			.mouse_right_button_up()\
+			.mouse_relative_motion(Vector2(10, 10)).wait_seconds(.5)\
+			.mouse_relative_motion(Vector2(10, 10)).wait_seconds(.5)\
+			.mouse_left_button_down()\
+			.mouse_relative_motion(Vector2(10, 10)).wait_seconds(.5)\
+			.mouse_relative_motion(Vector2(10, 10)).wait_seconds(.5)\
+			.mouse_left_button_up()\
+			.mouse_right_button_down()\
+			.mouse_relative_motion(Vector2(10, 10)).wait_seconds(.5)\
+			.mouse_relative_motion(Vector2(10, 10)).wait_seconds(.5)\
+			.mouse_right_button_up()\
+			.mouse_left_button_down()\
+			.mouse_right_button_down()\
+			.wait_seconds(1)
+
+		await sender.idle
+		pass_test("You shoulda been watching things.")
+
+
 
 
 class TestCreateKeyEvents:
@@ -271,6 +332,8 @@ class TestCreateKeyEvents:
 		assert_eq(sender.key_echo(), sender)
 
 
+
+
 class TestCreateActionEvents:
 	extends "res://addons/gut/test.gd"
 
@@ -293,6 +356,8 @@ class TestCreateActionEvents:
 	func test_action_down_returns_self():
 		var sender = InputSender.new()
 		assert_eq(sender.action_down("foo", .5), sender)
+
+
 
 
 class TestMouseButtons:
@@ -405,9 +470,45 @@ class TestMouseMotion:
 		assert_eq(r.inputs[0].global_position, Vector2(25, 25), 'global_position')
 
 
+
+
+class TestJoypadButton:
+	extends GutTest
+
+	func test_sends_event():
+		var r = autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+		sender.joypad_button(1, true)
+		assert_eq(r.inputs[0].button_index, 1, 'button_index')
+		assert_eq(r.inputs[0].pressed, true, 'pressed')
+
+	func test_returns_self():
+		var sender = InputSender.new()
+		var result = sender.joypad_button(2, false)
+		assert_eq(result, sender)
+
+
+
+class TestJoypadMotion:
+	extends GutTest
+
+	func test_sends_event():
+		var r = autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+		sender.joypad_motion(2, .5)
+		assert_eq(r.inputs[0].axis,  2, 'axis')
+		assert_eq(r.inputs[0].axis_value, .5, 'axis_value')
+
+	func test_returns_self():
+		var sender = InputSender.new()
+		var result = sender.joypad_motion(2, .5)
+		assert_eq(result, sender)
+
+
+
+
 class TestSendEvent:
 	extends "res://addons/gut/test.gd"
-
 
 	func test_send_event_returns_self():
 		var sender = InputSender.new()
@@ -521,9 +622,9 @@ class TestSequence:
 
 		sender\
 			.key_down(KEY_1)\
-			.wait(.5)\
+			.wait_seconds(.5)\
 			.key_up(KEY_1)\
-			.wait(.5)\
+			.wait_seconds(.5)\
 			.send_event(cust_event)
 
 		assert_eq(r.inputs.size(), 1, "first input sent")
@@ -562,10 +663,10 @@ class TestSequence:
 
 		sender\
 			.key_down("z")\
-			.wait(.5)\
+			.wait_seconds(.5)\
 			.key_down("a")\
 			.key_down("b")\
-			.wait(.5)\
+			.wait_seconds(.5)\
 			.key_down("c")
 
 		await wait_for_signal(sender.idle, 2)
@@ -605,6 +706,8 @@ class TestSequence:
 		assert_eq(r.inputs[2].position, Vector2(6, 6))
 
 
+
+
 class TestHoldFor:
 	extends "res://addons/gut/test.gd"
 
@@ -612,7 +715,7 @@ class TestHoldFor:
 		var r = add_child_autofree(InputTracker.new())
 		var sender = InputSender.new(r)
 
-		sender.action_down("jump").hold_for('3f')
+		sender.action_down("jump").hold_frames(3)
 		await wait_for_signal(sender.idle, 5)
 
 		assert_eq(r.inputs.size(), 2, 'input size')
@@ -625,7 +728,7 @@ class TestHoldFor:
 		var r = add_child_autofree(InputTracker.new())
 		var sender = InputSender.new(r)
 
-		sender.key_down("F").hold_for('.5s')
+		sender.key_down("F").hold_seconds(.5)
 		await wait_for_signal(sender.idle, 5)
 
 		assert_eq(r.inputs.size(), 2, 'input size')
@@ -638,7 +741,7 @@ class TestHoldFor:
 		var r = add_child_autofree(InputTracker.new())
 		var sender = InputSender.new(r)
 
-		sender.mouse_left_button_down(Vector2(1, 1)).hold_for('.5s')
+		sender.mouse_left_button_down(Vector2(1, 1)).hold_seconds(.5)
 		await wait_for_signal(sender.idle, 5)
 
 		assert_eq(r.inputs.size(), 2, 'input size')
@@ -646,6 +749,8 @@ class TestHoldFor:
 		assert_true(left_pressed, "left mouse pressed")
 		var left_released = r.inputs[1].button_index == MOUSE_BUTTON_LEFT and !(r.inputs[1].pressed)
 		assert_true(left_released, 'left mouse released')
+
+
 
 
 class TestReleaseAll:
@@ -677,7 +782,7 @@ class TestReleaseAll:
 		var r = add_child_autofree(InputTracker.new())
 		var sender = InputSender.new(r)
 
-		sender.key_down("F").hold_for(.2)
+		sender.key_down("F").hold_seconds(.2)
 		await sender.idle
 		sender.release_all()
 
@@ -694,7 +799,7 @@ class TestReleaseAll:
 		var r = add_child_autofree(InputTracker.new())
 		var sender = InputSender.new(r)
 
-		sender.action_down("jump").hold_for(.2)
+		sender.action_down("jump").hold_seconds(.2)
 		await sender.idle
 		sender.release_all()
 
@@ -711,11 +816,13 @@ class TestReleaseAll:
 		var r = add_child_autofree(InputTracker.new())
 		var sender = InputSender.new(r)
 
-		sender.mouse_right_button_down(Vector2(1,1)).hold_for(.2)
+		sender.mouse_right_button_down(Vector2(1,1)).hold_seconds(.2)
 		await sender.idle
 		sender.release_all()
 
 		assert_eq(r.inputs.size(), 2)
+
+
 
 
 class TestClear:
@@ -724,14 +831,14 @@ class TestClear:
 	func test_is_idle_after_clear():
 		var sender = InputSender.new()
 
-		sender.key_down("F").hold_for(1)
+		sender.key_down("F").hold_seconds(1)
 		sender.clear()
 		assert_true(sender.is_idle())
 
 	func test_frees_queue_items():
 		var sender = InputSender.new()
 
-		sender.key_down("F").hold_for(1)
+		sender.key_down("F").hold_seconds(1)
 		var q_item = sender._input_queue[0]
 		sender.clear()
 		assert_freed(q_item, 'q_item')
@@ -739,7 +846,7 @@ class TestClear:
 	func test_clears_next_queue_item():
 		var sender = InputSender.new()
 
-		sender.key_down("R").hold_for(1)
+		sender.key_down("R").hold_seconds(1)
 		sender.clear()
 		assert_null(sender._next_queue_item)
 
@@ -758,7 +865,7 @@ class TestClear:
 
 		sender.key_down("Q")
 		sender.clear()
-		sender.hold_for(.1)
+		sender.hold_seconds(.1)
 		await wait_seconds(.5)
 		assert_eq(r.inputs.size(), 1)
 
@@ -805,8 +912,10 @@ class TestClear:
 		assert_eq(r.inputs.size(), 1)
 
 
+
+
 class TestAtScriptLevel:
-	extends "res://addons/gut/test.gd"
+	extends GutTest
 
 	var _sender = InputSender.new(Input)
 
@@ -815,23 +924,26 @@ class TestAtScriptLevel:
 		_sender.clear()
 
 	func test_one():
-		_sender.key_down("F").hold_for(.1)\
-			.key_down("A").hold_for(.2)\
+		_sender.key_down("F").hold_seconds(.1)\
+			.key_down("A").hold_seconds(.2)\
 			.key_down("P")
 
 		await _sender.idle
 		assert_false(Input.is_key_pressed(KEY_F))
 
 	func test_two():
-		_sender.key_down("F").hold_for(.1)\
-			.key_down("A").hold_for(.2)
+		_sender.key_down("F").hold_seconds(.1)\
+			.key_down("A").hold_seconds(.2)
 
 		await _sender.idle
 		assert_false(Input.is_key_pressed(KEY_F))
 
 	func test_three():
-		_sender.key_down("F").hold_for(.1)\
-			.key_down("A").hold_for(.2)
+		_sender.key_down("F").hold_seconds(.1)\
+			.key_down("A").hold_seconds(.2)
 
 		await _sender.idle
 		assert_false(Input.is_key_pressed(KEY_F))
+
+
+

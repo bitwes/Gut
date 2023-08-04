@@ -11,6 +11,7 @@ const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
 var DoubleMe = load(DOUBLE_ME_PATH)
 var DoubleMeScene = load('res://test/resources/doubler_test_objects/double_me_scene.tscn')
 var SetGetTestNode = load('res://test/resources/test_assert_setget_test_objects/test_node.gd')
+var ThingCounter = load('res://addons/gut/thing_counter.gd')
 # const INNER_CLASSES_PATH = 'res://test/resources/doubler_test_objects/inner_classes.gd'
 # var InnerClasses = load(INNER_CLASSES_PATH)
 
@@ -121,11 +122,25 @@ func print_methods_with_defaults(thing):
 
 func print_methods_with_flags(obj, flags, print_all = true):
 	var methods = obj.get_method_list()
+	var flag_count = ThingCounter.new()
 	for i in range(methods.size()):
 		var mflags = methods[i]['flags']
 		if(is_flagged(mflags, flags)):
-			print(methods[i]['name'], ':', mflags)
+			flag_count.add(mflags)
+			print(methods[i]['name'], ':', mflags, ':', get_binary_string(mflags))
 			print_method_flags(mflags, print_all)
+	print(flag_count.to_s())
+
+func print_all_method_flags(obj, print_all=true):
+	var methods = obj.get_method_list()
+	var flag_count = ThingCounter.new()
+	for i in range(methods.size()):
+		var mflags = methods[i]['flags']
+		flag_count.add(mflags)
+		print(methods[i]['name'], ':', mflags, ':', get_binary_string(mflags))
+		print_method_flags(mflags, print_all)
+	print(flag_count.to_s())
+
 
 func print_methods_named(obj, name):
 	var methods = obj.get_method_list()
@@ -158,14 +173,22 @@ func print_flag(name, flags, flag, print_all=true):
 		print(name,'(', flag, ') = ', is_set)
 
 func print_method_flags(flags, print_all=true):
-	print_flag('  normal', flags, METHOD_FLAG_NORMAL, print_all)
+	print_flag('  normal/default', flags, METHOD_FLAG_NORMAL, print_all)
 	print_flag('  editor', flags, METHOD_FLAG_EDITOR, print_all)
 	print_flag('  const', flags, METHOD_FLAG_CONST, print_all)
 	print_flag('  virtual', flags, METHOD_FLAG_VIRTUAL, print_all)
 	print_flag('  vararg', flags, METHOD_FLAG_VARARG, print_all)
 	print_flag('  static', flags, METHOD_FLAG_STATIC, print_all)
 	print_flag('  core', flags, METHOD_FLAG_OBJECT_CORE, print_all)
-	print_flag('  default', flags, METHOD_FLAGS_DEFAULT, print_all)
+
+func get_binary_string(value):
+	var to_return = ''
+	for i in range(8):
+		var bit = int(pow(2, i))
+		to_return = str(int(value & bit != 0)) + to_return
+	return to_return
+
+
 
 
 func print_method_info(obj):
@@ -340,6 +363,32 @@ func print_properties(props, thing, print_all_meta=false):
 			print('  ', props[i])
 
 
+func print_singleton_info(thing):
+	print('--- Methods (object) ---')
+	print_methods(thing.get_method_list(), true)
+
+	# print('--- Methods (script) ---')
+	# print_methods(thing.get_script_method_list(), true)
+
+	print('--- Properties (object) ---')
+	var props = thing.get_property_list()
+	print_properties(props, thing)
+
+	# print('--- Properties (script) ---')
+	# props = thing.get_script_property_list()
+	# print_properties(props, thing, true)
+
+	# print('--- Constants ---')
+	# print_inner_test_classes(thing)
+
+	print('--- Signals ---')
+	var sigs = thing.get_signal_list()
+	for sig in sigs:
+		print(sig['name'])
+		print('  ', sig)
+
+
+
 func print_all_info(thing):
 	print('path = ', thing.get_path())
 
@@ -420,8 +469,10 @@ func get_scene_script_object(scene):
 
 
 func _init():
-	# print_method_info(ExtendsNode2D.new())
-	print_methods_with_flags(ExtendsNode2D.new(), METHOD_FLAG_VARARG, false)
+	print_singleton_info(Input)
+	# print_all_method_flags(Input, false)
+	# print_all_method_flags(ExtendsNode2D.new(), false)
+	# print_methods_with_flags(ExtendsNode2D.new(), METHOD_FLAG_VARARG, false)
 	# print_methods_with_flags(ExtendsNode2D.new(), METHOD_FLAG_OBJECT_CORE, false)
 	# print_methods_named(ExtendsNode2D.new(), '_input')
 	# print_methods_named(ExtendsNode2D.new(), '_notification')

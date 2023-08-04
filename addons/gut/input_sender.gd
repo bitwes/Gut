@@ -41,10 +41,10 @@
 # 	InputEventKey
 # 	InputEventMouseButton
 #	InputEventMouseMotion
-
-# Yet to implement InputEvents
 # 	InputEventJoypadButton
 # 	InputEventJoypadMotion
+
+# Yet to implement InputEvents
 # 	InputEventMagnifyGesture
 # 	InputEventMIDI
 # 	InputEventPanGesture
@@ -117,6 +117,8 @@ class MouseDraw:
 	var _b1_down = false
 	var _b2_down = false
 
+	var _prev_disabled_value = disabled
+
 
 	func draw_event(event):
 		if(event is InputEventMouse):
@@ -170,8 +172,14 @@ class MouseDraw:
 
 	func _draw():
 		if(disabled):
+			disabled = _prev_disabled_value
 			return
 		_draw_square_cursor()
+
+	func clear():
+		_prev_disabled_value = disabled
+		disabled = true
+		queue_redraw()
 
 
 
@@ -187,7 +195,7 @@ var InputFactory = load("res://addons/gut/input_factory.gd")
 
 const INPUT_WARN = 'If using Input as a reciever it will not respond to *_down events until a *_up event is recieved.  Call the appropriate *_up event or use hold_for(...) to automatically release after some duration.'
 
-var _lgr = _utils.get_logger()
+
 var _receivers = []
 var _input_queue = []
 var _next_queue_item = null
@@ -212,6 +220,10 @@ var _default_mouse_position = {
 var _last_mouse_position = {
 }
 
+var _lgr = _utils.get_logger()
+var logger = _lgr :
+	get: return _lgr
+	set(val): _lgr = val
 
 var mouse_warp = false
 var draw_mouse = true
@@ -322,6 +334,33 @@ func _new_defaulted_mouse_motion_event(position, global_position):
 	return event
 
 
+func _wait(t):
+	if(typeof(t) == TYPE_STRING):
+		var suffix = t.substr(t.length() -1, 1)
+		var val = t.rstrip('s').rstrip('f').to_float()
+
+		if(suffix.to_lower() == 's'):
+			wait_seconds(val)
+		elif(suffix.to_lower() == 'f'):
+			wait_frames(val)
+	else:
+		wait_seconds(t)
+
+	return self
+
+
+func _hold_for(wait_method : Callable):
+	if(_last_event != null and _last_event.pressed):
+		var next_event = _last_event.duplicate()
+		next_event.pressed = false
+
+		wait_method.call()
+		send_event(next_event)
+	else:
+		_lgr.warn('Previous event cannot be "held".  Previous event must have *.pressed = true (such as mouse_left_button_down or action_down)')
+
+	return self
+
 # ------------------------------
 # Events
 # ------------------------------
@@ -345,45 +384,38 @@ func _on_queue_item_ready(item):
 func add_receiver(obj):
 	_receivers.append(obj)
 
+
 func get_receivers():
 	return _receivers
 
+
 func is_idle():
 	return _input_queue.size() == 0
+
 
 func is_key_pressed(which):
 	var event = InputFactory.key_up(which)
 	return _pressed_keys.has(event.keycode) and _pressed_keys[event.keycode]
 
+
 func is_action_pressed(which):
 	return _pressed_actions.has(which) and _pressed_actions[which]
+
 
 func is_mouse_button_pressed(which):
 	return _pressed_mouse_buttons.has(which) and _pressed_mouse_buttons[which].pressed
 
+
 func get_auto_flush_input():
 	return _auto_flush_input
+
 
 func set_auto_flush_input(val):
 	_auto_flush_input = val
 
 
-func wait(t):
-	if(typeof(t) == TYPE_STRING):
-		var suffix = t.substr(t.length() -1, 1)
-		var val = t.rstrip('s').rstrip('f').to_float()
-
-		if(suffix.to_lower() == 's'):
-			wait_secs(val)
-		elif(suffix.to_lower() == 'f'):
-			wait_frames(val)
-	else:
-		wait_secs(t)
-
-	return self
-
-
 func clear():
+	_mouse_draw.clear()
 	_last_event = null
 	_next_queue_item = null
 
@@ -397,8 +429,33 @@ func clear():
 	_last_mouse_position = _default_mouse_position.duplicate()
 
 
+func send_event(event):
+	_send_or_record_event(event)
+	return self
+
+
+func release_all():
+	for key in _pressed_keys:
+		if(_pressed_keys[key]):
+			_send_event(InputFactory.key_up(key))
+	_pressed_keys.clear()
+
+	for key in _pressed_actions:
+		if(_pressed_actions[key]):
+			_send_event(InputFactory.action_up(key))
+	_pressed_actions.clear()
+
+	for key in _pressed_mouse_buttons:
+		var event = _pressed_mouse_buttons[key].duplicate()
+		if(event.pressed):
+			event.pressed = false
+			_send_event(event)
+	_pressed_mouse_buttons.clear()
+
+	return self
+
 # ------------------------------
-# Event methods
+# Key methods
 # ------------------------------
 func key_up(which):
 	var event = InputFactory.key_up(which)
@@ -420,6 +477,9 @@ func key_echo():
 	return self
 
 
+# ------------------------------
+# Action methods
+# ------------------------------
 func action_up(which, strength=1.0):
 	var event  = InputFactory.action_up(which, strength)
 	_send_or_record_event(event)
@@ -432,6 +492,9 @@ func action_down(which, strength=1.0):
 	return self
 
 
+# ------------------------------
+# Mouse methods
+# ------------------------------
 func mouse_left_button_down(position=null, global_position=null):
 	var event = _new_defaulted_mouse_button_event(position, global_position)
 	event.pressed = true
@@ -487,41 +550,61 @@ func mouse_relative_motion(offset, speed=Vector2(0, 0)):
 
 func mouse_set_position(position, global_position=null):
 	var event = _new_defaulted_mouse_motion_event(position, global_position)
+	if(mouse_warp):
+		DisplayServer.warp_mouse(event.position)
 	return self
 
 
 func mouse_left_click_at(where, duration = '5f'):
 	wait_frames(1)
 	mouse_left_button_down(where)
-	hold_for(duration)
+	_hold_for(_wait.bind(duration))
 	wait_frames(10)
 	return self
 
 
-func send_event(event):
-	_send_or_record_event(event)
+func mouse_left_click_ctrl(ctrl, duration = '5f'):
+	return mouse_left_click_at(ctrl.position + Vector2(1, 1), duration)
+
+
+func mouse_left_button_drag(from, distance, duration=0.0, steps_per_sec=10.0):
+	wait_frames(1)
+	mouse_left_button_down(from)
+	if(duration == 0):
+		mouse_relative_motion(distance)
+	else:
+		var steps = steps_per_sec * duration
+		for i in range(steps):
+			mouse_relative_motion(distance / steps)
+			wait_seconds(duration / steps)
+	mouse_left_button_up()
+	wait_frames(10)
 	return self
 
 
-func release_all():
-	for key in _pressed_keys:
-		if(_pressed_keys[key]):
-			_send_event(InputFactory.key_up(key))
-	_pressed_keys.clear()
+func mouse_left_button_drag_control(ctrl, distance,  duration=0.0, steps_per_sec=10.0):
+	return mouse_left_button_drag(ctrl.position + Vector2(1, 1), distance, duration, steps_per_sec)
 
-	for key in _pressed_actions:
-		if(_pressed_actions[key]):
-			_send_event(InputFactory.action_up(key))
-	_pressed_actions.clear()
 
-	for key in _pressed_mouse_buttons:
-		var event = _pressed_mouse_buttons[key].duplicate()
-		if(event.pressed):
-			event.pressed = false
-			_send_event(event)
-	_pressed_mouse_buttons.clear()
-
+# ------------------------------
+# Joypad
+# ------------------------------
+func joypad_button(button_index, pressed, pressure = 0.0):
+	var event = InputFactory.joypad_button(button_index, pressed, pressure)
+	_send_event(event)
 	return self
+
+func joypad_motion(axis, axis_value):
+	_send_event(InputFactory.joypad_motion(axis, axis_value))
+	return self
+
+
+# ------------------------------
+# Wait
+# ------------------------------
+func wait(t):
+	_lgr.deprecated('wait', 'wait_seconds or wait_frames')
+	return _wait(t)
 
 
 func wait_frames(num_frames):
@@ -530,13 +613,29 @@ func wait_frames(num_frames):
 	return self
 
 
-func wait_secs(num_secs):
-	var item = InputQueueItem.new(num_secs, 0)
+func wait_secs(time):
+	_lgr.deprecated('wait_secs', 'wait_seconds')
+	wait_seconds(time)
+
+
+func wait_seconds(time):
+	var item = InputQueueItem.new(time, 0)
 	_add_queue_item(item)
 	return self
 
 
+# ------------------------------
+# Hold
+# ------------------------------
+func hold_frames(frames):
+	return _hold_for(wait_frames.bind(frames))
+
+func hold_seconds(time):
+	return _hold_for(wait_seconds.bind(time))
+
+
 func hold_for(duration):
+	_lgr.deprecated('hold_for', 'hold_seconds or hold_frames')
 	if(_last_event != null and _last_event.pressed):
 		var next_event = _last_event.duplicate()
 		next_event.pressed = false
