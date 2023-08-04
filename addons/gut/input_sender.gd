@@ -37,17 +37,18 @@
 #extends "res://addons/gut/input_factory.gd"
 
 # Implemented InputEvent* convenience methods
-# 	InputEventAction
-# 	InputEventKey
-# 	InputEventMouseButton
 #	InputEventMouseMotion
+# 	InputEventAction
 # 	InputEventJoypadButton
 # 	InputEventJoypadMotion
+# 	InputEventKey
+# 	InputEventMagnifyGesture
+# 	InputEventMouseButton
+#	InputEventMouseMotion
+# 	InputEventPanGesture
 
 # Yet to implement InputEvents
-# 	InputEventMagnifyGesture
 # 	InputEventMIDI
-# 	InputEventPanGesture
 # 	InputEventScreenDrag
 # 	InputEventScreenTouch
 
@@ -596,6 +597,19 @@ func joypad_button(button_index, pressed, pressure = 0.0):
 
 func joypad_motion(axis, axis_value):
 	_send_event(InputFactory.joypad_motion(axis, axis_value))
+	return self
+
+
+# ------------------------------
+# Gesture
+# ------------------------------
+func magnify_gesture(position, factor=1.0):
+	_send_event(InputFactory.magnify_gesture(position, factor))
+	return self
+
+
+func pan_gesture(position, delta):
+	_send_event(InputFactory.pan_gesture(position, delta))
 	return self
 
 

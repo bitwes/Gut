@@ -33,16 +33,17 @@
 
 # Implemented InputEvent* convenience methods
 # 	InputEventAction
-# 	InputEventKey
-# 	InputEventMouseButton
-# 	InputEventMouseMotion
 # 	InputEventJoypadButton
 # 	InputEventJoypadMotion
+# 	InputEventKey
+# 	InputEventMagnifyGesture
+# 	InputEventMouseButton
+# 	InputEventMouseMotion
+# 	InputEventPanGesture
+
 
 # Yet to implement InputEvents
 # 	InputEventMIDI
-# 	InputEventMagnifyGesture
-# 	InputEventPanGesture
 # 	InputEventScreenDrag
 # 	InputEventScreenTouch
 #	InputEventShortcut
@@ -155,4 +156,18 @@ static func joypad_motion(axis, axis_value):
 	var event = InputEventJoypadMotion.new()
 	event.axis = axis
 	event.axis_value = axis_value
+	return event
+
+
+static func magnify_gesture(position, factor=1.0):
+	var event = InputEventMagnifyGesture.new()
+	event.position = position
+	event.factor = factor
+	return event
+
+
+static func pan_gesture(position, delta):
+	var event = InputEventPanGesture.new()
+	event.position = position
+	event.delta = delta
 	return event

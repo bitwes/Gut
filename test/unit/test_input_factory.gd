@@ -187,3 +187,37 @@ class TestJoypadMotion:
 		# assert fails then the behavior of joypad_motion should be re-evaluated
 		# since the engine behavior has changed.
 		assert_eq(e.axis, 0, 'axis')
+
+
+
+
+class TestMagnifyGesture:
+	extends GutTest
+
+	func test_creates_magnify_gesture_event():
+		var e = InputFactory.magnify_gesture(Vector2(1,1))
+		assert_is(e, InputEventMagnifyGesture)
+
+	func test_sets_values():
+		var e = InputFactory.magnify_gesture(Vector2(10, 10), .5)
+		assert_eq(e.position, Vector2(10, 10), 'position')
+		assert_eq(e.factor, .5, 'factor')
+
+	func test_factor_defaults_to_1():
+		var e = InputFactory.magnify_gesture(Vector2(10, 10))
+		assert_eq(e.factor, 1.0, 'factor')
+
+
+
+class TestPanGesture:
+	extends GutTest
+
+	func test_creates_pan_gesture_event():
+		var e = InputFactory.pan_gesture(Vector2(1,1), Vector2(2, 2))
+		assert_is(e, InputEventPanGesture)
+
+	func test_sets_values():
+		var e = InputFactory.pan_gesture(Vector2(10, 10), Vector2(1, 1))
+		assert_eq(e.position, Vector2(10, 10), 'position')
+		assert_eq(e.delta, Vector2(1, 1), 'delta')
+

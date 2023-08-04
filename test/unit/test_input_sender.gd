@@ -505,6 +505,38 @@ class TestJoypadMotion:
 		assert_eq(result, sender)
 
 
+class TestMagnifyGesture:
+	extends GutTest
+
+	func test_sends_event():
+		var r = autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+		sender.magnify_gesture(Vector2(1, 1), .5)
+		assert_eq(r.inputs[0].position,  Vector2(1, 1), 'position')
+		assert_eq(r.inputs[0].factor, .5, 'factor')
+
+	func test_returns_self():
+		var sender = InputSender.new()
+		var result = sender.magnify_gesture(Vector2(1, 1), .5)
+		assert_eq(result, sender)
+
+
+class TestPanGesture:
+	extends GutTest
+
+	func test_sends_event():
+		var r = autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+		sender.pan_gesture(Vector2(1, 1), Vector2(2, 2))
+		assert_eq(r.inputs[0].position,  Vector2(1, 1), 'position')
+		assert_eq(r.inputs[0].delta, Vector2(2, 2), 'delta')
+
+	func test_returns_self():
+		var sender = InputSender.new()
+		var result = sender.pan_gesture(Vector2(1, 1), Vector2(2, 2))
+		assert_eq(result, sender)
+
+
 
 
 class TestSendEvent:
