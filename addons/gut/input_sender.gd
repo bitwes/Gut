@@ -564,8 +564,8 @@ func mouse_left_click_at(where, duration = '5f'):
 	return self
 
 
-func mouse_left_click_ctrl(ctrl, duration = '5f'):
-	return mouse_left_click_at(ctrl.position + Vector2(1, 1), duration)
+func mouse_left_click_on(control, duration = '5f'):
+	return mouse_left_click_at(control.position + Vector2(1, 1), duration)
 
 
 func mouse_left_button_drag(from, distance, duration=0.0, steps_per_sec=10.0):
@@ -643,6 +643,7 @@ func wait_seconds(time):
 # ------------------------------
 func hold_frames(frames):
 	return _hold_for(wait_frames.bind(frames))
+
 
 func hold_seconds(time):
 	return _hold_for(wait_seconds.bind(time))

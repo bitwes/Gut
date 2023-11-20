@@ -54,7 +54,8 @@ func get_all_properties():
 
 
 func _init():
+    print(Node2D.new().get_property_list())
     # get_all_enums()
     # get_all_int_constants()
-    get_all_properties()
+    # get_all_properties()
     quit()

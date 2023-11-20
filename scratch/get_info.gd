@@ -50,6 +50,9 @@ class HasSomeInners:
 class ExtendsNode2D:
 	extends Node2D
 
+	var i_made_this = 27
+	var i_made_this_array : Array = []
+
 	static func a_static_func():
 		return true
 
@@ -348,7 +351,7 @@ func print_methods(methods, print_all_meta = false):
 			pp(methods_by_name[m_name], '  ')
 
 
-func print_properties(props, thing, print_all_meta=false):
+func print_properties(props, thing, print_all_meta=false, flags=0):
 	for i in range(props.size()):
 		var prop_name = props[i].name
 		var prop_value = thing.get(props[i].name)
@@ -358,9 +361,10 @@ func print_properties(props, thing, print_all_meta=false):
 		elif(print_value == ''):
 			print_value = 'EMPTY'
 
-		print(prop_name, ' = ', print_value)
-		if(print_all_meta):
-			print('  ', props[i])
+		if(flags == 0 || props[i].usage & flags > 0):
+			print(prop_name, ' = ', print_value)
+			if(print_all_meta):
+				print('  ', props[i])
 
 
 func print_singleton_info(thing):
@@ -469,7 +473,10 @@ func get_scene_script_object(scene):
 
 
 func _init():
-	print_singleton_info(Input)
+	var thing = ExtendsNode2D.new()
+	print_properties(thing.get_property_list(), thing, true, PROPERTY_USAGE_SCRIPT_VARIABLE)
+
+	# print_singleton_info(Input)
 	# print_all_method_flags(Input, false)
 	# print_all_method_flags(ExtendsNode2D.new(), false)
 	# print_methods_with_flags(ExtendsNode2D.new(), METHOD_FLAG_VARARG, false)

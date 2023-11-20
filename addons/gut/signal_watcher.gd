@@ -120,10 +120,12 @@ func does_object_have_signal(object, signal_name):
 			return true
 	return false
 
+
 func watch_signals(object):
 	var signals = object.get_signal_list()
 	for i in range(signals.size()):
 		_add_watched_signal(object, signals[i]['name'])
+
 
 func watch_signal(object, signal_name):
 	var did = false
@@ -134,11 +136,13 @@ func watch_signal(object, signal_name):
 		_utils.get_logger().warn(str(object, ' does not have signal ', signal_name))
 	return did
 
+
 func get_emit_count(object, signal_name):
 	var to_return = -1
 	if(is_watching(object, signal_name)):
 		to_return = _watched_signals[object][signal_name].size()
 	return to_return
+
 
 func did_emit(object, signal_name=null):
 	var vals = _obj_name_pair(object, signal_name)
@@ -147,10 +151,12 @@ func did_emit(object, signal_name=null):
 		did = get_emit_count(vals.object, vals.signal_name) != 0
 	return did
 
+
 func print_object_signals(object):
 	var list = object.get_signal_list()
 	for i in range(list.size()):
 		print(list[i].name, "\n  ", list[i])
+
 
 func get_signal_parameters(object, signal_name, index=-1):
 	var params = null
@@ -162,11 +168,14 @@ func get_signal_parameters(object, signal_name, index=-1):
 			params = all_params[index]
 	return params
 
+
 func is_watching_object(object):
 	return _watched_signals.has(object)
 
+
 func is_watching(object, signal_name):
 	return _watched_signals.has(object) and _watched_signals[object].has(signal_name)
+
 
 func clear():
 	for obj in _watched_signals:
@@ -174,6 +183,7 @@ func clear():
 			for signal_name in _watched_signals[obj]:
 				obj.disconnect(signal_name, Callable(self,'_on_watched_signal'))
 	_watched_signals.clear()
+
 
 # Returns a list of all the signal names that were emitted by the object.
 # If the object is not being watched then an empty list is returned.
@@ -205,15 +215,20 @@ func get_signal_summary(obj):
 	return emitted
 
 
-func print_signal_summary(obj):
+func get_signal_summary_text(obj):
 	if(!is_watching_object(obj)):
 		var msg = str('Not watching signals for ', obj)
 		_utils.get_logger().warn(msg)
-		return
+		return msg
 
 	var summary = get_signal_summary(obj)
-	print(obj, '::Signals')
+	var text = str(obj, ' Signals:')
 	var sorted = summary.keys()
 	sorted.sort()
 	for key in sorted:
-		print(' -  ', key, ' x ', summary[key].emit_count)
+		text += str("\n", ' -  ', key, ' ', summary[key].emit_count, 'x')
+	return text
+
+
+func print_signal_summary(obj):
+	print(get_signal_summary_text(obj))

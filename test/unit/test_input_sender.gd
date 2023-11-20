@@ -470,6 +470,115 @@ class TestMouseMotion:
 		assert_eq(r.inputs[0].global_position, Vector2(25, 25), 'global_position')
 
 
+class TestDrag:
+	extends GutTest
+
+	class DraggableButton:
+		extends Button
+
+		var _mouse_down = false
+
+		func _gui_input(event):
+			if(event is InputEventMouseButton):
+				_mouse_down = event.pressed
+			elif(event is InputEventMouseMotion and _mouse_down):
+				position += event.relative
+
+	var _sender = InputSender.new(Input)
+
+	func after_each():
+		_sender.release_all()
+		_sender.clear()
+		_sender.set_auto_flush_input(false)
+
+
+	func _new_draggable_button():
+		var btn = DraggableButton.new()
+		watch_signals(btn)
+		btn.size = Vector2(100, 100)
+		btn.position = Vector2(50, 50)
+		add_child_autofree(btn)
+		return btn
+
+	func test_drag_will_move_button():
+		var btn = _new_draggable_button()
+		var orig_pos = btn.position
+		var dist = Vector2(10, 0)
+		_sender.mouse_left_button_drag(btn.position, dist)
+		await _sender.idle
+		assert_eq(btn.position, orig_pos + dist)
+
+	func test_drag_will_not_move_button_if_start_click_outside_button():
+		var btn = _new_draggable_button()
+		var orig_pos = btn.position
+		var dist = Vector2(10, 0)
+		_sender.mouse_left_button_drag(Vector2(0, 0), dist)
+		await _sender.idle
+		assert_eq(btn.position, orig_pos)
+
+	func test_can_drag_using_control_instead_of_position():
+		var btn = _new_draggable_button()
+		var orig_pos = btn.position
+		var dist = Vector2(0, 10)
+		_sender.mouse_left_button_drag_control(btn, dist)
+		await _sender.idle
+		assert_eq(btn.position, orig_pos + dist)
+
+	func test_dragging_button_with_duration_animates():
+		var btn = _new_draggable_button()
+		var orig_pos = btn.position
+		var dist = Vector2(10, 10)
+		_sender.mouse_left_button_drag_control(btn, dist , 1)
+		await _sender.idle
+		assert_eq(btn.position, orig_pos + dist)
+
+	func test_can_drag_when_sending_input_to_control():
+		var btn = _new_draggable_button()
+		var sender = InputSender.new(btn)
+		var orig_pos = btn.position
+		var dist = Vector2(15, 10)
+		sender.mouse_left_button_drag_control(btn, dist)
+		await sender.idle
+		assert_eq(btn.position, orig_pos + dist)
+
+	# Illustrates a side effect, that if changed, could have impact on how
+	# everything else behaves.
+	func test_when_sending_events_to_control_it_does_not_care_about_start_click_position():
+		var btn = _new_draggable_button()
+		var sender = InputSender.new(btn)
+		var orig_pos = btn.position
+		var dist = Vector2(15, 10)
+		sender.mouse_left_button_drag(Vector2(0, 0), dist)
+		await sender.idle
+		assert_eq(btn.position, orig_pos + dist)
+
+
+	var drag_durations = ParameterFactory.named_parameters(['duration'], [0, .5, 1])
+	func test_complex_drag_with_multiple_durations(p = use_parameters(drag_durations)):
+		var btn = _new_draggable_button()
+
+		_sender.set_auto_flush_input(true)
+		_sender.mouse_warp = false
+		_sender.draw_mouse = true
+
+		var expected_pos = btn.position + Vector2(30, 0)
+		_sender.mouse_left_button_drag(btn.position + Vector2(10, 10), Vector2(30, 0), p.duration)
+		await _sender.idle
+		assert_eq(btn.position, expected_pos, 'After first drag')
+
+		expected_pos = btn.position + Vector2(0, 50)
+		_sender.mouse_left_button_drag_control(btn, Vector2(0, 50), p.duration)
+		await _sender.idle
+		assert_eq(btn.position, expected_pos, 'After second drag')
+
+		expected_pos = btn.position + Vector2(50, 50)
+		_sender.mouse_left_button_drag_control(btn, Vector2(50, 50), p.duration)
+		await _sender.idle
+		assert_eq(btn.position, expected_pos, 'After third drag')
+
+
+class TestClick:
+	extends GutTest
 
 
 class TestJoypadButton:
@@ -519,6 +628,8 @@ class TestMagnifyGesture:
 		var sender = InputSender.new()
 		var result = sender.magnify_gesture(Vector2(1, 1), .5)
 		assert_eq(result, sender)
+
+
 
 
 class TestPanGesture:
