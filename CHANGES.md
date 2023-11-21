@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * Fixed numerous issues with doubling that were caused by the port from 3.x.  Most of these involved using the INCLUDE_NATIVE doubling strategy.
 * Added errors and better failure messages when trying to stub or spy on an invalid method.  For example, if your script does not implement `_ready` and you try to spy on it, your test will now fail since `_ready` is virtual and you didn't overload it.
 * Doubled methods that have a vararg argument are now auto detected and extra parameters (up to 10) are added to the method signature to handle most use cases (i.e. `rpc_id`, `emit_signal`).  If you call a doubled method that has a vararg argument and you have not stubbed `param_count` on the object's script then a warning is generated.
+* Fixed an issue where command line would not launch in 4.2rc1.
 
 
 # 9.1.0 (requires Godot 4.1)

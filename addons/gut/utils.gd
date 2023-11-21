@@ -1,39 +1,16 @@
 class_name GutUtils
-extends Node
-# ##############################################################################
-#(G)odot (U)nit (T)est class
-#
-# ##############################################################################
-# The MIT License (MIT)
-# =====================
-#
-# Copyright (c) 2020 Tom "Butch" Wesley
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-# ##############################################################################
+# ------------------------------------------------------------------------------
 # Description
 # -----------
 # This class is a PSUEDO SINGLETON.  You should not make instances of it but use
 # the get_instance static method.
-# ##############################################################################
+# ------------------------------------------------------------------------------
+# NOTE:  I think this can become completely static now that we have static
+#		 variables.  A lot would have to change though.  But it would be good
+#		 to do.
+# ------------------------------------------------------------------------------
 const GUT_METADATA = '__gutdbl'
+
 
 # Note, these cannot change since places are checking for TYPE_INT to determine
 # how to process parameters.
@@ -58,11 +35,9 @@ const TEST_STATUSES = {
 	FAILED = 'fail',
 	PASSED = 'pass'
 }
-# ------------------------------------------------------------------------------
-# The instance name as a function since you can't have static variables.
-# ------------------------------------------------------------------------------
-static func INSTANCE_NAME():
-	return '__GutUtilsInstName__'
+
+
+static var _the_instance = null
 
 
 # ------------------------------------------------------------------------------
@@ -85,15 +60,10 @@ static func get_root_node():
 # running.
 # ------------------------------------------------------------------------------
 static func get_instance():
-	var the_root = get_root_node()
-	var inst = null
-	if(the_root.has_node(INSTANCE_NAME())):
-		inst = the_root.get_node(INSTANCE_NAME())
-	else:
-		inst = load('res://addons/gut/utils.gd').new()
-		inst.set_name(INSTANCE_NAME())
-		the_root.add_child(inst)
-	return inst
+	if(_the_instance == null):
+		_the_instance = GutUtils.new()
+
+	return _the_instance
 
 
 # ------------------------------------------------------------------------------
@@ -217,7 +187,7 @@ var CollectedScript = load('res://addons/gut/collected_test.gd')
 var GutScene = load('res://addons/gut/GutScene.tscn')
 
 # Source of truth for the GUT version
-var version = '9.1.0'
+var version = '9.1.1'
 # The required Godot version as an array.
 var req_godot = [4, 1, 0]
 
@@ -536,4 +506,36 @@ func create_script_from_source(source, override_path=null):
 
 
 func get_display_size():
-	return get_viewport().get_visible_rect()
+	return Engine.get_main_loop().get_viewport().get_visible_rect()
+
+
+
+# ##############################################################################
+#(G)odot (U)nit (T)est class
+#
+# ##############################################################################
+# The MIT License (MIT)
+# =====================
+#
+# Copyright (c) 2023 Tom "Butch" Wesley
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+# ##############################################################################
+
