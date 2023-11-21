@@ -2,7 +2,7 @@
 This wiki is being updated for the changes made for Godot 4.  Any pages with a warning at the top have not been updated yet.  For information about the changes in GUT 9 view  <a href="New-For-Godot-4.html">New-ForGodot-4</a>.
 </div>
 
-# Gut 9.1.0 (Godot 4.1)
+# Gut 9.1.1 (Godot 4.1)
 GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.  It allows you to write tests for your gdscripts in gdscript.
 
 ### Godot 3.x/4.x
