@@ -56,7 +56,6 @@ func test_is_instance_false_for_instanced_things():
 func test_get_native_class_name_does_not_generate_orphans():
 	var utils = Utils.new()
 	var n = utils.get_native_class_name(Node2D)
-	utils.free()
 	assert_no_new_orphans()
 
 func test_get_native_class_name_does_not_free_references():
