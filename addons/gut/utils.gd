@@ -36,7 +36,10 @@ const TEST_STATUSES = {
 	PASSED = 'pass'
 }
 
-
+# This is a holdover from when GUT was making a psuedo autoload.  It would add
+# an instance of this class to the tree with a name and retrieve it when
+# get_instance was called.  We now have static variables so this var is now
+# used instead of a node.
 static var _the_instance = null
 
 
