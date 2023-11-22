@@ -4,7 +4,47 @@ class TestType2Str:
 	extends GutInternalTester
 
 	var strutils = load('res://addons/gut/strutils.gd').new()
-
+	# manually copied from help.
+	var all_types = [
+		TYPE_AABB ,
+		TYPE_ARRAY ,
+		TYPE_BASIS ,
+		TYPE_BOOL,
+		TYPE_CALLABLE ,
+		TYPE_COLOR ,
+		TYPE_DICTIONARY ,
+		TYPE_FLOAT,
+		TYPE_INT,
+		TYPE_MAX ,
+		TYPE_NODE_PATH ,
+		TYPE_OBJECT ,
+		TYPE_PACKED_BYTE_ARRAY ,
+		TYPE_PACKED_COLOR_ARRAY ,
+		TYPE_PACKED_FLOAT32_ARRAY ,
+		TYPE_PACKED_FLOAT64_ARRAY ,
+		TYPE_PACKED_INT32_ARRAY ,
+		TYPE_PACKED_INT64_ARRAY ,
+		TYPE_PACKED_STRING_ARRAY ,
+		TYPE_PACKED_VECTOR2_ARRAY ,
+		TYPE_PACKED_VECTOR3_ARRAY ,
+		TYPE_PLANE ,
+		TYPE_PROJECTION ,
+		TYPE_QUATERNION ,
+		TYPE_RECT2,
+		TYPE_RECT2I,
+		TYPE_RID ,
+		TYPE_SIGNAL ,
+		TYPE_STRING_NAME ,
+		TYPE_STRING,
+		TYPE_TRANSFORM2D ,
+		TYPE_TRANSFORM3D ,
+		TYPE_VECTOR2,
+		TYPE_VECTOR2I,
+		TYPE_VECTOR3,
+		TYPE_VECTOR3I ,
+		TYPE_VECTOR4 ,
+		TYPE_VECTOR4I ,
+	]
 
 	class ExtendsControl:
 		extends Control
@@ -14,6 +54,9 @@ class TestType2Str:
 
 	class ExtendsNothing:
 		var foo = 'bar'
+
+	func test_types_contains_all_types(t = use_parameters(all_types)):
+		assert_has(strutils.types, t)
 
 	func test_string():
 		assert_eq(strutils.type2str('this'), '"this"')
@@ -42,7 +85,7 @@ class TestType2Str:
 
 	func test_vector2():
 		var v2 = Vector2(20, 30)
-		assert_eq(strutils.type2str(v2), 'Vector2(20, 30)')
+		assert_eq(strutils.type2str(v2), 'VECTOR2(20, 30)')
 
 	func test_null():
 		assert_eq(strutils.type2str(null), str(null))
@@ -53,7 +96,7 @@ class TestType2Str:
 
 	func test_color():
 		var c  = Color(.1, .2, .3)
-		assert_eq(strutils.type2str(c), 'Color(0.1, 0.2, 0.3, 1)')
+		assert_eq(strutils.type2str(c), 'COLOR(0.1, 0.2, 0.3, 1)')
 
 	func test_loaded_scene():
 		assert_eq(strutils.type2str(DoubleMeScene), str(DoubleMeScene) + '(double_me_scene.tscn)')

@@ -100,6 +100,31 @@ class TestMiscTests:
 		gr.test.set_logger(dlog)
 		assert_eq(gr.test.get_logger(), dlog)
 
+	# -------
+	# Spot check some type comparisons, these were all causing errors.  These
+	# were adjusted from issue 510 sample code.
+	# -------
+	func test_rect2i_basis():
+		gr.test.assert_ne(Rect2i(), Basis())
+		assert_fail(gr.test)
+
+	func test_vector2i_3i():
+		gr.test.assert_eq(Vector2i(), Vector3i())
+		assert_fail(gr.test)
+
+	func test_vector4_4i():
+		gr.test.assert_gt(Vector4(), Vector4i())
+		assert_fail(gr.test)
+
+	func test_transform2d_projection():
+		gr.test.assert_ne(Transform2D(), Projection())
+		assert_fail(gr.test)
+
+	func test_callable_signal():
+		gr.test.assert_ne(Callable(), Signal())
+		assert_fail(gr.test)
+
+
 
 # ------------------------------------------------------------------------------
 class TestAssertEq:
@@ -175,6 +200,7 @@ class TestAssertEq:
 		var d2 = {'a':1}
 		gr.test.assert_eq(d, d2)
 		assert_pass(gr.test)
+
 
 
 # ------------------------------------------------------------------------------
