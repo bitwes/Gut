@@ -368,12 +368,34 @@ func assert_gt(got, expected, text=""):
 			_fail(disp)
 
 # ------------------------------------------------------------------------------
+# Asserts got is greater than or equal to expected
+# ------------------------------------------------------------------------------
+func assert_gt(got, expected, text=""):
+	var disp = "[" + _str(got) + "] expected to be >= than [" + _str(expected) + "]:  " + text
+	if(_do_datatypes_match__fail_if_not(got, expected, text)):
+		if(got >= expected):
+			_pass(disp)
+		else:
+			_fail(disp)
+
+# ------------------------------------------------------------------------------
 # Asserts got is less than expected
 # ------------------------------------------------------------------------------
 func assert_lt(got, expected, text=""):
 	var disp = "[" + _str(got) + "] expected to be < than [" + _str(expected) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, expected, text)):
 		if(got < expected):
+			_pass(disp)
+		else:
+			_fail(disp)
+
+# ------------------------------------------------------------------------------
+# Asserts got is less than or equal to expected
+# ------------------------------------------------------------------------------
+func assert_lte(got, expected, text=""):
+	var disp = "[" + _str(got) + "] expected to be <= than [" + _str(expected) + "]:  " + text
+	if(_do_datatypes_match__fail_if_not(got, expected, text)):
+		if(got <= expected):
 			_pass(disp)
 		else:
 			_fail(disp)
