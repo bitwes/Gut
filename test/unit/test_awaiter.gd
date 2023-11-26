@@ -135,3 +135,11 @@ func test_is_not_paused_when_signal_emitted_before_max_time():
 	# gotta wait for the 2 additional frames
 	await get_tree().create_timer(.05).timeout
 	assert_false(a.is_waiting())
+
+func test_after_timeout_signal_is_disconnected():
+	var s = Signaler.new()
+	var a = add_child_autoqfree(Awaiter.new())
+	watch_signals(a)
+	a.wait_for_signal(s.the_signal, .1)
+	await get_tree().create_timer(.5).timeout
+	assert_not_connected(s, a, 'the_signal')
