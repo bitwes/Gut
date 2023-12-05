@@ -14,3 +14,4 @@ dest_files=["res://.godot/imported/source_code_pro.fnt-042fb383b3c7b4c19e67c852f
 
 fallbacks=[]
 compress=true
+scaling_mode=2
