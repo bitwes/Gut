@@ -38,4 +38,5 @@ epub_show_urls = 'footnote'
 
 source_suffix = [
     ".md",
+    ".rst",
 ]

@@ -1,3 +1,4 @@
+# Doubles
 The `double` method works similarly to `load`.  It will return a loaded class or scene that has empty implementations for all the methods defined in the script you pass it.  It will also include empty implementations for any methods in user-defined super classes.  It does not include implementations for any of the Godot Built-in super classes such as `Node2D` or `WindowDialog` (unless you have overloaded them in your script or in one of the user-defined super classes your script inherits from).  Actually, you can if you use the FULL Doubling strategy described at the bottom of this page.
 
 ## Characteristics of a Double
@@ -117,14 +118,14 @@ stub(doubled_node2d, 'get_position').to_return(-1)
 var partial_doubled_raycast = partial_double(Raycast2D).new()
 ```
 
-# What Do I Do With My Double?
+## What Do I Do With My Double?
 Doubles are useful when you want to test an object that requires another object but you don't want to be deal with the overhead of other object's implementation.
 
 Sometimes an empty implementation isn't enough.  Sometimes you need specific values or things to be returned from one of your doubled methods.  For this we have [Stubbing](Stubbing).  Stubbing allows you to specify return values in various different scenarios such as "returning a 9 whenever a method is called" or "returning 57 when a method is called with the parameters 'a' and 24".
 
 You can also [spy on](Spies) your double.  Once you have a double there are special `asserts` that can be used with it to verify that a method in the doubled object was called.  You can `assert` very specific calls too, such as with a specific list of parameters, or make sure it was called a certain number of times.
 
-# The Fine Details
+## The Fine Details
 
 ## Example of Script vs Built-in doubling
 Only methods that have been defined in the script you pass in OR methods that have been defined in parent scripts get the empty implementation in the double.  Methods defined in any built-in Godot class do not get overridden __unless__ the script (or parent script(s)) have them implemented.
@@ -157,7 +158,7 @@ Then:
 * You can use `assert_method(doubled, 'get_value')`
 * You __should not__ use `assert_method(doubled, 'get_position')`.  _You can but it will always return 0._
 
-# Doubling Strategy
+## Doubling Strategy
 Remember all that stuff I said earlier about not being able to double Godot Built-Ins?  Forget about it...or forget half of it, maybe 45% of it.
 
 You can [spy on](Spies) and stub most of the Built-Ins in Godot if you enable the `FULL` Doubling Strategy. I've enabled this feature in my own game and it didn't crash (I currently have 75 test scripts and 3633 asserts).  As reassuring as that was I'm still not sure that it won't blow up for someone so it is off by default.
@@ -208,6 +209,6 @@ double('res://inners.gd', 'InnerA', DOUBLE_STRATEGY.FULL)
 double('res://my_scene.tscn', DOUBLE_STRATEGY.PARTIAL)
 ```
 
-# Where to next?
+## Where to next?
 * [Stubbing](Stubbing)
 * [Spies](Spies)

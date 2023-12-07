@@ -1,8 +1,9 @@
+# Asserts and Methods
 These are all the methods, bells, whistles and blinky lights you get when you extend the Gut Test Class (`extends GutTest`).
 
 All sample code listed for the methods can be found here in [test_readme_examples.gd](https://github.com/bitwes/Gut/blob/master/test/samples/test_readme_examples.gd)
 
-# Utilities
+## Utilities
 |
 [add_child_autofree](#add_child_autofree)|
 [add_child_autoqfree](#add_child_autoqfree)|
@@ -30,7 +31,7 @@ All sample code listed for the methods can be found here in [test_readme_example
 [yield_to](#yield_to) |
 
 
-# Gut Utilities
+## Gut Utilities
 These methods exist on the GUT instance, and not in `test.gd`.  They must all be prefixed with `gut`.
 
 |
@@ -40,7 +41,7 @@ These methods exist on the GUT instance, and not in `test.gd`.  They must all be
 [gut.is_file_empty]()|
 [gut.p](#gut_p) |
 
-# Assertions
+## Assertions
 <!-- Almost alphabetical list, "not" asserts are listed after their counterparts -->
 <!-- 1 assert per line unless there is a "not" version for easy sorting -->
 |

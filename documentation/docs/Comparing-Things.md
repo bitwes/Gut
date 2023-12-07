@@ -1,4 +1,4 @@
-# Overview
+# Complex Comparisons
 Comparing values with GUT's asserts works the way you would expect it to in most cases.  Arrays and dictionaries are a little more complicated.  The following methods can help with this:
 * `compare_shallow`
 * `compare_deep`
@@ -13,7 +13,7 @@ A shallow compare will look at each element in a dictionary or array and use the
 ### Deep
 A deep compare will recursively compare all values in the dictionary/array and all sub-dictionaries and sub-arrays.  Floats and Integers are never equal.  See [`assert_eq_deep`](Asserts-and-Methods#assert_eq_deep) for examples.
 
-# <a name=ComparingArrays>Comparing Arrays</a>
+## Comparing Arrays
 * Godot compares arrays by value with some caveats.
     * Unlike when using `==`, floats never == integers in an array.
     * Dictionaries are compared by reference.  Two different dictionaries with the same values are not equal.
@@ -36,7 +36,7 @@ A shallow compare of arrays acts the same as `assert_eq`/`assert_ne`.  Any dicti
 A deep compare of arrays will compare all indexes and the values in all sub-arrays/sub-dictionaries found.  Floats and Integers are never equal.
 
 
-# <a name=ComparingDictionaries>Comparing Dictionaries</a>
+## Comparing Dictionaries
 * Godot compares dictionaries by reference.
 * Dictionary keys are ordered (which is unusual).
 * The dictionary `hash` fuction requires dictionary keys be in the same order to generate the same hash so comparing dictionaries by value cannot be done reliably without additional coding.
@@ -54,7 +54,7 @@ A shallow compare of dictionaries will compare all values found in the dictionar
 ### Deep
 A  deep compare of dictionaries will compare all keys and the values  in all sub-arrays/sub-dictionaries found.  Floats and Integers are never equal.
 
-# <a name=CompareResult> CompareResult</a>
+##  CompareResult
 A CompareResult object is returned from `compare_shallow` and `compare_deep`.  You can use this object to further inspect the differences or adjust the output.
 
 ### Properties

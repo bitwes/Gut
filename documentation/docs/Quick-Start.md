@@ -1,19 +1,12 @@
+# Quick Start
 This page contains brief descrptions of many of GUT's features.  Most sections have a "More information" link where more in depth documentation can be found.
 
-* [Setup](#setup)
-* [Creating Tests](#creating_tests)
-* [Doubles/Stubbing/Spies](#doubles)
-* [Partial Doubles](#partial_doubles)
-* [Parameterized Tests](#parameterized_tests)
-* [Yielding](#yielding)
-* [Memory Leak Testing and Memory Management](#memory_management)
 
-
-# <a name = "setup"> Setup
+##  Setup
 Setup doesn't get any simplier than what is already on the [install page.](Install)
 
 
-# <a name = "run"> Run Tests
+##  Run Tests
 Configure the GUT Panel to find your tests and use the various "Run" buttons to run your entire test suite or specific scripts/tests.
 [[https://raw.githubusercontent.com/wiki/bitwes/Gut/images/gut_panel.png|alt=gut_panel]]
 
@@ -21,7 +14,7 @@ Mouse-over labels and buttons in the GUT panel for more information.  You can ev
 
 You can also run tests via the [command line](Command-Line) or by [creating a scene]((Install)).
 
-# <a name = "creating_tests">Creating Tests
+## Creating Tests
 [More Information](Creating-Tests)
 
 All test scripts must extend the `test.gd` script supplied by GUT.
@@ -79,7 +72,7 @@ class TestOtherAspects:
 		assert_true(true, "Should pass, true is true")
 ```
 
-# <a name="doubles">Doubles/Spies/Stubs
+## Doubles/Spies/Stubs
 More Information:  [Doubles](Doubles), [Spies](Spies), [Stubs](Stubbing)
 
 You can make a double of just about anything.  `double` returns a loaded class, not an instance.  Doubles extend the object to be doubled and have empty implmenetations for all methods defined in the script or parent scripts, but not parent GDScript methods that are not overloaded.
@@ -120,7 +113,7 @@ var called_with_last = get_call_parameters(double_foo, 'call_me')
 var called_with_4 = get_call_parameters(double_foo, 'call_me', 4))
 ```
 
-# <a name="partial_doubles">Partial Doubles
+## Partial Doubles
 [More Information](Partial-Doubles)
 
 Partial doubles have all the same properties of a double except they retain the source functionality by default.  You can stub and spy on them just like a double, but anything not stubbed will behave as if it wasn't a double.
@@ -135,7 +128,7 @@ stub(double_bar, 'something').to_return(27).when_passed(32)
 assert_called(double_bar, 'other_thing')
 ```
 
-# <a name="parameterized_tests">Parameterized Tests
+## Parameterized Tests
 [More Information](Parameterized-Tests)
 
 You can create tests that will be run multiple times and be passed multiple values.
@@ -157,7 +150,7 @@ func test_with_named_params(p=use_parameters(better_params)):
 There are helpers to make your parameters more readable.
 
 
-# <a name="yielding">Yielding
+## Yielding
 [More Information](Yielding)
 
 You can use `yield` in your tests if you need to.  If you want to wait for a cetain amount of time you can use `yield_for`.
@@ -171,7 +164,7 @@ yield(yield_to(my_obj, 'some_signal', 3), YIELD)
 ```
 All of the magic of `yield_to`, `yield_for` and the `YIELD` constant is covered on the yielding page.
 
-# <a name="memory_management">Leak Testing and Memory Management
+## Leak Testing and Memory Management
 [More Information](Memory-Management)
 
 Call `autofree` or `autoqfree` on anything you want to be automatically freed up after your test.  These return whatever you pass it so you can save a line of code!
