@@ -1388,7 +1388,7 @@ assert_setget_called(5, 'current_hp', 'set_current_hp')  # FAIL => type has to b
 assert_setget_called(double(Health), 'current_hp', 'set_current_hp') # FAIL => type has to be a Resource that can be doubled
 ```
 
-Please note the last example. So far an already doubled type cannot be doubled again. Since the class under test will be doubled within the assert procession it is important to only feed in types that can be doubled. For more information about doubling its restrictions see the wiki page about [Doubles](https://github.com/bitwes/Gut/wiki/Doubles).
+Please note the last example. So far an already doubled type cannot be doubled again. Since the class under test will be doubled within the assert procession it is important to only feed in types that can be doubled. For more information about doubling its restrictions see the wiki page about [Doubles](Doubles).
 
 
 #### assert_property(obj, name_property, has_setter=false, has_getter=false)

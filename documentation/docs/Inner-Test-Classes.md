@@ -7,7 +7,7 @@ The order the tests are run are not guaranteed to be in the same order they are 
 
 Inner Classes are parsed out of the script by looking for a classes that start with `'Test'` and also extend `test.gd`.  You can change the name that Gut looks for using the `inner_class_prefix` property.
 
-There are options for the command line and editor node to specify an Inner Test Class name to run.  This allows you to easily run a subset of tests in a script as you develop a feature.  See [Gut Settings and Methods](https://github.com/bitwes/Gut/wiki/Gut-Settings-And-Methods) and  [Using Gut at the command line](https://github.com/bitwes/Gut/wiki/Command-Line) for more information.
+There are options for the command line and editor node to specify an Inner Test Class name to run.  This allows you to easily run a subset of tests in a script as you develop a feature.  See [Gut Settings and Methods](Gut-Settings-And-Methods) and  [Using Gut at the command line](Command-Line) for more information.
 
 ## Example
 Given the following test script defined at `res://test/unit/some_example.gd`
