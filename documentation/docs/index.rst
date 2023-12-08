@@ -1,65 +1,37 @@
-## Gut 7.4.0
+Gut 7.4.0
+=========
 GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.  It allows you to write tests for your gdscripts in gdscript.
 
-### Godot 3.2
+
+Godot 3.2
+=========
 * As of version 7.0.0 GUT requires Godot 3.2.  Version 6.8.x is 3.1 compatible.
 
 
-This is the Index page.
-=======================
 
-You should enjoy it and all of its TOC glory.
+Getting Started
+----------------
 
-
-Manual TOC
-==========
-.. toctree::
-   :maxdepth: 1
-
-   Quick-Start
-
-   Asserts-and-Methods
-   Doubles
-   Stubbing
-
-Auto-generated TOC
-==================
-.. toctree::
-   :glob:
-   :maxdepth: 1
-
-   /*
-
-But where did the TOC go?
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`search`
+* :doc:`Quick-Start <Quick-Start>`
+* :doc:`Install <Install>`
+* :doc:`Asserts and Methods <Asserts-and-Methods>`
+* :doc:`Creating Tests <Creating-Tests>`
+* :doc:`Gut Settings and Methods <Gut-Settings-And-Methods>`
+* :doc:`Using Gut at the command line <Command-Line>`
 
 
+Advanced Testing
+----------------
 
-
-## Getting Started
-* [Quick Start](Quick-Start)
-* [Install](Install)
-* [Asserts and Methods](Asserts-and-Methods)
-* [Creating Tests](Creating-Tests)
-* [Gut Settings and Methods](Gut-Settings-And-Methods)
-* [Using Gut at the command line](Command-Line)
-
-
-## Advanced Testing
-* [Inner Test Classes](Inner-Test-Classes)
-* [Doubling](Doubles)
-* [Spies](Spies)
-* [Stubbing](Stubbing)
-* [Parameterized Tests](Parameterized-Tests)
-* [Simulate](Simulate)
-* [Yielding during tests](Yielding)
-* [Pre/Post Run Hooks](Hooks)
-* [Exporting Results](Export-Test-Results)
+* :doc:`Inner Test Classes <Inner-Test-Classes>`
+* :doc:`Doubling <Doubles>`
+* :doc:`Spies <Spies>`
+* :doc:`Stubbing <Stubbing>`
+* :doc:`Parameterized Tests <Parameterized-Tests>`
+* :doc:`Simulate <Simulate>`
+* :doc:`Yielding during tests <Yielding>`
+* :doc:`Pre/Post Run Hooks <Hooks>`
+* :doc:`Exporting Results <Export-Test-Results>`
 
 
 ## Editor GUI
@@ -84,21 +56,40 @@ Indices and tables
 Also, in the bottom right corner, you can drag to resize the dialog.
 
 
-## Engine Warnings
+Engine Warnings
+---------------
+
 There are a fair number of warnings that Godot will show related to GUT.  Some of the warnings are valid and are being cleaned up overtime.  Most of the warnings are not valid and sometimes relate to generated code.  As of 3.2 you can disable warnings for addons, and it recommended you do so.
-[[https://raw.githubusercontent.com/wiki/bitwes/Gut/images/exclude_addons.png|alt=exclude_addons]]
+
+.. image:: _static/images/exclude_addons.png
+
+.. [[https://raw.githubusercontent.com/wiki/bitwes/Gut/images/exclude_addons.png|alt=exclude_addons]]
 
 
-## License
+License
+-------
+
 Gut is provided under the MIT license.  [The license is distributed with Gut so it is in the `addons/gut` folder](https://github.com/bitwes/Gut/blob/master/addons/gut/LICENSE.md).
 
 
-## Contributing
-[Contributing](Contributing)
+Contributing
+------------
+
+:doc:`Contributing <Contributing>`
 
 
-## Who do I talk to?
-You can talk to me, Butch Wesley
+TOC
+==================
 
-* Github:  bitwes
-* Godot Discord:  bitwes
+.. toctree::
+   :glob:
+   :maxdepth: 1
+
+   /*
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`search`
+

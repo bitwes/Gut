@@ -1513,9 +1513,9 @@ p + .classref-constant {
 }
 
 /* Banner panel in sidebar */
-.wy-nav-side .ethical-rtd.fixed {
+/* .wy-nav-side .ethical-rtd.fixed {
     position: fixed;
-}
+} */
 
 /* Read the Docs flyout panel, with language and version selectors. */
 
@@ -1628,7 +1628,7 @@ p + .classref-constant {
 .wy-menu.wy-menu-vertical {
     overflow-y: auto;
     overflow-x: hidden;
-    max-height: calc(100% - 348px);
+    /* max-height: calc(100% - 348px); */
     padding-bottom: 24px;
 }
 @media screen and (max-width: 768px) {

@@ -42,8 +42,9 @@ source_suffix = [
 ]
 
 html_static_path = ['_static']
+
+# custom.css copied from Godot's CSS:
+# https://github.com/godotengine/godot-docs/blob/4.2/_static/css/custom.css
 html_css_files = [
     'css/custom.css',
 ]
-# def setup(app):
-#     app.add_css_file('custom.css')
