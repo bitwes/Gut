@@ -18,7 +18,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
-    'myst_parser',
+    'myst_parser'
 ]
 
 intersphinx_mapping = {
@@ -40,3 +40,10 @@ source_suffix = [
     ".md",
     ".rst",
 ]
+
+html_static_path = ['_static']
+html_css_files = [
+    'css/custom.css',
+]
+# def setup(app):
+#     app.add_css_file('custom.css')
