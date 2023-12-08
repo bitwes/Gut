@@ -1,6 +1,7 @@
+# Export Test Results
 You can export test results in the JUnit XML format specified [here](https://llg.cubic.org/docs/junit/).  You can specify a file name to export to, or kick off an export in a [post-run hook](Hooks).
 
-# Setting the export file
+## Setting the export file
 There are two settings, the file name and a flag to include an epoch timestamp in the filename.  The epoch timestamp will prevent runs from overwritting the last run's file.
 
 * Gut Panel
@@ -16,7 +17,7 @@ There are two settings, the file name and a flag to include an epoch timestamp i
     * Set `Junit Xml File` to the path.
     * Check `Junit Xml Timestamp` if you want the timestamp to be included.
 
-# Exporting results in post-run Hook
+## Exporting results in post-run Hook
 Here is sample code to export results in a post-run hook script.  See [Hooks](Hooks) for more information about setting up a post-run script.
 
 Note that `JunitXmlExport` and `gut` are defined by the parent script `res://addons/gut/hook_script.gd`
@@ -31,7 +32,7 @@ func run() # called automatically by Gut
 		gut.p(str("Results saved to ", filename))
 ```
 
-# Example Output
+## Example Output
 ``` xml
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites name="GutTests" failures="7" tests="17">

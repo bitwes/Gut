@@ -1,4 +1,4 @@
-# <a name="gut_settings"> Gut Settings
+#  Gut Settings
 These settings are for the GUT node that can be added to a scene.  The most common scenario for using a scene (now that we have the GutPanel) is to run tests in a depoloyed build.  These are not the settings for the in-editor GutPanel.  Mouse over settings in the GutPanel for description.
 
 When using a GUT node in a scene, the following settings can be found in the Inspector.
@@ -53,21 +53,21 @@ These methods would be used inside the scene you created at `res://test/tests.tc
 * __**__ `maximize()` maximizes the gut window.
 * __**__ `get/set_include_subdirectories(should)` flag to include subdirectories when `add_directory` is called.  This is `false` by default.
 
-# <a name="extras"> Extras
+##  Extras
 
-##  <a name="strict"> Strict type checking
+###  Strict type checking
 Gut performs type checks in the asserts when comparing two different types that would normally cause a runtime error.  With the type checking enabled (on be default) your test will fail instead of crashing.  Some types are ok to be compared such as Floats and Integers but if you attempt to compare a String with a Float your test will fail instead of blowing up.
 
 You can disable this behavior if you like by calling `disable_strict_datatype_checks(true)` on your Gut node or by clicking the checkbox to "Disable Strict Datatype Checks" in the editor.
 
-##  <a name="output_detail"> Output Detail
+###  Output Detail
 The level of detail that is printed to the screen can be changed using the slider on the dialog or by calling `set_log_level` with one of the following constants defined in Gut
 
 * LOG_LEVEL_FAIL_ONLY (0)
 * LOG_LEVEL_TEST_AND_FAILURES (1)
 * LOG_LEVEL_ALL_ASSERTS (2)
 
-##  <a name="printing"> Printing info
+###   Printing info
 The `gut.p` method allows you to print information that is indented under the test output.  This output appears wherever GUT sends output (gui, terminal, console).  It has an optional 2nd parameter that sets which log level to display it at.  Use one of the constants in the section above to set it.  The default is `LOG_LEVEL_FAIL_ONLY` which means the output will always be visible.
 ```
 # From within your tests

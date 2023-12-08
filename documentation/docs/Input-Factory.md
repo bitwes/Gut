@@ -10,7 +10,7 @@ func test_something():
     var event = InputFactory.action_down("jump")
     ...
 ```
-# Methods
+## Methods
 |
 [action_down](#action_down)|
 [action_up](#action_up)|

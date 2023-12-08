@@ -19,7 +19,7 @@ Extract the zip and place the `gut` directory into your `addons` directory in yo
 
 Finish the install by following the instructions in Setup below.
 
-# <a name="setup">Setup
+## Setup
 #### Activate
 1.  From the menu choose Project->Project Settings, click the Plugins tab and activate Gut.
 
@@ -31,7 +31,7 @@ The next few steps cover the suggested configuration.  Feel free to deviate wher
 	* `res://test/unit`
 	* `res://test/integration`
 
-# Running Tests
+## Running Tests
 ## Run tests from the GUT Panel
 As of 7.2.0 GUT supports running through the Editor.
 

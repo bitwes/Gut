@@ -1,3 +1,4 @@
+# Inner Test Classes
 You can define test classes inside a test script that will be treated as test scripts themselves.  This allows you to create different contexts for your tests in a single script.  These Inner Classes have thier own `before_all`, `before_each`, `after_each`, and `after_all` methods that will be called.  Only the methods defined in the class are used, the methods defined in the containing script will not be called.
 
 The Inner Classes must also extend `GutTest` and their constructor cannot take any parameters.  The Classes will be loaded and ran in the order they are defined _after_ all the tests in the containing script are run.  If the script does not contain any tests then only the Inner Classes will be listed in the output.
@@ -8,7 +9,7 @@ Inner Classes are parsed out of the script by looking for a classes that start w
 
 There are options for the command line and editor node to specify an Inner Test Class name to run.  This allows you to easily run a subset of tests in a script as you develop a feature.  See [Gut Settings and Methods](https://github.com/bitwes/Gut/wiki/Gut-Settings-And-Methods) and  [Using Gut at the command line](https://github.com/bitwes/Gut/wiki/Command-Line) for more information.
 
-# Example
+## Example
 Given the following test script defined at `res://test/unit/some_example.gd`
 ```
 extends GutTest

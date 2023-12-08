@@ -1,3 +1,4 @@
+# Spies
 When a `double` is instanced, Gut will record calls to methods that are defined in the script or scripts it inherits from.  You can then make assertions to check if a method was called, not called, passed certain values, or how many times it was called.
 
 You should read the page on doubling before using this, as there are some gotchas with doubling.
@@ -8,7 +9,7 @@ The following methods can be used to "spy" on doubled objects:
 * `assert_call_count`
 * `get_call_parameters`
 
-#### <a name="assert_called">assert_called(inst, method_name, parameters=null)
+#### assert_called(inst, method_name, parameters=null)
 This assertion is is one of the ways Gut implements Spies.  It requires that you pass it an instance of a "doubled" object.  An instance created with `double` will record when a method it has is called.  You can then make assertions based on this.
 
 This assert will check the object to see if a call to the specified method (optionally with parameters) was called over the course of the test.  If it finds a match this test will `pass`, if not it will `fail`.
@@ -62,10 +63,10 @@ func test_assert_called():
 	# instance of a doubled class.
 	assert_called(GDScript.new(), 'some_method')
 ```
-#### <a name="asssert_not_called">assert_not_called(inst, method_name, parameters=null)
+#### assert_not_called(inst, method_name, parameters=null)
 This is the inverse of `assert_called` and works the same way except, you know, inversely.  Matches are found based on parameters in the same fashion.  If a matching call is found then this assert will `fail`, if not it will `pass`.
 
-#### <a name="assert_call_count">assert_call_count(inst, method_name, expected_count, parameters=null)
+#### assert_call_count(inst, method_name, expected_count, parameters=null)
 This assertion is is one of the ways Gut implements Spies.  It requires that you pass it an instance of a "doubled" object.  An instance created with `double` will record when a method it has is called.  You can then make assertions based on this.
 
 Asserts that a method on a doubled instance has been called a number of times.  If you do not specify any parameters then all calls to the method will be counted.  If you specify parameters, then only those calls that were passed matching values will be counted.

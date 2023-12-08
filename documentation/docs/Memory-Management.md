@@ -1,5 +1,4 @@
-
-# Overview
+# Memory Management
 You may have noticed errors similar to this at the end of your run:
 ```sh
 ERROR: ~List: Condition "_first != __null" is true.
@@ -23,7 +22,7 @@ Starting in 7.0.0 GUT also provides utilities for tracking down memory leaks and
 At the [bottom of the page](#memory_mgmt) is my attempt to describe how Godot does memory management.  If any of these sections seem confusing, read that part first.  The [Godot docs](https://docs.godotengine.org/en/stable/getting_started/scripting/gdscript/gdscript_basics.html#memory-management) have some infomration.  Also, here's a [tutorial](https://www.youtube.com/watch?v=cl2PxGkpJdo) on memory management I found.
 
 
-# GUT Orphan Count
+## GUT Orphan Count
 GUT, by default, will print a count of any orphans that are created by a test.  Depending on the log level these counts will appear after each test or may just appear after each script.  GUT counts the orphans before each test and warns when the value changes when a test is done.  These counts are summed up for each script as well and a grand total is printed at the end of the run.  You can disable this feature if you want to.
 
 Godot considers an object to be orphaned if it extends `Object` (but not `Reference`) and has not been added to the tree.  Godot provides the `print_stray_nodes` which will print a list of all nodes (and their children) that are not in the tree.  This information is a bit cryptic and can only be printed to the console and command line.  You can also use the `Performance` object to get a count of orphans at any particular time.
@@ -32,7 +31,7 @@ var count = Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT)
 ```
 
 
-# Freeing Test Objects
+## Freeing Test Objects
 Freeing up objects in your tests is tedious.  It adds additional lines of code that don't add anything to the test.  To aid in this GUT provides the `autofree` and `autoqfree` functions.  Anything passed to these methods will be freed up after the test runs.  These methods also `return` whatever is passed into them so you can chain them together to cut down on space.
 ```
 var Foo = load('res://foo.gd')
@@ -45,7 +44,7 @@ assert_null(autofree(Foo.new()).get_value(), 'default value is null')
 These functions can be used in a test or the `before_each` but should NOT be used in `before_all`.  If you create an object in `before_all` you must free it yourself in `after_all`.  Using either flavor of `autofree` in `before_all` will cause the object to be freed after the first test is run.
 
 
-# Using `add_child` in Tests
+## Using `add_child` in Tests
 When you call `add_child` from within a test the object is added as a child of the test script.  The test script is a child of the GUT gui.  Any child you add to a test will not be freed until the end of the test run.  GUT holds onto the test scripts until the end for summary inforation.  GUT will output a warning if a test script has children when it finishes running.
 
 It is best to free any children you add in a test in that same test.  GUT has two helper functions that will add the child and free the child after the test.  These are `add_child_autofree` and `add_child_autoqfree`.  These work the same way as `autofree` and `autoqfree` but take the additional step of calling `add_child`.  These methods also return whatever is passed to them so you can cut down on lines of code.
@@ -57,10 +56,10 @@ func test_foo():
 
 These functions can be used in a test or the `before_each` but should NOT be used in `before_all`.  If you have an object you want to add as a child in `before_all` you must free it yourself in `after_all`.  Using either flavor of `add_child_autofree` in `before_all` will cause the object to be freed after the first test is run.
 
-# Freeing Globals
+## Freeing Globals
 You can use a [post-run hook](Hooks#postrun) to clean up any global objects you have created.  If you are running your tests through a scene then you may have to recreate these objects if you want to be able to perform multiple test runs through the GUI.  You could use a [pre-run hook](Hooks#prerun) to do this, but it all starts getting messy at that point.
 
-# Automatically Freed Objects
+## Automatically Freed Objects
 To help with freeing up objects GUT will automatically free the following objects at the end of the test.
 * [Doubles](Doubles)
 * [Partial Doubles](Partial-Doubles)
@@ -68,7 +67,7 @@ To help with freeing up objects GUT will automatically free the following object
 Calling `autofree` with one of these objects, or manually freeing them yourself will not have any adverse effects.
 
 
-# <a name="testing_for_leaks">Testing for Leaks
+## Testing for Leaks
 GUT provides the `assert_no_new_orphans` method that will assert that the test has not created any new orphans.  Using this can be a little tricky in complicated test scripts.
 
 `assert_no_new_orphans` strictly validates that at the time it executes the count of of orphans found is the same as before the test was run.  The "before" count is taken prior to executing `before_each`.  It is recommended that these types of tests are done in an [Inner Test Class](Inner-Test-Classes) or standalone script where it is less likely that a `before_each` or `before_all` would introduce orphans causing false positives.
@@ -108,7 +107,7 @@ func test_no_orphans_queue_free();
 ```
 
 
-# <a name="memory_mgmt">Godot Memory Management
+## Godot Memory Management
 Godot treats `Object` and `Reference` instances differently for memory management.  The confusing part is that `Reference` extends `Object`.  Most of the time you don't have to worry about anything that extends `Reference`.  But if it extends `Object` (and not `Reference`) you must free it yourself or it, and all its parts, will stay around until you exit the game.
 
 #### Reference

@@ -1,6 +1,7 @@
+# Running on Devices
 You may find yourself wanting to run your tests on an Android or iOS device or you may want your testers to run the tests on their device.  To do this you will have to give the users access to the GUT instance through your GUI and you'll have to export your tests.  You can also enable file logging so that if running the tests causes a crash you can still get to the output from the run.
 
-# Godot 3.1+ Export As Text
+## Godot 3.1+ Export As Text
 In Godot 3.1 an old 2.x feature was reintroduced that allows you to export your scripts as text.  Normally Godot will compile your tests and GUT cannot parse compiled tests.  If you change the setting below then GUT will be able to find and parse all your tests when the project is exported.
 
 Just change the following setting in your exports settings form `compiled` to `text`
@@ -8,7 +9,7 @@ Just change the following setting in your exports settings form `compiled` to `t
 
 If you don't want to pass out your code in plain text or you are using Godot 3.0, then you can use the next section to export your tests.
 
-# Exporting Compiled/Encrypted/Godot 3.0 Tests
+## Exporting Compiled/Encrypted/Godot 3.0 Tests
 When you export your project, all the scripts get compiled and Gut cannot parse them anymore.  To address this Gut has some methods and settings that make it possible to run your tests on any device.
 
 Exporting is only supported through a scene since there is no built-in way to run the tests in your exported game via the command line.  To that end, you will have to have a scene in your game that has a Gut node (See the Setup section on the Install page).  I'm going to assume the node name is `$Gut`.
@@ -52,7 +53,7 @@ Gut also has methods that you can use to have full control over when and where y
 
 `export_tests` and `import_tests` will use any path you give them or the value set by `set_export_path` if no path is passed.
 
-## <a name="logging">Logging and Viewing Logs
+## Logging and Viewing Logs
 If you enable file logging in ProjectSettings->Logging->FileLogging then output will be put into the `user://logs` directory by default.  GUT has a built-in file viewer in the extra options button on the right of the dialog.  This allows you to view logs or any other user file from GUT.
 
 [[https://raw.githubusercontent.com/wiki/bitwes/Gut/images/view_user_files.png|alt=view_user_files]]

@@ -1,4 +1,4 @@
-# Overview
+# Hooks
 Pre-run and post-run hooks allow you to take any initialization steps or verify the results of the run.
 
 Hook scripts can be set through the editor, through a command line option or in the `.gutconfig.json` file.
@@ -14,7 +14,7 @@ GUT executes the `run()` method in  each of the Hook scripts.  Place your  custo
 
 
 
-# Setup
+## Setup
 Create scripts that inherit from `GutHookScript`, implement the `run()` method, and set their paths either through the editor, command line or  `.gutconfig.json`.
 
 #### Editor
@@ -26,7 +26,7 @@ The command line `-gpre_run_script` and `-gpost_run_script` options.  You can al
 
 
 
-# Features
+## Features
 The following features are available to scripts that inherit from `GutHookScript`.  Not all features are usable by all hooks.  Details below.
 * `gut` - the GUT instance running tests.
 * `abort()` - abort the test run.
@@ -49,7 +49,7 @@ The `set_exit_code(code)` method will set an exit code that will be used when ru
 
 
 
-# <a name="prerun"> Pre-Run Hook
+##  Pre-Run Hook
 The pre-run hook is run just before any tests are executed.  This can be useful in setting global variables or performing any setup required for all your tests.
 
 The post-run hook can access the pre-run hook instance via `gut.get_pre_run_script_instance()`.
@@ -64,7 +64,7 @@ The post-run hook can access the pre-run hook instance via `gut.get_pre_run_scri
 
 
 
-# <a name="postrun">Post-Run Hook
+## Post-Run Hook
 The post-run hook is run after all tests are run and all output has been generated.  The post-run hook can access the pre-run script instance (if one was specified) via `gut.get_pre_run_script_instance()`.
 
 The post-run hook could be useful in writing files used by CICD pipelines to verify the status fo the run.
@@ -72,7 +72,7 @@ The post-run hook could be useful in writing files used by CICD pipelines to ver
 
 
 
-# Summary Info
+## Summary Info
 GUT tracks the results of all the scripts and tests that are run.  There is a Summary object that you can access via the `gut` variable.  Using this information you can take actions in the post-run hook.
 
 Reading the documentation/code in [summary.gd](https://github.com/bitwes/Gut/blob/master/addons/gut/summary.gd) will get you the full details, but here are a few examples of how to get the summary data.

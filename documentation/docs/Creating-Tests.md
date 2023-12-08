@@ -1,22 +1,23 @@
 
-# <a name="creating_tests"> Making Tests
+# Creating Tests
 
-# Sample for Setup
+## Sample for Setup
 Here's a sample test script.  Copy the contents into the file `res://test/unit/test_example.gd` then run your scene.  If everything is setup correctly then you'll see some passing and failing tests.  If you don't have "Run on Load" checked in the editor, you'll have to hit the ">" button on the dialog window.
 
 ``` gdscript
 extends GutTest
-func before_each():
-	gut.p("ran setup", 2)
-
-func after_each():
-	gut.p("ran teardown", 2)
 
 func before_all():
-	gut.p("ran run setup", 2)
+	gut.p("Before All", 2)
+
+func before_each():
+	gut.p("Before Each", 2)
+
+func after_each():
+	gut.p("After Each", 2)
 
 func after_all():
-	gut.p("ran run teardown", 2)
+	gut.p("After All", 2)
 
 func test_assert_eq_number_not_equal():
 	assert_eq(1, 2, "Should fail.  1 != 2")
@@ -34,14 +35,14 @@ func test_something_else():
 	assert_true(false, "didn't work")
 ```
 
-# Creating tests
+## Test Script
 All test scripts must extend the test class.
 * `extends GutTest`
 
 Each test script has optional setup and teardown methods that you can provide an implementation for.  These are called by Gut at various stages of execution.  They take no parameters.
+ * `before_all()`:  Runs once before any test is ran.
  * `before_each()`:  Runs before each test.
  * `after_each()`:  Runs after each test.
- * `before_all()`:  Runs once before any test starts running.
  * `after_all()`:  Runs once after all tests finish running.
 
 All tests in the test script must start with the prefix `test_` in order for them to be run.  The methods must not have any parameters.
@@ -49,10 +50,10 @@ All tests in the test script must start with the prefix `test_` in order for the
 
 Each test should perform at least one assert or call `pending` to indicate the test hasn't been implemented yet.
 
-A list of all `asserts` and other helper functions available in your test script can be found in [Methods](https://github.com/bitwes/Gut/wiki/Methods).  There's also some helpful methods in the Gut object itself.  They are listed in [Gut Settings and Methods](https://github.com/bitwes/Gut/wiki/Gut-Settings-And-Methods)
+A list of all `asserts` and other helper functions available in your test script can be found in [Methods](Asserts-And-Methods).  There's also some helpful methods in the Gut object itself.  They are listed in [Gut Settings and Methods](Gut-Settings-And-Methods)
 
-# Inner Test Classes
-You can group tests together using Inner Classes. These classes must start with the prefix `'Test'` (this is configurable) and they must also extend `GutTest`.  You cannot create Inner Test Classes inside Inner Test Classes.  More info can be found at [Inner Test Classes](https://github.com/bitwes/Gut/wiki/Inner-Test-Classes).
+## Inner Test Classes
+You can group tests together using Inner Classes. These classes must start with the prefix `'Test'` (this is configurable) and they must also extend `GutTest`.  You cannot create Inner Test Classes inside Inner Test Classes.  More info can be found at [Inner Test Classes](Inner-Test-Classes).
 
 ## Simple Example
 ```
@@ -82,7 +83,7 @@ class TestFeatureB:
 	func test_foobar():
 		assert_eq(_obj.foo(), 'bar', 'Foo should return bar')
 ```
-# Where to next?
+## Where to next?
 * [Gut Settings and Methods](https://github.com/bitwes/Gut/wiki/Gut-Settings-And-Methods)
 * [Inner Test Classes](https://github.com/bitwes/Gut/wiki/Inner-Test-Classes)
 * [Methods](https://github.com/bitwes/Gut/wiki/Methods)

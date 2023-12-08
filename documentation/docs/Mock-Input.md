@@ -1,4 +1,6 @@
-# Input Sender
+# Mock Input
+
+## Input Sender
 The `InputSender` class can be used to send `InputEvent*` events to various objects.  It also allows you to script out a series of inputs and play them back in real time.  You could use it to:
 * Verify that jump height depends on how long the jump button is pressed.
 * Double tap a direction performs a dash.
@@ -6,7 +8,7 @@ The `InputSender` class can be used to send `InputEvent*` events to various obje
 
 And much much more.
 
-# Methods
+## Methods
 |
 [add_receiver](#add_receiver)|
 [get_receivers](#get_receivers)|
@@ -21,7 +23,7 @@ And much much more.
 [set_auto_flush_input](#set_auto_flush_input)|
 [get_auto_flush_input](#get_auto_flush_input)|
 
-# Sending InputEvents
+## Sending InputEvents
 |
 [send_event](#send_event)|
 [action_down](#action_down)|
@@ -37,11 +39,11 @@ And much much more.
 [mouse_right_button_down](#mouse_right_button_down)|
 [mouse_right_button_up](#mouse_right_button_up)|
 
-# Signals
+## Signals
 * `idle` - Emitted when all events in the input queue have been sent.
 
 
-# Usage
+## Usage
 The `InputSender` class operates on one or more receivers.  It will create and send `InputEvent` instances to all of its receivers.
 
 There are two ways you could be processing your input.  You could be using the `_input` events to receive input events and process them.  The other way is to interact with the `Input` global and detect input in the `_process` and `_physics_process` methods.  `InputSender` works with both approaches, but using `InputSender` differs for each approach.  Read the sections below to learn the best way to use `InputSender` with your game.
@@ -130,7 +132,7 @@ yield(sender, 'idle')
 ```
 
 
-# Examples
+## Examples
 These are examples of scripting out inputs and sending them to `Input`.  The `Player` class in these examples would be handling input in `_process` or `_process_physics`.
 
 ``` gdscript
@@ -204,7 +206,7 @@ func test_holding_down_and_jump_does_slide():
 ```
 
 
-# Gotchas
+## Gotchas
 * When using `Input` as a receiver, everything in the tree gets the signals AND any actual inputs from hardware will be sent as well.  It's best not to touch anything when running these tests.
 * If you use a class level `InputSender` and forget to call `release_all` and `clear` between tests then things will eventually start behaving weird and your tests will pass/fail in unpredictable ways.
 
@@ -271,7 +273,7 @@ func test_when_uai_enabled_flushing_buffer_just_pressed_is_processed_immediately
 ```
 
 
-# Functions
+## Functions
 __<a name="new">new(receiver=null)</a>__<br/>
 The optional receiver will be added to the list of recievers.
 
@@ -317,7 +319,7 @@ Enable/Disable auto flusing of input.  When enabled the `InputSender` will call 
 __<a name="get_auto_flush_input">get_auto_flush_input()</a>__<br/>
 Get it.
 
-# Sending InputEvents
+## Sending InputEvents
 __<a name="send_event">send_event(event)</a>__<br/>
 Create your own event and use this to send it to all receivers.
 
