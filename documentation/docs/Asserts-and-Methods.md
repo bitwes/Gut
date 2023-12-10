@@ -1,36 +1,10 @@
 # Asserts and Methods
-<div class="warning">This page has not been <b>completely</b> updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
+
+<div class="gutwarning">This page has not been <b>completely</b> updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
+
 These are all the methods, bells, whistles and blinky lights you get when you extend the Gut Test Class (`extends GutTest`).
 
 All sample code listed for the methods can be found here in [test_readme_examples.gd](https://github.com/bitwes/Gut/blob/master/test/samples/test_readme_examples.gd)
-
-## Utilities
-|
-[add_child_autofree](#add_child_autofree)|
-[add_child_autoqfree](#add_child_autoqfree)|
-[autofree](#autofree)|
-[autoqfree](#autoqfree)|
-[compare_deep](#compare_deep) |
-[compare_shallow](#compare_shallow) |
-[double](#double) |
-[get_call_count](#get_call_count) |
-[get_call_parameters](#get_call_parameters) |
-[get_non_matching_array_indexes](#get_non_matching_array_indexes) |
-[get_signal_emit_count](#get_signal_emit_count) |
-[get_signal_parameters](#get_signal_parameters) |
-[ignore_method_when_doubling](#ignore_method_when_doubling) |
-[is_failing](#is_failing) |
-[is_passing](#is_passing) |
-[pause_before_teardown](#pause_before_teardown) |
-[pending](#pending) |
-[replace_node](#replace_node) |
-[simulate](#simulate) |
-[stub](#stub) |
-[wait_for_signal](#wait_for_signal) |
-[wait_frames](#wait_frames) |
-[wait_seconds](#wait_seconds) |
-[watch_signals](#watch_signals) |
-
 
 ## Gut Utilities
 These methods exist on the GUT instance, and not in `test.gd`.  They must all be prefixed with `gut`.
@@ -43,51 +17,6 @@ These methods exist on the GUT instance, and not in `test.gd`.  They must all be
 [gut.p](#gut_p) |
 
 ## Assertions
-<!-- Almost alphabetical list, "not" asserts are listed after their counterparts -->
-<!-- 1 assert per line unless there is a "not" version for easy sorting -->
-|
-[assert_accessors](#assert_accessors) |
-[assert_almost_eq](#assert_almost_eq) | [assert_almost_ne](#assert_almost_ne) |
-[assert_between](#assert_between) | [assert_not_between](#assert_not_between) |
-[assert_call_count](#assert_call_count) |
-[assert_called](#assert_called) | [assert_not_called](#assert_not_called) |
-[assert_connected](#assert_connected) |
-[assert_eq (equal)](#assert_eq) | [assert_ne (not equal)](#assert_ne) |
-[assert_eq_deep](#assert_eq_deep) | [assert_ne_deep](#assert_ne_deep) |
-[assert_eq_shallow](#assert_eq_shallow) | [assert_ne_shallow](#assert_ne_shallow) |
-[assert_exports](#assert_exports) |
-[assert_false](#assert_false) |
-[assert_file_does_not_exist](#assert_file_does_not_exist) |
-[assert_file_empty](#assert_file_empty) |
-[assert_file_exists](#assert_file_exists) |
-[assert_file_not_empty](#assert_file_not_empty) |
-[assert_freed](#assert_freed) | [assert_not_freed](#assert_not_freed) |
-[assert_gt (greater than)](#assert_gt) |
-[assert_has_method](#assert_has_method) |
-[assert_has_signal](#assert_has_signal) |
-[assert_has](#assert_has) | [assert_does_not_have](#assert_does_not_have) |
-[assert_is](#assert_is) |
-[assert_lt (less than)](#assert_lt) |
-[assert_no_new_orpahns](#assert_no_new_orphans)|
-[assert_not_connected](#assert_not_connected) |
-[assert_null](#assert_null) | [assert_not_null](#assert_not_null) |
-[assert_property](#assert_property) |
-[assert_setget_called](#assert_setget_called) |
-[assert_setget](#assert_setget) |
-[assert_signal_emit_count](#assert_signal_emit_count) |
-[assert_signal_emitted_with_parameters](#assert_signal_emitted_with_parameters) |
-[assert_signal_emitted](#assert_signal_emitted) |
-[assert_signal_not_emitted](#assert_signal_not_emitted) |
-[assert_string_contains](#assert_string_contains) |
-[assert_string_ends_with](#assert_string_ends_with) |
-[assert_string_starts_with](#assert_string_starts_with) |
-[assert_true](#assert_true) |
-[assert_typeof](#assert_typeof) | [assert_not_typeof](#assert_not_typeof)|
-[fail_test](#fail_test) |
-[pass_test](#pass_test) |
-
-
-
 
 #### <a name="pass_test">pass_test(text) </a>
 Useful when you don't have anything meaningful to assert.  Any failing asserts within the test will override this.
@@ -994,147 +923,6 @@ Marks an object so that `queue_free` will be called on it after the test finishe
 #### <a name="assert_no_new_orphans">assert_no_new_orphans(text='') </a>
 This method will assert that no orphaned nodes have been introduced by the test when the assert is executed.  See the [Memory Management](Memory-Management#testing_for_leaks) page for more information.
 
-#### <a name="gut_p"> gut.p(text, level=0) </a>
-Print info to the GUI and console (if enabled).  You can see examples if this in the sample code above.  In order to be able to spot check the sample code, I print out a divider between the passing and failing tests.
-
-#### <a name="pause_before_teardown"> pause_before_teardown() </a>
-This method will cause Gut to pause before it moves on to the next test.  This is useful for debugging, for instance if you want to investigate the screen or anything else after a test has finished executing.  See also `set_ignore_pause_before_teardown`
-
-#### <a name="wait_seconds"> wait_seconds(time, msg='') </a>
-See [Awaiting](Awaiting)
-
-
-#### <a name="wait_seconds"> wait_frames(frames, msg='') </a>
-See [Awaiting](Awaiting)
-
-
-#### <a name="wait_for_signal"> wait_for_signal(sig, max_wait, msg='') </a>
-See [Awaiting](Awaiting)
-
-
-#### <a name="double"> double(path_or_class, inner_class_path=null) </a>
-This will return a double of a class.  See [Doubles](Doubles) for more information.
-
-
-#### <a name="simulate"> simulate(obj, times, delta) </a>
-This will call `_process` or `_physics_process` on the passed in object and all children of the object.  It will call them `times` times and pass in `delta` to each call.  See [Simulate](Simulate) for more information.
-
-#### <a name="stub"> stub(...) </a>
-Allows you to stub a [doubled](Doubles) instance of a script or scene to return a value.  See [Stubbing](Stubbing) for a list of parameters and instructions on Stubbing.
-
-#### <a name="ignore_method_when_doubling"> ignore_method_when_doubling(path_or_class, method_name) </a>
-This was implemented to allow the doubling of classes with static methods.  There might be other valid use cases for this method, but you should always try stubbing before using this method.  Using `stub(my_double, 'method').to_call_super()` or  creating a `partial_double` works for any other known scenario.  You cannot stub or spy on methods passed to `ignore_method_when_doubling`.
-
-This method will add a method for a script to an ignore list.  This means the method will not be included in the double.  This is required if you are attempting to double a class that has static methods.  Each of the static methods must be added to the ignore list or you will get a parser error similar to:
-```
-Parser Error: Function signature doesn't match the parent. Parent signature is: 'Variant foo()'.
-```
-
-`ignore_method_when_doubling` takes two parameters.  The first parameter can be a path to a script, a path to a scene, a loaded script, or a loaded scene.  The second is the name of the method to ignore.
-
-``` gdscript
-# -----------------------------------------------
-# Given this as res://scripts/has_statics.gd
-# -----------------------------------------------
-static func this_is_static():
-  pass
-
-func not_static():
-  return 'foo'
-
-# -----------------------------------------------
-# You can double this script like this:
-# -----------------------------------------------
-func test_can_double_classes_with_statics_if_ignored():
-  ignore_method_when_doubling('res://scripts/has_statics.gd', 'this_is_static')
-  var d_has_statics = double('res://scripts/has_statics.gd').new()
-  assert_not_null(d_has_statics)
-
-func test_can_use_loaded_scripts_to_ignore_statics():
-  var HasStatics = load('res://scripts/has_statics.gd')
-  ignore_method_when_doubling(HasStatics, 'this_is_static')
-  var d_has_statics = double(HasStatics).new()
-  assert_not_null(d_has_statics)
-
-func test_cannot_spy_or_stub_ignored_methods():
-  var HasStatics = load('res://scripts/has_statics.gd')
-  ignore_method_when_doubling(HasStatics, 'this_is_static')
-  ignore_method_when_doubling(HasStatics, 'not_static')
-
-  var d_has_statics = double(HasStatics).new()
-  # This stub will not be used since the method was ignored
-  stub(d_has_statics, 'not_static').to_return('bar')
-  var result = d_has_statics.not_static()
-
-  assert_eq(result, 'foo', 'not stubbed so "foo" will be returned')
-  # this will pass, even though the method was called,
-  # because you cannot spy on ignored methods.
-  assert_not_called(d_has_statics, 'not_static')
-```
-
-#### <a name="replace_node"> replace_node(base_node, path_or_node, with_this) </a>
-Replaces the child node of base_node with `with_this`.  You can pass a path to a node or a child node of base_node.  `with_this` will get all groups that the replaced node had.  `with_this` also gets the same "name" that the replaced node had so that any references to it via `$` will work.  The replaced node is freed via `queue_free`.
-
-This is useful when you want to double a node in another node.  Your code might be referencing the node via a call to `get_node` or might be using the `$` syntax to get to the object.  `replace_node` allows you to replace a node in another node and retain all of your `get_node` and `$` references.
-
-This will only work for references to the node are made __after__ `replace_node` has been called.  If your object has a local variable that points to the node that gets replaced and:
-* it was set on `_init`
-* or it was set in `_ready` or via an `onready` variable, and the base object has already been added to the tree
-
-then these variables will point to the old object (which gets freed after the call to `replace_node`).
-
-```gdscript
-func test_replace_node():
-	# This scene has:
-	# Node2D
-	#   - Label
-	#   - MyPanel
-	#     - MyButton
-	#
-	# And code:
-	#
-	# double_me_scene.gd:
-	# extends Node2D
-	#
-	# onready var label = get_node('Label')
-	#
-	# func return_hello():
-	# 	return 'hello'
-	#
-	# func set_label_text(text):
-	# 	$Label.set_text(text)
-	#
-	# func get_button():
-	# 	return $MyPanel/MyButton
-	var DOUBLE_ME_SCENE = 'res://test/resources/doubler_test_objects/double_me_scene.tscn'
-
-	var scene = load(DOUBLE_ME_SCENE).instance()
-	add_child_autofree(scene)
-	var replace_label = Label.new()
-	replace_node(scene, 'Label', replace_label)
-
-	# Passing
-	scene.set_label_text('asdf')
-	assert_eq(replace_label.get_text(), 'asdf',
-	  "Since set_label_text references the label using $ this will point to the new one.")
-
-	var replace_button = Button.new()
-	replace_node(scene, 'MyPanel/MyButton', replace_button)
-	assert_eq(scene.get_button(), replace_button,
-	  'Get button uses $ so this will work.')
-
-	# Failing
-	assert_eq(scene.label, replace_label,
-	  'The variable "label" was set as onready so it will not be updated')
-```
-
-[Comparing Things](Comparing-Things)
-#### <a name="compare_shallow"> compare_shallow(v1, v2, max_differences=30) </a>
-Performs a shallow comparison between two arrays or dictionaries.  A `CompareResult` object is returned.   See [Comparing Things](Comparing-Things) for more information and examples.
-
-#### <a name="compare_deep"> compare_deep(v1, v2, max_differences=30) </a>
-Performs a deep comparison between two arrays or dictionaries.  A `CompareResult` object is returned.   See [Comparing Things](Comparing-Things) for more information and examples.
-
 #### <a name="assert_eq_deep"> assert_eq_deep(v1, v2) </a>
 Performs a deep comparison between two arrays or dictionaries and asserts they are equal.  If they are not equal then a formatted list of differences are displayed.  See [Comparing Things](Comparing-Things) for more information.
 ```gdscript
@@ -1385,3 +1173,157 @@ gut.p('-- failing --')
 assert_setget(HealthBar, 'label') # FAIL => setter or getter has to be specified
 assert_setget(HealthBar, 'label', true) # FAIL => setter does not exist
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+## Utilities
+
+#### <a name="pause_before_teardown">
+#### <a name="gut_p"> gut.p(text, level=0) </a>
+Print info to the GUI and console (if enabled).  You can see examples if this in the sample code above.  In order to be able to spot check the sample code, I print out a divider between the passing and failing tests.
+pause_before_teardown() </a>
+This method will cause Gut to pause before it moves on to the next test.  This is useful for debugging, for instance if you want to investigate the screen or anything else after a test has finished executing.  See also `set_ignore_pause_before_teardown`
+
+#### <a name="wait_seconds"> wait_seconds(time, msg='') </a>
+See [Awaiting](Awaiting)
+
+
+#### <a name="wait_seconds"> wait_frames(frames, msg='') </a>
+See [Awaiting](Awaiting)
+
+
+#### <a name="wait_for_signal"> wait_for_signal(sig, max_wait, msg='') </a>
+See [Awaiting](Awaiting)
+
+
+#### <a name="double"> double(path_or_class, inner_class_path=null) </a>
+This will return a double of a class.  See [Doubles](Doubles) for more information.
+
+
+#### <a name="simulate"> simulate(obj, times, delta) </a>
+This will call `_process` or `_physics_process` on the passed in object and all children of the object.  It will call them `times` times and pass in `delta` to each call.  See [Simulate](Simulate) for more information.
+
+#### <a name="stub"> stub(...) </a>
+Allows you to stub a [doubled](Doubles) instance of a script or scene to return a value.  See [Stubbing](Stubbing) for a list of parameters and instructions on Stubbing.
+
+#### <a name="ignore_method_when_doubling"> ignore_method_when_doubling(path_or_class, method_name) </a>
+This was implemented to allow the doubling of classes with static methods.  There might be other valid use cases for this method, but you should always try stubbing before using this method.  Using `stub(my_double, 'method').to_call_super()` or  creating a `partial_double` works for any other known scenario.  You cannot stub or spy on methods passed to `ignore_method_when_doubling`.
+
+This method will add a method for a script to an ignore list.  This means the method will not be included in the double.  This is required if you are attempting to double a class that has static methods.  Each of the static methods must be added to the ignore list or you will get a parser error similar to:
+```
+Parser Error: Function signature doesn't match the parent. Parent signature is: 'Variant foo()'.
+```
+
+`ignore_method_when_doubling` takes two parameters.  The first parameter can be a path to a script, a path to a scene, a loaded script, or a loaded scene.  The second is the name of the method to ignore.
+
+``` gdscript
+# -----------------------------------------------
+# Given this as res://scripts/has_statics.gd
+# -----------------------------------------------
+static func this_is_static():
+  pass
+
+func not_static():
+  return 'foo'
+
+# -----------------------------------------------
+# You can double this script like this:
+# -----------------------------------------------
+func test_can_double_classes_with_statics_if_ignored():
+  ignore_method_when_doubling('res://scripts/has_statics.gd', 'this_is_static')
+  var d_has_statics = double('res://scripts/has_statics.gd').new()
+  assert_not_null(d_has_statics)
+
+func test_can_use_loaded_scripts_to_ignore_statics():
+  var HasStatics = load('res://scripts/has_statics.gd')
+  ignore_method_when_doubling(HasStatics, 'this_is_static')
+  var d_has_statics = double(HasStatics).new()
+  assert_not_null(d_has_statics)
+
+func test_cannot_spy_or_stub_ignored_methods():
+  var HasStatics = load('res://scripts/has_statics.gd')
+  ignore_method_when_doubling(HasStatics, 'this_is_static')
+  ignore_method_when_doubling(HasStatics, 'not_static')
+
+  var d_has_statics = double(HasStatics).new()
+  # This stub will not be used since the method was ignored
+  stub(d_has_statics, 'not_static').to_return('bar')
+  var result = d_has_statics.not_static()
+
+  assert_eq(result, 'foo', 'not stubbed so "foo" will be returned')
+  # this will pass, even though the method was called,
+  # because you cannot spy on ignored methods.
+  assert_not_called(d_has_statics, 'not_static')
+```
+
+#### <a name="replace_node"> replace_node(base_node, path_or_node, with_this) </a>
+Replaces the child node of base_node with `with_this`.  You can pass a path to a node or a child node of base_node.  `with_this` will get all groups that the replaced node had.  `with_this` also gets the same "name" that the replaced node had so that any references to it via `$` will work.  The replaced node is freed via `queue_free`.
+
+This is useful when you want to double a node in another node.  Your code might be referencing the node via a call to `get_node` or might be using the `$` syntax to get to the object.  `replace_node` allows you to replace a node in another node and retain all of your `get_node` and `$` references.
+
+This will only work for references to the node are made __after__ `replace_node` has been called.  If your object has a local variable that points to the node that gets replaced and:
+* it was set on `_init`
+* or it was set in `_ready` or via an `onready` variable, and the base object has already been added to the tree
+
+then these variables will point to the old object (which gets freed after the call to `replace_node`).
+
+```gdscript
+func test_replace_node():
+	# This scene has:
+	# Node2D
+	#   - Label
+	#   - MyPanel
+	#     - MyButton
+	#
+	# And code:
+	#
+	# double_me_scene.gd:
+	# extends Node2D
+	#
+	# onready var label = get_node('Label')
+	#
+	# func return_hello():
+	# 	return 'hello'
+	#
+	# func set_label_text(text):
+	# 	$Label.set_text(text)
+	#
+	# func get_button():
+	# 	return $MyPanel/MyButton
+	var DOUBLE_ME_SCENE = 'res://test/resources/doubler_test_objects/double_me_scene.tscn'
+
+	var scene = load(DOUBLE_ME_SCENE).instance()
+	add_child_autofree(scene)
+	var replace_label = Label.new()
+	replace_node(scene, 'Label', replace_label)
+
+	# Passing
+	scene.set_label_text('asdf')
+	assert_eq(replace_label.get_text(), 'asdf',
+	  "Since set_label_text references the label using $ this will point to the new one.")
+
+	var replace_button = Button.new()
+	replace_node(scene, 'MyPanel/MyButton', replace_button)
+	assert_eq(scene.get_button(), replace_button,
+	  'Get button uses $ so this will work.')
+
+	# Failing
+	assert_eq(scene.label, replace_label,
+	  'The variable "label" was set as onready so it will not be updated')
+```
+
+[Comparing Things](Comparing-Things)
+#### <a name="compare_shallow"> compare_shallow(v1, v2, max_differences=30) </a>
+Performs a shallow comparison between two arrays or dictionaries.  A `CompareResult` object is returned.   See [Comparing Things](Comparing-Things) for more information and examples.
+
+#### <a name="compare_deep"> compare_deep(v1, v2, max_differences=30) </a>
+Performs a deep comparison between two arrays or dictionaries.  A `CompareResult` object is returned.   See [Comparing Things](Comparing-Things) for more information and examples.

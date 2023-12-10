@@ -1765,7 +1765,7 @@ p + .classref-constant {
 }
 
 
-.warning{
+.gutwarning{
     background-color: rgb(115, 52, 0);
     text-align: center;
     font-size: large;

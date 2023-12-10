@@ -1,6 +1,6 @@
 # Comparing Things
 
-<div class="warning">This page has not been updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
+<div class="gutwarning">This page has not been updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
 
 ## Overview
 Comparing values with GUT's asserts works the way you would expect it to in most cases.  Arrays and dictionaries are a little more complicated.  The following methods can help with this:

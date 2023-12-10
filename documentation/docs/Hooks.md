@@ -1,5 +1,5 @@
 # Hooks
-<div class="warning">This page has not been updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
+<div class="gutwarning">This page has not been updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
 # Overview
 Pre-run and post-run hooks allow you to take any initialization steps or verify the results of the run.
 
