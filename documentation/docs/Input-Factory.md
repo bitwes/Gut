@@ -1,5 +1,4 @@
 
-# <div class="warning">This page has not been updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
 # InputFactory
 This static class is available when extending `GutTest`.  The methods in this class are simple wrappers to make it a little easier to create instances of the various `InputEvent*` classes.
 

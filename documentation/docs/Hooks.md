@@ -1,4 +1,5 @@
-# <div class="warning">This page has not been updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
+# Hooks
+<div class="warning">This page has not been updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
 # Overview
 Pre-run and post-run hooks allow you to take any initialization steps or verify the results of the run.
 
@@ -15,19 +16,19 @@ GUT executes the `run()` method in  each of the Hook scripts.  Place your  custo
 
 
 
-# Setup
+## Setup
 Create scripts that inherit from `GutHookScript`, implement the `run()` method, and set their paths either through the editor, command line or  `.gutconfig.json`.
 
-#### Editor
+### Editor
 The GUT node has `pre_run_script` and `post_run_script` properties to set the path to your Hook scripts.
 
-#### Command Line
+### Command Line
 The command line `-gpre_run_script` and `-gpost_run_script` options.  You can also specify `pre_run_script` and `post_run_script` in the `.gutconfig.json` file.
 
 
 
 
-# Features
+## Features
 The following features are available to scripts that inherit from `GutHookScript`.  Not all features are usable by all hooks.  Details below.
 * `gut` - the GUT instance running tests.
 * `abort()` - abort the test run.
@@ -48,7 +49,7 @@ The `set_exit_code(code)` method will set an exit code that will be used when ru
 
 
 
-# <a name="prerun"> Pre-Run Hook
+## Pre-Run Hook
 The pre-run hook is run just before any tests are executed.  This can be useful in setting global variables or performing any setup required for all your tests.
 
 The post-run hook can access the pre-run hook instance via `gut.get_pre_run_script_instance()`.
@@ -63,7 +64,7 @@ The post-run hook can access the pre-run hook instance via `gut.get_pre_run_scri
 
 
 
-# <a name="postrun">Post-Run Hook
+## Post-Run Hook
 The post-run hook is run after all tests are run and all output has been generated.  The post-run hook can access the pre-run script instance (if one was specified) via `gut.get_pre_run_script_instance()`.
 
 The post-run hook could be useful in writing files used by CICD pipelines to verify the status of the run.
@@ -71,7 +72,7 @@ The post-run hook could be useful in writing files used by CICD pipelines to ver
 
 
 
-# Summary Info
+## Summary Info
 GUT tracks the results of all the scripts and tests that are run.  There is a Summary object that you can access via the `gut` variable.  Using this information you can take actions in the post-run hook.
 
 Reading the documentation/code in [summary.gd](https://github.com/bitwes/Gut/blob/master/addons/gut/summary.gd) will get you the full details, but here are a few examples of how to get the summary data.

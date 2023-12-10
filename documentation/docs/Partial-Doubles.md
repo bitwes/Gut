@@ -1,4 +1,5 @@
-# <div class="warning">This page has not been updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
+# Partial Doubles
+
 A partial double is basically the inverse of a doubled object.  It creates an object that acts exactly the same way as its source but has hooks that allows us to stub or spy on any method.
 
 The `partial_double` method will create a partial double "class" which you can instance.  You can partially double scripts, packed scenes, and inner classes.  It works the same way as `double` works, so read up on that and then apply all that new knowledge to `partial_double`.

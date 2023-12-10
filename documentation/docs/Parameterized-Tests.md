@@ -1,8 +1,9 @@
+# Parameterized Tests
 There are some scenarios where it is desirable to run a test numerous times with different parameters.  You can do this in GUT by creating a test that has a single parameter that is defaulted to the GUT method `use_parameters`.
 
 `use_parameters` expects and array.  The test will be called once for each element in the array, passing the value of each element to the parameter of the function.
 
-# Requirements:
+## Requirements:
 * The test must have one and only one parameter.
 * The parameter must be defaulted to call `use_parameters`.
 * You must pass an array to `use_parameters`.  The test will be called once for each element in the array.
@@ -10,7 +11,7 @@ There are some scenarios where it is desirable to run a test numerous times with
 * If `use_parameters` is not called then GUT will only run the test once and will generate an error.
 
 
-# Example
+## Example
 
 ``` gdscript
 extends GutTest
@@ -36,7 +37,7 @@ Running this test will result in:
 * One passing test (`1 + 2 = 3`)
 * One failing test (`'a' + 'b'  != 'c'`, it actually equals `'ab'`)
 
-# ParameterFactory
+## ParameterFactory
 `GutTest` scripts have access to the `ParameterFactory` static class which has helper methods for defining parameters for parameterized tests.
 
 ### `named_parameters(names, values)`

@@ -1,3 +1,4 @@
+# Simulate
 ```
 gut.simulate(obj, times, delta, check_is_processing: bool = false):
 ```
@@ -71,5 +72,5 @@ func test_does_something_each_loop():
 
 ```
 
-# Where to next?
+## Where to next?
 * [Awaiting](Awaiting)<br/>

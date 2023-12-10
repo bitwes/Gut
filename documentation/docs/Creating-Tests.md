@@ -1,4 +1,6 @@
+# Creating Tests
 
+## Quick Sample
 Here's a sample test script.  Copy the contents into the file `res://test/unit/test_example.gd` then run the script.  If everything is setup correctly then you'll see some passing and failing tests.
 
 ``` gdscript
@@ -31,7 +33,7 @@ func test_something_else():
 	assert_true(false, "didn't work")
 ```
 
-# Creating tests
+## Details
 All test scripts must extend the test class.
 * `extends GutTest`
 
@@ -49,10 +51,10 @@ Each test should perform at least one assert or call `pending`, `pass_test` or `
 A list of all `asserts` and other helper functions available in your test script can be found in [Asserts and Methods](Asserts-and-Methods).
 
 
-# Inner Test Classes
+## Inner Test Classes
 You can group tests together using Inner Classes. These classes must start with the prefix `'Test'` (this is configurable) and they must also extend `GutTest`.  You cannot create Inner Test Classes inside Inner Test Classes.  More info can be found at [Inner Test Classes](Inner-Test-Classes).
 
-## Simple Example
+### Simple Example
 ```
 extends GutTest
 
@@ -80,7 +82,7 @@ class TestFeatureB:
 	func test_foobar():
 		assert_eq(_obj.foo(), 'bar', 'Foo should return bar')
 ```
-# Where to next?
+## Where to next?
 * [Asserts and Methods](Asserts-and-Methods)
 * [Inner Test Classes](Inner-Test-Classes)
 * [Command Line](Command-Line)

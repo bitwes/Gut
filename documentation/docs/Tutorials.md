@@ -1,6 +1,7 @@
+# Tutorials
 Here's a list of known tutorials.
 
-# [Butch Teaches Typing](https://www.youtube.com/channel/UCkGO6guRt_5fOh3oDHbfg9w)
+## [Butch Teaches Typing](https://www.youtube.com/channel/UCkGO6guRt_5fOh3oDHbfg9w)
 All "Butch Teaches Typing" code can be found [here](https://github.com/bitwes/GutTutorials)
 * [Command Line Setup](https://www.youtube.com/watch?v=DZ7NVJOpemg&t=9s) Starts with an empty project and installs GUT, creates tests, and covers a bunch of command line options all without ever launching the Godot editor.
 * [TDD and PONG Episode 1](https://www.youtube.com/watch?v=nF2gPF69Dc4&t=3s) First in a series of videos implementing Pong using a TDD approach.  Starts with an empty project and implements the Ball.

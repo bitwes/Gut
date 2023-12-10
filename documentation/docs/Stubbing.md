@@ -1,19 +1,11 @@
-##### Table of Contents
-* [Syntax](#syntax)
-* [Stubbing based off of parameter values](#stubbing-based-off-of-parameter-values)
-* [Stubbing Packed Scenes](#stubbing-packed-scenes)
-* [Stubbing Method Parameter Defaults](#stubbing-method-parameter-defaults)
-* [Stubbing Method Parameter Count](#stubbing-method-parameter-count)
-* [Stubbing Accessors](#stubbing-accessors)
----
-
+# Stubbing
 
 The `stub` function allows you to set return values for methods for a doubled script or instance.  You can stub any doubled class to return values.  Stubs can be layered to address general and specific situations.
 
 You can also use `stub` to set default parameter values and change the parameter count for a method.
 
 
-# Syntax
+## Syntax
 ```gdscript
 var MyScript = load('res://my_script.gd')
 var inst = double(MyScript).new()
@@ -88,7 +80,7 @@ stub(stub_again, 'returns_seven').to_return('words')
 assert_eq(stub_again.returns_seven(), 'words')
 ```
 
-# Stubbing based off of parameter values
+## Stubbing based off of parameter values
 You can stub a method to return a specific value based on what was passed in.
 ```gdscript
 var DoubleThis = load('res://scripts/double_this.gd')
@@ -101,12 +93,12 @@ assert_eq(inst.return_hello('hello'), 'world')
 ```
 The ordering of `when_passed` and `to_return` does not matter.
 
-# Stubbing Packed Scenes
+## Stubbing Packed Scenes
 When stubbing doubled scenes, use the path to the scene, __not__ the path to the scene's script.  If you double and stub the script used by the scene, the `instance` you make from `double_scene` will not return values stubbed for the script.  It will only return values stubbed for the scene.
 
 In order for a scene to be doubled, the scene's script must be able to be instantiated with `new` with zero parameters passed.
 
-## Example
+### Example
 Given the script `res://the_script.gd`:
 ``` gdscript
 func return_hello():
@@ -124,7 +116,7 @@ func test_illustrate_stubbing_scenes():
   assert_eq(doubled_scene.return_hello(), 'world')
 ```
 
-# Stubbing Method Parameter Defaults
+## Stubbing Method Parameter Defaults
 Godot only provides information about default values for built in methods so Gut doesn't know what any default values are for methods you have created.  Since it can't know, Gut defaults all parameters to `null`.  This can cause issues in specific cases (probably all involving calling super).  You can use `.param_defaults` to specify default values to be used.
 
 Here's an example where things go wrong
@@ -157,7 +149,7 @@ The fix is to add a `param_defaults` stub
 stub(dbl_foo, 'increment').param_defaults([1])
 ```
 
-# Stubbing Method Parameter Count
+## Stubbing Method Parameter Count
 <u>__Changing the number of parameters must be done before `double` is called__</u>
 
 Some built-in methods  have `vararg` parameters.  This makes the parameter list dynamic.  Godot does not provide this information.  This can cause errors due to a signature mismatch.  Your code might be calling a method using 10 parameter values but Gut only sees two.
@@ -193,7 +185,7 @@ func test_issue_246_rpc_id_varargs_with_defaults():
 You cannot make a method have less parameters, only more.
 
 
-# Stubbing Accessors
+## Stubbing Accessors
 It is not possible to stub the accessors for properties if you do not use a secondary method for the accessors.  This means that doubles retain the functionality of the accessors, and it cannot be changed.
 ``` gdscript
 # The get and set for my_property cannot be stubbed.  Doubles retain the

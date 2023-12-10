@@ -1,3 +1,4 @@
+# Doubles
 If you aren't sure what a Double is, check out https://en.wikipedia.org/wiki/Test_double.
 
 The `double` method accepts a loaded script or scene and returns a class based on the loaded script or scene passed to it.  The returned class/scene wraps the source and the methods defined will not execute the code defined in them.  These doubles can then be [stubbed](Stubbing) and [spied on](Spies) in tests.  You can also create [Partial Doubles](Partial-Doubles) which retain their functionality by default.
@@ -24,7 +25,7 @@ _process        _set
 ```
 
 
-# Characteristics of a Double
+## Characteristics of a Double
 * The double inherits (`extends`) the source.
 * Contains all class level variables defined in the source.
 * Contains all signals defined in the source.
@@ -41,7 +42,7 @@ _process        _set
 * You can double Scripts, Inner Classes, and Packed Scenes.  Once you have a double, you can then call `new` or `instantiate` on it to create instances of a doubled object.
 
 
-# Doubling a Script
+## Doubling a Script
 To double a script just give it a path or an already loaded script.
 ``` gdscript
 var MyScript = load('res://my_script.gd')
@@ -56,7 +57,7 @@ var doubled_script = double(MyScript).new()
 ```
 
 
-# Doubling Inner Classes
+## Doubling Inner Classes
 Inner Classes cannot be automatically detected and therefore must be registered with GUT before they can be doubled.  You do this by calling `register_inner_classes(Foo)`.  You only have to do this once per script/scene that contains Inner Classes, so it is best to call it in `before_all` or a pre-hook script.  Registering multiple times does nothing.  Failing to call `register_inner_classes` will result in a GUT error and a runtime error.
 ```gdscript
 # Given that SomeScript contains the class InnerClass that
@@ -72,7 +73,7 @@ func test_foo():
 This approach was used to make tests cleaner and less susceptible to typos.  If Godot adds meta data to inner classes that point back to the source script, then `register_inner_classes` can be removed later and no other changes will need to be made.
 
 
-# Doubling a Scene
+## Doubling a Scene
 A doubled version of your scene is created along with a double of its script.  The doubled scene is altered to load the doubled script instead of the original.  A reference to the newly doubled scene is returned.  You can call `instantiate` on the returned reference.
 
 ``` gdscript
@@ -86,7 +87,7 @@ var doubled_scene = DoubledScene.instantiate()
 var doubled_scene = double(MyScene).instantiate()
 ```
 
-# Doubling Scripts with Static Methods
+## Doubling Scripts with Static Methods
 Currently you cannot double static methods.  In fact if you try to double a class with a static method then you will get an error that looks similar to:
 ```
 Parser Error: Function signature doesn't match the parent. Parent signature is: 'Variant foo()'.
@@ -99,17 +100,17 @@ These ignored methods are cleared after each test is ran to avoid any unexpected
 
 There's more info and examples on this method on the [[Methods|Asserts-and-Methods]] page.
 
-# Methods with varargs and NativeScript parameter mismatches
+## Methods with varargs and NativeScript parameter mismatches
 Some methods provided by Godot can contain and endless list of parameters (varargs).  Trying to call one of these methods on a double can result in runtime errors due to a parameter mismatch.  See the sections in [Stubbing](Stubbing) that address parameters.
 
 Sometimes NativeScript parameters aren't found in doubles (maybe always).  This helps there too.
 
 For even more reading see issues #252 and #246.
 
-# Doubled method default parameters
+## Doubled method default parameters
 GUT stubs all parameters in doubled user methods to be `null`.  This is because Godot only provides defaults for built-in methods.  When using partial-doubles or stubbing a method `to_call_super` `null` can get passed around when you wouldn't expect it causing errors such as `Invalid operands 'int' and 'Nil'`.  See the "Stubbing Method Parameter Defaults" in [Stubbing](Stubbing) for a way to stub method default values.
 
-# Doubling Built-Ins
+## Doubling Built-Ins
 You can `double` built-in objects that are not inherited by a script such as a `Node2D` or a `Raycast2D`.  These doubles are always created using the Doubling Strategy of "INCLUDE_NATIVE" (see [Double-Strategy](Double-Strategy)).
 
 For example you can `double` or `partial_double` like this:
@@ -120,7 +121,7 @@ stub(doubled_node2d, 'get_position').to_return(-1)
 var partial_doubled_raycast = partial_double(Raycast2D).new()
 ```
 
-## Example of Script vs Built-in doubling
+### Example of Script vs Built-in doubling
 Only methods that have been defined in the script you pass in OR methods that have been defined in parent scripts get the empty implementation in the double.  Methods defined in any built-in Godot class do not get overridden __unless__ the script (or parent script(s)) have them implemented.
 
 This is in the process of being changed but it is not fully implemented yet.  See the section on Double Strategies.
@@ -153,7 +154,7 @@ Then:
 
 
 
-# Where to next?
+## Where to next?
 * [Stubbing](Stubbing)
 * [Spies](Spies)
 * [Partial-Doubles](Partial-Doubles)

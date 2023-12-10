@@ -1,3 +1,5 @@
+# Running on Devices
+
 You may want to deploy your tests with your game so you can run tests on different devices and platforms.  GUT provides the handy `GutControl` to help you run your tests.
 ![GutControl](images/GutControl.png)
 

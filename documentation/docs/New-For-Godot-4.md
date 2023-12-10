@@ -10,7 +10,7 @@ These are changes to Godot that affect how GUT is used/implemented.  There is mo
 * `is` no longer accepts a variable for a class.  You must use `is_instance_of` instead.
 
 
-# What's new/changed in GUT 9.0.0 for Godot 4.0
+## What's new/changed in GUT 9.0.0 for Godot 4.0
 * Any methods that were deprecated in GUT 7.x have been removed.
 * `assert_setget` no longer works (it now just fails with a message).  `assert_property` has been altered to work with the new setter/getter syntax.  `assert_set_property`, `assert_readonly_property`, and `assert_property_with_backing_variable` have been added.
 * To aid refactoring, `assert_property` and `assert_property_with_backing_variable` will warn if any "public accessors" are found for the property ('get_' and 'set_' methods).
@@ -51,7 +51,7 @@ Final note: `assert_eq` does not use `assert_eq_deep` since `assert_eq_deep` com
 
 
 ## Doubling Changes
-#### Doubling scripts and scenes
+### Doubling scripts and scenes
 The `double` method no longer supports paths to scripts or scenes.  You should `load` the script or scene first, and then pass that to `double` instead.
 ```
 var MyScript = load('res://my_script.gd')
@@ -107,7 +107,7 @@ To test this new paradigm `assert_setget` has been removed.  `assert_property` h
 `assert_property` will generate a warning when it finds "public" accessors for these properties (`get_foo`, `set_foo`).
 
 
-# Implementation Changes
+## Implementation Changes
 * The `Gut` control has been removed.  Adding a `Gut` node to a scene to run tests will no longer work.  This control dates back to Godot 2.x days.  With GUT 7.4.1 I believe the in-editor Gut Panel has enough features to discontinue using a Scene/`Gut` control to run tests.  Another approach for running tests in a deployed project will be added at some point.
 * The GUI for GUT has been simplified to reflect that it is no longer used to run tests, just display progress and output.  It has also been decoupled from `gut.gd`.  `gut.gd` is now a `Node` instead of a `Control` and all GUI logic has been removed.  New signals have been added so that a GUI can be made without `gut.gd` having to know anything about it.  As a result, GUT can now be run without a GUI if that ever becomes something we want to do.
 * Replaced the old `yield_between_tests` flag with `paint_after`.  This property (initially set to .1s) tells GUT how long to wait before it pauses for 1 frame to allow for painting the screen.  This value is checked after each test, so longer tests can still cause a delay in the painting of the screen.  This has made the painting a little choppier but has cut down the time it takes to run tests (200 simple tests in 20 scripts dropped from 2+ seconds to .5 seconds to run).  This feature is settable from the command line, .gutconfig.json, and GutPanel.

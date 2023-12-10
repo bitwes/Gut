@@ -1,5 +1,6 @@
-# <div class="warning">This page has not been updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
-# Input Sender
+# Mock Input
+
+## Input Sender
 The `InputSender` class can be used to send `InputEvent*` events to various objects.  It also allows you to script out a series of inputs and play them back in real time.  You could use it to:
 * Verify that jump height depends on how long the jump button is pressed.
 * Double tap a direction performs a dash.
@@ -7,7 +8,7 @@ The `InputSender` class can be used to send `InputEvent*` events to various obje
 
 And much much more.
 
-# Methods
+## Methods
 |
 [add_receiver](#add_receiver)|
 [get_receivers](#get_receivers)|
@@ -22,7 +23,7 @@ And much much more.
 [set_auto_flush_input](#set_auto_flush_input)|
 [get_auto_flush_input](#get_auto_flush_input)|
 
-# Sending InputEvents
+## Sending InputEvents
 |
 [send_event](#send_event)|
 [action_down](#action_down)|
@@ -38,16 +39,16 @@ And much much more.
 [mouse_right_button_down](#mouse_right_button_down)|
 [mouse_right_button_up](#mouse_right_button_up)|
 
-# Signals
+## Signals
 * `idle` - Emitted when all events in the input queue have been sent.
 
 
-# Usage
+## Usage
 The `InputSender` class operates on one or more receivers.  It will create and send `InputEvent` instances to all of its receivers.
 
 There are two ways you could be processing your input.  You could be using the `_input` events to receive input events and process them.  The other way is to interact with the `Input` global and detect input in the `_process` and `_physics_process` methods.  `InputSender` works with both approaches, but using `InputSender` differs for each approach.  Read the sections below to learn the best way to use `InputSender` with your game.
 
-## Using an Object as a Receiver
+### Using an Object as a Receiver
 When you use an instance of an object as a receiver, `InputSender` will send `InputEvent` instances to the various `input` methods.  They will be called in this order:
 1.  `_input`
 1.  `_gui_input`
@@ -67,7 +68,7 @@ func test_shoot():
     assert_true(player.is_shooting())
 ```
 
-## Using `Input` as a Receiver
+### Using `Input` as a Receiver
 !!! <b>`Input.use_accumualted_input` DISCLAIMER <b/>!!!
 
 In Godot 3.4 `Input.use_accumualted_input` is disabled by default (even though the documentation indicates otherwise).  In Godot 3.5 it is enabled by default.  This changes the way that `Input` buffers events that are sent to it.  See the section below about `use_accumulated_input` before continuing.
@@ -100,7 +101,7 @@ func test_shoot():
 ```
 
 
-## Chaining Input Events
+### Chaining Input Events
 The `InputSender` methods return the instance so you can chain multiple calls together to script out a sequence of inputs.  The sequence is immediately started.  When the sequence finishes the `'idle'` signal is emitted.
 
 ```
@@ -131,7 +132,7 @@ yield(sender, 'idle')
 ```
 
 
-# Examples
+## Examples
 These are examples of scripting out inputs and sending them to `Input`.  The `Player` class in these examples would be handling input in `_process` or `_process_physics`.
 
 ``` gdscript
@@ -205,25 +206,25 @@ func test_holding_down_and_jump_does_slide():
 ```
 
 
-# Gotchas
+## Gotchas
 * When using `Input` as a receiver, everything in the tree gets the signals AND any actual inputs from hardware will be sent as well.  It's best not to touch anything when running these tests.
 * If you use a class level `InputSender` and forget to call `release_all` and `clear` between tests then things will eventually start behaving weird and your tests will pass/fail in unpredictable ways.
 
-## Understanding Input.use_accumulated_input
+### Understanding Input.use_accumulated_input
 When `use_accumualted_input` is enabled, `Input` waits to process input until the end of a frame.  This means that if you do not flush the buffer or there are no "waits" or calls to `yield` before you test how input was processed then your tests will fail.
 
-### Testing with use_accumulated_input
-#### Recommended approaches
+#### Testing with use_accumulated_input
+##### Recommended approaches
 1.  If you game does not want to have `use_accumulated_input` enabled, then disable it in a an Autoload.  GUT loads autoloads before running so this will disable it for all tests.
 1.  Always have a trailing `wait` when sending input `_sender.key_down('a').wait('10f')`.  In testing, 6 frames wasn't enough but 7 was _(for reasons I don't understand but probably should so I made I used 10 frames for good measure)_.
 1.  After sending all your input, call `Input.flush_buffered_events`.  Only use this in the specific cases where you know you want to send inputs immediately since this is NOT how your game will actually receive inputs.
 
-#### Other ways that aren't so good.
+##### Other ways that aren't so good.
 If you use these approaches you should quarantine these tests in their own Inner Class or script so that they do not influence other tests that do not expect the buffer to be constantly flushed or `use_accumulated_input` to be disabled.
 1.  In GUT 7.4.0 `InputSender` has an `auto_flush_input` property which is disabled by default.  When enabled this will call `Input.flush_buffered_events` after each input sent through an `InputSender`.  This is a bit dangerous since this can cause some of your tests to not test the way your game will receive input when playing the game.
 1.  You can disable `use_accumulated_input` in `before_all` and re-enable in `after_all`.  Just like with `auto_flush_input`, this has the potential to not test all inputs the same way as your game will get them when playing the game.
 
-### Examples
+#### Examples
 The following assume `use_accumulated_input` is enabled and uses Godot 3.5 syntax.  In 3.4 you have to call `set_use_accumulated_input`.  There is no way to check the value of this flag in 3.4.
 ```gdscript
 extends GutTest
@@ -272,7 +273,7 @@ func test_when_uai_enabled_flushing_buffer_just_pressed_is_processed_immediately
 ```
 
 
-# Functions
+## Functions
 __<a name="new">new(receiver=null)</a>__<br/>
 The optional receiver will be added to the list of receivers.
 
