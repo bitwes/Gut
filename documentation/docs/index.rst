@@ -1,3 +1,91 @@
+.. tocTree::
+   :hidden:
+
+   New-For-Godot-4
+
+
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+   :caption: Getting Started
+   :name: sec-started
+
+   Install
+   Quick-Start
+   Command-Line
+
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+   :caption: GutTest
+   :name: sec-guttest
+
+   Creating-Tests
+   Asserts-and-Methods
+   Awaiting
+   Inner-Test-Classes
+   Parameterized-Tests
+   Simulate
+   Comparing-Things
+
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+   :caption: Doubling
+   :name: sec-doubles
+
+   Doubles
+   Partial-Doubles
+   Double-Strategy
+   Stubbing
+   Spies
+
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+   :caption: Mocking Input
+   :name: sec-mockinput
+
+   Input-Factory
+   Mock-Input
+
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+   :caption: Other
+   :name: sec-other
+
+   Contributing
+   Export-Test-Results
+   Hooks
+   Memory-Management
+   Orphans
+   Running-On-Devices
+   Tutorials
+
+
+
+
+
+
+
+
+.. raw:: html
+   .. toctree::
+      :glob:
+      :maxdepth: 3
+      :hidden:
+      :caption: Everything
+      :name: sec-everything
+
+      /*
+
+
 Gut 9.1.1 (Godot 4.1)
 =========
 GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.  It allows you to write tests for your gdscripts in gdscript.
@@ -82,15 +170,6 @@ Contributing
 
 :doc:`Contributing <Contributing>`
 
-
-TOC
-==================
-
-.. toctree::
-   :glob:
-   :maxdepth: 1
-
-   /*
 
 Indices and tables
 ==================

@@ -1,0 +1,30 @@
+.gutwarning{
+    background-color: rgb(115, 52, 0);
+    text-align: center;
+    font-size: large;
+    font-weight: bold;
+    border-style: dashed;
+    border-width: 5px;
+    border-color: black;
+
+    padding: 20px;
+}
+
+/* Override godot's override of the ad box */
+.wy-nav-side .ethical-rtd.fixed {
+    position: static !important;
+}
+
+.wy-menu-vertical p.caption {
+    text-transform: capitalize !important;
+}
+
+/* Cannot get the collapsing working so this makes them all uncollapsed */
+.wy-menu-vertical p.caption + ul {
+    display: block;
+}
+
+.wy-menu-vertical p.caption + ul.active {
+    display: block;
+}
+

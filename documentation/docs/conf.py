@@ -46,7 +46,12 @@ html_static_path = ['_static']
 # custom.css copied from Godot's CSS:
 # https://github.com/godotengine/godot-docs/blob/4.2/_static/css/custom.css
 html_css_files = [
-    'css/custom.css',
+    'css/godot_custom.css',
+    'css/gut_custom.css'
+]
+
+html_js_files = [
+    # 'js/godot_custom.js',
 ]
 
 html_favicon = 'favicon.ico'

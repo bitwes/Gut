@@ -1513,9 +1513,9 @@ p + .classref-constant {
 }
 
 /* Banner panel in sidebar */
-/* .wy-nav-side .ethical-rtd.fixed {
+.wy-nav-side .ethical-rtd.fixed {
     position: fixed;
-} */
+}
 
 /* Read the Docs flyout panel, with language and version selectors. */
 
@@ -1686,7 +1686,8 @@ p + .classref-constant {
 .wy-menu-vertical p.caption.active .caption-text:before {
     transform: rotate(90deg);
 }
-.wy-menu-vertical p.caption .caption-text:before {
+
+/* .wy-menu-vertical p.caption .caption-text:before {
     content: "❯";
     display: inline-block;
     margin-left: -4px;
@@ -1694,7 +1695,7 @@ p + .classref-constant {
     width: 16px;
     height: 32px;
     transform-origin: 2px 16px;
-}
+} */
 
 .wy-menu-vertical p.caption + ul {
     display: none;
@@ -1764,15 +1765,3 @@ p + .classref-constant {
     }
 }
 
-
-.gutwarning{
-    background-color: rgb(115, 52, 0);
-    text-align: center;
-    font-size: large;
-    font-weight: bold;
-    border-style: dashed;
-    border-width: 5px;
-    border-color: black;
-
-    padding: 20px;
-}
