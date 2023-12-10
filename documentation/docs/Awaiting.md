@@ -1,3 +1,4 @@
+# Awaiting
 If you aren't sure about coroutines and using `await`, [Godot explains it pretty well](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html#awaiting-for-signals-or-coroutines).  GUT supports coroutines, so you can `await` at anytime in your tests.  GUT also provides some handy methods to make awaiting easier.
 
 If you want to pause test execution for some amount of time/frames or until a signal is emitted use `await` and one of GUT's "wait" methods:
@@ -7,7 +8,7 @@ If you want to pause test execution for some amount of time/frames or until a si
 
 Calling `await` without using one of GUT's "wait" methods is discouraged.  When you use these methods, GUT provides output to indicate that execution is paused.  If you don't use them it can look like your tests have hung up.
 
-# wait_for_signal
+## wait_for_signal
 ```
 wait_for_signal(sig, max_wait, msg=''):
 ```
@@ -25,7 +26,7 @@ assert_signal_emitted(my_object, 'my_signal', \
                      'Maybe it did, maybe it didnt, but we still got here.')
 ```
 
-# wait_seconds
+## wait_seconds
 ```
 wait_seconds(time, msg=''):
 ```
@@ -41,7 +42,7 @@ func test_wait_for_a_bit():
 	gut.assert_eq(my_object.some_property, 'some value')
 ```
 
-# wait_frames
+## wait_frames
 ```
 wait_frames(frames, msg=''):
 ```
@@ -59,5 +60,5 @@ func test_wait_for_some_frames():
 ```
 
 
-# pause_before_teardown
+## pause_before_teardown
 Sometimes, as you are developing your tests you may want to verify something before the any of the teardown methods are called or just look at things a bit.  If you call `pause_before_teardown()` anywhere in your test then GUT will pause execution until you press the "Continue" button in the GUT GUI.  You can also specify an option to ignore all calls to `pause_before_teardown` through the GUT Panel, command line, or `.gutconfig` in case you get lazy and don't want to remove them.  You should always remove them, but I know you won't because I didn't so I made that an option.

@@ -1,3 +1,4 @@
+# Command Line
 Also supplied in this repo is the `gut_cmdln.gd` script that can be run from the command line.  This is also used by the VSCode Plugin [gut-extension](https://marketplace.visualstudio.com/items?itemName=bitwes.gut-extension).
 
 __Note:__ All the examples here come from my Mac/Bash.
@@ -17,7 +18,7 @@ The `-d` option tells Godot to run in debug mode which is helpful.  The `-s` opt
 
 When running from command line, `0` will be returned if all tests pass and `1` will be returned if any fail (`pending` doesn't affect the return value).
 
-### Options
+## Options
 _Output from the command line help (-gh)_
 ```
 ---  Gut  ---
@@ -63,7 +64,7 @@ Options
 ---------------------------------------------------------
 ```
 
-# Examples
+## Examples
 
 Run godot in debug mode (-d), run a test script (-gtest), set log level to lowest (-glog), exit when done (-gexit)
 
@@ -77,11 +78,11 @@ Load all test scripts that begin with 'me_' and end in '.res' and run me_only_on
 godot -s addons/gut/gut_cmdln.gd -d --path "$PWD" -gdir=res://test/unit -gprefix=me_ -gsuffix=.res -gselect=only_me
 ```
 
-# Config file
+## Config file
 To cut down on the amount of arguments you have to pass to gut and to make it easier to change them, you can optionally use a json file to specify some of the values.  By default `gut_cmdln` looks for a config file at `res://.gutconfig.json`.  You can specify a different file using the `-gconfig` option.
 
 Here is a sample file.  You can print out the text for a gutconfig file using the `-gprint_gutconfig_sample` option.
-## Example
+### Example
 ``` json
 {
   "dirs":["res://test/unit/","res://test/integration/"],
@@ -102,7 +103,7 @@ Here is a sample file.  You can print out the text for a gutconfig file using th
 ```
 
 
-### Common Errors
+## Common Errors
 I really only know of one so far, but if you get a space in your command somewhere, you might see something like this:
 ```
 ERROR:  No loader found for resource: res://samples3
