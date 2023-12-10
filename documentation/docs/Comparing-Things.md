@@ -1,6 +1,6 @@
 # Comparing Things
 
-## <div class="warning">This page has not been updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
+<div class="warning">This page has not been updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
 
 ## Overview
 Comparing values with GUT's asserts works the way you would expect it to in most cases.  Arrays and dictionaries are a little more complicated.  The following methods can help with this:
@@ -58,7 +58,7 @@ A shallow compare of dictionaries will compare all values found in the dictionar
 ### Deep
 A  deep compare of dictionaries will compare all keys and the values  in all sub-arrays/sub-dictionaries found.  Floats and Integers are never equal.
 
-# <a name=CompareResult> CompareResult</a>
+## CompareResult
 A CompareResult object is returned from `compare_shallow` and `compare_deep`.  You can use this object to further inspect the differences or adjust the output.
 
 ### Properties

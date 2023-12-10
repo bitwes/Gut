@@ -1763,3 +1763,16 @@ p + .classref-constant {
         padding: 3px 5px;
     }
 }
+
+
+.warning{
+    background-color: rgb(115, 52, 0);
+    text-align: center;
+    font-size: large;
+    font-weight: bold;
+    border-style: dashed;
+    border-width: 5px;
+    border-color: black;
+
+    padding: 20px;
+}
