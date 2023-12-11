@@ -28,29 +28,33 @@ Print info to the GUI and console (if enabled).  You can see examples if this in
 <!-- ----------------------------------------------------------------------- -->
 ## Assertions
 
-#### pass_test(text)
+#### pass_test
+`pass_test(text)`<br>
 Useful when you don't have anything meaningful to assert.  Any failing asserts within the test will override this.
 ```gdscript
 func test_nothing():
   pass_test('nothing tested, passing')
 ```
 
-#### fail_test(text)
+#### fail_test
+`fail_test(text)`<br>
 Useful when you need to fail a test but don't have a meaningful way to assert the condition you are testing.
 ```gdscript
 func test_this_test_just_fails():
   fail_test('a total unbridled failure')
 ```
 
-#### pending(text="")
+#### pending
+`pending(text="")`<br>
 flag a test as pending, the optional message is printed in the GUI
 ``` gdscript
 pending('This test is not implemented yet')
 pending()
 ```
 
-#### assert_eq(got, expected, text="")
-assert got == expected and prints optional text.  There are some caveats due to how  Godot compares things.  Arrays are compared by value (with some additional caveats) and dictionaries are compared by reference.  See also [assert_eq_deep](#assert_eq_deep) and [Comparing Things](Comparing-Things)
+#### assert_eq
+`assert_eq(got, expected, text="")`<br>
+assert got == expected and prints optional text.  There are some caveats due to how  Godot compares things.  Arrays are compared by value (with some additional caveats) and dictionaries are compared by reference.  See also [assert_eq_deep](#assert-eq-deep) and [Comparing Things](Comparing-Things)
 ``` gdscript
 func test_equals():
 	var one = 1
@@ -73,7 +77,8 @@ func test_equals():
 	assert_eq({'a':1}, {'a':1}) # FAIL
 ```
 
-#### assert_ne(got, not_expected, text="")
+#### assert_ne
+`assert_ne(got, not_expected, text="")`<br>
 asserts got != expected and prints optional text.  Read [Comparing Things](Comparing-Things) for array and dictionary caveats.
 ``` gdscript
 var two = 2
@@ -90,7 +95,8 @@ assert_ne('one', 'one') # FAIL
 assert_ne('2', 2) # FAIL
 ```
 
-#### assert_gt(got, expected, text="")
+#### assert_gt
+`assert_gt(got, expected, text="")`<br>
 assserts got > expected
 ``` gdscript
 var bigger = 5
@@ -108,7 +114,8 @@ assert_gt(1.0, 1) # FAIL
 assert_gt(smaller, bigger) # FAIL
 ```
 
-#### assert_lt(got, expected, text="")
+#### assert_lt
+`assert_lt(got, expected, text="")`<br>
 asserts got < expected
 ``` gdscript
 var bigger = 5
@@ -122,7 +129,8 @@ assert_lt('z', 'x') # FAIL
 assert_lt(-5, -5) # FAIL
 ```
 
-#### assert_true(got, text="")
+#### assert_true
+`assert_true(got, text="")`<br>
 asserts got == true.
 ``` gdscript
 func test_true():
@@ -137,7 +145,8 @@ func test_true():
 	assert_true(1)
 ```
 
-#### assert_false(got, text="")
+#### assert_false
+`assert_false(got, text="")`<br>
 asserts got == false
 ``` gdscript
 func test_false():
@@ -154,7 +163,8 @@ func test_false():
 	assert_false(0)
 ```
 
-#### assert_null(got)
+#### assert_null
+`assert_null(got)`<br>
 asserts the passed in value is null
 ```gdscript
 gut.p('-- passing --')
@@ -165,7 +175,8 @@ assert_null('a')
 assert_null(1)
 ```
 
-#### assert_not_null(got)
+#### assert_not_null
+`assert_not_null(got)`<br>
 asserts the passed in value is not null
 ```gdscript
 gut.p('-- passing --')
@@ -176,7 +187,8 @@ gut.p('-- failing --')
 assert_not_null(null)
 ```
 
-#### assert_between(got, expect_low, expect_high, text="")
+#### assert_between
+`assert_between(got, expect_low, expect_high, text="")`<br>
 asserts got > expect_low and <= expect_high
 ``` gdscript
 gut.p('-- passing --')
@@ -190,7 +202,8 @@ assert_between('a', 'b', 'c') # FAIL
 assert_between(1, 5, 10) # FAIL
 ```
 
-#### assert_not_between(got, expect_low, expect_high, text="")
+#### assert_not_between
+`assert_not_between(got, expect_low, expect_high, text="")`<br>
 asserts that got <= expect_low or got >=  expect_high.
 ``` gdscript
 gut.p('-- passing --')
@@ -205,7 +218,8 @@ assert_not_between(5, 0, 10, 'Five shouldnt be between 0 and 10') # FAIL
 assert_not_between(0.25, -2.0, 4.0) # FAIL
 
 ```
-#### assert_almost_eq(got, expected, error_interval, text='')
+#### assert_almost_eq
+`assert_almost_eq(got, expected, error_interval, text='')`<br>
 Asserts that `got` is within the range of `expected` +/- `error_interval`.  The upper and lower bounds are included in the check.  Verified to work with integers, floats, and Vector2.  Should work with anything that can be added/subtracted.
 
 ``` gdscript
@@ -225,7 +239,8 @@ assert_almost_eq(2.6, 3.0, .2, '2.6 outside range of 3 +/- .2') # FAIL
 assert_almost_eq(Vector2(.5, 1.5), Vector2(1.0, 1.0), Vector2(.25, .25))  # PASS
 ```
 
-#### assert_almost_ne(got, expected, error_interval, text='')
+#### assert_almost_ne
+`assert_almost_ne(got, expected, error_interval, text='')`<br>
 This is the inverse of `assert_almost_eq`.  This will pass if `got` is outside the range of `expected` +/- `error_interval`.
 ``` gdscript
 gut.p('-- passing --')
@@ -243,7 +258,8 @@ assert_almost_ne(.5, 1.0, .5, '.5 within range of 1 +/- .5') # FAIL
 
 assert_almost_ne(Vector2(.5, 1.5), Vector2(1.0, 1.0), Vector2(.5, .5))  # FAIL
 ```
-#### assert_has(obj, element, text='')
+#### assert_has
+`assert_has(obj, element, text='')`<br>
 Asserts that the object passed in "has" the element.  This works with any object that has a `has` method.
 ``` gdscript
 var an_array = [1, 2, 3, 'four', 'five']
@@ -262,7 +278,8 @@ assert_has(an_array, self) # FAIL
 assert_has(a_hash, 3) # FAIL
 assert_has(a_hash, 'three') # FAIL
 ```
-#### assert_does_not_have(obj, element, text='')
+#### assert_does_not_have
+`assert_does_not_have(obj, element, text='')`<br>
 The inverse of `assert_has`
 ``` gdscript
 var an_array = [1, 2, 3, 'four', 'five']
@@ -282,7 +299,8 @@ assert_does_not_have(a_hash, 'one') # FAIL
 assert_does_not_have(a_hash, '3') # FAIL
 ```
 
-#### assert_string_contains(text, search, match_case=true)
+#### assert_string_contains
+`assert_string_contains(text, search, match_case=true)`<br>
 Assert that `text` contains `search`.  Can perform case insensitive search by passing false for `match_case`.
 ```gdscript
 func test_string_contains():
@@ -297,7 +315,8 @@ func test_string_contains():
 	assert_string_contains('abc 123', '012')
 ```
 
-#### assert_string_starts_with(text, search, match_case=true)
+#### assert_string_starts_with
+`assert_string_starts_with(text, search, match_case=true)`<br>
 Assert that `text` starts with `search`.  Can perform case insensitive check by passing false for `match_case`
 ```gdscript
 func test_string_starts_with():
@@ -312,7 +331,8 @@ func test_string_starts_with():
 	assert_string_starts_with('abc 123', 'abc 1234')
 ```
 
-#### assert_string_ends_with(text, search, match_case=true)
+#### assert_string_ends_with
+`assert_string_ends_with(text, search, match_case=true)`<br>
 Assert that `text` ends with `search`.  Can perform case insensitive check by passing false for `match_case`
 ```gdscript
 func test_string_ends_with():
@@ -327,7 +347,8 @@ func test_string_ends_with():
 	assert_string_ends_with('abc 123', 'nope')
 ```
 
-#### assert_has_signal(object, signal_name)
+#### assert_has_signal
+`assert_has_signal(object, signal_name)`<br>
 Asserts the passed in object has a signal with the specified name.  It should be noted that all the asserts that verify a signal was/wasn't emitted will first check that the object has the signal being asserted against.  If it does not, a specific failure message will be given.  This means you can usually skip the step of specifically verifying that the object has a signal and move on to making sure it emits the signal correctly.
 ``` gdscript
 class SignalObject:
@@ -351,7 +372,8 @@ func test_assert_has_signal():
 	assert_has_signal(Node2D.new(), 'exit_tree')
 
 ```
-#### assert_connected(signaler_obj, connect_to_obj, signal_name, method_name="")
+#### assert_connected
+`assert_connected(signaler_obj, connect_to_obj, signal_name, method_name="")`<br>
 Asserts that `signaler_obj` is connected to `connect_to_obj` on signal `signal_name`.  The method that is connected is optional.  If `method_name` is supplied then this will pass only if the signal is connected to the  method.  If it is not provided then any connection to the signal will cause a pass.
 ``` gdscript
 class Signaler:
@@ -378,15 +400,18 @@ func test_assert_connected():
 	assert_connected(signaler, connector, 'other_signal')
 	assert_connected(signaler, foo, 'the_signal')
 ```
-#### assert_not_connected(signaler_obj, connect_to_obj, signal_name, method_name="")
+#### assert_not_connected
+`assert_not_connected(signaler_obj, connect_to_obj, signal_name, method_name="")`<br>
 The inverse of `assert_connected`.
 
 #### watch_signals(object)
+``<br>
 This must be called in order to make assertions based on signals being emitted.  __Right now, this only supports signals that are emitted with 9 or less parameters.__  This can be extended but nine seemed like enough for now.  The Godot documentation suggests that the limit is four but in my testing I found you can pass more.
 
 This must be called in each test in which you want to make signal based assertions in.  You can call it multiple times with different objects.   You should not call it multiple times with the same object in the same test.  The objects that are watched are cleared after each test (specifically right before `teardown` is called).  Under the covers, Gut will connect to all the signals an object has and it will track each time they fire.  You can then use the following asserts and methods to verify things are acting correct.
 
-#### assert_signal_emitted(object, signal_name)
+#### assert_signal_emitted
+`assert_signal_emitted(object, signal_name)`<br>
 Assert that the specified object emitted the named signal.  You must call `watch_signals` and pass it the object that you are making assertions about.  This will fail if the object is not being watched or if the object does not have the specified signal.  Since this will fail if the signal does not exist, you can often skip using `assert_has_signal`.
 ``` gdscript
 class SignalObject:
@@ -411,7 +436,8 @@ func test_assert_signal_emitted():
 	# Fails because the signal was not emitted
 	assert_signal_emitted(obj, 'other_signal')
 ```
-#### assert_signal_not_emitted(object, signal_name)
+#### assert_signal_not_emitted
+`assert_signal_not_emitted(object, signal_name)`<br>
 This works opposite of `assert_signal_emitted`.  This will fail if the object is not being watched or if the object does not have the signal.
 ``` gdscript
 class SignalObject:
@@ -436,7 +462,8 @@ func test_assert_signal_not_emitted():
 	# Fails because the signal was emitted
 	assert_signal_not_emitted(obj, 'some_signal')
 ```
-#### assert_signal_emitted_with_parameters(object, signal_name, parameters, index=-1)
+#### assert_signal_emitted_with_parameters
+`assert_signal_emitted_with_parameters(object, signal_name, parameters, index=-1)`<br>
 Asserts that a signal was fired with the specified parameters.  The expected parameters should be passed in as an array.  An optional index can be passed when a signal has fired more than once.  The default is to retrieve the most recent emission of the signal.
 
 This will fail with specific messages if the object is not being watched or the object does not have the specified signal
@@ -473,7 +500,8 @@ func test_assert_signal_emitted_with_parameters():
 	# Fails because the parameters for the specified index do not match
 	assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 1)
 ```
-#### assert_signal_emit_count(object, signal_name)
+#### assert_signal_emit_count
+`assert_signal_emit_count(object, signal_name)`<br>
 Asserts that a signal fired a specific number of times.
 
 ``` gdscript
@@ -509,10 +537,12 @@ func test_assert_signal_emit_count():
 	assert_signal_emit_count(obj_a, 'some_signal', 0)
 	assert_signal_emit_count(obj_b, 'other_signal', 283)
 ```
-#### get_signal_emit_count(object, signal_name)
+#### get_signal_emit_count
+`get_signal_emit_count(object, signal_name)`<br>
 This will return the number of times a signal was fired.  This gives you the freedom to make more complicated assertions if the spirit moves you.  This will return -1 if the signal was not fired or the object was not being watched, or if the object does not have the signal.
 
-#### get_signal_parameters(object, signal_name, index=-1)
+#### get_signal_parameters
+`get_signal_parameters(object, signal_name, index=-1)`<br>
 If you need to inspect the parameters in order to make more complicate assertions, then this will give you access to the parameters of any watched signal.  This works the same way that `assert_signal_emitted_with_parameters` does.  It takes an object, signal name, and an optional index.  If the index is not specified then the parameters from the most recent emission will be returned.  If the object is not being watched, the signal was not fired, or the object does not have the signal then `null` will be returned.
 ``` gdscript
 class SignalObject:
@@ -540,7 +570,8 @@ func test_get_signal_parameters():
 	assert_eq(get_signal_parameters(obj, 'some_signal'), [1, 2, 3])
 	assert_eq(get_signal_parameters(obj, 'some_signal', 0), ['a', 'b', 'c'])
 ```
-#### assert_file_exists(file_path)
+#### assert_file_exists
+`assert_file_exists(file_path)`<br>
 asserts a file exists at the specified path
 ``` gdscript
 func before_each():
@@ -558,7 +589,8 @@ func test_assert_file_exists():
 	assert_file_exists('user://file_does_not.exist') # FAIL
 	assert_file_exists('res://some_dir/another_dir/file_does_not.exist') # FAIL
 ```
-#### assert_file_does_not_exist(file_path)
+#### assert_file_does_not_exist
+`assert_file_does_not_exist(file_path)`<br>
 asserts a file does not exist at the specified path
 ``` gdscript
 func before_each():
@@ -575,7 +607,9 @@ func test_assert_file_does_not_exist():
 	gut.p('-- failing --')
 	assert_file_does_not_exist('res://addons/gut/gut.gd') # FAIL
 ```
-#### assert_file_empty(file_path)
+
+#### assert_file_empty
+`assert_file_empty(file_path)`<br>
 asserts the specified file is empty
 ``` gdscript
 func before_each():
@@ -591,7 +625,9 @@ func test_assert_file_empty():
 	gut.p('-- failing --')
 	assert_file_empty('res://addons/gut/gut.gd') # FAIL
 ```
-#### assert_file_not_empty(file_path)
+
+#### assert_file_not_empty
+`assert_file_not_empty(file_path)`<br>
 asserts the specified file is not empty
 ``` gdscript
 func before_each():
@@ -607,7 +643,9 @@ func test_assert_file_not_empty():
 	gut.p('-- failing --')
 	assert_file_not_empty('user://some_test_file') # FAIL
 ```
-#### assert_is(object, a_class, text)
+
+#### assert_is
+`assert_is(object, a_class, text)`<br>
 Asserts that "object" extends "a_class".  object must be an instance of an object.  It cannot be any of the built in classes like Array or Int or Float.  a_class must be a class, it can be loaded via load, a GDNative class such as Node or Label or anything else.
 
 ``` gdscript
@@ -632,7 +670,8 @@ func test_assert_is():
 	assert_is([], Node)
 ```
 
-#### assert_typeof(object, type, text='')
+#### assert_typeof
+`assert_typeof(object, type, text='')`<br>
 Asserts that `object` is the the `type` specified.  `type` should be one of the Godot `TYPE_` constants.
 ``` gdscript
 func test_assert_typeof():
@@ -646,10 +685,12 @@ func test_assert_typeof():
 	assert_fail(gr.test)
 ```
 
-#### assert_not_typeof(object, type, text='')
+#### assert_not_typeof
+`assert_not_typeof(object, type, text='')`<br>
 The inverse of `assert_typeof`
 
-#### assert_freed(obj, text)
+#### assert_freed
+`assert_freed(obj, text)`<br>
 Asserts that the passed in object has been freed.  This assertion requires that  you pass in some text in the form of a title since, if the object is freed, we won't have anything to convert to a string to put in the output statement.
 
 Note that this currently does not detect if a node has been queued free.
@@ -660,7 +701,8 @@ func test_object_is_freed_should_pass():
 	test.assert_freed(obj, "New Node")
 ```
 
-#### assert_not_freed(obj, text)
+#### assert_not_freed
+`assert_not_freed(obj, text)`<br>
 The inverse of `assert_freed`
 
 ``` gdscript
@@ -675,7 +717,8 @@ func test_queued_free_is_not_freed():
 	assert_not_freed(obj, "New Node")
 ```
 
-#### assert_exports(obj, property_name, type)
+#### assert_exports
+`assert_exports(obj, property_name, type)`<br>
 Asserts that `obj` exports a property with the name `property_name` and a type of `type`.  The `type` must be one of the various Godot built-in `TYPE_` constants.
 
 ``` gdscript
@@ -697,7 +740,8 @@ func test_assert_exports():
 	assert_exports(obj, 'some_variable', TYPE_INT)
 ```
 
-#### assert_called(inst, method_name, parameters=null)
+#### assert_called
+`assert_called(inst, method_name, parameters=null)`<br>
 This assertion is is one of the ways Gut implements Spies.  It requires that you pass it an instance of a "doubled" object.  An instance created with `double` will record when a method it has is called.  You can then make assertions based on this.
 
 This assert will check the object to see if a call to the specified method (optionally with parameters) was called over the course of the test.  If it finds a match this test will `pass`, if not it will `fail`.
@@ -751,10 +795,13 @@ func test_assert_called():
 	# instance of a doubled class.
 	assert_called(GDScript.new(), 'some_method')
 ```
-#### assert_not_called(inst, method_name, parameters=null)
+
+#### assert_not_called
+`assert_not_called(inst, method_name, parameters=null)`<br>
 This is the inverse of `assert_called` and works the same way except, you know, inversely.  Matches are found based on parameters in the same fashion.  If a matching call is found then this assert will `fail`, if not it will `pass`.
 
-#### assert_call_count(inst, method_name, expected_count, parameters=null)
+#### assert_call_count
+`assert_call_count(inst, method_name, expected_count, parameters=null)`<br>
 This assertion is is one of the ways Gut implements Spies.  It requires that you pass it an instance of a "doubled" object.  An instance created with `double` will record when a method it has is called.  You can then make assertions based on this.
 
 This asserts that a method on a doubled instance has been called a number of times.  If you do not specify any parameters then all calls to the method will be counted.  If you specify parameters, then only those calls that were passed matching values will be counted.
@@ -814,7 +861,8 @@ func test_assert_call_count():
 
 ```
 
-#### get_call_parameters(obj, method_name, index=-1)
+#### get_call_parameters
+`get_call_parameters(obj, method_name, index=-1)`<br>
 This method allows you to get the parameters that were sent to a call to a doubled object's method.  You must pass it an object created with/from `double`.  It will return and array containing the parameters from the most recent call by default.  You can optionally specify an index to get where the first call to the method is at position `0`.  If no calls were made to the method or you pass in a object this is not a double then `null` is returned.
 
 ```gdscript
@@ -835,7 +883,8 @@ func test_get_call_parameters():
 
 ```
 
-#### get_call_count(obj, method_name, parameters=null)
+#### get_call_count
+`get_call_count(obj, method_name, parameters=null)`<br>
 Get the number of times a method was called on a double.  Include the optional parameters array to only get the count for calls with matching parameters.  This is essentially `assert_call_count` without the assert, in case you need to do something else with the count.
 ```
 	func test_called_10_times():
@@ -854,7 +903,8 @@ Get the number of times a method was called on a double.  Include the optional p
 		var count = get_call_count(doubled, 'set_value', [3]) # 3
 ```
 
-#### assert_has_method(obj, method)
+#### assert_has_method
+`assert_has_method(obj, method)`<br>
 Asserts that the passed in object has a method named `method`.
 ```gdscript
 class SomeClass:
@@ -879,7 +929,8 @@ func test_assert_has_method():
 	gut.p('-- failing --')
 	assert_has_method(some_class, 'method_does_not_exist')
 ```
-#### assert_accessors(obj, property, default, set_to)
+#### assert_accessors
+`assert_accessors(obj, property, default, set_to)`<br>
 I found that making tests for most getters and setters was repetitious and annoying.  Enter `assert_accessors`.  This assertion handles 80% of your getter and setter testing needs.  Given an object and a property name it will verify:
  * The object has a method called `get_<PROPERTY_NAME>`
  * The object has a method called `set_<PROPERTY_NAME>`
@@ -915,31 +966,20 @@ func test_assert_accessors():
   assert_accessors(some_class, 'does_not_exist', 'does_not', 'matter')
 ```
 
-#### is_passing()
+#### is_passing
+`is_passing()`<br>
 Returns true if the test is passing as of the time of calling it.  This will return false if there haven't been any asserts or if any of the asserts are failing.  Usable in `after_each` but not `after_all`.
 
-#### is_failing()
+#### is_failing
+`is_failing()`<br>
 Returns true if any failing asserts have occurred as of the time of calling it.  Usable in `after_each` but not `after_all`.
 
-#### add_child_autofree(object)
-Calls `add_child` and `autofree` with the passed in object and returns it.  See [Memory Management](Memory-Management) page for more details.
-
-#### add_child_autoqfree(object)
-Calls `add_child` and `autoqfree` with the passed in object and returns it.  See [Memory Management](Memory-Management) page for more details.
-
-#### autofree(object)
-Marks an object so that `free` will be called on it after the test finishes.  Returns the object passed in.  See [Memory Management](Memory-Management) page for more details.
-
-(autoqfree)=
-#### autoqfree(object)
-Marks an object so that `queue_free` will be called on it after the test finishes.  Returns the object passed in.  See [Memory Management](Memory-Management) page for more details.
-
-(assert_no_new_orphans)=
-#### assert_no_new_orphans(text='')
+#### assert_no_new_orphans
+`assert_no_new_orphans(text='')`<br>
 This method will assert that no orphaned nodes have been introduced by the test when the assert is executed.  See the [Memory Management](Memory-Management#testing_for_leaks) page for more information.
 
-(assert_eq_deep)=
-#### assert_eq_deep(v1, v2)
+#### assert_eq_deep
+`assert_eq_deep(v1, v2)`<br>
 Performs a deep comparison between two arrays or dictionaries and asserts they are equal.  If they are not equal then a formatted list of differences are displayed.  See [Comparing Things](Comparing-Things) for more information.
 ```gdscript
 func test_assert_eq_deep():
@@ -966,10 +1006,12 @@ func test_assert_eq_deep():
 	assert_eq_deep([1, 2, {'a':1}], [1, 2, {'a':1.0}]) # floats != ints
 ```
 
-#### assert_ne_deep(v1, v2)
+#### assert_ne_deep
+`assert_ne_deep(v1, v2)`<br>
 Performs a deep comparison of two arrays or dictionaries and asserts they are not equal.  See [Comparing Things](Comparing-Things) for more information.
 
-#### assert_eq_shallow(v1, v2)
+#### assert_eq_shallow
+`assert_eq_shallow(v1, v2)`<br>
 Performs a shallow comparison between two arrays or dictionaries and asserts they are equal.  If they are not equal then a formatted list of differences are displayed.  See [Comparing Things](Comparing-Things) for more information.
 ```gdscript
 func test_assert_eq_shallow():
@@ -1003,11 +1045,13 @@ func test_assert_eq_shallow():
 	assert_eq_shallow(complex_example, deep_copy)
 ```
 
-#### assert_ne_shallow(v1, v2)
+#### assert_ne_shallow
+`assert_ne_shallow(v1, v2)`<br>
 Performs a shallow comparison of two arrays or dictionaries and asserts they are not equal.  See [Comparing Things](Comparing-Things) for more information.
 
 
-#### assert_property(obj, name_property, default_value, set_to_value)
+#### assert_property
+`assert_property(obj, name_property, default_value, set_to_value)`<br>
 This method does a couple of common tests for properties.
 It checks if:
 * the named setter and getter functions exist
@@ -1019,7 +1063,7 @@ It fails if at least one of the mentioned sub-checks fails.
 
 The parameter `obj` can be any `Object`. Depending on what you put in the function will try retrieve the underlying class or to instantiate from `obj`. It is tested for classes extending `Script` or `PackedScene` in case you want to put in a class / scene. It is tested for objects extending the `Node` class. The method may fail if you try to put in something else.
 
-Under the cover it runs `assert_accessors` and `assert_setget_called`. Look into [assert_accessors](#assert_accessors) or [assert_setget_called](#assert_setget_called) to get further information on how they work.
+Under the cover it runs `assert_accessors` and `assert_setget_called`. Look into [assert_accessors](#assert-accessors) or [assert_setget_called](#assert-setget-called) to get further information on how they work.
 
 In the following script you can see some examples how to use this assert function. The class under test is a "Health" component. It has a `max_hap` field with no setter or getter assigned. It also has a `current_hp` property with assigned setter and getter functions.
 
@@ -1065,7 +1109,8 @@ assert_property(directory, 'current_dir', '', 'new_dir') # FAIL => directory is 
 
 ```
 
-#### assert_setget_called(type, name_property, name_setter="", name_getter="")
+#### assert_setget_called
+`assert_setget_called(type, name_property, name_setter="", name_getter="")`<br>
 This method checks if the named setter and getter functions are called when the given property is accessed.
 
 In GDScript this is realized by using the `setget` keyword. The keyword requires you to specify a setter or getter function, you can also specify both:
@@ -1137,7 +1182,8 @@ assert_setget_called(double(Health), 'current_hp', 'set_current_hp') # FAIL => t
 Please note the last example. So far an already doubled type cannot be doubled again. Since the class under test will be doubled within the assert procession it is important to only feed in types that can be doubled. For more information about doubling its restrictions see the wiki page about [Doubles](Doubles).
 
 
-#### assert_property(obj, name_property, has_setter=false, has_getter=false)
+#### assert_property
+`assert_property(obj, name_property, has_setter=false, has_getter=false)`<br>
 This method checks if the named setter and getter functions are called when the given property is accessed.
 
 In GDScript this is realized by using the `setget` keyword. The keyword requires you to specify a setter or getter function, you can also specify both:
@@ -1195,33 +1241,52 @@ assert_setget(HealthBar, 'label', true) # FAIL => setter does not exist
 
 <!-- ----------------------------------------------------------------------- -->
 ## Utilities
+#### add_child_autofree
+`add_child_autofree(object)`<br>
+Calls `add_child` and `autofree` with the passed in object and returns it.  See [Memory Management](Memory-Management) page for more details.
 
-#### pause_before_teardown()
+#### add_child_autoqfree
+`add_child_autoqfree(object)`<br>
+Calls `add_child` and `autoqfree` with the passed in object and returns it.  See [Memory Management](Memory-Management) page for more details.
+
+#### autofree
+`autofree(object)`<br>
+Marks an object so that `free` will be called on it after the test finishes.  Returns the object passed in.  See [Memory Management](Memory-Management) page for more details.
+
+#### autoqfree
+`autoqfree(object)`<br>
+Marks an object so that `queue_free` will be called on it after the test finishes.  Returns the object passed in.  See [Memory Management](Memory-Management) page for more details.
+
+#### pause_before_teardown
+`pause_before_teardown()`<br>
 This method will cause Gut to pause before it moves on to the next test.  This is useful for debugging, for instance if you want to investigate the screen or anything else after a test has finished executing.  See also `set_ignore_pause_before_teardown`
 
-#### wait_seconds(time, msg='')
+#### wait_seconds
+`wait_seconds(time, msg='')`<br>
 See [Awaiting](Awaiting)
 
-
-#### wait_frames(frames, msg='')
+#### wait_frames
+`wait_frames(frames, msg='')`<br>
 See [Awaiting](Awaiting)
 
-
-#### wait_for_signal(sig, max_wait, msg='')
+#### wait_for_signal
+`wait_for_signal(sig, max_wait, msg='')`<br>
 See [Awaiting](Awaiting)
 
-
-#### double(path_or_class, inner_class_path=null)
+#### double
+`double(path_or_class, inner_class_path=null)`<br>
 This will return a double of a class.  See [Doubles](Doubles) for more information.
 
-
-#### simulate(obj, times, delta)
+#### simulate
+`simulate(obj, times, delta)`<br>
 This will call `_process` or `_physics_process` on the passed in object and all children of the object.  It will call them `times` times and pass in `delta` to each call.  See [Simulate](Simulate) for more information.
 
-#### stub(...)
+#### stub
+`stub(...)`<br>
 Allows you to stub a [doubled](Doubles) instance of a script or scene to return a value.  See [Stubbing](Stubbing) for a list of parameters and instructions on Stubbing.
 
-#### ignore_method_when_doubling(path_or_class, method_name)
+#### ignore_method_when_doubling
+`ignore_method_when_doubling(path_or_class, method_name)`<br>
 This was implemented to allow the doubling of classes with static methods.  There might be other valid use cases for this method, but you should always try stubbing before using this method.  Using `stub(my_double, 'method').to_call_super()` or  creating a `partial_double` works for any other known scenario.  You cannot stub or spy on methods passed to `ignore_method_when_doubling`.
 
 This method will add a method for a script to an ignore list.  This means the method will not be included in the double.  This is required if you are attempting to double a class that has static methods.  Each of the static methods must be added to the ignore list or you will get a parser error similar to:
@@ -1271,7 +1336,8 @@ func test_cannot_spy_or_stub_ignored_methods():
   assert_not_called(d_has_statics, 'not_static')
 ```
 
-#### replace_node(base_node, path_or_node, with_this)
+#### replace_node
+`replace_node(base_node, path_or_node, with_this)`<br>
 Replaces the child node of base_node with `with_this`.  You can pass a path to a node or a child node of base_node.  `with_this` will get all groups that the replaced node had.  `with_this` also gets the same "name" that the replaced node had so that any references to it via `$` will work.  The replaced node is freed via `queue_free`.
 
 This is useful when you want to double a node in another node.  Your code might be referencing the node via a call to `get_node` or might be using the `$` syntax to get to the object.  `replace_node` allows you to replace a node in another node and retain all of your `get_node` and `$` references.
@@ -1329,5 +1395,6 @@ func test_replace_node():
 
 [Comparing Things](Comparing-Things)
 
-#### compare_deep(v1, v2, max_differences=30)
+#### compare_deep
+`compare_deep(v1, v2, max_differences=30)`<br>
 Performs a deep comparison between two arrays or dictionaries.  A `CompareResult` object is returned.   See [Comparing Things](Comparing-Things) for more information and examples.
