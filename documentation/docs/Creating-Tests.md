@@ -55,7 +55,7 @@ A list of all `asserts` and other helper functions available in your test script
 You can group tests together using Inner Classes. These classes must start with the prefix `'Test'` (this is configurable) and they must also extend `GutTest`.  You cannot create Inner Test Classes inside Inner Test Classes.  More info can be found at [Inner Test Classes](Inner-Test-Classes).
 
 ### Simple Example
-```
+``` gdscript
 extends GutTest
 
 class TestFeatureA:

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://lig0073w8cjy"
-path="res://.godot/imported/view_user_files.png-35546bf00953427de4c80db5784e48e8.ctex"
+uid="uid://sleldhoqj8je"
+path="res://.godot/imported/GutDocsLogo.png-a5f48d2fab70aab34e33336f94ac690a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://documentation/docs/_static/images/view_user_files.png"
-dest_files=["res://.godot/imported/view_user_files.png-35546bf00953427de4c80db5784e48e8.ctex"]
+source_file="res://documentation/docs/_static/images/GutDocsLogo.png"
+dest_files=["res://.godot/imported/GutDocsLogo.png-a5f48d2fab70aab34e33336f94ac690a.ctex"]
 
 [params]
 

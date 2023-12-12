@@ -1259,7 +1259,9 @@ Marks an object so that `queue_free` will be called on it after the test finishe
 
 #### pause_before_teardown
 `pause_before_teardown()`<br>
-This method will cause Gut to pause before it moves on to the next test.  This is useful for debugging, for instance if you want to investigate the screen or anything else after a test has finished executing.  See also `set_ignore_pause_before_teardown`
+This method will cause Gut to pause before it moves on to the next test.  This is useful for debugging, for instance if you want to investigate the screen or anything else after a test has finished executing.
+
+Sometimes you get lazy, and you don't remove calls to `pause_before_teardown` after you are done with them.  You can tell GUT to ignore calls to `pause_before_teardown` through the panel or the command line.  Setting this in your `.gutconfig.json` file is recommended for CI/CD Pipelines.
 
 #### wait_seconds
 `wait_seconds(time, msg='')`<br>

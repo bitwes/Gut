@@ -40,7 +40,11 @@ Running this test will result in:
 ## ParameterFactory
 `GutTest` scripts have access to the `ParameterFactory` static class which has helper methods for defining parameters for parameterized tests.
 
-### `named_parameters(names, values)`
+### Methods
+There's only one right now.  If you have any suggestions, open up an [issue on Github](https://github.com/bitwes/Gut/issues).
+
+#### named_parameters
+`named_parameters(names, values)`<br>
 Creates an array of dictionaries.  It pairs up the names array with each set of values in values.  If more names than values are specified then the missing values will be filled with nulls.  If more values than names are specified those values will be ignored.
 
 Example:
@@ -81,6 +85,3 @@ ParameterFactory.named_parameters(
         ['one', 'two']
     ])
 ```
-
-### Others?
-If you have an idea for a helper please create an [issue on Github](https://github.com/bitwes/Gut/issues).

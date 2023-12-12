@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://lig0073w8cjy"
-path="res://.godot/imported/view_user_files.png-35546bf00953427de4c80db5784e48e8.ctex"
+uid="uid://cigysgwwb5dp5"
+path="res://.godot/imported/AddGutControl.png-5d6e19c9b4cd7b49c399c48d700ce69b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://documentation/docs/_static/images/view_user_files.png"
-dest_files=["res://.godot/imported/view_user_files.png-35546bf00953427de4c80db5784e48e8.ctex"]
+source_file="res://documentation/docs/_static/images/AddGutControl.png"
+dest_files=["res://.godot/imported/AddGutControl.png-5d6e19c9b4cd7b49c399c48d700ce69b.ctex"]
 
 [params]
 

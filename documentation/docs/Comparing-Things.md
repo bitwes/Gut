@@ -1,72 +1,28 @@
 # Comparing Things
+Comparing things isn't always as obvious as you would think.  It can get a little tricky when comparing the contents of dictionaries and arrays.  GUT has some utilities to help out.
 
-<div class="gutwarning">This page has not been updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
+In Godot 3.x dictionaries were compared by reference and arrays were compared by value. In 4.0 both are compared by value. Godot 4.0 introduces the `is_same` method which (amongst other things) will compare dictionaries and arrays by reference.  GUT now has `assert_same` and `assert_not_same`.
 
-## Overview
-Comparing values with GUT's asserts works the way you would expect it to in most cases.  Arrays and dictionaries are a little more complicated.  The following methods can help with this:
-* `compare_shallow`
+For more information about the changes to Dictionaries and Arrays and how they affect GUT see [Godot 4 Changes](New-For-Godot-4).
+
+The `assert_eq` and `assert_ne` methods use Godot's default comparision logic, meaning arrays and dictionaries are compared by value.  Godot uses a hashing function to compare the values.  This is fast, but does not give you any insight into what is actually different when your tests fail.  GUT has some "deep" comparison methods that will show the differences in the two values.
+
 * `compare_deep`
-* [`assert_eq_shallow`](Asserts-and-Methods#assert_eq_shallow), [`assert_ne_shallow`](Asserts-and-Methods#assert_ne_shallow)
-* [`assert_eq_deep`](Asserts-and-Methods#assert_eq_deep), [`assert_ne_deep`](Asserts-and-Methods#assert_ne_deep)
+* `assert_eq_deep`
+* `assert_ne_deep`
 
-The asserts listed are convenience wrappers around `compare_shallow` and `compare_deep`.  In most cases this will be all you need.  If you would like to further inspect the differences with code then or adjust the number of differences displayed then use the "compare" methods.  These methods return a [`CompareResult`](#CompareResult) object which is described below.
+A deep compare will recursively compare all values in the dictionary/array and all sub-dictionaries and sub-arrays.  Floats and Integers are never equal.  See `assert_eq_deep` in [Asserts and Methods](Asserts-and-Methods) for examples.
 
-### Shallow
-A shallow compare will look at each element in a dictionary or array and use the default Godot equivalence logic.  Floats and Integers are never equal.  See [`assert_eq_shallow`](Asserts-and-Methods#assert_eq_shallow) for examples.
-
-### Deep
-A deep compare will recursively compare all values in the dictionary/array and all sub-dictionaries and sub-arrays.  Floats and Integers are never equal.  See [`assert_eq_deep`](Asserts-and-Methods#assert_eq_deep) for examples.
-
-## Comparing Arrays
-* Godot compares arrays by value with some caveats.
-    * Unlike when using `==`, floats never == integers in an array.
-    * Dictionaries are compared by reference.  Two different dictionaries with the same values are not equal.
-* Sub arrays are compared the same way.
-* Cannot compare arrays by reference.
-
-### Asserts and Arrays
-* The `assert_eq` and `assert_ne` functions simulate Godot's behavior but have improved output.
-    * Up to 30 differences in index values are listed including any missing indexes.
-    * Dictionaries anywhere in the array are compared-by-ref.
-    * Sub-arrays are summarized, the number of indexes that do not match are listed, but each different value is not.
-* `assert_called` and `assert_not_called` perform deep compares on any parameters specified.
-* `assert_signal_emitted_with_parameters` performs a deep compare on the parameters specified.
-* `assert_has` and `assert_does_not_have` use Godot's default behavior.
-
-### Shallow
-A shallow compare of arrays acts the same as `assert_eq`/`assert_ne`.  Any dictionaries in the array or sub-arrays will be compared by reference.  Floats and Integers are never equal.
-
-### Deep
-A deep compare of arrays will compare all indexes and the values in all sub-arrays/sub-dictionaries found.  Floats and Integers are never equal.
-
-
-## Comparing Dictionaries
-* Godot compares dictionaries by reference.
-* Dictionary keys are ordered (which is unusual).
-* The dictionary `hash` function requires dictionary keys be in the same order to generate the same hash so comparing dictionaries by value cannot be done reliably without additional coding.
-* In order to compare values in dictionary you must use one of the shallow or deep methods listed above.
-
-### Asserts and Dictionaries
-* The `assert_eq` and `assert_ne` uses Godot's default behavior and compares them by reference.
-* `assert_called` and `assert_not_called` perform deep compares on any parameters specified.
-* `assert_signal_emitted_with_parameters` performs a deep compare on the parameters specified.
-* `assert_has` and `assert_does_not_have` use Godot's default behavior.
-
-### Shallow
-A shallow compare of dictionaries will compare all values found in the dictionary.  Sub-dictionaries are compared by value.  Sub-arrays are compared with `==`.  Floats and Integers are never equal.
-
-### Deep
-A  deep compare of dictionaries will compare all keys and the values  in all sub-arrays/sub-dictionaries found.  Floats and Integers are never equal.
 
 ## CompareResult
-A CompareResult object is returned from `compare_shallow` and `compare_deep`.  You can use this object to further inspect the differences or adjust the output.
+A `CompareResult` object is returned from `compare_deep`.  You can use this object to further inspect the differences or adjust the output.
 
 ### Properties
-* `are_equal`: returns `true`/`false` if the two objects are equal based on the kind of comparison performed.
-* `summary`: returns a string of all the differences found.  This will display `max_differences` differences.  When performing a deep compare, it will also display `max_differences` per each sub-array/sub-dictionary. This is returned if you use `str` on a `CompareResult`.
-* `max_differences`:  The number of differences to display.  This only affects output, all differences are accessible from the `differences` property.  Set this to -1 to show the maximum number of differences (10,000)
-* `differences`:  This is a dictionary of all the keys/indexes that are different between the compared items.  The key is the key/index that is different.  Keys/indexes that are missing from one of the compared objects are included.  The value of each index is a `CompareResult`.
-<br/><br/>
+* __are_equal__<br> `true`/`false` if all keys/values in the two objects are equal.
+* __summary__<br> returns a string of all the differences found.  This will display `max_differences` differences per each entry and per each sub-array/sub-dictionary. This is returned if you use `str` on a `CompareResult`.
+* __max_differences__<br>  The number of differences to display.  This only affects output, all differences are accessible from the `differences` property.  Set this to -1 to show the maximum number of differences (10,000)
+* __differences__<br>  This is a dictionary of all the keys/indexes that are different between the compared items.  The key is the key/index that is different.  Keys/indexes that are missing from one of the compared objects are included.  The value of each index is a `CompareResult`.
+<br><br>
 `CompareResult`s for sub-arrays/sub-dictionaries `differences` will contain all their differences.  You can use  the `differences` property for that key to dig deeper into the differences.  `differences` will be an empty dictionary for any element that is not an array or dictionary.
 
 
