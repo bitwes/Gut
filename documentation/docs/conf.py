@@ -46,7 +46,7 @@ html_static_path = ['_static']
 # custom.css copied from Godot's CSS:
 # https://github.com/godotengine/godot-docs/blob/4.2/_static/css/custom.css
 html_css_files = [
-    'css/godot_custom.css',
+    # 'css/godot_custom.css',
     'css/gut_custom.css'
 ]
 

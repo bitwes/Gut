@@ -12,12 +12,14 @@ GUT is a Godot Plugin.  You can download it directly or install it from the Asse
 
 Finish the install by following the instructions in [Setup](#setup) below.
 
+
 ## Download and install
 Download the zip from the [releases](https://github.com/bitwes/gut/releases) or from the [Godot Asset Library](https://godotengine.org/asset-library/asset/54).
 
 Extract the zip and place the `gut` directory into your `addons` directory in your project.  If you don't have an `addons` folder at the root of your project, then make one and THEN put the `gut` directory in there.
 
 Finish the install by following the instructions in Setup below.
+
 
 ## Setup
 ### Activate
@@ -34,11 +36,9 @@ The next few steps cover the suggested configuration.  Feel free to deviate wher
 ## Running Tests
 
 ### Run tests from the GUT Panel
-As of 7.2.0 GUT supports running through the Editor.
-
 Set the test directories in the settings panel (below) and click "Run All".  That's all there is to it.
 
-[[https://raw.githubusercontent.com/wiki/bitwes/Gut/images/gut_panel.png|alt=gut_panel]]
+![Gut Panel](_static/images/gut_panel.png)
 
 
 ### Run tests from the command line
@@ -47,10 +47,6 @@ GUT comes with a command line interface, more info can be found on the [Command 
 
 ### Run tests through VSCode
 There is also a VSCode plugin that you can use to run tests directly from VSCode.  You can find the plugin and related documentation [here](https://github.com/bitwes/gut-extension).
-
-
-### Run tests using a scene.
-This has not been documented for this version yet.  It's possible, but you will only need to do this if you are trying to run tests through a deployed project.  Which is a valid thing to do.  Remind me if I have forgotten to fill this in.
 
 
 ## Where to next?

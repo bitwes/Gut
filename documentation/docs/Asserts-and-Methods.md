@@ -1393,8 +1393,12 @@ func test_replace_node():
 	  'The variable "label" was set as onready so it will not be updated')
 ```
 
-[Comparing Things](Comparing-Things)
 
 #### compare_deep
 `compare_deep(v1, v2, max_differences=30)`<br>
 Performs a deep comparison between two arrays or dictionaries.  A `CompareResult` object is returned.   See [Comparing Things](Comparing-Things) for more information and examples.
+
+
+#### set_double_strategy
+`set_double_strategy(strategy)`
+Missing

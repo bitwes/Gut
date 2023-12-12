@@ -1,13 +1,13 @@
 # Running on Devices
 
 You may want to deploy your tests with your game so you can run tests on different devices and platforms.  GUT provides the handy `GutControl` to help you run your tests.
-![GutControl](images/GutControl.png)
+![GutControl](_static/images/GutControl.png)
 
 
 In order to run tests in a deployed game you must create a scene to kick off the tests from within the game.  Here's the steps:
 * Create a scene
 * Add a `GutControl` to the scene.
-![AddGutControl](images/AddGutControl.png)
+![AddGutControl](_static/images/AddGutControl.png)
 * Add a script to your scene and paste in the code below.
 * You're off to the races.
 

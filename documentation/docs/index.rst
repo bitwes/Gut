@@ -1,16 +1,10 @@
-.. tocTree::
-   :hidden:
-
-   New-For-Godot-4
-
-
-
 .. toctree::
    :hidden:
    :maxdepth: 1
    :caption: Getting Started
    :name: sec-started
 
+   New-For-Godot-4
    Install
    Quick-Start
    Command-Line
@@ -70,22 +64,6 @@
 
 
 
-
-
-
-
-
-.. raw:: html
-   .. toctree::
-      :glob:
-      :maxdepth: 3
-      :hidden:
-      :caption: Everything
-      :name: sec-everything
-
-      /*
-
-
 Gut 9.1.1 (Godot 4.1)
 =========
 GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.  It allows you to write tests for your gdscripts in gdscript.
@@ -133,23 +111,13 @@ Editor GUI
 GUT GUI
 -------
 
+Normal
+
 .. image:: _static/images/GutGui.png
 
-1.  Output Box.
-#.  List of Test Scripts.  Inner Classes are indented under scripts.
-#.  Progress bars for all scripts and the current script.
-#.  Log Level slider.
-#.  Previous Script (in list of scripts)
-#.  Run the currently selected script and all scripts after it.  This can be especially useful when running on another device and some script in the middle of the list causes a crash.  To run the tests after the crash, just select that test in the list and click this button.  It will run that one and all the ones after.
-#.  Next Script (in list of scripts)
-#.  Run the currently selected script.  If an Inner Class is selected then just that class will be run.  If a Script is selected then the script and all of its Inner Classes will be run.
-#.  Toggle display of List of Test Scripts
-#.  The Hamburger button.  It shows some additional options.
-#.  Continue button will be enabled if a call to `yield_before_teardown` occurs.  Click it to continue running tests.
-#.  The title bar.  It has a maximize button, shows the current script, has a running tally on the left of the pass/fail count, shows the elapsed time.  Also you can drag it all about.
+Compact
 
-Also, in the bottom right corner, you can drag to resize the dialog.
-
+.. image:: _static/images/GuiCompact.png
 
 Engine Warnings
 ---------------

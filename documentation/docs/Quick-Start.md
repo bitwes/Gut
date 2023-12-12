@@ -8,22 +8,24 @@ Setup doesn't get any simpler than what is already on the [install page.](Instal
 
 ## Run Tests
 * Configure the directories where your tests are in the Gut Panel settings.
-* Open a test script.
-* use the various buttons to run a script, inner class, or test.
-![Gut Panel](images/gut_panel.png)
+* Click "Run All" to run all your tests.
+* Open a test script and click the button with your test script's name (test_test.gd in image below) to run only that test script.
+* Open a test script, put the cursor inside a test function, click the button with your test function's name (test_fails_when_nymber_not_equal in the image below) to run just that one test.
+![Gut Panel](_static/images/gut_panel.png)
 
 Mouse-over labels and buttons in the GUT panel for more information.  You can even set keyboard shortcuts for all of the GUT panel actions.
 
 You can also run tests via the [command line](Command-Line) and through [VSCode](https://marketplace.visualstudio.com/items?itemName=bitwes.gut-extension)
 
+
 ## Creating Tests
 [More Information](Creating-Tests)
 
-All test scripts must extend the `test.gd` script supplied by GUT.
+All test scripts must extend `GutTest` (`res://addons/gut/test.gd`) script supplied by GUT.
 ```
 extends GutTest
 ```
-There are various asserts and helpers that are listed [here](Asserts-and-Methods)
+There is a plethora of asserts and helpers that are listed [here](Asserts-and-Methods)
 
 Setup and teardown methods:
 * `before_all`
@@ -54,7 +56,7 @@ func test_assert_eq_number_equal():
 	assert_eq('asdf', 'asdf', "Should pass")
 ```
 
-You can use inner classes to group tests together.  The class name must start with "Test" and it also must extend `test.gd`.
+You can use inner classes to group tests together.  The class name must start with "Test" and extend `test.gd`.
 ``` gdscript
 extends GutTest
 
@@ -77,7 +79,7 @@ class TestOtherAspects:
 ## Doubles/Spies/Stubs
 More Information:  [Doubles](Doubles), [Spies](Spies), [Stubs](Stubbing)
 
-You can make a double of just about anything.  `double` returns a loaded class, not an instance.  Doubles extend the object to be doubled and have empty implementations for all methods defined in the script or parent scripts, but not parent Godot methods that are not overloaded.
+You can make a double of just about anything.  `double` returns a loaded class/scene, not an instance.  Doubles extend the object to be doubled and have empty implementations for all methods defined in the script or parent scripts, but not parent Godot methods that are not overridden.
 
 ```gdscript
 var Foo = load('res://foo.gd')
@@ -192,7 +194,7 @@ var my_node = add_child_autofree(Node2D.new())
 
 Orphan counts are displayed after each test/script that generates orphans and at the end of the run.  If you don't see output, then you don't have any orphans!  You can disable this feature if you want.
 
-All objects created with `double` or `partial_double` are freed automatically.
+All objects created with `double` or `partial_double` are freed automatically after a test finishes.
 
 You can assert you didn't make any new orphans with `assert_no_new_orphans`.  `assert_no_new_orphans` doesn't know about objects passed to `autofree` so they will be counted if they are not in the tree.
 ```gdscript
