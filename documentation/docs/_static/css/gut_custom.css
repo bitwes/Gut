@@ -1,5 +1,8 @@
+/* ----------------------------------------------------------------------------*
+Gut Wiki Specific items
+----------------------------------------------------------------------------- */
 .gutwarning{
-    background-color: rgb(115, 52, 0);
+    background-color: rgb(60, 0, 0);
     color: white;
     text-align: center;
     font-size: large;
@@ -11,21 +14,9 @@
     padding: 20px;
 }
 
-/* Override godot's override of the ad box */
-.wy-nav-side .ethical-rtd.fixed {
-    position: static !important;
-}
-
+/* ----------------------------------------------------------------------------*
+Customizing the wiki
+----------------------------------------------------------------------------- */
 .wy-menu-vertical p.caption {
     text-transform: capitalize !important;
 }
-
-/* Cannot get the collapsing working so this makes them all uncollapsed */
-.wy-menu-vertical p.caption + ul {
-    display: block;
-}
-
-.wy-menu-vertical p.caption + ul.active {
-    display: block;
-}
-

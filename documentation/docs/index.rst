@@ -1,6 +1,6 @@
 .. toctree::
    :hidden:
-   :maxdepth: 1
+   :maxdepth: 3
    :caption: Getting Started
    :name: sec-started
 
@@ -12,7 +12,6 @@
 
 .. toctree::
    :hidden:
-   :maxdepth: 1
    :caption: GutTest
    :name: sec-guttest
 
@@ -73,11 +72,6 @@ GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.
 Godot 3.x/4.x
 --------------
 GUT 9 requires Godot 4.  GUT 7 requires Godot 3.4.
-
-.. raw:: html
-   <div class="gutwarning">
-   This wiki is being updated for the changes made for Godot 4.  Any pages with a warning at the top have not been updated yet.  For information about the changes in GUT 9 view  <a href="New-For-Godot-4.html">New-ForGodot-4</a>.
-   </div>
 
 
 Getting Started
