@@ -20,3 +20,7 @@ Customizing the wiki
 .wy-menu-vertical p.caption {
     text-transform: capitalize !important;
 }
+
+.wy-side-nav-search {
+    background-color: rgb(66, 10, 130) !important;
+}
