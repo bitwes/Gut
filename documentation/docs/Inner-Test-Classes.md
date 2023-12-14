@@ -4,7 +4,7 @@ You can define test classes inside a test script that will be treated as test sc
 
 The Inner Classes must also extend `GutTest` and their constructor cannot take any parameters.  The Classes will be loaded and ran in the order they are defined _after_ all the tests in the containing script are run.  If the script does not contain any tests then only the Inner Classes will be listed in the output.
 
-The order the tests are run are not guaranteed to be in the same order they are defined (I don't know why yet).  Also the line number for the tests cannot currently be reported when they fail or are pending (they aren't parsed the same way as normal script tests, I'll probably add this in later since it bugs me).
+The order the tests are run are not guaranteed to be in the same order they are defined (I don't know why yet).
 
 Inner Classes are parsed out of the script by looking for a classes that start with `'Test'` and also extend `test.gd`.  You can change the name that Gut looks for using the `inner_class_prefix` property.
 

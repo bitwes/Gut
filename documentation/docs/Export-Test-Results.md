@@ -1,5 +1,4 @@
 # Export Test Results
-<div class="gutwarning">This page has not been updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
 
 You can export test results in the JUnit XML format specified [here](https://llg.cubic.org/docs/junit/).  You can specify a file name to export to, or kick off an export in a [post-run hook](Hooks).
 
@@ -19,20 +18,6 @@ There are two settings, the file name and a flag to include an epoch timestamp i
     * Set `Junit Xml File` to the path.
     * Check `Junit Xml Timestamp` if you want the timestamp to be included.
 
-## Exporting results in post-run Hook
-Here is sample code to export results in a post-run hook script.  See [Hooks](Hooks) for more information about setting up a post-run script.
-
-Note that `JunitXmlExport` and `gut` are defined by the parent script `res://addons/gut/hook_script.gd`
-``` gdscript
-extends GutHookScript
-
-func run() # called automatically by Gut
-	var exporter = JunitXmlExport.new()
-    var filename = 'user://my_post_hook_results.xml'
-	var f_result = exporter.write_file(gut, filename)
-	if(f_result == OK):
-		gut.p(str("Results saved to ", filename))
-```
 
 ## Example Output
 ``` xml
@@ -93,4 +78,19 @@ func run() # called automatically by Gut
             <testcase name="test_pass_1" assertions="1" status="pass" classname="res://test/resources/exporter_test_files/test_with_inner_classes.gd.TestClassTwo"></testcase>
       </testsuite>
 </testsuites>
+```
+
+## Exporting results in post-run Hook
+If you would like more control over exporting the results you can do so manually in a post-run hook.  See [Hooks](Hooks) for more information about setting up a post-run script.
+
+Note that `JunitXmlExport` and `gut` are defined by the parent script `res://addons/gut/hook_script.gd`
+``` gdscript
+extends GutHookScript
+
+func run() # called automatically by Gut
+	var exporter = JunitXmlExport.new()
+    var filename = 'user://my_post_hook_results.xml'
+	var f_result = exporter.write_file(gut, filename)
+	if(f_result == OK):
+		gut.p(str("Results saved to ", filename))
 ```
