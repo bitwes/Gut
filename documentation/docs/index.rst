@@ -44,8 +44,10 @@
    :caption: Mocking Input
    :name: sec-mockinput
 
+   Mocking-Input
+   Input-Sender
    Input-Factory
-   Mock-Input
+
 
 
 .. toctree::

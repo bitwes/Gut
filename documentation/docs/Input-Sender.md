@@ -1,6 +1,4 @@
-# Mock Input
-
-## Input Sender
+# Input Sender
 The `InputSender` class can be used to send `InputEvent*` events to various objects.  It also allows you to script out a series of inputs and play them back in real time.  You could use it to:
 * Verify that jump height depends on how long the jump button is pressed.
 * Double tap a direction performs a dash.
@@ -8,36 +6,6 @@ The `InputSender` class can be used to send `InputEvent*` events to various obje
 
 And much much more.
 
-## Methods
-|
-[add_receiver](#add_receiver)|
-[get_receivers](#get_receivers)|
-[release_all](#release_all)|
-[clear](#clear)|
-[is_idle](#is_idle)|
-[wait](#wait)|
-[wait_frames](#wait_frames)|
-[wait_secs](#wait_secs)|
-[hold_for](#hold_for)|
-[mouse_set_position](#mouse_set_position)|
-[set_auto_flush_input](#set_auto_flush_input)|
-[get_auto_flush_input](#get_auto_flush_input)|
-
-## Sending InputEvents
-|
-[send_event](#send_event)|
-[action_down](#action_down)|
-[action_up](#action_up)|
-[key_down](#key_down)|
-[key_echo](#key_echo)|
-[key_up](#key_up)|
-[mouse_double_click](#mouse_double_click)|
-[mouse_left_button_down](#mouse_left_button_down)|
-[mouse_left_button_up](#mouse_left_button_up)|
-[mouse_motion](#mouse_motion)|
-[mouse_relative_motion](#mouse_relative_motion)|
-[mouse_right_button_down](#mouse_right_button_down)|
-[mouse_right_button_up](#mouse_right_button_up)|
 
 ## Signals
 * `idle` - Emitted when all events in the input queue have been sent.
@@ -69,11 +37,6 @@ func test_shoot():
 ```
 
 ### Using `Input` as a Receiver
-!!! <b>`Input.use_accumualted_input` DISCLAIMER <b/>!!!
-
-In Godot 3.4 `Input.use_accumualted_input` is disabled by default (even though the documentation indicates otherwise).  In Godot 3.5 it is enabled by default.  This changes the way that `Input` buffers events that are sent to it.  See the section below about `use_accumulated_input` before continuing.
-<hr>
-
 
 When `Input` is used as a receiver `Input` will send all inputs it receives from the `InputSender` to every object that has been added to the tree.  `Input` will treat all the events it gets exactly the same as if the events were triggered from hardware.  This means all the `is_action_just_pressed` and similar functions will work the same.  The `InputEvent` instances will also be sent to the various `_input` methods on objects in the tree in whatever order `Input` desires.
 
@@ -210,21 +173,22 @@ func test_holding_down_and_jump_does_slide():
 * When using `Input` as a receiver, everything in the tree gets the signals AND any actual inputs from hardware will be sent as well.  It's best not to touch anything when running these tests.
 * If you use a class level `InputSender` and forget to call `release_all` and `clear` between tests then things will eventually start behaving weird and your tests will pass/fail in unpredictable ways.
 
-### Understanding Input.use_accumulated_input
-When `use_accumualted_input` is enabled, `Input` waits to process input until the end of a frame.  This means that if you do not flush the buffer or there are no "waits" or calls to `yield` before you test how input was processed then your tests will fail.
 
-#### Testing with use_accumulated_input
-##### Recommended approaches
+## Understanding Input.use_accumulated_input
+When `use_accumualted_input` is enabled, `Input` waits to process input until the end of a frame.  This means that if you do not flush the buffer or there are no "waits" or calls to `await` before you test how input was processed then your tests will fail.
+
+### Testing with use_accumulated_input
+#### Recommended approaches
 1.  If you game does not want to have `use_accumulated_input` enabled, then disable it in a an Autoload.  GUT loads autoloads before running so this will disable it for all tests.
 1.  Always have a trailing `wait` when sending input `_sender.key_down('a').wait('10f')`.  In testing, 6 frames wasn't enough but 7 was _(for reasons I don't understand but probably should so I made I used 10 frames for good measure)_.
 1.  After sending all your input, call `Input.flush_buffered_events`.  Only use this in the specific cases where you know you want to send inputs immediately since this is NOT how your game will actually receive inputs.
 
-##### Other ways that aren't so good.
+#### Other ways that aren't so good.
 If you use these approaches you should quarantine these tests in their own Inner Class or script so that they do not influence other tests that do not expect the buffer to be constantly flushed or `use_accumulated_input` to be disabled.
 1.  In GUT 7.4.0 `InputSender` has an `auto_flush_input` property which is disabled by default.  When enabled this will call `Input.flush_buffered_events` after each input sent through an `InputSender`.  This is a bit dangerous since this can cause some of your tests to not test the way your game will receive input when playing the game.
 1.  You can disable `use_accumulated_input` in `before_all` and re-enable in `after_all`.  Just like with `auto_flush_input`, this has the potential to not test all inputs the same way as your game will get them when playing the game.
 
-#### Examples
+### Examples
 The following assume `use_accumulated_input` is enabled and uses Godot 3.5 syntax.  In 3.4 you have to call `set_use_accumulated_input`.  There is no way to check the value of this flag in 3.4.
 ```gdscript
 extends GutTest
@@ -273,89 +237,112 @@ func test_when_uai_enabled_flushing_buffer_just_pressed_is_processed_immediately
 ```
 
 
-## Functions
-__<a name="new">new(receiver=null)</a>__<br/>
+## Methods
+### new
+`new(receiver=null)</a>`<br>
 The optional receiver will be added to the list of receivers.
 
-__<a name="add_receiver">add_receiver(obj)</a>__<br/>
+### add_receiver
+`add_receiver(obj)`<br>
 Add an object to receive input events.
 
-__<a name="get_receivers">get_receivers()</a>__<br/>
+### get_receivers
+`get_receivers()`<br>
 Returns the receivers that have been added.
 
-__<a name="release_all">release_all()</a>__<br/>
+### release_all
+`release_all()`<br>
 Releases all `InputEventKey`, `InputEventAction`, and `InputEventMouseButton` events that have passed through the `InputSender`.  These events could have been generated via the various `_down` methods or passed to `send_event`.
 
 This will send the "release" event (`pressed = false`) to all receivers.  This should be done between each test when using `Input` as a receiver.
 
-__<a name="clear">clear()</a>__<br/>
+### clear
+`clear`<br>
 Clears the input queue and any state such as the last event sent and any pressed actions/buttons.  Does not clear the list of receivers.
 
 This should be done between each test when the `InputSender` is a class level variable so that state does not leak between tests.
 
-__<a name="is_idle">is_idle()</a>__<br/>
+### is_idle
+`is_idle()`<br>
 Returns true if the input queue has items to be processed, false if not.
 
-__<a name="wait">wait(t)</a>__<br/>
+### wait
+`wait(t)`<br>
 Adds a delay between the last input queue item added and any queue item added next.  By default this will wait `t` seconds.  You can specify a number of frames to wait by passing a string composed of a number and "f".  For example `wait("5f")` will wait 5 frames.
 
-__<a name="wait_frames">wait_frames(num_frames)</a>__<br/>
+### wait_frames
+`wait_frames(num_frames)`<br>
 Same as `wait` but only accepts a number of frames to wait.
 
-__<a name="wait_secs">wait_secs(num_secs)</a>__<br/>
+### wait_secs
+`wait_secs(num_secs)`<br>
 Same as `wait` but only accepts a number of seconds to wait.
 
-__<a name="hold_for">hold_for(duration)</a>__<br/>
+### hold_for
+`hold_for(duration)`<br>
 This is a special `wait` that will emit the previous input queue item with `pressed = false` after a delay.  If you pass a number then it will wait that many seconds.  You can also use the `"4f"` format to wait a specific number of frames.
 
 For example `sender.action_down('jump').hold_for("10f")` will cause two `InputEventAction` instances to be sent.  The "jump-down" event from `action_down` and then a "jump-up" event after 10 frames.
 
-__<a name="mouse_set_position">mouse_set_position(position, global_position=null)</a>__<br/>
+### mouse_set_position
+`mouse_set_position(position, global_position=null)`<br>
 Sets the mouse's position.  This does not send an event.  This position will be used for the next call to `mouse_relative_motion`.
 
-__<a name="set_auto_flush_input">set_auto_flush_input(val)</a>__<br/>
+### set_auto_flush_input
+`set_auto_flush_input(val)`<br>
 Enable/Disable auto flushing of input.  When enabled the `InputSender` will call `Input.flush_buffered_events` after each event is sent.  See the `use_accumulated_input` section for more information.
 
 __<a name="get_auto_flush_input">get_auto_flush_input()</a>__<br/>
 Get it.
 
-# Sending InputEvents
-__<a name="send_event">send_event(event)</a>__<br/>
+### send_event
+`send_event(event)`<br>
 Create your own event and use this to send it to all receivers.
 
-__<a name="key_down">key_down(which)</a>__<br/>
+### key_down
+`key_down(which)`<br>
 Sends a `InputEventKey` event with `pressed` = `true`.  `which` can be a character or a `KEY_*` constant.
 
-__<a name="key_up">key_up(which)</a>__<br/>
+### key_up
+`key_up(which)`<br>
 Sends a `InputEventKey` event with `pressed` = `false`.  `which` can be a character or a `KEY_*` constant.
 
-__<a name="key_echo">key_echo()</a>__<br/>
+### key_echo
+`key_echo()`<br>
 Sends an echo `InputEventKey` event of the last key event.
 
-
-__<a name="action_down">action_down(which, strength=1.0)</a>__<br/>
+### action_down
+`action_down(which, strength=1.0)`<br>
 Sends a "action down" `InputEventAction` instance.  `which` is the name of the action defined in the Key Map.
 
-__<a name="action_up">action_up(which, strength=1.0)</a>__<br/>
+### action_up
+`action_up(which, strength=1.0)`<br>
 Sends a "action up" `InputEventAction` instance.  `which` is the name of the action defined in the Key Map.
 
-__<a name="mouse_left_button_down">mouse_left_button_down(position, global_position=null)</a>__<br/>
+### mouse_left_button_down
+`mouse_left_button_down(position, global_position=null)`<br>
 Sends a "button down" `InputEventMouseButton` for the left mouse button.
 
-__<a name="mouse_left_button_up">mouse_left_button_up(position, global_position=null)</a>__<br/>
+### mouse_left_button_up
+`mouse_left_button_up(position, global_position=null)`<br>
 Sends a "button up" `InputEventMouseButton` for the left mouse button.
 
-__<a name="mouse_double_click">mouse_double_click(position, global_position=null)</a>__<br/>
+### mouse_double_click
+`mouse_double_click(position, global_position=null)`<br>
 Sends a "double click" `InputEventMouseButton` for the left mouse button.
 
-__<a name="mouse_right_button_down">mouse_right_button_down(position, global_position=null)</a>__<br/>
+### mouse_right_button_down
+`mouse_right_button_down(position, global_position=null)`<br>
 Sends a "button down" `InputEventMouseButton` for the right mouse button.
 
-__<a name="mouse_right_button_up">mouse_right_button_up(position, global_position=null)</a>__<br/>
+### mouse_right_button_up
+`mouse_right_button_up(position, global_position=null)`<br>
 Sends a "button up" `InputEventMouseButton` for the right mouse button.
 
-__<a name="mouse_motion(">mouse_motion(position, global_position=null)</a>__<br/>
+### mouse_motion
+`mouse_motion(position, global_position=null)`<br>
 Sends a "InputEventMouseMotion" to move the mouse the specified positions.
 
-__<a name="mouse_relative_motion">mouse_relative_motion(offset, speed=Vector2(0, 0))</a>__<br/>
+### mouse_relative_motion
+`mouse_relative_motion(offset, speed=Vector2(0, 0))`<br>
 Sends a "InputEventMouseMotion" that moves the mouse `offset` from the last `mouse_motion` or `mouse_set_position` call.

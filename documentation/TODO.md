@@ -7,3 +7,9 @@ I do not know if the following is still true:
 
 ## Asserts-and-Methods
 * Add `assert_same` and `assert_not_same`.
+
+
+## Mocking Input
+Add something to Mocking-Input.md
+
+Add a page for simulating clicks and what not.
