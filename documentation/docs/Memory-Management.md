@@ -8,16 +8,27 @@ WARNING: cleanup: ObjectDB Instances still exist!
 ERROR: clear: Resources Still in use at Exit!
    At: core/resource.cpp:476.
 ```
-These indicate that when the tests finished running there were existing objects that had not been freed.  As of 7.0.0 GUT no longer causes any leaks on its own.
+These indicate that when the tests finished running there were existing objects that had not been freed.
 
-Starting in 7.0.0 GUT also provides utilities for tracking down memory leaks and managing test objects.  These features include:
+GUT will try to detect when an orphan is created and will log how many orphans it finds after each test/script.  To make life a little easier, `GutTest` provides the following methods that makes freeing Nodes.  Each of these methods return what is passed in, so you can save a line or two of code.
+  * `autofree` - calls `free` after test finishes
+  * `autoqfree` - calls `queue_free` after test finishes
+  * `add_child_autofree` - calls `add_child` right away, and `free` after test finishes.
+  * `add_child_autoqfree` - calls `add_child` right away, and `queue_free` after teest finishes.
 
-* Printing the count of orphans created by a test
-* Methods to ease freeing objects
-  * `autofree`
-  * `autoqfree`
-  * `add_child_autofree`
-  * `add_child_autoqfree`
+More info can be found in "Freeing Test Objects" below.
+
+Quick Example:
+``` gdscript
+func test_something():
+  # add_child_autofree will add the result of SuperNeatNode.new to the tree,
+  # mark to to be freed after the test, and return the instance created by
+  # SuperNeatNode.new().
+  var my_node = add_child_autofree(SuperNeatNode.new())
+  assert_not_null(my_node)
+```
+
+
 
 At the [bottom of the page](#memory_mgmt) is my attempt to describe how Godot does memory management.  If any of these sections seem confusing, read that part first.  The [Godot docs](https://docs.godotengine.org/en/stable/getting_started/scripting/gdscript/gdscript_basics.html#memory-management) have some information.  Also, here's a [tutorial](https://www.youtube.com/watch?v=cl2PxGkpJdo) on memory management I found.
 
@@ -57,7 +68,7 @@ func test_foo():
 These functions can be used in a test or the `before_each` but should NOT be used in `before_all`.  If you have an object you want to add as a child in `before_all` you must free it yourself in `after_all`.  Using either flavor of `add_child_autofree` in `before_all` will cause the object to be freed after the first test is run.
 
 ## Freeing Globals
-You can use a [post-run hook](Hooks#postrun) to clean up any global objects you have created.  If you are running your tests through a scene then you may have to recreate these objects if you want to be able to perform multiple test runs through the GUI.  You could use a [pre-run hook](Hooks#prerun) to do this, but it all starts getting messy at that point.
+You can use a [post-run hook](Hooks) to clean up any global objects you have created.  If you are running your tests through a scene then you may have to recreate these objects if you want to be able to perform multiple test runs through the GUI.  You could use a [pre-run hook](Hooks) to do this, but it all starts getting messy at that point.
 
 ## Automatically Freed Objects
 To help with freeing up objects GUT will automatically free the following objects at the end of the test.

@@ -16,6 +16,3 @@ func run():
     n.print_stray_nodes()
     n.free()
 ```
-
-### Scene
-If you are using a scene you can call `print_stray_nodes` in the `tests_finished` signal emitted by GUT.

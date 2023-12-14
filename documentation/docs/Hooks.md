@@ -1,7 +1,6 @@
 # Hooks
-<div class="gutwarning">This page has not been updated for GUT 9.0.0 or Godot 4.  There could be incorrect information here.</div>
-# Overview
-Pre-run and post-run hooks allow you to take any initialization steps or verify the results of the run.
+
+GUT has a pre-run and post-run hook that allows you to take any initialization steps or verify the results of the run.
 
 Hook scripts can be set through the editor, through a command line option or in the `.gutconfig.json` file.
 
@@ -9,7 +8,7 @@ All Hook scripts must inherit from [`GutHookScript`](https://github.com/bitwes/G
 
 All Hook scripts have access to the GUT instance that is running the tests via the `gut` property defined in `hook_script.gd`.  This is set after initializing the script.
 
-GUT executes the `run()` method in  each of the Hook scripts.  Place your  custom code in there.
+GUT executes the virtual method `run()` when the hook should be executed.  Place your custom code in there.
 
 **Note:** All Hook scripts are instantiated at the start of the run and later `run()` is called on each instance at the appropriate time.  The `_init()` method of your Hook Script will not have access to the GUT instance since it is set  later.
 
@@ -17,14 +16,10 @@ GUT executes the `run()` method in  each of the Hook scripts.  Place your  custo
 
 
 ## Setup
-Create scripts that inherit from `GutHookScript`, implement the `run()` method, and set their paths either through the editor, command line or  `.gutconfig.json`.
+Create scripts that inherit from `GutHookScript`, implement the `run()` method.  Set the path to your scripts through the panel or  `.gutconfig.json`, depending on how you are running your tests.
 
-### Editor
-The GUT node has `pre_run_script` and `post_run_script` properties to set the path to your Hook scripts.
 
-### Command Line
-The command line `-gpre_run_script` and `-gpost_run_script` options.  You can also specify `pre_run_script` and `post_run_script` in the `.gutconfig.json` file.
-
+You can specify `pre_run_script` and `post_run_script` in the `.gutconfig.json` file.  You can also specify these options directly at the command line using the `-gpre_run_script` and `-gpost_run_script` options.
 
 
 
