@@ -18,7 +18,8 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
-    'myst_parser'
+    'myst_parser',
+    'sphinx_rtd_dark_mode',
 ]
 
 intersphinx_mapping = {
@@ -46,7 +47,10 @@ html_static_path = ['_static']
 # custom.css copied from Godot's CSS:
 # https://github.com/godotengine/godot-docs/blob/4.2/_static/css/custom.css
 html_css_files = [
-    'css/custom.css',
+    'css/gut_custom.css'
+]
+
+html_js_files = [
 ]
 
 html_favicon = 'favicon.ico'

@@ -1,0 +1,26 @@
+/* ----------------------------------------------------------------------------*
+Gut Wiki Specific items
+----------------------------------------------------------------------------- */
+.gutwarning{
+    background-color: rgb(60, 0, 0);
+    color: white;
+    text-align: center;
+    font-size: large;
+    font-weight: bold;
+    border-style: dashed;
+    border-width: 5px;
+    border-color: black;
+
+    padding: 20px;
+}
+
+/* ----------------------------------------------------------------------------*
+Customizing the wiki
+----------------------------------------------------------------------------- */
+.wy-menu-vertical p.caption {
+    text-transform: capitalize !important;
+}
+
+.wy-side-nav-search {
+    background-color: rgb(66, 10, 130) !important;
+}
