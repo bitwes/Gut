@@ -209,7 +209,7 @@ func test_queue_freeing():
 	var node = Node.new()
 	node.queue_free()
 	assert_no_new_orphans('this one fails')
-	yield(yield_for(.1), YIELD)
+	await(wait_seconds(.1))
 	assert_no_new_orphans('this one passes')
 
 ```

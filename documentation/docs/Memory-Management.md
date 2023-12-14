@@ -107,13 +107,13 @@ class TestLeaks:
         to_free.free()
         assert_no_new_orphans()
 ```
-If you must use `queue_free` instead of `free` in your test then you will have to pause before asserting that no orphans have been created.  You can do this with `yield`
+If you must use `queue_free` instead of `free` in your test then you will have to pause before asserting that no orphans have been created.  You can do this with `await`
 ``` gdscript
 func test_no_orphans_queue_free();
   var node = Node.new()
   node.queue_free()
   assert_no_new_orphans('this will fail')
-  yield(yield_for(.2), YIELD)
+  await wait_seconds(.2)
   assert_no_new_orphans('this one passes')
 ```
 

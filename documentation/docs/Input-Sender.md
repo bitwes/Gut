@@ -45,7 +45,7 @@ Using `Input` makes testing objects that handle input via `_process` or `_proces
 1.  You should declare your `InputSender` instance at the class level.  You will need access to it in the `after_each` method.
 1.  Call `release_all` on the `InputSender` in `after_each`.  This makes sure that `Input` doesn't think that a button is pressed when you don't expect it to be.  If `Input` thinks a button is pressed, it will not send any "down" events until it gets an "up" event.
 1.  Call `clear` on the `InputSender` in `after_each`.  This clears out any state the `InputSender` has.  It tracks inputs so that functions like `hold_for` can create dynamic "up" events, as well as various other things.  Calling `clear` makes sure that `InputSender` state does not leak from one test to another.
-1.  You must ALWAYS yield before making an assert or your objects will not get a chance to process the frame the `Input` was sent on (`_process` and `_physics_process` will not be called without a yield).
+1.  You must ALWAYS await before making an assert or your objects will not get a chance to process the frame the `Input` was sent on (`_process` and `_physics_process` will not be called without a await).
 
 ``` gdscript
 var _sender = InputSender.new(Input)
@@ -58,7 +58,7 @@ func test_shoot():
     var player = Player.new()
 
     _sender.action_down("shoot").wait_frames(1)
-    yield(_sender, 'idle')
+    await(_sender.idle)
 
     assert_true(player.is_shooting())
 ```
@@ -76,7 +76,7 @@ sender.key_down("a").wait(.1)\
     .key_down(KEY_B).wait(.1)\
     .key_up("a").wait(.1)\
     .key_up(KEY_B)
-yield(sender, 'idle')
+await(sender.idle)
 ```
 The `InputSender` will emit the `idle` signal when all inputs in a sequence have been sent and all `waits` have expired.
 
@@ -91,7 +91,7 @@ You can use a trailing `wait` to give the result of the input time to play out
 # wait an extra .2 seconds at the end so that asserts will be run after the
 # shooting animation finishes.
 sender.action_down("shoot").hold_for(1).wait(.2)
-yield(sender, 'idle')
+await(sender.idle)
 ```
 
 
@@ -122,7 +122,7 @@ func test_tapping_jump_jumps_certain_height():
     var player = add_child_autofree(Player.new())
 
     _sender.action_down("jump").hold_for(.1).wait(.3)
-    yield(_sender, 'idle')
+    await(_sender.idle)
 
     assert_between(player.position.y, 4, 5)
 
@@ -133,7 +133,7 @@ func test_holding_jump_jumps_higher():
     var player = add_child_autofree(Player.new())
 
     _sender.action_down("jump").hold_for(.75)
-    yield(_sender, 'idle')
+    await(_sender.idle)
 
     assert_between(player.position.y, 7, 8)
 
@@ -148,7 +148,7 @@ func test_fireball_input():
     _sender.action_down("down").hold_for("2f")\
         .action_down("down_forward").hold_for("2f")\
         .action_down("forward").key_down("FP")
-    yield(_sender, 'idle')
+    await(_sender.idle)
 
     assert_true(player.is_throwing_fireball())
 
@@ -163,7 +163,7 @@ func test_holding_down_and_jump_does_slide():
 
     _sender.action_down("down").wait("1f")\
         .action_down("jump").wait("2f")
-    yield(_sender, 'idle')
+    await(_sender.idle)
 
     assert_gt(player.velocity.x, 0)
 ```
@@ -214,7 +214,7 @@ func test_when_uai_enabled_waiting_makes_button_pressed():
     # wait 10 frames.  In testing, 6 frames failed, but 7 passed.  Added 3 for
     # good measure.
     _sender.key_down(KEY_Y).wait('10f')
-    yield(_sender, 'idle')
+    await(_sender.idle)
     assert_true(_sender.is_key_pressed(KEY_Y))
     assert_true(Input.is_key_pressed(KEY_Y))
 
