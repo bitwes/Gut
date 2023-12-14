@@ -3,20 +3,24 @@ When a `double` is instanced, Gut will record calls to methods that are defined 
 
 You should read the page on doubling before using this, as there are some gotchas with doubling.
 
-The following methods can be used to "spy" on doubled objects:
+__You can only spy on methods that have been included in the Double.  Built-in functions (such as `set_position`) are not doubled by default, so you cannot spy on them unless you have set the [Double Strategy](Double-Strategy).__
+
+## Spy Related Methods
+The following methods can be used to "spy" on doubled objects.  They are available in any script that extends `GutTest`.
 * `assert_called`
 * `assert_not_called`
 * `assert_call_count`
 * `get_call_parameters`
+* `get_call_count`
 
-#### <a name="assert_called">assert_called(inst, method_name, parameters=null)
+### assert_called
+`assert_called(inst, method_name, parameters=null)`<br>
 This assertion is is one of the ways Gut implements Spies.  It requires that you pass it an instance of a "doubled" object.  An instance created with `double` will record when a method it has is called.  You can then make assertions based on this.
 
 This assert will check the object to see if a call to the specified method (optionally with parameters) was called over the course of the test.  If it finds a match this test will `pass`, if not it will `fail`.
 
 The `parameters` parameter is an array of values that you expect to have been passed to `method_name`.  If you do not specify any parameters then any call to `method_name` will match and the assert will `pass`.  If you specify parameters then all the parameter values must match.  You must specify all parameters the method takes, even if they have defaults.
 
-__Methods that are inherited from built-in parent classes are not yet recorded.  For example, you cannot make "called" assertions on methods like `set_position` unless your sub-class specifically implements it.  But since those methods retain their built-in functionality, you can just make normal assertions on them.__
 
 ``` gdscript
 # Given the following class located at 'res://test/doubler_test_objects/double_extends_node2d.gd'
@@ -63,17 +67,20 @@ func test_assert_called():
 	# instance of a doubled class.
 	assert_called(GDScript.new(), 'some_method')
 ```
-#### <a name="asssert_not_called">assert_not_called(inst, method_name, parameters=null)
+
+
+### assert_not_called
+`assert_not_called(inst, method_name, parameters=null)`<br>
 This is the inverse of `assert_called` and works the same way except, you know, inversely.  Matches are found based on parameters in the same fashion.  If a matching call is found then this assert will `fail`, if not it will `pass`.
 
-#### <a name="assert_call_count">assert_call_count(inst, method_name, expected_count, parameters=null)
+
+### assert_call_count
+`assert_call_count(inst, method_name, expected_count, parameters=null)`<br>
 This assertion is is one of the ways Gut implements Spies.  It requires that you pass it an instance of a "doubled" object.  An instance created with `double` will record when a method it has is called.  You can then make assertions based on this.
 
 Asserts that a method on a doubled instance has been called a number of times.  If you do not specify any parameters then all calls to the method will be counted.  If you specify parameters, then only those calls that were passed matching values will be counted.
 
 The `parameters` parameter is an array of values that you expect to have been passed to `method_name`.  If you do not specify any parameters then any call to `method_name` will match and the assert will `pass`.  If you specify parameters then all the parameter values must match.  You must specify all parameters the method takes, even if they have defaults.  Gut is not able (yet?) to fill in default values.
-
-__Methods that are inherited from built-in parent classes are not yet recorded.  For example, you cannot make "call" assertions on methods like `set_position` unless your sub-class specifically implements it (you can, they will just always return 0).  Since those methods retain their built-in functionality, you can just make normal assertions on them.__
 
 
 ``` gdscript
@@ -125,3 +132,14 @@ func test_assert_call_count():
 	assert_call_count(doubled, 'set_position', 1)
 
 ```
+
+### get_call_parameters
+`get_call_parameters(object, method_name, index=-1)`<br>
+
+This will return the parameters that were passed to the call of method as an array.  By default it returns the most recent call to the method.  You can specify the optional index to get any of the calls that were made to the method.  `null` is returned if a call to the specified method was not found.
+
+
+### get_call_count
+`get_call_count(object, method_name, parameters=null)`<br>
+
+Returns the call count for a method with optional paramter matching.  See `assert_call_count` for info about parameter matching.

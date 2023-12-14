@@ -59,18 +59,21 @@ func test_something():
   stub(inst, 'returns_seven').to_return(500)
   assert_eq(inst.returns_seven(), 500)
 ```
+
+## Stubbing at the Script level vs Instance level
 The `stub` method is pretty smart about what you pass it.  You can pass it a path, an Object or an instance.  If you pass an instance, it __must__ be an instance of a double.
 
 When passed an Object or a path, it will stub the value for __all__ instances that do not have explicitly defined stubs.  When you pass it an instance of a doubled class, then the stubbed return will only be set for that instance.
+
 ```gdscript
 var DoubleThis = load('res://scripts/double_this.gd')
 var Doubled = double(DoubleThis)
+var inst = Doubled.new()
 
 # These two are equivalent, and stub returns_seven for any doubles of
 # DoubleThis to return 500.
 stub('res://scripts/double_this.gd', 'returns_seven').to_return(500)
 stub(DoubleThis, 'returns_seven').to_return(500)
-var inst = Doubled.new()
 assert_eq(inst.returns_seven(), 500)
 
 # This will stub returns_seven on the passed in instance ONLY.
@@ -78,6 +81,7 @@ assert_eq(inst.returns_seven(), 500)
 var stub_again = Doubled.new()
 stub(stub_again, 'returns_seven').to_return('words')
 assert_eq(stub_again.returns_seven(), 'words')
+assert_ne(inst.returns_seven, 'words')
 ```
 
 ## Stubbing based off of parameter values
