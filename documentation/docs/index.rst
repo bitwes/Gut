@@ -81,7 +81,6 @@ Getting Started
 * :doc:`Install <Install>`
 * :doc:`Asserts and Methods <Asserts-and-Methods>`
 * :doc:`Creating Tests <Creating-Tests>`
-* :doc:`Gut Settings and Methods <Gut-Settings-And-Methods>`
 * :doc:`Using Gut at the command line <Command-Line>`
 
 
