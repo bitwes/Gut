@@ -27,3 +27,5 @@ exported_tests.cfg
 # GUT-specific ignores
 .gut_editor_config.json
 .gut_editor_shortcuts.cfg
+
+documentation/docs/_build

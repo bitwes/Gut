@@ -21,7 +21,7 @@ func directory_delete_files(path):
 	var full_path = ''
 	while(thing != ''):
 		full_path = path + "/" + thing
-		#file_exists returns fasle for directories
+		# file_exists returns fasle for directories
 		if(d.file_exists(full_path)):
 			d.remove(full_path)
 		thing = d.get_next()

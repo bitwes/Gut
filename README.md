@@ -1,13 +1,20 @@
 ![gut logo](images/gut_logo_256x256.png)
-# Gut 9.1.1 (Godot 4.1)
+
+
+# Repo Changes
+* The default branch is now `main`.
+* GUT 9 (for Godot 4) is now on `main`.
+* GUT 7 (for Godot 3) is now on the `godot_3x` branch.
+* Documentation has moved
+    * GUT 9 on readthedocs.io:  https://gut.readthedocs.io/en/latest/
+    * GUT 7 on readthedocs.io:  https://gut.readthedocs.io/en/godot_3/
+
+
+# GUT 9.1.2 (Godot 4.1)
 GUT (Godot Unit Test) is a unit testing framework for the [Godot Engine](https://godotengine.org/).  It allows you to write tests for your gdscript in gdscript.
 
 GUT versions 9.x are for Godot 4.x
 GUT versions below 9.0.0 (currently 7.4.2) are for Godot 3.x
-
-__NOTE__ The wiki for this version has moved to https://bitwes.github.io/GutWiki/Godot4/.  It has not been fully updated yet.  The Wiki source is now [located in the `godot_4` branch](https://github.com/bitwes/Gut/tree/godot_4/wiki) and Pull Requests are encouraged.  See Wiki section in [GODOT_4_README.md](https://github.com/bitwes/Gut/blob/godot_4/GODOT_4_README.md) for details.
-
-See the [GODOT_4_README.md](https://github.com/bitwes/Gut/blob/godot_4/GODOT_4_README.md) for information about how things have changed in Godot 4.
 
 
 ## Donate/Shameless Plug
@@ -16,24 +23,24 @@ If you would like to help support GUT check out my game [Country or State](https
 
 # Features
 * Godot 4.0
-* [Simple install](https://bitwes.github.io/GutWiki/Godot4/Install) via the Asset Library.
-* A plethora of [asserts and utility methods](https://bitwes.github.io/GutWiki/Godot4/Asserts-and-Methods) to help make your tests simple and concise.
-* Support for [Inner Test Classes](https://bitwes.github.io/GutWiki/Godot4/Inner-Test-Classes) to give your tests some extra context and maintainability.
-* Doubling:  [Full](https://bitwes.github.io/GutWiki/Godot4/Doubles) and [Partial](https://bitwes.github.io/GutWiki/Godot4/Partial-Doubles), [Stubbing](https://bitwes.github.io/GutWiki/Godot4/Stubbing), [Spies](https://bitwes.github.io/GutWiki/Godot4/Spies)
-* Command Line Interface [(CLI)](https://bitwes.github.io/GutWiki/Godot4/Command-Line)
-* [Parameterized Tests](https://bitwes.github.io/GutWiki/Godot4/ParameterizedTests)
-* [Export results](https://bitwes.github.io/GutWiki/Godot4/Export-Test-Results) in standard JUnit XML format.
+* [Simple install](https://gut.readthedocs.io/en/latest/Install.html) via the Asset Library.
+* A plethora of [asserts and utility methods](https://gut.readthedocs.io/en/latest/Asserts-and-Methods.html) to help make your tests simple and concise.
+* Support for [Inner Test Classes](https://gut.readthedocs.io/en/latest/Inner-Test-Classes.html) to give your tests some extra context and maintainability.
+* Doubling:  [Full](https://gut.readthedocs.io/en/latest/Doubles.html) and [Partial](https://gut.readthedocs.io/en/latest/Partial-Doubles.html), [Stubbing](https://gut.readthedocs.io/en/latest/Stubbing.html), [Spies](https://gut.readthedocs.io/en/latest/Spies.html)
+* Command Line Interface [(CLI)](https://gut.readthedocs.io/en/latest/Command-Line.html)
+* [Parameterized Tests](https://gut.readthedocs.io/en/latest/Parameterized-Tests.html)
+* [Export results](https://gut.readthedocs.io/en/latest/Export-Test-Results.html) in standard JUnit XML format.
 
 More info can be found in the [wiki](https://github.com/bitwes/Gut/wiki).
 
-![Panel](https://raw.githubusercontent.com/bitwes/Gut/master/gut_panel.png)
+![Panel](https://gut.readthedocs.io/en/latest/_images/gut_panel.png)
 
 
 # Getting Started
-* [Install](https://bitwes.github.io/GutWiki/Godot4/Install)
-* [Quick Start](https://bitwes.github.io/GutWiki/Godot4/Quick-Start)
-* [Creating Tests](https://bitwes.github.io/GutWiki/Godot4/Creating-Tests)
-* [Asserts and Methods](https://bitwes.github.io/GutWiki/Godot4/Asserts-and-Methods)
+* [Install](https://gut.readthedocs.io/en/latest/Install.html)
+* [Quick Start](https://gut.readthedocs.io/en/latest/Quick-Start.html)
+* [Creating Tests](https://gut.readthedocs.io/en/latest/Creating-Tests.html)
+* [Asserts and Methods](https://gut.readthedocs.io/en/latest/Asserts-and-Methods.html)
 
 
 # VSCode Extension
@@ -47,6 +54,6 @@ Run your tests directly from the VSCode Editor.  Search VSCode extensions for "g
 Gut is provided under the MIT license.  License is in `addons/gut/LICENSE.md`
 
 
-## [Tutorials](https://github.com/bitwes/Gut/wiki/Tutorials)
+## [Tutorials](https://github.com/bitwes/Gut/wiki/Tutorials.html)
 * [TDD and P O N G Series](https://www.youtube.com/channel/UCkGO6guRt_5fOh3oDHbfg9w/playlists)
-* Wiki list of tutorials https://github.com/bitwes/Gut/wiki/Tutorials
+* Wiki list of tutorials https://github.com/bitwes/Gut/wiki/Tutorials.html
