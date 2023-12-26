@@ -2,11 +2,13 @@
 
 GUT (Godot Unit Test) is a unit testing framework for the [Godot Engine](https://godotengine.org/).  It allows you to write tests for your gdscript in gdscript.
 
-# GUT 9 for Godot 4
-GUT 9.0.1 has been released for Godot 4.
-* For a list of everything that is new or has changed in Godot 4, read this page:  https://bitwes.github.io/GutWiki/Godot4/New-For-Godot-4.html.
-* The wiki for the Godot 4 version of GUT is at:  https://bitwes.github.io/GutWiki/Godot4/Home.html
-* The Godot 4 version of GUT is maintained on the `godot_4` branch.
+# Repo Changes
+* The default branch is now `main`.
+* GUT 9 (for Godot 4) is now on `main`.
+* GUT 7 (for Godot 3) is now on the `godot_3x` branch.
+* Documentation has moved
+    * GUT 9 on readthedocs.io:  https://gut.readthedocs.io/en/latest/
+    * GUT 7 on readthedocs.io:  https://gut.readthedocs.io/en/godot_3/
 
 
 # GUT 7 for Godot 3.x
@@ -19,25 +21,25 @@ If you would like to help support GUT check out my game [Country or State](https
 
 # Features
 * Godot 3.4.x, 3.5.x, 4.x (godot_4 branch) compatible.
-* [Simple install](https://github.com/bitwes/Gut/wiki/Install) via the Asset Library (7.x and 9.x are in the asset library).
-* A plethora of [asserts and utility methods](https://github.com/bitwes/Gut/wiki/Asserts-and-Methods) to help make your tests simple and concise.
-* Support for [Inner Test Classes](https://github.com/bitwes/Gut/wiki/Inner-Test-Classes) to give your tests some extra context and maintainability.
-* Doubling:  [Full](https://github.com/bitwes/Gut/wiki/Doubles) and [Partial](https://github.com/bitwes/Gut/wiki/Partial-Doubles), [Stubbing](https://github.com/bitwes/Gut/wiki/Stubbing), [Spies](https://github.com/bitwes/Gut/wiki/Spies)
-* Command Line Interface [(CLI)](https://github.com/bitwes/Gut/wiki/Command-Line)
-* [Parameterized Tests](https://github.com/bitwes/Gut/wiki/ParameterizedTests)
-* [Export results](https://github.com/bitwes/Gut/wiki/Export-Test-Results) in standard JUnit XML format.
-* [Distribute your tests](https://github.com/bitwes/Gut/wiki/Running-On-Devices) with your project and run them on any platform Godot supports.
+* [Simple install](https://gut.readthedocs.io/en/godot_3x/Install) via the Asset Library (7.x and 9.x are in the asset library).
+* A plethora of [asserts and utility methods](https://gut.readthedocs.io/en/godot_3x/Asserts-and-Methods.html) to help make your tests simple and concise.
+* Support for [Inner Test Classes](https://gut.readthedocs.io/en/godot_3x/Inner-Test-Classes.html) to give your tests some extra context and maintainability.
+* Doubling:  [Full](https://gut.readthedocs.io/en/godot_3x/Doubles.html) and [Partial](https://gut.readthedocs.io/en/godot_3x/Partial-Doubles.html), [Stubbing](https://gut.readthedocs.io/en/godot_3x/Stubbing.html), [Spies](https://gut.readthedocs.io/en/godot_3x/Spies.html)
+* Command Line Interface [(CLI)](https://gut.readthedocs.io/en/godot_3x/Command-Line.html)
+* [Parameterized Tests](https://gut.readthedocs.io/en/godot_3x/ParameterizedTests.html)
+* [Export results](https://gut.readthedocs.io/en/godot_3x/Export-Test-Results.html) in standard JUnit XML format.
+* [Distribute your tests](https://gut.readthedocs.io/en/godot_3x/Running-On-Devices.html) with your project and run them on any platform Godot supports.
 
-More info can be found in the [wiki](https://github.com/bitwes/Gut/wiki).
+More info can be found in the [wiki](https://gut.readthedocs.io/en/godot_3x).
 
-![Panel](https://raw.githubusercontent.com/bitwes/Gut/master/images/gut_panel.png)
+![Panel](https://gut.readthedocs.io/en/godot_3x/_images/gut_panel.png)
 
 
 # Getting Started
-* [Install](https://github.com/bitwes/Gut/wiki/Install)
-* [Quick Start](https://github.com/bitwes/Gut/wiki/Quick-Start)
-* [Creating Tests](https://github.com/bitwes/Gut/wiki/Creating-Tests)
-* [Asserts and Methods](https://github.com/bitwes/Gut/wiki/Asserts-and-Methods)
+* [Install](https://gut.readthedocs.io/en/godot_3x/Install.html)
+* [Quick Start](https://gut.readthedocs.io/en/godot_3x/Quick-Start.html)
+* [Creating Tests](https://gut.readthedocs.io/en/godot_3x/Creating-Tests.html)
+* [Asserts and Methods](https://gut.readthedocs.io/en/godot_3x/Asserts-and-Methods.html)
 
 
 # VSCode Extension
@@ -51,6 +53,6 @@ Run your tests directly from the VSCode Editor.  Search VSCode extensions for "g
 Gut is provided under the MIT license.  License is in `addons/gut/LICENSE.md`
 
 
-## [Tutorials](https://github.com/bitwes/Gut/wiki/Tutorials)
+## [Tutorials](https://gut.readthedocs.io/en/godot_3x/Tutorials)
 * [TDD and P O N G Series](https://www.youtube.com/channel/UCkGO6guRt_5fOh3oDHbfg9w/playlists)
-* Wiki list of tutorials https://github.com/bitwes/Gut/wiki/Tutorials
+* Wiki list of tutorials https://gut.readthedocs.io/en/godot_3x/Tutorials.html
