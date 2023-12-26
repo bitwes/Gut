@@ -6,8 +6,8 @@
 * GUT 9 (for Godot 4) is now on `main`.
 * GUT 7 (for Godot 3) is now on the `godot_3x` branch.
 * Documentation has moved
-    * GUT 9 on readthedocs.io:  https://gut.readthedocs.io/en/latest/
-    * GUT 7 on readthedocs.io:  https://gut.readthedocs.io/en/godot_3/
+    * GUT 9 on readthedocs.io:  https://gut.readthedocs.io/en/latest
+    * GUT 7 on readthedocs.io:  https://gut.readthedocs.io/en/godot_3x
 
 
 # GUT 9.1.2 (Godot 4.1)
