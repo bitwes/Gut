@@ -65,7 +65,7 @@
 
 
 
-Gut 9.1.1 (Godot 4.1)
+Gut 9.1.2 (Godot 4.1)
 =========
 GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.  It allows you to write tests for your gdscripts in gdscript.
 

@@ -6,8 +6,8 @@ project = 'GUT'
 copyright = '2023, Butch Wesley'
 author = 'bitwes'
 
-release = '9.1.1'
-version = '9.1.1 for Godot-4'
+release = '9.1.2'
+version = '9.1.2 for Godot-4'
 
 # -- General configuration
 
