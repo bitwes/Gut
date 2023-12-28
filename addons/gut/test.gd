@@ -281,6 +281,7 @@ func assert_eq(got, expected, text=""):
 
 	if(_do_datatypes_match__fail_if_not(got, expected, text)):
 		var disp = "[" + _str(got) + "] expected to equal [" + _str(expected) + "]:  " + text
+		disp += "\nEscaped string comparison: \n" + _str(got).c_escape() + "\n" + _str(expected).c_escape()
 		var result = null
 
 		result = _compare.simple(got, expected)
