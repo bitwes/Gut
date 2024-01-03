@@ -1,4 +1,4 @@
-var _utils = load('res://addons/gut/utils.gd').get_instance()
+var _utils = load('utils.gd').get_instance()
 var _lgr = _utils.get_logger()
 
 var return_val = null

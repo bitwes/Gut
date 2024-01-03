@@ -76,7 +76,7 @@ class ParsedMethod:
 class ParsedScript:
 	# All methods indexed by name.
 	var _methods_by_name = {}
-	var _utils = load('res://addons/gut/utils.gd').get_instance()
+	var _utils = load('utils.gd').get_instance()
 
 	var _script_path = null
 	var script_path = _script_path :
@@ -271,7 +271,7 @@ class ParsedScript:
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 var scripts = {}
-var _utils = load('res://addons/gut/utils.gd').get_instance()
+var _utils = load('utils.gd').get_instance()
 
 
 func _get_instance_id(thing):

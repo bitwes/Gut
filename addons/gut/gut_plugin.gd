@@ -5,7 +5,7 @@ var _bottom_panel = null
 
 
 func _enter_tree():
-	_bottom_panel = preload('res://addons/gut/gui/GutBottomPanel.tscn').instantiate()
+	_bottom_panel = preload('gui/GutBottomPanel.tscn').instantiate()
 
 	var button = add_control_to_bottom_panel(_bottom_panel, 'GUT')
 	button.shortcut_in_tooltip = true

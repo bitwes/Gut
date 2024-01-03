@@ -3,12 +3,12 @@
 importer="font_data_dynamic"
 type="FontFile"
 uid="uid://cmiuntu71oyl3"
-path="res://.godot/imported/LobsterTwo-Bold.ttf-7c7f734103b58a32491a4788186f3dcb.fontdata"
+path="res://.godot/imported/LobsterTwo-Bold.ttf-6c39f88b3ec3eba392570aa0fe5f87f6.fontdata"
 
 [deps]
 
-source_file="res://addons/gut/fonts/LobsterTwo-Bold.ttf"
-dest_files=["res://.godot/imported/LobsterTwo-Bold.ttf-7c7f734103b58a32491a4788186f3dcb.fontdata"]
+source_file="fonts/LobsterTwo-Bold.ttf"
+dest_files=["res://.godot/imported/LobsterTwo-Bold.ttf-6c39f88b3ec3eba392570aa0fe5f87f6.fontdata"]
 
 [params]
 

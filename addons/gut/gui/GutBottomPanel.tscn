@@ -1,11 +1,11 @@
 [gd_scene load_steps=10 format=3 uid="uid://b3bostcslstem"]
 
-[ext_resource type="Script" path="res://addons/gut/gui/GutBottomPanel.gd" id="1"]
-[ext_resource type="PackedScene" uid="uid://bsk32dh41b4gs" path="res://addons/gut/gui/BottomPanelShortcuts.tscn" id="2"]
-[ext_resource type="PackedScene" uid="uid://0yunjxtaa8iw" path="res://addons/gut/gui/RunAtCursor.tscn" id="3"]
-[ext_resource type="Texture2D" uid="uid://cr6tvdv0ve6cv" path="res://addons/gut/gui/play.png" id="4"]
-[ext_resource type="PackedScene" uid="uid://4gyyn12um08h" path="res://addons/gut/gui/RunResults.tscn" id="5"]
-[ext_resource type="PackedScene" uid="uid://bqmo4dj64c7yl" path="res://addons/gut/gui/OutputText.tscn" id="6"]
+[ext_resource type="Script" path="GutBottomPanel.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://bsk32dh41b4gs" path="BottomPanelShortcuts.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://0yunjxtaa8iw" path="RunAtCursor.tscn" id="3"]
+[ext_resource type="Texture2D" uid="uid://cr6tvdv0ve6cv" path="../play.png" id="4"]
+[ext_resource type="PackedScene" uid="uid://4gyyn12um08h" path="RunResults.tscn" id="5"]
+[ext_resource type="PackedScene" uid="uid://bqmo4dj64c7yl" path="OutputText.tscn" id="6"]
 
 [sub_resource type="Shortcut" id="9"]
 

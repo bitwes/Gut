@@ -1,4 +1,4 @@
-var _utils = load('res://addons/gut/utils.gd').get_instance()
+var _utils = load('utils.gd').get_instance()
 var _strutils = _utils.Strutils.new()
 const INDENT = '    '
 var _max_to_display = 30

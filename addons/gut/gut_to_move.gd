@@ -1,7 +1,7 @@
 # Temporary base script for gut.gd to hold the things to be remvoed and added
 # to some utility somewhere.
 extends Node
-var _utils = load('res://addons/gut/utils.gd').get_instance()
+var _utils = load('utils.gd').get_instance()
 
 # ------------------------------------------------------------------------------
 # deletes all files in a given directory
