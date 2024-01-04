@@ -1,0 +1,36 @@
+name: Test
+on:
+  pull_request:
+jobs:
+  test:
+    name: Test
+    runs-on: ${{matrix.os}}-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu, windows, macos ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+      - name: Setup Godot
+        uses: chickensoft-games/setup-godot@v1
+        with:
+          version: 4.2.1-stable
+          use-dotnet: false
+      - name: Workaround Godot import issue
+        run: godot --headless --export-release "Linux/X11" /dev/null || true
+      - name: Run tests
+        run: godot -d --headless -s --path "$PWD" addons/gut/gut_cmdln.gd -gexit "-gjunit_xml_file=junit.xml" || true
+      - name: Process results
+        run: godot -d --headless -s --path "$PWD" test/process_junit_xml_results.gd
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-xml
+          path: junit.xml
+          if-no-files-found: error
