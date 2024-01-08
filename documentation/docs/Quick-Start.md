@@ -21,7 +21,8 @@ You can also run tests via the [command line](Command-Line) and through [VSCode]
 ## Creating Tests
 [More Information](Creating-Tests)
 
-All test scripts must extend `GutTest` (`res://addons/gut/test.gd`) script supplied by GUT.
+* All test scripts must extend `GutTest` (`res://addons/gut/test.gd`) script supplied by GUT.
+* All test files must begin with `test_` to be found by GUT.
 ```
 extends GutTest
 ```
