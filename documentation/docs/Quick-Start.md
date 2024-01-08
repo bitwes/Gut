@@ -22,7 +22,7 @@ You can also run tests via the [command line](Command-Line) and through [VSCode]
 [More Information](Creating-Tests)
 
 * All test scripts must extend `GutTest` (`res://addons/gut/test.gd`) script supplied by GUT.
-* All test files must begin with `test_` to be found by GUT.
+* By default, all test files must begin with `test_` to be found by GUT. You can change the prefix and suffix of test files in the GUT settings.
 ```
 extends GutTest
 ```
