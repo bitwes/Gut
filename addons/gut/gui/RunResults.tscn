@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://4gyyn12um08h"]
 
-[ext_resource type="Script" path="res://addons/gut/gui/RunResults.gd" id="1"]
-[ext_resource type="PackedScene" uid="uid://dls5r5f6157nq" path="res://addons/gut/gui/ResultsTree.tscn" id="2_o808v"]
+[ext_resource type="Script" path="./RunResults.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://dls5r5f6157nq" path="./ResultsTree.tscn" id="2_o808v"]
 
 [sub_resource type="Image" id="Image_abbh7"]
 data = {

@@ -6,7 +6,7 @@
 #
 # This class also facilitates all the exporting and importing of tests.
 # ------------------------------------------------------------------------------
-var CollectedTest = load('res://addons/gut/collected_test.gd')
+var CollectedTest = preload('collected_test.gd')
 
 var _utils = null
 var _lgr = null

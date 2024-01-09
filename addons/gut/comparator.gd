@@ -1,4 +1,4 @@
-var _utils = load('res://addons/gut/utils.gd').get_instance()
+var _utils = load('utils.gd').get_instance()
 var _strutils = _utils.Strutils.new()
 var _max_length = 100
 var _should_compare_int_to_float = true

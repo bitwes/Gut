@@ -1,6 +1,6 @@
 class_name GutStringUtils
 
-var _utils = load('res://addons/gut/utils.gd').get_instance()
+var _utils = load('utils.gd').get_instance()
 # Hash containing all the built in types in Godot.  This provides an English
 # name for the types that corosponds with the type constants defined in the
 # engine.
