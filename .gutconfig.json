@@ -9,7 +9,7 @@
   "should_maximize": false,
   "hide_orphans": true,
   "should_exit": true,
-  "ignore_pause": true,
+  "ignore_pause": false,
   "log_level": 3,
   "double_strategy": "script_only",
   "inner_class": "",

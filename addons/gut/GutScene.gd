@@ -14,6 +14,10 @@ var gut = null :
 
 
 func _ready():
+	print('-----------------')
+	print('GutScene Ready ', self, ' on ', get_parent())
+	print('-----------------')
+
 	_normal_gui.switch_modes.connect(use_compact_mode.bind(true))
 	_compact_gui.switch_modes.connect(use_compact_mode.bind(false))
 
@@ -27,6 +31,7 @@ func _ready():
 
 	if(get_parent() == get_tree().root):
 		_test_running_setup()
+
 
 func _test_running_setup():
 	set_font_size(100)

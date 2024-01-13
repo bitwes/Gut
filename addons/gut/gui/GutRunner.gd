@@ -38,6 +38,9 @@ var _cmdln_mode = false
 var auto_run_tests = true
 
 func _ready():
+	print('-----------------')
+	print('GutRunner Ready ', self, ' on ', get_parent())
+	print('-----------------')
 	if(_gut_config == null):
 		_gut_config = GutConfig.new()
 		_gut_config.load_panel_options(RUNNER_JSON_PATH)
@@ -72,8 +75,6 @@ func _setup_gui(show_gui):
 		_gui.set_background_color(Color(opts.background_color))
 
 	_gui.set_opacity(min(1.0, float(opts.opacity) / 100))
-	# if(opts.should_maximize):
-	# 	_tester.maximize()
 	_gui.use_compact_mode(opts.compact_mode)
 
 
@@ -140,6 +141,10 @@ func set_cmdln_mode(is_it):
 	_cmdln_mode = is_it
 
 
+func kill_scenes():
+	_gui._normal_gui.free()
+	_gui._compact_gui.free()
+	_gui.free()
 
 
 # ##############################################################################
