@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 # 9.1.2
 * Documentation and repo changes.
+* __Issue #536__ Theme refernces font instead of embedding it.
+
 
 
 # 9.1.1
