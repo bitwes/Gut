@@ -5,7 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 # 9.1.2
 * Documentation and repo changes.
-* __Issue #536__ Theme refernces font instead of embedding it.
+* __Issue__ #536 Theme refernces font instead of embedding it.
+* __Issue__ #523 "got" values are printed with extra precision for float, Vector2, and Vector3 when using `assert_almost_eq`, `assert_almost_ne`, `assert_between` and `assert_not_between`.
 
 
 
