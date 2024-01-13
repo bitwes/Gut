@@ -6,7 +6,11 @@ class HasInputEvents:
 
 	var input_event = null
 	var gui_event = null
+	var gui_signal_event = null
 	var unhandled_event = null
+
+	func _init() -> void:
+		gui_input.connect(_on_gui_input_emitted)
 
 	func _input(event):
 		input_event = event
@@ -14,6 +18,28 @@ class HasInputEvents:
 		gui_event = event
 	func _unhandled_input(event):
 		unhandled_event = event
+	func _on_gui_input_emitted(event):
+		gui_signal_event = event
+
+
+class InputEventsOrder:
+	extends Control
+	
+	const RIGHT_ORDER = ["input", "gui_signal", "gui", "unhandled"]
+	
+	var got_input_in_order: Array = []
+
+	func _init() -> void:
+		gui_input.connect(_on_gui_input_emitted)
+
+	func _input(event):
+		got_input_in_order.append("input")
+	func _gui_input(event):
+		got_input_in_order.append("gui")
+	func _unhandled_input(event):
+		got_input_in_order.append("unhandled")
+	func _on_gui_input_emitted(event):
+		got_input_in_order.append("gui_signal")
 
 
 class MissingGuiInput:
@@ -428,6 +454,13 @@ class TestSendEvent:
 		var event = InputEventKey.new()
 		sender.send_event(event)
 		assert_eq(r.gui_event, event)
+	
+	func test_sends_event_to_gui_input_signal():
+		var r = autofree(HasInputEvents.new())
+		var sender = InputSender.new(r)
+		var event = InputEventKey.new()
+		sender.send_event(event)
+		assert_eq(r.gui_signal_event, event)
 
 	func test_sends_event_to_unhandled_input():
 		var r = autofree(HasInputEvents.new())
@@ -435,6 +468,13 @@ class TestSendEvent:
 		var event = InputEventKey.new()
 		sender.send_event(event)
 		assert_eq(r.unhandled_event, event)
+
+	func test_event_received_order():
+		var r = autofree(InputEventsOrder.new())
+		var sender = InputSender.new(r)
+		var event = InputEventKey.new()
+		sender.send_event(event)
+		assert_eq(r.got_input_in_order, InputEventsOrder.RIGHT_ORDER)
 
 	func test_sends_event_to_multiple_receivers():
 		var r1 = autofree(HasInputEvents.new())
