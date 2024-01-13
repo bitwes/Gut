@@ -10,7 +10,7 @@ class BaseTestClass:
 	# !! Use this for debugging to see the results of all the subtests that
 	# are run using assert_fail_pass, assert_fail and assert_pass that are
 	# built into this class
-	var _print_all_subtests = false
+	var _print_all_subtests = true
 
 	# GlobalReset(gr) variables to be used by tests.
 	# The values of these are reset in the setup or
@@ -202,7 +202,6 @@ class TestAssertEq:
 		assert_pass(gr.test)
 
 	func test_comparing_callable_does_not_error():
-		_print_all_subtests = true
 		gr.test.assert_eq(test_comparing_callable_does_not_error, '1')
 		assert_fail(gr.test)
 		assert_fail_msg_contains(gr.test, 'Cannot compare CALLABLE')
@@ -331,6 +330,30 @@ class TestAssertAlmostEq:
 		gr.test.assert_almost_eq(Vector3(1.0, 2.0, 3.0), Vector3(1.0, 1.0, 1.0), Vector3(2.0, 2.0, 2.0), "Should pass, Vector3(1.0, 2.0, 3.0) == Vector3(1.0, 1.0, 1.0) +/- Vector3(2.0, 2.0, 2.0)")
 		assert_pass(gr.test)
 
+	func test_fail_message_includes_extra_precision_for_floats():
+		gr.test.assert_almost_eq(.500000000012300000, .499, .001)
+		assert_fail(gr.test)
+		assert_fail_msg_contains(gr.test, '01230')
+
+	func test_fail_message_includes_extra_precision_for_vector2():
+		var got = Vector2(1.0001230, 1.003450)
+		var expected = Vector2(.999, .999)
+		var pad = Vector2(.001, .001)
+		gr.test.assert_almost_eq(got, expected, pad)
+		assert_fail(gr.test)
+		assert_fail_msg_contains(gr.test, '01230')
+		assert_fail_msg_contains(gr.test, '03450')
+
+	func test_fail_message_includes_extra_precision_for_vector3():
+		var got = Vector3(1.0001230, 1.003450, 1.0032101)
+		var expected = Vector3(.999, .999, .999)
+		var pad = Vector3(.001, .001, .001)
+		gr.test.assert_almost_eq(got, expected, pad)
+		assert_fail(gr.test)
+		assert_fail_msg_contains(gr.test, '01230')
+		assert_fail_msg_contains(gr.test, '03450')
+		assert_fail_msg_contains(gr.test, '03210')
+
 
 # ------------------------------------------------------------------------------
 class TestAssertAlmostNe:
@@ -399,6 +422,12 @@ class TestAssertAlmostNe:
 	func test_fails_with_vector3s_y_z_within_range():
 		gr.test.assert_almost_ne(Vector3(1.0, 2.0, 3.0), Vector3(1.0, 1.0, 1.0), Vector3(2.0, 2.0, 2.0), "Should fail, Vector3(1.0, 2.0, 3.0) == Vector3(1.0, 1.0, 1.0) +/- Vector3(2.0, 2.0, 2.0)")
 		assert_fail(gr.test)
+
+	func test_fail_message_includes_extra_precision_for_floats():
+		gr.test.assert_almost_ne(.500000000012300000, .5, .001)
+		assert_fail(gr.test)
+		assert_fail_msg_contains(gr.test, '01230')
+
 
 
 # ------------------------------------------------------------------------------
@@ -496,6 +525,11 @@ class TestAssertBetween:
 		gr.test.assert_between('q', 'z', 'a', "Should fail")
 		assert_fail(gr.test)
 
+	func test_fail_message_includes_extra_precision_for_floats():
+		gr.test.assert_between(.50000000012300100, .498, .5)
+		assert_fail(gr.test)
+		assert_fail_msg_contains(gr.test, '01230')
+
 
 # ------------------------------------------------------------------------------
 class TestAssertNotBetween:
@@ -544,6 +578,11 @@ class TestAssertNotBetween:
 	func test_with_invalid_string_range():
 		gr.test.assert_not_between('q', 'z', 'a', "Should fail: Invalid range")
 		assert_fail(gr.test)
+
+	func test_fail_message_includes_extra_precision_for_floats():
+		gr.test.assert_not_between(.50000000012300100, .498, .51)
+		assert_fail(gr.test)
+		assert_fail_msg_contains(gr.test, '01230')
 
 
 # ------------------------------------------------------------------------------
