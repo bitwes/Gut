@@ -201,6 +201,12 @@ class TestAssertEq:
 		gr.test.assert_eq(d, d2)
 		assert_pass(gr.test)
 
+	func test_comparing_callable_does_not_error():
+		_print_all_subtests = true
+		gr.test.assert_eq(test_comparing_callable_does_not_error, '1')
+		assert_fail(gr.test)
+		assert_fail_msg_contains(gr.test, 'Cannot compare CALLABLE')
+
 
 
 # ------------------------------------------------------------------------------
