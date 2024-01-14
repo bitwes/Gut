@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://test/resources/TestIssue436.gd" type="Script" id=1]
+
+[node name="TestIssue436" type="Node2D"]
+position = Vector2( 10, 10 )
+script = ExtResource( 1 )
+test_export_value = 2
