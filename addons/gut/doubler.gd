@@ -326,8 +326,25 @@ class PackedSceneDouble:
 
 	func instance(edit_state=0):
 		var inst = _scene.instance(edit_state)
+		var export_props = []
+		var script_export_flag = (PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_EDITOR | PROPERTY_USAGE_SCRIPT_VARIABLE)
+
 		if(_script !=  null):
+			if(inst.get_script() != null):
+				# Get all the exported props and values so we can set them again
+				for prop in inst.get_property_list():
+					var is_export = prop.usage & (script_export_flag) == script_export_flag
+					if(is_export):
+						export_props.append([prop.name, inst.get(prop.name)])
+
 			inst.set_script(_script)
+			for exported_value in export_props:
+				print('setting ', exported_value)
+				inst.set(exported_value[0], exported_value[1])
+
+
+		# if(_script !=  null):
+		# 	inst.set_script(_script)
 		return inst
 
 	func load_scene(path):

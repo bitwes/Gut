@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/exclude_addons.png-f98208152e6418c1a49c1c82d986ae3c.stex"
+path="res://.import/exclude_addons.png-2d2c817abc528e131640983575b6c388.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://wiki/images/exclude_addons.png"
-dest_files=[ "res://.import/exclude_addons.png-f98208152e6418c1a49c1c82d986ae3c.stex" ]
+source_file="res://documentation/docs/_static/images/exclude_addons.png"
+dest_files=[ "res://.import/exclude_addons.png-2d2c817abc528e131640983575b6c388.stex" ]
 
 [params]
 

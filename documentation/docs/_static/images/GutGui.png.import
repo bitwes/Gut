@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/GutGui.png-33f9a235f932ddad8ae5503dfc864c83.stex"
+path="res://.import/GutGui.png-0605fa140f90e6b2908f382fa141f20b.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://wiki/images/GutGui.png"
-dest_files=[ "res://.import/GutGui.png-33f9a235f932ddad8ae5503dfc864c83.stex" ]
+source_file="res://documentation/docs/_static/images/GutGui.png"
+dest_files=[ "res://.import/GutGui.png-0605fa140f90e6b2908f382fa141f20b.stex" ]
 
 [params]
 

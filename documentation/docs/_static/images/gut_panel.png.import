@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/gut_panel.png-3740fad01737b2d4e2ebe99569913265.stex"
+path="res://.import/gut_panel.png-cb9e402270550ba26158d0fe087b7127.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://wiki/images/gut_panel.png"
-dest_files=[ "res://.import/gut_panel.png-3740fad01737b2d4e2ebe99569913265.stex" ]
+source_file="res://documentation/docs/_static/images/gut_panel.png"
+dest_files=[ "res://.import/gut_panel.png-cb9e402270550ba26158d0fe087b7127.stex" ]
 
 [params]
 

@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/view_user_files.png-35546bf00953427de4c80db5784e48e8.stex"
+path="res://.import/GutDocsLogo.png-a5f48d2fab70aab34e33336f94ac690a.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://documentation/docs/_static/images/view_user_files.png"
-dest_files=[ "res://.import/view_user_files.png-35546bf00953427de4c80db5784e48e8.stex" ]
+source_file="res://documentation/docs/_static/images/GutDocsLogo.png"
+dest_files=[ "res://.import/GutDocsLogo.png-a5f48d2fab70aab34e33336f94ac690a.stex" ]
 
 [params]
 
