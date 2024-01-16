@@ -168,7 +168,6 @@ func _new_row(key, disp_text, value_ctrl, hint):
 	ctrl.add_child(value_ctrl)
 
 	var rpad = CenterContainer.new()
-	# rpad.custom_minimum_size.x = 5
 	ctrl.add_child(rpad)
 
 	return ctrl
@@ -179,7 +178,6 @@ func _add_title(text):
 	var lbl = row.get_child(0)
 
 	lbl.text = text
-	# lbl.align = Label.ALIGNMENT_CENTER
 	_base_container.add_child(row)
 
 	row.connect('draw', _on_title_cell_draw.bind(row))
@@ -441,9 +439,9 @@ func get_options(base_opts):
 	to_return.errors_do_not_cause_failure = !_cfg_ctrls.errors_cause_failure.button_pressed
 
 	#Output
-	to_return.panel_options.font_name = _cfg_ctrls.output_font_name.get_item_text(
+	to_return.panel_options.output_font_name = _cfg_ctrls.output_font_name.get_item_text(
 		_cfg_ctrls.output_font_name.selected)
-	to_return.panel_options.font_size = _cfg_ctrls.output_font_size.value
+	to_return.panel_options.output_font_size = _cfg_ctrls.output_font_size.value
 
 	# Runner Appearance
 	to_return.font_name = _cfg_ctrls.font_name.get_item_text(
