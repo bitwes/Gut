@@ -6,11 +6,7 @@ class HasInputEvents:
 
 	var input_event = null
 	var gui_event = null
-	var gui_signal_event = null
 	var unhandled_event = null
-
-	func _init() -> void:
-		gui_input.connect(_on_gui_input_emitted)
 
 	func _input(event):
 		input_event = event
@@ -18,8 +14,6 @@ class HasInputEvents:
 		gui_event = event
 	func _unhandled_input(event):
 		unhandled_event = event
-	func _on_gui_input_emitted(event):
-		gui_signal_event = event
 
 
 class InputEventsOrder:
@@ -455,12 +449,13 @@ class TestSendEvent:
 		sender.send_event(event)
 		assert_eq(r.gui_event, event)
 	
-	func test_sends_event_to_gui_input_signal():
-		var r = autofree(HasInputEvents.new())
-		var sender = InputSender.new(r)
-		var event = InputEventKey.new()
-		sender.send_event(event)
-		assert_eq(r.gui_signal_event, event)
+	func test_send_event_causes_receiver_to_emit_gui_input_signal():  
+		var r = autofree(HasInputEvents.new())  
+		watch_signals(r)  
+		var sender = InputSender.new(r)  
+		var event = InputEventKey.new()  
+		sender.send_event(event)  
+		assert_signal_emitted_with_parameters(r, 'gui_input', [event])  
 
 	func test_sends_event_to_unhandled_input():
 		var r = autofree(HasInputEvents.new())
