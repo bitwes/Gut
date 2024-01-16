@@ -163,15 +163,15 @@ class TestYieldFor:
 		yield(yield_for(1, 'waiting around for stuff'), YIELD)
 
 	func test_passing_assert_ends_yield():
-		yield(yield_for(0.5), YIELD)
+		yield(yield_for(0.2), YIELD)
 		pass_test('yield should stop.')
 
 	func test_failing_assert_ends_yield():
-		yield(yield_for(0.5), YIELD)
-		fail_test('yield should stop for this failure')
+		yield(yield_for(0.2), YIELD)
+		fail_test('yield should stop for this failure SHOULD FAIL')
 
 	func test_pending_ends_yield():
-		yield(yield_for(0.5), YIELD)
+		yield(yield_for(0.2), YIELD)
 		pending('this is pending but should end test')
 
 	func test_output_for_long_yields():
@@ -241,6 +241,7 @@ class TestYieldTo:
 		signaler.emit_after(.5)
 		yield(yield_to(signaler, 'the_signal', 5), YIELD)
 		assert_signal_emitted(signaler, 'the_signal')
+
 
 
 class TestYieldFrames:

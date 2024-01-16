@@ -345,6 +345,8 @@ func _yielding_callback(
 		_yielding_to.obj = null
 		_yielding_to.signal_name = ''
 
+	_yield_timer.stop()
+
 	if(from_obj):
 		# we must yield for a little longer after the signal is emitted so that
 		# the signal can propagate to other objects.  This was discovered trying

@@ -369,9 +369,9 @@ func get_options(base_opts):
 	to_return.should_exit_on_success = _cfg_ctrls.should_exit_on_success.pressed
 
 	#Output
-	to_return.panel_options.font_name = _cfg_ctrls.output_font_name.get_item_text(
+	to_return.panel_options.output_font_name = _cfg_ctrls.output_font_name.get_item_text(
 		_cfg_ctrls.output_font_name.selected)
-	to_return.panel_options.font_size = _cfg_ctrls.output_font_size.value
+	to_return.panel_options.output_font_size = _cfg_ctrls.output_font_size.value
 
 	# Runner Appearance
 	to_return.font_name = _cfg_ctrls.font_name.get_item_text(
