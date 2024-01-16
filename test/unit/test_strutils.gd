@@ -163,6 +163,13 @@ class TestType2Str:
 		var txt = strutils.type2str(Node)
 		assert_eq(txt, 'Node')
 
+	func test_duplicated_resources_does_not_error():
+		# checks issue #481 which I could not duplicate.
+		var some_mat = Material.new()
+		var dupe_mat = some_mat.duplicate()
+		assert_not_null(str(dupe_mat))
+
+
 
 class TestTruncateString:
 	extends GutTest

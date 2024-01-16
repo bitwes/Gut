@@ -1004,8 +1004,6 @@ func add_directory(path, prefix=_file_prefix, suffix=".gd"):
 	var dir = DirAccess.open(path)
 	if(dir == null):
 		_lgr.error(str('The path [', path, '] does not exist.'))
-		# !4.0 exit code does not exist anymore
-		# OS.exit_code = 1
 	else:
 		var files = _get_files(path, prefix, suffix)
 		for i in range(files.size()):
