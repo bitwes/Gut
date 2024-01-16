@@ -6,6 +6,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * __Issue__ #485 GUT prints a warning and ignores scripts that do not extend `GutTest`.
 * Documentation changes for readthedocs.
 * __Issue__ #436 Doubled Scenes now retain export variable values that were set in the editor.
+* __Issue__ #547 GutPanel now saves output_font_name and output_font_size correctly.
+* __Issue__ #450 yield timer is now stopped to avoid possible leaking of yield time between tests.
 
 
 # 7.4.1
