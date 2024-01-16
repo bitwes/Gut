@@ -9,6 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * __Issue__ #523 "got" values are printed with extra precision for float, Vector2, and Vector3 when using `assert_almost_eq`, `assert_almost_ne`, `assert_between` and `assert_not_between`.
 * __Issue__ #436 Doubled Scenes now retain export variable values that were set in the editor.
 * __Issue__ #547 The output_font_name and output_font_size for the GutPanel are now saved.
+* __PR__ #544 (@xorblo-doitus) InputSender will now emit the `gui_input` signal on receivers.
 
 
 
