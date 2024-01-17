@@ -2,7 +2,9 @@
 # ------------------------------------------------------------------------------
 class BaseGutPanelControl:
 	extends HBoxContainer
-	var label = null
+	var label = Label.new()
+	var _lbl_unsaved = Label.new()
+	var _lbl_invalid = Label.new()
 
 	var value = null:
 		get: return get_value()
@@ -14,14 +16,28 @@ class BaseGutPanelControl:
 		size_flags_horizontal = SIZE_EXPAND_FILL
 		mouse_filter = MOUSE_FILTER_PASS
 
-		label = Label.new()
 		label.size_flags_horizontal = label.SIZE_EXPAND_FILL
 		label.mouse_filter = label.MOUSE_FILTER_STOP
 		add_child(label)
 
+		_lbl_unsaved.text = '*'
+		_lbl_unsaved.visible = false
+		add_child(_lbl_unsaved)
+
+		_lbl_invalid.text = '!'
+		_lbl_invalid.visible = false
+		add_child(_lbl_invalid)
+
 		label.text = title
 		label.tooltip_text = hint
 
+
+	func mark_unsaved(is_it):
+		_lbl_unsaved.visible = is_it
+
+
+	func mark_invalid(is_it):
+		_lbl_invalid.visible = is_it
 
 	# -- Virtual --
 	#
@@ -188,12 +204,17 @@ class DirectoryControl:
 		dialog.unresizable = false
 		dialog.dir_selected.connect(_on_selected)
 		dialog.file_selected.connect(_on_selected)
-		# _dialog.size = Vector2(1000, 700)
-		dialog.size = Vector2(500, 350)
 
 		add_child(value_ctrl)
 		add_child(_btn_dir)
 		add_child(dialog)
+
+
+	func _ready():
+		if(Engine.is_editor_hint()):
+			dialog.size = Vector2(1000, 700)
+		else:
+			dialog.size = Vector2(500, 350)
 
 	func _on_selected(path):
 		value_ctrl.text = path

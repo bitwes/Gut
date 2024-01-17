@@ -142,7 +142,8 @@ func _save_config():
 	var w_result = _gut_config.write_options(RUNNER_JSON_PATH)
 	if(w_result != OK):
 		push_error(str('Could not write options to ', RUNNER_JSON_PATH, ': ', w_result))
-		return;
+	else:
+		_gut_config_gui.mark_saved()
 
 
 func _run_tests():

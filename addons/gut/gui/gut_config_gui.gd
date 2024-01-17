@@ -3,8 +3,9 @@ var _base_container = null
 const DIRS_TO_LIST = 6
 var _cfg_ctrls = {}
 var _avail_fonts = ['AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default']
-
-
+var _titles = {
+	dirs = null
+}
 func _init(cont):
 	_base_container = cont
 
@@ -13,6 +14,7 @@ func _add_title(text):
 	var row = PanelControls.BaseGutPanelControl.new(text, text)
 	_base_container.add_child(row)
 	row.connect('draw', _on_title_cell_draw.bind(row))
+	return row
 
 func _add_ctrl(key, ctrl):
 	_cfg_ctrls[key] = ctrl
@@ -46,6 +48,7 @@ func _add_boolean(key, value, disp_text, hint=''):
 func _add_directory(key, value, disp_text, hint=''):
 	var ctrl = PanelControls.DirectoryControl.new(disp_text, value, hint)
 	_add_ctrl(key, ctrl)
+	ctrl.dialog.title = disp_text
 	return ctrl
 
 
@@ -53,6 +56,7 @@ func _add_file(key, value, disp_text, hint=''):
 	var ctrl = PanelControls.DirectoryControl.new(disp_text, value, hint)
 	_add_ctrl(key, ctrl)
 	ctrl.dialog.file_mode = ctrl.dialog.FILE_MODE_OPEN_FILE
+	ctrl.dialog.title = disp_text
 	return ctrl
 
 
@@ -61,6 +65,7 @@ func _add_save_file_anywhere(key, value, disp_text, hint=''):
 	_add_ctrl(key, ctrl)
 	ctrl.dialog.file_mode = ctrl.dialog.FILE_MODE_SAVE_FILE
 	ctrl.dialog.access = ctrl.dialog.ACCESS_FILESYSTEM
+	ctrl.dialog.title = disp_text
 	return ctrl
 
 
@@ -86,17 +91,28 @@ func get_config_issues():
 
 	for i in range(DIRS_TO_LIST):
 		var key = str('directory_', i)
-		var path = _cfg_ctrls[key].text
+		var path = _cfg_ctrls[key].value
 		if(path != null and path != ''):
 			has_directory = true
 			if(!DirAccess.dir_exists_absolute(path)):
+				_cfg_ctrls[key].mark_invalid(true)
 				to_return.append(str('Test directory ', path, ' does not exist.'))
+			else:
+				_cfg_ctrls[key].mark_invalid(false)
+		else:
+			_cfg_ctrls[key].mark_invalid(false)
 
 	if(!has_directory):
 		to_return.append('You do not have any directories set.')
+		_titles.dirs.mark_invalid(true)
+	else:
+		_titles.dirs.mark_invalid(false)
 
-	if(!_cfg_ctrls['suffix'].text.ends_with('.gd')):
+	if(!_cfg_ctrls.suffix.value.ends_with('.gd')):
+		_cfg_ctrls.suffix.mark_invalid(true)
 		to_return.append("Script suffix must end in '.gd'")
+	else:
+		_cfg_ctrls.suffix.mark_invalid(false)
 
 	return to_return
 
@@ -118,7 +134,8 @@ var hide_this = null :
 func set_options(options, config_path):
 	_add_title("Try This")
 	_add_save_file_anywhere("config_path", config_path, 'Config Path')
-	_add_title("Settings") # ----------------------------------
+
+	_add_title("Settings")
 	_add_number("log_level", options.log_level, "Log Level", 0, 3,
 		"Detail level for log messages.\n" + \
 		"\t0: Errors and failures only.\n" + \
@@ -133,24 +150,24 @@ func set_options(options, config_path):
 		"Exit when tests finished.")
 	_add_boolean('should_exit_on_success', options.should_exit_on_success, 'Exit on Success',
 		"Exit if there are no failures.  Does nothing if 'Exit on Finish' is enabled.")
-	var ds = _add_select('double_strategy', 'Script Only', ['Include Native', 'Script Only'], 'Double Strategy',
+	_add_select('double_strategy', 'Script Only', ['Include Native', 'Script Only'], 'Double Strategy',
 		'"Include Native" will include native methods in Doubles.  "Script Only" will not.  ' + "\n" + \
 		'The native method override warning is disabled when creating Doubles.' + "\n" + \
 		'This is the default, you can override this at the script level or when creating doubles.')
-	_cfg_ctrls['double_strategy'].value = GutUtils.get_enum_value(
+	_cfg_ctrls.double_strategy.value = GutUtils.get_enum_value(
 		options.double_strategy, GutUtils.DOUBLE_STRATEGY, GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY)
 	_add_boolean('errors_cause_failure', !options.errors_do_not_cause_failure, 'Errors cause failures.',
 		"When GUT generates an error (not an engine error) it causes tests to fail.")
 
 
-	_add_title("Panel Output") # ----------------------------------
+	_add_title("Panel Output")
 	_add_select('output_font_name', options.panel_options.output_font_name, _avail_fonts, 'Font',
 		"The name of the font to use when running tests and in the output panel to the left.")
 	_add_number('output_font_size', options.panel_options.output_font_size, 'Font Size', 5, 100,
 		"The font size to use when running tests and in the output panel to the left.")
 
 
-	_add_title('Runner Window') # ----------------------------------
+	_add_title('Runner Window')
 	hide_this = _add_boolean("gut_on_top", options.gut_on_top, "On Top",
 		"The GUT Runner appears above children added during tests.")
 	_add_number('opacity', options.opacity, 'Opacity', 0, 100,
@@ -160,7 +177,7 @@ func set_options(options, config_path):
 	_add_boolean('compact_mode', options.compact_mode, 'Compact Mode',
 		'The runner will be in compact mode.  This overrides Maximize.')
 
-	_add_title('Runner Appearance') # ----------------------------------
+	_add_title('Runner Appearance')
 	_add_select('font_name', options.font_name, _avail_fonts, 'Font',
 		"The font to use for text output in the Gut Runner.")
 	_add_number('font_size', options.font_size, 'Font Size', 5, 100,
@@ -172,7 +189,7 @@ func set_options(options, config_path):
 	_add_boolean('disable_colors', options.disable_colors, 'Disable Formatting',
 		'Disable formatting and colors used in the Runner.  Does not affect panel output.')
 
-	_add_title('Test Directories') # ----------------------------------
+	_titles.dirs = _add_title('Test Directories')
 	_add_boolean('include_subdirs', options.include_subdirs, 'Include Subdirs',
 		"Include subdirectories of the directories configured below.")
 	for i in range(DIRS_TO_LIST):
@@ -182,7 +199,7 @@ func set_options(options, config_path):
 
 		_add_directory(str('directory_', i), value, str('Directory ', i))
 
-	_add_title("XML Output") # ----------------------------------
+	_add_title("XML Output")
 	_add_save_file_anywhere("junit_xml_file", options.junit_xml_file, "Output Path",
 		"Path3D and filename where GUT should create a JUnit compliant XML file.  " +
 		"This file will contain the results of the last test run.  To avoid " +
@@ -191,20 +208,21 @@ func set_options(options, config_path):
 		"Include a timestamp in the filename so that each run gets its own xml file.")
 
 
-	_add_title('Hooks') # ----------------------------------
+	_add_title('Hooks')
 	_add_file('pre_run_script', options.pre_run_script, 'Pre-Run Hook',
 		'This script will be run by GUT before any tests are run.')
 	_add_file('post_run_script', options.post_run_script, 'Post-Run Hook',
 		'This script will be run by GUT after all tests are run.')
 
 
-	_add_title('Misc') # ----------------------------------
+	_add_title('Misc')
 	_add_value('prefix', options.prefix, 'Script Prefix',
 		"The filename prefix for all test scripts.")
 	_add_value('suffix', options.suffix, 'Script Suffix',
 		"Script suffix, including .gd extension.  For example '_foo.gd'.")
 	_add_number('paint_after', options.paint_after, 'Paint After', 0.0, 1.0,
 		"How long GUT will wait before pausing for 1 frame to paint the screen.  0 is never.")
+
 	# since _add_number doesn't set step property, it will default to a step of
 	# 1 and cast values to int.  Give it a .5 step and re-set the value.
 	_cfg_ctrls.paint_after.value_ctrl.step = .05
@@ -264,3 +282,7 @@ func get_options(base_opts):
 	to_return.suffix = _cfg_ctrls.suffix.value
 
 	return to_return
+
+func mark_saved():
+	for key in _cfg_ctrls:
+		_cfg_ctrls[key].mark_unsaved(false)
