@@ -165,8 +165,18 @@ func write_options(path):
 	return result
 
 
+# consistent name
+func save_file(path):
+	write_options(path)
+
+
 func load_options(path):
 	return _load_options_from_config_file(path, options)
+
+
+# consistent name
+func load_file(path):
+	return load_options(path)
 
 
 func load_panel_options(path):

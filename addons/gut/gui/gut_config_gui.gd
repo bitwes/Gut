@@ -1,11 +1,21 @@
 var PanelControls = load("res://addons/gut/gui/panel_controls.gd")
-var _base_container = null
+var GutConfig = load('res://addons/gut/gut_config.gd')
+
 const DIRS_TO_LIST = 6
-var _cfg_ctrls = {}
+
+var _base_container = null
 var _avail_fonts = ['AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default']
+# All the various PanelControls indexed by thier gut_config keys.
+var _cfg_ctrls = {}
+
+# specific titles that we need to do stuff with
 var _titles = {
 	dirs = null
 }
+# All titles so we can free them when we want.
+var _all_titles = []
+
+
 func _init(cont):
 	_base_container = cont
 
@@ -14,6 +24,7 @@ func _add_title(text):
 	var row = PanelControls.BaseGutPanelControl.new(text, text)
 	_base_container.add_child(row)
 	row.connect('draw', _on_title_cell_draw.bind(row))
+	_all_titles.append(row)
 	return row
 
 func _add_ctrl(key, ctrl):
@@ -74,18 +85,16 @@ func _add_color(key, value, disp_text, hint=''):
 	_add_ctrl(key, ctrl)
 	return ctrl
 
-func _add_save_load():
-	var ctrl = PanelControls.BaseGutPanelControl.new('Config', '', '')
-	var btn_load = Button.new()
-	btn_load.text = "Load"
-	btn_load.custom_minimum_size.x = 100
-	ctrl.add_child(btn_load)
 
-	var btn_save = Button.new()
-	btn_save.text = "Save As"
-	btn_save.custom_minimum_size.x = 100
-	ctrl.add_child(btn_save)
+func _add_save_load():
+	var ctrl = PanelControls.SaveLoadControl.new('Config', '', '')
 	_base_container.add_child(ctrl)
+
+	ctrl.save_path_chosen.connect(_on_save_path_chosen)
+	ctrl.load_path_chosen.connect(_on_load_path_chosen)
+
+	_cfg_ctrls['save_load'] = ctrl
+	return ctrl
 
 # ------------------
 # Events
@@ -93,6 +102,13 @@ func _add_save_load():
 func _on_title_cell_draw(which):
 	which.draw_rect(Rect2(Vector2(0, 0), which.size), Color(0, 0, 0, .15))
 
+
+func _on_save_path_chosen(path):
+	save_file(path)
+
+
+func _on_load_path_chosen(path):
+	load_file.bind(path).call_deferred()
 
 # ------------------
 # Public
@@ -127,6 +143,32 @@ func get_config_issues():
 		_cfg_ctrls.suffix.mark_invalid(false)
 
 	return to_return
+
+
+func clear():
+	for key in _cfg_ctrls:
+		_cfg_ctrls[key].free()
+
+	_cfg_ctrls.clear()
+
+	for entry in _all_titles:
+		entry.free()
+
+	_all_titles.clear()
+
+
+func save_file(path):
+	var gcfg = GutConfig.new()
+	gcfg.options = get_options({})
+	gcfg.save_file(path)
+
+
+
+func load_file(path):
+	var gcfg = GutConfig.new()
+	gcfg.load_panel_options(path)
+	clear()
+	set_options(gcfg.options)
 
 
 # --------------
@@ -244,6 +286,8 @@ func set_options(options):
 
 func get_options(base_opts):
 	var to_return = base_opts.duplicate()
+	if(!to_return.has('panel_options')):
+		to_return.panel_options = {}
 
 	# Settings
 	to_return.log_level = _cfg_ctrls.log_level.value
@@ -294,6 +338,7 @@ func get_options(base_opts):
 	to_return.suffix = _cfg_ctrls.suffix.value
 
 	return to_return
+
 
 func mark_saved():
 	for key in _cfg_ctrls:

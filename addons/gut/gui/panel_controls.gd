@@ -231,6 +231,64 @@ class DirectoryControl:
 
 
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+class SaveLoadControl:
+	extends BaseGutPanelControl
+
+	var btn_load = Button.new()
+	var btn_save = Button.new()
+
+	var dlg_load := FileDialog.new()
+	var dlg_save := FileDialog.new()
+
+	signal save_path_chosen(path)
+	signal load_path_chosen(path)
+
+	func _init(title, val, hint):
+		super._init(title, val, hint)
+
+		btn_load.text = "Load"
+		btn_load.custom_minimum_size.x = 100
+		btn_load.pressed.connect(_on_load_pressed)
+		add_child(btn_load)
+
+		btn_save.text = "Save As"
+		btn_save.custom_minimum_size.x = 100
+		btn_save.pressed.connect(_on_save_pressed)
+		add_child(btn_save)
+
+		dlg_load.file_mode = dlg_load.FILE_MODE_OPEN_FILE
+		dlg_load.unresizable = false
+		dlg_load.dir_selected.connect(_on_load_selected)
+		dlg_load.file_selected.connect(_on_load_selected)
+		add_child(dlg_load)
+
+		dlg_save.file_mode = dlg_save.FILE_MODE_SAVE_FILE
+		dlg_save.unresizable = false
+		dlg_save.dir_selected.connect(_on_save_selected)
+		dlg_save.file_selected.connect(_on_save_selected)
+		add_child(dlg_save)
+
+	func _ready():
+		if(Engine.is_editor_hint()):
+			dlg_load.size = Vector2(1000, 700)
+			dlg_save.size = Vector2(1000, 700)
+		else:
+			dlg_load.size = Vector2(500, 350)
+			dlg_save.size = Vector2(500, 350)
+
+	func _on_load_selected(path):
+		load_path_chosen.emit(path)
+
+	func _on_save_selected(path):
+		save_path_chosen.emit(path)
+
+	func _on_load_pressed():
+		dlg_load.popup_centered()
+
+	func _on_save_pressed():
+		dlg_save.popup_centered()
 
 # ------------------------------------------------------------------------------
 # This one was never used in gut_config_gui...but I put some work into it and

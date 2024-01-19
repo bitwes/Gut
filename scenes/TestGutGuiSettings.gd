@@ -19,11 +19,7 @@ func _ready():
 
 func _clear_options():
 	if(_gut_config_gui != null):
-		var to_free = _ctrls.settings
-		var new_one = _settings_vbox.duplicate()
-		to_free.free()
-		_ctrls.settings = new_one
-		$ColorRect/ScrollContainer.add_child(_ctrls.settings)
+		_gut_config_gui.clear()
 
 
 func _display_issues():
