@@ -46,20 +46,15 @@ var _last_selected_path = null
 	run_results = $layout/RSplit/CResults/TabBar/RunResults
 }
 
-var _config_path = RUNNER_JSON_PATH
 func _init():
 	pass
 
-
-func set_config_path(value):
-	_config_path = value
-	_gut_config.load_panel_options(_config_path)
 
 func _ready():
 	_ctrls.results.bar.connect('draw', _on_results_bar_draw.bind(_ctrls.results.bar))
 	hide_settings(!_ctrls.settings_button.button_pressed)
 	_gut_config_gui = GutConfigGui.new(_ctrls.settings)
-	_gut_config_gui.set_options(_gut_config.options, _config_path)
+	_gut_config_gui.set_options(_gut_config.options)
 
 	_apply_options_to_controls()
 

@@ -74,6 +74,18 @@ func _add_color(key, value, disp_text, hint=''):
 	_add_ctrl(key, ctrl)
 	return ctrl
 
+func _add_save_load():
+	var ctrl = PanelControls.BaseGutPanelControl.new('Config', '', '')
+	var btn_load = Button.new()
+	btn_load.text = "Load"
+	btn_load.custom_minimum_size.x = 100
+	ctrl.add_child(btn_load)
+
+	var btn_save = Button.new()
+	btn_save.text = "Save As"
+	btn_save.custom_minimum_size.x = 100
+	ctrl.add_child(btn_save)
+	_base_container.add_child(ctrl)
 
 # ------------------
 # Events
@@ -131,9 +143,9 @@ var hide_this = null :
 		val.visible = false
 # --------------
 
-func set_options(options, config_path):
-	_add_title("Try This")
-	_add_save_file_anywhere("config_path", config_path, 'Config Path')
+func set_options(options):
+	# _add_title('Save/Load')
+	_add_save_load()
 
 	_add_title("Settings")
 	_add_number("log_level", options.log_level, "Log Level", 0, 3,

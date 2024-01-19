@@ -36,7 +36,7 @@ func _display_issues():
 
 func _create_options():
 	_gut_config_gui = GutConfigGui.new(_ctrls.settings)
-	_gut_config_gui.set_options(_gut_config.options, RUNNER_JSON_PATH)	
+	_gut_config_gui.set_options(_gut_config.options)	
 
 func save_options():
 	_gut_config.options = _gut_config_gui.get_options(_gut_config.options)

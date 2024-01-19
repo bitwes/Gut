@@ -53,14 +53,6 @@ var ignore_pause_before_teardown = _ignore_pause_before_teardown :
 	get: return _ignore_pause_before_teardown
 	set(val): _ignore_pause_before_teardown = val
 
-# TODO remove this
-var _temp_directory = 'user://gut_temp_directory'
-## The directory where GUT stores any temporary information during a run.
-var temp_directory = _temp_directory :
-	get: return _temp_directory
-	set(val): _temp_directory = val
-
-
 var _log_level = 1
 ## The log detail level.  Valid values are 0 - 2.  Larger values do not matter.
 var log_level = _log_level:
