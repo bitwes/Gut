@@ -57,6 +57,7 @@ func _ready():
 	_ctrls.results.bar.connect('draw', _on_results_bar_draw.bind(_ctrls.results.bar))
 	hide_settings(!_ctrls.settings_button.button_pressed)
 
+	_gut_config.load_options(GutEditorGlobals.editor_run_gut_config_path)
 	_gut_config_gui.set_options(_gut_config.options)
 	_apply_options_to_controls()
 
