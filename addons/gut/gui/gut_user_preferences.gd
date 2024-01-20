@@ -1,9 +1,9 @@
 class_name GutUserPreferences
 
-static var gut_pref_prefix = 'gut/'
 
 
 class GutEditorPref:
+	var gut_pref_prefix = 'gut/'
 	var pname = '__not_set__'
 	var default = null
 	var value = '__not_set__'
@@ -16,7 +16,8 @@ class GutEditorPref:
 		load_it()
 
 	func _prefstr():
-		return str(GutUserPreferences.gut_pref_prefix + pname)
+		var to_return = str(gut_pref_prefix, pname)
+		return to_return
 
 	func save_it():
 		_settings.set_setting(_prefstr(), value)
@@ -29,15 +30,17 @@ class GutEditorPref:
 
 
 
-# ------------------------------------------------------------------
-var font_name = null
-var font_size = null
+# -- Runner Settings --
+var font_name = null 	# runner
+var font_size = null 	# runner
+var use_colors = null	# ? might be output panel
+
+# -- Editor ONLY Settings --
 var output_font_name = null
 var output_font_size = null
 var hide_result_tree = null
 var hide_output_text = null
 var hide_settings = null
-var use_colors = null
 
 
 func _init(editor_settings):
@@ -63,6 +66,19 @@ func load_it():
 		if(val is GutEditorPref):
 			val.load_it()
 
+# TODO, stop gap approach to getting things working
+# this should be removed or something.
+func make_panel_options():
+	return {
+		'font_name' : font_name.value,
+		'font_size' : font_size.value,
+		'output_font_name' : output_font_name.value,
+		'output_font_size' : output_font_size.value,
+		'hide_result_tree' : hide_result_tree.value,
+		'hide_output_text' : hide_output_text.value,
+		'hide_settings' : hide_settings.value,
+		'use_colors' : use_colors.value,
+	}
 
 
 # @export var shortcuts = {

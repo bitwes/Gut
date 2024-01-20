@@ -33,7 +33,7 @@ func _display_issues():
 
 func _create_options():
 	_gut_config_gui = GutConfigGui.new(_ctrls.settings)
-	_gut_config_gui.set_options(_gut_config.options)	
+	_gut_config_gui.set_options(_gut_config.options, _gut_config.default_panel_options)
 
 func save_options():
 	_gut_config.options = _gut_config_gui.get_options(_gut_config.options)
@@ -48,6 +48,7 @@ func _on_save_pressed():
 	save_options()
 	_display_issues()
 	print('saved')
+
 
 func _on_load_pressed():
 	_clear_options()

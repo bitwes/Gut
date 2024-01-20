@@ -9,7 +9,7 @@ func _get_default_options():
 	gc.options.double_strategy = GutUtils.get_enum_value(gc.options.double_strategy, GutUtils.DOUBLE_STRATEGY)
 	gc.options['panel_options'] = gc.default_panel_options.duplicate()
 	var gcc = GutConfigGui.new(ctrl)
-	gcc.set_options(gc.options)
+	gcc.set_options(gc.options, gc.options.panel_options)
 	var opts = gcc.get_options(gc.options)
 	return opts
 

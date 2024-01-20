@@ -36,7 +36,7 @@ const TEST_STATUSES = {
 	PASSED = 'pass'
 }
 
-
+static var avail_fonts = ['AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default']
 
 # ----------------------------------------------------
 # IDK if I like this get/set setup, but it seems a lot better than having to

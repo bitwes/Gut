@@ -1,7 +1,7 @@
 extends GutTest
 
 var Gup = load("res://addons/gut/gui/gut_user_preferences.gd")
-
+var pref_prefix = 'gut/'
 
 class MockEditorSettings:
 	var settings = {}
@@ -41,9 +41,9 @@ func test_save_sets_values_to_default_when_not_set(p = use_parameters(default_se
 	var es = MockEditorSettings.new()
 	var gup = Gup.new(es)
 	gup.save_it()
-	assert_true(es.has_setting(GutUserPreferences.gut_pref_prefix + p.name), 'has ' + p.name)
+	assert_true(es.has_setting(pref_prefix + p.name), 'has ' + p.name)
 	if(is_passing()):
-		assert_eq(es.get_setting(GutUserPreferences.gut_pref_prefix + p.name), p.value, p.name + ' default')
+		assert_eq(es.get_setting(pref_prefix + p.name), p.value, p.name + ' default')
 
 
 var non_default_settings = ParameterFactory.named_parameters(

@@ -4,7 +4,6 @@ var GutConfig = load('res://addons/gut/gut_config.gd')
 const DIRS_TO_LIST = 6
 
 var _base_container = null
-var _avail_fonts = ['AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default']
 # All the various PanelControls indexed by thier gut_config keys.
 var _cfg_ctrls = {}
 
@@ -168,7 +167,10 @@ func load_file(path):
 	var gcfg = GutConfig.new()
 	gcfg.load_panel_options(path)
 	clear()
-	set_options(gcfg.options)
+	# TODO this is a hack to get around it going in 2 parts.
+	# gut_config.gd needs to change, probably just remove all panel_options
+	# from gut_config.
+	set_options(gcfg.options, gcfg.options.panel_options)
 
 
 # --------------
@@ -183,14 +185,12 @@ func load_file(path):
 var hide_this = null :
 	set(val):
 		val.visible = false
+
 # --------------
 
-func set_options(opts):
+func set_options(opts, panel_opts):
 	var options = opts.duplicate()
-	if(!options.has('panel_options')):
-		var gcfg = GutConfig.new()
-		options.panel_options = gcfg.default_panel_options.duplicate()
-
+	options['panel_options'] = panel_opts
 
 	# _add_title('Save/Load')
 	_add_save_load()
@@ -220,14 +220,7 @@ func set_options(opts):
 		"When GUT generates an error (not an engine error) it causes tests to fail.")
 
 
-	_add_title("Panel Output")
-	_add_select('output_font_name', options.panel_options.output_font_name, _avail_fonts, 'Font',
-		"The name of the font to use when running tests and in the output panel to the left.")
-	_add_number('output_font_size', options.panel_options.output_font_size, 'Font Size', 5, 100,
-		"The font size to use when running tests and in the output panel to the left.")
-
-
-	_add_title('Runner Window')
+	_add_title('Runner Appearance')
 	hide_this = _add_boolean("gut_on_top", options.gut_on_top, "On Top",
 		"The GUT Runner appears above children added during tests.")
 	_add_number('opacity', options.opacity, 'Opacity', 0, 100,
@@ -236,9 +229,7 @@ func set_options(opts):
 		"Maximize GUT when tests are being run.")
 	_add_boolean('compact_mode', options.compact_mode, 'Compact Mode',
 		'The runner will be in compact mode.  This overrides Maximize.')
-
-	_add_title('Runner Appearance')
-	_add_select('font_name', options.font_name, _avail_fonts, 'Font',
+	_add_select('font_name', options.font_name, GutUtils.avail_fonts, 'Font',
 		"The font to use for text output in the Gut Runner.")
 	_add_number('font_size', options.font_size, 'Font Size', 5, 100,
 		"The font size for text output in the Gut Runner.")
@@ -249,6 +240,7 @@ func set_options(opts):
 	_add_boolean('disable_colors', options.disable_colors, 'Disable Formatting',
 		'Disable formatting and colors used in the Runner.  Does not affect panel output.')
 
+
 	_titles.dirs = _add_title('Test Directories')
 	_add_boolean('include_subdirs', options.include_subdirs, 'Include Subdirs',
 		"Include subdirectories of the directories configured below.")
@@ -258,6 +250,7 @@ func set_options(opts):
 			value = options.dirs[i]
 
 		_add_directory(str('directory_', i), value, str('Directory ', i))
+
 
 	_add_title("XML Output")
 	_add_save_file_anywhere("junit_xml_file", options.junit_xml_file, "Output Path",

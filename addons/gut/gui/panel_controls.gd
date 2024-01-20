@@ -32,7 +32,7 @@ class BaseGutPanelControl:
 		label.tooltip_text = hint
 
 
-	func mark_unsaved(is_it):
+	func mark_unsaved(is_it=true):
 		_lbl_unsaved.visible = is_it
 
 
@@ -152,7 +152,11 @@ class SelectControl:
 				select_idx = i
 		value_ctrl.selected = select_idx
 		value_ctrl.size_flags_horizontal = value_ctrl.SIZE_EXPAND_FILL
+		value_ctrl.item_selected.connect(_on_item_selected)
 		add_child(value_ctrl)
+
+	func _on_item_selected(idx):
+		changed.emit()
 
 	func get_value():
 		return value_ctrl.selected
