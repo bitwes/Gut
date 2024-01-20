@@ -36,6 +36,28 @@ const TEST_STATUSES = {
 	PASSED = 'pass'
 }
 
+
+
+# ----------------------------------------------------
+# IDK if I like this get/set setup, but it seems a lot better than having to
+# do path_join everywhere I use them.
+# ----------------------------------------------------
+static var temp_directory = 'user://gut_temp_directory'
+
+static var editor_run_gut_config_path = 'gut_editor_config.json':
+	get: return temp_directory.path_join(editor_run_gut_config_path)
+	set(val): editor_run_gut_config_path = val
+
+static var editor_run_bbcode_results_path = 'gut_editor.bbcode':
+	get: return temp_directory.path_join(editor_run_bbcode_results_path)
+	set(val): editor_run_bbcode_results_path = val
+
+static var editor_run_json_results_path = 'gut_editor.json':
+	get: return temp_directory.path_join(editor_run_json_results_path)
+	set(val): editor_run_json_results_path = val
+
+
+
 # This is a holdover from when GUT was making a psuedo autoload.  It would add
 # an instance of this class to the tree with a name and retrieve it when
 # get_instance was called.  We now have static variables so this var is now

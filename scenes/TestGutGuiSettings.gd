@@ -17,6 +17,7 @@ func _ready():
 	_gut_config.load_panel_options(RUNNER_JSON_PATH)
 	_create_options()
 
+
 func _clear_options():
 	if(_gut_config_gui != null):
 		_gut_config_gui.clear()

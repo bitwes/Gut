@@ -185,7 +185,13 @@ var hide_this = null :
 		val.visible = false
 # --------------
 
-func set_options(options):
+func set_options(opts):
+	var options = opts.duplicate()
+	if(!options.has('panel_options')):
+		var gcfg = GutConfig.new()
+		options.panel_options = gcfg.default_panel_options.duplicate()
+
+
 	# _add_title('Save/Load')
 	_add_save_load()
 
