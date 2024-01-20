@@ -165,12 +165,9 @@ func save_file(path):
 
 func load_file(path):
 	var gcfg = GutConfig.new()
-	gcfg.load_panel_options(path)
+	gcfg.load_options(path)
 	clear()
-	# TODO this is a hack to get around it going in 2 parts.
-	# gut_config.gd needs to change, probably just remove all panel_options
-	# from gut_config.
-	set_options(gcfg.options, gcfg.options.panel_options)
+	set_options(gcfg.options)
 
 
 # --------------
@@ -188,9 +185,8 @@ var hide_this = null :
 
 # --------------
 
-func set_options(opts, panel_opts):
+func set_options(opts):
 	var options = opts.duplicate()
-	options['panel_options'] = panel_opts
 
 	# _add_title('Save/Load')
 	_add_save_load()
@@ -285,8 +281,6 @@ func set_options(opts, panel_opts):
 
 func get_options(base_opts):
 	var to_return = base_opts.duplicate()
-	if(!to_return.has('panel_options')):
-		to_return.panel_options = {}
 
 	# Settings
 	to_return.log_level = _cfg_ctrls.log_level.value
@@ -297,9 +291,6 @@ func get_options(base_opts):
 	to_return.double_strategy = _cfg_ctrls.double_strategy.value
 	to_return.errors_do_not_cause_failure = !_cfg_ctrls.errors_cause_failure.value
 
-	#Output
-	to_return.panel_options.output_font_name = _cfg_ctrls.output_font_name.text
-	to_return.panel_options.output_font_size = _cfg_ctrls.output_font_size.value
 
 	# Runner Appearance
 	to_return.font_name = _cfg_ctrls.font_name.text

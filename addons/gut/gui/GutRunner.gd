@@ -19,9 +19,9 @@ var Gut = load('res://addons/gut/gut.gd')
 var ResultExporter = load('res://addons/gut/result_exporter.gd')
 var GutConfig = load('res://addons/gut/gut_config.gd')
 
-const RUNNER_JSON_PATH = 'res://.gut_editor_config.json'
-const RESULT_FILE = 'user://.gut_editor.bbcode'
-const RESULT_JSON = 'user://.gut_editor.json'
+var RUNNER_JSON_PATH = GutEditorGlobals.editor_run_gut_config_path
+var RESULT_FILE = GutEditorGlobals.editor_run_bbcode_results_path
+var RESULT_JSON = GutEditorGlobals.editor_run_json_results_path
 
 var _gut_config = null
 var _gut = null;
@@ -40,7 +40,7 @@ var auto_run_tests = true
 func _ready():
 	if(_gut_config == null):
 		_gut_config = GutConfig.new()
-		_gut_config.load_panel_options(RUNNER_JSON_PATH)
+		_gut_config.load_options(RUNNER_JSON_PATH)
 
 	# The command line will call run_tests on its own.  When used from the panel
 	# we have to kick off the tests ourselves b/c there's no way I know of to

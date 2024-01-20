@@ -7,9 +7,8 @@ func _get_default_options():
 	var ctrl = add_child_autofree(HBoxContainer.new())
 	var gc = GutConfig.new()
 	gc.options.double_strategy = GutUtils.get_enum_value(gc.options.double_strategy, GutUtils.DOUBLE_STRATEGY)
-	gc.options['panel_options'] = gc.default_panel_options.duplicate()
 	var gcc = GutConfigGui.new(ctrl)
-	gcc.set_options(gc.options, gc.options.panel_options)
+	gcc.set_options(gc.options)
 	var opts = gcc.get_options(gc.options)
 	return opts
 

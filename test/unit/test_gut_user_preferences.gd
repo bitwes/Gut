@@ -28,8 +28,6 @@ func test_can_make_one():
 
 var default_settings = ParameterFactory.named_parameters(
 	['name', 'value'],[
-		['font_name', 'CourierPrime'],
-		['font_size', 16],
 		['output_font_name', 'CourierPrime'],
 		['output_font_size', 30],
 		['hide_result_tree', false],
@@ -48,8 +46,6 @@ func test_save_sets_values_to_default_when_not_set(p = use_parameters(default_se
 
 var non_default_settings = ParameterFactory.named_parameters(
 	['name', 'value'],[
-		['font_name', 'test'],
-		['font_size', 99],
 		['output_font_name', 'test'],
 		['output_font_size', 99],
 		['hide_result_tree', true],

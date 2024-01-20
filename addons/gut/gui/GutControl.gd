@@ -206,9 +206,6 @@ func _populate_tree():
 
 
 func _refresh_tree_and_settings():
-	if(_config.options.has('panel_options')):
-		# TODO another hack, see hack TODO in gut_config_gui
-		_config_gui.set_options(_config.options, _config.options.panel_options)
 	_config.apply_options(_gut_runner.get_gut())
 	_gut_runner.set_gut_config(_config)
 	_populate_tree()
@@ -296,7 +293,7 @@ func run_selected():
 
 
 func load_config_file(path):
-	_config.load_panel_options(path)
+	_config.load_options(path)
 	_config.options.selected = ''
 	_config.options.inner_class_name = ''
 	_config.options.unit_test_name = ''

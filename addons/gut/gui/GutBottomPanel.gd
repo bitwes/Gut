@@ -1,9 +1,6 @@
 @tool
 extends Control
 
-const RUNNER_JSON_PATH = 'res://.gut_editor_config.json'
-const RESULT_FILE = 'user://.gut_editor.bbcode'
-const RESULT_JSON = 'user://.gut_editor.json'
 const SHORTCUTS_PATH = 'res://.gut_editor_shortcuts.cfg'
 
 var TestScript = load('res://addons/gut/test.gd')
@@ -52,13 +49,15 @@ func _init():
 
 
 func _ready():
-	_user_prefs = GutUserPreferences.new(EditorInterface.get_editor_settings())
+	GutEditorGlobals.create_temp_directory()
+
+	_user_prefs = GutEditorGlobals.user_prefs
 	_gut_config_gui = GutConfigGui.new(_ctrls.settings)
 
 	_ctrls.results.bar.connect('draw', _on_results_bar_draw.bind(_ctrls.results.bar))
 	hide_settings(!_ctrls.settings_button.button_pressed)
 
-	_gut_config_gui.set_options(_gut_config.options, _user_prefs.make_panel_options())
+	_gut_config_gui.set_options(_gut_config.options)
 	_apply_options_to_controls()
 
 	_ctrls.shortcuts_button.icon = get_theme_icon('Shortcut', 'EditorIcons')
@@ -67,9 +66,6 @@ func _ready():
 	_ctrls.output_button.icon = get_theme_icon('Font', 'EditorIcons')
 
 	_ctrls.run_results.set_output_control(_ctrls.output_ctrl)
-	_ctrls.run_results.set_font(
-		_user_prefs.font_name.value,
-		_user_prefs.font_size.value)
 
 	var check_import = load('res://addons/gut/images/red.png')
 	if(check_import == null):
@@ -83,14 +79,6 @@ func _apply_options_to_controls():
 	hide_settings(_user_prefs.hide_settings.value)
 	hide_result_tree(_user_prefs.hide_result_tree.value)
 	hide_output_text(_user_prefs.hide_output_text.value)
-
-	# _ctrls.output_ctrl.set_use_colors(_user_prefs.use_colors.value)
-	# _ctrls.output_ctrl.set_all_fonts(_user_prefs.font_name.value)
-	# _ctrls.output_ctrl.set_font_size(_user_prefs.font_size.value)
-
-	_ctrls.run_results.set_font(
-		_user_prefs.font_name.value,
-		_user_prefs.font_size.value)
 	_ctrls.run_results.set_show_orphans(!_gut_config.options.hide_orphans)
 
 
@@ -131,29 +119,28 @@ func _show_errors(errs):
 
 
 func _save_config():
-	_gut_config.options = _gut_config_gui.get_options(_gut_config.options)
 	_user_prefs.hide_settings.value = !_ctrls.settings_button.button_pressed
 	_user_prefs.hide_result_tree.value = !_ctrls.run_results_button.button_pressed
 	_user_prefs.hide_output_text.value = !_ctrls.output_button.button_pressed
-	_user_prefs.use_colors.value = _ctrls.output_ctrl.get_use_colors()
-	_user_prefs.font_name.value = _gut_config.options.font_name
-	_user_prefs.output_font_name.value = _gut_config.options.panel_options.output_font_name
+	_user_prefs.save_it()
 
-	var w_result = _gut_config.write_options(RUNNER_JSON_PATH)
+	_gut_config.options = _gut_config_gui.get_options(_gut_config.options)
+	var w_result = _gut_config.write_options(GutEditorGlobals.editor_run_gut_config_path)
 	if(w_result != OK):
-		push_error(str('Could not write options to ', RUNNER_JSON_PATH, ': ', w_result))
+		push_error(str('Could not write options to ', GutEditorGlobals.editor_run_gut_config_path, ': ', w_result))
 	else:
 		_gut_config_gui.mark_saved()
 
-	_user_prefs.save_it()
 
 func _run_tests():
+	GutEditorGlobals.create_temp_directory()
+
 	var issues = _gut_config_gui.get_config_issues()
 	if(issues.size() > 0):
 		_show_errors(issues)
 		return
 
-	write_file(RESULT_FILE, 'Run in progress')
+	write_file(GutEditorGlobals.editor_run_bbcode_results_path, 'Run in progress')
 	_save_config()
 	_apply_options_to_controls()
 
@@ -272,9 +259,9 @@ func hide_output_text(should):
 
 
 func load_result_output():
-	_ctrls.output_ctrl.load_file(RESULT_FILE)
+	_ctrls.output_ctrl.load_file(GutEditorGlobals.editor_run_bbcode_results_path)
 
-	var summary = get_file_as_text(RESULT_JSON)
+	var summary = get_file_as_text(GutEditorGlobals.editor_run_json_results_path)
 	var test_json_conv = JSON.new()
 	if (test_json_conv.parse(summary) != OK):
 		return

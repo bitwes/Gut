@@ -83,7 +83,7 @@ var PanelControls = load('res://addons/gut/gui/panel_controls.gd')
 var _sr = TextEditSearcher.new()
 var _highlighter : CodeHighlighter
 var _font_name = null
-var _user_prefs = GutUserPreferences.new(EditorInterface.get_editor_settings())
+var _user_prefs = GutEditorGlobals.user_prefs
 var _font_name_pctrl = null
 var _font_size_pctrl = null
 
@@ -134,7 +134,7 @@ func _add_other_ctrls():
 	_font_name_pctrl.label.size_flags_horizontal = SIZE_SHRINK_BEGIN
 	_ctrls.settings_bar.add_child(_font_name_pctrl)
 	set_all_fonts(fname)
-	
+
 	var fsize = 30
 	if(_user_prefs != null):
 		fsize = _user_prefs.output_font_size.value

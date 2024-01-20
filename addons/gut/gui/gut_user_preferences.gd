@@ -30,10 +30,6 @@ class GutEditorPref:
 
 
 
-# -- Runner Settings --
-var font_name = null 	# runner
-var font_size = null 	# runner
-var use_colors = null	# ? might be output panel
 
 # -- Editor ONLY Settings --
 var output_font_name = null
@@ -41,11 +37,11 @@ var output_font_size = null
 var hide_result_tree = null
 var hide_output_text = null
 var hide_settings = null
+var use_colors = null	# ? might be output panel
 
 
 func _init(editor_settings):
-	font_name = GutEditorPref.new('font_name', 'CourierPrime', editor_settings)
-	font_size = GutEditorPref.new('font_size', 16, editor_settings)
+
 	output_font_name = GutEditorPref.new('output_font_name', 'CourierPrime', editor_settings)
 	output_font_size = GutEditorPref.new('output_font_size', 30, editor_settings)
 	hide_result_tree = GutEditorPref.new('hide_result_tree', false, editor_settings)
@@ -70,8 +66,6 @@ func load_it():
 # this should be removed or something.
 func make_panel_options():
 	return {
-		'font_name' : font_name.value,
-		'font_size' : font_size.value,
 		'output_font_name' : output_font_name.value,
 		'output_font_size' : output_font_size.value,
 		'hide_result_tree' : hide_result_tree.value,

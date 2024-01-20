@@ -14,7 +14,7 @@ var _settings_vbox = null
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	_settings_vbox = _ctrls.settings.duplicate()
-	_gut_config.load_panel_options(RUNNER_JSON_PATH)
+	_gut_config.load_options(RUNNER_JSON_PATH)
 	_create_options()
 
 
@@ -33,7 +33,7 @@ func _display_issues():
 
 func _create_options():
 	_gut_config_gui = GutConfigGui.new(_ctrls.settings)
-	_gut_config_gui.set_options(_gut_config.options, _gut_config.default_panel_options)
+	_gut_config_gui.set_options(_gut_config.options)
 
 func save_options():
 	_gut_config.options = _gut_config_gui.get_options(_gut_config.options)

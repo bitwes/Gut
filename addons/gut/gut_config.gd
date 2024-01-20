@@ -48,16 +48,6 @@ var default_options = {
 	gut_on_top = true,
 }
 
-var default_panel_options = {
-	font_name = 'CourierPrime',
-	font_size = 16,
-	output_font_name = 'CourierPrime',
-	output_font_size = 30,
-	hide_result_tree = false,
-	hide_output_text = false,
-	hide_settings = false,
-	use_colors = true
-}
 
 var options = default_options.duplicate()
 var json = JSON.new()
@@ -177,11 +167,6 @@ func load_options(path):
 # consistent name
 func load_file(path):
 	return load_options(path)
-
-
-func load_panel_options(path):
-	options['panel_options'] = default_panel_options.duplicate()
-	return _load_options_from_config_file(path, options)
 
 
 func load_options_no_defaults(path):
