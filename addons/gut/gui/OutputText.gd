@@ -1,6 +1,9 @@
 @tool
 extends VBoxContainer
 
+var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
+var PanelControls = load('res://addons/gut/gui/panel_controls.gd')
+
 # ##############################################################################
 # Keeps search results from the TextEdit
 # ##############################################################################
@@ -59,7 +62,6 @@ class TextEditSearcher:
 		_find(term, te.SEARCH_BACKWARDS)
 
 
-var PanelControls = load('res://addons/gut/gui/panel_controls.gd')
 # ##############################################################################
 # Start OutputText control code
 # ##############################################################################

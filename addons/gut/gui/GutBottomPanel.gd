@@ -3,9 +3,11 @@ extends Control
 
 const SHORTCUTS_PATH = 'res://.gut_editor_shortcuts.cfg'
 
+var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
 var TestScript = load('res://addons/gut/test.gd')
 var GutConfigGui = load('res://addons/gut/gui/gut_config_gui.gd')
 var ScriptTextEditors = load('res://addons/gut/gui/script_text_editor_controls.gd')
+
 
 var _interface = null;
 var _is_running = false;

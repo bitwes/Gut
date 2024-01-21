@@ -1,7 +1,5 @@
 class_name GutUserPreferences
 
-
-
 class GutEditorPref:
 	var gut_pref_prefix = 'gut/'
 	var pname = '__not_set__'
@@ -41,7 +39,6 @@ var use_colors = null	# ? might be output panel
 
 
 func _init(editor_settings):
-
 	output_font_name = GutEditorPref.new('output_font_name', 'CourierPrime', editor_settings)
 	output_font_size = GutEditorPref.new('output_font_size', 30, editor_settings)
 	hide_result_tree = GutEditorPref.new('hide_result_tree', false, editor_settings)

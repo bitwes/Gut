@@ -1,6 +1,8 @@
 @tool
 extends Control
 
+var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
+
 var _interface = null
 var _font = null
 var _font_size = null

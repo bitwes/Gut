@@ -15,6 +15,7 @@
 # ##############################################################################
 extends Node2D
 
+var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
 var Gut = load('res://addons/gut/gut.gd')
 var ResultExporter = load('res://addons/gut/result_exporter.gd')
 var GutConfig = load('res://addons/gut/gut_config.gd')
