@@ -140,5 +140,6 @@ func clear_shortcut():
 func disable_set(should):
 	_ctrls.set_button.disabled = should
 
+
 func disable_clear(should):
 	_ctrls.clear_button.disabled = should

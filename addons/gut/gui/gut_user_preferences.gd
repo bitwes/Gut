@@ -18,6 +18,7 @@ class GutEditorPref:
 		return to_return
 
 	func save_it():
+		# print('saving ', pname, ' = ', value)
 		_settings.set_setting(_prefstr(), value)
 
 	func load_it():
@@ -25,8 +26,7 @@ class GutEditorPref:
 			value = _settings.get_setting(_prefstr())
 		else:
 			value = default
-
-
+		# print('loaded ', pname, ' = ', value)
 
 
 # -- Editor ONLY Settings --
@@ -37,6 +37,12 @@ var hide_output_text = null
 var hide_settings = null
 var use_colors = null	# ? might be output panel
 
+var shortcut_run_all = null
+var shortcut_run_current_script = null
+var shortcut_run_current_inner = null
+var shortcut_run_current_test = null
+var shortcut_panel_button = null
+
 
 func _init(editor_settings):
 	output_font_name = GutEditorPref.new('output_font_name', 'CourierPrime', editor_settings)
@@ -46,6 +52,11 @@ func _init(editor_settings):
 	hide_settings = GutEditorPref.new('hide_settings', false, editor_settings)
 	use_colors = GutEditorPref.new('use_colors', true, editor_settings)
 
+	shortcut_run_all = GutEditorPref.new('shortcut_run_all', null, editor_settings)
+	shortcut_run_current_script = GutEditorPref.new('shortcut_run_current_script', null, editor_settings)
+	shortcut_run_current_inner = GutEditorPref.new('shortcut_run_current_inner', null, editor_settings)
+	shortcut_run_current_test = GutEditorPref.new('shortcut_run_current_test', null, editor_settings)
+	shortcut_panel_button = GutEditorPref.new('shortcut_panel_button', null, editor_settings)
 
 func save_it():
 	for prop in get_property_list():
@@ -59,23 +70,3 @@ func load_it():
 		if(val is GutEditorPref):
 			val.load_it()
 
-# TODO, stop gap approach to getting things working
-# this should be removed or something.
-func make_panel_options():
-	return {
-		'output_font_name' : output_font_name.value,
-		'output_font_size' : output_font_size.value,
-		'hide_result_tree' : hide_result_tree.value,
-		'hide_output_text' : hide_output_text.value,
-		'hide_settings' : hide_settings.value,
-		'use_colors' : use_colors.value,
-	}
-
-
-# @export var shortcuts = {
-#     run_all = null,
-# 	run_current_script = null,
-# 	run_current_inner = null,
-# 	run_current_test = null,
-# 	panel_button = null,
-# }
