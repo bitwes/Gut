@@ -25,3 +25,7 @@ func _on_ShortcutButton_changed():
 func _on_Button_pressed():
 	print('hello world ', count)
 	count += 1
+
+
+func _on_show_dialog_pressed():
+	$BottomPanelShortcuts.popup_centered()
