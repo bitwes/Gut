@@ -1,8 +1,6 @@
 @tool
 extends Control
 
-const SHORTCUTS_PATH = 'res://.gut_editor_shortcuts.cfg'
-
 var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
 var TestScript = load('res://addons/gut/test.gd')
 var GutConfigGui = load('res://addons/gut/gui/gut_config_gui.gd')
@@ -98,7 +96,7 @@ func _process(delta):
 # ---------------
 
 func load_shortcuts():
-	_ctrls.shortcut_dialog.load_shortcuts(SHORTCUTS_PATH)
+	_ctrls.shortcut_dialog.load_shortcuts()
 	_apply_shortcuts()
 
 
@@ -203,7 +201,7 @@ func _on_Shortcuts_pressed():
 
 func _on_bottom_panel_shortcuts_visibility_changed():
 	_apply_shortcuts()
-	_ctrls.shortcut_dialog.save_shortcuts(SHORTCUTS_PATH)
+	_ctrls.shortcut_dialog.save_shortcuts()
 
 func _on_RunAtCursor_run_tests(what):
 	_gut_config.options.selected = what.script

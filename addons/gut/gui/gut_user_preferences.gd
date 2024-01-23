@@ -28,6 +28,7 @@ class GutEditorPref:
 			value = default
 		# print('loaded ', pname, ' = ', value)
 
+const EMPTY = '-- NOT_SET --'
 
 # -- Editor ONLY Settings --
 var output_font_name = null
@@ -37,14 +38,15 @@ var hide_output_text = null
 var hide_settings = null
 var use_colors = null	# ? might be output panel
 
-var shortcut_run_all = null
-var shortcut_run_current_script = null
-var shortcut_run_current_inner = null
-var shortcut_run_current_test = null
-var shortcut_panel_button = null
+# var shortcut_run_all = null
+# var shortcut_run_current_script = null
+# var shortcut_run_current_inner = null
+# var shortcut_run_current_test = null
+# var shortcut_panel_button = null
 
 
 func _init(editor_settings):
+	# print('-- initializing editor settings ', self, ' --')
 	output_font_name = GutEditorPref.new('output_font_name', 'CourierPrime', editor_settings)
 	output_font_size = GutEditorPref.new('output_font_size', 30, editor_settings)
 	hide_result_tree = GutEditorPref.new('hide_result_tree', false, editor_settings)
@@ -52,19 +54,21 @@ func _init(editor_settings):
 	hide_settings = GutEditorPref.new('hide_settings', false, editor_settings)
 	use_colors = GutEditorPref.new('use_colors', true, editor_settings)
 
-	shortcut_run_all = GutEditorPref.new('shortcut_run_all', null, editor_settings)
-	shortcut_run_current_script = GutEditorPref.new('shortcut_run_current_script', null, editor_settings)
-	shortcut_run_current_inner = GutEditorPref.new('shortcut_run_current_inner', null, editor_settings)
-	shortcut_run_current_test = GutEditorPref.new('shortcut_run_current_test', null, editor_settings)
-	shortcut_panel_button = GutEditorPref.new('shortcut_panel_button', null, editor_settings)
+	# shortcut_run_all = GutEditorPref.new('shortcut_run_all', EMPTY, editor_settings)
+	# shortcut_run_current_script = GutEditorPref.new('shortcut_run_current_script', EMPTY, editor_settings)
+	# shortcut_run_current_inner = GutEditorPref.new('shortcut_run_current_inner', EMPTY, editor_settings)
+	# shortcut_run_current_test = GutEditorPref.new('shortcut_run_current_test', EMPTY, editor_settings)
+	# shortcut_panel_button = GutEditorPref.new('shortcut_panel_button', EMPTY, editor_settings)
 
 func save_it():
+	# print('-- saving editor settings ', self, ' ==')
 	for prop in get_property_list():
 		var val = get(prop.name)
 		if(val is GutEditorPref):
 			val.save_it()
 
 func load_it():
+	# print('-- loading editor settings ', self, ' ==')
 	for prop in get_property_list():
 		var val = get(prop.name)
 		if(val is GutEditorPref):

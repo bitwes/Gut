@@ -25,6 +25,11 @@ static var editor_run_json_results_path = 'gut_editor.json':
 	set(v): pass
 
 
+static var editor_shortcuts_path = 'gut_editor_shortcuts.cfg' :
+	get: return temp_directory.path_join(editor_shortcuts_path)
+	set(v): pass
+
+
 static var _user_prefs = null
 static var user_prefs = _user_prefs :
 	# workaround not being able to reference EditorInterface when not in
