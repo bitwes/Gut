@@ -20,16 +20,24 @@ func _ready():
 		sc_button.connect('start_edit', _on_edit_start.bind(sc_button))
 		sc_button.connect('end_edit', _on_edit_end)
 
-
 	# show dialog when running scene from editor.
 	if(get_parent() == get_tree().root):
 		popup_centered()
+
+
+func _cancel_all():
+	_ctrls.run_all.cancel()
+	_ctrls.run_current_script.cancel()
+	_ctrls.run_current_inner.cancel()
+	_ctrls.run_current_test.cancel()
+	_ctrls.panel_button.cancel()
 
 # ------------
 # Events
 # ------------
 func _on_Hide_pressed():
 	hide()
+
 
 func _on_edit_start(which):
 	for key in _ctrls:
@@ -38,11 +46,16 @@ func _on_edit_start(which):
 			sc_button.disable_set(true)
 			sc_button.disable_clear(true)
 
+
 func _on_edit_end():
 	for key in _ctrls:
 		var sc_button = _ctrls[key]
 		sc_button.disable_set(false)
 		sc_button.disable_clear(false)
+
+
+func _on_popup_hide():
+	_cancel_all()
 
 # ------------
 # Public
@@ -99,6 +112,7 @@ func _load_shortcut_from_pref(user_pref):
 		# to_return = user_pref.value
 	return to_return
 
+
 func load_shortcuts():
 	load_shortcuts_from_file(default_path)
 
@@ -123,3 +137,5 @@ func load_shortcuts_from_file(path):
 	_ctrls.run_current_inner.set_shortcut(f.get_value('main', 'run_current_inner', empty))
 	_ctrls.run_current_test.set_shortcut(f.get_value('main', 'run_current_test', empty))
 	_ctrls.panel_button.set_shortcut(f.get_value('main', 'panel_button', empty))
+
+
