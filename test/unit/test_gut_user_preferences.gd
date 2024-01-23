@@ -15,6 +15,9 @@ class MockEditorSettings:
 	func has_setting(n):
 		return settings.has(n)
 
+	func erase(n):
+		settings.erase(n)
+
 
 func before_all():
 	register_inner_classes(self.get_script())
@@ -61,3 +64,17 @@ func test_all_values_are_loaded_from_settings(p = use_parameters(non_default_set
 	var loaded = Gup.new(es)
 	assert_eq(loaded.get(p.name).value, p.value)
 
+var pref_list = [
+	'output_font_name',
+	'output_font_size',
+	'hide_result_tree',
+	'hide_output_text',
+	'hide_settings',
+	'use_colors',
+]
+func test_all_values_are_erased_by_erase_all(p = use_parameters(pref_list)):
+	var es = partial_double(MockEditorSettings).new()
+	var prefs = Gup.new(es)
+	var erased = prefs.get(p)
+	prefs.erase_all()
+	assert_called(es, 'erase', [erased._prefstr()])

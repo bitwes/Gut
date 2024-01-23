@@ -32,3 +32,11 @@ func _exit_tree():
 	# Always remember to remove_at it from the engine when deactivated
 	remove_control_from_bottom_panel(_bottom_panel)
 	_bottom_panel.free()
+
+
+# This seems like a good idea at first, but it deletes the settings for ALL
+# projects.  If by chance you want to do that you can uncomment this, reload the
+# project and then disable GUT.
+# func _disable_plugin():
+#	var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
+# 	GutEditorGlobals.user_prefs.erase_all()

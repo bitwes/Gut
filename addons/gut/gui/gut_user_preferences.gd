@@ -18,7 +18,6 @@ class GutEditorPref:
 		return to_return
 
 	func save_it():
-		# print('saving ', pname, ' = ', value)
 		_settings.set_setting(_prefstr(), value)
 
 	func load_it():
@@ -26,7 +25,10 @@ class GutEditorPref:
 			value = _settings.get_setting(_prefstr())
 		else:
 			value = default
-		# print('loaded ', pname, ' = ', value)
+
+	func erase():
+		_settings.erase(_prefstr())
+
 
 const EMPTY = '-- NOT_SET --'
 
@@ -46,7 +48,6 @@ var use_colors = null	# ? might be output panel
 
 
 func _init(editor_settings):
-	# print('-- initializing editor settings ', self, ' --')
 	output_font_name = GutEditorPref.new('output_font_name', 'CourierPrime', editor_settings)
 	output_font_size = GutEditorPref.new('output_font_size', 30, editor_settings)
 	hide_result_tree = GutEditorPref.new('hide_result_tree', false, editor_settings)
@@ -61,16 +62,21 @@ func _init(editor_settings):
 	# shortcut_panel_button = GutEditorPref.new('shortcut_panel_button', EMPTY, editor_settings)
 
 func save_it():
-	# print('-- saving editor settings ', self, ' ==')
 	for prop in get_property_list():
 		var val = get(prop.name)
 		if(val is GutEditorPref):
 			val.save_it()
 
+
 func load_it():
-	# print('-- loading editor settings ', self, ' ==')
 	for prop in get_property_list():
 		var val = get(prop.name)
 		if(val is GutEditorPref):
 			val.load_it()
 
+
+func erase_all():
+	for prop in get_property_list():
+		var val = get(prop.name)
+		if(val is GutEditorPref):
+			val.erase()
