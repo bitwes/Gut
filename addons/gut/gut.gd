@@ -890,7 +890,7 @@ func _get_files(path, prefix, suffix):
 		full_path = path.path_join(fs_item)
 
 		#file_exists returns fasle for directories
-		if(d.file_exists(full_path)):
+		if(FileAccess.file_exists(full_path)):
 			if(fs_item.begins_with(prefix) and fs_item.ends_with(suffix)):
 				files.append(full_path)
 		elif(include_subdirectories and d.dir_exists(full_path)):
