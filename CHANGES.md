@@ -15,7 +15,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
     * When running GUT from the editor, the config used by the runner is saved to `user://` now.
     * You can load and save configs through the editor, so you can have a base set of settings that are not overwritten when running Gut.
     * Moved all files that Gut creates in `user://` to `user://gut_temp_directory`.
-    * Output Panel related settings have moved to the Output panel.  Use the "..." button.
+    * Output Subanel related settings have moved to the Output Subpanel.  Use the "..." button.
 
 
 

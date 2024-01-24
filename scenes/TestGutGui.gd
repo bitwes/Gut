@@ -6,7 +6,7 @@ var _runner = GutRunner.instantiate()
 
 
 func _init():
-	_runner.auto_run_tests = false
+	_runner.ran_from_editor = false
 
 
 func _ready():
