@@ -1,5 +1,6 @@
 @tool
 
+static var GutUserPreferences = load("res://addons/gut/gui/gut_user_preferences.gd")
 static var temp_directory = 'user://gut_temp_directory'
 
 static var editor_run_gut_config_path = 'gut_editor_config.json':

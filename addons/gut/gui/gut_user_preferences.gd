@@ -1,5 +1,3 @@
-class_name GutUserPreferences
-
 class GutEditorPref:
 	var gut_pref_prefix = 'gut/'
 	var pname = '__not_set__'
