@@ -878,21 +878,24 @@ func _get_files(path, prefix, suffix):
 		return [];
 
 	var d = DirAccess.open(path)
-	# true parameter tells list_dir_begin not to include "." and ".." directories.
-	d.list_dir_begin() # TODO 4.0 fill missing arguments https://github.com/godotengine/godot/pull/40547
+	d.include_hidden = false
+	d.include_navigational = false
 
-	# Traversing a directory is kinda odd.  You have to start the process of listing
-	# the contents of a directory with list_dir_begin then use get_next until it
-	# returns an empty string.  Then I guess you should end it.
+	# Traversing a directory is kinda odd.  You have to start the process of
+	# listing the contents of a directory with list_dir_begin then use get_next
+	# until it returns an empty string.  Then I guess you should end it.
+	d.list_dir_begin()
 	var fs_item = d.get_next()
 	var full_path = ''
 	while(fs_item != ''):
 		full_path = path.path_join(fs_item)
 
-		# file_exists returns fasle for directories
+		# MUST use FileAccess since d.file_exists returns false for exported
+		# projects
 		if(FileAccess.file_exists(full_path)):
 			if(fs_item.begins_with(prefix) and fs_item.ends_with(suffix)):
 				files.append(full_path)
+		# MUST use DirAccess, d.dir_exists is false for exported projects.
 		elif(include_subdirectories and DirAccess.dir_exists_absolute(full_path)):
 			directories.append(full_path)
 
