@@ -1,6 +1,9 @@
 @tool
 extends VBoxContainer
 
+var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
+var PanelControls = load('res://addons/gut/gui/panel_controls.gd')
+
 # ##############################################################################
 # Keeps search results from the TextEdit
 # ##############################################################################
@@ -59,17 +62,17 @@ class TextEditSearcher:
 		_find(term, te.SEARCH_BACKWARDS)
 
 
-
 # ##############################################################################
 # Start OutputText control code
 # ##############################################################################
 @onready var _ctrls = {
 	output = $Output,
+	settings_bar = $Settings,
+	use_colors = $Settings/UseColors,
+	word_wrap = $Settings/WordWrap,
 
 	copy_button = $Toolbar/CopyButton,
-	use_colors = $Toolbar/UseColors,
 	clear_button = $Toolbar/ClearButton,
-	word_wrap = $Toolbar/WordWrap,
 	show_search = $Toolbar/ShowSearch,
 	caret_position = $Toolbar/LblPosition,
 
@@ -82,6 +85,9 @@ class TextEditSearcher:
 var _sr = TextEditSearcher.new()
 var _highlighter : CodeHighlighter
 var _font_name = null
+var _user_prefs = GutEditorGlobals.user_prefs
+var _font_name_pctrl = null
+var _font_size_pctrl = null
 
 # Automatically used when running the OutputText scene from the editor.  Changes
 # to this method only affect test-running the control through the editor.
@@ -92,7 +98,7 @@ func _test_running_setup():
 
 	set_all_fonts("CourierPrime")
 	set_font_size(30)
-	
+
 	_ctrls.output.queue_redraw()
 	load_file('user://.gut_editor.bbcode')
 	await get_tree().process_frame
@@ -115,11 +121,32 @@ func _ready():
 
 	if(get_parent() == get_tree().root):
 		_test_running_setup()
-		
 
-func _on_caret_changed():
-	var txt = str("line:",_ctrls.output.get_caret_line(), ' col:', _ctrls.output.get_caret_column())
-	_ctrls.caret_position.text = str(txt)
+	_ctrls.settings_bar.visible = false
+	_add_other_ctrls()
+
+
+func _add_other_ctrls():
+	var fname = 'CourierNew'
+	if(_user_prefs != null):
+		fname = _user_prefs.output_font_name.value
+	_font_name_pctrl = PanelControls.SelectControl.new('Font', fname, GutUtils.avail_fonts,
+		"The font, you know, for the text below.  Change it, see what it does.")
+	_font_name_pctrl.changed.connect(_on_font_name_changed)
+	_font_name_pctrl.label.size_flags_horizontal = SIZE_SHRINK_BEGIN
+	_ctrls.settings_bar.add_child(_font_name_pctrl)
+	set_all_fonts(fname)
+
+	var fsize = 30
+	if(_user_prefs != null):
+		fsize = _user_prefs.output_font_size.value
+	_font_size_pctrl = PanelControls.NumberControl.new('Font Size', fsize , 5, 100,
+		"The size of 'The Font'.")
+	_font_size_pctrl.changed.connect(_on_font_size_changed)
+	_font_size_pctrl.label.size_flags_horizontal = SIZE_SHRINK_BEGIN
+	_ctrls.settings_bar.add_child(_font_size_pctrl)
+	set_font_size(fsize)
+
 
 # ------------------
 # Private
@@ -182,21 +209,33 @@ func _use_highlighting(should):
 # ------------------
 # Events
 # ------------------
+func _on_caret_changed():
+	var txt = str("line:",_ctrls.output.get_caret_line(), ' col:', _ctrls.output.get_caret_column())
+	_ctrls.caret_position.text = str(txt)
+
+func _on_font_size_changed():
+	set_font_size(_font_size_pctrl.value)
+	if(_user_prefs != null):
+		_user_prefs.output_font_size.value = _font_size_pctrl.value
+		_user_prefs.output_font_size.save_it()
+
+func _on_font_name_changed():
+	set_all_fonts(_font_name_pctrl.text)
+	if(_user_prefs != null):
+		_user_prefs.output_font_name.value = _font_name_pctrl.text
+		_user_prefs.output_font_name.save_it()
+
 func _on_CopyButton_pressed():
 	copy_to_clipboard()
-
 
 func _on_UseColors_pressed():
 	_use_highlighting(_ctrls.use_colors.button_pressed)
 
-
 func _on_ClearButton_pressed():
 	clear()
 
-
 func _on_ShowSearch_pressed():
 	show_search(_ctrls.show_search.button_pressed)
-
 
 func _on_SearchTerm_focus_entered():
 	_ctrls.search_bar.search_term.call_deferred('select_all')
@@ -204,10 +243,8 @@ func _on_SearchTerm_focus_entered():
 func _on_SearchNext_pressed():
 	_sr.find_next(_ctrls.search_bar.search_term.text)
 
-
 func _on_SearchPrev_pressed():
 	_sr.find_prev(_ctrls.search_bar.search_term.text)
-
 
 func _on_SearchTerm_text_changed(new_text):
 	if(new_text == ''):
@@ -215,18 +252,15 @@ func _on_SearchTerm_text_changed(new_text):
 	else:
 		_sr.find_next(new_text)
 
-
 func _on_SearchTerm_text_entered(new_text):
 	if(Input.is_physical_key_pressed(KEY_SHIFT)):
 		_sr.find_prev(new_text)
 	else:
 		_sr.find_next(new_text)
 
-
 func _on_SearchTerm_gui_input(event):
 	if(event is InputEventKey and !event.pressed and event.keycode == KEY_ESCAPE):
 		show_search(false)
-
 
 func _on_WordWrap_pressed():
 	if(_ctrls.word_wrap.button_pressed):
@@ -235,6 +269,9 @@ func _on_WordWrap_pressed():
 		_ctrls.output.wrap_mode = TextEdit.LINE_WRAPPING_NONE
 
 	_ctrls.output.queue_redraw()
+
+func _on_settings_pressed():
+	_ctrls.settings_bar.visible = $Toolbar/ShowSettings.button_pressed
 
 # ------------------
 # Public
@@ -266,7 +303,7 @@ func clear():
 func _set_font(font_name, custom_name):
 	var rtl = _ctrls.output
 	if(font_name == null):
-		rtl.add_theme_font_override(custom_name, null)
+		rtl.remove_theme_font_override(custom_name)
 	else:
 		var dyn_font = FontFile.new()
 		dyn_font.load_dynamic_font('res://addons/gut/fonts/' + font_name + '.ttf')
@@ -275,7 +312,7 @@ func _set_font(font_name, custom_name):
 
 func set_all_fonts(base_name):
 	_font_name = GutUtils.nvl(base_name, 'Default')
-	
+
 	if(base_name == 'Default'):
 		_set_font(null, 'font')
 		_set_font(null, 'normal_font')
@@ -291,21 +328,7 @@ func set_all_fonts(base_name):
 
 
 func set_font_size(new_size):
-	var rtl = _ctrls.output
-	rtl.set("theme_override_font_sizes/font_size", new_size)
-
-#	rtl.add_theme_font_size_override("font", new_size)
-#	rtl.add_theme_font_size_override("normal_font", new_size)
-#	rtl.add_theme_font_size_override("bold_font", new_size)
-#	rtl.add_theme_font_size_override("italics_font", new_size)
-#	rtl.add_theme_font_size_override("bold_italics_font", new_size)
-
-#	if(rtl.get('custom_fonts/font') != null):
-#		rtl.get('custom_fonts/font').size = new_size
-#		rtl.get('custom_fonts/bold_italics_font').size = new_size
-#		rtl.get('custom_fonts/bold_font').size = new_size
-#		rtl.get('custom_fonts/italics_font').size = new_size
-#		rtl.get('custom_fonts/normal_font').size = new_size
+	_ctrls.output.set("theme_override_font_sizes/font_size", new_size)
 
 
 func set_use_colors(value):

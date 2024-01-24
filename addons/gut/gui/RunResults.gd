@@ -1,6 +1,8 @@
 @tool
 extends Control
 
+var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
+
 var _interface = null
 var _font = null
 var _font_size = null
@@ -51,14 +53,9 @@ func _ready():
 func _test_running_setup():
 	_ctrls.tree.hide_passing = true
 	_ctrls.tree.show_orphans = true
-	var _gut_config = load('res://addons/gut/gut_config.gd').new()
-	_gut_config.load_panel_options('res://.gut_editor_config.json')
-	set_font(
-		_gut_config.options.panel_options.font_name,
-		_gut_config.options.panel_options.font_size)
 
 	_ctrls.toolbar.hide_passing.text = '[hp]'
-	_ctrls.tree.load_json_file('user://.gut_editor.json')
+	_ctrls.tree.load_json_file(GutEditorGlobals.editor_run_json_results_path)
 
 
 func _set_toolbutton_icon(btn, icon_name, text):
@@ -76,7 +73,7 @@ func _open_script_in_editor(path, line_number):
 	if(_interface == null):
 		print('Too soon, wait a bit and try again.')
 		return
-	
+
 	var r = load(path)
 	if(line_number != null and line_number != -1):
 		_interface.edit_script(r, line_number)
@@ -175,7 +172,7 @@ func _on_ExpandAll_pressed():
 
 func _on_Hide_Passing_pressed():
 	_ctrls.tree.hide_passing = !_ctrls.toolbar.hide_passing.button_pressed
-	_ctrls.tree.load_json_file('user://.gut_editor.json')
+	_ctrls.tree.load_json_file(GutEditorGlobals.editor_run_json_results_path)
 
 
 func _on_item_selected(script_path, inner_class, test_name, line):

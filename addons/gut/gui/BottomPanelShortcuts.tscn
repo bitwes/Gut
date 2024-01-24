@@ -8,6 +8,8 @@ title = "Shortcuts"
 size = Vector2i(500, 350)
 visible = true
 exclusive = true
+unresizable = false
+borderless = false
 script = ExtResource("2")
 
 [node name="Layout" type="VBoxContainer" parent="."]
@@ -147,4 +149,5 @@ custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 size_flags_horizontal = 3
 
+[connection signal="popup_hide" from="." to="." method="_on_popup_hide"]
 [connection signal="pressed" from="Layout/HBoxContainer/Hide" to="." method="_on_Hide_pressed"]

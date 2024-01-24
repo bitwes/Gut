@@ -9,7 +9,7 @@
 #
 # Running tests:
 # By default, this will run tests once this control has been added to the tree.
-# You can override this by setting auto_run_tests to false prior to adding
+# You can override this by setting ran_from_editor to false before adding
 # this to the tree.  To run tests manually, call run_tests.
 #
 # ##############################################################################
@@ -19,33 +19,38 @@ var Gut = load('res://addons/gut/gut.gd')
 var ResultExporter = load('res://addons/gut/result_exporter.gd')
 var GutConfig = load('res://addons/gut/gut_config.gd')
 
-const RUNNER_JSON_PATH = 'res://.gut_editor_config.json'
-const RESULT_FILE = 'user://.gut_editor.bbcode'
-const RESULT_JSON = 'user://.gut_editor.json'
+var runner_json_path = null
+var result_bbcode_path = null
+var result_json_path = null
 
 var _gut_config = null
 var _gut = null;
 var _wrote_results = false
-# Flag for when this is being used at the command line.  Otherwise it is
-# assumed this is being used by the panel and being launched with
-# play_custom_scene
-var _cmdln_mode = false
+
+# The editor runs this scene using play_custom_scene, which means we cannot
+# pass any info directly to the scene.  Whenever this is being used from
+# somewhere else, you probably want to set this to false before adding this
+# to the tree.
+var ran_from_editor = true
 
 @onready var _gut_layer = $GutLayer
 @onready var _gui = $GutLayer/GutScene
 
-# When true, tests will be kicked off in _ready.
-var auto_run_tests = true
 
 func _ready():
-	if(_gut_config == null):
-		_gut_config = GutConfig.new()
-		_gut_config.load_panel_options(RUNNER_JSON_PATH)
+	# When used from the panel we have to kick off the tests ourselves b/c
+	# there's no way I know of to interact with the scene that was run via
+	# play_custom_scene.
+	if(ran_from_editor):
+		var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
+		runner_json_path = GutUtils.nvl(runner_json_path, GutEditorGlobals.editor_run_gut_config_path)
+		result_bbcode_path = GutUtils.nvl(result_bbcode_path, GutEditorGlobals.editor_run_bbcode_results_path)
+		result_json_path = GutUtils.nvl(result_json_path, GutEditorGlobals.editor_run_json_results_path)
 
-	# The command line will call run_tests on its own.  When used from the panel
-	# we have to kick off the tests ourselves b/c there's no way I know of to
-	# interact with the scene that was run via play_custom_scene.
-	if(!_cmdln_mode and auto_run_tests):
+		if(_gut_config == null):
+			_gut_config = GutConfig.new()
+			_gut_config.load_options(runner_json_path)
+
 		call_deferred('run_tests')
 
 
@@ -72,15 +77,12 @@ func _setup_gui(show_gui):
 		_gui.set_background_color(Color(opts.background_color))
 
 	_gui.set_opacity(min(1.0, float(opts.opacity) / 100))
-	# if(opts.should_maximize):
-	# 	_tester.maximize()
 	_gui.use_compact_mode(opts.compact_mode)
-
 
 
 func _write_results():
 	var content = _gui.get_textbox().get_parsed_text() #_gut.logger.get_gui_bbcode()
-	var f = FileAccess.open(RESULT_FILE, FileAccess.WRITE)
+	var f = FileAccess.open(result_bbcode_path, FileAccess.WRITE)
 	if(f != null):
 		f.store_string(content)
 		f = null # closes file
@@ -88,12 +90,12 @@ func _write_results():
 		push_error('Could not save bbcode, result = ', FileAccess.get_open_error())
 
 	var exporter = ResultExporter.new()
-	var f_result = exporter.write_json_file(_gut, RESULT_JSON)
+	var f_result = exporter.write_json_file(_gut, result_json_path)
 	_wrote_results = true
 
 
 func _exit_tree():
-	if(!_wrote_results and !_cmdln_mode):
+	if(!_wrote_results and ran_from_editor):
 		_write_results()
 
 
@@ -118,7 +120,7 @@ func run_tests(show_gui=true):
 		else:
 			add_child(_gut)
 
-	if(!_cmdln_mode):
+	if(ran_from_editor):
 		_gut.end_run.connect(_on_tests_finished.bind(_gut_config.options.should_exit, _gut_config.options.should_exit_on_success))
 
 	_gut_config.apply_options(_gut)
@@ -134,10 +136,6 @@ func get_gut():
 
 func set_gut_config(which):
 	_gut_config = which
-
-
-func set_cmdln_mode(is_it):
-	_cmdln_mode = is_it
 
 
 

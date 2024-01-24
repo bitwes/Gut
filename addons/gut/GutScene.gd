@@ -89,7 +89,7 @@ func set_font(font_name):
 
 func _set_font(rtl, font_name, custom_name):
 	if(font_name == null):
-		rtl.add_theme_font_override(custom_name, null)
+		rtl.remove_theme_font_override(custom_name)
 	else:
 		var dyn_font = FontFile.new()
 		dyn_font.load_dynamic_font('res://addons/gut/fonts/' + font_name + '.ttf')

@@ -3,13 +3,19 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 
-# 9.1.2
+# 9.2.0
 * Documentation and repo changes.
 * __Issue__ #536 Theme refernces font instead of embedding it.
 * __Issue__ #523 "got" values are printed with extra precision for float, Vector2, and Vector3 when using `assert_almost_eq`, `assert_almost_ne`, `assert_between` and `assert_not_between`.
 * __Issue__ #436 Doubled Scenes now retain export variable values that were set in the editor.
 * __Issue__ #547 The output_font_name and output_font_size for the GutPanel are now saved.
 * __PR__ #544 (@xorblo-doitus) InputSender will now emit the `gui_input` signal on receivers.
+* __Issue__ #473 Moved gut panel settings and gut options out of res:// so that multiple devs won't fight over files that are really user preferences.
+    * Created some Editor Preferences for Gut to handle user only settings.
+    * When running GUT from the editor, the config used by the runner is saved to `user://` now.
+    * You can load and save configs through the editor, so you can have a base set of settings that are not overwritten when running Gut.
+    * Moved all files that Gut creates in `user://` to `user://gut_temp_directory`.
+    * Output Subanel related settings have moved to the Output Subpanel.  Use the "..." button.
 
 
 

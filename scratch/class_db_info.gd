@@ -43,7 +43,6 @@ func get_all_int_constants():
 
 func get_all_properties():
     var classes = ClassDB.get_class_list()
-    var found = false
     var all_properties = ThingCounter.new()
     for c in classes:
         var prop_list = ClassDB.class_get_property_list(c)
@@ -52,9 +51,17 @@ func get_all_properties():
 
     print(all_properties.to_s())
 
+func print_all_classes():
+    var classes = ClassDB.get_class_list()
+
+    for c in classes:
+        print(c)
+
+
 
 func _init():
     # get_all_enums()
     # get_all_int_constants()
-    get_all_properties()
+    # get_all_properties()
+    print_all_classes()
     quit()
