@@ -234,6 +234,78 @@ class DirectoryControl:
 		value_ctrl.text = val
 
 
+# ------------------------------------------------------------------------------
+# Features:
+# 	Buttons to pick res://, user://, or anywhere on the OS.
+# ------------------------------------------------------------------------------
+class FileDialogSuperPlus:
+	extends FileDialog
+
+	var show_diretory_types = true :
+		set(val) :
+			show_diretory_types = val
+			_update_display()
+
+	var show_res = true :
+		set(val) :
+			show_res = val
+			_update_display()
+
+	var show_user = true :
+		set(val) :
+			show_user = val
+			_update_display()
+
+	var show_os = true :
+		set(val) :
+			show_os = val
+			_update_display()
+
+	var _dir_type_hbox = null
+	var _btn_res = null
+	var _btn_user = null
+	var _btn_os = null
+
+	func _ready():
+		_init_controls()
+		_update_display()
+
+
+	func _init_controls():
+		_dir_type_hbox = HBoxContainer.new()
+
+		_btn_res = Button.new()
+		_btn_user = Button.new()
+		_btn_os = Button.new()
+		var spacer1 = CenterContainer.new()
+		spacer1.size_flags_horizontal = spacer1.SIZE_EXPAND_FILL
+		var spacer2 = spacer1.duplicate()
+
+		_dir_type_hbox.add_child(spacer1)
+		_dir_type_hbox.add_child(_btn_res)
+		_dir_type_hbox.add_child(_btn_user)
+		_dir_type_hbox.add_child(_btn_os)
+		_dir_type_hbox.add_child(spacer2)
+
+		_btn_res.text = 'res://'
+		_btn_user.text = 'user://'
+		_btn_os.text = 'OS'
+
+		get_vbox().add_child(_dir_type_hbox)
+		get_vbox().move_child(_dir_type_hbox, 0)
+
+		_btn_res.pressed.connect(func(): access = ACCESS_RESOURCES)
+		_btn_user.pressed.connect(func(): access = ACCESS_USERDATA)
+		_btn_os.pressed.connect(func(): access = ACCESS_FILESYSTEM)
+
+
+	func _update_display():
+		if(is_inside_tree()):
+			_dir_type_hbox.visible = show_diretory_types
+			_btn_res.visible = show_res
+			_btn_user.visible = show_user
+			_btn_os.visible = show_os
+
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -243,8 +315,8 @@ class SaveLoadControl:
 	var btn_load = Button.new()
 	var btn_save = Button.new()
 
-	var dlg_load := FileDialog.new()
-	var dlg_save := FileDialog.new()
+	var dlg_load := FileDialogSuperPlus.new()
+	var dlg_save := FileDialogSuperPlus.new()
 
 	signal save_path_chosen(path)
 	signal load_path_chosen(path)
@@ -273,6 +345,7 @@ class SaveLoadControl:
 		dlg_save.dir_selected.connect(_on_save_selected)
 		dlg_save.file_selected.connect(_on_save_selected)
 		add_child(dlg_save)
+
 
 	func _ready():
 		if(Engine.is_editor_hint()):
