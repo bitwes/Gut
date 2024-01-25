@@ -3,8 +3,16 @@ extends EditorPlugin
 
 var _bottom_panel = null
 
+func _version_conversion():
+	var EditorGlobals = load("res://addons/gut/gui/editor_globals.gd")
+	EditorGlobals.create_temp_directory()
+
+	var VersionConversion = load("res://addons/gut/version_conversion.gd")
+	VersionConversion.convert()
 
 func _enter_tree():
+	_version_conversion()
+
 	_bottom_panel = preload('res://addons/gut/gui/GutBottomPanel.tscn').instantiate()
 
 	var button = add_control_to_bottom_panel(_bottom_panel, 'GUT')
