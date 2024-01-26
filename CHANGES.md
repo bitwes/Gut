@@ -4,11 +4,27 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 
 # 9.2.0
+## Configuration Changes
+* The GUT Panel config is now auto-saved/loaded to `user://` instead of `res://`.  This file changes a lot and is very annoying with version control and teams that have more than one person (which is all teams since there is no "I" in team).
+    * The new location is `user://gut_temp_directory/gut_editor_config.json`
+    * When you open your project, GUT will check to see if there is a file in the new location.  If not, it will copy it there.
+    * GUT prints a warning to `Output`` telling you that you can delete the old file.
+* You can now Save/Load configs to/from anywhere through the Settings Subpanel.
+    * Saving/Loading does not change where the GUT panel auto-saves/loads to.
+    * This allows you to define standard config files for your project, but not save any changes in a version controlled file (unless you explicitly resave it using the cool new Save As button).
+* The GUT Panel Shortcuts config file has also been moved.  GUT also moves this file automatically and prints a warning.
+    * The new location is `user://gut_temp_directory/gut_editor_shortcuts.cfg`
+* All files that were being saved in `user://` have been moved to `user://gut_temp_directory` for better house keeping.
+
+
 ## Features
 * The Settings Subpanel now has on/off switches for directories, so you can turn them off if you want to run a subset of tests.
+* Wiki moved to https://gut.readthedocs.io
+
 
 ## Bug Fixes
-* Documentation and branch changes.
+* __Issue__ #479 source_code_pro.fnt was malformed, is now bienformed.
+* __Issue__ #549 @andrejp88 debug/gdscript/warnings/untyped_declaration as error would break GUT due to dynamic code generation.
 * __Issue__ #536 Theme refernces font instead of embedding it.
 * __Issue__ #523 "got" values are printed with extra precision for float, Vector2, and Vector3 when using `assert_almost_eq`, `assert_almost_ne`, `assert_between` and `assert_not_between`.
 * __Issue__ #436 Doubled Scenes now retain export variable values that were set in the editor.
@@ -21,7 +37,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
     * Moved all files that Gut creates in `user://` to `user://gut_temp_directory`.
     * Output Subanel related settings have moved to the Output Subpanel.  Use the "..." button.
 * __Issue__ #557 Tests are now found in exported projects.
-* Fixed issue where the panel was not setting the double strategy correctly.
+* Fixed issue where the panel was not loading the double strategy correctly.
 
 
 
