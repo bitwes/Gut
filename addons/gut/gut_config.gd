@@ -128,7 +128,7 @@ func _apply_options(opts, gut):
 	# Sometimes it is the index, sometimes it's a string.  This sets it regardless
 	gut.double_strategy = GutUtils.get_enum_value(
 		opts.double_strategy, GutUtils.DOUBLE_STRATEGY,
-		GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
+		GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY)
 
 	gut.unit_test_name = opts.unit_test_name
 	gut.pre_run_script = opts.pre_run_script

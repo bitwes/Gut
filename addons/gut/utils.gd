@@ -74,13 +74,29 @@ static func get_instance():
 
 
 # ------------------------------------------------------------------------------
-# Gets the value from an enum.  If passed an int it will return it if the enum
-# contains it.  If passed a string it will convert it to upper case and replace
-# spaces with underscores.  If the enum contains the key, it will return the
-# value for they key.  When keys or ints are not found, the default is returned.
+# Gets the value from an enum.
+# - If passed an integer value as a string it will convert it to an int and
+# 	processes the int value.
+# - If the value is a float then it is converted to an int and then processes
+#	the int value
+# - If the value is an int, or was converted to an int, then the enum is checked
+#	to see if it contains the value, if so then the value is returned.
+#	Otherwise the default is returned.
+# - If the value is a string then it is uppercased and all spaces are replaced
+#	with underscores.  It then checks to see if enum contains a key of that
+#	name.  If so then the value for that key is returned, otherwise the default
+#	is returned.
+#
+# This description is longer than the code, you should have just read the code
+# and the tests.
 # ------------------------------------------------------------------------------
 static func get_enum_value(thing, e, default=null):
 	var to_return = default
+
+	if(typeof(thing) == TYPE_STRING and str(thing.to_int()) == thing):
+		thing = thing.to_int()
+	elif(typeof(thing) == TYPE_FLOAT):
+		thing = int(thing)
 
 	if(typeof(thing) == TYPE_STRING):
 		var converted = thing.to_upper().replace(' ', '_')
