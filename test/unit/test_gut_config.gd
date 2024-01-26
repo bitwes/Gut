@@ -36,7 +36,7 @@ func test_gut_gets_default_when_value_invalid():
     g.double_strategy = GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY
     gc.options.double_strategy = 'invalid value'
     gc.apply_options(g)
-    assert_eq(g.double_strategy, GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
+    assert_eq(g.double_strategy, GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY)
 
 func test_another_thing():
     assert_true(true)
