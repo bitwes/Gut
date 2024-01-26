@@ -245,7 +245,8 @@ func set_options(opts):
 		if(options.dirs.size() > i):
 			value = options.dirs[i]
 
-		_add_directory(str('directory_', i), value, str('Directory ', i))
+		var test_dir = _add_directory(str('directory_', i), value, str(i))
+		test_dir.enabled_button.visible = true
 
 
 	_add_title("XML Output")
@@ -311,7 +312,7 @@ func get_options(base_opts):
 	for i in range(DIRS_TO_LIST):
 		var key = str('directory_', i)
 		var val = _cfg_ctrls[key].value
-		if(val != '' and val != null):
+		if(_cfg_ctrls[key].enabled_button.button_pressed and val != '' and val != null):
 			dirs.append(val)
 	to_return.dirs = dirs
 

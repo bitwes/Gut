@@ -192,10 +192,14 @@ class DirectoryControl:
 
 	var value_ctrl := LineEdit.new()
 	var dialog := FileDialog.new()
+	var enabled_button = CheckButton.new()
+
 	var _btn_dir := Button.new()
 
 	func _init(title, val, hint=""):
 		super._init(title, val, hint)
+
+		label.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 
 		_btn_dir.text = '...'
 		_btn_dir.pressed.connect(_on_dir_button_pressed)
@@ -203,15 +207,25 @@ class DirectoryControl:
 		value_ctrl.text = val
 		value_ctrl.size_flags_horizontal = value_ctrl.SIZE_EXPAND_FILL
 		value_ctrl.select_all_on_focus = true
+		value_ctrl.text_changed.connect(_on_value_changed)
 
 		dialog.file_mode = dialog.FILE_MODE_OPEN_DIR
 		dialog.unresizable = false
 		dialog.dir_selected.connect(_on_selected)
 		dialog.file_selected.connect(_on_selected)
 
+		enabled_button.button_pressed = true
+		enabled_button.visible = false
+
+		add_child(enabled_button)
 		add_child(value_ctrl)
 		add_child(_btn_dir)
 		add_child(dialog)
+
+	func _update_display():
+		var is_empty = value_ctrl.text == ''
+		enabled_button.button_pressed = !is_empty
+		enabled_button.disabled = is_empty
 
 
 	func _ready():
@@ -219,9 +233,14 @@ class DirectoryControl:
 			dialog.size = Vector2(1000, 700)
 		else:
 			dialog.size = Vector2(500, 350)
+		_update_display()
+
+	func _on_value_changed(new_text):
+		_update_display()
 
 	func _on_selected(path):
 		value_ctrl.text = path
+		_update_display()
 
 	func _on_dir_button_pressed():
 		dialog.current_dir = value_ctrl.text
@@ -289,7 +308,7 @@ class FileDialogSuperPlus:
 
 		_btn_res.text = 'res://'
 		_btn_user.text = 'user://'
-		_btn_os.text = 'OS'
+		_btn_os.text = '  OS  '
 
 		get_vbox().add_child(_dir_type_hbox)
 		get_vbox().move_child(_dir_type_hbox, 0)
