@@ -240,12 +240,19 @@ func set_options(opts):
 	_titles.dirs = _add_title('Test Directories')
 	_add_boolean('include_subdirs', options.include_subdirs, 'Include Subdirs',
 		"Include subdirectories of the directories configured below.")
+
+	var dirs_to_load = options.configured_dirs
+	if(options.dirs.size() > dirs_to_load.size()):
+		dirs_to_load = options.dirs
+
 	for i in range(DIRS_TO_LIST):
 		var value = ''
-		if(options.dirs.size() > i):
-			value = options.dirs[i]
+		if(dirs_to_load.size() > i):
+			value = dirs_to_load[i]
 
-		_add_directory(str('directory_', i), value, str('Directory ', i))
+		var test_dir = _add_directory(str('directory_', i), value, str(i))
+		test_dir.enabled_button.visible = true
+		test_dir.enabled_button.button_pressed = options.dirs.has(value)
 
 
 	_add_title("XML Output")
@@ -308,12 +315,16 @@ func get_options(base_opts):
 	# Directories
 	to_return.include_subdirs = _cfg_ctrls.include_subdirs.value
 	var dirs = []
+	var configured_dirs = []
 	for i in range(DIRS_TO_LIST):
 		var key = str('directory_', i)
-		var val = _cfg_ctrls[key].value
-		if(val != '' and val != null):
-			dirs.append(val)
+		var ctrl = _cfg_ctrls[key]
+		if(ctrl.value != '' and ctrl.value != null):
+			configured_dirs.append(ctrl.value)
+			if(ctrl.enabled_button.button_pressed):
+				dirs.append(ctrl.value)
 	to_return.dirs = dirs
+	to_return.configured_dirs = configured_dirs
 
 	# XML Output
 	to_return.junit_xml_file = _cfg_ctrls.junit_xml_file.value
