@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
     * Moved all files that Gut creates in `user://` to `user://gut_temp_directory`.
     * Output Subanel related settings have moved to the Output Subpanel.  Use the "..." button.
 * __Issue__ #557 Tests are now found in exported projects.
+* Fixed issue where the panel was not setting the double strategy correctly.
 
 
 

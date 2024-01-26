@@ -254,4 +254,30 @@ class TestGetEnumValue:
 		var val = GutUtils.get_enum_value('not a key', TEST1, 'asdf')
 		assert_eq(val, 'asdf')
 
+	func test_when_int_passed_as_string_it_converts_it():
+		var val = GutUtils.get_enum_value('1', TEST1, 999)
+		assert_eq(val, 1)
+
+	func test_with_double_strategy():
+		var val = GutUtils.get_enum_value(
+			0, GutUtils.DOUBLE_STRATEGY,
+			999)
+		assert_eq(val, 0)
+
+	func test_with_double_strategy2():
+		var val = GutUtils.get_enum_value(
+			1, GutUtils.DOUBLE_STRATEGY,
+			999)
+		assert_eq(val, 1)
+
+	func test_converts_floats_to_int():
+		var val = GutUtils.get_enum_value(1.0, TEST1, 9999)
+		assert_eq(val, 1)
+
+	func test_does_not_round_floats():
+		var val = GutUtils.get_enum_value(2.9, TEST1, 9999)
+		assert_eq(val, 2)
+
+
+
 
