@@ -11,6 +11,9 @@ var valid_fonts = ['AnonymousPro', 'CourierPro', 'LobsterTwo', 'Default']
 var default_options = {
 	background_color = Color(.15, .15, .15, 1).to_html(),
 	config_file = 'res://.gutconfig.json',
+	# used by editor to handle enabled/disabled dirs.  All dirs configured go
+	# here and only the enabled dirs go into dirs
+	configured_dirs = [],
 	dirs = [],
 	disable_colors = false,
 	# double strategy can be the name of the enum value, the enum value or

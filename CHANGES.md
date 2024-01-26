@@ -4,7 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 
 # 9.2.0
-* Documentation and repo changes.
+## Features
+* The Settings Subpanel now has on/off switches for directories, so you can turn them off if you want to run a subset of tests.
+
+## Bug Fixes
+* Documentation and branch changes.
 * __Issue__ #536 Theme refernces font instead of embedding it.
 * __Issue__ #523 "got" values are printed with extra precision for float, Vector2, and Vector3 when using `assert_almost_eq`, `assert_almost_ne`, `assert_between` and `assert_not_between`.
 * __Issue__ #436 Doubled Scenes now retain export variable values that were set in the editor.
