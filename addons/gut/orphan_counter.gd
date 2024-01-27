@@ -33,6 +33,9 @@
 # ##############################################################################
 var _counters = {}
 
+static func sprint_orphans(msg):
+	print(msg, ':  ', Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT), ' orphans.')
+
 func orphan_count():
 	return Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT)
 

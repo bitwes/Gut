@@ -65,6 +65,10 @@ func _process(_delta):
 	if(_gut != null and _gut.is_running()):
 		set_elapsed_time(_gut.get_elapsed_time())
 
+func _notification(what):
+	if(what == NOTIFICATION_PREDELETE):
+		GutUtils.pwsh('Deleting gut_gui')
+
 
 # ------------------
 # Private

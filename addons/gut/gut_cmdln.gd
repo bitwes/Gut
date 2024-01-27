@@ -15,6 +15,7 @@ extends SceneTree
 var Optparse = load('res://addons/gut/optparse.gd')
 var Gut = load('res://addons/gut/gut.gd')
 var GutRunner = load('res://addons/gut/gui/GutRunner.tscn')
+var OrphanCounter = load('res://addons/gut/orphan_counter.gd')
 var runner = null
 
 var json = JSON.new()
@@ -270,6 +271,7 @@ func _run_gut():
 			_tester = runner.get_gut()
 			_tester.end_run.connect( _on_tests_finished.bind(_final_opts.should_exit, _final_opts.should_exit_on_success))
 
+			OrphanCounter.sprint_orphans('Before run')
 			runner.run_tests()
 
 
@@ -290,11 +292,22 @@ func _on_tests_finished(should_exit, should_exit_on_success):
 		exit_code = post_inst.get_exit_code()
 
 	if(should_exit or (should_exit_on_success and _tester.get_fail_count() == 0)):
+		# runner.queue_free()
 		# runner.kill_scenes()
-		quit.call_deferred(exit_code)
+		# quit.call_deferred(exit_code)
+		await end_it_all.call_deferred(exit_code)
 	else:
 		print("Tests finished, exit manually")
 
+
+func end_it_all(exit_code):
+	OrphanCounter.sprint_orphans('Before free')
+	runner.kill_scenes()
+	runner.queue_free()
+	runner = null
+	await create_timer(.5).timeout
+	OrphanCounter.sprint_orphans('Before exit')
+	quit(exit_code)
 
 # ------------------------------------------------------------------------------
 # MAIN

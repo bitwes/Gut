@@ -46,7 +46,14 @@ static var avail_fonts = ['AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default
 # used instead of a node.
 static var _the_instance = null
 
+static func pws(text):
+	print(text)
+	print_stack()
 
+static func pwsh(text):
+	print('----------------------------')
+	pws(text)
+	print('----------------------------')
 # ------------------------------------------------------------------------------
 # Gets the root node without having to be in the tree and pushing out an error
 # if we don't have a main loop ready to go yet.

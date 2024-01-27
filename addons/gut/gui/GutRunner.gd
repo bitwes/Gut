@@ -36,8 +36,21 @@ var ran_from_editor = true
 @onready var _gut_layer = $GutLayer
 @onready var _gui = $GutLayer/GutScene
 
+func _notification(what):
+	if(what == NOTIFICATION_PREDELETE):
+		GutUtils.pwsh('Deleting GutRunner')
+		_gut.free()
+		_gui.free()
+		_gut_layer.free()
+		print('done deleting')
+
+
+
+func _init():
+	GutUtils.pwsh('New GutRunner')
 
 func _ready():
+	GutUtils.pwsh('GutRunner ready ')
 	# When used from the panel we have to kick off the tests ourselves b/c
 	# there's no way I know of to interact with the scene that was run via
 	# play_custom_scene.
@@ -139,9 +152,11 @@ func set_gut_config(which):
 
 
 func kill_scenes():
+	return
 	_gui._normal_gui.free()
 	_gui._compact_gui.free()
 	_gui.free()
+	_gui = null
 
 
 # ##############################################################################

@@ -12,11 +12,16 @@ var gut = null :
 		gut = val
 		_set_gut(val)
 
+func _init():
+	GutUtils.pwsh('New GutScene')
+
+func _notification(what):
+	if(what == NOTIFICATION_PREDELETE):
+		GutUtils.pwsh('Deleting GutScene')
+
 
 func _ready():
-	print('-----------------')
-	print('GutScene Ready ', self, ' on ', get_parent())
-	print('-----------------')
+	GutUtils.pwsh('GutScene Ready')
 
 	_normal_gui.switch_modes.connect(use_compact_mode.bind(true))
 	_compact_gui.switch_modes.connect(use_compact_mode.bind(false))
@@ -80,6 +85,7 @@ func get_textbox():
 
 
 func set_font_size(new_size):
+	return
 	var rtl = _normal_gui.get_textbox()
 
 	rtl.set('theme_override_font_sizes/bold_italics_font_size', new_size)
@@ -89,10 +95,12 @@ func set_font_size(new_size):
 
 
 func set_font(font_name):
+	return
 	_set_all_fonts_in_rtl(_normal_gui.get_textbox(), font_name)
 
 
 func _set_font(rtl, font_name, custom_name):
+	return
 	if(font_name == null):
 		rtl.remove_theme_font_override(custom_name)
 	else:
@@ -102,6 +110,7 @@ func _set_font(rtl, font_name, custom_name):
 
 
 func _set_all_fonts_in_rtl(rtl, base_name):
+	return
 	if(base_name == 'Default'):
 		_set_font(rtl, null, 'normal_font')
 		_set_font(rtl, null, 'bold_font')

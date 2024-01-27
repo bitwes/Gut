@@ -1,8 +1,8 @@
 @tool
 extends ColorRect
 # #############################################################################
-# Resize Handle control.  Place onto a control.  Set the orientation, then 
-# set the control that this should resize.  Then you can resize the control 
+# Resize Handle control.  Place onto a control.  Set the orientation, then
+# set the control that this should resize.  Then you can resize the control
 # by dragging this thing around.  It's pretty neat.
 # #############################################################################
 enum ORIENTATION {
@@ -29,6 +29,15 @@ var _num_lines = 8
 
 var _mouse_down = false
 # Called when the node enters the scene tree for the first time.
+
+
+func _init():
+	GutUtils.pwsh('New ResizeHandle')
+
+
+func _notification(what):
+	if(what == NOTIFICATION_PREDELETE):
+		GutUtils.pwsh('Deleting ResizeHandle')
 
 
 func _draw():
@@ -67,7 +76,7 @@ func _draw_resize_handle_right(color):
 
 func _draw_resize_handle_left(color):
 	var bl = Vector2(0, size.y)
-	
+
 	for i in range(_num_lines):
 		var start = bl + Vector2(i * _line_space, 0)
 		var end = bl -  Vector2(0, i * _line_space)
@@ -76,10 +85,10 @@ func _draw_resize_handle_left(color):
 
 func _handle_right_input(event : InputEvent):
 	if(event is InputEventMouseMotion):
-		if(_mouse_down and 
-			event.global_position.x > 0 and 
+		if(_mouse_down and
+			event.global_position.x > 0 and
 			event.global_position.y < DisplayServer.window_get_size().y):
-			
+
 			if(vertical_resize):
 				resize_control.size.y += event.relative.y
 			resize_control.size.x += event.relative.x
@@ -91,15 +100,15 @@ func _handle_right_input(event : InputEvent):
 
 func _handle_left_input(event : InputEvent):
 	if(event is InputEventMouseMotion):
-		if(_mouse_down and 
-			event.global_position.x > 0 and 
+		if(_mouse_down and
+			event.global_position.x > 0 and
 			event.global_position.y < DisplayServer.window_get_size().y):
-			
+
 			var start_size = resize_control.size
 			resize_control.size.x -= event.relative.x
 			if(resize_control.size.x != start_size.x):
 				resize_control.global_position.x += event.relative.x
-			
+
 			if(vertical_resize):
 				resize_control.size.y += event.relative.y
 	elif(event is InputEventMouseButton):
