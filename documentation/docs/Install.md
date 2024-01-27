@@ -36,7 +36,7 @@ The next few steps cover the suggested configuration.  Feel free to deviate wher
 ## Running Tests
 
 ### Run tests from the GUT Panel
-Set the test directories in the settings panel (below) and click "Run All".  That's all there is to it.
+Set the test directories in the settings subpanel (below) and click "Run All".  That's all there is to it.
 
 ![Gut Panel](_static/images/gut_panel.png)
 

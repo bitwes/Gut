@@ -263,7 +263,7 @@ func _run_gut():
 
 			runner = GutRunner.instantiate()
 
-			runner.set_cmdln_mode(true)
+			runner.ran_from_editor = false
 			runner.set_gut_config(_gut_config)
 
 			get_root().add_child(runner)

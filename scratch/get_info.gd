@@ -22,6 +22,41 @@ const NAME = 'name'
 const ARGS = 'args'
 
 
+var PROPERTY_USAGES = {
+	'PROPERTY_USAGE_NONE' : PROPERTY_USAGE_NONE,
+	'PROPERTY_USAGE_STORAGE' : PROPERTY_USAGE_STORAGE,
+	'PROPERTY_USAGE_EDITOR' : PROPERTY_USAGE_EDITOR,
+	'PROPERTY_USAGE_INTERNAL' : PROPERTY_USAGE_INTERNAL,
+	'PROPERTY_USAGE_CHECKABLE' : PROPERTY_USAGE_CHECKABLE,
+	'PROPERTY_USAGE_CHECKED' : PROPERTY_USAGE_CHECKED,
+	'PROPERTY_USAGE_GROUP' : PROPERTY_USAGE_GROUP,
+	'PROPERTY_USAGE_CATEGORY' : PROPERTY_USAGE_CATEGORY,
+	'PROPERTY_USAGE_SUBGROUP' : PROPERTY_USAGE_SUBGROUP,
+	'PROPERTY_USAGE_CLASS_IS_BITFIELD' : PROPERTY_USAGE_CLASS_IS_BITFIELD,
+	'PROPERTY_USAGE_NO_INSTANCE_STATE' : PROPERTY_USAGE_NO_INSTANCE_STATE,
+	'PROPERTY_USAGE_RESTART_IF_CHANGED' : PROPERTY_USAGE_RESTART_IF_CHANGED,
+	'PROPERTY_USAGE_SCRIPT_VARIABLE' : PROPERTY_USAGE_SCRIPT_VARIABLE,
+	'PROPERTY_USAGE_STORE_IF_NULL' : PROPERTY_USAGE_STORE_IF_NULL,
+	'PROPERTY_USAGE_UPDATE_ALL_IF_MODIFIED' : PROPERTY_USAGE_UPDATE_ALL_IF_MODIFIED,
+	'PROPERTY_USAGE_SCRIPT_DEFAULT_VALUE' : PROPERTY_USAGE_SCRIPT_DEFAULT_VALUE,
+	'PROPERTY_USAGE_CLASS_IS_ENUM' : PROPERTY_USAGE_CLASS_IS_ENUM,
+	'PROPERTY_USAGE_NIL_IS_VARIANT' : PROPERTY_USAGE_NIL_IS_VARIANT,
+	'PROPERTY_USAGE_ARRAY' : PROPERTY_USAGE_ARRAY,
+	'PROPERTY_USAGE_ALWAYS_DUPLICATE' : PROPERTY_USAGE_ALWAYS_DUPLICATE,
+	'PROPERTY_USAGE_NEVER_DUPLICATE' : PROPERTY_USAGE_NEVER_DUPLICATE,
+	'PROPERTY_USAGE_HIGH_END_GFX' : PROPERTY_USAGE_HIGH_END_GFX,
+	'PROPERTY_USAGE_NODE_PATH_FROM_SCENE_ROOT' : PROPERTY_USAGE_NODE_PATH_FROM_SCENE_ROOT,
+	'PROPERTY_USAGE_RESOURCE_NOT_PERSISTENT' : PROPERTY_USAGE_RESOURCE_NOT_PERSISTENT,
+	'PROPERTY_USAGE_KEYING_INCREMENTS' : PROPERTY_USAGE_KEYING_INCREMENTS,
+	'PROPERTY_USAGE_DEFERRED_SET_RESOURCE' : PROPERTY_USAGE_DEFERRED_SET_RESOURCE,
+	'PROPERTY_USAGE_EDITOR_INSTANTIATE_OBJECT' : PROPERTY_USAGE_EDITOR_INSTANTIATE_OBJECT,
+	'PROPERTY_USAGE_EDITOR_BASIC_SETTING' : PROPERTY_USAGE_EDITOR_BASIC_SETTING,
+	'PROPERTY_USAGE_READ_ONLY' : PROPERTY_USAGE_READ_ONLY,
+	'PROPERTY_USAGE_SECRET' : PROPERTY_USAGE_SECRET,
+	'PROPERTY_USAGE_DEFAULT' : PROPERTY_USAGE_DEFAULT,
+	'PROPERTY_USAGE_NO_EDITOR' : PROPERTY_USAGE_NO_EDITOR,
+}
+
 class HasSomeInners:
 	signal look_at_me_now
 
@@ -127,13 +162,13 @@ func print_methods_with_flags(obj, flags, print_all = true):
 			print(methods[i]['name'], ':', mflags)
 			print_method_flags(mflags, print_all)
 
+
 func print_methods_named(obj, name):
 	var methods = obj.get_method_list()
 	for i in range(methods.size()):
 		if(methods[i]['name'] == name):
 			print(methods[i]['name'], ':')
 			print_method_flags(methods[i]['flags'], false)
-
 
 
 func subtract_dictionary(sub_this, from_this):
@@ -152,10 +187,12 @@ func subtract_dictionary(sub_this, from_this):
 func is_flagged(mask, index):
 	return mask & index != 0
 
+
 func print_flag(name, flags, flag, print_all=true):
 	var is_set = is_flagged(flags, flag)
 	if(print_all or is_set):
 		print(name,'(', flag, ') = ', is_set)
+
 
 func print_method_flags(flags, print_all=true):
 	print_flag('  normal', flags, METHOD_FLAG_NORMAL, print_all)
@@ -338,6 +375,14 @@ func print_properties(props, thing, print_all_meta=false):
 		print(prop_name, ' = ', print_value)
 		if(print_all_meta):
 			print('  ', props[i])
+			print_property_usage(props[i])
+
+
+func print_property_usage(prop):
+	for key in PROPERTY_USAGES:
+		var flag = PROPERTY_USAGES[key]
+		if(prop.usage & flag):
+			print('- ', key, ' ', flag)
 
 
 func print_all_info(thing):
@@ -408,11 +453,11 @@ func print_scene_info(scene):
 		print(' is placehodler ', state.is_node_instance_placeholder(i))
 		print(' node path      ', state.get_node_path(i))
 		print(' groups         ', state.get_node_groups(i))
-
+		print(" properties:")
 		for j in range(state.get_node_property_count(i)):
 			var n = state.get_node_property_name(i, j)
 			var v = state.get_node_property_value(i, j)
-			print('        ', n, ' = ', v)
+			print('       - ', n, ' = ', v)
 
 
 func get_scene_script_object(scene):
@@ -420,8 +465,15 @@ func get_scene_script_object(scene):
 
 
 func _init():
+
+
+	var TestScene = load('res://test/resources/Issue436Scene.tscn')
+	print_scene_info(TestScene)
+	var inst = TestScene.instantiate()
+
+	print_all_info(inst.get_script())
 	# print_method_info(ExtendsNode2D.new())
-	print_methods_with_flags(ExtendsNode2D.new(), METHOD_FLAG_VARARG, false)
+	# print_methods_with_flags(ExtendsNode2D.new(), METHOD_FLAG_VARARG, false)
 	# print_methods_with_flags(ExtendsNode2D.new(), METHOD_FLAG_OBJECT_CORE, false)
 	# print_methods_named(ExtendsNode2D.new(), '_input')
 	# print_methods_named(ExtendsNode2D.new(), '_notification')

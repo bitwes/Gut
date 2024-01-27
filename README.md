@@ -10,7 +10,7 @@
     * GUT 7 on readthedocs.io:  https://gut.readthedocs.io/en/godot_3x
 
 
-# GUT 9.1.2 (Godot 4.1)
+# GUT 9.2.0 (Godot 4.2)
 GUT (Godot Unit Test) is a unit testing framework for the [Godot Engine](https://godotengine.org/).  It allows you to write tests for your gdscript in gdscript.
 
 GUT versions 9.x are for Godot 4.x

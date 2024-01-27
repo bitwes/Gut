@@ -32,7 +32,6 @@ class TestProperties:
 			['parameter_handler', null, _utils.ParameterHandler.new([])],
 			['post_run_script', '', 'res://something_else.gd'],
 			['pre_run_script', '', 'res://something.gd'],
-			['temp_directory', 'user://gut_temp_directory', 'user://blahblah'],
 			['treat_error_as_failure', true, false],
 			['unit_test_name', '', 'test_something_cool'],
 		])
@@ -84,7 +83,7 @@ class TestSimulate:
 	var _test_gut = null
 
 	func before_all():
-		_utils._test_mode
+		_utils._test_mode = true
 
 	func before_each():
 		_test_gut = autofree(new_gut())

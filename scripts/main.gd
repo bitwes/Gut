@@ -19,13 +19,15 @@ var _current_test_name = null
 
 
 func _ready():
-	# You must load a gut config file to use this
-	# control.
-	#
-	# Here we use the Gut Panel settings file.  This can be any gutconfig file,
-	# but this one is most likely to exist.  You can create your own just for
-	# deployed settings.  You could even create multiple and have buttons to
-	# load different configs.
+	simple_setup()
+	# complex_setup()
+
+
+func simple_setup():
+	# You must load a gut config file to use this control.  Here we are loading
+	# the default config file used by the command line.  You can use any config
+	# file you have created.  Use the "save as" button in the Settings subpanel
+	# to create a config file, or write your own.
 	#
 	# Some settings may not work.  For example, the exit flags do not have any
 	# effect.
@@ -37,7 +39,16 @@ func _ready():
 	# Note that you cannot to write to res:// on mobile platforms, so you will
 	# have to juggle the initial loading from res:// or user:// and save to
 	# user://.
-	_gut_control.load_config_file('res://.gut_editor_config.json')
+	_gut_control.load_config_file('res://.gutconfig.json')
+
+	# That's it.  Just get a reference to the control you added to the scene and
+	# give it a config.  The rest of the stuff in this script optional.
+
+
+
+func complex_setup():
+	# See simple setup
+	_gut_control.load_config_file('res://.gutconfig.json')
 
 	# Returns a gut_config.gd instance.
 	var config = _gut_control.get_config()
@@ -54,7 +65,9 @@ func _ready():
 	config.options.junit_xml_file = 'user://deployed_results.xml'
 
 	# Some actions cannot be done until after _ready has finished in all objects
-	call_deferred('_post_ready_setup')
+	_post_ready_setup.call_deferred()
+
+
 
 
 # If you would like to connect to signals provided by gut.gd then you must do

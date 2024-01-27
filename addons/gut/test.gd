@@ -88,6 +88,18 @@ func _init():
 func _str(thing):
 	return _strutils.type2str(thing)
 
+func _str_precision(value, precision):
+	var to_return = _str(value)
+	var format = str('%.', precision, 'f')
+	if(typeof(value) == TYPE_FLOAT):
+		to_return = format % value
+	elif(typeof(value) == TYPE_VECTOR2):
+		to_return = str('VECTOR2(', format % value.x, ', ', format %value.y, ')')
+	elif(typeof(value) == TYPE_VECTOR3):
+		to_return = str('VECTOR3(', format % value.x, ', ', format %value.y, ', ', format % value.z, ')')
+
+	return to_return
+
 # ------------------------------------------------------------------------------
 # Fail an assertion.  Causes test and script to fail as well.
 # ------------------------------------------------------------------------------
@@ -314,12 +326,11 @@ func assert_ne(got, not_expected, text=""):
 		else:
 			_pass(disp)
 
-
 # ------------------------------------------------------------------------------
 # Asserts that the expected value almost equals the value got.
 # ------------------------------------------------------------------------------
 func assert_almost_eq(got, expected, error_interval, text=''):
-	var disp = "[" + _str(got) + "] expected to equal [" + _str(expected) + "] +/- [" + str(error_interval) + "]:  " + text
+	var disp = "[" + _str_precision(got, 20) + "] expected to equal [" + _str(expected) + "] +/- [" + str(error_interval) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, expected, text) and _do_datatypes_match__fail_if_not(got, error_interval, text)):
 		if not _is_almost_eq(got, expected, error_interval):
 			_fail(disp)
@@ -330,7 +341,7 @@ func assert_almost_eq(got, expected, error_interval, text=''):
 # Asserts that the expected value does not almost equal the value got.
 # ------------------------------------------------------------------------------
 func assert_almost_ne(got, not_expected, error_interval, text=''):
-	var disp = "[" + _str(got) + "] expected to not equal [" + _str(not_expected) + "] +/- [" + str(error_interval) + "]:  " + text
+	var disp = "[" + _str_precision(got, 20) + "] expected to not equal [" + _str(not_expected) + "] +/- [" + str(error_interval) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, not_expected, text) and _do_datatypes_match__fail_if_not(got, error_interval, text)):
 		if _is_almost_eq(got, not_expected, error_interval):
 			_fail(disp)
@@ -338,22 +349,24 @@ func assert_almost_ne(got, not_expected, error_interval, text=''):
 			_pass(disp)
 
 # ------------------------------------------------------------------------------
-# Helper function which correctly compares two variables,
-# while properly handling vector2/3 types
+# Helper function compares a value against a expected and a +/- range.  Compares
+# all components of Vector2 and Vector3 as well.
 # ------------------------------------------------------------------------------
 func _is_almost_eq(got, expected, error_interval) -> bool:
 	var result = false
+	var upper = expected + error_interval
+	var lower = expected - error_interval
+
 	if typeof(got) == TYPE_VECTOR2:
-		if got.x >= (expected.x - error_interval.x) and got.x <= (expected.x + error_interval.x):
-			if got.y >= (expected.y - error_interval.y) and got.y <= (expected.y + error_interval.y):
-				result = true
+		result = got.x >= lower.x and got.x <= upper.x and \
+				got.y >= lower.y and got.y <= upper.y
 	elif typeof(got) == TYPE_VECTOR3:
-		if got.x >= (expected.x - error_interval.x) and got.x <= (expected.x + error_interval.x):
-			if got.y >= (expected.y - error_interval.y) and got.y <= (expected.y + error_interval.y):
-				if got.z >= (expected.z - error_interval.z) and got.z <= (expected.z + error_interval.z):
-					result = true
-	elif(got >= (expected - error_interval) and got <= (expected + error_interval)):
-		result = true
+		result = got.x >= lower.x and got.x <= upper.x and \
+				got.y >= lower.y and got.y <= upper.y and \
+				got.z >= lower.z and got.z <= upper.z
+	else:
+		result = got >= (lower) and got <= (upper)
+
 	return(result)
 
 # ------------------------------------------------------------------------------
@@ -408,7 +421,7 @@ func assert_false(got, text=""):
 # Asserts value is between (inclusive) the two expected values.
 # ------------------------------------------------------------------------------
 func assert_between(got, expect_low, expect_high, text=""):
-	var disp = "[" + _str(got) + "] expected to be between [" + _str(expect_low) + "] and [" + str(expect_high) + "]:  " + text
+	var disp = "[" + _str_precision(got, 20) + "] expected to be between [" + _str(expect_low) + "] and [" + str(expect_high) + "]:  " + text
 
 	if(_do_datatypes_match__fail_if_not(got, expect_low, text) and _do_datatypes_match__fail_if_not(got, expect_high, text)):
 		if(expect_low > expect_high):
@@ -424,7 +437,7 @@ func assert_between(got, expect_low, expect_high, text=""):
 # Asserts value is not between (exclusive) the two expected values.
 # ------------------------------------------------------------------------------
 func assert_not_between(got, expect_low, expect_high, text=""):
-	var disp = "[" + _str(got) + "] expected not to be between [" + _str(expect_low) + "] and [" + str(expect_high) + "]:  " + text
+	var disp = "[" + _str_precision(got, 20) + "] expected not to be between [" + _str(expect_low) + "] and [" + str(expect_high) + "]:  " + text
 
 	if(_do_datatypes_match__fail_if_not(got, expect_low, text) and _do_datatypes_match__fail_if_not(got, expect_high, text)):
 		if(expect_low > expect_high):

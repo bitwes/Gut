@@ -21,14 +21,6 @@
  "log_level": 3,
  "opacity": 100,
  "paint_after": 0.1,
- "panel_options": {
-  "font_name": "CourierPrime",
-  "font_size": 30,
-  "hide_output_text": true,
-  "hide_result_tree": false,
-  "hide_settings": false,
-  "use_colors": false
- },
  "post_run_script": "",
  "pre_run_script": "",
  "prefix": "test_",
