@@ -10,6 +10,12 @@ class TestSpy:
 	func before_each():
 		_spy = Spy.new()
 
+	func after_each():
+		_spy = null
+
+	func after_all():
+		Simple = null
+
 	func test_has_logger():
 		assert_has_logger(_spy)
 

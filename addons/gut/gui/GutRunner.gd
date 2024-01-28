@@ -36,13 +36,13 @@ var ran_from_editor = true
 @onready var _gut_layer = $GutLayer
 @onready var _gui = $GutLayer/GutScene
 
-func _notification(what):
-	if(what == NOTIFICATION_PREDELETE):
-		GutUtils.pwsh('Deleting GutRunner')
-		_gut.free()
-		_gui.free()
-		_gut_layer.free()
-		print('done deleting')
+# func _notification(what):
+# 	if(what == NOTIFICATION_PREDELETE):
+# 		GutUtils.pwsh('Deleting GutRunner')
+# 		_gut.free()
+# 		_gui.free()
+# 		_gut_layer.free()
+# 		print('done deleting')
 
 
 

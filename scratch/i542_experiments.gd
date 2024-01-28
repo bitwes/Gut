@@ -34,6 +34,8 @@ func _on_tests_finished():
 func end_it():
 	runner.free()
 	OrphanCounter.sprint_orphans('After run')
+	var inst = GutUtils.get_instance()
+	inst.free()
 	await create_timer(.5).timeout
 	quit()
 

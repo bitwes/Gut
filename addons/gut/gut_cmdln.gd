@@ -297,17 +297,22 @@ func _on_tests_finished(should_exit, should_exit_on_success):
 		# quit.call_deferred(exit_code)
 		await end_it_all.call_deferred(exit_code)
 	else:
+		await end_it_all.call_deferred(-99)
 		print("Tests finished, exit manually")
 
 
+
+
 func end_it_all(exit_code):
-	OrphanCounter.sprint_orphans('Before free')
-	runner.kill_scenes()
-	runner.queue_free()
-	runner = null
-	await create_timer(.5).timeout
-	OrphanCounter.sprint_orphans('Before exit')
-	quit(exit_code)
+	OrphanCounter.sprint_orphans('Before quit')
+	# runner.kill_scenes()
+	# runner.queue_free()
+	# runner = null
+	# await create_timer(.5).timeout
+	# OrphanCounter.sprint_orphans('Before exit')
+	_utils.free()
+	if(exit_code != -99):
+		quit(exit_code)
 
 # ------------------------------------------------------------------------------
 # MAIN

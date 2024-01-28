@@ -71,7 +71,7 @@ func assert_has_logger(obj):
 	if(obj.has_method('get_logger')):
 		assert_not_null(obj.get_logger(), 'Default logger not null.')
 		if(obj.has_method('set_logger')):
-			var l = double(Logger).new()
+			var l = 'asdf'#double(Logger).new()
 			obj.set_logger(l)
 			assert_eq(obj.get_logger(), l, 'Set/get works')
 
