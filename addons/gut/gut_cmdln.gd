@@ -239,23 +239,23 @@ func _run_gut():
 
 	# SHORTCIRCUIT
 	if(!all_options_valid or load_result == -1):
-		quit(1)
+		_end_run(1)
 	else:
 		opt_resolver.config_opts = _gut_config.options
 
 		if(o.get_value('-gh')):
 			print(_utils.get_version_text())
 			o.print_help()
-			quit()
+			_end_run(0)
 		elif(o.get_value('-gpo')):
 			print('All command line options and where they are specified.  ' +
 				'The "final" value shows which value will actually be used ' +
 				'based on order of precedence (default < .gutconfig < cmd line).' + "\n")
 			print(opt_resolver.to_s_verbose())
-			quit()
+			_end_run(0)
 		elif(o.get_value('-gprint_gutconfig_sample')):
 			_print_gutconfigs(opt_resolver.get_resolved_values())
-			quit()
+			_end_run(0)
 		else:
 			_final_opts = opt_resolver.get_resolved_values();
 			_gut_config.options = _final_opts
@@ -271,6 +271,12 @@ func _run_gut():
 
 			runner.run_tests()
 
+func _end_run(exit_code=-9999):
+	if(is_instance_valid(_utils)):
+		_utils.free()
+
+	if(exit_code != -9999):
+		quit(exit_code)
 
 # exit if option is set.
 func _on_tests_finished(should_exit, should_exit_on_success):
@@ -289,8 +295,9 @@ func _on_tests_finished(should_exit, should_exit_on_success):
 		exit_code = post_inst.get_exit_code()
 
 	if(should_exit or (should_exit_on_success and _tester.get_fail_count() == 0)):
-		quit(exit_code)
+		_end_run(exit_code)
 	else:
+		_end_run()
 		print("Tests finished, exit manually")
 
 
@@ -315,7 +322,7 @@ func _init():
 	if(!_utils.is_version_ok()):
 		print("\n\n", _utils.get_version_text())
 		push_error(_utils.get_bad_version_text())
-		quit(1)
+		_end_run(1)
 	else:
 		_run_gut()
 
