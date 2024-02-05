@@ -12,7 +12,7 @@ GUT (Godot Unit Test) is a unit testing framework for the [Godot Engine](https:/
 
 
 # GUT 7 for Godot 3.x
-GUT 7.4.1 is the current version for Godot 3.x
+GUT 7.4.2 is the current version for Godot 3.x
 
 
 # Donate/Shameless Plug
