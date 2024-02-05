@@ -38,6 +38,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
     * Output Subanel related settings have moved to the Output Subpanel.  Use the "..." button.
 * __Issue__ #557 Tests are now found in exported projects.
 * Fixed issue where the panel was not loading the double strategy correctly.
+* __Issue__ #542 GUT no longer generates orphans...again.
 
 
 
