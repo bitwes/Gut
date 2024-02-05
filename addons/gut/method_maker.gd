@@ -242,7 +242,6 @@ func get_function_text(meta, override_size=null):
 			text =  _get_init_text(meta, args, method_params, param_array)
 		else:
 			var decleration = str('func ', meta.name, '(', method_params, '):')
-			# decleration = str('# ', meta, "\n", decleration)
 			text = _func_text.format({
 				"func_decleration":decleration,
 				"method_name":meta.name,

@@ -1,5 +1,6 @@
 @tool
 class_name GutUtils
+extends Object
 # ------------------------------------------------------------------------------
 # Description
 # -----------
@@ -62,9 +63,6 @@ static func get_root_node():
 
 # ------------------------------------------------------------------------------
 # Get the ONE instance of utils
-# Since we can't have static variables we have to store the instance in the
-# tree.  This means you have to wait a bit for the main loop to be up and
-# running.
 # ------------------------------------------------------------------------------
 static func get_instance():
 	if(_the_instance == null):
