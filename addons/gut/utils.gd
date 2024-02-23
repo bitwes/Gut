@@ -511,7 +511,7 @@ func pp(dict, indent=''):
 var _created_script_count = 0
 func create_script_from_source(source, override_path=null):
 	_created_script_count += 1
-	var r_path = ''#str('workaround for godot issue #65263 (', _created_script_count, ')')
+	var r_path = str('gut_dynamic_script_', _created_script_count)
 	if(override_path != null):
 		r_path = override_path
 
