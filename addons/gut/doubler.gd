@@ -26,7 +26,6 @@ class PackedSceneDouble:
 
 			inst.set_script(_script)
 			for exported_value in export_props:
-				print('setting ', exported_value)
 				inst.set(exported_value[0], exported_value[1])
 
 		return inst
