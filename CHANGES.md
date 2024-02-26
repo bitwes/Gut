@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# vNext
+* __Issue__ #570 Doubling scripts that contain a statically typed variable of another class_name script (`var foo := Foo.new()` where foo is a `class_name` in another script) could cause errors.
 
 # 9.2.0
 ## Configuration Changes
