@@ -272,7 +272,12 @@ func _run_gut():
 				[_final_opts.should_exit, _final_opts.should_exit_on_success])
 
 			get_root().add_child(runner)
-			runner.run_tests()
+			run_tests(runner)
+
+
+func run_tests(runner):
+	runner.run_tests()
+
 
 
 # exit if option is set.

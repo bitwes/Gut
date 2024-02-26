@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# vNext
+* Add support for running tests through the debugger via VSCode via the gut-extension.
+
 # 7.4.2
 * __Issue__ #485 GUT prints a warning and ignores scripts that do not extend `GutTest`.
 * Documentation changes for readthedocs.
