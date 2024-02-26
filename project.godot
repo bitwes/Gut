@@ -43,6 +43,10 @@ gdscript/warnings/exclude_addons=false
 
 enabled=PoolStringArray( "res://addons/gut/plugin.cfg" )
 
+[global]
+
+port=false
+
 [network]
 
 limits/debugger_stdout/max_chars_per_second=8192
