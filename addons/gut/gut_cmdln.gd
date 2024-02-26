@@ -269,7 +269,12 @@ func _run_gut():
 			_tester = runner.get_gut()
 			_tester.connect('end_run', Callable(self,'_on_tests_finished').bind(_final_opts.should_exit, _final_opts.should_exit_on_success))
 
-			runner.run_tests()
+			run_tests(runner)
+
+
+func run_tests(runner):
+	runner.run_tests()
+
 
 func _end_run(exit_code=-9999):
 	if(is_instance_valid(_utils)):
