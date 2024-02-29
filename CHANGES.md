@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-# vNext
+# 7.4.3
 * Add support for running tests through the debugger via VSCode via the gut-extension.
 
 # 7.4.2
