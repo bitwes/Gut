@@ -142,7 +142,7 @@ func test_after_timeout_signal_is_disconnected():
 	assert_not_connected(s, a, 'the_signal')
 
 func test_wait_started_emitted_when_wait_until_freed():
-	var node := Node.new()
+	var node = add_child_autoqfree(Node.new())
 	var a = add_child_autoqfree(Awaiter.new())
 	watch_signals(a)
 
@@ -151,7 +151,7 @@ func test_wait_started_emitted_when_wait_until_freed():
 	assert_signal_emitted(a, 'wait_started')
 
 func test_can_wait_until_freed():
-	var node := Node.new()
+	var node = add_child_autoqfree(Node.new())
 	var a = add_child_autoqfree(Awaiter.new())
 	watch_signals(a)
 
@@ -163,7 +163,7 @@ func test_can_wait_until_freed():
 	assert_signal_emitted(a, 'timeout')
 
 func test_when_object_not_freed_then_max_time_is_waited():
-	var node := Node.new()
+	var node = add_child_autoqfree(Node.new())
 	var a = add_child_autoqfree(Awaiter.new())
 	watch_signals(a)
 
@@ -173,7 +173,7 @@ func test_when_object_not_freed_then_max_time_is_waited():
 	assert_signal_emitted(a, 'timeout')
 
 func test_is_waiting_when_waiting_on_object_to_be_freed():
-	var node := Node.new()
+	var node = add_child_autoqfree(Node.new())
 	var a = add_child_autoqfree(Awaiter.new())
 	watch_signals(a)
 
@@ -183,7 +183,7 @@ func test_is_waiting_when_waiting_on_object_to_be_freed():
 	assert_true(a.is_waiting())
 
 func test_is_not_paused_when_object_freed_before_max_time():
-	var node := Node.new()
+	var node = add_child_autoqfree(Node.new())
 	var a = add_child_autoqfree(Awaiter.new())
 	watch_signals(a)
 
