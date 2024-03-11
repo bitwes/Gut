@@ -7,7 +7,7 @@ var _wait_time = 0.0
 var _wait_frames = 0
 var _signal_to_wait_on = null
 
-var _object_waiting_to_be_freed: Variant = null
+var _object_waiting_to_be_freed: Node = null
 
 var _elapsed_time = 0.0
 var _elapsed_frames = 0
@@ -71,9 +71,9 @@ func wait_for_signal(the_signal, x):
 	_wait_time = x
 	wait_started.emit()
 
-func wait_until_freed(object, x):
+func wait_until_freed(object: Node, max_wait: float):
 	_object_waiting_to_be_freed = object
-	_wait_time = x
+	_wait_time = max_wait
 	wait_started.emit()
 
 func is_waiting():

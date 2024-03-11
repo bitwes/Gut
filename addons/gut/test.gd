@@ -1205,8 +1205,8 @@ func yield_frames(frames, msg=''):
 # -------------------------------------------------------------------------------------
 # Yield until the object is freed or a maximum amount of time, whichever comes first.
 # -------------------------------------------------------------------------------------
-func wait_until_freed(object, max_wait, msg=''):
-	var to_return = gut.set_object_to_wait_until_freed(object, max_wait, msg)
+func wait_until_freed(object: Node, max_wait_s: float, msg: String =''):
+	var to_return = gut.set_object_to_wait_until_freed(object, max_wait_s, msg)
 	return to_return
 
 func get_summary():
