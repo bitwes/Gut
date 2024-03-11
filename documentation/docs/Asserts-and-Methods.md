@@ -1265,6 +1265,10 @@ See [Awaiting](Awaiting)
 `wait_for_signal(sig, max_wait, msg='')`<br>
 See [Awaiting](Awaiting)
 
+### wait_until_freed
+`wait_until_freed(object, max_wait, msg='')`<br>
+See [Awaiting](Awaiting)
+
 ### double
 `double(path_or_class, inner_class_path=null)`<br>
 This will return a double of a class.  See [Doubles](Doubles) for more information.
