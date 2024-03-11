@@ -87,7 +87,15 @@ class TestTheNewWaitMethods:
 		await wait_for_signal(signaler.the_signal, 1)
 		assert_between(counter.time, .9, 1.1)
 
+	func test_wait_until_freed_waits_until_object_is_freed():
+		var signaler = add_child_autoqfree(TimedSignaler.new())
+		signaler.the_signal.connect(signaler.queue_free)
+		signaler.emit_after(.1)
 
+		await wait_until_freed(signaler, 1)
+
+		assert_between(counter.time, 0, .2)
+		assert_freed(signaler)
 
 # ------------------------------------
 # Could not get these to trigger the error I was trying to replicate.  This was

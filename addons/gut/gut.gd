@@ -1135,6 +1135,14 @@ func set_wait_frames(frames, text=''):
 	_lgr.yield_msg(str('-- Awaiting ', frames, ' frame(s) -- ', text))
 	return _awaiter.timeout
 
+# ------------------------------------------------------------------------------
+# Uses the awaiter to wait until the object has been freed or a maximum amount
+# of time. The signal emitted is returned.
+# ------------------------------------------------------------------------------
+func set_object_to_wait_until_freed(object, max_wait, text=''):
+	_awaiter.wait_until_freed(object, max_wait)
+	_lgr.yield_msg(str('-- Awaiting for object "', object.get_name(), '" to be freed or for ', max_wait, ' second(s) -- ', text))
+	return _awaiter.timeout
 
 # ------------------------------------------------------------------------------
 # Wait for a signal or a maximum amount of time.  The signal emitted is returned.

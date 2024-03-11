@@ -7,6 +7,8 @@ var _wait_time = 0.0
 var _wait_frames = 0
 var _signal_to_wait_on = null
 
+var _object_waiting_to_be_freed: Variant = null
+
 var _elapsed_time = 0.0
 var _elapsed_frames = 0
 
@@ -22,6 +24,10 @@ func _physics_process(delta):
 		if(_elapsed_frames >= _wait_frames):
 			_end_wait()
 
+	var is_waiting_for_object_to_be_freed := hash(_object_waiting_to_be_freed) != hash(null)
+	if is_waiting_for_object_to_be_freed:
+		if not is_instance_valid(_object_waiting_to_be_freed):
+			_end_wait()
 
 func _end_wait():
 	if(_signal_to_wait_on != null and _signal_to_wait_on.is_connected(_signal_callback)):
@@ -30,6 +36,7 @@ func _end_wait():
 	_wait_time = 0.0
 	_wait_frames = 0
 	_signal_to_wait_on = null
+	_object_waiting_to_be_freed = null
 	_elapsed_time = 0.0
 	_elapsed_frames = 0
 	timeout.emit()
@@ -64,7 +71,11 @@ func wait_for_signal(the_signal, x):
 	_wait_time = x
 	wait_started.emit()
 
+func wait_until_freed(object, x):
+	_object_waiting_to_be_freed = object
+	_wait_time = x
+	wait_started.emit()
 
 func is_waiting():
-	return _wait_time != 0.0 || _wait_frames != 0
+	return _wait_time != 0.0 || _wait_frames != 0 || _object_waiting_to_be_freed != null
 
