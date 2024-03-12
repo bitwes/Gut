@@ -10,7 +10,7 @@ var has_printed_name = false
 # the number of arguments the method has
 var arg_count = 0
 
-# the time it took to execute the test
+# the time it took to execute the test in seconds
 var time_taken : float = 0
 
 # The number of asserts in the test.  Converted to a property for backwards

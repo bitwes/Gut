@@ -764,7 +764,7 @@ func _test_the_scripts(indexes=[]):
 				_current_test.has_printed_name = false
 				
 				var us_elapsed = Time.get_ticks_usec() - ticks_before
-				_current_test.time_taken = us_elapsed / 1000.0
+				_current_test.time_taken = us_elapsed / 1000000.0
 				
 				end_test.emit()
 
