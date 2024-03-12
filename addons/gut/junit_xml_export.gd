@@ -40,6 +40,7 @@ func _export_tests(script_result, classname):
 		to_return += add_attr("assertions", assert_count)
 		to_return += add_attr("status", test.status)
 		to_return += add_attr("classname", classname)
+		to_return += add_attr("time", test.time_taken)
 		to_return += ">\n"
 
 		to_return += _export_test_result(test)
