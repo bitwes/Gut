@@ -39,7 +39,7 @@ func _export_tests(script_result, classname):
 		to_return += add_attr("name", key)
 		to_return += add_attr("assertions", assert_count)
 		to_return += add_attr("status", test.status)
-		to_return += add_attr("classname", classname)
+		to_return += add_attr("classname", classname.replace("res://", ""))
 		to_return += add_attr("time", test.time_taken)
 		to_return += ">\n"
 
@@ -63,7 +63,7 @@ func _export_scripts(exp_results):
 	for key in exp_results.test_scripts.scripts.keys():
 		var s = exp_results.test_scripts.scripts[key]
 		to_return += "<testsuite "
-		to_return += add_attr("name", key)
+		to_return += add_attr("name", key.replace("res://", ""))
 		to_return += add_attr("tests", s.props.tests)
 		to_return += add_attr("failures", s.props.failures)
 		to_return += add_attr("skipped", s.props.pending)
