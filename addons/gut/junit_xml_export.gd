@@ -49,6 +49,14 @@ func _export_tests(script_result, classname):
 
 	return to_return
 
+func _sum_test_time(script_result, classname)->float:
+	var to_return := 0.0
+
+	for key in script_result.keys():
+		var test = script_result[key]
+		to_return += test.time_taken
+
+	return to_return
 
 func _export_scripts(exp_results):
 	var to_return = ""
@@ -59,6 +67,7 @@ func _export_scripts(exp_results):
 		to_return += add_attr("tests", s.props.tests)
 		to_return += add_attr("failures", s.props.failures)
 		to_return += add_attr("skipped", s.props.pending)
+		to_return += add_attr("time", _sum_test_time(s.tests, key) )
 		to_return += ">\n"
 
 		to_return += indent(_export_tests(s.tests, key), "    ")
