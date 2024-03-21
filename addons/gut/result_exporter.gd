@@ -17,7 +17,8 @@ func _export_tests(collected_script):
 				"passing":test.pass_texts,
 				"failing":test.fail_texts,
 				"pending":test.pending_texts,
-				"orphans":test.orphans
+				"orphans":test.orphans,
+				"time_taken": test.time_taken 
 			}
 
 	return to_return
