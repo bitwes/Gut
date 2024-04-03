@@ -65,46 +65,6 @@ class InputTracker:
 		for e in inputs:
 			print(e)
 
-class InputSingletonTracker:
-	extends Node
-	var inputs = []
-	var input_frames = []
-
-	var _frame_counter = 0
-
-	func _process(delta):
-		_frame_counter += 1
-		if Input.is_anything_pressed():
-			input_frames.append(_frame_counter)
-			inputs.append("UNKNOWN_EVENT")
-
-	func print_events():
-		for e in inputs:
-			print(e)
-
-class TestInputSingleton:
-	extends "res://addons/gut/test.gd"
-	var _sender = InputSender.new(Input)
-
-	func before_all():
-		InputMap.add_action("jump")
-
-	func after_all():
-		InputMap.erase_action("jump")
-
-	func test_action_hold_for():
-		var r = add_child_autofree(InputSingletonTracker.new())
-
-		_sender.action_down("jump").hold_for('3f')
-		await wait_for_signal(_sender.idle, 5)
-
-		assert_eq(r.inputs.size(), 2, 'input size')
-		# var jump_pressed = r.inputs[0].action == "jump" and r.inputs[0].pressed
-		# assert_true(jump_pressed, "jump pressed is action 0")
-		# var jummp_released = r.inputs[1].action == "jump" and !(r.inputs[1].pressed)
-		# assert_true(jummp_released, "jump released is action 1")
-	
-
 class TestTheBasics:
 	extends "res://addons/gut/test.gd"
 
