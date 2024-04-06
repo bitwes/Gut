@@ -46,7 +46,7 @@ var _compare = _utils.Comparator.new()
 # Need a reference to the instance that is running the tests.  This
 # is set by the gut class when it runs the tests.  This gets you
 # access to the asserts in the tests you write.
-var gut = null
+var gut: GutMain = null
 
 var _disable_strict_datatype_checks = false
 # Holds all the text for a test's fail/pass.  This is used for testing purposes
