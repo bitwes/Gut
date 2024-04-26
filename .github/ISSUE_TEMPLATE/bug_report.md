@@ -7,12 +7,23 @@ assignees: ''
 
 ---
 
-**Versions**
-* Godot:  
-* GUT:  
-* OS:  
 
-**Describe the bug**
+# Versions
+*(list all versions where you have replicated the bug)*
+* Godot:
+* GUT:
+* OS:
 
 
-**Steps To Reproduce**
+
+
+# The Bug
+
+
+
+
+# Steps To Reproduce
+
+
+
+
