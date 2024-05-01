@@ -747,7 +747,7 @@ func _test_the_scripts(indexes=[]):
 				(_unit_test_name == '')):
 
 				var ticks_before := Time.get_ticks_usec()
-				
+
 				if(_current_test.arg_count > 1):
 					_lgr.error(str('Parameterized test ', _current_test.name,
 						' has too many parameters:  ', _current_test.arg_count, '.'))
@@ -762,10 +762,9 @@ func _test_the_scripts(indexes=[]):
 					_lgr.risky(str(_current_test.name, ' did not assert'))
 
 				_current_test.has_printed_name = false
-				
-				var us_elapsed = Time.get_ticks_usec() - ticks_before
-				_current_test.time_taken = us_elapsed / 1000000.0
-				
+
+				_current_test.time_taken = (Time.get_ticks_usec() - ticks_before) / 1000000.0
+
 				end_test.emit()
 
 				# After each test, check to see if we shoudl wait a frame to
