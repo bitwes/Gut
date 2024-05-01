@@ -6,6 +6,14 @@ var Logger = _utils.Logger
 
 var _test_gut = null
 
+const RESULT_XML_VALID_TAGS := { 
+	"testsuite": [ "name", "tests", "failures", "skipped", "time" ], 
+	"testcase": [ "name", "assertions", "status", "classname", "time" ], 
+	"testsuites": [ "name", "failures", "tests" ], 
+	"failure": [ "message" ],
+	"skipped": [ "message" ] 
+}
+
 # Returns a new gut object, all setup for testing.
 func get_a_gut():
 	var g = Gut.new()
@@ -29,15 +37,34 @@ func run_scripts(g, one_or_more):
 # Very simple xml validator.  Matches closing tags to opening tags as they
 # are encountered and any validation provided by XMLParser (which is very
 # little).  Does not catch malformed attributes among other things probably.
-func assert_is_valid_xml(s):
+# Additionally checks for valid tags as defined by RESULT_XML_VALID_TAGS
+func assert_is_valid_xml(xml : String)->void:
 	var tags = []
-	var pba = s.to_utf8_buffer()
+	var pba = xml.to_utf8_buffer()
 	var parser = XMLParser.new()
 	var result = parser.open_buffer(pba)
-
+	
 	while(result == OK):
 		if(parser.get_node_type() == parser.NODE_ELEMENT):
-			tags.push_back(parser.get_node_name())
+			var tag_name := parser.get_node_name()
+			tags.push_back(tag_name)
+			
+			if (tag_name in RESULT_XML_VALID_TAGS):
+				# check for required attributes
+				var required_attributes : Array = RESULT_XML_VALID_TAGS[tag_name].duplicate()
+				var missing_attributes := required_attributes.filter(func(attribute): return !parser.has_attribute(attribute))
+				assert_eq(missing_attributes, [], "Required attribute(s) missing.")
+				
+				# check for unexpected attributes
+				var unexpected_attributes : Array[String] = []
+				for attribute_index : int in parser.get_attribute_count():
+					var attribute_name := parser.get_attribute_name(attribute_index)
+					if not attribute_name in RESULT_XML_VALID_TAGS[tag_name]:
+						unexpected_attributes.push_back(attribute_name)
+				assert_eq(unexpected_attributes, [], "Unexpected attribute(s).")
+			else:
+				fail_test("%s is not one of the expected tags: %s" % [tag_name, RESULT_XML_VALID_TAGS.keys()])
+				
 		elif(parser.get_node_type() == parser.NODE_ELEMENT_END):
 			var last_tag = tags.pop_back()
 			if(last_tag != parser.get_node_name()):
@@ -49,7 +76,6 @@ func assert_is_valid_xml(s):
 			result = parser.read()
 
 	assert_eq(result, ERR_FILE_EOF, 'Parsing xml should reach EOF')
-	return parser
 
 func export_script(name):
 	return str('res://test/resources/exporter_test_files/', name)
@@ -78,7 +104,14 @@ func test_spot_check():
 	var result = re.get_results_xml(_test_gut)
 	assert_is_valid_xml(result)
 	print(result)
-
+	
+func test_res_removed_from_classname_path():
+	run_scripts(_test_gut, 'test_simple_2.gd')
+	var re = JunitExporter.new()
+	var result = re.get_results_xml(_test_gut)
+	assert_false(result.contains("classname=\"res://test/resources/exporter_test_files/test_simple_2.gd\""))
+	assert_string_contains(result, "classname=\"test/resources/exporter_test_files/test_simple_2.gd\"")
+		
 func test_write_file_creates_file():
 	run_scripts(_test_gut, 'test_simple_2.gd')
 	var fname = "user://test_junit_exporter.xml"
