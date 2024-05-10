@@ -53,7 +53,7 @@ func assert_is_valid_xml(xml : String)->void:
 				# check for required attributes
 				var required_attributes : Array = RESULT_XML_VALID_TAGS[tag_name].duplicate()
 				var missing_attributes := required_attributes.filter(func(attribute): return !parser.has_attribute(attribute))
-				assert_eq(missing_attributes, [], "Required attribute(s) missing.")
+				assert_eq(missing_attributes, [], str(tag_name, ":  Required attribute(s) missing ", missing_attributes))
 				
 				# check for unexpected attributes
 				var unexpected_attributes : Array[String] = []
@@ -61,7 +61,7 @@ func assert_is_valid_xml(xml : String)->void:
 					var attribute_name := parser.get_attribute_name(attribute_index)
 					if not attribute_name in RESULT_XML_VALID_TAGS[tag_name]:
 						unexpected_attributes.push_back(attribute_name)
-				assert_eq(unexpected_attributes, [], "Unexpected attribute(s).")
+				assert_eq(unexpected_attributes, [], str(tag_name, " Unexpected attribute(s) ", unexpected_attributes))
 			else:
 				fail_test("%s is not one of the expected tags: %s" % [tag_name, RESULT_XML_VALID_TAGS.keys()])
 				
