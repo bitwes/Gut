@@ -198,6 +198,29 @@ func test_test_has_text_fields():
 	assert_has(result, 'failing')
 	assert_has(result, 'pending')
 
+func test_test_has_time_field():
+	run_scripts(_test_gut, 'test_simple_2.gd')
+	var re = ResultExporter.new()
+	var result = re.get_results_dictionary(_test_gut)
+	result = result.test_scripts.scripts[export_script('test_simple_2.gd')]
+	result = result.tests
+	assert_has(result.test_pass, 'time_taken')
+	assert_has(result.test_fail, 'time_taken')
+	assert_has(result.test_pending, 'time_taken')
+
+func test_test_time_taken_in_range():
+	run_scripts(_test_gut, 'test_time_taken.gd')
+	await wait_for_signal(_test_gut.end_run, 10)
+	var re = ResultExporter.new()
+	var result = re.get_results_dictionary(_test_gut)
+	result = result.test_scripts.scripts[export_script('test_time_taken.gd')]
+	assert_has(result, 'tests')
+	result = result.tests
+	const TIME_ERROR_INTERVAL := 0.1
+	assert_almost_eq(result.test_pass_time_taken_about_half_s.time_taken, 0.5, TIME_ERROR_INTERVAL)
+	assert_almost_eq(result.test_fail_time_taken_about_half_s.time_taken, 0.5, TIME_ERROR_INTERVAL)
+	assert_almost_eq(result.test_pending_time_taken_about_half_s.time_taken, 0.5, TIME_ERROR_INTERVAL)
+	assert_almost_eq(result.test_pass_time_taken_about_2s.time_taken, 2.0, TIME_ERROR_INTERVAL)
 
 func test_write_file_creates_file():
 	run_scripts(_test_gut, 'test_simple_2.gd')
