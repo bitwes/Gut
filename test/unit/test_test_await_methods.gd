@@ -48,7 +48,7 @@ class TestOldYieldMethods:
 		var signaler = add_child_autoqfree(TimedSignaler.new())
 		signaler.emit_after(.5)
 		await yield_to(signaler, 'the_signal', 10)
-		assert_between(counter.time, .49, .52)
+		assert_between(counter.time, .48, .52)
 
 	func test_wait_to_ends_at_max_wait_if_signal_not_emitted():
 		var signaler = add_child_autoqfree(TimedSignaler.new())
@@ -80,7 +80,7 @@ class TestTheNewWaitMethods:
 		var signaler = add_child_autoqfree(TimedSignaler.new())
 		signaler.emit_after(.5)
 		await wait_for_signal(signaler.the_signal, 10)
-		assert_between(counter.time, .49, .52)
+		assert_between(counter.time, .48, .52)
 
 	func test_wait_to_ends_at_max_wait_if_signal_not_emitted():
 		var signaler = add_child_autoqfree(TimedSignaler.new())

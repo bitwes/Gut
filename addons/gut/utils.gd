@@ -503,15 +503,17 @@ func add_line_numbers(contents):
 		line_num += 1
 	return to_return
 
-func pp(dict, indent=''):
-	var text = json.stringify(dict, '  ')
+
+func pp(dict, indent='    '):
+	var text = json.stringify(dict, indent)
 	print(text)
 
 
+var _dynamic_script_base_name = 'gut_dynamic_script_' # needs to be changable for tests
 var _created_script_count = 0
 func create_script_from_source(source, override_path=null):
 	_created_script_count += 1
-	var r_path = str('gut_dynamic_script_', _created_script_count)
+	var r_path = str('res://addons/gut/not_a_real_file/', _dynamic_script_base_name, _created_script_count)
 	if(override_path != null):
 		r_path = override_path
 
@@ -522,6 +524,11 @@ func create_script_from_source(source, override_path=null):
 	# ERROR: Another resource is loaded from path 'workaround for godot issue #65263' (possible cyclic resource inclusion).
 	DynamicScript.resource_path = r_path
 	var result = DynamicScript.reload()
+	if(result != OK):
+		DynamicScript = null
+		var l = get_logger()
+		l.error(str('Could not create script from source.  Error Code ', result))
+		l.info(str("Source Code:\n", add_line_numbers(source)))
 
 	return DynamicScript
 

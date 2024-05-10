@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# Next Version
+
+## Features
+* @mphe GUT now automatically enables the "Exclude Addons" option when running tests.  This means you don't have to keep enabling/disabling this option if GUT does not conform to your warning/error settings.
+* @plink-plonk-will Elapsed time is now included in the XML export.
+
+## Bug Fixes
+* __Issue__ #601 doubles now get a resource path that makes Godot ignore them when "Exclude Addons" is enabled (res://adddons/gut/not_a_real_file/...).
+
+
 # 9.2.1
 * __Issue__ #570 Doubling scripts that contain a statically typed variable of another class_name script (`var foo := Foo.new()` where foo is a `class_name` in another script) could cause errors.
 * Add support for running tests through the debugger via VSCode via the gut-extension.
