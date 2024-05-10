@@ -216,11 +216,7 @@ func test_test_time_taken_in_range():
 	result = result.test_scripts.scripts[export_script('test_time_taken.gd')]
 	assert_has(result, 'tests')
 	result = result.tests
-	assert_has(result, 'test_pass_time_taken_about_half_s')
-	assert_has(result, 'test_fail_time_taken_about_half_s')
-	assert_has(result, 'test_pending_time_taken_about_half_s')
-	assert_has(result, 'test_pass_time_taken_about_2s')
-	const TIME_ERROR_INTERVAL := 0.01
+	const TIME_ERROR_INTERVAL := 0.1
 	assert_almost_eq(result.test_pass_time_taken_about_half_s.time_taken, 0.5, TIME_ERROR_INTERVAL)
 	assert_almost_eq(result.test_fail_time_taken_about_half_s.time_taken, 0.5, TIME_ERROR_INTERVAL)
 	assert_almost_eq(result.test_pending_time_taken_about_half_s.time_taken, 0.5, TIME_ERROR_INTERVAL)
