@@ -67,6 +67,13 @@ class VerNumTools:
 		return is_version
 
 
+	static func is_godot_version_eq(expected):
+		return VerNumTools.is_version_eq(Engine.get_version_info(), expected)
+
+
+	static func is_godot_version_gte(expected):
+		return VerNumTools.is_version_gte(Engine.get_version_info(), expected)
+
 
 
 var gut_version = '0.0.0'
@@ -80,37 +87,29 @@ func _init(gut_v = gut_version, required_godot_v = required_godot_version):
 # ------------------------------------------------------------------------------
 # Blurb of text with GUT and Godot versions.
 # ------------------------------------------------------------------------------
-# func get_version_text():
-# 	var v_info = Engine.get_version_info()
-# 	var gut_version_info =  str('GUT version:  ', gut_version)
-# 	var godot_version_info  = str('Godot version:  ', v_info.major,  '.',  v_info.minor,  '.',  v_info.patch)
-# 	return godot_version_info + "\n" + gut_version_info
+func get_version_text():
+	var v_info = Engine.get_version_info()
+	var gut_version_info =  str('GUT version:  ', gut_version)
+	var godot_version_info  = str('Godot version:  ', v_info.major,  '.',  v_info.minor,  '.',  v_info.patch)
+	return godot_version_info + "\n" + gut_version_info
 
 
 # ------------------------------------------------------------------------------
 # Returns a nice string for erroring out when we have a bad Godot version.
 # ------------------------------------------------------------------------------
-# func get_bad_version_text():
-# 	var ver = '.'.join(PackedStringArray(required_godot_version))
-# 	var info = Engine.get_version_info()
-# 	var gd_version = str(info.major, '.', info.minor, '.', info.patch)
-# 	return 'GUT ' + gut_version + ' requires Godot ' + ver + ' or greater.  Godot version is ' + gd_version
+func get_bad_version_text():
+	var ver = '.'.join(PackedStringArray(required_godot_version))
+	var info = Engine.get_version_info()
+	var gd_version = str(info.major, '.', info.minor, '.', info.patch)
+	return 'GUT ' + gut_version + ' requires Godot ' + ver + ' or greater.  Godot version is ' + gd_version
 
 
 # ------------------------------------------------------------------------------
-# Checks the Godot version against req_godot array.
+# Checks the Godot version against required_godot_version.
 # ------------------------------------------------------------------------------
 func is_godot_version_valid():
 	return VerNumTools.is_version_gte(Engine.get_version_info(), required_godot_version)
 
 
-func godot_version_str(engine_info=Engine.get_version_info()):
-	return str(engine_info.major, '.', engine_info.minor, '.', engine_info.patch)
-
-
-func is_godot_version_eq(expected):
-	return VerNumTools.is_version_eq(Engine.get_version_info(), expected)
-
-
-func is_godot_version_gte(expected):
-	return VerNumTools.is_version_gte(Engine.get_version_info(), expected)
+func make_godot_version_string():
+	return VerNumTools.make_version_string(Engine.get_version_info())

@@ -41,6 +41,7 @@ const TEST_STATUSES = {
 static var avail_fonts = ['AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default']
 
 
+
 # This is a holdover from when GUT was making a psuedo autoload.  It would add
 # an instance of this class to the tree with a name and retrieve it when
 # get_instance was called.  We now have static variables so this var is now
@@ -52,72 +53,47 @@ static var version = '9.2.1'
 # The required Godot version as an array.
 static var req_godot = [4, 2, 0]
 
+static var VersionNumbers = load("res://addons/gut/version_numbers.gd")
+static var version_numbers = VersionNumbers.new(
+	# gut_versrion (source of truth)
+	'9.2.1',
+	# required_godot_version
+	'4.2.0'
+)
 
 
 # ------------------------------------------------------------------------------
 # Blurb of text with GUT and Godot versions.
 # ------------------------------------------------------------------------------
 static func get_version_text():
-	var v_info = Engine.get_version_info()
-	var gut_version_info =  str('GUT version:  ', version)
-	var godot_version_info  = str('Godot version:  ', v_info.major,  '.',  v_info.minor,  '.',  v_info.patch)
-	return godot_version_info + "\n" + gut_version_info
+	return version_numbers.get_version_text()
 
 
 # ------------------------------------------------------------------------------
 # Returns a nice string for erroring out when we have a bad Godot version.
 # ------------------------------------------------------------------------------
 static func get_bad_version_text():
-	var ver = '.'.join(PackedStringArray(req_godot))
-	var info = Engine.get_version_info()
-	var gd_version = str(info.major, '.', info.minor, '.', info.patch)
-	return 'GUT ' + version + ' requires Godot ' + ver + ' or greater.  Godot version is ' + gd_version
+	return version_numbers.get_bad_version_text()
 
 
 # ------------------------------------------------------------------------------
 # Checks the Godot version against req_godot array.
 # ------------------------------------------------------------------------------
-static func is_version_ok(engine_info=Engine.get_version_info(),required=req_godot):
-	var is_ok = null
-	var engine_array = [engine_info.major, engine_info.minor, engine_info.patch]
-
-	var idx = 0
-	while(is_ok == null and idx < engine_array.size()):
-		if(engine_array[idx] > required[idx]):
-			is_ok = true
-		elif(engine_array[idx] < required[idx]):
-			is_ok = false
-
-		idx += 1
-
-	# still null means each index was the same.
-	return nvl(is_ok, true)
+static func is_version_ok():
+	return version_numbers.is_godot_version_valid()
 
 
-static func godot_version(engine_info=Engine.get_version_info()):
-	return str(engine_info.major, '.', engine_info.minor, '.', engine_info.patch)
+static func godot_version_string():
+	return version_numbers.make_godot_version_string()
 
 
-static func is_godot_version(expected, engine_info=Engine.get_version_info()):
-	var engine_array = [engine_info.major, engine_info.minor, engine_info.patch]
-	var expected_array = expected.split('.')
-
-	if(expected_array.size() > engine_array.size()):
-		return false
-
-	var is_version = true
-	var i = 0
-	while(i < expected_array.size() and i < engine_array.size() and is_version):
-		if(expected_array[i] == str(engine_array[i])):
-			i += 1
-		else:
-			is_version = false
-
-	return is_version
+static func is_godot_version(expected):
+	return VersionNumbers.VerNumTools.is_godot_version_eq(expected)
 
 
-static func is_godot_version_gte(expected, engine_info=Engine.get_version_info()):
-	return is_version_ok(engine_info, expected.split('.'))
+static func is_godot_version_gte(expected):
+	return VersionNumbers.VerNumTools.is_godot_version_gte(expected)
+
 
 
 # ------------------------------------------------------------------------------
