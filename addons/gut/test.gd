@@ -1629,7 +1629,7 @@ func assert_not_same(v1, v2, text=''):
 func skip_if_godot_version_lt(expected):
 	var should_skip = !_utils.is_godot_version_gte(expected)
 	if(should_skip):
-		_pass(str('Skipping: ', _utils.godot_version_string(), ' is less than ', expected))
+		_pass(str('Skipping: ', GutUtils.godot_version_string(), ' is less than ', expected))
 	return should_skip
 
 
@@ -1646,7 +1646,7 @@ func skip_if_godot_version_lt(expected):
 func skip_if_godot_version_ne(expected):
 	var should_skip = !_utils.is_godot_version(expected)
 	if(should_skip):
-		_pass(str('Skipping: ', _utils.godot_version_string(), ' is not ', expected))
+		_pass(str('Skipping: ', GutUtils.godot_version_string(), ' is not ', expected))
 	return should_skip
 
 

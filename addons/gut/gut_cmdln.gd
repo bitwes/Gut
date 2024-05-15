@@ -243,7 +243,7 @@ func _run_gut():
 		opt_resolver.config_opts = _gut_config.options
 
 		if(o.get_value('-gh')):
-			print(GutUtils.get_version_text())
+			print(GutUtils.version_numbers.get_version_text())
 			o.print_help()
 			_end_run(0)
 		elif(o.get_value('-gpo')):
@@ -325,9 +325,9 @@ func _init():
 		quit(0)
 		return
 
-	if(!GutUtils.is_version_ok()):
-		print("\n\n", GutUtils.get_version_text())
-		push_error(GutUtils.get_bad_version_text())
+	if(!GutUtils.version_numbers.is_godot_version_valid()):
+		print("\n\n", GutUtils.version_numbers.get_version_text())
+		push_error(GutUtils.version_numbers.get_bad_version_text())
 		_end_run(1)
 	else:
 		_run_gut()

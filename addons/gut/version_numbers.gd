@@ -1,4 +1,5 @@
 class VerNumTools:
+
 	static func _make_version_array_from_string(v):
 		var parts = Array(v.split('.'))
 		for i in range(parts.size()):
@@ -17,7 +18,6 @@ class VerNumTools:
 		elif(typeof(v) == TYPE_ARRAY):
 			to_return = v
 		return to_return
-
 
 
 	static func make_version_string(version_parts):

@@ -185,7 +185,7 @@ func get_test_collector():
 
 # var version = null :
 func get_version():
-	return _utils.version
+	return GutUtils.version_numbers.gut_version
 
 var _orphan_counter =  _utils.OrphanCounter.new()
 func get_orphan_counter():
@@ -285,10 +285,11 @@ func _init():
 # Initialize controls
 # ------------------------------------------------------------------------------
 func _ready():
-	if(!_utils.is_version_ok()):
+	if(!GutUtils.version_numbers.is_godot_version_valid()):
 		_print_versions()
-		push_error(_utils.get_bad_version_text())
-		print('Error:  ', _utils.get_bad_version_text())
+		var bad_text = GutUtils.version_numbers.get_bad_version_text()
+		push_error(bad_text)
+		print('Error:  ', bad_text)
 		get_tree().quit()
 		return
 
@@ -320,7 +321,7 @@ func _print_versions(send_all = true):
 	if(!_should_print_versions):
 		return
 
-	var info = _utils.get_version_text()
+	var info = GutUtils.version_numbers.get_version_text()
 
 	if(send_all):
 		p(info)

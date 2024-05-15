@@ -40,18 +40,11 @@ const TEST_STATUSES = {
 
 static var avail_fonts = ['AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default']
 
-
-
 # This is a holdover from when GUT was making a psuedo autoload.  It would add
 # an instance of this class to the tree with a name and retrieve it when
 # get_instance was called.  We now have static variables so this var is now
 # used instead of a node.
 static var _the_instance = null
-
-# Source of truth for the GUT version
-static var version = '9.2.1'
-# The required Godot version as an array.
-static var req_godot = [4, 2, 0]
 
 static var VersionNumbers = load("res://addons/gut/version_numbers.gd")
 static var version_numbers = VersionNumbers.new(
@@ -60,27 +53,6 @@ static var version_numbers = VersionNumbers.new(
 	# required_godot_version
 	'4.2.0'
 )
-
-
-# ------------------------------------------------------------------------------
-# Blurb of text with GUT and Godot versions.
-# ------------------------------------------------------------------------------
-static func get_version_text():
-	return version_numbers.get_version_text()
-
-
-# ------------------------------------------------------------------------------
-# Returns a nice string for erroring out when we have a bad Godot version.
-# ------------------------------------------------------------------------------
-static func get_bad_version_text():
-	return version_numbers.get_bad_version_text()
-
-
-# ------------------------------------------------------------------------------
-# Checks the Godot version against req_godot array.
-# ------------------------------------------------------------------------------
-static func is_version_ok():
-	return version_numbers.is_godot_version_valid()
 
 
 static func godot_version_string():
