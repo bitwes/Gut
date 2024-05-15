@@ -4,10 +4,8 @@
 # to a json file.  It is also responsible for applying these settings to GUT.
 #
 # ##############################################################################
-var Gut = load('res://addons/gut/gut.gd')
-
-
 var valid_fonts = ['AnonymousPro', 'CourierPro', 'LobsterTwo', 'Default']
+
 var default_options = {
 	background_color = Color(.15, .15, .15, 1).to_html(),
 	config_file = 'res://.gutconfig.json',
@@ -64,8 +62,10 @@ func _init() -> void:
 	# code diagnostics.
 	# This however makes it tedious to run GUT because the option has to be manually disabled before
 	# running tests.
-	if not Engine.is_editor_hint():
-		ProjectSettings.set("debug/gdscript/warnings/exclude_addons", true)
+	pass
+	# if not Engine.is_editor_hint():
+	# 	print('NOT EDITOR!!')
+	# 	ProjectSettings.set("debug/gdscript/warnings/exclude_addons", true)
 
 func _null_copy(h):
 	var new_hash = {}

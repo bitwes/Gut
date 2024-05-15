@@ -56,6 +56,7 @@
    :name: sec-other
 
    Contributing
+   GDScript-Warnings
    Export-Test-Results
    Hooks
    Memory-Management

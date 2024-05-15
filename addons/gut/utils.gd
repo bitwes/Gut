@@ -47,6 +47,78 @@ static var avail_fonts = ['AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default
 # used instead of a node.
 static var _the_instance = null
 
+# Source of truth for the GUT version
+static var version = '9.2.1'
+# The required Godot version as an array.
+static var req_godot = [4, 2, 0]
+
+
+
+# ------------------------------------------------------------------------------
+# Blurb of text with GUT and Godot versions.
+# ------------------------------------------------------------------------------
+static func get_version_text():
+	var v_info = Engine.get_version_info()
+	var gut_version_info =  str('GUT version:  ', version)
+	var godot_version_info  = str('Godot version:  ', v_info.major,  '.',  v_info.minor,  '.',  v_info.patch)
+	return godot_version_info + "\n" + gut_version_info
+
+
+# ------------------------------------------------------------------------------
+# Returns a nice string for erroring out when we have a bad Godot version.
+# ------------------------------------------------------------------------------
+static func get_bad_version_text():
+	var ver = '.'.join(PackedStringArray(req_godot))
+	var info = Engine.get_version_info()
+	var gd_version = str(info.major, '.', info.minor, '.', info.patch)
+	return 'GUT ' + version + ' requires Godot ' + ver + ' or greater.  Godot version is ' + gd_version
+
+
+# ------------------------------------------------------------------------------
+# Checks the Godot version against req_godot array.
+# ------------------------------------------------------------------------------
+static func is_version_ok(engine_info=Engine.get_version_info(),required=req_godot):
+	var is_ok = null
+	var engine_array = [engine_info.major, engine_info.minor, engine_info.patch]
+
+	var idx = 0
+	while(is_ok == null and idx < engine_array.size()):
+		if(engine_array[idx] > required[idx]):
+			is_ok = true
+		elif(engine_array[idx] < required[idx]):
+			is_ok = false
+
+		idx += 1
+
+	# still null means each index was the same.
+	return nvl(is_ok, true)
+
+
+static func godot_version(engine_info=Engine.get_version_info()):
+	return str(engine_info.major, '.', engine_info.minor, '.', engine_info.patch)
+
+
+static func is_godot_version(expected, engine_info=Engine.get_version_info()):
+	var engine_array = [engine_info.major, engine_info.minor, engine_info.patch]
+	var expected_array = expected.split('.')
+
+	if(expected_array.size() > engine_array.size()):
+		return false
+
+	var is_version = true
+	var i = 0
+	while(i < expected_array.size() and i < engine_array.size() and is_version):
+		if(expected_array[i] == str(engine_array[i])):
+			i += 1
+		else:
+			is_version = false
+
+	return is_version
+
+
+static func is_godot_version_gte(expected, engine_info=Engine.get_version_info()):
+	return is_version_ok(engine_info, expected.split('.'))
+
 
 # ------------------------------------------------------------------------------
 # Gets the root node without having to be in the tree and pushing out an error
@@ -66,6 +138,8 @@ static func get_root_node():
 # ------------------------------------------------------------------------------
 static func get_instance():
 	if(_the_instance == null):
+		print('--- First instance of GutUtils ---')
+		print_stack()
 		_the_instance = GutUtils.new()
 
 	return _the_instance
@@ -206,77 +280,6 @@ var CollectedTest = load('res://addons/gut/collected_test.gd')
 var CollectedScript = load('res://addons/gut/collected_test.gd')
 
 var GutScene = load('res://addons/gut/GutScene.tscn')
-
-# Source of truth for the GUT version
-var version = '9.2.1'
-# The required Godot version as an array.
-var req_godot = [4, 2, 0]
-
-
-# ------------------------------------------------------------------------------
-# Blurb of text with GUT and Godot versions.
-# ------------------------------------------------------------------------------
-func get_version_text():
-	var v_info = Engine.get_version_info()
-	var gut_version_info =  str('GUT version:  ', version)
-	var godot_version_info  = str('Godot version:  ', v_info.major,  '.',  v_info.minor,  '.',  v_info.patch)
-	return godot_version_info + "\n" + gut_version_info
-
-
-# ------------------------------------------------------------------------------
-# Returns a nice string for erroring out when we have a bad Godot version.
-# ------------------------------------------------------------------------------
-func get_bad_version_text():
-	var ver = '.'.join(PackedStringArray(req_godot))
-	var info = Engine.get_version_info()
-	var gd_version = str(info.major, '.', info.minor, '.', info.patch)
-	return 'GUT ' + version + ' requires Godot ' + ver + ' or greater.  Godot version is ' + gd_version
-
-
-# ------------------------------------------------------------------------------
-# Checks the Godot version against req_godot array.
-# ------------------------------------------------------------------------------
-func is_version_ok(engine_info=Engine.get_version_info(),required=req_godot):
-	var is_ok = null
-	var engine_array = [engine_info.major, engine_info.minor, engine_info.patch]
-
-	var idx = 0
-	while(is_ok == null and idx < engine_array.size()):
-		if(engine_array[idx] > required[idx]):
-			is_ok = true
-		elif(engine_array[idx] < required[idx]):
-			is_ok = false
-
-		idx += 1
-
-	# still null means each index was the same.
-	return nvl(is_ok, true)
-
-
-func godot_version(engine_info=Engine.get_version_info()):
-	return str(engine_info.major, '.', engine_info.minor, '.', engine_info.patch)
-
-
-func is_godot_version(expected, engine_info=Engine.get_version_info()):
-	var engine_array = [engine_info.major, engine_info.minor, engine_info.patch]
-	var expected_array = expected.split('.')
-
-	if(expected_array.size() > engine_array.size()):
-		return false
-
-	var is_version = true
-	var i = 0
-	while(i < expected_array.size() and i < engine_array.size() and is_version):
-		if(expected_array[i] == str(engine_array[i])):
-			i += 1
-		else:
-			is_version = false
-
-	return is_version
-
-
-func is_godot_version_gte(expected, engine_info=Engine.get_version_info()):
-	return is_version_ok(engine_info, expected.split('.'))
 
 
 # ------------------------------------------------------------------------------

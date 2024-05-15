@@ -1,8 +1,5 @@
 extends SceneTree
 
-var ThingCounter = load('res://addons/gut/thing_counter.gd')
-
-
 func fa_print_open_for_read_result(path):
     var file = FileAccess.open(path, FileAccess.READ)
     var result = FileAccess.get_open_error()

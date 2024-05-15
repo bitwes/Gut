@@ -19,10 +19,9 @@ class ParsedMethod:
 	var meta = _meta :
 		get: return _meta
 		set(val): return;
+
 	var is_local = false
-
 	var _parameters = []
-
 
 	func _init(metadata):
 		_meta = metadata
@@ -99,10 +98,11 @@ class ParsedScript:
 		get: return _native_instance != null
 		set(val): return;
 
-	func unreference():
-		if(_native_instance != null):
-			_native_instance.free()
-		return super()
+	func _notification(what, reversed=false):
+		if(what == NOTIFICATION_PREDELETE):
+			if(_native_instance != null):
+				_native_instance.free()
+
 
 
 	func _init(script_or_inst, inner_class=null):

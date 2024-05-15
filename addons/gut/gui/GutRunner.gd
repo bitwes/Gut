@@ -38,6 +38,10 @@ var ran_from_editor = true
 
 
 func _ready():
+	if not Engine.is_editor_hint():
+		ProjectSettings.set("debug/gdscript/warnings/exclude_addons", true)
+		# here is where all the warnings should be set.
+
 	# When used from the panel we have to kick off the tests ourselves b/c
 	# there's no way I know of to interact with the scene that was run via
 	# play_custom_scene.

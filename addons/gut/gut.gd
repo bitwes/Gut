@@ -426,7 +426,7 @@ func _validate_hook_script(path):
 
 # ------------------------------------------------------------------------------
 # Runs a hook script.  Script must exist, and must extend
-# res://addons/gut/hook_script.gd
+# GutHookScript or addons/gut/hook_script.gd
 # ------------------------------------------------------------------------------
 func _run_hook_script(inst):
 	if(inst != null):

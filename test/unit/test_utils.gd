@@ -30,6 +30,7 @@ func test_is_double_returns_false_for_primitives():
 
 class OverloadsGet:
 	var a = []
+	@warning_ignore("native_method_override")
 	func get(index):
 		return a[index]
 
