@@ -95,7 +95,7 @@ func get_results_xml(gut):
 func write_file(gut, path):
 	var xml = get_results_xml(gut)
 
-	var f_result = _utils.write_file(path, xml)
+	var f_result = GutUtils.write_file(path, xml)
 	if(f_result != OK):
 		var msg = str("Error:  ", f_result, ".  Could not create export file ", path)
 		_utils.get_logger().error(msg)

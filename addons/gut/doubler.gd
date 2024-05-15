@@ -41,7 +41,7 @@ class PackedSceneDouble:
 # START Doubler
 # ------------------------------------------------------------------------------
 var _utils = load('res://addons/gut/utils.gd').get_instance()
-var _base_script_text = _utils.get_file_as_text('res://addons/gut/double_templates/script_template.txt')
+var _base_script_text = GutUtils.get_file_as_text('res://addons/gut/double_templates/script_template.txt')
 var _script_collector = _utils.ScriptCollector.new()
 # used by tests for debugging purposes.
 var print_source = false
@@ -208,7 +208,7 @@ func _create_double(parsed, strategy, override_path, partial):
 
 
 	if(print_source):
-		print(_utils.add_line_numbers(dbl_src))
+		print(GutUtils.add_line_numbers(dbl_src))
 
 	var DblClass = _create_script_no_warnings(dbl_src)
 	if(_stubber != null):
@@ -260,7 +260,7 @@ func _get_func_text(method_hash, path):
 func _parse_script(obj):
 	var parsed = null
 
-	if(_utils.is_inner_class(obj)):
+	if(GutUtils.is_inner_class(obj)):
 		if(inner_class_registry.has(obj)):
 			parsed = _script_collector.parse(inner_class_registry.get_base_resource(obj), obj)
 		else:

@@ -46,7 +46,7 @@ func _find_matches(obj, method):
 	# an entry for the instance then see if we have an entry for the class.
 	if(returns.has(obj) and returns[obj].has(method)):
 		matches = returns[obj][method]
-	elif(_utils.is_instance(obj)):
+	elif(GutUtils.is_instance(obj)):
 		var parent = obj.get_script()
 		var found = false
 		while(parent != null and !found):

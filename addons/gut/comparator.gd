@@ -48,7 +48,7 @@ func simple(v1, v2, missing_string=''):
 		result.are_equal = v1 == v2
 	elif([TYPE_STRING, TYPE_STRING_NAME].has(tv1) and [TYPE_STRING, TYPE_STRING_NAME].has(tv2)):
 		result.are_equal = v1 == v2
-	elif(_utils.are_datatypes_same(v1, v2)):
+	elif(GutUtils.are_datatypes_same(v1, v2)):
 		result.are_equal = v1 == v2
 
 		if(typeof(v1) == TYPE_DICTIONARY or typeof(v1) == TYPE_ARRAY):
@@ -69,7 +69,7 @@ func simple(v1, v2, missing_string=''):
 
 func shallow(v1, v2):
 	var result =  null
-	if(_utils.are_datatypes_same(v1, v2)):
+	if(GutUtils.are_datatypes_same(v1, v2)):
 		if(typeof(v1) in [TYPE_ARRAY, TYPE_DICTIONARY]):
 			result = _utils.DiffTool.new(v1, v2, _utils.DIFF.DEEP)
 		else:
@@ -83,7 +83,7 @@ func shallow(v1, v2):
 func deep(v1, v2):
 	var result =  null
 
-	if(_utils.are_datatypes_same(v1, v2)):
+	if(GutUtils.are_datatypes_same(v1, v2)):
 		if(typeof(v1) in [TYPE_ARRAY, TYPE_DICTIONARY]):
 			result = _utils.DiffTool.new(v1, v2, _utils.DIFF.DEEP)
 		else:

@@ -1041,7 +1041,7 @@ func export_tests(path=_export_path):
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func import_tests(path=_export_path):
-	if(!_utils.file_exists(path)):
+	if(!FileAccess.file_exists(path)):
 		_lgr.error(str('Cannot import tests:  the path [', path, '] does not exist.'))
 	else:
 		_test_collector.clear()

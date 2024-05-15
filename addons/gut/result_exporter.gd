@@ -18,7 +18,7 @@ func _export_tests(collected_script):
 				"failing":test.fail_texts,
 				"pending":test.pending_texts,
 				"orphans":test.orphans,
-				"time_taken": test.time_taken 
+				"time_taken": test.time_taken
 			}
 
 	return to_return
@@ -93,7 +93,7 @@ func write_json_file(gut, path):
 	var dict = get_results_dictionary(gut)
 	var json_text = json.stringify(dict, ' ')
 
-	var f_result = _utils.write_file(path, json_text)
+	var f_result = GutUtils.write_file(path, json_text)
 	if(f_result != OK):
 		var msg = str("Error:  ", f_result, ".  Could not create export file ", path)
 		_utils.get_logger().error(msg)
@@ -106,7 +106,7 @@ func write_summary_file(gut, path):
 	var dict = get_results_dictionary(gut, false)
 	var json_text = json.stringify(dict, ' ')
 
-	var f_result = _utils.write_file(path, json_text)
+	var f_result = GutUtils.write_file(path, json_text)
 	if(f_result != OK):
 		var msg = str("Error:  ", f_result, ".  Could not create export file ", path)
 		_utils.get_logger().error(msg)

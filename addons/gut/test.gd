@@ -210,7 +210,7 @@ func _fail_if_parameters_not_array(parameters):
 func _get_bad_double_or_method_message(inst, method_name, what_you_cant_do):
 	var to_return = ''
 
-	if(!_utils.is_double(inst)):
+	if(!GutUtils.is_double(inst)):
 		to_return = str("An instance of a Double was expected, you passed:  ", _str(inst))
 	elif(!inst.has_method(method_name)):
 		to_return = str("You cannot ", what_you_cant_do, " [", method_name, "] because the method does not exist.  ",
@@ -757,7 +757,7 @@ func get_signal_parameters(object, signal_name, index=-1):
 # ------------------------------------------------------------------------------
 func get_call_parameters(object, method_name, index=-1):
 	var to_return = null
-	if(_utils.is_double(object)):
+	if(GutUtils.is_double(object)):
 		to_return = gut.get_spy().get_call_parameters(object, method_name, index)
 	else:
 		_lgr.error('You must pass a doulbed object to get_call_parameters.')
@@ -787,7 +787,7 @@ func assert_is(object, a_class, text=''):
 	else:
 		var a_str = _str(a_class)
 		disp = str('Expected [', _str(object), '] to extend [', a_str, ']: ', text)
-		if(!_utils.is_native_class(a_class) and !_utils.is_gdscript(a_class)):
+		if(!GutUtils.is_native_class(a_class) and !GutUtils.is_gdscript(a_class)):
 			_fail(str(bad_param_2, a_str))
 		else:
 			if(is_instance_of(object, a_class)):
@@ -1259,7 +1259,7 @@ func _smart_double(thing, double_strat, partial):
 		else:
 			to_return =  gut.get_doubler().double_scene(thing, override_strat)
 
-	elif(_utils.is_native_class(thing)):
+	elif(GutUtils.is_native_class(thing)):
 		if(partial):
 			to_return = gut.get_doubler().partial_double_gdnative(thing)
 		else:
@@ -1286,7 +1286,7 @@ func _are_double_parameters_valid(thing, p2, p3):
 	if(typeof(thing) == TYPE_STRING):
 		bad_msg += "Doubling using the path to a script or scene is no longer supported.  Load the script or scene and pass that to double instead.\n"
 
-	if(_utils.is_instance(thing)):
+	if(GutUtils.is_instance(thing)):
 		bad_msg += "double requires a script, you passed an instance:  " + _str(thing)
 
 	if(bad_msg != ""):
@@ -1395,7 +1395,7 @@ func stub(thing, p2, p3=null):
 		subpath = p2
 		method_name = p3
 
-	if(_utils.is_instance(thing)):
+	if(GutUtils.is_instance(thing)):
 		var msg = _get_bad_double_or_method_message(thing, method_name, 'stub')
 		if(msg != ''):
 			_lgr.error(msg)

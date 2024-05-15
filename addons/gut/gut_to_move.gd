@@ -51,7 +51,7 @@ func is_file_empty(path):
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func get_file_as_text(path):
-	return _utils.get_file_as_text(path)
+	return GutUtils.get_file_as_text(path)
 
 # ------------------------------------------------------------------------------
 # Creates an empty file at the specified path

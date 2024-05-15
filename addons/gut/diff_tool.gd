@@ -69,7 +69,7 @@ func _init(v1,v2,diff_type=DEEP):
 
 
 func _find_differences(v1, v2):
-	if(_utils.are_datatypes_same(v1, v2)):
+	if(GutUtils.are_datatypes_same(v1, v2)):
 		if(typeof(v1) == TYPE_ARRAY):
 			_brackets = {'open':'[', 'close':']'}
 			_desc_things = 'indexes'

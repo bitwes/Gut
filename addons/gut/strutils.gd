@@ -1,6 +1,5 @@
 class_name GutStringUtils
 
-var _utils = load('res://addons/gut/utils.gd').get_instance()
 # Hash containing all the built in types in Godot.  This provides an English
 # name for the types that corosponds with the type constants defined in the
 # engine.
@@ -68,11 +67,11 @@ func _get_obj_filename(thing):
 	var filename = null
 
 	if(thing == null or
-		_utils.is_native_class(thing) or
+		GutUtils.is_native_class(thing) or
 		!is_instance_valid(thing) or
 		str(thing) == '<Object#null>' or
 		typeof(thing) != TYPE_OBJECT or
-		_utils.is_double(thing)):
+		GutUtils.is_double(thing)):
 		return
 
 	if(thing.get_script() == null):
@@ -82,7 +81,7 @@ func _get_obj_filename(thing):
 			# If it isn't a packed scene and it doesn't have a script then
 			# we do nothing.  This just reads better.
 			pass
-	elif(!_utils.is_native_class(thing)):
+	elif(!GutUtils.is_native_class(thing)):
 		var dict = inst_to_dict(thing)
 		filename = _get_filename(dict['@path'])
 		if(str(dict['@subpath']) != ''):
@@ -116,9 +115,9 @@ func type2str(thing):
 		# better this way.
 		pass
 	elif(typeof(thing) == TYPE_OBJECT):
-		if(_utils.is_native_class(thing)):
-			str_thing = _utils.get_native_class_name(thing)
-		elif(_utils.is_double(thing)):
+		if(GutUtils.is_native_class(thing)):
+			str_thing = GutUtils.get_native_class_name(thing)
+		elif(GutUtils.is_double(thing)):
 			var double_path = _get_filename(thing.__gutdbl.thepath)
 			if(thing.__gutdbl.subpath != ''):
 				double_path += str('/', thing.__gutdbl.subpath)

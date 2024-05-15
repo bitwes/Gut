@@ -21,11 +21,11 @@ func _log_end_run_header(gut):
 
 
 func _log_what_was_run(gut):
-	if(!gut._utils.is_null_or_empty(gut._select_script)):
+	if(!GutUtils.is_null_or_empty(gut._select_script)):
 		gut.p('Ran Scripts matching "' + gut._select_script + '"')
-	if(!gut._utils.is_null_or_empty(gut._unit_test_name)):
+	if(!GutUtils.is_null_or_empty(gut._unit_test_name)):
 		gut.p('Ran Tests matching "' + gut._unit_test_name + '"')
-	if(!gut._utils.is_null_or_empty(gut._inner_class_name)):
+	if(!GutUtils.is_null_or_empty(gut._inner_class_name)):
 		gut.p('Ran Inner Classes matching "' + gut._inner_class_name + '"')
 
 

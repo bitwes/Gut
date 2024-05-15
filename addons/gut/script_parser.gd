@@ -108,7 +108,7 @@ class ParsedScript:
 	func _init(script_or_inst, inner_class=null):
 		var to_load = script_or_inst
 
-		if(_utils.is_native_class(to_load)):
+		if(GutUtils.is_native_class(to_load)):
 			_resource = to_load
 			_native_instance = to_load.new()
 		else:
@@ -129,7 +129,7 @@ class ParsedScript:
 
 
 	func _print_flags(meta):
-		print(str(meta.name, ':').rpad(30), str(meta.flags).rpad(4), ' = ', _utils.dec2bistr(meta.flags, 10))
+		print(str(meta.name, ':').rpad(30), str(meta.flags).rpad(4), ' = ', GutUtils.dec2bistr(meta.flags, 10))
 
 
 	func _get_native_methods(base_type):
@@ -277,7 +277,7 @@ var _utils = load('res://addons/gut/utils.gd').get_instance()
 func _get_instance_id(thing):
 	var inst_id = null
 
-	if(_utils.is_native_class(thing)):
+	if(GutUtils.is_native_class(thing)):
 		var id_str = str(thing).replace("<", '').replace(">", '').split('#')[1]
 		inst_id = id_str.to_int()
 	elif(typeof(thing) == TYPE_STRING):
@@ -307,7 +307,7 @@ func parse(thing, inner_thing=null):
 			if(inner_thing != null):
 				inner = instance_from_id(_get_instance_id(inner_thing))
 
-			if(obj is Resource or _utils.is_native_class(obj)):
+			if(obj is Resource or GutUtils.is_native_class(obj)):
 				parsed = ParsedScript.new(obj, inner)
 				scripts[key] = parsed
 

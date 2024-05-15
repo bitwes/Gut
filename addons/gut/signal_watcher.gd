@@ -170,7 +170,7 @@ func is_watching(object, signal_name):
 
 func clear():
 	for obj in _watched_signals:
-		if(_utils.is_not_freed(obj)):
+		if(GutUtils.is_not_freed(obj)):
 			for signal_name in _watched_signals[obj]:
 				obj.disconnect(signal_name, Callable(self,'_on_watched_signal'))
 	_watched_signals.clear()

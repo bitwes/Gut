@@ -186,12 +186,235 @@ static func get_scene_script_object(scene):
 	return to_return
 
 
+# ------------------------------------------------------------------------------
+# returns true if the object has been freed, false if not
+#
+# From what i've read, the weakref approach should work.  It seems to work most
+# of the time but sometimes it does not catch it.  The str comparison seems to
+# fill in the gaps.  I've not seen any errors after adding that check.
+# ------------------------------------------------------------------------------
+static func is_freed(obj):
+	var wr = weakref(obj)
+	return !(wr.get_ref() and str(obj) != '<Freed Object>')
+
+
+# ------------------------------------------------------------------------------
+# Pretty self explanitory.
+# ------------------------------------------------------------------------------
+static func is_not_freed(obj):
+	return !is_freed(obj)
+
+
+# ------------------------------------------------------------------------------
+# Checks if the passed in object is a GUT Double or Partial Double.
+# ------------------------------------------------------------------------------
+static func is_double(obj):
+	var to_return = false
+	if(typeof(obj) == TYPE_OBJECT and is_instance_valid(obj)):
+		to_return = obj.has_method('__gutdbl_check_method__')
+	return to_return
+
+
+# ------------------------------------------------------------------------------
+# Checks an object to see if it is a GDScriptNativeClass
+# ------------------------------------------------------------------------------
+static func is_native_class(thing):
+	var it_is = false
+	if(typeof(thing) == TYPE_OBJECT):
+		it_is = str(thing).begins_with("<GDScriptNativeClass#")
+	return it_is
+
+
+# ------------------------------------------------------------------------------
+# Checks if the passed in is an instance of a class
+# ------------------------------------------------------------------------------
+static func is_instance(obj):
+	return typeof(obj) == TYPE_OBJECT and \
+		!is_native_class(obj) and \
+		!obj.has_method('new') and \
+		!obj.has_method('instantiate')
+
+
+# ------------------------------------------------------------------------------
+# Checks if the passed in is a GDScript
+# ------------------------------------------------------------------------------
+static func is_gdscript(obj):
+	return typeof(obj) == TYPE_OBJECT and str(obj).begins_with('<GDScript#')
+
+
+# ------------------------------------------------------------------------------
+# Checks if the passed in is an inner class
+#
+# Looks like the resource_path will be populated for gdscripts, and not populated
+# for gdscripts inside a gdscript.
+# ------------------------------------------------------------------------------
+static func is_inner_class(obj):
+	return is_gdscript(obj) and obj.resource_path == ''
+
+
+# ------------------------------------------------------------------------------
+# Returns an array of values by calling get(property) on each element in source
+# ------------------------------------------------------------------------------
+static func extract_property_from_array(source, property):
+	var to_return = []
+	for i in (source.size()):
+		to_return.append(source[i].get(property))
+	return to_return
+
+
+# ------------------------------------------------------------------------------
+# true if what is passed in is null or an empty string.
+# ------------------------------------------------------------------------------
+static func is_null_or_empty(text):
+	return text == null or text == ''
+
+
+# ------------------------------------------------------------------------------
+# Get the name of a native class or null if the object passed in is not a
+# native class.
+# ------------------------------------------------------------------------------
+static func get_native_class_name(thing):
+	var to_return = null
+	if(is_native_class(thing)):
+		var newone = thing.new()
+		to_return = newone.get_class()
+		if(!newone is RefCounted):
+			newone.free()
+	return to_return
+
+
+
+
+# ------------------------------------------------------------------------------
+# Write a file.
+# ------------------------------------------------------------------------------
+static func write_file(path, content):
+	var f = FileAccess.open(path, FileAccess.WRITE)
+	if(f != null):
+		f.store_string(content)
+	f = null;
+
+	return FileAccess.get_open_error()
+
+
+
+# ------------------------------------------------------------------------------
+# Returns the text of a file or an empty string if the file could not be opened.
+# ------------------------------------------------------------------------------
+static func get_file_as_text(path):
+	var to_return = ''
+	var f = FileAccess.open(path, FileAccess.READ)
+	if(f != null):
+		to_return = f.get_as_text()
+	f = null
+	return to_return
+
+# ------------------------------------------------------------------------------
+# Loops through an array of things and calls a method or checks a property on
+# each element until it finds the returned value.  -1 is returned if not found
+# or the index is returned if found.
+# ------------------------------------------------------------------------------
+static func search_array_idx(ar, prop_method, value):
+	var found = false
+	var idx = 0
+
+	while(idx < ar.size() and !found):
+		var item = ar[idx]
+		var prop = item.get(prop_method)
+		if(!(prop is Callable)):
+			if(item.get(prop_method) == value):
+				found = true
+		elif(prop != null):
+			var called_val = prop.call()
+			if(called_val == value):
+				found = true
+
+		if(!found):
+			idx += 1
+
+	if(found):
+		return idx
+	else:
+		return -1
+
+# ------------------------------------------------------------------------------
+# Loops through an array of things and calls a method or checks a property on
+# each element until it finds the returned value.  The item in the array is
+# returned or null if it is not found (this method originally came first).
+# ------------------------------------------------------------------------------
+static func search_array(ar, prop_method, value):
+	var idx = search_array_idx(ar, prop_method, value)
+
+	if(idx != -1):
+		return ar[idx]
+	else:
+		return null
+
+
+static func are_datatypes_same(got, expected):
+	return !(typeof(got) != typeof(expected) and got != null and expected != null)
+
+
+static func get_script_text(obj):
+	return obj.get_script().get_source_code()
+
+
+
+# func get_singleton_by_name(name):
+# 	var source = str("var singleton = ", name)
+# 	var script = GDScript.new()
+# 	script.set_source_code(source)
+# 	script.reload()
+# 	return script.new().singleton
+
+
+static func dec2bistr(decimal_value, max_bits = 31):
+	var binary_string = ""
+	var temp
+	var count = max_bits
+
+	while(count >= 0):
+		temp = decimal_value >> count
+		if(temp & 1):
+			binary_string = binary_string + "1"
+		else:
+			binary_string = binary_string + "0"
+		count -= 1
+
+	return binary_string
+
+
+static func add_line_numbers(contents):
+	if(contents == null):
+		return ''
+
+	var to_return = ""
+	var lines = contents.split("\n")
+	var line_num = 1
+	for line in lines:
+		var line_str = str(line_num).lpad(6, ' ')
+		to_return += str(line_str, ' |', line, "\n")
+		line_num += 1
+	return to_return
+
+
+static func pp(dict, indent='    '):
+	var text = JSON.stringify(dict, indent)
+	print(text)
+
+
+static func get_display_size():
+	return Engine.get_main_loop().get_viewport().get_visible_rect()
+
+
+
 # ##############################################################################
+#
 # Start Class
+#
 # ##############################################################################
 var Logger = load('res://addons/gut/logger.gd') # everything should use get_logger
 var _lgr = null
-var json = JSON.new()
 
 var _test_mode = false
 
@@ -245,219 +468,6 @@ func get_logger():
 		return _lgr
 
 
-# ------------------------------------------------------------------------------
-# returns true if the object has been freed, false if not
-#
-# From what i've read, the weakref approach should work.  It seems to work most
-# of the time but sometimes it does not catch it.  The str comparison seems to
-# fill in the gaps.  I've not seen any errors after adding that check.
-# ------------------------------------------------------------------------------
-func is_freed(obj):
-	var wr = weakref(obj)
-	return !(wr.get_ref() and str(obj) != '<Freed Object>')
-
-
-# ------------------------------------------------------------------------------
-# Pretty self explanitory.
-# ------------------------------------------------------------------------------
-func is_not_freed(obj):
-	return !is_freed(obj)
-
-
-# ------------------------------------------------------------------------------
-# Checks if the passed in object is a GUT Double or Partial Double.
-# ------------------------------------------------------------------------------
-func is_double(obj):
-	var to_return = false
-	if(typeof(obj) == TYPE_OBJECT and is_instance_valid(obj)):
-		to_return = obj.has_method('__gutdbl_check_method__')
-	return to_return
-
-
-# ------------------------------------------------------------------------------
-# Checks if the passed in is an instance of a class
-# ------------------------------------------------------------------------------
-func is_instance(obj):
-	return typeof(obj) == TYPE_OBJECT and !is_native_class(obj) and !obj.has_method('new') and !obj.has_method('instantiate')
-
-# ------------------------------------------------------------------------------
-# Checks if the passed in is a GDScript
-# ------------------------------------------------------------------------------
-func is_gdscript(obj):
-	return typeof(obj) == TYPE_OBJECT and str(obj).begins_with('<GDScript#')
-
-
-# ------------------------------------------------------------------------------
-# Checks if the passed in is an inner class
-#
-# Looks like the resource_path will be populated for gdscripts, and not populated
-# for gdscripts inside a gdscript.
-# ------------------------------------------------------------------------------
-func is_inner_class(obj):
-	return is_gdscript(obj) and obj.resource_path == ''
-
-
-# ------------------------------------------------------------------------------
-# Returns an array of values by calling get(property) on each element in source
-# ------------------------------------------------------------------------------
-func extract_property_from_array(source, property):
-	var to_return = []
-	for i in (source.size()):
-		to_return.append(source[i].get(property))
-	return to_return
-
-
-# ------------------------------------------------------------------------------
-# true if file exists, false if not.
-# ------------------------------------------------------------------------------
-func file_exists(path):
-	return FileAccess.file_exists(path)
-
-
-# ------------------------------------------------------------------------------
-# Write a file.
-# ------------------------------------------------------------------------------
-func write_file(path, content):
-	var f = FileAccess.open(path, FileAccess.WRITE)
-	if(f != null):
-		f.store_string(content)
-	f = null;
-
-	return FileAccess.get_open_error()
-
-# ------------------------------------------------------------------------------
-# true if what is passed in is null or an empty string.
-# ------------------------------------------------------------------------------
-func is_null_or_empty(text):
-	return text == null or text == ''
-
-
-# ------------------------------------------------------------------------------
-# Get the name of a native class or null if the object passed in is not a
-# native class.
-# ------------------------------------------------------------------------------
-func get_native_class_name(thing):
-	var to_return = null
-	if(is_native_class(thing)):
-		var newone = thing.new()
-		to_return = newone.get_class()
-		if(!newone is RefCounted):
-			newone.free()
-	return to_return
-
-
-# ------------------------------------------------------------------------------
-# Checks an object to see if it is a GDScriptNativeClass
-# ------------------------------------------------------------------------------
-func is_native_class(thing):
-	var it_is = false
-	if(typeof(thing) == TYPE_OBJECT):
-		it_is = str(thing).begins_with("<GDScriptNativeClass#")
-	return it_is
-
-
-# ------------------------------------------------------------------------------
-# Returns the text of a file or an empty string if the file could not be opened.
-# ------------------------------------------------------------------------------
-func get_file_as_text(path):
-	var to_return = ''
-	var f = FileAccess.open(path, FileAccess.READ)
-	if(f != null):
-		to_return = f.get_as_text()
-	f = null
-	return to_return
-
-# ------------------------------------------------------------------------------
-# Loops through an array of things and calls a method or checks a property on
-# each element until it finds the returned value.  -1 is returned if not found
-# or the index is returned if found.
-# ------------------------------------------------------------------------------
-func search_array_idx(ar, prop_method, value):
-	var found = false
-	var idx = 0
-
-	while(idx < ar.size() and !found):
-		var item = ar[idx]
-		var prop = item.get(prop_method)
-		if(!(prop is Callable)):
-			if(item.get(prop_method) == value):
-				found = true
-		elif(prop != null):
-			var called_val = prop.call()
-			if(called_val == value):
-				found = true
-
-		if(!found):
-			idx += 1
-
-	if(found):
-		return idx
-	else:
-		return -1
-
-# ------------------------------------------------------------------------------
-# Loops through an array of things and calls a method or checks a property on
-# each element until it finds the returned value.  The item in the array is
-# returned or null if it is not found (this method originally came first).
-# ------------------------------------------------------------------------------
-func search_array(ar, prop_method, value):
-	var idx = search_array_idx(ar, prop_method, value)
-
-	if(idx != -1):
-		return ar[idx]
-	else:
-		return null
-
-
-func are_datatypes_same(got, expected):
-	return !(typeof(got) != typeof(expected) and got != null and expected != null)
-
-
-func get_script_text(obj):
-	return obj.get_script().get_source_code()
-
-
-func get_singleton_by_name(name):
-	var source = str("var singleton = ", name)
-	var script = GDScript.new()
-	script.set_source_code(source)
-	script.reload()
-	return script.new().singleton
-
-
-func dec2bistr(decimal_value, max_bits = 31):
-	var binary_string = ""
-	var temp
-	var count = max_bits
-
-	while(count >= 0):
-		temp = decimal_value >> count
-		if(temp & 1):
-			binary_string = binary_string + "1"
-		else:
-			binary_string = binary_string + "0"
-		count -= 1
-
-	return binary_string
-
-
-func add_line_numbers(contents):
-	if(contents == null):
-		return ''
-
-	var to_return = ""
-	var lines = contents.split("\n")
-	var line_num = 1
-	for line in lines:
-		var line_str = str(line_num).lpad(6, ' ')
-		to_return += str(line_str, ' |', line, "\n")
-		line_num += 1
-	return to_return
-
-
-func pp(dict, indent='    '):
-	var text = json.stringify(dict, indent)
-	print(text)
 
 
 var _dynamic_script_base_name = 'gut_dynamic_script_' # needs to be changable for tests
@@ -483,9 +493,6 @@ func create_script_from_source(source, override_path=null):
 
 	return DynamicScript
 
-
-func get_display_size():
-	return Engine.get_main_loop().get_viewport().get_visible_rect()
 
 
 

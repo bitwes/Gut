@@ -98,10 +98,10 @@ func export_to(config_file, section):
 
 func _remap_path(source_path):
     var to_return = source_path
-    if(!_utils.file_exists(source_path)):
+    if(!FileAccess.file_exists(source_path)):
         _lgr.debug('Checking for remap for:  ' + source_path)
         var remap_path = source_path.get_basename() + '.gd.remap'
-        if(_utils.file_exists(remap_path)):
+        if(FileAccess.file_exists(remap_path)):
             var cf = ConfigFile.new()
             cf.load(remap_path)
             to_return = cf.get_value('remap', 'path')
@@ -124,7 +124,7 @@ func import_from(config_file, section):
 
 
 func get_test_named(name):
-    return _utils.search_array(tests, 'name', name)
+    return GutUtils.search_array(tests, 'name', name)
 
 
 func mark_tests_to_skip_with_suffix(suffix):

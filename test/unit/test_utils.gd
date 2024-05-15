@@ -11,20 +11,20 @@ func test_can_make_one():
 
 func test_is_double_returns_false_for_non_doubles():
 	var utils = autofree(Utils.new())
-	assert_false(utils.is_double(autofree(Node.new())))
+	assert_false(GutUtils.is_double(autofree(Node.new())))
 
 func test_is_double_returns_true_for_doubles():
 	var utils = autofree(Utils.new())
 	var d = double(Node).new()
-	assert_true(utils.is_double(d))
+	assert_true(GutUtils.is_double(d))
 
 func test_is_double_returns_false_for_primitives():
 	var utils = autofree(Utils.new())
-	assert_false(utils.is_double('hello'), 'string')
-	assert_false(utils.is_double(1), 'int')
-	assert_false(utils.is_double(1.0), 'float')
-	assert_false(utils.is_double([]), 'array')
-	assert_false(utils.is_double({}), 'dictionary')
+	assert_false(GutUtils.is_double('hello'), 'string')
+	assert_false(GutUtils.is_double(1), 'int')
+	assert_false(GutUtils.is_double(1.0), 'float')
+	assert_false(GutUtils.is_double([]), 'array')
+	assert_false(GutUtils.is_double({}), 'dictionary')
 	# that's probably enough spot checking
 
 
@@ -37,49 +37,49 @@ class OverloadsGet:
 func test_is_double_works_with_classes_that_overload_get():
 	var og = autofree(OverloadsGet.new())
 	var utils = autofree(Utils.new())
-	assert_false(utils.is_double(og))
+	assert_false(GutUtils.is_double(og))
 
 func test_is_instance_false_for_classes():
 	var utils = autofree(Utils.new())
-	assert_false(utils.is_instance(Node2D))
+	assert_false(GutUtils.is_instance(Node2D))
 
 func test_is_instance_true_for_new():
 	var utils = autofree(Utils.new())
 	var n = autofree(Node.new())
-	assert_true(utils.is_instance(n))
+	assert_true(GutUtils.is_instance(n))
 
 func test_is_instance_false_for_instanced_things():
 	var utils = autofree(Utils.new())
 	var i = load('res://test/resources/SceneNoScript.tscn')
-	assert_false(utils.is_instance(i))
+	assert_false(GutUtils.is_instance(i))
 
 
 func test_get_native_class_name_does_not_generate_orphans():
 	var utils = Utils.new()
-	var n = utils.get_native_class_name(Node2D)
+	var n = GutUtils.get_native_class_name(Node2D)
 	assert_no_new_orphans()
 
 func test_get_native_class_name_does_not_free_references():
 	var utils = autofree(Utils.new())
-	var n = utils.get_native_class_name(InputEventKey)
+	var n = GutUtils.get_native_class_name(InputEventKey)
 	pass_test("we got here")
 
 func test_is_native_class_returns_true_for_native_classes():
 	var utils = autofree(Utils.new())
-	assert_true(utils.is_native_class(Node))
+	assert_true(GutUtils.is_native_class(Node))
 
 
 func test_is_inner_class_true_for_inner_classes():
 	var utils = autofree(Utils.new())
-	assert_true(utils.is_inner_class(InnerClasses.InnerA))
+	assert_true(GutUtils.is_inner_class(InnerClasses.InnerA))
 
 func test_is_inner_class_false_for_base_scripts():
 	var utils = autofree(Utils.new())
-	assert_false(utils.is_inner_class(InnerClasses))
+	assert_false(GutUtils.is_inner_class(InnerClasses))
 
 func test_is_inner_class_false_for_non_objs():
 	var utils = autofree(Utils.new())
-	assert_false(utils.is_inner_class('foo'))
+	assert_false(GutUtils.is_inner_class('foo'))
 
 
 

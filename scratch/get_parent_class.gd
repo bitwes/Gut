@@ -26,7 +26,7 @@ func test_someting():
     dict[InnerClasses] = 'foobar'
     dict[InnerClasses.AnotherInnerA] = 'bar -> foo'
 
-    print(ic_ia, ' is InnerClasses ', ic_ia is InnerClasses)
+    print(ic_ia, ' is InnerClasses ', ic_ia.is_instance_of(InnerClasses))
     print(ic_ia.get_class())
     print(ic_ia.get_script())
     print(dict[ic_ia.get_script()])
@@ -81,7 +81,7 @@ func make_class_db_hash_text():
         else:
             text += str('    # ', classname, "\n")
     text += "}"
-    print(_utils.add_line_numbers(text))
+    print(GutUtils.add_line_numbers(text))
     return text
 
 func make_class_db_hash():

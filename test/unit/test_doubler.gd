@@ -12,7 +12,7 @@ class BaseTest:
 
 	func get_source(thing):
 		var to_return = null
-		if(_utils.is_instance(thing)):
+		if(GutUtils.is_instance(thing)):
 			to_return = thing.get_script().get_source_code()
 		else:
 			to_return = thing.source_code
@@ -27,7 +27,7 @@ class BaseTest:
 			if(print_source_when_failing):
 				var header = str('------ Source for ', _strutils.type2str(thing), ' ------')
 				gut.p(header)
-				gut.p(_utils.add_line_numbers(source))
+				gut.p(GutUtils.add_line_numbers(source))
 		else:
 			pass_test(msg)
 
@@ -42,12 +42,12 @@ class BaseTest:
 			if(print_source_when_failing):
 				var header = str('------ Source for ', _strutils.type2str(thing), ' ------')
 				gut.p(header)
-				gut.p(_utils.add_line_numbers(source))
+				gut.p(GutUtils.add_line_numbers(source))
 
 
 	func print_source(thing):
 		var source = get_source(thing)
-		gut.p(_utils.add_line_numbers(source))
+		gut.p(GutUtils.add_line_numbers(source))
 
 
 
