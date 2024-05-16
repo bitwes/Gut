@@ -223,57 +223,6 @@ class TestGetEnumValue:
 		assert_eq(val, 2)
 
 
-class TestCreateScriptFromSource:
-	extends GutTest
-
-	# We need to use the same instance for all tests so we don't reset the
-	# _created_script_count between tests, causing Godot to generate an error
-	# for duplicate resources.
-	var utils = load('res://addons/gut/utils.gd').new()
-
-	func before_all():
-		# Another workaround for _created_script_count
-		utils._dynamic_script_base_name = 'test_create_script_from_source'
-
-	func test_can_create_a_script_from_source():
-		var DynScript = utils.create_script_from_source('var a = 1')
-		assert_not_null(DynScript)
-
-	func test_can_create_instance_of_script_from_source():
-		var DynScript = utils.create_script_from_source('var a = 1')
-		var i = DynScript.new()
-		assert_eq(i.a, 1)
-
-	func test_resource_path_is_in_addons_directory():
-		var DynScript = utils.create_script_from_source('var a = 1')
-		var i = DynScript.new()
-		assert_string_starts_with(DynScript.resource_path, 'res://addons/gut/')
-
-	func test_each_script_gets_a_unique_resource_path():
-		var DynScript1 = utils.create_script_from_source('var a = 1')
-		var DynScript2 = utils.create_script_from_source('var a = 1')
-		var DynScript3 = utils.create_script_from_source('var a = 1')
-
-		assert_ne(DynScript1.resource_path, DynScript2.resource_path, '1 - 2')
-		assert_ne(DynScript2.resource_path, DynScript3.resource_path, '2 - 3')
-		assert_ne(DynScript1.resource_path, DynScript3.resource_path, '1 - 3')
-
-	func test_when_override_path_specified_it_is_used_for_resource_path():
-		var DynScript = utils.create_script_from_source('var a = 1', 'res://foo/bar.gd')
-		assert_eq(DynScript.resource_path, 'res://foo/bar.gd')
-
-	# ----
-	# This test is commented out because it will cause the run to break on this
-	# error when debug is enabled (usually is during dev).  This is the best
-	# thing I could come up with until there is an ability to disable breaking
-	# on errors when in debug.
-	# https://github.com/godotengine/godot/pull/77015
-	# https://github.com/godotengine/godot-proposals/issues/6781
-	# ----
-	# func test_when_script_source_invalid_null_is_returned():
-	# 	var DynScript = utils.create_script_from_source("asdf\n\n\nasdfasfd\n\nasdf")
-	# 	assert_null(DynScript)
-
 
 
 

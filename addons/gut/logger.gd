@@ -83,7 +83,6 @@ var _printers = {
 }
 
 var _gut = null
-var _utils = null
 var _indent_level = 0
 var _min_indent_level = 0
 var _indent_string = '    '
@@ -92,11 +91,11 @@ var _less_test_names = false
 var _yield_calls = 0
 var _last_yield_text = ''
 
+var Printers = load('res://addons/gut/printers.gd')
 
 func _init():
-	_utils = load('res://addons/gut/utils.gd').get_instance()
-	_printers.terminal = _utils.Printers.TerminalPrinter.new()
-	_printers.console = _utils.Printers.ConsolePrinter.new()
+	_printers.terminal = Printers.TerminalPrinter.new()
+	_printers.console = Printers.ConsolePrinter.new()
 	# There were some problems in the timing of disabling this at the right
 	# time in gut_cmdln so it is disabled by default.  This is enabled
 	# by plugin_control.gd based on settings.
@@ -276,7 +275,7 @@ func set_gut(gut):
 		_printers.gui = null
 	else:
 		if(_printers.gui == null):
-			_printers.gui = _utils.Printers.GutGuiPrinter.new()
+			_printers.gui = Printers.GutGuiPrinter.new()
 
 
 func get_indent_level():

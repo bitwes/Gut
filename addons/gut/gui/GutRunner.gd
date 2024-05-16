@@ -38,6 +38,7 @@ var ran_from_editor = true
 
 
 func _ready():
+	print('--- GutRunner _ready ---')
 	if not Engine.is_editor_hint():
 		ProjectSettings.set("debug/gdscript/warnings/exclude_addons", true)
 		# here is where all the warnings should be set.
