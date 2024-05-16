@@ -46,7 +46,7 @@ func __gutdbl_init_vals():
 #       else:
 #               return false
 
-# var __gut_utils_ = load('res://addons/gut/utils.gd').get_instance()
+# var __gut_utils_ = GutUtils
 
 # func __gut_spy(method_name, called_with):
 #       if(__gut_metadata_.spy != null):

@@ -24,7 +24,7 @@ var Spy = load('res://addons/gut/spy.gd')
 var TestCollector = load('res://addons/gut/test_collector.gd')
 
 func _init():
-	load('res://addons/gut/utils.gd').get_instance()._test_mode = true
+	GutUtils._test_mode = true
 
 func _get_logger_from_obj(obj):
 	var to_return = null

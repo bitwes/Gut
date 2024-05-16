@@ -1,16 +1,19 @@
-var _utils = load('res://addons/gut/utils.gd').get_instance()
+var _utils = GutUtils
 var _strutils = _utils.Strutils.new()
 var _max_length = 100
 var _should_compare_int_to_float = true
 
 const MISSING = '|__missing__gut__compare__value__|'
 
+
 func _cannot_compare_text(v1, v2):
 	return str('Cannot compare ', _strutils.types[typeof(v1)], ' with ',
 		_strutils.types[typeof(v2)], '.')
 
+
 func _make_missing_string(text):
 	return '<missing ' + text + '>'
+
 
 func _create_missing_result(v1, v2, text):
 	var to_return = null

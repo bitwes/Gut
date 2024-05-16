@@ -10,7 +10,7 @@ var CollectedTest = load('res://addons/gut/collected_test.gd')
 
 var _test_prefix = 'test_'
 var _test_class_prefix = 'Test'
-var _utils = load('res://addons/gut/utils.gd').get_instance()
+var _utils = GutUtils
 var _lgr = _utils.get_logger()
 
 

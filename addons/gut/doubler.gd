@@ -40,7 +40,7 @@ class PackedSceneDouble:
 # ------------------------------------------------------------------------------
 # START Doubler
 # ------------------------------------------------------------------------------
-var _utils = load('res://addons/gut/utils.gd').get_instance()
+var _utils = GutUtils
 var _base_script_text = GutUtils.get_file_as_text('res://addons/gut/double_templates/script_template.txt')
 var _script_collector = _utils.ScriptCollector.new()
 # used by tests for debugging purposes.

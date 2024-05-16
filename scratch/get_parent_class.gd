@@ -1,6 +1,6 @@
 extends SceneTree
 
-var _utils = load('res://addons/gut/utils.gd').get_instance()
+var _utils = GutUtils
 const INNER_CLASSES_PATH = 'res://test/resources/doubler_test_objects/inner_classes.gd'
 var InnerClasses = load(INNER_CLASSES_PATH)
 

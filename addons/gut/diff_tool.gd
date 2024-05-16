@@ -5,7 +5,7 @@ enum {
 	SIMPLE
 }
 
-var _utils = load('res://addons/gut/utils.gd').get_instance()
+var _utils = GutUtils
 var _strutils = _utils.Strutils.new()
 var _compare = _utils.Comparator.new()
 var DiffTool = load('res://addons/gut/diff_tool.gd')

@@ -26,7 +26,7 @@ class CallParameters:
 # }]
 # default_args []
 
-var _utils = load('res://addons/gut/utils.gd').get_instance()
+var _utils = GutUtils
 var _lgr = _utils.get_logger()
 var default_vararg_arg_count = 10
 const PARAM_PREFIX = 'p_'

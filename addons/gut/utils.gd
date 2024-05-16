@@ -2,42 +2,119 @@
 class_name GutUtils
 extends Object
 
-class LazyLoader:
-	var _loaded = null
-	var _inst = null
-	var _path = null
 
-	func _init(path):
-		_path = path
+# --------------------------------
+# Lazy loaded scripts.  These scripts are lazy loaded so that they can be
+# declared, but will not load when this script is loaded.  This gives us a
+# window at the start of a run to adjust warning levels prior to loading
+# everything.
+static var LazyLoader = load('res://addons/gut/lazy_loader.gd')
+# --------------------------------
+static var AutoFree = LazyLoader.new('res://addons/gut/autofree.gd'):
+	get: return AutoFree.get_loaded()
+	set(val): pass
+static var Awaiter = LazyLoader.new('res://addons/gut/awaiter.gd'):
+	get: return Awaiter.get_loaded()
+	set(val): pass
+static var Comparator = LazyLoader.new('res://addons/gut/comparator.gd'):
+	get: return Comparator.get_loaded()
+	set(val): pass
+static var CollectedTest = LazyLoader.new('res://addons/gut/collected_test.gd'):
+	get: return CollectedTest.get_loaded()
+	set(val): pass
+static var CollectedScript = LazyLoader.new('res://addons/gut/collected_test.gd'):
+	get: return CollectedScript.get_loaded()
+	set(val): pass
+static var CompareResult = LazyLoader.new('res://addons/gut/compare_result.gd'):
+	get: return CompareResult.get_loaded()
+	set(val): pass
+static var DiffTool = LazyLoader.new('res://addons/gut/diff_tool.gd'):
+	get: return DiffTool.get_loaded()
+	set(val): pass
+static var Doubler = LazyLoader.new('res://addons/gut/doubler.gd'):
+	get: return Doubler.get_loaded()
+	set(val): pass
+static var DynamicGdScript = LazyLoader.new("res://addons/gut/dynamic_gdscript.gd") :
+	get: return DynamicGdScript.get_loaded()
+	set(val): pass
+static var Gut = LazyLoader.new('res://addons/gut/gut.gd'):
+	get: return Gut.get_loaded()
+	set(val): pass
+static var GutConfig = LazyLoader.new('res://addons/gut/gut_config.gd'):
+	get: return GutConfig.get_loaded()
+	set(val): pass
+static var HookScript = LazyLoader.new('res://addons/gut/hook_script.gd'):
+	get: return HookScript.get_loaded()
+	set(val): pass
+static var InnerClassRegistry = LazyLoader.new('res://addons/gut/inner_class_registry.gd'):
+	get: return InnerClassRegistry.get_loaded()
+	set(val): pass
+static var InputFactory = LazyLoader.new("res://addons/gut/input_factory.gd"):
+	get: return InputFactory.get_loaded()
+	set(val): pass
+static var InputSender = LazyLoader.new("res://addons/gut/input_sender.gd"):
+	get: return InputSender.get_loaded()
+	set(val): pass
+static var JunitXmlExport = LazyLoader.new('res://addons/gut/junit_xml_export.gd'):
+	get: return JunitXmlExport.get_loaded()
+	set(val): pass
+static var Logger = LazyLoader.new('res://addons/gut/logger.gd') : # everything should use get_logger
+	get: return Logger.get_loaded()
+	set(val): pass
+static var MethodMaker = LazyLoader.new('res://addons/gut/method_maker.gd'):
+	get: return MethodMaker.get_loaded()
+	set(val): pass
+static var OneToMany = LazyLoader.new('res://addons/gut/one_to_many.gd'):
+	get: return OneToMany.get_loaded()
+	set(val): pass
+static var OrphanCounter = LazyLoader.new('res://addons/gut/orphan_counter.gd'):
+	get: return OrphanCounter.get_loaded()
+	set(val): pass
+static var ParameterFactory = LazyLoader.new('res://addons/gut/parameter_factory.gd'):
+	get: return ParameterFactory.get_loaded()
+	set(val): pass
+static var ParameterHandler = LazyLoader.new('res://addons/gut/parameter_handler.gd'):
+	get: return ParameterHandler.get_loaded()
+	set(val): pass
+static var Printers = LazyLoader.new('res://addons/gut/printers.gd'):
+	get: return Printers.get_loaded()
+	set(val): pass
+static var ResultExporter = LazyLoader.new('res://addons/gut/result_exporter.gd'):
+	get: return ResultExporter.get_loaded()
+	set(val): pass
+static var ScriptCollector = LazyLoader.new('res://addons/gut/script_parser.gd'):
+	get: return ScriptCollector.get_loaded()
+	set(val): pass
+static var Spy = LazyLoader.new('res://addons/gut/spy.gd'):
+	get: return Spy.get_loaded()
+	set(val): pass
+static var Strutils = LazyLoader.new('res://addons/gut/strutils.gd'):
+	get: return Strutils.get_loaded()
+	set(val): pass
+static var Stubber = LazyLoader.new('res://addons/gut/stubber.gd'):
+	get: return Stubber.get_loaded()
+	set(val): pass
+static var StubParams = LazyLoader.new('res://addons/gut/stub_params.gd'):
+	get: return StubParams.get_loaded()
+	set(val): pass
+static var Summary = LazyLoader.new('res://addons/gut/summary.gd'):
+	get: return Summary.get_loaded()
+	set(val): pass
+static var Test = LazyLoader.new('res://addons/gut/test.gd'):
+	get: return Test.get_loaded()
+	set(val): pass
+static var TestCollector = LazyLoader.new('res://addons/gut/test_collector.gd'):
+	get: return TestCollector.get_loaded()
+	set(val): pass
+static var ThingCounter = LazyLoader.new('res://addons/gut/thing_counter.gd'):
+	get: return ThingCounter.get_loaded()
+	set(val): pass
+# --------------------------------
 
 
-	func get_loaded():
-		if(_loaded == null):
-			print('---- loading ', _path, ' ----')
-			_loaded = load(_path)
-		return _loaded
 
 
-	func get_instance():
-		if(_inst == null):
-			print('---- creating instance of ', _path, ' ----')
-			_inst = get_loaded().new()
-		return _inst
-
-
-
-# ------------------------------------------------------------------------------
-# Description
-# -----------
-# This class is a PSUEDO SINGLETON.  You should not make instances of it but use
-# the get_instance static method.
-# ------------------------------------------------------------------------------
-# NOTE:  I think this can become completely static now that we have static
-#		 variables.  A lot would have to change though.  But it would be good
-#		 to do.
-# ------------------------------------------------------------------------------
 const GUT_METADATA = '__gutdbl'
-
 
 # Note, these cannot change since places are checking for TYPE_INT to determine
 # how to process parameters.
@@ -46,12 +123,10 @@ enum DOUBLE_STRATEGY{
 	SCRIPT_ONLY,
 }
 
-
 enum DIFF {
 	DEEP,
 	SIMPLE
 }
-
 
 const TEST_STATUSES = {
 	NO_ASSERTS = 'no asserts',
@@ -65,13 +140,6 @@ const TEST_STATUSES = {
 }
 
 static var avail_fonts = ['AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default']
-
-# This is a holdover from when GUT was making a psuedo autoload.  It would add
-# an instance of this class to the tree with a name and retrieve it when
-# get_instance was called.  We now have static variables so this var is now
-# used instead of a node.
-static var _the_instance = null
-
 static var VersionNumbers = load("res://addons/gut/version_numbers.gd")
 static var version_numbers = VersionNumbers.new(
 	# gut_versrion (source of truth)
@@ -80,8 +148,9 @@ static var version_numbers = VersionNumbers.new(
 	'4.2.0'
 )
 
-static var DynmaicGdScript = load("res://addons/gut/dynamic_gdscript.gd")
-static var _dyn_gdscript = DynmaicGdScript.new()
+
+static var GutScene = load('res://addons/gut/GutScene.tscn')
+static var _dyn_gdscript = DynamicGdScript.new()
 
 static func godot_version_string():
 	return version_numbers.make_godot_version_string()
@@ -107,18 +176,6 @@ static func get_root_node():
 	else:
 		push_error('No Main Loop Yet')
 		return null
-
-
-# ------------------------------------------------------------------------------
-# Get the ONE instance of utils
-# ------------------------------------------------------------------------------
-static func get_instance():
-	if(_the_instance == null):
-		print('--- First instance of GutUtils ---')
-		print_stack()
-		_the_instance = GutUtils.new()
-
-	return _the_instance
 
 
 # ------------------------------------------------------------------------------
@@ -430,114 +487,6 @@ static func get_display_size():
 	return Engine.get_main_loop().get_viewport().get_visible_rect()
 
 
-
-# ##############################################################################
-#
-# Start Class
-#
-# ##############################################################################
-static var Logger = load('res://addons/gut/logger.gd') # everything should use get_logger
-static var _lgr = null
-
-
-
-static var AutoFree = LazyLoader.new('res://addons/gut/autofree.gd'):
-	get: return AutoFree.get_loaded()
-	set(val): pass
-static var Awaiter = LazyLoader.new('res://addons/gut/awaiter.gd'):
-	get: return Awaiter.get_loaded()
-	set(val): pass
-static var Comparator = LazyLoader.new('res://addons/gut/comparator.gd'):
-	get: return Comparator.get_loaded()
-	set(val): pass
-static var CompareResult = LazyLoader.new('res://addons/gut/compare_result.gd'):
-	get: return CompareResult.get_loaded()
-	set(val): pass
-static var DiffTool = LazyLoader.new('res://addons/gut/diff_tool.gd'):
-	get: return DiffTool.get_loaded()
-	set(val): pass
-static var Doubler = LazyLoader.new('res://addons/gut/doubler.gd'):
-	get: return Doubler.get_loaded()
-	set(val): pass
-static var Gut = LazyLoader.new('res://addons/gut/gut.gd'):
-	get: return Gut.get_loaded()
-	set(val): pass
-static var GutConfig = LazyLoader.new('res://addons/gut/gut_config.gd'):
-	get: return GutConfig.get_loaded()
-	set(val): pass
-static var HookScript = LazyLoader.new('res://addons/gut/hook_script.gd'):
-	get: return HookScript.get_loaded()
-	set(val): pass
-static var InnerClassRegistry = LazyLoader.new('res://addons/gut/inner_class_registry.gd'):
-	get: return InnerClassRegistry.get_loaded()
-	set(val): pass
-static var InputFactory = LazyLoader.new("res://addons/gut/input_factory.gd"):
-	get: return InputFactory.get_loaded()
-	set(val): pass
-static var InputSender = LazyLoader.new("res://addons/gut/input_sender.gd"):
-	get: return InputSender.get_loaded()
-	set(val): pass
-static var JunitXmlExport = LazyLoader.new('res://addons/gut/junit_xml_export.gd'):
-	get: return JunitXmlExport.get_loaded()
-	set(val): pass
-static var MethodMaker = LazyLoader.new('res://addons/gut/method_maker.gd'):
-	get: return MethodMaker.get_loaded()
-	set(val): pass
-static var OneToMany = LazyLoader.new('res://addons/gut/one_to_many.gd'):
-	get: return OneToMany.get_loaded()
-	set(val): pass
-static var OrphanCounter = LazyLoader.new('res://addons/gut/orphan_counter.gd'):
-	get: return OrphanCounter.get_loaded()
-	set(val): pass
-static var ParameterFactory = LazyLoader.new('res://addons/gut/parameter_factory.gd'):
-	get: return ParameterFactory.get_loaded()
-	set(val): pass
-static var ParameterHandler = LazyLoader.new('res://addons/gut/parameter_handler.gd'):
-	get: return ParameterHandler.get_loaded()
-	set(val): pass
-static var Printers = LazyLoader.new('res://addons/gut/printers.gd'):
-	get: return Printers.get_loaded()
-	set(val): pass
-static var ResultExporter = LazyLoader.new('res://addons/gut/result_exporter.gd'):
-	get: return ResultExporter.get_loaded()
-	set(val): pass
-static var ScriptCollector = LazyLoader.new('res://addons/gut/script_parser.gd'):
-	get: return ScriptCollector.get_loaded()
-	set(val): pass
-static var Spy = LazyLoader.new('res://addons/gut/spy.gd'):
-	get: return Spy.get_loaded()
-	set(val): pass
-static var Strutils = LazyLoader.new('res://addons/gut/strutils.gd'):
-	get: return Strutils.get_loaded()
-	set(val): pass
-static var Stubber = LazyLoader.new('res://addons/gut/stubber.gd'):
-	get: return Stubber.get_loaded()
-	set(val): pass
-static var StubParams = LazyLoader.new('res://addons/gut/stub_params.gd'):
-	get: return StubParams.get_loaded()
-	set(val): pass
-static var Summary = LazyLoader.new('res://addons/gut/summary.gd'):
-	get: return Summary.get_loaded()
-	set(val): pass
-static var Test = LazyLoader.new('res://addons/gut/test.gd'):
-	get: return Test.get_loaded()
-	set(val): pass
-static var TestCollector = LazyLoader.new('res://addons/gut/test_collector.gd'):
-	get: return TestCollector.get_loaded()
-	set(val): pass
-static var ThingCounter = LazyLoader.new('res://addons/gut/thing_counter.gd'):
-	get: return ThingCounter.get_loaded()
-	set(val): pass
-static var CollectedTest = LazyLoader.new('res://addons/gut/collected_test.gd'):
-	get: return CollectedTest.get_loaded()
-	set(val): pass
-static var CollectedScript = LazyLoader.new('res://addons/gut/collected_test.gd'):
-	get: return CollectedScript.get_loaded()
-	set(val): pass
-
-var GutScene = load('res://addons/gut/GutScene.tscn')
-
-
 # ------------------------------------------------------------------------------
 # Everything should get a logger through this.
 #
@@ -545,6 +494,7 @@ var GutScene = load('res://addons/gut/GutScene.tscn')
 # are not caused by getting bad warn/error/etc counts.
 # ------------------------------------------------------------------------------
 static var _test_mode = false
+static var _lgr = null
 static func get_logger():
 	if(_test_mode):
 		return Logger.new()

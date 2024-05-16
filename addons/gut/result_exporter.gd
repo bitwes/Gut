@@ -4,7 +4,7 @@
 # of a run and exporting it in a specific format.  This can also serve as a
 # unofficial GUT export format.
 # ------------------------------------------------------------------------------
-var _utils = load('res://addons/gut/utils.gd').get_instance()
+var _utils = GutUtils
 var json = JSON.new()
 
 func _export_tests(collected_script):

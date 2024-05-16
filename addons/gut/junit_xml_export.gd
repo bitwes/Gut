@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
 # Creates an export of a test run in the JUnit XML format.
 # ------------------------------------------------------------------------------
-var _utils = load('res://addons/gut/utils.gd').get_instance()
+var _utils = GutUtils
 
 var _exporter = _utils.ResultExporter.new()
 

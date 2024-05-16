@@ -277,10 +277,6 @@ func run_tests(runner):
 
 
 func _end_run(exit_code=-9999):
-	var utils_inst = GutUtils.get_instance()
-	if(is_instance_valid(utils_inst)):
-		utils_inst.free()
-
 	if(exit_code != -9999):
 		quit(exit_code)
 

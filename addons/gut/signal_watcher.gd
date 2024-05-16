@@ -52,7 +52,7 @@ const ARG_NOT_SET = '_*_argument_*_is_*_not_set_*_'
 #	- some_signal on ref2 was never emitted.
 #	- other_signal on ref2 was emitted 3 times, each time with 3 parameters.
 var _watched_signals = {}
-var _utils = load('res://addons/gut/utils.gd').get_instance()
+var _utils = GutUtils
 var _lgr = _utils.get_logger()
 
 func _add_watched_signal(obj, name):

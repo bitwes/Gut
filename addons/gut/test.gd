@@ -39,7 +39,7 @@ class_name GutTest
 extends Node
 
 
-var _utils = load('res://addons/gut/utils.gd').get_instance()
+var _utils = GutUtils
 var _compare = _utils.Comparator.new()
 
 

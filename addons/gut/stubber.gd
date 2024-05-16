@@ -12,7 +12,7 @@
 # 	}
 # }
 var returns = {}
-var _utils = load('res://addons/gut/utils.gd').get_instance()
+var _utils = GutUtils
 var _lgr = _utils.get_logger()
 var _strutils = _utils.Strutils.new()
 var _class_db_name_hash = {}
