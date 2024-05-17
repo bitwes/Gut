@@ -8,7 +8,6 @@
 # ------------------------------------------------------------------------------
 var CollectedTest = load('res://addons/gut/collected_test.gd')
 
-var _utils = null
 var _lgr = null
 
 # One entry per test found in the script.  Added externally by TestCollector
@@ -38,8 +37,7 @@ var name = '' :
     set(val):pass
 
 
-func _init(utils=null,logger=null):
-    _utils = utils
+func _init(__todo_remove_me=null,logger=null):
     _lgr = logger
 
 

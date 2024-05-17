@@ -75,7 +75,6 @@ class ParsedMethod:
 class ParsedScript:
 	# All methods indexed by name.
 	var _methods_by_name = {}
-	var _utils = GutUtils
 
 	var _script_path = null
 	var script_path = _script_path :
@@ -136,7 +135,7 @@ class ParsedScript:
 		var to_return = []
 		if(base_type != null):
 			var source = str('extends ', base_type)
-			var inst = _utils.create_script_from_source(source).new()
+			var inst = GutUtils.create_script_from_source(source).new()
 			to_return = inst.get_method_list()
 			if(! inst is RefCounted):
 				inst.free()
@@ -271,8 +270,6 @@ class ParsedScript:
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 var scripts = {}
-var _utils = GutUtils
-
 
 func _get_instance_id(thing):
 	var inst_id = null

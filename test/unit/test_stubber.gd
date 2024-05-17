@@ -309,6 +309,6 @@ func test_draw_parameter_method_meta():
 # 	var txt = _mm.get_function_text(meta)
 # 	assert_string_contains(txt, 'p_texture=null')
 # 	if(is_failing()):
-# 		_utils.pretty_print(meta)
+# 		GutUtils.pretty_print(meta)
 
 

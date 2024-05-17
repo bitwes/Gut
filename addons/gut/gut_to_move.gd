@@ -1,7 +1,6 @@
 # Temporary base script for gut.gd to hold the things to be remvoed and added
 # to some utility somewhere.
 extends Node
-var _utils = GutUtils
 
 # ------------------------------------------------------------------------------
 # deletes all files in a given directory

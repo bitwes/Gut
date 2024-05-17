@@ -55,9 +55,8 @@ func _ready():
 	_gut_runner.ran_from_editor = false
 	add_child(_gut_runner)
 
-	# Becuase of the janky _utils psuedo-global script, we cannot do all this
-	# in _ready.  If we do this in _ready, it generates a bunch of errors.
-	# The errors don't matter, but it looks bad.
+	# TODO This might not need to be called deferred after changing GutUtils to
+	# an all static class.
 	call_deferred('_post_ready')
 
 

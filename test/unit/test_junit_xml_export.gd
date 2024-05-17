@@ -1,24 +1,24 @@
 extends GutTest
 
 var Gut = load('res://addons/gut/gut.gd')
-var JunitExporter = _utils.JunitXmlExport
-var Logger = _utils.Logger
+var JunitExporter = GutUtils.JunitXmlExport
+var Logger = GutUtils.Logger
 
 var _test_gut = null
 
-const RESULT_XML_VALID_TAGS := { 
-	"testsuite": [ "name", "tests", "failures", "skipped", "time" ], 
-	"testcase": [ "name", "assertions", "status", "classname", "time" ], 
-	"testsuites": [ "name", "failures", "tests" ], 
+const RESULT_XML_VALID_TAGS := {
+	"testsuite": [ "name", "tests", "failures", "skipped", "time" ],
+	"testcase": [ "name", "assertions", "status", "classname", "time" ],
+	"testsuites": [ "name", "failures", "tests" ],
 	"failure": [ "message" ],
-	"skipped": [ "message" ] 
+	"skipped": [ "message" ]
 }
 
 # Returns a new gut object, all setup for testing.
 func get_a_gut():
 	var g = Gut.new()
 	g.log_level = g.LOG_LEVEL_ALL_ASSERTS
-	g.logger = _utils.Logger.new()
+	g.logger = GutUtils.Logger.new()
 	g.logger.disable_printer('terminal', true)
 	g.logger.disable_printer('gui', true)
 	g.logger.disable_printer('console', true)
@@ -43,18 +43,18 @@ func assert_is_valid_xml(xml : String)->void:
 	var pba = xml.to_utf8_buffer()
 	var parser = XMLParser.new()
 	var result = parser.open_buffer(pba)
-	
+
 	while(result == OK):
 		if(parser.get_node_type() == parser.NODE_ELEMENT):
 			var tag_name := parser.get_node_name()
 			tags.push_back(tag_name)
-			
+
 			if (tag_name in RESULT_XML_VALID_TAGS):
 				# check for required attributes
 				var required_attributes : Array = RESULT_XML_VALID_TAGS[tag_name].duplicate()
 				var missing_attributes := required_attributes.filter(func(attribute): return !parser.has_attribute(attribute))
 				assert_eq(missing_attributes, [], str(tag_name, ":  Required attribute(s) missing ", missing_attributes))
-				
+
 				# check for unexpected attributes
 				var unexpected_attributes : Array[String] = []
 				for attribute_index : int in parser.get_attribute_count():
@@ -64,7 +64,7 @@ func assert_is_valid_xml(xml : String)->void:
 				assert_eq(unexpected_attributes, [], str(tag_name, " Unexpected attribute(s) ", unexpected_attributes))
 			else:
 				fail_test("%s is not one of the expected tags: %s" % [tag_name, RESULT_XML_VALID_TAGS.keys()])
-				
+
 		elif(parser.get_node_type() == parser.NODE_ELEMENT_END):
 			var last_tag = tags.pop_back()
 			if(last_tag != parser.get_node_name()):
@@ -81,7 +81,7 @@ func export_script(name):
 	return str('res://test/resources/exporter_test_files/', name)
 
 func before_all():
-	_utils._test_mode = true
+	GutUtils._test_mode = true
 
 func before_each():
 	_test_gut = get_a_gut()
@@ -104,14 +104,14 @@ func test_spot_check():
 	var result = re.get_results_xml(_test_gut)
 	assert_is_valid_xml(result)
 	print(result)
-	
+
 func test_res_removed_from_classname_path():
 	run_scripts(_test_gut, 'test_simple_2.gd')
 	var re = JunitExporter.new()
 	var result = re.get_results_xml(_test_gut)
 	assert_false(result.contains("classname=\"res://test/resources/exporter_test_files/test_simple_2.gd\""))
 	assert_string_contains(result, "classname=\"test/resources/exporter_test_files/test_simple_2.gd\"")
-		
+
 func test_write_file_creates_file():
 	run_scripts(_test_gut, 'test_simple_2.gd')
 	var fname = "user://test_junit_exporter.xml"

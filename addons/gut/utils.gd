@@ -169,13 +169,13 @@ static func is_godot_version_gte(expected):
 # Gets the root node without having to be in the tree and pushing out an error
 # if we don't have a main loop ready to go yet.
 # ------------------------------------------------------------------------------
-static func get_root_node():
-	var main_loop = Engine.get_main_loop()
-	if(main_loop != null):
-		return main_loop.root
-	else:
-		push_error('No Main Loop Yet')
-		return null
+# static func get_root_node():
+# 	var main_loop = Engine.get_main_loop()
+# 	if(main_loop != null):
+# 		return main_loop.root
+# 	else:
+# 		push_error('No Main Loop Yet')
+# 		return null
 
 
 # ------------------------------------------------------------------------------

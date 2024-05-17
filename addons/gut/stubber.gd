@@ -12,9 +12,8 @@
 # 	}
 # }
 var returns = {}
-var _utils = GutUtils
-var _lgr = _utils.get_logger()
-var _strutils = _utils.Strutils.new()
+var _lgr = GutUtils.get_logger()
+var _strutils = GutUtils.Strutils.new()
 var _class_db_name_hash = {}
 
 func _init():
@@ -33,7 +32,7 @@ func _make_crazy_dynamic_over_engineered_class_db_hash():
 		else:
 			text += str('# ', classname, "\n")
 	text += "}"
-	var inst =  _utils.create_script_from_source(text).new()
+	var inst =  GutUtils.create_script_from_source(text).new()
 	return inst.all_the_classes
 
 
@@ -225,6 +224,6 @@ func to_s():
 
 
 func stub_defaults_from_meta(target, method_meta):
-	var params = _utils.StubParams.new(target, method_meta)
+	var params = GutUtils.StubParams.new(target, method_meta)
 	params.is_script_default = true
 	add_stub(params)

@@ -26,8 +26,7 @@ class CallParameters:
 # }]
 # default_args []
 
-var _utils = GutUtils
-var _lgr = _utils.get_logger()
+var _lgr = GutUtils.get_logger()
 var default_vararg_arg_count = 10
 const PARAM_PREFIX = 'p_'
 

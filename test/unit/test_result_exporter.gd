@@ -1,8 +1,8 @@
 extends GutTest
 
 var Gut = load('res://addons/gut/gut.gd')
-var ResultExporter = _utils.ResultExporter
-var Logger = _utils.Logger
+var ResultExporter = GutUtils.ResultExporter
+var Logger = GutUtils.Logger
 
 var _test_gut = null
 
@@ -11,7 +11,7 @@ var _test_gut = null
 func get_a_gut():
 	var g = Gut.new()
 	g.log_level = g.LOG_LEVEL_ALL_ASSERTS
-	g.logger = _utils.Logger.new()
+	g.logger = GutUtils.Logger.new()
 	g.logger.disable_printer('terminal', true)
 	g.logger.disable_printer('gui', true)
 	g.logger.disable_printer('console', true)
@@ -31,7 +31,7 @@ func export_script(script_name):
 	return str('res://test/resources/exporter_test_files/', script_name)
 
 func before_all():
-	_utils._test_mode = true
+	GutUtils._test_mode = true
 
 func before_each():
 	_test_gut = get_a_gut()

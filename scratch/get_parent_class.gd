@@ -1,6 +1,5 @@
 extends SceneTree
 
-var _utils = GutUtils
 const INNER_CLASSES_PATH = 'res://test/resources/doubler_test_objects/inner_classes.gd'
 var InnerClasses = load(INNER_CLASSES_PATH)
 
@@ -86,7 +85,7 @@ func make_class_db_hash_text():
 
 func make_class_db_hash():
     var source = make_class_db_hash_text()
-    return _utils.create_script_from_source(source).new().all_classes
+    return GutUtilscreate_script_from_source(source).new().all_classes
 
 
 func _init():

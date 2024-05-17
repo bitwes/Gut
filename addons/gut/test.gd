@@ -39,8 +39,7 @@ class_name GutTest
 extends Node
 
 
-var _utils = GutUtils
-var _compare = _utils.Comparator.new()
+var _compare = GutUtils.Comparator.new()
 
 
 # Need a reference to the instance that is running the tests.  This
@@ -68,17 +67,17 @@ var _summary = {
 # This is used to watch signals so we can make assertions about them.
 var _signal_watcher = load('res://addons/gut/signal_watcher.gd').new()
 
-# Convenience copy of _utils.DOUBLE_STRATEGY
+# Convenience copy of GutUtils.DOUBLE_STRATEGY
 var DOUBLE_STRATEGY = GutUtils.DOUBLE_STRATEGY
 
-var _lgr = _utils.get_logger()
-var _strutils = _utils.Strutils.new()
+var _lgr = GutUtils.get_logger()
+var _strutils = GutUtils.Strutils.new()
 
 # syntax sugar
-var ParameterFactory = _utils.ParameterFactory
-var CompareResult = _utils.CompareResult
-var InputFactory = _utils.InputFactory
-var InputSender = _utils.InputSender
+var ParameterFactory = GutUtils.ParameterFactory
+var CompareResult = GutUtils.CompareResult
+var InputFactory = GutUtils.InputFactory
+var InputSender = GutUtils.InputSender
 
 
 func _init():
@@ -1399,9 +1398,9 @@ func stub(thing, p2, p3=null):
 		var msg = _get_bad_double_or_method_message(thing, method_name, 'stub')
 		if(msg != ''):
 			_lgr.error(msg)
-			return _utils.StubParams.new()
+			return GutUtils.StubParams.new()
 
-	var sp = _utils.StubParams.new(thing, method_name, subpath)
+	var sp = GutUtils.StubParams.new(thing, method_name, subpath)
 	gut.get_stubber().add_stub(sp)
 	return sp
 
@@ -1461,7 +1460,7 @@ func replace_node(base_node, path_or_node, with_this):
 func use_parameters(params):
 	var ph = gut.parameter_handler
 	if(ph == null):
-		ph = _utils.ParameterHandler.new(params)
+		ph = GutUtils.ParameterHandler.new(params)
 		gut.parameter_handler = ph
 
 	# DO NOT use gut.gd's get_call_count_text here since it decrements the
@@ -1627,7 +1626,7 @@ func assert_not_same(v1, v2, text=''):
 # 	return
 # ------------------------------------------------------------------------------
 func skip_if_godot_version_lt(expected):
-	var should_skip = !_utils.is_godot_version_gte(expected)
+	var should_skip = !GutUtils.is_godot_version_gte(expected)
 	if(should_skip):
 		_pass(str('Skipping: ', GutUtils.godot_version_string(), ' is less than ', expected))
 	return should_skip
@@ -1644,7 +1643,7 @@ func skip_if_godot_version_lt(expected):
 # 	return
 # ------------------------------------------------------------------------------
 func skip_if_godot_version_ne(expected):
-	var should_skip = !_utils.is_godot_version(expected)
+	var should_skip = !GutUtils.is_godot_version(expected)
 	if(should_skip):
 		_pass(str('Skipping: ', GutUtils.godot_version_string(), ' is not ', expected))
 	return should_skip

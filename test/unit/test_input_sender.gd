@@ -18,9 +18,9 @@ class HasInputEvents:
 
 class InputEventsOrder:
 	extends Control
-	
+
 	const RIGHT_ORDER = ["input", "gui_signal", "gui", "unhandled"]
-	
+
 	var got_input_in_order: Array = []
 
 	func _init() -> void:
@@ -160,7 +160,7 @@ class TestTheBasics:
 
 	func test_warns_when_key_down_for_a_pressed_key():
 		var sender = InputSender.new()
-		var lgr = _utils.Logger.new()
+		var lgr = GutUtils.Logger.new()
 		sender._lgr = lgr
 		sender.key_down("S")
 		sender.key_down("S")
@@ -168,7 +168,7 @@ class TestTheBasics:
 
 	func test_does_now_warn_for_key_up():
 		var sender = InputSender.new()
-		var lgr = _utils.Logger.new()
+		var lgr = GutUtils.Logger.new()
 		sender._lgr = lgr
 		sender.key_down("S")
 		sender.key_up("S")
@@ -176,7 +176,7 @@ class TestTheBasics:
 
 	func test_does_not_warn_for_key_echos():
 		var sender = InputSender.new()
-		var lgr = _utils.Logger.new()
+		var lgr = GutUtils.Logger.new()
 		sender._lgr = lgr
 		sender.key_down("S")
 		sender.key_echo()
@@ -185,7 +185,7 @@ class TestTheBasics:
 
 	func test_warns_when_action_down_for_a_pressed_action():
 		var sender = InputSender.new()
-		var lgr = _utils.Logger.new()
+		var lgr = GutUtils.Logger.new()
 		sender._lgr = lgr
 		sender.action_down("jump")
 		sender.action_down("jump")
@@ -193,7 +193,7 @@ class TestTheBasics:
 
 	func test_does_not_warn_for_action_up():
 		var sender = InputSender.new()
-		var lgr = _utils.Logger.new()
+		var lgr = GutUtils.Logger.new()
 		sender._lgr = lgr
 		sender.action_down("jump")
 		sender.action_up("jump")
@@ -201,7 +201,7 @@ class TestTheBasics:
 
 	func test_warns_when_mouse_down_for_a_pressed_mouse_button():
 		var sender = InputSender.new()
-		var lgr = _utils.Logger.new()
+		var lgr = GutUtils.Logger.new()
 		sender._lgr = lgr
 		sender.mouse_right_button_down(Vector2(1,1))
 		sender.mouse_right_button_down(Vector2(1,1))
@@ -209,7 +209,7 @@ class TestTheBasics:
 
 	func test_does_not_warn_for_mouse_up():
 		var sender = InputSender.new()
-		var lgr = _utils.Logger.new()
+		var lgr = GutUtils.Logger.new()
 		sender._lgr = lgr
 		sender.mouse_right_button_down(Vector2(1,1))
 		sender.mouse_right_button_up(Vector2(1,1))
@@ -217,7 +217,7 @@ class TestTheBasics:
 
 	func test_does_not_warn_when_mouse_button_released():
 		var sender = InputSender.new()
-		var lgr = _utils.Logger.new()
+		var lgr = GutUtils.Logger.new()
 		sender._lgr = lgr
 		sender.mouse_right_button_down(Vector2(1,1))
 		sender.mouse_right_button_up(Vector2(1,1))
@@ -226,7 +226,7 @@ class TestTheBasics:
 
 	func test_warns_for_2nd_down_event_after_idle():
 		var sender = InputSender.new()
-		var lgr = _utils.Logger.new()
+		var lgr = GutUtils.Logger.new()
 		sender._lgr = lgr
 
 		sender.key_down("R").wait(.2)
@@ -448,14 +448,14 @@ class TestSendEvent:
 		var event = InputEventKey.new()
 		sender.send_event(event)
 		assert_eq(r.gui_event, event)
-	
-	func test_send_event_causes_receiver_to_emit_gui_input_signal():  
-		var r = autofree(HasInputEvents.new())  
-		watch_signals(r)  
-		var sender = InputSender.new(r)  
-		var event = InputEventKey.new()  
-		sender.send_event(event)  
-		assert_signal_emitted_with_parameters(r, 'gui_input', [event])  
+
+	func test_send_event_causes_receiver_to_emit_gui_input_signal():
+		var r = autofree(HasInputEvents.new())
+		watch_signals(r)
+		var sender = InputSender.new(r)
+		var event = InputEventKey.new()
+		sender.send_event(event)
+		assert_signal_emitted_with_parameters(r, 'gui_input', [event])
 
 	func test_sends_event_to_unhandled_input():
 		var r = autofree(HasInputEvents.new())

@@ -1930,7 +1930,7 @@ class TestCompareDeepShallow:
 	extends BaseTestClass
 
 	func test_compare_deep_uses_compare():
-		var d_compare = double(_utils.Comparator).new()
+		var d_compare = double(GutUtils.Comparator).new()
 		gr.test._compare = d_compare
 		var result = gr.test.compare_deep([], [])
 		assert_called(d_compare, 'deep')

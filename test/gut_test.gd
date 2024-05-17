@@ -82,7 +82,7 @@ func get_error_count(obj):
 
 func new_gut(print_sub_tests=false):
 	var g = Gut.new()
-	g.logger = _utils.Logger.new()
+	g.logger = GutUtils.Logger.new()
 	g.logger.disable_all_printers(true)
 
 	if(print_sub_tests):
@@ -105,14 +105,14 @@ func new_gut(print_sub_tests=false):
 
 # func new_test():
 # 	var t = GutTest.new()
-# 	var logger = _utils.Logger.new()
+# 	var logger = GutUtils.Logger.new()
 # 	t.set_logger(logger)
 # 	return t
 
 
 # func new_test_double():
 # 	var t = double(GutTest).new()
-# 	var logger = double(_utils.Logger).new()
+# 	var logger = double(GutUtils.Logger).new()
 # 	stub(t, 'set_logger').to_call_super()
 # 	stub(t, 'get_logger').to_call_super()
 # 	t.set_logger(logger)

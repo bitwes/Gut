@@ -121,7 +121,7 @@ class TestGetDecleration:
 	# 	var txt = _mm.get_function_text(meta)
 	# 	assert_string_contains(txt, 'p_texture=null')
 	# 	if(is_failing()):
-	# 		_utils.pretty_print(meta)
+	# 		GutUtils.pretty_print(meta)
 
 	# func test_popup_TYPE_RECT2I():
 	# 	var inst = autofree(Window.new())

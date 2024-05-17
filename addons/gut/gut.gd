@@ -152,7 +152,7 @@ var parameter_handler = _parameter_handler :
 		_parameter_handler = val
 		_parameter_handler.set_logger(_lgr)
 
-var _lgr = _utils.get_logger()
+var _lgr = GutUtils.get_logger()
 # Local reference for the common logger.
 ## FOR INERNAL USE ONLY
 var logger = _lgr :
@@ -179,7 +179,7 @@ var treat_error_as_failure = _treat_error_as_failure:
 # ------------
 # Read only
 # ------------
-var _test_collector = _utils.TestCollector.new()
+var _test_collector = GutUtils.TestCollector.new()
 func get_test_collector():
 	return _test_collector
 
@@ -187,23 +187,23 @@ func get_test_collector():
 func get_version():
 	return GutUtils.version_numbers.gut_version
 
-var _orphan_counter =  _utils.OrphanCounter.new()
+var _orphan_counter =  GutUtils.OrphanCounter.new()
 func get_orphan_counter():
 	return _orphan_counter
 
-var _autofree = _utils.AutoFree.new()
+var _autofree = GutUtils.AutoFree.new()
 func get_autofree():
 	return _autofree
 
-var _stubber = _utils.Stubber.new()
+var _stubber = GutUtils.Stubber.new()
 func get_stubber():
 	return _stubber
 
-var _doubler = _utils.Doubler.new()
+var _doubler = GutUtils.Doubler.new()
 func get_doubler():
 	return _doubler
 
-var _spy = _utils.Spy.new()
+var _spy = GutUtils.Spy.new()
 func get_spy():
 	return _spy
 
@@ -224,7 +224,7 @@ var _inner_class_prefix = 'Test'
 
 var _select_script = ''
 var _last_paint_time = 0.0
-var _strutils = _utils.Strutils.new()
+var _strutils = GutUtils.Strutils.new()
 
 # The instance that is created from _pre_run_script.  Accessible from
 # get_pre_run_script_instance.
@@ -247,7 +247,7 @@ var _current_test = null
 var _pause_before_teardown = false
 
 
-var _awaiter = _utils.Awaiter.new()
+var _awaiter = GutUtils.Awaiter.new()
 
 # Used to cancel importing scripts if an error has occurred in the setup.  This
 # prevents tests from being run if they were exported and ensures that the
@@ -264,7 +264,7 @@ var _auto_queue_free_delay = .1
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func _init():
-	# When running tests for GUT itself, _utils has been setup to always return
+	# When running tests for GUT itself, GutUtils has been setup to always return
 	# a new logger so this does not set the gut instance on the base logger
 	# when creating test instances of GUT.
 	_lgr.set_gut(self)
@@ -396,7 +396,7 @@ func _log_test_children_warning(test_script):
 
 func _log_end_run():
 	if(_should_print_summary):
-		var summary = _utils.Summary.new(self)
+		var summary = GutUtils.Summary.new(self)
 		summary.log_end_run()
 
 
@@ -477,7 +477,7 @@ func _export_results():
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func _export_junit_xml():
-	var exporter = _utils.JunitXmlExport.new()
+	var exporter = GutUtils.JunitXmlExport.new()
 	var output_file = _junit_xml_file
 
 	if(_junit_xml_timestamp):
@@ -612,7 +612,7 @@ func _run_test(script_inst, test_name):
 # Calls both pre-all-tests methods until prerun_setup is removed
 # ------------------------------------------------------------------------------
 func _call_before_all(test_script, collected_script):
-	var before_all_test_obj = _utils.CollectedTest.new()
+	var before_all_test_obj = GutUtils.CollectedTest.new()
 	before_all_test_obj.has_printed_name = false
 	before_all_test_obj.name = 'before_all'
 
@@ -637,7 +637,7 @@ func _call_before_all(test_script, collected_script):
 # Calls both post-all-tests methods until postrun_teardown is removed.
 # ------------------------------------------------------------------------------
 func _call_after_all(test_script, collected_script):
-	var after_all_test_obj = _utils.CollectedTest.new()
+	var after_all_test_obj = GutUtils.CollectedTest.new()
 	after_all_test_obj.has_printed_name = false
 	after_all_test_obj.name = 'after_all'
 
@@ -1170,7 +1170,7 @@ func get_current_test_object():
 ## Returns a summary.gd object that contains all the information about
 ## the run results.
 func get_summary():
-	return _utils.Summary.new(self)
+	return GutUtils.Summary.new(self)
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------

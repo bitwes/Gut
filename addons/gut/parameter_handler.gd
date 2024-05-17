@@ -1,11 +1,10 @@
-var _utils = GutUtils
 var _params = null
 var _call_count = 0
 var _logger = null
 
 func _init(params=null):
 	_params = params
-	_logger = _utils.get_logger()
+	_logger = GutUtils.get_logger()
 	if(typeof(_params) != TYPE_ARRAY):
 		_logger.error('You must pass an array to parameter_handler constructor.')
 		_params = null

@@ -108,14 +108,14 @@ class TestTheBasics:
 
 	func test_when_stubbed_to_call_super_then_super_is_called():
 		var doubled = autofree(gr.doubler.double(DoubleMe).new())
-		var params = _utils.StubParams.new(doubled, 'set_value').to_call_super()
+		var params = GutUtils.StubParams.new(doubled, 'set_value').to_call_super()
 		gr.stubber.add_stub(params)
 		doubled.set_value(99)
 		assert_eq(doubled._value, 99)
 
 	func test_can_stub_native_methods():
 		var d_node2d = autofree(gr.doubler.double_gdnative(Node2D).new())
-		var params = _utils.StubParams.new(d_node2d, 'get_position').to_return(-1)
+		var params = GutUtils.StubParams.new(d_node2d, 'get_position').to_return(-1)
 		gr.stubber.add_stub(params)
 		assert_eq(d_node2d.get_position(), -1)
 
@@ -125,7 +125,7 @@ class TestTheBasics:
 
 	func test_can_stub_all_Node2D_doubles():
 		var d_node2d = autofree(gr.doubler.double_gdnative(Node2D).new())
-		var params = _utils.StubParams.new(Node2D, 'get_position').to_return(-1)
+		var params = GutUtils.StubParams.new(Node2D, 'get_position').to_return(-1)
 		gr.stubber.add_stub(params)
 		assert_eq(d_node2d.get_position(), -1)
 		if(is_failing()):
@@ -133,14 +133,14 @@ class TestTheBasics:
 			# print(gr.stubber.to_s())
 
 	func test_can_stub_param_count_on_gdnatives():
-		var params = _utils.StubParams.new(Node2D, 'rpc_id').param_count(5)
+		var params = GutUtils.StubParams.new(Node2D, 'rpc_id').param_count(5)
 		gr.stubber.add_stub(params)
 		var d_node2d = autofree(gr.doubler.double_gdnative(Node2D).new())
 		assert_eq(gr.stubber.get_parameter_count(d_node2d, 'rpc_id'), 5)
 
 
 	func test_double_can_have_default_param_values_stubbed():
-		var params = _utils.StubParams.new(INIT_PARAMETERS, '_init')
+		var params = GutUtils.StubParams.new(INIT_PARAMETERS, '_init')
 		params.param_defaults(["override_default"])
 		gr.stubber.add_stub(params)
 		var inst = gr.doubler.double(InitParameters).new()
@@ -150,7 +150,7 @@ class TestTheBasics:
 
 	func test_double_can_have_default_param_values_stubbed_after_double_created():
 		var Dbl = gr.doubler.double(InitParameters)
-		var params = _utils.StubParams.new(INIT_PARAMETERS, '_init')
+		var params = GutUtils.StubParams.new(INIT_PARAMETERS, '_init')
 		params.param_defaults(["override_default"])
 		gr.stubber.add_stub(params)
 		var inst = Dbl.new()
@@ -167,7 +167,7 @@ class TestInnerClasses:
 
 	func before_each():
 		doubler = Doubler.new()
-		stubber = _utils.Stubber.new()
+		stubber = GutUtils.Stubber.new()
 		doubler.set_stubber(stubber)
 
 
@@ -189,8 +189,8 @@ class TestDefaultParameters:
 	var stubber = null
 
 	func before_each():
-		doubler = Doubler.new(_utils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
-		stubber = _utils.Stubber.new()
+		doubler = Doubler.new(GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
+		stubber = GutUtils.Stubber.new()
 		doubler.set_stubber(stubber)
 
 

@@ -1,9 +1,7 @@
 # ------------------------------------------------------------------------------
 # Creates an export of a test run in the JUnit XML format.
 # ------------------------------------------------------------------------------
-var _utils = GutUtils
-
-var _exporter = _utils.ResultExporter.new()
+var _exporter = GutUtils.ResultExporter.new()
 
 func indent(s, ind):
 	var to_return = ind + s
@@ -98,7 +96,7 @@ func write_file(gut, path):
 	var f_result = GutUtils.write_file(path, xml)
 	if(f_result != OK):
 		var msg = str("Error:  ", f_result, ".  Could not create export file ", path)
-		_utils.get_logger().error(msg)
+		GutUtils.get_logger().error(msg)
 
 	return f_result
 

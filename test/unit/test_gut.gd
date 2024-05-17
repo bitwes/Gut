@@ -9,7 +9,7 @@ class TestProperties:
 	var _gut = null
 
 	func before_all():
-		_utils._test_mode = true
+		GutUtils._test_mode = true
 
 	func before_each():
 		_gut = autofree(Gut.new())
@@ -29,7 +29,7 @@ class TestProperties:
 			['junit_xml_file', '', 'user://somewhere.json'],
 			['junit_xml_timestamp', false, true],
 			['log_level', 1, 3],
-			['parameter_handler', null, _utils.ParameterHandler.new([])],
+			['parameter_handler', null, GutUtils.ParameterHandler.new([])],
 			['post_run_script', '', 'res://something_else.gd'],
 			['pre_run_script', '', 'res://something.gd'],
 			['treat_error_as_failure', true, false],
@@ -55,12 +55,12 @@ class TestProperties:
 
 	func test_logger_backed_property():
 		# This is hardcodedd to use the current value to check the default because of the way
-		# that _utils and logger works with _utils._test_mode = true.  Kinda breaks
+		# that GutUtils and logger works with GutUtils._test_mode = true.  Kinda breaks
 		# the one of the 8 things that this assert checks, but that's fine.
-		assert_property_with_backing_variable(_gut, 'logger', _gut._lgr, _utils.Logger.new(), '_lgr')
+		assert_property_with_backing_variable(_gut, 'logger', _gut._lgr, GutUtils.Logger.new(), '_lgr')
 
 	func test_setting_logger_sets_gut_for_logger():
-		var new_logger = _utils.Logger.new()
+		var new_logger = GutUtils.Logger.new()
 		_gut.logger = new_logger
 		assert_eq(new_logger.get_gut(), _gut)
 
@@ -83,7 +83,7 @@ class TestSimulate:
 	var _test_gut = null
 
 	func before_all():
-		_utils._test_mode = true
+		GutUtils._test_mode = true
 
 	func before_each():
 		_test_gut = autofree(new_gut())
@@ -350,7 +350,7 @@ class TestEverythingElse:
 	# Setup/Teardown
 	# ------------------------------
 	func before_all():
-		_utils._test_mode = true
+		GutUtils._test_mode = true
 		starting_counts.setup_count = gut.get_test_count()
 		starting_counts.teardown_count = gut.get_test_count()
 		counts.prerun_setup_count += 1
@@ -386,11 +386,11 @@ class TestEverythingElse:
 	# Doubler
 	# ------------------------------
 	func test_when_test_overrides_strategy_it_is_reset_after_test_finishes():
-		gr.test_gut.double_strategy = _utils.DOUBLE_STRATEGY.SCRIPT_ONLY
+		gr.test_gut.double_strategy = GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY
 		gr.test_gut.add_script('res://test/samples/test_before_after.gd')
-		gr.test_gut.get_doubler().set_strategy(_utils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
+		gr.test_gut.get_doubler().set_strategy(GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
 		gr.test_gut.test_scripts()
-		assert_eq(gr.test_gut.double_strategy, _utils.DOUBLE_STRATEGY.SCRIPT_ONLY)
+		assert_eq(gr.test_gut.double_strategy, GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY)
 
 	func test_clears_ignored_methods_between_tests():
 		gr.test_gut.get_doubler().add_ignored_method('ignore_script', 'ignore_method')
@@ -793,20 +793,20 @@ class TestErrorsTreatedAsFailure:
 		_test_gut = add_child_autofree(new_gut())
 
 	func test_logger_calls__fail_for_error_when_error_occurs():
-		var logger = _utils.Logger.new()
-		var dgut = double(_utils.Gut).new()
+		var logger = GutUtils.Logger.new()
+		var dgut = double(GutUtils.Gut).new()
 		logger.set_gut(dgut)
 		logger.error('this is an error')
 		assert_called(dgut, '_fail_for_error')
 
 	func test_gut_does_not_call__fail_when_flag_false():
-		var dgut = double(_utils.Gut).new()
+		var dgut = double(GutUtils.Gut).new()
 		stub(dgut, '_fail_for_error').to_call_super()
 		dgut._fail_for_error('error text')
 		assert_not_called(dgut, '_fail')
 
 	func test_gut_calls__fail_when_flag_true():
-		var dgut = double(_utils.Gut).new()
+		var dgut = double(GutUtils.Gut).new()
 		dgut._current_test = 'something'
 		dgut.treat_error_as_failure = true
 		stub(dgut, '_fail_for_error').to_call_super()
@@ -814,7 +814,7 @@ class TestErrorsTreatedAsFailure:
 		assert_called(dgut, '_fail')
 
 	func test_gut_does_not_call__fail_when_there_is_no_test_object():
-		var dgut = double(_utils.Gut).new()
+		var dgut = double(GutUtils.Gut).new()
 		dgut.treat_error_as_failure = true
 		stub(dgut, '_fail_for_error').to_call_super()
 		dgut._fail_for_error('error text')

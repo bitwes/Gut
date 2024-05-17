@@ -5,11 +5,11 @@ class TestTheBasics:
 	extends GutTest
 
 	func test_can_make_one():
-		var c = _utils.Comparator.new()
+		var c = GutUtils.Comparator.new()
 		assert_not_null(c)
 
 	func test_get_set_should_compare_int_float():
-		var c = _utils.Comparator.new()
+		var c = GutUtils.Comparator.new()
 		assert_accessors(c, 'should_compare_int_to_float', true, false)
 
 
@@ -17,7 +17,7 @@ class TestMissing:
 	extends GutTest
 
 	func test_when_first_value_is_missing_it_uses_missing_string_in_summary():
-		var c = _utils.Comparator.new()
+		var c = GutUtils.Comparator.new()
 		var other = 'asdf'
 		var result = c.simple(c.MISSING, other, 'not here')
 		assert_string_contains(result.summary, 'not here')
@@ -27,7 +27,7 @@ class TestMissing:
 		assert_false(result.are_equal)
 
 	func test_when_second_value_is_missing_it_uses_missing_string_in_summary():
-		var c = _utils.Comparator.new()
+		var c = GutUtils.Comparator.new()
 		var other  = 'asdf'
 		var result = c.simple(other, c.MISSING, 'not here')
 		assert_string_contains(result.summary, 'not here')
@@ -37,7 +37,7 @@ class TestMissing:
 		assert_false(result.are_equal)
 
 	func test_missing_code_works_with_non_strings():
-		var c = _utils.Comparator.new()
+		var c = GutUtils.Comparator.new()
 		var result = c.simple(1, 1)
 		assert_true(result.are_equal)
 
@@ -49,7 +49,7 @@ class TestSimpleCompare:
 	var _comparator  = null
 
 	func before_each():
-		_comparator = _utils.Comparator.new()
+		_comparator = GutUtils.Comparator.new()
 
 	var primitive_equal_values = [[1, 1], [3, 3.0], ['a', 'a'], [true, true], [null, null]]
 	func test_compare_equal_primitives(p=use_parameters(primitive_equal_values)):
@@ -96,7 +96,7 @@ class TestShouldCompareIntToFloat:
 	var _comparator  = null
 
 	func before_each():
-		_comparator = _utils.Comparator.new()
+		_comparator = GutUtils.Comparator.new()
 
 	func test_when_enabled_float_and_int_are_equal():
 		_comparator.set_should_compare_int_to_float(true)
@@ -126,7 +126,7 @@ class TestDeepCompare:
 	var _comparator  = null
 
 	func before_each():
-		_comparator = _utils.Comparator.new()
+		_comparator = GutUtils.Comparator.new()
 
 	func test_comparing_arrays_are_equal_true_when_equal():
 		var result = _comparator.deep([1], [1])
@@ -171,7 +171,7 @@ class TestGodot4ArrayDictionary:
 	var _comparator  = null
 
 	func before_each():
-		_comparator = _utils.Comparator.new()
+		_comparator = GutUtils.Comparator.new()
 
 	var _same_arrays = [
 		[[1, 2, 3], [1, 2, 3]],

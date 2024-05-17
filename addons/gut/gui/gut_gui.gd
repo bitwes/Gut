@@ -42,7 +42,6 @@ var _resize_left_mouse = {
 signal switch_modes()
 
 var _max_position = Vector2(100, 100)
-var _utils = null
 
 func _ready():
 	_populate_ctrls()

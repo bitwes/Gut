@@ -10,8 +10,8 @@ var CollectedTest = load('res://addons/gut/collected_test.gd')
 
 var _test_prefix = 'test_'
 var _test_class_prefix = 'Test'
-var _utils = GutUtils
-var _lgr = _utils.get_logger()
+
+var _lgr = GutUtils.get_logger()
 
 
 # Array of CollectedScripts.
@@ -83,7 +83,7 @@ func _parse_script(test_script):
 	for i in range(inner_classes.size()):
 		var loaded_inner = loaded.get(inner_classes[i])
 		if(_does_inherit_from_test(loaded_inner)):
-			var ts = CollectedScript.new(_utils, _lgr)
+			var ts = CollectedScript.new(null, _lgr)
 			ts.path = test_script.path
 			ts.inner_class_name = inner_classes[i]
 			_populate_tests(ts)
@@ -106,7 +106,7 @@ func add_script(path):
 		_lgr.error('Could not find script:  ' + path)
 		return
 
-	var ts = CollectedScript.new(_utils, _lgr)
+	var ts = CollectedScript.new(null, _lgr)
 	ts.path = path
 	# Append right away because if we don't test_doubler.gd.TestInitParameters
 	# will HARD crash.  I couldn't figure out what was causing the issue but
@@ -159,7 +159,7 @@ func import_tests(path):
 	else:
 		var sections = f.get_sections()
 		for key in sections:
-			var ts = CollectedScript.new(_utils, _lgr)
+			var ts = CollectedScript.new(null, _lgr)
 			ts.import_from(f, key)
 			_populate_tests(ts)
 			scripts.append(ts)

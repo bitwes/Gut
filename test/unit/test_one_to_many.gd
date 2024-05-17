@@ -1,6 +1,6 @@
 extends "res://addons/gut/test.gd"
 
-var OneToMany = _utils.OneToMany
+var OneToMany = GutUtils.OneToMany
 
 func test_can_make_one():
 	assert_not_null(OneToMany.new())
