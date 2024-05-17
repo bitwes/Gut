@@ -90,7 +90,7 @@ func get_results_dictionary(gut, include_scripts=true):
 
 func write_json_file(gut, path):
 	var dict = get_results_dictionary(gut)
-	var json_text = json.stringify(dict, ' ')
+	var json_text = JSON.stringify(dict, ' ')
 
 	var f_result = GutUtils.write_file(path, json_text)
 	if(f_result != OK):
@@ -103,7 +103,7 @@ func write_json_file(gut, path):
 
 func write_summary_file(gut, path):
 	var dict = get_results_dictionary(gut, false)
-	var json_text = json.stringify(dict, ' ')
+	var json_text = JSON.stringify(dict, ' ')
 
 	var f_result = GutUtils.write_file(path, json_text)
 	if(f_result != OK):

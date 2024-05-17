@@ -218,7 +218,6 @@ func is_running():
 var  _should_print_versions = true # used to cut down on output in tests.
 var _should_print_summary = true
 
-var _test_prefix = 'test_'
 var _file_prefix = 'test_'
 var _inner_class_prefix = 'Test'
 
@@ -237,7 +236,6 @@ var _script_name = null
 var _test_script_objects = []
 
 var _waiting = false
-var _done = false
 
 # msecs ticks when run was started
 var _start_time = 0.0
@@ -308,9 +306,9 @@ func _ready():
 # ------------------------------------------------------------------------------
 func _notification(what):
 	if(what == NOTIFICATION_PREDELETE):
-		for test_script in _test_script_objects:
-			if(is_instance_valid(test_script)):
-				test_script.free()
+		for ts in _test_script_objects:
+			if(is_instance_valid(ts)):
+				ts.free()
 
 		_test_script_objects = []
 		if(is_instance_valid(_awaiter)):
@@ -525,10 +523,10 @@ func _wait_for_continue_button():
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-func _get_indexes_matching_script_name(name):
+func _get_indexes_matching_script_name(script_name):
 	var indexes = [] # empty runs all
 	for i in range(_test_collector.scripts.size()):
-		if(_test_collector.scripts[i].get_filename().find(name) != -1):
+		if(_test_collector.scripts[i].get_filename().find(script_name) != -1):
 			indexes.append(i)
 	return indexes
 
@@ -572,7 +570,6 @@ func _run_test(script_inst, test_name):
 	_lgr.log_test_name()
 	_lgr.set_indent_level(1)
 	_orphan_counter.add_counter('test')
-	var script_result = null
 
 	await script_inst.before_each()
 
@@ -714,7 +711,6 @@ func _test_the_scripts(indexes=[]):
 			continue
 		# ----
 
-		var script_result = null
 		_setup_script(test_script)
 		_doubler.set_strategy(_double_strategy)
 
@@ -736,7 +732,6 @@ func _test_the_scripts(indexes=[]):
 			_stubber.clear()
 			_spy.clear()
 			_current_test = coll_script.tests[i]
-			script_result = null
 
 			# ------------------
 			# SHORTCIRCUI
@@ -754,10 +749,10 @@ func _test_the_scripts(indexes=[]):
 						' has too many parameters:  ', _current_test.arg_count, '.'))
 				elif(_current_test.arg_count == 1):
 					_current_test.was_run = true
-					script_result = await _run_parameterized_test(test_script, _current_test.name)
+					await _run_parameterized_test(test_script, _current_test.name)
 				else:
 					_current_test.was_run = true
-					script_result = await _run_test(test_script, _current_test.name)
+					await _run_test(test_script, _current_test.name)
 
 				if(!_current_test.did_something()):
 					_lgr.risky(str(_current_test.name, ' did not assert'))
@@ -954,7 +949,7 @@ func p(text, level=0):
 # ------------------------------------------------------------------------------
 # Runs all the scripts that were added using add_script
 # ------------------------------------------------------------------------------
-func test_scripts(run_rest=false):
+func test_scripts(_run_rest=false):
 	if(_script_name != null and _script_name != ''):
 		var indexes = _get_indexes_matching_script_name(_script_name)
 		if(indexes == []):
@@ -974,11 +969,11 @@ func run_tests(run_rest=false):
 # ------------------------------------------------------------------------------
 # Runs a single script passed in.
 # ------------------------------------------------------------------------------
-func test_script(script):
-	_test_collector.set_test_class_prefix(_inner_class_prefix)
-	_test_collector.clear()
-	_test_collector.add_script(script)
-	_test_the_scripts()
+# func run_test_script(script):
+# 	_test_collector.set_test_class_prefix(_inner_class_prefix)
+# 	_test_collector.clear()
+# 	_test_collector.add_script(script)
+# 	_test_the_scripts()
 
 
 # ------------------------------------------------------------------------------

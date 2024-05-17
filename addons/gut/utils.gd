@@ -3,12 +3,44 @@ class_name GutUtils
 extends Object
 
 
+
+
+const GUT_METADATA = '__gutdbl'
+
+# Note, these cannot change since places are checking for TYPE_INT to determine
+# how to process parameters.
+enum DOUBLE_STRATEGY{
+	INCLUDE_NATIVE,
+	SCRIPT_ONLY,
+}
+
+enum DIFF {
+	DEEP,
+	SIMPLE
+}
+
+const TEST_STATUSES = {
+	NO_ASSERTS = 'no asserts',
+	SKIPPED = 'skipped',
+	NOT_RUN = 'not run',
+	PENDING = 'pending',
+	# These two got the "ed" b/c pass is a reserved word and I could not
+	# think of better words.
+	FAILED = 'fail',
+	PASSED = 'pass'
+}
+
+
+
+
+static var GutScene = load('res://addons/gut/GutScene.tscn')
+static var LazyLoader = load('res://addons/gut/lazy_loader.gd')
+static var VersionNumbers = load("res://addons/gut/version_numbers.gd")
 # --------------------------------
 # Lazy loaded scripts.  These scripts are lazy loaded so that they can be
 # declared, but will not load when this script is loaded.  This gives us a
 # window at the start of a run to adjust warning levels prior to loading
 # everything.
-static var LazyLoader = load('res://addons/gut/lazy_loader.gd')
 # --------------------------------
 static var AutoFree = LazyLoader.new('res://addons/gut/autofree.gd'):
 	get: return AutoFree.get_loaded()
@@ -110,37 +142,8 @@ static var ThingCounter = LazyLoader.new('res://addons/gut/thing_counter.gd'):
 	get: return ThingCounter.get_loaded()
 	set(val): pass
 # --------------------------------
-
-
-
-
-const GUT_METADATA = '__gutdbl'
-
-# Note, these cannot change since places are checking for TYPE_INT to determine
-# how to process parameters.
-enum DOUBLE_STRATEGY{
-	INCLUDE_NATIVE,
-	SCRIPT_ONLY,
-}
-
-enum DIFF {
-	DEEP,
-	SIMPLE
-}
-
-const TEST_STATUSES = {
-	NO_ASSERTS = 'no asserts',
-	SKIPPED = 'skipped',
-	NOT_RUN = 'not run',
-	PENDING = 'pending',
-	# These two got the "ed" b/c pass is a reserved word and I could not
-	# think of better words.
-	FAILED = 'fail',
-	PASSED = 'pass'
-}
-
 static var avail_fonts = ['AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default']
-static var VersionNumbers = load("res://addons/gut/version_numbers.gd")
+
 static var version_numbers = VersionNumbers.new(
 	# gut_versrion (source of truth)
 	'9.2.1',
@@ -149,8 +152,38 @@ static var version_numbers = VersionNumbers.new(
 )
 
 
-static var GutScene = load('res://addons/gut/GutScene.tscn')
+static func _static_init():
+	print('---- utils initialized ----')
+
+
+# ------------------------------------------------------------------------------
+# Everything should get a logger through this.
+#
+# When running in test mode this will always return a new logger so that errors
+# are not caused by getting bad warn/error/etc counts.
+# ------------------------------------------------------------------------------
+static var _test_mode = false
+static var _lgr = null
+static func get_logger():
+	if(_test_mode):
+		return Logger.new()
+	else:
+		if(_lgr == null):
+			_lgr = Logger.new()
+		return _lgr
+
+
 static var _dyn_gdscript = DynamicGdScript.new()
+static func create_script_from_source(source, override_path=null):
+	var DynamicScript = _dyn_gdscript.create_script_from_source(source, override_path)
+
+	if(typeof(DynamicScript) == TYPE_INT):
+		var l = get_logger()
+		l.error(str('Could not create script from source.  Error:  ', DynamicScript))
+		l.info(str("Source Code:\n", add_line_numbers(source)))
+
+	return DynamicScript
+
 
 static func godot_version_string():
 	return version_numbers.make_godot_version_string()
@@ -394,6 +427,7 @@ static func get_file_as_text(path):
 	f = null
 	return to_return
 
+
 # ------------------------------------------------------------------------------
 # Loops through an array of things and calls a method or checks a property on
 # each element until it finds the returned value.  -1 is returned if not found
@@ -486,33 +520,6 @@ static func add_line_numbers(contents):
 static func get_display_size():
 	return Engine.get_main_loop().get_viewport().get_visible_rect()
 
-
-# ------------------------------------------------------------------------------
-# Everything should get a logger through this.
-#
-# When running in test mode this will always return a new logger so that errors
-# are not caused by getting bad warn/error/etc counts.
-# ------------------------------------------------------------------------------
-static var _test_mode = false
-static var _lgr = null
-static func get_logger():
-	if(_test_mode):
-		return Logger.new()
-	else:
-		if(_lgr == null):
-			_lgr = Logger.new()
-		return _lgr
-
-
-static func create_script_from_source(source, override_path=null):
-	var DynamicScript = _dyn_gdscript.create_script_from_source(source, override_path)
-
-	if(typeof(DynamicScript) == TYPE_INT):
-		var l = get_logger()
-		l.error(str('Could not create script from source.  Error:  ', DynamicScript))
-		l.info(str("Source Code:\n", add_line_numbers(source)))
-
-	return DynamicScript
 
 
 

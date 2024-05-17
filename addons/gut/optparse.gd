@@ -175,7 +175,6 @@ class Option:
 # the command line and make it easily accessible.
 #-------------------------------------------------------------------------------
 var options = []
-var _opts = []
 var _banner = ''
 
 func add(name, default, desc):

@@ -16,8 +16,6 @@ var Optparse = load('res://addons/gut/optparse.gd')
 var Gut = load('res://addons/gut/gut.gd')
 var GutRunner = load('res://addons/gut/gui/GutRunner.tscn')
 
-var json = JSON.new()
-
 # ------------------------------------------------------------------------------
 # Helper class to resolve the various different places where an option can
 # be set.  Using the get_value method will enforce the order of precedence of:
@@ -213,13 +211,13 @@ option (option priority:  command-line, .gutconfig, default)."""
 	resolved.erase("show_help")
 
 	print("Here's a config with all the properties set based off of your current command and config.")
-	print(json.stringify(resolved, '  '))
+	print(JSON.stringify(resolved, '  '))
 
 	for key in resolved:
 		resolved[key] = null
 
 	print("\n\nAnd here's an empty config for you fill in what you want.")
-	print(json.stringify(resolved, ' '))
+	print(JSON.stringify(resolved, ' '))
 
 
 # parse options and run Gut

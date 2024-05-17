@@ -30,14 +30,6 @@ var _title_mouse = {
 	down = false
 }
 
-var _resize_mouse = {
-	down = false
-}
-
-var _resize_left_mouse = {
-	down = false
-}
-
 
 signal switch_modes()
 
@@ -182,7 +174,7 @@ func next_script(path, num_tests):
 	_ctrls.path_file.text = path.get_file()
 
 
-func next_test(test_name):
+func next_test(__test_name):
 	_ctrls.prog_test.value += 1
 
 

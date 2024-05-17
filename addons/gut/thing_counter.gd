@@ -28,10 +28,10 @@ func count(thing):
 
 
 func sum():
-	var count = 0
+	var to_return = 0
 	for key in things:
-		count += things[key]
-	return count
+		to_return += things[key]
+	return to_return
 
 
 func to_s():

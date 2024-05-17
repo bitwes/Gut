@@ -51,8 +51,6 @@ var default_options = {
 
 
 var options = default_options.duplicate()
-var json = JSON.new()
-
 
 func _init() -> void:
 	# Ensure the exclude_addons option in the project settings is enabled when running GUT.
@@ -157,7 +155,7 @@ func _apply_options(opts, gut):
 # Public
 # --------------------------
 func write_options(path):
-	var content = json.stringify(options, ' ')
+	var content = JSON.stringify(options, ' ')
 
 	var f = FileAccess.open(path, FileAccess.WRITE)
 	var result = FileAccess.get_open_error()
