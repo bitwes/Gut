@@ -4,6 +4,11 @@ func get_unique_count():
 	return things.size()
 
 
+func add_thing_to_count(thing):
+	if(!things.has(thing)):
+		things[thing] = 0
+
+
 func add(thing):
 	if(things.has(thing)):
 		things[thing] += 1

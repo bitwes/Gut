@@ -1,5 +1,7 @@
-
-
+# ------------------------------------------------------------------------------
+# Static
+# ------------------------------------------------------------------------------
+static var _usage_counter = load('res://addons/gut/thing_counter.gd').new()
 # ------------------------------------------------------------------------------
 # Instance
 # ------------------------------------------------------------------------------
@@ -9,11 +11,14 @@ var _path = null
 
 func _init(path):
 	_path = path
+	_usage_counter.add_thing_to_count(path)
+
 
 func get_loaded():
 	if(_loaded == null):
 		print('---- loading ', _path, ' ----')
 		_loaded = load(_path)
+	_usage_counter.add(_path)
 	return _loaded
 
 
