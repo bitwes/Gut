@@ -100,6 +100,21 @@ class TestTheNewWaitMethods:
 
 		assert_between(counter.time, .09, .15)
 
+	# TODO: Keep an eye on the Github issue, until Godot fixes the error log
+	# This test passes, but prints the error log:
+	# 	ERROR: Lambda capture at index 0 was freed. Passed "null" instead
+	# Godot issue: https://github.com/godotengine/godot/issues/85947
+	func test_wait_until_is_compatible_with_checking_if_an_object_is_freed():
+		var node = add_child_autoqfree(Node.new())
+		var is_freed = func(): return not is_instance_valid(node)
+		var signaler = add_child_autoqfree(TimedSignaler.new())
+		signaler.the_signal.connect(node.queue_free)
+		signaler.emit_after(.1)
+
+		await assert_eventually(is_freed, 1.0)
+
+		assert_between(counter.time, 0, .2)
+		assert_freed(node)
 
 # ------------------------------------
 # Could not get these to trigger the error I was trying to replicate.  This was
