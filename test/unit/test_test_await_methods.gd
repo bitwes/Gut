@@ -87,6 +87,18 @@ class TestTheNewWaitMethods:
 		await wait_for_signal(signaler.the_signal, 1)
 		assert_between(counter.time, .9, 1.1)
 
+	func test_assert_eventually_waits_until_predicate_function_returns_true():
+		var some_node = add_child_autoqfree(Node.new())
+		var is_named_foo = func(): return some_node.name == 'foo'
+		var signaler = add_child_autoqfree(TimedSignaler.new())
+		signaler.the_signal.connect(func(): some_node.name = 'foo')
+		signaler.emit_after(.1)
+
+		assert_false(is_named_foo.call())
+		await assert_eventually(is_named_foo, 1.0)
+		assert_true(is_named_foo.call())
+
+		assert_between(counter.time, .09, .15)
 
 
 # ------------------------------------

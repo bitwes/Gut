@@ -1150,6 +1150,13 @@ func set_wait_for_signal_or_time(obj, signal_name, max_wait, text=''):
 	_lgr.yield_msg(str('-- Awaiting signal "', signal_name, '" or for ', max_wait, ' second(s) -- ', text))
 	return _awaiter.timeout
 
+# ------------------------------------------------------------------------------
+# Wait for predicate function to return true or a maximum amount of time.
+# ------------------------------------------------------------------------------
+func set_predicate_function_to_wait_until_true(predicate_function: Callable, max_wait, text=''):
+	_awaiter.wait_until(predicate_function, max_wait)
+	_lgr.yield_msg(str('-- Awaiting predicate function to return true or for ', max_wait, ' second(s) -- ', text))
+	return _awaiter.timeout
 
 # ------------------------------------------------------------------------------
 # Returns the script object instance that is currently being run.
@@ -1191,6 +1198,8 @@ func show_orphans(should):
 func get_logger():
 	return _lgr
 
+func get_awaiter():
+	return _awaiter
 
 # ##############################################################################
 # The MIT License (MIT)
