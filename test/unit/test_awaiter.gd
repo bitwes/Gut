@@ -143,3 +143,62 @@ func test_after_timeout_signal_is_disconnected():
 	a.wait_for_signal(s.the_signal, .1)
 	await get_tree().create_timer(.5).timeout
 	assert_not_connected(s, a, 'the_signal')
+
+func test_wait_until_emits_wait_started():
+	var a = add_child_autoqfree(Awaiter.new())
+	watch_signals(a)
+
+	a.wait_until(func(): return true, 10)
+
+	assert_signal_emitted(a, 'wait_started')
+
+func test_wait_until_waits_until_predicate_function_is_true():
+	var node = add_child_autoqfree(Node.new())
+	var is_named_foo = func(): return node.name == 'foo'
+	var a = add_child_autoqfree(Awaiter.new())
+	watch_signals(a)
+
+	a.wait_until(is_named_foo, 10)
+	await get_tree().create_timer(.5).timeout
+	node.name = 'foo'
+
+	await get_tree().create_timer(.05).timeout
+	assert_signal_emitted(a, 'timeout')
+	assert_false(a.did_last_wait_timeout)
+
+
+func test_wait_until_reaches_timeout_when_predicate_function_never_returns_true():
+	var node = add_child_autoqfree(Node.new())
+	var is_named_foo = func(): return node.name == 'foo'
+	var a = add_child_autoqfree(Awaiter.new())
+	watch_signals(a)
+
+	a.wait_until(is_named_foo, .5)
+	await get_tree().create_timer(.8).timeout
+
+	assert_signal_emitted(a, 'timeout')
+	assert_true(a.did_last_wait_timeout)
+
+func test_wait_until_causes_is_waiting_to_be_true_when_waiting():
+	var node = add_child_autoqfree(Node.new())
+	var is_named_foo = func(): return node.name == 'foo'
+	var a = add_child_autoqfree(Awaiter.new())
+
+	a.wait_until(is_named_foo, .5)
+	await get_tree().create_timer(.1).timeout
+
+	assert_true(a.is_waiting())
+
+func test_wait_until_causes_is_waiting_to_be_false_when_predicate_function_returns_true_before_timeout():
+	var node = add_child_autoqfree(Node.new())
+	var is_named_foo = func(): return node.name == 'foo'
+	var a = add_child_autoqfree(Awaiter.new())
+	watch_signals(a)
+
+	a.wait_until(is_named_foo, 10)
+	await get_tree().create_timer(.5).timeout
+	node.name = 'foo'
+
+	# gotta wait for the 2 additional frames
+	await get_tree().create_timer(.05).timeout
+	assert_false(a.is_waiting())
