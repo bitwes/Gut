@@ -152,10 +152,6 @@ static var version_numbers = VersionNumbers.new(
 )
 
 
-static func _static_init():
-	print('---- utils initialized ----')
-
-
 # ------------------------------------------------------------------------------
 # Everything should get a logger through this.
 #

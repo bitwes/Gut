@@ -26,8 +26,9 @@ static var project_warnings := {} :
 
 
 static func _static_init():
+	# print('---- warnings_manager.gd initialized ----')
 	var wm = new()
-	_project_warnings = wm.create_project_warnings_dictionary()
+	_project_warnings = wm.create_warnings_dictionary_from_project_settings()
 
 
 ## Turn all warnings on/off.  Use reset_warnings to restore the original value.
@@ -53,7 +54,7 @@ func create_ignore_all_dictionary():
 	return replace_warnings_values(project_warnings, -1, IGNORE)
 
 
-func create_all_warnings_dictionary():
+func create_warn_all_warnings_dictionary():
 	return replace_warnings_values(project_warnings, -1, WARN)
 
 
@@ -73,7 +74,7 @@ func replace_warnings_values(dict, replace_this, with_this):
 	return to_return
 
 
-func create_project_warnings_dictionary() -> Dictionary :
+func create_warnings_dictionary_from_project_settings() -> Dictionary :
 	var props = ProjectSettings.get_property_list()
 	var to_return = {}
 	for i in props.size():
@@ -83,7 +84,7 @@ func create_project_warnings_dictionary() -> Dictionary :
 	return to_return
 
 
-func _set_project_setting(warning_name : String, value : Variant):
+func set_project_setting_warning(warning_name : String, value : Variant):
 	var property_name = str(GDSCRIPT_WARNING, warning_name)
 	# This check will generate a warning if the setting does not exist
 	if(property_name in ProjectSettings):
@@ -92,7 +93,7 @@ func _set_project_setting(warning_name : String, value : Variant):
 
 func apply_warnings_dictionary(warning_values : Dictionary):
 	for key in warning_values:
-		_set_project_setting(key, warning_values[key])
+		set_project_setting_warning(key, warning_values[key])
 
 
 func print_warnings_dictionary(which : Dictionary):

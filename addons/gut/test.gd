@@ -31,13 +31,12 @@ class_name GutTest
 #
 # Version - see gut.gd
 # ##############################################################################
-# Class that all test scripts must extend.
+# Class that all test scripts must extend.`
 #
 # This provides all the asserts and other testing features.  Test scripts are
 # run by the Gut class in gut.gd
 # ##############################################################################
 extends Node
-
 
 var _compare = GutUtils.Comparator.new()
 
@@ -86,6 +85,7 @@ func _init():
 
 func _str(thing):
 	return _strutils.type2str(thing)
+
 
 func _str_precision(value, precision):
 	var to_return = _str(value)

@@ -16,7 +16,7 @@ static func load_script_ignoring_all_warnings(path):
 
 static func load_script_using_custom_warnings(path, warnings_dictionary):
 	var should_reload = reload_scripts and ResourceLoader.has_cached(path)
-	var current_warns = _wm.create_project_warnings_dictionary()
+	var current_warns = _wm.create_warnings_dictionary_from_project_settings()
 
 	_wm.apply_warnings_dictionary(warnings_dictionary)
 	var s = load(path)

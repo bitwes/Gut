@@ -11,7 +11,7 @@ class PackedSceneDouble:
 	func set_script_obj(obj):
 		_script = obj
 
-	# @warning_ignore("native_method_override")
+	@warning_ignore("native_method_override")
 	func instantiate(edit_state=0):
 		var inst = _scene.instantiate(edit_state)
 		var export_props = []

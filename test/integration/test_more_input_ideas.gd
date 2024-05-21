@@ -1,7 +1,10 @@
 extends GutTest
 
+var skip_script = 'takes too long and these shouldnt even be here'
+
 class SuperButton:
 	extends Button
+
 
 	func p(s1='', s2='', s3='', s4='', s5='', s6=''):
 		print(s1, s2, s3, s4, s5, s6)
