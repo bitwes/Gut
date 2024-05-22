@@ -121,7 +121,6 @@ class TestBasicLoggerOutput:
 		_test_logger = GutUtils.Logger.new()
 		_test_logger.set_gut(gut)
 		_test_logger.set_indent_string('|...')
-		_test_logger._skip_test_name_for_testing = true
 
 	func test_indent_levels():
 		_test_logger.log('0 indent')
