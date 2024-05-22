@@ -38,10 +38,10 @@ var ran_from_editor = true
 
 
 func _ready():
-	print('--- GutRunner _ready ---')
-	if not Engine.is_editor_hint():
-		ProjectSettings.set("debug/gdscript/warnings/exclude_addons", true)
-		# here is where all the warnings should be set.
+	print('---  GUT  ---')
+	GutUtils.WarningsManager.apply_warnings_dictionary(
+		GutUtils.warnings_at_start)
+	GutUtils.LazyLoader.load_all()
 
 	# When used from the panel we have to kick off the tests ourselves b/c
 	# there's no way I know of to interact with the scene that was run via
@@ -57,6 +57,11 @@ func _ready():
 			_gut_config.load_options(runner_json_path)
 
 		call_deferred('run_tests')
+
+
+func _exit_tree():
+	if(!_wrote_results and ran_from_editor):
+		_write_results()
 
 
 func _lazy_make_gut():
@@ -95,17 +100,16 @@ func _write_results():
 		push_error('Could not save bbcode, result = ', FileAccess.get_open_error())
 
 	var exporter = ResultExporter.new()
-	# TODO this should be checked and _wrote_results should maybe not be set, or 
+	# TODO this should be checked and _wrote_results should maybe not be set, or
 	# maybe we do not care.  Whichever, it should be clear.
 	var _f_result = exporter.write_json_file(_gut, result_json_path)
 	_wrote_results = true
 
 
-func _exit_tree():
-	if(!_wrote_results and ran_from_editor):
-		_write_results()
 
-
+# -------------
+# Events
+# -------------
 func _on_tests_finished(should_exit, should_exit_on_success):
 	_write_results()
 
@@ -115,6 +119,10 @@ func _on_tests_finished(should_exit, should_exit_on_success):
 		get_tree().quit()
 
 
+
+# -------------
+# Public
+# -------------
 func run_tests(show_gui=true):
 	_lazy_make_gut()
 
@@ -128,7 +136,9 @@ func run_tests(show_gui=true):
 			add_child(_gut)
 
 	if(ran_from_editor):
-		_gut.end_run.connect(_on_tests_finished.bind(_gut_config.options.should_exit, _gut_config.options.should_exit_on_success))
+		_gut.end_run.connect(_on_tests_finished.bind(
+			_gut_config.options.should_exit,
+			_gut_config.options.should_exit_on_success))
 
 	_gut_config.apply_options(_gut)
 	var run_rest_of_scripts = _gut_config.options.unit_test_name == ''

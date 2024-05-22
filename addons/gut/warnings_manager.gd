@@ -1,4 +1,3 @@
-
 const IGNORE = 0
 const WARN = 1
 const ERROR = 2
@@ -12,7 +11,7 @@ const WARNING_LOOKUP = {
 
 const GDSCRIPT_WARNING = 'debug/gdscript/warnings/'
 
-
+static var reload_scripts = true
 # ---------------------------------------
 # Static
 # ---------------------------------------
@@ -27,8 +26,12 @@ static var project_warnings := {} :
 
 static func _static_init():
 	# print('---- warnings_manager.gd initialized ----')
-	var wm = new()
-	_project_warnings = wm.create_warnings_dictionary_from_project_settings()
+	_project_warnings = create_warnings_dictionary_from_project_settings()
+
+
+
+static func are_warnings_enabled():
+	return ProjectSettings.get(str(GDSCRIPT_WARNING, 'enable'))
 
 
 ## Turn all warnings on/off.  Use reset_warnings to restore the original value.
@@ -43,30 +46,41 @@ static func exclude_addons(should=true):
 
 ## Resets warning settings to what they are set to in Project Settings
 static func reset_warnings():
-	var wm = new()
-	wm.apply_warnings_dictionary(_project_warnings)
+	apply_warnings_dictionary(_project_warnings)
 
+
+
+static func set_project_setting_warning(warning_name : String, value : Variant):
+	var property_name = str(GDSCRIPT_WARNING, warning_name)
+	# This check will generate a warning if the setting does not exist
+	if(property_name in ProjectSettings):
+		ProjectSettings.set(property_name, value)
+
+
+static func apply_warnings_dictionary(warning_values : Dictionary):
+	for key in warning_values:
+		set_project_setting_warning(key, warning_values[key])
 
 # ---------------------------------------
 # Class
 # ---------------------------------------
-func create_ignore_all_dictionary():
+static func create_ignore_all_dictionary():
 	return replace_warnings_values(project_warnings, -1, IGNORE)
 
 
-func create_warn_all_warnings_dictionary():
+static func create_warn_all_warnings_dictionary():
 	return replace_warnings_values(project_warnings, -1, WARN)
 
 
-func replace_warnings_with_ignore(dict):
+static func replace_warnings_with_ignore(dict):
 	return replace_warnings_values(dict, WARN, IGNORE)
 
 
-func replace_errors_with_warnings(dict):
+static func replace_errors_with_warnings(dict):
 	return replace_warnings_values(dict, ERROR, WARN)
 
 
-func replace_warnings_values(dict, replace_this, with_this):
+static func replace_warnings_values(dict, replace_this, with_this):
 	var to_return = dict.duplicate()
 	for key in to_return:
 		if(typeof(to_return[key]) == TYPE_INT and (replace_this == -1 or to_return[key] == replace_this)):
@@ -74,7 +88,7 @@ func replace_warnings_values(dict, replace_this, with_this):
 	return to_return
 
 
-func create_warnings_dictionary_from_project_settings() -> Dictionary :
+static func create_warnings_dictionary_from_project_settings() -> Dictionary :
 	var props = ProjectSettings.get_property_list()
 	var to_return = {}
 	for i in props.size():
@@ -84,19 +98,7 @@ func create_warnings_dictionary_from_project_settings() -> Dictionary :
 	return to_return
 
 
-func set_project_setting_warning(warning_name : String, value : Variant):
-	var property_name = str(GDSCRIPT_WARNING, warning_name)
-	# This check will generate a warning if the setting does not exist
-	if(property_name in ProjectSettings):
-		ProjectSettings.set(property_name, value)
-
-
-func apply_warnings_dictionary(warning_values : Dictionary):
-	for key in warning_values:
-		set_project_setting_warning(key, warning_values[key])
-
-
-func print_warnings_dictionary(which : Dictionary):
+static func print_warnings_dictionary(which : Dictionary):
 	var is_valid = true
 	for key in which:
 		var value_str = str(which[key])
@@ -115,22 +117,18 @@ func print_warnings_dictionary(which : Dictionary):
 	return is_valid
 
 
+static func load_script_ignoring_all_warnings(path):
+	return load_script_using_custom_warnings(path, create_ignore_all_dictionary())
 
 
-# func _set_all_project_settings_warnings(change_this : int, to_this : int):
-# 	var current = create_project_warnings_dictionary()
-# 	for key in current:
-# 		if(typeof(current[key]) == TYPE_INT and (change_this == -1 or current[key] == change_this)):
-# 			_set_project_setting(key, to_this)
+static func load_script_using_custom_warnings(path, warnings_dictionary):
+	var should_reload = reload_scripts and ResourceLoader.has_cached(path)
+	var current_warns = create_warnings_dictionary_from_project_settings()
 
+	apply_warnings_dictionary(warnings_dictionary)
+	var s = load(path)
+	if(should_reload):
+		s.reload()
+	apply_warnings_dictionary(current_warns)
 
-# func set_all_warnings_to_ignore():
-# 	_set_all_project_settings_warnings(WARN, IGNORE)
-
-
-# func set_all_errors_to_warnings():
-# 	_set_all_project_settings_warnings(ERROR, WARN)
-
-
-# func set_all_to_ignore():
-# 	_set_all_project_settings_warnings(-1, IGNORE)
+	return s

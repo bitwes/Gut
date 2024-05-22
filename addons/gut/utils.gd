@@ -2,9 +2,6 @@
 class_name GutUtils
 extends Object
 
-
-
-
 const GUT_METADATA = '__gutdbl'
 
 # Note, these cannot change since places are checking for TYPE_INT to determine
@@ -36,6 +33,7 @@ const TEST_STATUSES = {
 static var GutScene = load('res://addons/gut/GutScene.tscn')
 static var LazyLoader = load('res://addons/gut/lazy_loader.gd')
 static var VersionNumbers = load("res://addons/gut/version_numbers.gd")
+static var WarningsManager = load("res://addons/gut/warnings_manager.gd")
 # --------------------------------
 # Lazy loaded scripts.  These scripts are lazy loaded so that they can be
 # declared, but will not load when this script is loaded.  This gives us a
@@ -150,6 +148,15 @@ static var version_numbers = VersionNumbers.new(
 	# required_godot_version
 	'4.2.0'
 )
+
+
+static var warnings_at_start := { # WarningsManager dictionary
+	exclude_addons = true
+}
+
+static var warnings_when_loading_test_scripts := { # WarningsManager dictionary
+	enable = false
+}
 
 
 # ------------------------------------------------------------------------------

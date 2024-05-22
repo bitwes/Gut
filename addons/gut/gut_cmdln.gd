@@ -225,7 +225,6 @@ func _run_gut():
 	var opt_resolver = OptionResolver.new()
 	opt_resolver.set_base_opts(_gut_config.default_options)
 
-	print("\n\n", ' ---  Gut  ---')
 	var o = setup_options(_gut_config.default_options, _gut_config.valid_fonts)
 
 	var all_options_valid = o.parse()
@@ -254,7 +253,6 @@ func _run_gut():
 			_print_gutconfigs(opt_resolver.get_resolved_values())
 			_end_run(0)
 		else:
-			print('--- running gut ---')
 			_final_opts = opt_resolver.get_resolved_values();
 			_gut_config.options = _final_opts
 

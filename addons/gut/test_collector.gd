@@ -72,7 +72,10 @@ func _parse_script(test_script):
 	var inner_classes = []
 	var scripts_found = []
 
-	var loaded = load(test_script.path)
+	var loaded = GutUtils.WarningsManager.load_script_using_custom_warnings(
+		test_script.path,
+		GutUtils.warnings_when_loading_test_scripts)
+
 	if(_does_inherit_from_test(loaded)):
 		_populate_tests(test_script)
 		scripts_found.append(test_script.path)
