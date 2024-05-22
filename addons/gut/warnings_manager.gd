@@ -11,7 +11,6 @@ const WARNING_LOOKUP = {
 
 const GDSCRIPT_WARNING = 'debug/gdscript/warnings/'
 
-static var reload_scripts = true
 # ---------------------------------------
 # Static
 # ---------------------------------------
@@ -117,18 +116,14 @@ static func print_warnings_dictionary(which : Dictionary):
 	return is_valid
 
 
-static func load_script_ignoring_all_warnings(path):
+static func load_script_ignoring_all_warnings(path : String) -> Variant:
 	return load_script_using_custom_warnings(path, create_ignore_all_dictionary())
 
 
-static func load_script_using_custom_warnings(path, warnings_dictionary):
-	var should_reload = reload_scripts and ResourceLoader.has_cached(path)
+static func load_script_using_custom_warnings(path : String, warnings_dictionary : Dictionary) -> Variant:
 	var current_warns = create_warnings_dictionary_from_project_settings()
-
 	apply_warnings_dictionary(warnings_dictionary)
 	var s = load(path)
-	if(should_reload):
-		s.reload()
 	apply_warnings_dictionary(current_warns)
 
 	return s
