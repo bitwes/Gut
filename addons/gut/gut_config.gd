@@ -50,22 +50,8 @@ var default_options = {
 }
 
 
-
-
 var options = default_options.duplicate()
 
-# func _init() -> void:
-# 	# Ensure the exclude_addons option in the project settings is enabled when running GUT.
-# 	# This is important, because GUT will throw errors if this option is disabled, e.g. due to
-# 	# overriding native methods.
-# 	# When working on addons it is usually desired to disable exclude_addons in order to get proper
-# 	# code diagnostics.
-# 	# This however makes it tedious to run GUT because the option has to be manually disabled before
-# 	# running tests.
-# 	pass
-# 	# if not Engine.is_editor_hint():
-# 	# 	print('---- gut_config _init ----')
-# 	# 	ProjectSettings.set("debug/gdscript/warnings/exclude_addons", true)
 
 func _null_copy(h):
 	var new_hash = {}
