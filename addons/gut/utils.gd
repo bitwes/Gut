@@ -52,7 +52,7 @@ static var Comparator = LazyLoader.new('res://addons/gut/comparator.gd'):
 static var CollectedTest = LazyLoader.new('res://addons/gut/collected_test.gd'):
 	get: return CollectedTest.get_loaded()
 	set(val): pass
-static var CollectedScript = LazyLoader.new('res://addons/gut/collected_test.gd'):
+static var CollectedScript = LazyLoader.new('res://addons/gut/collected_script.gd'):
 	get: return CollectedScript.get_loaded()
 	set(val): pass
 static var CompareResult = LazyLoader.new('res://addons/gut/compare_result.gd'):

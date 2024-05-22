@@ -6,7 +6,7 @@
 #
 # This class also facilitates all the exporting and importing of tests.
 # ------------------------------------------------------------------------------
-var CollectedTest = load('res://addons/gut/collected_test.gd')
+var CollectedTest = GutUtils.CollectedTest
 
 var _lgr = null
 
@@ -37,7 +37,7 @@ var name = '' :
     set(val):pass
 
 
-func _init(__todo_remove_me=null,logger=null):
+func _init(logger=null):
     _lgr = logger
 
 

@@ -1,7 +1,7 @@
 extends GutTest
 
-var CollectedTest = load('res://addons/gut/collected_test.gd')
-var CollectedScript = load('res://addons/gut/collected_script.gd')
+var CollectedTest = GutUtils.CollectedTest
+var CollectedScript = GutUtils.CollectedScript
 
 
 
