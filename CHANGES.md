@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Features
 * @mphe GUT now automatically enables the "Exclude Addons" option when running tests.  This means you don't have to keep enabling/disabling this option if GUT does not conform to your warning/error settings.
 * @plink-plonk-will Elapsed time is now included in the XML export.
+* __Issue__ #612 `InputSender` now sets the `button_mask` property for generated mouse motion events when mouse buttons have been pressed but not released prior to a motion event.
 
 ## Bug Fixes
 * __Issue__ #601 doubles now get a resource path that makes Godot ignore them when "Exclude Addons" is enabled (res://adddons/gut/not_a_real_file/...).
