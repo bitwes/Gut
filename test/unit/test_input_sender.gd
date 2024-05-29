@@ -128,6 +128,7 @@ class TestTheBasics:
 		assert_gt(parent_item.get_child_count(), 0, 'just making sure there is something to free')
 		# could not find a way to trigger this by unreferencing
 		sender._notification(NOTIFICATION_PREDELETE)
+		await wait_frames(5)
 		assert_freed(parent_item, 'sender item node parent')
 
 
