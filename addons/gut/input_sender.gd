@@ -321,6 +321,9 @@ func _new_defaulted_mouse_button_event(position, global_position):
 func _new_defaulted_mouse_motion_event(position, global_position):
 	var event = InputEventMouseMotion.new()
 	_apply_last_position_and_set_last_position(event, position, global_position)
+	for key in _pressed_mouse_buttons:
+		if(_pressed_mouse_buttons[key].pressed):
+			event.button_mask += key
 	return event
 
 

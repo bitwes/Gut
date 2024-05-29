@@ -1,4 +1,5 @@
 extends 'res://addons/gut/gut_to_move.gd'
+class_name GutMain
 
 # ##############################################################################
 #
@@ -917,7 +918,7 @@ func _get_files(path, prefix, suffix):
 # public
 #
 #########################
-func get_elapsed_time():
+func get_elapsed_time() -> float:
 	var to_return = 0.0
 	if(_start_time != 0.0):
 		to_return = Time.get_ticks_msec() - _start_time
