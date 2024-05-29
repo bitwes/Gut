@@ -18,9 +18,9 @@ class HasInputEvents:
 
 class InputEventsOrder:
 	extends Control
-	
+
 	const RIGHT_ORDER = ["input", "gui_signal", "gui", "unhandled"]
-	
+
 	var got_input_in_order: Array = []
 
 	func _init() -> void:
@@ -128,6 +128,7 @@ class TestTheBasics:
 		assert_gt(parent_item.get_child_count(), 0, 'just making sure there is something to free')
 		# could not find a way to trigger this by unreferencing
 		sender._notification(NOTIFICATION_PREDELETE)
+		await wait_frames(5)
 		assert_freed(parent_item, 'sender item node parent')
 
 
@@ -424,6 +425,89 @@ class TestMouseMotion:
 		assert_eq(r.inputs[0].position, Vector2(15, 15), 'position')
 		assert_eq(r.inputs[0].global_position, Vector2(25, 25), 'global_position')
 
+	func test_mouse_motion_sends_left_button_index_when_button_pressed():
+		var r = autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+
+		sender\
+			.mouse_left_button_down(Vector2(10, 10))\
+			.mouse_motion(Vector2(12, 12))
+
+		assert_eq(r.inputs[1].button_mask, MOUSE_BUTTON_LEFT)
+
+	func test_mouse_motion_sends_right_button_index_when_button_pressed():
+		var r = autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+
+		sender\
+			.mouse_right_button_down(Vector2(10, 10))\
+			.mouse_motion(Vector2(12, 12))
+
+		assert_eq(r.inputs[1].button_mask, MOUSE_BUTTON_RIGHT)
+
+	func test_mouse_motion_sends_mask_for_all_buttons_when_multiple_pressed():
+		var r = autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+
+		sender\
+			.mouse_right_button_down(Vector2(10, 10))\
+			.mouse_left_button_down(Vector2(10, 10))\
+			.mouse_motion(Vector2(12, 12))
+
+		assert_eq(r.inputs[2].button_mask, MOUSE_BUTTON_RIGHT + MOUSE_BUTTON_LEFT)
+
+	func test_mouse_motion_does_not_send_button_when_released():
+		var r = autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+
+		sender\
+			.mouse_left_button_down(Vector2(10, 10))\
+			.mouse_left_button_up(Vector2(10, 10))\
+			.mouse_motion(Vector2(12, 12))
+
+		assert_eq(r.inputs[2].button_mask, 0)
+
+	func test_mouse_relative_motion_sends_left_button_index_when_button_pressed():
+		var r = autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+
+		sender\
+			.mouse_left_button_down(Vector2(10, 10))\
+			.mouse_relative_motion(Vector2(12, 12))
+
+		assert_eq(r.inputs[1].button_mask, MOUSE_BUTTON_LEFT)
+
+	func test_mouse_relative_motion_sends_right_button_index_when_button_pressed():
+		var r = autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+
+		sender\
+			.mouse_right_button_down(Vector2(10, 10))\
+			.mouse_relative_motion(Vector2(12, 12))
+
+		assert_eq(r.inputs[1].button_mask, MOUSE_BUTTON_RIGHT)
+
+	func test_mouse_relative_motion_sends_mask_for_all_buttons_when_multiple_pressed():
+		var r = autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+
+		sender\
+			.mouse_right_button_down(Vector2(10, 10))\
+			.mouse_left_button_down(Vector2(10, 10))\
+			.mouse_relative_motion(Vector2(12, 12))
+
+		assert_eq(r.inputs[2].button_mask, MOUSE_BUTTON_RIGHT + MOUSE_BUTTON_LEFT)
+
+	func test_mouse_relative_motion_does_not_send_button_when_released():
+		var r = autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+
+		sender\
+			.mouse_left_button_down(Vector2(10, 10))\
+			.mouse_left_button_up(Vector2(10, 10))\
+			.mouse_relative_motion(Vector2(12, 12))
+
+		assert_eq(r.inputs[2].button_mask, 0)
 
 class TestSendEvent:
 	extends "res://addons/gut/test.gd"
@@ -448,14 +532,14 @@ class TestSendEvent:
 		var event = InputEventKey.new()
 		sender.send_event(event)
 		assert_eq(r.gui_event, event)
-	
-	func test_send_event_causes_receiver_to_emit_gui_input_signal():  
-		var r = autofree(HasInputEvents.new())  
-		watch_signals(r)  
-		var sender = InputSender.new(r)  
-		var event = InputEventKey.new()  
-		sender.send_event(event)  
-		assert_signal_emitted_with_parameters(r, 'gui_input', [event])  
+
+	func test_send_event_causes_receiver_to_emit_gui_input_signal():
+		var r = autofree(HasInputEvents.new())
+		watch_signals(r)
+		var sender = InputSender.new(r)
+		var event = InputEventKey.new()
+		sender.send_event(event)
+		assert_signal_emitted_with_parameters(r, 'gui_input', [event])
 
 	func test_sends_event_to_unhandled_input():
 		var r = autofree(HasInputEvents.new())
