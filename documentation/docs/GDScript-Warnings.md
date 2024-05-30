@@ -1,4 +1,4 @@
-# GDScript-Warnings
+# GDScript Warnings
 
 GUT has a bit of legacy code in it.  I'm pretty proud that GUT has existed long enough to have legacy code, but that means GUT development hasn't benefited from all the warnings that Godot has introduced over the years.  GUT also has to do some things that you shouldn't normally do.  If you are not developing an addon, we recommend that "exclude addons" remain enabled (it is enabled by default).  Excluding addons will cut down on the noise generated from GUT.
 
