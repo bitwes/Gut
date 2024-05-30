@@ -3,7 +3,7 @@
 # -- Project information
 
 project = 'GUT'
-copyright = '2023, Butch Wesley'
+copyright = '2024, Butch Wesley'
 author = 'bitwes'
 
 release = '9.2.1'
