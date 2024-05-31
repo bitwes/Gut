@@ -24,10 +24,6 @@ These are changes to Godot that affect how GUT is used/implemented.  There is mo
 * To aid refactoring, `assert_property` and `assert_property_with_backing_variable` will warn if any "public accessors" are found for the property ('get_' and 'set_' methods).
 * `assert_property` now requires an instance instead of also working with a loaded objects.
 * Doubling strategy flags have been renamed to `INCLUDE_NATIVE` (was `FULL`) and `SCRIPT_ONLY` (was `PARTIAL`).  The default is `SCRIPT_ONLY`.  I wanted something more descriptive and less likely to be confused with partial doubles.
-* Added support for a `skip_script` test-script variable.  This can be added to any test-script or inner-class causing GUT to skip running tests in that script.  The script will be included in the "risky" count and appear in the summary as skipped.  This was done to help porting tests to 4.0 but might stick around as a permanent feature.
-```gdscript
-var skip_script = 'The reason for skipping.  This will be printed in the output.'
-```
 * The various `yield_` methods have been deprecated but are still supported to make conversions easier.  The new syntax for `yield_to`, `yield_for`, or `yield_frames` is:
 ```gdscript
 await yield_to(signaler, 'the_signal_name', 5, 'optional message')

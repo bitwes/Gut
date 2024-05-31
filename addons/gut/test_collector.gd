@@ -106,8 +106,14 @@ func add_script(path):
 
 	# SHORTCIRCUIT
 	if(!FileAccess.file_exists(path)):
-		_lgr.error('Could not find script:  ' + path)
-		return
+		# This check was added so tests could create dynmaic scripts and add
+		# them to be run through gut.  This helps cut down on creating test
+		# scripts to be used in test/resources.
+		if(ResourceLoader.has_cached(path)):
+			_lgr.info("Using cached version of " + path)
+		else:
+			_lgr.error('Could not find script:  ' + path)
+			return
 
 	var ts = CollectedScript.new(_lgr)
 	ts.path = path

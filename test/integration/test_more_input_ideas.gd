@@ -1,10 +1,7 @@
 extends GutTest
 
-var skip_script = 'takes too long and these shouldnt even be here'
-
 class SuperButton:
 	extends Button
-
 
 	func p(s1='', s2='', s3='', s4='', s5='', s6=''):
 		print(s1, s2, s3, s4, s5, s6)
@@ -38,6 +35,9 @@ class DraggableButton:
 			_mouse_down = event.pressed
 		elif(event is InputEventMouseMotion and _mouse_down):
 			position += event.relative
+
+func should_skip_script():
+	return 'takes too long and these shouldnt even be here'
 
 
 func _print_emitted_signals(thing):

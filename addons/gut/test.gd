@@ -254,19 +254,22 @@ func _create_obj_from_type(type):
 # Virtual Methods
 # #######################
 
-# alias for prerun_setup
+func should_skip_script():
+	return false
+
+
 func before_all():
 	pass
 
-# alias for setup
+
 func before_each():
 	pass
 
-# alias for postrun_teardown
+
 func after_all():
 	pass
 
-# alias for teardown
+
 func after_each():
 	pass
 

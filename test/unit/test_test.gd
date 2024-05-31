@@ -791,7 +791,8 @@ class TestAccessorAsserts:
 class TestAssertExports:
 	extends BaseTestClass
 
-	var skip_script = 'Not implemented in 4.0'
+	func should_skip_script():
+		return 'Not implemented in 4.0'
 
 	class NoProperty:
 		func _unused():
