@@ -106,8 +106,11 @@ func add_script(path):
 
 	# SHORTCIRCUIT
 	if(!FileAccess.file_exists(path)):
-		_lgr.error('Could not find script:  ' + path)
-		return
+		if(ResourceLoader.has_cached(path)):
+			_lgr.info("Using cached version of " + path)
+		else:
+			_lgr.error('Could not find script:  ' + path)
+			return
 
 	var ts = CollectedScript.new(_lgr)
 	ts.path = path

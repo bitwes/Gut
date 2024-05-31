@@ -653,6 +653,37 @@ func _call_after_all(test_script, collected_script):
 
 
 # ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func _should_skip_script(test_script, collected_script):
+	var skip_message = 'not skipped'
+	var skip_value = test_script.get('skip_script')
+	var should_skip = false
+
+	if(skip_value == null):
+		skip_value = test_script.should_skip_script()
+	else:
+		_lgr.deprecated('Using the skip_script var has been deprecated.  Implement the new should_skip_script() method in your test instead.')
+
+	if(skip_value != null):
+		if(typeof(skip_value) == TYPE_BOOL):
+			should_skip = skip_value
+			if(skip_value):
+				skip_message = 'TRUE was returned'
+		elif(typeof(skip_value) == TYPE_STRING):
+			should_skip = true
+			skip_message = skip_value
+
+	if(should_skip):
+		var msg = str('- [Script skipped]:  ', skip_message)
+		_lgr.inc_indent()
+		_lgr.log(msg, _lgr.fmts.yellow)
+		_lgr.dec_indent()
+		collected_script.skip_reason = skip_message
+		collected_script.was_skipped = true
+
+	return should_skip
+
+# ------------------------------------------------------------------------------
 # Run all tests in a script.  This is the core logic for running tests.
 # ------------------------------------------------------------------------------
 func _test_the_scripts(indexes=[]):
@@ -698,22 +729,15 @@ func _test_the_scripts(indexes=[]):
 
 		var test_script = coll_script.get_new()
 
+		_setup_script(test_script)
+		_doubler.set_strategy(_double_strategy)
+
 		# ----
 		# SHORTCIRCUIT
 		# skip_script logic
-		var skip_script = test_script.get('skip_script')
-		if(skip_script != null):
-			var msg = str('- [Script skipped]:  ', skip_script)
-			_lgr.inc_indent()
-			_lgr.log(msg, _lgr.fmts.yellow)
-			_lgr.dec_indent()
-			coll_script.skip_reason = skip_script
-			coll_script.was_skipped = true
+		if(_should_skip_script(test_script, coll_script)):
 			continue
 		# ----
-
-		_setup_script(test_script)
-		_doubler.set_strategy(_double_strategy)
 
 		# !!!
 		# Hack so there isn't another indent to this monster of a method.  if
@@ -729,6 +753,7 @@ func _test_the_scripts(indexes=[]):
 		# Each test in the script
 		var skip_suffix = '_skip__'
 		coll_script.mark_tests_to_skip_with_suffix(skip_suffix)
+
 		for i in range(coll_script.tests.size()):
 			_stubber.clear()
 			_spy.clear()

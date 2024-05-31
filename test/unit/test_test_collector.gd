@@ -130,7 +130,8 @@ class TestTestsWithParameters:
 class TestExportImport:
 	extends GutInternalTester
 
-	var skip_script = 'Not implemented in 4.0'
+	func should_skip_script():
+		return 'Not implemented in 4.0'
 
 	var SCRIPTS_ROOT = 'res://test/resources/parsing_and_loading_samples/'
 	var EXPORT_FILE = 'user://exported_tests.cfg'
