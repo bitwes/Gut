@@ -668,7 +668,7 @@ func _should_skip_script(test_script, collected_script):
 		if(typeof(skip_value) == TYPE_BOOL):
 			should_skip = skip_value
 			if(skip_value):
-				skip_message = 'TRUE was returned'
+				skip_message = 'script marked to skip'
 		elif(typeof(skip_value) == TYPE_STRING):
 			should_skip = true
 			skip_message = skip_value
