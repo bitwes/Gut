@@ -125,11 +125,6 @@ func get_test_named(test_name):
 	return GutUtils.search_array(tests, 'name', test_name)
 
 
-func mark_tests_to_skip_with_suffix(suffix):
-	for single_test in tests:
-		single_test.should_skip = single_test.name.ends_with(suffix)
-
-
 func get_ran_test_count():
 	var count = 0
 	for t in tests:

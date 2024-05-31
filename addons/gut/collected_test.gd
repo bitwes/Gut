@@ -31,7 +31,7 @@ var line_number = -1
 
 # Set internally by Gut using whatever reason Gut wants to use to set this.
 # Gut will skip these marked true and the test will be listed as risky.
-var should_skip = false
+var should_skip = false  # -- Currently not used by GUT don't believe ^
 
 var pass_texts = []
 var fail_texts = []

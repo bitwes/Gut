@@ -4,6 +4,38 @@ These are all the methods, bells, whistles and blinky lights you get when you ex
 
 Most sample code listed for the methods can be found here in [test_readme_examples.gd](https://github.com/bitwes/Gut/blob/master/test/samples/test_readme_examples.gd)
 
+## Setup/Teardown
+Implement these virtual methods in your test script to run code at key points during the execution of the test script.
+
+### before_all
+This method is run prior to to running any test.  This is a great place to perform one time setup for the script.
+``` gdscript
+var _foo = null
+func before_all():
+	_foo = Foo.instantiate()
+```
+
+### before_each
+This method is called right before each test.
+``` gdscript
+func before_each():
+	_foo.reset()
+```
+
+### after_each
+This method is run after each test.
+``` gdscript
+func after_each():
+	pass # could not think of a fun thing to go here.
+```
+
+### after_all
+This is called after all tests have been executed.  This is a good place to clean up after yourself.
+``` gdscript
+func after_all():
+	_foo.queue_free()
+```
+
 
 ## Assertions
 
@@ -1395,6 +1427,22 @@ Performs a deep comparison between two arrays or dictionaries.  A `CompareResult
 `set_double_strategy(strategy)`
 
 See [Double Strategy](Double-Strategy)
+
+
+### should_skip_script
+This virtual method is run after the script has been prepped for execution, but before `before_all` is executed.  If you implement this method and return `true` or a `String` (the string is displayed in the log) then GUT will stop executing the script and mark it as risky.  You might want to do this because:
+* You are porting tests from 3.x to 4.x and you don't want to comment everything out.
+* Skipping tests that should not be run when in `headless` mode such as input testing that does not work in headless.
+``` gdscript
+func should_skip_script():
+	if DisplayServer.get_name() == "headless":
+		return "Skip Input tests when running headless"
+```
+* If you have tests that would normally cause the debugger to break on an error, you can skip the script if the debugger is enabled so that the run is not interrupted.
+``` gdscript
+func should_skip_script():
+	return EngineDebugger.is_active()
+```
 
 
 

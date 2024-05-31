@@ -751,19 +751,10 @@ func _test_the_scripts(indexes=[]):
 			await _call_before_all(test_script, coll_script)
 
 		# Each test in the script
-		var skip_suffix = '_skip__'
-		coll_script.mark_tests_to_skip_with_suffix(skip_suffix)
-
 		for i in range(coll_script.tests.size()):
 			_stubber.clear()
 			_spy.clear()
 			_current_test = coll_script.tests[i]
-
-			# ------------------
-			# SHORTCIRCUI
-			if(_current_test.should_skip):
-				continue
-			# ------------------
 
 			if((_unit_test_name != '' and _current_test.name.find(_unit_test_name) > -1) or
 				(_unit_test_name == '')):

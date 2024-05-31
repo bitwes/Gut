@@ -2,15 +2,35 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-# Next Version
+# 9.2.2
 
 ## Features
 * @mphe GUT now automatically enables the "Exclude Addons" option when running tests.  This means you don't have to keep enabling/disabling this option if GUT does not conform to your warning/error settings.
 * @plink-plonk-will Elapsed time is now included in the XML export.
 * __Issue__ #612 `InputSender` now sets the `button_mask` property for generated mouse motion events when mouse buttons have been pressed but not released prior to a motion event.
+* __Issue__ #598 Added the virtual method `should_skip_script` to `GutTest`.  If you impelement this method and return `true` or a `String`, then GUT will skip the script.  Skipped scripts are marked as "risky" in the final counts.  This can be useful when skipping scripts that should not be run under certiain circumstances such as:
+    * You are porting tests from 3.x to 4.x and you don't want to comment everything out.
+    * Skipping tests that should not be run when in `headless` mode.
+    ``` gdscript
+    func should_skip_script():
+        if DisplayServer.get_name() == "headless":
+            return "Skip Input tests when running headless"
+    ```
+    * If you have tests that would normally cause the debugger to break on an error, you can skip the script if the debugger is enabled so that the run is not interrupted.
+    ``` gdscript
+    func should_skip_script():
+        return EngineDebugger.is_active()
+    ```
+
 
 ## Bug Fixes
 * __Issue__ #601 doubles now get a resource path that makes Godot ignore them when "Exclude Addons" is enabled (res://adddons/gut/not_a_real_file/...).
+
+
+## Deprecations
+* The optional `GutTest` script variable `skip_script` has been deprecated.  Use the new `should_skip_script` method instead.
+
+
 
 
 # 9.2.1
