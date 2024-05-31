@@ -5,13 +5,13 @@
 #
 # This also handles exporting and importing tests.
 # ------------------------------------------------------------------------------
-var CollectedScript = load('res://addons/gut/collected_script.gd')
-var CollectedTest = load('res://addons/gut/collected_test.gd')
+var CollectedScript = GutUtils.CollectedScript
+var CollectedTest = GutUtils.CollectedTest
 
 var _test_prefix = 'test_'
 var _test_class_prefix = 'Test'
-var _utils = load('res://addons/gut/utils.gd').get_instance()
-var _lgr = _utils.get_logger()
+
+var _lgr = GutUtils.get_logger()
 
 
 # Array of CollectedScripts.
@@ -52,7 +52,7 @@ func _get_inner_test_class_names(loaded):
 	var const_map = loaded.get_script_constant_map()
 	for key in const_map:
 		var thing = const_map[key]
-		if(_utils.is_gdscript(thing)):
+		if(GutUtils.is_gdscript(thing)):
 			if(key.begins_with(_test_class_prefix)):
 				if(_does_inherit_from_test(thing)):
 					inner_classes.append(key)
@@ -72,7 +72,10 @@ func _parse_script(test_script):
 	var inner_classes = []
 	var scripts_found = []
 
-	var loaded = load(test_script.path)
+	var loaded = GutUtils.WarningsManager.load_script_using_custom_warnings(
+		test_script.path,
+		GutUtils.warnings_when_loading_test_scripts)
+
 	if(_does_inherit_from_test(loaded)):
 		_populate_tests(test_script)
 		scripts_found.append(test_script.path)
@@ -83,7 +86,7 @@ func _parse_script(test_script):
 	for i in range(inner_classes.size()):
 		var loaded_inner = loaded.get(inner_classes[i])
 		if(_does_inherit_from_test(loaded_inner)):
-			var ts = CollectedScript.new(_utils, _lgr)
+			var ts = CollectedScript.new(_lgr)
 			ts.path = test_script.path
 			ts.inner_class_name = inner_classes[i]
 			_populate_tests(ts)
@@ -106,7 +109,7 @@ func add_script(path):
 		_lgr.error('Could not find script:  ' + path)
 		return
 
-	var ts = CollectedScript.new(_utils, _lgr)
+	var ts = CollectedScript.new(_lgr)
 	ts.path = path
 	# Append right away because if we don't test_doubler.gd.TestInitParameters
 	# will HARD crash.  I couldn't figure out what was causing the issue but
@@ -159,7 +162,7 @@ func import_tests(path):
 	else:
 		var sections = f.get_sections()
 		for key in sections:
-			var ts = CollectedScript.new(_utils, _lgr)
+			var ts = CollectedScript.new(_lgr)
 			ts.import_from(f, key)
 			_populate_tests(ts)
 			scripts.append(ts)
@@ -168,7 +171,7 @@ func import_tests(path):
 
 
 func get_script_named(name):
-	return _utils.search_array(scripts, 'get_filename_and_inner', name)
+	return GutUtils.search_array(scripts, 'get_filename_and_inner', name)
 
 
 func get_test_named(script_name, test_name):

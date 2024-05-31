@@ -5,9 +5,8 @@ enum {
 	SIMPLE
 }
 
-var _utils = load('res://addons/gut/utils.gd').get_instance()
-var _strutils = _utils.Strutils.new()
-var _compare = _utils.Comparator.new()
+var _strutils = GutUtils.Strutils.new()
+var _compare = GutUtils.Comparator.new()
 var DiffTool = load('res://addons/gut/diff_tool.gd')
 
 var _value_1 = null
@@ -69,7 +68,7 @@ func _init(v1,v2,diff_type=DEEP):
 
 
 func _find_differences(v1, v2):
-	if(_utils.are_datatypes_same(v1, v2)):
+	if(GutUtils.are_datatypes_same(v1, v2)):
 		if(typeof(v1) == TYPE_ARRAY):
 			_brackets = {'open':'[', 'close':']'}
 			_desc_things = 'indexes'
@@ -80,10 +79,10 @@ func _find_differences(v1, v2):
 			_diff_dictionary(v1, v2)
 		else:
 			_invalidate()
-			_utils.get_logger().error('Only Arrays and Dictionaries are supported.')
+			GutUtils.get_logger().error('Only Arrays and Dictionaries are supported.')
 	else:
 		_invalidate()
-		_utils.get_logger().error('Only Arrays and Dictionaries are supported.')
+		GutUtils.get_logger().error('Only Arrays and Dictionaries are supported.')
 
 
 func _diff_array(a1, a2):

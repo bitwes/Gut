@@ -12,7 +12,7 @@ class BaseTest:
 
 	func get_source(thing):
 		var to_return = null
-		if(_utils.is_instance(thing)):
+		if(GutUtils.is_instance(thing)):
 			to_return = thing.get_script().get_source_code()
 		else:
 			to_return = thing.source_code
@@ -27,7 +27,7 @@ class BaseTest:
 			if(print_source_when_failing):
 				var header = str('------ Source for ', _strutils.type2str(thing), ' ------')
 				gut.p(header)
-				gut.p(_utils.add_line_numbers(source))
+				gut.p(GutUtils.add_line_numbers(source))
 		else:
 			pass_test(msg)
 
@@ -42,12 +42,12 @@ class BaseTest:
 			if(print_source_when_failing):
 				var header = str('------ Source for ', _strutils.type2str(thing), ' ------')
 				gut.p(header)
-				gut.p(_utils.add_line_numbers(source))
+				gut.p(GutUtils.add_line_numbers(source))
 
 
 	func print_source(thing):
 		var source = get_source(thing)
-		gut.p(_utils.add_line_numbers(source))
+		gut.p(GutUtils.add_line_numbers(source))
 
 
 
@@ -56,14 +56,14 @@ class TestTheBasics:
 
 	var _doubler = null
 
-	var stubber = _utils.Stubber.new()
+	var stubber = GutUtils.Stubber.new()
 	func before_each():
 		stubber.clear()
 		_doubler = Doubler.new()
 		_doubler.set_stubber(stubber)
 		_doubler.set_gut(gut)
 		_doubler.set_strategy(DOUBLE_STRATEGY.SCRIPT_ONLY)
-		_doubler.set_logger(_utils.Logger.new())
+		_doubler.set_logger(GutUtils.Logger.new())
 		_doubler.print_source = false
 
 	func test_get_set_stubber():
@@ -92,7 +92,7 @@ class TestTheBasics:
 		assert_eq(_doubler.get_logger(), _doubler._method_maker.get_logger())
 
 	func test_get_set_strategy():
-		assert_accessors(_doubler, 'strategy', _utils.DOUBLE_STRATEGY.SCRIPT_ONLY,  _utils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
+		assert_accessors(_doubler, 'strategy', GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY,  GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
 
 	func test_cannot_set_strategy_to_invalid_values():
 		var default = _doubler.get_strategy()
@@ -101,8 +101,8 @@ class TestTheBasics:
 		assert_errored(_doubler, 1)
 
 	func test_can_set_strategy_in_constructor():
-		var d = Doubler.new(_utils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
-		assert_eq(d.get_strategy(), _utils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
+		var d = Doubler.new(GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
+		assert_eq(d.get_strategy(), GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
 
 
 class TestDoublingScripts:
@@ -110,7 +110,7 @@ class TestDoublingScripts:
 
 	var _doubler = null
 
-	var stubber = _utils.Stubber.new()
+	var stubber = GutUtils.Stubber.new()
 	func before_each():
 		stubber.clear()
 		_doubler = Doubler.new()
@@ -192,7 +192,7 @@ class TestAddingIgnoredMethods:
 	extends BaseTest
 	var _doubler = null
 
-	var stubber = _utils.Stubber.new()
+	var stubber = GutUtils.Stubber.new()
 	func before_each():
 		stubber.clear()
 		_doubler = Doubler.new()
@@ -212,7 +212,7 @@ class TestAddingIgnoredMethods:
 
 	func test_when_ignored_methods_are_a_super_method_they_are_not_present_in_double_code():
 		_doubler.add_ignored_method(DoubleMe, 'is_connected')
-		var c = _doubler.double(DoubleMe, _utils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
+		var c = _doubler.double(DoubleMe, GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
 		assert_source_not_contains(c.new(), 'is_connected')
 
 	func test_can_double_classes_with_static_methods():
@@ -225,7 +225,7 @@ class TestDoubleScene:
 	extends BaseTest
 	var _doubler = null
 
-	var stubber = _utils.Stubber.new()
+	var stubber = GutUtils.Stubber.new()
 	func before_each():
 		stubber.clear()
 		_doubler = Doubler.new()
@@ -249,12 +249,12 @@ class TestDoubleScene:
 		assert_eq(inst.__gutdbl.thepath, DOUBLE_ME_SCENE_PATH)
 
 	func test_can_override_strategy_when_doubling_scene():
-		_doubler.set_strategy(_utils.DOUBLE_STRATEGY.SCRIPT_ONLY)
-		var inst = autofree(_doubler.double_scene(DoubleMeScene, _utils.DOUBLE_STRATEGY.INCLUDE_NATIVE).instantiate())
+		_doubler.set_strategy(GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY)
+		var inst = autofree(_doubler.double_scene(DoubleMeScene, GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE).instantiate())
 		assert_source_contains(inst, 'func is_blocking_signals')
 
 	func test_full_start_has_block_signals():
-		_doubler.set_strategy(_utils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
+		_doubler.set_strategy(GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
 		var inst = autofree(_doubler.double_scene(DoubleMeScene).instantiate())
 		assert_source_contains(inst, 'func is_blocking_signals')
 
@@ -266,26 +266,26 @@ class TestDoubleStrategyIncludeNative:
 		pass
 
 	var doubler = null
-	var stubber = _utils.Stubber.new()
+	var stubber = GutUtils.Stubber.new()
 
 
 	func before_each():
 		stubber.clear()
-		doubler = Doubler.new(_utils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
+		doubler = Doubler.new(GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
 		doubler.set_stubber(stubber)
 		doubler.print_source = false
 
 
 	func test_built_in_overloading_ony_happens_on_full_strategy():
-		doubler.set_strategy(_utils.DOUBLE_STRATEGY.SCRIPT_ONLY)
+		doubler.set_strategy(GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY)
 		var inst = autofree(doubler.double(DoubleMe).new())
 		var txt = get_source(inst)
 		assert_false(txt == '', "text is not empty")
 		assert_source_not_contains(inst, 'func is_blocking_signals', 'does not have non-overloaded methods')
 
 	func test_can_override_strategy_when_doubling_script():
-		doubler.set_strategy(_utils.DOUBLE_STRATEGY.SCRIPT_ONLY)
-		var inst = doubler.double(DoubleMe, _utils.DOUBLE_STRATEGY.INCLUDE_NATIVE).new()
+		doubler.set_strategy(GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY)
+		var inst = doubler.double(DoubleMe, GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE).new()
 		autofree(inst)
 		assert_source_contains(inst, 'func is_blocking_signals')
 
@@ -344,7 +344,7 @@ class TestPartialDoubles:
 	extends BaseTest
 
 	var doubler = null
-	var stubber = _utils.Stubber.new()
+	var stubber = GutUtils.Stubber.new()
 
 	func before_each():
 		stubber.clear()
@@ -388,7 +388,7 @@ class TestDoubleGDNaviteClasses:
 	extends BaseTest
 
 	var _doubler = null
-	var _stubber = _utils.Stubber.new()
+	var _stubber = GutUtils.Stubber.new()
 
 	func before_each():
 		_stubber.clear()
@@ -422,8 +422,8 @@ class TestDoubleInnerClasses:
 
 	func before_each():
 		doubler = Doubler.new()
-		doubler.set_stubber(_utils.Stubber.new())
-		doubler.set_logger(_utils.Logger.new())
+		doubler.set_stubber(GutUtils.Stubber.new())
+		doubler.set_logger(GutUtils.Logger.new())
 
 	func test_when_inner_class_not_registered_it_generates_error():
 		var  Dbl = doubler.double(InnerClasses.InnerA)

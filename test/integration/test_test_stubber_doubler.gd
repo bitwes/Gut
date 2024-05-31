@@ -122,13 +122,13 @@ class TestIgnoreMethodsWhenDoubling:
 		add_child_autofree(_test)
 
 	func test_sends_loaded_script_to_the_doubler():
-		var m_doubler = double(_utils.Doubler).new()
+		var m_doubler = double(GutUtils.Doubler).new()
 		_test_gut._doubler = m_doubler
 		_test.ignore_method_when_doubling(DoubleMe, 'two')
 		assert_called(m_doubler, 'add_ignored_method', [DoubleMe, 'two'])
 
 	func test_sends_loaded_scene_to_the_doubler():
-		var m_doubler = double(_utils.Doubler).new()
+		var m_doubler = double(GutUtils.Doubler).new()
 		_test_gut._doubler = m_doubler
 		_test.ignore_method_when_doubling(DoubleMeScene, 'two')
 		assert_called(m_doubler, 'add_ignored_method',
@@ -409,7 +409,7 @@ class TestStub:
 
 	func before_all():
 		_gut = Gut.new()
-		_gut.logger = _utils.Logger.new()
+		_gut.logger = GutUtils.Logger.new()
 		_test = Test.new()
 		_test.gut = _gut
 

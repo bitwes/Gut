@@ -1,4 +1,5 @@
 extends Node
+
 var _value = 0
 
 var should_might_await_await = true

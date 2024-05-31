@@ -4,10 +4,8 @@
 # to a json file.  It is also responsible for applying these settings to GUT.
 #
 # ##############################################################################
-var Gut = load('res://addons/gut/gut.gd')
-
-
 var valid_fonts = ['AnonymousPro', 'CourierPro', 'LobsterTwo', 'Default']
+
 var default_options = {
 	background_color = Color(.15, .15, .15, 1).to_html(),
 	config_file = 'res://.gutconfig.json',
@@ -53,19 +51,7 @@ var default_options = {
 
 
 var options = default_options.duplicate()
-var json = JSON.new()
 
-
-func _init() -> void:
-	# Ensure the exclude_addons option in the project settings is enabled when running GUT.
-	# This is important, because GUT will throw errors if this option is disabled, e.g. due to
-	# overriding native methods.
-	# When working on addons it is usually desired to disable exclude_addons in order to get proper
-	# code diagnostics.
-	# This however makes it tedious to run GUT because the option has to be manually disabled before
-	# running tests.
-	if not Engine.is_editor_hint():
-		ProjectSettings.set("debug/gdscript/warnings/exclude_addons", true)
 
 func _null_copy(h):
 	var new_hash = {}
@@ -157,7 +143,7 @@ func _apply_options(opts, gut):
 # Public
 # --------------------------
 func write_options(path):
-	var content = json.stringify(options, ' ')
+	var content = JSON.stringify(options, ' ')
 
 	var f = FileAccess.open(path, FileAccess.WRITE)
 	var result = FileAccess.get_open_error()

@@ -11,6 +11,7 @@ class PackedSceneDouble:
 	func set_script_obj(obj):
 		_script = obj
 
+	@warning_ignore("native_method_override")
 	func instantiate(edit_state=0):
 		var inst = _scene.instantiate(edit_state)
 		var export_props = []
@@ -39,23 +40,22 @@ class PackedSceneDouble:
 # ------------------------------------------------------------------------------
 # START Doubler
 # ------------------------------------------------------------------------------
-var _utils = load('res://addons/gut/utils.gd').get_instance()
-var _base_script_text = _utils.get_file_as_text('res://addons/gut/double_templates/script_template.txt')
-var _script_collector = _utils.ScriptCollector.new()
+var _base_script_text = GutUtils.get_file_as_text('res://addons/gut/double_templates/script_template.txt')
+var _script_collector = GutUtils.ScriptCollector.new()
 # used by tests for debugging purposes.
 var print_source = false
-var inner_class_registry = _utils.InnerClassRegistry.new()
+var inner_class_registry = GutUtils.InnerClassRegistry.new()
 
 # ###############
 # Properties
 # ###############
-var _stubber = _utils.Stubber.new()
+var _stubber = GutUtils.Stubber.new()
 func get_stubber():
 	return _stubber
 func set_stubber(stubber):
 	_stubber = stubber
 
-var _lgr = _utils.get_logger()
+var _lgr = GutUtils.get_logger()
 func get_logger():
 	return _lgr
 func set_logger(logger):
@@ -84,19 +84,19 @@ func set_strategy(strategy):
 		_lgr.error(str('doubler.gd:  invalid double strategy ', strategy))
 
 
-var _method_maker = _utils.MethodMaker.new()
+var _method_maker = GutUtils.MethodMaker.new()
 func get_method_maker():
 	return _method_maker
 
-var _ignored_methods = _utils.OneToMany.new()
+var _ignored_methods = GutUtils.OneToMany.new()
 func get_ignored_methods():
 	return _ignored_methods
 
 # ###############
 # Private
 # ###############
-func _init(strategy=_utils.DOUBLE_STRATEGY.SCRIPT_ONLY):
-	set_logger(_utils.get_logger())
+func _init(strategy=GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY):
+	set_logger(GutUtils.get_logger())
 	_strategy = strategy
 
 
@@ -111,7 +111,7 @@ func _stub_to_call_super(parsed, method_name):
 	if(!parsed.get_method(method_name).is_eligible_for_doubling()):
 		return
 
-	var params = _utils.StubParams.new(parsed.script_path, method_name, parsed.subpath)
+	var params = GutUtils.StubParams.new(parsed.script_path, method_name, parsed.subpath)
 	params.to_call_super()
 	_stubber.add_stub(params)
 
@@ -170,7 +170,7 @@ func _create_script_no_warnings(src):
 	prev_native_override_value = ProjectSettings.get_setting(native_method_override)
 	ProjectSettings.set_setting(native_method_override, 0)
 
-	var DblClass = _utils.create_script_from_source(src)
+	var DblClass = GutUtils.create_script_from_source(src)
 
 	ProjectSettings.set_setting(native_method_override, prev_native_override_value)
 	return DblClass
@@ -192,7 +192,7 @@ func _create_double(parsed, strategy, override_path, partial):
 			else:
 				dbl_src += _get_func_text(method.meta, path)
 
-	if(strategy == _utils.DOUBLE_STRATEGY.INCLUDE_NATIVE):
+	if(strategy == GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE):
 		for method in parsed.get_super_methods():
 			if(_is_method_eligible_for_doubling(parsed, method)):
 				included_methods.append(method.meta.name)
@@ -207,7 +207,7 @@ func _create_double(parsed, strategy, override_path, partial):
 
 
 	if(print_source):
-		print(_utils.add_line_numbers(dbl_src))
+		print(GutUtils.add_line_numbers(dbl_src))
 
 	var DblClass = _create_script_no_warnings(dbl_src)
 	if(_stubber != null):
@@ -259,7 +259,7 @@ func _get_func_text(method_hash, path):
 func _parse_script(obj):
 	var parsed = null
 
-	if(_utils.is_inner_class(obj)):
+	if(GutUtils.is_inner_class(obj)):
 		if(inner_class_registry.has(obj)):
 			parsed = _script_collector.parse(inner_class_registry.get_base_resource(obj), obj)
 		else:
@@ -304,10 +304,10 @@ func partial_double_scene(scene, strategy=_strategy):
 
 
 func double_gdnative(which):
-	return _double(which, _utils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
+	return _double(which, GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
 
 func partial_double_gdnative(which):
-	return _partial_double(which, _utils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
+	return _partial_double(which, GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
 
 
 func double_inner(parent, inner, strategy=_strategy):

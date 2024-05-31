@@ -140,7 +140,7 @@ class TestExportImport:
 		export_file_text = export_file_text.replace( \
 			'res://test/resources/parsing_and_loading_samples/', \
 			'res://test/resources/parsing_and_loading_samples/exported/')
-		_utils.write_file(path, export_file_text)
+		GutUtils.write_file(path, export_file_text)
 
 	func _run_test_collector(tc):
 		var test_gut = Gut.new()
@@ -178,7 +178,7 @@ class TestExportImport:
 		var worked = tc_import.import_tests(EXPORT_FILE)
 
 		assert_eq(tc_import.scripts[0].tests.size(), 2, 'has correct size')
-		var names = _utils.extract_property_from_array(tc_import.scripts[0].tests, 'name')
+		var names = GutUtils.extract_property_from_array(tc_import.scripts[0].tests, 'name')
 		assert_has(names, 'test_one')
 		assert_has(names, 'test_two')
 

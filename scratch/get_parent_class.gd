@@ -1,6 +1,5 @@
 extends SceneTree
 
-var _utils = load('res://addons/gut/utils.gd').get_instance()
 const INNER_CLASSES_PATH = 'res://test/resources/doubler_test_objects/inner_classes.gd'
 var InnerClasses = load(INNER_CLASSES_PATH)
 
@@ -26,7 +25,7 @@ func test_someting():
     dict[InnerClasses] = 'foobar'
     dict[InnerClasses.AnotherInnerA] = 'bar -> foo'
 
-    print(ic_ia, ' is InnerClasses ', ic_ia is InnerClasses)
+    print(ic_ia, ' is InnerClasses ', ic_ia.is_instance_of(InnerClasses))
     print(ic_ia.get_class())
     print(ic_ia.get_script())
     print(dict[ic_ia.get_script()])
@@ -81,12 +80,12 @@ func make_class_db_hash_text():
         else:
             text += str('    # ', classname, "\n")
     text += "}"
-    print(_utils.add_line_numbers(text))
+    print(GutUtils.add_line_numbers(text))
     return text
 
 func make_class_db_hash():
     var source = make_class_db_hash_text()
-    return _utils.create_script_from_source(source).new().all_classes
+    return GutUtilscreate_script_from_source(source).new().all_classes
 
 
 func _init():

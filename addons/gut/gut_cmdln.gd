@@ -16,8 +16,6 @@ var Optparse = load('res://addons/gut/optparse.gd')
 var Gut = load('res://addons/gut/gut.gd')
 var GutRunner = load('res://addons/gut/gui/GutRunner.tscn')
 
-var json = JSON.new()
-
 # ------------------------------------------------------------------------------
 # Helper class to resolve the various different places where an option can
 # be set.  Using the get_value method will enforce the order of precedence of:
@@ -89,7 +87,6 @@ class OptionResolver:
 # Here starts the actual script that uses the Options class to kick off Gut
 # and run your tests.
 # ------------------------------------------------------------------------------
-var _utils = null
 var _gut_config = load('res://addons/gut/gut_config.gd').new()
 # instance of gut
 var _tester = null
@@ -214,13 +211,13 @@ option (option priority:  command-line, .gutconfig, default)."""
 	resolved.erase("show_help")
 
 	print("Here's a config with all the properties set based off of your current command and config.")
-	print(json.stringify(resolved, '  '))
+	print(JSON.stringify(resolved, '  '))
 
 	for key in resolved:
 		resolved[key] = null
 
 	print("\n\nAnd here's an empty config for you fill in what you want.")
-	print(json.stringify(resolved, ' '))
+	print(JSON.stringify(resolved, ' '))
 
 
 # parse options and run Gut
@@ -228,7 +225,6 @@ func _run_gut():
 	var opt_resolver = OptionResolver.new()
 	opt_resolver.set_base_opts(_gut_config.default_options)
 
-	print("\n\n", ' ---  Gut  ---')
 	var o = setup_options(_gut_config.default_options, _gut_config.valid_fonts)
 
 	var all_options_valid = o.parse()
@@ -244,7 +240,7 @@ func _run_gut():
 		opt_resolver.config_opts = _gut_config.options
 
 		if(o.get_value('-gh')):
-			print(_utils.get_version_text())
+			print(GutUtils.version_numbers.get_version_text())
 			o.print_help()
 			_end_run(0)
 		elif(o.get_value('-gpo')):
@@ -277,11 +273,9 @@ func run_tests(runner):
 
 
 func _end_run(exit_code=-9999):
-	if(is_instance_valid(_utils)):
-		_utils.free()
-
 	if(exit_code != -9999):
 		quit(exit_code)
+
 
 # exit if option is set.
 func _on_tests_finished(should_exit, should_exit_on_success):
@@ -323,10 +317,9 @@ func _init():
 		quit(0)
 		return
 
-	_utils = GutUtils.get_instance()
-	if(!_utils.is_version_ok()):
-		print("\n\n", _utils.get_version_text())
-		push_error(_utils.get_bad_version_text())
+	if(!GutUtils.version_numbers.is_godot_version_valid()):
+		print("\n\n", GutUtils.version_numbers.get_version_text())
+		push_error(GutUtils.version_numbers.get_bad_version_text())
 		_end_run(1)
 	else:
 		_run_gut()

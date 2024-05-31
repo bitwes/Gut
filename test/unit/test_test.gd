@@ -1624,7 +1624,7 @@ class TestReplaceNode:
 		gr.test.replace_node(_arena, 'Player1/Sword', replacement)
 		# object is freed using queue_free, so we have to wait for it to go away
 		await wait_frames(20)
-		assert_true(_utils.is_freed(old))
+		assert_true(GutUtils.is_freed(old))
 
 	func test_replaced_node_retains_groups():
 		var replacement = autofree(Node2D.new())
@@ -1930,7 +1930,7 @@ class TestCompareDeepShallow:
 	extends BaseTestClass
 
 	func test_compare_deep_uses_compare():
-		var d_compare = double(_utils.Comparator).new()
+		var d_compare = double(GutUtils.Comparator).new()
 		gr.test._compare = d_compare
 		var result = gr.test.compare_deep([], [])
 		assert_called(d_compare, 'deep')

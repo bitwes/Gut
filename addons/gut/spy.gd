@@ -9,9 +9,8 @@
 #   },
 # }
 var _calls = {}
-var _utils = load('res://addons/gut/utils.gd').get_instance()
-var _lgr = _utils.get_logger()
-var _compare = _utils.Comparator.new()
+var _lgr = GutUtils.get_logger()
+var _compare = GutUtils.Comparator.new()
 
 func _find_parameters(call_params, params_to_find):
 	var found = false

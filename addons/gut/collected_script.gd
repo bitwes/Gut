@@ -6,9 +6,8 @@
 #
 # This class also facilitates all the exporting and importing of tests.
 # ------------------------------------------------------------------------------
-var CollectedTest = load('res://addons/gut/collected_test.gd')
+var CollectedTest = GutUtils.CollectedTest
 
-var _utils = null
 var _lgr = null
 
 # One entry per test found in the script.  Added externally by TestCollector
@@ -38,8 +37,7 @@ var name = '' :
     set(val):pass
 
 
-func _init(utils=null,logger=null):
-    _utils = utils
+func _init(logger=null):
     _lgr = logger
 
 
@@ -98,10 +96,10 @@ func export_to(config_file, section):
 
 func _remap_path(source_path):
     var to_return = source_path
-    if(!_utils.file_exists(source_path)):
+    if(!FileAccess.file_exists(source_path)):
         _lgr.debug('Checking for remap for:  ' + source_path)
         var remap_path = source_path.get_basename() + '.gd.remap'
-        if(_utils.file_exists(remap_path)):
+        if(FileAccess.file_exists(remap_path)):
             var cf = ConfigFile.new()
             cf.load(remap_path)
             to_return = cf.get_value('remap', 'path')
@@ -124,7 +122,7 @@ func import_from(config_file, section):
 
 
 func get_test_named(name):
-    return _utils.search_array(tests, 'name', name)
+    return GutUtils.search_array(tests, 'name', name)
 
 
 func mark_tests_to_skip_with_suffix(suffix):

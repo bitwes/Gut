@@ -1,6 +1,6 @@
 extends GutTest
 
-var CollectedTest = load('res://addons/gut/collected_test.gd')
+var CollectedTest = GutUtils.CollectedTest
 
 
 func test_was_run_defaults_to_false():

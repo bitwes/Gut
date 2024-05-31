@@ -11,74 +11,75 @@ func test_can_make_one():
 
 func test_is_double_returns_false_for_non_doubles():
 	var utils = autofree(Utils.new())
-	assert_false(utils.is_double(autofree(Node.new())))
+	assert_false(GutUtils.is_double(autofree(Node.new())))
 
 func test_is_double_returns_true_for_doubles():
 	var utils = autofree(Utils.new())
 	var d = double(Node).new()
-	assert_true(utils.is_double(d))
+	assert_true(GutUtils.is_double(d))
 
 func test_is_double_returns_false_for_primitives():
 	var utils = autofree(Utils.new())
-	assert_false(utils.is_double('hello'), 'string')
-	assert_false(utils.is_double(1), 'int')
-	assert_false(utils.is_double(1.0), 'float')
-	assert_false(utils.is_double([]), 'array')
-	assert_false(utils.is_double({}), 'dictionary')
+	assert_false(GutUtils.is_double('hello'), 'string')
+	assert_false(GutUtils.is_double(1), 'int')
+	assert_false(GutUtils.is_double(1.0), 'float')
+	assert_false(GutUtils.is_double([]), 'array')
+	assert_false(GutUtils.is_double({}), 'dictionary')
 	# that's probably enough spot checking
 
 
 class OverloadsGet:
 	var a = []
+	@warning_ignore("native_method_override")
 	func get(index):
 		return a[index]
 
 func test_is_double_works_with_classes_that_overload_get():
 	var og = autofree(OverloadsGet.new())
 	var utils = autofree(Utils.new())
-	assert_false(utils.is_double(og))
+	assert_false(GutUtils.is_double(og))
 
 func test_is_instance_false_for_classes():
 	var utils = autofree(Utils.new())
-	assert_false(utils.is_instance(Node2D))
+	assert_false(GutUtils.is_instance(Node2D))
 
 func test_is_instance_true_for_new():
 	var utils = autofree(Utils.new())
 	var n = autofree(Node.new())
-	assert_true(utils.is_instance(n))
+	assert_true(GutUtils.is_instance(n))
 
 func test_is_instance_false_for_instanced_things():
 	var utils = autofree(Utils.new())
 	var i = load('res://test/resources/SceneNoScript.tscn')
-	assert_false(utils.is_instance(i))
+	assert_false(GutUtils.is_instance(i))
 
 
 func test_get_native_class_name_does_not_generate_orphans():
 	var utils = Utils.new()
-	var n = utils.get_native_class_name(Node2D)
+	var n = GutUtils.get_native_class_name(Node2D)
 	assert_no_new_orphans()
 
 func test_get_native_class_name_does_not_free_references():
 	var utils = autofree(Utils.new())
-	var n = utils.get_native_class_name(InputEventKey)
+	var n = GutUtils.get_native_class_name(InputEventKey)
 	pass_test("we got here")
 
 func test_is_native_class_returns_true_for_native_classes():
 	var utils = autofree(Utils.new())
-	assert_true(utils.is_native_class(Node))
+	assert_true(GutUtils.is_native_class(Node))
 
 
 func test_is_inner_class_true_for_inner_classes():
 	var utils = autofree(Utils.new())
-	assert_true(utils.is_inner_class(InnerClasses.InnerA))
+	assert_true(GutUtils.is_inner_class(InnerClasses.InnerA))
 
 func test_is_inner_class_false_for_base_scripts():
 	var utils = autofree(Utils.new())
-	assert_false(utils.is_inner_class(InnerClasses))
+	assert_false(GutUtils.is_inner_class(InnerClasses))
 
 func test_is_inner_class_false_for_non_objs():
 	var utils = autofree(Utils.new())
-	assert_false(utils.is_inner_class('foo'))
+	assert_false(GutUtils.is_inner_class('foo'))
 
 
 
@@ -157,63 +158,6 @@ class TestGetSceneScript:
 
 
 
-
-
-class TestVersionCheck:
-	extends 'res://addons/gut/test.gd'
-
-	var Utils = load('res://addons/gut/utils.gd')
-
-	func _fake_engine_version(version):
-		var parsed = version.split('.')
-		return{'major':parsed[0], 'minor':parsed[1], 'patch':parsed[2]}
-
-	var test_ok_versions = ParameterFactory.named_parameters(
-		['engine_version', 'req_version', 'expected_result'],
-		[
-			['1.2.3', '1.2.3', true],
-			['2.0.0', '1.0.0', true],
-			['1.0.1', '1.0.0', true],
-			['1.1.0', '1.0.0', true],
-			['1.1.1', '1.0.0', true],
-			['1.2.5', '1.0.10', true],
-			['3.3.0', '3.2.3', true],
-			['4.0.0', '3.2.0', true],
-
-			['3.0.0', '3.0.1', false],
-			['1.2.3', '2.0.0', false],
-			['1.2.1', '1.2.3', false],
-			['1.2.3', '1.3.0', false],
-
-		])
-	func test_is_version_ok(p=use_parameters(test_ok_versions)):
-		var utils = autofree(Utils.new())
-		var engine_info = _fake_engine_version(p.engine_version)
-		var req_version = p.req_version.split('.')
-		assert_eq(utils.is_version_ok(engine_info, req_version), p.expected_result,
-			str(p.engine_version, ' >= ', p.req_version))
-
-	var test_is_versions = ParameterFactory.named_parameters(
-		['engine_version', 'expected_version', 'expected_result'],
-		[
-			['1.2.3', '1.2.3', true],
-			['1.2.3', '1.2', true],
-			['1.2.3', '1', true],
-
-			['1.2.4', '1.2.3', false],
-			['1.3.3', '1.2.3', false],
-			['2.2.3', '1.2.3', false],
-
-			['1.2.3', '1.2.3.4', false]
-		])
-
-	func test_is_godot_version(p=use_parameters(test_is_versions)):
-		var utils = autofree(Utils.new())
-		var engine_info = _fake_engine_version(p.engine_version)
-		assert_eq(utils.is_godot_version(p.expected_version, engine_info), p.expected_result,
-			str(p.engine_version, ' is ', p.expected_version))
-
-
 class TestGetEnumValue:
 	extends GutTest
 
@@ -278,57 +222,6 @@ class TestGetEnumValue:
 		var val = GutUtils.get_enum_value(2.9, TEST1, 9999)
 		assert_eq(val, 2)
 
-
-class TestCreateScriptFromSource:
-	extends GutTest
-
-	# We need to use the same instance for all tests so we don't reset the
-	# _created_script_count between tests, causing Godot to generate an error
-	# for duplicate resources.
-	var utils = load('res://addons/gut/utils.gd').new()
-
-	func before_all():
-		# Another workaround for _created_script_count
-		utils._dynamic_script_base_name = 'test_create_script_from_source'
-
-	func test_can_create_a_script_from_source():
-		var DynScript = utils.create_script_from_source('var a = 1')
-		assert_not_null(DynScript)
-
-	func test_can_create_instance_of_script_from_source():
-		var DynScript = utils.create_script_from_source('var a = 1')
-		var i = DynScript.new()
-		assert_eq(i.a, 1)
-
-	func test_resource_path_is_in_addons_directory():
-		var DynScript = utils.create_script_from_source('var a = 1')
-		var i = DynScript.new()
-		assert_string_starts_with(DynScript.resource_path, 'res://addons/gut/')
-
-	func test_each_script_gets_a_unique_resource_path():
-		var DynScript1 = utils.create_script_from_source('var a = 1')
-		var DynScript2 = utils.create_script_from_source('var a = 1')
-		var DynScript3 = utils.create_script_from_source('var a = 1')
-
-		assert_ne(DynScript1.resource_path, DynScript2.resource_path, '1 - 2')
-		assert_ne(DynScript2.resource_path, DynScript3.resource_path, '2 - 3')
-		assert_ne(DynScript1.resource_path, DynScript3.resource_path, '1 - 3')
-
-	func test_when_override_path_specified_it_is_used_for_resource_path():
-		var DynScript = utils.create_script_from_source('var a = 1', 'res://foo/bar.gd')
-		assert_eq(DynScript.resource_path, 'res://foo/bar.gd')
-
-	# ----
-	# This test is commented out because it will cause the run to break on this
-	# error when debug is enabled (usually is during dev).  This is the best
-	# thing I could come up with until there is an ability to disable breaking
-	# on errors when in debug.
-	# https://github.com/godotengine/godot/pull/77015
-	# https://github.com/godotengine/godot-proposals/issues/6781
-	# ----
-	# func test_when_script_source_invalid_null_is_returned():
-	# 	var DynScript = utils.create_script_from_source("asdf\n\n\nasdfasfd\n\nasdf")
-	# 	assert_null(DynScript)
 
 
 

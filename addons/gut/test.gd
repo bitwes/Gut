@@ -31,16 +31,14 @@ class_name GutTest
 #
 # Version - see gut.gd
 # ##############################################################################
-# Class that all test scripts must extend.
+# Class that all test scripts must extend.`
 #
 # This provides all the asserts and other testing features.  Test scripts are
 # run by the Gut class in gut.gd
 # ##############################################################################
 extends Node
 
-
-var _utils = load('res://addons/gut/utils.gd').get_instance()
-var _compare = _utils.Comparator.new()
+var _compare = GutUtils.Comparator.new()
 
 
 # Need a reference to the instance that is running the tests.  This
@@ -68,17 +66,17 @@ var _summary = {
 # This is used to watch signals so we can make assertions about them.
 var _signal_watcher = load('res://addons/gut/signal_watcher.gd').new()
 
-# Convenience copy of _utils.DOUBLE_STRATEGY
+# Convenience copy of GutUtils.DOUBLE_STRATEGY
 var DOUBLE_STRATEGY = GutUtils.DOUBLE_STRATEGY
 
-var _lgr = _utils.get_logger()
-var _strutils = _utils.Strutils.new()
+var _lgr = GutUtils.get_logger()
+var _strutils = GutUtils.Strutils.new()
 
 # syntax sugar
-var ParameterFactory = _utils.ParameterFactory
-var CompareResult = _utils.CompareResult
-var InputFactory = _utils.InputFactory
-var InputSender = _utils.InputSender
+var ParameterFactory = GutUtils.ParameterFactory
+var CompareResult = GutUtils.CompareResult
+var InputFactory = GutUtils.InputFactory
+var InputSender = GutUtils.InputSender
 
 
 func _init():
@@ -87,6 +85,7 @@ func _init():
 
 func _str(thing):
 	return _strutils.type2str(thing)
+
 
 func _str_precision(value, precision):
 	var to_return = _str(value)
@@ -210,7 +209,7 @@ func _fail_if_parameters_not_array(parameters):
 func _get_bad_double_or_method_message(inst, method_name, what_you_cant_do):
 	var to_return = ''
 
-	if(!_utils.is_double(inst)):
+	if(!GutUtils.is_double(inst)):
 		to_return = str("An instance of a Double was expected, you passed:  ", _str(inst))
 	elif(!inst.has_method(method_name)):
 		to_return = str("You cannot ", what_you_cant_do, " [", method_name, "] because the method does not exist.  ",
@@ -757,7 +756,7 @@ func get_signal_parameters(object, signal_name, index=-1):
 # ------------------------------------------------------------------------------
 func get_call_parameters(object, method_name, index=-1):
 	var to_return = null
-	if(_utils.is_double(object)):
+	if(GutUtils.is_double(object)):
 		to_return = gut.get_spy().get_call_parameters(object, method_name, index)
 	else:
 		_lgr.error('You must pass a doulbed object to get_call_parameters.')
@@ -787,7 +786,7 @@ func assert_is(object, a_class, text=''):
 	else:
 		var a_str = _str(a_class)
 		disp = str('Expected [', _str(object), '] to extend [', a_str, ']: ', text)
-		if(!_utils.is_native_class(a_class) and !_utils.is_gdscript(a_class)):
+		if(!GutUtils.is_native_class(a_class) and !GutUtils.is_gdscript(a_class)):
 			_fail(str(bad_param_2, a_str))
 		else:
 			if(is_instance_of(object, a_class)):
@@ -1259,7 +1258,7 @@ func _smart_double(thing, double_strat, partial):
 		else:
 			to_return =  gut.get_doubler().double_scene(thing, override_strat)
 
-	elif(_utils.is_native_class(thing)):
+	elif(GutUtils.is_native_class(thing)):
 		if(partial):
 			to_return = gut.get_doubler().partial_double_gdnative(thing)
 		else:
@@ -1286,7 +1285,7 @@ func _are_double_parameters_valid(thing, p2, p3):
 	if(typeof(thing) == TYPE_STRING):
 		bad_msg += "Doubling using the path to a script or scene is no longer supported.  Load the script or scene and pass that to double instead.\n"
 
-	if(_utils.is_instance(thing)):
+	if(GutUtils.is_instance(thing)):
 		bad_msg += "double requires a script, you passed an instance:  " + _str(thing)
 
 	if(bad_msg != ""):
@@ -1395,13 +1394,13 @@ func stub(thing, p2, p3=null):
 		subpath = p2
 		method_name = p3
 
-	if(_utils.is_instance(thing)):
+	if(GutUtils.is_instance(thing)):
 		var msg = _get_bad_double_or_method_message(thing, method_name, 'stub')
 		if(msg != ''):
 			_lgr.error(msg)
-			return _utils.StubParams.new()
+			return GutUtils.StubParams.new()
 
-	var sp = _utils.StubParams.new(thing, method_name, subpath)
+	var sp = GutUtils.StubParams.new(thing, method_name, subpath)
 	gut.get_stubber().add_stub(sp)
 	return sp
 
@@ -1461,7 +1460,7 @@ func replace_node(base_node, path_or_node, with_this):
 func use_parameters(params):
 	var ph = gut.parameter_handler
 	if(ph == null):
-		ph = _utils.ParameterHandler.new(params)
+		ph = GutUtils.ParameterHandler.new(params)
 		gut.parameter_handler = ph
 
 	# DO NOT use gut.gd's get_call_count_text here since it decrements the
@@ -1627,9 +1626,9 @@ func assert_not_same(v1, v2, text=''):
 # 	return
 # ------------------------------------------------------------------------------
 func skip_if_godot_version_lt(expected):
-	var should_skip = !_utils.is_godot_version_gte(expected)
+	var should_skip = !GutUtils.is_godot_version_gte(expected)
 	if(should_skip):
-		_pass(str('Skipping ', _utils.godot_version(), ' is less than ', expected))
+		_pass(str('Skipping: ', GutUtils.godot_version_string(), ' is less than ', expected))
 	return should_skip
 
 
@@ -1644,9 +1643,9 @@ func skip_if_godot_version_lt(expected):
 # 	return
 # ------------------------------------------------------------------------------
 func skip_if_godot_version_ne(expected):
-	var should_skip = !_utils.is_godot_version(expected)
+	var should_skip = !GutUtils.is_godot_version(expected)
 	if(should_skip):
-		_pass(str('Skipping ', _utils.godot_version(), ' is not ', expected))
+		_pass(str('Skipping: ', GutUtils.godot_version_string(), ' is not ', expected))
 	return should_skip
 
 

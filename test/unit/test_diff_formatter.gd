@@ -4,7 +4,7 @@ class TestFormatter:
 	extends GutTest
 
 	var Formatter = load('res://addons/gut/diff_formatter.gd')
-	var DiffTool = _utils.DiffTool
+	var DiffTool = GutUtils.DiffTool
 
 	func test_demo_eq_format():
 		assert_eq([], [])
@@ -67,7 +67,7 @@ class TestFormatter:
 			{'a':11, 'b':12, 'c':13},
 			[{'a':'diff'}, {'b':2}]
 		]
-		var diff = DiffTool.new(a1, a2, _utils.DIFF.DEEP)
+		var diff = DiffTool.new(a1, a2, GutUtils.DIFF.DEEP)
 		pass_test(Formatter.new().make_it(diff))
 
 
@@ -80,7 +80,7 @@ class TestFormatter:
 			[11, 12, 13],
 			[[14, 15, 16], ['same'], [17, 18, 19]]
 		]
-		var diff = DiffTool.new(a1, a2, _utils.DIFF.DEEP)
+		var diff = DiffTool.new(a1, a2, GutUtils.DIFF.DEEP)
 		pass_test(Formatter.new().make_it(diff))
 
 	func test_when_arrays_are_large_then_summarize_truncates():
@@ -120,7 +120,7 @@ class TestFormatter:
 class TestUsingAssertNe:
 	extends GutTest
 
-	var DiffTool = _utils.DiffTool
+	var DiffTool = GutUtils.DiffTool
 
 	func test_works_with_strings_and_numbers():
 		var a1 = [0, 1, 2, 3, 4]
@@ -153,7 +153,7 @@ class TestUsingAssertNe:
 	# 		[11, 12, 13],
 	# 		[[14, 15, 16], ['same'], [17, 18, 19]]
 	# 	]
-	# 	var diff = DiffTool.new(a1, a2, _utils.DIFF.DEEP)
+	# 	var diff = DiffTool.new(a1, a2, GutUtils.DIFF.DEEP)
 	# 	pass_test(Formatter.new().make_it(diff))
 
 	# func test_when_arrays_are_large_then_summarize_truncates():
