@@ -23,7 +23,9 @@ Finish the install by following the instructions in Setup below.
 
 ## Setup
 ### Activate
-1.  From the menu choose Project->Project Settings, click the Plugins tab and activate Gut.
+1.  From the menu choose Project->Project Settings, click the Plugins tab and activate Gut.  Once activated, the GUT Panel will appear at the bottom of your editor:
+
+![Gut Panel Location](_static/images/gut_panel_where.png)
 
 ### Setup directories for tests
 The next few steps cover the suggested configuration.  Feel free to deviate where you see fit.
