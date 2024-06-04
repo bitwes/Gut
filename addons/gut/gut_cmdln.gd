@@ -317,9 +317,10 @@ func _init():
 		quit(0)
 		return
 
-	if(!GutUtils.version_numbers.is_godot_version_valid()):
+	var install_check_text = GutUtils.make_install_check_text()
+	if(install_check_text != GutUtils.INSTALL_OK_TEXT):
 		print("\n\n", GutUtils.version_numbers.get_version_text())
-		push_error(GutUtils.version_numbers.get_bad_version_text())
+		push_error(install_check_text)
 		_end_run(1)
 	else:
 		_run_gut()

@@ -1,3 +1,6 @@
+# ##############################################################################
+#
+# ##############################################################################
 class VerNumTools:
 
 	static func _make_version_array_from_string(v):
@@ -76,6 +79,10 @@ class VerNumTools:
 
 
 
+
+# ##############################################################################
+#
+# ##############################################################################
 var gut_version = '0.0.0'
 var required_godot_version = '0.0.0'
 
@@ -98,10 +105,10 @@ func get_version_text():
 # Returns a nice string for erroring out when we have a bad Godot version.
 # ------------------------------------------------------------------------------
 func get_bad_version_text():
-	var ver = '.'.join(PackedStringArray(required_godot_version))
 	var info = Engine.get_version_info()
 	var gd_version = str(info.major, '.', info.minor, '.', info.patch)
-	return 'GUT ' + gut_version + ' requires Godot ' + ver + ' or greater.  Godot version is ' + gd_version
+	return 'GUT ' + gut_version + ' requires Godot ' + required_godot_version + \
+		' or greater.  Godot version is ' + gd_version
 
 
 # ------------------------------------------------------------------------------

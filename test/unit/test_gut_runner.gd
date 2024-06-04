@@ -7,4 +7,3 @@ func test_can_make_one():
 	var gr = autofree(GutRunner.instantiate())
 	assert_not_null(gr)
 
-

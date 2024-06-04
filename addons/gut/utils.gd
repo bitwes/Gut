@@ -27,7 +27,11 @@ const TEST_STATUSES = {
 	PASSED = 'pass'
 }
 
-
+const DOUBLE_TEMPLATES = {
+	FUNCTION = 'res://addons/gut/double_templates/function_template.txt',
+	INIT = 'res://addons/gut/double_templates/init_template.txt',
+	SCRIPT = 'res://addons/gut/double_templates/script_template.txt',
+}
 
 
 static var GutScene = load('res://addons/gut/GutScene.tscn')
@@ -140,6 +144,7 @@ static var ThingCounter = LazyLoader.new('res://addons/gut/thing_counter.gd'):
 	get: return ThingCounter.get_loaded()
 	set(val): pass
 # --------------------------------
+
 static var avail_fonts = ['AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default']
 
 static var version_numbers = VersionNumbers.new(
@@ -199,6 +204,23 @@ static func is_godot_version(expected):
 static func is_godot_version_gte(expected):
 	return VersionNumbers.VerNumTools.is_godot_version_gte(expected)
 
+
+const INSTALL_OK_TEXT = 'Everything checks out'
+static func make_install_check_text(template_paths=DOUBLE_TEMPLATES, ver_nums=version_numbers):
+	var text = INSTALL_OK_TEXT
+	if(!FileAccess.file_exists(template_paths.FUNCTION) or
+		!FileAccess.file_exists(template_paths.INIT) or
+		!FileAccess.file_exists(template_paths.SCRIPT)):
+
+		text = 'One or more GUT template files are missing.  If this is an exported project, you must include *.txt files in the export to run GUT.  If it is not an exported project then reinstall GUT.'
+	elif(!ver_nums.is_godot_version_valid()):
+		text = ver_nums.get_bad_version_text()
+
+	return text
+
+
+static func is_install_valid(template_paths=DOUBLE_TEMPLATES, ver_nums=version_numbers):
+	return make_install_check_text(template_paths, ver_nums) == INSTALL_OK_TEXT
 
 
 # ------------------------------------------------------------------------------
@@ -404,8 +426,6 @@ static func get_native_class_name(thing):
 	return to_return
 
 
-
-
 # ------------------------------------------------------------------------------
 # Write a file.
 # ------------------------------------------------------------------------------
@@ -418,7 +438,6 @@ static func write_file(path, content):
 	return FileAccess.get_open_error()
 
 
-
 # ------------------------------------------------------------------------------
 # Returns the text of a file or an empty string if the file could not be opened.
 # ------------------------------------------------------------------------------
@@ -427,6 +446,9 @@ static func get_file_as_text(path):
 	var f = FileAccess.open(path, FileAccess.READ)
 	if(f != null):
 		to_return = f.get_as_text()
+	else:
+		var err = FileAccess.get_open_error()
+		_lgr.error(str('Could not open file ', path, '.  Error ', err))
 	f = null
 	return to_return
 
@@ -459,6 +481,7 @@ static func search_array_idx(ar, prop_method, value):
 	else:
 		return -1
 
+
 # ------------------------------------------------------------------------------
 # Loops through an array of things and calls a method or checks a property on
 # each element until it finds the returned value.  The item in the array is
@@ -479,7 +502,6 @@ static func are_datatypes_same(got, expected):
 
 static func get_script_text(obj):
 	return obj.get_script().get_source_code()
-
 
 
 # func get_singleton_by_name(name):
