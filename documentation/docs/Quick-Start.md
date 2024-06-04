@@ -9,8 +9,10 @@ Setup doesn't get any simpler than what is already on the [install page.](Instal
 ## Run Tests
 
 * Open the GUT panel
-![Gut Panel Location](_static/images/gut_panel_where.png)
-* Configure the directories where your tests are in the [Gut Panel](Install#activate) settings.
+
+![GUT Panel Location](_static/images/gut_panel_where.png)
+
+* Configure the directories where your tests are in the [GUT Panel](Install#activate) settings.
 * Click "Run All" to run all your tests.
 * Open a test script and click the button with your test script's name (test_test.gd in image below) to run only that test script.
 * Open a test script, put the cursor inside a test function, click the button with your test function's name (test_fails_when_nymber_not_equal in the image below) to run just that one test.
