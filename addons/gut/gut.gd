@@ -284,14 +284,6 @@ func _init():
 # Initialize controls
 # ------------------------------------------------------------------------------
 func _ready():
-	if(!GutUtils.version_numbers.is_godot_version_valid()):
-		_print_versions()
-		var bad_text = GutUtils.version_numbers.get_bad_version_text()
-		push_error(bad_text)
-		print('Error:  ', bad_text)
-		get_tree().quit()
-		return
-
 	if(_should_print_versions):
 		_lgr.info(str('using [', OS.get_user_data_dir(), '] for temporary output.'))
 

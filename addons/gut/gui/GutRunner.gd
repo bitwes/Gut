@@ -24,7 +24,12 @@ var result_bbcode_path = null
 var result_json_path = null
 
 var _gut_config = null
-var _gut = null;
+var _hid_gut = null;
+var gut = _hid_gut :
+	get:
+		if(_hid_gut == null):
+			_hid_gut = Gut.new()
+		return _hid_gut
 var _wrote_results = false
 
 # The editor runs this scene using play_custom_scene, which means we cannot
@@ -64,18 +69,13 @@ func _exit_tree():
 		_write_results()
 
 
-func _lazy_make_gut():
-	if(_gut == null):
-		_gut = Gut.new()
-
-
 func _setup_gui(show_gui):
 	if(show_gui):
-		_gui.gut = _gut
-		var printer = _gut.logger.get_printer('gui')
+		_gui.gut = gut
+		var printer = gut.logger.get_printer('gui')
 		printer.set_textbox(_gui.get_textbox())
 	else:
-		_gut.logger.disable_printer('gui', true)
+		gut.logger.disable_printer('gui', true)
 		_gui.visible = false
 
 	var opts = _gut_config.options
@@ -102,7 +102,7 @@ func _write_results():
 	var exporter = ResultExporter.new()
 	# TODO this should be checked and _wrote_results should maybe not be set, or
 	# maybe we do not care.  Whichever, it should be clear.
-	var _f_result = exporter.write_json_file(_gut, result_json_path)
+	var _f_result = exporter.write_json_file(gut, result_json_path)
 	_wrote_results = true
 
 
@@ -115,7 +115,7 @@ func _on_tests_finished(should_exit, should_exit_on_success):
 
 	if(should_exit):
 		get_tree().quit()
-	elif(should_exit_on_success and _gut.get_fail_count() == 0):
+	elif(should_exit_on_success and gut.get_fail_count() == 0):
 		get_tree().quit()
 
 
@@ -124,36 +124,39 @@ func _on_tests_finished(should_exit, should_exit_on_success):
 # Public
 # -------------
 func run_tests(show_gui=true):
-	_lazy_make_gut()
+	var install_check_text = GutUtils.make_install_check_text()
+	if(install_check_text != GutUtils.INSTALL_OK_TEXT):
+		print("\n\n", GutUtils.version_numbers.get_version_text())
+		push_error(install_check_text)
+		return
 
 	_setup_gui(show_gui)
 
-	_gut.add_children_to = self
-	if(_gut.get_parent() == null):
+	gut.add_children_to = self
+	if(gut.get_parent() == null):
 		if(_gut_config.options.gut_on_top):
-			_gut_layer.add_child(_gut)
+			_gut_layer.add_child(gut)
 		else:
-			add_child(_gut)
+			add_child(gut)
 
 	if(ran_from_editor):
-		_gut.end_run.connect(_on_tests_finished.bind(
+		gut.end_run.connect(_on_tests_finished.bind(
 			_gut_config.options.should_exit,
 			_gut_config.options.should_exit_on_success))
 
-	_gut_config.apply_options(_gut)
+	_gut_config.apply_options(gut)
 	var run_rest_of_scripts = _gut_config.options.unit_test_name == ''
 
-	_gut.test_scripts(run_rest_of_scripts)
-
-
-func get_gut():
-	_lazy_make_gut()
-	return _gut
+	gut.test_scripts(run_rest_of_scripts)
 
 
 func set_gut_config(which):
 	_gut_config = which
 
+
+# for backwards compatibility
+func get_gut():
+	return gut
 
 # ##############################################################################
 # The MIT License (MIT)
