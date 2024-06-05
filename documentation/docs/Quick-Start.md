@@ -7,7 +7,7 @@ Add GUT to your project by downloading the `GUT - Godot Unit Testing` package in
 
 
 ## Creating Two Example Tests
-For purposes of the Quick Start, create a script file `test/test_example.gd` with the following content:
+For purposes of this Quick Start guide, create a script file `res://test/unit/test_example.gd` with the following content:
 
 ```gdscript
 extends GutTest
