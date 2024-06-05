@@ -26,7 +26,7 @@ func test_fails():
 
 ![GUT Panel Location](_static/images/gut_panel_where.png)
 
-* Configure the directories where your tests are in the GUT Panel settings (you may need to scroll down to see this section).  If you created the example test above, this would be in `res://test`.  A good strategy with GUT is to separate unit and integration tests into separate directory structures (such as `res://test/unit` and `res://test/integration`).
+* Configure the directories where your tests are in the GUT Panel settings (you may need to scroll down to see this section).  If you created the example test above, this would be in `res://test/unit`.  A good strategy with GUT is to separate unit and integration tests into separate directory structures (such as `res://test/unit` and `res://test/integration`).  Once you get a lot of tests, this will make it easier to run the fast unit tests frequently, and the slower integration tests only as often as is useful.
 
 ![GUT Panel Test Directories](_static/images/gut_panel_test_directories.png)
 
