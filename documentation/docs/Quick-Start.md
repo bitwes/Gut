@@ -9,7 +9,7 @@ Add GUT to your project by downloading the `GUT - Godot Unit Testing` package in
 ## Creating Two Example Tests
 For purposes of this Quick Start guide, create a script file `res://test/unit/test_example.gd` with the following content:
 
-```gdscript
+``` gdscript
 extends GutTest
 
 func test_passes():
@@ -32,7 +32,8 @@ func test_fails():
 
 * Click "Run All" to run all your tests.
 * Open a test script and click the button with your test script's name (`test_test.gd` in image below) to run only that test script.
-* Open a test script, put the cursor inside a test function, click the button with your test function's name (`test_fails_when_nymber_not_equal` in the image below) to run just that one test.
+* Open a test script, put the cursor inside a test function, click the button with your test function's name (`test_fails_when_number_not_equal` in the image below) to run just that one test.
+
 ![Gut Panel](_static/images/gut_panel.png)
 
 Mouse-over labels and buttons in the GUT panel for more information.  You can even set keyboard shortcuts for all of the GUT panel actions.
@@ -45,10 +46,14 @@ You can also run tests via the [command line](Command-Line) and through [VSCode]
 Much more information is available in the [Creating Tests](Creating-Tests) document, but here are some basics:
 
 * All test scripts must extend `GutTest` (`res://addons/gut/test.gd`) script supplied by GUT.
-* By default, all test files must begin with `test_` to be found by GUT. You can change the prefix and suffix of test files in the GUT settings.
-```
+
+``` gdscript
 extends GutTest
 ```
+
+* By default, all test files must begin with `test_` to be found by GUT. You can change the prefix and suffix of test files in the GUT settings.
+
+
 There is a plethora of asserts and helpers that are listed [here](Asserts-and-Methods)
 
 Setup and teardown methods:
