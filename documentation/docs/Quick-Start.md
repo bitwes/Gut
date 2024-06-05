@@ -2,15 +2,40 @@
 This page contains brief descriptions of many of GUT's features.  Most sections have a "More information" link where more in depth documentation can be found.
 
 
-## Setup
-Setup doesn't get any simpler than what is already on the [install page.](Install)
+## Install
+Add GUT to your project by downloading the `GUT - Godot Unit Testing` package in the Godot Asset Library (top center of Godot screen).  For more details and alternate install methods, check the [install page](Install).
+
+
+## Creating Two Example Tests
+For purposes of this Quick Start guide, create a script file `res://test/unit/test_example.gd` with the following content:
+
+``` gdscript
+extends GutTest
+
+func test_passes():
+	# this test will pass because 1 does equal 1
+	assert_eq(1, 1)
+	
+func test_fails():
+	# this test will fail because those strings are not equal
+	assert_eq('hello', 'goodbye')
+```
 
 
 ## Run Tests
-* Configure the directories where your tests are in the Gut Panel settings.
+
+* Open the GUT panel
+
+![GUT Panel Location](_static/images/gut_panel_where.png)
+
+* Configure the directories where your tests are in the GUT Panel settings (you may need to scroll down to see this section).  If you created the example test above, this would be in `res://test/unit`.  A good strategy with GUT is to separate unit and integration tests into separate directory structures (such as `res://test/unit` and `res://test/integration`).  Once you get a lot of tests, this will make it easier to run the fast unit tests frequently, and the slower integration tests only as often as is useful.
+
+![GUT Panel Test Directories](_static/images/gut_panel_test_directories.png)
+
 * Click "Run All" to run all your tests.
-* Open a test script and click the button with your test script's name (test_test.gd in image below) to run only that test script.
-* Open a test script, put the cursor inside a test function, click the button with your test function's name (test_fails_when_nymber_not_equal in the image below) to run just that one test.
+* Open a test script and click the button with your test script's name (`test_test.gd` in image below) to run only that test script.
+* Open a test script, put the cursor inside a test function, click the button with your test function's name (`test_fails_when_number_not_equal` in the image below) to run just that one test.
+
 ![Gut Panel](_static/images/gut_panel.png)
 
 Mouse-over labels and buttons in the GUT panel for more information.  You can even set keyboard shortcuts for all of the GUT panel actions.
@@ -19,13 +44,18 @@ You can also run tests via the [command line](Command-Line) and through [VSCode]
 
 
 ## Creating Tests
-[More Information](Creating-Tests)
+
+Much more information is available in the [Creating Tests](Creating-Tests) document, but here are some basics:
 
 * All test scripts must extend `GutTest` (`res://addons/gut/test.gd`) script supplied by GUT.
-* By default, all test files must begin with `test_` to be found by GUT. You can change the prefix and suffix of test files in the GUT settings.
-```
+
+``` gdscript
 extends GutTest
 ```
+
+* By default, all test files must begin with `test_` to be found by GUT. You can change the prefix and suffix of test files in the GUT settings.
+
+
 There is a plethora of asserts and helpers that are listed [here](Asserts-and-Methods)
 
 Setup and teardown methods:
