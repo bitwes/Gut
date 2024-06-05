@@ -32,7 +32,7 @@ func get_loaded():
 		# 	print('---- already loaded ', _path, ' ----')
 		# else:
 		# 	print('---- loading ', _path, ' ----')
-		_loaded = load(_path)
+		_loaded = WarningsManager.load_script_ignoring_all_warnings(_path)
 	usage_counter.add(self)
 	return _loaded
 

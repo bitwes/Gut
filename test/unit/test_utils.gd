@@ -112,7 +112,8 @@ func test_make_install_check_text_contains_info_about_invalid_version():
 	var text = GutUtils.make_install_check_text(GutUtils.DOUBLE_TEMPLATES, ver_nums)
 	assert_string_contains(text, 'requires Godot ', false)
 
-
+func test_make_install_check_text_contains_text_about_no_configured_directories():
+	pending()
 
 
 class TestGetSceneScript:

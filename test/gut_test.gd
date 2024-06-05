@@ -100,6 +100,28 @@ func new_gut(print_sub_tests=false):
 
 	return g
 
+
+func new_partial_double_gut(print_sub_tests=false):
+	var g = partial_double(Gut).new()
+	g.logger = GutUtils.Logger.new()
+	g.logger.disable_all_printers(true)
+
+	if(print_sub_tests):
+		g.log_level = 3
+		g.logger.disable_printer("terminal", false)
+		g.logger._min_indent_level = 1
+		g.logger.dec_indent()
+		g.logger.set_indent_string('|##| ')
+		g.logger.disable_formatting(!print_sub_tests)
+	else:
+		g.log_level = g.LOG_LEVEL_FAIL_ONLY
+
+	g._should_print_versions = false
+	g._should_print_summary = false
+
+	return g
+
+
 # ----------------------------
 # Not used yet, but will be used eventually
 

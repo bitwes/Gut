@@ -88,8 +88,7 @@ class OptionResolver:
 # and run your tests.
 # ------------------------------------------------------------------------------
 var _gut_config = load('res://addons/gut/gut_config.gd').new()
-# instance of gut
-var _tester = null
+
 # array of command line options specified
 var _final_opts = []
 
@@ -220,6 +219,18 @@ option (option priority:  command-line, .gutconfig, default)."""
 	print(JSON.stringify(resolved, ' '))
 
 
+func _run_tests(opt_resolver):
+	_final_opts = opt_resolver.get_resolved_values();
+	_gut_config.options = _final_opts
+
+	var runner = GutRunner.instantiate()
+	runner.ran_from_editor = false
+	runner.set_gut_config(_gut_config)
+	get_root().add_child(runner)
+
+	runner.run_tests()
+
+
 # parse options and run Gut
 func _run_gut():
 	var opt_resolver = OptionResolver.new()
@@ -230,74 +241,35 @@ func _run_gut():
 	var all_options_valid = o.parse()
 	extract_command_line_options(o, opt_resolver.cmd_opts)
 
-	var load_result = _gut_config.load_options_no_defaults(
-		opt_resolver.get_value('config_file'))
+	var config_path = opt_resolver.get_value('config_file')
+	var load_result = 1
+	# Checking for an empty config path allows us to not use a config file via
+	# the -gconfig_file option since using "-gconfig_file=" or -gconfig_file=''"
+	# will result in an empty string.
+	if(config_path != ''):
+		load_result = _gut_config.load_options_no_defaults(config_path)
 
 	# SHORTCIRCUIT
 	if(!all_options_valid or load_result == -1):
-		_end_run(1)
+		quit(1)
 	else:
 		opt_resolver.config_opts = _gut_config.options
 
 		if(o.get_value('-gh')):
 			print(GutUtils.version_numbers.get_version_text())
 			o.print_help()
-			_end_run(0)
+			quit(0)
 		elif(o.get_value('-gpo')):
 			print('All command line options and where they are specified.  ' +
 				'The "final" value shows which value will actually be used ' +
 				'based on order of precedence (default < .gutconfig < cmd line).' + "\n")
 			print(opt_resolver.to_s_verbose())
-			_end_run(0)
+			quit(0)
 		elif(o.get_value('-gprint_gutconfig_sample')):
 			_print_gutconfigs(opt_resolver.get_resolved_values())
-			_end_run(0)
+			quit(0)
 		else:
-			_final_opts = opt_resolver.get_resolved_values();
-			_gut_config.options = _final_opts
-
-			var runner = GutRunner.instantiate()
-
-			runner.ran_from_editor = false
-			runner.set_gut_config(_gut_config)
-
-			get_root().add_child(runner)
-			_tester = runner.get_gut()
-			_tester.connect('end_run', Callable(self,'_on_tests_finished').bind(_final_opts.should_exit, _final_opts.should_exit_on_success))
-
-			run_tests(runner)
-
-
-func run_tests(runner):
-	runner.run_tests()
-
-
-func _end_run(exit_code=-9999):
-	if(exit_code != -9999):
-		quit(exit_code)
-
-
-# exit if option is set.
-func _on_tests_finished(should_exit, should_exit_on_success):
-	if(_final_opts.dirs.size() == 0):
-		if(_tester.get_summary().get_totals().scripts == 0):
-			var lgr = _tester.logger
-			lgr.error('No directories configured.  Add directories with options or a .gutconfig.json file.  Use the -gh option for more information.')
-
-	var exit_code = 0
-	if(_tester.get_fail_count()):
-		exit_code = 1
-
-	# Overwrite the exit code with the post_script
-	var post_inst = _tester.get_post_run_script_instance()
-	if(post_inst != null and post_inst.get_exit_code() != null):
-		exit_code = post_inst.get_exit_code()
-
-	if(should_exit or (should_exit_on_success and _tester.get_fail_count() == 0)):
-		_end_run(exit_code)
-	else:
-		_end_run()
-		print("Tests finished, exit manually")
+			_run_tests(opt_resolver)
 
 
 # ------------------------------------------------------------------------------
@@ -317,13 +289,7 @@ func _init():
 		quit(0)
 		return
 
-	var install_check_text = GutUtils.make_install_check_text()
-	if(install_check_text != GutUtils.INSTALL_OK_TEXT):
-		print("\n\n", GutUtils.version_numbers.get_version_text())
-		push_error(install_check_text)
-		_end_run(1)
-	else:
-		_run_gut()
+	_run_gut()
 
 
 # ##############################################################################

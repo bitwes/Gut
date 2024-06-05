@@ -227,9 +227,11 @@ var _last_paint_time = 0.0
 var _strutils = GutUtils.Strutils.new()
 
 # The instance that is created from _pre_run_script.  Accessible from
-# get_pre_run_script_instance.
+# get_pre_run_script_instance.  These are created at the start of the run
+# and then referenced at the appropriate time.  This allows us to validate the
+# scripts prior to running.
 var _pre_run_script_instance = null
-var _post_run_script_instance = null # This is not used except in tests.
+var _post_run_script_instance = null
 
 var _script_name = null
 
@@ -285,6 +287,7 @@ func _init():
 # ------------------------------------------------------------------------------
 func _ready():
 	if(_should_print_versions):
+		_lgr.log('---  GUT  ---')
 		_lgr.info(str('using [', OS.get_user_data_dir(), '] for temporary output.'))
 
 	add_child(_awaiter)
@@ -381,7 +384,6 @@ func _log_test_children_warning(test_script):
 		else:
 			msg = str("Test script has ", kids.size(), " unfreed children.  Increase log level for more details.")
 
-
 		_lgr.warn(msg)
 
 
@@ -453,7 +455,7 @@ func _end_run():
 	_log_end_run()
 	_is_running = false
 
-	_run_hook_script(_post_run_script_instance)
+	_run_hook_script(get_post_run_script_instance())
 	_export_results()
 	end_run.emit()
 
@@ -687,7 +689,7 @@ func _test_the_scripts(indexes=[]):
 		_lgr.error('Something went wrong and the run was aborted.')
 		return
 
-	_run_hook_script(_pre_run_script_instance)
+	_run_hook_script(get_pre_run_script_instance())
 	if(_pre_run_script_instance!= null and _pre_run_script_instance.should_abort()):
 		_lgr.error('pre-run abort')
 		end_run.emit()
@@ -965,6 +967,7 @@ func test_scripts(_run_rest=false):
 			_lgr.error(str(
 				"Could not find script matching '", _script_name, "'.\n",
 				"Check your directory settings and Script Prefix/Suffix settings."))
+			end_run.emit()
 		else:
 			_test_the_scripts(indexes)
 	else:

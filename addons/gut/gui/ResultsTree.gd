@@ -274,12 +274,17 @@ func _load_result_tree(j):
 	# 'nothing to see here' should be visible.
 	clear_centered_text()
 
+	var add_count = 0
 	for key in script_keys:
 		if(scripts[key]['props']['tests'] > 0):
+			add_count += 1
 			_add_script_to_tree(key, scripts[key])
 
 	_free_childless_scripts()
-	_show_all_passed()
+	if(add_count == 0):
+		add_centered_text('Nothing was run')
+	else:
+		_show_all_passed()
 
 
 # -------------------
