@@ -26,6 +26,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Bug Fixes
 * __Issue__ #601 doubles now get a resource path that makes Godot ignore them when "Exclude Addons" is enabled (res://adddons/gut/not_a_real_file/...).
 * __Issue__ #594 An error is generated if GUT cannot find the double template files.  This can happen if you export your game with tests, but do not include *.txt files.
+* __Issue__ #595 When no tests are run GUT no longer displays "All Tests Passed!" and exits (based off of settings).
 
 
 ## Deprecations
