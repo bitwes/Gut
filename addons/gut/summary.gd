@@ -85,7 +85,6 @@ func _log_nothing_run(gut):
 	var lgr = gut.get_logger()
 	lgr.error("Nothing was run.")
 	lgr.log('On the one hand nothing failed, on the other hand nothing did anything.')
-	lgr.log('You decide if this is good or not.')
 
 
 # ---------------------

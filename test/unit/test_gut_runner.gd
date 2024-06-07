@@ -75,7 +75,6 @@ class TestQuit:
 		var gr = _create_runner()
 		gr.ran_from_editor = false
 		gr.gut_config.options.should_exit = true
-		gr.gut._post_run_script_instance = hook_inst
 		stub(gr.gut, 'get_post_run_script_instance').to_return(hook_inst)
 		add_child_autofree(gr)
 
@@ -103,7 +102,6 @@ class TestQuit:
 		var gr = _create_runner()
 		gr.ran_from_editor = false
 		gr.gut_config.options.should_exit = true
-		gr.gut._post_run_script_instance = hook_inst
 		stub(gr.gut, 'get_post_run_script_instance').to_return(hook_inst)
 		stub(gr.gut, 'get_fail_count').to_return(99)
 		add_child_autofree(gr)
