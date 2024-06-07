@@ -61,6 +61,11 @@ class CmdLineParser:
 	func _parse_array_value(full_option):
 		var value = _parse_option_value(full_option)
 		var split = value.split(',')
+		# This is what an empty set looks like from the command line.  If we do
+		# not do this then we will always get back [''] which is not what it
+		# shoudl be.
+		if(split.size() == 1 and split[0] == ''):
+			split = []
 		return split
 
 	# Parse out the value of an option.  Values are separated from

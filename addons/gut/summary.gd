@@ -63,7 +63,6 @@ func _log_totals(gut, totals):
 	lgr.log()
 
 	lgr.log("---- Totals ----")
-	var col1 = 18
 	var issue_count = 0
 	issue_count += _log_non_zero_total('Errors', totals.errors, lgr)
 	issue_count += _log_non_zero_total('Warnings', totals.warnings, lgr)
@@ -80,6 +79,12 @@ func _log_totals(gut, totals):
 	lgr.log(_total_fmt( 'Time', str(gut.get_elapsed_time(), 's')))
 
 	return totals
+
+
+func _log_nothing_run(gut):
+	var lgr = gut.get_logger()
+	lgr.error("Nothing was run.")
+	lgr.log('On the one hand nothing failed, on the other hand nothing did anything.')
 
 
 # ---------------------
@@ -186,10 +191,12 @@ func get_totals(gut=_gut):
 
 
 func log_end_run(gut=_gut):
-	_log_end_run_header(gut)
-
 	var totals = get_totals(gut)
-	var tc = gut.get_test_collector()
+	if(totals.tests == 0):
+		_log_nothing_run(gut)
+		return
+
+	_log_end_run_header(gut)
 	var lgr = gut.get_logger()
 
 	log_all_non_passing_tests(gut)

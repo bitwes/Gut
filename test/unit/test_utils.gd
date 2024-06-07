@@ -10,16 +10,13 @@ func test_can_make_one():
 	assert_not_null(autofree(Utils.new()))
 
 func test_is_double_returns_false_for_non_doubles():
-	var utils = autofree(Utils.new())
 	assert_false(GutUtils.is_double(autofree(Node.new())))
 
 func test_is_double_returns_true_for_doubles():
-	var utils = autofree(Utils.new())
 	var d = double(Node).new()
 	assert_true(GutUtils.is_double(d))
 
 func test_is_double_returns_false_for_primitives():
-	var utils = autofree(Utils.new())
 	assert_false(GutUtils.is_double('hello'), 'string')
 	assert_false(GutUtils.is_double(1), 'int')
 	assert_false(GutUtils.is_double(1.0), 'float')
@@ -36,52 +33,87 @@ class OverloadsGet:
 
 func test_is_double_works_with_classes_that_overload_get():
 	var og = autofree(OverloadsGet.new())
-	var utils = autofree(Utils.new())
 	assert_false(GutUtils.is_double(og))
 
 func test_is_instance_false_for_classes():
-	var utils = autofree(Utils.new())
 	assert_false(GutUtils.is_instance(Node2D))
 
 func test_is_instance_true_for_new():
-	var utils = autofree(Utils.new())
 	var n = autofree(Node.new())
 	assert_true(GutUtils.is_instance(n))
 
 func test_is_instance_false_for_instanced_things():
-	var utils = autofree(Utils.new())
 	var i = load('res://test/resources/SceneNoScript.tscn')
 	assert_false(GutUtils.is_instance(i))
 
 
 func test_get_native_class_name_does_not_generate_orphans():
-	var utils = Utils.new()
-	var n = GutUtils.get_native_class_name(Node2D)
+	var _n = GutUtils.get_native_class_name(Node2D)
 	assert_no_new_orphans()
 
 func test_get_native_class_name_does_not_free_references():
-	var utils = autofree(Utils.new())
-	var n = GutUtils.get_native_class_name(InputEventKey)
+	var _n = GutUtils.get_native_class_name(InputEventKey)
 	pass_test("we got here")
 
 func test_is_native_class_returns_true_for_native_classes():
-	var utils = autofree(Utils.new())
 	assert_true(GutUtils.is_native_class(Node))
 
-
 func test_is_inner_class_true_for_inner_classes():
-	var utils = autofree(Utils.new())
 	assert_true(GutUtils.is_inner_class(InnerClasses.InnerA))
 
 func test_is_inner_class_false_for_base_scripts():
-	var utils = autofree(Utils.new())
 	assert_false(GutUtils.is_inner_class(InnerClasses))
 
 func test_is_inner_class_false_for_non_objs():
-	var utils = autofree(Utils.new())
 	assert_false(GutUtils.is_inner_class('foo'))
 
+func test_is_install_valid_true_by_default():
+	assert_true(GutUtils.is_install_valid())
 
+func test_is_install_valid_false_if_function_template_missing():
+	var template_paths = GutUtils.DOUBLE_TEMPLATES.duplicate()
+	template_paths.FUNCTION = 'res://does_not_exist.txt'
+	assert_false(GutUtils.is_install_valid(template_paths))
+
+func test_is_install_valid_false_if_init_template_missing():
+	var template_paths = GutUtils.DOUBLE_TEMPLATES.duplicate()
+	template_paths.INIT = 'res://does_not_exist.txt'
+	assert_false(GutUtils.is_install_valid(template_paths))
+
+func test_is_install_valid_false_if_script_template_missing():
+	var template_paths = GutUtils.DOUBLE_TEMPLATES.duplicate()
+	template_paths.SCRIPT = 'res://does_not_exist.txt'
+	assert_false(GutUtils.is_install_valid(template_paths))
+
+func test_is_install_valid_false_when_godot_version_too_low():
+	var ver_nums = GutUtils.VersionNumbers.new('50.50.50', '50.50.50')
+	assert_false(GutUtils.is_install_valid(GutUtils.DOUBLE_TEMPLATES, ver_nums))
+
+func test_make_install_check_text_contains_missing_tempalte_text_when_function_template_missing():
+	var template_paths = GutUtils.DOUBLE_TEMPLATES.duplicate()
+	template_paths.FUNCTION = 'res://does_not_exist.txt'
+	var text = GutUtils.make_install_check_text(template_paths)
+	assert_string_contains(text, 'template files are missing', false)
+
+func test_make_install_check_text_contains_missing_tempalte_text_when_init_template_missing():
+	var template_paths = GutUtils.DOUBLE_TEMPLATES.duplicate()
+	template_paths.INIT = 'res://does_not_exist.txt'
+	var text = GutUtils.make_install_check_text(template_paths)
+	assert_string_contains(text, 'template files are missing', false)
+
+func test_make_install_check_text_contains_missing_tempalte_text_when_script_template_missing():
+	var template_paths = GutUtils.DOUBLE_TEMPLATES.duplicate()
+	template_paths.SCRIPT = 'res://does_not_exist.txt'
+	var text = GutUtils.make_install_check_text(template_paths)
+	assert_string_contains(text, 'template files are missing', false)
+
+func test_make_install_check_text_contains_info_about_invalid_version():
+	var ver_nums = GutUtils.VersionNumbers.new('50.50.50', '50.50.50')
+	var text = GutUtils.make_install_check_text(GutUtils.DOUBLE_TEMPLATES, ver_nums)
+	assert_string_contains(text, 'requires Godot ', false)
+
+func test_make_install_check_text_contains_text_about_no_configured_directories():
+	pending()
 
 
 class TestGetSceneScript:

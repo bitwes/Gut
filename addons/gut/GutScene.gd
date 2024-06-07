@@ -125,3 +125,6 @@ func use_compact_mode(should=true):
 func set_opacity(val):
 	_normal_gui.modulate.a = val
 	_compact_gui.modulate.a = val
+
+func set_title(text):
+	_set_both_titles(text)
