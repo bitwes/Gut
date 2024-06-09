@@ -1233,33 +1233,48 @@ class TestAssertTypeOf:
 
 
 # ------------------------------------------------------------------------------
-# TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
-class TestStringContains:
+class TestAssertStringContains:
 	extends BaseTestClass
 
-	func test__assert_string_contains__fails_when_text_is_empty():
+	func test_fails_when_text_is_empty():
 		gr.test.assert_string_contains('', 'walrus')
 		assert_fail(gr.test)
 
-	func test__assert_string_contains__fails_when_search_string_is_empty():
+	func test_fails_when_search_string_is_empty():
 		gr.test.assert_string_contains('This is a test.', '')
 		assert_fail(gr.test)
 
-	func test__assert_string_contains__fails_when_case_sensitive_search_not_found():
+	func test_fails_when_case_sensitive_search_not_found():
 		gr.test.assert_string_contains('This is a test.', 'TeSt', true)
 		assert_fail(gr.test)
 
-	func test__assert_string_contains__fails_when_case_insensitive_search_not_found():
+	func test_fails_when_case_insensitive_search_not_found():
 		gr.test.assert_string_contains('This is a test.', 'penguin', false)
 		assert_fail(gr.test)
 
-	func test__assert_string_contains__passes_when_case_sensitive_search_is_found():
+	func test_passes_when_case_sensitive_search_is_found():
 		gr.test.assert_string_contains('This is a test.', 'is a ', true)
 		assert_pass(gr.test)
 
-	func test__assert_string_contains__passes_when_case_insensitive_search_is_found():
+	func test_passes_when_case_insensitive_search_is_found():
 		gr.test.assert_string_contains('This is a test.', 'this ', false)
 		assert_pass(gr.test)
+
+	func test_fails_when_text_is_null():
+		gr.test.assert_string_contains(null, 'whatever', false)
+		assert_fail(gr.test)
+
+	func test_fails_when_search_is_null():
+		gr.test.assert_string_contains('hello', null, false)
+		assert_fail(gr.test)
+
+	func test_fails_when_text_is_number():
+		gr.test.assert_string_contains(123, '2', false)
+		assert_fail(gr.test)
+
+	func test_fails_when_search_is_number():
+		gr.test.assert_string_contains('2', 123, false)
+		assert_fail(gr.test)
 
 
 # ------------------------------------------------------------------------------

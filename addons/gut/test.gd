@@ -836,9 +836,12 @@ func assert_not_typeof(object, type, text=''):
 # The match_case flag determines case sensitivity.
 # ------------------------------------------------------------------------------
 func assert_string_contains(text, search, match_case=true):
-	var empty_search = 'Expected text and search strings to be non-empty. You passed \'%s\' and \'%s\'.'
+	const empty_search = 'Expected text and search strings to be non-empty. You passed \'%s\' and \'%s\'.'
+	const non_strings = 'Expected text and search to both be strings.  You passed \'%s\' and \'%s\'.'
 	var disp = 'Expected \'%s\' to contain \'%s\', match_case=%s' % [text, search, match_case]
-	if(text == '' or search == ''):
+	if(typeof(text) != TYPE_STRING or typeof(search) != TYPE_STRING):
+		_fail(non_strings % [text, search])
+	elif(text == '' or search == ''):
 		_fail(empty_search % [text, search])
 	elif(match_case):
 		if(text.find(search) == -1):
