@@ -1262,19 +1262,19 @@ class TestAssertStringContains:
 
 	func test_fails_when_text_is_null():
 		gr.test.assert_string_contains(null, 'whatever', false)
-		assert_fail(gr.test)
+		assert_fail_msg_contains(gr.test, 'Expected text and search to both be strings.  You passed \'<null>\' and \'whatever\'.')
 
 	func test_fails_when_search_is_null():
 		gr.test.assert_string_contains('hello', null, false)
-		assert_fail(gr.test)
+		assert_fail_msg_contains(gr.test, 'Expected text and search to both be strings.  You passed \'hello\' and \'<null>\'.')
 
 	func test_fails_when_text_is_number():
 		gr.test.assert_string_contains(123, '2', false)
-		assert_fail(gr.test)
+		assert_fail_msg_contains(gr.test, 'Expected text and search to both be strings.  You passed \'123\' and \'2\'.')
 
 	func test_fails_when_search_is_number():
 		gr.test.assert_string_contains('2', 123, false)
-		assert_fail(gr.test)
+		assert_fail_msg_contains(gr.test, 'Expected text and search to both be strings.  You passed \'2\' and \'123\'.')
 
 
 # ------------------------------------------------------------------------------
