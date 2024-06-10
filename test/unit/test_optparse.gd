@@ -3,7 +3,7 @@ extends GutTest
 class BaseTest:
 	extends GutTest
 
-	var OptParse = load('res://addons/gut/optparse.gd')
+	var OptParse = load('res://addons/gut/cli/optparse.gd')
 
 
 class TestOption:
