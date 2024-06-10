@@ -19,11 +19,13 @@ class Option:
 	var description = ''
 	var required = false
 
+
 	func _init(name,default_value,desc=''):
 		option_name = name
 		default = default_value
 		description = desc
 		value = empty_value#default_value
+
 
 	func pad(to_pad, size, pad_with=' '):
 		var to_return = to_pad
@@ -32,11 +34,13 @@ class Option:
 
 		return to_return
 
+
 	func to_s(min_space=0):
 		var subbed_desc = description
 		if(subbed_desc.find('[default]') != -1):
 			subbed_desc = subbed_desc.replace('[default]', str(default))
 		return pad(option_name, min_space) + subbed_desc
+
 
 	func has_been_set():
 		return str(_value) != empty_value
@@ -54,8 +58,13 @@ var positional = []
 var banner = ''
 var option_name_prefix = '-'
 var unused = []
-var script_option = Option.new('-s', '?', 'script option provided by Godot')
+var script_option = null
 
+var _options_by_name = {}
+
+func _init():
+	script_option = Option.new('-s', '?', 'script option provided by Godot')
+	_options_by_name['-s'] = script_option
 
 func _convert_value_to_array(raw_value):
 	var split = raw_value.split(',')
@@ -96,24 +105,10 @@ func _is_option(arg):
 
 
 func _find_option_by_name(opt_name):
-	var idx = 0
 	var found_param = null
 
-	if(opt_name == script_option.option_name):
-		found_param = script_option
-
-	while(idx < options.size() and found_param == null):
-		if(options[idx].option_name == opt_name):
-			found_param = options[idx]
-		else:
-			idx += 1
-
-	idx = 0
-	while(idx < positional.size() and found_param == null):
-		if(positional[idx].option_name == opt_name):
-			found_param = positional[idx]
-		else:
-			idx += 1
+	if(_options_by_name.has(opt_name)):
+		found_param = _options_by_name[opt_name]
 
 	return found_param
 
@@ -164,12 +159,16 @@ func _parse_command_line_arguments(args):
 
 
 func add(op_name, default, desc):
+	var new_op = null
+
 	if(_find_option_by_name(op_name) != null):
 		push_error(str('Option [', op_name, '] already exists.'))
 	else:
-		var new_op = Option.new(op_name, default, desc)
+		new_op = Option.new(op_name, default, desc)
 		options.append(new_op)
-		return new_op
+		_options_by_name[op_name] = new_op
+
+	return new_op
 
 
 func add_required(op_name, default, desc):
@@ -180,12 +179,14 @@ func add_required(op_name, default, desc):
 
 
 func add_positional(op_name, default, desc):
+	var new_op = null
 	if(_find_option_by_name(op_name) != null):
 		push_error(str('Positional option [', op_name, '] already exists.'))
 	else:
-		var new_op = Option.new(op_name, default, desc)
+		new_op = Option.new(op_name, default, desc)
 		positional.append(new_op)
-		return new_op
+		_options_by_name[op_name] = new_op
+	return new_op
 
 
 func add_positional_required(op_name, default, desc):
@@ -225,15 +226,18 @@ func print_help():
 	print(get_help())
 
 
-func print_options():
+func print_option_values():
 	for i in range(options.size()):
-		print(options[i].option_name + '=' + str(options[i].value))
+		var text = ""
+		if(options[i].has_been_set()):
+			text = str(options[i].option_name, ' = ', options[i].value)
+		else:
+			text = str(options[i].option_name, ' = [', options[i].value, ']')
+		print(text)
 
 
 func parse(cli_args=OS.get_cmdline_args()):
 	unused = _parse_command_line_arguments(cli_args)
-
-	return unused
 
 
 func get_missing_required_options():

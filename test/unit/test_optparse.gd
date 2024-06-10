@@ -88,8 +88,8 @@ class TestOptParse:
 
 	func test_when_include_godot_script_option_true_option_is_not_in_unused():
 		var opts = OptParse.new()
-		var unused = opts.parse(['-s', 'res://something.gd'])
-		assert_eq(unused, [])
+		opts.parse(['-s', 'res://something.gd'])
+		assert_eq(opts.unused, [])
 
 	func test_when_script_option_specified_it_is_set():
 		var opts = OptParse.new()
