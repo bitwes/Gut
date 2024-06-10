@@ -37,6 +37,9 @@ class TestOption:
 		var o = OptParse.Option.new('name', 'foobar', 'put default here [default]')
 		assert_string_ends_with(o.to_s(), 'put default here foobar')
 
+	func test_required_false_by_default():
+		var o = OptParse.Option.new('name', 'default')
+		assert_false(o.required)
 
 
 class TestOptParse:
@@ -83,9 +86,89 @@ class TestOptParse:
 		assert_string_contains(help, "foo = bar")
 		assert_string_contains(help, "bar = foo")
 
+	func test_when_include_godot_script_option_true_option_is_not_in_unused():
+		var opts = OptParse.new()
+		var unused = opts.parse(['-s', 'res://something.gd'])
+		assert_eq(unused, [])
 
+	func test_when_script_option_specified_it_is_set():
+		var opts = OptParse.new()
+		opts.parse(['-s', 'res://something.gd'])
+		assert_eq(opts.script_option.value, 'res://something.gd')
 
+	func test_cannot_add_duplicate_options():
+		var opts = OptParse.new()
+		opts.add('-a', 'a', 'a')
+		opts.add('-a', 'a', 'a')
+		assert_eq(opts.options.size(), 1)
 
+	func test_cannot_add_duplicate_positional_option():
+		var opts = OptParse.new()
+		opts.add_positional('a', 'a', 'a')
+		opts.add_positional('a', 'a', 'a')
+		assert_eq(opts.positional.size(), 1)
+
+	func test_add_required_sets_required_flag():
+		var opts = OptParse.new()
+		var result = opts.add_required('-a', 'a', 'a')
+		assert_true(result.required)
+
+	func test_add_required_positional_sets_required_flag():
+		var opts = OptParse.new()
+		var result = opts.add_positional_required('-a', 'a', 'a')
+		assert_true(result.required)
+
+	func test_add_required_ignores_duplicates():
+		var opts = OptParse.new()
+		var first = opts.add('-a', 'a', 'a')
+		var result = opts.add_required('-a', 'a', 'a')
+		assert_null(result)
+		assert_false(first.required)
+
+	func test_add_required_positional_ignores_duplicates():
+		var opts = OptParse.new()
+		var first = opts.add_positional('-a', 'a', 'a')
+		var result = opts.add_positional_required('-a', 'a', 'a')
+		assert_null(result)
+		assert_false(first.required)
+
+	func test_get_missing_required_options_zero_default():
+		var opts = OptParse.new()
+		assert_eq(opts.get_missing_required_options().size(), 0)
+
+	func test_non_specified_required_options_included_in_missing():
+		var opts = OptParse.new()
+		var req1 = opts.add_required('a', 'a', 'a')
+		var req2 = opts.add_required('b', 'b', 'b')
+		var missing = opts.get_missing_required_options()
+		assert_has(missing, req1, 'required 1 in the list')
+		assert_has(missing, req2, 'required 2 in the list')
+
+	func test_non_specified_required_positional_options_included_in_missing():
+		var opts = OptParse.new()
+		var req1 = opts.add_positional_required('a', 'a', 'a')
+		var req2 = opts.add_positional_required('b', 'b', 'b')
+		var missing = opts.get_missing_required_options()
+		assert_has(missing, req1, 'required 1 in the list')
+		assert_has(missing, req2, 'required 2 in the list')
+
+	func test_specified_required_options_not_in_missing():
+		var opts = OptParse.new()
+		var req1 = opts.add_required('-a', 'a', 'a')
+		var req2 = opts.add_required('-b', 'b', 'b')
+		opts.parse(['-b=something'])
+		var missing = opts.get_missing_required_options()
+		assert_has(missing, req1, 'required 2 in the list')
+		assert_does_not_have(missing, req2, 'required 1 in the list')
+
+	func test_specified_required_positional_options_not_in_missing():
+		var opts = OptParse.new()
+		var req1 = opts.add_positional_required('a', 'a', 'a')
+		var req2 = opts.add_positional_required('b', 'b', 'b')
+		opts.parse(['something'])
+		var missing = opts.get_missing_required_options()
+		assert_does_not_have(missing, req1, 'required 1 in the list')
+		assert_has(missing, req2, 'required 2 in the list')
 
 	# func test_get_value_null_by_default():
 	# 	var cli_p = OptParse.CmdLineParser.new(['--foo'])
