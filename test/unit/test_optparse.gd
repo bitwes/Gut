@@ -96,19 +96,19 @@ class TestOptParse:
 	func test_when_script_option_specified_it_is_set():
 		var opts = OptParse.new()
 		opts.parse(['-s', 'res://something.gd'])
-		assert_eq(opts.script_option.value, 'res://something.gd')
+		assert_eq(opts.options.script_option.value, 'res://something.gd')
 
 	func test_cannot_add_duplicate_options():
 		var opts = OptParse.new()
 		opts.add('-a', 'a', 'a')
 		opts.add('-a', 'a', 'a')
-		assert_eq(opts.options.size(), 1)
+		assert_eq(opts.options.options.size(), 1)
 
 	func test_cannot_add_duplicate_positional_option():
 		var opts = OptParse.new()
 		opts.add_positional('a', 'a', 'a')
 		opts.add_positional('a', 'a', 'a')
-		assert_eq(opts.positional.size(), 1)
+		assert_eq(opts.options.positional.size(), 1)
 
 	func test_add_required_sets_required_flag():
 		var opts = OptParse.new()
@@ -274,7 +274,7 @@ class TestPositionalArguments:
 	func test_can_add_positional_argument():
 		var op = OptParse.new()
 		op.add_positional('first', '', 'the first one')
-		assert_eq(op.positional.size(), 1)
+		assert_eq(op.options.positional.size(), 1)
 
 	func test_non_named_parameter_1_goes_into_positional():
 		var op = OptParse.new()

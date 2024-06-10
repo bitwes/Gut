@@ -112,14 +112,9 @@ Any option that requires a value will take the form of \"-g<name>=<value>\".
 There cannot be any spaces between the option, the \"=\", or ' + 'inside a
 specified value or godot will think you are trying to run a scene.
 """
-	# Run specific things
-	opts.add('-gselect', '', ('All scripts that contain the specified string in their filename will be ran'))
-	opts.add('-ginner_class', '', 'Only run inner classes that contain the specified string int their name.')
-	opts.add('-gunit_test_name', '', ('Any test that contains the specified text will be run, all others will be skipped.'))
-
-	# Run Config
-	opts.add('-ginclude_subdirs', false, 'Include subdirectories of -gdir.')
+	opts.add_heading("Test Config:")
 	opts.add('-gdir', options.dirs, 'Comma delimited list of directories to add tests from.')
+	opts.add('-ginclude_subdirs', false, 'Include subdirectories of -gdir.')
 	opts.add('-gtest', [], 'Comma delimited list of full paths to test scripts to run.')
 	opts.add('-gprefix', options.prefix, 'Prefix used to find tests when specifying -gdir.  Default "[default]".')
 	opts.add('-gsuffix', options.suffix, 'Test script suffix, including .gd extension.  Default "[default]".')
@@ -129,10 +124,12 @@ specified value or godot will think you are trying to run a scene.
 	opts.add('-gerrors_do_not_cause_failure', false, 'When an internal GUT error occurs tests will fail.  With this option set, that does not happen.')
 	opts.add('-gdouble_strategy', 'SCRIPT_ONLY', 'Default strategy to use when doubling.  Valid values are [INCLUDE_NATIVE, SCRIPT_ONLY].  Default "[default]"')
 
-	# Misc
-	opts.add('-gpaint_after', options.paint_after, 'Delay before GUT will add a 1 frame pause to paint the screen/GUI.  default [default]')
+	opts.add_heading("Running Subsets:")
+	opts.add('-gselect', '', ('All scripts that contain the specified string in their filename will be ran'))
+	opts.add('-ginner_class', '', 'Only run inner classes that contain the specified string int their name.')
+	opts.add('-gunit_test_name', '', ('Any test that contains the specified text will be run, all others will be skipped.'))
 
-	# Display options
+	opts.add_heading("Display Settings:")
 	opts.add('-glog', options.log_level, 'Log level.  Default [default]')
 	opts.add('-ghide_orphans', false, 'Display orphan counts for tests and scripts.  Default "[default]".')
 	opts.add('-gmaximize', false, 'Maximizes test runner window to fit the viewport.')
@@ -143,20 +140,21 @@ specified value or godot will think you are trying to run a scene.
 	opts.add('-gfont_size', options.font_size, 'Font size, default "[default]"')
 	opts.add('-gbackground_color', options.background_color, 'Background color as an html color, default "[default]"')
 	opts.add('-gfont_color',options.font_color, 'Font color as an html color, default "[default]"')
+	opts.add('-gpaint_after', options.paint_after, 'Delay before GUT will add a 1 frame pause to paint the screen/GUI.  default [default]')
 
-	# End Behavior
+	opts.add_heading("End Behaviour")
 	opts.add('-gexit', false, 'Exit after running tests.  If not specified you have to manually close the window.')
 	opts.add('-gexit_on_success', false, 'Only exit if all tests pass.')
 	opts.add('-gignore_pause', false, 'Ignores any calls to gut.pause_before_teardown.')
 
-	# Helpish options
+	opts.add_heading("Output:")
+	opts.add('-gjunit_xml_file', options.junit_xml_file, 'Export results of run to this file in the Junit XML format.')
+	opts.add('-gjunit_xml_timestamp', options.junit_xml_timestamp, 'Include a timestamp in the -gjunit_xml_file, default [default]')
+
+	opts.add_heading("Help:")
 	opts.add('-gh', false, 'Print this help.  You did this to see this, so you probably understand.')
 	opts.add('-gpo', false, 'Print option values from all sources and the value used.')
 	opts.add('-gprint_gutconfig_sample', false, 'Print out json that can be used to make a gutconfig file.')
-
-	# Output options
-	opts.add('-gjunit_xml_file', options.junit_xml_file, 'Export results of run to this file in the Junit XML format.')
-	opts.add('-gjunit_xml_timestamp', options.junit_xml_timestamp, 'Include a timestamp in the -gjunit_xml_file, default [default]')
 
 	return opts
 
@@ -275,7 +273,6 @@ func _run_gut():
 			_print_gutconfigs(opt_resolver.get_resolved_values())
 			quit(0)
 		else:
-			o.print_option_values()
 			_run_tests(opt_resolver)
 
 

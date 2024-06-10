@@ -46,6 +46,78 @@ class Option:
 		return str(_value) != empty_value
 
 
+class OptionHeading:
+	var options = []
+	var display = 'default'
+
+
+class Options:
+	var options = []
+	var positional = []
+	var default_heading = OptionHeading.new()
+	var script_option = Option.new('-s', '?', 'script option provided by Godot')
+
+	var _options_by_name = {}
+	var _options_by_heading = [default_heading]
+	var _cur_heading = default_heading
+
+
+	func add_heading(display):
+		var heading = OptionHeading.new()
+		heading.display = display
+		_cur_heading = heading
+		_options_by_heading.append(heading)
+
+
+	func add(option):
+		options.append(option)
+		_options_by_name[option.option_name] = option
+		_cur_heading.options.append(option)
+
+
+	func add_positional(option):
+		positional.append(option)
+		_options_by_name[option.option_name] = option
+
+
+	func get_by_name(option_name):
+		var found_param = null
+		if(option_name == script_option.option_name):
+			found_param = script_option
+		elif(_options_by_name.has(option_name)):
+			found_param = _options_by_name[option_name]
+
+		return found_param
+
+
+	func get_help_text():
+		var longest = 0
+		var text = ""
+		for i in range(options.size()):
+			if(options[i].option_name.length() > longest):
+				longest = options[i].option_name.length()
+
+		for heading in _options_by_heading:
+			if(heading != default_heading):
+				text += str("\n", heading.display, "\n")
+			for option in heading.options:
+				text += str('  ', option.to_s(longest + 2), "\n")
+
+
+		return text
+
+
+	func print_option_values():
+		for i in range(options.options.size()):
+			var text = str(options.options[i].option_name, ' = ', options.options[i].value)
+
+			if(!options.options[i].has_been_set()):
+				text += " (default)"
+
+			print(text)
+
+
+
 
 
 #-------------------------------------------------------------------------------
@@ -53,18 +125,11 @@ class Option:
 # supplied.  Uses Option class and CmdLineParser to extract information from
 # the command line and make it easily accessible.
 #-------------------------------------------------------------------------------
-var options = []
-var positional = []
+var options = Options.new()
 var banner = ''
 var option_name_prefix = '-'
 var unused = []
-var script_option = null
 
-var _options_by_name = {}
-
-func _init():
-	script_option = Option.new('-s', '?', 'script option provided by Godot')
-	_options_by_name['-s'] = script_option
 
 func _convert_value_to_array(raw_value):
 	var split = raw_value.split(',')
@@ -104,15 +169,6 @@ func _is_option(arg):
 	return arg.begins_with(option_name_prefix)
 
 
-func _find_option_by_name(opt_name):
-	var found_param = null
-
-	if(_options_by_name.has(opt_name)):
-		found_param = _options_by_name[opt_name]
-
-	return found_param
-
-
 func _parse_command_line_arguments(args):
 	var parsed_opts = args.duplicate()
 	var i = 0
@@ -128,14 +184,14 @@ func _parse_command_line_arguments(args):
 				var parts = entry.split('=')
 				opt = parts[0]
 				value = parts[1]
-				var the_option = _find_option_by_name(opt)
+				var the_option = options.get_by_name(opt)
 				if(the_option != null):
 					parsed_opts.remove_at(i)
 					_set_option_value(the_option, value)
 				else:
 					i += 1
 			else:
-				var the_option = _find_option_by_name(entry)
+				var the_option = options.get_by_name(entry)
 				if(the_option != null):
 					parsed_opts.remove_at(i)
 					if(typeof(the_option.default) == TYPE_BOOL):
@@ -147,8 +203,8 @@ func _parse_command_line_arguments(args):
 				else:
 					i += 1
 		else:
-			if(positional_index < positional.size()):
-				_set_option_value(positional[positional_index], entry)
+			if(positional_index < options.positional.size()):
+				_set_option_value(options.positional[positional_index], entry)
 				parsed_opts.remove_at(i)
 				positional_index += 1
 			else:
@@ -161,12 +217,11 @@ func _parse_command_line_arguments(args):
 func add(op_name, default, desc):
 	var new_op = null
 
-	if(_find_option_by_name(op_name) != null):
+	if(options.get_by_name(op_name) != null):
 		push_error(str('Option [', op_name, '] already exists.'))
 	else:
 		new_op = Option.new(op_name, default, desc)
-		options.append(new_op)
-		_options_by_name[op_name] = new_op
+		options.add(new_op)
 
 	return new_op
 
@@ -180,12 +235,11 @@ func add_required(op_name, default, desc):
 
 func add_positional(op_name, default, desc):
 	var new_op = null
-	if(_find_option_by_name(op_name) != null):
+	if(options.get_by_name(op_name) != null):
 		push_error(str('Positional option [', op_name, '] already exists.'))
 	else:
 		new_op = Option.new(op_name, default, desc)
-		positional.append(new_op)
-		_options_by_name[op_name] = new_op
+		options.add_positional(new_op)
 	return new_op
 
 
@@ -195,9 +249,12 @@ func add_positional_required(op_name, default, desc):
 		op.required = true
 	return op
 
+func add_heading(display_text):
+	options.add_heading(display_text)
+
 
 func get_value(name):
-	var found_param = _find_option_by_name(name)
+	var found_param = options.get_by_name(name)
 
 	if(found_param != null):
 		return found_param.value
@@ -206,7 +263,7 @@ func get_value(name):
 		return null
 
 func get_value_or_null(name):
-	var found_param = _find_option_by_name(name)
+	var found_param = options.get_by_name(name)
 
 	if(found_param != null and found_param.has_been_set()):
 		return found_param.value
@@ -215,17 +272,12 @@ func get_value_or_null(name):
 
 
 func get_help():
-	var longest = 0
-	for i in range(options.size()):
-		if(options[i].option_name.length() > longest):
-			longest = options[i].option_name.length()
 	var sep = '---------------------------------------------------------'
 
 	var text = str(sep, "\n", banner, "\n")
 	text += get_usage() + "\n"
 	text += "\nOptions\n-------\n"
-	for i in range(options.size()):
-		text += str('  ', options[i].to_s(longest + 2), "\n")
+	text += options.get_help_text()
 	text += str(sep, "\n")
 	return text
 
@@ -234,27 +286,17 @@ func print_help():
 	print(get_help())
 
 
-func print_option_values():
-	for i in range(options.size()):
-		var text = str(options[i].option_name, ' = ', options[i].value)
-
-		if(!options[i].has_been_set()):
-			text += " (default)"
-
-		print(text)
-
-
 func parse(cli_args=OS.get_cmdline_args()):
 	unused = _parse_command_line_arguments(cli_args)
 
 
 func get_missing_required_options():
 	var to_return = []
-	for opt in options:
+	for opt in options.options:
 		if(opt.required and !opt.has_been_set()):
 			to_return.append(opt)
 
-	for opt in positional:
+	for opt in options.positional:
 		if(opt.required and !opt.has_been_set()):
 			to_return.append(opt)
 
@@ -263,12 +305,12 @@ func get_missing_required_options():
 
 func get_usage():
 	var pos_text = ""
-	for opt in positional:
+	for opt in options.positional:
 		pos_text += str("[", opt.description, "] ")
 	if(pos_text != ""):
 		pos_text += " [opts] "
 
-	return "<path to godot> -s " + script_option.value + " [opts] " + pos_text
+	return "<path to godot> -s " + options.script_option.value + " [opts] " + pos_text
 
 
 
