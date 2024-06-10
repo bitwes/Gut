@@ -96,26 +96,26 @@ file with the -gconfig option.
 To generate a .gutconfig.json file you can use -gprint_gutconfig_sample
 To see the effective values of a CLI command and a gutconfig use -gpo
 
-Any option that requires a value will take the form of \"-g<name>=<value>\".
-There cannot be any spaces between the option, the \"=\", or ' + 'inside a
-specified value or godot will think you are trying to run a scene.
+Values for options will can be supplied by:
+    option=value    # no space around "="
+    option value    # a space between option and value w/o =
 """
 	opts.add_heading("Test Config:")
-	opts.add('-gdir', options.dirs, 'Comma delimited list of directories to add tests from.')
-	opts.add('-ginclude_subdirs', false, 'Include subdirectories of -gdir.')
+	opts.add('-gdir', options.dirs, 'Comma delimited list of directories to search for test scripts in.')
+	opts.add('-ginclude_subdirs', false, 'Flag to include all subdirectories specified with -gdir.')
 	opts.add('-gtest', [], 'Comma delimited list of full paths to test scripts to run.')
 	opts.add('-gprefix', options.prefix, 'Prefix used to find tests when specifying -gdir.  Default "[default]".')
 	opts.add('-gsuffix', options.suffix, 'Test script suffix, including .gd extension.  Default "[default]".')
-	opts.add('-gconfig', 'res://.gutconfig.json', 'A config file that contains configuration information.  Default is res://.gutconfig.json')
+	opts.add('-gconfig', 'res://.gutconfig.json', 'The config file to load options from.  The default is [default].  Use "-gconfig=" to not use a config file.')
 	opts.add('-gpre_run_script', '', 'pre-run hook script path')
 	opts.add('-gpost_run_script', '', 'post-run hook script path')
 	opts.add('-gerrors_do_not_cause_failure', false, 'When an internal GUT error occurs tests will fail.  With this option set, that does not happen.')
 	opts.add('-gdouble_strategy', 'SCRIPT_ONLY', 'Default strategy to use when doubling.  Valid values are [INCLUDE_NATIVE, SCRIPT_ONLY].  Default "[default]"')
 
 	opts.add_heading("Running Subsets:")
-	opts.add('-gselect', '', ('All scripts that contain the specified string in their filename will be ran'))
-	opts.add('-ginner_class', '', 'Only run inner classes that contain the specified string int their name.')
-	opts.add('-gunit_test_name', '', ('Any test that contains the specified text will be run, all others will be skipped.'))
+	opts.add('-gselect', '', 'All scripts that contain the specified string in their filename will be ran')
+	opts.add('-ginner_class', '', 'Only run inner classes that contain the specified string in their name.')
+	opts.add('-gunit_test_name', '', 'Any test that contains the specified text will be run, all others will be skipped.')
 
 	opts.add_heading("Display Settings:")
 	opts.add('-glog', options.log_level, 'Log level [0-3].  Default [default]')
@@ -188,15 +188,14 @@ func _print_gutconfigs(values):
 	var header = """Here is a sample of a full .gutconfig.json file.
 You do not need to specify all values in your own file.  The values supplied in
 this sample are what would be used if you ran gut w/o the -gprint_gutconfig_sample
-option (option priority:  command-line, .gutconfig, default)."""
-	print("\n", header.replace("\n", ' '), "\n\n")
+option.   Option priority is:  command-line, .gutconfig, default)."""
+	print("\n", header.replace("\n", ' '), "\n")
 	var resolved = values
 
 	# remove_at some options that don't make sense to be in config
 	resolved.erase("config_file")
 	resolved.erase("show_help")
 
-	print("Here's a config with all the properties set based off of your current command and config.")
 	print(JSON.stringify(resolved, '  '))
 
 	for key in resolved:

@@ -317,9 +317,10 @@ func get_value_or_null(name):
 func get_help():
 	var sep = '---------------------------------------------------------'
 
-	var text = str(sep, "\n", banner, "\n")
-	text += options.get_usage_text() + "\n"
-	text += "\nOptions\n-------\n"
+	var text = str(sep, "\n", banner, "\n\n")
+	text += "Usage\n-----------\n"
+	text += "  " + options.get_usage_text() + "\n\n"
+	text += "\nOptions\n-----------\n"
 	text += options.get_help_text()
 	text += str(sep, "\n")
 	return text
