@@ -1,9 +1,13 @@
 extends GutTest
 
-class TestOption:
+class BaseTest:
 	extends GutTest
 
-	var OptParse = load('res://addons/gut/optparse2.gd')
+	var OptParse = load('res://addons/gut/optparse.gd')
+
+
+class TestOption:
+	extends BaseTest
 
 	func test_can_make_one():
 		var o = OptParse.Option.new('name', 'default')
@@ -43,9 +47,7 @@ class TestOption:
 
 
 class TestOptParse:
-	extends GutTest
-
-	var OptParse = load('res://addons/gut/optparse2.gd')
+	extends BaseTest
 
 	func test_can_make_one():
 		var opts = OptParse.new()
@@ -220,9 +222,7 @@ class TestOptParse:
 
 
 class TestBooleanValues:
-	extends GutTest
-
-	var OptParse = load('res://addons/gut/optparse2.gd')
+	extends BaseTest
 
 	func test_gets_default_of_false_when_not_specified():
 		var op = OptParse.new()
@@ -257,10 +257,7 @@ class TestBooleanValues:
 
 
 class TestArrayParameters:
-	extends GutTest
-
-	var OptParse = load('res://addons/gut/optparse2.gd')
-
+	extends BaseTest
 
 	func test_get_array_value_parses_commas_when_equal_not_used():
 		var op = OptParse.new()
@@ -272,9 +269,7 @@ class TestArrayParameters:
 
 
 class TestPositionalArguments:
-	extends GutTest
-
-	var OptParse = load('res://addons/gut/optparse2.gd')
+	extends BaseTest
 
 	func test_can_add_positional_argument():
 		var op = OptParse.new()

@@ -53,6 +53,7 @@ class OptionResolver:
 			return b
 		else:
 			return a
+
 	func _string_it(h):
 		var to_return = ''
 		for key in h:
@@ -95,7 +96,7 @@ var _final_opts = []
 
 func setup_options(options, font_names):
 	var opts = Optparse.new()
-	opts.set_banner(
+	opts.banner =\
 """
 The GUT CLI
 -----------
@@ -110,7 +111,7 @@ To see the effective values of a CLI command and a gutconfig use -gpo
 Any option that requires a value will take the form of \"-g<name>=<value>\".
 There cannot be any spaces between the option, the \"=\", or ' + 'inside a
 specified value or godot will think you are trying to run a scene.
-""")
+"""
 	# Run specific things
 	opts.add('-gselect', '', ('All scripts that contain the specified string in their filename will be ran'))
 	opts.add('-ginner_class', '', 'Only run inner classes that contain the specified string int their name.')
@@ -163,37 +164,37 @@ specified value or godot will think you are trying to run a scene.
 # Parses options, applying them to the _tester or setting values
 # in the options struct.
 func extract_command_line_options(from, to):
-	to.config_file = from.get_value('-gconfig')
-	to.dirs = from.get_value('-gdir')
-	to.disable_colors =  from.get_value('-gdisable_colors')
-	to.double_strategy = from.get_value('-gdouble_strategy')
-	to.ignore_pause = from.get_value('-gignore_pause')
-	to.include_subdirs = from.get_value('-ginclude_subdirs')
-	to.inner_class = from.get_value('-ginner_class')
-	to.log_level = from.get_value('-glog')
-	to.opacity = from.get_value('-gopacity')
-	to.post_run_script = from.get_value('-gpost_run_script')
-	to.pre_run_script = from.get_value('-gpre_run_script')
-	to.prefix = from.get_value('-gprefix')
-	to.selected = from.get_value('-gselect')
-	to.should_exit = from.get_value('-gexit')
-	to.should_exit_on_success = from.get_value('-gexit_on_success')
-	to.should_maximize = from.get_value('-gmaximize')
-	to.compact_mode = from.get_value('-gcompact_mode')
-	to.hide_orphans = from.get_value('-ghide_orphans')
-	to.suffix = from.get_value('-gsuffix')
-	to.errors_do_not_cause_failure = from.get_value('-gerrors_do_not_cause_failure')
-	to.tests = from.get_value('-gtest')
-	to.unit_test_name = from.get_value('-gunit_test_name')
+	to.config_file = from.get_value_or_null('-gconfig')
+	to.dirs = from.get_value_or_null('-gdir')
+	to.disable_colors =  from.get_value_or_null('-gdisable_colors')
+	to.double_strategy = from.get_value_or_null('-gdouble_strategy')
+	to.ignore_pause = from.get_value_or_null('-gignore_pause')
+	to.include_subdirs = from.get_value_or_null('-ginclude_subdirs')
+	to.inner_class = from.get_value_or_null('-ginner_class')
+	to.log_level = from.get_value_or_null('-glog')
+	to.opacity = from.get_value_or_null('-gopacity')
+	to.post_run_script = from.get_value_or_null('-gpost_run_script')
+	to.pre_run_script = from.get_value_or_null('-gpre_run_script')
+	to.prefix = from.get_value_or_null('-gprefix')
+	to.selected = from.get_value_or_null('-gselect')
+	to.should_exit = from.get_value_or_null('-gexit')
+	to.should_exit_on_success = from.get_value_or_null('-gexit_on_success')
+	to.should_maximize = from.get_value_or_null('-gmaximize')
+	to.compact_mode = from.get_value_or_null('-gcompact_mode')
+	to.hide_orphans = from.get_value_or_null('-ghide_orphans')
+	to.suffix = from.get_value_or_null('-gsuffix')
+	to.errors_do_not_cause_failure = from.get_value_or_null('-gerrors_do_not_cause_failure')
+	to.tests = from.get_value_or_null('-gtest')
+	to.unit_test_name = from.get_value_or_null('-gunit_test_name')
 
-	to.font_size = from.get_value('-gfont_size')
-	to.font_name = from.get_value('-gfont_name')
-	to.background_color = from.get_value('-gbackground_color')
-	to.font_color = from.get_value('-gfont_color')
-	to.paint_after = from.get_value('-gpaint_after')
+	to.font_size = from.get_value_or_null('-gfont_size')
+	to.font_name = from.get_value_or_null('-gfont_name')
+	to.background_color = from.get_value_or_null('-gbackground_color')
+	to.font_color = from.get_value_or_null('-gfont_color')
+	to.paint_after = from.get_value_or_null('-gpaint_after')
 
-	to.junit_xml_file = from.get_value('-gjunit_xml_file')
-	to.junit_xml_timestamp = from.get_value('-gjunit_xml_timestamp')
+	to.junit_xml_file = from.get_value_or_null('-gjunit_xml_file')
+	to.junit_xml_timestamp = from.get_value_or_null('-gjunit_xml_timestamp')
 
 
 
@@ -238,7 +239,8 @@ func _run_gut():
 
 	var o = setup_options(_gut_config.default_options, _gut_config.valid_fonts)
 
-	var all_options_valid = o.parse()
+	o.parse()
+	var all_options_valid = o.unused.size() == 0
 	extract_command_line_options(o, opt_resolver.cmd_opts)
 
 	var config_path = opt_resolver.get_value('config_file')
@@ -250,7 +252,11 @@ func _run_gut():
 		load_result = _gut_config.load_options_no_defaults(config_path)
 
 	# SHORTCIRCUIT
-	if(!all_options_valid or load_result == -1):
+	if(!all_options_valid):
+		print('Unknown arguments:  ', o.unused)
+		quit(1)
+	elif(load_result == -1):
+		print('Invalid gutconfig ', load_result)
 		quit(1)
 	else:
 		opt_resolver.config_opts = _gut_config.options
@@ -269,6 +275,7 @@ func _run_gut():
 			_print_gutconfigs(opt_resolver.get_resolved_values())
 			quit(0)
 		else:
+			o.print_option_values()
 			_run_tests(opt_resolver)
 
 
