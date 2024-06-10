@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------------
-# Simple class to hold a command line option
+# Holds all the properties of a command line option
 #-------------------------------------------------------------------------------
 class Option:
 	static var empty_value = &'--__this_is_an_optparse_empty_value__--'
@@ -19,12 +19,11 @@ class Option:
 	var description = ''
 	var required = false
 
-
 	func _init(name,default_value,desc=''):
 		option_name = name
 		default = default_value
 		description = desc
-		value = empty_value#default_value
+		value = empty_value
 
 
 	func pad(to_pad, size, pad_with=' '):
@@ -46,11 +45,17 @@ class Option:
 		return str(_value) != empty_value
 
 
+#-------------------------------------------------------------------------------
+# A struct for organizing options by a heading
+#-------------------------------------------------------------------------------
 class OptionHeading:
 	var options = []
 	var display = 'default'
 
-
+#-------------------------------------------------------------------------------
+# Organizes options by order, heading, position.  Also responsible for all
+# help related text generation.
+#-------------------------------------------------------------------------------
 class Options:
 	var options = []
 	var positional = []
@@ -107,14 +112,44 @@ class Options:
 		return text
 
 
-	func print_option_values():
-		for i in range(options.options.size()):
-			var text = str(options.options[i].option_name, ' = ', options.options[i].value)
+	func get_option_value_text():
+		var text = ""
+		for option in options:
+			text += str(option.option_name, ' = ', option.value)
 
-			if(!options.options[i].has_been_set()):
+			if(!option.has_been_set()):
 				text += " (default)"
+			text += "\n"
+		return text
 
-			print(text)
+
+	func print_option_values():
+		print(get_option_value_text())
+
+
+	func get_missing_required_options():
+		var to_return = []
+		for opt in options:
+			if(opt.required and !opt.has_been_set()):
+				to_return.append(opt)
+
+		for opt in positional:
+			if(opt.required and !opt.has_been_set()):
+				to_return.append(opt)
+
+		return to_return
+
+
+	func get_usage_text():
+		var pos_text = ""
+		for opt in positional:
+			pos_text += str("[", opt.description, "] ")
+
+		if(pos_text != ""):
+			pos_text += " [opts] "
+
+		return "<path to godot> -s " + script_option.value + " [opts] " + pos_text
+
 
 
 
@@ -249,6 +284,7 @@ func add_positional_required(op_name, default, desc):
 		op.required = true
 	return op
 
+
 func add_heading(display_text):
 	options.add_heading(display_text)
 
@@ -262,6 +298,13 @@ func get_value(name):
 		print("COULD NOT FIND OPTION " + name)
 		return null
 
+
+# This will return null instead of the default value if an option has not been
+# specified.  This can be useful when providing an order of precedence to your
+# values.  For example if
+#	default value < config file < command line
+# then you do not want to get the default value for a command line option or it
+# will overwrite the value in a config file.
 func get_value_or_null(name):
 	var found_param = options.get_by_name(name)
 
@@ -275,7 +318,7 @@ func get_help():
 	var sep = '---------------------------------------------------------'
 
 	var text = str(sep, "\n", banner, "\n")
-	text += get_usage() + "\n"
+	text += options.get_usage_text() + "\n"
 	text += "\nOptions\n-------\n"
 	text += options.get_help_text()
 	text += str(sep, "\n")
@@ -291,52 +334,7 @@ func parse(cli_args=OS.get_cmdline_args()):
 
 
 func get_missing_required_options():
-	var to_return = []
-	for opt in options.options:
-		if(opt.required and !opt.has_been_set()):
-			to_return.append(opt)
-
-	for opt in options.positional:
-		if(opt.required and !opt.has_been_set()):
-			to_return.append(opt)
-
-	return to_return
-
-
-func get_usage():
-	var pos_text = ""
-	for opt in options.positional:
-		pos_text += str("[", opt.description, "] ")
-	if(pos_text != ""):
-		pos_text += " [opts] "
-
-	return "<path to godot> -s " + options.script_option.value + " [opts] " + pos_text
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	return options.get_missing_required_options()
 
 
 # ##############################################################################

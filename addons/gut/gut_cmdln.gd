@@ -130,7 +130,7 @@ specified value or godot will think you are trying to run a scene.
 	opts.add('-gunit_test_name', '', ('Any test that contains the specified text will be run, all others will be skipped.'))
 
 	opts.add_heading("Display Settings:")
-	opts.add('-glog', options.log_level, 'Log level.  Default [default]')
+	opts.add('-glog', options.log_level, 'Log level [0-3].  Default [default]')
 	opts.add('-ghide_orphans', false, 'Display orphan counts for tests and scripts.  Default "[default]".')
 	opts.add('-gmaximize', false, 'Maximizes test runner window to fit the viewport.')
 	opts.add('-gcompact_mode', false, 'The runner will be in compact mode.  This overrides -gmaximize.')
@@ -264,7 +264,7 @@ func _run_gut():
 			o.print_help()
 			quit(0)
 		elif(o.get_value('-gpo')):
-			print('All command line options and where they are specified.  ' +
+			print('All config options and where they are specified.  ' +
 				'The "final" value shows which value will actually be used ' +
 				'based on order of precedence (default < .gutconfig < cmd line).' + "\n")
 			print(opt_resolver.to_s_verbose())

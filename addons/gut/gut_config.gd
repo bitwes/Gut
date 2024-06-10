@@ -84,8 +84,6 @@ func _load_options_from_config_file(file_path, into):
 	# SHORTCIRCUIT
 	if(results == null):
 		print("\n\n",'!! ERROR parsing file:  ', file_path)
-		print('    at line ', results.error_line, ':')
-		print('    ', results.error_string)
 		return -1
 
 	# Get all the options out of the config file using the option name.  The
