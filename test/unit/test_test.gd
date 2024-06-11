@@ -479,7 +479,7 @@ class TestAssertGte:
 		assert_fail(gr.test)
 
 	func test_passes_with_equal_integer():
-		gr.test.assert_gte(30, 2, "Should Pass")
+		gr.test.assert_gte(2, 2, "Should Pass")
 		assert_pass(gr.test, 1, '2 >= 2')
 
 	func test_passes_with_equal_string():
