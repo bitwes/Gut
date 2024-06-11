@@ -450,6 +450,41 @@ class TestAssertGt:
 		gr.test.assert_gt("a", "b", "Should Fail")
 		assert_fail(gr.test)
 
+	func test_fails_with_equal_integer():
+		gr.test.assert_gt(2, 2, "Should fail")
+		assert_fail(gr.test, 1, '2 > 2')
+
+	func test_fails_with_equal_string():
+		gr.test.assert_gt('A', 'A', "Should fail")
+		assert_fail(gr.test, 1, '"A" > "A"')
+
+# ------------------------------------------------------------------------------
+class TestAssertGte:
+	extends BaseTestClass
+
+	func test_passes_with_greater_integer():
+		gr.test.assert_gte(2, 1, "Should Pass")
+		assert_pass(gr.test, 1, '2 >= 1')
+
+	func test_fails_with_less_than_integer():
+		gr.test.assert_gte(1, 2, "Should fail")
+		assert_fail(gr.test, 1, '1 <= 2')
+
+	func test_passes_with_greater_string():
+		gr.test.assert_gte("b", "a", "Should Pass")
+		assert_pass(gr.test)
+
+	func test_fails_with_less_than_string():
+		gr.test.assert_gte("a", "b", "Should Fail")
+		assert_fail(gr.test)
+
+	func test_passes_with_equal_integer():
+		gr.test.assert_gte(30, 2, "Should Pass")
+		assert_pass(gr.test, 1, '2 >= 2')
+
+	func test_passes_with_equal_string():
+		gr.test.assert_gte('A', 'A', "Should Pass")
+		assert_pass(gr.test, 1, '"A" >= "A"')
 
 # ------------------------------------------------------------------------------
 class TestAssertLt:
@@ -470,6 +505,42 @@ class TestAssertLt:
 	func test_string_with_gt():
 		gr.test.assert_lt("b", "a", "Should Fail")
 		assert_fail(gr.test)
+
+	func test_fails_with_equal_integer():
+		gr.test.assert_lt(2, 2, "Should fail")
+		assert_fail(gr.test, 1, '2 < 2')
+
+	func test_fails_with_equal_string():
+		gr.test.assert_lt('A', 'A', "Should fail")
+		assert_fail(gr.test, 1, '"A" < "A"')
+
+# ------------------------------------------------------------------------------
+class TestAssertLte:
+	extends BaseTestClass
+
+	func test_passes_with_lesser_integer():
+		gr.test.assert_lte(1, 2, "Should Pass")
+		assert_pass(gr.test, 1, '1 <= 2')
+
+	func test_fails_with_greater_integer():
+		gr.test.assert_lte(2, 1, "Should fail")
+		assert_fail(gr.test, 1, '2 >= 1')
+
+	func test_passes_with_lesser_string():
+		gr.test.assert_lte("a", "b", "Should Pass")
+		assert_pass(gr.test)
+
+	func test_fails_with_greater_string():
+		gr.test.assert_lte("b", "a", "Should Fail")
+		assert_fail(gr.test)
+
+	func test_passes_with_equal_integer():
+		gr.test.assert_lte(2, 2, "Should pass")
+		assert_pass(gr.test, 1, '2 >= 2')
+
+	func test_passes_with_equal_string():
+		gr.test.assert_lte('A', 'A', "Should pass")
+		assert_pass(gr.test, 1, '"A" >= "A"')
 
 
 # ------------------------------------------------------------------------------
