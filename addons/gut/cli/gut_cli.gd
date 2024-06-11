@@ -99,11 +99,17 @@ To see the effective values of a CLI command and a gutconfig use -gpo
 Values for options will can be supplied by:
     option=value    # no space around "="
     option value    # a space between option and value w/o =
+
+Options whose values are lists/arrays can be specified multiple times:
+	-gdir=a,b
+	-gdir c,d
+	-gdir e
+	# results in -gdir equaling [a, b, c, d, e]
 """
 	opts.add_heading("Test Config:")
-	opts.add('-gdir', options.dirs, 'Comma delimited list of directories to search for test scripts in.')
+	opts.add('-gdir', options.dirs, 'List of directories to search for test scripts in.')
 	opts.add('-ginclude_subdirs', false, 'Flag to include all subdirectories specified with -gdir.')
-	opts.add('-gtest', [], 'Comma delimited list of full paths to test scripts to run.')
+	opts.add('-gtest', [], 'List of full paths to test scripts to run.')
 	opts.add('-gprefix', options.prefix, 'Prefix used to find tests when specifying -gdir.  Default "[default]".')
 	opts.add('-gsuffix', options.suffix, 'Test script suffix, including .gd extension.  Default "[default]".')
 	opts.add('-gconfig', 'res://.gutconfig.json', 'The config file to load options from.  The default is [default].  Use "-gconfig=" to not use a config file.')
@@ -112,14 +118,17 @@ Values for options will can be supplied by:
 	opts.add('-gerrors_do_not_cause_failure', false, 'When an internal GUT error occurs tests will fail.  With this option set, that does not happen.')
 	opts.add('-gdouble_strategy', 'SCRIPT_ONLY', 'Default strategy to use when doubling.  Valid values are [INCLUDE_NATIVE, SCRIPT_ONLY].  Default "[default]"')
 
-	opts.add_heading("Running Subsets:")
+	opts.add_heading("Run Options:")
 	opts.add('-gselect', '', 'All scripts that contain the specified string in their filename will be ran')
 	opts.add('-ginner_class', '', 'Only run inner classes that contain the specified string in their name.')
 	opts.add('-gunit_test_name', '', 'Any test that contains the specified text will be run, all others will be skipped.')
+	opts.add('-gexit', false, 'Exit after running tests.  If not specified you have to manually close the window.')
+	opts.add('-gexit_on_success', false, 'Only exit if zero tests fail.')
+	opts.add('-gignore_pause', false, 'Ignores any calls to pause_before_teardown.')
 
 	opts.add_heading("Display Settings:")
 	opts.add('-glog', options.log_level, 'Log level [0-3].  Default [default]')
-	opts.add('-ghide_orphans', false, 'Display orphan counts for tests and scripts.  Default "[default]".')
+	opts.add('-ghide_orphans', false, 'Display orphan counts for tests and scripts.  Default [default].')
 	opts.add('-gmaximize', false, 'Maximizes test runner window to fit the viewport.')
 	opts.add('-gcompact_mode', false, 'The runner will be in compact mode.  This overrides -gmaximize.')
 	opts.add('-gopacity', options.opacity, 'Set opacity of test runner window. Use range 0 - 100. 0 = transparent, 100 = opaque.')
@@ -130,12 +139,7 @@ Values for options will can be supplied by:
 	opts.add('-gfont_color',options.font_color, 'Font color as an html color, default "[default]"')
 	opts.add('-gpaint_after', options.paint_after, 'Delay before GUT will add a 1 frame pause to paint the screen/GUI.  default [default]')
 
-	opts.add_heading("End Behaviour")
-	opts.add('-gexit', false, 'Exit after running tests.  If not specified you have to manually close the window.')
-	opts.add('-gexit_on_success', false, 'Only exit if all tests pass.')
-	opts.add('-gignore_pause', false, 'Ignores any calls to gut.pause_before_teardown.')
-
-	opts.add_heading("Output:")
+	opts.add_heading("Result Export:")
 	opts.add('-gjunit_xml_file', options.junit_xml_file, 'Export results of run to this file in the Junit XML format.')
 	opts.add('-gjunit_xml_timestamp', options.junit_xml_timestamp, 'Include a timestamp in the -gjunit_xml_file, default [default]')
 

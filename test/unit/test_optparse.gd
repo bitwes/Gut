@@ -88,7 +88,7 @@ class TestOptParse:
 		assert_string_contains(help, "foo = bar")
 		assert_string_contains(help, "bar = foo")
 
-	func test_when_include_godot_script_option_true_option_is_not_in_unused():
+	func test_script_option_is_not_in_unused():
 		var opts = OptParse.new()
 		opts.parse(['-s', 'res://something.gd'])
 		assert_eq(opts.unused, [])
@@ -172,53 +172,57 @@ class TestOptParse:
 		assert_does_not_have(missing, req1, 'required 1 in the list')
 		assert_has(missing, req2, 'required 2 in the list')
 
-	# func test_get_value_null_by_default():
-	# 	var cli_p = OptParse.CmdLineParser.new(['--foo'])
-	# 	assert_null(cli_p.get_value('--foo'))
+	func test_splits_value_on_equal_sign():
+		var opts = OptParse.new()
+		var op = opts.add('--foo', 'some string', 'desc')
+		opts.parse(['--foo=bar'])
+		assert_eq(op.value, 'bar')
 
-	# func test_get_value_returns_default_when_option_not_specified():
-	# 	var cli_p = OptParse.CmdLineParser.new(['one'])
-	# 	assert_eq(cli_p.get_value('--foo', 'default'), 'default')
+	func test_sets_value_when_next_element_when_is_not_an_option():
+		var opts = OptParse.new()
+		var op = opts.add('--foo', 'some string', 'desc')
+		opts.parse(['--foo', 'bar'])
+		assert_eq(op.value, 'bar')
 
-	# func test_splits_value_on_equal_sign():
-	# 	var cli_p = OptParse.CmdLineParser.new(['--foo=bar'])
-	# 	assert_eq(cli_p.get_value('--foo'), 'bar')
+	func test_does_not_set_value_when_next_element_when_is_an_option():
+		var opts = OptParse.new()
+		var op = opts.add('--foo', 'some string', 'desc')
+		opts.parse(['--foo', '--bar'])
+		assert_eq(op.value, 'some string')
 
-	# func test_sets_value_when_next_element_when_is_not_an_option():
-	# 	var cli_p = OptParse.CmdLineParser.new(['--foo', 'bar'])
-	# 	assert_eq(cli_p.get_value('--foo'), 'bar')
+	func test_positional_argument_values_are_parsed_from_a_complicated_set():
+		var opts = OptParse.new()
+		var pos1 = opts.add_positional('one', 'default', 'one desc')
+		var pos2 = opts.add_positional('two', 'default', 'two desc')
+		var pos3 = opts.add_positional('three', 'default', 'three desc')
+		opts.add('--foo', 'foo', 'foo')
+		opts.add('--bar', 'bar', 'bar')
 
-	# func test_does_not_set_value_when_next_element_when_is_an_option():
-	# 	var cli_p = OptParse.CmdLineParser.new(['--foo', '--bar'])
-	# 	assert_null(cli_p.get_value('--foo'))
+		opts.parse(["--foo=bar", "one_value", "--bar", "asdf", "two_value", "three_value", "--hello", "--world"])
+
+		assert_eq(pos1.value, 'one_value')
+		assert_eq(pos2.value, 'two_value')
+		assert_eq(pos3.value, 'three_value')
+
+	func test_all_options_are_unused_by_default():
+		var opts = OptParse.new()
+		opts.parse(['--foo', 'a,b,c,d', '--bar', '--asdf'])
+		assert_eq(opts.unused.size(), 4)
+
+	func test_used_options_are_removed_from_unused_options():
+		var opts = OptParse.new()
+		opts.add('--foo', 'string', 'desc')
+		opts.parse(['--foo', 'a,b,c,d', '--bar', '--asdf'])
+		assert_eq(opts.unused, ['--bar', '--asdf'])
+
+	func test_flags_are_removed_from_unused_options():
+		var opts = OptParse.new()
+		opts.add('--foo', false, 'asdf')
+		opts.parse(['--foo', 'a,b,c,d', '--bar', '--asdf'])
+		assert_eq(opts.unused, ['a,b,c,d', '--bar', '--asdf'])
 
 
-	# func test_get_array_value_removes_opt_from_unused_opts():
-	# 	var cli_p = OptParse.CmdLineParser.new(['--foo', 'a,b,c,d', '--bar', '--asdf'])
-	# 	cli_p.get_array_value('--foo')
-	# 	var unused = cli_p.get_unused_options()
-	# 	assert_ne(unused[0], '--foo')
 
-	# func test_get_value_removes_opt_from_unused_opts():
-	# 	var cli_p = OptParse.CmdLineParser.new(['--foo', 'a,b,c,d', '--bar', '--asdf'])
-	# 	cli_p.get_value('--foo')
-	# 	var unused = cli_p.get_unused_options()
-	# 	assert_ne(unused[0], '--foo')
-
-	# func test_positional_arguments_appear_in_order_they_were_specified_minus_other_args_and_values():
-	# 	var cli_p = OptParse.CmdLineParser.new(
-	# 		["--foo=bar", "one", "--bar", "asdf", "two", "three", "--hello", "--world"])
-	# 	assert_eq(cli_p.positional_args, ['one', 'two', 'three'])
-
-	# func test_all_options_are_unused_by_default():
-	# 	var cli_p = OptParse.CmdLineParser.new(['--foo', 'a,b,c,d', '--bar', '--asdf'])
-	# 	assert_eq(cli_p.get_unused_options().size(), 3)
-
-	# func test_was_specified_removes_opt_from_unused_opts():
-	# 	var cli_p = OptParse.CmdLineParser.new(['--foo', 'a,b,c,d', '--bar', '--asdf'])
-	# 	cli_p.was_specified('--bar')
-	# 	var unused = cli_p.get_unused_options()
-	# 	assert_ne(unused[1], '--bar')
 
 
 class TestBooleanValues:
@@ -259,11 +263,23 @@ class TestBooleanValues:
 class TestArrayParameters:
 	extends BaseTest
 
-	func test_get_array_value_parses_commas_when_equal_not_used():
+	func test_array_values_parsed_from_commas_when_equal_not_used():
 		var op = OptParse.new()
 		op.add('--foo', [], 'foo array')
 		op.parse(['--foo', 'a,b,c,d'])
-		assert_eq(op.get_value('--foo'), PackedStringArray(['a', 'b', 'c', 'd']))
+		assert_eq(op.get_value('--foo'), ['a', 'b', 'c', 'd'])
+
+	func test_array_values_parsed_from_commas_when_using_equal():
+		var op = OptParse.new()
+		op.add('--foo', [], 'foo array')
+		op.parse(['--foo=a,b,c,d'])
+		assert_eq(op.get_value('--foo'), ['a', 'b', 'c', 'd'])
+
+	func test_can_specify_array_values_multiple_times():
+		var op = OptParse.new()
+		var option = op.add('--foo', [], 'foo array')
+		op.parse(['--foo=a,b', '--foo', 'c,d', '--foo', 'e'])
+		assert_eq(option.value, ['a', 'b', 'c', 'd', 'e'])
 
 
 
