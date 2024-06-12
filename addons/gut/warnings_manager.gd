@@ -14,19 +14,27 @@ const GDSCRIPT_WARNING = 'debug/gdscript/warnings/'
 # ---------------------------------------
 # Static
 # ---------------------------------------
-
+static var _static_init_called = false
 # This is static and set in _static_init so that we can get the current settings as
 # soon as possible.
 static var _project_warnings : Dictionary = {}
 static var project_warnings := {} :
-	get: return _project_warnings.duplicate()
+	get:
+		# somehow this gets called before _project_warnings is initialized when
+		# loading a project in the editor.  It causes an error stating that
+		# duplicate can't be called on nil.  It seems there might be an
+		# implicit "get" call happening.  Using push_error I saw a message
+		# in this method, but not one from _static_init upon loading the project
+		if(_static_init_called):
+			return _project_warnings.duplicate()
+		else:
+			return {}
 	set(val): pass
 
 
 static func _static_init():
-	# print('---- warnings_manager.gd initialized ----')
 	_project_warnings = create_warnings_dictionary_from_project_settings()
-
+	_static_init_called = true
 
 
 static func are_warnings_enabled():
