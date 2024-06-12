@@ -113,7 +113,7 @@ class TestTheNewWaitMethods:
 
 		await assert_eventually(is_freed, 1.0)
 
-		assert_between(counter.time, 0, .2)
+		assert_between(counter.time, 0.0, .2)
 		assert_freed(node)
 
 # ------------------------------------
