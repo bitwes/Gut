@@ -168,23 +168,21 @@ func test_wait_until_waits_until_predicate_function_is_true():
 
 
 func test_wait_until_reaches_timeout_when_predicate_function_never_returns_true():
-	var node = add_child_autoqfree(Node.new())
-	var is_named_foo = func(): return node.name == 'foo'
+	var never = func(): return false
 	var a = add_child_autoqfree(Awaiter.new())
 	watch_signals(a)
 
-	a.wait_until(is_named_foo, .5)
+	a.wait_until(never, .5)
 	await get_tree().create_timer(.8).timeout
 
 	assert_signal_emitted(a, 'timeout')
 	assert_true(a.did_last_wait_timeout)
 
 func test_wait_until_causes_is_waiting_to_be_true_when_waiting():
-	var node = add_child_autoqfree(Node.new())
-	var is_named_foo = func(): return node.name == 'foo'
+	var never = func(): return false
 	var a = add_child_autoqfree(Awaiter.new())
 
-	a.wait_until(is_named_foo, .5)
+	a.wait_until(never, .5)
 	await get_tree().create_timer(.1).timeout
 
 	assert_true(a.is_waiting())
