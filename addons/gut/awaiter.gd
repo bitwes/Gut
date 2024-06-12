@@ -79,7 +79,9 @@ func wait_for_signal(the_signal, x):
 
 func wait_until(predicate_function: Callable, timeout_seconds):
 	_predicate_function_waiting_to_be_true = predicate_function
-	wait_for(timeout_seconds)
+	_did_last_wait_timeout = false
+	_wait_time = timeout_seconds
+	wait_started.emit()
 
 func is_waiting():
 	return _wait_time != 0.0 || _wait_frames != 0
