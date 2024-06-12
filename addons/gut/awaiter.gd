@@ -27,11 +27,11 @@ func _physics_process(delta):
 		if(_elapsed_frames >= _wait_frames):
 			_end_wait()
 
-	if(_predicate_function_waiting_to_be_true && _predicate_function_waiting_to_be_true.call()):
+	if(_predicate_function_waiting_to_be_true and _predicate_function_waiting_to_be_true.call()):
 		_end_wait()
 
 func _end_wait():
-	_did_last_wait_timeout = _wait_time && _elapsed_time > _wait_time
+	_did_last_wait_timeout = _wait_time and _elapsed_time > _wait_time
 
 	if(_signal_to_wait_on != null and _signal_to_wait_on.is_connected(_signal_callback)):
 		_signal_to_wait_on.disconnect(_signal_callback)
