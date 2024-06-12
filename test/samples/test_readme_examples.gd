@@ -344,12 +344,6 @@ func test_illustrate_yield():
 	assert_gt(moving_node.get_position().x, 0)
 	assert_between(moving_node.get_position().x, 3.9, 4, 'it should move almost 4 whatevers at speed 2')
 
-func test_illustrate_end_test():
-	await yield_for(1)
-	# we don't have anything to test yet, or at all.  So we
-	# call end_test so that Gut knows all the yielding has
-	# finished.
-	end_test()
 
 # ------------------------------------------------------------------------------
 class TimedSignaler:
