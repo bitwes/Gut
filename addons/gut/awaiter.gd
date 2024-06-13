@@ -31,7 +31,9 @@ func _physics_process(delta):
 		_end_wait()
 
 func _end_wait():
-	_did_last_wait_timeout = _wait_time and _elapsed_time > _wait_time
+	var has_busted_wait_time = _wait_time and _elapsed_time >= _wait_time
+	var has_busted_wait_frames = _wait_frames and _elapsed_frames >= _wait_frames
+	_did_last_wait_timeout = has_busted_wait_time or has_busted_wait_frames
 
 	if(_signal_to_wait_on != null and _signal_to_wait_on.is_connected(_signal_callback)):
 		_signal_to_wait_on.disconnect(_signal_callback)
