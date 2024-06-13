@@ -10,7 +10,6 @@ var _predicate_function_waiting_to_be_true = null
 var _did_last_wait_timeout = false
 var did_last_wait_timeout = false :
 	get: return _did_last_wait_timeout
-	set(val): pass
 
 var _elapsed_time = 0.0
 var _elapsed_frames = 0
