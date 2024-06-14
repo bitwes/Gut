@@ -1492,6 +1492,31 @@ func use_parameters(params):
 
 	return ph.next_parameters()
 
+
+# ------------------------------------------------------------------------------
+# When used as the default for a test method parameter, it will cause the test
+# to be run x times.
+#
+# I Hacked this together to test a method that was occassionally failing due to
+# timing issues.  I don't think it's a great idea, but you be the judge.
+# ------------------------------------------------------------------------------
+func run_x_times(x):
+	var ph = gut.parameter_handler
+	if(ph == null):
+		_lgr.warn(
+			str("This test uses run_x_times and you really should not be ",
+			"using it.  I don't think it's a good thing, but I did find it ",
+			"temporarily useful so I left it in here and didn't document it.  ",
+			"Well, you found it, might as well open up an issue and let me ",
+			"know why you're doing this."))
+		var params = []
+		for i in range(x):
+			params.append([])
+
+		ph = GutUtils.ParameterHandler.new(params)
+		gut.parameter_handler = ph
+	return ph.next_parameters()
+
 # ------------------------------------------------------------------------------
 # Marks whatever is passed in to be freed after the test finishes.  It also
 # returns what is passed in so you can save a line of code.
