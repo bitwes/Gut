@@ -248,8 +248,6 @@ var _current_test = null
 var _pause_before_teardown = false
 
 
-var _awaiter = GutUtils.Awaiter.new()
-
 # Used to cancel importing scripts if an error has occurred in the setup.  This
 # prevents tests from being run if they were exported and ensures that the
 # error displayed is seen since importing generates a lot of text.
@@ -290,8 +288,6 @@ func _ready():
 		_lgr.log('---  GUT  ---')
 		_lgr.info(str('using [', OS.get_user_data_dir(), '] for temporary output.'))
 
-	add_child(_awaiter)
-
 	if(_select_script != null):
 		select_script(_select_script)
 
@@ -307,8 +303,6 @@ func _notification(what):
 				ts.free()
 
 		_test_script_objects = []
-		if(is_instance_valid(_awaiter)):
-			_awaiter.free()
 
 
 func _print_versions(send_all = true):
@@ -374,7 +368,7 @@ func _log_test_children_warning(test_script):
 		return
 
 	var kids = test_script.get_children()
-	if(kids.size() > 0):
+	if(kids.size() > 1):
 		var msg = ''
 		if(_log_level == 2):
 			msg = "Test script still has children when all tests finisehd.\n"
@@ -1131,41 +1125,6 @@ func pause_before_teardown():
 
 
 # ------------------------------------------------------------------------------
-# Uses the awaiter to wait for x amount of time.  The signal emitted when the
-# time has expired is returned (_awaiter.timeout).
-# ------------------------------------------------------------------------------
-func set_wait_time(time, text=''):
-	_awaiter.wait_for(time)
-	_lgr.yield_msg(str('-- Awaiting ', time, ' second(s) -- ', text))
-	return _awaiter.timeout
-
-
-# ------------------------------------------------------------------------------
-# Uses the awaiter to wait for x frames.  The signal emitted is returned.
-# ------------------------------------------------------------------------------
-func set_wait_frames(frames, text=''):
-	_awaiter.wait_frames(frames)
-	_lgr.yield_msg(str('-- Awaiting ', frames, ' frame(s) -- ', text))
-	return _awaiter.timeout
-
-
-# ------------------------------------------------------------------------------
-# Wait for a signal or a maximum amount of time.  The signal emitted is returned.
-# ------------------------------------------------------------------------------
-func set_wait_for_signal_or_time(obj, signal_name, max_wait, text=''):
-	_awaiter.wait_for_signal(Signal(obj, signal_name), max_wait)
-	_lgr.yield_msg(str('-- Awaiting signal "', signal_name, '" or for ', max_wait, ' second(s) -- ', text))
-	return _awaiter.timeout
-
-# ------------------------------------------------------------------------------
-# Wait for predicate function to return true or a maximum amount of time.
-# ------------------------------------------------------------------------------
-func set_predicate_function_to_wait_until_true(predicate_function: Callable, max_wait, text=''):
-	_awaiter.wait_until(predicate_function, max_wait)
-	_lgr.yield_msg(str('-- Awaiting predicate function to return true or for ', max_wait, ' second(s) -- ', text))
-	return _awaiter.timeout
-
-# ------------------------------------------------------------------------------
 # Returns the script object instance that is currently being run.
 # ------------------------------------------------------------------------------
 func get_current_script_object():
@@ -1205,8 +1164,6 @@ func show_orphans(should):
 func get_logger():
 	return _lgr
 
-func get_awaiter():
-	return _awaiter
 
 # ##############################################################################
 # The MIT License (MIT)

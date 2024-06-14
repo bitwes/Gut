@@ -71,6 +71,7 @@ var DOUBLE_STRATEGY = GutUtils.DOUBLE_STRATEGY
 
 var _lgr = GutUtils.get_logger()
 var _strutils = GutUtils.Strutils.new()
+var _awaiter = null
 
 # syntax sugar
 var ParameterFactory = GutUtils.ParameterFactory
@@ -79,8 +80,9 @@ var InputFactory = GutUtils.InputFactory
 var InputSender = GutUtils.InputSender
 
 
-func _init():
-	pass
+func _ready():
+	_awaiter = GutUtils.Awaiter.new()
+	add_child(_awaiter)
 
 
 func _str(thing):
@@ -1151,9 +1153,12 @@ func assert_property(obj, property_name, default_value, new_value) -> void:
 # ------------------------------------------------------------------------------
 # Asserts that the predicate function eventually returns true before the timeout.
 # ------------------------------------------------------------------------------
-func assert_eventually(predicate_function: Callable, timeout_seconds, msg=''):
-	await gut.set_predicate_function_to_wait_until_true(predicate_function, timeout_seconds, msg)
-	if(gut.get_awaiter().did_last_wait_timeout):
+func assert_eventually(predicate_function: Callable, max_wait, msg=''):
+	_lgr.yield_msg(str('-- Awaiting predicate function to return true or for ', max_wait, ' second(s) -- ', msg))
+	_awaiter.wait_until(predicate_function, max_wait)
+	await _awaiter.timeout
+
+	if(_awaiter.did_last_wait_timeout):
 		_fail(str('predicate function did not return true before timeout: ', msg))
 	else:
 		_pass(str('predicate function returned true: ', msg))
@@ -1173,29 +1178,29 @@ func pending(text=""):
 # Gut detects the yield.
 # ------------------------------------------------------------------------------
 func wait_seconds(time, msg=''):
-	var to_return = gut.set_wait_time(time, msg)
-	return to_return
+	_lgr.yield_msg(str('-- Awaiting ', time, ' second(s) -- ', msg))
+	_awaiter.wait_seconds(time)
+	return _awaiter.timeout
 
 func yield_for(time, msg=''):
 	_lgr.deprecated('yield_for', 'wait_seconds')
-	var to_return = gut.set_wait_time(time, msg)
-	return to_return
+	return wait_seconds(time, msg)
 
 
 # ------------------------------------------------------------------------------
 # Yield to a signal or a maximum amount of time, whichever comes first.
 # ------------------------------------------------------------------------------
-func wait_for_signal(sig, max_wait, msg=''):
+func wait_for_signal(sig : Signal, max_wait, msg=''):
 	watch_signals(sig.get_object())
-	var to_return = gut.set_wait_for_signal_or_time(sig.get_object(), sig.get_name(), max_wait, msg)
-	return to_return
+	_lgr.yield_msg(str('-- Awaiting signal "', sig.get_name(), '" or for ', max_wait, ' second(s) -- ', msg))
+	_awaiter.wait_for_signal(sig, max_wait)
+	return _awaiter.timeout
 
 
 func yield_to(obj, signal_name, max_wait, msg=''):
 	_lgr.deprecated('yield_to', 'wait_for_signal')
-	watch_signals(obj)
-	var to_return = gut.set_wait_for_signal_or_time(obj, signal_name, max_wait, msg)
-	return to_return
+	return wait_for_signal(Signal(obj, signal_name), max_wait, msg)
+
 
 # ------------------------------------------------------------------------------
 # Yield for a number of frames.  The optional message will be printed. when
@@ -1207,14 +1212,15 @@ func wait_frames(frames, msg=''):
 		_lgr.error(text)
 		frames = 1
 
-	var to_return = gut.set_wait_frames(frames, msg)
-	return to_return
+	_lgr.yield_msg(str('-- Awaiting ', frames, ' frame(s) -- ', msg))
+	_awaiter.wait_frames(frames)
+	return _awaiter.timeout
 
 
 func yield_frames(frames, msg=''):
 	_lgr.deprecated("yield_frames", "wait_frames")
-	var to_return = wait_frames(frames, msg)
-	return to_return
+	return wait_frames(frames, msg)
+
 
 func get_summary():
 	return _summary

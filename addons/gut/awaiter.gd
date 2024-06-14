@@ -58,12 +58,14 @@ func _signal_callback(
 	# signal_watcher doesn't get the signal in time if we don't do this.
 	_wait_frames = 2
 
-
-func wait_for(x):
+func wait_seconds(x):
 	_did_last_wait_timeout = false
 	_wait_time = x
 	wait_started.emit()
 
+# deprecate?
+func wait_for(x):
+	wait_seconds(x)
 
 func wait_frames(x):
 	_did_last_wait_timeout = false
