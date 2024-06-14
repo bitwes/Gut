@@ -218,7 +218,7 @@ func _create_double(parsed, strategy, override_path, partial):
 
 func _stub_method_default_values(which, parsed, strategy):
 	for method in parsed.get_local_methods():
-		if(method.is_eligible_for_doubling() && !_ignored_methods.has(parsed.resource, method.meta.name)):
+		if(method.is_eligible_for_doubling() and !_ignored_methods.has(parsed.resource, method.meta.name)):
 			_stubber.stub_defaults_from_meta(parsed.script_path, method.meta)
 
 

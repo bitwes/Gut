@@ -20,6 +20,15 @@ func test_is_not_paused_by_default():
 	var a = add_child_autofree(Awaiter.new())
 	assert_false(a.is_waiting())
 
+func test_did_last_wait_timeout_is_false_by_default():
+	var a = add_child_autoqfree(Awaiter.new())
+	assert_false(a.did_last_wait_timeout)
+
+func test_did_last_wait_timeout_is_readonly():
+	var a = add_child_autoqfree(Awaiter.new())
+	a.did_last_wait_timeout = true
+	assert_false(a.did_last_wait_timeout)
+
 func test_wait_started_emitted_when_waiting_seconds():
 	var a = add_child_autoqfree(Awaiter.new())
 	watch_signals(a)
@@ -45,6 +54,19 @@ func test_is_waiting_while_waiting_on_time():
 	await get_tree().create_timer(.1).timeout
 	assert_true(a.is_waiting())
 
+func test_wait_for_sets_did_last_wait_timeout_to_true():
+	var a = add_child_autoqfree(Awaiter.new())
+	a.wait_for(.2)
+	await a.timeout
+	assert_true(a.did_last_wait_timeout)
+
+func test_wait_for_resets_did_last_wait_timeout():
+	var a = add_child_autoqfree(Awaiter.new())
+	a.wait_for(.2)
+	await a.timeout
+	a.wait_for(20)
+	assert_false(a.did_last_wait_timeout)
+
 func test_wait_started_emitted_when_waiting_frames():
 	var a = add_child_autoqfree(Awaiter.new())
 	watch_signals(a)
@@ -67,6 +89,18 @@ func test_is_waiting_while_waiting_on_frames():
 	await get_tree().create_timer(.1).timeout
 	assert_true(a.is_waiting())
 
+func test_wait_frames_sets_did_last_wait_timeout_to_true():
+	var a = add_child_autoqfree(Awaiter.new())
+	a.wait_frames(10)
+	await a.timeout
+	assert_true(a.did_last_wait_timeout)
+
+func test_wait_frames_resets_did_last_wait_timeout():
+	var a = add_child_autoqfree(Awaiter.new())
+	a.wait_frames(10)
+	await a.timeout
+	a.wait_frames(50)
+	assert_false(a.did_last_wait_timeout)
 
 func test_wait_started_emitted_when_waiting_on_signal():
 	var s = Signaler.new()
@@ -143,3 +177,81 @@ func test_after_timeout_signal_is_disconnected():
 	a.wait_for_signal(s.the_signal, .1)
 	await get_tree().create_timer(.5).timeout
 	assert_not_connected(s, a, 'the_signal')
+
+func test_wait_for_signal_sets_did_last_wait_timeout_to_true_when_time_exceeded():
+	var a = add_child_autoqfree(Awaiter.new())
+	var s = Signaler.new()
+
+	a.wait_for_signal(s.the_signal, .5)
+	await a.timeout
+
+	assert_true(a.did_last_wait_timeout)
+
+func test_wait_for_signal_resets_did_last_wait_timeout_when_signal_detected():
+	var a = add_child_autoqfree(Awaiter.new())
+
+	a.wait_for(.2)
+	await a.timeout # results in true timeout
+
+	var s = Signaler.new()
+	a.wait_for_signal(s.the_signal, 10)
+	await get_tree().create_timer(.1).timeout
+
+	assert_false(a.did_last_wait_timeout)
+
+func test_wait_until_emits_wait_started():
+	var a = add_child_autoqfree(Awaiter.new())
+	watch_signals(a)
+
+	a.wait_until(func(): return true, 10)
+
+	assert_signal_emitted(a, 'wait_started')
+
+func test_wait_until_waits_until_predicate_function_is_true():
+	var node = add_child_autoqfree(Node.new())
+	var is_named_foo = func(): return node.name == 'foo'
+	var a = add_child_autoqfree(Awaiter.new())
+	watch_signals(a)
+
+	a.wait_until(is_named_foo, 10)
+	await get_tree().create_timer(.5).timeout
+	node.name = 'foo'
+
+	await get_tree().create_timer(.05).timeout
+	assert_signal_emitted(a, 'timeout')
+	assert_false(a.did_last_wait_timeout)
+
+
+func test_wait_until_reaches_timeout_when_predicate_function_never_returns_true():
+	var never = func(): return false
+	var a = add_child_autoqfree(Awaiter.new())
+	watch_signals(a)
+
+	a.wait_until(never, .5)
+	await get_tree().create_timer(.8).timeout
+
+	assert_signal_emitted(a, 'timeout')
+	assert_true(a.did_last_wait_timeout)
+
+func test_wait_until_causes_is_waiting_to_be_true_when_waiting():
+	var never = func(): return false
+	var a = add_child_autoqfree(Awaiter.new())
+
+	a.wait_until(never, .5)
+	await get_tree().create_timer(.1).timeout
+
+	assert_true(a.is_waiting())
+
+func test_wait_until_causes_is_waiting_to_be_false_when_predicate_function_returns_true_before_timeout():
+	var node = add_child_autoqfree(Node.new())
+	var is_named_foo = func(): return node.name == 'foo'
+	var a = add_child_autoqfree(Awaiter.new())
+	watch_signals(a)
+
+	a.wait_until(is_named_foo, 10)
+	await get_tree().create_timer(.5).timeout
+	node.name = 'foo'
+
+	# gotta wait for the 2 additional frames
+	await get_tree().create_timer(.05).timeout
+	assert_false(a.is_waiting())

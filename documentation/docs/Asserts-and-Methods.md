@@ -1173,8 +1173,19 @@ assert_setget(HealthBar, 'label') # FAIL => setter or getter has to be specified
 assert_setget(HealthBar, 'label', true) # FAIL => setter does not exist
 ```
 
+### assert_eventually(predicate_function, timeout_seconds, text="")
+`assert_eventually(predicate_function, timeout_seconds, text="")`<br>
+This method takes a predicate_function (a [Callable](https://docs.godotengine.org/en/stable/classes/class_callable.html) that returns a boolean) and waits until it returns true or until timeout_seconds has elapsed.
 
+In GDScript this is realized by using the `setget` keyword. The keyword requires you to specify a setter or getter function, you can also specify both:
 
+``` gdscript
+var is_injured := func(): return monster.get_hitpoints() <= monster.get_max_hitpoints()
+
+throw_axe_towards_monster() // The monster is not yet injured, but he
+
+await assert_eventually(is_injured, 10)
+```
 
 <!-- ----------------------------------------------------------------------- -->
 ## Utilities

@@ -1148,6 +1148,15 @@ func assert_property(obj, property_name, default_value, new_value) -> void:
 
 	_warn_for_public_accessors(obj, property_name)
 
+# ------------------------------------------------------------------------------
+# Asserts that the predicate function eventually returns true before the timeout.
+# ------------------------------------------------------------------------------
+func assert_eventually(predicate_function: Callable, timeout_seconds, msg=''):
+	await gut.set_predicate_function_to_wait_until_true(predicate_function, timeout_seconds, msg)
+	if(gut.get_awaiter().did_last_wait_timeout):
+		_fail(str('predicate function did not return true before timeout: ', msg))
+	else:
+		_pass(str('predicate function returned true: ', msg))
 
 # ------------------------------------------------------------------------------
 # Mark the current test as pending.
