@@ -133,6 +133,25 @@ assert_gt(1.0, 1) # FAIL
 assert_gt(smaller, bigger) # FAIL
 ```
 
+### assert_gte
+`assert_gte(got, expected, text="")`<br>
+assserts got >= expected
+``` gdscript
+var bigger = 5
+var smaller = 0
+
+gut.p('-- passing --')
+assert_gte(bigger, smaller, 'Bigger should be greater than or equal to smaller') # PASS
+assert_gte('b', 'a') # PASS
+assert_gte('a', 'A') # PASS
+assert_gte(1.1, 1) # PASS
+assert_gte('a', 'a') # PASS
+
+gut.p('-- failing --')
+assert_gte(0.9, 1.0) # FAIL
+assert_gte(smaller, bigger) # FAIL
+```
+
 ### assert_lt
 `assert_lt(got, expected, text="")`<br>
 asserts got < expected
@@ -142,10 +161,28 @@ var smaller = 0
 gut.p('-- passing --')
 assert_lt(smaller, bigger, 'Smaller should be less than bigger') # PASS
 assert_lt('a', 'b') # PASS
+assert_lt(99, 100) # PASS
 
 gut.p('-- failing --')
 assert_lt('z', 'x') # FAIL
 assert_lt(-5, -5) # FAIL
+```
+
+### assert_lte
+`assert_lte(got, expected, text="")`<br>
+asserts got <= expected
+``` gdscript
+var bigger = 5
+var smaller = 0
+gut.p('-- passing --')
+assert_lte(smaller, bigger, 'Smaller should be less than or equal to bigger') # PASS
+assert_lte('a', 'b') # PASS
+assert_lte(1.0, 1.0) # PASS
+assert_lte(-5, -5) # PASS
+
+gut.p('-- failing --')
+assert_lte('z', 'x') # FAIL
+assert_lte(1.1, 1.0) # FAIL
 ```
 
 ### assert_true
