@@ -21,6 +21,9 @@ class BaseTestClass:
 		test_with_gut = null
 	}
 
+	const SHOULD_PASS = &"Should pass"
+	const SHOULD_FAIL = &"Should fail"
+
 	func print_fail_pass_text(t):
 		for i in range(t._fail_pass_text.size()):
 			gut.p('sub-test:  ' + t._fail_pass_text[i], gut.LOG_LEVEL_FAIL_ONLY)
@@ -429,119 +432,68 @@ class TestAssertAlmostNe:
 		assert_fail_msg_contains(gr.test, '01230')
 
 
-
 # ------------------------------------------------------------------------------
-class TestAssertGt:
+class TestAssertGreaterThanAndGreaterThanOrEqualComparisonAsserts:
 	extends BaseTestClass
 
-	func test_passes_with_greater_integer():
-		gr.test.assert_gt(2, 1, "Should Pass")
-		assert_pass(gr.test, 1, '2 > 1')
+	# The assert_gt and assert_gte methods assert that `got` is greater than
+	# or greater than or equal to the `expected` value
+	var test_data = ParameterFactory.named_parameters(
+		['got', 'expected', 'pass_fail_gt', 'pass_fail_gte'],
+		[
+			[2, 1, SHOULD_PASS, SHOULD_PASS], # 2 is gt AND gte 1, so both should pass.
+			[2, 2, SHOULD_FAIL, SHOULD_PASS],
+			[2, 3, SHOULD_FAIL, SHOULD_FAIL],
+			['B', 'A', SHOULD_PASS, SHOULD_PASS], # 'B' is gt AND gte 'A', so both should pass.
+			['B', 'B', SHOULD_FAIL, SHOULD_PASS],
+			['B', 'C', SHOULD_FAIL, SHOULD_FAIL]
+		])
 
-	func test_fails_with_less_than_integer():
-		gr.test.assert_gt(1, 2, "Should fail")
-		assert_fail(gr.test, 1, '1 < 2')
+	func test_assert_gt(p = use_parameters(test_data)):
+		gr.test.assert_gt(p.got, p.expected, p.pass_fail_gt)
+		if (p.pass_fail_gt == SHOULD_PASS):
+			assert_pass(gr.test, 1, str(p.got, ' > ', p.expected))
+		else:
+			assert_fail(gr.test, 1, str(p.got, ' > ', p.expected))
 
-	func test_passes_with_greater_string():
-		gr.test.assert_gt("b", "a", "Should Pass")
-		assert_pass(gr.test)
+	func test_assert_gte(p = use_parameters(test_data)):
+		gr.test.assert_gte(p.got, p.expected, p.pass_fail_gte)
+		if (p.pass_fail_gte == SHOULD_PASS):
+			assert_pass(gr.test, 1, str(p.got, ' >= ', p.expected))
+		else:
+			assert_fail(gr.test, 1, str(p.got, ' >= ', p.expected))
 
-	func test_fails_with_less_than_string():
-		gr.test.assert_gt("a", "b", "Should Fail")
-		assert_fail(gr.test)
-
-	func test_fails_with_equal_integer():
-		gr.test.assert_gt(2, 2, "Should fail")
-		assert_fail(gr.test, 1, '2 > 2')
-
-	func test_fails_with_equal_string():
-		gr.test.assert_gt('A', 'A', "Should fail")
-		assert_fail(gr.test, 1, '"A" > "A"')
-
-# ------------------------------------------------------------------------------
-class TestAssertGte:
-	extends BaseTestClass
-
-	func test_passes_with_greater_integer():
-		gr.test.assert_gte(2, 1, "Should Pass")
-		assert_pass(gr.test, 1, '2 >= 1')
-
-	func test_fails_with_less_than_integer():
-		gr.test.assert_gte(1, 2, "Should fail")
-		assert_fail(gr.test, 1, '1 <= 2')
-
-	func test_passes_with_greater_string():
-		gr.test.assert_gte("b", "a", "Should Pass")
-		assert_pass(gr.test)
-
-	func test_fails_with_less_than_string():
-		gr.test.assert_gte("a", "b", "Should Fail")
-		assert_fail(gr.test)
-
-	func test_passes_with_equal_integer():
-		gr.test.assert_gte(2, 2, "Should Pass")
-		assert_pass(gr.test, 1, '2 >= 2')
-
-	func test_passes_with_equal_string():
-		gr.test.assert_gte('A', 'A', "Should Pass")
-		assert_pass(gr.test, 1, '"A" >= "A"')
 
 # ------------------------------------------------------------------------------
-class TestAssertLt:
+class TestAssertLessThanAndLessThanOrEqualComparisonAsserts:
 	extends BaseTestClass
 
-	func test_number_with_lt():
-		gr.test.assert_lt(1, 2, "Should Pass")
-		assert_pass(gr.test, 1, '1 < 2')
+	# The assert_lt and assert_lte methods assert that `got` is less than
+	# or less than or equal to the `expected` value
+	var test_data = ParameterFactory.named_parameters(
+		['got', 'expected', 'pass_fail_lt', 'pass_fail_lte'],
+		[
+			[2, 1, SHOULD_FAIL, SHOULD_FAIL], # 2 is not lt and not lte 1, so both should fail.
+			[2, 2, SHOULD_FAIL, SHOULD_PASS],
+			[2, 3, SHOULD_PASS, SHOULD_PASS],
+			['B', 'A', SHOULD_FAIL, SHOULD_FAIL], # 'B' is not lt and not lte 'A', so both should fail.
+			['B', 'B', SHOULD_FAIL, SHOULD_PASS],
+			['B', 'C', SHOULD_PASS, SHOULD_PASS]
+		])
 
-	func test_number_with_gt():
-		gr.test.assert_lt(2, 1, "Should fail")
-		assert_fail(gr.test, 1, '2 > 1')
+	func test_assert_lt(p = use_parameters(test_data)):
+		gr.test.assert_lt(p.got, p.expected, p.pass_fail_lt)
+		if (p.pass_fail_lt == SHOULD_PASS):
+			assert_pass(gr.test, 1, str(p.got, ' < ', p.expected))
+		else:
+			assert_fail(gr.test, 1, str(p.got, ' < ', p.expected))
 
-	func test_string_with_lt():
-		gr.test.assert_lt("a", "b", "Should Pass")
-		assert_pass(gr.test)
-
-	func test_string_with_gt():
-		gr.test.assert_lt("b", "a", "Should Fail")
-		assert_fail(gr.test)
-
-	func test_fails_with_equal_integer():
-		gr.test.assert_lt(2, 2, "Should fail")
-		assert_fail(gr.test, 1, '2 < 2')
-
-	func test_fails_with_equal_string():
-		gr.test.assert_lt('A', 'A', "Should fail")
-		assert_fail(gr.test, 1, '"A" < "A"')
-
-# ------------------------------------------------------------------------------
-class TestAssertLte:
-	extends BaseTestClass
-
-	func test_passes_with_lesser_integer():
-		gr.test.assert_lte(1, 2, "Should Pass")
-		assert_pass(gr.test, 1, '1 <= 2')
-
-	func test_fails_with_greater_integer():
-		gr.test.assert_lte(2, 1, "Should fail")
-		assert_fail(gr.test, 1, '2 >= 1')
-
-	func test_passes_with_lesser_string():
-		gr.test.assert_lte("a", "b", "Should Pass")
-		assert_pass(gr.test)
-
-	func test_fails_with_greater_string():
-		gr.test.assert_lte("b", "a", "Should Fail")
-		assert_fail(gr.test)
-
-	func test_passes_with_equal_integer():
-		gr.test.assert_lte(2, 2, "Should pass")
-		assert_pass(gr.test, 1, '2 >= 2')
-
-	func test_passes_with_equal_string():
-		gr.test.assert_lte('A', 'A', "Should pass")
-		assert_pass(gr.test, 1, '"A" >= "A"')
-
+	func test_assert_lte(p = use_parameters(test_data)):
+		gr.test.assert_lte(p.got, p.expected, p.pass_fail_lte)
+		if (p.pass_fail_lte == SHOULD_PASS):
+			assert_pass(gr.test, 1, str(p.got, ' <= ', p.expected))
+		else:
+			assert_fail(gr.test, 1, str(p.got, ' <= ', p.expected))
 
 # ------------------------------------------------------------------------------
 # TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
