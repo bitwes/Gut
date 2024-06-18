@@ -32,7 +32,7 @@ func test_did_last_wait_timeout_is_readonly():
 func test_wait_started_emitted_when_waiting_seconds():
 	var a = add_child_autoqfree(Awaiter.new())
 	watch_signals(a)
-	a.wait_for(.5)
+	a.wait_seconds(.5)
 	assert_signal_emitted(a, 'wait_started')
 
 func test_signal_emitted_after_half_second():
@@ -42,7 +42,7 @@ func test_signal_emitted_after_half_second():
 	var c = add_child_autoqfree(Counter.new())
 	var a = add_child_autoqfree(Awaiter.new())
 	watch_signals(a)
-	a.wait_for(.5)
+	a.wait_seconds(.5)
 	await a.timeout
 	assert_signal_emitted(a, 'timeout')
 	assert_gt(c.time, .49, 'waited enough time')
@@ -50,21 +50,21 @@ func test_signal_emitted_after_half_second():
 func test_is_waiting_while_waiting_on_time():
 	var c = add_child_autoqfree(Counter.new())
 	var a = add_child_autoqfree(Awaiter.new())
-	a.wait_for(.5)
+	a.wait_seconds(.5)
 	await get_tree().create_timer(.1).timeout
 	assert_true(a.is_waiting())
 
 func test_wait_for_sets_did_last_wait_timeout_to_true():
 	var a = add_child_autoqfree(Awaiter.new())
-	a.wait_for(.2)
+	a.wait_seconds(.2)
 	await a.timeout
 	assert_true(a.did_last_wait_timeout)
 
 func test_wait_for_resets_did_last_wait_timeout():
 	var a = add_child_autoqfree(Awaiter.new())
-	a.wait_for(.2)
+	a.wait_seconds(.2)
 	await a.timeout
-	a.wait_for(20)
+	a.wait_seconds(20)
 	assert_false(a.did_last_wait_timeout)
 
 func test_wait_started_emitted_when_waiting_frames():
@@ -190,7 +190,7 @@ func test_wait_for_signal_sets_did_last_wait_timeout_to_true_when_time_exceeded(
 func test_wait_for_signal_resets_did_last_wait_timeout_when_signal_detected():
 	var a = add_child_autoqfree(Awaiter.new())
 
-	a.wait_for(.2)
+	a.wait_seconds(.2)
 	await a.timeout # results in true timeout
 
 	var s = Signaler.new()

@@ -63,10 +63,6 @@ func wait_seconds(x):
 	_wait_time = x
 	wait_started.emit()
 
-# deprecate?
-func wait_for(x):
-	wait_seconds(x)
-
 func wait_frames(x):
 	_did_last_wait_timeout = false
 	_wait_frames = x
