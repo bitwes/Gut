@@ -41,6 +41,8 @@ func _physics_process(delta):
 
 
 func _end_wait():
+	# Check for time before checking for frames so that the extra frames added
+	# when waiting on a signal do not cause a false negative for timing out.
 	if(_wait_time > 0):
 		_did_last_wait_timeout = _elapsed_time >= _wait_time
 	elif(_wait_frames > 0):
