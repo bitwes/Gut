@@ -10,6 +10,7 @@ var _predicate_function_waiting_to_be_true = null
 var _did_last_wait_timeout = false
 var did_last_wait_timeout = false :
 	get: return _did_last_wait_timeout
+	set(val): push_error("Cannot set did_last_wait_timeout")
 
 var _elapsed_time = 0.0
 var _elapsed_frames = 0
@@ -29,10 +30,12 @@ func _physics_process(delta):
 	if(_predicate_function_waiting_to_be_true and _predicate_function_waiting_to_be_true.call()):
 		_end_wait()
 
+
 func _end_wait():
-	var has_busted_wait_time = _wait_time and _elapsed_time >= _wait_time
-	var has_busted_wait_frames = _wait_frames and _elapsed_frames >= _wait_frames
-	_did_last_wait_timeout = has_busted_wait_time or has_busted_wait_frames
+	if(_wait_time > 0):
+		_did_last_wait_timeout = _elapsed_time >= _wait_time
+	elif(_wait_frames > 0):
+		_did_last_wait_timeout = _elapsed_frames >= _wait_frames
 
 	if(_signal_to_wait_on != null and _signal_to_wait_on.is_connected(_signal_callback)):
 		_signal_to_wait_on.disconnect(_signal_callback)
@@ -63,24 +66,27 @@ func wait_seconds(x):
 	_wait_time = x
 	wait_started.emit()
 
+
 func wait_frames(x):
 	_did_last_wait_timeout = false
 	_wait_frames = x
 	wait_started.emit()
 
 
-func wait_for_signal(the_signal, x):
+func wait_for_signal(the_signal, max_time):
 	_did_last_wait_timeout = false
 	the_signal.connect(_signal_callback)
 	_signal_to_wait_on = the_signal
-	_wait_time = x
+	_wait_time = max_time
 	wait_started.emit()
 
-func wait_until(predicate_function: Callable, timeout_seconds):
+
+func wait_until(predicate_function: Callable, max_time):
 	_predicate_function_waiting_to_be_true = predicate_function
 	_did_last_wait_timeout = false
-	_wait_time = timeout_seconds
+	_wait_time = max_time
 	wait_started.emit()
+
 
 func is_waiting():
 	return _wait_time != 0.0 || _wait_frames != 0

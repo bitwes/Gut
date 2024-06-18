@@ -80,12 +80,49 @@ class TestTheNewWaitMethods:
 		var signaler = add_child_autoqfree(TimedSignaler.new())
 		signaler.emit_after(.5)
 		await wait_for_signal(signaler.the_signal, 10)
-		assert_between(counter.time, .48, .52)
+		assert_almost_eq(counter.time, .5, .05)
+		assert_false(did_wait_timeout(), 'did_wait_timeout')
 
 	func test_wait_to_ends_at_max_wait_if_signal_not_emitted():
 		var signaler = add_child_autoqfree(TimedSignaler.new())
 		await wait_for_signal(signaler.the_signal, 1)
 		assert_between(counter.time, .9, 1.1)
+		assert_true(did_wait_timeout(), 'did_wait_timeout')
+
+	func test_wait_until_waits_ends_when_method_returns_true():
+		var all_is_good = func():
+			return counter.time > .25
+
+		await wait_until(all_is_good, .5)
+		assert_almost_eq(counter.time, .25, .05)
+		assert_false(did_wait_timeout(), 'did_wait_timeout')
+
+	func test_wait_until_times_out():
+		var all_is_good = func():
+			return false
+
+		await wait_until(all_is_good, .5)
+		assert_almost_eq(counter.time, .5, .05)
+		assert_true(did_wait_timeout(), 'did_wait_timeout')
+
+	func test_wait_until_returns_true_when_it_finishes():
+		var all_is_good = func():
+			return counter.time > .25
+
+		var result = await wait_until(all_is_good, .5)
+		assert_true(result)
+
+	func test_wait_until_returns_false_when_it_times_out():
+		var all_is_good = func():
+			return false
+
+		var result = await wait_until(all_is_good, .5)
+		assert_false(result)
+
+
+
+
+
 
 	func test_assert_eventually_waits_until_predicate_function_returns_true():
 		var some_node = add_child_autoqfree(Node.new())

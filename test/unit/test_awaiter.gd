@@ -109,7 +109,6 @@ func test_wait_started_emitted_when_waiting_on_signal():
 	a.wait_for_signal(s.the_signal, 10)
 	assert_signal_emitted(a, 'wait_started')
 
-
 func test_can_wait_for_signal():
 	var s = Signaler.new()
 	var a = add_child_autoqfree(Awaiter.new())
@@ -151,7 +150,6 @@ func test_when_signal_not_emitted_max_time_is_waited():
 	assert_signal_emitted(a, 'timeout')
 
 func test_is_waiting_when_waiting_on_signal():
-	var c = add_child_autoqfree(Counter.new())
 	var s = Signaler.new()
 	var a = add_child_autoqfree(Awaiter.new())
 	watch_signals(a)
@@ -196,8 +194,20 @@ func test_wait_for_signal_resets_did_last_wait_timeout_when_signal_detected():
 	var s = Signaler.new()
 	a.wait_for_signal(s.the_signal, 10)
 	await get_tree().create_timer(.1).timeout
-
+	# Checking for did_last_wait_timeout while it is still waiting
+	# on the signal to be emitted.
 	assert_false(a.did_last_wait_timeout)
+
+func test_wait_for_signal_did_last_time_out_false_when_does_not_timeout():
+	var a = add_child_autoqfree(Awaiter.new())
+	var s = Signaler.new()
+
+	a.wait_for_signal(s.the_signal, 10)
+	await get_tree().create_timer(.5).timeout
+	s.the_signal.emit()
+	await get_tree().create_timer(.5).timeout
+	assert_false(a.is_waiting(), 'is_waiting')
+	assert_false(a.did_last_wait_timeout, 'timed_out')
 
 func test_wait_until_emits_wait_started():
 	var a = add_child_autoqfree(Awaiter.new())

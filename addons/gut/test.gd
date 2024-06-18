@@ -1217,6 +1217,17 @@ func wait_frames(frames, msg=''):
 	return _awaiter.timeout
 
 
+func wait_until(callable, max_wait, msg=''):
+	_lgr.yield_msg(str("--Awaiting callable to return TRUE or ", max_wait, "s.  ", msg))
+	_awaiter.wait_until(callable, max_wait)
+	await _awaiter.timeout
+	return !_awaiter.did_last_wait_timeout
+
+
+func did_wait_timeout():
+	return _awaiter.did_last_wait_timeout
+
+
 func yield_frames(frames, msg=''):
 	_lgr.deprecated("yield_frames", "wait_frames")
 	return wait_frames(frames, msg)
