@@ -93,6 +93,7 @@ func wait_for_signal(the_signal, max_time):
 func wait_until(predicate_function: Callable, max_time, time_between_calls:=0.0):
 	_predicate_time_between = time_between_calls
 	_predicate_function_waiting_to_be_true = predicate_function
+	_predicate_time_between_elpased = 0.0
 	_did_last_wait_timeout = false
 	_wait_time = max_time
 	wait_started.emit()

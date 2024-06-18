@@ -40,7 +40,7 @@ class PredicateMethods:
 		return times_called == x
 
 
-class TestOldYieldMethods:
+class TestYeOldYieldMethods:
 	extends GutTest
 
 	var counter = null
@@ -159,6 +159,17 @@ class TestTheNewWaitMethods:
 
 		await wait_until(method, 1.1, .25, 'DID YOU SEE THIS?')
 		assert_eq(pred_methods.times_called, 4)
+
+
+	func test_wait_until_resets_time_between_counter():
+		var pred_methods = PredicateMethods.new()
+		var method = pred_methods.called_x_times.bind(10)
+
+		await wait_until(method, 1.1, .75)
+		pred_methods.times_called = 0
+		await wait_until(method, 1.1, .2)
+		assert_eq(pred_methods.times_called, 5)
+
 
 	func test_assert_eventually_accepts_string_as_thrid_arg():
 		var test = add_child_autoqfree(GutTest.new())
