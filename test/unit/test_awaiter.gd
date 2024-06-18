@@ -224,6 +224,26 @@ func test_wait_until_emits_wait_started():
 
 	assert_signal_emitted(a, 'wait_started')
 
+func test_wait_until_ignores_ints_values():
+	var a = add_child_autoqfree(Awaiter.new())
+	a.wait_until(func(): return 1, .25)
+	await a.timeout
+	assert_true(a.did_last_wait_timeout)
+
+func test_wait_until_ignores_strings_values():
+	var a = add_child_autoqfree(Awaiter.new())
+	a.wait_until(func(): return 'true', .25)
+	await a.timeout
+	assert_true(a.did_last_wait_timeout)
+
+func test_wait_until_ignores_object_values():
+	var a = add_child_autoqfree(Awaiter.new())
+	a.wait_until(func(): return self, .25)
+	await a.timeout
+	assert_true(a.did_last_wait_timeout)
+
+
+
 func test_wait_until_waits_until_predicate_function_is_true():
 	var node = add_child_autoqfree(Node.new())
 	var is_named_foo = func(): return node.name == 'foo'

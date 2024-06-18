@@ -36,7 +36,7 @@ func _physics_process(delta):
 		if(_predicate_time_between_elpased >= _predicate_time_between):
 			_predicate_time_between_elpased = 0.0
 			var result = _predicate_function_waiting_to_be_true.call()
-			if(result):
+			if(typeof(result) == TYPE_BOOL and result):
 				_end_wait()
 
 
