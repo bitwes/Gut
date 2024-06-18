@@ -1151,33 +1151,6 @@ func assert_property(obj, property_name, default_value, new_value) -> void:
 	_warn_for_public_accessors(obj, property_name)
 
 # ------------------------------------------------------------------------------
-# Asserts that the predicate function eventually returns true before the timeout.
-# ------------------------------------------------------------------------------
-# assert_true_with_timeout
-# assert_wait_for
-# assert_wait_for_true
-# assert_true_with_wait
-# assert_becomes_true
-func assert_eventually(callable, max_wait, msg_or_time_between='', msg=''):
-	var time_between = 0.0
-	var message = msg
-	if(typeof(msg_or_time_between) != TYPE_STRING):
-		time_between = msg_or_time_between
-	else:
-		message = msg_or_time_between
-
-	_lgr.yield_msg(
-		str('-- Awaiting predicate function to return true or for ', max_wait,
-		' second(s) -- ', message))
-	_awaiter.wait_until(callable, max_wait, time_between)
-	await _awaiter.timeout
-
-	if(_awaiter.did_last_wait_timeout):
-		_fail(str('predicate function did not return true before timeout: ', msg))
-	else:
-		_pass(str('predicate function returned true: ', msg))
-
-# ------------------------------------------------------------------------------
 # Mark the current test as pending.
 # ------------------------------------------------------------------------------
 func pending(text=""):
