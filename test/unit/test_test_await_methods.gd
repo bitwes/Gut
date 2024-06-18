@@ -89,6 +89,19 @@ class TestTheNewWaitMethods:
 		assert_between(counter.time, .9, 1.1)
 		assert_true(did_wait_timeout(), 'did_wait_timeout')
 
+	func test_wait_for_signal_returns_true_when_signal_emitted():
+		var signaler = add_child_autoqfree(TimedSignaler.new())
+		signaler.emit_after(.5)
+		var result = await wait_for_signal(signaler.the_signal, 10)
+		assert_true(result)
+
+	func test_wait_for_signal_returns_false_when_signal_not_emitted():
+		var signaler = add_child_autoqfree(TimedSignaler.new())
+		signaler.emit_after(10)
+		var result = await wait_for_signal(signaler.the_signal, .5)
+		assert_false(result)
+
+
 	func test_wait_until_waits_ends_when_method_returns_true():
 		var all_is_good = func():
 			return counter.time > .25
@@ -118,6 +131,14 @@ class TestTheNewWaitMethods:
 
 		var result = await wait_until(all_is_good, .5)
 		assert_false(result)
+
+
+
+
+
+
+
+
 
 
 

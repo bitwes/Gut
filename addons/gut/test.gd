@@ -1153,6 +1153,11 @@ func assert_property(obj, property_name, default_value, new_value) -> void:
 # ------------------------------------------------------------------------------
 # Asserts that the predicate function eventually returns true before the timeout.
 # ------------------------------------------------------------------------------
+# assert_true_with_timeout
+# assert_wait_for
+# assert_wait_for_true
+# assert_true_with_wait
+# assert_becomes_true
 func assert_eventually(predicate_function: Callable, max_wait, msg=''):
 	_lgr.yield_msg(str('-- Awaiting predicate function to return true or for ', max_wait, ' second(s) -- ', msg))
 	_awaiter.wait_until(predicate_function, max_wait)
@@ -1194,12 +1199,13 @@ func wait_for_signal(sig : Signal, max_wait, msg=''):
 	watch_signals(sig.get_object())
 	_lgr.yield_msg(str('-- Awaiting signal "', sig.get_name(), '" or for ', max_wait, ' second(s) -- ', msg))
 	_awaiter.wait_for_signal(sig, max_wait)
-	return _awaiter.timeout
+	await _awaiter.timeout
+	return !_awaiter.did_last_wait_timeout
 
 
 func yield_to(obj, signal_name, max_wait, msg=''):
 	_lgr.deprecated('yield_to', 'wait_for_signal')
-	return wait_for_signal(Signal(obj, signal_name), max_wait, msg)
+	return await wait_for_signal(Signal(obj, signal_name), max_wait, msg)
 
 
 # ------------------------------------------------------------------------------

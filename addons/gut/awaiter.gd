@@ -51,9 +51,9 @@ func _end_wait():
 
 const ARG_NOT_SET = '_*_argument_*_is_*_not_set_*_'
 func _signal_callback(
-		arg1=ARG_NOT_SET, arg2=ARG_NOT_SET, arg3=ARG_NOT_SET,
-		arg4=ARG_NOT_SET, arg5=ARG_NOT_SET, arg6=ARG_NOT_SET,
-		arg7=ARG_NOT_SET, arg8=ARG_NOT_SET, arg9=ARG_NOT_SET):
+		_arg1=ARG_NOT_SET, _arg2=ARG_NOT_SET, _arg3=ARG_NOT_SET,
+		_arg4=ARG_NOT_SET, _arg5=ARG_NOT_SET, _arg6=ARG_NOT_SET,
+		_arg7=ARG_NOT_SET, _arg8=ARG_NOT_SET, _arg9=ARG_NOT_SET):
 
 	_signal_to_wait_on.disconnect(_signal_callback)
 	# DO NOT _end_wait here.  For other parts of the test to get the signal that
