@@ -5,6 +5,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 # 9.2.2
 
 ## Features
+* @WebF0x GUT can now wait on a `Callable` to return `true` (aka predicate method)  via the new `wait_until`:
+```
+# Call the function once per frame until it returns 5 or one second has elapsed.
+await wait_until(func(): return randi_range(0, 20)==5, 1)
+```
+* `wait_for_signal` and the new `wait_until` return `true` if they did not timeout, and `false` otherwise.  This means waiting on, and asserting a signal has been emitted can now be written as
+```
+assert_true(await wait_for_signal(my_obj.my_singal, 2),
+    'signal should emit before 2 seconds')
+```
 * @mphe GUT now automatically enables the "Exclude Addons" option when running tests.  This means you don't have to keep enabling/disabling this option if GUT does not conform to your warning/error settings.
 * @plink-plonk-will Elapsed time is now included in the XML export.
 * __Issue__ #612 `InputSender` now sets the `button_mask` property for generated mouse motion events when mouse buttons have been pressed but not released prior to a motion event.
