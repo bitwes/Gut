@@ -1158,9 +1158,18 @@ func assert_property(obj, property_name, default_value, new_value) -> void:
 # assert_wait_for_true
 # assert_true_with_wait
 # assert_becomes_true
-func assert_eventually(predicate_function: Callable, max_wait, msg=''):
-	_lgr.yield_msg(str('-- Awaiting predicate function to return true or for ', max_wait, ' second(s) -- ', msg))
-	_awaiter.wait_until(predicate_function, max_wait)
+func assert_eventually(callable, max_wait, msg_or_time_between='', msg=''):
+	var time_between = 0.0
+	var message = msg
+	if(typeof(msg_or_time_between) != TYPE_STRING):
+		time_between = msg_or_time_between
+	else:
+		message = msg_or_time_between
+
+	_lgr.yield_msg(
+		str('-- Awaiting predicate function to return true or for ', max_wait,
+		' second(s) -- ', message))
+	_awaiter.wait_until(callable, max_wait, time_between)
 	await _awaiter.timeout
 
 	if(_awaiter.did_last_wait_timeout):
@@ -1223,9 +1232,16 @@ func wait_frames(frames, msg=''):
 	return _awaiter.timeout
 
 
-func wait_until(callable, max_wait, msg=''):
-	_lgr.yield_msg(str("--Awaiting callable to return TRUE or ", max_wait, "s.  ", msg))
-	_awaiter.wait_until(callable, max_wait)
+func wait_until(callable, max_wait, msg_or_time_between='', msg=''):
+	var time_between = 0.0
+	var message = msg
+	if(typeof(msg_or_time_between) != TYPE_STRING):
+		time_between = msg_or_time_between
+	else:
+		message = msg_or_time_between
+
+	_lgr.yield_msg(str("--Awaiting callable to return TRUE or ", max_wait, "s.  ", message))
+	_awaiter.wait_until(callable, max_wait, time_between)
 	await _awaiter.timeout
 	return !_awaiter.did_last_wait_timeout
 

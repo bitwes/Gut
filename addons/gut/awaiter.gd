@@ -3,17 +3,21 @@ extends Node
 signal timeout
 signal wait_started
 
-var _wait_time = 0.0
-var _wait_frames = 0
+var _wait_time := 0.0
+var _wait_frames := 0
 var _signal_to_wait_on = null
+
 var _predicate_function_waiting_to_be_true = null
+var _predicate_time_between := 0.0
+var _predicate_time_between_elpased := 0.0
+
 var _did_last_wait_timeout = false
 var did_last_wait_timeout = false :
 	get: return _did_last_wait_timeout
 	set(val): push_error("Cannot set did_last_wait_timeout")
 
-var _elapsed_time = 0.0
-var _elapsed_frames = 0
+var _elapsed_time := 0.0
+var _elapsed_frames := 0
 
 
 func _physics_process(delta):
@@ -27,8 +31,13 @@ func _physics_process(delta):
 		if(_elapsed_frames >= _wait_frames):
 			_end_wait()
 
-	if(_predicate_function_waiting_to_be_true and _predicate_function_waiting_to_be_true.call()):
-		_end_wait()
+	if(_predicate_function_waiting_to_be_true != null):
+		_predicate_time_between_elpased += delta
+		if(_predicate_time_between_elpased >= _predicate_time_between):
+			_predicate_time_between_elpased = 0.0
+			var result = _predicate_function_waiting_to_be_true.call()
+			if(result):
+				_end_wait()
 
 
 func _end_wait():
@@ -81,7 +90,8 @@ func wait_for_signal(the_signal, max_time):
 	wait_started.emit()
 
 
-func wait_until(predicate_function: Callable, max_time):
+func wait_until(predicate_function: Callable, max_time, time_between_calls:=0.0):
+	_predicate_time_between = time_between_calls
 	_predicate_function_waiting_to_be_true = predicate_function
 	_did_last_wait_timeout = false
 	_wait_time = max_time

@@ -16,6 +16,13 @@ class Signaler:
 	signal the_signal
 	signal with_parameters(foo, bar)
 
+class PredicateMethods:
+	var times_called = 0
+	func called_x_times(x):
+		times_called += 1
+		return times_called == x
+
+
 func test_is_not_paused_by_default():
 	var a = add_child_autofree(Awaiter.new())
 	assert_false(a.is_waiting())
@@ -265,3 +272,13 @@ func test_wait_until_causes_is_waiting_to_be_false_when_predicate_function_retur
 	# gotta wait for the 2 additional frames
 	await get_tree().create_timer(.05).timeout
 	assert_false(a.is_waiting())
+
+
+func test_wait_until_uses_time_between_calls():
+	var pred_methods = PredicateMethods.new()
+	var method = pred_methods.called_x_times.bind(10)
+	var a = add_child_autoqfree(Awaiter.new())
+
+	a.wait_until(method, 1.1, .25)
+	await a.timeout
+	assert_eq(pred_methods.times_called, 4)
