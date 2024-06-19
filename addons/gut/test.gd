@@ -80,10 +80,19 @@ var InputFactory = GutUtils.InputFactory
 var InputSender = GutUtils.InputSender
 
 
-func _ready():
+
+
+# I haven't decided if we should be using _ready or not.  Right now gut.gd will
+# call this if _ready was not called (because it was overridden without a super
+# call).  Maybe gut.gd should just call _do_ready_stuff (after we rename it to
+# something better).  I'm leaving all this as it is until it bothers me more.
+func _do_ready_stuff():
 	_awaiter = GutUtils.Awaiter.new()
 	add_child(_awaiter)
-
+	_was_ready_called = true
+var _was_ready_called = false
+func _ready():
+	_do_ready_stuff()
 
 func _str(thing):
 	return _strutils.type2str(thing)

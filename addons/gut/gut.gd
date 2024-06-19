@@ -494,11 +494,28 @@ func _does_class_name_match(the_class_name, script_class_name):
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-func _setup_script(test_script):
+func _setup_script(test_script, collected_script):
 	test_script.gut = self
 	test_script.set_logger(_lgr)
 	_add_children_to.add_child(test_script)
 	_test_script_objects.append(test_script)
+
+	if(!test_script._was_ready_called):
+		test_script._do_ready_stuff()
+		_lgr.warn(str("!!! YOU HAVE UPSET YOUR GUT !!!\n",
+			"You have overridden _ready in [", collected_script.get_filename_and_inner(), "] ",
+			"but it does not call super._ready().  New additions (or maybe old ",
+			"by the time you see this) require that super._ready() is called.",
+			"\n\n",
+			"GUT is working around this infraction, but may not be able to in ",
+			"the future.  GUT also reserves the right to decide it does not want ",
+			"to work around it in the future.  ",
+			"You should probably use before_all instead of _ready.  I can think ",
+			"of a few reasons why you would want to use _ready but I won't list ",
+			"them here because I think they are bad ideas.  I know they are bad ",
+			"ideas because I did them.  Hence the warning.  This message is ",
+			"intentially long so that it bothers you and you change your ways.\n\n",
+			"Thank you for using GUT."))
 
 
 # ------------------------------------------------------------------------------
@@ -717,7 +734,7 @@ func _test_the_scripts(indexes=[]):
 
 		var test_script = coll_script.get_new()
 
-		_setup_script(test_script)
+		_setup_script(test_script, coll_script)
 		_doubler.set_strategy(_double_strategy)
 
 		# ----
