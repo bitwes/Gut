@@ -298,6 +298,7 @@ var banner = ''
 var option_name_prefix = '-'
 var unused = []
 var parsed_args = []
+var show_usage_in_help = true
 
 func _convert_value_to_array(raw_value):
 	var split = raw_value.split(',')
@@ -452,8 +453,9 @@ func get_help():
 	var sep = '---------------------------------------------------------'
 
 	var text = str(sep, "\n", banner, "\n\n")
-	text += "Usage\n-----------\n"
-	text += "  " + options.get_usage_text() + "\n\n"
+	if(show_usage_in_help):
+		text += "Usage\n-----------\n"
+		text += "  " + options.get_usage_text() + "\n\n"
 	text += "\nOptions\n-----------\n"
 	text += options.get_help_text()
 	text += str(sep, "\n")

@@ -1,0 +1,4 @@
+res://addons/gut/utils.gd
+res://addons/gut/hook_script.gd
+res://addons/gut/gut.gd
+res://addons/gut/test.gd
