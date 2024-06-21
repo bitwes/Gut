@@ -21,6 +21,9 @@ class BaseTestClass:
 		test_with_gut = null
 	}
 
+	const SHOULD_PASS = &"Should pass"
+	const SHOULD_FAIL = &"Should fail"
+
 	func print_fail_pass_text(t):
 		for i in range(t._fail_pass_text.size()):
 			gut.p('sub-test:  ' + t._fail_pass_text[i], gut.LOG_LEVEL_FAIL_ONLY)
@@ -428,49 +431,110 @@ class TestAssertAlmostNe:
 		assert_fail(gr.test)
 		assert_fail_msg_contains(gr.test, '01230')
 
-
-
 # ------------------------------------------------------------------------------
 class TestAssertGt:
 	extends BaseTestClass
 
-	func test_passes_with_greater_integer():
-		gr.test.assert_gt(2, 1, "Should Pass")
-		assert_pass(gr.test, 1, '2 > 1')
+	# The assert_gt method asserts that `got` is greater than `expected`.
+	var test_data = ParameterFactory.named_parameters(
+		['got', 'expected', 'pass_fail_gt'],
+		[
+			[2, 1, SHOULD_PASS],
+			[2, 2, SHOULD_FAIL],
+			[2, 3, SHOULD_FAIL],
+			[2.2, 2.1, SHOULD_PASS],
+			[2.2, 2.2, SHOULD_FAIL],
+			[2.2, 2.3, SHOULD_FAIL],
+			['B', 'A', SHOULD_PASS],
+			['B', 'B', SHOULD_FAIL],
+			['B', 'C', SHOULD_FAIL]
+		])
 
-	func test_fails_with_less_than_integer():
-		gr.test.assert_gt(1, 2, "Should fail")
-		assert_fail(gr.test, 1, '1 < 2')
+	func test_assert_gt(p = use_parameters(test_data)):
+		gr.test.assert_gt(p.got, p.expected, p.pass_fail_gt)
+		if (p.pass_fail_gt == SHOULD_PASS):
+			assert_pass(gr.test, 1, str(p.got, ' > ', p.expected))
+		else:
+			assert_fail(gr.test, 1, str(p.got, ' > ', p.expected))
 
-	func test_passes_with_greater_string():
-		gr.test.assert_gt("b", "a", "Should Pass")
-		assert_pass(gr.test)
 
-	func test_fails_with_less_than_string():
-		gr.test.assert_gt("a", "b", "Should Fail")
-		assert_fail(gr.test)
+# ------------------------------------------------------------------------------
+class TestAssertGte:
+	extends BaseTestClass
 
+	# The assert_gte method asserts that `got` is greater than or equal to `expected`.
+	var test_data = ParameterFactory.named_parameters(
+		['got', 'expected', 'pass_fail_gte'],
+		[
+			[2, 1, SHOULD_PASS],
+			[2, 2, SHOULD_PASS],
+			[2, 3, SHOULD_FAIL],
+			[2.2, 2.1, SHOULD_PASS],
+			[2.2, 2.2, SHOULD_PASS],
+			[2.2, 2.3, SHOULD_FAIL],
+			['B', 'A', SHOULD_PASS],
+			['B', 'B', SHOULD_PASS],
+			['B', 'C', SHOULD_FAIL]
+		])
+
+	func test_assert_gte(p = use_parameters(test_data)):
+		gr.test.assert_gte(p.got, p.expected, p.pass_fail_gte)
+		if (p.pass_fail_gte == SHOULD_PASS):
+			assert_pass(gr.test, 1, str(p.got, ' >= ', p.expected))
+		else:
+			assert_fail(gr.test, 1, str(p.got, ' >= ', p.expected))
 
 # ------------------------------------------------------------------------------
 class TestAssertLt:
 	extends BaseTestClass
 
-	func test_number_with_lt():
-		gr.test.assert_lt(1, 2, "Should Pass")
-		assert_pass(gr.test, 1, '1 < 2')
+	# The assert_lt method asserts that `got` is less than `expected`.
+	var test_data = ParameterFactory.named_parameters(
+		['got', 'expected', 'pass_fail_lt'],
+		[
+			[2, 1, SHOULD_FAIL],
+			[2, 2, SHOULD_FAIL],
+			[2, 3, SHOULD_PASS],
+			[2.2, 2.1, SHOULD_FAIL],
+			[2.2, 2.2, SHOULD_FAIL],
+			[2.2, 2.3, SHOULD_PASS],
+			['B', 'A', SHOULD_FAIL],
+			['B', 'B', SHOULD_FAIL],
+			['B', 'C', SHOULD_PASS]
+		])
 
-	func test_number_with_gt():
-		gr.test.assert_lt(2, 1, "Should fail")
-		assert_fail(gr.test, 1, '2 > 1')
+	func test_assert_lt(p = use_parameters(test_data)):
+		gr.test.assert_lt(p.got, p.expected, p.pass_fail_lt)
+		if (p.pass_fail_lt == SHOULD_PASS):
+			assert_pass(gr.test, 1, str(p.got, ' < ', p.expected))
+		else:
+			assert_fail(gr.test, 1, str(p.got, ' < ', p.expected))
 
-	func test_string_with_lt():
-		gr.test.assert_lt("a", "b", "Should Pass")
-		assert_pass(gr.test)
+# ------------------------------------------------------------------------------
+class TestAssertLte:
+	extends BaseTestClass
 
-	func test_string_with_gt():
-		gr.test.assert_lt("b", "a", "Should Fail")
-		assert_fail(gr.test)
+	# The assert_lte method asserts that `got` is less than or equal to `expected`.
+	var test_data = ParameterFactory.named_parameters(
+		['got', 'expected', 'pass_fail_lte'],
+		[
+			[2, 1, SHOULD_FAIL],
+			[2, 2, SHOULD_PASS],
+			[2, 3, SHOULD_PASS],
+			[2.2, 2.1, SHOULD_FAIL],
+			[2.2, 2.2, SHOULD_PASS],
+			[2.2, 2.3, SHOULD_PASS],
+			['B', 'A', SHOULD_FAIL],
+			['B', 'B', SHOULD_PASS],
+			['B', 'C', SHOULD_PASS]
+		])
 
+	func test_assert_lte(p = use_parameters(test_data)):
+		gr.test.assert_lte(p.got, p.expected, p.pass_fail_lte)
+		if (p.pass_fail_lte == SHOULD_PASS):
+			assert_pass(gr.test, 1, str(p.got, ' <= ', p.expected))
+		else:
+			assert_fail(gr.test, 1, str(p.got, ' <= ', p.expected))
 
 # ------------------------------------------------------------------------------
 # TODO rename tests since they are now in an inner class.  See NOTE at top about naming.
