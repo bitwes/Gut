@@ -14,20 +14,25 @@ class ScriptClassCacheUpdater:
 		return res_path.path_join(path)
 
 
-	func _extract_nvp_from_line(line, name, err_info):
-		if(line.begins_with(name)):
+	func _get_second_word_on_line_that_starts_with_word(line, start_word, err_info):
+		if(line.begins_with(start_word)):
 			var parts = line.split("#", false)[0].split(" ", false)
 
 			if(parts.size() != 2):
-				push_error(str("Could not parse ", name, " from [", line, ']:  ', err_info))
+				push_error(str("Could not parse ", start_word, " from [", line, ']:  ', err_info))
 				return null
 			else:
 				return parts[1]
 
 
 	func _is_line_script_body_type_text(line):
-		var l = line.strip_edges()
-		return l != '' and l.begins_with('#')
+		var l = line.strip_edges(true, false)
+		# I decided that the first occurance of func or var (that wasn't part of
+		# a comment) was a good enough way to assume we are in the body of a
+		# script.
+		var it_is = l != '' and !l.begins_with('#') and \
+			(l.begins_with('func') or l.begins_with('var'))
+		return it_is
 
 
 	func _parse_file(any_path):
@@ -41,24 +46,26 @@ class ScriptClassCacheUpdater:
 		var i = 0
 		var body_started = false
 
-		var extends_parts = null
-		var class_name_parts = null
+		var extends_this = null
+		var the_class_name = null
 
-		while(!f.eof_reached() and parts_found != 2):
+		while(!f.eof_reached() and parts_found != 2 and !body_started):
 			var line = f.get_line()
 			var err_info = str(path, " line ", i)
-			var c_parts = _extract_nvp_from_line(line, 'class_name', err_info)
-			if(c_parts != null):
-				class_name_parts = c_parts
+			var result = _get_second_word_on_line_that_starts_with_word(
+				line, 'class_name', err_info)
+			if(result != null):
+				the_class_name = result
 				parts_found += 1
 			else:
-				var e_parts = _extract_nvp_from_line(line, 'extends', err_info)
-				if(e_parts != null):
-					extends_parts = e_parts
-					if(extends_parts.contains("res:")):
-						extends_parts = extends_parts.replace("'", '')
-						extends_parts = extends_parts.replace('"', '')
-						extends_parts = _parse_file(extends_parts)['extends']
+				result = _get_second_word_on_line_that_starts_with_word(
+					line, 'extends', err_info)
+				if(result != null):
+					extends_this = result
+					if(extends_this.contains("res:")):
+						extends_this = extends_this.replace("'", '')
+						extends_this = extends_this.replace('"', '')
+						extends_this = _parse_file(extends_this)['extends']
 					parts_found += 1
 				elif(_is_line_script_body_type_text(line)):
 					body_started = true
@@ -67,10 +74,10 @@ class ScriptClassCacheUpdater:
 		f.close()
 
 		var to_return = {'class_name':null, 'extends':'RefCounted'}
-		if(extends_parts != null):
-			to_return['extends'] = extends_parts
-		if(class_name_parts != null):
-			to_return['class_name'] = class_name_parts
+		if(extends_this != null):
+			to_return['extends'] = extends_this
+		if(the_class_name != null):
+			to_return['class_name'] = the_class_name
 		return to_return
 
 
@@ -85,10 +92,6 @@ class ScriptClassCacheUpdater:
 			else:
 				push_warning("Could not open/parse ", cache_path, ":  ", result, ".  Existing values will not be used.")
 			return
-
-		# print("----- ", cache_path, " -----")
-		# print(cfg.encode_to_text())
-		# print("--------------------")
 
 		var scripts = cfg.get_value('', 'list', [])
 		for entry in scripts:
@@ -123,24 +126,11 @@ class ScriptClassCacheUpdater:
 			return
 
 		var file_parts = _parse_file(path)
-		if(file_parts['class_name'] == null or file_parts['extends'] == null):
+		if(file_parts['class_name'] == null):
+			push_warning(str(path, ' was ignored because it does not have a class_name.'))
 			return
 
 		add_class_entry(path, file_parts['class_name'], file_parts['extends'])
-
-
-	func save_it():
-		var list_value = make_list_entry_value()
-
-		var path = _replace_res(class_cache_path)
-		var d = DirAccess.open('./')
-		d.make_dir_recursive(path.get_base_dir())
-
-		var cfg = ConfigFile.new()
-		cfg.set_value('', 'list', list_value)
-		cfg.save(path)
-
-		print("Wrote ", _replace_res(class_cache_path))
 
 
 	func make_list_entry_value():
@@ -162,6 +152,18 @@ class ScriptClassCacheUpdater:
 			print()
 
 
+	func save_it():
+		var list_value = make_list_entry_value()
+
+		var path = _replace_res(class_cache_path)
+		var d = DirAccess.open('./')
+		d.make_dir_recursive(path.get_base_dir())
+
+		var cfg = ConfigFile.new()
+		cfg.set_value('', 'list', list_value)
+		cfg.save(path)
+
+		print("Wrote ", _replace_res(class_cache_path))
 
 
 
@@ -169,14 +171,12 @@ class ScriptClassCacheUpdater:
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 var _o_class_cache_file = null
-var _o_res_path = null
 var _o_dry_run = null
 
 
 func _update_class_cache(scripts):
 	var updater = ScriptClassCacheUpdater.new()
 	updater.class_cache_path = _o_class_cache_file.value
-	updater.res_path = _o_res_path.value
 
 	updater.load_it()
 	for entry in scripts:
@@ -208,26 +208,26 @@ scripts.  It will parse out the class_name from the scripts and add entries to
 the config file.
 
 Entries are created for any script that is missing in the global class cache file.
-Entries in the global class cache are updated if they already exist.  Any
-entries for scripts not provided are not altered.
+Entries in the global class cache are updated (if they need to be) if they
+already exist.  Any entries for scripts not provided are not altered.
 
 The global class cache file will be created, as well as any parent directories,
 if they do not exist.
 
-Scripts should be listed using res:// as the start of the path.  If the current
-working directory is not the same as the root of the project, use the -res_path
-option.  This will then search for the scripts for parsing in that directory.
-It will also use the path to create the global class cache file.
-
 Usage
 --------
- <path to godot> --headless -s update_script_class_cache.gd [opts] script_path1 script_path2 ...
+ <path to godot> --headless -s addons/gut/cli/update_script_class_cache.gd [opts] script_path1 script_path2 ...
 """
 
-	_o_class_cache_file = opts.add("-class-cache-file", "res://.godot/global_script_class_cache.cfg", "The relative or absolute path to class cache config file.  Default [default]")
-	opts.add("-class-list-file", "", "An optional file containing a list of scripts, one per line.")
-	_o_res_path = opts.add("-res-path", "./", "The path to the project root, default is the current working directory.")
-	_o_dry_run = opts.add("-dry-run", false, "print results instead of updating file")
+	_o_class_cache_file = opts.add("-class-cache-file", "res://.godot/global_script_class_cache.cfg",
+		"The relative or absolute path to class cache config file.  Default [default]")
+	opts.add("-class-list-file", "",
+		"An optional file containing a list of scripts to add to the global class cache, one per line.")
+	# Decided to remove this option for now.  It would be useful if this script
+	# was used outside of a project, but not needed when inside GUT.
+	# opts.add("-res-path", "./", "The path to the project root, default is the current working directory.")
+	_o_dry_run = opts.add("-dry-run", false,
+		"Print results instead of updating file")
 	opts.add("-help", false, "Show this help")
 
 	return opts
