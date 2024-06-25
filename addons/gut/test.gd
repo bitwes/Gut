@@ -71,6 +71,7 @@ var DOUBLE_STRATEGY = GutUtils.DOUBLE_STRATEGY
 
 var _lgr = GutUtils.get_logger()
 var _strutils = GutUtils.Strutils.new()
+var _awaiter = null
 
 # syntax sugar
 var ParameterFactory = GutUtils.ParameterFactory
@@ -79,9 +80,19 @@ var InputFactory = GutUtils.InputFactory
 var InputSender = GutUtils.InputSender
 
 
-func _init():
-	pass
 
+
+# I haven't decided if we should be using _ready or not.  Right now gut.gd will
+# call this if _ready was not called (because it was overridden without a super
+# call).  Maybe gut.gd should just call _do_ready_stuff (after we rename it to
+# something better).  I'm leaving all this as it is until it bothers me more.
+func _do_ready_stuff():
+	_awaiter = GutUtils.Awaiter.new()
+	add_child(_awaiter)
+	_was_ready_called = true
+var _was_ready_called = false
+func _ready():
+	_do_ready_stuff()
 
 func _str(thing):
 	return _strutils.type2str(thing)
@@ -1171,16 +1182,6 @@ func assert_property(obj, property_name, default_value, new_value) -> void:
 	_warn_for_public_accessors(obj, property_name)
 
 # ------------------------------------------------------------------------------
-# Asserts that the predicate function eventually returns true before the timeout.
-# ------------------------------------------------------------------------------
-func assert_eventually(predicate_function: Callable, timeout_seconds, msg=''):
-	await gut.set_predicate_function_to_wait_until_true(predicate_function, timeout_seconds, msg)
-	if(gut.get_awaiter().did_last_wait_timeout):
-		_fail(str('predicate function did not return true before timeout: ', msg))
-	else:
-		_pass(str('predicate function returned true: ', msg))
-
-# ------------------------------------------------------------------------------
 # Mark the current test as pending.
 # ------------------------------------------------------------------------------
 func pending(text=""):
@@ -1195,29 +1196,30 @@ func pending(text=""):
 # Gut detects the yield.
 # ------------------------------------------------------------------------------
 func wait_seconds(time, msg=''):
-	var to_return = gut.set_wait_time(time, msg)
-	return to_return
+	_lgr.yield_msg(str('-- Awaiting ', time, ' second(s) -- ', msg))
+	_awaiter.wait_seconds(time)
+	return _awaiter.timeout
 
 func yield_for(time, msg=''):
 	_lgr.deprecated('yield_for', 'wait_seconds')
-	var to_return = gut.set_wait_time(time, msg)
-	return to_return
+	return wait_seconds(time, msg)
 
 
 # ------------------------------------------------------------------------------
 # Yield to a signal or a maximum amount of time, whichever comes first.
 # ------------------------------------------------------------------------------
-func wait_for_signal(sig, max_wait, msg=''):
+func wait_for_signal(sig : Signal, max_wait, msg=''):
 	watch_signals(sig.get_object())
-	var to_return = gut.set_wait_for_signal_or_time(sig.get_object(), sig.get_name(), max_wait, msg)
-	return to_return
+	_lgr.yield_msg(str('-- Awaiting signal "', sig.get_name(), '" or for ', max_wait, ' second(s) -- ', msg))
+	_awaiter.wait_for_signal(sig, max_wait)
+	await _awaiter.timeout
+	return !_awaiter.did_last_wait_timeout
 
 
 func yield_to(obj, signal_name, max_wait, msg=''):
 	_lgr.deprecated('yield_to', 'wait_for_signal')
-	watch_signals(obj)
-	var to_return = gut.set_wait_for_signal_or_time(obj, signal_name, max_wait, msg)
-	return to_return
+	return await wait_for_signal(Signal(obj, signal_name), max_wait, msg)
+
 
 # ------------------------------------------------------------------------------
 # Yield for a number of frames.  The optional message will be printed. when
@@ -1229,14 +1231,35 @@ func wait_frames(frames, msg=''):
 		_lgr.error(text)
 		frames = 1
 
-	var to_return = gut.set_wait_frames(frames, msg)
-	return to_return
+	_lgr.yield_msg(str('-- Awaiting ', frames, ' frame(s) -- ', msg))
+	_awaiter.wait_frames(frames)
+	return _awaiter.timeout
+
+# p3 can be the optional message or an amount of time to wait between tests.
+# p4 is the optional message if you have specified an amount of time to
+#	wait between tests.
+func wait_until(callable, max_wait, p3='', p4=''):
+	var time_between = 0.0
+	var message = p4
+	if(typeof(p3) != TYPE_STRING):
+		time_between = p3
+	else:
+		message = p3
+
+	_lgr.yield_msg(str("--Awaiting callable to return TRUE or ", max_wait, "s.  ", message))
+	_awaiter.wait_until(callable, max_wait, time_between)
+	await _awaiter.timeout
+	return !_awaiter.did_last_wait_timeout
+
+
+func did_wait_timeout():
+	return _awaiter.did_last_wait_timeout
 
 
 func yield_frames(frames, msg=''):
 	_lgr.deprecated("yield_frames", "wait_frames")
-	var to_return = wait_frames(frames, msg)
-	return to_return
+	return wait_frames(frames, msg)
+
 
 func get_summary():
 	return _summary
@@ -1506,6 +1529,31 @@ func use_parameters(params):
 	var output = str('- params[', ph.get_call_count(), ']','(', ph.get_current_parameters(), ')')
 	gut.p(output, gut.LOG_LEVEL_TEST_AND_FAILURES)
 
+	return ph.next_parameters()
+
+
+# ------------------------------------------------------------------------------
+# When used as the default for a test method parameter, it will cause the test
+# to be run x times.
+#
+# I Hacked this together to test a method that was occassionally failing due to
+# timing issues.  I don't think it's a great idea, but you be the judge.
+# ------------------------------------------------------------------------------
+func run_x_times(x):
+	var ph = gut.parameter_handler
+	if(ph == null):
+		_lgr.warn(
+			str("This test uses run_x_times and you really should not be ",
+			"using it.  I don't think it's a good thing, but I did find it ",
+			"temporarily useful so I left it in here and didn't document it.  ",
+			"Well, you found it, might as well open up an issue and let me ",
+			"know why you're doing this."))
+		var params = []
+		for i in range(x):
+			params.append([])
+
+		ph = GutUtils.ParameterHandler.new(params)
+		gut.parameter_handler = ph
 	return ph.next_parameters()
 
 # ------------------------------------------------------------------------------

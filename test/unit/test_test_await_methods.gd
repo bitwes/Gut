@@ -21,6 +21,7 @@ class TimedSignaler:
 		_timer.set_wait_time(time)
 		_timer.start()
 
+
 class Counter:
 	extends Node
 
@@ -32,8 +33,14 @@ class Counter:
 		frames += 1
 
 
+class PredicateMethods:
+	var times_called = 0
+	func called_x_times(x):
+		times_called += 1
+		return times_called == x
 
-class TestOldYieldMethods:
+
+class TestYeOldYieldMethods:
 	extends GutTest
 
 	var counter = null
@@ -80,79 +87,86 @@ class TestTheNewWaitMethods:
 		var signaler = add_child_autoqfree(TimedSignaler.new())
 		signaler.emit_after(.5)
 		await wait_for_signal(signaler.the_signal, 10)
-		assert_between(counter.time, .48, .52)
+		assert_almost_eq(counter.time, .5, .05)
+		assert_false(did_wait_timeout(), 'did_wait_timeout')
 
 	func test_wait_to_ends_at_max_wait_if_signal_not_emitted():
 		var signaler = add_child_autoqfree(TimedSignaler.new())
 		await wait_for_signal(signaler.the_signal, 1)
 		assert_between(counter.time, .9, 1.1)
+		assert_true(did_wait_timeout(), 'did_wait_timeout')
 
-	func test_assert_eventually_waits_until_predicate_function_returns_true():
-		var some_node = add_child_autoqfree(Node.new())
-		var is_named_foo = func(): return some_node.name == 'foo'
+	func test_wait_for_signal_returns_true_when_signal_emitted():
 		var signaler = add_child_autoqfree(TimedSignaler.new())
-		signaler.the_signal.connect(func(): some_node.name = 'foo')
-		signaler.emit_after(.1)
+		signaler.emit_after(.5)
+		var result = await wait_for_signal(signaler.the_signal, 10)
+		assert_true(result)
 
-		assert_false(is_named_foo.call())
-		await assert_eventually(is_named_foo, 1.0)
-		assert_true(is_named_foo.call())
-
-		assert_between(counter.time, .09, .15)
-
-	# TODO: Keep an eye on the Github issue, until Godot fixes the error log
-	# This test passes, but prints the error log:
-	# 	ERROR: Lambda capture at index 0 was freed. Passed "null" instead
-	# Godot issue: https://github.com/godotengine/godot/issues/85947
-	func test_wait_until_is_compatible_with_checking_if_an_object_is_freed():
-		var node = add_child_autoqfree(Node.new())
-		# TODO: If we ever expose _utils.is_freed() in GUT's public API, we could swap it in here
-		# It makes the test pass without any error logs
-		# To add it to the API:
-		# 	- add it in addons/gut/test.gd
-		# 	- document in https://gut.readthedocs.io/en/latest/Asserts-and-Methods.html#utilities
-		# For now let's keep is_instance_valid to demo what a GUT user would probably use
-		var is_freed = func(): return not is_instance_valid(node)
+	func test_wait_for_signal_returns_false_when_signal_not_emitted():
 		var signaler = add_child_autoqfree(TimedSignaler.new())
-		signaler.the_signal.connect(node.queue_free)
-		signaler.emit_after(.1)
-
-		await assert_eventually(is_freed, 1.0)
-
-		assert_between(counter.time, 0.0, .2)
-		assert_freed(node)
-
-# ------------------------------------
-# Could not get these to trigger the error I was trying to replicate.  This was
-# a useful exercies though and I'm not ready to part with this code.  So it is
-# here as an example of using parameterized tests to control the order of the
-# execution of tests with different behavior per iteration.
-# ------------------------------------
-# class TestYieldTimerResetAfterSignalEmitted:
-# 	extends GutTest
-
-# 	var _wait_data = ParameterFactory.named_parameters(
-# 		['kind', 'time'],
-# 		[
-# 			['s', 3.0],
-# 			['t', 4.0],
-# 		])
-
-# 	var _counter = null
-# 	func before_each():
-# 		_counter = add_child_autoqfree(Counter.new())
+		signaler.emit_after(10)
+		var result = await wait_for_signal(signaler.the_signal, .5)
+		assert_false(result)
 
 
-# 	func test_one(param=use_parameters(_wait_data)):
-# 		print('time left = ', gut._yield_timer.time_left)
-# 		var signaler = add_child_autoqfree(TimedSignaler.new())
-# 		var t = param.time
+	func test_wait_until_waits_ends_when_method_returns_true():
+		var all_is_good = func():
+			return counter.time > .25
 
-# 		if(param.kind == 's'):
-# 			signaler.emit_after(t)
-# 			await wait_for_signal(signaler.the_signal, t + 2)
-# 		else:
-# 			await wait_seconds(t)
+		await wait_until(all_is_good, .5)
+		assert_almost_eq(counter.time, .25, .05)
+		assert_false(did_wait_timeout(), 'did_wait_timeout')
 
-# 		assert_between(_counter.time, t - 0.1, t + 0.1)
-# 		print('time left = ', gut._yield_timer.time_left)
+	func test_wait_until_times_out():
+		var all_is_good = func():
+			return false
+
+		await wait_until(all_is_good, .5)
+		assert_almost_eq(counter.time, .5, .05)
+		assert_true(did_wait_timeout(), 'did_wait_timeout')
+
+	func test_wait_until_returns_true_when_it_finishes():
+		var all_is_good = func():
+			return counter.time > .25
+
+		var result = await wait_until(all_is_good, .5)
+		assert_true(result)
+
+	func test_wait_until_returns_false_when_it_times_out():
+		var all_is_good = func():
+			return false
+
+		var result = await wait_until(all_is_good, .5)
+		assert_false(result)
+
+	func test_wait_until_accepts_string_as_thrid_arg():
+		var pred_methods = PredicateMethods.new()
+		var method = pred_methods.called_x_times.bind(10)
+
+		await wait_until(method, 1.1, 'DID YOU SEE THIS?')
+		pass_test("Check output for DID YOU SEE THIS?")
+
+	func test_wait_until_accepts_time_between():
+		var pred_methods = PredicateMethods.new()
+		var method = pred_methods.called_x_times.bind(10)
+
+		await wait_until(method, 1.1, .25)
+		assert_eq(pred_methods.times_called, 4)
+
+	func test_wait_until_accepts_time_between_then_msg():
+		var pred_methods = PredicateMethods.new()
+		var method = pred_methods.called_x_times.bind(10)
+
+		await wait_until(method, 1.1, .25, 'DID YOU SEE THIS?')
+		assert_eq(pred_methods.times_called, 4)
+
+
+	func test_wait_until_resets_time_between_counter():
+		var pred_methods = PredicateMethods.new()
+		var method = pred_methods.called_x_times.bind(10)
+
+		await wait_until(method, 1.1, .75)
+		pred_methods.times_called = 0
+		await wait_until(method, 1.1, .2)
+		assert_eq(pred_methods.times_called, 5)
+
