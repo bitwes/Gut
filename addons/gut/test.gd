@@ -1213,14 +1213,16 @@ func wait_frames(frames, msg=''):
 	_awaiter.wait_frames(frames)
 	return _awaiter.timeout
 
-
-func wait_until(callable, max_wait, msg_or_time_between='', msg=''):
+# p3 can be the optional message or an amount of time to wait between tests.
+# p4 is the optional message if you have specified an amount of time to
+#	wait between tests.
+func wait_until(callable, max_wait, p3='', p4=''):
 	var time_between = 0.0
-	var message = msg
-	if(typeof(msg_or_time_between) != TYPE_STRING):
-		time_between = msg_or_time_between
+	var message = p4
+	if(typeof(p3) != TYPE_STRING):
+		time_between = p3
 	else:
-		message = msg_or_time_between
+		message = p3
 
 	_lgr.yield_msg(str("--Awaiting callable to return TRUE or ", max_wait, "s.  ", message))
 	_awaiter.wait_until(callable, max_wait, time_between)

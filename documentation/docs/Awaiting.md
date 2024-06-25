@@ -69,11 +69,15 @@ assert_true(await wait_for_signal(my_object.my_signal, 2),
 
 ## wait_until
 ```
-wait_until(callable, max_wait, msg_or_time_between='', msg=''):
+wait_until(callable, max_wait, p3='', p4=''):
 ```
 This method takes a `Callable` predicate method that will be called every frame.  The wait will end when the `Callable` returns `true` or when `max_wait` seconds has expired.  This requires the method to explicity return `true` and not a truthy value.
 
 This will return `true` if the method returned `true` before the timeout, `false` if otherwise.  You can optionally specify an amount of time to wait between calling the `Callable`.
+
+* `p3` can be the optional message or an amount of time to wait between tests.
+* `p4` is the optional message if you have specified an amount of time to wait between tests.
+
 ```
 var everything_is_ok = func():
 	return true
