@@ -276,6 +276,11 @@ func _send_event(event):
 	for r in _receivers:
 		if(r == Input):
 			Input.parse_input_event(event)
+			if(event is InputEventAction):
+				if(event.pressed):
+					Input.action_press(event.action)
+				else:
+					Input.action_release(event.action)
 			if(_auto_flush_input):
 				Input.flush_buffered_events()
 		else:
