@@ -10,20 +10,11 @@ Using your double, you can:
 * Assert a method was called with specific parameters.
 * And much much more.  See [Stubbing](Stubbing) and [Spies](Spies) for more information.
 
-The following methods cannot be spied on due to implementation details with either Gut or GDScript.  There might be more.
+<hr>
 
+__Warning:__   Native Godot methods are not included in doubles by default.  Native methods are all the non-overridable methods in objects such as `Node`.  This means `_ready` will exist in the double, but `set_position` will not.  A good rule of thumb is that if you didn't write the function, it probably will not be included in your double.  You can include them by changing the [Double-Strategy](Double-Strategy), but there are some complications and gotchas.
 
-```
-has_method      _draw
-get_script      _physics_process
-get             _input
-_notification   _unhandled_input
-get_path        _unhandled_key_input
-_enter_tree     _get
-_exit_tree      emit_signal
-_process        _set
-```
-
+<hr>
 
 ## Characteristics of a Double
 * The double inherits (`extends`) the source.
@@ -33,7 +24,6 @@ _process        _set
   * Do nothing (unless stubbed).
   * Will return `null` (unless stubbed).
   * __All__ parameters are defaulted to `null`, even if they did not have a default value originally.  You can stub parameter defaults (see [Stubbing](Stubbing)).
-* Methods defined in any Godot super class (such as `Node` or `Control`) are not altered unless those methods have been overridden.  This is overridable by changing the [Double-Strategy](Double-Strategy).
 * Inner Classes of the source are not doubled and will retain their functionality.
 * You can double Inner Classes, but it requires an extra step.  See the Inner Class section below.
 * If your `_init` method has required parameters you must [stub](Stubbing) default values before trying to `double` the object.
@@ -124,8 +114,8 @@ func rpc_id (peer_id, method, arg1=null, arg2=null, arg3=null, arg4=null, arg5=n
 You can change the number of arguments passed and their default by [stubbing](Stubbing) parameters.
 
 
-## Doubling Built-Ins
-You can `double` built-in objects that are not inherited by a script such as a `Node2D` or a `Raycast2D`.  These doubles are always created using the Doubling Strategy of `INCLUDE_NATIVE` (see [Double-Strategy](Double-Strategy)).
+## Doubling Built-In/Base Objects
+You can `double` built-in objects that are not inherited by a script such as a `Node2D` or a `Raycast2D`.  These doubles are always created using the Doubling Strategy of `INCLUDE_NATIVE` (see [Double-Strategy](Double-Strategy)).  Be sure to read the [Double-Strategy](Double-Strategy), there are some gotchas and issues with this.
 
 For example you can `double` or `partial_double` like this:
 ``` gdscript
