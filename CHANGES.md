@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-# 9.2.2
+# 9.3.0
 
 ## Features
 * @WebF0x GUT can now wait on a `Callable` to return `true` (aka predicate method)  via the new `wait_until`:
