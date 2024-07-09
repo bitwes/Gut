@@ -37,6 +37,7 @@ assert_true(await wait_for_signal(my_obj.my_singal, 2),
 * __Issue__ #601 doubles now get a resource path that makes Godot ignore them when "Exclude Addons" is enabled (res://adddons/gut/not_a_real_file/...).
 * __Issue__ #594 An error is generated if GUT cannot find the double template files.  This can happen if you export your game with tests, but do not include *.txt files.
 * __Issue__ #595 When no tests are run GUT no longer displays "All Tests Passed!" and exits (based off of settings).
+* __Issue__ #578 Fix `InputSender` so it works with `Input.is_action_just_pressed`, `Input.is_action_just_released` and `Input.is_action_pressed`.  Thanks @lxkarp and @edearth for you work on this.
 
 
 ## Deprecations
