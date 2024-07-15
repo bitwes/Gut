@@ -42,6 +42,7 @@ assert_true(await wait_for_signal(my_obj.my_singal, 2),
 
 ## Deprecations
 * The optional `GutTest` script variable `skip_script` has been deprecated.  Use the new `should_skip_script` method instead.
+* GUT now warns if you have overridden `_ready` in your test script without calling `super._ready`.
 
 
 

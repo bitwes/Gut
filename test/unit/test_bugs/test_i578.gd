@@ -8,7 +8,7 @@ class InputSingletonTracker:
 
 	var _frame_counter = 0
 
-	func _process(delta):
+	func _process(_delta):
 		_frame_counter += 1
 
 		if(Input.is_action_just_pressed("jump")):
@@ -45,7 +45,7 @@ class TestInputSingleton:
 		Input.action_release("jump")
 
 		assert_gt(r.pressed_frames.size(), 1, 'input size')
-	
+
 	func test_input_sender_press():
 		var r = add_child_autofree(InputSingletonTracker.new())
 
@@ -57,7 +57,7 @@ class TestInputSingleton:
 
 	func test_input_sender_just_pressed():
 		var r = add_child_autofree(InputSingletonTracker.new())
-		
+
 		_sender.action_down("jump").hold_for("20f")
 		await wait_frames(5)
 
@@ -66,7 +66,7 @@ class TestInputSingleton:
 
 	func test_input_sender_just_released():
 		var r = add_child_autofree(InputSingletonTracker.new())
-		
+
 		_sender.action_down("jump").hold_for('5f')
 		await wait_for_signal(_sender.idle, 10)
 
