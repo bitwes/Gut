@@ -408,7 +408,7 @@ class TestStub:
 	var _gut = null
 	var _test = null
 
-	func before_all():
+	func before_each():
 		_gut = Gut.new()
 		_gut.logger = GutUtils.Logger.new()
 		_test = Test.new()
@@ -435,10 +435,21 @@ class TestStub:
 		_test.stub(dbl, 'foo').to_do_nothing()
 		assert_errored(_test, 1)
 
+
 	func test_can_stub_double_method_with_callable():
 		var d = _test.double(DoubleMe).new()
 		_test.stub(d.has_one_param).to_return(5)
 		assert_eq(_gut.get_stubber().get_return(d, 'has_one_param'), 5)
+
+	func test_errors_or_p2_when_using_callable():
+		var d = _test.double(DoubleMe).new()
+		_test.stub(d.has_one_param, 'asdf').to_return(5)
+		assert_errored(_test, 1)
+
+	func test_errors_or_p3_when_using_callable():
+		var d = _test.double(DoubleMe).new()
+		_test.stub(d.has_one_param, null, 'asdf').to_return(5)
+		assert_errored(_test, 1)
 
 
 

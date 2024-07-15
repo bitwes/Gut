@@ -1440,7 +1440,7 @@ func ignore_method_when_doubling(thing, method_name):
 # Stub something.
 #
 # Parameters
-# 1: the thing to stub, a file path or an instance or a class
+# 1: A callable OR the thing to stub OR a file path OR an instance OR a Script
 # 2: either an inner class subpath or the method name
 # 3: the method name if an inner class subpath was specified
 # NOTE:  right now we cannot stub inner classes at the path level so this should
@@ -1463,6 +1463,8 @@ func stub(thing, p2=null, p3=null):
 
 	var sp = null
 	if(typeof(thing) == TYPE_CALLABLE):
+		if(p2 != null or p3 != null):
+			_lgr.error("Only one parameter expected when using a callable.")
 		sp = GutUtils.StubParams.new(thing)
 	else:
 		sp = GutUtils.StubParams.new(thing, method_name, subpath)
