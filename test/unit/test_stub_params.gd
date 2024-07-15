@@ -219,4 +219,8 @@ func test_can_create_from_bound_callable():
 	var sp = StubParamsClass.new(self.assert_true.bind(false))
 	assert_eq(sp.parameters, [false])
 
+func test_when_callable_is_not_bound_parameters_is_null():
+	var sp = StubParamsClass.new(self.assert_false)
+	assert_eq(sp.parameters, null)
+
 

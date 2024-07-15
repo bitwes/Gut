@@ -28,7 +28,7 @@ var _parameter_override_only = true
 
 const NOT_SET = '|_1_this_is_not_set_1_|'
 
-func _init(target=null,method=null):
+func _init(target=null, method=null, _subpath=null):
 	stub_target = target
 	stub_method = method
 
@@ -36,12 +36,15 @@ func _init(target=null,method=null):
 		stub_target = target.get_object()
 		stub_method = target.get_method()
 		parameters = target.get_bound_arguments()
+		if(parameters.size() == 0):
+			parameters = null
 	elif(typeof(target) == TYPE_STRING):
 		if(target.is_absolute_path()):
 			stub_target = load(str(target))
 		else:
 			_lgr.warn(str(target, ' is not a valid path'))
-	elif(stub_target is PackedScene):
+
+	if(stub_target is PackedScene):
 		stub_target = GutUtils.get_scene_script_object(stub_target)
 
 	# this is used internally to stub default parameters for everything that is

@@ -220,6 +220,7 @@ class TestTestsSmartDoubleMethod:
 		assert_errored(_test, 1)
 
 
+
 class TestPartialDoubleMethod:
 	extends GutInternalTester
 
@@ -433,6 +434,12 @@ class TestStub:
 		var dbl = _test.double(DoubleMe).new()
 		_test.stub(dbl, 'foo').to_do_nothing()
 		assert_errored(_test, 1)
+
+	func test_can_stub_double_method_with_callable():
+		var d = _test.double(DoubleMe).new()
+		_test.stub(d.has_one_param).to_return(5)
+		assert_eq(_gut.get_stubber().get_return(d, 'has_one_param'), 5)
+
 
 
 # class TestSingletonDoubling:
