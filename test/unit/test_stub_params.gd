@@ -207,3 +207,16 @@ func test__draw_polyline_colors__method_meta_4():
 
 
 
+# ------------------------------------------------------------------------------
+# Test creating from Callable
+# ------------------------------------------------------------------------------
+func test_can_create_from_callable():
+	var sp = StubParamsClass.new(self.assert_true)
+	assert_eq(sp.stub_target, self, 'target')
+	assert_eq(sp.stub_method, 'assert_true', 'method')
+
+func test_can_create_from_bound_callable():
+	var sp = StubParamsClass.new(self.assert_true.bind(false))
+	assert_eq(sp.parameters, [false])
+
+
