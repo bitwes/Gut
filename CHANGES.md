@@ -5,6 +5,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 # 9.2.2
 
 ## Features
+* You can now use callables to `stub`.  Binding arguments adds `when_passed` to the stub.  Less strings, less typing!
+```gdscript
+var dbl = double(MyScript)
+# same as stub(dbl, "some_method").to_return(111)
+stub(dbl.some_method).to_return(111)
+
+# same as stub(dbl, 'some_method').to_return(999).when_passed("a")
+stub(dbl.some_method.bind("a")).to_return(999)
+```
 * @WebF0x GUT can now wait on a `Callable` to return `true` (aka predicate method)  via the new `wait_until`:
 ```
 # Call the function once per frame until it returns 5 or one second has elapsed.
