@@ -28,11 +28,17 @@ var _parameter_override_only = true
 
 const NOT_SET = '|_1_this_is_not_set_1_|'
 
-func _init(target=null,method=null,subpath=null):
+func _init(target=null, method=null, _subpath=null):
 	stub_target = target
 	stub_method = method
 
-	if(typeof(target) == TYPE_STRING):
+	if(typeof(target) == TYPE_CALLABLE):
+		stub_target = target.get_object()
+		stub_method = target.get_method()
+		parameters = target.get_bound_arguments()
+		if(parameters.size() == 0):
+			parameters = null
+	elif(typeof(target) == TYPE_STRING):
 		if(target.is_absolute_path()):
 			stub_target = load(str(target))
 		else:
@@ -47,6 +53,7 @@ func _init(target=null,method=null,subpath=null):
 	if(typeof(method) == TYPE_DICTIONARY):
 		_load_defaults_from_metadata(method)
 
+
 func _load_defaults_from_metadata(meta):
 	stub_method = meta.name
 	var values = meta.default_args.duplicate()
@@ -54,6 +61,7 @@ func _load_defaults_from_metadata(meta):
 		values.push_front(null)
 
 	param_defaults(values)
+
 
 func to_return(val):
 	if(stub_method == '_init'):
@@ -103,10 +111,10 @@ func has_param_override():
 
 
 func is_param_override_only():
-	var to_return = false
+	var ret_val = false
 	if(has_param_override()):
-		to_return = _parameter_override_only
-	return to_return
+		ret_val = _parameter_override_only
+	return ret_val
 
 
 func to_s():
