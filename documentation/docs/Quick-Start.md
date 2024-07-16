@@ -15,7 +15,7 @@ extends GutTest
 func test_passes():
 	# this test will pass because 1 does equal 1
 	assert_eq(1, 1)
-	
+
 func test_fails():
 	# this test will fail because those strings are not equal
 	assert_eq('hello', 'goodbye')
@@ -120,13 +120,13 @@ var double_foo = double(Foo).new()
 var double_scene = double(MyScene).instantiate()
 ```
 
-You can stub your double to do different things.  Any unstubbed method that is called will generate a warning.
+You can stub your double to do different things.  Unstubbed methods that are called generate log messages.
 ```gdscript
 var double_foo = double(Foo).new()
-stub(double_foo, 'bar').to_return(42)
-stub(double_foo, 'something').to_call_super() # do what method would normally do
-stub(double_foo, 'other_thing').to_return(null).when_passed(1, 2, 'c')
-stub(double_foo, 'method').to_do_nothing()
+stub(double_foo.bar).to_return(42)
+stub(double_foo, "something").to_call_super() # do what method would normally do
+stub(double_foo.other_thing).to_return(77).when_passed(1, 2, 'c')
+stub(double_foo.other_thing.bind(4, 5, 'z')).to_do_nothing()
 ```
 
 You can spy on your doubles with various asserts and helpers.
@@ -158,11 +158,11 @@ Partial doubles have all the same properties of a double except they retain the 
 var double_bar = partial_double(Bar).instance()
 
 # the foo method will do nothing always now
-stub(double_bar, 'foo').to_do_nothing()
+stub(double_ba.foo).to_do_nothing()
 
 # the something method will return 27 when passed 32,
 # but act normally when passed anything else.
-stub(double_bar, 'something').to_return(27).when_passed(32)
+stub(double_bar.something).to_return(27).when_passed(32)
 
 # example of spying
 assert_called(double_bar, 'other_thing')
