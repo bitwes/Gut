@@ -1,4 +1,8 @@
+
 var _lgr = GutUtils.get_logger()
+var logger = _lgr :
+	get: return _lgr
+	set(val): _lgr = val
 
 var return_val = null
 var stub_target = null

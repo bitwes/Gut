@@ -310,7 +310,8 @@ func set_less_test_names(less_test_names):
 	_less_test_names = less_test_names
 
 func disable_printer(name, is_disabled):
-	_printers[name].set_disabled(is_disabled)
+	if(_printers[name] != null):
+		_printers[name].set_disabled(is_disabled)
 
 func is_printer_disabled(name):
 	return _printers[name].get_disabled()

@@ -233,6 +233,9 @@ class TestMonkeyPatching:
 	func return_this():
 		return return_this_value
 
+	func return_passed(p1=null, p2=null, p3=null, p4=null, p5=null, p6=null):
+		return [p1, p2, p3, p4, p5, p6]
+
 	func before_each():
 		call_this_value = null
 
@@ -255,3 +258,28 @@ class TestMonkeyPatching:
 		stubber.add_stub(params)
 		var result = dbl.get_value()
 		assert_eq(result, 99)
+
+
+	func test_with_bound_parameters():
+		var dbl = autofree(doubler.double(DoubleMe).new())
+		var params = GutUtils.StubParams.new(dbl.has_two_params_one_default)
+		params.to_call(return_passed.bind('three', 'four'))
+		stubber.add_stub(params)
+		var result = dbl.has_two_params_one_default('one', 'two')
+		assert_eq(result, ["one", "two", "three", "four", null, null])
+
+	func test_with_lambda_that_awaits():
+		var lambda = func(p1, _p2=null):
+			await get_tree().create_timer(p1).timeout
+		var dbl = autofree(doubler.double(DoubleMe).new())
+
+		var params = GutUtils.StubParams.new(dbl.has_two_params_one_default)
+		params.to_call(lambda)
+		stubber.add_stub(params)
+
+		var before = Time.get_ticks_msec()
+		await dbl.has_two_params_one_default(1, 2)
+		var elapsed = Time.get_ticks_msec() - before
+
+		assert_almost_eq(elapsed, 1000, 2000)
+

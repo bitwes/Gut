@@ -1,5 +1,4 @@
 class_name GutInternalTester
-
 extends GutTest
 
 const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
@@ -23,8 +22,10 @@ var Logger = load('res://addons/gut/logger.gd')
 var Spy = load('res://addons/gut/spy.gd')
 var TestCollector = load('res://addons/gut/test_collector.gd')
 
+
 func _init():
 	GutUtils._test_mode = true
+
 
 func _get_logger_from_obj(obj):
 	var to_return = null
@@ -33,6 +34,7 @@ func _get_logger_from_obj(obj):
 	elif(obj.get('logger') != null):
 		to_return = obj.logger
 	return to_return
+
 
 func _assert_log_count(entries, type, count):
 	if(count == -1):
@@ -82,18 +84,16 @@ func get_error_count(obj):
 
 func new_gut(print_sub_tests=false):
 	var g = Gut.new()
-	g.logger = GutUtils.Logger.new()
+	g.logger = Logger.new()
 	g.logger.disable_all_printers(true)
 
+	g.log_level = 3
 	if(print_sub_tests):
-		g.log_level = 3
 		g.logger.disable_printer("terminal", false)
 		g.logger._min_indent_level = 1
 		g.logger.dec_indent()
 		g.logger.set_indent_string('|##| ')
 		g.logger.disable_formatting(!print_sub_tests)
-	else:
-		g.log_level = g.LOG_LEVEL_FAIL_ONLY
 
 	g._should_print_versions = false
 	g._should_print_summary = false
@@ -122,15 +122,20 @@ func new_partial_double_gut(print_sub_tests=false):
 	return g
 
 
+func new_no_print_logger():
+	var to_return = Logger.new()
+	to_return.disable_all_printers(true)
+	return to_return
+
+
+func new_wired_test(gut_instance):
+	var t = GutTest.new()
+	t.gut = gut_instance
+	t.set_logger(gut_instance.logger)
+	return t
+
 # ----------------------------
 # Not used yet, but will be used eventually
-
-# func new_test():
-# 	var t = GutTest.new()
-# 	var logger = GutUtils.Logger.new()
-# 	t.set_logger(logger)
-# 	return t
-
 
 # func new_test_double():
 # 	var t = double(GutTest).new()

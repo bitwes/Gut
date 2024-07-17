@@ -75,26 +75,3 @@ func test_handle_other_stubs_returns_value():
 
 	var result = dt.handle_other_stubs('get_foo', [])
 	assert_eq(result, 'asdf')
-
-# func test_calling_the_method_uses_parameters_passed():
-# 	var fd = FakeDouble.new()
-
-# 	var sp = StubParams.new(fd.set_foo)
-# 	sp.to_call(call_this)
-
-# 	var stbr = Stubber.new()
-# 	stbr.add_stub(sp)
-
-# 	var dt = DoubleTools.new()
-# 	dt.stubber = stbr
-# 	dt.double = fd
-
-# 	var result = dt.handle_other_stubs('set_foo', [1])
-# 	result.call()
-# 	assert_eq(call_this_was_called, 1)
-
-
-# func test_print_source():
-# 	gut.get_doubler().print_source = true
-# 	var d = double(DoubleMe).new()
-# 	gut.get_doubler().print_source = false

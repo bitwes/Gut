@@ -51,7 +51,7 @@ func handle_other_stubs(method_name, called_with):
 
 	var method = _get_stubbed_method_to_call(method_name, called_with)
 	if(method != null):
-		return method.call()
+		return await method.call()
 	else:
 		return stubber.get_return(double, method_name, called_with)
 
