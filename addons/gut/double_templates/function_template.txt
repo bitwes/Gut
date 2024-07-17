@@ -3,5 +3,9 @@
 	if(__gutdbl.should_call_super('{method_name}', {param_array})):
 		return {super_call}
 	else:
-		return __gutdbl.get_stubbed_return('{method_name}', {param_array})
+		var method = __gutdbl.get_method_to_call('{method_name}', {param_array})
+		if(method != null):
+			return method.call()
+		else:
+			return __gutdbl.get_stubbed_return('{method_name}', {param_array})
 

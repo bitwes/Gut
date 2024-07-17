@@ -159,6 +159,7 @@ class TestTheBasics:
 			print(gr.stubber.to_s())
 
 
+
 class TestInnerClasses:
 	extends BaseTest
 
@@ -216,3 +217,41 @@ class TestDefaultParameters:
 		var result = dbl.return_passed('foo', 'bar')
 		assert_eq(result, 'foobar')
 
+
+class TestMonkeyPatching:
+	extends BaseTest
+
+	var doubler = null
+	var stubber = null
+
+
+	var call_this_value = null
+	func call_this(value):
+		call_this_value = value
+
+	var return_this_value = 99
+	func return_this():
+		return return_this_value
+
+	func before_each():
+		call_this_value = null
+
+		doubler = Doubler.new()
+		stubber = GutUtils.Stubber.new()
+		doubler.set_stubber(stubber)
+
+
+	func test_stubbed_method_calls_method():
+		var dbl = autofree(doubler.double(DoubleMe).new())
+		var params = GutUtils.StubParams.new(dbl.set_value).to_call(call_this)
+		stubber.add_stub(params)
+		dbl.set_value(9)
+		assert_eq(call_this_value, 9)
+
+
+	func test_stubbed_method_returns_value():
+		var dbl = autofree(doubler.double(DoubleMe).new())
+		var params = GutUtils.StubParams.new(dbl.get_value).to_call(return_this)
+		stubber.add_stub(params)
+		var result = dbl.get_value()
+		assert_eq(result, 99)
