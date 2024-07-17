@@ -120,7 +120,6 @@ func _make_arg_array(method_meta, override_size):
 	var to_return = []
 
 	var has_unsupported_defaults = false
-	var dflt_start = method_meta.args.size() - method_meta.default_args.size()
 
 	for i in range(method_meta.args.size()):
 		var pname = method_meta.args[i].name

@@ -36,6 +36,16 @@ func should_call_super(method_name, called_with):
 	else:
 		return false
 
+func get_method_to_call(method_name, called_with):
+	var method = null
+	if(stubber != null):
+		# return Callable(double, method_name)
+		method = stubber.get_call_this(double, method_name, called_with)
+		if(method != null):
+			method = method.bindv(called_with)
+			return method
+	return method
+
 
 func spy_on(method_name, called_with):
 	if(spy != null):

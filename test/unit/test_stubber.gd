@@ -158,7 +158,7 @@ func test_withStubParams_can_get_return_based_on_complex_parameters():
 func test_when_parameters_do_not_match_any_stub_then_info_generated():
 	var sp = StubParamsClass.new(DoubleMe, 'method').to_return(10).when_passed('a')
 	gr.stubber.add_stub(sp)
-	var result = gr.stubber.get_return(DoubleMe, 'method', ['b'])
+	gr.stubber.get_return(DoubleMe, 'method', ['b'])
 	assert_eq(gr.stubber.get_logger().get_infos().size(), 1)
 
 func test_withStubParams_param_layering_works():
@@ -211,6 +211,16 @@ func test_when_instances_of_inner_classes_are_stubbed_only_the_stubbed_instance_
 	gr.stubber.add_stub(sp)
 	assert_null(gr.stubber.get_return(another_a, 'get_a'), 'AnotherInnerA not stubbed')
 	assert_eq(gr.stubber.get_return(inner_a, 'get_a'), 'foo', 'InnerA is stubbed')
+
+func test_get_call_this_returns_null_by_default():
+	assert_null(gr.stubber.get_call_this('thing', 'method'))
+
+func test_get_call_this_returns_method_on_match():
+	var call_this = func(): print('hello')
+	var sp = StubParamsClass.new(ToStub, 'method').to_call(call_this)
+	gr.stubber.add_stub(sp)
+	var inst = ToStub.new()
+	assert_eq(gr.stubber.get_call_this(inst, 'method'), call_this)
 
 # ----------------
 # Parameter Count
@@ -289,7 +299,6 @@ func test_get_default_values_finds_values_when_another_stub_exists():
 	assert_eq(gr.stubber.get_default_value(DoubleMe, 'method', 1), 2)
 
 
-
 # ----------------
 # Default Parameter Values from meta
 # ----------------
@@ -297,18 +306,7 @@ func test_draw_parameter_method_meta():
 	# 5 parameters, 2 defaults
 	# index 3 = null object
 	# index 4 = 1
-	var inst = autofree(ToStub.new())
 	var meta = find_method_meta(ToStub.get_script_method_list(), 'default_value_method')
 	gr.stubber.stub_defaults_from_meta(ToStub, meta)
 	assert_eq(gr.stubber.get_default_value(ToStub, 'default_value_method', 0), 'a')
-
-
-# func test_draw_primitive():
-# 	var inst = autofree(Button.new())
-# 	var meta = find_method_meta(inst.get_method_list(), 'draw_primitive')
-# 	var txt = _mm.get_function_text(meta)
-# 	assert_string_contains(txt, 'p_texture=null')
-# 	if(is_failing()):
-# 		GutUtils.pretty_print(meta)
-
 
