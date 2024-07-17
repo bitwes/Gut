@@ -113,6 +113,15 @@ class TestTheBasics:
 		doubled.set_value(99)
 		assert_eq(doubled._value, 99)
 
+	func test_when_super_awaits_the_method_awaits():
+		var doubled = add_child_autofree(gr.doubler.double(DoubleMe).new())
+		var params = GutUtils.StubParams.new(doubled.await_seconds).to_call_super()
+		gr.stubber.add_stub(params)
+		var before = Time.get_ticks_msec()
+		await doubled.await_seconds(1)
+		var elapsed = Time.get_ticks_msec() - before
+		assert_almost_eq(elapsed, 1000, 200)
+
 	func test_can_stub_native_methods():
 		var d_node2d = autofree(gr.doubler.double_gdnative(Node2D).new())
 		var params = GutUtils.StubParams.new(d_node2d, 'get_position').to_return(-1)
@@ -281,5 +290,5 @@ class TestMonkeyPatching:
 		await dbl.has_two_params_one_default(1, 2)
 		var elapsed = Time.get_ticks_msec() - before
 
-		assert_almost_eq(elapsed, 1000, 2000)
+		assert_almost_eq(elapsed, 1000, 200)
 
