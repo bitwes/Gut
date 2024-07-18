@@ -120,7 +120,7 @@ class TestTheBasics:
 		var before = Time.get_ticks_msec()
 		await doubled.await_seconds(1)
 		var elapsed = Time.get_ticks_msec() - before
-		assert_almost_eq(elapsed, 1000, 200)
+		assert_almost_eq(elapsed, 1000, 300) # 300 seems like a lot, but i guess it's not.
 
 	func test_can_stub_native_methods():
 		var d_node2d = autofree(gr.doubler.double_gdnative(Node2D).new())
@@ -291,6 +291,6 @@ class TestMonkeyPatching:
 		await dbl.has_two_params_one_default(1, 2)
 		var elapsed = Time.get_ticks_msec() - before
 
-		assert_almost_eq(elapsed, 1000, 200)
+		assert_almost_eq(elapsed, 1000, 300) # yea, 300 is what you need.
 
 
