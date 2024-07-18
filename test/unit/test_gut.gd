@@ -338,14 +338,6 @@ class TestEverythingElse:
 		g.log_level = g.LOG_LEVEL_ALL_ASSERTS
 		return g
 
-	# convenience method to assert the number of failures on the gr.test_gut object.
-	func assert_fail(count=1, msg=''):
-		assert_eq(gr.test.get_fail_count(), count, 'failures:  ' + msg)
-
-	# convenience method to assert the number of passes on the gr.test_gut object.
-	func assert_pass(count=1, msg=''):
-		assert_eq(gr.test.get_pass_count(), count, 'passes:  ' + msg)
-
 	# ------------------------------
 	# Setup/Teardown
 	# ------------------------------
@@ -406,12 +398,12 @@ class TestEverythingElse:
 	# ------------------------------
 	func test_when_strict_enabled_you_can_compare_int_and_float():
 		gr.test.assert_eq(1.0, 1)
-		assert_pass()
+		assert_pass(gr.test)
 
 	func test_when_strict_disabled_can_compare_int_and_float():
 		gr.test_gut.disable_strict_datatype_checks = true
 		gr.test.assert_eq(1.0, 1)
-		assert_pass()
+		assert_pass(gr.test)
 
 	# ------------------------------
 	# File utilities
@@ -420,14 +412,14 @@ class TestEverythingElse:
 		var path = 'user://gut_test_touch.txt'
 		gut.file_touch(path)
 		gr.test.assert_file_exists(path)
-		assert_pass()
+		assert_pass(gr.test)
 
 	func test_file_delete_kills_file():
 		var path = 'user://gut_test_file_delete.txt'
 		gr.test_gut.file_touch(path)
 		gr.test_gut.file_delete(path)
 		gr.test.assert_file_does_not_exist(path)
-		assert_pass()
+		assert_pass(gr.test)
 
 	func test_delete_all_files_in_a_directory():
 		var path = 'user://gut_dir_tests'
@@ -442,7 +434,7 @@ class TestEverythingElse:
 			gut.directory_delete_files('user://gut_dir_tests')
 			gut.file_delete('user://gut_dir_tests')
 
-		assert_pass(2, 'both files should not exist')
+		assert_pass(gr.test, 2, 'both files should not exist')
 
 
 

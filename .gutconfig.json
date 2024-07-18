@@ -12,7 +12,7 @@
   "should_maximize": false,
   "hide_orphans": true,
   "ignore_pause": true,
-  "log_level": 3,
+  "log_level": 1,
   "double_strategy": "script_only",
   "inner_class": "",
   "disable_colors": false,

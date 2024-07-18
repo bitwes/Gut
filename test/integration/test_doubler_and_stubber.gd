@@ -113,6 +113,15 @@ class TestTheBasics:
 		doubled.set_value(99)
 		assert_eq(doubled._value, 99)
 
+	func test_when_super_awaits_the_method_awaits():
+		var doubled = add_child_autofree(gr.doubler.double(DoubleMe).new())
+		var params = GutUtils.StubParams.new(doubled.await_seconds).to_call_super()
+		gr.stubber.add_stub(params)
+		var before = Time.get_ticks_msec()
+		await doubled.await_seconds(1)
+		var elapsed = Time.get_ticks_msec() - before
+		assert_almost_eq(elapsed, 1000, 300) # 300 seems like a lot, but i guess it's not.
+
 	func test_can_stub_native_methods():
 		var d_node2d = autofree(gr.doubler.double_gdnative(Node2D).new())
 		var params = GutUtils.StubParams.new(d_node2d, 'get_position').to_return(-1)
@@ -157,6 +166,7 @@ class TestTheBasics:
 		assert_eq(inst.value, 'override_default')
 		if(is_failing()):
 			print(gr.stubber.to_s())
+
 
 
 class TestInnerClasses:
@@ -215,4 +225,72 @@ class TestDefaultParameters:
 		var dbl = autofree(doubler.partial_double(DoubleDefaultParameters).new())
 		var result = dbl.return_passed('foo', 'bar')
 		assert_eq(result, 'foobar')
+
+
+class TestMonkeyPatching:
+	extends BaseTest
+
+	var doubler = null
+	var stubber = null
+
+
+	var call_this_value = null
+	func call_this(value):
+		call_this_value = value
+
+	var return_this_value = 99
+	func return_this():
+		return return_this_value
+
+	func return_passed(p1=null, p2=null, p3=null, p4=null, p5=null, p6=null):
+		return [p1, p2, p3, p4, p5, p6]
+
+	func before_each():
+		call_this_value = null
+
+		doubler = Doubler.new()
+		stubber = GutUtils.Stubber.new()
+		doubler.set_stubber(stubber)
+
+
+	func test_stubbed_method_calls_method():
+		var dbl = autofree(doubler.double(DoubleMe).new())
+		var params = GutUtils.StubParams.new(dbl.set_value).to_call(call_this)
+		stubber.add_stub(params)
+		dbl.set_value(9)
+		assert_eq(call_this_value, 9)
+
+
+	func test_stubbed_method_returns_value():
+		var dbl = autofree(doubler.double(DoubleMe).new())
+		var params = GutUtils.StubParams.new(dbl.get_value).to_call(return_this)
+		stubber.add_stub(params)
+		var result = dbl.get_value()
+		assert_eq(result, 99)
+
+
+	func test_with_bound_parameters():
+		var dbl = autofree(doubler.double(DoubleMe).new())
+		var params = GutUtils.StubParams.new(dbl.has_two_params_one_default)
+		params.to_call(return_passed.bind('three', 'four'))
+		stubber.add_stub(params)
+		var result = dbl.has_two_params_one_default('one', 'two')
+		assert_eq(result, ["one", "two", "three", "four", null, null])
+
+
+	func test_with_lambda_that_awaits():
+		var lambda = func(p1, _p2=null):
+			await get_tree().create_timer(p1).timeout
+		var dbl = autofree(doubler.double(DoubleMe).new())
+
+		var params = GutUtils.StubParams.new(dbl.has_two_params_one_default)
+		params.to_call(lambda)
+		stubber.add_stub(params)
+
+		var before = Time.get_ticks_msec()
+		await dbl.has_two_params_one_default(1, 2)
+		var elapsed = Time.get_ticks_msec() - before
+
+		assert_almost_eq(elapsed, 1000, 300) # yea, 300 is what you need.
+
 

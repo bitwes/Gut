@@ -77,6 +77,21 @@ func test_turns_paths_into_classes():
 	var sp = StubParamsClass.new(STUB_PARAMS_PATH, 'to_return')
 	assert_eq(sp.stub_target, StubParamsClass)
 
+func test_to_call_is_null_by_default():
+	var sp = StubParamsClass.new(self.assert_true)
+	assert_null(sp.call_this)
+
+func test_to_call_sets_call_this():
+	var sp = StubParamsClass.new(self.assert_true)
+	sp.to_call(self.assert_false)
+	assert_eq(sp.call_this, self.assert_false)
+
+func test_to_call_returns_itself():
+	var sp = StubParamsClass.new(self.assert_true)
+	var val = sp.to_call(self.assert_false)
+	assert_eq(val, sp)
+
+
 # --------------
 # Parameter Count and Defaults
 # --------------

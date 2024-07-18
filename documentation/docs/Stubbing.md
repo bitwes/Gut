@@ -1,10 +1,11 @@
 # Stubbing
 
-The `stub` function allows you to define behavior for methods of a Doubled instance.  Stubs can be layered to address general and specific situations.  You can use `stub` to
+The `stub` function allows you to define behavior for methods of a Doubled instance.  Stubs can be layered to address general and specific circumstances.  You can use `stub` to
 * Force a method to do nothing and return a specific value.
 * Call `super`'s version of the method, allowing the double to retain original functionality.
+* Call a `Callable` of your choosing (aka Monkey Patching).
 * Force the method to take no action (useful when using Partial Doubles).
-* Do any of the above only when passed specific values.
+
 
 You can also use `stub` to change the signature of a method by
 * Set default parameter values.  All doubles default all parameters on all methods to `null` because GUT can't do anything else yet.  If your method has default values, and it has been stubbed to `call_super`, you may need to specify these values.  See `param_defaults` below.
@@ -17,7 +18,7 @@ All Stubs are cleared between tests.  If you want to stub a method for all your 
 
 
 ## Syntax
-`stub` creates a stub for a method on a specific instance of a Double or any instance of a Doubled script.  You __must chain in a call__ to one of the "to" methods such as `to_return(...)` to specify what action should be taken when the method is called on a Double.  `stub` can be called numerous ways with different effects
+`stub` creates a stub for a method on a specific instance of a Double or any instance of a Doubled script.  After calling `stub` you chain calls to the various actioins available to tell GUT what the stub should do.  `stub` can be called numerous ways:
 
 ### stub(callable)
 This will create a stub for the Double instance and method of the callable.  If the Callable has bound parameters the stub will only be used when the parameters used when calling the method match the bound parameters.  Using bound parameters is the same as using `when_passed`.
@@ -66,7 +67,9 @@ func test_script_level_stubs():
 ## Stub Actions
 You can stub a method to take the following actions when called.  These actions will be taken based on the best matched stub found for the method.
 
-Chain actions to the end of a call to `stub`
+__Only one action should be specified as only one will be used.__
+
+Chain an action to the end of a call to `stub`
 ``` gdscript
 stub(MyScript, "some_method").to_return(9)
 ```
@@ -96,15 +99,63 @@ stub(dbl_inst.some_method).to_call_super()
 assert_eq(dbl_inst.some_method(), inst.some_method())
 ```
 
+### to_call(callable)
+This will cause the double to call the method specified.  Any value returned from the `Callable` will be returned by the original method.
+
+The parameters passed to the original method will be sent to the `Callable.`  Be sure the parameters of the `Callable` are compatable with the parameters of the original method or a runtime error will occur.
+
+Any parameters bound to the `Callable` will be passed __after__ the parameters sent to the original method.  Bound parameters will not be included when spying.
+
+```gdscript
+func return_passed(p1=null, p2=null, p3=null, p4=null, p5=null, p6=null):
+  return [p1, p2, p3, p4, p5, p6]
+
+func test_illustrate_stub_action_to_call():
+  var dbl_inst = double(MyScript).new()
+
+  stub(MyScript, "foo")\
+    .to_call(func(value):  print("We did not get a seven."))
+
+  stub(MyScript, "foo")\
+    .when_passed(7)\
+    .to_call(func(value):  print("We got a 7"))
+
+
+  # This illustrates the ordering of bound parameters, return values, and
+  # argument spying.
+  stub(dbl_inst.bar).to_call(return_passed.bind("three", "four"))
+  var result = dbl_inst.bar("one", "two")
+  assert_eq(result, ["one", "two", "three", "four", null, null])
+  assert_called(dbl_inst, "bar", ["one", "two"],
+    "This passes because bound arguments are not spied on.")
+```
+
+All the greatness and super weirdness of using lambdas applies.
+```gdscript
+func test_using_local_variable_in_callable():
+  var this_var = "some value"
+  var d = double(DoubleMe).new()
+  stub(d.has_one_param).to_call(
+    func(value):
+      this_var = "another value"
+      return this_var)
+
+  var result = d.has_one_param("asdf")
+
+  # These all pass
+  assert_eq(result, "another value", "Seems reasonable")
+  assert_ne(result, this_var, "Why would this pass?")
+  assert_eq(this_var, "some value", "Ohhh, well ok.")
+```
 
 
 ## Stub Qualifiers
-There is only one qualifier, `when_passed`.  See examples above.
+There is only one qualifier, `when_passed`.  Only the last `when_passed` qualifier will be used.  If you wish to stub the same action for multiple argument patterns you must make multiple stubs.  See the various examples above.
 
 
 
 
-## Method Signature
+## Method Signature Modifiers
 You alter a method's signature with:
 * `param_defaults([default1, default2, ...])`
 * `param_count(x)`

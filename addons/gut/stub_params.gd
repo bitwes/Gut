@@ -1,4 +1,8 @@
+
 var _lgr = GutUtils.get_logger()
+var logger = _lgr :
+	get: return _lgr
+	set(val): _lgr = val
 
 var return_val = null
 var stub_target = null
@@ -6,6 +10,7 @@ var stub_target = null
 var parameters = null
 var stub_method = null
 var call_super = false
+var call_this = null
 # Whether this is a stub for default parameter values as they are defined in
 # the script, and not an overridden default value.
 var is_script_default = false
@@ -81,6 +86,11 @@ func to_do_nothing():
 func to_call_super():
 	call_super = true
 	_parameter_override_only = false
+	return self
+
+
+func to_call(callable : Callable):
+	call_this = callable
 	return self
 
 

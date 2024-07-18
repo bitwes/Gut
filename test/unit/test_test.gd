@@ -21,45 +21,6 @@ class BaseTestClass:
 		test_with_gut = null
 	}
 
-	const SHOULD_PASS = &"Should pass"
-	const SHOULD_FAIL = &"Should fail"
-
-	func print_fail_pass_text(t):
-		for i in range(t._fail_pass_text.size()):
-			gut.p('sub-test:  ' + t._fail_pass_text[i], gut.LOG_LEVEL_FAIL_ONLY)
-
-	func assert_fail_pass(t, fail_count, pass_count, msg=''):
-		var self_fail_count = get_fail_count()
-		assert_eq(t.get_fail_count(), fail_count, 'Bad FAIL COUNT:  ' + msg)
-		assert_eq(t.get_pass_count(), pass_count, 'Bad PASS COUNT:  ' + msg)
-		if(get_fail_count() != self_fail_count or _print_all_subtests):
-			print_fail_pass_text(t)
-
-	# convenience method to assert the number of failures on the gr.test_gut object.
-	func assert_fail(t, count=1, msg=''):
-		var self_fail_count = get_fail_count()
-		assert_eq(t.get_fail_count(), count, 'Expected FAIL COUNT:  ' + msg)
-		if(t.get_pass_count() > 0 and count != t.get_assert_count()):
-			assert_eq(t.get_pass_count(), 0, 'When checking for failures there should be no passing')
-		if(get_fail_count() != self_fail_count or _print_all_subtests):
-			print_fail_pass_text(t)
-
-	# convenience method to assert the number of passes on the gr.test_gut object.
-	func assert_pass(t, count=1, msg=''):
-		var self_fail_count = get_fail_count()
-		assert_eq(t.get_pass_count(), count, 'Expected PASS COUNT:  ' + msg)
-		if(t.get_fail_count() != 0 and count != t.get_assert_count()):
-			assert_eq(t.get_fail_count(), 0, 'When checking for passes there should be no failures.')
-		if(get_fail_count() != self_fail_count or _print_all_subtests):
-			print_fail_pass_text(t)
-
-	func assert_fail_msg_contains(t, text):
-		if(t.get_fail_count() != 1):
-			assert_fail(t, 1, 'assert_fail_msg_contains requires single failing assert.')
-		elif(t.get_pass_count() != 0):
-			assert_pass(t, 0, 'assert_fail_msg_contains requires no passing asserts.')
-		else:
-			assert_string_contains(t._fail_pass_text[0], text)
 
 
 	# #############

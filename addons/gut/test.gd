@@ -42,8 +42,7 @@ var _compare = GutUtils.Comparator.new()
 
 
 # Need a reference to the instance that is running the tests.  This
-# is set by the gut class when it runs the tests.  This gets you
-# access to the asserts in the tests you write.
+# is set by the gut class when it runs the test script.
 var gut: GutMain = null
 
 var _disable_strict_datatype_checks = false
@@ -1469,6 +1468,7 @@ func stub(thing, p2=null, p3=null):
 	else:
 		sp = GutUtils.StubParams.new(thing, method_name, subpath)
 
+	sp.logger = _lgr
 	gut.get_stubber().add_stub(sp)
 	return sp
 

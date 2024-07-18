@@ -23,6 +23,14 @@ func _init(values=null):
 		gut.get_autofree().add_free(double)
 
 
+func _get_stubbed_method_to_call(method_name, called_with):
+	var method = stubber.get_call_this(double, method_name, called_with)
+	if(method != null):
+		method = method.bindv(called_with)
+		return method
+	return method
+
+
 func from_id(inst_id):
 	if(inst_id ==  -1):
 		return null
@@ -30,23 +38,27 @@ func from_id(inst_id):
 		return instance_from_id(inst_id)
 
 
-func should_call_super(method_name, called_with):
+func is_stubbed_to_call_super(method_name, called_with):
 	if(stubber != null):
 		return stubber.should_call_super(double, method_name, called_with)
 	else:
 		return false
 
 
+func handle_other_stubs(method_name, called_with):
+	if(stubber == null):
+		return
+
+	var method = _get_stubbed_method_to_call(method_name, called_with)
+	if(method != null):
+		return await method.call()
+	else:
+		return stubber.get_return(double, method_name, called_with)
+
+
 func spy_on(method_name, called_with):
 	if(spy != null):
 		spy.add_call(double, method_name, called_with)
-
-
-func get_stubbed_return(method_name, called_with):
-	if(stubber != null):
-		return stubber.get_return(double, method_name, called_with)
-	else:
-		return null
 
 
 func default_val(method_name, p_index, default_val=NO_DEFAULT_VALUE):
