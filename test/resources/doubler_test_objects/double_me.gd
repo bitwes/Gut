@@ -57,6 +57,9 @@ func might_await(should, some_default=3):
 
 	return
 
+func await_seconds(s):
+	await get_tree().create_timer(s).timeout
+
 func might_await_no_return(some_default=3):
 	if(should_might_await_await):
 		print('awaiting')

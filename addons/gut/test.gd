@@ -42,8 +42,7 @@ var _compare = GutUtils.Comparator.new()
 
 
 # Need a reference to the instance that is running the tests.  This
-# is set by the gut class when it runs the tests.  This gets you
-# access to the asserts in the tests you write.
+# is set by the gut class when it runs the test script.
 var gut: GutMain = null
 
 var _disable_strict_datatype_checks = false
@@ -1440,16 +1439,17 @@ func ignore_method_when_doubling(thing, method_name):
 # Stub something.
 #
 # Parameters
-# 1: the thing to stub, a file path or an instance or a class
+# 1: A callable OR the thing to stub OR a file path OR an instance OR a Script
 # 2: either an inner class subpath or the method name
 # 3: the method name if an inner class subpath was specified
 # NOTE:  right now we cannot stub inner classes at the path level so this should
 #        only be called with two parameters.  I did the work though so I'm going
 #        to leave it but not update the wiki.
 # ------------------------------------------------------------------------------
-func stub(thing, p2, p3=null):
+func stub(thing, p2=null, p3=null):
 	var method_name = p2
 	var subpath = null
+
 	if(p3 != null):
 		subpath = p2
 		method_name = p3
@@ -1460,7 +1460,15 @@ func stub(thing, p2, p3=null):
 			_lgr.error(msg)
 			return GutUtils.StubParams.new()
 
-	var sp = GutUtils.StubParams.new(thing, method_name, subpath)
+	var sp = null
+	if(typeof(thing) == TYPE_CALLABLE):
+		if(p2 != null or p3 != null):
+			_lgr.error("Only one parameter expected when using a callable.")
+		sp = GutUtils.StubParams.new(thing)
+	else:
+		sp = GutUtils.StubParams.new(thing, method_name, subpath)
+
+	sp.logger = _lgr
 	gut.get_stubber().add_stub(sp)
 	return sp
 

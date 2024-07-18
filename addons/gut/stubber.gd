@@ -173,6 +173,13 @@ func should_call_super(obj, method, parameters=null):
 	return should
 
 
+func get_call_this(obj, method, parameters=null):
+	var stub_info = _find_stub(obj, method, parameters)
+
+	if(stub_info != null):
+		return stub_info.call_this
+
+
 func get_parameter_count(obj, method):
 	var to_return = null
 	var stub_info = _find_stub(obj, method, null, true)

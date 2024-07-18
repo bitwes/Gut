@@ -77,6 +77,21 @@ func test_turns_paths_into_classes():
 	var sp = StubParamsClass.new(STUB_PARAMS_PATH, 'to_return')
 	assert_eq(sp.stub_target, StubParamsClass)
 
+func test_to_call_is_null_by_default():
+	var sp = StubParamsClass.new(self.assert_true)
+	assert_null(sp.call_this)
+
+func test_to_call_sets_call_this():
+	var sp = StubParamsClass.new(self.assert_true)
+	sp.to_call(self.assert_false)
+	assert_eq(sp.call_this, self.assert_false)
+
+func test_to_call_returns_itself():
+	var sp = StubParamsClass.new(self.assert_true)
+	var val = sp.to_call(self.assert_false)
+	assert_eq(val, sp)
+
+
 # --------------
 # Parameter Count and Defaults
 # --------------
@@ -205,5 +220,22 @@ func test__draw_polyline_colors__method_meta_4():
 	var sp = StubParamsClass.new(inst, meta)
 	assert_eq(sp.parameter_defaults.size(), 4)
 
+
+
+# ------------------------------------------------------------------------------
+# Test creating from Callable
+# ------------------------------------------------------------------------------
+func test_can_create_from_callable():
+	var sp = StubParamsClass.new(self.assert_true)
+	assert_eq(sp.stub_target, self, 'target')
+	assert_eq(sp.stub_method, 'assert_true', 'method')
+
+func test_can_create_from_bound_callable():
+	var sp = StubParamsClass.new(self.assert_true.bind(false))
+	assert_eq(sp.parameters, [false])
+
+func test_when_callable_is_not_bound_parameters_is_null():
+	var sp = StubParamsClass.new(self.assert_false)
+	assert_eq(sp.parameters, null)
 
 

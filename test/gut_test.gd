@@ -1,6 +1,6 @@
 class_name GutInternalTester
-
 extends GutTest
+var verbose = false
 
 const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
 var DoubleMe = GutUtils.WarningsManager.load_script_ignoring_all_warnings(DOUBLE_ME_PATH)
@@ -23,8 +23,10 @@ var Logger = load('res://addons/gut/logger.gd')
 var Spy = load('res://addons/gut/spy.gd')
 var TestCollector = load('res://addons/gut/test_collector.gd')
 
+
 func _init():
 	GutUtils._test_mode = true
+
 
 func _get_logger_from_obj(obj):
 	var to_return = null
@@ -34,11 +36,20 @@ func _get_logger_from_obj(obj):
 		to_return = obj.logger
 	return to_return
 
+
 func _assert_log_count(entries, type, count):
 	if(count == -1):
 		assert_gt(entries.size(), 0, str('There should be at least 1 ' + type))
 	else:
 		assert_eq(entries.size(), count, str('There should be ', count, ' ', type))
+
+
+const SHOULD_PASS = &"Should pass"
+const SHOULD_FAIL = &"Should fail"
+
+func print_fail_pass_text(t):
+	for i in range(t._fail_pass_text.size()):
+		gut.p('sub-test:  ' + t._fail_pass_text[i], gut.LOG_LEVEL_FAIL_ONLY)
 
 
 func assert_warn(obj, times=1):
@@ -76,24 +87,55 @@ func assert_has_logger(obj):
 			assert_eq(obj.get_logger(), l, 'Set/get works')
 
 
+func assert_fail_pass(t, fail_count, pass_count, msg=''):
+	var self_fail_count = get_fail_count()
+	assert_eq(t.get_fail_count(), fail_count, 'Bad FAIL COUNT:  ' + msg)
+	assert_eq(t.get_pass_count(), pass_count, 'Bad PASS COUNT:  ' + msg)
+	if(get_fail_count() != self_fail_count or verbose):
+		print_fail_pass_text(t)
+
+# convenience method to assert the number of failures on the gr.test_gut object.
+func assert_fail(t, count=1, msg=''):
+	var self_fail_count = get_fail_count()
+	assert_eq(t.get_fail_count(), count, 'Expected FAIL COUNT:  ' + msg)
+	if(t.get_pass_count() > 0 and count != t.get_assert_count()):
+		assert_eq(t.get_pass_count(), 0, 'When checking for failures there should be no passing')
+	if(get_fail_count() != self_fail_count or verbose):
+		print_fail_pass_text(t)
+
+# convenience method to assert the number of passes on the gr.test_gut object.
+func assert_pass(t, count=1, msg=''):
+	var self_fail_count = get_fail_count()
+	assert_eq(t.get_pass_count(), count, 'Expected PASS COUNT:  ' + msg)
+	if(t.get_fail_count() != 0 and count != t.get_assert_count()):
+		assert_eq(t.get_fail_count(), 0, 'When checking for passes there should be no failures.')
+	if(get_fail_count() != self_fail_count or verbose):
+		print_fail_pass_text(t)
+
+func assert_fail_msg_contains(t, text):
+	if(t.get_fail_count() != 1):
+		assert_fail(t, 1, 'assert_fail_msg_contains requires single failing assert.')
+	elif(t.get_pass_count() != 0):
+		assert_pass(t, 0, 'assert_fail_msg_contains requires no passing asserts.')
+	else:
+		assert_string_contains(t._fail_pass_text[0], text)
+
 func get_error_count(obj):
 	return obj.logger.get_errors().size()
 
 
 func new_gut(print_sub_tests=false):
 	var g = Gut.new()
-	g.logger = GutUtils.Logger.new()
+	g.logger = Logger.new()
 	g.logger.disable_all_printers(true)
 
+	g.log_level = 3
 	if(print_sub_tests):
-		g.log_level = 3
 		g.logger.disable_printer("terminal", false)
 		g.logger._min_indent_level = 1
 		g.logger.dec_indent()
 		g.logger.set_indent_string('|##| ')
 		g.logger.disable_formatting(!print_sub_tests)
-	else:
-		g.log_level = g.LOG_LEVEL_FAIL_ONLY
 
 	g._should_print_versions = false
 	g._should_print_summary = false
@@ -122,15 +164,20 @@ func new_partial_double_gut(print_sub_tests=false):
 	return g
 
 
+func new_no_print_logger():
+	var to_return = Logger.new()
+	to_return.disable_all_printers(true)
+	return to_return
+
+
+func new_wired_test(gut_instance):
+	var t = GutTest.new()
+	t.gut = gut_instance
+	t.set_logger(gut_instance.logger)
+	return t
+
 # ----------------------------
 # Not used yet, but will be used eventually
-
-# func new_test():
-# 	var t = GutTest.new()
-# 	var logger = GutUtils.Logger.new()
-# 	t.set_logger(logger)
-# 	return t
-
 
 # func new_test_double():
 # 	var t = double(GutTest).new()

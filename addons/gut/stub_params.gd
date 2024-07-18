@@ -1,4 +1,8 @@
+
 var _lgr = GutUtils.get_logger()
+var logger = _lgr :
+	get: return _lgr
+	set(val): _lgr = val
 
 var return_val = null
 var stub_target = null
@@ -6,6 +10,7 @@ var stub_target = null
 var parameters = null
 var stub_method = null
 var call_super = false
+var call_this = null
 # Whether this is a stub for default parameter values as they are defined in
 # the script, and not an overridden default value.
 var is_script_default = false
@@ -28,11 +33,17 @@ var _parameter_override_only = true
 
 const NOT_SET = '|_1_this_is_not_set_1_|'
 
-func _init(target=null,method=null,subpath=null):
+func _init(target=null, method=null, _subpath=null):
 	stub_target = target
 	stub_method = method
 
-	if(typeof(target) == TYPE_STRING):
+	if(typeof(target) == TYPE_CALLABLE):
+		stub_target = target.get_object()
+		stub_method = target.get_method()
+		parameters = target.get_bound_arguments()
+		if(parameters.size() == 0):
+			parameters = null
+	elif(typeof(target) == TYPE_STRING):
 		if(target.is_absolute_path()):
 			stub_target = load(str(target))
 		else:
@@ -47,6 +58,7 @@ func _init(target=null,method=null,subpath=null):
 	if(typeof(method) == TYPE_DICTIONARY):
 		_load_defaults_from_metadata(method)
 
+
 func _load_defaults_from_metadata(meta):
 	stub_method = meta.name
 	var values = meta.default_args.duplicate()
@@ -54,6 +66,7 @@ func _load_defaults_from_metadata(meta):
 		values.push_front(null)
 
 	param_defaults(values)
+
 
 func to_return(val):
 	if(stub_method == '_init'):
@@ -73,6 +86,11 @@ func to_do_nothing():
 func to_call_super():
 	call_super = true
 	_parameter_override_only = false
+	return self
+
+
+func to_call(callable : Callable):
+	call_this = callable
 	return self
 
 
@@ -103,10 +121,10 @@ func has_param_override():
 
 
 func is_param_override_only():
-	var to_return = false
+	var ret_val = false
 	if(has_param_override()):
-		to_return = _parameter_override_only
-	return to_return
+		ret_val = _parameter_override_only
+	return ret_val
 
 
 func to_s():

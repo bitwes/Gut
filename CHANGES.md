@@ -5,6 +5,20 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 # 9.3.0
 
 ## Features
+* You can Monkey Patch your doubles!  You can make any method in a double call a specified `Callable` using `.to_call(callable)` on `stub`.  Details are on the [Stubbing](https://gut.readthedocs.io/en/latest/Stubbing.html) wiki page.
+```gdscript
+var dbl = double(MyScript)
+stub(dbl.some_method).to_call(func(): print("Monkey Patched!"))
+```
+* You can now use callables to `stub` insetad of passing the object and method name.  Binding arguments adds an implicit `when_passed` to the stub.  Less strings, less typing!
+```gdscript
+var dbl = double(MyScript)
+# same as stub(dbl, "some_method").to_return(111)
+stub(dbl.some_method).to_return(111)
+
+# same as stub(dbl, 'some_method').to_return(999).when_passed("a")
+stub(dbl.some_method.bind("a")).to_return(999)
+```
 * @WebF0x GUT can now wait on a `Callable` to return `true` (aka predicate method)  via the new `wait_until`:
 ```
 # Call the function once per frame until it returns 5 or one second has elapsed.
@@ -16,6 +30,7 @@ assert_true(await wait_for_signal(my_obj.my_singal, 2),
     'signal should emit before 2 seconds')
 ```
 * @mphe GUT now automatically enables the "Exclude Addons" option when running tests.  This means you don't have to keep enabling/disabling this option if GUT does not conform to your warning/error settings.
+* GUT disables warnings at key points in execution and then re-enables them.  This makes running GUT possible (or at least easier) with warning levels incompatable with GUT source code.  This also makes the ouput less noisy.
 * @plink-plonk-will Elapsed time is now included in the XML export.
 * __Issue__ #612 `InputSender` now sets the `button_mask` property for generated mouse motion events when mouse buttons have been pressed but not released prior to a motion event.
 * __Issue__ #598 Added the virtual method `should_skip_script` to `GutTest`.  If you impelement this method and return `true` or a `String`, then GUT will skip the script.  Skipped scripts are marked as "risky" in the final counts.  This can be useful when skipping scripts that should not be run under certiain circumstances such as:

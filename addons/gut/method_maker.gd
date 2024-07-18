@@ -116,11 +116,11 @@ func _is_supported_default(type_flag):
 func _make_stub_default(method, index):
 	return str('__gutdbl.default_val("', method, '",', index, ')')
 
+
 func _make_arg_array(method_meta, override_size):
 	var to_return = []
 
 	var has_unsupported_defaults = false
-	var dflt_start = method_meta.args.size() - method_meta.default_args.size()
 
 	for i in range(method_meta.args.size()):
 		var pname = method_meta.args[i].name
@@ -252,10 +252,9 @@ func get_function_text(meta, override_size=null):
 	return text
 
 
-
-
 func get_logger():
 	return _lgr
+
 
 func set_logger(logger):
 	_lgr = logger
