@@ -277,6 +277,7 @@ class TestMonkeyPatching:
 		var result = dbl.has_two_params_one_default('one', 'two')
 		assert_eq(result, ["one", "two", "three", "four", null, null])
 
+
 	func test_with_lambda_that_awaits():
 		var lambda = func(p1, _p2=null):
 			await get_tree().create_timer(p1).timeout
@@ -291,4 +292,5 @@ class TestMonkeyPatching:
 		var elapsed = Time.get_ticks_msec() - before
 
 		assert_almost_eq(elapsed, 1000, 200)
+
 

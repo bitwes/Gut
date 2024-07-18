@@ -3,8 +3,6 @@ extends GutInternalTester
 class BaseTest:
 	extends GutInternalTester
 
-	var verbose = false
-
 	var _gut = null
 	var _test = null
 
@@ -424,7 +422,7 @@ class TestStub:
 		_test.stub(dbl, 'foo').to_do_nothing()
 		assert_errored(_test, 1)
 
-	func test_can_stub_double_method_with_callable():
+	func test_can_stub_double_method_using_callable():
 		var d = _test.double(DoubleMe).new()
 		_test.stub(d.has_one_param).to_return(5)
 		assert_eq(_gut.get_stubber().get_return(d, 'has_one_param'), 5)
@@ -439,6 +437,28 @@ class TestStub:
 		_test.stub(d.has_one_param, null, 'asdf').to_return(5)
 		assert_errored(_test, 1)
 
+	func test_bound_parameters_are_not_spied_on():
+		var d = _test.double(DoubleMe).new()
+		var callable = func(value, p2):
+			return p2
+		_test.stub(d.has_one_param).to_call(callable.bind("p2"))
+		d.has_one_param("value")
+		_test.assert_not_called(d, "has_one_param", ["value", "p2"])
+		_test.assert_called(d, "has_one_param", ["value"])
+		assert_pass(_test, 2)
+
+	func test_setting_local_variable_in_callable():
+		var d = _test.double(DoubleMe).new()
+		var this_var = "some value"
+		_test.stub(d.has_one_param).to_call(
+			func(value):
+				this_var = "another value"
+				return this_var)
+		var result = d.has_one_param("asdf")
+		_test.assert_eq(result, "another value", "Seems reasonable")
+		_test.assert_ne(result, this_var, "Why would this pass?")
+		_test.assert_eq(this_var, "some value", "Ohhh, well ok.")
+		assert_pass(_test, 3)
 
 
 # class TestSingletonDoubling:
