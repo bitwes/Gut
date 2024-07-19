@@ -142,8 +142,7 @@ func _print_test_name():
 func _output(text, fmt=null):
 	for key in _printers:
 		if(_should_print_to_printer(key)):
-			var info = ''#str(self, ':', key, ':', _printers[key], '|  ')
-			_printers[key].send(info + text, fmt)
+			_printers[key].send(text, fmt)
 
 func _log(text, fmt=fmts.none):
 	_print_test_name()

@@ -20,15 +20,21 @@ class InputSingletonTracker:
 		if Input.is_action_pressed("jump"):
 			pressed_frames.append(_frame_counter)
 
+
+
+
 class TestInputSingleton:
 	extends "res://addons/gut/test.gd"
 	var _sender = InputSender.new(Input)
 
 	func before_all():
+		await wait_frames(10)
 		InputMap.add_action("jump")
+
 
 	func after_all():
 		InputMap.erase_action("jump")
+
 
 	func after_each():
 		_sender.release_all()
@@ -37,11 +43,12 @@ class TestInputSingleton:
 		await wait_frames(1)
 		_sender.clear()
 
+
 	func test_raw_input_press():
 		var r = add_child_autofree(InputSingletonTracker.new())
 
 		Input.action_press("jump")
-		await wait_frames(10)
+		await wait_frames(2)
 		Input.action_release("jump")
 
 		assert_gt(r.pressed_frames.size(), 1, 'input size')
@@ -52,7 +59,6 @@ class TestInputSingleton:
 		_sender.action_down("jump").hold_for('10f')
 		await wait_for_signal(_sender.idle, 5)
 
-		print(r.pressed_frames.size())
 		assert_gt(r.pressed_frames.size(), 1, 'input size')
 
 	func test_input_sender_just_pressed():
