@@ -28,18 +28,20 @@ class InputSingletonTracker:
 # replicate the issue consistently.
 #
 # Fails when (MacOS)
-# * Drag the window to a different monitor
-# * Use keystroke (better-snap-tools) to move window
+# * Drag the window to a different monitor.
+# * Use keystroke (better-snap-tools) to move window.
+# * Window is dragged and "held" on another monitor.
 #
 # Passes when (MacOS)
-# * The window is not moved
-# * Window is moved around on the same monitor
+# * The window is not moved.
+# * Window is moved around on the same monitor.
+# * The window is being "held" on the original monitor.
 # * Window is moved back to original monitor before these tests are executed.
 #   This appears to be the case regardless of the number of times the window
-#   changes monitor
+#   changes monitor.
 #
-# To test these failing I used the following to run a script that just delays
-# for a bit, and then run this script
+# To test these scenarios I used the following to run a script that just delays
+# for a bit, and then run this script.
 # gdscript addons/gut/gut_cmdln.gd -gexit -gconfig= -gtest test/resources/wait_awhile.gd,test/unit/test_bugs/test_i578.gd
 # ------------------------------------------------------------------------------
 class TestInputSingleton:

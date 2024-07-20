@@ -50,6 +50,7 @@ assert_true(await wait_for_signal(my_obj.my_singal, 2),
     * options that take a value can now be specified with a space (`option value`) instead of using `option=value`.
     * `-gh` option now has headings for the different options. It looks a lot better.
     * `-gdir` and `-gtest` can be specified multiple times instead of using a comma delimited list.
+    * You can use `-gconfig=` to not use a config file.
 * Minor niceties such as showing that GUT is exiting in the title bar (takes a bit sometimes) and switching to full display at the end of a run if GUT does not automatically exit.
 
 ## Bug Fixes

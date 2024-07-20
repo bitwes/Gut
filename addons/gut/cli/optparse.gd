@@ -133,9 +133,12 @@
 # value will return the default when it has not been set.
 #-------------------------------------------------------------------------------
 class Option:
-
 	var _has_been_set = false
 	var _value = null
+	# REMEMBER that when this option is an array, you have to set the value
+	# before you alter the contents of the array (append etc) or has_been_set
+	# will return false and it might not be used right.  For example
+	# get_value_or_null will return null when you've actually changed the value.
 	var value = _value:
 		get:
 			return _value
