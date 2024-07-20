@@ -28,6 +28,8 @@ class TestInputSingleton:
 	var _sender = InputSender.new(Input)
 
 	func before_all():
+		_sender.release_all()
+		_sender.clear()
 		await wait_frames(10)
 		InputMap.add_action("jump")
 
