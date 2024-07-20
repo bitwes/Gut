@@ -22,7 +22,26 @@ class InputSingletonTracker:
 
 
 
-
+# ------------------------------------------------------------------------------
+# There are a few tests in here that will fail if the window changes to
+# a different monitor at any point before these tests are run.  I was able to
+# replicate the issue consistently.
+#
+# Fails when (MacOS)
+# * Drag the window to a different monitor
+# * Use keystroke (better-snap-tools) to move window
+#
+# Passes when (MacOS)
+# * The window is not moved
+# * Window is moved around on the same monitor
+# * Window is moved back to original monitor before these tests are executed.
+#   This appears to be the case regardless of the number of times the window
+#   changes monitor
+#
+# To test these failing I used the following to run a script that just delays
+# for a bit, and then run this script
+# gdscript addons/gut/gut_cmdln.gd -gexit -gconfig= -gtest test/resources/wait_awhile.gd,test/unit/test_bugs/test_i578.gd
+# ------------------------------------------------------------------------------
 class TestInputSingleton:
 	extends "res://addons/gut/test.gd"
 	var _sender = InputSender.new(Input)
@@ -53,7 +72,8 @@ class TestInputSingleton:
 		await wait_frames(2)
 		Input.action_release("jump")
 
-		assert_gt(r.pressed_frames.size(), 1, 'input size')
+		# see inner-test-class note
+		assert_gt(r.pressed_frames.size(), 1, 'input size (FAILS if window changes monitor)')
 
 	func test_input_sender_press():
 		var r = add_child_autofree(InputSingletonTracker.new())
@@ -79,4 +99,5 @@ class TestInputSingleton:
 		await wait_for_signal(_sender.idle, 10)
 
 		assert_eq(r.just_pressed_count, 1, 'just pressed once')
-		assert_eq(r.just_released_count, 1, 'released key once')
+		# see inner-test-class note
+		assert_eq(r.just_released_count, 1, 'released key once (FAILS if window changes monitor)')
