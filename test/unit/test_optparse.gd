@@ -45,6 +45,11 @@ class TestOption:
 		var o = OptParse.Option.new('name', 'default')
 		assert_false(o.required)
 
+	func test_setting_value_to_an_array_makes_has_been_set_true():
+		var o = OptParse.Option.new("name", [])
+		o.value = [1, 2, 3]
+		assert_true(o.has_been_set())
+
 
 class TestOptParse:
 	extends BaseTest
@@ -280,6 +285,13 @@ class TestArrayParameters:
 		var option = op.add('--foo', [], 'foo array')
 		op.parse(['--foo=a,b', '--foo', 'c,d', '--foo', 'e'])
 		assert_eq(option.value, ['a', 'b', 'c', 'd', 'e'])
+
+	func test_after_setting_value_has_been_set_is_true():
+		var op = OptParse.new()
+		var option = op.add('--foo', [], 'foo array')
+		op.parse(['--foo=a,b'])
+		assert_eq(option.value, ['a', 'b'])
+		assert_true(option.has_been_set())
 
 
 

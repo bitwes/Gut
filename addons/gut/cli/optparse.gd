@@ -129,18 +129,19 @@
 
 #-------------------------------------------------------------------------------
 # Holds all the properties of a command line option
+#
+# value will return the default when it has not been set.
 #-------------------------------------------------------------------------------
 class Option:
-	static var empty_value = &'--__this_is_an_optparse_empty_value__--'
 
-	var _value = empty_value
-	var value = empty_value:
+	var _has_been_set = false
+	var _value = null
+	var value = _value:
 		get:
-			if(str(_value) == empty_value):
-				return default
-			else:
-				return _value
+			return _value
+
 		set(val):
+			_has_been_set = true
 			_value = val
 
 	var option_name = ''
@@ -148,22 +149,22 @@ class Option:
 	var description = ''
 	var required = false
 
+
 	func _init(name,default_value,desc=''):
 		option_name = name
 		default = default_value
 		description = desc
-		value = empty_value
+		_value = default
 
 
 	func to_s(min_space=0):
 		var subbed_desc = description
-		if(subbed_desc.find('[default]') != -1):
-			subbed_desc = subbed_desc.replace('[default]', str(default))
+		subbed_desc = subbed_desc.replace('[default]', str(default))
 		return str(option_name.rpad(min_space), ' ', subbed_desc)
 
 
 	func has_been_set():
-		return str(_value) != empty_value
+		return _has_been_set
 
 
 
@@ -323,6 +324,8 @@ func _set_option_value(option, raw_value):
 		option.value = str(raw_value)
 	elif(t == TYPE_ARRAY):
 		var values = _convert_value_to_array(raw_value)
+		if(!option.has_been_set()):
+			option.value = []
 		option.value.append_array(values)
 	elif(t == TYPE_BOOL):
 		option.value = !option.default
