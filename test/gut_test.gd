@@ -164,9 +164,9 @@ func new_partial_double_gut(print_sub_tests=false):
 	return g
 
 
-func new_no_print_logger():
+func new_no_print_logger(override=!verbose):
 	var to_return = Logger.new()
-	to_return.disable_all_printers(true)
+	to_return.disable_all_printers(override)
 	return to_return
 
 
