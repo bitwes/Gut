@@ -1825,6 +1825,7 @@ class TestMemoryMgmt:
 	extends GutTest
 
 	func test_passes_when_no_orphans_introduced():
+
 		assert_no_new_orphans()
 		assert_true(is_passing(), 'test should be passing')
 

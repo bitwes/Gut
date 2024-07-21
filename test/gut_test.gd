@@ -123,7 +123,7 @@ func assert_fail_msg_contains(t, text):
 func get_error_count(obj):
 	return obj.logger.get_errors().size()
 
-
+var new_gut_indent_string = "|   "
 func new_gut(print_sub_tests=false):
 	var g = Gut.new()
 	g.logger = Logger.new()
@@ -134,8 +134,9 @@ func new_gut(print_sub_tests=false):
 		g.logger.disable_printer("terminal", false)
 		g.logger._min_indent_level = 1
 		g.logger.dec_indent()
-		g.logger.set_indent_string('|##| ')
+		g.logger.set_indent_string(new_gut_indent_string)
 		g.logger.disable_formatting(!print_sub_tests)
+		g.logger.set_type_enabled(g.logger.types.debug, true)
 
 	g._should_print_versions = false
 	g._should_print_summary = false
@@ -153,7 +154,7 @@ func new_partial_double_gut(print_sub_tests=false):
 		g.logger.disable_printer("terminal", false)
 		g.logger._min_indent_level = 1
 		g.logger.dec_indent()
-		g.logger.set_indent_string('|##| ')
+		g.logger.set_indent_string(new_gut_indent_string)
 		g.logger.disable_formatting(!print_sub_tests)
 	else:
 		g.log_level = g.LOG_LEVEL_FAIL_ONLY
@@ -187,3 +188,54 @@ func new_wired_test(gut_instance):
 # 	t.set_logger(logger)
 # 	return t
 # ----------------------------
+
+
+
+class DynamicGutTest:
+	var source_entries = []
+
+	func _unindent(source, min_indent=0):
+		var src = ""
+		var lines = source.split("\n")
+
+		var first_line_with_text_index = 0
+		while(lines[first_line_with_text_index] == ""):
+			first_line_with_text_index += 1
+
+		var tab_count = 0
+		while(lines[first_line_with_text_index].begins_with("\t")):
+			tab_count += 1
+			lines[first_line_with_text_index] = lines[first_line_with_text_index].trim_prefix("\t")
+
+
+		while(lines[lines.size() -1].strip_edges() == ""):
+			lines.remove_at(lines.size() -1)
+
+		var to_remove = "\t".repeat(tab_count)
+		var to_add = "\t".repeat(min_indent)
+		for line in lines:
+			src += str("\n", to_add, line.trim_prefix(to_remove))
+
+		return src
+
+
+	func make_source():
+		var src = "extends GutTest\n"
+		for e in source_entries:
+			src += str(e, "\n")
+
+		return src
+
+
+	func make_script():
+		return GutUtils.create_script_from_source(make_source())
+
+
+	func add_source(p1='', p2='', p3='', p4='', p5='', p6='', p7='', p8='', p9='', p10=''):
+		var source = str(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10)
+		source_entries.append(_unindent(source))
+
+
+	func add_as_test_to_gut(which):
+		var dyn = make_script()
+		which.get_test_collector().add_script(dyn.resource_path)

@@ -141,6 +141,9 @@ func to_s():
 	if(call_super):
 		base_string += " to call SUPER"
 
+	if(call_this != null):
+		base_string += str(" to call ", call_this)
+
 	if(parameters != null):
 		base_string += str(' with params (', parameters, ') returns ', return_val)
 	else:
