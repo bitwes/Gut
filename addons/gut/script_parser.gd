@@ -91,16 +91,14 @@ class ParsedScript:
 		get: return _resource
 		set(val): return;
 
-	var _native_instance = null
 
-	var is_native = false :
-		get: return _native_instance != null
+	var _is_native = false
+	var is_native = _is_native:
+		get: return _is_native
 		set(val): return;
 
-	func _notification(what, reversed=false):
-		if(what == NOTIFICATION_PREDELETE):
-			if(_native_instance != null):
-				_native_instance.free()
+	var _native_methods = {}
+	var _native_class_name = ""
 
 
 
@@ -109,7 +107,11 @@ class ParsedScript:
 
 		if(GutUtils.is_native_class(to_load)):
 			_resource = to_load
-			_native_instance = to_load.new()
+			_is_native = true
+			var inst = to_load.new()
+			_native_class_name = inst.get_class()
+			_native_methods = inst.get_method_list()
+			inst.free()
 		else:
 			if(!script_or_inst is Resource):
 				to_load = load(script_or_inst.get_script().get_path())
@@ -145,7 +147,7 @@ class ParsedScript:
 	func _parse_methods(thing):
 		var methods = []
 		if(is_native):
-			methods = _native_instance.get_method_list()
+			methods = _native_methods.duplicate()
 		else:
 			var base_type = thing.get_instance_base_type()
 			methods = _get_native_methods(base_type)
@@ -259,7 +261,7 @@ class ParsedScript:
 	func get_extends_text():
 		var text = null
 		if(is_native):
-			text = str("extends ", _native_instance.get_class())
+			text = str("extends ", _native_class_name)
 		else:
 			text = str("extends '", _script_path, "'")
 			if(_subpath != null):
