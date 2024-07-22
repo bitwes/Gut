@@ -15,7 +15,7 @@ func create_script_from_source(source, override_path=null):
 		r_path = override_path
 
 	var DynamicScript = GDScript.new()
-	DynamicScript.source_code = source
+	DynamicScript.source_code = source.dedent()
 	# The resource_path must be unique or Godot thinks it is trying
 	# to load something it has already loaded and generates an error like
 	# ERROR: Another resource is loaded from path 'workaround for godot
