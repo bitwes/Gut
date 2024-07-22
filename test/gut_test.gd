@@ -193,6 +193,7 @@ func new_wired_test(gut_instance):
 
 class DynamicGutTest:
 	var source_entries = []
+	var lambdas = []
 
 	func _unindent(source, min_indent=0):
 		var src = ""
@@ -231,11 +232,38 @@ class DynamicGutTest:
 		return GutUtils.create_script_from_source(make_source())
 
 
+	func make_new():
+		return make_script().new()
+
+
 	func add_source(p1='', p2='', p3='', p4='', p5='', p6='', p7='', p8='', p9='', p10=''):
 		var source = str(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10)
 		source_entries.append(_unindent(source))
+		return self
+
+
+	func add_lambda_test(lambda, test_name=null):
+		var idx = lambdas.size()
+		var func_name = test_name
+		if(func_name == null):
+			func_name = str("test_run_lambda_", idx)
+		lambdas.append(lambda)
+		add_source("func ", func_name, "():\n",
+			"\tinstance_from_id(", get_instance_id(), ").lambdas[", idx, "].call(self)")
+		return self
 
 
 	func add_as_test_to_gut(which):
 		var dyn = make_script()
 		which.get_test_collector().add_script(dyn.resource_path)
+
+
+	func run_test_in_gut(which):
+		add_as_test_to_gut(which)
+		which.run_tests()
+		var s = GutUtils.Summary.new()
+		return s.get_totals(which)
+
+	func print_source():
+		print(GutUtils.add_line_numbers(make_source()))
+
