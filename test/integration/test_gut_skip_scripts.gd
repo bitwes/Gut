@@ -21,18 +21,20 @@ var _src_should_skip_script_method_ret_string = """
 var _gut = null
 
 func before_all():
-	# verbose = true
+	verbose = false
 	DynamicGutTest.should_print_source = verbose
 
 
 func before_each():
 	_gut = add_child_autofree(new_gut(verbose))
 
-
+# --------------
+# skip var
+# --------------
 func test_using_skip_script_variable_is_deprecated():
 	var s = DynamicGutTest.new()
 	s.add_source("var skip_script = 'skip me thanks'")
-	s.add_source("func test_passing():assert_true(true)")
+	s.add_source(_src_passing_test)
 	var t = s.run_test_in_gut(_gut)
 	assert_eq(t.deprecated, 1, 'Should be one deprecation.')
 
@@ -55,7 +57,19 @@ func test_when_skip_script_var_is_null_the_script_is_ran():
 	assert_eq(smry.tests, 1, 'the one test should be ran')
 	assert_eq(smry.risky, 0, 'not marked risky just for having var')
 
+func test_when_skip_scrpt_var_is_true_the_script_is_skipped():
+	var s = DynamicGutTest.new()
+	s.add_source("var skip_script = true")
+	s.add_source(_src_passing_test)
+	var smry = s.run_test_in_gut(_gut)
 
+	assert_eq(smry.tests, 0, 'no tests should be ran')
+	assert_eq(smry.risky, 1, 'Should be marked as risky due to skip')
+
+
+# --------------
+# skip method
+# --------------
 func test_should_skip_script_method_returns_false_by_default():
 	var test = autofree(GutTest.new())
 	assert_false(test.should_skip_script())

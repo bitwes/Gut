@@ -55,7 +55,7 @@ var fmts = {
 }
 
 var _type_data = {
-	types.debug:		{disp='DEBUG', 		enabled=true, fmt=fmts.none},
+	types.debug:		{disp='DEBUG', 		enabled=true, fmt=fmts.bold},
 	types.deprecated:	{disp='DEPRECATED', enabled=true, fmt=fmts.none},
 	types.error:		{disp='ERROR', 		enabled=true, fmt=fmts.red},
 	types.failed:		{disp='Failed', 	enabled=true, fmt=fmts.red},

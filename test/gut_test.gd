@@ -1,5 +1,6 @@
 class_name GutInternalTester
 extends GutTest
+
 var verbose = false
 
 const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
