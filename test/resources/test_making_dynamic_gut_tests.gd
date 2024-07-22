@@ -82,7 +82,7 @@ func _run_test_source(dyn_script):
 
 
 func before_all():
-	verbose = false
+	verbose = true
 
 
 func before_each():

@@ -192,32 +192,37 @@ func new_wired_test(gut_instance):
 
 
 class DynamicGutTest:
+	static var should_print_source = true
+
 	var source_entries = []
 	var lambdas = []
 
-	func _unindent(source, min_indent=0):
-		var src = ""
-		var lines = source.split("\n")
+	# -----------------------
+	# pretty sure .dedent does all this but not ready to kill it yet.
+	# -----------------------
+	# func _unindent(source, min_indent=0):
+	# 	var src = ""
+	# 	var lines = source.split("\n")
 
-		var first_line_with_text_index = 0
-		while(lines[first_line_with_text_index] == ""):
-			first_line_with_text_index += 1
+	# 	var first_line_with_text_index = 0
+	# 	while(lines[first_line_with_text_index] == ""):
+	# 		first_line_with_text_index += 1
 
-		var tab_count = 0
-		while(lines[first_line_with_text_index].begins_with("\t")):
-			tab_count += 1
-			lines[first_line_with_text_index] = lines[first_line_with_text_index].trim_prefix("\t")
+	# 	var tab_count = 0
+	# 	while(lines[first_line_with_text_index].begins_with("\t")):
+	# 		tab_count += 1
+	# 		lines[first_line_with_text_index] = lines[first_line_with_text_index].trim_prefix("\t")
 
 
-		while(lines[lines.size() -1].strip_edges() == ""):
-			lines.remove_at(lines.size() -1)
+	# 	while(lines[lines.size() -1].strip_edges() == ""):
+	# 		lines.remove_at(lines.size() -1)
 
-		var to_remove = "\t".repeat(tab_count)
-		var to_add = "\t".repeat(min_indent)
-		for line in lines:
-			src += str("\n", to_add, line.trim_prefix(to_remove))
+	# 	var to_remove = "\t".repeat(tab_count)
+	# 	var to_add = "\t".repeat(min_indent)
+	# 	for line in lines:
+	# 		src += str("\n", to_add, line.trim_prefix(to_remove))
 
-		return src
+	# 	return src
 
 
 	func make_source():
@@ -233,12 +238,17 @@ class DynamicGutTest:
 
 
 	func make_new():
-		return make_script().new()
+		var to_return = make_script().new()
+		if(should_print_source):
+			print(to_return.get_script().resource_path)
+			print_source()
+
+		return to_return
 
 
 	func add_source(p1='', p2='', p3='', p4='', p5='', p6='', p7='', p8='', p9='', p10=''):
 		var source = str(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10)
-		source_entries.append(_unindent(source))
+		source_entries.append(source.dedent())
 		return self
 
 
@@ -255,6 +265,10 @@ class DynamicGutTest:
 
 	func add_as_test_to_gut(which):
 		var dyn = make_script()
+		if(should_print_source):
+			print(dyn.resource_path)
+			print_source()
+
 		which.get_test_collector().add_script(dyn.resource_path)
 
 
@@ -263,6 +277,7 @@ class DynamicGutTest:
 		which.run_tests()
 		var s = GutUtils.Summary.new()
 		return s.get_totals(which)
+
 
 	func print_source():
 		print(GutUtils.add_line_numbers(make_source()))
