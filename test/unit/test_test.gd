@@ -1822,18 +1822,35 @@ class TestParameterizedTests:
 
 # ------------------------------------------------------------------------------
 class TestMemoryMgmt:
-	extends GutTest
+	extends GutInternalTester
+
+	var _gut = null
+
+	func before_each():
+		# verbose = true
+		_gut = add_child_autofree(new_gut(verbose))
 
 	func test_passes_when_no_orphans_introduced():
-
-		assert_no_new_orphans()
-		assert_true(is_passing(), 'test should be passing')
+		var d = DynamicGutTest.new()
+		d.add_source("""
+		func test_assert_no_orphans():
+			assert_no_new_orphans()
+		""")
+		var results = d.run_test_in_gut(_gut)
+		assert_eq(results.passing, 1)
 
 	func test_failing_orphan_assert_marks_test_as_failing():
-		var n2d = Node2D.new()
-		assert_no_new_orphans('SHOULD FAIL')
-		assert_true(is_failing(), 'this test should be failing')
-		n2d.free()
+		var d = DynamicGutTest.new()
+		d.add_source("""
+		func test_assert_no_orphans():
+			var n2d = Node2D.new()
+			assert_no_new_orphans('SHOULD FAIL')
+			assert_true(is_failing(), 'this test should be failing')
+			n2d.free()
+		""")
+		var results = d.run_test_in_gut(_gut)
+		assert_eq(results.failing, 1)
+
 
 	func test_passes_when_orphans_released():
 		var n2d = Node2D.new()

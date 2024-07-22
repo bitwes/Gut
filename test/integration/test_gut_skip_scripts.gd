@@ -31,6 +31,15 @@ func should_skip_script():
 	return 'skip me'
 """
 
+var _gut = null
+
+func before_all():
+	verbose = true
+
+func before_each():
+	_gut = add_child_autofree(new_gut(verbose))
+
+
 func _run_test_source(src):
 	var g = new_gut(true)
 	add_child_autofree(g)
@@ -57,7 +66,13 @@ func test_using_skip_script_variable_is_deprecated():
 		_src_skip_script_var_string_val + \
 		_src_passing_test
 	var t = _run_test_source(src)
+	assert_eq(t.deprecated, 1, 'Should be one deprecation.')
 
+func test_using_skip_script_variable_is_deprecated_():
+	var s = DynamicGutTest.new()
+	s.add_source("var skip_script = 'skip me thanks'")
+	s.add_source("func test_passing():assert_true(true)")
+	var t = s.run_test_in_gut(_gut)
 	assert_eq(t.deprecated, 1, 'Should be one deprecation.')
 
 
@@ -69,6 +84,16 @@ func test_when_skip_script_var_is_string_script_is_skipped():
 
 	assert_eq(t.tests, 0, 'no tests should be ran')
 	assert_eq(t.risky, 1, 'Should be marked as risky due to skip')
+
+func test_when_skip_script_var_is_string_script_is_skipped_():
+	var src = _src_base + \
+		_src_skip_script_var_string_val + \
+		_src_passing_test
+	var t = _run_test_source(src)
+
+	assert_eq(t.tests, 0, 'no tests should be ran')
+	assert_eq(t.risky, 1, 'Should be marked as risky due to skip')
+
 
 
 func test_when_skip_script_var_is_null_the_script_is_ran():

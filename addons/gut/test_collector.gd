@@ -110,7 +110,7 @@ func add_script(path):
 		# them to be run through gut.  This helps cut down on creating test
 		# scripts to be used in test/resources.
 		if(ResourceLoader.has_cached(path)):
-			_lgr.info("Using cached version of " + path)
+			_lgr.debug("Using cached version of " + path)
 		else:
 			_lgr.error('Could not find script:  ' + path)
 			return
