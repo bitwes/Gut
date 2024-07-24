@@ -9,8 +9,6 @@ class TestScriptParser:
 	var ExtendsNode = load('res://test/resources/doubler_test_objects/double_extends_node2d.gd')
 	const INNER_CLASSES_PATH = 'res://test/resources/doubler_test_objects/inner_classes.gd'
 	var InnerClasses = load(INNER_CLASSES_PATH)
-
-
 	var ScriptParser = load('res://addons/gut/script_parser.gd')
 
 	func test_can_make_one():
@@ -70,6 +68,8 @@ class TestScriptParser:
 		var collector = ScriptParser.new()
 		var parsed = collector.parse(InnerClasses, InnerClasses.InnerCA)
 		assert_eq(parsed.script_path, INNER_CLASSES_PATH)
+
+
 
 
 class HasAccessors:
@@ -208,6 +208,9 @@ class TestParsedScript:
 		var parsed = ParsedScript.new(HasAccessors)
 		var method = parsed.get_method('@my_property_setter')
 		assert_true(method.is_accessor())
+
+
+
 
 class TestParsedMethod:
 	extends GutTest

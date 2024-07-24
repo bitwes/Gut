@@ -6,6 +6,8 @@ The `InputSender` class can be used to send `InputEvent*` events to various obje
 
 And much much more.
 
+__Warning__<br>
+If you move the Godot window to a different monitor while tests are running it can cause input tests to fail.  [This issue](https://github.com/bitwes/Gut/issues/643) has more details.
 
 ## Signals
 * `idle` - Emitted when all events in the input queue have been sent.

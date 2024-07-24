@@ -1567,7 +1567,7 @@ func run_x_times(x):
 			"know why you're doing this."))
 		var params = []
 		for i in range(x):
-			params.append([])
+			params.append(i)
 
 		ph = GutUtils.ParameterHandler.new(params)
 		gut.parameter_handler = ph

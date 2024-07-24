@@ -73,7 +73,7 @@ class InputQueueItem:
 		if(frame_delay > 0 and _delay_started):
 			_waited_frames += 1
 			if(_waited_frames >= frame_delay):
-				emit_signal("event_ready")
+				event_ready.emit()
 
 	func _init(t_delay,f_delay):
 		time_delay = t_delay
@@ -82,7 +82,7 @@ class InputQueueItem:
 
 	func _on_time_timeout():
 		_is_ready = true
-		emit_signal("event_ready")
+		event_ready.emit()
 
 	func _delay_timer(t):
 		return Engine.get_main_loop().root.get_tree().create_timer(t)
@@ -344,7 +344,7 @@ func _on_queue_item_ready(item):
 
 	if(_input_queue.size() == 0):
 		_next_queue_item = null
-		emit_signal("idle")
+		idle.emit()
 	else:
 		_input_queue[0].start()
 

@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-# 9.2.2
+# 9.3.0
 
 ## Features
 * You can Monkey Patch your doubles!  You can make any method in a double call a specified `Callable` using `.to_call(callable)` on `stub`.  Details are on the [Stubbing](https://gut.readthedocs.io/en/latest/Stubbing.html) wiki page.
@@ -46,6 +46,11 @@ assert_true(await wait_for_signal(my_obj.my_singal, 2),
     func should_skip_script():
         return EngineDebugger.is_active()
     ```
+* The CLI got an update to its Option Parser.  There's more info in #623:
+    * options that take a value can now be specified with a space (`option value`) instead of using `option=value`.
+    * `-gh` option now has headings for the different options. It looks a lot better.
+    * `-gdir` and `-gtest` can be specified multiple times instead of using a comma delimited list.
+    * You can use `-gconfig=` to not use a config file.
 * Minor niceties such as showing that GUT is exiting in the title bar (takes a bit sometimes) and switching to full display at the end of a run if GUT does not automatically exit.
 
 ## Bug Fixes
@@ -57,6 +62,7 @@ assert_true(await wait_for_signal(my_obj.my_singal, 2),
 
 ## Deprecations
 * The optional `GutTest` script variable `skip_script` has been deprecated.  Use the new `should_skip_script` method instead.
+* GUT now warns if you have overridden `_ready` in your test script without calling `super._ready`.
 
 
 

@@ -1,5 +1,6 @@
 class_name GutInternalTester
 extends GutTest
+
 var verbose = false
 
 const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
@@ -123,7 +124,7 @@ func assert_fail_msg_contains(t, text):
 func get_error_count(obj):
 	return obj.logger.get_errors().size()
 
-
+var new_gut_indent_string = "|   "
 func new_gut(print_sub_tests=false):
 	var g = Gut.new()
 	g.logger = Logger.new()
@@ -134,8 +135,9 @@ func new_gut(print_sub_tests=false):
 		g.logger.disable_printer("terminal", false)
 		g.logger._min_indent_level = 1
 		g.logger.dec_indent()
-		g.logger.set_indent_string('|##| ')
+		g.logger.set_indent_string(new_gut_indent_string)
 		g.logger.disable_formatting(!print_sub_tests)
+		g.logger.set_type_enabled(g.logger.types.debug, true)
 
 	g._should_print_versions = false
 	g._should_print_summary = false
@@ -153,7 +155,7 @@ func new_partial_double_gut(print_sub_tests=false):
 		g.logger.disable_printer("terminal", false)
 		g.logger._min_indent_level = 1
 		g.logger.dec_indent()
-		g.logger.set_indent_string('|##| ')
+		g.logger.set_indent_string(new_gut_indent_string)
 		g.logger.disable_formatting(!print_sub_tests)
 	else:
 		g.log_level = g.LOG_LEVEL_FAIL_ONLY
@@ -164,9 +166,9 @@ func new_partial_double_gut(print_sub_tests=false):
 	return g
 
 
-func new_no_print_logger():
+func new_no_print_logger(override=!verbose):
 	var to_return = Logger.new()
-	to_return.disable_all_printers(true)
+	to_return.disable_all_printers(override)
 	return to_return
 
 
@@ -187,3 +189,4 @@ func new_wired_test(gut_instance):
 # 	t.set_logger(logger)
 # 	return t
 # ----------------------------
+

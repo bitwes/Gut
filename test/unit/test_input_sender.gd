@@ -66,7 +66,7 @@ class InputTracker:
 			print(e)
 
 class TestTheBasics:
-	extends "res://addons/gut/test.gd"
+	extends GutInternalTester
 
 	func before_all():
 		InputMap.add_action("jump")
@@ -161,7 +161,7 @@ class TestTheBasics:
 
 	func test_warns_when_key_down_for_a_pressed_key():
 		var sender = InputSender.new()
-		var lgr = GutUtils.Logger.new()
+		var lgr = new_no_print_logger()
 		sender._lgr = lgr
 		sender.key_down("S")
 		sender.key_down("S")
@@ -169,7 +169,7 @@ class TestTheBasics:
 
 	func test_does_now_warn_for_key_up():
 		var sender = InputSender.new()
-		var lgr = GutUtils.Logger.new()
+		var lgr = new_no_print_logger()
 		sender._lgr = lgr
 		sender.key_down("S")
 		sender.key_up("S")
@@ -177,7 +177,7 @@ class TestTheBasics:
 
 	func test_does_not_warn_for_key_echos():
 		var sender = InputSender.new()
-		var lgr = GutUtils.Logger.new()
+		var lgr = new_no_print_logger()
 		sender._lgr = lgr
 		sender.key_down("S")
 		sender.key_echo()
@@ -186,7 +186,7 @@ class TestTheBasics:
 
 	func test_warns_when_action_down_for_a_pressed_action():
 		var sender = InputSender.new()
-		var lgr = GutUtils.Logger.new()
+		var lgr = new_no_print_logger()
 		sender._lgr = lgr
 		sender.action_down("jump")
 		sender.action_down("jump")
@@ -194,7 +194,7 @@ class TestTheBasics:
 
 	func test_does_not_warn_for_action_up():
 		var sender = InputSender.new()
-		var lgr = GutUtils.Logger.new()
+		var lgr = new_no_print_logger()
 		sender._lgr = lgr
 		sender.action_down("jump")
 		sender.action_up("jump")
@@ -202,7 +202,7 @@ class TestTheBasics:
 
 	func test_warns_when_mouse_down_for_a_pressed_mouse_button():
 		var sender = InputSender.new()
-		var lgr = GutUtils.Logger.new()
+		var lgr = new_no_print_logger()
 		sender._lgr = lgr
 		sender.mouse_right_button_down(Vector2(1,1))
 		sender.mouse_right_button_down(Vector2(1,1))
@@ -210,7 +210,7 @@ class TestTheBasics:
 
 	func test_does_not_warn_for_mouse_up():
 		var sender = InputSender.new()
-		var lgr = GutUtils.Logger.new()
+		var lgr = new_no_print_logger()
 		sender._lgr = lgr
 		sender.mouse_right_button_down(Vector2(1,1))
 		sender.mouse_right_button_up(Vector2(1,1))
@@ -218,7 +218,7 @@ class TestTheBasics:
 
 	func test_does_not_warn_when_mouse_button_released():
 		var sender = InputSender.new()
-		var lgr = GutUtils.Logger.new()
+		var lgr = new_no_print_logger()
 		sender._lgr = lgr
 		sender.mouse_right_button_down(Vector2(1,1))
 		sender.mouse_right_button_up(Vector2(1,1))
@@ -227,7 +227,7 @@ class TestTheBasics:
 
 	func test_warns_for_2nd_down_event_after_idle():
 		var sender = InputSender.new()
-		var lgr = GutUtils.Logger.new()
+		var lgr = new_no_print_logger()
 		sender._lgr = lgr
 
 		sender.key_down("R").wait(.2)
