@@ -64,6 +64,13 @@ class TestMiscTests:
 		gr.test.set_logger(dlog)
 		assert_eq(gr.test.get_logger(), dlog)
 
+	func test_when_leaves_tree_awaiter_is_freed():
+		add_child(gr.test)
+		remove_child(gr.test)
+		await wait_frames(10)
+		assert_freed(gr.test._awaiter, 'awaiter')
+
+
 	# -------
 	# Spot check some type comparisons, these were all causing errors.  These
 	# were adjusted from issue 510 sample code.

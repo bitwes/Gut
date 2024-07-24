@@ -80,7 +80,7 @@ var InputSender = GutUtils.InputSender
 
 
 
-
+var _was_ready_called = false
 # I haven't decided if we should be using _ready or not.  Right now gut.gd will
 # call this if _ready was not called (because it was overridden without a super
 # call).  Maybe gut.gd should just call _do_ready_stuff (after we rename it to
@@ -89,9 +89,18 @@ func _do_ready_stuff():
 	_awaiter = GutUtils.Awaiter.new()
 	add_child(_awaiter)
 	_was_ready_called = true
-var _was_ready_called = false
+
+
 func _ready():
 	_do_ready_stuff()
+
+
+func _notification(what):
+	# Tests are never expected to re-enter the tree.  Tests are removed from the
+	# tree after they are run.
+	if(what == NOTIFICATION_EXIT_TREE):
+		_awaiter.queue_free()
+
 
 func _str(thing):
 	return _strutils.type2str(thing)
@@ -1037,7 +1046,7 @@ func assert_not_freed(obj, title):
 # the last thing your test does.
 # ------------------------------------------------------------------------------
 func assert_no_new_orphans(text=''):
-	var count = gut.get_orphan_counter().get_counter('test')
+	var count = gut.get_orphan_counter().get_orphans_since('test')
 	var msg = ''
 	if(text != ''):
 		msg = ':  ' + text

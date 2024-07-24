@@ -8,7 +8,7 @@ func test_can_add_get_counter():
 	stub(oc, 'orphan_count').to_return(6)
 	oc.add_counter('one')
 	stub(oc, 'orphan_count').to_return(10)
-	assert_eq(oc.get_counter('one'), 4)
+	assert_eq(oc.get_orphans_since('one'), 4)
 
 func test_print_singular_orphan():
 	var oc = partial_double(GutUtils.OrphanCounter).new()
@@ -43,8 +43,8 @@ func test_adding_same_name_overwrites_prev_start_val():
 	stub(oc, 'orphan_count').to_return(2)
 	oc.add_counter('one')
 	stub(oc, 'orphan_count').to_return(10)
-	assert_eq(oc.get_counter('one'), 8)
+	assert_eq(oc.get_orphans_since('one'), 8)
 
 func test_getting_count_for_names_that_dne_returns_neg_1():
 	var oc = GutUtils.OrphanCounter.new()
-	assert_eq(oc.get_counter('dne'), -1)
+	assert_eq(oc.get_orphans_since('dne'), -1)

@@ -10,10 +10,8 @@ class TestLogging:
 		_gut = Gut.new()
 		_gut._should_print_versions = false
 		_gut.log_level = 0
-		add_child(_gut)
+		add_child_autofree(_gut)
 
-	func after_each():
-		remove_child(_gut)
 
 	func test_gut_sets_doublers_logger():
 		assert_eq(_gut.get_doubler().get_logger(), _gut.logger, 'Doubler logger')
@@ -39,3 +37,25 @@ class TestLogging:
 
 	func test_test_colledtor_has_same_logger():
 		assert_eq(_gut.get_test_collector().get_logger(), _gut.logger)
+
+
+class TestMemoryMgmt:
+	extends GutTest
+
+	func after_each():
+		assert_no_new_orphans()
+
+	func test_GutTest():
+		var t = GutTest.new()
+		add_child(t)
+		t.free()
+		assert_no_new_orphans()
+
+	func test_GutTest_with_waits():
+		var t = GutTest.new()
+		add_child(t)
+		await wait_frames(10)
+		t.free()
+		await wait_frames(10)
+		assert_no_new_orphans()
+

@@ -692,7 +692,7 @@ func _should_skip_script(test_script, collected_script):
 # Run all tests in a script.  This is the core logic for running tests.
 # ------------------------------------------------------------------------------
 func _test_the_scripts(indexes=[]):
-	_orphan_counter.add_counter('total')
+	_orphan_counter.add_counter('pre_run')
 
 	_print_versions(false)
 	var is_valid = _init_run()
@@ -817,6 +817,11 @@ func _test_the_scripts(indexes=[]):
 		# END TEST SCRIPT LOOP
 
 	_lgr.set_indent_level(0)
+	# Give anything that is queued to be freed time to be freed before we count
+	# the orphans.  Without this, the last test's awaiter won't be freed
+	# yet, which messes with the orphans total.  There could also be objects
+	# the user has queued to be freed as well.
+	await get_tree().create_timer(.1).timeout
 	_end_run()
 
 
@@ -1178,8 +1183,18 @@ func show_orphans(should):
 	_lgr.set_type_enabled(_lgr.types.orphan, should)
 
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func get_logger():
 	return _lgr
+
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func get_test_script_count():
+	return _test_script_objects.size()
+
+
 
 
 # ##############################################################################
