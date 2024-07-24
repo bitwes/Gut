@@ -273,11 +273,14 @@ func _init():
 	_doubler.set_gut(self)
 
 	# TODO remove_at these, universal logger should fix this.
+	update_loggers()
+
+# Public for tests that set the logger to do this.
+func update_loggers():
 	_doubler.set_logger(_lgr)
 	_spy.set_logger(_lgr)
 	_stubber.set_logger(_lgr)
 	_test_collector.set_logger(_lgr)
-
 
 
 # ------------------------------------------------------------------------------

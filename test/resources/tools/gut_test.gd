@@ -62,9 +62,9 @@ func assert_warn(obj, times=1):
 
 
 func assert_errored(obj, times=1):
-	var lgr = _get_logger_from_obj(obj)
-	if(lgr != null):
-		_assert_log_count(lgr.get_errors(), 'errors', times)
+	var things_lgr = _get_logger_from_obj(obj)
+	if(things_lgr != null):
+		_assert_log_count(things_lgr.get_errors(), 'errors', times)
 	else:
 		_fail(str('Cannot assert_errored, ', obj, ' does not have get_logger method or logger property'))
 
@@ -129,6 +129,7 @@ func new_gut(print_sub_tests=false):
 	var g = Gut.new()
 	g.logger = Logger.new()
 	g.logger.disable_all_printers(true)
+	g.update_loggers()
 
 	g.log_level = 3
 	if(print_sub_tests):
@@ -149,6 +150,7 @@ func new_partial_double_gut(print_sub_tests=false):
 	var g = partial_double(Gut).new()
 	g.logger = GutUtils.Logger.new()
 	g.logger.disable_all_printers(true)
+	g.update_loggers()
 
 	if(print_sub_tests):
 		g.log_level = 3

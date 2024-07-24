@@ -177,8 +177,8 @@ class TestJunitXmlExport:
 			g.add_script(export_script(s))
 		g.test_scripts()
 
-	func export_script(name):
-		return str('res://test/resources/exporter_test_files/', name)
+	func export_script(fname):
+		return str('res://test/resources/exporter_test_files/', fname)
 
 	func before_all():
 		verbose = true # should always print everything

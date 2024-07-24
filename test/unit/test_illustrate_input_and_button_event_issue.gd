@@ -103,7 +103,7 @@ func test_same_thing_the_gut_way():
 		.idle
 	assert_signal_emitted(btn, 'button_down')
 	assert_signal_emitted(btn, 'button_up')
-	GutUtils.pretty_print(_signal_watcher._watched_signals)
+	# GutUtils.pretty_print(_signal_watcher._watched_signals)
 
 
 func test_same_thing_another_way():
