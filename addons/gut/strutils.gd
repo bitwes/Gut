@@ -6,6 +6,7 @@ class_name GutStringUtils
 var types = {}
 
 func _init_types_dictionary():
+	types[TYPE_NIL] = 'NIL'
 	types[TYPE_AABB] = 'AABB'
 	types[TYPE_ARRAY] = 'ARRAY'
 	types[TYPE_BASIS] = 'BASIS'

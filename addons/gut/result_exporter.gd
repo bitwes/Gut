@@ -61,9 +61,6 @@ func _make_results_dict():
 	return result
 
 
-# TODO
-#	time
-#	errors
 func get_results_dictionary(gut, include_scripts=true):
 	var scripts = []
 
@@ -82,7 +79,7 @@ func get_results_dictionary(gut, include_scripts=true):
 	props.errors = gut.logger.get_errors().size()
 	props.warnings = gut.logger.get_warnings().size()
 	props.time =  gut.get_elapsed_time()
-	props.orphans = gut.get_orphan_counter().get_counter('total')
+	props.orphans = gut.get_orphan_counter().get_orphans_since('pre_run')
 	result.test_scripts.scripts = scripts
 
 	return result
