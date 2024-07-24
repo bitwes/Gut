@@ -103,7 +103,6 @@ func test_spot_check():
 	var re = JunitExporter.new()
 	var result = re.get_results_xml(_test_gut)
 	assert_is_valid_xml(result)
-	print(result)
 
 func test_res_removed_from_classname_path():
 	run_scripts(_test_gut, 'test_simple_2.gd')

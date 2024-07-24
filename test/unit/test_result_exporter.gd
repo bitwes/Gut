@@ -230,9 +230,3 @@ func test_write_file_creates_file():
 	assert_file_not_empty(fname)
 	gut.file_delete(fname)
 
-func test_spot_check():
-	run_scripts(_test_gut, ['test_simple_2.gd', 'test_simple.gd', 'test_with_inner_classes.gd'])
-	var re = ResultExporter.new()
-	var result = re.get_results_dictionary(_test_gut)
-	GutUtils.pretty_print(result)
-	pass_test("Check output")

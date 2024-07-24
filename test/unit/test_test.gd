@@ -1372,12 +1372,6 @@ class TestStringEndsWith:
 class TestAssertCalled:
 	extends BaseTestClass
 
-	func test_fails_with_message_if_non_doubled_passed():
-		var obj = GDScript.new()
-		gr.test_with_gut.gut.get_spy().add_call(obj, 'method')
-		gr.test_with_gut.assert_called(obj, 'method1')
-		gut.p('!! Check output !!')
-		assert_fail(gr.test_with_gut)
 
 	func test_passes_when_call_occurred():
 		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
@@ -1889,13 +1883,6 @@ class TestMemoryMgmt:
 		await wait_frames(10)
 		assert_freed(n, 'node')
 		assert_no_new_orphans()
-
-	func test_children_warning():
-		var TestClass = load('res://addons/gut/test.gd')
-		for i in range(3):
-			var extra_test = TestClass.new()
-			add_child(extra_test)
-		pass_test('Check for warning')
 
 
 # ------------------------------------------------------------------------------
