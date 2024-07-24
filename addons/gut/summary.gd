@@ -30,17 +30,22 @@ func _log_what_was_run(gut):
 
 
 func _log_orphans_and_disclaimer(gut):
-	var orphan_count = gut.get_orphan_counter()
 	var lgr = gut.get_logger()
-	# Do not count any of the _test_script_objects since these will be released
-	# when GUT is released.
-	orphan_count._counters.total += gut._test_script_objects.size()
-	if(orphan_count.get_counter('total') > 0 and lgr.is_type_enabled('orphan')):
-		orphan_count.print_orphans('total', lgr)
+	if(!lgr.is_type_enabled('orphan')):
+		return
+
+	var counter = gut.get_orphan_counter()
+	# Do not count any of the test scripts since these will be released when GUT
+	# is released.
+	var do_not_count_orphans = counter.get_count("pre_run") + gut.get_test_script_count()
+	var total_run_orphans = counter.orphan_count() - do_not_count_orphans
+
+	if(total_run_orphans > 0):
+		lgr.orphan(str("Total orphans in run ", total_run_orphans))
 		gut.p("Note:  This count does not include GUT objects that will be freed upon exit.")
 		gut.p("       It also does not include any orphans created by global scripts")
 		gut.p("       loaded before tests were ran.")
-		gut.p(str("Total orphans = ", orphan_count.orphan_count()))
+		gut.p(str("Total orphans = ", counter.orphan_count()))
 		gut.p('')
 
 
@@ -57,6 +62,7 @@ func _log_non_zero_total(text, value, lgr):
 		return 1
 	else:
 		return 0
+
 
 func _log_totals(gut, totals):
 	var lgr = gut.get_logger()
