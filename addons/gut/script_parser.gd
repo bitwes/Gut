@@ -111,7 +111,8 @@ class ParsedScript:
 			var inst = to_load.new()
 			_native_class_name = inst.get_class()
 			_native_methods = inst.get_method_list()
-			inst.free()
+			if(!inst is RefCounted):
+				inst.free()
 		else:
 			if(!script_or_inst is Resource):
 				to_load = load(script_or_inst.get_script().get_path())
