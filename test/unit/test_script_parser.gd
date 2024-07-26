@@ -253,3 +253,55 @@ class TestParsedMethod:
 		assert_false(pm.is_eligible_for_doubling())
 
 
+class TestParsingDynamicScripts:
+	extends GutInternalTester
+
+	var ScriptParser = load('res://addons/gut/script_parser.gd')
+
+	func test_parsing_script():
+		var DynScript = GutUtils.create_script_from_source("""
+		var foo = "bar"
+		""")
+		var pm = ScriptParser.new()
+		var parsed = pm.parse(DynScript)
+		assert_not_null(parsed)
+
+	func test_parsed_extends_text_is_empty_when_dyn_script_does_not_extend():
+		var DynScript = GutUtils.create_script_from_source("""
+		var foo = "bar"
+		""")
+		var pm = ScriptParser.new()
+		var parsed = pm.parse(DynScript)
+		assert_eq(parsed.get_extends_text(), "")
+
+	func test_parsed_extends_text_is_Node_when_dyn_script_extends_node():
+		var DynScript = GutUtils.create_script_from_source("""
+		extends Node
+		var foo = "bar"
+		""")
+		var pm = ScriptParser.new()
+		var parsed = pm.parse(DynScript)
+		assert_eq(parsed.get_extends_text(), "extends Node")
+
+
+# 	var _types = [#Node, Node2D, Button, Mesh,
+# 		GutUtils.create_script_from_source("""
+# 		extends Node
+# 		var foo = "bar"
+# 		"""),
+# 		GutUtils.create_script_from_source("""
+# 		var foo = "bar"
+# 		""")
+# ]
+# 	func test_print_props(p = use_parameters(_types)):
+# 		print("=== ", p, " ===")
+# 		print("base_script = ", p.get_base_script())
+# 		print("instance_base_type = ", p.get_instance_base_type())
+# 		# print(p.name)
+# 		# GutUtils.print_properties(p.get_property_list(), p)
+# 		var inst = p.new()
+# 		print("---- ", inst, " ------")
+# 		print("class = ", inst.get_class())
+# 		GutUtils.print_properties(inst.get_property_list(), inst)
+
+

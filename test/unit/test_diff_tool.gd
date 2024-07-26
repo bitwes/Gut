@@ -260,34 +260,6 @@ class TestDictionaryDiff:
 		assert_true(DiffTool.new({'a':1}, {'a':1}).are_equal, 'same')
 		assert_true(DiffTool.new({'a':1, 'b':2}, {'b':2, 'a':1}).are_equal, 'different order')
 
-	func test_summarize():
-		var d1 = {'aa':'asdf', 'a':1, 'b':'two', 'c':autofree(Node2D.new())}
-		var d2 = {'a':1.0, 'b':2, 'c':GutUtils.Strutils.new(), 'cc':'adsf'}
-		var dd = DiffTool.new(d1, d2)
-		gut.p(dd.summarize())
-		pass_test('Visually check this')
-
-
-	func test_with_obj_as_keys():
-		var d1 = {}
-		var d2 = {}
-		var node_1 = autofree(Node2D.new())
-		var node_2 = autofree(Node2D.new())
-		var other_1 = autofree(GutUtils.Strutils.new())
-		var other_2 = autofree(GutUtils.Strutils.new())
-		for i in range(6):
-			var key = autofree(GutUtils.Strutils.new())
-
-			if(i%2 == 0):
-				d1[key] = node_1
-				d2[key] = node_2
-			else:
-				d1[key] = other_1
-				d2[key] = other_2
-
-		var dd =  DiffTool.new(d1, d2)
-		gut.p(dd.summarize())
-		pass_test('Visually check this')
 
 	func test_sub_dictionary_compare_when_equal():
 		var d1 = {'a':1, 'b':{'a':99}}
