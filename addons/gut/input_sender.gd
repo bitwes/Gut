@@ -1,41 +1,4 @@
-# ##############################################################################
-#(G)odot (U)nit (T)est class
-#
-# ##############################################################################
-# The MIT License (MIT)
-# =====================
-#
-# Copyright (c) 2023 Tom "Butch" Wesley
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-# ##############################################################################
-# Description
-# -----------
-# This class sends input to one or more recievers.  The receivers' _input,
-# _unhandled_input, and _gui_input are called sending InputEvent* events.
-# InputEvents can be sent via the helper methods or a custom made InputEvent
-# can be sent via send_event(...)
-#
-# ##############################################################################
-#extends "res://addons/gut/input_factory.gd"
-
+class_name GutInputSender
 # Implemented InputEvent* convenience methods
 # 	InputEventAction
 # 	InputEventKey
@@ -554,3 +517,41 @@ func hold_for(duration):
 		wait(duration)
 		send_event(next_event)
 	return self
+
+
+# ##############################################################################
+#(G)odot (U)nit (T)est class
+#
+# ##############################################################################
+# The MIT License (MIT)
+# =====================
+#
+# Copyright (c) 2024 Tom "Butch" Wesley
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+# ##############################################################################
+# Description
+# -----------
+# This class sends input to one or more recievers.  The receivers' _input,
+# _unhandled_input, and _gui_input are called sending InputEvent* events.
+# InputEvents can be sent via the helper methods or a custom made InputEvent
+# can be sent via send_event(...)
+#
+# ##############################################################################

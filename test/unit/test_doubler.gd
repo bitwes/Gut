@@ -436,6 +436,10 @@ class TestDoubleGDNaviteClasses:
 		var crect_double_inst = _doubler.double_gdnative(ColorRect).new()
 		assert_not_null(crect_double_inst)
 
+	func test_can_make_double_of_ref_counted_native():
+		var dbl = _doubler.double_gdnative(StreamPeerTCP)
+		assert_not_null(dbl)
+
 
 class TestDoubleInnerClasses:
 	extends BaseTest

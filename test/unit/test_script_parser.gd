@@ -198,6 +198,10 @@ class TestParsedScript:
 		parsed = null
 		assert_no_new_orphans()
 
+	func test_parsing_native_ref_counted_does_not_generate_error():
+		var parsed = ParsedScript.new(StreamPeerTCP)
+		assert_not_null(parsed)
+
 	func test_get_accessor_marked_as_accessor():
 		var parsed = ParsedScript.new(HasAccessors)
 		var method = parsed.get_method('@my_property_getter')
