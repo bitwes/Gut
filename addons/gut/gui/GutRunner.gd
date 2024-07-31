@@ -56,7 +56,6 @@ var ran_from_editor = true
 func _ready():
 	GutUtils.WarningsManager.apply_warnings_dictionary(
 		GutUtils.warnings_at_start)
-	GutUtils.LazyLoader.load_all()
 
 	# When used from the panel we have to kick off the tests ourselves b/c
 	# there's no way I know of to interact with the scene that was run via

@@ -68,9 +68,7 @@ static func apply_warnings_dictionary(warning_values : Dictionary):
 	for key in warning_values:
 		set_project_setting_warning(key, warning_values[key])
 
-# ---------------------------------------
-# Class
-# ---------------------------------------
+
 static func create_ignore_all_dictionary():
 	return replace_warnings_values(project_warnings, -1, IGNORE)
 

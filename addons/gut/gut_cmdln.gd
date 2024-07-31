@@ -11,9 +11,13 @@
 # ------------------------------------------------------------------------------
 extends SceneTree
 
-func _init():
-	var max_iter = 20
-	var iter = 0
+@warning_ignore("unsafe_method_access")
+@warning_ignore("inferred_declaration")
+func _init() -> void:
+	var max_iter := 20
+	var iter := 0
+
+	var Loader : Object = load("res://addons/gut/gut_loader.gd")
 
 	# Not seen this wait more than 1.
 	while(Engine.get_main_loop() == null and iter < max_iter):
@@ -25,9 +29,13 @@ func _init():
 		quit(0)
 		return
 
-	var cli = load('res://addons/gut/cli/gut_cli.gd').new()
+	var cli : Node = load('res://addons/gut/cli/gut_cli.gd').new()
 	get_root().add_child(cli)
+
+	Loader.restore_ignore_addons()
 	cli.main()
+
+
 
 
 # ##############################################################################
@@ -37,7 +45,7 @@ func _init():
 # The MIT License (MIT)
 # =====================
 #
-# Copyright (c) 2023 Tom "Butch" Wesley
+# Copyright (c) 2024 Tom "Butch" Wesley
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
