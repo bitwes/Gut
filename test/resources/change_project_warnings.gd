@@ -6,7 +6,7 @@ var WarningsManager = load("res://addons/gut/warnings_manager.gd")
 # I used the tool to make the data for the tool.  I did change exclude_addons
 # to be false, otherwise these warnings don't help.  Everything else is the
 # default Godot setting as of the creation of this.
-var default_wanrings = {
+var default_warnings = {
   "assert_always_false": 1,             "assert_always_true": 1,  			"confusable_identifier": 1,
   "confusable_local_declaration": 1,    "confusable_local_usage": 1,  		"constant_used_as_function": 1,
   "deprecated_keyword": 1,              "empty_file": 1,  					"enable": true,
@@ -26,13 +26,36 @@ var default_wanrings = {
 }
 
 
-func _print_settings(which):
+func _print_human_readable(warnings):
+	for key in warnings:
+		var value = warnings[key]
+		var readable = str(warnings[key]).capitalize()
+		if(typeof(value) == TYPE_INT):
+			readable = WarningsManager.WARNING_LOOKUP.get(value, str(readable, ' ???'))
+			readable = readable.capitalize()
+		print(key.capitalize().rpad(35, ' '), readable)
+
+
+func _dump_settings(which):
 	if(which == "current"):
 		var values = WarningsManager.create_warnings_dictionary_from_project_settings()
 		print('-- Current Values --')
 		GutUtils.pretty_print(values)
 	elif(which == "default"):
-		GutUtils.pretty_print(default_wanrings)
+		GutUtils.pretty_print(default_warnings)
+	else:
+		print("UNKNOWN print option ", which)
+
+
+func _print_settings(which):
+	var warnings = {}
+	if(which == "current"):
+		warnings = WarningsManager.create_warnings_dictionary_from_project_settings()
+	elif(which == "default"):
+		warnings = default_warnings.duplicate()
+
+	if(warnings != {}):
+		_print_human_readable(warnings)
 	else:
 		print("UNKNOWN print option ", which)
 
@@ -41,7 +64,7 @@ func _set_settings(which):
 	var warnings = {}
 
 	if(which == 'default'):
-		warnings = default_wanrings.duplicate()
+		warnings = default_warnings.duplicate()
 	elif(which == 'all_warn'):
 		warnings = WarningsManager.create_warn_all_warnings_dictionary()
 		warnings.exclude_addons = false
@@ -49,9 +72,11 @@ func _set_settings(which):
 	if(warnings != {}):
 		WarningsManager.apply_warnings_dictionary(warnings)
 		ProjectSettings.save()
-		var set_values = WarningsManager.create_warnings_dictionary_from_project_settings()
 		print("-- Values have been updated to --")
-		GutUtils.pretty_print(set_values)
+		_print_settings("current")
+		print()
+		print("Changes will not be visible in Godot until it is restarted.")
+		print("Even if it asks you to reload...Maybe")
 	else:
 		print("UNKNOWN set option ", which)
 
@@ -64,7 +89,10 @@ func _setup_options():
 	""".dedent()
 
 	opts.add('-h', false, 'Print this help')
-	opts.add('-print', 'none', """Print settings.  Valid values are:
+	opts.add('-dump', 'none', """Prints a dictionary of all warning values.  Valid values are:
+		* current
+		* default""".dedent())
+	opts.add('-print', 'none', """Print human readable warning values.  Valid values are:
 		* current
 		* default""".dedent())
 	opts.add('-set', 'none', """Sets the values for the project.  Valid values are:
@@ -78,11 +106,16 @@ func _init():
 	var opts = _setup_options()
 	opts.parse()
 
-	if(opts.get_value('-h')):
+	if(opts.unused.size() != 0):
 		opts.print_help()
-	elif(opts.get_value('-print') != 'none'):
-		_print_settings(opts.get_value('-print'))
-	elif(opts.get_value('-set') != 'none'):
-		_set_settings(opts.get_value('-set'))
+		print("Unknown arguments ", opts.unused)
+	if(opts.values.h):
+		opts.print_help()
+	elif(opts.values.print != 'none'):
+		_print_settings(opts.values.print)
+	elif(opts.values.dump != 'none'):
+		_dump_settings(opts.values.dump)
+	elif(opts.values.set != 'none'):
+		_set_settings(opts.values.set)
 
 	quit()
