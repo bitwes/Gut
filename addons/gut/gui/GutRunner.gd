@@ -10,11 +10,7 @@
 #
 # This will create a GUI and wire it up and apply gut_config.gd options.
 #
-# Running tests:
-# By default, this will run tests once this control has been added to the tree.
-# You can override this by setting ran_from_editor to false before adding
-# this to the tree.  To run tests manually, call run_tests.
-#
+# Running tests:  Call run_tests
 # ##############################################################################
 extends Node2D
 
@@ -41,13 +37,9 @@ var gut = _hid_gut :
 		return _hid_gut
 	set(val):
 		_hid_gut = val
-var _wrote_results = false
 
-# The editor runs this scene using play_custom_scene, which means we cannot
-# pass any info directly to the scene.  Whenever this is being used from
-# somewhere else, you probably want to set this to false before adding this
-# to the tree.
-var ran_from_editor = true
+var _wrote_results = false
+var _ran_from_editor = false
 
 @onready var _gut_layer = $GutLayer
 @onready var _gui = $GutLayer/GutScene
@@ -57,29 +49,10 @@ func _ready():
 	GutUtils.WarningsManager.apply_warnings_dictionary(
 		GutUtils.warnings_at_start)
 
-	# When used from the panel we have to kick off the tests ourselves b/c
-	# there's no way I know of to interact with the scene that was run via
-	# play_custom_scene.
-	if(ran_from_editor):
-		_run_from_editor()
-
 
 func _exit_tree():
-	if(!_wrote_results and ran_from_editor):
+	if(!_wrote_results and _ran_from_editor):
 		_write_results_for_gut_panel()
-
-
-func _run_from_editor():
-	var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
-	runner_json_path = GutUtils.nvl(runner_json_path, GutEditorGlobals.editor_run_gut_config_path)
-	result_bbcode_path = GutUtils.nvl(result_bbcode_path, GutEditorGlobals.editor_run_bbcode_results_path)
-	result_json_path = GutUtils.nvl(result_json_path, GutEditorGlobals.editor_run_json_results_path)
-
-	if(gut_config == null):
-		gut_config = GutConfig.new()
-		gut_config.load_options(runner_json_path)
-
-	call_deferred('run_tests')
 
 
 func _setup_gui(show_gui):
@@ -146,7 +119,7 @@ func _handle_quit(should_exit, should_exit_on_success, override_exit_code=EXIT_O
 
 
 func _end_run(override_exit_code=EXIT_OK):
-	if(ran_from_editor):
+	if(_ran_from_editor):
 		_write_results_for_gut_panel()
 
 	_handle_quit(gut_config.options.should_exit,
@@ -164,6 +137,22 @@ func _on_tests_finished():
 # -------------
 # Public
 # -------------
+# For internal use only, but still public.  Consider it "protected" and you
+# don't have my permission to call this, unless "you" is "me".
+func run_from_editor():
+	_ran_from_editor = true
+	var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
+	runner_json_path = GutUtils.nvl(runner_json_path, GutEditorGlobals.editor_run_gut_config_path)
+	result_bbcode_path = GutUtils.nvl(result_bbcode_path, GutEditorGlobals.editor_run_bbcode_results_path)
+	result_json_path = GutUtils.nvl(result_json_path, GutEditorGlobals.editor_run_json_results_path)
+
+	if(gut_config == null):
+		gut_config = GutConfig.new()
+		gut_config.load_options(runner_json_path)
+
+	call_deferred('run_tests')
+
+
 func run_tests(show_gui=true):
 	_setup_gui(show_gui)
 
@@ -214,6 +203,9 @@ func quit(exit_code):
 
 	lgr.info(str('Exiting with code ', exit_code))
 	get_tree().quit(exit_code)
+
+
+
 
 # ##############################################################################
 # The MIT License (MIT)

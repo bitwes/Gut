@@ -5,10 +5,6 @@ var GutRunner = load('res://addons/gut/gui/GutRunner.tscn')
 var _runner = GutRunner.instantiate()
 
 
-func _init():
-	_runner.ran_from_editor = false
-
-
 func _ready():
 	# wait a bit for _utils to be happy.
 	await get_tree().create_timer(.2).timeout

@@ -1,13 +1,10 @@
 # ------------------------------------------------------------------------------
 # Description
 # -----------
-# Command line interface for the GUT unit testing tool.  Allows you to run tests
-# from the command line instead of running a scene.  You can run this script
-# (from the root of your project) using the following command:
-# 	godot -s test/gut/gut_cmdln.gd
+# Entry point for the command line interface.  The actual logic for GUT's CLI
+# is in addons/gut/cli/gut_cli.gd.
 #
-# See the wiki for a list of options and examples.  You can also use the -gh
-# option to get more information about how to use the command line interface.
+# This script should conform to, or ignore, the strictest warning settings.
 # ------------------------------------------------------------------------------
 extends SceneTree
 

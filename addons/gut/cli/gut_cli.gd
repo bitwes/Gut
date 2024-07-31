@@ -214,7 +214,6 @@ func _run_tests(opt_resolver):
 	_gut_config.options = _final_opts
 
 	var runner = GutRunner.instantiate()
-	runner.ran_from_editor = false
 	runner.set_gut_config(_gut_config)
 	get_tree().root.add_child(runner)
 

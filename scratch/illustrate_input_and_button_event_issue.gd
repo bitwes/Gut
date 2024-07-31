@@ -54,7 +54,6 @@ func illustrate(add_to):
 
 func _make_the_whole_gut_tree_to_add_to():
 	var gut_runner = load('res://addons/gut/gui/GutRunner.tscn').instantiate()
-	gut_runner.ran_from_editor = false
 	get_root().add_child(gut_runner)
 
 	var gut = gut_runner.get_gut()
