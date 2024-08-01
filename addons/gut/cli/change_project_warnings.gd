@@ -3,14 +3,11 @@ extends SceneTree
 var Optparse = load('res://addons/gut/cli/optparse.gd')
 var WarningsManager = load("res://addons/gut/warnings_manager.gd")
 
-# I used the tool to make the data for the tool.  I did change exclude_addons
-# to be false, otherwise these warnings don't help.  Everything else is the
-# default Godot setting as of the creation of this.
-var default_warnings = {
+var godot_default_warnings = {
   "assert_always_false": 1,             "assert_always_true": 1,  			"confusable_identifier": 1,
   "confusable_local_declaration": 1,    "confusable_local_usage": 1,  		"constant_used_as_function": 1,
   "deprecated_keyword": 1,              "empty_file": 1,  					"enable": true,
-  "exclude_addons": false, 				"function_used_as_property": 1,  	"get_node_default_without_onready": 2,
+  "exclude_addons": true, 				"function_used_as_property": 1,  	"get_node_default_without_onready": 2,
   "incompatible_ternary": 1,  			"inference_on_variant": 2,  		"inferred_declaration": 0,
   "int_as_enum_without_cast": 1,  		"int_as_enum_without_match": 1,  	"integer_division": 1,
   "narrowing_conversion": 1,  			"native_method_override": 2,  		"onready_with_export": 2,
@@ -24,6 +21,19 @@ var default_warnings = {
   "unused_local_constant": 1,  			"unused_parameter": 1,  			"unused_private_class_variable": 1,
   "unused_signal": 1,  					"unused_variable": 1
 }
+
+var gut_warning_changes = {
+  "exclude_addons": false, 				"redundant_await": 0,
+}
+
+var warning_settings = {}
+
+func _setup_warning_settings():
+	warning_settings["godot_default"] = godot_default_warnings
+
+	var gut_default = godot_default_warnings.duplicate()
+	gut_default.merge(gut_warning_changes, true)
+	warning_settings["gut_default"] = gut_default
 
 
 func _print_human_readable(warnings):
@@ -39,23 +49,19 @@ func _print_human_readable(warnings):
 func _dump_settings(which):
 	if(which == "current"):
 		var values = WarningsManager.create_warnings_dictionary_from_project_settings()
-		print('-- Current Values --')
 		GutUtils.pretty_print(values)
-	elif(which == "default"):
-		GutUtils.pretty_print(default_warnings)
+	elif(warning_settings.has(which)):
+		GutUtils.pretty_print(warning_settings[which])
 	else:
 		print("UNKNOWN print option ", which)
 
 
 func _print_settings(which):
-	var warnings = {}
 	if(which == "current"):
-		warnings = WarningsManager.create_warnings_dictionary_from_project_settings()
-	elif(which == "default"):
-		warnings = default_warnings.duplicate()
-
-	if(warnings != {}):
+		var warnings = WarningsManager.create_warnings_dictionary_from_project_settings()
 		_print_human_readable(warnings)
+	elif(warning_settings.has(which)):
+		_print_human_readable(warning_settings[which])
 	else:
 		print("UNKNOWN print option ", which)
 
@@ -63,11 +69,11 @@ func _print_settings(which):
 func _set_settings(which):
 	var warnings = {}
 
-	if(which == 'default'):
-		warnings = default_warnings.duplicate()
-	elif(which == 'all_warn'):
+	if(which == 'all_warn'):
 		warnings = WarningsManager.create_warn_all_warnings_dictionary()
 		warnings.exclude_addons = false
+	elif(warning_settings.has(which)):
+		warnings = warning_settings[which]
 
 	if(warnings != {}):
 		WarningsManager.apply_warnings_dictionary(warnings)
@@ -91,18 +97,23 @@ func _setup_options():
 	opts.add('-h', false, 'Print this help')
 	opts.add('-dump', 'none', """Prints a dictionary of all warning values.  Valid values are:
 		* current
-		* default""".dedent())
+		* godot_default
+		* gut_default""".dedent())
 	opts.add('-print', 'none', """Print human readable warning values.  Valid values are:
 		* current
-		* default""".dedent())
+		* godot_default
+		* gut_default""".dedent())
 	opts.add('-set', 'none', """Sets the values for the project.  Valid values are:
-		* default
+		* godot_default
+		* gut_default
 		* all_warn""".dedent())
 
 	return opts
 
 
 func _init():
+	_setup_warning_settings()
+
 	var opts = _setup_options()
 	opts.parse()
 
@@ -117,5 +128,8 @@ func _init():
 		_dump_settings(opts.values.dump)
 	elif(opts.values.set != 'none'):
 		_set_settings(opts.values.set)
+	else:
+		opts.print_help()
+		print("You didn't specify any options.  I don't know what you want to do.")
 
 	quit()

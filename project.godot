@@ -22,7 +22,7 @@ global="*res://scripts/global.gd"
 [debug]
 
 gdscript/warnings/exclude_addons=false
-gdscript/warnings/native_method_override=1
+gdscript/warnings/redundant_await=0
 
 [display]
 
