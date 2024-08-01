@@ -26,14 +26,14 @@ class TestBasics:
 
 	func test_double_returns_a_class():
 		var D = _test.double(DoubleMe)
-		assert_ne(D.new(), null)
+		assert_ne(autofree(D.new()), null)
 
 	func test_double_sets_stubber_for_doubled_class():
-		var d = _test.double(DoubleMe).new()
+		var d = autofree(_test.double(DoubleMe).new())
 		assert_eq(d.__gutdbl.stubber, _gut.get_stubber())
 
 	func test_basic_double_and_stub():
-		var d = _test.double(DoubleMe).new()
+		var d = autofree(_test.double(DoubleMe).new())
 		_test.stub(DOUBLE_ME_PATH, 'get_value').to_return(10)
 		assert_eq(d.get_value(), 10)
 
@@ -42,12 +42,14 @@ class TestBasics:
 
 	func test_when_strategy_is_full_then_supers_are_spied():
 		var doubled = _test.double(DoubleMe, _test.DOUBLE_STRATEGY.INCLUDE_NATIVE).new()
+		autofree(doubled)
 		doubled.is_blocking_signals()
 		_test.assert_called(doubled, 'is_blocking_signals')
 		assert_eq(_test.get_pass_count(), 1)
 
 	func test_when_strategy_is_partial_then_spying_on_non_overloaded_fails():
 		var doubled = _test.double(DoubleMe, _test.DOUBLE_STRATEGY.SCRIPT_ONLY).new()
+		autofree(doubled)
 		doubled.is_blocking_signals()
 		_test.assert_not_called(doubled, 'is_blocking_signals')
 		assert_eq(_test.get_fail_count(), 1)
@@ -103,6 +105,7 @@ class TestBasics:
 
 	func test_can_stub_scenes():
 		var dbl_scn = _test.double(DoubleMeScene).instantiate()
+		autofree(dbl_scn)
 		_test.stub(dbl_scn, 'return_hello').to_return('world')
 		assert_eq(dbl_scn.return_hello(), 'world')
 
@@ -239,6 +242,7 @@ class TestPartialDoubleMethod:
 
 	func test_partial_double_script():
 		var inst = _test.partial_double(DoubleMe).new()
+		autofree(inst)
 		inst.set_value(10)
 		assert_eq(inst.get_value(), 10)
 
@@ -257,6 +261,7 @@ class TestPartialDoubleMethod:
 
 	func test_double_script_not_a_partial():
 		var inst = _test.double(DoubleMe).new()
+		autofree(inst)
 		inst.set_value(10)
 		assert_eq(inst.get_value(), null)
 
@@ -273,6 +278,7 @@ class TestPartialDoubleMethod:
 	func test_can_spy_on_partial_doubles():
 		var pass_count = _test.get_pass_count()
 		var inst = _test.partial_double(DoubleMe).new()
+		autofree(inst)
 		inst.set_value(10)
 		_test.assert_called(inst, 'set_value')
 		_test.assert_called(inst, 'set_value', [10])
