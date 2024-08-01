@@ -1,24 +1,14 @@
 # ------------------------------------------------------------------------------
 # Loading directories
 # ------------------------------------------------------------------------------
-extends "res://addons/gut/test.gd"
+extends GutTest
 
 # Common parts for the other InnerClasses in this script.
 class BaseTest:
-	extends "res://addons/gut/test.gd"
-
-	var Gut = load('res://addons/gut/gut.gd')
-	var Test = load('res://addons/gut/test.gd')
+	extends GutInternalTester
 
 	const TEST_LOAD_DIR = 'res://test/resources/parsing_and_loading_samples'
 	const TEST_BASE_DIR = 'user://test_directories/'
-
-	# Returns a new gut object, all setup for testing.
-	func get_a_gut():
-		var g = Gut.new()
-		g.log_level = g.LOG_LEVEL_ALL_ASSERTS
-		add_child(g)
-		return g
 
 # ------------------------------------------------------------------------------
 # I chose a more dynamic approach for creating directories and files for new
@@ -35,7 +25,7 @@ class TestUsingResDirs:
 	}
 
 	func before_each():
-		gr.gut = get_a_gut()
+		gr.gut = add_child_autofree(new_gut())
 
 
 	func test_adding_directory_loads_files():
@@ -67,8 +57,8 @@ class TestUsingResDirs:
 
 	# We only have 3 directories with tests in them so test 3
 	func test_directories123_defined_in_editor_are_loaded_on_ready():
-		var g = Gut.new()
-		var t = Test.new()
+		var g = autofree(Gut.new())
+		var t = autofree(Test.new())
 		t.gut = g
 		add_child(g)
 		g.add_directory('res://test/resources/parsing_and_loading_samples')
@@ -130,7 +120,7 @@ class TestUsingDynamicDirs:
 		_create_test_script('other_root/three/test_script.gd')
 
 	func before_each():
-		gr.gut = get_a_gut()
+		gr.gut = add_child_autofree(new_gut())
 		_create_all_dirs_and_files()
 
 	func after_each():

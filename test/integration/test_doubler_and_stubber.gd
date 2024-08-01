@@ -6,6 +6,7 @@ class BaseTest:
 	var Stubber = load('res://addons/gut/stubber.gd')
 	var Doubler = load('res://addons/gut/doubler.gd')
 	var StubParams = load('res://addons/gut/stub_params.gd')
+	var Wm = GutUtils.WarningsManager
 
 
 	const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
@@ -18,14 +19,14 @@ class BaseTest:
 	const INNER_CLASSES_PATH = 'res://test/resources/doubler_test_objects/inner_classes.gd'
 	const DOUBLE_DEFAULT_PARAMETERS = 'res://test/resources/doubler_test_objects/double_default_parameters.gd'
 
-	var DoubleMe = load(DOUBLE_ME_PATH)
-	var DoubleExtendsNode2D = load(DOUBLE_EXTENDS_NODE2D)
-	var DoubleExtendsWindowDialog = load(DOUBLE_EXTENDS_WINDOW_DIALOG)
-	var DoubleWithStatic = load(DOUBLE_WITH_STATIC)
-	var DoubleMeScene = load(DOUBLE_ME_SCENE_PATH)
-	var InnerClasses = load(INNER_CLASSES_PATH)
-	var DoubleDefaultParameters = load(DOUBLE_DEFAULT_PARAMETERS)
-	var InitParameters = load(INIT_PARAMETERS)
+	var DoubleMe = Wm.load_script_ignoring_all_warnings(DOUBLE_ME_PATH)
+	var DoubleExtendsNode2D = Wm.load_script_ignoring_all_warnings(DOUBLE_EXTENDS_NODE2D)
+	var DoubleExtendsWindowDialog = Wm.load_script_ignoring_all_warnings(DOUBLE_EXTENDS_WINDOW_DIALOG)
+	var DoubleWithStatic = Wm.load_script_ignoring_all_warnings(DOUBLE_WITH_STATIC)
+	var DoubleMeScene = Wm.load_script_ignoring_all_warnings(DOUBLE_ME_SCENE_PATH)
+	var InnerClasses = Wm.load_script_ignoring_all_warnings(INNER_CLASSES_PATH)
+	var DoubleDefaultParameters = Wm.load_script_ignoring_all_warnings(DOUBLE_DEFAULT_PARAMETERS)
+	var InitParameters = Wm.load_script_ignoring_all_warnings(INIT_PARAMETERS)
 
 
 
@@ -38,10 +39,12 @@ class TestTheBasics:
 		stubber = null
 	}
 
+
 	func before_each():
 		gr.doubler = Doubler.new()
 		gr.stubber = Stubber.new()
 		gr.doubler.set_stubber(gr.stubber)
+		gr.doubler.add_ignored_method(DoubleMe, '_notification')
 
 
 	func test_stubbing_method_returns_expected_value():

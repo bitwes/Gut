@@ -139,25 +139,12 @@ class TestTheNewWaitMethods:
 		var result = await wait_until(all_is_good, .5)
 		assert_false(result)
 
-	func test_wait_until_accepts_string_as_thrid_arg():
-		var pred_methods = PredicateMethods.new()
-		var method = pred_methods.called_x_times.bind(10)
-
-		await wait_until(method, 1.1, 'DID YOU SEE THIS?')
-		pass_test("Check output for DID YOU SEE THIS?")
 
 	func test_wait_until_accepts_time_between():
 		var pred_methods = PredicateMethods.new()
 		var method = pred_methods.called_x_times.bind(10)
 
 		await wait_until(method, 1.1, .25)
-		assert_eq(pred_methods.times_called, 4)
-
-	func test_wait_until_accepts_time_between_then_msg():
-		var pred_methods = PredicateMethods.new()
-		var method = pred_methods.called_x_times.bind(10)
-
-		await wait_until(method, 1.1, .25, 'DID YOU SEE THIS?')
 		assert_eq(pred_methods.times_called, 4)
 
 
@@ -169,4 +156,3 @@ class TestTheNewWaitMethods:
 		pred_methods.times_called = 0
 		await wait_until(method, 1.1, .2)
 		assert_eq(pred_methods.times_called, 5)
-

@@ -1,32 +1,37 @@
 extends GutInternalTester
 
+func _new_logger():
+	var to_return = Logger.new()
+	to_return.disable_all_printers(true)
+	return to_return
+
 func test_can_warn():
-	var l = Logger.new()
+	var l = _new_logger()
 	l.warn('something')
 	assert_eq(l.get_warnings().size(), 1)
 
 func test_can_error():
-	var l = Logger.new()
+	var l = _new_logger()
 	l.error('soemthing')
 	assert_eq(l.get_errors().size(), 1)
 
 func test_can_info():
-	var l = Logger.new()
+	var l = _new_logger()
 	l.info('something')
 	assert_eq(l.get_infos().size(), 1)
 
 func test_can_debug():
-	var l = Logger.new()
+	var l = _new_logger()
 	l.debug('something')
 	assert_eq(l.get_debugs().size(), 1)
 
 func test_can_deprecate():
-	var l = Logger.new()
+	var l = _new_logger()
 	l.deprecated('something')
 	assert_eq(l.get_deprecated().size(), 1)
 
 func test_clear_clears_all_buffers():
-	var l = Logger.new()
+	var l = _new_logger()
 	l.debug('a')
 	l.info('a')
 	l.warn('a')
@@ -40,10 +45,10 @@ func test_clear_clears_all_buffers():
 	assert_eq(l.get_deprecated().size(), 0, 'deprecated')
 
 func test_get_set_gut():
-	assert_accessors(Logger.new(), 'gut', null, Gut.new())
+	assert_accessors(_new_logger(), 'gut', null, autofree(Gut.new()))
 
 func test_can_get_count_using_type():
-	var l = Logger.new()
+	var l = _new_logger()
 	l.warn('somethng')
 	l.debug('something 2')
 	l.debug('something else')
@@ -51,7 +56,7 @@ func test_can_get_count_using_type():
 	assert_eq(l.get_count(l.types.warn), 1, 'count warnings')
 
 func test_get_count_with_no_parameter_returns_count_of_all_logs():
-	var l = Logger.new()
+	var l = _new_logger()
 	l.warn('a')
 	l.debug('b')
 	l.error('c')
@@ -60,23 +65,23 @@ func test_get_count_with_no_parameter_returns_count_of_all_logs():
 	assert_eq(l.get_count(), 5)
 
 func test_get_set_indent_level():
-	var l = Logger.new()
+	var l = _new_logger()
 	assert_accessors(l, 'indent_level', 0, 10)
 
 func test_inc_indent():
-	var l = Logger.new()
+	var l = _new_logger()
 	l.inc_indent()
 	l.inc_indent()
 	assert_eq(l.get_indent_level(), 2)
 
 func test_dec_indent_does_not_go_below_0():
-	var l = Logger.new()
+	var l = _new_logger()
 	l.dec_indent()
 	l.dec_indent()
 	assert_eq(l.get_indent_level(), 0, 'does not go below 0')
 
 func test_dec_indent_decreases():
-	var l = Logger.new()
+	var l = _new_logger()
 	l.set_indent_level(10)
 	l.dec_indent()
 	l.dec_indent()
@@ -84,12 +89,12 @@ func test_dec_indent_decreases():
 	assert_eq(l.get_indent_level(), 7)
 
 func test_get_set_indent_string():
-	var l = Logger.new()
+	var l = _new_logger()
 	assert_accessors(l, 'indent_string', '    ', "\t")
 
-var log_types = Logger.new().types.keys()
+var log_types = _new_logger().types.keys()
 func test_can_enable_disable_types(log_type_key = use_parameters(log_types)):
-	var l = Logger.new()
+	var l = _new_logger()
 	var log_type = l.types[log_type_key]
 	assert_true(l.is_type_enabled(log_type), log_type + ' should be enabled by default')
 	l.set_type_enabled(log_type, false)

@@ -266,18 +266,21 @@ func _init():
 	# When running tests for GUT itself, GutUtils has been setup to always return
 	# a new logger so this does not set the gut instance on the base logger
 	# when creating test instances of GUT.
-	_lgr.set_gut(self)
+	_lgr.set_gut(self) # HEY!  What about tests?  ^^^^^^^^^
 
 	_doubler.set_stubber(_stubber)
 	_doubler.set_spy(_spy)
 	_doubler.set_gut(self)
 
-	# TODO remove_at these, universal logger should fix this.
+	update_loggers()
+
+# Public for tests that set the logger.  This makes it much easier to propigate
+# test loggers.
+func update_loggers():
 	_doubler.set_logger(_lgr)
 	_spy.set_logger(_lgr)
 	_stubber.set_logger(_lgr)
 	_test_collector.set_logger(_lgr)
-
 
 
 # ------------------------------------------------------------------------------

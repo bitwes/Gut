@@ -536,6 +536,7 @@ class TestEverythingElse:
 		gr.test_gut.test_scripts()
 		gr.test_gut.test_scripts()
 		assert_eq(gr.test_gut._test_script_objects.size(), 1, 'The should only be one test script after a second run')
+		# There might not be an easy way to free this orphan.
 
 
 	# ------------------------------

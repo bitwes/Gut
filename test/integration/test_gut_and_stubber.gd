@@ -8,7 +8,7 @@ const DOUBLE_ME_SCENE_PATH = 'res://test/resources/doubler_test_objects/double_m
 var DoubleMeScene = load(DOUBLE_ME_SCENE_PATH)
 
 func test_can_get_stubber():
-	var g = Gut.new()
+	var g = autofree(Gut.new())
 	assert_ne(g.get_stubber(), null)
 
 # ---------------------------------
