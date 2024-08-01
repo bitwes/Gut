@@ -6,6 +6,8 @@ The `InputSender` class can be used to send `InputEvent*` events to various obje
 
 And much much more.
 
+As of 9.3.1 you can use `GutInputSender` instead of `InputSender`.  It's the same thing, but `GutInputSender` is a `class_name` so you may have less warnings and auto-complete will work.
+
 __Warning__<br>
 If you move the Godot window to a different monitor while tests are running it can cause input tests to fail.  [This issue](https://github.com/bitwes/Gut/issues/643) has more details.
 
