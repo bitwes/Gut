@@ -4,9 +4,10 @@ var _test_gut = null
 const EXPORT_FILE = 'res://test/exported_tests.cfg'
 
 func before_each():
-	_test_gut = Gut.new()
-	_test_gut._should_print_versions = false
-	add_child_autofree(_test_gut)
+	_test_gut = new_gut()
+	_test_gut.log_level = 4
+	# _test_gut._should_print_versions = false
+	autofree(_test_gut)
 
 func after_each():
 	gut.file_delete(EXPORT_FILE)
@@ -32,7 +33,7 @@ func test_importing_tests_populates_test_collector():
 	_test_gut.add_directory('res://test/resources/parsing_and_loading_samples')
 	_test_gut.export_tests(EXPORT_FILE)
 
-	var _import_gut = add_child_autofree(Gut.new())
+	var _import_gut = add_child_autofree(new_gut())
 	add_child(_import_gut)
 	_import_gut.import_tests(EXPORT_FILE)
 
@@ -45,7 +46,7 @@ func test_import_tests_uses_export_path_by_default():
 	_test_gut.add_directory('res://test/resources/parsing_and_loading_samples')
 	_test_gut.export_tests(EXPORT_FILE)
 
-	var _import_gut = add_child_autofree(Gut.new())
+	var _import_gut = add_child_autofree(new_gut())
 	_import_gut.export_path = EXPORT_FILE
 	_import_gut.import_tests()
 

@@ -6,8 +6,6 @@ var should_might_await_await = true
 
 signal signal_signal
 
-func _notification(_what):
-	pass
 
 func _ready():
 	pass

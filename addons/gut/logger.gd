@@ -185,6 +185,8 @@ func get_log_entries(log_type):
 func _output_type(type, text):
 	var td = _type_data[type]
 	if(!td.enabled):
+		# if(_logs.has(type)):
+		# 	_logs[type].append(text)
 		return
 
 	_print_test_name()

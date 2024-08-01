@@ -1,6 +1,7 @@
 @tool
 var default_script_name_no_extension = 'gut_dynamic_script'
 var default_script_resource_path = 'res://addons/gut/not_a_real_file/'
+var default_script_extension = "gd"
 
 var _created_script_count = 0
 
@@ -10,7 +11,10 @@ var _created_script_count = 0
 # is returned instead.
 func create_script_from_source(source, override_path=null):
 	_created_script_count += 1
-	var r_path = str(default_script_resource_path, default_script_name_no_extension, '_', _created_script_count)
+	var r_path = str(default_script_resource_path,
+		default_script_name_no_extension, '_', _created_script_count, ".",
+		default_script_extension)
+
 	if(override_path != null):
 		r_path = override_path
 

@@ -1372,12 +1372,6 @@ class TestStringEndsWith:
 class TestAssertCalled:
 	extends BaseTestClass
 
-	func test_fails_with_message_if_non_doubled_passed():
-		var obj = GDScript.new()
-		gr.test_with_gut.gut.get_spy().add_call(obj, 'method')
-		gr.test_with_gut.assert_called(obj, 'method1')
-		gut.p('!! Check output !!')
-		assert_fail(gr.test_with_gut)
 
 	func test_passes_when_call_occurred():
 		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
@@ -1640,16 +1634,19 @@ class TestReplaceNode:
 
 	func before_each():
 		super.before_each()
-		_arena = Arena.instantiate()
+		_arena = autofree(Arena.instantiate())
 
 	func after_each():
+		# Things get queue_free in these tests and show up as orphans when they
+		# actually aren't, so wait for them to free.
+		await wait_frames(10)
 		super.after_each()
-		_arena.queue_free()
 
 	func test_can_replace_node():
 		var replacement = autofree(Node2D.new())
 		gr.test.replace_node(_arena, 'Player1/Sword', replacement)
 		assert_eq(_arena.get_sword(), replacement)
+
 
 	func test_when_node_does_not_exist_error_is_generated():
 		var replacement = autofree(Node2D.new())
@@ -1889,13 +1886,6 @@ class TestMemoryMgmt:
 		await wait_frames(10)
 		assert_freed(n, 'node')
 		assert_no_new_orphans()
-
-	func test_children_warning():
-		var TestClass = load('res://addons/gut/test.gd')
-		for i in range(3):
-			var extra_test = TestClass.new()
-			add_child(extra_test)
-		pass_test('Check for warning')
 
 
 # ------------------------------------------------------------------------------

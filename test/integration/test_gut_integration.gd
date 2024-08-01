@@ -9,10 +9,7 @@ class CoupledScriptTest:
 		_gut = GutUtils.Gut.new()
 		_gut._should_print_versions = false
 		_gut._should_print_summary = false
-		add_child(_gut)
-
-	func after_each():
-		_gut.queue_free()
+		add_child_autofree(_gut)
 
 	func _same_name():
 		return gut.get_current_test_object().name

@@ -26,14 +26,14 @@ class TestBasics:
 
 	func test_double_returns_a_class():
 		var D = _test.double(DoubleMe)
-		assert_ne(D.new(), null)
+		assert_ne(autofree(D.new()), null)
 
 	func test_double_sets_stubber_for_doubled_class():
-		var d = _test.double(DoubleMe).new()
+		var d = autofree(_test.double(DoubleMe).new())
 		assert_eq(d.__gutdbl.stubber, _gut.get_stubber())
 
 	func test_basic_double_and_stub():
-		var d = _test.double(DoubleMe).new()
+		var d = autofree(_test.double(DoubleMe).new())
 		_test.stub(DOUBLE_ME_PATH, 'get_value').to_return(10)
 		assert_eq(d.get_value(), 10)
 
@@ -42,12 +42,14 @@ class TestBasics:
 
 	func test_when_strategy_is_full_then_supers_are_spied():
 		var doubled = _test.double(DoubleMe, _test.DOUBLE_STRATEGY.INCLUDE_NATIVE).new()
+		autofree(doubled)
 		doubled.is_blocking_signals()
 		_test.assert_called(doubled, 'is_blocking_signals')
 		assert_eq(_test.get_pass_count(), 1)
 
 	func test_when_strategy_is_partial_then_spying_on_non_overloaded_fails():
 		var doubled = _test.double(DoubleMe, _test.DOUBLE_STRATEGY.SCRIPT_ONLY).new()
+		autofree(doubled)
 		doubled.is_blocking_signals()
 		_test.assert_not_called(doubled, 'is_blocking_signals')
 		assert_eq(_test.get_fail_count(), 1)
@@ -103,6 +105,7 @@ class TestBasics:
 
 	func test_can_stub_scenes():
 		var dbl_scn = _test.double(DoubleMeScene).instantiate()
+		autofree(dbl_scn)
 		_test.stub(dbl_scn, 'return_hello').to_return('world')
 		assert_eq(dbl_scn.return_hello(), 'world')
 
@@ -239,6 +242,7 @@ class TestPartialDoubleMethod:
 
 	func test_partial_double_script():
 		var inst = _test.partial_double(DoubleMe).new()
+		autofree(inst)
 		inst.set_value(10)
 		assert_eq(inst.get_value(), 10)
 
@@ -257,6 +261,7 @@ class TestPartialDoubleMethod:
 
 	func test_double_script_not_a_partial():
 		var inst = _test.double(DoubleMe).new()
+		autofree(inst)
 		inst.set_value(10)
 		assert_eq(inst.get_value(), null)
 
@@ -273,6 +278,7 @@ class TestPartialDoubleMethod:
 	func test_can_spy_on_partial_doubles():
 		var pass_count = _test.get_pass_count()
 		var inst = _test.partial_double(DoubleMe).new()
+		autofree(inst)
 		inst.set_value(10)
 		_test.assert_called(inst, 'set_value')
 		_test.assert_called(inst, 'set_value', [10])
@@ -302,6 +308,16 @@ class TestPartialDoubleMethod:
 class TestOverridingParameters:
 	extends BaseTest
 
+	const INIT_PARAMETERS = 'res://test/resources/stub_test_objects/init_parameters.gd'
+	const DEFAULT_PARAMS_PATH = 'res://test/resources/doubler_test_objects/double_default_parameters.gd'
+	var DefaultParams = null
+
+	func before_all():
+		var were_set = GutUtils.WarningsManager.are_warnings_enabled()
+		GutUtils.WarningsManager.enable_warnings(false)
+		DefaultParams = load(DEFAULT_PARAMS_PATH)
+		GutUtils.WarningsManager.enable_warnings(were_set)
+
 	func before_each():
 		_gut = new_gut(verbose)
 
@@ -315,9 +331,6 @@ class TestOverridingParameters:
 		_test.free()
 
 
-	const INIT_PARAMETERS = 'res://test/resources/stub_test_objects/init_parameters.gd'
-	const DEFAULT_PARAMS_PATH = 'res://test/resources/doubler_test_objects/double_default_parameters.gd'
-	var DefaultParams = load(DEFAULT_PARAMS_PATH)
 	# -------------------
 	# Default parameters and override parameter count
 	func test_can_stub_default_values():
@@ -397,49 +410,49 @@ class TestOverridingParameters:
 class TestStub:
 	extends BaseTest
 
+
 	func before_each():
 		_gut = new_gut(verbose)
 
 		_test = new_wired_test(_gut)
+		_test.ignore_method_when_doubling(DoubleMe, '_notification')
 
-		add_child(_gut)
-		add_child(_test)
+		add_child_autofree(_gut)
+		add_child_autofree(_test)
+
 
 	func after_each():
 		_gut.get_stubber().clear()
 
-	func after_all():
-		_gut.free()
-		_test.free()
 
 	func test_stub_of_valid_stuff_is_fine():
-		var dbl = _test.double(DoubleMe).new()
+		var dbl = autofree(_test.double(DoubleMe).new())
 		_test.stub(dbl, 'get_value').to_return(9)
 		assert_errored(_test, 0)
 
 	func test_stub_of_double_method_generates_error_when_method_does_not_exist():
-		var dbl = _test.double(DoubleMe).new()
+		var dbl = autofree(_test.double(DoubleMe).new())
 		_test.stub(dbl, 'foo').to_do_nothing()
 		assert_errored(_test, 1)
 
 	func test_can_stub_double_method_using_callable():
-		var d = _test.double(DoubleMe).new()
+		var d = autofree(_test.double(DoubleMe).new())
 		_test.stub(d.has_one_param).to_return(5)
 		assert_eq(_gut.get_stubber().get_return(d, 'has_one_param'), 5)
 
 	func test_errors_on_p2_when_using_callable():
-		var d = _test.double(DoubleMe).new()
+		var d = autofree(_test.double(DoubleMe).new())
 		_test.stub(d.has_one_param, 'asdf').to_return(5)
 		assert_errored(_test, 1)
 
 	func test_errors_on_p3_when_using_callable():
-		var d = _test.double(DoubleMe).new()
+		var d = autofree(_test.double(DoubleMe).new())
 		_test.stub(d.has_one_param, null, 'asdf').to_return(5)
 		assert_errored(_test, 1)
 
 	func test_bound_parameters_are_not_spied_on():
-		var d = _test.double(DoubleMe).new()
-		var callable = func(value, p2):
+		var d = autofree(_test.double(DoubleMe).new())
+		var callable = func(_value, p2):
 			return p2
 		_test.stub(d.has_one_param).to_call(callable.bind("p2"))
 		d.has_one_param("value")
@@ -448,10 +461,10 @@ class TestStub:
 		assert_pass(_test, 2)
 
 	func test_setting_local_variable_in_callable():
-		var d = _test.double(DoubleMe).new()
+		var d = autofree(_test.double(DoubleMe).new())
 		var this_var = "some value"
 		_test.stub(d.has_one_param).to_call(
-			func(value):
+			func(_value):
 				this_var = "another value"
 				return this_var)
 		var result = d.has_one_param("asdf")

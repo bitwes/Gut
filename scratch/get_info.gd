@@ -84,10 +84,14 @@ class HasSomeInners:
 class ExtendsNode2D:
 	extends Node2D
 
+	static var static_foo := "static foo"
+
 	static func a_static_func():
 		return true
 
-	func my_function():
+	var local_foo := "local foo"
+
+	func my_function(some_string : String, defaulted_node : Node = null):
 		return 7
 
 	func get_position():
@@ -384,6 +388,25 @@ func print_property_usage(prop):
 		if(prop.usage & flag):
 			print('- ', key, ' ', flag)
 
+func print_script_info(thing):
+	print('path = ', thing.get_path())
+
+	print('--- Methods (script) ---')
+	print_methods(thing.get_script_method_list(), true)
+
+	print('--- Properties (script) ---')
+	var props = thing.get_script_property_list()
+	print_properties(props, thing, true)
+
+	print('--- Constants ---')
+	pp(thing.get_script_constant_map())
+
+	print('--- Signals ---')
+	var sigs = thing.get_signal_list()
+	for sig in sigs:
+		print(sig['name'])
+		print('  ', sig)
+
 
 func print_all_info(thing):
 	print('path = ', thing.get_path())
@@ -467,12 +490,12 @@ func get_scene_script_object(scene):
 func _init():
 
 
-	var TestScene = load('res://test/resources/Issue436Scene.tscn')
-	print_scene_info(TestScene)
-	var inst = TestScene.instantiate()
+	# var TestScene = load('res://test/resources/Issue436Scene.tscn')
+	# print_scene_info(TestScene)
+	# var inst = TestScene.instantiate()
 
-	print_all_info(inst.get_script())
-	# print_method_info(ExtendsNode2D.new())
+	# print_all_info(inst.get_script())
+	print_script_info(ExtendsNode2D)
 	# print_methods_with_flags(ExtendsNode2D.new(), METHOD_FLAG_VARARG, false)
 	# print_methods_with_flags(ExtendsNode2D.new(), METHOD_FLAG_OBJECT_CORE, false)
 	# print_methods_named(ExtendsNode2D.new(), '_input')
