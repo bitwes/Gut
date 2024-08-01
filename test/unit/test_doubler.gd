@@ -116,7 +116,6 @@ class TestDoublingScripts:
 		_doubler = Doubler.new()
 		_doubler.set_stubber(stubber)
 		_doubler.set_gut(gut)
-		_doubler.add_ignored_method(DoubleMe, "_notification")
 
 
 	func test_doubling_object_includes_methods():
@@ -192,51 +191,29 @@ class TestDoublingScripts:
 class TestAddingIgnoredMethods:
 	extends BaseTest
 	var _doubler = null
+
 	var stubber = GutUtils.Stubber.new()
-
-	var TestClassStaticMethod = GutUtils.create_script_from_source("""
-	static func this_is_a_static_method():
-		return true
-
-	func this_is_not_static():
-		return true
-	""")
-
-	var TestSimpleClass = GutUtils.create_script_from_source("""
-	extends Node
-	class_name TestSimpleClass
-
-	var foo = "bar"
-	func has_one_param(p1):
-		print(p1)
-	""")
-
-
 	func before_each():
 		stubber.clear()
 		_doubler = Doubler.new()
 		_doubler.set_stubber(stubber)
 		_doubler.set_gut(gut)
-		_doubler.print_source = true
+		_doubler.print_source = false
 
 	func test_can_add_to_ignore_list():
 		assert_eq(_doubler.get_ignored_methods().size(), 0, 'initial size')
-		_doubler.add_ignored_method(TestClassStaticMethod, 'some_method')
+		_doubler.add_ignored_method(DoubleWithStatic, 'some_method')
 		assert_eq(_doubler.get_ignored_methods().size(), 1, 'after add')
 
-	func test_when_ignored_methods_are_a_local_method_they_are_not_present_in_double_code():
-		_doubler.add_ignored_method(TestSimpleClass, 'has_one_param')
-		var c = _doubler.double(TestSimpleClass)
+	func test_when_ignored_methods_are_a_local_method_mthey_are_not_present_in_double_code():
+		_doubler.add_ignored_method(DoubleMe, 'has_one_param')
+		var c = _doubler.double(DoubleMe)
 		assert_source_not_contains(c.new(), 'has_one_param')
 
 	func test_when_ignored_methods_are_a_super_method_they_are_not_present_in_double_code():
-		_doubler.add_ignored_method(TestSimpleClass, 'is_connected')
-		var result = load(TestSimpleClass.resource_path)
-		print(result)
-		print(result.get_rid())
-
-		# var c = _doubler.double(TestSimpleClass, GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
-		# assert_source_not_contains(c.new(), 'is_connected')
+		_doubler.add_ignored_method(DoubleMe, 'is_connected')
+		var c = _doubler.double(DoubleMe, GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
+		assert_source_not_contains(c.new(), 'is_connected')
 
 	func test_can_double_classes_with_static_methods():
 		_doubler.add_ignored_method(DoubleWithStatic, 'this_is_a_static_method')

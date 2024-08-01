@@ -91,6 +91,7 @@ class ParsedScript:
 		get: return _resource
 		set(val): return;
 
+
 	var _is_native = false
 	var is_native = _is_native:
 		get: return _is_native
@@ -263,17 +264,9 @@ class ParsedScript:
 		if(is_native):
 			text = str("extends ", _native_class_name)
 		else:
-			if(!FileAccess.file_exists(_script_path)):
-				if(ResourceLoader.has_cached(_script_path)):
-					var base_type = _resource.get_instance_base_type()
-					if(base_type == &"RefCounted"):
-						text = ""
-					else:
-						text = str("extends ", "'", _script_path, "'")
-			else:
-				text = str("extends '", _script_path, "'")
-				if(_subpath != null):
-					text += '.' + _subpath
+			text = str("extends '", _script_path, "'")
+			if(_subpath != null):
+				text += '.' + _subpath
 		return text
 
 
