@@ -2,6 +2,7 @@ extends SceneTree
 
 var Optparse = load('res://addons/gut/cli/optparse.gd')
 var WarningsManager = load("res://addons/gut/warnings_manager.gd")
+const WARN_VALUE_PRINT_POSITION = 36
 
 var godot_default_warnings = {
   "assert_always_false": 1,             "assert_always_true": 1,  			"confusable_identifier": 1,
@@ -30,83 +31,146 @@ var warning_settings = {}
 
 func _setup_warning_settings():
 	warning_settings["godot_default"] = godot_default_warnings
+	warning_settings["current"] = WarningsManager.create_warnings_dictionary_from_project_settings()
+	warning_settings["all_warn"] = WarningsManager.create_warn_all_warnings_dictionary()
 
 	var gut_default = godot_default_warnings.duplicate()
 	gut_default.merge(gut_warning_changes, true)
 	warning_settings["gut_default"] = gut_default
 
 
-func _print_human_readable(warnings):
+func _warn_value_to_s(value):
+	var readable = str(value).capitalize()
+	if(typeof(value) == TYPE_INT):
+		readable = WarningsManager.WARNING_LOOKUP.get(value, str(readable, ' ???'))
+		readable = readable.capitalize()
+	return readable
+
+
+func _human_readable(warnings):
+	var to_return = ""
 	for key in warnings:
-		var value = warnings[key]
-		var readable = str(warnings[key]).capitalize()
-		if(typeof(value) == TYPE_INT):
-			readable = WarningsManager.WARNING_LOOKUP.get(value, str(readable, ' ???'))
-			readable = readable.capitalize()
-		print(key.capitalize().rpad(35, ' '), readable)
+		var readable = _warn_value_to_s(warnings[key])
+		to_return += str(key.capitalize().rpad(35, ' '), readable, "\n")
+	return to_return
 
 
 func _dump_settings(which):
-	if(which == "current"):
-		var values = WarningsManager.create_warnings_dictionary_from_project_settings()
-		GutUtils.pretty_print(values)
-	elif(warning_settings.has(which)):
+	if(warning_settings.has(which)):
 		GutUtils.pretty_print(warning_settings[which])
 	else:
 		print("UNKNOWN print option ", which)
 
 
 func _print_settings(which):
-	if(which == "current"):
-		var warnings = WarningsManager.create_warnings_dictionary_from_project_settings()
-		_print_human_readable(warnings)
-	elif(warning_settings.has(which)):
-		_print_human_readable(warning_settings[which])
+	if(warning_settings.has(which)):
+		print(_human_readable(warning_settings[which]))
 	else:
 		print("UNKNOWN print option ", which)
 
 
 func _set_settings(which):
-	var warnings = {}
-
-	if(which == 'all_warn'):
-		warnings = WarningsManager.create_warn_all_warnings_dictionary()
-		warnings.exclude_addons = false
-	elif(warning_settings.has(which)):
-		warnings = warning_settings[which]
-
-	if(warnings != {}):
-		WarningsManager.apply_warnings_dictionary(warnings)
-		ProjectSettings.save()
-		print("-- Values have been updated to --")
-		_print_settings("current")
-		print()
-		print("Changes will not be visible in Godot until it is restarted.")
-		print("Even if it asks you to reload...Maybe")
-	else:
+	if(!warning_settings.has(which)):
 		print("UNKNOWN set option ", which)
+		return
+
+	var pre_settings = warning_settings["current"]
+	var new_settings = warning_settings[which]
+
+	if(new_settings == pre_settings):
+		print("-- Settings are the same, no changes were made --")
+		return
+
+	WarningsManager.apply_warnings_dictionary(new_settings)
+	ProjectSettings.save()
+	print("-- Project Warning Settings have been updated --")
+
+	var orig_diff_text = _diff_text(
+		pre_settings,
+		WarningsManager.create_warnings_dictionary_from_project_settings(),
+		0)
+	# these next two lines are fragile and brute force...enjoy
+	var diff_text = orig_diff_text.replace("-", " -> ")
+	diff_text = diff_text.replace("+", " -> ")
+
+	print(diff_text)
+	print()
+	if(orig_diff_text == diff_text):
+		print("-- No changes were made --")
+	else:
+		print("Changes will not be visible in Godot until it is restarted.")
+		print("Even if it asks you to reload...Maybe.  Probably.")
+
+
+func _diff_text(w1, w2, diff_col_pad=10):
+	var to_return = ""
+	for key in w1:
+		var v1_text = _warn_value_to_s(w1[key])
+		var v2_text = _warn_value_to_s(w2[key])
+		var diff_text = v1_text
+		var prefix = "  "
+
+		if(v1_text != v2_text):
+			var diff_prefix = " "
+			if(w1[key] > w2[key]):
+				diff_prefix = "-"
+			else:
+				diff_prefix = "+"
+			prefix = "* "
+			diff_text = str(v1_text.rpad(diff_col_pad, ' '), diff_prefix, v2_text)
+
+		to_return += str(str(prefix, key.capitalize()).rpad(WARN_VALUE_PRINT_POSITION, ' '), diff_text, "\n")
+
+	return to_return.rstrip("\n")
+
+
+func _diff(name_1, name_2):
+	if(warning_settings.has(name_1) and warning_settings.has(name_2)):
+		var c2_pad = name_1.length() + 2
+		var heading = str(" ".repeat(WARN_VALUE_PRINT_POSITION), name_1.rpad(c2_pad, ' '), name_2, "\n")
+		heading += str(
+			" ".repeat(WARN_VALUE_PRINT_POSITION),
+			"-".repeat(name_1.length()).rpad(c2_pad, " "),
+			"-".repeat(name_2.length()),
+			"\n")
+
+		var text = _diff_text(warning_settings[name_1], warning_settings[name_2], c2_pad)
+
+		print(heading)
+		print(text)
+
+		var diff_count = 0
+		for line in text.split("\n"):
+			if(!line.begins_with("  ")):
+				diff_count += 1
+
+		if(diff_count == 0):
+			print('-- [', name_1, "] and [", name_2, "] are the same --")
+		else:
+			print('-- There are ', diff_count, ' differences between [', name_1, "] and [", name_2, "] --")
+	else:
+		print("One or more unknown Warning Level Names:, [", name_1, "] [", name_2, "]")
 
 
 func _setup_options():
 	var opts = Optparse.new()
 	opts.banner = """
-	This is the banner!  Remember to use -- or ++ before these options or they
-	don't work...but you saw this so you rememberd.  Good job.
+	This script prints info about or sets the warning settings for the project.
+	Each action requires one or more Warning Level Names.
+
+	Warning Level Names:
+	    * current        The current settings for the project.
+	    * godot_default  The default settings for Godot.
+	    * gut_default    The warning settings that is used when developing GUT.
+	    * all_warn       Everything set to warn.
 	""".dedent()
 
 	opts.add('-h', false, 'Print this help')
-	opts.add('-dump', 'none', """Prints a dictionary of all warning values.  Valid values are:
-		* current
-		* godot_default
-		* gut_default""".dedent())
-	opts.add('-print', 'none', """Print human readable warning values.  Valid values are:
-		* current
-		* godot_default
-		* gut_default""".dedent())
-	opts.add('-set', 'none', """Sets the values for the project.  Valid values are:
-		* godot_default
-		* gut_default
-		* all_warn""".dedent())
+	opts.add_heading(" Actions (require Warning Level Name)")
+	opts.add('-diff', [], "Shows the difference between two Warning Level Names.")
+	opts.add('-dump', 'none', "Prints a dictionary of the warning values.")
+	opts.add('-print', 'none', "Print human readable warning values.")
+	opts.add('-set', 'none', "Sets the values for the project.  You should restart after using this")
 
 	return opts
 
@@ -128,6 +192,8 @@ func _init():
 		_dump_settings(opts.values.dump)
 	elif(opts.values.set != 'none'):
 		_set_settings(opts.values.set)
+	elif(opts.values.diff.size() == 2):
+		_diff(opts.values.diff[0], opts.values.diff[1])
 	else:
 		opts.print_help()
 		print("You didn't specify any options.  I don't know what you want to do.")
