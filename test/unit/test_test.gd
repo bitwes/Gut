@@ -1634,16 +1634,19 @@ class TestReplaceNode:
 
 	func before_each():
 		super.before_each()
-		_arena = Arena.instantiate()
+		_arena = autofree(Arena.instantiate())
 
 	func after_each():
+		# Things get queue_free in these tests and show up as orphans when they
+		# actually aren't, so wait for them to free.
+		await wait_frames(10)
 		super.after_each()
-		_arena.queue_free()
 
 	func test_can_replace_node():
 		var replacement = autofree(Node2D.new())
 		gr.test.replace_node(_arena, 'Player1/Sword', replacement)
 		assert_eq(_arena.get_sword(), replacement)
+
 
 	func test_when_node_does_not_exist_error_is_generated():
 		var replacement = autofree(Node2D.new())

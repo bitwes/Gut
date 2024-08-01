@@ -412,6 +412,7 @@ class TestDoubleGDNaviteClasses:
 
 	func test_can_make_instances_of_native_doubles():
 		var crect_double_inst = _doubler.double_gdnative(ColorRect).new()
+		autofree(crect_double_inst)
 		assert_not_null(crect_double_inst)
 
 	func test_can_make_double_of_ref_counted_native():
