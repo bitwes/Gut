@@ -17,30 +17,57 @@
 # quickly alter project warning levels for testing purposes.
 # 	gdscript test/resources/change_project_warnings.gd --headless ++ -h
 #
+# You can set project warning settings from the command line with:
+#	godot -s addons/gut/cli/change_project_warnings.gd ++ -h
+#
 # This script should conform to, or ignore, the strictest warning settings.
 # ------------------------------------------------------------------------------
 const WARNING_PATH : String = 'debug/gdscript/warnings/'
+
+
 static var were_addons_disabled : bool = true
+
 
 @warning_ignore("unsafe_method_access")
 @warning_ignore("unsafe_property_access")
 static func _static_init() -> void:
 	were_addons_disabled = ProjectSettings.get(str(WARNING_PATH, 'exclude_addons'))
 	ProjectSettings.set(str(WARNING_PATH, 'exclude_addons'), true)
+
+	var WarningsManager = load('res://addons/gut/warnings_manager.gd')
+
+	# Turn everything back on (if it originally was on) if the warnings manager
+	# is disabled.  This makes sure we see all the warnings for all the scripts
+	# in the LazyLoader (except WarningsManager, but that's not a big deal).
+	#
+	# With the warnings manager disabled and all_warn warnings:
+	#	test_warnings_manager.gd 	-> 5471 errors
+	#	full run 				 	-> 131,742 errors
+	#
+	# With the warnings manager disabled and gut_default warnings:
+	#	test_warnings_manager.gd 	-> 46 errors
+	#	full run 					-> 165 errors.
+	if(WarningsManager.disabled):
+		ProjectSettings.set(str(WARNING_PATH, 'exclude_addons'), were_addons_disabled)
+
 	# Force a reference to utils.gd by path.  Using the class_name would cause
 	# utils.gd to load when this script loads, before we could turn off the
 	# warnings.
 	var _utils : Object = load('res://addons/gut/utils.gd')
+
 	# Since load_all exists on the LazyLoader, it should be done now so nothing
 	# sneaks in later...This essentially defeats the "lazy" part of the
 	# LazyLoader, but not the "loader" part of LazyLoader.
 	_utils.LazyLoader.load_all()
+
 	# Make sure that the values set in WarningsManager's static_init actually
 	# reflect the project settings and not whatever we do here to make things
 	# not warn.
-	_utils.WarningsManager._project_warnings.exclude_addons = were_addons_disabled
+	WarningsManager._project_warnings.exclude_addons = were_addons_disabled
 
 
+# this can be called before tests are run to reinstate whatever exclude_addons
+# was set to before this script disabled it.
 static func restore_ignore_addons() -> void:
 	ProjectSettings.set(str(WARNING_PATH, 'exclude_addons'), were_addons_disabled)
 

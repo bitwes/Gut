@@ -176,6 +176,12 @@ func _setup_options():
 
 
 func _init():
+	# Testing might set this flag but it should never be disabled for this tool
+	# or it cannot save project settings, but says it did.  Sneakily use the
+	# private property to get around this property being read-only.  Don't
+	# try this at home.
+	WarningsManager._disabled = false
+
 	_setup_warning_settings()
 
 	var opts = _setup_options()

@@ -3,10 +3,14 @@ extends GutTest
 var WarningsManager = load('res://addons/gut/warnings_manager.gd')
 
 
-func test_can_make_one():
-	var wm = WarningsManager.new()
-	assert_not_null(wm)
-	wm.print_warnings_dictionary(WarningsManager.project_warnings)
+func test_warnings_manager_is_not_disabled_by_default():
+	assert_false(WarningsManager.disabled)
+
+
+func test_cannot_disable_warnings_manager():
+	var value = WarningsManager.disabled
+	WarningsManager.disabled = !value
+	assert_eq(WarningsManager.disabled, value)
 
 
 func test_project_warnings_is_populated():
