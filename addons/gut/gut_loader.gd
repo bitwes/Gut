@@ -30,6 +30,7 @@ static var were_addons_disabled : bool = true
 
 @warning_ignore("unsafe_method_access")
 @warning_ignore("unsafe_property_access")
+@warning_ignore("untyped_declaration")
 static func _static_init() -> void:
 	were_addons_disabled = ProjectSettings.get(str(WARNING_PATH, 'exclude_addons'))
 	ProjectSettings.set(str(WARNING_PATH, 'exclude_addons'), true)
