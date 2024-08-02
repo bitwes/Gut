@@ -23,7 +23,7 @@ var godot_default_warnings = {
   "unused_signal": 1,  					"unused_variable": 1
 }
 
-var gut_warning_changes = {
+var gut_default_changes = {
   "exclude_addons": false, 				"redundant_await": 0,
 }
 
@@ -35,7 +35,7 @@ func _setup_warning_settings():
 	warning_settings["all_warn"] = WarningsManager.create_warn_all_warnings_dictionary()
 
 	var gut_default = godot_default_warnings.duplicate()
-	gut_default.merge(gut_warning_changes, true)
+	gut_default.merge(gut_default_changes, true)
 	warning_settings["gut_default"] = gut_default
 
 
@@ -69,7 +69,7 @@ func _print_settings(which):
 		print("UNKNOWN print option ", which)
 
 
-func _set_settings(which):
+func _apply_settings(which):
 	if(!warning_settings.has(which)):
 		print("UNKNOWN set option ", which)
 		return
@@ -84,22 +84,7 @@ func _set_settings(which):
 	WarningsManager.apply_warnings_dictionary(new_settings)
 	ProjectSettings.save()
 	print("-- Project Warning Settings have been updated --")
-
-	var orig_diff_text = _diff_text(
-		pre_settings,
-		WarningsManager.create_warnings_dictionary_from_project_settings(),
-		0)
-	# these next two lines are fragile and brute force...enjoy
-	var diff_text = orig_diff_text.replace("-", " -> ")
-	diff_text = diff_text.replace("+", " -> ")
-
-	print(diff_text)
-	print()
-	if(orig_diff_text == diff_text):
-		print("-- No changes were made --")
-	else:
-		print("Changes will not be visible in Godot until it is restarted.")
-		print("Even if it asks you to reload...Maybe.  Probably.")
+	print(_diff_changes_text(pre_settings))
 
 
 func _diff_text(w1, w2, diff_col_pad=10):
@@ -122,6 +107,25 @@ func _diff_text(w1, w2, diff_col_pad=10):
 		to_return += str(str(prefix, key.capitalize()).rpad(WARN_VALUE_PRINT_POSITION, ' '), diff_text, "\n")
 
 	return to_return.rstrip("\n")
+
+
+func _diff_changes_text(pre_settings):
+	var orig_diff_text = _diff_text(
+		pre_settings,
+		WarningsManager.create_warnings_dictionary_from_project_settings(),
+		0)
+	# these next two lines are fragile and brute force...enjoy
+	var diff_text = orig_diff_text.replace("-", " -> ")
+	diff_text = diff_text.replace("+", " -> ")
+
+	if(orig_diff_text == diff_text):
+		diff_text += "\n-- No changes were made --"
+	else:
+		diff_text += "\nChanges will not be visible in Godot until it is restarted.\n"
+		diff_text += "Even if it asks you to reload...Maybe.  Probably."
+
+	return diff_text
+
 
 
 func _diff(name_1, name_2):
@@ -152,6 +156,24 @@ func _diff(name_1, name_2):
 		print("One or more unknown Warning Level Names:, [", name_1, "] [", name_2, "]")
 
 
+func _set_settings(nvps):
+	var pre_settings = warning_settings["current"]
+	for i in range(nvps.size()/2):
+		var s_name = nvps[i * 2]
+		var s_value = nvps[i * 2 + 1]
+		if(godot_default_warnings.has(s_name)):
+			var t = typeof(godot_default_warnings[s_name])
+			if(t == TYPE_INT):
+				s_value = s_value.to_int()
+			elif(t == TYPE_BOOL):
+				s_value = s_value.to_lower() == 'true'
+
+			WarningsManager.set_project_setting_warning(s_name, s_value)
+			ProjectSettings.save()
+	print(_diff_changes_text(pre_settings))
+
+
+
 func _setup_options():
 	var opts = Optparse.new()
 	opts.banner = """
@@ -166,13 +188,21 @@ func _setup_options():
 	""".dedent()
 
 	opts.add('-h', false, 'Print this help')
+	opts.add('-set', [], "Sets a single setting in the project settings and saves.\n" +
+						 "Use -dump to see a list of setting names and values.\n" +
+						 "Example: -set enabled,true -set unsafe_cast,2 -set unreachable_code,0")
 	opts.add_heading(" Actions (require Warning Level Name)")
-	opts.add('-diff', [], "Shows the difference between two Warning Level Names.")
+	opts.add('-diff', [], "Shows the difference between two Warning Level Names.\n" +
+						  "Example:  -diff current,all_warn")
 	opts.add('-dump', 'none', "Prints a dictionary of the warning values.")
 	opts.add('-print', 'none', "Print human readable warning values.")
-	opts.add('-set', 'none', "Sets the values for the project.  You should restart after using this")
+	opts.add('-apply', 'none', "Applys one of the Warning Level Names to the project settings.  You should restart after using this")
 
 	return opts
+
+func _print_help(opts):
+	opts.print_help()
+
 
 
 func _init():
@@ -196,12 +226,14 @@ func _init():
 		_print_settings(opts.values.print)
 	elif(opts.values.dump != 'none'):
 		_dump_settings(opts.values.dump)
-	elif(opts.values.set != 'none'):
-		_set_settings(opts.values.set)
+	elif(opts.values.apply != 'none'):
+		_apply_settings(opts.values.apply )
 	elif(opts.values.diff.size() == 2):
 		_diff(opts.values.diff[0], opts.values.diff[1])
+	elif(opts.values.set.size() % 2 == 0):
+		_set_settings(opts.values.set)
 	else:
 		opts.print_help()
-		print("You didn't specify any options.  I don't know what you want to do.")
+		print("You didn't specify any options or too many or not the right size or something invalid.  I don't know what you want to do.")
 
 	quit()

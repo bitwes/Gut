@@ -161,8 +161,10 @@ class Option:
 
 
 	func to_s(min_space=0):
+		var line_indent = str("\n", " ".repeat(min_space + 1))
 		var subbed_desc = description
 		subbed_desc = subbed_desc.replace('[default]', str(default))
+		subbed_desc = subbed_desc.replace("\n", line_indent)
 		return str(option_name.rpad(min_space), ' ', subbed_desc)
 
 
@@ -236,7 +238,7 @@ class Options:
 			if(heading != default_heading):
 				text += str("\n", heading.display, "\n")
 			for option in heading.options:
-				text += str('  ', option.to_s(longest + 2), "\n")
+				text += str('  ', option.to_s(longest + 2).replace("\n", "\n  "), "\n")
 
 
 		return text

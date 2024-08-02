@@ -41,6 +41,14 @@ class TestOption:
 		var o = OptParse.Option.new('name', 'foobar', 'put default here [default]')
 		assert_string_ends_with(o.to_s(), 'put default here foobar')
 
+	func test_to_s_indents_multiple_lines():
+		var o = OptParse.Option.new("h", 'default', "line one\nline two\nline three")
+		var desc = o.to_s(3)
+		var lines = desc.split("\n")
+		assert_eq(lines[0], "h   line one")
+		assert_eq(lines[1], "    line two")
+		assert_eq(lines[2], "    line three")
+
 	func test_required_false_by_default():
 		var o = OptParse.Option.new('name', 'default')
 		assert_false(o.required)
