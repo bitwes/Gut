@@ -149,7 +149,7 @@ func _run_tests():
 	_ctrls.run_results.clear()
 	_ctrls.run_results.add_centered_text('Running...')
 
-	_interface.play_custom_scene('res://addons/gut/gui/GutRunner.tscn')
+	_interface.play_custom_scene('res://addons/gut/gui/run_from_editor.tscn')
 	_is_running = true
 	_ctrls.output_ctrl.add_text('Running...')
 

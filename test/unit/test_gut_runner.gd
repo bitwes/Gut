@@ -41,7 +41,6 @@ class TestQuit:
 
 	func test_does_not_quit_when_gut_config_does_not_say_to():
 		var gr = _create_runner()
-		gr.ran_from_editor = false
 		add_child_autofree(gr)
 
 		gr.run_tests()
@@ -51,7 +50,6 @@ class TestQuit:
 	func test_quits_with_exit_code_0_when_should_exit_and_everything_ok():
 		var gr = _create_runner()
 		gr.gut_config.options.should_exit = true
-		gr.ran_from_editor = false
 		add_child_autofree(gr)
 
 		gr.run_tests()
@@ -60,7 +58,6 @@ class TestQuit:
 
 	func test_quits_with_exit_code_0_when_exit_on_success_and_everything_ok():
 		var gr = _create_runner()
-		gr.ran_from_editor = false
 		gr.gut_config.options.should_exit_on_success = true
 		add_child_autofree(gr)
 
@@ -73,7 +70,6 @@ class TestQuit:
 		hook_inst.use_this_exit_code = 456
 
 		var gr = _create_runner()
-		gr.ran_from_editor = false
 		gr.gut_config.options.should_exit = true
 		stub(gr.gut, 'get_post_run_script_instance').to_return(hook_inst)
 		add_child_autofree(gr)
@@ -85,7 +81,6 @@ class TestQuit:
 
 	func test_exit_code_is_1_when_any_test_fails():
 		var gr = _create_runner()
-		gr.ran_from_editor = false
 		gr.gut_config.options.should_exit = true
 		stub(gr.gut, 'get_fail_count').to_return(1)
 		add_child_autofree(gr)
@@ -100,7 +95,6 @@ class TestQuit:
 		hook_inst.use_this_exit_code = 456
 
 		var gr = _create_runner()
-		gr.ran_from_editor = false
 		gr.gut_config.options.should_exit = true
 		stub(gr.gut, 'get_post_run_script_instance').to_return(hook_inst)
 		stub(gr.gut, 'get_fail_count').to_return(99)
@@ -113,7 +107,6 @@ class TestQuit:
 
 	func test_does_not_quit_when_exit_on_success_but_has_failing_tests():
 		var gr = _create_runner()
-		gr.ran_from_editor = false
 		gr.gut_config.options.should_exit_on_success = true
 		stub(gr.gut, 'get_fail_count').to_return(1)
 		add_child_autofree(gr)
@@ -125,7 +118,6 @@ class TestQuit:
 
 	func test_quits_when_exit_on_success_and_has_risky_tests():
 		var gr = _create_runner()
-		gr.ran_from_editor = false
 		gr.gut_config.options.should_exit_on_success = true
 		stub(gr.gut, 'get_pending_count').to_return(1)
 		add_child_autofree(gr)
@@ -139,7 +131,6 @@ class TestQuit:
 		var gr = _create_runner()
 		gr.gut_config.options.should_exit = true
 		gr.gut_config.options.dirs = []
-		gr.ran_from_editor = false
 		add_child_autofree(gr)
 
 		gr.run_tests()

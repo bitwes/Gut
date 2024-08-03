@@ -41,6 +41,14 @@ class TestOption:
 		var o = OptParse.Option.new('name', 'foobar', 'put default here [default]')
 		assert_string_ends_with(o.to_s(), 'put default here foobar')
 
+	func test_to_s_indents_multiple_lines():
+		var o = OptParse.Option.new("h", 'default', "line one\nline two\nline three")
+		var desc = o.to_s(3)
+		var lines = desc.split("\n")
+		assert_eq(lines[0], "h   line one")
+		assert_eq(lines[1], "    line two")
+		assert_eq(lines[2], "    line three")
+
 	func test_required_false_by_default():
 		var o = OptParse.Option.new('name', 'default')
 		assert_false(o.required)
@@ -334,5 +342,59 @@ class TestPositionalArguments:
 		assert_eq(op.get_value('first'), 'foo')
 		assert_true(op.get_value('--bool'))
 
+	func test_can_have_positional_arguments_with_numeric_values():
+		var op = OptParse.new()
+		op.add_positional('first', 99, 'the first one')
+		op.parse([555])
+		assert_eq(op.get_value('first'), 555)
 
 
+
+class TestValuesDictionary:
+	extends BaseTest
+
+	func test_values_dictionary_empty_by_default():
+		var op = OptParse.new()
+		assert_eq(op.values, {})
+
+	func test_values_contains_options_without_single_dash_after_parse():
+		var op = OptParse.new()
+		op.add('-foo', false, 'foo')
+		op.parse([])
+		assert_has(op.values, 'foo')
+
+	func test_values_contains_options_without_two_dashes_after_parse():
+		var op = OptParse.new()
+		op.add('--foo', false, 'foo')
+		op.parse([])
+		assert_has(op.values, 'foo')
+
+	func test_values_contains_default_value_when_not_specified():
+		var op = OptParse.new()
+		op.add('--foo', 'bar', 'foo')
+		op.parse([])
+		assert_eq(op.values.foo, 'bar')
+
+	func test_values_contains_set_value_when_specified():
+		var op = OptParse.new()
+		op.add('--foo', 'bar', 'foo')
+		op.parse(['--foo', 'i set this'])
+		assert_eq(op.values.foo, 'i set this')
+
+	func test_values_contains_positional_arguments():
+		var op = OptParse.new()
+		op.add_positional("first", 'asdf', 'the first one')
+		op.parse(['foo'])
+		assert_has(op.values, 'first')
+
+	func test_values_contains_positional_arguments_default_value():
+		var op = OptParse.new()
+		op.add_positional("first", 'asdf', 'the first one')
+		op.parse()
+		assert_eq(op.values.first, 'asdf')
+
+	func test_values_contains_positional_arguments_value():
+		var op = OptParse.new()
+		op.add_positional("first", 'asdf', 'the first one')
+		op.parse(['foo'])
+		assert_eq(op.values.first, 'foo')

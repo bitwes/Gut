@@ -161,8 +161,10 @@ class Option:
 
 
 	func to_s(min_space=0):
+		var line_indent = str("\n", " ".repeat(min_space + 1))
 		var subbed_desc = description
 		subbed_desc = subbed_desc.replace('[default]', str(default))
+		subbed_desc = subbed_desc.replace("\n", line_indent)
 		return str(option_name.rpad(min_space), ' ', subbed_desc)
 
 
@@ -236,7 +238,7 @@ class Options:
 			if(heading != default_heading):
 				text += str("\n", heading.display, "\n")
 			for option in heading.options:
-				text += str('  ', option.to_s(longest + 2), "\n")
+				text += str('  ', option.to_s(longest + 2).replace("\n", "\n  "), "\n")
 
 
 		return text
@@ -292,6 +294,8 @@ class Options:
 
 
 
+
+
 #-------------------------------------------------------------------------------
 #
 # optarse
@@ -302,6 +306,18 @@ var banner = ''
 var option_name_prefix = '-'
 var unused = []
 var parsed_args = []
+var values = {}
+
+func _populate_values_dictionary():
+	for entry in options.options:
+		var value_key = entry.option_name.lstrip('-')
+		values[value_key] = entry.value
+
+	for entry in options.positional:
+		var value_key = entry.option_name.lstrip('-')
+		values[value_key] = entry.value
+
+
 
 func _convert_value_to_array(raw_value):
 	var split = raw_value.split(',')
@@ -386,7 +402,7 @@ func _parse_command_line_arguments(args):
 
 
 func is_option(arg):
-	return arg.begins_with(option_name_prefix)
+	return str(arg).begins_with(option_name_prefix)
 
 
 func add(op_name, default, desc):
@@ -478,6 +494,7 @@ func parse(cli_args=null):
 		parsed_args.append_array(OS.get_cmdline_user_args())
 
 	unused = _parse_command_line_arguments(parsed_args)
+	_populate_values_dictionary()
 
 
 func get_missing_required_options():

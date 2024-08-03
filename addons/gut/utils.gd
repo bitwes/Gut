@@ -62,8 +62,14 @@ static var CollectedScript = LazyLoader.new('res://addons/gut/collected_script.g
 static var CompareResult = LazyLoader.new('res://addons/gut/compare_result.gd'):
 	get: return CompareResult.get_loaded()
 	set(val): pass
+static var DiffFormatter = LazyLoader.new("res://addons/gut/diff_formatter.gd"):
+	get: return DiffFormatter.get_loaded()
+	set(val): pass
 static var DiffTool = LazyLoader.new('res://addons/gut/diff_tool.gd'):
 	get: return DiffTool.get_loaded()
+	set(val): pass
+static var DoubleTools = LazyLoader.new("res://addons/gut/double_tools.gd"):
+	get: return DoubleTools.get_loader()
 	set(val): pass
 static var Doubler = LazyLoader.new('res://addons/gut/doubler.gd'):
 	get: return Doubler.get_loaded()
@@ -118,6 +124,9 @@ static var ResultExporter = LazyLoader.new('res://addons/gut/result_exporter.gd'
 	set(val): pass
 static var ScriptCollector = LazyLoader.new('res://addons/gut/script_parser.gd'):
 	get: return ScriptCollector.get_loaded()
+	set(val): pass
+static var SignalWatcher = LazyLoader.new('res://addons/gut/signal_watcher.gd'):
+	get: return SignalWatcher.get_loaded()
 	set(val): pass
 static var Spy = LazyLoader.new('res://addons/gut/spy.gd'):
 	get: return Spy.get_loaded()
@@ -183,12 +192,16 @@ static func get_logger():
 
 static var _dyn_gdscript = DynamicGdScript.new()
 static func create_script_from_source(source, override_path=null):
-	var DynamicScript = _dyn_gdscript.create_script_from_source(source, override_path)
+	var are_warnings_enabled = WarningsManager.are_warnings_enabled()
+	WarningsManager.enable_warnings(false)
 
+	var DynamicScript = _dyn_gdscript.create_script_from_source(source, override_path)
 	if(typeof(DynamicScript) == TYPE_INT):
 		var l = get_logger()
 		l.error(str('Could not create script from source.  Error:  ', DynamicScript))
 		l.info(str("Source Code:\n", add_line_numbers(source)))
+
+	WarningsManager.enable_warnings(are_warnings_enabled)
 
 	return DynamicScript
 

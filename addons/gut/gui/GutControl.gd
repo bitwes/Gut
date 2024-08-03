@@ -50,9 +50,6 @@ func _ready():
 	_config_gui = GutConfigGui.new(_ctrls.settings_vbox)
 
 	_ctrls.test_tree.hide_root = true
-	# Stop tests from kicking off when the runner is "ready" and prevents it
-	# from writing results file that is used by the panel.
-	_gut_runner.ran_from_editor = false
 	add_child(_gut_runner)
 
 	# TODO This might not need to be called deferred after changing GutUtils to
