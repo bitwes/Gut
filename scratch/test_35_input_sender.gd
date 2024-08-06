@@ -35,7 +35,7 @@ func test_input_vanilla():
 
 func test_auto_flush():
     var sender = InputSender.new(Input)
-    sender._auto_flush_input = false
+    sender.auto_flush_input = false
 
     var action_event = InputEventAction.new()
     action_event.action = 'jump'

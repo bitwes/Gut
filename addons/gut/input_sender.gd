@@ -162,7 +162,7 @@ var _pressed_keys = {}
 var _pressed_actions = {}
 var _pressed_mouse_buttons = {}
 
-var _auto_flush_input = false
+
 var _tree_items_parent = null
 var _mouse_draw = null;
 
@@ -175,6 +175,7 @@ var _last_mouse_position = {
 }
 
 
+var auto_flush_input = false
 var mouse_warp = false
 var draw_mouse = true
 
@@ -244,7 +245,7 @@ func _send_event(event):
 					Input.action_press(event.action)
 				else:
 					Input.action_release(event.action)
-			if(_auto_flush_input):
+			if(auto_flush_input):
 				Input.flush_buffered_events()
 		else:
 			if(r.has_method(&"_input")):
@@ -335,10 +336,10 @@ func is_mouse_button_pressed(which):
 	return _pressed_mouse_buttons.has(which) and _pressed_mouse_buttons[which].pressed
 
 func get_auto_flush_input():
-	return _auto_flush_input
+	return auto_flush_input
 
 func set_auto_flush_input(val):
-	_auto_flush_input = val
+	auto_flush_input = val
 
 
 func wait(t):

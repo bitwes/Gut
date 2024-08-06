@@ -1,0 +1,30 @@
+# Using an Object as a Receiver
+
+## When to Use this Approach
+It is important to understand the different ways to use the `InputSender` and their benefits/drawbacks.  This is covered in general in Input-Mocking.  Please read that before continuing.
+
+## Gotchas
+* If you use a class level `InputSender` (not recommended for this type of testing) and forget to call `release_all` and `clear` between tests then things will eventually start behaving weird and your tests will pass/fail in unpredictable ways.
+
+
+## How-to
+When you use an instance of an object as a receiver, `InputSender` will send `InputEvent` instances to the various `input` methods.  They will be called in this order:
+1.  `_input`
+1.  `_gui_input`
+1.  `_unhandled_input`
+
+When there are multiple receivers, each receiver will be called in the order they were added.  All three `_input` methods will be called on each receiver then the `InputSender` will move to the next receiver.
+
+When using objects as receivers it is recommended that each test create its own instance of `InputSender`.  `InputSender` retains information about what actions/buttons/etc have been pressed.  By creating a new instance in each test, you don't have to worry about clearing this state between tests.
+
+```gdscript
+var player = add_child_autofree(Player.new())
+var sender = InputSender.new(player)
+
+# press a, then b, then release a, then release b
+sender.key_down("a").wait(.1)\
+    .key_down(KEY_B).wait(.1)\
+    .key_up("a").wait(.1)\
+    .key_up(KEY_B)
+await sender.idle
+```
