@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://cgsvx84a3jb8m"]
+
+[ext_resource type="Texture2D" uid="uid://biw60gwe1vv6w" path="res://images/gut_logo_256x256.png" id="1_6s3wo"]
+[ext_resource type="Script" path="res://test/resources/gut_rigid_body.gd" id="1_swdm0"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hjv71"]
+radius = 111.0
+
+[node name="GutRigidBody" type="RigidBody2D"]
+input_pickable = true
+script = ExtResource("1_swdm0")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_6s3wo")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(1, 7)
+shape = SubResource("CircleShape2D_hjv71")
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

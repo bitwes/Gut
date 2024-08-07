@@ -1,26 +1,129 @@
 # Mocking Input
-One of the first things you should consider when mocking input is "maybe I shouldn't mock input".  Mocking input can be slow, tedious, and error prone, especially when testing mouse interactions.  For example, if you are trying to validate how a button click is handled, it's much faster, easier, and reliable to emit the `pressed` signal for the button instead of simulating the mouse input to click the button.
+One of the first things you should consider when mocking input is "maybe I shouldn't mock input".  Mocking input can be slow, tedious, and error prone, __especially when testing mouse interactions__.  For example, if you are trying to validate how a button click is handled, it's much faster, easier, and reliable to emit the `pressed` signal for the button instead of simulating the mouse input to click the button.
 
-There are examples below on handling mouse input and alternative approaches below.
+There are examples on handling mouse input and alternative approaches below.
 
-In general, testing mouse input is cumbersome and should be avoided when possible.  There are reasons to use it (covered below) but you should defer to invoking logic more directly when possible.
+In general, testing mouse input is cumbersome and should be avoided when possible.  There are plenty fo reasons to use it (some covered below) but you should defer to invoking logic more directly when possible.
 
-
-## Usage
-The `InputSender` class operates on one or more receivers.  It will create and send `InputEvent` instances to all of its receivers.
-
-There are two ways you could be processing your input.  You could be using the various `input` methods to receive input events and process them.  The other way is to interact with the `Input` singleton and detect input in the `_process` and `_physics_process` methods.  `InputSender` works with both approaches, but using `InputSender` differs for each approach.
+As of 9.3.1 you can use `GutInputSender` instead of `InputSender`. It's the same thing.  `GutInputSender` is just a class_name introduced in 9.3.1 for all your strict-typing and auto-complete happiness.
 
 
-Use [`Input` as a receiver](Input-Sender-Input-Singleton):  If you directly reference `Input` in your object.  _(You can use this approach even if you are not refrencing `Input` directly but it is more complicated.)_
 
-Use [Input Methods](Input-Sender-Input-Methods):  If you are handling `InputEvent`s through `_input`, `_gui_input`, and/or `_unhandled_input`.If not, you can use either approach, but using `Input` is more complicated so you should use the  approach.
+# Alright, I Want to Mock Input
 
 
-## Working around Testing Input
+## Not Using GutInputSender
+If you want to move the mouse somewhere in your tests you can use `DisplayServer.warp_mouse()` to move the mouse to a position.
+
+You can create your own `InputEvent*` instances and pass them to whatever you want or to `Input.parse_input_event()` to simulate input.
+
+`GutInputFactory` is a static class with convenience methods for creating `InputEvent*` instances which you can use however you like.
+
+Using `GutInputSender` does all this for you and a whole lot more, but you don't need to use it.
+
+
+## Using GutInputSender
+`GutInputSender` (the newly introduced class name for `InputSender`) creates and sends `InputEvent*` instances to any number of receivers, including `Input`.  It has utilities for scripting a list of inputs that playback in real time (similar to how you would use a tween).  As well as methods to clear out input state when using `Input` as a receiver.
+
+There are two common ways to process input.
+1.  Use `_input`, `_gui_input`, `_unhandled_input` to receive events and process them.
+2.  Use the `Input` singleton to detect user input in `_process` and/or `_physics_process`.
+3.  Both of these or neither of these via some other way that you should tell me about.
+
+`GutInputSender` is compatable with both approaches but usage is different.  When using the various `input` methods `GutInputSender` can send events directly to those methods.  When using `Input`, `GutInputSender` must interact with a global singleton which has additional steps to ensure state does not leak from test to test.
+
+See [Input-Sender](Input-Sender) for `GutInputSender` class reference.
+
+See [`Input` as a receiver](Input-Sender-Input-Singleton) when your object directly references `Input` to process input.
+
+See [Input Methods](Input-Sender-Input-Methods) if you are using `_input`, `_gui_input`, and/or `_unhandled_input` to process input.
+
+
+
+
+## Examples
+### Down Right Fierce (a Street Fighter fireball test)
+This example assumes input is being handled through  `_input()`.
+
+```gdscript
+func test_throw_fireball():
+	var player = add_child_autofree(Ryu.instantiate())
+	var sender = GutInputSender.new(player)
+
+	sender\
+		.action_down("down").hold_frames(5)\
+		.action_down("down-forward").hold_frames(5)\
+		# no "hold" calls since the fireball comes out when
+		# forward + punch is pressed.  With no "hold" or
+		# "wait" between forward and fierce-punch this
+		# means they will be sent on the same frame.
+		.action_down("forward").\
+		.action_down("fierce-punch").\
+		.wait_frames(5)
+	await sender.idle
+
+	assert_true(player.is_doing_hadouken)
+```
+You could take this a step farther and make this a parameterized test which passes values to `hold_frames` so that you can test different input timings.
+
+### Handling Mouse-enter/exit
+This example uses `Input` as a receiver.  Since `Input` is a global singleton we have to take additiional steps to make sure that input states, such as a button/action being down, do not leak between tests.
+
+This also uses `mouse_warp` which causes the cursor to to move to the location of any `mouse_` events.  This is required to test enter/exit events.
+
+For a test like this you should probably just emit `mouse_enter`/`mouse_exit` signals in the test, but maybe you are testing something more complicated.
+```gdscript
+extends GutTest
+
+# 256 x 256 sprite with collision shape over most of it.  The sprite
+# is a public @onready variable named `sprite`.
+var GutRigidBody = load("res://test/resources/gut_rigid_body.tscn")
+
+var _sender = InputSender.new(Input)
+
+func before_all():
+	_sender.mouse_warp = true
+
+func after_each():
+	_sender.release_all()
+	_sender.clear()
+	await wait_frames(1)
+
+func test_mouse_enter_modulates_sprite():
+	var rb = add_child_autofree(GutRigidBody.instantiate())
+	# Must freeze or it will fall
+	rb.freeze = true
+	rb.position = Vector2(300, 300)
+
+	_sender.mouse_motion(Vector2(140, 300))\
+		.mouse_relative_motion(Vector2(100, 0))\
+		.wait_frames(1)
+	await _sender.idle
+
+	assert_ne(rb.sprite.modulate, Color(1, 1, 1))
+
+func test_mouse_exit_removes_modulate():
+	var rb = add_child_autofree(GutRigidBody.instantiate())
+	rb.freeze = true
+	rb.position = Vector2(300, 300)
+
+	_sender.mouse_motion(Vector2(140, 300))\
+		.mouse_relative_motion(Vector2(100, 0))\
+		.wait_frames(10)\
+		.mouse_relative_motion(Vector2(-100, 0))\
+		.wait_frames(10)
+	await _sender.idle
+
+	assert_eq(rb.sprite.modulate, Color(1, 1, 1))```
+```
+
+
+
+
+## Not Mocking Mouse Input
 I want to mock input just as much as you do.  It sounds cool and fun and looks neat.  I want to watch that mouse move around and click things.  Unfortunately, in many cases it is overkill, slow, and overly complicated.  It is better to test our objects more directly even if means making something public that wouldn't normally be, or being sneaky and operating on private properies.
 
-### Emit signals manually and check properties whenever possible, instead of simulating clicks.
+### Emitting Signals vs Input Mocking (a very short case study)
 Here's MyObject and two inner-test-classes that test
 * the button on MyObject increments the counter
 * the button becomes disabled when the counter is incremented to 10 or more.
@@ -120,52 +223,36 @@ Using mouse input to test the button is more complicated and slower.  It is also
 
 
 
-* wrappers for things that get the mouse position (`get_viewport().get_mouse_position()`) that you can double/stub.
+
+## Faking mouse position
+You might be using `get_viewport().get_mouse_position()` to determine where the mouse is.  You can directly control where the mouse is without using `GutInputSender` by using `DisplayServer.warp_mouse`.  This will move the mouse cursor to that location, but these kinds of tests require you don't touch the mouse and won't work in headless mode.
+
+One approach would be to make the methods that operate on mouse position public and have them accept the mouse's position.  This is probably the cleanest approach, but could make tests too verbose when performing integration tests with complicated mouse interations.
+
+Another approach is to create a wrapper method in your object to get the mouse position.  You can then create a paritial double of that object and stub the return value.  This requires stubbing a "private" method, which is bad practice in general...but since we cannot stub the viewport this is about the only choice.
+
+MyObject
+```gdscript
+extends Node2D
+...
+func _where_is_the_mouse():
+	return get_viewport().get_mouse_position()
+...
+```
+test_my_object
+```gdscript
+func test_when_mouse_is_at_100_100_something_happens():
+	var my_object = add_child_autofree(parital_double(MyObject).new())
+	stub(my_object._where_is_the_mouse).to_return(Vector2(100, 100))
+	# wait some frames for my_object to process the mouse position
+	await wait_frames(5)
+	assert_true(my_object.something_happened())
+```
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-## When to Use Mouse Mocking
-There are a lot of reasons to use mouse input mocking.  This is not an exhaustive list.
-
-
-### Cases I can think of where mocking input is useful in unit tests:
-You are testing input handling that you have created, such as:
-* Dragging objects (strictly that follow the mouse when dragged, not dragging them into something else)
-* Logic when mouse enters/exits
-
-Cases for integration tests
-* Layering logic, where things should/shouldn't recieve mouse events when they are in front/behind other objects.
-* Complex mouse handling logic (or things I can't think of right now).
-
-
-## Notes
-* You should probably avoid having to send mouse inputs to `Input` as much as possible.
-* Mocking input in unit tests is more suited to test controller/keyboard/action input.
-* When running tests that send InputEvents to `Input` you must refrain from touching the mouse or keyboard or it may make the test fail.
-* Tests that send `InputEvent`s to `Input` cannot be run head `--headless` mode.
-
-
-
-The Input mocking is more useful when you have implemented complicated logic in your input handling. Like if you have made your own "pressed" event on an Area2D by
-
-If you are:
-* handling mouse enter/exit
-* handling mouse buttons' pressed events (left/right/center buttons up/down)
-* detecting a click manually through `input` events and emitting your own signal.
-
-
+All the Input links:
 * [Input Sender](Input-Sender)
-* [Input Sender Using Input Methods](Input-Sender-Input-Methods)
-* [Input Sender Using Input Singleton](Input-Sender-Input-Singleton)
+* [Input Sender Using input Virtual Methods](Input-Sender-Input-Methods)
+* [Input Sender Using the Input Singleton](Input-Sender-Input-Singleton)
 * [Input Factory](Input-Factory)

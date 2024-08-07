@@ -78,3 +78,48 @@ class TestUsingInputMocking:
 		await _sender.idle
 
 		assert_eq(my_object.counter, 10)
+
+
+class TestMouseAndRigidBody:
+	extends GutTest
+
+	# 256 x 256 sprite with collision shape over most of it.
+	var GutRigidBody = load("res://test/resources/gut_rigid_body.tscn")
+
+	var _sender = InputSender.new(Input)
+
+	func before_all():
+		_sender.mouse_warp = true
+
+	func after_each():
+		_sender.release_all()
+		_sender.clear()
+		await wait_frames(1)
+
+	func test_mouse_enter_modulates_sprite():
+		var rb = add_child_autofree(GutRigidBody.instantiate())
+		# Must freeze or it will fall
+		rb.freeze = true
+		rb.position = Vector2(300, 300)
+
+		_sender.mouse_motion(Vector2(140, 300))\
+			.mouse_relative_motion(Vector2(100, 0))\
+			.wait_frames(1)
+		await _sender.idle
+
+		assert_ne(rb.sprite.modulate, Color(1, 1, 1))
+
+	func test_mouse_exit_removes_modulate():
+		var rb = add_child_autofree(GutRigidBody.instantiate())
+		rb.freeze = true
+		rb.position = Vector2(300, 300)
+
+		_sender.mouse_motion(Vector2(140, 300))\
+			.mouse_relative_motion(Vector2(100, 0))\
+			.wait_frames(10)\
+			.mouse_relative_motion(Vector2(-100, 0))\
+			.wait_frames(10)
+		await _sender.idle
+
+		assert_eq(rb.sprite.modulate, Color(1, 1, 1))
+

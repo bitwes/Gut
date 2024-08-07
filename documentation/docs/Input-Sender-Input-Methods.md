@@ -1,7 +1,9 @@
 # Using an Object as a Receiver
 
 ## When to Use this Approach
-It is important to understand the different ways to use the `InputSender` and their benefits/drawbacks.  This is covered in general in Input-Mocking.  Please read that before continuing.
+It is important to understand the different ways to use the `InputSender` and their benefits/drawbacks.  This is covered in general in [Mocking-Input](Mocking-Input).  Please read that before continuing.
+
+See [Input-Sender](Input-Sender) for details on the `GutInputSender` class.
 
 ## Gotchas
 * If you use a class level `InputSender` (not recommended for this type of testing) and forget to call `release_all` and `clear` between tests then things will eventually start behaving weird and your tests will pass/fail in unpredictable ways.

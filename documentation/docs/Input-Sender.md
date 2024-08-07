@@ -3,7 +3,7 @@
 The `InputSender` class can be used to send `InputEvent*` events to various objects (recievers).  It also allows you to script out a series of inputs and play them back in real time.  You could use it to:
 * Verify that jump height depends on how long the jump button is pressed.
 * Double tap a direction performs a dash.
-* Down, Down-Forward, Forward + punch throws a fireball.
+* Move the mouse around and click things.
 
 And much much more.
 

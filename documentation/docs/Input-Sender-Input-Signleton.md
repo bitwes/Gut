@@ -1,7 +1,9 @@
 # Using `Input` as a Receiver
 
 ## When to Use this Approach
-It is important to understand the different ways to use the `InputSender` and their benefits/drawbacks.  This is covered in general in Mocking-Input.  Please read that before continuing.
+It is important to understand the different ways to use the `InputSender` and their benefits/drawbacks.  This is covered in general in [Mocking-Input](Mocking-Input).  Please read that before continuing.
+
+See [Input-Sender](Input-Sender) for details on the `GutInputSender` class.
 
 ## Gotchas
 * When using `Input` as a receiver, everything in the tree gets the signals AND any inputs from hardware as well.  It's best not to touch anything when running these tests.
@@ -29,12 +31,13 @@ var _sender = InputSender.new(Input)
 func after_each():
     _sender.release_all()
     _sender.clear()
+    await wait_frames(1)
 
 func test_shoot():
     var player = Player.new()
 
     _sender.action_down("shoot").wait_frames(1)
-    await(_sender.idle)
+    await _sender.idle
 
     assert_true(player.is_shooting())
 ```
