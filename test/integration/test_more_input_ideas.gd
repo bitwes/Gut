@@ -59,10 +59,10 @@ func test_draw_mouse():
 		.mouse_right_button_up()\
 		.mouse_relative_motion(Vector2(10, 10)).wait(.5)\
 		.mouse_relative_motion(Vector2(10, 10)).wait(.5)\
-		.mouse_left_button_down().hold_for(.5)\
+		.mouse_left_button_down().hold_secs(.5)\
 		.mouse_relative_motion(Vector2(10, 10)).wait(.5)\
 		.mouse_relative_motion(Vector2(10, 10)).wait(.5)\
-		.mouse_right_button_down().hold_for(.5)\
+		.mouse_right_button_down().hold_secs(.5)\
 		.mouse_relative_motion(Vector2(10, 10)).wait(.5)\
 		.mouse_left_button_down()\
 		.mouse_right_button_down()\
@@ -130,7 +130,7 @@ func test_clicking_things_with_input_as_receiver():
 		var new_pos = start_pos + Vector2i(i * 10, 0)
 		await sender.wait(.1)\
 			.mouse_left_button_down(new_pos)\
-			.hold_for(.1)\
+			.hold_secs(.1)\
 			.wait(.1).idle
 
 	_print_emitted_signals(btn)
@@ -181,7 +181,7 @@ func test_clicking_things_with_button_as_receiver():
 		var new_pos = start_pos + Vector2i(i * 10, 0)
 		await sender.wait(.1)\
 			.mouse_left_button_down(new_pos)\
-			.hold_for(.1)\
+			.hold_secs(.1)\
 			.wait(.1).idle
 
 	_print_emitted_signals(btn)

@@ -70,7 +70,7 @@ func after_each():
 func test_tapping_jump_jumps_certain_height():
     var player = add_child_autofree(Player.new())
 
-    _sender.action_down("jump").hold_for(.1).wait(.3)
+    _sender.action_down("jump").hold_secs(.1).wait(.3)
     await(_sender.idle)
 
     assert_between(player.position.y, 4, 5)
@@ -81,21 +81,21 @@ func test_tapping_jump_jumps_certain_height():
 func test_holding_jump_jumps_higher():
     var player = add_child_autofree(Player.new())
 
-    _sender.action_down("jump").hold_for(.75)
+    _sender.action_down("jump").hold_secs(.75)
     await(_sender.idle)
 
     assert_between(player.position.y, 7, 8)
 
 
 # This tests throwing a fireball, like with Ryu or Ken from Street Fighter.
-# Note that there is not a hold_for after "forward" and the key_down for
+# Note that there is not a hold_frames after "forward" and the key_down for
 # fierce punch (FP) immediately after.  This means the "forward" motion AND
 # FP are pressed in the same frame.
 func test_fireball_input():
     var player = add_child_autofree(Player.new())
 
-    _sender.action_down("down").hold_for("2f")\
-        .action_down("down_forward").hold_for("2f")\
+    _sender.action_down("down").hold_frames(2)\
+        .action_down("down_forward").hold_frames(2)\
         .action_down("forward").key_down("FP")
     await(_sender.idle)
 

@@ -5,7 +5,7 @@ class_name GutInputSender
 # 	InputEventMouseButton
 #	InputEventMouseMotion
 
-# Yet to implement InputEvents
+# Planned InputEvents to implement
 # 	InputEventJoypadButton
 # 	InputEventJoypadMotion
 # 	InputEventMagnifyGesture
@@ -22,9 +22,11 @@ class InputQueueItem:
 	extends Node
 
 	var events = []
-	var time_delay = null
-	var frame_delay = null
-	var _waited_frames = 0
+	var time_delay := 0.0
+	var frame_delay := 1
+	var _waited_frames := 0
+	var _waited_time := 0.0
+
 	var _is_ready = false
 	var _delay_started = false
 
@@ -33,31 +35,32 @@ class InputQueueItem:
 	# TODO should this be done in _physics_process instead or should it be
 	# configurable?
 	func _physics_process(delta):
-		if(frame_delay > 0 and _delay_started):
-			_waited_frames += 1
-			if(_waited_frames >= frame_delay):
-				event_ready.emit()
+		if(!_is_ready and _delay_started):
+			if(frame_delay > 0):
+				_waited_frames += 1
+				if(_waited_frames >= frame_delay):
+					_handle_delay_finished()
+			elif(time_delay > 0.0):
+				_waited_time += delta
+				if(_waited_time >= time_delay):
+					_handle_delay_finished()
+
+	func _handle_delay_finished():
+		_is_ready = true
+		event_ready.emit()
 
 	func _init(t_delay,f_delay):
 		time_delay = t_delay
 		frame_delay = f_delay
 		_is_ready = time_delay == 0 and frame_delay == 0
 
-	func _on_time_timeout():
-		_is_ready = true
-		event_ready.emit()
-
-	func _delay_timer(t):
-		return Engine.get_main_loop().root.get_tree().create_timer(t)
 
 	func is_ready():
 		return _is_ready
 
+
 	func start():
 		_delay_started = true
-		if(time_delay > 0):
-			var t = _delay_timer(time_delay)
-			t.connect("timeout",Callable(self,"_on_time_timeout"))
 
 
 
@@ -342,6 +345,7 @@ func set_auto_flush_input(val):
 	auto_flush_input = val
 
 
+# TODO deprecate
 func wait(t):
 	if(typeof(t) == TYPE_STRING):
 		var suffix = t.substr(t.length() -1, 1)
@@ -509,16 +513,50 @@ func wait_secs(num_secs):
 	_add_queue_item(item)
 	return self
 
+# alias
+func wait_seconds(num_secs):
+	return wait_secs(num_secs)
 
+
+# TODO deprecate
 func hold_for(duration):
-	if(_last_event != null and _last_event.pressed):
-		var next_event = _last_event.duplicate()
-		next_event.pressed = false
-
+	var next_event = _make_release_event_from_last_event()
+	if(next_event != null):
 		wait(duration)
+		send_event(next_event)
+
+	return self
+
+
+func hold_frames(frames):
+	var next_event = _make_release_event_from_last_event()
+	if(next_event != null):
+		wait_frames(frames)
+		send_event(next_event)
+
+	return self
+
+# alias
+func hold_seconds(num_secs):
+	return hold_secs(num_secs)
+
+
+func hold_secs(num_secs):
+	var next_event = _make_release_event_from_last_event()
+	if(next_event != null):
+		wait_secs(num_secs)
 		send_event(next_event)
 	return self
 
+
+func _make_release_event_from_last_event():
+	var to_return = null
+
+	if(_last_event != null and _last_event.pressed):
+		to_return = _last_event.duplicate()
+		to_return.pressed = false
+
+	return to_return
 
 # ##############################################################################
 #(G)odot (U)nit (T)est class

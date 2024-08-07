@@ -54,7 +54,7 @@ class InputTracker:
 
 	var _frame_counter = 0
 
-	func _process(delta):
+	func _physics_process(_delta):
 		_frame_counter += 1
 
 	func _input(event):
@@ -62,8 +62,9 @@ class InputTracker:
 		input_frames.append(_frame_counter)
 
 	func print_events():
-		for e in inputs:
-			print(e)
+		for i in inputs.size():
+			print('frame ', input_frames[i], ":  ", inputs[i])
+
 
 class TestTheBasics:
 	extends GutInternalTester
@@ -235,6 +236,13 @@ class TestTheBasics:
 
 		sender.key_down("R")
 		assert_eq(lgr.get_warnings().size(), 1)
+
+	func test_wait_seconds_is_alias_for_hold_secs():
+		var sender = partial_double(GutInputSender).new()
+		var result = sender.wait_seconds(5)
+
+		assert_called(sender, 'wait_secs', [5])
+		assert_eq(result, sender)
 
 
 class TestCreateKeyEvents:
@@ -765,6 +773,68 @@ class TestHoldFor:
 		assert_true(left_pressed, "left mouse pressed")
 		var left_released = r.inputs[1].button_index == MOUSE_BUTTON_LEFT and !(r.inputs[1].pressed)
 		assert_true(left_released, 'left mouse released')
+
+	func test_hold_frames_creates_up_event():
+		var r = add_child_autofree(InputTracker.new())
+		var sender = GutInputSender.new(r)
+
+		sender.mouse_left_button_down(Vector2(1, 1)).hold_frames(5)
+		await wait_for_signal(sender.idle, 5)
+
+		assert_eq(r.inputs.size(), 2, 'should cause two inputs')
+		if(is_passing()):
+			assert_false(r.inputs[1].pressed, 'event sent should not be pressed')
+
+	func test_hold_frames_holds_for_expected_frames():
+		var r = add_child_autofree(InputTracker.new())
+		var sender = GutInputSender.new(r)
+
+		sender.mouse_left_button_down(Vector2(1, 1)).hold_frames(5)
+		await wait_for_signal(sender.idle, 2)
+
+		assert_almost_eq(r.input_frames[1], 5, 1)
+
+	func test_hold_frames_returns_self():
+		var sender = GutInputSender.new()
+		var result = sender.hold_frames(1)
+		assert_eq(result, sender)
+
+	func test_hold_secs_returns_self():
+		var sender = GutInputSender.new()
+		var result = sender.hold_secs(1)
+		assert_eq(result, sender)
+
+	func test_hold_seconds_holds_for_expected_time():
+		var sender = GutInputSender.new()
+
+		var then = Time.get_ticks_msec()
+		sender.mouse_left_button_down(Vector2(1, 1)).hold_secs(1)
+		await wait_for_signal(sender.idle, 2)
+		var now = Time.get_ticks_msec()
+
+		assert_almost_eq(now - then, 1000, 150)
+
+	func test_hold_seconds_creates_up_event():
+		var r = add_child_autofree(InputTracker.new())
+		var sender = GutInputSender.new(r)
+
+		sender.mouse_left_button_down(Vector2(1, 1)).hold_secs(1)
+		await wait_for_signal(sender.idle, 2)
+
+		assert_eq(r.inputs.size(), 2, 'should cause two inputs')
+		if(is_passing()):
+			assert_false(r.inputs[1].pressed, 'event sent should not be pressed')
+
+	func test_hold_seconds_is_alias_for_hold_secs():
+		var sender = partial_double(GutInputSender).new()
+		var result = sender.hold_seconds(5)
+
+		assert_called(sender, 'hold_secs', [5])
+		assert_eq(result, sender)
+
+
+
+
 
 
 class TestReleaseAll:

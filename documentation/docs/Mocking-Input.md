@@ -197,7 +197,7 @@ class TestUsingInputMocking:
 		var orig_count = my_object.counter
 
 		_sender.mouse_left_button_down(my_object.button.global_position)\
-			.hold_for(.1)\
+			.hold_secs(.1)\
 			.wait_frames(5)
 		await _sender.idle
 
@@ -210,10 +210,10 @@ class TestUsingInputMocking:
 		# click twice to make sure it increments to 10 but
 		# then not past it.
 		_sender.mouse_left_button_down(my_object.button.global_position)\
-			.hold_for(.1)\
+			.hold_secs(.1)\
 			# click 2
 			.mouse_left_button_down()\
-			.hold_for(.1)\
+			.hold_secs(.1)\
 			.wait_frames(5)
 		await _sender.idle
 

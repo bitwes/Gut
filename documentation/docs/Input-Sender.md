@@ -31,15 +31,15 @@ var player = Player.new()
 var sender = InputSender.new(player)
 
 # press a, then b, then release a, then release b
-sender.key_down("a").wait(.1)\
-    .key_down(KEY_B).wait(.1)\
-    .key_up("a").wait(.1)\
+sender.key_down("a").wait_secs(.1)\
+    .key_down(KEY_B).wait_secs(.1)\
+    .key_up("a").wait_secs(.1)\
     .key_up(KEY_B)
 await(sender.idle)
 ```
 The `InputSender` will emit the `idle` signal when all inputs in a sequence have been sent and all `waits` have expired.
 
-Any events that do not have a `wait` or `hold_for` call in between them will be fired on the same frame.
+Any events that do not have a `wait*` or `hold*` call in between them will be fired on the same frame.
 ```gdscript
 # checking for is_action_just_pressed for "jump" and "fire" will be true in the same frame.
 sender.action-down("jump").action_down("fire")
@@ -49,14 +49,9 @@ You can use a trailing `wait` to give the result of the input time to play out
 ```gdscript
 # wait an extra .2 seconds at the end so that asserts will be run after the
 # shooting animation finishes.
-sender.action_down("shoot").hold_for(1).wait(.2)
+sender.action_down("shoot").hold_secs(1).wait_secs(.2)
 await(sender.idle)
 ```
-
-## Input Receivers
-### Objects
-
-### Input
 
 
 ## Understanding Input.use_accumulated_input
@@ -68,7 +63,7 @@ When `use_accumulated_input` is enabled (it is by default), `Input` waits to pro
 
 #### Recommended approaches
 1.  If you game does not want to have `use_accumulated_input` enabled, then disable it in a an Autoload.  GUT loads autoloads before running so this will disable it for all tests.
-1.  Always have a trailing `wait` when sending input `_sender.key_down('a').wait('10f')`.  In testing, 6 frames wasn't enough but 7 was _(for reasons I don't understand but probably should so I used 10 frames for good measure)_.
+1.  Always have a trailing `wait` when sending input `_sender.key_down('a').wait_frames(10)`.  In testing, 6 frames wasn't enough but 7 was _(for reasons I don't understand but probably should so I used 10 frames for good measure)_.
 1.  After sending all your input, call `Input.flush_buffered_events`.  Only use this in the specific cases where you know you want to send inputs immediately since this is NOT how your game will actually receive inputs.
 
 #### Other ways that aren't so good.
@@ -106,7 +101,7 @@ func test_when_uai_enabled_input_not_processed_immediately():
 func test_when_uai_enabled_waiting_makes_button_pressed():
     # wait 10 frames.  In testing, 6 frames failed, but 7 passed.  Added 3 for
     # good measure.
-    _sender.key_down(KEY_Y).wait('10f')
+    _sender.key_down(KEY_Y).wait_frames(10)
     await(_sender.idle)
     assert_true(_sender.is_key_pressed(KEY_Y))
     assert_true(Input.is_key_pressed(KEY_Y))
@@ -152,23 +147,34 @@ This should be done between each test when the `InputSender` is a class level va
 `is_idle()`<br>
 Returns true if the input queue has items to be processed, false if not.
 
-### wait
-`wait(t)`<br>
-Adds a delay between the last input queue item added and any queue item added next.  By default this will wait `t` seconds.  You can specify a number of frames to wait by passing a string composed of a number and "f".  For example `wait("5f")` will wait 5 frames.
 
 ### wait_frames
 `wait_frames(num_frames)`<br>
-Same as `wait` but only accepts a number of frames to wait.
+Adds a delay of `num_frames` between the last input queue item added and any queue item added next.
 
 ### wait_secs
 `wait_secs(num_secs)`<br>
-Same as `wait` but only accepts a number of seconds to wait.
+Same as `wait_frames` but creates a delay of `num_secs` seconds instead of frames.
 
-### hold_for
-`hold_for(duration)`<br>
-This is a special `wait` that will emit the previous input queue item with `pressed = false` after a delay.  If you pass a number then it will wait that many seconds.  You can also use the `"4f"` format to wait a specific number of frames.
+### wait_seconds
+Alias for `wait_secs`
 
-For example `sender.action_down('jump').hold_for("10f")` will cause two `InputEventAction` instances to be sent.  The "jump-down" event from `action_down` and then a "jump-up" event after 10 frames.
+
+### hold_frames
+`hold_frames(frames)`<br>
+This is a special `wait` that will emit the previous input queue item with `pressed = false` after a delay.
+
+For example `sender.action_down('jump').hold_frames(10)` will cause two `InputEventAction` instances to be sent.  The "jump-down" event from `action_down` and then another action 10 frames later with  pressed false.
+
+
+### hold_secs
+`hold_secs(num_secs)`<br>
+Same as `hold_frames` but holds for a number of seconds instead of frames.
+
+
+### hold_seconds
+Alias for hold_secs
+
 
 ### mouse_set_position
 `mouse_set_position(position, global_position=null)`<br>

@@ -116,7 +116,7 @@ func test_same_thing_another_way():
 	var sender = InputSender.new(Input)
 	await sender\
 		.mouse_left_button_down(btn.position + Vector2(10, 10))\
-		.hold_for('5f')\
+		.hold_frames(5)\
 		.wait_frames(5)\
 		.idle
 
@@ -137,7 +137,7 @@ func test_same_thing_another_way_but_with_autoflush():
 
 	await sender\
 		.mouse_left_button_down(btn.position + Vector2(10, 10))\
-		.hold_for('1f')\
+		.hold_frames(1)\
 		.idle
 
 	assert_signal_emitted(btn, 'button_down')
