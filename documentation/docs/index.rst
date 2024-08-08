@@ -44,6 +44,8 @@
    :name: sec-mockinput
 
    Mocking-Input
+   Input-Sender-Input-Methods
+   Input-Sender-Input-Singleton
    Input-Sender
    Input-Factory
 

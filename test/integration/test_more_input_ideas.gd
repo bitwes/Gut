@@ -93,7 +93,7 @@ func test_drag_something():
 	assert_true(Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT), 'left button is down')
 	await sender\
 		.mouse_left_button_up()\
-		.wait('1f')\
+		.wait_frames(1)\
 		.mouse_relative_motion(Vector2(1, 1))\
 		.wait(.2).idle
 

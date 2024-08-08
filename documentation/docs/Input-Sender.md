@@ -13,18 +13,8 @@ __Warning__<br>
 If you move the Godot window to a different monitor while tests are running it can cause input tests to fail.  [This issue](https://github.com/bitwes/Gut/issues/643) has more details.
 
 
-## Signals
-* `idle` - Emitted when all events in the input queue have been sent.
-
-
-## Properties
-* `auto_flush_input` - Default false.  You probably should not enable this.  This can help work around not using `Input.use_accumulated_input`.  In most cases, enabling this, means that objects under test will not receive events with the same timing they will when playing the game.
-* `mouse_warp` - Default false.  When enabled, any mouse event will cause the actual mouse cursor to move to the location of the event.  This is required for testing some events like mouse enter/exit.  Moving the mouse while using this will likely cause tests to fail.
-* `draw_mouse` - Default true.  Draws a mouse crosshair that also has button indicators.  It's crude right now, but usefult.
-
-
-### Chaining Input Events
-The `InputSender` methods return the instance so you can chain multiple calls together to script out a sequence of inputs.  The sequence is immediately started.  When the sequence finishes the `'idle'` signal is emitted.
+### Chaining Input Events (Input Sequence)
+You can chain multiple calls together to script out a sequence of inputs, similar to how you would interact with a `Tween`.  The sequence is immediately started, you do not have to explicitly start it.  When the sequence finishes the `idle` signal is emitted.
 
 ```
 var player = Player.new()
@@ -37,85 +27,34 @@ sender.key_down("a").wait_secs(.1)\
     .key_up(KEY_B)
 await(sender.idle)
 ```
+
 The `InputSender` will emit the `idle` signal when all inputs in a sequence have been sent and all `waits` have expired.
 
-Any events that do not have a `wait*` or `hold*` call in between them will be fired on the same frame.
+Any events created that do not have a `wait*` or `hold*` call in between them will be sent on the same frame.
+
 ```gdscript
 # checking for is_action_just_pressed for "jump" and "fire" will be true in the same frame.
 sender.action-down("jump").action_down("fire")
 ```
 
-You can use a trailing `wait` to give the result of the input time to play out
+You can use a trailing `wait_frames`/`wait_secs` to give the result of the input time to play out
 ```gdscript
 # wait an extra .2 seconds at the end so that asserts will be run after the
 # shooting animation finishes.
-sender.action_down("shoot").hold_secs(1).wait_secs(.2)
+sender.action_down("shoot")\
+    .hold_secs(1)\
+    .wait_secs(.2)
 await(sender.idle)
 ```
 
-
-## Understanding Input.use_accumulated_input
-When `use_accumulated_input` is enabled (it is by default), `Input` waits to process input until the end of a frame.  This means that if you do not flush the buffer or there are no "waits" or calls to `await` before you test how input was processed then your tests will fail.
-
-### Testing with use_accumulated_input
-`Input.use_accumulated_input` is enabled by default.  There are cases where you may have disabled this for your game.
+## Signals
+* `idle` - Emitted when all events in the input queue have been sent.
 
 
-#### Recommended approaches
-1.  If you game does not want to have `use_accumulated_input` enabled, then disable it in a an Autoload.  GUT loads autoloads before running so this will disable it for all tests.
-1.  Always have a trailing `wait` when sending input `_sender.key_down('a').wait_frames(10)`.  In testing, 6 frames wasn't enough but 7 was _(for reasons I don't understand but probably should so I used 10 frames for good measure)_.
-1.  After sending all your input, call `Input.flush_buffered_events`.  Only use this in the specific cases where you know you want to send inputs immediately since this is NOT how your game will actually receive inputs.
-
-#### Other ways that aren't so good.
-If you use these approaches you should quarantine these tests in their own Inner Class or script so that they do not influence other tests that do not expect the buffer to be constantly flushed or `use_accumulated_input` to be disabled.
-1.  In GUT 7.4.0 `InputSender` has an `auto_flush_input` property which is disabled by default.  When enabled this will call `Input.flush_buffered_events` after each input sent through an `InputSender`.  This is a bit dangerous since this can cause some of your tests to not test the way your game will receive input when playing the game.
-1.  You can disable `use_accumulated_input` in `before_all` and re-enable in `after_all`.  Just like with `auto_flush_input`, this has the potential to not test all inputs the same way as your game will get them when playing the game.
-
-### Examples
-The following assume `use_accumulated_input` is enabled and uses Godot 3.5 syntax.  In 3.4 you have to call `set_use_accumulated_input`.  There is no way to check the value of this flag in 3.4.
-```gdscript
-extends GutTest
-
-extends GutTest
-
-var _sender = InputSender.new(Input)
-var _orig_accum_input = Input.use_accumulated_input
-
-func before_all():
-    InputMap.add_action("jump")
-    Input.use_accumulated_input = true
-    await wait_frames(1)
-
-func after_each():
-    _sender.release_all()
-    _sender.clear()
-
-func after_all():
-    Input.use_accumulated_input = _orig_accum_input
-    InputMap.erase_action("jump") # I added this too, probably the right thing to do.
-
-func test_when_uai_enabled_input_not_processed_immediately():
-    _sender.key_down('a')
-    assert_false(Input.is_key_pressed(KEY_A))
-
-func test_when_uai_enabled_waiting_makes_button_pressed():
-    # wait 10 frames.  In testing, 6 frames failed, but 7 passed.  Added 3 for
-    # good measure.
-    _sender.key_down(KEY_Y).wait_frames(10)
-    await(_sender.idle)
-    assert_true(_sender.is_key_pressed(KEY_Y))
-    assert_true(Input.is_key_pressed(KEY_Y))
-
-func test_when_uai_enabled_flushig_buffer_sends_input_immediatly():
-    _sender.key_down('a')
-    Input.flush_buffered_events()
-    assert_true(Input.is_key_pressed(KEY_A))
-
-func test_when_uai_enabled_flushing_buffer_just_pressed_is_processed_immediately():
-    _sender.action_down('jump')
-    Input.flush_buffered_events()
-    assert_true(Input.is_action_just_pressed('jump'))
-```
+## Properties
+* `auto_flush_input` - Default false.  You probably should not enable this.  This can help work around not using `Input.use_accumulated_input`.  In most cases, enabling this, means that objects under test will not receive events with the same timing they will when playing the game.
+* `mouse_warp` - Default false.  When enabled, any mouse event will cause the actual mouse cursor to move to the location of the event.  This is required for testing some events like mouse enter/exit.  Moving the mouse while using this will likely cause tests to fail.
+* `draw_mouse` - Default true.  Draws a mouse crosshair that also has button indicators.  It's crude right now, but usefult.
 
 
 ## Methods

@@ -24,9 +24,9 @@ var player = add_child_autofree(Player.new())
 var sender = InputSender.new(player)
 
 # press a, then b, then release a, then release b
-sender.key_down("a").wait(.1)\
-    .key_down(KEY_B).wait(.1)\
-    .key_up("a").wait(.1)\
+sender.key_down("a").wait_secs(.1)\
+    .key_down(KEY_B).wait_secs(.1)\
+    .key_up("a").wait_secs(.1)\
     .key_up(KEY_B)
 await sender.idle
 ```

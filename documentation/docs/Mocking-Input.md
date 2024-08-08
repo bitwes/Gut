@@ -9,21 +9,19 @@ As of 9.3.1 you can use `GutInputSender` instead of `InputSender`. It's the same
 
 
 
-# Alright, I Want to Mock Input
+## Alright, I Want to Mock Input
 
 
-## Not Using GutInputSender
-If you want to move the mouse somewhere in your tests you can use `DisplayServer.warp_mouse()` to move the mouse to a position.
+### Not Using GutInputSender
+If you want to move the mouse somewhere in your tests you can use `DisplayServer.warp_mouse()` to move the mouse to a position.  This is functionally the same as moving the mouse and what `GutInputSender` uses when `mouse_warp` is enabled.
 
-You can create your own `InputEvent*` instances and pass them to whatever you want or to `Input.parse_input_event()` to simulate input.
+You can create your own `InputEvent*` instances and pass them to whatever you want or pass them to `Input.parse_input_event()` to simulate input.
 
 `GutInputFactory` is a static class with convenience methods for creating `InputEvent*` instances which you can use however you like.
 
-Using `GutInputSender` does all this for you and a whole lot more, but you don't need to use it.
 
-
-## Using GutInputSender
-`GutInputSender` (the newly introduced class name for `InputSender`) creates and sends `InputEvent*` instances to any number of receivers, including `Input`.  It has utilities for scripting a list of inputs that playback in real time (similar to how you would use a tween).  As well as methods to clear out input state when using `Input` as a receiver.
+### Using GutInputSender
+`GutInputSender` (the newly introduced class name for `InputSender`) creates and sends `InputEvent*` instances to any number of receivers, including `Input`.  It has utilities for scripting a list of inputs that playback in real time (similar to how you would use a tween).  As well as methods to reset input state when using `Input` as a receiver.
 
 There are two common ways to process input.
 1.  Use `_input`, `_gui_input`, `_unhandled_input` to receive events and process them.
