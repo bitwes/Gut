@@ -9,6 +9,7 @@ As of 9.3.1 you can use `GutInputSender` instead of `InputSender`. It's the same
 
 
 
+
 ## Alright, I Want to Mock Input
 
 
@@ -63,6 +64,26 @@ func test_throw_fireball():
 	assert_true(player.is_doing_hadouken)
 ```
 You could take this a step farther and make this a parameterized test which passes values to `hold_frames` so that you can test different input timings.
+
+
+### Overlapping Down/UP and Sending Keys
+In the above example we use `hold_frames` to hold an action down for a duration.  This works for sequential input, but if you need to layer inputs in your tests then you can call the various "down" and "up" methods.  This example uses `key_down`/`key_up` but the same approach works for `action_down`/`action_up` and any other "down"/"up" methods.
+
+```gdscript
+func test_foo():
+    var player = add_child_autofree(Player.new())
+    var sender = InputSender.new(player)
+
+    # press a, then b, then release a, then release b
+    sender.key_down("a").wait_secs(.1)\
+        .key_down(KEY_B).wait_secs(.1)\
+        .key_up("a").wait_secs(.1)\
+        .key_up(KEY_B)
+    await sender.idle
+
+    assert_true(player.something_happened())
+```
+
 
 ### Handling Mouse-enter/exit
 This example uses `Input` as a receiver.  Since `Input` is a global singleton we have to take additiional steps to make sure that input states, such as a button/action being down, do not leak between tests.
@@ -120,6 +141,7 @@ func test_mouse_exit_removes_modulate():
 
 ## Not Mocking Mouse Input
 I want to mock input just as much as you do.  It sounds cool and fun and looks neat.  I want to watch that mouse move around and click things.  Unfortunately, in many cases it is overkill, slow, and overly complicated.  It is better to test our objects more directly even if means making something public that wouldn't normally be, or being sneaky and operating on private properies.
+
 
 ### Emitting Signals vs Input Mocking (a very short case study)
 Here's MyObject and two inner-test-classes that test
@@ -223,7 +245,7 @@ Using mouse input to test the button is more complicated and slower.  It is also
 
 
 ## Faking mouse position
-You might be using `get_viewport().get_mouse_position()` to determine where the mouse is.  You can directly control where the mouse is without using `GutInputSender` by using `DisplayServer.warp_mouse`.  This will move the mouse cursor to that location, but these kinds of tests require you don't touch the mouse and won't work in headless mode.
+You might be using `get_viewport().get_mouse_position()` to determine where the mouse is.  Instead of mocking the input to move the mouse, we can restructure the code to make sending it values easier.
 
 One approach would be to make the methods that operate on mouse position public and have them accept the mouse's position.  This is probably the cleanest approach, but could make tests too verbose when performing integration tests with complicated mouse interations.
 
