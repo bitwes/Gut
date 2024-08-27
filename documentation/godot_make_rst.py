@@ -13,7 +13,8 @@ from typing import Any, Dict, List, Optional, TextIO, Tuple, Union
 # Import hardcoded version information from version.py
 root_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../")
 sys.path.append(root_directory)  # Include the root directory
-#import version  # noqa: E402
+import godot_version as version # noqa: E402
+godot_classes = []
 
 # $DOCS_URL/path/to/page.html(#fragment-tag)
 GODOT_DOCS_PATTERN = re.compile(r"^\$DOCS_URL/(.*)\.html(#.*)?$")
@@ -159,7 +160,6 @@ PACKED_ARRAY_TYPES: List[str] = [
     "PackedVector4Array",
 ]
 
-
 class State:
     def __init__(self) -> None:
         self.num_errors = 0
@@ -169,6 +169,7 @@ class State:
 
         # Additional content and structure checks and validators.
         self.script_language_parity_check: ScriptLanguageParityCheck = ScriptLanguageParityCheck()
+
 
     def parse_class(self, class_root: ET.Element, filepath: str) -> None:
         class_name = class_root.attrib["name"]
@@ -899,8 +900,8 @@ def translate(string: str) -> str:
 
 
 def get_git_branch() -> str:
-    # if hasattr(version, "docs") and version.docs != "latest":
-    #     return version.docs
+    if hasattr(version, "docs") and version.docs != "latest":
+        return version.docs
 
     return "master"
 
@@ -1520,8 +1521,13 @@ def make_type(klass: str, state: State) -> str:
             type_rst = f":ref:`Array<class_Array>`\\[{type_rst}\\]"
         return type_rst
 
-    print_error(f'{state.current_class}.xml: Unresolved type "{link_type}".', state)
-    type_rst = f"``{link_type}``"
+    # print_error(f'{state.current_class}.xml: Unresolved type "{link_type}".', state)
+    # type_rst = f"``{link_type}``"
+    if(not link_type in godot_classes):
+        godot_classes.append(link_type)
+        print_warning(f'Assuming "{link_type}" is a Godot class.', state)
+
+    type_rst = f"`{link_type} <https://docs.godotengine.org/en/stable/classes/class_{link_type.lower()}.html>`_"
     if is_array:
         type_rst = f":ref:`Array<class_Array>`\\[{type_rst}\\]"
     return type_rst

@@ -24,19 +24,19 @@ Properties
 .. table::
    :widths: auto
 
-   +-------------+------------------------------------------------------------------------------------+-----------+
-   | ``Variant`` | :ref:`events<class_GutInputSender.InputQueueItem_property_events>`                 | ``[]``    |
-   +-------------+------------------------------------------------------------------------------------+-----------+
-   | ``Variant`` | :ref:`time_delay<class_GutInputSender.InputQueueItem_property_time_delay>`         | ``null``  |
-   +-------------+------------------------------------------------------------------------------------+-----------+
-   | ``Variant`` | :ref:`frame_delay<class_GutInputSender.InputQueueItem_property_frame_delay>`       | ``null``  |
-   +-------------+------------------------------------------------------------------------------------+-----------+
-   | ``Variant`` | :ref:`_waited_frames<class_GutInputSender.InputQueueItem_property__waited_frames>` | ``0``     |
-   +-------------+------------------------------------------------------------------------------------+-----------+
-   | ``Variant`` | :ref:`_is_ready<class_GutInputSender.InputQueueItem_property__is_ready>`           | ``false`` |
-   +-------------+------------------------------------------------------------------------------------+-----------+
-   | ``Variant`` | :ref:`_delay_started<class_GutInputSender.InputQueueItem_property__delay_started>` | ``false`` |
-   +-------------+------------------------------------------------------------------------------------+-----------+
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------+-----------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`events<class_GutInputSender.InputQueueItem_property_events>`                 | ``[]``    |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------+-----------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`time_delay<class_GutInputSender.InputQueueItem_property_time_delay>`         | ``null``  |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------+-----------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`frame_delay<class_GutInputSender.InputQueueItem_property_frame_delay>`       | ``null``  |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------+-----------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`_waited_frames<class_GutInputSender.InputQueueItem_property__waited_frames>` | ``0``     |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------+-----------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`_is_ready<class_GutInputSender.InputQueueItem_property__is_ready>`           | ``false`` |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------+-----------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`_delay_started<class_GutInputSender.InputQueueItem_property__delay_started>` | ``false`` |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------+-----------+
 
 .. rst-class:: classref-reftable-group
 
@@ -46,19 +46,19 @@ Methods
 .. table::
    :widths: auto
 
-   +-------------+----------------------------------------------------------------------------------------------------------------------------+
-   | |void|      | :ref:`_physics_process<class_GutInputSender.InputQueueItem_private_method__physics_process>`\ (\ delta\: ``Variant``\ )    |
-   +-------------+----------------------------------------------------------------------------------------------------------------------------+
-   | |void|      | :ref:`_init<class_GutInputSender.InputQueueItem_private_method__init>`\ (\ t_delay\: ``Variant``, f_delay\: ``Variant``\ ) |
-   +-------------+----------------------------------------------------------------------------------------------------------------------------+
-   | |void|      | :ref:`_on_time_timeout<class_GutInputSender.InputQueueItem_private_method__on_time_timeout>`\ (\ )                         |
-   +-------------+----------------------------------------------------------------------------------------------------------------------------+
-   | ``Variant`` | :ref:`_delay_timer<class_GutInputSender.InputQueueItem_private_method__delay_timer>`\ (\ t\: ``Variant``\ )                |
-   +-------------+----------------------------------------------------------------------------------------------------------------------------+
-   | ``Variant`` | :ref:`is_ready<class_GutInputSender.InputQueueItem_method_is_ready>`\ (\ )                                                 |
-   +-------------+----------------------------------------------------------------------------------------------------------------------------+
-   | |void|      | :ref:`start<class_GutInputSender.InputQueueItem_method_start>`\ (\ )                                                       |
-   +-------------+----------------------------------------------------------------------------------------------------------------------------+
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | |void|                                                                         | :ref:`_physics_process<class_GutInputSender.InputQueueItem_private_method__physics_process>`\ (\ delta\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_\ )                                                                       |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | |void|                                                                         | :ref:`_init<class_GutInputSender.InputQueueItem_private_method__init>`\ (\ t_delay\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_, f_delay\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_\ ) |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | |void|                                                                         | :ref:`_on_time_timeout<class_GutInputSender.InputQueueItem_private_method__on_time_timeout>`\ (\ )                                                                                                                                                               |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`_delay_timer<class_GutInputSender.InputQueueItem_private_method__delay_timer>`\ (\ t\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_\ )                                                                                   |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`is_ready<class_GutInputSender.InputQueueItem_method_is_ready>`\ (\ )                                                                                                                                                                                       |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | |void|                                                                         | :ref:`start<class_GutInputSender.InputQueueItem_method_start>`\ (\ )                                                                                                                                                                                             |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 .. rst-class:: classref-section-separator
 
@@ -92,7 +92,7 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-``Variant`` **events** = ``[]`` :ref:`🔗<class_GutInputSender.InputQueueItem_property_events>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **events** = ``[]`` :ref:`🔗<class_GutInputSender.InputQueueItem_property_events>`
 
 .. container:: contribute
 
@@ -106,7 +106,7 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-``Variant`` **time_delay** = ``null`` :ref:`🔗<class_GutInputSender.InputQueueItem_property_time_delay>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **time_delay** = ``null`` :ref:`🔗<class_GutInputSender.InputQueueItem_property_time_delay>`
 
 .. container:: contribute
 
@@ -120,7 +120,7 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-``Variant`` **frame_delay** = ``null`` :ref:`🔗<class_GutInputSender.InputQueueItem_property_frame_delay>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **frame_delay** = ``null`` :ref:`🔗<class_GutInputSender.InputQueueItem_property_frame_delay>`
 
 .. container:: contribute
 
@@ -134,7 +134,7 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-``Variant`` **_waited_frames** = ``0`` :ref:`🔗<class_GutInputSender.InputQueueItem_property__waited_frames>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **_waited_frames** = ``0`` :ref:`🔗<class_GutInputSender.InputQueueItem_property__waited_frames>`
 
 .. container:: contribute
 
@@ -148,7 +148,7 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-``Variant`` **_is_ready** = ``false`` :ref:`🔗<class_GutInputSender.InputQueueItem_property__is_ready>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **_is_ready** = ``false`` :ref:`🔗<class_GutInputSender.InputQueueItem_property__is_ready>`
 
 .. container:: contribute
 
@@ -162,7 +162,7 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-``Variant`` **_delay_started** = ``false`` :ref:`🔗<class_GutInputSender.InputQueueItem_property__delay_started>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **_delay_started** = ``false`` :ref:`🔗<class_GutInputSender.InputQueueItem_property__delay_started>`
 
 .. container:: contribute
 
@@ -181,7 +181,7 @@ Method Descriptions
 
 .. rst-class:: classref-method
 
-|void| **_physics_process**\ (\ delta\: ``Variant``\ ) :ref:`🔗<class_GutInputSender.InputQueueItem_private_method__physics_process>`
+|void| **_physics_process**\ (\ delta\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_\ ) :ref:`🔗<class_GutInputSender.InputQueueItem_private_method__physics_process>`
 
 .. container:: contribute
 
@@ -195,7 +195,7 @@ Method Descriptions
 
 .. rst-class:: classref-method
 
-|void| **_init**\ (\ t_delay\: ``Variant``, f_delay\: ``Variant``\ ) :ref:`🔗<class_GutInputSender.InputQueueItem_private_method__init>`
+|void| **_init**\ (\ t_delay\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_, f_delay\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_\ ) :ref:`🔗<class_GutInputSender.InputQueueItem_private_method__init>`
 
 .. container:: contribute
 
@@ -223,7 +223,7 @@ Method Descriptions
 
 .. rst-class:: classref-method
 
-``Variant`` **_delay_timer**\ (\ t\: ``Variant``\ ) :ref:`🔗<class_GutInputSender.InputQueueItem_private_method__delay_timer>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **_delay_timer**\ (\ t\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_\ ) :ref:`🔗<class_GutInputSender.InputQueueItem_private_method__delay_timer>`
 
 .. container:: contribute
 
@@ -237,7 +237,7 @@ Method Descriptions
 
 .. rst-class:: classref-method
 
-``Variant`` **is_ready**\ (\ ) :ref:`🔗<class_GutInputSender.InputQueueItem_method_is_ready>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **is_ready**\ (\ ) :ref:`🔗<class_GutInputSender.InputQueueItem_method_is_ready>`
 
 .. container:: contribute
 

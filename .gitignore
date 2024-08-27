@@ -30,3 +30,4 @@ exported_tests.cfg
 
 documentation/docs/_build
 documentation/godot_doctools
+documentation/__pycache__

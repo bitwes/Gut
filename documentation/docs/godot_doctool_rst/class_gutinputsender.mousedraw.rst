@@ -24,21 +24,21 @@ Properties
 .. table::
    :widths: auto
 
-   +-------------+-----------------------------------------------------------------------+--------------------------+
-   | ``Variant`` | :ref:`down_color<class_GutInputSender.MouseDraw_property_down_color>` | ``Color(1, 1, 1, 0.25)`` |
-   +-------------+-----------------------------------------------------------------------+--------------------------+
-   | ``Variant`` | :ref:`up_color<class_GutInputSender.MouseDraw_property_up_color>`     | ``Color(0, 0, 0, 0.25)`` |
-   +-------------+-----------------------------------------------------------------------+--------------------------+
-   | ``Variant`` | :ref:`line_color<class_GutInputSender.MouseDraw_property_line_color>` | ``Color(1, 0, 0, 1)``    |
-   +-------------+-----------------------------------------------------------------------+--------------------------+
-   | ``Variant`` | :ref:`disabled<class_GutInputSender.MouseDraw_property_disabled>`     | ``true``                 |
-   +-------------+-----------------------------------------------------------------------+--------------------------+
-   | ``Variant`` | :ref:`_draw_at<class_GutInputSender.MouseDraw_property__draw_at>`     | ``Vector2(0, 0)``        |
-   +-------------+-----------------------------------------------------------------------+--------------------------+
-   | ``Variant`` | :ref:`_b1_down<class_GutInputSender.MouseDraw_property__b1_down>`     | ``false``                |
-   +-------------+-----------------------------------------------------------------------+--------------------------+
-   | ``Variant`` | :ref:`_b2_down<class_GutInputSender.MouseDraw_property__b2_down>`     | ``false``                |
-   +-------------+-----------------------------------------------------------------------+--------------------------+
+   +--------------------------------------------------------------------------------+-----------------------------------------------------------------------+--------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`down_color<class_GutInputSender.MouseDraw_property_down_color>` | ``Color(1, 1, 1, 0.25)`` |
+   +--------------------------------------------------------------------------------+-----------------------------------------------------------------------+--------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`up_color<class_GutInputSender.MouseDraw_property_up_color>`     | ``Color(0, 0, 0, 0.25)`` |
+   +--------------------------------------------------------------------------------+-----------------------------------------------------------------------+--------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`line_color<class_GutInputSender.MouseDraw_property_line_color>` | ``Color(1, 0, 0, 1)``    |
+   +--------------------------------------------------------------------------------+-----------------------------------------------------------------------+--------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`disabled<class_GutInputSender.MouseDraw_property_disabled>`     | ``true``                 |
+   +--------------------------------------------------------------------------------+-----------------------------------------------------------------------+--------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`_draw_at<class_GutInputSender.MouseDraw_property__draw_at>`     | ``Vector2(0, 0)``        |
+   +--------------------------------------------------------------------------------+-----------------------------------------------------------------------+--------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`_b1_down<class_GutInputSender.MouseDraw_property__b1_down>`     | ``false``                |
+   +--------------------------------------------------------------------------------+-----------------------------------------------------------------------+--------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`_b2_down<class_GutInputSender.MouseDraw_property__b2_down>`     | ``false``                |
+   +--------------------------------------------------------------------------------+-----------------------------------------------------------------------+--------------------------+
 
 .. rst-class:: classref-reftable-group
 
@@ -48,15 +48,15 @@ Methods
 .. table::
    :widths: auto
 
-   +--------+-----------------------------------------------------------------------------------------------------+
-   | |void| | :ref:`draw_event<class_GutInputSender.MouseDraw_method_draw_event>`\ (\ event\: ``Variant``\ )      |
-   +--------+-----------------------------------------------------------------------------------------------------+
-   | |void| | :ref:`_draw_cicled_cursor<class_GutInputSender.MouseDraw_private_method__draw_cicled_cursor>`\ (\ ) |
-   +--------+-----------------------------------------------------------------------------------------------------+
-   | |void| | :ref:`_draw_square_cursor<class_GutInputSender.MouseDraw_private_method__draw_square_cursor>`\ (\ ) |
-   +--------+-----------------------------------------------------------------------------------------------------+
-   | |void| | :ref:`_draw<class_GutInputSender.MouseDraw_private_method__draw>`\ (\ )                             |
-   +--------+-----------------------------------------------------------------------------------------------------+
+   +--------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | |void| | :ref:`draw_event<class_GutInputSender.MouseDraw_method_draw_event>`\ (\ event\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_\ ) |
+   +--------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | |void| | :ref:`_draw_cicled_cursor<class_GutInputSender.MouseDraw_private_method__draw_cicled_cursor>`\ (\ )                                                               |
+   +--------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | |void| | :ref:`_draw_square_cursor<class_GutInputSender.MouseDraw_private_method__draw_square_cursor>`\ (\ )                                                               |
+   +--------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | |void| | :ref:`_draw<class_GutInputSender.MouseDraw_private_method__draw>`\ (\ )                                                                                           |
+   +--------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 .. rst-class:: classref-section-separator
 
@@ -71,7 +71,7 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-``Variant`` **down_color** = ``Color(1, 1, 1, 0.25)`` :ref:`🔗<class_GutInputSender.MouseDraw_property_down_color>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **down_color** = ``Color(1, 1, 1, 0.25)`` :ref:`🔗<class_GutInputSender.MouseDraw_property_down_color>`
 
 .. container:: contribute
 
@@ -85,7 +85,7 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-``Variant`` **up_color** = ``Color(0, 0, 0, 0.25)`` :ref:`🔗<class_GutInputSender.MouseDraw_property_up_color>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **up_color** = ``Color(0, 0, 0, 0.25)`` :ref:`🔗<class_GutInputSender.MouseDraw_property_up_color>`
 
 .. container:: contribute
 
@@ -99,7 +99,7 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-``Variant`` **line_color** = ``Color(1, 0, 0, 1)`` :ref:`🔗<class_GutInputSender.MouseDraw_property_line_color>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **line_color** = ``Color(1, 0, 0, 1)`` :ref:`🔗<class_GutInputSender.MouseDraw_property_line_color>`
 
 .. container:: contribute
 
@@ -113,12 +113,12 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-``Variant`` **disabled** = ``true`` :ref:`🔗<class_GutInputSender.MouseDraw_property_disabled>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **disabled** = ``true`` :ref:`🔗<class_GutInputSender.MouseDraw_property_disabled>`
 
 .. rst-class:: classref-property-setget
 
-- |void| **@disabled_setter**\ (\ value\: ``Variant``\ )
-- ``Variant`` **@disabled_getter**\ (\ )
+- |void| **@disabled_setter**\ (\ value\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_\ )
+- `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **@disabled_getter**\ (\ )
 
 .. container:: contribute
 
@@ -132,7 +132,7 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-``Variant`` **_draw_at** = ``Vector2(0, 0)`` :ref:`🔗<class_GutInputSender.MouseDraw_property__draw_at>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **_draw_at** = ``Vector2(0, 0)`` :ref:`🔗<class_GutInputSender.MouseDraw_property__draw_at>`
 
 .. container:: contribute
 
@@ -146,7 +146,7 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-``Variant`` **_b1_down** = ``false`` :ref:`🔗<class_GutInputSender.MouseDraw_property__b1_down>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **_b1_down** = ``false`` :ref:`🔗<class_GutInputSender.MouseDraw_property__b1_down>`
 
 .. container:: contribute
 
@@ -160,7 +160,7 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-``Variant`` **_b2_down** = ``false`` :ref:`🔗<class_GutInputSender.MouseDraw_property__b2_down>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **_b2_down** = ``false`` :ref:`🔗<class_GutInputSender.MouseDraw_property__b2_down>`
 
 .. container:: contribute
 
@@ -179,7 +179,7 @@ Method Descriptions
 
 .. rst-class:: classref-method
 
-|void| **draw_event**\ (\ event\: ``Variant``\ ) :ref:`🔗<class_GutInputSender.MouseDraw_method_draw_event>`
+|void| **draw_event**\ (\ event\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_\ ) :ref:`🔗<class_GutInputSender.MouseDraw_method_draw_event>`
 
 .. container:: contribute
 

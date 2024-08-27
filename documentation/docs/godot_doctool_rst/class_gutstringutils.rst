@@ -24,11 +24,11 @@ Properties
 .. table::
    :widths: auto
 
-   +-------------+---------------------------------------------------------------------------+-----------+
-   | ``Variant`` | :ref:`types<class_GutStringUtils_property_types>`                         | ``{}``    |
-   +-------------+---------------------------------------------------------------------------+-----------+
-   | ``Variant`` | :ref:`_str_ignore_types<class_GutStringUtils_property__str_ignore_types>` | ``[...]`` |
-   +-------------+---------------------------------------------------------------------------+-----------+
+   +--------------------------------------------------------------------------------+---------------------------------------------------------------------------+-----------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`types<class_GutStringUtils_property_types>`                         | ``{}``    |
+   +--------------------------------------------------------------------------------+---------------------------------------------------------------------------+-----------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`_str_ignore_types<class_GutStringUtils_property__str_ignore_types>` | ``[...]`` |
+   +--------------------------------------------------------------------------------+---------------------------------------------------------------------------+-----------+
 
 .. rst-class:: classref-reftable-group
 
@@ -38,23 +38,23 @@ Methods
 .. table::
    :widths: auto
 
-   +-------------+-------------------------------------------------------------------------------------------------------------------------------+
-   | |void|      | :ref:`_init_types_dictionary<class_GutStringUtils_private_method__init_types_dictionary>`\ (\ )                               |
-   +-------------+-------------------------------------------------------------------------------------------------------------------------------+
-   | |void|      | :ref:`_init<class_GutStringUtils_private_method__init>`\ (\ )                                                                 |
-   +-------------+-------------------------------------------------------------------------------------------------------------------------------+
-   | ``Variant`` | :ref:`_get_filename<class_GutStringUtils_private_method__get_filename>`\ (\ path\: ``Variant``\ )                             |
-   +-------------+-------------------------------------------------------------------------------------------------------------------------------+
-   | ``Variant`` | :ref:`_get_obj_filename<class_GutStringUtils_private_method__get_obj_filename>`\ (\ thing\: ``Variant``\ )                    |
-   +-------------+-------------------------------------------------------------------------------------------------------------------------------+
-   | ``Variant`` | :ref:`type2str<class_GutStringUtils_method_type2str>`\ (\ thing\: ``Variant``\ )                                              |
-   +-------------+-------------------------------------------------------------------------------------------------------------------------------+
-   | ``Variant`` | :ref:`truncate_string<class_GutStringUtils_method_truncate_string>`\ (\ src\: ``Variant``, max_size\: ``Variant``\ )          |
-   +-------------+-------------------------------------------------------------------------------------------------------------------------------+
-   | ``Variant`` | :ref:`_get_indent_text<class_GutStringUtils_private_method__get_indent_text>`\ (\ times\: ``Variant``, pad\: ``Variant``\ )   |
-   +-------------+-------------------------------------------------------------------------------------------------------------------------------+
-   | ``Variant`` | :ref:`indent_text<class_GutStringUtils_method_indent_text>`\ (\ text\: ``Variant``, times\: ``Variant``, pad\: ``Variant``\ ) |
-   +-------------+-------------------------------------------------------------------------------------------------------------------------------+
+   +--------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | |void|                                                                         | :ref:`_init_types_dictionary<class_GutStringUtils_private_method__init_types_dictionary>`\ (\ )                                                                                                                                                                                                                                        |
+   +--------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | |void|                                                                         | :ref:`_init<class_GutStringUtils_private_method__init>`\ (\ )                                                                                                                                                                                                                                                                          |
+   +--------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`_get_filename<class_GutStringUtils_private_method__get_filename>`\ (\ path\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_\ )                                                                                                                                                                   |
+   +--------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`_get_obj_filename<class_GutStringUtils_private_method__get_obj_filename>`\ (\ thing\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_\ )                                                                                                                                                          |
+   +--------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`type2str<class_GutStringUtils_method_type2str>`\ (\ thing\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_\ )                                                                                                                                                                                    |
+   +--------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`truncate_string<class_GutStringUtils_method_truncate_string>`\ (\ src\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_, max_size\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_\ )                                                                             |
+   +--------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`_get_indent_text<class_GutStringUtils_private_method__get_indent_text>`\ (\ times\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_, pad\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_\ )                                                                      |
+   +--------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`indent_text<class_GutStringUtils_method_indent_text>`\ (\ text\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_, times\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_, pad\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_\ ) |
+   +--------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 .. rst-class:: classref-section-separator
 
@@ -69,7 +69,7 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-``Variant`` **types** = ``{}`` :ref:`🔗<class_GutStringUtils_property_types>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **types** = ``{}`` :ref:`🔗<class_GutStringUtils_property_types>`
 
 .. container:: contribute
 
@@ -83,7 +83,7 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-``Variant`` **_str_ignore_types** = ``[...]`` :ref:`🔗<class_GutStringUtils_property__str_ignore_types>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **_str_ignore_types** = ``[...]`` :ref:`🔗<class_GutStringUtils_property__str_ignore_types>`
 
 .. container:: contribute
 
@@ -130,7 +130,7 @@ Method Descriptions
 
 .. rst-class:: classref-method
 
-``Variant`` **_get_filename**\ (\ path\: ``Variant``\ ) :ref:`🔗<class_GutStringUtils_private_method__get_filename>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **_get_filename**\ (\ path\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_\ ) :ref:`🔗<class_GutStringUtils_private_method__get_filename>`
 
 .. container:: contribute
 
@@ -144,7 +144,7 @@ Method Descriptions
 
 .. rst-class:: classref-method
 
-``Variant`` **_get_obj_filename**\ (\ thing\: ``Variant``\ ) :ref:`🔗<class_GutStringUtils_private_method__get_obj_filename>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **_get_obj_filename**\ (\ thing\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_\ ) :ref:`🔗<class_GutStringUtils_private_method__get_obj_filename>`
 
 .. container:: contribute
 
@@ -158,7 +158,7 @@ Method Descriptions
 
 .. rst-class:: classref-method
 
-``Variant`` **type2str**\ (\ thing\: ``Variant``\ ) :ref:`🔗<class_GutStringUtils_method_type2str>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **type2str**\ (\ thing\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_\ ) :ref:`🔗<class_GutStringUtils_method_type2str>`
 
 .. container:: contribute
 
@@ -172,7 +172,7 @@ Method Descriptions
 
 .. rst-class:: classref-method
 
-``Variant`` **truncate_string**\ (\ src\: ``Variant``, max_size\: ``Variant``\ ) :ref:`🔗<class_GutStringUtils_method_truncate_string>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **truncate_string**\ (\ src\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_, max_size\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_\ ) :ref:`🔗<class_GutStringUtils_method_truncate_string>`
 
 .. container:: contribute
 
@@ -186,7 +186,7 @@ Method Descriptions
 
 .. rst-class:: classref-method
 
-``Variant`` **_get_indent_text**\ (\ times\: ``Variant``, pad\: ``Variant``\ ) :ref:`🔗<class_GutStringUtils_private_method__get_indent_text>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **_get_indent_text**\ (\ times\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_, pad\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_\ ) :ref:`🔗<class_GutStringUtils_private_method__get_indent_text>`
 
 .. container:: contribute
 
@@ -200,7 +200,7 @@ Method Descriptions
 
 .. rst-class:: classref-method
 
-``Variant`` **indent_text**\ (\ text\: ``Variant``, times\: ``Variant``, pad\: ``Variant``\ ) :ref:`🔗<class_GutStringUtils_method_indent_text>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **indent_text**\ (\ text\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_, times\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_, pad\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_\ ) :ref:`🔗<class_GutStringUtils_method_indent_text>`
 
 .. container:: contribute
 

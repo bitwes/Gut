@@ -50,13 +50,16 @@ documentation/docs/_build/html/index.html
 # Class Reference Generation
 ```
 # Generate XML files for godot plugin.  This cannot be more specific than a directory.
+# YOU MUST hit ctrl+c to end this, it doesn't end
+# https://github.com/godotengine/godot/issues/86604
 godot --doctool documentation/godot_doctools --no-docbase --gdscript-docs res://addons/gut
 
 # Kill all the files that do not have a class_name.  These are not included in the documetnation
 rm documentation/godot_doctools/addon*
 
 # Run the slightly altered make_rst.py file from the godot repo to generate .rst files
-# for the generated xml.
+# for the generated xml.  There's gonna be a TON of "Unresolved type" errors until I figure
+# out how to work around this.
 python3 documentation/godot_make_rst.py documentation/godot_doctools --filter documentation/godot_doctools -o documentation/docs/godot_doctool_rst
 
 # Generate the HTML for everything.
