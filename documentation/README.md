@@ -43,3 +43,22 @@ You can view the generated documentation here:
 ```
 documentation/docs/_build/html/index.html
 ```
+
+
+
+
+# Class Reference Generation
+```
+# Generate XML files for godot plugin.  This cannot be more specific than a directory.
+godot --doctool documentation/godot_doctools --no-docbase --gdscript-docs res://addons/gut
+
+# Kill all the files that do not have a class_name.  These are not included in the documetnation
+rm documentation/godot_doctools/addon*
+
+# Run the slightly altered make_rst.py file from the godot repo to generate .rst files
+# for the generated xml.
+python3 documentation/godot_make_rst.py documentation/godot_doctools --filter documentation/godot_doctools -o documentation/docs/godot_doctool_rst
+
+# Generate the HTML for everything.
+docker-compose -f docker/compose.yml up
+```

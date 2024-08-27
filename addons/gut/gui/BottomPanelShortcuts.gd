@@ -137,5 +137,3 @@ func load_shortcuts_from_file(path):
 	_ctrls.run_current_inner.set_shortcut(f.get_value('main', 'run_current_inner', empty))
 	_ctrls.run_current_test.set_shortcut(f.get_value('main', 'run_current_test', empty))
 	_ctrls.panel_button.set_shortcut(f.get_value('main', 'panel_button', empty))
-
-
