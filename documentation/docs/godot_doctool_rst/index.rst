@@ -16,6 +16,10 @@ Variant types
     :name: toc-class-ref-variants
 
     class_variant
+    class_"addons/gut/cli/optparse.gd"
+    class_"addons/gut/cli/optparse.gd".option
+    class_"addons/gut/cli/optparse.gd".optionheading
+    class_"addons/gut/cli/optparse.gd".options
     class_guthookscript
     class_gutinputsender
     class_gutinputsender.inputqueueitem

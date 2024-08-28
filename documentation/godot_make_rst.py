@@ -659,7 +659,8 @@ class ClassDef(DefinitionBase):
     def _strip_private_props(self):
         to_delete = []
         for key in self.properties.keys():
-            if(key.startswith("_")):
+            descrip = self.properties[key].text
+            if(key.startswith("_") and (descrip is None or descrip.strip() == "")):
                 to_delete.append(key)
 
         for del_me in to_delete:
@@ -946,8 +947,17 @@ def get_git_branch() -> str:
 
 def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir: str) -> None:
     class_name = class_def.name
+    filename = os.path.join(output_dir, f"class_{class_name.lower()}.rst")
+    if('.gd"' in class_name.strip()):
+        basename = class_name.lower()\
+            .replace('.gd"', "")\
+            .replace('"', "")\
+            .replace(os.sep, '_')
+        filename = os.path.join(output_dir, f"class_{basename}.rst")
+
+    print(class_name, '->', filename)
     with open(
-        os.devnull if dry_run else os.path.join(output_dir, f"class_{class_name.lower()}.rst"),
+        os.devnull if dry_run else filename,
         "w",
         encoding="utf-8",
         newline="\n",
