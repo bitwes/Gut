@@ -181,6 +181,7 @@ var draw_mouse = true
 signal idle
 
 
+## You can pass in a receiver if you want to.
 func _init(r=null):
 	if(r != null):
 		add_receiver(r)

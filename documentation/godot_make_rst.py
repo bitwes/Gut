@@ -1,3 +1,8 @@
+#
+#
+# Adapted from Godot's make_rst.py.
+#
+#
 #!/usr/bin/env python3
 
 # This script makes RST files from the XML class reference for use with the online docs.
@@ -661,10 +666,11 @@ class ClassDef(DefinitionBase):
             del self.properties[del_me]
 
 
-    def _strip_private_method(self):
+    def _strip_private_methods(self):
         to_delete = []
         for key in self.methods.keys():
-            if(key.startswith("_")):
+            descrip = self.methods[key][0].description
+            if(key.startswith("_") and (descrip is None or descrip.strip() == "")):
                 to_delete.append(key)
 
         for del_me in to_delete:
@@ -673,7 +679,7 @@ class ClassDef(DefinitionBase):
 
     def strip_privates(self):
         self._strip_private_props()
-        self._strip_private_method()
+        self._strip_private_methods()
 
 
 

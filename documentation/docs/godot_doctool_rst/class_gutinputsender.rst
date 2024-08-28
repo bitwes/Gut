@@ -39,6 +39,8 @@ Methods
    :widths: auto
 
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | |void|                                                                         | :ref:`_init<class_GutInputSender_private_method__init>`\ (\ r\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ = null\ )                                                                                                                                             |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`add_receiver<class_GutInputSender_method_add_receiver>`\ (\ obj\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_\ )                                                                                                                                            |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_receivers<class_GutInputSender_method_get_receivers>`\ (\ )                                                                                                                                                                                                                                |
@@ -193,6 +195,18 @@ Property Descriptions
 
 Method Descriptions
 -------------------
+
+.. _class_GutInputSender_private_method__init:
+
+.. rst-class:: classref-method
+
+|void| **_init**\ (\ r\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ = null\ ) :ref:`🔗<class_GutInputSender_private_method__init>`
+
+You can pass in a receiver if you want to.
+
+.. rst-class:: classref-item-separator
+
+----
 
 .. _class_GutInputSender_method_add_receiver:
 
