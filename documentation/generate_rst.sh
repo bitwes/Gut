@@ -9,6 +9,11 @@ outdir='documentation/docs/godot_doctool_rst'
 xmldir='documentation/godot_doctools'
 filterdir="$xmldir/filtered"
 
+function printdir(){
+    echo "-- $1"
+    ls -1 $1
+    echo "-------"
+}
 
 function generate_xml(){
     echo "Clearing $xmldir xml files"
@@ -19,18 +24,19 @@ function generate_xml(){
     # (which is mac version of timeout from coreutils) and then kill it.
     gtimeout -k 1s 5s $GODOT --doctool $xmldir --no-docbase --gdscript-docs res://addons/gut
 
-    echo "--- DONE ---"
+    printdir $xmldir
 }
 
 function fitler_xml(){
     mkdir -p $filterdir
     rm "$filterdir"/*
 
-    find "$xmldir" -type f ! -name '*addons*' -exec mv {} $filterdir \;
-    find "$xmldir" -type f -name '*optparse*' -exec mv {} $filterdir \;
+    # This gets files for things with a class_name
+    find "$xmldir" -type f ! -name '*addons*' -exec cp {} $filterdir \;
+    # Include the optparse files
+    find "$xmldir" -type f -name '*optparse*' -exec cp {} $filterdir \;
 
-    echo "-- $filterdir --"
-    ls -l $filterdir
+    printdir $filterdir
 }
 
 
@@ -39,12 +45,17 @@ function generate_rst(){
     rm "$outdir"/*.rst
 
     python3 documentation/godot_make_rst.py $filterdir --filter $filterdir -o $outdir
+
+    printdir $outdir
 }
 
 
 function main(){
+    echo "--- Generating XML files ---"
     generate_xml
+    echo "--- Filtering XML files ---"
     fitler_xml
+    echo "--- Generating RST files ---"
     generate_rst
 }
 
