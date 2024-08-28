@@ -8,6 +8,7 @@
 outdir='documentation/docs/godot_doctool_rst'
 xmldir='documentation/godot_doctools'
 filterdir="$xmldir/filtered"
+htmldir='documentation/docs/_build/html'
 
 function printdir(){
     echo "-- $1"
@@ -17,6 +18,7 @@ function printdir(){
 
 function generate_xml(){
     echo "Clearing $xmldir xml files"
+    mkdir -p $xmldir
     rm "$xmldir"/*.xml
 
     # The command hangs forever, always.  It looks like this will be fixed in
@@ -51,6 +53,8 @@ function generate_rst(){
 
 
 function main(){
+    rm -r "$htmldir"/*
+
     echo "--- Generating XML files ---"
     generate_xml
     echo "--- Filtering XML files ---"
@@ -60,5 +64,5 @@ function main(){
 }
 
 
-# main
-generate_rst
+main
+
