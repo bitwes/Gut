@@ -60,4 +60,5 @@ function main(){
 }
 
 
-main
+# main
+generate_rst

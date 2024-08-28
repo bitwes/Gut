@@ -5,8 +5,8 @@
 .. Generator: documentation/godot_make_rst.py.
 .. _class_"addons/gut/cli/optparse.gd".Option:
 
-"addons/gut/cli/optparse.gd".Option
-===================================
+addons/gut/cli/optparse.gd.Option
+=================================
 
 **Inherits:** 
 

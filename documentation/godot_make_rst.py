@@ -948,12 +948,13 @@ def get_git_branch() -> str:
 def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir: str) -> None:
     class_name = class_def.name
     filename = os.path.join(output_dir, f"class_{class_name.lower()}.rst")
+    adjusted_class_name = class_name
     if('.gd"' in class_name.strip()):
-        basename = class_name.lower()\
+        adjusted_class_name = class_name.lower()\
             .replace('.gd"', "")\
             .replace('"', "")\
             .replace(os.sep, '_')
-        filename = os.path.join(output_dir, f"class_{basename}.rst")
+        filename = os.path.join(output_dir, f"class_{adjusted_class_name}.rst")
 
     print(class_name, '->', filename)
     with open(
@@ -983,7 +984,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
 
         # Document reference id and header.
         f.write(f".. _class_{class_name}:\n\n")
-        f.write(make_heading(class_name, "=", False))
+        f.write(make_heading(class_name.replace('"', ''), "=", False))
 
         f.write(make_deprecated_experimental(class_def, state))
 
@@ -1827,7 +1828,13 @@ def make_rst_index(grouped_classes: Dict[str, List[str]], dry_run: bool, output_
                     if group_name in CLASS_GROUPS_BASE and CLASS_GROUPS_BASE[group_name].lower() == class_name.lower():
                         continue
 
-                    f.write(f"    class_{class_name.lower()}\n")
+                    adjusted_class_name = f"class_{class_name.lower()}"
+                    if('.gd"' in adjusted_class_name.strip()):
+                        adjusted_class_name = adjusted_class_name.replace('.gd"', "")\
+                            .replace('"', "")\
+                            .replace(os.sep, '_')
+
+                    f.write(f"    {adjusted_class_name}\n")
 
                 f.write("\n")
 
