@@ -859,12 +859,12 @@ def main() -> None:
                 grouped_classes["editor"] = []
             grouped_classes["editor"].append(class_name)
 
-    print("")
-    print("Generating the index file...")
+    # print("")
+    # print("Generating the index file...")
 
-    make_rst_index(grouped_classes, args.dry_run, args.output)
+    # make_rst_index(grouped_classes, args.dry_run, args.output)
 
-    print("")
+    # print("")
 
     # Print out checks.
 
@@ -949,12 +949,18 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
     class_name = class_def.name
     filename = os.path.join(output_dir, f"class_{class_name.lower()}.rst")
     adjusted_class_name = class_name
+
     if('.gd"' in class_name.strip()):
         adjusted_class_name = class_name.lower()\
             .replace('.gd"', "")\
             .replace('"', "")\
             .replace(os.sep, '_')
         filename = os.path.join(output_dir, f"class_{adjusted_class_name}.rst")
+
+    if((class_def.description is None or class_def.description.strip() == "") and
+        (class_def.brief_description is None or class_def.brief_description.strip() == "")):
+        print("SKIP ", class_name, ".  No descriptions so skipping")
+        return
 
     print(class_name, '->', filename)
     with open(
@@ -1111,8 +1117,10 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
             f.write(make_heading("Methods", "-"))
 
             ml = []
-            for method_list in class_def.methods.values():
-                for m in method_list:
+            # for method_list in class_def.methods.values():
+                # for m in method_list:
+            for key in sorted(class_def.methods.keys()):
+                for m in class_def.methods[key]:
                     ml.append(make_method_signature(class_def, m, "method", state))
 
             format_table(f, ml)

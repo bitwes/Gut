@@ -1,41 +1,5 @@
+## This is the base class for all test scripts.  Extend this...test the world!
 class_name GutTest
-# ##############################################################################
-#(G)odot (U)nit (T)est class
-#
-# ##############################################################################
-# The MIT License (MIT)
-# =====================
-#
-# Copyright (c) 2020 Tom "Butch" Wesley
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-# ##############################################################################
-# View readme for usage details.
-#
-# Version - see gut.gd
-# ##############################################################################
-# Class that all test scripts must extend.`
-#
-# This provides all the asserts and other testing features.  Test scripts are
-# run by the Gut class in gut.gd
-# ##############################################################################
 extends Node
 
 var _compare = GutUtils.Comparator.new()
@@ -1549,13 +1513,11 @@ func use_parameters(params):
 	return ph.next_parameters()
 
 
-# ------------------------------------------------------------------------------
-# When used as the default for a test method parameter, it will cause the test
-# to be run x times.
-#
-# I Hacked this together to test a method that was occassionally failing due to
-# timing issues.  I don't think it's a great idea, but you be the judge.
-# ------------------------------------------------------------------------------
+## When used as the default for a test method parameter, it will cause the test
+## to be run x times.
+##
+## I Hacked this together to test a method that was occassionally failing due to
+## timing issues.  I don't think it's a great idea, but you be the judge.
 func run_x_times(x):
 	var ph = gut.parameter_handler
 	if(ph == null):
@@ -1573,27 +1535,23 @@ func run_x_times(x):
 		gut.parameter_handler = ph
 	return ph.next_parameters()
 
-# ------------------------------------------------------------------------------
-# Marks whatever is passed in to be freed after the test finishes.  It also
-# returns what is passed in so you can save a line of code.
-#   var thing = autofree(Thing.new())
-# ------------------------------------------------------------------------------
+## Marks whatever is passed in to be freed after the test finishes.  It also
+## returns what is passed in so you can save a line of code.
+##   var thing = autofree(Thing.new())
 func autofree(thing):
 	gut.get_autofree().add_free(thing)
 	return thing
 
-# ------------------------------------------------------------------------------
-# Works the same as autofree except queue_free will be called on the object
-# instead.  This also imparts a brief pause after the test finishes so that
-# the queued object has time to free.
-# ------------------------------------------------------------------------------
+
+## Works the same as autofree except queue_free will be called on the object
+## instead.  This also imparts a brief pause after the test finishes so that
+## the queued object has time to free.
 func autoqfree(thing):
 	gut.get_autofree().add_queue_free(thing)
 	return thing
 
-# ------------------------------------------------------------------------------
-# The same as autofree but it also adds the object as a child of the test.
-# ------------------------------------------------------------------------------
+
+## The same as autofree but it also adds the object as a child of the test.
 func add_child_autofree(node, legible_unique_name = false):
 	gut.get_autofree().add_free(node)
 	# Explicitly calling super here b/c add_child MIGHT change and I don't want
@@ -1601,9 +1559,8 @@ func add_child_autofree(node, legible_unique_name = false):
 	super.add_child(node, legible_unique_name)
 	return node
 
-# ------------------------------------------------------------------------------
-# The same as autoqfree but it also adds the object as a child of the test.
-# ------------------------------------------------------------------------------
+
+## The same as autoqfree but it also adds the object as a child of the test.
 func add_child_autoqfree(node, legible_unique_name=false):
 	gut.get_autofree().add_queue_free(node)
 	# Explicitly calling super here b/c add_child MIGHT change and I don't want
@@ -1611,9 +1568,8 @@ func add_child_autoqfree(node, legible_unique_name=false):
 	super.add_child(node, legible_unique_name)
 	return node
 
-# ------------------------------------------------------------------------------
-# Returns true if the test is passing as of the time of this call.  False if not.
-# ------------------------------------------------------------------------------
+
+## Returns true if the test is passing as of the time of this call.  False if not.
 func is_passing():
 	if(gut.get_current_test_object() != null and
 		!['before_all', 'after_all'].has(gut.get_current_test_object().name)):
@@ -1623,9 +1579,8 @@ func is_passing():
 		_lgr.error('No current test object found.  is_passing must be called inside a test.')
 		return null
 
-# ------------------------------------------------------------------------------
-# Returns true if the test is failing as of the time of this call.  False if not.
-# ------------------------------------------------------------------------------
+
+## Returns true if the test is failing as of the time of this call.  False if not.
 func is_failing():
 	if(gut.get_current_test_object() != null and
 		!['before_all', 'after_all'].has(gut.get_current_test_object().name)):
@@ -1635,23 +1590,20 @@ func is_failing():
 		_lgr.error('No current test object found.  is_failing must be called inside a test.')
 		return null
 
-# ------------------------------------------------------------------------------
-# Marks the test as passing.  Does not override any failing asserts or calls to
-# fail_test.  Same as a passing assert.
-# ------------------------------------------------------------------------------
+
+## Marks the test as passing.  Does not override any failing asserts or calls to
+## fail_test.  Same as a passing assert.
 func pass_test(text):
 	_pass(text)
 
-# ------------------------------------------------------------------------------
-# Marks the test as failing.  Same as a failing assert.
-# ------------------------------------------------------------------------------
+
+## Marks the test as failing.  Same as a failing assert.
 func fail_test(text):
 	_fail(text)
 
-# ------------------------------------------------------------------------------
-# Peforms a deep compare on both values, a CompareResult instnace is returned.
-# The optional max_differences paramter sets the max_differences to be displayed.
-# ------------------------------------------------------------------------------
+
+## Peforms a deep compare on both values, a CompareResult instnace is returned.
+## The optional max_differences paramter sets the max_differences to be displayed.
 func compare_deep(v1, v2, max_differences=null):
 	var result = _compare.deep(v1, v2)
 	if(max_differences != null):
@@ -1757,3 +1709,49 @@ func skip_if_godot_version_ne(expected):
 # ------------------------------------------------------------------------------
 func register_inner_classes(base_script):
 	gut.get_doubler().inner_class_registry.register(base_script)
+
+
+
+
+
+
+
+
+
+# ##############################################################################
+#(G)odot (U)nit (T)est class
+#
+# ##############################################################################
+# The MIT License (MIT)
+# =====================
+#
+# Copyright (c) 2020 Tom "Butch" Wesley
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+# ##############################################################################
+# View readme for usage details.
+#
+# Version - see gut.gd
+# ##############################################################################
+# Class that all test scripts must extend.`
+#
+# This provides all the asserts and other testing features.  Test scripts are
+# run by the Gut class in gut.gd
+# ##############################################################################
