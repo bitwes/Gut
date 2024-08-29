@@ -959,10 +959,10 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
 
     if((class_def.description is None or class_def.description.strip() == "") and
         (class_def.brief_description is None or class_def.brief_description.strip() == "")):
-        print("SKIP ", class_name, ".  No descriptions so skipping")
+        print("SKIP", class_name, ".  No description.")
         return
 
-    print(class_name, '->', filename)
+    print("ADD ", class_name, '->', filename)
     with open(
         os.devnull if dry_run else filename,
         "w",
