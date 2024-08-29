@@ -1157,9 +1157,7 @@ Method Descriptions
 
 |void| **assert_setget**\ (\ instance\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_, name_property\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_, const_or_setter\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ = null, getter\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ = "__not_set__"\ ) :ref:`🔗<class_GutTest_method_assert_setget>`
 
-.. container:: contribute
-
-	No description
+**Deprecated:** no longer supported.
 
 .. rst-class:: classref-item-separator
 
@@ -1227,9 +1225,7 @@ Method Descriptions
 
 |void| **pending**\ (\ text\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ = ""\ ) :ref:`🔗<class_GutTest_method_pending>`
 
-.. container:: contribute
-
-	No description
+Mark the current test as pending.
 
 .. rst-class:: classref-item-separator
 
@@ -1241,9 +1237,7 @@ Method Descriptions
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_seconds**\ (\ time\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_, msg\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ = ""\ ) :ref:`🔗<class_GutTest_method_wait_seconds>`
 
-.. container:: contribute
-
-	No description
+Await for the time sent in.  The optional message will be printed when the await starts
 
 .. rst-class:: classref-item-separator
 
@@ -1255,9 +1249,7 @@ Method Descriptions
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **yield_for**\ (\ time\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_, msg\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ = ""\ ) :ref:`🔗<class_GutTest_method_yield_for>`
 
-.. container:: contribute
-
-	No description
+**Deprecated:** use wait_seconds
 
 .. rst-class:: classref-item-separator
 
@@ -1269,9 +1261,7 @@ Method Descriptions
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_for_signal**\ (\ sig\: `Signal <https://docs.godotengine.org/en/stable/classes/class_signal.html>`_, max_wait\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_, msg\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ = ""\ ) :ref:`🔗<class_GutTest_method_wait_for_signal>`
 
-.. container:: contribute
-
-	No description
+Yield to a signal or a maximum amount of time, whichever comes first.
 
 .. rst-class:: classref-item-separator
 
@@ -1283,9 +1273,7 @@ Method Descriptions
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **yield_to**\ (\ obj\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_, signal_name\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_, max_wait\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_, msg\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ = ""\ ) :ref:`🔗<class_GutTest_method_yield_to>`
 
-.. container:: contribute
-
-	No description
+**Deprecated:** use wait_for_signal
 
 .. rst-class:: classref-item-separator
 
@@ -1297,9 +1285,7 @@ Method Descriptions
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_frames**\ (\ frames\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_, msg\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ = ""\ ) :ref:`🔗<class_GutTest_method_wait_frames>`
 
-.. container:: contribute
-
-	No description
+Yield for a number of frames.  The optional message will be printed. when Gut detects a yield.
 
 .. rst-class:: classref-item-separator
 
@@ -1325,9 +1311,7 @@ Method Descriptions
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **did_wait_timeout**\ (\ ) :ref:`🔗<class_GutTest_method_did_wait_timeout>`
 
-.. container:: contribute
-
-	No description
+Returns whether the last wait\_\* method timed out.  This is always true if the last method was wait_frames or wait_seconds.  It will be false when using wait_for_signal and wait_until if the timeout occurs before what is being waited on.  The wait\_\* methods return this value so you should be able to avoid calling this directly, but you can.
 
 .. rst-class:: classref-item-separator
 
@@ -1339,9 +1323,7 @@ Method Descriptions
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **yield_frames**\ (\ frames\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_, msg\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ = ""\ ) :ref:`🔗<class_GutTest_method_yield_frames>`
 
-.. container:: contribute
-
-	No description
+**Deprecated:** use wait_frames
 
 .. rst-class:: classref-item-separator
 
@@ -1549,9 +1531,7 @@ Method Descriptions
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **double_scene**\ (\ path\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_, strategy\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ = null\ ) :ref:`🔗<class_GutTest_method_double_scene>`
 
-.. container:: contribute
-
-	No description
+**Deprecated:** no longer supported.  Use double
 
 .. rst-class:: classref-item-separator
 
@@ -1563,9 +1543,7 @@ Method Descriptions
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **double_script**\ (\ path\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_, strategy\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ = null\ ) :ref:`🔗<class_GutTest_method_double_script>`
 
-.. container:: contribute
-
-	No description
+**Deprecated:** no longer supported.  Use double
 
 .. rst-class:: classref-item-separator
 
@@ -1577,9 +1555,7 @@ Method Descriptions
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **double_inner**\ (\ path\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_, subpath\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_, strategy\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ = null\ ) :ref:`🔗<class_GutTest_method_double_inner>`
 
-.. container:: contribute
-
-	No description
+**Deprecated:** no longer supported.  Use register_inner_classes + double
 
 .. rst-class:: classref-item-separator
 

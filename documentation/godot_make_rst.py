@@ -15,7 +15,7 @@
 #   - Does not include scripts that do not have any description.
 #   - Does not include private methods or properties unless they have a
 #     description.
-#   - Sorts method names
+#   - Sorts methods by name
 #   - Class names for scripts without a class_name will be
 #        path/to/file/filename.gd
 #        path/to/file/filename.gd.InnerClassName
@@ -47,7 +47,7 @@ from typing import Any, Dict, List, Optional, TextIO, Tuple, Union
 root_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../")
 sys.path.append(root_directory)  # Include the root directory
 import godot_version as version # noqa: E402
-godot_classes = []
+
 
 # $DOCS_URL/path/to/page.html(#fragment-tag)
 GODOT_DOCS_PATTERN = re.compile(r"^\$DOCS_URL/(.*)\.html(#.*)?$")
@@ -57,11 +57,35 @@ GODOT_DOCS_PATTERN = re.compile(r"^\$DOCS_URL/(.*)\.html(#.*)?$")
 MARKUP_ALLOWED_PRECEDENT = " -:/'\"<([{"
 MARKUP_ALLOWED_SUBSEQUENT = " -.,:;!?\\/'\")]}>"
 
+
+# -------- bitwes methods/vars --------
+godot_classes = []
+def make_type_link(link_type, state):
+    if(not link_type in godot_classes):
+        godot_classes.append(link_type)
+        print_warning(f'Assuming "{link_type}" is a Godot class.', state)
+
+    return f"`{link_type} <https://docs.godotengine.org/en/stable/classes/class_{link_type.lower()}.html>`_"
+
 # Used this method to change the message in one place and make it easier to be
 # sure translation entries and calls to translate match.
 def no_description(name):
     return "No description"
     # return f"There is currently no description for this {name}. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!"
+
+verbose_enabled = True
+def vprint(*arg) -> None:
+    if(verbose_enabled):
+        print(f"{verbose_enabled}:  Trace:  {" ".join(arg)}")
+
+debug_enabled = True
+def dbg(*arg) -> None:
+    if(debug_enabled):
+        print(f"Debug:  {" ".join(arg)}")
+# --------
+
+
+
 
 # Used to translate section headings and other hardcoded strings when required with
 # the --lang argument. The BASE_STRINGS list should be synced with what we actually
@@ -745,6 +769,8 @@ class ScriptLanguageParityCheck:
 
 # Entry point for the RST generator.
 def main() -> None:
+    global verbose_enabled
+
     parser = argparse.ArgumentParser()
     parser.add_argument("path", nargs="+", help="A path to an XML file or a directory containing XML files to parse.")
     parser.add_argument("--filter", default="", help="The filepath pattern for XML files to filter.")
@@ -767,6 +793,7 @@ def main() -> None:
         help="If passed, enables verbose printing.",
     )
     args = parser.parse_args()
+    verbose_enabled = args.verbose
 
     should_color = bool(args.color or sys.stdout.isatty() or os.environ.get("CI"))
 
@@ -993,7 +1020,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
 
     if((class_def.description is None or class_def.description.strip() == "") and
         (class_def.brief_description is None or class_def.brief_description.strip() == "")):
-        print("SKIP", class_name, ".  No description.")
+        vprint("SKIP", class_name, ".  No description.")
         return
 
     print("ADD ", class_name, '->', filename)
@@ -1590,11 +1617,7 @@ def make_type(klass: str, state: State) -> str:
 
     # print_error(f'{state.current_class}.xml: Unresolved type "{link_type}".', state)
     # type_rst = f"``{link_type}``"
-    if(not link_type in godot_classes):
-        godot_classes.append(link_type)
-        print_warning(f'Assuming "{link_type}" is a Godot class.', state)
-
-    type_rst = f"`{link_type} <https://docs.godotengine.org/en/stable/classes/class_{link_type.lower()}.html>`_"
+    type_rst = make_type_link(link_type, state)
     if is_array:
         type_rst = f":ref:`Array<class_Array>`\\[{type_rst}\\]"
     return type_rst

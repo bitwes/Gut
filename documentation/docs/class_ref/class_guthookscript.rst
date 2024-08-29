@@ -138,7 +138,11 @@ Usable by pre-run script to cause the run to end AFTER the run() method finishes
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **should_abort**\ (\ ) :ref:`🔗<class_GutHookScript_method_should_abort>`
 
-Returns the current abort flag value.
+**Deprecated:** I added this
+
+**Experimental:** This method may be changed or removed in future versions.
+
+Returns the current abort flag value. @ignore: I added this too
 
 .. |virtual| replace:: :abbr:`virtual (This method should typically be overridden by the user to have any effect.)`
 .. |const| replace:: :abbr:`const (This method has no side effects. It doesn't modify any of the instance's member variables.)`
