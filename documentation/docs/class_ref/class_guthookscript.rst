@@ -43,7 +43,7 @@ Methods
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`set_exit_code<class_GutHookScript_method_set_exit_code>`\ (\ code\: `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_\ ) |
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`should_abort<class_GutHookScript_method_should_abort>`\ (\ )                                                                                          |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | Deprecated :ref:`should_abort<class_GutHookScript_method_should_abort>`\ (\ )                                                                               |
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 .. rst-class:: classref-section-separator

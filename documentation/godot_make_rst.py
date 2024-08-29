@@ -27,6 +27,8 @@
 #   - The DO NOT EDIT THIS warnings are altered to indicate this is GUT stuff.
 #   - Changed how missing description messages are generated in output and
 #     translation entries.  See no_description method.  Pretty simple.
+#   - Deprecated methods are grouped together at the bottom of the list of
+#     methods.
 #
 # This was a bit of a brute force edit of the original to fit my needs.  I only
 # changed what was needed to get this to work.
@@ -82,6 +84,20 @@ debug_enabled = True
 def dbg(*arg) -> None:
     if(debug_enabled):
         print(f"Debug:  {" ".join(arg)}")
+
+def make_method_table_data(class_def, state):
+    ml = []
+    dep = []
+    # for method_list in class_def.methods.values():
+        # for m in method_list:
+    for key in sorted(class_def.methods.keys()): # list by name
+        for m in class_def.methods[key]:
+            to_append = make_method_signature(class_def, m, "method", state)
+            if(m.deprecated is not None):
+                dep.append((to_append[0], "Deprecated " + to_append[1]))
+            else:
+                ml.append(to_append)
+    return ml + dep
 # --------
 
 
@@ -1175,13 +1191,11 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
             f.write(".. rst-class:: classref-reftable-group\n\n")
             f.write(make_heading("Methods", "-"))
 
-            ml = []
-            # for method_list in class_def.methods.values():
-                # for m in method_list:
-            for key in sorted(class_def.methods.keys()):
-                for m in class_def.methods[key]:
-                    ml.append(make_method_signature(class_def, m, "method", state))
+            # ml = []
+            # # for method_list in class_def.methods.values():
+            #     # for m in method_list:
 
+            ml = make_method_table_data(class_def, state)
             format_table(f, ml)
 
         if len(class_def.operators) > 0:
