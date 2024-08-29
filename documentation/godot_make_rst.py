@@ -1,9 +1,37 @@
-#
-#
-# Adapted from Godot's make_rst.py.
-#
-#
 #!/usr/bin/env python3
+# ##############################################################################
+#
+# Adapted from Godot's make_rst.py as of ~8/25/24.
+# https://github.com/godotengine/godot/blob/master/doc/tools/make_rst.py
+#
+# This aims to generate class reference rst files for plugins.  It is meant to
+# operate on a directory of xml files generated using --no-docbase.  It only
+# generates rst files for scripts (rather their doctool xml representation) that
+# have a description (a ## comment at the top), so that only user relevant
+# files are included.
+#
+# Changes
+#   - Does not generate an index.rst
+#   - Does not include scripts that do not have any description.
+#   - Does not include private methods or properties unless they have a
+#     description.
+#   - Sorts method names
+#   - Class names for scripts without a class_name will be
+#        path/to/file/filename.gd
+#        path/to/file/filename.gd.InnerClassName
+#     This is how they appear in the TOC.
+#   - Since this is indended to be used with the --no-docbase doctool option,
+#     any reference to a class it can't find is assumed to be a Godot class and
+#     links to the Godot docs (latest).  A warning is printed on the first
+#     occurance of each unknown class.
+#   - The DO NOT EDIT THIS warnings are altered to indicate this is GUT stuff.
+#   - Changed how missing description messages are generated in output and
+#     translation entries.  See no_description method.  Pretty simple.
+#
+# This was a bit of a brute force edit of the original to fit my needs.  I only
+# changed what was needed to get this to work.
+# ##############################################################################
+
 
 # This script makes RST files from the XML class reference for use with the online docs.
 
@@ -28,6 +56,12 @@ GODOT_DOCS_PATTERN = re.compile(r"^\$DOCS_URL/(.*)\.html(#.*)?$")
 # https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#inline-markup-recognition-rules
 MARKUP_ALLOWED_PRECEDENT = " -:/'\"<([{"
 MARKUP_ALLOWED_SUBSEQUENT = " -.,:;!?\\/'\")]}>"
+
+# Used this method to change the message in one place and make it easier to be
+# sure translation entries and calls to translate match.
+def no_description(name):
+    return "No description"
+    # return f"There is currently no description for this {name}. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!"
 
 # Used to translate section headings and other hardcoded strings when required with
 # the --lang argument. The BASE_STRINGS list should be synced with what we actually
@@ -72,16 +106,16 @@ BASE_STRINGS = [
     "This method describes a valid operator to use with this type as left-hand operand.",
     "This value is an integer composed as a bitmask of the following flags.",
     "No return value.",
-    "There is currently no description for this class. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!",
-    "There is currently no description for this signal. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!",
-    "There is currently no description for this enum. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!",
-    "There is currently no description for this constant. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!",
-    "There is currently no description for this annotation. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!",
-    "There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!",
-    "There is currently no description for this constructor. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!",
-    "There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!",
-    "There is currently no description for this operator. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!",
-    "There is currently no description for this theme property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!",
+    no_description("class"),
+    no_description("signal"),
+    no_description("enum"),
+    no_description("constant"),
+    no_description("annotation"),
+    no_description("property"),
+    no_description("constructor"),
+    no_description("method"),
+    no_description("operator"),
+    no_description("theme property"),
     "There are notable differences when using this API with C#. See :ref:`doc_c_sharp_differences` for more information.",
     "Deprecated:",
     "Experimental:",
@@ -1051,9 +1085,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
         if not has_description:
             f.write(".. container:: contribute\n\n\t")
             f.write(
-                translate(
-                    "There is currently no description for this class. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!"
-                )
+                translate(no_description("class"))
                 + "\n\n"
             )
 
@@ -1181,9 +1213,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
                 elif signal.deprecated is None and signal.experimental is None:
                     f.write(".. container:: contribute\n\n\t")
                     f.write(
-                        translate(
-                            "There is currently no description for this signal. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!"
-                        )
+                        translate(no_description("signal"))
                         + "\n\n"
                     )
 
@@ -1230,9 +1260,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
                     elif value.deprecated is None and value.experimental is None:
                         f.write(".. container:: contribute\n\n\t")
                         f.write(
-                            translate(
-                                "There is currently no description for this enum. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!"
-                            )
+                            translate(no_description("enum"))
                             + "\n\n"
                         )
 
@@ -1265,9 +1293,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
                 elif constant.deprecated is None and constant.experimental is None:
                     f.write(".. container:: contribute\n\n\t")
                     f.write(
-                        translate(
-                            "There is currently no description for this constant. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!"
-                        )
+                        translate(no_description("constant"))
                         + "\n\n"
                     )
 
@@ -1305,9 +1331,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
                     else:
                         f.write(".. container:: contribute\n\n\t")
                         f.write(
-                            translate(
-                                "There is currently no description for this annotation. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!"
-                            )
+                            translate(no_description("annotation"))
                             + "\n\n"
                         )
 
@@ -1371,9 +1395,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
                 elif property_def.deprecated is None and property_def.experimental is None:
                     f.write(".. container:: contribute\n\n\t")
                     f.write(
-                        translate(
-                            "There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!"
-                        )
+                        translate(no_description("property"))
                         + "\n\n"
                     )
 
@@ -1414,9 +1436,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
                     elif m.deprecated is None and m.experimental is None:
                         f.write(".. container:: contribute\n\n\t")
                         f.write(
-                            translate(
-                                "There is currently no description for this constructor. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!"
-                            )
+                            translate(no_description("constructor"))
                             + "\n\n"
                         )
 
@@ -1461,9 +1481,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
                     elif m.deprecated is None and m.experimental is None:
                         f.write(".. container:: contribute\n\n\t")
                         f.write(
-                            translate(
-                                "There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!"
-                            )
+                            translate(no_description("method"))
                             + "\n\n"
                         )
 
@@ -1503,9 +1521,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
                     elif m.deprecated is None and m.experimental is None:
                         f.write(".. container:: contribute\n\n\t")
                         f.write(
-                            translate(
-                                "There is currently no description for this operator. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!"
-                            )
+                            translate(no_description("operator"))
                             + "\n\n"
                         )
 
@@ -1546,9 +1562,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
                 elif theme_item_def.deprecated is None and theme_item_def.experimental is None:
                     f.write(".. container:: contribute\n\n\t")
                     f.write(
-                        translate(
-                            "There is currently no description for this theme property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!"
-                        )
+                        translate(no_description("property"))
                         + "\n\n"
                     )
 

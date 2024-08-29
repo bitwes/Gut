@@ -281,7 +281,7 @@ Constants
 
 .. container:: contribute
 
-	There is currently no description for this constant. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 
 
@@ -293,7 +293,7 @@ Constants
 
 .. container:: contribute
 
-	There is currently no description for this constant. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 
 
@@ -314,7 +314,7 @@ Property Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -328,7 +328,7 @@ Property Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -342,7 +342,7 @@ Property Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -356,7 +356,7 @@ Property Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -370,7 +370,7 @@ Property Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -384,7 +384,7 @@ Property Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-section-separator
 
@@ -403,7 +403,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -417,7 +417,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -431,7 +431,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -445,7 +445,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -459,7 +459,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -473,7 +473,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -487,7 +487,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -501,7 +501,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -515,7 +515,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -529,7 +529,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -543,7 +543,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -557,7 +557,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -571,7 +571,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -585,7 +585,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -599,7 +599,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -613,7 +613,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -627,7 +627,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -641,7 +641,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -655,7 +655,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -669,7 +669,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -683,7 +683,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -697,7 +697,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -711,7 +711,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -725,7 +725,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -739,7 +739,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -753,7 +753,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -767,7 +767,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -781,7 +781,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -795,7 +795,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -809,7 +809,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -823,7 +823,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -837,7 +837,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -851,7 +851,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -865,7 +865,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -879,7 +879,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -893,7 +893,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -907,7 +907,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -921,7 +921,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -935,7 +935,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -949,7 +949,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -963,7 +963,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -977,7 +977,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -991,7 +991,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1005,7 +1005,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1019,7 +1019,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1033,7 +1033,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1047,7 +1047,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1061,7 +1061,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1075,7 +1075,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1089,7 +1089,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1103,7 +1103,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1117,7 +1117,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1131,7 +1131,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1145,7 +1145,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1159,7 +1159,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1173,7 +1173,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1187,7 +1187,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1201,7 +1201,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1215,7 +1215,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1229,7 +1229,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1243,7 +1243,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1257,7 +1257,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1271,7 +1271,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1285,7 +1285,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1299,7 +1299,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1313,7 +1313,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1327,7 +1327,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1341,7 +1341,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1355,7 +1355,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1369,7 +1369,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1383,7 +1383,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1397,7 +1397,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1411,7 +1411,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1425,7 +1425,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1439,7 +1439,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1453,7 +1453,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1467,7 +1467,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1481,7 +1481,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1495,7 +1495,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1509,7 +1509,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1523,7 +1523,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1537,7 +1537,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1551,7 +1551,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1565,7 +1565,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1579,7 +1579,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1593,7 +1593,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1607,7 +1607,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1621,7 +1621,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1635,7 +1635,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1649,7 +1649,7 @@ Method Descriptions
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1783,7 +1783,7 @@ Peforms a deep compare on both values, a CompareResult instnace is returned. The
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1797,7 +1797,7 @@ Peforms a deep compare on both values, a CompareResult instnace is returned. The
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1811,7 +1811,7 @@ Peforms a deep compare on both values, a CompareResult instnace is returned. The
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1825,7 +1825,7 @@ Peforms a deep compare on both values, a CompareResult instnace is returned. The
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1839,7 +1839,7 @@ Peforms a deep compare on both values, a CompareResult instnace is returned. The
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1853,7 +1853,7 @@ Peforms a deep compare on both values, a CompareResult instnace is returned. The
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1867,7 +1867,7 @@ Peforms a deep compare on both values, a CompareResult instnace is returned. The
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1881,7 +1881,7 @@ Peforms a deep compare on both values, a CompareResult instnace is returned. The
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1895,7 +1895,7 @@ Peforms a deep compare on both values, a CompareResult instnace is returned. The
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. rst-class:: classref-item-separator
 
@@ -1909,7 +1909,7 @@ Peforms a deep compare on both values, a CompareResult instnace is returned. The
 
 .. container:: contribute
 
-	There is currently no description for this method. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+	No description
 
 .. |virtual| replace:: :abbr:`virtual (This method should typically be overridden by the user to have any effect.)`
 .. |const| replace:: :abbr:`const (This method has no side effects. It doesn't modify any of the instance's member variables.)`
