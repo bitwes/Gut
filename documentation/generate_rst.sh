@@ -5,8 +5,8 @@
 #
 # Should be run from project root.
 # -----------------------------------------------------------------------------
-rstdir='documentation/docs/godot_doctool_rst'
-xmldir='documentation/godot_doctools'
+rstdir='documentation/docs/class_ref'
+xmldir='documentation/class_ref_xml'
 # Eventual final location for html files generated from rst.  Included in this
 # script since that directory should be cleared whenever this is run.
 htmldir='documentation/docs/_build/html'

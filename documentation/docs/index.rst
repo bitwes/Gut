@@ -71,7 +71,7 @@
    :name: class-ref
    :glob:
 
-   godot_doctool_rst/*
+   class_ref/*
 
 
 
