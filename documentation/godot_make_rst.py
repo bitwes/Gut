@@ -31,14 +31,15 @@
 #     methods.
 #   - Does not list Variant datatype for method parameters.  I barely use types
 #     in GUT, so it is just noise.  Change marked in make_method_signature.
-#   - Supports @internal in the description.  This will cause the method to
-#     be listed seperately (like deprecated methods).  This is for methods that
-#     are public but aren't really supposed to be consumed by the general
-#     public.
 #
-# This was a bit of a brute force edit of the original to fit my needs.  I only
-# changed what was needed to get this to work.  In most cases the original code
-# was commented out to help make changes apparent.
+#   Additional Method Annotations (in ## comments)
+#   NOTE:  These do not apply to in-engine documentation and the annotations
+#          will appear in the in-engine method descriptions.
+#   - @ignore - The method will not appear in generated documentation.
+#   - @internal -  This will cause the method to be listed seperately (like
+#     deprecated methods).  This is for methods that are public but aren't
+#     really supposed to be consumed by the general public.
+#
 # ##############################################################################
 
 
@@ -52,14 +53,16 @@ import xml.etree.ElementTree as ET
 from collections import OrderedDict
 from typing import Any, Dict, List, Optional, TextIO, Tuple, Union
 
-# Import hardcoded version information from version.py
 root_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../")
 sys.path.append(root_directory)  # Include the root directory
+
+# Import hardcoded version information from version.py
 import godot_version as version # noqa: E402
 import doc_bbcode_to_rst as bb2rst
 from godot_classes import *
 from godot_consts import *
 import logger as lgr
+import bitwes
 
 # $DOCS_URL/path/to/page.html(#fragment-tag)
 
@@ -67,24 +70,17 @@ import logger as lgr
 # Based on reStructuredText inline markup recognition rules
 # https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#inline-markup-recognition-rules
 
+
+
+
 # ------------------
 # -------- START bitwes methods/vars --------
 # ------------------
-godot_classes = []
-def make_type_link(link_type, state):
-    if(not link_type in godot_classes):
-        godot_classes.append(link_type)
-        lgr.print_warning(f'Assuming "{link_type}" is a Godot class.', state)
-
-    return f"`{link_type} <https://docs.godotengine.org/en/stable/classes/class_{link_type.lower()}.html>`_"
-
-
 # Used this method to change the message in one place and make it easier to be
 # sure translation entries and calls to translate match.
 def no_description(name):
     return "No description"
     # return f"There is currently no description for this {name}. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!"
-
 
 
 def make_method_table(f, class_def, state):
@@ -96,22 +92,24 @@ def make_method_table(f, class_def, state):
             to_append = make_method_signature(class_def, m, "method", state)
             if(m.deprecated is not None):
                 dep.append(("Deprecated", to_append[0], to_append[1]))
-            elif("@internal" in m.description):
+            elif(m.internal):
                 internal.append(("Internal Use", to_append[0], to_append[1]))
-                # bold with bbcode because the description hasn't been converted to
-                # to rst yet?  It is confusing.
-                m.description = m.description.replace("@internal", "[b]Internal use only.[/b]")
-            else:
+            elif(not m.ignore):
                 ml.append(to_append)
 
     f.write(".. rst-class:: classref-reftable-group\n\n")
     f.write(make_heading("Methods", "-"))
+
     format_table(f, ml)
     format_table(f, dep)
     format_table(f, internal)
 # ------------------
 # -------- END bitwes methods/vars --------
 # ------------------
+
+
+
+
 # Used to translate section headings and other hardcoded strings when required with
 # the --lang argument. The BASE_STRINGS list should be synced with what we actually
 # write in this script (check `translate()` uses), and also hardcoded in
@@ -178,9 +176,7 @@ BASE_STRINGS = [
     "[b]Note:[/b] The returned array is [i]copied[/i] and any changes to it will not update the original property value. See [%s] for more details.",
 ]
 
-
-# Entry point for the RST generator.
-def main() -> None:
+def process_cl_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("path", nargs="+", help="A path to an XML file or a directory containing XML files to parse.")
     parser.add_argument("--filter", default="", help="The filepath pattern for XML files to filter.")
@@ -202,35 +198,18 @@ def main() -> None:
         action="store_true",
         help="If passed, enables verbose printing.",
     )
-    args = parser.parse_args()
+    return parser.parse_args()
+
+
+
+# Entry point for the RST generator.
+def main() -> None:
+    args = process_cl_args()
     lgr.verbose_enabled = args.verbose
 
     should_color = bool(args.color or sys.stdout.isatty() or os.environ.get("CI"))
 
-    # Enable ANSI escape code support on Windows 10 and later (for colored console output).
-    # <https://github.com/python/cpython/issues/73245>
-    if should_color and sys.stdout.isatty() and sys.platform == "win32":
-        try:
-            from ctypes import WinError, byref, windll  # type: ignore
-            from ctypes.wintypes import DWORD  # type: ignore
-
-            stdout_handle = windll.kernel32.GetStdHandle(DWORD(-11))
-            mode = DWORD(0)
-            if not windll.kernel32.GetConsoleMode(stdout_handle, byref(mode)):
-                raise WinError()
-            mode = DWORD(mode.value | 4)
-            if not windll.kernel32.SetConsoleMode(stdout_handle, mode):
-                raise WinError()
-        except Exception:
-            should_color = False
-
-    STYLES["red"] = "\x1b[91m" if should_color else ""
-    STYLES["green"] = "\x1b[92m" if should_color else ""
-    STYLES["yellow"] = "\x1b[93m" if should_color else ""
-    STYLES["bold"] = "\x1b[1m" if should_color else ""
-    STYLES["regular"] = "\x1b[22m" if should_color else ""
-    STYLES["reset"] = "\x1b[0m" if should_color else ""
-
+    lgr.set_should_color(should_color)
     # Retrieve heading translations for the given language.
     if not args.dry_run and args.lang != "en":
         lang_file = os.path.join(
@@ -341,17 +320,13 @@ def main() -> None:
 
     if state.script_language_parity_check.hit_count > 0:
         if not args.verbose:
-            print(
-                f'{STYLES["yellow"]}{state.script_language_parity_check.hit_count} code samples failed parity check. Use --verbose to get more information.{STYLES["reset"]}'
-            )
+            lgr.print_style("yellow", f'{state.script_language_parity_check.hit_count} code samples failed parity check. Use --verbose to get more information.')
         else:
-            print(
-                f'{STYLES["yellow"]}{state.script_language_parity_check.hit_count} code samples failed parity check:{STYLES["reset"]}'
-            )
+            lgr.print_style("yellow", f'{state.script_language_parity_check.hit_count} code samples failed parity check:')
 
             for class_name in state.script_language_parity_check.hit_map.keys():
                 class_hits = state.script_language_parity_check.hit_map[class_name]
-                print(f'{STYLES["yellow"]}- {len(class_hits)} hits in class "{class_name}"{STYLES["reset"]}')
+                lgr.print_style("yellow", f'- {len(class_hits)} hits in class "{class_name}"')
 
                 for context, error in class_hits:
                     print(f"  - {error} in {bb2rst.format_context_name(context)}")
@@ -360,25 +335,17 @@ def main() -> None:
     # Print out warnings and errors, or lack thereof, and exit with an appropriate code.
 
     if state.num_warnings >= 2:
-        print(
-            f'{STYLES["yellow"]}{state.num_warnings} warnings were found in the class reference XML. Please check the messages above.{STYLES["reset"]}'
-        )
+        lgr.print_style("yellow", f'{state.num_warnings} warnings were found in the class reference XML. Please check the messages above.')
     elif state.num_warnings == 1:
-        print(
-            f'{STYLES["yellow"]}1 warning was found in the class reference XML. Please check the messages above.{STYLES["reset"]}'
-        )
+        lgr.print_style("yellow", f'1 warning was found in the class reference XML. Please check the messages above.')
 
     if state.num_errors >= 2:
-        print(
-            f'{STYLES["red"]}{state.num_errors} errors were found in the class reference XML. Please check the messages above.{STYLES["reset"]}'
-        )
+        lgr.print_style("red", f'{state.num_errors} errors were found in the class reference XML. Please check the messages above.')
     elif state.num_errors == 1:
-        print(
-            f'{STYLES["red"]}1 error was found in the class reference XML. Please check the messages above.{STYLES["reset"]}'
-        )
+        lgr.print_style("red", f'1 error was found in the class reference XML. Please check the messages above.')
 
     if state.num_warnings == 0 and state.num_errors == 0:
-        print(f'{STYLES["green"]}No warnings or errors found in the class reference XML.{STYLES["reset"]}')
+        lgr.print_style("green", f'No warnings or errors found in the class reference XML.')
         if not args.dry_run:
             print(f"Wrote reStructuredText files for each class to: {args.output}")
     else:
@@ -410,21 +377,28 @@ def get_git_branch() -> str:
 def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir: str) -> None:
     class_name = class_def.name
     filename = os.path.join(output_dir, f"class_{class_name.lower()}.rst")
-    adjusted_class_name = class_name
 
-    if('.gd"' in class_name.strip()):
-        adjusted_class_name = class_name.lower()\
-            .replace('.gd"', "")\
-            .replace('"', "")\
-            .replace(os.sep, '_')
-        filename = os.path.join(output_dir, f"class_{adjusted_class_name}.rst")
-
+    # bitwes --
+    # shortcircuit when class has no description.
     if((class_def.description is None or class_def.description.strip() == "") and
         (class_def.brief_description is None or class_def.brief_description.strip() == "")):
         lgr.vprint("SKIP", class_name, ".  No description.")
         return
 
-    print("ADD ", class_name, '->', filename)
+    adjusted_class_name = class_name
+
+    # converts '"path/to/script.gd"' to 'path_to_script'
+    if('.gd"' in class_name.strip()):
+        adjusted_class_name = class_name.lower()\
+            .replace('.gd"', "")\
+            .replace('"', "")\
+            .replace(os.sep, '_')
+        # filename will be <output_dir>/class_path_to_script.rst
+        filename = os.path.join(output_dir, f"class_{adjusted_class_name}.rst")
+
+    lgr.print_style("green", "Writing ", f'{class_name} -> {filename}')
+    # -- bitwes
+
     with open(
         os.devnull if dry_run else filename,
         "w",
@@ -478,7 +452,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
             # If we didn't ever print anything then the class wasn't found so
             # we just use it and assume it is a Godot class (bitwes).
             if(first):
-                f.write(make_type_link(class_def.inherits.strip(), state))
+                f.write(bitwes.make_type_link(class_def.inherits.strip()))
             f.write("\n\n")
 
         # Descendants
@@ -503,7 +477,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
         if class_def.brief_description is not None and class_def.brief_description.strip() != "":
             has_description = True
 
-            f.write(f"{format_text_block(class_def.brief_description.strip(), class_def, state)}\n\n")
+            f.write(f"{bb2rst.format_text_block(class_def.brief_description.strip(), class_def, state)}\n\n")
 
         # Class description
         if class_def.description is not None and class_def.description.strip() != "":
@@ -512,7 +486,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
             f.write(".. rst-class:: classref-introduction-group\n\n")
             f.write(make_heading("Description", "-"))
 
-            f.write(f"{format_text_block(class_def.description.strip(), class_def, state)}\n\n")
+            f.write(f"{bb2rst.format_text_block(class_def.description.strip(), class_def, state)}\n\n")
 
         if not has_description:
             f.write(".. container:: contribute\n\n\t")
@@ -639,7 +613,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
                 f.write(make_deprecated_experimental(signal, state))
 
                 if signal.description is not None and signal.description.strip() != "":
-                    f.write(f"{format_text_block(signal.description.strip(), signal, state)}\n\n")
+                    f.write(f"{bb2rst.format_text_block(signal.description.strip(), signal, state)}\n\n")
                 elif signal.deprecated is None and signal.experimental is None:
                     f.write(".. container:: contribute\n\n\t")
                     f.write(
@@ -686,7 +660,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
                     f.write(make_deprecated_experimental(value, state))
 
                     if value.text is not None and value.text.strip() != "":
-                        f.write(f"{format_text_block(value.text.strip(), value, state)}")
+                        f.write(f"{bb2rst.format_text_block(value.text.strip(), value, state)}")
                     elif value.deprecated is None and value.experimental is None:
                         f.write(".. container:: contribute\n\n\t")
                         f.write(
@@ -719,7 +693,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
                 f.write(make_deprecated_experimental(constant, state))
 
                 if constant.text is not None and constant.text.strip() != "":
-                    f.write(f"{format_text_block(constant.text.strip(), constant, state)}")
+                    f.write(f"{bb2rst.format_text_block(constant.text.strip(), constant, state)}")
                 elif constant.deprecated is None and constant.experimental is None:
                     f.write(".. container:: contribute\n\n\t")
                     f.write(
@@ -757,7 +731,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
                     # Add annotation description, or a call to action if it's missing.
 
                     if m.description is not None and m.description.strip() != "":
-                        f.write(f"{format_text_block(m.description.strip(), m, state)}\n\n")
+                        f.write(f"{bb2rst.format_text_block(m.description.strip(), m, state)}\n\n")
                     else:
                         f.write(".. container:: contribute\n\n\t")
                         f.write(
@@ -818,10 +792,10 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
                 f.write(make_deprecated_experimental(property_def, state))
 
                 if property_def.text is not None and property_def.text.strip() != "":
-                    f.write(f"{format_text_block(property_def.text.strip(), property_def, state)}\n\n")
+                    f.write(f"{bb2rst.format_text_block(property_def.text.strip(), property_def, state)}\n\n")
                     if property_def.type_name.type_name in PACKED_ARRAY_TYPES:
                         tmp = f"[b]Note:[/b] The returned array is [i]copied[/i] and any changes to it will not update the original property value. See [{property_def.type_name.type_name}] for more details."
-                        f.write(f"{format_text_block(tmp, property_def, state)}\n\n")
+                        f.write(f"{bb2rst.format_text_block(tmp, property_def, state)}\n\n")
                 elif property_def.deprecated is None and property_def.experimental is None:
                     f.write(".. container:: contribute\n\n\t")
                     f.write(
@@ -862,7 +836,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
                     f.write(make_deprecated_experimental(m, state))
 
                     if m.description is not None and m.description.strip() != "":
-                        f.write(f"{format_text_block(m.description.strip(), m, state)}\n\n")
+                        f.write(f"{bb2rst.format_text_block(m.description.strip(), m, state)}\n\n")
                     elif m.deprecated is None and m.experimental is None:
                         f.write(".. container:: contribute\n\n\t")
                         f.write(
@@ -881,6 +855,9 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
 
             for method_list in class_def.methods.values():
                 for i, m in enumerate(method_list):
+                    if(m.ignore):
+                        continue
+
                     if index != 0:
                         f.write(make_separator())
 
@@ -907,7 +884,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
                     f.write(make_deprecated_experimental(m, state))
 
                     if m.description is not None and m.description.strip() != "":
-                        f.write(f"{format_text_block(m.description.strip(), m, state)}\n\n")
+                        f.write(f"{bb2rst.format_text_block(m.description.strip(), m, state)}\n\n")
                     elif m.deprecated is None and m.experimental is None:
                         f.write(".. container:: contribute\n\n\t")
                         f.write(
@@ -947,7 +924,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
                     f.write(make_deprecated_experimental(m, state))
 
                     if m.description is not None and m.description.strip() != "":
-                        f.write(f"{format_text_block(m.description.strip(), m, state)}\n\n")
+                        f.write(f"{bb2rst.format_text_block(m.description.strip(), m, state)}\n\n")
                     elif m.deprecated is None and m.experimental is None:
                         f.write(".. container:: contribute\n\n\t")
                         f.write(
@@ -988,7 +965,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
                 f.write(make_deprecated_experimental(theme_item_def, state))
 
                 if theme_item_def.text is not None and theme_item_def.text.strip() != "":
-                    f.write(f"{format_text_block(theme_item_def.text.strip(), theme_item_def, state)}\n\n")
+                    f.write(f"{bb2rst.format_text_block(theme_item_def.text.strip(), theme_item_def, state)}\n\n")
                 elif theme_item_def.deprecated is None and theme_item_def.experimental is None:
                     f.write(".. container:: contribute\n\n\t")
                     f.write(
@@ -1111,7 +1088,7 @@ def make_deprecated_experimental(item: DefinitionBase, state: State) -> str:
             default_message = translate(f"This {item.definition_name} may be changed or removed in future versions.")
             result += f"**{deprecated_prefix}** {default_message}\n\n"
         else:
-            result += f"**{deprecated_prefix}** {format_text_block(item.deprecated.strip(), item, state)}\n\n"
+            result += f"**{deprecated_prefix}** {bb2rst.format_text_block(item.deprecated.strip(), item, state)}\n\n"
 
     if item.experimental is not None:
         experimental_prefix = translate("Experimental:")
@@ -1119,7 +1096,7 @@ def make_deprecated_experimental(item: DefinitionBase, state: State) -> str:
             default_message = translate(f"This {item.definition_name} may be changed or removed in future versions.")
             result += f"**{experimental_prefix}** {default_message}\n\n"
         else:
-            result += f"**{experimental_prefix}** {format_text_block(item.experimental.strip(), item, state)}\n\n"
+            result += f"**{experimental_prefix}** {bb2rst.format_text_block(item.experimental.strip(), item, state)}\n\n"
 
     return result
 
@@ -1219,26 +1196,6 @@ def make_rst_index(grouped_classes: Dict[str, List[str]], dry_run: bool, output_
 
 
 # Formatting helpers.
-
-
-
-
-
-
-
-def format_text_block(
-    text: str,
-    context: DefinitionBase,
-    state: State,
-) -> str:
-    return bb2rst.format_text_block(text, context, state)
-
-
-
-
-
-
-
 
 def format_table(f: TextIO, data: List[Tuple[Optional[str], ...]], remove_empty_columns: bool = False) -> None:
     if len(data) == 0:

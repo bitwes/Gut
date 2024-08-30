@@ -4,8 +4,6 @@ from typing import Any, Dict, List, Optional, TextIO, Tuple, Union
 
 strings_l10n: Dict[str, str] = {}
 
-STYLES: Dict[str, str] = {}
-
 CLASS_GROUPS: Dict[str, str] = {
     "global": "Globals",
     "node": "Nodes",

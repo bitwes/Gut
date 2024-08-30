@@ -20,11 +20,11 @@ Properties
 .. table::
    :widths: auto
 
-   +--------------+--------------------------------------------------------------------+---------------+
-   | whatever man | :ref:`JunitXmlExport<class_GutHookScript_property_JunitXmlExport>` | ``load(...)`` |
-   +--------------+--------------------------------------------------------------------+---------------+
-   | whatever man | :ref:`gut<class_GutHookScript_property_gut>`                       | ``null``      |
-   +--------------+--------------------------------------------------------------------+---------------+
+   +--------------------------------------------------------------------------------+--------------------------------------------------------------------+---------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`JunitXmlExport<class_GutHookScript_property_JunitXmlExport>` | ``load(...)`` |
+   +--------------------------------------------------------------------------------+--------------------------------------------------------------------+---------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`gut<class_GutHookScript_property_gut>`                       | ``null``      |
+   +--------------------------------------------------------------------------------+--------------------------------------------------------------------+---------------+
 
 .. rst-class:: classref-reftable-group
 
@@ -34,17 +34,17 @@ Methods
 .. table::
    :widths: auto
 
-   +--------------+-------------------------------------------------------------------------------------------+
-   | |void|       | :ref:`abort<class_GutHookScript_method_abort>`\ (\ )                                      |
-   +--------------+-------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`get_exit_code<class_GutHookScript_method_get_exit_code>`\ (\ )                      |
-   +--------------+-------------------------------------------------------------------------------------------+
-   | |void|       | :ref:`run<class_GutHookScript_method_run>`\ (\ )                                          |
-   +--------------+-------------------------------------------------------------------------------------------+
-   | |void|       | :ref:`set_exit_code<class_GutHookScript_method_set_exit_code>`\ (\ code\: whatever man\ ) |
-   +--------------+-------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`should_abort<class_GutHookScript_method_should_abort>`\ (\ )                        |
-   +--------------+-------------------------------------------------------------------------------------------+
+   +--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+
+   | |void|                                                                         | :ref:`abort<class_GutHookScript_method_abort>`\ (\ )                                                                                                |
+   +--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_exit_code<class_GutHookScript_method_get_exit_code>`\ (\ )                                                                                |
+   +--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+
+   | |void|                                                                         | :ref:`run<class_GutHookScript_method_run>`\ (\ )                                                                                                    |
+   +--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+
+   | |void|                                                                         | :ref:`set_exit_code<class_GutHookScript_method_set_exit_code>`\ (\ code\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_\ ) |
+   +--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`should_abort<class_GutHookScript_method_should_abort>`\ (\ )                                                                                  |
+   +--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+
 
 .. rst-class:: classref-section-separator
 
@@ -59,7 +59,7 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-whatever man **JunitXmlExport** = ``load(...)`` :ref:`🔗<class_GutHookScript_property_JunitXmlExport>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **JunitXmlExport** = ``load(...)`` :ref:`🔗<class_GutHookScript_property_JunitXmlExport>`
 
 Class responsible for generating xml.  You could use this to generate XML yourself instead of using the built in GUT xml generation options.
 
@@ -71,7 +71,7 @@ Class responsible for generating xml.  You could use this to generate XML yourse
 
 .. rst-class:: classref-property
 
-whatever man **gut** = ``null`` :ref:`🔗<class_GutHookScript_property_gut>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **gut** = ``null`` :ref:`🔗<class_GutHookScript_property_gut>`
 
 This is the instance of GUT that is running the tests.  You can get information about the run from this object.  This is set by GUT when the script is instantiated.
 
@@ -100,7 +100,7 @@ Virtual method that will be called by GUT after instantiating this script.
 
 .. rst-class:: classref-method
 
-|void| **set_exit_code**\ (\ code\: whatever man\ ) :ref:`🔗<class_GutHookScript_method_set_exit_code>`
+|void| **set_exit_code**\ (\ code\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_\ ) :ref:`🔗<class_GutHookScript_method_set_exit_code>`
 
 Set the exit code when running from the command line.  If not set then the default exit code will be returned (0 when no tests fail, 1 when any tests fail).
 
@@ -112,7 +112,7 @@ Set the exit code when running from the command line.  If not set then the defau
 
 .. rst-class:: classref-method
 
-whatever man **get_exit_code**\ (\ ) :ref:`🔗<class_GutHookScript_method_get_exit_code>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_exit_code**\ (\ ) :ref:`🔗<class_GutHookScript_method_get_exit_code>`
 
 Return the current exit code.
 
@@ -136,7 +136,7 @@ Usable by pre-run script to cause the run to end AFTER the run() method finishes
 
 .. rst-class:: classref-method
 
-whatever man **should_abort**\ (\ ) :ref:`🔗<class_GutHookScript_method_should_abort>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **should_abort**\ (\ ) :ref:`🔗<class_GutHookScript_method_should_abort>`
 
 Returns the current abort flag value.
 

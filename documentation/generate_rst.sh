@@ -47,11 +47,12 @@ function generate_xml(){
 function generate_rst(){
     input_dir=$1
     output_dir=$2
+    flags=${3-""}
 
     echo "Clearing $output_dir rst files"
     rm "$output_dir"/*.rst
 
-    python3 documentation/godot_make_rst.py $input_dir --filter $input_dir -o $output_dir
+    python3 documentation/godot_make_rst.py $input_dir --filter $input_dir -o $output_dir  $flags
 
     printdir $output_dir
 }
@@ -82,5 +83,5 @@ function main(){
     generate_html $htmldir
 }
 
-# main
-generate_rst $xmldir $rstdir
+main
+# generate_rst $xmldir $rstdir

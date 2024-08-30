@@ -27,13 +27,13 @@ Properties
 .. table::
    :widths: auto
 
-   +--------------+-----------------------------------------------------------------+---------------+
-   | whatever man | :ref:`InputFactory<class_GutInputSender_property_InputFactory>` | ``load(...)`` |
-   +--------------+-----------------------------------------------------------------+---------------+
-   | whatever man | :ref:`mouse_warp<class_GutInputSender_property_mouse_warp>`     | ``false``     |
-   +--------------+-----------------------------------------------------------------+---------------+
-   | whatever man | :ref:`draw_mouse<class_GutInputSender_property_draw_mouse>`     | ``true``      |
-   +--------------+-----------------------------------------------------------------+---------------+
+   +--------------------------------------------------------------------------------+-----------------------------------------------------------------+---------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`InputFactory<class_GutInputSender_property_InputFactory>` | ``load(...)`` |
+   +--------------------------------------------------------------------------------+-----------------------------------------------------------------+---------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`mouse_warp<class_GutInputSender_property_mouse_warp>`     | ``false``     |
+   +--------------------------------------------------------------------------------+-----------------------------------------------------------------+---------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`draw_mouse<class_GutInputSender_property_draw_mouse>`     | ``true``      |
+   +--------------------------------------------------------------------------------+-----------------------------------------------------------------+---------------+
 
 .. rst-class:: classref-reftable-group
 
@@ -43,67 +43,67 @@ Methods
 .. table::
    :widths: auto
 
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|       | :ref:`_init<class_GutInputSender_private_method__init>`\ (\ r = null\ )                                                            |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`action_down<class_GutInputSender_method_action_down>`\ (\ which, strength = 1.0\ )                                           |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`action_up<class_GutInputSender_method_action_up>`\ (\ which, strength = 1.0\ )                                               |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|       | :ref:`add_receiver<class_GutInputSender_method_add_receiver>`\ (\ obj\ )                                                           |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|       | :ref:`clear<class_GutInputSender_method_clear>`\ (\ )                                                                              |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`get_auto_flush_input<class_GutInputSender_method_get_auto_flush_input>`\ (\ )                                                |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`get_receivers<class_GutInputSender_method_get_receivers>`\ (\ )                                                              |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`hold_for<class_GutInputSender_method_hold_for>`\ (\ duration\ )                                                              |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`is_action_pressed<class_GutInputSender_method_is_action_pressed>`\ (\ which\ )                                               |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`is_idle<class_GutInputSender_method_is_idle>`\ (\ )                                                                          |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`is_key_pressed<class_GutInputSender_method_is_key_pressed>`\ (\ which\ )                                                     |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`is_mouse_button_pressed<class_GutInputSender_method_is_mouse_button_pressed>`\ (\ which\ )                                   |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`key_down<class_GutInputSender_method_key_down>`\ (\ which\ )                                                                 |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`key_echo<class_GutInputSender_method_key_echo>`\ (\ )                                                                        |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`key_up<class_GutInputSender_method_key_up>`\ (\ which\ )                                                                     |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`mouse_double_click<class_GutInputSender_method_mouse_double_click>`\ (\ position = null, global_position = null\ )           |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`mouse_left_button_down<class_GutInputSender_method_mouse_left_button_down>`\ (\ position = null, global_position = null\ )   |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`mouse_left_button_up<class_GutInputSender_method_mouse_left_button_up>`\ (\ position = null, global_position = null\ )       |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`mouse_left_click_at<class_GutInputSender_method_mouse_left_click_at>`\ (\ where, duration = "5f"\ )                          |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`mouse_motion<class_GutInputSender_method_mouse_motion>`\ (\ position, global_position = null\ )                              |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`mouse_relative_motion<class_GutInputSender_method_mouse_relative_motion>`\ (\ offset, speed = Vector2(0, 0)\ )               |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`mouse_right_button_down<class_GutInputSender_method_mouse_right_button_down>`\ (\ position = null, global_position = null\ ) |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`mouse_right_button_up<class_GutInputSender_method_mouse_right_button_up>`\ (\ position = null, global_position = null\ )     |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`mouse_set_position<class_GutInputSender_method_mouse_set_position>`\ (\ position, global_position = null\ )                  |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`release_all<class_GutInputSender_method_release_all>`\ (\ )                                                                  |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`send_event<class_GutInputSender_method_send_event>`\ (\ event\ )                                                             |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|       | :ref:`set_auto_flush_input<class_GutInputSender_method_set_auto_flush_input>`\ (\ val\ )                                           |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`wait<class_GutInputSender_method_wait>`\ (\ t\ )                                                                             |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`wait_frames<class_GutInputSender_method_wait_frames>`\ (\ num_frames\ )                                                      |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`wait_secs<class_GutInputSender_method_wait_secs>`\ (\ num_secs\ )                                                            |
-   +--------------+------------------------------------------------------------------------------------------------------------------------------------+
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | |void|                                                                         | :ref:`_init<class_GutInputSender_private_method__init>`\ (\ r = null\ )                                                            |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`action_down<class_GutInputSender_method_action_down>`\ (\ which, strength = 1.0\ )                                           |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`action_up<class_GutInputSender_method_action_up>`\ (\ which, strength = 1.0\ )                                               |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | |void|                                                                         | :ref:`add_receiver<class_GutInputSender_method_add_receiver>`\ (\ obj\ )                                                           |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | |void|                                                                         | :ref:`clear<class_GutInputSender_method_clear>`\ (\ )                                                                              |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_auto_flush_input<class_GutInputSender_method_get_auto_flush_input>`\ (\ )                                                |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_receivers<class_GutInputSender_method_get_receivers>`\ (\ )                                                              |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`hold_for<class_GutInputSender_method_hold_for>`\ (\ duration\ )                                                              |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`is_action_pressed<class_GutInputSender_method_is_action_pressed>`\ (\ which\ )                                               |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`is_idle<class_GutInputSender_method_is_idle>`\ (\ )                                                                          |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`is_key_pressed<class_GutInputSender_method_is_key_pressed>`\ (\ which\ )                                                     |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`is_mouse_button_pressed<class_GutInputSender_method_is_mouse_button_pressed>`\ (\ which\ )                                   |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`key_down<class_GutInputSender_method_key_down>`\ (\ which\ )                                                                 |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`key_echo<class_GutInputSender_method_key_echo>`\ (\ )                                                                        |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`key_up<class_GutInputSender_method_key_up>`\ (\ which\ )                                                                     |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`mouse_double_click<class_GutInputSender_method_mouse_double_click>`\ (\ position = null, global_position = null\ )           |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`mouse_left_button_down<class_GutInputSender_method_mouse_left_button_down>`\ (\ position = null, global_position = null\ )   |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`mouse_left_button_up<class_GutInputSender_method_mouse_left_button_up>`\ (\ position = null, global_position = null\ )       |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`mouse_left_click_at<class_GutInputSender_method_mouse_left_click_at>`\ (\ where, duration = "5f"\ )                          |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`mouse_motion<class_GutInputSender_method_mouse_motion>`\ (\ position, global_position = null\ )                              |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`mouse_relative_motion<class_GutInputSender_method_mouse_relative_motion>`\ (\ offset, speed = Vector2(0, 0)\ )               |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`mouse_right_button_down<class_GutInputSender_method_mouse_right_button_down>`\ (\ position = null, global_position = null\ ) |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`mouse_right_button_up<class_GutInputSender_method_mouse_right_button_up>`\ (\ position = null, global_position = null\ )     |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`mouse_set_position<class_GutInputSender_method_mouse_set_position>`\ (\ position, global_position = null\ )                  |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`release_all<class_GutInputSender_method_release_all>`\ (\ )                                                                  |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`send_event<class_GutInputSender_method_send_event>`\ (\ event\ )                                                             |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | |void|                                                                         | :ref:`set_auto_flush_input<class_GutInputSender_method_set_auto_flush_input>`\ (\ val\ )                                           |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait<class_GutInputSender_method_wait>`\ (\ t\ )                                                                             |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_frames<class_GutInputSender_method_wait_frames>`\ (\ num_frames\ )                                                      |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_secs<class_GutInputSender_method_wait_secs>`\ (\ num_secs\ )                                                            |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+
 
 .. rst-class:: classref-section-separator
 
@@ -158,7 +158,7 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-whatever man **InputFactory** = ``load(...)`` :ref:`🔗<class_GutInputSender_property_InputFactory>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **InputFactory** = ``load(...)`` :ref:`🔗<class_GutInputSender_property_InputFactory>`
 
 .. container:: contribute
 
@@ -172,7 +172,7 @@ whatever man **InputFactory** = ``load(...)`` :ref:`🔗<class_GutInputSender_pr
 
 .. rst-class:: classref-property
 
-whatever man **mouse_warp** = ``false`` :ref:`🔗<class_GutInputSender_property_mouse_warp>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **mouse_warp** = ``false`` :ref:`🔗<class_GutInputSender_property_mouse_warp>`
 
 .. container:: contribute
 
@@ -186,7 +186,7 @@ whatever man **mouse_warp** = ``false`` :ref:`🔗<class_GutInputSender_property
 
 .. rst-class:: classref-property
 
-whatever man **draw_mouse** = ``true`` :ref:`🔗<class_GutInputSender_property_draw_mouse>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **draw_mouse** = ``true`` :ref:`🔗<class_GutInputSender_property_draw_mouse>`
 
 .. container:: contribute
 
@@ -231,7 +231,7 @@ You can pass in a receiver if you want to.
 
 .. rst-class:: classref-method
 
-whatever man **get_receivers**\ (\ ) :ref:`🔗<class_GutInputSender_method_get_receivers>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_receivers**\ (\ ) :ref:`🔗<class_GutInputSender_method_get_receivers>`
 
 .. container:: contribute
 
@@ -245,7 +245,7 @@ whatever man **get_receivers**\ (\ ) :ref:`🔗<class_GutInputSender_method_get_
 
 .. rst-class:: classref-method
 
-whatever man **is_idle**\ (\ ) :ref:`🔗<class_GutInputSender_method_is_idle>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **is_idle**\ (\ ) :ref:`🔗<class_GutInputSender_method_is_idle>`
 
 .. container:: contribute
 
@@ -259,7 +259,7 @@ whatever man **is_idle**\ (\ ) :ref:`🔗<class_GutInputSender_method_is_idle>`
 
 .. rst-class:: classref-method
 
-whatever man **is_key_pressed**\ (\ which\ ) :ref:`🔗<class_GutInputSender_method_is_key_pressed>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **is_key_pressed**\ (\ which\ ) :ref:`🔗<class_GutInputSender_method_is_key_pressed>`
 
 .. container:: contribute
 
@@ -273,7 +273,7 @@ whatever man **is_key_pressed**\ (\ which\ ) :ref:`🔗<class_GutInputSender_met
 
 .. rst-class:: classref-method
 
-whatever man **is_action_pressed**\ (\ which\ ) :ref:`🔗<class_GutInputSender_method_is_action_pressed>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **is_action_pressed**\ (\ which\ ) :ref:`🔗<class_GutInputSender_method_is_action_pressed>`
 
 .. container:: contribute
 
@@ -287,7 +287,7 @@ whatever man **is_action_pressed**\ (\ which\ ) :ref:`🔗<class_GutInputSender_
 
 .. rst-class:: classref-method
 
-whatever man **is_mouse_button_pressed**\ (\ which\ ) :ref:`🔗<class_GutInputSender_method_is_mouse_button_pressed>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **is_mouse_button_pressed**\ (\ which\ ) :ref:`🔗<class_GutInputSender_method_is_mouse_button_pressed>`
 
 .. container:: contribute
 
@@ -301,7 +301,7 @@ whatever man **is_mouse_button_pressed**\ (\ which\ ) :ref:`🔗<class_GutInputS
 
 .. rst-class:: classref-method
 
-whatever man **get_auto_flush_input**\ (\ ) :ref:`🔗<class_GutInputSender_method_get_auto_flush_input>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_auto_flush_input**\ (\ ) :ref:`🔗<class_GutInputSender_method_get_auto_flush_input>`
 
 .. container:: contribute
 
@@ -329,7 +329,7 @@ whatever man **get_auto_flush_input**\ (\ ) :ref:`🔗<class_GutInputSender_meth
 
 .. rst-class:: classref-method
 
-whatever man **wait**\ (\ t\ ) :ref:`🔗<class_GutInputSender_method_wait>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait**\ (\ t\ ) :ref:`🔗<class_GutInputSender_method_wait>`
 
 .. container:: contribute
 
@@ -357,7 +357,7 @@ whatever man **wait**\ (\ t\ ) :ref:`🔗<class_GutInputSender_method_wait>`
 
 .. rst-class:: classref-method
 
-whatever man **key_up**\ (\ which\ ) :ref:`🔗<class_GutInputSender_method_key_up>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **key_up**\ (\ which\ ) :ref:`🔗<class_GutInputSender_method_key_up>`
 
 .. container:: contribute
 
@@ -371,7 +371,7 @@ whatever man **key_up**\ (\ which\ ) :ref:`🔗<class_GutInputSender_method_key_
 
 .. rst-class:: classref-method
 
-whatever man **key_down**\ (\ which\ ) :ref:`🔗<class_GutInputSender_method_key_down>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **key_down**\ (\ which\ ) :ref:`🔗<class_GutInputSender_method_key_down>`
 
 .. container:: contribute
 
@@ -385,7 +385,7 @@ whatever man **key_down**\ (\ which\ ) :ref:`🔗<class_GutInputSender_method_ke
 
 .. rst-class:: classref-method
 
-whatever man **key_echo**\ (\ ) :ref:`🔗<class_GutInputSender_method_key_echo>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **key_echo**\ (\ ) :ref:`🔗<class_GutInputSender_method_key_echo>`
 
 .. container:: contribute
 
@@ -399,7 +399,7 @@ whatever man **key_echo**\ (\ ) :ref:`🔗<class_GutInputSender_method_key_echo>
 
 .. rst-class:: classref-method
 
-whatever man **action_up**\ (\ which, strength = 1.0\ ) :ref:`🔗<class_GutInputSender_method_action_up>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **action_up**\ (\ which, strength = 1.0\ ) :ref:`🔗<class_GutInputSender_method_action_up>`
 
 .. container:: contribute
 
@@ -413,7 +413,7 @@ whatever man **action_up**\ (\ which, strength = 1.0\ ) :ref:`🔗<class_GutInpu
 
 .. rst-class:: classref-method
 
-whatever man **action_down**\ (\ which, strength = 1.0\ ) :ref:`🔗<class_GutInputSender_method_action_down>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **action_down**\ (\ which, strength = 1.0\ ) :ref:`🔗<class_GutInputSender_method_action_down>`
 
 .. container:: contribute
 
@@ -427,7 +427,7 @@ whatever man **action_down**\ (\ which, strength = 1.0\ ) :ref:`🔗<class_GutIn
 
 .. rst-class:: classref-method
 
-whatever man **mouse_left_button_down**\ (\ position = null, global_position = null\ ) :ref:`🔗<class_GutInputSender_method_mouse_left_button_down>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **mouse_left_button_down**\ (\ position = null, global_position = null\ ) :ref:`🔗<class_GutInputSender_method_mouse_left_button_down>`
 
 .. container:: contribute
 
@@ -441,7 +441,7 @@ whatever man **mouse_left_button_down**\ (\ position = null, global_position = n
 
 .. rst-class:: classref-method
 
-whatever man **mouse_left_button_up**\ (\ position = null, global_position = null\ ) :ref:`🔗<class_GutInputSender_method_mouse_left_button_up>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **mouse_left_button_up**\ (\ position = null, global_position = null\ ) :ref:`🔗<class_GutInputSender_method_mouse_left_button_up>`
 
 .. container:: contribute
 
@@ -455,7 +455,7 @@ whatever man **mouse_left_button_up**\ (\ position = null, global_position = nul
 
 .. rst-class:: classref-method
 
-whatever man **mouse_double_click**\ (\ position = null, global_position = null\ ) :ref:`🔗<class_GutInputSender_method_mouse_double_click>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **mouse_double_click**\ (\ position = null, global_position = null\ ) :ref:`🔗<class_GutInputSender_method_mouse_double_click>`
 
 .. container:: contribute
 
@@ -469,7 +469,7 @@ whatever man **mouse_double_click**\ (\ position = null, global_position = null\
 
 .. rst-class:: classref-method
 
-whatever man **mouse_right_button_down**\ (\ position = null, global_position = null\ ) :ref:`🔗<class_GutInputSender_method_mouse_right_button_down>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **mouse_right_button_down**\ (\ position = null, global_position = null\ ) :ref:`🔗<class_GutInputSender_method_mouse_right_button_down>`
 
 .. container:: contribute
 
@@ -483,7 +483,7 @@ whatever man **mouse_right_button_down**\ (\ position = null, global_position = 
 
 .. rst-class:: classref-method
 
-whatever man **mouse_right_button_up**\ (\ position = null, global_position = null\ ) :ref:`🔗<class_GutInputSender_method_mouse_right_button_up>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **mouse_right_button_up**\ (\ position = null, global_position = null\ ) :ref:`🔗<class_GutInputSender_method_mouse_right_button_up>`
 
 .. container:: contribute
 
@@ -497,7 +497,7 @@ whatever man **mouse_right_button_up**\ (\ position = null, global_position = nu
 
 .. rst-class:: classref-method
 
-whatever man **mouse_motion**\ (\ position, global_position = null\ ) :ref:`🔗<class_GutInputSender_method_mouse_motion>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **mouse_motion**\ (\ position, global_position = null\ ) :ref:`🔗<class_GutInputSender_method_mouse_motion>`
 
 .. container:: contribute
 
@@ -511,7 +511,7 @@ whatever man **mouse_motion**\ (\ position, global_position = null\ ) :ref:`🔗
 
 .. rst-class:: classref-method
 
-whatever man **mouse_relative_motion**\ (\ offset, speed = Vector2(0, 0)\ ) :ref:`🔗<class_GutInputSender_method_mouse_relative_motion>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **mouse_relative_motion**\ (\ offset, speed = Vector2(0, 0)\ ) :ref:`🔗<class_GutInputSender_method_mouse_relative_motion>`
 
 .. container:: contribute
 
@@ -525,7 +525,7 @@ whatever man **mouse_relative_motion**\ (\ offset, speed = Vector2(0, 0)\ ) :ref
 
 .. rst-class:: classref-method
 
-whatever man **mouse_set_position**\ (\ position, global_position = null\ ) :ref:`🔗<class_GutInputSender_method_mouse_set_position>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **mouse_set_position**\ (\ position, global_position = null\ ) :ref:`🔗<class_GutInputSender_method_mouse_set_position>`
 
 .. container:: contribute
 
@@ -539,7 +539,7 @@ whatever man **mouse_set_position**\ (\ position, global_position = null\ ) :ref
 
 .. rst-class:: classref-method
 
-whatever man **mouse_left_click_at**\ (\ where, duration = "5f"\ ) :ref:`🔗<class_GutInputSender_method_mouse_left_click_at>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **mouse_left_click_at**\ (\ where, duration = "5f"\ ) :ref:`🔗<class_GutInputSender_method_mouse_left_click_at>`
 
 .. container:: contribute
 
@@ -553,7 +553,7 @@ whatever man **mouse_left_click_at**\ (\ where, duration = "5f"\ ) :ref:`🔗<cl
 
 .. rst-class:: classref-method
 
-whatever man **send_event**\ (\ event\ ) :ref:`🔗<class_GutInputSender_method_send_event>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **send_event**\ (\ event\ ) :ref:`🔗<class_GutInputSender_method_send_event>`
 
 .. container:: contribute
 
@@ -567,7 +567,7 @@ whatever man **send_event**\ (\ event\ ) :ref:`🔗<class_GutInputSender_method_
 
 .. rst-class:: classref-method
 
-whatever man **release_all**\ (\ ) :ref:`🔗<class_GutInputSender_method_release_all>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **release_all**\ (\ ) :ref:`🔗<class_GutInputSender_method_release_all>`
 
 .. container:: contribute
 
@@ -581,7 +581,7 @@ whatever man **release_all**\ (\ ) :ref:`🔗<class_GutInputSender_method_releas
 
 .. rst-class:: classref-method
 
-whatever man **wait_frames**\ (\ num_frames\ ) :ref:`🔗<class_GutInputSender_method_wait_frames>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_frames**\ (\ num_frames\ ) :ref:`🔗<class_GutInputSender_method_wait_frames>`
 
 .. container:: contribute
 
@@ -595,7 +595,7 @@ whatever man **wait_frames**\ (\ num_frames\ ) :ref:`🔗<class_GutInputSender_m
 
 .. rst-class:: classref-method
 
-whatever man **wait_secs**\ (\ num_secs\ ) :ref:`🔗<class_GutInputSender_method_wait_secs>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_secs**\ (\ num_secs\ ) :ref:`🔗<class_GutInputSender_method_wait_secs>`
 
 .. container:: contribute
 
@@ -609,7 +609,7 @@ whatever man **wait_secs**\ (\ num_secs\ ) :ref:`🔗<class_GutInputSender_metho
 
 .. rst-class:: classref-method
 
-whatever man **hold_for**\ (\ duration\ ) :ref:`🔗<class_GutInputSender_method_hold_for>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **hold_for**\ (\ duration\ ) :ref:`🔗<class_GutInputSender_method_hold_for>`
 
 .. container:: contribute
 

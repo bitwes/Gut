@@ -2,7 +2,15 @@ from typing import Any, Dict, List, Optional, TextIO, Tuple, Union
 import re
 from godot_classes import *
 from godot_consts import *
-from logger import *
+import logger as lgr
+
+def print_error(text, state):
+    lgr.print_error(text, state)
+
+
+def print_warning(text, state):
+    lgr.print_warning(text, state)
+
 
 MARKUP_ALLOWED_PRECEDENT = " -:/'\"<([{"
 MARKUP_ALLOWED_SUBSEQUENT = " -.,:;!?\\/'\")]}>"
@@ -22,6 +30,16 @@ RESERVED_CROSSLINK_TAGS = [
     "theme_item",
     "param",
 ]
+
+class TagState:
+    def __init__(self, raw: str, name: str, arguments: str, closing: bool) -> None:
+        self.raw = raw
+
+        self.name = name
+        self.arguments = arguments
+        self.closing = closing
+
+
 
 
 def make_link(url: str, title: str) -> str:
@@ -69,7 +87,6 @@ def is_in_tagset(tag_text: str, tagset: List[str]) -> bool:
             return True
 
     return False
-
 
 
 def get_tag_and_args(tag_text: str) -> TagState:
@@ -128,7 +145,7 @@ def format_codeblock(
         while code_pos + to_skip + 1 < len(code_text) and code_text[code_pos + to_skip + 1] == "\t":
             to_skip += 1
 
-        if to_skip > indent_level:
+        if to_skip > indent_level and "lang=text" not in tag_state.arguments:
             print_error(
                 f"{state.current_class}.xml: Four spaces should be used for indentation within [{tag_state.name}].",
                 state,
@@ -183,7 +200,6 @@ def escape_rst(text: str, until_pos: int = -1) -> str:
             pos += 1
 
     return text
-
 
 
 def format_text_block(

@@ -27,9 +27,9 @@ Methods
 .. table::
    :widths: auto
 
-   +--------------+------------------------------------------------------------------------------------------------------------------------+
-   | whatever man | :ref:`named_parameters<class_"addons/gut/parameter_factory.gd"_method_named_parameters>`\ (\ names, values\ ) |static| |
-   +--------------+------------------------------------------------------------------------------------------------------------------------+
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`named_parameters<class_"addons/gut/parameter_factory.gd"_method_named_parameters>`\ (\ names, values\ ) |static| |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------+
 
 .. rst-class:: classref-section-separator
 
@@ -44,7 +44,7 @@ Method Descriptions
 
 .. rst-class:: classref-method
 
-whatever man **named_parameters**\ (\ names, values\ ) |static| :ref:`🔗<class_"addons/gut/parameter_factory.gd"_method_named_parameters>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **named_parameters**\ (\ names, values\ ) |static| :ref:`🔗<class_"addons/gut/parameter_factory.gd"_method_named_parameters>`
 
 Creates an array of dictionaries.  It pairs up the names array with each set of values in values.  If more names than values are specified then the missing values will be filled with nulls.  If more values than names are specified those values will be ignored.  Example:
 

@@ -1,8 +1,10 @@
 from collections import OrderedDict
 import xml.etree.ElementTree as ET
 from typing import Any, Dict, List, Optional, TextIO, Tuple, Union
+
 from godot_consts import *
 import logger as lgr
+import bitwes
 
 
 class State:
@@ -296,15 +298,6 @@ class State:
         self.classes = OrderedDict(sorted(self.classes.items(), key=lambda t: t[0].lower()))
 
 
-class TagState:
-    def __init__(self, raw: str, name: str, arguments: str, closing: bool) -> None:
-        self.raw = raw
-
-        self.name = name
-        self.arguments = arguments
-        self.closing = closing
-
-
 class TypeName:
     def __init__(self, type_name: str, enum: Optional[str] = None, is_bitfield: bool = False) -> None:
         self.type_name = type_name
@@ -334,6 +327,7 @@ class DefinitionBase:
         self.name = name
         self.deprecated: Optional[str] = None
         self.experimental: Optional[str] = None
+
 
 
 class PropertyDef(DefinitionBase):
@@ -403,6 +397,19 @@ class MethodDef(DefinitionBase):
         self.parameters = parameters
         self.description = description
         self.qualifiers = qualifiers
+        self.internal = self.desc_annotation("@internal", "[b]Internal use only.[/b]")
+        self.ignore = self.desc_annotation("@ignore", None)
+
+
+    def desc_annotation(self, ann_text, replace_text):
+        exists = False
+        if(self.description != None):
+            exists = ann_text in self.description
+            if(exists and replace_text != None):
+                self.description = self.description.replace(ann_text, replace_text)
+        return exists
+
+
 
 
 class ConstantDef(DefinitionBase):
@@ -523,8 +530,6 @@ class ClassDef(DefinitionBase):
         self._strip_private_methods()
 
 
-
-
 # Checks if code samples have both GDScript and C# variations.
 # For simplicity we assume that a GDScript example is always present, and ignore contexts
 # which don't necessarily need C# examples.
@@ -549,11 +554,6 @@ class ScriptLanguageParityCheck:
         self.hit_map[class_name].append((context, error))
 
 
-
-def make_type_link(link_type, state):
-    return ("whatever man")
-
-
 def make_type(klass: str, state: State) -> str:
     if klass.find("*") != -1:  # Pointer, ignore
         return f"``{klass}``"
@@ -573,10 +573,11 @@ def make_type(klass: str, state: State) -> str:
 
     # print_error(f'{state.current_class}.xml: Unresolved type "{link_type}".', state)
     # type_rst = f"``{link_type}``"
-    type_rst = make_type_link(link_type, state)
+    type_rst = bitwes.make_type_link(link_type)
     if is_array:
         type_rst = f":ref:`Array<class_Array>`\\[{type_rst}\\]"
     return type_rst
+
 
 def make_enum(t: str, is_bitfield: bool, state: State) -> str:
     p = t.find(".")
