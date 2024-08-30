@@ -8,7 +8,7 @@
 GutTest
 =======
 
-**Inherits:** 
+**Inherits:** `Node <https://docs.godotengine.org/en/stable/classes/class_node.html>`_
 
 This is the base class for all test scripts.  Extend this...test the world!
 

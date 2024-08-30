@@ -8,7 +8,7 @@
 addons/gut/cli/optparse.gd
 ==========================
 
-**Inherits:** 
+**Inherits:** `RefCounted <https://docs.godotengine.org/en/stable/classes/class_refcounted.html>`_
 
 Parses command line arguments, as one might expect.
 
@@ -150,19 +150,21 @@ Properties
 .. table::
    :widths: auto
 
-   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+-----------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`options<class_"addons/gut/cli/optparse.gd"_property_options>`                       | ``new()`` |
-   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+-----------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`banner<class_"addons/gut/cli/optparse.gd"_property_banner>`                         | ``""``    |
-   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+-----------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`option_name_prefix<class_"addons/gut/cli/optparse.gd"_property_option_name_prefix>` | ``"-"``   |
-   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+-----------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`unused<class_"addons/gut/cli/optparse.gd"_property_unused>`                         | ``[]``    |
-   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+-----------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`parsed_args<class_"addons/gut/cli/optparse.gd"_property_parsed_args>`               | ``[]``    |
-   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+-----------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`values<class_"addons/gut/cli/optparse.gd"_property_values>`                         | ``{}``    |
-   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+-----------+
+   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+---------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`nothing<class_"addons/gut/cli/optparse.gd"_property_nothing>`                       | ``"nothing"`` |
+   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+---------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`options<class_"addons/gut/cli/optparse.gd"_property_options>`                       | ``new()``     |
+   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+---------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`banner<class_"addons/gut/cli/optparse.gd"_property_banner>`                         | ``""``        |
+   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+---------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`option_name_prefix<class_"addons/gut/cli/optparse.gd"_property_option_name_prefix>` | ``"-"``       |
+   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+---------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`unused<class_"addons/gut/cli/optparse.gd"_property_unused>`                         | ``[]``        |
+   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+---------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`parsed_args<class_"addons/gut/cli/optparse.gd"_property_parsed_args>`               | ``[]``        |
+   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+---------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`values<class_"addons/gut/cli/optparse.gd"_property_values>`                         | ``{}``        |
+   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+---------------+
 
 .. rst-class:: classref-reftable-group
 
@@ -206,6 +208,20 @@ Methods
 
 Property Descriptions
 ---------------------
+
+.. _class_"addons/gut/cli/optparse.gd"_property_nothing:
+
+.. rst-class:: classref-property
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **nothing** = ``"nothing"`` :ref:`🔗<class_"addons/gut/cli/optparse.gd"_property_nothing>`
+
+.. container:: contribute
+
+	No description
+
+.. rst-class:: classref-item-separator
+
+----
 
 .. _class_"addons/gut/cli/optparse.gd"_property_options:
 

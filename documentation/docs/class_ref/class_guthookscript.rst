@@ -8,7 +8,7 @@
 GutHookScript
 =============
 
-**Inherits:** 
+**Inherits:** `RefCounted <https://docs.godotengine.org/en/stable/classes/class_refcounted.html>`_
 
 This script is the base for custom scripts to be used in pre and post run hooks. To use, inherit from this script and then implement the run method.
 

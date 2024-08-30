@@ -8,7 +8,7 @@
 GutInputSender
 ==============
 
-**Inherits:** 
+**Inherits:** `RefCounted <https://docs.godotengine.org/en/stable/classes/class_refcounted.html>`_
 
 The InputSender class.  It sends input to places.
 

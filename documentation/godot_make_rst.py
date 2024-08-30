@@ -31,7 +31,7 @@
 #     methods.
 #   - Does not list Variant datatype for method parameters.  I barely use types
 #     in GUT, so it is just noise.  Change marked in make_method_signature.
-#   - Supports @internal in the description.  This will cause a public method to
+#   - Supports @internal in the description.  This will cause the method to
 #     be listed seperately (like deprecated methods).  This is for methods that
 #     are public but aren't really supposed to be consumed by the general
 #     public.
@@ -1119,6 +1119,10 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
                     inherits = inode.strip()
                 else:
                     break
+            # If we didn't ever print anything then the class wasn't found so
+            # we just use it and assume it is a Godot class (bitwes).
+            if(first):
+                f.write(make_type_link(class_def.inherits.strip(), state))
             f.write("\n\n")
 
         # Descendants

@@ -30,8 +30,8 @@ function generate_xml(){
     the_dir=$1
     scripts_dir=$2
 
-    echo "Clearing $the_dir xml files"
     mkdir -p $the_dir
+    echo "Clearing $the_dir xml files"
     rm "$the_dir"/*.xml
 
     # The command hangs forever, always.  It looks like this will be fixed in
@@ -83,3 +83,4 @@ function main(){
 }
 
 main
+# generate_rst $xmldir $rstdir
