@@ -26,7 +26,7 @@ func run():
 ## Set the exit code when running from the command line.  If not set then the
 ## default exit code will be returned (0 when no tests fail, 1 when any tests
 ## fail).
-func set_exit_code(code):
+func set_exit_code(code : int):
 	_exit_code  = code
 
 ## Return the current exit code.

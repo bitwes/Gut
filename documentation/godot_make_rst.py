@@ -11,7 +11,7 @@
 # files are included.
 #
 # Changes
-#   - Does not generate an index.rst
+#   - Does not generate an index.rst (commented out in main)
 #   - Does not include scripts that do not have any description.
 #   - Does not include private methods or properties unless they have a
 #     description.
@@ -29,9 +29,12 @@
 #     translation entries.  See no_description method.  Pretty simple.
 #   - Deprecated methods are grouped together at the bottom of the list of
 #     methods.
+#   - Does not list Variant datatype for method parameters.  I barely use types
+#     in GUT, so it is just noise.  Change marked in make_method_signature.
 #
 # This was a bit of a brute force edit of the original to fit my needs.  I only
-# changed what was needed to get this to work.
+# changed what was needed to get this to work.  In most cases the original code
+# was commented out to help make changes apparent.
 # ##############################################################################
 
 
@@ -60,7 +63,7 @@ MARKUP_ALLOWED_PRECEDENT = " -:/'\"<([{"
 MARKUP_ALLOWED_SUBSEQUENT = " -.,:;!?\\/'\")]}>"
 
 
-# -------- bitwes methods/vars --------
+# -------- START bitwes methods/vars --------
 godot_classes = []
 def make_type_link(link_type, state):
     if(not link_type in godot_classes):
@@ -69,27 +72,36 @@ def make_type_link(link_type, state):
 
     return f"`{link_type} <https://docs.godotengine.org/en/stable/classes/class_{link_type.lower()}.html>`_"
 
+
 # Used this method to change the message in one place and make it easier to be
 # sure translation entries and calls to translate match.
 def no_description(name):
     return "No description"
     # return f"There is currently no description for this {name}. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!"
 
+
 verbose_enabled = True
 def vprint(*arg) -> None:
     if(verbose_enabled):
-        print(f"{verbose_enabled}:  Trace:  {" ".join(arg)}")
+        out = ""
+        for a in arg:
+            out += str(a) + " "
+        print(f"Debug:  {out}")
+
 
 debug_enabled = True
 def dbg(*arg) -> None:
     if(debug_enabled):
-        print(f"Debug:  {" ".join(arg)}")
+        out = ""
+        for a in arg:
+            out += str(a) + " "
+        print(f"Debug:  {out}")
+
 
 def make_method_table_data(class_def, state):
     ml = []
     dep = []
-    # for method_list in class_def.methods.values():
-        # for m in method_list:
+
     for key in sorted(class_def.methods.keys()): # list by name
         for m in class_def.methods[key]:
             to_append = make_method_signature(class_def, m, "method", state)
@@ -98,7 +110,7 @@ def make_method_table_data(class_def, state):
             else:
                 ml.append(to_append)
     return ml + dep
-# --------
+# -------- END bitwes methods/vars --------
 
 
 
@@ -1704,7 +1716,11 @@ def make_method_signature(
         else:
             out += "\\ "
 
-        out += f"{arg.name}\\: {arg.type_name.to_rst(state)}"
+        # hide variant datatype, too noisey for me (bitwes)
+        if(arg.type_name.type_name == "Variant"):
+            out += f"{arg.name}"
+        else:
+            out += f"{arg.name}\\: {arg.type_name.to_rst(state)}"
 
         if arg.default_value is not None:
             out += f" = {arg.default_value}"
