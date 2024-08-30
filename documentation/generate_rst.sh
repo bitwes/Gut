@@ -82,5 +82,5 @@ function main(){
     generate_html $htmldir
 }
 
-main
-# generate_rst $xmldir $rstdir
+# main
+generate_rst $xmldir $rstdir
