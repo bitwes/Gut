@@ -227,6 +227,7 @@ func to_bottom_right():
 
 func align_right():
 	var win_size = get_display_size()
-	self.position.x = win_size.x - self.size.x -5
+	self.position.x = 5
 	self.position.y = 5
 	self.size.y = win_size.y - 10
+	self.size.x = win_size.x - 10

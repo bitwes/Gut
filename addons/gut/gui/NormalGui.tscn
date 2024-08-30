@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" uid="uid://bvrqqgjpyouse" path="res://addons/gut/gui/ResizeHandle.tscn" id="4_2r8a8"]
 
 [node name="Large" type="Panel"]
-custom_minimum_size = Vector2(500, 150)
 offset_right = 632.0
 offset_bottom = 260.0
 theme = ExtResource("1_5hlsm")
