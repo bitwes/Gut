@@ -481,7 +481,7 @@ Method Descriptions
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_logger**\ (\ ) :ref:`🔗<class_GutTest_method_get_logger>`
 
-@internal
+**Internal use only.**
 
 .. rst-class:: classref-item-separator
 
@@ -493,7 +493,7 @@ Method Descriptions
 
 |void| **set_logger**\ (\ logger\ ) :ref:`🔗<class_GutTest_method_set_logger>`
 
-@internal
+**Internal use only.**
 
 .. rst-class:: classref-item-separator
 
@@ -1341,7 +1341,7 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_summary**\ (\ ) :ref:`🔗<class_GutTest_method_get_summary>`
 
-@internal
+**Internal use only.**
 
 .. rst-class:: classref-item-separator
 
@@ -1409,7 +1409,7 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 |void| **clear_signal_watcher**\ (\ ) :ref:`🔗<class_GutTest_method_clear_signal_watcher>`
 
-@internal
+**Internal use only.**
 
 .. rst-class:: classref-item-separator
 
@@ -1463,7 +1463,7 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_summary_text**\ (\ ) :ref:`🔗<class_GutTest_method_get_summary_text>`
 
-@internal
+**Internal use only.**
 
 .. rst-class:: classref-item-separator
 
@@ -1503,7 +1503,7 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **double_singleton**\ (\ singleton_name\ ) :ref:`🔗<class_GutTest_method_double_singleton>`
 
-@internal
+**Internal use only.**
 
 .. rst-class:: classref-item-separator
 
@@ -1515,7 +1515,7 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **partial_double_singleton**\ (\ singleton_name\ ) :ref:`🔗<class_GutTest_method_partial_double_singleton>`
 
-@internal
+**Internal use only.**
 
 .. rst-class:: classref-item-separator
 
@@ -1633,7 +1633,7 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **run_x_times**\ (\ x\ ) :ref:`🔗<class_GutTest_method_run_x_times>`
 
-When used as the default for a test method parameter, it will cause the test to be run x times.  I Hacked this together to test a method that was occassionally failing due to timing issues.  I don't think it's a great idea, but you be the judge. @internal
+**Internal use only.** When used as the default for a test method parameter, it will cause the test to be run x times.  I Hacked this together to test a method that was occassionally failing due to timing issues.  I don't think it's a great idea, but you be the judge.  If you find a good use for it, let me know and I'll make it a legit member of the api.
 
 .. rst-class:: classref-item-separator
 

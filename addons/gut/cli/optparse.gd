@@ -1,6 +1,6 @@
 ## Parses command line arguments, as one might expect.
 ##
-## Parses command line arguments with a bunch of options includingg generating
+## Parses command line arguments with a bunch of options including generating
 ## text that displays all the arguments your script accepts.  This
 ## is included in the GUT ClassRef since it might be usable by others and is
 ## portable (everything it needs is in this one file).

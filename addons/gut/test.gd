@@ -1521,12 +1521,14 @@ func use_parameters(params):
 	return ph.next_parameters()
 
 
+## @internal
 ## When used as the default for a test method parameter, it will cause the test
 ## to be run x times.
 ##
 ## I Hacked this together to test a method that was occassionally failing due to
-## timing issues.  I don't think it's a great idea, but you be the judge.
-## @internal
+## timing issues.  I don't think it's a great idea, but you be the judge.  If
+## you find a good use for it, let me know and I'll make it a legit member
+## of the api.
 func run_x_times(x):
 	var ph = gut.parameter_handler
 	if(ph == null):

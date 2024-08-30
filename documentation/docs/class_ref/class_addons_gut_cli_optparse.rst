@@ -17,7 +17,7 @@ Parses command line arguments, as one might expect.
 Description
 -----------
 
-Parses command line arguments with a bunch of options includingg generating text that displays all the arguments your script accepts.  This is included in the GUT ClassRef since it might be usable by others and is portable (everything it needs is in this one file). 
+Parses command line arguments with a bunch of options including generating text that displays all the arguments your script accepts.  This is included in the GUT ClassRef since it might be usable by others and is portable (everything it needs is in this one file). 
 
 This does alot, if you want to see it in action have a look at `scratch/optparse_example.gd <https://github.com/bitwes/Gut/blob/main/scratch/optparse_example.gd>`__\ 
 

@@ -1,4 +1,8 @@
 class_name GutInputSender
+## The InputSender class.  It sends input to places.
+##
+## This is the full description that has not yet been filled in.
+
 # Implemented InputEvent* convenience methods
 # 	InputEventAction
 # 	InputEventKey

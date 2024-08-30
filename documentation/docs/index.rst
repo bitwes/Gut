@@ -71,6 +71,7 @@
    :name: class-ref
    :glob:
 
+   Class-Ref
    class_ref/*
 
 

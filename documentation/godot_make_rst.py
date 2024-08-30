@@ -7,7 +7,7 @@
 # This aims to generate class reference rst files for plugins.  It is meant to
 # operate on a directory of xml files generated using --no-docbase.  It only
 # generates rst files for scripts (rather their doctool xml representation) that
-# have a description (a ## comment at the top), so that only user relevant
+# that have a description (a ## comment at the top), so that only user relevant
 # files are included.
 #
 # Changes
@@ -20,7 +20,7 @@
 #        path/to/file/filename.gd
 #        path/to/file/filename.gd.InnerClassName
 #     This is how they appear in the TOC.
-#   - Since this is indended to be used with the --no-docbase doctool option,
+#   - Since this is intended to be used with the --no-docbase doctool option,
 #     any reference to a class it can't find is assumed to be a Godot class and
 #     links to the Godot docs (latest).  A warning is printed on the first
 #     occurance of each unknown class.
@@ -31,6 +31,10 @@
 #     methods.
 #   - Does not list Variant datatype for method parameters.  I barely use types
 #     in GUT, so it is just noise.  Change marked in make_method_signature.
+#   - Supports @internal in the description.  This will cause a public method to
+#     be listed seperately (like deprecated methods).  This is for methods that
+#     are public but aren't really supposed to be consumed by the general
+#     public.
 #
 # This was a bit of a brute force edit of the original to fit my needs.  I only
 # changed what was needed to get this to work.  In most cases the original code
@@ -62,8 +66,9 @@ GODOT_DOCS_PATTERN = re.compile(r"^\$DOCS_URL/(.*)\.html(#.*)?$")
 MARKUP_ALLOWED_PRECEDENT = " -:/'\"<([{"
 MARKUP_ALLOWED_SUBSEQUENT = " -.,:;!?\\/'\")]}>"
 
-
+# ------------------
 # -------- START bitwes methods/vars --------
+# ------------------
 godot_classes = []
 def make_type_link(link_type, state):
     if(not link_type in godot_classes):
@@ -86,7 +91,7 @@ def vprint(*arg) -> None:
         out = ""
         for a in arg:
             out += str(a) + " "
-        print(f"Debug:  {out}")
+        print(f"Info:  {out}")
 
 
 debug_enabled = True
@@ -109,6 +114,9 @@ def make_method_table(f, class_def, state):
                 dep.append(("Deprecated", to_append[0], to_append[1]))
             elif("@internal" in m.description):
                 internal.append(("Internal Use", to_append[0], to_append[1]))
+                # bold with bbcode because the description hasn't been converted to
+                # to rst yet?  It is confusing.
+                m.description = m.description.replace("@internal", "[b]Internal use only.[/b]")
             else:
                 ml.append(to_append)
 
@@ -117,8 +125,9 @@ def make_method_table(f, class_def, state):
     format_table(f, ml)
     format_table(f, dep)
     format_table(f, internal)
-    # return ml + dep
+# ------------------
 # -------- END bitwes methods/vars --------
+# ------------------
 
 
 

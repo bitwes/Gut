@@ -39,8 +39,5 @@ func abort():
 	_should_abort = true
 
 ## Returns the current abort flag value.
-## @deprecated: I added this
-## @ignore: I added this too
-## @experimental
 func should_abort():
 	return _should_abort

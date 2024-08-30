@@ -1,5 +1,11 @@
 extends 'res://addons/gut/gut_to_move.gd'
 class_name GutMain
+## The GUT brains.
+##
+## This is responsible for everything.  There aren't a lot of things you should
+## be doing with this, but there are some edge cases where you can/should
+## interact with the instance of this that is making all the magic happen.
+
 
 # ##############################################################################
 #

@@ -8,7 +8,7 @@
 # -----------------------------------------------------------------------------
 
 # Directory where xml files from `godot --doctool` will be placed.  These are
-# used to generate rst files from.
+# used to generate rst files from.  This dir should be in your .gitignore
 xmldir='documentation/class_ref_xml'
 
 # Directory where generated rst files are placed.
