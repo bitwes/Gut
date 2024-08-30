@@ -260,9 +260,11 @@ func after_each():
 # Public
 # #######################
 
+## @internal
 func get_logger():
 	return _lgr
 
+## @internal
 func set_logger(logger):
 	_lgr = logger
 
@@ -1240,7 +1242,7 @@ func yield_frames(frames, msg=''):
 	_lgr.deprecated("yield_frames", "wait_frames")
 	return wait_frames(frames, msg)
 
-
+## @internal
 func get_summary():
 	return _summary
 
@@ -1256,6 +1258,7 @@ func get_pending_count():
 func get_assert_count():
 	return _summary.asserts
 
+## @internal
 func clear_signal_watcher():
 	_signal_watcher.clear()
 
@@ -1271,6 +1274,7 @@ func pause_before_teardown():
 # ------------------------------------------------------------------------------
 # Convert the _summary dictionary into text
 # ------------------------------------------------------------------------------
+## @internal
 func get_summary_text():
 	var to_return = get_script().get_path() + "\n"
 	to_return += str('  ', _summary.passed, ' of ', _summary.asserts, ' passed.')
@@ -1353,6 +1357,7 @@ func partial_double(thing, double_strat=null, not_used_anymore=null):
 # ------------------------------------------------------------------------------
 # Doubles a Godot singleton
 # ------------------------------------------------------------------------------
+## @internal
 func double_singleton(singleton_name):
 	return null
 	# var to_return = null
@@ -1363,6 +1368,7 @@ func double_singleton(singleton_name):
 # ------------------------------------------------------------------------------
 # Partial Doubles a Godot singleton
 # ------------------------------------------------------------------------------
+## @internal
 func partial_double_singleton(singleton_name):
 	return null
 	# var to_return = null
@@ -1520,6 +1526,7 @@ func use_parameters(params):
 ##
 ## I Hacked this together to test a method that was occassionally failing due to
 ## timing issues.  I don't think it's a great idea, but you be the judge.
+## @internal
 func run_x_times(x):
 	var ph = gut.parameter_handler
 	if(ph == null):

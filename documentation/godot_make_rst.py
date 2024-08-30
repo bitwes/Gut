@@ -98,18 +98,26 @@ def dbg(*arg) -> None:
         print(f"Debug:  {out}")
 
 
-def make_method_table_data(class_def, state):
+def make_method_table(f, class_def, state):
     ml = []
     dep = []
-
+    internal = []
     for key in sorted(class_def.methods.keys()): # list by name
         for m in class_def.methods[key]:
             to_append = make_method_signature(class_def, m, "method", state)
             if(m.deprecated is not None):
-                dep.append((to_append[0], "Deprecated " + to_append[1]))
+                dep.append(("Deprecated", to_append[0], to_append[1]))
+            elif("@internal" in m.description):
+                internal.append(("Internal Use", to_append[0], to_append[1]))
             else:
                 ml.append(to_append)
-    return ml + dep
+
+    f.write(".. rst-class:: classref-reftable-group\n\n")
+    f.write(make_heading("Methods", "-"))
+    format_table(f, ml)
+    format_table(f, dep)
+    format_table(f, internal)
+    # return ml + dep
 # -------- END bitwes methods/vars --------
 
 
@@ -1200,15 +1208,15 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
             format_table(f, ml)
 
         if len(class_def.methods) > 0:
-            f.write(".. rst-class:: classref-reftable-group\n\n")
-            f.write(make_heading("Methods", "-"))
+            # f.write(".. rst-class:: classref-reftable-group\n\n")
+            # f.write(make_heading("Methods", "-"))
 
             # ml = []
             # # for method_list in class_def.methods.values():
             #     # for m in method_list:
 
-            ml = make_method_table_data(class_def, state)
-            format_table(f, ml)
+            # format_table(f, ml)
+            make_method_table(f, class_def, state)
 
         if len(class_def.operators) > 0:
             f.write(".. rst-class:: classref-reftable-group\n\n")

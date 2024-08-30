@@ -163,8 +163,6 @@ Methods
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`before_each<class_GutTest_method_before_each>`\ (\ )                                                                                                                          |
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`clear_signal_watcher<class_GutTest_method_clear_signal_watcher>`\ (\ )                                                                                                        |
-   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`compare_deep<class_GutTest_method_compare_deep>`\ (\ v1, v2, max_differences = null\ )                                                                                        |
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`compare_shallow<class_GutTest_method_compare_shallow>`\ (\ v1, v2, max_differences = null\ )                                                                                  |
@@ -172,8 +170,6 @@ Methods
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`did_wait_timeout<class_GutTest_method_did_wait_timeout>`\ (\ )                                                                                                                |
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`double<class_GutTest_method_double>`\ (\ thing, double_strat = null, not_used_anymore = null\ )                                                                               |
-   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`double_singleton<class_GutTest_method_double_singleton>`\ (\ singleton_name\ )                                                                                                |
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`fail_test<class_GutTest_method_fail_test>`\ (\ text\ )                                                                                                                        |
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -187,8 +183,6 @@ Methods
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_fail_count<class_GutTest_method_get_fail_count>`\ (\ )                                                                                                                    |
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_logger<class_GutTest_method_get_logger>`\ (\ )                                                                                                                            |
-   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_pass_count<class_GutTest_method_get_pass_count>`\ (\ )                                                                                                                    |
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_pending_count<class_GutTest_method_get_pending_count>`\ (\ )                                                                                                              |
@@ -197,10 +191,6 @@ Methods
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_signal_parameters<class_GutTest_method_get_signal_parameters>`\ (\ object, signal_name, index = -1\ )                                                                     |
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_summary<class_GutTest_method_get_summary>`\ (\ )                                                                                                                          |
-   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_summary_text<class_GutTest_method_get_summary_text>`\ (\ )                                                                                                                |
-   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`ignore_method_when_doubling<class_GutTest_method_ignore_method_when_doubling>`\ (\ thing, method_name\ )                                                                      |
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`is_failing<class_GutTest_method_is_failing>`\ (\ )                                                                                                                            |
@@ -208,8 +198,6 @@ Methods
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`is_passing<class_GutTest_method_is_passing>`\ (\ )                                                                                                                            |
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`partial_double<class_GutTest_method_partial_double>`\ (\ thing, double_strat = null, not_used_anymore = null\ )                                                               |
-   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`partial_double_singleton<class_GutTest_method_partial_double_singleton>`\ (\ singleton_name\ )                                                                                |
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`pass_test<class_GutTest_method_pass_test>`\ (\ text\ )                                                                                                                        |
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -221,11 +209,7 @@ Methods
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`replace_node<class_GutTest_method_replace_node>`\ (\ base_node, path_or_node, with_this\ )                                                                                    |
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`run_x_times<class_GutTest_method_run_x_times>`\ (\ x\ )                                                                                                                       |
-   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`set_double_strategy<class_GutTest_method_set_double_strategy>`\ (\ double_strategy\ )                                                                                         |
-   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`set_logger<class_GutTest_method_set_logger>`\ (\ logger\ )                                                                                                                    |
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`should_skip_script<class_GutTest_method_should_skip_script>`\ (\ )                                                                                                            |
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -249,20 +233,46 @@ Methods
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`watch_signals<class_GutTest_method_watch_signals>`\ (\ object\ )                                                                                                              |
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | Deprecated :ref:`assert_setget<class_GutTest_method_assert_setget>`\ (\ instance, name_property, const_or_setter = null, getter = "__not_set__"\ )                                  |
-   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | Deprecated :ref:`double_inner<class_GutTest_method_double_inner>`\ (\ path, subpath, strategy = null\ )                                                                             |
-   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | Deprecated :ref:`double_scene<class_GutTest_method_double_scene>`\ (\ path, strategy = null\ )                                                                                      |
-   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | Deprecated :ref:`double_script<class_GutTest_method_double_script>`\ (\ path, strategy = null\ )                                                                                    |
-   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | Deprecated :ref:`yield_for<class_GutTest_method_yield_for>`\ (\ time, msg = ""\ )                                                                                                   |
-   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | Deprecated :ref:`yield_frames<class_GutTest_method_yield_frames>`\ (\ frames, msg = ""\ )                                                                                           |
-   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | Deprecated :ref:`yield_to<class_GutTest_method_yield_to>`\ (\ obj, signal_name, max_wait, msg = ""\ )                                                                               |
-   +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+.. table::
+   :widths: auto
+
+   +------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+   | Deprecated | |void|                                                                         | :ref:`assert_setget<class_GutTest_method_assert_setget>`\ (\ instance, name_property, const_or_setter = null, getter = "__not_set__"\ ) |
+   +------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+   | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`double_inner<class_GutTest_method_double_inner>`\ (\ path, subpath, strategy = null\ )                                            |
+   +------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+   | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`double_scene<class_GutTest_method_double_scene>`\ (\ path, strategy = null\ )                                                     |
+   +------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+   | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`double_script<class_GutTest_method_double_script>`\ (\ path, strategy = null\ )                                                   |
+   +------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+   | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`yield_for<class_GutTest_method_yield_for>`\ (\ time, msg = ""\ )                                                                  |
+   +------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+   | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`yield_frames<class_GutTest_method_yield_frames>`\ (\ frames, msg = ""\ )                                                          |
+   +------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+   | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`yield_to<class_GutTest_method_yield_to>`\ (\ obj, signal_name, max_wait, msg = ""\ )                                              |
+   +------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+
+.. table::
+   :widths: auto
+
+   +--------------+--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------+
+   | Internal Use | |void|                                                                         | :ref:`clear_signal_watcher<class_GutTest_method_clear_signal_watcher>`\ (\ )                         |
+   +--------------+--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------+
+   | Internal Use | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`double_singleton<class_GutTest_method_double_singleton>`\ (\ singleton_name\ )                 |
+   +--------------+--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------+
+   | Internal Use | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_logger<class_GutTest_method_get_logger>`\ (\ )                                             |
+   +--------------+--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------+
+   | Internal Use | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_summary<class_GutTest_method_get_summary>`\ (\ )                                           |
+   +--------------+--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------+
+   | Internal Use | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_summary_text<class_GutTest_method_get_summary_text>`\ (\ )                                 |
+   +--------------+--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------+
+   | Internal Use | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`partial_double_singleton<class_GutTest_method_partial_double_singleton>`\ (\ singleton_name\ ) |
+   +--------------+--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------+
+   | Internal Use | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`run_x_times<class_GutTest_method_run_x_times>`\ (\ x\ )                                        |
+   +--------------+--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------+
+   | Internal Use | |void|                                                                         | :ref:`set_logger<class_GutTest_method_set_logger>`\ (\ logger\ )                                     |
+   +--------------+--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------+
 
 .. rst-class:: classref-section-separator
 
@@ -471,9 +481,7 @@ Method Descriptions
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_logger**\ (\ ) :ref:`🔗<class_GutTest_method_get_logger>`
 
-.. container:: contribute
-
-	No description
+@internal
 
 .. rst-class:: classref-item-separator
 
@@ -485,9 +493,7 @@ Method Descriptions
 
 |void| **set_logger**\ (\ logger\ ) :ref:`🔗<class_GutTest_method_set_logger>`
 
-.. container:: contribute
-
-	No description
+@internal
 
 .. rst-class:: classref-item-separator
 
@@ -1335,9 +1341,7 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_summary**\ (\ ) :ref:`🔗<class_GutTest_method_get_summary>`
 
-.. container:: contribute
-
-	No description
+@internal
 
 .. rst-class:: classref-item-separator
 
@@ -1405,9 +1409,7 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 |void| **clear_signal_watcher**\ (\ ) :ref:`🔗<class_GutTest_method_clear_signal_watcher>`
 
-.. container:: contribute
-
-	No description
+@internal
 
 .. rst-class:: classref-item-separator
 
@@ -1461,9 +1463,7 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_summary_text**\ (\ ) :ref:`🔗<class_GutTest_method_get_summary_text>`
 
-.. container:: contribute
-
-	No description
+@internal
 
 .. rst-class:: classref-item-separator
 
@@ -1503,9 +1503,7 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **double_singleton**\ (\ singleton_name\ ) :ref:`🔗<class_GutTest_method_double_singleton>`
 
-.. container:: contribute
-
-	No description
+@internal
 
 .. rst-class:: classref-item-separator
 
@@ -1517,9 +1515,7 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **partial_double_singleton**\ (\ singleton_name\ ) :ref:`🔗<class_GutTest_method_partial_double_singleton>`
 
-.. container:: contribute
-
-	No description
+@internal
 
 .. rst-class:: classref-item-separator
 
@@ -1637,7 +1633,7 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **run_x_times**\ (\ x\ ) :ref:`🔗<class_GutTest_method_run_x_times>`
 
-When used as the default for a test method parameter, it will cause the test to be run x times.  I Hacked this together to test a method that was occassionally failing due to timing issues.  I don't think it's a great idea, but you be the judge.
+When used as the default for a test method parameter, it will cause the test to be run x times.  I Hacked this together to test a method that was occassionally failing due to timing issues.  I don't think it's a great idea, but you be the judge. @internal
 
 .. rst-class:: classref-item-separator
 
