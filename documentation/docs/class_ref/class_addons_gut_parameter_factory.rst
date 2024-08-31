@@ -55,7 +55,7 @@ Creates an array of dictionaries.  It pairs up the names array with each set of 
 
 
 
-This allows you to increase readability of your parameterized tests:
+This allows you to increase readability of your parameterized tests: 
 
 
 
@@ -67,11 +67,11 @@ This allows you to increase readability of your parameterized tests:
 
 
 
-Parameters:   * names:  an array of names to be used as keys in the dictionaries
+Parameters:
+
+* names:  an array of names to be used as keys in the dictionaries
 * values:  an array of arrays of values.
-* another thing
-* and another thing
-and what does this look like after the list?
+
 
 .. |virtual| replace:: :abbr:`virtual (This method should typically be overridden by the user to have any effect.)`
 .. |const| replace:: :abbr:`const (This method has no side effects. It doesn't modify any of the instance's member variables.)`
