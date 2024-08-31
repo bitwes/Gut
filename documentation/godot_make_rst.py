@@ -31,6 +31,9 @@
 #     methods.
 #   - Does not list Variant datatype for method parameters.  I barely use types
 #     in GUT, so it is just noise.  Change marked in make_method_signature.
+#   - [li][/li] support for list items.  You need a [br] before the first [li].
+#     I could add a TON more code so you don't have to...anyway...[li] turns
+#     into "* " and [/li] turns into "\n".  It's hacked together, but it works.
 #
 #   Additional Method Annotations (in ## comments)
 #   NOTE:  These do not apply to in-engine documentation and the annotations

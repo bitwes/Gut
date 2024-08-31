@@ -718,11 +718,24 @@ def format_text_block(
                     escape_pre = True
                 tag_text = ""
 
+            elif tag_state.name == "li":
+                if tag_state.closing:
+                    tag_depth -= 1
+                    tag_text = "\n"
+                    # A space gets in there and the 2nd list item is indented.
+                    # This gets rid of that space.  Might be a bad idea.
+                    post_text = post_text.lstrip()
+                else:
+                    tag_depth += 1
+                    tag_text = "* "
+
+
             elif tag_state.name == "lb":
                 tag_text = "\\["
 
             elif tag_state.name == "rb":
                 tag_text = "\\]"
+
 
             elif tag_state.name == "kbd":
                 tag_text = "`"

@@ -23,8 +23,8 @@
 ##[/codeblock]
 ## [br]
 ## Parameters:[br]
-## * names:  an array of names to be used as keys in the dictionaries
-## * values:  an array of arrays of values.
+##[li]names:  an array of names to be used as keys in the dictionaries[/li]
+##[li]values:  an array of arrays of values.[/li]
 static func named_parameters(names, values):
 	var named = []
 	for i in range(values.size()):
