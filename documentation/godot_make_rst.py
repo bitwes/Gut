@@ -33,9 +33,17 @@
 #     methods.
 #   - Does not list Variant datatype for method parameters.  I barely use types
 #     in GUT, so it is just noise.  Change marked in make_method_signature.
+#
+#
+# Additional BBCode tags:
+# NOTE:  These do not work with the in-engine documentation and will appear
+#        in the comments unaltered.
+#
+#   Unordered Lists
 #   - [li][/li] support for list items.  You need a [br] before the first [li].
 #     I could add a TON more code so you don't have to...anyway...[li] turns
 #     into "* " and [/li] turns into "\n".  It's hacked together, but it works.
+#
 #
 # Additional Anotations (in ## comments)
 # NOTE:  These do not apply to in-engine documentation and the annotations
@@ -43,9 +51,10 @@
 #
 #   Classes:
 #   - @ignore-uncommented:  Public members that are not commented will not be
-#     included.  Currently works for:
+#     included unless that have a doc comment.  Currently works for:
 #       - Methods
 #       - Properties
+#       - Constants
 #
 #   Methods:
 #   - @ignore - The method will not appear in generated documentation.
@@ -263,6 +272,43 @@ def make_property_descriptions(f, class_def, state):
             )
 
         index += 1
+
+
+def make_constant_descriptions(f, class_def, state):
+    num_printed = 0
+    for constant in class_def.constants.values():
+        if(class_def.ignore_uncommented and constant.text.strip() == ""):
+            continue
+
+        num_printed += 1
+        if(num_printed == 1):
+            f.write(make_separator(True))
+            f.write(".. rst-class:: classref-descriptions-group\n\n")
+            f.write(make_heading("Constants", "-"))
+
+        # Create constant signature and anchor point.
+
+        constant_anchor = f"class_{class_def.name}_constant_{constant.name}"
+        f.write(f".. _{constant_anchor}:\n\n")
+        self_link = f":ref:`🔗<{constant_anchor}>`"
+        f.write(".. rst-class:: classref-constant\n\n")
+
+        f.write(f"**{constant.name}** = ``{constant.value}`` {self_link}\n\n")
+
+        # Add constant description.
+
+        f.write(make_deprecated_experimental(constant, state))
+
+        if constant.text is not None and constant.text.strip() != "":
+            f.write(f"{bb2rst.format_text_block(constant.text.strip(), constant, state)}")
+        elif constant.deprecated is None and constant.experimental is None:
+            f.write(".. container:: contribute\n\n\t")
+            f.write(
+                translate(no_description("constant"))
+                + "\n\n"
+            )
+
+        f.write("\n\n")
 # ------------------
 # -------- END bitwes methods/vars --------
 # ------------------
@@ -817,34 +863,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
 
         # Constant descriptions
         if len(class_def.constants) > 0:
-            f.write(make_separator(True))
-            f.write(".. rst-class:: classref-descriptions-group\n\n")
-            f.write(make_heading("Constants", "-"))
-
-            for constant in class_def.constants.values():
-                # Create constant signature and anchor point.
-
-                constant_anchor = f"class_{class_name}_constant_{constant.name}"
-                f.write(f".. _{constant_anchor}:\n\n")
-                self_link = f":ref:`🔗<{constant_anchor}>`"
-                f.write(".. rst-class:: classref-constant\n\n")
-
-                f.write(f"**{constant.name}** = ``{constant.value}`` {self_link}\n\n")
-
-                # Add constant description.
-
-                f.write(make_deprecated_experimental(constant, state))
-
-                if constant.text is not None and constant.text.strip() != "":
-                    f.write(f"{bb2rst.format_text_block(constant.text.strip(), constant, state)}")
-                elif constant.deprecated is None and constant.experimental is None:
-                    f.write(".. container:: contribute\n\n\t")
-                    f.write(
-                        translate(no_description("constant"))
-                        + "\n\n"
-                    )
-
-                f.write("\n\n")
+            make_constant_descriptions(f, class_def, state)
 
         # Annotation descriptions
         if len(class_def.annotations) > 0:

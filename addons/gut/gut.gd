@@ -5,20 +5,12 @@ class_name GutMain
 ## This is responsible for everything.  There aren't a lot of things you should
 ## be doing with this, but there are some edge cases where you can/should
 ## interact with the instance of this that is making all the magic happen.
+## @ignore-uncommented
 
 
-# ##############################################################################
-#
-# View the readme at https://github.com/bitwes/Gut/blob/master/README.md for usage
-# details.  You should also check out the github wiki at:
-# https://github.com/bitwes/Gut/wiki
-#
-# ##############################################################################
-
-
-# ###########################
+# ---------------------------
 # Constants
-# ###########################
+# ---------------------------
 const LOG_LEVEL_FAIL_ONLY = 0
 const LOG_LEVEL_TEST_AND_FAILURES = 1
 const LOG_LEVEL_ALL_ASSERTS = 2
@@ -26,9 +18,9 @@ const WAITING_MESSAGE = '/# waiting #/'
 const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
 const COMPLETED = 'completed'
 
-# ###########################
+# ---------------------------
 # Signals
-# ###########################
+# ---------------------------
 signal start_pause_before_teardown
 signal end_pause_before_teardown
 
@@ -40,22 +32,22 @@ signal start_test(test_name)
 signal end_test
 
 
-# ###########################
+# ---------------------------
 # Settings
 #
 # These are properties that are usually set before a run is started through
 # gutconfig.
-# ###########################
+# ---------------------------
 
 var _inner_class_name = ''
-## When set, GUT will only run Inner-Test-Classes that contain this string.
+# When set, GUT will only run Inner-Test-Classes that contain this string.
 var inner_class_name = _inner_class_name :
 	get: return _inner_class_name
 	set(val): _inner_class_name = val
 
 var _ignore_pause_before_teardown = false
-## For batch processing purposes, you may want to ignore any calls to
-## pause_before_teardown that you forgot to remove_at.
+# For batch processing purposes, you may want to ignore any calls to
+# pause_before_teardown that you forgot to remove_at.
 var ignore_pause_before_teardown = _ignore_pause_before_teardown :
 	get: return _ignore_pause_before_teardown
 	set(val): _ignore_pause_before_teardown = val
@@ -75,22 +67,22 @@ var disable_strict_datatype_checks = false :
 	set(val): _disable_strict_datatype_checks = val
 
 var _export_path = ''
-## Path to file that GUT will create which holds a list of all test scripts so
-## that GUT can run tests when a project is exported.
+# Path to file that GUT will create which holds a list of all test scripts so
+# that GUT can run tests when a project is exported.
 var export_path = '' :
 	get: return _export_path
 	set(val): _export_path = val
 
 var _include_subdirectories = false
-## Setting this to true will make GUT search all subdirectories of any directory
-## you have configured GUT to search for tests in.
+# Setting this to true will make GUT search all subdirectories of any directory
+# you have configured GUT to search for tests in.
 var include_subdirectories = _include_subdirectories :
 	get: return _include_subdirectories
 	set(val): _include_subdirectories = val
 
 
 var _double_strategy = GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY
-## TODO rework what this is and then document it here.
+# TODO rework what this is and then document it here.
 var double_strategy = _double_strategy  :
 	get: return _double_strategy
 	set(val):
@@ -101,21 +93,21 @@ var double_strategy = _double_strategy  :
 			_lgr.error(str("gut.gd:  invalid double_strategy ", val))
 
 var _pre_run_script = ''
-## Path to the script that will be run before all tests are run.  This script
-## must extend GutHookScript
+# Path to the script that will be run before all tests are run.  This script
+# must extend GutHookScript
 var pre_run_script = _pre_run_script :
 	get: return _pre_run_script
 	set(val): _pre_run_script = val
 
 var _post_run_script = ''
-## Path to the script that will run after all tests have run.  The script
-## must extend GutHookScript
+# Path to the script that will run after all tests have run.  The script
+# must extend GutHookScript
 var post_run_script = _post_run_script :
 	get: return _post_run_script
 	set(val): _post_run_script = val
 
 var _color_output = false
-## Flag to color output at the command line and in the GUT GUI.
+# Flag to color output at the command line and in the GUT GUI.
 var color_output = false :
 	get: return _color_output
 	set(val):
@@ -123,28 +115,28 @@ var color_output = false :
 		_lgr.disable_formatting(!_color_output)
 
 var _junit_xml_file = ''
-## The full path to where GUT should write a JUnit compliant XML file to which
-## contains the results of all tests run.
+# The full path to where GUT should write a JUnit compliant XML file to which
+# contains the results of all tests run.
 var junit_xml_file = '' :
 	get: return _junit_xml_file
 	set(val): _junit_xml_file = val
 
 var _junit_xml_timestamp = false
-## When true and junit_xml_file is set, the file name will include a
-## timestamp so that previous files are not overwritten.
+# When true and junit_xml_file is set, the file name will include a
+# timestamp so that previous files are not overwritten.
 var junit_xml_timestamp = false :
 	get: return _junit_xml_timestamp
 	set(val): _junit_xml_timestamp = val
 
-## The minimum amout of time GUT will wait before pausing for 1 frame to allow
-## the screen to paint.  GUT checkes after each test to see if enough time has
-## passed.
+# The minimum amout of time GUT will wait before pausing for 1 frame to allow
+# the screen to paint.  GUT checkes after each test to see if enough time has
+# passed.
 var paint_after = .1:
 	get: return paint_after
 	set(val): paint_after = val
 
 var _unit_test_name = ''
-## When set GUT will only run tests that contain this string.
+# When set GUT will only run tests that contain this string.
 var unit_test_name = _unit_test_name :
 	get: return _unit_test_name
 	set(val): _unit_test_name = val
@@ -152,7 +144,7 @@ var unit_test_name = _unit_test_name :
 var _parameter_handler = null
 # This is populated by test.gd each time a paramterized test is encountered
 # for the first time.
-## FOR INTERNAL USE ONLY
+# FOR INTERNAL USE ONLY
 var parameter_handler = _parameter_handler :
 	get: return _parameter_handler
 	set(val):
@@ -161,7 +153,6 @@ var parameter_handler = _parameter_handler :
 
 var _lgr = GutUtils.get_logger()
 # Local reference for the common logger.
-## FOR INERNAL USE ONLY
 var logger = _lgr :
 	get: return _lgr
 	set(val):
@@ -169,10 +160,9 @@ var logger = _lgr :
 		_lgr.set_gut(self)
 
 var _add_children_to = self
-# Sets the object that GUT will add test objects to as it creates them.  The
-# default is self, but can be set to other objects so that GUT is not obscured
-# by the objects added during tests.
-## FOR INERNAL USE ONLY
+## Sets the object that GUT will add test objects to as it creates them.  The
+## default is self, but can be set to other objects so that GUT is not obscured
+## by the objects added during tests.
 var add_children_to = self :
 	get: return _add_children_to
 	set(val): _add_children_to = val
@@ -219,9 +209,9 @@ func is_running():
 	return _is_running
 
 
-# ###########################
+# ---------------------------
 # Private
-# ###########################
+# ---------------------------
 var  _should_print_versions = true # used to cut down on output in tests.
 var _should_print_summary = true
 
@@ -328,11 +318,11 @@ func _print_versions(send_all = true):
 
 
 
-# ####################
+# ---------------------------
 #
 # Accessor code
 #
-# ####################
+# ---------------------------
 
 
 # ------------------------------------------------------------------------------
@@ -357,21 +347,21 @@ func _set_log_level(level):
 	_lgr.set_type_enabled(_lgr.types.info, level > 1)
 	_lgr.set_type_enabled(_lgr.types.debug, level > 1)
 
-# ####################
+# ---------------------------
 #
 # Events
 #
-# ####################
+# ---------------------------
 func end_teardown_pause():
 	_pause_before_teardown = false
 	_waiting = false
 	end_pause_before_teardown.emit()
 
-#####################
+# ---------------------------
 #
 # Private
 #
-#####################
+# ---------------------------
 func _log_test_children_warning(test_script):
 	if(!_lgr.is_type_enabled(_lgr.types.orphan)):
 		return
@@ -948,11 +938,12 @@ func _get_files(path, prefix, suffix):
 	return files
 
 
-#########################
+# ---------------------------
 #
 # public
 #
-#########################
+# ---------------------------
+
 func get_elapsed_time() -> float:
 	var to_return = 0.0
 	if(_start_time != 0.0):
@@ -976,11 +967,11 @@ func p(text, level=0):
 	if(level <= GutUtils.nvl(_log_level, 0)):
 		_lgr.log(str_text)
 
-################
+# ---------------------------
 #
 # RUN TESTS/ADD SCRIPTS
 #
-################
+# ---------------------------
 
 # ------------------------------------------------------------------------------
 # Runs all the scripts that were added using add_script
@@ -1096,11 +1087,11 @@ func export_if_tests_found():
 	if(_test_collector.scripts.size() > 0):
 		export_tests()
 
-################
+# ---------------------------
 #
 # MISC
 #
-################
+# ---------------------------
 
 
 # ------------------------------------------------------------------------------
@@ -1123,26 +1114,22 @@ func get_test_count():
 	return _test_collector.get_ran_test_count()
 
 # ------------------------------------------------------------------------------
-# Get the number of assertions that were made
-# ------------------------------------------------------------------------------
+## Get the number of assertions that were made
 func get_assert_count():
 	return _test_collector.get_assert_count()
 
 # ------------------------------------------------------------------------------
-# Get the number of assertions that passed
-# ------------------------------------------------------------------------------
+## Get the number of assertions that passed
 func get_pass_count():
 	return _test_collector.get_pass_count()
 
 # ------------------------------------------------------------------------------
-# Get the number of assertions that failed
-# ------------------------------------------------------------------------------
+## Get the number of assertions that failed
 func get_fail_count():
 	return _test_collector.get_fail_count()
 
 # ------------------------------------------------------------------------------
-# Get the number of tests flagged as pending
-# ------------------------------------------------------------------------------
+## Get the number of tests flagged as pending
 func get_pending_count():
 	return _test_collector.get_pending_count()
 
@@ -1199,7 +1186,8 @@ func get_logger():
 
 
 # ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
+## Returns the number of test scripts.  Inner Test classes each count as a
+## script.
 func get_test_script_count():
 	return _test_script_objects.size()
 
