@@ -70,27 +70,11 @@ Signals
 
 **start_pause_before_teardown**\ (\ ) :ref:`🔗<class_GutMain_signal_start_pause_before_teardown>`
 
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
 .. _class_GutMain_signal_end_pause_before_teardown:
 
 .. rst-class:: classref-signal
 
 **end_pause_before_teardown**\ (\ ) :ref:`🔗<class_GutMain_signal_end_pause_before_teardown>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
 
 .. _class_GutMain_signal_start_run:
 
@@ -98,27 +82,11 @@ Signals
 
 **start_run**\ (\ ) :ref:`🔗<class_GutMain_signal_start_run>`
 
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
 .. _class_GutMain_signal_end_run:
 
 .. rst-class:: classref-signal
 
 **end_run**\ (\ ) :ref:`🔗<class_GutMain_signal_end_run>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
 
 .. _class_GutMain_signal_start_script:
 
@@ -126,27 +94,11 @@ Signals
 
 **start_script**\ (\ test_script_obj\ ) :ref:`🔗<class_GutMain_signal_start_script>`
 
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
 .. _class_GutMain_signal_end_script:
 
 .. rst-class:: classref-signal
 
 **end_script**\ (\ ) :ref:`🔗<class_GutMain_signal_end_script>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
 
 .. _class_GutMain_signal_start_test:
 
@@ -154,23 +106,11 @@ Signals
 
 **start_test**\ (\ test_name\ ) :ref:`🔗<class_GutMain_signal_start_test>`
 
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
 .. _class_GutMain_signal_end_test:
 
 .. rst-class:: classref-signal
 
 **end_test**\ (\ ) :ref:`🔗<class_GutMain_signal_end_test>`
-
-.. container:: contribute
-
-	No description
 
 .. rst-class:: classref-section-separator
 

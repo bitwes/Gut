@@ -120,10 +120,6 @@ Signals
 
 **idle**\ (\ ) :ref:`🔗<class_GutInputSender_signal_idle>`
 
-.. container:: contribute
-
-	No description
-
 .. rst-class:: classref-section-separator
 
 ----

@@ -108,6 +108,14 @@ def no_description(name):
     # return f"There is currently no description for this {name}. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!"
 
 
+def no_description_container(f, name):
+    f.write(".. container:: contribute\n\n\t")
+    f.write(
+        translate(no_description(name))
+        + "\n\n"
+    )
+
+
 def make_method_table(f, class_def, state):
     ml = []
     dep = []
@@ -176,11 +184,7 @@ def make_method_descriptions(f, class_def, state):
             if m.description is not None and m.description.strip() != "":
                 f.write(f"{bb2rst.format_text_block(m.description.strip(), m, state)}\n\n")
             elif m.deprecated is None and m.experimental is None:
-                f.write(".. container:: contribute\n\n\t")
-                f.write(
-                    translate(no_description("method"))
-                    + "\n\n"
-                )
+                no_description_container(f, "method")
 
             index += 1
 
@@ -265,11 +269,7 @@ def make_property_descriptions(f, class_def, state):
                 tmp = f"[b]Note:[/b] The returned array is [i]copied[/i] and any changes to it will not update the original property value. See [{property_def.type_name.type_name}] for more details."
                 f.write(f"{bb2rst.format_text_block(tmp, property_def, state)}\n\n")
         elif property_def.deprecated is None and property_def.experimental is None:
-            f.write(".. container:: contribute\n\n\t")
-            f.write(
-                translate(no_description("property"))
-                + "\n\n"
-            )
+            no_description_container(f, "property")
 
         index += 1
 
@@ -302,13 +302,42 @@ def make_constant_descriptions(f, class_def, state):
         if constant.text is not None and constant.text.strip() != "":
             f.write(f"{bb2rst.format_text_block(constant.text.strip(), constant, state)}")
         elif constant.deprecated is None and constant.experimental is None:
-            f.write(".. container:: contribute\n\n\t")
-            f.write(
-                translate(no_description("constant"))
-                + "\n\n"
-            )
+            no_description_container(f, "constant")
 
         f.write("\n\n")
+
+
+def make_signal_descriptions(f, class_def, state):
+    f.write(make_separator(True))
+    f.write(".. rst-class:: classref-descriptions-group\n\n")
+    f.write(make_heading("Signals", "-"))
+
+    index = 0
+
+    for signal in class_def.signals.values():
+        # if index != 0:
+        #     f.write(make_separator())
+
+        # Create signal signature and anchor point.
+
+        signal_anchor = f"class_{class_def.name}_signal_{signal.name}"
+        f.write(f".. _{signal_anchor}:\n\n")
+        self_link = f":ref:`🔗<{signal_anchor}>`"
+        f.write(".. rst-class:: classref-signal\n\n")
+
+        _, signature = make_method_signature(class_def, signal, "", state)
+        f.write(f"{signature} {self_link}\n\n")
+
+        # Add signal description, or a call to action if it's missing.
+
+        f.write(make_deprecated_experimental(signal, state))
+
+        if signal.description is not None and signal.description.strip() != "":
+            f.write(f"{bb2rst.format_text_block(signal.description.strip(), signal, state)}\n\n")
+        elif signal.deprecated is None and signal.experimental is None:
+            pass# no_description_container(f, "signal")
+
+        index += 1
 # ------------------
 # -------- END bitwes methods/vars --------
 # ------------------
@@ -777,40 +806,8 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
 
         # Signal descriptions
         if len(class_def.signals) > 0:
-            f.write(make_separator(True))
-            f.write(".. rst-class:: classref-descriptions-group\n\n")
-            f.write(make_heading("Signals", "-"))
+            make_signal_descriptions(f, class_def, state)
 
-            index = 0
-
-            for signal in class_def.signals.values():
-                if index != 0:
-                    f.write(make_separator())
-
-                # Create signal signature and anchor point.
-
-                signal_anchor = f"class_{class_name}_signal_{signal.name}"
-                f.write(f".. _{signal_anchor}:\n\n")
-                self_link = f":ref:`🔗<{signal_anchor}>`"
-                f.write(".. rst-class:: classref-signal\n\n")
-
-                _, signature = make_method_signature(class_def, signal, "", state)
-                f.write(f"{signature} {self_link}\n\n")
-
-                # Add signal description, or a call to action if it's missing.
-
-                f.write(make_deprecated_experimental(signal, state))
-
-                if signal.description is not None and signal.description.strip() != "":
-                    f.write(f"{bb2rst.format_text_block(signal.description.strip(), signal, state)}\n\n")
-                elif signal.deprecated is None and signal.experimental is None:
-                    f.write(".. container:: contribute\n\n\t")
-                    f.write(
-                        translate(no_description("signal"))
-                        + "\n\n"
-                    )
-
-                index += 1
 
         # Enumeration descriptions
         if len(class_def.enums) > 0:
