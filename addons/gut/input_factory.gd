@@ -25,6 +25,7 @@ static func _to_scancode(which):
 	return key_code
 
 
+## Creates a new button with the properties given
 static func new_mouse_button_event(position, global_position, pressed, button_index):
 	var event = InputEventMouseButton.new()
 	event.position = position

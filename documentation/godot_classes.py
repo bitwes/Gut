@@ -327,6 +327,21 @@ class DefinitionBase:
         self.name = name
         self.deprecated: Optional[str] = None
         self.experimental: Optional[str] = None
+        self.description: Optional[str] = None
+
+    # Checks the description for an annotation, returns if it is there,
+    # optionally replaces the annotation in the description with replace_text.
+    def desc_annotation(self, ann_text, replace_text=None):
+        exists = False
+        if(self.description != None):
+            exists = ann_text in self.description
+            if(exists and replace_text != None):
+                self.description = self.description.replace(ann_text, replace_text)
+        return exists
+
+    def is_description_empty(self):
+        return self.description is None or self.description.strip() == ""
+
 
 
 
@@ -346,9 +361,12 @@ class PropertyDef(DefinitionBase):
         self.type_name = type_name
         self.setter = setter
         self.getter = getter
-        self.text = text
+        self.text = "!! No longer used, use description !!"
         self.default_value = default_value
         self.overrides = overrides
+        self.description = text
+
+        self.ignore = self.desc_annotation("@ignore")
 
 
 class ParameterDef(DefinitionBase):
@@ -399,16 +417,6 @@ class MethodDef(DefinitionBase):
         self.qualifiers = qualifiers
         self.internal = self.desc_annotation("@internal", "[b]Internal use only.[/b]")
         self.ignore = self.desc_annotation("@ignore", None)
-
-
-    def desc_annotation(self, ann_text, replace_text):
-        exists = False
-        if(self.description != None):
-            exists = ann_text in self.description
-            if(exists and replace_text != None):
-                self.description = self.description.replace(ann_text, replace_text)
-        return exists
-
 
 
 
@@ -466,6 +474,7 @@ class ClassDef(DefinitionBase):
 
         # Used to match the class with XML source for output filtering purposes.
         self.filepath: str = ""
+        self.ignore_uncommented = False
 
     def _is_editor_class(self) -> bool:
         if self.name.startswith("Editor"):
@@ -506,8 +515,7 @@ class ClassDef(DefinitionBase):
     def _strip_private_props(self):
         to_delete = []
         for key in self.properties.keys():
-            descrip = self.properties[key].text
-            if(key.startswith("_") and (descrip is None or descrip.strip() == "")):
+            if(key.startswith("_") and self.properties[key].is_description_empty()):
                 to_delete.append(key)
 
         for del_me in to_delete:
@@ -517,8 +525,7 @@ class ClassDef(DefinitionBase):
     def _strip_private_methods(self):
         to_delete = []
         for key in self.methods.keys():
-            descrip = self.methods[key][0].description
-            if(key.startswith("_") and (descrip is None or descrip.strip() == "")):
+            if(key.startswith("_") and self.methods[key][0].is_description_empty()):
                 to_delete.append(key)
 
         for del_me in to_delete:
@@ -526,6 +533,7 @@ class ClassDef(DefinitionBase):
 
 
     def strip_privates(self):
+        self.ignore_uncommented = self.desc_annotation("@ignore-uncommented", "")
         self._strip_private_props()
         self._strip_private_methods()
 

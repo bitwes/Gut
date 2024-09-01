@@ -68,9 +68,7 @@ Method Descriptions
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **new_mouse_button_event**\ (\ position, global_position, pressed, button_index\ ) |static| :ref:`🔗<class_"addons/gut/input_factory.gd"_method_new_mouse_button_event>`
 
-.. container:: contribute
-
-	No description
+Creates a new button with the properties given
 
 .. rst-class:: classref-item-separator
 

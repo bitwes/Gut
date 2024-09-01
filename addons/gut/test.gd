@@ -38,8 +38,11 @@ var _awaiter = null
 
 # syntax sugar
 var ParameterFactory = GutUtils.ParameterFactory
+## @ignore
 var CompareResult = GutUtils.CompareResult
+## @ingore
 var InputFactory = GutUtils.InputFactory
+## @ignore
 var InputSender = GutUtils.InputSender
 
 

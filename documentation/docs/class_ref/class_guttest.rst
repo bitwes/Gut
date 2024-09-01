@@ -27,11 +27,7 @@ Properties
    +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`ParameterFactory<class_GutTest_property_ParameterFactory>` | ``<unknown>``                               |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`CompareResult<class_GutTest_property_CompareResult>`       | ``<unknown>``                               |
-   +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`InputFactory<class_GutTest_property_InputFactory>`         | ``<unknown>``                               |
-   +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`InputSender<class_GutTest_property_InputSender>`           | ``<unknown>``                               |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
 
 .. rst-class:: classref-reftable-group
@@ -358,43 +354,13 @@ Property Descriptions
 
 ----
 
-.. _class_GutTest_property_CompareResult:
-
-.. rst-class:: classref-property
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **CompareResult** = ``<unknown>`` :ref:`🔗<class_GutTest_property_CompareResult>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
 .. _class_GutTest_property_InputFactory:
 
 .. rst-class:: classref-property
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **InputFactory** = ``<unknown>`` :ref:`🔗<class_GutTest_property_InputFactory>`
 
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_property_InputSender:
-
-.. rst-class:: classref-property
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **InputSender** = ``<unknown>`` :ref:`🔗<class_GutTest_property_InputSender>`
-
-.. container:: contribute
-
-	No description
+@ingore
 
 .. rst-class:: classref-section-separator
 

@@ -6,11 +6,13 @@
 #
 # This aims to generate class reference rst files for plugins.  It is meant to
 # operate on a directory of xml files generated using --no-docbase.  It only
-# generates rst files for scripts (rather their doctool xml representation) that
+# generates rst files for scripts (their doctool xml representation) that
 # that have a description (a ## comment at the top), so that only user relevant
 # files are included.
 #
 # Changes
+#   - Script has been broken up into multiple scripts.  It's a rough break up.
+#     Should get better with time.
 #   - Does not generate an index.rst (commented out in main)
 #   - Does not include scripts that do not have any description.
 #   - Does not include private methods or properties unless they have a
@@ -22,7 +24,7 @@
 #     This is how they appear in the TOC.
 #   - Since this is intended to be used with the --no-docbase doctool option,
 #     any reference to a class it can't find is assumed to be a Godot class and
-#     links to the Godot docs (latest).  A warning is printed on the first
+#     links to the Godot docs (latest).  A message is printed on the first
 #     occurance of each unknown class.
 #   - The DO NOT EDIT THIS warnings are altered to indicate this is GUT stuff.
 #   - Changed how missing description messages are generated in output and
@@ -35,13 +37,24 @@
 #     I could add a TON more code so you don't have to...anyway...[li] turns
 #     into "* " and [/li] turns into "\n".  It's hacked together, but it works.
 #
-#   Additional Method Annotations (in ## comments)
-#   NOTE:  These do not apply to in-engine documentation and the annotations
-#          will appear in the in-engine method descriptions.
+# Additional Anotations (in ## comments)
+# NOTE:  These do not apply to in-engine documentation and the annotations
+#        will appear in the in-engine method descriptions.
+#
+#   Classes:
+#   - @ignore-uncommented:  Public members that are not commented will not be
+#     included.  Currently works for:
+#       - Methods
+#       - Properties
+#
+#   Methods:
 #   - @ignore - The method will not appear in generated documentation.
 #   - @internal -  This will cause the method to be listed seperately (like
 #     deprecated methods).  This is for methods that are public but aren't
 #     really supposed to be consumed by the general public.
+#
+#   Properties
+#   - @ignore - The property will not appear in generated documentation
 #
 # ##############################################################################
 
@@ -92,6 +105,9 @@ def make_method_table(f, class_def, state):
     internal = []
     for key in sorted(class_def.methods.keys()): # list by name
         for m in class_def.methods[key]:
+            if(class_def.ignore_uncommented and m.is_description_empty()):
+                continue
+
             to_append = make_method_signature(class_def, m, "method", state)
             if(m.deprecated is not None):
                 dep.append(("Deprecated", to_append[0], to_append[1]))
@@ -106,6 +122,147 @@ def make_method_table(f, class_def, state):
     format_table(f, ml)
     format_table(f, dep)
     format_table(f, internal)
+
+
+def make_method_descriptions(f, class_def, state):
+    f.write(make_separator(True))
+    f.write(".. rst-class:: classref-descriptions-group\n\n")
+    f.write(make_heading("Method Descriptions", "-"))
+
+    index = 0
+
+    for method_list in class_def.methods.values():
+        if(class_def.ignore_uncommented and method_list[0].is_description_empty()):
+            continue
+
+        for i, m in enumerate(method_list):
+            if(m.ignore):
+                continue
+
+            if index != 0:
+                f.write(make_separator())
+
+            # Create method signature and anchor point.
+
+            self_link = ""
+
+            if i == 0:
+                method_qualifier = ""
+                if m.name.startswith("_"):
+                    method_qualifier = "private_"
+                method_anchor = f"class_{class_def.name}_{method_qualifier}method_{m.name}"
+                f.write(f".. _{method_anchor}:\n\n")
+                self_link = f" :ref:`🔗<{method_anchor}>`"
+
+            f.write(".. rst-class:: classref-method\n\n")
+
+            ret_type, signature = make_method_signature(class_def, m, "", state)
+
+            f.write(f"{ret_type} {signature}{self_link}\n\n")
+
+            # Add method description, or a call to action if it's missing.
+
+            f.write(make_deprecated_experimental(m, state))
+
+            if m.description is not None and m.description.strip() != "":
+                f.write(f"{bb2rst.format_text_block(m.description.strip(), m, state)}\n\n")
+            elif m.deprecated is None and m.experimental is None:
+                f.write(".. container:: contribute\n\n\t")
+                f.write(
+                    translate(no_description("method"))
+                    + "\n\n"
+                )
+
+            index += 1
+
+
+def make_property_table(f, class_def, state):
+    f.write(".. rst-class:: classref-reftable-group\n\n")
+    f.write(make_heading("Properties", "-"))
+
+    ml = []
+    for property_def in class_def.properties.values():
+        if(property_def.ignore or class_def.ignore_uncommented and property_def.is_description_empty()):
+            continue
+
+        type_rst = property_def.type_name.to_rst(state)
+        default = property_def.default_value
+        if default is not None and property_def.overrides:
+            ref = (
+                f":ref:`{property_def.overrides}<class_{property_def.overrides}_property_{property_def.name}>`"
+            )
+            # Not using translate() for now as it breaks table formatting.
+            ml.append((type_rst, property_def.name, f"{default} (overrides {ref})"))
+        else:
+            ref = f":ref:`{property_def.name}<class_{class_def.name}_property_{property_def.name}>`"
+            ml.append((type_rst, ref, default))
+
+    format_table(f, ml, True)
+
+
+def make_property_descriptions(f, class_def, state):
+    f.write(make_separator(True))
+    f.write(".. rst-class:: classref-descriptions-group\n\n")
+    f.write(make_heading("Property Descriptions", "-"))
+
+    index = 0
+
+    for property_def in class_def.properties.values():
+        if property_def.overrides or property_def.ignore or \
+            (class_def.ignore_uncommented and property_def.is_description_empty()):
+            continue
+
+        if index != 0:
+            f.write(make_separator())
+
+        # Create property signature and anchor point.
+
+        property_anchor = f"class_{class_def.name}_property_{property_def.name}"
+        f.write(f".. _{property_anchor}:\n\n")
+        self_link = f":ref:`🔗<{property_anchor}>`"
+        f.write(".. rst-class:: classref-property\n\n")
+
+        property_default = ""
+        if property_def.default_value is not None:
+            property_default = f" = {property_def.default_value}"
+        f.write(
+            f"{property_def.type_name.to_rst(state)} **{property_def.name}**{property_default} {self_link}\n\n"
+        )
+
+        # Create property setter and getter records.
+
+        property_setget = ""
+
+        if property_def.setter is not None and not property_def.setter.startswith("_"):
+            property_setter = make_setter_signature(class_def, property_def, state)
+            property_setget += f"- {property_setter}\n"
+
+        if property_def.getter is not None and not property_def.getter.startswith("_"):
+            property_getter = make_getter_signature(class_def, property_def, state)
+            property_setget += f"- {property_getter}\n"
+
+        if property_setget != "":
+            f.write(".. rst-class:: classref-property-setget\n\n")
+            f.write(property_setget)
+            f.write("\n")
+
+        # Add property description, or a call to action if it's missing.
+
+        f.write(make_deprecated_experimental(property_def, state))
+
+        if not property_def.is_description_empty():
+            f.write(f"{bb2rst.format_text_block(property_def.description.strip(), property_def, state)}\n\n")
+            if property_def.type_name.type_name in PACKED_ARRAY_TYPES:
+                tmp = f"[b]Note:[/b] The returned array is [i]copied[/i] and any changes to it will not update the original property value. See [{property_def.type_name.type_name}] for more details."
+                f.write(f"{bb2rst.format_text_block(tmp, property_def, state)}\n\n")
+        elif property_def.deprecated is None and property_def.experimental is None:
+            f.write(".. container:: contribute\n\n\t")
+            f.write(
+                translate(no_description("property"))
+                + "\n\n"
+            )
+
+        index += 1
 # ------------------
 # -------- END bitwes methods/vars --------
 # ------------------
@@ -522,24 +679,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
 
         # Properties reference table
         if len(class_def.properties) > 0:
-            f.write(".. rst-class:: classref-reftable-group\n\n")
-            f.write(make_heading("Properties", "-"))
-
-            ml = []
-            for property_def in class_def.properties.values():
-                type_rst = property_def.type_name.to_rst(state)
-                default = property_def.default_value
-                if default is not None and property_def.overrides:
-                    ref = (
-                        f":ref:`{property_def.overrides}<class_{property_def.overrides}_property_{property_def.name}>`"
-                    )
-                    # Not using translate() for now as it breaks table formatting.
-                    ml.append((type_rst, property_def.name, f"{default} (overrides {ref})"))
-                else:
-                    ref = f":ref:`{property_def.name}<class_{class_name}_property_{property_def.name}>`"
-                    ml.append((type_rst, ref, default))
-
-            format_table(f, ml, True)
+            make_property_table(f, class_def, state)
 
         # Constructors, Methods, Operators reference tables
         if len(class_def.constructors) > 0:
@@ -744,69 +884,11 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
 
                     index += 1
 
+
         # Property descriptions
         if any(not p.overrides for p in class_def.properties.values()) > 0:
-            f.write(make_separator(True))
-            f.write(".. rst-class:: classref-descriptions-group\n\n")
-            f.write(make_heading("Property Descriptions", "-"))
+            make_property_descriptions(f, class_def, state)
 
-            index = 0
-
-            for property_def in class_def.properties.values():
-                if property_def.overrides:
-                    continue
-
-                if index != 0:
-                    f.write(make_separator())
-
-                # Create property signature and anchor point.
-
-                property_anchor = f"class_{class_name}_property_{property_def.name}"
-                f.write(f".. _{property_anchor}:\n\n")
-                self_link = f":ref:`🔗<{property_anchor}>`"
-                f.write(".. rst-class:: classref-property\n\n")
-
-                property_default = ""
-                if property_def.default_value is not None:
-                    property_default = f" = {property_def.default_value}"
-                f.write(
-                    f"{property_def.type_name.to_rst(state)} **{property_def.name}**{property_default} {self_link}\n\n"
-                )
-
-                # Create property setter and getter records.
-
-                property_setget = ""
-
-                if property_def.setter is not None and not property_def.setter.startswith("_"):
-                    property_setter = make_setter_signature(class_def, property_def, state)
-                    property_setget += f"- {property_setter}\n"
-
-                if property_def.getter is not None and not property_def.getter.startswith("_"):
-                    property_getter = make_getter_signature(class_def, property_def, state)
-                    property_setget += f"- {property_getter}\n"
-
-                if property_setget != "":
-                    f.write(".. rst-class:: classref-property-setget\n\n")
-                    f.write(property_setget)
-                    f.write("\n")
-
-                # Add property description, or a call to action if it's missing.
-
-                f.write(make_deprecated_experimental(property_def, state))
-
-                if property_def.text is not None and property_def.text.strip() != "":
-                    f.write(f"{bb2rst.format_text_block(property_def.text.strip(), property_def, state)}\n\n")
-                    if property_def.type_name.type_name in PACKED_ARRAY_TYPES:
-                        tmp = f"[b]Note:[/b] The returned array is [i]copied[/i] and any changes to it will not update the original property value. See [{property_def.type_name.type_name}] for more details."
-                        f.write(f"{bb2rst.format_text_block(tmp, property_def, state)}\n\n")
-                elif property_def.deprecated is None and property_def.experimental is None:
-                    f.write(".. container:: contribute\n\n\t")
-                    f.write(
-                        translate(no_description("property"))
-                        + "\n\n"
-                    )
-
-                index += 1
 
         # Constructor, Method, Operator descriptions
         if len(class_def.constructors) > 0:
@@ -818,6 +900,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
 
             for method_list in class_def.constructors.values():
                 for i, m in enumerate(method_list):
+
                     if index != 0:
                         f.write(make_separator())
 
@@ -838,7 +921,7 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
 
                     f.write(make_deprecated_experimental(m, state))
 
-                    if m.description is not None and m.description.strip() != "":
+                    if not m.is_description_empty():
                         f.write(f"{bb2rst.format_text_block(m.description.strip(), m, state)}\n\n")
                     elif m.deprecated is None and m.experimental is None:
                         f.write(".. container:: contribute\n\n\t")
@@ -849,53 +932,11 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
 
                     index += 1
 
+
+        # Method descrptions
         if len(class_def.methods) > 0:
-            f.write(make_separator(True))
-            f.write(".. rst-class:: classref-descriptions-group\n\n")
-            f.write(make_heading("Method Descriptions", "-"))
+            make_method_descriptions(f, class_def, state)
 
-            index = 0
-
-            for method_list in class_def.methods.values():
-                for i, m in enumerate(method_list):
-                    if(m.ignore):
-                        continue
-
-                    if index != 0:
-                        f.write(make_separator())
-
-                    # Create method signature and anchor point.
-
-                    self_link = ""
-
-                    if i == 0:
-                        method_qualifier = ""
-                        if m.name.startswith("_"):
-                            method_qualifier = "private_"
-                        method_anchor = f"class_{class_name}_{method_qualifier}method_{m.name}"
-                        f.write(f".. _{method_anchor}:\n\n")
-                        self_link = f" :ref:`🔗<{method_anchor}>`"
-
-                    f.write(".. rst-class:: classref-method\n\n")
-
-                    ret_type, signature = make_method_signature(class_def, m, "", state)
-
-                    f.write(f"{ret_type} {signature}{self_link}\n\n")
-
-                    # Add method description, or a call to action if it's missing.
-
-                    f.write(make_deprecated_experimental(m, state))
-
-                    if m.description is not None and m.description.strip() != "":
-                        f.write(f"{bb2rst.format_text_block(m.description.strip(), m, state)}\n\n")
-                    elif m.deprecated is None and m.experimental is None:
-                        f.write(".. container:: contribute\n\n\t")
-                        f.write(
-                            translate(no_description("method"))
-                            + "\n\n"
-                        )
-
-                    index += 1
 
         if len(class_def.operators) > 0:
             f.write(make_separator(True))

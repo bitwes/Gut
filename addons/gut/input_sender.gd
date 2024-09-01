@@ -2,6 +2,7 @@ class_name GutInputSender
 ## The InputSender class.  It sends input to places.
 ##
 ## This is the full description that has not yet been filled in.
+## @ignore-uncommented
 
 # Implemented InputEvent* convenience methods
 # 	InputEventAction
@@ -178,7 +179,7 @@ var _default_mouse_position = {
 var _last_mouse_position = {
 }
 
-
+## Warp mouse when sending INputEventMouse* events
 var mouse_warp = false
 var draw_mouse = true
 
