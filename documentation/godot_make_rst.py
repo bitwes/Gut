@@ -11,7 +11,7 @@
 # files are included.
 #
 # Changes
-#   - Script has been broken up into multiple scripts.  It's a rough break up.
+#   - This script has been broken up into multiple scripts.  It's a rough break up.
 #     Should get better with time.
 #   - Does not generate an index.rst (commented out in main)
 #   - Does not include scripts that do not have any description.
@@ -35,7 +35,7 @@
 #     in GUT, so it is just noise.  Change marked in make_method_signature.
 #
 #
-# Additional BBCode tags:
+# Additional Doc Comment BBCode tags:
 # NOTE:  These do not work with the in-engine documentation and will appear
 #        in the comments unaltered.
 #
@@ -45,11 +45,11 @@
 #     into "* " and [/li] turns into "\n".  It's hacked together, but it works.
 #
 #
-# Additional Anotations (in ## comments)
+# Additional Doc Comment Anotations:
 # NOTE:  These do not apply to in-engine documentation and the annotations
 #        will appear in the in-engine method descriptions.
 #
-#   Classes:
+#   Classes (use these in the description, NOT the brief_description):
 #   - @ignore-uncommented:  Public members that are not commented will not be
 #     included unless that have a doc comment.  Currently works for:
 #       - Methods
@@ -338,6 +338,111 @@ def make_signal_descriptions(f, class_def, state):
             pass# no_description_container(f, "signal")
 
         index += 1
+
+
+def make_inheritance_tree(f, class_def, state):
+    # Ascendants
+    if class_def.inherits:
+        inherits = class_def.inherits.strip()
+        f.write(f'**{translate("Inherits:")}** ')
+        first = True
+        while inherits in state.classes:
+            if not first:
+                f.write(" **<** ")
+            else:
+                first = False
+
+            f.write(make_type(inherits, state))
+            inode = state.classes[inherits].inherits
+            if inode:
+                inherits = inode.strip()
+            else:
+                break
+        # If we didn't ever print anything then the class wasn't found so
+        # we just use it and assume it is a Godot class (bitwes).
+        if(first):
+            f.write(bitwes.make_type_link(class_def.inherits.strip()))
+        f.write("\n\n")
+
+    # Descendants
+    inherited: List[str] = []
+    for c in state.classes.values():
+        if c.inherits and c.inherits.strip() == class_def.name:
+            inherited.append(c.name)
+
+    if len(inherited):
+        f.write(f'**{translate("Inherited By:")}** ')
+        for i, child in enumerate(inherited):
+            if i > 0:
+                f.write(", ")
+            f.write(make_type(child, state))
+        f.write("\n\n")
+
+
+def make_class_description(f, class_def, state):
+    has_any_description = False
+
+    if class_def.brief_description is not None and class_def.brief_description.strip() != "":
+        has_any_description = True
+
+        f.write(f"{bb2rst.format_text_block(class_def.brief_description.strip(), class_def, state)}\n\n")
+
+    if class_def.description is not None and class_def.description.strip() != "":
+        has_any_description = True
+
+        f.write(".. rst-class:: classref-introduction-group\n\n")
+        f.write(make_heading("Description", "-"))
+
+        f.write(f"{bb2rst.format_text_block(class_def.description.strip(), class_def, state)}\n\n")
+
+    if not has_any_description:
+        no_description_container(f, "class")
+
+    if class_def.name in CLASSES_WITH_CSHARP_DIFFERENCES:
+        f.write(".. note::\n\n\t")
+        f.write(
+            translate(
+                "There are notable differences when using this API with C#. See :ref:`doc_c_sharp_differences` for more information."
+            )
+            + "\n\n"
+        )
+
+
+def make_constructor_table(f, class_def, state):
+    f.write(".. rst-class:: classref-reftable-group\n\n")
+    f.write(make_heading("Constructors", "-"))
+
+    ml = []
+    for method_list in class_def.constructors.values():
+        for m in method_list:
+            ml.append(make_method_signature(class_def, m, "constructor", state))
+
+    format_table(f, ml)
+
+
+def make_operator_table(f, class_def, state):
+    f.write(".. rst-class:: classref-reftable-group\n\n")
+    f.write(make_heading("Operators", "-"))
+
+    ml = []
+    for method_list in class_def.operators.values():
+        for m in method_list:
+            ml.append(make_method_signature(class_def, m, "operator", state))
+
+    format_table(f, ml)
+
+
+def make_theme_properties_table(f, class_def, state):
+    f.write(".. rst-class:: classref-reftable-group\n\n")
+    f.write(make_heading("Theme Properties", "-"))
+
+    ml = []
+    for theme_item_def in class_def.theme_items.values():
+        ref = f":ref:`{theme_item_def.name}<class_{class_def.name}_theme_{theme_item_def.data_name}_{theme_item_def.name}>`"
+        ml.append((theme_item_def.type_name.to_rst(state), ref, theme_item_def.default_value))
+
+    format_table(f, ml, True)
+
 # ------------------
 # -------- END bitwes methods/vars --------
 # ------------------
@@ -437,154 +542,6 @@ def process_cl_args():
 
 
 
-# Entry point for the RST generator.
-def main() -> None:
-    args = process_cl_args()
-    lgr.verbose_enabled = args.verbose
-
-    should_color = bool(args.color or sys.stdout.isatty() or os.environ.get("CI"))
-
-    lgr.set_should_color(should_color)
-    # Retrieve heading translations for the given language.
-    if not args.dry_run and args.lang != "en":
-        lang_file = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), "..", "translations", "{}.po".format(args.lang)
-        )
-        if os.path.exists(lang_file):
-            try:
-                import polib  # type: ignore
-            except ImportError:
-                print("Base template strings localization requires `polib`.")
-                exit(1)
-
-            pofile = polib.pofile(lang_file)
-            for entry in pofile.translated_entries():
-                if entry.msgid in BASE_STRINGS:
-                    strings_l10n[entry.msgid] = entry.msgstr
-        else:
-            print(f'No PO file at "{lang_file}" for language "{args.lang}".')
-
-    print("Checking for errors in the XML class reference...")
-
-    file_list: List[str] = []
-
-    for path in args.path:
-        # Cut off trailing slashes so os.path.basename doesn't choke.
-        if path.endswith("/") or path.endswith("\\"):
-            path = path[:-1]
-
-        if os.path.basename(path) in ["modules", "platform"]:
-            for subdir, dirs, _ in os.walk(path):
-                if "doc_classes" in dirs:
-                    doc_dir = os.path.join(subdir, "doc_classes")
-                    class_file_names = (f for f in os.listdir(doc_dir) if f.endswith(".xml"))
-                    file_list += (os.path.join(doc_dir, f) for f in class_file_names)
-
-        elif os.path.isdir(path):
-            file_list += (os.path.join(path, f) for f in os.listdir(path) if f.endswith(".xml"))
-
-        elif os.path.isfile(path):
-            if not path.endswith(".xml"):
-                print(f'Got non-.xml file "{path}" in input, skipping.')
-                continue
-
-            file_list.append(path)
-
-    classes: Dict[str, Tuple[ET.Element, str]] = {}
-    state = State()
-
-    for cur_file in file_list:
-        try:
-            tree = ET.parse(cur_file)
-        except ET.ParseError as e:
-            lgr.print_error(f"{cur_file}: Parse error while reading the file: {e}", state)
-            continue
-        doc = tree.getroot()
-
-        name = doc.attrib["name"]
-        if name in classes:
-            lgr.print_error(f'{cur_file}: Duplicate class "{name}".', state)
-            continue
-
-        classes[name] = (doc, cur_file)
-
-    for name, data in classes.items():
-        try:
-            state.parse_class(data[0], data[1])
-        except Exception as e:
-            lgr.print_error(f"{name}.xml: Exception while parsing class: {e}", state)
-
-    state.sort_classes()
-
-    pattern = re.compile(args.filter)
-
-    # Create the output folder recursively if it doesn't already exist.
-    os.makedirs(args.output, exist_ok=True)
-
-    print("Generating the RST class reference...")
-
-    grouped_classes: Dict[str, List[str]] = {}
-
-    for class_name, class_def in state.classes.items():
-        if args.filter and not pattern.search(class_def.filepath):
-            continue
-        state.current_class = class_name
-
-        class_def.update_class_group(state)
-
-        class_def.strip_privates()
-        make_rst_class(class_def, state, args.dry_run, args.output)
-
-        if class_def.class_group not in grouped_classes:
-            grouped_classes[class_def.class_group] = []
-        grouped_classes[class_def.class_group].append(class_name)
-
-        if class_def.editor_class:
-            if "editor" not in grouped_classes:
-                grouped_classes["editor"] = []
-            grouped_classes["editor"].append(class_name)
-
-    # print("")
-    # print("Generating the index file...")
-
-    # make_rst_index(grouped_classes, args.dry_run, args.output)
-
-    # print("")
-
-    # Print out checks.
-
-    if state.script_language_parity_check.hit_count > 0:
-        if not args.verbose:
-            lgr.print_style("yellow", f'{state.script_language_parity_check.hit_count} code samples failed parity check. Use --verbose to get more information.')
-        else:
-            lgr.print_style("yellow", f'{state.script_language_parity_check.hit_count} code samples failed parity check:')
-
-            for class_name in state.script_language_parity_check.hit_map.keys():
-                class_hits = state.script_language_parity_check.hit_map[class_name]
-                lgr.print_style("yellow", f'- {len(class_hits)} hits in class "{class_name}"')
-
-                for context, error in class_hits:
-                    print(f"  - {error} in {bb2rst.format_context_name(context)}")
-        print("")
-
-    # Print out warnings and errors, or lack thereof, and exit with an appropriate code.
-
-    if state.num_warnings >= 2:
-        lgr.print_style("yellow", f'{state.num_warnings} warnings were found in the class reference XML. Please check the messages above.')
-    elif state.num_warnings == 1:
-        lgr.print_style("yellow", f'1 warning was found in the class reference XML. Please check the messages above.')
-
-    if state.num_errors >= 2:
-        lgr.print_style("red", f'{state.num_errors} errors were found in the class reference XML. Please check the messages above.')
-    elif state.num_errors == 1:
-        lgr.print_style("red", f'1 error was found in the class reference XML. Please check the messages above.')
-
-    if state.num_warnings == 0 and state.num_errors == 0:
-        lgr.print_style("green", f'No warnings or errors found in the class reference XML.')
-        if not args.dry_run:
-            print(f"Wrote reStructuredText files for each class to: {args.output}")
-    else:
-        exit(1)
 
 
 # Common helpers.
@@ -598,12 +555,13 @@ def translate(string: str) -> str:
     """
     return strings_l10n.get(string, string)
 
+# Removed uses of this, the uses of this were not using the result of this, and
+# so by the transitive prooperty this was not being used.
+# def get_git_branch() -> str:
+#     if hasattr(version, "docs") and version.docs != "latest":
+#         return version.docs
 
-def get_git_branch() -> str:
-    if hasattr(version, "docs") and version.docs != "latest":
-        return version.docs
-
-    return "master"
+#     return "master"
 
 
 # Generator methods.
@@ -650,8 +608,8 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
         # Warn contributors not to edit this file directly.
         # Also provide links to the source files for reference.
 
-        git_branch = get_git_branch()
-        source_xml_path = os.path.relpath(class_def.filepath, root_directory).replace("\\", "/")
+        # git_branch = get_git_branch()
+        # source_xml_path = os.path.relpath(class_def.filepath, root_directory).replace("\\", "/")
         # source_github_url = f"https://github.com/godotengine/godot/tree/{git_branch}/{source_xml_path}"
         # generator_github_url = f"https://github.com/godotengine/godot/tree/{git_branch}/doc/tools/make_rst.py"
 
@@ -665,79 +623,9 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
 
         f.write(make_deprecated_experimental(class_def, state))
 
-        ### INHERITANCE TREE ###
+        make_inheritance_tree(f, class_def, state)
 
-        # Ascendants
-        if class_def.inherits:
-            inherits = class_def.inherits.strip()
-            f.write(f'**{translate("Inherits:")}** ')
-            first = True
-            while inherits in state.classes:
-                if not first:
-                    f.write(" **<** ")
-                else:
-                    first = False
-
-                f.write(make_type(inherits, state))
-                inode = state.classes[inherits].inherits
-                if inode:
-                    inherits = inode.strip()
-                else:
-                    break
-            # If we didn't ever print anything then the class wasn't found so
-            # we just use it and assume it is a Godot class (bitwes).
-            if(first):
-                f.write(bitwes.make_type_link(class_def.inherits.strip()))
-            f.write("\n\n")
-
-        # Descendants
-        inherited: List[str] = []
-        for c in state.classes.values():
-            if c.inherits and c.inherits.strip() == class_name:
-                inherited.append(c.name)
-
-        if len(inherited):
-            f.write(f'**{translate("Inherited By:")}** ')
-            for i, child in enumerate(inherited):
-                if i > 0:
-                    f.write(", ")
-                f.write(make_type(child, state))
-            f.write("\n\n")
-
-        ### INTRODUCTION ###
-
-        has_description = False
-
-        # Brief description
-        if class_def.brief_description is not None and class_def.brief_description.strip() != "":
-            has_description = True
-
-            f.write(f"{bb2rst.format_text_block(class_def.brief_description.strip(), class_def, state)}\n\n")
-
-        # Class description
-        if class_def.description is not None and class_def.description.strip() != "":
-            has_description = True
-
-            f.write(".. rst-class:: classref-introduction-group\n\n")
-            f.write(make_heading("Description", "-"))
-
-            f.write(f"{bb2rst.format_text_block(class_def.description.strip(), class_def, state)}\n\n")
-
-        if not has_description:
-            f.write(".. container:: contribute\n\n\t")
-            f.write(
-                translate(no_description("class"))
-                + "\n\n"
-            )
-
-        if class_def.name in CLASSES_WITH_CSHARP_DIFFERENCES:
-            f.write(".. note::\n\n\t")
-            f.write(
-                translate(
-                    "There are notable differences when using this API with C#. See :ref:`doc_c_sharp_differences` for more information."
-                )
-                + "\n\n"
-            )
+        make_class_description(f, class_def, state)
 
         # Online tutorials
         if len(class_def.tutorials) > 0:
@@ -749,58 +637,22 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
 
         ### REFERENCE TABLES ###
 
-        # Reused container for reference tables.
-        ml: List[Tuple[Optional[str], ...]] = []
-
-        # Properties reference table
         if len(class_def.properties) > 0:
             make_property_table(f, class_def, state)
 
-        # Constructors, Methods, Operators reference tables
         if len(class_def.constructors) > 0:
-            f.write(".. rst-class:: classref-reftable-group\n\n")
-            f.write(make_heading("Constructors", "-"))
-
-            ml = []
-            for method_list in class_def.constructors.values():
-                for m in method_list:
-                    ml.append(make_method_signature(class_def, m, "constructor", state))
-
-            format_table(f, ml)
+            make_constructor_table(f, class_def, state)
 
         if len(class_def.methods) > 0:
-            # f.write(".. rst-class:: classref-reftable-group\n\n")
-            # f.write(make_heading("Methods", "-"))
-
-            # ml = []
-            # # for method_list in class_def.methods.values():
-            #     # for m in method_list:
-
-            # format_table(f, ml)
             make_method_table(f, class_def, state)
 
         if len(class_def.operators) > 0:
-            f.write(".. rst-class:: classref-reftable-group\n\n")
-            f.write(make_heading("Operators", "-"))
+            make_operator_table(f, class_def, state)
 
-            ml = []
-            for method_list in class_def.operators.values():
-                for m in method_list:
-                    ml.append(make_method_signature(class_def, m, "operator", state))
 
-            format_table(f, ml)
-
-        # Theme properties reference table
         if len(class_def.theme_items) > 0:
-            f.write(".. rst-class:: classref-reftable-group\n\n")
-            f.write(make_heading("Theme Properties", "-"))
+            make_theme_properties_table(f, class_def, state)
 
-            ml = []
-            for theme_item_def in class_def.theme_items.values():
-                ref = f":ref:`{theme_item_def.name}<class_{class_name}_theme_{theme_item_def.data_name}_{theme_item_def.name}>`"
-                ml.append((theme_item_def.type_name.to_rst(state), ref, theme_item_def.default_value))
-
-            format_table(f, ml, True)
 
         ### DETAILED DESCRIPTIONS ###
 
@@ -1217,7 +1069,7 @@ def make_rst_index(grouped_classes: Dict[str, List[str]], dry_run: bool, output_
         # Warn contributors not to edit this file directly.
         # Also provide links to the source files for reference.
 
-        git_branch = get_git_branch()
+        # git_branch = get_git_branch()
         # generator_github_url = f"https://github.com/godotengine/godot/tree/{git_branch}/doc/tools/make_rst.py"
 
         f.write(".. DO NOT EDIT THIS FILE!!!\n")
@@ -1358,6 +1210,158 @@ def sanitize_operator_name(dirty_name: str, state: State) -> str:
         lgr.print_error(f'Unsupported operator type "{dirty_name}", please add the missing rule.', state)
 
     return clear_name
+
+
+# Entry point for the RST generator.
+def main() -> None:
+    args = process_cl_args()
+    lgr.verbose_enabled = args.verbose
+
+    should_color = bool(args.color or sys.stdout.isatty() or os.environ.get("CI"))
+
+    lgr.set_should_color(should_color)
+    # Retrieve heading translations for the given language.
+    if not args.dry_run and args.lang != "en":
+        lang_file = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)), "..", "translations", "{}.po".format(args.lang)
+        )
+        if os.path.exists(lang_file):
+            try:
+                import polib  # type: ignore
+            except ImportError:
+                print("Base template strings localization requires `polib`.")
+                exit(1)
+
+            pofile = polib.pofile(lang_file)
+            for entry in pofile.translated_entries():
+                if entry.msgid in BASE_STRINGS:
+                    strings_l10n[entry.msgid] = entry.msgstr
+        else:
+            print(f'No PO file at "{lang_file}" for language "{args.lang}".')
+
+    print("Checking for errors in the XML class reference...")
+
+    file_list: List[str] = []
+
+    for path in args.path:
+        # Cut off trailing slashes so os.path.basename doesn't choke.
+        if path.endswith("/") or path.endswith("\\"):
+            path = path[:-1]
+
+        if os.path.basename(path) in ["modules", "platform"]:
+            for subdir, dirs, _ in os.walk(path):
+                if "doc_classes" in dirs:
+                    doc_dir = os.path.join(subdir, "doc_classes")
+                    class_file_names = (f for f in os.listdir(doc_dir) if f.endswith(".xml"))
+                    file_list += (os.path.join(doc_dir, f) for f in class_file_names)
+
+        elif os.path.isdir(path):
+            file_list += (os.path.join(path, f) for f in os.listdir(path) if f.endswith(".xml"))
+
+        elif os.path.isfile(path):
+            if not path.endswith(".xml"):
+                print(f'Got non-.xml file "{path}" in input, skipping.')
+                continue
+
+            file_list.append(path)
+
+    classes: Dict[str, Tuple[ET.Element, str]] = {}
+    state = State()
+
+    for cur_file in file_list:
+        try:
+            tree = ET.parse(cur_file)
+        except ET.ParseError as e:
+            lgr.print_error(f"{cur_file}: Parse error while reading the file: {e}", state)
+            continue
+        doc = tree.getroot()
+
+        name = doc.attrib["name"]
+        if name in classes:
+            lgr.print_error(f'{cur_file}: Duplicate class "{name}".', state)
+            continue
+
+        classes[name] = (doc, cur_file)
+
+    for name, data in classes.items():
+        try:
+            state.parse_class(data[0], data[1])
+        except Exception as e:
+            lgr.print_error(f"{name}.xml: Exception while parsing class: {e}", state)
+
+    state.sort_classes()
+
+    pattern = re.compile(args.filter)
+
+    # Create the output folder recursively if it doesn't already exist.
+    os.makedirs(args.output, exist_ok=True)
+
+    print("Generating the RST class reference...")
+
+    grouped_classes: Dict[str, List[str]] = {}
+
+    for class_name, class_def in state.classes.items():
+        if args.filter and not pattern.search(class_def.filepath):
+            continue
+        state.current_class = class_name
+
+        class_def.update_class_group(state)
+
+        class_def.strip_privates()
+        make_rst_class(class_def, state, args.dry_run, args.output)
+
+        if class_def.class_group not in grouped_classes:
+            grouped_classes[class_def.class_group] = []
+        grouped_classes[class_def.class_group].append(class_name)
+
+        if class_def.editor_class:
+            if "editor" not in grouped_classes:
+                grouped_classes["editor"] = []
+            grouped_classes["editor"].append(class_name)
+
+    # print("")
+    # print("Generating the index file...")
+
+    # make_rst_index(grouped_classes, args.dry_run, args.output)
+
+    # print("")
+
+    # Print out checks.
+
+    if state.script_language_parity_check.hit_count > 0:
+        if not args.verbose:
+            lgr.print_style("yellow", f'{state.script_language_parity_check.hit_count} code samples failed parity check. Use --verbose to get more information.')
+        else:
+            lgr.print_style("yellow", f'{state.script_language_parity_check.hit_count} code samples failed parity check:')
+
+            for class_name in state.script_language_parity_check.hit_map.keys():
+                class_hits = state.script_language_parity_check.hit_map[class_name]
+                lgr.print_style("yellow", f'- {len(class_hits)} hits in class "{class_name}"')
+
+                for context, error in class_hits:
+                    print(f"  - {error} in {bb2rst.format_context_name(context)}")
+        print("")
+
+    # Print out warnings and errors, or lack thereof, and exit with an appropriate code.
+
+    if state.num_warnings >= 2:
+        lgr.print_style("yellow", f'{state.num_warnings} warnings were found in the class reference XML. Please check the messages above.')
+    elif state.num_warnings == 1:
+        lgr.print_style("yellow", f'1 warning was found in the class reference XML. Please check the messages above.')
+
+    if state.num_errors >= 2:
+        lgr.print_style("red", f'{state.num_errors} errors were found in the class reference XML. Please check the messages above.')
+    elif state.num_errors == 1:
+        lgr.print_style("red", f'1 error was found in the class reference XML. Please check the messages above.')
+
+    if state.num_warnings == 0 and state.num_errors == 0:
+        lgr.print_style("green", f'No warnings or errors found in the class reference XML.')
+        if not args.dry_run:
+            print(f"Wrote reStructuredText files for each class to: {args.output}")
+    else:
+        exit(1)
+
+
 
 
 if __name__ == "__main__":
