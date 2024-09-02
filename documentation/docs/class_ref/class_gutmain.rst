@@ -8,7 +8,7 @@
 GutMain
 =======
 
-**Inherits:** :ref:`"addons/gut/gut_to_move.gd"<class_"addons/gut/gut_to_move.gd">`
+**Inherits:** `"addons/gut/gut_to_move.gd" <https://docs.godotengine.org/en/stable/classes/class_"addons/gut/gut_to_move.gd".html>`_
 
 The GUT brains.
 
@@ -54,63 +54,6 @@ Methods
    +--------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_test_script_count<class_GutMain_method_get_test_script_count>`\ (\ ) |
    +--------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
-
-.. rst-class:: classref-section-separator
-
-----
-
-.. rst-class:: classref-descriptions-group
-
-Signals
--------
-
-.. _class_GutMain_signal_start_pause_before_teardown:
-
-.. rst-class:: classref-signal
-
-**start_pause_before_teardown**\ (\ ) :ref:`🔗<class_GutMain_signal_start_pause_before_teardown>`
-
-.. _class_GutMain_signal_end_pause_before_teardown:
-
-.. rst-class:: classref-signal
-
-**end_pause_before_teardown**\ (\ ) :ref:`🔗<class_GutMain_signal_end_pause_before_teardown>`
-
-.. _class_GutMain_signal_start_run:
-
-.. rst-class:: classref-signal
-
-**start_run**\ (\ ) :ref:`🔗<class_GutMain_signal_start_run>`
-
-.. _class_GutMain_signal_end_run:
-
-.. rst-class:: classref-signal
-
-**end_run**\ (\ ) :ref:`🔗<class_GutMain_signal_end_run>`
-
-.. _class_GutMain_signal_start_script:
-
-.. rst-class:: classref-signal
-
-**start_script**\ (\ test_script_obj\ ) :ref:`🔗<class_GutMain_signal_start_script>`
-
-.. _class_GutMain_signal_end_script:
-
-.. rst-class:: classref-signal
-
-**end_script**\ (\ ) :ref:`🔗<class_GutMain_signal_end_script>`
-
-.. _class_GutMain_signal_start_test:
-
-.. rst-class:: classref-signal
-
-**start_test**\ (\ test_name\ ) :ref:`🔗<class_GutMain_signal_start_test>`
-
-.. _class_GutMain_signal_end_test:
-
-.. rst-class:: classref-signal
-
-**end_test**\ (\ ) :ref:`🔗<class_GutMain_signal_end_test>`
 
 .. rst-class:: classref-section-separator
 

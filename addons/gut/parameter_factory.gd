@@ -1,6 +1,18 @@
 ## Creates parameter structures for parameterized tests.
 ##
-## There is no need for more description.
+## This is a static class accessible in a `GutTest` script through
+## `ParameterFactory`.  It contains methods for constructing parameters to be
+## used in parameterized tests.  It currently only has one, if you have anyu
+## ideas for more, make an issue.  More of them would be great since I prematurely
+## decided to make this static class and it has such a long name.  I'd feel a lot
+## better about it if there was more in here.
+## [br]
+## Additional Helper Ideas?[br]
+## [li]File.  IDK what it would look like.  csv maybe.[/li]
+## [li]Random values within a range?[/li]
+## [li]All int values in a range or add an optioanal step.[/li]
+
+
 
 
 ## Creates an array of dictionaries.  It pairs up the names array with each set
@@ -43,11 +55,6 @@ static func named_parameters(names, values):
 
 	return named
 
-# Additional Helper Ideas
-# * File.  IDK what it would look like.  csv maybe.
-# * Random values within a range?
-# * All int values in a range or add an optioanal step.
-# *
 
 
 # ##############################################################################

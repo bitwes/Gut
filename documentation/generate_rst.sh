@@ -84,4 +84,4 @@ function main(){
 }
 
 main
-#generate_rst $xmldir $rstdir
+# generate_rst $xmldir $rstdir

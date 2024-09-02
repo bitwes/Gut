@@ -19,7 +19,11 @@ class State:
 
 
     def parse_class(self, class_root: ET.Element, filepath: str) -> None:
-        class_name = class_root.attrib["name"]
+        # -bitwes: remove quotes from class names, these appear when the script
+        # does not have a class_name.  This prevents the quotes from appearing
+        # in TOC and allows linking to scripts by path without having to use
+        # quotes.
+        class_name = class_root.attrib["name"].replace('"', "")
         self.current_class = class_name
 
         class_def = ClassDef(class_name)
@@ -383,6 +387,7 @@ class SignalDef(DefinitionBase):
 
         self.parameters = parameters
         self.description = description
+        self.ignore = self.desc_annotation("@ignore")
 
 
 class AnnotationDef(DefinitionBase):

@@ -37,12 +37,14 @@ var _strutils = GutUtils.Strutils.new()
 var _awaiter = null
 
 # syntax sugar
+## Reference to [addons/gut/parameter_factory.gd] script.
 var ParameterFactory = GutUtils.ParameterFactory
 ## @ignore
 var CompareResult = GutUtils.CompareResult
-## @ingore
+## Reference to [addons/gut/input_factory.gd] script.
 var InputFactory = GutUtils.InputFactory
-## @ignore
+## Reference to [GutInputSender].  This was the way you got to the [GutInputSender]
+## before it was given a [code]class_name[/code]
 var InputSender = GutUtils.InputSender
 
 

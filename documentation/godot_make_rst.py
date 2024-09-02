@@ -21,7 +21,8 @@
 #   - Class names for scripts without a class_name will be
 #        path/to/file/filename.gd
 #        path/to/file/filename.gd.InnerClassName
-#     This is how they appear in the TOC.
+#     You can use [path/to/file/filename.gd] inside your doc comments to link to
+#     pages.  This is also how they appear in the TOC.
 #   - Since this is intended to be used with the --no-docbase doctool option,
 #     any reference to a class it can't find is assumed to be a Godot class and
 #     links to the Godot docs (latest).  A message is printed on the first
@@ -55,6 +56,7 @@
 #       - Methods
 #       - Properties
 #       - Constants
+#       - Signals
 #
 #   Methods:
 #   - @ignore - The method will not appear in generated documentation.
@@ -63,8 +65,10 @@
 #     really supposed to be consumed by the general public.
 #
 #   Properties
-#   - @ignore - The property will not appear in generated documentation
+#   - @ignore - The property will not appear in generated documentation.
 #
+#   Signals
+#   - @ignore - The signal will not appear in the generated documenration.
 # ##############################################################################
 
 
@@ -536,13 +540,16 @@ def make_constant_descriptions(f, class_def, state):
 
 
 def make_signal_descriptions(f, class_def, state):
-    f.write(make_separator(True))
-    f.write(".. rst-class:: classref-descriptions-group\n\n")
-    f.write(make_heading("Signals", "-"))
-
     index = 0
-
     for signal in class_def.signals.values():
+        if(signal.ignore or (class_def.ignore_uncommented and signal.is_description_empty())):
+            continue
+
+        if(index == 0):
+            f.write(make_separator(True))
+            f.write(".. rst-class:: classref-descriptions-group\n\n")
+            f.write(make_heading("Signals", "-"))
+
         # if index != 0:
         #     f.write(make_separator())
 
@@ -755,10 +762,9 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
     adjusted_class_name = class_name
 
     # converts '"path/to/script.gd"' to 'path_to_script'
-    if('.gd"' in class_name.strip()):
+    if('.gd' in class_name.strip()):
         adjusted_class_name = class_name.lower()\
-            .replace('.gd"', "")\
-            .replace('"', "")\
+            .replace('.gd', "")\
             .replace(os.sep, '_')
         # filename will be <output_dir>/class_path_to_script.rst
         filename = os.path.join(output_dir, f"class_{adjusted_class_name}.rst")

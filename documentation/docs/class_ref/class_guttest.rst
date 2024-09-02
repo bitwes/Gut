@@ -29,6 +29,8 @@ Properties
    +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`InputFactory<class_GutTest_property_InputFactory>`         | ``<unknown>``                               |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`InputSender<class_GutTest_property_InputSender>`           | ``<unknown>``                               |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
 
 .. rst-class:: classref-reftable-group
 
@@ -346,9 +348,7 @@ Property Descriptions
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **ParameterFactory** = ``<unknown>`` :ref:`🔗<class_GutTest_property_ParameterFactory>`
 
-.. container:: contribute
-
-	No description
+Reference to :ref:`addons/gut/parameter_factory.gd<class_addons/gut/parameter_factory.gd>` script.
 
 .. rst-class:: classref-item-separator
 
@@ -360,7 +360,19 @@ Property Descriptions
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **InputFactory** = ``<unknown>`` :ref:`🔗<class_GutTest_property_InputFactory>`
 
-@ingore
+Reference to :ref:`addons/gut/input_factory.gd<class_addons/gut/input_factory.gd>` script.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_property_InputSender:
+
+.. rst-class:: classref-property
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **InputSender** = ``<unknown>`` :ref:`🔗<class_GutTest_property_InputSender>`
+
+Reference to :ref:`GutInputSender<class_GutInputSender>`.  This was the way you got to the :ref:`GutInputSender<class_GutInputSender>` before it was given a ``class_name``
 
 .. rst-class:: classref-section-separator
 

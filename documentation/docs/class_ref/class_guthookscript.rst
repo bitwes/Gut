@@ -10,7 +10,12 @@ GutHookScript
 
 **Inherits:** `RefCounted <https://docs.godotengine.org/en/stable/classes/class_refcounted.html>`_
 
-This script is the base for custom scripts to be used in pre and post run hooks. To use, inherit from this script and then implement the run method.
+This script is the base for custom scripts to be used in pre and post run hooks.  Creating a hook script requires that you:
+
+* Inherit ``GutHookScript``\ 
+* Implement a ``run()`` method
+* Configure the path in GUT (gutconfig and/or editor) as the approparite hook (pre or post).
+
 
 .. rst-class:: classref-reftable-group
 
@@ -61,7 +66,7 @@ Property Descriptions
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **JunitXmlExport** = ``load(...)`` :ref:`🔗<class_GutHookScript_property_JunitXmlExport>`
 
-Class responsible for generating xml.  You could use this to generate XML yourself instead of using the built in GUT xml generation options.
+Class responsible for generating xml.  You could use this to generate XML yourself instead of using the built in GUT xml generation options.  See :ref:`addons/gut/junit_xml_export.gd<class_addons/gut/junit_xml_export.gd>`
 
 .. rst-class:: classref-item-separator
 
@@ -73,7 +78,7 @@ Class responsible for generating xml.  You could use this to generate XML yourse
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **gut** = ``null`` :ref:`🔗<class_GutHookScript_property_gut>`
 
-This is the instance of GUT that is running the tests.  You can get information about the run from this object.  This is set by GUT when the script is instantiated.
+This is the instance of :ref:`GutMain<class_GutMain>` that is running the tests.  You can get information about the run from this object.  This is set by GUT when the script is instantiated.
 
 .. rst-class:: classref-section-separator
 
@@ -90,7 +95,7 @@ Method Descriptions
 
 |void| **run**\ (\ ) :ref:`🔗<class_GutHookScript_method_run>`
 
-Virtual method that will be called by GUT after instantiating this script.
+Virtual method that will be called by GUT after instantiating this script. This is where you put all of your logic.
 
 .. rst-class:: classref-item-separator
 
@@ -114,7 +119,7 @@ Set the exit code when running from the command line.  If not set then the defau
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_exit_code**\ (\ ) :ref:`🔗<class_GutHookScript_method_get_exit_code>`
 
-Return the current exit code.
+Returns the exit code set with ``set_exit_code``
 
 .. rst-class:: classref-item-separator
 
@@ -126,7 +131,7 @@ Return the current exit code.
 
 |void| **abort**\ (\ ) :ref:`🔗<class_GutHookScript_method_abort>`
 
-Usable by pre-run script to cause the run to end AFTER the run() method finishes.  post-run script will not be ran.
+Usable by pre-run script to cause the run to end AFTER the run() method finishes.  GUT will quit and post-run script will not be ran.
 
 .. rst-class:: classref-item-separator
 
@@ -138,7 +143,7 @@ Usable by pre-run script to cause the run to end AFTER the run() method finishes
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **should_abort**\ (\ ) :ref:`🔗<class_GutHookScript_method_should_abort>`
 
-Returns the current abort flag value.
+Returns if ``abort`` was called.
 
 .. |virtual| replace:: :abbr:`virtual (This method should typically be overridden by the user to have any effect.)`
 .. |const| replace:: :abbr:`const (This method has no side effects. It doesn't modify any of the instance's member variables.)`

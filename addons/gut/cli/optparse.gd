@@ -1,13 +1,3 @@
-#
-#
-#
-
-
-#
-
-#
-var nothing = 'nothing'
-
 ## Parses command line arguments, as one might expect.
 ##
 ## Parses command line arguments with a bunch of options including generating
