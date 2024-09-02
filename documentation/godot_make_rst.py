@@ -116,6 +116,74 @@ def no_description_container(f, name):
     )
 
 
+def make_inheritance_tree(f, class_def, state):
+    # Ascendants
+    if class_def.inherits:
+        inherits = class_def.inherits.strip()
+        f.write(f'**{translate("Inherits:")}** ')
+        first = True
+        while inherits in state.classes:
+            if not first:
+                f.write(" **<** ")
+            else:
+                first = False
+
+            f.write(make_type(inherits, state))
+            inode = state.classes[inherits].inherits
+            if inode:
+                inherits = inode.strip()
+            else:
+                break
+        # If we didn't ever print anything then the class wasn't found so
+        # we just use it and assume it is a Godot class (bitwes).
+        if(first):
+            f.write(bitwes.make_type_link(class_def.inherits.strip()))
+        f.write("\n\n")
+
+    # Descendants
+    inherited: List[str] = []
+    for c in state.classes.values():
+        if c.inherits and c.inherits.strip() == class_def.name:
+            inherited.append(c.name)
+
+    if len(inherited):
+        f.write(f'**{translate("Inherited By:")}** ')
+        for i, child in enumerate(inherited):
+            if i > 0:
+                f.write(", ")
+            f.write(make_type(child, state))
+        f.write("\n\n")
+
+
+def make_class_description(f, class_def, state):
+    has_any_description = False
+
+    if class_def.brief_description is not None and class_def.brief_description.strip() != "":
+        has_any_description = True
+
+        f.write(f"{bb2rst.format_text_block(class_def.brief_description.strip(), class_def, state)}\n\n")
+
+    if class_def.description is not None and class_def.description.strip() != "":
+        has_any_description = True
+
+        f.write(".. rst-class:: classref-introduction-group\n\n")
+        f.write(make_heading("Description", "-"))
+
+        f.write(f"{bb2rst.format_text_block(class_def.description.strip(), class_def, state)}\n\n")
+
+    if not has_any_description:
+        no_description_container(f, "class")
+
+    if class_def.name in CLASSES_WITH_CSHARP_DIFFERENCES:
+        f.write(".. note::\n\n\t")
+        f.write(
+            translate(
+                "There are notable differences when using this API with C#. See :ref:`doc_c_sharp_differences` for more information."
+            )
+            + "\n\n"
+        )
+
+
 def make_method_table(f, class_def, state):
     ml = []
     dep = []
@@ -274,6 +342,166 @@ def make_property_descriptions(f, class_def, state):
         index += 1
 
 
+def make_constructor_table(f, class_def, state):
+    f.write(".. rst-class:: classref-reftable-group\n\n")
+    f.write(make_heading("Constructors", "-"))
+
+    ml = []
+    for method_list in class_def.constructors.values():
+        for m in method_list:
+            ml.append(make_method_signature(class_def, m, "constructor", state))
+
+    format_table(f, ml)
+
+
+def make_constructor_descriptions(f, class_def, state):
+    f.write(make_separator(True))
+    f.write(".. rst-class:: classref-descriptions-group\n\n")
+    f.write(make_heading("Constructor Descriptions", "-"))
+
+    index = 0
+
+    for method_list in class_def.constructors.values():
+        for i, m in enumerate(method_list):
+
+            if index != 0:
+                f.write(make_separator())
+
+            # Create constructor signature and anchor point.
+
+            self_link = ""
+            if i == 0:
+                constructor_anchor = f"class_{class_def.name}_constructor_{m.name}"
+                f.write(f".. _{constructor_anchor}:\n\n")
+                self_link = f" :ref:`🔗<{constructor_anchor}>`"
+
+            f.write(".. rst-class:: classref-constructor\n\n")
+
+            ret_type, signature = make_method_signature(class_def, m, "", state)
+            f.write(f"{ret_type} {signature}{self_link}\n\n")
+
+            # Add constructor description, or a call to action if it's missing.
+
+            f.write(make_deprecated_experimental(m, state))
+
+            if not m.is_description_empty():
+                f.write(f"{bb2rst.format_text_block(m.description.strip(), m, state)}\n\n")
+            elif m.deprecated is None and m.experimental is None:
+                f.write(".. container:: contribute\n\n\t")
+                f.write(
+                    translate(no_description("constructor"))
+                    + "\n\n"
+                )
+
+            index += 1
+
+
+def make_operator_table(f, class_def, state):
+    f.write(".. rst-class:: classref-reftable-group\n\n")
+    f.write(make_heading("Operators", "-"))
+
+    ml = []
+    for method_list in class_def.operators.values():
+        for m in method_list:
+            ml.append(make_method_signature(class_def, m, "operator", state))
+
+    format_table(f, ml)
+
+
+def make_operator_descriptions(f, class_def, state):
+    f.write(make_separator(True))
+    f.write(".. rst-class:: classref-descriptions-group\n\n")
+    f.write(make_heading("Operator Descriptions", "-"))
+
+    index = 0
+
+    for method_list in class_def.operators.values():
+        for i, m in enumerate(method_list):
+            if index != 0:
+                f.write(make_separator())
+
+            # Create operator signature and anchor point.
+
+            operator_anchor = f"class_{class_def.name}_operator_{sanitize_operator_name(m.name, state)}"
+            for parameter in m.parameters:
+                operator_anchor += f"_{parameter.type_name.type_name}"
+            f.write(f".. _{operator_anchor}:\n\n")
+            self_link = f":ref:`🔗<{operator_anchor}>`"
+
+            f.write(".. rst-class:: classref-operator\n\n")
+
+            ret_type, signature = make_method_signature(class_def, m, "", state)
+            f.write(f"{ret_type} {signature} {self_link}\n\n")
+
+            # Add operator description, or a call to action if it's missing.
+
+            f.write(make_deprecated_experimental(m, state))
+
+            if m.description is not None and m.description.strip() != "":
+                f.write(f"{bb2rst.format_text_block(m.description.strip(), m, state)}\n\n")
+            elif m.deprecated is None and m.experimental is None:
+                f.write(".. container:: contribute\n\n\t")
+                f.write(
+                    translate(no_description("operator"))
+                    + "\n\n"
+                )
+
+            index += 1
+
+
+def make_theme_properties_table(f, class_def, state):
+    f.write(".. rst-class:: classref-reftable-group\n\n")
+    f.write(make_heading("Theme Properties", "-"))
+
+    ml = []
+    for theme_item_def in class_def.theme_items.values():
+        ref = f":ref:`{theme_item_def.name}<class_{class_def.name}_theme_{theme_item_def.data_name}_{theme_item_def.name}>`"
+        ml.append((theme_item_def.type_name.to_rst(state), ref, theme_item_def.default_value))
+
+    format_table(f, ml, True)
+
+
+def make_theme_property_descriptions(f, class_def, state):
+    f.write(make_separator(True))
+    f.write(".. rst-class:: classref-descriptions-group\n\n")
+    f.write(make_heading("Theme Property Descriptions", "-"))
+
+    index = 0
+
+    for theme_item_def in class_def.theme_items.values():
+        if index != 0:
+            f.write(make_separator())
+
+        # Create theme property signature and anchor point.
+
+        theme_item_anchor = f"class_{class_def.name}_theme_{theme_item_def.data_name}_{theme_item_def.name}"
+        f.write(f".. _{theme_item_anchor}:\n\n")
+        self_link = f":ref:`🔗<{theme_item_anchor}>`"
+        f.write(".. rst-class:: classref-themeproperty\n\n")
+
+        theme_item_default = ""
+        if theme_item_def.default_value is not None:
+            theme_item_default = f" = {theme_item_def.default_value}"
+        f.write(
+            f"{theme_item_def.type_name.to_rst(state)} **{theme_item_def.name}**{theme_item_default} {self_link}\n\n"
+        )
+
+        # Add theme property description, or a call to action if it's missing.
+
+        f.write(make_deprecated_experimental(theme_item_def, state))
+
+        if theme_item_def.text is not None and theme_item_def.text.strip() != "":
+            f.write(f"{bb2rst.format_text_block(theme_item_def.text.strip(), theme_item_def, state)}\n\n")
+        elif theme_item_def.deprecated is None and theme_item_def.experimental is None:
+            f.write(".. container:: contribute\n\n\t")
+            f.write(
+                translate(no_description("property"))
+                + "\n\n"
+            )
+
+        index += 1
+
+
 def make_constant_descriptions(f, class_def, state):
     num_printed = 0
     for constant in class_def.constants.values():
@@ -340,109 +568,91 @@ def make_signal_descriptions(f, class_def, state):
         index += 1
 
 
-def make_inheritance_tree(f, class_def, state):
-    # Ascendants
-    if class_def.inherits:
-        inherits = class_def.inherits.strip()
-        f.write(f'**{translate("Inherits:")}** ')
-        first = True
-        while inherits in state.classes:
-            if not first:
-                f.write(" **<** ")
+def make_enum_descriptions(f, class_def, state):
+    f.write(make_separator(True))
+    f.write(".. rst-class:: classref-descriptions-group\n\n")
+    f.write(make_heading("Enumerations", "-"))
+
+    index = 0
+
+    for e in class_def.enums.values():
+        if index != 0:
+            f.write(make_separator())
+
+        # Create enumeration signature and anchor point.
+
+        enum_anchor = f"enum_{class_def.name}_{e.name}"
+        f.write(f".. _{enum_anchor}:\n\n")
+        self_link = f":ref:`🔗<{enum_anchor}>`"
+        f.write(".. rst-class:: classref-enumeration\n\n")
+
+        if e.is_bitfield:
+            f.write(f"flags **{e.name}**: {self_link}\n\n")
+        else:
+            f.write(f"enum **{e.name}**: {self_link}\n\n")
+
+        for value in e.values.values():
+            # Also create signature and anchor point for each enum constant.
+
+            f.write(f".. _class_{class_def.name}_constant_{value.name}:\n\n")
+            f.write(".. rst-class:: classref-enumeration-constant\n\n")
+
+            f.write(f"{e.type_name.to_rst(state)} **{value.name}** = ``{value.value}``\n\n")
+
+            # Add enum constant description.
+
+            f.write(make_deprecated_experimental(value, state))
+
+            if value.text is not None and value.text.strip() != "":
+                f.write(f"{bb2rst.format_text_block(value.text.strip(), value, state)}")
+            elif value.deprecated is None and value.experimental is None:
+                f.write(".. container:: contribute\n\n\t")
+                f.write(
+                    translate(no_description("enum"))
+                    + "\n\n"
+                )
+
+            f.write("\n\n")
+
+        index += 1
+
+
+def make_annotation_descriptions(f, class_def, state):
+    f.write(make_separator(True))
+    f.write(make_heading("Annotations", "-"))
+
+    index = 0
+
+    for method_list in class_def.annotations.values():  # type: ignore
+        for i, m in enumerate(method_list):
+            if index != 0:
+                f.write(make_separator())
+
+            # Create annotation signature and anchor point.
+
+            self_link = ""
+            if i == 0:
+                annotation_anchor = f"class_{class_def.name}_annotation_{m.name}"
+                f.write(f".. _{annotation_anchor}:\n\n")
+                self_link = f" :ref:`🔗<{annotation_anchor}>`"
+
+            f.write(".. rst-class:: classref-annotation\n\n")
+
+            _, signature = make_method_signature(class_def, m, "", state)
+            f.write(f"{signature}{self_link}\n\n")
+
+            # Add annotation description, or a call to action if it's missing.
+
+            if m.description is not None and m.description.strip() != "":
+                f.write(f"{bb2rst.format_text_block(m.description.strip(), m, state)}\n\n")
             else:
-                first = False
+                f.write(".. container:: contribute\n\n\t")
+                f.write(
+                    translate(no_description("annotation"))
+                    + "\n\n"
+                )
 
-            f.write(make_type(inherits, state))
-            inode = state.classes[inherits].inherits
-            if inode:
-                inherits = inode.strip()
-            else:
-                break
-        # If we didn't ever print anything then the class wasn't found so
-        # we just use it and assume it is a Godot class (bitwes).
-        if(first):
-            f.write(bitwes.make_type_link(class_def.inherits.strip()))
-        f.write("\n\n")
-
-    # Descendants
-    inherited: List[str] = []
-    for c in state.classes.values():
-        if c.inherits and c.inherits.strip() == class_def.name:
-            inherited.append(c.name)
-
-    if len(inherited):
-        f.write(f'**{translate("Inherited By:")}** ')
-        for i, child in enumerate(inherited):
-            if i > 0:
-                f.write(", ")
-            f.write(make_type(child, state))
-        f.write("\n\n")
-
-
-def make_class_description(f, class_def, state):
-    has_any_description = False
-
-    if class_def.brief_description is not None and class_def.brief_description.strip() != "":
-        has_any_description = True
-
-        f.write(f"{bb2rst.format_text_block(class_def.brief_description.strip(), class_def, state)}\n\n")
-
-    if class_def.description is not None and class_def.description.strip() != "":
-        has_any_description = True
-
-        f.write(".. rst-class:: classref-introduction-group\n\n")
-        f.write(make_heading("Description", "-"))
-
-        f.write(f"{bb2rst.format_text_block(class_def.description.strip(), class_def, state)}\n\n")
-
-    if not has_any_description:
-        no_description_container(f, "class")
-
-    if class_def.name in CLASSES_WITH_CSHARP_DIFFERENCES:
-        f.write(".. note::\n\n\t")
-        f.write(
-            translate(
-                "There are notable differences when using this API with C#. See :ref:`doc_c_sharp_differences` for more information."
-            )
-            + "\n\n"
-        )
-
-
-def make_constructor_table(f, class_def, state):
-    f.write(".. rst-class:: classref-reftable-group\n\n")
-    f.write(make_heading("Constructors", "-"))
-
-    ml = []
-    for method_list in class_def.constructors.values():
-        for m in method_list:
-            ml.append(make_method_signature(class_def, m, "constructor", state))
-
-    format_table(f, ml)
-
-
-def make_operator_table(f, class_def, state):
-    f.write(".. rst-class:: classref-reftable-group\n\n")
-    f.write(make_heading("Operators", "-"))
-
-    ml = []
-    for method_list in class_def.operators.values():
-        for m in method_list:
-            ml.append(make_method_signature(class_def, m, "operator", state))
-
-    format_table(f, ml)
-
-
-def make_theme_properties_table(f, class_def, state):
-    f.write(".. rst-class:: classref-reftable-group\n\n")
-    f.write(make_heading("Theme Properties", "-"))
-
-    ml = []
-    for theme_item_def in class_def.theme_items.values():
-        ref = f":ref:`{theme_item_def.name}<class_{class_def.name}_theme_{theme_item_def.data_name}_{theme_item_def.name}>`"
-        ml.append((theme_item_def.type_name.to_rst(state), ref, theme_item_def.default_value))
-
-    format_table(f, ml, True)
-
+            index += 1
 # ------------------
 # -------- END bitwes methods/vars --------
 # ------------------
@@ -516,38 +726,6 @@ BASE_STRINGS = [
     "[b]Note:[/b] The returned array is [i]copied[/i] and any changes to it will not update the original property value. See [%s] for more details.",
 ]
 
-def process_cl_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("path", nargs="+", help="A path to an XML file or a directory containing XML files to parse.")
-    parser.add_argument("--filter", default="", help="The filepath pattern for XML files to filter.")
-    parser.add_argument("--lang", "-l", default="en", help="Language to use for section headings.")
-    parser.add_argument(
-        "--color",
-        action="store_true",
-        help="If passed, force colored output even if stdout is not a TTY (useful for continuous integration).",
-    )
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument("--output", "-o", default=".", help="The directory to save output .rst files in.")
-    group.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="If passed, no output will be generated and XML files are only checked for errors.",
-    )
-    parser.add_argument(
-        "--verbose",
-        action="store_true",
-        help="If passed, enables verbose printing.",
-    )
-    return parser.parse_args()
-
-
-
-
-
-# Common helpers.
-
-
-
 def translate(string: str) -> str:
     """Translate a string based on translations sourced from `doc/translations/*.po`
     for a language if defined via the --lang command line argument.
@@ -555,16 +733,12 @@ def translate(string: str) -> str:
     """
     return strings_l10n.get(string, string)
 
-# Removed uses of this, the uses of this were not using the result of this, and
-# so by the transitive prooperty this was not being used.
+
+# Removed uses of this, the uses of this were not using the result of this.
 # def get_git_branch() -> str:
 #     if hasattr(version, "docs") and version.docs != "latest":
 #         return version.docs
-
 #     return "master"
-
-
-# Generator methods.
 
 
 def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir: str) -> None:
@@ -656,59 +830,14 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
 
         ### DETAILED DESCRIPTIONS ###
 
+
         # Signal descriptions
         if len(class_def.signals) > 0:
             make_signal_descriptions(f, class_def, state)
 
-
         # Enumeration descriptions
         if len(class_def.enums) > 0:
-            f.write(make_separator(True))
-            f.write(".. rst-class:: classref-descriptions-group\n\n")
-            f.write(make_heading("Enumerations", "-"))
-
-            index = 0
-
-            for e in class_def.enums.values():
-                if index != 0:
-                    f.write(make_separator())
-
-                # Create enumeration signature and anchor point.
-
-                enum_anchor = f"enum_{class_name}_{e.name}"
-                f.write(f".. _{enum_anchor}:\n\n")
-                self_link = f":ref:`🔗<{enum_anchor}>`"
-                f.write(".. rst-class:: classref-enumeration\n\n")
-
-                if e.is_bitfield:
-                    f.write(f"flags **{e.name}**: {self_link}\n\n")
-                else:
-                    f.write(f"enum **{e.name}**: {self_link}\n\n")
-
-                for value in e.values.values():
-                    # Also create signature and anchor point for each enum constant.
-
-                    f.write(f".. _class_{class_name}_constant_{value.name}:\n\n")
-                    f.write(".. rst-class:: classref-enumeration-constant\n\n")
-
-                    f.write(f"{e.type_name.to_rst(state)} **{value.name}** = ``{value.value}``\n\n")
-
-                    # Add enum constant description.
-
-                    f.write(make_deprecated_experimental(value, state))
-
-                    if value.text is not None and value.text.strip() != "":
-                        f.write(f"{bb2rst.format_text_block(value.text.strip(), value, state)}")
-                    elif value.deprecated is None and value.experimental is None:
-                        f.write(".. container:: contribute\n\n\t")
-                        f.write(
-                            translate(no_description("enum"))
-                            + "\n\n"
-                        )
-
-                    f.write("\n\n")
-
-                index += 1
+            make_enum_descriptions(f, class_def, state)
 
         # Constant descriptions
         if len(class_def.constants) > 0:
@@ -716,183 +845,28 @@ def make_rst_class(class_def: ClassDef, state: State, dry_run: bool, output_dir:
 
         # Annotation descriptions
         if len(class_def.annotations) > 0:
-            f.write(make_separator(True))
-            f.write(make_heading("Annotations", "-"))
-
-            index = 0
-
-            for method_list in class_def.annotations.values():  # type: ignore
-                for i, m in enumerate(method_list):
-                    if index != 0:
-                        f.write(make_separator())
-
-                    # Create annotation signature and anchor point.
-
-                    self_link = ""
-                    if i == 0:
-                        annotation_anchor = f"class_{class_name}_annotation_{m.name}"
-                        f.write(f".. _{annotation_anchor}:\n\n")
-                        self_link = f" :ref:`🔗<{annotation_anchor}>`"
-
-                    f.write(".. rst-class:: classref-annotation\n\n")
-
-                    _, signature = make_method_signature(class_def, m, "", state)
-                    f.write(f"{signature}{self_link}\n\n")
-
-                    # Add annotation description, or a call to action if it's missing.
-
-                    if m.description is not None and m.description.strip() != "":
-                        f.write(f"{bb2rst.format_text_block(m.description.strip(), m, state)}\n\n")
-                    else:
-                        f.write(".. container:: contribute\n\n\t")
-                        f.write(
-                            translate(no_description("annotation"))
-                            + "\n\n"
-                        )
-
-                    index += 1
-
+            make_annotation_descriptions(f, class_def, state)
 
         # Property descriptions
         if any(not p.overrides for p in class_def.properties.values()) > 0:
             make_property_descriptions(f, class_def, state)
 
-
         # Constructor, Method, Operator descriptions
         if len(class_def.constructors) > 0:
-            f.write(make_separator(True))
-            f.write(".. rst-class:: classref-descriptions-group\n\n")
-            f.write(make_heading("Constructor Descriptions", "-"))
-
-            index = 0
-
-            for method_list in class_def.constructors.values():
-                for i, m in enumerate(method_list):
-
-                    if index != 0:
-                        f.write(make_separator())
-
-                    # Create constructor signature and anchor point.
-
-                    self_link = ""
-                    if i == 0:
-                        constructor_anchor = f"class_{class_name}_constructor_{m.name}"
-                        f.write(f".. _{constructor_anchor}:\n\n")
-                        self_link = f" :ref:`🔗<{constructor_anchor}>`"
-
-                    f.write(".. rst-class:: classref-constructor\n\n")
-
-                    ret_type, signature = make_method_signature(class_def, m, "", state)
-                    f.write(f"{ret_type} {signature}{self_link}\n\n")
-
-                    # Add constructor description, or a call to action if it's missing.
-
-                    f.write(make_deprecated_experimental(m, state))
-
-                    if not m.is_description_empty():
-                        f.write(f"{bb2rst.format_text_block(m.description.strip(), m, state)}\n\n")
-                    elif m.deprecated is None and m.experimental is None:
-                        f.write(".. container:: contribute\n\n\t")
-                        f.write(
-                            translate(no_description("constructor"))
-                            + "\n\n"
-                        )
-
-                    index += 1
-
+            make_constructor_descriptions(f, class_def, state)
 
         # Method descrptions
         if len(class_def.methods) > 0:
             make_method_descriptions(f, class_def, state)
 
-
         if len(class_def.operators) > 0:
-            f.write(make_separator(True))
-            f.write(".. rst-class:: classref-descriptions-group\n\n")
-            f.write(make_heading("Operator Descriptions", "-"))
-
-            index = 0
-
-            for method_list in class_def.operators.values():
-                for i, m in enumerate(method_list):
-                    if index != 0:
-                        f.write(make_separator())
-
-                    # Create operator signature and anchor point.
-
-                    operator_anchor = f"class_{class_name}_operator_{sanitize_operator_name(m.name, state)}"
-                    for parameter in m.parameters:
-                        operator_anchor += f"_{parameter.type_name.type_name}"
-                    f.write(f".. _{operator_anchor}:\n\n")
-                    self_link = f":ref:`🔗<{operator_anchor}>`"
-
-                    f.write(".. rst-class:: classref-operator\n\n")
-
-                    ret_type, signature = make_method_signature(class_def, m, "", state)
-                    f.write(f"{ret_type} {signature} {self_link}\n\n")
-
-                    # Add operator description, or a call to action if it's missing.
-
-                    f.write(make_deprecated_experimental(m, state))
-
-                    if m.description is not None and m.description.strip() != "":
-                        f.write(f"{bb2rst.format_text_block(m.description.strip(), m, state)}\n\n")
-                    elif m.deprecated is None and m.experimental is None:
-                        f.write(".. container:: contribute\n\n\t")
-                        f.write(
-                            translate(no_description("operator"))
-                            + "\n\n"
-                        )
-
-                    index += 1
+            make_operator_descriptions(f, class_def, state)
 
         # Theme property descriptions
         if len(class_def.theme_items) > 0:
-            f.write(make_separator(True))
-            f.write(".. rst-class:: classref-descriptions-group\n\n")
-            f.write(make_heading("Theme Property Descriptions", "-"))
-
-            index = 0
-
-            for theme_item_def in class_def.theme_items.values():
-                if index != 0:
-                    f.write(make_separator())
-
-                # Create theme property signature and anchor point.
-
-                theme_item_anchor = f"class_{class_name}_theme_{theme_item_def.data_name}_{theme_item_def.name}"
-                f.write(f".. _{theme_item_anchor}:\n\n")
-                self_link = f":ref:`🔗<{theme_item_anchor}>`"
-                f.write(".. rst-class:: classref-themeproperty\n\n")
-
-                theme_item_default = ""
-                if theme_item_def.default_value is not None:
-                    theme_item_default = f" = {theme_item_def.default_value}"
-                f.write(
-                    f"{theme_item_def.type_name.to_rst(state)} **{theme_item_def.name}**{theme_item_default} {self_link}\n\n"
-                )
-
-                # Add theme property description, or a call to action if it's missing.
-
-                f.write(make_deprecated_experimental(theme_item_def, state))
-
-                if theme_item_def.text is not None and theme_item_def.text.strip() != "":
-                    f.write(f"{bb2rst.format_text_block(theme_item_def.text.strip(), theme_item_def, state)}\n\n")
-                elif theme_item_def.deprecated is None and theme_item_def.experimental is None:
-                    f.write(".. container:: contribute\n\n\t")
-                    f.write(
-                        translate(no_description("property"))
-                        + "\n\n"
-                    )
-
-                index += 1
+            make_theme_property_descriptions(f, class_def, state)
 
         f.write(make_footer())
-
-
-
-
-
 
 
 def make_method_signature(
@@ -1056,8 +1030,6 @@ def make_separator(section_level: bool = False) -> str:
     return f".. rst-class:: classref-{separator_class}-separator\n\n----\n\n"
 
 
-
-
 def make_rst_index(grouped_classes: Dict[str, List[str]], dry_run: bool, output_dir: str) -> None:
     with open(
         os.devnull if dry_run else os.path.join(output_dir, "index.rst"), "w", encoding="utf-8", newline="\n"
@@ -1212,38 +1184,29 @@ def sanitize_operator_name(dirty_name: str, state: State) -> str:
     return clear_name
 
 
-# Entry point for the RST generator.
-def main() -> None:
-    args = process_cl_args()
-    lgr.verbose_enabled = args.verbose
+def load_translations(lang):
+    lang_file = os.path.join(
+        os.path.dirname(os.path.realpath(__file__)), "..", "translations", "{}.po".format(lang)
+    )
+    if os.path.exists(lang_file):
+        try:
+            import polib  # type: ignore
+        except ImportError:
+            print("Base template strings localization requires `polib`.")
+            exit(1)
 
-    should_color = bool(args.color or sys.stdout.isatty() or os.environ.get("CI"))
+        pofile = polib.pofile(lang_file)
+        for entry in pofile.translated_entries():
+            if entry.msgid in BASE_STRINGS:
+                strings_l10n[entry.msgid] = entry.msgstr
+    else:
+        print(f'No PO file at "{lang_file}" for language "{lang}".')
 
-    lgr.set_should_color(should_color)
-    # Retrieve heading translations for the given language.
-    if not args.dry_run and args.lang != "en":
-        lang_file = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), "..", "translations", "{}.po".format(args.lang)
-        )
-        if os.path.exists(lang_file):
-            try:
-                import polib  # type: ignore
-            except ImportError:
-                print("Base template strings localization requires `polib`.")
-                exit(1)
 
-            pofile = polib.pofile(lang_file)
-            for entry in pofile.translated_entries():
-                if entry.msgid in BASE_STRINGS:
-                    strings_l10n[entry.msgid] = entry.msgstr
-        else:
-            print(f'No PO file at "{lang_file}" for language "{args.lang}".')
-
-    print("Checking for errors in the XML class reference...")
-
+def get_xml_file_list(xml_path):
     file_list: List[str] = []
 
-    for path in args.path:
+    for path in xml_path:
         # Cut off trailing slashes so os.path.basename doesn't choke.
         if path.endswith("/") or path.endswith("\\"):
             path = path[:-1]
@@ -1254,10 +1217,8 @@ def main() -> None:
                     doc_dir = os.path.join(subdir, "doc_classes")
                     class_file_names = (f for f in os.listdir(doc_dir) if f.endswith(".xml"))
                     file_list += (os.path.join(doc_dir, f) for f in class_file_names)
-
         elif os.path.isdir(path):
             file_list += (os.path.join(path, f) for f in os.listdir(path) if f.endswith(".xml"))
-
         elif os.path.isfile(path):
             if not path.endswith(".xml"):
                 print(f'Got non-.xml file "{path}" in input, skipping.')
@@ -1265,9 +1226,12 @@ def main() -> None:
 
             file_list.append(path)
 
-    classes: Dict[str, Tuple[ET.Element, str]] = {}
-    state = State()
+    return file_list
 
+
+def new_state_from_xml_files(file_list):
+    state = State()
+    classes: Dict[str, Tuple[ET.Element, str]] = {}
     for cur_file in file_list:
         try:
             tree = ET.parse(cur_file)
@@ -1288,10 +1252,50 @@ def main() -> None:
             state.parse_class(data[0], data[1])
         except Exception as e:
             lgr.print_error(f"{name}.xml: Exception while parsing class: {e}", state)
+    return state
 
+
+
+def get_cmdline_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("path", nargs="+", help="A path to an XML file or a directory containing XML files to parse.")
+    parser.add_argument("--filter", default="", help="The filepath pattern for XML files to filter.")
+    parser.add_argument("--lang", "-l", default="en", help="Language to use for section headings.")
+    parser.add_argument(
+        "--color",
+        action="store_true",
+        help="If passed, force colored output even if stdout is not a TTY (useful for continuous integration).",
+    )
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("--output", "-o", default=".", help="The directory to save output .rst files in.")
+    group.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="If passed, no output will be generated and XML files are only checked for errors.",
+    )
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="If passed, enables verbose printing.",
+    )
+    return parser.parse_args()
+
+
+# Entry point for the RST generator.
+def main() -> None:
+    args = get_cmdline_args()
+    lgr.verbose_enabled = args.verbose
+    should_color = bool(args.color or sys.stdout.isatty() or os.environ.get("CI"))
+    lgr.set_should_color(should_color)
+
+    # Retrieve heading translations for the given language.
+    if not args.dry_run and args.lang != "en":
+        load_translations(args.lang)
+
+    print("Checking for errors in the XML class reference...")
+    file_list = get_xml_file_list(args.path)
+    state = new_state_from_xml_files(file_list)
     state.sort_classes()
-
-    pattern = re.compile(args.filter)
 
     # Create the output folder recursively if it doesn't already exist.
     os.makedirs(args.output, exist_ok=True)
@@ -1299,15 +1303,15 @@ def main() -> None:
     print("Generating the RST class reference...")
 
     grouped_classes: Dict[str, List[str]] = {}
-
+    pattern = re.compile(args.filter)
     for class_name, class_def in state.classes.items():
         if args.filter and not pattern.search(class_def.filepath):
             continue
+
         state.current_class = class_name
-
         class_def.update_class_group(state)
-
         class_def.strip_privates()
+
         make_rst_class(class_def, state, args.dry_run, args.output)
 
         if class_def.class_group not in grouped_classes:
