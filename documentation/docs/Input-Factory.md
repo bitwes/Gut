@@ -1,6 +1,6 @@
 
 # InputFactory
-This static class is available when extending `GutTest`.  The methods in this class are simple wrappers to make it a little easier to create instances of the various `InputEvent*` classes.  These are used, under the covers, by (Input Sender)[Mocking-Input].
+This static class is available when extending `GutTest`.  The methods in this class are simple wrappers to make it a little easier to create instances of the various `InputEvent*` classes.  These are used, under the covers, by [Input Sender](Mocking-Input).
 
 Usage:
 ```
