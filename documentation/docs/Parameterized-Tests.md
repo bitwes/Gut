@@ -1,7 +1,7 @@
 # Parameterized Tests
 There are some scenarios where it is desirable to run a test numerous times with different parameters.  You can do this in GUT by creating a test that has a single parameter that is defaulted to the GUT method `use_parameters`.
 
-`use_parameters` expects and array.  The test will be called once for each element in the array, passing the value of each element to the parameter of the function.
+`use_parameters` expects an array.  The test will be called once for each element in the array, passing the value of each element to the parameter of the function.
 
 ## Requirements:
 * The test must have one and only one parameter.
