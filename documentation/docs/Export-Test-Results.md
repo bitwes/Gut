@@ -12,7 +12,7 @@ There are two settings, the file name and a flag to include an epoch timestamp i
     * Set `-gjunit_xml_file` to the path.
     * Add option `-gjunit_xml_timestamp` to include the timestamp.
 * `.gutconfig.json` File
-    * `"junit_xml_file":"user://resutls.xml"`
+    * `"junit_xml_file":"user://results.xml"`
     * `"junit_xml_timestamp":false`
 * Inspector
     * Set `Junit Xml File` to the path.
