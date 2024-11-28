@@ -662,6 +662,22 @@ class TestEverythingElse:
 		gr.test_gut.test_scripts()
 		assert_eq(gr.test_gut.get_test_count(), 0, 'test should not be run')
 		assert_errored(gr.test_gut, -1)
+	
+	func test_awaiting_in_the_pre_hook_script():
+		var pre_run_script = load("res://test/resources/awaiting_pre_run_script.gd")
+		gr.test_gut.pre_run_script = "res://test/resources/awaiting_pre_run_script.gd"
+		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
+		gr.test_gut.test_scripts()
+		await wait_for_signal(gr.test_gut.start_run, 3, "It should take exactly 1 second.")
+		assert_true(gr.test_gut.get_pre_run_script_instance().awaited, "Pre-run script awaited.")
+	
+	func test_awaiting_in_the_post_hook_script():
+		var pre_run_script = load("res://test/resources/awaiting_post_run_script.gd")
+		gr.test_gut.post_run_script = "res://test/resources/awaiting_post_run_script.gd"
+		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
+		gr.test_gut.test_scripts()
+		await wait_for_signal(gr.test_gut.end_run, 3, "It should take exactly 1 second.")
+		assert_true(gr.test_gut.get_post_run_script_instance().awaited, "Post-run script awaited.")
 
 	# ------------------------------
 	# Parameterized Test Tests
