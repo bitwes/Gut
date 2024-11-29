@@ -5,6 +5,11 @@
 # rst files from the xml.
 #
 # This should be run before each release, at the end of the release cycle.
+#
+# This should be run from the project root directory.  Must have opened the
+# the project in the editor or run godot --headless --import.  Maybe the import
+# should just be added to this script...just to be safe.  Well, if you don't
+# see any xml files, run the import, that's probably the problem.
 # -----------------------------------------------------------------------------
 
 # Directory where xml files from `godot --doctool` will be placed.  These are

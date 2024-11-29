@@ -48,20 +48,27 @@ documentation/docs/_build/html/index.html
 
 
 # Class Reference Generation
-```
-# Generate XML files for godot plugin.  This cannot be more specific than a directory.
-# YOU MUST hit ctrl+c to end this, it doesn't end
-# https://github.com/godotengine/godot/issues/86604
-godot --doctool documentation/godot_doctools --no-docbase --gdscript-docs res://addons/gut
 
-# Kill all the files that do not have a class_name.  These are not included in the documetnation
-rm documentation/godot_doctools/addon*
+## Setup
+The class reference documentation generation toolkit wrapper script requires:
+* `zsh`
+* `python3`
+* Docker (per above requirements)
 
-# Run the slightly altered make_rst.py file from the godot repo to generate .rst files
-# for the generated xml.  There's gonna be a TON of "Unresolved type" errors until I figure
-# out how to work around this.
-python3 documentation/godot_make_rst.py documentation/godot_doctools --filter documentation/godot_doctools -o documentation/docs/godot_doctool_rst
+Before generating class reference:
+* The project must have been opened in the editor or you have run an import (`godot --import`).  No xml files will be generated if not.
+* You must have created the docker image already, per the directions above.
 
-# Generate the HTML for everything.
-docker-compose -f docker/compose.yml up
-```
+
+## Execution
+From the root of this project run:
+* `zsh documentation/generate_rst.sh`
+
+Output will be located in the following directories:
+* XML:  `documentation/class_ref_xml`
+* RST:  `documentation/docs/class_ref`
+* HTML:  `documentation/docs/_build/html/class_ref`
+
+Class Reference will be on the index page the the bottom of the TOC.
+
+The XML and RST files are under revision control, the HTML is not.
