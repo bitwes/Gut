@@ -157,7 +157,7 @@ func run_tests(show_gui=true):
 	_setup_gui(show_gui)
 
 	if(gut_config.options.dirs.size() + gut_config.options.tests.size() == 0):
-		var err_text = "You do not have any directories configrued, so GUT doesn't know where to find the tests.  Tell GUT where to find the tests and GUT shall run the tests."
+		var err_text = "You do not have any directories configured, so GUT doesn't know where to find the tests.  Tell GUT where to find the tests and GUT shall run the tests."
 		lgr.error(err_text)
 		push_error(err_text)
 		_end_run(EXIT_ERROR)

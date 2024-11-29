@@ -185,7 +185,7 @@ func _fail_if_parameters_not_array(parameters):
 	var invalid = parameters != null and typeof(parameters) != TYPE_ARRAY
 	if(invalid):
 		_lgr.error('The "parameters" parameter must be an array of expected parameter values.')
-		_fail('Cannot compare paramter values because an array was not passed.')
+		_fail('Cannot compare parameter values because an array was not passed.')
 	return invalid
 
 
@@ -1207,7 +1207,7 @@ func yield_to(obj, signal_name, max_wait, msg=''):
 ## Gut detects a yield.
 func wait_frames(frames, msg=''):
 	if(frames <= 0):
-		var text = str('yeild_frames:  frames must be > 0, you passed  ', frames, '.  0 frames waited.')
+		var text = str('wait_frames:  frames must be > 0, you passed  ', frames, '.  0 frames waited.')
 		_lgr.error(text)
 		frames = 1
 
