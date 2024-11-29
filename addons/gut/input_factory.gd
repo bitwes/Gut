@@ -1,35 +1,6 @@
-# ##############################################################################
-#(G)odot (U)nit (T)est class
-#
-# ##############################################################################
-# The MIT License (MIT)
-# =====================
-#
-# Copyright (c) 2020 Tom "Butch" Wesley
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-# ##############################################################################
-# Description
-# -----------
-# ##############################################################################
-
+## Static class full of helper methods to make InputEvent instances
+##
+## This thing makes InputEvents.  Enjoy.
 
 # Implemented InputEvent* convenience methods
 # 	InputEventAction
@@ -54,6 +25,7 @@ static func _to_scancode(which):
 	return key_code
 
 
+## Creates a new button with the properties given
 static func new_mouse_button_event(position, global_position, pressed, button_index):
 	var event = InputEventMouseButton.new()
 	event.position = position
@@ -140,3 +112,35 @@ static func mouse_relative_motion(offset, last_motion_event=null, speed=Vector2(
 		event.relative = offset
 		event.velocity = speed
 	return event
+
+# ##############################################################################
+#(G)odot (U)nit (T)est class
+#
+# ##############################################################################
+# The MIT License (MIT)
+# =====================
+#
+# Copyright (c) 2020 Tom "Butch" Wesley
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+# ##############################################################################
+# Description
+# -----------
+# ##############################################################################

@@ -29,3 +29,7 @@ exported_tests.cfg
 .gut_editor_shortcuts.cfg
 
 documentation/docs/_build
+
+
+documentation/class_ref_xml
+documentation/class_ref/__pycache__

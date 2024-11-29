@@ -64,6 +64,17 @@
    Running-On-Devices
    Tutorials
 
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+   :caption: ClassRef
+   :name: class-ref
+   :glob:
+
+   Class-Ref
+   class_ref/*
+
+
 
 
 Gut 9.3.0 (Godot 4.2)
