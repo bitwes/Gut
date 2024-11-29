@@ -84,7 +84,7 @@ function main(){
     generate_rst $xmldir $rstdir
 
     echo "\n\n"
-    echo "--- Generating HTML ---"
+    echo "--- Generating All HTML ---"
     generate_html $htmldir
 }
 

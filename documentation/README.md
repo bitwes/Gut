@@ -48,6 +48,10 @@ documentation/docs/_build/html/index.html
 
 
 # Class Reference Generation
+GUT has a set of tools to generate rst files from comments in code.  It is adapted from Godot's scripts.  See `documentation/class_ref/godot_make_rst.py` for changes from Godot's version and additional features.  Most of the scripts in `documentation/class_ref` are from splitting up Godot's script.
+
+The way it works is that XML is generated from scripts.  The XML is then used to generate .rst files.  These .rst files are used by Sphinx to make HTML files.  For the documentation generation, the generated .rst files are under version control, the HTML and XML is not.
+
 
 ## Setup
 The class reference documentation generation toolkit wrapper script requires:
@@ -70,5 +74,3 @@ Output will be located in the following directories:
 * HTML:  `documentation/docs/_build/html/class_ref`
 
 Class Reference will be on the index page the the bottom of the TOC.
-
-The XML and RST files are under revision control, the HTML is not.
