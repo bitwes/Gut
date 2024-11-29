@@ -57,7 +57,7 @@ function generate_rst(){
     echo "Clearing $output_dir rst files"
     rm "$output_dir"/*.rst
 
-    python3 documentation/godot_make_rst.py $input_dir --filter $input_dir -o $output_dir  $flags
+    python3 documentation/class_ref/godot_make_rst.py $input_dir --filter $input_dir -o $output_dir  $flags
 
     printdir $output_dir
 }
