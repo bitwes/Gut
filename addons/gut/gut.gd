@@ -418,7 +418,7 @@ func _validate_hook_script(path):
 func _run_hook_script(inst):
 	if(inst != null):
 		inst.gut = self
-		inst.run()
+		await inst.run()
 	return inst
 
 # ------------------------------------------------------------------------------
@@ -448,7 +448,7 @@ func _end_run():
 	_log_end_run()
 	_is_running = false
 
-	_run_hook_script(get_post_run_script_instance())
+	await _run_hook_script(get_post_run_script_instance())
 	_export_results()
 	end_run.emit()
 
@@ -664,7 +664,7 @@ func _should_skip_script(test_script, collected_script):
 	var should_skip = false
 
 	if(skip_value == null):
-		skip_value = test_script.should_skip_script()
+		skip_value = await test_script.should_skip_script()
 	else:
 		_lgr.deprecated('Using the skip_script var has been deprecated.  Implement the new should_skip_script() method in your test instead.')
 
@@ -699,7 +699,7 @@ func _test_the_scripts(indexes=[]):
 		_lgr.error('Something went wrong and the run was aborted.')
 		return
 
-	_run_hook_script(get_pre_run_script_instance())
+	await _run_hook_script(get_pre_run_script_instance())
 	if(_pre_run_script_instance!= null and _pre_run_script_instance.should_abort()):
 		_lgr.error('pre-run abort')
 		end_run.emit()
@@ -739,7 +739,7 @@ func _test_the_scripts(indexes=[]):
 		# ----
 		# SHORTCIRCUIT
 		# skip_script logic
-		if(_should_skip_script(test_script, coll_script)):
+		if(await _should_skip_script(test_script, coll_script)):
 			continue
 		# ----
 
