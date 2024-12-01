@@ -300,6 +300,14 @@ class TestAssertAlmostEq:
 	func test_passes_with_vector3s_y_z_within_range():
 		gr.test.assert_almost_eq(Vector3(1.0, 2.0, 3.0), Vector3(1.0, 1.0, 1.0), Vector3(2.0, 2.0, 2.0), "Should pass, Vector3(1.0, 2.0, 3.0) == Vector3(1.0, 1.0, 1.0) +/- Vector3(2.0, 2.0, 2.0)")
 		assert_pass(gr.test)
+		
+	func test_passes_with_vecor4s_within_range():
+		gr.test.assert_almost_eq(Vector4(1.0, 2.0, 3.0, 1.0), Vector4(1.0, 1.0, 1.0, 1.0), Vector4(2.0, 2.0, 2.0, 2.0), "Should pass")
+		assert_pass(gr.test)
+		
+	func test_fails_with_vector4_outside_range():
+		gr.test.assert_almost_eq(Vector4(1.0, 2.0, 3.0, 1.0), Vector4(9.0, 1.0, 1.0, 1.0), Vector4(2.0, 2.0, 2.0, 2.0), "Should fail")
+		assert_fail(gr.test)
 
 	func test_fail_message_includes_extra_precision_for_floats():
 		gr.test.assert_almost_eq(.500000000012300000, .499, .001)
