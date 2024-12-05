@@ -342,20 +342,15 @@ func assert_almost_ne(got, not_expected, error_interval, text=''):
 
 # ------------------------------------------------------------------------------
 # Helper function compares a value against a expected and a +/- range.  Compares
-# all components of Vector2 and Vector3 as well.
+# all components of Vector2, Vector3, and Vector4 as well.
 # ------------------------------------------------------------------------------
 func _is_almost_eq(got, expected, error_interval) -> bool:
 	var result = false
 	var upper = expected + error_interval
 	var lower = expected - error_interval
 
-	if typeof(got) == TYPE_VECTOR2:
-		result = got.x >= lower.x and got.x <= upper.x and \
-				got.y >= lower.y and got.y <= upper.y
-	elif typeof(got) == TYPE_VECTOR3:
-		result = got.x >= lower.x and got.x <= upper.x and \
-				got.y >= lower.y and got.y <= upper.y and \
-				got.z >= lower.z and got.z <= upper.z
+	if typeof(got) in [TYPE_VECTOR2, TYPE_VECTOR3, TYPE_VECTOR4]:
+		result = got.clamp(lower, upper) == got
 	else:
 		result = got >= (lower) and got <= (upper)
 
