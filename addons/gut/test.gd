@@ -379,7 +379,7 @@ func _is_almost_eq(got, expected, error_interval) -> bool:
 	var lower = expected - error_interval
 
 	if typeof(got) in [TYPE_VECTOR2, TYPE_VECTOR3, TYPE_VECTOR4]:
-		result = (got.max(lower) == got and got.min(upper) == got)
+		result = got.clamp(lower, upper) == got
 	else:
 		result = got >= (lower) and got <= (upper)
 
