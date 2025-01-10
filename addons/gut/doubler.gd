@@ -332,7 +332,7 @@ func add_ignored_method(obj, method_name):
 # The MIT License (MIT)
 # =====================
 #
-# Copyright (c) 2024 Tom "Butch" Wesley
+# Copyright (c) 2025 Tom "Butch" Wesley
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal

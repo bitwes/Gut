@@ -158,7 +158,7 @@ static var avail_fonts = ['AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default
 
 static var version_numbers = VersionNumbers.new(
 	# gut_versrion (source of truth)
-	'9.3.0',
+	'9.3.1',
 	# required_godot_version
 	'4.2.0'
 )
