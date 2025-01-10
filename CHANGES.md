@@ -2,6 +2,35 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# 9.3.1
+A small collection of bug fixes and documentation.  GUT can now generate documentation from code comments.
+
+## Features
+* added class_name to InputSender by @bitwes in https://github.com/bitwes/Gut/pull/651
+* add await in pre-run script, post-run scrpt, and should_skip_script. by @LowFire in https://github.com/bitwes/Gut/pull/671
+* Doctools generation by @bitwes in https://github.com/bitwes/Gut/pull/672
+
+## Bug Fixes
+* Parsed Native Refcounted Objects are not freed. by @bitwes in https://github.com/bitwes/Gut/pull/648
+* Housekeeping by @bitwes in https://github.com/bitwes/Gut/pull/652
+* I650 more warnings by @bitwes in https://github.com/bitwes/Gut/pull/653
+* fix: Mocking-Input link by @HotariTobu in https://github.com/bitwes/Gut/pull/659
+* Fixed typos in error messages. by @xmoby in https://github.com/bitwes/Gut/pull/663
+* Fix docs typo by @MSWS in https://github.com/bitwes/Gut/pull/665
+* Font import files: Add disable_embedded_bitmaps by @manuq in https://github.com/bitwes/Gut/pull/674
+* Update is_almost_eq() to use built-in vector comparison by @onegm in https://github.com/bitwes/Gut/pull/668
+
+## New Contributors
+* @HotariTobu made their first contribution in https://github.com/bitwes/Gut/pull/659
+* @xmoby made their first contribution in https://github.com/bitwes/Gut/pull/663
+* @MSWS made their first contribution in https://github.com/bitwes/Gut/pull/665
+* @LowFire made their first contribution in https://github.com/bitwes/Gut/pull/671
+* @manuq made their first contribution in https://github.com/bitwes/Gut/pull/674
+* @onegm made their first contribution in https://github.com/bitwes/Gut/pull/668
+
+**Full Changelog**: https://github.com/bitwes/Gut/compare/v9.3.0...9.4.0
+
+
 # 9.3.0
 
 ## Features
