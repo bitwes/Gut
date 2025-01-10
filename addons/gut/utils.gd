@@ -158,7 +158,7 @@ static var avail_fonts = ['AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default
 
 static var version_numbers = VersionNumbers.new(
 	# gut_versrion (source of truth)
-	'9.3.0',
+	'9.3.1',
 	# required_godot_version
 	'4.2.0'
 )
@@ -569,7 +569,7 @@ static func get_display_size():
 # The MIT License (MIT)
 # =====================
 #
-# Copyright (c) 2023 Tom "Butch" Wesley
+# Copyright (c) 2025 Tom "Butch" Wesley
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
