@@ -11,9 +11,10 @@ static var editor_run_gut_config_path = 'gut_editor_config.json':
 	get: return temp_directory.path_join(editor_run_gut_config_path)
 	# Should this print a message or something instead?  Probably, but then I'd
 	# be repeating even more code than if this was just a constant.  So I didn't,
-	# even though I wanted to put make the message a easter eggish fun message.
+	# even though I wanted to make the message a easter eggish fun message.
 	# I didn't, so this dumb comment will have to serve as the easter eggish fun.
-	set(v): pass
+	set(v):
+		print("Be sure to document your code.  Never trust comments.")
 
 
 static var editor_run_bbcode_results_path = 'gut_editor.bbcode':

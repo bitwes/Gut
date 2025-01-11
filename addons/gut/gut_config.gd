@@ -51,7 +51,7 @@ var default_options = {
 
 
 var options = default_options.duplicate()
-
+var logger = GutUtils.get_logger()
 
 func _null_copy(h):
 	var new_hash = {}
@@ -61,10 +61,11 @@ func _null_copy(h):
 
 
 func _load_options_from_config_file(file_path, into):
-	# SHORTCIRCUIT
 	if(!FileAccess.file_exists(file_path)):
-		if(file_path != 'res://.gutconfig.json'):
-			print('ERROR:  Config File "', file_path, '" does not exist.')
+		# Default files are ok to be missing.  Maybe this is too deep a place
+		# to implement this, but here it is.
+		if(file_path != 'res://.gutconfig.json' and file_path != GutUtils.EditorGlobals.editor_run_gut_config_path):
+			logger.error(str('Config File "', file_path, '" does not exist.'))
 			return -1
 		else:
 			return 1
@@ -72,7 +73,7 @@ func _load_options_from_config_file(file_path, into):
 	var f = FileAccess.open(file_path, FileAccess.READ)
 	if(f == null):
 		var result = FileAccess.get_open_error()
-		push_error(str("Could not load data ", file_path, ' ', result))
+		logger.error(str("Could not load data ", file_path, ' ', result))
 		return result
 
 	var json = f.get_as_text()
@@ -83,7 +84,7 @@ func _load_options_from_config_file(file_path, into):
 	var results = test_json_conv.get_data()
 	# SHORTCIRCUIT
 	if(results == null):
-		print("\n\n",'!! ERROR parsing file:  ', file_path)
+		logger.error(str("Could not parse file:  ", file_path))
 		return -1
 
 	# Get all the options out of the config file using the option name.  The
@@ -149,7 +150,7 @@ func write_options(path):
 		f.store_string(content)
 		f = null # closes file
 	else:
-		print('ERROR:  could not open file ', path, ' ', result)
+		logger.error(str("Could not open file ", path, ' ', result))
 	return result
 
 
