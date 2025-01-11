@@ -911,11 +911,25 @@ func assert_string_ends_with(text, search, match_case=true):
 #      then work some magic so this can have a "text" parameter without being
 #      annoying.
 # ------------------------------------------------------------------------------
-func assert_called(inst, method_name, parameters=null):
-	var disp = str('Expected [',method_name,'] to have been called on ',_str(inst))
+func assert_called(inst, method_name=null, parameters=null):
 
 	if(_fail_if_parameters_not_array(parameters)):
 		return
+
+	if(inst is Callable):
+		if(parameters != null):
+			fail_test("3rd parameter to assert_called not supported when using a Callable.")
+			return
+		elif(method_name != null):
+			fail_test("2nd parameter to assert_called not supported when using a Callable.")
+			return
+
+		if(inst.get_bound_arguments_count() > 0):
+			parameters = inst.get_bound_arguments()
+		method_name = inst.get_method()
+		inst = inst.get_object()
+
+	var disp = str('Expected [',method_name,'] to have been called on ',_str(inst))
 
 	if(_fail_if_not_double_or_does_not_have_method(inst, method_name) == OK):
 		if(gut.get_spy().was_called(inst, method_name, parameters)):

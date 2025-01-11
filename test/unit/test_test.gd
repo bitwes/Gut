@@ -1384,6 +1384,9 @@ class TestStringEndsWith:
 class TestAssertCalled:
 	extends BaseTestClass
 
+	# func before_all():
+	# 	_print_all_subtests = true
+
 
 	func test_passes_when_call_occurred():
 		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
@@ -1425,6 +1428,40 @@ class TestAssertCalled:
 		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
 		gr.test_with_gut.assert_called(doubled, 'get_parent')
 		assert_string_contains(gr.test_with_gut._fail_pass_text[0], 'does not overload')
+
+	func test_accepts_callable_as_first_parameter():
+		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
+		doubled.has_two_params_one_default(10)
+		gr.test_with_gut.assert_called(doubled.has_two_params_one_default)
+		assert_pass(gr.test_with_gut)
+
+	func test_accepts_callable_as_first_parameter_and_parameters_as_second():
+		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
+		doubled.has_two_params_one_default(9)
+		gr.test_with_gut.assert_called(doubled.has_two_params_one_default, [10, null])
+		assert_fail(gr.test_with_gut)
+
+	func test_when_using_callable_third_parameter_causes_failure():
+		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
+		doubled.has_two_params_one_default(10)
+		gr.test_with_gut.assert_called(doubled.has_two_params_one_default, [10, null], ['bad'])
+		assert_fail(gr.test_with_gut)
+
+	func test_when_using_callable_second_parameter_causes_failure():
+		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
+		doubled.has_two_params_one_default(10)
+		gr.test_with_gut.assert_called(doubled.has_two_params_one_default, [10, null])
+		assert_fail(gr.test_with_gut)
+
+
+	func test_uses_bound_arguments_when_no_parameters_passed_and_there_are_bound_arguments():
+		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
+		doubled.has_two_params_one_default(10)
+		gr.test_with_gut.assert_called(doubled.has_two_params_one_default.bind(11, null))
+		assert_fail(gr.test_with_gut)
+
+
+
 
 
 
