@@ -1000,7 +1000,7 @@ func assert_freed(obj, title='something'):
 # ------------------------------------------------------------------------------
 # Asserts Object has not been freed from memory
 # -----------------------------------------------------------------------------
-func assert_not_freed(obj, title):
+func assert_not_freed(obj, title='something'):
 	var disp = title
 	if(is_instance_valid(obj)):
 		disp = _strutils.type2str(obj) + title
