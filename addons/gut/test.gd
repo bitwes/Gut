@@ -764,10 +764,17 @@ func get_signal_parameters(object, signal_name, index=-1):
 # * null when a call to the method was not found or the index specified was
 #   invalid.
 # ------------------------------------------------------------------------------
-func get_call_parameters(object, method_name, index=-1):
+func get_call_parameters(object, method_name_or_index = -1, idx=-1):
 	var to_return = null
-	if(GutUtils.is_double(object)):
-		to_return = gut.get_spy().get_call_parameters(object, method_name, index)
+	var index = idx
+	if(object is Callable):
+		index = method_name_or_index
+		method_name_or_index = null
+	var converted = _convert_spy_args(object, method_name_or_index, null)
+
+	if(GutUtils.is_double(converted.object)):
+		to_return = gut.get_spy().get_call_parameters(
+			converted.object, converted.method_name, index)
 	else:
 		_lgr.error('You must pass a doulbed object to get_call_parameters.')
 
@@ -903,6 +910,31 @@ func assert_string_ends_with(text, search, match_case=true):
 		else:
 			_fail(disp)
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+func _convert_spy_args(inst, method_name, parameters):
+	var to_return = {
+		'object':inst,
+		'method_name':method_name,
+		'arguments':parameters,
+		'invalid_message':'ok'
+	}
+
+	if(inst is Callable):
+		if(parameters != null):
+			to_return.invalid_message =\
+				"3rd parameter to assert_called not supported when using a Callable."
+		elif(method_name != null):
+			to_return.invalid_message =\
+				"2nd parameter to assert_called not supported when using a Callable."
+		else:
+			if(inst.get_bound_arguments_count() > 0):
+				to_return.arguments = inst.get_bound_arguments()
+			to_return.method_name = inst.get_method()
+			to_return.object = inst.get_object()
+
+	return to_return
+
 
 # ------------------------------------------------------------------------------
 # Assert that a method was called on an instance of a doubled class.  If
@@ -916,70 +948,80 @@ func assert_called(inst, method_name=null, parameters=null):
 	if(_fail_if_parameters_not_array(parameters)):
 		return
 
-	if(inst is Callable):
-		if(parameters != null):
-			fail_test("3rd parameter to assert_called not supported when using a Callable.")
-			return
-		elif(method_name != null):
-			fail_test("2nd parameter to assert_called not supported when using a Callable.")
-			return
+	var converted = _convert_spy_args(inst, method_name, parameters)
+	if(converted.invalid_message != 'ok'):
+		fail_test(converted.invalid_message)
+		return
 
-		if(inst.get_bound_arguments_count() > 0):
-			parameters = inst.get_bound_arguments()
-		method_name = inst.get_method()
-		inst = inst.get_object()
+	var disp = str('Expected [',converted.method_name,'] to have been called on ',_str(converted.object))
 
-	var disp = str('Expected [',method_name,'] to have been called on ',_str(inst))
-
-	if(_fail_if_not_double_or_does_not_have_method(inst, method_name) == OK):
-		if(gut.get_spy().was_called(inst, method_name, parameters)):
+	if(_fail_if_not_double_or_does_not_have_method(converted.object, converted.method_name) == OK):
+		if(gut.get_spy().was_called(
+			converted.object, converted.method_name, converted.arguments)):
 			_pass(disp)
 		else:
-			if(parameters != null):
-				disp += str(' with parameters ', parameters)
-			_fail(str(disp, "\n", _get_desc_of_calls_to_instance(inst)))
+			if(converted.arguments != null):
+				disp += str(' with parameters ', converted.arguments)
+			_fail(str(disp, "\n", _get_desc_of_calls_to_instance(converted.object)))
+
 
 # ------------------------------------------------------------------------------
 # Assert that a method was not called on an instance of a doubled class.  If
 # parameters are specified then this will only fail if it finds a call that was
 # sent matching parameters.
 # ------------------------------------------------------------------------------
-func assert_not_called(inst, method_name, parameters=null):
-	var disp = str('Expected [', method_name, '] to NOT have been called on ', _str(inst))
+func assert_not_called(inst, method_name=null, parameters=null):
 
 	if(_fail_if_parameters_not_array(parameters)):
 		return
 
-	if(_fail_if_not_double_or_does_not_have_method(inst, method_name) == OK):
-		if(gut.get_spy().was_called(inst, method_name, parameters)):
-			if(parameters != null):
-				disp += str(' with parameters ', parameters)
-			_fail(str(disp, "\n", _get_desc_of_calls_to_instance(inst)))
+	var converted = _convert_spy_args(inst, method_name, parameters)
+	if(converted.invalid_message != 'ok'):
+		fail_test(converted.invalid_message)
+		return
+
+	var disp = str('Expected [', converted.method_name, '] to NOT have been called on ', _str(converted.object))
+
+	if(_fail_if_not_double_or_does_not_have_method(converted.object, converted.method_name) == OK):
+		if(gut.get_spy().was_called(
+			converted.object, converted.method_name, converted.arguments)):
+			if(converted.arguments != null):
+				disp += str(' with parameters ', converted.arguments)
+			_fail(str(disp, "\n", _get_desc_of_calls_to_instance(converted.object)))
 		else:
 			_pass(disp)
 
 # ------------------------------------------------------------------------------
-# Assert that a method on an instance of a doubled class was called a number
-# of times.  If parameters are specified then only calls with matching
-# parameter values will be counted.
-# ------------------------------------------------------------------------------
+## Deprecated.  Use assert_called_count instead.
 func assert_call_count(inst, method_name, expected_count, parameters=null):
-	var count = gut.get_spy().call_count(inst, method_name, parameters)
+	gut.logger.deprecated('This has been replaced with assert_called_count which accepts a Callable with optional bound arguments.')
+	var callable = Callable.create(inst, method_name)
+	if(parameters != null):
+		callable = callable.bindv(parameters)
+	assert_called_count(callable, expected_count)
 
-	if(_fail_if_parameters_not_array(parameters)):
-		return
+
+# ------------------------------------------------------------------------------
+## Asserts the the method of a double was called an expected number of times.
+## If any arguments are bound to the callable then only calls with matching
+## arguments will be counted.
+func assert_called_count(callable : Callable, expected_count : int):
+	var converted = _convert_spy_args(callable, null, null)
+	var count = gut.get_spy().call_count(converted.object, converted.method_name, converted.arguments)
 
 	var param_text = ''
-	if(parameters):
-		param_text = ' with parameters ' + str(parameters)
+	if(callable.get_bound_arguments_count() > 0):
+		param_text = ' with parameters ' + str(callable.get_bound_arguments())
 	var disp = 'Expected [%s] on %s to be called [%s] times%s.  It was called [%s] times.'
-	disp = disp % [method_name, _str(inst), expected_count, param_text, count]
+	disp = disp % [converted.method_name, _str(converted.object), expected_count, param_text, count]
 
-	if(_fail_if_not_double_or_does_not_have_method(inst, method_name) == OK):
+
+	if(_fail_if_not_double_or_does_not_have_method(converted.object, converted.method_name) == OK):
 		if(count == expected_count):
 			_pass(disp)
 		else:
-			_fail(str(disp, "\n", _get_desc_of_calls_to_instance(inst)))
+			_fail(str(disp, "\n", _get_desc_of_calls_to_instance(converted.object)))
+
 
 # ------------------------------------------------------------------------------
 # Asserts the passed in value is null
