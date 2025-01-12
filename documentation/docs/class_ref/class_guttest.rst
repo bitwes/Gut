@@ -57,8 +57,6 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_between<class_GutTest_method_assert_between>`\ (\ got, expect_low, expect_high, text = ""\ )                                                                                                                                                        |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_call_count<class_GutTest_method_assert_call_count>`\ (\ inst, method_name, expected_count, parameters = null\ )                                                                                                                                     |
-   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_called<class_GutTest_method_assert_called>`\ (\ inst, method_name = null, parameters = null\ )                                                                                                                                                      |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_called_count<class_GutTest_method_assert_called_count>`\ (\ callable\: `Callable <https://docs.godotengine.org/en/stable/classes/class_callable.html>`_, expected_count\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_\ ) |
@@ -237,6 +235,8 @@ Methods
 .. table::
    :widths: auto
 
+   +------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+   | Deprecated | |void|                                                                         | :ref:`assert_call_count<class_GutTest_method_assert_call_count>`\ (\ inst, method_name, expected_count, parameters = null\ )            |
    +------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
    | Deprecated | |void|                                                                         | :ref:`assert_setget<class_GutTest_method_assert_setget>`\ (\ instance, name_property, const_or_setter = null, getter = "__not_set__"\ ) |
    +------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
@@ -1027,7 +1027,16 @@ Returns the call count for a method with optional paramter matching.  Can be cal
 
 |void| **assert_called**\ (\ inst, method_name = null, parameters = null\ ) :ref:`🔗<class_GutTest_method_assert_called>`
 
-Assert that a method was called on an instance of a doubled class.  If parameters are supplied then the params passed in when called must match.  Can be called with a Callabe instead of specifying the object, method_name, and parameters.  The Callable's object must be a double.  Bound arguments will be used to match calls based on values passed to the method.  Example: assert_called(my_double, 'foo', ``1, 2, 3``) assert_called(my_double.foo.bind(1, 2, 3))
+Assert that a method was called on an instance of a doubled class.  If parameters are supplied then the params passed in when called must match.  Can be called with a Callabe instead of specifying the object, method_name, and parameters.  The Callable's object must be a double.  Bound arguments will be used to match calls based on values passed to the method. 
+
+
+
+\ **Examples**\ 
+
+::
+
+    assert_called(my_double, 'foo', [1, 2, 3])
+    assert_called(my_double.foo.bind(1, 2, 3))
 
 .. rst-class:: classref-item-separator
 
@@ -1039,7 +1048,16 @@ Assert that a method was called on an instance of a doubled class.  If parameter
 
 |void| **assert_not_called**\ (\ inst, method_name = null, parameters = null\ ) :ref:`🔗<class_GutTest_method_assert_not_called>`
 
-Assert that a method was not called on an instance of a doubled class.  If parameters are specified then this will only fail if it finds a call that was sent matching parameters.  Can be called with a Callabe instead of specifying the object, method_name, and parameters.  The Callable's object must be a double.  Bound arguments will be used to match calls based on values passed to the method. Example: assert_not_called(my_double, 'foo', ``1, 2, 3``) assert_not_called(my_double.foo.bind(1, 2, 3))
+Assert that a method was not called on an instance of a doubled class.  If parameters are specified then this will only fail if it finds a call that was sent matching parameters.  Can be called with a Callabe instead of specifying the object, method_name, and parameters.  The Callable's object must be a double.  Bound arguments will be used to match calls based on values passed to the method. 
+
+
+
+\ **Examples**\ 
+
+::
+
+    assert_not_called(my_double, 'foo', [1, 2, 3])
+    assert_not_called(my_double.foo.bind(1, 2, 3))
 
 .. rst-class:: classref-item-separator
 
@@ -1051,7 +1069,7 @@ Assert that a method was not called on an instance of a doubled class.  If param
 
 |void| **assert_call_count**\ (\ inst, method_name, expected_count, parameters = null\ ) :ref:`🔗<class_GutTest_method_assert_call_count>`
 
-Deprecated.  Use assert_called_count instead.
+**Deprecated:** Use :ref:`assert_called_count<class_GutTest_method_assert_called_count>` instead.
 
 .. rst-class:: classref-item-separator
 
@@ -1063,7 +1081,18 @@ Deprecated.  Use assert_called_count instead.
 
 |void| **assert_called_count**\ (\ callable\: `Callable <https://docs.godotengine.org/en/stable/classes/class_callable.html>`_, expected_count\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_\ ) :ref:`🔗<class_GutTest_method_assert_called_count>`
 
-Asserts the the method of a double was called an expected number of times. If any arguments are bound to the callable then only calls with matching arguments will be counted.  Examples: # assert foo was called on my_double 5 times assert_called_count(my_double.foo, 5) # assert foo, with parameters ``1,2,3``, was called on my_double 4 times. assert_called_count(my_double.foo.bind(1, 2, 3), 4)
+Asserts the the method of a double was called an expected number of times. If any arguments are bound to the callable then only calls with matching arguments will be counted.  
+
+
+
+\ **Examples**\ 
+
+::
+
+    # assert foo was called on my_double 5 times
+    assert_called_count(my_double.foo, 5)
+    # assert foo, with parameters [1,2,3], was called on my_double 4 times.
+    assert_called_count(my_double.foo.bind(1, 2, 3), 4)
 
 .. rst-class:: classref-item-separator
 
