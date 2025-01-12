@@ -10,7 +10,7 @@ class BaseTestClass:
 	# !! Use this for debugging to see the results of all the subtests that
 	# are run using assert_fail_pass, assert_fail and assert_pass that are
 	# built into this class
-	var _print_all_subtests = true
+	var _print_all_subtests = false
 
 	# GlobalReset(gr) variables to be used by tests.
 	# The values of these are reset in the setup or
@@ -382,3 +382,19 @@ class TestGetCallCount:
 			doubled.set_value(5)
 		assert_eq(gr.test_with_gut.get_call_count(doubled, 'set_value', [3]), 3)
 
+	func test_gets_count_when_passed_callable():
+		var doubled = gr.test_with_gut.partial_double(DoubleMe).new()
+		autofree(doubled)
+		for i in range(10):
+			doubled.set_value(5)
+		assert_eq(gr.test_with_gut.get_call_count(doubled.set_value), 10)
+
+	func test_it_works_with_parameters_and_callable():
+		var doubled = gr.test_with_gut.partial_double(DoubleMe).new()
+		autofree(doubled)
+		for i in range(3):
+			doubled.set_value(3)
+
+		for i in range(5):
+			doubled.set_value(5)
+		assert_eq(gr.test_with_gut.get_call_count(doubled.set_value.bind(3)), 3)

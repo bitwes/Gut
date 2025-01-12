@@ -238,6 +238,33 @@ func _create_obj_from_type(type):
 	return obj
 
 
+# ------------------------------------------------------------------------------
+# Converts a Callabe passed through inst or inst/method_name/parameters into a
+# hash so that methods that interact with Spy can accept both more easily.
+func _convert_spy_args(inst, method_name, parameters):
+	var to_return = {
+		'object':inst,
+		'method_name':method_name,
+		'arguments':parameters,
+		'invalid_message':'ok'
+	}
+
+	if(inst is Callable):
+		if(parameters != null):
+			to_return.invalid_message =\
+				"3rd parameter to assert_called not supported when using a Callable."
+		elif(method_name != null):
+			to_return.invalid_message =\
+				"2nd parameter to assert_called not supported when using a Callable."
+		else:
+			if(inst.get_bound_arguments_count() > 0):
+				to_return.arguments = inst.get_bound_arguments()
+			to_return.method_name = inst.get_method()
+			to_return.object = inst.get_object()
+
+	return to_return
+	
+
 # #######################
 # Virtual Methods
 # #######################
@@ -755,15 +782,20 @@ func get_signal_emit_count(object, signal_name):
 func get_signal_parameters(object, signal_name, index=-1):
 	return _signal_watcher.get_signal_parameters(object, signal_name, index)
 
+
 # ------------------------------------------------------------------------------
-# Get the parameters for a method call to a doubled object.  By default it will
-# return the most recent call.  You can optionally specify an index.
-#
-# Returns:
-# * an array of parameter values if a call the method was found
-# * null when a call to the method was not found or the index specified was
-#   invalid.
-# ------------------------------------------------------------------------------
+## Get the parameters for a method call to a doubled object.  By default it will
+## return the most recent call.  You can optionally specify an index for which
+## call you want to get the parameters for.
+##
+## Can be called using a Callable for the first parameter instead of specifying
+## an object and method name.  When you do this, the seoncd parameter is used
+## as the index.
+##
+## Returns:
+## * an array of parameter values if a call the method was found
+## * null when a call to the method was not found or the index specified was
+##   invalid.
 func get_call_parameters(object, method_name_or_index = -1, idx=-1):
 	var to_return = null
 	var index = idx
@@ -781,10 +813,13 @@ func get_call_parameters(object, method_name_or_index = -1, idx=-1):
 	return to_return
 
 # ------------------------------------------------------------------------------
-# Returns the call count for a method with optional paramter matching.
-# ------------------------------------------------------------------------------
-func get_call_count(object, method_name, parameters=null):
-	return gut.get_spy().call_count(object, method_name, parameters)
+## Returns the call count for a method with optional paramter matching.
+##
+## Can be called with a Callable instead of an object, method_name, and
+## parameters.  Bound arguments will be used to match call arguments.
+func get_call_count(object, method_name=null, parameters=null):
+	var converted = _convert_spy_args(object, method_name, parameters)
+	return gut.get_spy().call_count(converted.object, converted.method_name, converted.arguments)
 
 
 # ------------------------------------------------------------------------------
@@ -910,39 +945,20 @@ func assert_string_ends_with(text, search, match_case=true):
 		else:
 			_fail(disp)
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func _convert_spy_args(inst, method_name, parameters):
-	var to_return = {
-		'object':inst,
-		'method_name':method_name,
-		'arguments':parameters,
-		'invalid_message':'ok'
-	}
-
-	if(inst is Callable):
-		if(parameters != null):
-			to_return.invalid_message =\
-				"3rd parameter to assert_called not supported when using a Callable."
-		elif(method_name != null):
-			to_return.invalid_message =\
-				"2nd parameter to assert_called not supported when using a Callable."
-		else:
-			if(inst.get_bound_arguments_count() > 0):
-				to_return.arguments = inst.get_bound_arguments()
-			to_return.method_name = inst.get_method()
-			to_return.object = inst.get_object()
-
-	return to_return
-
 
 # ------------------------------------------------------------------------------
-# Assert that a method was called on an instance of a doubled class.  If
-# parameters are supplied then the params passed in when called must match.
-# TODO make 3rd parameter "param_or_text" and add fourth parameter of "text" and
-#      then work some magic so this can have a "text" parameter without being
-#      annoying.
-# ------------------------------------------------------------------------------
+## Assert that a method was called on an instance of a doubled class.  If
+## parameters are supplied then the params passed in when called must match.
+##
+## Can be called with a Callabe instead of specifying the object, method_name,
+## and parameters.  The Callable's object must be a double.  Bound arguments
+## will be used to match calls based on values passed to the method.
+## [br][br]
+## [b]Examples[/b]
+## [codeblock]
+##	assert_called(my_double, 'foo', [1, 2, 3])
+##	assert_called(my_double.foo.bind(1, 2, 3))
+## [/codeblock]
 func assert_called(inst, method_name=null, parameters=null):
 
 	if(_fail_if_parameters_not_array(parameters)):
@@ -966,10 +982,19 @@ func assert_called(inst, method_name=null, parameters=null):
 
 
 # ------------------------------------------------------------------------------
-# Assert that a method was not called on an instance of a doubled class.  If
-# parameters are specified then this will only fail if it finds a call that was
-# sent matching parameters.
-# ------------------------------------------------------------------------------
+## Assert that a method was not called on an instance of a doubled class.  If
+## parameters are specified then this will only fail if it finds a call that was
+## sent matching parameters.
+##
+## Can be called with a Callabe instead of specifying the object, method_name,
+## and parameters.  The Callable's object must be a double.  Bound arguments
+## will be used to match calls based on values passed to the method.
+## [br][br]
+## [b]Examples[/b]
+## [codeblock]
+##	assert_not_called(my_double, 'foo', [1, 2, 3])
+##	assert_not_called(my_double.foo.bind(1, 2, 3))
+## [/codeblock]
 func assert_not_called(inst, method_name=null, parameters=null):
 
 	if(_fail_if_parameters_not_array(parameters)):
@@ -992,7 +1017,7 @@ func assert_not_called(inst, method_name=null, parameters=null):
 			_pass(disp)
 
 # ------------------------------------------------------------------------------
-## Deprecated.  Use assert_called_count instead.
+## @deprecated:  Use [method assert_called_count] instead.
 func assert_call_count(inst, method_name, expected_count, parameters=null):
 	gut.logger.deprecated('This has been replaced with assert_called_count which accepts a Callable with optional bound arguments.')
 	var callable = Callable.create(inst, method_name)
@@ -1005,6 +1030,15 @@ func assert_call_count(inst, method_name, expected_count, parameters=null):
 ## Asserts the the method of a double was called an expected number of times.
 ## If any arguments are bound to the callable then only calls with matching
 ## arguments will be counted.
+##
+## [br][br]
+## [b]Examples[/b]
+## [codeblock]
+##	# assert foo was called on my_double 5 times
+##	assert_called_count(my_double.foo, 5)
+##	# assert foo, with parameters [1,2,3], was called on my_double 4 times.
+##	assert_called_count(my_double.foo.bind(1, 2, 3), 4)
+## [/codeblock]
 func assert_called_count(callable : Callable, expected_count : int):
 	var converted = _convert_spy_args(callable, null, null)
 	var count = gut.get_spy().call_count(converted.object, converted.method_name, converted.arguments)
