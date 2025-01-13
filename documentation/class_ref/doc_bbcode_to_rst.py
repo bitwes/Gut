@@ -680,9 +680,12 @@ def format_text_block(
             elif tag_state.name == "br":
                 # Make a new paragraph instead of a linebreak, rst is not so linebreak friendly
                 tag_text = "\n\n"
-                # Strip potential leading spaces
-                while post_text[0] == " ":
-                    post_text = post_text[1:]
+                # -- Commented this out when it caused an error.  Due to the  --
+                # -- complexity of all this I decided some spaces is probably --
+                # -- not as bad debugging this thing                          --
+                # # Strip potential leading spaces
+                # while post_text[0] == " ":
+                #     post_text = post_text[1:]
 
             elif tag_state.name == "center":
                 if tag_state.closing:
