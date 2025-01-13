@@ -44,6 +44,8 @@
 #   - [li][/li] support for list items.  You need a [br] before the first [li].
 #     I could add a TON more code so you don't have to...anyway...[li] turns
 #     into "* " and [/li] turns into "\n".  It's hacked together, but it works.
+#   - [wiki][/wiki] Creates a link to a wiki page.  Very specific to this repo's
+#     structure, but you should be able to read it and adapt.
 #
 #
 # Additional Doc Comment Anotations:

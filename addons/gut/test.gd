@@ -1,6 +1,7 @@
-## This is the base class for all test scripts.  Extend this...test the world!
 class_name GutTest
 extends Node
+## This is the base class for all test scripts.  Extend this...test the world!
+
 
 var _compare = GutUtils.Comparator.new()
 
@@ -263,7 +264,7 @@ func _convert_spy_args(inst, method_name, parameters):
 			to_return.object = inst.get_object()
 
 	return to_return
-	
+
 
 # #######################
 # Virtual Methods
@@ -956,8 +957,8 @@ func assert_string_ends_with(text, search, match_case=true):
 ## [br][br]
 ## [b]Examples[/b]
 ## [codeblock]
-##	assert_called(my_double, 'foo', [1, 2, 3])
-##	assert_called(my_double.foo.bind(1, 2, 3))
+##    assert_called(my_double, 'foo', [1, 2, 3])
+##    assert_called(my_double.foo.bind(1, 2, 3))
 ## [/codeblock]
 func assert_called(inst, method_name=null, parameters=null):
 
@@ -992,8 +993,8 @@ func assert_called(inst, method_name=null, parameters=null):
 ## [br][br]
 ## [b]Examples[/b]
 ## [codeblock]
-##	assert_not_called(my_double, 'foo', [1, 2, 3])
-##	assert_not_called(my_double.foo.bind(1, 2, 3))
+##    assert_not_called(my_double, 'foo', [1, 2, 3])
+##    assert_not_called(my_double.foo.bind(1, 2, 3))
 ## [/codeblock]
 func assert_not_called(inst, method_name=null, parameters=null):
 
@@ -1034,10 +1035,10 @@ func assert_call_count(inst, method_name, expected_count, parameters=null):
 ## [br][br]
 ## [b]Examples[/b]
 ## [codeblock]
-##	# assert foo was called on my_double 5 times
-##	assert_called_count(my_double.foo, 5)
-##	# assert foo, with parameters [1,2,3], was called on my_double 4 times.
-##	assert_called_count(my_double.foo.bind(1, 2, 3), 4)
+##    # assert foo was called on my_double 5 times
+##    assert_called_count(my_double.foo, 5)
+##    # assert foo, with parameters [1,2,3], was called on my_double 4 times.
+##    assert_called_count(my_double.foo.bind(1, 2, 3), 4)
 ## [/codeblock]
 func assert_called_count(callable : Callable, expected_count : int):
 	var converted = _convert_spy_args(callable, null, null)
@@ -1255,8 +1256,9 @@ func pending(text=""):
 
 
 # ------------------------------------------------------------------------------
-## Await for the time sent in.  The optional message will be printed when the
-## await starts
+## Use with await to wait an amount of time in seconds.  The optional message
+## will be printed when the await starts.[br]
+## See [wiki]Awaiting[/wiki]
 func wait_seconds(time, msg=''):
 	_lgr.yield_msg(str('-- Awaiting ', time, ' second(s) -- ', msg))
 	_awaiter.wait_seconds(time)
@@ -1264,14 +1266,9 @@ func wait_seconds(time, msg=''):
 
 
 # ------------------------------------------------------------------------------
-## @deprecated: use wait_seconds
-func yield_for(time, msg=''):
-	_lgr.deprecated('yield_for', 'wait_seconds')
-	return wait_seconds(time, msg)
-
-
-# ------------------------------------------------------------------------------
-## Yield to a signal or a maximum amount of time, whichever comes first.
+## Use with await to wait for a signal to be emitted or a maximum amount of
+## time.  Returns true if the signal was emitted, false if not.[br]
+## See [wiki]Awaiting[/wiki]
 func wait_for_signal(sig : Signal, max_wait, msg=''):
 	watch_signals(sig.get_object())
 	_lgr.yield_msg(str('-- Awaiting signal "', sig.get_name(), '" or for ', max_wait, ' second(s) -- ', msg))
@@ -1281,15 +1278,9 @@ func wait_for_signal(sig : Signal, max_wait, msg=''):
 
 
 # ------------------------------------------------------------------------------
-## @deprecated: use wait_for_signal
-func yield_to(obj, signal_name, max_wait, msg=''):
-	_lgr.deprecated('yield_to', 'wait_for_signal')
-	return await wait_for_signal(Signal(obj, signal_name), max_wait, msg)
-
-
-# ------------------------------------------------------------------------------
-## Yield for a number of frames.  The optional message will be printed. when
-## Gut detects a yield.
+## Use with await to wait a number of frames.  The optional message will be
+## printed[br]
+## See [wiki]Awaiting[/wiki]
 func wait_frames(frames, msg=''):
 	if(frames <= 0):
 		var text = str('wait_frames:  frames must be > 0, you passed  ', frames, '.  0 frames waited.')
@@ -1302,9 +1293,15 @@ func wait_frames(frames, msg=''):
 
 
 # ------------------------------------------------------------------------------
-# p3 can be the optional message or an amount of time to wait between tests.
-# p4 is the optional message if you have specified an amount of time to
-#	wait between tests.
+## Use with await to wait for the passed in callable to return true or a maximum
+## amount of time.  The callable is called every _physics_process tick unless
+## an optional time between calls is specified.[br]
+## p3 can be the optional message or an amount of time to wait between tests.
+## p4 is the optional message if you have specified an amount of time to
+## wait between tests.[br]
+## Returns true if the callable returned true before the timeout, false if not.
+##[br]
+## See [wiki]Awaiting[/wiki]
 func wait_until(callable, max_wait, p3='', p4=''):
 	var time_between = 0.0
 	var message = p4
@@ -1326,11 +1323,6 @@ func wait_until(callable, max_wait, p3='', p4=''):
 func did_wait_timeout():
 	return _awaiter.did_last_wait_timeout
 
-
-## @deprecated: use wait_frames
-func yield_frames(frames, msg=''):
-	_lgr.deprecated("yield_frames", "wait_frames")
-	return wait_frames(frames, msg)
 
 ## @internal
 func get_summary():
@@ -1506,17 +1498,16 @@ func ignore_method_when_doubling(thing, method_name):
 
 	gut.get_doubler().add_ignored_method(r, method_name)
 
-# ------------------------------------------------------------------------------
-# Stub something.
-#
-# Parameters
-# 1: A callable OR the thing to stub OR a file path OR an instance OR a Script
-# 2: either an inner class subpath or the method name
-# 3: the method name if an inner class subpath was specified
-# NOTE:  right now we cannot stub inner classes at the path level so this should
-#        only be called with two parameters.  I did the work though so I'm going
-#        to leave it but not update the wiki.
-# ------------------------------------------------------------------------------
+
+## Stub something.
+##
+## Parameters
+## 1: A callable OR the thing to stub OR a file path OR an instance OR a Script
+## 2: either an inner class subpath or the method name
+## 3: the method name if an inner class subpath was specified
+## NOTE:  right now we cannot stub inner classes at the path level so this should
+##        only be called with two parameters.  I did the work though so I'm going
+##        to leave it but not update the wiki.
 func stub(thing, p2=null, p3=null):
 	var method_name = p2
 	var subpath = null
@@ -1543,9 +1534,16 @@ func stub(thing, p2=null, p3=null):
 	gut.get_stubber().add_stub(sp)
 	return sp
 
-# ------------------------------------------------------------------------------
-# convenience wrapper.
-# ------------------------------------------------------------------------------
+
+## Simulate a number of frames by calling '_process' and '_physics_process' (if
+## the methods exist) on an object and all of its descendents. The specified frame
+## time, 'delta', will be passed to each simulated call.
+##
+## NOTE: Objects can disable their processing methods using 'set_process(false)' and
+## 'set_physics_process(false)'. This is reflected in the 'Object' methods
+## 'is_processing()' and 'is_physics_processing()', respectively. To make 'simulate'
+## respect this status, for example if you are testing an object which toggles
+## processing, pass 'check_is_processing' as 'true'.
 func simulate(obj, times, delta, check_is_processing: bool = false):
 	gut.simulate(obj, times, delta, check_is_processing)
 
@@ -1591,11 +1589,13 @@ func replace_node(base_node, path_or_node, with_this):
 	to_replace.queue_free()
 
 
-# ------------------------------------------------------------------------------
-# This method does a somewhat complicated dance with Gut.  It assumes that Gut
-# will clear its parameter handler after it finishes calling a parameterized test
-# enough times.
-# ------------------------------------------------------------------------------
+## Use this as the default value for the first parameter to a test to create
+## a parameterized test.  See also the ParameterFactory and Parameterized Tests.
+## [br][br]
+## [b]Example[/b]
+## [codeblock]
+##    func test_with_parameters(p = use_parameters([1, 2, 3])):
+## [/codeblock]
 func use_parameters(params):
 	var ph = gut.parameter_handler
 	if(ph == null):
@@ -1635,6 +1635,7 @@ func run_x_times(x):
 		ph = GutUtils.ParameterHandler.new(params)
 		gut.parameter_handler = ph
 	return ph.next_parameters()
+
 
 ## Marks whatever is passed in to be freed after the test finishes.  It also
 ## returns what is passed in so you can save a line of code.
@@ -1711,18 +1712,8 @@ func compare_deep(v1, v2, max_differences=null):
 		result.max_differences = max_differences
 	return result
 
-# ------------------------------------------------------------------------------
-# REMOVED
-# ------------------------------------------------------------------------------
-func compare_shallow(v1, v2, max_differences=null):
-	_fail('compare_shallow has been removed.  Use compare_deep or just compare using == instead.')
-	_lgr.error('compare_shallow has been removed.  Use compare_deep or just compare using == instead.')
-	return null
 
-
-# ------------------------------------------------------------------------------
-# Performs a deep compare and asserts the  values are equal
-# ------------------------------------------------------------------------------
+## Performs a deep compare and asserts the  values are equal
 func assert_eq_deep(v1, v2):
 	var result = compare_deep(v1, v2)
 	if(result.are_equal):
@@ -1730,9 +1721,8 @@ func assert_eq_deep(v1, v2):
 	else:
 		_fail(result.summary)
 
-# ------------------------------------------------------------------------------
-# Performs a deep compare and asserts the values are not equal
-# ------------------------------------------------------------------------------
+
+## Performs a deep compare and asserts the values are not equal
 func assert_ne_deep(v1, v2):
 	var result = compare_deep(v1, v2)
 	if(!result.are_equal):
@@ -1740,22 +1730,8 @@ func assert_ne_deep(v1, v2):
 	else:
 		_fail(result.get_short_summary())
 
-# ------------------------------------------------------------------------------
-# REMOVED
-# ------------------------------------------------------------------------------
-func assert_eq_shallow(v1, v2):
-	_fail('assert_eq_shallow has been removed.  Use assert_eq/assert_same/assert_eq_deep')
 
-# ------------------------------------------------------------------------------
-# REMOVED
-# ------------------------------------------------------------------------------
-func assert_ne_shallow(v1, v2):
-	_fail('assert_eq_shallow has been removed.  Use assert_eq/assert_same/assert_eq_deep')
-
-
-# ------------------------------------------------------------------------------
-# Assert wrapper for is_same
-# ------------------------------------------------------------------------------
+## Uses `same` to assert that `v1` and `v2` are the same object.
 func assert_same(v1, v2, text=''):
 	var disp = "[" + _str(v1) + "] expected to be same as  [" + _str(v2) + "]:  " + text
 	if(is_same(v1, v2)):
@@ -1763,6 +1739,8 @@ func assert_same(v1, v2, text=''):
 	else:
 		_fail(disp)
 
+
+## Uses `same` to assert that `v1` and `v2` are not the same object.
 func assert_not_same(v1, v2, text=''):
 	var disp = "[" + _str(v1) + "] expected to not be same as  [" + _str(v2) + "]:  " + text
 	if(is_same(v1, v2)):
@@ -1770,16 +1748,17 @@ func assert_not_same(v1, v2, text=''):
 	else:
 		_pass(disp)
 
-# ------------------------------------------------------------------------------
-# Checks the passed in version string (x.x.x) against the engine version to see
-# if the engine version is less than the expected version.  If it is then the
-# test is mareked as passed (for a lack of anything better to do).  The result
-# of the check is returned.
-#
-# Example:
-# if(skip_if_godot_version_lt('3.5.0')):
-# 	return
-# ------------------------------------------------------------------------------
+
+## Checks the passed in version string (x.x.x) against the engine version to see
+## if the engine version is less than the expected version.  If it is then the
+## test is mareked as passed (for a lack of anything better to do).  The result
+## of the check is returned.
+## [br][br]
+## [b]Example[/b]
+## [codeblock]
+##    if(skip_if_godot_version_lt('3.5.0')):
+##        return
+## [/codeblock]
 func skip_if_godot_version_lt(expected):
 	var should_skip = !GutUtils.is_godot_version_gte(expected)
 	if(should_skip):
@@ -1787,16 +1766,16 @@ func skip_if_godot_version_lt(expected):
 	return should_skip
 
 
-# ------------------------------------------------------------------------------
-# Checks if the passed in version matches the engine version.  The passed in
-# version can contain just the major, major.minor or major.minor.path.  If
-# the version is not the same then the test is marked as passed.  The result of
-# the check is returned.
-#
-# Example:
-# if(skip_if_godot_version_ne('3.4')):
-# 	return
-# ------------------------------------------------------------------------------
+## Checks if the passed in version matches the engine version.  The passed in
+## version can contain just the major, major.minor or major.minor.path.  If
+## the version is not the same then the test is marked as passed.  The result of
+## the check is returned.
+## [br][br]
+## [b]Example[/b]
+## [codeblock]
+##     if(skip_if_godot_version_ne('3.4')):
+##        return
+## [/codeblock]
 func skip_if_godot_version_ne(expected):
 	var should_skip = !GutUtils.is_godot_version(expected)
 	if(should_skip):
@@ -1804,19 +1783,56 @@ func skip_if_godot_version_ne(expected):
 	return should_skip
 
 
-# ------------------------------------------------------------------------------
-# Registers all the inner classes in a script with the doubler.  This is required
-# before you can double any inner class.
-# ------------------------------------------------------------------------------
+## Registers all the inner classes in a script with the doubler.  This is required
+## before you can double any inner class.
 func register_inner_classes(base_script):
 	gut.get_doubler().inner_class_registry.register(base_script)
 
 
 
+# ----------
+# Removed/deprecated/should be deleted soon
+# ----------
 
 
+## REMOVED
+## @ignore
+func compare_shallow(v1, v2, max_differences=null):
+	_fail('compare_shallow has been removed.  Use compare_deep or just compare using == instead.')
+	_lgr.error('compare_shallow has been removed.  Use compare_deep or just compare using == instead.')
+	return null
 
 
+## REMOVED
+## @ignore
+func assert_eq_shallow(v1, v2):
+	_fail('assert_eq_shallow has been removed.  Use assert_eq/assert_same/assert_eq_deep')
+
+
+## REMOVED
+## @ignore
+func assert_ne_shallow(v1, v2):
+	_fail('assert_eq_shallow has been removed.  Use assert_eq/assert_same/assert_eq_deep')
+
+
+# ------------------------------------------------------------------------------
+## @deprecated: use wait_seconds
+func yield_for(time, msg=''):
+	_lgr.deprecated('yield_for', 'wait_seconds')
+	return wait_seconds(time, msg)
+
+
+# ------------------------------------------------------------------------------
+## @deprecated: use wait_for_signal
+func yield_to(obj, signal_name, max_wait, msg=''):
+	_lgr.deprecated('yield_to', 'wait_for_signal')
+	return await wait_for_signal(Signal(obj, signal_name), max_wait, msg)
+
+
+## @deprecated: use wait_frames
+func yield_frames(frames, msg=''):
+	_lgr.deprecated("yield_frames", "wait_frames")
+	return wait_frames(frames, msg)
 
 
 # ##############################################################################

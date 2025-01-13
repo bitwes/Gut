@@ -15,7 +15,7 @@ def print_warning(text, state):
 MARKUP_ALLOWED_PRECEDENT = " -:/'\"<([{"
 MARKUP_ALLOWED_SUBSEQUENT = " -.,:;!?\\/'\")]}>"
 GODOT_DOCS_PATTERN = re.compile(r"^\$DOCS_URL/(.*)\.html(#.*)?$")
-RESERVED_FORMATTING_TAGS = ["i", "b", "u", "lb", "rb", "code", "kbd", "center", "url", "br"]
+RESERVED_FORMATTING_TAGS = ["i", "b", "u", "lb", "rb", "code", "kbd", "center", "url", "br",]
 RESERVED_LAYOUT_TAGS = ["codeblocks"]
 RESERVED_CODEBLOCK_TAGS = ["codeblock", "gdscript", "csharp"]
 RESERVED_CROSSLINK_TAGS = [
@@ -729,6 +729,36 @@ def format_text_block(
                     tag_depth += 1
                     tag_text = "* "
 
+            # Slightly modified copy of the url tag handling.
+            elif is_in_tagset(tag_state.name, ["wiki"]):
+                url_target = tag_state.arguments
+
+                # Unlike other tags, URLs are handled in full here, as we need to extract
+                # the optional link title to use `make_link`.
+                endurl_pos = text.find("[/wiki]", endq_pos + 1)
+                if endurl_pos == -1:
+                    print_error(
+                        f"{state.current_class}.xml: Tag depth mismatch for [wiki]: no closing [/wiki] in {context_name}.",
+                        state,
+                    )
+                    break
+                link_title = text[endq_pos + 1 : endurl_pos]
+                if url_target == "":
+                    url_target = f'../{link_title}.html'
+
+                tag_text = make_link(url_target, link_title)
+
+                pre_text = text[:pos]
+                post_text = text[endurl_pos + 7 :] # +7 instead +6 bc wiki has one more character than url
+
+                if pre_text and pre_text[-1] not in MARKUP_ALLOWED_PRECEDENT:
+                    pre_text += "\\ "
+                if post_text and post_text[0] not in MARKUP_ALLOWED_SUBSEQUENT:
+                    post_text = "\\ " + post_text
+
+                text = pre_text + tag_text + post_text
+                pos = len(pre_text) + len(tag_text)
+                continue
 
             elif tag_state.name == "lb":
                 tag_text = "\\["

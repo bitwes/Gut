@@ -69,8 +69,6 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_eq_deep<class_GutTest_method_assert_eq_deep>`\ (\ v1, v2\ )                                                                                                                                                                                         |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_eq_shallow<class_GutTest_method_assert_eq_shallow>`\ (\ v1, v2\ )                                                                                                                                                                                   |
-   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_exports<class_GutTest_method_assert_exports>`\ (\ obj, property_name, type\ )                                                                                                                                                                       |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_false<class_GutTest_method_assert_false>`\ (\ got, text = ""\ )                                                                                                                                                                                     |
@@ -104,8 +102,6 @@ Methods
    | |void|                                                                         | :ref:`assert_ne<class_GutTest_method_assert_ne>`\ (\ got, not_expected, text = ""\ )                                                                                                                                                                             |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_ne_deep<class_GutTest_method_assert_ne_deep>`\ (\ v1, v2\ )                                                                                                                                                                                         |
-   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_ne_shallow<class_GutTest_method_assert_ne_shallow>`\ (\ v1, v2\ )                                                                                                                                                                                   |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_no_new_orphans<class_GutTest_method_assert_no_new_orphans>`\ (\ text = ""\ )                                                                                                                                                                        |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -162,8 +158,6 @@ Methods
    | |void|                                                                         | :ref:`before_each<class_GutTest_method_before_each>`\ (\ )                                                                                                                                                                                                       |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`compare_deep<class_GutTest_method_compare_deep>`\ (\ v1, v2, max_differences = null\ )                                                                                                                                                                     |
-   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`compare_shallow<class_GutTest_method_compare_shallow>`\ (\ v1, v2, max_differences = null\ )                                                                                                                                                               |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`did_wait_timeout<class_GutTest_method_did_wait_timeout>`\ (\ )                                                                                                                                                                                             |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -1035,8 +1029,8 @@ Assert that a method was called on an instance of a doubled class.  If parameter
 
 ::
 
-    assert_called(my_double, 'foo', [1, 2, 3])
-    assert_called(my_double.foo.bind(1, 2, 3))
+       assert_called(my_double, 'foo', [1, 2, 3])
+       assert_called(my_double.foo.bind(1, 2, 3))
 
 .. rst-class:: classref-item-separator
 
@@ -1056,8 +1050,8 @@ Assert that a method was not called on an instance of a doubled class.  If param
 
 ::
 
-    assert_not_called(my_double, 'foo', [1, 2, 3])
-    assert_not_called(my_double.foo.bind(1, 2, 3))
+       assert_not_called(my_double, 'foo', [1, 2, 3])
+       assert_not_called(my_double.foo.bind(1, 2, 3))
 
 .. rst-class:: classref-item-separator
 
@@ -1089,10 +1083,10 @@ Asserts the the method of a double was called an expected number of times. If an
 
 ::
 
-    # assert foo was called on my_double 5 times
-    assert_called_count(my_double.foo, 5)
-    # assert foo, with parameters [1,2,3], was called on my_double 4 times.
-    assert_called_count(my_double.foo.bind(1, 2, 3), 4)
+       # assert foo was called on my_double 5 times
+       assert_called_count(my_double.foo, 5)
+       # assert foo, with parameters [1,2,3], was called on my_double 4 times.
+       assert_called_count(my_double.foo.bind(1, 2, 3), 4)
 
 .. rst-class:: classref-item-separator
 
@@ -1254,19 +1248,9 @@ Mark the current test as pending.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_seconds**\ (\ time, msg = ""\ ) :ref:`🔗<class_GutTest_method_wait_seconds>`
 
-Await for the time sent in.  The optional message will be printed when the await starts
+Use with await to wait an amount of time in seconds.  The optional message will be printed when the await starts.
 
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_yield_for:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **yield_for**\ (\ time, msg = ""\ ) :ref:`🔗<class_GutTest_method_yield_for>`
-
-**Deprecated:** use wait_seconds
+See `Awaiting <../Awaiting.html>`__
 
 .. rst-class:: classref-item-separator
 
@@ -1278,19 +1262,9 @@ Await for the time sent in.  The optional message will be printed when the await
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_for_signal**\ (\ sig\: `Signal <https://docs.godotengine.org/en/stable/classes/class_signal.html>`_, max_wait, msg = ""\ ) :ref:`🔗<class_GutTest_method_wait_for_signal>`
 
-Yield to a signal or a maximum amount of time, whichever comes first.
+Use with await to wait for a signal to be emitted or a maximum amount of time.  Returns true if the signal was emitted, false if not.
 
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_yield_to:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **yield_to**\ (\ obj, signal_name, max_wait, msg = ""\ ) :ref:`🔗<class_GutTest_method_yield_to>`
-
-**Deprecated:** use wait_for_signal
+See `Awaiting <../Awaiting.html>`__
 
 .. rst-class:: classref-item-separator
 
@@ -1302,7 +1276,9 @@ Yield to a signal or a maximum amount of time, whichever comes first.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_frames**\ (\ frames, msg = ""\ ) :ref:`🔗<class_GutTest_method_wait_frames>`
 
-Yield for a number of frames.  The optional message will be printed. when Gut detects a yield.
+Use with await to wait a number of frames.  The optional message will be printed
+
+See `Awaiting <../Awaiting.html>`__
 
 .. rst-class:: classref-item-separator
 
@@ -1314,9 +1290,13 @@ Yield for a number of frames.  The optional message will be printed. when Gut de
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_until**\ (\ callable, max_wait, p3 = "", p4 = ""\ ) :ref:`🔗<class_GutTest_method_wait_until>`
 
-.. container:: contribute
+Use with await to wait for the passed in callable to return true or a maximum amount of time.  The callable is called every _physics_process tick unless an optional time between calls is specified.
 
-	No description
+p3 can be the optional message or an amount of time to wait between tests. p4 is the optional message if you have specified an amount of time to wait between tests.
+
+Returns true if the callable returned true before the timeout, false if not. 
+
+See `Awaiting <../Awaiting.html>`__
 
 .. rst-class:: classref-item-separator
 
@@ -1329,18 +1309,6 @@ Yield for a number of frames.  The optional message will be printed. when Gut de
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **did_wait_timeout**\ (\ ) :ref:`🔗<class_GutTest_method_did_wait_timeout>`
 
 Returns whether the last wait\_\* method timed out.  This is always true if the last method was wait_frames or wait_seconds.  It will be false when using wait_for_signal and wait_until if the timeout occurs before what is being waited on.  The wait\_\* methods return this value so you should be able to avoid calling this directly, but you can.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_yield_frames:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **yield_frames**\ (\ frames, msg = ""\ ) :ref:`🔗<class_GutTest_method_yield_frames>`
-
-**Deprecated:** use wait_frames
 
 .. rst-class:: classref-item-separator
 
@@ -1588,9 +1556,7 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **stub**\ (\ thing, p2 = null, p3 = null\ ) :ref:`🔗<class_GutTest_method_stub>`
 
-.. container:: contribute
-
-	No description
+Stub something.  Parameters 1: A callable OR the thing to stub OR a file path OR an instance OR a Script 2: either an inner class subpath or the method name 3: the method name if an inner class subpath was specified NOTE:  right now we cannot stub inner classes at the path level so this should only be called with two parameters.  I did the work though so I'm going to leave it but not update the wiki.
 
 .. rst-class:: classref-item-separator
 
@@ -1602,9 +1568,7 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 |void| **simulate**\ (\ obj, times, delta, check_is_processing\: `bool <https://docs.godotengine.org/en/stable/classes/class_bool.html>`_ = false\ ) :ref:`🔗<class_GutTest_method_simulate>`
 
-.. container:: contribute
-
-	No description
+Simulate a number of frames by calling '_process' and '_physics_process' (if the methods exist) on an object and all of its descendents. The specified frame time, 'delta', will be passed to each simulated call.  NOTE: Objects can disable their processing methods using 'set_process(false)' and 'set_physics_process(false)'. This is reflected in the 'Object' methods 'is_processing()' and 'is_physics_processing()', respectively. To make 'simulate' respect this status, for example if you are testing an object which toggles processing, pass 'check_is_processing' as 'true'.
 
 .. rst-class:: classref-item-separator
 
@@ -1630,9 +1594,15 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **use_parameters**\ (\ params\ ) :ref:`🔗<class_GutTest_method_use_parameters>`
 
-.. container:: contribute
+Use this as the default value for the first parameter to a test to create a parameterized test.  See also the ParameterFactory and Parameterized Tests. 
 
-	No description
+
+
+\ **Example**\ 
+
+::
+
+       func test_with_parameters(p = use_parameters([1, 2, 3])):
 
 .. rst-class:: classref-item-separator
 
@@ -1758,29 +1728,13 @@ Peforms a deep compare on both values, a CompareResult instnace is returned. The
 
 ----
 
-.. _class_GutTest_method_compare_shallow:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **compare_shallow**\ (\ v1, v2, max_differences = null\ ) :ref:`🔗<class_GutTest_method_compare_shallow>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
 .. _class_GutTest_method_assert_eq_deep:
 
 .. rst-class:: classref-method
 
 |void| **assert_eq_deep**\ (\ v1, v2\ ) :ref:`🔗<class_GutTest_method_assert_eq_deep>`
 
-.. container:: contribute
-
-	No description
+Performs a deep compare and asserts the  values are equal
 
 .. rst-class:: classref-item-separator
 
@@ -1792,37 +1746,7 @@ Peforms a deep compare on both values, a CompareResult instnace is returned. The
 
 |void| **assert_ne_deep**\ (\ v1, v2\ ) :ref:`🔗<class_GutTest_method_assert_ne_deep>`
 
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_eq_shallow:
-
-.. rst-class:: classref-method
-
-|void| **assert_eq_shallow**\ (\ v1, v2\ ) :ref:`🔗<class_GutTest_method_assert_eq_shallow>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_ne_shallow:
-
-.. rst-class:: classref-method
-
-|void| **assert_ne_shallow**\ (\ v1, v2\ ) :ref:`🔗<class_GutTest_method_assert_ne_shallow>`
-
-.. container:: contribute
-
-	No description
+Performs a deep compare and asserts the values are not equal
 
 .. rst-class:: classref-item-separator
 
@@ -1834,9 +1758,7 @@ Peforms a deep compare on both values, a CompareResult instnace is returned. The
 
 |void| **assert_same**\ (\ v1, v2, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_same>`
 
-.. container:: contribute
-
-	No description
+Uses `same` to assert that `v1` and `v2` are the same object.
 
 .. rst-class:: classref-item-separator
 
@@ -1848,9 +1770,7 @@ Peforms a deep compare on both values, a CompareResult instnace is returned. The
 
 |void| **assert_not_same**\ (\ v1, v2, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_same>`
 
-.. container:: contribute
-
-	No description
+Uses `same` to assert that `v1` and `v2` are not the same object.
 
 .. rst-class:: classref-item-separator
 
@@ -1862,9 +1782,16 @@ Peforms a deep compare on both values, a CompareResult instnace is returned. The
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **skip_if_godot_version_lt**\ (\ expected\ ) :ref:`🔗<class_GutTest_method_skip_if_godot_version_lt>`
 
-.. container:: contribute
+Checks the passed in version string (x.x.x) against the engine version to see if the engine version is less than the expected version.  If it is then the test is mareked as passed (for a lack of anything better to do).  The result of the check is returned. 
 
-	No description
+
+
+\ **Example**\ 
+
+::
+
+       if(skip_if_godot_version_lt('3.5.0')):
+           return
 
 .. rst-class:: classref-item-separator
 
@@ -1876,9 +1803,16 @@ Peforms a deep compare on both values, a CompareResult instnace is returned. The
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **skip_if_godot_version_ne**\ (\ expected\ ) :ref:`🔗<class_GutTest_method_skip_if_godot_version_ne>`
 
-.. container:: contribute
+Checks if the passed in version matches the engine version.  The passed in version can contain just the major, major.minor or major.minor.path.  If the version is not the same then the test is marked as passed.  The result of the check is returned. 
 
-	No description
+
+
+\ **Example**\ 
+
+::
+
+        if(skip_if_godot_version_ne('3.4')):
+           return
 
 .. rst-class:: classref-item-separator
 
@@ -1890,9 +1824,43 @@ Peforms a deep compare on both values, a CompareResult instnace is returned. The
 
 |void| **register_inner_classes**\ (\ base_script\ ) :ref:`🔗<class_GutTest_method_register_inner_classes>`
 
-.. container:: contribute
+Registers all the inner classes in a script with the doubler.  This is required before you can double any inner class.
 
-	No description
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_yield_for:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **yield_for**\ (\ time, msg = ""\ ) :ref:`🔗<class_GutTest_method_yield_for>`
+
+**Deprecated:** use wait_seconds
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_yield_to:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **yield_to**\ (\ obj, signal_name, max_wait, msg = ""\ ) :ref:`🔗<class_GutTest_method_yield_to>`
+
+**Deprecated:** use wait_for_signal
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_yield_frames:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **yield_frames**\ (\ frames, msg = ""\ ) :ref:`🔗<class_GutTest_method_yield_frames>`
+
+**Deprecated:** use wait_frames
 
 .. |virtual| replace:: :abbr:`virtual (This method should typically be overridden by the user to have any effect.)`
 .. |const| replace:: :abbr:`const (This method has no side effects. It doesn't modify any of the instance's member variables.)`

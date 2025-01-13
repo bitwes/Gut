@@ -1319,21 +1319,6 @@ This method will cause Gut to pause before it moves on to the next test.  This i
 
 Sometimes you get lazy, and you don't remove calls to `pause_before_teardown` after you are done with them.  You can tell GUT to ignore calls to `pause_before_teardown` through the panel or the command line.  Setting this in your `.gutconfig.json` file is recommended for CI/CD Pipelines.
 
-### wait_seconds
-`wait_seconds(time, msg='')`<br>
-See [Awaiting](Awaiting)
-
-### wait_frames
-`wait_frames(frames, msg='')`<br>
-See [Awaiting](Awaiting)
-
-### wait_for_signal
-`wait_for_signal(sig, max_wait, msg='')`<br>
-See [Awaiting](Awaiting)
-
-### wait_until
-`wait_until(callable, max_wait, msg_or_time_between='', msg='')`
-See [Awaiting](Awaiting)
 
 ### double
 `double(path_or_class, inner_class_path=null)`<br>
@@ -1511,3 +1496,38 @@ Returns `true` if the file at the specified path has nothing in it or it does no
 `gut.p(text, level=0)`<br>
 Print info to the GUI and console (if enabled).  You can see examples if this in the sample code above.  In order to be able to spot check the sample code, I print out a divider between the passing and failing tests.
 <!-- ----------------------------------------------------------------------- -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### wait_seconds
+`wait_seconds(time, msg='')`<br>
+See [Awaiting](Awaiting)
+
+### wait_frames
+`wait_frames(frames, msg='')`<br>
+See [Awaiting](Awaiting)
+
+### wait_for_signal
+`wait_for_signal(sig, max_wait, msg='')`<br>
+See [Awaiting](Awaiting)
+
+### wait_until
+`wait_until(callable, max_wait, msg_or_time_between='', msg='')`
+See [Awaiting](Awaiting)
