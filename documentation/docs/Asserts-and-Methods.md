@@ -39,337 +39,21 @@ func after_all():
 
 ## Assertions
 
-### pass_test
-`pass_test(text)`<br>
-Useful when you don't have anything meaningful to assert.  Any failing asserts within the test will override this.
-```gdscript
-func test_nothing():
-  pass_test('nothing tested, passing')
-```
 
-### fail_test
-`fail_test(text)`<br>
-Useful when you need to fail a test but don't have a meaningful way to assert the condition you are testing.  This will also override `pass_test`.
-```gdscript
-func test_this_test_just_fails():
-  fail_test('a total unbridled failure')
-```
 
-### pending
-`pending(text="")`<br>
-Flag a test as pending, the optional message is printed in the GUI.
-``` gdscript
-pending('This test is not implemented yet')
-pending()
-```
 
-### assert_eq
-`assert_eq(got, expected, text="")`<br>
-assert got == expected and prints optional text.  There are some caveats due to how  Godot compares things.  Arrays are compared by value (with some additional caveats) and dictionaries are compared by reference.  See also [assert_eq_deep](#assert-eq-deep) and [Comparing Things](Comparing-Things)
-``` gdscript
-func test_equals():
-	var one = 1
-	var node1 = Node.new()
-	var node2 = node1
 
-	assert_eq(one, 1, 'one should equal one') # PASS
-	assert_eq('racecar', 'racecar') # PASS
-	assert_eq(node2, node1) # PASS
-	assert_eq([1, 2, 3], [1, 2, 3]) # PASS
-	var d1_pass = {'a':1}
-	var d2_pass = d1_pass
-	assert_eq(d1_pass, d2_pass) # PASS
 
-	gut.p('-- failing --')
-	assert_eq(1, 2) # FAIL
-	assert_eq('hello', 'world') # FAIL
-	assert_eq(self, node1) # FAIL
-	assert_eq([1, 'two', 3], [1, 2, 3, 4]) # FAIL
-	assert_eq({'a':1}, {'a':1}) # FAIL
-```
 
-### assert_ne
-`assert_ne(got, not_expected, text="")`<br>
-asserts got != expected and prints optional text.  Read [Comparing Things](Comparing-Things) for array and dictionary caveats.
-``` gdscript
-var two = 2
-var node1 = Node.new()
 
-gut.p('-- passing --')
-assert_ne(two, 1, 'Two should not equal one.')  # PASS
-assert_ne('hello', 'world') # PASS
-assert_ne(self, node1) # PASS
 
-gut.p('-- failing --')
-assert_ne(two, 2) # FAIL
-assert_ne('one', 'one') # FAIL
-assert_ne('2', 2) # FAIL
-```
 
-### assert_same
-`assert_same(v1, v2, text='')`<br>
-This is used to compare references to make sure they are the same.  This is the only way to compare dictionaries and arrays by reference instead of by value.  Asserts that a call to `is_same(v1, v2)` is `true`.  See also [Comparing Things](Comparing-Things).
 
-### assert_not_same
-`assert_not_same(v1, v2, text='')`<br>
-Inverse of `assert_same`.  See also [Comparing Things](Comparing-Things).
 
-### assert_gt
-`assert_gt(got, expected, text="")`<br>
-assserts got > expected
-``` gdscript
-var bigger = 5
-var smaller = 0
 
-gut.p('-- passing --')
-assert_gt(bigger, smaller, 'Bigger should be greater than smaller') # PASS
-assert_gt('b', 'a') # PASS
-assert_gt('a', 'A') # PASS
-assert_gt(1.1, 1) # PASS
 
-gut.p('-- failing --')
-assert_gt('a', 'a') # FAIL
-assert_gt(1.0, 1) # FAIL
-assert_gt(smaller, bigger) # FAIL
-```
 
-### assert_gte
-`assert_gte(got, expected, text="")`<br>
-assserts got >= expected
-``` gdscript
-var bigger = 5
-var smaller = 0
 
-gut.p('-- passing --')
-assert_gte(bigger, smaller, 'Bigger should be greater than or equal to smaller') # PASS
-assert_gte('b', 'a') # PASS
-assert_gte('a', 'A') # PASS
-assert_gte(1.1, 1) # PASS
-assert_gte('a', 'a') # PASS
-
-gut.p('-- failing --')
-assert_gte(0.9, 1.0) # FAIL
-assert_gte(smaller, bigger) # FAIL
-```
-
-### assert_lt
-`assert_lt(got, expected, text="")`<br>
-asserts got < expected
-``` gdscript
-var bigger = 5
-var smaller = 0
-gut.p('-- passing --')
-assert_lt(smaller, bigger, 'Smaller should be less than bigger') # PASS
-assert_lt('a', 'b') # PASS
-assert_lt(99, 100) # PASS
-
-gut.p('-- failing --')
-assert_lt('z', 'x') # FAIL
-assert_lt(-5, -5) # FAIL
-```
-
-### assert_lte
-`assert_lte(got, expected, text="")`<br>
-asserts got <= expected
-``` gdscript
-var bigger = 5
-var smaller = 0
-gut.p('-- passing --')
-assert_lte(smaller, bigger, 'Smaller should be less than or equal to bigger') # PASS
-assert_lte('a', 'b') # PASS
-assert_lte(1.0, 1.0) # PASS
-assert_lte(-5, -5) # PASS
-
-gut.p('-- failing --')
-assert_lte('z', 'x') # FAIL
-assert_lte(1.1, 1.0) # FAIL
-```
-
-### assert_true
-`assert_true(got, text="")`<br>
-asserts got == true.
-``` gdscript
-func test_true():
-	gut.p('-- passing --')
-	assert_true(true, 'True should be true') # PASS
-	assert_true(5 == 5, 'That expressions should be true') # PASS
-
-	gut.p('-- failing --')
-	assert_true(false) # FAIL
-	assert_true('a' == 'b') # FAIL
-	assert_true('b') # FAIL
-	assert_true(1)
-```
-
-### assert_false
-`assert_false(got, text="")`<br>
-asserts got == false
-``` gdscript
-func test_false():
-	gut.p('-- passing --')
-	assert_false(false, 'False is false') # PASS
-	assert_false(1 == 2) # PASS
-	assert_false('a' == 'z') # PASS
-	assert_false(self.has_user_signal('nope')) # PASS
-
-	gut.p('-- failing --')
-	assert_false(true) # FAIL
-	assert_false('ABC' == 'ABC') # FAIL
-	assert_false(null) # FAIL
-	assert_false(0)
-```
-
-### assert_null
-`assert_null(got)`<br>
-asserts the passed in value is null
-```gdscript
-gut.p('-- passing --')
-assert_null(null)
-
-gut.p('-- failing --')
-assert_null('a')
-assert_null(1)
-```
-
-### assert_not_null
-`assert_not_null(got)`<br>
-asserts the passed in value is not null
-```gdscript
-gut.p('-- passing --')
-assert_not_null('a')
-assert_not_null(1)
-
-gut.p('-- failing --')
-assert_not_null(null)
-```
-
-### assert_between
-`assert_between(got, expect_low, expect_high, text="")`<br>
-asserts got > expect_low and <= expect_high
-``` gdscript
-gut.p('-- passing --')
-assert_between(5, 0, 10, 'Five should be between 0 and 10') # PASS
-assert_between(10, 0, 10) # PASS
-assert_between(0, 0, 10) # PASS
-assert_between(2.25, 2, 4.0) # PASS
-
-gut.p('-- failing --')
-assert_between('a', 'b', 'c') # FAIL
-assert_between(1, 5, 10) # FAIL
-```
-
-### assert_not_between
-`assert_not_between(got, expect_low, expect_high, text="")`<br>
-asserts that got <= expect_low or got >=  expect_high.
-``` gdscript
-gut.p('-- passing --')
-assert_not_between(1, 5, 10) # PASS
-assert_not_between('a', 'b', 'd') # PASS
-assert_not_between('d', 'b', 'd') # PASS
-assert_not_between(10, 0, 10) # PASS
-assert_not_between(-2, -2, 10) # PASS
-
-gut.p('-- failing --')
-assert_not_between(5, 0, 10, 'Five shouldnt be between 0 and 10') # FAIL
-assert_not_between(0.25, -2.0, 4.0) # FAIL
-
-```
-### assert_almost_eq
-`assert_almost_eq(got, expected, error_interval, text='')`<br>
-Asserts that `got` is within the range of `expected` +/- `error_interval`.  The upper and lower bounds are included in the check.  Verified to work with integers, floats, and Vector2.  Should work with anything that can be added/subtracted.
-
-``` gdscript
-gut.p('-- passing --')
-assert_almost_eq(0, 1, 1, '0 within range of 1 +/- 1') # PASS
-assert_almost_eq(2, 1, 1, '2 within range of 1 +/- 1') # PASS
-
-assert_almost_eq(1.2, 1.0, .5, '1.2 within range of 1 +/- .5') # PASS
-assert_almost_eq(.5, 1.0, .5, '.5 within range of 1 +/- .5') # PASS
-
-assert_almost_eq(Vector2(.5, 1.5), Vector2(1.0, 1.0), Vector2(.5, .5))  # PASS
-
-gut.p('-- failing --')
-assert_almost_eq(1, 3, 1, '1 outside range of 3 +/- 1') # FAIL
-assert_almost_eq(2.6, 3.0, .2, '2.6 outside range of 3 +/- .2') # FAIL
-
-assert_almost_eq(Vector2(.5, 1.5), Vector2(1.0, 1.0), Vector2(.25, .25))  # PASS
-```
-
-### assert_almost_ne
-`assert_almost_ne(got, expected, error_interval, text='')`<br>
-This is the inverse of `assert_almost_eq`.  This will pass if `got` is outside the range of `expected` +/- `error_interval`.
-``` gdscript
-gut.p('-- passing --')
-assert_almost_ne(1, 3, 1, '1 outside range of 3 +/- 1') # PASS
-assert_almost_ne(2.6, 3.0, .2, '2.6 outside range of 3 +/- .2') # PASS
-
-assert_almost_ne(Vector2(.5, 1.5), Vector2(1.0, 1.0), Vector2(.25, .25))  # PASS
-
-gut.p('-- failing --')
-assert_almost_ne(0, 1, 1, '0 within range of 1 +/- 1') # FAIL
-assert_almost_ne(2, 1, 1, '2 within range of 1 +/- 1') # FAIL
-
-assert_almost_ne(1.2, 1.0, .5, '1.2 within range of 1 +/- .5') # FAIL
-assert_almost_ne(.5, 1.0, .5, '.5 within range of 1 +/- .5') # FAIL
-
-assert_almost_ne(Vector2(.5, 1.5), Vector2(1.0, 1.0), Vector2(.5, .5))  # FAIL
-```
-### assert_has
-`assert_has(obj, element, text='')`<br>
-Asserts that the object passed in "has" the element.  This works with any object that has a `has` method.
-``` gdscript
-var an_array = [1, 2, 3, 'four', 'five']
-var a_hash = { 'one':1, 'two':2, '3':'three'}
-
-gut.p('-- passing --')
-assert_has(an_array, 'four') # PASS
-assert_has(an_array, 2) # PASS
-# the hash's has method checks indexes not values
-assert_has(a_hash, 'one') # PASS
-assert_has(a_hash, '3') # PASS
-
-gut.p('-- failing --')
-assert_has(an_array, 5) # FAIL
-assert_has(an_array, self) # FAIL
-assert_has(a_hash, 3) # FAIL
-assert_has(a_hash, 'three') # FAIL
-```
-### assert_does_not_have
-`assert_does_not_have(obj, element, text='')`<br>
-The inverse of `assert_has`
-``` gdscript
-var an_array = [1, 2, 3, 'four', 'five']
-var a_hash = { 'one':1, 'two':2, '3':'three'}
-
-gut.p('-- passing --')
-assert_does_not_have(an_array, 5) # PASS
-assert_does_not_have(an_array, self) # PASS
-assert_does_not_have(a_hash, 3) # PASS
-assert_does_not_have(a_hash, 'three') # PASS
-
-gut.p('-- failing --')
-assert_does_not_have(an_array, 'four') # FAIL
-assert_does_not_have(an_array, 2) # FAIL
-# the hash's has method checks indexes not values
-assert_does_not_have(a_hash, 'one') # FAIL
-assert_does_not_have(a_hash, '3') # FAIL
-```
-
-### assert_string_contains
-`assert_string_contains(text, search, match_case=true)`<br>
-Assert that `text` contains `search`.  Can perform case insensitive search by passing false for `match_case`.
-```gdscript
-func test_string_contains():
-	gut.p('-- passing --')
-	assert_string_contains('abc 123', 'a')
-	assert_string_contains('abc 123', 'BC', false)
-	assert_string_contains('abc 123', '3')
-
-	gut.p('-- failing --')
-	assert_string_contains('abc 123', 'A')
-	assert_string_contains('abc 123', 'BC')
-	assert_string_contains('abc 123', '012')
-```
 
 ### assert_string_starts_with
 `assert_string_starts_with(text, search, match_case=true)`<br>
@@ -1531,3 +1215,339 @@ See [Awaiting](Awaiting)
 ### wait_until
 `wait_until(callable, max_wait, msg_or_time_between='', msg='')`
 See [Awaiting](Awaiting)
+
+### assert_eq
+`assert_eq(got, expected, text="")`<br>
+assert got == expected and prints optional text.  There are some caveats due to how  Godot compares things.  Arrays are compared by value (with some additional caveats) and dictionaries are compared by reference.  See also [assert_eq_deep](#assert-eq-deep) and [Comparing Things](Comparing-Things)
+``` gdscript
+func test_equals():
+	var one = 1
+	var node1 = Node.new()
+	var node2 = node1
+
+	assert_eq(one, 1, 'one should equal one') # PASS
+	assert_eq('racecar', 'racecar') # PASS
+	assert_eq(node2, node1) # PASS
+	assert_eq([1, 2, 3], [1, 2, 3]) # PASS
+	var d1_pass = {'a':1}
+	var d2_pass = d1_pass
+	assert_eq(d1_pass, d2_pass) # PASS
+
+	gut.p('-- failing --')
+	assert_eq(1, 2) # FAIL
+	assert_eq('hello', 'world') # FAIL
+	assert_eq(self, node1) # FAIL
+	assert_eq([1, 'two', 3], [1, 2, 3, 4]) # FAIL
+	assert_eq({'a':1}, {'a':1}) # FAIL
+```
+
+### pass_test
+`pass_test(text)`<br>
+Useful when you don't have anything meaningful to assert.  Any failing asserts within the test will override this.
+```gdscript
+func test_nothing():
+  pass_test('nothing tested, passing')
+```
+
+### fail_test
+`fail_test(text)`<br>
+Useful when you need to fail a test but don't have a meaningful way to assert the condition you are testing.  This will also override `pass_test`.
+```gdscript
+func test_this_test_just_fails():
+  fail_test('a total unbridled failure')
+```
+
+### pending
+`pending(text="")`<br>
+Flag a test as pending, the optional message is printed in the GUI.
+``` gdscript
+pending('This test is not implemented yet')
+pending()
+```
+
+### assert_ne
+`assert_ne(got, not_expected, text="")`<br>
+asserts got != expected and prints optional text.  Read [Comparing Things](Comparing-Things) for array and dictionary caveats.
+``` gdscript
+var two = 2
+var node1 = Node.new()
+
+gut.p('-- passing --')
+assert_ne(two, 1, 'Two should not equal one.')  # PASS
+assert_ne('hello', 'world') # PASS
+assert_ne(self, node1) # PASS
+
+gut.p('-- failing --')
+assert_ne(two, 2) # FAIL
+assert_ne('one', 'one') # FAIL
+assert_ne('2', 2) # FAIL
+```
+
+### assert_same
+`assert_same(v1, v2, text='')`<br>
+This is used to compare references to make sure they are the same.  This is the only way to compare dictionaries and arrays by reference instead of by value.  Asserts that a call to `is_same(v1, v2)` is `true`.  See also [Comparing Things](Comparing-Things).
+
+### assert_not_same
+`assert_not_same(v1, v2, text='')`<br>
+Inverse of `assert_same`.  See also [Comparing Things](Comparing-Things).
+
+### assert_gt
+`assert_gt(got, expected, text="")`<br>
+assserts got > expected
+``` gdscript
+var bigger = 5
+var smaller = 0
+
+gut.p('-- passing --')
+assert_gt(bigger, smaller, 'Bigger should be greater than smaller') # PASS
+assert_gt('b', 'a') # PASS
+assert_gt('a', 'A') # PASS
+assert_gt(1.1, 1) # PASS
+
+gut.p('-- failing --')
+assert_gt('a', 'a') # FAIL
+assert_gt(1.0, 1) # FAIL
+assert_gt(smaller, bigger) # FAIL
+```
+
+### assert_gte
+`assert_gte(got, expected, text="")`<br>
+assserts got >= expected
+``` gdscript
+var bigger = 5
+var smaller = 0
+
+gut.p('-- passing --')
+assert_gte(bigger, smaller, 'Bigger should be greater than or equal to smaller') # PASS
+assert_gte('b', 'a') # PASS
+assert_gte('a', 'A') # PASS
+assert_gte(1.1, 1) # PASS
+assert_gte('a', 'a') # PASS
+
+gut.p('-- failing --')
+assert_gte(0.9, 1.0) # FAIL
+assert_gte(smaller, bigger) # FAIL
+```
+
+### assert_lt
+`assert_lt(got, expected, text="")`<br>
+asserts got < expected
+``` gdscript
+var bigger = 5
+var smaller = 0
+gut.p('-- passing --')
+assert_lt(smaller, bigger, 'Smaller should be less than bigger') # PASS
+assert_lt('a', 'b') # PASS
+assert_lt(99, 100) # PASS
+
+gut.p('-- failing --')
+assert_lt('z', 'x') # FAIL
+assert_lt(-5, -5) # FAIL
+```
+
+
+### assert_lte
+`assert_lte(got, expected, text="")`<br>
+asserts got <= expected
+``` gdscript
+var bigger = 5
+var smaller = 0
+gut.p('-- passing --')
+assert_lte(smaller, bigger, 'Smaller should be less than or equal to bigger') # PASS
+assert_lte('a', 'b') # PASS
+assert_lte(1.0, 1.0) # PASS
+assert_lte(-5, -5) # PASS
+
+gut.p('-- failing --')
+assert_lte('z', 'x') # FAIL
+assert_lte(1.1, 1.0) # FAIL
+```
+
+### assert_true
+`assert_true(got, text="")`<br>
+asserts got == true.
+``` gdscript
+func test_true():
+	gut.p('-- passing --')
+	assert_true(true, 'True should be true') # PASS
+	assert_true(5 == 5, 'That expressions should be true') # PASS
+
+	gut.p('-- failing --')
+	assert_true(false) # FAIL
+	assert_true('a' == 'b') # FAIL
+	assert_true('b') # FAIL
+	assert_true(1)
+```
+
+### assert_false
+`assert_false(got, text="")`<br>
+asserts got == false
+``` gdscript
+func test_false():
+	gut.p('-- passing --')
+	assert_false(false, 'False is false') # PASS
+	assert_false(1 == 2) # PASS
+	assert_false('a' == 'z') # PASS
+	assert_false(self.has_user_signal('nope')) # PASS
+
+	gut.p('-- failing --')
+	assert_false(true) # FAIL
+	assert_false('ABC' == 'ABC') # FAIL
+	assert_false(null) # FAIL
+	assert_false(0)
+```
+
+### assert_null
+`assert_null(got)`<br>
+asserts the passed in value is null
+```gdscript
+gut.p('-- passing --')
+assert_null(null)
+
+gut.p('-- failing --')
+assert_null('a')
+assert_null(1)
+```
+
+### assert_not_null
+`assert_not_null(got)`<br>
+asserts the passed in value is not null
+```gdscript
+gut.p('-- passing --')
+assert_not_null('a')
+assert_not_null(1)
+
+gut.p('-- failing --')
+assert_not_null(null)
+```
+
+### assert_between
+`assert_between(got, expect_low, expect_high, text="")`<br>
+asserts got > expect_low and <= expect_high
+``` gdscript
+gut.p('-- passing --')
+assert_between(5, 0, 10, 'Five should be between 0 and 10') # PASS
+assert_between(10, 0, 10) # PASS
+assert_between(0, 0, 10) # PASS
+assert_between(2.25, 2, 4.0) # PASS
+
+gut.p('-- failing --')
+assert_between('a', 'b', 'c') # FAIL
+assert_between(1, 5, 10) # FAIL
+```
+
+### assert_not_between
+`assert_not_between(got, expect_low, expect_high, text="")`<br>
+asserts that got <= expect_low or got >=  expect_high.
+``` gdscript
+gut.p('-- passing --')
+assert_not_between(1, 5, 10) # PASS
+assert_not_between('a', 'b', 'd') # PASS
+assert_not_between('d', 'b', 'd') # PASS
+assert_not_between(10, 0, 10) # PASS
+assert_not_between(-2, -2, 10) # PASS
+
+gut.p('-- failing --')
+assert_not_between(5, 0, 10, 'Five shouldnt be between 0 and 10') # FAIL
+assert_not_between(0.25, -2.0, 4.0) # FAIL
+
+```
+
+### assert_almost_eq
+`assert_almost_eq(got, expected, error_interval, text='')`<br>
+Asserts that `got` is within the range of `expected` +/- `error_interval`.  The upper and lower bounds are included in the check.  Verified to work with integers, floats, and Vector2.  Should work with anything that can be added/subtracted.
+
+``` gdscript
+gut.p('-- passing --')
+assert_almost_eq(0, 1, 1, '0 within range of 1 +/- 1') # PASS
+assert_almost_eq(2, 1, 1, '2 within range of 1 +/- 1') # PASS
+
+assert_almost_eq(1.2, 1.0, .5, '1.2 within range of 1 +/- .5') # PASS
+assert_almost_eq(.5, 1.0, .5, '.5 within range of 1 +/- .5') # PASS
+
+assert_almost_eq(Vector2(.5, 1.5), Vector2(1.0, 1.0), Vector2(.5, .5))  # PASS
+
+gut.p('-- failing --')
+assert_almost_eq(1, 3, 1, '1 outside range of 3 +/- 1') # FAIL
+assert_almost_eq(2.6, 3.0, .2, '2.6 outside range of 3 +/- .2') # FAIL
+
+assert_almost_eq(Vector2(.5, 1.5), Vector2(1.0, 1.0), Vector2(.25, .25))  # PASS
+```
+
+### assert_almost_ne
+`assert_almost_ne(got, expected, error_interval, text='')`<br>
+This is the inverse of `assert_almost_eq`.  This will pass if `got` is outside the range of `expected` +/- `error_interval`.
+``` gdscript
+gut.p('-- passing --')
+assert_almost_ne(1, 3, 1, '1 outside range of 3 +/- 1') # PASS
+assert_almost_ne(2.6, 3.0, .2, '2.6 outside range of 3 +/- .2') # PASS
+
+assert_almost_ne(Vector2(.5, 1.5), Vector2(1.0, 1.0), Vector2(.25, .25))  # PASS
+
+gut.p('-- failing --')
+assert_almost_ne(0, 1, 1, '0 within range of 1 +/- 1') # FAIL
+assert_almost_ne(2, 1, 1, '2 within range of 1 +/- 1') # FAIL
+
+assert_almost_ne(1.2, 1.0, .5, '1.2 within range of 1 +/- .5') # FAIL
+assert_almost_ne(.5, 1.0, .5, '.5 within range of 1 +/- .5') # FAIL
+
+assert_almost_ne(Vector2(.5, 1.5), Vector2(1.0, 1.0), Vector2(.5, .5))  # FAIL
+```
+
+### assert_has
+`assert_has(obj, element, text='')`<br>
+Asserts that the object passed in "has" the element.  This works with any object that has a `has` method.
+``` gdscript
+var an_array = [1, 2, 3, 'four', 'five']
+var a_hash = { 'one':1, 'two':2, '3':'three'}
+
+gut.p('-- passing --')
+assert_has(an_array, 'four') # PASS
+assert_has(an_array, 2) # PASS
+# the hash's has method checks indexes not values
+assert_has(a_hash, 'one') # PASS
+assert_has(a_hash, '3') # PASS
+
+gut.p('-- failing --')
+assert_has(an_array, 5) # FAIL
+assert_has(an_array, self) # FAIL
+assert_has(a_hash, 3) # FAIL
+assert_has(a_hash, 'three') # FAIL
+```
+
+### assert_does_not_have
+`assert_does_not_have(obj, element, text='')`<br>
+The inverse of `assert_has`
+``` gdscript
+var an_array = [1, 2, 3, 'four', 'five']
+var a_hash = { 'one':1, 'two':2, '3':'three'}
+
+gut.p('-- passing --')
+assert_does_not_have(an_array, 5) # PASS
+assert_does_not_have(an_array, self) # PASS
+assert_does_not_have(a_hash, 3) # PASS
+assert_does_not_have(a_hash, 'three') # PASS
+
+gut.p('-- failing --')
+assert_does_not_have(an_array, 'four') # FAIL
+assert_does_not_have(an_array, 2) # FAIL
+# the hash's has method checks indexes not values
+assert_does_not_have(a_hash, 'one') # FAIL
+assert_does_not_have(a_hash, '3') # FAIL
+```
+
+### assert_string_contains
+`assert_string_contains(text, search, match_case=true)`<br>
+Assert that `text` contains `search`.  Can perform case insensitive search by passing false for `match_case`.
+```gdscript
+func test_string_contains():
+	gut.p('-- passing --')
+	assert_string_contains('abc 123', 'a')
+	assert_string_contains('abc 123', 'BC', false)
+	assert_string_contains('abc 123', '3')
+
+	gut.p('-- failing --')
+	assert_string_contains('abc 123', 'A')
+	assert_string_contains('abc 123', 'BC')
+	assert_string_contains('abc 123', '012')
+```

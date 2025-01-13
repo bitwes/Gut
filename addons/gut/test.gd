@@ -1,6 +1,8 @@
 class_name GutTest
 extends Node
 ## This is the base class for all test scripts.  Extend this...test the world!
+##
+## @ignore-uncommented
 
 
 var _compare = GutUtils.Comparator.new()
@@ -37,7 +39,7 @@ var _lgr = GutUtils.get_logger()
 var _strutils = GutUtils.Strutils.new()
 var _awaiter = null
 
-# syntax sugar
+
 ## Reference to [addons/gut/parameter_factory.gd] script.
 var ParameterFactory = GutUtils.ParameterFactory
 ## @ignore
@@ -306,9 +308,32 @@ func set_logger(logger):
 # Asserts
 # #######################
 
-# ------------------------------------------------------------------------------
-# Asserts that the expected value equals the value got.
-# ------------------------------------------------------------------------------
+## Asserts that the expected value equals the value got.
+## assert got == expected and prints optional text.  See [wiki]Comparing-Things[/wiki]
+## for information about comparing dictionaries and arrays.
+## [br]
+## See also: [method assert_ne], [method assert_same], [method assert_not_same]
+## [codeblock]
+##    var one = 1
+##    var node1 = Node.new()
+##    var node2 = node1
+##
+##    # Passing
+##    assert_eq(one, 1, 'one should equal one')
+##    assert_eq('racecar', 'racecar')
+##    assert_eq(node2, node1)
+##    assert_eq([1, 2, 3], [1, 2, 3])
+##    var d1_pass = {'a':1}
+##    var d2_pass = d1_pass
+##    assert_eq(d1_pass, d2_pass)
+##
+##    # Failing
+##    assert_eq(1, 2) # FAIL
+##    assert_eq('hello', 'world')
+##    assert_eq(self, node1)
+##    assert_eq([1, 'two', 3], [1, 2, 3, 4])
+##    assert_eq({'a':1}, {'a':1})
+## [/codeblock]
 func assert_eq(got, expected, text=""):
 
 	if(_do_datatypes_match__fail_if_not(got, expected, text)):
@@ -327,9 +352,25 @@ func assert_eq(got, expected, text=""):
 			_fail(disp)
 
 
-# ------------------------------------------------------------------------------
-# Asserts that the value got does not equal the "not expected" value.
-# ------------------------------------------------------------------------------
+## asserts got != expected and prints optional text.  See
+## [wiki]Comparing-Things[/wiki] for information about comparing dictionaries
+## and arrays.
+##[br]
+## See also: [method assert_eq], [method assert_same], [method assert_not_same]
+## [codeblock]
+##    var two = 2
+##    var node1 = Node.new()
+##
+##    # Passing
+##    assert_ne(two, 1, 'Two should not equal one.')
+##    assert_ne('hello', 'world')
+##    assert_ne(self, node1)
+##
+##    # Failing
+##    assert_ne(two, 2)
+##    assert_ne('one', 'one')
+##    assert_ne('2', 2)
+## [/codeblock]
 func assert_ne(got, not_expected, text=""):
 	if(_do_datatypes_match__fail_if_not(got, not_expected, text)):
 		var disp = "[" + _str(got) + "] expected to not equal [" + _str(not_expected) + "]:  " + text
@@ -346,9 +387,25 @@ func assert_ne(got, not_expected, text=""):
 		else:
 			_pass(disp)
 
-# ------------------------------------------------------------------------------
-# Asserts that the expected value almost equals the value got.
-# ------------------------------------------------------------------------------
+
+## Asserts that `got` is within the range of `expected` +/- `error_interval`.
+## The upper and lower bounds are included in the check.  Verified to work with
+## integers, floats, and Vector2.  Should work with anything that can be
+## added/subtracted.
+##
+## [codeblock]
+##    # Passing
+##    assert_almost_eq(0, 1, 1, '0 within range of 1 +/- 1')
+##    assert_almost_eq(2, 1, 1, '2 within range of 1 +/- 1')
+##    assert_almost_eq(1.2, 1.0, .5, '1.2 within range of 1 +/- .5')
+##    assert_almost_eq(.5, 1.0, .5, '.5 within range of 1 +/- .5')
+##    assert_almost_eq(Vector2(.5, 1.5), Vector2(1.0, 1.0), Vector2(.5, .5))
+##    assert_almost_eq(Vector2(.5, 1.5), Vector2(1.0, 1.0), Vector2(.25, .25))
+##
+##    # Failing
+##    assert_almost_eq(1, 3, 1, '1 outside range of 3 +/- 1')
+##    assert_almost_eq(2.6, 3.0, .2, '2.6 outside range of 3 +/- .2')
+## [/codeblock]
 func assert_almost_eq(got, expected, error_interval, text=''):
 	var disp = "[" + _str_precision(got, 20) + "] expected to equal [" + _str(expected) + "] +/- [" + str(error_interval) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, expected, text) and _do_datatypes_match__fail_if_not(got, error_interval, text)):
@@ -357,9 +414,9 @@ func assert_almost_eq(got, expected, error_interval, text=''):
 		else:
 			_pass(disp)
 
-# ------------------------------------------------------------------------------
-# Asserts that the expected value does not almost equal the value got.
-# ------------------------------------------------------------------------------
+
+## This is the inverse of `assert_almost_eq`.  This will pass if `got` is
+## outside the range of `expected` +/- `error_interval`.
 func assert_almost_ne(got, not_expected, error_interval, text=''):
 	var disp = "[" + _str_precision(got, 20) + "] expected to not equal [" + _str(not_expected) + "] +/- [" + str(error_interval) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, not_expected, text) and _do_datatypes_match__fail_if_not(got, error_interval, text)):
@@ -384,9 +441,22 @@ func _is_almost_eq(got, expected, error_interval) -> bool:
 
 	return(result)
 
-# ------------------------------------------------------------------------------
-# Asserts got is greater than expected
-# ------------------------------------------------------------------------------
+## assserts got > expected
+## [codeblock]
+##    var bigger = 5
+##    var smaller = 0
+##
+##    # Passing
+##    assert_gt(bigger, smaller, 'Bigger should be greater than smaller')
+##    assert_gt('b', 'a')
+##    assert_gt('a', 'A')
+##    assert_gt(1.1, 1)
+##
+##    # Failing
+##    assert_gt('a', 'a')
+##    assert_gt(1.0, 1)
+##    assert_gt(smaller, bigger)
+## [/codeblock]
 func assert_gt(got, expected, text=""):
 	var disp = "[" + _str(got) + "] expected to be > than [" + _str(expected) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, expected, text)):
@@ -395,9 +465,23 @@ func assert_gt(got, expected, text=""):
 		else:
 			_fail(disp)
 
-# ------------------------------------------------------------------------------
-# Asserts got is greater than or equal to expected
-# ------------------------------------------------------------------------------
+
+## Asserts got is greater than or equal to expected.
+## [codeblock]
+##    var bigger = 5
+##    var smaller = 0
+##
+##    # Passing
+##    assert_gte(bigger, smaller, 'Bigger should be greater than or equal to smaller')
+##    assert_gte('b', 'a')
+##    assert_gte('a', 'A')
+##    assert_gte(1.1, 1)
+##    assert_gte('a', 'a')
+##
+##    # Failing
+##    assert_gte(0.9, 1.0)
+##    assert_gte(smaller, bigger)
+## [/codeblock]
 func assert_gte(got, expected, text=""):
 	var disp = "[" + _str(got) + "] expected to be >= than [" + _str(expected) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, expected, text)):
@@ -417,9 +501,21 @@ func assert_lt(got, expected, text=""):
 		else:
 			_fail(disp)
 
-# ------------------------------------------------------------------------------
-# Asserts got is less than or equal to expected
-# ------------------------------------------------------------------------------
+
+## Asserts got is less than or equal to expected
+## [codeblock]
+##    var bigger = 5
+##    var smaller = 0
+##
+##    # Passing
+##    assert_lt(smaller, bigger, 'Smaller should be less than bigger')
+##    assert_lt('a', 'b')
+##    assert_lt(99, 100)
+##
+##    # Failing
+##    assert_lt('z', 'x')
+##    assert_lt(-5, -5)
+## [/codeblock]
 func assert_lte(got, expected, text=""):
 	var disp = "[" + _str(got) + "] expected to be <= than [" + _str(expected) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, expected, text)):
@@ -428,9 +524,9 @@ func assert_lte(got, expected, text=""):
 		else:
 			_fail(disp)
 
-# ------------------------------------------------------------------------------
-# asserts that got is true
-# ------------------------------------------------------------------------------
+
+## asserts that got is `true`.  Does not assert truthiness, only boolean values
+## will pass.
 func assert_true(got, text=""):
 	if(typeof(got) == TYPE_BOOL):
 		if(got):
@@ -441,9 +537,9 @@ func assert_true(got, text=""):
 		var msg = str("Cannot convert ", _strutils.type2str(got), " to boolean")
 		_fail(msg)
 
-# ------------------------------------------------------------------------------
-# Asserts that got is false
-# ------------------------------------------------------------------------------
+
+## Asserts that got is false.  Does not assert truthiness, only boolean values
+## will pass.
 func assert_false(got, text=""):
 	if(typeof(got) == TYPE_BOOL):
 		if(got):
@@ -454,9 +550,20 @@ func assert_false(got, text=""):
 		var msg = str("Cannot convert ", _strutils.type2str(got), " to boolean")
 		_fail(msg)
 
-# ------------------------------------------------------------------------------
-# Asserts value is between (inclusive) the two expected values.
-# ------------------------------------------------------------------------------
+
+## Asserts value is between (inclusive) the two expected values.[br]
+## got >= expect_low and <= expect_high
+## [codeblock]
+##    # Passing
+##    assert_between(5, 0, 10, 'Five should be between 0 and 10')
+##    assert_between(10, 0, 10)
+##    assert_between(0, 0, 10)
+##    assert_between(2.25, 2, 4.0)
+##
+##    # Failing
+##    assert_between('a', 'b', 'c')
+##    assert_between(1, 5, 10)
+## [/codeblock]
 func assert_between(got, expect_low, expect_high, text=""):
 	var disp = "[" + _str_precision(got, 20) + "] expected to be between [" + _str(expect_low) + "] and [" + str(expect_high) + "]:  " + text
 
@@ -470,9 +577,19 @@ func assert_between(got, expect_low, expect_high, text=""):
 			else:
 				_pass(disp)
 
-# ------------------------------------------------------------------------------
-# Asserts value is not between (exclusive) the two expected values.
-# ------------------------------------------------------------------------------
+
+## Asserts value is not between (exclusive) the two expected values.[br]
+## asserts that got <= expect_low or got >=  expect_high.
+##    # Passing
+##    assert_not_between(1, 5, 10)
+##    assert_not_between('a', 'b', 'd')
+##    assert_not_between('d', 'b', 'd')
+##    assert_not_between(10, 0, 10)
+##    assert_not_between(-2, -2, 10)
+##
+##    # Failing
+##    assert_not_between(5, 0, 10, 'Five shouldnt be between 0 and 10')
+##    assert_not_between(0.25, -2.0, 4.0)
 func assert_not_between(got, expect_low, expect_high, text=""):
 	var disp = "[" + _str_precision(got, 20) + "] expected not to be between [" + _str(expect_low) + "] and [" + str(expect_high) + "]:  " + text
 
@@ -486,10 +603,26 @@ func assert_not_between(got, expect_low, expect_high, text=""):
 			else:
 				_pass(disp)
 
-# ------------------------------------------------------------------------------
-# Uses the 'has' method of the object passed in to determine if it contains
-# the passed in element.
-# ------------------------------------------------------------------------------
+
+## Uses the 'has' method of the object passed in to determine if it contains
+## the passed in element.
+## [codeblock]
+##    var an_array = [1, 2, 3, 'four', 'five']
+##    var a_hash = { 'one':1, 'two':2, '3':'three'}
+##
+##    # Passing
+##    assert_has(an_array, 'four') # PASS
+##    assert_has(an_array, 2) # PASS
+##    # the hash's has method checks indexes not values
+##    assert_has(a_hash, 'one') # PASS
+##    assert_has(a_hash, '3') # PASS
+##
+##    # Failing
+##    assert_has(an_array, 5) # FAIL
+##    assert_has(an_array, self) # FAIL
+##    assert_has(a_hash, 3) # FAIL
+##    assert_has(a_hash, 'three') # FAIL
+## [/codeblock]
 func assert_has(obj, element, text=""):
 	var disp = str('Expected [', _str(obj), '] to contain value:  [', _str(element), ']:  ', text)
 	if(obj.has(element)):
@@ -497,8 +630,7 @@ func assert_has(obj, element, text=""):
 	else:
 		_fail(disp)
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
+## The inverse of assert_has.
 func assert_does_not_have(obj, element, text=""):
 	var disp = str('Expected [', _str(obj), '] to NOT contain value:  [', _str(element), ']:  ', text)
 	if(obj.has(element)):
@@ -881,10 +1013,20 @@ func assert_not_typeof(object, type, text=''):
 	else:
 		_fail(disp)
 
-# ------------------------------------------------------------------------------
-# Assert that text contains given search string.
-# The match_case flag determines case sensitivity.
-# ------------------------------------------------------------------------------
+
+## Assert that `text` contains `search`.  Can perform case insensitive search
+## by passing false for `match_case`.
+## [codeblock]
+##    # Passing
+##    assert_string_contains('abc 123', 'a')
+##    assert_string_contains('abc 123', 'BC', false)
+##    assert_string_contains('abc 123', '3')
+##
+##    # Failing
+##    assert_string_contains('abc 123', 'A')
+##    assert_string_contains('abc 123', 'BC')
+##    assert_string_contains('abc 123', '012')
+## [/codeblock]
 func assert_string_contains(text, search, match_case=true):
 	const empty_search = 'Expected text and search strings to be non-empty. You passed %s and %s.'
 	const non_strings = 'Expected text and search to both be strings.  You passed %s and %s.'
@@ -1058,9 +1200,7 @@ func assert_called_count(callable : Callable, expected_count : int):
 			_fail(str(disp, "\n", _get_desc_of_calls_to_instance(converted.object)))
 
 
-# ------------------------------------------------------------------------------
-# Asserts the passed in value is null
-# ------------------------------------------------------------------------------
+## Asserts the passed in value is null
 func assert_null(got, text=''):
 	var disp = str('Expected [', _str(got), '] to be NULL:  ', text)
 	if(got == null):
@@ -1068,9 +1208,8 @@ func assert_null(got, text=''):
 	else:
 		_fail(disp)
 
-# ------------------------------------------------------------------------------
-# Asserts the passed in value is null
-# ------------------------------------------------------------------------------
+
+## Asserts the passed in value is not null.
 func assert_not_null(got, text=''):
 	var disp = str('Expected [', _str(got), '] to be anything but NULL:  ', text)
 	if(got == null):
@@ -1246,7 +1385,6 @@ func assert_property(obj, property_name, default_value, new_value) -> void:
 	_warn_for_public_accessors(obj, property_name)
 
 
-# ------------------------------------------------------------------------------
 ## Mark the current test as pending.
 func pending(text=""):
 	_summary.pending += 1
@@ -1731,7 +1869,7 @@ func assert_ne_deep(v1, v2):
 		_fail(result.get_short_summary())
 
 
-## Uses `same` to assert that `v1` and `v2` are the same object.
+## Assert v1 and v2 are the same using `is_same`.  See @GlobalScope.is_same.
 func assert_same(v1, v2, text=''):
 	var disp = "[" + _str(v1) + "] expected to be same as  [" + _str(v2) + "]:  " + text
 	if(is_same(v1, v2)):
@@ -1740,7 +1878,7 @@ func assert_same(v1, v2, text=''):
 		_fail(disp)
 
 
-## Uses `same` to assert that `v1` and `v2` are not the same object.
+## Assert using v1 and v2 are not the same using `is_same`.  See @GlobalScope.is_same.
 func assert_not_same(v1, v2, text=''):
 	var disp = "[" + _str(v1) + "] expected to not be same as  [" + _str(v2) + "]:  " + text
 	if(is_same(v1, v2)):
