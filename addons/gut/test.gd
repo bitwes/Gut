@@ -1,8 +1,6 @@
 class_name GutTest
 extends Node
 ## This is the base class for all test scripts.  Extend this...test the world!
-##
-## @ignore-uncommented
 
 
 var _compare = GutUtils.Comparator.new()
@@ -388,7 +386,7 @@ func assert_ne(got, not_expected, text=""):
 			_pass(disp)
 
 
-## Asserts that `got` is within the range of `expected` +/- `error_interval`.
+## Asserts that [param got] is within the range of [param expected] +/- [param error_interval].
 ## The upper and lower bounds are included in the check.  Verified to work with
 ## integers, floats, and Vector2.  Should work with anything that can be
 ## added/subtracted.
@@ -415,8 +413,8 @@ func assert_almost_eq(got, expected, error_interval, text=''):
 			_pass(disp)
 
 
-## This is the inverse of `assert_almost_eq`.  This will pass if `got` is
-## outside the range of `expected` +/- `error_interval`.
+## This is the inverse of [method assert_almost_eq].  This will pass if [param got] is
+## outside the range of [param not_expected] +/- [param error_interval].
 func assert_almost_ne(got, not_expected, error_interval, text=''):
 	var disp = "[" + _str_precision(got, 20) + "] expected to not equal [" + _str(not_expected) + "] +/- [" + str(error_interval) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, not_expected, text) and _do_datatypes_match__fail_if_not(got, error_interval, text)):
@@ -525,7 +523,7 @@ func assert_lte(got, expected, text=""):
 			_fail(disp)
 
 
-## asserts that got is `true`.  Does not assert truthiness, only boolean values
+## asserts that got is true.  Does not assert truthiness, only boolean values
 ## will pass.
 func assert_true(got, text=""):
 	if(typeof(got) == TYPE_BOOL):
@@ -638,9 +636,24 @@ func assert_does_not_have(obj, element, text=""):
 	else:
 		_pass(disp)
 
-# ------------------------------------------------------------------------------
-# Asserts that a file exists
-# ------------------------------------------------------------------------------
+
+## asserts a file exists at the specified path
+## [codeblock]
+##    func before_each():
+##        gut.file_touch('user://some_test_file')
+##
+##    func after_each():
+##        gut.file_delete('user://some_test_file')
+##
+##    func test_assert_file_exists():
+##        # Passing
+##        assert_file_exists('res://addons/gut/gut.gd')
+##        assert_file_exists('user://some_test_file')
+##
+##        # Failing
+##        assert_file_exists('user://file_does_not.exist')
+##        assert_file_exists('res://some_dir/another_dir/file_does_not.exist')
+## [/codeblock]
 func assert_file_exists(file_path):
 	var disp = 'expected [' + file_path + '] to exist.'
 	if(FileAccess.file_exists(file_path)):
@@ -648,9 +661,23 @@ func assert_file_exists(file_path):
 	else:
 		_fail(disp)
 
-# ------------------------------------------------------------------------------
-# Asserts that a file should not exist
-# ------------------------------------------------------------------------------
+
+## asserts a file does not exist at the specified path
+## [codeblock]
+##    func before_each():
+##        gut.file_touch('user://some_test_file')
+##
+##    func after_each():
+##        gut.file_delete('user://some_test_file')
+##
+##    func test_assert_file_does_not_exist():
+##        # Passing
+##        assert_file_does_not_exist('user://file_does_not.exist')
+##        assert_file_does_not_exist('res://some_dir/another_dir/file_does_not.exist')
+##
+##        # Failing
+##        assert_file_does_not_exist('res://addons/gut/gut.gd')
+## [/codeblock]
 func assert_file_does_not_exist(file_path):
 	var disp = 'expected [' + file_path + '] to NOT exist'
 	if(!FileAccess.file_exists(file_path)):
@@ -658,9 +685,23 @@ func assert_file_does_not_exist(file_path):
 	else:
 		_fail(disp)
 
-# ------------------------------------------------------------------------------
-# Asserts the specified file is empty
-# ------------------------------------------------------------------------------
+
+
+## asserts the specified file is empty
+## [codeblock]
+##    func before_each():
+##        gut.file_touch('user://some_test_file')
+##
+##    func after_each():
+##        gut.file_delete('user://some_test_file')
+##
+##    func test_assert_file_empty():
+##        # Passing
+##        assert_file_empty('user://some_test_file')
+##
+##        # Failing
+##        assert_file_empty('res://addons/gut/gut.gd')
+## [/codeblock]
 func assert_file_empty(file_path):
 	var disp = 'expected [' + file_path + '] to be empty'
 	if(FileAccess.file_exists(file_path) and gut.is_file_empty(file_path)):
@@ -668,9 +709,22 @@ func assert_file_empty(file_path):
 	else:
 		_fail(disp)
 
-# ------------------------------------------------------------------------------
-# Asserts the specified file is not empty
-# ------------------------------------------------------------------------------
+
+## Asserts the specified file is not empty
+## [codeblock]
+##    func before_each():
+##        gut.file_touch('user://some_test_file')
+##
+##    func after_each():
+##        gut.file_delete('user://some_test_file')
+##
+##    func test_assert_file_not_empty():
+##        # Passing
+##        assert_file_not_empty('res://addons/gut/gut.gd') # PASS
+##
+##        # Failing
+##        assert_file_not_empty('user://some_test_file') # FAIL
+## [/codeblock]
 func assert_file_not_empty(file_path):
 	var disp = 'expected [' + file_path + '] to contain data'
 	if(!gut.is_file_empty(file_path)):
@@ -678,9 +732,8 @@ func assert_file_not_empty(file_path):
 	else:
 		_fail(disp)
 
-# ------------------------------------------------------------------------------
-# Asserts the object has the specified method
-# ------------------------------------------------------------------------------
+
+## Asserts that the passed in object has a method named [param method].
 func assert_has_method(obj, method, text=''):
 	var disp = _str(obj) + ' should have method: ' + method
 	if(text != ''):
@@ -688,13 +741,13 @@ func assert_has_method(obj, method, text=''):
 	assert_true(obj.has_method(method), disp)
 
 
-# ------------------------------------------------------------------------------
-# Verifies the object has get and set methods for the property passed in.  The
-# property isn't tied to anything, just a name to be appended to the end of
-# get_ and set_.  Asserts the get_ and set_ methods exist, if not, it stops there.
-# If they exist then it asserts get_ returns the expected default then calls
-# set_ and asserts get_ has the value it was set to.
-# ------------------------------------------------------------------------------
+## This is meant to make testing public get/set methods for a member variable.  This was originally created for early Godot 3.x setter and getter methods.  See [method assert_property] for verifying Godot 4.x accessors.  This makes multiple assertions to verify:
+## [br]
+## [li]The object has a method called [code]get_<PROPERTY_NAME>[/code][/li]
+## [li]The object has a method called [code]set_<PROPERTY_NAME>[/code][/li]
+## [li]The method [code]get_<PROPERTY_NAME>[/code] returns the expected default value when first called.[/li]
+## [li]Once you set the property, the [code]get_<PROPERTY_NAME>[/code] returns the new value.[/li]
+## [br]
 func assert_accessors(obj, property, default, set_to):
 	var fail_count = _summary.failed
 	var get_func = 'get_' + property
@@ -734,9 +787,27 @@ func _find_object_property(obj, property_name, property_usage=null):
 				found = true
 	return result
 
-# ------------------------------------------------------------------------------
-# Asserts a class exports a variable.
-# ------------------------------------------------------------------------------
+## Asserts that [param obj] exports a property with the name
+## [param property_name] and a type of [param type].  The [param type] must be
+## one of the various Godot built-in [code]TYPE_[/code] constants.
+## [codeblock]
+##    class ExportClass:
+##        export var some_number = 5
+##        export(PackedScene) var some_scene
+##        var some_variable = 1
+##
+##    func test_assert_exports():
+##        var obj = ExportClass.new()
+##
+##        # Passing
+##        assert_exports(obj, "some_number", TYPE_INT)
+##        assert_exports(obj, "some_scene", TYPE_OBJECT)
+##
+##        # Failing
+##        assert_exports(obj, 'some_number', TYPE_VECTOR2)
+##        assert_exports(obj, 'some_scene', TYPE_AABB)
+##        assert_exports(obj, 'some_variable', TYPE_INT)
+## [/codeblock]
 func assert_exports(obj, property_name, type):
 	var disp = 'expected %s to have editor property [%s]' % [_str(obj), property_name]
 	var property = _find_object_property(obj, property_name, EDITOR_PROPERTY)
@@ -772,19 +843,51 @@ func _is_connected(signaler_obj, connect_to_obj, signal_name, method_name=""):
 			if(conn['signal'].get_name() == signal_name and conn['callable'].get_object() == connect_to_obj):
 				return true
 		return false
-# ------------------------------------------------------------------------------
-# Watch the signals for an object.  This must be called before you can make
-# any assertions about the signals themselves.
-# ------------------------------------------------------------------------------
+
+
+## This must be called in order to make assertions based on signals being
+## emitted.  __Right now, this only supports signals that are emitted with 9 or
+## less parameters.__  This can be extended but nine seemed like enough for now.
+## The Godot documentation suggests that the limit is four but in my testing
+## I found you can pass more.
+## [br]
+## This must be called in each test in which you want to make signal based
+## assertions in.  You can call it multiple times with different objects.
+## You should not call it multiple times with the same object in the same test.
+## The objects that are watched are cleared after each test (specifically right
+## before `teardown` is called).  Under the covers, Gut will connect to all the
+## signals an object has and it will track each time they fire.  You can then
+## use the following asserts and methods to verify things are acting correct.
 func watch_signals(object):
 	_signal_watcher.watch_signals(object)
 
-# ------------------------------------------------------------------------------
-# Asserts that an object is connected to a signal on another object
-#
-# This will fail with specific messages if the target object is not connected
-# to the specified signal on the source object.
-# ------------------------------------------------------------------------------
+
+## Asserts that `signaler_obj` is connected to `connect_to_obj` on signal `signal_name`.  The method that is connected is optional.  If `method_name` is supplied then this will pass only if the signal is connected to the  method.  If it is not provided then any connection to the signal will cause a pass.
+## [codeblock]
+##    class Signaler:
+##        signal the_signal
+##
+##    class Connector:
+##        func connect_this():
+##            pass
+##        func  other_method():
+##            pass
+##
+##    func test_assert_connected():
+##        var signaler = Signaler.new()
+##        var connector  = Connector.new()
+##        signaler.connect('the_signal', connector, 'connect_this')
+##
+##        # Passing
+##        assert_connected(signaler, connector, 'the_signal')
+##        assert_connected(signaler, connector, 'the_signal', 'connect_this')
+##
+##        # Failing
+##        var foo = Connector.new()
+##        assert_connected(signaler,  connector, 'the_signal', 'other_method')
+##        assert_connected(signaler, connector, 'other_signal')
+##        assert_connected(signaler, foo, 'the_signal')
+## [/codeblock]
 func assert_connected(signaler_obj, connect_to_obj, signal_name, method_name=""):
 	pass
 	var method_disp = ''
@@ -798,12 +901,11 @@ func assert_connected(signaler_obj, connect_to_obj, signal_name, method_name="")
 	else:
 		_fail(disp)
 
-# ------------------------------------------------------------------------------
-# Asserts that an object is not connected to a signal on another object
-#
-# This will fail with specific messages if the target object is connected
-# to the specified signal on the source object.
-# ------------------------------------------------------------------------------
+
+## Asserts that an object is not connected to a signal on another object
+## [br]
+## This will fail with specific messages if the target object is connected
+## to the specified signal on the source object.
 func assert_not_connected(signaler_obj, connect_to_obj, signal_name, method_name=""):
 	var method_disp = ''
 	if (method_name != ""):
@@ -816,12 +918,34 @@ func assert_not_connected(signaler_obj, connect_to_obj, signal_name, method_name
 	else:
 		_pass(disp)
 
-# ------------------------------------------------------------------------------
-# Asserts that a signal has been emitted at least once.
-#
-# This will fail with specific messages if the object is not being watched or
-# the object does not have the specified signal
-# ------------------------------------------------------------------------------
+
+## Assert that the specified object emitted the named signal.  You must call
+## [method watch_signals] and pass it the object that you are making assertions about.
+## This will fail if the object is not being watched or if the object does not
+## have the specified signal.  Since this will fail if the signal does not
+## exist, you can often skip using [method assert_has_signal].
+## [codeblock]
+##    class SignalObject:
+##        signal some_signal
+##        signal other_signal
+##
+##    func test_assert_signal_emitted():
+##        var obj = SignalObject.new()
+##
+##        watch_signals(obj)
+##        obj.emit_signal('some_signal')
+##
+##        ## Passing
+##        assert_signal_emitted(obj, 'some_signal')
+##
+##        ## Failing
+##        # Fails with specific message that the object does not have the signal
+##        assert_signal_emitted(obj, 'signal_does_not_exist')
+##        # Fails because the object passed is not being watched
+##        assert_signal_emitted(SignalObject.new(), 'some_signal')
+##        # Fails because the signal was not emitted
+##        assert_signal_emitted(obj, 'other_signal')
+## [/codeblock]
 func assert_signal_emitted(object, signal_name, text=""):
 	var disp = str('Expected object ', _str(object), ' to have emitted signal [', signal_name, ']:  ', text)
 	if(_can_make_signal_assertions(object, signal_name)):
@@ -830,12 +954,31 @@ func assert_signal_emitted(object, signal_name, text=""):
 		else:
 			_fail(_get_fail_msg_including_emitted_signals(disp, object))
 
-# ------------------------------------------------------------------------------
-# Asserts that a signal has not been emitted.
-#
-# This will fail with specific messages if the object is not being watched or
-# the object does not have the specified signal
-# ------------------------------------------------------------------------------
+
+## This works opposite of `assert_signal_emitted`.  This will fail if the object
+## is not being watched or if the object does not have the signal.
+## [codeblock]
+##    class SignalObject:
+##        signal some_signal
+##        signal other_signal
+##
+##    func test_assert_signal_not_emitted():
+##        var obj = SignalObject.new()
+##
+##        watch_signals(obj)
+##        obj.emit_signal('some_signal')
+##
+##        # Passing
+##        assert_signal_not_emitted(obj, 'other_signal')
+##
+##        # Failing
+##        # Fails with specific message that the object does not have the signal
+##        assert_signal_not_emitted(obj, 'signal_does_not_exist')
+##        # Fails because the object passed is not being watched
+##        assert_signal_not_emitted(SignalObject.new(), 'some_signal')
+##        # Fails because the signal was emitted
+##        assert_signal_not_emitted(obj, 'some_signal')
+## [/codeblock]
 func assert_signal_not_emitted(object, signal_name, text=""):
 	var disp = str('Expected object ', _str(object), ' to NOT emit signal [', signal_name, ']:  ', text)
 	if(_can_make_signal_assertions(object, signal_name)):
@@ -844,15 +987,46 @@ func assert_signal_not_emitted(object, signal_name, text=""):
 		else:
 			_pass(disp)
 
-# ------------------------------------------------------------------------------
-# Asserts that a signal was fired with the specified parameters.  The expected
-# parameters should be passed in as an array.  An optional index can be passed
-# when a signal has fired more than once.  The default is to retrieve the most
-# recent emission of the signal.
-#
-# This will fail with specific messages if the object is not being watched or
-# the object does not have the specified signal
-# ------------------------------------------------------------------------------
+
+## Asserts that a signal was fired with the specified parameters.  The expected
+## parameters should be passed in as an array.  An optional index can be passed
+## when a signal has fired more than once.  The default is to retrieve the most
+## recent emission of the signal.
+## [br]
+## This will fail with specific messages if the object is not being watched or
+## the object does not have the specified signal
+## [codeblock]
+##    class SignalObject:
+##        signal some_signal
+##        signal other_signal
+##
+##    func test_assert_signal_emitted_with_parameters():
+##        var obj = SignalObject.new()
+##
+##        watch_signals(obj)
+##        # emit the signal 3 times to illustrate how the index works in
+##        # assert_signal_emitted_with_parameters
+##        obj.emit_signal('some_signal', 1, 2, 3)
+##        obj.emit_signal('some_signal', 'a', 'b', 'c')
+##        obj.emit_signal('some_signal', 'one', 'two', 'three')
+##
+##        # Passing
+##        # Passes b/c the default parameters to check are the last emission of
+##        # the signal
+##        assert_signal_emitted_with_parameters(obj, 'some_signal', ['one', 'two', 'three'])
+##        # Passes because the parameters match the specified emission based on index.
+##        assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 0)
+##
+##        # Failing
+##        # Fails with specific message that the object does not have the signal
+##        assert_signal_emitted_with_parameters(obj, 'signal_does_not_exist', [])
+##        # Fails because the object passed is not being watched
+##        assert_signal_emitted_with_parameters(SignalObject.new(), 'some_signal', [])
+##        # Fails because parameters do not match latest emission
+##        assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3])
+##        # Fails because the parameters for the specified index do not match
+##        assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 1)
+## [/codeblock]
 func assert_signal_emitted_with_parameters(object, signal_name, parameters, index=-1):
 	if(typeof(parameters) != TYPE_ARRAY):
 		_lgr.error("The expected parameters must be wrapped in an array, you passed:  " + _str(parameters))
@@ -872,12 +1046,40 @@ func assert_signal_emitted_with_parameters(object, signal_name, parameters, inde
 			var text = str('Object ', object, ' did not emit signal [', signal_name, ']')
 			_fail(_get_fail_msg_including_emitted_signals(text, object))
 
-# ------------------------------------------------------------------------------
-# Assert that a signal has been emitted a specific number of times.
-#
-# This will fail with specific messages if the object is not being watched or
-# the object does not have the specified signal
-# ------------------------------------------------------------------------------
+
+## Asserts that a signal fired a specific number of times.
+## [codeblock]
+##    class SignalObject:
+##        signal some_signal
+##        signal other_signal
+##
+##    func test_assert_signal_emit_count():
+##        var obj_a = SignalObject.new()
+##        var obj_b = SignalObject.new()
+##
+##        watch_signals(obj_a)
+##        watch_signals(obj_b)
+##        obj_a.emit_signal('some_signal')
+##        obj_a.emit_signal('some_signal')
+##
+##        obj_b.emit_signal('some_signal')
+##        obj_b.emit_signal('other_signal')
+##
+##        # Passing
+##        assert_signal_emit_count(obj_a, 'some_signal', 2)
+##        assert_signal_emit_count(obj_a, 'other_signal', 0)
+##
+##        assert_signal_emit_count(obj_b, 'other_signal', 1)
+##
+##        # Failing
+##        # Fails with specific message that the object does not have the signal
+##        assert_signal_emit_count(obj_a, 'signal_does_not_exist', 99)
+##        # Fails because the object passed is not being watched
+##        assert_signal_emit_count(SignalObject.new(), 'some_signal', 99)
+##        # The following fail for obvious reasons
+##        assert_signal_emit_count(obj_a, 'some_signal', 0)
+##        assert_signal_emit_count(obj_b, 'other_signal', 283)
+## [/codeblock]
 func assert_signal_emit_count(object, signal_name, times, text=""):
 	if(_can_make_signal_assertions(object, signal_name)):
 		var count = _signal_watcher.get_emit_count(object, signal_name)
@@ -887,9 +1089,33 @@ func assert_signal_emit_count(object, signal_name, times, text=""):
 		else:
 			_fail(_get_fail_msg_including_emitted_signals(disp, object))
 
-# ------------------------------------------------------------------------------
-# Assert that the passed in object has the specified signal
-# ------------------------------------------------------------------------------
+
+## Asserts the passed in object has a signal with the specified name.  It
+## should be noted that all the asserts that verify a signal was/wasn't emitted
+## will first check that the object has the signal being asserted against.  If
+## it does not, a specific failure message will be given.  This means you can
+## usually skip the step of specifically verifying that the object has a signal
+## and move on to making sure it emits the signal correctly.
+## [codeblock]
+##    class SignalObject:
+##        signal some_signal
+##        signal other_signal
+##
+##    func test_assert_has_signal():
+##        var obj = SignalObject.new()
+##
+##        ## Passing
+##        assert_has_signal(obj, 'some_signal')
+##        assert_has_signal(obj, 'other_signal')
+##
+##        ## Failing
+##        assert_has_signal(obj, 'not_a real SIGNAL')
+##        assert_has_signal(obj, 'yea, this one doesnt exist either')
+##        # Fails because the signal is not a user signal.  Node2D does have the
+##        # specified signal but it can't be checked this way.  It could be watched
+##        # and asserted that it fired though.
+##        assert_has_signal(Node2D.new(), 'exit_tree')
+## [/codeblock]
 func assert_has_signal(object, signal_name, text=""):
 	var disp = str('Expected object ', _str(object), ' to have signal [', signal_name, ']:  ', text)
 	if(_signal_watcher.does_object_have_signal(object, signal_name)):
@@ -955,13 +1181,32 @@ func get_call_count(object, method_name=null, parameters=null):
 	return gut.get_spy().call_count(converted.object, converted.method_name, converted.arguments)
 
 
-# ------------------------------------------------------------------------------
-# Assert that object is an instance of a_class
-# ------------------------------------------------------------------------------
+## Asserts that [param object] extends [param a_class].  object must be an instance of an
+## object.  It cannot be any of the built in classes like Array or Int or Float.
+## [param a_class] must be a class, it can be loaded via load, a GDNative class such as
+## Node or Label or anything else.
+## [codeblock]
+##    # Passing
+##    assert_is(Node2D.new(), Node2D)
+##    assert_is(Label.new(), CanvasItem)
+##    assert_is(SubClass.new(), BaseClass)
+##    # Since this is a test script that inherits from test.gd, so
+##    # this passes.  It's not obvious w/o seeing the whole script
+##    # so I'm telling you.  You'll just have to trust me.
+##    assert_is(self, load('res://addons/gut/test.gd'))
+##
+##    var Gut = load('res://addons/gut/gut.gd')
+##    var a_gut = Gut.new()
+##    assert_is(a_gut, Gut)
+##
+##    # Failing
+##    assert_is(Node2D.new(), Node2D.new())
+##    assert_is(BaseClass.new(), SubClass)
+##    assert_is('a', 'b')
+##    assert_is([], Node)
+## [/codeblock]
 func assert_is(object, a_class, text=''):
 	var disp  = ''#var disp = str('Expected [', _str(object), '] to be type of [', a_class, ']: ', text)
-	var NATIVE_CLASS = 'GDScriptNativeClass'
-	var GDSCRIPT_CLASS = 'GDScript'
 	var bad_param_2 = 'Parameter 2 must be a Class (like Node2D or Label).  You passed '
 
 	if(typeof(object) != TYPE_OBJECT):
@@ -987,8 +1232,19 @@ func _get_typeof_string(the_type):
 		to_return += str(the_type)
 	return to_return
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
+
+## Asserts that [param object] is the the [param type] specified.  [param type]
+## should be one of the Godot [code]TYPE_[/code] constants.
+## [codeblock]
+##    # Passing
+##    var c = Color(1, 1, 1, 1)
+##    gr.test.assert_typeof(c, TYPE_COLOR)
+##    assert_pass(gr.test)
+##
+##    # Failing
+##    gr.test.assert_typeof('some string', TYPE_INT)
+##    assert_fail(gr.test)
+## [/codeblock]
 func assert_typeof(object, type, text=''):
 	var disp = str('Expected [typeof(', object, ') = ')
 	disp += _get_typeof_string(typeof(object))
@@ -1000,8 +1256,7 @@ func assert_typeof(object, type, text=''):
 	else:
 		_fail(disp)
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
+## The inverse of [method assert_typeof]
 func assert_not_typeof(object, type, text=''):
 	var disp = str('Expected [typeof(', object, ') = ')
 	disp += _get_typeof_string(typeof(object))
@@ -1046,10 +1301,19 @@ func assert_string_contains(text, search, match_case=true):
 		else:
 			_pass(disp)
 
-# ------------------------------------------------------------------------------
-# Assert that text starts with given search string.
-# match_case flag determines case sensitivity.
-# ------------------------------------------------------------------------------
+## Assert that text starts with search.  Can perform case insensitive check
+## by passing false for match_case
+## [codeblock]
+##    # Passing
+##    assert_string_starts_with('abc 123', 'a')
+##    assert_string_starts_with('abc 123', 'ABC', false)
+##    assert_string_starts_with('abc 123', 'abc 123')
+##
+##    ## Failing
+##    assert_string_starts_with('abc 123', 'z')
+##    assert_string_starts_with('abc 123', 'ABC')
+##    assert_string_starts_with('abc 123', 'abc 1234')
+## [/codeblock]
 func assert_string_starts_with(text, search, match_case=true):
 	var empty_search = 'Expected text and search strings to be non-empty. You passed \'%s\' and \'%s\'.'
 	var disp = 'Expected \'%s\' to start with \'%s\', match_case=%s' % [text, search, match_case]
@@ -1067,10 +1331,18 @@ func assert_string_starts_with(text, search, match_case=true):
 			_fail(disp)
 
 
-# ------------------------------------------------------------------------------
-# Assert that text ends with given search string.
-# match_case flag determines case sensitivity.
-# ------------------------------------------------------------------------------
+## Assert that [param text] ends with [param search].  Can perform case insensitive check by passing false for [param match_case]
+## [codeblock]
+##    ## Passing
+##    assert_string_ends_with('abc 123', '123')
+##    assert_string_ends_with('abc 123', 'C 123', false)
+##    assert_string_ends_with('abc 123', 'abc 123')
+##
+##    ## Failing
+##    assert_string_ends_with('abc 123', '1234')
+##    assert_string_ends_with('abc 123', 'C 123')
+##    assert_string_ends_with('abc 123', 'nope')
+## [/codeblock]
 func assert_string_ends_with(text, search, match_case=true):
 	var empty_search = 'Expected text and search strings to be non-empty. You passed \'%s\' and \'%s\'.'
 	var disp = 'Expected \'%s\' to end with \'%s\', match_case=%s' % [text, search, match_case]
@@ -1096,9 +1368,13 @@ func assert_string_ends_with(text, search, match_case=true):
 ## Can be called with a Callabe instead of specifying the object, method_name,
 ## and parameters.  The Callable's object must be a double.  Bound arguments
 ## will be used to match calls based on values passed to the method.
+## [br]
+## See also: [wiki]Doubles[/wiki], [wiki]Spies[/wiki]
 ## [br][br]
 ## [b]Examples[/b]
 ## [codeblock]
+##    var my_double = double(Foobar).new()
+##    ...
 ##    assert_called(my_double, 'foo', [1, 2, 3])
 ##    assert_called(my_double.foo.bind(1, 2, 3))
 ## [/codeblock]
@@ -1132,6 +1408,8 @@ func assert_called(inst, method_name=null, parameters=null):
 ## Can be called with a Callabe instead of specifying the object, method_name,
 ## and parameters.  The Callable's object must be a double.  Bound arguments
 ## will be used to match calls based on values passed to the method.
+## [br]
+## See also: [wiki]Doubles[/wiki], [wiki]Spies[/wiki]
 ## [br][br]
 ## [b]Examples[/b]
 ## [codeblock]
@@ -1173,7 +1451,8 @@ func assert_call_count(inst, method_name, expected_count, parameters=null):
 ## Asserts the the method of a double was called an expected number of times.
 ## If any arguments are bound to the callable then only calls with matching
 ## arguments will be counted.
-##
+## [br]
+## See also: [wiki]Doubles[/wiki], [wiki]Spies[/wiki]
 ## [br][br]
 ## [b]Examples[/b]
 ## [codeblock]
@@ -1217,30 +1496,35 @@ func assert_not_null(got, text=''):
 	else:
 		_pass(disp)
 
-# -----------------------------------------------------------------------------
-# Asserts object has been freed from memory
-# We pass in a title (since if it is freed, we lost all identity data)
-# -----------------------------------------------------------------------------
+## Asserts that the passed in object has been freed.  This assertion requires
+## that  you pass in some text in the form of a title since, if the object is
+## freed, we won't have anything to convert to a string to put in the output
+## statement.
+## [br]
+## [b]Note[/b] that this currently does not detect if a node has been queued free.
+## [codeblock]
+##    var obj = Node.new()
+##    obj.free()
+##    test.assert_freed(obj, "New Node")
+## [/codeblock]
 func assert_freed(obj, title='something'):
 	var disp = title
 	if(is_instance_valid(obj)):
 		disp = _strutils.type2str(obj) + title
 	assert_true(not is_instance_valid(obj), "Expected [%s] to be freed" % disp)
 
-# ------------------------------------------------------------------------------
-# Asserts Object has not been freed from memory
-# -----------------------------------------------------------------------------
+
+## The inverse of [method assert_freed]
 func assert_not_freed(obj, title='something'):
 	var disp = title
 	if(is_instance_valid(obj)):
 		disp = _strutils.type2str(obj) + title
 	assert_true(is_instance_valid(obj), "Expected [%s] to not be freed" % disp)
 
-# ------------------------------------------------------------------------------
-# Asserts that the current test has not introduced any new orphans.  This only
-# applies to the test code that preceedes a call to this method so it should be
-# the last thing your test does.
-# ------------------------------------------------------------------------------
+
+## This method will assert that no orphaned nodes have been introduced by the
+## test when the assert is executed.  See the [wiki]Memory-Management[/wiki]
+## page for more information.
 func assert_no_new_orphans(text=''):
 	var count = gut.get_orphan_counter().get_orphans_since('test')
 	var msg = ''
@@ -1318,12 +1602,11 @@ func _warn_for_public_accessors(obj, property_name):
 	if(public_accessors.size() > 0):
 		_lgr.warn (str('Public accessors ', public_accessors, ' found for property ', property_name))
 
-# ------------------------------------------------------------------------------
-# Assumes backing varible with be _<property_name>.  This will perform all the
-# asserts of assert_property.  Then this will set the value through the setter
-# and check the backing variable value.  It will then reset throught the setter
-# and set the backing variable and check the getter.
-# ------------------------------------------------------------------------------
+
+## Assumes backing varible with be _<property_name>.  This will perform all the
+## asserts of assert_property.  Then this will set the value through the setter
+## and check the backing variable value.  It will then reset throught the setter
+## and set the backing variable and check the getter.
 func assert_property_with_backing_variable(obj, property_name, default_value, new_value, backed_by_name=null):
 	var setter_name = str('@', property_name, '_setter')
 	var getter_name = str('@', property_name, '_getter')
@@ -1354,14 +1637,11 @@ func assert_property_with_backing_variable(obj, property_name, default_value, ne
 	_warn_for_public_accessors(obj, property_name)
 
 
-# ------------------------------------------------------------------------------
-# This will verify that the method has a setter and getter for the property.
-# It will then use the getter to check the default.  Then use the
-# setter with new_value and verify the getter returns the same value.
-# ------------------------------------------------------------------------------
+
+## This will verify that the method has a setter and getter for the property.
+## It will then use the getter to check the default.  Then use the
+## setter with new_value and verify the getter returns the same value.
 func assert_property(obj, property_name, default_value, new_value) -> void:
-	var free_me = null
-	var resource = null
 	var pre_fail_count = get_fail_count()
 
 	var setter_name = str('@', property_name, '_setter')
@@ -1851,7 +2131,9 @@ func compare_deep(v1, v2, max_differences=null):
 	return result
 
 
-## Performs a deep compare and asserts the  values are equal
+## Performs a deep comparison between two arrays or dictionaries and asserts
+## they are equal.  If they are not equal then a formatted list of differences
+## are displayed.  See [wiki]Comparing-Things[/wiki] for more information.
 func assert_eq_deep(v1, v2):
 	var result = compare_deep(v1, v2)
 	if(result.are_equal):
@@ -1860,7 +2142,8 @@ func assert_eq_deep(v1, v2):
 		_fail(result.summary)
 
 
-## Performs a deep compare and asserts the values are not equal
+## Performs a deep comparison of two arrays or dictionaries and asserts they
+## are not equal.  See [wiki]Comparing-Things[/wiki] for more information.
 func assert_ne_deep(v1, v2):
 	var result = compare_deep(v1, v2)
 	if(!result.are_equal):
@@ -1869,7 +2152,7 @@ func assert_ne_deep(v1, v2):
 		_fail(result.get_short_summary())
 
 
-## Assert v1 and v2 are the same using `is_same`.  See @GlobalScope.is_same.
+## Assert v1 and v2 are the same using [code]is_same[/code].  See @GlobalScope.is_same.
 func assert_same(v1, v2, text=''):
 	var disp = "[" + _str(v1) + "] expected to be same as  [" + _str(v2) + "]:  " + text
 	if(is_same(v1, v2)):
@@ -1878,7 +2161,7 @@ func assert_same(v1, v2, text=''):
 		_fail(disp)
 
 
-## Assert using v1 and v2 are not the same using `is_same`.  See @GlobalScope.is_same.
+## Assert using v1 and v2 are not the same using [code]is_same[/code].  See @GlobalScope.is_same.
 func assert_not_same(v1, v2, text=''):
 	var disp = "[" + _str(v1) + "] expected to not be same as  [" + _str(v2) + "]:  " + text
 	if(is_same(v1, v2)):

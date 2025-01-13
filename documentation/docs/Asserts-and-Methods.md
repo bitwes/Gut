@@ -55,844 +55,11 @@ func after_all():
 
 
 
-### assert_string_starts_with
-`assert_string_starts_with(text, search, match_case=true)`<br>
-Assert that `text` starts with `search`.  Can perform case insensitive check by passing false for `match_case`
-```gdscript
-func test_string_starts_with():
-	gut.p('-- passing --')
-	assert_string_starts_with('abc 123', 'a')
-	assert_string_starts_with('abc 123', 'ABC', false)
-	assert_string_starts_with('abc 123', 'abc 123')
 
-	gut.p('-- failing --')
-	assert_string_starts_with('abc 123', 'z')
-	assert_string_starts_with('abc 123', 'ABC')
-	assert_string_starts_with('abc 123', 'abc 1234')
-```
 
-### assert_string_ends_with
-`assert_string_ends_with(text, search, match_case=true)`<br>
-Assert that `text` ends with `search`.  Can perform case insensitive check by passing false for `match_case`
-```gdscript
-func test_string_ends_with():
-	gut.p('-- passing --')
-	assert_string_ends_with('abc 123', '123')
-	assert_string_ends_with('abc 123', 'C 123', false)
-	assert_string_ends_with('abc 123', 'abc 123')
 
-	gut.p('-- failing --')
-	assert_string_ends_with('abc 123', '1234')
-	assert_string_ends_with('abc 123', 'C 123')
-	assert_string_ends_with('abc 123', 'nope')
-```
 
-### assert_has_signal
-`assert_has_signal(object, signal_name)`<br>
-Asserts the passed in object has a signal with the specified name.  It should be noted that all the asserts that verify a signal was/wasn't emitted will first check that the object has the signal being asserted against.  If it does not, a specific failure message will be given.  This means you can usually skip the step of specifically verifying that the object has a signal and move on to making sure it emits the signal correctly.
-``` gdscript
-class SignalObject:
-	func _init():
-		add_user_signal('some_signal')
-		add_user_signal('other_signal')
 
-func test_assert_has_signal():
-	var obj = SignalObject.new()
-
-	gut.p('-- passing --')
-	assert_has_signal(obj, 'some_signal')
-	assert_has_signal(obj, 'other_signal')
-
-	gut.p('-- failing --')
-	assert_has_signal(obj, 'not_a real SIGNAL')
-	assert_has_signal(obj, 'yea, this one doesnt exist either')
-	# Fails because the signal is not a user signal.  Node2D does have the
-	# specified signal but it can't be checked this way.  It could be watched
-	# and asserted that it fired though.
-	assert_has_signal(Node2D.new(), 'exit_tree')
-
-```
-### assert_connected
-`assert_connected(signaler_obj, connect_to_obj, signal_name, method_name="")`<br>
-Asserts that `signaler_obj` is connected to `connect_to_obj` on signal `signal_name`.  The method that is connected is optional.  If `method_name` is supplied then this will pass only if the signal is connected to the  method.  If it is not provided then any connection to the signal will cause a pass.
-``` gdscript
-class Signaler:
-	signal the_signal
-
-class Connector:
-	func connect_this():
-		pass
-	func  other_method():
-		pass
-
-func test_assert_connected():
-	var signaler = Signaler.new()
-	var connector  = Connector.new()
-	signaler.connect('the_signal', connector, 'connect_this')
-
-	# Passing
-	assert_connected(signaler, connector, 'the_signal')
-	assert_connected(signaler, connector, 'the_signal', 'connect_this')
-
-	# Failing
-	var foo = Connector.new()
-	assert_connected(signaler,  connector, 'the_signal', 'other_method')
-	assert_connected(signaler, connector, 'other_signal')
-	assert_connected(signaler, foo, 'the_signal')
-```
-### assert_not_connected
-`assert_not_connected(signaler_obj, connect_to_obj, signal_name, method_name="")`<br>
-The inverse of `assert_connected`.
-
-### watch_signals(object)
-``<br>
-This must be called in order to make assertions based on signals being emitted.  __Right now, this only supports signals that are emitted with 9 or less parameters.__  This can be extended but nine seemed like enough for now.  The Godot documentation suggests that the limit is four but in my testing I found you can pass more.
-
-This must be called in each test in which you want to make signal based assertions in.  You can call it multiple times with different objects.   You should not call it multiple times with the same object in the same test.  The objects that are watched are cleared after each test (specifically right before `teardown` is called).  Under the covers, Gut will connect to all the signals an object has and it will track each time they fire.  You can then use the following asserts and methods to verify things are acting correct.
-
-### assert_signal_emitted
-`assert_signal_emitted(object, signal_name)`<br>
-Assert that the specified object emitted the named signal.  You must call `watch_signals` and pass it the object that you are making assertions about.  This will fail if the object is not being watched or if the object does not have the specified signal.  Since this will fail if the signal does not exist, you can often skip using `assert_has_signal`.
-``` gdscript
-class SignalObject:
-	func _init():
-		add_user_signal('some_signal')
-		add_user_signal('other_signal')
-
-func test_assert_signal_emitted():
-	var obj = SignalObject.new()
-
-	watch_signals(obj)
-	obj.emit_signal('some_signal')
-
-	gut.p('-- passing --')
-	assert_signal_emitted(obj, 'some_signal')
-
-	gut.p('-- failing --')
-	# Fails with specific message that the object does not have the signal
-	assert_signal_emitted(obj, 'signal_does_not_exist')
-	# Fails because the object passed is not being watched
-	assert_signal_emitted(SignalObject.new(), 'some_signal')
-	# Fails because the signal was not emitted
-	assert_signal_emitted(obj, 'other_signal')
-```
-### assert_signal_not_emitted
-`assert_signal_not_emitted(object, signal_name)`<br>
-This works opposite of `assert_signal_emitted`.  This will fail if the object is not being watched or if the object does not have the signal.
-``` gdscript
-class SignalObject:
-	func _init():
-		add_user_signal('some_signal')
-		add_user_signal('other_signal')
-
-func test_assert_signal_not_emitted():
-	var obj = SignalObject.new()
-
-	watch_signals(obj)
-	obj.emit_signal('some_signal')
-
-	gut.p('-- passing --')
-	assert_signal_not_emitted(obj, 'other_signal')
-
-	gut.p('-- failing --')
-	# Fails with specific message that the object does not have the signal
-	assert_signal_not_emitted(obj, 'signal_does_not_exist')
-	# Fails because the object passed is not being watched
-	assert_signal_not_emitted(SignalObject.new(), 'some_signal')
-	# Fails because the signal was emitted
-	assert_signal_not_emitted(obj, 'some_signal')
-```
-### assert_signal_emitted_with_parameters
-`assert_signal_emitted_with_parameters(object, signal_name, parameters, index=-1)`<br>
-Asserts that a signal was fired with the specified parameters.  The expected parameters should be passed in as an array.  An optional index can be passed when a signal has fired more than once.  The default is to retrieve the most recent emission of the signal.
-
-This will fail with specific messages if the object is not being watched or the object does not have the specified signal
-``` gdscript
-class SignalObject:
-	func _init():
-		add_user_signal('some_signal')
-		add_user_signal('other_signal')
-
-func test_assert_signal_emitted_with_parameters():
-	var obj = SignalObject.new()
-
-	watch_signals(obj)
-	# emit the signal 3 times to illustrate how the index works in
-	# assert_signal_emitted_with_parameters
-	obj.emit_signal('some_signal', 1, 2, 3)
-	obj.emit_signal('some_signal', 'a', 'b', 'c')
-	obj.emit_signal('some_signal', 'one', 'two', 'three')
-
-	gut.p('-- passing --')
-	# Passes b/c the default parameters to check are the last emission of
-	# the signal
-	assert_signal_emitted_with_parameters(obj, 'some_signal', ['one', 'two', 'three'])
-	# Passes because the parameters match the specified emission based on index.
-	assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 0)
-
-	gut.p('-- failing --')
-	# Fails with specific message that the object does not have the signal
-	assert_signal_emitted_with_parameters(obj, 'signal_does_not_exist', [])
-	# Fails because the object passed is not being watched
-	assert_signal_emitted_with_parameters(SignalObject.new(), 'some_signal', [])
-	# Fails because parameters do not match latest emission
-	assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3])
-	# Fails because the parameters for the specified index do not match
-	assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 1)
-```
-### assert_signal_emit_count
-`assert_signal_emit_count(object, signal_name)`<br>
-Asserts that a signal fired a specific number of times.
-
-``` gdscript
-class SignalObject:
-	func _init():
-		add_user_signal('some_signal')
-		add_user_signal('other_signal')
-
-func test_assert_signal_emit_count():
-	var obj_a = SignalObject.new()
-	var obj_b = SignalObject.new()
-
-	watch_signals(obj_a)
-	watch_signals(obj_b)
-	obj_a.emit_signal('some_signal')
-	obj_a.emit_signal('some_signal')
-
-	obj_b.emit_signal('some_signal')
-	obj_b.emit_signal('other_signal')
-
-	gut.p('-- passing --')
-	assert_signal_emit_count(obj_a, 'some_signal', 2)
-	assert_signal_emit_count(obj_a, 'other_signal', 0)
-
-	assert_signal_emit_count(obj_b, 'other_signal', 1)
-
-	gut.p('-- failing --')
-	# Fails with specific message that the object does not have the signal
-	assert_signal_emit_count(obj_a, 'signal_does_not_exist', 99)
-	# Fails because the object passed is not being watched
-	assert_signal_emit_count(SignalObject.new(), 'some_signal', 99)
-	# The following fail for obvious reasons
-	assert_signal_emit_count(obj_a, 'some_signal', 0)
-	assert_signal_emit_count(obj_b, 'other_signal', 283)
-```
-
-### assert_file_exists
-`assert_file_exists(file_path)`<br>
-asserts a file exists at the specified path
-``` gdscript
-func before_each():
-	gut.file_touch('user://some_test_file')
-
-func after_each():
-	gut.file_delete('user://some_test_file')
-
-func test_assert_file_exists():
-	gut.p('-- passing --')
-	assert_file_exists('res://addons/gut/gut.gd') # PASS
-	assert_file_exists('user://some_test_file') # PASS
-
-	gut.p('-- failing --')
-	assert_file_exists('user://file_does_not.exist') # FAIL
-	assert_file_exists('res://some_dir/another_dir/file_does_not.exist') # FAIL
-```
-### assert_file_does_not_exist
-`assert_file_does_not_exist(file_path)`<br>
-asserts a file does not exist at the specified path
-``` gdscript
-func before_each():
-	gut.file_touch('user://some_test_file')
-
-func after_each():
-	gut.file_delete('user://some_test_file')
-
-func test_assert_file_does_not_exist():
-	gut.p('-- passing --')
-	assert_file_does_not_exist('user://file_does_not.exist') # PASS
-	assert_file_does_not_exist('res://some_dir/another_dir/file_does_not.exist') # PASS
-
-	gut.p('-- failing --')
-	assert_file_does_not_exist('res://addons/gut/gut.gd') # FAIL
-```
-
-### assert_file_empty
-`assert_file_empty(file_path)`<br>
-asserts the specified file is empty
-``` gdscript
-func before_each():
-	gut.file_touch('user://some_test_file')
-
-func after_each():
-	gut.file_delete('user://some_test_file')
-
-func test_assert_file_empty():
-	gut.p('-- passing --')
-	assert_file_empty('user://some_test_file') # PASS
-
-	gut.p('-- failing --')
-	assert_file_empty('res://addons/gut/gut.gd') # FAIL
-```
-
-### assert_file_not_empty
-`assert_file_not_empty(file_path)`<br>
-asserts the specified file is not empty
-``` gdscript
-func before_each():
-	gut.file_touch('user://some_test_file')
-
-func after_each():
-	gut.file_delete('user://some_test_file')
-
-func test_assert_file_not_empty():
-	gut.p('-- passing --')
-	assert_file_not_empty('res://addons/gut/gut.gd') # PASS
-
-	gut.p('-- failing --')
-	assert_file_not_empty('user://some_test_file') # FAIL
-```
-
-### assert_is
-`assert_is(object, a_class, text)`<br>
-Asserts that "object" extends "a_class".  object must be an instance of an object.  It cannot be any of the built in classes like Array or Int or Float.  a_class must be a class, it can be loaded via load, a GDNative class such as Node or Label or anything else.
-
-``` gdscript
-func test_assert_is():
-	gut.p('-- passing --')
-	assert_is(Node2D.new(), Node2D)
-	assert_is(Label.new(), CanvasItem)
-	assert_is(SubClass.new(), BaseClass)
-	# Since this is a test script that inherits from test.gd, so
-	# this passes.  It's not obvious w/o seeing the whole script
-	# so I'm telling you.  You'll just have to trust me.
-	assert_is(self, load('res://addons/gut/test.gd'))
-
-	var Gut = load('res://addons/gut/gut.gd')
-	var a_gut = Gut.new()
-	assert_is(a_gut, Gut)
-
-	gut.p('-- failing --')
-	assert_is(Node2D.new(), Node2D.new())
-	assert_is(BaseClass.new(), SubClass)
-	assert_is('a', 'b')
-	assert_is([], Node)
-```
-
-### assert_typeof
-`assert_typeof(object, type, text='')`<br>
-Asserts that `object` is the the `type` specified.  `type` should be one of the Godot `TYPE_` constants.
-``` gdscript
-func test_assert_typeof():
-	gut.p('-- passing --')
-	var c = Color(1, 1, 1, 1)
-	gr.test.assert_typeof(c, TYPE_COLOR)
-	assert_pass(gr.test)
-
-	gut.p('-- failing --')
-	gr.test.assert_typeof('some string', TYPE_INT)
-	assert_fail(gr.test)
-```
-
-### assert_not_typeof
-`assert_not_typeof(object, type, text='')`<br>
-The inverse of `assert_typeof`
-
-### assert_freed
-`assert_freed(obj, text)`<br>
-Asserts that the passed in object has been freed.  This assertion requires that  you pass in some text in the form of a title since, if the object is freed, we won't have anything to convert to a string to put in the output statement.
-
-Note that this currently does not detect if a node has been queued free.
-``` gdscript
-func test_object_is_freed_should_pass():
-	var obj = Node.new()
-	obj.free()
-	test.assert_freed(obj, "New Node")
-```
-
-### assert_not_freed
-`assert_not_freed(obj, text)`<br>
-The inverse of `assert_freed`
-
-``` gdscript
-func test_object_is_not_freed_should_pass():
-	var obj = Node.new()
-	assert_not_freed(obj, "New Node")
-
-func test_queued_free_is_not_freed():
-	var obj = Node.new()
-	add_child(obj)
-	obj.queue_free()
-	assert_not_freed(obj, "New Node")
-```
-
-### assert_exports
-`assert_exports(obj, property_name, type)`<br>
-Asserts that `obj` exports a property with the name `property_name` and a type of `type`.  The `type` must be one of the various Godot built-in `TYPE_` constants.
-
-``` gdscript
-class ExportClass:
-	export var some_number = 5
-	export(PackedScene) var some_scene
-	var some_variable = 1
-
-func test_assert_exports():
-	var obj = ExportClass.new()
-
-	gut.p('-- passing --')
-	assert_exports(obj, "some_number", TYPE_INT)
-	assert_exports(obj, "some_scene", TYPE_OBJECT)
-
-	gut.p('-- failing --')
-	assert_exports(obj, 'some_number', TYPE_VECTOR2)
-	assert_exports(obj, 'some_scene', TYPE_AABB)
-	assert_exports(obj, 'some_variable', TYPE_INT)
-```
-
-### assert_called
-`assert_called(inst, method_name, parameters=null)`<br>
-This assertion is is one of the ways Gut implements Spies.  It requires that you pass it an instance of a "doubled" object.  An instance created with `double` will record when a method it has is called.  You can then make assertions based on this.
-
-This assert will check the object to see if a call to the specified method (optionally with parameters) was called over the course of the test.  If it finds a match this test will `pass`, if not it will `fail`.
-
-The `parameters` parameter is an array of values that you expect to have been passed to `method_name`.  If you do not specify any parameters then any call to `method_name` will match and the assert will `pass`.  If you specify parameters then all the parameter values must match.  You must specify all parameters the method takes, even if they have defaults.  Gut is not able (yet?) to fill in default values.
-
-__Methods that are inherited from built-in parent classes are not yet recorded.  For example, you cannot make "called" assertions on methods like `set_position` unless your sub-class specifically implements it.  But since those methods retain their built-in functionality, you can just make normal assertions on them.__
-
-``` gdscript
-# Given the following class located at 'res://test/doubler_test_objects/double_extends_node2d.gd'
-# --------------------
-	extends Node2D
-	var _value = 0
-
-	func get_value():
-	    return _value
-	func set_value(val):
-	    _value = val
-	func has_one_param(one):
-	    pass
-	func has_two_params_one_default(one, two=null):
-	    pass
-	func get_position():
-	    return .get_position()
-# --------------------
-
-# This is how assert_called behaves
-func test_assert_called():
-	var DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_extends_node2d.gd'
-
-	var doubled = double(DOUBLE_ME_PATH).new()
-	doubled.set_value(4)
-	doubled.set_value(5)
-	doubled.has_two_params_one_default('a')
-	doubled.has_two_params_one_default('a', 'b')
-
-	gut.p('-- passing --')
-	assert_called(doubled, 'set_value')
-	assert_called(doubled, 'set_value', [5])
-	# note the passing of `null` here.  Default parameters must be supplied.
-	assert_called(doubled, 'has_two_params_one_default', ['a', null])
-	assert_called(doubled, 'has_two_params_one_default', ['a', 'b'])
-
-	gut.p('-- failing --')
-	assert_called(doubled, 'get_value')
-	assert_called(doubled, 'set_value', ['nope'])
-	# This fails b/c Gut isn't smart enough to fill in default values for you...
-	# ast least not yet.
-	assert_called(doubled, 'has_two_params_one_default', ['a'])
-	# This fails with a specific message indicating that you have to pass an
-	# instance of a doubled class.
-	assert_called(GDScript.new(), 'some_method')
-```
-
-### assert_not_called
-`assert_not_called(inst, method_name, parameters=null)`<br>
-This is the inverse of `assert_called` and works the same way except, you know, inversely.  Matches are found based on parameters in the same fashion.  If a matching call is found then this assert will `fail`, if not it will `pass`.
-
-### assert_call_count
-`assert_call_count(inst, method_name, expected_count, parameters=null)`<br>
-This assertion is is one of the ways Gut implements Spies.  It requires that you pass it an instance of a "doubled" object.  An instance created with `double` will record when a method it has is called.  You can then make assertions based on this.
-
-This asserts that a method on a doubled instance has been called a number of times.  If you do not specify any parameters then all calls to the method will be counted.  If you specify parameters, then only those calls that were passed matching values will be counted.
-
-The `parameters` parameter is an array of values that you expect to have been passed to `method_name`.  If you do not specify any parameters then any call to `method_name` will match and the assert will `pass`.  If you specify parameters then all the parameter values must match.  You must specify all parameters the method takes, even if they have defaults.  Gut is not able (yet?) to fill in default values.
-
-__Methods that are inherited from built-in parent classes are not yet recorded.  For example, you cannot make "call" assertions on methods like `set_position` unless your sub-class specifically implements it (you can, they will just always return 0).  Since those methods retain their built-in functionality, you can just make normal assertions on them.__
-
-
-``` gdscript
-# Given the following class located at 'res://test/doubler_test_objects/double_extends_node2d.gd'
-# --------------------
-	extends Node2D
-	var _value = 0
-
-	func get_value():
-	    return _value
-	func set_value(val):
-	    _value = val
-	func has_one_param(one):
-	    pass
-	func has_two_params_one_default(one, two=null):
-	    pass
-	func get_position():
-	    return .get_position()
-# --------------------
-
-# This is how assert_call_count behaves
-func test_assert_call_count():
-	var DOUBLE_ME_PATH = 'res://test/doubler_test_objects/double_extends_node2d.gd'
-
-	var doubled = double(DOUBLE_ME_PATH).new()
-	doubled.set_value(4)
-	doubled.set_value(5)
-	doubled.has_two_params_one_default('a')
-	doubled.has_two_params_one_default('a', 'b')
-	doubled.set_position(Vector2(100, 100))
-
-	gut.p('-- passing --')
-	assert_call_count(doubled, 'set_value', 2)
-	assert_call_count(doubled, 'set_value', 1, [4])
-	# note the passing of `null` here.  Default parameters must be supplied.
-	assert_call_count(doubled, 'has_two_params_one_default', 1, ['a', null])
-	assert_call_count(doubled, 'get_value', 0)
-
-	gut.p('-- failing --')
-	assert_call_count(doubled, 'set_value', 5)
-	assert_call_count(doubled, 'set_value', 2, [4])
-	assert_call_count(doubled, 'get_value', 1)
-	# This fails with a specific message indicating that you have to pass an
-	# instance of a doubled class even though technically the method was called.
-	assert_call_count(GDScript.new(), 'some_method', 0)
-	# This fails b/c double_extends_node2d does not have it's own implementation
-	# of set_position.  The function is supplied by the parent class and these
-	# methods are not yet being recorded.
-	assert_call_count(doubled, 'set_position', 1)
-
-```
-
-### assert_has_method
-`assert_has_method(obj, method)`<br>
-Asserts that the passed in object has a method named `method`.
-```gdscript
-class SomeClass:
-	var _count = 0
-
-	func get_count():
-		return _count
-	func set_count(number):
-		_count = number
-
-	func get_nothing():
-		pass
-	func set_nothing(val):
-		pass
-
-func test_assert_has_method():
-	var some_class = SomeClass.new()
-	gut.p('-- passing --')
-	assert_has_method(some_class, 'get_nothing')
-	assert_has_method(some_class, 'set_count')
-
-	gut.p('-- failing --')
-	assert_has_method(some_class, 'method_does_not_exist')
-```
-### assert_accessors
-`assert_accessors(obj, property, default, set_to)`<br>
-I found that making tests for most getters and setters was repetitious and annoying.  Enter `assert_accessors`.  This assertion handles 80% of your getter and setter testing needs.  Given an object and a property name it will verify:
- * The object has a method called `get_<PROPERTY_NAME>`
- * The object has a method called `set_<PROPERTY_NAME>`
- * The method `get_<PROPERTY_NAME>` returns the expected default value when first called.
- * Once you set the property, the `get_<PROPERTY_NAME>`will return the value passed in.
-
-On the inside Gut actually performs up to 4 assertions.  So if everything goes right you will have four passing asserts each time you call `assert_accessors`.  I say "up to 4 assertions" because there are 2 assertions to make sure the object has the methods and then 2 to verify they act correctly.  If the object does not have the methods, it does not bother running the tests for the methods.
-``` gdscript
-class SomeClass:
-	var _count = 0
-
-	func get_count():
-		return _count
-	func set_count(number):
-		_count = number
-
-	func get_nothing():
-		pass
-	func set_nothing(val):
-		pass
-
-func test_assert_accessors():
-  var some_class = SomeClass.new()
-  gut.p('-- passing --')
-  assert_accessors(some_class, 'count', 0, 20) # 4 PASSING
-
-  gut.p('-- failing --')
-  # 1 FAILING, 3 PASSING
-  assert_accessors(some_class, 'count', 'not_default', 20)
-  # 2 FAILING, 2 PASSING
-  assert_accessors(some_class, 'nothing', 'hello', 22)
-  # 2 FAILING
-  assert_accessors(some_class, 'does_not_exist', 'does_not', 'matter')
-```
-
-### assert_no_new_orphans
-`assert_no_new_orphans(text='')`<br>
-This method will assert that no orphaned nodes have been introduced by the test when the assert is executed.  See the [Memory Management](Memory-Management#testing_for_leaks) page for more information.
-
-### assert_eq_deep
-`assert_eq_deep(v1, v2)`<br>
-Performs a deep comparison between two arrays or dictionaries and asserts they are equal.  If they are not equal then a formatted list of differences are displayed.  See [Comparing Things](Comparing-Things) for more information.
-```gdscript
-func test_assert_eq_deep():
-	var complex_example = [
-		'a', 'b', 'c',
-		[1, 2, 3, 4],
-		{'a':1, 'b':2, 'c':3},
-		[{'a':1}, {'b':2}]
-	]
-
-	# Passing
-	assert_eq_deep([1, 2, {'a':1}], [1, 2, {'a':1}])
-	assert_eq_deep({'a':1, 'b':{'c':1}}, {'b':{'c':1}, 'a':1})
-
-	var shallow_copy  = complex_example.duplicate(false)
-	var deep_copy = complex_example.duplicate(true)
-	assert_eq_deep(complex_example, shallow_copy)
-	assert_eq_deep(complex_example, deep_copy)
-	assert_eq_deep(shallow_copy, deep_copy)
-
-	# Failing
-	assert_eq_shallow([1, 2], [1, 2 ,3]) # missing index
-	assert_eq_shallow({'a':1}, {'a':1, 'b':2}) # missing key
-	assert_eq_deep([1, 2, {'a':1}], [1, 2, {'a':1.0}]) # floats != ints
-```
-
-### assert_ne_deep
-`assert_ne_deep(v1, v2)`<br>
-Performs a deep comparison of two arrays or dictionaries and asserts they are not equal.  See [Comparing Things](Comparing-Things) for more information.
-
-### assert_eq_shallow
-`assert_eq_shallow(v1, v2)`<br>
-Performs a shallow comparison between two arrays or dictionaries and asserts they are equal.  If they are not equal then a formatted list of differences are displayed.  See [Comparing Things](Comparing-Things) for more information.
-```gdscript
-func test_assert_eq_shallow():
-	var complex_example = [
-		'a', 'b', 'c',
-		[1, 2, 3, 4],
-		{'a':1, 'b':2, 'c':3},
-		[{'a':1}, {'b':2}]
-	]
-
-	# Passing
-	assert_eq_shallow([1, 2, 3], [1, 2, 3])
-	assert_eq_shallow([1, [2, 3], 4], [1, [2, 3], 4])
-	var d1 = {'foo':'bar'}
-	assert_eq_shallow([1, 2, d1], [1, 2, d1])
-	assert_eq_shallow({'a':1}, {'a':1})
-	assert_eq_shallow({'a':[1, 2, 3, d1]}, {'a':[1, 2, 3, d1]})
-
-	var shallow_copy = complex_example.duplicate(false)
-	assert_eq_shallow(complex_example, shallow_copy)
-
-	# Failing
-	assert_eq_shallow([1, 2], [1, 2 ,3]) # missing index
-	assert_eq_shallow({'a':1}, {'a':1, 'b':2}) # missing key
-	assert_eq_shallow([1, 2], [1.0, 2.0]) # floats != ints
-	assert_eq_shallow([1, 2, {'a':1}], [1, 2, {'a':1}]) # compare [2] by ref
-	assert_eq_shallow({'a':1}, {'a':1.0}) # floats != ints
-	assert_eq_shallow({'a':1, 'b':{'c':1}}, {'a':1, 'b':{'c':1}}) # compare 'b' by ref
-
-	var deep_copy = complex_example.duplicate(true)
-	assert_eq_shallow(complex_example, deep_copy)
-```
-
-### assert_ne_shallow
-`assert_ne_shallow(v1, v2)`<br>
-Performs a shallow comparison of two arrays or dictionaries and asserts they are not equal.  See [Comparing Things](Comparing-Things) for more information.
-
-
-### assert_property
-`assert_property(obj, name_property, default_value, set_to_value)`<br>
-This method does a couple of common tests for properties.
-It checks if:
-* the named setter and getter functions exist
-* the given default value is set_to_value
-* the value is set correctly to the given `set_to_value`
-* the named setter and getter functions are called when the property is accessed directly
-
-It fails if at least one of the mentioned sub-checks fails.
-
-The parameter `obj` can be any `Object`. Depending on what you put in the function will try retrieve the underlying class or to instantiate from `obj`. It is tested for classes extending `Script` or `PackedScene` in case you want to put in a class / scene. It is tested for objects extending the `Node` class. The method may fail if you try to put in something else.
-
-Under the cover it runs `assert_accessors` and `assert_setget_called`. Look into [assert_accessors](#assert-accessors) or [assert_setget_called](#assert-setget-called) to get further information on how they work.
-
-In the following script you can see some examples how to use this assert function. The class under test is a "Health" component. It has a `max_hap` field with no setter or getter assigned. It also has a `current_hp` property with assigned setter and getter functions.
-
-```gdscript
-gut.p('-- class under test --')
-class Health:
-  extends Node
-
-
-  export(int) var max_hp = 0
-  export(int) var current_hp = 0 setget set_current_hp, get_current_hp
-
-
-  func set_max_hp(value: int) -> void:
-  	if value < 0:
-  		value = 0
-  	max_hp = value
-
-
-  func get_max_hp() -> int:
-  	return max_hp
-
-
-  func set_current_hp(value: int) -> void:
-  	current_hp = clamp(value, 0, max_hp)
-
-
-  func get_current_hp() -> int:
-  	return current_hp
-
-
-gut.p('-- passing --')
-assert_property(Health, 'current_hp', 0, 0) # PASS
-var health = Health.new()
-health.max_hp = 10
-assert_property(health, 'current_hp', 0, 5) # PASS
-
-gut.p('-- failing --')
-assert_property(Health, 'max_hp', 0, 5) # FAIL => no setget keyword
-assert_property(Health, 'current_hp', 0, 5) # FAIL => method will clamp current_hp to max_hp which is 0 by default
-var directory = Directory.new()
-assert_property(directory, 'current_dir', '', 'new_dir') # FAIL => directory is not a Resource nor a Node
-
-```
-
-### assert_setget_called
-`assert_setget_called(type, name_property, name_setter="", name_getter="")`<br>
-This method checks if the named setter and getter functions are called when the given property is accessed.
-
-In GDScript this is realized by using the `setget` keyword. The keyword requires you to specify a setter or getter function, you can also specify both:
-
-```gdscript
-class SomeClass:
-  var property_both = null setget set_property_both, get_property_both
-  var property_setter = null setget set_property_setter
-  var property_getter = null setget , get_property_getter
-  var normal_class_attribute = null
-  var another_property = null setget some_completely_different_name, another_different_name
-```
-
-With this assert you can test for scenarios equivalent to `property_both`, `property_setter` and `property_getter`. As shown in the example GDScript allows any names for the setter and getter functions. With this assert you can test for this scenario as well. With this assert you cannot test for normal class attributes.
-
-The parameter `type` has to be a `Resource`. Therefore you can put in a `Script` or a `PackedScene` but no instances of your class / scene under test.
-
-The parameters `name_setter` and `name_getter` are optional.
-
-In the following script you can see some examples how to use this assert function. The class under test is a "Health" component. It has a `max_hap` field with no setter or getter assigned. It also has a `current_hp` property with assigned setter and getter functions. For slightly more convenient ways to test properties with setget keyword also look into [assert_setget](#assert_setget) or [assert_property](#assert_property). They wrap around this assert function and set some common defaults to safe you some time.
-
-```gdscript
-gut.p('-- class under test --')
-class Health:
-  extends Node
-
-
-  export(int) var max_hp = 0
-  export(int) var current_hp = 0 setget set_current_hp, get_current_hp
-
-
-  func set_max_hp(value: int) -> void:
-  	if value < 0:
-  		value = 0
-  	max_hp = value
-
-
-  func get_max_hp() -> int:
-  	return max_hp
-
-
-  func set_current_hp(value: int) -> void:
-  	current_hp = clamp(value, 0, max_hp)
-
-
-  func get_current_hp() -> int:
-  	return current_hp
-
-
-gut.p('-- passing --')
-assert_setget_called(Health, 'current_hp', 'set_current_hp', 'get_current_hp') # PASS
-assert_setget_called(Health, 'current_hp', 'set_current_hp') # PASS
-assert_setget_called(Health, 'current_hp', '', 'get_current_hp') # PASS
-
-
-gut.p('-- failing --')
-assert_setget_called(Health, 'max_hp', 'set_max_hp') # FAIL
-assert_setget_called(Health, 'max_hp') # FAIL => out of scope
-assert_setget_called(Health, 'current_hp') # FAIL => setter or getter name must be specified
-assert_setget_called(Health, 'current_hp', 'set_current_hp', 'get_current_hp') # FAIL => typo...
-var health = Health.new()
-assert_setget_called(health, 'current_hp', 'set_current_hp') # FAIL => type has to be a Resource
-assert_setget_called(Health, max_hp, null, null) # FAIL => methods do not exist
-assert_setget_called(Health, max_hp, 1, 1)  # FAIL => methods do not exist
-assert_setget_called(5, 'current_hp', 'set_current_hp')  # FAIL => type has to be a Resource
-assert_setget_called(double(Health), 'current_hp', 'set_current_hp') # FAIL => type has to be a Resource that can be doubled
-```
-
-Please note the last example. So far an already doubled type cannot be doubled again. Since the class under test will be doubled within the assert procession it is important to only feed in types that can be doubled. For more information about doubling its restrictions see the wiki page about [Doubles](Doubles).
-
-
-### assert_property
-`assert_property(obj, name_property, has_setter=false, has_getter=false)`<br>
-This method checks if the named setter and getter functions are called when the given property is accessed.
-
-In GDScript this is realized by using the `setget` keyword. The keyword requires you to specify a setter or getter function, you can also specify both:
-
-```gdscript
-class SomeClass:
-  var property_both = null setget set_property_both, get_property_both
-  var property_setter = null setget set_property_setter
-  var property_getter = null setget , get_property_getter
-```
-
-The parameter `obj` can be any `Object`. Depending on what you put in the function will try retrieve the underlying class or to instantiate from `obj`. It is tested for classes extending `Script` or `PackedScene` in case you want to put in a class / scene. It is tested for objects extending the `Node` class. The method may fail if you try to put in something else.
-
-The parameters `name_setter` and `name_getter` are optional.
-
-Under the cover it runs `assert_setget_called`. Look into [assert_setget_called](#assert_setget_called) to get further information on how it works.
-
-In the following script you can see some examples how to use this assert function. The class under test is a "Health bar" component. It has a `health` field with a setter but no getter assigned.
-
-```gdscript
-gut.p('-- class under test --')
-class HealthBar:
-  extends Control
-
-const Health = preload("res://some_path/health.gd")
-var health: Health = null setget set_health
-
-onready var progress_bar = $ProgressBar
-onready var label = $Label
-
-
-func set_health(node: Health) -> void:
-	health = node
-
-
-func _on_Health_updated() -> void:
-	if health != null:
-		label.text = "%s / %s" %[health.current_hp, health.max_hp]
-		progress_bar.max_value = health.max_hp
-		progress_bar.value = health.current_hp
-
-
-gut.p('-- passing --')
-assert_setget(HealthBar, 'health', true) # PASS
-var health_bar = load("res://some_path/HealthBar.tscn").instance()
-assert_setget(health_bar, 'health', true) # PASS
-
-gut.p('-- failing --')
-assert_setget(HealthBar, 'label') # FAIL => setter or getter has to be specified
-assert_setget(HealthBar, 'label', true) # FAIL => setter does not exist
-```
 
 <!-- ----------------------------------------------------------------------- -->
 ## Utilities
@@ -1550,4 +717,609 @@ func test_string_contains():
 	assert_string_contains('abc 123', 'A')
 	assert_string_contains('abc 123', 'BC')
 	assert_string_contains('abc 123', '012')
+```
+
+### assert_string_starts_with
+`assert_string_starts_with(text, search, match_case=true)`<br>
+Assert that `text` starts with `search`.  Can perform case insensitive check by passing false for `match_case`
+```gdscript
+func test_string_starts_with():
+	gut.p('-- passing --')
+	assert_string_starts_with('abc 123', 'a')
+	assert_string_starts_with('abc 123', 'ABC', false)
+	assert_string_starts_with('abc 123', 'abc 123')
+
+	gut.p('-- failing --')
+	assert_string_starts_with('abc 123', 'z')
+	assert_string_starts_with('abc 123', 'ABC')
+	assert_string_starts_with('abc 123', 'abc 1234')
+```
+
+### assert_string_ends_with
+`assert_string_ends_with(text, search, match_case=true)`<br>
+Assert that `text` ends with `search`.  Can perform case insensitive check by passing false for `match_case`
+```gdscript
+func test_string_ends_with():
+	gut.p('-- passing --')
+	assert_string_ends_with('abc 123', '123')
+	assert_string_ends_with('abc 123', 'C 123', false)
+	assert_string_ends_with('abc 123', 'abc 123')
+
+	gut.p('-- failing --')
+	assert_string_ends_with('abc 123', '1234')
+	assert_string_ends_with('abc 123', 'C 123')
+	assert_string_ends_with('abc 123', 'nope')
+```
+
+### assert_has_signal
+`assert_has_signal(object, signal_name)`<br>
+Asserts the passed in object has a signal with the specified name.  It should be noted that all the asserts that verify a signal was/wasn't emitted will first check that the object has the signal being asserted against.  If it does not, a specific failure message will be given.  This means you can usually skip the step of specifically verifying that the object has a signal and move on to making sure it emits the signal correctly.
+``` gdscript
+class SignalObject:
+	func _init():
+		add_user_signal('some_signal')
+		add_user_signal('other_signal')
+
+func test_assert_has_signal():
+	var obj = SignalObject.new()
+
+	gut.p('-- passing --')
+	assert_has_signal(obj, 'some_signal')
+	assert_has_signal(obj, 'other_signal')
+
+	gut.p('-- failing --')
+	assert_has_signal(obj, 'not_a real SIGNAL')
+	assert_has_signal(obj, 'yea, this one doesnt exist either')
+	# Fails because the signal is not a user signal.  Node2D does have the
+	# specified signal but it can't be checked this way.  It could be watched
+	# and asserted that it fired though.
+	assert_has_signal(Node2D.new(), 'exit_tree')
+
+```
+### assert_connected
+`assert_connected(signaler_obj, connect_to_obj, signal_name, method_name="")`<br>
+Asserts that `signaler_obj` is connected to `connect_to_obj` on signal `signal_name`.  The method that is connected is optional.  If `method_name` is supplied then this will pass only if the signal is connected to the  method.  If it is not provided then any connection to the signal will cause a pass.
+``` gdscript
+class Signaler:
+	signal the_signal
+
+class Connector:
+	func connect_this():
+		pass
+	func  other_method():
+		pass
+
+func test_assert_connected():
+	var signaler = Signaler.new()
+	var connector  = Connector.new()
+	signaler.connect('the_signal', connector, 'connect_this')
+
+	# Passing
+	assert_connected(signaler, connector, 'the_signal')
+	assert_connected(signaler, connector, 'the_signal', 'connect_this')
+
+	# Failing
+	var foo = Connector.new()
+	assert_connected(signaler,  connector, 'the_signal', 'other_method')
+	assert_connected(signaler, connector, 'other_signal')
+	assert_connected(signaler, foo, 'the_signal')
+```
+### assert_not_connected
+`assert_not_connected(signaler_obj, connect_to_obj, signal_name, method_name="")`<br>
+The inverse of `assert_connected`.
+
+### watch_signals(object)
+``<br>
+This must be called in order to make assertions based on signals being emitted.  __Right now, this only supports signals that are emitted with 9 or less parameters.__  This can be extended but nine seemed like enough for now.  The Godot documentation suggests that the limit is four but in my testing I found you can pass more.
+
+This must be called in each test in which you want to make signal based assertions in.  You can call it multiple times with different objects.   You should not call it multiple times with the same object in the same test.  The objects that are watched are cleared after each test (specifically right before `teardown` is called).  Under the covers, Gut will connect to all the signals an object has and it will track each time they fire.  You can then use the following asserts and methods to verify things are acting correct.
+
+### assert_signal_emitted
+`assert_signal_emitted(object, signal_name)`<br>
+Assert that the specified object emitted the named signal.  You must call `watch_signals` and pass it the object that you are making assertions about.  This will fail if the object is not being watched or if the object does not have the specified signal.  Since this will fail if the signal does not exist, you can often skip using `assert_has_signal`.
+``` gdscript
+class SignalObject:
+	func _init():
+		add_user_signal('some_signal')
+		add_user_signal('other_signal')
+
+func test_assert_signal_emitted():
+	var obj = SignalObject.new()
+
+	watch_signals(obj)
+	obj.emit_signal('some_signal')
+
+	gut.p('-- passing --')
+	assert_signal_emitted(obj, 'some_signal')
+
+	gut.p('-- failing --')
+	# Fails with specific message that the object does not have the signal
+	assert_signal_emitted(obj, 'signal_does_not_exist')
+	# Fails because the object passed is not being watched
+	assert_signal_emitted(SignalObject.new(), 'some_signal')
+	# Fails because the signal was not emitted
+	assert_signal_emitted(obj, 'other_signal')
+```
+
+### assert_signal_not_emitted
+`assert_signal_not_emitted(object, signal_name)`<br>
+This works opposite of `assert_signal_emitted`.  This will fail if the object is not being watched or if the object does not have the signal.
+``` gdscript
+class SignalObject:
+	func _init():
+		add_user_signal('some_signal')
+		add_user_signal('other_signal')
+
+func test_assert_signal_not_emitted():
+	var obj = SignalObject.new()
+
+	watch_signals(obj)
+	obj.emit_signal('some_signal')
+
+	gut.p('-- passing --')
+	assert_signal_not_emitted(obj, 'other_signal')
+
+	gut.p('-- failing --')
+	# Fails with specific message that the object does not have the signal
+	assert_signal_not_emitted(obj, 'signal_does_not_exist')
+	# Fails because the object passed is not being watched
+	assert_signal_not_emitted(SignalObject.new(), 'some_signal')
+	# Fails because the signal was emitted
+	assert_signal_not_emitted(obj, 'some_signal')
+```
+### assert_signal_emitted_with_parameters
+`assert_signal_emitted_with_parameters(object, signal_name, parameters, index=-1)`<br>
+Asserts that a signal was fired with the specified parameters.  The expected parameters should be passed in as an array.  An optional index can be passed when a signal has fired more than once.  The default is to retrieve the most recent emission of the signal.
+
+This will fail with specific messages if the object is not being watched or the object does not have the specified signal
+``` gdscript
+class SignalObject:
+	func _init():
+		add_user_signal('some_signal')
+		add_user_signal('other_signal')
+
+func test_assert_signal_emitted_with_parameters():
+	var obj = SignalObject.new()
+
+	watch_signals(obj)
+	# emit the signal 3 times to illustrate how the index works in
+	# assert_signal_emitted_with_parameters
+	obj.emit_signal('some_signal', 1, 2, 3)
+	obj.emit_signal('some_signal', 'a', 'b', 'c')
+	obj.emit_signal('some_signal', 'one', 'two', 'three')
+
+	gut.p('-- passing --')
+	# Passes b/c the default parameters to check are the last emission of
+	# the signal
+	assert_signal_emitted_with_parameters(obj, 'some_signal', ['one', 'two', 'three'])
+	# Passes because the parameters match the specified emission based on index.
+	assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 0)
+
+	gut.p('-- failing --')
+	# Fails with specific message that the object does not have the signal
+	assert_signal_emitted_with_parameters(obj, 'signal_does_not_exist', [])
+	# Fails because the object passed is not being watched
+	assert_signal_emitted_with_parameters(SignalObject.new(), 'some_signal', [])
+	# Fails because parameters do not match latest emission
+	assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3])
+	# Fails because the parameters for the specified index do not match
+	assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 1)
+```
+### assert_signal_emit_count
+`assert_signal_emit_count(object, signal_name)`<br>
+Asserts that a signal fired a specific number of times.
+
+``` gdscript
+class SignalObject:
+	func _init():
+		add_user_signal('some_signal')
+		add_user_signal('other_signal')
+
+func test_assert_signal_emit_count():
+	var obj_a = SignalObject.new()
+	var obj_b = SignalObject.new()
+
+	watch_signals(obj_a)
+	watch_signals(obj_b)
+	obj_a.emit_signal('some_signal')
+	obj_a.emit_signal('some_signal')
+
+	obj_b.emit_signal('some_signal')
+	obj_b.emit_signal('other_signal')
+
+	gut.p('-- passing --')
+	assert_signal_emit_count(obj_a, 'some_signal', 2)
+	assert_signal_emit_count(obj_a, 'other_signal', 0)
+
+	assert_signal_emit_count(obj_b, 'other_signal', 1)
+
+	gut.p('-- failing --')
+	# Fails with specific message that the object does not have the signal
+	assert_signal_emit_count(obj_a, 'signal_does_not_exist', 99)
+	# Fails because the object passed is not being watched
+	assert_signal_emit_count(SignalObject.new(), 'some_signal', 99)
+	# The following fail for obvious reasons
+	assert_signal_emit_count(obj_a, 'some_signal', 0)
+	assert_signal_emit_count(obj_b, 'other_signal', 283)
+```
+
+### assert_file_exists
+`assert_file_exists(file_path)`<br>
+asserts a file exists at the specified path
+``` gdscript
+func before_each():
+	gut.file_touch('user://some_test_file')
+
+func after_each():
+	gut.file_delete('user://some_test_file')
+
+func test_assert_file_exists():
+	gut.p('-- passing --')
+	assert_file_exists('res://addons/gut/gut.gd') # PASS
+	assert_file_exists('user://some_test_file') # PASS
+
+	gut.p('-- failing --')
+	assert_file_exists('user://file_does_not.exist') # FAIL
+	assert_file_exists('res://some_dir/another_dir/file_does_not.exist') # FAIL
+```
+### assert_file_does_not_exist
+`assert_file_does_not_exist(file_path)`<br>
+asserts a file does not exist at the specified path
+``` gdscript
+func before_each():
+	gut.file_touch('user://some_test_file')
+
+func after_each():
+	gut.file_delete('user://some_test_file')
+
+func test_assert_file_does_not_exist():
+	gut.p('-- passing --')
+	assert_file_does_not_exist('user://file_does_not.exist') # PASS
+	assert_file_does_not_exist('res://some_dir/another_dir/file_does_not.exist') # PASS
+
+	gut.p('-- failing --')
+	assert_file_does_not_exist('res://addons/gut/gut.gd') # FAIL
+```
+
+### assert_file_empty
+`assert_file_empty(file_path)`<br>
+asserts the specified file is empty
+``` gdscript
+func before_each():
+	gut.file_touch('user://some_test_file')
+
+func after_each():
+	gut.file_delete('user://some_test_file')
+
+func test_assert_file_empty():
+	gut.p('-- passing --')
+	assert_file_empty('user://some_test_file') # PASS
+
+	gut.p('-- failing --')
+	assert_file_empty('res://addons/gut/gut.gd') # FAIL
+```
+
+### assert_has_method
+`assert_has_method(obj, method)`<br>
+Asserts that the passed in object has a method named `method`.
+```gdscript
+class SomeClass:
+	var _count = 0
+
+	func get_count():
+		return _count
+	func set_count(number):
+		_count = number
+
+	func get_nothing():
+		pass
+	func set_nothing(val):
+		pass
+
+func test_assert_has_method():
+	var some_class = SomeClass.new()
+	gut.p('-- passing --')
+	assert_has_method(some_class, 'get_nothing')
+	assert_has_method(some_class, 'set_count')
+
+	gut.p('-- failing --')
+	assert_has_method(some_class, 'method_does_not_exist')
+```
+### assert_accessors
+`assert_accessors(obj, property, default, set_to)`<br>
+I found that making tests for most getters and setters was repetitious and annoying.  Enter `assert_accessors`.  This assertion handles 80% of your getter and setter testing needs.  Given an object and a property name it will verify:
+ * The object has a method called `get_<PROPERTY_NAME>`
+ * The object has a method called `set_<PROPERTY_NAME>`
+ * The method `get_<PROPERTY_NAME>` returns the expected default value when first called.
+ * Once you set the property, the `get_<PROPERTY_NAME>`will return the value passed in.
+
+On the inside Gut actually performs up to 4 assertions.  So if everything goes right you will have four passing asserts each time you call `assert_accessors`.  I say "up to 4 assertions" because there are 2 assertions to make sure the object has the methods and then 2 to verify they act correctly.  If the object does not have the methods, it does not bother running the tests for the methods.
+``` gdscript
+class SomeClass:
+	var _count = 0
+
+	func get_count():
+		return _count
+	func set_count(number):
+		_count = number
+
+	func get_nothing():
+		pass
+	func set_nothing(val):
+		pass
+
+func test_assert_accessors():
+  var some_class = SomeClass.new()
+  gut.p('-- passing --')
+  assert_accessors(some_class, 'count', 0, 20) # 4 PASSING
+
+  gut.p('-- failing --')
+  # 1 FAILING, 3 PASSING
+  assert_accessors(some_class, 'count', 'not_default', 20)
+  # 2 FAILING, 2 PASSING
+  assert_accessors(some_class, 'nothing', 'hello', 22)
+  # 2 FAILING
+  assert_accessors(some_class, 'does_not_exist', 'does_not', 'matter')
+```
+
+### assert_no_new_orphans
+`assert_no_new_orphans(text='')`<br>
+This method will assert that no orphaned nodes have been introduced by the test when the assert is executed.  See the [Memory Management](Memory-Management#testing_for_leaks) page for more information.
+
+### assert_eq_deep
+`assert_eq_deep(v1, v2)`<br>
+Performs a deep comparison between two arrays or dictionaries and asserts they are equal.  If they are not equal then a formatted list of differences are displayed.  See [Comparing Things](Comparing-Things) for more information.
+```gdscript
+func test_assert_eq_deep():
+	var complex_example = [
+		'a', 'b', 'c',
+		[1, 2, 3, 4],
+		{'a':1, 'b':2, 'c':3},
+		[{'a':1}, {'b':2}]
+	]
+
+	# Passing
+	assert_eq_deep([1, 2, {'a':1}], [1, 2, {'a':1}])
+	assert_eq_deep({'a':1, 'b':{'c':1}}, {'b':{'c':1}, 'a':1})
+
+	var shallow_copy  = complex_example.duplicate(false)
+	var deep_copy = complex_example.duplicate(true)
+	assert_eq_deep(complex_example, shallow_copy)
+	assert_eq_deep(complex_example, deep_copy)
+	assert_eq_deep(shallow_copy, deep_copy)
+
+	# Failing
+	assert_eq_shallow([1, 2], [1, 2 ,3]) # missing index
+	assert_eq_shallow({'a':1}, {'a':1, 'b':2}) # missing key
+	assert_eq_deep([1, 2, {'a':1}], [1, 2, {'a':1.0}]) # floats != ints
+```
+
+### assert_ne_deep
+`assert_ne_deep(v1, v2)`<br>
+Performs a deep comparison of two arrays or dictionaries and asserts they are not equal.  See [Comparing Things](Comparing-Things) for more information.
+
+### assert_eq_shallow
+`assert_eq_shallow(v1, v2)`<br>
+Performs a shallow comparison between two arrays or dictionaries and asserts they are equal.  If they are not equal then a formatted list of differences are displayed.  See [Comparing Things](Comparing-Things) for more information.
+```gdscript
+func test_assert_eq_shallow():
+	var complex_example = [
+		'a', 'b', 'c',
+		[1, 2, 3, 4],
+		{'a':1, 'b':2, 'c':3},
+		[{'a':1}, {'b':2}]
+	]
+
+	# Passing
+	assert_eq_shallow([1, 2, 3], [1, 2, 3])
+	assert_eq_shallow([1, [2, 3], 4], [1, [2, 3], 4])
+	var d1 = {'foo':'bar'}
+	assert_eq_shallow([1, 2, d1], [1, 2, d1])
+	assert_eq_shallow({'a':1}, {'a':1})
+	assert_eq_shallow({'a':[1, 2, 3, d1]}, {'a':[1, 2, 3, d1]})
+
+	var shallow_copy = complex_example.duplicate(false)
+	assert_eq_shallow(complex_example, shallow_copy)
+
+	# Failing
+	assert_eq_shallow([1, 2], [1, 2 ,3]) # missing index
+	assert_eq_shallow({'a':1}, {'a':1, 'b':2}) # missing key
+	assert_eq_shallow([1, 2], [1.0, 2.0]) # floats != ints
+	assert_eq_shallow([1, 2, {'a':1}], [1, 2, {'a':1}]) # compare [2] by ref
+	assert_eq_shallow({'a':1}, {'a':1.0}) # floats != ints
+	assert_eq_shallow({'a':1, 'b':{'c':1}}, {'a':1, 'b':{'c':1}}) # compare 'b' by ref
+
+	var deep_copy = complex_example.duplicate(true)
+	assert_eq_shallow(complex_example, deep_copy)
+```
+
+### assert_ne_shallow
+`assert_ne_shallow(v1, v2)`<br>
+Performs a shallow comparison of two arrays or dictionaries and asserts they are not equal.  See [Comparing Things](Comparing-Things) for more information.
+
+
+### assert_property
+`assert_property(obj, name_property, default_value, set_to_value)`<br>
+This method does a couple of common tests for properties.
+It checks if:
+* the named setter and getter functions exist
+* the given default value is set_to_value
+* the value is set correctly to the given `set_to_value`
+* the named setter and getter functions are called when the property is accessed directly
+
+It fails if at least one of the mentioned sub-checks fails.
+
+The parameter `obj` can be any `Object`. Depending on what you put in the function will try retrieve the underlying class or to instantiate from `obj`. It is tested for classes extending `Script` or `PackedScene` in case you want to put in a class / scene. It is tested for objects extending the `Node` class. The method may fail if you try to put in something else.
+
+Under the cover it runs `assert_accessors` and `assert_setget_called`. Look into [assert_accessors](#assert-accessors) or [assert_setget_called](#assert-setget-called) to get further information on how they work.
+
+In the following script you can see some examples how to use this assert function. The class under test is a "Health" component. It has a `max_hap` field with no setter or getter assigned. It also has a `current_hp` property with assigned setter and getter functions.
+
+```gdscript
+gut.p('-- class under test --')
+class Health:
+  extends Node
+
+
+  export(int) var max_hp = 0
+  export(int) var current_hp = 0 setget set_current_hp, get_current_hp
+
+
+  func set_max_hp(value: int) -> void:
+  	if value < 0:
+  		value = 0
+  	max_hp = value
+
+
+  func get_max_hp() -> int:
+  	return max_hp
+
+
+  func set_current_hp(value: int) -> void:
+  	current_hp = clamp(value, 0, max_hp)
+
+
+  func get_current_hp() -> int:
+  	return current_hp
+
+
+gut.p('-- passing --')
+assert_property(Health, 'current_hp', 0, 0) # PASS
+var health = Health.new()
+health.max_hp = 10
+assert_property(health, 'current_hp', 0, 5) # PASS
+
+gut.p('-- failing --')
+assert_property(Health, 'max_hp', 0, 5) # FAIL => no setget keyword
+assert_property(Health, 'current_hp', 0, 5) # FAIL => method will clamp current_hp to max_hp which is 0 by default
+var directory = Directory.new()
+assert_property(directory, 'current_dir', '', 'new_dir') # FAIL => directory is not a Resource nor a Node
+
+```
+
+### assert_setget_called
+`assert_setget_called(type, name_property, name_setter="", name_getter="")`<br>
+This method checks if the named setter and getter functions are called when the given property is accessed.
+
+In GDScript this is realized by using the `setget` keyword. The keyword requires you to specify a setter or getter function, you can also specify both:
+
+```gdscript
+class SomeClass:
+  var property_both = null setget set_property_both, get_property_both
+  var property_setter = null setget set_property_setter
+  var property_getter = null setget , get_property_getter
+  var normal_class_attribute = null
+  var another_property = null setget some_completely_different_name, another_different_name
+```
+
+With this assert you can test for scenarios equivalent to `property_both`, `property_setter` and `property_getter`. As shown in the example GDScript allows any names for the setter and getter functions. With this assert you can test for this scenario as well. With this assert you cannot test for normal class attributes.
+
+The parameter `type` has to be a `Resource`. Therefore you can put in a `Script` or a `PackedScene` but no instances of your class / scene under test.
+
+The parameters `name_setter` and `name_getter` are optional.
+
+In the following script you can see some examples how to use this assert function. The class under test is a "Health" component. It has a `max_hap` field with no setter or getter assigned. It also has a `current_hp` property with assigned setter and getter functions. For slightly more convenient ways to test properties with setget keyword also look into [assert_setget](#assert_setget) or [assert_property](#assert_property). They wrap around this assert function and set some common defaults to safe you some time.
+
+```gdscript
+gut.p('-- class under test --')
+class Health:
+  extends Node
+
+
+  export(int) var max_hp = 0
+  export(int) var current_hp = 0 setget set_current_hp, get_current_hp
+
+
+  func set_max_hp(value: int) -> void:
+  	if value < 0:
+  		value = 0
+  	max_hp = value
+
+
+  func get_max_hp() -> int:
+  	return max_hp
+
+
+  func set_current_hp(value: int) -> void:
+  	current_hp = clamp(value, 0, max_hp)
+
+
+  func get_current_hp() -> int:
+  	return current_hp
+
+
+gut.p('-- passing --')
+assert_setget_called(Health, 'current_hp', 'set_current_hp', 'get_current_hp') # PASS
+assert_setget_called(Health, 'current_hp', 'set_current_hp') # PASS
+assert_setget_called(Health, 'current_hp', '', 'get_current_hp') # PASS
+
+
+gut.p('-- failing --')
+assert_setget_called(Health, 'max_hp', 'set_max_hp') # FAIL
+assert_setget_called(Health, 'max_hp') # FAIL => out of scope
+assert_setget_called(Health, 'current_hp') # FAIL => setter or getter name must be specified
+assert_setget_called(Health, 'current_hp', 'set_current_hp', 'get_current_hp') # FAIL => typo...
+var health = Health.new()
+assert_setget_called(health, 'current_hp', 'set_current_hp') # FAIL => type has to be a Resource
+assert_setget_called(Health, max_hp, null, null) # FAIL => methods do not exist
+assert_setget_called(Health, max_hp, 1, 1)  # FAIL => methods do not exist
+assert_setget_called(5, 'current_hp', 'set_current_hp')  # FAIL => type has to be a Resource
+assert_setget_called(double(Health), 'current_hp', 'set_current_hp') # FAIL => type has to be a Resource that can be doubled
+```
+
+Please note the last example. So far an already doubled type cannot be doubled again. Since the class under test will be doubled within the assert procession it is important to only feed in types that can be doubled. For more information about doubling its restrictions see the wiki page about [Doubles](Doubles).
+
+
+### assert_property
+`assert_property(obj, name_property, has_setter=false, has_getter=false)`<br>
+This method checks if the named setter and getter functions are called when the given property is accessed.
+
+In GDScript this is realized by using the `setget` keyword. The keyword requires you to specify a setter or getter function, you can also specify both:
+
+```gdscript
+class SomeClass:
+  var property_both = null setget set_property_both, get_property_both
+  var property_setter = null setget set_property_setter
+  var property_getter = null setget , get_property_getter
+```
+
+The parameter `obj` can be any `Object`. Depending on what you put in the function will try retrieve the underlying class or to instantiate from `obj`. It is tested for classes extending `Script` or `PackedScene` in case you want to put in a class / scene. It is tested for objects extending the `Node` class. The method may fail if you try to put in something else.
+
+The parameters `name_setter` and `name_getter` are optional.
+
+Under the cover it runs `assert_setget_called`. Look into [assert_setget_called](#assert_setget_called) to get further information on how it works.
+
+In the following script you can see some examples how to use this assert function. The class under test is a "Health bar" component. It has a `health` field with a setter but no getter assigned.
+
+```gdscript
+gut.p('-- class under test --')
+class HealthBar:
+  extends Control
+
+const Health = preload("res://some_path/health.gd")
+var health: Health = null setget set_health
+
+onready var progress_bar = $ProgressBar
+onready var label = $Label
+
+
+func set_health(node: Health) -> void:
+	health = node
+
+
+func _on_Health_updated() -> void:
+	if health != null:
+		label.text = "%s / %s" %[health.current_hp, health.max_hp]
+		progress_bar.max_value = health.max_hp
+		progress_bar.value = health.current_hp
+
+
+gut.p('-- passing --')
+assert_setget(HealthBar, 'health', true) # PASS
+var health_bar = load("res://some_path/HealthBar.tscn").instance()
+assert_setget(health_bar, 'health', true) # PASS
+
+gut.p('-- failing --')
+assert_setget(HealthBar, 'label') # FAIL => setter or getter has to be specified
+assert_setget(HealthBar, 'label', true) # FAIL => setter does not exist
 ```
