@@ -303,20 +303,6 @@ Performs a deep comparison between two arrays or dictionaries.  A `CompareResult
 See [Double Strategy](Double-Strategy)
 
 
-### should_skip_script
-This virtual method is run after the script has been prepped for execution, but before `before_all` is executed.  If you implement this method and return `true` or a `String` (the string is displayed in the log) then GUT will stop executing the script and mark it as risky.  You might want to do this because:
-* You are porting tests from 3.x to 4.x and you don't want to comment everything out.
-* Skipping tests that should not be run when in `headless` mode such as input testing that does not work in headless.
-``` gdscript
-func should_skip_script():
-	if DisplayServer.get_name() == "headless":
-		return "Skip Input tests when running headless"
-```
-* If you have tests that would normally cause the debugger to break on an error, you can skip the script if the debugger is enabled so that the run is not interrupted.
-``` gdscript
-func should_skip_script():
-	return EngineDebugger.is_active()
-```
 
 
 
@@ -1322,4 +1308,21 @@ assert_setget(health_bar, 'health', true) # PASS
 gut.p('-- failing --')
 assert_setget(HealthBar, 'label') # FAIL => setter or getter has to be specified
 assert_setget(HealthBar, 'label', true) # FAIL => setter does not exist
+```
+
+
+
+### should_skip_script
+This virtual method is run after the script has been prepped for execution, but before `before_all` is executed.  If you implement this method and return `true` or a `String` (the string is displayed in the log) then GUT will stop executing the script and mark it as risky.  You might want to do this because:
+* You are porting tests from 3.x to 4.x and you don't want to comment everything out.
+* Skipping tests that should not be run when in `headless` mode such as input testing that does not work in headless.
+``` gdscript
+func should_skip_script():
+	if DisplayServer.get_name() == "headless":
+		return "Skip Input tests when running headless"
+```
+* If you have tests that would normally cause the debugger to break on an error, you can skip the script if the debugger is enabled so that the run is not interrupted.
+``` gdscript
+func should_skip_script():
+	return EngineDebugger.is_active()
 ```

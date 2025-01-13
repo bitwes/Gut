@@ -125,11 +125,7 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_property_with_backing_variable<class_GutTest_method_assert_property_with_backing_variable>`\ (\ obj, property_name, default_value, new_value, backed_by_name = null\ )                                                                              |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_readonly_property<class_GutTest_method_assert_readonly_property>`\ (\ obj, property_name, new_value, expected_value\ )                                                                                                                              |
-   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_same<class_GutTest_method_assert_same>`\ (\ v1, v2, text = ""\ )                                                                                                                                                                                    |
-   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_set_property<class_GutTest_method_assert_set_property>`\ (\ obj, property_name, new_value, expected_value\ )                                                                                                                                        |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_signal_emit_count<class_GutTest_method_assert_signal_emit_count>`\ (\ object, signal_name, times, text = ""\ )                                                                                                                                      |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -385,9 +381,26 @@ Method Descriptions
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **should_skip_script**\ (\ ) :ref:`🔗<class_GutTest_method_should_skip_script>`
 
-.. container:: contribute
+Virtual Method.  This is run after the script has been prepped for execution, but before `before_all` is executed.  If you implement this method and return `true` or a `String` (the string is displayed in the log) then GUT will stop executing the script and mark it as risky.  You might want to do this because: - You are porting tests from 3.x to 4.x and you don't want to comment everything out.
 
-	No description
+- Skipping tests that should not be run when in `headless` mode such as input testing that does not work in headless.
+
+
+
+::
+
+       func should_skip_script():
+           if DisplayServer.get_name() == "headless":
+               return "Skip Input tests when running headless"
+
+- If you have tests that would normally cause the debugger to break on an error, you can skip the script if the debugger is enabled so that the run is not interrupted.
+
+
+
+::
+
+       func should_skip_script():
+           return EngineDebugger.is_active()
 
 .. rst-class:: classref-item-separator
 
@@ -399,9 +412,7 @@ Method Descriptions
 
 |void| **before_all**\ (\ ) :ref:`🔗<class_GutTest_method_before_all>`
 
-.. container:: contribute
-
-	No description
+Virtual method.  Run once before anything else in the test script is run.
 
 .. rst-class:: classref-item-separator
 
@@ -413,23 +424,7 @@ Method Descriptions
 
 |void| **before_each**\ (\ ) :ref:`🔗<class_GutTest_method_before_each>`
 
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_after_all:
-
-.. rst-class:: classref-method
-
-|void| **after_all**\ (\ ) :ref:`🔗<class_GutTest_method_after_all>`
-
-.. container:: contribute
-
-	No description
+Virtual method.  Run before each test is executed
 
 .. rst-class:: classref-item-separator
 
@@ -441,9 +436,19 @@ Method Descriptions
 
 |void| **after_each**\ (\ ) :ref:`🔗<class_GutTest_method_after_each>`
 
-.. container:: contribute
+Virtual method.  Run after each test is executed.
 
-	No description
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_after_all:
+
+.. rst-class:: classref-method
+
+|void| **after_all**\ (\ ) :ref:`🔗<class_GutTest_method_after_all>`
+
+Virtual method.  Run after all tests have been run.
 
 .. rst-class:: classref-item-separator
 
@@ -638,21 +643,7 @@ Asserts got is greater than or equal to expected.
 
 |void| **assert_lt**\ (\ got, expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_lt>`
 
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_lte:
-
-.. rst-class:: classref-method
-
-|void| **assert_lte**\ (\ got, expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_lte>`
-
-Asserts got is less than or equal to expected
+Asserts ``got`` is less than ``expected``\ 
 
 ::
 
@@ -667,6 +658,18 @@ Asserts got is less than or equal to expected
        # Failing
        assert_lt('z', 'x')
        assert_lt(-5, -5)
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_lte:
+
+.. rst-class:: classref-method
+
+|void| **assert_lte**\ (\ got, expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_lte>`
+
+Asserts got is less than or equal to expected
 
 .. rst-class:: classref-item-separator
 
@@ -1219,9 +1222,7 @@ Asserts the passed in object has a signal with the specified name.  It should be
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_signal_emit_count**\ (\ object, signal_name\ ) :ref:`🔗<class_GutTest_method_get_signal_emit_count>`
 
-.. container:: contribute
-
-	No description
+This will return the number of times a signal was fired.  This gives you the freedom to make more complicated assertions if the spirit moves you. This will return -1 if the signal was not fired or the object was not being watched, or if the object does not have the signal.
 
 .. rst-class:: classref-item-separator
 
@@ -1570,34 +1571,6 @@ This method will assert that no orphaned nodes have been introduced by the test 
 
 ----
 
-.. _class_GutTest_method_assert_set_property:
-
-.. rst-class:: classref-method
-
-|void| **assert_set_property**\ (\ obj, property_name, new_value, expected_value\ ) :ref:`🔗<class_GutTest_method_assert_set_property>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_readonly_property:
-
-.. rst-class:: classref-method
-
-|void| **assert_readonly_property**\ (\ obj, property_name, new_value, expected_value\ ) :ref:`🔗<class_GutTest_method_assert_readonly_property>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
 .. _class_GutTest_method_assert_property_with_backing_variable:
 
 .. rst-class:: classref-method
@@ -1724,9 +1697,7 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_fail_count**\ (\ ) :ref:`🔗<class_GutTest_method_get_fail_count>`
 
-.. container:: contribute
-
-	No description
+Returns the number of failing asserts.
 
 .. rst-class:: classref-item-separator
 
@@ -1738,9 +1709,7 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_pass_count**\ (\ ) :ref:`🔗<class_GutTest_method_get_pass_count>`
 
-.. container:: contribute
-
-	No description
+Returns the number of passing asserts.
 
 .. rst-class:: classref-item-separator
 
@@ -1752,9 +1721,7 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_pending_count**\ (\ ) :ref:`🔗<class_GutTest_method_get_pending_count>`
 
-.. container:: contribute
-
-	No description
+Returns the number of pending tests.
 
 .. rst-class:: classref-item-separator
 
@@ -1766,9 +1733,7 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_assert_count**\ (\ ) :ref:`🔗<class_GutTest_method_get_assert_count>`
 
-.. container:: contribute
-
-	No description
+Returns the total number of asserts as of the time of the calling of this method.
 
 .. rst-class:: classref-item-separator
 
@@ -1792,9 +1757,7 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_double_strategy**\ (\ ) :ref:`🔗<class_GutTest_method_get_double_strategy>`
 
-.. container:: contribute
-
-	No description
+Returns the current double strategy.
 
 .. rst-class:: classref-item-separator
 
@@ -1806,9 +1769,7 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 |void| **set_double_strategy**\ (\ double_strategy\ ) :ref:`🔗<class_GutTest_method_set_double_strategy>`
 
-.. container:: contribute
-
-	No description
+Sets the double strategy for all tests in the script.  This should usually be done in :ref:`before_all<class_GutTest_method_before_all>`.  The double strtegy can be set per run/script/double.  See `Double-Strategy <../Double-Strategy.html>`__
 
 .. rst-class:: classref-item-separator
 
@@ -1820,9 +1781,9 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 |void| **pause_before_teardown**\ (\ ) :ref:`🔗<class_GutTest_method_pause_before_teardown>`
 
-.. container:: contribute
+This method will cause Gut to pause before it moves on to the next test. This is useful for debugging, for instance if you want to investigate the screen or anything else after a test has finished executing. 
 
-	No description
+Sometimes you get lazy, and you don't remove calls to ``pause_before_teardown`` after you are done with them.  You can tell GUT to ignore calls to to this method through the panel or the command line.  Setting this in your `.gutconfig.json` file is recommended for CI/CD Pipelines.
 
 .. rst-class:: classref-item-separator
 
@@ -1846,9 +1807,7 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **double**\ (\ thing, double_strat = null, not_used_anymore = null\ ) :ref:`🔗<class_GutTest_method_double>`
 
-.. container:: contribute
-
-	No description
+Create a Double of ``thing``.  ``thing`` should be a Class, script, or scene.  See `Doubles <../Doubles.html>`__
 
 .. rst-class:: classref-item-separator
 
@@ -1860,9 +1819,7 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **partial_double**\ (\ thing, double_strat = null, not_used_anymore = null\ ) :ref:`🔗<class_GutTest_method_partial_double>`
 
-.. container:: contribute
-
-	No description
+Create a Partial Double of ``thing``.  ``thing`` should be a Class, script, or scene.  See `Partial-Doubles <../Partial-Doubles.html>`__
 
 .. rst-class:: classref-item-separator
 
@@ -1892,51 +1849,13 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 ----
 
-.. _class_GutTest_method_double_scene:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **double_scene**\ (\ path, strategy = null\ ) :ref:`🔗<class_GutTest_method_double_scene>`
-
-**Deprecated:** no longer supported.  Use double
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_double_script:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **double_script**\ (\ path, strategy = null\ ) :ref:`🔗<class_GutTest_method_double_script>`
-
-**Deprecated:** no longer supported.  Use double
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_double_inner:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **double_inner**\ (\ path, subpath, strategy = null\ ) :ref:`🔗<class_GutTest_method_double_inner>`
-
-**Deprecated:** no longer supported.  Use register_inner_classes + double
-
-.. rst-class:: classref-item-separator
-
-----
-
 .. _class_GutTest_method_ignore_method_when_doubling:
 
 .. rst-class:: classref-method
 
 |void| **ignore_method_when_doubling**\ (\ thing, method_name\ ) :ref:`🔗<class_GutTest_method_ignore_method_when_doubling>`
 
-.. container:: contribute
-
-	No description
+This was implemented to allow the doubling of classes with static methods. There might be other valid use cases for this method, but you should always try stubbing before using this method.  Using ``stub(my_double, 'method').to_call_super()`` or  creating a :ref:`partial_double<class_GutTest_method_partial_double>` works for any other known scenario.  You cannot stub or spy on methods passed to ``ignore_method_when_doubling``.
 
 .. rst-class:: classref-item-separator
 
@@ -2253,6 +2172,42 @@ Registers all the inner classes in a script with the doubler.  This is required 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **yield_frames**\ (\ frames, msg = ""\ ) :ref:`🔗<class_GutTest_method_yield_frames>`
 
 **Deprecated:** use wait_frames
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_double_scene:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **double_scene**\ (\ path, strategy = null\ ) :ref:`🔗<class_GutTest_method_double_scene>`
+
+**Deprecated:** no longer supported.  Use double
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_double_script:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **double_script**\ (\ path, strategy = null\ ) :ref:`🔗<class_GutTest_method_double_script>`
+
+**Deprecated:** no longer supported.  Use double
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_double_inner:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **double_inner**\ (\ path, subpath, strategy = null\ ) :ref:`🔗<class_GutTest_method_double_inner>`
+
+**Deprecated:** no longer supported.  Use register_inner_classes + double
 
 .. |virtual| replace:: :abbr:`virtual (This method should typically be overridden by the user to have any effect.)`
 .. |const| replace:: :abbr:`const (This method has no side effects. It doesn't modify any of the instance's member variables.)`

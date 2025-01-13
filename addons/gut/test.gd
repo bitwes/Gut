@@ -270,24 +270,42 @@ func _convert_spy_args(inst, method_name, parameters):
 # Virtual Methods
 # #######################
 
+## Virtual Method.  This is run after the script has been prepped for execution, but before `before_all` is executed.  If you implement this method and return `true` or a `String` (the string is displayed in the log) then GUT will stop executing the script and mark it as risky.  You might want to do this because:
+## - You are porting tests from 3.x to 4.x and you don't want to comment everything out.[br]
+## - Skipping tests that should not be run when in `headless` mode such as input testing that does not work in headless.[br]
+## [codeblock]
+##    func should_skip_script():
+##        if DisplayServer.get_name() == "headless":
+##            return "Skip Input tests when running headless"
+## [/codeblock]
+## - If you have tests that would normally cause the debugger to break on an error, you can skip the script if the debugger is enabled so that the run is not interrupted.[br]
+## [codeblock]
+##    func should_skip_script():
+##        return EngineDebugger.is_active()
+## [/codeblock]
 func should_skip_script():
 	return false
 
 
+## Virtual method.  Run once before anything else in the test script is run.
 func before_all():
 	pass
 
 
+## Virtual method.  Run before each test is executed
 func before_each():
 	pass
 
+## Virtual method.  Run after each test is executed.
+func after_each():
+	pass
 
+
+## Virtual method.  Run after all tests have been run.
 func after_all():
 	pass
 
 
-func after_each():
-	pass
 
 # #######################
 # Public
@@ -488,19 +506,7 @@ func assert_gte(got, expected, text=""):
 		else:
 			_fail(disp)
 
-# ------------------------------------------------------------------------------
-# Asserts got is less than expected
-# ------------------------------------------------------------------------------
-func assert_lt(got, expected, text=""):
-	var disp = "[" + _str(got) + "] expected to be < than [" + _str(expected) + "]:  " + text
-	if(_do_datatypes_match__fail_if_not(got, expected, text)):
-		if(got < expected):
-			_pass(disp)
-		else:
-			_fail(disp)
-
-
-## Asserts got is less than or equal to expected
+## Asserts [param got] is less than [param expected]
 ## [codeblock]
 ##    var bigger = 5
 ##    var smaller = 0
@@ -514,6 +520,16 @@ func assert_lt(got, expected, text=""):
 ##    assert_lt('z', 'x')
 ##    assert_lt(-5, -5)
 ## [/codeblock]
+func assert_lt(got, expected, text=""):
+	var disp = "[" + _str(got) + "] expected to be < than [" + _str(expected) + "]:  " + text
+	if(_do_datatypes_match__fail_if_not(got, expected, text)):
+		if(got < expected):
+			_pass(disp)
+		else:
+			_fail(disp)
+
+
+## Asserts got is less than or equal to expected
 func assert_lte(got, expected, text=""):
 	var disp = "[" + _str(got) + "] expected to be <= than [" + _str(expected) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, expected, text)):
@@ -1124,20 +1140,48 @@ func assert_has_signal(object, signal_name, text=""):
 		_fail(disp)
 
 
-# ------------------------------------------------------------------------------
-# Returns the number of times a signal was emitted.  -1 returned if the object
-# is not being watched.
-# ------------------------------------------------------------------------------
+## This will return the number of times a signal was fired.  This gives you
+## the freedom to make more complicated assertions if the spirit moves you.
+## This will return -1 if the signal was not fired or the object was not being
+## watched, or if the object does not have the signal.
 func get_signal_emit_count(object, signal_name):
 	return _signal_watcher.get_emit_count(object, signal_name)
 
-# ------------------------------------------------------------------------------
-# Get the parmaters of a fired signal.  If the signal was not fired null is
-# returned.  You can specify an optional index (use get_signal_emit_count to
-# determine the number of times it was emitted).  The default index is the
-# latest time the signal was fired (size() -1 insetead of 0).  The parameters
-# returned are in an array.
-# ------------------------------------------------------------------------------
+
+
+## If you need to inspect the parameters in order to make more complicate
+## assertions, then this will give you access to the parameters of any watched
+## signal.  This works the same way that
+## [code]assert_signal_emitted_with_parameters[/code] does.  It takes an
+## object, signal name, and an optional index.  If the index is not specified
+## then the parameters from the most recent emission will be returned.  If the
+## object is not being watched, the signal was not fired, or the object does
+## not have the signal then `null` will be returned.
+## [codeblock]
+##    class SignalObject:
+##        signal some_signal
+##        signal other_signal
+##
+##    func test_get_signal_parameters():
+##        var obj = SignalObject.new()
+##        watch_signals(obj)
+##        obj.some_signal.emit(1, 2, 3)
+##        obj.some_signal.emit('a', 'b', 'c')
+##
+##        # Passing
+##        # passes because get_signal_parameters returns the most recent emission
+##        # by default
+##        assert_eq(get_signal_parameters(obj, 'some_signal'), ['a', 'b', 'c'])
+##        assert_eq(get_signal_parameters(obj, 'some_signal', 0), [1, 2, 3])
+##        # if the signal was not fired null is returned
+##        assert_eq(get_signal_parameters(obj, 'other_signal'), null)
+##        # if the signal does not exist or isn't being watched null is returned
+##        assert_eq(get_signal_parameters(obj, 'signal_dne'), null)
+##
+##        # Failing
+##        assert_eq(get_signal_parameters(obj, 'some_signal'), [1, 2, 3])
+##        assert_eq(get_signal_parameters(obj, 'some_signal', 0), ['a', 'b', 'c'])
+# [/codeblock]
 func get_signal_parameters(object, signal_name, index=-1):
 	return _signal_watcher.get_signal_parameters(object, signal_name, index)
 
@@ -1567,18 +1611,12 @@ func assert_setget(
 	_fail('assert_setget has been removed.  Use assert_property, assert_set_property, assert_readonly_property instead.')
 
 
-# ------------------------------------------------------------------------------
-# This will set the property through the setter and compare the result to the
-# expected value.  Useful when setter is not simple.
-# ------------------------------------------------------------------------------
+## @ignore
 func assert_set_property(obj, property_name, new_value, expected_value):
 	pending("this hasn't been implemented yet")
 
 
-# ------------------------------------------------------------------------------
-# This will attempt to assign new_value to the property and verify that it
-# is equal to expected_value.
-# ------------------------------------------------------------------------------
+## @ignore
 func assert_readonly_property(obj, property_name, new_value, expected_value):
 	pending("this hasn't been implemented yet")
 
@@ -1746,15 +1784,20 @@ func did_wait_timeout():
 func get_summary():
 	return _summary
 
+## Returns the number of failing asserts.
 func get_fail_count():
 	return _summary.failed
 
+## Returns the number of passing asserts.
 func get_pass_count():
 	return _summary.passed
 
+## Returns the number of pending tests.
 func get_pending_count():
 	return _summary.pending
 
+## Returns the total number of asserts as of the time of the calling of this
+## method.
 func get_assert_count():
 	return _summary.asserts
 
@@ -1762,12 +1805,26 @@ func get_assert_count():
 func clear_signal_watcher():
 	_signal_watcher.clear()
 
+## Returns the current double strategy.
 func get_double_strategy():
 	return gut.get_doubler().get_strategy()
 
+## Sets the double strategy for all tests in the script.  This should usually
+## be done in [method before_all].  The double strtegy can be set per
+## run/script/double.  See [wiki]Double-Strategy[/wiki]
 func set_double_strategy(double_strategy):
 	gut.get_doubler().set_strategy(double_strategy)
 
+
+## This method will cause Gut to pause before it moves on to the next test.
+## This is useful for debugging, for instance if you want to investigate the
+## screen or anything else after a test has finished executing.
+## [br]
+## Sometimes you get lazy, and you don't remove calls to
+## [code skip-lint]pause_before_teardown[/code] after you are done with them.  You can
+## tell GUT to ignore calls to to this method through the panel or
+## the command line.  Setting this in your `.gutconfig.json` file is recommended
+## for CI/CD Pipelines.
 func pause_before_teardown():
 	gut.pause_before_teardown()
 
@@ -1783,12 +1840,6 @@ func get_summary_text():
 	if(_summary.failed > 0):
 		to_return += str("\n  ", _summary.failed, ' failed.')
 	return to_return
-
-# ------------------------------------------------------------------------------
-# Double a script, inner class, or scene using a path or a loaded script/scene.
-#
-#
-# ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -1838,16 +1889,16 @@ func _are_double_parameters_valid(thing, p2, p3):
 	return bad_msg == ""
 
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
+## Create a Double of [param thing].  [param thing] should be a Class, script,
+## or scene.  See [wiki]Doubles[/wiki]
 func double(thing, double_strat=null, not_used_anymore=null):
 	if(!_are_double_parameters_valid(thing, double_strat, not_used_anymore)):
 		return null
 
 	return _smart_double(thing, double_strat, false)
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
+## Create a Partial Double of [param thing].  [param thing] should be a Class,
+## script, or scene.  See [wiki]Partial-Doubles[/wiki]
 func partial_double(thing, double_strat=null, not_used_anymore=null):
 	if(!_are_double_parameters_valid(thing, double_strat, not_used_anymore)):
 		return null
@@ -1865,9 +1916,6 @@ func double_singleton(singleton_name):
 	# 	to_return = gut.get_doubler().double_singleton(singleton_name)
 	# return to_return
 
-# ------------------------------------------------------------------------------
-# Partial Doubles a Godot singleton
-# ------------------------------------------------------------------------------
 ## @internal
 func partial_double_singleton(singleton_name):
 	return null
@@ -1876,35 +1924,13 @@ func partial_double_singleton(singleton_name):
 	# 	to_return = gut.get_doubler().partial_double_singleton(singleton_name)
 	# return to_return
 
-## @deprecated: no longer supported.  Use double
-func double_scene(path, strategy=null):
-	_lgr.deprecated('test.double_scene has been removed.', 'double')
-	return null
 
-
-
-## @deprecated: no longer supported.  Use double
-func double_script(path, strategy=null):
-	_lgr.deprecated('test.double_script has been removed.', 'double')
-	return null
-
-	# var override_strat = GutUtils.nvl(strategy, gut.get_doubler().get_strategy())
-	# return gut.get_doubler().double(path, override_strat)
-
-
-## @deprecated: no longer supported.  Use register_inner_classes + double
-func double_inner(path, subpath, strategy=null):
-	_lgr.deprecated('double_inner should not be used.  Use register_inner_classes and double instead.', 'double')
-	return null
-
-	var override_strat = GutUtils.nvl(strategy, gut.get_doubler().get_strategy())
-	return gut.get_doubler().double_inner(path, subpath, override_strat)
-
-
-# ------------------------------------------------------------------------------
-# Add a method that the doubler will ignore.  You can pass this a loaded script
-# or scene.  These ignores are cleared after every test.
-# ------------------------------------------------------------------------------
+## This was implemented to allow the doubling of classes with static methods.
+## There might be other valid use cases for this method, but you should always
+## try stubbing before using this method.  Using
+## [code]stub(my_double, 'method').to_call_super()[/code] or  creating a
+## [method partial_double] works for any other known scenario.  You cannot stub
+## or spy on methods passed to [code skip-lint]ignore_method_when_doubling[/code].
 func ignore_method_when_doubling(thing, method_name):
 	if(typeof(thing) == TYPE_STRING):
 		_lgr.error('ignore_method_when_doubling no longer supports paths to scripts or scenes.  Load them and pass them instead.')
@@ -1965,14 +1991,15 @@ func stub(thing, p2=null, p3=null):
 func simulate(obj, times, delta, check_is_processing: bool = false):
 	gut.simulate(obj, times, delta, check_is_processing)
 
+
 # ------------------------------------------------------------------------------
-# Replace the node at base_node.get_node(path) with with_this.  All references
-# to the node via $ and get_node(...) will now return with_this.  with_this will
-# get all the groups that the node that was replaced had.
-#
-# The node that was replaced is queued to be freed.
-#
-# TODO see replace_by method, this could simplify the logic here.
+## Replace the node at base_node.get_node(path) with with_this.  All references
+## to the node via $ and get_node(...) will now return with_this.  with_this will
+## get all the groups that the node that was replaced had.
+## [br]
+## The node that was replaced is queued to be freed.
+## [br]
+## TODO see replace_by method, this could simplify the logic here.
 # ------------------------------------------------------------------------------
 func replace_node(base_node, path_or_node, with_this):
 	var path = path_or_node
@@ -2254,6 +2281,30 @@ func yield_to(obj, signal_name, max_wait, msg=''):
 func yield_frames(frames, msg=''):
 	_lgr.deprecated("yield_frames", "wait_frames")
 	return wait_frames(frames, msg)
+
+
+## @deprecated: no longer supported.  Use double
+func double_scene(path, strategy=null):
+	_lgr.deprecated('test.double_scene has been removed.', 'double')
+	return null
+
+
+## @deprecated: no longer supported.  Use double
+func double_script(path, strategy=null):
+	_lgr.deprecated('test.double_script has been removed.', 'double')
+	return null
+
+	# var override_strat = GutUtils.nvl(strategy, gut.get_doubler().get_strategy())
+	# return gut.get_doubler().double(path, override_strat)
+
+
+## @deprecated: no longer supported.  Use register_inner_classes + double
+func double_inner(path, subpath, strategy=null):
+	_lgr.deprecated('double_inner should not be used.  Use register_inner_classes and double instead.', 'double')
+	return null
+
+	var override_strat = GutUtils.nvl(strategy, gut.get_doubler().get_strategy())
+	return gut.get_doubler().double_inner(path, subpath, override_strat)
 
 
 # ##############################################################################

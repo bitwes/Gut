@@ -258,6 +258,7 @@ def make_method_descriptions(f, class_def, state):
             if m.description is not None and m.description.strip() != "":
                 f.write(f"{bb2rst.format_text_block(m.description.strip(), m, state)}\n\n")
             elif m.deprecated is None and m.experimental is None:
+                lgr.vprint(f'Missing method description {class_def.name}.{m.name}')
                 no_description_container(f, "method")
 
             index += 1
@@ -1292,7 +1293,7 @@ def get_cmdline_args():
 # Entry point for the RST generator.
 def main() -> None:
     args = get_cmdline_args()
-    lgr.verbose_enabled = args.verbose
+    lgr.verbose_enabled = True#args.verbose
     should_color = bool(args.color or sys.stdout.isatty() or os.environ.get("CI"))
     lgr.set_should_color(should_color)
 
