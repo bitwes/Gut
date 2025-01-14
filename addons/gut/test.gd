@@ -1,6 +1,6 @@
 class_name GutTest
 extends Node
-## This is the base class for all test scripts.  Extend this...test the world!
+## This is the base class for all GUT test scripts.
 
 
 var _compare = GutUtils.Comparator.new()
@@ -72,6 +72,10 @@ func _notification(what):
 		_awaiter.queue_free()
 
 
+#region Private
+# ----------------
+
+
 func _str(thing):
 	return _strutils.type2str(thing)
 
@@ -88,9 +92,8 @@ func _str_precision(value, precision):
 
 	return to_return
 
-# ------------------------------------------------------------------------------
+
 # Fail an assertion.  Causes test and script to fail as well.
-# ------------------------------------------------------------------------------
 func _fail(text):
 	_summary.asserts += 1
 	_summary.failed += 1
@@ -100,9 +103,7 @@ func _fail(text):
 		gut._fail(text)
 
 
-# ------------------------------------------------------------------------------
 # Pass an assertion.
-# ------------------------------------------------------------------------------
 func _pass(text):
 	_summary.asserts += 1
 	_summary.passed += 1
@@ -111,11 +112,10 @@ func _pass(text):
 		_lgr.passed(text)
 		gut._pass(text)
 
-# ------------------------------------------------------------------------------
+
 # Checks if the datatypes passed in match.  If they do not then this will cause
 # a fail to occur.  If they match then TRUE is returned, FALSE if not.  This is
 # used in all the assertions that compare values.
-# ------------------------------------------------------------------------------
 func _do_datatypes_match__fail_if_not(got, expected, text):
 	var did_pass = true
 
@@ -137,10 +137,9 @@ func _do_datatypes_match__fail_if_not(got, expected, text):
 
 	return did_pass
 
-# ------------------------------------------------------------------------------
+
 # Create a string that lists all the methods that were called on an spied
 # instance.
-# ------------------------------------------------------------------------------
 func _get_desc_of_calls_to_instance(inst):
 	var BULLET = '  * '
 	var calls = gut.get_spy().get_call_list_as_string(inst)
@@ -150,9 +149,9 @@ func _get_desc_of_calls_to_instance(inst):
 	calls = calls.substr(0, calls.length() - BULLET.length() - 1)
 	return "Calls made on " + str(inst) + "\n" + calls
 
-# ------------------------------------------------------------------------------
+
+
 # Signal assertion helper.  Do not call directly, use _can_make_signal_assertions
-# ------------------------------------------------------------------------------
 func _fail_if_does_not_have_signal(object, signal_name):
 	var did_fail = false
 	if(!_signal_watcher.does_object_have_signal(object, signal_name)):
@@ -160,9 +159,8 @@ func _fail_if_does_not_have_signal(object, signal_name):
 		did_fail = true
 	return did_fail
 
-# ------------------------------------------------------------------------------
+
 # Signal assertion helper.  Do not call directly, use _can_make_signal_assertions
-# ------------------------------------------------------------------------------
 func _fail_if_not_watching(object):
 	var did_fail = false
 	if(!_signal_watcher.is_watching_object(object)):
@@ -171,17 +169,15 @@ func _fail_if_not_watching(object):
 		did_fail = true
 	return did_fail
 
-# ------------------------------------------------------------------------------
+
 # Returns text that contains original text and a list of all the signals that
 # were emitted for the passed in object.
-# ------------------------------------------------------------------------------
 func _get_fail_msg_including_emitted_signals(text, object):
 	return str(text," (Signals emitted: ", _signal_watcher.get_signals_emitted(object), ")")
 
-# ------------------------------------------------------------------------------
+
 # This validates that parameters is an array and generates a specific error
 # and a failure with a specific message
-# ------------------------------------------------------------------------------
 func _fail_if_parameters_not_array(parameters):
 	var invalid = parameters != null and typeof(parameters) != TYPE_ARRAY
 	if(invalid):
@@ -190,11 +186,9 @@ func _fail_if_parameters_not_array(parameters):
 	return invalid
 
 
-# ------------------------------------------------------------------------------
 # A bunch of common checkes used when validating a double/method pair.  If
 # everything is ok then an empty string is returned, otherwise the message
 # is returned.
-# ------------------------------------------------------------------------------
 func _get_bad_double_or_method_message(inst, method_name, what_you_cant_do):
 	var to_return = ''
 
@@ -214,8 +208,6 @@ func _get_bad_double_or_method_message(inst, method_name, what_you_cant_do):
 	return to_return
 
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
 func _fail_if_not_double_or_does_not_have_method(inst, method_name):
 	var to_return = OK
 
@@ -227,8 +219,6 @@ func _fail_if_not_double_or_does_not_have_method(inst, method_name):
 	return to_return
 
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
 func _create_obj_from_type(type):
 	var obj = null
 	if type.is_class("PackedScene"):
@@ -239,7 +229,6 @@ func _create_obj_from_type(type):
 	return obj
 
 
-# ------------------------------------------------------------------------------
 # Converts a Callabe passed through inst or inst/method_name/parameters into a
 # hash so that methods that interact with Spy can accept both more easily.
 func _convert_spy_args(inst, method_name, parameters):
@@ -266,9 +255,99 @@ func _convert_spy_args(inst, method_name, parameters):
 	return to_return
 
 
-# #######################
-# Virtual Methods
-# #######################
+func _get_typeof_string(the_type):
+	var to_return = ""
+	if(_strutils.types.has(the_type)):
+		to_return += str(the_type, '(',  _strutils.types[the_type], ')')
+	else:
+		to_return += str(the_type)
+	return to_return
+
+
+# Validates the singleton_name is a string and exists.  Errors when conditions
+# are not met.  Returns true/false if singleton_name is valid or not.
+func _validate_singleton_name(singleton_name):
+	var is_valid = true
+	if(typeof(singleton_name) != TYPE_STRING):
+		_lgr.error("double_singleton requires a Godot singleton name, you passed " + _str(singleton_name))
+		is_valid = false
+	# Sometimes they have underscores in front of them, sometimes they do not.
+	# The doubler is smart enought of ind the right thing, so this has to be
+	# that smart as well.
+	elif(!ClassDB.class_exists(singleton_name) and !ClassDB.class_exists('_' + singleton_name)):
+		var txt = str("The singleton [", singleton_name, "] could not be found.  ",
+					"Check the GlobalScope page for a list of singletons.")
+		_lgr.error(txt)
+		is_valid = false
+	return is_valid
+
+
+# Checks the object for 'get_' and 'set_' methods for the specified property.
+# If found a warning is generated.
+func _warn_for_public_accessors(obj, property_name):
+	var public_accessors = []
+	var accessor_names = [
+		str('get_', property_name),
+		str('is_', property_name),
+		str('set_', property_name)
+	]
+
+	for acc in accessor_names:
+		if(obj.has_method(acc)):
+			public_accessors.append(acc)
+
+	if(public_accessors.size() > 0):
+		_lgr.warn (str('Public accessors ', public_accessors, ' found for property ', property_name))
+
+
+func _smart_double(thing, double_strat, partial):
+	var override_strat = GutUtils.nvl(double_strat, gut.get_doubler().get_strategy())
+	var to_return = null
+
+	if(thing is PackedScene):
+		if(partial):
+			to_return =  gut.get_doubler().partial_double_scene(thing, override_strat)
+		else:
+			to_return =  gut.get_doubler().double_scene(thing, override_strat)
+
+	elif(GutUtils.is_native_class(thing)):
+		if(partial):
+			to_return = gut.get_doubler().partial_double_gdnative(thing)
+		else:
+			to_return = gut.get_doubler().double_gdnative(thing)
+
+	elif(thing is GDScript):
+		if(partial):
+			to_return = gut.get_doubler().partial_double(thing, override_strat)
+		else:
+			to_return = gut.get_doubler().double(thing, override_strat)
+
+	return to_return
+
+
+# This is here to aid in the transition to the new doubling sytnax.  Once this
+# has been established it could be removed.  We must keep the is_instance check
+# going forward though.
+func _are_double_parameters_valid(thing, p2, p3):
+	var bad_msg = ""
+	if(p3 != null or typeof(p2) == TYPE_STRING):
+		bad_msg += "Doubling using a subpath is not supported.  Call register_inner_class and then pass the Inner Class to double().\n"
+
+	if(typeof(thing) == TYPE_STRING):
+		bad_msg += "Doubling using the path to a script or scene is no longer supported.  Load the script or scene and pass that to double instead.\n"
+
+	if(GutUtils.is_instance(thing)):
+		bad_msg += "double requires a script, you passed an instance:  " + _str(thing)
+
+	if(bad_msg != ""):
+		_lgr.error(bad_msg)
+
+	return bad_msg == ""
+
+# ----------------
+#endregion
+#region Virtual Methods
+# ----------------
 
 ## Virtual Method.  This is run after the script has been prepped for execution, but before `before_all` is executed.  If you implement this method and return `true` or a `String` (the string is displayed in the log) then GUT will stop executing the script and mark it as risky.  You might want to do this because:
 ## - You are porting tests from 3.x to 4.x and you don't want to comment everything out.[br]
@@ -305,11 +384,79 @@ func after_each():
 func after_all():
 	pass
 
+# ----------------
+#endregion
+#region Misc Public
+# ----------------
+## Mark the current test as pending.
+func pending(text=""):
+	_summary.pending += 1
+	if(gut):
+		_lgr.pending(text)
+		gut._pending(text)
 
 
-# #######################
-# Public
-# #######################
+## Returns true if the test is passing as of the time of this call.  False if not.
+func is_passing():
+	if(gut.get_current_test_object() != null and
+		!['before_all', 'after_all'].has(gut.get_current_test_object().name)):
+		return gut.get_current_test_object().is_passing() and \
+			gut.get_current_test_object().assert_count > 0
+	else:
+		_lgr.error('No current test object found.  is_passing must be called inside a test.')
+		return null
+
+
+## Returns true if the test is failing as of the time of this call.  False if not.
+func is_failing():
+	if(gut.get_current_test_object() != null and
+		!['before_all', 'after_all'].has(gut.get_current_test_object().name)):
+
+		return gut.get_current_test_object().is_failing()
+	else:
+		_lgr.error('No current test object found.  is_failing must be called inside a test.')
+		return null
+
+
+## Marks the test as passing.  Does not override any failing asserts or calls to
+## fail_test.  Same as a passing assert.
+func pass_test(text):
+	_pass(text)
+
+
+## Marks the test as failing.  Same as a failing assert.
+func fail_test(text):
+	_fail(text)
+
+## @internal
+func clear_signal_watcher():
+	_signal_watcher.clear()
+
+
+## Returns the current double strategy.
+func get_double_strategy():
+	return gut.get_doubler().get_strategy()
+
+
+## Sets the double strategy for all tests in the script.  This should usually
+## be done in [method before_all].  The double strtegy can be set per
+## run/script/double.  See [wiki]Double-Strategy[/wiki]
+func set_double_strategy(double_strategy):
+	gut.get_doubler().set_strategy(double_strategy)
+
+
+## This method will cause Gut to pause before it moves on to the next test.
+## This is useful for debugging, for instance if you want to investigate the
+## screen or anything else after a test has finished executing.
+## [br]
+## Sometimes you get lazy, and you don't remove calls to
+## [code skip-lint]pause_before_teardown[/code] after you are done with them.  You can
+## tell GUT to ignore calls to to this method through the panel or
+## the command line.  Setting this in your `.gutconfig.json` file is recommended
+## for CI/CD Pipelines.
+func pause_before_teardown():
+	gut.pause_before_teardown()
+
 
 ## @internal
 func get_logger():
@@ -320,9 +467,262 @@ func set_logger(logger):
 	_lgr = logger
 
 
-# #######################
-# Asserts
-# #######################
+## This must be called in order to make assertions based on signals being
+## emitted.  __Right now, this only supports signals that are emitted with 9 or
+## less parameters.__  This can be extended but nine seemed like enough for now.
+## The Godot documentation suggests that the limit is four but in my testing
+## I found you can pass more.
+## [br]
+## This must be called in each test in which you want to make signal based
+## assertions in.  You can call it multiple times with different objects.
+## You should not call it multiple times with the same object in the same test.
+## The objects that are watched are cleared after each test (specifically right
+## before `teardown` is called).  Under the covers, Gut will connect to all the
+## signals an object has and it will track each time they fire.  You can then
+## use the following asserts and methods to verify things are acting correct.
+func watch_signals(object):
+	_signal_watcher.watch_signals(object)
+
+
+## This will return the number of times a signal was fired.  This gives you
+## the freedom to make more complicated assertions if the spirit moves you.
+## This will return -1 if the signal was not fired or the object was not being
+## watched, or if the object does not have the signal.
+func get_signal_emit_count(object, signal_name):
+	return _signal_watcher.get_emit_count(object, signal_name)
+
+
+## If you need to inspect the parameters in order to make more complicate
+## assertions, then this will give you access to the parameters of any watched
+## signal.  This works the same way that
+## [code]assert_signal_emitted_with_parameters[/code] does.  It takes an
+## object, signal name, and an optional index.  If the index is not specified
+## then the parameters from the most recent emission will be returned.  If the
+## object is not being watched, the signal was not fired, or the object does
+## not have the signal then `null` will be returned.
+## [codeblock]
+##    class SignalObject:
+##        signal some_signal
+##        signal other_signal
+##
+##    func test_get_signal_parameters():
+##        var obj = SignalObject.new()
+##        watch_signals(obj)
+##        obj.some_signal.emit(1, 2, 3)
+##        obj.some_signal.emit('a', 'b', 'c')
+##
+##        # Passing
+##        # passes because get_signal_parameters returns the most recent emission
+##        # by default
+##        assert_eq(get_signal_parameters(obj, 'some_signal'), ['a', 'b', 'c'])
+##        assert_eq(get_signal_parameters(obj, 'some_signal', 0), [1, 2, 3])
+##        # if the signal was not fired null is returned
+##        assert_eq(get_signal_parameters(obj, 'other_signal'), null)
+##        # if the signal does not exist or isn't being watched null is returned
+##        assert_eq(get_signal_parameters(obj, 'signal_dne'), null)
+##
+##        # Failing
+##        assert_eq(get_signal_parameters(obj, 'some_signal'), [1, 2, 3])
+##        assert_eq(get_signal_parameters(obj, 'some_signal', 0), ['a', 'b', 'c'])
+## [/codeblock]
+func get_signal_parameters(object, signal_name, index=-1):
+	return _signal_watcher.get_signal_parameters(object, signal_name, index)
+
+
+## Get the parameters for a method call to a doubled object.  By default it will
+## return the most recent call.  You can optionally specify an index for which
+## call you want to get the parameters for.
+##
+## Can be called using a Callable for the first parameter instead of specifying
+## an object and method name.  When you do this, the seoncd parameter is used
+## as the index.
+##
+## Returns:
+## * an array of parameter values if a call the method was found
+## * null when a call to the method was not found or the index specified was
+##   invalid.
+func get_call_parameters(object, method_name_or_index = -1, idx=-1):
+	var to_return = null
+	var index = idx
+	if(object is Callable):
+		index = method_name_or_index
+		method_name_or_index = null
+	var converted = _convert_spy_args(object, method_name_or_index, null)
+
+	if(GutUtils.is_double(converted.object)):
+		to_return = gut.get_spy().get_call_parameters(
+			converted.object, converted.method_name, index)
+	else:
+		_lgr.error('You must pass a doulbed object to get_call_parameters.')
+
+	return to_return
+
+
+## Returns the call count for a method with optional paramter matching.
+##
+## Can be called with a Callable instead of an object, method_name, and
+## parameters.  Bound arguments will be used to match call arguments.
+func get_call_count(object, method_name=null, parameters=null):
+	var converted = _convert_spy_args(object, method_name, parameters)
+	return gut.get_spy().call_count(converted.object, converted.method_name, converted.arguments)
+
+
+## Simulate a number of frames by calling '_process' and '_physics_process' (if
+## the methods exist) on an object and all of its descendents. The specified frame
+## time, 'delta', will be passed to each simulated call.
+##
+## NOTE: Objects can disable their processing methods using 'set_process(false)' and
+## 'set_physics_process(false)'. This is reflected in the 'Object' methods
+## 'is_processing()' and 'is_physics_processing()', respectively. To make 'simulate'
+## respect this status, for example if you are testing an object which toggles
+## processing, pass 'check_is_processing' as 'true'.
+func simulate(obj, times, delta, check_is_processing: bool = false):
+	gut.simulate(obj, times, delta, check_is_processing)
+
+
+# ------------------------------------------------------------------------------
+## Replace the node at base_node.get_node(path) with with_this.  All references
+## to the node via $ and get_node(...) will now return with_this.  with_this will
+## get all the groups that the node that was replaced had.
+## [br]
+## The node that was replaced is queued to be freed.
+## [br]
+## TODO see replace_by method, this could simplify the logic here.
+# ------------------------------------------------------------------------------
+func replace_node(base_node, path_or_node, with_this):
+	var path = path_or_node
+
+	if(typeof(path_or_node) != TYPE_STRING):
+		# This will cause an engine error if it fails.  It always returns a
+		# NodePath, even if it fails.  Checking the name count is the only way
+		# I found to check if it found something or not (after it worked I
+		# didn't look any farther).
+		path = base_node.get_path_to(path_or_node)
+		if(path.get_name_count() == 0):
+			_lgr.error('You passed an object that base_node does not have.  Cannot replace node.')
+			return
+
+	if(!base_node.has_node(path)):
+		_lgr.error(str('Could not find node at path [', path, ']'))
+		return
+
+	var to_replace = base_node.get_node(path)
+	var parent = to_replace.get_parent()
+	var replace_name = to_replace.get_name()
+
+	parent.remove_child(to_replace)
+	parent.add_child(with_this)
+	with_this.set_name(replace_name)
+	with_this.set_owner(parent)
+
+	var groups = to_replace.get_groups()
+	for i in range(groups.size()):
+		with_this.add_to_group(groups[i])
+
+	to_replace.queue_free()
+
+
+## Use this as the default value for the first parameter to a test to create
+## a parameterized test.  See also the ParameterFactory and Parameterized Tests.
+## [br][br]
+## [b]Example[/b]
+## [codeblock]
+##    func test_with_parameters(p = use_parameters([1, 2, 3])):
+## [/codeblock]
+func use_parameters(params):
+	var ph = gut.parameter_handler
+	if(ph == null):
+		ph = GutUtils.ParameterHandler.new(params)
+		gut.parameter_handler = ph
+
+	# DO NOT use gut.gd's get_call_count_text here since it decrements the
+	# get_call_count value.  This method increments the call count in its
+	# return statement.
+	var output = str('- params[', ph.get_call_count(), ']','(', ph.get_current_parameters(), ')')
+	gut.p(output, gut.LOG_LEVEL_TEST_AND_FAILURES)
+
+	return ph.next_parameters()
+
+
+## @internal
+## When used as the default for a test method parameter, it will cause the test
+## to be run x times.
+##
+## I Hacked this together to test a method that was occassionally failing due to
+## timing issues.  I don't think it's a great idea, but you be the judge.  If
+## you find a good use for it, let me know and I'll make it a legit member
+## of the api.
+func run_x_times(x):
+	var ph = gut.parameter_handler
+	if(ph == null):
+		_lgr.warn(
+			str("This test uses run_x_times and you really should not be ",
+			"using it.  I don't think it's a good thing, but I did find it ",
+			"temporarily useful so I left it in here and didn't document it.  ",
+			"Well, you found it, might as well open up an issue and let me ",
+			"know why you're doing this."))
+		var params = []
+		for i in range(x):
+			params.append(i)
+
+		ph = GutUtils.ParameterHandler.new(params)
+		gut.parameter_handler = ph
+	return ph.next_parameters()
+
+
+## Checks the passed in version string (x.x.x) against the engine version to see
+## if the engine version is less than the expected version.  If it is then the
+## test is mareked as passed (for a lack of anything better to do).  The result
+## of the check is returned.
+## [br][br]
+## [b]Example[/b]
+## [codeblock]
+##    if(skip_if_godot_version_lt('3.5.0')):
+##        return
+## [/codeblock]
+func skip_if_godot_version_lt(expected):
+	var should_skip = !GutUtils.is_godot_version_gte(expected)
+	if(should_skip):
+		_pass(str('Skipping: ', GutUtils.godot_version_string(), ' is less than ', expected))
+	return should_skip
+
+
+## Checks if the passed in version matches the engine version.  The passed in
+## version can contain just the major, major.minor or major.minor.path.  If
+## the version is not the same then the test is marked as passed.  The result of
+## the check is returned.
+## [br][br]
+## [b]Example[/b]
+## [codeblock]
+##     if(skip_if_godot_version_ne('3.4')):
+##        return
+## [/codeblock]
+func skip_if_godot_version_ne(expected):
+	var should_skip = !GutUtils.is_godot_version(expected)
+	if(should_skip):
+		_pass(str('Skipping: ', GutUtils.godot_version_string(), ' is not ', expected))
+	return should_skip
+
+
+## Registers all the inner classes in a script with the doubler.  This is required
+## before you can double any inner class.
+func register_inner_classes(base_script):
+	gut.get_doubler().inner_class_registry.register(base_script)
+
+
+## Peforms a deep compare on both values, a CompareResult instnace is returned.
+## The optional max_differences paramter sets the max_differences to be displayed.
+func compare_deep(v1, v2, max_differences=null):
+	var result = _compare.deep(v1, v2)
+	if(max_differences != null):
+		result.max_differences = max_differences
+	return result
+
+
+# ----------------
+#endregion
+#region Asserts
+# ----------------
 
 ## Asserts that the expected value equals the value got.
 ## assert got == expected and prints optional text.  See [wiki]Comparing-Things[/wiki]
@@ -594,6 +994,7 @@ func assert_between(got, expect_low, expect_high, text=""):
 
 ## Asserts value is not between (exclusive) the two expected values.[br]
 ## asserts that got <= expect_low or got >=  expect_high.
+## [codeblock]
 ##    # Passing
 ##    assert_not_between(1, 5, 10)
 ##    assert_not_between('a', 'b', 'd')
@@ -604,6 +1005,7 @@ func assert_between(got, expect_low, expect_high, text=""):
 ##    # Failing
 ##    assert_not_between(5, 0, 10, 'Five shouldnt be between 0 and 10')
 ##    assert_not_between(0.25, -2.0, 4.0)
+## [/codeblock]
 func assert_not_between(got, expect_low, expect_high, text=""):
 	var disp = "[" + _str_precision(got, 20) + "] expected not to be between [" + _str(expect_low) + "] and [" + str(expect_high) + "]:  " + text
 
@@ -643,6 +1045,7 @@ func assert_has(obj, element, text=""):
 		_pass(disp)
 	else:
 		_fail(disp)
+
 
 ## The inverse of assert_has.
 func assert_does_not_have(obj, element, text=""):
@@ -700,7 +1103,6 @@ func assert_file_does_not_exist(file_path):
 		_pass(disp)
 	else:
 		_fail(disp)
-
 
 
 ## asserts the specified file is empty
@@ -782,14 +1184,12 @@ func assert_accessors(obj, property, default, set_to):
 	assert_eq(obj.call(get_func), set_to, 'The set value should have been returned.')
 
 
-# ---------------------------------------------------------------------------
 # Property search helper.  Used to retrieve Dictionary of specified property
 # from passed object. Returns null if not found.
 # If provided, property_usage constrains the type of property returned by
 # passing either:
 # EDITOR_PROPERTY for properties defined as: export var some_value: int
 # VARIABLE_PROPERTY for properties defined as: var another_value
-# ---------------------------------------------------------------------------
 func _find_object_property(obj, property_name, property_usage=null):
 	var result = null
 	var found = false
@@ -802,6 +1202,7 @@ func _find_object_property(obj, property_name, property_usage=null):
 				result = property
 				found = true
 	return result
+
 
 ## Asserts that [param obj] exports a property with the name
 ## [param property_name] and a type of [param type].  The [param type] must be
@@ -836,20 +1237,18 @@ func assert_exports(obj, property_name, type):
 	else:
 		_fail(disp)
 
-# ------------------------------------------------------------------------------
+
 # Signal assertion helper.
 #
 # Verifies that the object and signal are valid for making signal assertions.
 # This will fail with specific messages that indicate why they are not valid.
 # This returns true/false to indicate if the object and signal are valid.
-# ------------------------------------------------------------------------------
 func _can_make_signal_assertions(object, signal_name):
 	return !(_fail_if_not_watching(object) or _fail_if_does_not_have_signal(object, signal_name))
 
-# ------------------------------------------------------------------------------
+
 # Check if an object is connected to a signal on another object. Returns True
 # if it is and false otherwise
-# ------------------------------------------------------------------------------
 func _is_connected(signaler_obj, connect_to_obj, signal_name, method_name=""):
 	if(method_name != ""):
 		return signaler_obj.is_connected(signal_name,Callable(connect_to_obj,method_name))
@@ -859,23 +1258,6 @@ func _is_connected(signaler_obj, connect_to_obj, signal_name, method_name=""):
 			if(conn['signal'].get_name() == signal_name and conn['callable'].get_object() == connect_to_obj):
 				return true
 		return false
-
-
-## This must be called in order to make assertions based on signals being
-## emitted.  __Right now, this only supports signals that are emitted with 9 or
-## less parameters.__  This can be extended but nine seemed like enough for now.
-## The Godot documentation suggests that the limit is four but in my testing
-## I found you can pass more.
-## [br]
-## This must be called in each test in which you want to make signal based
-## assertions in.  You can call it multiple times with different objects.
-## You should not call it multiple times with the same object in the same test.
-## The objects that are watched are cleared after each test (specifically right
-## before `teardown` is called).  Under the covers, Gut will connect to all the
-## signals an object has and it will track each time they fire.  You can then
-## use the following asserts and methods to verify things are acting correct.
-func watch_signals(object):
-	_signal_watcher.watch_signals(object)
 
 
 ## Asserts that `signaler_obj` is connected to `connect_to_obj` on signal `signal_name`.  The method that is connected is optional.  If `method_name` is supplied then this will pass only if the signal is connected to the  method.  If it is not provided then any connection to the signal will cause a pass.
@@ -1140,91 +1522,6 @@ func assert_has_signal(object, signal_name, text=""):
 		_fail(disp)
 
 
-## This will return the number of times a signal was fired.  This gives you
-## the freedom to make more complicated assertions if the spirit moves you.
-## This will return -1 if the signal was not fired or the object was not being
-## watched, or if the object does not have the signal.
-func get_signal_emit_count(object, signal_name):
-	return _signal_watcher.get_emit_count(object, signal_name)
-
-
-
-## If you need to inspect the parameters in order to make more complicate
-## assertions, then this will give you access to the parameters of any watched
-## signal.  This works the same way that
-## [code]assert_signal_emitted_with_parameters[/code] does.  It takes an
-## object, signal name, and an optional index.  If the index is not specified
-## then the parameters from the most recent emission will be returned.  If the
-## object is not being watched, the signal was not fired, or the object does
-## not have the signal then `null` will be returned.
-## [codeblock]
-##    class SignalObject:
-##        signal some_signal
-##        signal other_signal
-##
-##    func test_get_signal_parameters():
-##        var obj = SignalObject.new()
-##        watch_signals(obj)
-##        obj.some_signal.emit(1, 2, 3)
-##        obj.some_signal.emit('a', 'b', 'c')
-##
-##        # Passing
-##        # passes because get_signal_parameters returns the most recent emission
-##        # by default
-##        assert_eq(get_signal_parameters(obj, 'some_signal'), ['a', 'b', 'c'])
-##        assert_eq(get_signal_parameters(obj, 'some_signal', 0), [1, 2, 3])
-##        # if the signal was not fired null is returned
-##        assert_eq(get_signal_parameters(obj, 'other_signal'), null)
-##        # if the signal does not exist or isn't being watched null is returned
-##        assert_eq(get_signal_parameters(obj, 'signal_dne'), null)
-##
-##        # Failing
-##        assert_eq(get_signal_parameters(obj, 'some_signal'), [1, 2, 3])
-##        assert_eq(get_signal_parameters(obj, 'some_signal', 0), ['a', 'b', 'c'])
-# [/codeblock]
-func get_signal_parameters(object, signal_name, index=-1):
-	return _signal_watcher.get_signal_parameters(object, signal_name, index)
-
-
-# ------------------------------------------------------------------------------
-## Get the parameters for a method call to a doubled object.  By default it will
-## return the most recent call.  You can optionally specify an index for which
-## call you want to get the parameters for.
-##
-## Can be called using a Callable for the first parameter instead of specifying
-## an object and method name.  When you do this, the seoncd parameter is used
-## as the index.
-##
-## Returns:
-## * an array of parameter values if a call the method was found
-## * null when a call to the method was not found or the index specified was
-##   invalid.
-func get_call_parameters(object, method_name_or_index = -1, idx=-1):
-	var to_return = null
-	var index = idx
-	if(object is Callable):
-		index = method_name_or_index
-		method_name_or_index = null
-	var converted = _convert_spy_args(object, method_name_or_index, null)
-
-	if(GutUtils.is_double(converted.object)):
-		to_return = gut.get_spy().get_call_parameters(
-			converted.object, converted.method_name, index)
-	else:
-		_lgr.error('You must pass a doulbed object to get_call_parameters.')
-
-	return to_return
-
-# ------------------------------------------------------------------------------
-## Returns the call count for a method with optional paramter matching.
-##
-## Can be called with a Callable instead of an object, method_name, and
-## parameters.  Bound arguments will be used to match call arguments.
-func get_call_count(object, method_name=null, parameters=null):
-	var converted = _convert_spy_args(object, method_name, parameters)
-	return gut.get_spy().call_count(converted.object, converted.method_name, converted.arguments)
-
-
 ## Asserts that [param object] extends [param a_class].  object must be an instance of an
 ## object.  It cannot be any of the built in classes like Array or Int or Float.
 ## [param a_class] must be a class, it can be loaded via load, a GDNative class such as
@@ -1268,14 +1565,6 @@ func assert_is(object, a_class, text=''):
 			else:
 				_fail(disp)
 
-func _get_typeof_string(the_type):
-	var to_return = ""
-	if(_strutils.types.has(the_type)):
-		to_return += str(the_type, '(',  _strutils.types[the_type], ')')
-	else:
-		to_return += str(the_type)
-	return to_return
-
 
 ## Asserts that [param object] is the the [param type] specified.  [param type]
 ## should be one of the Godot [code]TYPE_[/code] constants.
@@ -1299,6 +1588,7 @@ func assert_typeof(object, type, text=''):
 		_pass(disp)
 	else:
 		_fail(disp)
+
 
 ## The inverse of [method assert_typeof]
 func assert_not_typeof(object, type, text=''):
@@ -1344,6 +1634,7 @@ func assert_string_contains(text, search, match_case=true):
 			_fail(disp)
 		else:
 			_pass(disp)
+
 
 ## Assert that text starts with search.  Can perform case insensitive check
 ## by passing false for match_case
@@ -1481,15 +1772,6 @@ func assert_not_called(inst, method_name=null, parameters=null):
 		else:
 			_pass(disp)
 
-# ------------------------------------------------------------------------------
-## @deprecated:  Use [method assert_called_count] instead.
-func assert_call_count(inst, method_name, expected_count, parameters=null):
-	gut.logger.deprecated('This has been replaced with assert_called_count which accepts a Callable with optional bound arguments.')
-	var callable = Callable.create(inst, method_name)
-	if(parameters != null):
-		callable = callable.bindv(parameters)
-	assert_called_count(callable, expected_count)
-
 
 # ------------------------------------------------------------------------------
 ## Asserts the the method of a double was called an expected number of times.
@@ -1583,34 +1865,6 @@ func assert_no_new_orphans(text=''):
 		_pass('No new orphans found.' + msg)
 
 
-# ------------------------------------------------------------------------------
-# Validates the singleton_name is a string and exists.  Errors when conditions
-# are not met.  Returns true/false if singleton_name is valid or not.
-# ------------------------------------------------------------------------------
-func _validate_singleton_name(singleton_name):
-	var is_valid = true
-	if(typeof(singleton_name) != TYPE_STRING):
-		_lgr.error("double_singleton requires a Godot singleton name, you passed " + _str(singleton_name))
-		is_valid = false
-	# Sometimes they have underscores in front of them, sometimes they do not.
-	# The doubler is smart enought of ind the right thing, so this has to be
-	# that smart as well.
-	elif(!ClassDB.class_exists(singleton_name) and !ClassDB.class_exists('_' + singleton_name)):
-		var txt = str("The singleton [", singleton_name, "] could not be found.  ",
-					"Check the GlobalScope page for a list of singletons.")
-		_lgr.error(txt)
-		is_valid = false
-	return is_valid
-
-
-## @deprecated: no longer supported.
-func assert_setget(
-	instance, name_property,
-	const_or_setter = null, getter="__not_set__"):
-	_lgr.deprecated('assert_property')
-	_fail('assert_setget has been removed.  Use assert_property, assert_set_property, assert_readonly_property instead.')
-
-
 ## @ignore
 func assert_set_property(obj, property_name, new_value, expected_value):
 	pending("this hasn't been implemented yet")
@@ -1619,26 +1873,6 @@ func assert_set_property(obj, property_name, new_value, expected_value):
 ## @ignore
 func assert_readonly_property(obj, property_name, new_value, expected_value):
 	pending("this hasn't been implemented yet")
-
-
-# ------------------------------------------------------------------------------
-# Checks the object for 'get_' and 'set_' methods for the specified property.
-# If found a warning is generated.
-# ------------------------------------------------------------------------------
-func _warn_for_public_accessors(obj, property_name):
-	var public_accessors = []
-	var accessor_names = [
-		str('get_', property_name),
-		str('is_', property_name),
-		str('set_', property_name)
-	]
-
-	for acc in accessor_names:
-		if(obj.has_method(acc)):
-			public_accessors.append(acc)
-
-	if(public_accessors.size() > 0):
-		_lgr.warn (str('Public accessors ', public_accessors, ' found for property ', property_name))
 
 
 ## Assumes backing varible with be _<property_name>.  This will perform all the
@@ -1675,7 +1909,6 @@ func assert_property_with_backing_variable(obj, property_name, default_value, ne
 	_warn_for_public_accessors(obj, property_name)
 
 
-
 ## This will verify that the method has a setter and getter for the property.
 ## It will then use the getter to check the default.  Then use the
 ## setter with new_value and verify the getter returns the same value.
@@ -1703,15 +1936,51 @@ func assert_property(obj, property_name, default_value, new_value) -> void:
 	_warn_for_public_accessors(obj, property_name)
 
 
-## Mark the current test as pending.
-func pending(text=""):
-	_summary.pending += 1
-	if(gut):
-		_lgr.pending(text)
-		gut._pending(text)
+## Performs a deep comparison between two arrays or dictionaries and asserts
+## they are equal.  If they are not equal then a formatted list of differences
+## are displayed.  See [wiki]Comparing-Things[/wiki] for more information.
+func assert_eq_deep(v1, v2):
+	var result = compare_deep(v1, v2)
+	if(result.are_equal):
+		_pass(result.get_short_summary())
+	else:
+		_fail(result.summary)
 
 
-# ------------------------------------------------------------------------------
+## Performs a deep comparison of two arrays or dictionaries and asserts they
+## are not equal.  See [wiki]Comparing-Things[/wiki] for more information.
+func assert_ne_deep(v1, v2):
+	var result = compare_deep(v1, v2)
+	if(!result.are_equal):
+		_pass(result.get_short_summary())
+	else:
+		_fail(result.get_short_summary())
+
+
+## Assert v1 and v2 are the same using [code]is_same[/code].  See @GlobalScope.is_same.
+func assert_same(v1, v2, text=''):
+	var disp = "[" + _str(v1) + "] expected to be same as  [" + _str(v2) + "]:  " + text
+	if(is_same(v1, v2)):
+		_pass(disp)
+	else:
+		_fail(disp)
+
+
+## Assert using v1 and v2 are not the same using [code]is_same[/code].  See @GlobalScope.is_same.
+func assert_not_same(v1, v2, text=''):
+	var disp = "[" + _str(v1) + "] expected to not be same as  [" + _str(v2) + "]:  " + text
+	if(is_same(v1, v2)):
+		_fail(disp)
+	else:
+		_pass(disp)
+
+
+# ----------------
+#endregion
+#region Await Helpers
+# ----------------
+
+
 ## Use with await to wait an amount of time in seconds.  The optional message
 ## will be printed when the await starts.[br]
 ## See [wiki]Awaiting[/wiki]
@@ -1721,7 +1990,6 @@ func wait_seconds(time, msg=''):
 	return _awaiter.timeout
 
 
-# ------------------------------------------------------------------------------
 ## Use with await to wait for a signal to be emitted or a maximum amount of
 ## time.  Returns true if the signal was emitted, false if not.[br]
 ## See [wiki]Awaiting[/wiki]
@@ -1733,7 +2001,6 @@ func wait_for_signal(sig : Signal, max_wait, msg=''):
 	return !_awaiter.did_last_wait_timeout
 
 
-# ------------------------------------------------------------------------------
 ## Use with await to wait a number of frames.  The optional message will be
 ## printed[br]
 ## See [wiki]Awaiting[/wiki]
@@ -1779,58 +2046,38 @@ func wait_until(callable, max_wait, p3='', p4=''):
 func did_wait_timeout():
 	return _awaiter.did_last_wait_timeout
 
+# ----------------
+#endregion
+#region Summary Data
+# ----------------
 
 ## @internal
 func get_summary():
 	return _summary
 
+
 ## Returns the number of failing asserts.
 func get_fail_count():
 	return _summary.failed
+
 
 ## Returns the number of passing asserts.
 func get_pass_count():
 	return _summary.passed
 
+
 ## Returns the number of pending tests.
 func get_pending_count():
 	return _summary.pending
+
 
 ## Returns the total number of asserts as of the time of the calling of this
 ## method.
 func get_assert_count():
 	return _summary.asserts
 
-## @internal
-func clear_signal_watcher():
-	_signal_watcher.clear()
 
-## Returns the current double strategy.
-func get_double_strategy():
-	return gut.get_doubler().get_strategy()
-
-## Sets the double strategy for all tests in the script.  This should usually
-## be done in [method before_all].  The double strtegy can be set per
-## run/script/double.  See [wiki]Double-Strategy[/wiki]
-func set_double_strategy(double_strategy):
-	gut.get_doubler().set_strategy(double_strategy)
-
-
-## This method will cause Gut to pause before it moves on to the next test.
-## This is useful for debugging, for instance if you want to investigate the
-## screen or anything else after a test has finished executing.
-## [br]
-## Sometimes you get lazy, and you don't remove calls to
-## [code skip-lint]pause_before_teardown[/code] after you are done with them.  You can
-## tell GUT to ignore calls to to this method through the panel or
-## the command line.  Setting this in your `.gutconfig.json` file is recommended
-## for CI/CD Pipelines.
-func pause_before_teardown():
-	gut.pause_before_teardown()
-
-# ------------------------------------------------------------------------------
 # Convert the _summary dictionary into text
-# ------------------------------------------------------------------------------
 ## @internal
 func get_summary_text():
 	var to_return = get_script().get_path() + "\n"
@@ -1841,52 +2088,11 @@ func get_summary_text():
 		to_return += str("\n  ", _summary.failed, ' failed.')
 	return to_return
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-func _smart_double(thing, double_strat, partial):
-	var override_strat = GutUtils.nvl(double_strat, gut.get_doubler().get_strategy())
-	var to_return = null
 
-	if(thing is PackedScene):
-		if(partial):
-			to_return =  gut.get_doubler().partial_double_scene(thing, override_strat)
-		else:
-			to_return =  gut.get_doubler().double_scene(thing, override_strat)
-
-	elif(GutUtils.is_native_class(thing)):
-		if(partial):
-			to_return = gut.get_doubler().partial_double_gdnative(thing)
-		else:
-			to_return = gut.get_doubler().double_gdnative(thing)
-
-	elif(thing is GDScript):
-		if(partial):
-			to_return = gut.get_doubler().partial_double(thing, override_strat)
-		else:
-			to_return = gut.get_doubler().double(thing, override_strat)
-
-	return to_return
-
-# ------------------------------------------------------------------------------
-# This is here to aid in the transition to the new doubling sytnax.  Once this
-# has been established it could be removed.  We must keep the is_instance check
-# going forward though.
-# ------------------------------------------------------------------------------
-func _are_double_parameters_valid(thing, p2, p3):
-	var bad_msg = ""
-	if(p3 != null or typeof(p2) == TYPE_STRING):
-		bad_msg += "Doubling using a subpath is not supported.  Call register_inner_class and then pass the Inner Class to double().\n"
-
-	if(typeof(thing) == TYPE_STRING):
-		bad_msg += "Doubling using the path to a script or scene is no longer supported.  Load the script or scene and pass that to double instead.\n"
-
-	if(GutUtils.is_instance(thing)):
-		bad_msg += "double requires a script, you passed an instance:  " + _str(thing)
-
-	if(bad_msg != ""):
-		_lgr.error(bad_msg)
-
-	return bad_msg == ""
+# ----------------
+#endregion
+#region Double Methods
+# ----------------
 
 
 ## Create a Double of [param thing].  [param thing] should be a Class, script,
@@ -1905,9 +2111,6 @@ func partial_double(thing, double_strat=null, not_used_anymore=null):
 
 	return _smart_double(thing, double_strat, true)
 
-# ------------------------------------------------------------------------------
-# Doubles a Godot singleton
-# ------------------------------------------------------------------------------
 ## @internal
 func double_singleton(singleton_name):
 	return null
@@ -1978,108 +2181,10 @@ func stub(thing, p2=null, p3=null):
 	gut.get_stubber().add_stub(sp)
 	return sp
 
-
-## Simulate a number of frames by calling '_process' and '_physics_process' (if
-## the methods exist) on an object and all of its descendents. The specified frame
-## time, 'delta', will be passed to each simulated call.
-##
-## NOTE: Objects can disable their processing methods using 'set_process(false)' and
-## 'set_physics_process(false)'. This is reflected in the 'Object' methods
-## 'is_processing()' and 'is_physics_processing()', respectively. To make 'simulate'
-## respect this status, for example if you are testing an object which toggles
-## processing, pass 'check_is_processing' as 'true'.
-func simulate(obj, times, delta, check_is_processing: bool = false):
-	gut.simulate(obj, times, delta, check_is_processing)
-
-
-# ------------------------------------------------------------------------------
-## Replace the node at base_node.get_node(path) with with_this.  All references
-## to the node via $ and get_node(...) will now return with_this.  with_this will
-## get all the groups that the node that was replaced had.
-## [br]
-## The node that was replaced is queued to be freed.
-## [br]
-## TODO see replace_by method, this could simplify the logic here.
-# ------------------------------------------------------------------------------
-func replace_node(base_node, path_or_node, with_this):
-	var path = path_or_node
-
-	if(typeof(path_or_node) != TYPE_STRING):
-		# This will cause an engine error if it fails.  It always returns a
-		# NodePath, even if it fails.  Checking the name count is the only way
-		# I found to check if it found something or not (after it worked I
-		# didn't look any farther).
-		path = base_node.get_path_to(path_or_node)
-		if(path.get_name_count() == 0):
-			_lgr.error('You passed an object that base_node does not have.  Cannot replace node.')
-			return
-
-	if(!base_node.has_node(path)):
-		_lgr.error(str('Could not find node at path [', path, ']'))
-		return
-
-	var to_replace = base_node.get_node(path)
-	var parent = to_replace.get_parent()
-	var replace_name = to_replace.get_name()
-
-	parent.remove_child(to_replace)
-	parent.add_child(with_this)
-	with_this.set_name(replace_name)
-	with_this.set_owner(parent)
-
-	var groups = to_replace.get_groups()
-	for i in range(groups.size()):
-		with_this.add_to_group(groups[i])
-
-	to_replace.queue_free()
-
-
-## Use this as the default value for the first parameter to a test to create
-## a parameterized test.  See also the ParameterFactory and Parameterized Tests.
-## [br][br]
-## [b]Example[/b]
-## [codeblock]
-##    func test_with_parameters(p = use_parameters([1, 2, 3])):
-## [/codeblock]
-func use_parameters(params):
-	var ph = gut.parameter_handler
-	if(ph == null):
-		ph = GutUtils.ParameterHandler.new(params)
-		gut.parameter_handler = ph
-
-	# DO NOT use gut.gd's get_call_count_text here since it decrements the
-	# get_call_count value.  This method increments the call count in its
-	# return statement.
-	var output = str('- params[', ph.get_call_count(), ']','(', ph.get_current_parameters(), ')')
-	gut.p(output, gut.LOG_LEVEL_TEST_AND_FAILURES)
-
-	return ph.next_parameters()
-
-
-## @internal
-## When used as the default for a test method parameter, it will cause the test
-## to be run x times.
-##
-## I Hacked this together to test a method that was occassionally failing due to
-## timing issues.  I don't think it's a great idea, but you be the judge.  If
-## you find a good use for it, let me know and I'll make it a legit member
-## of the api.
-func run_x_times(x):
-	var ph = gut.parameter_handler
-	if(ph == null):
-		_lgr.warn(
-			str("This test uses run_x_times and you really should not be ",
-			"using it.  I don't think it's a good thing, but I did find it ",
-			"temporarily useful so I left it in here and didn't document it.  ",
-			"Well, you found it, might as well open up an issue and let me ",
-			"know why you're doing this."))
-		var params = []
-		for i in range(x):
-			params.append(i)
-
-		ph = GutUtils.ParameterHandler.new(params)
-		gut.parameter_handler = ph
-	return ph.next_parameters()
+# ----------------
+#endregion
+#region Memory Mgmt
+# ----------------
 
 
 ## Marks whatever is passed in to be freed after the test finishes.  It also
@@ -2116,131 +2221,11 @@ func add_child_autoqfree(node, legible_unique_name=false):
 	return node
 
 
-## Returns true if the test is passing as of the time of this call.  False if not.
-func is_passing():
-	if(gut.get_current_test_object() != null and
-		!['before_all', 'after_all'].has(gut.get_current_test_object().name)):
-		return gut.get_current_test_object().is_passing() and \
-			gut.get_current_test_object().assert_count > 0
-	else:
-		_lgr.error('No current test object found.  is_passing must be called inside a test.')
-		return null
 
-
-## Returns true if the test is failing as of the time of this call.  False if not.
-func is_failing():
-	if(gut.get_current_test_object() != null and
-		!['before_all', 'after_all'].has(gut.get_current_test_object().name)):
-
-		return gut.get_current_test_object().is_failing()
-	else:
-		_lgr.error('No current test object found.  is_failing must be called inside a test.')
-		return null
-
-
-## Marks the test as passing.  Does not override any failing asserts or calls to
-## fail_test.  Same as a passing assert.
-func pass_test(text):
-	_pass(text)
-
-
-## Marks the test as failing.  Same as a failing assert.
-func fail_test(text):
-	_fail(text)
-
-
-## Peforms a deep compare on both values, a CompareResult instnace is returned.
-## The optional max_differences paramter sets the max_differences to be displayed.
-func compare_deep(v1, v2, max_differences=null):
-	var result = _compare.deep(v1, v2)
-	if(max_differences != null):
-		result.max_differences = max_differences
-	return result
-
-
-## Performs a deep comparison between two arrays or dictionaries and asserts
-## they are equal.  If they are not equal then a formatted list of differences
-## are displayed.  See [wiki]Comparing-Things[/wiki] for more information.
-func assert_eq_deep(v1, v2):
-	var result = compare_deep(v1, v2)
-	if(result.are_equal):
-		_pass(result.get_short_summary())
-	else:
-		_fail(result.summary)
-
-
-## Performs a deep comparison of two arrays or dictionaries and asserts they
-## are not equal.  See [wiki]Comparing-Things[/wiki] for more information.
-func assert_ne_deep(v1, v2):
-	var result = compare_deep(v1, v2)
-	if(!result.are_equal):
-		_pass(result.get_short_summary())
-	else:
-		_fail(result.get_short_summary())
-
-
-## Assert v1 and v2 are the same using [code]is_same[/code].  See @GlobalScope.is_same.
-func assert_same(v1, v2, text=''):
-	var disp = "[" + _str(v1) + "] expected to be same as  [" + _str(v2) + "]:  " + text
-	if(is_same(v1, v2)):
-		_pass(disp)
-	else:
-		_fail(disp)
-
-
-## Assert using v1 and v2 are not the same using [code]is_same[/code].  See @GlobalScope.is_same.
-func assert_not_same(v1, v2, text=''):
-	var disp = "[" + _str(v1) + "] expected to not be same as  [" + _str(v2) + "]:  " + text
-	if(is_same(v1, v2)):
-		_fail(disp)
-	else:
-		_pass(disp)
-
-
-## Checks the passed in version string (x.x.x) against the engine version to see
-## if the engine version is less than the expected version.  If it is then the
-## test is mareked as passed (for a lack of anything better to do).  The result
-## of the check is returned.
-## [br][br]
-## [b]Example[/b]
-## [codeblock]
-##    if(skip_if_godot_version_lt('3.5.0')):
-##        return
-## [/codeblock]
-func skip_if_godot_version_lt(expected):
-	var should_skip = !GutUtils.is_godot_version_gte(expected)
-	if(should_skip):
-		_pass(str('Skipping: ', GutUtils.godot_version_string(), ' is less than ', expected))
-	return should_skip
-
-
-## Checks if the passed in version matches the engine version.  The passed in
-## version can contain just the major, major.minor or major.minor.path.  If
-## the version is not the same then the test is marked as passed.  The result of
-## the check is returned.
-## [br][br]
-## [b]Example[/b]
-## [codeblock]
-##     if(skip_if_godot_version_ne('3.4')):
-##        return
-## [/codeblock]
-func skip_if_godot_version_ne(expected):
-	var should_skip = !GutUtils.is_godot_version(expected)
-	if(should_skip):
-		_pass(str('Skipping: ', GutUtils.godot_version_string(), ' is not ', expected))
-	return should_skip
-
-
-## Registers all the inner classes in a script with the doubler.  This is required
-## before you can double any inner class.
-func register_inner_classes(base_script):
-	gut.get_doubler().inner_class_registry.register(base_script)
-
-
-
-# ----------
-# Removed/deprecated/should be deleted soon
-# ----------
+# ----------------
+#endregion
+#region Deprecated/Removed
+# ----------------
 
 
 ## REMOVED
@@ -2263,14 +2248,12 @@ func assert_ne_shallow(v1, v2):
 	_fail('assert_eq_shallow has been removed.  Use assert_eq/assert_same/assert_eq_deep')
 
 
-# ------------------------------------------------------------------------------
 ## @deprecated: use wait_seconds
 func yield_for(time, msg=''):
 	_lgr.deprecated('yield_for', 'wait_seconds')
 	return wait_seconds(time, msg)
 
 
-# ------------------------------------------------------------------------------
 ## @deprecated: use wait_for_signal
 func yield_to(obj, signal_name, max_wait, msg=''):
 	_lgr.deprecated('yield_to', 'wait_for_signal')
@@ -2305,6 +2288,28 @@ func double_inner(path, subpath, strategy=null):
 
 	var override_strat = GutUtils.nvl(strategy, gut.get_doubler().get_strategy())
 	return gut.get_doubler().double_inner(path, subpath, override_strat)
+
+
+## @deprecated:  Use [method assert_called_count] instead.
+func assert_call_count(inst, method_name, expected_count, parameters=null):
+	gut.logger.deprecated('This has been replaced with assert_called_count which accepts a Callable with optional bound arguments.')
+	var callable = Callable.create(inst, method_name)
+	if(parameters != null):
+		callable = callable.bindv(parameters)
+	assert_called_count(callable, expected_count)
+
+
+## @deprecated: no longer supported.
+func assert_setget(
+	instance, name_property,
+	const_or_setter = null, getter="__not_set__"):
+	_lgr.deprecated('assert_property')
+	_fail('assert_setget has been removed.  Use assert_property, assert_set_property, assert_readonly_property instead.')
+
+
+# ----------------
+#endregion
+
 
 
 # ##############################################################################

@@ -4,19 +4,20 @@
    :caption: Getting Started
    :name: sec-started
 
-   New-For-Godot-4
    Install
    Quick-Start
    Command-Line
+   New-For-Godot-4
 
 
 .. toctree::
    :hidden:
-   :caption: GutTest
+   :maxdepth: 3
+   :caption: Test Scripts
    :name: sec-guttest
 
+   class_ref/class_guttest
    Creating-Tests
-   Asserts-and-Methods
    Awaiting
    Inner-Test-Classes
    Parameterized-Tests
@@ -63,6 +64,7 @@
    Orphans
    Running-On-Devices
    Tutorials
+
 
 .. toctree::
    :hidden:
