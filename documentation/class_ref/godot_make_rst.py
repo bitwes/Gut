@@ -1293,7 +1293,7 @@ def get_cmdline_args():
 # Entry point for the RST generator.
 def main() -> None:
     args = get_cmdline_args()
-    lgr.verbose_enabled = True#args.verbose
+    lgr.verbose_enabled = args.verbose
     should_color = bool(args.color or sys.stdout.isatty() or os.environ.get("CI"))
     lgr.set_should_color(should_color)
 

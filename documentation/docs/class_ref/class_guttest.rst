@@ -10,7 +10,7 @@ GutTest
 
 **Inherits:** `Node <https://docs.godotengine.org/en/stable/classes/class_node.html>`_
 
-This is the base class for all test scripts.  Extend this...test the world!
+This is the base class for all GUT test scripts.
 
 .. rst-class:: classref-reftable-group
 
@@ -454,6 +454,116 @@ Virtual method.  Run after all tests have been run.
 
 ----
 
+.. _class_GutTest_method_pending:
+
+.. rst-class:: classref-method
+
+|void| **pending**\ (\ text = ""\ ) :ref:`🔗<class_GutTest_method_pending>`
+
+Mark the current test as pending.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_is_passing:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **is_passing**\ (\ ) :ref:`🔗<class_GutTest_method_is_passing>`
+
+Returns true if the test is passing as of the time of this call.  False if not.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_is_failing:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **is_failing**\ (\ ) :ref:`🔗<class_GutTest_method_is_failing>`
+
+Returns true if the test is failing as of the time of this call.  False if not.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_pass_test:
+
+.. rst-class:: classref-method
+
+|void| **pass_test**\ (\ text\ ) :ref:`🔗<class_GutTest_method_pass_test>`
+
+Marks the test as passing.  Does not override any failing asserts or calls to fail_test.  Same as a passing assert.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_fail_test:
+
+.. rst-class:: classref-method
+
+|void| **fail_test**\ (\ text\ ) :ref:`🔗<class_GutTest_method_fail_test>`
+
+Marks the test as failing.  Same as a failing assert.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_clear_signal_watcher:
+
+.. rst-class:: classref-method
+
+|void| **clear_signal_watcher**\ (\ ) :ref:`🔗<class_GutTest_method_clear_signal_watcher>`
+
+**Internal use only.**
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_double_strategy:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_double_strategy**\ (\ ) :ref:`🔗<class_GutTest_method_get_double_strategy>`
+
+Returns the current double strategy.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_set_double_strategy:
+
+.. rst-class:: classref-method
+
+|void| **set_double_strategy**\ (\ double_strategy\ ) :ref:`🔗<class_GutTest_method_set_double_strategy>`
+
+Sets the double strategy for all tests in the script.  This should usually be done in :ref:`before_all<class_GutTest_method_before_all>`.  The double strtegy can be set per run/script/double.  See `Double-Strategy <../Double-Strategy.html>`__
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_pause_before_teardown:
+
+.. rst-class:: classref-method
+
+|void| **pause_before_teardown**\ (\ ) :ref:`🔗<class_GutTest_method_pause_before_teardown>`
+
+This method will cause Gut to pause before it moves on to the next test. This is useful for debugging, for instance if you want to investigate the screen or anything else after a test has finished executing. 
+
+Sometimes you get lazy, and you don't remove calls to ``pause_before_teardown`` after you are done with them.  You can tell GUT to ignore calls to to this method through the panel or the command line.  Setting this in your `.gutconfig.json` file is recommended for CI/CD Pipelines.
+
+.. rst-class:: classref-item-separator
+
+----
+
 .. _class_GutTest_method_get_logger:
 
 .. rst-class:: classref-method
@@ -473,6 +583,218 @@ Virtual method.  Run after all tests have been run.
 |void| **set_logger**\ (\ logger\ ) :ref:`🔗<class_GutTest_method_set_logger>`
 
 **Internal use only.**
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_watch_signals:
+
+.. rst-class:: classref-method
+
+|void| **watch_signals**\ (\ object\ ) :ref:`🔗<class_GutTest_method_watch_signals>`
+
+This must be called in order to make assertions based on signals being emitted.  \__Right now, this only supports signals that are emitted with 9 or less parameters.\_\_  This can be extended but nine seemed like enough for now. The Godot documentation suggests that the limit is four but in my testing I found you can pass more. 
+
+This must be called in each test in which you want to make signal based assertions in.  You can call it multiple times with different objects. You should not call it multiple times with the same object in the same test. The objects that are watched are cleared after each test (specifically right before `teardown` is called).  Under the covers, Gut will connect to all the signals an object has and it will track each time they fire.  You can then use the following asserts and methods to verify things are acting correct.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_signal_emit_count:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_signal_emit_count**\ (\ object, signal_name\ ) :ref:`🔗<class_GutTest_method_get_signal_emit_count>`
+
+This will return the number of times a signal was fired.  This gives you the freedom to make more complicated assertions if the spirit moves you. This will return -1 if the signal was not fired or the object was not being watched, or if the object does not have the signal.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_signal_parameters:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_signal_parameters**\ (\ object, signal_name, index = -1\ ) :ref:`🔗<class_GutTest_method_get_signal_parameters>`
+
+If you need to inspect the parameters in order to make more complicate assertions, then this will give you access to the parameters of any watched signal.  This works the same way that ``assert_signal_emitted_with_parameters`` does.  It takes an object, signal name, and an optional index.  If the index is not specified then the parameters from the most recent emission will be returned.  If the object is not being watched, the signal was not fired, or the object does not have the signal then `null` will be returned.
+
+::
+
+       class SignalObject:
+           signal some_signal
+           signal other_signal
+    
+       func test_get_signal_parameters():
+           var obj = SignalObject.new()
+           watch_signals(obj)
+           obj.some_signal.emit(1, 2, 3)
+           obj.some_signal.emit('a', 'b', 'c')
+    
+           # Passing
+           # passes because get_signal_parameters returns the most recent emission
+           # by default
+           assert_eq(get_signal_parameters(obj, 'some_signal'), ['a', 'b', 'c'])
+           assert_eq(get_signal_parameters(obj, 'some_signal', 0), [1, 2, 3])
+           # if the signal was not fired null is returned
+           assert_eq(get_signal_parameters(obj, 'other_signal'), null)
+           # if the signal does not exist or isn't being watched null is returned
+           assert_eq(get_signal_parameters(obj, 'signal_dne'), null)
+    
+           # Failing
+           assert_eq(get_signal_parameters(obj, 'some_signal'), [1, 2, 3])
+           assert_eq(get_signal_parameters(obj, 'some_signal', 0), ['a', 'b', 'c'])
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_call_parameters:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_call_parameters**\ (\ object, method_name_or_index = -1, idx = -1\ ) :ref:`🔗<class_GutTest_method_get_call_parameters>`
+
+Get the parameters for a method call to a doubled object.  By default it will return the most recent call.  You can optionally specify an index for which call you want to get the parameters for.  Can be called using a Callable for the first parameter instead of specifying an object and method name.  When you do this, the seoncd parameter is used as the index.  Returns: \* an array of parameter values if a call the method was found \* null when a call to the method was not found or the index specified was invalid.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_call_count:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_call_count**\ (\ object, method_name = null, parameters = null\ ) :ref:`🔗<class_GutTest_method_get_call_count>`
+
+Returns the call count for a method with optional paramter matching.  Can be called with a Callable instead of an object, method_name, and parameters.  Bound arguments will be used to match call arguments.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_simulate:
+
+.. rst-class:: classref-method
+
+|void| **simulate**\ (\ obj, times, delta, check_is_processing\: `bool <https://docs.godotengine.org/en/stable/classes/class_bool.html>`_ = false\ ) :ref:`🔗<class_GutTest_method_simulate>`
+
+Simulate a number of frames by calling '_process' and '_physics_process' (if the methods exist) on an object and all of its descendents. The specified frame time, 'delta', will be passed to each simulated call.  NOTE: Objects can disable their processing methods using 'set_process(false)' and 'set_physics_process(false)'. This is reflected in the 'Object' methods 'is_processing()' and 'is_physics_processing()', respectively. To make 'simulate' respect this status, for example if you are testing an object which toggles processing, pass 'check_is_processing' as 'true'.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_replace_node:
+
+.. rst-class:: classref-method
+
+|void| **replace_node**\ (\ base_node, path_or_node, with_this\ ) :ref:`🔗<class_GutTest_method_replace_node>`
+
+.. container:: contribute
+
+	No description
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_use_parameters:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **use_parameters**\ (\ params\ ) :ref:`🔗<class_GutTest_method_use_parameters>`
+
+Use this as the default value for the first parameter to a test to create a parameterized test.  See also the ParameterFactory and Parameterized Tests. 
+
+
+
+\ **Example**\ 
+
+::
+
+       func test_with_parameters(p = use_parameters([1, 2, 3])):
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_run_x_times:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **run_x_times**\ (\ x\ ) :ref:`🔗<class_GutTest_method_run_x_times>`
+
+**Internal use only.** When used as the default for a test method parameter, it will cause the test to be run x times.  I Hacked this together to test a method that was occassionally failing due to timing issues.  I don't think it's a great idea, but you be the judge.  If you find a good use for it, let me know and I'll make it a legit member of the api.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_skip_if_godot_version_lt:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **skip_if_godot_version_lt**\ (\ expected\ ) :ref:`🔗<class_GutTest_method_skip_if_godot_version_lt>`
+
+Checks the passed in version string (x.x.x) against the engine version to see if the engine version is less than the expected version.  If it is then the test is mareked as passed (for a lack of anything better to do).  The result of the check is returned. 
+
+
+
+\ **Example**\ 
+
+::
+
+       if(skip_if_godot_version_lt('3.5.0')):
+           return
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_skip_if_godot_version_ne:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **skip_if_godot_version_ne**\ (\ expected\ ) :ref:`🔗<class_GutTest_method_skip_if_godot_version_ne>`
+
+Checks if the passed in version matches the engine version.  The passed in version can contain just the major, major.minor or major.minor.path.  If the version is not the same then the test is marked as passed.  The result of the check is returned. 
+
+
+
+\ **Example**\ 
+
+::
+
+        if(skip_if_godot_version_ne('3.4')):
+           return
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_register_inner_classes:
+
+.. rst-class:: classref-method
+
+|void| **register_inner_classes**\ (\ base_script\ ) :ref:`🔗<class_GutTest_method_register_inner_classes>`
+
+Registers all the inner classes in a script with the doubler.  This is required before you can double any inner class.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_compare_deep:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **compare_deep**\ (\ v1, v2, max_differences = null\ ) :ref:`🔗<class_GutTest_method_compare_deep>`
+
+Peforms a deep compare on both values, a CompareResult instnace is returned. The optional max_differences paramter sets the max_differences to be displayed.
 
 .. rst-class:: classref-item-separator
 
@@ -733,7 +1055,20 @@ got >= expect_low and <= expect_high
 
 Asserts value is not between (exclusive) the two expected values.
 
-asserts that got <= expect_low or got >=  expect_high. # Passing assert_not_between(1, 5, 10) assert_not_between('a', 'b', 'd') assert_not_between('d', 'b', 'd') assert_not_between(10, 0, 10) assert_not_between(-2, -2, 10)  # Failing assert_not_between(5, 0, 10, 'Five shouldnt be between 0 and 10') assert_not_between(0.25, -2.0, 4.0)
+asserts that got <= expect_low or got >=  expect_high.
+
+::
+
+       # Passing
+       assert_not_between(1, 5, 10)
+       assert_not_between('a', 'b', 'd')
+       assert_not_between('d', 'b', 'd')
+       assert_not_between(10, 0, 10)
+       assert_not_between(-2, -2, 10)
+    
+       # Failing
+       assert_not_between(5, 0, 10, 'Five shouldnt be between 0 and 10')
+       assert_not_between(0.25, -2.0, 4.0)
 
 .. rst-class:: classref-item-separator
 
@@ -950,20 +1285,6 @@ Asserts that ``obj`` exports a property with the name ``property_name`` and a ty
            assert_exports(obj, 'some_number', TYPE_VECTOR2)
            assert_exports(obj, 'some_scene', TYPE_AABB)
            assert_exports(obj, 'some_variable', TYPE_INT)
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_watch_signals:
-
-.. rst-class:: classref-method
-
-|void| **watch_signals**\ (\ object\ ) :ref:`🔗<class_GutTest_method_watch_signals>`
-
-This must be called in order to make assertions based on signals being emitted.  \__Right now, this only supports signals that are emitted with 9 or less parameters.\_\_  This can be extended but nine seemed like enough for now. The Godot documentation suggests that the limit is four but in my testing I found you can pass more. 
-
-This must be called in each test in which you want to make signal based assertions in.  You can call it multiple times with different objects. You should not call it multiple times with the same object in the same test. The objects that are watched are cleared after each test (specifically right before `teardown` is called).  Under the covers, Gut will connect to all the signals an object has and it will track each time they fire.  You can then use the following asserts and methods to verify things are acting correct.
 
 .. rst-class:: classref-item-separator
 
@@ -1216,56 +1537,6 @@ Asserts the passed in object has a signal with the specified name.  It should be
 
 ----
 
-.. _class_GutTest_method_get_signal_emit_count:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_signal_emit_count**\ (\ object, signal_name\ ) :ref:`🔗<class_GutTest_method_get_signal_emit_count>`
-
-This will return the number of times a signal was fired.  This gives you the freedom to make more complicated assertions if the spirit moves you. This will return -1 if the signal was not fired or the object was not being watched, or if the object does not have the signal.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_get_signal_parameters:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_signal_parameters**\ (\ object, signal_name, index = -1\ ) :ref:`🔗<class_GutTest_method_get_signal_parameters>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_get_call_parameters:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_call_parameters**\ (\ object, method_name_or_index = -1, idx = -1\ ) :ref:`🔗<class_GutTest_method_get_call_parameters>`
-
-Get the parameters for a method call to a doubled object.  By default it will return the most recent call.  You can optionally specify an index for which call you want to get the parameters for.  Can be called using a Callable for the first parameter instead of specifying an object and method name.  When you do this, the seoncd parameter is used as the index.  Returns: \* an array of parameter values if a call the method was found \* null when a call to the method was not found or the index specified was invalid.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_get_call_count:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_call_count**\ (\ object, method_name = null, parameters = null\ ) :ref:`🔗<class_GutTest_method_get_call_count>`
-
-Returns the call count for a method with optional paramter matching.  Can be called with a Callable instead of an object, method_name, and parameters.  Bound arguments will be used to match call arguments.
-
-.. rst-class:: classref-item-separator
-
-----
-
 .. _class_GutTest_method_assert_is:
 
 .. rst-class:: classref-method
@@ -1454,18 +1725,6 @@ See also: `Doubles <../Doubles.html>`__, `Spies <../Spies.html>`__
 
 ----
 
-.. _class_GutTest_method_assert_call_count:
-
-.. rst-class:: classref-method
-
-|void| **assert_call_count**\ (\ inst, method_name, expected_count, parameters = null\ ) :ref:`🔗<class_GutTest_method_assert_call_count>`
-
-**Deprecated:** Use :ref:`assert_called_count<class_GutTest_method_assert_called_count>` instead.
-
-.. rst-class:: classref-item-separator
-
-----
-
 .. _class_GutTest_method_assert_called_count:
 
 .. rst-class:: classref-method
@@ -1559,18 +1818,6 @@ This method will assert that no orphaned nodes have been introduced by the test 
 
 ----
 
-.. _class_GutTest_method_assert_setget:
-
-.. rst-class:: classref-method
-
-|void| **assert_setget**\ (\ instance, name_property, const_or_setter = null, getter = "__not_set__"\ ) :ref:`🔗<class_GutTest_method_assert_setget>`
-
-**Deprecated:** no longer supported.
-
-.. rst-class:: classref-item-separator
-
-----
-
 .. _class_GutTest_method_assert_property_with_backing_variable:
 
 .. rst-class:: classref-method
@@ -1595,13 +1842,49 @@ This will verify that the method has a setter and getter for the property. It wi
 
 ----
 
-.. _class_GutTest_method_pending:
+.. _class_GutTest_method_assert_eq_deep:
 
 .. rst-class:: classref-method
 
-|void| **pending**\ (\ text = ""\ ) :ref:`🔗<class_GutTest_method_pending>`
+|void| **assert_eq_deep**\ (\ v1, v2\ ) :ref:`🔗<class_GutTest_method_assert_eq_deep>`
 
-Mark the current test as pending.
+Performs a deep comparison between two arrays or dictionaries and asserts they are equal.  If they are not equal then a formatted list of differences are displayed.  See `Comparing-Things <../Comparing-Things.html>`__ for more information.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_ne_deep:
+
+.. rst-class:: classref-method
+
+|void| **assert_ne_deep**\ (\ v1, v2\ ) :ref:`🔗<class_GutTest_method_assert_ne_deep>`
+
+Performs a deep comparison of two arrays or dictionaries and asserts they are not equal.  See `Comparing-Things <../Comparing-Things.html>`__ for more information.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_same:
+
+.. rst-class:: classref-method
+
+|void| **assert_same**\ (\ v1, v2, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_same>`
+
+Assert v1 and v2 are the same using ``is_same``.  See @GlobalScope.is_same.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_not_same:
+
+.. rst-class:: classref-method
+
+|void| **assert_not_same**\ (\ v1, v2, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_same>`
+
+Assert using v1 and v2 are not the same using ``is_same``.  See @GlobalScope.is_same.
 
 .. rst-class:: classref-item-separator
 
@@ -1739,56 +2022,6 @@ Returns the total number of asserts as of the time of the calling of this method
 
 ----
 
-.. _class_GutTest_method_clear_signal_watcher:
-
-.. rst-class:: classref-method
-
-|void| **clear_signal_watcher**\ (\ ) :ref:`🔗<class_GutTest_method_clear_signal_watcher>`
-
-**Internal use only.**
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_get_double_strategy:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_double_strategy**\ (\ ) :ref:`🔗<class_GutTest_method_get_double_strategy>`
-
-Returns the current double strategy.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_set_double_strategy:
-
-.. rst-class:: classref-method
-
-|void| **set_double_strategy**\ (\ double_strategy\ ) :ref:`🔗<class_GutTest_method_set_double_strategy>`
-
-Sets the double strategy for all tests in the script.  This should usually be done in :ref:`before_all<class_GutTest_method_before_all>`.  The double strtegy can be set per run/script/double.  See `Double-Strategy <../Double-Strategy.html>`__
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_pause_before_teardown:
-
-.. rst-class:: classref-method
-
-|void| **pause_before_teardown**\ (\ ) :ref:`🔗<class_GutTest_method_pause_before_teardown>`
-
-This method will cause Gut to pause before it moves on to the next test. This is useful for debugging, for instance if you want to investigate the screen or anything else after a test has finished executing. 
-
-Sometimes you get lazy, and you don't remove calls to ``pause_before_teardown`` after you are done with them.  You can tell GUT to ignore calls to to this method through the panel or the command line.  Setting this in your `.gutconfig.json` file is recommended for CI/CD Pipelines.
-
-.. rst-class:: classref-item-separator
-
-----
-
 .. _class_GutTest_method_get_summary_text:
 
 .. rst-class:: classref-method
@@ -1873,64 +2106,6 @@ Stub something.  Parameters 1: A callable OR the thing to stub OR a file path OR
 
 ----
 
-.. _class_GutTest_method_simulate:
-
-.. rst-class:: classref-method
-
-|void| **simulate**\ (\ obj, times, delta, check_is_processing\: `bool <https://docs.godotengine.org/en/stable/classes/class_bool.html>`_ = false\ ) :ref:`🔗<class_GutTest_method_simulate>`
-
-Simulate a number of frames by calling '_process' and '_physics_process' (if the methods exist) on an object and all of its descendents. The specified frame time, 'delta', will be passed to each simulated call.  NOTE: Objects can disable their processing methods using 'set_process(false)' and 'set_physics_process(false)'. This is reflected in the 'Object' methods 'is_processing()' and 'is_physics_processing()', respectively. To make 'simulate' respect this status, for example if you are testing an object which toggles processing, pass 'check_is_processing' as 'true'.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_replace_node:
-
-.. rst-class:: classref-method
-
-|void| **replace_node**\ (\ base_node, path_or_node, with_this\ ) :ref:`🔗<class_GutTest_method_replace_node>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_use_parameters:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **use_parameters**\ (\ params\ ) :ref:`🔗<class_GutTest_method_use_parameters>`
-
-Use this as the default value for the first parameter to a test to create a parameterized test.  See also the ParameterFactory and Parameterized Tests. 
-
-
-
-\ **Example**\ 
-
-::
-
-       func test_with_parameters(p = use_parameters([1, 2, 3])):
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_run_x_times:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **run_x_times**\ (\ x\ ) :ref:`🔗<class_GutTest_method_run_x_times>`
-
-**Internal use only.** When used as the default for a test method parameter, it will cause the test to be run x times.  I Hacked this together to test a method that was occassionally failing due to timing issues.  I don't think it's a great idea, but you be the judge.  If you find a good use for it, let me know and I'll make it a legit member of the api.
-
-.. rst-class:: classref-item-separator
-
-----
-
 .. _class_GutTest_method_autofree:
 
 .. rst-class:: classref-method
@@ -1974,168 +2149,6 @@ The same as autofree but it also adds the object as a child of the test.
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **add_child_autoqfree**\ (\ node, legible_unique_name = false\ ) :ref:`🔗<class_GutTest_method_add_child_autoqfree>`
 
 The same as autoqfree but it also adds the object as a child of the test.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_is_passing:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **is_passing**\ (\ ) :ref:`🔗<class_GutTest_method_is_passing>`
-
-Returns true if the test is passing as of the time of this call.  False if not.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_is_failing:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **is_failing**\ (\ ) :ref:`🔗<class_GutTest_method_is_failing>`
-
-Returns true if the test is failing as of the time of this call.  False if not.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_pass_test:
-
-.. rst-class:: classref-method
-
-|void| **pass_test**\ (\ text\ ) :ref:`🔗<class_GutTest_method_pass_test>`
-
-Marks the test as passing.  Does not override any failing asserts or calls to fail_test.  Same as a passing assert.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_fail_test:
-
-.. rst-class:: classref-method
-
-|void| **fail_test**\ (\ text\ ) :ref:`🔗<class_GutTest_method_fail_test>`
-
-Marks the test as failing.  Same as a failing assert.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_compare_deep:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **compare_deep**\ (\ v1, v2, max_differences = null\ ) :ref:`🔗<class_GutTest_method_compare_deep>`
-
-Peforms a deep compare on both values, a CompareResult instnace is returned. The optional max_differences paramter sets the max_differences to be displayed.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_eq_deep:
-
-.. rst-class:: classref-method
-
-|void| **assert_eq_deep**\ (\ v1, v2\ ) :ref:`🔗<class_GutTest_method_assert_eq_deep>`
-
-Performs a deep comparison between two arrays or dictionaries and asserts they are equal.  If they are not equal then a formatted list of differences are displayed.  See `Comparing-Things <../Comparing-Things.html>`__ for more information.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_ne_deep:
-
-.. rst-class:: classref-method
-
-|void| **assert_ne_deep**\ (\ v1, v2\ ) :ref:`🔗<class_GutTest_method_assert_ne_deep>`
-
-Performs a deep comparison of two arrays or dictionaries and asserts they are not equal.  See `Comparing-Things <../Comparing-Things.html>`__ for more information.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_same:
-
-.. rst-class:: classref-method
-
-|void| **assert_same**\ (\ v1, v2, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_same>`
-
-Assert v1 and v2 are the same using ``is_same``.  See @GlobalScope.is_same.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_not_same:
-
-.. rst-class:: classref-method
-
-|void| **assert_not_same**\ (\ v1, v2, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_same>`
-
-Assert using v1 and v2 are not the same using ``is_same``.  See @GlobalScope.is_same.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_skip_if_godot_version_lt:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **skip_if_godot_version_lt**\ (\ expected\ ) :ref:`🔗<class_GutTest_method_skip_if_godot_version_lt>`
-
-Checks the passed in version string (x.x.x) against the engine version to see if the engine version is less than the expected version.  If it is then the test is mareked as passed (for a lack of anything better to do).  The result of the check is returned. 
-
-
-
-\ **Example**\ 
-
-::
-
-       if(skip_if_godot_version_lt('3.5.0')):
-           return
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_skip_if_godot_version_ne:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **skip_if_godot_version_ne**\ (\ expected\ ) :ref:`🔗<class_GutTest_method_skip_if_godot_version_ne>`
-
-Checks if the passed in version matches the engine version.  The passed in version can contain just the major, major.minor or major.minor.path.  If the version is not the same then the test is marked as passed.  The result of the check is returned. 
-
-
-
-\ **Example**\ 
-
-::
-
-        if(skip_if_godot_version_ne('3.4')):
-           return
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_register_inner_classes:
-
-.. rst-class:: classref-method
-
-|void| **register_inner_classes**\ (\ base_script\ ) :ref:`🔗<class_GutTest_method_register_inner_classes>`
-
-Registers all the inner classes in a script with the doubler.  This is required before you can double any inner class.
 
 .. rst-class:: classref-item-separator
 
@@ -2208,6 +2221,30 @@ Registers all the inner classes in a script with the doubler.  This is required 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **double_inner**\ (\ path, subpath, strategy = null\ ) :ref:`🔗<class_GutTest_method_double_inner>`
 
 **Deprecated:** no longer supported.  Use register_inner_classes + double
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_call_count:
+
+.. rst-class:: classref-method
+
+|void| **assert_call_count**\ (\ inst, method_name, expected_count, parameters = null\ ) :ref:`🔗<class_GutTest_method_assert_call_count>`
+
+**Deprecated:** Use :ref:`assert_called_count<class_GutTest_method_assert_called_count>` instead.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_setget:
+
+.. rst-class:: classref-method
+
+|void| **assert_setget**\ (\ instance, name_property, const_or_setter = null, getter = "__not_set__"\ ) :ref:`🔗<class_GutTest_method_assert_setget>`
+
+**Deprecated:** no longer supported.
 
 .. |virtual| replace:: :abbr:`virtual (This method should typically be overridden by the user to have any effect.)`
 .. |const| replace:: :abbr:`const (This method has no side effects. It doesn't modify any of the instance's member variables.)`
