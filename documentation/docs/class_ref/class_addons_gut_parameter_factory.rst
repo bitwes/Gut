@@ -17,7 +17,7 @@ Creates parameter structures for parameterized tests.
 Description
 -----------
 
-This is a static class accessible in a `GutTest` script through `ParameterFactory`.  It contains methods for constructing parameters to be used in parameterized tests.  It currently only has one, if you have anyu ideas for more, make an issue.  More of them would be great since I prematurely decided to make this static class and it has such a long name.  I'd feel a lot better about it if there was more in here. 
+This is a static class accessible in a :ref:`GutTest<class_GutTest>` script through :ref:`GutTest.ParameterFactory<class_GutTest_property_ParameterFactory>`.  It contains methods for constructing parameters to be used in parameterized tests.  It currently only has one, if you have anyu ideas for more, make an issue.  More of them would be great since I prematurely decided to make this static class and it has such a long name.  I'd feel a lot better about it if there was more in here. 
 
 Additional Helper Ideas?
 
