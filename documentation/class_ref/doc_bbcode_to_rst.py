@@ -3,6 +3,7 @@ import re
 from godot_classes import *
 from godot_consts import *
 import logger as lgr
+import bitwes
 
 def print_error(text, state):
     lgr.print_error(text, state)
@@ -780,6 +781,7 @@ def format_text_block(
                     tag_depth += 1
                     escape_pre = True
 
+
             # Invalid syntax.
             else:
                 if tag_state.closing:
@@ -790,14 +792,20 @@ def format_text_block(
 
                     tag_text = f"[{tag_text}]"
                 else:
-                    print_error(
-                        f'{state.current_class}.xml: Unrecognized opening tag "[{tag_state.raw}]" in {context_name}.',
-                        state,
-                    )
+                    # Assume any unknown opening tag that starts with an
+                    # uppercase letter is a reference to a Godot class.
+                    # Treat all others as errors.
+                    if len(tag_state.arguments) == 0 and len(tag_text) > 0 and tag_text[0].isupper():
+                        tag_text = bitwes.make_type_link(tag_text)
+                    else:
+                        print_error(
+                            f'{state.current_class}.xml: Unrecognized opening tag "[{tag_state.raw}]" in {context_name}.',
+                            state,
+                        )
 
-                    tag_text = f"``{tag_text}``"
-                    escape_pre = True
-                    escape_post = True
+                        tag_text = f"``{tag_text}``"
+                        escape_pre = True
+                        escape_post = True
 
         # Properly escape things like `[Node]s`
         if escape_pre and pre_text and pre_text[-1] not in MARKUP_ALLOWED_PRECEDENT:
