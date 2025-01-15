@@ -54,17 +54,7 @@ class v9_2_0:
 		remove_user_file('user://.gut_editor.bbcode')
 		remove_user_file('user://.gut_editor.json')
 
-class v9_4_0:
-	extends ConfigurationUpdater
-
-	func validate():
-		if(!ClassDB.class_exists(&'GutInputFactory')):
-			warn('There are new class_names in this release.  Please restart the Editor.')
-
 
 static func convert():
 	var inst = v9_2_0.new()
-	inst.validate()
-
-	inst = v9_4_0.new()
 	inst.validate()
