@@ -2132,7 +2132,7 @@ This was implemented to allow the doubling of classes with static methods. There
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **stub**\ (\ thing, p2 = null, p3 = null\ ) :ref:`🔗<class_GutTest_method_stub>`
 
-Stub something.  Parameters 1: A callable OR the thing to stub OR a file path OR an instance OR a Script 2: either an inner class subpath or the method name 3: the method name if an inner class subpath was specified NOTE:  right now we cannot stub inner classes at the path level so this should only be called with two parameters.  I did the work though so I'm going to leave it but not update the wiki.
+Stub something.  See `Stubbing <../Stubbing.html>`__ for detailed information about stubbing.
 
 .. rst-class:: classref-item-separator
 

@@ -1,17 +1,18 @@
 # Awaiting
-If you aren't sure about coroutines and using `await`, [Godot explains it pretty well](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html#awaiting-for-signals-or-coroutines).  GUT supports coroutines, so you can `await` at anytime in your tests.  GUT also provides some handy methods to make awaiting easier.
+If you aren't sure about coroutines and using `await`, [Godot explains it pretty well](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html#awaiting-for-signals-or-coroutines).  GUT supports coroutines, so you can `await` at anytime in your tests.  GUT also provides some handy methods to make awaiting in your tests a little easier.
 
-You can use `await` with any of the following methods to pause execution for a duration or until something occurs.
-* `wait_seconds` Waits x seconds.
-* `wait_frames` Waits x frames.
-* `wait_for_signal` Waits until a signal is emitted, or a maximum amount of time.
-* `wait_until` Waits until a `Callable` returns `true` or a maximum amount of time.
+You can use `await` with any of the following methods to pause execution for a duration or until something occurs.  You can find more information about each method below, and in the `GutTest` documentation.
+ * <a href="class_ref/class_guttest.html#class-guttest-method-wait-seconds">wait_seconds</a>:  Waits x seconds.
+ * <a href="class_ref/class_guttest.html#class-guttest-method-wait-frames">wait_frames</a>:  Waits x frames (physics frames).
+ * <a href="class_ref/class_guttest.html#class-guttest-method-wait-for-signal">wait_for_signal</a>:  Waits until a signal is emitted, or a maximum amount of time.
+ * <a href="class_ref/class_guttest.html#class-guttest-method-wait-until">wait_until</a>:   Waits until a `Callable` returns `true` or a maximum amount of time.
+ * `pause_before_teardown`:  can be called in a test to pause execution at the end of a test, before moving on to the next test or ending the run.
 
 Calling `await` without using one of GUT's "wait" methods is discouraged.  When you use these methods, GUT provides output to indicate that execution is paused.  If you don't use them it can look like your tests have stopped running.
 
 
-## wait_seconds
-```
+## <a href="class_ref/class_guttest.html#class-guttest-method-wait-seconds">wait_seconds</a>
+``` gdscript
 wait_seconds(time, msg=''):
 ```
 Sometimes you just want to pause for some amount of time.  Use `wait_seconds` instead of making timers.
@@ -25,8 +26,8 @@ await wait_seconds(2.8)
 await wait_secondes(.25, "waiting for a short period")
 ```
 
-## wait_frames
-```
+## <a href="class_ref/class_guttest.html#class-guttest-method-wait-frames">wait_frames</a>
+``` gdscript
 wait_frames(frames, msg=''):
 ```
 
@@ -43,8 +44,8 @@ await wait_frames(2)
 await wait_frames(20) # waiting some frames.
 ```
 
-## wait_for_signal
-```
+## <a href="class_ref/class_guttest.html#class-guttest-method-wait-for-signal">wait_for_signal</a>
+``` gdscript
 wait_for_signal(sig, max_wait, msg=''):
 ```
 This method will pause execution until a signal is emitted or until `max_wait` seconds have passed, whichever comes first.  Using `wait_for_signal` is better than just using `await my_obj.my_signal` since tests will continue to run if the signal is never emitted.
@@ -67,8 +68,8 @@ assert_true(await wait_for_signal(my_object.my_signal, 2),
 ```
 
 
-## wait_until
-```
+## <a href="class_ref/class_guttest.html#class-guttest-method-wait-until">wait_until</a>
+``` gdscript
 wait_until(callable, max_wait, p3='', p4=''):
 ```
 This method takes a `Callable` predicate method that will be called every frame.  The wait will end when the `Callable` returns `true` or when `max_wait` seconds has expired.  This requires the method to explicity return `true` and not a truthy value.
@@ -78,7 +79,7 @@ This will return `true` if the method returned `true` before the timeout, `false
 * `p3` can be the optional message or an amount of time to wait between tests.
 * `p4` is the optional message if you have specified an amount of time to wait between tests.
 
-```
+``` gdscript
 var everything_is_ok = func():
 	return true
 
