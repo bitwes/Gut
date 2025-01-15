@@ -1,19 +1,19 @@
 # Mocking Input
 
-The `GutInputSender` class operates on one or more receivers.  It will create and send `InputEvent` instances to all of its receivers.
+The [GutInputSender](class_GutInputSender) class operates on one or more receivers.  It will create and send `InputEvent` instances to all of its receivers.
 
-There are two ways you could be processing your input.  You could be using the `_input` events to receive input events and process them.  The other way is to interact with the `Input` global and detect input in the `_process` and `_physics_process` methods.  `GutInputSender` works with both approaches, but using `GutInputSender` differs for each approach.  Read the sections below to learn the best way to use `GutInputSender` with your game.
+There are two ways you could be processing your input.  You could be using the `_input` events to receive input events and process them.  The other way is to interact with the `Input` global and detect input in the `_process` and `_physics_process` methods.  [GutInputSender](class_GutInputSender) works with both approaches, but using [GutInputSender](class_GutInputSender) differs for each approach.  Read the sections below to learn the best way to use [GutInputSender](class_GutInputSender) with your game.
 
 
 ### Using an Object as a Receiver
-When you use an instance of an object as a receiver, `GutInputSender` will send `InputEvent` instances to the various `input` methods.  They will be called in this order:
+When you use an instance of an object as a receiver, [GutInputSender](class_GutInputSender) will send `InputEvent` instances to the various `input` methods.  They will be called in this order:
 1.  `_input`
 1.  `_gui_input`
 1.  `_unhandled_input`
 
-When there are multiple receivers, each receiver will be called in the order they were added.  All three `_input` methods will be called on each receiver then the `GutInputSender` will move to the next receiver.
+When there are multiple receivers, each receiver will be called in the order they were added.  All three `_input` methods will be called on each receiver then the [GutInputSender](class_GutInputSender) will move to the next receiver.
 
-When using objects as receivers it is recommended that each test create its own instance of `GutInputSender`.  `GutInputSender` retains information about what actions/buttons/etc have been pressed.  By creating a new instance in each test, you don't have to worry about clearing this state between tests.
+When using objects as receivers it is recommended that each test create its own instance of [GutInputSender](class_GutInputSender).  [GutInputSender](class_GutInputSender) retains information about what actions/buttons/etc have been pressed.  By creating a new instance in each test, you don't have to worry about clearing this state between tests.
 
 If you are processing input by directly interacting with the `Input` global, then you should follow the instructions in the next section.
 ``` gdscript
@@ -28,13 +28,13 @@ func test_shoot():
 
 ### Using `Input` as a Receiver
 
-When `Input` is used as a receiver `Input` will send all inputs it receives from the `GutInputSender` to every object that has been added to the tree.  `Input` will treat all the events it gets exactly the same as if the events were triggered from hardware.  This means all the `is_action_just_pressed` and similar functions will work the same.  The `InputEvent` instances will also be sent to the various `_input` methods on objects in the tree in whatever order `Input` desires.
+When `Input` is used as a receiver `Input` will send all inputs it receives from the [GutInputSender](class_GutInputSender) to every object that has been added to the tree.  `Input` will treat all the events it gets exactly the same as if the events were triggered from hardware.  This means all the `is_action_just_pressed` and similar functions will work the same.  The `InputEvent` instances will also be sent to the various `_input` methods on objects in the tree in whatever order `Input` desires.
 
 Using `Input` makes testing objects that handle input via `_process` or `_process_delta` much easier but you have to be a little careful when using it though.  Since the `Input` instance is global and retains its state for the duration of the test run.
 
-1.  You should declare your `GutInputSender` instance at the class level.  You will need access to it in the `after_each` method.
-1.  Call `release_all` on the `GutInputSender` in `after_each`.  This makes sure that `Input` doesn't think that a button is pressed when you don't expect it to be.  If `Input` thinks a button is pressed, it will not send any "down" events until it gets an "up" event.
-1.  Call `clear` on the `GutInputSender` in `after_each`.  This clears out any state the `GutInputSender` has.  It tracks inputs so that functions like `hold_for` can create dynamic "up" events, as well as various other things.  Calling `clear` makes sure that `GutInputSender` state does not leak from one test to another.
+1.  You should declare your [GutInputSender](class_GutInputSender) instance at the class level.  You will need access to it in the `after_each` method.
+1.  Call `release_all` on the [GutInputSender](class_GutInputSender) in `after_each`.  This makes sure that `Input` doesn't think that a button is pressed when you don't expect it to be.  If `Input` thinks a button is pressed, it will not send any "down" events until it gets an "up" event.
+1.  Call `clear` on the [GutInputSender](class_GutInputSender) in `after_each`.  This clears out any state the [GutInputSender](class_GutInputSender) has.  It tracks inputs so that functions like `hold_for` can create dynamic "up" events, as well as various other things.  Calling `clear` makes sure that [GutInputSender](class_GutInputSender) state does not leak from one test to another.
 1.  You must ALWAYS await before making an assert or your objects will not get a chance to process the frame the `Input` was sent on (`_process` and `_physics_process` will not be called without a await).
 
 ``` gdscript
@@ -55,7 +55,7 @@ func test_shoot():
 
 
 ### Chaining Input Events
-The `GutInputSender` methods return the instance so you can chain multiple calls together to script out a sequence of inputs.  The sequence is immediately started.  When the sequence finishes the `'idle'` signal is emitted.
+The [GutInputSender](class_GutInputSender) methods return the instance so you can chain multiple calls together to script out a sequence of inputs.  The sequence is immediately started.  When the sequence finishes the `'idle'` signal is emitted.
 
 ```
 var player = Player.new()
@@ -68,7 +68,7 @@ sender.key_down("a").wait(.1)\
     .key_up(KEY_B)
 await(sender.idle)
 ```
-The `GutInputSender` will emit the `idle` signal when all inputs in a sequence have been sent and all `waits` have expired.
+The [GutInputSender](class_GutInputSender) will emit the `idle` signal when all inputs in a sequence have been sent and all `waits` have expired.
 
 Any events that do not have a `wait` or `hold_for` call in between them will be fired on the same frame.
 ```
@@ -161,7 +161,7 @@ func test_holding_down_and_jump_does_slide():
 
 ## Gotchas
 * When using `Input` as a receiver, everything in the tree gets the signals AND any actual inputs from hardware will be sent as well.  It's best not to touch anything when running these tests.
-* If you use a class level `GutInputSender` and forget to call `release_all` and `clear` between tests then things will eventually start behaving weird and your tests will pass/fail in unpredictable ways.
+* If you use a class level [GutInputSender](class_GutInputSender) and forget to call `release_all` and `clear` between tests then things will eventually start behaving weird and your tests will pass/fail in unpredictable ways.
 
 
 ## Understanding Input.use_accumulated_input
@@ -175,7 +175,7 @@ When `use_accumualted_input` is enabled, `Input` waits to process input until th
 
 #### Other ways that aren't so good.
 If you use these approaches you should quarantine these tests in their own Inner Class or script so that they do not influence other tests that do not expect the buffer to be constantly flushed or `use_accumulated_input` to be disabled.
-1.  In GUT 7.4.0 `GutInputSender` has an `auto_flush_input` property which is disabled by default.  When enabled this will call `Input.flush_buffered_events` after each input sent through an `GutInputSender`.  This is a bit dangerous since this can cause some of your tests to not test the way your game will receive input when playing the game.
+1.  In GUT 7.4.0 [GutInputSender](class_GutInputSender) has an `auto_flush_input` property which is disabled by default.  When enabled this will call `Input.flush_buffered_events` after each input sent through an [GutInputSender](class_GutInputSender).  This is a bit dangerous since this can cause some of your tests to not test the way your game will receive input when playing the game.
 1.  You can disable `use_accumulated_input` in `before_all` and re-enable in `after_all`.  Just like with `auto_flush_input`, this has the potential to not test all inputs the same way as your game will get them when playing the game.
 
 ### Examples

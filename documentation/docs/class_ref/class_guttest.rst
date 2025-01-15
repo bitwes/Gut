@@ -53,7 +53,7 @@ Properties
    +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`ParameterFactory<class_GutTest_property_ParameterFactory>` | ``<unknown>``                               |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`InputFactory<class_GutTest_property_InputFactory>`         | ``new()``                                   |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`InputFactory<class_GutTest_property_InputFactory>`         | ``GutInputFactory``                         |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`InputSender<class_GutTest_property_InputSender>`           | ``<unknown>``                               |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
@@ -364,9 +364,9 @@ Reference to :ref:`addons/gut/parameter_factory.gd<class_addons/gut/parameter_fa
 
 .. rst-class:: classref-property
 
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **InputFactory** = ``new()`` :ref:`🔗<class_GutTest_property_InputFactory>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **InputFactory** = ``GutInputFactory`` :ref:`🔗<class_GutTest_property_InputFactory>`
 
-Reference :ref:`GutInputFactory<class_GutInputFactory>` class that was originally used to reference the Input Factory before the class_name was introduced.
+Reference to :ref:`GutInputFactory<class_GutInputFactory>` class that was originally used to reference the Input Factory before the class_name was introduced.
 
 .. rst-class:: classref-item-separator
 
