@@ -1730,6 +1730,8 @@ func assert_string_ends_with(text, search, match_case=true):
 ## [codeblock]
 ##    var my_double = double(Foobar).new()
 ##    ...
+##    assert_called(my_double, 'foo')
+##    assert_called(my_double.foo)
 ##    assert_called(my_double, 'foo', [1, 2, 3])
 ##    assert_called(my_double.foo.bind(1, 2, 3))
 ## [/codeblock]
@@ -1768,6 +1770,8 @@ func assert_called(inst, method_name=null, parameters=null):
 ## [br][br]
 ## [b]Examples[/b]
 ## [codeblock]
+##    assert_not_called(my_double, 'foo')
+##    assert_not_called(my_double.foo)
 ##    assert_not_called(my_double, 'foo', [1, 2, 3])
 ##    assert_not_called(my_double.foo.bind(1, 2, 3))
 ## [/codeblock]
@@ -2172,15 +2176,7 @@ func ignore_method_when_doubling(thing, method_name):
 	gut.get_doubler().add_ignored_method(r, method_name)
 
 
-## Stub something.
-##
-## Parameters
-## 1: A callable OR the thing to stub OR a file path OR an instance OR a Script
-## 2: either an inner class subpath or the method name
-## 3: the method name if an inner class subpath was specified
-## NOTE:  right now we cannot stub inner classes at the path level so this should
-##        only be called with two parameters.  I did the work though so I'm going
-##        to leave it but not update the wiki.
+## Stub something.  See [wiki]Stubbing[/wiki] for detailed information about stubbing.
 func stub(thing, p2=null, p3=null):
 	var method_name = p2
 	var subpath = null

@@ -1723,6 +1723,8 @@ See also: `Doubles <../Doubles.html>`__, `Spies <../Spies.html>`__
 
        var my_double = double(Foobar).new()
        ...
+       assert_called(my_double, 'foo')
+       assert_called(my_double.foo)
        assert_called(my_double, 'foo', [1, 2, 3])
        assert_called(my_double.foo.bind(1, 2, 3))
 
@@ -1746,6 +1748,8 @@ See also: `Doubles <../Doubles.html>`__, `Spies <../Spies.html>`__
 
 ::
 
+       assert_not_called(my_double, 'foo')
+       assert_not_called(my_double.foo)
        assert_not_called(my_double, 'foo', [1, 2, 3])
        assert_not_called(my_double.foo.bind(1, 2, 3))
 

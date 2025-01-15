@@ -48,7 +48,7 @@ All tests in the test script must start with the prefix `test_` in order for the
 
 Each test should perform at least one assert or call `pending`, `pass_test` or `fail_test` or it will be marked risky.
 
-A list of all `asserts` and other helper functions available in your test script can be found in [Asserts and Methods](Asserts-and-Methods).
+A list of all `asserts` and other helper functions available in your test script can be found in [GutTest](class_GutTest).
 
 
 ## Inner Test Classes
