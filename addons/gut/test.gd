@@ -39,8 +39,8 @@ var DOUBLE_STRATEGY = GutUtils.DOUBLE_STRATEGY
 var ParameterFactory = GutUtils.ParameterFactory
 ## @ignore
 var CompareResult = GutUtils.CompareResult
-## Reference [GutInputFactory] class that was originally used to reference the
-## Input Factory before the class_name was introduced.
+## Reference to [GutInputFactory] class that was originally used to reference
+## the Input Factory before the class_name was introduced.
 var InputFactory = GutInputFactory
 ## Reference to [GutInputSender].  This was the way you got to the [GutInputSender]
 ## before it was given a [code]class_name[/code]

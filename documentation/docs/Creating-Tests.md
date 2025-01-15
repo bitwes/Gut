@@ -83,6 +83,6 @@ class TestFeatureB:
 		assert_eq(_obj.foo(), 'bar', 'Foo should return bar')
 ```
 ## Where to next?
-* [Asserts and Methods](Asserts-and-Methods)
+* [GutTest](class_GutTest)
 * [Inner Test Classes](Inner-Test-Classes)
 * [Command Line](Command-Line)
