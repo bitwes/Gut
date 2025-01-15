@@ -10,7 +10,35 @@ GutTest
 
 **Inherits:** `Node <https://docs.godotengine.org/en/stable/classes/class_node.html>`_
 
-This is the base class for all GUT test scripts.
+This is the base class for your GUT test scripts.
+
+
+
+GUT Wiki:  `https://gut.readthedocs.io <https://gut.readthedocs.io>`__ 
+
+Simple Example
+
+::
+
+       extends GutTest
+    
+       func before_all():
+           gut.p("before_all called"
+    
+       func before_each():
+           gut.p("before_each called")
+    
+       func after_each():
+           gut.p("after_each called")
+    
+       func after_all():
+           gut.p("after_all called")
+    
+       func test_assert_eq_letters():
+           assert_eq("asdf", "asdf", "Should pass")
+    
+       func test_assert_eq_number_not_equal():
+           assert_eq(1, 2, "Should fail.  1 != 2")
 
 .. rst-class:: classref-reftable-group
 
@@ -21,15 +49,15 @@ Properties
    :widths: auto
 
    +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
-   | :ref:`GutMain<class_GutMain>`                                                  | :ref:`gut<class_GutTest_property_gut>`                           | ``null``                                    |
-   +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`DOUBLE_STRATEGY<class_GutTest_property_DOUBLE_STRATEGY>`   | ``{"INCLUDE_NATIVE": 0, "SCRIPT_ONLY": 1}`` |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`ParameterFactory<class_GutTest_property_ParameterFactory>` | ``<unknown>``                               |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`InputFactory<class_GutTest_property_InputFactory>`         | ``<unknown>``                               |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`InputFactory<class_GutTest_property_InputFactory>`         | ``GutInputFactory``                         |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`InputSender<class_GutTest_property_InputSender>`           | ``<unknown>``                               |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
+   | :ref:`GutMain<class_GutMain>`                                                  | :ref:`gut<class_GutTest_property_gut>`                           | ``null``                                    |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
 
 .. rst-class:: classref-reftable-group
@@ -306,20 +334,6 @@ Constants
 Property Descriptions
 ---------------------
 
-.. _class_GutTest_property_gut:
-
-.. rst-class:: classref-property
-
-:ref:`GutMain<class_GutMain>` **gut** = ``null`` :ref:`🔗<class_GutTest_property_gut>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
 .. _class_GutTest_property_DOUBLE_STRATEGY:
 
 .. rst-class:: classref-property
@@ -350,9 +364,9 @@ Reference to :ref:`addons/gut/parameter_factory.gd<class_addons/gut/parameter_fa
 
 .. rst-class:: classref-property
 
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **InputFactory** = ``<unknown>`` :ref:`🔗<class_GutTest_property_InputFactory>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **InputFactory** = ``GutInputFactory`` :ref:`🔗<class_GutTest_property_InputFactory>`
 
-Reference to :ref:`addons/gut/input_factory.gd<class_addons/gut/input_factory.gd>` script.
+Reference :ref:`GutInputFactory<class_GutInputFactory>` class that was originally used to reference the Input Factory before the class_name was introduced.
 
 .. rst-class:: classref-item-separator
 
@@ -365,6 +379,20 @@ Reference to :ref:`addons/gut/input_factory.gd<class_addons/gut/input_factory.gd
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **InputSender** = ``<unknown>`` :ref:`🔗<class_GutTest_property_InputSender>`
 
 Reference to :ref:`GutInputSender<class_GutInputSender>`.  This was the way you got to the :ref:`GutInputSender<class_GutInputSender>` before it was given a ``class_name``
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_property_gut:
+
+.. rst-class:: classref-property
+
+:ref:`GutMain<class_GutMain>` **gut** = ``null`` :ref:`🔗<class_GutTest_property_gut>`
+
+.. container:: contribute
+
+	No description
 
 .. rst-class:: classref-section-separator
 
@@ -1980,7 +2008,7 @@ Returns whether the last wait\_\* method timed out.  This is always true if the 
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_fail_count**\ (\ ) :ref:`🔗<class_GutTest_method_get_fail_count>`
 
-Returns the number of failing asserts.
+Returns the number of failing asserts in this script at the time this method was called.  Call in :ref:`after_all<class_GutTest_method_after_all>` to get total count for script.
 
 .. rst-class:: classref-item-separator
 
@@ -1992,7 +2020,7 @@ Returns the number of failing asserts.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_pass_count**\ (\ ) :ref:`🔗<class_GutTest_method_get_pass_count>`
 
-Returns the number of passing asserts.
+Returns the number of passing asserts in this script at the time this method was called.  Call in :ref:`after_all<class_GutTest_method_after_all>` to get total count for script.
 
 .. rst-class:: classref-item-separator
 
@@ -2004,7 +2032,7 @@ Returns the number of passing asserts.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_pending_count**\ (\ ) :ref:`🔗<class_GutTest_method_get_pending_count>`
 
-Returns the number of pending tests.
+Returns the number of pending tests in this script at the time this method was called.  Call in :ref:`after_all<class_GutTest_method_after_all>` to get total count for script.
 
 .. rst-class:: classref-item-separator
 
@@ -2016,7 +2044,7 @@ Returns the number of pending tests.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_assert_count**\ (\ ) :ref:`🔗<class_GutTest_method_get_assert_count>`
 
-Returns the total number of asserts as of the time of the calling of this method.
+Returns the total number of asserts this script has made as of the time of this was called.  Call in :ref:`after_all<class_GutTest_method_after_all>` to get total count for script.
 
 .. rst-class:: classref-item-separator
 

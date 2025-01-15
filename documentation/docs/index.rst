@@ -41,18 +41,6 @@
 .. toctree::
    :hidden:
    :maxdepth: 1
-   :caption: Mocking Input
-   :name: sec-mockinput
-
-   Mocking-Input
-   Input-Sender
-   Input-Factory
-
-
-
-.. toctree::
-   :hidden:
-   :maxdepth: 1
    :caption: Other
    :name: sec-other
 
@@ -61,6 +49,7 @@
    Export-Test-Results
    Hooks
    Memory-Management
+   Mocking-Input
    Orphans
    Running-On-Devices
    Tutorials
@@ -69,7 +58,7 @@
 .. toctree::
    :hidden:
    :maxdepth: 1
-   :caption: ClassRef
+   :caption: Class Reference
    :name: class-ref
    :glob:
 
@@ -93,7 +82,7 @@ Getting Started
 
 * :doc:`Quick-Start <Quick-Start>`
 * :doc:`Install <Install>`
-* :doc:`Asserts and Methods <Asserts-and-Methods>`
+* :doc:`GutTest Class <class_ref/class_guttest>`
 * :doc:`Creating Tests <Creating-Tests>`
 * :doc:`Using Gut at the command line <Command-Line>`
 

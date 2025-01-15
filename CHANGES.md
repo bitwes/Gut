@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# 9.4.0
+
+## Features
+* Utilized the adapted Godot tools that generate HTML from code comments, moving some documentation to code comments.  This makes more documentation easily accessible from the editor and cuts down on some duplicate documentation.
+* New `class_name`s:
+  * `GutInputFactory` for `res://addons/gut/gut_input_factory.gd` static class.
+
+
 # 9.3.1
 A small collection of bug fixes and documentation.  GUT can now generate documentation from code comments.
 

@@ -1,23 +1,61 @@
 class_name GutTest
 extends Node
-## This is the base class for all GUT test scripts.
+## This is the base class for your GUT test scripts.[br]
+## [br]
+## GUT Wiki:  [url=https://gut.readthedocs.io]https://gut.readthedocs.io[/url]
+## [br]
+## Simple Example
+## [codeblock]
+##    extends GutTest
+##
+##    func before_all():
+##        gut.p("before_all called"
+##
+##    func before_each():
+##        gut.p("before_each called")
+##
+##    func after_each():
+##        gut.p("after_each called")
+##
+##    func after_all():
+##        gut.p("after_all called")
+##
+##    func test_assert_eq_letters():
+##        assert_eq("asdf", "asdf", "Should pass")
+##
+##    func test_assert_eq_number_not_equal():
+##        assert_eq(1, 2, "Should fail.  1 != 2")
+## [/codeblock]
 
 
-var _compare = GutUtils.Comparator.new()
 
+
+const EDITOR_PROPERTY = PROPERTY_USAGE_SCRIPT_VARIABLE | PROPERTY_USAGE_DEFAULT
+const VARIABLE_PROPERTY = PROPERTY_USAGE_SCRIPT_VARIABLE
+# Convenience copy of GutUtils.DOUBLE_STRATEGY
+var DOUBLE_STRATEGY = GutUtils.DOUBLE_STRATEGY
+
+## Reference to [addons/gut/parameter_factory.gd] script.
+var ParameterFactory = GutUtils.ParameterFactory
+## @ignore
+var CompareResult = GutUtils.CompareResult
+## Reference [GutInputFactory] class that was originally used to reference the
+## Input Factory before the class_name was introduced.
+var InputFactory = GutInputFactory
+## Reference to [GutInputSender].  This was the way you got to the [GutInputSender]
+## before it was given a [code]class_name[/code]
+var InputSender = GutUtils.InputSender
 
 # Need a reference to the instance that is running the tests.  This
 # is set by the gut class when it runs the test script.
 var gut: GutMain = null
 
+
+var _compare = GutUtils.Comparator.new()
 var _disable_strict_datatype_checks = false
 # Holds all the text for a test's fail/pass.  This is used for testing purposes
 # to see the text of a failed sub-test in test_test.gd
 var _fail_pass_text = []
-
-const EDITOR_PROPERTY = PROPERTY_USAGE_SCRIPT_VARIABLE | PROPERTY_USAGE_DEFAULT
-const VARIABLE_PROPERTY = PROPERTY_USAGE_SCRIPT_VARIABLE
-
 # Summary counts for the test.
 var _summary = {
 	asserts = 0,
@@ -26,31 +64,13 @@ var _summary = {
 	tests = 0,
 	pending = 0
 }
-
 # This is used to watch signals so we can make assertions about them.
 var _signal_watcher = load('res://addons/gut/signal_watcher.gd').new()
-
-# Convenience copy of GutUtils.DOUBLE_STRATEGY
-var DOUBLE_STRATEGY = GutUtils.DOUBLE_STRATEGY
-
 var _lgr = GutUtils.get_logger()
 var _strutils = GutUtils.Strutils.new()
 var _awaiter = null
-
-
-## Reference to [addons/gut/parameter_factory.gd] script.
-var ParameterFactory = GutUtils.ParameterFactory
-## @ignore
-var CompareResult = GutUtils.CompareResult
-## Reference to [addons/gut/input_factory.gd] script.
-var InputFactory = GutUtils.InputFactory
-## Reference to [GutInputSender].  This was the way you got to the [GutInputSender]
-## before it was given a [code]class_name[/code]
-var InputSender = GutUtils.InputSender
-
-
-
 var _was_ready_called = false
+
 # I haven't decided if we should be using _ready or not.  Right now gut.gd will
 # call this if _ready was not called (because it was overridden without a super
 # call).  Maybe gut.gd should just call _do_ready_stuff (after we rename it to
@@ -495,7 +515,7 @@ func get_signal_emit_count(object, signal_name):
 ## If you need to inspect the parameters in order to make more complicate
 ## assertions, then this will give you access to the parameters of any watched
 ## signal.  This works the same way that
-## [code]assert_signal_emitted_with_parameters[/code] does.  It takes an
+## [code skip-lint]assert_signal_emitted_with_parameters[/code] does.  It takes an
 ## object, signal name, and an optional index.  If the index is not specified
 ## then the parameters from the most recent emission will be returned.  If the
 ## object is not being watched, the signal was not fired, or the object does
@@ -1773,7 +1793,6 @@ func assert_not_called(inst, method_name=null, parameters=null):
 			_pass(disp)
 
 
-# ------------------------------------------------------------------------------
 ## Asserts the the method of a double was called an expected number of times.
 ## If any arguments are bound to the callable then only calls with matching
 ## arguments will be counted.
@@ -1821,6 +1840,7 @@ func assert_not_null(got, text=''):
 		_fail(disp)
 	else:
 		_pass(disp)
+
 
 ## Asserts that the passed in object has been freed.  This assertion requires
 ## that  you pass in some text in the form of a title since, if the object is
@@ -2015,7 +2035,6 @@ func wait_frames(frames, msg=''):
 	return _awaiter.timeout
 
 
-# ------------------------------------------------------------------------------
 ## Use with await to wait for the passed in callable to return true or a maximum
 ## amount of time.  The callable is called every _physics_process tick unless
 ## an optional time between calls is specified.[br]
@@ -2038,6 +2057,7 @@ func wait_until(callable, max_wait, p3='', p4=''):
 	await _awaiter.timeout
 	return !_awaiter.did_last_wait_timeout
 
+
 ## Returns whether the last wait_* method timed out.  This is always true if
 ## the last method was wait_frames or wait_seconds.  It will be false when
 ## using wait_for_signal and wait_until if the timeout occurs before what
@@ -2056,23 +2076,26 @@ func get_summary():
 	return _summary
 
 
-## Returns the number of failing asserts.
+## Returns the number of failing asserts in this script at the time this
+## method was called.  Call in [method after_all] to get total count for script.
 func get_fail_count():
 	return _summary.failed
 
 
-## Returns the number of passing asserts.
+## Returns the number of passing asserts in this script at the time this method
+## was called.  Call in [method after_all] to get total count for script.
 func get_pass_count():
 	return _summary.passed
 
 
-## Returns the number of pending tests.
+## Returns the number of pending tests in this script at the time this method
+## was called.  Call in [method after_all] to get total count for script.
 func get_pending_count():
 	return _summary.pending
 
 
-## Returns the total number of asserts as of the time of the calling of this
-## method.
+## Returns the total number of asserts this script has made as of the time of
+## this was called.  Call in [method after_all] to get total count for script.
 func get_assert_count():
 	return _summary.asserts
 
@@ -2103,6 +2126,7 @@ func double(thing, double_strat=null, not_used_anymore=null):
 
 	return _smart_double(thing, double_strat, false)
 
+
 ## Create a Partial Double of [param thing].  [param thing] should be a Class,
 ## script, or scene.  See [wiki]Partial-Doubles[/wiki]
 func partial_double(thing, double_strat=null, not_used_anymore=null):
@@ -2111,6 +2135,7 @@ func partial_double(thing, double_strat=null, not_used_anymore=null):
 
 	return _smart_double(thing, double_strat, true)
 
+
 ## @internal
 func double_singleton(singleton_name):
 	return null
@@ -2118,6 +2143,7 @@ func double_singleton(singleton_name):
 	# if(_validate_singleton_name(singleton_name)):
 	# 	to_return = gut.get_doubler().double_singleton(singleton_name)
 	# return to_return
+
 
 ## @internal
 func partial_double_singleton(singleton_name):
