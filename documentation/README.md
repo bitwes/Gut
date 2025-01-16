@@ -1,24 +1,51 @@
 # GUT Documentation
-This is the readme for the readmes.  The one that binds them all together.  The super README!  The supreme readme.  Behold it in all of its glory!
-
 Documentation is hosted at https://gut.readthedocs.io.
 
+The wiki is generated from three types of files:
+* RST:  This wiki site index (`index.rst`) is the only RST file that manually created.  All other RST files are generated from code comments.
+* Markdown:  The standalone pages of th wiki are all made in Markdown.
+* Documentation Comments:  A modified version of Godot's code is used to generate RST files for GUT scripts and `class_names`.
+
+
+## Code Comment Features
+All features listed in [Godot's Documentation Comments](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_documentation_comments.html) are supported as well as some additional bbcode tags and annotations.  These additional tags will only work on the site and will appear unaltered when viewing documention through the Editor.
+
+* `[wiki][/wiki]` Creates a link to a wiki page.  Use page title between tags.  For example `[wiki]Creating-Tests[/wiki]`.  To link to a GUT class, prefix the `class_name` with `class_`:  `[wiki]class_GutTest[/wiki]`
+* `@ignore-uncommented`:  Place in the class description (not short description) to exclude all of the following that do not have document comments above them:
+    * Methods
+    * Properties
+    * Constants
+    * Signals
+* `@ignore` Can be used in doc comments for Methods, Properties, and Signals to exclude them from the documentation.
+* `@internal` Can be used in doc comments for Methods to mark them for "internal use only".  They will be included in the generated documentation but will be marked.
+
+Any links to non GUT classes created in doc comments (like `[Node2D]`) will link to Godot's documentation.  Due to the way the documentation is generated, all non-GUT links are assumed to exist on Godot's site.
+
+
+## Markdown
+Linking to wiki pages in Markdown requires the title be used.  As with doc comments, you must prefix GUT class links with `class_`.
+* `[Creating Tests](Creating-Tests)` links to the Creating Tests wiki page.
+* `[GutTest][class_GutTest]` links to the class reference page for `GutTest`.
+* You must use `<a>` tags to link to anchors in class ref pages:  `<a href="class_ref/class_guttest.html#class-guttest-method-assert-called">assert_called</a>`
 
 
 
-# Structure
-`documentation/docs/conf.py`
+
+# Documentation Files Structure
+`documentation/docs/conf.py`<br>
 This is the Sphinx configuration file.
 
-`documentation/docs/index.rst`
+`documentation/docs/index.rst`<br>
 The Home page and also responsible for generating the Table of Contents for the site.  If you add a new page, it must be added to one of the `.. toctree::` entries.
 
-`documentation/docs`  The directory for all the wiki pages.  All wiki pages are markdown.
+`documentation/docs`  <br>
+The directory for all the wiki pages.  All wiki pages are markdown.
 
-`documentation/_static/css`
+`documentation/_static/css`<br>
 The CSS goes in here.
 
-`documentation/_static/images` Put any wiki related images in here.
+`documentation/_static/images` <br>
+Put any wiki related images in here.
 
 
 

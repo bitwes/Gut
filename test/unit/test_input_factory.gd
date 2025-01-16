@@ -65,14 +65,17 @@ class TestMouseButtons:
 	extends "res://addons/gut/test.gd"
 
 	func assert_mouse_event_props(method, pressed, button_index):
-		var event = InputFactory.call(method, (Vector2(10, 10)))
+		# instance so that we can use call
+		var input_factory = InputFactory.new()
+		var event = input_factory.call(method, (Vector2(10, 10)))
 		assert_is(event, InputEventMouseButton, 'correct class')
 		assert_eq(event.position, Vector2(10, 10), 'position')
 		assert_eq(event.pressed, pressed, 'pressed')
 		assert_eq(event.button_index, button_index, 'button_index')
 
 	func assert_mouse_event_positions(method):
-		var event = InputFactory.call(method, Vector2(10, 10), Vector2(11, 11))
+		var input_factory = InputFactory.new()
+		var event = input_factory.call(method, Vector2(10, 10), Vector2(11, 11))
 		assert_eq(event.position, Vector2(10, 10), "position")
 		assert_eq(event.global_position, Vector2(11, 11), "global position")
 

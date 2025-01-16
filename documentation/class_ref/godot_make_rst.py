@@ -44,6 +44,8 @@
 #   - [li][/li] support for list items.  You need a [br] before the first [li].
 #     I could add a TON more code so you don't have to...anyway...[li] turns
 #     into "* " and [/li] turns into "\n".  It's hacked together, but it works.
+#   - [wiki][/wiki] Creates a link to a wiki page.  Very specific to this repo's
+#     structure, but you should be able to read it and adapt.
 #
 #
 # Additional Doc Comment Anotations:
@@ -256,6 +258,7 @@ def make_method_descriptions(f, class_def, state):
             if m.description is not None and m.description.strip() != "":
                 f.write(f"{bb2rst.format_text_block(m.description.strip(), m, state)}\n\n")
             elif m.deprecated is None and m.experimental is None:
+                lgr.vprint(f'Missing method description {class_def.name}.{m.name}')
                 no_description_container(f, "method")
 
             index += 1

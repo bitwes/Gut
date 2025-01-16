@@ -10,7 +10,35 @@ GutTest
 
 **Inherits:** `Node <https://docs.godotengine.org/en/stable/classes/class_node.html>`_
 
-This is the base class for all test scripts.  Extend this...test the world!
+This is the base class for your GUT test scripts.
+
+
+
+GUT Wiki:  `https://gut.readthedocs.io <https://gut.readthedocs.io>`__ 
+
+Simple Example
+
+::
+
+       extends GutTest
+    
+       func before_all():
+           gut.p("before_all called"
+    
+       func before_each():
+           gut.p("before_each called")
+    
+       func after_each():
+           gut.p("after_each called")
+    
+       func after_all():
+           gut.p("after_all called")
+    
+       func test_assert_eq_letters():
+           assert_eq("asdf", "asdf", "Should pass")
+    
+       func test_assert_eq_number_not_equal():
+           assert_eq(1, 2, "Should fail.  1 != 2")
 
 .. rst-class:: classref-reftable-group
 
@@ -21,15 +49,15 @@ Properties
    :widths: auto
 
    +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
-   | :ref:`GutMain<class_GutMain>`                                                  | :ref:`gut<class_GutTest_property_gut>`                           | ``null``                                    |
-   +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`DOUBLE_STRATEGY<class_GutTest_property_DOUBLE_STRATEGY>`   | ``{"INCLUDE_NATIVE": 0, "SCRIPT_ONLY": 1}`` |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`ParameterFactory<class_GutTest_property_ParameterFactory>` | ``<unknown>``                               |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`InputFactory<class_GutTest_property_InputFactory>`         | ``<unknown>``                               |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`InputFactory<class_GutTest_property_InputFactory>`         | ``GutInputFactory``                         |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`InputSender<class_GutTest_property_InputSender>`           | ``<unknown>``                               |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
+   | :ref:`GutMain<class_GutMain>`                                                  | :ref:`gut<class_GutTest_property_gut>`                           | ``null``                                    |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
 
 .. rst-class:: classref-reftable-group
@@ -69,8 +97,6 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_eq_deep<class_GutTest_method_assert_eq_deep>`\ (\ v1, v2\ )                                                                                                                                                                                         |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_eq_shallow<class_GutTest_method_assert_eq_shallow>`\ (\ v1, v2\ )                                                                                                                                                                                   |
-   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_exports<class_GutTest_method_assert_exports>`\ (\ obj, property_name, type\ )                                                                                                                                                                       |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_false<class_GutTest_method_assert_false>`\ (\ got, text = ""\ )                                                                                                                                                                                     |
@@ -105,8 +131,6 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_ne_deep<class_GutTest_method_assert_ne_deep>`\ (\ v1, v2\ )                                                                                                                                                                                         |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_ne_shallow<class_GutTest_method_assert_ne_shallow>`\ (\ v1, v2\ )                                                                                                                                                                                   |
-   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_no_new_orphans<class_GutTest_method_assert_no_new_orphans>`\ (\ text = ""\ )                                                                                                                                                                        |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_not_between<class_GutTest_method_assert_not_between>`\ (\ got, expect_low, expect_high, text = ""\ )                                                                                                                                                |
@@ -129,11 +153,7 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_property_with_backing_variable<class_GutTest_method_assert_property_with_backing_variable>`\ (\ obj, property_name, default_value, new_value, backed_by_name = null\ )                                                                              |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_readonly_property<class_GutTest_method_assert_readonly_property>`\ (\ obj, property_name, new_value, expected_value\ )                                                                                                                              |
-   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_same<class_GutTest_method_assert_same>`\ (\ v1, v2, text = ""\ )                                                                                                                                                                                    |
-   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_set_property<class_GutTest_method_assert_set_property>`\ (\ obj, property_name, new_value, expected_value\ )                                                                                                                                        |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_signal_emit_count<class_GutTest_method_assert_signal_emit_count>`\ (\ object, signal_name, times, text = ""\ )                                                                                                                                      |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -162,8 +182,6 @@ Methods
    | |void|                                                                         | :ref:`before_each<class_GutTest_method_before_each>`\ (\ )                                                                                                                                                                                                       |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`compare_deep<class_GutTest_method_compare_deep>`\ (\ v1, v2, max_differences = null\ )                                                                                                                                                                     |
-   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`compare_shallow<class_GutTest_method_compare_shallow>`\ (\ v1, v2, max_differences = null\ )                                                                                                                                                               |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`did_wait_timeout<class_GutTest_method_did_wait_timeout>`\ (\ )                                                                                                                                                                                             |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -316,20 +334,6 @@ Constants
 Property Descriptions
 ---------------------
 
-.. _class_GutTest_property_gut:
-
-.. rst-class:: classref-property
-
-:ref:`GutMain<class_GutMain>` **gut** = ``null`` :ref:`🔗<class_GutTest_property_gut>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
 .. _class_GutTest_property_DOUBLE_STRATEGY:
 
 .. rst-class:: classref-property
@@ -360,9 +364,9 @@ Reference to :ref:`addons/gut/parameter_factory.gd<class_addons/gut/parameter_fa
 
 .. rst-class:: classref-property
 
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **InputFactory** = ``<unknown>`` :ref:`🔗<class_GutTest_property_InputFactory>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **InputFactory** = ``GutInputFactory`` :ref:`🔗<class_GutTest_property_InputFactory>`
 
-Reference to :ref:`addons/gut/input_factory.gd<class_addons/gut/input_factory.gd>` script.
+Reference to :ref:`GutInputFactory<class_GutInputFactory>` class that was originally used to reference the Input Factory before the class_name was introduced.
 
 .. rst-class:: classref-item-separator
 
@@ -375,6 +379,20 @@ Reference to :ref:`addons/gut/input_factory.gd<class_addons/gut/input_factory.gd
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **InputSender** = ``<unknown>`` :ref:`🔗<class_GutTest_property_InputSender>`
 
 Reference to :ref:`GutInputSender<class_GutInputSender>`.  This was the way you got to the :ref:`GutInputSender<class_GutInputSender>` before it was given a ``class_name``
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_property_gut:
+
+.. rst-class:: classref-property
+
+:ref:`GutMain<class_GutMain>` **gut** = ``null`` :ref:`🔗<class_GutTest_property_gut>`
+
+.. container:: contribute
+
+	No description
 
 .. rst-class:: classref-section-separator
 
@@ -391,9 +409,26 @@ Method Descriptions
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **should_skip_script**\ (\ ) :ref:`🔗<class_GutTest_method_should_skip_script>`
 
-.. container:: contribute
+Virtual Method.  This is run after the script has been prepped for execution, but before `before_all` is executed.  If you implement this method and return `true` or a `String` (the string is displayed in the log) then GUT will stop executing the script and mark it as risky.  You might want to do this because: - You are porting tests from 3.x to 4.x and you don't want to comment everything out.
 
-	No description
+- Skipping tests that should not be run when in `headless` mode such as input testing that does not work in headless.
+
+
+
+::
+
+       func should_skip_script():
+           if DisplayServer.get_name() == "headless":
+               return "Skip Input tests when running headless"
+
+- If you have tests that would normally cause the debugger to break on an error, you can skip the script if the debugger is enabled so that the run is not interrupted.
+
+
+
+::
+
+       func should_skip_script():
+           return EngineDebugger.is_active()
 
 .. rst-class:: classref-item-separator
 
@@ -405,9 +440,7 @@ Method Descriptions
 
 |void| **before_all**\ (\ ) :ref:`🔗<class_GutTest_method_before_all>`
 
-.. container:: contribute
-
-	No description
+Virtual method.  Run once before anything else in the test script is run.
 
 .. rst-class:: classref-item-separator
 
@@ -419,23 +452,7 @@ Method Descriptions
 
 |void| **before_each**\ (\ ) :ref:`🔗<class_GutTest_method_before_each>`
 
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_after_all:
-
-.. rst-class:: classref-method
-
-|void| **after_all**\ (\ ) :ref:`🔗<class_GutTest_method_after_all>`
-
-.. container:: contribute
-
-	No description
+Virtual method.  Run before each test is executed
 
 .. rst-class:: classref-item-separator
 
@@ -447,790 +464,19 @@ Method Descriptions
 
 |void| **after_each**\ (\ ) :ref:`🔗<class_GutTest_method_after_each>`
 
-.. container:: contribute
-
-	No description
+Virtual method.  Run after each test is executed.
 
 .. rst-class:: classref-item-separator
 
 ----
 
-.. _class_GutTest_method_get_logger:
+.. _class_GutTest_method_after_all:
 
 .. rst-class:: classref-method
 
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_logger**\ (\ ) :ref:`🔗<class_GutTest_method_get_logger>`
+|void| **after_all**\ (\ ) :ref:`🔗<class_GutTest_method_after_all>`
 
-**Internal use only.**
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_set_logger:
-
-.. rst-class:: classref-method
-
-|void| **set_logger**\ (\ logger\ ) :ref:`🔗<class_GutTest_method_set_logger>`
-
-**Internal use only.**
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_eq:
-
-.. rst-class:: classref-method
-
-|void| **assert_eq**\ (\ got, expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_eq>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_ne:
-
-.. rst-class:: classref-method
-
-|void| **assert_ne**\ (\ got, not_expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_ne>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_almost_eq:
-
-.. rst-class:: classref-method
-
-|void| **assert_almost_eq**\ (\ got, expected, error_interval, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_almost_eq>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_almost_ne:
-
-.. rst-class:: classref-method
-
-|void| **assert_almost_ne**\ (\ got, not_expected, error_interval, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_almost_ne>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_gt:
-
-.. rst-class:: classref-method
-
-|void| **assert_gt**\ (\ got, expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_gt>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_gte:
-
-.. rst-class:: classref-method
-
-|void| **assert_gte**\ (\ got, expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_gte>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_lt:
-
-.. rst-class:: classref-method
-
-|void| **assert_lt**\ (\ got, expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_lt>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_lte:
-
-.. rst-class:: classref-method
-
-|void| **assert_lte**\ (\ got, expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_lte>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_true:
-
-.. rst-class:: classref-method
-
-|void| **assert_true**\ (\ got, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_true>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_false:
-
-.. rst-class:: classref-method
-
-|void| **assert_false**\ (\ got, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_false>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_between:
-
-.. rst-class:: classref-method
-
-|void| **assert_between**\ (\ got, expect_low, expect_high, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_between>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_not_between:
-
-.. rst-class:: classref-method
-
-|void| **assert_not_between**\ (\ got, expect_low, expect_high, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_between>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_has:
-
-.. rst-class:: classref-method
-
-|void| **assert_has**\ (\ obj, element, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_has>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_does_not_have:
-
-.. rst-class:: classref-method
-
-|void| **assert_does_not_have**\ (\ obj, element, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_does_not_have>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_file_exists:
-
-.. rst-class:: classref-method
-
-|void| **assert_file_exists**\ (\ file_path\ ) :ref:`🔗<class_GutTest_method_assert_file_exists>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_file_does_not_exist:
-
-.. rst-class:: classref-method
-
-|void| **assert_file_does_not_exist**\ (\ file_path\ ) :ref:`🔗<class_GutTest_method_assert_file_does_not_exist>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_file_empty:
-
-.. rst-class:: classref-method
-
-|void| **assert_file_empty**\ (\ file_path\ ) :ref:`🔗<class_GutTest_method_assert_file_empty>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_file_not_empty:
-
-.. rst-class:: classref-method
-
-|void| **assert_file_not_empty**\ (\ file_path\ ) :ref:`🔗<class_GutTest_method_assert_file_not_empty>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_has_method:
-
-.. rst-class:: classref-method
-
-|void| **assert_has_method**\ (\ obj, method, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_has_method>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_accessors:
-
-.. rst-class:: classref-method
-
-|void| **assert_accessors**\ (\ obj, property, default, set_to\ ) :ref:`🔗<class_GutTest_method_assert_accessors>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_exports:
-
-.. rst-class:: classref-method
-
-|void| **assert_exports**\ (\ obj, property_name, type\ ) :ref:`🔗<class_GutTest_method_assert_exports>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_watch_signals:
-
-.. rst-class:: classref-method
-
-|void| **watch_signals**\ (\ object\ ) :ref:`🔗<class_GutTest_method_watch_signals>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_connected:
-
-.. rst-class:: classref-method
-
-|void| **assert_connected**\ (\ signaler_obj, connect_to_obj, signal_name, method_name = ""\ ) :ref:`🔗<class_GutTest_method_assert_connected>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_not_connected:
-
-.. rst-class:: classref-method
-
-|void| **assert_not_connected**\ (\ signaler_obj, connect_to_obj, signal_name, method_name = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_connected>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_signal_emitted:
-
-.. rst-class:: classref-method
-
-|void| **assert_signal_emitted**\ (\ object, signal_name, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_signal_emitted>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_signal_not_emitted:
-
-.. rst-class:: classref-method
-
-|void| **assert_signal_not_emitted**\ (\ object, signal_name, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_signal_not_emitted>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_signal_emitted_with_parameters:
-
-.. rst-class:: classref-method
-
-|void| **assert_signal_emitted_with_parameters**\ (\ object, signal_name, parameters, index = -1\ ) :ref:`🔗<class_GutTest_method_assert_signal_emitted_with_parameters>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_signal_emit_count:
-
-.. rst-class:: classref-method
-
-|void| **assert_signal_emit_count**\ (\ object, signal_name, times, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_signal_emit_count>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_has_signal:
-
-.. rst-class:: classref-method
-
-|void| **assert_has_signal**\ (\ object, signal_name, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_has_signal>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_get_signal_emit_count:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_signal_emit_count**\ (\ object, signal_name\ ) :ref:`🔗<class_GutTest_method_get_signal_emit_count>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_get_signal_parameters:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_signal_parameters**\ (\ object, signal_name, index = -1\ ) :ref:`🔗<class_GutTest_method_get_signal_parameters>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_get_call_parameters:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_call_parameters**\ (\ object, method_name_or_index = -1, idx = -1\ ) :ref:`🔗<class_GutTest_method_get_call_parameters>`
-
-Get the parameters for a method call to a doubled object.  By default it will return the most recent call.  You can optionally specify an index for which call you want to get the parameters for.  Can be called using a Callable for the first parameter instead of specifying an object and method name.  When you do this, the seoncd parameter is used as the index.  Returns: \* an array of parameter values if a call the method was found \* null when a call to the method was not found or the index specified was invalid.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_get_call_count:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_call_count**\ (\ object, method_name = null, parameters = null\ ) :ref:`🔗<class_GutTest_method_get_call_count>`
-
-Returns the call count for a method with optional paramter matching.  Can be called with a Callable instead of an object, method_name, and parameters.  Bound arguments will be used to match call arguments.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_is:
-
-.. rst-class:: classref-method
-
-|void| **assert_is**\ (\ object, a_class, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_is>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_typeof:
-
-.. rst-class:: classref-method
-
-|void| **assert_typeof**\ (\ object, type, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_typeof>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_not_typeof:
-
-.. rst-class:: classref-method
-
-|void| **assert_not_typeof**\ (\ object, type, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_typeof>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_string_contains:
-
-.. rst-class:: classref-method
-
-|void| **assert_string_contains**\ (\ text, search, match_case = true\ ) :ref:`🔗<class_GutTest_method_assert_string_contains>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_string_starts_with:
-
-.. rst-class:: classref-method
-
-|void| **assert_string_starts_with**\ (\ text, search, match_case = true\ ) :ref:`🔗<class_GutTest_method_assert_string_starts_with>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_string_ends_with:
-
-.. rst-class:: classref-method
-
-|void| **assert_string_ends_with**\ (\ text, search, match_case = true\ ) :ref:`🔗<class_GutTest_method_assert_string_ends_with>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_called:
-
-.. rst-class:: classref-method
-
-|void| **assert_called**\ (\ inst, method_name = null, parameters = null\ ) :ref:`🔗<class_GutTest_method_assert_called>`
-
-Assert that a method was called on an instance of a doubled class.  If parameters are supplied then the params passed in when called must match.  Can be called with a Callabe instead of specifying the object, method_name, and parameters.  The Callable's object must be a double.  Bound arguments will be used to match calls based on values passed to the method. 
-
-
-
-\ **Examples**\ 
-
-::
-
-    assert_called(my_double, 'foo', [1, 2, 3])
-    assert_called(my_double.foo.bind(1, 2, 3))
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_not_called:
-
-.. rst-class:: classref-method
-
-|void| **assert_not_called**\ (\ inst, method_name = null, parameters = null\ ) :ref:`🔗<class_GutTest_method_assert_not_called>`
-
-Assert that a method was not called on an instance of a doubled class.  If parameters are specified then this will only fail if it finds a call that was sent matching parameters.  Can be called with a Callabe instead of specifying the object, method_name, and parameters.  The Callable's object must be a double.  Bound arguments will be used to match calls based on values passed to the method. 
-
-
-
-\ **Examples**\ 
-
-::
-
-    assert_not_called(my_double, 'foo', [1, 2, 3])
-    assert_not_called(my_double.foo.bind(1, 2, 3))
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_call_count:
-
-.. rst-class:: classref-method
-
-|void| **assert_call_count**\ (\ inst, method_name, expected_count, parameters = null\ ) :ref:`🔗<class_GutTest_method_assert_call_count>`
-
-**Deprecated:** Use :ref:`assert_called_count<class_GutTest_method_assert_called_count>` instead.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_called_count:
-
-.. rst-class:: classref-method
-
-|void| **assert_called_count**\ (\ callable\: `Callable <https://docs.godotengine.org/en/stable/classes/class_callable.html>`_, expected_count\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_\ ) :ref:`🔗<class_GutTest_method_assert_called_count>`
-
-Asserts the the method of a double was called an expected number of times. If any arguments are bound to the callable then only calls with matching arguments will be counted.  
-
-
-
-\ **Examples**\ 
-
-::
-
-    # assert foo was called on my_double 5 times
-    assert_called_count(my_double.foo, 5)
-    # assert foo, with parameters [1,2,3], was called on my_double 4 times.
-    assert_called_count(my_double.foo.bind(1, 2, 3), 4)
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_null:
-
-.. rst-class:: classref-method
-
-|void| **assert_null**\ (\ got, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_null>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_not_null:
-
-.. rst-class:: classref-method
-
-|void| **assert_not_null**\ (\ got, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_null>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_freed:
-
-.. rst-class:: classref-method
-
-|void| **assert_freed**\ (\ obj, title = "something"\ ) :ref:`🔗<class_GutTest_method_assert_freed>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_not_freed:
-
-.. rst-class:: classref-method
-
-|void| **assert_not_freed**\ (\ obj, title = "something"\ ) :ref:`🔗<class_GutTest_method_assert_not_freed>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_no_new_orphans:
-
-.. rst-class:: classref-method
-
-|void| **assert_no_new_orphans**\ (\ text = ""\ ) :ref:`🔗<class_GutTest_method_assert_no_new_orphans>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_setget:
-
-.. rst-class:: classref-method
-
-|void| **assert_setget**\ (\ instance, name_property, const_or_setter = null, getter = "__not_set__"\ ) :ref:`🔗<class_GutTest_method_assert_setget>`
-
-**Deprecated:** no longer supported.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_set_property:
-
-.. rst-class:: classref-method
-
-|void| **assert_set_property**\ (\ obj, property_name, new_value, expected_value\ ) :ref:`🔗<class_GutTest_method_assert_set_property>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_readonly_property:
-
-.. rst-class:: classref-method
-
-|void| **assert_readonly_property**\ (\ obj, property_name, new_value, expected_value\ ) :ref:`🔗<class_GutTest_method_assert_readonly_property>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_property_with_backing_variable:
-
-.. rst-class:: classref-method
-
-|void| **assert_property_with_backing_variable**\ (\ obj, property_name, default_value, new_value, backed_by_name = null\ ) :ref:`🔗<class_GutTest_method_assert_property_with_backing_variable>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_property:
-
-.. rst-class:: classref-method
-
-|void| **assert_property**\ (\ obj, property_name, default_value, new_value\ ) :ref:`🔗<class_GutTest_method_assert_property>`
-
-.. container:: contribute
-
-	No description
+Virtual method.  Run after all tests have been run.
 
 .. rst-class:: classref-item-separator
 
@@ -1243,456 +489,6 @@ Asserts the the method of a double was called an expected number of times. If an
 |void| **pending**\ (\ text = ""\ ) :ref:`🔗<class_GutTest_method_pending>`
 
 Mark the current test as pending.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_wait_seconds:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_seconds**\ (\ time, msg = ""\ ) :ref:`🔗<class_GutTest_method_wait_seconds>`
-
-Await for the time sent in.  The optional message will be printed when the await starts
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_yield_for:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **yield_for**\ (\ time, msg = ""\ ) :ref:`🔗<class_GutTest_method_yield_for>`
-
-**Deprecated:** use wait_seconds
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_wait_for_signal:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_for_signal**\ (\ sig\: `Signal <https://docs.godotengine.org/en/stable/classes/class_signal.html>`_, max_wait, msg = ""\ ) :ref:`🔗<class_GutTest_method_wait_for_signal>`
-
-Yield to a signal or a maximum amount of time, whichever comes first.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_yield_to:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **yield_to**\ (\ obj, signal_name, max_wait, msg = ""\ ) :ref:`🔗<class_GutTest_method_yield_to>`
-
-**Deprecated:** use wait_for_signal
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_wait_frames:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_frames**\ (\ frames, msg = ""\ ) :ref:`🔗<class_GutTest_method_wait_frames>`
-
-Yield for a number of frames.  The optional message will be printed. when Gut detects a yield.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_wait_until:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_until**\ (\ callable, max_wait, p3 = "", p4 = ""\ ) :ref:`🔗<class_GutTest_method_wait_until>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_did_wait_timeout:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **did_wait_timeout**\ (\ ) :ref:`🔗<class_GutTest_method_did_wait_timeout>`
-
-Returns whether the last wait\_\* method timed out.  This is always true if the last method was wait_frames or wait_seconds.  It will be false when using wait_for_signal and wait_until if the timeout occurs before what is being waited on.  The wait\_\* methods return this value so you should be able to avoid calling this directly, but you can.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_yield_frames:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **yield_frames**\ (\ frames, msg = ""\ ) :ref:`🔗<class_GutTest_method_yield_frames>`
-
-**Deprecated:** use wait_frames
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_get_summary:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_summary**\ (\ ) :ref:`🔗<class_GutTest_method_get_summary>`
-
-**Internal use only.**
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_get_fail_count:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_fail_count**\ (\ ) :ref:`🔗<class_GutTest_method_get_fail_count>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_get_pass_count:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_pass_count**\ (\ ) :ref:`🔗<class_GutTest_method_get_pass_count>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_get_pending_count:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_pending_count**\ (\ ) :ref:`🔗<class_GutTest_method_get_pending_count>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_get_assert_count:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_assert_count**\ (\ ) :ref:`🔗<class_GutTest_method_get_assert_count>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_clear_signal_watcher:
-
-.. rst-class:: classref-method
-
-|void| **clear_signal_watcher**\ (\ ) :ref:`🔗<class_GutTest_method_clear_signal_watcher>`
-
-**Internal use only.**
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_get_double_strategy:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_double_strategy**\ (\ ) :ref:`🔗<class_GutTest_method_get_double_strategy>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_set_double_strategy:
-
-.. rst-class:: classref-method
-
-|void| **set_double_strategy**\ (\ double_strategy\ ) :ref:`🔗<class_GutTest_method_set_double_strategy>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_pause_before_teardown:
-
-.. rst-class:: classref-method
-
-|void| **pause_before_teardown**\ (\ ) :ref:`🔗<class_GutTest_method_pause_before_teardown>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_get_summary_text:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_summary_text**\ (\ ) :ref:`🔗<class_GutTest_method_get_summary_text>`
-
-**Internal use only.**
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_double:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **double**\ (\ thing, double_strat = null, not_used_anymore = null\ ) :ref:`🔗<class_GutTest_method_double>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_partial_double:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **partial_double**\ (\ thing, double_strat = null, not_used_anymore = null\ ) :ref:`🔗<class_GutTest_method_partial_double>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_double_singleton:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **double_singleton**\ (\ singleton_name\ ) :ref:`🔗<class_GutTest_method_double_singleton>`
-
-**Internal use only.**
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_partial_double_singleton:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **partial_double_singleton**\ (\ singleton_name\ ) :ref:`🔗<class_GutTest_method_partial_double_singleton>`
-
-**Internal use only.**
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_double_scene:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **double_scene**\ (\ path, strategy = null\ ) :ref:`🔗<class_GutTest_method_double_scene>`
-
-**Deprecated:** no longer supported.  Use double
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_double_script:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **double_script**\ (\ path, strategy = null\ ) :ref:`🔗<class_GutTest_method_double_script>`
-
-**Deprecated:** no longer supported.  Use double
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_double_inner:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **double_inner**\ (\ path, subpath, strategy = null\ ) :ref:`🔗<class_GutTest_method_double_inner>`
-
-**Deprecated:** no longer supported.  Use register_inner_classes + double
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_ignore_method_when_doubling:
-
-.. rst-class:: classref-method
-
-|void| **ignore_method_when_doubling**\ (\ thing, method_name\ ) :ref:`🔗<class_GutTest_method_ignore_method_when_doubling>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_stub:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **stub**\ (\ thing, p2 = null, p3 = null\ ) :ref:`🔗<class_GutTest_method_stub>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_simulate:
-
-.. rst-class:: classref-method
-
-|void| **simulate**\ (\ obj, times, delta, check_is_processing\: `bool <https://docs.godotengine.org/en/stable/classes/class_bool.html>`_ = false\ ) :ref:`🔗<class_GutTest_method_simulate>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_replace_node:
-
-.. rst-class:: classref-method
-
-|void| **replace_node**\ (\ base_node, path_or_node, with_this\ ) :ref:`🔗<class_GutTest_method_replace_node>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_use_parameters:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **use_parameters**\ (\ params\ ) :ref:`🔗<class_GutTest_method_use_parameters>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_run_x_times:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **run_x_times**\ (\ x\ ) :ref:`🔗<class_GutTest_method_run_x_times>`
-
-**Internal use only.** When used as the default for a test method parameter, it will cause the test to be run x times.  I Hacked this together to test a method that was occassionally failing due to timing issues.  I don't think it's a great idea, but you be the judge.  If you find a good use for it, let me know and I'll make it a legit member of the api.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_autofree:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **autofree**\ (\ thing\ ) :ref:`🔗<class_GutTest_method_autofree>`
-
-Marks whatever is passed in to be freed after the test finishes.  It also returns what is passed in so you can save a line of code. var thing = autofree(Thing.new())
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_autoqfree:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **autoqfree**\ (\ thing\ ) :ref:`🔗<class_GutTest_method_autoqfree>`
-
-Works the same as autofree except queue_free will be called on the object instead.  This also imparts a brief pause after the test finishes so that the queued object has time to free.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_add_child_autofree:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **add_child_autofree**\ (\ node, legible_unique_name = false\ ) :ref:`🔗<class_GutTest_method_add_child_autofree>`
-
-The same as autofree but it also adds the object as a child of the test.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_add_child_autoqfree:
-
-.. rst-class:: classref-method
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **add_child_autoqfree**\ (\ node, legible_unique_name = false\ ) :ref:`🔗<class_GutTest_method_add_child_autoqfree>`
-
-The same as autoqfree but it also adds the object as a child of the test.
 
 .. rst-class:: classref-item-separator
 
@@ -1746,6 +542,280 @@ Marks the test as failing.  Same as a failing assert.
 
 ----
 
+.. _class_GutTest_method_clear_signal_watcher:
+
+.. rst-class:: classref-method
+
+|void| **clear_signal_watcher**\ (\ ) :ref:`🔗<class_GutTest_method_clear_signal_watcher>`
+
+**Internal use only.**
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_double_strategy:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_double_strategy**\ (\ ) :ref:`🔗<class_GutTest_method_get_double_strategy>`
+
+Returns the current double strategy.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_set_double_strategy:
+
+.. rst-class:: classref-method
+
+|void| **set_double_strategy**\ (\ double_strategy\ ) :ref:`🔗<class_GutTest_method_set_double_strategy>`
+
+Sets the double strategy for all tests in the script.  This should usually be done in :ref:`before_all<class_GutTest_method_before_all>`.  The double strtegy can be set per run/script/double.  See `Double-Strategy <../Double-Strategy.html>`__
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_pause_before_teardown:
+
+.. rst-class:: classref-method
+
+|void| **pause_before_teardown**\ (\ ) :ref:`🔗<class_GutTest_method_pause_before_teardown>`
+
+This method will cause Gut to pause before it moves on to the next test. This is useful for debugging, for instance if you want to investigate the screen or anything else after a test has finished executing. 
+
+Sometimes you get lazy, and you don't remove calls to ``pause_before_teardown`` after you are done with them.  You can tell GUT to ignore calls to to this method through the panel or the command line.  Setting this in your `.gutconfig.json` file is recommended for CI/CD Pipelines.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_logger:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_logger**\ (\ ) :ref:`🔗<class_GutTest_method_get_logger>`
+
+**Internal use only.**
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_set_logger:
+
+.. rst-class:: classref-method
+
+|void| **set_logger**\ (\ logger\ ) :ref:`🔗<class_GutTest_method_set_logger>`
+
+**Internal use only.**
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_watch_signals:
+
+.. rst-class:: classref-method
+
+|void| **watch_signals**\ (\ object\ ) :ref:`🔗<class_GutTest_method_watch_signals>`
+
+This must be called in order to make assertions based on signals being emitted.  \__Right now, this only supports signals that are emitted with 9 or less parameters.\_\_  This can be extended but nine seemed like enough for now. The Godot documentation suggests that the limit is four but in my testing I found you can pass more. 
+
+This must be called in each test in which you want to make signal based assertions in.  You can call it multiple times with different objects. You should not call it multiple times with the same object in the same test. The objects that are watched are cleared after each test (specifically right before `teardown` is called).  Under the covers, Gut will connect to all the signals an object has and it will track each time they fire.  You can then use the following asserts and methods to verify things are acting correct.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_signal_emit_count:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_signal_emit_count**\ (\ object, signal_name\ ) :ref:`🔗<class_GutTest_method_get_signal_emit_count>`
+
+This will return the number of times a signal was fired.  This gives you the freedom to make more complicated assertions if the spirit moves you. This will return -1 if the signal was not fired or the object was not being watched, or if the object does not have the signal.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_signal_parameters:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_signal_parameters**\ (\ object, signal_name, index = -1\ ) :ref:`🔗<class_GutTest_method_get_signal_parameters>`
+
+If you need to inspect the parameters in order to make more complicate assertions, then this will give you access to the parameters of any watched signal.  This works the same way that ``assert_signal_emitted_with_parameters`` does.  It takes an object, signal name, and an optional index.  If the index is not specified then the parameters from the most recent emission will be returned.  If the object is not being watched, the signal was not fired, or the object does not have the signal then `null` will be returned.
+
+::
+
+       class SignalObject:
+           signal some_signal
+           signal other_signal
+    
+       func test_get_signal_parameters():
+           var obj = SignalObject.new()
+           watch_signals(obj)
+           obj.some_signal.emit(1, 2, 3)
+           obj.some_signal.emit('a', 'b', 'c')
+    
+           # Passing
+           # passes because get_signal_parameters returns the most recent emission
+           # by default
+           assert_eq(get_signal_parameters(obj, 'some_signal'), ['a', 'b', 'c'])
+           assert_eq(get_signal_parameters(obj, 'some_signal', 0), [1, 2, 3])
+           # if the signal was not fired null is returned
+           assert_eq(get_signal_parameters(obj, 'other_signal'), null)
+           # if the signal does not exist or isn't being watched null is returned
+           assert_eq(get_signal_parameters(obj, 'signal_dne'), null)
+    
+           # Failing
+           assert_eq(get_signal_parameters(obj, 'some_signal'), [1, 2, 3])
+           assert_eq(get_signal_parameters(obj, 'some_signal', 0), ['a', 'b', 'c'])
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_call_parameters:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_call_parameters**\ (\ object, method_name_or_index = -1, idx = -1\ ) :ref:`🔗<class_GutTest_method_get_call_parameters>`
+
+Get the parameters for a method call to a doubled object.  By default it will return the most recent call.  You can optionally specify an index for which call you want to get the parameters for.  Can be called using a Callable for the first parameter instead of specifying an object and method name.  When you do this, the seoncd parameter is used as the index.  Returns: \* an array of parameter values if a call the method was found \* null when a call to the method was not found or the index specified was invalid.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_call_count:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_call_count**\ (\ object, method_name = null, parameters = null\ ) :ref:`🔗<class_GutTest_method_get_call_count>`
+
+Returns the call count for a method with optional paramter matching.  Can be called with a Callable instead of an object, method_name, and parameters.  Bound arguments will be used to match call arguments.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_simulate:
+
+.. rst-class:: classref-method
+
+|void| **simulate**\ (\ obj, times, delta, check_is_processing\: `bool <https://docs.godotengine.org/en/stable/classes/class_bool.html>`_ = false\ ) :ref:`🔗<class_GutTest_method_simulate>`
+
+Simulate a number of frames by calling '_process' and '_physics_process' (if the methods exist) on an object and all of its descendents. The specified frame time, 'delta', will be passed to each simulated call.  NOTE: Objects can disable their processing methods using 'set_process(false)' and 'set_physics_process(false)'. This is reflected in the 'Object' methods 'is_processing()' and 'is_physics_processing()', respectively. To make 'simulate' respect this status, for example if you are testing an object which toggles processing, pass 'check_is_processing' as 'true'.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_replace_node:
+
+.. rst-class:: classref-method
+
+|void| **replace_node**\ (\ base_node, path_or_node, with_this\ ) :ref:`🔗<class_GutTest_method_replace_node>`
+
+.. container:: contribute
+
+	No description
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_use_parameters:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **use_parameters**\ (\ params\ ) :ref:`🔗<class_GutTest_method_use_parameters>`
+
+Use this as the default value for the first parameter to a test to create a parameterized test.  See also the ParameterFactory and Parameterized Tests. 
+
+
+
+\ **Example**\ 
+
+::
+
+       func test_with_parameters(p = use_parameters([1, 2, 3])):
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_run_x_times:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **run_x_times**\ (\ x\ ) :ref:`🔗<class_GutTest_method_run_x_times>`
+
+**Internal use only.** When used as the default for a test method parameter, it will cause the test to be run x times.  I Hacked this together to test a method that was occassionally failing due to timing issues.  I don't think it's a great idea, but you be the judge.  If you find a good use for it, let me know and I'll make it a legit member of the api.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_skip_if_godot_version_lt:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **skip_if_godot_version_lt**\ (\ expected\ ) :ref:`🔗<class_GutTest_method_skip_if_godot_version_lt>`
+
+Checks the passed in version string (x.x.x) against the engine version to see if the engine version is less than the expected version.  If it is then the test is mareked as passed (for a lack of anything better to do).  The result of the check is returned. 
+
+
+
+\ **Example**\ 
+
+::
+
+       if(skip_if_godot_version_lt('3.5.0')):
+           return
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_skip_if_godot_version_ne:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **skip_if_godot_version_ne**\ (\ expected\ ) :ref:`🔗<class_GutTest_method_skip_if_godot_version_ne>`
+
+Checks if the passed in version matches the engine version.  The passed in version can contain just the major, major.minor or major.minor.path.  If the version is not the same then the test is marked as passed.  The result of the check is returned. 
+
+
+
+\ **Example**\ 
+
+::
+
+        if(skip_if_godot_version_ne('3.4')):
+           return
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_register_inner_classes:
+
+.. rst-class:: classref-method
+
+|void| **register_inner_classes**\ (\ base_script\ ) :ref:`🔗<class_GutTest_method_register_inner_classes>`
+
+Registers all the inner classes in a script with the doubler.  This is required before you can double any inner class.
+
+.. rst-class:: classref-item-separator
+
+----
+
 .. _class_GutTest_method_compare_deep:
 
 .. rst-class:: classref-method
@@ -1758,15 +828,1047 @@ Peforms a deep compare on both values, a CompareResult instnace is returned. The
 
 ----
 
-.. _class_GutTest_method_compare_shallow:
+.. _class_GutTest_method_assert_eq:
 
 .. rst-class:: classref-method
 
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **compare_shallow**\ (\ v1, v2, max_differences = null\ ) :ref:`🔗<class_GutTest_method_compare_shallow>`
+|void| **assert_eq**\ (\ got, expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_eq>`
 
-.. container:: contribute
+Asserts that the expected value equals the value got. assert got == expected and prints optional text.  See `Comparing-Things <../Comparing-Things.html>`__ for information about comparing dictionaries and arrays. 
 
-	No description
+See also: :ref:`assert_ne<class_GutTest_method_assert_ne>`, :ref:`assert_same<class_GutTest_method_assert_same>`, :ref:`assert_not_same<class_GutTest_method_assert_not_same>`\ 
+
+::
+
+       var one = 1
+       var node1 = Node.new()
+       var node2 = node1
+    
+       # Passing
+       assert_eq(one, 1, 'one should equal one')
+       assert_eq('racecar', 'racecar')
+       assert_eq(node2, node1)
+       assert_eq([1, 2, 3], [1, 2, 3])
+       var d1_pass = {'a':1}
+       var d2_pass = d1_pass
+       assert_eq(d1_pass, d2_pass)
+    
+       # Failing
+       assert_eq(1, 2) # FAIL
+       assert_eq('hello', 'world')
+       assert_eq(self, node1)
+       assert_eq([1, 'two', 3], [1, 2, 3, 4])
+       assert_eq({'a':1}, {'a':1})
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_ne:
+
+.. rst-class:: classref-method
+
+|void| **assert_ne**\ (\ got, not_expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_ne>`
+
+asserts got != expected and prints optional text.  See `Comparing-Things <../Comparing-Things.html>`__ for information about comparing dictionaries and arrays. 
+
+See also: :ref:`assert_eq<class_GutTest_method_assert_eq>`, :ref:`assert_same<class_GutTest_method_assert_same>`, :ref:`assert_not_same<class_GutTest_method_assert_not_same>`\ 
+
+::
+
+       var two = 2
+       var node1 = Node.new()
+    
+       # Passing
+       assert_ne(two, 1, 'Two should not equal one.')
+       assert_ne('hello', 'world')
+       assert_ne(self, node1)
+    
+       # Failing
+       assert_ne(two, 2)
+       assert_ne('one', 'one')
+       assert_ne('2', 2)
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_almost_eq:
+
+.. rst-class:: classref-method
+
+|void| **assert_almost_eq**\ (\ got, expected, error_interval, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_almost_eq>`
+
+Asserts that ``got`` is within the range of ``expected`` +/- ``error_interval``. The upper and lower bounds are included in the check.  Verified to work with integers, floats, and Vector2.  Should work with anything that can be added/subtracted. 
+
+::
+
+       # Passing
+       assert_almost_eq(0, 1, 1, '0 within range of 1 +/- 1')
+       assert_almost_eq(2, 1, 1, '2 within range of 1 +/- 1')
+       assert_almost_eq(1.2, 1.0, .5, '1.2 within range of 1 +/- .5')
+       assert_almost_eq(.5, 1.0, .5, '.5 within range of 1 +/- .5')
+       assert_almost_eq(Vector2(.5, 1.5), Vector2(1.0, 1.0), Vector2(.5, .5))
+       assert_almost_eq(Vector2(.5, 1.5), Vector2(1.0, 1.0), Vector2(.25, .25))
+    
+       # Failing
+       assert_almost_eq(1, 3, 1, '1 outside range of 3 +/- 1')
+       assert_almost_eq(2.6, 3.0, .2, '2.6 outside range of 3 +/- .2')
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_almost_ne:
+
+.. rst-class:: classref-method
+
+|void| **assert_almost_ne**\ (\ got, not_expected, error_interval, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_almost_ne>`
+
+This is the inverse of :ref:`assert_almost_eq<class_GutTest_method_assert_almost_eq>`.  This will pass if ``got`` is outside the range of ``not_expected`` +/- ``error_interval``.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_gt:
+
+.. rst-class:: classref-method
+
+|void| **assert_gt**\ (\ got, expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_gt>`
+
+assserts got > expected
+
+::
+
+       var bigger = 5
+       var smaller = 0
+    
+       # Passing
+       assert_gt(bigger, smaller, 'Bigger should be greater than smaller')
+       assert_gt('b', 'a')
+       assert_gt('a', 'A')
+       assert_gt(1.1, 1)
+    
+       # Failing
+       assert_gt('a', 'a')
+       assert_gt(1.0, 1)
+       assert_gt(smaller, bigger)
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_gte:
+
+.. rst-class:: classref-method
+
+|void| **assert_gte**\ (\ got, expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_gte>`
+
+Asserts got is greater than or equal to expected.
+
+::
+
+       var bigger = 5
+       var smaller = 0
+    
+       # Passing
+       assert_gte(bigger, smaller, 'Bigger should be greater than or equal to smaller')
+       assert_gte('b', 'a')
+       assert_gte('a', 'A')
+       assert_gte(1.1, 1)
+       assert_gte('a', 'a')
+    
+       # Failing
+       assert_gte(0.9, 1.0)
+       assert_gte(smaller, bigger)
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_lt:
+
+.. rst-class:: classref-method
+
+|void| **assert_lt**\ (\ got, expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_lt>`
+
+Asserts ``got`` is less than ``expected``\ 
+
+::
+
+       var bigger = 5
+       var smaller = 0
+    
+       # Passing
+       assert_lt(smaller, bigger, 'Smaller should be less than bigger')
+       assert_lt('a', 'b')
+       assert_lt(99, 100)
+    
+       # Failing
+       assert_lt('z', 'x')
+       assert_lt(-5, -5)
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_lte:
+
+.. rst-class:: classref-method
+
+|void| **assert_lte**\ (\ got, expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_lte>`
+
+Asserts got is less than or equal to expected
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_true:
+
+.. rst-class:: classref-method
+
+|void| **assert_true**\ (\ got, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_true>`
+
+asserts that got is true.  Does not assert truthiness, only boolean values will pass.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_false:
+
+.. rst-class:: classref-method
+
+|void| **assert_false**\ (\ got, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_false>`
+
+Asserts that got is false.  Does not assert truthiness, only boolean values will pass.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_between:
+
+.. rst-class:: classref-method
+
+|void| **assert_between**\ (\ got, expect_low, expect_high, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_between>`
+
+Asserts value is between (inclusive) the two expected values.
+
+got >= expect_low and <= expect_high
+
+::
+
+       # Passing
+       assert_between(5, 0, 10, 'Five should be between 0 and 10')
+       assert_between(10, 0, 10)
+       assert_between(0, 0, 10)
+       assert_between(2.25, 2, 4.0)
+    
+       # Failing
+       assert_between('a', 'b', 'c')
+       assert_between(1, 5, 10)
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_not_between:
+
+.. rst-class:: classref-method
+
+|void| **assert_not_between**\ (\ got, expect_low, expect_high, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_between>`
+
+Asserts value is not between (exclusive) the two expected values.
+
+asserts that got <= expect_low or got >=  expect_high.
+
+::
+
+       # Passing
+       assert_not_between(1, 5, 10)
+       assert_not_between('a', 'b', 'd')
+       assert_not_between('d', 'b', 'd')
+       assert_not_between(10, 0, 10)
+       assert_not_between(-2, -2, 10)
+    
+       # Failing
+       assert_not_between(5, 0, 10, 'Five shouldnt be between 0 and 10')
+       assert_not_between(0.25, -2.0, 4.0)
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_has:
+
+.. rst-class:: classref-method
+
+|void| **assert_has**\ (\ obj, element, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_has>`
+
+Uses the 'has' method of the object passed in to determine if it contains the passed in element.
+
+::
+
+       var an_array = [1, 2, 3, 'four', 'five']
+       var a_hash = { 'one':1, 'two':2, '3':'three'}
+    
+       # Passing
+       assert_has(an_array, 'four') # PASS
+       assert_has(an_array, 2) # PASS
+       # the hash's has method checks indexes not values
+       assert_has(a_hash, 'one') # PASS
+       assert_has(a_hash, '3') # PASS
+    
+       # Failing
+       assert_has(an_array, 5) # FAIL
+       assert_has(an_array, self) # FAIL
+       assert_has(a_hash, 3) # FAIL
+       assert_has(a_hash, 'three') # FAIL
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_does_not_have:
+
+.. rst-class:: classref-method
+
+|void| **assert_does_not_have**\ (\ obj, element, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_does_not_have>`
+
+The inverse of assert_has.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_file_exists:
+
+.. rst-class:: classref-method
+
+|void| **assert_file_exists**\ (\ file_path\ ) :ref:`🔗<class_GutTest_method_assert_file_exists>`
+
+asserts a file exists at the specified path
+
+::
+
+       func before_each():
+           gut.file_touch('user://some_test_file')
+    
+       func after_each():
+           gut.file_delete('user://some_test_file')
+    
+       func test_assert_file_exists():
+           # Passing
+           assert_file_exists('res://addons/gut/gut.gd')
+           assert_file_exists('user://some_test_file')
+    
+           # Failing
+           assert_file_exists('user://file_does_not.exist')
+           assert_file_exists('res://some_dir/another_dir/file_does_not.exist')
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_file_does_not_exist:
+
+.. rst-class:: classref-method
+
+|void| **assert_file_does_not_exist**\ (\ file_path\ ) :ref:`🔗<class_GutTest_method_assert_file_does_not_exist>`
+
+asserts a file does not exist at the specified path
+
+::
+
+       func before_each():
+           gut.file_touch('user://some_test_file')
+    
+       func after_each():
+           gut.file_delete('user://some_test_file')
+    
+       func test_assert_file_does_not_exist():
+           # Passing
+           assert_file_does_not_exist('user://file_does_not.exist')
+           assert_file_does_not_exist('res://some_dir/another_dir/file_does_not.exist')
+    
+           # Failing
+           assert_file_does_not_exist('res://addons/gut/gut.gd')
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_file_empty:
+
+.. rst-class:: classref-method
+
+|void| **assert_file_empty**\ (\ file_path\ ) :ref:`🔗<class_GutTest_method_assert_file_empty>`
+
+asserts the specified file is empty
+
+::
+
+       func before_each():
+           gut.file_touch('user://some_test_file')
+    
+       func after_each():
+           gut.file_delete('user://some_test_file')
+    
+       func test_assert_file_empty():
+           # Passing
+           assert_file_empty('user://some_test_file')
+    
+           # Failing
+           assert_file_empty('res://addons/gut/gut.gd')
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_file_not_empty:
+
+.. rst-class:: classref-method
+
+|void| **assert_file_not_empty**\ (\ file_path\ ) :ref:`🔗<class_GutTest_method_assert_file_not_empty>`
+
+Asserts the specified file is not empty
+
+::
+
+       func before_each():
+           gut.file_touch('user://some_test_file')
+    
+       func after_each():
+           gut.file_delete('user://some_test_file')
+    
+       func test_assert_file_not_empty():
+           # Passing
+           assert_file_not_empty('res://addons/gut/gut.gd') # PASS
+    
+           # Failing
+           assert_file_not_empty('user://some_test_file') # FAIL
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_has_method:
+
+.. rst-class:: classref-method
+
+|void| **assert_has_method**\ (\ obj, method, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_has_method>`
+
+Asserts that the passed in object has a method named ``method``.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_accessors:
+
+.. rst-class:: classref-method
+
+|void| **assert_accessors**\ (\ obj, property, default, set_to\ ) :ref:`🔗<class_GutTest_method_assert_accessors>`
+
+This is meant to make testing public get/set methods for a member variable.  This was originally created for early Godot 3.x setter and getter methods.  See :ref:`assert_property<class_GutTest_method_assert_property>` for verifying Godot 4.x accessors.  This makes multiple assertions to verify: 
+
+* The object has a method called ``get_<PROPERTY_NAME>``\ 
+* The object has a method called ``set_<PROPERTY_NAME>``\ 
+* The method ``get_<PROPERTY_NAME>`` returns the expected default value when first called.
+* Once you set the property, the ``get_<PROPERTY_NAME>`` returns the new value.
+
+
+
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_exports:
+
+.. rst-class:: classref-method
+
+|void| **assert_exports**\ (\ obj, property_name, type\ ) :ref:`🔗<class_GutTest_method_assert_exports>`
+
+Asserts that ``obj`` exports a property with the name ``property_name`` and a type of ``type``.  The ``type`` must be one of the various Godot built-in ``TYPE_`` constants.
+
+::
+
+       class ExportClass:
+           export var some_number = 5
+           export(PackedScene) var some_scene
+           var some_variable = 1
+    
+       func test_assert_exports():
+           var obj = ExportClass.new()
+    
+           # Passing
+           assert_exports(obj, "some_number", TYPE_INT)
+           assert_exports(obj, "some_scene", TYPE_OBJECT)
+    
+           # Failing
+           assert_exports(obj, 'some_number', TYPE_VECTOR2)
+           assert_exports(obj, 'some_scene', TYPE_AABB)
+           assert_exports(obj, 'some_variable', TYPE_INT)
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_connected:
+
+.. rst-class:: classref-method
+
+|void| **assert_connected**\ (\ signaler_obj, connect_to_obj, signal_name, method_name = ""\ ) :ref:`🔗<class_GutTest_method_assert_connected>`
+
+Asserts that `signaler_obj` is connected to `connect_to_obj` on signal `signal_name`.  The method that is connected is optional.  If `method_name` is supplied then this will pass only if the signal is connected to the  method.  If it is not provided then any connection to the signal will cause a pass.
+
+::
+
+       class Signaler:
+           signal the_signal
+    
+       class Connector:
+           func connect_this():
+               pass
+           func  other_method():
+               pass
+    
+       func test_assert_connected():
+           var signaler = Signaler.new()
+           var connector  = Connector.new()
+           signaler.connect('the_signal', connector, 'connect_this')
+    
+           # Passing
+           assert_connected(signaler, connector, 'the_signal')
+           assert_connected(signaler, connector, 'the_signal', 'connect_this')
+    
+           # Failing
+           var foo = Connector.new()
+           assert_connected(signaler,  connector, 'the_signal', 'other_method')
+           assert_connected(signaler, connector, 'other_signal')
+           assert_connected(signaler, foo, 'the_signal')
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_not_connected:
+
+.. rst-class:: classref-method
+
+|void| **assert_not_connected**\ (\ signaler_obj, connect_to_obj, signal_name, method_name = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_connected>`
+
+Asserts that an object is not connected to a signal on another object 
+
+This will fail with specific messages if the target object is connected to the specified signal on the source object.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_signal_emitted:
+
+.. rst-class:: classref-method
+
+|void| **assert_signal_emitted**\ (\ object, signal_name, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_signal_emitted>`
+
+Assert that the specified object emitted the named signal.  You must call :ref:`watch_signals<class_GutTest_method_watch_signals>` and pass it the object that you are making assertions about. This will fail if the object is not being watched or if the object does not have the specified signal.  Since this will fail if the signal does not exist, you can often skip using :ref:`assert_has_signal<class_GutTest_method_assert_has_signal>`.
+
+::
+
+       class SignalObject:
+           signal some_signal
+           signal other_signal
+    
+       func test_assert_signal_emitted():
+           var obj = SignalObject.new()
+    
+           watch_signals(obj)
+           obj.emit_signal('some_signal')
+    
+           ## Passing
+           assert_signal_emitted(obj, 'some_signal')
+    
+           ## Failing
+           # Fails with specific message that the object does not have the signal
+           assert_signal_emitted(obj, 'signal_does_not_exist')
+           # Fails because the object passed is not being watched
+           assert_signal_emitted(SignalObject.new(), 'some_signal')
+           # Fails because the signal was not emitted
+           assert_signal_emitted(obj, 'other_signal')
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_signal_not_emitted:
+
+.. rst-class:: classref-method
+
+|void| **assert_signal_not_emitted**\ (\ object, signal_name, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_signal_not_emitted>`
+
+This works opposite of `assert_signal_emitted`.  This will fail if the object is not being watched or if the object does not have the signal.
+
+::
+
+       class SignalObject:
+           signal some_signal
+           signal other_signal
+    
+       func test_assert_signal_not_emitted():
+           var obj = SignalObject.new()
+    
+           watch_signals(obj)
+           obj.emit_signal('some_signal')
+    
+           # Passing
+           assert_signal_not_emitted(obj, 'other_signal')
+    
+           # Failing
+           # Fails with specific message that the object does not have the signal
+           assert_signal_not_emitted(obj, 'signal_does_not_exist')
+           # Fails because the object passed is not being watched
+           assert_signal_not_emitted(SignalObject.new(), 'some_signal')
+           # Fails because the signal was emitted
+           assert_signal_not_emitted(obj, 'some_signal')
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_signal_emitted_with_parameters:
+
+.. rst-class:: classref-method
+
+|void| **assert_signal_emitted_with_parameters**\ (\ object, signal_name, parameters, index = -1\ ) :ref:`🔗<class_GutTest_method_assert_signal_emitted_with_parameters>`
+
+Asserts that a signal was fired with the specified parameters.  The expected parameters should be passed in as an array.  An optional index can be passed when a signal has fired more than once.  The default is to retrieve the most recent emission of the signal. 
+
+This will fail with specific messages if the object is not being watched or the object does not have the specified signal
+
+::
+
+       class SignalObject:
+           signal some_signal
+           signal other_signal
+    
+       func test_assert_signal_emitted_with_parameters():
+           var obj = SignalObject.new()
+    
+           watch_signals(obj)
+           # emit the signal 3 times to illustrate how the index works in
+           # assert_signal_emitted_with_parameters
+           obj.emit_signal('some_signal', 1, 2, 3)
+           obj.emit_signal('some_signal', 'a', 'b', 'c')
+           obj.emit_signal('some_signal', 'one', 'two', 'three')
+    
+           # Passing
+           # Passes b/c the default parameters to check are the last emission of
+           # the signal
+           assert_signal_emitted_with_parameters(obj, 'some_signal', ['one', 'two', 'three'])
+           # Passes because the parameters match the specified emission based on index.
+           assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 0)
+    
+           # Failing
+           # Fails with specific message that the object does not have the signal
+           assert_signal_emitted_with_parameters(obj, 'signal_does_not_exist', [])
+           # Fails because the object passed is not being watched
+           assert_signal_emitted_with_parameters(SignalObject.new(), 'some_signal', [])
+           # Fails because parameters do not match latest emission
+           assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3])
+           # Fails because the parameters for the specified index do not match
+           assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 1)
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_signal_emit_count:
+
+.. rst-class:: classref-method
+
+|void| **assert_signal_emit_count**\ (\ object, signal_name, times, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_signal_emit_count>`
+
+Asserts that a signal fired a specific number of times.
+
+::
+
+       class SignalObject:
+           signal some_signal
+           signal other_signal
+    
+       func test_assert_signal_emit_count():
+           var obj_a = SignalObject.new()
+           var obj_b = SignalObject.new()
+    
+           watch_signals(obj_a)
+           watch_signals(obj_b)
+           obj_a.emit_signal('some_signal')
+           obj_a.emit_signal('some_signal')
+    
+           obj_b.emit_signal('some_signal')
+           obj_b.emit_signal('other_signal')
+    
+           # Passing
+           assert_signal_emit_count(obj_a, 'some_signal', 2)
+           assert_signal_emit_count(obj_a, 'other_signal', 0)
+    
+           assert_signal_emit_count(obj_b, 'other_signal', 1)
+    
+           # Failing
+           # Fails with specific message that the object does not have the signal
+           assert_signal_emit_count(obj_a, 'signal_does_not_exist', 99)
+           # Fails because the object passed is not being watched
+           assert_signal_emit_count(SignalObject.new(), 'some_signal', 99)
+           # The following fail for obvious reasons
+           assert_signal_emit_count(obj_a, 'some_signal', 0)
+           assert_signal_emit_count(obj_b, 'other_signal', 283)
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_has_signal:
+
+.. rst-class:: classref-method
+
+|void| **assert_has_signal**\ (\ object, signal_name, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_has_signal>`
+
+Asserts the passed in object has a signal with the specified name.  It should be noted that all the asserts that verify a signal was/wasn't emitted will first check that the object has the signal being asserted against.  If it does not, a specific failure message will be given.  This means you can usually skip the step of specifically verifying that the object has a signal and move on to making sure it emits the signal correctly.
+
+::
+
+       class SignalObject:
+           signal some_signal
+           signal other_signal
+    
+       func test_assert_has_signal():
+           var obj = SignalObject.new()
+    
+           ## Passing
+           assert_has_signal(obj, 'some_signal')
+           assert_has_signal(obj, 'other_signal')
+    
+           ## Failing
+           assert_has_signal(obj, 'not_a real SIGNAL')
+           assert_has_signal(obj, 'yea, this one doesnt exist either')
+           # Fails because the signal is not a user signal.  Node2D does have the
+           # specified signal but it can't be checked this way.  It could be watched
+           # and asserted that it fired though.
+           assert_has_signal(Node2D.new(), 'exit_tree')
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_is:
+
+.. rst-class:: classref-method
+
+|void| **assert_is**\ (\ object, a_class, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_is>`
+
+Asserts that ``object`` extends ``a_class``.  object must be an instance of an object.  It cannot be any of the built in classes like Array or Int or Float. ``a_class`` must be a class, it can be loaded via load, a GDNative class such as Node or Label or anything else.
+
+::
+
+       # Passing
+       assert_is(Node2D.new(), Node2D)
+       assert_is(Label.new(), CanvasItem)
+       assert_is(SubClass.new(), BaseClass)
+       # Since this is a test script that inherits from test.gd, so
+       # this passes.  It's not obvious w/o seeing the whole script
+       # so I'm telling you.  You'll just have to trust me.
+       assert_is(self, load('res://addons/gut/test.gd'))
+    
+       var Gut = load('res://addons/gut/gut.gd')
+       var a_gut = Gut.new()
+       assert_is(a_gut, Gut)
+    
+       # Failing
+       assert_is(Node2D.new(), Node2D.new())
+       assert_is(BaseClass.new(), SubClass)
+       assert_is('a', 'b')
+       assert_is([], Node)
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_typeof:
+
+.. rst-class:: classref-method
+
+|void| **assert_typeof**\ (\ object, type, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_typeof>`
+
+Asserts that ``object`` is the the ``type`` specified.  ``type`` should be one of the Godot ``TYPE_`` constants.
+
+::
+
+       # Passing
+       var c = Color(1, 1, 1, 1)
+       gr.test.assert_typeof(c, TYPE_COLOR)
+       assert_pass(gr.test)
+    
+       # Failing
+       gr.test.assert_typeof('some string', TYPE_INT)
+       assert_fail(gr.test)
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_not_typeof:
+
+.. rst-class:: classref-method
+
+|void| **assert_not_typeof**\ (\ object, type, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_typeof>`
+
+The inverse of :ref:`assert_typeof<class_GutTest_method_assert_typeof>`
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_string_contains:
+
+.. rst-class:: classref-method
+
+|void| **assert_string_contains**\ (\ text, search, match_case = true\ ) :ref:`🔗<class_GutTest_method_assert_string_contains>`
+
+Assert that `text` contains `search`.  Can perform case insensitive search by passing false for `match_case`.
+
+::
+
+       # Passing
+       assert_string_contains('abc 123', 'a')
+       assert_string_contains('abc 123', 'BC', false)
+       assert_string_contains('abc 123', '3')
+    
+       # Failing
+       assert_string_contains('abc 123', 'A')
+       assert_string_contains('abc 123', 'BC')
+       assert_string_contains('abc 123', '012')
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_string_starts_with:
+
+.. rst-class:: classref-method
+
+|void| **assert_string_starts_with**\ (\ text, search, match_case = true\ ) :ref:`🔗<class_GutTest_method_assert_string_starts_with>`
+
+Assert that text starts with search.  Can perform case insensitive check by passing false for match_case
+
+::
+
+       # Passing
+       assert_string_starts_with('abc 123', 'a')
+       assert_string_starts_with('abc 123', 'ABC', false)
+       assert_string_starts_with('abc 123', 'abc 123')
+    
+       ## Failing
+       assert_string_starts_with('abc 123', 'z')
+       assert_string_starts_with('abc 123', 'ABC')
+       assert_string_starts_with('abc 123', 'abc 1234')
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_string_ends_with:
+
+.. rst-class:: classref-method
+
+|void| **assert_string_ends_with**\ (\ text, search, match_case = true\ ) :ref:`🔗<class_GutTest_method_assert_string_ends_with>`
+
+Assert that ``text`` ends with ``search``.  Can perform case insensitive check by passing false for ``match_case``\ 
+
+::
+
+       ## Passing
+       assert_string_ends_with('abc 123', '123')
+       assert_string_ends_with('abc 123', 'C 123', false)
+       assert_string_ends_with('abc 123', 'abc 123')
+    
+       ## Failing
+       assert_string_ends_with('abc 123', '1234')
+       assert_string_ends_with('abc 123', 'C 123')
+       assert_string_ends_with('abc 123', 'nope')
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_called:
+
+.. rst-class:: classref-method
+
+|void| **assert_called**\ (\ inst, method_name = null, parameters = null\ ) :ref:`🔗<class_GutTest_method_assert_called>`
+
+Assert that a method was called on an instance of a doubled class.  If parameters are supplied then the params passed in when called must match.  Can be called with a Callabe instead of specifying the object, method_name, and parameters.  The Callable's object must be a double.  Bound arguments will be used to match calls based on values passed to the method. 
+
+See also: `Doubles <../Doubles.html>`__, `Spies <../Spies.html>`__ 
+
+
+
+\ **Examples**\ 
+
+::
+
+       var my_double = double(Foobar).new()
+       ...
+       assert_called(my_double, 'foo')
+       assert_called(my_double.foo)
+       assert_called(my_double, 'foo', [1, 2, 3])
+       assert_called(my_double.foo.bind(1, 2, 3))
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_not_called:
+
+.. rst-class:: classref-method
+
+|void| **assert_not_called**\ (\ inst, method_name = null, parameters = null\ ) :ref:`🔗<class_GutTest_method_assert_not_called>`
+
+Assert that a method was not called on an instance of a doubled class.  If parameters are specified then this will only fail if it finds a call that was sent matching parameters.  Can be called with a Callabe instead of specifying the object, method_name, and parameters.  The Callable's object must be a double.  Bound arguments will be used to match calls based on values passed to the method. 
+
+See also: `Doubles <../Doubles.html>`__, `Spies <../Spies.html>`__ 
+
+
+
+\ **Examples**\ 
+
+::
+
+       assert_not_called(my_double, 'foo')
+       assert_not_called(my_double.foo)
+       assert_not_called(my_double, 'foo', [1, 2, 3])
+       assert_not_called(my_double.foo.bind(1, 2, 3))
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_called_count:
+
+.. rst-class:: classref-method
+
+|void| **assert_called_count**\ (\ callable\: `Callable <https://docs.godotengine.org/en/stable/classes/class_callable.html>`_, expected_count\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_\ ) :ref:`🔗<class_GutTest_method_assert_called_count>`
+
+Asserts the the method of a double was called an expected number of times. If any arguments are bound to the callable then only calls with matching arguments will be counted. 
+
+See also: `Doubles <../Doubles.html>`__, `Spies <../Spies.html>`__ 
+
+
+
+\ **Examples**\ 
+
+::
+
+       # assert foo was called on my_double 5 times
+       assert_called_count(my_double.foo, 5)
+       # assert foo, with parameters [1,2,3], was called on my_double 4 times.
+       assert_called_count(my_double.foo.bind(1, 2, 3), 4)
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_null:
+
+.. rst-class:: classref-method
+
+|void| **assert_null**\ (\ got, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_null>`
+
+Asserts the passed in value is null
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_not_null:
+
+.. rst-class:: classref-method
+
+|void| **assert_not_null**\ (\ got, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_null>`
+
+Asserts the passed in value is not null.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_freed:
+
+.. rst-class:: classref-method
+
+|void| **assert_freed**\ (\ obj, title = "something"\ ) :ref:`🔗<class_GutTest_method_assert_freed>`
+
+Asserts that the passed in object has been freed.  This assertion requires that  you pass in some text in the form of a title since, if the object is freed, we won't have anything to convert to a string to put in the output statement. 
+
+\ **Note** that this currently does not detect if a node has been queued free.
+
+::
+
+       var obj = Node.new()
+       obj.free()
+       test.assert_freed(obj, "New Node")
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_not_freed:
+
+.. rst-class:: classref-method
+
+|void| **assert_not_freed**\ (\ obj, title = "something"\ ) :ref:`🔗<class_GutTest_method_assert_not_freed>`
+
+The inverse of :ref:`assert_freed<class_GutTest_method_assert_freed>`
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_no_new_orphans:
+
+.. rst-class:: classref-method
+
+|void| **assert_no_new_orphans**\ (\ text = ""\ ) :ref:`🔗<class_GutTest_method_assert_no_new_orphans>`
+
+This method will assert that no orphaned nodes have been introduced by the test when the assert is executed.  See the `Memory-Management <../Memory-Management.html>`__ page for more information.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_property_with_backing_variable:
+
+.. rst-class:: classref-method
+
+|void| **assert_property_with_backing_variable**\ (\ obj, property_name, default_value, new_value, backed_by_name = null\ ) :ref:`🔗<class_GutTest_method_assert_property_with_backing_variable>`
+
+Assumes backing varible with be \_<property_name>.  This will perform all the asserts of assert_property.  Then this will set the value through the setter and check the backing variable value.  It will then reset throught the setter and set the backing variable and check the getter.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_property:
+
+.. rst-class:: classref-method
+
+|void| **assert_property**\ (\ obj, property_name, default_value, new_value\ ) :ref:`🔗<class_GutTest_method_assert_property>`
+
+This will verify that the method has a setter and getter for the property. It will then use the getter to check the default.  Then use the setter with new_value and verify the getter returns the same value.
 
 .. rst-class:: classref-item-separator
 
@@ -1778,9 +1880,7 @@ Peforms a deep compare on both values, a CompareResult instnace is returned. The
 
 |void| **assert_eq_deep**\ (\ v1, v2\ ) :ref:`🔗<class_GutTest_method_assert_eq_deep>`
 
-.. container:: contribute
-
-	No description
+Performs a deep comparison between two arrays or dictionaries and asserts they are equal.  If they are not equal then a formatted list of differences are displayed.  See `Comparing-Things <../Comparing-Things.html>`__ for more information.
 
 .. rst-class:: classref-item-separator
 
@@ -1792,37 +1892,7 @@ Peforms a deep compare on both values, a CompareResult instnace is returned. The
 
 |void| **assert_ne_deep**\ (\ v1, v2\ ) :ref:`🔗<class_GutTest_method_assert_ne_deep>`
 
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_eq_shallow:
-
-.. rst-class:: classref-method
-
-|void| **assert_eq_shallow**\ (\ v1, v2\ ) :ref:`🔗<class_GutTest_method_assert_eq_shallow>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_ne_shallow:
-
-.. rst-class:: classref-method
-
-|void| **assert_ne_shallow**\ (\ v1, v2\ ) :ref:`🔗<class_GutTest_method_assert_ne_shallow>`
-
-.. container:: contribute
-
-	No description
+Performs a deep comparison of two arrays or dictionaries and asserts they are not equal.  See `Comparing-Things <../Comparing-Things.html>`__ for more information.
 
 .. rst-class:: classref-item-separator
 
@@ -1834,9 +1904,7 @@ Peforms a deep compare on both values, a CompareResult instnace is returned. The
 
 |void| **assert_same**\ (\ v1, v2, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_same>`
 
-.. container:: contribute
-
-	No description
+Assert v1 and v2 are the same using ``is_same``.  See @GlobalScope.is_same.
 
 .. rst-class:: classref-item-separator
 
@@ -1848,51 +1916,367 @@ Peforms a deep compare on both values, a CompareResult instnace is returned. The
 
 |void| **assert_not_same**\ (\ v1, v2, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_same>`
 
-.. container:: contribute
-
-	No description
+Assert using v1 and v2 are not the same using ``is_same``.  See @GlobalScope.is_same.
 
 .. rst-class:: classref-item-separator
 
 ----
 
-.. _class_GutTest_method_skip_if_godot_version_lt:
+.. _class_GutTest_method_wait_seconds:
 
 .. rst-class:: classref-method
 
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **skip_if_godot_version_lt**\ (\ expected\ ) :ref:`🔗<class_GutTest_method_skip_if_godot_version_lt>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_seconds**\ (\ time, msg = ""\ ) :ref:`🔗<class_GutTest_method_wait_seconds>`
 
-.. container:: contribute
+Use with await to wait an amount of time in seconds.  The optional message will be printed when the await starts.
 
-	No description
+See `Awaiting <../Awaiting.html>`__
 
 .. rst-class:: classref-item-separator
 
 ----
 
-.. _class_GutTest_method_skip_if_godot_version_ne:
+.. _class_GutTest_method_wait_for_signal:
 
 .. rst-class:: classref-method
 
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **skip_if_godot_version_ne**\ (\ expected\ ) :ref:`🔗<class_GutTest_method_skip_if_godot_version_ne>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_for_signal**\ (\ sig\: `Signal <https://docs.godotengine.org/en/stable/classes/class_signal.html>`_, max_wait, msg = ""\ ) :ref:`🔗<class_GutTest_method_wait_for_signal>`
 
-.. container:: contribute
+Use with await to wait for a signal to be emitted or a maximum amount of time.  Returns true if the signal was emitted, false if not.
 
-	No description
+See `Awaiting <../Awaiting.html>`__
 
 .. rst-class:: classref-item-separator
 
 ----
 
-.. _class_GutTest_method_register_inner_classes:
+.. _class_GutTest_method_wait_frames:
 
 .. rst-class:: classref-method
 
-|void| **register_inner_classes**\ (\ base_script\ ) :ref:`🔗<class_GutTest_method_register_inner_classes>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_frames**\ (\ frames, msg = ""\ ) :ref:`🔗<class_GutTest_method_wait_frames>`
 
-.. container:: contribute
+Use with await to wait a number of frames.  The optional message will be printed
 
-	No description
+See `Awaiting <../Awaiting.html>`__
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_wait_until:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_until**\ (\ callable, max_wait, p3 = "", p4 = ""\ ) :ref:`🔗<class_GutTest_method_wait_until>`
+
+Use with await to wait for the passed in callable to return true or a maximum amount of time.  The callable is called every _physics_process tick unless an optional time between calls is specified.
+
+p3 can be the optional message or an amount of time to wait between tests. p4 is the optional message if you have specified an amount of time to wait between tests.
+
+Returns true if the callable returned true before the timeout, false if not. 
+
+See `Awaiting <../Awaiting.html>`__
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_did_wait_timeout:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **did_wait_timeout**\ (\ ) :ref:`🔗<class_GutTest_method_did_wait_timeout>`
+
+Returns whether the last wait\_\* method timed out.  This is always true if the last method was wait_frames or wait_seconds.  It will be false when using wait_for_signal and wait_until if the timeout occurs before what is being waited on.  The wait\_\* methods return this value so you should be able to avoid calling this directly, but you can.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_summary:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_summary**\ (\ ) :ref:`🔗<class_GutTest_method_get_summary>`
+
+**Internal use only.**
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_fail_count:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_fail_count**\ (\ ) :ref:`🔗<class_GutTest_method_get_fail_count>`
+
+Returns the number of failing asserts in this script at the time this method was called.  Call in :ref:`after_all<class_GutTest_method_after_all>` to get total count for script.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_pass_count:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_pass_count**\ (\ ) :ref:`🔗<class_GutTest_method_get_pass_count>`
+
+Returns the number of passing asserts in this script at the time this method was called.  Call in :ref:`after_all<class_GutTest_method_after_all>` to get total count for script.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_pending_count:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_pending_count**\ (\ ) :ref:`🔗<class_GutTest_method_get_pending_count>`
+
+Returns the number of pending tests in this script at the time this method was called.  Call in :ref:`after_all<class_GutTest_method_after_all>` to get total count for script.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_assert_count:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_assert_count**\ (\ ) :ref:`🔗<class_GutTest_method_get_assert_count>`
+
+Returns the total number of asserts this script has made as of the time of this was called.  Call in :ref:`after_all<class_GutTest_method_after_all>` to get total count for script.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_summary_text:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_summary_text**\ (\ ) :ref:`🔗<class_GutTest_method_get_summary_text>`
+
+**Internal use only.**
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_double:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **double**\ (\ thing, double_strat = null, not_used_anymore = null\ ) :ref:`🔗<class_GutTest_method_double>`
+
+Create a Double of ``thing``.  ``thing`` should be a Class, script, or scene.  See `Doubles <../Doubles.html>`__
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_partial_double:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **partial_double**\ (\ thing, double_strat = null, not_used_anymore = null\ ) :ref:`🔗<class_GutTest_method_partial_double>`
+
+Create a Partial Double of ``thing``.  ``thing`` should be a Class, script, or scene.  See `Partial-Doubles <../Partial-Doubles.html>`__
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_double_singleton:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **double_singleton**\ (\ singleton_name\ ) :ref:`🔗<class_GutTest_method_double_singleton>`
+
+**Internal use only.**
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_partial_double_singleton:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **partial_double_singleton**\ (\ singleton_name\ ) :ref:`🔗<class_GutTest_method_partial_double_singleton>`
+
+**Internal use only.**
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_ignore_method_when_doubling:
+
+.. rst-class:: classref-method
+
+|void| **ignore_method_when_doubling**\ (\ thing, method_name\ ) :ref:`🔗<class_GutTest_method_ignore_method_when_doubling>`
+
+This was implemented to allow the doubling of classes with static methods. There might be other valid use cases for this method, but you should always try stubbing before using this method.  Using ``stub(my_double, 'method').to_call_super()`` or  creating a :ref:`partial_double<class_GutTest_method_partial_double>` works for any other known scenario.  You cannot stub or spy on methods passed to ``ignore_method_when_doubling``.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_stub:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **stub**\ (\ thing, p2 = null, p3 = null\ ) :ref:`🔗<class_GutTest_method_stub>`
+
+Stub something.  See `Stubbing <../Stubbing.html>`__ for detailed information about stubbing.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_autofree:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **autofree**\ (\ thing\ ) :ref:`🔗<class_GutTest_method_autofree>`
+
+Marks whatever is passed in to be freed after the test finishes.  It also returns what is passed in so you can save a line of code. var thing = autofree(Thing.new())
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_autoqfree:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **autoqfree**\ (\ thing\ ) :ref:`🔗<class_GutTest_method_autoqfree>`
+
+Works the same as autofree except queue_free will be called on the object instead.  This also imparts a brief pause after the test finishes so that the queued object has time to free.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_add_child_autofree:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **add_child_autofree**\ (\ node, legible_unique_name = false\ ) :ref:`🔗<class_GutTest_method_add_child_autofree>`
+
+The same as autofree but it also adds the object as a child of the test.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_add_child_autoqfree:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **add_child_autoqfree**\ (\ node, legible_unique_name = false\ ) :ref:`🔗<class_GutTest_method_add_child_autoqfree>`
+
+The same as autoqfree but it also adds the object as a child of the test.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_yield_for:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **yield_for**\ (\ time, msg = ""\ ) :ref:`🔗<class_GutTest_method_yield_for>`
+
+**Deprecated:** use wait_seconds
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_yield_to:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **yield_to**\ (\ obj, signal_name, max_wait, msg = ""\ ) :ref:`🔗<class_GutTest_method_yield_to>`
+
+**Deprecated:** use wait_for_signal
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_yield_frames:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **yield_frames**\ (\ frames, msg = ""\ ) :ref:`🔗<class_GutTest_method_yield_frames>`
+
+**Deprecated:** use wait_frames
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_double_scene:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **double_scene**\ (\ path, strategy = null\ ) :ref:`🔗<class_GutTest_method_double_scene>`
+
+**Deprecated:** no longer supported.  Use double
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_double_script:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **double_script**\ (\ path, strategy = null\ ) :ref:`🔗<class_GutTest_method_double_script>`
+
+**Deprecated:** no longer supported.  Use double
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_double_inner:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **double_inner**\ (\ path, subpath, strategy = null\ ) :ref:`🔗<class_GutTest_method_double_inner>`
+
+**Deprecated:** no longer supported.  Use register_inner_classes + double
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_call_count:
+
+.. rst-class:: classref-method
+
+|void| **assert_call_count**\ (\ inst, method_name, expected_count, parameters = null\ ) :ref:`🔗<class_GutTest_method_assert_call_count>`
+
+**Deprecated:** Use :ref:`assert_called_count<class_GutTest_method_assert_called_count>` instead.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_setget:
+
+.. rst-class:: classref-method
+
+|void| **assert_setget**\ (\ instance, name_property, const_or_setter = null, getter = "__not_set__"\ ) :ref:`🔗<class_GutTest_method_assert_setget>`
+
+**Deprecated:** no longer supported.
 
 .. |virtual| replace:: :abbr:`virtual (This method should typically be overridden by the user to have any effect.)`
 .. |const| replace:: :abbr:`const (This method has no side effects. It doesn't modify any of the instance's member variables.)`

@@ -2,9 +2,13 @@ extends 'res://addons/gut/gut_to_move.gd'
 class_name GutMain
 ## The GUT brains.
 ##
-## This is responsible for everything.  There aren't a lot of things you should
-## be doing with this, but there are some edge cases where you can/should
-## interact with the instance of this that is making all the magic happen.
+## Most of this class is for internal use only.  Features that can be used are
+## have descriptions and can be accessed through the [member GutTest.gut] variable
+## in your test scripts (extends [GutTest]).
+## The wiki page for this class contains only the usable features.
+## [br][br]
+## GUT Wiki:  [url=https://gut.readthedocs.io]https://gut.readthedocs.io[/url]
+## [br]
 ## @ignore-uncommented
 
 
@@ -160,9 +164,9 @@ var logger = _lgr :
 		_lgr.set_gut(self)
 
 var _add_children_to = self
-## Sets the object that GUT will add test objects to as it creates them.  The
-## default is self, but can be set to other objects so that GUT is not obscured
-## by the objects added during tests.
+# Sets the object that GUT will add test objects to as it creates them.  The
+# default is self, but can be set to other objects so that GUT is not obscured
+# by the objects added during tests.
 var add_children_to = self :
 	get: return _add_children_to
 	set(val): _add_children_to = val

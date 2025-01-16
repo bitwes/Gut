@@ -4,19 +4,20 @@
    :caption: Getting Started
    :name: sec-started
 
-   New-For-Godot-4
    Install
    Quick-Start
    Command-Line
+   New-For-Godot-4
 
 
 .. toctree::
    :hidden:
-   :caption: GutTest
+   :maxdepth: 3
+   :caption: Test Scripts
    :name: sec-guttest
 
+   class_ref/class_guttest
    Creating-Tests
-   Asserts-and-Methods
    Awaiting
    Inner-Test-Classes
    Parameterized-Tests
@@ -40,18 +41,6 @@
 .. toctree::
    :hidden:
    :maxdepth: 1
-   :caption: Mocking Input
-   :name: sec-mockinput
-
-   Mocking-Input
-   Input-Sender
-   Input-Factory
-
-
-
-.. toctree::
-   :hidden:
-   :maxdepth: 1
    :caption: Other
    :name: sec-other
 
@@ -60,14 +49,16 @@
    Export-Test-Results
    Hooks
    Memory-Management
+   Mocking-Input
    Orphans
    Running-On-Devices
    Tutorials
 
+
 .. toctree::
    :hidden:
    :maxdepth: 1
-   :caption: ClassRef
+   :caption: Class Reference
    :name: class-ref
    :glob:
 
@@ -91,7 +82,7 @@ Getting Started
 
 * :doc:`Quick-Start <Quick-Start>`
 * :doc:`Install <Install>`
-* :doc:`Asserts and Methods <Asserts-and-Methods>`
+* :doc:`GutTest Class <class_ref/class_guttest>`
 * :doc:`Creating Tests <Creating-Tests>`
 * :doc:`Using Gut at the command line <Command-Line>`
 

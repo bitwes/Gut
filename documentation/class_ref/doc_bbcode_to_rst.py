@@ -3,6 +3,7 @@ import re
 from godot_classes import *
 from godot_consts import *
 import logger as lgr
+import bitwes
 
 def print_error(text, state):
     lgr.print_error(text, state)
@@ -15,7 +16,7 @@ def print_warning(text, state):
 MARKUP_ALLOWED_PRECEDENT = " -:/'\"<([{"
 MARKUP_ALLOWED_SUBSEQUENT = " -.,:;!?\\/'\")]}>"
 GODOT_DOCS_PATTERN = re.compile(r"^\$DOCS_URL/(.*)\.html(#.*)?$")
-RESERVED_FORMATTING_TAGS = ["i", "b", "u", "lb", "rb", "code", "kbd", "center", "url", "br"]
+RESERVED_FORMATTING_TAGS = ["i", "b", "u", "lb", "rb", "code", "kbd", "center", "url", "br",]
 RESERVED_LAYOUT_TAGS = ["codeblocks"]
 RESERVED_CODEBLOCK_TAGS = ["codeblock", "gdscript", "csharp"]
 RESERVED_CROSSLINK_TAGS = [
@@ -680,9 +681,12 @@ def format_text_block(
             elif tag_state.name == "br":
                 # Make a new paragraph instead of a linebreak, rst is not so linebreak friendly
                 tag_text = "\n\n"
-                # Strip potential leading spaces
-                while post_text[0] == " ":
-                    post_text = post_text[1:]
+                # -- Commented this out when it caused an error.  Due to the  --
+                # -- complexity of all this I decided some spaces is probably --
+                # -- not as bad debugging this thing                          --
+                # # Strip potential leading spaces
+                # while post_text[0] == " ":
+                #     post_text = post_text[1:]
 
             elif tag_state.name == "center":
                 if tag_state.closing:
@@ -729,6 +733,36 @@ def format_text_block(
                     tag_depth += 1
                     tag_text = "* "
 
+            # Slightly modified copy of the url tag handling.
+            elif is_in_tagset(tag_state.name, ["wiki"]):
+                url_target = tag_state.arguments
+
+                # Unlike other tags, URLs are handled in full here, as we need to extract
+                # the optional link title to use `make_link`.
+                endurl_pos = text.find("[/wiki]", endq_pos + 1)
+                if endurl_pos == -1:
+                    print_error(
+                        f"{state.current_class}.xml: Tag depth mismatch for [wiki]: no closing [/wiki] in {context_name}.",
+                        state,
+                    )
+                    break
+                link_title = text[endq_pos + 1 : endurl_pos]
+                if url_target == "":
+                    url_target = f'../{link_title}.html'
+
+                tag_text = make_link(url_target, link_title)
+
+                pre_text = text[:pos]
+                post_text = text[endurl_pos + 7 :] # +7 instead +6 bc wiki has one more character than url
+
+                if pre_text and pre_text[-1] not in MARKUP_ALLOWED_PRECEDENT:
+                    pre_text += "\\ "
+                if post_text and post_text[0] not in MARKUP_ALLOWED_SUBSEQUENT:
+                    post_text = "\\ " + post_text
+
+                text = pre_text + tag_text + post_text
+                pos = len(pre_text) + len(tag_text)
+                continue
 
             elif tag_state.name == "lb":
                 tag_text = "\\["
@@ -747,6 +781,7 @@ def format_text_block(
                     tag_depth += 1
                     escape_pre = True
 
+
             # Invalid syntax.
             else:
                 if tag_state.closing:
@@ -757,14 +792,20 @@ def format_text_block(
 
                     tag_text = f"[{tag_text}]"
                 else:
-                    print_error(
-                        f'{state.current_class}.xml: Unrecognized opening tag "[{tag_state.raw}]" in {context_name}.',
-                        state,
-                    )
+                    # Assume any unknown opening tag that starts with an
+                    # uppercase letter is a reference to a Godot class.
+                    # Treat all others as errors.
+                    if len(tag_state.arguments) == 0 and len(tag_text) > 0 and tag_text[0].isupper():
+                        tag_text = bitwes.make_type_link(tag_text)
+                    else:
+                        print_error(
+                            f'{state.current_class}.xml: Unrecognized opening tag "[{tag_state.raw}]" in {context_name}.',
+                            state,
+                        )
 
-                    tag_text = f"``{tag_text}``"
-                    escape_pre = True
-                    escape_post = True
+                        tag_text = f"``{tag_text}``"
+                        escape_pre = True
+                        escape_post = True
 
         # Properly escape things like `[Node]s`
         if escape_pre and pre_text and pre_text[-1] not in MARKUP_ALLOWED_PRECEDENT:

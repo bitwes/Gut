@@ -1,17 +1,27 @@
 @tool
 extends EditorPlugin
-
+var VersionConversion = load("res://addons/gut/version_conversion.gd")
 var _bottom_panel = null
+
+func _init():
+	if(VersionConversion.error_if_not_all_classes_imported()):
+		return
+
 
 func _version_conversion():
 	var EditorGlobals = load("res://addons/gut/gui/editor_globals.gd")
 	EditorGlobals.create_temp_directory()
 
-	var VersionConversion = load("res://addons/gut/version_conversion.gd")
+	if(VersionConversion.error_if_not_all_classes_imported()):
+		return false
+
 	VersionConversion.convert()
+	return true
+
 
 func _enter_tree():
-	_version_conversion()
+	if(!_version_conversion()):
+		return
 
 	_bottom_panel = preload('res://addons/gut/gui/GutBottomPanel.tscn').instantiate()
 
