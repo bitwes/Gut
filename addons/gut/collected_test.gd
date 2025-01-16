@@ -114,5 +114,3 @@ func to_s():
 	for i in range(pass_texts.size()):
 		to_return += str(pad, 'Pass:  ', pass_texts[i], "\n")
 	return to_return
-
-

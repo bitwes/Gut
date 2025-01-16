@@ -846,6 +846,9 @@ func get_call_count_text():
 		# should have been called before we get to any calls for this method
 		# just due to how use_parameters works.  There isn't a way to know
 		# whether we are before or after that call.
+		var current_params = _parameter_handler._params[_parameter_handler.get_call_count() - 1]
+		if current_params is String:
+			return str('params[', current_params, '] ')
 		to_return = str('params[', _parameter_handler.get_call_count() -1, '] ')
 	return to_return
 

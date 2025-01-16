@@ -658,7 +658,12 @@ func use_parameters(params):
 	# DO NOT use gut.gd's get_call_count_text here since it decrements the
 	# get_call_count value.  This method increments the call count in its
 	# return statement.
-	var output = str('- params[', ph.get_call_count(), ']','(', ph.get_current_parameters(), ')')
+	var call_count = ph.get_call_count()
+	var output
+	if params is Dictionary and params.keys()[call_count] is String:
+		output = str('- ', params.keys()[call_count],'(', ph.get_current_parameters(), ')')
+	else:
+		output = str('- params[', call_count, ']','(', ph.get_current_parameters(), ')')
 	gut.p(output, gut.LOG_LEVEL_TEST_AND_FAILURES)
 
 	return ph.next_parameters()

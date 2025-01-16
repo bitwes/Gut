@@ -3,10 +3,12 @@ var _call_count = 0
 var _logger = null
 
 func _init(params=null):
+	if params is Dictionary:
+		params = params.keys()
 	_params = params
 	_logger = GutUtils.get_logger()
 	if(typeof(_params) != TYPE_ARRAY):
-		_logger.error('You must pass an array to parameter_handler constructor.')
+		_logger.error('You must pass an array or dictionary to parameter_handler constructor.')
 		_params = null
 
 
@@ -15,6 +17,8 @@ func next_parameters():
 	return _params[_call_count -1]
 
 func get_current_parameters():
+	if _params is Dictionary:
+		return _params.keys()[_call_count]
 	return _params[_call_count]
 
 func is_done():
