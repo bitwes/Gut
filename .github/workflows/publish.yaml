@@ -1,0 +1,28 @@
+name: "🚀 Release: Plugin version"
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  contents: write
+
+jobs:
+  release-branch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: coffeebeats/godot-infra/package-addon@main
+        with:
+          subfolder: gut
+          target-branch: "godot-v4.3"
+          godot-editor-version: v4.3-stable
