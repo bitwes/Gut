@@ -4,7 +4,7 @@ GUT has a pre-run and post-run hook that allows you to take any initialization s
 
 Hook scripts can be set through the editor, through a command line option or in the `.gutconfig.json` file.
 
-All Hook scripts must inherit from [`GutHookScript`](https://github.com/bitwes/Gut/blob/master/addons/gut/hook_script.gd).  If the pre-run or post-run scripts specified do not exist or do not extend `GutHookScript` then the run will be aborted before any tests are run.
+All Hook scripts must inherit from [GutHookScript](class_GutHookScript).  If the pre-run or post-run scripts specified do not exist or do not extend [GutHookScript](class_GutHookScript) then the run will be aborted before any tests are run.
 
 All Hook scripts have access to the GUT instance that is running the tests via the `gut` property defined in `hook_script.gd`.  This is set after initializing the script.
 
@@ -16,7 +16,7 @@ GUT executes the virtual method `run()` when the hook should be executed.  Place
 
 
 ## Setup
-Create scripts that inherit from `GutHookScript`, implement the `run()` method.  Set the path to your scripts through the panel or  `.gutconfig.json`, depending on how you are running your tests.
+Create scripts that inherit from [GutHookScript](class_GutHookScript), implement the `run()` method.  Set the path to your scripts through the panel or  `.gutconfig.json`, depending on how you are running your tests.
 
 
 You can specify `pre_run_script` and `post_run_script` in the `.gutconfig.json` file.  You can also specify these options directly at the command line using the `-gpre_run_script` and `-gpost_run_script` options.
@@ -24,7 +24,7 @@ You can specify `pre_run_script` and `post_run_script` in the `.gutconfig.json` 
 
 
 ## Features
-The following features are available to scripts that inherit from `GutHookScript`.  Not all features are usable by all hooks.  Details below.
+The following features are available to scripts that inherit from [GutHookScript](class_GutHookScript).  Not all features are usable by all hooks.  Details below.
 * `gut` - the GUT instance running tests.
 * `abort()` - abort the test run.
 * `set_exit_code(code)` - Set the code to be returned when the command line finishes.

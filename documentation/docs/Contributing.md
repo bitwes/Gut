@@ -30,10 +30,9 @@ If you don't see an existing directory that matches your needs then you can crea
 
 
 ### Running GUT Tests
-Due to the nature of using the tool to test the tool, there are some tests that are expected to fail.  The message for failing tests will indicate that they are expected to fail.
+Due to the nature of using the tool to test the tool, there are some are pending or risky.  These ar ebeing cleaned up, but there might be some.  You should run all the tests once before developing to see see which currently exist.
 
-I've found that using VSCode and the VSCode plugin "gut-extension" is the easiest way to run tests as you develop your feature.  Mostly because you can have more than one file on the screen at a time.  If you do not care for VSCode then I'd suggest using the command line to avoid having to switch scenes.  A `.gutconfig.json` is already included in the project so you should be able to run tests with no config changes.
-
+Here's some common errors:
 
 #### The GUT Panel doesn't do anything.
 Sometimes when you edit GUT files, the plugin doesn't like it.  Reload the plugin.

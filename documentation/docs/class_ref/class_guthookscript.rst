@@ -10,12 +10,26 @@ GutHookScript
 
 **Inherits:** `RefCounted <https://docs.godotengine.org/en/stable/classes/class_refcounted.html>`_
 
-This script is the base for custom scripts to be used in pre and post run hooks.  Creating a hook script requires that you:
+This script is the base for custom scripts to be used in pre and post run hooks.
 
-* Inherit ``GutHookScript``\ 
-* Implement a ``run()`` method
-* Configure the path in GUT (gutconfig and/or editor) as the approparite hook (pre or post).
+.. rst-class:: classref-introduction-group
 
+Description
+-----------
+
+GUT Wiki:  `https://gut.readthedocs.io <https://gut.readthedocs.io>`__ 
+
+
+
+Creating a hook script requires that you:
+
+- Inherit ``GutHookScript``\ 
+
+- Implement a ``run()`` method
+
+- Configure the path in GUT (gutconfig aand/or editor) as the approparite hook (pre or post).
+
+See `Hooks <../Hooks.html>`__
 
 .. rst-class:: classref-reftable-group
 

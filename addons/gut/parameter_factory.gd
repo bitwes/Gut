@@ -1,7 +1,7 @@
 ## Creates parameter structures for parameterized tests.
 ##
-## This is a static class accessible in a `GutTest` script through
-## `ParameterFactory`.  It contains methods for constructing parameters to be
+## This is a static class accessible in a [GutTest] script through
+## [member GutTest.ParameterFactory].  It contains methods for constructing parameters to be
 ## used in parameterized tests.  It currently only has one, if you have anyu
 ## ideas for more, make an issue.  More of them would be great since I prematurely
 ## decided to make this static class and it has such a long name.  I'd feel a lot
@@ -64,7 +64,7 @@ static func named_parameters(names, values):
 # The MIT License (MIT)
 # =====================
 #
-# Copyright (c) 2024 Tom "Butch" Wesley
+# Copyright (c) 2025 Tom "Butch" Wesley
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal

@@ -10,15 +10,11 @@
     * GUT 7 on readthedocs.io:  https://gut.readthedocs.io/en/godot_3x
 
 
-# GUT 9.3.0 (Godot 4.2)
+# GUT 9.3.1 (Godot 4.2)
 GUT (Godot Unit Test) is a unit testing framework for the [Godot Engine](https://godotengine.org/).  It allows you to write tests for your gdscript in gdscript.
 
 GUT versions 9.x are for Godot 4.x
 GUT versions below 9.0.0 (currently 7.4.2) are for Godot 3.x
-
-
-## Donate/Shameless Plug
-If you would like to help support GUT check out my game [Country or State](https://www.youtube.com/watch?v=iCAROKgN9xw&t=4s) on [Android](https://play.google.com/store/apps/details?id=com.butchwesley.country_or_state&hl=en_US&gl=US) and [iOS](https://apps.apple.com/us/app/country-or-state/id1504122706).  Then, purchase the full version even if you don't like it.  Thanks!
 
 
 # Features

@@ -1,8 +1,8 @@
+extends GutTest
 # ------------------------------------------------------------------------------
 # Tests test.gd.  test.gd contains all the asserts and is the class that all
 # test scripts inherit from.
 # ------------------------------------------------------------------------------
-extends GutTest
 
 # ------------------------------------------------------------------------------
 class BaseTestClass:
@@ -300,15 +300,15 @@ class TestAssertAlmostEq:
 	func test_passes_with_vector3s_y_z_within_range():
 		gr.test.assert_almost_eq(Vector3(1.0, 2.0, 3.0), Vector3(1.0, 1.0, 1.0), Vector3(2.0, 2.0, 2.0), "Should pass, Vector3(1.0, 2.0, 3.0) == Vector3(1.0, 1.0, 1.0) +/- Vector3(2.0, 2.0, 2.0)")
 		assert_pass(gr.test)
-		
+
 	func test_passes_with_vector4s_within_range():
 		gr.test.assert_almost_eq(Vector4(1.0, 2.0, 3.0, 1.0), Vector4(1.0, 1.0, 1.0, 1.0), Vector4(2.0, 2.0, 2.0, 2.0), "Should pass")
 		assert_pass(gr.test)
-		
+
 	func test_fails_with_vector4_outside_range():
 		gr.test.assert_almost_eq(Vector4(1.0, 2.0, 3.0, 1.0), Vector4(9.0, 1.0, 1.0, 1.0), Vector4(2.0, 2.0, 2.0, 2.0), "Should fail")
 		assert_fail(gr.test)
-		
+
 	func test_fails_when_vector4_y_outside_range():
 		gr.test.assert_almost_eq(Vector4(1.0, 2.0, 99.0, 1.0), Vector4(1.0, 1.0, 1.0, 1.0), Vector4(2.0, 2.0, 2.0, 2.0), "Should fail")
 		assert_fail(gr.test)
@@ -1381,209 +1381,6 @@ class TestStringEndsWith:
 		assert_pass(gr.test)
 
 
-class TestAssertCalled:
-	extends BaseTestClass
-
-
-	func test_passes_when_call_occurred():
-		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
-		doubled.get_value()
-		gr.test_with_gut.assert_called(doubled, 'get_value')
-		assert_pass(gr.test_with_gut)
-
-	func test_passes_with_parameters():
-		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
-		doubled.set_value(5)
-		gr.test_with_gut.assert_called(doubled, 'set_value', [5])
-		assert_pass(gr.test_with_gut)
-
-	func test_fails_when_parameters_do_not_match():
-		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
-		doubled.set_value('a')
-		gr.test_with_gut.assert_called(doubled, 'set_value', [5])
-		assert_fail(gr.test_with_gut)
-
-	func test_works_with_defaults():
-		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
-		doubled.has_two_params_one_default(10)
-		gr.test_with_gut.assert_called(doubled, 'has_two_params_one_default', [10, null])
-		assert_pass(gr.test_with_gut)
-
-	func test_generates_error_if_third_parameter_not_an_array():
-		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
-		doubled.set_value(5)
-		gr.test_with_gut.assert_called(doubled, 'set_value', 5)
-		assert_fail(gr.test_with_gut)
-		assert_errored(gr.test_with_gut, 1)
-
-	func test_fail_message_indicates_method_does_not_exist():
-		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
-		gr.test_with_gut.assert_called(doubled, 'foo')
-		assert_string_contains(gr.test_with_gut._fail_pass_text[0], 'does not exist')
-
-	func test_fail_message_indicates_non_included_methods():
-		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
-		gr.test_with_gut.assert_called(doubled, 'get_parent')
-		assert_string_contains(gr.test_with_gut._fail_pass_text[0], 'does not overload')
-
-
-
-
-# ------------------------------------------------------------------------------
-class TestAssertNotCalled:
-	extends BaseTestClass
-
-	func test_passes_when_no_calls_have_been_made():
-		var doubled = gr.test_with_gut.double(DoubleMe).new()
-		autofree(doubled)
-		gr.test_with_gut.assert_not_called(doubled, 'get_value')
-		assert_pass(gr.test_with_gut)
-
-	func test_fails_when_a_call_has_been_made():
-		var doubled = gr.test_with_gut.double(DoubleMe).new()
-		autofree(doubled)
-		doubled.get_value()
-		gr.test_with_gut.assert_not_called(doubled, 'get_value')
-		assert_fail(gr.test_with_gut)
-
-	func test_fails_when_passed_a_non_doubled_instance():
-		gr.test_with_gut.assert_not_called(GDScript.new(), 'method')
-		assert_fail(gr.test_with_gut)
-
-	func test_passes_if_parameters_do_not_match():
-		var doubled = gr.test_with_gut.double(DoubleMe).new()
-		autofree(doubled)
-		doubled.set_value(4)
-		gr.test_with_gut.assert_not_called(doubled, 'set_value', [5])
-		assert_pass(gr.test_with_gut)
-
-	func test_fails_if_parameters_do_match():
-		var doubled = gr.test_with_gut.double(DoubleMe).new()
-		autofree(doubled)
-		doubled.set_value('a')
-		gr.test_with_gut.assert_not_called(doubled, 'set_value', ['a'])
-		assert_fail(gr.test_with_gut)
-
-	func test_fails_if_no_params_specified_and_a_call_was_made():
-		var doubled = gr.test_with_gut.double(DoubleMe).new()
-		autofree(doubled)
-		doubled.set_value('a')
-		gr.test_with_gut.assert_not_called(doubled, 'set_value')
-		assert_fail(gr.test_with_gut)
-
-	func test_fail_message_indicates_method_does_not_exist():
-		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
-		gr.test_with_gut.assert_called(doubled, 'foo')
-		assert_string_contains(gr.test_with_gut._fail_pass_text[0], 'does not exist')
-
-	func test_fail_message_indicates_non_included_methods():
-		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
-		gr.test_with_gut.assert_called(doubled, 'get_parent')
-		assert_string_contains(gr.test_with_gut._fail_pass_text[0], 'does not overload')
-
-
-# ------------------------------------------------------------------------------
-class TestAssertCallCount:
-	extends BaseTestClass
-
-	func test_passes_when_nothing_called_and_expected_count_zero():
-		var doubled = gr.test_with_gut.double(DoubleMe).new()
-		autofree(doubled)
-		gr.test_with_gut.assert_call_count(doubled, 'set_value', 0)
-		assert_pass(gr.test_with_gut)
-
-	func test_fails_when_count_does_not_match():
-		var doubled = gr.test_with_gut.double(DoubleMe).new()
-		autofree(doubled)
-		doubled.set_value(5)
-		doubled.set_value(10)
-		gr.test_with_gut.assert_call_count(doubled, 'set_value', 1)
-		assert_fail(gr.test_with_gut)
-
-	func test_fails_if_object_is_not_a_double():
-		var obj = GDScript.new()
-		gr.test_with_gut.gut.get_spy().add_call(obj, '_init')
-		gr.test_with_gut.assert_call_count(obj, '_init', 1)
-		assert_fail(gr.test_with_gut)
-
-	func test_fails_if_parameters_do_not_match():
-		var doubled = gr.test_with_gut.double(DoubleMe).new()
-		autofree(doubled)
-		doubled.set_value(5)
-		doubled.set_value(10)
-		gr.test_with_gut.assert_call_count(doubled, 'set_value', 2, [5])
-		assert_fail(gr.test_with_gut)
-
-	func test_it_passes_if_parameters_do_match():
-		var doubled = gr.test_with_gut.double(DoubleMe).new()
-		autofree(doubled)
-		doubled.set_value(5)
-		doubled.set_value(10)
-		doubled.set_value(5)
-		doubled.set_value(5)
-		gr.test_with_gut.assert_call_count(doubled, 'set_value', 3, [5])
-		assert_pass(gr.test_with_gut)
-
-	func test_when_parameters_not_sent_all_calls_count():
-		var doubled = gr.test_with_gut.double(DoubleMe).new()
-		autofree(doubled)
-		doubled.set_value(5)
-		doubled.set_value(10)
-		doubled.set_value(6)
-		doubled.set_value(12)
-		gr.test_with_gut.assert_call_count(doubled, 'set_value', 4)
-		assert_pass(gr.test_with_gut)
-
-	func test_fail_message_indicates_method_does_not_exist():
-		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
-		gr.test_with_gut.assert_called(doubled, 'foo')
-		assert_string_contains(gr.test_with_gut._fail_pass_text[0], 'does not exist')
-
-	func test_fail_message_indicates_non_included_methods():
-		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
-		gr.test_with_gut.assert_called(doubled, 'get_parent')
-		assert_string_contains(gr.test_with_gut._fail_pass_text[0], 'does not overload')
-
-
-# ------------------------------------------------------------------------------
-class TestGetCallParameters:
-	extends BaseTestClass
-
-	func test_it_works():
-		var doubled = gr.test_with_gut.double(DoubleMe).new()
-		autofree(doubled)
-		doubled.set_value(5)
-		assert_eq(gr.test_with_gut.get_call_parameters(doubled, 'set_value'), [5])
-		gr.test_with_gut.assert_called(doubled, 'set_value')
-		assert_pass(gr.test_with_gut)
-
-	func test_generates_error_if_you_do_not_pass_a_doubled_object():
-		var thing = autofree(Node2D.new())
-		var _p = gr.test_with_gut.get_call_parameters(thing, 'something')
-		assert_errored(gr.test_with_gut, 1)
-
-
-# ------------------------------------------------------------------------------
-class TestGetCallCount:
-	extends BaseTestClass
-
-	func test_it_works():
-		var doubled = gr.test_with_gut.partial_double(DoubleMe).new()
-		autofree(doubled)
-		for i in range(10):
-			doubled.set_value(5)
-		assert_eq(gr.test_with_gut.get_call_count(doubled, 'set_value'), 10)
-
-	func test_it_works_with_parameters():
-		var doubled = gr.test_with_gut.partial_double(DoubleMe).new()
-		autofree(doubled)
-		for i in range(3):
-			doubled.set_value(3)
-
-		for i in range(5):
-			doubled.set_value(5)
-		assert_eq(gr.test_with_gut.get_call_count(doubled, 'set_value', [3]), 3)
-
 
 # ------------------------------------------------------------------------------
 class TestAssertNull:
@@ -1737,6 +1534,11 @@ class TestAssertIsFreed:
 		obj.queue_free()
 		gr.test.assert_not_freed(obj, "Object4")
 		assert_pass(gr.test)
+
+	func test_assert_not_freed_title_is_optional():
+		var obj = Node.new()
+		gr.test.assert_not_freed(obj)
+		pass_test("we got here")
 
 
 # ------------------------------------------------------------------------------

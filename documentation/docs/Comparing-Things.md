@@ -11,7 +11,7 @@ The `assert_eq` and `assert_ne` methods use Godot's default comparision logic, m
 * `assert_eq_deep`
 * `assert_ne_deep`
 
-A deep compare will recursively compare all values in the dictionary/array and all sub-dictionaries and sub-arrays.  Floats and Integers are never equal.  See `assert_eq_deep` in [Asserts and Methods](Asserts-and-Methods) for examples.
+A deep compare will recursively compare all values in the dictionary/array and all sub-dictionaries and sub-arrays.  Floats and Integers are never equal.  See `assert_eq_deep` in [GutTest](class_GutTest) for examples.
 
 
 ## CompareResult

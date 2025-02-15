@@ -10,14 +10,46 @@ GutInputSender
 
 **Inherits:** `RefCounted <https://docs.godotengine.org/en/stable/classes/class_refcounted.html>`_
 
-The InputSender class.  It sends input to places.
+The GutInputSender class.  It sends input to places.
 
 .. rst-class:: classref-introduction-group
 
 Description
 -----------
 
-This is the full description that has not yet been filled in.
+
+
+
+
+GUT Wiki:  `https://gut.readthedocs.io <https://gut.readthedocs.io>`__\ 
+
+See `Mocking-Input <../Mocking-Input.html>`__ for examples. 
+
+
+
+This class can be used to send ``InputEvent*`` events to various objects.  It also allows you to script out a series of inputs and play them back in real time.  You could use it to:
+
+- Verify that jump height depends on how long the jump button is pressed.
+
+- Double tap a direction performs a dash.
+
+- Down, Down-Forward, Forward + punch throws a fireball.
+
+
+
+
+
+And much much more. 
+
+
+
+As of 9.3.1 you can use ``GutInputSender`` instead of ``InputSender``.  It's the same thing, but ``GutInputSender`` is a ``class_name`` so you may have less warnings and auto-complete will work. 
+
+
+
+\ **Warning**\ 
+
+If you move the Godot window to a different monitor while tests are running it can cause input tests to fail.  `This issue <https://github.com/bitwes/Gut/issues/643>`__ has more details.
 
 .. rst-class:: classref-reftable-group
 
@@ -27,13 +59,11 @@ Properties
 .. table::
    :widths: auto
 
-   +--------------------------------------------------------------------------------+-----------------------------------------------------------------+---------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`InputFactory<class_GutInputSender_property_InputFactory>` | ``load(...)`` |
-   +--------------------------------------------------------------------------------+-----------------------------------------------------------------+---------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`mouse_warp<class_GutInputSender_property_mouse_warp>`     | ``false``     |
-   +--------------------------------------------------------------------------------+-----------------------------------------------------------------+---------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`draw_mouse<class_GutInputSender_property_draw_mouse>`     | ``true``      |
-   +--------------------------------------------------------------------------------+-----------------------------------------------------------------+---------------+
+   +--------------------------------------------------------------------------------+-------------------------------------------------------------+-----------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`mouse_warp<class_GutInputSender_property_mouse_warp>` | ``false`` |
+   +--------------------------------------------------------------------------------+-------------------------------------------------------------+-----------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`draw_mouse<class_GutInputSender_property_draw_mouse>` | ``true``  |
+   +--------------------------------------------------------------------------------+-------------------------------------------------------------+-----------+
 
 .. rst-class:: classref-reftable-group
 
@@ -120,6 +150,8 @@ Signals
 
 **idle**\ (\ ) :ref:`🔗<class_GutInputSender_signal_idle>`
 
+Emitted when all events in the input queue have been sent.
+
 .. rst-class:: classref-section-separator
 
 ----
@@ -135,11 +167,7 @@ Constants
 
 **INPUT_WARN** = ``"If using Input as a reciever it will not respond to *_down events until a *_up event is recieved.  Call the appropriate *_up event or use hold_for(...) to automatically release after some duration."`` :ref:`🔗<class_GutInputSender_constant_INPUT_WARN>`
 
-.. container:: contribute
-
-	No description
-
-
+Local reference to the GutInputFactory static class
 
 .. rst-class:: classref-section-separator
 
@@ -150,27 +178,13 @@ Constants
 Property Descriptions
 ---------------------
 
-.. _class_GutInputSender_property_InputFactory:
-
-.. rst-class:: classref-property
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **InputFactory** = ``load(...)`` :ref:`🔗<class_GutInputSender_property_InputFactory>`
-
-.. container:: contribute
-
-	No description
-
-.. rst-class:: classref-item-separator
-
-----
-
 .. _class_GutInputSender_property_mouse_warp:
 
 .. rst-class:: classref-property
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **mouse_warp** = ``false`` :ref:`🔗<class_GutInputSender_property_mouse_warp>`
 
-Warp mouse when sending INputEventMouse\* events
+Warp mouse when sending InputEventMouse\* events
 
 .. rst-class:: classref-item-separator
 
@@ -182,9 +196,7 @@ Warp mouse when sending INputEventMouse\* events
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **draw_mouse** = ``true`` :ref:`🔗<class_GutInputSender_property_draw_mouse>`
 
-.. container:: contribute
-
-	No description
+Draw mouse position cross hairs.  Useful to see where the mouse is at when not using :ref:`mouse_warp<class_GutInputSender_property_mouse_warp>`
 
 .. rst-class:: classref-section-separator
 
@@ -201,7 +213,7 @@ Method Descriptions
 
 |void| **_init**\ (\ r = null\ ) :ref:`🔗<class_GutInputSender_private_method__init>`
 
-You can pass in a receiver if you want to.
+Accepts a single optional receiver.
 
 .. rst-class:: classref-item-separator
 
@@ -213,9 +225,7 @@ You can pass in a receiver if you want to.
 
 |void| **add_receiver**\ (\ obj\ ) :ref:`🔗<class_GutInputSender_method_add_receiver>`
 
-.. container:: contribute
-
-	No description
+Add an object to receive input events.
 
 .. rst-class:: classref-item-separator
 
@@ -227,9 +237,7 @@ You can pass in a receiver if you want to.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_receivers**\ (\ ) :ref:`🔗<class_GutInputSender_method_get_receivers>`
 
-.. container:: contribute
-
-	No description
+Returns the receivers that have been added.
 
 .. rst-class:: classref-item-separator
 
@@ -241,9 +249,7 @@ You can pass in a receiver if you want to.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **is_idle**\ (\ ) :ref:`🔗<class_GutInputSender_method_is_idle>`
 
-.. container:: contribute
-
-	No description
+Returns true if the input queue has items to be processed, false if not.
 
 .. rst-class:: classref-item-separator
 
@@ -297,9 +303,7 @@ You can pass in a receiver if you want to.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_auto_flush_input**\ (\ ) :ref:`🔗<class_GutInputSender_method_get_auto_flush_input>`
 
-.. container:: contribute
-
-	No description
+Get the value of :ref:`set_auto_flush_input<class_GutInputSender_method_set_auto_flush_input>`.
 
 .. rst-class:: classref-item-separator
 
@@ -311,9 +315,7 @@ You can pass in a receiver if you want to.
 
 |void| **set_auto_flush_input**\ (\ val\ ) :ref:`🔗<class_GutInputSender_method_set_auto_flush_input>`
 
-.. container:: contribute
-
-	No description
+Enable/Disable auto flushing of input.  When enabled the **GutInputSender** will call ``Input.flush_buffered_events`` after each event is sent. See the "use_accumulated_input" section in `Mocking-Input <../Mocking-Input.html>`__ for more information.
 
 .. rst-class:: classref-item-separator
 
@@ -325,9 +327,7 @@ You can pass in a receiver if you want to.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait**\ (\ t\ ) :ref:`🔗<class_GutInputSender_method_wait>`
 
-.. container:: contribute
-
-	No description
+Adds a delay between the last input queue item added and any queue item added next.  By default this will wait ``t`` seconds.  You can specify a number of frames to wait by passing a string composed of a number and "f". For example ``wait("5f")`` will wait 5 frames.
 
 .. rst-class:: classref-item-separator
 
@@ -339,9 +339,11 @@ You can pass in a receiver if you want to.
 
 |void| **clear**\ (\ ) :ref:`🔗<class_GutInputSender_method_clear>`
 
-.. container:: contribute
+Clears the input queue and any state such as the last event sent and any pressed actions/buttons.  Does not clear the list of receivers. 
 
-	No description
+
+
+This should be done between each test when the **GutInputSender** is a class level variable so that state does not leak between tests.
 
 .. rst-class:: classref-item-separator
 
@@ -353,9 +355,7 @@ You can pass in a receiver if you want to.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **key_up**\ (\ which\ ) :ref:`🔗<class_GutInputSender_method_key_up>`
 
-.. container:: contribute
-
-	No description
+Sends a `InputEventKey <https://docs.godotengine.org/en/stable/classes/class_inputeventkey.html>`_ event with ``pressed = false``.  ``which`` can be a character or a ``KEY_*`` constant.
 
 .. rst-class:: classref-item-separator
 
@@ -367,9 +367,7 @@ You can pass in a receiver if you want to.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **key_down**\ (\ which\ ) :ref:`🔗<class_GutInputSender_method_key_down>`
 
-.. container:: contribute
-
-	No description
+Sends a `InputEventKey <https://docs.godotengine.org/en/stable/classes/class_inputeventkey.html>`_ event with ``pressed = true``.  ``which`` can be a character or a ``KEY_*`` constant.
 
 .. rst-class:: classref-item-separator
 
@@ -381,9 +379,7 @@ You can pass in a receiver if you want to.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **key_echo**\ (\ ) :ref:`🔗<class_GutInputSender_method_key_echo>`
 
-.. container:: contribute
-
-	No description
+Sends an echo `InputEventKey <https://docs.godotengine.org/en/stable/classes/class_inputeventkey.html>`_ event of the last key event.
 
 .. rst-class:: classref-item-separator
 
@@ -395,9 +391,7 @@ You can pass in a receiver if you want to.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **action_up**\ (\ which, strength = 1.0\ ) :ref:`🔗<class_GutInputSender_method_action_up>`
 
-.. container:: contribute
-
-	No description
+Sends a "action up" `InputEventAction <https://docs.godotengine.org/en/stable/classes/class_inputeventaction.html>`_ instance.  ``which`` is the name of the action defined in the Key Map.
 
 .. rst-class:: classref-item-separator
 
@@ -409,9 +403,7 @@ You can pass in a receiver if you want to.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **action_down**\ (\ which, strength = 1.0\ ) :ref:`🔗<class_GutInputSender_method_action_down>`
 
-.. container:: contribute
-
-	No description
+Sends a "action down" `InputEventAction <https://docs.godotengine.org/en/stable/classes/class_inputeventaction.html>`_ instance.  ``which`` is the name of the action defined in the Key Map.
 
 .. rst-class:: classref-item-separator
 
@@ -423,9 +415,7 @@ You can pass in a receiver if you want to.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **mouse_left_button_down**\ (\ position = null, global_position = null\ ) :ref:`🔗<class_GutInputSender_method_mouse_left_button_down>`
 
-.. container:: contribute
-
-	No description
+Sends a "button down" `InputEventMouseButton <https://docs.godotengine.org/en/stable/classes/class_inputeventmousebutton.html>`_ for the left mouse button.
 
 .. rst-class:: classref-item-separator
 
@@ -437,9 +427,7 @@ You can pass in a receiver if you want to.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **mouse_left_button_up**\ (\ position = null, global_position = null\ ) :ref:`🔗<class_GutInputSender_method_mouse_left_button_up>`
 
-.. container:: contribute
-
-	No description
+Sends a "button up" `InputEventMouseButton <https://docs.godotengine.org/en/stable/classes/class_inputeventmousebutton.html>`_ for the left mouse button.
 
 .. rst-class:: classref-item-separator
 
@@ -451,9 +439,7 @@ You can pass in a receiver if you want to.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **mouse_double_click**\ (\ position = null, global_position = null\ ) :ref:`🔗<class_GutInputSender_method_mouse_double_click>`
 
-.. container:: contribute
-
-	No description
+Sends a "double click" `InputEventMouseButton <https://docs.godotengine.org/en/stable/classes/class_inputeventmousebutton.html>`_ for the left mouse button.
 
 .. rst-class:: classref-item-separator
 
@@ -465,9 +451,7 @@ You can pass in a receiver if you want to.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **mouse_right_button_down**\ (\ position = null, global_position = null\ ) :ref:`🔗<class_GutInputSender_method_mouse_right_button_down>`
 
-.. container:: contribute
-
-	No description
+Sends a "button down" `InputEventMouseButton <https://docs.godotengine.org/en/stable/classes/class_inputeventmousebutton.html>`_ for the right mouse button.
 
 .. rst-class:: classref-item-separator
 
@@ -479,9 +463,7 @@ You can pass in a receiver if you want to.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **mouse_right_button_up**\ (\ position = null, global_position = null\ ) :ref:`🔗<class_GutInputSender_method_mouse_right_button_up>`
 
-.. container:: contribute
-
-	No description
+Sends a "button up" `InputEventMouseButton <https://docs.godotengine.org/en/stable/classes/class_inputeventmousebutton.html>`_ for the right mouse button.
 
 .. rst-class:: classref-item-separator
 
@@ -493,9 +475,7 @@ You can pass in a receiver if you want to.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **mouse_motion**\ (\ position, global_position = null\ ) :ref:`🔗<class_GutInputSender_method_mouse_motion>`
 
-.. container:: contribute
-
-	No description
+Sends a `InputEventMouseMotion <https://docs.godotengine.org/en/stable/classes/class_inputeventmousemotion.html>`_ to move the mouse the specified positions.
 
 .. rst-class:: classref-item-separator
 
@@ -507,9 +487,7 @@ You can pass in a receiver if you want to.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **mouse_relative_motion**\ (\ offset, speed = Vector2(0, 0)\ ) :ref:`🔗<class_GutInputSender_method_mouse_relative_motion>`
 
-.. container:: contribute
-
-	No description
+Sends a `InputEventMouseMotion <https://docs.godotengine.org/en/stable/classes/class_inputeventmousemotion.html>`_ that moves the mouse ``offset`` from the last :ref:`mouse_motion<class_GutInputSender_method_mouse_motion>` or :ref:`mouse_set_position<class_GutInputSender_method_mouse_set_position>` call.
 
 .. rst-class:: classref-item-separator
 
@@ -521,9 +499,7 @@ You can pass in a receiver if you want to.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **mouse_set_position**\ (\ position, global_position = null\ ) :ref:`🔗<class_GutInputSender_method_mouse_set_position>`
 
-.. container:: contribute
-
-	No description
+Sets the mouse's position.  This does not send an event.  This position will be used for the next call to :ref:`mouse_relative_motion<class_GutInputSender_method_mouse_relative_motion>`.
 
 .. rst-class:: classref-item-separator
 
@@ -535,9 +511,7 @@ You can pass in a receiver if you want to.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **mouse_left_click_at**\ (\ where, duration = "5f"\ ) :ref:`🔗<class_GutInputSender_method_mouse_left_click_at>`
 
-.. container:: contribute
-
-	No description
+Performs a left click at the given position.
 
 .. rst-class:: classref-item-separator
 
@@ -549,9 +523,7 @@ You can pass in a receiver if you want to.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **send_event**\ (\ event\ ) :ref:`🔗<class_GutInputSender_method_send_event>`
 
-.. container:: contribute
-
-	No description
+Create your own event and use this to send it to all receivers.
 
 .. rst-class:: classref-item-separator
 
@@ -563,9 +535,11 @@ You can pass in a receiver if you want to.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **release_all**\ (\ ) :ref:`🔗<class_GutInputSender_method_release_all>`
 
-.. container:: contribute
+Releases all `InputEventKey <https://docs.godotengine.org/en/stable/classes/class_inputeventkey.html>`_, `InputEventAction <https://docs.godotengine.org/en/stable/classes/class_inputeventaction.html>`_, and `InputEventMouseButton <https://docs.godotengine.org/en/stable/classes/class_inputeventmousebutton.html>`_ events that have passed through this instance.  These events could have been generated via the various ``_down`` methods or passed to :ref:`send_event<class_GutInputSender_method_send_event>`. 
 
-	No description
+
+
+This will send the "release" event (``pressed = false``) to all receivers.  This should be done between each test when using `Input` as a receiver.
 
 .. rst-class:: classref-item-separator
 
@@ -577,9 +551,7 @@ You can pass in a receiver if you want to.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_frames**\ (\ num_frames\ ) :ref:`🔗<class_GutInputSender_method_wait_frames>`
 
-.. container:: contribute
-
-	No description
+Same as :ref:`wait<class_GutInputSender_method_wait>` but only accepts a number of frames to wait.
 
 .. rst-class:: classref-item-separator
 
@@ -591,9 +563,7 @@ You can pass in a receiver if you want to.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_secs**\ (\ num_secs\ ) :ref:`🔗<class_GutInputSender_method_wait_secs>`
 
-.. container:: contribute
-
-	No description
+Same as :ref:`wait<class_GutInputSender_method_wait>` but only accepts a number of seconds to wait.
 
 .. rst-class:: classref-item-separator
 
@@ -605,9 +575,11 @@ You can pass in a receiver if you want to.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **hold_for**\ (\ duration\ ) :ref:`🔗<class_GutInputSender_method_hold_for>`
 
-.. container:: contribute
+This is a special :ref:`wait<class_GutInputSender_method_wait>` that will emit the previous input queue item with ``pressed = false`` after a delay.  If you pass a number then it will wait that many seconds.  You can also use the `"4f"` format to wait a specific number of frames. 
 
-	No description
+
+
+For example ``sender.action_down('jump').hold_for("10f")`` will cause two `InputEventAction <https://docs.godotengine.org/en/stable/classes/class_inputeventaction.html>`_ instances to be sent.  The "jump-down" event from :ref:`action_down<class_GutInputSender_method_action_down>` and then a "jump-up" event after 10 frames.
 
 .. |virtual| replace:: :abbr:`virtual (This method should typically be overridden by the user to have any effect.)`
 .. |const| replace:: :abbr:`const (This method has no side effects. It doesn't modify any of the instance's member variables.)`

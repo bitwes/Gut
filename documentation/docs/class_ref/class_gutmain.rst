@@ -17,7 +17,13 @@ The GUT brains.
 Description
 -----------
 
-This is responsible for everything.  There aren't a lot of things you should be doing with this, but there are some edge cases where you can/should interact with the instance of this that is making all the magic happen.
+Most of this class is for internal use only.  Features that can be used are have descriptions and can be accessed through the :ref:`GutTest.gut<class_GutTest_property_gut>` variable in your test scripts (extends :ref:`GutTest<class_GutTest>`). The wiki page for this class contains only the usable features. 
+
+
+
+GUT Wiki:  `https://gut.readthedocs.io <https://gut.readthedocs.io>`__ 
+
+
 
 .. rst-class:: classref-reftable-group
 
@@ -27,11 +33,9 @@ Properties
 .. table::
    :widths: auto
 
-   +--------------------------------------------------------------------------------+----------------------------------------------------------------+----------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`log_level<class_GutMain_property_log_level>`             | ``_log_level`` |
-   +--------------------------------------------------------------------------------+----------------------------------------------------------------+----------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`add_children_to<class_GutMain_property_add_children_to>` | ``<unknown>``  |
-   +--------------------------------------------------------------------------------+----------------------------------------------------------------+----------------+
+   +--------------------------------------------------------------------------------+----------------------------------------------------+----------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`log_level<class_GutMain_property_log_level>` | ``_log_level`` |
+   +--------------------------------------------------------------------------------+----------------------------------------------------+----------------+
 
 .. rst-class:: classref-reftable-group
 
@@ -76,23 +80,6 @@ Property Descriptions
 - `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **@log_level_getter**\ (\ )
 
 The log detail level.  Valid values are 0 - 2.  Larger values do not matter.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutMain_property_add_children_to:
-
-.. rst-class:: classref-property
-
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **add_children_to** = ``<unknown>`` :ref:`🔗<class_GutMain_property_add_children_to>`
-
-.. rst-class:: classref-property-setget
-
-- |void| **@add_children_to_setter**\ (\ value\ )
-- `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **@add_children_to_getter**\ (\ )
-
-Sets the object that GUT will add test objects to as it creates them.  The default is self, but can be set to other objects so that GUT is not obscured by the objects added during tests.
 
 .. rst-class:: classref-section-separator
 

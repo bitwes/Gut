@@ -52,8 +52,8 @@ There is also a VSCode plugin that you can use to run tests directly from VSCode
 
 
 ## Where to next?
+* [Quick Start](Quick-Start)
 * [Creating Tests](Creating-Tests)
 * [Command Line](Command-Line)
-* [Gut Settings and Methods](Gut-Settings-And-Methods)
-* [Quick Start](Quick-Start)
+
 
