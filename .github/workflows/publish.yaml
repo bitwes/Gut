@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: coffeebeats/godot-infra/package-addon@main
+      - uses: coffeebeats/godot-infra/package-addon@v1
         with:
           subfolder: gut
           target-branch: "godot-v4.3"
