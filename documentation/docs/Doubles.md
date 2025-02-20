@@ -52,7 +52,7 @@ Inner Classes cannot be automatically detected and therefore must be registered 
 
 ```gdscript
 # Given that SomeScript contains the class InnerClass that
-# you wish to to double:
+# you wish to double:
 var SomeScript = load('res://some_script.gd')
 
 func before_all():

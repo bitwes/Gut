@@ -61,7 +61,7 @@ If you pass a string then an error message will be printed and `double` will ret
 ### Doubling Inner Classes
 The `double` method no longer supports strings for the path of the base script or a string of the name of the Inner Class.  You must call `register_inner_classes` then pass the Inner Class to `double`.  You only have to do this once, so it is best to call it in `before_all` or a pre-hook script.  Registering multiple times does nothing.  Failing to call `register_inner_classes` will result in a GUT error and a runtime error.
 ```gdscript
-# Given that SomeScript contains the class InnerClass that you wish to to double:
+# Given that SomeScript contains the class InnerClass that you wish to double:
 var SomeScript = load('res://some_script.gd')
 
 func before_all():

@@ -22,7 +22,7 @@ Quick Example:
 ``` gdscript
 func test_something():
   # add_child_autofree will add the result of SuperNeatNode.new to the tree,
-  # mark to to be freed after the test, and return the instance created by
+  # mark it to be freed after the test, and return the instance created by
   # SuperNeatNode.new().
   var my_node = add_child_autofree(SuperNeatNode.new())
   assert_not_null(my_node)
