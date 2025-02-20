@@ -89,6 +89,7 @@ The class reference documentation generation toolkit wrapper script requires:
 Before generating class reference:
 * The project must have been opened in the editor or you have run an import (`godot --import`).  No xml files will be generated if not.
 * You must have created the docker image already, per the directions above.
+* The environment variable "GODOT" must be set to the godot executable.
 
 
 ## Execution

@@ -43,7 +43,14 @@ function generate_xml(){
     # soon (fixed merged after 4.3).  So we wait 2 seconds +1 seconds (-k 1s)
     # using gtimeout (which is mac version of timeout from coreutils) and then
     # kill it (-k 1s).
-    gtimeout -k 1s 2s $GODOT --doctool $the_dir --no-docbase --gdscript-docs $scripts_dir
+    case $OSTYPE in
+        linux-gnu)
+            timeout -k 1s 2s $GODOT --doctool $the_dir --no-docbase --gdscript-docs $scripts_dir
+        ;;
+        darwin)
+            gtimeout -k 1s 2s $GODOT --doctool $the_dir --no-docbase --gdscript-docs $scripts_dir
+        ;;
+    esac
 
     printdir $the_dir
 }
