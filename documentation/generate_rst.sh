@@ -44,11 +44,11 @@ function generate_xml(){
     # using gtimeout (which is mac version of timeout from coreutils) and then
     # kill it (-k 1s).
     case $OSTYPE in
-        linux-gnu)
-            timeout -k 1s 2s $GODOT --doctool $the_dir --no-docbase --gdscript-docs $scripts_dir
-        ;;
-        darwin)
+        "darwin"*)
             gtimeout -k 1s 2s $GODOT --doctool $the_dir --no-docbase --gdscript-docs $scripts_dir
+        ;;
+        *)
+            timeout -k 1s 2s $GODOT --doctool $the_dir --no-docbase --gdscript-docs $scripts_dir
         ;;
     esac
 
