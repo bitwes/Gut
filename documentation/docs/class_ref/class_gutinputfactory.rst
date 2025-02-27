@@ -10,7 +10,7 @@ GutInputFactory
 
 **Inherits:** `RefCounted <https://docs.godotengine.org/en/stable/classes/class_refcounted.html>`_
 
-Static class full of helper methods to make InputEvent instances
+Static class full of helper methods to make InputEvent instances.
 
 .. rst-class:: classref-introduction-group
 
@@ -68,7 +68,7 @@ Method Descriptions
 
 `InputEventMouseButton <https://docs.godotengine.org/en/stable/classes/class_inputeventmousebutton.html>`_ **new_mouse_button_event**\ (\ position, global_position, pressed, button_index\ ) |static| :ref:`🔗<class_GutInputFactory_method_new_mouse_button_event>`
 
-Creates a new button with the properties given
+Creates a new button with the given propoerties.
 
 .. rst-class:: classref-item-separator
 

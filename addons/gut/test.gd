@@ -471,7 +471,7 @@ func set_double_strategy(double_strategy):
 ## [br]
 ## Sometimes you get lazy, and you don't remove calls to
 ## [code skip-lint]pause_before_teardown[/code] after you are done with them.  You can
-## tell GUT to ignore calls to to this method through the panel or
+## tell GUT to ignore calls to this method through the panel or
 ## the command line.  Setting this in your `.gutconfig.json` file is recommended
 ## for CI/CD Pipelines.
 func pause_before_teardown():
