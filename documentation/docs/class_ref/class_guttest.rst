@@ -586,7 +586,7 @@ Sets the double strategy for all tests in the script.  This should usually be do
 
 This method will cause Gut to pause before it moves on to the next test. This is useful for debugging, for instance if you want to investigate the screen or anything else after a test has finished executing. 
 
-Sometimes you get lazy, and you don't remove calls to ``pause_before_teardown`` after you are done with them.  You can tell GUT to ignore calls to to this method through the panel or the command line.  Setting this in your `.gutconfig.json` file is recommended for CI/CD Pipelines.
+Sometimes you get lazy, and you don't remove calls to ``pause_before_teardown`` after you are done with them.  You can tell GUT to ignore calls to this method through the panel or the command line.  Setting this in your `.gutconfig.json` file is recommended for CI/CD Pipelines.
 
 .. rst-class:: classref-item-separator
 

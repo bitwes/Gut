@@ -1,5 +1,5 @@
 class_name GutInputFactory
-## Static class full of helper methods to make InputEvent instances
+## Static class full of helper methods to make InputEvent instances.
 ##
 ## This thing makes InputEvents.  Enjoy.
 
@@ -26,7 +26,7 @@ static func _to_scancode(which):
 	return key_code
 
 
-## Creates a new button with the properties given
+## Creates a new button with the given propoerties.
 static func new_mouse_button_event(position, global_position, pressed, button_index) -> InputEventMouseButton:
 	var event = InputEventMouseButton.new()
 	event.position = position

@@ -30,7 +30,7 @@ If you don't see an existing directory that matches your needs then you can crea
 
 
 ### Running GUT Tests
-Due to the nature of using the tool to test the tool, there are some are pending or risky.  These ar ebeing cleaned up, but there might be some.  You should run all the tests once before developing to see see which currently exist.
+Due to the nature of using GUT to test GUT, some tests may not work as intended.  These are being cleaned up, but there may still be some left in the codebase.  You should run all the tests once before developing to see which tests are currently in use.
 
 Here's some common errors:
 

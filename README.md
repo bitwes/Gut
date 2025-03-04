@@ -13,19 +13,19 @@
 # GUT 9.3.1 (Godot 4.2)
 GUT (Godot Unit Test) is a unit testing framework for the [Godot Engine](https://godotengine.org/).  It allows you to write tests for your gdscript in gdscript.
 
-GUT versions 9.x are for Godot 4.x
-GUT versions below 9.0.0 (currently 7.4.2) are for Godot 3.x
+GUT versions 9.x are for Godot 4.x.
+GUT versions below 9.0.0 (currently 7.4.2) are for Godot 3.x.
 
 
 # Features
 * Godot 4.0
-* [Simple install](https://gut.readthedocs.io/en/latest/Install.html) via the Asset Library.
-* A plethora of [asserts and utility methods](https://gut.readthedocs.io/en/latest/Asserts-and-Methods.html) to help make your tests simple and concise.
-* Support for [Inner Test Classes](https://gut.readthedocs.io/en/latest/Inner-Test-Classes.html) to give your tests some extra context and maintainability.
+* [Simple install](https://gut.readthedocs.io/en/latest/Install.html) via the Asset Library
+* A plethora of [asserts and utility methods](https://gut.readthedocs.io/en/latest/Asserts-and-Methods.html) to help make your tests simple and concise
+* Support for [Inner Test Classes](https://gut.readthedocs.io/en/latest/Inner-Test-Classes.html) to give your tests some extra context and maintainability
 * Doubling:  [Full](https://gut.readthedocs.io/en/latest/Doubles.html) and [Partial](https://gut.readthedocs.io/en/latest/Partial-Doubles.html), [Stubbing](https://gut.readthedocs.io/en/latest/Stubbing.html), [Spies](https://gut.readthedocs.io/en/latest/Spies.html)
 * Command Line Interface [(CLI)](https://gut.readthedocs.io/en/latest/Command-Line.html)
 * [Parameterized Tests](https://gut.readthedocs.io/en/latest/Parameterized-Tests.html)
-* [Export results](https://gut.readthedocs.io/en/latest/Export-Test-Results.html) in standard JUnit XML format.
+* [Export results](https://gut.readthedocs.io/en/latest/Export-Test-Results.html) in standard JUnit XML format
 
 More info can be found in the [wiki](https://github.com/bitwes/Gut/wiki).
 
@@ -47,7 +47,7 @@ Run your tests directly from the VSCode Editor.  Search VSCode extensions for "g
 
 
 # License
-Gut is provided under the MIT license.  License is in `addons/gut/LICENSE.md`
+Gut is provided under the MIT license.  License is in `addons/gut/LICENSE.md`.
 
 
 ## [Tutorials](https://github.com/bitwes/Gut/wiki/Tutorials.html)
