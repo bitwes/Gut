@@ -1,11 +1,12 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://cop4kedl4jm5c"]
 
-[ext_resource path="res://test/resources/test_assert_setget_test_objects/control_child_mock.gd" type="Script" id=1]
+[sub_resource type="Resource" id="Resource_ilpij"]
+metadata/__load_path__ = "res://test/resources/test_assert_setget_test_objects/control_child_mock.gd"
 
 [node name="HealthBar" type="Control"]
 offset_right = 130.0
 offset_bottom = 46.0
-script = ExtResource( 1 )
+script = SubResource("Resource_ilpij")
 __meta__ = {
 "_edit_use_anchors_": false
 }

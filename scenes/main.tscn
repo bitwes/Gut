@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://cme7ha7tcw3y8"]
 
-[ext_resource type="Script" path="res://scripts/main.gd" id="1"]
+[ext_resource type="Script" uid="uid://lpk3dex2keik" path="res://scripts/main.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://4jb53yqktyfg" path="res://addons/gut/gui/GutControl.tscn" id="2_f2w0u"]
 
 [node name="main" type="Node2D"]

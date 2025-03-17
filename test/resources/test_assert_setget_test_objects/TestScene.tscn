@@ -1,10 +1,10 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=3 format=3 uid="uid://hnbswmh7ent3"]
 
-[ext_resource path="res://test/resources/test_assert_setget_test_objects/test_node.gd" type="Script" id=1]
-[ext_resource path="res://test/resources/test_assert_setget_test_objects/test_scene.gd" type="Script" id=2]
+[ext_resource type="Script" uid="uid://66ynxi0jf6tt" path="res://test/resources/test_assert_setget_test_objects/test_node.gd" id="1"]
+[ext_resource type="Script" uid="uid://both3faeig212" path="res://test/resources/test_assert_setget_test_objects/test_scene.gd" id="2"]
 
 [node name="SceneMock" type="Node2D"]
-script = ExtResource( 2 )
+script = ExtResource("2")
 
 [node name="NodeChildMock" type="Node" parent="."]
-script = ExtResource( 1 )
+script = ExtResource("1")

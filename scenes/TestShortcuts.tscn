@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://cijjo3e8o8mai"]
 
 [ext_resource type="PackedScene" uid="uid://sfb1fw8j6ufu" path="res://addons/gut/gui/ShortcutButton.tscn" id="1"]
-[ext_resource type="Script" path="res://scenes/TestShortcuts.gd" id="2"]
+[ext_resource type="Script" uid="uid://bqgu7qm0xqe2j" path="res://scenes/TestShortcuts.gd" id="2"]
 [ext_resource type="PackedScene" uid="uid://bsk32dh41b4gs" path="res://addons/gut/gui/BottomPanelShortcuts.tscn" id="3_3x1ae"]
 
 [sub_resource type="Shortcut" id="2"]

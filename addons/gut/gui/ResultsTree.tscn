@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dls5r5f6157nq"]
 
-[ext_resource type="Script" path="res://addons/gut/gui/ResultsTree.gd" id="1_b4uub"]
+[ext_resource type="Script" uid="uid://ds1fn6qoirmx4" path="res://addons/gut/gui/ResultsTree.gd" id="1_b4uub"]
 
 [node name="ResultsTree" type="VBoxContainer"]
 custom_minimum_size = Vector2(10, 10)
