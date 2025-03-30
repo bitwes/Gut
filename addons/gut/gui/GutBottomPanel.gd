@@ -271,22 +271,22 @@ func load_result_output():
 	_ctrls.run_results.load_json_results(results)
 
 	var summary_json = results['test_scripts']['props']
-	_ctrls.results.passing.text = str(summary_json.passing)
+	_ctrls.results.passing.text = str(int(summary_json.passing))
 	_ctrls.results.passing.get_parent().visible = true
 
-	_ctrls.results.failing.text = str(summary_json.failures)
+	_ctrls.results.failing.text = str(int(summary_json.failures))
 	_ctrls.results.failing.get_parent().visible = true
 
-	_ctrls.results.pending.text = str(summary_json.pending)
+	_ctrls.results.pending.text = str(int(summary_json.pending))
 	_ctrls.results.pending.get_parent().visible = _ctrls.results.pending.text != '0'
 
-	_ctrls.results.errors.text = str(summary_json.errors)
+	_ctrls.results.errors.text = str(int(summary_json.errors))
 	_ctrls.results.errors.get_parent().visible = _ctrls.results.errors.text != '0'
 
-	_ctrls.results.warnings.text = str(summary_json.warnings)
+	_ctrls.results.warnings.text = str(int(summary_json.warnings))
 	_ctrls.results.warnings.get_parent().visible = _ctrls.results.warnings.text != '0'
 
-	_ctrls.results.orphans.text = str(summary_json.orphans)
+	_ctrls.results.orphans.text = str(int(summary_json.orphans))
 	_ctrls.results.orphans.get_parent().visible = _ctrls.results.orphans.text != '0' and !_gut_config.options.hide_orphans
 
 	if(summary_json.tests == 0):

@@ -391,7 +391,7 @@ class TestValuesDictionary:
 		var op = OptParse.new()
 		op.add_positional("first", 'asdf', 'the first one')
 		op.parse()
-		assert_eq(op.values.first, 'asdf')
+		assert_eq(op.values.first, 'asdf', 'This fails when run through the editor.')
 
 	func test_values_contains_positional_arguments_value():
 		var op = OptParse.new()
