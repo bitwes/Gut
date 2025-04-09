@@ -9,6 +9,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * New `class_name`s:
   * `GutInputFactory` for `res://addons/gut/gut_input_factory.gd` static class.
 
+## Bug Fixes
+* I192 in just under 5 years I moved the two lines of code up some to finally fix this.
 
 # 9.3.1
 A small collection of bug fixes and documentation.  GUT can now generate documentation from code comments.

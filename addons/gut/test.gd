@@ -1746,14 +1746,14 @@ func assert_called(inst, method_name=null, parameters=null):
 		return
 
 	var disp = str('Expected [',converted.method_name,'] to have been called on ',_str(converted.object))
+	if(converted.arguments != null):
+		disp += str(' with parameters ', converted.arguments)
 
 	if(_fail_if_not_double_or_does_not_have_method(converted.object, converted.method_name) == OK):
 		if(gut.get_spy().was_called(
 			converted.object, converted.method_name, converted.arguments)):
 			_pass(disp)
 		else:
-			if(converted.arguments != null):
-				disp += str(' with parameters ', converted.arguments)
 			_fail(str(disp, "\n", _get_desc_of_calls_to_instance(converted.object)))
 
 
