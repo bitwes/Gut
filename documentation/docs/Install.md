@@ -12,7 +12,6 @@ GUT is a Godot Plugin.  You can download it directly or install it from the Asse
 
 Finish the install by following the instructions in [Setup](#setup) below.
 
-
 ## Download and install
 Download the zip from the [releases](https://github.com/bitwes/gut/releases) or from the [Godot Asset Library](https://godotengine.org/asset-library/asset/54).
 
@@ -20,6 +19,9 @@ Extract the zip and place the `gut` directory into your `addons` directory in yo
 
 Finish the install by following the instructions in Setup below.
 
+## Installing via this repository
+You can also use GUT by cloning this repository or adding it as a git submodule.
+Just add a symlink `res://addons/gut` in your project that points to `Gut/addons/gut`.
 
 ## Setup
 ### Activate
