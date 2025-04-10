@@ -19,16 +19,9 @@ Extract the zip and place the `gut` directory into your `addons` directory in yo
 
 Finish the install by following the instructions in Setup below.
 
-## Installing as git submodule
-Because GUT is developed in the `res://addons/gut` directory of this project, resources in this repository are referenced as `res://addons/gut/...`. If this repository is installed as a git submodule in `res://addons`, those paths are now invalid, as the path to them would now be `res://addons/gut/addons/gut/...`.
-
-In order to install GUT as a git submodule, then, you can use a single symlink to keep all the resource paths in GUT valid. Follow these steps:
-1. Add GUT as a git submodule (`git submodule add https://github.com/bitwes/Gut.git <submodule location>`).
-2. Symlink GUT's source to your project's addons (`ln -s <submodule location>/addons/gut addons/gut`).
-
-Godot (as of version 4.4) will detect that the submodule contains a Godot project and will give a warning noting that it will not attempt to parse this folder (which also means that the submodule will not show up in Godot's file tree). However, because the symlink you've created goes into GUT's source and skips the project file, Godot will parse GUT's source and you can use it like normal.
-
-If you'd prefer not to see this warning, you can manually tell Godot not to parse the submodule by placing the submodule in a directory and adding an empty file named `.gdignore` in that directory.
+## Installing via this repository
+You can also use GUT by cloning this repository or adding it as a git submodule.
+Just add a symlink `res://addons/gut` in your project that points to `Gut/addons/gut`.
 
 ## Setup
 ### Activate
