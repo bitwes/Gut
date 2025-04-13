@@ -19,11 +19,16 @@ var scripts = []
 
 
 func _does_inherit_from_test(thing):
+
+	if (thing.get_class() == 'CSharpScript'):
+		var cs_inspector = load('res://addons/gut/CSharpScriptInspector.cs').new()
+		var ret = cs_inspector.InheritsFromTest(thing)
+
 	var base_script = thing.get_base_script()
 	var to_return = false
 	if(base_script != null):
 		var base_path = base_script.get_path()
-		if(base_path == 'res://addons/gut/test.gd'):
+		if(base_path == 'res://addons/gut/test.gd' or base_path == 'res://addons/gut/GutTest.cs'):
 			to_return = true
 		else:
 			to_return = _does_inherit_from_test(base_script)
@@ -100,6 +105,7 @@ func _parse_script(test_script):
 # Public
 # -----------------
 func add_script(path):
+	print('script path: ', path)
 	# SHORTCIRCUIT
 	if(has_script(path)):
 		return []
