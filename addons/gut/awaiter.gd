@@ -83,6 +83,7 @@ func _signal_callback(
 	# signal_watcher doesn't get the signal in time if we don't do this.
 	_wait_physics_frames = 2
 
+
 func wait_seconds(x):
 	_did_last_wait_timeout = false
 	_wait_time = x
@@ -99,7 +100,6 @@ func wait_physics_frames(x):
 	_did_last_wait_timeout = false
 	_wait_physics_frames = x
 	wait_started.emit()
-
 
 
 func wait_for_signal(the_signal, max_time):

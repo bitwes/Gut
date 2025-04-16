@@ -82,7 +82,7 @@ func test_illustrate():
 
 	# If we use get_tree().root when calling illustrate, then all the signal
 	# asserts in other tests will fail and I have no idea why.
-	await wait_frames(10)
+	await wait_physics_frames(10)
 	await illustrate(btn)
 	assert_called(btn, '_on_button_up')
 	assert_signal_emitted(btn, 'button_down')

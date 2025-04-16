@@ -286,7 +286,7 @@ class TestMisc:
 	func test_gut_does_not_make_orphans_when_freed_before_in_tree():
 		var g = new_gut()
 		g.free()
-		await wait_frames(2)
+		await wait_physics_frames(2)
 		assert_no_new_orphans()
 
 
@@ -662,7 +662,7 @@ class TestEverythingElse:
 		gr.test_gut.test_scripts()
 		assert_eq(gr.test_gut.get_test_count(), 0, 'test should not be run')
 		assert_errored(gr.test_gut, -1)
-	
+
 	func test_awaiting_in_the_pre_hook_script():
 		var pre_run_script = load("res://test/resources/awaiting_pre_run_script.gd")
 		gr.test_gut.pre_run_script = "res://test/resources/awaiting_pre_run_script.gd"
@@ -670,7 +670,7 @@ class TestEverythingElse:
 		gr.test_gut.test_scripts()
 		await wait_for_signal(gr.test_gut.start_run, 3, "It should take exactly 1 second.")
 		assert_true(gr.test_gut.get_pre_run_script_instance().awaited, "Pre-run script awaited.")
-	
+
 	func test_awaiting_in_the_post_hook_script():
 		var pre_run_script = load("res://test/resources/awaiting_post_run_script.gd")
 		gr.test_gut.post_run_script = "res://test/resources/awaiting_post_run_script.gd"

@@ -54,8 +54,8 @@ class TestMemoryMgmt:
 	func test_GutTest_with_waits():
 		var t = GutTest.new()
 		add_child(t)
-		await wait_frames(10)
+		await wait_physics_frames(10)
 		t.free()
-		await wait_frames(10)
+		await wait_physics_frames(10)
 		assert_no_new_orphans()
 

@@ -51,7 +51,7 @@ class TestInputSingleton:
 	func before_all():
 		_sender.release_all()
 		_sender.clear()
-		await wait_frames(10)
+		await wait_physics_frames(10)
 		InputMap.add_action("jump")
 
 
@@ -63,7 +63,7 @@ class TestInputSingleton:
 		_sender.release_all()
 		# Wait for key release to be processed. Otherwise the key release is
 		# leaked to the next test and it detects an extra key release.
-		await wait_frames(1)
+		await wait_physics_frames(1)
 		_sender.clear()
 
 
@@ -71,7 +71,7 @@ class TestInputSingleton:
 		var r = add_child_autofree(InputSingletonTracker.new())
 
 		Input.action_press("jump")
-		await wait_frames(2)
+		await wait_physics_frames(2)
 		Input.action_release("jump")
 
 		# see inner-test-class note
@@ -89,7 +89,7 @@ class TestInputSingleton:
 		var r = add_child_autofree(InputSingletonTracker.new())
 
 		_sender.action_down("jump").hold_for("20f")
-		await wait_frames(5)
+		await wait_physics_frames(5)
 
 		assert_eq(r.just_pressed_count, 1, 'just pressed once')
 		assert_eq(r.just_released_count, 0, 'not released yet')

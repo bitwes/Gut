@@ -67,7 +67,7 @@ class TestMiscTests:
 	func test_when_leaves_tree_awaiter_is_freed():
 		add_child(gr.test)
 		remove_child(gr.test)
-		await wait_frames(10)
+		await wait_physics_frames(10)
 		assert_freed(gr.test._awaiter, 'awaiter')
 
 
@@ -1448,7 +1448,7 @@ class TestReplaceNode:
 	func after_each():
 		# Things get queue_free in these tests and show up as orphans when they
 		# actually aren't, so wait for them to free.
-		await wait_frames(10)
+		await wait_physics_frames(10)
 		super.after_each()
 
 	func test_can_replace_node():
@@ -1477,7 +1477,7 @@ class TestReplaceNode:
 		var old = _arena.get_sword()
 		gr.test.replace_node(_arena, 'Player1/Sword', replacement)
 		# object is freed using queue_free, so we have to wait for it to go away
-		await wait_frames(20)
+		await wait_physics_frames(20)
 		assert_true(GutUtils.is_freed(old))
 
 	func test_replaced_node_retains_groups():
@@ -1697,7 +1697,7 @@ class TestMemoryMgmt:
 		assert_eq(n.get_parent(), self, 'added as child')
 		gut.get_autofree().free_all()
 		assert_not_freed(n, 'node') # should not be freed until we wait
-		await wait_frames(10)
+		await wait_physics_frames(10)
 		assert_freed(n, 'node')
 		assert_no_new_orphans()
 

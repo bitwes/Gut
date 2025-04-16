@@ -14,7 +14,7 @@ class TimedSignaler:
 		_timer.one_shot = true
 
 	func _on_timer_timeout():
-		print(self, " emitting the_signal")
+		# print(self, " emitting the_signal")
 		the_signal.emit()
 
 	func emit_after(time):
