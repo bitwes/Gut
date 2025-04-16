@@ -241,7 +241,9 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_for_signal<class_GutTest_method_wait_for_signal>`\ (\ sig\: `Signal <https://docs.godotengine.org/en/stable/classes/class_signal.html>`_, max_wait, msg = ""\ )                                                                                       |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_frames<class_GutTest_method_wait_frames>`\ (\ frames, msg = ""\ )                                                                                                                                                                                     |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_physics_frames<class_GutTest_method_wait_physics_frames>`\ (\ frames, msg = ""\ )                                                                                                                                                                     |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_process_frames<class_GutTest_method_wait_process_frames>`\ (\ frames, msg = ""\ )                                                                                                                                                                     |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_seconds<class_GutTest_method_wait_seconds>`\ (\ time, msg = ""\ )                                                                                                                                                                                     |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -263,6 +265,8 @@ Methods
    | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`double_scene<class_GutTest_method_double_scene>`\ (\ path, strategy = null\ )                                                     |
    +------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
    | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`double_script<class_GutTest_method_double_script>`\ (\ path, strategy = null\ )                                                   |
+   +------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+   | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_frames<class_GutTest_method_wait_frames>`\ (\ frames, msg = ""\ )                                                            |
    +------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
    | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`yield_for<class_GutTest_method_yield_for>`\ (\ time, msg = ""\ )                                                                  |
    +------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
@@ -1956,9 +1960,33 @@ See `Awaiting <../Awaiting.html>`__
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_frames**\ (\ frames, msg = ""\ ) :ref:`🔗<class_GutTest_method_wait_frames>`
 
-Use with await to wait a number of frames.  The optional message will be printed
+**Deprecated:** This method may be changed or removed in future versions.
 
-See `Awaiting <../Awaiting.html>`__
+Use wait_physics_frames or wait_process_frames See `Awaiting <../Awaiting.html>`__
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_wait_physics_frames:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_physics_frames**\ (\ frames, msg = ""\ ) :ref:`🔗<class_GutTest_method_wait_physics_frames>`
+
+Use this with await to pause execution for a number of physics frames (counted in _physics_process). See `Awaiting <../Awaiting.html>`__
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_wait_process_frames:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_process_frames**\ (\ frames, msg = ""\ ) :ref:`🔗<class_GutTest_method_wait_process_frames>`
+
+Use this with await to pause execution for a number of idle/process frames (counted in _process(delta)) See `Awaiting <../Awaiting.html>`__
 
 .. rst-class:: classref-item-separator
 

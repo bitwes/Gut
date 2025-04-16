@@ -22,6 +22,9 @@ var _elapsed_frames := 0
 
 
 func _process(_delta: float) -> void:
+	# TODO:  The `process_frame` signal on SceneTree fires before _process
+	# is called (same for physics_frame).  It might be more consistent to
+	# connect to that signal and increment then.
 	if(_wait_process_frames > 0):
 		_elapsed_frames += 1
 		if(_elapsed_frames >= _wait_process_frames):

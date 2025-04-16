@@ -2025,14 +2025,18 @@ func wait_for_signal(sig : Signal, max_wait, msg=''):
 	return !_awaiter.did_last_wait_timeout
 
 
-## Use with await to wait a number of frames.  The optional message will be
-## printed[br]
+## @deprecated
+## Use wait_physics_frames or wait_process_frames
 ## See [wiki]Awaiting[/wiki]
 func wait_frames(frames, msg=''):
-	_lgr.deprecated("wait_frames has been replaced with wait_physics_frames which is counted in _physics_process.  wait_process_frames has also been added which is counted in _process.")
+	_lgr.deprecated("wait_frames has been replaced with wait_physics_frames which is counted in _physics_process.  " +
+		"wait_process_frames has also been added which is counted in _process.")
 	return wait_physics_frames(frames, msg)
 
 
+## Use this with await to pause execution for a number of physics frames
+## (counted in _physics_process).
+## See [wiki]Awaiting[/wiki]
 func wait_physics_frames(frames, msg=''):
 	if(frames <= 0):
 		var text = str('wait_physics_frames:  frames must be > 0, you passed  ', frames, '.  1 frames waited.')
@@ -2044,6 +2048,9 @@ func wait_physics_frames(frames, msg=''):
 	return _awaiter.timeout
 
 
+## Use this with await to pause execution for a number of idle/process frames
+## (counted in _process(delta))
+## See [wiki]Awaiting[/wiki]
 func wait_process_frames(frames, msg=''):
 	if(frames <= 0):
 		var text = str('wait_process_frames:  frames must be > 0, you passed  ', frames, '.  1 frames waited.')
@@ -2053,7 +2060,6 @@ func wait_process_frames(frames, msg=''):
 	_lgr.yield_msg(str('-- Awaiting ', frames, ' frame(s) -- ', msg))
 	_awaiter.wait_process_frames(frames)
 	return _awaiter.timeout
-
 
 
 ## Use with await to wait for the passed in callable to return true or a maximum

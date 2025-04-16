@@ -204,9 +204,13 @@ You can `await` to a signal or an amount of time, whichever comes first with `wa
 var my_obj = load('res://my_obj.gd').new()
 await wait_for_signal(my_obj.some_signal, 3)
 ```
-You can also `await` for a number of frames using `wait_frames`.  It's best to wait at least 2 frames as waiting one frame can be flaky.
+You can also `await` for a number of physics frames using `wait_physics_frames`.  It's best to wait at least 2 frames as waiting one frame can be flaky.
+```gdscript
+await wait_physics_frames(5)
 ```
-await wait_frames(5)
+Or a number of idle/process frames using `wait_process_frames`.
+```gdscript
+await wait_process_frames(10)
 ```
 
 ## Leak Testing and Memory Management

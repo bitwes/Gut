@@ -6,8 +6,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Features
 * Utilized the adapted Godot tools that generate HTML from code comments, moving some documentation to code comments.  This makes more documentation easily accessible from the editor and cuts down on some duplicate documentation.
+* `wait_process_frames` added.  This counts frames in `_process` instead of `_physics_process`.  `wait_frames` has been renamed (deprecated) to `wait_physics_frames`.
 * New `class_name`s:
   * `GutInputFactory` for `res://addons/gut/gut_input_factory.gd` static class.
+
 
 ## Bug Fixes
 * I192 in just under 5 years I moved the two lines of code up some to finally fix this.
