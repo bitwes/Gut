@@ -4,7 +4,8 @@ signal timeout
 signal wait_started
 
 var _wait_time := 0.0
-var _wait_frames := 0
+var _wait_idle_frames := 0
+var _wait_physics_frames := 0
 var _signal_to_wait_on = null
 
 var _predicate_function_waiting_to_be_true = null
@@ -20,15 +21,22 @@ var _elapsed_time := 0.0
 var _elapsed_frames := 0
 
 
+func _process(_delta: float) -> void:
+	if(_wait_idle_frames > 0):
+		_elapsed_frames += 1
+		if(_elapsed_frames >= _wait_idle_frames):
+			_end_wait()
+
+
 func _physics_process(delta):
 	if(_wait_time != 0.0):
 		_elapsed_time += delta
 		if(_elapsed_time >= _wait_time):
 			_end_wait()
 
-	if(_wait_frames != 0):
+	if(_wait_physics_frames != 0):
 		_elapsed_frames += 1
-		if(_elapsed_frames >= _wait_frames):
+		if(_elapsed_frames >= _wait_physics_frames):
 			_end_wait()
 
 	if(_predicate_function_waiting_to_be_true != null):
@@ -45,14 +53,17 @@ func _end_wait():
 	# when waiting on a signal do not cause a false negative for timing out.
 	if(_wait_time > 0):
 		_did_last_wait_timeout = _elapsed_time >= _wait_time
-	elif(_wait_frames > 0):
-		_did_last_wait_timeout = _elapsed_frames >= _wait_frames
+	elif(_wait_physics_frames > 0):
+		_did_last_wait_timeout = _elapsed_frames >= _wait_physics_frames
+	elif(_wait_idle_frames > 0):
+		_did_last_wait_timeout = _elapsed_frames >= _wait_idle_frames
 
 	if(_signal_to_wait_on != null and _signal_to_wait_on.is_connected(_signal_callback)):
 		_signal_to_wait_on.disconnect(_signal_callback)
 
+	_wait_idle_frames = 0
 	_wait_time = 0.0
-	_wait_frames = 0
+	_wait_physics_frames = 0
 	_signal_to_wait_on = null
 	_predicate_function_waiting_to_be_true = null
 	_elapsed_time = 0.0
@@ -70,7 +81,7 @@ func _signal_callback(
 	# DO NOT _end_wait here.  For other parts of the test to get the signal that
 	# was waited on, we have to wait for a couple more frames.  For example, the
 	# signal_watcher doesn't get the signal in time if we don't do this.
-	_wait_frames = 2
+	_wait_physics_frames = 2
 
 func wait_seconds(x):
 	_did_last_wait_timeout = false
@@ -78,10 +89,17 @@ func wait_seconds(x):
 	wait_started.emit()
 
 
-func wait_frames(x):
+func wait_idle_frames(x):
 	_did_last_wait_timeout = false
-	_wait_frames = x
+	_wait_idle_frames = x
 	wait_started.emit()
+
+
+func wait_physics_frames(x):
+	_did_last_wait_timeout = false
+	_wait_physics_frames = x
+	wait_started.emit()
+
 
 
 func wait_for_signal(the_signal, max_time):
@@ -102,4 +120,4 @@ func wait_until(predicate_function: Callable, max_time, time_between_calls:=0.0)
 
 
 func is_waiting():
-	return _wait_time != 0.0 || _wait_frames != 0
+	return _wait_time != 0.0 || _wait_physics_frames != 0

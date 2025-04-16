@@ -2029,14 +2029,31 @@ func wait_for_signal(sig : Signal, max_wait, msg=''):
 ## printed[br]
 ## See [wiki]Awaiting[/wiki]
 func wait_frames(frames, msg=''):
+	_lgr.deprecated("wait_frames has been replaced with wait_physics_frames which is counted in _physics_process.  wait_idle_frames has also been added which is counted in _process.")
+	return wait_physics_frames(frames, msg)
+
+
+func wait_physics_frames(frames, msg=''):
 	if(frames <= 0):
-		var text = str('wait_frames:  frames must be > 0, you passed  ', frames, '.  0 frames waited.')
+		var text = str('wait_physics_frames:  frames must be > 0, you passed  ', frames, '.  1 frames waited.')
 		_lgr.error(text)
 		frames = 1
 
 	_lgr.yield_msg(str('-- Awaiting ', frames, ' frame(s) -- ', msg))
-	_awaiter.wait_frames(frames)
+	_awaiter.wait_physics_frames(frames)
 	return _awaiter.timeout
+
+
+func wait_idle_frames(frames, msg=''):
+	if(frames <= 0):
+		var text = str('wait_idle_frames:  frames must be > 0, you passed  ', frames, '.  1 frames waited.')
+		_lgr.error(text)
+		frames = 1
+
+	_lgr.yield_msg(str('-- Awaiting ', frames, ' frame(s) -- ', msg))
+	_awaiter.wait_idle_frames(frames)
+	return _awaiter.timeout
+
 
 
 ## Use with await to wait for the passed in callable to return true or a maximum
