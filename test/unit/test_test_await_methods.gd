@@ -96,8 +96,8 @@ class TestTheNewWaitMethods:
 		await wait_physics_frames(30)
 		assert_between(counter.physics_frames, 29, 31)
 
-	func test_wait_idle_frames_waits_for_x_frames():
-		await wait_idle_frames(30)
+	func test_wait_process_frames_waits_for_x_frames():
+		await wait_process_frames(30)
 		assert_between(counter.idle_frames, 29, 31)
 
 	func test_wait_to_ends_when_signal_emitted():

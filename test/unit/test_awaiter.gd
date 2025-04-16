@@ -86,11 +86,11 @@ func test_wait_for_resets_did_last_wait_timeout():
 
 
 
-func test_wait_idle_frames_counts_frames_in_process(_x = run_x_times(10)):
+func test_wait_process_frames_counts_frames_in_process(_x = run_x_times(10)):
 	var a = add_child_autoqfree(Awaiter.new())
 	watch_signals(a)
 	a.set_physics_process(false)
-	a.wait_idle_frames(10)
+	a.wait_process_frames(10)
 	var c = add_child_autoqfree(Counter.new())
 	await wait_for_signal(a.timeout, 10)
 	assert_almost_eq(c.idle_frames, 11, 2, 'waited enough frames')
@@ -136,9 +136,9 @@ func test_wait_physics_frames_sets_did_last_wait_timeout_to_true():
 	await a.timeout
 	assert_true(a.did_last_wait_timeout)
 
-func test_wait_idle_frames_sets_did_last_wait_timeout_to_true():
+func test_wait_process_frames_sets_did_last_wait_timeout_to_true():
 	var a = add_child_autoqfree(Awaiter.new())
-	a.wait_idle_frames(10)
+	a.wait_process_frames(10)
 	await a.timeout
 	assert_true(a.did_last_wait_timeout)
 
@@ -150,11 +150,11 @@ func test_wait_physics_frames_resets_did_last_wait_timeout():
 	a.wait_physics_frames(50)
 	assert_false(a.did_last_wait_timeout)
 
-func test_wait_idle_frames_resets_did_last_wait_timeout():
+func test_wait_process_frames_resets_did_last_wait_timeout():
 	var a = add_child_autoqfree(Awaiter.new())
-	a.wait_idle_frames(10)
+	a.wait_process_frames(10)
 	await a.timeout
-	a.wait_idle_frames(50)
+	a.wait_process_frames(50)
 	assert_false(a.did_last_wait_timeout)
 
 

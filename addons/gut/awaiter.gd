@@ -4,7 +4,7 @@ signal timeout
 signal wait_started
 
 var _wait_time := 0.0
-var _wait_idle_frames := 0
+var _wait_process_frames := 0
 var _wait_physics_frames := 0
 var _signal_to_wait_on = null
 
@@ -22,9 +22,9 @@ var _elapsed_frames := 0
 
 
 func _process(_delta: float) -> void:
-	if(_wait_idle_frames > 0):
+	if(_wait_process_frames > 0):
 		_elapsed_frames += 1
-		if(_elapsed_frames >= _wait_idle_frames):
+		if(_elapsed_frames >= _wait_process_frames):
 			_end_wait()
 
 
@@ -55,13 +55,13 @@ func _end_wait():
 		_did_last_wait_timeout = _elapsed_time >= _wait_time
 	elif(_wait_physics_frames > 0):
 		_did_last_wait_timeout = _elapsed_frames >= _wait_physics_frames
-	elif(_wait_idle_frames > 0):
-		_did_last_wait_timeout = _elapsed_frames >= _wait_idle_frames
+	elif(_wait_process_frames > 0):
+		_did_last_wait_timeout = _elapsed_frames >= _wait_process_frames
 
 	if(_signal_to_wait_on != null and _signal_to_wait_on.is_connected(_signal_callback)):
 		_signal_to_wait_on.disconnect(_signal_callback)
 
-	_wait_idle_frames = 0
+	_wait_process_frames = 0
 	_wait_time = 0.0
 	_wait_physics_frames = 0
 	_signal_to_wait_on = null
@@ -90,9 +90,9 @@ func wait_seconds(x):
 	wait_started.emit()
 
 
-func wait_idle_frames(x):
+func wait_process_frames(x):
 	_did_last_wait_timeout = false
-	_wait_idle_frames = x
+	_wait_process_frames = x
 	wait_started.emit()
 
 
