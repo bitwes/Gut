@@ -4,9 +4,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 # 9.4.0
 
+## Potentially Breaking Changes
+* The deprecated `wait_frames` and the new `wait_idle_frames`, `wait_physics_frames` now count frames when the `SceneTree.process_frame` and `SceneTree.physics_frame` signals are emitted.  This may cause some of your awaits to wait a frame too long/short.  This approach is more reliable as it occurs before the `_process` or `_physics_process` is called on anything in the tree.  This means that tree order will not matter and all objects will have finished `_process`/`_physics_process` by the time the await ends.
+
+
 ## Features
 * Utilized the adapted Godot tools that generate HTML from code comments, moving some documentation to code comments.  This makes more documentation easily accessible from the editor and cuts down on some duplicate documentation.
-* `wait_process_frames` added.  This counts frames in `_process` instead of `_physics_process`.  `wait_frames` has been renamed (deprecated) to `wait_physics_frames`.
+* `wait_idle_frames` added.  This counts frames idle/process frames instead of `_physics_process`.  `wait_frames` has been renamed (deprecated) to `wait_physics_frames`.
 * New `class_name`s:
   * `GutInputFactory` for `res://addons/gut/gut_input_factory.gd` static class.
 
@@ -16,6 +20,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * I666 Using a doubled scene as the value of a property with type `PackedScene` could cause errors.
 
 
+## Deprecations
+* `wait_frames` has been deprecated in lieu of the more specific `wait_physics_frames` and `wait_idle_frames`.
 
 
 # 9.3.1

@@ -20,14 +20,28 @@ var did_last_wait_timeout = false :
 var _elapsed_time := 0.0
 var _elapsed_frames := 0
 
+func _ready() -> void:
+	get_tree().process_frame.connect(_on_tree_process_frame)
+	get_tree().physics_frame.connect(_on_tree_physics_frame)
 
-func _process(_delta: float) -> void:
-	# TODO:  The `process_frame` signal on SceneTree fires before _process
-	# is called (same for physics_frame).  It might be more consistent to
-	# connect to that signal and increment then.
+
+func _on_tree_process_frame():
+	# Count frames here instead of in _process so that tree order never
+	# makes a difference and the count/signaling happens outside of
+	# _process being called.
 	if(_wait_process_frames > 0):
 		_elapsed_frames += 1
-		if(_elapsed_frames >= _wait_process_frames):
+		if(_elapsed_frames > _wait_process_frames):
+			_end_wait()
+
+
+func _on_tree_physics_frame():
+	# Count frames here instead of in _physics_process so that tree order never
+	# makes a difference and the count/signaling happens outside of
+	# _physics_process being called.
+	if(_wait_physics_frames != 0):
+		_elapsed_frames += 1
+		if(_elapsed_frames > _wait_physics_frames):
 			_end_wait()
 
 
@@ -35,11 +49,6 @@ func _physics_process(delta):
 	if(_wait_time != 0.0):
 		_elapsed_time += delta
 		if(_elapsed_time >= _wait_time):
-			_end_wait()
-
-	if(_wait_physics_frames != 0):
-		_elapsed_frames += 1
-		if(_elapsed_frames >= _wait_physics_frames):
 			_end_wait()
 
 	if(_predicate_function_waiting_to_be_true != null):
@@ -82,9 +91,9 @@ func _signal_callback(
 
 	_signal_to_wait_on.disconnect(_signal_callback)
 	# DO NOT _end_wait here.  For other parts of the test to get the signal that
-	# was waited on, we have to wait for a couple more frames.  For example, the
+	# was waited on, we have to wait for another frames.  For example, the
 	# signal_watcher doesn't get the signal in time if we don't do this.
-	_wait_physics_frames = 2
+	_wait_process_frames = 1
 
 
 func wait_seconds(x):

@@ -2028,37 +2028,56 @@ func wait_for_signal(sig : Signal, max_wait, msg=''):
 ## @deprecated
 ## Use wait_physics_frames or wait_process_frames
 ## See [wiki]Awaiting[/wiki]
-func wait_frames(frames, msg=''):
+func wait_frames(frames : int, msg=''):
 	_lgr.deprecated("wait_frames has been replaced with wait_physics_frames which is counted in _physics_process.  " +
 		"wait_process_frames has also been added which is counted in _process.")
 	return wait_physics_frames(frames, msg)
 
 
-## Use this with await to pause execution for a number of physics frames
-## (counted in _physics_process).
+## This returns a signal that is emitted after [code]x[/code] physics frames have
+## elpased.  You can await this method directly to pause execution for [code]x[/code]
+## physics frames.  The frames are counted prior to _physics_process being called
+## on any node (when [signal SceneTree.physics_frame] is emitted).  This means the
+## signal is emitted after [code]x[/code] frames and just before the x + 1 frame starts.
+## [codeblock]
+## await wait_physics_frames(10)
+## [/codeblock]
 ## See [wiki]Awaiting[/wiki]
-func wait_physics_frames(frames, msg=''):
-	if(frames <= 0):
-		var text = str('wait_physics_frames:  frames must be > 0, you passed  ', frames, '.  1 frames waited.')
+func wait_physics_frames(x :int , msg=''):
+	if(x <= 0):
+		var text = str('wait_physics_frames:  frames must be > 0, you passed  ', x, '.  1 frames waited.')
 		_lgr.error(text)
-		frames = 1
+		x = 1
 
-	_lgr.yield_msg(str('-- Awaiting ', frames, ' frame(s) -- ', msg))
-	_awaiter.wait_physics_frames(frames)
+	_lgr.yield_msg(str('-- Awaiting ', x, ' frame(s) -- ', msg))
+	_awaiter.wait_physics_frames(x)
 	return _awaiter.timeout
 
 
-## Use this with await to pause execution for a number of idle/process frames
-## (counted in _process(delta))
-## See [wiki]Awaiting[/wiki]
-func wait_process_frames(frames, msg=''):
-	if(frames <= 0):
-		var text = str('wait_process_frames:  frames must be > 0, you passed  ', frames, '.  1 frames waited.')
-		_lgr.error(text)
-		frames = 1
+## Alias for [method GutTest.wait_process_frames]
+func wait_idle_frames(x : int, msg=''):
+	wait_process_frames(x, msg)
 
-	_lgr.yield_msg(str('-- Awaiting ', frames, ' frame(s) -- ', msg))
-	_awaiter.wait_process_frames(frames)
+
+## This returns a signal that is emitted after [code]x[/code] process/idle frames have
+## elpased.  You can await this method directly to pause execution for [code]x[/code]
+## process/idle frames.  The frames are counted prior to _process being called
+## on any node (when [signal SceneTree.process_frame] is emitted).  This means the
+## signal is emitted after [code]x[/code] frames and just before the x + 1 frame starts.
+## [codeblock]
+## await wait_process_frames(10)
+## # wait_idle_frames is an alias of wait_process_frames
+## await wait_idle_frames(10)
+## [/codeblock]
+## See [wiki]Awaiting[/wiki]
+func wait_process_frames(x : int, msg=''):
+	if(x <= 0):
+		var text = str('wait_process_frames:  frames must be > 0, you passed  ', x, '.  1 frames waited.')
+		_lgr.error(text)
+		x = 1
+
+	_lgr.yield_msg(str('-- Awaiting ', x, ' frame(s) -- ', msg))
+	_awaiter.wait_process_frames(x)
 	return _awaiter.timeout
 
 

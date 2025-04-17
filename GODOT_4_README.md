@@ -30,7 +30,7 @@ await yield_to(signaler, 'the_signal_name', 5, 'optional message')
 await yield_for(1.5, 'optional message')
 await yield_frames(30, 'optional message')
 ```
-* The replacement methods for the various `yield_` methods are `wait_seconds`, `wait_process_frames`, `wait_physics_frames`, and `wait_for_signal`.
+* The replacement methods for the various `yield_` methods are `wait_seconds`, `wait_idle_frames`, `wait_physics_frames`, and `wait_for_signal`.
 ```gdscript
 await wait_for_signal(signaler.the_signal, 5, 'optional message') # wait for signal or 5 seconds
 await wait_seconds(1.5, 'optional message')

@@ -3,7 +3,7 @@ If you aren't sure about coroutines and using `await`, [Godot explains it pretty
 
 You can use `await` with any of the following methods to pause execution for a duration or until something occurs.  You can find more information about each method below, and in the `GutTest` documentation.
  * <a href="class_ref/class_guttest.html#class-guttest-method-wait-seconds">wait_seconds</a>:  Waits x seconds.
- * <a href="class_ref/class_guttest.html#class-guttest-method-wait-process-frames">wait_process_frames</a>:  Waits x process frames(_process(delta)).
+ * <a href="class_ref/class_guttest.html#class-guttest-method-wait-idle-frames">wait_idle_frames</a>:  Waits x process frames(_process(delta)).
  * <a href="class_ref/class_guttest.html#class-guttest-method-wait-physics-frames">wait_physics_frames</a>:  Waits x physics frames(_physics_process(delta)).
  * <a href="class_ref/class_guttest.html#class-guttest-method-wait-for-signal">wait_for_signal</a>:  Waits until a signal is emitted, or a maximum amount of time.
  * <a href="class_ref/class_guttest.html#class-guttest-method-wait-until">wait_until</a>:   Waits until a `Callable` returns `true` or a maximum amount of time.
@@ -27,7 +27,7 @@ await wait_seconds(2.8)
 await wait_secondes(.25, "waiting for a short period")
 ```
 
-## <a href="class_ref/class_guttest.html#class-guttest-method-wait-frames">wait_physics_frames</a>
+## <a href="class_ref/class_guttest.html#class-guttest-method-wait-physics-frames">wait_physics_frames</a>
 ``` gdscript
 wait_physics_frames(frames, msg=''):
 ```
@@ -45,9 +45,9 @@ await wait_physics_frames(2)
 await wait_physics_frames(20) # waiting some frames.
 ```
 
-## <a href="class_ref/class_guttest.html#class-guttest-method-wait-frames">wait_process_frames</a>
+## <a href="class_ref/class_guttest.html#class-guttest-method-wait-idle-frames">wait_idle_frames</a>
 ``` gdscript
-wait_process_frames(frames, msg=''):
+wait_idle_frames(frames, msg=''):
 ```
 
 This is just like `wait_physics_frames` except frames are counted in `_process` instead of `_physics_process`.

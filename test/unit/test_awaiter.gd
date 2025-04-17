@@ -11,13 +11,18 @@ class Counter:
 	var physics_time = 0.0
 	var physics_frames = 0
 
+	func _process(delta):
+		idle_time += delta
+		idle_frames += 1
+
 	func _physics_process(delta):
 		physics_time += delta
 		physics_frames += 1
 
-	func _process(delta):
-		idle_time += delta
-		idle_frames += 1
+	func stop_counting_on_signal(the_signal):
+		the_signal.connect(func():
+			set_process(false)
+			set_physics_process(false))
 
 
 class Signaler:
@@ -83,30 +88,28 @@ func test_wait_for_resets_did_last_wait_timeout():
 	a.wait_seconds(20)
 	assert_false(a.did_last_wait_timeout)
 
-
-
-
 func test_wait_process_frames_counts_frames_in_process(_x = run_x_times(10)):
 	var a = add_child_autoqfree(Awaiter.new())
-	watch_signals(a)
-	a.set_physics_process(false)
-	a.wait_process_frames(10)
 	var c = add_child_autoqfree(Counter.new())
-	await wait_for_signal(a.timeout, 10)
-	assert_almost_eq(c.idle_frames, 11, 2, 'waited enough frames')
-
+	watch_signals(a)
+	a.wait_process_frames(10)
+	await a.timeout
+	# TODO figure this out:
+	# When the whole script is ran, the first time in here it appears to take
+	# 11 frames.  All subsequent runs are 10 frames.  If you run just this
+	# test, then all are 10 frames.  Smells funny, would like to know more.
+	if(_x == 0):
+		assert_between(c.idle_frames, 10, 11)
+	else:
+		assert_eq(c.idle_frames, 10)
 
 func test_wait_phyiscs_frames_counts_frames_in_physics_process(_x = run_x_times(10)):
 	var a = add_child_autoqfree(Awaiter.new())
 	var c = add_child_autoqfree(Counter.new())
 	watch_signals(a)
-	a.set_process(false)
 	a.wait_physics_frames(10)
-	await wait_for_signal(a.timeout, 5)
-	assert_almost_eq(c.physics_frames, 11, 1, 'waited enough frames')
-
-
-
+	await a.timeout
+	assert_eq(c.physics_frames, 10, 'waited enough frames')
 
 func test_wait_started_emitted_when_waiting_frames():
 	var a = add_child_autoqfree(Awaiter.new())
@@ -141,7 +144,6 @@ func test_wait_process_frames_sets_did_last_wait_timeout_to_true():
 	a.wait_process_frames(10)
 	await a.timeout
 	assert_true(a.did_last_wait_timeout)
-
 
 func test_wait_physics_frames_resets_did_last_wait_timeout():
 	var a = add_child_autoqfree(Awaiter.new())

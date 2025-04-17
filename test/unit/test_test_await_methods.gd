@@ -58,7 +58,7 @@ class TestYeOldYieldMethods:
 		await yield_frames(30)
 		assert_between(counter.physics_frames, 29, 31)
 
-	func test_wait_to_ends_when_signal_emitted():
+	func test_wait_to_ends_when_signal_emitted(_x = run_x_times(5)):
 		var signaler = add_child_autoqfree(TimedSignaler.new())
 		signaler.emit_after(.5)
 		await yield_to(signaler, 'the_signal', 10)
@@ -100,7 +100,14 @@ class TestTheNewWaitMethods:
 		await wait_process_frames(30)
 		assert_between(counter.idle_frames, 29, 31)
 
-	func test_wait_to_ends_when_signal_emitted():
+	func test_wait_for_signal_does_not_wait_too_long(_x = run_x_times(5)):
+		var signaler = add_child_autoqfree(TimedSignaler.new())
+		signaler.emit_after(.5)
+		await wait_for_signal(signaler.the_signal, 10)
+		assert_between(counter.physics_time, .48, .52)
+
+
+	func test_wait_for_signal_ends_when_signal_emitted():
 		var signaler = add_child_autoqfree(TimedSignaler.new())
 		signaler.emit_after(.5)
 		await wait_for_signal(signaler.the_signal, 10)
