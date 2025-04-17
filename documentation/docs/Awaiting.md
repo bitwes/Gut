@@ -1,18 +1,19 @@
 # Awaiting
-If you aren't sure about coroutines and using `await`, [Godot explains it pretty well](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html#awaiting-for-signals-or-coroutines).  GUT supports coroutines, so you can `await` at anytime in your tests.  GUT also provides some handy methods to make awaiting in your tests a little easier.
+If you aren't sure about coroutines and using `await`, [Godot explains it pretty well](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html#awaiting-signals-or-coroutines).  GUT supports coroutines, so you can `await` at anytime in your tests.  GUT also provides some handy methods to make awaiting in your tests a little easier.
 
 You can use `await` with any of the following methods to pause execution for a duration or until something occurs.  You can find more information about each method below, and in the `GutTest` documentation.
- * <a href="class_ref/class_guttest.html#class-guttest-method-wait-seconds">wait_seconds</a>:  Waits x seconds.
- * <a href="class_ref/class_guttest.html#class-guttest-method-wait-idle-frames">wait_idle_frames</a>:  Waits x process frames(_process(delta)).
- * <a href="class_ref/class_guttest.html#class-guttest-method-wait-physics-frames">wait_physics_frames</a>:  Waits x physics frames(_physics_process(delta)).
- * <a href="class_ref/class_guttest.html#class-guttest-method-wait-for-signal">wait_for_signal</a>:  Waits until a signal is emitted, or a maximum amount of time.
- * <a href="class_ref/class_guttest.html#class-guttest-method-wait-until">wait_until</a>:   Waits until a `Callable` returns `true` or a maximum amount of time.
+ * `wait_seconds`:  Waits x seconds.
+ * `wait_idle_frames`:  Waits x process frames(_process(delta)).
+ * `wait_physics_frames`:  Waits x physics frames(_physics_process(delta)).
+ * `wait_for_signal`:  Waits until a signal is emitted, or a maximum amount of time.
+ * `wait_until`:   Waits until a `Callable` returns `true` or a maximum amount of time.
  * `pause_before_teardown`:  can be called in a test to pause execution at the end of a test, before moving on to the next test or ending the run.
 
 Calling `await` without using one of GUT's "wait" methods is discouraged.  When you use these methods, GUT provides output to indicate that execution is paused.  If you don't use them it can look like your tests have stopped running.
 
 
-## <a href="class_ref/class_guttest.html#class-guttest-method-wait-seconds">wait_seconds</a>
+## wait_seconds
+<a href="class_ref/class_guttest.html#class-guttest-method-wait-seconds">GutTest.wait_seconds</a>
 ``` gdscript
 wait_seconds(time, msg=''):
 ```
@@ -27,33 +28,45 @@ await wait_seconds(2.8)
 await wait_secondes(.25, "waiting for a short period")
 ```
 
-## <a href="class_ref/class_guttest.html#class-guttest-method-wait-physics-frames">wait_physics_frames</a>
+## wait_physics_frames
+<a href="class_ref/class_guttest.html#class-guttest-method-wait-physics-frames">GutTest.wait_physics_frames</a>
 ``` gdscript
 wait_physics_frames(frames, msg=''):
 ```
-
-This is just like `wait_seconds` but instead of counting seconds it counts physics frames.  Due to order of operations, this may wait +/- 1 frames, but sholdn't ever be 0.  This can be very useful if you use `call_deferred` in any of the objects under test, or need to wait a frame or two for `_process` to run.
-
-The internal frame counter is incremented in `_process_physics`.
+This returns a signal that is emitted after `x` physics frames have
+elpased.  You can await this method directly to pause execution for `x`
+physics frames.  The frames are counted prior to _physics_process being called
+on any node (when [signal SceneTree.physics_frame] is emitted).  This means the
+signal is emitted after `x` frames and just before the x + 1 frame starts.
+```
+await wait_physics_frames(10)
+```
 
 The optional `msg` parameter is logged so you know why test execution is paused.
 ``` gdscript
 # wait 2 frames before continue test execution
 await wait_physics_frames(2)
 
-# wait's some frames and includes optional message
-await wait_physics_frames(20) # waiting some frames.
+# waits some frames and includes optional message
+await wait_physics_frames(20, 'waiting some frames.')
 ```
 
-## <a href="class_ref/class_guttest.html#class-guttest-method-wait-idle-frames">wait_idle_frames</a>
-``` gdscript
-wait_idle_frames(frames, msg=''):
+## wait_idle_frames
+<a href="class_ref/class_guttest.html#class-guttest-method-wait-idle-frames">GutTest.wait_idle_frames</a>
+```gdscript
+await wait_idle_frames(10)
+# wait_process_frames is an alias of wait_idle_frames
+await wait_process_frames(10)
 ```
+This returns a signal that is emitted after `x` process/idle frames have
+elpased.  You can await this method directly to pause execution for `x`
+process/idle frames.  The frames are counted prior to _process being called
+on any node (when [signal SceneTree.process_frame] is emitted).  This means the
+signal is emitted after `x` frames and just before the x + 1 frame starts.
 
-This is just like `wait_physics_frames` except frames are counted in `_process` instead of `_physics_process`.
 
-
-## <a href="class_ref/class_guttest.html#class-guttest-method-wait-for-signal">wait_for_signal</a>
+## wait_for_signal
+ <a href="class_ref/class_guttest.html#class-guttest-method-wait-for-signal">GutTest.wait_for_signal</a>
 ``` gdscript
 wait_for_signal(sig, max_wait, msg=''):
 ```
@@ -77,7 +90,8 @@ assert_true(await wait_for_signal(my_object.my_signal, 2),
 ```
 
 
-## <a href="class_ref/class_guttest.html#class-guttest-method-wait-until">wait_until</a>
+## wait_until
+<a href="class_ref/class_guttest.html#class-guttest-method-wait-until">GutTest.wait_until</a>
 ``` gdscript
 wait_until(callable, max_wait, p3='', p4=''):
 ```
@@ -106,4 +120,6 @@ assert_true(await wait_until(everything_is_ok, 10, 1),
 ```
 
 ## pause_before_teardown
+<a href="class_ref/class_guttest.html#class-guttest-method-pause-before-teardown">GutTest.pause_before_teardown</a>
+
 Sometimes, as you are developing your tests you may want to verify something before the any of the teardown methods are called or just look at things a bit.  If you call `pause_before_teardown()` anywhere in your test then GUT will pause execution until you press the "Continue" button in the GUT GUI.  You can also specify an option to ignore all calls to `pause_before_teardown` through the GUT Panel, command line, or `.gutconfig` in case you get lazy and don't want to remove them.  You should always remove them, but I know you won't because I didn't, so I made that an option.

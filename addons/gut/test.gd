@@ -2049,7 +2049,7 @@ func wait_physics_frames(x :int , msg=''):
 		_lgr.error(text)
 		x = 1
 
-	_lgr.yield_msg(str('-- Awaiting ', x, ' frame(s) -- ', msg))
+	_lgr.yield_msg(str('-- Awaiting ', x, ' physics frame(s) -- ', msg))
 	_awaiter.wait_physics_frames(x)
 	return _awaiter.timeout
 
@@ -2076,7 +2076,7 @@ func wait_process_frames(x : int, msg=''):
 		_lgr.error(text)
 		x = 1
 
-	_lgr.yield_msg(str('-- Awaiting ', x, ' frame(s) -- ', msg))
+	_lgr.yield_msg(str('-- Awaiting ', x, ' idle frame(s) -- ', msg))
 	_awaiter.wait_process_frames(x)
 	return _awaiter.timeout
 
