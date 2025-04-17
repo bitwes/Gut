@@ -100,6 +100,11 @@ class TestTheNewWaitMethods:
 		await wait_process_frames(30)
 		assert_between(counter.idle_frames, 29, 31)
 
+	func test_wait_idle_frames_waits_for_x_frames():
+		await wait_idle_frames(30)
+		assert_between(counter.idle_frames, 29, 31)
+
+
 	func test_wait_for_signal_does_not_wait_too_long(_x = run_x_times(5)):
 		var signaler = add_child_autoqfree(TimedSignaler.new())
 		signaler.emit_after(.5)

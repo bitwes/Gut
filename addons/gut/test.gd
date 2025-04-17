@@ -2056,7 +2056,7 @@ func wait_physics_frames(x :int , msg=''):
 
 ## Alias for [method GutTest.wait_process_frames]
 func wait_idle_frames(x : int, msg=''):
-	wait_process_frames(x, msg)
+	return wait_process_frames(x, msg)
 
 
 ## This returns a signal that is emitted after [code]x[/code] process/idle frames have
