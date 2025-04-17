@@ -92,7 +92,7 @@ class TestGuiOutput:
 
 	func test_embedded_bbcode():
 		_logger.log('[u]this should not be underlined')
-		await wait_frames(10)
+		await wait_physics_frames(10)
 		# assert_string_contains(_gui.get_textbox().text, '[u]this should')
 		pass_test('Check output, cannot get bbcode out of RTL')
 		pause_before_teardown()

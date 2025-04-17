@@ -21,7 +21,7 @@ func test_free_makes_no_orphans():
 	var ctrl = add_child_autofree(HBoxContainer.new())
 	var gcc = GutConfigGui.new(ctrl)
 	gcc = null
-	await wait_frames(1)
+	await wait_physics_frames(1)
 	assert_no_new_orphans()
 
 func test_double_strategy_is_script_only():
