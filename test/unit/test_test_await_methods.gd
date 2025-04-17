@@ -42,9 +42,14 @@ class Counter:
 
 class PredicateMethods:
 	var times_called = 0
+
 	func called_x_times(x):
 		times_called += 1
 		return times_called == x
+
+	func not_called_x_times(x):
+		times_called += 1
+		return times_called != x
 
 
 class TestYeOldYieldMethods:
@@ -138,6 +143,14 @@ class TestTheNewWaitMethods:
 		assert_false(result)
 
 
+class TestWaitUntil:
+	extends GutInternalTester
+
+	var counter = null
+	func before_each():
+		counter = add_child_autoqfree(Counter.new())
+
+
 	func test_wait_until_waits_ends_when_method_returns_true():
 		var all_is_good = func():
 			return counter.physics_time > .25
@@ -184,4 +197,61 @@ class TestTheNewWaitMethods:
 		await wait_until(method, 1.1, .75)
 		pred_methods.times_called = 0
 		await wait_until(method, 1.1, .2)
+		assert_eq(pred_methods.times_called, 5)
+
+
+
+
+class TestWaitWhile:
+	extends GutInternalTester
+
+	var counter = null
+	func before_each():
+		counter = add_child_autoqfree(Counter.new())
+
+
+	func test_ends_when_method_returns_false():
+		var all_is_bad = func():
+			return counter.physics_time < .25
+
+		await wait_while(all_is_bad, .5)
+		assert_almost_eq(counter.physics_time, .25, .05)
+		assert_false(did_wait_timeout(), 'did_wait_timeout')
+
+
+	func test_times_out():
+		var never_false = func(): return true
+
+		await wait_while(never_false, .5)
+		assert_almost_eq(counter.physics_time, .5, .05)
+		assert_true(did_wait_timeout(), 'did_wait_timeout')
+
+	func test_wait_until_returns_true_when_it_finishes():
+		var all_is_bad = func():
+			return counter.physics_time < .25
+
+		var result = await wait_while(all_is_bad, .5)
+		assert_true(result)
+
+	func test_wait_until_returns_false_when_it_times_out():
+		var never_false = func(): return true
+		var result = await wait_while(never_false, .5)
+		assert_false(result)
+
+
+	func test_wait_until_accepts_time_between():
+		var pred_methods = PredicateMethods.new()
+		var method = pred_methods.not_called_x_times.bind(10)
+
+		await wait_while(method, 1.1, .25)
+		assert_eq(pred_methods.times_called, 4)
+
+
+	func test_wait_until_resets_time_between_counter():
+		var pred_methods = PredicateMethods.new()
+		var method = pred_methods.not_called_x_times.bind(10)
+
+		await wait_while(method, 1.1, .75)
+		pred_methods.times_called = 0
+		await wait_while(method, 1.1, .2)
 		assert_eq(pred_methods.times_called, 5)

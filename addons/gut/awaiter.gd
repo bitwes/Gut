@@ -8,7 +8,9 @@ var _wait_process_frames := 0
 var _wait_physics_frames := 0
 var _signal_to_wait_on = null
 
-var _predicate_function_waiting_to_be_true = null
+var _predicate_method = null
+var _waiting_for_predicate_to_be = null
+
 var _predicate_time_between := 0.0
 var _predicate_time_between_elpased := 0.0
 
@@ -51,13 +53,17 @@ func _physics_process(delta):
 		if(_elapsed_time >= _wait_time):
 			_end_wait()
 
-	if(_predicate_function_waiting_to_be_true != null):
+	if(_predicate_method != null):
 		_predicate_time_between_elpased += delta
 		if(_predicate_time_between_elpased >= _predicate_time_between):
 			_predicate_time_between_elpased = 0.0
-			var result = _predicate_function_waiting_to_be_true.call()
-			if(typeof(result) == TYPE_BOOL and result):
-				_end_wait()
+			var result = _predicate_method.call()
+			if(_waiting_for_predicate_to_be == false):
+				if(typeof(result) != TYPE_BOOL or result != true):
+					_end_wait()
+			else:
+				if(typeof(result) == TYPE_BOOL and result == _waiting_for_predicate_to_be):
+					_end_wait()
 
 
 func _end_wait():
@@ -77,7 +83,7 @@ func _end_wait():
 	_wait_time = 0.0
 	_wait_physics_frames = 0
 	_signal_to_wait_on = null
-	_predicate_function_waiting_to_be_true = null
+	_predicate_method = null
 	_elapsed_time = 0.0
 	_elapsed_frames = 0
 	timeout.emit()
@@ -124,12 +130,26 @@ func wait_for_signal(the_signal, max_time):
 
 func wait_until(predicate_function: Callable, max_time, time_between_calls:=0.0):
 	_predicate_time_between = time_between_calls
-	_predicate_function_waiting_to_be_true = predicate_function
+	_predicate_method = predicate_function
+	_wait_time = max_time
+
+	_waiting_for_predicate_to_be = true
 	_predicate_time_between_elpased = 0.0
 	_did_last_wait_timeout = false
-	_wait_time = max_time
+
 	wait_started.emit()
 
+
+func wait_while(predicate_function: Callable, max_time, time_between_calls:=0.0):
+	_predicate_time_between = time_between_calls
+	_predicate_method = predicate_function
+	_wait_time = max_time
+
+	_waiting_for_predicate_to_be = false
+	_predicate_time_between_elpased = 0.0
+	_did_last_wait_timeout = false
+
+	wait_started.emit()
 
 func is_waiting():
 	return _wait_time != 0.0 || _wait_physics_frames != 0

@@ -251,6 +251,8 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_until<class_GutTest_method_wait_until>`\ (\ callable, max_wait, p3 = "", p4 = ""\ )                                                                                                                                                                   |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_while<class_GutTest_method_wait_while>`\ (\ callable, max_wait, p3 = "", p4 = ""\ )                                                                                                                                                                   |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`watch_signals<class_GutTest_method_watch_signals>`\ (\ object\ )                                                                                                                                                                                           |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
@@ -2026,11 +2028,64 @@ See `Awaiting <../Awaiting.html>`__
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_until**\ (\ callable, max_wait, p3 = "", p4 = ""\ ) :ref:`🔗<class_GutTest_method_wait_until>`
 
-Use with await to wait for the passed in callable to return true or a maximum amount of time.  The callable is called every _physics_process tick unless an optional time between calls is specified.
+Use with await to wait for ``callable`` to return the boolean value ``true`` or a maximum amount of time.  All values that are not the boolean value ``true`` are ignored.  ``callable`` is called every ``_physics_process`` tick unless an optional time between calls is specified.
 
-p3 can be the optional message or an amount of time to wait between tests. p4 is the optional message if you have specified an amount of time to wait between tests.
+\ ``p3`` can be the optional message or an amount of time to wait between calls.
 
-Returns true if the callable returned true before the timeout, false if not. 
+\ ``p4`` is the optional message if you have specified an amount of time to wait between calls.
+
+Returns ``true`` if ``callable`` returned true before the timeout, false if not. 
+
+
+
+::
+
+    var foo = 1
+    func test_example():
+        var foo_func = func():
+            foo += 1
+            return foo == 10
+        foo = 1
+        wait_until(foo_func, 5, 'optional message')
+        # or give it a time between
+        foo = 1
+        wait_until(foo_func, 5, 1,
+            'this will timeout because we call it every second and are waiting a max of 10 seconds')
+    
+
+See also :ref:`wait_while<class_GutTest_method_wait_while>`\ 
+
+See `Awaiting <../Awaiting.html>`__
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_wait_while:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_while**\ (\ callable, max_wait, p3 = "", p4 = ""\ ) :ref:`🔗<class_GutTest_method_wait_while>`
+
+This is the inverse of :ref:`wait_until<class_GutTest_method_wait_until>`.  This will continue to wait while ``callable`` returns the boolean value ``true``.  If **ANY** other value is is returned then the wait will end. Returns ``true`` if ``callable`` returned a value other than ``true`` before the timeout, ``false`` if not.
+
+::
+
+    var foo = 1
+    func test_example():
+        var foo_func = func():
+            foo += 1
+            if(foo < 10):
+                return true
+            else:
+                return 'this is not a boolean'
+        foo = 1
+        wait_while(foo_func, 5, 'optional message')
+        # or give it a time between
+        foo = 1
+        wait_while(foo_func, 5, 1,
+            'this will timeout because we call it every second and are waiting a max of 10 seconds')
+    
 
 See `Awaiting <../Awaiting.html>`__
 
@@ -2044,7 +2099,7 @@ See `Awaiting <../Awaiting.html>`__
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **did_wait_timeout**\ (\ ) :ref:`🔗<class_GutTest_method_did_wait_timeout>`
 
-Returns whether the last wait\_\* method timed out.  This is always true if the last method was wait_frames or wait_seconds.  It will be false when using wait_for_signal and wait_until if the timeout occurs before what is being waited on.  The wait\_\* methods return this value so you should be able to avoid calling this directly, but you can.
+Returns whether the last wait\_\* method timed out.  This is always true if the last method was wait_xxx_frames or wait_seconds.  It will be false when using wait_for_signal and wait_until if the timeout occurs before what is being waited on.  The wait\_\* methods return this value so you should be able to avoid calling this directly, but you can.
 
 .. rst-class:: classref-item-separator
 
