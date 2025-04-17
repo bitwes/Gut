@@ -7,6 +7,7 @@ You can use `await` with any of the following methods to pause execution for a d
  * `wait_physics_frames`:  Waits x physics frames(_physics_process(delta)).
  * `wait_for_signal`:  Waits until a signal is emitted, or a maximum amount of time.
  * `wait_until`:   Waits until a `Callable` returns `true` or a maximum amount of time.
+ * `wait_while`:   Waits while a `Callable` returns `true` or a maximum amount of time.
  * `pause_before_teardown`:  can be called in a test to pause execution at the end of a test, before moving on to the next test or ending the run.
 
 Calling `await` without using one of GUT's "wait" methods is discouraged.  When you use these methods, GUT provides output to indicate that execution is paused.  If you don't use them it can look like your tests have stopped running.
@@ -118,6 +119,10 @@ var result = await wait_until(everything_is_ok, 5, 'Show this message')
 assert_true(await wait_until(everything_is_ok, 10, 1),
 	"Everything should be ok in 10 seconds").
 ```
+
+## wait_while
+<a href="class_ref/class_guttest.html#class-guttest-method-wait-while">GutTest.wait_while</a>
+This is the inverse of `wait_until`.  Use the link above for more information.
 
 ## pause_before_teardown
 <a href="class_ref/class_guttest.html#class-guttest-method-pause-before-teardown">GutTest.pause_before_teardown</a>

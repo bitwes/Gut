@@ -2081,14 +2081,31 @@ func wait_process_frames(x : int, msg=''):
 	return _awaiter.timeout
 
 
-## Use with await to wait for the passed in callable to return true or a maximum
-## amount of time.  The callable is called every _physics_process tick unless
-## an optional time between calls is specified.[br]
-## p3 can be the optional message or an amount of time to wait between tests.
-## p4 is the optional message if you have specified an amount of time to
-## wait between tests.[br]
-## Returns true if the callable returned true before the timeout, false if not.
+## Use with await to wait for [param callable] to return the boolean value
+## [code]true[/code] or a maximum amount of time.  All values that are not the
+## boolean value [code]true[/code] are ignored.  [param callable] is called
+## every [code]_physics_process[/code] tick unless an optional time between
+## calls is specified.[br]
+## [param p3] can be the optional message or an amount of time to wait between calls.[br]
+## [param p4] is the optional message if you have specified an amount of time to
+## wait between calls.[br]
+## Returns [code]true[/code] if [param callable] returned true before the timeout, false if not.
 ##[br]
+##[codeblock]
+## var foo = 1
+## func test_example():
+##     var foo_func = func():
+##         foo += 1
+##         return foo == 10
+##     foo = 1
+##     wait_until(foo_func, 5, 'optional message')
+##     # or give it a time between
+##     foo = 1
+##     wait_until(foo_func, 5, 1,
+##         'this will timeout because we call it every second and are waiting a max of 10 seconds')
+##
+##[/codeblock]
+## See also [method wait_while][br]
 ## See [wiki]Awaiting[/wiki]
 func wait_until(callable, max_wait, p3='', p4=''):
 	var time_between = 0.0
@@ -2104,8 +2121,46 @@ func wait_until(callable, max_wait, p3='', p4=''):
 	return !_awaiter.did_last_wait_timeout
 
 
+## This is the inverse of [method wait_until].  This will continue to wait while
+## [param callable] returns the boolean value [code]true[/code].  If [b]ANY[/b]
+## other value is is returned then the wait will end.
+## Returns [code]true[/code] if [param callable] returned a value other than
+## [code]true[/code] before the timeout, [code]false[/code] if not.
+##[codeblock]
+## var foo = 1
+## func test_example():
+##     var foo_func = func():
+##         foo += 1
+##         if(foo < 10):
+##             return true
+##         else:
+##             return 'this is not a boolean'
+##     foo = 1
+##     wait_while(foo_func, 5, 'optional message')
+##     # or give it a time between
+##     foo = 1
+##     wait_while(foo_func, 5, 1,
+##         'this will timeout because we call it every second and are waiting a max of 10 seconds')
+##
+##[/codeblock]
+## See [wiki]Awaiting[/wiki]
+func wait_while(callable, max_wait, p3='', p4=''):
+	var time_between = 0.0
+	var message = p4
+	if(typeof(p3) != TYPE_STRING):
+		time_between = p3
+	else:
+		message = p3
+
+	_lgr.yield_msg(str("--Awaiting callable to return FALSE or ", max_wait, "s.  ", message))
+	_awaiter.wait_while(callable, max_wait, time_between)
+	await _awaiter.timeout
+	return !_awaiter.did_last_wait_timeout
+
+
+
 ## Returns whether the last wait_* method timed out.  This is always true if
-## the last method was wait_frames or wait_seconds.  It will be false when
+## the last method was wait_xxx_frames or wait_seconds.  It will be false when
 ## using wait_for_signal and wait_until if the timeout occurs before what
 ## is being waited on.  The wait_* methods return this value so you should be
 ## able to avoid calling this directly, but you can.
