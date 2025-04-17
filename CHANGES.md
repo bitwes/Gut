@@ -15,6 +15,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * I192 in just under 5 years I moved the two lines of code up some to finally fix this.
 * I666 Using a doubled scene as the value of a property with type `PackedScene` could cause errors.
 
+
+
+
 # 9.3.1
 A small collection of bug fixes and documentation.  GUT can now generate documentation from code comments.
 
