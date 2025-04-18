@@ -49,6 +49,14 @@ class TestOption:
 		assert_eq(lines[1], "    line two")
 		assert_eq(lines[2], "    line three")
 
+	func test_to_s_contains_aliases():
+		var o = OptParse.Option.new("name", 'default', "description")
+		o.aliases.assign(["alias1", "alias2"])
+		var desc = o.to_s(4)
+		var lines = desc.split("\n")
+		assert_eq(lines[0], "name description")
+		assert_eq(lines[1], "     aliases: alias1, alias2")
+
 	func test_required_false_by_default():
 		var o = OptParse.Option.new('name', 'default')
 		assert_false(o.required)
