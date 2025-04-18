@@ -41,14 +41,19 @@
 ## Use the following to add options to be parsed.  These methods return the
 ## created Option instance.  See that class above for more info.  You can use
 ## the returned instance to get values, or use get_value/get_value_or_null.
-##   add("--name", "default", "Description goes here")
-##   add_required("--name", "default", "Description goes here")
+##   add("--name", "default", "Description goes here", ["--aliases"])
+##   add_required("--name", "default", "Description goes here", ["--aliases"])
 ##   add_positional("--name", "default", "Description goes here")
 ##   add_positional_required("--name", "default", "Description goes here")
 ##
 ## get_value will return the value of the option or the default if it was not
 ## set.  get_value_or_null will return the value of the option or null if it was
 ## not set.
+##
+## The last parameter in add and add_required is an optional list of aliases
+## that allows arguments to be used under other names (--parameter vs -p).
+## Positional arguments do not take aliases since they are passed by position
+## and not by name to begin with.
 ##
 ## The Datatype for an option is determined from the default value supplied to
 ## the various add methods.  Supported types are
@@ -153,6 +158,7 @@ class Option:
 	var default = null
 	var description = ''
 	var required = false
+	var aliases: Array[String] = []
 
 
 	func _init(name,default_value,desc=''):
@@ -165,6 +171,8 @@ class Option:
 	func to_s(min_space=0):
 		var line_indent = str("\n", " ".repeat(min_space + 1))
 		var subbed_desc = description
+		if not aliases.is_empty():
+			subbed_desc += "\naliases: " + ", ".join(aliases)
 		subbed_desc = subbed_desc.replace('[default]', str(default))
 		subbed_desc = subbed_desc.replace("\n", line_indent)
 		return str(option_name.rpad(min_space), ' ', subbed_desc)
@@ -196,7 +204,7 @@ class Options:
 	var default_heading = OptionHeading.new()
 	var script_option = Option.new('-s', '?', 'script option provided by Godot')
 
-	var _options_by_name = {}
+	var _options_by_name = {"--script": script_option}
 	var _options_by_heading = [default_heading]
 	var _cur_heading = default_heading
 
@@ -208,10 +216,15 @@ class Options:
 		_options_by_heading.append(heading)
 
 
-	func add(option):
+	func add(option, aliases=null):
 		options.append(option)
 		_options_by_name[option.option_name] = option
 		_cur_heading.options.append(option)
+
+		if aliases != null:
+			for a in aliases:
+				_options_by_name[a] = option
+			option.aliases.assign(aliases)
 
 
 	func add_positional(option):
@@ -407,20 +420,28 @@ func is_option(arg):
 	return str(arg).begins_with(option_name_prefix)
 
 
-func add(op_name, default, desc):
+func add(op_name, default, desc, aliases=null):
 	var new_op = null
+
+	if(aliases == null):
+		aliases = []
+	var bad_alias = aliases.find_custom(
+		func (a): return options.get_by_name(a) != null
+	)
 
 	if(options.get_by_name(op_name) != null):
 		push_error(str('Option [', op_name, '] already exists.'))
+	elif bad_alias != -1:
+		push_error(str('Option [', aliases[bad_alias], '] already exists.'))
 	else:
 		new_op = Option.new(op_name, default, desc)
-		options.add(new_op)
+		options.add(new_op, aliases)
 
 	return new_op
 
 
-func add_required(op_name, default, desc):
-	var op = add(op_name, default, desc)
+func add_required(op_name, default, desc, aliases=null):
+	var op = add(op_name, default, desc, aliases)
 	if(op != null):
 		op.required = true
 	return op
