@@ -219,6 +219,7 @@ class Options:
 		if aliases != null:
 			for a in aliases:
 				_options_by_name[a] = option
+			option.aliases.assign(aliases)
 
 
 	func add_positional(option):
@@ -430,7 +431,6 @@ func add(op_name, default, desc, aliases=null):
 	else:
 		new_op = Option.new(op_name, default, desc)
 		options.add(new_op, aliases)
-		new_op.aliases.assign(aliases)
 
 	return new_op
 
