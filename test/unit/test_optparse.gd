@@ -427,6 +427,8 @@ class TestOptionAliases:
 		opts.add(opt, ["alias1", "alias2"])
 		assert_eq(opts.get_by_name("alias1"), opt)
 		assert_eq(opts.get_by_name("alias2"), opt)
+		assert_has(opt.aliases, "alias1")
+		assert_has(opt.aliases, "alias2")
 
 	func test_arguments_by_alias():
 		op.add("--name", "default", "description", ["--alias"])
