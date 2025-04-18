@@ -111,6 +111,11 @@ class TestOptParse:
 		opts.parse(['-s', 'res://something.gd'])
 		assert_eq(opts.options.script_option.value, 'res://something.gd')
 
+	func test_when_long_script_option_specified_it_is_set():
+		var opts = OptParse.new()
+		opts.parse(['--script', 'res://something.gd'])
+		assert_eq(opts.options.script_option.value, 'res://something.gd')
+
 	func test_cannot_add_duplicate_options():
 		var opts = OptParse.new()
 		opts.add('-a', 'a', 'a')
@@ -398,3 +403,46 @@ class TestValuesDictionary:
 		op.add_positional("first", 'asdf', 'the first one')
 		op.parse(['foo'])
 		assert_eq(op.values.first, 'foo')
+
+
+class TestOptionAliases:
+	extends BaseTest
+
+	var op
+
+	func before_each():
+		op = OptParse.new()
+
+	func test_options_add_with_alias():
+		var opt = OptParse.Option.new("name", "default")
+		var opts = OptParse.Options.new()
+		opts.add(opt, ["alias1", "alias2"])
+		assert_eq(opts.get_by_name("alias1"), opt)
+		assert_eq(opts.get_by_name("alias2"), opt)
+
+	func test_arguments_by_alias():
+		op.add("--name", "default", "description", ["--alias"])
+		op.parse(['--alias=value'])
+		assert_eq(op.get_value_or_null("--name"), "value")
+
+	func test_alias_doesnt_change_normal_function():
+		op.add("--name", "default", "description", ["--alias"])
+		op.parse(['--name=value'])
+		assert_eq(op.get_value_or_null("--name"), "value")
+
+	func test_argument_accessible_by_alias():
+		op.add("--name", "default", "description", ["--alias"])
+		op.parse(['--name=value'])
+		assert_eq(op.get_value_or_null("--alias"), "value")
+
+	func test_aliases_collide_with_options():
+		op.add("--name", "default", "description")
+		assert_null(op.add("--another", "default", "description", ["--name"]))
+
+	func test_aliases_collide_with_aliases():
+		op.add("--name", "default", "description", ["--alias"])
+		assert_null(op.add("--another", "default", "description", ["--alias"]))
+
+	func test_options_collide_with_aliases():
+		op.add("--name", "default", "description", ["--alias"])
+		assert_null(op.add("--alias", "default", "description"))
