@@ -41,14 +41,19 @@
 ## Use the following to add options to be parsed.  These methods return the
 ## created Option instance.  See that class above for more info.  You can use
 ## the returned instance to get values, or use get_value/get_value_or_null.
-##   add("--name", "default", "Description goes here")
-##   add_required("--name", "default", "Description goes here")
+##   add("--name", "default", "Description goes here", ["--aliases"])
+##   add_required("--name", "default", "Description goes here", ["--aliases"])
 ##   add_positional("--name", "default", "Description goes here")
 ##   add_positional_required("--name", "default", "Description goes here")
 ##
 ## get_value will return the value of the option or the default if it was not
 ## set.  get_value_or_null will return the value of the option or null if it was
 ## not set.
+##
+## The last parameter in add and add_required is an optional list of aliases
+## that allows arguments to be used under other names (--parameter vs -p).
+## Positional arguments do not take aliases since they are passed by position
+## and not by name to begin with.
 ##
 ## The Datatype for an option is determined from the default value supplied to
 ## the various add methods.  Supported types are
