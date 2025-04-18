@@ -390,7 +390,7 @@ class TestValuesDictionary:
 	func test_values_contains_positional_arguments_default_value():
 		var op = OptParse.new()
 		op.add_positional("first", 'asdf', 'the first one')
-		op.parse()
+		op.parse([])
 		assert_eq(op.values.first, 'asdf')
 
 	func test_values_contains_positional_arguments_value():
