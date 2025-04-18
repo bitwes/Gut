@@ -83,7 +83,7 @@
 ## sign
 ##   -gdir=
 ##
-## Boolean options will have thier value set to !default when they are supplied
+## Boolean options will have their value set to !default when they are supplied
 ## on the command line.  Boolean options cannot have a value on the command line.
 ## They are either supplied or not.
 ##
@@ -325,7 +325,7 @@ func _convert_value_to_array(raw_value):
 	var split = raw_value.split(',')
 	# This is what an empty set looks like from the command line.  If we do
 	# not do this then we will always get back [''] which is not what it
-	# shoudl be.
+	# should be.
 	if(split.size() == 1 and split[0] == ''):
 		split = []
 	return split

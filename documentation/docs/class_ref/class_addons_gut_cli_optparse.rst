@@ -98,7 +98,7 @@ This does alot, if you want to see it in action have a look at `scratch/optparse
     sign
       -gdir=
     
-    Boolean options will have thier value set to !default when they are supplied
+    Boolean options will have their value set to !default when they are supplied
     on the command line.  Boolean options cannot have a value on the command line.
     They are either supplied or not.
     
