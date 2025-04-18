@@ -325,7 +325,7 @@ func _convert_value_to_array(raw_value):
 	var split = raw_value.split(',')
 	# This is what an empty set looks like from the command line.  If we do
 	# not do this then we will always get back [''] which is not what it
-	# shoudl be.
+	# should be.
 	if(split.size() == 1 and split[0] == ''):
 		split = []
 	return split
