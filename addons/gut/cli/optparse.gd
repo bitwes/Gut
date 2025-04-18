@@ -196,7 +196,7 @@ class Options:
 	var default_heading = OptionHeading.new()
 	var script_option = Option.new('-s', '?', 'script option provided by Godot')
 
-	var _options_by_name = {}
+	var _options_by_name = {"--script": script_option}
 	var _options_by_heading = [default_heading]
 	var _cur_heading = default_heading
 
