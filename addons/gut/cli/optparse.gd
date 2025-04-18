@@ -153,6 +153,7 @@ class Option:
 	var default = null
 	var description = ''
 	var required = false
+	var aliases: Array[String] = []
 
 
 	func _init(name,default_value,desc=''):
@@ -165,6 +166,8 @@ class Option:
 	func to_s(min_space=0):
 		var line_indent = str("\n", " ".repeat(min_space + 1))
 		var subbed_desc = description
+		if not aliases.is_empty():
+			subbed_desc += "\naliases: " + ", ".join(aliases)
 		subbed_desc = subbed_desc.replace('[default]', str(default))
 		subbed_desc = subbed_desc.replace("\n", line_indent)
 		return str(option_name.rpad(min_space), ' ', subbed_desc)
@@ -427,6 +430,7 @@ func add(op_name, default, desc, aliases=null):
 	else:
 		new_op = Option.new(op_name, default, desc)
 		options.add(new_op, aliases)
+		new_op.aliases.assign(aliases)
 
 	return new_op
 
