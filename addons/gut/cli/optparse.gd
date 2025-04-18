@@ -208,10 +208,14 @@ class Options:
 		_options_by_heading.append(heading)
 
 
-	func add(option):
+	func add(option, aliases=null):
 		options.append(option)
 		_options_by_name[option.option_name] = option
 		_cur_heading.options.append(option)
+
+		if aliases != null:
+			for a in aliases:
+				_options_by_name[a] = option
 
 
 	func add_positional(option):
@@ -407,20 +411,28 @@ func is_option(arg):
 	return str(arg).begins_with(option_name_prefix)
 
 
-func add(op_name, default, desc):
+func add(op_name, default, desc, aliases=null):
 	var new_op = null
+
+	if(aliases == null):
+		aliases = []
+	var bad_alias = aliases.find_custom(
+		func (a): return options.get_by_name(a) != null
+	)
 
 	if(options.get_by_name(op_name) != null):
 		push_error(str('Option [', op_name, '] already exists.'))
+	elif bad_alias != -1:
+		push_error(str('Option [', aliases[bad_alias], '] already exists.'))
 	else:
 		new_op = Option.new(op_name, default, desc)
-		options.add(new_op)
+		options.add(new_op, aliases)
 
 	return new_op
 
 
-func add_required(op_name, default, desc):
-	var op = add(op_name, default, desc)
+func add_required(op_name, default, desc, aliases=null):
+	var op = add(op_name, default, desc, aliases)
 	if(op != null):
 		op.required = true
 	return op
