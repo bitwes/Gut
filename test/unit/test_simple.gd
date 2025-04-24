@@ -16,6 +16,7 @@ func before_all():
 func test_assert_true():
 	assert_true(true, 'this is true')
 
+
 # func test_making_double_of_string():
 # 	var d = double('res://test/resources/doubler_test_objects/double_me.gd')
 # 	assert_not_null(d)

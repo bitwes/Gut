@@ -77,6 +77,7 @@ func assert_is_valid_xml(xml : String)->void:
 
 	assert_eq(result, ERR_FILE_EOF, 'Parsing xml should reach EOF')
 
+
 func export_script(name):
 	return str('res://test/resources/exporter_test_files/', name)
 
@@ -96,10 +97,9 @@ func test_no_tests_returns_valid_xml():
 	var re = JunitExporter.new()
 	var result = re.get_results_xml(_test_gut)
 	assert_is_valid_xml(result)
-	print(result)
 
 func test_spot_check():
-	run_scripts(_test_gut, ['test_simple_2.gd', 'test_simple.gd', 'test_with_inner_classes.gd'])
+	run_scripts(_test_gut, ['test_simple_2.gd', 'test_simple.gd', 'test_with_inner_classes.gd', 'test_special_chars_in_test_output.gd'])
 	var re = JunitExporter.new()
 	var result = re.get_results_xml(_test_gut)
 	assert_is_valid_xml(result)
@@ -118,3 +118,9 @@ func test_write_file_creates_file():
 	var result = re.write_file(_test_gut, fname)
 	assert_file_not_empty(fname)
 	gut.file_delete(fname)
+
+func test_xml_is_valid_when_test_skip_message_is_null():
+	run_scripts(_test_gut, ['test_special_chars_in_test_output.gd'])
+	var re = JunitExporter.new()
+	var result = re.get_results_xml(_test_gut)
+	assert_is_valid_xml(result)
