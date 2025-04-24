@@ -425,9 +425,9 @@ func add(op_name, default, desc, aliases=null):
 
 	if(aliases == null):
 		aliases = []
-	var bad_alias = aliases.find_custom(
+	var bad_alias = aliases.map(
 		func (a): return options.get_by_name(a) != null
-	)
+	).find(true)
 
 	if(options.get_by_name(op_name) != null):
 		push_error(str('Option [', op_name, '] already exists.'))
