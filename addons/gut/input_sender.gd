@@ -602,6 +602,16 @@ func hold_for(duration):
 	return self
 
 
+## Same as [method hold_for] but specifically holds for a number of physics
+## frames.
+func hold_frames(duration:int):
+	return hold_for(str(duration, 'f'))
+
+
+## Same as [method hold_for] but specifically holds for a number of seconds.
+func hold_seconds(duration:float):
+	return hold_for(duration)
+
 
 # ##############################################################################
 #(G)odot (U)nit (T)est class

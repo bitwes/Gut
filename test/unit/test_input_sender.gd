@@ -727,6 +727,13 @@ class TestSequence:
 class TestHoldFor:
 	extends "res://addons/gut/test.gd"
 
+
+	func test_hold_for_returns_self():
+		var r = add_child_autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+		assert_eq(sender.hold_for(1), sender)
+
+
 	func test_action_hold_for():
 		var r = add_child_autofree(InputTracker.new())
 		var sender = InputSender.new(r)
@@ -765,6 +772,46 @@ class TestHoldFor:
 		assert_true(left_pressed, "left mouse pressed")
 		var left_released = r.inputs[1].button_index == MOUSE_BUTTON_LEFT and !(r.inputs[1].pressed)
 		assert_true(left_released, 'left mouse released')
+
+
+	func test_hold_frames_returns_self():
+		var r = add_child_autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+		assert_eq(sender.hold_frames(1), sender)
+
+
+	func test_hold_frames_waits_frames():
+		var r = add_child_autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+
+		sender.mouse_left_button_down(Vector2(1, 1)).hold_frames(2)
+		await wait_for_signal(sender.idle, .1)
+
+		assert_eq(r.inputs.size(), 2, 'input size')
+		var left_pressed = r.inputs[0].button_index == MOUSE_BUTTON_LEFT and r.inputs[0].pressed
+		assert_true(left_pressed, "left mouse pressed")
+		var left_released = r.inputs[1].button_index == MOUSE_BUTTON_LEFT and !(r.inputs[1].pressed)
+		assert_true(left_released, 'left mouse released')
+
+
+	func test_hold_secondss_returns_self():
+		var r = add_child_autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+		assert_eq(sender.hold_seconds(1), sender)
+
+
+	func test_action_hold_seconds():
+		var r = add_child_autofree(InputTracker.new())
+		var sender = InputSender.new(r)
+
+		sender.action_down("jump").hold_seconds(.2)
+		await wait_for_signal(sender.idle, 5)
+
+		assert_eq(r.inputs.size(), 2, 'input size')
+		var jump_pressed = r.inputs[0].action == "jump" and r.inputs[0].pressed
+		assert_true(jump_pressed, "jump pressed is action 0")
+		var jummp_released = r.inputs[1].action == "jump" and !(r.inputs[1].pressed)
+		assert_true(jummp_released, "jump released is action 1")
 
 
 class TestReleaseAll:
