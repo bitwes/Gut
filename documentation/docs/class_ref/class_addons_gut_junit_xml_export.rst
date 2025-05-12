@@ -30,6 +30,8 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_results_xml<class_addons/gut/junit_xml_export.gd_method_get_results_xml>`\ (\ gut\ ) |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wrap_cdata<class_addons/gut/junit_xml_export.gd_method_wrap_cdata>`\ (\ content\ )       |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`write_file<class_addons/gut/junit_xml_export.gd_method_write_file>`\ (\ gut, path\ )     |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------+
 
@@ -41,6 +43,20 @@ Methods
 
 Method Descriptions
 -------------------
+
+.. _class_addons/gut/junit_xml_export.gd_method_wrap_cdata:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wrap_cdata**\ (\ content\ ) :ref:`🔗<class_addons/gut/junit_xml_export.gd_method_wrap_cdata>`
+
+.. container:: contribute
+
+	No description
+
+.. rst-class:: classref-item-separator
+
+----
 
 .. _class_addons/gut/junit_xml_export.gd_method_get_results_xml:
 
