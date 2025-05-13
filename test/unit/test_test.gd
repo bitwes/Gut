@@ -989,6 +989,7 @@ class TestSignalAsserts:
 	# ####################
 	class SignalObject:
 		signal script_signal
+
 		func _init():
 			add_user_signal(SIGNALS.NO_PARAMETERS)
 			add_user_signal(SIGNALS.ONE_PARAMETER, [
@@ -1062,6 +1063,19 @@ class TestSignalAsserts:
 		gr.test.assert_signal_emit_count(gr.signal_object, 'signal_does_not_exist', 0)
 		assert_fail(gr.test)
 
+	func test_assert_signal_emit_count_accepts_signal_instead_of_name():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.script_signal.emit()
+		gr.test.assert_signal_emit_count(gr.signal_object.script_signal, 1)
+		assert_pass(gr.test)
+
+	func test_assert_signal_emit_count_uses_text_when_signal_passed_instead_of_name():
+		gr.test.watch_signals(gr.signal_object)
+		# gr.signal_object.script_signal.emit()
+		gr.test.assert_signal_emit_count(gr.signal_object.script_signal, 1, '__foo__')
+		var text = gr.test._fail_pass_text[0]
+		assert_string_contains(text, '__foo__')
+
 	func test__assert_has_signal__passes_when_it_has_the_signal():
 		gr.test.assert_has_signal(gr.signal_object, SIGNALS.NO_PARAMETERS)
 		assert_pass(gr.test)
@@ -1075,6 +1089,48 @@ class TestSignalAsserts:
 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
 		assert_eq(gr.test.get_signal_emit_count(gr.signal_object, SIGNALS.SOME_SIGNAL), 2)
+
+	func test_text_included_in_output_when_signal_name_passed():
+		gr.test.watch_signals(gr.signal_object)
+		gr.test.assert_signal_emitted(gr.signal_object, 'script_signal', '__foo__')
+		var text = gr.test._fail_pass_text[0]
+		assert_string_contains(text, '__foo__')
+
+	func test_accepts_signal_object_instead_of_name():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.script_signal.emit()
+		gr.test.assert_signal_emitted(gr.signal_object.script_signal)
+		assert_pass(gr.test)
+
+	func test_text_included_in_output_when_signal_passed():
+		gr.test.watch_signals(gr.signal_object)
+		gr.test.assert_signal_emitted(gr.signal_object.script_signal, '__foo__')
+		var text = gr.test._fail_pass_text[0]
+		assert_string_contains(text, '__foo__')
+
+	func test_not_text_included_in_output_when_signal_name_passed():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.script_signal.emit()
+		gr.test.assert_signal_not_emitted(gr.signal_object, 'script_signal', '__foo__')
+		var text = gr.test._fail_pass_text[0]
+		assert_string_contains(text, '__foo__')
+
+	func test_not_accepts_signal_object_instead_of_name():
+		gr.test.watch_signals(gr.signal_object)
+		gr.test.assert_signal_not_emitted(gr.signal_object.script_signal)
+		assert_pass(gr.test)
+
+	func test_not_text_included_in_output_when_signal_passed():
+		gr.test.watch_signals(gr.signal_object)
+		gr.test.assert_signal_not_emitted(gr.signal_object.script_signal, '__foo__')
+		var text = gr.test._fail_pass_text[0]
+		assert_string_contains(text, '__foo__')
+
+	func test_text_is_empty_string_when_only_signal_object_is_passed():
+		gr.test.watch_signals(gr.signal_object)
+		gr.test.assert_signal_emitted(gr.signal_object, 'script_signal')
+		var text = gr.test._fail_pass_text[0]
+		assert_string_contains(text, ']:   (')
 
 
 	# ------------------
@@ -1141,13 +1197,30 @@ class TestSignalAsserts:
 		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1, 2.0, 3])
 		assert_fail(gr.test)
 
-	func test__get_signal_emit_count__returns_neg_1_when_not_watched():
-		assert_eq(gr.test.get_signal_emit_count(gr.signal_object, SIGNALS.SOME_SIGNAL), -1)
+	func test_accepts_signal_instead_of_signal_name():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.script_signal.emit(1, 2, 3)
+		gr.test.assert_signal_emitted_with_parameters(gr.signal_object.script_signal, [1, 2, 3])
+		assert_pass(gr.test)
+
+	func test_accepts_signal_instead_of_signal_name_and_index():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.script_signal.emit(1, 2, 3)
+		gr.signal_object.script_signal.emit(4, 5, 6)
+		gr.test.assert_signal_emitted_with_parameters(gr.signal_object.script_signal, [1, 2, 3], 0)
+		assert_pass(gr.test)
+
 
 	func test_can_get_signal_parameters():
 		gr.test.watch_signals(gr.signal_object)
 		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1, 2, 3)
 		assert_eq(gr.test.get_signal_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, 0), [1, 2, 3])
+
+	func test_can_get_signal_parameters_using_signal_object_instead_of_name():
+		gr.test.watch_signals(gr.signal_object)
+		gr.signal_object.script_signal.emit(1, 2, 3)
+		assert_eq(gr.test.get_signal_parameters(gr.signal_object.script_signal, 0), [1, 2, 3])
+
 
 	func test__assert_signal_emitted__passes_with_script_signals():
 		gr.test.watch_signals(gr.signal_object)
@@ -1177,6 +1250,12 @@ class TestSignalAsserts:
 		var text = gr.test._fail_pass_text[0]
 		assert_string_contains(text, SIGNALS.NO_PARAMETERS)
 		assert_string_contains(text, SIGNALS.SOME_SIGNAL)
+
+	func test__get_signal_emit_count__returns_neg_1_when_not_watched():
+		assert_eq(gr.test.get_signal_emit_count(gr.signal_object, SIGNALS.SOME_SIGNAL), -1)
+
+	func test_get_signal_emit_count_works_with_signal_ref():
+		assert_eq(gr.test.get_signal_emit_count(gr.signal_object.script_signal), -1)
 
 
 # ------------------------------------------------------------------------------
@@ -1606,6 +1685,37 @@ class TestConnectionAsserts:
 		var c = ConnectTo.new()
 		gr.test.assert_not_connected(s, c, SIGNAL_NAME)
 		assert_pass(gr.test)
+
+	func test_assert_conneccted_accepts_objects_instead_of_names():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		s.test_signal.connect(c.test_signal_connector)
+		gr.test.assert_connected(s.test_signal, c)
+		assert_pass(gr.test)
+
+	func test_assert_conneccted_works_with_callable():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		s.test_signal.connect(c.test_signal_connector)
+		gr.test.assert_connected(s.test_signal, c.test_signal_connector)
+		assert_pass(gr.test)
+
+	func test_assert_not_connected_accepts_objects_instead_of_names():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		s.test_signal.connect(c.test_signal_connector)
+		gr.test.assert_not_connected(s.test_signal, c)
+		assert_fail(gr.test)
+
+	func test_assert_not_conneccted_works_with_callable():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		s.test_signal.connect(c.test_signal_connector)
+		gr.test.assert_not_connected(s.test_signal, c.test_signal_connector)
+		assert_fail(gr.test)
+
+
+
 
 
 # ------------------------------------------------------------------------------
