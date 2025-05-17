@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Gut"
 run/main_scene="res://scenes/main.tscn"
-config/features=PackedStringArray("4.3")
+config/features=PackedStringArray("4.3", "C#")
 config/icon="res://icon.png"
 
 [autoload]
@@ -21,13 +21,16 @@ global="*res://scripts/global.gd"
 
 [debug]
 
-gdscript/warnings/exclude_addons=false
 gdscript/warnings/redundant_await=0
 
 [display]
 
 window/stretch/mode="canvas_items"
 window/dpi/allow_hidpi=false
+
+[dotnet]
+
+project/assembly_name="Gut"
 
 [editor_plugins]
 
