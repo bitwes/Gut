@@ -1,7 +1,7 @@
 extends GutInternalTester
 
 func _new_logger():
-	var to_return = Logger.new()
+	var to_return = GutLogger.new()
 	to_return.disable_all_printers(true)
 	return to_return
 

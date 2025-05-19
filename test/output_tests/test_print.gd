@@ -83,7 +83,7 @@ class TestGuiOutput:
 
 	func before_each():
 		_gui = add_child_autofree(GutUtils.GutScene.instantiate())
-		_logger = GutUtils.Logger.new()
+		_logger = GutUtils.GutLogger.new()
 		_logger._printers.gui = GutUtils.Printers.GutGuiPrinter.new()
 		_logger.disable_printer('gui', false)
 		var printer = _logger.get_printer('gui')
@@ -118,7 +118,7 @@ class TestBasicLoggerOutput:
 
 	var _test_logger = null
 	func before_each():
-		_test_logger = GutUtils.Logger.new()
+		_test_logger = GutUtils.GutLogger.new()
 		_test_logger.set_gut(gut)
 		_test_logger.set_indent_string('|...')
 

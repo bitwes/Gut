@@ -63,7 +63,7 @@ class TestTheBasics:
 		_doubler.set_stubber(stubber)
 		_doubler.set_gut(gut)
 		_doubler.set_strategy(DOUBLE_STRATEGY.SCRIPT_ONLY)
-		_doubler.set_logger(GutUtils.Logger.new())
+		_doubler.set_logger(GutUtils.GutLogger.new())
 		_doubler.print_source = false
 
 	func test_get_set_stubber():
@@ -428,7 +428,7 @@ class TestDoubleInnerClasses:
 	func before_each():
 		doubler = Doubler.new()
 		doubler.set_stubber(GutUtils.Stubber.new())
-		doubler.set_logger(GutUtils.Logger.new())
+		doubler.set_logger(GutUtils.GutLogger.new())
 
 	func test_when_inner_class_not_registered_it_generates_error():
 		var  Dbl = doubler.double(InnerClasses.InnerA)

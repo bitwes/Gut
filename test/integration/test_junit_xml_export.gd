@@ -2,7 +2,7 @@ extends GutTest
 
 var Gut = load('res://addons/gut/gut.gd')
 var JunitExporter = GutUtils.JunitXmlExport
-var Logger = GutUtils.Logger
+var GutLogger = GutUtils.GutLogger
 
 var _test_gut = null
 
@@ -18,7 +18,7 @@ const RESULT_XML_VALID_TAGS := {
 func get_a_gut():
 	var g = Gut.new()
 	g.log_level = g.LOG_LEVEL_ALL_ASSERTS
-	g.logger = GutUtils.Logger.new()
+	g.logger = GutUtils.GutLogger.new()
 	g.logger.disable_printer('terminal', true)
 	g.logger.disable_printer('gui', true)
 	g.logger.disable_printer('console', true)

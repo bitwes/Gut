@@ -2,7 +2,7 @@ extends GutInternalTester
 
 func _make_gut_config():
 	var gc = GutUtils.GutConfig.new()
-	gc.logger = GutUtils.Logger.new()
+	gc.logger = GutUtils.GutLogger.new()
 	if(gut.log_level < 2):
 		gc.logger.disable_all_printers(true)
 	return gc

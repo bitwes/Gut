@@ -60,7 +60,7 @@ class TestMiscTests:
 
 	func test_get_set_logger():
 		assert_ne(gr.test.get_logger(), null)
-		var dlog = double(Logger).new()
+		var dlog = double(GutLogger).new()
 		gr.test.set_logger(dlog)
 		assert_eq(gr.test.get_logger(), dlog)
 

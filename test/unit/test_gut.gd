@@ -57,10 +57,10 @@ class TestProperties:
 		# This is hardcodedd to use the current value to check the default because of the way
 		# that GutUtils and logger works with GutUtils._test_mode = true.  Kinda breaks
 		# the one of the 8 things that this assert checks, but that's fine.
-		assert_property_with_backing_variable(_gut, 'logger', _gut._lgr, GutUtils.Logger.new(), '_lgr')
+		assert_property_with_backing_variable(_gut, 'logger', _gut._lgr, GutUtils.GutLogger.new(), '_lgr')
 
 	func test_setting_logger_sets_gut_for_logger():
-		var new_logger = GutUtils.Logger.new()
+		var new_logger = GutUtils.GutLogger.new()
 		_gut.logger = new_logger
 		assert_eq(new_logger.get_gut(), _gut)
 
@@ -802,7 +802,7 @@ class TestErrorsTreatedAsFailure:
 		_test_gut = add_child_autofree(new_gut())
 
 	func test_logger_calls__fail_for_error_when_error_occurs():
-		var logger = GutUtils.Logger.new()
+		var logger = GutUtils.GutLogger.new()
 		var dgut = double(GutUtils.Gut).new()
 		logger.set_gut(dgut)
 		logger.error('this is an error')

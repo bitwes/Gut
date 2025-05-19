@@ -2,7 +2,7 @@ extends GutTest
 
 var Gut = load('res://addons/gut/gut.gd')
 var ResultExporter = GutUtils.ResultExporter
-var Logger = GutUtils.Logger
+var GutLogger = GutUtils.GutLogger
 
 var _test_gut = null
 
@@ -11,7 +11,7 @@ var _test_gut = null
 func get_a_gut():
 	var g = Gut.new()
 	g.log_level = g.LOG_LEVEL_ALL_ASSERTS
-	g.logger = GutUtils.Logger.new()
+	g.logger = GutUtils.GutLogger.new()
 	g.logger.disable_printer('terminal', true)
 	g.logger.disable_printer('gui', true)
 	g.logger.disable_printer('console', true)
