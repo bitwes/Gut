@@ -12,7 +12,7 @@ func test_can_add_get_counter():
 
 func test_print_singular_orphan():
 	var oc = partial_double(GutUtils.OrphanCounter).new()
-	var d_logger = double(GutUtils.Logger).new()
+	var d_logger = double(GutUtils.GutLogger).new()
 
 	stub(oc, 'orphan_count').to_return(1)
 	oc.add_counter('one')
@@ -25,7 +25,7 @@ func test_print_singular_orphan():
 
 func test_print_plural_orphans():
 	var oc = partial_double(GutUtils.OrphanCounter).new()
-	var d_logger = double(GutUtils.Logger).new()
+	var d_logger = double(GutUtils.GutLogger).new()
 
 	stub(oc, 'orphan_count').to_return(1)
 	oc.add_counter('one')
