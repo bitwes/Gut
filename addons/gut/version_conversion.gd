@@ -1,3 +1,5 @@
+class_name VersionConversion extends Object
+
 class ConfigurationUpdater:
 	var EditorGlobals = load("res://addons/gut/gui/editor_globals.gd")
 
