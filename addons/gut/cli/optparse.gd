@@ -51,11 +51,6 @@
 ## set.  get_value_or_null will return the value of the option or null if it was
 ## not set.
 ##
-## The last parameter in add and add_required is an optional list of aliases
-## that allows arguments to be used under other names (--parameter vs -p).
-## Positional arguments do not take aliases since they are passed by position
-## and not by name to begin with.
-##
 ## The Datatype for an option is determined from the default value supplied to
 ## the various add methods.  Supported types are
 ##   String
@@ -312,7 +307,7 @@ class Options:
 # optarse
 #
 #-------------------------------------------------------------------------------
-var options: Options = Options.new()
+var options := Options.new()
 var banner := ''
 var option_name_prefix := '-'
 var unused = []
