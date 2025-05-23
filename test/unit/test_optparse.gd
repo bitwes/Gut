@@ -1,5 +1,6 @@
 extends GutTest
 
+
 class BaseTest:
 	extends GutTest
 
@@ -248,9 +249,6 @@ class TestOptParse:
 		assert_eq(opts.unused, ['a,b,c,d', '--bar', '--asdf'])
 
 
-
-
-
 class TestBooleanValues:
 	extends BaseTest
 
@@ -285,7 +283,6 @@ class TestBooleanValues:
 		assert_true(op.get_value('--foo'))
 
 
-
 class TestArrayParameters:
 	extends BaseTest
 
@@ -313,8 +310,6 @@ class TestArrayParameters:
 		op.parse(['--foo=a,b'])
 		assert_eq(option.value, ['a', 'b'])
 		assert_true(option.has_been_set())
-
-
 
 
 class TestPositionalArguments:
@@ -431,28 +426,28 @@ class TestOptionAliases:
 		assert_has(opt.aliases, "alias2")
 
 	func test_arguments_by_alias():
-		op.add("--name", "default", "description", ["--alias"])
+		op.add(["--name", "--alias"], "default", "description")
 		op.parse(['--alias=value'])
 		assert_eq(op.get_value_or_null("--name"), "value")
 
 	func test_alias_doesnt_change_normal_function():
-		op.add("--name", "default", "description", ["--alias"])
+		op.add(["--name", "--alias"], "default", "description")
 		op.parse(['--name=value'])
 		assert_eq(op.get_value_or_null("--name"), "value")
 
 	func test_argument_accessible_by_alias():
-		op.add("--name", "default", "description", ["--alias"])
+		op.add(["--name", "--alias"], "default", "description")
 		op.parse(['--name=value'])
 		assert_eq(op.get_value_or_null("--alias"), "value")
 
 	func test_aliases_collide_with_options():
 		op.add("--name", "default", "description")
-		assert_null(op.add("--another", "default", "description", ["--name"]))
+		assert_null(op.add(["--another", "--name"], "default", "description"))
 
 	func test_aliases_collide_with_aliases():
-		op.add("--name", "default", "description", ["--alias"])
-		assert_null(op.add("--another", "default", "description", ["--alias"]))
+		op.add(["--name", "--alias"], "default", "description")
+		assert_null(op.add(["--another", "--alias"], "default", "description"))
 
 	func test_options_collide_with_aliases():
-		op.add("--name", "default", "description", ["--alias"])
+		op.add(["--name", "--alias"], "default", "description")
 		assert_null(op.add("--alias", "default", "description"))
