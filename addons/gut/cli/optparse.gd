@@ -41,8 +41,9 @@
 ## Use the following to add options to be parsed.  These methods return the
 ## created Option instance.  See that class above for more info.  You can use
 ## the returned instance to get values, or use get_value/get_value_or_null.
-##   add("--name", "default", "Description goes here", ["--aliases"])
-##   add_required("--name", "default", "Description goes here", ["--aliases"])
+##   add("--name", "default", "Description goes here")
+##   add(["--name", "--aliases"], "default", "Description goes here")
+##   add_required(["--name", "--aliases"], "default", "Description goes here")
 ##   add_positional("--name", "default", "Description goes here")
 ##   add_positional_required("--name", "default", "Description goes here")
 ##
@@ -255,7 +256,6 @@ class Options:
 			for option in heading.options:
 				text += str('  ', option.to_s(longest + 2).replace("\n", "\n  "), "\n")
 
-
 		return text
 
 
@@ -418,8 +418,16 @@ func is_option(arg):
 	return str(arg).begins_with(option_name_prefix)
 
 
-func add(op_name, default, desc, aliases=null):
+func add(op_names, default, desc):
+	var op_name: String
+	var aliases = null
 	var new_op = null
+
+	if(typeof(op_names) == TYPE_STRING):
+		op_name = op_names
+	else:
+		op_name = op_names[0]
+		aliases = op_names.slice(1)
 
 	if(aliases == null):
 		aliases = []
@@ -438,8 +446,8 @@ func add(op_name, default, desc, aliases=null):
 	return new_op
 
 
-func add_required(op_name, default, desc, aliases=null):
-	var op = add(op_name, default, desc, aliases)
+func add_required(op_names, default, desc):
+	var op = add(op_names, default, desc)
 	if(op != null):
 		op.required = true
 	return op
