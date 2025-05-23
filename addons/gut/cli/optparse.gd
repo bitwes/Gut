@@ -309,8 +309,6 @@ class Options:
 
 
 
-
-
 #-------------------------------------------------------------------------------
 #
 # optarse
@@ -323,6 +321,7 @@ var unused = []
 var parsed_args = []
 var values = {}
 
+
 func _populate_values_dictionary():
 	for entry in options.options:
 		var value_key = entry.option_name.lstrip('-')
@@ -331,7 +330,6 @@ func _populate_values_dictionary():
 	for entry in options.positional:
 		var value_key = entry.option_name.lstrip('-')
 		values[value_key] = entry.value
-
 
 
 func _convert_value_to_array(raw_value):
