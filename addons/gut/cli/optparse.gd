@@ -307,11 +307,21 @@ class Options:
 # optarse
 #
 #-------------------------------------------------------------------------------
+## @ignore
 var options := Options.new()
+## Set the banner property to any text you want to appear before the usage and
+## options sections when printing the options help.
 var banner := ''
+## optparse uses option_name_prefix to differentiate between option names and
+## values.  Any argument that starts with this value will be treated as an
+## argument name.  The default is "-".  Set this before calling parse if you want
+## to change it.
 var option_name_prefix := '-'
+## @ignore
 var unused = []
+## @ignore
 var parsed_args = []
+## @ignore
 var values: Dictionary = {}
 
 
@@ -466,7 +476,7 @@ func add(op_names, default, desc: String) -> Option:
 ## If the option is not successfully added (e.g. a name collision with another
 ## option occurs), an error message will be printed and [code]null[/code]
 ## will be returned.
-func add_required(op_names, default, desc: String):
+func add_required(op_names, default, desc: String) -> Option:
 	var op := add(op_names, default, desc)
 	if(op != null):
 		op.required = true
@@ -487,7 +497,7 @@ func add_required(op_names, default, desc: String):
 ## If the option is not successfully added (e.g. a name collision with another
 ## option occurs), an error message will be printed and [code]null[/code]
 ## will be returned.
-func add_positional(op_name, default, desc: String):
+func add_positional(op_name, default, desc: String) -> Option:
 	var new_op = null
 	if(options.get_by_name(op_name) != null):
 		push_error(str('Positional option [', op_name, '] already exists.'))
@@ -513,7 +523,7 @@ func add_positional(op_name, default, desc: String):
 ## If the option is not successfully added (e.g. a name collision with another
 ## option occurs), an error message will be printed and [code]null[/code]
 ## will be returned.
-func add_positional_required(op_name, default, desc: String):
+func add_positional_required(op_name, default, desc: String) -> Option:
 	var op = add_positional(op_name, default, desc)
 	if(op != null):
 		op.required = true
