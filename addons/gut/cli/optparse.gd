@@ -344,7 +344,6 @@ func _convert_value_to_array(raw_value):
 		split = []
 	return split
 
-
 # REMEMBER raw_value not used for bools.
 func _set_option_value(option, raw_value):
 	var t = typeof(option.default)
@@ -419,7 +418,7 @@ func _parse_command_line_arguments(args):
 
 ## Test is something is an argument by the [code]option_name_prefix[/code].
 ## If [code]str(arg)[/code] begins with the prefix, it will considered true,
-## otherwise it will be considered false[br].
+## otherwise it will be considered false.
 func is_option(arg) -> bool:
 	return str(arg).begins_with(option_name_prefix)
 
