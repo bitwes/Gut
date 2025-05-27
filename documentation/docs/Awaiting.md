@@ -26,7 +26,7 @@ The optional `msg` parameter is logged so you know why test execution is paused.
 await wait_seconds(2.8)
 
 # wait .25 seconds, text included in log message
-await wait_secondes(.25, "waiting for a short period")
+await wait_seconds(.25, "waiting for a short period")
 ```
 
 ## wait_physics_frames
