@@ -20,7 +20,7 @@ var InnerClasses = GutUtils.WarningsManager.load_script_ignoring_all_warnings(IN
 
 var Gut = load('res://addons/gut/gut.gd')
 var Test = load('res://addons/gut/test.gd')
-var Logger = load('res://addons/gut/logger.gd')
+var GutLogger = load('res://addons/gut/logger.gd')
 var Spy = load('res://addons/gut/spy.gd')
 var TestCollector = load('res://addons/gut/test_collector.gd')
 
@@ -83,7 +83,7 @@ func assert_has_logger(obj):
 	if(obj.has_method('get_logger')):
 		assert_not_null(obj.get_logger(), 'Default logger not null.')
 		if(obj.has_method('set_logger')):
-			var l = double(Logger).new()
+			var l = double(GutLogger).new()
 			obj.set_logger(l)
 			assert_eq(obj.get_logger(), l, 'Set/get works')
 
@@ -127,7 +127,7 @@ func get_error_count(obj):
 var new_gut_indent_string = "|   "
 func new_gut(print_sub_tests=false):
 	var g = Gut.new()
-	g.logger = Logger.new()
+	g.logger = GutLogger.new()
 	g.logger.disable_all_printers(true)
 	g.update_loggers()
 
@@ -148,7 +148,7 @@ func new_gut(print_sub_tests=false):
 
 func new_partial_double_gut(print_sub_tests=false):
 	var g = partial_double(Gut).new()
-	g.logger = GutUtils.Logger.new()
+	g.logger = GutUtils.GutLogger.new()
 	g.logger.disable_all_printers(true)
 	g.update_loggers()
 
@@ -169,7 +169,7 @@ func new_partial_double_gut(print_sub_tests=false):
 
 
 func new_no_print_logger(override=!verbose):
-	var to_return = Logger.new()
+	var to_return = GutLogger.new()
 	to_return.disable_all_printers(override)
 	return to_return
 
@@ -185,7 +185,7 @@ func new_wired_test(gut_instance):
 
 # func new_test_double():
 # 	var t = double(GutTest).new()
-# 	var logger = double(GutUtils.Logger).new()
+# 	var logger = double(GutUtils.GutLogger).new()
 # 	stub(t, 'set_logger').to_call_super()
 # 	stub(t, 'get_logger').to_call_super()
 # 	t.set_logger(logger)
