@@ -14,7 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * `wait_while` added.  This waits while a `Callable` returns `true`.
 * New `class_name`s:
   * `GutInputFactory` for `res://addons/gut/gut_input_factory.gd` static class.
-
+* Signal related methods now accept a reference to a signal as well as an object/signal name:  `get_signal_emit_count`, `assert_connected`, `assert_not_connected`, `assert_signal_emitted`, `assert_signal_not_emitted`, `assert_signal_emitted_with_parameters`, `assert_signal_emit_count`, `get_signal_parameters`.
 
 ## Bug Fixes
 * I192 in just under 5 years I moved the two lines of code up some to finally fix this.
@@ -23,6 +23,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Deprecations
 * `wait_frames` has been deprecated in lieu of the more specific `wait_physics_frames` and `wait_idle_frames`.
+
+
+
 
 
 # 9.3.1
@@ -52,6 +55,8 @@ A small collection of bug fixes and documentation.  GUT can now generate documen
 * @onegm made their first contribution in https://github.com/bitwes/Gut/pull/668
 
 **Full Changelog**: https://github.com/bitwes/Gut/compare/v9.3.0...9.4.0
+
+
 
 
 # 9.3.0

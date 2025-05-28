@@ -530,41 +530,51 @@ func get_signal_emit_count(p1, p2=null):
 	return _signal_watcher.get_emit_count(sp.object, sp.signal_name)
 
 
-## If you need to inspect the parameters in order to make more complicate
-## assertions, then this will give you access to the parameters of any watched
-## signal.  This works the same way that
-## [code skip-lint]assert_signal_emitted_with_parameters[/code] does.  It takes an
-## object, signal name, and an optional index.  If the index is not specified
-## then the parameters from the most recent emission will be returned.  If the
-## object is not being watched, the signal was not fired, or the object does
-## not have the signal then `null` will be returned.
+## If you need to inspect the parameters in order to make more complicate assertions, then this will give you access to
+## the parameters of any watched signal.  This works the same way that
+## [code skip-lint]assert_signal_emitted_with_parameters[/code] does.  It takes an object, signal name, and an optional
+## index.  If the index is not specified then the parameters from the most recent emission will be returned.  If the
+## object is not being watched, the signal was not fired, or the object does not have the signal then `null` will be
+## returned.
+##
+## [br][br]
+## [b]Signatures:[/b][br]
+## - get_signal_parameters([param p1]:Signal, [param p2]:parameter-index (optional))[br]
+## - get_signal_parameters([param p1]:object, [param p2]:signal name, [param p3]:parameter-index (optional)) [br]
+## [br]
+## [b]Examples:[/b]
 ## [codeblock]
-##    class SignalObject:
-##        signal some_signal
-##        signal other_signal
+## class SignalObject:
+##     signal some_signal
+##     signal other_signal
 ##
-##    func test_get_signal_parameters():
-##        var obj = SignalObject.new()
-##        watch_signals(obj)
-##        obj.some_signal.emit(1, 2, 3)
-##        obj.some_signal.emit('a', 'b', 'c')
 ##
-##        # Passing
-##        # passes because get_signal_parameters returns the most recent emission
-##        # by default
-##        assert_eq(get_signal_parameters(obj, 'some_signal'), ['a', 'b', 'c'])
-##        assert_eq(get_signal_parameters(obj, 'some_signal', 0), [1, 2, 3])
-##        # if the signal was not fired null is returned
-##        assert_eq(get_signal_parameters(obj, 'other_signal'), null)
-##        # if the signal does not exist or isn't being watched null is returned
-##        assert_eq(get_signal_parameters(obj, 'signal_dne'), null)
+## func test_get_signal_parameters():
+##     var obj = SignalObject.new()
+##     watch_signals(obj)
+##     obj.some_signal.emit(1, 2, 3)
+##     obj.some_signal.emit('a', 'b', 'c')
 ##
-##        # Failing
-##        assert_eq(get_signal_parameters(obj, 'some_signal'), [1, 2, 3])
-##        assert_eq(get_signal_parameters(obj, 'some_signal', 0), ['a', 'b', 'c'])
+##     # -- Passing --
+##     # passes because get_signal_parameters returns the most recent emission
+##     # by default
+##     assert_eq(get_signal_parameters(obj, 'some_signal'), ['a', 'b', 'c'])
+##     assert_eq(get_signal_parameters(obj.some_signal), ['a', 'b', 'c'])
+##
+##     assert_eq(get_signal_parameters(obj, 'some_signal', 0), [1, 2, 3])
+##     assert_eq(get_signal_parameters(obj.some_signal, 0), [1, 2, 3])
+##
+##     # if the signal was not fired null is returned
+##     assert_null(get_signal_parameters(obj, 'other_signal'))
+##     # if the signal does not exist or isn't being watched null is returned
+##     assert_null(get_signal_parameters(obj, 'signal_dne'))
+##
+##     # -- Failing --
+##     assert_eq(get_signal_parameters(obj, 'some_signal'), [1, 2, 3])
+##     assert_eq(get_signal_parameters(obj.some_signal, 0), ['a', 'b', 'c'])
 ## [/codeblock]
-func get_signal_parameters(object, signal_name, index=-1):
-	var sp = SignalAssertParameters.new(object, signal_name, index)
+func get_signal_parameters(p1, p2=null, p3=-1):
+	var sp = SignalAssertParameters.new(p1, GutUtils.nvl(p2, -1), p3)
 	return _signal_watcher.get_signal_parameters(sp.object, sp.signal_name, sp.extra)
 
 
@@ -1444,111 +1454,133 @@ func assert_signal_not_emitted(p1, p2='', p3=''):
 ## [br]
 ## This will fail with specific messages if the object is not being watched or
 ## the object does not have the specified signal
+## [br][br]
+## [b]Signatures:[/b][br]
+## - assert_signal_emitted_with_parameters([param p1]:Signal, [param p2]:parameters, [param p3]: index [optional])[br]
+## - assert_signal_emitted_with_parameters([param p1]:object, [param p2]:signal-name, [param p3]:parameters, [param p4]: index [optional])
+## [br][br]
+## [b]Examples:[/b]
 ## [codeblock]
-##    class SignalObject:
-##        signal some_signal
-##        signal other_signal
+## class SignalObject:
+##     signal some_signal
+##     signal other_signal
 ##
-##    func test_assert_signal_emitted_with_parameters():
-##        var obj = SignalObject.new()
+## func test_assert_signal_emitted_with_parameters():
+##     var obj = SignalObject.new()
 ##
-##        watch_signals(obj)
-##        # emit the signal 3 times to illustrate how the index works in
-##        # assert_signal_emitted_with_parameters
-##        obj.emit_signal('some_signal', 1, 2, 3)
-##        obj.emit_signal('some_signal', 'a', 'b', 'c')
-##        obj.emit_signal('some_signal', 'one', 'two', 'three')
+##     watch_signals(obj)
+##     # emit the signal 3 times to illustrate how the index works in
+##     # assert_signal_emitted_with_parameters
+##     obj.emit_signal('some_signal', 1, 2, 3)
+##     obj.emit_signal('some_signal', 'a', 'b', 'c')
+##     obj.emit_signal('some_signal', 'one', 'two', 'three')
 ##
-##        # Passing
-##        # Passes b/c the default parameters to check are the last emission of
-##        # the signal
-##        assert_signal_emitted_with_parameters(obj, 'some_signal', ['one', 'two', 'three'])
-##        # Passes because the parameters match the specified emission based on index.
-##        assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 0)
+##     # Passing
+##     # Passes b/c the default parameters to check are the last emission of
+##     # the signal
+##     assert_signal_emitted_with_parameters(obj, 'some_signal', ['one', 'two', 'three'])
+##     assert_signal_emitted_with_parameters(obj.some_signal, ['one', 'two', 'three'])
 ##
-##        # Failing
-##        # Fails with specific message that the object does not have the signal
-##        assert_signal_emitted_with_parameters(obj, 'signal_does_not_exist', [])
-##        # Fails because the object passed is not being watched
-##        assert_signal_emitted_with_parameters(SignalObject.new(), 'some_signal', [])
-##        # Fails because parameters do not match latest emission
-##        assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3])
-##        # Fails because the parameters for the specified index do not match
-##        assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 1)
+##     # Passes because the parameters match the specified emission based on index.
+##     assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 0)
+##     assert_signal_emitted_with_parameters(obj.some_signal, [1, 2, 3], 0)
+##
+##     # Failing
+##     # Fails with specific message that the object does not have the signal
+##     assert_signal_emitted_with_parameters(obj, 'signal_does_not_exist', [])
+##     # Fails because the object passed is not being watched
+##     assert_signal_emitted_with_parameters(SignalObject.new(), 'some_signal', [])
+##     # Fails because parameters do not match latest emission
+##     assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3])
+##     # Fails because the parameters for the specified index do not match
+##     assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 1)
 ## [/codeblock]
-func assert_signal_emitted_with_parameters(object, signal_name, parameters=null, index=-1):
-	if(object is Signal):
+func assert_signal_emitted_with_parameters(p1, p2, p3=null, p4=-1):
+	var sp = SignalAssertParameters.new(p1, p2, p3)
+	var parameters = p3
+	var index = p4
+	if(p1 is Signal):
 		index = GutUtils.nvl(parameters, -1)
-		parameters = signal_name
-		signal_name = object.get_name()
-		object = object.get_object()
+		parameters = p2
 
 	if(typeof(parameters) != TYPE_ARRAY):
 		_lgr.error("The expected parameters must be wrapped in an array, you passed:  " + _str(parameters))
 		_fail("Bad Parameters")
 		return
 
-	var disp = str('Expected object ', _str(object), ' to emit signal [', signal_name, '] with parameters ', parameters, ', got ')
-	if(_can_make_signal_assertions(object, signal_name)):
-		if(_signal_watcher.did_emit(object, signal_name)):
-			var parms_got = _signal_watcher.get_signal_parameters(object, signal_name, index)
+	var disp = str('Expected object ', _str(sp.object), ' to emit signal [', sp.signal_name, '] with parameters ', parameters, ', got ')
+	if(_can_make_signal_assertions(sp.object, sp.signal_name)):
+		if(_signal_watcher.did_emit(sp.object, sp.signal_name)):
+			var parms_got = _signal_watcher.get_signal_parameters(sp.object, sp.signal_name, index)
 			var diff_result = _compare.deep(parameters, parms_got)
 			if(diff_result.are_equal):
 				_pass(str(disp, parms_got))
 			else:
-				_fail(str('Expected object ', _str(object), ' to emit signal [', signal_name, '] with parameters ', diff_result.summarize()))
+				_fail(str('Expected object ', _str(sp.object), ' to emit signal [', sp.signal_name, '] with parameters ', diff_result.summarize()))
 		else:
-			var text = str('Object ', object, ' did not emit signal [', signal_name, ']')
-			_fail(_get_fail_msg_including_emitted_signals(text, object))
+			var text = str('Object ', sp.object, ' did not emit signal [', sp.signal_name, ']')
+			_fail(_get_fail_msg_including_emitted_signals(text, sp.object))
 
 
 ## Asserts that a signal fired a specific number of times.
+## [br][br]
+## [b]Signatures:[/b][br]
+## - assert_signal_emit_count([param p1]:Signal, [param p2]:expected-count, [param p3]: text [optional])[br]
+## - assert_signal_emit_count([param p1]:object, [param p2]:signal-name, [param p3]:expected-count, [param p4]: text [optional])
+## [br][br]
+## [b]Examples:[/b]
 ## [codeblock]
-##    class SignalObject:
-##        signal some_signal
-##        signal other_signal
+## class SignalObject:
+##     signal some_signal
+##     signal other_signal
 ##
-##    func test_assert_signal_emit_count():
-##        var obj_a = SignalObject.new()
-##        var obj_b = SignalObject.new()
 ##
-##        watch_signals(obj_a)
-##        watch_signals(obj_b)
-##        obj_a.emit_signal('some_signal')
-##        obj_a.emit_signal('some_signal')
+## func test_assert_signal_emit_count():
+##     var obj_a = SignalObject.new()
+##     var obj_b = SignalObject.new()
 ##
-##        obj_b.emit_signal('some_signal')
-##        obj_b.emit_signal('other_signal')
+##     watch_signals(obj_a)
+##     watch_signals(obj_b)
 ##
-##        # Passing
-##        assert_signal_emit_count(obj_a, 'some_signal', 2)
-##        assert_signal_emit_count(obj_a, 'other_signal', 0)
+##     obj_a.emit_signal('some_signal')
+##     obj_a.emit_signal('some_signal')
 ##
-##        assert_signal_emit_count(obj_b, 'other_signal', 1)
+##     obj_b.emit_signal('some_signal')
+##     obj_b.emit_signal('other_signal')
 ##
-##        # Failing
-##        # Fails with specific message that the object does not have the signal
-##        assert_signal_emit_count(obj_a, 'signal_does_not_exist', 99)
-##        # Fails because the object passed is not being watched
-##        assert_signal_emit_count(SignalObject.new(), 'some_signal', 99)
-##        # The following fail for obvious reasons
-##        assert_signal_emit_count(obj_a, 'some_signal', 0)
-##        assert_signal_emit_count(obj_b, 'other_signal', 283)
+##     # Passing
+##     assert_signal_emit_count(obj_a, 'some_signal', 2, 'passes')
+##     assert_signal_emit_count(obj_a.some_signal, 2, 'passes')
+##
+##     assert_signal_emit_count(obj_a, 'other_signal', 0)
+##     assert_signal_emit_count(obj_a.other_signal, 0)
+##
+##     assert_signal_emit_count(obj_b, 'other_signal', 1)
+##
+##     # Failing
+##     # Fails with specific message that the object does not have the signal
+##     assert_signal_emit_count(obj_a, 'signal_does_not_exist', 99)
+##     # Fails because the object passed is not being watched
+##     assert_signal_emit_count(SignalObject.new(), 'some_signal', 99)
+##     # The following fail for obvious reasons
+##     assert_signal_emit_count(obj_a, 'some_signal', 0)
+##     assert_signal_emit_count(obj_b, 'other_signal', 283)
 ## [/codeblock]
-func assert_signal_emit_count(object, signal_name, times=0, text=""):
-	if(object is Signal):
+func assert_signal_emit_count(p1, p2, p3=0, p4=""):
+	var times = p3
+	var text = p4
+	var sp := SignalAssertParameters.new(p1, p2, times)
+	if(p1 is Signal):
 		text = times
-		times = signal_name
-		signal_name = object.get_name()
-		object = object.get_object()
+		times = p2
 
-	if(_can_make_signal_assertions(object, signal_name)):
-		var count = _signal_watcher.get_emit_count(object, signal_name)
-		var disp = str('Expected the signal [', signal_name, '] emit count of [', count, '] to equal [', times, ']: ', text)
+	if(_can_make_signal_assertions(sp.object, sp.signal_name)):
+		var count = _signal_watcher.get_emit_count(sp.object, sp.signal_name)
+		var disp = str('Expected the signal [', sp.signal_name, '] emit count of [', count, '] to equal [', times, ']: ', text)
 		if(count== times):
 			_pass(disp)
 		else:
-			_fail(_get_fail_msg_including_emitted_signals(disp, object))
+			_fail(_get_fail_msg_including_emitted_signals(disp, sp.object))
 
 
 ## Asserts the passed in object has a signal with the specified name.  It
