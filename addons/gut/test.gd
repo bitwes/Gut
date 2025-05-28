@@ -525,6 +525,8 @@ func watch_signals(object):
 ## the freedom to make more complicated assertions if the spirit moves you.
 ## This will return -1 if the signal was not fired or the object was not being
 ## watched, or if the object does not have the signal.
+## [br][br]
+## Accepts either the object and the signal name or the signal.
 func get_signal_emit_count(p1, p2=null):
 	var sp = SignalAssertParameters.new(p1, p2, '')
 	return _signal_watcher.get_emit_count(sp.object, sp.signal_name)
@@ -1310,30 +1312,41 @@ func _is_connected(signaler_obj, connect_to_obj, signal_name, method_name=""):
 
 
 ## Asserts that `signaler_obj` is connected to `connect_to_obj` on signal `signal_name`.  The method that is connected is optional.  If `method_name` is supplied then this will pass only if the signal is connected to the  method.  If it is not provided then any connection to the signal will cause a pass.
+## [br][br]
+## [b]Signatures:[/b][br]
+## - assert_connected([param p1]:Signal, [param p2]:connected-object)[br]
+## - assert_connected([param p1]:Signal, [param p2]:connected-method)[br]
+## - assert_connected([param p1]:object, [param p2]:signal-name, [param p3]:econnected-object, [param p4]: connected-method-name [optonal])
+## [br][br]
+## [b]Examples:[/b]
 ## [codeblock]
-##    class Signaler:
-##        signal the_signal
+## class Signaler:
+##     signal the_signal
 ##
-##    class Connector:
-##        func connect_this():
-##            pass
-##        func  other_method():
-##            pass
+## class Connector:
+##     func connect_this():
+##         pass
+##     func  other_method():
+##         pass
 ##
-##    func test_assert_connected():
-##        var signaler = Signaler.new()
-##        var connector  = Connector.new()
-##        signaler.connect('the_signal', connector, 'connect_this')
+## func test_assert_connected():
+##     var signaler = Signaler.new()
+##     var connector  = Connector.new()
+##     signaler.the_signal.connect(connector.connect_this)
 ##
-##        # Passing
-##        assert_connected(signaler, connector, 'the_signal')
-##        assert_connected(signaler, connector, 'the_signal', 'connect_this')
+##     # Passing
+##     assert_connected(signaler.the_signal, connector.connect_this)
+##     assert_connected(signaler.the_signal, connector)
+##     assert_connected(signaler, connector, 'the_signal')
+##     assert_connected(signaler, connector, 'the_signal', 'connect_this')
 ##
-##        # Failing
-##        var foo = Connector.new()
-##        assert_connected(signaler,  connector, 'the_signal', 'other_method')
-##        assert_connected(signaler, connector, 'other_signal')
-##        assert_connected(signaler, foo, 'the_signal')
+##     # Failing
+##     assert_connected(signaler.the_signal, connector.other_method)
+##
+##     var foo = Connector.new()
+##     assert_connected(signaler,  connector, 'the_signal', 'other_method')
+##     assert_connected(signaler, connector, 'other_signal')
+##     assert_connected(signaler, foo, 'the_signal')
 ## [/codeblock]
 func assert_connected(p1, connect_to_obj, p3=null, method_name=""):
 	var sp = SignalAssertParameters.new(p1, p3, null)
@@ -1353,10 +1366,9 @@ func assert_connected(p1, connect_to_obj, p3=null, method_name=""):
 		_fail(disp)
 
 
-## Asserts that an object is not connected to a signal on another object
+## The inverse of [method assert_connected].  See [method assert_connected] for parameter syntax.
 ## [br]
-## This will fail with specific messages if the target object is connected
-## to the specified signal on the source object.
+## This will fail with specific messages if the target object is connected to the specified signal on the source object.
 func assert_not_connected(p1, connect_to_obj, p3=null, method_name=""):
 	var sp = SignalAssertParameters.new(p1, p3, null)
 
@@ -1381,27 +1393,36 @@ func assert_not_connected(p1, connect_to_obj, p3=null, method_name=""):
 ## This will fail if the object is not being watched or if the object does not
 ## have the specified signal.  Since this will fail if the signal does not
 ## exist, you can often skip using [method assert_has_signal].
+## [br][br]
+## [b]Signatures:[/b][br]
+## - assert_signal_emitted([param p1]:Signal, [param p2]: text [optional])[br]
+## - assert_signal_emitted([param p1]:object, [param p2]:signal-name, [param p3]: text [optional])
+## [br][br]
+## [b]Examples:[/b]
 ## [codeblock]
-##    class SignalObject:
-##        signal some_signal
-##        signal other_signal
+## class SignalObject:
+##     signal some_signal
+##     signal other_signal
 ##
-##    func test_assert_signal_emitted():
-##        var obj = SignalObject.new()
 ##
-##        watch_signals(obj)
-##        obj.emit_signal('some_signal')
+## func test_assert_signal_emitted():
+##     var obj = SignalObject.new()
 ##
-##        ## Passing
-##        assert_signal_emitted(obj, 'some_signal')
+##     watch_signals(obj)
+##     obj.emit_signal('some_signal')
 ##
-##        ## Failing
-##        # Fails with specific message that the object does not have the signal
-##        assert_signal_emitted(obj, 'signal_does_not_exist')
-##        # Fails because the object passed is not being watched
-##        assert_signal_emitted(SignalObject.new(), 'some_signal')
-##        # Fails because the signal was not emitted
-##        assert_signal_emitted(obj, 'other_signal')
+##     ## Passing
+##     assert_signal_emitted(obj, 'some_signal')
+##     assert_signal_emitted(obj.some_signal)
+##
+##     ## Failing
+##     # Fails with specific message that the object does not have the signal
+##     assert_signal_emitted(obj, 'signal_does_not_exist')
+##     # Fails because the object passed is not being watched
+##     assert_signal_emitted(SignalObject.new(), 'some_signal')
+##     # Fails because the signal was not emitted
+##     assert_signal_emitted(obj, 'other_signal')
+##     assert_signal_emitted(obj.other_signal)
 ## [/codeblock]
 func assert_signal_emitted(p1, p2='', p3=""):
 	var sp = SignalAssertParameters.new(p1, p2, p3)
@@ -1415,6 +1436,12 @@ func assert_signal_emitted(p1, p2='', p3=""):
 
 ## This works opposite of `assert_signal_emitted`.  This will fail if the object
 ## is not being watched or if the object does not have the signal.
+## [br][br]
+## [b]Signatures:[/b][br]
+## - assert_signal_not_emitted([param p1]:Signal, [param p2]: text [optional])[br]
+## - assert_signal_not_emitted([param p1]:object, [param p2]:signal-name, [param p3]: text [optional])
+## [br][br]
+## [b]Examples:[/b]
 ## [codeblock]
 ##    class SignalObject:
 ##        signal some_signal
@@ -1428,6 +1455,7 @@ func assert_signal_emitted(p1, p2='', p3=""):
 ##
 ##        # Passing
 ##        assert_signal_not_emitted(obj, 'other_signal')
+##        assert_signal_not_emitted(obj.other_signal)
 ##
 ##        # Failing
 ##        # Fails with specific message that the object does not have the signal
