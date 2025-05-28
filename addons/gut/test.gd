@@ -1316,7 +1316,7 @@ func _is_connected(signaler_obj, connect_to_obj, signal_name, method_name=""):
 ## [b]Signatures:[/b][br]
 ## - assert_connected([param p1]:Signal, [param p2]:connected-object)[br]
 ## - assert_connected([param p1]:Signal, [param p2]:connected-method)[br]
-## - assert_connected([param p1]:object, [param p2]:signal-name, [param p3]:econnected-object, [param p4]: connected-method-name [optonal])
+## - assert_connected([param p1]:object, [param p2]:signal-name, [param p3]:econnected-object, [param p4]: connected-method-name <optional>)
 ## [br][br]
 ## [b]Examples:[/b]
 ## [codeblock]
@@ -1348,7 +1348,9 @@ func _is_connected(signaler_obj, connect_to_obj, signal_name, method_name=""):
 ##     assert_connected(signaler, connector, 'other_signal')
 ##     assert_connected(signaler, foo, 'the_signal')
 ## [/codeblock]
-func assert_connected(p1, connect_to_obj, p3=null, method_name=""):
+func assert_connected(p1, p2, p3=null, p4=""):
+	var connect_to_obj = p2
+	var method_name = p4
 	var sp = SignalAssertParameters.new(p1, p3, null)
 	if(connect_to_obj is  Callable):
 		method_name = connect_to_obj.get_method()
@@ -1395,8 +1397,8 @@ func assert_not_connected(p1, connect_to_obj, p3=null, method_name=""):
 ## exist, you can often skip using [method assert_has_signal].
 ## [br][br]
 ## [b]Signatures:[/b][br]
-## - assert_signal_emitted([param p1]:Signal, [param p2]: text [optional])[br]
-## - assert_signal_emitted([param p1]:object, [param p2]:signal-name, [param p3]: text [optional])
+## - assert_signal_emitted([param p1]:Signal, [param p2]: text <optional>)[br]
+## - assert_signal_emitted([param p1]:object, [param p2]:signal-name, [param p3]: text <optional>)
 ## [br][br]
 ## [b]Examples:[/b]
 ## [codeblock]
@@ -1438,8 +1440,8 @@ func assert_signal_emitted(p1, p2='', p3=""):
 ## is not being watched or if the object does not have the signal.
 ## [br][br]
 ## [b]Signatures:[/b][br]
-## - assert_signal_not_emitted([param p1]:Signal, [param p2]: text [optional])[br]
-## - assert_signal_not_emitted([param p1]:object, [param p2]:signal-name, [param p3]: text [optional])
+## - assert_signal_not_emitted([param p1]:Signal, [param p2]: text <optional>)[br]
+## - assert_signal_not_emitted([param p1]:object, [param p2]:signal-name, [param p3]: text <optional>)
 ## [br][br]
 ## [b]Examples:[/b]
 ## [codeblock]
@@ -1484,8 +1486,8 @@ func assert_signal_not_emitted(p1, p2='', p3=''):
 ## the object does not have the specified signal
 ## [br][br]
 ## [b]Signatures:[/b][br]
-## - assert_signal_emitted_with_parameters([param p1]:Signal, [param p2]:parameters, [param p3]: index [optional])[br]
-## - assert_signal_emitted_with_parameters([param p1]:object, [param p2]:signal-name, [param p3]:parameters, [param p4]: index [optional])
+## - assert_signal_emitted_with_parameters([param p1]:Signal, [param p2]:parameters, [param p3]: index <optional>)[br]
+## - assert_signal_emitted_with_parameters([param p1]:object, [param p2]:signal-name, [param p3]:parameters, [param p4]: index <optional>)
 ## [br][br]
 ## [b]Examples:[/b]
 ## [codeblock]
@@ -1553,8 +1555,8 @@ func assert_signal_emitted_with_parameters(p1, p2, p3=null, p4=-1):
 ## Asserts that a signal fired a specific number of times.
 ## [br][br]
 ## [b]Signatures:[/b][br]
-## - assert_signal_emit_count([param p1]:Signal, [param p2]:expected-count, [param p3]: text [optional])[br]
-## - assert_signal_emit_count([param p1]:object, [param p2]:signal-name, [param p3]:expected-count, [param p4]: text [optional])
+## - assert_signal_emit_count([param p1]:Signal, [param p2]:expected-count, [param p3]: text <optional>)[br]
+## - assert_signal_emit_count([param p1]:object, [param p2]:signal-name, [param p3]:expected-count, [param p4]: text <optional>)
 ## [br][br]
 ## [b]Examples:[/b]
 ## [codeblock]
