@@ -1486,8 +1486,8 @@ func assert_signal_not_emitted(p1, p2='', p3=''):
 ## the object does not have the specified signal
 ## [br][br]
 ## [b]Signatures:[/b][br]
-## - assert_signal_emitted_with_parameters([param p1]:Signal, [param p2]:parameters, [param p3]: index <optional>)[br]
-## - assert_signal_emitted_with_parameters([param p1]:object, [param p2]:signal-name, [param p3]:parameters, [param p4]: index <optional>)
+## - assert_signal_emitted_with_parameters([param p1]:Signal, [param p2]:expected-parameters, [param p3]: index <optional>)[br]
+## - assert_signal_emitted_with_parameters([param p1]:object, [param p2]:signal-name, [param p3]:expected-parameters, [param p4]: index <optional>)
 ## [br][br]
 ## [b]Examples:[/b]
 ## [codeblock]

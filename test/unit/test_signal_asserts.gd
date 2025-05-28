@@ -344,4 +344,3 @@ class TestSignalAsserts:
 
 	func test_get_signal_emit_count_works_with_signal_ref():
 		assert_eq(gr.test.get_signal_emit_count(gr.signal_object.script_signal), -1)
-

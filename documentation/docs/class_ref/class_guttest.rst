@@ -1529,9 +1529,9 @@ This will fail with specific messages if the object is not being watched or the 
 
 \ **Signatures:**\ 
 
-- assert_signal_emitted_with_parameters(``p1``:Signal, ``p2``:parameters, ``p3``: index <optional>)
+- assert_signal_emitted_with_parameters(``p1``:Signal, ``p2``:expected-parameters, ``p3``: index <optional>)
 
-- assert_signal_emitted_with_parameters(``p1``:object, ``p2``:signal-name, ``p3``:parameters, ``p4``: index <optional>) 
+- assert_signal_emitted_with_parameters(``p1``:object, ``p2``:signal-name, ``p3``:expected-parameters, ``p4``: index <optional>) 
 
 
 
