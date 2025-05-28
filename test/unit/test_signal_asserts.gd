@@ -344,3 +344,101 @@ class TestSignalAsserts:
 
 	func test_get_signal_emit_count_works_with_signal_ref():
 		assert_eq(gr.test.get_signal_emit_count(gr.signal_object.script_signal), -1)
+
+
+
+
+# ------------------------------------------------------------------------------
+class TestConnectionAsserts:
+	extends BaseTestClass
+
+	const SIGNAL_NAME = 'test_signal'
+	const METHOD_NAME = 'test_signal_connector'
+
+	class Signaler:
+		signal test_signal
+
+	class ConnectTo:
+		func test_signal_connector():
+			pass
+
+	func test_when_target_connected_to_source_connected_passes_with_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		s.connect(SIGNAL_NAME,Callable(c,METHOD_NAME))
+		gr.test.assert_connected(s, c, SIGNAL_NAME, METHOD_NAME)
+		assert_pass(gr.test)
+
+	func test_when_target_connected_to_source_connected_passes_without_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		s.connect(SIGNAL_NAME,Callable(c,METHOD_NAME))
+		gr.test.assert_connected(s, c, SIGNAL_NAME)
+		assert_pass(gr.test)
+
+	func test_when_target_not_connected_to_source_connected_fails_with_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		gr.test.assert_connected(s, c, SIGNAL_NAME, METHOD_NAME)
+		assert_fail(gr.test)
+
+	func test_when_target_not_connected_to_source_connected_fails_without_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		gr.test.assert_connected(s, c, SIGNAL_NAME)
+		assert_fail(gr.test)
+
+	func test_when_target_connected_to_source_not_connected_fails_with_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		s.connect(SIGNAL_NAME,Callable(c,METHOD_NAME))
+		gr.test.assert_not_connected(s, c, SIGNAL_NAME, METHOD_NAME)
+		assert_fail(gr.test)
+
+	func test_when_target_connected_to_source_not_connected_fails_without_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		s.connect(SIGNAL_NAME,Callable(c,METHOD_NAME))
+		gr.test.assert_not_connected(s, c, SIGNAL_NAME)
+		assert_fail(gr.test)
+
+	func test_when_target_not_connected_to_source_not_connected_passes_with_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		gr.test.assert_not_connected(s, c, SIGNAL_NAME, METHOD_NAME)
+		assert_pass(gr.test)
+
+	func test_when_target_not_connected_to_source_not_connected_passes_without_method_name():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		gr.test.assert_not_connected(s, c, SIGNAL_NAME)
+		assert_pass(gr.test)
+
+	func test_assert_conneccted_accepts_objects_instead_of_names():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		s.test_signal.connect(c.test_signal_connector)
+		gr.test.assert_connected(s.test_signal, c)
+		assert_pass(gr.test)
+
+	func test_assert_conneccted_works_with_callable():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		s.test_signal.connect(c.test_signal_connector)
+		gr.test.assert_connected(s.test_signal, c.test_signal_connector)
+		assert_pass(gr.test)
+
+	func test_assert_not_connected_accepts_objects_instead_of_names():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		s.test_signal.connect(c.test_signal_connector)
+		gr.test.assert_not_connected(s.test_signal, c)
+		assert_fail(gr.test)
+
+	func test_assert_not_conneccted_works_with_callable():
+		var s = Signaler.new()
+		var c = ConnectTo.new()
+		s.test_signal.connect(c.test_signal_connector)
+		gr.test.assert_not_connected(s.test_signal, c.test_signal_connector)
+		assert_fail(gr.test)
+

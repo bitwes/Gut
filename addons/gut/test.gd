@@ -28,22 +28,26 @@ extends Node
 ## [/codeblock]
 
 
+# Normalizes p1 and p2 into object/signal_name/signal_ref(sig).  Additional
+# parameters are optional and will be placed into the others array.  This
+# class is used in refactoring signal methods to accept a reference to the
+# signal instead an object and the signal name.
 class SignalAssertParameters:
 	var object = null
 	var signal_name = null
 	var sig = null
-	var extra = ''
+	var others := []
 
-	func _init(p1, p2, p3):
+	func _init(p1, p2, p3=null, p4=null, p5=null, p6=null):
+		others = [p3, p4, p5, p6]
 		if(p1 is Signal):
 			object = p1.get_object()
 			signal_name = p1.get_name()
-			extra = p2
+			others.push_front(p2)
 			sig = p1
 		else:
 			object = p1
 			signal_name = p2
-			extra = p3
 			sig = object.get(signal_name)
 
 
@@ -528,7 +532,7 @@ func watch_signals(object):
 ## [br][br]
 ## Accepts either the object and the signal name or the signal.
 func get_signal_emit_count(p1, p2=null):
-	var sp = SignalAssertParameters.new(p1, p2, '')
+	var sp = SignalAssertParameters.new(p1, p2)
 	return _signal_watcher.get_emit_count(sp.object, sp.signal_name)
 
 
@@ -576,8 +580,8 @@ func get_signal_emit_count(p1, p2=null):
 ##     assert_eq(get_signal_parameters(obj.some_signal, 0), ['a', 'b', 'c'])
 ## [/codeblock]
 func get_signal_parameters(p1, p2=null, p3=-1):
-	var sp = SignalAssertParameters.new(p1, GutUtils.nvl(p2, -1), p3)
-	return _signal_watcher.get_signal_parameters(sp.object, sp.signal_name, sp.extra)
+	var sp := SignalAssertParameters.new(p1, GutUtils.nvl(p2, -1), p3)
+	return _signal_watcher.get_signal_parameters(sp.object, sp.signal_name, sp.others[0])
 
 
 ## Get the parameters for a method call to a doubled object.  By default it will
@@ -1316,7 +1320,7 @@ func _is_connected(signaler_obj, connect_to_obj, signal_name, method_name=""):
 ## [b]Signatures:[/b][br]
 ## - assert_connected([param p1]:Signal, [param p2]:connected-object)[br]
 ## - assert_connected([param p1]:Signal, [param p2]:connected-method)[br]
-## - assert_connected([param p1]:object, [param p2]:signal-name, [param p3]:econnected-object, [param p4]: connected-method-name <optional>)
+## - assert_connected([param p1]:object, [param p2]:connected-object, [param p3]:signal-name, [param p4]: connected-method-name <optional>)
 ## [br][br]
 ## [b]Examples:[/b]
 ## [codeblock]
@@ -1349,9 +1353,10 @@ func _is_connected(signaler_obj, connect_to_obj, signal_name, method_name=""):
 ##     assert_connected(signaler, foo, 'the_signal')
 ## [/codeblock]
 func assert_connected(p1, p2, p3=null, p4=""):
+	var sp := SignalAssertParameters.new(p1, p3)
 	var connect_to_obj = p2
 	var method_name = p4
-	var sp = SignalAssertParameters.new(p1, p3, null)
+
 	if(connect_to_obj is  Callable):
 		method_name = connect_to_obj.get_method()
 		connect_to_obj = connect_to_obj.get_object()
@@ -1371,8 +1376,10 @@ func assert_connected(p1, p2, p3=null, p4=""):
 ## The inverse of [method assert_connected].  See [method assert_connected] for parameter syntax.
 ## [br]
 ## This will fail with specific messages if the target object is connected to the specified signal on the source object.
-func assert_not_connected(p1, connect_to_obj, p3=null, method_name=""):
-	var sp = SignalAssertParameters.new(p1, p3, null)
+func assert_not_connected(p1, p2, p3=null, p4=""):
+	var sp := SignalAssertParameters.new(p1, p3)
+	var connect_to_obj = p2
+	var method_name = p4
 
 	if(connect_to_obj is  Callable):
 		method_name = connect_to_obj.get_method()
@@ -1427,8 +1434,8 @@ func assert_not_connected(p1, connect_to_obj, p3=null, method_name=""):
 ##     assert_signal_emitted(obj.other_signal)
 ## [/codeblock]
 func assert_signal_emitted(p1, p2='', p3=""):
-	var sp = SignalAssertParameters.new(p1, p2, p3)
-	var disp = str('Expected object ', _str(sp.object), ' to have emitted signal [', sp.signal_name, ']:  ', sp.extra)
+	var sp := SignalAssertParameters.new(p1, p2, p3)
+	var disp = str('Expected object ', _str(sp.object), ' to have emitted signal [', sp.signal_name, ']:  ', sp.others[0])
 	if(_can_make_signal_assertions(sp.object, sp.signal_name)):
 		if(_signal_watcher.did_emit(sp.object, sp.signal_name)):
 			_pass(disp)
@@ -1468,8 +1475,8 @@ func assert_signal_emitted(p1, p2='', p3=""):
 ##        assert_signal_not_emitted(obj, 'some_signal')
 ## [/codeblock]
 func assert_signal_not_emitted(p1, p2='', p3=''):
-	var sp = SignalAssertParameters.new(p1, p2, p3)
-	var disp = str('Expected object ', _str(sp.object), ' to NOT emit signal [', sp.signal_name, ']:  ', sp.extra)
+	var sp := SignalAssertParameters.new(p1, p2, p3)
+	var disp = str('Expected object ', _str(sp.object), ' to NOT emit signal [', sp.signal_name, ']:  ', sp.others[0])
 	if(_can_make_signal_assertions(sp.object, sp.signal_name)):
 		if(_signal_watcher.did_emit(sp.object, sp.signal_name)):
 			_fail(disp)
@@ -1525,13 +1532,10 @@ func assert_signal_not_emitted(p1, p2='', p3=''):
 ##     # Fails because the parameters for the specified index do not match
 ##     assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 1)
 ## [/codeblock]
-func assert_signal_emitted_with_parameters(p1, p2, p3=null, p4=-1):
-	var sp = SignalAssertParameters.new(p1, p2, p3)
-	var parameters = p3
-	var index = p4
-	if(p1 is Signal):
-		index = GutUtils.nvl(parameters, -1)
-		parameters = p2
+func assert_signal_emitted_with_parameters(p1, p2, p3=-1, p4=-1):
+	var sp := SignalAssertParameters.new(p1, p2, p3, p4)
+	var parameters = sp.others[0]
+	var index = sp.others[1]
 
 	if(typeof(parameters) != TYPE_ARRAY):
 		_lgr.error("The expected parameters must be wrapped in an array, you passed:  " + _str(parameters))
@@ -1597,12 +1601,9 @@ func assert_signal_emitted_with_parameters(p1, p2, p3=null, p4=-1):
 ##     assert_signal_emit_count(obj_b, 'other_signal', 283)
 ## [/codeblock]
 func assert_signal_emit_count(p1, p2, p3=0, p4=""):
-	var times = p3
-	var text = p4
-	var sp := SignalAssertParameters.new(p1, p2, times)
-	if(p1 is Signal):
-		text = times
-		times = p2
+	var sp := SignalAssertParameters.new(p1, p2, p3, p4)
+	var times = sp.others[0]
+	var text = sp.others[1]
 
 	if(_can_make_signal_assertions(sp.object, sp.signal_name)):
 		var count = _signal_watcher.get_emit_count(sp.object, sp.signal_name)
