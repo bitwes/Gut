@@ -233,6 +233,8 @@ static func make_install_check_text(template_paths=DOUBLE_TEMPLATES, ver_nums=ve
 	return text
 
 
+static var inner_class_registry = InnerClassRegistry.new()
+
 static func is_install_valid(template_paths=DOUBLE_TEMPLATES, ver_nums=version_numbers):
 	return make_install_check_text(template_paths, ver_nums) == INSTALL_OK_TEXT
 
@@ -512,10 +514,6 @@ static func search_array(ar, prop_method, value):
 
 static func are_datatypes_same(got, expected):
 	return !(typeof(got) != typeof(expected) and got != null and expected != null)
-
-
-static func get_script_text(obj):
-	return obj.get_script().get_source_code()
 
 
 # func get_singleton_by_name(name):

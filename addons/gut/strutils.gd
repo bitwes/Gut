@@ -83,10 +83,11 @@ func _get_obj_filename(thing):
 			# we do nothing.  This just reads better.
 			pass
 	elif(!GutUtils.is_native_class(thing)):
-		var dict = inst_to_dict(thing)
-		filename = _get_filename(dict['@path'])
-		if(str(dict['@subpath']) != ''):
-			filename += str('/', dict['@subpath'])
+		filename = GutUtils.inner_class_registry.do_the_thing_i_want_it_to_do(thing)
+		# var dict = inst_to_dict(thing)
+		# filename = _get_filename(dict['@path'])
+		# if(str(dict['@subpath']) != ''):
+		# 	filename += str('/', dict['@subpath'])
 
 	return filename
 

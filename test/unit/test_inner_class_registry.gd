@@ -56,3 +56,27 @@ func test_get_base_resource_returns_null_when_not_registered():
 	var reg = GutUtils.InnerClassRegistry.new()
 	var resource = reg.get_base_resource(InnerClasses.InnerCA)
 	assert_eq(resource, null)
+
+func test_get_full_path_with_script_name():
+	var reg = GutUtils.InnerClassRegistry.new()
+	reg.register(InnerClasses)
+	var inst = InnerClasses.InnerB.InnerB1.new()
+	var result = reg.do_the_thing_i_want_it_to_do(inst)
+	assert_string_ends_with(result, '.gd/InnerB.InnerB1')
+
+
+func test_get_The_full_path_with_script_name_works_with_class_ref():
+	var reg = GutUtils.InnerClassRegistry.new()
+	reg.register(InnerClasses)
+	var result = reg.do_the_thing_i_want_it_to_do(InnerClasses.InnerB.InnerB1)
+	assert_string_ends_with(result, '.gd/InnerB.InnerB1')
+
+
+func test_using_constant_map_examples():
+	print("---------------------------------------")
+	var reg = GutUtils.InnerClassRegistry.new()
+	reg.register(load('res://test/resources/constant_map_examples.gd'))
+	print("---------------------------------------")
+	print(reg.to_s())
+	print("---------------------------------------")
+	pending()

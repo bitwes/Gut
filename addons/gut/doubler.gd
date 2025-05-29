@@ -5,7 +5,7 @@ var _base_script_text = GutUtils.get_file_as_text('res://addons/gut/double_templ
 var _script_collector = GutUtils.ScriptCollector.new()
 # used by tests for debugging purposes.
 var print_source = false
-var inner_class_registry = GutUtils.InnerClassRegistry.new()
+var inner_class_registry = GutUtils.inner_class_registry
 
 # ###############
 # Properties

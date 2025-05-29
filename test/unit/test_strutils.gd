@@ -55,6 +55,11 @@ class TestType2Str:
 	class ExtendsNothing:
 		var foo = 'bar'
 
+	func before_all():
+		GutUtils.inner_class_registry.register(DoubleMe)
+		GutUtils.inner_class_registry.register(DoubleMeScene)
+		print(GutUtils.inner_class_registry.to_s())
+
 	func test_types_contains_all_types(t = use_parameters(all_types)):
 		assert_has(strutils.types, t)
 
