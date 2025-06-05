@@ -768,5 +768,3 @@ func test_assert_setget():
 
 	# assert_setget(HealthBar, 'label') # FAIL => setter or getter has to be specified
 	# assert_setget(HealthBar, 'label', true) # FAIL => setter does not exist
-
-
