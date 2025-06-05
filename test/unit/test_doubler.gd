@@ -429,6 +429,7 @@ class TestDoubleInnerClasses:
 		doubler = Doubler.new()
 		doubler.set_stubber(GutUtils.Stubber.new())
 		doubler.set_logger(GutUtils.GutLogger.new())
+		doubler.inner_class_registry = GutUtils.InnerClassRegistry.new()
 
 	func test_when_inner_class_not_registered_it_generates_error():
 		var  Dbl = doubler.double(InnerClasses.InnerA)

@@ -1,0 +1,3 @@
+This is a POC branch for issue #706.  So far, I think this handles all the internal cases where using `inst_to_dict` is being used to get path info for doubles of inner classes.  I'm not sure what it looks like for user objects that go through `GutStringUtils.type2str`.
+
+This needs to be tested more, but it appears to be working.  These changes should be used as an example of what actual changes should do.  This is not being furthere developed because Godot may provide a better/easier way of doing this, making this obsolete.
