@@ -31,7 +31,7 @@ static func get_scene_tree_path(p_node: Node) -> String:
 		m_node = m_parent
 	
 	m_tree.invert()
-	return m_tree.join("/")
+	return "/" + m_tree.join("/")
 
 
 static func get_remote_view_port() -> Viewport:
@@ -114,18 +114,18 @@ func screen_touch_input_event(p_absolute_node_path: String) -> void:
 
 
 func wait_until_node_is_added(
-	p_target_node_name: String,
+	p_target_nodes_abs_path: String,
 	p_wait_time: float = DEFAULT_WAIT_TIME
 ) -> bool:
 	yield(yield_for(0.1), YIELD)
 	
-	var m_required_node = get_node(p_target_node_name)
+	var m_required_node = get_node(p_target_nodes_abs_path)
 	if m_required_node != null and is_instance_valid(m_required_node):
 		return true
 	
 	# m_main_loop is being used as scene tree
 	var m_main_loop = Engine.get_main_loop()
-	m_main_loop.connect("node_added", self, "_on_node_added", [p_target_node_name])
+	m_main_loop.connect("node_added", self, "_on_node_added", [p_target_nodes_abs_path])
 	
 	var m_wait_timer: SceneTreeTimer = get_tree().create_timer(p_wait_time)
 	m_wait_timer.connect("timeout", self, "_on_wait_timer_timeout")
@@ -139,10 +139,10 @@ func wait_until_node_is_added(
 	return m_is_node_found
 
 
-func _on_node_added(p_new_node, p_node_name: String) -> void:
+func _on_node_added(p_new_node, p_node_path: String) -> void:
 	var m_current_node_path: String = get_scene_tree_path(p_new_node)
 	
-	if p_node_name != m_current_node_path:
+	if p_node_path != m_current_node_path:
 		return
 	
 	emit_signal("similar_node_detected", true)
