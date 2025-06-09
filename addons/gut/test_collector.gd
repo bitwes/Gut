@@ -145,15 +145,33 @@ func _does_inherit_from_test(thing):
 			to_return = _does_inherit_from_test(base_script)
 	return to_return
 
+# identified_test_cases has key value pair as name_of_test_case with number of args
+# for Eg: {"test_some_function": 3}
 func _populate_tests(test_script):
-	var methods = test_script.load_script().get_script_method_list()
-	for i in range(methods.size()):
-		var name = methods[i]['name']
-		if(name.begins_with(_test_prefix)):
+	var loaded_script = test_script.load_script()
+	var methods = loaded_script.get_script_method_list()
+	var user_defined_test_order = loaded_script.TEST_CASES
+	
+	var identified_test_cases: Dictionary = {}
+	
+	for method in methods:
+		var method_name = method["name"]
+		if method_name.begins_with(_test_prefix):
+			identified_test_cases[method_name] = method["args"].size()
+	
+	for test_case_detail in user_defined_test_order:
+		var test_case_name: String = test_case_detail["name"]
+		var is_enabled: bool = test_case_detail["enabled"]
+
+		if not is_enabled:
+			continue
+
+		if identified_test_cases.has(test_case_name):
 			var t = Test.new()
-			t.name = name
-			t.arg_count = methods[i]['args'].size()
+			t.name = test_case_name
+			t.arg_count = identified_test_cases[test_case_name]
 			test_script.tests.append(t)
+
 
 func _get_inner_test_class_names(loaded):
 	var inner_classes = []

@@ -313,6 +313,9 @@ func _update_summary():
 # ####################
 # Public
 # ####################
+func run_all_script():
+	_on_Run_pressed()
+
 func run_mode(is_running=true):
 	_run_mode(is_running)
 

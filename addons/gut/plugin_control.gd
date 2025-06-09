@@ -125,22 +125,42 @@ var _lgr = null
 var _cancel_import = false
 var _placeholder = null
 
-func _init():
+var _script_details: Array
+
+func _init(
+	p_export_path: String,
+	p_junit_xml_file: String,
+	p_main_dir: String,
+	p_is_sub_dir_included: bool,
+	p_script_details: Array
+) -> void:
 	# This min size has to be what the min size of the GutScene's min size is
 	# but it has to be set here and not inferred i think.
 	rect_min_size = Vector2(740, 250)
+	
+	_export_path = p_export_path
+	_junit_xml_file = p_junit_xml_file
+	_directory1 = p_main_dir
+	_include_subdirectories = p_is_sub_dir_included
+	_script_details = p_script_details
 
+
+"""
+Note we do not require any placeholder at this time.
+All the setup data are provided from parent node's while initializing
+"""
 func _ready():
 	# Must call this deferred so that there is enough time for
 	# Engine.get_main_loop() is populated and the psuedo singleton utils.gd
 	# can be setup correctly.
-	if(Engine.editor_hint):
-		_placeholder = load('res://addons/gut/GutScene.tscn').instance()
-		call_deferred('add_child', _placeholder)
-		_placeholder.rect_size = rect_size
-	else:
-		call_deferred('_setup_gut')
-
+#	if(Engine.editor_hint):
+#		_placeholder = load('res://addons/gut/GutScene.tscn').instance()
+#		call_deferred('add_child', _placeholder)
+#		_placeholder.rect_size = rect_size
+#		pass
+#	else:
+	
+	call_deferred('_setup_gut')
 	connect('resized', self,  '_on_resized')
 
 func _on_resized():
@@ -194,6 +214,7 @@ func _setup_gut():
 	_gut.show_orphans(_show_orphans)
 	_gut.set_junit_xml_file(_junit_xml_file)
 	_gut.set_junit_xml_timestamp(_junit_xml_timestamp)
+	_gut.set_script_details(_script_details)
 
 	get_parent().add_child(_gut)
 
@@ -246,3 +267,9 @@ func export_if_tests_found():
 func import_tests_if_none_found():
 	if(_is_ready_to_go('import_tests_if_none_found') and !_cancel_import):
 		_gut.import_tests_if_none_found()
+
+func hide_gui_panel():
+	_gut.hide_gui_panel()
+
+func run_all_imported_tests():
+	_gut.run_tests()

@@ -188,6 +188,10 @@ func _add_queue_item(item):
 		item.start()
 
 
+func clear_receiver():
+	_receivers.clear()
+
+
 func add_receiver(obj):
 	_receivers.append(obj)
 

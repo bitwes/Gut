@@ -1,0 +1,36 @@
+{
+    "junit_xml_file": "user://data/results.xml",
+    "export_path": "res://gut_testing/exported_tests.cfg",
+    "main_directory": "res://gut_testing",
+    "include_sub_directory": true,
+    "script_details": [
+        {
+            "name": "test_welcome_bonus",
+            "enabled": false
+        },
+        {
+            "name": "test_profile",
+            "enabled": true
+        },
+        {
+            "name": "test_settings",
+            "enabled": false
+        },
+        {
+            "name": "test_store_scene",
+            "enabled": false
+        },
+        {
+            "name": "test_news_scene",
+            "enabled": false
+        },
+        {
+            "name": "test_home_scene",
+            "enabled": false
+        },
+        {
+            "name":"test_play_bots_normal_mode",
+            "enabled": false
+        }
+    ]
+}

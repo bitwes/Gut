@@ -61,6 +61,7 @@ const LOG_LEVEL_ALL_ASSERTS = 2
 const WAITING_MESSAGE = '/# waiting #/'
 const PAUSE_MESSAGE = '/# Pausing.  Press continue button...#/'
 const COMPLETED = 'completed'
+const GUTCONFIG_FILE_PATH = "res://addons/gut/gutconfig.json"
 
 # use a class as a sentinel value since it can be used in expressions that require a const value
 class YIELD_FROM_OBJ:
@@ -147,6 +148,15 @@ const SIGNAL_STOP_YIELD_BEFORE_TEARDOWN = 'stop_yield_before_teardown'
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 var  _should_print_versions = true # used to cut down on output in tests.
+
+"""
+Will have collection of dictionaries.
+{
+	"name": String,
+	"enabled": bool
+}
+"""
+var _script_details: Array = []
 
 
 func _init():
@@ -259,6 +269,7 @@ func _print_versions(send_all = true):
 # GUI Events and setup
 #
 # ##############################################################################
+
 func _setup_gui():
 	# This is how we get the size of the control to translate to the gui when
 	# the scene is run.  This is also another reason why the min_rect_size
@@ -1147,10 +1158,35 @@ func add_directory(path, prefix=_file_prefix, suffix=".gd"):
 		OS.exit_code = 1
 	else:
 		var files = _get_files(path, prefix, suffix)
+		files = _sort_script_files_order(files)
+		
 		for i in range(files.size()):
 			if(_script_name == null or _script_name == '' or \
 					(_script_name != null and files[i].findn(_script_name) != -1)):
 				add_script(files[i])
+
+
+func _sort_script_files_order(p_files: Array) -> Array:
+	var m_sorted_files_list: Array = []
+	
+	# Build a map of filename -> full path for quick lookup
+	var m_file_map := {}
+	for m_script_path in p_files:
+		var m_script_file_name = get_file_name(m_script_path)
+		m_file_map[m_script_file_name] = m_script_path
+	
+	# Go through script details in order and lookup in map
+	for m_script_detail in _script_details:
+		var m_ordered_script_name = m_script_detail["name"]
+		var m_is_script_enabled: bool = m_script_detail["enabled"]
+	
+		if not m_is_script_enabled:
+			continue
+	
+		if m_file_map.has(m_ordered_script_name):
+			m_sorted_files_list.push_back(m_file_map[m_ordered_script_name])
+	
+	return m_sorted_files_list
 
 
 # ------------------------------------------------------------------------------
@@ -1509,6 +1545,9 @@ func directory_delete_files(path):
 		thing = d.get_next()
 	d.list_dir_end()
 
+func hide_gui_panel() -> void:
+	_gui.hide()
+
 # ------------------------------------------------------------------------------
 # Returns the instantiated script object that is currently being run.
 # ------------------------------------------------------------------------------
@@ -1711,6 +1750,11 @@ func set_junit_xml_timestamp(junit_xml_timestamp):
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
+func set_script_details(p_script_details):
+	_script_details = p_script_details
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func get_add_children_to():
 	return _add_children_to
 
@@ -1718,3 +1762,10 @@ func get_add_children_to():
 # ------------------------------------------------------------------------------
 func set_add_children_to(add_children_to):
 	_add_children_to = add_children_to
+
+
+func get_file_name(p_file_path: String) -> String:
+	var m_splitted_path: Array = p_file_path.rsplit("/")
+	var m_file_name: String = m_splitted_path[m_splitted_path.size() - 1]
+	
+	return m_file_name.rsplit(".")[0]
