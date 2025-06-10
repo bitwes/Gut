@@ -57,7 +57,7 @@ static func check_is_instance_valid(p_instance) -> bool:
 
 
 func get_node_from_root(p_node_path: String):
-	return get_node(NodePath(p_node_path))
+	return get_node_or_null(NodePath(p_node_path))
 
 
 func mouse_left_button_click_simulation(p_absolute_node_path: String) -> void:
