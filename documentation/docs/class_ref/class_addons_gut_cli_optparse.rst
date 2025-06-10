@@ -235,7 +235,7 @@ Method Descriptions
 
 `bool <https://docs.godotengine.org/en/stable/classes/class_bool.html>`_ **is_option**\ (\ arg\ ) :ref:`🔗<class_addons/gut/cli/optparse.gd_method_is_option>`
 
-Test is something is an argument by the ``option_name_prefix``. If ``str(arg)`` begins with the prefix, it will considered true, otherwise it will be considered false.
+Test is something is an argument by the :ref:`option_name_prefix<class_addons/gut/cli/optparse.gd_property_option_name_prefix>`. If ``str(arg)`` begins with the prefix, it will considered true, otherwise it will be considered false.
 
 .. rst-class:: classref-item-separator
 
@@ -259,7 +259,7 @@ Adds a command line option. If ``op_names`` is a String, this is set as the argu
 
 `"addons/gut/cli/optparse.gd".Option <https://docs.godotengine.org/en/stable/classes/class_"addons/gut/cli/optparse.gd".option.html>`_ **add_required**\ (\ op_names, default, desc\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_\ ) :ref:`🔗<class_addons/gut/cli/optparse.gd_method_add_required>`
 
-Adds a required command line option. Required options that have not been set may be collected after parsing by calling ``get_missing_required_options()``. If ``op_names`` is a String, this is set as the argument's name. If ``op_names`` is an Array of Strings, all elements of the array will be aliases for the same argument and will be treated as such during parsing. ``default`` is the default value the option will be set to if it is not explicitly set during parsing. ``desc`` is a human readable text description of the option. If the option is successfully added, the Option object will be returned. If the option is not successfully added (e.g. a name collision with another option occurs), an error message will be printed and ``null`` will be returned.
+Adds a required command line option. Required options that have not been set may be collected after parsing by calling :ref:`get_missing_required_options<class_addons/gut/cli/optparse.gd_method_get_missing_required_options>`. If ``op_names`` is a String, this is set as the argument's name. If ``op_names`` is an Array of Strings, all elements of the array will be aliases for the same argument and will be treated as such during parsing. ``default`` is the default value the option will be set to if it is not explicitly set during parsing. ``desc`` is a human readable text description of the option. If the option is successfully added, the Option object will be returned. If the option is not successfully added (e.g. a name collision with another option occurs), an error message will be printed and ``null`` will be returned.
 
 .. rst-class:: classref-item-separator
 
@@ -271,7 +271,7 @@ Adds a required command line option. Required options that have not been set may
 
 `"addons/gut/cli/optparse.gd".Option <https://docs.godotengine.org/en/stable/classes/class_"addons/gut/cli/optparse.gd".option.html>`_ **add_positional**\ (\ op_name, default, desc\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_\ ) :ref:`🔗<class_addons/gut/cli/optparse.gd_method_add_positional>`
 
-Adds a positional command line option. Positional options are parsed by their position in the list of arguments are are not assigned by name by the user. If ``op_names`` is a String, this is set as the argument's name. If ``op_names`` is an Array of Strings, all elements of the array will be aliases for the same argument and will be treated as such during parsing. ``default`` is the default value the option will be set to if it is not explicitly set during parsing. ``desc`` is a human readable text description of the option. If the option is successfully added, the Option object will be returned. If the option is not successfully added (e.g. a name collision with another option occurs), an error message will be printed and ``null`` will be returned.
+Adds a positional command line option. Positional options are parsed by their position in the list of arguments are are not assigned by name by the user. If ``op_name`` is a String, this is set as the argument's name. If ``op_name`` is an Array of Strings, all elements of the array will be aliases for the same argument and will be treated as such during parsing. ``default`` is the default value the option will be set to if it is not explicitly set during parsing. ``desc`` is a human readable text description of the option. If the option is successfully added, the Option object will be returned. If the option is not successfully added (e.g. a name collision with another option occurs), an error message will be printed and ``null`` will be returned.
 
 .. rst-class:: classref-item-separator
 
@@ -283,7 +283,7 @@ Adds a positional command line option. Positional options are parsed by their po
 
 `"addons/gut/cli/optparse.gd".Option <https://docs.godotengine.org/en/stable/classes/class_"addons/gut/cli/optparse.gd".option.html>`_ **add_positional_required**\ (\ op_name, default, desc\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_\ ) :ref:`🔗<class_addons/gut/cli/optparse.gd_method_add_positional_required>`
 
-Adds a required positional command line option. If ``op_names`` is a String, this is set as the argument's name. Required options that have not been set may be collected after parsing by calling ``get_missing_required_options()``. Positional options are parsed by their position in the list of arguments are are not assigned by name by the user. If ``op_names`` is an Array of Strings, all elements of the array will be aliases for the same argument and will be treated as such during parsing. ``default`` is the default value the option will be set to if it is not explicitly set during parsing. ``desc`` is a human readable text description of the option. If the option is successfully added, the Option object will be returned. If the option is not successfully added (e.g. a name collision with another option occurs), an error message will be printed and ``null`` will be returned.
+Adds a required positional command line option. If ``op_name`` is a String, this is set as the argument's name. Required options that have not been set may be collected after parsing by calling :ref:`get_missing_required_options<class_addons/gut/cli/optparse.gd_method_get_missing_required_options>`. Positional options are parsed by their position in the list of arguments are are not assigned by name by the user. If ``op_name`` is an Array of Strings, all elements of the array will be aliases for the same argument and will be treated as such during parsing. ``default`` is the default value the option will be set to if it is not explicitly set during parsing. ``desc`` is a human readable text description of the option. If the option is successfully added, the Option object will be returned. If the option is not successfully added (e.g. a name collision with another option occurs), an error message will be printed and ``null`` will be returned.
 
 .. rst-class:: classref-item-separator
 
@@ -295,7 +295,7 @@ Adds a required positional command line option. If ``op_names`` is a String, thi
 
 |void| **add_heading**\ (\ display_text\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_\ ) :ref:`🔗<class_addons/gut/cli/optparse.gd_method_add_heading>`
 
-Headings are used to separate logical groups of command line options when printing out options from the help menu. Headings are printed out between option descriptions in the order that ``add_heading`` was called.
+Headings are used to separate logical groups of command line options when printing out options from the help menu. Headings are printed out between option descriptions in the order that :ref:`add_heading<class_addons/gut/cli/optparse.gd_method_add_heading>` was called.
 
 .. rst-class:: classref-item-separator
 
@@ -323,7 +323,7 @@ Gets the value assigned to an option after parsing, returning null if the option
 
 ::
 
-    default value < config file < command line
+        default value < config file < command line
 
 then you do not want to get the default value for a command line option or it will overwrite the value in a config file.
 

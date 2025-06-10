@@ -2140,11 +2140,11 @@ func wait_frames(frames : int, msg=''):
 	return wait_physics_frames(frames, msg)
 
 
-## This returns a signal that is emitted after [code]x[/code] physics frames have
-## elpased.  You can await this method directly to pause execution for [code]x[/code]
+## This returns a signal that is emitted after [param x] physics frames have
+## elpased.  You can await this method directly to pause execution for [param x]
 ## physics frames.  The frames are counted prior to _physics_process being called
 ## on any node (when [signal SceneTree.physics_frame] is emitted).  This means the
-## signal is emitted after [code]x[/code] frames and just before the x + 1 frame starts.
+## signal is emitted after [param x] frames and just before the x + 1 frame starts.
 ## [codeblock]
 ## await wait_physics_frames(10)
 ## [/codeblock]
@@ -2165,11 +2165,11 @@ func wait_idle_frames(x : int, msg=''):
 	return wait_process_frames(x, msg)
 
 
-## This returns a signal that is emitted after [code]x[/code] process/idle frames have
-## elpased.  You can await this method directly to pause execution for [code]x[/code]
+## This returns a signal that is emitted after [param x] process/idle frames have
+## elpased.  You can await this method directly to pause execution for [param x]
 ## process/idle frames.  The frames are counted prior to _process being called
 ## on any node (when [signal SceneTree.process_frame] is emitted).  This means the
-## signal is emitted after [code]x[/code] frames and just before the x + 1 frame starts.
+## signal is emitted after [param x] frames and just before the x + 1 frame starts.
 ## [codeblock]
 ## await wait_process_frames(10)
 ## # wait_idle_frames is an alias of wait_process_frames

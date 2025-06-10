@@ -137,7 +137,7 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_not_called<class_GutTest_method_assert_not_called>`\ (\ inst, method_name = null, parameters = null\ )                                                                                                                                              |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_not_connected<class_GutTest_method_assert_not_connected>`\ (\ p1, connect_to_obj, p3 = null, method_name = ""\ )                                                                                                                                    |
+   | |void|                                                                         | :ref:`assert_not_connected<class_GutTest_method_assert_not_connected>`\ (\ p1, p2, p3 = null, p4 = ""\ )                                                                                                                                                         |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_not_freed<class_GutTest_method_assert_not_freed>`\ (\ obj, title = "something"\ )                                                                                                                                                                   |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -159,7 +159,7 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_signal_emitted<class_GutTest_method_assert_signal_emitted>`\ (\ p1, p2 = "", p3 = ""\ )                                                                                                                                                             |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_signal_emitted_with_parameters<class_GutTest_method_assert_signal_emitted_with_parameters>`\ (\ p1, p2, p3 = null, p4 = -1\ )                                                                                                                       |
+   | |void|                                                                         | :ref:`assert_signal_emitted_with_parameters<class_GutTest_method_assert_signal_emitted_with_parameters>`\ (\ p1, p2, p3 = -1, p4 = -1\ )                                                                                                                         |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_signal_not_emitted<class_GutTest_method_assert_signal_not_emitted>`\ (\ p1, p2 = "", p3 = ""\ )                                                                                                                                                     |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -1363,7 +1363,7 @@ Asserts that `signaler_obj` is connected to `connect_to_obj` on signal `signal_n
 
 - assert_connected(``p1``:Signal, ``p2``:connected-method)
 
-- assert_connected(``p1``:object, ``p2``:signal-name, ``p3``:econnected-object, ``p4``: connected-method-name <optional>) 
+- assert_connected(``p1``:object, ``p2``:connected-object, ``p3``:signal-name, ``p4``: connected-method-name <optional>) 
 
 
 
@@ -1407,7 +1407,7 @@ Asserts that `signaler_obj` is connected to `connect_to_obj` on signal `signal_n
 
 .. rst-class:: classref-method
 
-|void| **assert_not_connected**\ (\ p1, connect_to_obj, p3 = null, method_name = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_connected>`
+|void| **assert_not_connected**\ (\ p1, p2, p3 = null, p4 = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_connected>`
 
 The inverse of :ref:`assert_connected<class_GutTest_method_assert_connected>`.  See :ref:`assert_connected<class_GutTest_method_assert_connected>` for parameter syntax. 
 
@@ -1519,7 +1519,7 @@ This works opposite of `assert_signal_emitted`.  This will fail if the object is
 
 .. rst-class:: classref-method
 
-|void| **assert_signal_emitted_with_parameters**\ (\ p1, p2, p3 = null, p4 = -1\ ) :ref:`🔗<class_GutTest_method_assert_signal_emitted_with_parameters>`
+|void| **assert_signal_emitted_with_parameters**\ (\ p1, p2, p3 = -1, p4 = -1\ ) :ref:`🔗<class_GutTest_method_assert_signal_emitted_with_parameters>`
 
 Asserts that a signal was fired with the specified parameters.  The expected parameters should be passed in as an array.  An optional index can be passed when a signal has fired more than once.  The default is to retrieve the most recent emission of the signal. 
 

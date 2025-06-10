@@ -73,12 +73,11 @@ wait_for_signal(sig, max_wait, msg=''):
 ```
 This method will pause execution until a signal is emitted or until `max_wait` seconds have passed, whichever comes first.  Using `wait_for_signal` is better than just using `await my_obj.my_signal` since tests will continue to run if the signal is never emitted.
 
-`wait_for_signal` internally calls `watch_signals` for the object, so you can skip that step when asserting signals have been emitted.
-
 This method returns `true` if the signal was emitted before timing out, `false` if not.
 
 The optional `msg` parameter is logged so you know why test execution is paused.
 ``` gdscript
+...
 # wait for my_object to emit the signal 'my_signal'
 # or 5 seconds, whichever comes first.
 await wait_for_signal(my_object.my_signal, 5)
@@ -89,6 +88,8 @@ assert_signal_emitted(my_object, 'my_signal', \
 assert_true(await wait_for_signal(my_object.my_signal, 2),
 	"The signal should have been emitted before timeout")
 ```
+
+As a bonus, `wait_for_signal` internally calls <a href="class_ref/class_guttest.html#class-guttest-method-watch-signals">watch_signals</a> for the object, so you can skip that step when asserting signals have been emitted.
 
 
 ## wait_until
