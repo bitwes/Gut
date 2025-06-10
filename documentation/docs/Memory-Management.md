@@ -30,7 +30,7 @@ func test_something():
 
 
 
-At the [bottom of the page](#memory_mgmt) is my attempt to describe how Godot does memory management.  If any of these sections seem confusing, read that part first.  The [Godot docs](https://docs.godotengine.org/en/stable/getting_started/scripting/gdscript/gdscript_basics.html#memory-management) have some information.  Also, here's a [tutorial](https://www.youtube.com/watch?v=cl2PxGkpJdo) on memory management I found.
+At the bottom of the page I attempt to describe how Godot does memory management.  If any of these sections seem confusing, read that part first.  The [Godot docs](https://docs.godotengine.org/en/stable/getting_started/scripting/gdscript/gdscript_basics.html#memory-management) has some information.  Also, here's a [tutorial](https://www.youtube.com/watch?v=cl2PxGkpJdo) on memory management I found.
 
 
 ## GUT Orphan Count

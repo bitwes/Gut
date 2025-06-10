@@ -13,9 +13,7 @@ In order to run tests in a deployed game you must create a scene to kick off the
 
 Remember to add `*.json` in your export settings (resources tab), or your config file will not be exported with your game.
 
-``` gdscript
-# from https://github.com/bitwes/Gut/blob/godot_4/scripts/main.gd
-#  and https://github.com/bitwes/Gut/blob/godot_4/scenes/main.tscn
+```
 # ------------------------------------------------------------------------------
 # This is an example of using the GutControl (res://addons/gut/gui/GutContro.tscn)
 # to execute tests in a deployed game.

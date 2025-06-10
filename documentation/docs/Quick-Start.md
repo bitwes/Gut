@@ -191,7 +191,7 @@ There are helpers to make your parameters more readable.
 
 
 ## Await
-[More Information](Await)
+[More Information](Awaiting)
 
 You can use `await` in your tests to allow time to pass before making assertions.  This can be useful if you need to wait for some interaction to play out, a signal to be emitted, or wait for things to happen in the next frames, such as physics process or draw.
 

@@ -416,8 +416,8 @@ func _parse_command_line_arguments(args):
 	return parsed_opts
 
 
-## Test is something is an argument by the [code]option_name_prefix[/code].
-## If [code]str(arg)[/code] begins with the prefix, it will considered true,
+## Test if something is an existing argument. If [code]str(arg)[/code] begins
+## with the [member option_name_prefix], it will considered true,
 ## otherwise it will be considered false.
 func is_option(arg) -> bool:
 	return str(arg).begins_with(option_name_prefix)
@@ -463,7 +463,7 @@ func add(op_names, default, desc: String) -> Option:
 
 ## Adds a required command line option.
 ## Required options that have not been set may be collected after parsing
-## by calling [code]get_missing_required_options()[/code].
+## by calling [method get_missing_required_options].
 ## If [param op_names] is a String, this is set as the argument's name.
 ## If [param op_names] is an Array of Strings, all elements of the array
 ## will be aliases for the same argument and will be treated as such during
@@ -485,8 +485,8 @@ func add_required(op_names, default, desc: String) -> Option:
 ## Adds a positional command line option.
 ## Positional options are parsed by their position in the list of arguments
 ## are are not assigned by name by the user.
-## If [param op_names] is a String, this is set as the argument's name.
-## If [param op_names] is an Array of Strings, all elements of the array
+## If [param op_name] is a String, this is set as the argument's name.
+## If [param op_name] is an Array of Strings, all elements of the array
 ## will be aliases for the same argument and will be treated as such during
 ## parsing.
 ## [param default] is the default value the option will be set to if it is not
@@ -507,12 +507,12 @@ func add_positional(op_name, default, desc: String) -> Option:
 
 
 ## Adds a required positional command line option.
-## If [param op_names] is a String, this is set as the argument's name.
+## If [param op_name] is a String, this is set as the argument's name.
 ## Required options that have not been set may be collected after parsing
-## by calling [code]get_missing_required_options()[/code].
+## by calling [method get_missing_required_options].
 ## Positional options are parsed by their position in the list of arguments
 ## are are not assigned by name by the user.
-## If [param op_names] is an Array of Strings, all elements of the array
+## If [param op_name] is an Array of Strings, all elements of the array
 ## will be aliases for the same argument and will be treated as such during
 ## parsing.
 ## [param default] is the default value the option will be set to if it is not
@@ -532,7 +532,7 @@ func add_positional_required(op_name, default, desc: String) -> Option:
 ## Headings are used to separate logical groups of command line options
 ## when printing out options from the help menu.
 ## Headings are printed out between option descriptions in the order
-## that [code]add_heading[/code] was called.
+## that [method add_heading] was called.
 func add_heading(display_text: String) -> void:
 	options.add_heading(display_text)
 
@@ -558,7 +558,7 @@ func get_value(name: String):
 ## This can be useful when providing an order of precedence to your values.
 ## For example if
 ## [codeblock]
-## 	default value < config file < command line
+##     default value < config file < command line
 ## [/codeblock]
 ## then you do not want to get the default value for a command line option or
 ## it will overwrite the value in a config file.
