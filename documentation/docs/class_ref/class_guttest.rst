@@ -89,7 +89,7 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_called_count<class_GutTest_method_assert_called_count>`\ (\ callable\: `Callable <https://docs.godotengine.org/en/stable/classes/class_callable.html>`_, expected_count\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_\ ) |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_connected<class_GutTest_method_assert_connected>`\ (\ signaler_obj, connect_to_obj, signal_name, method_name = ""\ )                                                                                                                                |
+   | |void|                                                                         | :ref:`assert_connected<class_GutTest_method_assert_connected>`\ (\ p1, p2, p3 = null, p4 = ""\ )                                                                                                                                                                 |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_does_not_have<class_GutTest_method_assert_does_not_have>`\ (\ obj, element, text = ""\ )                                                                                                                                                            |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -137,7 +137,7 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_not_called<class_GutTest_method_assert_not_called>`\ (\ inst, method_name = null, parameters = null\ )                                                                                                                                              |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_not_connected<class_GutTest_method_assert_not_connected>`\ (\ signaler_obj, connect_to_obj, signal_name, method_name = ""\ )                                                                                                                        |
+   | |void|                                                                         | :ref:`assert_not_connected<class_GutTest_method_assert_not_connected>`\ (\ p1, p2, p3 = null, p4 = ""\ )                                                                                                                                                         |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_not_freed<class_GutTest_method_assert_not_freed>`\ (\ obj, title = "something"\ )                                                                                                                                                                   |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -155,13 +155,13 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_same<class_GutTest_method_assert_same>`\ (\ v1, v2, text = ""\ )                                                                                                                                                                                    |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_signal_emit_count<class_GutTest_method_assert_signal_emit_count>`\ (\ object, signal_name, times, text = ""\ )                                                                                                                                      |
+   | |void|                                                                         | :ref:`assert_signal_emit_count<class_GutTest_method_assert_signal_emit_count>`\ (\ p1, p2, p3 = 0, p4 = ""\ )                                                                                                                                                    |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_signal_emitted<class_GutTest_method_assert_signal_emitted>`\ (\ object, signal_name, text = ""\ )                                                                                                                                                   |
+   | |void|                                                                         | :ref:`assert_signal_emitted<class_GutTest_method_assert_signal_emitted>`\ (\ p1, p2 = "", p3 = ""\ )                                                                                                                                                             |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_signal_emitted_with_parameters<class_GutTest_method_assert_signal_emitted_with_parameters>`\ (\ object, signal_name, parameters, index = -1\ )                                                                                                      |
+   | |void|                                                                         | :ref:`assert_signal_emitted_with_parameters<class_GutTest_method_assert_signal_emitted_with_parameters>`\ (\ p1, p2, p3 = -1, p4 = -1\ )                                                                                                                         |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_signal_not_emitted<class_GutTest_method_assert_signal_not_emitted>`\ (\ object, signal_name, text = ""\ )                                                                                                                                           |
+   | |void|                                                                         | :ref:`assert_signal_not_emitted<class_GutTest_method_assert_signal_not_emitted>`\ (\ p1, p2 = "", p3 = ""\ )                                                                                                                                                     |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_string_contains<class_GutTest_method_assert_string_contains>`\ (\ text, search, match_case = true\ )                                                                                                                                                |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -203,9 +203,9 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_pending_count<class_GutTest_method_get_pending_count>`\ (\ )                                                                                                                                                                                           |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_signal_emit_count<class_GutTest_method_get_signal_emit_count>`\ (\ object, signal_name\ )                                                                                                                                                              |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_signal_emit_count<class_GutTest_method_get_signal_emit_count>`\ (\ p1, p2 = null\ )                                                                                                                                                                    |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_signal_parameters<class_GutTest_method_get_signal_parameters>`\ (\ object, signal_name, index = -1\ )                                                                                                                                                  |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_signal_parameters<class_GutTest_method_get_signal_parameters>`\ (\ p1, p2 = null, p3 = -1\ )                                                                                                                                                           |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`ignore_method_when_doubling<class_GutTest_method_ignore_method_when_doubling>`\ (\ thing, method_name\ )                                                                                                                                                   |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -241,11 +241,17 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_for_signal<class_GutTest_method_wait_for_signal>`\ (\ sig\: `Signal <https://docs.godotengine.org/en/stable/classes/class_signal.html>`_, max_wait, msg = ""\ )                                                                                       |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_frames<class_GutTest_method_wait_frames>`\ (\ frames, msg = ""\ )                                                                                                                                                                                     |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_idle_frames<class_GutTest_method_wait_idle_frames>`\ (\ x\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_, msg = ""\ )                                                                                                       |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_physics_frames<class_GutTest_method_wait_physics_frames>`\ (\ x\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_, msg = ""\ )                                                                                                 |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_process_frames<class_GutTest_method_wait_process_frames>`\ (\ x\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_, msg = ""\ )                                                                                                 |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_seconds<class_GutTest_method_wait_seconds>`\ (\ time, msg = ""\ )                                                                                                                                                                                     |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_until<class_GutTest_method_wait_until>`\ (\ callable, max_wait, p3 = "", p4 = ""\ )                                                                                                                                                                   |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_while<class_GutTest_method_wait_while>`\ (\ callable, max_wait, p3 = "", p4 = ""\ )                                                                                                                                                                   |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`watch_signals<class_GutTest_method_watch_signals>`\ (\ object\ )                                                                                                                                                                                           |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -253,23 +259,25 @@ Methods
 .. table::
    :widths: auto
 
-   +------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
-   | Deprecated | |void|                                                                         | :ref:`assert_call_count<class_GutTest_method_assert_call_count>`\ (\ inst, method_name, expected_count, parameters = null\ )            |
-   +------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
-   | Deprecated | |void|                                                                         | :ref:`assert_setget<class_GutTest_method_assert_setget>`\ (\ instance, name_property, const_or_setter = null, getter = "__not_set__"\ ) |
-   +------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
-   | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`double_inner<class_GutTest_method_double_inner>`\ (\ path, subpath, strategy = null\ )                                            |
-   +------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
-   | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`double_scene<class_GutTest_method_double_scene>`\ (\ path, strategy = null\ )                                                     |
-   +------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
-   | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`double_script<class_GutTest_method_double_script>`\ (\ path, strategy = null\ )                                                   |
-   +------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
-   | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`yield_for<class_GutTest_method_yield_for>`\ (\ time, msg = ""\ )                                                                  |
-   +------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
-   | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`yield_frames<class_GutTest_method_yield_frames>`\ (\ frames, msg = ""\ )                                                          |
-   +------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
-   | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`yield_to<class_GutTest_method_yield_to>`\ (\ obj, signal_name, max_wait, msg = ""\ )                                              |
-   +------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+   +------------+--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | Deprecated | |void|                                                                         | :ref:`assert_call_count<class_GutTest_method_assert_call_count>`\ (\ inst, method_name, expected_count, parameters = null\ )                          |
+   +------------+--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | Deprecated | |void|                                                                         | :ref:`assert_setget<class_GutTest_method_assert_setget>`\ (\ instance, name_property, const_or_setter = null, getter = "__not_set__"\ )               |
+   +------------+--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`double_inner<class_GutTest_method_double_inner>`\ (\ path, subpath, strategy = null\ )                                                          |
+   +------------+--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`double_scene<class_GutTest_method_double_scene>`\ (\ path, strategy = null\ )                                                                   |
+   +------------+--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`double_script<class_GutTest_method_double_script>`\ (\ path, strategy = null\ )                                                                 |
+   +------------+--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_frames<class_GutTest_method_wait_frames>`\ (\ frames\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_, msg = ""\ ) |
+   +------------+--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`yield_for<class_GutTest_method_yield_for>`\ (\ time, msg = ""\ )                                                                                |
+   +------------+--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`yield_frames<class_GutTest_method_yield_frames>`\ (\ frames, msg = ""\ )                                                                        |
+   +------------+--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`yield_to<class_GutTest_method_yield_to>`\ (\ obj, signal_name, max_wait, msg = ""\ )                                                            |
+   +------------+--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 .. table::
    :widths: auto
@@ -634,9 +642,13 @@ This must be called in each test in which you want to make signal based assertio
 
 .. rst-class:: classref-method
 
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_signal_emit_count**\ (\ object, signal_name\ ) :ref:`🔗<class_GutTest_method_get_signal_emit_count>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_signal_emit_count**\ (\ p1, p2 = null\ ) :ref:`🔗<class_GutTest_method_get_signal_emit_count>`
 
-This will return the number of times a signal was fired.  This gives you the freedom to make more complicated assertions if the spirit moves you. This will return -1 if the signal was not fired or the object was not being watched, or if the object does not have the signal.
+This will return the number of times a signal was fired.  This gives you the freedom to make more complicated assertions if the spirit moves you. This will return -1 if the signal was not fired or the object was not being watched, or if the object does not have the signal. 
+
+
+
+Accepts either the object and the signal name or the signal.
 
 .. rst-class:: classref-item-separator
 
@@ -646,35 +658,52 @@ This will return the number of times a signal was fired.  This gives you the fre
 
 .. rst-class:: classref-method
 
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_signal_parameters**\ (\ object, signal_name, index = -1\ ) :ref:`🔗<class_GutTest_method_get_signal_parameters>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_signal_parameters**\ (\ p1, p2 = null, p3 = -1\ ) :ref:`🔗<class_GutTest_method_get_signal_parameters>`
 
-If you need to inspect the parameters in order to make more complicate assertions, then this will give you access to the parameters of any watched signal.  This works the same way that ``assert_signal_emitted_with_parameters`` does.  It takes an object, signal name, and an optional index.  If the index is not specified then the parameters from the most recent emission will be returned.  If the object is not being watched, the signal was not fired, or the object does not have the signal then `null` will be returned.
+If you need to inspect the parameters in order to make more complicate assertions, then this will give you access to the parameters of any watched signal.  This works the same way that ``assert_signal_emitted_with_parameters`` does.  It takes an object, signal name, and an optional index.  If the index is not specified then the parameters from the most recent emission will be returned.  If the object is not being watched, the signal was not fired, or the object does not have the signal then `null` will be returned.  
+
+
+
+\ **Signatures:**\ 
+
+- get_signal_parameters(``p1``:Signal, ``p2``:parameter-index (optional))
+
+- get_signal_parameters(``p1``:object, ``p2``:signal name, ``p3``:parameter-index (optional)) 
+
+
+
+\ **Examples:**\ 
 
 ::
 
-       class SignalObject:
-           signal some_signal
-           signal other_signal
+    class SignalObject:
+        signal some_signal
+        signal other_signal
     
-       func test_get_signal_parameters():
-           var obj = SignalObject.new()
-           watch_signals(obj)
-           obj.some_signal.emit(1, 2, 3)
-           obj.some_signal.emit('a', 'b', 'c')
     
-           # Passing
-           # passes because get_signal_parameters returns the most recent emission
-           # by default
-           assert_eq(get_signal_parameters(obj, 'some_signal'), ['a', 'b', 'c'])
-           assert_eq(get_signal_parameters(obj, 'some_signal', 0), [1, 2, 3])
-           # if the signal was not fired null is returned
-           assert_eq(get_signal_parameters(obj, 'other_signal'), null)
-           # if the signal does not exist or isn't being watched null is returned
-           assert_eq(get_signal_parameters(obj, 'signal_dne'), null)
+    func test_get_signal_parameters():
+        var obj = SignalObject.new()
+        watch_signals(obj)
+        obj.some_signal.emit(1, 2, 3)
+        obj.some_signal.emit('a', 'b', 'c')
     
-           # Failing
-           assert_eq(get_signal_parameters(obj, 'some_signal'), [1, 2, 3])
-           assert_eq(get_signal_parameters(obj, 'some_signal', 0), ['a', 'b', 'c'])
+        # -- Passing --
+        # passes because get_signal_parameters returns the most recent emission
+        # by default
+        assert_eq(get_signal_parameters(obj, 'some_signal'), ['a', 'b', 'c'])
+        assert_eq(get_signal_parameters(obj.some_signal), ['a', 'b', 'c'])
+    
+        assert_eq(get_signal_parameters(obj, 'some_signal', 0), [1, 2, 3])
+        assert_eq(get_signal_parameters(obj.some_signal, 0), [1, 2, 3])
+    
+        # if the signal was not fired null is returned
+        assert_null(get_signal_parameters(obj, 'other_signal'))
+        # if the signal does not exist or isn't being watched null is returned
+        assert_null(get_signal_parameters(obj, 'signal_dne'))
+    
+        # -- Failing --
+        assert_eq(get_signal_parameters(obj, 'some_signal'), [1, 2, 3])
+        assert_eq(get_signal_parameters(obj.some_signal, 0), ['a', 'b', 'c'])
 
 .. rst-class:: classref-item-separator
 
@@ -1322,35 +1351,53 @@ Asserts that ``obj`` exports a property with the name ``property_name`` and a ty
 
 .. rst-class:: classref-method
 
-|void| **assert_connected**\ (\ signaler_obj, connect_to_obj, signal_name, method_name = ""\ ) :ref:`🔗<class_GutTest_method_assert_connected>`
+|void| **assert_connected**\ (\ p1, p2, p3 = null, p4 = ""\ ) :ref:`🔗<class_GutTest_method_assert_connected>`
 
-Asserts that `signaler_obj` is connected to `connect_to_obj` on signal `signal_name`.  The method that is connected is optional.  If `method_name` is supplied then this will pass only if the signal is connected to the  method.  If it is not provided then any connection to the signal will cause a pass.
+Asserts that `signaler_obj` is connected to `connect_to_obj` on signal `signal_name`.  The method that is connected is optional.  If `method_name` is supplied then this will pass only if the signal is connected to the  method.  If it is not provided then any connection to the signal will cause a pass. 
+
+
+
+\ **Signatures:**\ 
+
+- assert_connected(``p1``:Signal, ``p2``:connected-object)
+
+- assert_connected(``p1``:Signal, ``p2``:connected-method)
+
+- assert_connected(``p1``:object, ``p2``:connected-object, ``p3``:signal-name, ``p4``: connected-method-name <optional>) 
+
+
+
+\ **Examples:**\ 
 
 ::
 
-       class Signaler:
-           signal the_signal
+    class Signaler:
+        signal the_signal
     
-       class Connector:
-           func connect_this():
-               pass
-           func  other_method():
-               pass
+    class Connector:
+        func connect_this():
+            pass
+        func  other_method():
+            pass
     
-       func test_assert_connected():
-           var signaler = Signaler.new()
-           var connector  = Connector.new()
-           signaler.connect('the_signal', connector, 'connect_this')
+    func test_assert_connected():
+        var signaler = Signaler.new()
+        var connector  = Connector.new()
+        signaler.the_signal.connect(connector.connect_this)
     
-           # Passing
-           assert_connected(signaler, connector, 'the_signal')
-           assert_connected(signaler, connector, 'the_signal', 'connect_this')
+        # Passing
+        assert_connected(signaler.the_signal, connector.connect_this)
+        assert_connected(signaler.the_signal, connector)
+        assert_connected(signaler, connector, 'the_signal')
+        assert_connected(signaler, connector, 'the_signal', 'connect_this')
     
-           # Failing
-           var foo = Connector.new()
-           assert_connected(signaler,  connector, 'the_signal', 'other_method')
-           assert_connected(signaler, connector, 'other_signal')
-           assert_connected(signaler, foo, 'the_signal')
+        # Failing
+        assert_connected(signaler.the_signal, connector.other_method)
+    
+        var foo = Connector.new()
+        assert_connected(signaler,  connector, 'the_signal', 'other_method')
+        assert_connected(signaler, connector, 'other_signal')
+        assert_connected(signaler, foo, 'the_signal')
 
 .. rst-class:: classref-item-separator
 
@@ -1360,9 +1407,9 @@ Asserts that `signaler_obj` is connected to `connect_to_obj` on signal `signal_n
 
 .. rst-class:: classref-method
 
-|void| **assert_not_connected**\ (\ signaler_obj, connect_to_obj, signal_name, method_name = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_connected>`
+|void| **assert_not_connected**\ (\ p1, p2, p3 = null, p4 = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_connected>`
 
-Asserts that an object is not connected to a signal on another object 
+The inverse of :ref:`assert_connected<class_GutTest_method_assert_connected>`.  See :ref:`assert_connected<class_GutTest_method_assert_connected>` for parameter syntax. 
 
 This will fail with specific messages if the target object is connected to the specified signal on the source object.
 
@@ -1374,32 +1421,47 @@ This will fail with specific messages if the target object is connected to the s
 
 .. rst-class:: classref-method
 
-|void| **assert_signal_emitted**\ (\ object, signal_name, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_signal_emitted>`
+|void| **assert_signal_emitted**\ (\ p1, p2 = "", p3 = ""\ ) :ref:`🔗<class_GutTest_method_assert_signal_emitted>`
 
-Assert that the specified object emitted the named signal.  You must call :ref:`watch_signals<class_GutTest_method_watch_signals>` and pass it the object that you are making assertions about. This will fail if the object is not being watched or if the object does not have the specified signal.  Since this will fail if the signal does not exist, you can often skip using :ref:`assert_has_signal<class_GutTest_method_assert_has_signal>`.
+Assert that the specified object emitted the named signal.  You must call :ref:`watch_signals<class_GutTest_method_watch_signals>` and pass it the object that you are making assertions about. This will fail if the object is not being watched or if the object does not have the specified signal.  Since this will fail if the signal does not exist, you can often skip using :ref:`assert_has_signal<class_GutTest_method_assert_has_signal>`. 
+
+
+
+\ **Signatures:**\ 
+
+- assert_signal_emitted(``p1``:Signal, ``p2``: text <optional>)
+
+- assert_signal_emitted(``p1``:object, ``p2``:signal-name, ``p3``: text <optional>) 
+
+
+
+\ **Examples:**\ 
 
 ::
 
-       class SignalObject:
-           signal some_signal
-           signal other_signal
+    class SignalObject:
+        signal some_signal
+        signal other_signal
     
-       func test_assert_signal_emitted():
-           var obj = SignalObject.new()
     
-           watch_signals(obj)
-           obj.emit_signal('some_signal')
+    func test_assert_signal_emitted():
+        var obj = SignalObject.new()
     
-           ## Passing
-           assert_signal_emitted(obj, 'some_signal')
+        watch_signals(obj)
+        obj.emit_signal('some_signal')
     
-           ## Failing
-           # Fails with specific message that the object does not have the signal
-           assert_signal_emitted(obj, 'signal_does_not_exist')
-           # Fails because the object passed is not being watched
-           assert_signal_emitted(SignalObject.new(), 'some_signal')
-           # Fails because the signal was not emitted
-           assert_signal_emitted(obj, 'other_signal')
+        ## Passing
+        assert_signal_emitted(obj, 'some_signal')
+        assert_signal_emitted(obj.some_signal)
+    
+        ## Failing
+        # Fails with specific message that the object does not have the signal
+        assert_signal_emitted(obj, 'signal_does_not_exist')
+        # Fails because the object passed is not being watched
+        assert_signal_emitted(SignalObject.new(), 'some_signal')
+        # Fails because the signal was not emitted
+        assert_signal_emitted(obj, 'other_signal')
+        assert_signal_emitted(obj.other_signal)
 
 .. rst-class:: classref-item-separator
 
@@ -1409,9 +1471,21 @@ Assert that the specified object emitted the named signal.  You must call :ref:`
 
 .. rst-class:: classref-method
 
-|void| **assert_signal_not_emitted**\ (\ object, signal_name, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_signal_not_emitted>`
+|void| **assert_signal_not_emitted**\ (\ p1, p2 = "", p3 = ""\ ) :ref:`🔗<class_GutTest_method_assert_signal_not_emitted>`
 
-This works opposite of `assert_signal_emitted`.  This will fail if the object is not being watched or if the object does not have the signal.
+This works opposite of `assert_signal_emitted`.  This will fail if the object is not being watched or if the object does not have the signal. 
+
+
+
+\ **Signatures:**\ 
+
+- assert_signal_not_emitted(``p1``:Signal, ``p2``: text <optional>)
+
+- assert_signal_not_emitted(``p1``:object, ``p2``:signal-name, ``p3``: text <optional>) 
+
+
+
+\ **Examples:**\ 
 
 ::
 
@@ -1427,6 +1501,7 @@ This works opposite of `assert_signal_emitted`.  This will fail if the object is
     
            # Passing
            assert_signal_not_emitted(obj, 'other_signal')
+           assert_signal_not_emitted(obj.other_signal)
     
            # Failing
            # Fails with specific message that the object does not have the signal
@@ -1444,44 +1519,59 @@ This works opposite of `assert_signal_emitted`.  This will fail if the object is
 
 .. rst-class:: classref-method
 
-|void| **assert_signal_emitted_with_parameters**\ (\ object, signal_name, parameters, index = -1\ ) :ref:`🔗<class_GutTest_method_assert_signal_emitted_with_parameters>`
+|void| **assert_signal_emitted_with_parameters**\ (\ p1, p2, p3 = -1, p4 = -1\ ) :ref:`🔗<class_GutTest_method_assert_signal_emitted_with_parameters>`
 
 Asserts that a signal was fired with the specified parameters.  The expected parameters should be passed in as an array.  An optional index can be passed when a signal has fired more than once.  The default is to retrieve the most recent emission of the signal. 
 
-This will fail with specific messages if the object is not being watched or the object does not have the specified signal
+This will fail with specific messages if the object is not being watched or the object does not have the specified signal 
+
+
+
+\ **Signatures:**\ 
+
+- assert_signal_emitted_with_parameters(``p1``:Signal, ``p2``:expected-parameters, ``p3``: index <optional>)
+
+- assert_signal_emitted_with_parameters(``p1``:object, ``p2``:signal-name, ``p3``:expected-parameters, ``p4``: index <optional>) 
+
+
+
+\ **Examples:**\ 
 
 ::
 
-       class SignalObject:
-           signal some_signal
-           signal other_signal
+    class SignalObject:
+        signal some_signal
+        signal other_signal
     
-       func test_assert_signal_emitted_with_parameters():
-           var obj = SignalObject.new()
+    func test_assert_signal_emitted_with_parameters():
+        var obj = SignalObject.new()
     
-           watch_signals(obj)
-           # emit the signal 3 times to illustrate how the index works in
-           # assert_signal_emitted_with_parameters
-           obj.emit_signal('some_signal', 1, 2, 3)
-           obj.emit_signal('some_signal', 'a', 'b', 'c')
-           obj.emit_signal('some_signal', 'one', 'two', 'three')
+        watch_signals(obj)
+        # emit the signal 3 times to illustrate how the index works in
+        # assert_signal_emitted_with_parameters
+        obj.emit_signal('some_signal', 1, 2, 3)
+        obj.emit_signal('some_signal', 'a', 'b', 'c')
+        obj.emit_signal('some_signal', 'one', 'two', 'three')
     
-           # Passing
-           # Passes b/c the default parameters to check are the last emission of
-           # the signal
-           assert_signal_emitted_with_parameters(obj, 'some_signal', ['one', 'two', 'three'])
-           # Passes because the parameters match the specified emission based on index.
-           assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 0)
+        # Passing
+        # Passes b/c the default parameters to check are the last emission of
+        # the signal
+        assert_signal_emitted_with_parameters(obj, 'some_signal', ['one', 'two', 'three'])
+        assert_signal_emitted_with_parameters(obj.some_signal, ['one', 'two', 'three'])
     
-           # Failing
-           # Fails with specific message that the object does not have the signal
-           assert_signal_emitted_with_parameters(obj, 'signal_does_not_exist', [])
-           # Fails because the object passed is not being watched
-           assert_signal_emitted_with_parameters(SignalObject.new(), 'some_signal', [])
-           # Fails because parameters do not match latest emission
-           assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3])
-           # Fails because the parameters for the specified index do not match
-           assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 1)
+        # Passes because the parameters match the specified emission based on index.
+        assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 0)
+        assert_signal_emitted_with_parameters(obj.some_signal, [1, 2, 3], 0)
+    
+        # Failing
+        # Fails with specific message that the object does not have the signal
+        assert_signal_emitted_with_parameters(obj, 'signal_does_not_exist', [])
+        # Fails because the object passed is not being watched
+        assert_signal_emitted_with_parameters(SignalObject.new(), 'some_signal', [])
+        # Fails because parameters do not match latest emission
+        assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3])
+        # Fails because the parameters for the specified index do not match
+        assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 1)
 
 .. rst-class:: classref-item-separator
 
@@ -1491,42 +1581,59 @@ This will fail with specific messages if the object is not being watched or the 
 
 .. rst-class:: classref-method
 
-|void| **assert_signal_emit_count**\ (\ object, signal_name, times, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_signal_emit_count>`
+|void| **assert_signal_emit_count**\ (\ p1, p2, p3 = 0, p4 = ""\ ) :ref:`🔗<class_GutTest_method_assert_signal_emit_count>`
 
-Asserts that a signal fired a specific number of times.
+Asserts that a signal fired a specific number of times. 
+
+
+
+\ **Signatures:**\ 
+
+- assert_signal_emit_count(``p1``:Signal, ``p2``:expected-count, ``p3``: text <optional>)
+
+- assert_signal_emit_count(``p1``:object, ``p2``:signal-name, ``p3``:expected-count, ``p4``: text <optional>) 
+
+
+
+\ **Examples:**\ 
 
 ::
 
-       class SignalObject:
-           signal some_signal
-           signal other_signal
+    class SignalObject:
+        signal some_signal
+        signal other_signal
     
-       func test_assert_signal_emit_count():
-           var obj_a = SignalObject.new()
-           var obj_b = SignalObject.new()
     
-           watch_signals(obj_a)
-           watch_signals(obj_b)
-           obj_a.emit_signal('some_signal')
-           obj_a.emit_signal('some_signal')
+    func test_assert_signal_emit_count():
+        var obj_a = SignalObject.new()
+        var obj_b = SignalObject.new()
     
-           obj_b.emit_signal('some_signal')
-           obj_b.emit_signal('other_signal')
+        watch_signals(obj_a)
+        watch_signals(obj_b)
     
-           # Passing
-           assert_signal_emit_count(obj_a, 'some_signal', 2)
-           assert_signal_emit_count(obj_a, 'other_signal', 0)
+        obj_a.emit_signal('some_signal')
+        obj_a.emit_signal('some_signal')
     
-           assert_signal_emit_count(obj_b, 'other_signal', 1)
+        obj_b.emit_signal('some_signal')
+        obj_b.emit_signal('other_signal')
     
-           # Failing
-           # Fails with specific message that the object does not have the signal
-           assert_signal_emit_count(obj_a, 'signal_does_not_exist', 99)
-           # Fails because the object passed is not being watched
-           assert_signal_emit_count(SignalObject.new(), 'some_signal', 99)
-           # The following fail for obvious reasons
-           assert_signal_emit_count(obj_a, 'some_signal', 0)
-           assert_signal_emit_count(obj_b, 'other_signal', 283)
+        # Passing
+        assert_signal_emit_count(obj_a, 'some_signal', 2, 'passes')
+        assert_signal_emit_count(obj_a.some_signal, 2, 'passes')
+    
+        assert_signal_emit_count(obj_a, 'other_signal', 0)
+        assert_signal_emit_count(obj_a.other_signal, 0)
+    
+        assert_signal_emit_count(obj_b, 'other_signal', 1)
+    
+        # Failing
+        # Fails with specific message that the object does not have the signal
+        assert_signal_emit_count(obj_a, 'signal_does_not_exist', 99)
+        # Fails because the object passed is not being watched
+        assert_signal_emit_count(SignalObject.new(), 'some_signal', 99)
+        # The following fail for obvious reasons
+        assert_signal_emit_count(obj_a, 'some_signal', 0)
+        assert_signal_emit_count(obj_b, 'other_signal', 283)
 
 .. rst-class:: classref-item-separator
 
@@ -1954,9 +2061,59 @@ See `Awaiting <../Awaiting.html>`__
 
 .. rst-class:: classref-method
 
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_frames**\ (\ frames, msg = ""\ ) :ref:`🔗<class_GutTest_method_wait_frames>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_frames**\ (\ frames\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_, msg = ""\ ) :ref:`🔗<class_GutTest_method_wait_frames>`
 
-Use with await to wait a number of frames.  The optional message will be printed
+**Deprecated:** This method may be changed or removed in future versions.
+
+Use wait_physics_frames or wait_process_frames See `Awaiting <../Awaiting.html>`__
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_wait_physics_frames:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_physics_frames**\ (\ x\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_, msg = ""\ ) :ref:`🔗<class_GutTest_method_wait_physics_frames>`
+
+This returns a signal that is emitted after ``x`` physics frames have elpased.  You can await this method directly to pause execution for ``x`` physics frames.  The frames are counted prior to _physics_process being called on any node (when :ref:`SceneTree.physics_frame<class_SceneTree_signal_physics_frame>` is emitted).  This means the signal is emitted after ``x`` frames and just before the x + 1 frame starts.
+
+::
+
+    await wait_physics_frames(10)
+
+See `Awaiting <../Awaiting.html>`__
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_wait_idle_frames:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_idle_frames**\ (\ x\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_, msg = ""\ ) :ref:`🔗<class_GutTest_method_wait_idle_frames>`
+
+Alias for :ref:`wait_process_frames<class_GutTest_method_wait_process_frames>`
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_wait_process_frames:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_process_frames**\ (\ x\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_, msg = ""\ ) :ref:`🔗<class_GutTest_method_wait_process_frames>`
+
+This returns a signal that is emitted after ``x`` process/idle frames have elpased.  You can await this method directly to pause execution for ``x`` process/idle frames.  The frames are counted prior to _process being called on any node (when :ref:`SceneTree.process_frame<class_SceneTree_signal_process_frame>` is emitted).  This means the signal is emitted after ``x`` frames and just before the x + 1 frame starts.
+
+::
+
+    await wait_process_frames(10)
+    # wait_idle_frames is an alias of wait_process_frames
+    await wait_idle_frames(10)
 
 See `Awaiting <../Awaiting.html>`__
 
@@ -1970,11 +2127,64 @@ See `Awaiting <../Awaiting.html>`__
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_until**\ (\ callable, max_wait, p3 = "", p4 = ""\ ) :ref:`🔗<class_GutTest_method_wait_until>`
 
-Use with await to wait for the passed in callable to return true or a maximum amount of time.  The callable is called every _physics_process tick unless an optional time between calls is specified.
+Use with await to wait for ``callable`` to return the boolean value ``true`` or a maximum amount of time.  All values that are not the boolean value ``true`` are ignored.  ``callable`` is called every ``_physics_process`` tick unless an optional time between calls is specified.
 
-p3 can be the optional message or an amount of time to wait between tests. p4 is the optional message if you have specified an amount of time to wait between tests.
+\ ``p3`` can be the optional message or an amount of time to wait between calls.
 
-Returns true if the callable returned true before the timeout, false if not. 
+\ ``p4`` is the optional message if you have specified an amount of time to wait between calls.
+
+Returns ``true`` if ``callable`` returned true before the timeout, false if not. 
+
+
+
+::
+
+    var foo = 1
+    func test_example():
+        var foo_func = func():
+            foo += 1
+            return foo == 10
+        foo = 1
+        wait_until(foo_func, 5, 'optional message')
+        # or give it a time between
+        foo = 1
+        wait_until(foo_func, 5, 1,
+            'this will timeout because we call it every second and are waiting a max of 10 seconds')
+    
+
+See also :ref:`wait_while<class_GutTest_method_wait_while>`\ 
+
+See `Awaiting <../Awaiting.html>`__
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_wait_while:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_while**\ (\ callable, max_wait, p3 = "", p4 = ""\ ) :ref:`🔗<class_GutTest_method_wait_while>`
+
+This is the inverse of :ref:`wait_until<class_GutTest_method_wait_until>`.  This will continue to wait while ``callable`` returns the boolean value ``true``.  If **ANY** other value is is returned then the wait will end. Returns ``true`` if ``callable`` returned a value other than ``true`` before the timeout, ``false`` if not.
+
+::
+
+    var foo = 1
+    func test_example():
+        var foo_func = func():
+            foo += 1
+            if(foo < 10):
+                return true
+            else:
+                return 'this is not a boolean'
+        foo = 1
+        wait_while(foo_func, 5, 'optional message')
+        # or give it a time between
+        foo = 1
+        wait_while(foo_func, 5, 1,
+            'this will timeout because we call it every second and are waiting a max of 10 seconds')
+    
 
 See `Awaiting <../Awaiting.html>`__
 
@@ -1988,7 +2198,7 @@ See `Awaiting <../Awaiting.html>`__
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **did_wait_timeout**\ (\ ) :ref:`🔗<class_GutTest_method_did_wait_timeout>`
 
-Returns whether the last wait\_\* method timed out.  This is always true if the last method was wait_frames or wait_seconds.  It will be false when using wait_for_signal and wait_until if the timeout occurs before what is being waited on.  The wait\_\* methods return this value so you should be able to avoid calling this directly, but you can.
+Returns whether the last wait\_\* method timed out.  This is always true if the last method was wait_xxx_frames or wait_seconds.  It will be false when using wait_for_signal and wait_until if the timeout occurs before what is being waited on.  The wait\_\* methods return this value so you should be able to avoid calling this directly, but you can.
 
 .. rst-class:: classref-item-separator
 

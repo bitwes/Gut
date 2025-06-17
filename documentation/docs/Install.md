@@ -20,6 +20,12 @@ Extract the zip and place the `gut` directory into your `addons` directory in yo
 
 Finish the install by following the instructions in Setup below.
 
+## Installing from this repository
+GUT's file structure is not organized to be used as a Git submodule.  If you would like to have GUT as a submodule of your project you could:
+1. Add GUT as a submodule at `<path to gut>/gut`
+1. Symlink `<path to gut>/gut/addons/gut` to `addons/gut`
+
+This will clone the entire GUT repository, including all of its documentation and tests (which are unnecessary).  It may be better to clone GUT outside your project and symlink to it from there instead (contributors must all have a copy of GUT at the same location for the symlink to work).
 
 ## Setup
 ### Activate

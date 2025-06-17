@@ -191,7 +191,7 @@ There are helpers to make your parameters more readable.
 
 
 ## Await
-[More Information](Await)
+[More Information](Awaiting)
 
 You can use `await` in your tests to allow time to pass before making assertions.  This can be useful if you need to wait for some interaction to play out, a signal to be emitted, or wait for things to happen in the next frames, such as physics process or draw.
 
@@ -204,9 +204,13 @@ You can `await` to a signal or an amount of time, whichever comes first with `wa
 var my_obj = load('res://my_obj.gd').new()
 await wait_for_signal(my_obj.some_signal, 3)
 ```
-You can also `await` for a number of frames using `wait_frames`.  It's best to wait at least 2 frames as waiting one frame can be flaky.
+You can also `await` for a number of physics frames using `wait_physics_frames`.  It's best to wait at least 2 frames as waiting one frame can be flaky.
+```gdscript
+await wait_physics_frames(5)
 ```
-await wait_frames(5)
+Or a number of idle/process frames using `wait_process_frames`.
+```gdscript
+await wait_process_frames(10)
 ```
 
 ## Leak Testing and Memory Management

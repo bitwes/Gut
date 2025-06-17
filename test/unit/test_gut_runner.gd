@@ -44,7 +44,7 @@ class TestQuit:
 		add_child_autofree(gr)
 
 		gr.run_tests()
-		await wait_frames(10)
+		await wait_physics_frames(10)
 		assert_not_called(gr, 'quit')
 
 	func test_quits_with_exit_code_0_when_should_exit_and_everything_ok():
@@ -53,7 +53,7 @@ class TestQuit:
 		add_child_autofree(gr)
 
 		gr.run_tests()
-		await wait_frames(10)
+		await wait_physics_frames(10)
 		assert_called(gr, 'quit', [0])
 
 	func test_quits_with_exit_code_0_when_exit_on_success_and_everything_ok():
@@ -62,7 +62,7 @@ class TestQuit:
 		add_child_autofree(gr)
 
 		gr.run_tests()
-		await wait_frames(10)
+		await wait_physics_frames(10)
 		assert_called(gr, 'quit', [0])
 
 	func test_sets_exit_code_from_post_run_hook():
@@ -75,7 +75,7 @@ class TestQuit:
 		add_child_autofree(gr)
 
 		gr.run_tests()
-		await wait_frames(10)
+		await wait_physics_frames(10)
 		assert_called(gr, 'quit', [456])
 
 
@@ -86,7 +86,7 @@ class TestQuit:
 		add_child_autofree(gr)
 
 		gr.run_tests()
-		await wait_frames(10)
+		await wait_physics_frames(10)
 		assert_called(gr, 'quit', [1])
 
 
@@ -101,7 +101,7 @@ class TestQuit:
 		add_child_autofree(gr)
 
 		gr.run_tests()
-		await wait_frames(10)
+		await wait_physics_frames(10)
 		assert_called(gr, 'quit', [456])
 
 
@@ -112,7 +112,7 @@ class TestQuit:
 		add_child_autofree(gr)
 
 		gr.run_tests()
-		await wait_frames(10)
+		await wait_physics_frames(10)
 		assert_not_called(gr, 'quit')
 
 
@@ -123,7 +123,7 @@ class TestQuit:
 		add_child_autofree(gr)
 
 		gr.run_tests()
-		await wait_frames(10)
+		await wait_physics_frames(10)
 		assert_called(gr, 'quit', [0])
 
 
@@ -134,5 +134,5 @@ class TestQuit:
 		add_child_autofree(gr)
 
 		gr.run_tests()
-		await wait_frames(10)
+		await wait_physics_frames(10)
 		assert_called(gr, 'quit', [1])

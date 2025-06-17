@@ -28,6 +28,27 @@ extends Node
 ## [/codeblock]
 
 
+# Normalizes p1 and p2 into object/signal_name/signal_ref(sig).  Additional
+# parameters are optional and will be placed into the others array.  This
+# class is used in refactoring signal methods to accept a reference to the
+# signal instead an object and the signal name.
+class SignalAssertParameters:
+	var object = null
+	var signal_name = null
+	var sig = null
+	var others := []
+
+	func _init(p1, p2, p3=null, p4=null, p5=null, p6=null):
+		others = [p3, p4, p5, p6]
+		if(p1 is Signal):
+			object = p1.get_object()
+			signal_name = p1.get_name()
+			others.push_front(p2)
+			sig = p1
+		else:
+			object = p1
+			signal_name = p2
+			sig = object.get(signal_name)
 
 
 const EDITOR_PROPERTY = PROPERTY_USAGE_SCRIPT_VARIABLE | PROPERTY_USAGE_DEFAULT
@@ -508,45 +529,59 @@ func watch_signals(object):
 ## the freedom to make more complicated assertions if the spirit moves you.
 ## This will return -1 if the signal was not fired or the object was not being
 ## watched, or if the object does not have the signal.
-func get_signal_emit_count(object, signal_name):
-	return _signal_watcher.get_emit_count(object, signal_name)
+## [br][br]
+## Accepts either the object and the signal name or the signal.
+func get_signal_emit_count(p1, p2=null):
+	var sp = SignalAssertParameters.new(p1, p2)
+	return _signal_watcher.get_emit_count(sp.object, sp.signal_name)
 
 
-## If you need to inspect the parameters in order to make more complicate
-## assertions, then this will give you access to the parameters of any watched
-## signal.  This works the same way that
-## [code skip-lint]assert_signal_emitted_with_parameters[/code] does.  It takes an
-## object, signal name, and an optional index.  If the index is not specified
-## then the parameters from the most recent emission will be returned.  If the
-## object is not being watched, the signal was not fired, or the object does
-## not have the signal then `null` will be returned.
+## If you need to inspect the parameters in order to make more complicate assertions, then this will give you access to
+## the parameters of any watched signal.  This works the same way that
+## [code skip-lint]assert_signal_emitted_with_parameters[/code] does.  It takes an object, signal name, and an optional
+## index.  If the index is not specified then the parameters from the most recent emission will be returned.  If the
+## object is not being watched, the signal was not fired, or the object does not have the signal then `null` will be
+## returned.
+##
+## [br][br]
+## [b]Signatures:[/b][br]
+## - get_signal_parameters([param p1]:Signal, [param p2]:parameter-index (optional))[br]
+## - get_signal_parameters([param p1]:object, [param p2]:signal name, [param p3]:parameter-index (optional)) [br]
+## [br]
+## [b]Examples:[/b]
 ## [codeblock]
-##    class SignalObject:
-##        signal some_signal
-##        signal other_signal
+## class SignalObject:
+##     signal some_signal
+##     signal other_signal
 ##
-##    func test_get_signal_parameters():
-##        var obj = SignalObject.new()
-##        watch_signals(obj)
-##        obj.some_signal.emit(1, 2, 3)
-##        obj.some_signal.emit('a', 'b', 'c')
 ##
-##        # Passing
-##        # passes because get_signal_parameters returns the most recent emission
-##        # by default
-##        assert_eq(get_signal_parameters(obj, 'some_signal'), ['a', 'b', 'c'])
-##        assert_eq(get_signal_parameters(obj, 'some_signal', 0), [1, 2, 3])
-##        # if the signal was not fired null is returned
-##        assert_eq(get_signal_parameters(obj, 'other_signal'), null)
-##        # if the signal does not exist or isn't being watched null is returned
-##        assert_eq(get_signal_parameters(obj, 'signal_dne'), null)
+## func test_get_signal_parameters():
+##     var obj = SignalObject.new()
+##     watch_signals(obj)
+##     obj.some_signal.emit(1, 2, 3)
+##     obj.some_signal.emit('a', 'b', 'c')
 ##
-##        # Failing
-##        assert_eq(get_signal_parameters(obj, 'some_signal'), [1, 2, 3])
-##        assert_eq(get_signal_parameters(obj, 'some_signal', 0), ['a', 'b', 'c'])
+##     # -- Passing --
+##     # passes because get_signal_parameters returns the most recent emission
+##     # by default
+##     assert_eq(get_signal_parameters(obj, 'some_signal'), ['a', 'b', 'c'])
+##     assert_eq(get_signal_parameters(obj.some_signal), ['a', 'b', 'c'])
+##
+##     assert_eq(get_signal_parameters(obj, 'some_signal', 0), [1, 2, 3])
+##     assert_eq(get_signal_parameters(obj.some_signal, 0), [1, 2, 3])
+##
+##     # if the signal was not fired null is returned
+##     assert_null(get_signal_parameters(obj, 'other_signal'))
+##     # if the signal does not exist or isn't being watched null is returned
+##     assert_null(get_signal_parameters(obj, 'signal_dne'))
+##
+##     # -- Failing --
+##     assert_eq(get_signal_parameters(obj, 'some_signal'), [1, 2, 3])
+##     assert_eq(get_signal_parameters(obj.some_signal, 0), ['a', 'b', 'c'])
 ## [/codeblock]
-func get_signal_parameters(object, signal_name, index=-1):
-	return _signal_watcher.get_signal_parameters(object, signal_name, index)
+func get_signal_parameters(p1, p2=null, p3=-1):
+	var sp := SignalAssertParameters.new(p1, GutUtils.nvl(p2, -1), p3)
+	return _signal_watcher.get_signal_parameters(sp.object, sp.signal_name, sp.others[0])
 
 
 ## Get the parameters for a method call to a doubled object.  By default it will
@@ -1281,57 +1316,82 @@ func _is_connected(signaler_obj, connect_to_obj, signal_name, method_name=""):
 
 
 ## Asserts that `signaler_obj` is connected to `connect_to_obj` on signal `signal_name`.  The method that is connected is optional.  If `method_name` is supplied then this will pass only if the signal is connected to the  method.  If it is not provided then any connection to the signal will cause a pass.
+## [br][br]
+## [b]Signatures:[/b][br]
+## - assert_connected([param p1]:Signal, [param p2]:connected-object)[br]
+## - assert_connected([param p1]:Signal, [param p2]:connected-method)[br]
+## - assert_connected([param p1]:object, [param p2]:connected-object, [param p3]:signal-name, [param p4]: connected-method-name <optional>)
+## [br][br]
+## [b]Examples:[/b]
 ## [codeblock]
-##    class Signaler:
-##        signal the_signal
+## class Signaler:
+##     signal the_signal
 ##
-##    class Connector:
-##        func connect_this():
-##            pass
-##        func  other_method():
-##            pass
+## class Connector:
+##     func connect_this():
+##         pass
+##     func  other_method():
+##         pass
 ##
-##    func test_assert_connected():
-##        var signaler = Signaler.new()
-##        var connector  = Connector.new()
-##        signaler.connect('the_signal', connector, 'connect_this')
+## func test_assert_connected():
+##     var signaler = Signaler.new()
+##     var connector  = Connector.new()
+##     signaler.the_signal.connect(connector.connect_this)
 ##
-##        # Passing
-##        assert_connected(signaler, connector, 'the_signal')
-##        assert_connected(signaler, connector, 'the_signal', 'connect_this')
+##     # Passing
+##     assert_connected(signaler.the_signal, connector.connect_this)
+##     assert_connected(signaler.the_signal, connector)
+##     assert_connected(signaler, connector, 'the_signal')
+##     assert_connected(signaler, connector, 'the_signal', 'connect_this')
 ##
-##        # Failing
-##        var foo = Connector.new()
-##        assert_connected(signaler,  connector, 'the_signal', 'other_method')
-##        assert_connected(signaler, connector, 'other_signal')
-##        assert_connected(signaler, foo, 'the_signal')
+##     # Failing
+##     assert_connected(signaler.the_signal, connector.other_method)
+##
+##     var foo = Connector.new()
+##     assert_connected(signaler,  connector, 'the_signal', 'other_method')
+##     assert_connected(signaler, connector, 'other_signal')
+##     assert_connected(signaler, foo, 'the_signal')
 ## [/codeblock]
-func assert_connected(signaler_obj, connect_to_obj, signal_name, method_name=""):
-	pass
+func assert_connected(p1, p2, p3=null, p4=""):
+	var sp := SignalAssertParameters.new(p1, p3)
+	var connect_to_obj = p2
+	var method_name = p4
+
+	if(connect_to_obj is  Callable):
+		method_name = connect_to_obj.get_method()
+		connect_to_obj = connect_to_obj.get_object()
+
 	var method_disp = ''
 	if (method_name != ""):
 		method_disp = str(' using method: [', method_name, '] ')
-	var disp = str('Expected object ', _str(signaler_obj),\
-		' to be connected to signal: [', signal_name, '] on ',\
+	var disp = str('Expected object ', _str(sp.object),\
+		' to be connected to signal: [', sp.signal_name, '] on ',\
 		_str(connect_to_obj), method_disp)
-	if(_is_connected(signaler_obj, connect_to_obj, signal_name, method_name)):
+	if(_is_connected(sp.object, connect_to_obj, sp.signal_name, method_name)):
 		_pass(disp)
 	else:
 		_fail(disp)
 
 
-## Asserts that an object is not connected to a signal on another object
+## The inverse of [method assert_connected].  See [method assert_connected] for parameter syntax.
 ## [br]
-## This will fail with specific messages if the target object is connected
-## to the specified signal on the source object.
-func assert_not_connected(signaler_obj, connect_to_obj, signal_name, method_name=""):
+## This will fail with specific messages if the target object is connected to the specified signal on the source object.
+func assert_not_connected(p1, p2, p3=null, p4=""):
+	var sp := SignalAssertParameters.new(p1, p3)
+	var connect_to_obj = p2
+	var method_name = p4
+
+	if(connect_to_obj is  Callable):
+		method_name = connect_to_obj.get_method()
+		connect_to_obj = connect_to_obj.get_object()
+
 	var method_disp = ''
 	if (method_name != ""):
 		method_disp = str(' using method: [', method_name, '] ')
-	var disp = str('Expected object ', _str(signaler_obj),\
-		' to not be connected to signal: [', signal_name, '] on ',\
-		_str(connect_to_obj), method_disp)
-	if(_is_connected(signaler_obj, connect_to_obj, signal_name, method_name)):
+	var disp = str('Expected object ', _str(sp.object),\
+		' to not be connected to signal: [', sp.signal_name, '] on ',\
+		_str(sp.object), method_disp)
+	if(_is_connected(sp.object, connect_to_obj, sp.signal_name, method_name)):
 		_fail(disp)
 	else:
 		_pass(disp)
@@ -1342,39 +1402,55 @@ func assert_not_connected(signaler_obj, connect_to_obj, signal_name, method_name
 ## This will fail if the object is not being watched or if the object does not
 ## have the specified signal.  Since this will fail if the signal does not
 ## exist, you can often skip using [method assert_has_signal].
+## [br][br]
+## [b]Signatures:[/b][br]
+## - assert_signal_emitted([param p1]:Signal, [param p2]: text <optional>)[br]
+## - assert_signal_emitted([param p1]:object, [param p2]:signal-name, [param p3]: text <optional>)
+## [br][br]
+## [b]Examples:[/b]
 ## [codeblock]
-##    class SignalObject:
-##        signal some_signal
-##        signal other_signal
+## class SignalObject:
+##     signal some_signal
+##     signal other_signal
 ##
-##    func test_assert_signal_emitted():
-##        var obj = SignalObject.new()
 ##
-##        watch_signals(obj)
-##        obj.emit_signal('some_signal')
+## func test_assert_signal_emitted():
+##     var obj = SignalObject.new()
 ##
-##        ## Passing
-##        assert_signal_emitted(obj, 'some_signal')
+##     watch_signals(obj)
+##     obj.emit_signal('some_signal')
 ##
-##        ## Failing
-##        # Fails with specific message that the object does not have the signal
-##        assert_signal_emitted(obj, 'signal_does_not_exist')
-##        # Fails because the object passed is not being watched
-##        assert_signal_emitted(SignalObject.new(), 'some_signal')
-##        # Fails because the signal was not emitted
-##        assert_signal_emitted(obj, 'other_signal')
+##     ## Passing
+##     assert_signal_emitted(obj, 'some_signal')
+##     assert_signal_emitted(obj.some_signal)
+##
+##     ## Failing
+##     # Fails with specific message that the object does not have the signal
+##     assert_signal_emitted(obj, 'signal_does_not_exist')
+##     # Fails because the object passed is not being watched
+##     assert_signal_emitted(SignalObject.new(), 'some_signal')
+##     # Fails because the signal was not emitted
+##     assert_signal_emitted(obj, 'other_signal')
+##     assert_signal_emitted(obj.other_signal)
 ## [/codeblock]
-func assert_signal_emitted(object, signal_name, text=""):
-	var disp = str('Expected object ', _str(object), ' to have emitted signal [', signal_name, ']:  ', text)
-	if(_can_make_signal_assertions(object, signal_name)):
-		if(_signal_watcher.did_emit(object, signal_name)):
+func assert_signal_emitted(p1, p2='', p3=""):
+	var sp := SignalAssertParameters.new(p1, p2, p3)
+	var disp = str('Expected object ', _str(sp.object), ' to have emitted signal [', sp.signal_name, ']:  ', sp.others[0])
+	if(_can_make_signal_assertions(sp.object, sp.signal_name)):
+		if(_signal_watcher.did_emit(sp.object, sp.signal_name)):
 			_pass(disp)
 		else:
-			_fail(_get_fail_msg_including_emitted_signals(disp, object))
+			_fail(_get_fail_msg_including_emitted_signals(disp, sp.object))
 
 
 ## This works opposite of `assert_signal_emitted`.  This will fail if the object
 ## is not being watched or if the object does not have the signal.
+## [br][br]
+## [b]Signatures:[/b][br]
+## - assert_signal_not_emitted([param p1]:Signal, [param p2]: text <optional>)[br]
+## - assert_signal_not_emitted([param p1]:object, [param p2]:signal-name, [param p3]: text <optional>)
+## [br][br]
+## [b]Examples:[/b]
 ## [codeblock]
 ##    class SignalObject:
 ##        signal some_signal
@@ -1388,6 +1464,7 @@ func assert_signal_emitted(object, signal_name, text=""):
 ##
 ##        # Passing
 ##        assert_signal_not_emitted(obj, 'other_signal')
+##        assert_signal_not_emitted(obj.other_signal)
 ##
 ##        # Failing
 ##        # Fails with specific message that the object does not have the signal
@@ -1397,10 +1474,11 @@ func assert_signal_emitted(object, signal_name, text=""):
 ##        # Fails because the signal was emitted
 ##        assert_signal_not_emitted(obj, 'some_signal')
 ## [/codeblock]
-func assert_signal_not_emitted(object, signal_name, text=""):
-	var disp = str('Expected object ', _str(object), ' to NOT emit signal [', signal_name, ']:  ', text)
-	if(_can_make_signal_assertions(object, signal_name)):
-		if(_signal_watcher.did_emit(object, signal_name)):
+func assert_signal_not_emitted(p1, p2='', p3=''):
+	var sp := SignalAssertParameters.new(p1, p2, p3)
+	var disp = str('Expected object ', _str(sp.object), ' to NOT emit signal [', sp.signal_name, ']:  ', sp.others[0])
+	if(_can_make_signal_assertions(sp.object, sp.signal_name)):
+		if(_signal_watcher.did_emit(sp.object, sp.signal_name)):
 			_fail(disp)
 		else:
 			_pass(disp)
@@ -1413,99 +1491,127 @@ func assert_signal_not_emitted(object, signal_name, text=""):
 ## [br]
 ## This will fail with specific messages if the object is not being watched or
 ## the object does not have the specified signal
+## [br][br]
+## [b]Signatures:[/b][br]
+## - assert_signal_emitted_with_parameters([param p1]:Signal, [param p2]:expected-parameters, [param p3]: index <optional>)[br]
+## - assert_signal_emitted_with_parameters([param p1]:object, [param p2]:signal-name, [param p3]:expected-parameters, [param p4]: index <optional>)
+## [br][br]
+## [b]Examples:[/b]
 ## [codeblock]
-##    class SignalObject:
-##        signal some_signal
-##        signal other_signal
+## class SignalObject:
+##     signal some_signal
+##     signal other_signal
 ##
-##    func test_assert_signal_emitted_with_parameters():
-##        var obj = SignalObject.new()
+## func test_assert_signal_emitted_with_parameters():
+##     var obj = SignalObject.new()
 ##
-##        watch_signals(obj)
-##        # emit the signal 3 times to illustrate how the index works in
-##        # assert_signal_emitted_with_parameters
-##        obj.emit_signal('some_signal', 1, 2, 3)
-##        obj.emit_signal('some_signal', 'a', 'b', 'c')
-##        obj.emit_signal('some_signal', 'one', 'two', 'three')
+##     watch_signals(obj)
+##     # emit the signal 3 times to illustrate how the index works in
+##     # assert_signal_emitted_with_parameters
+##     obj.emit_signal('some_signal', 1, 2, 3)
+##     obj.emit_signal('some_signal', 'a', 'b', 'c')
+##     obj.emit_signal('some_signal', 'one', 'two', 'three')
 ##
-##        # Passing
-##        # Passes b/c the default parameters to check are the last emission of
-##        # the signal
-##        assert_signal_emitted_with_parameters(obj, 'some_signal', ['one', 'two', 'three'])
-##        # Passes because the parameters match the specified emission based on index.
-##        assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 0)
+##     # Passing
+##     # Passes b/c the default parameters to check are the last emission of
+##     # the signal
+##     assert_signal_emitted_with_parameters(obj, 'some_signal', ['one', 'two', 'three'])
+##     assert_signal_emitted_with_parameters(obj.some_signal, ['one', 'two', 'three'])
 ##
-##        # Failing
-##        # Fails with specific message that the object does not have the signal
-##        assert_signal_emitted_with_parameters(obj, 'signal_does_not_exist', [])
-##        # Fails because the object passed is not being watched
-##        assert_signal_emitted_with_parameters(SignalObject.new(), 'some_signal', [])
-##        # Fails because parameters do not match latest emission
-##        assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3])
-##        # Fails because the parameters for the specified index do not match
-##        assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 1)
+##     # Passes because the parameters match the specified emission based on index.
+##     assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 0)
+##     assert_signal_emitted_with_parameters(obj.some_signal, [1, 2, 3], 0)
+##
+##     # Failing
+##     # Fails with specific message that the object does not have the signal
+##     assert_signal_emitted_with_parameters(obj, 'signal_does_not_exist', [])
+##     # Fails because the object passed is not being watched
+##     assert_signal_emitted_with_parameters(SignalObject.new(), 'some_signal', [])
+##     # Fails because parameters do not match latest emission
+##     assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3])
+##     # Fails because the parameters for the specified index do not match
+##     assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 1)
 ## [/codeblock]
-func assert_signal_emitted_with_parameters(object, signal_name, parameters, index=-1):
+func assert_signal_emitted_with_parameters(p1, p2, p3=-1, p4=-1):
+	var sp := SignalAssertParameters.new(p1, p2, p3, p4)
+	var parameters = sp.others[0]
+	var index = sp.others[1]
+
 	if(typeof(parameters) != TYPE_ARRAY):
 		_lgr.error("The expected parameters must be wrapped in an array, you passed:  " + _str(parameters))
 		_fail("Bad Parameters")
 		return
 
-	var disp = str('Expected object ', _str(object), ' to emit signal [', signal_name, '] with parameters ', parameters, ', got ')
-	if(_can_make_signal_assertions(object, signal_name)):
-		if(_signal_watcher.did_emit(object, signal_name)):
-			var parms_got = _signal_watcher.get_signal_parameters(object, signal_name, index)
+	var disp = str('Expected object ', _str(sp.object), ' to emit signal [', sp.signal_name, '] with parameters ', parameters, ', got ')
+	if(_can_make_signal_assertions(sp.object, sp.signal_name)):
+		if(_signal_watcher.did_emit(sp.object, sp.signal_name)):
+			var parms_got = _signal_watcher.get_signal_parameters(sp.object, sp.signal_name, index)
 			var diff_result = _compare.deep(parameters, parms_got)
 			if(diff_result.are_equal):
 				_pass(str(disp, parms_got))
 			else:
-				_fail(str('Expected object ', _str(object), ' to emit signal [', signal_name, '] with parameters ', diff_result.summarize()))
+				_fail(str('Expected object ', _str(sp.object), ' to emit signal [', sp.signal_name, '] with parameters ', diff_result.summarize()))
 		else:
-			var text = str('Object ', object, ' did not emit signal [', signal_name, ']')
-			_fail(_get_fail_msg_including_emitted_signals(text, object))
+			var text = str('Object ', sp.object, ' did not emit signal [', sp.signal_name, ']')
+			_fail(_get_fail_msg_including_emitted_signals(text, sp.object))
 
 
 ## Asserts that a signal fired a specific number of times.
+## [br][br]
+## [b]Signatures:[/b][br]
+## - assert_signal_emit_count([param p1]:Signal, [param p2]:expected-count, [param p3]: text <optional>)[br]
+## - assert_signal_emit_count([param p1]:object, [param p2]:signal-name, [param p3]:expected-count, [param p4]: text <optional>)
+## [br][br]
+## [b]Examples:[/b]
 ## [codeblock]
-##    class SignalObject:
-##        signal some_signal
-##        signal other_signal
+## class SignalObject:
+##     signal some_signal
+##     signal other_signal
 ##
-##    func test_assert_signal_emit_count():
-##        var obj_a = SignalObject.new()
-##        var obj_b = SignalObject.new()
 ##
-##        watch_signals(obj_a)
-##        watch_signals(obj_b)
-##        obj_a.emit_signal('some_signal')
-##        obj_a.emit_signal('some_signal')
+## func test_assert_signal_emit_count():
+##     var obj_a = SignalObject.new()
+##     var obj_b = SignalObject.new()
 ##
-##        obj_b.emit_signal('some_signal')
-##        obj_b.emit_signal('other_signal')
+##     watch_signals(obj_a)
+##     watch_signals(obj_b)
 ##
-##        # Passing
-##        assert_signal_emit_count(obj_a, 'some_signal', 2)
-##        assert_signal_emit_count(obj_a, 'other_signal', 0)
+##     obj_a.emit_signal('some_signal')
+##     obj_a.emit_signal('some_signal')
 ##
-##        assert_signal_emit_count(obj_b, 'other_signal', 1)
+##     obj_b.emit_signal('some_signal')
+##     obj_b.emit_signal('other_signal')
 ##
-##        # Failing
-##        # Fails with specific message that the object does not have the signal
-##        assert_signal_emit_count(obj_a, 'signal_does_not_exist', 99)
-##        # Fails because the object passed is not being watched
-##        assert_signal_emit_count(SignalObject.new(), 'some_signal', 99)
-##        # The following fail for obvious reasons
-##        assert_signal_emit_count(obj_a, 'some_signal', 0)
-##        assert_signal_emit_count(obj_b, 'other_signal', 283)
+##     # Passing
+##     assert_signal_emit_count(obj_a, 'some_signal', 2, 'passes')
+##     assert_signal_emit_count(obj_a.some_signal, 2, 'passes')
+##
+##     assert_signal_emit_count(obj_a, 'other_signal', 0)
+##     assert_signal_emit_count(obj_a.other_signal, 0)
+##
+##     assert_signal_emit_count(obj_b, 'other_signal', 1)
+##
+##     # Failing
+##     # Fails with specific message that the object does not have the signal
+##     assert_signal_emit_count(obj_a, 'signal_does_not_exist', 99)
+##     # Fails because the object passed is not being watched
+##     assert_signal_emit_count(SignalObject.new(), 'some_signal', 99)
+##     # The following fail for obvious reasons
+##     assert_signal_emit_count(obj_a, 'some_signal', 0)
+##     assert_signal_emit_count(obj_b, 'other_signal', 283)
 ## [/codeblock]
-func assert_signal_emit_count(object, signal_name, times, text=""):
-	if(_can_make_signal_assertions(object, signal_name)):
-		var count = _signal_watcher.get_emit_count(object, signal_name)
-		var disp = str('Expected the signal [', signal_name, '] emit count of [', count, '] to equal [', times, ']: ', text)
+func assert_signal_emit_count(p1, p2, p3=0, p4=""):
+	var sp := SignalAssertParameters.new(p1, p2, p3, p4)
+	var times = sp.others[0]
+	var text = sp.others[1]
+
+	if(_can_make_signal_assertions(sp.object, sp.signal_name)):
+		var count = _signal_watcher.get_emit_count(sp.object, sp.signal_name)
+		var disp = str('Expected the signal [', sp.signal_name, '] emit count of [', count, '] to equal [', times, ']: ', text)
 		if(count== times):
 			_pass(disp)
 		else:
-			_fail(_get_fail_msg_including_emitted_signals(disp, object))
+			_fail(_get_fail_msg_including_emitted_signals(disp, sp.object))
 
 
 ## Asserts the passed in object has a signal with the specified name.  It
@@ -1746,14 +1852,14 @@ func assert_called(inst, method_name=null, parameters=null):
 		return
 
 	var disp = str('Expected [',converted.method_name,'] to have been called on ',_str(converted.object))
+	if(converted.arguments != null):
+		disp += str(' with parameters ', converted.arguments)
 
 	if(_fail_if_not_double_or_does_not_have_method(converted.object, converted.method_name) == OK):
 		if(gut.get_spy().was_called(
 			converted.object, converted.method_name, converted.arguments)):
 			_pass(disp)
 		else:
-			if(converted.arguments != null):
-				disp += str(' with parameters ', converted.arguments)
 			_fail(str(disp, "\n", _get_desc_of_calls_to_instance(converted.object)))
 
 
@@ -2025,28 +2131,87 @@ func wait_for_signal(sig : Signal, max_wait, msg=''):
 	return !_awaiter.did_last_wait_timeout
 
 
-## Use with await to wait a number of frames.  The optional message will be
-## printed[br]
+## @deprecated
+## Use wait_physics_frames or wait_process_frames
 ## See [wiki]Awaiting[/wiki]
-func wait_frames(frames, msg=''):
-	if(frames <= 0):
-		var text = str('wait_frames:  frames must be > 0, you passed  ', frames, '.  0 frames waited.')
-		_lgr.error(text)
-		frames = 1
+func wait_frames(frames : int, msg=''):
+	_lgr.deprecated("wait_frames has been replaced with wait_physics_frames which is counted in _physics_process.  " +
+		"wait_process_frames has also been added which is counted in _process.")
+	return wait_physics_frames(frames, msg)
 
-	_lgr.yield_msg(str('-- Awaiting ', frames, ' frame(s) -- ', msg))
-	_awaiter.wait_frames(frames)
+
+## This returns a signal that is emitted after [param x] physics frames have
+## elpased.  You can await this method directly to pause execution for [param x]
+## physics frames.  The frames are counted prior to _physics_process being called
+## on any node (when [signal SceneTree.physics_frame] is emitted).  This means the
+## signal is emitted after [param x] frames and just before the x + 1 frame starts.
+## [codeblock]
+## await wait_physics_frames(10)
+## [/codeblock]
+## See [wiki]Awaiting[/wiki]
+func wait_physics_frames(x :int , msg=''):
+	if(x <= 0):
+		var text = str('wait_physics_frames:  frames must be > 0, you passed  ', x, '.  1 frames waited.')
+		_lgr.error(text)
+		x = 1
+
+	_lgr.yield_msg(str('-- Awaiting ', x, ' physics frame(s) -- ', msg))
+	_awaiter.wait_physics_frames(x)
 	return _awaiter.timeout
 
 
-## Use with await to wait for the passed in callable to return true or a maximum
-## amount of time.  The callable is called every _physics_process tick unless
-## an optional time between calls is specified.[br]
-## p3 can be the optional message or an amount of time to wait between tests.
-## p4 is the optional message if you have specified an amount of time to
-## wait between tests.[br]
-## Returns true if the callable returned true before the timeout, false if not.
+## Alias for [method GutTest.wait_process_frames]
+func wait_idle_frames(x : int, msg=''):
+	return wait_process_frames(x, msg)
+
+
+## This returns a signal that is emitted after [param x] process/idle frames have
+## elpased.  You can await this method directly to pause execution for [param x]
+## process/idle frames.  The frames are counted prior to _process being called
+## on any node (when [signal SceneTree.process_frame] is emitted).  This means the
+## signal is emitted after [param x] frames and just before the x + 1 frame starts.
+## [codeblock]
+## await wait_process_frames(10)
+## # wait_idle_frames is an alias of wait_process_frames
+## await wait_idle_frames(10)
+## [/codeblock]
+## See [wiki]Awaiting[/wiki]
+func wait_process_frames(x : int, msg=''):
+	if(x <= 0):
+		var text = str('wait_process_frames:  frames must be > 0, you passed  ', x, '.  1 frames waited.')
+		_lgr.error(text)
+		x = 1
+
+	_lgr.yield_msg(str('-- Awaiting ', x, ' idle frame(s) -- ', msg))
+	_awaiter.wait_process_frames(x)
+	return _awaiter.timeout
+
+
+## Use with await to wait for [param callable] to return the boolean value
+## [code]true[/code] or a maximum amount of time.  All values that are not the
+## boolean value [code]true[/code] are ignored.  [param callable] is called
+## every [code]_physics_process[/code] tick unless an optional time between
+## calls is specified.[br]
+## [param p3] can be the optional message or an amount of time to wait between calls.[br]
+## [param p4] is the optional message if you have specified an amount of time to
+## wait between calls.[br]
+## Returns [code]true[/code] if [param callable] returned true before the timeout, false if not.
 ##[br]
+##[codeblock]
+## var foo = 1
+## func test_example():
+##     var foo_func = func():
+##         foo += 1
+##         return foo == 10
+##     foo = 1
+##     wait_until(foo_func, 5, 'optional message')
+##     # or give it a time between
+##     foo = 1
+##     wait_until(foo_func, 5, 1,
+##         'this will timeout because we call it every second and are waiting a max of 10 seconds')
+##
+##[/codeblock]
+## See also [method wait_while][br]
 ## See [wiki]Awaiting[/wiki]
 func wait_until(callable, max_wait, p3='', p4=''):
 	var time_between = 0.0
@@ -2062,8 +2227,46 @@ func wait_until(callable, max_wait, p3='', p4=''):
 	return !_awaiter.did_last_wait_timeout
 
 
+## This is the inverse of [method wait_until].  This will continue to wait while
+## [param callable] returns the boolean value [code]true[/code].  If [b]ANY[/b]
+## other value is is returned then the wait will end.
+## Returns [code]true[/code] if [param callable] returned a value other than
+## [code]true[/code] before the timeout, [code]false[/code] if not.
+##[codeblock]
+## var foo = 1
+## func test_example():
+##     var foo_func = func():
+##         foo += 1
+##         if(foo < 10):
+##             return true
+##         else:
+##             return 'this is not a boolean'
+##     foo = 1
+##     wait_while(foo_func, 5, 'optional message')
+##     # or give it a time between
+##     foo = 1
+##     wait_while(foo_func, 5, 1,
+##         'this will timeout because we call it every second and are waiting a max of 10 seconds')
+##
+##[/codeblock]
+## See [wiki]Awaiting[/wiki]
+func wait_while(callable, max_wait, p3='', p4=''):
+	var time_between = 0.0
+	var message = p4
+	if(typeof(p3) != TYPE_STRING):
+		time_between = p3
+	else:
+		message = p3
+
+	_lgr.yield_msg(str("--Awaiting callable to return FALSE or ", max_wait, "s.  ", message))
+	_awaiter.wait_while(callable, max_wait, time_between)
+	await _awaiter.timeout
+	return !_awaiter.did_last_wait_timeout
+
+
+
 ## Returns whether the last wait_* method timed out.  This is always true if
-## the last method was wait_frames or wait_seconds.  It will be false when
+## the last method was wait_xxx_frames or wait_seconds.  It will be false when
 ## using wait_for_signal and wait_until if the timeout occurs before what
 ## is being waited on.  The wait_* methods return this value so you should be
 ## able to avoid calling this directly, but you can.
