@@ -21,11 +21,6 @@ This class exposes two methods for exporting GUT test results to XML. One return
 
 .. rst-class:: classref-reftable-group
 
-Properties
-----------
-
-.. rst-class:: classref-reftable-group
-
 Methods
 -------
 
@@ -37,15 +32,6 @@ Methods
    +------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_       | :ref:`write_file<class_addons/gut/junit_xml_export.gd_method_write_file>`\ (\ gut\: :ref:`GutMain<class_GutMain>`, path\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_\ ) |
    +------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-
-.. rst-class:: classref-section-separator
-
-----
-
-.. rst-class:: classref-descriptions-group
-
-Property Descriptions
----------------------
 
 .. rst-class:: classref-section-separator
 
@@ -74,7 +60,7 @@ Takes in an instance of :ref:`GutMain<class_GutMain>` and returns a string of XM
 
 `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_ **write_file**\ (\ gut\: :ref:`GutMain<class_GutMain>`, path\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_\ ) :ref:`🔗<class_addons/gut/junit_xml_export.gd_method_write_file>`
 
-Takes in an instance of GutMain and writes test results to an XML file specified by ``path``. Return value is an error code forwarded from the call to :ref:`FileAccess.open<class_FileAccess_method_open>` to write to ``path``.
+Takes in an instance of GutMain and writes test results to an XML file specified by ``path``. Return value is an error code forwarded from the call to FileAccess.open to write to ``path``.
 
 .. |virtual| replace:: :abbr:`virtual (This method should typically be overridden by the user to have any effect.)`
 .. |const| replace:: :abbr:`const (This method has no side effects. It doesn't modify any of the instance's member variables.)`

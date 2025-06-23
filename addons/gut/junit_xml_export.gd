@@ -12,7 +12,7 @@ func _wrap_cdata(content) -> String:
 	return "<![CDATA[" + str(content) + "]]>"
 
 
-func add_attr(name, value) -> String:
+func _add_attr(name, value) -> String:
 	return str(name, '="', value, '" ')
 
 
@@ -38,11 +38,11 @@ func _export_tests(script_result: Dictionary, classname: String) -> String:
 		var test: Dictionary = script_result[test_name]
 		var assert_count = test.passing.size() + test.failing.size()
 		to_return += "<testcase "
-		to_return += add_attr("name", test_name)
-		to_return += add_attr("assertions", assert_count)
-		to_return += add_attr("status", test.status)
-		to_return += add_attr("classname", classname.replace("res://", ""))
-		to_return += add_attr("time", test.time_taken)
+		to_return += _add_attr("name", test_name)
+		to_return += _add_attr("assertions", assert_count)
+		to_return += _add_attr("status", test.status)
+		to_return += _add_attr("classname", classname.replace("res://", ""))
+		to_return += _add_attr("time", test.time_taken)
 		to_return += ">\n"
 
 		to_return += _export_test_result(test)
@@ -66,11 +66,11 @@ func _export_scripts(exp_results: Dictionary) -> String:
 	for script_path: String in exp_results.test_scripts.scripts.keys():
 		var s: Dictionary = exp_results.test_scripts.scripts[script_path]
 		to_return += "<testsuite "
-		to_return += add_attr("name", script_path.replace("res://", ""))
-		to_return += add_attr("tests", s.props.tests)
-		to_return += add_attr("failures", s.props.failures)
-		to_return += add_attr("skipped", s.props.pending)
-		to_return += add_attr("time", _sum_test_time(s.tests))
+		to_return += _add_attr("name", script_path.replace("res://", ""))
+		to_return += _add_attr("tests", s.props.tests)
+		to_return += _add_attr("failures", s.props.failures)
+		to_return += _add_attr("skipped", s.props.pending)
+		to_return += _add_attr("time", _sum_test_time(s.tests))
 		to_return += ">\n"
 
 		to_return += _strutils.indent_text(_export_tests(s.tests, script_path), 1, "    ")
@@ -86,9 +86,9 @@ func get_results_xml(gut: GutMain) -> String:
 	var exp_results: Dictionary = _exporter.get_results_dictionary(gut)
 	var to_return := '<?xml version="1.0" encoding="UTF-8"?>' + "\n"
 	to_return += '<testsuites '
-	to_return += add_attr("name", 'GutTests')
-	to_return += add_attr("failures", exp_results.test_scripts.props.failures)
-	to_return += add_attr('tests', exp_results.test_scripts.props.tests)
+	to_return += _add_attr("name", 'GutTests')
+	to_return += _add_attr("failures", exp_results.test_scripts.props.failures)
+	to_return += _add_attr('tests', exp_results.test_scripts.props.tests)
 	to_return += ">\n"
 
 	to_return += _strutils.indent_text(_export_scripts(exp_results), 1, "  ")
@@ -99,7 +99,7 @@ func get_results_xml(gut: GutMain) -> String:
 
 ## Takes in an instance of GutMain and writes test results to an XML file
 ## specified by [param path]. Return value is an error code forwarded from
-## the call to [method FileAccess.open] to write to [param path].
+## the call to FileAccess.open to write to [param path].
 func write_file(gut: GutMain, path: String) -> int:
 	var xml := get_results_xml(gut)
 
