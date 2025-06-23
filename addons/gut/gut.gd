@@ -740,6 +740,16 @@ func _test_the_scripts(indexes=[]):
 		_setup_script(test_script, coll_script)
 		_doubler.set_strategy(_double_strategy)
 
+		# Skip based on indexes if needed
+		if(indexes != [] and !indexes.has(test_indexes)):
+			continue
+			
+		# C# specific handling
+		# if test_script.resource_path.ends_with(".cs"):
+		# 	var runner = load("res://addons/gut/GutCSharpRunner.cs").new(self)
+		# 	runner.RunTests(test_script.path)
+		# 	continue
+
 		# ----
 		# SHORTCIRCUIT
 		# skip_script logic
@@ -924,7 +934,9 @@ func _get_files(path, prefix, suffix):
 		# MUST use FileAccess since d.file_exists returns false for exported
 		# projects
 		if(FileAccess.file_exists(full_path)):
-			if(fs_item.begins_with(prefix) and fs_item.ends_with(suffix)):
+			# Add support for C# files
+			if((fs_item.begins_with(prefix) and fs_item.ends_with(suffix)) or 
+			   (fs_item.begins_with("Test") and fs_item.ends_with(".cs"))):
 				files.append(full_path)
 		# MUST use DirAccess, d.dir_exists is false for exported projects.
 		elif(include_subdirectories and DirAccess.dir_exists_absolute(full_path)):
@@ -1026,6 +1038,7 @@ func add_directory(path, prefix=_file_prefix, suffix=".gd"):
 	# check for '' b/c the calls to addin the exported directories 1-6 will pass
 	# '' if the field has not been populated.  This will cause res:// to be
 	# processed which will include all files if include_subdirectories is true.
+	print('path: ', path)
 	if(path == '' or path == null):
 		return
 
@@ -1034,6 +1047,7 @@ func add_directory(path, prefix=_file_prefix, suffix=".gd"):
 		_lgr.error(str('The path [', path, '] does not exist.'))
 	else:
 		var files = _get_files(path, prefix, suffix)
+		print(files)
 		for i in range(files.size()):
 			if(_script_name == null or _script_name == '' or \
 					(_script_name != null and files[i].findn(_script_name) != -1)):

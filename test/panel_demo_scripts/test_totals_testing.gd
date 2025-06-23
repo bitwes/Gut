@@ -60,4 +60,3 @@ func test_fail_with_orphans():
 
 func test_no_assert_and_orphans():
 	var n1 = Node2D.new()
-
