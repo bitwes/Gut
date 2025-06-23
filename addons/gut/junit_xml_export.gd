@@ -3,33 +3,19 @@
 ## This class exposes two methods for exporting GUT test results to XML.
 ## One returns a string representing the XML, and the other writes it to
 ## a file.
-# TODO: this class doesn't store any state and could be turned into only
-# static members
 
-# TODO: Someone should probably make GutStringUtils' methods static
 var _strutils := GutStringUtils.new()
-## @ignore
-## _exporter is our way to get test results as easily accessible dictionaries.
 var _exporter = GutUtils.ResultExporter.new()
 
 
-## @ignore
-## Wraps content in CDATA section because it may contain special characters
-## e.g. str(null) becomes <null> and can break XML parsing.
 func _wrap_cdata(content) -> String:
 	return "<![CDATA[" + str(content) + "]]>"
 
 
-## @ignore
-## Returns a string of the form "<name>='<value>'".
 func add_attr(name, value) -> String:
 	return str(name, '="', value, '" ')
 
 
-## @ignore
-## Returns a String of xml data about the results for a single test in a test
-## script. The schema for the Dictionary [code]script_result[/code] can be
-## found in res://addons/gut/result_exporter.gd:_export_scripts.
 func _export_test_result(test: Dictionary) -> String:
 	var to_return := ''
 
@@ -45,10 +31,6 @@ func _export_test_result(test: Dictionary) -> String:
 	return to_return
 
 
-## @ignore
-## Returns a String of xml data about the results for a single test script.
-## The schema for the Dictionary [code]script_result[/code] can be found in
-## res://addons/gut/result_exporter.gd:_export_scripts.
 func _export_tests(script_result: Dictionary, classname: String) -> String:
 	var to_return := ""
 
@@ -70,8 +52,6 @@ func _export_tests(script_result: Dictionary, classname: String) -> String:
 	return to_return
 
 
-## @ignore
-## Returns the total amount of time taken by a suite of tests in one script.
 func _sum_test_time(script_result: Dictionary) -> float:
 	var to_return := 0.0
 
@@ -81,10 +61,6 @@ func _sum_test_time(script_result: Dictionary) -> float:
 	return to_return
 
 
-## @ignore
-## Returns a String of xml data about the results for a group of test scripts.
-## The schema for the Dictionary [code]exp_results[/code] can be found in
-## res://addons/gut/result_exporter.gd:_make_results_dict.
 func _export_scripts(exp_results: Dictionary) -> String:
 	var to_return := ""
 	for script_path: String in exp_results.test_scripts.scripts.keys():
