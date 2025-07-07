@@ -1,8 +1,8 @@
-extends GutInternalTester
+extends GutTest
 
 # Tests taken from test_test_await_methods
 class TestTestAwaitMethods:
-	extends GutInternalTester
+	extends GutOutputTest
 
 	class PredicateMethods:
 		var times_called = 0
@@ -15,14 +15,14 @@ class TestTestAwaitMethods:
 		var method = pred_methods.called_x_times.bind(10)
 
 		await wait_until(method, 1.1, 'DID YOU SEE THIS?')
-		pass_test("Check output for DID YOU SEE THIS?")
+		look_for("DID YOU SEE THIS?")
 
 	func test_wait_until_accepts_time_between_then_msg():
 		var pred_methods = PredicateMethods.new()
 		var method = pred_methods.called_x_times.bind(10)
 
 		await wait_until(method, 1.1, .25, 'DID YOU SEE THIS?')
-		pass_test('Check output for DID YOU SEE THIS?')
+		look_for('DID YOU SEE THIS?')
 		assert_eq(pred_methods.times_called, 4)
 
 
@@ -66,7 +66,7 @@ class TestResultExporter:
 
 
 class TestTest:
-	extends GutInternalTester
+	extends GutOutputTest
 
 	var _gut = null
 	var _test = null
@@ -74,6 +74,7 @@ class TestTest:
 	func before_each():
 		_gut = new_gut()
 		add_child_autofree(_gut)
+		_gut.log_level = 4
 
 		_test = new_wired_test(_gut)
 
@@ -82,19 +83,19 @@ class TestTest:
 		for i in range(3):
 			var extra_test = TestClass.new()
 			add_child(extra_test)
-		pass_test('Check for warning')
+		should_warn("There should be warnings")
 
 
 	func test_fails_with_message_if_non_doubled_passed():
 		var obj = GDScript.new()
 		_test.gut.get_spy().add_call(obj, 'method')
 		_test.assert_called(obj, 'method1')
-		gut.p('!! Check output !!')
+		should_error("non doubled error")#gut.p('!! Check output !!')
 		assert_fail(_test)
 
 
 class TestSummary:
-	extends GutInternalTester
+	extends GutOutputTest
 
 	var Summary = load('res://addons/gut/test_collector.gd')
 	const PARSING_AND_LOADING = 'res://test/resources/parsing_and_loading_samples'
@@ -108,6 +109,7 @@ class TestSummary:
 	func before_each():
 		_gut = new_gut()
 		add_child_autofree(_gut)
+		_gut._lgr._min_indent_level = 5
 
 		_gut.logger.disable_printer("terminal", false)
 		_gut._should_print_summary = true
@@ -129,7 +131,7 @@ class TestSummary:
 		_gut.add_directory(PARSING_AND_LOADING)
 
 		await _run_test_gut_tests(_gut)
-		pass_test("Look at the output, or don't if you aren't interested.")
+		just_look_at_it("Look at the output, or don't if you aren't interested.")
 
 	func test_output_with_unit_and_script_set():
 		_gut.add_directory(PARSING_AND_LOADING)
@@ -137,7 +139,7 @@ class TestSummary:
 		_gut.unit_test_name = 'number'
 
 		await _run_test_gut_tests(_gut)
-		pass_test("Look at the output, or don't if you aren't interested.")
+		just_look_at_it("Look at the output, or don't if you aren't interested.")
 
 	func test_output_with_scripts_that_have_issues():
 		_gut.add_directory(SUMMARY_SCRIPTS)
@@ -145,7 +147,7 @@ class TestSummary:
 		_gut.select_script('issues')
 
 		await _run_test_gut_tests(_gut)
-		pass_test("Look at the output, or don't if you aren't interested.")
+		just_look_at_it("Look at the output, or don't if you aren't interested.")
 
 	func test_output_with_risky_tests():
 		_gut.add_directory(SUMMARY_SCRIPTS)
@@ -153,7 +155,7 @@ class TestSummary:
 		_gut.select_script('risky_and_passing')
 
 		await _run_test_gut_tests(_gut)
-		pass_test("Look at the output, or don't if you aren't interested.")
+		just_look_at_it("Look at the output, or don't if you aren't interested.")
 
 	func test_output_with_all_test_scripts():
 		_gut.add_directory(SUMMARY_SCRIPTS)
@@ -161,11 +163,11 @@ class TestSummary:
 
 		_gut.log_level = 99
 		await _run_test_gut_tests(_gut)
-		pass_test("Look at the output, or don't if you aren't interested.")
+		just_look_at_it("Look at the output, or don't if you aren't interested.")
 
 
 class TestJunitXmlExport:
-	extends GutInternalTester
+	extends GutOutputTest
 
 	var _gut = null
 
@@ -192,11 +194,11 @@ class TestJunitXmlExport:
 		var re = GutUtils.JunitXmlExport.new()
 		var result = re.get_results_xml(_gut)
 		print(result)
-		pass_test('Check Output')
+		just_look_at_it('Check Output')
 
 
 class TestDiffTool:
-	extends GutInternalTester
+	extends GutOutputTest
 
 	var DiffTool = GutUtils.DiffTool
 
@@ -205,7 +207,7 @@ class TestDiffTool:
 		var d2 = {'a':1.0, 'b':2, 'c':GutUtils.Strutils.new(), 'cc':'adsf'}
 		var dd = DiffTool.new(d1, d2)
 		gut.p(dd.summarize())
-		pass_test('Visually check this')
+		just_look_at_it('Visually check this')
 
 	func test_with_obj_as_keys():
 		var d1 = {}
@@ -226,4 +228,4 @@ class TestDiffTool:
 
 		var dd =  DiffTool.new(d1, d2)
 		gut.p(dd.summarize())
-		pass_test('Visually check this')
+		just_look_at_it('Visually check this')
