@@ -22,13 +22,14 @@ Documentation is hosted at https://gut.readthedocs.io/
 # Version Links
 There are only two versions of GUT in the Asset Library (one for Godot 3 and one for Godot 4).  GUT will not appear in the Asset Library if your current version of Godot is less than GUT's required version.  Here's the highest version of GUT per Godot version.
 
-|Godot|GUT|||
-|-|-|-|-|
-|4.3 (or greater) |[9.4.0](https://github.com/bitwes/Gut/releases/tag/v9.4.0)|[repo](https://github.com/bitwes/Gut/tree/v9.4.0)|[zip](https://github.com/bitwes/Gut/archive/refs/tags/v9.4.0.zip)|
-|4.2|[9.3.0](https://github.com/bitwes/Gut/releases/tag/v9.3.0)|[repo](https://github.com/bitwes/Gut/tree/v9.3.0)|[zip](https://github.com/bitwes/Gut/archive/refs/tags/v9.3.0.zip)|
-|4.1|[9.1.1](https://github.com/bitwes/Gut/releases/tag/v9.1.1)|[repo](https://github.com/bitwes/Gut/tree/v9.1.1)|[zip](https://github.com/bitwes/Gut/archive/refs/tags/v9.1.1.zip)|
-|4.0|[9.0.1](https://github.com/bitwes/Gut/releases/tag/v9.0.1)|[repo](https://github.com/bitwes/Gut/tree/v9.0.1)|[zip](https://github.com/bitwes/Gut/archive/refs/tags/v9.0.1.zip)|
-|3.5|[7.4.3](https://github.com/bitwes/Gut/releases/tag/v7.4.3)|[repo](https://github.com/bitwes/Gut/tree/v7.4.3)|[zip](https://github.com/bitwes/Gut/archive/refs/tags/v7.4.3.zip)|
+|GUT|Required Godot<br>Version||||
+|-|-|-|-|-|
+|Main Branch |4.4 (or greater)| | |
+|[9.4.0](https://github.com/bitwes/Gut/releases/tag/v9.4.0)|4.3|[repo](https://github.com/bitwes/Gut/tree/v9.4.0)|[zip](https://github.com/bitwes/Gut/archive/refs/tags/v9.4.0.zip)|[Asset Library](https://godotengine.org/asset-library/asset/1709)|
+|[9.3.0](https://github.com/bitwes/Gut/releases/tag/v9.3.0)|4.2|[repo](https://github.com/bitwes/Gut/tree/v9.3.0)|[zip](https://github.com/bitwes/Gut/archive/refs/tags/v9.3.0.zip)||
+|[9.1.1](https://github.com/bitwes/Gut/releases/tag/v9.1.1)|4.1|[repo](https://github.com/bitwes/Gut/tree/v9.1.1)|[zip](https://github.com/bitwes/Gut/archive/refs/tags/v9.1.1.zip)||
+|[9.0.1](https://github.com/bitwes/Gut/releases/tag/v9.0.1)|4.0|[repo](https://github.com/bitwes/Gut/tree/v9.0.1)|[zip](https://github.com/bitwes/Gut/archive/refs/tags/v9.0.1.zip)||
+|[7.4.3](https://github.com/bitwes/Gut/releases/tag/v7.4.3)|3.5|[repo](https://github.com/bitwes/Gut/tree/v7.4.3)|[zip](https://github.com/bitwes/Gut/archive/refs/tags/v7.4.3.zip)|[Asset Library](https://godotengine.org/asset-library/asset/54)|
 
 To install from the zip link:
 * Download the zip and extract it
@@ -36,11 +37,6 @@ To install from the zip link:
 * Enable the GUT plugin.
 
 You will need to relaunch Godot.
-
-### Godot Asset Library Links
-* [GUT for Godot 4](https://godotengine.org/asset-library/asset/1709)
-* [GUT for Godot 3](https://godotengine.org/asset-library/asset/54)
-
 
 
 
