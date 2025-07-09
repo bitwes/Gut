@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+
+# 9.5.0
+* All the `.uid` files you could ever want!
+
+
 # 9.4.0
 
 ## Potentially Breaking Changes
