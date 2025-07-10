@@ -268,7 +268,6 @@ class TestDoubleStrategyIncludeNative:
 	var doubler = null
 	var stubber = GutUtils.Stubber.new()
 
-
 	func before_each():
 		stubber.clear()
 		doubler = Doubler.new(GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
