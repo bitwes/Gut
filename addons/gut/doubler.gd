@@ -119,7 +119,7 @@ func _get_base_script_text(parsed, override_path, partial, included_methods):
 func _is_method_eligible_for_doubling(parsed_script, parsed_method):
 	if(parsed_method.meta.flags & METHOD_FLAG_VARARG):
 		_lgr.warn(str("Skipping ", parsed_method.meta.name, " due to varargs"))
-		return true
+		return false
 
 	return !parsed_method.is_accessor() and \
 		parsed_method.is_eligible_for_doubling() and \
