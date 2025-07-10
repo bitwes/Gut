@@ -27,9 +27,6 @@ class HasAccessors:
 var doubler = null
 var stubber = null
 
-func should_skip_script():
-	return "INCLUDE_NATIVE broke in 4.5"
-
 
 func before_each():
 	doubler = Doubler.new(GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
