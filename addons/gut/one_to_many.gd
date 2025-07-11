@@ -17,8 +17,9 @@ func size(one=null):
 
 # Add an element to "one" if it does not already exist
 func add(one, many_item):
-	if(_items.has(one) and !_items[one].has(many_item)):
-		_items[one].append(many_item)
+	if(_items.has(one)):
+		if(!_items[one].has(many_item)):
+			_items[one].append(many_item)
 	else:
 		_items[one] = [many_item]
 
