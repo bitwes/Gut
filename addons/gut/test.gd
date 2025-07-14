@@ -2395,9 +2395,6 @@ func stub(thing, p2=null, p3=null):
 	if(GutUtils.is_instance(thing) and !GutUtils.is_double(thing)):
 		_lgr.error(str("An instance of a Double was expected, you passed:  ", _str(thing)))
 		return GutUtils.StubParams.new()
-	# elif(typeof(thing) == TYPE_OBJECT and !thing.has_method(p2)):
-	# 	_lgr.error(str("Cannot stub method ", p2,  ' on ', thing, ' because it does not exist.'))
-	# 	return GutUtils.StubParams.new()
 
 	var sp = null
 	if(typeof(thing) == TYPE_CALLABLE):

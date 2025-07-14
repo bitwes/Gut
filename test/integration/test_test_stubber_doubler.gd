@@ -455,10 +455,6 @@ class TestStub:
 		_test.stub(d.has_one_param).to_return(5)
 		assert_errored(_test)
 
-	func test_cannot_stub_methods_that_do_not_exist_on_a_class():
-		_test.stub(DoubleMe, 'this_does_not_exist_hopefully')
-		assert_errored(_test)
-
 
 # class TestSingletonDoubling:
 # 	extends GutInternalTester

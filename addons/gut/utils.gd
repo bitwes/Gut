@@ -326,6 +326,10 @@ static func print_properties(props, thing, print_all_meta=false):
 			print('  ', props[i])
 
 
+static func print_method_list(thing):
+	for entry in thing.get_method_list():
+		print("* ", entry.name)
+
 
 # ------------------------------------------------------------------------------
 # Gets the value of the node_property 'script' from a PackedScene's root node.
