@@ -572,7 +572,20 @@ static func get_display_size():
 
 
 
+static func find_method_meta(methods, method_name):
+	var meta = null
+	var idx = 0
+	while (idx < methods.size() and meta == null):
+		var m = methods[idx]
+		if(m.name == method_name):
+			meta = m
+		idx += 1
 
+	return meta
+
+
+static func get_method_meta(object, method_name):
+	return find_method_meta(object.get_method_list(), method_name)
 
 # ##############################################################################
 #(G)odot (U)nit (T)est class

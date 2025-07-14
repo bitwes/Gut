@@ -1,4 +1,4 @@
-extends GutTest
+extends GutInternalTester
 
 # test.gd has a StubParams variable already so this has to have a
 # different name.  I thought it was too vague to just use the one
@@ -219,6 +219,18 @@ func test__draw_polyline_colors__method_meta_4():
 	var meta = find_method_meta(inst.get_method_list(), 'draw_polyline_colors')
 	var sp = StubParamsClass.new(inst, meta)
 	assert_eq(sp.parameter_defaults.size(), 4)
+
+func test_cannot_stub_defaults_for_varargs():
+	var inst = autofree(Node.new())
+	var lgr = new_no_print_logger()
+	var sp = StubParamsClass.new(inst.rpc)
+
+	sp.logger = lgr
+	sp.param_defaults([1, 2])
+
+	assert_null(sp.parameter_defaults)
+	assert_errored(sp)
+
 
 
 

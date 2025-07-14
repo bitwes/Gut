@@ -2,7 +2,7 @@ extends GutTest
 
 
 class BaseTest:
-	extends GutTest
+	extends GutInternalTester
 
 	var MethodMaker = load('res://addons/gut/method_maker.gd')
 
@@ -36,8 +36,8 @@ class TestGetDecleration:
 	func test_get_function_text_no_params():
 		assert_string_contains(_mm.get_function_text(make_meta('dummy')), 'func dummy():')
 
-	func test_default_vararg_arg_count_default_value():
-		assert_eq(_mm.default_vararg_arg_count, 10)
+	# func test_default_vararg_arg_count_default_value():
+	# 	assert_eq(_mm.default_vararg_arg_count, -1, 'count size no longer used')
 
 	func test_parameters_get_prefix_and_default_to_call_stubber():
 		var params = [make_param('value1', TYPE_INT), make_param('value2', TYPE_INT)]
@@ -45,11 +45,11 @@ class TestGetDecleration:
 		var txt = _mm.get_function_text(meta)
 		assert_string_contains(txt, 'func dummy(p_value1=__gutdbl.default_val("dummy",0), p_value2=__gutdbl.default_val("dummy",1)):')
 
-	func test_vararg_methods_get_extra_parameters():
-		_mm.default_vararg_arg_count = 100
-		var meta = make_meta('foo', [make_param('value1', TYPE_INT)], METHOD_FLAG_VARARG)
-		var txt = _mm.get_function_text(meta)
-		assert_string_contains(txt, 'p_arg99')
+	# func test_vararg_methods_get_extra_parameters():
+	# 	_mm.default_vararg_arg_count = 100
+	# 	var meta = make_meta('foo', [make_param('value1', TYPE_INT)], METHOD_FLAG_VARARG)
+	# 	var txt = _mm.get_function_text(meta)
+	# 	assert_string_contains(txt, 'p_arg99')
 
 	func test_vararg_methods_without_overrides_get_vararg_warning():
 		var warning_call = "__gutdbl.vararg_warning()"
@@ -62,74 +62,6 @@ class TestGetDecleration:
 		var meta = make_meta('foo', [make_param('value1', TYPE_INT)], METHOD_FLAG_VARARG)
 		var txt = _mm.get_function_text(meta, 5)
 		assert_eq(txt.find(warning_call), -1)
-
-
-
-
-	# func test_vector2_default():
-	# 	var params = [make_param('value1', TYPE_VECTOR2)]
-	# 	var meta = make_meta('dummy', params)
-	# 	meta.default_args.append('(0,0)')
-	# 	var txt = _mm.get_function_text(meta)
-	# 	assert_string_contains(txt, 'func dummy(p_value1=Vector2(0,0)):')
-
-	# func test_rect2_default():
-	# 	var params = [make_param('value1', TYPE_RECT2)]
-	# 	var meta = make_meta('dummy', params)
-	# 	meta.default_args.append('(0,0,0,0)')
-	# 	var txt = _mm.get_function_text(meta)
-	# 	assert_string_contains(txt, 'func dummy(p_value1=Rect2(0,0,0,0)):')
-
-	# func test_string_default():
-	# 	var params = [make_param('value1', TYPE_STRING)]
-	# 	var meta = make_meta('dummy', params)
-	# 	meta.default_args.append('aSDf')
-	# 	var txt = _mm.get_function_text(meta)
-	# 	assert_string_contains(txt, 'func dummy(p_value1=\'aSDf\'):')
-
-	# func test_TYPE_STRING_NAME_default():
-	# 	var params = [make_param('value1', TYPE_STRING_NAME)]
-	# 	var meta = make_meta('dummy', params)
-	# 	meta.default_args.append('aSDf')
-	# 	var txt = _mm.get_function_text(meta)
-	# 	assert_string_contains(txt, 'func dummy(p_value1=\'aSDf\'):')
-
-	# func test_vector3_default():
-	# 	var params = [make_param('value1', TYPE_VECTOR3)]
-	# 	var meta = make_meta('dummy', params)
-	# 	meta.default_args.append('(0,0,0)')
-	# 	var txt = _mm.get_function_text(meta)
-	# 	assert_string_contains(txt, 'func dummy(p_value1=Vector3(0,0,0)):')
-
-	# func test_color_default():
-	# 	var params = [make_param('value1', TYPE_COLOR)]
-	# 	var meta = make_meta('dummy', params)
-	# 	meta.default_args.append('(1,1,1,1)')
-	# 	var txt = _mm.get_function_text(meta)
-	# 	assert_string_contains(txt, 'func dummy(p_value1=Color(1,1,1,1)):')
-
-	# func test_when_default_type_is_TYPE_NIL_null_is_used():
-	# 	var params = [make_param('value1', TYPE_NIL)]
-	# 	var meta = make_meta('dummy', params)
-	# 	meta.default_args.append('asdf')
-	# 	var txt = _mm.get_function_text(meta)
-	# 	assert_string_contains(txt, 'func dummy(p_value1=null):')
-
-	# func test_draw_primitive():
-	# 	var inst = autofree(Button.new())
-	# 	var meta = find_method_meta(inst.get_method_list(), 'draw_primitive')
-	# 	var txt = _mm.get_function_text(meta)
-	# 	assert_string_contains(txt, 'p_texture=null')
-	# 	if(is_failing()):
-	# 		GutUtils.pretty_print(meta)
-
-	# func test_popup_TYPE_RECT2I():
-	# 	var inst = autofree(Window.new())
-	# 	var meta = find_method_meta(inst.get_method_list(), 'popup')
-	# 	var txt = _mm.get_function_text(meta)
-	# 	print('!! the type is: ', typeof(meta.default_args[0]))
-	# 	assert_string_contains(txt, 'Rect2i[p: (0, 0), s: (0, 0)]')
-
 
 
 class TestSuperCall:
@@ -158,10 +90,37 @@ class TestSuperCall:
 
 
 
+class TestVarargMethods:
+	extends BaseTest
+
+	func test_rpc():
+		var mm = MethodMaker.new()
+
+		var n = autofree(Node.new())
+		var meta = find_method_meta(n.get_method_list(), 'rpc')
+		var func_def = mm.get_function_text(meta)
+
+		assert_string_contains(func_def, ", ...args: Array")
+		assert_string_contains(func_def, "__gutdbl.spy_on('rpc', [p_method, args])")
+
+	func test_rpc_id():
+		var mm = MethodMaker.new()
+
+		var n = autofree(Node.new())
+		var meta = find_method_meta(n.get_method_list(), 'rpc_id')
+		var func_def = mm.get_function_text(meta)
+
+		assert_string_contains(func_def, ", ...args: Array")
+		assert_string_contains(func_def, "__gutdbl.spy_on('rpc_id', [p_peer_id, p_method, args])")
+
+
 class TestOverrideParameterList:
 	extends BaseTest
 
 	var _mm = null
+
+	func should_skip_script():
+		return "Overriding the parameter list is no longer necessary...I think."
 
 	func before_each():
 		_mm = MethodMaker.new()

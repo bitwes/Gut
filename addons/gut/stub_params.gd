@@ -30,6 +30,7 @@ var parameter_defaults = null
 # to determine if this stub is only an override is more complicated.
 var _parameter_override_only = true
 # --
+var _method_meta : Dictionary = {}
 
 const NOT_SET = '|_1_this_is_not_set_1_|'
 
@@ -56,6 +57,7 @@ func _init(target=null, method=null, _subpath=null):
 	# doubled...or something.  Look for stub_defaults_from_meta for usage.  This
 	# behavior is not to be used by end users.
 	if(typeof(method) == TYPE_DICTIONARY):
+		_method_meta = method
 		_load_defaults_from_metadata(method)
 
 
@@ -66,6 +68,14 @@ func _load_defaults_from_metadata(meta):
 		values.push_front(null)
 
 	param_defaults(values)
+
+
+func _get_method_meta():
+	if(_method_meta == {} and typeof(stub_target) == TYPE_OBJECT):
+		var found_meta = GutUtils.get_method_meta(stub_target, stub_method)
+		if(found_meta != null):
+			_method_meta = found_meta
+	return _method_meta
 
 
 func to_return(val):
@@ -111,8 +121,12 @@ func param_count(x):
 
 
 func param_defaults(values):
-	parameter_count = values.size()
-	parameter_defaults = values
+	var meta = _get_method_meta()
+	if(meta != {} and meta.flags & METHOD_FLAG_VARARG):
+		_lgr.error("Cannot stub defaults for methods with varargs.")
+	else:
+		parameter_count = values.size()
+		parameter_defaults = values
 	return self
 
 

@@ -192,3 +192,7 @@ func new_wired_test(gut_instance):
 # 	return t
 # ----------------------------
 
+
+
+func find_method_meta(methods, method_name):
+	return GutUtils.find_method_meta(methods, method_name)
