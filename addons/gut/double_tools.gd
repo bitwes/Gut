@@ -66,14 +66,3 @@ func default_val(method_name, p_index):
 		return null
 	else:
 		return stubber.get_default_value(double, method_name, p_index)
-
-
-
-func vararg_warning():
-	push_error("Remove all references to vararg_warning.")
-	# if(gut != null):
-	# 	gut.get_logger().warn(
-	# 		"This method contains a vararg argument and the paramter count was not stubbed.  " + \
-	# 		"GUT adds extra parameters to this method which should fill most needs.  " + \
-	# 		"It is recommended that you stub param_count for this object's class to ensure " + \
-	# 		"that there are not any parameter count mismatch errors.")

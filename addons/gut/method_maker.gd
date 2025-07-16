@@ -232,7 +232,6 @@ func get_function_text(meta, override_size=null):
 	var result = _make_arg_array(meta)
 	var has_unsupported = result[0]
 	var args = result[1]
-	var vararg_warning = ""
 
 	var param_array = _get_spy_call_parameters_text(args)
 	if(has_unsupported):
@@ -246,9 +245,6 @@ func get_function_text(meta, override_size=null):
 	if(param_array == 'null'):
 		param_array = '[]'
 
-	if(meta.flags & METHOD_FLAG_VARARG and override_size == null):
-		vararg_warning = "__gutdbl.vararg_warning()\n\t"
-
 	if(method_params != null):
 		if(meta.name == '_init'):
 			text =  _get_init_text(meta, args, method_params, param_array)
@@ -259,7 +255,6 @@ func get_function_text(meta, override_size=null):
 				"method_name":meta.name,
 				"param_array":param_array,
 				"super_call":_get_super_call_text(meta.name, args),
-				"vararg_warning":vararg_warning,
 			})
 
 	return text
