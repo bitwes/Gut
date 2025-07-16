@@ -133,7 +133,7 @@ func param_defaults(values):
 	return self
 
 
-func is_param_override_only():
+func is_default_override_only():
 	return is_defaults_override() and !is_return_override() and !is_call_override()
 
 

@@ -125,31 +125,31 @@ func test_param_defaults_set_parameter_defaults():
 # --------------
 func test_is_paramter_override_only_false_by_default():
 	var sp = StubParamsClass.new()
-	assert_false(sp.is_param_override_only())
+	assert_false(sp.is_default_override_only())
 
 func test_to_return_sets_override_flag():
 	var sp = StubParamsClass.new()
 	sp.param_count(10)
 	sp.to_return(7)
-	assert_false(sp.is_param_override_only())
+	assert_false(sp.is_default_override_only())
 
 func test_order_of_calls_with_to_return_does_not_matter():
 	var sp = StubParamsClass.new()
 	sp.to_return(7)
 	sp.param_count(10)
-	assert_false(sp.is_param_override_only())
+	assert_false(sp.is_default_override_only())
 
 func test_to_do_nothing_sets_flag():
 	var sp = StubParamsClass.new()
 	sp.param_count(10)
 	sp.to_do_nothing()
-	assert_false(sp.is_param_override_only())
+	assert_false(sp.is_default_override_only())
 
 func test_to_call_super_sets_flag():
 	var sp = StubParamsClass.new()
 	sp.param_count(10)
 	sp.to_call_super()
-	assert_false(sp.is_param_override_only())
+	assert_false(sp.is_default_override_only())
 
 
 # ------------------------------------------------------------------------------
@@ -184,7 +184,7 @@ func test__draw_polyline_colors__method_meta_3():
 	var inst = autofree(Button.new())
 	var meta = find_method_meta(inst.get_method_list(), 'draw_polyline_colors')
 	var sp = StubParamsClass.new(inst, meta)
-	assert_true(sp.is_param_override_only())
+	assert_true(sp.is_default_override_only())
 
 func test__draw_polyline_colors__method_meta_4():
 	var inst = autofree(Button.new())

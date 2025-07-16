@@ -94,7 +94,7 @@ func _find_stub(obj, method, parameters=null, find_overloads=false):
 		if(cur_stub.parameters == parameters):
 			param_match = cur_stub
 
-		if(cur_stub.parameters == null and !cur_stub.is_param_override_only()):
+		if(cur_stub.parameters == null and !cur_stub.is_default_override_only()):
 			null_match = cur_stub
 
 		if(cur_stub.is_defaults_override):
