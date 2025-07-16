@@ -1,3 +1,8 @@
+var _is_return_override = false
+var _is_defaults_override = false
+var _is_call_override = false
+var _method_meta : Dictionary = {}
+
 
 var _lgr = GutUtils.get_logger()
 var logger = _lgr :
@@ -6,31 +11,26 @@ var logger = _lgr :
 
 var return_val = null
 var stub_target = null
-# the parameter values to match method call on.
-var parameters = null
+var parameters = null # the parameter values to match method call on.
 var stub_method = null
 var call_super = false
 var call_this = null
+
 # Whether this is a stub for default parameter values as they are defined in
 # the script, and not an overridden default value.
 var is_script_default = false
 
-# -- Paramter Override --
-# Parmater overrides are stored in here along with all the other stub info
-# so that you can chain stubbing parameter overrides along with all the
-# other stubbing.  This adds some complexity to the logic that tries to
-# find the correct stub for a call by a double.  Since an instance of this
-# class could be just a parameter override, or it could have been chained
-# we have to have _paramter_override_only so that we know when to tell the
-# difference.
-var parameter_count = -1
-var parameter_defaults = null
-# Anything that would make this stub not just an override of paramters
-# must set this flag to false.  This must be private bc the actual logic
-# to determine if this stub is only an override is more complicated.
-var _parameter_override_only = true
-# --
-var _method_meta : Dictionary = {}
+var parameter_count = -1 :
+	get():
+		_lgr.deprecated("parameter count deprecated")
+		return -1
+
+# Default values for parameters.  This is used to store default values for
+# scripts and to override those values.  I'm not sure if there is a need to
+# override them anymore, since I think this was introduced for stubbing vararg
+# methods, but you still can for now.  This value should only be used if
+# is_defaults_override is true.
+var parameter_defaults = []
 
 const NOT_SET = '|_1_this_is_not_set_1_|'
 
@@ -59,6 +59,7 @@ func _init(target=null, method=null, _subpath=null):
 	if(typeof(method) == TYPE_DICTIONARY):
 		_method_meta = method
 		_load_defaults_from_metadata(method)
+		is_script_default = true
 
 
 func _load_defaults_from_metadata(meta):
@@ -78,13 +79,14 @@ func _get_method_meta():
 	return _method_meta
 
 
+# -------------------------
+# Public
+# -------------------------
 func to_return(val):
-	if(stub_method == '_init'):
-		_lgr.error("You cannot stub _init to do nothing.  Super's _init is always called.")
-	else:
-		return_val = val
-		call_super = false
-		_parameter_override_only = false
+	return_val = val
+	call_super = false
+	_is_return_override = true
+
 	return self
 
 
@@ -95,12 +97,13 @@ func to_do_nothing():
 
 func to_call_super():
 	call_super = true
-	_parameter_override_only = false
+	_is_call_override = true
 	return self
 
 
 func to_call(callable : Callable):
 	call_this = callable
+	_is_call_override = true
 	return self
 
 
@@ -115,8 +118,8 @@ func when_passed(p1=NOT_SET,p2=NOT_SET,p3=NOT_SET,p4=NOT_SET,p5=NOT_SET,p6=NOT_S
 	return self
 
 
-func param_count(x):
-	parameter_count = x
+func param_count(_x):
+	_lgr.deprecated("Stubbing param_count is no longer required or supported.")
 	return self
 
 
@@ -125,32 +128,40 @@ func param_defaults(values):
 	if(meta != {} and meta.flags & METHOD_FLAG_VARARG):
 		_lgr.error("Cannot stub defaults for methods with varargs.")
 	else:
-		parameter_count = values.size()
 		parameter_defaults = values
+		_is_defaults_override = true
 	return self
 
 
-func has_param_override():
-	return parameter_count != -1
-
-
 func is_param_override_only():
-	var ret_val = false
-	if(has_param_override()):
-		ret_val = _parameter_override_only
-	return ret_val
+	return is_defaults_override() and !is_return_override() and !is_call_override()
+
+
+func is_return_override():
+	return _is_return_override
+
+
+func is_defaults_override():
+	return _is_defaults_override
+
+
+func is_call_override():
+	return _is_call_override
 
 
 func to_s():
 	var base_string = str(stub_target, '.', stub_method)
 
-	if(has_param_override()):
-		base_string += str(' (param count override=', parameter_count, ' defaults=', parameter_defaults)
-		if(is_param_override_only()):
-			base_string += " ONLY"
-		if(is_script_default):
-			base_string += " script default"
-		base_string += ') '
+	# if(has_param_override()):
+	# 	base_string += str(' (param count override=', parameter_count, ' defaults=', parameter_defaults)
+	# 	if(is_param_override_only()):
+	# 		base_string += " ONLY"
+	# 	if(is_script_default):
+	# 		base_string += " script default"
+	# 	base_string += ') '
+
+	if(parameter_defaults.size() > 0):
+		base_string += str(" defaults ", parameter_defaults)
 
 	if(call_super):
 		base_string += " to call SUPER"

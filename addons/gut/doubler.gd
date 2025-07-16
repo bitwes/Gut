@@ -213,14 +213,15 @@ func _get_inst_id_ref_str(inst):
 	return ref_str
 
 
-func _get_func_text(method_hash, path):
-	var override_count = null;
-	if(_stubber != null):
-		override_count = _stubber.get_parameter_count(path, method_hash.name)
+func _get_func_text(method_hash, _path):
+	return _method_maker.get_function_text(method_hash) + "\n"
+	# var override_count = null;
+	# if(_stubber != null):
+	# 	override_count = _stubber.get_parameter_count(path, method_hash.name)
 
-	var text = _method_maker.get_function_text(method_hash, override_count) + "\n"
+	# var text = _method_maker.get_function_text(method_hash, override_count) + "\n"
 
-	return text
+	# return text
 
 
 func _parse_script(obj):

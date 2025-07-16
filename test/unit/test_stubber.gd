@@ -225,41 +225,41 @@ func test_get_call_this_returns_method_on_match():
 # ----------------
 # Parameter Count
 # ----------------
-func test_get_parameter_count_returns_null_by_default():
-	assert_null(gr.stubber.get_parameter_count(DoubleMe, 'method'))
+# func test_get_parameter_count_returns_null_by_default():
+# 	assert_null(gr.stubber.get_parameter_count(DoubleMe, 'method'))
 
-func test_get_parameter_count_returns_stub_params_value():
-	var sp = StubParamsClass.new(DoubleMe, 'method')
-	sp.param_count(3)
-	gr.stubber.add_stub(sp)
-	assert_eq(gr.stubber.get_parameter_count(DoubleMe, 'method'), 3)
+# func test_get_parameter_count_returns_stub_params_value():
+# 	var sp = StubParamsClass.new(DoubleMe, 'method')
+# 	sp.param_count(3)
+# 	gr.stubber.add_stub(sp)
+# 	assert_eq(gr.stubber.get_parameter_count(DoubleMe, 'method'), 3)
 
-func test_get_parameter_count_returns_null_when_param_count_not_set():
-	var sp = StubParamsClass.new(DoubleMe, 'method')
-	gr.stubber.add_stub(sp)
-	assert_null(gr.stubber.get_parameter_count(DoubleMe, 'method'))
+# func test_get_parameter_count_returns_null_when_param_count_not_set():
+# 	var sp = StubParamsClass.new(DoubleMe, 'method')
+# 	gr.stubber.add_stub(sp)
+# 	assert_null(gr.stubber.get_parameter_count(DoubleMe, 'method'))
 
-func test_get_parameter_count_finds_count_when_another_stub_exists():
-	var sp = StubParamsClass.new(DoubleMe, 'method')
-	sp.param_count(3)
-	gr.stubber.add_stub(sp)
+# func test_get_parameter_count_finds_count_when_another_stub_exists():
+# 	var sp = StubParamsClass.new(DoubleMe, 'method')
+# 	sp.param_count(3)
+# 	gr.stubber.add_stub(sp)
 
-	var second_sp = StubParamsClass.new(DoubleMe, 'method')
-	second_sp.to_call_super()
-	gr.stubber.add_stub(second_sp)
+# 	var second_sp = StubParamsClass.new(DoubleMe, 'method')
+# 	second_sp.to_call_super()
+# 	gr.stubber.add_stub(second_sp)
 
-	assert_eq(gr.stubber.get_parameter_count(DoubleMe, 'method'), 3)
+# 	assert_eq(gr.stubber.get_parameter_count(DoubleMe, 'method'), 3)
 
-func test_can_stub_parameter_count_for_gdnatives():
-	var sp = StubParamsClass.new(Node, 'rpc_id').param_count(5)
-	gr.stubber.add_stub(sp)
-	assert_eq(gr.stubber.get_parameter_count(Node, 'rpc_id'), 5)
+# func test_can_stub_parameter_count_for_gdnatives():
+# 	var sp = StubParamsClass.new(Node, 'rpc_id').param_count(5)
+# 	gr.stubber.add_stub(sp)
+# 	assert_eq(gr.stubber.get_parameter_count(Node, 'rpc_id'), 5)
 
-func test_can_get_parameter_count_from_instance_of_gdnatives():
-	var sp = StubParamsClass.new(Node, 'rpc_id').param_count(5)
-	gr.stubber.add_stub(sp)
-	var n = double(Node).new()
-	assert_eq(gr.stubber.get_parameter_count(n, 'rpc_id'), 5)
+# func test_can_get_parameter_count_from_instance_of_gdnatives():
+# 	var sp = StubParamsClass.new(Node, 'rpc_id').param_count(5)
+# 	gr.stubber.add_stub(sp)
+# 	var n = double(Node).new()
+# 	assert_eq(gr.stubber.get_parameter_count(n, 'rpc_id'), 5)
 
 
 

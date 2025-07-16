@@ -95,38 +95,30 @@ func test_to_call_returns_itself():
 # --------------
 # Parameter Count and Defaults
 # --------------
+
+func test_cannot_set_parameter_count():
+	gr.stub_params.logger = new_no_print_logger()
+	assert_eq(gr.stub_params.parameter_count, -1)
+	assert_deprecated(gr.stub_params)
+	gr.stub_params.parameter_count = 99
+	assert_eq(gr.stub_params.parameter_count, -1)
+
 func test_param_count_returns_self():
 	var val = gr.stub_params.param_count(3)
 	assert_eq(val, gr.stub_params);
 
-func test_param_count_sets_param_count():
-	var val = gr.stub_params.param_count(3)
-	assert_eq(gr.stub_params.parameter_count, 3)
-
-func test_param_count_default_value():
-	assert_eq(gr.stub_params.parameter_count, -1)
 
 func test_param_defaults_returns_self():
 	var val = gr.stub_params.param_defaults([])
 	assert_eq(val, gr.stub_params)
 
-func test_param_defaults_sets_parameter_count():
-	gr.stub_params.param_defaults([1, 2, 3])
-	assert_eq(gr.stub_params.parameter_count, 3)
 
-func test_parameter_defaults_is_null_by_default():
-	assert_null(gr.stub_params.parameter_defaults)
+func test_parameter_defaults_is_empty():
+	assert_eq(gr.stub_params.parameter_defaults, [])
 
 func test_param_defaults_set_parameter_defaults():
 	gr.stub_params.param_defaults([1, 2, 3])
 	assert_eq(gr.stub_params.parameter_defaults, [1, 2, 3])
-
-func test_has_param_override_is_false_by_default():
-	assert_false(gr.stub_params.has_param_override())
-
-func test_when_param_count_set_has_param_override_is_true():
-	gr.stub_params.param_count(3)
-	assert_true(gr.stub_params.has_param_override())
 
 # --------------
 # Parameter Override Only
@@ -134,16 +126,6 @@ func test_when_param_count_set_has_param_override_is_true():
 func test_is_paramter_override_only_false_by_default():
 	var sp = StubParamsClass.new()
 	assert_false(sp.is_param_override_only())
-
-func test_param_count_override_params_sets_flag():
-	var sp = StubParamsClass.new()
-	sp.param_count(10)
-	assert_true(sp.is_param_override_only())
-
-func test_setting_defaults_sets_flag():
-	var sp = StubParamsClass.new()
-	sp.param_defaults([1, 2, 3])
-	assert_true(sp.is_param_override_only())
 
 func test_to_return_sets_override_flag():
 	var sp = StubParamsClass.new()
@@ -173,11 +155,11 @@ func test_to_call_super_sets_flag():
 # stub the paramters of a double when it is passed specific values.  In
 # all other cases that I can think of, you will end up calling one of the
 # other stub methods that flip the flag.
-func test_when_passed_does_not_set_flag():
-	var sp = StubParamsClass.new()
-	sp.param_count(10)
-	sp.when_passed(1, 2, 3)
-	assert_true(sp.is_param_override_only())
+# func test_when_passed_does_not_set_flag():
+# 	var sp = StubParamsClass.new()
+# 	sp.param_count(10)
+# 	sp.when_passed(1, 2, 3)
+# 	assert_true(sp.is_param_override_only())
 
 
 # ------------------------------------------------------------------------------
@@ -228,7 +210,7 @@ func test_cannot_stub_defaults_for_varargs():
 	sp.logger = lgr
 	sp.param_defaults([1, 2])
 
-	assert_null(sp.parameter_defaults)
+	assert_eq(sp.parameter_defaults, [])
 	assert_errored(sp)
 
 
@@ -251,3 +233,37 @@ func test_when_callable_is_not_bound_parameters_is_null():
 	assert_eq(sp.parameters, null)
 
 
+
+# ------------------------------------------------------------------------------
+# Test New Flags
+# ------------------------------------------------------------------------------
+func test_is_not_an_override_of_any_kind_by_default():
+	var sp = StubParamsClass.new()
+	assert_false(sp.is_return_override(), 'return override')
+	assert_false(sp.is_defaults_override(), 'defaults override')
+	assert_false(sp.is_call_override(), 'call override')
+
+func test_to_return_sets_return_override_flag():
+	var sp = StubParamsClass.new()
+	sp.to_return(77)
+	assert_true(sp.is_return_override())
+
+func test_to_do_nothing_sets_return_override_flag():
+	var sp = StubParamsClass.new()
+	sp.to_do_nothing()
+	assert_true(sp.is_return_override())
+
+func test_to_call_super_sets_call_override_flag():
+	var sp = StubParamsClass.new()
+	sp.to_call_super()
+	assert_true(sp.is_call_override())
+
+func test_to_call_sets_call_override_flag():
+	var sp = StubParamsClass.new()
+	sp.to_call(func():  print("hello"))
+	assert_true(sp.is_call_override())
+
+func test_param_defaults_sets_is_defaults_override():
+	var sp = StubParamsClass.new()
+	sp.param_defaults([1, 2, 3])
+	assert_true(sp.is_defaults_override())
