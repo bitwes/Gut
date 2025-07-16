@@ -335,6 +335,7 @@ class TestOverridingParameters:
 	# Default parameters and override parameter count
 	func test_can_stub_default_values():
 		var TestClass = load(DEFAULT_PARAMS_PATH)
+
 		var s = _test.stub(TestClass, 'return_passed').to_call_super()
 		s.param_defaults(['1', '2'])
 
@@ -350,30 +351,14 @@ class TestOverridingParameters:
 		var ret_val = inst.rpc_id(1, 'foo', '3', '4', '5')
 		pass_test('we got here')
 
-	func test_vararg_methods_generate_warning_when_called_and_param_count_not_overridden():
-		_test.stub(Node, 'rpc_id').to_do_nothing()
-		var inst = _test.double(Node).new()
-		add_child_autofree(inst)
-
-		var ret_val = inst.rpc_id(1, 'foo', '3', '4', '5')
-		assert_warn(_test.gut, 1)
-
-	func test_vararg_methods_do_not_generate_warnings_when_param_count_overridden():
-		_test.stub(Node, 'rpc_id').to_do_nothing().param_count(5)
-		var inst = _test.double(Node).new()
-		add_child_autofree(inst)
-
-		var ret_val = inst.rpc_id(1, 'foo', '3', '4', '5')
-		assert_warn(_test.gut, 0)
-
 	func test_issue_246_rpc_id_varargs():
 		_test.stub(Node, 'rpc_id').to_do_nothing().param_count(5)
 
 		var inst =  _test.double(Node).new()
 		add_child_autofree(inst)
 
-		var ret_val = inst.rpc_id(1, 'foo', '3', '4', '5')
-		_test.assert_called(inst, 'rpc_id', [1, 'foo', '3', '4', '5'])
+		inst.rpc_id(1, 'foo', '3', '4', '5')
+		_test.assert_called(inst, 'rpc_id', [1, 'foo', ['3', '4', '5']])
 		assert_eq(_test.get_pass_count(), 1)
 
 	func test_issue_246_rpc_id_varargs2():
@@ -382,23 +367,7 @@ class TestOverridingParameters:
 		var inst = double(Node).new()
 		add_child_autofree(inst)
 		inst.rpc_id(1, 'foo', '3', '4', '5')
-		assert_called(inst, 'rpc_id', [1, 'foo', '3', '4', '5'])
-
-	func test_issue_246_rpc_id_varargs_with_defaults():
-		stub(Node, 'rpc_id').to_do_nothing().param_defaults([null, null, 'a', 'b', 'c'])
-
-		var inst = double(Node).new()
-		add_child_autofree(inst)
-		inst.rpc_id(1, 'foo', 'z')
-		assert_called(inst, 'rpc_id', [1, 'foo', 'z', 'b', 'c'])
-
-	func test_setting_less_parameters_does_not_affect_anything():
-		var TestClass = load(DEFAULT_PARAMS_PATH)
-		var s = _test.stub(TestClass, 'return_passed').param_count(0)
-
-		var inst =  _test.partial_double(DefaultParams).new()
-		var ret_val = inst.return_passed('a', 'b')
-		assert_eq(ret_val, 'ab')
+		assert_called(inst, 'rpc_id', [1, 'foo', ['3', '4', '5']])
 
 	func test_double_can_have_default_param_values_stubbed_using_class():
 		var InitParams = load(INIT_PARAMETERS)
@@ -472,6 +441,12 @@ class TestStub:
 		_test.assert_ne(result, this_var, "Why would this pass?")
 		_test.assert_eq(this_var, "some value", "Ohhh, well ok.")
 		assert_pass(_test, 3)
+
+	func test_get_error_messages_when_using_callables():
+		_test.ignore_method_when_doubling(DoubleMe, "has_one_param")
+		var d = autofree(_test.double(DoubleMe).new())
+		_test.stub(d.has_one_param).to_return(5)
+		assert_errored(_test)
 
 
 # class TestSingletonDoubling:

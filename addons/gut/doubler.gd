@@ -117,10 +117,6 @@ func _get_base_script_text(parsed, override_path, partial, included_methods):
 
 
 func _is_method_eligible_for_doubling(parsed_script, parsed_method):
-	if(parsed_method.meta.flags & METHOD_FLAG_VARARG):
-		_lgr.warn(str("Skipping ", parsed_method.meta.name, " due to varargs"))
-		return false
-
 	return !parsed_method.is_accessor() and \
 		parsed_method.is_eligible_for_doubling() and \
 		!_ignored_methods.has(parsed_script.resource, parsed_method.meta.name)
@@ -142,34 +138,23 @@ func _create_script_no_warnings(src):
 
 
 func _create_double(parsed, strategy, override_path, partial):
-	var path = ""
-
-	path = parsed.script_path
 	var dbl_src = ""
 	var included_methods = []
 
 	for method in parsed.get_local_methods():
 		if(_is_method_eligible_for_doubling(parsed, method)):
 			included_methods.append(method.meta.name)
-			var mthd = parsed.get_local_method(method.meta.name)
-			if(parsed.is_native):
-				dbl_src += _get_func_text(method.meta, parsed.resource)
-			else:
-				dbl_src += _get_func_text(method.meta, path)
+			dbl_src += _get_func_text(method.meta)
 
 	if(strategy == GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE):
 		for method in parsed.get_super_methods():
 			if(_is_method_eligible_for_doubling(parsed, method)):
 				included_methods.append(method.meta.name)
 				_stub_to_call_super(parsed, method.meta.name)
-				if(parsed.is_native):
-					dbl_src += _get_func_text(method.meta, parsed.resource)
-				else:
-					dbl_src += _get_func_text(method.meta, path)
+				dbl_src += _get_func_text(method.meta)
 
 	var base_script = _get_base_script_text(parsed, override_path, partial, included_methods)
 	dbl_src = base_script + "\n\n" + dbl_src
-
 
 	if(print_source):
 		print(GutUtils.add_line_numbers(dbl_src))
@@ -217,14 +202,8 @@ func _get_inst_id_ref_str(inst):
 	return ref_str
 
 
-func _get_func_text(method_hash, path):
-	var override_count = null;
-	if(_stubber != null):
-		override_count = _stubber.get_parameter_count(path, method_hash.name)
-
-	var text = _method_maker.get_function_text(method_hash, override_count) + "\n"
-
-	return text
+func _get_func_text(method_hash):
+	return _method_maker.get_function_text(method_hash) + "\n"
 
 
 func _parse_script(obj):

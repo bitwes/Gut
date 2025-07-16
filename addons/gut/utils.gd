@@ -326,6 +326,10 @@ static func print_properties(props, thing, print_all_meta=false):
 			print('  ', props[i])
 
 
+static func print_method_list(thing):
+	for entry in thing.get_method_list():
+		print("* ", entry.name)
+
 
 # ------------------------------------------------------------------------------
 # Gets the value of the node_property 'script' from a PackedScene's root node.
@@ -572,7 +576,20 @@ static func get_display_size():
 
 
 
+static func find_method_meta(methods, method_name):
+	var meta = null
+	var idx = 0
+	while (idx < methods.size() and meta == null):
+		var m = methods[idx]
+		if(m.name == method_name):
+			meta = m
+		idx += 1
 
+	return meta
+
+
+static func get_method_meta(object, method_name):
+	return find_method_meta(object.get_method_list(), method_name)
 
 # ##############################################################################
 #(G)odot (U)nit (T)est class

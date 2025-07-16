@@ -6,12 +6,6 @@ The `stub` function allows you to define behavior for methods of a Doubled insta
 * Call a `Callable` of your choosing (aka Monkey Patching).
 * Force the method to take no action (useful when using Partial Doubles).
 
-
-You can also use `stub` to change the signature of a method by
-* Set default parameter values.  All doubles default all parameters on all methods to `null` because GUT can't do anything else yet.  If your method has default values, and it has been stubbed to `call_super`, you may need to specify these values.  See `param_defaults` below.
-* Changing the parameter count (useful in very specific cases, mostly involving `vararg`).
-
-
 All Stubs are cleared between tests.  If you want to stub a method for all your tests do this in `before_each` using `stub(MyScript, "method_name")...`.  You should not stub anything in `before_all`, `after_each`, or `after_all`.
 
 
