@@ -138,16 +138,6 @@ func _make_arg_array(method_meta):
 		cp.vararg = true
 		to_return.append(cp)
 
-	# var extra_params = GutUtils.nvl(override_size, 0)
-	# if(extra_params == 0):
-
-	# Add in extra parameters from stub settings.
-	# if(extra_params > 0):
-	# 	for i in range(method_meta.args.size(), extra_params):
-	# 		var pname = str(PARAM_PREFIX, 'arg', i)
-	# 		var dflt_text = _make_stub_default(method_meta.name, i)
-	# 		to_return.append(CallParameters.new(pname, dflt_text))
-
 	return [has_unsupported_defaults, to_return];
 
 
@@ -162,10 +152,6 @@ func _get_arg_text(arg_array):
 
 	for i in range(arg_array.size()):
 		text += arg_array[i].get_signature()
-		# if(arg_array[i].p_name == ""):
-		# 	text += str(arg_array[i].default)
-		# else:
-		# 	text += str(arg_array[i].p_name, '=', arg_array[i].default)
 		if(i != arg_array.size() -1):
 			text += ', '
 

@@ -138,9 +138,6 @@ func _create_script_no_warnings(src):
 
 
 func _create_double(parsed, strategy, override_path, partial):
-	var path = ""
-
-	path = parsed.script_path
 	var dbl_src = ""
 	var included_methods = []
 
@@ -158,7 +155,6 @@ func _create_double(parsed, strategy, override_path, partial):
 
 	var base_script = _get_base_script_text(parsed, override_path, partial, included_methods)
 	dbl_src = base_script + "\n\n" + dbl_src
-
 
 	if(print_source):
 		print(GutUtils.add_line_numbers(dbl_src))
