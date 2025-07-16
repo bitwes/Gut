@@ -142,14 +142,7 @@ class TestTheBasics:
 		assert_eq(d_node2d.get_position(), -1)
 		if(is_failing()):
 			print("Node2D = ", Node2D)
-			# print(gr.stubber.to_s())
-
-	func test_can_stub_param_count_on_gdnatives():
-		var params = GutUtils.StubParams.new(Node2D, 'rpc_id').param_count(5)
-		gr.stubber.add_stub(params)
-		var d_node2d = autofree(gr.doubler.double_gdnative(Node2D).new())
-		assert_eq(gr.stubber.get_parameter_count(d_node2d, 'rpc_id'), 5)
-
+			print(gr.stubber.to_s())
 
 	func test_double_can_have_default_param_values_stubbed():
 		var params = GutUtils.StubParams.new(INIT_PARAMETERS, '_init')

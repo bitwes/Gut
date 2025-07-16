@@ -2,6 +2,15 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# 9.6.0
+* Godot 4.5
+* Stubbing/Doubling/Spying on vararg methods has changed.
+    * You no longer need to stub the parameter count for vararg methods.
+    * Since you don't need to do that, you can't do that anymore.
+    * Asserting parameter values passed into a vararg must be enclosed in an array.
+```gdscript
+assert_called(my_double.rpc_id, [p1, p2, [vararg_val1, vararg_val2, vararg_val3]])
+```
 
 # 9.5.0
 * All the `.uid` files you could ever want!

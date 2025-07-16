@@ -230,12 +230,10 @@ func _fail_if_parameters_not_array(parameters):
 # A bunch of common checkes used when validating a double/method pair.  If
 # everything is ok then an empty string is returned, otherwise the message
 # is returned.
-func _get_bad_double_or_method_message(inst, method_name, what_you_cant_do):
+func _get_bad_method_message(inst, method_name, what_you_cant_do):
 	var to_return = ''
 
-	if(!GutUtils.is_double(inst)):
-		to_return = str("An instance of a Double was expected, you passed:  ", _str(inst))
-	elif(!inst.has_method(method_name)):
+	if(!inst.has_method(method_name)):
 		to_return = str("You cannot ", what_you_cant_do, " [", method_name, "] because the method does not exist.  ",
 			"This can happen if the method is virtual and not overloaded (i.e. _ready) ",
 			"or you have mistyped the name of the method.")
@@ -252,10 +250,16 @@ func _get_bad_double_or_method_message(inst, method_name, what_you_cant_do):
 func _fail_if_not_double_or_does_not_have_method(inst, method_name):
 	var to_return = OK
 
-	var msg = _get_bad_double_or_method_message(inst, method_name, 'spy on')
-	if(msg != ''):
-		_fail(msg)
+	if(!GutUtils.is_double(inst)):
+		_fail(str("An instance of a Double was expected, you passed:  ", _str(inst)))
 		to_return = ERR_INVALID_DATA
+	else:
+		var msg = _get_bad_method_message(inst, method_name, 'spy on')
+		if(msg != ''):
+			_fail(msg)
+			to_return = ERR_INVALID_DATA
+
+
 
 	return to_return
 
@@ -2388,11 +2392,9 @@ func stub(thing, p2=null, p3=null):
 		subpath = p2
 		method_name = p3
 
-	if(GutUtils.is_instance(thing)):
-		var msg = _get_bad_double_or_method_message(thing, method_name, 'stub')
-		if(msg != ''):
-			_lgr.error(msg)
-			return GutUtils.StubParams.new()
+	if(GutUtils.is_instance(thing) and !GutUtils.is_double(thing)):
+		_lgr.error(str("An instance of a Double was expected, you passed:  ", _str(thing)))
+		return GutUtils.StubParams.new()
 
 	var sp = null
 	if(typeof(thing) == TYPE_CALLABLE):
@@ -2402,9 +2404,16 @@ func stub(thing, p2=null, p3=null):
 	else:
 		sp = GutUtils.StubParams.new(thing, method_name, subpath)
 
+	if(GutUtils.is_instance(sp.stub_target)):
+		var msg = _get_bad_method_message(sp.stub_target, sp.stub_method, 'stub')
+		if(msg != ''):
+			_lgr.error(msg)
+			return GutUtils.StubParams.new()
+
 	sp.logger = _lgr
 	gut.get_stubber().add_stub(sp)
 	return sp
+
 
 # ----------------
 #endregion

@@ -12,7 +12,7 @@ var MethodMaker = load("res://addons/gut/method_maker.gd")
 
 func test_can_make_a_double_of_node():
 	var doubler = Doubler.new()
-	doubler.print_source = true
+	# doubler.print_source = true
 	var d = doubler.double_gdnative(Node)
 	assert_not_null(d)
 
