@@ -152,14 +152,6 @@ func is_call_override():
 func to_s():
 	var base_string = str(stub_target, '.', stub_method)
 
-	# if(has_param_override()):
-	# 	base_string += str(' (param count override=', parameter_count, ' defaults=', parameter_defaults)
-	# 	if(is_param_override_only()):
-	# 		base_string += " ONLY"
-	# 	if(is_script_default):
-	# 		base_string += " script default"
-	# 	base_string += ') '
-
 	if(parameter_defaults.size() > 0):
 		base_string += str(" defaults ", parameter_defaults)
 

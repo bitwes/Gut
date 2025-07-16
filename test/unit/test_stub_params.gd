@@ -151,16 +151,6 @@ func test_to_call_super_sets_flag():
 	sp.to_call_super()
 	assert_false(sp.is_param_override_only())
 
-# I think this is how it should work.  You may want (if you even can) to
-# stub the paramters of a double when it is passed specific values.  In
-# all other cases that I can think of, you will end up calling one of the
-# other stub methods that flip the flag.
-# func test_when_passed_does_not_set_flag():
-# 	var sp = StubParamsClass.new()
-# 	sp.param_count(10)
-# 	sp.when_passed(1, 2, 3)
-# 	assert_true(sp.is_param_override_only())
-
 
 # ------------------------------------------------------------------------------
 # Stubbing complex parameter lists
