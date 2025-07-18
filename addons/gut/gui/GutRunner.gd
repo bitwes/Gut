@@ -182,7 +182,7 @@ func run_tests(show_gui=true):
 
 	gut_config.apply_options(gut)
 	var run_rest_of_scripts = gut_config.options.unit_test_name == ''
-
+	OS.add_logger(GutUtils.get_logger())
 	gut.test_scripts(run_rest_of_scripts)
 
 
@@ -196,6 +196,7 @@ func get_gut():
 
 
 func quit(exit_code):
+	OS.remove_logger(GutUtils.get_logger())
 	# Sometimes quitting takes a few seconds.  This gives some indicator
 	# of what is going on.
 	_gui.set_title("Exiting")
