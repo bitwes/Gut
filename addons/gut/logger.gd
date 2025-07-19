@@ -61,6 +61,9 @@ var _less_test_names = false
 var _yield_calls = 0
 var _last_yield_text = ''
 
+
+
+
 func _init():
 	_printers.terminal = GutUtils.Printers.TerminalPrinter.new()
 	_printers.console = GutUtils.Printers.ConsolePrinter.new()
@@ -69,12 +72,6 @@ func _init():
 	# by plugin_control.gd based on settings.
 	_printers.console.set_disabled(true)
 
-func get_indent_text():
-	var pad = ''
-	for i in range(_indent_level):
-		pad += _indent_string
-
-	return pad
 
 func _indent_text(text):
 	var to_return = text
@@ -84,14 +81,16 @@ func _indent_text(text):
 		ending_newline = "\n"
 		to_return = to_return.left(to_return.length() -1)
 
-	var pad = get_indent_text()
+	var pad = get_indent()
 	to_return = to_return.replace("\n", "\n" + pad)
 	to_return += ending_newline
 
 	return pad + to_return
 
+
 func _should_print_to_printer(key_name):
 	return _printers[key_name] != null and !_printers[key_name].get_disabled()
+
 
 func _print_test_name():
 	if(_gut == null):
@@ -110,10 +109,12 @@ func _print_test_name():
 		_output(str('* ', cur_test.name, param_text, "\n"))
 		cur_test.has_printed_name = true
 
+
 func _output(text, fmt=null):
 	for key in _printers:
 		if(_should_print_to_printer(key)):
 			_printers[key].send(text, fmt)
+
 
 func _log(text, fmt=fmts.none):
 	_print_test_name()
@@ -131,11 +132,12 @@ func _log_error(function: String, file: String, line: int,
 	code: String, rationale: String, _editor_notify: bool,
 	_error_type: int, _script_backtraces: Array[ScriptBacktrace]) -> void:
 		if(godot_errors_cause_failures):
-			mutex.lock()
 			"at: test_cause_error (res://test/integration/test_new_logger_and_errors.gd:19)"
 			var text = str(code, ": ", rationale)
 			if(function != "push_error"):
 				text = str(code, ': ', rationale, " ", function, "(", file, ":", line, ")  ")
+
+			mutex.lock()
 			error(text)
 			mutex.unlock()
 
@@ -146,17 +148,22 @@ func _log_error(function: String, file: String, line: int,
 func get_warnings():
 	return get_log_entries(types.warn)
 
+
 func get_errors():
 	return get_log_entries(types.error)
+
 
 func get_infos():
 	return get_log_entries(types.info)
 
+
 func get_debugs():
 	return get_log_entries(types.debug)
 
+
 func get_deprecated():
 	return get_log_entries(types.deprecated)
+
 
 func get_count(log_type=null):
 	var count = 0
@@ -167,8 +174,17 @@ func get_count(log_type=null):
 		count = _logs[log_type].size()
 	return count
 
+
 func get_log_entries(log_type):
 	return _logs[log_type]
+
+
+func get_indent():
+	var pad = ''
+	for i in range(_indent_level):
+		pad += _indent_string
+
+	return pad
 
 # ---------------
 # Log methods
@@ -258,6 +274,7 @@ func log_test_name():
 func get_gut():
 	return _gut
 
+
 func set_gut(gut):
 	_gut = gut
 	if(_gut == null):
@@ -270,54 +287,70 @@ func set_gut(gut):
 func get_indent_level():
 	return _indent_level
 
+
 func set_indent_level(indent_level):
 	_indent_level = max(_min_indent_level, indent_level)
+
 
 func get_indent_string():
 	return _indent_string
 
+
 func set_indent_string(indent_string):
 	_indent_string = indent_string
+
 
 func clear():
 	for key in _logs:
 		_logs[key].clear()
 
+
 func inc_indent():
 	_indent_level += 1
+
 
 func dec_indent():
 	_indent_level = max(_min_indent_level, _indent_level -1)
 
+
 func is_type_enabled(type):
 	return _type_data[type].enabled
+
 
 func set_type_enabled(type, is_enabled):
 	_type_data[type].enabled = is_enabled
 
+
 func get_less_test_names():
 	return _less_test_names
 
+
 func set_less_test_names(less_test_names):
 	_less_test_names = less_test_names
+
 
 func disable_printer(name, is_disabled):
 	if(_printers[name] != null):
 		_printers[name].set_disabled(is_disabled)
 
+
 func is_printer_disabled(name):
 	return _printers[name].get_disabled()
+
 
 func disable_formatting(is_disabled):
 	for key in _printers:
 		_printers[key].set_format_enabled(!is_disabled)
 
+
 func disable_all_printers(is_disabled):
 	for p in _printers:
 		disable_printer(p, is_disabled)
 
+
 func get_printer(printer_key):
 	return _printers[printer_key]
+
 
 func _yield_text_terminal(text):
 	var printer = _printers['terminal']
@@ -326,43 +359,34 @@ func _yield_text_terminal(text):
 		printer.back(_last_yield_text.length())
 	printer.send(text, fmts.yellow)
 
+
 func _end_yield_terminal():
 	var printer = _printers['terminal']
 	printer.clear_line()
 	printer.back(_last_yield_text.length())
 
-func _yield_text_gui(text):
-	pass
-	# var lbl = _gut.get_gui().get_waiting_label()
-	# lbl.visible = true
-	# lbl.set_bbcode('[color=yellow]' + text + '[/color]')
-
-func _end_yield_gui():
-	pass
-	# var lbl = _gut.get_gui().get_waiting_label()
-	# lbl.visible = false
-	# lbl.set_text('')
 
 # This is used for displaying the "yield detected" and "yielding to" messages.
 func yield_msg(text):
 	if(_type_data.warn.enabled):
 		self.log(text, fmts.yellow)
 
+
 # This is used for the animated "waiting" message
 func yield_text(text):
 	_yield_text_terminal(text)
-	_yield_text_gui(text)
 	_last_yield_text = text
 	_yield_calls += 1
+
 
 # This is used for the animated "waiting" message
 func end_yield():
 	if(_yield_calls == 0):
 		return
 	_end_yield_terminal()
-	_end_yield_gui()
 	_yield_calls = 0
 	_last_yield_text = ''
+
 
 func get_gui_bbcode():
 	return _printers.gui.get_bbcode()
