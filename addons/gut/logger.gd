@@ -216,6 +216,7 @@ func _output_type(type, text):
 func debug(text):
 	_output_type(types.debug, text)
 
+
 # supply some text or the name of the deprecated method and the replacement.
 func deprecated(text, alt_method=null):
 	var msg = text
@@ -223,31 +224,40 @@ func deprecated(text, alt_method=null):
 		msg = str('The method ', text, ' is deprecated, use ', alt_method , ' instead.')
 	return _output_type(types.deprecated, msg)
 
+
 func error(text):
 	_output_type(types.error, text)
 	if(_gut != null):
 		_gut._fail_for_error(text)
 
+
 func failed(text):
 	_output_type(types.failed, text)
+
 
 func info(text):
 	_output_type(types.info, text)
 
+
 func orphan(text):
 	_output_type(types.orphan, text)
+
 
 func passed(text):
 	_output_type(types.passed, text)
 
+
 func pending(text):
 	_output_type(types.pending, text)
+
 
 func risky(text):
 	_output_type(types.risky, text)
 
+
 func warn(text):
 	_output_type(types.warn, text)
+
 
 func log(text='', fmt=fmts.none):
 	end_yield()
@@ -257,8 +267,10 @@ func log(text='', fmt=fmts.none):
 		_log(text + "\n", fmt)
 	return null
 
+
 func lograw(text, fmt=fmts.none):
 	return _output(text, fmt)
+
 
 # Print the test name if we aren't skipping names of tests that pass (basically
 # what _less_test_names means))
