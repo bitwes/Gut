@@ -1,7 +1,6 @@
 extends SceneTree
 
-var GutGodotLogger = load("res://addons/gut/gut_godot_logger.gd")
-var lgr = GutGodotLogger.new()
+var lgr = GutErrorTracker.new()
 
 
 func add_em_up(a, b, c):
@@ -34,7 +33,7 @@ func whatever_push_error():
 
 func summary():
 	print("----------------")
-	print(lgr.test_errors.to_s())
+	print(lgr.errors.to_s())
 	print("----------------")
 
 
