@@ -2,6 +2,9 @@ extends GutTest
 
 var _added_tracker
 
+func before_all():
+	gut.error_tracker.disabled = true
+
 
 func before_each():
 	_added_tracker = GutErrorTracker.new()
@@ -13,6 +16,9 @@ func after_each():
 	OS.remove_logger(_added_tracker)
 	_added_tracker = null
 
+
+func after_all():
+	gut.error_tracker.disabled = false
 
 func _divide_these(a, b):
 	return a / b

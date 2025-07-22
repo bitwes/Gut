@@ -63,7 +63,9 @@ class TestTheBasics:
 		_doubler.set_stubber(stubber)
 		_doubler.set_gut(gut)
 		_doubler.set_strategy(DOUBLE_STRATEGY.SCRIPT_ONLY)
-		_doubler.set_logger(GutUtils.GutLogger.new())
+		var lgr = GutUtils.GutLogger.new()
+		lgr.set_gut(gut)
+		_doubler.set_logger(lgr)
 		_doubler.print_source = false
 
 	func test_get_set_stubber():
@@ -97,6 +99,7 @@ class TestTheBasics:
 	func test_cannot_set_strategy_to_invalid_values():
 		var default = _doubler.get_strategy()
 		_doubler.set_strategy(-1)
+		assert_tracked_gut_error()
 		assert_eq(_doubler.get_strategy(), default, 'original value retained')
 		assert_errored(_doubler, 1)
 
@@ -427,11 +430,13 @@ class TestDoubleInnerClasses:
 	func before_each():
 		doubler = Doubler.new()
 		doubler.set_stubber(GutUtils.Stubber.new())
-		doubler.set_logger(GutUtils.GutLogger.new())
+		var lgr = GutUtils.GutLogger.new()
+		lgr.set_gut(gut)
+		doubler.set_logger(lgr)
 
 	func test_when_inner_class_not_registered_it_generates_error():
-		var  Dbl = doubler.double(InnerClasses.InnerA)
-		assert_errored(doubler, 1)
+		doubler.double(InnerClasses.InnerA)
+		assert_tracked_gut_error()
 
 	func test_when_inner_class_registered_it_makes_a_double():
 		doubler.inner_class_registry.register(InnerClasses)
@@ -488,8 +493,8 @@ class TestDoubleInnerClasses:
 		assert_eq(inst.get_a(), 'a')
 
 	func test_partial_double_errors_if_inner_not_registered():
-		var inst = doubler.partial_double(InnerClasses.InnerA)
-		assert_errored(doubler, 1)
+		doubler.partial_double(InnerClasses.InnerA)
+		assert_tracked_gut_error()
 
 
 

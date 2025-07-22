@@ -71,6 +71,7 @@ var InputSender = GutUtils.InputSender
 # is set by the gut class when it runs the test script.
 var gut: GutMain = null
 
+var _collected_script = null
 
 var _compare = GutUtils.Comparator.new()
 var _disable_strict_datatype_checks = false

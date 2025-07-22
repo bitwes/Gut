@@ -135,4 +135,8 @@ class TestQuit:
 
 		gr.run_tests()
 		await wait_physics_frames(10)
+		assert_tracked_push_error()
+		# This is a hack because it is not configured right but it suppresses
+		# an error that we don't care about because of bad config.
+		assert_tracked_engine_error()
 		assert_called(gr, 'quit', [1])

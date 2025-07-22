@@ -1,4 +1,4 @@
-extends GutTest
+extends GutInternalTester
 
 var Awaiter = load('res://addons/gut/awaiter.gd')
 
@@ -55,6 +55,7 @@ func test_did_last_wait_timeout_is_false_by_default():
 func test_did_last_wait_timeout_is_readonly():
 	var a = add_child_autoqfree(Awaiter.new())
 	a.did_last_wait_timeout = true
+	assert_tracked_push_error()
 	assert_false(a.did_last_wait_timeout)
 
 func test_wait_started_emitted_when_waiting_seconds():

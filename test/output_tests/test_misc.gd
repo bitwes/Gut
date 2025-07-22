@@ -229,3 +229,10 @@ class TestDiffTool:
 		var dd =  DiffTool.new(d1, d2)
 		gut.p(dd.summarize())
 		just_look_at_it('Visually check this')
+
+
+class TestParameterized:
+	extends GutTest
+
+	func test_invalid_parameters(p=[1, 2, 3, 4, 5]):
+		assert_eq(p, 99)

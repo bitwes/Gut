@@ -230,7 +230,8 @@ func error(text):
 	# Use the _gut one instead of GutUtils.get_error_tracker() for testing
 	# purposes.  This probably means this should have its own reference but
 	# that seems too difficult now.
-	_gut.error_tracker.add_gut_error(text)
+	if(_gut != null):
+		_gut.error_tracker.add_gut_error(text)
 
 
 func failed(text):

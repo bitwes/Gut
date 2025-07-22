@@ -198,3 +198,35 @@ func new_wired_test(gut_instance):
 
 func find_method_meta(methods, method_name):
 	return GutUtils.find_method_meta(methods, method_name)
+
+
+
+func assert_tracked_gut_error(which_gut=gut):
+	var consumed_error = false
+	var errors = which_gut.error_tracker.get_current_test_errors()
+	for err in errors:
+		if(err.is_gut_error()):
+			err.handled = true
+			consumed_error = true
+	assert_true(consumed_error, "GUT error was found.")
+
+
+func assert_tracked_push_error(which_gut=gut):
+	var consumed_error = false
+	var errors = which_gut.error_tracker.get_current_test_errors()
+	for err in errors:
+		if(err.is_push_error()):
+			err.handled = true
+			consumed_error = true
+	assert_true(consumed_error, "push_error error was found.")
+
+
+func assert_tracked_engine_error(which_gut=gut):
+	var consumed_error = false
+	var errors = which_gut.error_tracker.get_current_test_errors()
+	for err in errors:
+		if(err.is_engine_error()):
+			err.handled = true
+			consumed_error = true
+	assert_true(consumed_error, "engine error was found.")
+

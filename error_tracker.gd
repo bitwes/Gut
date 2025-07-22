@@ -23,6 +23,7 @@ class TrackedError:
 	var file = NO_TEST
 	var function = NO_TEST
 	var line = -1
+	var handled = false
 
 
 	func to_s() -> String:
@@ -90,12 +91,13 @@ func _get_stack_data(current_test_name):
 
 func _is_error_failable(error : TrackedError):
 	var is_it = false
-	if(error.is_gut_error()):
-		is_it = treat_gut_errors_as == TREAT_AS.FAILURE
-	elif(error.is_push_error()):
-		is_it = treat_push_error_as == TREAT_AS.FAILURE
-	elif(error.is_engine_error()):
-		is_it = treat_engine_errors_as == TREAT_AS.FAILURE
+	if(error.handled == false):
+		if(error.is_gut_error()):
+			is_it = treat_gut_errors_as == TREAT_AS.FAILURE
+		elif(error.is_push_error()):
+			is_it = treat_push_error_as == TREAT_AS.FAILURE
+		elif(error.is_engine_error()):
+			is_it = treat_engine_errors_as == TREAT_AS.FAILURE
 	return is_it
 
 
@@ -123,6 +125,10 @@ func end_test():
 
 func did_test_error(test_id=_current_test_id):
 	return errors.size(test_id) > 0
+
+
+func get_current_test_errors():
+	return errors.items.get(_current_test_id, [])
 
 
 # This should look through all the errors for a test and see if a failure

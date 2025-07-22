@@ -34,7 +34,6 @@ func test_importing_tests_populates_test_collector():
 	_test_gut.export_tests(EXPORT_FILE)
 
 	var _import_gut = add_child_autofree(new_gut())
-	add_child(_import_gut)
 	_import_gut.import_tests(EXPORT_FILE)
 
 	assert_eq(

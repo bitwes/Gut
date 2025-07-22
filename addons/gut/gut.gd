@@ -585,7 +585,7 @@ func _run_test(script_inst, test_name):
 	await script_inst.before_each()
 
 	start_test.emit(test_name)
-	var test_id = str(script_inst.get_script().get_path(), ':', test_name)
+	var test_id = str(script_inst._collected_script.get_filename_and_inner(), ':', test_name)
 	error_tracker.start_test(test_id)
 
 	await script_inst.call(test_name)

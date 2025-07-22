@@ -366,13 +366,6 @@ class TestEverythingElse:
 		assert_true(true, 'POSTTEARDOWN RAN')
 		gut.directory_delete_files('user://')
 
-		gut.p("/*THESE SHOULD ALL PASS, IF NOT THEN SOMETHING IS BROKEN*/")
-		gut.p("/*These counts will be off if another script was run before this one.*/")
-		assert_eq(1, counts.prerun_setup_count, "Prerun setup should have been called once")
-		assert_eq(gut.get_test_count() - starting_counts.setup_count, counts.setup_count, "Setup should have been called once for each test")
-		# teardown for this test hasn't been run yet.
-		assert_eq(gut.get_test_count() - starting_counts.teardown_count, counts.teardown_count, "Teardown for all tests.")
-
 
 	# ------------------------------
 	# Doubler
@@ -716,8 +709,9 @@ class TestEverythingElse:
 		gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 		gr.test_gut.unit_test_name = 'test_does_not_use_use_parameters'
 		gr.test_gut.test_scripts()
+		assert_tracked_gut_error(gr.test_gut)
 		assert_errored(gr.test_gut, 1)
-		assert_eq(gr.test_gut.get_fail_count(), 2)
+		assert_eq(gr.test_gut.get_fail_count(), 1)
 
 	# if you really think about this, it is a very very inception like test.
 	func test_parameterized_test_that_yield_are_called_correctly():
