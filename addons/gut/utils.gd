@@ -197,6 +197,15 @@ static func get_logger():
 			_lgr = GutLogger.new()
 		return _lgr
 
+static var _error_tracker = null
+static func get_error_tracker():
+	if(_test_mode):
+		return GutErrorTracker.new()
+	else:
+		if(_error_tracker == null):
+			_error_tracker = GutErrorTracker.new()
+		return _error_tracker
+
 
 static var _dyn_gdscript = DynamicGdScript.new()
 static func create_script_from_source(source, override_path=null):

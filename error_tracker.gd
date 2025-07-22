@@ -60,9 +60,9 @@ var _mutex = Mutex.new()
 
 var errors = GutUtils.OneToMany.new()
 
-var treat_gut_errors_as : TREAT_AS = TREAT_AS.NOTHING
-var treat_engine_errors_as : TREAT_AS = TREAT_AS.NOTHING
-var treat_push_error_as : TREAT_AS = TREAT_AS.NOTHING
+var treat_gut_errors_as : TREAT_AS = TREAT_AS.FAILURE
+var treat_engine_errors_as : TREAT_AS = TREAT_AS.FAILURE
+var treat_push_error_as : TREAT_AS = TREAT_AS.FAILURE
 
 
 func _get_stack_data(current_test_name):
@@ -91,14 +91,11 @@ func _get_stack_data(current_test_name):
 func _is_error_failable(error : TrackedError):
 	var is_it = false
 	if(error.is_gut_error()):
-		if(treat_gut_errors_as == TREAT_AS.FAILURE):
-			is_it = true
+		is_it = treat_gut_errors_as == TREAT_AS.FAILURE
 	elif(error.is_push_error()):
-		if(treat_push_error_as == TREAT_AS.FAILURE):
-			is_it = true
+		is_it = treat_push_error_as == TREAT_AS.FAILURE
 	elif(error.is_engine_error()):
-		if(treat_engine_errors_as == TREAT_AS.FAILURE):
-			is_it = true
+		is_it = treat_engine_errors_as == TREAT_AS.FAILURE
 	return is_it
 
 

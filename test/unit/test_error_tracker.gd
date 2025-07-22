@@ -79,53 +79,58 @@ func test_when_push_error_data():
 
 
 func test_should_fail_true_for_gut_error():
+	_added_tracker.treat_gut_errors_as = GutErrorTracker.TREAT_AS.NOTHING
 	_added_tracker.start_test('test')
 	_added_tracker.add_gut_error('this is a gut error')
 	assert_false(_added_tracker.should_test_fail_from_errors('test'))
 
 
 func test_should_fail_true_for_gut_error_when_flag_set():
-	_added_tracker.treat_gut_errors_as = GutErrorTracker.TREAT_AS.FAILURE
+	# _added_tracker.treat_gut_errors_as = GutErrorTracker.TREAT_AS.FAILURE
 	_added_tracker.start_test('test')
 	_added_tracker.add_gut_error('this is a gut error')
 	assert_true(_added_tracker.should_test_fail_from_errors('test'))
 
 
 func test_should_fail_false_for_engine_error():
+	_added_tracker.treat_engine_errors_as = GutErrorTracker.TREAT_AS.NOTHING
 	_added_tracker.start_test('test')
 	_divide_these('word', 'sentence')
 	assert_false(_added_tracker.should_test_fail_from_errors('test'))
 
 
 func test_should_fail_true_for_engine_error_when_flag_set():
-	_added_tracker.treat_engine_errors_as = GutErrorTracker.TREAT_AS.FAILURE
+	# _added_tracker.treat_engine_errors_as = GutErrorTracker.TREAT_AS.FAILURE
 	_added_tracker.start_test('test')
 	_divide_these('word', 'sentence')
 	assert_true(_added_tracker.should_test_fail_from_errors('test'))
 
 
 func test_should_fail_false_for_push_error():
+	_added_tracker.treat_push_error_as = GutErrorTracker.TREAT_AS.NOTHING
 	_added_tracker.start_test('test')
 	push_error("this is a push error")
 	assert_false(_added_tracker.should_test_fail_from_errors('test'))
 
 
 func test_should_fail_true_for_push_error_when_flag_set():
-	_added_tracker.treat_push_error_as = GutErrorTracker.TREAT_AS.FAILURE
+	# _added_tracker.treat_push_error_as = GutErrorTracker.TREAT_AS.FAILURE
 	_added_tracker.start_test('test')
 	push_error("this is a push error")
 	assert_true(_added_tracker.should_test_fail_from_errors('test'))
 
 
 func test_should_fail_finds_second_error():
-	_added_tracker.treat_gut_errors_as = GutErrorTracker.TREAT_AS.FAILURE
+	# _added_tracker.treat_gut_errors_as = GutErrorTracker.TREAT_AS.FAILURE
 	_added_tracker.start_test('test')
 	push_error('this is the first error')
 	_added_tracker.add_gut_error('this is a gut error')
 	assert_true(_added_tracker.should_test_fail_from_errors('test'))
 
-func test_should_fail_does_not_mistake_engine_for_push():
-	_added_tracker.treat_engine_errors_as = GutErrorTracker.TREAT_AS.FAILURE
+
+func test_should_fail_does_not_push_for_engine_error():
+	_added_tracker.treat_push_error_as = GutErrorTracker.TREAT_AS.NOTHING
+	_added_tracker.treat_gut_errors_as = GutErrorTracker.TREAT_AS.NOTHING
 	_added_tracker.start_test('test')
 	push_error('this is the first error')
 	_added_tracker.add_gut_error('this is a gut error')
@@ -141,18 +146,7 @@ func test_should_fail_does_not_mistake_engine_for_push():
 # 	_added_tracker.treat_engine_errors_as = params.error_fail
 
 
-func test_fail_text_includes_nothing_by_default():
-	push_error('push nope')
-	_added_tracker.add_gut_error('gut error nope')
-	_divide_these('nope', 44)
-	assert_eq(_added_tracker.get_fail_text_for_errors(), '')
-
-
-func test_fail_text_includes_all_when_flags_set():
-	_added_tracker.treat_engine_errors_as = GutErrorTracker.TREAT_AS.FAILURE
-	_added_tracker.treat_gut_errors_as = GutErrorTracker.TREAT_AS.FAILURE
-	_added_tracker.treat_push_error_as = GutErrorTracker.TREAT_AS.FAILURE
-
+func test_fail_text_includes_all_by_default():
 	push_error('push nope')
 	_added_tracker.add_gut_error('gut error nope')
 	_divide_these('nope', 44)
@@ -165,8 +159,6 @@ func test_fail_text_includes_all_when_flags_set():
 
 
 func test_fail_text_can_exclude_push():
-	_added_tracker.treat_engine_errors_as = GutErrorTracker.TREAT_AS.FAILURE
-	_added_tracker.treat_gut_errors_as = GutErrorTracker.TREAT_AS.FAILURE
 	_added_tracker.treat_push_error_as = GutErrorTracker.TREAT_AS.NOTHING
 
 	push_error('push nope')
@@ -182,8 +174,6 @@ func test_fail_text_can_exclude_push():
 
 func test_fail_text_can_exclude_engine_error():
 	_added_tracker.treat_engine_errors_as = GutErrorTracker.TREAT_AS.NOTHING
-	_added_tracker.treat_gut_errors_as = GutErrorTracker.TREAT_AS.FAILURE
-	_added_tracker.treat_push_error_as = GutErrorTracker.TREAT_AS.FAILURE
 
 	push_error('push nope')
 	_added_tracker.add_gut_error('gut error nope')
@@ -197,9 +187,7 @@ func test_fail_text_can_exclude_engine_error():
 
 
 func test_fail_text_can_exclude_gut_error():
-	_added_tracker.treat_engine_errors_as = GutErrorTracker.TREAT_AS.FAILURE
 	_added_tracker.treat_gut_errors_as = GutErrorTracker.TREAT_AS.NOTHING
-	_added_tracker.treat_push_error_as = GutErrorTracker.TREAT_AS.FAILURE
 
 	push_error('push nope')
 	_added_tracker.add_gut_error('gut error nope')
