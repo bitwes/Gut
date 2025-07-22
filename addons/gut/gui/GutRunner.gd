@@ -20,6 +20,7 @@ const EXIT_ERROR = 1
 var Gut = load('res://addons/gut/gut.gd')
 var ResultExporter = load('res://addons/gut/result_exporter.gd')
 var GutConfig = load('res://addons/gut/gut_config.gd')
+var _added_error_tracker = null
 
 var runner_json_path = null
 var result_bbcode_path = null
@@ -182,7 +183,8 @@ func run_tests(show_gui=true):
 
 	gut_config.apply_options(gut)
 	var run_rest_of_scripts = gut_config.options.unit_test_name == ''
-	OS.add_logger(GutUtils.get_logger())
+	_added_error_tracker = GutUtils.get_error_tracker()
+	OS.add_logger(_added_error_tracker)
 	gut.test_scripts(run_rest_of_scripts)
 
 
@@ -196,10 +198,10 @@ func get_gut():
 
 
 func quit(exit_code):
-	OS.remove_logger(GutUtils.get_logger())
 	# Sometimes quitting takes a few seconds.  This gives some indicator
 	# of what is going on.
 	_gui.set_title("Exiting")
+	OS.remove_logger(_added_error_tracker)
 	await get_tree().process_frame
 
 	lgr.info(str('Exiting with code ', exit_code))

@@ -9,7 +9,6 @@ enum TREAT_AS {
 	FAILURE,
 }
 
-
 class TrackedError:
 	var backtrace = []
 	# appears to be the description
@@ -63,6 +62,7 @@ var errors = GutUtils.OneToMany.new()
 var treat_gut_errors_as : TREAT_AS = TREAT_AS.FAILURE
 var treat_engine_errors_as : TREAT_AS = TREAT_AS.FAILURE
 var treat_push_error_as : TREAT_AS = TREAT_AS.FAILURE
+var disabled = false
 
 
 func _get_stack_data(current_test_name):
@@ -174,6 +174,8 @@ func add_gut_error(text) -> TrackedError:
 func add_error(function: String, file: String, line: int,
 	code: String, rationale: String, editor_notify: bool,
 	error_type: int, script_backtraces: Array) -> TrackedError:
+		if(disabled):
+			return
 
 		_mutex.lock()
 

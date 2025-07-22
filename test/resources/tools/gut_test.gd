@@ -143,6 +143,8 @@ func new_gut(print_sub_tests=false):
 	g._should_print_versions = false
 	g._should_print_summary = false
 
+	g.error_tracker = GutErrorTracker.new()
+
 	return g
 
 

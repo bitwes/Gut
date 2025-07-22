@@ -163,6 +163,8 @@ var logger = _lgr :
 		_lgr = val
 		_lgr.set_gut(self)
 
+var error_tracker = GutUtils.get_error_tracker()
+
 var _add_children_to = self
 # Sets the object that GUT will add test objects to as it creates them.  The
 # default is self, but can be set to other objects so that GUT is not obscured
@@ -583,9 +585,15 @@ func _run_test(script_inst, test_name):
 	await script_inst.before_each()
 
 	start_test.emit(test_name)
+	var test_id = str(script_inst.get_script().get_path(), ':', test_name)
+	error_tracker.start_test(test_id)
 
 	await script_inst.call(test_name)
 
+	if(error_tracker.should_test_fail_from_errors(test_id)):
+		script_inst._fail(str("Unexpected Errors:\n", error_tracker.get_fail_text_for_errors(test_id)))
+
+	error_tracker.end_test()
 	# if the test called pause_before_teardown then await until
 	# the continue button is pressed.
 	if(_pause_before_teardown and !_ignore_pause_before_teardown):
@@ -862,16 +870,6 @@ func _fail(text=''):
 		var call_count_text = get_call_count_text()
 		_current_test.line_number = line_number
 		_current_test.add_fail(call_count_text + text + line_text)
-
-
-# ------------------------------------------------------------------------------
-# This is "private" but is only used by the logger, it is not used internally.
-# It was either, make this weird method or "do it the right way" with signals
-# or some other crazy mechanism.
-# ------------------------------------------------------------------------------
-func _fail_for_error(err_text):
-	if(_current_test != null and treat_error_as_failure):
-		_fail(err_text)
 
 
 # ------------------------------------------------------------------------------

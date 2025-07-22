@@ -793,38 +793,3 @@ class TestEverythingElse:
 
 
 
-class TestErrorsTreatedAsFailure:
-	extends GutInternalTester
-
-	var _test_gut = null
-
-	func before_each():
-		_test_gut = add_child_autofree(new_gut())
-
-	func test_logger_calls__fail_for_error_when_error_occurs():
-		var logger = GutUtils.GutLogger.new()
-		var dgut = double(GutUtils.Gut).new()
-		logger.set_gut(dgut)
-		logger.error('this is an error')
-		assert_called(dgut, '_fail_for_error')
-
-	func test_gut_does_not_call__fail_when_flag_false():
-		var dgut = double(GutUtils.Gut).new()
-		stub(dgut, '_fail_for_error').to_call_super()
-		dgut._fail_for_error('error text')
-		assert_not_called(dgut, '_fail')
-
-	func test_gut_calls__fail_when_flag_true():
-		var dgut = double(GutUtils.Gut).new()
-		dgut._current_test = 'something'
-		dgut.treat_error_as_failure = true
-		stub(dgut, '_fail_for_error').to_call_super()
-		dgut._fail_for_error('error text')
-		assert_called(dgut, '_fail')
-
-	func test_gut_does_not_call__fail_when_there_is_no_test_object():
-		var dgut = double(GutUtils.Gut).new()
-		dgut.treat_error_as_failure = true
-		stub(dgut, '_fail_for_error').to_call_super()
-		dgut._fail_for_error('error text')
-		assert_not_called(dgut, '_fail')
