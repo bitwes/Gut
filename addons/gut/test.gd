@@ -2455,6 +2455,30 @@ func add_child_autoqfree(node, legible_unique_name=false):
 	return node
 
 
+# ----------------
+#endregion
+#region Engine Error Handling
+# ----------------
+
+## Use when errors cause failures.  Use before the error occurs.  Will cause
+## test to fail if expected error count does not happen.  Will cause test to
+## pass if the expected error count happens.
+func expect_error(count=1):
+	pass
+
+
+# ## Use this at the end of a test when tests do not cause failures to assert that
+# ## an error occurred.
+# func assert_errored(count=1):
+# 	pass
+
+
+## Returns an array (of something) containing all the errors that occurred
+## during the test, up to the point this is called since we can't get tests in
+## the future.
+func get_test_errors() -> Array:
+	return []
+
 
 # ----------------
 #endregion

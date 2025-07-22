@@ -594,7 +594,6 @@ func _run_test(script_inst, test_name):
 
 	script_inst.clear_signal_watcher()
 
-	# call each post-each-test method until teardown is removed.
 	await script_inst.after_each()
 
 	# Free up everything in the _autofree.  Yield for a bit if we
@@ -690,6 +689,7 @@ func _should_skip_script(test_script, collected_script):
 		collected_script.was_skipped = true
 
 	return should_skip
+
 
 # ------------------------------------------------------------------------------
 # Run all tests in a script.  This is the core logic for running tests.
