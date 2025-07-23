@@ -61,12 +61,20 @@ func assert_warn(obj, times=1):
 		_fail(str('Cannot assert_errored, ', obj, ' does not have get_logger method or logger property'))
 
 
-func assert_errored(obj, times=1):
+func assert_logger_errored(obj, times=1):
 	var things_lgr = _get_logger_from_obj(obj)
 	if(things_lgr != null):
 		_assert_log_count(things_lgr.get_errors(), 'errors', times)
 	else:
 		_fail(str('Cannot assert_errored, ', obj, ' does not have get_logger method or logger property'))
+
+
+# func assert_errored(obj, times=1):
+# 	var things_lgr = _get_logger_from_obj(obj)
+# 	if(things_lgr != null):
+# 		_assert_log_count(things_lgr.get_errors(), 'errors', times)
+# 	else:
+# 		_fail(str('Cannot assert_errored, ', obj, ' does not have get_logger method or logger property'))
 
 
 func assert_deprecated(obj, times=1):
@@ -200,33 +208,45 @@ func find_method_meta(methods, method_name):
 	return GutUtils.find_method_meta(methods, method_name)
 
 
+func _get_tracker_from(thing):
+	var tracker = null
+	if(thing is GutMain):
+		tracker = thing.error_tracker
+	elif(thing is GutTest):
+		tracker = thing.gut.error_tracker
+	else:
+		var lgr = _get_logger_from_obj(thing)
+		if(lgr != null):
+			tracker = lgr.get_gut().error_tracker
 
-func assert_tracked_gut_error(which_gut=gut):
-	var consumed_error = false
-	var errors = which_gut.error_tracker.get_current_test_errors()
+	return tracker
+
+func assert_tracked_gut_error(thing=gut, count=1):
+	var consumed_count = 0
+	var errors = _get_tracker_from(thing).get_current_test_errors()
 	for err in errors:
 		if(err.is_gut_error()):
 			err.handled = true
-			consumed_error = true
-	assert_true(consumed_error, "GUT error was found.")
+			consumed_count += 1
+	assert_eq(consumed_count, count, "engine error was found.")
 
 
-func assert_tracked_push_error(which_gut=gut):
-	var consumed_error = false
-	var errors = which_gut.error_tracker.get_current_test_errors()
+func assert_tracked_push_error(thing=gut, count=1):
+	var consumed_count = 0
+	var errors = _get_tracker_from(thing).get_current_test_errors()
 	for err in errors:
 		if(err.is_push_error()):
 			err.handled = true
-			consumed_error = true
-	assert_true(consumed_error, "push_error error was found.")
+			consumed_count += 1
+	assert_eq(consumed_count, count, "engine error was found.")
 
 
-func assert_tracked_engine_error(which_gut=gut):
-	var consumed_error = false
-	var errors = which_gut.error_tracker.get_current_test_errors()
+func assert_tracked_engine_error(thing=gut, count=1):
+	var consumed_count = 0
+	var errors = _get_tracker_from(thing).get_current_test_errors()
 	for err in errors:
 		if(err.is_engine_error()):
 			err.handled = true
-			consumed_error = true
-	assert_true(consumed_error, "engine error was found.")
+			consumed_count += 1
+	assert_eq(consumed_count, count, "engine error was found.")
 

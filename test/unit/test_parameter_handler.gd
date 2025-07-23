@@ -39,7 +39,7 @@ func test_has_logger():
 
 func test_passing_non_array_to_constructor_causes_error():
 	var ph = ParameterHandler.new('asdf')
-	assert_errored(ph, 1)
+	assert_logger_errored(ph, 1)
 
 func test_when_invalid_constructor_parameter_object_is_setup_correctly():
 	var ph = ParameterHandler.new('asdf')

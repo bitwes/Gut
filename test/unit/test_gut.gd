@@ -624,7 +624,7 @@ class TestEverythingElse:
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		gr.test_gut.test_scripts()
 		assert_eq(gr.test_gut.get_test_count(), 0, 'test should not be run')
-		assert_errored(gr.test_gut, 2)
+		assert_tracked_gut_error(gr.test_gut, 2)
 
 	func test_pre_hook_sets_gut_instance():
 		gr.test_gut.pre_run_script = 'res://test/resources/pre_run_script.gd'
@@ -637,7 +637,7 @@ class TestEverythingElse:
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		gr.test_gut.test_scripts()
 		assert_eq(gr.test_gut.get_test_count(), 0, 'test should not be run')
-		assert_errored(gr.test_gut, 2)
+		assert_tracked_gut_error(gr.test_gut, 2)
 
 	func test_post_hook_is_run_after_tests():
 		var PostRunScript = load('res://test/resources/post_run_script.gd')
@@ -654,7 +654,7 @@ class TestEverythingElse:
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		gr.test_gut.test_scripts()
 		assert_eq(gr.test_gut.get_test_count(), 0, 'test should not be run')
-		assert_errored(gr.test_gut, -1)
+		assert_tracked_gut_error(gr.test_gut, 2)
 
 	func test_awaiting_in_the_pre_hook_script():
 		var pre_run_script = load("res://test/resources/awaiting_pre_run_script.gd")
@@ -696,7 +696,7 @@ class TestEverythingElse:
 		gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 		gr.test_gut.unit_test_name = 'test_has_two_parameters'
 		gr.test_gut.test_scripts()
-		assert_errored(gr.test_gut, 1)
+		assert_tracked_gut_error(gr.test_gut, 1)
 		assert_eq(gr.test_gut.get_test_count(), 0, 'test count')
 
 	func test_parameterized_tests_are_called_multiple_times():
@@ -710,7 +710,7 @@ class TestEverythingElse:
 		gr.test_gut.unit_test_name = 'test_does_not_use_use_parameters'
 		gr.test_gut.test_scripts()
 		assert_tracked_gut_error(gr.test_gut)
-		assert_errored(gr.test_gut, 1)
+		assert_tracked_gut_error(gr.test_gut, 1)
 		assert_eq(gr.test_gut.get_fail_count(), 1)
 
 	# if you really think about this, it is a very very inception like test.

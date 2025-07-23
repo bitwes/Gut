@@ -5,6 +5,7 @@ func _make_gut_config():
 	gc.logger = GutUtils.GutLogger.new()
 	if(gut.log_level < 2):
 		gc.logger.disable_all_printers(true)
+	gc.logger.set_gut(gut)
 	return gc
 
 
@@ -42,28 +43,28 @@ func test_gut_gets_default_when_value_invalid():
 func test_errors_when_config_file_cannot_be_found():
 	var gc = _make_gut_config()
 	gc.load_options('res://some_file_that_dne.json')
-	assert_errored(gc, 1)
+	assert_tracked_gut_error(gc, 1)
 
 
 func test_does_not_error_when_default_file_missing():
 	var gc = _make_gut_config()
 	gc.load_options('res://.gutconfig.json')
-	assert_errored(gc, 0)
+	assert_tracked_gut_error(gc, 0)
 
 
 func test_does_not_error_when_default_editor_file_missing():
 	var gc = _make_gut_config()
 	gc.load_options(GutUtils.EditorGlobals.editor_run_gut_config_path)
-	assert_errored(gc, 0)
+	assert_tracked_gut_error(gc, 0)
 
 
 func test_errors_when_file_cannot_be_parsed():
 	var gc = _make_gut_config()
 	gc.load_options('res://addons/gut/gut.gd')
-	assert_errored(gc)
+	assert_tracked_gut_error(gc)
 
 
 func test_errors_when_path_cannot_be_written_to():
 	var gc = _make_gut_config()
 	gc.write_options("user://some_path/that_does/not_exist/dot.json")
-	assert_errored(gc)
+	assert_tracked_gut_error(gc)

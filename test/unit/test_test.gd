@@ -1252,7 +1252,7 @@ class TestReplaceNode:
 	func test_when_node_does_not_exist_error_is_generated():
 		var replacement = autofree(Node2D.new())
 		gr.test.replace_node(_arena, 'DoesNotExist', replacement)
-		assert_errored(gr.test)
+		assert_logger_errored(gr.test)
 
 	func test_replacement_works_with_dollar_sign_references():
 		var replacement = autofree(Node2D.new())
@@ -1290,7 +1290,7 @@ class TestReplaceNode:
 		var old = autofree(Node2D.new())
 		gr.test.replace_node(_arena, old, replacement)
 		assert_tracked_engine_error()
-		assert_errored(gr.test)
+		assert_logger_errored(gr.test)
 
 
 # ------------------------------------------------------------------------------
@@ -1495,19 +1495,19 @@ class TestTestStateChecking:
 
 	func test_error_generated_when_using_is_passing_in_before_all():
 		_run_test('TestUseIsPassingInBeforeAll', 'test_nothing')
-		assert_errored(_gut, 1)
+		assert_logger_errored(_gut, 1)
 
 	func test_error_generated_when_using_is_passing_in_after_all():
 		_run_test('TestUseIsPassingInAfterAll', 'test_nothing')
-		assert_errored(_gut, 1)
+		assert_logger_errored(_gut, 1)
 
 	func test_error_generated_when_using_is_failing_in_before_all():
 		_run_test('TestUseIsFailingInBeforeAll', 'test_nothing')
-		assert_errored(_gut, 1)
+		assert_logger_errored(_gut, 1)
 
 	func test_error_generated_when_using_is_failing_in_after_all():
 		_run_test('TestUseIsFailingInAfterAll', 'test_nothing')
-		assert_errored(_gut, 1)
+		assert_logger_errored(_gut, 1)
 
 
 # ------------------------------------------------------------------------------

@@ -1,5 +1,3 @@
-extends Logger
-
 var types = {
 	debug = 'debug',
 	deprecated = 'deprecated',
@@ -120,27 +118,6 @@ func _log(text, fmt=fmts.none):
 	_print_test_name()
 	var indented = _indent_text(text)
 	_output(indented, fmt)
-
-
-# ------------------------------------------------------------------------------
-# Godot's Logger Related
-# ------------------------------------------------------------------------------
-
-var mutex := Mutex.new()
-var godot_errors_cause_failures = false
-func _log_error(function: String, file: String, line: int,
-	code: String, rationale: String, _editor_notify: bool,
-	_error_type: int, _script_backtraces: Array[ScriptBacktrace]) -> void:
-		if(godot_errors_cause_failures):
-			"at: test_cause_error (res://test/integration/test_new_logger_and_errors.gd:19)"
-			var text = str(code, ": ", rationale)
-			if(function != "push_error"):
-				text = str(code, ': ', rationale, " ", function, "(", file, ":", line, ")  ")
-
-			mutex.lock()
-			error(text)
-			mutex.unlock()
-
 
 # ---------------
 # Get Methods

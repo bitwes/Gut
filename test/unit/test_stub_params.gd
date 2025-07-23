@@ -201,7 +201,7 @@ func test_cannot_stub_defaults_for_varargs():
 	sp.param_defaults([1, 2])
 
 	assert_eq(sp.parameter_defaults, [])
-	assert_errored(sp)
+	assert_logger_errored(sp)
 
 
 

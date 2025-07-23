@@ -101,7 +101,7 @@ class TestTheBasics:
 		_doubler.set_strategy(-1)
 		assert_tracked_gut_error()
 		assert_eq(_doubler.get_strategy(), default, 'original value retained')
-		assert_errored(_doubler, 1)
+		assert_tracked_gut_error(_doubler, 1)
 
 	func test_can_set_strategy_in_constructor():
 		var d = Doubler.new(GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
@@ -441,7 +441,7 @@ class TestDoubleInnerClasses:
 	func test_when_inner_class_registered_it_makes_a_double():
 		doubler.inner_class_registry.register(InnerClasses)
 		var  Dbl = doubler.double(InnerClasses.InnerA)
-		assert_errored(doubler, 0)
+		assert_tracked_gut_error(doubler, 0)
 		assert_not_null(Dbl, 'made a double')
 
 	func test_doubled_instance_returns_null_for_get_b1():
