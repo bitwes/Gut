@@ -72,7 +72,7 @@ class TestTestCollector:
 		gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')
 		assert_false(gr.tc.has_script(SCRIPTS_ROOT + 'has_inner_class.gd.DoesNotExtend')
 			, 'should not have DoesNotExtend')
-		assert_warn(gr.tc)
+		assert_logger_warn(gr.tc)
 
 	func test_inner_classes_have_tests():
 		gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')

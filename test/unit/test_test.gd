@@ -137,7 +137,7 @@ class TestAssertEq:
 
 	func test_warns_when_comparing_float_and_int():
 		gr.test.assert_eq(1.0, 1, 'Should pass and warn')
-		assert_warn(gr.test)
+		assert_logger_warn(gr.test)
 
 	var array_vals = [
 		[[1, 2, 3], ['1', '2', '3'], false],

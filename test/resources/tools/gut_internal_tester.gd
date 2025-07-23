@@ -53,7 +53,7 @@ func print_fail_pass_text(t):
 		gut.p('sub-test:  ' + t._fail_pass_text[i], gut.LOG_LEVEL_FAIL_ONLY)
 
 
-func assert_warn(obj, times=1):
+func assert_logger_warn(obj, times=1):
 	var lgr = _get_logger_from_obj(obj)
 	if(lgr != null):
 		_assert_log_count(lgr.get_warnings(), 'warnings', times)
@@ -67,14 +67,6 @@ func assert_logger_errored(obj, times=1):
 		_assert_log_count(things_lgr.get_errors(), 'errors', times)
 	else:
 		_fail(str('Cannot assert_errored, ', obj, ' does not have get_logger method or logger property'))
-
-
-# func assert_errored(obj, times=1):
-# 	var things_lgr = _get_logger_from_obj(obj)
-# 	if(things_lgr != null):
-# 		_assert_log_count(things_lgr.get_errors(), 'errors', times)
-# 	else:
-# 		_fail(str('Cannot assert_errored, ', obj, ' does not have get_logger method or logger property'))
 
 
 func assert_deprecated(obj, times=1):

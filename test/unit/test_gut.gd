@@ -440,7 +440,7 @@ class TestEverythingElse:
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name =  'test_no_asserts'
 		gr.test_gut.test_scripts()
-		assert_warn(gr.test_gut, 0)
+		assert_logger_warn(gr.test_gut, 0)
 		var risky_count = gr.test_gut.get_test_collector().scripts[0].get_risky_count()
 		assert_eq(risky_count, 1, 'Risky count')
 
@@ -448,31 +448,31 @@ class TestEverythingElse:
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name = 'test_passing_assert'
 		gr.test_gut.test_scripts()
-		assert_warn(gr.test_gut, 0)
+		assert_logger_warn(gr.test_gut, 0)
 
 	func test_with_failing_assert_no_assert_warning_is_not_generated():
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name = 'test_failing_assert'
 		gr.test_gut.test_scripts()
-		assert_warn(gr.test_gut, 0)
+		assert_logger_warn(gr.test_gut, 0)
 
 	func test_with_pass_test_call_no_assert_warning_is_not_generated():
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name = 'test_use_pass_test'
 		gr.test_gut.test_scripts()
-		assert_warn(gr.test_gut, 0)
+		assert_logger_warn(gr.test_gut, 0)
 
 	func test_with_fail_test_call_no_assert_warning_is_not_generated():
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name = 'test_use_fail_test'
 		gr.test_gut.test_scripts()
-		assert_warn(gr.test_gut, 0)
+		assert_logger_warn(gr.test_gut, 0)
 
 	func test_with_pending_call_no_assert_warning_is_no_generated():
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name = 'test_use_pending'
 		gr.test_gut.test_scripts()
-		assert_warn(gr.test_gut, 0)
+		assert_logger_warn(gr.test_gut, 0)
 
 
 	# ------------------------------
