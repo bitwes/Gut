@@ -46,14 +46,14 @@ func _init():
 
 	print("main loop = ", Engine.get_main_loop())
 
-	OS.add_logger(lgr)
+	GutErrorTracker.register_logger(lgr)
 
 	whatever_man()
 	whatever_push_error()
 	whatever_asserts()
 
 	summary()
-	OS.remove_logger(lgr)
+	GutErrorTracker.deregister_logger(lgr)
 	await create_timer(.01).timeout
 
 	quit()

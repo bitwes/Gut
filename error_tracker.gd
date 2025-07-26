@@ -1,6 +1,50 @@
 extends Logger
 class_name GutErrorTracker
 
+static var registered_loggers := {}
+static var total_register_calls = 0
+static var total_deregister_calls = 0
+static var total_deregistered = 0
+static var total_registered = 0
+static var total_created = 0
+static var max_simultaneously_registered = 0
+
+static var register_loggers = true
+
+static func register_logger(which):
+	total_register_calls += 1
+	if(!register_loggers):
+		return
+
+	if(!registered_loggers.has(which)):
+		total_registered += 1
+		OS.add_logger(which)
+		registered_loggers[which] = {
+			"id":str(which),
+			"index":total_created,
+			"stack": get_stack()
+		}
+		max_simultaneously_registered = max(max_simultaneously_registered, registered_loggers.size())
+
+static func deregister_logger(which):
+	total_deregister_calls += 1
+	if(registered_loggers.has(which)):
+		total_deregistered += 1
+		OS.remove_logger(which)
+		registered_loggers.erase(which)
+
+
+static func print_register_summary():
+	print("registered loggers = ", registered_loggers.size())
+	GutUtils.pretty_print(registered_loggers)
+	print("total_registered        ", total_registered)
+	print("total_register_calls    ", total_register_calls)
+	print("total_deregister_calls  ", total_deregister_calls)
+	print("total_deregistered      ", total_deregistered)
+	print("total_created           ", total_created)
+	print("max simul               ", max_simultaneously_registered)
+
+
 const NO_TEST := 'NONE'
 const GUT_ERROR_TYPE = 999
 
@@ -64,6 +108,9 @@ var treat_gut_errors_as : TREAT_AS = TREAT_AS.FAILURE
 var treat_engine_errors_as : TREAT_AS = TREAT_AS.FAILURE
 var treat_push_error_as : TREAT_AS = TREAT_AS.FAILURE
 var disabled = false
+
+func _init() -> void:
+	total_created += 1
 
 
 func _get_stack_data(current_test_name):

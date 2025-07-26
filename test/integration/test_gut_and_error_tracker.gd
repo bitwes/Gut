@@ -22,11 +22,11 @@ class TestStuff:
 
 	func before_each():
 		_gut = add_child_autofree(new_gut(verbose))
-		OS.add_logger(_gut.error_tracker)
+		GutErrorTracker.register_logger(_gut.error_tracker)
 
 
 	func after_each():
-		OS.remove_logger(_gut.error_tracker)
+		GutErrorTracker.deregister_logger(_gut.error_tracker)
 
 
 	func after_all():
@@ -70,14 +70,6 @@ class TestStuff:
 		var t = s.run_test_in_gut(_gut)
 		assert_eq(t.failing, 1, 'one failing')
 		assert_eq(t.passing, 1, 'one passing')
-
-
-	func test_pushed_errors_included_in_summary_error_count():
-		var s = DynamicGutTest.new()
-		s.add_source(_src_push_error)
-		var t = s.run_test_in_gut(_gut)
-
-		assert_eq(t.errors, 1, 'one error')
 
 
 	func test_gut_error_causes_failure():

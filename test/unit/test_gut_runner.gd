@@ -28,8 +28,15 @@ class TestQuit:
 	var GutRunner = load('res://addons/gut/gui/GutRunner.tscn')
 	var PDblRunner = null
 
+	var _created_runners = []
+
 	func before_all():
 		PDblRunner = partial_double(GutRunner)
+
+	func after_each():
+		for r in _created_runners:
+			GutErrorTracker.deregister_logger(r._added_error_tracker)
+		_created_runners.clear()
 
 	func _create_runner():
 		var gr = PDblRunner.instantiate()
@@ -37,6 +44,7 @@ class TestQuit:
 		gr.gut_config.options.dirs = ['res://not_real']
 		stub(gr, 'quit').to_do_nothing()
 		gr.gut = new_partial_double_gut()
+		_created_runners.append(gr)
 		return gr
 
 	func test_does_not_quit_when_gut_config_does_not_say_to():

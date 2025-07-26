@@ -53,6 +53,7 @@ var default_options = {
 	tests = [],
 	unit_test_name = '',
 
+	no_error_tracking = false,
 	failure_error_types = ["engine", "gut", "push_error"],
 
 	gut_on_top = true,
@@ -159,6 +160,8 @@ func _apply_options(opts, gut):
 
 	if(!opts.failure_error_types.has(FAIL_ERROR_TYPE_GUT)):
 		gut.error_tracker.treat_gut_errors_as = gut.error_tracker.TREAT_AS.NOTHING
+
+	gut.error_tracker.register_loggers = !opts.no_error_tracking
 
 	return gut
 

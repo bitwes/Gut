@@ -6,6 +6,7 @@
 script = ExtResource("1_5452u")
 
 [node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = -1
 offset_left = 71.0
 offset_top = 22.0
 offset_right = 585.0
@@ -26,6 +27,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Controls" type="ColorRect" parent="."]
+anchors_preset = -1
 offset_left = 634.0
 offset_top = 4.0
 offset_right = 1001.0

@@ -123,6 +123,8 @@ func _end_run(override_exit_code=EXIT_OK):
 	if(_ran_from_editor):
 		_write_results_for_gut_panel()
 
+	GutErrorTracker.deregister_logger(_added_error_tracker)
+
 	_handle_quit(gut_config.options.should_exit,
 		gut_config.options.should_exit_on_success,
 		override_exit_code)
@@ -184,7 +186,7 @@ func run_tests(show_gui=true):
 	gut_config.apply_options(gut)
 	var run_rest_of_scripts = gut_config.options.unit_test_name == ''
 	_added_error_tracker = GutUtils.get_error_tracker()
-	OS.add_logger(_added_error_tracker)
+	GutErrorTracker.register_logger(_added_error_tracker)
 	gut.test_scripts(run_rest_of_scripts)
 
 
@@ -201,7 +203,7 @@ func quit(exit_code):
 	# Sometimes quitting takes a few seconds.  This gives some indicator
 	# of what is going on.
 	_gui.set_title("Exiting")
-	OS.remove_logger(_added_error_tracker)
+
 	await get_tree().process_frame
 
 	lgr.info(str('Exiting with code ', exit_code))

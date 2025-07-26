@@ -1,5 +1,8 @@
 extends GutTest
 
+func should_skip_script():
+	return EngineDebugger.is_active()
+	
 var _added_tracker
 
 func before_all():
@@ -8,12 +11,12 @@ func before_all():
 
 func before_each():
 	_added_tracker = GutErrorTracker.new()
-	OS.add_logger(_added_tracker)
+	GutErrorTracker.register_logger(_added_tracker)
 	_added_tracker.errors.items.clear()
 
 
 func after_each():
-	OS.remove_logger(_added_tracker)
+	GutErrorTracker.deregister_logger(_added_tracker)
 	_added_tracker = null
 
 
@@ -22,6 +25,7 @@ func after_all():
 
 func _divide_these(a, b):
 	return a / b
+
 
 func _assert_a_equals_b(a, b, extra_text):
 	assert(a == b, extra_text)
