@@ -32,7 +32,6 @@ class TestProperties:
 			['parameter_handler', null, GutUtils.ParameterHandler.new([])],
 			['post_run_script', '', 'res://something_else.gd'],
 			['pre_run_script', '', 'res://something.gd'],
-			['treat_error_as_failure', true, false],
 			['unit_test_name', '', 'test_something_cool'],
 		])
 

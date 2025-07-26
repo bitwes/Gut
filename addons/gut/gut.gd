@@ -174,11 +174,6 @@ var add_children_to = self :
 	set(val): _add_children_to = val
 
 
-var _treat_error_as_failure = true
-var treat_error_as_failure = _treat_error_as_failure:
-	get: return _treat_error_as_failure
-	set(val): _treat_error_as_failure = val
-
 # ------------
 # Read only
 # ------------
