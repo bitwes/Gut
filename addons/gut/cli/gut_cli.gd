@@ -105,6 +105,10 @@ Options whose values are lists/arrays can be specified multiple times:
 	-gdir c,d
 	-gdir e
 	# results in -gdir equaling [a, b, c, d, e]
+
+To not use an empty value instead of a default value, specifiy the option with
+an immediate "=":
+	-gconfig=
 """
 	opts.add_heading("Test Config:")
 	opts.add('-gdir', options.dirs, 'List of directories to search for test scripts in.')
@@ -125,6 +129,7 @@ Options whose values are lists/arrays can be specified multiple times:
 	opts.add('-gexit', false, 'Exit after running tests.  If not specified you have to manually close the window.')
 	opts.add('-gexit_on_success', false, 'Only exit if zero tests fail.')
 	opts.add('-gignore_pause', false, 'Ignores any calls to pause_before_teardown.')
+	opts.add('-gfailure_error_types', options.failure_error_types, 'Error types that will cause tests to fail if the are encountered during the execution of a test.  Default "[default]"')
 
 	opts.add_heading("Display Settings:")
 	opts.add('-glog', options.log_level, 'Log level [0-3].  Default [default]')
