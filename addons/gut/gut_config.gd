@@ -53,8 +53,6 @@ var default_options = {
 	tests = [],
 	unit_test_name = '',
 
-	# named differently than gut option so we can use it as a flag in the cli
-	errors_do_not_cause_failure = false,
 	failure_error_types = ["engine", "gut", "push_error"],
 
 	gut_on_top = true,
@@ -151,7 +149,6 @@ func _apply_options(opts, gut):
 	gut.junit_xml_file = opts.junit_xml_file
 	gut.junit_xml_timestamp = opts.junit_xml_timestamp
 	gut.paint_after = str(opts.paint_after).to_float()
-	gut.treat_error_as_failure = !opts.errors_do_not_cause_failure
 
 	# These error_tracker options default to true.  Don't trust this comment.
 	if(!opts.failure_error_types.has(FAIL_ERROR_TYPE_ENGINE)):
