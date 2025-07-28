@@ -1,8 +1,6 @@
-extends GutTest
+extends GutInternalTester
 
-var Gut = load('res://addons/gut/gut.gd')
 var JunitExporter = GutUtils.JunitXmlExport
-var GutLogger = GutUtils.GutLogger
 
 var _test_gut = null
 
@@ -16,12 +14,7 @@ const RESULT_XML_VALID_TAGS := {
 
 # Returns a new gut object, all setup for testing.
 func get_a_gut():
-	var g = Gut.new()
-	g.log_level = g.LOG_LEVEL_ALL_ASSERTS
-	g.logger = GutUtils.GutLogger.new()
-	g.logger.disable_printer('terminal', true)
-	g.logger.disable_printer('gui', true)
-	g.logger.disable_printer('console', true)
+	var g = new_gut(verbose)
 	return g
 
 
@@ -78,11 +71,8 @@ func assert_is_valid_xml(xml : String)->void:
 	assert_eq(result, ERR_FILE_EOF, 'Parsing xml should reach EOF')
 
 
-func export_script(name):
-	return str('res://test/resources/exporter_test_files/', name)
-
-func before_all():
-	GutUtils._test_mode = true
+func export_script(n):
+	return str('res://test/resources/exporter_test_files/', n)
 
 func before_each():
 	_test_gut = get_a_gut()

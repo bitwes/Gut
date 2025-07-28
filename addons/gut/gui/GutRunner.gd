@@ -20,7 +20,6 @@ const EXIT_ERROR = 1
 var Gut = load('res://addons/gut/gut.gd')
 var ResultExporter = load('res://addons/gut/result_exporter.gd')
 var GutConfig = load('res://addons/gut/gut_config.gd')
-var _added_error_tracker = null
 
 var runner_json_path = null
 var result_bbcode_path = null
@@ -29,12 +28,15 @@ var result_json_path = null
 var lgr = GutUtils.get_logger()
 var gut_config = null
 
+var error_tracker = GutUtils.get_error_tracker()
+
 var _hid_gut = null;
 # Lazy loaded gut instance.  Settable for testing purposes.
 var gut = _hid_gut :
 	get:
 		if(_hid_gut == null):
-			_hid_gut = Gut.new()
+			_hid_gut = Gut.new(lgr)
+			_hid_gut.error_tracker = error_tracker
 		return _hid_gut
 	set(val):
 		_hid_gut = val
@@ -123,7 +125,7 @@ func _end_run(override_exit_code=EXIT_OK):
 	if(_ran_from_editor):
 		_write_results_for_gut_panel()
 
-	GutErrorTracker.deregister_logger(_added_error_tracker)
+	GutErrorTracker.deregister_logger(error_tracker)
 
 	_handle_quit(gut_config.options.should_exit,
 		gut_config.options.should_exit_on_success,
@@ -185,8 +187,7 @@ func run_tests(show_gui=true):
 
 	gut_config.apply_options(gut)
 	var run_rest_of_scripts = gut_config.options.unit_test_name == ''
-	_added_error_tracker = GutUtils.get_error_tracker()
-	GutErrorTracker.register_logger(_added_error_tracker)
+	GutErrorTracker.register_logger(error_tracker)
 	gut.test_scripts(run_rest_of_scripts)
 
 

@@ -187,24 +187,17 @@ static var warnings_when_loading_test_scripts := { # WarningsManager dictionary
 # When running in test mode this will always return a new logger so that errors
 # are not caused by getting bad warn/error/etc counts.
 # ------------------------------------------------------------------------------
-static var _test_mode = false
 static var _lgr = null
 static func get_logger():
-	if(_test_mode):
-		return GutLogger.new()
-	else:
-		if(_lgr == null):
-			_lgr = GutLogger.new()
-		return _lgr
+	if(_lgr == null):
+		_lgr = GutLogger.new()
+	return _lgr
 
 static var _error_tracker = null
 static func get_error_tracker():
-	if(_test_mode):
-		return GutErrorTracker.new()
-	else:
-		if(_error_tracker == null):
-			_error_tracker = GutErrorTracker.new()
-		return _error_tracker
+	if(_error_tracker == null):
+		_error_tracker = GutErrorTracker.new()
+	return _error_tracker
 
 
 static var _dyn_gdscript = DynamicGdScript.new()

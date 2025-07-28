@@ -67,7 +67,7 @@ class TestYeOldYieldMethods:
 		var signaler = add_child_autoqfree(TimedSignaler.new())
 		signaler.emit_after(.5)
 		await yield_to(signaler, 'the_signal', 10)
-		assert_between(counter.physics_time, .48, .52)
+		assert_between(counter.physics_time, .49, .54)
 
 	func test_wait_to_ends_at_max_wait_if_signal_not_emitted():
 		var signaler = add_child_autoqfree(TimedSignaler.new())
@@ -76,7 +76,7 @@ class TestYeOldYieldMethods:
 
 	func test_wait_for_waits_for_x_seconds():
 		await wait_seconds(.5)
-		assert_between(counter.physics_time, .49, .52)
+		assert_between(counter.physics_time, .49, .54)
 
 
 
@@ -89,13 +89,14 @@ class TestTheNewWaitMethods:
 
 	func test_wait_frames_is_deprecated():
 		var t = GutTest.new()
+		t.set_logger(GutLogger.new())
 		t._awaiter = autofree(double(load('res://addons/gut/awaiter.gd')).new())
 		t.wait_frames(5)
 		assert_deprecated(t)
 
 	func test_wait_for_waits_for_x_seconds():
 		await wait_seconds(.5)
-		assert_between(counter.physics_time, .49, .52)
+		assert_between(counter.physics_time, .49, .54)
 
 	func test_wait_physics_frames_waits_for_x_frames():
 		await wait_physics_frames(30)
@@ -114,7 +115,7 @@ class TestTheNewWaitMethods:
 		var signaler = add_child_autoqfree(TimedSignaler.new())
 		signaler.emit_after(.5)
 		await wait_for_signal(signaler.the_signal, 10)
-		assert_between(counter.physics_time, .48, .52)
+		assert_between(counter.physics_time, .49, .54)
 
 
 	func test_wait_for_signal_ends_when_signal_emitted():

@@ -259,11 +259,11 @@ var _auto_queue_free_delay = .1
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-func _init():
-	# When running tests for GUT itself, GutUtils has been setup to always return
-	# a new logger so this does not set the gut instance on the base logger
-	# when creating test instances of GUT.
-	_lgr.set_gut(self) # HEY!  What about tests?  ^^^^^^^^^
+func _init(override_logger=null):
+	if(override_logger != null):
+		logger = override_logger
+	else:
+		logger = logger # force setter logic
 
 	_doubler.set_stubber(_stubber)
 	_doubler.set_spy(_spy)

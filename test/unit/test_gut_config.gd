@@ -64,7 +64,7 @@ class TestApplyOptions:
 
 	func test_gut_gets_double_strategy_when_applied():
 		var gc = GutUtils.GutConfig.new()
-		var g = autofree(GutUtils.Gut.new())
+		var g = autofree(new_gut(verbose))
 		g.log_level = gut.log_level
 
 		gc.options.double_strategy = GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY
@@ -74,7 +74,7 @@ class TestApplyOptions:
 
 	func test_gut_gets_default_when_value_invalid():
 		var gc = GutUtils.GutConfig.new()
-		var g = autofree(GutUtils.Gut.new())
+		var g = autofree(new_gut(verbose))
 		g.log_level = gut.log_level
 
 		g.double_strategy = GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY
@@ -85,7 +85,7 @@ class TestApplyOptions:
 
 	func test_failure_error_type_engine_sets_error_tracker_option_true_when_it_exists():
 		var gc = GutUtils.GutConfig.new()
-		var g = autofree(GutUtils.Gut.new())
+		var g = autofree(new_gut(verbose))
 
 		gc.options.failure_error_types = [gc.FAIL_ERROR_TYPE_ENGINE]
 		gc.apply_options(g)
@@ -95,7 +95,7 @@ class TestApplyOptions:
 
 	func test_failure_error_type_engine_sets_error_tracker_option_false_when_missing():
 		var gc = GutUtils.GutConfig.new()
-		var g = autofree(GutUtils.Gut.new())
+		var g = autofree(new_gut(verbose))
 
 		gc.options.failure_error_types = []
 		gc.apply_options(g)
@@ -104,7 +104,7 @@ class TestApplyOptions:
 
 	func test_failure_error_type_push_error_sets_error_tracker_option_true_when_it_exists():
 		var gc = GutUtils.GutConfig.new()
-		var g = autofree(GutUtils.Gut.new())
+		var g = autofree(new_gut(verbose))
 
 		gc.options.failure_error_types = [gc.FAIL_ERROR_TYPE_PUSH_ERROR]
 		gc.apply_options(g)
@@ -114,7 +114,7 @@ class TestApplyOptions:
 
 	func test_failure_error_type_push_error_sets_error_tracker_option_false_when_missing():
 		var gc = GutUtils.GutConfig.new()
-		var g = autofree(GutUtils.Gut.new())
+		var g = autofree(new_gut(verbose))
 
 		gc.options.failure_error_types = []
 		gc.apply_options(g)
@@ -123,7 +123,7 @@ class TestApplyOptions:
 
 	func test_failure_error_type_gut_sets_error_tracker_option_true_when_it_exists():
 		var gc = GutUtils.GutConfig.new()
-		var g = autofree(GutUtils.Gut.new())
+		var g = autofree(new_gut(verbose))
 
 		gc.options.failure_error_types = [gc.FAIL_ERROR_TYPE_GUT]
 		gc.apply_options(g)
@@ -133,7 +133,7 @@ class TestApplyOptions:
 
 	func test_failure_error_type_gut_sets_error_tracker_option_false_when_missing():
 		var gc = GutUtils.GutConfig.new()
-		var g = autofree(GutUtils.Gut.new())
+		var g = autofree(new_gut(verbose))
 
 		gc.options.failure_error_types = []
 		gc.apply_options(g)
@@ -143,7 +143,7 @@ class TestApplyOptions:
 
 	func test_errors_do_not_cause_failure_is_deprecated():
 		var gc = GutUtils.GutConfig.new()
-		var g = autofree(GutUtils.Gut.new())
+		var g = autofree(new_gut(verbose))
 
 		gc.options.errors_do_not_cause_failure = true
 		gc.apply_options(g)

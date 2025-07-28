@@ -24,6 +24,9 @@ class TestQuit:
 		func run():
 			set_exit_code(use_this_exit_code)
 
+	# func should_skip_script():
+	# 	return "Skipping until all the stupid globals are worked out."
+
 
 	var GutRunner = load('res://addons/gut/gui/GutRunner.tscn')
 	var PDblRunner = null
@@ -35,16 +38,21 @@ class TestQuit:
 
 	func after_each():
 		for r in _created_runners:
-			GutErrorTracker.deregister_logger(r._added_error_tracker)
+			if(r.error_tracker != GutUtils.get_error_tracker()):
+				GutErrorTracker.deregister_logger(r.error_tracker)
 		_created_runners.clear()
 
 	func _create_runner():
 		var gr = PDblRunner.instantiate()
+		gr.lgr = GutLogger.new()
+		gr.error_tracker = GutErrorTracker.new()
+
 		gr.gut_config = GutUtils.GutConfig.new()
 		gr.gut_config.options.dirs = ['res://not_real']
 		stub(gr, 'quit').to_do_nothing()
-		gr.gut = new_partial_double_gut()
+		gr.gut = new_partial_double_gut(verbose)
 		_created_runners.append(gr)
+
 		return gr
 
 	func test_does_not_quit_when_gut_config_does_not_say_to():
@@ -143,8 +151,9 @@ class TestQuit:
 
 		gr.run_tests()
 		await wait_physics_frames(10)
+
+		assert_logger_errored(gr.lgr)
 		assert_tracked_push_error()
-		# This is a hack because it is not configured right but it suppresses
-		# an error that we don't care about because of bad config.
-		assert_tracked_engine_error()
+
 		assert_called(gr, 'quit', [1])
+

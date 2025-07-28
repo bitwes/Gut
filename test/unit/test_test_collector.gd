@@ -10,6 +10,7 @@ class TestTestCollector:
 	}
 	func before_each():
 		gr.tc = TestCollector.new()
+		gr.tc.set_logger(GutLogger.new())
 
 	func test_has_logger():
 		assert_has_logger(gr.tc)
@@ -144,7 +145,7 @@ class TestExportImport:
 		GutUtils.write_file(path, export_file_text)
 
 	func _run_test_collector(tc):
-		var test_gut = Gut.new()
+		var test_gut = new_gut()
 		add_child(test_gut)
 		test_gut._test_collector = tc
 		test_gut._test_the_scripts()

@@ -57,7 +57,7 @@ class TestUsingResDirs:
 
 	# We only have 3 directories with tests in them so test 3
 	func test_directories123_defined_in_editor_are_loaded_on_ready():
-		var g = autofree(Gut.new())
+		var g = autofree(new_gut())
 		var t = autofree(Test.new())
 		t.gut = g
 		add_child(g)

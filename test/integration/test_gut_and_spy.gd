@@ -1,15 +1,12 @@
-extends 'res://addons/gut/test.gd'
+extends GutInternalTester
 
-var Gut = load('res://addons/gut/gut.gd')
-
-const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
 
 func test_can_get_spy():
-	var g = autofree(Gut.new())
+	var g = autofree(new_gut(verbose))
 	assert_ne(g.get_spy(), null)
 
 func test_spy_for_doubler_is_guts_spy():
-	var g = autofree(Gut.new())
+	var g = autofree(new_gut(verbose))
 	assert_eq(g.get_doubler().get_spy(), g.get_spy())
 
 

@@ -25,12 +25,10 @@ var Spy = load('res://addons/gut/spy.gd')
 var TestCollector = load('res://addons/gut/test_collector.gd')
 
 
-func _init():
-	GutUtils._test_mode = true
-
-
 func _get_logger_from_obj(obj):
 	var to_return = null
+	if(is_instance_of(obj, GutLogger)):
+		to_return = obj
 	if(obj.has_method('get_logger')):
 		to_return = obj.get_logger()
 	elif(obj.get('logger') != null):
@@ -126,10 +124,9 @@ func get_error_count(obj):
 
 var new_gut_indent_string = "|   "
 func new_gut(print_sub_tests=false):
-	var g = Gut.new()
-	g.logger = GutLogger.new()
+	var l = GutLogger.new()
+	var g = Gut.new(l)
 	g.logger.disable_all_printers(true)
-	g.update_loggers()
 
 	g.log_level = 3
 	if(print_sub_tests):
@@ -149,10 +146,9 @@ func new_gut(print_sub_tests=false):
 
 
 func new_partial_double_gut(print_sub_tests=false):
-	var g = partial_double(Gut).new()
-	g.logger = GutUtils.GutLogger.new()
+	var l = GutLogger.new()
+	var g = partial_double(Gut).new(l)
 	g.logger.disable_all_printers(true)
-	g.update_loggers()
 
 	if(print_sub_tests):
 		g.log_level = 3
@@ -166,6 +162,7 @@ func new_partial_double_gut(print_sub_tests=false):
 
 	g._should_print_versions = false
 	g._should_print_summary = false
+	g.error_tracker = GutErrorTracker.new()
 
 	return g
 
@@ -220,7 +217,7 @@ func assert_tracked_gut_error(thing=gut, count=1):
 		if(err.is_gut_error()):
 			err.handled = true
 			consumed_count += 1
-	assert_eq(consumed_count, count, "engine error was found.")
+	assert_eq(consumed_count, count, "gut error was found.")
 
 
 func assert_tracked_push_error(thing=gut, count=1):
@@ -230,7 +227,7 @@ func assert_tracked_push_error(thing=gut, count=1):
 		if(err.is_push_error()):
 			err.handled = true
 			consumed_count += 1
-	assert_eq(consumed_count, count, "engine error was found.")
+	assert_eq(consumed_count, count, "push_error error was found.")
 
 
 func assert_tracked_engine_error(thing=gut, count=1):

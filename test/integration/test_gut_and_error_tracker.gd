@@ -2,10 +2,10 @@ extends GutTest
 
 
 class TestDefaults:
-	extends GutTest
+	extends GutInternalTester
 
 	func test_gut_uses_utils_error_tracker_by_default():
-		var g = autofree(GutMain.new())
+		var g = autofree(Gut.new(GutLogger.new()))
 		assert_eq(g.error_tracker, GutUtils.get_error_tracker())
 
 

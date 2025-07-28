@@ -64,6 +64,19 @@ class TrackedError:
 		return error_type == GUT_ERROR_TYPE
 
 
+	func get_error_type_name():
+		var to_return = "unknown"
+
+		if(is_gut_error()):
+			to_return =  "GUT"
+		elif(is_push_error()):
+			to_return = "push_error"
+		elif(is_engine_error()):
+			to_return = str("engine-", error_type)
+
+		return to_return
+
+
 	# this might not work in other languages, and is flakey at best.
 	# func is_assert():
 	# 	return error_type == Logger.ERROR_TYPE_SCRIPT and \
@@ -84,6 +97,7 @@ var treat_gut_errors_as : TREAT_AS = TREAT_AS.FAILURE
 var treat_engine_errors_as : TREAT_AS = TREAT_AS.FAILURE
 var treat_push_error_as : TREAT_AS = TREAT_AS.FAILURE
 var disabled = false
+
 
 func _get_stack_data(current_test_name):
 	var test_entry = {}
@@ -172,7 +186,7 @@ func get_fail_text_for_errors(test_id=_current_test_id) -> String:
 	if(errors.items.has(test_id)):
 		for error in errors.items[test_id]:
 			if(_is_error_failable(error)):
-				error_texts.append(error.code)
+				error_texts.append(str('<', error.get_error_type_name(), '>', error.code))
 
 	var to_return = ""
 	for i in error_texts.size():

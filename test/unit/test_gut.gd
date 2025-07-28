@@ -8,12 +8,12 @@ class TestProperties:
 	extends GutInternalTester
 	var _gut = null
 
-	func before_all():
-		GutUtils._test_mode = true
-
 	func before_each():
-		_gut = autofree(Gut.new())
+		# Can't use new_gut here because of default value checks
+		_gut = autofree(Gut.new(GutUtils.GutLogger.new()))
+		_gut.error_tracker = GutErrorTracker.new()
 		_gut._should_print_versions = false
+
 
 	var _backed_properties = ParameterFactory.named_parameters(
 		['property_name', 'default', 'new_value'],
@@ -53,9 +53,6 @@ class TestProperties:
 		assert_property_with_backing_variable(_gut, 'add_children_to', _gut, self)
 
 	func test_logger_backed_property():
-		# This is hardcodedd to use the current value to check the default because of the way
-		# that GutUtils and logger works with GutUtils._test_mode = true.  Kinda breaks
-		# the one of the 8 things that this assert checks, but that's fine.
 		assert_property_with_backing_variable(_gut, 'logger', _gut._lgr, GutUtils.GutLogger.new(), '_lgr')
 
 	func test_setting_logger_sets_gut_for_logger():
@@ -81,11 +78,8 @@ class TestSimulate:
 
 	var _test_gut = null
 
-	func before_all():
-		GutUtils._test_mode = true
-
 	func before_each():
-		_test_gut = autofree(new_gut())
+		_test_gut = autofree(new_gut(verbose))
 
 	class WithoutProcess:
 		extends Node
@@ -328,20 +322,13 @@ class TestEverythingElse:
 
 	# Returns a new gut object, all setup for testing.
 	func get_a_gut():
-		var g = new_gut()
-		# Hides output.  remove this when things start failing.
-		var print_sub_tests = false
-		g.logger.disable_all_printers(!print_sub_tests)
-		g.logger.disable_formatting(!print_sub_tests)
-		# For checking warnings etc, this has to be ALL_ASSERTS
-		g.log_level = g.LOG_LEVEL_ALL_ASSERTS
+		var g = new_gut(verbose)
 		return g
 
 	# ------------------------------
 	# Setup/Teardown
 	# ------------------------------
 	func before_all():
-		GutUtils._test_mode = true
 		starting_counts.setup_count = gut.get_test_count()
 		starting_counts.teardown_count = gut.get_test_count()
 		counts.prerun_setup_count += 1
