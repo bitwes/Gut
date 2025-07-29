@@ -9,8 +9,13 @@ class TestDefaults:
 		assert_eq(g.error_tracker, GutUtils.get_error_tracker())
 
 
-class TestStuff:
+
+
+class TestErrorFailures:
 	extends GutInternalTester
+
+	func should_skip_script():
+		return skip_if_debugger_active()
 
 	var _gut = null
 
@@ -96,3 +101,171 @@ class TestStuff:
 		assert_eq(t.passing, 0, 'no passing because of early exit from error')
 
 
+class TestErrorAsserts:
+	extends GutInternalTester
+
+	func should_skip_script():
+		return skip_if_debugger_active()
+
+	var _gut = null
+
+	func before_all():
+		verbose = false
+		gut.error_tracker.disabled = true
+		DynamicGutTest.should_print_source = verbose
+
+
+	func before_each():
+		_gut = add_child_autofree(new_gut(verbose))
+		GutErrorTracker.register_logger(_gut.error_tracker)
+
+
+	func after_each():
+		GutErrorTracker.deregister_logger(_gut.error_tracker)
+
+
+	func after_all():
+		gut.error_tracker.disabled = false
+
+
+	var _src_divide_them = """
+	func divide_them(a, b):
+		return a / b
+	"""
+
+	func test_asserting_one_push_error_prevents_failure():
+		var test_func = func(me):
+			push_error('error 1')
+			me.assert_push_error(1)
+
+		var s = autofree(DynamicGutTest.new())
+		s.add_lambda_test(test_func, 'test_something')
+
+		var t = s.run_test_in_gut(_gut)
+		assert_eq(t.passing, 1)
+
+
+	func test_asserting_two_push_error_prevents_failure():
+		var test_func = func(me):
+			push_error('error 1')
+			push_error('error 2')
+			me.assert_push_error(2)
+
+		var s = autofree(DynamicGutTest.new())
+		s.add_lambda_test(test_func, 'test_something')
+
+		var t = s.run_test_in_gut(_gut)
+		assert_eq(t.passing, 1)
+
+
+	func test_asserting_non_matching_push_error_causes_failure():
+		var test_func = func(me):
+			push_error('error 1')
+			push_error('error 2')
+			push_error('error 3')
+			me.assert_push_error(1)
+
+		var s = autofree(DynamicGutTest.new())
+		s.add_lambda_test(test_func, 'test_something')
+
+		var t = s.run_test_in_gut(_gut)
+		# 2 failures, one for assert and one for the unexpected errors that
+		# were not handled by the assert
+		assert_eq(t.failing, 2)
+
+
+	func test_asserting_engine_error_prevents_failure():
+		var test_func = func(me):
+			me.divide_them(1, 'b')
+			me.assert_engine_error(1)
+
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(_src_divide_them)
+		s.add_lambda_test(test_func, 'test_something')
+
+		var t = s.run_test_in_gut(_gut)
+		assert_eq(t.passing, 1)
+
+	func test_asserting_multiple_engine_error_prevents_failure():
+		var test_func = func(me):
+			me.divide_them(1, 'b')
+			me.divide_them(1, 'b')
+			me.divide_them(1, 'b')
+			me.assert_engine_error(3)
+
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(_src_divide_them)
+		s.add_lambda_test(test_func, 'test_something')
+
+		var t = s.run_test_in_gut(_gut)
+		assert_eq(t.passing, 1)
+
+	func test_asserting_non_matching_count_causes_two_failures():
+		var test_func = func(me):
+			me.divide_them(1, 'b')
+			me.divide_them(1, 'b')
+			me.divide_them(1, 'b')
+			me.assert_engine_error(2)
+
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(_src_divide_them)
+		s.add_lambda_test(test_func, 'test_something')
+
+		var t = s.run_test_in_gut(_gut)
+		# 2 failures, one for assert and one for the unexpected errors that
+		# were not handled by the assert
+		assert_eq(t.failing, 2)
+
+
+	func test_can_assert_multiple_error_types():
+		var test_func = func(me):
+			me.divide_them(1, 'b')
+			me.divide_them(1, 'b')
+			push_error('push error 1')
+			me.assert_engine_error(2)
+			me.assert_push_error(1)
+
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(_src_divide_them)
+		s.add_lambda_test(test_func, 'test_something')
+
+		var t = s.run_test_in_gut(_gut)
+		assert_eq(t.passing, 2)
+
+
+	func test_can_get_all_errors_that_occur():
+		var test_func = func(me):
+			me.divide_them(1, 'b')
+			me.divide_them(1, 'b')
+			push_error('pushe error 1')
+			var errs = me.get_errors()
+			me.assert_eq(errs.size(), 3)
+
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(_src_divide_them)
+		s.add_lambda_test(test_func, 'test_something')
+
+		var t = s.run_test_in_gut(_gut)
+		assert_eq(t.passing, 1, 'pass count')
+		# Errors are not consumed so they still cause errors.
+		assert_eq(t.failing, 1, 'fail count')
+
+
+	func test_can_mark_all_errors_handled_manually():
+		var test_func = func(me):
+			me.divide_them(1, 'b')
+			me.divide_them(1, 'b')
+			push_error('pushe error 1')
+			var errs = me.get_errors()
+			me.assert_eq(errs.size(), 3)
+			for e in errs:
+				e.handled = true
+
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(_src_divide_them)
+		s.add_lambda_test(test_func, 'test_something')
+
+		var t = s.run_test_in_gut(_gut)
+		assert_eq(t.passing, 1, 'pass count')
+		# Errors are not consumed so they still cause errors.
+		assert_eq(t.failing, 0, 'fail count')

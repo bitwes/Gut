@@ -239,3 +239,9 @@ func assert_tracked_engine_error(thing=gut, count=1):
 			consumed_count += 1
 	assert_eq(consumed_count, count, "engine error was found.")
 
+
+func skip_if_debugger_active():
+	if(EngineDebugger.is_active()):
+		return "Script skipped when debugger active"
+	else:
+		return false

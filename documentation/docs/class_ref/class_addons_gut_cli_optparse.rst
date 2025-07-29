@@ -235,7 +235,7 @@ Method Descriptions
 
 `bool <https://docs.godotengine.org/en/stable/classes/class_bool.html>`_ **is_option**\ (\ arg\ ) :ref:`🔗<class_addons/gut/cli/optparse.gd_method_is_option>`
 
-Test is something is an argument by the :ref:`option_name_prefix<class_addons/gut/cli/optparse.gd_property_option_name_prefix>`. If ``str(arg)`` begins with the prefix, it will considered true, otherwise it will be considered false.
+Test if something is an existing argument. If ``str(arg)`` begins with the :ref:`option_name_prefix<class_addons/gut/cli/optparse.gd_property_option_name_prefix>`, it will considered true, otherwise it will be considered false.
 
 .. rst-class:: classref-item-separator
 

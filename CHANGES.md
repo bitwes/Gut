@@ -11,6 +11,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ```gdscript
 assert_called(my_double.rpc_id, [p1, p2, [vararg_val1, vararg_val2, vararg_val3]])
 ```
+* Error detection has been added and tests will now fail when an error happens.  This can be disabled at 3 different levels:  engine, push_error, GUT.  See the wiki for more information.
+
 
 # 9.5.0
 * All the `.uid` files you could ever want!

@@ -44,15 +44,15 @@
    :caption: Other
    :name: sec-other
 
-   Contributing
-   GDScript-Warnings
+   Error-Tracking
    Export-Test-Results
    Hooks
    Memory-Management
    Mocking-Input
    Orphans
    Running-On-Devices
-   Tutorials
+   GDScript-Warnings
+   Contributing
 
 
 .. toctree::

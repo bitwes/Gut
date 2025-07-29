@@ -57,7 +57,7 @@ class TrackedError:
 
 
 	func is_engine_error():
-		return error_type != GUT_ERROR_TYPE
+		return error_type != GUT_ERROR_TYPE and !is_push_error()
 
 
 	func is_gut_error():
@@ -77,7 +77,8 @@ class TrackedError:
 		return to_return
 
 
-	# this might not work in other languages, and is flakey at best.
+	# this might not work in other languages, and feels falkey, but might be
+	# useful at some point.
 	# func is_assert():
 	# 	return error_type == Logger.ERROR_TYPE_SCRIPT and \
 	# 		(code.find("Assertion failed.") == 0 or \
@@ -98,6 +99,10 @@ var treat_engine_errors_as : TREAT_AS = TREAT_AS.FAILURE
 var treat_push_error_as : TREAT_AS = TREAT_AS.FAILURE
 var disabled = false
 
+
+# ----------------
+#region Private
+# ----------------
 
 func _get_stack_data(current_test_name):
 	var test_entry = {}
@@ -133,6 +138,10 @@ func _is_error_failable(error : TrackedError):
 			is_it = treat_engine_errors_as == TREAT_AS.FAILURE
 	return is_it
 
+# ----------------
+#endregion
+#region Godot's Logger Overrides
+# ----------------
 
 # Godot's Logger virtual method for errors
 func _log_error(function: String, file: String, line: int,
@@ -147,6 +156,10 @@ func _log_error(function: String, file: String, line: int,
 # func _log_message(message: String, error: bool) -> void:
 # 	pass
 
+# ----------------
+#endregion
+#region Public
+# ----------------
 
 func start_test(test_id):
 	_current_test_id = test_id
@@ -175,6 +188,14 @@ func should_test_fail_from_errors(test_id = _current_test_id):
 			var error = errs[index]
 			to_return = _is_error_failable(error)
 			index += 1
+	return to_return
+
+
+func get_errors_for_test(test_id=_current_test_id):
+	var to_return = []
+	if(errors.items.has(test_id)):
+		to_return = errors.items[test_id].duplicate()
+
 	return to_return
 
 
@@ -219,13 +240,11 @@ func add_error(function: String, file: String, line: int,
 		_mutex.lock()
 
 		var err := TrackedError.new()
-
 		err.backtrace = script_backtraces
 		err.code = code
 		err.rationale = rationale
 		err.error_type = error_type
 		err.editor_notify = editor_notify
-
 		err.file = file
 		err.function = function
 		err.line = line

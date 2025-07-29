@@ -93,6 +93,8 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_does_not_have<class_GutTest_method_assert_does_not_have>`\ (\ obj, element, text = ""\ )                                                                                                                                                            |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | |void|                                                                         | :ref:`assert_engine_error<class_GutTest_method_assert_engine_error>`\ (\ count = 1\ )                                                                                                                                                                            |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_eq<class_GutTest_method_assert_eq>`\ (\ got, expected, text = ""\ )                                                                                                                                                                                 |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_eq_deep<class_GutTest_method_assert_eq_deep>`\ (\ v1, v2\ )                                                                                                                                                                                         |
@@ -153,6 +155,8 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_property_with_backing_variable<class_GutTest_method_assert_property_with_backing_variable>`\ (\ obj, property_name, default_value, new_value, backed_by_name = null\ )                                                                              |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | |void|                                                                         | :ref:`assert_push_error<class_GutTest_method_assert_push_error>`\ (\ count = 1\ )                                                                                                                                                                                |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_same<class_GutTest_method_assert_same>`\ (\ v1, v2, text = ""\ )                                                                                                                                                                                    |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_signal_emit_count<class_GutTest_method_assert_signal_emit_count>`\ (\ p1, p2, p3 = 0, p4 = ""\ )                                                                                                                                                    |
@@ -187,6 +191,8 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`double<class_GutTest_method_double>`\ (\ thing, double_strat = null, not_used_anymore = null\ )                                                                                                                                                            |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | |void|                                                                         | :ref:`expect_error<class_GutTest_method_expect_error>`\ (\ count = 1\ )                                                                                                                                                                                          |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`fail_test<class_GutTest_method_fail_test>`\ (\ text\ )                                                                                                                                                                                                     |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_assert_count<class_GutTest_method_get_assert_count>`\ (\ )                                                                                                                                                                                             |
@@ -197,6 +203,8 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_double_strategy<class_GutTest_method_get_double_strategy>`\ (\ )                                                                                                                                                                                       |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `Array <https://docs.godotengine.org/en/stable/classes/class_array.html>`_     | :ref:`get_errors<class_GutTest_method_get_errors>`\ (\ )                                                                                                                                                                                                         |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_fail_count<class_GutTest_method_get_fail_count>`\ (\ )                                                                                                                                                                                                 |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_pass_count<class_GutTest_method_get_pass_count>`\ (\ )                                                                                                                                                                                                 |
@@ -206,6 +214,8 @@ Methods
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_signal_emit_count<class_GutTest_method_get_signal_emit_count>`\ (\ p1, p2 = null\ )                                                                                                                                                                    |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_signal_parameters<class_GutTest_method_get_signal_parameters>`\ (\ p1, p2 = null, p3 = -1\ )                                                                                                                                                           |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `Array <https://docs.godotengine.org/en/stable/classes/class_array.html>`_     | :ref:`get_test_errors<class_GutTest_method_get_test_errors>`\ (\ )                                                                                                                                                                                               |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`ignore_method_when_doubling<class_GutTest_method_ignore_method_when_doubling>`\ (\ thing, method_name\ )                                                                                                                                                   |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -306,6 +316,33 @@ Methods
 
 .. rst-class:: classref-descriptions-group
 
+Enumerations
+------------
+
+.. _enum_GutTest_PropertyUsageFlags:
+
+.. rst-class:: classref-enumeration
+
+enum **PropertyUsageFlags**: :ref:`🔗<enum_GutTest_PropertyUsageFlags>`
+
+.. _class_GutTest_constant_VARIABLE_PROPERTY:
+
+.. rst-class:: classref-enumeration-constant
+
+:ref:`PropertyUsageFlags<enum_GutTest_PropertyUsageFlags>` **VARIABLE_PROPERTY** = ``4096``
+
+.. container:: contribute
+
+	No description
+
+
+
+.. rst-class:: classref-section-separator
+
+----
+
+.. rst-class:: classref-descriptions-group
+
 Constants
 ---------
 
@@ -314,18 +351,6 @@ Constants
 .. rst-class:: classref-constant
 
 **EDITOR_PROPERTY** = ``4102`` :ref:`🔗<class_GutTest_constant_EDITOR_PROPERTY>`
-
-.. container:: contribute
-
-	No description
-
-
-
-.. _class_GutTest_constant_VARIABLE_PROPERTY:
-
-.. rst-class:: classref-constant
-
-**VARIABLE_PROPERTY** = ``4096`` :ref:`🔗<class_GutTest_constant_VARIABLE_PROPERTY>`
 
 .. container:: contribute
 
@@ -2029,6 +2054,66 @@ Assert using v1 and v2 are not the same using ``is_same``.  See @GlobalScope.is_
 
 ----
 
+.. _class_GutTest_method_assert_push_error:
+
+.. rst-class:: classref-method
+
+|void| **assert_push_error**\ (\ count = 1\ ) :ref:`🔗<class_GutTest_method_assert_push_error>`
+
+Asserts that ``count`` errors from push_error have occurred by this point in the test.  If the expected number of errors are found then this assert will pass and the test will not fail from an unexpected push_error. 
+
+
+
+This assert will pass/fail even if push_errors are not configured to cause a test failure. 
+
+
+
+See `Error-Tracking <../Error-Tracking.html>`__.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_engine_error:
+
+.. rst-class:: classref-method
+
+|void| **assert_engine_error**\ (\ count = 1\ ) :ref:`🔗<class_GutTest_method_assert_engine_error>`
+
+Asserts that ``count`` errors generated by the engine have occurred by this point in the test.  If the expected number of errors are found then this assert will pass and the test will not fail from an unexpected push_error. 
+
+
+
+This assert will pass/fail even if push_errors are not configured to cause a test failure. 
+
+
+
+See `Error-Tracking <../Error-Tracking.html>`__.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_errors:
+
+.. rst-class:: classref-method
+
+`Array <https://docs.godotengine.org/en/stable/classes/class_array.html>`_ **get_errors**\ (\ ) :ref:`🔗<class_GutTest_method_get_errors>`
+
+Get all the errors in the test up to this point.  Each error is an instance of GutErrorTracker.TrackedError.  This class is explained in `Error-Tracking <../Error-Tracking.html>`__.  Setting the ``handled`` property of an element in the array will prevent it from causing a test to fail. 
+
+
+
+This method allows you to inspect the details of any errors that occured and decide if it's the error you are expecting or not. 
+
+
+
+See `Error-Tracking <../Error-Tracking.html>`__.
+
+.. rst-class:: classref-item-separator
+
+----
+
 .. _class_GutTest_method_wait_seconds:
 
 .. rst-class:: classref-method
@@ -2065,7 +2150,7 @@ See `Awaiting <../Awaiting.html>`__
 
 **Deprecated:** This method may be changed or removed in future versions.
 
-Use wait_physics_frames or wait_process_frames See `Awaiting <../Awaiting.html>`__
+Use wait_physics_frames or wait_process_frames See `Awaiting <../Awaiting.html>`__.
 
 .. rst-class:: classref-item-separator
 
@@ -2391,6 +2476,30 @@ The same as autofree but it also adds the object as a child of the test.
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **add_child_autoqfree**\ (\ node, legible_unique_name = false\ ) :ref:`🔗<class_GutTest_method_add_child_autoqfree>`
 
 The same as autoqfree but it also adds the object as a child of the test.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_expect_error:
+
+.. rst-class:: classref-method
+
+|void| **expect_error**\ (\ count = 1\ ) :ref:`🔗<class_GutTest_method_expect_error>`
+
+Use when errors cause failures.  Use before the error occurs.  Will cause test to fail if expected error count does not happen.  Will cause test to pass if the expected error count happens.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_test_errors:
+
+.. rst-class:: classref-method
+
+`Array <https://docs.godotengine.org/en/stable/classes/class_array.html>`_ **get_test_errors**\ (\ ) :ref:`🔗<class_GutTest_method_get_test_errors>`
+
+Returns an array (of something) containing all the errors that occurred during the test, up to the point this is called since we can't get tests in the future.
 
 .. rst-class:: classref-item-separator
 

@@ -1,8 +1,9 @@
-extends GutTest
+extends GutInternalTester
 
 func should_skip_script():
-	return EngineDebugger.is_active()
-	
+	return skip_if_debugger_active()
+
+
 var _added_tracker
 
 func before_all():
