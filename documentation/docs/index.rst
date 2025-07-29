@@ -23,6 +23,7 @@
    Parameterized-Tests
    Simulate
    Comparing-Things
+   Error-Tracking
 
 
 .. toctree::
@@ -44,7 +45,6 @@
    :caption: Other
    :name: sec-other
 
-   Error-Tracking
    Export-Test-Results
    Hooks
    Memory-Management

@@ -322,5 +322,3 @@ class TestDictionaryDiff:
 		diff.max_differences = 10
 		assert_lt(diff.summary.split("\n").size(), 50, diff.summary)
 		assert_false(diff.are_equal)
-
-

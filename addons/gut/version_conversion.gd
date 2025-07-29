@@ -70,13 +70,17 @@ class v9_2_0:
 # "path": "res://test/resources/doubler_test_objects/inner_classes.gd"
 # }, ... ])
 static func get_missing_gut_class_names() -> Array:
-	var gut_class_names = ["GutHookScript",
+	var gut_class_names = [
+		"GutErrorTracker",
+		"GutHookScript",
 		"GutInputFactory",
 		"GutInputSender",
 		"GutMain",
 		"GutStringUtils",
 		"GutTest",
-		"GutUtils",]
+		"GutTrackedError",
+		"GutUtils",
+	]
 
 	var class_cach_path = 'res://.godot/global_script_class_cache.cfg'
 	var cfg = ConfigFile.new()

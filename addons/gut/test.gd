@@ -86,6 +86,7 @@ var _summary = {
 	tests = 0,
 	pending = 0
 }
+
 # This is used to watch signals so we can make assertions about them.
 var _signal_watcher = load('res://addons/gut/signal_watcher.gd').new()
 var _lgr = GutUtils.get_logger()
@@ -2119,13 +2120,22 @@ func assert_not_same(v1, v2, text=''):
 ## assert will pass and the test will not fail from an unexpected push_error.
 ## [br][br]
 ## This assert will pass/fail even if push_errors are not configured to cause
-## a test failure.
-## [br][br]
+## a test failure.  This will not prevent the error from showing up in output.
+## [codeblock]
+## func test_with_push_error():
+##     push_error("This is an error")
+##     assert_push_error(1, 'This test should have caused a push_error)
+## [/codeblock]
 ## See [wiki]Error-Tracking[/wiki].
-func assert_push_error(count=1):
+func assert_push_error(count, msg=''):
 	var consumed_count = 0
 	var errors = gut.error_tracker.get_errors_for_test()
 	var found = []
+	var msg_text = msg
+	if(msg_text != ''):
+		msg_text = str(':  ', msg_text)
+	else:
+		msg_text = '.'
 
 	for err in errors:
 		if(err.is_push_error()):
@@ -2134,7 +2144,7 @@ func assert_push_error(count=1):
 				consumed_count += 1
 			found.append(err)
 
-	var text = str("Expected ", count, " push_error errors.  Got ", found.size())
+	var text = str("Expected ", count, " push_error errors.  Got ", found.size(), msg_text)
 	if(found.size() == count):
 		_pass(text)
 	else:
@@ -2146,13 +2156,26 @@ func assert_push_error(count=1):
 ## assert will pass and the test will not fail from an unexpected push_error.
 ## [br][br]
 ## This assert will pass/fail even if push_errors are not configured to cause
-## a test failure.
+## a test failure.  This will not prevent the error from showing up in output.
 ## [br][br]
+## [codeblock]
+## func divide_them(a, b):
+##     return a / b
+##
+## func test_with_script_error():
+##     divide_them('one', 44)
+##     assert_engine_error(1, "Invalid operands 'int' and 'String' in operator '/'")
+## [/codeblock]
 ## See [wiki]Error-Tracking[/wiki].
-func assert_engine_error(count=1):
+func assert_engine_error(count, msg=''):
 	var consumed_count = 0
 	var errors = gut.error_tracker.get_errors_for_test()
 	var found = []
+	var msg_text = msg
+	if(msg_text != ''):
+		msg_text = str(':  ', msg_text)
+	else:
+		msg_text = '.'
 
 	for err in errors:
 		if(err.is_engine_error()):
@@ -2161,7 +2184,7 @@ func assert_engine_error(count=1):
 				consumed_count += 1
 			found.append(err)
 
-	var text = str("Expected ", count, " engine errors.  Got ", found.size())
+	var text = str("Expected ", count, " engine errors.  Got ", found.size(), msg_text)
 	if(found.size() == count):
 		_pass(text)
 	else:
@@ -2176,7 +2199,21 @@ func assert_engine_error(count=1):
 ## This method allows you to inspect the details of any errors that occured and
 ## decide if it's the error you are expecting or not.
 ## [br][br]
-## See [wiki]Error-Tracking[/wiki].
+## func divide_them(a, b):
+##     return a / b
+##
+## func test_with_script_error():
+##     divide_them('one', 44)
+##     push_error('this is a push error')
+##     var errs = get_errors()
+##     assert_eq(errs.size(), 2, 'expected error count')
+##
+##     # Maybe inspect some properties of the errors here.
+##
+##     # Mark all the errors as handled.
+##     for e in errs:
+##         e.handled = true
+## See [GutTrackedError], [wiki]Error-Tracking[/wiki].
 func get_errors()->Array:
 	return gut.error_tracker.get_errors_for_test()
 
@@ -2525,31 +2562,6 @@ func add_child_autoqfree(node, legible_unique_name=false):
 	# a bug sneaking its way in here.
 	super.add_child(node, legible_unique_name)
 	return node
-
-
-# ----------------
-#endregion
-#region Engine Error Handling
-# ----------------
-
-## Use when errors cause failures.  Use before the error occurs.  Will cause
-## test to fail if expected error count does not happen.  Will cause test to
-## pass if the expected error count happens.
-func expect_error(count=1):
-	pass
-
-
-# ## Use this at the end of a test when tests do not cause failures to assert that
-# ## an error occurred.
-# func assert_errored(count=1):
-# 	pass
-
-
-## Returns an array (of something) containing all the errors that occurred
-## during the test, up to the point this is called since we can't get tests in
-## the future.
-func get_test_errors() -> Array:
-	return []
 
 
 # ----------------

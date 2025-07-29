@@ -21,82 +21,18 @@ static func deregister_logger(which):
 		registered_loggers.erase(which)
 
 
-const NO_TEST := 'NONE'
-const GUT_ERROR_TYPE = 999
-
-enum TREAT_AS {
-	NOTHING,
-	FAILURE,
-}
-
-class TrackedError:
-	var backtrace = []
-	# appears to be the description
-	var code = NO_TEST
-	# I don't know what this is.
-	var rationale = NO_TEST
-	# Logger.ErrorType enum value, maybe 999 becomes a gut error?
-	var error_type = -1
-	# Unknown
-	var editor_notify = false
-
-	var file = NO_TEST
-	var function = NO_TEST
-	var line = -1
-	var handled = false
-
-
-	func to_s() -> String:
-		return str("CODE:", code, " TYPE:", error_type, " RATIONALE:", rationale, "\n",
-			file, '->', function, '@', line, "\n",
-			backtrace, "\n")
-
-
-	func is_push_error():
-		return error_type != GUT_ERROR_TYPE and function == "push_error"
-
-
-	func is_engine_error():
-		return error_type != GUT_ERROR_TYPE and !is_push_error()
-
-
-	func is_gut_error():
-		return error_type == GUT_ERROR_TYPE
-
-
-	func get_error_type_name():
-		var to_return = "unknown"
-
-		if(is_gut_error()):
-			to_return =  "GUT"
-		elif(is_push_error()):
-			to_return = "push_error"
-		elif(is_engine_error()):
-			to_return = str("engine-", error_type)
-
-		return to_return
-
-
-	# this might not work in other languages, and feels falkey, but might be
-	# useful at some point.
-	# func is_assert():
-	# 	return error_type == Logger.ERROR_TYPE_SCRIPT and \
-	# 		(code.find("Assertion failed.") == 0 or \
-	# 			code.find("Assertion failed:") == 0)
-
-
 
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-var _current_test_id = NO_TEST
+var _current_test_id = GutUtils.NO_TEST
 var _mutex = Mutex.new()
 
 var errors = GutUtils.OneToMany.new()
 
-var treat_gut_errors_as : TREAT_AS = TREAT_AS.FAILURE
-var treat_engine_errors_as : TREAT_AS = TREAT_AS.FAILURE
-var treat_push_error_as : TREAT_AS = TREAT_AS.FAILURE
+var treat_gut_errors_as : GutUtils.TREAT_AS = GutUtils.TREAT_AS.FAILURE
+var treat_engine_errors_as : GutUtils.TREAT_AS = GutUtils.TREAT_AS.FAILURE
+var treat_push_error_as : GutUtils.TREAT_AS = GutUtils.TREAT_AS.FAILURE
 var disabled = false
 
 
@@ -127,15 +63,15 @@ func _get_stack_data(current_test_name):
 	}
 
 
-func _is_error_failable(error : TrackedError):
+func _is_error_failable(error : GutTrackedError):
 	var is_it = false
 	if(error.handled == false):
 		if(error.is_gut_error()):
-			is_it = treat_gut_errors_as == TREAT_AS.FAILURE
+			is_it = treat_gut_errors_as == GutUtils.TREAT_AS.FAILURE
 		elif(error.is_push_error()):
-			is_it = treat_push_error_as == TREAT_AS.FAILURE
+			is_it = treat_push_error_as == GutUtils.TREAT_AS.FAILURE
 		elif(error.is_engine_error()):
-			is_it = treat_engine_errors_as == TREAT_AS.FAILURE
+			is_it = treat_engine_errors_as == GutUtils.TREAT_AS.FAILURE
 	return is_it
 
 # ----------------
@@ -166,7 +102,7 @@ func start_test(test_id):
 
 
 func end_test():
-	_current_test_id = NO_TEST
+	_current_test_id = GutUtils.NO_TEST
 
 
 func did_test_error(test_id=_current_test_id):
@@ -218,28 +154,28 @@ func get_fail_text_for_errors(test_id=_current_test_id) -> String:
 	return to_return
 
 
-func add_gut_error(text) -> TrackedError:
-	if(_current_test_id != NO_TEST):
+func add_gut_error(text) -> GutTrackedError:
+	if(_current_test_id != GutUtils.NO_TEST):
 		var data = _get_stack_data(_current_test_id)
 		if(data.test_entry != {}):
 			return add_error(_current_test_id, data.test_entry.source, data.test_entry.line,
 				text, '', false,
-				GUT_ERROR_TYPE, data.full_stack)
+				GutUtils.GUT_ERROR_TYPE, data.full_stack)
 
 	return add_error(_current_test_id, "unknown", -1,
 		text, '', false,
-		GUT_ERROR_TYPE, get_stack())
+		GutUtils.GUT_ERROR_TYPE, get_stack())
 
 
 func add_error(function: String, file: String, line: int,
 	code: String, rationale: String, editor_notify: bool,
-	error_type: int, script_backtraces: Array) -> TrackedError:
+	error_type: int, script_backtraces: Array) -> GutTrackedError:
 		if(disabled):
 			return
 
 		_mutex.lock()
 
-		var err := TrackedError.new()
+		var err := GutTrackedError.new()
 		err.backtrace = script_backtraces
 		err.code = code
 		err.rationale = rationale

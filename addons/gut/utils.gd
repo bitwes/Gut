@@ -33,6 +33,15 @@ const DOUBLE_TEMPLATES = {
 	SCRIPT = 'res://addons/gut/double_templates/script_template.txt',
 }
 
+const NO_TEST := 'NONE'
+const GUT_ERROR_TYPE = 999
+
+enum TREAT_AS {
+	NOTHING,
+	FAILURE,
+}
+
+
 ## This dictionary defaults to all the native classes that we cannot call new
 ## on.  It is further populated during a run so that we only have to create
 ## a new instance once to get the class name string.
