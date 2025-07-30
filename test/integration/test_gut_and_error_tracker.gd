@@ -101,6 +101,8 @@ class TestErrorFailures:
 		assert_eq(t.passing, 0, 'no passing because of early exit from error')
 
 
+
+
 class TestErrorAsserts:
 	extends GutInternalTester
 
@@ -269,3 +271,20 @@ class TestErrorAsserts:
 		assert_eq(t.passing, 1, 'pass count')
 		# Errors are not consumed so they still cause errors.
 		assert_eq(t.failing, 0, 'fail count')
+
+
+	func test_parameterized_tests_do_not_compound_error_counts():
+		var src_test_with_params = """
+		var params = [1, 2, 3, 4, 5]
+		func test_parameterized_and_errors(p=use_parameters(params)):
+			push_error(str("Error ", p))
+			assert_push_error(1)
+		"""
+
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(src_test_with_params)
+
+		var t = s.run_test_in_gut(_gut)
+		assert_eq(t.passing, 5, '5 params, 1 assert each: pass count')
+		assert_eq(t.failing, 0, 'fail count')
+

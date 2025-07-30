@@ -551,7 +551,7 @@ func _get_indexes_matching_path(path):
 # Execute all calls of a parameterized test.
 # ------------------------------------------------------------------------------
 func _run_parameterized_test(test_script, test_name):
-	await _run_test(test_script, test_name)
+	await _run_test(test_script, test_name, 0)
 
 	if(_current_test.assert_count == 0 and !_current_test.pending):
 		_lgr.risky('Test did not assert')
@@ -560,11 +560,13 @@ func _run_parameterized_test(test_script, test_name):
 		_lgr.error(str('Parameterized test ', _current_test.name, ' did not call use_parameters for the default value of the parameter.'))
 		_fail(str('Parameterized test ', _current_test.name, ' did not call use_parameters for the default value of the parameter.'))
 	else:
+		var index = 1
 		while(!_parameter_handler.is_done()):
 			var cur_assert_count = _current_test.assert_count
-			await _run_test(test_script, test_name)
+			await _run_test(test_script, test_name, index)
 			if(_current_test.assert_count == cur_assert_count and !_current_test.pending):
 				_lgr.risky('Test did not assert')
+			index += 1
 
 	_parameter_handler = null
 
@@ -572,7 +574,7 @@ func _run_parameterized_test(test_script, test_name):
 # ------------------------------------------------------------------------------
 # Runs a single test given a test.gd instance and the name of the test to run.
 # ------------------------------------------------------------------------------
-func _run_test(script_inst, test_name):
+func _run_test(script_inst, test_name, param_index = -1):
 	_lgr.log_test_name()
 	_lgr.set_indent_level(1)
 	_orphan_counter.add_counter('test')
@@ -581,6 +583,8 @@ func _run_test(script_inst, test_name):
 
 	start_test.emit(test_name)
 	var test_id = str(script_inst._collected_script.get_filename_and_inner(), ':', test_name)
+	if(param_index != -1):
+		test_id += str('[', param_index, ']')
 	error_tracker.start_test(test_id)
 
 	await script_inst.call(test_name)
