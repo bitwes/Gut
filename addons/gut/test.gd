@@ -2199,6 +2199,7 @@ func assert_engine_error(count, msg=''):
 ## This method allows you to inspect the details of any errors that occured and
 ## decide if it's the error you are expecting or not.
 ## [br][br]
+## [codeblock]
 ## func divide_them(a, b):
 ##     return a / b
 ##
@@ -2213,6 +2214,7 @@ func assert_engine_error(count, msg=''):
 ##     # Mark all the errors as handled.
 ##     for e in errs:
 ##         e.handled = true
+## [/codeblock]
 ## See [GutTrackedError], [wiki]Error-Tracking[/wiki].
 func get_errors()->Array:
 	return gut.error_tracker.get_errors_for_test()

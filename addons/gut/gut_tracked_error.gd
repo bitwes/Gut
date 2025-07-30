@@ -10,7 +10,7 @@ var backtrace = []
 ## Usually the description
 var code = GutUtils.NO_TEST
 var rationale = GutUtils.NO_TEST
-## [enum Logger.ErrorType] value or, for GUT errors, this will be [code]GutUtils.GUT_ERROR_TYPE[/code].
+## [enum Logger.ErrorType] value or, for GUT errors, this will be [code skip-lint]GutUtils.GUT_ERROR_TYPE[/code].
 var error_type = -1
 var editor_notify = false
 

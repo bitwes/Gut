@@ -16,7 +16,6 @@
    :caption: Test Scripts
    :name: sec-guttest
 
-   class_ref/class_guttest
    Creating-Tests
    Awaiting
    Inner-Test-Classes

@@ -113,7 +113,7 @@ Usually the description
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **error_type** = ``-1`` :ref:`🔗<class_GutTrackedError_property_error_type>`
 
-Logger.ErrorType value or, for GUT errors, this will be ``GutUtils.GUT_ERROR_TYPE``.
+`Logger.ErrorType <https://docs.godotengine.org/en/stable/classes/class_logger.html>`_ value or, for GUT errors, this will be ``GutUtils.GUT_ERROR_TYPE``.
 
 .. rst-class:: classref-item-separator
 

@@ -2119,7 +2119,26 @@ This method allows you to inspect the details of any errors that occured and dec
 
 
 
-func divide_them(a, b): return a / b  func test_with_script_error(): divide_them('one', 44) push_error('this is a push error') var errs = get_errors() assert_eq(errs.size(), 2, 'expected error count')  # Maybe inspect some properties of the errors here.  # Mark all the errors as handled. for e in errs: e.handled = true See :ref:`GutTrackedError<class_GutTrackedError>`, `Error-Tracking <../Error-Tracking.html>`__.
+
+
+::
+
+    func divide_them(a, b):
+        return a / b
+    
+    func test_with_script_error():
+        divide_them('one', 44)
+        push_error('this is a push error')
+        var errs = get_errors()
+        assert_eq(errs.size(), 2, 'expected error count')
+    
+        # Maybe inspect some properties of the errors here.
+    
+        # Mark all the errors as handled.
+        for e in errs:
+            e.handled = true
+
+See :ref:`GutTrackedError<class_GutTrackedError>`, `Error-Tracking <../Error-Tracking.html>`__.
 
 .. rst-class:: classref-item-separator
 
@@ -2173,7 +2192,7 @@ Use wait_physics_frames or wait_process_frames See `Awaiting <../Awaiting.html>`
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_physics_frames**\ (\ x\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_, msg = ""\ ) :ref:`🔗<class_GutTest_method_wait_physics_frames>`
 
-This returns a signal that is emitted after ``x`` physics frames have elpased.  You can await this method directly to pause execution for ``x`` physics frames.  The frames are counted prior to _physics_process being called on any node (when :ref:`SceneTree.physics_frame<class_SceneTree_signal_physics_frame>` is emitted).  This means the signal is emitted after ``x`` frames and just before the x + 1 frame starts.
+This returns a signal that is emitted after ``x`` physics frames have elpased.  You can await this method directly to pause execution for ``x`` physics frames.  The frames are counted prior to _physics_process being called on any node (when `SceneTree.physics_frame <https://docs.godotengine.org/en/stable/classes/class_scenetree.html>`_ is emitted).  This means the signal is emitted after ``x`` frames and just before the x + 1 frame starts.
 
 ::
 
@@ -2203,7 +2222,7 @@ Alias for :ref:`wait_process_frames<class_GutTest_method_wait_process_frames>`
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_process_frames**\ (\ x\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_, msg = ""\ ) :ref:`🔗<class_GutTest_method_wait_process_frames>`
 
-This returns a signal that is emitted after ``x`` process/idle frames have elpased.  You can await this method directly to pause execution for ``x`` process/idle frames.  The frames are counted prior to _process being called on any node (when :ref:`SceneTree.process_frame<class_SceneTree_signal_process_frame>` is emitted).  This means the signal is emitted after ``x`` frames and just before the x + 1 frame starts.
+This returns a signal that is emitted after ``x`` process/idle frames have elpased.  You can await this method directly to pause execution for ``x`` process/idle frames.  The frames are counted prior to _process being called on any node (when `SceneTree.process_frame <https://docs.godotengine.org/en/stable/classes/class_scenetree.html>`_ is emitted).  This means the signal is emitted after ``x`` frames and just before the x + 1 frame starts.
 
 ::
 

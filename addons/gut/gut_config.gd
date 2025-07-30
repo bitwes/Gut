@@ -153,13 +153,13 @@ func _apply_options(opts, gut):
 
 	# These error_tracker options default to true.  Don't trust this comment.
 	if(!opts.failure_error_types.has(FAIL_ERROR_TYPE_ENGINE)):
-		gut.error_tracker.treat_engine_errors_as = gut.error_tracker.TREAT_AS.NOTHING
+		gut.error_tracker.treat_engine_errors_as = GutUtils.TREAT_AS.NOTHING
 
 	if(!opts.failure_error_types.has(FAIL_ERROR_TYPE_PUSH_ERROR)):
-		gut.error_tracker.treat_push_error_as = gut.error_tracker.TREAT_AS.NOTHING
+		gut.error_tracker.treat_push_error_as = GutUtils.TREAT_AS.NOTHING
 
 	if(!opts.failure_error_types.has(FAIL_ERROR_TYPE_GUT)):
-		gut.error_tracker.treat_gut_errors_as = gut.error_tracker.TREAT_AS.NOTHING
+		gut.error_tracker.treat_gut_errors_as = GutUtils.TREAT_AS.NOTHING
 
 	gut.error_tracker.register_loggers = !opts.no_error_tracking
 
