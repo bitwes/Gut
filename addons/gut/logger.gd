@@ -163,6 +163,7 @@ func get_indent():
 
 	return pad
 
+
 # ---------------
 # Log methods
 # ---------------

@@ -42,9 +42,9 @@ func test_add_gut_error_adds_error_to_none():
 	var err = inst.add_gut_error('this is an error')
 
 	assert_eq(err.code, 'this is an error', 'code')
-	assert_eq(err.error_type, GutErrorTracker.GUT_ERROR_TYPE, 'error_type')
+	assert_eq(err.error_type, GutUtils.GUT_ERROR_TYPE, 'error_type')
 	assert_true(err.is_gut_error(), 'is_gut_error')
-	assert_eq(inst.errors.items[GutErrorTracker.NO_TEST][0], err, 'tracked')
+	assert_eq(inst.errors.items[GutUtils.NO_TEST][0], err, 'tracked')
 	assert_false(err.is_engine_error(), 'is_engine_error')
 
 
@@ -63,14 +63,14 @@ func test_when_adding_gut_error_during_a_test_addtional_info_filled_in():
 
 func test_when_engine_error_data():
 	_divide_these(22, 'foo')
-	var last_error = _added_tracker.errors.items[GutErrorTracker.NO_TEST][0]
+	var last_error = _added_tracker.errors.items[GutUtils.NO_TEST][0]
 	assert_not_null(last_error)
 	assert_true(last_error.is_engine_error())
 
 
 func test_when_push_error_data():
 	push_error("manually pushed error")
-	var last_error = _added_tracker.errors.items[GutErrorTracker.NO_TEST][0]
+	var last_error = _added_tracker.errors.items[GutUtils.NO_TEST][0]
 	assert_not_null(last_error)
 	assert_true(last_error.is_push_error())
 
@@ -90,7 +90,7 @@ func test_when_push_error_data():
 
 
 func test_should_fail_true_for_gut_error():
-	_added_tracker.treat_gut_errors_as = GutErrorTracker.TREAT_AS.NOTHING
+	_added_tracker.treat_gut_errors_as = GutUtils.TREAT_AS.NOTHING
 	_added_tracker.start_test('test')
 	_added_tracker.add_gut_error('this is a gut error')
 	assert_false(_added_tracker.should_test_fail_from_errors('test'))
@@ -104,7 +104,7 @@ func test_should_fail_true_for_gut_error_when_flag_set():
 
 
 func test_should_fail_false_for_engine_error():
-	_added_tracker.treat_engine_errors_as = GutErrorTracker.TREAT_AS.NOTHING
+	_added_tracker.treat_engine_errors_as = GutUtils.TREAT_AS.NOTHING
 	_added_tracker.start_test('test')
 	_divide_these('word', 'sentence')
 	assert_false(_added_tracker.should_test_fail_from_errors('test'))
@@ -118,7 +118,7 @@ func test_should_fail_true_for_engine_error_when_flag_set():
 
 
 func test_should_fail_false_for_push_error():
-	_added_tracker.treat_push_error_as = GutErrorTracker.TREAT_AS.NOTHING
+	_added_tracker.treat_push_error_as = GutUtils.TREAT_AS.NOTHING
 	_added_tracker.start_test('test')
 	push_error("this is a push error")
 	assert_false(_added_tracker.should_test_fail_from_errors('test'))
@@ -140,8 +140,8 @@ func test_should_fail_finds_second_error():
 
 
 func test_should_fail_does_not_push_for_engine_error():
-	_added_tracker.treat_push_error_as = GutErrorTracker.TREAT_AS.NOTHING
-	_added_tracker.treat_gut_errors_as = GutErrorTracker.TREAT_AS.NOTHING
+	_added_tracker.treat_push_error_as = GutUtils.TREAT_AS.NOTHING
+	_added_tracker.treat_gut_errors_as = GutUtils.TREAT_AS.NOTHING
 	_added_tracker.start_test('test')
 	push_error('this is the first error')
 	_added_tracker.add_gut_error('this is a gut error')
@@ -170,7 +170,7 @@ func test_fail_text_includes_all_by_default():
 
 
 func test_fail_text_can_exclude_push():
-	_added_tracker.treat_push_error_as = GutErrorTracker.TREAT_AS.NOTHING
+	_added_tracker.treat_push_error_as = GutUtils.TREAT_AS.NOTHING
 
 	push_error('push nope')
 	_added_tracker.add_gut_error('gut error nope')
@@ -184,7 +184,7 @@ func test_fail_text_can_exclude_push():
 
 
 func test_fail_text_can_exclude_engine_error():
-	_added_tracker.treat_engine_errors_as = GutErrorTracker.TREAT_AS.NOTHING
+	_added_tracker.treat_engine_errors_as = GutUtils.TREAT_AS.NOTHING
 
 	push_error('push nope')
 	_added_tracker.add_gut_error('gut error nope')
@@ -198,7 +198,7 @@ func test_fail_text_can_exclude_engine_error():
 
 
 func test_fail_text_can_exclude_gut_error():
-	_added_tracker.treat_gut_errors_as = GutErrorTracker.TREAT_AS.NOTHING
+	_added_tracker.treat_gut_errors_as = GutUtils.TREAT_AS.NOTHING
 
 	push_error('push nope')
 	_added_tracker.add_gut_error('gut error nope')
