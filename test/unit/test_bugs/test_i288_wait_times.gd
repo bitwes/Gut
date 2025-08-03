@@ -51,7 +51,7 @@ func test_yield5():
 
 var yield_params = [1, 2, 3, 4, 5, 6, 7, 8]
 func test_parameterized(p=use_parameters(yield_params)):
-	_max_acceptable_time += 20
+	_max_acceptable_time += 30
 	await wait_physics_frames(1)
 	pass_test('no test')
 

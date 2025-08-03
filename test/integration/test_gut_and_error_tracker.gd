@@ -20,7 +20,6 @@ class TestErrorFailures:
 	var _gut = null
 
 	func before_all():
-		GutUtils.pretty_print(_lgr._type_data)
 		gut.error_tracker.disabled = true
 		verbose = false
 		DynamicGutTest.should_print_source = verbose
@@ -113,7 +112,7 @@ class TestErrorAsserts:
 	var _gut = null
 
 	func before_all():
-		verbose = true
+		verbose = false
 		gut.error_tracker.disabled = true
 		DynamicGutTest.should_print_source = verbose
 
