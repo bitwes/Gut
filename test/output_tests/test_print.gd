@@ -136,6 +136,11 @@ class TestBasicLoggerOutput:
 		_test_logger.log("hello\nthis\nshould\nline up")
 		assert_true(true)
 
+	func test_expected_error_output():
+		_test_logger.expected_error("hello world")
+		pass_test('pass')
+
+
 
 class TestLogLevels:
 	extends GutTest # this was on purpose

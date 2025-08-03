@@ -1,6 +1,7 @@
 var types = {
 	debug = 'debug',
 	deprecated = 'deprecated',
+	expected_error = 'expected_error',
 	error = 'error',
 	failed = 'failed',
 	info = 'info',
@@ -16,6 +17,7 @@ var fmts = {
 	red = 'red',
 	yellow = 'yellow',
 	green = 'green',
+	blue = 'blue',
 
 	bold = 'bold',
 	underline = 'underline',
@@ -27,6 +29,7 @@ var _type_data = {
 	types.debug:		{disp='DEBUG', 		enabled=true, fmt=fmts.bold},
 	types.deprecated:	{disp='DEPRECATED', enabled=true, fmt=fmts.none},
 	types.error:		{disp='ERROR', 		enabled=true, fmt=fmts.red},
+	types.expected_error:	{disp="Expected Error", enabled=true, fmt=fmts.blue},
 	types.failed:		{disp='Failed', 	enabled=true, fmt=fmts.red},
 	types.info:			{disp='INFO', 		enabled=true, fmt=fmts.bold},
 	types.normal:		{disp='NORMAL', 	enabled=true, fmt=fmts.none},
@@ -43,6 +46,7 @@ var _logs = {
 	types.info: [],
 	types.debug: [],
 	types.deprecated: [],
+	types.expected_error: [],
 }
 
 var _printers = {
@@ -191,6 +195,23 @@ func _output_type(type, text):
 		_output(indented_end + "\n")
 
 
+func _output_type_no_indent(type, text):
+	var td = _type_data[type]
+	if(!td.enabled):
+		# if(_logs.has(type)):
+		# 	_logs[type].append(text)
+		return
+
+	_print_test_name()
+	if(type != types.normal):
+		if(_logs.has(type)):
+			_logs[type].append(text)
+
+		var start = str('[', td.disp, ']')
+		_output(start, td.fmt)
+		_output(text + "\n")
+
+
 func debug(text):
 	_output_type(types.debug, text)
 
@@ -210,6 +231,10 @@ func error(text):
 	# that seems too difficult now.
 	if(_gut != null):
 		_gut.error_tracker.add_gut_error(text)
+
+
+func expected_error(text):
+	_output_type_no_indent(types.expected_error, text)
 
 
 func failed(text):

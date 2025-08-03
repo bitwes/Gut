@@ -51,6 +51,10 @@ func is_gut_error():
 	return error_type == GutUtils.GUT_ERROR_TYPE
 
 
+func contains_text(text):
+	return code.to_lower().find(text.to_lower()) != -1
+
+
 ## For display purposes only, the actual value returned may change over time.
 ## This returns a name for the error_type as far as this class is concerned.
 ## Use the various [code]is_[/code] methods to check if an error is a certain

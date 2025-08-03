@@ -20,6 +20,7 @@ class TestErrorFailures:
 	var _gut = null
 
 	func before_all():
+		GutUtils.pretty_print(_lgr._type_data)
 		gut.error_tracker.disabled = true
 		verbose = false
 		DynamicGutTest.should_print_source = verbose
@@ -112,7 +113,7 @@ class TestErrorAsserts:
 	var _gut = null
 
 	func before_all():
-		verbose = false
+		verbose = true
 		gut.error_tracker.disabled = true
 		DynamicGutTest.should_print_source = verbose
 
@@ -135,6 +136,9 @@ class TestErrorAsserts:
 		return a / b
 	"""
 
+# ---------------------
+# Push error count
+# ---------------------
 	func test_asserting_one_push_error_prevents_failure():
 		var test_func = func(me):
 			push_error('error 1')
@@ -174,8 +178,61 @@ class TestErrorAsserts:
 		# 2 failures, one for assert and one for the unexpected errors that
 		# were not handled by the assert
 		assert_eq(t.failing, 2)
+# ---------------------
+# Push error text
+# ---------------------
+	func test_push_error_with_matching_text_prevents_failure():
+		var test_func = func(me):
+			push_error('_special_ text')
+			me.assert_push_error('_special_')
 
+		var s = autofree(DynamicGutTest.new())
+		s.add_lambda_test(test_func, 'test_something')
 
+		var t = s.run_test_in_gut(_gut)
+		assert_eq(t.passing, 1)
+
+	func test_push_error_with_non_matching_text_fails():
+		var test_func = func(me):
+			push_error('_special_ text')
+			me.assert_push_error('nope')
+
+		var s = autofree(DynamicGutTest.new())
+		s.add_lambda_test(test_func, 'test_something')
+
+		var t = s.run_test_in_gut(_gut)
+		assert_eq(t.failing, 2)
+
+	func test_push_error_with_matching_text_only_consumes_one():
+		var test_func = func(me):
+			push_error('_special_ one')
+			push_error('_special_ two')
+			me.assert_push_error('_special_')
+
+		var s = autofree(DynamicGutTest.new())
+		s.add_lambda_test(test_func, 'test_something')
+
+		var t = s.run_test_in_gut(_gut)
+		assert_eq(t.passing, 1)
+		assert_eq(t.failing, 1)
+
+	func test_push_error_can_assert_multiple_different_texts():
+		var test_func = func(me):
+			push_error('_special_ one')
+			push_error('_special_ two')
+			me.assert_push_error('one')
+			me.assert_push_error('two')
+
+		var s = autofree(DynamicGutTest.new())
+		s.add_lambda_test(test_func, 'test_something')
+
+		var t = s.run_test_in_gut(_gut)
+		assert_eq(t.passing, 2)
+		assert_eq(t.failing, 0)
+
+# ---------------------
+# Engine error count
+# ---------------------
 	func test_asserting_engine_error_prevents_failure():
 		var test_func = func(me):
 			me.divide_them(1, 'b')
@@ -219,6 +276,67 @@ class TestErrorAsserts:
 		assert_eq(t.failing, 2)
 
 
+# ---------------------
+# Engine error text
+# ---------------------
+	func test_engine_with_matching_text_prevents_failure():
+		var test_func = func(me):
+			me.divide_them(1, 'b')
+			me.assert_engine_error('Invalid operands')
+
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(_src_divide_them)
+		s.add_lambda_test(test_func, 'test_something')
+
+		var t = s.run_test_in_gut(_gut)
+		assert_eq(t.passing, 1)
+
+	func test_engine_with_non_matching_text_fails():
+		var test_func = func(me):
+			me.divide_them(1, 'b')
+			me.assert_engine_error('nope')
+
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(_src_divide_them)
+		s.add_lambda_test(test_func, 'test_something')
+
+		var t = s.run_test_in_gut(_gut)
+		assert_eq(t.failing, 2)
+
+	func test_engine_with_matching_text_only_consumes_one():
+		var test_func = func(me):
+			me.divide_them(1, 'b')
+			me.divide_them(1, 'b')
+			me.assert_engine_error('Invalid operands')
+
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(_src_divide_them)
+		s.add_lambda_test(test_func, 'test_something')
+
+		var t = s.run_test_in_gut(_gut)
+		assert_eq(t.passing, 1)
+		assert_eq(t.failing, 1)
+
+	func test_engine_can_assert_multiple_different_texts():
+		var test_func = func(me):
+			me.divide_them(1, 'b')
+			me.divide_them(1, 0)
+			me.assert_engine_error('Invalid operands')
+			me.assert_engine_error('Division by zero')
+
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(_src_divide_them)
+		s.add_lambda_test(test_func, 'test_something')
+
+		var t = s.run_test_in_gut(_gut)
+		assert_eq(t.passing, 2)
+		assert_eq(t.failing, 0)
+
+
+
+# ---------------------
+# misc
+# ---------------------
 	func test_can_assert_multiple_error_types():
 		var test_func = func(me):
 			me.divide_them(1, 'b')
@@ -235,6 +353,9 @@ class TestErrorAsserts:
 		assert_eq(t.passing, 2)
 
 
+# ---------------------
+# get_errors
+# ---------------------
 	func test_can_get_all_errors_that_occur():
 		var test_func = func(me):
 			me.divide_them(1, 'b')
