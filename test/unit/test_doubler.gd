@@ -101,7 +101,6 @@ class TestTheBasics:
 		_doubler.set_strategy(-1)
 		assert_tracked_gut_error()
 		assert_eq(_doubler.get_strategy(), default, 'original value retained')
-		assert_tracked_gut_error(_doubler, 1)
 
 	func test_can_set_strategy_in_constructor():
 		var d = Doubler.new(GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)

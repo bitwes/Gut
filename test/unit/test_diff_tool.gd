@@ -9,7 +9,7 @@ class TestArrayCompareResultInterace:
 	func test_cannot_set_summary():
 		var ad = DiffTool.new([], [])
 		ad.summary = 'the summary'
-		assert_tracked_push_error()
+		assert_push_error('cannot set summary')
 		assert_ne(ad.summary,  'the summary')
 
 	func test_summary_prop_returns_summarize():
@@ -19,7 +19,7 @@ class TestArrayCompareResultInterace:
 	func test_cannot_set_are_equal():
 		var ad = DiffTool.new([], [])
 		ad.are_equal = 'asdf'
-		assert_tracked_push_error()
+		assert_push_error('cannot set are_equal')
 		assert_eq(ad.are_equal, true)
 
 	func test_are_equal_prop_returns_result_of_diff():
@@ -184,7 +184,7 @@ class TestDictionaryCompareResultInterace:
 	func test_cannot_set_summary():
 		var diff = DiffTool.new({},{}, GutUtils.DIFF.DEEP)
 		diff.summary = 'the summary'
-		assert_tracked_push_error()
+		assert_push_error('cannot set summary')
 		assert_ne(diff.summary,  'the summary')
 
 	func test_summary_prop_returns_summarize():
@@ -194,7 +194,7 @@ class TestDictionaryCompareResultInterace:
 	func test_cannot_set_are_equal():
 		var diff = DiffTool.new({},{}, GutUtils.DIFF.DEEP)
 		diff.are_equal = 'asdf'
-		assert_tracked_push_error()
+		assert_push_error('cannot set are_equal')
 		assert_eq(diff.are_equal, true)
 
 	func test_are_equal_prop_returns_result_of_diff():

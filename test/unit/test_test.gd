@@ -1289,7 +1289,7 @@ class TestReplaceNode:
 		var replacement = autofree(Node2D.new())
 		var old = autofree(Node2D.new())
 		gr.test.replace_node(_arena, old, replacement)
-		assert_tracked_engine_error()
+		assert_engine_error("common_parent")
 		assert_logger_errored(gr.test)
 
 

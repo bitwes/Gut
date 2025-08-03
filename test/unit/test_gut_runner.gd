@@ -153,7 +153,7 @@ class TestQuit:
 		await wait_physics_frames(10)
 
 		assert_logger_errored(gr.lgr)
-		assert_tracked_push_error()
+		assert_push_error("directories configured,")
 
 		assert_called(gr, 'quit', [1])
 

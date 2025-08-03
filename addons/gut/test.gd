@@ -2159,7 +2159,6 @@ func _assert_error_text(text, error_type_name, msg):
 	for err in errors:
 		if(_is_error_of_type(err, error_type_name) and err.contains_text(text)):
 			if(consumed_count == 0):
-				print("consuming")
 				err.handled = true
 				consumed_count += 1
 			found.append(err)
