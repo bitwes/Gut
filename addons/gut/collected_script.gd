@@ -43,7 +43,7 @@ func _init(logger=null):
 
 func get_new():
 	var inst = load_script().new()
-	inst._collected_script = self
+	inst.collected_script = self
 	return inst
 
 

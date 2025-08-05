@@ -582,7 +582,7 @@ func _run_test(script_inst, test_name, param_index = -1):
 	await script_inst.before_each()
 
 	start_test.emit(test_name)
-	var test_id = str(script_inst._collected_script.get_filename_and_inner(), ':', test_name)
+	var test_id = str(script_inst.collected_script.get_filename_and_inner(), ':', test_name)
 	if(param_index != -1):
 		test_id += str('[', param_index, ']')
 	error_tracker.start_test(test_id)
