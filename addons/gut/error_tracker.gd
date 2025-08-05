@@ -24,6 +24,7 @@ static func deregister_logger(which):
 
 
 # ------------------------------------------------------------------------------
+# GutErrorTracker
 # ------------------------------------------------------------------------------
 var _current_test_id = GutUtils.NO_TEST
 var _mutex = Mutex.new()

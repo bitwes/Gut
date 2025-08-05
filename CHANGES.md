@@ -2,8 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-# 9.6.0
+# 9.5.0
 * Godot 4.5
+* All the `.uid` files you could ever want!
 * Stubbing/Doubling/Spying on vararg methods has changed.
     * You no longer need to stub the parameter count for vararg methods.
     * Since you don't need to do that, you can't do that anymore.
@@ -11,11 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ```gdscript
 assert_called(my_double.rpc_id, [p1, p2, [vararg_val1, vararg_val2, vararg_val3]])
 ```
-* Error detection has been added and tests will now fail when an error happens.  This can be disabled at 3 different levels:  engine, push_error, GUT.  See the wiki for more information.
-
-
-# 9.5.0
-* All the `.uid` files you could ever want!
+* Error detection and asserts have been added.  Tests fail when unexpected errors occur and you can assert that errors have occurred.  This can be disabled at 3 different levels:  engine, push_error, GUT.  See the wiki for more information.
 
 
 # 9.4.0

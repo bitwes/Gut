@@ -93,7 +93,7 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_does_not_have<class_GutTest_method_assert_does_not_have>`\ (\ obj, element, text = ""\ )                                                                                                                                                            |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_engine_error<class_GutTest_method_assert_engine_error>`\ (\ count, msg = ""\ )                                                                                                                                                                      |
+   | |void|                                                                         | :ref:`assert_engine_error<class_GutTest_method_assert_engine_error>`\ (\ count_or_text, msg = ""\ )                                                                                                                                                              |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_eq<class_GutTest_method_assert_eq>`\ (\ got, expected, text = ""\ )                                                                                                                                                                                 |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -155,7 +155,7 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_property_with_backing_variable<class_GutTest_method_assert_property_with_backing_variable>`\ (\ obj, property_name, default_value, new_value, backed_by_name = null\ )                                                                              |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_push_error<class_GutTest_method_assert_push_error>`\ (\ count, msg = ""\ )                                                                                                                                                                          |
+   | |void|                                                                         | :ref:`assert_push_error<class_GutTest_method_assert_push_error>`\ (\ count_or_text, msg = ""\ )                                                                                                                                                                  |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_same<class_GutTest_method_assert_same>`\ (\ v1, v2, text = ""\ )                                                                                                                                                                                    |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -2050,68 +2050,13 @@ Assert using v1 and v2 are not the same using ``is_same``.  See @GlobalScope.is_
 
 ----
 
-.. _class_GutTest_method_assert_push_error:
-
-.. rst-class:: classref-method
-
-|void| **assert_push_error**\ (\ count, msg = ""\ ) :ref:`🔗<class_GutTest_method_assert_push_error>`
-
-Asserts that ``count`` errors from push_error have occurred by this point in the test.  If the expected number of errors are found then this assert will pass and the test will not fail from an unexpected push_error. 
-
-
-
-This assert will pass/fail even if push_errors are not configured to cause a test failure.  This will not prevent the error from showing up in output.
-
-::
-
-    func test_with_push_error():
-        push_error("This is an error")
-        assert_push_error(1, 'This test should have caused a push_error)
-
-See `Error-Tracking <../Error-Tracking.html>`__.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_engine_error:
-
-.. rst-class:: classref-method
-
-|void| **assert_engine_error**\ (\ count, msg = ""\ ) :ref:`🔗<class_GutTest_method_assert_engine_error>`
-
-Asserts that ``count`` errors generated by the engine have occurred by this point in the test.  If the expected number of errors are found then this assert will pass and the test will not fail from an unexpected push_error. 
-
-
-
-This assert will pass/fail even if push_errors are not configured to cause a test failure.  This will not prevent the error from showing up in output. 
-
-
-
-
-
-::
-
-    func divide_them(a, b):
-        return a / b
-    
-    func test_with_script_error():
-        divide_them('one', 44)
-        assert_engine_error(1, "Invalid operands 'int' and 'String' in operator '/'")
-
-See `Error-Tracking <../Error-Tracking.html>`__.
-
-.. rst-class:: classref-item-separator
-
-----
-
 .. _class_GutTest_method_get_errors:
 
 .. rst-class:: classref-method
 
 `Array <https://docs.godotengine.org/en/stable/classes/class_array.html>`_ **get_errors**\ (\ ) :ref:`🔗<class_GutTest_method_get_errors>`
 
-Get all the errors in the test up to this point.  Each error is an instance of GutErrorTracker.TrackedError.  This class is explained in `Error-Tracking <../Error-Tracking.html>`__.  Setting the ``handled`` property of an element in the array will prevent it from causing a test to fail. 
+Get all the errors in the test up to this point.  Each error is an instance of :ref:`GutTrackedError<class_GutTrackedError>`. Setting the :ref:`GutTrackedError.handled<class_GutTrackedError_property_handled>` ``handled`` property of an element in the array will prevent it from causing a test to fail. 
 
 
 
@@ -2139,6 +2084,82 @@ This method allows you to inspect the details of any errors that occured and dec
             e.handled = true
 
 See :ref:`GutTrackedError<class_GutTrackedError>`, `Error-Tracking <../Error-Tracking.html>`__.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_engine_error:
+
+.. rst-class:: classref-method
+
+|void| **assert_engine_error**\ (\ count_or_text, msg = ""\ ) :ref:`🔗<class_GutTest_method_assert_engine_error>`
+
+Asserts that a number of engine or a single engine error continating (case insensitive) text has occurred.  If the expected error(s) are found then this assert will pass and the test will not fail from an unexpected push_error. 
+
+
+
+This assert will pass/fail even if push_errors are not configured to cause a test failure.  This will not prevent the error from showing up in output. 
+
+
+
+
+
+::
+
+    func divide_them(a, b):
+        return a / b
+    
+    func test_asserting_engine_error_count():
+        divide_them('one', 44)
+        assert_engine_error(1, "expecing a script error")
+    
+    func test_asserting_engine_error_text():
+        divide_them('word', 91)
+        assert_engine_error('invalid operands')
+    
+    func test_asserting_multipe_engine_error_texts():
+        divide_them('foo', Node)
+        divide_them(1729, 0)
+        assert_engine_error('Division by zero')
+        assert_engine_error('invalid operands')
+
+See `Error-Tracking <../Error-Tracking.html>`__.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_assert_push_error:
+
+.. rst-class:: classref-method
+
+|void| **assert_push_error**\ (\ count_or_text, msg = ""\ ) :ref:`🔗<class_GutTest_method_assert_push_error>`
+
+Asserts that a number of push_errors or a single push error continating (case insensitive) text has occurred.  If the expected error(s) are found then this assert will pass and the test will not fail from an unexpected push_error. 
+
+
+
+This assert will pass/fail even if push_errors are not configured to cause a test failure.  This will not prevent the error from showing up in output.
+
+::
+
+    func test_with_push_error():
+        push_error("This is an error")
+        assert_push_error(1, 'This test should have caused a push_error)
+    
+    func test_push_error_text():
+        push_error("SpecialText")
+        assert_push_error("CIALtex")
+    
+    func test_push_error_multiple_texts():
+        push_error("Error One")
+        push_error("Expception two")
+        assert_push_error("one")
+        assert_push_error("two")
+    
+
+See `Error-Tracking <../Error-Tracking.html>`__.
 
 .. rst-class:: classref-item-separator
 

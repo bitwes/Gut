@@ -22,7 +22,11 @@ var function = GutUtils.NO_TEST
 var line = -1
 
 ## Used by GUT to flag errors as being handled.  This is set by various asserts
-## or can be set in a test.
+## or can be set in a test.  When set to [code]true[/code] GUT will ignore it
+## when determining if an unexpected error occurred during the execution of the
+## test.  Setting this value prior to performing any of the error related
+## asserts may have unexpected results.  It is recommended you either set this
+## manually or use the error asserts.
 var handled = false
 
 
@@ -52,7 +56,8 @@ func is_gut_error():
 
 
 func contains_text(text):
-	return code.to_lower().find(text.to_lower()) != -1
+	return code.to_lower().find(text.to_lower()) != -1 or \
+		rationale.to_lower().find(text.to_lower()) != -1
 
 
 ## For display purposes only, the actual value returned may change over time.

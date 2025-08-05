@@ -49,6 +49,8 @@ Methods
    :widths: auto
 
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`contains_text<class_GutTrackedError_method_contains_text>`\ (\ text\ )       |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_error_type_name<class_GutTrackedError_method_get_error_type_name>`\ (\ ) |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`is_engine_error<class_GutTrackedError_method_is_engine_error>`\ (\ )         |
@@ -175,7 +177,7 @@ The line number in :ref:`file<class_GutTrackedError_property_file>`
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **handled** = ``false`` :ref:`🔗<class_GutTrackedError_property_handled>`
 
-Used by GUT to flag errors as being handled.  This is set by various asserts or can be set in a test.
+Used by GUT to flag errors as being handled.  This is set by various asserts or can be set in a test.  When set to ``true`` GUT will ignore it when determining if an unexpected error occurred during the execution of the test.  Setting this value prior to performing any of the error related asserts may have unexpected results.  It is recommended you either set this manually or use the error asserts.
 
 .. rst-class:: classref-section-separator
 
@@ -229,6 +231,20 @@ Returns ``true`` if the error is an engine error.  This includes all errors that
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **is_gut_error**\ (\ ) :ref:`🔗<class_GutTrackedError_method_is_gut_error>`
 
 Returns ``true`` if the error is a GUT error.  Some fields may not be populated for GUT errors.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTrackedError_method_contains_text:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **contains_text**\ (\ text\ ) :ref:`🔗<class_GutTrackedError_method_contains_text>`
+
+.. container:: contribute
+
+	No description
 
 .. rst-class:: classref-item-separator
 

@@ -98,6 +98,7 @@ Advanced Testing
 * :doc:`Coroutines and await in tests <Awaiting>`
 * :doc:`Pre/Post Run Hooks <Hooks>`
 * :doc:`Exporting Results <Export-Test-Results>`
+* :doc:`Error Tracking <Error-Tracking>`
 
 
 Editor GUI
