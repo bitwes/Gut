@@ -20,7 +20,9 @@ var HasStubMetadata = load(HAS_STUB_METADATA_PATH)
 class HackedStubber:
 	extends 'res://addons/gut/stubber.gd'
 	var StubParams = load('res://addons/gut/stub_params.gd')
-
+	func _init():
+		set_logger(GutUtils.GutLogger.new())
+		
 	func set_return(obj, method, value):
 		var sp = StubParams.new(obj, method)
 		sp.to_return(value)
@@ -269,4 +271,3 @@ func test_draw_parameter_method_meta():
 	var meta = find_method_meta(ToStub.get_script_method_list(), 'default_value_method')
 	gr.stubber.stub_defaults_from_meta(ToStub, meta)
 	assert_eq(gr.stubber.get_default_value(ToStub, 'default_value_method', 0), 'a')
-

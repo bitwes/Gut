@@ -1,6 +1,5 @@
 extends GutTest
 
-
 class PrintEventsButton:
 	extends Button
 

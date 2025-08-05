@@ -3,7 +3,7 @@ extends GutInternalTester
 var ParameterHandler = load('res://addons/gut/parameter_handler.gd')
 
 func test_can_make_one():
-	assert_not_null(ParameterHandler.new())
+	assert_not_null(ParameterHandler.new([]))
 
 func test_can_get_parsed_parameters():
 	var ph = ParameterHandler.new([1, 2, 3])
@@ -38,12 +38,13 @@ func test_has_logger():
 	assert_has_logger(ParameterHandler.new([]))
 
 func test_passing_non_array_to_constructor_causes_error():
-	var ph = ParameterHandler.new('asdf')
-	assert_errored(ph, 1)
+	ParameterHandler.new('asdf')
+	assert_tracked_gut_error()
 
 func test_when_invalid_constructor_parameter_object_is_setup_correctly():
 	var ph = ParameterHandler.new('asdf')
 	assert_null(ph._params)
 	assert_true(ph.is_done(), 'is_done should be true')
+	assert_tracked_gut_error()
 
 

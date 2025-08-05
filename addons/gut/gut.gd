@@ -163,6 +163,8 @@ var logger = _lgr :
 		_lgr = val
 		_lgr.set_gut(self)
 
+var error_tracker = GutUtils.get_error_tracker()
+
 var _add_children_to = self
 # Sets the object that GUT will add test objects to as it creates them.  The
 # default is self, but can be set to other objects so that GUT is not obscured
@@ -171,11 +173,6 @@ var add_children_to = self :
 	get: return _add_children_to
 	set(val): _add_children_to = val
 
-
-var _treat_error_as_failure = true
-var treat_error_as_failure = _treat_error_as_failure:
-	get: return _treat_error_as_failure
-	set(val): _treat_error_as_failure = val
 
 # ------------
 # Read only
@@ -262,11 +259,11 @@ var _auto_queue_free_delay = .1
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-func _init():
-	# When running tests for GUT itself, GutUtils has been setup to always return
-	# a new logger so this does not set the gut instance on the base logger
-	# when creating test instances of GUT.
-	_lgr.set_gut(self) # HEY!  What about tests?  ^^^^^^^^^
+func _init(override_logger=null):
+	if(override_logger != null):
+		logger = override_logger
+	else:
+		logger = logger # force setter logic
 
 	_doubler.set_stubber(_stubber)
 	_doubler.set_spy(_spy)
@@ -554,7 +551,7 @@ func _get_indexes_matching_path(path):
 # Execute all calls of a parameterized test.
 # ------------------------------------------------------------------------------
 func _run_parameterized_test(test_script, test_name):
-	await _run_test(test_script, test_name)
+	await _run_test(test_script, test_name, 0)
 
 	if(_current_test.assert_count == 0 and !_current_test.pending):
 		_lgr.risky('Test did not assert')
@@ -563,11 +560,13 @@ func _run_parameterized_test(test_script, test_name):
 		_lgr.error(str('Parameterized test ', _current_test.name, ' did not call use_parameters for the default value of the parameter.'))
 		_fail(str('Parameterized test ', _current_test.name, ' did not call use_parameters for the default value of the parameter.'))
 	else:
+		var index = 1
 		while(!_parameter_handler.is_done()):
 			var cur_assert_count = _current_test.assert_count
-			await _run_test(test_script, test_name)
+			await _run_test(test_script, test_name, index)
 			if(_current_test.assert_count == cur_assert_count and !_current_test.pending):
 				_lgr.risky('Test did not assert')
+			index += 1
 
 	_parameter_handler = null
 
@@ -575,7 +574,7 @@ func _run_parameterized_test(test_script, test_name):
 # ------------------------------------------------------------------------------
 # Runs a single test given a test.gd instance and the name of the test to run.
 # ------------------------------------------------------------------------------
-func _run_test(script_inst, test_name):
+func _run_test(script_inst, test_name, param_index = -1):
 	_lgr.log_test_name()
 	_lgr.set_indent_level(1)
 	_orphan_counter.add_counter('test')
@@ -583,9 +582,17 @@ func _run_test(script_inst, test_name):
 	await script_inst.before_each()
 
 	start_test.emit(test_name)
+	var test_id = str(script_inst.collected_script.get_filename_and_inner(), ':', test_name)
+	if(param_index != -1):
+		test_id += str('[', param_index, ']')
+	error_tracker.start_test(test_id)
 
 	await script_inst.call(test_name)
 
+	if(error_tracker.should_test_fail_from_errors(test_id)):
+		script_inst._fail(str("Unexpected Errors:\n", error_tracker.get_fail_text_for_errors(test_id)))
+
+	error_tracker.end_test()
 	# if the test called pause_before_teardown then await until
 	# the continue button is pressed.
 	if(_pause_before_teardown and !_ignore_pause_before_teardown):
@@ -594,7 +601,6 @@ func _run_test(script_inst, test_name):
 
 	script_inst.clear_signal_watcher()
 
-	# call each post-each-test method until teardown is removed.
 	await script_inst.after_each()
 
 	# Free up everything in the _autofree.  Yield for a bit if we
@@ -690,6 +696,7 @@ func _should_skip_script(test_script, collected_script):
 		collected_script.was_skipped = true
 
 	return should_skip
+
 
 # ------------------------------------------------------------------------------
 # Run all tests in a script.  This is the core logic for running tests.
@@ -862,16 +869,6 @@ func _fail(text=''):
 		var call_count_text = get_call_count_text()
 		_current_test.line_number = line_number
 		_current_test.add_fail(call_count_text + text + line_text)
-
-
-# ------------------------------------------------------------------------------
-# This is "private" but is only used by the logger, it is not used internally.
-# It was either, make this weird method or "do it the right way" with signals
-# or some other crazy mechanism.
-# ------------------------------------------------------------------------------
-func _fail_for_error(err_text):
-	if(_current_test != null and treat_error_as_failure):
-		_fail(err_text)
 
 
 # ------------------------------------------------------------------------------

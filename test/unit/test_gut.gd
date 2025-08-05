@@ -8,12 +8,12 @@ class TestProperties:
 	extends GutInternalTester
 	var _gut = null
 
-	func before_all():
-		GutUtils._test_mode = true
-
 	func before_each():
-		_gut = autofree(Gut.new())
+		# Can't use new_gut here because of default value checks
+		_gut = autofree(Gut.new(GutUtils.GutLogger.new()))
+		_gut.error_tracker = GutErrorTracker.new()
 		_gut._should_print_versions = false
+
 
 	var _backed_properties = ParameterFactory.named_parameters(
 		['property_name', 'default', 'new_value'],
@@ -32,7 +32,6 @@ class TestProperties:
 			['parameter_handler', null, GutUtils.ParameterHandler.new([])],
 			['post_run_script', '', 'res://something_else.gd'],
 			['pre_run_script', '', 'res://something.gd'],
-			['treat_error_as_failure', true, false],
 			['unit_test_name', '', 'test_something_cool'],
 		])
 
@@ -54,9 +53,6 @@ class TestProperties:
 		assert_property_with_backing_variable(_gut, 'add_children_to', _gut, self)
 
 	func test_logger_backed_property():
-		# This is hardcodedd to use the current value to check the default because of the way
-		# that GutUtils and logger works with GutUtils._test_mode = true.  Kinda breaks
-		# the one of the 8 things that this assert checks, but that's fine.
 		assert_property_with_backing_variable(_gut, 'logger', _gut._lgr, GutUtils.GutLogger.new(), '_lgr')
 
 	func test_setting_logger_sets_gut_for_logger():
@@ -82,11 +78,8 @@ class TestSimulate:
 
 	var _test_gut = null
 
-	func before_all():
-		GutUtils._test_mode = true
-
 	func before_each():
-		_test_gut = autofree(new_gut())
+		_test_gut = autofree(new_gut(verbose))
 
 	class WithoutProcess:
 		extends Node
@@ -329,20 +322,13 @@ class TestEverythingElse:
 
 	# Returns a new gut object, all setup for testing.
 	func get_a_gut():
-		var g = new_gut()
-		# Hides output.  remove this when things start failing.
-		var print_sub_tests = false
-		g.logger.disable_all_printers(!print_sub_tests)
-		g.logger.disable_formatting(!print_sub_tests)
-		# For checking warnings etc, this has to be ALL_ASSERTS
-		g.log_level = g.LOG_LEVEL_ALL_ASSERTS
+		var g = new_gut(verbose)
 		return g
 
 	# ------------------------------
 	# Setup/Teardown
 	# ------------------------------
 	func before_all():
-		GutUtils._test_mode = true
 		starting_counts.setup_count = gut.get_test_count()
 		starting_counts.teardown_count = gut.get_test_count()
 		counts.prerun_setup_count += 1
@@ -365,13 +351,6 @@ class TestEverythingElse:
 		# is a bad idea in general.
 		assert_true(true, 'POSTTEARDOWN RAN')
 		gut.directory_delete_files('user://')
-
-		gut.p("/*THESE SHOULD ALL PASS, IF NOT THEN SOMETHING IS BROKEN*/")
-		gut.p("/*These counts will be off if another script was run before this one.*/")
-		assert_eq(1, counts.prerun_setup_count, "Prerun setup should have been called once")
-		assert_eq(gut.get_test_count() - starting_counts.setup_count, counts.setup_count, "Setup should have been called once for each test")
-		# teardown for this test hasn't been run yet.
-		assert_eq(gut.get_test_count() - starting_counts.teardown_count, counts.teardown_count, "Teardown for all tests.")
 
 
 	# ------------------------------
@@ -447,7 +426,7 @@ class TestEverythingElse:
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name =  'test_no_asserts'
 		gr.test_gut.test_scripts()
-		assert_warn(gr.test_gut, 0)
+		assert_logger_warn(gr.test_gut, 0)
 		var risky_count = gr.test_gut.get_test_collector().scripts[0].get_risky_count()
 		assert_eq(risky_count, 1, 'Risky count')
 
@@ -455,31 +434,31 @@ class TestEverythingElse:
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name = 'test_passing_assert'
 		gr.test_gut.test_scripts()
-		assert_warn(gr.test_gut, 0)
+		assert_logger_warn(gr.test_gut, 0)
 
 	func test_with_failing_assert_no_assert_warning_is_not_generated():
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name = 'test_failing_assert'
 		gr.test_gut.test_scripts()
-		assert_warn(gr.test_gut, 0)
+		assert_logger_warn(gr.test_gut, 0)
 
 	func test_with_pass_test_call_no_assert_warning_is_not_generated():
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name = 'test_use_pass_test'
 		gr.test_gut.test_scripts()
-		assert_warn(gr.test_gut, 0)
+		assert_logger_warn(gr.test_gut, 0)
 
 	func test_with_fail_test_call_no_assert_warning_is_not_generated():
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name = 'test_use_fail_test'
 		gr.test_gut.test_scripts()
-		assert_warn(gr.test_gut, 0)
+		assert_logger_warn(gr.test_gut, 0)
 
 	func test_with_pending_call_no_assert_warning_is_no_generated():
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name = 'test_use_pending'
 		gr.test_gut.test_scripts()
-		assert_warn(gr.test_gut, 0)
+		assert_logger_warn(gr.test_gut, 0)
 
 
 	# ------------------------------
@@ -631,7 +610,7 @@ class TestEverythingElse:
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		gr.test_gut.test_scripts()
 		assert_eq(gr.test_gut.get_test_count(), 0, 'test should not be run')
-		assert_errored(gr.test_gut, 2)
+		assert_tracked_gut_error(gr.test_gut, 2)
 
 	func test_pre_hook_sets_gut_instance():
 		gr.test_gut.pre_run_script = 'res://test/resources/pre_run_script.gd'
@@ -644,7 +623,7 @@ class TestEverythingElse:
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		gr.test_gut.test_scripts()
 		assert_eq(gr.test_gut.get_test_count(), 0, 'test should not be run')
-		assert_errored(gr.test_gut, 2)
+		assert_tracked_gut_error(gr.test_gut, 2)
 
 	func test_post_hook_is_run_after_tests():
 		var PostRunScript = load('res://test/resources/post_run_script.gd')
@@ -661,7 +640,7 @@ class TestEverythingElse:
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		gr.test_gut.test_scripts()
 		assert_eq(gr.test_gut.get_test_count(), 0, 'test should not be run')
-		assert_errored(gr.test_gut, -1)
+		assert_tracked_gut_error(gr.test_gut, 2)
 
 	func test_awaiting_in_the_pre_hook_script():
 		var pre_run_script = load("res://test/resources/awaiting_pre_run_script.gd")
@@ -703,7 +682,7 @@ class TestEverythingElse:
 		gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 		gr.test_gut.unit_test_name = 'test_has_two_parameters'
 		gr.test_gut.test_scripts()
-		assert_errored(gr.test_gut, 1)
+		assert_tracked_gut_error(gr.test_gut, 1)
 		assert_eq(gr.test_gut.get_test_count(), 0, 'test count')
 
 	func test_parameterized_tests_are_called_multiple_times():
@@ -716,8 +695,9 @@ class TestEverythingElse:
 		gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 		gr.test_gut.unit_test_name = 'test_does_not_use_use_parameters'
 		gr.test_gut.test_scripts()
-		assert_errored(gr.test_gut, 1)
-		assert_eq(gr.test_gut.get_fail_count(), 2)
+		assert_tracked_gut_error(gr.test_gut)
+		assert_tracked_gut_error(gr.test_gut, 1)
+		assert_eq(gr.test_gut.get_fail_count(), 1)
 
 	# if you really think about this, it is a very very inception like test.
 	func test_parameterized_test_that_yield_are_called_correctly():
@@ -793,38 +773,3 @@ class TestEverythingElse:
 
 
 
-class TestErrorsTreatedAsFailure:
-	extends GutInternalTester
-
-	var _test_gut = null
-
-	func before_each():
-		_test_gut = add_child_autofree(new_gut())
-
-	func test_logger_calls__fail_for_error_when_error_occurs():
-		var logger = GutUtils.GutLogger.new()
-		var dgut = double(GutUtils.Gut).new()
-		logger.set_gut(dgut)
-		logger.error('this is an error')
-		assert_called(dgut, '_fail_for_error')
-
-	func test_gut_does_not_call__fail_when_flag_false():
-		var dgut = double(GutUtils.Gut).new()
-		stub(dgut, '_fail_for_error').to_call_super()
-		dgut._fail_for_error('error text')
-		assert_not_called(dgut, '_fail')
-
-	func test_gut_calls__fail_when_flag_true():
-		var dgut = double(GutUtils.Gut).new()
-		dgut._current_test = 'something'
-		dgut.treat_error_as_failure = true
-		stub(dgut, '_fail_for_error').to_call_super()
-		dgut._fail_for_error('error text')
-		assert_called(dgut, '_fail')
-
-	func test_gut_does_not_call__fail_when_there_is_no_test_object():
-		var dgut = double(GutUtils.Gut).new()
-		dgut.treat_error_as_failure = true
-		stub(dgut, '_fail_for_error').to_call_super()
-		dgut._fail_for_error('error text')
-		assert_not_called(dgut, '_fail')

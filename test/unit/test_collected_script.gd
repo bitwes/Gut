@@ -43,3 +43,11 @@ func test_get_ran_test_count_only_returns_tests_that_were_run():
 	c_test.was_run = false
 
 	assert_eq(c_script.get_ran_test_count(), 2)
+
+
+func test_sets_collected_from_when_creating_instances():
+	var c_script = CollectedScript.new()
+	c_script.path = "res://test/unit/test_collected_script.gd"
+	var inst = autofree(c_script.get_new())
+	assert_eq(inst.collected_script, c_script)
+

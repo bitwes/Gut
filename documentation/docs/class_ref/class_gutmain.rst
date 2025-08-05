@@ -8,7 +8,7 @@
 GutMain
 =======
 
-**Inherits:** `"addons/gut/gut_to_move.gd" <https://docs.godotengine.org/en/stable/classes/class_"addons/gut/gut_to_move.gd".html>`_
+**Inherits:** addons/gut/gut_to_move.gd
 
 The GUT brains.
 

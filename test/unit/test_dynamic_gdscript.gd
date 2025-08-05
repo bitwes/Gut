@@ -1,4 +1,4 @@
-extends GutTest
+extends GutInternalTester
 
 var DynmaicGdScript = load("res://addons/gut/dynamic_gdscript.gd")
 
@@ -51,4 +51,5 @@ func test_when_script_source_invalid_the_error_code_is_returned():
 		return
 
 	var DynScript = _dyn_gd.create_script_from_source("asdf\n\n\nasdfasfd\n\nasdf")
+	assert_engine_error("unexpected identifier")
 	assert_eq(typeof(DynScript), TYPE_INT)

@@ -1,14 +1,9 @@
-extends "res://addons/gut/test.gd"
+extends GutInternalTester
 
-var Gut = load('res://addons/gut/gut.gd')
-var Test = load('res://addons/gut/test.gd')
 var StubParams = load('res://addons/gut/stub_params.gd')
 
-const DOUBLE_ME_SCENE_PATH = 'res://test/resources/doubler_test_objects/double_me_scene.tscn'
-var DoubleMeScene = load(DOUBLE_ME_SCENE_PATH)
-
 func test_can_get_stubber():
-	var g = autofree(Gut.new())
+	var g = autofree(new_gut(verbose))
 	assert_ne(g.get_stubber(), null)
 
 # ---------------------------------
@@ -26,11 +21,11 @@ func test_stubber_cleared_between_tests():
 # ---------------------------------
 
 func test_can_get_doubler():
-	var g = autofree(Gut.new())
+	var g = autofree(new_gut(verbose))
 	assert_ne(g.get_doubler(), null)
 
 func test_doublers_stubber_is_guts_stubber():
-	var g = autofree(Gut.new())
+	var g = autofree(new_gut(verbose))
 	assert_eq(g.get_doubler().get_stubber(), g.get_stubber())
 
 # Since the stubber and doubler are "global" to gut, this is the best place

@@ -70,7 +70,10 @@ var InputSender = GutUtils.InputSender
 # Need a reference to the instance that is running the tests.  This
 # is set by the gut class when it runs the test script.
 var gut: GutMain = null
-
+# Reference to the collected_script.gd instance that was used to create this.
+# This makes getting to meta data about the test easier.  This is set by
+# collected_script.get_new().
+var collected_script = null
 
 var _compare = GutUtils.Comparator.new()
 var _disable_strict_datatype_checks = false
@@ -85,6 +88,7 @@ var _summary = {
 	tests = 0,
 	pending = 0
 }
+
 # This is used to watch signals so we can make assertions about them.
 var _signal_watcher = load('res://addons/gut/signal_watcher.gd').new()
 var _lgr = GutUtils.get_logger()
@@ -2108,6 +2112,167 @@ func assert_not_same(v1, v2, text=''):
 	else:
 		_pass(disp)
 
+# ----------------
+#endregion
+#region Error Detection
+# ----------------
+var _error_type_check_methods = {
+	"push_error": "is_push_error",
+	"engine": "is_engine_error",
+}
+
+# smells like GutTrackedError needs some more constants but I'm not ready to
+# make them yet
+func _is_error_of_type(err, error_type_name):
+	return err.call(_error_type_check_methods[error_type_name])
+
+
+func _assert_error_count(count, error_type_name, msg):
+	var consumed_count = 0
+	var errors = gut.error_tracker.get_errors_for_test()
+	var found = []
+	var disp = msg
+
+	for err in errors:
+		if(_is_error_of_type(err, error_type_name)):
+			if(consumed_count < count):
+				err.handled = true
+				consumed_count += 1
+			found.append(err)
+
+	if(disp != ''):
+		disp = str(':  ', disp)
+	else:
+		disp = '.'
+	disp = str("Expected ", count, " ", error_type_name, " errors.  Got ", found.size(), disp)
+	if(found.size() == count):
+		_pass(disp)
+		if(!_lgr.is_type_enabled(_lgr.types.passed)):
+			_lgr.expected_error(msg)
+	else:
+		_fail(disp)
+
+
+func _assert_error_text(text, error_type_name, msg):
+	var consumed_count = 0
+	var errors = gut.error_tracker.get_errors_for_test()
+	var found = []
+	var disp = msg
+
+	for err in errors:
+		if(_is_error_of_type(err, error_type_name) and err.contains_text(text)):
+			if(consumed_count == 0):
+				err.handled = true
+				consumed_count += 1
+			found.append(err)
+
+	disp = str("Expected ", error_type_name, " error containing '", text, "'.  ", msg)
+	if(consumed_count == 1):
+		_pass(disp)
+		if(!_lgr.is_type_enabled(_lgr.types.passed)):
+			_lgr.expected_error(disp)
+	else:
+		_fail(disp)
+
+
+## Get all the errors in the test up to this point.  Each error is an instance
+## of [GutTrackedError]. Setting the [member GutTrackedError.handled] [code]handled[/code] property of
+## an element in the array will prevent it from causing a test to fail.
+## [br][br]
+## This method allows you to inspect the details of any errors that occured and
+## decide if it's the error you are expecting or not.
+## [br][br]
+## [codeblock]
+## func divide_them(a, b):
+##     return a / b
+##
+## func test_with_script_error():
+##     divide_them('one', 44)
+##     push_error('this is a push error')
+##     var errs = get_errors()
+##     assert_eq(errs.size(), 2, 'expected error count')
+##
+##     # Maybe inspect some properties of the errors here.
+##
+##     # Mark all the errors as handled.
+##     for e in errs:
+##         e.handled = true
+## [/codeblock]
+## See [GutTrackedError], [wiki]Error-Tracking[/wiki].
+func get_errors()->Array:
+	return gut.error_tracker.get_errors_for_test()
+
+
+## Asserts that a number of engine or a single engine error continating
+## (case insensitive) text has occurred.  If the expected error(s) are
+## found then this assert will pass and the test will not fail from an
+## unexpected push_error.
+## [br][br]
+## This assert will pass/fail even if push_errors are not configured to cause
+## a test failure.  This will not prevent the error from showing up in output.
+## [br][br]
+## [codeblock]
+## func divide_them(a, b):
+##     return a / b
+##
+## func test_asserting_engine_error_count():
+##     divide_them('one', 44)
+##     assert_engine_error(1, "expecing a script error")
+##
+## func test_asserting_engine_error_text():
+##     divide_them('word', 91)
+##     assert_engine_error('invalid operands')
+##
+## func test_asserting_multipe_engine_error_texts():
+##     divide_them('foo', Node)
+##     divide_them(1729, 0)
+##     assert_engine_error('Division by zero')
+##     assert_engine_error('invalid operands')
+## [/codeblock]
+## See [wiki]Error-Tracking[/wiki].
+func assert_engine_error(count_or_text, msg=''):
+	var t = typeof(count_or_text)
+	if(t == TYPE_INT or t == TYPE_FLOAT):
+		_assert_error_count(count_or_text, "engine", msg)
+	elif(t == TYPE_STRING):
+		_assert_error_text(count_or_text, 'engine', msg)
+	else:
+		_fail(str("Unexpected input:  ", count_or_text))
+
+
+## Asserts that a number of push_errors or a single push error continating
+## (case insensitive) text has occurred.  If the expected error(s) are
+## found then this assert will pass and the test will not fail from an
+## unexpected push_error.
+## [br][br]
+## This assert will pass/fail even if push_errors are not configured to cause
+## a test failure.  This will not prevent the error from showing up in output.
+## [codeblock]
+## func test_with_push_error():
+##     push_error("This is an error")
+##     assert_push_error(1, 'This test should have caused a push_error)
+##
+## func test_push_error_text():
+##     push_error("SpecialText")
+##     assert_push_error("CIALtex")
+##
+## func test_push_error_multiple_texts():
+##     push_error("Error One")
+##     push_error("Expception two")
+##     assert_push_error("one")
+##     assert_push_error("two")
+##
+## [/codeblock]
+## See [wiki]Error-Tracking[/wiki].
+func assert_push_error(count_or_text, msg=''):
+	var t = typeof(count_or_text)
+	if(t == TYPE_INT or t == TYPE_FLOAT):
+		_assert_error_count(count_or_text, "push_error", msg)
+	elif(t == TYPE_STRING):
+		_assert_error_text(count_or_text, 'push_error', msg)
+	else:
+		_fail(str("Unexpected input:  ", count_or_text))
+
 
 # ----------------
 #endregion
@@ -2137,7 +2302,7 @@ func wait_for_signal(sig : Signal, max_wait, msg=''):
 
 ## @deprecated
 ## Use wait_physics_frames or wait_process_frames
-## See [wiki]Awaiting[/wiki]
+## See [wiki]Awaiting[/wiki].
 func wait_frames(frames : int, msg=''):
 	_lgr.deprecated("wait_frames has been replaced with wait_physics_frames which is counted in _physics_process.  " +
 		"wait_process_frames has also been added which is counted in _process.")
@@ -2453,7 +2618,6 @@ func add_child_autoqfree(node, legible_unique_name=false):
 	# a bug sneaking its way in here.
 	super.add_child(node, legible_unique_name)
 	return node
-
 
 
 # ----------------

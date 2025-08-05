@@ -27,14 +27,13 @@ func test_export_uses_export_path_if_no_path_sent():
 func test_if_export_path_not_set_and_no_path_passed_error_is_generated():
 	_test_gut.add_directory('res://test/resources/parsing_and_loading_samples')
 	_test_gut.export_tests()
-	assert_errored(_test_gut)
+	assert_tracked_gut_error(_test_gut)
 
 func test_importing_tests_populates_test_collector():
 	_test_gut.add_directory('res://test/resources/parsing_and_loading_samples')
 	_test_gut.export_tests(EXPORT_FILE)
 
 	var _import_gut = add_child_autofree(new_gut())
-	add_child(_import_gut)
 	_import_gut.import_tests(EXPORT_FILE)
 
 	assert_eq(
@@ -56,7 +55,7 @@ func test_import_tests_uses_export_path_by_default():
 
 func test_import_errors_if_file_does_not_exist():
 	_test_gut.import_tests('res://file_does_not_exist.txt')
-	assert_errored(_test_gut)
+	assert_tracked_gut_error(_test_gut)
 
 func test_gut_runs_the_imported_tests():
 	pending('this is failing and I think it is related to import/export not working yet.')

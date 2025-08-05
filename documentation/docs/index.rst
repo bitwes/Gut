@@ -16,13 +16,13 @@
    :caption: Test Scripts
    :name: sec-guttest
 
-   class_ref/class_guttest
    Creating-Tests
    Awaiting
    Inner-Test-Classes
    Parameterized-Tests
    Simulate
    Comparing-Things
+   Error-Tracking
 
 
 .. toctree::
@@ -44,15 +44,14 @@
    :caption: Other
    :name: sec-other
 
-   Contributing
-   GDScript-Warnings
    Export-Test-Results
    Hooks
    Memory-Management
    Mocking-Input
    Orphans
    Running-On-Devices
-   Tutorials
+   GDScript-Warnings
+   Contributing
 
 
 .. toctree::
@@ -99,6 +98,7 @@ Advanced Testing
 * :doc:`Coroutines and await in tests <Awaiting>`
 * :doc:`Pre/Post Run Hooks <Hooks>`
 * :doc:`Exporting Results <Export-Test-Results>`
+* :doc:`Error Tracking <Error-Tracking>`
 
 
 Editor GUI

@@ -37,7 +37,7 @@ wait_physics_frames(frames, msg=''):
 This returns a signal that is emitted after `x` physics frames have
 elpased.  You can await this method directly to pause execution for `x`
 physics frames.  The frames are counted prior to _physics_process being called
-on any node (when [signal SceneTree.physics_frame] is emitted).  This means the
+on any node (when `SceneTree.physics_frame` is emitted).  This means the
 signal is emitted after `x` frames and just before the x + 1 frame starts.
 ```
 await wait_physics_frames(10)
@@ -62,7 +62,7 @@ await wait_process_frames(10)
 This returns a signal that is emitted after `x` process/idle frames have
 elpased.  You can await this method directly to pause execution for `x`
 process/idle frames.  The frames are counted prior to _process being called
-on any node (when [signal SceneTree.process_frame] is emitted).  This means the
+on any node (when `SceneTree.process_frame` is emitted).  This means the
 signal is emitted after `x` frames and just before the x + 1 frame starts.
 
 

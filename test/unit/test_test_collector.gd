@@ -10,6 +10,7 @@ class TestTestCollector:
 	}
 	func before_each():
 		gr.tc = TestCollector.new()
+		gr.tc.set_logger(GutLogger.new())
 
 	func test_has_logger():
 		assert_has_logger(gr.tc)
@@ -72,7 +73,7 @@ class TestTestCollector:
 		gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')
 		assert_false(gr.tc.has_script(SCRIPTS_ROOT + 'has_inner_class.gd.DoesNotExtend')
 			, 'should not have DoesNotExtend')
-		assert_warn(gr.tc)
+		assert_logger_warn(gr.tc)
 
 	func test_inner_classes_have_tests():
 		gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')
@@ -144,7 +145,7 @@ class TestExportImport:
 		GutUtils.write_file(path, export_file_text)
 
 	func _run_test_collector(tc):
-		var test_gut = Gut.new()
+		var test_gut = new_gut()
 		add_child(test_gut)
 		test_gut._test_collector = tc
 		test_gut._test_the_scripts()

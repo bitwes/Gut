@@ -1,20 +1,13 @@
-extends GutTest
+extends GutInternalTester
 
-var Gut = load('res://addons/gut/gut.gd')
 var ResultExporter = GutUtils.ResultExporter
-var GutLogger = GutUtils.GutLogger
 
 var _test_gut = null
 
 
 # Returns a new gut object, all setup for testing.
 func get_a_gut():
-	var g = Gut.new()
-	g.log_level = g.LOG_LEVEL_ALL_ASSERTS
-	g.logger = GutUtils.GutLogger.new()
-	g.logger.disable_printer('terminal', true)
-	g.logger.disable_printer('gui', true)
-	g.logger.disable_printer('console', true)
+	var g = new_gut(verbose)
 	return g
 
 
@@ -30,8 +23,6 @@ func run_scripts(g, one_or_more):
 func export_script(script_name):
 	return str('res://test/resources/exporter_test_files/', script_name)
 
-func before_all():
-	GutUtils._test_mode = true
 
 func before_each():
 	_test_gut = get_a_gut()

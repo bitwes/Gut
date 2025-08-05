@@ -17,5 +17,7 @@
   "inner_class": "",
   "disable_colors": false,
   "compact_mode": true,
-  "gut_on_top": true
+  "gut_on_top": true,
+
+  "post_run_script":"res://test/gut_post_run.gd"
 }

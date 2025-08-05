@@ -7,7 +7,7 @@ class TestLogging:
 	var _gut = null
 
 	func before_each():
-		_gut = Gut.new()
+		_gut = new_gut(verbose)
 		_gut._should_print_versions = false
 		_gut.log_level = 0
 		add_child_autofree(_gut)

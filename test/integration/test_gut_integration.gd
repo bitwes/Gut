@@ -1,12 +1,12 @@
 extends GutTest
 
 class CoupledScriptTest:
-	extends GutTest
+	extends GutInternalTester
 
 	var _gut = null
 
 	func before_each():
-		_gut = GutUtils.Gut.new()
+		_gut = new_gut(verbose)
 		_gut._should_print_versions = false
 		_gut._should_print_summary = false
 		add_child_autofree(_gut)
@@ -74,54 +74,3 @@ class TestYieldInBeforeAfterMethods:
 	# 	var test_script = _get_inner_class_script_instance('TestYieldsThatDoNotUseGutYieldMethods')
 	# 	assert_eq(test_script.before_all_value, 'set', 'before_all_value')
 	# 	assert_eq(test_script.before_each_value, 'set', 'before_each_value')
-
-class TestOutputWhenRunDirectly:
-	extends GutTest
-
-	var before_all_value = 'NOT_SET'
-	var before_each_value = 'NOT_SET'
-	var after_each_value = 'NOT_SET'
-	var after_all_value = 'NOT_SET'
-
-	var _timer = Timer.new()
-
-	func before_all():
-		gut.p('WATCH THESE TESTS')
-		add_child(_timer)
-		_timer.set_wait_time(3)
-		_timer.one_shot = true
-
-		_timer.start()
-		gut.p('before_all yield')
-		await _timer.timeout
-		before_all_value = 'set'
-
-	func before_each():
-		_timer.start()
-		gut.p('before_each yield')
-		await _timer.timeout
-		before_each_value = 'set'
-
-	func after_each():
-		_timer.start()
-		gut.p('after_each yield')
-		await _timer.timeout
-		after_each_value = 'set'
-
-	func after_all():
-		_timer.start()
-		gut.p('after_all yield')
-		await _timer.timeout
-		# must be queued free b/c after yield _timer is still emitting
-		# the timeout signal.  This results in a false positive message
-		# indicating there are still children in the test.
-		_timer.queue_free()
-
-	func test_one():
-		assert_eq(before_all_value, 'set', 'before all value')
-		assert_eq(before_each_value, 'set', 'before each value')
-		_timer.start()
-		gut.p('test_one yield')
-		await _timer.timeout
-
-

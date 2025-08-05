@@ -64,7 +64,7 @@ func _print_all_formats():
 		_lgr.lograw(' ')
 	_lgr.log()
 
-	_lgr.lograw(_lgr.get_indent_text())
+	_lgr.lograw(_lgr.get_indent())
 	for key in _lgr.fmts:
 		_lgr.lograw(key, _lgr.fmts[key])
 		_lgr.lograw(' ')

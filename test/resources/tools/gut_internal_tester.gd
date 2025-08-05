@@ -25,12 +25,10 @@ var Spy = load('res://addons/gut/spy.gd')
 var TestCollector = load('res://addons/gut/test_collector.gd')
 
 
-func _init():
-	GutUtils._test_mode = true
-
-
 func _get_logger_from_obj(obj):
 	var to_return = null
+	if(is_instance_of(obj, GutLogger)):
+		to_return = obj
 	if(obj.has_method('get_logger')):
 		to_return = obj.get_logger()
 	elif(obj.get('logger') != null):
@@ -53,7 +51,7 @@ func print_fail_pass_text(t):
 		gut.p('sub-test:  ' + t._fail_pass_text[i], gut.LOG_LEVEL_FAIL_ONLY)
 
 
-func assert_warn(obj, times=1):
+func assert_logger_warn(obj, times=1):
 	var lgr = _get_logger_from_obj(obj)
 	if(lgr != null):
 		_assert_log_count(lgr.get_warnings(), 'warnings', times)
@@ -61,7 +59,7 @@ func assert_warn(obj, times=1):
 		_fail(str('Cannot assert_errored, ', obj, ' does not have get_logger method or logger property'))
 
 
-func assert_errored(obj, times=1):
+func assert_logger_errored(obj, times=1):
 	var things_lgr = _get_logger_from_obj(obj)
 	if(things_lgr != null):
 		_assert_log_count(things_lgr.get_errors(), 'errors', times)
@@ -126,10 +124,9 @@ func get_error_count(obj):
 
 var new_gut_indent_string = "|   "
 func new_gut(print_sub_tests=false):
-	var g = Gut.new()
-	g.logger = GutLogger.new()
+	var l = GutLogger.new()
+	var g = Gut.new(l)
 	g.logger.disable_all_printers(true)
-	g.update_loggers()
 
 	g.log_level = 3
 	if(print_sub_tests):
@@ -143,14 +140,15 @@ func new_gut(print_sub_tests=false):
 	g._should_print_versions = false
 	g._should_print_summary = false
 
+	g.error_tracker = GutErrorTracker.new()
+
 	return g
 
 
 func new_partial_double_gut(print_sub_tests=false):
-	var g = partial_double(Gut).new()
-	g.logger = GutUtils.GutLogger.new()
+	var l = GutLogger.new()
+	var g = partial_double(Gut).new(l)
 	g.logger.disable_all_printers(true)
-	g.update_loggers()
 
 	if(print_sub_tests):
 		g.log_level = 3
@@ -164,6 +162,7 @@ func new_partial_double_gut(print_sub_tests=false):
 
 	g._should_print_versions = false
 	g._should_print_summary = false
+	g.error_tracker = GutErrorTracker.new()
 
 	return g
 
@@ -196,3 +195,53 @@ func new_wired_test(gut_instance):
 
 func find_method_meta(methods, method_name):
 	return GutUtils.find_method_meta(methods, method_name)
+
+
+func _get_tracker_from(thing):
+	var tracker = null
+	if(thing is GutMain):
+		tracker = thing.error_tracker
+	elif(thing is GutTest):
+		tracker = thing.gut.error_tracker
+	else:
+		var lgr = _get_logger_from_obj(thing)
+		if(lgr != null):
+			tracker = lgr.get_gut().error_tracker
+
+	return tracker
+
+func assert_tracked_gut_error(thing=gut, count=1):
+	var consumed_count = 0
+	var errors = _get_tracker_from(thing).get_current_test_errors()
+	for err in errors:
+		if(err.is_gut_error()):
+			err.handled = true
+			consumed_count += 1
+	assert_eq(consumed_count, count, "gut error was found.")
+
+
+func assert_tracked_push_error(thing=gut, count=1):
+	var consumed_count = 0
+	var errors = _get_tracker_from(thing).get_current_test_errors()
+	for err in errors:
+		if(err.is_push_error()):
+			err.handled = true
+			consumed_count += 1
+	assert_eq(consumed_count, count, "push_error error was found.")
+
+
+func assert_tracked_engine_error(thing=gut, count=1):
+	var consumed_count = 0
+	var errors = _get_tracker_from(thing).get_current_test_errors()
+	for err in errors:
+		if(err.is_engine_error()):
+			err.handled = true
+			consumed_count += 1
+	assert_eq(consumed_count, count, "engine error was found.")
+
+
+func skip_if_debugger_active():
+	if(EngineDebugger.is_active()):
+		return "Script skipped when debugger active"
+	else:
+		return false
