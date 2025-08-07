@@ -266,7 +266,6 @@ func warn(text):
 
 
 func log(text='', fmt=fmts.none):
-	end_yield()
 	if(text == ''):
 		_output("\n")
 	else:
@@ -378,32 +377,10 @@ func _yield_text_terminal(text):
 	printer.send(text, fmts.yellow)
 
 
-func _end_yield_terminal():
-	var printer = _printers['terminal']
-	printer.clear_line()
-	printer.back(_last_yield_text.length())
-
-
-# This is used for displaying the "yield detected" and "yielding to" messages.
-func yield_msg(text):
+# Format and printing rules for the "Awaiting" messages.
+func wait_msg(text):
 	if(_type_data.warn.enabled):
 		self.log(text, fmts.yellow)
-
-
-# This is used for the animated "waiting" message
-func yield_text(text):
-	_yield_text_terminal(text)
-	_last_yield_text = text
-	_yield_calls += 1
-
-
-# This is used for the animated "waiting" message
-func end_yield():
-	if(_yield_calls == 0):
-		return
-	_end_yield_terminal()
-	_yield_calls = 0
-	_last_yield_text = ''
 
 
 func get_gui_bbcode():

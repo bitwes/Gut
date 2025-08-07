@@ -2284,7 +2284,6 @@ func assert_push_error(count_or_text, msg=''):
 ## will be printed when the await starts.[br]
 ## See [wiki]Awaiting[/wiki]
 func wait_seconds(time, msg=''):
-	_lgr.yield_msg(str('-- Awaiting ', time, ' second(s) -- ', msg))
 	_awaiter.wait_seconds(time)
 	return _awaiter.timeout
 
@@ -2292,10 +2291,9 @@ func wait_seconds(time, msg=''):
 ## Use with await to wait for a signal to be emitted or a maximum amount of
 ## time.  Returns true if the signal was emitted, false if not.[br]
 ## See [wiki]Awaiting[/wiki]
-func wait_for_signal(sig : Signal, max_wait, msg=''):
+func wait_for_signal(sig : Signal, max_time, msg=''):
 	watch_signals(sig.get_object())
-	_lgr.yield_msg(str('-- Awaiting signal "', sig.get_name(), '" or for ', max_wait, ' second(s) -- ', msg))
-	_awaiter.wait_for_signal(sig, max_wait)
+	_awaiter.wait_for_signal(sig, max_time, msg)
 	await _awaiter.timeout
 	return !_awaiter.did_last_wait_timeout
 
@@ -2324,8 +2322,7 @@ func wait_physics_frames(x :int , msg=''):
 		_lgr.error(text)
 		x = 1
 
-	_lgr.yield_msg(str('-- Awaiting ', x, ' physics frame(s) -- ', msg))
-	_awaiter.wait_physics_frames(x)
+	_awaiter.wait_physics_frames(x, msg)
 	return _awaiter.timeout
 
 
@@ -2351,8 +2348,7 @@ func wait_process_frames(x : int, msg=''):
 		_lgr.error(text)
 		x = 1
 
-	_lgr.yield_msg(str('-- Awaiting ', x, ' idle frame(s) -- ', msg))
-	_awaiter.wait_process_frames(x)
+	_awaiter.wait_process_frames(x, msg)
 	return _awaiter.timeout
 
 
@@ -2382,7 +2378,7 @@ func wait_process_frames(x : int, msg=''):
 ##[/codeblock]
 ## See also [method wait_while][br]
 ## See [wiki]Awaiting[/wiki]
-func wait_until(callable, max_wait, p3='', p4=''):
+func wait_until(callable, max_time, p3='', p4=''):
 	var time_between = 0.0
 	var message = p4
 	if(typeof(p3) != TYPE_STRING):
@@ -2390,8 +2386,7 @@ func wait_until(callable, max_wait, p3='', p4=''):
 	else:
 		message = p3
 
-	_lgr.yield_msg(str("--Awaiting callable to return TRUE or ", max_wait, "s.  ", message))
-	_awaiter.wait_until(callable, max_wait, time_between)
+	_awaiter.wait_until(callable, max_time, time_between, message)
 	await _awaiter.timeout
 	return !_awaiter.did_last_wait_timeout
 
@@ -2419,7 +2414,7 @@ func wait_until(callable, max_wait, p3='', p4=''):
 ##
 ##[/codeblock]
 ## See [wiki]Awaiting[/wiki]
-func wait_while(callable, max_wait, p3='', p4=''):
+func wait_while(callable, max_time, p3='', p4=''):
 	var time_between = 0.0
 	var message = p4
 	if(typeof(p3) != TYPE_STRING):
@@ -2427,8 +2422,7 @@ func wait_while(callable, max_wait, p3='', p4=''):
 	else:
 		message = p3
 
-	_lgr.yield_msg(str("--Awaiting callable to return FALSE or ", max_wait, "s.  ", message))
-	_awaiter.wait_while(callable, max_wait, time_between)
+	_awaiter.wait_while(callable, max_time, time_between, message)
 	await _awaiter.timeout
 	return !_awaiter.did_last_wait_timeout
 

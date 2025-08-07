@@ -133,9 +133,15 @@ func test_signal_emitted_after_10_frames():
 	assert_signal_emitted(a, 'timeout')
 	assert_eq(c.physics_frames, 10, 'waited enough frames')
 
-func test_is_waiting_while_waiting_on_frames():
+func test_is_waiting_while_waiting_on_physics_frames():
 	var a = add_child_autoqfree(Awaiter.new())
 	a.wait_physics_frames(120)
+	await get_tree().create_timer(.1).timeout
+	assert_true(a.is_waiting())
+
+func test_is_waiting_while_waiting_on_process_frames():
+	var a = add_child_autoqfree(Awaiter.new())
+	a.wait_process_frames(120)
 	await get_tree().create_timer(.1).timeout
 	assert_true(a.is_waiting())
 
