@@ -102,6 +102,7 @@ class TestApplyOptions:
 
 		assert_eq(g.error_tracker.treat_engine_errors_as, GutUtils.TREAT_AS.NOTHING)
 
+
 	func test_failure_error_type_push_error_sets_error_tracker_option_true_when_it_exists():
 		var gc = GutUtils.GutConfig.new()
 		var g = autofree(new_gut(verbose))
@@ -120,6 +121,7 @@ class TestApplyOptions:
 		gc.apply_options(g)
 
 		assert_eq(g.error_tracker.treat_push_error_as, GutUtils.TREAT_AS.NOTHING)
+
 
 	func test_failure_error_type_gut_sets_error_tracker_option_true_when_it_exists():
 		var gc = GutUtils.GutConfig.new()
@@ -149,4 +151,5 @@ class TestApplyOptions:
 		gc.options.errors_do_not_cause_failure = true
 		gc.apply_options(g)
 		assert_deprecated(gc)
+
 

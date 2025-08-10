@@ -55,6 +55,7 @@ var default_options = {
 
 	no_error_tracking = false,
 	failure_error_types = ["engine", "gut", "push_error"],
+	await_log_message_min_time = .5,
 
 	gut_on_top = true,
 }

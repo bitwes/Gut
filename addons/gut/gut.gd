@@ -62,6 +62,9 @@ var log_level = _log_level:
 	get: return _log_level
 	set(val): _set_log_level(val)
 
+## The amount of time that must elapse before an "Awaiting" message is printed.
+var await_log_message_min_time = 0.5
+
 # TODO 4.0
 # This appears to not be used anymore.  Going to wait for more tests to be
 # ported before removing.
@@ -499,6 +502,7 @@ func _setup_script(test_script, collected_script):
 	test_script.set_logger(_lgr)
 	_add_children_to.add_child(test_script)
 	_test_script_objects.append(test_script)
+	test_script.await_log_message_min_time = await_log_message_min_time
 
 	if(!test_script._was_ready_called):
 		test_script._do_ready_stuff()
