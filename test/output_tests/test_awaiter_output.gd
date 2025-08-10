@@ -1,7 +1,7 @@
 extends GutInternalTester
 
 func before_each():
-	await_log_message_min_time = 0.0
+	wait_log_delay = 0.0
 
 
 func test_wait_seconds():
@@ -10,7 +10,7 @@ func test_wait_seconds():
 
 
 func test_wait_1s():
-	await_log_message_min_time = .9
+	wait_log_delay = .9
 	await wait_seconds(1, 'this is the message')
 	pass_test('passing')
 
@@ -40,4 +40,11 @@ func test_wait_while():
 signal some_signal
 func test_wait_for_signal():
 	await wait_for_signal(some_signal, .5, 'this is the message')
+	pass_test('passing')
+
+func test_get_no_message_when_wait_is_less():
+	wait_log_delay = 10
+	await wait_idle_frames(1)
+	await wait_physics_frames(1)
+	await wait_seconds(.2)
 	pass_test('passing')

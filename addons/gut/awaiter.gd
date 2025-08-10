@@ -5,12 +5,12 @@ class AwaitLogger:
 	var logger = GutUtils.get_logger()
 	var waiting_on = "nothing"
 	var logged_initial_message = false
-	var await_log_message_min_time := 1.0
+	var wait_log_delay := 1.0
 	var disabled = false
 
 	func waited(x):
 		_time_waited += x
-		if(!logged_initial_message and _time_waited >= await_log_message_min_time):
+		if(!logged_initial_message and _time_waited >= wait_log_delay):
 			log_it()
 			logged_initial_message = true
 

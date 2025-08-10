@@ -74,11 +74,11 @@ var gut: GutMain = null
 # This makes getting to meta data about the test easier.  This is set by
 # collected_script.get_new().
 var collected_script = null
-var await_log_message_min_time = .5 :
+var wait_log_delay = .5 :
 	set(val):
 		if(_awaiter != null):
-			_awaiter._await_logger.await_log_message_min_time = val
-			await_log_message_min_time = val
+			_awaiter._await_logger.wait_log_delay = val
+			wait_log_delay = val
 var _compare = GutUtils.Comparator.new()
 var _disable_strict_datatype_checks = false
 # Holds all the text for a test's fail/pass.  This is used for testing purposes
@@ -106,7 +106,7 @@ var _was_ready_called = false
 # something better).  I'm leaving all this as it is until it bothers me more.
 func _do_ready_stuff():
 	_awaiter = GutUtils.Awaiter.new()
-	_awaiter._await_logger.await_log_message_min_time = await_log_message_min_time
+	_awaiter._await_logger.wait_log_delay = wait_log_delay
 	add_child(_awaiter)
 	_was_ready_called = true
 
