@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 assert_called(my_double.rpc_id, [p1, p2, [vararg_val1, vararg_val2, vararg_val3]])
 ```
 * Error detection and asserts have been added.  Tests fail when unexpected errors occur and you can assert that errors have occurred.  This can be disabled at 3 different levels:  engine, push_error, GUT.  See the wiki for more information.
+* "Awaiting" messages now have a configurable delay which defaults to .5 seconds.  Messages to indicate a call to a `wait_` method will not appear until this delay has expired.  Now your 10 frame awaits aren't noisy unless you want them to be.
 
 
 # 9.4.0

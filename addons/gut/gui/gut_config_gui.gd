@@ -37,6 +37,13 @@ func _add_number(key, value, disp_text, v_min, v_max, hint=''):
 	return ctrl
 
 
+func _add_float(key, value, disp_text, step, v_min, v_max, hint=''):
+	var ctrl = PanelControls.FloatControl.new(disp_text, value, step, v_min, v_max, hint)
+	_add_ctrl(key, ctrl)
+	return ctrl
+
+
+
 func _add_select(key, value, values, disp_text, hint=''):
 	var ctrl = PanelControls.SelectControl.new(disp_text, value, values, hint)
 	_add_ctrl(key, ctrl)
@@ -198,6 +205,8 @@ func set_options(opts):
 		"\t1: Adds all test names + warnings + info\n" + \
 		"\t2: Shows all asserts\n" + \
 		"\t3: Adds more stuff probably, maybe not.")
+	_add_float("wait_log_delay", options.wait_log_delay, "Wait Log Delay", 0.1, 0.0, 999.1,
+		"How long to wait before displaying 'Awaiting' messages.")
 	_add_boolean('ignore_pause', options.ignore_pause, 'Ignore Pause',
 		"Ignore calls to pause_before_teardown")
 	_add_boolean('hide_orphans', options.hide_orphans, 'Hide Orphans',
@@ -285,13 +294,8 @@ func set_options(opts):
 		"The filename prefix for all test scripts.")
 	_add_value('suffix', options.suffix, 'Script Suffix',
 		"Script suffix, including .gd extension.  For example '_foo.gd'.")
-	_add_number('paint_after', options.paint_after, 'Paint After', 0.0, 1.0,
+	_add_float('paint_after', options.paint_after, 'Paint After', .05, 0.0, 1.0,
 		"How long GUT will wait before pausing for 1 frame to paint the screen.  0 is never.")
-
-	# since _add_number doesn't set step property, it will default to a step of
-	# 1 and cast values to int.  Give it a .5 step and re-set the value.
-	_cfg_ctrls.paint_after.value_ctrl.step = .05
-	_cfg_ctrls.paint_after.value = options.paint_after
 
 
 
@@ -300,6 +304,7 @@ func get_options(base_opts):
 
 	# Settings
 	to_return.log_level = _cfg_ctrls.log_level.value
+	to_return.wait_log_delay = _cfg_ctrls.wait_log_delay.value
 	to_return.ignore_pause = _cfg_ctrls.ignore_pause.value
 	to_return.hide_orphans = _cfg_ctrls.hide_orphans.value
 	to_return.should_exit = _cfg_ctrls.should_exit.value

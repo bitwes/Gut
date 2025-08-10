@@ -80,6 +80,17 @@ class NumberControl:
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
+class FloatControl:
+	extends NumberControl
+
+	func _init(title, val, step, v_min, v_max, hint=""):
+		super._init(title, val, v_min, v_max, hint)
+		value_ctrl.step = step
+		value_ctrl.value = val
+
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 class StringControl:
 	extends BaseGutPanelControl
 

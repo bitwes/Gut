@@ -62,6 +62,9 @@ var log_level = _log_level:
 	get: return _log_level
 	set(val): _set_log_level(val)
 
+## The amount of time that must elapse before an "Awaiting" message is printed.
+var wait_log_delay = 0.5
+
 # TODO 4.0
 # This appears to not be used anymore.  Going to wait for more tests to be
 # ported before removing.
@@ -494,11 +497,14 @@ func _does_class_name_match(the_class_name, script_class_name):
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-func _setup_script(test_script, collected_script):
+func _create_script_instance(collected_script):
+	var test_script = collected_script.get_new()
+
 	test_script.gut = self
 	test_script.set_logger(_lgr)
 	_add_children_to.add_child(test_script)
 	_test_script_objects.append(test_script)
+	test_script.wait_log_delay = wait_log_delay
 
 	if(!test_script._was_ready_called):
 		test_script._do_ready_stuff()
@@ -516,6 +522,7 @@ func _setup_script(test_script, collected_script):
 			"ideas because I did them.  Hence the warning.  This message is ",
 			"intentially long so that it bothers you and you change your ways.\n\n",
 			"Thank you for using GUT."))
+	return test_script
 
 
 # ------------------------------------------------------------------------------
@@ -742,9 +749,7 @@ func _test_the_scripts(indexes=[]):
 
 		start_script.emit(coll_script)
 
-		var test_script = coll_script.get_new()
-
-		_setup_script(test_script, coll_script)
+		var test_script = _create_script_instance(coll_script)
 		_doubler.set_strategy(_double_strategy)
 
 		# ----
