@@ -497,7 +497,9 @@ func _does_class_name_match(the_class_name, script_class_name):
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-func _setup_script(test_script, collected_script):
+func _create_script_instance(collected_script):
+	var test_script = collected_script.get_new()
+
 	test_script.gut = self
 	test_script.set_logger(_lgr)
 	_add_children_to.add_child(test_script)
@@ -520,6 +522,7 @@ func _setup_script(test_script, collected_script):
 			"ideas because I did them.  Hence the warning.  This message is ",
 			"intentially long so that it bothers you and you change your ways.\n\n",
 			"Thank you for using GUT."))
+	return test_script
 
 
 # ------------------------------------------------------------------------------
@@ -746,9 +749,7 @@ func _test_the_scripts(indexes=[]):
 
 		start_script.emit(coll_script)
 
-		var test_script = coll_script.get_new()
-
-		_setup_script(test_script, coll_script)
+		var test_script = _create_script_instance(coll_script)
 		_doubler.set_strategy(_double_strategy)
 
 		# ----

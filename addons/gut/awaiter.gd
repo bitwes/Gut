@@ -31,7 +31,7 @@ class AwaitLogger:
 signal timeout
 signal wait_started
 
-var _await_logger = AwaitLogger.new()
+var await_logger = AwaitLogger.new()
 var _wait_time := 0.0
 var _wait_process_frames := 0
 var _wait_physics_frames := 0
@@ -80,7 +80,7 @@ func _on_tree_physics_frame():
 
 func _physics_process(delta):
 	if(is_waiting()):
-		_await_logger.waited(delta)
+		await_logger.waited(delta)
 
 	if(_wait_time != 0.0):
 		_elapsed_time += delta
@@ -101,7 +101,7 @@ func _physics_process(delta):
 
 
 func _end_wait():
-	_await_logger.reset()
+	await_logger.reset()
 	# Check for time before checking for frames so that the extra frames added
 	# when waiting on a signal do not cause a false negative for timing out.
 	if(_wait_time > 0):
@@ -140,28 +140,28 @@ func _signal_callback(
 
 
 func wait_seconds(x, msg=''):
-	_await_logger.waiting_on = str(x, " seconds ", msg)
+	await_logger.waiting_on = str(x, " seconds ", msg)
 	_did_last_wait_timeout = false
 	_wait_time = x
 	wait_started.emit()
 
 
 func wait_process_frames(x, msg=''):
-	_await_logger.waiting_on = str(x, " idle frames ", msg)
+	await_logger.waiting_on = str(x, " idle frames ", msg)
 	_did_last_wait_timeout = false
 	_wait_process_frames = x
 	wait_started.emit()
 
 
 func wait_physics_frames(x, msg=''):
-	_await_logger.waiting_on = str(x, " physics frames ", msg)
+	await_logger.waiting_on = str(x, " physics frames ", msg)
 	_did_last_wait_timeout = false
 	_wait_physics_frames = x
 	wait_started.emit()
 
 
 func wait_for_signal(the_signal : Signal, max_time, msg=''):
-	_await_logger.waiting_on = str("signal ", the_signal.get_name(), " or ", max_time, "s ", msg)
+	await_logger.waiting_on = str("signal ", the_signal.get_name(), " or ", max_time, "s ", msg)
 	_did_last_wait_timeout = false
 	the_signal.connect(_signal_callback)
 	_signal_to_wait_on = the_signal
@@ -170,7 +170,7 @@ func wait_for_signal(the_signal : Signal, max_time, msg=''):
 
 
 func wait_until(predicate_function: Callable, max_time, time_between_calls:=0.0, msg=''):
-	_await_logger.waiting_on = str("callable to return TRUE or ", max_time, "s.  ", msg)
+	await_logger.waiting_on = str("callable to return TRUE or ", max_time, "s.  ", msg)
 	_predicate_time_between = time_between_calls
 	_predicate_method = predicate_function
 	_wait_time = max_time
@@ -183,7 +183,7 @@ func wait_until(predicate_function: Callable, max_time, time_between_calls:=0.0,
 
 
 func wait_while(predicate_function: Callable, max_time, time_between_calls:=0.0, msg=''):
-	_await_logger.waiting_on = str("callable to return FALSE or ", max_time, "s.  ", msg)
+	await_logger.waiting_on = str("callable to return FALSE or ", max_time, "s.  ", msg)
 	_predicate_time_between = time_between_calls
 	_predicate_method = predicate_function
 	_wait_time = max_time

@@ -70,6 +70,11 @@ class TestMiscTests:
 		await wait_physics_frames(10)
 		assert_freed(gr.test._awaiter, 'awaiter')
 
+	func test_setting_wait_log_delay_propigates_to_awaiter():
+		add_child_autofree(gr.test)
+		gr.test.wait_log_delay = 999
+		assert_eq(gr.test._awaiter.await_logger.wait_log_delay, 999.0)
+
 
 	# -------
 	# Spot check some type comparisons, these were all causing errors.  These

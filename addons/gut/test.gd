@@ -77,7 +77,7 @@ var collected_script = null
 var wait_log_delay = .5 :
 	set(val):
 		if(_awaiter != null):
-			_awaiter._await_logger.wait_log_delay = val
+			_awaiter.await_logger.wait_log_delay = val
 			wait_log_delay = val
 var _compare = GutUtils.Comparator.new()
 var _disable_strict_datatype_checks = false
@@ -106,7 +106,7 @@ var _was_ready_called = false
 # something better).  I'm leaving all this as it is until it bothers me more.
 func _do_ready_stuff():
 	_awaiter = GutUtils.Awaiter.new()
-	_awaiter._await_logger.wait_log_delay = wait_log_delay
+	_awaiter.await_logger.wait_log_delay = wait_log_delay
 	add_child(_awaiter)
 	_was_ready_called = true
 

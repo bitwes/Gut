@@ -151,6 +151,7 @@ func _apply_options(opts, gut):
 	gut.junit_xml_file = opts.junit_xml_file
 	gut.junit_xml_timestamp = opts.junit_xml_timestamp
 	gut.paint_after = str(opts.paint_after).to_float()
+	gut.wait_log_delay = opts.wait_log_delay
 
 	# These error_tracker options default to true.  Don't trust this comment.
 	if(!opts.failure_error_types.has(FAIL_ERROR_TYPE_ENGINE)):

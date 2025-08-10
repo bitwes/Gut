@@ -144,6 +144,7 @@ an immediate "=":
 	opts.add('-gbackground_color', options.background_color, 'Background color as an html color, default "[default]"')
 	opts.add('-gfont_color',options.font_color, 'Font color as an html color, default "[default]"')
 	opts.add('-gpaint_after', options.paint_after, 'Delay before GUT will add a 1 frame pause to paint the screen/GUI.  default [default]')
+	opts.add('-gwait_log_delay', options.wait_log_delay, 'Delay before GUT will print a message to indicate a test is awaiting one of the wait_* methods.  Default [default]')
 
 	opts.add_heading("Result Export:")
 	opts.add('-gjunit_xml_file', options.junit_xml_file, 'Export results of run to this file in the Junit XML format.')
@@ -160,10 +161,13 @@ an immediate "=":
 # Parses options, applying them to the _tester or setting values
 # in the options struct.
 func extract_command_line_options(from, to):
+	to.compact_mode = from.get_value_or_null('-gcompact_mode')
 	to.config_file = from.get_value_or_null('-gconfig')
 	to.dirs = from.get_value_or_null('-gdir')
 	to.disable_colors =  from.get_value_or_null('-gdisable_colors')
 	to.double_strategy = from.get_value_or_null('-gdouble_strategy')
+	to.errors_do_not_cause_failure = from.get_value_or_null('-gerrors_do_not_cause_failure')
+	to.hide_orphans = from.get_value_or_null('-ghide_orphans')
 	to.ignore_pause = from.get_value_or_null('-gignore_pause')
 	to.include_subdirs = from.get_value_or_null('-ginclude_subdirs')
 	to.inner_class = from.get_value_or_null('-ginner_class')
@@ -176,17 +180,15 @@ func extract_command_line_options(from, to):
 	to.should_exit = from.get_value_or_null('-gexit')
 	to.should_exit_on_success = from.get_value_or_null('-gexit_on_success')
 	to.should_maximize = from.get_value_or_null('-gmaximize')
-	to.compact_mode = from.get_value_or_null('-gcompact_mode')
-	to.hide_orphans = from.get_value_or_null('-ghide_orphans')
 	to.suffix = from.get_value_or_null('-gsuffix')
-	to.errors_do_not_cause_failure = from.get_value_or_null('-gerrors_do_not_cause_failure')
 	to.tests = from.get_value_or_null('-gtest')
 	to.unit_test_name = from.get_value_or_null('-gunit_test_name')
+	to.wait_log_delay = from.get_value_or_null('-gwait_log_delay')
 
-	to.font_size = from.get_value_or_null('-gfont_size')
-	to.font_name = from.get_value_or_null('-gfont_name')
 	to.background_color = from.get_value_or_null('-gbackground_color')
 	to.font_color = from.get_value_or_null('-gfont_color')
+	to.font_name = from.get_value_or_null('-gfont_name')
+	to.font_size = from.get_value_or_null('-gfont_size')
 	to.paint_after = from.get_value_or_null('-gpaint_after')
 
 	to.junit_xml_file = from.get_value_or_null('-gjunit_xml_file')

@@ -152,4 +152,15 @@ class TestApplyOptions:
 		gc.apply_options(g)
 		assert_deprecated(gc)
 
+	func test_wait_log_delay_is_applied():
+		var gc = GutUtils.GutConfig.new()
+		var g = autofree(new_gut(verbose))
+
+		g.wait_log_delay = 1.3
+		gc.options.wait_log_delay = .77
+		gc.apply_options(g)
+		assert_eq(g.wait_log_delay, gc.options.wait_log_delay)
+
+
+
 

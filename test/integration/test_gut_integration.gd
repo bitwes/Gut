@@ -23,6 +23,7 @@ class CoupledScriptTest:
 		if(test_name != null):
 			_gut.unit_test_name = test_name
 
+		_gut.wait_log_delay = wait_log_delay
 		_gut.test_scripts()
 
 
