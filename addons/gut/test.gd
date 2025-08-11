@@ -120,8 +120,10 @@ func _notification(what):
 	# Tests are never expected to re-enter the tree.  Tests are removed from the
 	# tree after they are run.
 	if(what == NOTIFICATION_EXIT_TREE):
+		# print(_strutils.type2str(self), ':  exit_tree')
 		_awaiter.queue_free()
 	elif(what == NOTIFICATION_PREDELETE):
+		# print(_strutils.type2str(self), ':  predelete')
 		if(is_instance_valid(_awaiter)):
 			_awaiter.queue_free()
 
@@ -271,8 +273,6 @@ func _fail_if_not_double_or_does_not_have_method(inst, method_name):
 		if(msg != ''):
 			_fail(msg)
 			to_return = ERR_INVALID_DATA
-
-
 
 	return to_return
 

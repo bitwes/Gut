@@ -246,7 +246,12 @@ func info(text):
 
 
 func orphan(text):
-	_output_type(types.orphan, text)
+	var td = _type_data["orphan"]
+	if(!td.enabled):
+		return
+	_output(_indent_text(text), td.fmt)
+	_output("\n")
+	# _output_type(types.orphan, text)
 
 
 func passed(text):

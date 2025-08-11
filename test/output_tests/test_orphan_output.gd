@@ -87,3 +87,12 @@ class TestWithAsserts:
 		var n = new_node("test_two_one")
 		n.free()
 		assert_no_new_orphans()
+
+
+	func test_pending():
+		var n = new_node("test_pending")
+		pending("sure")
+
+
+	func test_risky():
+		var n = new_node("test_risky")

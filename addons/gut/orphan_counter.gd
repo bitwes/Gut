@@ -58,25 +58,6 @@ class Orphanage:
 		return to_return
 
 
-	func print_all():
-		var last_script = ''
-		var last_test = ''
-		var still_orphaned = 0
-		for key in orphan_ids:
-			var inst = instance_from_id(key)
-			if(inst != null and inst is not GutTest):
-				var entry = orphan_ids[key]
-				if(entry.group != last_script):
-					print(entry.group)
-					last_script = entry.group
-				if(entry.subgroup != last_test):
-					print('    - ', entry.subgroup)
-					last_test = entry.subgroup
-				print('    ', '    * ', strutils.type2str(inst))#, '::::', strutils.type2str(inst.get_parent()))
-				still_orphaned += 1
-		print("Total still orphaned = ", still_orphaned)
-
-
 	func clean():
 		oprhans_by_group.clear()
 		for key in orphan_ids.keys():
@@ -88,13 +69,15 @@ class Orphanage:
 
 
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 var _strutils = GutStringUtils.new()
 
 var orphanage = Orphanage.new()
 var logger = GutUtils.get_logger()
 
 
-func orphan_count():
+func orphan_count() -> int:
 	return Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT)
 
 
@@ -115,15 +98,15 @@ func end_script(script_path, should_log):
 	record_orphans(script_path)
 	var orphans = orphanage.get_all_group_orphans(script_path)
 	if(orphans.size() > 0 and should_log):
-		logger.log(str(script_path, ': ', orphans.size(), ' orphans'))
+		logger.orphan(str(orphans.size(), ' orphans'))
 
 
 func end_test(script_path, test_name, should_log = true):
 	var orphans = record_orphans(script_path, test_name)
 	if(orphans.size() > 0 and should_log):
-		logger.log('Orphans:')
+		logger.orphan('Orphans:')
 		for o in orphans:
-			logger.log(str('    * ', _strutils.type2str(o)))
+			logger.orphan(str('    * ', _strutils.type2str(o)))
 
 
 func get_orphans(group, subgroup=null):
@@ -133,12 +116,30 @@ func get_orphans(group, subgroup=null):
 		return orphanage.get_orphans(group, subgroup)
 
 
-func get_count():
-	return orphanage.orphan_ids.size()
+func get_count() -> int:
+	return orphan_count()
+	# return orphanage.orphan_ids.size()
 
 
-func print_all():
-	orphanage.print_all()
+func log_all():
+	var last_script = ''
+	var last_test = ''
+	var still_orphaned = 0
+
+	for key in orphanage.orphan_ids:
+		var inst = instance_from_id(key)
+		if(inst != null and inst is not GutTest):
+			var entry = orphanage.orphan_ids[key]
+			if(entry.group != last_script):
+				logger.log(entry.group)
+				last_script = entry.group
+			if(entry.subgroup != last_test):
+				logger.log(str('    - ', entry.subgroup))
+				last_test = entry.subgroup
+			logger.log(str('    ', '    * ', _strutils.type2str(inst)))
+			still_orphaned += 1
+
+	logger.log(str("\nTotal = ", still_orphaned))
 
 
 # ##############################################################################

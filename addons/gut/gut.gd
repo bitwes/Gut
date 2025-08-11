@@ -385,10 +385,20 @@ func _log_test_children_warning(test_script):
 
 
 func _log_end_run():
+	var summary = GutUtils.Summary.new(self)
 	if(_should_print_summary):
-		var summary = GutUtils.Summary.new(self)
+		_orphan_counter.record_orphans("end_run")
+		if(_lgr.is_type_enabled("orphan") and _orphan_counter.get_count() > 0):
+			_lgr.log("\n\n\n")
+			_lgr.orphan("==============================================")
+			_lgr.orphan('= Orphans')
+			_lgr.orphan("==============================================")
+			_orphan_counter.log_all()
+			_lgr.log("\n")
+		else:
+			_lgr.log("\n\n\n")
+
 		summary.log_end_run()
-		_orphan_counter.print_all()
 
 
 func _validate_hook_script(path):
@@ -425,6 +435,7 @@ func _run_hook_script(inst):
 		inst.gut = self
 		await inst.run()
 	return inst
+
 
 # ------------------------------------------------------------------------------
 # Initialize variables for each run of a single test script.
@@ -466,6 +477,7 @@ func _end_run():
 func _export_results():
 	if(_junit_xml_file != ''):
 		_export_junit_xml()
+
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -626,8 +638,9 @@ func _run_test(script_inst, test_name, param_index = -1):
 
 	_doubler.get_ignored_methods().clear()
 
+
 func get_current_test_orphans():
-	var sname = get_current_test_object().collected_script.get_filename_and_inner()
+	var sname = get_current_test_object().collected_script.get_ref().get_filename_and_inner()
 	var tname = get_current_test_object().name
 	_orphan_counter.record_orphans(sname, tname)
 	return _orphan_counter.get_orphans(sname, tname)
