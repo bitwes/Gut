@@ -1,44 +1,144 @@
 # ------------------------------------------------------------------------------
-# This is used to track the change in orphans over different intervals.
-# You use this by adding a counter at the start of an interval and then
-# using get_orphans_since to find out how many orphans have been created since
-# that counter was added.
-#
-# For example, when a test starts, gut adds a counter for "test" which
-# creates/sets the counter's value to the current orphan count.  At the end of
-# the test GUT uses get_orphans_since("test") to find out how many orphans
-# were created by the test.
+# It keeps track of the orphans...so this is best name it could ever have.
 # ------------------------------------------------------------------------------
-var _counters = {}
+class Orphanage:
+	const UNGROUPED = "UNGROUPED"
+	var orphan_ids = {}
+	var oprhans_by_group = {}
+	var strutils = GutUtils.Strutils.new()
+	# var new_orphans = []
+
+	func _make_group_key(group=null, subgroup=null):
+		var to_return = UNGROUPED
+		if(group != null):
+			to_return = group
+
+		if(subgroup == null):
+			to_return += UNGROUPED
+		else:
+			to_return += str(".", subgroup)
+
+		return to_return
+
+	func _add_orphan_by_group(id, group, subgroup):
+		var key = _make_group_key(group, subgroup)
+		if(oprhans_by_group.has(key)):
+			oprhans_by_group[key].append(id)
+		else:
+			oprhans_by_group[key] = [id]
+
+
+	func process_orphans(group=null, subgroup=null):
+		var new_orphans = []
+		for orphan_id in Node.get_orphan_node_ids():
+			if(!orphan_ids.has(orphan_id)):
+				new_orphans.append(orphan_id)
+				orphan_ids[orphan_id] = {
+					"group":GutUtils.nvl(group, UNGROUPED),
+					"subgroup":GutUtils.nvl(subgroup, UNGROUPED)
+				}
+				_add_orphan_by_group(orphan_id, group, subgroup)
+
+
+		return new_orphans
+
+
+	func get_orphans(group=null, subgroup=null):
+		var key = _make_group_key(group, subgroup)
+		return oprhans_by_group.get(key, [])
+
+
+	# Given the likely size, this was way easier than making a dictionary
+	# of dictionaries of arrays.
+	func get_all_group_orphans(group):
+		var to_return = []
+		for key in oprhans_by_group:
+			if(key == group or key.begins_with(str(group, '.'))):
+				to_return.append_array(oprhans_by_group[key])
+		return to_return
+
+
+	func print_all():
+		var last_script = ''
+		var last_test = ''
+		var still_orphaned = 0
+		for key in orphan_ids:
+			var inst = instance_from_id(key)
+			if(inst != null and inst is not GutTest):
+				var entry = orphan_ids[key]
+				if(entry.group != last_script):
+					print(entry.group)
+					last_script = entry.group
+				if(entry.subgroup != last_test):
+					print('    - ', entry.subgroup)
+					last_test = entry.subgroup
+				print('    ', '    * ', strutils.type2str(inst))#, '::::', strutils.type2str(inst.get_parent()))
+				still_orphaned += 1
+		print("Total still orphaned = ", still_orphaned)
+
+
+	func clean():
+		oprhans_by_group.clear()
+		for key in orphan_ids.keys():
+			if(!is_instance_id_valid(key)):
+				orphan_ids.erase(key)
+			else:
+				_add_orphan_by_group(key, orphan_ids[key].group, orphan_ids[key].subgroup)
+
+
+
+
+var _strutils = GutStringUtils.new()
+
+var orphanage = Orphanage.new()
+var logger = GutUtils.get_logger()
+
 
 func orphan_count():
 	return Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT)
 
-func add_counter(name):
-	_counters[name] = orphan_count()
 
-# Returns the number of orphans created since add_counter was last called for
-# the name.  Returns -1 to avoid blowing up with an invalid name but still
-# be somewhat visible that we've done something wrong.
-func get_orphans_since(name):
-	return orphan_count() - _counters[name] if _counters.has(name) else -1
+func record_orphans(group, subgroup = null):
+	var result = orphanage.process_orphans(group, subgroup)
+	return convert_instance_ids_to_valid_instances(result)
 
-func get_count(name):
-	return _counters.get(name, -1)
 
-func print_orphans(name, lgr):
-	var count = get_orphans_since(name)
+func convert_instance_ids_to_valid_instances(orphan_ids):
+	var to_return = []
+	for entry in orphan_ids:
+		if(is_instance_id_valid(entry)):
+			to_return.append(instance_from_id(entry))
+	return to_return
 
-	if(count > 0):
-		var o = 'orphan'
-		if(count > 1):
-			o = 'orphans'
-		lgr.orphan(str(count, ' new ', o, ' in ', name, '.'))
+
+func end_script(script_path, should_log):
+	record_orphans(script_path)
+	var orphans = orphanage.get_all_group_orphans(script_path)
+	if(orphans.size() > 0 and should_log):
+		logger.log(str(script_path, ': ', orphans.size(), ' orphans'))
+
+
+func end_test(script_path, test_name, should_log = true):
+	var orphans = record_orphans(script_path, test_name)
+	if(orphans.size() > 0 and should_log):
+		logger.log('Orphans:')
+		for o in orphans:
+			logger.log(str('    * ', _strutils.type2str(o)))
+
+
+func get_orphans(group, subgroup=null):
+	if(subgroup == null):
+		return orphanage.get_all_group_orphans(group)
+	else:
+		return orphanage.get_orphans(group, subgroup)
+
+
+func get_count():
+	return orphanage.orphan_ids.size()
+
 
 func print_all():
-	var msg = str("Total Orphans ", orphan_count(), "\n", JSON.stringify(_counters, "    "))
-	print(msg)
-
+	orphanage.print_all()
 
 
 # ##############################################################################
@@ -68,9 +168,4 @@ func print_all():
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
-# ##############################################################################
-# This is a utility for tracking changes in the orphan count.  Each time
-# add_counter is called it adds/resets the value in the dictionary to the
-# current number of orphans.  Each call to get_counter will return the change
-# in orphans since add_counter was last called.
 # ##############################################################################

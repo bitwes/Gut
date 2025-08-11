@@ -37,9 +37,7 @@ func _log_orphans_and_disclaimer(gut):
 	var counter = gut.get_orphan_counter()
 	# Do not count any of the test scripts since these will be released when GUT
 	# is released.
-	var do_not_count_orphans = counter.get_count("pre_run") + gut.get_test_script_count()
-	var total_run_orphans = counter.orphan_count() - do_not_count_orphans
-
+	var total_run_orphans = counter.get_count()
 	if(total_run_orphans > 0):
 		lgr.orphan(str("Total orphans in run ", total_run_orphans))
 		gut.p("Note:  This count does not include GUT objects that will be freed upon exit.")

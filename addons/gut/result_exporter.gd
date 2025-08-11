@@ -79,7 +79,7 @@ func get_results_dictionary(gut, include_scripts=true):
 	props.errors = gut.logger.get_errors().size()
 	props.warnings = gut.logger.get_warnings().size()
 	props.time =  gut.get_elapsed_time()
-	props.orphans = gut.get_orphan_counter().get_orphans_since('pre_run')
+	props.orphans = gut.get_orphan_counter().get_count()
 	result.test_scripts.scripts = scripts
 
 	return result

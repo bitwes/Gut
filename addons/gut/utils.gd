@@ -33,6 +33,7 @@ const DOUBLE_TEMPLATES = {
 	SCRIPT = 'res://addons/gut/double_templates/script_template.txt',
 }
 
+const NOTHING := '__NOTHING__'
 const NO_TEST := 'NONE'
 const GUT_ERROR_TYPE = 999
 

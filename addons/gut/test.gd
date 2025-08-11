@@ -100,6 +100,7 @@ var _strutils = GutUtils.Strutils.new()
 var _awaiter = null
 var _was_ready_called = false
 
+
 # I haven't decided if we should be using _ready or not.  Right now gut.gd will
 # call this if _ready was not called (because it was overridden without a super
 # call).  Maybe gut.gd should just call _do_ready_stuff (after we rename it to
@@ -120,6 +121,9 @@ func _notification(what):
 	# tree after they are run.
 	if(what == NOTIFICATION_EXIT_TREE):
 		_awaiter.queue_free()
+	elif(what == NOTIFICATION_PREDELETE):
+		if(is_instance_valid(_awaiter)):
+			_awaiter.queue_free()
 
 
 #region Private
@@ -1995,7 +1999,7 @@ func assert_not_freed(obj, title='something'):
 ## test when the assert is executed.  See the [wiki]Memory-Management[/wiki]
 ## page for more information.
 func assert_no_new_orphans(text=''):
-	var count = gut.get_orphan_counter().get_orphans_since('test')
+	var count = gut.get_current_test_orphans().size()
 	var msg = ''
 	if(text != ''):
 		msg = ':  ' + text
