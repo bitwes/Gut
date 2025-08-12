@@ -63,6 +63,13 @@ func run_test_in_gut(which):
 	var s = GutUtils.Summary.new()
 	return s.get_totals(which)
 
+func run_tests_in_gut_await(which):
+	add_as_test_to_gut(which)
+	which.run_tests()
+	await which.end_run
+	var s = GutUtils.Summary.new()
+	return s.get_totals(which)
+
 
 func print_source():
 	print(GutUtils.add_line_numbers(make_source()))

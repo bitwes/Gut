@@ -72,7 +72,7 @@ class TestErrorFailures:
 	func test_push_error_causes_failure():
 		var s = autofree(DynamicGutTest.new())
 		s.add_source(_src_push_error)
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.failing, 1, 'one failing')
 		assert_eq(t.passing, 1, 'one passing')
 
@@ -80,7 +80,7 @@ class TestErrorFailures:
 	func test_gut_error_causes_failure():
 		var s = autofree(DynamicGutTest.new())
 		s.add_source(_src_gut_error)
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.failing, 1, 'one failing')
 		assert_eq(t.passing, 1, 'one passing')
 
@@ -88,7 +88,7 @@ class TestErrorFailures:
 	func test_script_error_causes_failure():
 		var s = autofree(DynamicGutTest.new())
 		s.add_source(_src_script_error_in_called_method)
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.failing, 1, 'one failing')
 		assert_eq(t.passing, 1, 'one passing')
 
@@ -96,7 +96,7 @@ class TestErrorFailures:
 	func test_script_error_in_test_causes_failure():
 		var s = autofree(DynamicGutTest.new())
 		s.add_source(_src_script_error_in_test)
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.failing, 1, 'one failing')
 		assert_eq(t.passing, 0, 'no passing because of early exit from error')
 
@@ -146,7 +146,7 @@ class TestErrorAsserts:
 		var s = autofree(DynamicGutTest.new())
 		s.add_lambda_test(test_func, 'test_something')
 
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.passing, 1)
 
 
@@ -159,7 +159,7 @@ class TestErrorAsserts:
 		var s = autofree(DynamicGutTest.new())
 		s.add_lambda_test(test_func, 'test_something')
 
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.passing, 1)
 
 
@@ -173,7 +173,7 @@ class TestErrorAsserts:
 		var s = autofree(DynamicGutTest.new())
 		s.add_lambda_test(test_func, 'test_something')
 
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		# 2 failures, one for assert and one for the unexpected errors that
 		# were not handled by the assert
 		assert_eq(t.failing, 2)
@@ -188,7 +188,7 @@ class TestErrorAsserts:
 		var s = autofree(DynamicGutTest.new())
 		s.add_lambda_test(test_func, 'test_something')
 
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.passing, 1)
 
 	func test_push_error_with_non_matching_text_fails():
@@ -199,7 +199,7 @@ class TestErrorAsserts:
 		var s = autofree(DynamicGutTest.new())
 		s.add_lambda_test(test_func, 'test_something')
 
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.failing, 2)
 
 	func test_push_error_with_matching_text_only_consumes_one():
@@ -211,7 +211,7 @@ class TestErrorAsserts:
 		var s = autofree(DynamicGutTest.new())
 		s.add_lambda_test(test_func, 'test_something')
 
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.passing, 1)
 		assert_eq(t.failing, 1)
 
@@ -225,7 +225,7 @@ class TestErrorAsserts:
 		var s = autofree(DynamicGutTest.new())
 		s.add_lambda_test(test_func, 'test_something')
 
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.passing, 2)
 		assert_eq(t.failing, 0)
 
@@ -241,7 +241,7 @@ class TestErrorAsserts:
 		s.add_source(_src_divide_them)
 		s.add_lambda_test(test_func, 'test_something')
 
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.passing, 1)
 
 	func test_asserting_multiple_engine_error_prevents_failure():
@@ -255,7 +255,7 @@ class TestErrorAsserts:
 		s.add_source(_src_divide_them)
 		s.add_lambda_test(test_func, 'test_something')
 
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.passing, 1)
 
 	func test_asserting_non_matching_count_causes_two_failures():
@@ -269,7 +269,7 @@ class TestErrorAsserts:
 		s.add_source(_src_divide_them)
 		s.add_lambda_test(test_func, 'test_something')
 
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		# 2 failures, one for assert and one for the unexpected errors that
 		# were not handled by the assert
 		assert_eq(t.failing, 2)
@@ -287,7 +287,7 @@ class TestErrorAsserts:
 		s.add_source(_src_divide_them)
 		s.add_lambda_test(test_func, 'test_something')
 
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.passing, 1)
 
 	func test_engine_with_non_matching_text_fails():
@@ -299,7 +299,7 @@ class TestErrorAsserts:
 		s.add_source(_src_divide_them)
 		s.add_lambda_test(test_func, 'test_something')
 
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.failing, 2)
 
 	func test_engine_with_matching_text_only_consumes_one():
@@ -312,7 +312,7 @@ class TestErrorAsserts:
 		s.add_source(_src_divide_them)
 		s.add_lambda_test(test_func, 'test_something')
 
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.passing, 1)
 		assert_eq(t.failing, 1)
 
@@ -327,7 +327,7 @@ class TestErrorAsserts:
 		s.add_source(_src_divide_them)
 		s.add_lambda_test(test_func, 'test_something')
 
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.passing, 2)
 		assert_eq(t.failing, 0)
 
@@ -348,7 +348,7 @@ class TestErrorAsserts:
 		s.add_source(_src_divide_them)
 		s.add_lambda_test(test_func, 'test_something')
 
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.passing, 2)
 
 
@@ -367,7 +367,7 @@ class TestErrorAsserts:
 		s.add_source(_src_divide_them)
 		s.add_lambda_test(test_func, 'test_something')
 
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.passing, 1, 'pass count')
 		# Errors are not consumed so they still cause errors.
 		assert_eq(t.failing, 1, 'fail count')
@@ -387,7 +387,7 @@ class TestErrorAsserts:
 		s.add_source(_src_divide_them)
 		s.add_lambda_test(test_func, 'test_something')
 
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.passing, 1, 'pass count')
 		# Errors are not consumed so they still cause errors.
 		assert_eq(t.failing, 0, 'fail count')
@@ -404,7 +404,7 @@ class TestErrorAsserts:
 		var s = autofree(DynamicGutTest.new())
 		s.add_source(src_test_with_params)
 
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.passing, 5, '5 params, 1 assert each: pass count')
 		assert_eq(t.failing, 0, 'fail count')
 
