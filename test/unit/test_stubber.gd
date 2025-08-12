@@ -22,7 +22,7 @@ class HackedStubber:
 	var StubParams = load('res://addons/gut/stub_params.gd')
 	func _init():
 		set_logger(GutUtils.GutLogger.new())
-		
+
 	func set_return(obj, method, value):
 		var sp = StubParams.new(obj, method)
 		sp.to_return(value)

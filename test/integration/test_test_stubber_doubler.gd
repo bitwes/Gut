@@ -30,7 +30,7 @@ class TestBasics:
 
 	func test_double_sets_stubber_for_doubled_class():
 		var d = autofree(_test.double(DoubleMe).new())
-		assert_eq(d.__gutdbl.stubber, _gut.get_stubber())
+		assert_eq(d.__gutdbl.stubber_ref.get_ref(), _gut.get_stubber())
 
 	func test_basic_double_and_stub():
 		var d = autofree(_test.double(DoubleMe).new())
