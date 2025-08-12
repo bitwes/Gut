@@ -155,6 +155,9 @@ class TestTestsSmartDoubleMethod:
 		_test.gut = gut
 		_test.set_logger(gut.logger)
 
+	func after_all():
+		_test.queue_free()
+
 	func after_each():
 		gut.get_stubber().clear()
 
