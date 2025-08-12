@@ -1,7 +1,7 @@
 extends GutTest
 
 var script_orphan = new_node("script_level")
-
+var MainScene = load('res://scenes/main.tscn')
 
 func new_node(node_name):
 	var n = Node.new()
@@ -27,11 +27,16 @@ func test_this_makes_two_orphans():
 	new_node("test_two_two")
 	pass_test('passing')
 
+func test_with_a_scene_orphan():
+	var main_scene = MainScene.instantiate()
+	pass_test('passing')
+
+	
 
 class TestDupeOne:
 	extends GutTest
 	var script_orphan = new_node("script_level")
-
+	
 
 	func new_node(node_name):
 		var n = Node.new()

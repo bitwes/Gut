@@ -67,12 +67,12 @@ class TestYeOldYieldMethods:
 		var signaler = add_child_autoqfree(TimedSignaler.new())
 		signaler.emit_after(.5)
 		await yield_to(signaler, 'the_signal', 10)
-		assert_between(counter.physics_time, .49, .54)
+		assert_between(counter.idle_time, .49, .54)
 
 	func test_wait_to_ends_at_max_wait_if_signal_not_emitted():
 		var signaler = add_child_autoqfree(TimedSignaler.new())
 		await yield_to(signaler, 'the_signal', 1)
-		assert_between(counter.physics_time, .9, 1.1)
+		assert_between(counter.idle_time, .9, 1.1)
 
 	func test_wait_for_waits_for_x_seconds():
 		await wait_seconds(.5)
@@ -115,20 +115,20 @@ class TestTheNewWaitMethods:
 		var signaler = add_child_autoqfree(TimedSignaler.new())
 		signaler.emit_after(.5)
 		await wait_for_signal(signaler.the_signal, 10)
-		assert_between(counter.physics_time, .49, .54)
+		assert_between(counter.idle_time, .49, .54)
 
 
 	func test_wait_for_signal_ends_when_signal_emitted():
 		var signaler = add_child_autoqfree(TimedSignaler.new())
 		signaler.emit_after(.5)
 		await wait_for_signal(signaler.the_signal, 10)
-		assert_almost_eq(counter.physics_time, .5, .05)
+		assert_almost_eq(counter.idle_time, .5, .05)
 		assert_false(did_wait_timeout(), 'did_wait_timeout')
 
 	func test_wait_to_ends_at_max_wait_if_signal_not_emitted():
 		var signaler = add_child_autoqfree(TimedSignaler.new())
 		await wait_for_signal(signaler.the_signal, 1)
-		assert_between(counter.physics_time, .9, 1.1)
+		assert_between(counter.idle_time, .9, 1.1)
 		assert_true(did_wait_timeout(), 'did_wait_timeout')
 
 	func test_wait_for_signal_returns_true_when_signal_emitted():
@@ -157,7 +157,7 @@ class TestWaitUntil:
 			return counter.physics_time > .25
 
 		await wait_until(all_is_good, .5)
-		assert_almost_eq(counter.physics_time, .25, .05)
+		assert_almost_eq(counter.idle_time, .25, .05)
 		assert_false(did_wait_timeout(), 'did_wait_timeout')
 
 	func test_wait_until_times_out():
@@ -165,7 +165,7 @@ class TestWaitUntil:
 			return false
 
 		await wait_until(all_is_good, .5)
-		assert_almost_eq(counter.physics_time, .5, .05)
+		assert_almost_eq(counter.idle_time, .5, .05)
 		assert_true(did_wait_timeout(), 'did_wait_timeout')
 
 	func test_wait_until_returns_true_when_it_finishes():
@@ -213,10 +213,10 @@ class TestWaitWhile:
 
 	func test_ends_when_method_returns_false():
 		var all_is_bad = func():
-			return counter.physics_time < .25
+			return counter.idle_time < .25
 
 		await wait_while(all_is_bad, .5)
-		assert_almost_eq(counter.physics_time, .25, .05)
+		assert_almost_eq(counter.idle_time, .25, .05)
 		assert_false(did_wait_timeout(), 'did_wait_timeout')
 
 
@@ -224,12 +224,12 @@ class TestWaitWhile:
 		var never_false = func(): return true
 
 		await wait_while(never_false, .5)
-		assert_almost_eq(counter.physics_time, .5, .05)
+		assert_almost_eq(counter.idle_time, .5, .05)
 		assert_true(did_wait_timeout(), 'did_wait_timeout')
 
 	func test_wait_until_returns_true_when_it_finishes():
 		var all_is_bad = func():
-			return counter.physics_time < .25
+			return counter.idle_time < .25
 
 		var result = await wait_while(all_is_bad, .5)
 		assert_true(result)

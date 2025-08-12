@@ -5,6 +5,7 @@
 # unofficial GUT export format.
 # ------------------------------------------------------------------------------
 var json = JSON.new()
+var strutils = GutStringUtils.new()
 
 func _export_tests(gut, collected_script):
 	var to_return = {}
@@ -14,12 +15,18 @@ func _export_tests(gut, collected_script):
 			var orphans = gut.get_orphan_counter().get_orphans(
 				collected_script.get_filename_and_inner(),
 				test.name)
+			var orphan_node_strings = []
+			for o in orphans:
+				if(is_instance_id_valid(o)):
+					orphan_node_strings.append(strutils.type2str(instance_from_id(o)))
+
 			to_return[test.name] = {
 				"status":test.get_status_text(),
 				"passing":test.pass_texts,
 				"failing":test.fail_texts,
 				"pending":test.pending_texts,
-				"orphans":orphans.size(),
+				"orphan_count":orphan_node_strings.size(),
+				"orphans":orphan_node_strings,
 				"time_taken": test.time_taken
 			}
 
