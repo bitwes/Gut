@@ -88,7 +88,7 @@ class TestTheNewWaitMethods:
 		counter = add_child_autoqfree(Counter.new())
 
 	func test_wait_frames_is_deprecated():
-		var t = GutTest.new()
+		var t = autofree(GutTest.new())
 		t.set_logger(GutLogger.new())
 		t._awaiter = autofree(double(load('res://addons/gut/awaiter.gd')).new())
 		t.wait_frames(5)
