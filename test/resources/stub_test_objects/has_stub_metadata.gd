@@ -4,7 +4,6 @@
 # ------------------------------------------------------------------------------
 
 var __gutdbl_values = {
-	double = self,
 	thepath = 'res://test/resources/stub_test_objects/to_stub.gd',
 	subpath = '',
 	stubber = -1,
@@ -13,8 +12,15 @@ var __gutdbl_values = {
 	from_singleton = '',
 	is_partial = false,
 }
+
 var __gutdbl = load('res://addons/gut/double_tools.gd').new(self)
 
 # Here so other things can check for a method to know if this is a double.
 func __gutdbl_check_method__():
 	pass
+
+# Cleanup called by GUT after tests have finished.  Important for RefCounted
+# objects.  Nodes are freed, and won't have this method called on them.
+func __gutdbl_done():
+	__gutdbl = null
+	__gutdbl_values.clear()
