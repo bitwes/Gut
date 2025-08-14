@@ -59,6 +59,10 @@ Properties
    +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
    | :ref:`GutMain<class_GutMain>`                                                  | :ref:`gut<class_GutTest_property_gut>`                           | ``null``                                    |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`collected_script<class_GutTest_property_collected_script>` | ``null``                                    |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_log_delay<class_GutTest_property_wait_log_delay>`     | ``0.5``                                     |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------+---------------------------------------------+
 
 .. rst-class:: classref-reftable-group
 
@@ -134,6 +138,8 @@ Methods
    | |void|                                                                         | :ref:`assert_ne_deep<class_GutTest_method_assert_ne_deep>`\ (\ v1, v2\ )                                                                                                                                                                                         |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_no_new_orphans<class_GutTest_method_assert_no_new_orphans>`\ (\ text = ""\ )                                                                                                                                                                        |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | |void|                                                                         | :ref:`assert_no_orphans<class_GutTest_method_assert_no_orphans>`\ (\ text = ""\ )                                                                                                                                                                                |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_not_between<class_GutTest_method_assert_not_between>`\ (\ got, expect_low, expect_high, text = ""\ )                                                                                                                                                |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -245,7 +251,7 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`use_parameters<class_GutTest_method_use_parameters>`\ (\ params\ )                                                                                                                                                                                         |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_for_signal<class_GutTest_method_wait_for_signal>`\ (\ sig\: `Signal <https://docs.godotengine.org/en/stable/classes/class_signal.html>`_, max_wait, msg = ""\ )                                                                                       |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_for_signal<class_GutTest_method_wait_for_signal>`\ (\ sig\: `Signal <https://docs.godotengine.org/en/stable/classes/class_signal.html>`_, max_time, msg = ""\ )                                                                                       |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_idle_frames<class_GutTest_method_wait_idle_frames>`\ (\ x\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_, msg = ""\ )                                                                                                       |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -255,9 +261,9 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_seconds<class_GutTest_method_wait_seconds>`\ (\ time, msg = ""\ )                                                                                                                                                                                     |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_until<class_GutTest_method_wait_until>`\ (\ callable, max_wait, p3 = "", p4 = ""\ )                                                                                                                                                                   |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_until<class_GutTest_method_wait_until>`\ (\ callable, max_time, p3 = "", p4 = ""\ )                                                                                                                                                                   |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_while<class_GutTest_method_wait_while>`\ (\ callable, max_wait, p3 = "", p4 = ""\ )                                                                                                                                                                   |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_while<class_GutTest_method_wait_while>`\ (\ callable, max_time, p3 = "", p4 = ""\ )                                                                                                                                                                   |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`watch_signals<class_GutTest_method_watch_signals>`\ (\ object\ )                                                                                                                                                                                           |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -418,6 +424,38 @@ Reference to :ref:`GutInputSender<class_GutInputSender>`.  This was the way you 
 .. rst-class:: classref-property
 
 :ref:`GutMain<class_GutMain>` **gut** = ``null`` :ref:`🔗<class_GutTest_property_gut>`
+
+.. container:: contribute
+
+	No description
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_property_collected_script:
+
+.. rst-class:: classref-property
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **collected_script** = ``null`` :ref:`🔗<class_GutTest_property_collected_script>`
+
+.. container:: contribute
+
+	No description
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_property_wait_log_delay:
+
+.. rst-class:: classref-property
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_log_delay** = ``0.5`` :ref:`🔗<class_GutTest_property_wait_log_delay>`
+
+.. rst-class:: classref-property-setget
+
+- |void| **@wait_log_delay_setter**\ (\ value\ )
 
 .. container:: contribute
 
@@ -1978,6 +2016,18 @@ This method will assert that no orphaned nodes have been introduced by the test 
 
 ----
 
+.. _class_GutTest_method_assert_no_orphans:
+
+.. rst-class:: classref-method
+
+|void| **assert_no_orphans**\ (\ text = ""\ ) :ref:`🔗<class_GutTest_method_assert_no_orphans>`
+
+This is an alias for :ref:`assert_no_new_orphans<class_GutTest_method_assert_no_new_orphans>`, since the new orphan tracking system (`Orphanage`) no longer has a need for the "new" qualifier, in its name, that the old system did.  Now GUT knows more and you can more confidently assert that your test has made "no orphans".
+
+.. rst-class:: classref-item-separator
+
+----
+
 .. _class_GutTest_method_assert_property_with_backing_variable:
 
 .. rst-class:: classref-method
@@ -2183,7 +2233,7 @@ See `Awaiting <../Awaiting.html>`__
 
 .. rst-class:: classref-method
 
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_for_signal**\ (\ sig\: `Signal <https://docs.godotengine.org/en/stable/classes/class_signal.html>`_, max_wait, msg = ""\ ) :ref:`🔗<class_GutTest_method_wait_for_signal>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_for_signal**\ (\ sig\: `Signal <https://docs.godotengine.org/en/stable/classes/class_signal.html>`_, max_time, msg = ""\ ) :ref:`🔗<class_GutTest_method_wait_for_signal>`
 
 Use with await to wait for a signal to be emitted or a maximum amount of time.  Returns true if the signal was emitted, false if not.
 
@@ -2261,7 +2311,7 @@ See `Awaiting <../Awaiting.html>`__
 
 .. rst-class:: classref-method
 
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_until**\ (\ callable, max_wait, p3 = "", p4 = ""\ ) :ref:`🔗<class_GutTest_method_wait_until>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_until**\ (\ callable, max_time, p3 = "", p4 = ""\ ) :ref:`🔗<class_GutTest_method_wait_until>`
 
 Use with await to wait for ``callable`` to return the boolean value ``true`` or a maximum amount of time.  All values that are not the boolean value ``true`` are ignored.  ``callable`` is called every ``_physics_process`` tick unless an optional time between calls is specified.
 
@@ -2300,7 +2350,7 @@ See `Awaiting <../Awaiting.html>`__
 
 .. rst-class:: classref-method
 
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_while**\ (\ callable, max_wait, p3 = "", p4 = ""\ ) :ref:`🔗<class_GutTest_method_wait_while>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_while**\ (\ callable, max_time, p3 = "", p4 = ""\ ) :ref:`🔗<class_GutTest_method_wait_while>`
 
 This is the inverse of :ref:`wait_until<class_GutTest_method_wait_until>`.  This will continue to wait while ``callable`` returns the boolean value ``true``.  If **ANY** other value is is returned then the wait will end. Returns ``true`` if ``callable`` returned a value other than ``true`` before the timeout, ``false`` if not.
 

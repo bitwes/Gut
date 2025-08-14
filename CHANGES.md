@@ -14,6 +14,17 @@ assert_called(my_double.rpc_id, [p1, p2, [vararg_val1, vararg_val2, vararg_val3]
 ```
 * Error detection and asserts have been added.  Tests fail when unexpected errors occur and you can assert that errors have occurred.  This can be disabled at 3 different levels:  engine, push_error, GUT.  See the wiki for more information.
 * "Awaiting" messages now have a configurable delay which defaults to .5 seconds.  Messages to indicate a call to a `wait_` method will not appear until this delay has expired.  Now your 10 frame awaits aren't noisy unless you want them to be.
+* Orphaned nodes are now displayed...not the count (well, the count too), but the actual node and some extra information.  Insead of seeing "2 new orphans" you'll see something like:
+```
+* test_this_makes_two_orphans
+    Orphans:
+        * test_two_one:<Node#59760445195>
+        * test_two_two:<Node#59777222412>
+* test_with_a_scene_orphan
+    Orphans:
+        * main:<Node2D#59861108497>(main.gd)
+        * RunTestsButton:<Button#59877885714>
+```
 
 
 # 9.4.0

@@ -2012,6 +2012,14 @@ func assert_no_new_orphans(text=''):
 		_pass('No new orphans found.' + msg)
 
 
+## This is an alias for [method assert_no_new_orphans], since the new orphan
+## tracking system (`Orphanage`) no longer has a need for the "new" qualifier,
+## in its name, that the old system did.  Now GUT knows more and you can more
+## confidently assert that your test has made "no orphans".
+func assert_no_orphans(text=''):
+	assert_no_new_orphans(text)
+
+
 ## @ignore
 func assert_set_property(obj, property_name, new_value, expected_value):
 	pending("this hasn't been implemented yet")

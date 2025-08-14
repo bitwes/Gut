@@ -27,16 +27,23 @@ func test_this_makes_two_orphans():
 	new_node("test_two_two")
 	pass_test('passing')
 
-func test_with_a_scene_orphan():
-	var main_scene = MainScene.instantiate()
-	pass_test('passing')
 
-	
+# soooo many orphans, commented out because there's like 103 of them.  should
+# remain though.
+# func test_with_a_scene_orphan():
+# 	var main_scene = MainScene.instantiate()
+# 	pass_test('passing')
+
+
+func test_with_an_autofreed_node():
+	var new_node = autofree(Node.new())
+	assert_no_orphans()
+
 
 class TestDupeOne:
 	extends GutTest
 	var script_orphan = new_node("script_level")
-	
+
 
 	func new_node(node_name):
 		var n = Node.new()
@@ -62,6 +69,9 @@ class TestDupeOne:
 		new_node("test_two_two")
 		pass_test('passing')
 
+	func test_is_an_object_an_orphan():
+		var o = Object.new()
+		pass_test('passing')
 
 
 class TestWithAsserts:
