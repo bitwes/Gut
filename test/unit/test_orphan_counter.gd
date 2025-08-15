@@ -17,11 +17,11 @@ class TestOrphanIds:
 		return oc
 
 
-	func test_recording_orphans_returns_orphan_instances():
+	func test_recording_orphans_returns_instance_ids():
 		var oc = new_primed_orphan_counter()
 		var n1 = autofree(Node.new())
 		var orphans = oc.record_orphans('test_group')
-		assert_eq(orphans, [n1])
+		assert_eq(orphans, [n1.get_instance_id()])
 
 
 	func test_can_get_orphans_by_group():

@@ -391,7 +391,7 @@ func _log_end_run():
 		if(_lgr.is_type_enabled("orphan") and _orphan_counter.get_count() > 0):
 			_lgr.log("\n\n\n")
 			_lgr.orphan("==============================================")
-			_lgr.orphan('= Orphans')
+			_lgr.orphan('= All Orphans')
 			_lgr.orphan("==============================================")
 			_orphan_counter.log_all()
 			_lgr.log("\n")

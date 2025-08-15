@@ -3,45 +3,79 @@
 
 You may have noticed errors similar to this at the end of your run:
 ```sh
-WARNING: 2 RIDs of type "Canvas" were leaked.
-     at: _free_rids (servers/rendering/renderer_canvas_cull.cpp:2678)
-WARNING: 98 RIDs of type "CanvasItem" were leaked.
-     at: _free_rids (servers/rendering/renderer_canvas_cull.cpp:2678)
-ERROR: 1 RID allocations of type 'N16RendererViewport8ViewportE' were leaked at exit.
-ERROR: 8 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.
-ERROR: 27 RID allocations of type 'PN18TextServerAdvanced22ShapedTextDataAdvancedE' were leaked at exit.
-ERROR: 3 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.
 WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
      at: cleanup (core/object/object.cpp:2490)
 ERROR: 24 resources still in use at exit (run with --verbose for details).
    at: clear (core/io/resource.cpp:789)
 ```
-These indicate that when the tests finished running there were existing objects that had not been freed.  These objects are called orphans.
+
+These indicate that there were existing objects that had not been freed when your game/tests finished running.  These objects are called orphans.  GUT will display when orphans are created in a test and a list of orphans (except the children of orphans) at the end of a run.
+
+Example of orphans in a test:
+``` gdscript
+* test_this_makes_two_orphans
+    2 Orphans
+        * test_two_one:<Node#59944994582>
+        * test_two_two:<Node#59961771799>
+* test_with_a_scene_orphan
+    104 Orphans
+        * main:<Node2D#60045657884>(main.gd) + 27
+        * GutRunner:<Node2D#60565751588>(GutRunner.gd) + 75
+```
+GUT displays the name of the node, the node converted to string, and the script of the node if it has one.  If the node has children then the number of all decendents will be listed as `+ x`.
+
+All of GUT's orphan features are wrappers around `Node.get_orphan_node_ids()`.  This static method on `Node` returns the `instance_id` of each orphaned node.
 
 ## Orphans
-I should add a blurb about leaked references that GUT cannot detect.
-* Node orphans
-* Leaked References
-* verbose flag
+Any Node (or a subclass of Node) that is not currently in the tree is considered an orphan.  Children of orphaned Nodes are also considered orphans.  Orphans aren't necesasrily bad, but they usually indicate a memory leak.
 
-The [Godot docs](https://docs.godotengine.org/en/stable/getting_started/scripting/gdscript/gdscript_basics.html#memory-management) has some good information.
+The [Godot docs](https://docs.godotengine.org/en/stable/getting_started/scripting/gdscript/gdscript_basics.html#memory-management) has some useful reading on memory management.  Godot provides the following two mechanisms to get information about orphans.
 
-Any object that extends Node (or a subclass of Node) and is not currently in the tree is considered an orphan.  Children of orphaned Nodes are considered orphans as well.
+
+## Leaked References
+You may also see the following error if you have a refernce counted object that could not be freed.
+```sh
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2490)
 ```
-var orphan_count = Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT)
-var all_orphan_instance_ids = Node.get_orphan_node_ids()
-```
+Many times, reference counted objects cannot be freed due to a cyclical reference.  In the simplest case, a cyclical reference happens when two objects have a reference to each other.  When this happens, the references cannot be cleared and therefore referenced object cannot be freed.  The best way to solve this is by using [Weakref](https://docs.godotengine.org/en/latest/classes/class_weakref.html).
+
+Godot does not yet supply any information about these leaked objects, so GUT cannot display any information about them.  Using the `--verbose` flag is the best way to debug these.
+
+
+# GUT Memory Management Features
+Since GUT cannot know if an orphan was created on purpose or not, it will tell you about all the orphans it finds, as soon as it finds them.  GUT provides some methods to make it easier to free objects you create in your tests so GUT is more likely to report an actual orphan and not some test object.
+
 
 ## Autofree Methods
-GUT detects when an orphan is created and will log the orphans it finds in each test and at the end of the run.  `GutTest` provides the following methods to ease freeing Nodes.  Each of these methods return what is passed in, so you can save a line or two of code.
+GUT detects when an orphan is created and will log the orphans it finds in each test and at the end of the run.  `GutTest` provides the following methods to ease freeing Nodes you create in your tests.  Each of these methods return what is passed in, so you can save a line or two of code.
 
-Henceforth these will be referred to as an `autofree` method.
-  * `autofree` - calls `free` after test finishes
-  * `autoqfree` - calls `queue_free` after test finishes
+Henceforth these will be referred to as an "Autofree" method.
+  * `autofree` - calls `free` after `after_each`.
+  * `autoqfree` - calls `queue_free` after `after_each`.
   * `add_child_autofree` - calls `add_child` right away, and `free` after `after_each`.
   * `add_child_autoqfree` - calls `add_child` right away, and `queue_free` after `after_each`.
 
-More info can be found in "Freeing Test Objects" below.
+
+__Notes__:
+* It is ok to use any of the Autofree methods `before_each`.
+
+
+__Warnings:__
+* Objects passed to `autofree` and  `autoqfree` are not in the tree and therefore will still cause `assert_no_orphans` to fail.
+* Do not use any of the `autofree` methods in `before_all`.  This will cause the objects to be freed after the first test is run.
+
+### Freeing Globals
+You can use a [post-run hook](Hooks) to clean up any global objects you have created.
+
+
+### Automatically Freed Objects
+GUT automatically frees any [Doubles](Doubles) or [Partial Doubles](Partial-Doubles) you create.
+
+Calling `autofree` with one of these objects, or manually freeing them yourself will not have any adverse effects.
+
+All children of tests are also freed after the test runs, though a warning is printed out if a test has any children.
+
 
 ## Quick Example:
 This test generates an orphan
@@ -60,45 +94,9 @@ func test_something():
   assert_not_null(my_node)
 ```
 
-## GUT Orphan List
-~~GUT, by default, will print a count of any orphans that are created by a test.  Depending on the log level these counts will appear after each test or may just appear after each script.  GUT counts the orphans before each test and warns when the value changes when a test is done.  These counts are summed up for each script as well and a grand total is printed at the end of the run.  You can disable this feature if you want to.~~
-
-
-
-### Freeing Test Objects
-Freeing up objects in your tests is tedious.  It adds additional lines of code that don't add anything to the test.  To aid in this GUT provides the `autofree` and `autoqfree` functions.  Anything passed to these methods will be freed up after the test runs.  These methods also `return` whatever is passed into them so you can chain them together to cut down on space.
-```
-var Foo = load('res://foo.gd')
-var node = autofree(Node.new())
-var bar_scene = autofree(load('res://bar.tscn').instance())
-assert_null(autofree(Foo.new()).get_value(), 'default value is null')
-```
-After test execution is done and `after_each` has been called, GUT will free any objects sent to `autofree` and `autoqfree` (and the `add_child_*` methods).  If either `autoqfree` method is called during a test GUT will pause briefly to give the `queue_free` time to execute.
-
-These functions can be used in a test or the `before_each` but should NOT be used in `before_all`.  If you create an object in `before_all` you must free it yourself in `after_all`.  Using either flavor of `autofree` in `before_all` will cause the object to be freed after the first test is run.
-
-
 ### Using `add_child` in Tests
-When you call `add_child` from within a test the object is added as a child of the test script.  The test script is a child of the GUT.  GUT will output a warning if a test script has children when it finishes running (after `after_all`).
+When you call `add_child` from within a test the object is added as a child of the test script.  The test script is a child of the GUT.  GUT will output a warning if a test script has children when it finishes running (after `after_all`).  If you need an object to exist for the duration of a script, be sure to free it in `after_all`.  All scripts and children of scripts are freed after they are done.
 
-It is best to free any children you add in a test in that same test.  GUT has two helper functions that will add the child and free the child after the test.  These are `add_child_autofree` and `add_child_autoqfree`.  These work the same way as `autofree` and `autoqfree` but take the additional step of calling `add_child`.  These methods also return whatever is passed to them so you can cut down on lines of code.
-```
-func test_foo():
-  var node = add_child_autofree(Node.new())
-  var node2 = add_child_autoqfree(Node.new())
-```
-
-These functions can be used in a test or the `before_each` but should NOT be used in `before_all`.  If you have an object you want to add as a child in `before_all` you must free it yourself in `after_all`.  Using either flavor of `add_child_autofree` in `before_all` will cause the object to be freed after the first test is run.
-
-### Freeing Globals
-You can use a [post-run hook](Hooks) to clean up any global objects you have created.
-
-### Automatically Freed Objects
-GUT automatically frees any [Doubles](Doubles) or [Partial Doubles](Partial-Doubles) you create.
-
-Calling `autofree` with one of these objects, or manually freeing them yourself will not have any adverse effects.
-
-All children of tests are also freed after the test runs, though a warning is printed out if a test has any children.
 
 
 ### Testing for Leaks

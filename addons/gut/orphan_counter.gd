@@ -20,6 +20,7 @@ class Orphanage:
 
 		return to_return
 
+
 	func _add_orphan_by_group(id, group, subgroup):
 		var key = _make_group_key(group, subgroup)
 		if(oprhans_by_group.has(key)):
@@ -38,7 +39,6 @@ class Orphanage:
 					"subgroup":GutUtils.nvl(subgroup, UNGROUPED)
 				}
 				_add_orphan_by_group(orphan_id, group, subgroup)
-
 
 		return new_orphans
 
@@ -77,13 +77,31 @@ var orphanage = Orphanage.new()
 var logger = GutUtils.get_logger()
 
 
+func _consolidate_orphan_children(orphans):
+	var to_return = {}
+	for o in convert_instance_ids_to_valid_instances(orphans):
+		var root_parent = null
+		var trav_node = o
+		while(trav_node.get_parent() != null):
+			root_parent = trav_node.get_parent()
+			trav_node = root_parent
+
+		if(root_parent == null):
+			to_return[o] = 0
+		else:
+			if(to_return.has(root_parent)):
+				to_return[root_parent] += 1
+			else:
+				to_return[o] = 0
+	return to_return
+
+
 func orphan_count() -> int:
-	return Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT)
+	return int(Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT))
 
 
 func record_orphans(group, subgroup = null):
-	var result = orphanage.process_orphans(group, subgroup)
-	return convert_instance_ids_to_valid_instances(result)
+	return orphanage.process_orphans(group, subgroup)
 
 
 func convert_instance_ids_to_valid_instances(orphan_ids):
@@ -103,10 +121,15 @@ func end_script(script_path, should_log):
 
 func end_test(script_path, test_name, should_log = true):
 	var orphans = record_orphans(script_path, test_name)
+	var total_count = orphans.size()
+	orphans = _consolidate_orphan_children(orphans)
 	if(orphans.size() > 0 and should_log):
-		logger.orphan('Orphans:')
+		logger.orphan(str(total_count, ' Orphans'))
 		for o in orphans:
-			logger.orphan(str('    * ', _strutils.type2str(o)))
+			var text = str('    * ', _strutils.type2str(o))
+			if(orphans[o] > 0):
+				text += str(" + ", orphans[o])
+			logger.orphan(text)
 
 
 func get_orphans(group, subgroup=null):
@@ -125,10 +148,11 @@ func log_all():
 	var last_script = ''
 	var last_test = ''
 	var still_orphaned = 0
+	var orphans_by_parent = _consolidate_orphan_children(orphanage.orphan_ids)
 
 	for key in orphanage.orphan_ids:
 		var inst = instance_from_id(key)
-		if(inst != null and inst is not GutTest):
+		if(inst != null and inst is not GutTest and inst.get_parent() == null):
 			var entry = orphanage.orphan_ids[key]
 			if(entry.group != last_script):
 				logger.log(entry.group)
@@ -136,7 +160,12 @@ func log_all():
 			if(entry.subgroup != last_test):
 				logger.log(str('    - ', entry.subgroup))
 				last_test = entry.subgroup
-			logger.log(str('    ', '    * ', _strutils.type2str(inst)))
+
+			var kid_count_text = ''
+			if(orphans_by_parent[inst] != 0):
+				kid_count_text = str(' + ', orphans_by_parent[inst])
+				still_orphaned += orphans_by_parent[inst]
+			logger.log(str('    ', '    * ', _strutils.type2str(inst), kid_count_text))
 			still_orphaned += 1
 
 	logger.log(str("\nTotal = ", still_orphaned))

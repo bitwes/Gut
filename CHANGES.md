@@ -3,7 +3,11 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 # 9.5.0
-* Godot 4.5
+## Potentially Breaking Changes
+* Test scripts are now freed after they finish.  Prior to this release they would continue to exist until the end of the run, but were removed from the tree.  This has been changed to give more accurate orphan information and because it wasn't needed anymore.
+
+## Features
+* Requires Godot 4.5
 * All the `.uid` files you could ever want!
 * Stubbing/Doubling/Spying on vararg methods has changed.
     * You no longer need to stub the parameter count for vararg methods.
@@ -17,13 +21,13 @@ assert_called(my_double.rpc_id, [p1, p2, [vararg_val1, vararg_val2, vararg_val3]
 * Orphaned nodes are now displayed...not the count (well, the count too), but the actual node and some extra information.  Insead of seeing "2 new orphans" you'll see something like:
 ```
 * test_this_makes_two_orphans
-    Orphans:
+    2 Orphans:
         * test_two_one:<Node#59760445195>
         * test_two_two:<Node#59777222412>
-* test_with_a_scene_orphan
-    Orphans:
-        * main:<Node2D#59861108497>(main.gd)
-        * RunTestsButton:<Button#59877885714>
+* test_with_some_nodes_with_children
+    9 Orphans
+        * parent_one:<Node#65062045712> + 5
+        * parent_a:<Node#65162709014> + 2
 ```
 
 
