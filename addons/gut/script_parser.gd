@@ -3,8 +3,6 @@
 const BLACKLIST = [
 	'get_script',
 	'has_method',
-	'_notification',
-	'_exit_tree'
 ]
 
 
