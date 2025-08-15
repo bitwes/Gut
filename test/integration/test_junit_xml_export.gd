@@ -85,7 +85,6 @@ func test_can_make_one():
 
 func test_no_tests_returns_valid_xml():
 	await run_scripts(_test_gut, [])
-	# _test_gut.test_scripts()
 	var re = JunitExporter.new()
 	var result = re.get_results_xml(_test_gut)
 	assert_is_valid_xml(result)

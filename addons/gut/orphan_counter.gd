@@ -141,7 +141,6 @@ func get_orphans(group, subgroup=null):
 
 func get_count() -> int:
 	return orphan_count()
-	# return orphanage.orphan_ids.size()
 
 
 func log_all():

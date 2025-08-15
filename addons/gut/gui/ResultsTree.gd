@@ -200,9 +200,6 @@ func _add_test_tree_item(test_name, test_json, script_item):
 
 	if(status == 'pass' and no_orphans_to_show):
 		item.set_icon(0, _icons.green)
-	#elif(status == 'pass' and !no_orphans_to_show):
-		#item.set_icon(0, _icons.yellow)
-		#item.set_text(1, orphan_text)
 	elif(status == 'fail'):
 		item.set_icon(0, _icons.red)
 	else:
@@ -228,7 +225,7 @@ func _add_test_tree_item(test_name, test_json, script_item):
 		for o in test_json.orphans:
 			var orphan_entry = _ctrls.tree.create_item(orphan_item)
 			orphan_entry.set_text(0, o)
-	
+
 
 	return item
 
