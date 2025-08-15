@@ -5,18 +5,28 @@
 # unofficial GUT export format.
 # ------------------------------------------------------------------------------
 var json = JSON.new()
+var strutils = GutStringUtils.new()
 
-func _export_tests(collected_script):
+func _export_tests(gut, collected_script):
 	var to_return = {}
 	var tests = collected_script.tests
 	for test in tests:
 		if(test.get_status_text() != GutUtils.TEST_STATUSES.NOT_RUN):
+			var orphans = gut.get_orphan_counter().get_orphans(
+				collected_script.get_filename_and_inner(),
+				test.name)
+			var orphan_node_strings = []
+			for o in orphans:
+				if(is_instance_id_valid(o)):
+					orphan_node_strings.append(strutils.type2str(instance_from_id(o)))
+
 			to_return[test.name] = {
 				"status":test.get_status_text(),
 				"passing":test.pass_texts,
 				"failing":test.fail_texts,
 				"pending":test.pending_texts,
-				"orphans":test.orphans,
+				"orphan_count":orphan_node_strings.size(),
+				"orphans":orphan_node_strings,
 				"time_taken": test.time_taken
 			}
 
@@ -24,14 +34,15 @@ func _export_tests(collected_script):
 
 # TODO
 #	errors
-func _export_scripts(collector):
+func _export_scripts(gut):
+	var collector = gut.get_test_collector()
 	if(collector == null):
 		return {}
 
 	var scripts = {}
 
 	for s in collector.scripts:
-		var test_data = _export_tests(s)
+		var test_data = _export_tests(gut, s)
 		scripts[s.get_full_name()] = {
 			'props':{
 				"tests":test_data.keys().size(),
@@ -65,7 +76,7 @@ func get_results_dictionary(gut, include_scripts=true):
 	var scripts = []
 
 	if(include_scripts):
-		scripts = _export_scripts(gut.get_test_collector())
+		scripts = _export_scripts(gut)
 
 	var result =  _make_results_dict()
 
@@ -79,7 +90,7 @@ func get_results_dictionary(gut, include_scripts=true):
 	props.errors = gut.logger.get_errors().size()
 	props.warnings = gut.logger.get_warnings().size()
 	props.time =  gut.get_elapsed_time()
-	props.orphans = gut.get_orphan_counter().get_orphans_since('pre_run')
+	props.orphans = gut.get_orphan_counter().get_count()
 	result.test_scripts.scripts = scripts
 
 	return result

@@ -1,5 +1,10 @@
 extends GutTest
 
+func should_skip_script():
+	if DisplayServer.get_name() == "headless":
+		return "Skip Input tests when running headless"
+
+
 class PrintEventsButton:
 	extends Button
 

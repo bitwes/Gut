@@ -14,7 +14,6 @@ func _init(gut=null):
 # ---------------------
 func _log_end_run_header(gut):
 	var lgr = gut.get_logger()
-	lgr.log("\n\n\n")
 	lgr.log('==============================================', lgr.fmts.yellow)
 	lgr.log("= Run Summary", lgr.fmts.yellow)
 	lgr.log('==============================================', lgr.fmts.yellow)
@@ -29,31 +28,11 @@ func _log_what_was_run(gut):
 		gut.p('Ran Inner Classes matching "' + gut._inner_class_name + '"')
 
 
-func _log_orphans_and_disclaimer(gut):
-	var lgr = gut.get_logger()
-	if(!lgr.is_type_enabled('orphan')):
-		return
-
-	var counter = gut.get_orphan_counter()
-	# Do not count any of the test scripts since these will be released when GUT
-	# is released.
-	var do_not_count_orphans = counter.get_count("pre_run") + gut.get_test_script_count()
-	var total_run_orphans = counter.orphan_count() - do_not_count_orphans
-
-	if(total_run_orphans > 0):
-		lgr.orphan(str("Total orphans in run ", total_run_orphans))
-		gut.p("Note:  This count does not include GUT objects that will be freed upon exit.")
-		gut.p("       It also does not include any orphans created by global scripts")
-		gut.p("       loaded before tests were ran.")
-		gut.p(str("Total orphans = ", counter.orphan_count()))
-		gut.p('')
-
-
 func _total_fmt(text, value):
 	var space = 18
 	if(str(value) == '0'):
 		value = 'none'
-	return str(text.rpad(space), value)
+	return str(text.rpad(space), str(value).lpad(5))
 
 
 func _log_non_zero_total(text, value, lgr):
@@ -68,7 +47,9 @@ func _log_totals(gut, totals):
 	var lgr = gut.get_logger()
 	lgr.log()
 
-	lgr.log("---- Totals ----")
+	# lgr.log("---- Totals ----")
+	lgr.log("Totals")
+	lgr.log("------")
 	var issue_count = 0
 	issue_count += _log_non_zero_total('Errors', totals.errors, lgr)
 	issue_count += _log_non_zero_total('Warnings', totals.warnings, lgr)
@@ -78,10 +59,11 @@ func _log_totals(gut, totals):
 
 	lgr.log(_total_fmt( 'Scripts', totals.scripts))
 	lgr.log(_total_fmt( 'Tests', gut.get_test_collector().get_ran_test_count()))
-	lgr.log(_total_fmt( '  Passing', totals.passing_tests))
-	_log_non_zero_total('  Failing', totals.failing_tests, lgr)
-	_log_non_zero_total('  Risky/Pending', totals.risky + totals.pending, lgr)
+	lgr.log(_total_fmt( 'Passing Tests', totals.passing_tests))
+	_log_non_zero_total('Failing Tests', totals.failing_tests, lgr)
+	_log_non_zero_total('Risky/Pending', totals.risky + totals.pending, lgr)
 	lgr.log(_total_fmt( 'Asserts', totals.passing + totals.failing))
+	_log_non_zero_total( 'Orphans', totals.orphans, lgr)
 	lgr.log(_total_fmt( 'Time', str(gut.get_elapsed_time(), 's')))
 
 	return totals
@@ -193,6 +175,8 @@ func get_totals(gut=_gut):
 		totals.failing_tests += s.get_failing_test_count()
 		totals.risky += s.get_risky_count()
 
+	totals.orphans = gut.get_orphan_counter().orphan_count()
+
 	return totals
 
 
@@ -209,7 +193,6 @@ func log_end_run(gut=_gut):
 	log_totals(gut, totals)
 	lgr.log("\n")
 
-	_log_orphans_and_disclaimer(gut)
 	_log_what_was_run(gut)
 	log_the_final_line(totals, gut)
 	lgr.log("")

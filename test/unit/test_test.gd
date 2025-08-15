@@ -1334,7 +1334,7 @@ class TestAssertIsFreed:
 		assert_pass(gr.test)
 
 	func test_assert_not_freed_title_is_optional():
-		var obj = Node.new()
+		var obj = autofree(Node.new())
 		gr.test.assert_not_freed(obj)
 		pass_test("we got here")
 
@@ -1378,7 +1378,7 @@ class TestMemoryMgmt:
 	var _gut = null
 
 	func before_each():
-		# verbose = true
+		verbose = false
 		_gut = add_child_autofree(new_gut(verbose))
 
 	func test_passes_when_no_orphans_introduced():
@@ -1389,6 +1389,8 @@ class TestMemoryMgmt:
 		""")
 		var results = d.run_test_in_gut(_gut)
 		assert_eq(results.passing, 1)
+		await wait_for_signal(_gut.end_run, 5)
+		await wait_seconds(.5)
 
 	func test_failing_orphan_assert_marks_test_as_failing():
 		var d = DynamicGutTest.new()
@@ -1401,6 +1403,8 @@ class TestMemoryMgmt:
 		""")
 		var results = d.run_test_in_gut(_gut)
 		assert_eq(results.failing, 1)
+		await wait_for_signal(_gut.end_run, 5)
+		await wait_seconds(.5)
 
 
 	func test_passes_when_orphans_released():
@@ -1461,57 +1465,58 @@ class TestTestStateChecking:
 		_gut.inner_class_name = inner_class
 		_gut.unit_test_name = name
 		_gut.test_scripts()
+		await wait_for_signal(_gut.end_run, 5)
 
 	func _assert_pass_fail_count(passing, failing):
 		assert_eq(_gut.get_pass_count(), passing, 'Pass count does not match')
 		assert_eq(_gut.get_fail_count(), failing, 'Failing count does not match')
 
 	func test_is_passing_returns_true_when_test_is_passing():
-		_run_test('TestIsPassing')
+		await _run_test('TestIsPassing')
 		_assert_pass_fail_count(2, 0)
 
 	func test_is_passing_returns_false_when_test_is_failing():
-		_run_test('TestIsPassing')
+		await _run_test('TestIsPassing')
 		_assert_pass_fail_count(1, 1)
 
 	func test_is_passing_false_by_default():
-		_run_test('TestIsPassing')
+		await _run_test('TestIsPassing')
 		_assert_pass_fail_count(1, 0)
 
 	func  test_is_passing_returns_true_before_test_fails():
-		_run_test('TestIsPassing')
+		await _run_test('TestIsPassing')
 		_assert_pass_fail_count(2, 1)
 
 	func test_is_failing_returns_true_when_failing():
-		_run_test('TestIsFailing')
+		await _run_test('TestIsFailing')
 		_assert_pass_fail_count(1, 1)
 
 	func test_is_failing_returns_false_when_passing():
-		_run_test('TestIsFailing')
+		await _run_test('TestIsFailing')
 		_assert_pass_fail_count(2, 0)
 
 	func test_is_failing_returns_false_by_default():
-		_run_test('TestIsFailing')
+		await _run_test('TestIsFailing')
 		_assert_pass_fail_count(1, 0)
 
 	func test_is_failing_returns_false_before_test_passes():
-		_run_test('TestIsFailing')
+		await _run_test('TestIsFailing')
 		_assert_pass_fail_count(2, 0)
 
 	func test_error_generated_when_using_is_passing_in_before_all():
-		_run_test('TestUseIsPassingInBeforeAll', 'test_nothing')
+		await _run_test('TestUseIsPassingInBeforeAll', 'test_nothing')
 		assert_logger_errored(_gut, 1)
 
 	func test_error_generated_when_using_is_passing_in_after_all():
-		_run_test('TestUseIsPassingInAfterAll', 'test_nothing')
+		await _run_test('TestUseIsPassingInAfterAll', 'test_nothing')
 		assert_logger_errored(_gut, 1)
 
 	func test_error_generated_when_using_is_failing_in_before_all():
-		_run_test('TestUseIsFailingInBeforeAll', 'test_nothing')
+		await _run_test('TestUseIsFailingInBeforeAll', 'test_nothing')
 		assert_logger_errored(_gut, 1)
 
 	func test_error_generated_when_using_is_failing_in_after_all():
-		_run_test('TestUseIsFailingInAfterAll', 'test_nothing')
+		await _run_test('TestUseIsFailingInAfterAll', 'test_nothing')
 		assert_logger_errored(_gut, 1)
 
 

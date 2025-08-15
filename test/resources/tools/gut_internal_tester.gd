@@ -122,10 +122,7 @@ func assert_fail_msg_contains(t, text):
 func get_error_count(obj):
 	return obj.logger.get_errors().size()
 
-var new_gut_indent_string = "|   "
-func new_gut(print_sub_tests=false):
-	var l = GutLogger.new()
-	var g = Gut.new(l)
+func _setup_test_gut(g, print_sub_tests):
 	g.logger.disable_all_printers(true)
 
 	g.log_level = 3
@@ -139,31 +136,19 @@ func new_gut(print_sub_tests=false):
 
 	g._should_print_versions = false
 	g._should_print_summary = false
-
 	g.error_tracker = GutErrorTracker.new()
 
+
+var new_gut_indent_string = "|   "
+func new_gut(print_sub_tests=false):
+	var g = Gut.new(GutLogger.new())
+	_setup_test_gut(g, print_sub_tests)
 	return g
 
 
 func new_partial_double_gut(print_sub_tests=false):
-	var l = GutLogger.new()
-	var g = partial_double(Gut).new(l)
-	g.logger.disable_all_printers(true)
-
-	if(print_sub_tests):
-		g.log_level = 3
-		g.logger.disable_printer("terminal", false)
-		g.logger._min_indent_level = 1
-		g.logger.dec_indent()
-		g.logger.set_indent_string(new_gut_indent_string)
-		g.logger.disable_formatting(!print_sub_tests)
-	else:
-		g.log_level = g.LOG_LEVEL_FAIL_ONLY
-
-	g._should_print_versions = false
-	g._should_print_summary = false
-	g.error_tracker = GutErrorTracker.new()
-
+	var g = partial_double(Gut).new(GutLogger.new())
+	_setup_test_gut(g, print_sub_tests)
 	return g
 
 

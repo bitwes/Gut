@@ -150,7 +150,7 @@ class TestDoublingScripts:
 
 	func test_doublecd_thing_has_gut_metadata():
 		var doubled = _doubler.double(DoubleMe).new()
-		assert_eq(doubled.__gutdbl.gut, gut)
+		assert_eq(doubled.__gutdbl.gut_ref.get_ref(), gut)
 
 	func test_keeps_extends():
 		var doubled = _doubler.double(DoubleExtendsNode2D).new()

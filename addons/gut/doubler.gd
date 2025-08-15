@@ -157,11 +157,16 @@ func _create_double(parsed, strategy, override_path, partial):
 	dbl_src = base_script + "\n\n" + dbl_src
 
 	if(print_source):
-		print(GutUtils.add_line_numbers(dbl_src))
+		var to_print :String = GutUtils.add_line_numbers(dbl_src)
+		to_print = to_print.rstrip("\n")
+		_lgr.log(str(to_print))
 
 	var DblClass = _create_script_no_warnings(dbl_src)
 	if(_stubber != null):
 		_stub_method_default_values(DblClass, parsed, strategy)
+
+	if(print_source):
+		_lgr.log(str("  path | ", DblClass.resource_path, "\n"))
 
 	return DblClass
 

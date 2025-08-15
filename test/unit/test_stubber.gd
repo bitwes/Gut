@@ -22,7 +22,7 @@ class HackedStubber:
 	var StubParams = load('res://addons/gut/stub_params.gd')
 	func _init():
 		set_logger(GutUtils.GutLogger.new())
-		
+
 	func set_return(obj, method, value):
 		var sp = StubParams.new(obj, method)
 		sp.to_return(value)
@@ -152,9 +152,9 @@ func test_withStubParams_can_get_return_based_on_parameters():
 
 func test_withStubParams_can_get_return_based_on_complex_parameters():
 	var sp = StubParamsClass.new(DoubleMe, 'method').to_return(10)
-	sp.when_passed('a', 1, ['a', 1], sp)
+	sp.when_passed('a', 1, ['a', 1])
 	gr.stubber.add_stub(sp)
-	var with_params = gr.stubber.get_return(DoubleMe, 'method', ['a', 1, ['a', 1], sp])
+	var with_params = gr.stubber.get_return(DoubleMe, 'method', ['a', 1, ['a', 1]])
 	assert_eq(with_params, 10)
 
 func test_when_parameters_do_not_match_any_stub_then_info_generated():

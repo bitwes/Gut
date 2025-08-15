@@ -25,6 +25,7 @@ func run_scripts(g, one_or_more):
 	for s in scripts:
 		g.add_script(export_script(s))
 	g.test_scripts()
+	await g.end_run
 
 
 # Very simple xml validator.  Matches closing tags to opening tags as they
@@ -83,26 +84,26 @@ func test_can_make_one():
 	assert_not_null(JunitExporter.new())
 
 func test_no_tests_returns_valid_xml():
-	_test_gut.test_scripts()
+	await run_scripts(_test_gut, [])
 	var re = JunitExporter.new()
 	var result = re.get_results_xml(_test_gut)
 	assert_is_valid_xml(result)
 
 func test_spot_check():
-	run_scripts(_test_gut, ['test_simple_2.gd', 'test_simple.gd', 'test_with_inner_classes.gd', 'test_special_chars_in_test_output.gd'])
+	await run_scripts(_test_gut, ['test_simple_2.gd', 'test_simple.gd', 'test_with_inner_classes.gd', 'test_special_chars_in_test_output.gd'])
 	var re = JunitExporter.new()
 	var result = re.get_results_xml(_test_gut)
 	assert_is_valid_xml(result)
 
 func test_res_removed_from_classname_path():
-	run_scripts(_test_gut, 'test_simple_2.gd')
+	await run_scripts(_test_gut, 'test_simple_2.gd')
 	var re = JunitExporter.new()
 	var result = re.get_results_xml(_test_gut)
 	assert_false(result.contains("classname=\"res://test/resources/exporter_test_files/test_simple_2.gd\""))
 	assert_string_contains(result, "classname=\"test/resources/exporter_test_files/test_simple_2.gd\"")
 
 func test_write_file_creates_file():
-	run_scripts(_test_gut, 'test_simple_2.gd')
+	await run_scripts(_test_gut, 'test_simple_2.gd')
 	var fname = "user://test_junit_exporter.xml"
 	var re = JunitExporter.new()
 	var result = re.write_file(_test_gut, fname)
@@ -110,7 +111,7 @@ func test_write_file_creates_file():
 	gut.file_delete(fname)
 
 func test_xml_is_valid_when_test_skip_message_is_null():
-	run_scripts(_test_gut, ['test_special_chars_in_test_output.gd'])
+	await run_scripts(_test_gut, ['test_special_chars_in_test_output.gd'])
 	var re = JunitExporter.new()
 	var result = re.get_results_xml(_test_gut)
 	assert_is_valid_xml(result)

@@ -182,7 +182,7 @@ func _add_assert_item(text, icon, parent_item):
 
 func _add_test_tree_item(test_name, test_json, script_item):
 	# print('    * adding test ', test_name)
-	var no_orphans_to_show = !_show_orphans or (_show_orphans and test_json.orphans == 0)
+	var no_orphans_to_show = !_show_orphans or (_show_orphans and test_json.orphan_count == 0)
 	if(_hide_passing and test_json['status'] == 'pass' and no_orphans_to_show):
 		return
 
@@ -198,16 +198,8 @@ func _add_test_tree_item(test_name, test_json, script_item):
 	item.set_metadata(0, meta)
 	item.set_icon_max_width(0, _max_icon_width)
 
-	var orphan_text = 'orphans'
-	if(test_json.orphans == 1):
-		orphan_text = 'orphan'
-	orphan_text = str(test_json.orphans, ' ', orphan_text)
-
 	if(status == 'pass' and no_orphans_to_show):
 		item.set_icon(0, _icons.green)
-	elif(status == 'pass' and !no_orphans_to_show):
-		item.set_icon(0, _icons.yellow)
-		item.set_text(1, orphan_text)
 	elif(status == 'fail'):
 		item.set_icon(0, _icons.red)
 	else:
@@ -223,8 +215,17 @@ func _add_test_tree_item(test_name, test_json, script_item):
 	for pending in test_json.pending:
 		_add_assert_item("pending:  " + pending.replace("\n", ''), _icons.yellow, item)
 
-	if(status != 'pass' and !no_orphans_to_show):
-		_add_assert_item(orphan_text, _icons.yellow, item)
+	var orphan_text = 'orphans'
+	if(test_json.orphan_count == 1):
+		orphan_text = 'orphan'
+	orphan_text = str(int(test_json.orphan_count), ' ', orphan_text)
+
+	if(!no_orphans_to_show):
+		var orphan_item = _add_assert_item(orphan_text, _icons.yellow, item)
+		for o in test_json.orphans:
+			var orphan_entry = _ctrls.tree.create_item(orphan_item)
+			orphan_entry.set_text(0, o)
+
 
 	return item
 

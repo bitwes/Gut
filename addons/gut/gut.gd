@@ -385,8 +385,19 @@ func _log_test_children_warning(test_script):
 
 
 func _log_end_run():
+	var summary = GutUtils.Summary.new(self)
 	if(_should_print_summary):
-		var summary = GutUtils.Summary.new(self)
+		_orphan_counter.record_orphans("end_run")
+		if(_lgr.is_type_enabled("orphan") and _orphan_counter.get_count() > 0):
+			_lgr.log("\n\n\n")
+			_lgr.orphan("==============================================")
+			_lgr.orphan('= All Orphans')
+			_lgr.orphan("==============================================")
+			_orphan_counter.log_all()
+			_lgr.log("\n")
+		else:
+			_lgr.log("\n\n\n")
+
 		summary.log_end_run()
 
 
@@ -425,6 +436,7 @@ func _run_hook_script(inst):
 		await inst.run()
 	return inst
 
+
 # ------------------------------------------------------------------------------
 # Initialize variables for each run of a single test script.
 # ------------------------------------------------------------------------------
@@ -449,6 +461,8 @@ func _init_run():
 # Print out run information and close out the run.
 # ------------------------------------------------------------------------------
 func _end_run():
+	_orphan_counter.record_orphans("end_run")
+	_orphan_counter.orphanage.clean()
 	_log_end_run()
 	_is_running = false
 
@@ -463,6 +477,7 @@ func _end_run():
 func _export_results():
 	if(_junit_xml_file != ''):
 		_export_junit_xml()
+
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -584,7 +599,6 @@ func _run_parameterized_test(test_script, test_name):
 func _run_test(script_inst, test_name, param_index = -1):
 	_lgr.log_test_name()
 	_lgr.set_indent_level(1)
-	_orphan_counter.add_counter('test')
 
 	await script_inst.before_each()
 
@@ -618,14 +632,22 @@ func _run_test(script_inst, test_name, param_index = -1):
 	if(aqf_count > 0):
 		await get_tree().create_timer(_auto_queue_free_delay).timeout
 
-	if(_log_level > 0):
-		_orphan_counter.print_orphans('test', _lgr)
+	_orphan_counter.end_test(
+		script_inst.collected_script.get_filename_and_inner(), test_name,
+		_log_level > 0)
 
 	_doubler.get_ignored_methods().clear()
 
 
+func get_current_test_orphans():
+	var sname = get_current_test_object().collected_script.get_ref().get_filename_and_inner()
+	var tname = get_current_test_object().name
+	_orphan_counter.record_orphans(sname, tname)
+	return _orphan_counter.get_orphans(sname, tname)
+
+
 # ------------------------------------------------------------------------------
-# Calls after_all on the passed in test script and takes care of settings so all
+# Calls before_all on the passed in test script and takes care of settings so all
 # logger output appears indented and with a proper heading
 #
 # Calls both pre-all-tests methods until prerun_setup is removed
@@ -709,7 +731,6 @@ func _should_skip_script(test_script, collected_script):
 # Run all tests in a script.  This is the core logic for running tests.
 # ------------------------------------------------------------------------------
 func _test_the_scripts(indexes=[]):
-	_orphan_counter.add_counter('pre_run')
 
 	_print_versions(false)
 	var is_valid = _init_run()
@@ -738,7 +759,6 @@ func _test_the_scripts(indexes=[]):
 	# loop through scripts
 	for test_indexes in range(indexes_to_run.size()):
 		var coll_script = _test_collector.scripts[indexes_to_run[test_indexes]]
-		_orphan_counter.add_counter('script')
 
 		if(coll_script.tests.size() > 0):
 			_lgr.set_indent_level(0)
@@ -756,6 +776,7 @@ func _test_the_scripts(indexes=[]):
 		# SHORTCIRCUIT
 		# skip_script logic
 		if(await _should_skip_script(test_script, coll_script)):
+			_orphan_counter.record_orphans(coll_script.get_full_name())
 			continue
 		# ----
 
@@ -770,6 +791,7 @@ func _test_the_scripts(indexes=[]):
 			coll_script.was_run = true
 			await _call_before_all(test_script, coll_script)
 
+		_orphan_counter.record_orphans(coll_script.get_full_name())
 		# Each test in the script
 		for i in range(coll_script.tests.size()):
 			_stubber.clear()
@@ -811,7 +833,10 @@ func _test_the_scripts(indexes=[]):
 
 		_current_test = null
 		_lgr.dec_indent()
-		_orphan_counter.print_orphans('script', _lgr)
+
+		_orphan_counter.end_script(
+			coll_script.get_filename_and_inner(),
+			_log_level > 0)
 
 		if(_does_class_name_match(_inner_class_name, coll_script.inner_class_name)):
 			await _call_after_all(test_script, coll_script)
@@ -828,6 +853,7 @@ func _test_the_scripts(indexes=[]):
 			var script_sum = str(coll_script.get_passing_test_count(), '/', coll_script.get_ran_test_count(), ' passed.')
 			_lgr.log(script_sum, _lgr.fmts.bold)
 
+		test_script.queue_free()
 		end_script.emit()
 		# END TEST SCRIPT LOOP
 
@@ -836,7 +862,11 @@ func _test_the_scripts(indexes=[]):
 	# the orphans.  Without this, the last test's awaiter won't be freed
 	# yet, which messes with the orphans total.  There could also be objects
 	# the user has queued to be freed as well.
-	await get_tree().create_timer(.1).timeout
+	# Bump number from .1 to .5 when inner classes that were not run were still
+	# appearing as orphans.  Maybe this could loop through the orpahns looking
+	# for entries that were not freed but are queued to be freed and wait unitl
+	# they are all gone.  ".5" is a lot easier.
+	await get_tree().create_timer(.5).timeout
 	_end_run()
 
 

@@ -33,9 +33,11 @@ Properties
 .. table::
    :widths: auto
 
-   +--------------------------------------------------------------------------------+----------------------------------------------------+----------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`log_level<class_GutMain_property_log_level>` | ``_log_level`` |
-   +--------------------------------------------------------------------------------+----------------------------------------------------+----------------+
+   +--------------------------------------------------------------------------------+--------------------------------------------------------------+----------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`log_level<class_GutMain_property_log_level>`           | ``_log_level`` |
+   +--------------------------------------------------------------------------------+--------------------------------------------------------------+----------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_log_delay<class_GutMain_property_wait_log_delay>` | ``0.5``        |
+   +--------------------------------------------------------------------------------+--------------------------------------------------------------+----------------+
 
 .. rst-class:: classref-reftable-group
 
@@ -80,6 +82,18 @@ Property Descriptions
 - `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **@log_level_getter**\ (\ )
 
 The log detail level.  Valid values are 0 - 2.  Larger values do not matter.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutMain_property_wait_log_delay:
+
+.. rst-class:: classref-property
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **wait_log_delay** = ``0.5`` :ref:`🔗<class_GutMain_property_wait_log_delay>`
+
+The amount of time that must elapse before an "Awaiting" message is printed.
 
 .. rst-class:: classref-section-separator
 

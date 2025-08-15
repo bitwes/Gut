@@ -100,6 +100,7 @@ var _strutils = GutUtils.Strutils.new()
 var _awaiter = null
 var _was_ready_called = false
 
+
 # I haven't decided if we should be using _ready or not.  Right now gut.gd will
 # call this if _ready was not called (because it was overridden without a super
 # call).  Maybe gut.gd should just call _do_ready_stuff (after we rename it to
@@ -119,7 +120,12 @@ func _notification(what):
 	# Tests are never expected to re-enter the tree.  Tests are removed from the
 	# tree after they are run.
 	if(what == NOTIFICATION_EXIT_TREE):
+		# print(_strutils.type2str(self), ':  exit_tree')
 		_awaiter.queue_free()
+	elif(what == NOTIFICATION_PREDELETE):
+		# print(_strutils.type2str(self), ':  predelete')
+		if(is_instance_valid(_awaiter)):
+			_awaiter.queue_free()
 
 
 #region Private
@@ -267,8 +273,6 @@ func _fail_if_not_double_or_does_not_have_method(inst, method_name):
 		if(msg != ''):
 			_fail(msg)
 			to_return = ERR_INVALID_DATA
-
-
 
 	return to_return
 
@@ -1995,7 +1999,7 @@ func assert_not_freed(obj, title='something'):
 ## test when the assert is executed.  See the [wiki]Memory-Management[/wiki]
 ## page for more information.
 func assert_no_new_orphans(text=''):
-	var count = gut.get_orphan_counter().get_orphans_since('test')
+	var count = gut.get_current_test_orphans().size()
 	var msg = ''
 	if(text != ''):
 		msg = ':  ' + text
@@ -2006,6 +2010,14 @@ func assert_no_new_orphans(text=''):
 		_fail(str('Expected no orphans, but found ', count, msg))
 	else:
 		_pass('No new orphans found.' + msg)
+
+
+## This is an alias for [method assert_no_new_orphans], since the new orphan
+## tracking system (`Orphanage`) no longer has a need for the "new" qualifier,
+## in its name, that the old system did.  Now GUT knows more and you can more
+## confidently assert that your test has made "no orphans".
+func assert_no_orphans(text=''):
+	assert_no_new_orphans(text)
 
 
 ## @ignore
