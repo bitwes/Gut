@@ -192,9 +192,9 @@ var _orphan_counter =  GutUtils.OrphanCounter.new()
 func get_orphan_counter():
 	return _orphan_counter
 
-var _autofree = GutUtils.AutoFree.new()
+# var _autofree = GutUtils.AutoFree.new()
 func get_autofree():
-	return _autofree
+	return _orphan_counter.autofree
 
 var _stubber = GutUtils.Stubber.new()
 func get_stubber():
@@ -391,7 +391,7 @@ func _log_end_run():
 		if(_lgr.is_type_enabled("orphan") and _orphan_counter.get_count() > 0):
 			_lgr.log("\n\n\n")
 			_lgr.orphan("==============================================")
-			_lgr.orphan('= All Orphans')
+			_lgr.orphan(str('= ', _orphan_counter.get_count(), ' Orphans'))
 			_lgr.orphan("==============================================")
 			_orphan_counter.log_all()
 			_lgr.log("\n")
@@ -627,8 +627,8 @@ func _run_test(script_inst, test_name, param_index = -1):
 	# Free up everything in the _autofree.  Yield for a bit if we
 	# have anything with a queue_free so that they have time to
 	# free and are not found by the orphan counter.
-	var aqf_count = _autofree.get_queue_free_count()
-	_autofree.free_all()
+	var aqf_count = _orphan_counter.autofree.get_queue_free_count()
+	_orphan_counter.autofree.free_all()
 	if(aqf_count > 0):
 		await get_tree().create_timer(_auto_queue_free_delay).timeout
 
@@ -643,7 +643,7 @@ func get_current_test_orphans():
 	var sname = get_current_test_object().collected_script.get_ref().get_filename_and_inner()
 	var tname = get_current_test_object().name
 	_orphan_counter.record_orphans(sname, tname)
-	return _orphan_counter.get_orphans(sname, tname)
+	return _orphan_counter.get_orphan_ids(sname, tname)
 
 
 # ------------------------------------------------------------------------------

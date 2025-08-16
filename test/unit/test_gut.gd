@@ -495,7 +495,6 @@ class TestEverythingElse:
 
 	# These should all pass, just making sure there aren't any syntax errors.
 	func test_asserts_on_test_object():
-		pending('This really is not pending')
 		assert_eq(1, 1, 'text')
 		assert_ne(1, 2, 'text')
 		assert_almost_eq(5, 5, 0, 'text')

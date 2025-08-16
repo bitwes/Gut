@@ -743,7 +743,8 @@ class TestPending:
 		assert_eq(gr.test.get_pending_count(), 1, 'One test should have been marked as pending')
 
 	func test_pending_accepts_text():
-		pending("This is a pending test.  You should see this text in the results.")
+		gr.test.pending("This is a pending test.  You should see this text in the results.")
+		assert_eq(gr.test.get_pass_count(), 0)
 
 	func test_pending_does_not_increment_passed():
 		gr.test.pending()

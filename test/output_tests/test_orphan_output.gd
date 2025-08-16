@@ -19,7 +19,7 @@ func before_all():
 
 
 func after_all():
-	new_node("after_all")
+	new_node("script_level_after_all")
 
 
 func test_this_makes_one_orphan():
@@ -34,11 +34,11 @@ func test_this_makes_two_orphans():
 
 
 var _script_cyclic_ref = CyclicRefClass.new()
-# func test_cyclic_ref():
-# 	var test_cyclic_ref = CyclicRefClass.new()
-# 	test_cyclic_ref.other_thing = _script_cyclic_ref
-# 	_script_cyclic_ref.other_thing = test_cyclic_ref
-# 	pass_test('passing')
+func test_cyclic_ref():
+	var test_cyclic_ref_var = CyclicRefClass.new()
+	test_cyclic_ref_var.other_thing = _script_cyclic_ref
+	_script_cyclic_ref.other_thing = test_cyclic_ref_var
+	pass_test('passing')
 
 func test_cyclic_ref_local():
 	var cyclic_ref_a = CyclicRefClass.new()
@@ -48,8 +48,6 @@ func test_cyclic_ref_local():
 	pass_test('passing')
 
 
-# soooo many orphans, commented out because there's like 103 of them.  should
-# remain though.
 func test_with_a_scene_orphan():
 	var main_scene = MainScene.instantiate()
 	pass_test('passing')
@@ -124,7 +122,7 @@ class TestDupeOne:
 
 
 	func after_all():
-		new_node("after_all")
+		new_node("TestDupeOne_after_all")
 
 
 	func test_this_makes_one_orphan():
@@ -159,7 +157,7 @@ class TestWithAsserts:
 
 
 	func after_all():
-		new_node("after_all")
+		new_node("TestWithAsserts_after_all")
 
 
 	func test_failing():

@@ -29,12 +29,11 @@ class TestOrphanIds:
 		var n1 = autofree(Node.new())
 		var n2 = autofree(Node.new())
 		oc.record_orphans('test_group')
-		var results = oc.get_orphans('test_group')
+		var results = oc.get_orphan_ids('test_group')
 		results = oc.convert_instance_ids_to_valid_instances(results)
 		results.sort()
 		assert_true(results.all(func(e):
 			return [n1, n2].has(e)))
-
 
 
 	func test_can_get_orphans_by_group_and_subgroup():
@@ -42,7 +41,7 @@ class TestOrphanIds:
 		var n1 = autofree(Node.new())
 		var n2 = autofree(Node.new())
 		oc.record_orphans('group', 'subgroup')
-		var results = oc.get_orphans('group', 'subgroup')
+		var results = oc.get_orphan_ids('group', 'subgroup')
 		results = oc.convert_instance_ids_to_valid_instances(results)
 		results.sort()
 		assert_true(results.all(func(e):
@@ -54,8 +53,28 @@ class TestOrphanIds:
 		var n1 = autofree(Node.new())
 		var n2 = autofree(Node.new())
 		oc.record_orphans('group', 'subgroup')
-		var result = oc.get_orphans("group")
+		var result = oc.get_orphan_ids("group")
 		assert_eq(result.size(), 2)
+
+
+	func test_autofreed_are_not_included():
+		var oc = new_primed_orphan_counter()
+		var n1 = Node.new()
+		oc.autofree.add_free(n1)
+		oc.record_orphans('group')
+		var result = oc.get_orphan_ids('group')
+		assert_eq(result.size(), 0)
+		n1.free()
+
+
+	func test_autoqfreed_are_not_included():
+		var oc = new_primed_orphan_counter()
+		var n1 = Node.new()
+		oc.autofree.add_queue_free(n1)
+		oc.record_orphans('group')
+		var result = oc.get_orphan_ids('group')
+		assert_eq(result.size(), 0)
+		n1.free()
 
 
 
