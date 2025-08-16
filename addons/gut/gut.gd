@@ -834,12 +834,12 @@ func _test_the_scripts(indexes=[]):
 		_current_test = null
 		_lgr.dec_indent()
 
+		if(_does_class_name_match(_inner_class_name, coll_script.inner_class_name)):
+			await _call_after_all(test_script, coll_script)
+
 		_orphan_counter.end_script(
 			coll_script.get_filename_and_inner(),
 			_log_level > 0)
-
-		if(_does_class_name_match(_inner_class_name, coll_script.inner_class_name)):
-			await _call_after_all(test_script, coll_script)
 
 		_log_test_children_warning(test_script)
 		# This might end up being very resource intensive if the scripts

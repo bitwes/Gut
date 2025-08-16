@@ -57,24 +57,24 @@ class TestOrphanIds:
 		assert_eq(result.size(), 2)
 
 
-	func test_autofreed_are_not_included():
-		var oc = new_primed_orphan_counter()
-		var n1 = Node.new()
-		oc.autofree.add_free(n1)
-		oc.record_orphans('group')
-		var result = oc.get_orphan_ids('group')
-		assert_eq(result.size(), 0)
-		n1.free()
+	# func test_autofreed_are_not_included():
+	# 	var oc = new_primed_orphan_counter()
+	# 	var n1 = Node.new()
+	# 	oc.autofree.add_free(n1)
+	# 	oc.record_orphans('group')
+	# 	var result = oc.get_orphan_ids('group')
+	# 	assert_eq(result.size(), 0)
+	# 	n1.free()
 
 
-	func test_autoqfreed_are_not_included():
-		var oc = new_primed_orphan_counter()
-		var n1 = Node.new()
-		oc.autofree.add_queue_free(n1)
-		oc.record_orphans('group')
-		var result = oc.get_orphan_ids('group')
-		assert_eq(result.size(), 0)
-		n1.free()
+	# func test_autoqfreed_are_not_included():
+	# 	var oc = new_primed_orphan_counter()
+	# 	var n1 = Node.new()
+	# 	oc.autofree.add_queue_free(n1)
+	# 	oc.record_orphans('group')
+	# 	var result = oc.get_orphan_ids('group')
+	# 	assert_eq(result.size(), 0)
+	# 	n1.free()
 
 
 

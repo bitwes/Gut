@@ -1999,7 +1999,8 @@ func assert_not_freed(obj, title='something'):
 ## test when the assert is executed.  See the [wiki]Memory-Management[/wiki]
 ## page for more information.
 func assert_no_new_orphans(text=''):
-	var count = gut.get_current_test_orphans().size()
+	var orphan_ids = gut.get_current_test_orphans()
+	var count = orphan_ids.size()
 	var msg = ''
 	if(text != ''):
 		msg = ':  ' + text
@@ -2007,6 +2008,7 @@ func assert_no_new_orphans(text=''):
 	# can happen with a misplaced assert_no_new_orphans.  Checking for > 0
 	# ensures this will not cause some weird failure.
 	if(count > 0):
+		msg += str("\n", _strutils.indent_text(gut.get_orphan_counter()._get_orphan_list_text(orphan_ids), 1, '    '))
 		_fail(str('Expected no orphans, but found ', count, msg))
 	else:
 		_pass('No new orphans found.' + msg)

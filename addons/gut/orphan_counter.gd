@@ -3,6 +3,8 @@
 # ------------------------------------------------------------------------------
 class Orphanage:
 	const UNGROUPED = "UNGROUPED"
+	const SUBGROUP_SEP = '->'
+
 	var orphan_ids = {}
 	var oprhans_by_group = {}
 	var strutils = GutUtils.Strutils.new()
@@ -18,9 +20,9 @@ class Orphanage:
 			to_return = group
 
 		if(subgroup == null):
-			to_return += str('->', UNGROUPED)
+			to_return += str(SUBGROUP_SEP, UNGROUPED)
 		else:
-			to_return += str("->", subgroup)
+			to_return += str(SUBGROUP_SEP, subgroup)
 
 		return to_return
 
@@ -58,11 +60,12 @@ class Orphanage:
 	func get_all_group_orphans(group):
 		var to_return = []
 		for key in oprhans_by_group:
-			if(key == group or key.begins_with(str(group, '.'))):
+			if(key == group or key.begins_with(str(group, SUBGROUP_SEP))):
 				to_return.append_array(oprhans_by_group[key])
 		return to_return
 
 
+	# clears out anything that is not still an orphan.
 	func clean():
 		oprhans_by_group.clear()
 		for key in orphan_ids.keys():
@@ -117,7 +120,6 @@ func _count_all_children(instance):
 
 
 func _get_orphan_list_text(orphan_ids):
-	# var consolidated_ids = _consolidate_orphan_children(orphan_ids)
 	var text = ""
 	for id in orphan_ids:
 		var kid_count_text = ''
@@ -129,7 +131,7 @@ func _get_orphan_list_text(orphan_ids):
 
 			var autofree_text = ''
 			if(autofree.has_instance_id(id)):
-				autofree_text = (" autofreed")
+				autofree_text = (" (autofree)")
 
 			if(text != ''):
 				text += "\n"
@@ -169,10 +171,11 @@ func end_test(script_path, test_name, should_log = true):
 	# already.
 	var orphans = get_orphan_ids(script_path, test_name)
 	var total_count = orphans.size()
-	# orphans = _consolidate_orphan_children(orphans)
 	if(orphans.size() > 0 and should_log):
 		logger.orphan(str(total_count, ' Orphans'))
-		logger.orphan(_strutils.indent_text(_get_orphan_list_text(orphans), 1, '    '))
+		logger.inc_indent()
+		logger.orphan(_get_orphan_list_text(orphans))
+		logger.dec_indent()
 
 
 func get_orphan_ids(group=null, subgroup=null):
@@ -184,10 +187,10 @@ func get_orphan_ids(group=null, subgroup=null):
 	else:
 		ids = orphanage.get_orphan_ids(group, subgroup)
 
-	if(hide_autofree):
-		for i in range(ids.size() -1, -1, -1):
-			if(autofree.has_instance_id(ids[i])):
-				ids.remove_at(i)
+	# if(hide_autofree):
+	# 	for i in range(ids.size() -1, -1, -1):
+	# 		if(autofree.has_instance_id(ids[i])):
+	# 			ids.remove_at(i)
 	return ids
 
 
@@ -198,7 +201,6 @@ func get_count() -> int:
 func log_all():
 	var last_script = ''
 	var last_test = ''
-	var still_orphaned = 0
 	# var orphans_by_parent = _consolidate_orphan_children(orphanage.orphan_ids)
 	# logger.orphan(_strutils.indent_text(_get_orphan_list_text(orphanage.orphan_ids), 1, '    '))
 

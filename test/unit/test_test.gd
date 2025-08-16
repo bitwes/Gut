@@ -1382,6 +1382,7 @@ class TestMemoryMgmt:
 		verbose = false
 		_gut = add_child_autofree(new_gut(verbose))
 
+
 	func test_passes_when_no_orphans_introduced():
 		var d = DynamicGutTest.new()
 		d.add_source("""
@@ -1392,6 +1393,7 @@ class TestMemoryMgmt:
 		assert_eq(results.passing, 1)
 		await wait_for_signal(_gut.end_run, 5)
 		await wait_seconds(.5)
+
 
 	func test_failing_orphan_assert_marks_test_as_failing():
 		var d = DynamicGutTest.new()
