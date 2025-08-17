@@ -2,7 +2,7 @@
 # It keeps track of the orphans...so this is best name it could ever have.
 # ------------------------------------------------------------------------------
 class Orphanage:
-	const UNGROUPED = "UNGROUPED"
+	const UNGROUPED = "Outside Tests"
 	const SUBGROUP_SEP = '->'
 
 	var orphan_ids = {}
@@ -87,30 +87,6 @@ var logger = GutUtils.get_logger()
 var autofree = GutUtils.AutoFree.new()
 var hide_autofree = false
 
-# returns {instance_id:child_count, instance_id:child_count}
-# func _consolidate_orphan_children(orphan_ids):
-# 	var to_return = {}
-
-# 	for id in orphan_ids:
-# 		var inst = orphanage.orphan_ids[id].instance
-# 		var root_parent = null
-# 		var trav_node = inst
-# 		if(is_instance_valid(inst)):
-# 			while(trav_node.get_parent() != null):
-# 				root_parent = trav_node.get_parent()
-# 				trav_node = root_parent
-
-# 			if(root_parent == null):
-# 				to_return[id] = 0
-# 			else:
-# 				var root_parent_id = root_parent.get_instance_id()
-# 				if(to_return.has(root_parent_id)):
-# 					to_return[root_parent_id] += 1
-# 				else:
-# 					to_return[id] = 0
-
-# 	return to_return
-
 
 func _count_all_children(instance):
 	var count = 0
@@ -135,7 +111,7 @@ func _get_orphan_list_text(orphan_ids):
 
 			if(text != ''):
 				text += "\n"
-			text += str('* ', _strutils.type2str(inst), kid_count_text, autofree_text)
+			text += str('* [', _strutils.type2str(inst), ']', kid_count_text, autofree_text)
 
 	return text
 
@@ -201,8 +177,6 @@ func get_count() -> int:
 func log_all():
 	var last_script = ''
 	var last_test = ''
-	# var orphans_by_parent = _consolidate_orphan_children(orphanage.orphan_ids)
-	# logger.orphan(_strutils.indent_text(_get_orphan_list_text(orphanage.orphan_ids), 1, '    '))
 
 	for id in orphanage.orphan_ids:
 		var entry = orphanage.orphan_ids[id]
@@ -221,32 +195,6 @@ func log_all():
 			logger.orphan(_get_orphan_list_text(orphan_ids))
 			logger.dec_indent()
 			logger.dec_indent()
-	# GutUtils.pretty_print(orphanage.oprhans_by_group)
-
-
-
-	# for key in orphanage.orphan_ids:
-	# 	var inst = instance_from_id(key)
-	# 	if(inst != null and inst is not GutTest and inst.get_parent() == null):
-	# 		var entry = orphanage.orphan_ids[key]
-	# 		if(entry.group != last_script):
-	# 			logger.log(entry.group)
-	# 			last_script = entry.group
-	# 		if(entry.subgroup != last_test):
-	# 			logger.log(str('    - ', entry.subgroup))
-	# 			last_test = entry.subgroup
-
-	# 		var kid_count_text = ''
-	# 		if(orphans_by_parent.get(key, 0) != 0):
-	# 			kid_count_text = str(' + ', orphans_by_parent[inst])
-	# 			still_orphaned += orphans_by_parent[inst]
-	# 		var autofree_text = ''
-	# 		if(autofree.has_instance_id(key)):
-	# 			autofree_text = (" autofreed")
-	# 		logger.log(str('    ', '    * ', _strutils.type2str(inst), kid_count_text, autofree_text))
-	# 		still_orphaned += 1
-
-	# logger.log(str("\nTotal = ", still_orphaned))
 
 
 # ##############################################################################
