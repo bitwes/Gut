@@ -461,12 +461,13 @@ func _init_run():
 # Print out run information and close out the run.
 # ------------------------------------------------------------------------------
 func _end_run():
+	await _run_hook_script(get_post_run_script_instance())
+
 	_orphan_counter.record_orphans("end_run")
 	_orphan_counter.orphanage.clean()
 	_log_end_run()
 	_is_running = false
 
-	await _run_hook_script(get_post_run_script_instance())
 	_export_results()
 	end_run.emit()
 
