@@ -85,13 +85,12 @@ var _strutils = GutStringUtils.new()
 var orphanage : Orphanage = Orphanage.new()
 var logger = GutUtils.get_logger()
 var autofree = GutUtils.AutoFree.new()
-var hide_autofree = false
 
 
 func _count_all_children(instance):
-	var count = 0
+	var count = instance.get_child_count()
 	for child in instance.get_children():
-		count += _count_all_children(child) + 1
+		count += _count_all_children(child)
 	return count
 
 
@@ -146,9 +145,8 @@ func end_test(script_path, test_name, should_log = true):
 	# because record_orphans may have been called for this group/subgroup
 	# already.
 	var orphans = get_orphan_ids(script_path, test_name)
-	var total_count = orphans.size()
 	if(orphans.size() > 0 and should_log):
-		logger.orphan(str(total_count, ' Orphans'))
+		logger.orphan(str(orphans.size(), ' Orphans'))
 		logger.inc_indent()
 		logger.orphan(_get_orphan_list_text(orphans))
 		logger.dec_indent()
@@ -163,10 +161,6 @@ func get_orphan_ids(group=null, subgroup=null):
 	else:
 		ids = orphanage.get_orphan_ids(group, subgroup)
 
-	# if(hide_autofree):
-	# 	for i in range(ids.size() -1, -1, -1):
-	# 		if(autofree.has_instance_id(ids[i])):
-	# 			ids.remove_at(i)
 	return ids
 
 
