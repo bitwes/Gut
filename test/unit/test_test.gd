@@ -743,7 +743,8 @@ class TestPending:
 		assert_eq(gr.test.get_pending_count(), 1, 'One test should have been marked as pending')
 
 	func test_pending_accepts_text():
-		pending("This is a pending test.  You should see this text in the results.")
+		gr.test.pending("This is a pending test.  You should see this text in the results.")
+		assert_eq(gr.test.get_pass_count(), 0)
 
 	func test_pending_does_not_increment_passed():
 		gr.test.pending()
@@ -1381,10 +1382,11 @@ class TestMemoryMgmt:
 		verbose = false
 		_gut = add_child_autofree(new_gut(verbose))
 
+
 	func test_passes_when_no_orphans_introduced():
 		var d = DynamicGutTest.new()
 		d.add_source("""
-		func test_assert_no_orphans():
+		func test_assert_no_new_orphans():
 			assert_no_new_orphans()
 		""")
 		var results = d.run_test_in_gut(_gut)
@@ -1392,10 +1394,11 @@ class TestMemoryMgmt:
 		await wait_for_signal(_gut.end_run, 5)
 		await wait_seconds(.5)
 
+
 	func test_failing_orphan_assert_marks_test_as_failing():
 		var d = DynamicGutTest.new()
 		d.add_source("""
-		func test_assert_no_orphans():
+		func test_assert_no_new_orphans():
 			var n2d = Node2D.new()
 			assert_no_new_orphans('SHOULD FAIL')
 			assert_true(is_failing(), 'this test should be failing')

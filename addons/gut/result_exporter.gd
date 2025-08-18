@@ -12,7 +12,7 @@ func _export_tests(gut, collected_script):
 	var tests = collected_script.tests
 	for test in tests:
 		if(test.get_status_text() != GutUtils.TEST_STATUSES.NOT_RUN):
-			var orphans = gut.get_orphan_counter().get_orphans(
+			var orphans = gut.get_orphan_counter().get_orphan_ids(
 				collected_script.get_filename_and_inner(),
 				test.name)
 			var orphan_node_strings = []

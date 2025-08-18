@@ -31,9 +31,17 @@
 var _to_free = []
 var _to_queue_free = []
 var _ref_counted_doubles = []
+var _all_instance_ids = []
+
+
+func _add_instance_id(thing):
+	if(thing.has_method("get_instance_id")):
+		_all_instance_ids.append(thing.get_instance_id())
+
 
 func add_free(thing):
 	if(typeof(thing) == TYPE_OBJECT):
+		_add_instance_id(thing)
 		if(!thing is RefCounted):
 			_to_free.append(thing)
 		elif(GutUtils.is_double(thing)):
@@ -41,7 +49,9 @@ func add_free(thing):
 
 
 func add_queue_free(thing):
-	_to_queue_free.append(thing)
+	if(typeof(thing) == TYPE_OBJECT):
+		_add_instance_id(thing)
+		_to_queue_free.append(thing)
 
 
 func get_queue_free_count():
@@ -69,4 +79,8 @@ func free_all():
 		ref_dbl.__gutdbl_done()
 	_ref_counted_doubles.clear()
 
+	_all_instance_ids.clear()
 
+
+func has_instance_id(id):
+	return _all_instance_ids.has(id)
