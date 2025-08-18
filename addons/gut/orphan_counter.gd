@@ -94,7 +94,7 @@ func _count_all_children(instance):
 	return count
 
 
-func _get_orphan_list_text(orphan_ids):
+func get_orphan_list_text(orphan_ids):
 	var text = ""
 	for id in orphan_ids:
 		var kid_count_text = ''
@@ -148,7 +148,7 @@ func end_test(script_path, test_name, should_log = true):
 	if(orphans.size() > 0 and should_log):
 		logger.orphan(str(orphans.size(), ' Orphans'))
 		logger.inc_indent()
-		logger.orphan(_get_orphan_list_text(orphans))
+		logger.orphan(get_orphan_list_text(orphans))
 		logger.dec_indent()
 
 
@@ -186,7 +186,7 @@ func log_all():
 			last_test = entry.subgroup
 			logger.inc_indent()
 			var orphan_ids = orphanage.get_orphan_ids(last_script, last_test)
-			logger.orphan(_get_orphan_list_text(orphan_ids))
+			logger.orphan(get_orphan_list_text(orphan_ids))
 			logger.dec_indent()
 			logger.dec_indent()
 

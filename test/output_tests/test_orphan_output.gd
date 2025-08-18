@@ -55,12 +55,12 @@ func test_with_a_scene_orphan():
 
 func test_with_a_scene_orphan_assert():
 	var main_scene = autoqfree(MainScene.instantiate())
-	assert_no_orphans()
+	assert_no_new_orphans()
 
 
 func test_with_an_autofreed_node():
 	var new_node = autofree(Node.new())
-	assert_no_orphans("will fail, but will not list orphan because by then it is freed.")
+	assert_no_new_orphans("will fail, but will not list orphan because by then it is freed.")
 
 
 func test_with_some_nodes_with_children():

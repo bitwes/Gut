@@ -139,8 +139,6 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_no_new_orphans<class_GutTest_method_assert_no_new_orphans>`\ (\ text = ""\ )                                                                                                                                                                        |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_no_orphans<class_GutTest_method_assert_no_orphans>`\ (\ text = ""\ )                                                                                                                                                                                |
-   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_not_between<class_GutTest_method_assert_not_between>`\ (\ got, expect_low, expect_high, text = ""\ )                                                                                                                                                |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_not_called<class_GutTest_method_assert_not_called>`\ (\ inst, method_name = null, parameters = null\ )                                                                                                                                              |
@@ -2011,18 +2009,6 @@ The inverse of :ref:`assert_freed<class_GutTest_method_assert_freed>`
 |void| **assert_no_new_orphans**\ (\ text = ""\ ) :ref:`🔗<class_GutTest_method_assert_no_new_orphans>`
 
 This method will assert that no orphaned nodes have been introduced by the test when the assert is executed.  See the `Memory-Management <../Memory-Management.html>`__ page for more information.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_GutTest_method_assert_no_orphans:
-
-.. rst-class:: classref-method
-
-|void| **assert_no_orphans**\ (\ text = ""\ ) :ref:`🔗<class_GutTest_method_assert_no_orphans>`
-
-This is an alias for :ref:`assert_no_new_orphans<class_GutTest_method_assert_no_new_orphans>`, since the new orphan tracking system (`Orphanage`) no longer has a need for the "new" qualifier, in its name, that the old system did.  Now GUT knows more and you can more confidently assert that your test has made "no orphans".
 
 .. rst-class:: classref-item-separator
 

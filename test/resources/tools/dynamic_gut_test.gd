@@ -5,7 +5,7 @@ class_name DynamicGutTest
 # test scripts created in tests to test the tests closer to the tests that
 # test the test.
 # ------------------------------------------------------------------------------
-static var should_print_source = true
+static var should_print_source = false
 var source_entries = []
 var lambdas = []
 

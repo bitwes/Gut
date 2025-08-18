@@ -62,7 +62,7 @@ __Notes__:
 
 
 __Warnings:__
-* Objects passed to `autofree` and  `autoqfree` are not in the tree and therefore will still cause `assert_no_orphans` to fail.
+* Objects passed to `autofree` and  `autoqfree` are not in the tree and therefore will still cause `assert_no_new_orphans` to fail.
 * Do not use any of the `autofree` methods in `before_all`.  This will cause the objects to be freed after the first test is run.
 
 ### Freeing Globals
@@ -100,11 +100,11 @@ When you call `add_child` from within a test the object is added as a child of t
 
 
 ### Testing for Leaks
-GUT provides the `assert_no_orphans` method that will assert that the test has not created any new orphans.  Using this can be a little tricky in complicated test scripts.
+GUT provides the `assert_no_new_orphans` method that will assert that the test has not created any new orphans.  Using this can be a little tricky in complicated test scripts.
 
-`assert_no_orphans` will verify that, at the time of calling, the test has not created an new orphans.
+`assert_no_new_orphans` will verify that, at the time of calling, the test has not created an new orphans.
 
-`assert_no_orphans` cannot take into account anything you have called `autofree` on.  For one, it's impossible, and it wouldn't tell you much since freeing that object could cause leaks.
+`assert_no_new_orphans` cannot take into account anything you have called `autofree` on.  For one, it's impossible, and it wouldn't tell you much since freeing that object could cause leaks.
 
 A standard memory leak test will create an object, free it, and then verify that you have not created any new orphans.  Based on some bad practices I've done myself I would advise creating tests with and without using `add_child`.
 
@@ -126,14 +126,14 @@ class TestLeaks:
         var to_free = Foo.new()
         add_child(to_free)
         to_free.free()
-        assert_no_orphans()
+        assert_no_new_orphans()
 ```
 If you must use `queue_free` instead of `free` in your test then you will have to pause before asserting that no orphans have been created.  You can do this with `await`
 ``` gdscript
 func test_no_orphans_queue_free();
   var node = Node.new()
   node.queue_free()
-  assert_no_orphans('this will fail')
+  assert_no_new_orphans('this will fail')
   await wait_seconds(.2)
-  assert_no_orphans('this one passes')
+  assert_no_new_orphans('this one passes')
 ```

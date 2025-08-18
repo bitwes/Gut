@@ -2008,18 +2008,10 @@ func assert_no_new_orphans(text=''):
 	# can happen with a misplaced assert_no_new_orphans.  Checking for > 0
 	# ensures this will not cause some weird failure.
 	if(count > 0):
-		msg += str("\n", _strutils.indent_text(gut.get_orphan_counter()._get_orphan_list_text(orphan_ids), 1, '    '))
+		msg += str("\n", _strutils.indent_text(gut.get_orphan_counter().get_orphan_list_text(orphan_ids), 1, '    '))
 		_fail(str('Expected no orphans, but found ', count, msg))
 	else:
 		_pass('No new orphans found.' + msg)
-
-
-## This is an alias for [method assert_no_new_orphans], since the new orphan
-## tracking system (`Orphanage`) no longer has a need for the "new" qualifier,
-## in its name, that the old system did.  Now GUT knows more and you can more
-## confidently assert that your test has made "no orphans".
-func assert_no_orphans(text=''):
-	assert_no_new_orphans(text)
 
 
 ## @ignore
