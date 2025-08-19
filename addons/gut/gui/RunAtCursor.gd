@@ -3,6 +3,15 @@ extends Control
 
 
 var ScriptTextEditors = load('res://addons/gut/gui/script_text_editor_controls.gd')
+var menu_manager = null :
+	set(val):
+		menu_manager = val
+		menu_manager.run_script.connect(_on_BtnRunScript_pressed)
+		menu_manager.run_at_cursor.connect(run_at_cursor)
+		menu_manager.rerun.connect(rerun)
+		menu_manager.run_inner_class.connect(_on_BtnRunInnerClass_pressed)
+		menu_manager.run_test.connect(_on_BtnRunMethod_pressed)
+		_update_buttons(_last_info)
 
 @onready var _ctrls = {
 	btn_script = $HBox/BtnRunScript,
@@ -57,17 +66,22 @@ func _set_editor(which):
 func _update_buttons(info):
 	_ctrls.lbl_none.visible = _cur_script_path == null
 	_ctrls.btn_script.visible = _cur_script_path != null
+	menu_manager.disable_menu("run_script", _cur_script_path == null)
+	menu_manager.disable_menu("run_at_cursor", _cur_script_path == null)
 
 	_ctrls.btn_inner.visible = info.inner_class != null
 	_ctrls.arrow_1.visible = info.inner_class != null
 	_ctrls.btn_inner.text = str(info.inner_class)
 	_ctrls.btn_inner.tooltip_text = str("Run all tests in Inner-Test-Class ", info.inner_class)
+	menu_manager.disable_menu("run_inner_class", info.inner_class == null)
 
 	_ctrls.btn_method.visible = info.test_method != null
 	_ctrls.arrow_2.visible = info.test_method != null
 	_ctrls.btn_method.text = str(info.test_method)
 	_ctrls.btn_method.tooltip_text = str("Run test ", info.test_method)
+	menu_manager.disable_menu("run_test", info.test_method == null)
 
+	menu_manager.disable_menu("rerun", _last_run_info == {})
 	# The button's new size won't take effect until the next frame.
 	# This appears to be what was causing the button to not be clickable the
 	# first time.
@@ -75,6 +89,11 @@ func _update_buttons(info):
 
 func _update_size():
 	custom_minimum_size.x = _ctrls.btn_method.size.x + _ctrls.btn_method.position.x
+
+var _last_run_info = {}
+func _emit_run_tests(info):
+	_last_run_info = info.duplicate()
+	run_tests.emit(info)
 
 # ----------------
 # Events
@@ -91,25 +110,41 @@ func _on_BtnRunScript_pressed():
 	info.script = _cur_script_path.get_file()
 	info.inner_class = null
 	info.test_method = null
-	emit_signal("run_tests", info)
+	_emit_run_tests(info)
 
 
 func _on_BtnRunInnerClass_pressed():
 	var info = _last_info.duplicate()
 	info.script = _cur_script_path.get_file()
 	info.test_method = null
-	emit_signal("run_tests", info)
+	_emit_run_tests(info)
 
 
 func _on_BtnRunMethod_pressed():
 	var info = _last_info.duplicate()
 	info.script = _cur_script_path.get_file()
-	emit_signal("run_tests", info)
+	_emit_run_tests(info)
 
 
 # ----------------
 # Public
 # ----------------
+func rerun():
+	if(_last_run_info != {}):
+		_emit_run_tests(_last_run_info)
+
+
+func run_at_cursor():
+	if(_ctrls.btn_method.visible):
+		_on_BtnRunMethod_pressed()
+	elif(_ctrls.btn_inner.visible):
+		_on_BtnRunInnerClass_pressed()
+	elif(_ctrls.btn_script.visible):
+		_on_BtnRunScript_pressed()
+	else:
+		print("nothing selected")
+
+
 func set_script_text_editors(value):
 	_editors = value
 

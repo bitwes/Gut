@@ -1,7 +1,11 @@
 @tool
 extends EditorPlugin
 var VersionConversion = load("res://addons/gut/version_conversion.gd")
+var MenuManager = load("res://addons/gut/menu_manager.gd")
+
 var _bottom_panel = null
+var _menu_mgr = null
+var _gut_button = null
 
 func _init():
 	if(VersionConversion.error_if_not_all_classes_imported()):
@@ -25,8 +29,8 @@ func _enter_tree():
 
 	_bottom_panel = preload('res://addons/gut/gui/GutBottomPanel.tscn').instantiate()
 
-	var button = add_control_to_bottom_panel(_bottom_panel, 'GUT')
-	button.shortcut_in_tooltip = true
+	_gut_button = add_control_to_bottom_panel(_bottom_panel, 'GUT')
+	_gut_button.shortcut_in_tooltip = true
 
 	# ---------
 	# I removed this delay because it was causing issues with the shortcut button.
@@ -41,8 +45,12 @@ func _enter_tree():
 	# ---
 	_bottom_panel.set_interface(get_editor_interface())
 	_bottom_panel.set_plugin(self)
-	_bottom_panel.set_panel_button(button)
+	_bottom_panel.set_panel_button(_gut_button)
 	_bottom_panel.load_shortcuts()
+
+	_menu_mgr = MenuManager.new(self)
+	_bottom_panel._ctrls.run_at_cursor.menu_manager = _menu_mgr
+	_bottom_panel.menu_manager = _menu_mgr
 
 
 func _exit_tree():
@@ -50,6 +58,7 @@ func _exit_tree():
 	# Always remember to remove_at it from the engine when deactivated
 	remove_control_from_bottom_panel(_bottom_panel)
 	_bottom_panel.free()
+	remove_tool_menu_item("GUT") # made by _menu_mgr
 
 
 # This seems like a good idea at first, but it deletes the settings for ALL
