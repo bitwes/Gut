@@ -9,6 +9,9 @@ var menu_manager = null :
 		menu_manager.run_script.connect(_on_BtnRunScript_pressed)
 		menu_manager.run_at_cursor.connect(run_at_cursor)
 		menu_manager.rerun.connect(rerun)
+		menu_manager.run_inner_class.connect(_on_BtnRunInnerClass_pressed)
+		menu_manager.run_test.connect(_on_BtnRunMethod_pressed)
+		_update_buttons(_last_info)
 
 @onready var _ctrls = {
 	btn_script = $HBox/BtnRunScript,
@@ -64,17 +67,21 @@ func _update_buttons(info):
 	_ctrls.lbl_none.visible = _cur_script_path == null
 	_ctrls.btn_script.visible = _cur_script_path != null
 	menu_manager.disable_menu("run_script", _cur_script_path == null)
+	menu_manager.disable_menu("run_at_cursor", _cur_script_path == null)
 
 	_ctrls.btn_inner.visible = info.inner_class != null
 	_ctrls.arrow_1.visible = info.inner_class != null
 	_ctrls.btn_inner.text = str(info.inner_class)
 	_ctrls.btn_inner.tooltip_text = str("Run all tests in Inner-Test-Class ", info.inner_class)
+	menu_manager.disable_menu("run_inner_class", info.inner_class == null)
 
 	_ctrls.btn_method.visible = info.test_method != null
 	_ctrls.arrow_2.visible = info.test_method != null
 	_ctrls.btn_method.text = str(info.test_method)
 	_ctrls.btn_method.tooltip_text = str("Run test ", info.test_method)
+	menu_manager.disable_menu("run_test", info.test_method == null)
 
+	menu_manager.disable_menu("rerun", _last_run_info == {})
 	# The button's new size won't take effect until the next frame.
 	# This appears to be what was causing the button to not be clickable the
 	# first time.

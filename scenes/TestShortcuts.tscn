@@ -16,6 +16,7 @@ offset_right = 485.331
 offset_bottom = 114.741
 
 [node name="Button" type="Button" parent="."]
+anchors_preset = -1
 offset_left = 112.303
 offset_top = 57.211
 offset_right = 238.303
@@ -27,6 +28,7 @@ text = "Hello World3D"
 visible = false
 
 [node name="Controls" type="ColorRect" parent="."]
+anchors_preset = -1
 offset_left = 607.0
 offset_top = 29.0
 offset_right = 762.0

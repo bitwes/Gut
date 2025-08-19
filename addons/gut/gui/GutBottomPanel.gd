@@ -16,6 +16,10 @@ var _light_color = Color(0, 0, 0, .5)
 var _panel_button = null
 var _last_selected_path = null
 var _user_prefs = null
+var menu_manager = null :
+	set(val):
+		menu_manager = val
+		_apply_shortcuts()
 
 
 @onready var _ctrls = {
@@ -155,10 +159,24 @@ func _run_tests():
 
 
 func _apply_shortcuts():
-	_ctrls.run_button.shortcut = _ctrls.shortcut_dialog.get_run_all()
+	#_ctrls.run_button.shortcut = _ctrls.shortcut_dialog.get_run_all()
+
+	if(menu_manager != null):
+		menu_manager.set_shortcut("run_all",
+			_ctrls.shortcut_dialog.get_run_all_input_event())
+		menu_manager.set_shortcut("run_script", 
+			_ctrls.shortcut_dialog.get_run_current_script_input_event())
+		menu_manager.set_shortcut("run_inner_class", 
+			_ctrls.shortcut_dialog.get_run_current_inner_input_event())
+		menu_manager.set_shortcut("run_test",
+			_ctrls.shortcut_dialog.get_run_current_test_input_event())
+		menu_manager.set_shortcut("run_at_cursor",
+			_ctrls.shortcut_dialog.get_run_at_cursor_input_event())
+		menu_manager.set_shortcut("rerun",
+			_ctrls.shortcut_dialog.get_rerun_input_event())
 
 	_ctrls.run_at_cursor.get_script_button().shortcut = \
-		_ctrls.shortcut_dialog.get_run_current_script()
+		_ctrls.shortcut_dialog.get_run_current_script()	
 	_ctrls.run_at_cursor.get_inner_button().shortcut = \
 		_ctrls.shortcut_dialog.get_run_current_inner()
 	_ctrls.run_at_cursor.get_test_button().shortcut = \

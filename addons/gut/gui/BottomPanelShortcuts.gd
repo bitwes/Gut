@@ -9,6 +9,8 @@ var default_path = GutEditorGlobals.editor_shortcuts_path
 	run_current_script = $Layout/CRunCurrentScript/ShortcutButton,
 	run_current_inner = $Layout/CRunCurrentInner/ShortcutButton,
 	run_current_test = $Layout/CRunCurrentTest/ShortcutButton,
+	run_at_cursor = $Layout/CRunAtCursor/ShortcutButton,
+	rerun = $Layout/CRerun/ShortcutButton, 
 	panel_button = $Layout/CPanelButton/ShortcutButton,
 }
 
@@ -62,18 +64,40 @@ func _on_popup_hide():
 # ------------
 func get_run_all():
 	return _ctrls.run_all.get_shortcut()
+	
+func get_run_all_input_event():
+	return _ctrls.run_all.get_input_event()
 
 func get_run_current_script():
 	return _ctrls.run_current_script.get_shortcut()
 
+func get_run_current_script_input_event():
+	return _ctrls.run_current_script.get_input_event()
+
+
 func get_run_current_inner():
 	return _ctrls.run_current_inner.get_shortcut()
-
+	
+func get_run_current_inner_input_event():
+	return _ctrls.run_current_inner.get_input_event()
+	
+	
 func get_run_current_test():
 	return _ctrls.run_current_test.get_shortcut()
 
+func get_run_current_test_input_event():
+	return _ctrls.run_current_test.get_input_event()
+
+func get_run_at_cursor_input_event():
+	return _ctrls.run_at_cursor.get_input_event()
+	
+func get_rerun_input_event():
+	return _ctrls.rerun.get_input_event()
+	
+
 func get_panel_button():
 	return _ctrls.panel_button.get_shortcut()
+
 
 func _set_pref_value(pref, button):
 	pref.value = {shortcut = button.get_shortcut().events}
@@ -118,8 +142,6 @@ func load_shortcuts():
 
 
 func load_shortcuts_from_editor_settings():
-	var empty = Shortcut.new()
-
 	_ctrls.run_all.set_shortcut(_load_shortcut_from_pref(_user_prefs.shortcut_run_all))
 	_ctrls.run_current_script.set_shortcut(_load_shortcut_from_pref(_user_prefs.shortcut_run_current_script))
 	_ctrls.run_current_inner.set_shortcut(_load_shortcut_from_pref(_user_prefs.shortcut_run_current_inner))

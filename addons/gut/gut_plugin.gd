@@ -50,6 +50,7 @@ func _enter_tree():
 
 	_menu_mgr = MenuManager.new(self)
 	_bottom_panel._ctrls.run_at_cursor.menu_manager = _menu_mgr
+	_bottom_panel.menu_manager = _menu_mgr
 
 
 func _exit_tree():
