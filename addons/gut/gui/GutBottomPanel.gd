@@ -159,30 +159,31 @@ func _run_tests():
 
 
 func _apply_shortcuts():
-	#_ctrls.run_button.shortcut = _ctrls.shortcut_dialog.get_run_all()
 
 	if(menu_manager != null):
 		menu_manager.set_shortcut("run_all",
-			_ctrls.shortcut_dialog.get_run_all_input_event())
+			_ctrls.shortcut_dialog.sc_button_run_all.get_input_event())
 		menu_manager.set_shortcut("run_script", 
-			_ctrls.shortcut_dialog.get_run_current_script_input_event())
+			_ctrls.shortcut_dialog.sc_button_run_current_script.get_input_event())
 		menu_manager.set_shortcut("run_inner_class", 
-			_ctrls.shortcut_dialog.get_run_current_inner_input_event())
+			_ctrls.shortcut_dialog.sc_button_run_current_inner.get_input_event())
 		menu_manager.set_shortcut("run_test",
-			_ctrls.shortcut_dialog.get_run_current_test_input_event())
+			_ctrls.shortcut_dialog.sc_button_run_current_test.get_input_event())
 		menu_manager.set_shortcut("run_at_cursor",
-			_ctrls.shortcut_dialog.get_run_at_cursor_input_event())
+			_ctrls.shortcut_dialog.sc_button_run_at_cursor.get_input_event())
 		menu_manager.set_shortcut("rerun",
-			_ctrls.shortcut_dialog.get_rerun_input_event())
+			_ctrls.shortcut_dialog.sc_button_rerun.get_input_event())
 
+	_ctrls.run_button.shortcut = \
+		_ctrls.shortcut_dialog.sc_button_run_all.get_shortcut()
 	_ctrls.run_at_cursor.get_script_button().shortcut = \
-		_ctrls.shortcut_dialog.get_run_current_script()	
+		_ctrls.shortcut_dialog.sc_button_run_current_script.get_shortcut()
 	_ctrls.run_at_cursor.get_inner_button().shortcut = \
-		_ctrls.shortcut_dialog.get_run_current_inner()
+		_ctrls.shortcut_dialog.sc_button_run_current_inner.get_shortcut()
 	_ctrls.run_at_cursor.get_test_button().shortcut = \
-		_ctrls.shortcut_dialog.get_run_current_test()
+		_ctrls.shortcut_dialog.sc_button_run_current_test.get_shortcut()
 
-	_panel_button.shortcut = _ctrls.shortcut_dialog.get_panel_button()
+	_panel_button.shortcut = _ctrls.shortcut_dialog.sc_button_panel.get_shortcut()
 
 
 func _run_all():

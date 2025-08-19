@@ -7,7 +7,7 @@
 oversampling_override = 1.0
 title = "Shortcuts"
 position = Vector2i(0, 36)
-size = Vector2i(700, 586)
+size = Vector2i(700, 13259)
 visible = true
 exclusive = true
 unresizable = false

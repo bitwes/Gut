@@ -35,18 +35,6 @@ func _on_run_all():
 	_plugin._bottom_panel._run_all()
 
 
-# func _on_run_script():
-# 	run_script.emit()
-
-
-# func _on_run_at_cursor():
-# 	run_at_cursor.emit()
-
-
-# func _on_rerun():
-# 	rerun.emit()
-
-
 func add_menu(display_text, menu_name, callback, tooltip=''):
 	var index = _menus.size()
 	_menus[menu_name] = {
