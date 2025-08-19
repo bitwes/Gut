@@ -33,7 +33,7 @@ var menu_manager = null :
 	output_button = $layout/ControlBar/OutputBtn,
 
 	settings = $layout/RSplit/sc/Settings,
-	shortcut_dialog = $BottomPanelShortcuts,
+	shortcut_dialog = $ShortcutDialog,#$BottomPanelShortcuts,
 	light = $layout/RSplit/CResults/ControlBar/Light3D,
 	results = {
 		bar = $layout/RSplit/CResults/ControlBar,
@@ -87,7 +87,7 @@ func _apply_options_to_controls():
 	_ctrls.run_results.set_show_orphans(!_gut_config.options.hide_orphans)
 
 
-func _process(delta):
+func _process(_delta):
 	if(_is_running):
 		if(!_interface.is_playing_scene()):
 			_is_running = false
@@ -162,28 +162,28 @@ func _apply_shortcuts():
 
 	if(menu_manager != null):
 		menu_manager.set_shortcut("run_all",
-			_ctrls.shortcut_dialog.sc_button_run_all.get_input_event())
+			_ctrls.shortcut_dialog.scbtn_run_all.get_input_event())
 		menu_manager.set_shortcut("run_script", 
-			_ctrls.shortcut_dialog.sc_button_run_current_script.get_input_event())
+			_ctrls.shortcut_dialog.scbtn_run_current_script.get_input_event())
 		menu_manager.set_shortcut("run_inner_class", 
-			_ctrls.shortcut_dialog.sc_button_run_current_inner.get_input_event())
+			_ctrls.shortcut_dialog.scbtn_run_current_inner.get_input_event())
 		menu_manager.set_shortcut("run_test",
-			_ctrls.shortcut_dialog.sc_button_run_current_test.get_input_event())
+			_ctrls.shortcut_dialog.scbtn_run_current_test.get_input_event())
 		menu_manager.set_shortcut("run_at_cursor",
-			_ctrls.shortcut_dialog.sc_button_run_at_cursor.get_input_event())
+			_ctrls.shortcut_dialog.scbtn_run_at_cursor.get_input_event())
 		menu_manager.set_shortcut("rerun",
-			_ctrls.shortcut_dialog.sc_button_rerun.get_input_event())
+			_ctrls.shortcut_dialog.scbtn_rerun.get_input_event())
 
 	_ctrls.run_button.shortcut = \
-		_ctrls.shortcut_dialog.sc_button_run_all.get_shortcut()
+		_ctrls.shortcut_dialog.scbtn_run_all.get_shortcut()
 	_ctrls.run_at_cursor.get_script_button().shortcut = \
-		_ctrls.shortcut_dialog.sc_button_run_current_script.get_shortcut()
+		_ctrls.shortcut_dialog.scbtn_run_current_script.get_shortcut()
 	_ctrls.run_at_cursor.get_inner_button().shortcut = \
-		_ctrls.shortcut_dialog.sc_button_run_current_inner.get_shortcut()
+		_ctrls.shortcut_dialog.scbtn_run_current_inner.get_shortcut()
 	_ctrls.run_at_cursor.get_test_button().shortcut = \
-		_ctrls.shortcut_dialog.sc_button_run_current_test.get_shortcut()
+		_ctrls.shortcut_dialog.scbtn_run_current_test.get_shortcut()
 
-	_panel_button.shortcut = _ctrls.shortcut_dialog.sc_button_panel.get_shortcut()
+	_panel_button.shortcut = _ctrls.shortcut_dialog.scbtn_panel.get_shortcut()
 
 
 func _run_all():
@@ -217,10 +217,12 @@ func _on_RunAll_pressed():
 
 func _on_Shortcuts_pressed():
 	_ctrls.shortcut_dialog.popup_centered()
+	
 
-func _on_bottom_panel_shortcuts_visibility_changed():
+func _on_sortcut_dialog_confirmed() -> void:
 	_apply_shortcuts()
 	_ctrls.shortcut_dialog.save_shortcuts()
+
 
 func _on_RunAtCursor_run_tests(what):
 	_gut_config.options.selected = what.script

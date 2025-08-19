@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://vppa8r8uq548" path="res://addons/gut/gui/BottomPanelShortcuts.gd" id="2"]
 
 [node name="BottomPanelShortcuts" type="Popup"]
+disable_3d = true
 oversampling_override = 1.0
 title = "Shortcuts"
 position = Vector2i(0, 36)
@@ -18,9 +19,10 @@ script = ExtResource("2")
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 5.0
-offset_right = -5.0
-offset_bottom = -11842.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 692.0
+offset_bottom = 13210.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
