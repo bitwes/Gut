@@ -86,19 +86,23 @@ func _add_controls():
 		"That's the main reason it was made, you might have other reasons.")
 	
 	opt_maker.add_title('Blocking Mode')
-	_add_blurb("[b]Blocking[/b] (Recommended)")
+	_add_blurb("[b]Blocking[/b]")
 	_add_blurb(
-		"Errors appear in the output near the test that generated the error but the editor " + 
-		"cannot be used while tests are running.")
+		"Errors appear in the output as they would if run from the command line, but the editor " + 
+		"cannot be used while tests are running.  If you are trying to test for errors, this " + 
+		"mode provides the best output.")
 	_add_blurb("[b]Non-Blocking[/b]")
 	_add_blurb(
-		"Error output appears first, then test output, but you can use the editor while tests are running.")
+		"Test output is streamed to the GUT panel but error output appears after all tests have " + 
+		"finished.  The editor is not blocked.  If you want to run tests with the --headless option, " +
+		"you can use this mode to see what the run is doing.")
 	opt_maker.add_select('blocking_mode', blocking_mode, ['Blocking', 'Non-Blocking'], '')
 	
 	opt_maker.add_title("Additional Arguments")
 	_add_blurb(
 		"Supply any additional command line options for GUT and/or Godot.  You cannot use " + 
-		"spaces in values.")
+		"spaces in values.  See the Godot command line help for options and the GUT documentation " + 
+		"for optons.")
 	opt_maker.add_value("additional_arguments", additional_arguments, '', '')
 	_opt_maker_setup = true
 

@@ -95,6 +95,13 @@ func _apply_options_to_controls():
 	_ctrls.run_results.set_show_orphans(!_gut_config.options.hide_orphans)
 	$layout/ControlBar/SpecialButton.button_pressed = _user_prefs.run_externally.value
 	$layout/ControlBar/ShellOutOptions.disabled = !$layout/ControlBar/SpecialButton.button_pressed
+	var shell_dialog_size = _user_prefs.run_externally_options_dialog_size.value
+	if(shell_dialog_size != Vector2i(-1, -1)):
+		$ShellOutOptions.size = Vector2i(shell_dialog_size)
+	else:
+		print('shell_dialog_size =' , shell_dialog_size)
+	if(_user_prefs.shortcuts_dialog_size.value != Vector2i(-1, -1)):
+		_ctrls.shortcut_dialog.size = _user_prefs.shortcuts_dialog_size.value
 
 func _disable_run_buttons(should):
 	_ctrls.run_button.disabled = should
@@ -145,6 +152,8 @@ func _save_user_prefs():
 	_user_prefs.hide_result_tree.value = !_ctrls.run_results_button.button_pressed
 	_user_prefs.hide_output_text.value = !_ctrls.output_button.button_pressed
 	_user_prefs.run_externally.value = $layout/ControlBar/SpecialButton.button_pressed
+	_user_prefs.run_externally_options_dialog_size.value = $ShellOutOptions.size
+	_user_prefs.shortcuts_dialog_size.value = _ctrls.shortcut_dialog.size
 	_user_prefs.save_it()
 	
 
@@ -259,6 +268,7 @@ func _on_Shortcuts_pressed():
 func _on_sortcut_dialog_confirmed() -> void:
 	_apply_shortcuts()
 	_ctrls.shortcut_dialog.save_shortcuts()
+	_save_user_prefs()
 
 
 func _on_RunAtCursor_run_tests(what):
@@ -317,9 +327,7 @@ func hide_output_text(should):
 	_ctrls.output_button.button_pressed = !should
 
 
-func load_result_output():
-	_ctrls.output_ctrl.load_file(GutEditorGlobals.editor_run_bbcode_results_path)
-
+func load_result_json():
 	var summary = get_file_as_text(GutEditorGlobals.editor_run_json_results_path)
 	var test_json_conv = JSON.new()
 	if (test_json_conv.parse(summary) != OK):
@@ -357,6 +365,15 @@ func load_result_output():
 		_light_color = Color(0, 1, 0, .75)
 	_ctrls.light.visible = true
 	_ctrls.light.queue_redraw()
+	
+
+func load_result_text():
+	_ctrls.output_ctrl.load_file(GutEditorGlobals.editor_run_bbcode_results_path)	
+
+
+func load_result_output():
+	load_result_text()
+	load_result_json()
 
 
 func set_current_script(script):
@@ -430,3 +447,4 @@ func _on_shell_out_options_pressed() -> void:
 
 func _on_shell_out_options_confirmed() -> void:
 	$ShellOutOptions.save_to_file()
+	_save_user_prefs()

@@ -1,19 +1,68 @@
-[gd_scene load_steps=2 format=3 uid="uid://cftcb0e6g7tu1"]
+[gd_scene load_steps=3 format=3 uid="uid://cftcb0e6g7tu1"]
 
 [ext_resource type="Script" uid="uid://bi8pg352un4om" path="res://scenes/do_shell_out.gd" id="1_haowt"]
 
-[node name="DoShellOut" type="Node2D"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_haowt"]
+bg_color = Color(0.27749082, 0.07984676, 0, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_size = 5
+shadow_offset = Vector2(7, 7)
+
+[node name="DoShellOut" type="Control"]
+layout_mode = 3
+offset_right = 774.0
+offset_bottom = 260.0
 script = ExtResource("1_haowt")
 
-[node name="ColorRect" type="ColorRect" parent="."]
-anchors_preset = -1
-offset_left = 32.0
-offset_top = 30.0
-offset_right = 362.0
-offset_bottom = 342.0
-color = Color(0.00035125823, 0.22052902, 0.7284061, 1)
+[node name="ColorRect" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_haowt")
+
+[node name="VBox" type="VBoxContainer" parent="ColorRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="ColorRect/VBox"]
+layout_mode = 2
+text = "Running Tests Externally"
+horizontal_alignment = 1
+
+[node name="Spacer" type="CenterContainer" parent="ColorRect/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="ColorRect/VBox"]
+layout_mode = 2
+
+[node name="Spacer2" type="CenterContainer" parent="ColorRect/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Kill" type="Button" parent="ColorRect/VBox"]
+visible = false
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Stop"
+
+[node name="Spacer3" type="CenterContainer" parent="ColorRect/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
 
 [node name="Free" type="Button" parent="ColorRect"]
+visible = false
 layout_mode = 0
 offset_left = 121.0
 offset_top = 11.0
@@ -22,6 +71,7 @@ offset_bottom = 71.0
 text = "Free"
 
 [node name="DoIt" type="Button" parent="ColorRect"]
+visible = false
 layout_mode = 0
 offset_left = 119.0
 offset_top = 88.0
@@ -29,25 +79,6 @@ offset_right = 222.0
 offset_bottom = 154.0
 text = "Do it"
 
-[node name="Kill" type="Button" parent="ColorRect"]
-visible = false
-layout_mode = 0
-offset_left = 120.0
-offset_top = 238.0
-offset_right = 223.0
-offset_bottom = 304.0
-text = "Kill it"
-
-[node name="Label" type="Label" parent="ColorRect"]
-visible = false
-layout_mode = 0
-offset_left = 3.0
-offset_top = 182.0
-offset_right = 329.0
-offset_bottom = 205.0
-text = "Running"
-horizontal_alignment = 1
-
+[connection signal="pressed" from="ColorRect/VBox/Kill" to="." method="_on_kill_pressed"]
 [connection signal="pressed" from="ColorRect/Free" to="." method="_on_free_pressed"]
 [connection signal="pressed" from="ColorRect/DoIt" to="." method="_on_do_it_pressed"]
-[connection signal="pressed" from="ColorRect/Kill" to="." method="_on_kill_pressed"]

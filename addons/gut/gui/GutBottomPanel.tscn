@@ -241,9 +241,11 @@ size_flags_vertical = 3
 layout_mode = 2
 
 [node name="ShortcutDialog" parent="." instance=ExtResource("7_srqj5")]
+size = Vector2i(1134, 1256)
 visible = false
 
 [node name="ShellOutOptions" parent="." instance=ExtResource("7_xv2r3")]
+size = Vector2i(1300, 1044)
 visible = false
 
 [connection signal="pressed" from="layout/ControlBar/RunAll" to="." method="_on_RunAll_pressed"]

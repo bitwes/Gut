@@ -37,7 +37,7 @@ function_color = Color(1, 1, 1, 1)
 member_variable_color = Color(1, 1, 1, 1)
 keyword_colors = {
 "ERROR": Color(1, 0, 0, 1),
-"Expected Error": Color(0, 0, 1, 1),
+"ExpectedError": Color(0.6784314, 0.84705883, 0.9019608, 1),
 "Failed": Color(1, 0, 0, 1),
 "Orphans": Color(1, 1, 0, 1),
 "Passed": Color(0, 1, 0, 1),
