@@ -153,7 +153,13 @@ func _run_tests():
 	_ctrls.run_results.clear()
 	_ctrls.run_results.add_centered_text('Running...')
 
-	_interface.play_custom_scene('res://addons/gut/gui/run_from_editor.tscn')
+	if($layout/ControlBar/SpecialButton.button_pressed):
+		var panel = load("res://scenes/do_shell_out.tscn").instantiate()
+		panel._bottom_panel = self
+		add_child(panel)
+		panel.run_tests()
+	else:
+		_interface.play_custom_scene('res://addons/gut/gui/run_from_editor.tscn')
 	_is_running = true
 	_ctrls.output_ctrl.add_text('Running...')
 
@@ -325,7 +331,6 @@ func load_result_output():
 func set_current_script(script):
 	if(script):
 		if(_is_test_script(script)):
-			var file = script.resource_path.get_file()
 			_last_selected_path = script.resource_path.get_file()
 			_ctrls.run_at_cursor.activate_for_script(script.resource_path)
 
@@ -380,3 +385,4 @@ func nvl(value, if_null):
 		return if_null
 	else:
 		return value
+	

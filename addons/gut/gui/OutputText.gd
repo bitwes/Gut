@@ -89,6 +89,18 @@ var _user_prefs = GutEditorGlobals.user_prefs
 var _font_name_pctrl = null
 var _font_size_pctrl = null
 
+var keywords = [
+	['Failed', Color.RED],
+	['Passed', Color.GREEN],
+	['Pending', Color.YELLOW],
+	['Risky', Color.YELLOW],
+	['Orphans', Color.YELLOW],
+	['WARNING', Color.YELLOW],
+	['ERROR', Color.RED],
+	['ExpectedError', Color.BLUE],
+]
+
+
 # Automatically used when running the OutputText scene from the editor.  Changes
 # to this method only affect test-running the control through the editor.
 func _test_running_setup():
@@ -169,15 +181,6 @@ func _create_highlighter(default_color=Color(1, 1, 1, 1)):
 	to_return.number_color = default_color
 	to_return.symbol_color = default_color
 	to_return.member_variable_color = default_color
-
-	var keywords = [
-		['Failed', Color.RED],
-		['Passed', Color.GREEN],
-		['Pending', Color.YELLOW],
-		['Orphans', Color.YELLOW],
-		['WARNING', Color.YELLOW],
-		['ERROR', Color.RED]
-	]
 
 	for keyword in keywords:
 		to_return.add_keyword_color(keyword[0], keyword[1])

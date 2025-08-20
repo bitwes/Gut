@@ -125,6 +125,9 @@ static var MethodMaker = LazyLoader.new('res://addons/gut/method_maker.gd'):
 static var OneToMany = LazyLoader.new('res://addons/gut/one_to_many.gd'):
 	get: return OneToMany.get_loaded()
 	set(val): pass
+static var OptionMaker = LazyLoader.new('res://addons/gut/gui/option_maker.gd'):
+	get: return OptionMaker.get_loaded()
+	set(val): pass
 static var OrphanCounter = LazyLoader.new('res://addons/gut/orphan_counter.gd'):
 	get: return OrphanCounter.get_loaded()
 	set(val): pass

@@ -45,4 +45,3 @@ static var user_prefs = _user_prefs :
 
 static func create_temp_directory():
 	DirAccess.make_dir_recursive_absolute(temp_directory)
-
