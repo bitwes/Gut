@@ -2,21 +2,23 @@
 
 [ext_resource type="Script" uid="uid://c64u22kybimgi" path="res://addons/gut/gui/ShellOutOptions.gd" id="1_ht2pf"]
 
-[node name="ShellOutOptions" type="Control"]
-layout_mode = 3
-anchor_right = 0.321
-anchor_bottom = 0.68200004
-offset_right = 0.2079773
-offset_bottom = 0.063964844
-grow_horizontal = 2
-grow_vertical = 2
+[node name="ShellOutOptions" type="ConfirmationDialog"]
+oversampling_override = 1.0
+title = "GUT Run Externally Options"
+position = Vector2i(0, 36)
+size = Vector2i(516, 557)
+visible = true
 script = ExtResource("1_ht2pf")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
+custom_minimum_size = Vector2(500, 500)
+anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -49.0
 grow_horizontal = 2
 grow_vertical = 2
 

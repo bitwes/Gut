@@ -9,6 +9,10 @@ var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
 
 var _pipe_results = {}
 var _bottom_panel = null
+
+var blocking_mode = "Blocking"
+var additional_arguments = []
+
 func _init(bottom_panel=null):
 	_bottom_panel = bottom_panel
 	
@@ -28,17 +32,8 @@ func _process(delta: float) -> void:
 
 
 func _end_pipe():
-	#print('Done')
-	#print("######################################################")
-	#print(_pipe_results.stdio.get_as_text())
-	#print("######################################################")
-	#print(_pipe_results.stderr.get_as_text())
-	
-	#btn_free.visible = true
-	#label.text = "done"
-	#btn_kill_it.visible = false
-	
-	_bottom_panel.write_file(GutEditorGlobals.editor_run_bbcode_results_path, _pipe_results.stdio.get_as_text())
+	var text = _pipe_results.stderr.get_as_text() + _pipe_results.stdio.get_as_text()
+	_bottom_panel.write_file(GutEditorGlobals.editor_run_bbcode_results_path, text)
 	_bottom_panel.load_result_output()
 	
 	_pipe_results = {}
@@ -77,6 +72,9 @@ func run_tests():
 	await get_tree().create_timer(.1).timeout
 	var options = ["-s", "res://addons/gut/gut_cmdln.gd", "-graie", "-gdisable_colors",
 		"-gconfig", GutEditorGlobals.editor_run_gut_config_path]
+	options.append_array(additional_arguments)
 	
-	_do_it_blocking(options)
-	#_do_it_pipe(options)
+	if(blocking_mode == 'Blocking'):
+		_do_it_blocking(options)
+	else:
+		_do_it_pipe(options)

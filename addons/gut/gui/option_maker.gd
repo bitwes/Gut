@@ -1,11 +1,12 @@
 var PanelControls = load("res://addons/gut/gui/panel_controls.gd")
 
+# All titles so we can free them when we want.
+var _all_titles = []
+
+
 var base_container = null
 # All the various PanelControls indexed by thier keys.
 var controls = {}
-
-# All titles so we can free them when we want.
-var _all_titles = []
 
 
 func _init(cont):

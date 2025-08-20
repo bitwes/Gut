@@ -26,7 +26,9 @@ class Counter:
 
 
 class Signaler:
+	@warning_ignore("unused_signal")
 	signal the_signal
+	@warning_ignore("unused_signal")
 	signal with_parameters(foo, bar)
 
 
@@ -453,10 +455,11 @@ class TestWaitWhile:
 			else:
 				return some_var
 
-		some_var == 1
+		some_var = 1
 		a.wait_while(method, 1.1, .25)
 		await get_tree().create_timer(.5).timeout
-
+		assert_true(a.is_waiting(), 'should still be waiting')
+		
 		some_var = 'hello world'
 		await get_tree().create_timer(.5).timeout
-		assert_false(a.is_waiting())
+		assert_false(a.is_waiting(), 'waiting should have ended')

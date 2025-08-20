@@ -23,14 +23,14 @@ var default_path = GutEditorGlobals.editor_shortcuts_path
 
 func _debug_ready():
 	popup_centered()
-	
+
 	var btn = Button.new()
 	btn.text = "show"
 	get_tree().root.add_child(btn)
 	btn.pressed.connect(popup)
 	btn.position = Vector2(100, 100)
 	btn.size = Vector2(100, 100)
-	
+
 	size_changed.connect(func(): title = str(size))
 
 
@@ -40,10 +40,10 @@ func _ready():
 		scbtn.connect('end_edit', _on_edit_end)
 
 	canceled.connect(_on_cancel)
-		
+
 	# Sizing this window on different monitors, especially compared to what it
 	# looks like if you just run this project is annoying.  This is what I came
-	# up with after getting annoyed.  You probably won't be looking at this 
+	# up with after getting annoyed.  You probably won't be looking at this
 	# very often so it's fine...until it isn't.
 	size = Vector2(DisplayServer.screen_get_size()) * Vector2(.5, .8)
 

@@ -97,7 +97,7 @@ var keywords = [
 	['Orphans', Color.YELLOW],
 	['WARNING', Color.YELLOW],
 	['ERROR', Color.RED],
-	['ExpectedError', Color.BLUE],
+	['ExpectedError', Color.LIGHT_BLUE],
 ]
 
 

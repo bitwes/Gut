@@ -32,6 +32,14 @@ var _last_info = {
 	test_method = null
 }
 
+var disabled = false :
+	set(val):
+		disabled = val
+		if(is_inside_tree()):
+			_ctrls.btn_script.disabled = val
+			_ctrls.btn_inner.disabled = val
+			_ctrls.btn_method.disabled = val
+
 
 signal run_tests(what)
 
@@ -43,6 +51,8 @@ func _ready():
 	_ctrls.btn_method.visible = false
 	_ctrls.arrow_1.visible = false
 	_ctrls.arrow_2.visible = false
+	
+	disabled = disabled
 
 # ----------------
 # Private
