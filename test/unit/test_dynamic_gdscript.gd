@@ -26,7 +26,6 @@ func test_can_create_instance_of_script_from_source():
 
 func test_resource_path_is_in_addons_directory():
 	var DynScript = _dyn_gd.create_script_from_source('var a = 1')
-	var i = DynScript.new()
 	assert_string_starts_with(DynScript.resource_path, 'res://addons/')
 
 

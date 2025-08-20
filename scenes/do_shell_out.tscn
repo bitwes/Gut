@@ -1,0 +1,53 @@
+[gd_scene load_steps=2 format=3 uid="uid://cftcb0e6g7tu1"]
+
+[ext_resource type="Script" uid="uid://bi8pg352un4om" path="res://scenes/do_shell_out.gd" id="1_haowt"]
+
+[node name="DoShellOut" type="Node2D"]
+script = ExtResource("1_haowt")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = -1
+offset_left = 32.0
+offset_top = 30.0
+offset_right = 362.0
+offset_bottom = 342.0
+color = Color(0.00035125823, 0.22052902, 0.7284061, 1)
+
+[node name="Free" type="Button" parent="ColorRect"]
+layout_mode = 0
+offset_left = 121.0
+offset_top = 11.0
+offset_right = 220.0
+offset_bottom = 71.0
+text = "Free"
+
+[node name="DoIt" type="Button" parent="ColorRect"]
+layout_mode = 0
+offset_left = 119.0
+offset_top = 88.0
+offset_right = 222.0
+offset_bottom = 154.0
+text = "Do it"
+
+[node name="Kill" type="Button" parent="ColorRect"]
+visible = false
+layout_mode = 0
+offset_left = 120.0
+offset_top = 238.0
+offset_right = 223.0
+offset_bottom = 304.0
+text = "Kill it"
+
+[node name="Label" type="Label" parent="ColorRect"]
+visible = false
+layout_mode = 0
+offset_left = 3.0
+offset_top = 182.0
+offset_right = 329.0
+offset_bottom = 205.0
+text = "Running"
+horizontal_alignment = 1
+
+[connection signal="pressed" from="ColorRect/Free" to="." method="_on_free_pressed"]
+[connection signal="pressed" from="ColorRect/DoIt" to="." method="_on_do_it_pressed"]
+[connection signal="pressed" from="ColorRect/Kill" to="." method="_on_kill_pressed"]

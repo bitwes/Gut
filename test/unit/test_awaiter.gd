@@ -460,5 +460,3 @@ class TestWaitWhile:
 		some_var = 'hello world'
 		await get_tree().create_timer(.5).timeout
 		assert_false(a.is_waiting())
-
-
