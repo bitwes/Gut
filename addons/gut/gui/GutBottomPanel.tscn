@@ -35,6 +35,10 @@ anchor_bottom = 1.0
 [node name="ControlBar" type="HBoxContainer" parent="layout"]
 layout_mode = 2
 
+[node name="RunMode" type="Button" parent="layout/ControlBar"]
+layout_mode = 2
+text = "Mode"
+
 [node name="RunAll" type="Button" parent="layout/ControlBar"]
 layout_mode = 2
 size_flags_vertical = 11
@@ -54,16 +58,6 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="SpecialButton" type="CheckButton" parent="layout/ControlBar"]
-layout_mode = 2
-button_pressed = true
-text = " "
-
-[node name="ShowShellOutOptions" type="Button" parent="layout/ControlBar"]
-layout_mode = 2
-text = "ext"
-flat = true
-
 [node name="Sep1" type="ColorRect" parent="layout/ControlBar"]
 custom_minimum_size = Vector2(1, 2.08165e-12)
 layout_mode = 2
@@ -71,7 +65,6 @@ layout_mode = 2
 [node name="RunResultsBtn" type="Button" parent="layout/ControlBar"]
 layout_mode = 2
 toggle_mode = true
-button_pressed = true
 icon = SubResource("SVGTexture_srqj5")
 
 [node name="OutputBtn" type="Button" parent="layout/ControlBar"]
@@ -233,6 +226,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="RunResults" parent="layout/RSplit/CResults/TabBar" instance=ExtResource("5")]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -248,10 +242,9 @@ visible = false
 size = Vector2i(1300, 1044)
 visible = false
 
+[connection signal="pressed" from="layout/ControlBar/RunMode" to="." method="_on_run_mode_pressed"]
 [connection signal="pressed" from="layout/ControlBar/RunAll" to="." method="_on_RunAll_pressed"]
 [connection signal="run_tests" from="layout/ControlBar/RunAtCursor" to="." method="_on_RunAtCursor_run_tests"]
-[connection signal="pressed" from="layout/ControlBar/SpecialButton" to="." method="_on_special_button_pressed"]
-[connection signal="pressed" from="layout/ControlBar/ShowShellOutOptions" to="." method="_on_shell_out_options_pressed"]
 [connection signal="pressed" from="layout/ControlBar/RunResultsBtn" to="." method="_on_RunResultsBtn_pressed"]
 [connection signal="pressed" from="layout/ControlBar/OutputBtn" to="." method="_on_OutputBtn_pressed"]
 [connection signal="pressed" from="layout/ControlBar/Settings" to="." method="_on_Settings_pressed"]

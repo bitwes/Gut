@@ -57,8 +57,7 @@ var menu_manager = null :
 	run_results = $layout/RSplit/CResults/TabBar/RunResults,
 
 	run_externally_dialog = $ShellOutOptions,
-	run_externally_option_button = $layout/ControlBar/ShowShellOutOptions,
-	run_externally_check_button = $layout/ControlBar/SpecialButton
+	run_mode = $layout/ControlBar/RunMode,
 }
 
 
@@ -73,7 +72,6 @@ func _ready():
 
 	_gut_config.load_options(GutEditorGlobals.editor_run_gut_config_path)
 	_gut_config_gui.set_options(_gut_config.options)
-	_apply_options_to_controls()
 
 	_ctrls.shortcuts_button.icon = get_theme_icon('Shortcut', 'EditorIcons')
 	_ctrls.settings_button.icon = get_theme_icon('Tools', 'EditorIcons')
@@ -90,32 +88,12 @@ func _ready():
 		_ctrls.run_results.add_centered_text("Let's run some tests!")
 
 	_ctrls.run_externally_dialog.load_from_file()
-
-
-func _apply_options_to_controls():
-	hide_settings(_user_prefs.hide_settings.value)
-	hide_result_tree(_user_prefs.hide_result_tree.value)
-	hide_output_text(_user_prefs.hide_output_text.value)
-	_ctrls.run_results.set_show_orphans(!_gut_config.options.hide_orphans)
-	_ctrls.run_externally_check_button.button_pressed = _user_prefs.run_externally.value
-	_ctrls.run_externally_option_button.disabled = !_ctrls.run_externally_check_button.button_pressed
-	var shell_dialog_size = _user_prefs.run_externally_options_dialog_size.value
-
-	if(shell_dialog_size != Vector2i(-1, -1)):
-		_ctrls.run_externally_dialog.size = Vector2i(shell_dialog_size)
-
-	if(_user_prefs.shortcuts_dialog_size.value != Vector2i(-1, -1)):
-		_ctrls.shortcut_dialog.size = _user_prefs.shortcuts_dialog_size.value
-
-
-func _disable_run_buttons(should):
-	_ctrls.run_button.disabled = should
-	_ctrls.run_at_cursor.disabled = should
+	_apply_options_to_controls()
 
 
 func _process(_delta):
 	if(_is_running):
-		if(_ctrls.run_externally_check_button.button_pressed):
+		if(_ctrls.run_externally_dialog.should_run_externally()):
 			if(!is_instance_valid(_shell_out_panel)):
 				_is_running = false
 				_gut_plugin.make_bottom_panel_item_visible(self)
@@ -125,9 +103,36 @@ func _process(_delta):
 			load_result_output()
 			_gut_plugin.make_bottom_panel_item_visible(self)
 
+
 # ---------------
 # Private
 # ---------------
+func _apply_options_to_controls():
+	hide_settings(_user_prefs.hide_settings.value)
+	hide_result_tree(_user_prefs.hide_result_tree.value)
+	hide_output_text(_user_prefs.hide_output_text.value)
+	_ctrls.run_results.set_show_orphans(!_gut_config.options.hide_orphans)
+	var shell_dialog_size = _user_prefs.run_externally_options_dialog_size.value
+
+	if(shell_dialog_size != Vector2i(-1, -1)):
+		_ctrls.run_externally_dialog.size = Vector2i(shell_dialog_size)
+
+	if(_user_prefs.shortcuts_dialog_size.value != Vector2i(-1, -1)):
+		_ctrls.shortcut_dialog.size = _user_prefs.shortcuts_dialog_size.value
+
+	var mode_ind = 'Ed'
+	if(_ctrls.run_externally_dialog.run_mode == _ctrls.run_externally_dialog.RUN_MODE_BLOCKING):
+		mode_ind = 'ExB'
+	elif(_ctrls.run_externally_dialog.run_mode == _ctrls.run_externally_dialog.RUN_MODE_NON_BLOCKING):
+		mode_ind = 'ExN'
+	_ctrls.run_mode.text = "Mode:" + mode_ind
+
+
+func _disable_run_buttons(should):
+	_ctrls.run_button.disabled = should
+	_ctrls.run_at_cursor.disabled = should
+
+
 func _is_test_script(script):
 	var from = script.get_base_script()
 	while(from and from.resource_path != 'res://addons/gut/test.gd'):
@@ -151,9 +156,11 @@ func _save_user_prefs():
 	_user_prefs.hide_settings.value = !_ctrls.settings_button.button_pressed
 	_user_prefs.hide_result_tree.value = !_ctrls.run_results_button.button_pressed
 	_user_prefs.hide_output_text.value = !_ctrls.output_button.button_pressed
-	_user_prefs.run_externally.value = _ctrls.run_externally_check_button.button_pressed
-	_user_prefs.run_externally_options_dialog_size.value = _ctrls.run_externally_dialog.size
 	_user_prefs.shortcuts_dialog_size.value = _ctrls.shortcut_dialog.size
+
+	_user_prefs.run_externally.value = _ctrls.run_externally_dialog.run_mode != _ctrls.run_externally_dialog.RUN_MODE_EDITOR
+	_user_prefs.run_externally_options_dialog_size.value = _ctrls.run_externally_dialog.size
+
 	_user_prefs.save_it()
 
 
@@ -171,7 +178,7 @@ func _save_config():
 func _run_externally():
 	_shell_out_panel = GutUtils.RunExternallyScene.instantiate()
 	_shell_out_panel.bottom_panel = self
-	_shell_out_panel.blocking_mode = _ctrls.run_externally_dialog.blocking_mode
+	_shell_out_panel.blocking_mode = _ctrls.run_externally_dialog.run_mode
 	_shell_out_panel.additional_arguments = _ctrls.run_externally_dialog.get_additional_arguments_array()
 
 	add_child(_shell_out_panel)
@@ -204,14 +211,13 @@ func _run_tests():
 	_is_running = true
 	_ctrls.output_ctrl.add_text('Running...')
 
-	if(_ctrls.run_externally_check_button.button_pressed):
+	if(_ctrls.run_externally_dialog.should_run_externally()):
 		_run_externally()
 	else:
 		_interface.play_custom_scene('res://addons/gut/gui/run_from_editor.tscn')
 
 
 func _apply_shortcuts():
-
 	if(menu_manager != null):
 		menu_manager.set_shortcut("run_all",
 			_ctrls.shortcut_dialog.scbtn_run_all.get_input_event())
@@ -306,19 +312,14 @@ func _on_UseColors_pressed():
 	pass
 
 
-func _on_special_button_pressed() -> void:
-	_ctrls.run_externally_option_button.disabled = \
-		!_ctrls.run_externally_check_button.button_pressed
-	_save_user_prefs()
-
-
-func _on_shell_out_options_pressed() -> void:
-	_ctrls.run_externally_dialog.popup_centered()
-
-
 func _on_shell_out_options_confirmed() -> void:
 	_ctrls.run_externally_dialog.save_to_file()
 	_save_user_prefs()
+	_apply_options_to_controls()
+
+
+func _on_run_mode_pressed() -> void:
+	_ctrls.run_externally_dialog.popup_centered()
 
 # ---------------
 # Public

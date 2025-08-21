@@ -99,6 +99,8 @@ func add_blurb(text):
 	ctrl.text = text
 	add_ctrl(str("blurb_", _blurbs), ctrl)
 	return ctrl
+
+
 # ------------------
 # Events
 # ------------------
