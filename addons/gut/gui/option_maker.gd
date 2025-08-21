@@ -122,4 +122,3 @@ func clear():
 		entry.free()
 
 	_all_titles.clear()
-

@@ -7,9 +7,12 @@ const RUN_MODE_NON_BLOCKING = 'NonBlocking'
 
 var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
 
+@onready var _bad_arg_dialog = $AcceptDialog
+
 var _blurb_style_box = StyleBoxEmpty.new()
 var _opt_maker_setup = false
-var _additional_arguments_ctrls = []
+var _arg_vbox : VBoxContainer = null
+var _my_ok_button : Button = null
 
 # Run mode button stuff
 var _run_mode_theme = load('res://addons/gut/gui/EditorRadioButton.tres')
@@ -19,18 +22,16 @@ var _btn_blocking : Button = null
 var _btn_non_blocking : Button = null
 var _txt_additional_arguments = null
 
-
 var opt_maker = null
 var default_path = GutEditorGlobals.run_externally_options_path
-
-# I like this.  It holds values loaded/saved which makes for an easy 
+# I like this.  It holds values loaded/saved which makes for an easy
 # reset mechanism.  Hit OK; values get written to this object (not the file
-# system).  Hit Cancel; values are reloaded from this object.  Call the 
+# system).  Hit Cancel; values are reloaded from this object.  Call the
 # save/load methods to interact with the file system.
 #
-# Downside:  If the keys/sections in the config file change, this ends up 
-#            preserving old data.  So you gotta find a way to clean it out 
-#            somehow. 
+# Downside:  If the keys/sections in the config file change, this ends up
+#            preserving old data.  So you gotta find a way to clean it out
+#            somehow.
 # Downside solved:  Clear the config file at the start of the save method.
 var _config_file = ConfigFile.new()
 
@@ -58,7 +59,7 @@ func _debug_ready():
 	popup_centered()
 	default_path = GutEditorGlobals.temp_directory.path_join('test_external_run_options.cfg')
 	exclusive = false
-	
+
 	var save_btn = Button.new()
 	save_btn.text = 'save'
 	save_btn.pressed.connect(func():
@@ -67,7 +68,7 @@ func _debug_ready():
 	save_btn.position = Vector2(100, 20)
 	save_btn.size = Vector2(100, 100)
 	get_tree().root.add_child(save_btn)
-	
+
 	var load_btn = Button.new()
 	load_btn.text = 'load'
 	load_btn.pressed.connect(func():
@@ -76,7 +77,7 @@ func _debug_ready():
 	load_btn.position = Vector2(100, 130)
 	load_btn.size = Vector2(100, 100)
 	get_tree().root.add_child(load_btn)
-	
+
 	var show_btn = Button.new()
 	show_btn.text = 'Show'
 	show_btn.pressed.connect(popup_centered)
@@ -88,22 +89,45 @@ func _debug_ready():
 func _ready():
 	opt_maker = GutUtils.OptionMaker.new($ScrollContainer/VBoxContainer)
 	_add_controls()
-	
+
 	if(get_parent() == get_tree().root):
 		_debug_ready.call_deferred()
-	
+
+	_my_ok_button = Button.new()
+	_my_ok_button.text = 'OK'
+	_my_ok_button.pressed.connect(_validate_and_confirm)
+	get_ok_button().add_sibling(_my_ok_button)
+	get_ok_button().modulate.a = 0.0
+	get_ok_button().text = ''
+	get_ok_button().disabled = true
+
 	canceled.connect(reset)
-	confirmed.connect(_save_to_config_file.bind(_config_file))
 	_button_group.pressed.connect(_on_mode_button_pressed)
 	run_mode = run_mode
-	
-	
+
+
+func _validate_and_confirm():
+	if(validate_arguments()):
+		_save_to_config_file(_config_file)
+		confirmed.emit()
+		hide()
+	else:
+		var dlg_text = str("Invalid arguments.  The following cannot be used:\n",
+			' '.join(_invalid_args))
+
+		if(run_mode == RUN_MODE_BLOCKING):
+			dlg_text += str("\nThese cannot be used with blocking mode:\n",
+				' '.join(_invalid_blocking_args))
+
+		_bad_arg_dialog.dialog_text = dlg_text
+		_bad_arg_dialog.popup_centered()
+
+
 func _on_mode_button_pressed(which):
-	for ctrl in _additional_arguments_ctrls:
-		if(which == _btn_in_editor):
-			ctrl.modulate.a = .3
-		else:
-			ctrl.modulate.a = 1.0
+	if(which == _btn_in_editor):
+		_arg_vbox.modulate.a = .3
+	else:
+		_arg_vbox.modulate.a = 1.0
 
 	_txt_additional_arguments.value_ctrl.editable = which != _btn_in_editor
 	if(which == _btn_in_editor):
@@ -116,12 +140,12 @@ func _on_mode_button_pressed(which):
 
 func _add_run_mode_button(text):
 	var hbox = HBoxContainer.new()
-	
+
 	var spacer = CenterContainer.new()
 	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	spacer.size_flags_stretch_ratio = .5
 	hbox.add_child(spacer)
-	
+
 	var btn = Button.new()
 	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	btn.toggle_mode = true
@@ -142,7 +166,7 @@ func _add_blurb(text):
 	ctrl.set("theme_override_styles/normal", _blurb_style_box)
 	return ctrl
 
-	
+
 func _add_title(text):
 	var ctrl = opt_maker.add_title(text)
 	ctrl.get_child(0).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -150,42 +174,48 @@ func _add_title(text):
 
 
 func _add_controls():
-	var ctrl = null
+
 	_add_title("Run Modes")
 	_add_blurb(
-		"Choose how GUT will launch tests.  Normally you just run them through the editor, but now " + 
+		"Choose how GUT will launch tests.  Normally you just run them through the editor, but now " +
 		"you can run them externally.  The Modes are described below.")
-	
+
 	_btn_in_editor = _add_run_mode_button("In Editor (default)")
 	_btn_blocking = _add_run_mode_button("Externally - Blocking")
 	_btn_non_blocking = _add_run_mode_button("Externally - NonBlocking")
-	
-	ctrl = _add_title("Command Line Arguments")
-	_additional_arguments_ctrls.append(ctrl)
-	ctrl = _add_blurb(
-		"Supply any command line options for GUT and/or Godot when running externally.  You cannot use " + 
-		"spaces in values.  See the Godot command line help for options and the GUT documentation " + 
-		"for optons.")
-	_additional_arguments_ctrls.append(ctrl)
+
+	_add_title("Command Line Arguments")
+	_arg_vbox = VBoxContainer.new()
+	$ScrollContainer/VBoxContainer.add_child(_arg_vbox)
+	opt_maker.base_container = _arg_vbox
+	_add_blurb(
+		"Supply any command line options for GUT and/or Godot when running externally.  You cannot use " +
+		"spaces in values.  See the Godot and GUT documentation for valid arguments.")
+	_add_blurb("[b]Be Careful[/b]  There are plenty of argument combinations that may make this " +
+		"act weird/odd/bad/horrible.  Some arguments you might [i]want[/i] " +
+		"to use but [b]shouldn't[/b] are checked for, but not that many.  Choose your arguments very carefully.")
 	_txt_additional_arguments = opt_maker.add_value("additional_arguments", additional_arguments, '', '')
-	_additional_arguments_ctrls.append(_txt_additional_arguments)
-	
+
+	opt_maker.base_container = $ScrollContainer/VBoxContainer
 	_add_title("Run Mode Descriptions")
 	_add_blurb("[b]In Editor[/b]")
-	_add_blurb("This is the default.  Runs through the editor.  When an error occurs " + 
-		"in your test code or code under test, then the debugger is invoked.")
+	_add_blurb("This is the default.  Runs through the editor.  When an error occurs " +
+		"the debugger is invoked.  [b]print[/b] output " +
+		"appears in the Output panel and errors show up in the Debugger panel.")
 
 	_add_blurb("[b]Blocking[/b]")
 	_add_blurb(
-		"Errors appear in the output as they would if run from the command line, but the editor " + 
-		"cannot be used while tests are running.  If you are trying to test for errors, this " + 
-		"mode provides the best output.")
-	
+		"Errors appear in the output as they would if run from the command line, but the editor " +
+		"cannot be used while tests are running.  If you are trying to test for errors, this " +
+		"mode provides the best output.  [b]print[/b] output will appear in the GUT panel instead " +
+		"of the Output panel")
+
 	_add_blurb("[b]Non-Blocking[/b]")
 	_add_blurb(
-		"Test output is streamed to the GUT panel but error output appears after all tests have " + 
+		"Test output is streamed to the GUT panel but error output appears after all tests have " +
 		"finished.  The editor is not blocked.  If you want to run tests with the --headless option, " +
-		"you can use this mode to see what the run is doing.")
+		"you can use this mode to see what the run is doing.  [b]print[/b] output will appear in the " +
+		"GUT panel instead of the Output panel")
 
 	_opt_maker_setup = true
 
@@ -222,3 +252,29 @@ func get_additional_arguments_array():
 
 func should_run_externally():
 	return run_mode != RUN_MODE_EDITOR
+
+
+var _invalid_args = [
+	'-d', '--debug',
+	'-s', '--script'
+]
+var _invalid_blocking_args = [
+	'--headless'
+]
+func validate_arguments():
+	var arg_array = get_additional_arguments_array()
+	var i = 0
+	var invalid_found = false
+	while i < _invalid_args.size() and !invalid_found:
+		if(arg_array.has(_invalid_args[i])):
+			invalid_found = true
+		i += 1
+
+	if(run_mode == RUN_MODE_BLOCKING):
+		i = 0
+		while i < _invalid_blocking_args.size() and !invalid_found:
+			if(arg_array.has(_invalid_blocking_args[i])):
+				invalid_found = true
+			i += 1
+
+	return !invalid_found

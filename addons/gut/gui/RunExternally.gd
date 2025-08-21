@@ -74,8 +74,9 @@ func _update_piped_data(delta):
 func _end_pipe():
 	var txt_ctrl = bottom_panel.get_text_output_control().get_rich_text_edit()
 	var last_test_output_line = txt_ctrl.get_line_count()
-
+	_add_arguments_to_output()
 	bottom_panel.add_output_text(_pipe_results.stderr.get_as_text())
+
 	txt_ctrl.scroll_vertical = last_test_output_line -5
 	bottom_panel.load_result_json()
 
@@ -84,6 +85,8 @@ func _end_pipe():
 
 
 func _run_blocking(options):
+	var txt_ctrl = bottom_panel.get_text_output_control().get_rich_text_edit()
+
 	label.text = "When tests finish you can use the editor again."
 	btn_kill_it.visible = false
 	var output = []
@@ -92,9 +95,19 @@ func _run_blocking(options):
 	OS.execute(OS.get_executable_path(), options, output, true)
 
 	bottom_panel.add_output_text(output[0])
+	_add_arguments_to_output()
+	txt_ctrl.scroll_vertical = txt_ctrl.get_line_count()
+
 	bottom_panel.load_result_json()
+
 	queue_free()
 
+
+func _add_arguments_to_output():
+	if(additional_arguments.size() != 0):
+		bottom_panel.add_output_text(
+			str("Run Mode arguments: ", ' '.join(additional_arguments), "\n\n")
+		)
 
 func _run_non_blocking(options):
 	_pipe_results = OS.execute_with_pipe(OS.get_executable_path(), options)
@@ -103,6 +116,7 @@ func _run_non_blocking(options):
 
 func _center_me():
 	position = get_parent().size / 2.0 - size / 2.0
+
 
 # ----------------
 # Events
