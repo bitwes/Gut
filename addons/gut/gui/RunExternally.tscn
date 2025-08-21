@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://cftcb0e6g7tu1"]
 
-[ext_resource type="Script" uid="uid://bi8pg352un4om" path="res://scenes/do_shell_out.gd" id="1_haowt"]
+[ext_resource type="Script" uid="uid://bi8pg352un4om" path="res://addons/gut/gui/RunExternally.gd" id="1_lrqqi"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_haowt"]
 bg_color = Color(0.27749082, 0.07984676, 0, 1)
@@ -15,7 +15,7 @@ shadow_offset = Vector2(7, 7)
 layout_mode = 3
 offset_right = 774.0
 offset_bottom = 260.0
-script = ExtResource("1_haowt")
+script = ExtResource("1_lrqqi")
 
 [node name="ColorRect" type="Panel" parent="."]
 layout_mode = 1
@@ -61,24 +61,5 @@ text = "Stop"
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Free" type="Button" parent="ColorRect"]
-visible = false
-layout_mode = 0
-offset_left = 121.0
-offset_top = 11.0
-offset_right = 220.0
-offset_bottom = 71.0
-text = "Free"
-
-[node name="DoIt" type="Button" parent="ColorRect"]
-visible = false
-layout_mode = 0
-offset_left = 119.0
-offset_top = 88.0
-offset_right = 222.0
-offset_bottom = 154.0
-text = "Do it"
-
+[connection signal="gui_input" from="ColorRect" to="." method="_on_color_rect_gui_input"]
 [connection signal="pressed" from="ColorRect/VBox/Kill" to="." method="_on_kill_pressed"]
-[connection signal="pressed" from="ColorRect/Free" to="." method="_on_free_pressed"]
-[connection signal="pressed" from="ColorRect/DoIt" to="." method="_on_do_it_pressed"]

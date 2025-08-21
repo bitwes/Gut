@@ -2,7 +2,6 @@
 extends Control
 
 var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
-var TestScript = load('res://addons/gut/test.gd')
 var GutConfigGui = load('res://addons/gut/gui/gut_config_gui.gd')
 var ScriptTextEditors = load('res://addons/gut/gui/script_text_editor_controls.gd')
 
@@ -12,11 +11,15 @@ var _is_running = false :
 	set(val):
 		_is_running = val
 		_disable_run_buttons(_is_running)
-		
+
 var _gut_config = load('res://addons/gut/gut_config.gd').new()
 var _gut_config_gui = null
 var _gut_plugin = null
-var _light_color = Color(0, 0, 0, .5)
+var _light_color = Color(0, 0, 0, .5) :
+	set(val):
+		_light_color = val
+		if(is_inside_tree()):
+			_ctrls.light.queue_redraw()
 var _panel_button = null
 var _last_selected_path = null
 var _user_prefs = null
@@ -39,7 +42,7 @@ var menu_manager = null :
 	output_button = $layout/ControlBar/OutputBtn,
 
 	settings = $layout/RSplit/sc/Settings,
-	shortcut_dialog = $ShortcutDialog,#$BottomPanelShortcuts,
+	shortcut_dialog = $ShortcutDialog,
 	light = $layout/RSplit/CResults/ControlBar/Light3D,
 	results = {
 		bar = $layout/RSplit/CResults/ControlBar,
@@ -51,11 +54,12 @@ var menu_manager = null :
 		orphans = $layout/RSplit/CResults/ControlBar/Orphans/value
 	},
 	run_at_cursor = $layout/ControlBar/RunAtCursor,
-	run_results = $layout/RSplit/CResults/TabBar/RunResults
-}
+	run_results = $layout/RSplit/CResults/TabBar/RunResults,
 
-func _init():
-	pass
+	run_externally_dialog = $ShellOutOptions,
+	run_externally_option_button = $layout/ControlBar/ShowShellOutOptions,
+	run_externally_check_button = $layout/ControlBar/SpecialButton
+}
 
 
 func _ready():
@@ -84,8 +88,8 @@ func _ready():
 		print('GUT got some new images that are not imported yet.  Please restart Godot.')
 	else:
 		_ctrls.run_results.add_centered_text("Let's run some tests!")
-		
-	$ShellOutOptions.load_from_file()
+
+	_ctrls.run_externally_dialog.load_from_file()
 
 
 func _apply_options_to_controls():
@@ -93,23 +97,25 @@ func _apply_options_to_controls():
 	hide_result_tree(_user_prefs.hide_result_tree.value)
 	hide_output_text(_user_prefs.hide_output_text.value)
 	_ctrls.run_results.set_show_orphans(!_gut_config.options.hide_orphans)
-	$layout/ControlBar/SpecialButton.button_pressed = _user_prefs.run_externally.value
-	$layout/ControlBar/ShellOutOptions.disabled = !$layout/ControlBar/SpecialButton.button_pressed
+	_ctrls.run_externally_check_button.button_pressed = _user_prefs.run_externally.value
+	_ctrls.run_externally_option_button.disabled = !_ctrls.run_externally_check_button.button_pressed
 	var shell_dialog_size = _user_prefs.run_externally_options_dialog_size.value
+
 	if(shell_dialog_size != Vector2i(-1, -1)):
-		$ShellOutOptions.size = Vector2i(shell_dialog_size)
-	else:
-		print('shell_dialog_size =' , shell_dialog_size)
+		_ctrls.run_externally_dialog.size = Vector2i(shell_dialog_size)
+
 	if(_user_prefs.shortcuts_dialog_size.value != Vector2i(-1, -1)):
 		_ctrls.shortcut_dialog.size = _user_prefs.shortcuts_dialog_size.value
+
 
 func _disable_run_buttons(should):
 	_ctrls.run_button.disabled = should
 	_ctrls.run_at_cursor.disabled = should
 
+
 func _process(_delta):
 	if(_is_running):
-		if($layout/ControlBar/SpecialButton.button_pressed):
+		if(_ctrls.run_externally_check_button.button_pressed):
 			if(!is_instance_valid(_shell_out_panel)):
 				_is_running = false
 				_gut_plugin.make_bottom_panel_item_visible(self)
@@ -122,12 +128,6 @@ func _process(_delta):
 # ---------------
 # Private
 # ---------------
-
-func load_shortcuts():
-	_ctrls.shortcut_dialog.load_shortcuts()
-	_apply_shortcuts()
-
-
 func _is_test_script(script):
 	var from = script.get_base_script()
 	while(from and from.resource_path != 'res://addons/gut/test.gd'):
@@ -151,15 +151,15 @@ func _save_user_prefs():
 	_user_prefs.hide_settings.value = !_ctrls.settings_button.button_pressed
 	_user_prefs.hide_result_tree.value = !_ctrls.run_results_button.button_pressed
 	_user_prefs.hide_output_text.value = !_ctrls.output_button.button_pressed
-	_user_prefs.run_externally.value = $layout/ControlBar/SpecialButton.button_pressed
-	_user_prefs.run_externally_options_dialog_size.value = $ShellOutOptions.size
+	_user_prefs.run_externally.value = _ctrls.run_externally_check_button.button_pressed
+	_user_prefs.run_externally_options_dialog_size.value = _ctrls.run_externally_dialog.size
 	_user_prefs.shortcuts_dialog_size.value = _ctrls.shortcut_dialog.size
 	_user_prefs.save_it()
-	
+
 
 func _save_config():
 	_save_user_prefs()
-	
+
 	_gut_config.options = _gut_config_gui.get_options(_gut_config.options)
 	var w_result = _gut_config.write_options(GutEditorGlobals.editor_run_gut_config_path)
 	if(w_result != OK):
@@ -168,12 +168,24 @@ func _save_config():
 		_gut_config_gui.mark_saved()
 
 
+func _run_externally():
+	_shell_out_panel = GutUtils.RunExternallyScene.instantiate()
+	_shell_out_panel.bottom_panel = self
+	_shell_out_panel.blocking_mode = _ctrls.run_externally_dialog.blocking_mode
+	_shell_out_panel.additional_arguments = _ctrls.run_externally_dialog.get_additional_arguments_array()
+
+	add_child(_shell_out_panel)
+	_shell_out_panel.run_tests()
+
+
 func _run_tests():
 	if(_is_running):
 		push_error("GUT:  Cannot run tests, tests are already running.")
 		return
 
+	clear_results()
 	GutEditorGlobals.create_temp_directory()
+	_light_color = Color.BLUE
 
 	var issues = _gut_config_gui.get_config_issues()
 	if(issues.size() > 0):
@@ -181,6 +193,7 @@ func _run_tests():
 		return
 
 	write_file(GutEditorGlobals.editor_run_bbcode_results_path, 'Run in progress')
+	write_file(GutEditorGlobals.editor_run_json_results_path, '')
 	_save_config()
 	_apply_options_to_controls()
 
@@ -190,18 +203,11 @@ func _run_tests():
 
 	_is_running = true
 	_ctrls.output_ctrl.add_text('Running...')
-	
-	if($layout/ControlBar/SpecialButton.button_pressed):
-		_shell_out_panel = load("res://scenes/do_shell_out.tscn").instantiate()
-		_shell_out_panel.blocking_mode = $ShellOutOptions.blocking_mode
-		_shell_out_panel.additional_arguments = $ShellOutOptions.get_additional_arguments_array()
-		
-		_shell_out_panel._bottom_panel = self
-		add_child(_shell_out_panel)
-		_shell_out_panel.run_tests()
+
+	if(_ctrls.run_externally_check_button.button_pressed):
+		_run_externally()
 	else:
 		_interface.play_custom_scene('res://addons/gut/gui/run_from_editor.tscn')
-	
 
 
 func _apply_shortcuts():
@@ -209,9 +215,9 @@ func _apply_shortcuts():
 	if(menu_manager != null):
 		menu_manager.set_shortcut("run_all",
 			_ctrls.shortcut_dialog.scbtn_run_all.get_input_event())
-		menu_manager.set_shortcut("run_script", 
+		menu_manager.set_shortcut("run_script",
 			_ctrls.shortcut_dialog.scbtn_run_current_script.get_input_event())
-		menu_manager.set_shortcut("run_inner_class", 
+		menu_manager.set_shortcut("run_inner_class",
 			_ctrls.shortcut_dialog.scbtn_run_current_inner.get_input_event())
 		menu_manager.set_shortcut("run_test",
 			_ctrls.shortcut_dialog.scbtn_run_current_test.get_input_event())
@@ -263,7 +269,7 @@ func _on_RunAll_pressed():
 
 func _on_Shortcuts_pressed():
 	_ctrls.shortcut_dialog.popup_centered()
-	
+
 
 func _on_sortcut_dialog_confirmed() -> void:
 	_apply_shortcuts()
@@ -299,9 +305,29 @@ func _on_RunResultsBtn_pressed():
 func _on_UseColors_pressed():
 	pass
 
+
+func _on_special_button_pressed() -> void:
+	_ctrls.run_externally_option_button.disabled = \
+		!_ctrls.run_externally_check_button.button_pressed
+	_save_user_prefs()
+
+
+func _on_shell_out_options_pressed() -> void:
+	_ctrls.run_externally_dialog.popup_centered()
+
+
+func _on_shell_out_options_confirmed() -> void:
+	_ctrls.run_externally_dialog.save_to_file()
+	_save_user_prefs()
+
 # ---------------
 # Public
 # ---------------
+func load_shortcuts():
+	_ctrls.shortcut_dialog.load_shortcuts()
+	_apply_shortcuts()
+
+
 func hide_result_tree(should):
 	_ctrls.run_results.visible = !should
 	_ctrls.run_results_button.button_pressed = !should
@@ -325,6 +351,28 @@ func hide_settings(should):
 func hide_output_text(should):
 	$layout/RSplit/CResults/TabBar/OutputText.visible = !should
 	_ctrls.output_button.button_pressed = !should
+
+
+func clear_results():
+	_light_color = Color(0, 0, 0, .5)
+
+	_ctrls.results.passing.text = "0"
+	_ctrls.results.passing.get_parent().visible = false
+
+	_ctrls.results.failing.text = "0"
+	_ctrls.results.failing.get_parent().visible = false
+
+	_ctrls.results.pending.text = "0"
+	_ctrls.results.pending.get_parent().visible = false
+
+	_ctrls.results.errors.text = "0"
+	_ctrls.results.errors.get_parent().visible = false
+
+	_ctrls.results.warnings.text = "0"
+	_ctrls.results.warnings.get_parent().visible = false
+
+	_ctrls.results.orphans.text = "0"
+	_ctrls.results.orphans.get_parent().visible = false
 
 
 func load_result_json():
@@ -363,12 +411,12 @@ func load_result_json():
 		_light_color = Color(1, 1, 0, .75)
 	else:
 		_light_color = Color(0, 1, 0, .75)
+
 	_ctrls.light.visible = true
-	_ctrls.light.queue_redraw()
-	
+
 
 func load_result_text():
-	_ctrls.output_ctrl.load_file(GutEditorGlobals.editor_run_bbcode_results_path)	
+	_ctrls.output_ctrl.load_file(GutEditorGlobals.editor_run_bbcode_results_path)
 
 
 func load_result_output():
@@ -401,9 +449,7 @@ func set_plugin(value):
 func set_panel_button(value):
 	_panel_button = value
 
-# ------------------------------------------------------------------------------
-# Write a file.
-# ------------------------------------------------------------------------------
+
 func write_file(path, content):
 	var f = FileAccess.open(path, FileAccess.WRITE)
 	if(f != null):
@@ -413,9 +459,6 @@ func write_file(path, content):
 	return FileAccess.get_open_error()
 
 
-# ------------------------------------------------------------------------------
-# Returns the text of a file or an empty string if the file could not be opened.
-# ------------------------------------------------------------------------------
 func get_file_as_text(path):
 	var to_return = ''
 	var f = FileAccess.open(path, FileAccess.READ)
@@ -425,26 +468,9 @@ func get_file_as_text(path):
 	return to_return
 
 
-# ------------------------------------------------------------------------------
-# return if_null if value is null otherwise return value
-# ------------------------------------------------------------------------------
-func nvl(value, if_null):
-	if(value == null):
-		return if_null
-	else:
-		return value
-	
+func get_text_output_control():
+	return _ctrls.output_ctrl
 
 
-func _on_special_button_pressed() -> void:
-	$layout/ControlBar/ShellOutOptions.disabled = !$layout/ControlBar/SpecialButton.button_pressed
-	_save_user_prefs()
-
-
-func _on_shell_out_options_pressed() -> void:
-	$ShellOutOptions.popup_centered()
-
-
-func _on_shell_out_options_confirmed() -> void:
-	$ShellOutOptions.save_to_file()
-	_save_user_prefs()
+func add_output_text(text):
+	_ctrls.output_ctrl.add_text(text)

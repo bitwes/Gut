@@ -59,7 +59,7 @@ layout_mode = 2
 button_pressed = true
 text = " "
 
-[node name="ShellOutOptions" type="Button" parent="layout/ControlBar"]
+[node name="ShowShellOutOptions" type="Button" parent="layout/ControlBar"]
 layout_mode = 2
 text = "ext"
 flat = true
@@ -251,7 +251,7 @@ visible = false
 [connection signal="pressed" from="layout/ControlBar/RunAll" to="." method="_on_RunAll_pressed"]
 [connection signal="run_tests" from="layout/ControlBar/RunAtCursor" to="." method="_on_RunAtCursor_run_tests"]
 [connection signal="pressed" from="layout/ControlBar/SpecialButton" to="." method="_on_special_button_pressed"]
-[connection signal="pressed" from="layout/ControlBar/ShellOutOptions" to="." method="_on_shell_out_options_pressed"]
+[connection signal="pressed" from="layout/ControlBar/ShowShellOutOptions" to="." method="_on_shell_out_options_pressed"]
 [connection signal="pressed" from="layout/ControlBar/RunResultsBtn" to="." method="_on_RunResultsBtn_pressed"]
 [connection signal="pressed" from="layout/ControlBar/OutputBtn" to="." method="_on_OutputBtn_pressed"]
 [connection signal="pressed" from="layout/ControlBar/Settings" to="." method="_on_Settings_pressed"]
