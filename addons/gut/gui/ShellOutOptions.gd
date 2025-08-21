@@ -192,10 +192,11 @@ func _add_controls():
 		"Supply any command line options for GUT and/or Godot when running externally.  You cannot use " +
 		"spaces in values.  See the Godot and GUT documentation for valid arguments.")
 	_add_blurb("[b]Be Careful[/b]  There are plenty of argument combinations that may make this " +
-		"act weird/odd/bad/horrible.  Some arguments you might [i]want[/i] " +
-		"to use but [b]shouldn't[/b] are checked for, but not that many.  Choose your arguments very carefully.")
+		"act wrong/odd/bad/horrible.  Some arguments you might [i]want[/i] " +
+		"to use but [b]shouldn't[/b] are checked for, but not that many.  Choose your arguments carefully (generally good advice).")
 	_txt_additional_arguments = opt_maker.add_value("additional_arguments", additional_arguments, '', '')
-
+	_txt_additional_arguments.value_ctrl.select_all_on_focus = false
+	
 	opt_maker.base_container = $ScrollContainer/VBoxContainer
 	_add_title("Run Mode Descriptions")
 	_add_blurb("[b]In Editor[/b]")
@@ -215,7 +216,7 @@ func _add_controls():
 		"Test output is streamed to the GUT panel but error output appears after all tests have " +
 		"finished.  The editor is not blocked.  If you want to run tests with the --headless option, " +
 		"you can use this mode to see what the run is doing.  [b]print[/b] output will appear in the " +
-		"GUT panel instead of the Output panel")
+		"GUT panel instead of the Output panel.")
 
 	_opt_maker_setup = true
 
@@ -256,7 +257,8 @@ func should_run_externally():
 
 var _invalid_args = [
 	'-d', '--debug',
-	'-s', '--script'
+	'-s', '--script',
+	'-e', '--editor'
 ]
 var _invalid_blocking_args = [
 	'--headless'

@@ -212,6 +212,7 @@ func _run_tests():
 	_ctrls.output_ctrl.add_text('Running...')
 
 	if(_ctrls.run_externally_dialog.should_run_externally()):
+		_gut_plugin.make_bottom_panel_item_visible(self)
 		_run_externally()
 	else:
 		_interface.play_custom_scene('res://addons/gut/gui/run_from_editor.tscn')

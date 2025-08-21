@@ -28,6 +28,7 @@ var invalid_args = ParameterFactory.named_parameters(
 	[
 		['-d', false, false], ['--debug', false , false],
 		['-s', false, false], ['--script', false, false],
+		['-e', false, false], ['--editor', false, false],
 		['--headless', false, true]
 	]
 )
