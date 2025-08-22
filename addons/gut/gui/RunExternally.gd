@@ -67,8 +67,6 @@ func _process(_delta: float) -> void:
 	if(_pipe_results != {}):
 		if(!OS.is_process_running(_pipe_results.pid)):
 			_end_non_blocking()
-		#else:
-			#_update_piped_data(delta)
 
 
 func _output_text(text, should_scroll = true):
@@ -128,26 +126,16 @@ func _run_blocking(options):
 func _read_non_blocking_stdio():
 	var fio : FileAccess = _pipe_results.stdio
 	var ferr : FileAccess = _pipe_results.stderr
-	var print_calls = 0
 
 	while(OS.is_process_running(_pipe_results.pid)):
 		while(ferr.get_length() > 0):
 			_output_text(ferr.get_line() + "\n")
-			#var text = ferr.get_line()
-			#print(print_calls, ' err:  ', text)
-			#print_calls += 1
 
 		while(fio.get_length() > 0):
 			_output_text(fio.get_line() + "\n")
-			#var text = fio.get_line()
-			#print(print_calls, ':  ', text)
-			#print_calls += 1
 			
 		await get_tree().process_frame
 
-	
-	print("open=", fio.is_open(), ' error=', fio.get_error(), ':', error_string(fio.get_error()), ' prints=', print_calls)
-	
 
 var _stdio_thread : Thread
 func _run_non_blocking(options):
