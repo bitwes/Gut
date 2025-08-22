@@ -25,6 +25,7 @@ var _last_selected_path = null
 var _user_prefs = null
 var _shell_out_panel = null
 
+
 var menu_manager = null :
 	set(val):
 		menu_manager = val

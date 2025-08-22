@@ -35,7 +35,7 @@ var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
 var _dot_anim = DotsAnimator.new()
 var _pipe_results = {}
 var _run_time = 0.0
-
+var _debug_mode = false
 
 var bottom_panel = null :
 	set(val):
@@ -49,44 +49,67 @@ func _init():
 	_dot_anim.text = "Running"
 
 
+func _debug_ready():
+	_debug_mode = true
+	additional_arguments = ['-gselect', 'test_awaiter.gd', '-gconfig', 'res://.gutconfig.json'] # '-gunit_test_name', 'test_can_clear_spies'
+	blocking_mode = "NonBlocking"
+	run_tests()
+
+
 func _ready():
 	btn_kill_it.visible = false
+	
+	if(get_parent() == get_tree().root):
+		_debug_ready.call_deferred()
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if(_pipe_results != {}):
 		if(!OS.is_process_running(_pipe_results.pid)):
-			_end_pipe()
-		else:
-			_update_piped_data(delta)
+			_end_non_blocking()
+		#else:
+			#_update_piped_data(delta)
 
+
+func _output_text(text, should_scroll = true):
+	if(_debug_mode):
+		print(text)
+	else:
+		bottom_panel.add_output_text(text)
+		if(should_scroll):
+			_scroll_output_pane(-1)
+	
+	
+func _scroll_output_pane(line):
+	if(!_debug_mode):
+		var txt_ctrl = bottom_panel.get_text_output_control().get_rich_text_edit()
+		if(line == -1):
+			line = txt_ctrl.get_line_count()
+		txt_ctrl.scroll_vertical = line
+		
 
 func _update_piped_data(delta):
 	_dot_anim.add_time(delta)
 	_run_time += delta
 	label.text = _dot_anim.get_animated_text()
-	bottom_panel.add_output_text(_pipe_results.stdio.get_as_text())
-
-	var txt_ctrl = bottom_panel.get_text_output_control().get_rich_text_edit()
-	txt_ctrl.scroll_vertical = txt_ctrl.get_line_count()
+	_output_text(_pipe_results.stdio.get_as_text())
 
 
-func _end_pipe():
-	var txt_ctrl = bottom_panel.get_text_output_control().get_rich_text_edit()
-	var last_test_output_line = txt_ctrl.get_line_count()
-	_add_arguments_to_output()
-	bottom_panel.add_output_text(_pipe_results.stderr.get_as_text())
+func _add_arguments_to_output():
+	if(additional_arguments.size() != 0):
+		_output_text(
+			str("Run Mode arguments: ", ' '.join(additional_arguments), "\n\n")
+		)
 
-	txt_ctrl.scroll_vertical = last_test_output_line -5
-	bottom_panel.load_result_json()
 
-	_pipe_results = {}
-	queue_free()
+func _load_json():
+	if(_debug_mode):
+		pass # could load file and print it if we want.
+	else:
+		bottom_panel.load_result_json()
 
 
 func _run_blocking(options):
-	var txt_ctrl = bottom_panel.get_text_output_control().get_rich_text_edit()
-
 	label.text = "When tests finish you can use the editor again."
 	btn_kill_it.visible = false
 	var output = []
@@ -94,24 +117,57 @@ func _run_blocking(options):
 
 	OS.execute(OS.get_executable_path(), options, output, true)
 
-	bottom_panel.add_output_text(output[0])
+	_output_text(output[0])
 	_add_arguments_to_output()
-	txt_ctrl.scroll_vertical = txt_ctrl.get_line_count()
+	_scroll_output_pane(-1)
 
-	bottom_panel.load_result_json()
-
+	_load_json()
 	queue_free()
 
 
-func _add_arguments_to_output():
-	if(additional_arguments.size() != 0):
-		bottom_panel.add_output_text(
-			str("Run Mode arguments: ", ' '.join(additional_arguments), "\n\n")
-		)
+func _read_non_blocking_stdio():
+	var fio : FileAccess = _pipe_results.stdio
+	var ferr : FileAccess = _pipe_results.stderr
+	var print_calls = 0
 
+	while(OS.is_process_running(_pipe_results.pid)):
+		while(ferr.get_length() > 0):
+			_output_text(ferr.get_line() + "\n")
+			#var text = ferr.get_line()
+			#print(print_calls, ' err:  ', text)
+			#print_calls += 1
+
+		while(fio.get_length() > 0):
+			_output_text(fio.get_line() + "\n")
+			#var text = fio.get_line()
+			#print(print_calls, ':  ', text)
+			#print_calls += 1
+			
+		await get_tree().process_frame
+
+	
+	print("open=", fio.is_open(), ' error=', fio.get_error(), ':', error_string(fio.get_error()), ' prints=', print_calls)
+	
+
+var _stdio_thread : Thread
 func _run_non_blocking(options):
-	_pipe_results = OS.execute_with_pipe(OS.get_executable_path(), options)
+	_pipe_results = OS.execute_with_pipe(OS.get_executable_path(), options, false)
+	_stdio_thread = Thread.new()
+	_stdio_thread.start(_read_non_blocking_stdio)
 	btn_kill_it.visible = true
+
+
+func _end_non_blocking():
+	_add_arguments_to_output()
+	_output_text(_pipe_results.stderr.get_as_text(), false)
+	
+	_load_json()
+
+	_pipe_results = {}
+	_stdio_thread.wait_to_finish()
+	queue_free()
+	if(_debug_mode):
+		get_tree().quit()
 
 
 func _center_me():
