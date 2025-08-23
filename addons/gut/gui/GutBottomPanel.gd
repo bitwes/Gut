@@ -20,6 +20,7 @@ var menu_manager = null :
 	set(val):
 		menu_manager = val
 		_apply_shortcuts()
+		menu_manager.toggle_windowed.connect(_on_toggle_windowed)
 
 
 @onready var _ctrls = {
@@ -163,9 +164,9 @@ func _apply_shortcuts():
 	if(menu_manager != null):
 		menu_manager.set_shortcut("run_all",
 			_ctrls.shortcut_dialog.scbtn_run_all.get_input_event())
-		menu_manager.set_shortcut("run_script", 
+		menu_manager.set_shortcut("run_script",
 			_ctrls.shortcut_dialog.scbtn_run_current_script.get_input_event())
-		menu_manager.set_shortcut("run_inner_class", 
+		menu_manager.set_shortcut("run_inner_class",
 			_ctrls.shortcut_dialog.scbtn_run_current_inner.get_input_event())
 		menu_manager.set_shortcut("run_test",
 			_ctrls.shortcut_dialog.scbtn_run_current_test.get_input_event())
@@ -173,6 +174,8 @@ func _apply_shortcuts():
 			_ctrls.shortcut_dialog.scbtn_run_at_cursor.get_input_event())
 		menu_manager.set_shortcut("rerun",
 			_ctrls.shortcut_dialog.scbtn_rerun.get_input_event())
+		menu_manager.set_shortcut("toggle_windowed",
+			_ctrls.shortcut_dialog.scbtn_windowed.get_input_event())
 
 	_ctrls.run_button.shortcut = \
 		_ctrls.shortcut_dialog.scbtn_run_all.get_shortcut()
@@ -183,7 +186,8 @@ func _apply_shortcuts():
 	_ctrls.run_at_cursor.get_test_button().shortcut = \
 		_ctrls.shortcut_dialog.scbtn_run_current_test.get_shortcut()
 
-	_panel_button.shortcut = _ctrls.shortcut_dialog.scbtn_panel.get_shortcut()
+	if(_panel_button != null):
+		_panel_button.shortcut = _ctrls.shortcut_dialog.scbtn_panel.get_shortcut()
 
 
 func _run_all():
@@ -217,7 +221,7 @@ func _on_RunAll_pressed():
 
 func _on_Shortcuts_pressed():
 	_ctrls.shortcut_dialog.popup_centered()
-	
+
 
 func _on_sortcut_dialog_confirmed() -> void:
 	_apply_shortcuts()
@@ -251,6 +255,11 @@ func _on_RunResultsBtn_pressed():
 # colors into the text results
 func _on_UseColors_pressed():
 	pass
+
+
+func _on_toggle_windowed():
+	_gut_plugin.toggle_windowed()
+
 
 # ---------------
 # Public

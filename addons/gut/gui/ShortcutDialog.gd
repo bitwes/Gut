@@ -12,6 +12,7 @@ var default_path = GutEditorGlobals.editor_shortcuts_path
 @onready var scbtn_run_at_cursor = $Scroll/Layout/CRunAtCursor/ShortcutButton
 @onready var scbtn_rerun = $Scroll/Layout/CRerun/ShortcutButton
 @onready var scbtn_panel = $Scroll/Layout/CPanelButton/ShortcutButton
+@onready var scbtn_windowed = $Scroll/Layout/CToggleWindowed/ShortcutButton
 
 
 @onready var _all_buttons = [
@@ -94,6 +95,7 @@ func save_shortcuts_to_file(path):
 	f.set_value('main', 'run_current_inner', scbtn_run_current_inner.get_shortcut())
 	f.set_value('main', 'run_current_script', scbtn_run_current_script.get_shortcut())
 	f.set_value('main', 'run_current_test', scbtn_run_current_test.get_shortcut())
+	f.set_value('main', 'toggle_windowed', scbtn_windowed.get_shortcut())
 	f.save(path)
 
 
@@ -115,3 +117,4 @@ func load_shortcuts_from_file(path):
 	scbtn_run_current_inner.set_shortcut(f.get_value('main', 'run_current_inner', empty))
 	scbtn_run_current_script.set_shortcut(f.get_value('main', 'run_current_script', empty))
 	scbtn_run_current_test.set_shortcut(f.get_value('main', 'run_current_test', empty))
+	scbtn_windowed.set_shortcut(f.get_value('main', 'toggle_windowed', empty))

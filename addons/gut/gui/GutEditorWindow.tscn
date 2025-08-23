@@ -1,0 +1,39 @@
+[gd_scene load_steps=2 format=3 uid="uid://dnnvwlplf1km7"]
+
+[ext_resource type="Script" uid="uid://crp2af6k4nmf5" path="res://addons/gut/gui/GutEditorWindow.gd" id="1_qevl3"]
+
+[node name="GutEditorWindow" type="Window"]
+oversampling_override = 1.0
+title = "GUT"
+position = Vector2i(0, 36)
+size = Vector2i(500, 500)
+script = ExtResource("1_qevl3")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.19973177, 0.19973174, 0.19973174, 1)
+
+[node name="Layout" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="WinControls" type="HBoxContainer" parent="Layout"]
+layout_mode = 2
+
+[node name="ToPanel" type="Button" parent="Layout/WinControls"]
+layout_mode = 2
+text = "Panel"
+
+[node name="OnTop" type="CheckButton" parent="Layout/WinControls"]
+layout_mode = 2
+text = "Always on Top"
+
+[connection signal="pressed" from="Layout/WinControls/ToPanel" to="." method="_on_to_panel_pressed"]
+[connection signal="toggled" from="Layout/WinControls/OnTop" to="." method="_on_on_top_toggled"]
