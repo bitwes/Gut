@@ -122,6 +122,9 @@ func _test_running_setup():
 
 
 func _ready():
+	if(get_parent() is SubViewport):
+		return
+
 	_sr.set_text_edit(_ctrls.output)
 	_ctrls.use_colors.icon = get_theme_icon('RichTextEffect', 'EditorIcons')
 	_ctrls.show_search.icon = get_theme_icon('Search', 'EditorIcons')

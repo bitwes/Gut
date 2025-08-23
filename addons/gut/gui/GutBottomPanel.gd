@@ -65,6 +65,9 @@ var menu_manager = null :
 
 
 func _ready():
+	if(get_parent() is SubViewport):
+		return
+	
 	GutEditorGlobals.create_temp_directory()
 
 	_user_prefs = GutEditorGlobals.user_prefs

@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=4 uid="uid://bqmo4dj64c7yl"]
+[gd_scene load_steps=6 format=4 uid="uid://bqmo4dj64c7yl"]
 
 [ext_resource type="Script" uid="uid://cax5phqs8acmu" path="res://addons/gut/gui/OutputText.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://bvo0uao7deu0q" path="res://addons/gut/icon.png" id="2_b4xqv"]
 
-[sub_resource type="SVGTexture" id="SVGTexture_lygvu"]
+[sub_resource type="DPITexture" id="DPITexture_lygvu"]
 _source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#ff5d5d\" d=\"M2 1v8.586l1.293-1.293a1 1 0 0 1 1.414 0L7 10.587l2.293-2.293a1 1 0 0 1 1.414 0L13 10.586l1-1V6H9V1H2zm8 0v4h4zm-6 9.414-2 2V15h12v-2.586l-.293.293a1 1 0 0 1-1.414 0L10 10.414l-2.293 2.293a1 1 0 0 1-1.414 0L4 10.414z\"/></svg>
 "
 
@@ -14,6 +15,11 @@ font_style = 4
 subpixel_positioning = 0
 msdf_pixel_range = 14
 msdf_size = 128
+cache/0/16/0/ascent = 13.0
+cache/0/16/0/descent = 6.0
+cache/0/16/0/underline_position = 1.953125
+cache/0/16/0/underline_thickness = 1.015625
+cache/0/16/0/scale = 1.0
 cache/0/30/0/ascent = 24.0
 cache/0/30/0/descent = 11.0
 cache/0/30/0/underline_position = 3.65625
@@ -24,11 +30,6 @@ cache/0/30/0/glyphs/3/offset = Vector2(0, 0)
 cache/0/30/0/glyphs/3/size = Vector2(0, 0)
 cache/0/30/0/glyphs/3/uv_rect = Rect2(0, 0, 0, 0)
 cache/0/30/0/glyphs/3/texture_idx = -1
-cache/0/16/0/ascent = 13.0
-cache/0/16/0/descent = 6.0
-cache/0/16/0/underline_position = 1.953125
-cache/0/16/0/underline_thickness = 1.015625
-cache/0/16/0/scale = 1.0
 
 [sub_resource type="CodeHighlighter" id="CodeHighlighter_8ynmy"]
 number_color = Color(1, 1, 1, 1)
@@ -47,7 +48,6 @@ keyword_colors = {
 }
 
 [node name="OutputText" type="VBoxContainer"]
-anchors_preset = -1
 offset_right = 862.0
 offset_bottom = 523.0
 size_flags_horizontal = 3
@@ -62,7 +62,7 @@ size_flags_horizontal = 3
 layout_mode = 2
 tooltip_text = "Search"
 toggle_mode = true
-icon = SubResource("SVGTexture_lygvu")
+icon = ExtResource("2_b4xqv")
 
 [node name="ShowSettings" type="Button" parent="Toolbar"]
 layout_mode = 2
@@ -93,14 +93,14 @@ layout_mode = 2
 layout_mode = 2
 tooltip_text = "Word Wrap"
 toggle_mode = true
-icon = SubResource("SVGTexture_lygvu")
+icon = SubResource("DPITexture_lygvu")
 
 [node name="UseColors" type="Button" parent="Settings"]
 layout_mode = 2
 tooltip_text = "Colorized Text"
 toggle_mode = true
 button_pressed = true
-icon = SubResource("SVGTexture_lygvu")
+icon = SubResource("DPITexture_lygvu")
 
 [node name="Output" type="TextEdit" parent="."]
 layout_mode = 2
