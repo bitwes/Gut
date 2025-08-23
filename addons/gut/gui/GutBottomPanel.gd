@@ -60,6 +60,7 @@ var menu_manager = null :
 
 	run_externally_dialog = $ShellOutOptions,
 	run_mode = $layout/ControlBar/RunMode,
+	to_window = $layout/ControlBar/ToWindow,
 }
 
 
@@ -79,6 +80,9 @@ func _ready():
 	_ctrls.settings_button.icon = get_theme_icon('Tools', 'EditorIcons')
 	_ctrls.run_results_button.icon = get_theme_icon('AnimationTrackGroup', 'EditorIcons') # Tree
 	_ctrls.output_button.icon = get_theme_icon('Font', 'EditorIcons')
+	_ctrls.to_window.icon = get_theme_icon("MakeFloating", 'EditorIcons')
+	_ctrls.to_window.text = ''
+	_ctrls.run_mode.icon = get_theme_icon("ViewportSpeed", 'EditorIcons')
 
 	_ctrls.run_results.set_output_control(_ctrls.output_ctrl)
 
@@ -127,7 +131,7 @@ func _apply_options_to_controls():
 		mode_ind = 'ExB'
 	elif(_ctrls.run_externally_dialog.run_mode == _ctrls.run_externally_dialog.RUN_MODE_NON_BLOCKING):
 		mode_ind = 'ExN'
-	_ctrls.run_mode.text = "Mode:" + mode_ind
+	_ctrls.run_mode.text = mode_ind
 
 
 func _disable_run_buttons(should):
@@ -330,6 +334,10 @@ func _on_run_mode_pressed() -> void:
 
 
 func _on_toggle_windowed():
+	_gut_plugin.toggle_windowed()
+
+
+func _on_to_window_pressed() -> void:
 	_gut_plugin.toggle_windowed()
 
 

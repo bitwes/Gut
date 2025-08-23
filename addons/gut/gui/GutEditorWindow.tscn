@@ -74,6 +74,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = SubResource("Theme_fqfwy")
+color = Color(0.18717614, 0.18717614, 0.18717614, 1)
 
 [node name="Layout" type="VBoxContainer" parent="."]
 anchors_preset = 15
@@ -89,14 +90,15 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ToPanel" type="Button" parent="Layout/WinControls"]
-layout_mode = 2
-text = "Dock Window"
-
 [node name="OnTop" type="CheckButton" parent="Layout/WinControls"]
 layout_mode = 2
 text = "Always on Top"
 
+[node name="ToPanel" type="Button" parent="Layout/WinControls"]
+layout_mode = 2
+text = "Dock Window"
+
+[connection signal="close_requested" from="." to="." method="_on_close_requested"]
 [connection signal="size_changed" from="." to="." method="_on_size_changed"]
-[connection signal="pressed" from="Layout/WinControls/ToPanel" to="." method="_on_to_panel_pressed"]
 [connection signal="toggled" from="Layout/WinControls/OnTop" to="." method="_on_on_top_toggled"]
+[connection signal="pressed" from="Layout/WinControls/ToPanel" to="." method="_on_to_panel_pressed"]

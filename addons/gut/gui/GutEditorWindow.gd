@@ -4,17 +4,13 @@ extends Window
 var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
 
 @onready var _chk_always_on_top = $Layout/WinControls/OnTop
+@onready var _btn_to_panel = $Layout/WinControls/ToPanel
 
 var _bottom_panel = null
 var _ready_to_go = false
 
 var gut_plugin = null
-var interface = null : 
-	set(val):
-		interface = val
-		#print(theme.get_type_list())
-		#print(theme.get_theme_item_list(Theme.DATA_TYPE_COLOR, "Editor"))
-		#$ColorRect.color = theme.get_theme_item(Theme.DATA_TYPE_COLOR, "Editor", "background")
+var interface = null
 
 
 func _ready() -> void:
@@ -25,6 +21,7 @@ func _ready() -> void:
 		size = pref_size
 	always_on_top = GutEditorGlobals.user_prefs.gut_window_on_top.value
 	_chk_always_on_top.button_pressed = always_on_top
+	
 	
 	
 # --------
@@ -59,7 +56,13 @@ func add_gut_panel(panel : Control):
 	theme = interface.get_editor_theme()
 	var settings = interface.get_editor_settings()
 	$ColorRect.color = settings.get_setting("interface/theme/base_color")
+	_btn_to_panel.icon = get_theme_icon('MakeFloating', 'EditorIcons')
+	_btn_to_panel.text = ""
 
 
 func remove_panel():
 	$Layout.remove_child(_bottom_panel)
+
+
+func _on_close_requested() -> void:
+	gut_plugin.toggle_windowed()
