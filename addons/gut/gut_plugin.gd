@@ -5,12 +5,13 @@ var VersionConversion = load("res://addons/gut/version_conversion.gd")
 var MenuManager = load("res://addons/gut/menu_manager.gd")
 var GutWindow = load("res://addons/gut/gui/GutEditorWindow.tscn")
 var BottomPanelScene = preload('res://addons/gut/gui/GutBottomPanel.tscn')
-
+var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
 
 var _bottom_panel : Control = null
 var _menu_mgr = null
 var _gut_button = null
 var _gut_window = null
+var _dock_mode = 'none'
 
 
 func _init():
@@ -42,7 +43,6 @@ func _enter_tree():
 
 	_bottom_panel.set_interface(get_editor_interface())
 	_bottom_panel.set_plugin(self)
-	_bottom_panel.set_panel_button(_gut_button)
 	_bottom_panel.load_shortcuts()
 
 	_menu_mgr = MenuManager.new(self)
@@ -63,35 +63,28 @@ func _version_conversion():
 	VersionConversion.convert()
 	return true
 
-var _dock_mode = 'none'
-
 
 func gut_as_window():
 	if(_gut_window == null):
 		_gut_window = GutWindow.instantiate()
-		_gut_window.size = Vector2(800, 800)
 		_gut_window.gut_plugin = self
 		add_child(_gut_window)
 		_gut_window.theme = get_tree().root.theme
+		_gut_window.interface = get_editor_interface()
 
 	_gut_window.add_gut_panel(_bottom_panel)
-	# _bottom_panel.position = Vector2(0, 0)
-	# _bottom_panel.size = _gut_window.size
-	# _bottom_panel.anchor_bottom = 1.0
-	# _bottom_panel.anchor_top = 1.0
-	# _bottom_panel.anchor_left = 1.0
-	# _bottom_panel.anchor_right = 1.0
 	_gut_button = null
 	_dock_mode = 'window'
 
 
 func gut_as_panel():
 	_gut_button = add_control_to_bottom_panel(_bottom_panel, 'GUT')
+	_bottom_panel.set_panel_button(_gut_button)
 	_gut_button.shortcut_in_tooltip = true
 	_dock_mode = 'panel'
+	_bottom_panel._apply_shortcuts()
 
 	if(_gut_window != null):
-		print("leaving window so killing window.")
 		_gut_window.queue_free()
 		_gut_window = null
 
@@ -113,6 +106,7 @@ func _deparent_bottom_panel():
 
 
 func _exit_tree():
+	GutEditorGlobals.user_prefs.save_it()
 	# Clean-up of the plugin goes here
 	# Always remember to remove_at it from the engine when deactivated
 	_deparent_bottom_panel()

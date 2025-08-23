@@ -62,6 +62,7 @@ class TestSpy:
 		_spy.clear()
 		assert_eq(_spy._calls.keys().size(), 0, 'post count')
 
+
 class TestAddingCallsWithParameters:
 	extends GutInternalTester
 

@@ -225,9 +225,7 @@ func _apply_shortcuts():
 		menu_manager.set_shortcut("run_all",
 			_ctrls.shortcut_dialog.scbtn_run_all.get_input_event())
 		menu_manager.set_shortcut("run_script",
-		menu_manager.set_shortcut("run_script",
 			_ctrls.shortcut_dialog.scbtn_run_current_script.get_input_event())
-		menu_manager.set_shortcut("run_inner_class",
 		menu_manager.set_shortcut("run_inner_class",
 			_ctrls.shortcut_dialog.scbtn_run_current_inner.get_input_event())
 		menu_manager.set_shortcut("run_test",

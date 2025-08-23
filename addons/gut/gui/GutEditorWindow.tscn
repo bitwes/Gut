@@ -1,12 +1,70 @@
-[gd_scene load_steps=2 format=3 uid="uid://dnnvwlplf1km7"]
+[gd_scene load_steps=7 format=3 uid="uid://dnnvwlplf1km7"]
 
 [ext_resource type="Script" uid="uid://crp2af6k4nmf5" path="res://addons/gut/gui/GutEditorWindow.gd" id="1_qevl3"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qevl3"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.115499996, 0.132, 0.15949999, 1)
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_af010"]
+content_margin_left = 8.0
+content_margin_top = 12.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.21, 0.24, 0.29, 1)
+border_color = Color(0.08399999, 0.095999986, 0.116, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_detail = 5
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xw0o2"]
+content_margin_left = 0.0
+content_margin_top = 8.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.21, 0.24, 0.29, 1)
+border_color = Color(0.08399999, 0.095999986, 0.116, 1)
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_detail = 5
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fqfwy"]
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+bg_color = Color(0.14699998, 0.16799998, 0.203, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_detail = 5
+anti_aliasing = false
+
+[sub_resource type="Theme" id="Theme_fqfwy"]
+Editor/colors/accent_color = Color(0.44, 0.73, 0.98, 1)
+Editor/colors/background = Color(0.115499996, 0.132, 0.15949999, 1)
+Editor/colors/base_color = Color(0.21, 0.24, 0.29, 1)
+EditorStyles/styles/Background = SubResource("StyleBoxFlat_qevl3")
+EditorStyles/styles/BottomPanel = SubResource("StyleBoxFlat_af010")
+EditorStyles/styles/Content = SubResource("StyleBoxFlat_xw0o2")
+Panel/styles/panel = SubResource("StyleBoxFlat_fqfwy")
 
 [node name="GutEditorWindow" type="Window"]
 oversampling_override = 1.0
 title = "GUT"
 position = Vector2i(0, 36)
-size = Vector2i(500, 500)
+size = Vector2i(3024, 1728)
+min_size = Vector2i(800, 600)
 script = ExtResource("1_qevl3")
 
 [node name="ColorRect" type="ColorRect" parent="."]
@@ -15,7 +73,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.19973177, 0.19973174, 0.19973174, 1)
+theme = SubResource("Theme_fqfwy")
 
 [node name="Layout" type="VBoxContainer" parent="."]
 anchors_preset = 15
@@ -27,13 +85,18 @@ grow_vertical = 2
 [node name="WinControls" type="HBoxContainer" parent="Layout"]
 layout_mode = 2
 
+[node name="CenterContainer" type="CenterContainer" parent="Layout/WinControls"]
+layout_mode = 2
+size_flags_horizontal = 3
+
 [node name="ToPanel" type="Button" parent="Layout/WinControls"]
 layout_mode = 2
-text = "Panel"
+text = "Dock Window"
 
 [node name="OnTop" type="CheckButton" parent="Layout/WinControls"]
 layout_mode = 2
 text = "Always on Top"
 
+[connection signal="size_changed" from="." to="." method="_on_size_changed"]
 [connection signal="pressed" from="Layout/WinControls/ToPanel" to="." method="_on_to_panel_pressed"]
 [connection signal="toggled" from="Layout/WinControls/OnTop" to="." method="_on_on_top_toggled"]

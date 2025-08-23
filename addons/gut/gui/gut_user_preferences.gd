@@ -40,6 +40,8 @@ var use_colors = null	# ? might be output panel
 var run_externally = null
 var run_externally_options_dialog_size = null
 var shortcuts_dialog_size = null
+var gut_window_size = null
+var gut_window_on_top = null
 
 
 func _init(editor_settings):
@@ -52,6 +54,8 @@ func _init(editor_settings):
 	run_externally = GutEditorPref.new('run_externally', false, editor_settings)
 	run_externally_options_dialog_size = GutEditorPref.new('run_externally_options_dialog_size', Vector2i(-1, -1), editor_settings)
 	shortcuts_dialog_size = GutEditorPref.new('shortcuts_dialog_size', Vector2i(-1, -1), editor_settings)
+	gut_window_size = GutEditorPref.new('editor_window_size', Vector2i(-1, -1), editor_settings)
+	gut_window_on_top = GutEditorPref.new('editor_window_on_top', false, editor_settings)
 
 
 func save_it():
