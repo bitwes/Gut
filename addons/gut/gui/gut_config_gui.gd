@@ -74,15 +74,6 @@ func get_config_issues():
 
 func clear():
 	opt_maker.clear()
-	# for key in _cfg_ctrls:
-	# 	_cfg_ctrls[key].free()
-
-	# _cfg_ctrls.clear()
-
-	# for entry in _all_titles:
-	# 	entry.free()
-
-	# _all_titles.clear()
 
 
 func save_file(path):

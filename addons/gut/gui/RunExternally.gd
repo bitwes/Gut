@@ -1,30 +1,30 @@
 @tool
 extends Control
 
-class DotsAnimator:
-	var text = ''
-	var dot = '.'
-	var max_dots = 3
-	var dot_delay = .5
+# I'm probably going to put this back in later and I don't want to create it
+# again.  Yeah, yeah, yeah.
+# class DotsAnimator:
+# 	var text = ''
+# 	var dot = '.'
+# 	var max_dots = 3
+# 	var dot_delay = .5
 
-	var _anim_text = ''
-	var _elapsed_time = 0.0
-	var _cur_dots = 0
+# 	var _anim_text = ''
+# 	var _elapsed_time = 0.0
+# 	var _cur_dots = 0
 
-	func get_animated_text():
-		return _anim_text
+# 	func get_animated_text():
+# 		return _anim_text
 
-	func add_time(delta):
-		_elapsed_time += delta
-		if(_elapsed_time > dot_delay):
-			_elapsed_time = 0
-			_cur_dots += 1
-			if(_cur_dots > max_dots):
-				_cur_dots = 0
+# 	func add_time(delta):
+# 		_elapsed_time += delta
+# 		if(_elapsed_time > dot_delay):
+# 			_elapsed_time = 0
+# 			_cur_dots += 1
+# 			if(_cur_dots > max_dots):
+# 				_cur_dots = 0
 
-			_anim_text = text.rpad(text.length() + _cur_dots, dot)
-
-
+# 			_anim_text = text.rpad(text.length() + _cur_dots, dot)
 
 
 var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
@@ -32,10 +32,9 @@ var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
 @onready var label = $ColorRect/VBox/Label
 @onready var btn_kill_it = $ColorRect/VBox/Kill
 
-var _dot_anim = DotsAnimator.new()
 var _pipe_results = {}
-var _run_time = 0.0
 var _debug_mode = false
+var _std_thread : Thread
 
 var bottom_panel = null :
 	set(val):
@@ -43,10 +42,6 @@ var bottom_panel = null :
 		bottom_panel.resized.connect(_on_bottom_panel_resized)
 var blocking_mode = "Blocking"
 var additional_arguments = []
-
-
-func _init():
-	_dot_anim.text = "Running"
 
 
 func _debug_ready():
@@ -58,7 +53,7 @@ func _debug_ready():
 
 func _ready():
 	btn_kill_it.visible = false
-	
+
 	if(get_parent() == get_tree().root):
 		_debug_ready.call_deferred()
 
@@ -69,6 +64,13 @@ func _process(_delta: float) -> void:
 			_end_non_blocking()
 
 
+# ----------
+# Private
+# ----------
+func _center_me():
+	position = get_parent().size / 2.0 - size / 2.0
+
+
 func _output_text(text, should_scroll = true):
 	if(_debug_mode):
 		print(text)
@@ -76,21 +78,14 @@ func _output_text(text, should_scroll = true):
 		bottom_panel.add_output_text(text)
 		if(should_scroll):
 			_scroll_output_pane(-1)
-	
-	
+
+
 func _scroll_output_pane(line):
 	if(!_debug_mode):
 		var txt_ctrl = bottom_panel.get_text_output_control().get_rich_text_edit()
 		if(line == -1):
 			line = txt_ctrl.get_line_count()
 		txt_ctrl.scroll_vertical = line
-		
-
-func _update_piped_data(delta):
-	_dot_anim.add_time(delta)
-	_run_time += delta
-	label.text = _dot_anim.get_animated_text()
-	_output_text(_pipe_results.stdio.get_as_text())
 
 
 func _add_arguments_to_output():
@@ -133,33 +128,30 @@ func _read_non_blocking_stdio():
 
 		while(fio.get_length() > 0):
 			_output_text(fio.get_line() + "\n")
-			
+
+		# without this, things start to lock up.
 		await get_tree().process_frame
 
 
-var _stdio_thread : Thread
 func _run_non_blocking(options):
 	_pipe_results = OS.execute_with_pipe(OS.get_executable_path(), options, false)
-	_stdio_thread = Thread.new()
-	_stdio_thread.start(_read_non_blocking_stdio)
+	_std_thread = Thread.new()
+	_std_thread.start(_read_non_blocking_stdio)
 	btn_kill_it.visible = true
 
 
 func _end_non_blocking():
 	_add_arguments_to_output()
-	_output_text(_pipe_results.stderr.get_as_text(), false)
-	
+	_scroll_output_pane(-1)
+
 	_load_json()
 
 	_pipe_results = {}
-	_stdio_thread.wait_to_finish()
+	_std_thread.wait_to_finish()
 	queue_free()
 	if(_debug_mode):
 		get_tree().quit()
 
-
-func _center_me():
-	position = get_parent().size / 2.0 - size / 2.0
 
 
 # ----------------

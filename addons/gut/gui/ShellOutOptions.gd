@@ -213,10 +213,10 @@ func _add_controls():
 
 	_add_blurb("[b]Non-Blocking[/b]")
 	_add_blurb(
-		"Test output is streamed to the GUT panel but error output appears after all tests have " +
-		"finished.  The editor is not blocked.  If you want to run tests with the --headless option, " +
-		"you can use this mode to see what the run is doing.  [b]print[/b] output will appear in the " +
-		"GUT panel instead of the Output panel.")
+		"Test output and errors are streamed to the GUT panel pretty much as they occur.  The " + 
+		"editor is not blocked (mostly).  If you want to run tests with the --headless option, " +
+		"you can use this mode.  [b]print[/b] output will appear in the GUT panel instead of the " + 
+		"Output panel.")
 
 	_opt_maker_setup = true
 
