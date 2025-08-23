@@ -155,6 +155,9 @@ an immediate "=":
 	opts.add('-gpo', false, 'Print option values from all sources and the value used.')
 	opts.add('-gprint_gutconfig_sample', false, 'Print out json that can be used to make a gutconfig file.')
 
+	opts.add_heading("Internal")
+	# run as in editor, for shelling out purposes.
+	opts.add('-graie', false, 'do not use')
 	return opts
 
 
@@ -196,6 +199,7 @@ func extract_command_line_options(from, to):
 
 	to.failure_error_types = from.get_value_or_null('-gfailure_error_types')
 	to.no_error_tracking = from.get_value_or_null('-gno_error_tracking')
+	to.raie = from.get_value_or_null('-graie')
 
 
 
@@ -228,7 +232,10 @@ func _run_tests(opt_resolver):
 	runner.set_gut_config(_gut_config)
 	get_tree().root.add_child(runner)
 
-	runner.run_tests()
+	if(opt_resolver.cmd_opts.raie):
+		runner.run_from_editor()
+	else:
+		runner.run_tests()
 
 
 # parse options and run Gut

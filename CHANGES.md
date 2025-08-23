@@ -29,6 +29,9 @@ assert_called(my_double.rpc_id, [p1, p2, [vararg_val1, vararg_val2, vararg_val3]
         * parent_one:<Node#65062045712> + 5
         * parent_a:<Node#65162709014> + 2
 ```
+* More shortcuts, use shortcuts anywhere.
+* Shortcuts dialog and the new run-externally dialog now remember their size across sessions.
+* Run tests externally through the editor.  This is basically the same thing as running from the command line, but kicked off through the editor.  This was introduced to allow you to run tests that had errors in them without invoking the debugger, but could have many other use cases..  There are some options on how this is run.  See the run-externally options for more information about best use.
 
 
 # 9.4.0
