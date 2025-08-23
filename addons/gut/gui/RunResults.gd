@@ -24,6 +24,9 @@ var _output_control = null
 }
 
 func _ready():
+	if(get_parent() is SubViewport):
+		return
+
 	var f = null
 	if ($FontSampler.get_label_settings() == null) :
 		f = get_theme_default_font()

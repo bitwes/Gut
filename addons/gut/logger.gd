@@ -29,7 +29,7 @@ var _type_data = {
 	types.debug:		{disp='DEBUG', 		enabled=true, fmt=fmts.bold},
 	types.deprecated:	{disp='DEPRECATED', enabled=true, fmt=fmts.none},
 	types.error:		{disp='ERROR', 		enabled=true, fmt=fmts.red},
-	types.expected_error:	{disp="Expected Error", enabled=true, fmt=fmts.blue},
+	types.expected_error:	{disp="ExpectedError", enabled=true, fmt=fmts.blue},
 	types.failed:		{disp='Failed', 	enabled=true, fmt=fmts.red},
 	types.info:			{disp='INFO', 		enabled=true, fmt=fmts.bold},
 	types.normal:		{disp='NORMAL', 	enabled=true, fmt=fmts.none},

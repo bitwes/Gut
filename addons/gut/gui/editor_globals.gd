@@ -31,6 +31,9 @@ static var editor_shortcuts_path = 'gut_editor_shortcuts.cfg' :
 	get: return temp_directory.path_join(editor_shortcuts_path)
 	set(v): pass
 
+static var run_externally_options_path = 'gut_editor_run_externally.cfg' :
+	get: return temp_directory.path_join(run_externally_options_path)
+	set(v): pass
 
 static var _user_prefs = null
 static var user_prefs = _user_prefs :
@@ -45,4 +48,3 @@ static var user_prefs = _user_prefs :
 
 static func create_temp_directory():
 	DirAccess.make_dir_recursive_absolute(temp_directory)
-

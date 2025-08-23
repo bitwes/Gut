@@ -407,4 +407,3 @@ class TestErrorAsserts:
 		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.passing, 5, '5 params, 1 assert each: pass count')
 		assert_eq(t.failing, 0, 'fail count')
-

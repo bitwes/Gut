@@ -2,24 +2,35 @@
 extends Control
 
 var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
-var TestScript = load('res://addons/gut/test.gd')
 var GutConfigGui = load('res://addons/gut/gui/gut_config_gui.gd')
 var ScriptTextEditors = load('res://addons/gut/gui/script_text_editor_controls.gd')
 
 
 var _interface = null;
-var _is_running = false;
+var _is_running = false :
+	set(val):
+		_is_running = val
+		_disable_run_buttons(_is_running)
+
 var _gut_config = load('res://addons/gut/gut_config.gd').new()
 var _gut_config_gui = null
 var _gut_plugin = null
-var _light_color = Color(0, 0, 0, .5)
+var _light_color = Color(0, 0, 0, .5) :
+	set(val):
+		_light_color = val
+		if(is_inside_tree()):
+			_ctrls.light.queue_redraw()
 var _panel_button = null
 var _last_selected_path = null
 var _user_prefs = null
+var _shell_out_panel = null
+
+
 var menu_manager = null :
 	set(val):
 		menu_manager = val
 		_apply_shortcuts()
+		menu_manager.toggle_windowed.connect(_on_toggle_windowed)
 
 
 @onready var _ctrls = {
@@ -33,7 +44,7 @@ var menu_manager = null :
 	output_button = $layout/ControlBar/OutputBtn,
 
 	settings = $layout/RSplit/sc/Settings,
-	shortcut_dialog = $ShortcutDialog,#$BottomPanelShortcuts,
+	shortcut_dialog = $ShortcutDialog,
 	light = $layout/RSplit/CResults/ControlBar/Light3D,
 	results = {
 		bar = $layout/RSplit/CResults/ControlBar,
@@ -45,14 +56,18 @@ var menu_manager = null :
 		orphans = $layout/RSplit/CResults/ControlBar/Orphans/value
 	},
 	run_at_cursor = $layout/ControlBar/RunAtCursor,
-	run_results = $layout/RSplit/CResults/TabBar/RunResults
-}
+	run_results = $layout/RSplit/CResults/TabBar/RunResults,
 
-func _init():
-	pass
+	run_externally_dialog = $ShellOutOptions,
+	run_mode = $layout/ControlBar/RunMode,
+	to_window = $layout/ControlBar/ToWindow,
+}
 
 
 func _ready():
+	if(get_parent() is SubViewport):
+		return
+	
 	GutEditorGlobals.create_temp_directory()
 
 	_user_prefs = GutEditorGlobals.user_prefs
@@ -63,12 +78,14 @@ func _ready():
 
 	_gut_config.load_options(GutEditorGlobals.editor_run_gut_config_path)
 	_gut_config_gui.set_options(_gut_config.options)
-	_apply_options_to_controls()
 
 	_ctrls.shortcuts_button.icon = get_theme_icon('Shortcut', 'EditorIcons')
 	_ctrls.settings_button.icon = get_theme_icon('Tools', 'EditorIcons')
 	_ctrls.run_results_button.icon = get_theme_icon('AnimationTrackGroup', 'EditorIcons') # Tree
 	_ctrls.output_button.icon = get_theme_icon('Font', 'EditorIcons')
+	_ctrls.to_window.icon = get_theme_icon("MakeFloating", 'EditorIcons')
+	_ctrls.to_window.text = ''
+	_ctrls.run_mode.icon = get_theme_icon("ViewportSpeed", 'EditorIcons')
 
 	_ctrls.run_results.set_output_control(_ctrls.output_ctrl)
 
@@ -79,29 +96,50 @@ func _ready():
 	else:
 		_ctrls.run_results.add_centered_text("Let's run some tests!")
 
-
-func _apply_options_to_controls():
-	hide_settings(_user_prefs.hide_settings.value)
-	hide_result_tree(_user_prefs.hide_result_tree.value)
-	hide_output_text(_user_prefs.hide_output_text.value)
-	_ctrls.run_results.set_show_orphans(!_gut_config.options.hide_orphans)
+	_ctrls.run_externally_dialog.load_from_file()
+	_apply_options_to_controls()
 
 
 func _process(_delta):
 	if(_is_running):
-		if(!_interface.is_playing_scene()):
+		if(_ctrls.run_externally_dialog.should_run_externally()):
+			if(!is_instance_valid(_shell_out_panel)):
+				_is_running = false
+				_gut_plugin.make_bottom_panel_item_visible(self)
+		elif(!_interface.is_playing_scene()):
 			_is_running = false
 			_ctrls.output_ctrl.add_text("\ndone")
 			load_result_output()
 			_gut_plugin.make_bottom_panel_item_visible(self)
 
+
 # ---------------
 # Private
 # ---------------
+func _apply_options_to_controls():
+	hide_settings(_user_prefs.hide_settings.value)
+	hide_result_tree(_user_prefs.hide_result_tree.value)
+	hide_output_text(_user_prefs.hide_output_text.value)
+	_ctrls.run_results.set_show_orphans(!_gut_config.options.hide_orphans)
+	var shell_dialog_size = _user_prefs.run_externally_options_dialog_size.value
 
-func load_shortcuts():
-	_ctrls.shortcut_dialog.load_shortcuts()
-	_apply_shortcuts()
+	if(shell_dialog_size != Vector2i(-1, -1)):
+		_ctrls.run_externally_dialog.size = Vector2i(shell_dialog_size)
+
+	if(_user_prefs.shortcuts_dialog_size.value != Vector2i(-1, -1)):
+		_ctrls.shortcut_dialog.size = _user_prefs.shortcuts_dialog_size.value
+
+	var mode_ind = 'Ed'
+	if(_ctrls.run_externally_dialog.run_mode == _ctrls.run_externally_dialog.RUN_MODE_BLOCKING):
+		mode_ind = 'ExB'
+	elif(_ctrls.run_externally_dialog.run_mode == _ctrls.run_externally_dialog.RUN_MODE_NON_BLOCKING):
+		mode_ind = 'ExN'
+	_ctrls.run_mode.text = mode_ind
+
+
+func _disable_run_buttons(should):
+	_ctrls.run_button.disabled = should
+	_ctrls.run_at_cursor.disabled = should
 
 
 func _is_test_script(script):
@@ -123,11 +161,20 @@ func _show_errors(errs):
 	hide_settings(false)
 
 
-func _save_config():
+func _save_user_prefs():
 	_user_prefs.hide_settings.value = !_ctrls.settings_button.button_pressed
 	_user_prefs.hide_result_tree.value = !_ctrls.run_results_button.button_pressed
 	_user_prefs.hide_output_text.value = !_ctrls.output_button.button_pressed
+	_user_prefs.shortcuts_dialog_size.value = _ctrls.shortcut_dialog.size
+
+	_user_prefs.run_externally.value = _ctrls.run_externally_dialog.run_mode != _ctrls.run_externally_dialog.RUN_MODE_EDITOR
+	_user_prefs.run_externally_options_dialog_size.value = _ctrls.run_externally_dialog.size
+
 	_user_prefs.save_it()
+
+
+func _save_config():
+	_save_user_prefs()
 
 	_gut_config.options = _gut_config_gui.get_options(_gut_config.options)
 	var w_result = _gut_config.write_options(GutEditorGlobals.editor_run_gut_config_path)
@@ -137,8 +184,24 @@ func _save_config():
 		_gut_config_gui.mark_saved()
 
 
+func _run_externally():
+	_shell_out_panel = GutUtils.RunExternallyScene.instantiate()
+	_shell_out_panel.bottom_panel = self
+	_shell_out_panel.blocking_mode = _ctrls.run_externally_dialog.run_mode
+	_shell_out_panel.additional_arguments = _ctrls.run_externally_dialog.get_additional_arguments_array()
+
+	add_child(_shell_out_panel)
+	_shell_out_panel.run_tests()
+
+
 func _run_tests():
+	if(_is_running):
+		push_error("GUT:  Cannot run tests, tests are already running.")
+		return
+
+	clear_results()
 	GutEditorGlobals.create_temp_directory()
+	_light_color = Color.BLUE
 
 	var issues = _gut_config_gui.get_config_issues()
 	if(issues.size() > 0):
@@ -146,6 +209,7 @@ func _run_tests():
 		return
 
 	write_file(GutEditorGlobals.editor_run_bbcode_results_path, 'Run in progress')
+	write_file(GutEditorGlobals.editor_run_json_results_path, '')
 	_save_config()
 	_apply_options_to_controls()
 
@@ -153,19 +217,23 @@ func _run_tests():
 	_ctrls.run_results.clear()
 	_ctrls.run_results.add_centered_text('Running...')
 
-	_interface.play_custom_scene('res://addons/gut/gui/run_from_editor.tscn')
 	_is_running = true
 	_ctrls.output_ctrl.add_text('Running...')
 
+	if(_ctrls.run_externally_dialog.should_run_externally()):
+		_gut_plugin.make_bottom_panel_item_visible(self)
+		_run_externally()
+	else:
+		_interface.play_custom_scene('res://addons/gut/gui/run_from_editor.tscn')
+
 
 func _apply_shortcuts():
-
 	if(menu_manager != null):
 		menu_manager.set_shortcut("run_all",
 			_ctrls.shortcut_dialog.scbtn_run_all.get_input_event())
-		menu_manager.set_shortcut("run_script", 
+		menu_manager.set_shortcut("run_script",
 			_ctrls.shortcut_dialog.scbtn_run_current_script.get_input_event())
-		menu_manager.set_shortcut("run_inner_class", 
+		menu_manager.set_shortcut("run_inner_class",
 			_ctrls.shortcut_dialog.scbtn_run_current_inner.get_input_event())
 		menu_manager.set_shortcut("run_test",
 			_ctrls.shortcut_dialog.scbtn_run_current_test.get_input_event())
@@ -173,6 +241,8 @@ func _apply_shortcuts():
 			_ctrls.shortcut_dialog.scbtn_run_at_cursor.get_input_event())
 		menu_manager.set_shortcut("rerun",
 			_ctrls.shortcut_dialog.scbtn_rerun.get_input_event())
+		menu_manager.set_shortcut("toggle_windowed",
+			_ctrls.shortcut_dialog.scbtn_windowed.get_input_event())
 
 	_ctrls.run_button.shortcut = \
 		_ctrls.shortcut_dialog.scbtn_run_all.get_shortcut()
@@ -183,7 +253,8 @@ func _apply_shortcuts():
 	_ctrls.run_at_cursor.get_test_button().shortcut = \
 		_ctrls.shortcut_dialog.scbtn_run_current_test.get_shortcut()
 
-	_panel_button.shortcut = _ctrls.shortcut_dialog.scbtn_panel.get_shortcut()
+	if(_panel_button != null):
+		_panel_button.shortcut = _ctrls.shortcut_dialog.scbtn_panel.get_shortcut()
 
 
 func _run_all():
@@ -217,11 +288,13 @@ func _on_RunAll_pressed():
 
 func _on_Shortcuts_pressed():
 	_ctrls.shortcut_dialog.popup_centered()
-	
+
+
 
 func _on_sortcut_dialog_confirmed() -> void:
 	_apply_shortcuts()
 	_ctrls.shortcut_dialog.save_shortcuts()
+	_save_user_prefs()
 
 
 func _on_RunAtCursor_run_tests(what):
@@ -252,9 +325,33 @@ func _on_RunResultsBtn_pressed():
 func _on_UseColors_pressed():
 	pass
 
+
+func _on_shell_out_options_confirmed() -> void:
+	_ctrls.run_externally_dialog.save_to_file()
+	_save_user_prefs()
+	_apply_options_to_controls()
+
+
+func _on_run_mode_pressed() -> void:
+	_ctrls.run_externally_dialog.popup_centered()
+
+
+func _on_toggle_windowed():
+	_gut_plugin.toggle_windowed()
+
+
+func _on_to_window_pressed() -> void:
+	_gut_plugin.toggle_windowed()
+
+
 # ---------------
 # Public
 # ---------------
+func load_shortcuts():
+	_ctrls.shortcut_dialog.load_shortcuts()
+	_apply_shortcuts()
+
+
 func hide_result_tree(should):
 	_ctrls.run_results.visible = !should
 	_ctrls.run_results_button.button_pressed = !should
@@ -280,9 +377,29 @@ func hide_output_text(should):
 	_ctrls.output_button.button_pressed = !should
 
 
-func load_result_output():
-	_ctrls.output_ctrl.load_file(GutEditorGlobals.editor_run_bbcode_results_path)
+func clear_results():
+	_light_color = Color(0, 0, 0, .5)
 
+	_ctrls.results.passing.text = "0"
+	_ctrls.results.passing.get_parent().visible = false
+
+	_ctrls.results.failing.text = "0"
+	_ctrls.results.failing.get_parent().visible = false
+
+	_ctrls.results.pending.text = "0"
+	_ctrls.results.pending.get_parent().visible = false
+
+	_ctrls.results.errors.text = "0"
+	_ctrls.results.errors.get_parent().visible = false
+
+	_ctrls.results.warnings.text = "0"
+	_ctrls.results.warnings.get_parent().visible = false
+
+	_ctrls.results.orphans.text = "0"
+	_ctrls.results.orphans.get_parent().visible = false
+
+
+func load_result_json():
 	var summary = get_file_as_text(GutEditorGlobals.editor_run_json_results_path)
 	var test_json_conv = JSON.new()
 	if (test_json_conv.parse(summary) != OK):
@@ -318,14 +435,22 @@ func load_result_output():
 		_light_color = Color(1, 1, 0, .75)
 	else:
 		_light_color = Color(0, 1, 0, .75)
+
 	_ctrls.light.visible = true
-	_ctrls.light.queue_redraw()
+
+
+func load_result_text():
+	_ctrls.output_ctrl.load_file(GutEditorGlobals.editor_run_bbcode_results_path)
+
+
+func load_result_output():
+	load_result_text()
+	load_result_json()
 
 
 func set_current_script(script):
 	if(script):
 		if(_is_test_script(script)):
-			var file = script.resource_path.get_file()
 			_last_selected_path = script.resource_path.get_file()
 			_ctrls.run_at_cursor.activate_for_script(script.resource_path)
 
@@ -348,9 +473,7 @@ func set_plugin(value):
 func set_panel_button(value):
 	_panel_button = value
 
-# ------------------------------------------------------------------------------
-# Write a file.
-# ------------------------------------------------------------------------------
+
 func write_file(path, content):
 	var f = FileAccess.open(path, FileAccess.WRITE)
 	if(f != null):
@@ -360,9 +483,6 @@ func write_file(path, content):
 	return FileAccess.get_open_error()
 
 
-# ------------------------------------------------------------------------------
-# Returns the text of a file or an empty string if the file could not be opened.
-# ------------------------------------------------------------------------------
 func get_file_as_text(path):
 	var to_return = ''
 	var f = FileAccess.open(path, FileAccess.READ)
@@ -372,11 +492,9 @@ func get_file_as_text(path):
 	return to_return
 
 
-# ------------------------------------------------------------------------------
-# return if_null if value is null otherwise return value
-# ------------------------------------------------------------------------------
-func nvl(value, if_null):
-	if(value == null):
-		return if_null
-	else:
-		return value
+func get_text_output_control():
+	return _ctrls.output_ctrl
+
+
+func add_output_text(text):
+	_ctrls.output_ctrl.add_text(text)

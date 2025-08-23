@@ -56,6 +56,8 @@ static var LazyLoader = load('res://addons/gut/lazy_loader.gd')
 static var VersionNumbers = load("res://addons/gut/version_numbers.gd")
 static var WarningsManager = load("res://addons/gut/warnings_manager.gd")
 static var EditorGlobals = load("res://addons/gut/gui/editor_globals.gd")
+static var RunExternallyScene = load("res://addons/gut/gui/RunExternally.tscn")
+
 # --------------------------------
 # Lazy loaded scripts.  These scripts are lazy loaded so that they can be
 # declared, but will not load when this script is loaded.  This gives us a
@@ -124,6 +126,9 @@ static var MethodMaker = LazyLoader.new('res://addons/gut/method_maker.gd'):
 	set(val): pass
 static var OneToMany = LazyLoader.new('res://addons/gut/one_to_many.gd'):
 	get: return OneToMany.get_loaded()
+	set(val): pass
+static var OptionMaker = LazyLoader.new('res://addons/gut/gui/option_maker.gd'):
+	get: return OptionMaker.get_loaded()
 	set(val): pass
 static var OrphanCounter = LazyLoader.new('res://addons/gut/orphan_counter.gd'):
 	get: return OrphanCounter.get_loaded()

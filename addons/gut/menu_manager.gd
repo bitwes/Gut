@@ -9,6 +9,7 @@ signal run_at_cursor
 signal rerun
 signal run_inner_class
 signal run_test
+signal toggle_windowed
 
 func _init(plugin : EditorPlugin):
 	_plugin = plugin
@@ -60,6 +61,7 @@ func make_menu():
 		"Run the most specific of script/inner class/test based on cursor position")
 	add_menu("Rerun", "rerun", rerun.emit,
 		"Rerun the last test(s) ran", )
+	add_menu("Toggle Windowed", "toggle_windowed", toggle_windowed.emit, '')
 
 
 func set_shortcut(menu_name, accel_or_input_key):

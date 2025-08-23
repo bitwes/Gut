@@ -7,7 +7,7 @@
 oversampling_override = 1.0
 title = "GUT Shortcuts"
 position = Vector2i(0, 36)
-size = Vector2i(1920, 1728)
+size = Vector2i(1512, 1571)
 visible = true
 script = ExtResource("1_qq8qn")
 
@@ -15,8 +15,8 @@ script = ExtResource("1_qq8qn")
 anchors_preset = -1
 offset_left = 8.0
 offset_top = 8.0
-offset_right = 1912.0
-offset_bottom = 1679.0
+offset_right = 1504.0
+offset_bottom = 1522.0
 
 [node name="Layout" type="VBoxContainer" parent="Scroll"]
 layout_mode = 2
@@ -183,5 +183,26 @@ custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 bbcode_enabled = true
 text = "[i]Rerun the test(s) that were last run."
+fit_content = true
+scroll_active = false
+
+[node name="CToggleWindowed" type="HBoxContainer" parent="Scroll/Layout"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Scroll/Layout/CToggleWindowed"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+size_flags_vertical = 7
+text = "Toggle Windowed"
+
+[node name="ShortcutButton" parent="Scroll/Layout/CToggleWindowed" instance=ExtResource("2_i3wie")]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ShortcutDescription9" type="RichTextLabel" parent="Scroll/Layout"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+bbcode_enabled = true
+text = "[i]Toggle GUT in the bottom panel or a separate window.[/i]"
 fit_content = true
 scroll_active = false
