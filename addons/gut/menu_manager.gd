@@ -4,12 +4,14 @@ var sub_menu : PopupMenu = null
 var _menus = {
 }
 
+signal run_all
 signal run_script
 signal run_at_cursor
 signal rerun
 signal run_inner_class
 signal run_test
 signal toggle_windowed
+signal about
 
 func _init(plugin : EditorPlugin):
 	_plugin = plugin
@@ -36,8 +38,12 @@ func _on_run_all():
 	_plugin._bottom_panel._run_all()
 
 
+#func add_separator(text = ''):
+	#sub_menu.add_separator(text)
+	#sub_menu.item_count
+
 func add_menu(display_text, menu_name, callback, tooltip=''):
-	var index = _menus.size()
+	var index = sub_menu.item_count
 	_menus[menu_name] = {
 		index = index,
 		id = index,
@@ -49,7 +55,10 @@ func add_menu(display_text, menu_name, callback, tooltip=''):
 
 
 func make_menu():
-	add_menu("Run All", "run_all",_on_run_all,
+	add_menu("Toggle Windowed", "toggle_windowed", toggle_windowed.emit, '')
+
+	sub_menu.add_separator('Run')
+	add_menu("Run All", "run_all",run_all.emit,
 		"Run all tests")
 	add_menu("Run Script", "run_script", run_script.emit,
 		"Run the currently selected script")
@@ -61,8 +70,11 @@ func make_menu():
 		"Run the most specific of script/inner class/test based on cursor position")
 	add_menu("Rerun", "rerun", rerun.emit,
 		"Rerun the last test(s) ran", )
-	add_menu("Toggle Windowed", "toggle_windowed", toggle_windowed.emit, '')
-
+	
+	sub_menu.add_separator()
+	add_menu("About", "about", about.emit, 
+		'All about GUT')
+	
 
 func set_shortcut(menu_name, accel_or_input_key):
 	if(typeof(accel_or_input_key) == TYPE_INT):

@@ -49,9 +49,6 @@ func _enter_tree():
 	_bottom_panel._ctrls.run_at_cursor.menu_manager = _menu_mgr
 	_bottom_panel.menu_manager = _menu_mgr
 
-	# var t : Theme = get_tree().root.theme
-	# print(t.get_type_list())
-
 
 func _version_conversion():
 	var EditorGlobals = load("res://addons/gut/gui/editor_globals.gd")
