@@ -1045,9 +1045,9 @@ func run_tests(run_rest=false):
 # Adds a script to be run when test_scripts called.
 # ------------------------------------------------------------------------------
 func add_script(script):
-	if(!Engine.is_editor_hint()):
-		_test_collector.set_test_class_prefix(_inner_class_prefix)
-		_test_collector.add_script(script)
+	# if(!Engine.is_editor_hint()):
+	_test_collector.set_test_class_prefix(_inner_class_prefix)
+	_test_collector.add_script(script)
 
 
 # ------------------------------------------------------------------------------

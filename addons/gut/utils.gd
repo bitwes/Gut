@@ -183,7 +183,7 @@ static var version_numbers = VersionNumbers.new(
 	# gut_versrion (source of truth)
 	'9.5.0',
 	# required_godot_ver4sion
-	'4.4.0'
+	'4.5'
 )
 
 

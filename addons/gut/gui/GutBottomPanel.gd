@@ -31,6 +31,8 @@ var menu_manager = null :
 		menu_manager = val
 		_apply_shortcuts()
 		menu_manager.toggle_windowed.connect(_on_toggle_windowed)
+		menu_manager.about.connect(show_about)
+		menu_manager.run_all.connect(_run_all)
 
 
 @onready var _ctrls = {
@@ -61,6 +63,7 @@ var menu_manager = null :
 	run_externally_dialog = $ShellOutOptions,
 	run_mode = $layout/ControlBar/RunMode,
 	to_window = $layout/ControlBar/ToWindow,
+	about = $layout/ControlBar/About,
 }
 
 
@@ -85,6 +88,8 @@ func _ready():
 	_ctrls.output_button.icon = get_theme_icon('Font', 'EditorIcons')
 	_ctrls.to_window.icon = get_theme_icon("MakeFloating", 'EditorIcons')
 	_ctrls.to_window.text = ''
+	_ctrls.about.icon = get_theme_icon('Info', 'EditorIcons')
+	_ctrls.about.text = ''
 	_ctrls.run_mode.icon = get_theme_icon("ViewportSpeed", 'EditorIcons')
 
 	_ctrls.run_results.set_output_control(_ctrls.output_ctrl)
@@ -288,7 +293,6 @@ func _on_RunAll_pressed():
 
 func _on_Shortcuts_pressed():
 	_ctrls.shortcut_dialog.popup_centered()
-
 
 
 func _on_sortcut_dialog_confirmed() -> void:
@@ -498,3 +502,14 @@ func get_text_output_control():
 
 func add_output_text(text):
 	_ctrls.output_ctrl.add_text(text)
+
+var AboutWindow = load("res://addons/gut/gui/about.tscn")
+func show_about():
+	var about = AboutWindow.instantiate()
+	add_child(about)
+	about.popup_centered()
+	about.confirmed.connect(about.queue_free)
+
+
+func _on_about_pressed() -> void:
+	show_about()

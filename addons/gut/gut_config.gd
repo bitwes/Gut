@@ -167,6 +167,7 @@ func _apply_options(opts, gut):
 
 	return gut
 
+
 # --------------------------
 # Public
 # --------------------------
