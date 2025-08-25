@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Features
 * Requires Godot 4.5
+* New menu and functionality at Project->Tools->GUT
 * All the `.uid` files you could ever want!
 * Stubbing/Doubling/Spying on vararg methods has changed.
     * You no longer need to stub the parameter count for vararg methods.
@@ -33,6 +34,7 @@ assert_called(my_double.rpc_id, [p1, p2, [vararg_val1, vararg_val2, vararg_val3]
 * Shortcuts dialog and the new run-externally dialog now remember their size across sessions.
 * Run tests externally through the editor.  This is basically the same thing as running from the command line, but kicked off through the editor.  This was introduced to allow you to run tests that had errors in them without invoking the debugger, but could have many other use cases..  There are some options on how this is run.  See the run-externally options for more information about best use.
 * Pop out the GUT panel into a window.  After spending a lot of time in the editor implementing "Run tests externally" I got annoyed and added the ability to pop the GUT panel out into a separate window.
+* There's an About box now.  It has text, and links, and an icon...and absolutely nothing else.
 
 
 # 9.4.0
