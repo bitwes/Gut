@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://dqbkylpsatcqm"]
 
 [ext_resource type="Script" uid="uid://g7qu8ihdt3pd" path="res://addons/gut/gui/about.gd" id="1_bg86c"]
-[ext_resource type="Texture2D" uid="uid://biw60gwe1vv6w" path="res://images/gut_logo_256x256.png" id="2_q8rky"]
+[ext_resource type="PackedScene" uid="uid://bjkn8mhx2fmt1" path="res://addons/gut/gui/GutLogo.tscn" id="3_kpic4"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q8rky"]
 bg_color = Color(0, 0, 0, 0.49803922)
@@ -23,17 +23,14 @@ offset_right = 1492.0
 offset_bottom = 751.0
 alignment = 1
 
+[node name="Spacer" type="CenterContainer" parent="HBox"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+
 [node name="VBoxContainer" type="VBoxContainer" parent="HBox"]
+visible = false
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-
-[node name="Spacer" type="CenterContainer" parent="HBox/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="HBox/VBoxContainer"]
-layout_mode = 2
-texture = ExtResource("2_q8rky")
-stretch_mode = 2
 
 [node name="Spacer2" type="CenterContainer" parent="HBox/VBoxContainer"]
 layout_mode = 2
@@ -66,4 +63,12 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_kpic4")
 bbcode_enabled = true
 fit_content = true
 
+[node name="Logo" parent="." instance=ExtResource("3_kpic4")]
+position = Vector2(151, 265)
+scale = Vector2(0.8, 0.8)
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
 [connection signal="meta_clicked" from="HBox/Scroll/VBox/RichTextLabel" to="." method="_on_rich_text_label_meta_clicked"]
+[connection signal="meta_hover_ended" from="HBox/Scroll/VBox/RichTextLabel" to="." method="_on_rich_text_label_meta_hover_ended"]
+[connection signal="meta_hover_started" from="HBox/Scroll/VBox/RichTextLabel" to="." method="_on_rich_text_label_meta_hover_started"]
