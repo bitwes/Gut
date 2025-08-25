@@ -48,3 +48,17 @@ static var user_prefs = _user_prefs :
 
 static func create_temp_directory():
 	DirAccess.make_dir_recursive_absolute(temp_directory)
+
+
+static func is_being_edited_in_editor(which):
+	if(!Engine.is_editor_hint()):
+		return false
+
+	var trav = which
+	var is_scene_root = false
+	var editor_root = which.get_tree().edited_scene_root
+	while(trav != null and !is_scene_root):
+		is_scene_root = editor_root == trav
+		if(!is_scene_root):
+			trav = trav.get_parent()
+	return is_scene_root

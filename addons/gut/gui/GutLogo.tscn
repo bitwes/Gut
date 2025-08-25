@@ -12,10 +12,12 @@ scale = Vector2(0.5, 0.5)
 texture = ExtResource("2_ba6lh")
 
 [node name="LeftEye" type="Sprite2D" parent="BaseLogo"]
+visible = false
 position = Vector2(-238, 16)
 texture = ExtResource("3_rc8fb")
 
 [node name="RightEye" type="Sprite2D" parent="BaseLogo"]
+visible = false
 position = Vector2(239, 16)
 texture = ExtResource("3_rc8fb")
 
@@ -23,4 +25,12 @@ texture = ExtResource("3_rc8fb")
 wait_time = 5.0
 one_shot = true
 
+[node name="FaceButton" type="Button" parent="."]
+modulate = Color(1, 1, 1, 0)
+offset_left = -141.0
+offset_top = -113.0
+offset_right = 140.0
+offset_bottom = 175.0
+
 [connection signal="timeout" from="ResetTimer" to="." method="_on_reset_timer_timeout"]
+[connection signal="pressed" from="FaceButton" to="." method="_on_face_button_pressed"]

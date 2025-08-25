@@ -36,11 +36,14 @@ var _donate_link = "https://buymeacoffee.com/bitwes"
 
 @onready var _logo = $Logo
 
+
 func _ready():
 	if(get_parent() is SubViewport):
 		return
 	
-	$HBox/Scroll/VBox/RichTextLabel.text = _make_text()#formatted
+	_vert_center_logo()
+	$Logo.disabled = true
+	$HBox/Scroll/RichTextLabel.text = _make_text()
 
 
 func _color_link(link_text):
@@ -72,11 +75,8 @@ func _make_text():
 	return text
 
 
-#var interface = null
-#func _do_editor_themeing():
-	#theme = interface.get_editor_theme()
-	#var settings = interface.get_editor_settings()
-	#$ColorRect.color = settings.get_setting("interface/theme/base_color")
+func _vert_center_logo():
+	_logo.position.y = size.y / 2.0
 
 
 # -----------
@@ -87,31 +87,39 @@ func _on_rich_text_label_meta_clicked(meta: Variant) -> void:
 
 
 func _on_mouse_entered() -> void:
-	_logo.active = true
+	pass#_logo.active = true
 
 
 func _on_mouse_exited() -> void:
-	_logo.active = false
+	pass#_logo.active = false
 
 
+var _odd_ball_eyes_l = 1.1
+var _odd_ball_eyes_r = .7
 func _on_rich_text_label_meta_hover_started(meta: Variant) -> void:
 	if(meta == _gut_links[0][1]):
-		_logo.eye_color(Color.DARK_RED)
+		_logo.set_eye_color(Color.RED)
 	elif(meta.find("releases/tag/") > 0):
-		_logo.eye_color(Color.DARK_GREEN)
+		_logo.set_eye_color(Color.GREEN)
 	elif(meta == _gut_links[2][1]):
-		_logo.eye_color(Color.PURPLE)
+		_logo.set_eye_color(Color.PURPLE)
 	elif(meta == _gut_links[3][1]):
-		_logo.eye_scale(1)
-		_logo.eye_color(Color.ORANGE, Color.BLUE)
+		_logo.set_eye_scale(1.2)
 	elif(meta == _vscode_links[0][1]):
-		_logo.eye_scale(.5, .5)
+		_logo.set_eye_scale(.5, .5)
 	elif(meta == _vscode_links[1][1]):
-		_logo.eye_scale(1.1, .7)
+		_logo.set_eye_scale(_odd_ball_eyes_l, _odd_ball_eyes_r)
+		var temp = _odd_ball_eyes_l
+		_odd_ball_eyes_l = _odd_ball_eyes_r
+		_odd_ball_eyes_r = temp
 	elif(meta == _donate_link):
-		_logo.eye_scale(1.3, 1.3)
-		_logo.eye_color(Color.BLACK)
+		_logo.active = false
 
 
-func _on_rich_text_label_meta_hover_ended(_meta: Variant) -> void:
-	pass
+func _on_rich_text_label_meta_hover_ended(meta: Variant) -> void:
+	if(meta == _donate_link):
+		_logo.active = true
+
+
+func _on_logo_pressed() -> void:
+	_logo.disabled = !_logo.disabled
