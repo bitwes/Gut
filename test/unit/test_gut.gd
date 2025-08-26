@@ -772,21 +772,6 @@ class TestEverythingElse:
 		assert_eq(gr.test_gut.get_assert_count(), 1, 'assert count')
 		assert_eq(gr.test_gut.get_pass_count(), 1, 'pass count')
 
-	func test_passing_asserts_made_in_after_all_are_counted():
-		gr.test_gut.add_script('res://test/resources/has_asserts_in_beforeall_and_afterall.gd')
-		gr.test_gut.inner_class_name = 'TestPassingAfterAllAssertNoOtherTests'
-		await run_tests()
-
-		assert_eq(gr.test_gut.get_assert_count(), 1, 'assert count')
-		assert_eq(gr.test_gut.get_pass_count(), 1, 'pass count')
-
-	func test_failing_asserts_made_in_before_all_are_counted():
-		gr.test_gut.add_script('res://test/resources/has_asserts_in_beforeall_and_afterall.gd')
-		gr.test_gut.inner_class_name = 'TestFailingBeforeAllAssertNoOtherTests'
-		await run_tests()
-
-		assert_eq(gr.test_gut.get_assert_count(), 1, 'assert count')
-		assert_eq(gr.test_gut.get_fail_count(), 1, 'fail count')
 
 	func test_failing_asserts_made_in_after_all_are_counted():
 		gr.test_gut.add_script('res://test/resources/has_asserts_in_beforeall_and_afterall.gd')
@@ -814,5 +799,112 @@ class TestEverythingElse:
 		assert_eq(gr.test_gut.get_assert_count(), 20, 'assert count`')
 
 
+class TestReworkedEverythingElse:
+	extends GutInternalTester
+
+	var _gut  = null
+
+	func before_all():
+		verbose = false
+		DynamicGutTest.should_print_source = verbose
 
 
+	func before_each():
+		_gut = add_child_autofree(new_gut(verbose))
+
+
+	func test_passing_asserts_made_in_after_all_are_counted():
+		var src = """
+		func after_all():
+			assert_true(true)
+
+		func test_nothing():
+			assert_eq(1, 1)
+		"""
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(src)
+		var t = s.run_test_in_gut(_gut)
+		assert_eq(t.passing, 2, 'passing asserts')
+
+
+	func test_failing_asserts_made_in_before_all_are_counted():
+		var src = """
+		func after_all():
+			assert_true(false)
+
+		func test_nothing():
+			assert_eq(1, 1)
+			pending()
+		"""
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(src)
+		var t = s.run_test_in_gut(_gut)
+		assert_eq(t.failing, 1, 'one failing')
+
+
+	func test_failing_asserts_made_in_before_all_are_in_the_summary():
+		var src = """
+		func before_all():
+			assert_true(false)
+
+		func test_nothing():
+			assert_eq(1, 1)
+		"""
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(src)
+		var t = s.run_test_in_gut(_gut)
+		_gut.get_summary().log_end_run()
+		assert_eq(t.failing, 1, 'one failing')
+		assert_has(_gut.get_logger().get_log_entries('failed'), "before_all/after_all assert failed")
+
+
+	func test_failing_asserts_made_in_after_all_are_in_the_summary():
+		var src = """
+		func after_all():
+			assert_true(false)
+
+		func test_nothing():
+			assert_eq(1, 1)
+		"""
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(src)
+		var t = s.run_test_in_gut(_gut)
+		_gut.get_summary().log_end_run()
+		assert_eq(t.failing, 1, 'one failing')
+		assert_has(_gut.get_logger().get_log_entries('failed'), "before_all/after_all assert failed")
+
+
+	func test_failing_asserts_made_in_before_each_cause_test_it_is_before_to_fail():
+		var src = """
+		func before_each():
+			assert_true(false, 'before_each_assert')
+
+		func test_nothing():
+			assert_eq(1, 1)
+
+		func test_something():
+			assert_eq(1, 1)
+		"""
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(src)
+		var t = s.run_test_in_gut(_gut)
+		assert_eq(t.failing, 2, 'failing asserts')
+		assert_eq(t.failing_tests, 2, 'failing tests')
+
+
+	func test_failing_asserts_made_in_after_each_cause_test_it_is_after_to_fail():
+		var src = """
+		func after_each():
+			assert_true(false, 'after_each assert')
+
+		func test_nothing():
+			assert_eq(1, 1)
+
+		func test_something():
+			assert_eq(1, 1)
+		"""
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(src)
+		var t = s.run_test_in_gut(_gut)
+		assert_eq(t.failing, 2, 'failing asserts')
+		assert_eq(t.failing_tests, 2, 'failing tests')

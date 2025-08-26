@@ -62,7 +62,10 @@ func _log_totals(gut, totals):
 	lgr.log(_total_fmt( 'Passing Tests', totals.passing_tests))
 	_log_non_zero_total('Failing Tests', totals.failing_tests, lgr)
 	_log_non_zero_total('Risky/Pending', totals.risky + totals.pending, lgr)
-	lgr.log(_total_fmt( 'Asserts', totals.passing + totals.failing))
+	if(totals.failing == 0):
+		lgr.log(_total_fmt( 'Asserts', totals.passing + totals.failing))
+	else:
+		lgr.log(_total_fmt( 'Asserts', str(totals.passing, '/', totals.passing + totals.failing)))
 	_log_non_zero_total( 'Orphans', totals.orphans, lgr)
 	lgr.log(_total_fmt( 'Time', str(gut.get_elapsed_time(), 's')))
 
@@ -100,6 +103,7 @@ func log_all_non_passing_tests(gut=_gut):
 			lgr.log(skip_msg, lgr.fmts.yellow)
 			lgr.dec_indent()
 
+		var test_fail_count = 0
 		for test in test_script.tests:
 			if(test.was_run):
 				if(test.is_passing()):
@@ -111,11 +115,15 @@ func log_all_non_passing_tests(gut=_gut):
 
 					for i in range(test.fail_texts.size()):
 						lgr.failed(test.fail_texts[i])
+						test_fail_count += 1
 					for i in range(test.pending_texts.size()):
 						lgr.pending(test.pending_texts[i])
 					if(test.is_risky()):
 						lgr.risky('Did not assert')
 					lgr.dec_indent()
+
+		if(test_script.get_fail_count() > test_fail_count):
+			lgr.failed("before_all/after_all assert failed")
 
 	return to_return
 
@@ -126,6 +134,9 @@ func log_the_final_line(totals, gut):
 	var grand_total_fmt = lgr.fmts.none
 	if(totals.failing_tests > 0):
 		grand_total_text = str(totals.failing_tests, " failing tests")
+		grand_total_fmt = lgr.fmts.red
+	elif(totals.failing > 0): # no failing tests, but some failing asserts
+		grand_total_text = str(totals.failing, " assert(s) in before_all/after_all methods failed")
 		grand_total_fmt = lgr.fmts.red
 	elif(totals.risky > 0 or totals.pending > 0):
 		grand_total_text = str(totals.risky + totals.pending, " pending/risky tests.")

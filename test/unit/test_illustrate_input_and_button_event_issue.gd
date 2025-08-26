@@ -46,11 +46,6 @@ class PrintEventsButton:
 func before_all():
 	register_inner_classes(load('res://test/unit/test_illustrate_input_and_button_event_issue.gd'))
 
-func test_something():
-	var btn = autofree(PrintEventsButton.new())
-	btn.print_has_method('_input')
-	btn._input(InputEventMouseButton.new())
-
 
 func illustrate(btn):
 	var button_down = InputEventMouseButton.new()

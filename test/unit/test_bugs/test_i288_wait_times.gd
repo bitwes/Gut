@@ -22,37 +22,37 @@ func before_all():
 
 func after_all():
 	var total_time = Time.get_ticks_msec() - _start_time
-	assert_lt(total_time, _max_acceptable_time)
+	assert_lt(total_time, _max_acceptable_time, 'Flakey on full runs')
 
 func test_yield1():
 	_max_acceptable_time += 20
-	await wait_physics_frames(1)
+	await wait_idle_frames(1)
 	pass_test('no test')
 
 func test_yield2():
 	_max_acceptable_time += 20
-	await wait_physics_frames(1)
+	await wait_idle_frames(1)
 	pass_test('no test')
 
 func test_yield3():
 	_max_acceptable_time += 20
-	await wait_physics_frames(1)
+	await wait_idle_frames(1)
 	pass_test('no test')
 
 func test_yield4():
 	_max_acceptable_time += 20
-	await wait_physics_frames(1)
+	await wait_idle_frames(1)
 	pass_test('no test')
 
 func test_yield5():
 	_max_acceptable_time += 20
-	await wait_physics_frames(1)
+	await wait_idle_frames(1)
 	pass_test('no test')
 
 var yield_params = [1, 2, 3, 4, 5, 6, 7, 8]
 func test_parameterized(p=use_parameters(yield_params)):
 	_max_acceptable_time += 30
-	await wait_physics_frames(1)
+	await wait_idle_frames(1)
 	pass_test('no test')
 
 
