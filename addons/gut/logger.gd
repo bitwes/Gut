@@ -47,6 +47,7 @@ var _logs = {
 	types.debug: [],
 	types.deprecated: [],
 	types.expected_error: [],
+	types.failed: [],
 }
 
 var _printers = {
