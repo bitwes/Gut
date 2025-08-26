@@ -9,8 +9,7 @@ var GutConfigGui = load('res://addons/gut/gui/gut_config_gui.gd')
 
 var _config = GutConfig.new()
 var _config_gui = null
-var _gut_runner = GutRunnerScene.instantiate()
-var _has_connected = false
+var _gut_runner = null
 var _tree_root : TreeItem = null
 
 var _script_icon = load('res://addons/gut/images/Script.svg')
@@ -43,6 +42,7 @@ func _ready():
 	if Engine.is_editor_hint():
 		return
 
+	_gut_runner = GutRunnerScene.instantiate()
 	$Bg.color = bg_color
 	_ctrls.tabs.set_tab_title(0, 'Tests')
 	_ctrls.tabs.set_tab_title(1, 'Settings')
