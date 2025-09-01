@@ -103,6 +103,9 @@ static var Gut = LazyLoader.new('res://addons/gut/gut.gd'):
 static var GutConfig = LazyLoader.new('res://addons/gut/gut_config.gd'):
 	get: return GutConfig.get_loaded()
 	set(val): pass
+static var GutFonts = LazyLoader.new("res://addons/gut/gut_fonts.gd"):
+	get: return GutFonts.get_loaded()
+	set(val): pass
 static var HookScript = LazyLoader.new('res://addons/gut/hook_script.gd'):
 	get: return HookScript.get_loaded()
 	set(val): pass
@@ -177,12 +180,13 @@ static var ThingCounter = LazyLoader.new('res://addons/gut/thing_counter.gd'):
 	set(val): pass
 # --------------------------------
 
-static var avail_fonts = ['AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default']
+static var gut_fonts = GutFonts.new()
+static var avail_fonts = gut_fonts.get_font_names()
 
 static var version_numbers = VersionNumbers.new(
 	# gut_versrion (source of truth)
 	'9.5.0',
-	# required_godot_ver4sion
+	# required_godot_version
 	'4.5'
 )
 
