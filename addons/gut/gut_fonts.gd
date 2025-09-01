@@ -55,9 +55,9 @@ func _populate_default_fonts():
 
 
 func _load_font(font_name, font_type, font_path):
-	var _dynamic_font = FontFile.new()
-	_dynamic_font.load_dynamic_font(font_path)
-	fonts[font_name][font_type] = _dynamic_font
+	var dynamic_font = FontFile.new()
+	dynamic_font.load_dynamic_font(font_path)
+	fonts[font_name][font_type] = dynamic_font
 
 
 func get_font(font_name, font_type='Regular'):
