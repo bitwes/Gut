@@ -10,7 +10,7 @@ const FAIL_ERROR_TYPE_GUT = &'gut'
 
 
 
-var valid_fonts = ['AnonymousPro', 'CourierPro', 'LobsterTwo', 'Default']
+var valid_fonts = GutUtils.gut_fonts.get_font_names()
 var _deprecated_values = {
 	"errors_do_not_cause_failure": "Use failure_error_types instead."
 }
@@ -29,7 +29,7 @@ var default_options = {
 	# when saved.
 	double_strategy = 'SCRIPT_ONLY',
 	font_color = Color(.8, .8, .8, 1).to_html(),
-	font_name = 'CourierPrime',
+	font_name = GutUtils.gut_fonts.DEFAULT_CUSTOM_FONT_NAME,
 	font_size = 16,
 	hide_orphans = false,
 	ignore_pause = false,
