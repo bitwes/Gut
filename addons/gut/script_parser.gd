@@ -119,7 +119,7 @@ class ParsedScript:
 
 			_script_path = to_load.resource_path
 			if(inner_class != null):
-				_subpath = _find_subpath(to_load, inner_class, {})
+				_subpath = _find_subpath(to_load, inner_class)
 
 			if(inner_class == null):
 				_resource = to_load
@@ -173,10 +173,7 @@ class ParsedScript:
 				_methods_by_name[m.name] = parsed_method
 
 
-	func _find_subpath(parent_script, inner, seen):
-		if parent_script in seen:
-			return
-		seen[parent_script] = parent_script
+	func _find_subpath(parent_script, inner):
 		var const_map = parent_script.get_script_constant_map()
 		var consts = const_map.keys()
 		var const_idx = 0
@@ -191,7 +188,7 @@ class ParsedScript:
 					found = true
 					to_return = key
 				else:
-					to_return = _find_subpath(const_val, inner, seen)
+					to_return = _find_subpath(const_val, inner)
 					if(to_return != null):
 						to_return = str(key, '.', to_return)
 						found = true
