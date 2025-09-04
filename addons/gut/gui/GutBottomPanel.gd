@@ -21,7 +21,6 @@ var _light_color = Color(0, 0, 0, .5) :
 		if(is_inside_tree()):
 			_ctrls.light.queue_redraw()
 var _panel_button = null
-var _last_selected_path = null
 var _user_prefs = null
 var _shell_out_panel = null
 
@@ -70,7 +69,7 @@ var menu_manager = null :
 func _ready():
 	if(get_parent() is SubViewport):
 		return
-	
+
 	GutEditorGlobals.create_temp_directory()
 
 	_user_prefs = GutEditorGlobals.user_prefs
@@ -282,9 +281,9 @@ func _on_Light_draw():
 	l.draw_circle(Vector2(l.size.x / 2, l.size.y / 2), l.size.x / 2, _light_color)
 
 
-func _on_editor_script_changed(script):
-	if(script):
-		set_current_script(script)
+# func _on_editor_script_changed(script):
+# 	if(script):
+# 		set_current_script(script)
 
 
 func _on_RunAll_pressed():
@@ -304,7 +303,7 @@ func _on_sortcut_dialog_confirmed() -> void:
 func _on_RunAtCursor_run_tests(what):
 	_gut_config.options.selected = what.script
 	_gut_config.options.inner_class = what.inner_class
-	_gut_config.options.unit_test_name = what.test_method
+	_gut_config.options.unit_test_name = what.method
 
 	_run_tests()
 
@@ -453,20 +452,20 @@ func load_result_output():
 
 
 func set_current_script(script):
-	if(script):
-		if(_is_test_script(script)):
-			_last_selected_path = script.resource_path.get_file()
-			_ctrls.run_at_cursor.activate_for_script(script.resource_path)
+	pass
+	# if(script):
+	# 	if(_is_test_script(script)):
+	# 		_ctrls.run_at_cursor.activate_for_script(script.resource_path)
 
 
 func set_interface(value):
 	_interface = value
-	_interface.get_script_editor().connect("editor_script_changed",Callable(self,'_on_editor_script_changed'))
+	# _interface.get_script_editor().connect("editor_script_changed",Callable(self,'_on_editor_script_changed'))
 
 	var ste = ScriptTextEditors.new(_interface.get_script_editor())
 	_ctrls.run_results.set_interface(_interface)
 	_ctrls.run_results.set_script_text_editors(ste)
-	_ctrls.run_at_cursor.set_script_text_editors(ste)
+	# _ctrls.run_at_cursor.set_script_text_editors(ste)
 	set_current_script(_interface.get_script_editor().get_current_script())
 
 
