@@ -57,8 +57,8 @@ func _ready():
 
 
 func _on_caret_notifer_changed(data):
-	_last_info = data
 	if(data.is_test_script):
+		_last_info = data
 		_update_buttons(_last_info)
 
 
