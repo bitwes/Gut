@@ -18,6 +18,13 @@ extends Node
 # want with it.
 signal it_changed(change_data)
 
+# In order to keep the data that comes back from the emitted signal way more
+# usable, we have to know what GUT looks for for an inner-test-class prefix.
+# If we didn't do this, then this thing would have to return all the inner
+# classes and then we'd have to determine if we were in an inner-test-class
+# outside of here by traversing all the classes returned.  It makes this thing
+# less generic and know too much, but this is probably already too generic as
+# it is.
 var inner_class_prefix = "Test"
 
 var _last_info : Dictionary = {}
@@ -94,14 +101,14 @@ func _make_info(editor, script, test_script_flag):
 				if(editor.get_indent_level(line) == 0):
 					done_inner = true
 
-			if(!done_inner and strip_text.begins_with("class")):
+			if(done_func and !done_inner and strip_text.begins_with("class")):
 				var inner_name = _get_class_name_from_line(text)
+				# See note about inner_class_prefix, this knows too much, but
+				# if it was to know less it would insanely more difficult
+				# everywhere.
 				if(inner_name.begins_with(inner_class_prefix)):
 					info.inner_class = inner_name
 					done_inner = true
-					# if we found an inner class then we are already past
-					# any test the cursor could be in.
-					done_func = true
 		line -= 1
 
 	# print('parsed lines:  ', start_line - line, '(', info.inner_class, ':', info.method, ')')
