@@ -27,11 +27,12 @@ var _shell_out_panel = null
 var menu_manager = null :
 	set(val):
 		menu_manager = val
-		_apply_shortcuts()
-		menu_manager.toggle_windowed.connect(_on_toggle_windowed)
-		menu_manager.about.connect(show_about)
-		menu_manager.run_all.connect(_run_all)
-		menu_manager.show_gut.connect(_on_show_gut)
+		if(val != null):
+			_apply_shortcuts()
+			menu_manager.toggle_windowed.connect(_on_toggle_windowed)
+			menu_manager.about.connect(show_about)
+			menu_manager.run_all.connect(_run_all)
+			menu_manager.show_gut.connect(_on_show_gut)
 
 
 @onready var _ctrls = {
@@ -234,22 +235,7 @@ func _run_tests():
 
 func _apply_shortcuts():
 	if(menu_manager != null):
-		menu_manager.set_shortcut("show_gut",
-			_ctrls.shortcut_dialog.scbtn_panel.get_input_event())
-		menu_manager.set_shortcut("run_all",
-			_ctrls.shortcut_dialog.scbtn_run_all.get_input_event())
-		menu_manager.set_shortcut("run_script",
-			_ctrls.shortcut_dialog.scbtn_run_current_script.get_input_event())
-		menu_manager.set_shortcut("run_inner_class",
-			_ctrls.shortcut_dialog.scbtn_run_current_inner.get_input_event())
-		menu_manager.set_shortcut("run_test",
-			_ctrls.shortcut_dialog.scbtn_run_current_test.get_input_event())
-		menu_manager.set_shortcut("run_at_cursor",
-			_ctrls.shortcut_dialog.scbtn_run_at_cursor.get_input_event())
-		menu_manager.set_shortcut("rerun",
-			_ctrls.shortcut_dialog.scbtn_rerun.get_input_event())
-		menu_manager.set_shortcut("toggle_windowed",
-			_ctrls.shortcut_dialog.scbtn_windowed.get_input_event())
+		menu_manager.apply_gut_shortcuts(_ctrls.shortcut_dialog)
 
 	_ctrls.run_button.shortcut = \
 		_ctrls.shortcut_dialog.scbtn_run_all.get_shortcut()
@@ -352,7 +338,7 @@ func _on_to_window_pressed() -> void:
 
 
 func _on_show_gut() -> void:
-	show_me()
+	show_hide()
 
 
 func _on_about_pressed() -> void:
@@ -513,3 +499,20 @@ func show_me():
 		owner.grab_focus()
 	else:
 		_gut_plugin.make_bottom_panel_item_visible(self)
+
+
+func show_hide():
+	if(owner is Window):
+		if(owner.has_focus()):
+			var win_to_focus_on = EditorInterface.get_editor_main_screen().get_parent()
+			while(win_to_focus_on != null and win_to_focus_on is not Window):
+				win_to_focus_on = win_to_focus_on.get_parent()
+			if(win_to_focus_on != null):
+				win_to_focus_on.grab_focus()
+		else:
+			owner.grab_focus()
+	else:
+		pass
+		# We don't have to do anything when we are docked because the GUT
+		# bottom panel has the shortcut and it does the toggling all on its
+		# own.

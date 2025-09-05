@@ -45,9 +45,11 @@ func _enter_tree():
 	_bottom_panel.set_plugin(self)
 	_bottom_panel.load_shortcuts()
 
-	_menu_mgr = MenuManager.new(self)
+	_menu_mgr = MenuManager.new()
 	_bottom_panel._ctrls.run_at_cursor.menu_manager = _menu_mgr
 	_bottom_panel.menu_manager = _menu_mgr
+	add_tool_submenu_item("GUT", _menu_mgr.sub_menu)
+
 
 
 func _version_conversion():
@@ -68,6 +70,7 @@ func gut_as_window():
 		add_child(_gut_window)
 		_gut_window.theme = get_tree().root.theme
 		_gut_window.interface = get_editor_interface()
+		_gut_window.shadow_menu_manager(_menu_mgr, _bottom_panel._ctrls.shortcut_dialog)
 
 	_gut_window.add_gut_panel(_bottom_panel)
 	_gut_button = null
@@ -104,6 +107,8 @@ func _deparent_bottom_panel():
 
 
 func _exit_tree():
+	remove_tool_menu_item("GUT")
+	_menu_mgr = null
 	GutEditorGlobals.user_prefs.save_it()
 	# Clean-up of the plugin goes here
 	# Always remember to remove_at it from the engine when deactivated
@@ -111,6 +116,7 @@ func _exit_tree():
 	if(_gut_window != null):
 		_gut_window.queue_free()
 
+	_bottom_panel.menu_manager = null
 	_bottom_panel.queue_free()
 
 	remove_tool_menu_item("GUT") # made by _menu_mgr
