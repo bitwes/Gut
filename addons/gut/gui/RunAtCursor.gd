@@ -69,7 +69,8 @@ func _on_caret_notifer_changed(data):
 func _update_buttons(info):
 	_ctrls.lbl_none.visible = false
 	_ctrls.btn_script.visible = info.script != null
-	if(info.is_test_script):
+
+	if(info.script != null and info.is_test_script):
 		_ctrls.btn_script.text = info.script.resource_path.get_file()
 
 	_ctrls.btn_inner.visible = info.inner_class != null

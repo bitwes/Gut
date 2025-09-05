@@ -4,7 +4,6 @@ extends Window
 var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
 
 @onready var _chk_always_on_top = $Layout/WinControls/OnTop
-@onready var _btn_to_panel = $Layout/WinControls/ToPanel
 
 var _bottom_panel = null
 var _ready_to_go = false
@@ -48,16 +47,17 @@ func add_gut_panel(panel : Control):
 	_bottom_panel = panel
 	_ready_to_go = true
 	
+	panel.owner = self
+	
 	# This stunk to figure out.
 	theme = interface.get_editor_theme()
 	var settings = interface.get_editor_settings()
 	$ColorRect.color = settings.get_setting("interface/theme/base_color")
-	_btn_to_panel.icon = get_theme_icon('MakeFloating', 'EditorIcons')
-	_btn_to_panel.text = ""
 
 
 func remove_panel():
 	$Layout.remove_child(_bottom_panel)
+	_bottom_panel.owner = null
 
 
 func _on_close_requested() -> void:
