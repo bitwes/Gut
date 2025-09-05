@@ -63,7 +63,8 @@ Panel/styles/panel = SubResource("StyleBoxFlat_fqfwy")
 oversampling_override = 1.0
 title = "GUT"
 position = Vector2i(0, 36)
-size = Vector2i(3024, 1728)
+size = Vector2i(3024, 1726)
+always_on_top = true
 min_size = Vector2i(800, 600)
 script = ExtResource("1_qevl3")
 
@@ -92,13 +93,9 @@ size_flags_horizontal = 3
 
 [node name="OnTop" type="CheckButton" parent="Layout/WinControls"]
 layout_mode = 2
+button_pressed = true
 text = "Always on Top"
-
-[node name="ToPanel" type="Button" parent="Layout/WinControls"]
-layout_mode = 2
-text = "Dock Window"
 
 [connection signal="close_requested" from="." to="." method="_on_close_requested"]
 [connection signal="size_changed" from="." to="." method="_on_size_changed"]
 [connection signal="toggled" from="Layout/WinControls/OnTop" to="." method="_on_on_top_toggled"]
-[connection signal="pressed" from="Layout/WinControls/ToPanel" to="." method="_on_to_panel_pressed"]

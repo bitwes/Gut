@@ -27,10 +27,6 @@ func _ready() -> void:
 # --------
 # Events
 # --------
-func _on_to_panel_pressed() -> void:
-	gut_plugin.toggle_windowed()
-
-
 func _on_on_top_toggled(toggled_on: bool) -> void:
 	always_on_top = toggled_on
 	GutEditorGlobals.user_prefs.gut_window_on_top.value = toggled_on
