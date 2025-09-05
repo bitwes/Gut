@@ -3,20 +3,21 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 # 9.5.0
-## Potentially Breaking Changes
-* Test scripts are now freed after they finish.  Prior to this release they would continue to exist until the end of the run, but were removed from the tree.  This has been changed to give more accurate orphan information and because it wasn't needed anymore.
-
-## Features
-* Requires Godot 4.5
-* New menu and functionality at Project->Tools->GUT
-* All the `.uid` files you could ever want!
-* Stubbing/Doubling/Spying on vararg methods has changed.
+## Breaking Changes
+* Stubbing/Doubling/Spying on vararg methods has changed (due to engine changes).
     * You no longer need to stub the parameter count for vararg methods.
     * Since you don't need to do that, you can't do that anymore.
     * Asserting parameter values passed into a vararg must be enclosed in an array.
 ```gdscript
 assert_called(my_double.rpc_id, [p1, p2, [vararg_val1, vararg_val2, vararg_val3]])
 ```
+* Test scripts are now freed after they finish.  Prior to this release they would continue to exist until the end of the run, but were removed from the tree.  This has been changed to give more accurate orphan information and because it wasn't needed anymore.  You shouldn't care, but I thought you should know.
+
+
+## Features
+* Requires Godot 4.5
+* New menu and functionality at Project->Tools->GUT
+* All the `.uid` files you could ever want.
 * Error detection and asserts have been added.  Tests fail when unexpected errors occur and you can assert that errors have occurred.  This can be disabled at 3 different levels:  engine, push_error, GUT.  See the wiki for more information.
 * "Awaiting" messages now have a configurable delay which defaults to .5 seconds.  Messages to indicate a call to a `wait_` method will not appear until this delay has expired.  Now your 10 frame awaits aren't noisy unless you want them to be.
 * Orphaned nodes are now displayed...not the count (well, the count too), but the actual node and some extra information.  Insead of seeing "2 new orphans" you'll see something like:
@@ -30,11 +31,17 @@ assert_called(my_double.rpc_id, [p1, p2, [vararg_val1, vararg_val2, vararg_val3]
         * parent_one:<Node#65062045712> + 5
         * parent_a:<Node#65162709014> + 2
 ```
-* More shortcuts, use shortcuts anywhere.
+* More shortcuts, use shortcuts anytime (even if the GUT panel is hidden).
 * Shortcuts dialog and the new run-externally dialog now remember their size across sessions.
 * Run tests externally through the editor.  This is basically the same thing as running from the command line, but kicked off through the editor.  This was introduced to allow you to run tests that had errors in them without invoking the debugger, but could have many other use cases..  There are some options on how this is run.  See the run-externally options for more information about best use.
 * Pop out the GUT panel into a window.  After spending a lot of time in the editor implementing "Run tests externally" I got annoyed and added the ability to pop the GUT panel out into a separate window.
 * There's an About box now.  It has text, and links, and an icon...and absolutely nothing else.
+
+
+## Bug Fixes
+* Occassionaly the Run buttons wouldn't sync with the editor.
+
+
 
 
 # 9.4.0
