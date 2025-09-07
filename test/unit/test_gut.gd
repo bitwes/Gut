@@ -823,7 +823,7 @@ class TestReworkedEverythingElse:
 		"""
 		var s = autofree(DynamicGutTest.new())
 		s.add_source(src)
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.passing, 2, 'passing asserts')
 
 
@@ -838,7 +838,7 @@ class TestReworkedEverythingElse:
 		"""
 		var s = autofree(DynamicGutTest.new())
 		s.add_source(src)
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.failing, 1, 'one failing')
 
 
@@ -852,7 +852,7 @@ class TestReworkedEverythingElse:
 		"""
 		var s = autofree(DynamicGutTest.new())
 		s.add_source(src)
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		_gut.get_summary().log_end_run()
 		assert_eq(t.failing, 1, 'one failing')
 		assert_has(_gut.get_logger().get_log_entries('failed'), "before_all/after_all assert failed")
@@ -868,7 +868,7 @@ class TestReworkedEverythingElse:
 		"""
 		var s = autofree(DynamicGutTest.new())
 		s.add_source(src)
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		_gut.get_summary().log_end_run()
 		assert_eq(t.failing, 1, 'one failing')
 		assert_has(_gut.get_logger().get_log_entries('failed'), "before_all/after_all assert failed")
@@ -887,7 +887,7 @@ class TestReworkedEverythingElse:
 		"""
 		var s = autofree(DynamicGutTest.new())
 		s.add_source(src)
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.failing, 2, 'failing asserts')
 		assert_eq(t.failing_tests, 2, 'failing tests')
 
@@ -905,6 +905,6 @@ class TestReworkedEverythingElse:
 		"""
 		var s = autofree(DynamicGutTest.new())
 		s.add_source(src)
-		var t = s.run_test_in_gut(_gut)
+		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.failing, 2, 'failing asserts')
 		assert_eq(t.failing_tests, 2, 'failing tests')

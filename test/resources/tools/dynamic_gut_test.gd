@@ -57,11 +57,15 @@ func add_as_test_to_gut(which):
 	which.get_test_collector().add_script(dyn.resource_path)
 
 
+# This leaks SceneTreeTimers in some cases.  Not sure of all the cases, but
+# if you get leaked instances and don't want to figure it out, use
+# run_tests_in_gut_await instead.
 func run_test_in_gut(which):
 	add_as_test_to_gut(which)
 	which.run_tests()
 	var s = GutUtils.Summary.new()
 	return s.get_totals(which)
+
 
 func run_tests_in_gut_await(which):
 	add_as_test_to_gut(which)
