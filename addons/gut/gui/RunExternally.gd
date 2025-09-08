@@ -119,15 +119,12 @@ func _run_blocking(options):
 
 
 func _read_non_blocking_stdio():
-	var fio : FileAccess = _pipe_results.stdio
-	var ferr : FileAccess = _pipe_results.stderr
-
 	while(OS.is_process_running(_pipe_results.pid)):
-		while(ferr.get_length() > 0):
-			_output_text(ferr.get_line() + "\n")
+		while(_pipe_results.stderr.get_length() > 0):
+			_output_text(_pipe_results.stderr.get_line() + "\n")
 
-		while(fio.get_length() > 0):
-			_output_text(fio.get_line() + "\n")
+		while(_pipe_results.stdio.get_length() > 0):
+			_output_text(_pipe_results.stdio.get_line() + "\n")
 
 		# without this, things start to lock up.
 		await get_tree().process_frame
@@ -148,6 +145,7 @@ func _end_non_blocking():
 
 	_pipe_results = {}
 	_std_thread.wait_to_finish()
+	_std_thread = null
 	queue_free()
 	if(_debug_mode):
 		get_tree().quit()
@@ -171,6 +169,7 @@ func _on_color_rect_gui_input(event: InputEvent) -> void:
 
 func _on_bottom_panel_resized():
 	_center_me()
+
 
 # ----------------
 # Public
