@@ -29,8 +29,9 @@ extends Control
 
 var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
 
-@onready var label = $ColorRect/VBox/Label
-@onready var btn_kill_it = $ColorRect/VBox/Kill
+@onready var label = $BgControl/VBox/Label
+@onready var btn_kill_it = $BgControl/VBox/Kill
+@onready var bg_control = $BgControl
 
 var _pipe_results = {}
 var _debug_mode = false
@@ -42,7 +43,11 @@ var bottom_panel = null :
 		bottom_panel.resized.connect(_on_bottom_panel_resized)
 var blocking_mode = "Blocking"
 var additional_arguments = []
-
+@export var bg_color = Color.WHITE:
+	set(val):
+		bg_color = val
+		if(is_inside_tree()):
+			bg_control.get("theme_override_styles/panel").bg_color = bg_color
 
 func _debug_ready():
 	_debug_mode = true
@@ -56,6 +61,7 @@ func _ready():
 
 	if(get_parent() == get_tree().root):
 		_debug_ready.call_deferred()
+	bg_color = bg_color
 
 
 func _process(_delta: float) -> void:
