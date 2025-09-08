@@ -164,7 +164,10 @@ func is_test_script(script):
 	var from = script.get_base_script()
 	if(from == null and script.get_script_method_list().size() == 0):
 		if(OS.is_stdout_verbose() or !_scripts_that_have_been_warned_about.has(script.resource_path)):
-			push_warning(str('[GUT] Treating ', script.resource_path, " as test script:  GUT was not able to retrieve information about this script.  This may have to do with having VSCode open.  Restarting Godot sometimes helps."))
+			push_warning(str('[GUT] Treating ', script.resource_path, " as test script:  ", 
+				"GUT was not able to retrieve information about this script.  This may ", 
+				"have to do with having VSCode open.  Restarting Godot sometimes helps.  See ",
+				"https://github.com/bitwes/Gut/issues/754"))
 			_scripts_that_have_been_warned_about.append(script.resource_path)
 		# We can't know if this is a test script.  It's more usable if we
 		# assume this is a test script.
