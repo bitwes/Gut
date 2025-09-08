@@ -29,8 +29,9 @@ extends Control
 
 var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
 
-@onready var label = $ColorRect/VBox/Label
-@onready var btn_kill_it = $ColorRect/VBox/Kill
+@onready var label = $BgControl/VBox/Label
+@onready var btn_kill_it = $BgControl/VBox/Kill
+@onready var bg_control = $BgControl
 
 var _pipe_results = {}
 var _debug_mode = false
@@ -42,7 +43,11 @@ var bottom_panel = null :
 		bottom_panel.resized.connect(_on_bottom_panel_resized)
 var blocking_mode = "Blocking"
 var additional_arguments = []
-
+@export var bg_color = Color.WHITE:
+	set(val):
+		bg_color = val
+		if(is_inside_tree()):
+			bg_control.get("theme_override_styles/panel").bg_color = bg_color
 
 func _debug_ready():
 	_debug_mode = true
@@ -56,6 +61,7 @@ func _ready():
 
 	if(get_parent() == get_tree().root):
 		_debug_ready.call_deferred()
+	bg_color = bg_color
 
 
 func _process(_delta: float) -> void:
@@ -119,15 +125,12 @@ func _run_blocking(options):
 
 
 func _read_non_blocking_stdio():
-	var fio : FileAccess = _pipe_results.stdio
-	var ferr : FileAccess = _pipe_results.stderr
-
 	while(OS.is_process_running(_pipe_results.pid)):
-		while(ferr.get_length() > 0):
-			_output_text(ferr.get_line() + "\n")
+		while(_pipe_results.stderr.get_length() > 0):
+			_output_text(_pipe_results.stderr.get_line() + "\n")
 
-		while(fio.get_length() > 0):
-			_output_text(fio.get_line() + "\n")
+		while(_pipe_results.stdio.get_length() > 0):
+			_output_text(_pipe_results.stdio.get_line() + "\n")
 
 		# without this, things start to lock up.
 		await get_tree().process_frame
@@ -148,6 +151,7 @@ func _end_non_blocking():
 
 	_pipe_results = {}
 	_std_thread.wait_to_finish()
+	_std_thread = null
 	queue_free()
 	if(_debug_mode):
 		get_tree().quit()
@@ -171,6 +175,7 @@ func _on_color_rect_gui_input(event: InputEvent) -> void:
 
 func _on_bottom_panel_resized():
 	_center_me()
+
 
 # ----------------
 # Public

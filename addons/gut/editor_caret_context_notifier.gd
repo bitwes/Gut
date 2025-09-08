@@ -53,10 +53,11 @@ func _handle_caret_location(which):
 	if(_last_line != current_line):
 		_last_line = current_line
 
-		var new_info = _make_info(which, _current_script, _current_script_is_test_script)
-		if(_last_info != new_info):
-			_last_info = new_info
-			it_changed.emit(_last_info.duplicate())
+		if(_current_script_is_test_script):
+			var new_info = _make_info(which, _current_script, _current_script_is_test_script)
+			if(_last_info != new_info):
+				_last_info = new_info
+				it_changed.emit(_last_info.duplicate())
 
 
 func _get_func_name_from_line(text):
@@ -101,7 +102,7 @@ func _make_info(editor, script, test_script_flag):
 				if(editor.get_indent_level(line) == 0):
 					done_inner = true
 
-			if(done_func and !done_inner and strip_text.begins_with("class")):
+			if(!done_inner and strip_text.begins_with("class")):
 				var inner_name = _get_class_name_from_line(text)
 				# See note about inner_class_prefix, this knows too much, but
 				# if it was to know less it would insanely more difficult
@@ -109,6 +110,7 @@ func _make_info(editor, script, test_script_flag):
 				if(inner_name.begins_with(inner_class_prefix)):
 					info.inner_class = inner_name
 					done_inner = true
+					done_func = true
 		line -= 1
 
 	# print('parsed lines:  ', start_line - line, '(', info.inner_class, ':', info.method, ')')
@@ -135,7 +137,6 @@ func _on_editor_script_changed(script):
 	_editors_for_scripts[script] = _current_editor
 	_current_script_is_test_script = is_test_script(_current_script)
 
-
 	_handle_caret_location(_current_editor)
 
 
@@ -158,12 +159,23 @@ func _on_caret_changed(which):
 # -------------
 # Public
 # -------------
-
+var _scripts_that_have_been_warned_about = []
 func is_test_script(script):
 	var from = script.get_base_script()
-	while(from and from.resource_path != 'res://addons/gut/test.gd'):
-		from = from.get_base_script()
-	return from != null
+	if(from == null and script.get_script_method_list().size() == 0):
+		if(OS.is_stdout_verbose() or !_scripts_that_have_been_warned_about.has(script.resource_path)):
+			push_warning(str('[GUT] Treating ', script.resource_path, " as test script:  ", 
+				"GUT was not able to retrieve information about this script.  This may ", 
+				"have to do with having VSCode open.  Restarting Godot sometimes helps.  See ",
+				"https://github.com/bitwes/Gut/issues/754"))
+			_scripts_that_have_been_warned_about.append(script.resource_path)
+		# We can't know if this is a test script.  It's more usable if we
+		# assume this is a test script.
+		return true
+	else:
+		while(from and from.resource_path != 'res://addons/gut/test.gd'):
+			from = from.get_base_script()
+		return from != null
 
 
 func get_info():

@@ -7,16 +7,15 @@
 oversampling_override = 1.0
 title = "GUT Shortcuts"
 position = Vector2i(0, 36)
-size = Vector2i(1512, 1571)
+size = Vector2i(1920, 1728)
 visible = true
 script = ExtResource("1_qq8qn")
 
 [node name="Scroll" type="ScrollContainer" parent="."]
-anchors_preset = -1
 offset_left = 8.0
 offset_top = 8.0
-offset_right = 1504.0
-offset_bottom = 1522.0
+offset_right = 1912.0
+offset_bottom = 1679.0
 
 [node name="Layout" type="VBoxContainer" parent="Scroll"]
 layout_mode = 2
@@ -45,7 +44,7 @@ layout_mode = 2
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 size_flags_vertical = 7
-text = "Show/Hide GUT Panel"
+text = "Show/Hide GUT"
 
 [node name="ShortcutButton" parent="Scroll/Layout/CPanelButton" instance=ExtResource("2_i3wie")]
 layout_mode = 2

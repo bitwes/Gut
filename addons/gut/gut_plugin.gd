@@ -45,9 +45,11 @@ func _enter_tree():
 	_bottom_panel.set_plugin(self)
 	_bottom_panel.load_shortcuts()
 
-	_menu_mgr = MenuManager.new(self)
+	_menu_mgr = MenuManager.new()
 	_bottom_panel._ctrls.run_at_cursor.menu_manager = _menu_mgr
 	_bottom_panel.menu_manager = _menu_mgr
+	add_tool_submenu_item("GUT", _menu_mgr.sub_menu)
+
 
 
 func _version_conversion():
@@ -92,6 +94,7 @@ func toggle_windowed():
 		gut_as_panel()
 	elif(_dock_mode == 'panel'):
 		gut_as_window()
+	_bottom_panel.show_me()
 
 
 func _deparent_bottom_panel():
@@ -103,6 +106,8 @@ func _deparent_bottom_panel():
 
 
 func _exit_tree():
+	remove_tool_menu_item("GUT")
+	_menu_mgr = null
 	GutEditorGlobals.user_prefs.save_it()
 	# Clean-up of the plugin goes here
 	# Always remember to remove_at it from the engine when deactivated
@@ -110,14 +115,7 @@ func _exit_tree():
 	if(_gut_window != null):
 		_gut_window.queue_free()
 
+	_bottom_panel.menu_manager = null
 	_bottom_panel.queue_free()
 
 	remove_tool_menu_item("GUT") # made by _menu_mgr
-
-
-# This seems like a good idea at first, but it deletes the settings for ALL
-# projects.  If by chance you want to do that you can uncomment this, reload the
-# project and then disable GUT.
-# func _disable_plugin():
-#	var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
-# 	GutEditorGlobals.user_prefs.erase_all()

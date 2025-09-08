@@ -3,6 +3,7 @@ extends Control
 
 var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
 var GutConfigGui = load('res://addons/gut/gui/gut_config_gui.gd')
+var AboutWindow = load("res://addons/gut/gui/about.tscn")
 
 var _interface = null;
 var _is_running = false :
@@ -26,10 +27,12 @@ var _shell_out_panel = null
 var menu_manager = null :
 	set(val):
 		menu_manager = val
-		_apply_shortcuts()
-		menu_manager.toggle_windowed.connect(_on_toggle_windowed)
-		menu_manager.about.connect(show_about)
-		menu_manager.run_all.connect(_run_all)
+		if(val != null):
+			_apply_shortcuts()
+			menu_manager.toggle_windowed.connect(_on_toggle_windowed)
+			menu_manager.about.connect(show_about)
+			menu_manager.run_all.connect(_run_all)
+			menu_manager.show_gut.connect(_on_show_gut)
 
 
 @onready var _ctrls = {
@@ -107,12 +110,12 @@ func _process(_delta):
 		if(_ctrls.run_externally_dialog.should_run_externally()):
 			if(!is_instance_valid(_shell_out_panel)):
 				_is_running = false
-				_gut_plugin.make_bottom_panel_item_visible(self)
+				show_me()
 		elif(!_interface.is_playing_scene()):
 			_is_running = false
 			_ctrls.output_ctrl.add_text("\ndone")
 			load_result_output()
-			_gut_plugin.make_bottom_panel_item_visible(self)
+			show_me()
 
 
 # ---------------
@@ -197,6 +200,7 @@ func _run_externally():
 
 
 func _run_tests():
+	show_me()
 	if(_is_running):
 		push_error("GUT:  Cannot run tests, tests are already running.")
 		return
@@ -231,20 +235,7 @@ func _run_tests():
 
 func _apply_shortcuts():
 	if(menu_manager != null):
-		menu_manager.set_shortcut("run_all",
-			_ctrls.shortcut_dialog.scbtn_run_all.get_input_event())
-		menu_manager.set_shortcut("run_script",
-			_ctrls.shortcut_dialog.scbtn_run_current_script.get_input_event())
-		menu_manager.set_shortcut("run_inner_class",
-			_ctrls.shortcut_dialog.scbtn_run_current_inner.get_input_event())
-		menu_manager.set_shortcut("run_test",
-			_ctrls.shortcut_dialog.scbtn_run_current_test.get_input_event())
-		menu_manager.set_shortcut("run_at_cursor",
-			_ctrls.shortcut_dialog.scbtn_run_at_cursor.get_input_event())
-		menu_manager.set_shortcut("rerun",
-			_ctrls.shortcut_dialog.scbtn_rerun.get_input_event())
-		menu_manager.set_shortcut("toggle_windowed",
-			_ctrls.shortcut_dialog.scbtn_windowed.get_input_event())
+		menu_manager.apply_gut_shortcuts(_ctrls.shortcut_dialog)
 
 	_ctrls.run_button.shortcut = \
 		_ctrls.shortcut_dialog.scbtn_run_all.get_shortcut()
@@ -254,6 +245,12 @@ func _apply_shortcuts():
 		_ctrls.shortcut_dialog.scbtn_run_current_inner.get_shortcut()
 	_ctrls.run_at_cursor.get_test_button().shortcut = \
 		_ctrls.shortcut_dialog.scbtn_run_current_test.get_shortcut()
+	# Took this out because it seems to break using the shortcut when docked.
+	# Though it does allow the shortcut to work when windowed.  Shortcuts
+	# are weird.
+	# _ctrls.to_window.shortcut = \
+	# 	_ctrls.shortcut_dialog.scbtn_windowed.get_shortcut()
+
 
 	if(_panel_button != null):
 		_panel_button.shortcut = _ctrls.shortcut_dialog.scbtn_panel.get_shortcut()
@@ -339,6 +336,13 @@ func _on_toggle_windowed():
 func _on_to_window_pressed() -> void:
 	_gut_plugin.toggle_windowed()
 
+
+func _on_show_gut() -> void:
+	show_hide()
+
+
+func _on_about_pressed() -> void:
+	show_about()
 
 # ---------------
 # Public
@@ -482,7 +486,7 @@ func get_text_output_control():
 func add_output_text(text):
 	_ctrls.output_ctrl.add_text(text)
 
-var AboutWindow = load("res://addons/gut/gui/about.tscn")
+
 func show_about():
 	var about = AboutWindow.instantiate()
 	add_child(about)
@@ -490,5 +494,29 @@ func show_about():
 	about.confirmed.connect(about.queue_free)
 
 
-func _on_about_pressed() -> void:
-	show_about()
+func show_me():
+	if(owner is Window):
+		owner.grab_focus()
+	else:
+		_gut_plugin.make_bottom_panel_item_visible(self)
+
+
+func show_hide():
+	if(owner is Window):
+		if(owner.has_focus()):
+			var win_to_focus_on = EditorInterface.get_editor_main_screen().get_parent()
+			while(win_to_focus_on != null and win_to_focus_on is not Window):
+				win_to_focus_on = win_to_focus_on.get_parent()
+			if(win_to_focus_on != null):
+				win_to_focus_on.grab_focus()
+		else:
+			owner.grab_focus()
+	else:
+		pass
+		# We don't have to do anything when we are docked because the GUT
+		# bottom panel has the shortcut and it does the toggling all on its
+		# own.
+
+
+func get_shortcut_dialog():
+	return _ctrls.shortcut_dialog
