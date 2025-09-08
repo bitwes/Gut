@@ -1,5 +1,4 @@
 var sub_menu : PopupMenu = null
-var _signaler = null
 
 var _menus = {
 	# name : {
@@ -18,21 +17,12 @@ signal run_script
 signal run_test
 signal show_gut
 signal toggle_windowed
-# Used for shadowed menus
-signal menu_disabled(index, disabled)
 
 
 func _init():
 	sub_menu = PopupMenu.new()
 	sub_menu.index_pressed.connect(_on_sub_menu_index_pressed)
 	make_menu()
-
-
-func _notification(what: int) -> void:
-	if(what == NOTIFICATION_PREDELETE):
-		if(_signaler != null):
-			_signaler.menu_disabled.disconnect(_on_shadowed_disabled)
-		_signaler = null
 
 
 func _invalid_index():
@@ -48,59 +38,39 @@ func _on_sub_menu_index_pressed(index):
 	to_call.call()
 
 
-func add_menu(display_text, menu_name, sig_to_emit, tooltip=''):
+func add_menu(display_text, sig_to_emit, tooltip=''):
 	var index = sub_menu.item_count
-	_menus[menu_name] = {
+	_menus[sig_to_emit.get_name()] = {
 		index = index,
 		id = index,
-		callback = _emit_signal.bind(sig_to_emit)
+		callback = sig_to_emit.emit
 	}
 	sub_menu.add_item(display_text, index)
 	sub_menu.set_item_tooltip(index, tooltip)
 	return index
 
 
-func _emit_signal(sig):
-	if(_signaler != null):
-		_signaler.emit_signal(sig.get_name())
-	else:
-		sig.emit()
-
-
-func shadow_menu(which):
-	_signaler = which
-	which.menu_disabled.connect(_on_shadowed_disabled)
-
-	for key in _menus:
-		var is_disabled = which.sub_menu.is_item_disabled(which._menus[key].index)
-		sub_menu.set_item_disabled(_menus[key].index, is_disabled)
-
-
-func _on_shadowed_disabled(index, disabled):
-	sub_menu.set_item_disabled(index, disabled)
-
 
 func make_menu():
-	add_menu("Toggle Windowed", "toggle_windowed", toggle_windowed, '')
-	add_menu("Show GUT", "show_gut", show_gut, '')
+	add_menu("Toggle Windowed", toggle_windowed, 
+		'Toggle GUT in the dock or a floating window')
+	add_menu("Show/Hide GUT", show_gut, '')
 
 	sub_menu.add_separator('Run')
-	add_menu("Run All", "run_all", run_all,
+	add_menu("Run All", run_all,
 		"Run all tests")
-	add_menu("Run Script", "run_script", run_script,
+	add_menu("Run Script", run_script,
 		"Run the currently selected script")
-	add_menu("Run Inner Class", "run_inner_class", run_inner_class,
+	add_menu("Run Inner Class", run_inner_class,
 		"Run the currently selected inner test class")
-	add_menu("Run Test", "run_test", run_test,
+	add_menu("Run Test", run_test,
 		"Run the currently selected test")
-	add_menu("Run At Cursor", "run_at_cursor", run_at_cursor,
+	add_menu("Run At Cursor", run_at_cursor,
 		"Run the most specific of script/inner class/test based on cursor position")
-	add_menu("Rerun", "rerun", rerun,
-		"Rerun the last test(s) ran", )
+	add_menu("Rerun", rerun, "Rerun the last test(s) ran", )
 
 	sub_menu.add_separator()
-	add_menu("About", "about", about,
-		'All about GUT')
+	add_menu("About", about, 'All about GUT')
 
 
 func set_shortcut(menu_name, accel_or_input_key):
@@ -112,7 +82,6 @@ func set_shortcut(menu_name, accel_or_input_key):
 
 func disable_menu(menu_name, disabled):
 	sub_menu.set_item_disabled(_menus[menu_name].index, disabled)
-	menu_disabled.emit(_menus[menu_name].index, disabled)
 
 
 func apply_gut_shortcuts(shortcut_dialog):

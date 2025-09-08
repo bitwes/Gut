@@ -15,10 +15,10 @@ var default_path = GutEditorGlobals.editor_shortcuts_path
 @onready var scbtn_windowed = $Scroll/Layout/CToggleWindowed/ShortcutButton
 
 
-@onready var _all_buttons = [
+@onready var all_buttons = [
 	scbtn_run_all, scbtn_run_current_script, scbtn_run_current_inner,
 	scbtn_run_current_test, scbtn_run_at_cursor, scbtn_rerun,
-	scbtn_panel
+	scbtn_panel, scbtn_windowed
 ]
 
 
@@ -36,7 +36,7 @@ func _debug_ready():
 
 
 func _ready():
-	for scbtn in _all_buttons:
+	for scbtn in all_buttons:
 		scbtn.connect('start_edit', _on_edit_start.bind(scbtn))
 		scbtn.connect('end_edit', _on_edit_end)
 
@@ -54,7 +54,7 @@ func _ready():
 
 
 func _cancel_all():
-	for scbtn in _all_buttons:
+	for scbtn in all_buttons:
 		scbtn.cancel()
 
 
@@ -67,14 +67,14 @@ func _on_cancel():
 
 
 func _on_edit_start(which):
-	for scbtn in _all_buttons:
+	for scbtn in all_buttons:
 		if(scbtn != which):
 			scbtn.disable_set(true)
 			scbtn.disable_clear(true)
 
 
 func _on_edit_end():
-	for scbtn in _all_buttons:
+	for scbtn in all_buttons:
 		scbtn.disable_set(false)
 		scbtn.disable_clear(false)
 

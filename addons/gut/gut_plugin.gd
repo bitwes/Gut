@@ -70,7 +70,6 @@ func gut_as_window():
 		add_child(_gut_window)
 		_gut_window.theme = get_tree().root.theme
 		_gut_window.interface = get_editor_interface()
-		_gut_window.shadow_menu_manager(_menu_mgr, _bottom_panel._ctrls.shortcut_dialog)
 
 	_gut_window.add_gut_panel(_bottom_panel)
 	_gut_button = null

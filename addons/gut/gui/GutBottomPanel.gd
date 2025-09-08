@@ -516,3 +516,7 @@ func show_hide():
 		# We don't have to do anything when we are docked because the GUT
 		# bottom panel has the shortcut and it does the toggling all on its
 		# own.
+
+
+func get_shortcut_dialog():
+	return _ctrls.shortcut_dialog

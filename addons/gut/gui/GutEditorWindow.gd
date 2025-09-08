@@ -8,15 +8,16 @@ var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
 
 var _bottom_panel = null
 var _ready_to_go = false
+var _gut_shortcuts = []
 
 var gut_plugin = null
 var interface = null
-var _menu_manager = null
 
-func _notification(what: int) -> void:
-	if(what == NOTIFICATION_PREDELETE):
-		_menu_manager._signaler = null
-		_menu_manager = null
+
+func _unhandled_key_input(event: InputEvent) -> void:
+	if(event is InputEventKey):
+		if(_gut_shortcuts.has(event.as_text_keycode())):
+			get_tree().root.push_input(event)
 
 
 func _ready() -> void:
@@ -27,7 +28,6 @@ func _ready() -> void:
 		size = pref_size
 	always_on_top = GutEditorGlobals.user_prefs.gut_window_on_top.value
 	_chk_always_on_top.button_pressed = always_on_top
-
 
 
 # --------
@@ -50,15 +50,6 @@ func _on_close_requested() -> void:
 # --------
 # Public
 # --------
-func shadow_menu_manager(which, shortcuts_dialog):
-	var menu_bar = $Layout/WinControls/MenuBar
-	_menu_manager = load('res://addons/gut/menu_manager.gd').new()
-	menu_bar.add_child(_menu_manager.sub_menu)
-	menu_bar.set_menu_title(0, "GUT")
-	_menu_manager.shadow_menu(which)
-	_menu_manager.apply_gut_shortcuts(shortcuts_dialog)
-
-
 func add_gut_panel(panel : Control):
 	$Layout.add_child(panel)
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -73,6 +64,8 @@ func add_gut_panel(panel : Control):
 	theme = interface.get_editor_theme()
 	var settings = interface.get_editor_settings()
 	$ColorRect.color = settings.get_setting("interface/theme/base_color")
+	
+	set_gut_shortcuts(_bottom_panel._ctrls.shortcut_dialog)
 
 
 func remove_panel():
@@ -80,4 +73,7 @@ func remove_panel():
 	_bottom_panel.owner = null
 
 
-
+func set_gut_shortcuts(shortcuts_dialog):
+	_gut_shortcuts.clear()
+	for btn in shortcuts_dialog.all_buttons:
+		_gut_shortcuts.append(btn.get_input_event().as_text_keycode())
