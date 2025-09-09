@@ -39,31 +39,31 @@ var menu_manager = null :
 	output = $layout/RSplit/CResults/TabBar/OutputText.get_rich_text_edit(),
 	output_ctrl = $layout/RSplit/CResults/TabBar/OutputText,
 	run_button = $layout/ControlBar/RunAll,
-	shortcuts_button = $layout/ControlBar/Shortcuts,
+	shortcuts_button = %ExtraButtons/Shortcuts,
 
-	settings_button = $layout/ControlBar/Settings,
-	run_results_button = $layout/ControlBar/RunResultsBtn,
-	output_button = $layout/ControlBar/OutputBtn,
+	settings_button = %ExtraButtons/Settings,
+	run_results_button = %ExtraButtons/RunResultsBtn,
+	output_button = %ExtraButtons/OutputBtn,
 
 	settings = $layout/RSplit/sc/Settings,
 	shortcut_dialog = $ShortcutDialog,
-	light = $layout/RSplit/CResults/ControlBar/Light3D,
+	light = %StatusIndicator,
 	results = {
-		bar = $layout/RSplit/CResults/ControlBar,
-		passing = $layout/RSplit/CResults/ControlBar/Passing/value,
-		failing = $layout/RSplit/CResults/ControlBar/Failing/value,
-		pending = $layout/RSplit/CResults/ControlBar/Pending/value,
-		errors = $layout/RSplit/CResults/ControlBar/Errors/value,
-		warnings = $layout/RSplit/CResults/ControlBar/Warnings/value,
-		orphans = $layout/RSplit/CResults/ControlBar/Orphans/value
+		bar = $layout/ControlBar2,
+		passing = %passing_value,
+		failing = %failing_value,
+		pending = %pending_value,
+		errors = %errors_value,
+		warnings = %warnings_value,
+		orphans = %orphans_value,
 	},
 	run_at_cursor = $layout/ControlBar/RunAtCursor,
 	run_results = $layout/RSplit/CResults/TabBar/RunResults,
 
 	run_externally_dialog = $ShellOutOptions,
-	run_mode = $layout/ControlBar/RunMode,
-	to_window = $layout/ControlBar/ToWindow,
-	about = $layout/ControlBar/About,
+	run_mode = %ExtraButtons/RunMode,
+	to_window = %ExtraButtons/ToWindow,
+	about = %ExtraButtons/About,
 }
 
 
@@ -418,7 +418,7 @@ func load_result_json():
 	_ctrls.results.failing.text = str(int(summary_json.failures))
 	_ctrls.results.failing.get_parent().visible = true
 
-	_ctrls.results.pending.text = str(int(summary_json.pending))
+	_ctrls.results.pending.text = str(int(summary_json.pending) + int(summary_json.risky))
 	_ctrls.results.pending.get_parent().visible = _ctrls.results.pending.text != '0'
 
 	_ctrls.results.errors.text = str(int(summary_json.errors))
@@ -429,12 +429,12 @@ func load_result_json():
 
 	_ctrls.results.orphans.text = str(int(summary_json.orphans))
 	_ctrls.results.orphans.get_parent().visible = _ctrls.results.orphans.text != '0' and !_gut_config.options.hide_orphans
-
+	GutUtils.pretty_print(summary_json)
 	if(summary_json.tests == 0):
 		_light_color = Color(1, 0, 0, .75)
 	elif(summary_json.failures != 0):
 		_light_color = Color(1, 0, 0, .75)
-	elif(summary_json.pending != 0):
+	elif(summary_json.pending != 0 or summary_json.risky != 0):
 		_light_color = Color(1, 1, 0, .75)
 	else:
 		_light_color = Color(0, 1, 0, .75)

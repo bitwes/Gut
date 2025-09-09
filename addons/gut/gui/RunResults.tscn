@@ -22,18 +22,22 @@ layout_mode = 2
 size_flags_horizontal = 0
 
 [node name="Expand" type="Button" parent="VBox/Toolbar"]
+visible = false
 layout_mode = 2
 icon = ExtResource("2_1k8e0")
 
 [node name="Collapse" type="Button" parent="VBox/Toolbar"]
+visible = false
 layout_mode = 2
 icon = ExtResource("2_1k8e0")
 
 [node name="Sep" type="ColorRect" parent="VBox/Toolbar"]
+visible = false
 custom_minimum_size = Vector2(2, 0)
 layout_mode = 2
 
 [node name="LblAll" type="Label" parent="VBox/Toolbar"]
+visible = false
 layout_mode = 2
 text = "All:"
 

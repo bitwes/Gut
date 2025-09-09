@@ -64,7 +64,8 @@ func _make_results_dict():
 				"time":0,
 				"orphans":0,
 				"errors":0,
-				"warnings":0
+				"warnings":0,
+				"risky":0
 			},
 			"scripts":[]
 		}
@@ -84,13 +85,15 @@ func get_results_dictionary(gut, include_scripts=true):
 
 	var props = result.test_scripts.props
 	props.pending = totals.pending
-	props.failures = totals.failing
+	props.failures = totals.failing_tests
 	props.passing = totals.passing_tests
 	props.tests = totals.tests
 	props.errors = gut.logger.get_errors().size()
 	props.warnings = gut.logger.get_warnings().size()
 	props.time =  gut.get_elapsed_time()
 	props.orphans = gut.get_orphan_counter().get_count()
+	props.risky = totals.risky
+
 	result.test_scripts.scripts = scripts
 
 	return result

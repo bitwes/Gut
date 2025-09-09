@@ -57,14 +57,27 @@ func test_test_script_props_has_props():
 	assert_has(result, 'errors')
 	assert_has(result, 'warnings')
 	assert_has(result, 'orphans')
+	assert_has(result, 'risky')
 
 func test_test_script_props_have_values_for_one_script():
 	await run_scripts(_test_gut, 'test_simple.gd')
 	var re = ResultExporter.new()
 	var result = re.get_results_dictionary(_test_gut).test_scripts.props
 	assert_eq(result['pending'], 2, 'pending')
-	assert_eq(result['failures'], 4, 'failures')
+	assert_eq(result['failures'], 3, 'failures')
 	assert_eq(result['tests'], 8, 'tests')
+
+func test_risky_populated():
+	var src = """
+	func test_this_is_risky():
+		pass
+	"""
+	var s = autofree(DynamicGutTest.new())
+	s.add_source(src)
+	await s.run_tests_in_gut_await(_test_gut)
+	var re = ResultExporter.new()
+	var result = re.get_results_dictionary(_test_gut).test_scripts.props
+	assert_eq(result['risky'], 1, 'risky')
 
 func test_warnings_and_errors_populated():
 	await run_scripts(_test_gut, 'test_has_error_and_warning.gd')
@@ -126,7 +139,7 @@ func test_test_script_props_have_values_for_two_script():
 	var re = ResultExporter.new()
 	var result = re.get_results_dictionary(_test_gut).test_scripts.props
 	assert_eq(result['pending'], 3, 'pending')
-	assert_eq(result['failures'], 5, 'failures')
+	assert_eq(result['failures'], 4, 'failures')
 	assert_eq(result['tests'], 11, 'tests')
 
 func test_totals_with_inner_classes():
@@ -223,4 +236,3 @@ func test_write_file_creates_file():
 	var result = re.write_json_file(_test_gut, fname)
 	assert_file_not_empty(fname)
 	gut.file_delete(fname)
-
