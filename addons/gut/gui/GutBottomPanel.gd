@@ -140,6 +140,9 @@ func _apply_options_to_controls():
 	elif(_ctrls.run_externally_dialog.run_mode == _ctrls.run_externally_dialog.RUN_MODE_NON_BLOCKING):
 		mode_ind = 'ExN'
 	_ctrls.run_mode.text = mode_ind
+	
+	_ctrls.run_at_cursor.apply_gut_config(_gut_config)
+
 
 
 func _disable_run_buttons(should):

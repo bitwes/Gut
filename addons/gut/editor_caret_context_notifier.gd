@@ -14,18 +14,6 @@ extends Node
 #		* CodeEdit
 # ##############################################################################
 
-# Based on cursor and open editors, this will be emitted.  You do what you
-# want with it.
-signal it_changed(change_data)
-
-# In order to keep the data that comes back from the emitted signal way more
-# usable, we have to know what GUT looks for for an inner-test-class prefix.
-# If we didn't do this, then this thing would have to return all the inner
-# classes and then we'd have to determine if we were in an inner-test-class
-# outside of here by traversing all the classes returned.  It makes this thing
-# less generic and know too much, but this is probably already too generic as
-# it is.
-var inner_class_prefix = "Test"
 
 var _last_info : Dictionary = {}
 var _last_line = -1
@@ -36,9 +24,26 @@ var _current_script = null
 var _current_script_is_test_script = false
 var _current_editor_base : ScriptEditorBase = null
 var _current_editor : CodeEdit = null
-
 # Quick lookup of editors based on the current script.
 var _editors_for_scripts : Dictionary= {}
+
+
+# In order to keep the data that comes back from the emitted signal way more
+# usable, we have to know what GUT looks for for an inner-test-class prefix.
+# If we didn't do this, then this thing would have to return all the inner
+# classes and then we'd have to determine if we were in an inner-test-class
+# outside of here by traversing all the classes returned.  It makes this thing
+# less generic and know too much, but this is probably already too generic as
+# it is.
+var inner_class_prefix = "Test"
+var method_prefix = "test_"
+var script_prefix = "test_"
+var script_suffix = ".gd"
+
+
+# Based on cursor and open editors, this will be emitted.  You do what you
+# want with it.
+signal it_changed(change_data)
 
 
 func _ready():
@@ -162,7 +167,10 @@ func _on_caret_changed(which):
 var _scripts_that_have_been_warned_about = []
 func is_test_script(script):
 	var from = script.get_base_script()
-	if(from == null and script.get_script_method_list().size() == 0):
+	if(from == null and script.get_script_method_list().size() == 0 and \
+		script.resource_path.get_file().begins_with(script_prefix) and \
+		script.resource_path.get_file().ends_with(script_suffix)):
+			
 		if(OS.is_stdout_verbose() or !_scripts_that_have_been_warned_about.has(script.resource_path)):
 			push_warning(str('[GUT] Treating ', script.resource_path, " as test script:  ", 
 				"GUT was not able to retrieve information about this script.  This may ", 
