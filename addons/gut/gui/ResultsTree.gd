@@ -18,7 +18,22 @@ var _icons = {
 	green = load('res://addons/gut/images/green.png'),
 	yellow = load('res://addons/gut/images/yellow.png'),
 }
-const _col_1_bg_color = Color(0, 0, 0, .1)
+
+@export var script_entry_color : Color = Color(0, 0, 0, .5) :
+	set(val):
+		if(val != null):
+			script_entry_color = val
+@export var column_0_color : Color = Color(1, 1, 1, 0) :
+	set(val):
+		if(val != null):
+			column_0_color = val
+@export var column_1_color : Color = Color(0, 0, 0, .1): 
+	set(val):
+		if(val != null):
+			column_1_color = val
+
+
+
 var _max_icon_width = 10
 var _root : TreeItem
 
@@ -29,72 +44,32 @@ var _root : TreeItem
 
 
 signal item_selected(script_path, inner_class, test_name, line_number)
-# -------------------
-# Private
-# -------------------
+
+func _debug_ready():
+	hide_passing = false
+	load_json_file('user://gut_temp_directory/gut_editor.json')
+
+
 func _ready():
 	_root = _ctrls.tree.create_item()
-	_root = _ctrls.tree.create_item()
+	#_root = _ctrls.tree.create_item()
 	_ctrls.tree.set_hide_root(true)
 	_ctrls.tree.columns = 2
 	_ctrls.tree.set_column_expand(0, true)
-	_ctrls.tree.set_column_expand(1, false)
-	_ctrls.tree.set_column_clip_content(0, true)
+	_ctrls.tree.set_column_expand_ratio(0, 5)
+	
+	_ctrls.tree.set_column_expand_ratio(1, 1)
+	_ctrls.tree.set_column_expand(1, true)
 
 	$Tree.item_selected.connect(_on_tree_item_selected)
 
 	if(get_parent() == get_tree().root):
-		_test_running_setup()
-
-func _test_running_setup():
-	load_json_file('user://.gut_editor.json')
+		_debug_ready()
 
 
-func _on_tree_item_selected():
-	var item = _ctrls.tree.get_selected()
-	var item_meta = item.get_metadata(0)
-	var item_type = null
-
-	# Only select the left side of the tree item, cause I like that better.
-	# you can still click the right, but only the left gets highlighted.
-	if(item.is_selected(1)):
-		item.deselect(1)
-		item.select(0)
-
-	if(item_meta == null):
-		return
-	else:
-		item_type = item_meta.type
-
-	var script_path = '';
-	var line = -1;
-	var test_name = ''
-	var inner_class = ''
-
-	if(item_type == 'test'):
-		var s_item = item.get_parent()
-		script_path = s_item.get_metadata(0)['path']
-		inner_class = s_item.get_metadata(0)['inner_class']
-		line = -1
-		test_name = item.get_text(0)
-	elif(item_type == 'assert'):
-		var s_item = item.get_parent().get_parent()
-		script_path = s_item.get_metadata(0)['path']
-		inner_class = s_item.get_metadata(0)['inner_class']
-		line = _get_line_number_from_assert_msg(item.get_text(0))
-		test_name = item.get_parent().get_text(0)
-	elif(item_type == 'script'):
-		script_path = item.get_metadata(0)['path']
-		if(item.get_parent() != _root):
-			inner_class = item.get_text(0)
-		line = -1
-		test_name = ''
-	else:
-		return
-
-	item_selected.emit(script_path, inner_class, test_name, line)
-
-
+# -------------------
+# Private
+# -------------------
 func _get_line_number_from_assert_msg(msg):
 	var line = -1
 	if(msg.find('at line') > 0):
@@ -142,15 +117,15 @@ func _add_script_tree_item(script_path, script_json):
 		if(parent == null):
 			parent = _add_script_tree_item(path_info.path, {})
 
-		parent.get_metadata(0).inner_tests += script_json['props']['tests']
-		parent.get_metadata(0).inner_passing += script_json['props']['tests']
-		parent.get_metadata(0).inner_passing -= script_json['props']['failures']
-		parent.get_metadata(0).inner_passing -= script_json['props']['pending']
+		#parent.get_metadata(0).inner_tests += script_json['props']['tests']
+		#parent.get_metadata(0).inner_passing += script_json['props']['tests']
+		#parent.get_metadata(0).inner_passing -= script_json['props']['failures']
+		#parent.get_metadata(0).inner_passing -= script_json['props']['pending']
 
-		var total_text = str("All ", parent.get_metadata(0).inner_tests, " passed")
-		if(parent.get_metadata(0).inner_passing != parent.get_metadata(0).inner_tests):
-			total_text = str(int(parent.get_metadata(0).inner_passing), '/', int(parent.get_metadata(0).inner_tests), ' passed.')
-		parent.set_text(1, total_text)
+		#var total_text = str("All ", int(parent.get_metadata(0).inner_tests), " passed")
+		#if(parent.get_metadata(0).inner_passing != parent.get_metadata(0).inner_tests):
+			#total_text = str(int(parent.get_metadata(0).inner_passing), '/', int(parent.get_metadata(0).inner_tests), ' passed.')
+		#parent.set_text(1, total_text)
 
 	var item = _ctrls.tree.create_item(parent)
 	item.set_text(0, item_text)
@@ -163,7 +138,8 @@ func _add_script_tree_item(script_path, script_json):
 		"inner_tests":0
 	}
 	item.set_metadata(0, meta)
-	item.set_custom_bg_color(1, _col_1_bg_color)
+	item.set_custom_bg_color(0, script_entry_color)
+	item.set_custom_bg_color(1, script_entry_color)
 
 	return item
 
@@ -175,7 +151,8 @@ func _add_assert_item(text, icon, parent_item):
 	assert_item.set_text(0, text)
 	assert_item.set_metadata(0, {"type":"assert"})
 	assert_item.set_icon(0, icon)
-	assert_item.set_custom_bg_color(1, _col_1_bg_color)
+	assert_item.set_custom_bg_color(0, column_0_color)
+	assert_item.set_custom_bg_color(1, column_1_color)
 
 	return assert_item
 
@@ -193,10 +170,11 @@ func _add_test_tree_item(test_name, test_json, script_item):
 	item.set_text(0, test_name)
 	item.set_text(1, status)
 	item.set_text_alignment(1, HORIZONTAL_ALIGNMENT_RIGHT)
-	item.set_custom_bg_color(1, _col_1_bg_color)
+	item.set_custom_bg_color(1, column_1_color)
 
 	item.set_metadata(0, meta)
 	item.set_icon_max_width(0, _max_icon_width)
+	item.set_custom_bg_color(0, column_0_color)
 
 	if(status == 'pass' and no_orphans_to_show):
 		item.set_icon(0, _icons.green)
@@ -225,7 +203,8 @@ func _add_test_tree_item(test_name, test_json, script_item):
 		for o in test_json.orphans:
 			var orphan_entry = _ctrls.tree.create_item(orphan_item)
 			orphan_entry.set_text(0, o)
-
+			orphan_entry.set_custom_bg_color(0, column_0_color)
+			orphan_entry.set_custom_bg_color(1, column_1_color)
 
 	return item
 
@@ -281,7 +260,6 @@ func _load_result_tree(j):
 
 	var add_count = 0
 	for key in script_keys:
-		#if(scripts[key]['props']['tests'] > 0):
 		add_count += 1
 		_add_script_to_tree(key, scripts[key])
 
@@ -290,6 +268,52 @@ func _load_result_tree(j):
 		add_centered_text('Nothing was run')
 	else:
 		_show_all_passed()
+# -------------------
+# Events
+# -------------------
+func _on_tree_item_selected():
+	var item = _ctrls.tree.get_selected()
+	var item_meta = item.get_metadata(0)
+	var item_type = null
+
+	# Only select the left side of the tree item, cause I like that better.
+	# you can still click the right, but only the left gets highlighted.
+	if(item.is_selected(1)):
+		item.deselect(1)
+		item.select(0)
+
+	if(item_meta == null):
+		return
+	else:
+		item_type = item_meta.type
+
+	var script_path = '';
+	var line = -1;
+	var test_name = ''
+	var inner_class = ''
+
+	if(item_type == 'test'):
+		var s_item = item.get_parent()
+		script_path = s_item.get_metadata(0)['path']
+		inner_class = s_item.get_metadata(0)['inner_class']
+		line = -1
+		test_name = item.get_text(0)
+	elif(item_type == 'assert'):
+		var s_item = item.get_parent().get_parent()
+		script_path = s_item.get_metadata(0)['path']
+		inner_class = s_item.get_metadata(0)['inner_class']
+		line = _get_line_number_from_assert_msg(item.get_text(0))
+		test_name = item.get_parent().get_text(0)
+	elif(item_type == 'script'):
+		script_path = item.get_metadata(0)['path']
+		if(item.get_parent() != _root):
+			inner_class = item.get_text(0)
+		line = -1
+		test_name = ''
+	else:
+		return
+
+	item_selected.emit(script_path, inner_class, test_name, line)
 
 
 # -------------------

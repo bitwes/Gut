@@ -281,5 +281,3 @@ class TestOutputWhenRunDirectly:
 		_timer.start()
 		gut.p('test_one yield')
 		await _timer.timeout
-
-

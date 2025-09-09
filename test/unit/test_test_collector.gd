@@ -245,4 +245,3 @@ class TestExportImport:
 		# This is 2 for some reason.  it is only 1 in the other test.  One of
 		# them is wrong but everything else checks out ok.
 		assert_eq(totals.scripts, 2, 'script count')
-

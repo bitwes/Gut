@@ -31,7 +31,7 @@ func test_gut_error():
 	assert_between(2, 1, 3)
 
 func test_makes_an_orphan():
-	var _n = Node.new()
+	var _n = GutTest.new()
 	pass_test('passing')
 
 func test_makes_an_orphan_with_assert():
