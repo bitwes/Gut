@@ -55,6 +55,7 @@ func add_as_test_to_gut(which):
 		print_source()
 
 	which.get_test_collector().add_script(dyn.resource_path)
+	return dyn
 
 
 # This leaks SceneTreeTimers in some cases.  Not sure of all the cases, but
@@ -78,4 +79,3 @@ func run_tests_in_gut_await(which):
 
 func print_source():
 	print(GutUtils.add_line_numbers(make_source()))
-

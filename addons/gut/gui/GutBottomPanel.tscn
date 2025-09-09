@@ -44,7 +44,7 @@ custom_minimum_size = Vector2(1, 2.08165e-12)
 layout_mode = 2
 
 [node name="RunAtCursor" parent="layout/ControlBar" instance=ExtResource("3")]
-custom_minimum_size = Vector2(611, 0)
+custom_minimum_size = Vector2(573, 0)
 layout_mode = 2
 
 [node name="CenterContainer2" type="CenterContainer" parent="layout/ControlBar"]

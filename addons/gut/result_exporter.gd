@@ -48,6 +48,7 @@ func _export_scripts(gut):
 				"tests":test_data.keys().size(),
 				"pending":s.get_pending_count(),
 				"failures":s.get_fail_count(),
+				"skipped":s.was_skipped,
 			},
 			"tests":test_data
 		}

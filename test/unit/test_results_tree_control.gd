@@ -24,7 +24,8 @@ func add_script_to_json(script_name, add_to):
 		"props": {
 			"failures": 0,
 			"pending": 0,
-			"tests": 0
+			"tests": 0,
+			"skipped": false,
 		},
 		"tests": {}
 	}
@@ -34,7 +35,7 @@ func add_script_to_json(script_name, add_to):
 func add_test_to_json(test_name, add_to):
 	var test_json ={
 		"failing": [],
-		"orphans": 0,
+		"orphan_count": 0,
 		"passing": [],
 		"pending": [],
 		"status": "pass"

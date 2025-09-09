@@ -140,7 +140,7 @@ func _apply_options_to_controls():
 	elif(_ctrls.run_externally_dialog.run_mode == _ctrls.run_externally_dialog.RUN_MODE_NON_BLOCKING):
 		mode_ind = 'ExN'
 	_ctrls.run_mode.text = mode_ind
-	
+
 	_ctrls.run_at_cursor.apply_gut_config(_gut_config)
 
 
@@ -429,7 +429,7 @@ func load_result_json():
 
 	_ctrls.results.orphans.text = str(int(summary_json.orphans))
 	_ctrls.results.orphans.get_parent().visible = _ctrls.results.orphans.text != '0' and !_gut_config.options.hide_orphans
-	GutUtils.pretty_print(summary_json)
+
 	if(summary_json.tests == 0):
 		_light_color = Color(1, 0, 0, .75)
 	elif(summary_json.failures != 0):

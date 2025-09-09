@@ -79,6 +79,21 @@ func test_risky_populated():
 	var result = re.get_results_dictionary(_test_gut).test_scripts.props
 	assert_eq(result['risky'], 1, 'risky')
 
+func test_skipped_script_counted_as_risky():
+	var src = """
+	func should_skip_script():
+		return "skip this script"
+	func test_pass():
+		pass_test('passing')
+	"""
+	var s = autofree(DynamicGutTest.new())
+	s.add_source(src)
+	await s.run_tests_in_gut_await(_test_gut)
+	var re = ResultExporter.new()
+	var result = re.get_results_dictionary(_test_gut).test_scripts.props
+	assert_eq(result['risky'], 1, 'risky')
+	
+
 func test_warnings_and_errors_populated():
 	await run_scripts(_test_gut, 'test_has_error_and_warning.gd')
 	var re = ResultExporter.new()
@@ -114,6 +129,7 @@ func test_script_has_prop_values():
 	assert_has(result, 'tests')
 	assert_has(result, 'pending')
 	assert_has(result, 'failures')
+	assert_has(result, 'skipped')
 
 func test_script_has_proper_prop_values():
 	await run_scripts(_test_gut, 'test_simple.gd')
@@ -133,6 +149,25 @@ func test_script_has_proper_prop_values_for_2nd_script():
 	assert_eq(result['pending'], 1, 'pending count')
 	assert_eq(result['failures'], 1, 'failures')
 
+func test_skipped_script_has_flag_set():
+	var src = """
+	func should_skip_script():
+		return "skip this script"
+	func test_pass():
+		pass_test('passing')
+	"""
+	var s = autofree(DynamicGutTest.new())
+	s.add_source(src)
+	var dyn_script = s.add_as_test_to_gut(_test_gut)
+	_test_gut.test_scripts()
+	await wait_for_signal(_test_gut.end_run, 2)
+
+	#await s.run_tests_in_gut_await(_test_gut)
+	var re = ResultExporter.new()
+	var result = re.get_results_dictionary(_test_gut).test_scripts.scripts
+	result = result[dyn_script.resource_path]['props']
+	assert_eq(result['skipped'], true, 'skipped')
+	
 
 func test_test_script_props_have_values_for_two_script():
 	await run_scripts(_test_gut, ['test_simple.gd', 'test_simple_2.gd'])

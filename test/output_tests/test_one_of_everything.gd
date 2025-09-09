@@ -32,4 +32,31 @@ func test_gut_error():
 
 func test_makes_an_orphan():
 	var _n = Node.new()
+	pass_test('passing')
+
+func test_makes_an_orphan_with_assert():
+	var _n = Node.new()
 	assert_no_new_orphans()
+
+
+class TestSkipThisScript:
+	extends GutTest
+	
+	func should_skip_script():
+		return "Skipping for demo purposes"
+		
+	func test_nothing():
+		pass_test('nothing')
+
+
+class TestInnerTestClass:
+	extends GutTest
+	
+	func test_failing():
+		assert_false(true)
+
+	func test_passing():
+		assert_true(true)
+
+	func test_pending():
+		pending('This is pending')

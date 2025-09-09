@@ -149,7 +149,7 @@ func _add_script_tree_item(script_path, script_json):
 
 		var total_text = str("All ", parent.get_metadata(0).inner_tests, " passed")
 		if(parent.get_metadata(0).inner_passing != parent.get_metadata(0).inner_tests):
-			total_text = str(parent.get_metadata(0).inner_passing, '/', parent.get_metadata(0).inner_tests, ' passed.')
+			total_text = str(int(parent.get_metadata(0).inner_passing), '/', int(parent.get_metadata(0).inner_tests), ' passed.')
 		parent.set_text(1, total_text)
 
 	var item = _ctrls.tree.create_item(parent)
@@ -244,13 +244,17 @@ func _add_script_to_tree(key, script_json):
 			t_item.collapsed = true
 
 	if(s_item.get_children().size() == 0):
-		s_item.free()
+		if(script_json.props.skipped):
+			_add_assert_item("Skipped", _icons.yellow, s_item)
+			s_item.set_text(1, "Skipped")
+		else:
+			s_item.free()
 	else:
 		var total_text = str('All ', test_keys.size(), ' passed')
 		if(bad_count == 0):
 			s_item.collapsed = true
 		else:
-			total_text = str(test_keys.size() - bad_count, '/', test_keys.size(), ' passed')
+			total_text = str(int(test_keys.size() - bad_count), '/', int(test_keys.size()), ' passed')
 		s_item.set_text(1, total_text)
 
 
@@ -277,9 +281,9 @@ func _load_result_tree(j):
 
 	var add_count = 0
 	for key in script_keys:
-		if(scripts[key]['props']['tests'] > 0):
-			add_count += 1
-			_add_script_to_tree(key, scripts[key])
+		#if(scripts[key]['props']['tests'] > 0):
+		add_count += 1
+		_add_script_to_tree(key, scripts[key])
 
 	_free_childless_scripts()
 	if(add_count == 0):
