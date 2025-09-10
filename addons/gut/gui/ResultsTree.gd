@@ -1,5 +1,5 @@
 @tool
-extends Control
+extends Tree
 
 var _show_orphans = true
 var show_orphans = true :
@@ -19,7 +19,7 @@ var _icons = {
 	yellow = load('res://addons/gut/images/yellow.png'),
 }
 
-@export var script_entry_color : Color = Color(0, 0, 0, .5) :
+@export var script_entry_color : Color = Color(0, 0, 0, .2) :
 	set(val):
 		if(val != null):
 			script_entry_color = val
@@ -27,7 +27,7 @@ var _icons = {
 	set(val):
 		if(val != null):
 			column_0_color = val
-@export var column_1_color : Color = Color(0, 0, 0, .1): 
+@export var column_1_color : Color = Color(0, 0, 0, .2):
 	set(val):
 		if(val != null):
 			column_1_color = val
@@ -37,13 +37,11 @@ var _icons = {
 var _max_icon_width = 10
 var _root : TreeItem
 
-@onready var _ctrls = {
-	tree = $Tree,
-	lbl_overlay = $Tree/TextOverlay
-}
+
+@onready var lbl_overlay = $TextOverlay
 
 
-signal item_selected(script_path, inner_class, test_name, line_number)
+signal selected(script_path, inner_class, test_name, line_number)
 
 func _debug_ready():
 	hide_passing = false
@@ -51,17 +49,16 @@ func _debug_ready():
 
 
 func _ready():
-	_root = _ctrls.tree.create_item()
-	#_root = _ctrls.tree.create_item()
-	_ctrls.tree.set_hide_root(true)
-	_ctrls.tree.columns = 2
-	_ctrls.tree.set_column_expand(0, true)
-	_ctrls.tree.set_column_expand_ratio(0, 5)
-	
-	_ctrls.tree.set_column_expand_ratio(1, 1)
-	_ctrls.tree.set_column_expand(1, true)
+	_root = create_item()
+	set_hide_root(true)
+	columns = 2
+	set_column_expand(0, true)
+	set_column_expand_ratio(0, 5)
 
-	$Tree.item_selected.connect(_on_tree_item_selected)
+	set_column_expand_ratio(1, 1)
+	set_column_expand(1, true)
+
+	item_selected.connect(_on_tree_item_selected)
 
 	if(get_parent() == get_tree().root):
 		_debug_ready()
@@ -127,7 +124,7 @@ func _add_script_tree_item(script_path, script_json):
 			#total_text = str(int(parent.get_metadata(0).inner_passing), '/', int(parent.get_metadata(0).inner_tests), ' passed.')
 		#parent.set_text(1, total_text)
 
-	var item = _ctrls.tree.create_item(parent)
+	var item = create_item(parent)
 	item.set_text(0, item_text)
 	var meta = {
 		"type":"script",
@@ -146,7 +143,7 @@ func _add_script_tree_item(script_path, script_json):
 
 func _add_assert_item(text, icon, parent_item):
 	# print('        * adding assert')
-	var assert_item = _ctrls.tree.create_item(parent_item)
+	var assert_item = create_item(parent_item)
 	assert_item.set_icon_max_width(0, _max_icon_width)
 	assert_item.set_text(0, text)
 	assert_item.set_metadata(0, {"type":"assert"})
@@ -163,7 +160,7 @@ func _add_test_tree_item(test_name, test_json, script_item):
 	if(_hide_passing and test_json['status'] == 'pass' and no_orphans_to_show):
 		return
 
-	var item = _ctrls.tree.create_item(script_item)
+	var item = create_item(script_item)
 	var status = test_json['status']
 	var meta = {"type":"test", "json":test_json}
 
@@ -201,7 +198,7 @@ func _add_test_tree_item(test_name, test_json, script_item):
 	if(!no_orphans_to_show):
 		var orphan_item = _add_assert_item(orphan_text, _icons.yellow, item)
 		for o in test_json.orphans:
-			var orphan_entry = _ctrls.tree.create_item(orphan_item)
+			var orphan_entry = create_item(orphan_item)
 			orphan_entry.set_text(0, o)
 			orphan_entry.set_custom_bg_color(0, column_0_color)
 			orphan_entry.set_custom_bg_color(1, column_1_color)
@@ -272,7 +269,7 @@ func _load_result_tree(j):
 # Events
 # -------------------
 func _on_tree_item_selected():
-	var item = _ctrls.tree.get_selected()
+	var item = get_selected()
 	var item_meta = item.get_metadata(0)
 	var item_type = null
 
@@ -313,7 +310,7 @@ func _on_tree_item_selected():
 	else:
 		return
 
-	item_selected.emit(script_path, inner_class, test_name, line)
+	selected.emit(script_path, inner_class, test_name, line)
 
 
 # -------------------
@@ -342,26 +339,29 @@ func load_json_file(path):
 
 func load_json_results(j):
 	clear()
+	if(_root == null):
+		_root = create_item()
+
 	_load_result_tree(j)
 
 
-func clear():
-	_ctrls.tree.clear()
-	_root = _ctrls.tree.create_item()
+#func clear():
+	#clear()
+	#_root = create_item()
 
 
 func set_summary_min_width(width):
-	_ctrls.tree.set_column_custom_minimum_width(1, width)
+	set_column_custom_minimum_width(1, width)
 
 
 func add_centered_text(t):
-	_ctrls.lbl_overlay.visible = true
-	_ctrls.lbl_overlay.text = t
+	lbl_overlay.visible = true
+	lbl_overlay.text = t
 
 
 func clear_centered_text():
-	_ctrls.lbl_overlay.visible = false
-	_ctrls.lbl_overlay.text = ''
+	lbl_overlay.visible = false
+	lbl_overlay.text = ''
 
 
 func collapse_all():
@@ -376,7 +376,3 @@ func set_collapsed_on_all(item, value):
 	item.set_collapsed_recursive(value)
 	if(item == _root and value):
 		item.set_collapsed(false)
-
-
-func get_selected():
-	return _ctrls.tree.get_selected()
