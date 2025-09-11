@@ -13,7 +13,7 @@ GUT versions 7.x (currently 7.4.2) are for Godot 3.x.
 # Documentation
 Documentation is hosted at https://gut.readthedocs.io/
 * [Latest](https://gut.readthedocs.io/en/latest)
-* [GUT 9.x for Godot 4](https://gut.readthedocs.io/en/v9.4.0/Quick-Start.html)
+* [GUT 9.x for Godot 4](https://gut.readthedocs.io/en/v9.5.0/Quick-Start.html)
 * [GUT 7.x for Godot 3](https://gut.readthedocs.io/en/v7.4.2/Quick-Start.html)
 
 
@@ -24,8 +24,9 @@ There are only two versions of GUT in the Asset Library (one for Godot 3 and one
 
 |GUT|Required Godot<br>Version||||
 |-|-|-|-|-|
-|Main Branch |4.4 (or greater)| | |
-|[9.4.0](https://github.com/bitwes/Gut/releases/tag/v9.4.0)|4.3|[repo](https://github.com/bitwes/Gut/tree/v9.4.0)|[download](https://github.com/bitwes/Gut/archive/refs/tags/v9.4.0.zip)|[Asset Library](https://godotengine.org/asset-library/asset/1709)|
+|Main Branch |4.5 (or greater)| | |
+|[9.5.0](https://github.com/bitwes/Gut/releases/tag/v9.4.0)|4.5|[repo](https://github.com/bitwes/Gut/tree/v9.5.0)|[download](https://github.com/bitwes/Gut/archive/refs/tags/v9.5.0.zip)|[Asset Library](https://godotengine.org/asset-library/asset/1709)|
+|[9.4.0](https://github.com/bitwes/Gut/releases/tag/v9.4.0)|4.3|[repo](https://github.com/bitwes/Gut/tree/v9.4.0)|[download](https://github.com/bitwes/Gut/archive/refs/tags/v9.4.0.zip)||
 |[9.3.0](https://github.com/bitwes/Gut/releases/tag/v9.3.0)|4.2|[repo](https://github.com/bitwes/Gut/tree/v9.3.0)|[download](https://github.com/bitwes/Gut/archive/refs/tags/v9.3.0.zip)||
 |[9.1.1](https://github.com/bitwes/Gut/releases/tag/v9.1.1)|4.1|[repo](https://github.com/bitwes/Gut/tree/v9.1.1)|[download](https://github.com/bitwes/Gut/archive/refs/tags/v9.1.1.zip)||
 |[9.0.1](https://github.com/bitwes/Gut/releases/tag/v9.0.1)|4.0|[repo](https://github.com/bitwes/Gut/tree/v9.0.1)|[download](https://github.com/bitwes/Gut/archive/refs/tags/v9.0.1.zip)||
