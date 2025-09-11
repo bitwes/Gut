@@ -44,7 +44,7 @@ custom_minimum_size = Vector2(1, 2.08165e-12)
 layout_mode = 2
 
 [node name="RunAtCursor" parent="layout/ControlBar" instance=ExtResource("3")]
-custom_minimum_size = Vector2(945, 0)
+custom_minimum_size = Vector2(359, 0)
 layout_mode = 2
 
 [node name="CenterContainer2" type="CenterContainer" parent="layout/ControlBar"]
@@ -223,7 +223,8 @@ icon = ExtResource("4_xv2r3")
 layout_mode = 2
 text = "A"
 
-[node name="ToWindow" type="Button" parent="layout/ControlBar2/ExtraButtons"]
+[node name="MakeFloating" type="Button" parent="layout/ControlBar2/ExtraButtons"]
+unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Move the GUT panel to a window."
 icon = ExtResource("4_xv2r3")
@@ -238,19 +239,28 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="TabBar" type="HSplitContainer" parent="layout/RSplit/CResults"]
+[node name="HSplitResults" type="HSplitContainer" parent="layout/RSplit/CResults"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="RunResults" parent="layout/RSplit/CResults/TabBar" instance=ExtResource("5")]
-custom_minimum_size = Vector2(255, 0)
+[node name="RunResults" parent="layout/RSplit/CResults/HSplitResults" instance=ExtResource("5")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(255, 255)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="OutputText" parent="layout/RSplit/CResults/TabBar" instance=ExtResource("6")]
+[node name="OutputText" parent="layout/RSplit/CResults/HSplitResults" instance=ExtResource("6")]
+unique_name_in_owner = true
 layout_mode = 2
+
+[node name="VSplitResults" type="VSplitContainer" parent="layout/RSplit/CResults"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
 
 [node name="sc" type="ScrollContainer" parent="layout/RSplit"]
 custom_minimum_size = Vector2(500, 2.08165e-12)
@@ -278,6 +288,6 @@ visible = false
 [connection signal="pressed" from="layout/ControlBar2/ExtraButtons/Settings" to="." method="_on_Settings_pressed"]
 [connection signal="pressed" from="layout/ControlBar2/ExtraButtons/Shortcuts" to="." method="_on_Shortcuts_pressed"]
 [connection signal="pressed" from="layout/ControlBar2/ExtraButtons/About" to="." method="_on_about_pressed"]
-[connection signal="pressed" from="layout/ControlBar2/ExtraButtons/ToWindow" to="." method="_on_to_window_pressed"]
+[connection signal="pressed" from="layout/ControlBar2/ExtraButtons/MakeFloating" to="." method="_on_to_window_pressed"]
 [connection signal="confirmed" from="ShortcutDialog" to="." method="_on_sortcut_dialog_confirmed"]
 [connection signal="confirmed" from="ShellOutOptions" to="." method="_on_shell_out_options_confirmed"]

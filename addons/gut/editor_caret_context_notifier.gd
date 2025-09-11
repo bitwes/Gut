@@ -161,29 +161,37 @@ func _on_caret_changed(which):
 	if(which == _current_editor):
 		_handle_caret_location(which)
 
+
+func _could_be_test_script(script):
+	return 	script.resource_path.get_file().begins_with(script_prefix) and \
+		script.resource_path.get_file().ends_with(script_suffix)
+
 # -------------
 # Public
 # -------------
 var _scripts_that_have_been_warned_about = []
+var _we_have_warned_enough = false
+var _max_warnings = 5
 func is_test_script(script):
-	var from = script.get_base_script()
-	if(from == null and script.get_script_method_list().size() == 0 and \
-		script.resource_path.get_file().begins_with(script_prefix) and \
-		script.resource_path.get_file().ends_with(script_suffix)):
-			
-		if(OS.is_stdout_verbose() or !_scripts_that_have_been_warned_about.has(script.resource_path)):
-			push_warning(str('[GUT] Treating ', script.resource_path, " as test script:  ", 
-				"GUT was not able to retrieve information about this script.  This may ", 
+	var base = script.get_base_script()
+	if(base == null and script.get_script_method_list().size() == 0 and _could_be_test_script(script)):
+		if(OS.is_stdout_verbose() or (!_scripts_that_have_been_warned_about.has(script.resource_path) and !_we_have_warned_enough)):
+			_scripts_that_have_been_warned_about.append(script.resource_path)
+			push_warning(str('[GUT] Treating ', script.resource_path, " as test script:  ",
+				"GUT was not able to retrieve information about this script.  This may ",
 				"have to do with having VSCode open.  Restarting Godot sometimes helps.  See ",
 				"https://github.com/bitwes/Gut/issues/754"))
-			_scripts_that_have_been_warned_about.append(script.resource_path)
+			if(!OS.is_stdout_verbose() and _scripts_that_have_been_warned_about.size() >= _max_warnings):
+				print("[GUT] Disabling warning.")
+				_we_have_warned_enough = true
+
 		# We can't know if this is a test script.  It's more usable if we
 		# assume this is a test script.
 		return true
 	else:
-		while(from and from.resource_path != 'res://addons/gut/test.gd'):
-			from = from.get_base_script()
-		return from != null
+		while(base and base.resource_path != 'res://addons/gut/test.gd'):
+			base = base.get_base_script()
+		return base != null
 
 
 func get_info():

@@ -188,7 +188,7 @@ func set_options(opts):
 
 	opt_maker.add_title("XML Output")
 	opt_maker.add_save_file_anywhere("junit_xml_file", options.junit_xml_file, "Output Path",
-		"Path3D and filename where GUT should create a JUnit compliant XML file.  " +
+		"Path and filename where GUT should create a JUnit compliant XML file.  " +
 		"This file will contain the results of the last test run.  To avoid " +
 		"overriding the file use Include Timestamp.")
 	opt_maker.add_boolean("junit_xml_timestamp", options.junit_xml_timestamp, "Include Timestamp",

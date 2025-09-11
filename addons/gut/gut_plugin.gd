@@ -72,6 +72,7 @@ func gut_as_window():
 		_gut_window.interface = get_editor_interface()
 
 	_gut_window.add_gut_panel(_bottom_panel)
+	_bottom_panel.make_floating_btn.visible = false
 	_gut_button = null
 	_dock_mode = 'window'
 
@@ -82,6 +83,8 @@ func gut_as_panel():
 	_gut_button.shortcut_in_tooltip = true
 	_dock_mode = 'panel'
 	_bottom_panel._apply_shortcuts()
+	_bottom_panel.results_horiz_layout()
+	_bottom_panel.make_floating_btn.visible = true
 
 	if(_gut_window != null):
 		_gut_window.queue_free()

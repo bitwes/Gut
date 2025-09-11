@@ -114,16 +114,6 @@ func _add_script_tree_item(script_path, script_json):
 		if(parent == null):
 			parent = _add_script_tree_item(path_info.path, {})
 
-		#parent.get_metadata(0).inner_tests += script_json['props']['tests']
-		#parent.get_metadata(0).inner_passing += script_json['props']['tests']
-		#parent.get_metadata(0).inner_passing -= script_json['props']['failures']
-		#parent.get_metadata(0).inner_passing -= script_json['props']['pending']
-
-		#var total_text = str("All ", int(parent.get_metadata(0).inner_tests), " passed")
-		#if(parent.get_metadata(0).inner_passing != parent.get_metadata(0).inner_tests):
-			#total_text = str(int(parent.get_metadata(0).inner_passing), '/', int(parent.get_metadata(0).inner_tests), ' passed.')
-		#parent.set_text(1, total_text)
-
 	var item = create_item(parent)
 	item.set_text(0, item_text)
 	var meta = {
