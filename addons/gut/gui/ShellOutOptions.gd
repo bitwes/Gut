@@ -197,23 +197,23 @@ func _add_controls():
 	button_box.add_child(_btn_in_editor)
 	_btn_blocking = _add_run_mode_button("Externally - Blocking", button_desc,
 		"Debugger is not enabled, and cannot be enabled.  All output (print, errors, warnings, etc) " +
-		"appears in the GUT panel, and [b]not[/b] the 'Output' or 'Debugger' panel.  \n" +
+		"appears in the GUT panel, and [b]not[/b] the Output or Debugger panels.  \n" +
 		"The Editor cannot be used while tests are running.  If you are trying to test for errors, this " +
 		"mode provides the best output.")
 	button_box.add_child(_btn_blocking)
 	_btn_non_blocking = _add_run_mode_button("Externally - NonBlocking", button_desc,
 		"Debugger is not enabled, and cannot be enabled.  All output (print, errors, warnings, etc) " +
-		"appears in the GUT panel, and [b]not[/b] the 'Output' or 'Debugger' panel.  \n" +
-		"Test output is streamed to the GUT panel.  The editor is not blocked, but is less " +
+		"appears in the GUT panel, and [b]not[/b] the Output or Debugger panels.  \n" +
+		"Test output is streamed to the GUT panel.  The editor is not blocked, but can be less " +
 		"responsive when there is a lot of output.  This is the only mode that supports the --headless argument." )
 	button_box.add_child(_btn_non_blocking)
-
 
 	_add_title("Command Line Arguments")
 	_arg_vbox = VBoxContainer.new()
 	_main_container.add_child(_arg_vbox)
 	opt_maker.base_container = _arg_vbox
 	_txt_additional_arguments = opt_maker.add_value("additional_arguments", additional_arguments, '', '')
+	_txt_additional_arguments.value_ctrl.placeholder_text = "Put your arguments here.  Ex:  --verbose -glog 0"
 	_txt_additional_arguments.value_ctrl.select_all_on_focus = false
 	_add_blurb(
 		"Supply any command line options for GUT and/or Godot when running externally.  You cannot use " +
