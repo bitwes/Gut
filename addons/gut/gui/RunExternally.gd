@@ -29,7 +29,6 @@ extends Control
 
 var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
 
-@onready var label = $BgControl/VBox/Label
 @onready var btn_kill_it = $BgControl/VBox/Kill
 @onready var bg_control = $BgControl
 
@@ -109,7 +108,6 @@ func _load_json():
 
 
 func _run_blocking(options):
-	label.text = "When tests finish you can use the editor again."
 	btn_kill_it.visible = false
 	var output = []
 	await get_tree().create_timer(.1).timeout
@@ -182,7 +180,6 @@ func _on_bottom_panel_resized():
 # ----------------
 func run_tests():
 	_center_me()
-	label.visible = true
 
 	var options = ["-s", "res://addons/gut/gut_cmdln.gd", "-graie", "-gdisable_colors",
 		"-gconfig", GutEditorGlobals.editor_run_gut_config_path]

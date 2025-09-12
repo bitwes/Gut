@@ -36,17 +36,14 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Title" type="Label" parent="BgControl/VBox"]
-layout_mode = 2
-text = "Running Tests"
-horizontal_alignment = 1
-
 [node name="Spacer" type="CenterContainer" parent="BgControl/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="BgControl/VBox"]
+[node name="Title" type="Label" parent="BgControl/VBox"]
 layout_mode = 2
+text = "Running Tests"
+horizontal_alignment = 1
 
 [node name="Spacer2" type="CenterContainer" parent="BgControl/VBox"]
 layout_mode = 2
