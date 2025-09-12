@@ -155,9 +155,9 @@ an immediate "=":
 	opts.add('-gpo', false, 'Print option values from all sources and the value used.')
 	opts.add('-gprint_gutconfig_sample', false, 'Print out json that can be used to make a gutconfig file.')
 
-	opts.add_heading("Internal")
-	# run as in editor, for shelling out purposes.
-	opts.add('-graie', false, 'do not use')
+	# run as in editor, for shelling out purposes through Editor.
+	var o = opts.add('-graie', false, 'do not use')
+	o.show_in_help = false
 	return opts
 
 

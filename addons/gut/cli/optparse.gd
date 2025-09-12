@@ -155,6 +155,7 @@ class Option:
 	var description = ''
 	var required = false
 	var aliases: Array[String] = []
+	var show_in_help = true
 
 
 	func _init(name,default_value,desc=''):
@@ -164,14 +165,51 @@ class Option:
 		_value = default
 
 
-	func to_s(min_space=0):
+	func wrap_text(text, left_indent, max_length, wiggle_room=15):
+		var line_indent = str("\n", " ".repeat(left_indent + 1))
+		var wrapped = ''
+		var position = 0
+		var split_length = max_length
+		while(position < text.length()):
+			if(position > 0):
+				wrapped += line_indent
+
+			var split_by = split_length
+			if(position + split_by + wiggle_room >= text.length()):
+				split_by = text.length() - position
+			else:
+				var min_space = text.rfind(' ', position + split_length)
+				var max_space = text.find(' ', position + split_length)
+				if(max_space <= position + split_length + wiggle_room):
+					split_by = max_space - position
+				else:
+					split_by = min_space - position
+
+			wrapped += text.substr(position, split_by).lstrip(' ')
+
+			if(position == 0):
+				split_length = max_length - left_indent
+
+			position += split_by
+
+
+		return wrapped
+
+
+
+	func to_s(min_space=0, wrap_length=100):
 		var line_indent = str("\n", " ".repeat(min_space + 1))
 		var subbed_desc = description
 		if not aliases.is_empty():
 			subbed_desc += "\naliases: " + ", ".join(aliases)
 		subbed_desc = subbed_desc.replace('[default]', str(default))
 		subbed_desc = subbed_desc.replace("\n", line_indent)
-		return str(option_name.rpad(min_space), ' ', subbed_desc)
+
+		var final = str(option_name.rpad(min_space), ' ', subbed_desc)
+		if(wrap_length != -1):
+			final = wrap_text(final, min_space, wrap_length)
+
+		return final
 
 
 	func has_been_set():
@@ -247,7 +285,8 @@ class Options:
 			if(heading != default_heading):
 				text += str("\n", heading.display, "\n")
 			for option in heading.options:
-				text += str('  ', option.to_s(longest + 2).replace("\n", "\n  "), "\n")
+				if(option.show_in_help):
+					text += str('  ', option.to_s(longest + 2).replace("\n", "\n  "), "\n")
 
 		return text
 
