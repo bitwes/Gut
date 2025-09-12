@@ -1,6 +1,8 @@
 ![gut logo](images/gut_logo_256x256.png)
 
 
+If you'd like to support me you can [buy me a coffee](https://buymeacoffee.com/bitwes).
+
 # GUT
 GUT (Godot Unit Test) is a unit testing framework for the [Godot Engine](https://godotengine.org/).  It allows you to write tests for your gdscript in gdscript.
 
@@ -72,7 +74,7 @@ Run your tests directly from the VSCode Editor.  Search VSCode extensions for "g
 * [Quick tutorial on setup and use](https://youtu.be/pqcA8A52CMs)
 
 
-
+Thanks for using GUT.  If you'd like to support me you can [buy me a coffee](https://buymeacoffee.com/bitwes).
 
 # License
 Gut is provided under the MIT license.  License is in `addons/gut/LICENSE.md`.
