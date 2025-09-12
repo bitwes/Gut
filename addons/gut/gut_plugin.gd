@@ -50,6 +50,8 @@ func _enter_tree():
 	_bottom_panel.menu_manager = _menu_mgr
 	add_tool_submenu_item("GUT", _menu_mgr.sub_menu)
 
+	GutEditorGlobals.gut_plugin = self
+
 
 
 func _version_conversion():
@@ -122,3 +124,20 @@ func _exit_tree():
 	_bottom_panel.queue_free()
 
 	remove_tool_menu_item("GUT") # made by _menu_mgr
+
+
+func show_output_panel():
+	if(_bottom_panel == null):
+		return
+
+	var panel = null
+	var kids = _bottom_panel.get_parent().get_children()
+	var idx = 0
+
+	while(idx < kids.size() and panel == null):
+		if(str(kids[idx]).contains("<EditorLog#")):
+			panel = kids[idx]
+		idx += 1
+
+	if(panel != null):
+		make_bottom_panel_item_visible(panel)

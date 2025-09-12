@@ -46,6 +46,7 @@ text = "Running Tests"
 horizontal_alignment = 1
 
 [node name="Spacer2" type="CenterContainer" parent="BgControl/VBox"]
+visible = false
 layout_mode = 2
 size_flags_vertical = 3
 

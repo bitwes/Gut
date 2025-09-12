@@ -35,6 +35,8 @@ var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
 var _pipe_results = {}
 var _debug_mode = false
 var _std_thread : Thread
+var _escape_regex : RegEx = RegEx.new()
+var _text_buffer = ''
 
 var bottom_panel = null :
 	set(val):
@@ -42,11 +44,16 @@ var bottom_panel = null :
 		bottom_panel.resized.connect(_on_bottom_panel_resized)
 var blocking_mode = "Blocking"
 var additional_arguments = []
+var remove_escape_characters = true
 @export var bg_color = Color.WHITE:
 	set(val):
 		bg_color = val
 		if(is_inside_tree()):
 			bg_control.get("theme_override_styles/panel").bg_color = bg_color
+
+
+signal done
+
 
 func _debug_ready():
 	_debug_mode = true
@@ -56,6 +63,7 @@ func _debug_ready():
 
 
 func _ready():
+	_escape_regex.compile("\\x1b\\[[0-9;]*m")
 	btn_kill_it.visible = false
 
 	if(get_parent() == get_tree().root):
@@ -80,13 +88,19 @@ func _output_text(text, should_scroll = true):
 	if(_debug_mode):
 		print(text)
 	else:
-		bottom_panel.add_output_text(text)
-		if(should_scroll):
-			_scroll_output_pane(-1)
+		if(remove_escape_characters):
+			text = _escape_regex.sub(text, '', true)
+
+		if(bottom_panel != null):
+			bottom_panel.add_output_text(text)
+			if(should_scroll):
+				_scroll_output_pane(-1)
+		else:
+			_text_buffer += text
 
 
 func _scroll_output_pane(line):
-	if(!_debug_mode):
+	if(!_debug_mode and bottom_panel != null):
 		var txt_ctrl = bottom_panel.get_text_output_control().get_rich_text_edit()
 		if(line == -1):
 			line = txt_ctrl.get_line_count()
@@ -103,7 +117,7 @@ func _add_arguments_to_output():
 func _load_json():
 	if(_debug_mode):
 		pass # could load file and print it if we want.
-	else:
+	elif(bottom_panel != null):
 		bottom_panel.load_result_json()
 
 
@@ -189,3 +203,17 @@ func run_tests():
 		_run_blocking(options)
 	else:
 		_run_non_blocking(options)
+
+
+func get_godot_help():
+	_text_buffer = ''
+	var options = ["--help", "--headless"]
+	await _run_blocking(options)
+	return _text_buffer
+
+
+func get_gut_help():
+	_text_buffer = ''
+	var options = ["-s", "res://addons/gut/gut_cmdln.gd", "-gh", "--headless"]
+	await _run_blocking(options)
+	return _text_buffer
