@@ -2,7 +2,7 @@
 extends EditorPlugin
 
 var VersionConversion = load("res://addons/gut/version_conversion.gd")
-var MenuManager = load("res://addons/gut/menu_manager.gd")
+var MenuManager = load("res://addons/gut/gut_menu.gd")
 var GutWindow = load("res://addons/gut/gui/GutEditorWindow.tscn")
 var BottomPanelScene = preload('res://addons/gut/gui/GutBottomPanel.tscn')
 var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
