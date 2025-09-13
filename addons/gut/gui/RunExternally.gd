@@ -52,9 +52,6 @@ var remove_escape_characters = true
 			bg_control.get("theme_override_styles/panel").bg_color = bg_color
 
 
-signal done
-
-
 func _debug_ready():
 	_debug_mode = true
 	additional_arguments = ['-gselect', 'test_awaiter.gd', '-gconfig', 'res://.gutconfig.json'] # '-gunit_test_name', 'test_can_clear_spies'
