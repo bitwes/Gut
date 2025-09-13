@@ -260,6 +260,10 @@ func run_tests(options = null):
 		_config.options = _config_gui.get_options(_config.options)
 	else:
 		_config.options = options
+		
+	# We ar running from within the game, so we should not exit, ever.
+	_config.options.should_exit_on_success = false
+	_config.options.should_exit = false
 
 	_gut_runner.get_gut().get_test_collector().clear()
 	_gut_runner.set_gut_config(_config)
