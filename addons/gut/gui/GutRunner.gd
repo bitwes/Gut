@@ -184,8 +184,9 @@ func run_tests(show_gui=true):
 			_gut_layer.add_child(gut)
 		else:
 			add_child(gut)
-
-	gut.end_run.connect(_on_tests_finished)
+	
+	if(!gut.end_run.is_connected(_on_tests_finished)):
+		gut.end_run.connect(_on_tests_finished)
 
 	gut_config.apply_options(gut)
 	var run_rest_of_scripts = gut_config.options.unit_test_name == ''

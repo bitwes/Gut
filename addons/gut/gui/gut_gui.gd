@@ -38,7 +38,6 @@ var _max_position = Vector2(100, 100)
 
 func _ready():
 	_populate_ctrls()
-	GutUtils.pretty_print(_ctrls)
 
 	_ctrls.btn_continue.visible = false
 	_ctrls.btn_continue.pressed.connect(_on_continue_pressed)

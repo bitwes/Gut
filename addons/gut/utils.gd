@@ -55,7 +55,7 @@ static var GutScene = load('res://addons/gut/GutScene.tscn')
 static var LazyLoader = load('res://addons/gut/lazy_loader.gd')
 static var VersionNumbers = load("res://addons/gut/version_numbers.gd")
 static var WarningsManager = load("res://addons/gut/warnings_manager.gd")
-static var EditorGlobals = load("res://addons/gut/gui/editor_globals.gd")
+static var EditorGlobals = null
 static var RunExternallyScene = load("res://addons/gut/gui/RunExternally.tscn")
 
 # --------------------------------
@@ -233,6 +233,11 @@ static func create_script_from_source(source, override_path=null):
 	WarningsManager.enable_warnings(are_warnings_enabled)
 
 	return DynamicScript
+
+
+static func _init():
+	if(Engine.is_editor_hint()):
+		EditorGlobals = load("res://addons/gut/gui/editor_globals.gd")
 
 
 static func godot_version_string():
