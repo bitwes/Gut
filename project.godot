@@ -40,4 +40,5 @@ limits/debugger_stdout/max_chars_per_second=8192
 
 [rendering]
 
+textures/vram_compression/import_etc2_astc=true
 environment/default_environment="res://default_env.tres"
