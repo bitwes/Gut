@@ -2,7 +2,7 @@
 extends EditorPlugin
 
 var VersionConversion = load("res://addons/gut/version_conversion.gd")
-var MenuManager = load("res://addons/gut/menu_manager.gd")
+var MenuManager = load("res://addons/gut/gut_menu.gd")
 var GutWindow = load("res://addons/gut/gui/GutEditorWindow.tscn")
 var BottomPanelScene = preload('res://addons/gut/gui/GutBottomPanel.tscn')
 var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
@@ -50,6 +50,8 @@ func _enter_tree():
 	_bottom_panel.menu_manager = _menu_mgr
 	add_tool_submenu_item("GUT", _menu_mgr.sub_menu)
 
+	GutEditorGlobals.gut_plugin = self
+
 
 
 func _version_conversion():
@@ -72,6 +74,7 @@ func gut_as_window():
 		_gut_window.interface = get_editor_interface()
 
 	_gut_window.add_gut_panel(_bottom_panel)
+	_bottom_panel.make_floating_btn.visible = false
 	_gut_button = null
 	_dock_mode = 'window'
 
@@ -82,6 +85,8 @@ func gut_as_panel():
 	_gut_button.shortcut_in_tooltip = true
 	_dock_mode = 'panel'
 	_bottom_panel._apply_shortcuts()
+	_bottom_panel.results_horiz_layout()
+	_bottom_panel.make_floating_btn.visible = true
 
 	if(_gut_window != null):
 		_gut_window.queue_free()
@@ -119,3 +124,20 @@ func _exit_tree():
 	_bottom_panel.queue_free()
 
 	remove_tool_menu_item("GUT") # made by _menu_mgr
+
+
+func show_output_panel():
+	if(_bottom_panel == null):
+		return
+
+	var panel = null
+	var kids = _bottom_panel.get_parent().get_children()
+	var idx = 0
+
+	while(idx < kids.size() and panel == null):
+		if(str(kids[idx]).contains("<EditorLog#")):
+			panel = kids[idx]
+		idx += 1
+
+	if(panel != null):
+		make_bottom_panel_item_visible(panel)

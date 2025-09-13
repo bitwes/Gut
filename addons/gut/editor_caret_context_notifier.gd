@@ -14,18 +14,6 @@ extends Node
 #		* CodeEdit
 # ##############################################################################
 
-# Based on cursor and open editors, this will be emitted.  You do what you
-# want with it.
-signal it_changed(change_data)
-
-# In order to keep the data that comes back from the emitted signal way more
-# usable, we have to know what GUT looks for for an inner-test-class prefix.
-# If we didn't do this, then this thing would have to return all the inner
-# classes and then we'd have to determine if we were in an inner-test-class
-# outside of here by traversing all the classes returned.  It makes this thing
-# less generic and know too much, but this is probably already too generic as
-# it is.
-var inner_class_prefix = "Test"
 
 var _last_info : Dictionary = {}
 var _last_line = -1
@@ -36,9 +24,26 @@ var _current_script = null
 var _current_script_is_test_script = false
 var _current_editor_base : ScriptEditorBase = null
 var _current_editor : CodeEdit = null
-
 # Quick lookup of editors based on the current script.
 var _editors_for_scripts : Dictionary= {}
+
+
+# In order to keep the data that comes back from the emitted signal way more
+# usable, we have to know what GUT looks for for an inner-test-class prefix.
+# If we didn't do this, then this thing would have to return all the inner
+# classes and then we'd have to determine if we were in an inner-test-class
+# outside of here by traversing all the classes returned.  It makes this thing
+# less generic and know too much, but this is probably already too generic as
+# it is.
+var inner_class_prefix = "Test"
+var method_prefix = "test_"
+var script_prefix = "test_"
+var script_suffix = ".gd"
+
+
+# Based on cursor and open editors, this will be emitted.  You do what you
+# want with it.
+signal it_changed(change_data)
 
 
 func _ready():
@@ -156,26 +161,37 @@ func _on_caret_changed(which):
 	if(which == _current_editor):
 		_handle_caret_location(which)
 
+
+func _could_be_test_script(script):
+	return 	script.resource_path.get_file().begins_with(script_prefix) and \
+		script.resource_path.get_file().ends_with(script_suffix)
+
 # -------------
 # Public
 # -------------
 var _scripts_that_have_been_warned_about = []
+var _we_have_warned_enough = false
+var _max_warnings = 5
 func is_test_script(script):
-	var from = script.get_base_script()
-	if(from == null and script.get_script_method_list().size() == 0):
-		if(OS.is_stdout_verbose() or !_scripts_that_have_been_warned_about.has(script.resource_path)):
-			push_warning(str('[GUT] Treating ', script.resource_path, " as test script:  ", 
-				"GUT was not able to retrieve information about this script.  This may ", 
+	var base = script.get_base_script()
+	if(base == null and script.get_script_method_list().size() == 0 and _could_be_test_script(script)):
+		if(OS.is_stdout_verbose() or (!_scripts_that_have_been_warned_about.has(script.resource_path) and !_we_have_warned_enough)):
+			_scripts_that_have_been_warned_about.append(script.resource_path)
+			push_warning(str('[GUT] Treating ', script.resource_path, " as test script:  ",
+				"GUT was not able to retrieve information about this script.  This may ",
 				"have to do with having VSCode open.  Restarting Godot sometimes helps.  See ",
 				"https://github.com/bitwes/Gut/issues/754"))
-			_scripts_that_have_been_warned_about.append(script.resource_path)
+			if(!OS.is_stdout_verbose() and _scripts_that_have_been_warned_about.size() >= _max_warnings):
+				print("[GUT] Disabling warning.")
+				_we_have_warned_enough = true
+
 		# We can't know if this is a test script.  It's more usable if we
 		# assume this is a test script.
 		return true
 	else:
-		while(from and from.resource_path != 'res://addons/gut/test.gd'):
-			from = from.get_base_script()
-		return from != null
+		while(base and base.resource_path != 'res://addons/gut/test.gd'):
+			base = base.get_base_script()
+		return base != null
 
 
 func get_info():

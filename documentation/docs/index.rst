@@ -19,10 +19,10 @@
    Creating-Tests
    Awaiting
    Inner-Test-Classes
+   Error-Tracking
    Parameterized-Tests
    Simulate
    Comparing-Things
-   Error-Tracking
 
 
 .. toctree::
@@ -48,7 +48,6 @@
    Hooks
    Memory-Management
    Mocking-Input
-   Orphans
    Running-On-Devices
    GDScript-Warnings
    Contributing

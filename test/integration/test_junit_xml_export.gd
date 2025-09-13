@@ -106,7 +106,7 @@ func test_write_file_creates_file():
 	await run_scripts(_test_gut, 'test_simple_2.gd')
 	var fname = "user://test_junit_exporter.xml"
 	var re = JunitExporter.new()
-	var result = re.write_file(_test_gut, fname)
+	re.write_file(_test_gut, fname)
 	assert_file_not_empty(fname)
 	gut.file_delete(fname)
 

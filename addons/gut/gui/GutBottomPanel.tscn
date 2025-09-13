@@ -39,67 +39,196 @@ shortcut = SubResource("9")
 text = "Run All"
 icon = ExtResource("4")
 
-[node name="Label" type="Label" parent="layout/ControlBar"]
+[node name="Sep3" type="ColorRect" parent="layout/ControlBar"]
+custom_minimum_size = Vector2(1, 2.08165e-12)
 layout_mode = 2
-mouse_filter = 1
-text = "Current:  "
 
 [node name="RunAtCursor" parent="layout/ControlBar" instance=ExtResource("3")]
+custom_minimum_size = Vector2(648, 0)
 layout_mode = 2
 
 [node name="CenterContainer2" type="CenterContainer" parent="layout/ControlBar"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="RunMode" type="Button" parent="layout/ControlBar"]
+[node name="MakeFloating" type="Button" parent="layout/ControlBar"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Move the GUT panel to a window."
+icon = ExtResource("4_xv2r3")
+flat = true
+
+[node name="ControlBar2" type="HBoxContainer" parent="layout"]
+layout_mode = 2
+
+[node name="Sep2" type="ColorRect" parent="layout/ControlBar2"]
+custom_minimum_size = Vector2(1, 2.08165e-12)
+layout_mode = 2
+color = Color(1, 1, 1, 0)
+
+[node name="StatusIndicator" type="Control" parent="layout/ControlBar2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+
+[node name="Passing" type="HBoxContainer" parent="layout/ControlBar2"]
+visible = false
+layout_mode = 2
+
+[node name="Sep" type="ColorRect" parent="layout/ControlBar2/Passing"]
+custom_minimum_size = Vector2(1, 2.08165e-12)
+layout_mode = 2
+
+[node name="label" type="Label" parent="layout/ControlBar2/Passing"]
+layout_mode = 2
+text = "Pass"
+
+[node name="passing_value" type="Label" parent="layout/ControlBar2/Passing"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "---"
+
+[node name="Failing" type="HBoxContainer" parent="layout/ControlBar2"]
+visible = false
+layout_mode = 2
+
+[node name="Sep" type="ColorRect" parent="layout/ControlBar2/Failing"]
+custom_minimum_size = Vector2(1, 2.08165e-12)
+layout_mode = 2
+
+[node name="label" type="Label" parent="layout/ControlBar2/Failing"]
+layout_mode = 2
+text = "Fail"
+
+[node name="failing_value" type="Label" parent="layout/ControlBar2/Failing"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "---"
+
+[node name="Pending" type="HBoxContainer" parent="layout/ControlBar2"]
+visible = false
+layout_mode = 2
+
+[node name="Sep" type="ColorRect" parent="layout/ControlBar2/Pending"]
+custom_minimum_size = Vector2(1, 2.08165e-12)
+layout_mode = 2
+
+[node name="label" type="Label" parent="layout/ControlBar2/Pending"]
+layout_mode = 2
+text = "Risky"
+
+[node name="pending_value" type="Label" parent="layout/ControlBar2/Pending"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "---"
+
+[node name="Orphans" type="HBoxContainer" parent="layout/ControlBar2"]
+visible = false
+layout_mode = 2
+
+[node name="Sep" type="ColorRect" parent="layout/ControlBar2/Orphans"]
+custom_minimum_size = Vector2(1, 2.08165e-12)
+layout_mode = 2
+
+[node name="label" type="Label" parent="layout/ControlBar2/Orphans"]
+layout_mode = 2
+text = "Orphans"
+
+[node name="orphans_value" type="Label" parent="layout/ControlBar2/Orphans"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "---"
+
+[node name="Errors" type="HBoxContainer" parent="layout/ControlBar2"]
+visible = false
+layout_mode = 2
+
+[node name="Sep" type="ColorRect" parent="layout/ControlBar2/Errors"]
+custom_minimum_size = Vector2(1, 2.08165e-12)
+layout_mode = 2
+
+[node name="label" type="Label" parent="layout/ControlBar2/Errors"]
+layout_mode = 2
+text = "Errors"
+
+[node name="errors_value" type="Label" parent="layout/ControlBar2/Errors"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "---"
+
+[node name="Warnings" type="HBoxContainer" parent="layout/ControlBar2"]
+visible = false
+layout_mode = 2
+
+[node name="Sep" type="ColorRect" parent="layout/ControlBar2/Warnings"]
+custom_minimum_size = Vector2(1, 2.08165e-12)
+layout_mode = 2
+
+[node name="label" type="Label" parent="layout/ControlBar2/Warnings"]
+layout_mode = 2
+text = "Warnings"
+
+[node name="warnings_value" type="Label" parent="layout/ControlBar2/Warnings"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "---"
+
+[node name="CenterContainer" type="CenterContainer" parent="layout/ControlBar2"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ExtraButtons" type="HBoxContainer" parent="layout/ControlBar2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Sep1" type="ColorRect" parent="layout/ControlBar2/ExtraButtons"]
+custom_minimum_size = Vector2(1, 2.08165e-12)
+layout_mode = 2
+
+[node name="RunMode" type="Button" parent="layout/ControlBar2/ExtraButtons"]
 layout_mode = 2
 tooltip_text = "Run Mode.  Run tests through the editor or externally in a different process."
 text = "ExN"
 icon = ExtResource("4_xv2r3")
 
-[node name="Sep1" type="ColorRect" parent="layout/ControlBar"]
+[node name="Sep2" type="ColorRect" parent="layout/ControlBar2/ExtraButtons"]
 custom_minimum_size = Vector2(1, 2.08165e-12)
 layout_mode = 2
 
-[node name="RunResultsBtn" type="Button" parent="layout/ControlBar"]
+[node name="RunResultsBtn" type="Button" parent="layout/ControlBar2/ExtraButtons"]
 layout_mode = 2
 tooltip_text = "Show/Hide Result Tree"
 toggle_mode = true
 button_pressed = true
 icon = ExtResource("4_xv2r3")
 
-[node name="OutputBtn" type="Button" parent="layout/ControlBar"]
+[node name="OutputBtn" type="Button" parent="layout/ControlBar2/ExtraButtons"]
 layout_mode = 2
 tooltip_text = "Show/Hide Text Output"
 toggle_mode = true
 button_pressed = true
 icon = ExtResource("4_xv2r3")
 
-[node name="Settings" type="Button" parent="layout/ControlBar"]
+[node name="Settings" type="Button" parent="layout/ControlBar2/ExtraButtons"]
 layout_mode = 2
 tooltip_text = "GUT Settings"
 toggle_mode = true
 button_pressed = true
 icon = ExtResource("4_xv2r3")
 
-[node name="Sep2" type="ColorRect" parent="layout/ControlBar"]
+[node name="Sep3" type="ColorRect" parent="layout/ControlBar2/ExtraButtons"]
 custom_minimum_size = Vector2(1, 2.08165e-12)
 layout_mode = 2
 
-[node name="Shortcuts" type="Button" parent="layout/ControlBar"]
+[node name="Shortcuts" type="Button" parent="layout/ControlBar2/ExtraButtons"]
 layout_mode = 2
 size_flags_vertical = 11
 tooltip_text = "GUT Shortcuts"
 icon = ExtResource("4_xv2r3")
 
-[node name="About" type="Button" parent="layout/ControlBar"]
+[node name="About" type="Button" parent="layout/ControlBar2/ExtraButtons"]
 layout_mode = 2
 text = "A"
-
-[node name="ToWindow" type="Button" parent="layout/ControlBar"]
-layout_mode = 2
-tooltip_text = "Move the GUT panel to a window."
-icon = ExtResource("4_xv2r3")
 
 [node name="RSplit" type="HSplitContainer" parent="layout"]
 layout_mode = 2
@@ -111,129 +240,28 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="ControlBar" type="HBoxContainer" parent="layout/RSplit/CResults"]
-layout_mode = 2
-
-[node name="Sep2" type="ColorRect" parent="layout/RSplit/CResults/ControlBar"]
-custom_minimum_size = Vector2(1, 2.08165e-12)
-layout_mode = 2
-
-[node name="Light3D" type="Control" parent="layout/RSplit/CResults/ControlBar"]
-custom_minimum_size = Vector2(30, 30)
-layout_mode = 2
-
-[node name="Passing" type="HBoxContainer" parent="layout/RSplit/CResults/ControlBar"]
-visible = false
-layout_mode = 2
-
-[node name="Sep" type="ColorRect" parent="layout/RSplit/CResults/ControlBar/Passing"]
-custom_minimum_size = Vector2(1, 2.08165e-12)
-layout_mode = 2
-
-[node name="label" type="Label" parent="layout/RSplit/CResults/ControlBar/Passing"]
-layout_mode = 2
-text = "Passing"
-
-[node name="value" type="Label" parent="layout/RSplit/CResults/ControlBar/Passing"]
-layout_mode = 2
-text = "---"
-
-[node name="Failing" type="HBoxContainer" parent="layout/RSplit/CResults/ControlBar"]
-visible = false
-layout_mode = 2
-
-[node name="Sep" type="ColorRect" parent="layout/RSplit/CResults/ControlBar/Failing"]
-custom_minimum_size = Vector2(1, 2.08165e-12)
-layout_mode = 2
-
-[node name="label" type="Label" parent="layout/RSplit/CResults/ControlBar/Failing"]
-layout_mode = 2
-text = "Failing"
-
-[node name="value" type="Label" parent="layout/RSplit/CResults/ControlBar/Failing"]
-layout_mode = 2
-text = "---"
-
-[node name="Pending" type="HBoxContainer" parent="layout/RSplit/CResults/ControlBar"]
-visible = false
-layout_mode = 2
-
-[node name="Sep" type="ColorRect" parent="layout/RSplit/CResults/ControlBar/Pending"]
-custom_minimum_size = Vector2(1, 2.08165e-12)
-layout_mode = 2
-
-[node name="label" type="Label" parent="layout/RSplit/CResults/ControlBar/Pending"]
-layout_mode = 2
-text = "Pending"
-
-[node name="value" type="Label" parent="layout/RSplit/CResults/ControlBar/Pending"]
-layout_mode = 2
-text = "---"
-
-[node name="Orphans" type="HBoxContainer" parent="layout/RSplit/CResults/ControlBar"]
-visible = false
-layout_mode = 2
-
-[node name="Sep" type="ColorRect" parent="layout/RSplit/CResults/ControlBar/Orphans"]
-custom_minimum_size = Vector2(1, 2.08165e-12)
-layout_mode = 2
-
-[node name="label" type="Label" parent="layout/RSplit/CResults/ControlBar/Orphans"]
-layout_mode = 2
-text = "Orphans"
-
-[node name="value" type="Label" parent="layout/RSplit/CResults/ControlBar/Orphans"]
-layout_mode = 2
-text = "---"
-
-[node name="Errors" type="HBoxContainer" parent="layout/RSplit/CResults/ControlBar"]
-visible = false
-layout_mode = 2
-
-[node name="Sep" type="ColorRect" parent="layout/RSplit/CResults/ControlBar/Errors"]
-custom_minimum_size = Vector2(1, 2.08165e-12)
-layout_mode = 2
-
-[node name="label" type="Label" parent="layout/RSplit/CResults/ControlBar/Errors"]
-layout_mode = 2
-text = "Errors"
-
-[node name="value" type="Label" parent="layout/RSplit/CResults/ControlBar/Errors"]
-layout_mode = 2
-text = "---"
-
-[node name="Warnings" type="HBoxContainer" parent="layout/RSplit/CResults/ControlBar"]
-visible = false
-layout_mode = 2
-
-[node name="Sep" type="ColorRect" parent="layout/RSplit/CResults/ControlBar/Warnings"]
-custom_minimum_size = Vector2(1, 2.08165e-12)
-layout_mode = 2
-
-[node name="label" type="Label" parent="layout/RSplit/CResults/ControlBar/Warnings"]
-layout_mode = 2
-text = "Warnings"
-
-[node name="value" type="Label" parent="layout/RSplit/CResults/ControlBar/Warnings"]
-layout_mode = 2
-text = "---"
-
-[node name="CenterContainer" type="CenterContainer" parent="layout/RSplit/CResults/ControlBar"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="TabBar" type="HSplitContainer" parent="layout/RSplit/CResults"]
+[node name="HSplitResults" type="HSplitContainer" parent="layout/RSplit/CResults"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="RunResults" parent="layout/RSplit/CResults/TabBar" instance=ExtResource("5")]
+[node name="RunResults" parent="layout/RSplit/CResults/HSplitResults" instance=ExtResource("5")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(255, 255)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="OutputText" parent="layout/RSplit/CResults/TabBar" instance=ExtResource("6")]
+[node name="OutputText" parent="layout/RSplit/CResults/HSplitResults" instance=ExtResource("6")]
+unique_name_in_owner = true
 layout_mode = 2
+
+[node name="VSplitResults" type="VSplitContainer" parent="layout/RSplit/CResults"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
 
 [node name="sc" type="ScrollContainer" parent="layout/RSplit"]
 custom_minimum_size = Vector2(500, 2.08165e-12)
@@ -254,13 +282,13 @@ visible = false
 
 [connection signal="pressed" from="layout/ControlBar/RunAll" to="." method="_on_RunAll_pressed"]
 [connection signal="run_tests" from="layout/ControlBar/RunAtCursor" to="." method="_on_RunAtCursor_run_tests"]
-[connection signal="pressed" from="layout/ControlBar/RunMode" to="." method="_on_run_mode_pressed"]
-[connection signal="pressed" from="layout/ControlBar/RunResultsBtn" to="." method="_on_RunResultsBtn_pressed"]
-[connection signal="pressed" from="layout/ControlBar/OutputBtn" to="." method="_on_OutputBtn_pressed"]
-[connection signal="pressed" from="layout/ControlBar/Settings" to="." method="_on_Settings_pressed"]
-[connection signal="pressed" from="layout/ControlBar/Shortcuts" to="." method="_on_Shortcuts_pressed"]
-[connection signal="pressed" from="layout/ControlBar/About" to="." method="_on_about_pressed"]
-[connection signal="pressed" from="layout/ControlBar/ToWindow" to="." method="_on_to_window_pressed"]
-[connection signal="draw" from="layout/RSplit/CResults/ControlBar/Light3D" to="." method="_on_Light_draw"]
+[connection signal="pressed" from="layout/ControlBar/MakeFloating" to="." method="_on_to_window_pressed"]
+[connection signal="draw" from="layout/ControlBar2/StatusIndicator" to="." method="_on_Light_draw"]
+[connection signal="pressed" from="layout/ControlBar2/ExtraButtons/RunMode" to="." method="_on_run_mode_pressed"]
+[connection signal="pressed" from="layout/ControlBar2/ExtraButtons/RunResultsBtn" to="." method="_on_RunResultsBtn_pressed"]
+[connection signal="pressed" from="layout/ControlBar2/ExtraButtons/OutputBtn" to="." method="_on_OutputBtn_pressed"]
+[connection signal="pressed" from="layout/ControlBar2/ExtraButtons/Settings" to="." method="_on_Settings_pressed"]
+[connection signal="pressed" from="layout/ControlBar2/ExtraButtons/Shortcuts" to="." method="_on_Shortcuts_pressed"]
+[connection signal="pressed" from="layout/ControlBar2/ExtraButtons/About" to="." method="_on_about_pressed"]
 [connection signal="confirmed" from="ShortcutDialog" to="." method="_on_sortcut_dialog_confirmed"]
 [connection signal="confirmed" from="ShellOutOptions" to="." method="_on_shell_out_options_confirmed"]

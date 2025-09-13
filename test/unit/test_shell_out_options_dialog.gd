@@ -39,3 +39,5 @@ func test_invalid_arguments(p = use_parameters(invalid_args)):
 	assert_eq(inst.validate_arguments(), p.valid_blocking, str('"',p.args, '" is valid for blocking'))
 	inst.run_mode = inst.RUN_MODE_NON_BLOCKING
 	assert_eq(inst.validate_arguments(), p.valid_non_blocking, str('"', p.args, '" is valid for non-blocking'))
+
+

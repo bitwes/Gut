@@ -47,6 +47,15 @@ func _on_close_requested() -> void:
 	gut_plugin.toggle_windowed()
 
 
+
+func _on_vert_layout_pressed() -> void:
+	_bottom_panel.results_vert_layout()
+
+
+func _on_horiz_layout_pressed() -> void:
+	_bottom_panel.results_horiz_layout()
+
+
 # --------
 # Public
 # --------
@@ -64,7 +73,7 @@ func add_gut_panel(panel : Control):
 	theme = interface.get_editor_theme()
 	var settings = interface.get_editor_settings()
 	$ColorRect.color = settings.get_setting("interface/theme/base_color")
-	
+
 	set_gut_shortcuts(_bottom_panel._ctrls.shortcut_dialog)
 
 

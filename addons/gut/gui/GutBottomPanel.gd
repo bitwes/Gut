@@ -36,35 +36,35 @@ var menu_manager = null :
 
 
 @onready var _ctrls = {
-	output = $layout/RSplit/CResults/TabBar/OutputText.get_rich_text_edit(),
-	output_ctrl = $layout/RSplit/CResults/TabBar/OutputText,
+	about = %ExtraButtons/About,
+	light = %StatusIndicator,
+	output_button = %ExtraButtons/OutputBtn,
 	run_button = $layout/ControlBar/RunAll,
-	shortcuts_button = $layout/ControlBar/Shortcuts,
-
-	settings_button = $layout/ControlBar/Settings,
-	run_results_button = $layout/ControlBar/RunResultsBtn,
-	output_button = $layout/ControlBar/OutputBtn,
-
-	settings = $layout/RSplit/sc/Settings,
-	shortcut_dialog = $ShortcutDialog,
-	light = $layout/RSplit/CResults/ControlBar/Light3D,
-	results = {
-		bar = $layout/RSplit/CResults/ControlBar,
-		passing = $layout/RSplit/CResults/ControlBar/Passing/value,
-		failing = $layout/RSplit/CResults/ControlBar/Failing/value,
-		pending = $layout/RSplit/CResults/ControlBar/Pending/value,
-		errors = $layout/RSplit/CResults/ControlBar/Errors/value,
-		warnings = $layout/RSplit/CResults/ControlBar/Warnings/value,
-		orphans = $layout/RSplit/CResults/ControlBar/Orphans/value
-	},
-	run_at_cursor = $layout/ControlBar/RunAtCursor,
-	run_results = $layout/RSplit/CResults/TabBar/RunResults,
-
 	run_externally_dialog = $ShellOutOptions,
-	run_mode = $layout/ControlBar/RunMode,
-	to_window = $layout/ControlBar/ToWindow,
-	about = $layout/ControlBar/About,
+	run_mode = %ExtraButtons/RunMode,
+	run_at_cursor = $layout/ControlBar/RunAtCursor,
+	run_results_button = %ExtraButtons/RunResultsBtn,
+	settings = $layout/RSplit/sc/Settings,
+	settings_button = %ExtraButtons/Settings,
+	shortcut_dialog = $ShortcutDialog,
+	shortcuts_button = %ExtraButtons/Shortcuts,
+
+	results = {
+		bar = $layout/ControlBar2,
+		errors = %errors_value,
+		failing = %failing_value,
+		orphans = %orphans_value,
+		passing = %passing_value,
+		pending = %pending_value,
+		warnings = %warnings_value,
+	},
 }
+
+@onready var results_v_split = %VSplitResults
+@onready var results_h_split = %HSplitResults
+@onready var results_tree = %RunResults
+@onready var results_text = %OutputText
+@onready var make_floating_btn = %MakeFloating
 
 
 func _ready():
@@ -86,23 +86,25 @@ func _ready():
 	_ctrls.settings_button.icon = get_theme_icon('Tools', 'EditorIcons')
 	_ctrls.run_results_button.icon = get_theme_icon('AnimationTrackGroup', 'EditorIcons') # Tree
 	_ctrls.output_button.icon = get_theme_icon('Font', 'EditorIcons')
-	_ctrls.to_window.icon = get_theme_icon("MakeFloating", 'EditorIcons')
-	_ctrls.to_window.text = ''
+	make_floating_btn.icon = get_theme_icon("MakeFloating", 'EditorIcons')
+	make_floating_btn.text = ''
 	_ctrls.about.icon = get_theme_icon('Info', 'EditorIcons')
 	_ctrls.about.text = ''
 	_ctrls.run_mode.icon = get_theme_icon("ViewportSpeed", 'EditorIcons')
 
-	_ctrls.run_results.set_output_control(_ctrls.output_ctrl)
+	results_tree.set_output_control(results_text)
 
-	var check_import = load('res://addons/gut/images/red.png')
+	var check_import = load('res://addons/gut/images/HSplitContainer.svg')
 	if(check_import == null):
-		_ctrls.run_results.add_centered_text("GUT got some new images that are not imported yet.  Please restart Godot.")
+		results_tree.add_centered_text("GUT got some new images that are not imported yet.  Please restart Godot.")
 		print('GUT got some new images that are not imported yet.  Please restart Godot.')
 	else:
-		_ctrls.run_results.add_centered_text("Let's run some tests!")
+		results_tree.add_centered_text("Let's run some tests!")
 
 	_ctrls.run_externally_dialog.load_from_file()
 	_apply_options_to_controls()
+
+	results_vert_layout()
 
 
 func _process(_delta):
@@ -113,7 +115,7 @@ func _process(_delta):
 				show_me()
 		elif(!_interface.is_playing_scene()):
 			_is_running = false
-			_ctrls.output_ctrl.add_text("\ndone")
+			results_text.add_text("\ndone")
 			load_result_output()
 			show_me()
 
@@ -125,7 +127,7 @@ func _apply_options_to_controls():
 	hide_settings(_user_prefs.hide_settings.value)
 	hide_result_tree(_user_prefs.hide_result_tree.value)
 	hide_output_text(_user_prefs.hide_output_text.value)
-	_ctrls.run_results.set_show_orphans(!_gut_config.options.hide_orphans)
+	results_tree.set_show_orphans(!_gut_config.options.hide_orphans)
 	var shell_dialog_size = _user_prefs.run_externally_options_dialog_size.value
 
 	if(shell_dialog_size != Vector2i(-1, -1)):
@@ -140,6 +142,9 @@ func _apply_options_to_controls():
 	elif(_ctrls.run_externally_dialog.run_mode == _ctrls.run_externally_dialog.RUN_MODE_NON_BLOCKING):
 		mode_ind = 'ExN'
 	_ctrls.run_mode.text = mode_ind
+
+	_ctrls.run_at_cursor.apply_gut_config(_gut_config)
+
 
 
 func _disable_run_buttons(should):
@@ -156,12 +161,12 @@ func _is_test_script(script):
 
 
 func _show_errors(errs):
-	_ctrls.output_ctrl.clear()
+	results_text.clear()
 	var text = "Cannot run tests, you have a configuration error:\n"
 	for e in errs:
 		text += str('*  ', e, "\n")
 	text += "Check your settings ----->"
-	_ctrls.output_ctrl.add_text(text)
+	results_text.add_text(text)
 	hide_output_text(false)
 	hide_settings(false)
 
@@ -219,12 +224,12 @@ func _run_tests():
 	_save_config()
 	_apply_options_to_controls()
 
-	_ctrls.output_ctrl.clear()
-	_ctrls.run_results.clear()
-	_ctrls.run_results.add_centered_text('Running...')
+	results_text.clear()
+	results_tree.clear()
+	results_tree.add_centered_text('Running...')
 
 	_is_running = true
-	_ctrls.output_ctrl.add_text('Running...')
+	results_text.add_text('Running...')
 
 	if(_ctrls.run_externally_dialog.should_run_externally()):
 		_gut_plugin.make_bottom_panel_item_visible(self)
@@ -248,7 +253,7 @@ func _apply_shortcuts():
 	# Took this out because it seems to break using the shortcut when docked.
 	# Though it does allow the shortcut to work when windowed.  Shortcuts
 	# are weird.
-	# _ctrls.to_window.shortcut = \
+	# make_floating_btn.shortcut = \
 	# 	_ctrls.shortcut_dialog.scbtn_windowed.get_shortcut()
 
 
@@ -353,7 +358,7 @@ func load_shortcuts():
 
 
 func hide_result_tree(should):
-	_ctrls.run_results.visible = !should
+	results_tree.visible = !should
 	_ctrls.run_results_button.button_pressed = !should
 
 
@@ -373,7 +378,7 @@ func hide_settings(should):
 
 
 func hide_output_text(should):
-	$layout/RSplit/CResults/TabBar/OutputText.visible = !should
+	results_text.visible = !should
 	_ctrls.output_button.button_pressed = !should
 
 
@@ -406,7 +411,7 @@ func load_result_json():
 		return
 	var results = test_json_conv.get_data()
 
-	_ctrls.run_results.load_json_results(results)
+	results_tree.load_json_results(results)
 
 	var summary_json = results['test_scripts']['props']
 	_ctrls.results.passing.text = str(int(summary_json.passing))
@@ -415,7 +420,7 @@ func load_result_json():
 	_ctrls.results.failing.text = str(int(summary_json.failures))
 	_ctrls.results.failing.get_parent().visible = true
 
-	_ctrls.results.pending.text = str(int(summary_json.pending))
+	_ctrls.results.pending.text = str(int(summary_json.pending) + int(summary_json.risky))
 	_ctrls.results.pending.get_parent().visible = _ctrls.results.pending.text != '0'
 
 	_ctrls.results.errors.text = str(int(summary_json.errors))
@@ -431,7 +436,7 @@ func load_result_json():
 		_light_color = Color(1, 0, 0, .75)
 	elif(summary_json.failures != 0):
 		_light_color = Color(1, 0, 0, .75)
-	elif(summary_json.pending != 0):
+	elif(summary_json.pending != 0 or summary_json.risky != 0):
 		_light_color = Color(1, 1, 0, .75)
 	else:
 		_light_color = Color(0, 1, 0, .75)
@@ -440,7 +445,7 @@ func load_result_json():
 
 
 func load_result_text():
-	_ctrls.output_ctrl.load_file(GutEditorGlobals.editor_run_bbcode_results_path)
+	results_text.load_file(GutEditorGlobals.editor_run_bbcode_results_path)
 
 
 func load_result_output():
@@ -450,7 +455,7 @@ func load_result_output():
 
 func set_interface(value):
 	_interface = value
-	_ctrls.run_results.set_interface(_interface)
+	results_tree.set_interface(_interface)
 
 
 func set_plugin(value):
@@ -480,11 +485,11 @@ func get_file_as_text(path):
 
 
 func get_text_output_control():
-	return _ctrls.output_ctrl
+	return results_text
 
 
 func add_output_text(text):
-	_ctrls.output_ctrl.add_text(text)
+	results_text.add_text(text)
 
 
 func show_about():
@@ -520,3 +525,19 @@ func show_hide():
 
 func get_shortcut_dialog():
 	return _ctrls.shortcut_dialog
+
+
+func results_vert_layout():
+	if(results_tree.get_parent() != results_v_split):
+		results_tree.reparent(results_v_split)
+		results_text.reparent(results_v_split)
+		results_v_split.visible = true
+		results_h_split.visible = false
+
+
+func results_horiz_layout():
+	if(results_tree.get_parent() != results_h_split):
+		results_tree.reparent(results_h_split)
+		results_text.reparent(results_h_split)
+		results_v_split.visible = false
+		results_h_split.visible = true

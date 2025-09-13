@@ -12,8 +12,8 @@ var _bbcode = \
 
 [center][b]VSCode Extension Links[/b]
 {vscode_link_table}[/center]
- 
-[center]You can support GUT development at 
+
+[center]You can support GUT development at
 {donate_link}
 
 Thanks for using GUT!
@@ -24,7 +24,7 @@ var _gut_links = [
 	[&"Documentation", &"https://gut.readthedocs.io"],
 	[&"What's New", &"https://github.com/bitwes/Gut/releases/tag/v{gut_version}"],
 	[&"Repo", &"https://github.com/bitwes/gut"],
-	[&"Issues", &"https://github.com/bitwes/gut/issues"]
+	[&"Report Bugs", &"https://github.com/bitwes/gut/issues"]
 ]
 
 var _vscode_links = [
@@ -40,7 +40,7 @@ var _donate_link = "https://buymeacoffee.com/bitwes"
 func _ready():
 	if(get_parent() is SubViewport):
 		return
-	
+
 	_vert_center_logo()
 	$Logo.disabled = true
 	$HBox/Scroll/RichTextLabel.text = _make_text()
@@ -60,12 +60,12 @@ func _link_table(entries):
 
 		text += str("[cell][left]", _color_link(link), "[/left][/cell]\n")
 	return str('[table=2]', text, '[/table]')
-	
+
 
 func _make_text():
 	var gut_link_table = _link_table(_gut_links)
 	var vscode_link_table = _link_table(_vscode_links)
-	
+
 	var text = _bbcode.format({
 		"gut_link_table":gut_link_table,
 		"vscode_link_table":vscode_link_table,

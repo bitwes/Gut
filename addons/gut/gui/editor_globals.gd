@@ -44,7 +44,7 @@ static var user_prefs = _user_prefs :
 		if(_user_prefs == null and Engine.is_editor_hint()):
 			_user_prefs = GutUserPreferences.new(EditorInterface.get_editor_settings())
 		return _user_prefs
-
+static var gut_plugin = null
 
 static func create_temp_directory():
 	DirAccess.make_dir_recursive_absolute(temp_directory)
@@ -62,3 +62,5 @@ static func is_being_edited_in_editor(which):
 		if(!is_scene_root):
 			trav = trav.get_parent()
 	return is_scene_root
+
+

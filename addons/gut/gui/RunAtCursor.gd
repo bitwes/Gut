@@ -2,15 +2,6 @@
 extends Control
 
 var EditorCaretContextNotifier = load('res://addons/gut/editor_caret_context_notifier.gd')
-var menu_manager = null :
-	set(val):
-		menu_manager = val
-		menu_manager.run_script.connect(_on_BtnRunScript_pressed)
-		menu_manager.run_at_cursor.connect(run_at_cursor)
-		menu_manager.rerun.connect(rerun)
-		menu_manager.run_inner_class.connect(_on_BtnRunInnerClass_pressed)
-		menu_manager.run_test.connect(_on_BtnRunMethod_pressed)
-		_update_buttons(_last_info)
 
 @onready var _ctrls = {
 	btn_script = $HBox/BtnRunScript,
@@ -22,7 +13,7 @@ var menu_manager = null :
 }
 
 var _caret_notifier = null
-var _method_prefix = 'test_'
+
 var _last_info = {
 	script = null,
 	inner_class = null,
@@ -36,6 +27,17 @@ var disabled = false :
 			_ctrls.btn_script.disabled = val
 			_ctrls.btn_inner.disabled = val
 			_ctrls.btn_method.disabled = val
+var method_prefix = 'test_'
+var inner_class_prefix = 'Test'
+var menu_manager = null :
+	set(val):
+		menu_manager = val
+		menu_manager.run_script.connect(_on_BtnRunScript_pressed)
+		menu_manager.run_at_cursor.connect(run_at_cursor)
+		menu_manager.rerun.connect(rerun)
+		menu_manager.run_inner_class.connect(_on_BtnRunInnerClass_pressed)
+		menu_manager.run_test.connect(_on_BtnRunMethod_pressed)
+		_update_buttons(_last_info)
 
 
 signal run_tests(what)
@@ -78,7 +80,7 @@ func _update_buttons(info):
 	_ctrls.btn_inner.text = str(info.inner_class)
 	_ctrls.btn_inner.tooltip_text = str("Run all tests in Inner-Test-Class ", info.inner_class)
 
-	var is_test_method = info.method != null and info.method.begins_with(_method_prefix)
+	var is_test_method = info.method != null and info.method.begins_with(method_prefix)
 	_ctrls.btn_method.visible = is_test_method
 	_ctrls.arrow_2.visible = is_test_method
 	if(is_test_method):
@@ -160,9 +162,10 @@ func get_test_button():
 	return _ctrls.btn_method
 
 
-func set_method_prefix(value):
-	_method_prefix = value
-
-
 func set_inner_class_prefix(value):
 	_caret_notifier.inner_class_prefix = value
+
+
+func apply_gut_config(gut_config):
+	_caret_notifier.script_prefix = gut_config.options.prefix
+	_caret_notifier.script_suffix = gut_config.options.suffix

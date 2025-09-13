@@ -42,7 +42,7 @@ func _ready():
 	_ctrls.tree.hide_passing = true
 	_ctrls.toolbar.hide_passing.button_pressed = false
 	_ctrls.tree.show_orphans = true
-	_ctrls.tree.item_selected.connect(_on_item_selected)
+	_ctrls.tree.selected.connect(_on_item_selected)
 
 	if(get_parent() == get_tree().root):
 		_test_running_setup()

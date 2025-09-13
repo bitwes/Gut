@@ -841,9 +841,6 @@ class TestAccessorAsserts:
 class TestAssertExports:
 	extends BaseTestClass
 
-	func should_skip_script():
-		return 'Not implemented in 4.0'
-
 	class NoProperty:
 		func _unused():
 			pass
@@ -1302,6 +1299,10 @@ class TestReplaceNode:
 # ------------------------------------------------------------------------------
 class TestAssertIsFreed:
 	extends BaseTestClass
+
+	func after_all():
+		# wait for queue_free to kick in.
+		await wait_idle_frames(10)
 
 	func test_object_is_freed_should_pass():
 		var obj = Node.new()
