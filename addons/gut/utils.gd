@@ -240,12 +240,8 @@ static func create_script_from_source(source, override_path=null):
 # without having the parser error when you refer to it when not in the editor.
 static func get_editor_interface():
 	if(Engine.is_editor_hint()):
-		var src = """
-		func get_it():
-			return EditorInterface
-		"""
-		var s = create_script_from_source(src).new()
-		return s.get_it()
+		var inst = load("res://addons/gut/get_editor_interface.gd").new()
+		return inst.get_it()
 	else:
 		return null
 
