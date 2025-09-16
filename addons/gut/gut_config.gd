@@ -75,7 +75,7 @@ func _load_options_from_config_file(file_path, into):
 	if(!FileAccess.file_exists(file_path)):
 		# Default files are ok to be missing.  Maybe this is too deep a place
 		# to implement this, but here it is.
-		if(file_path != 'res://.gutconfig.json' and file_path != GutUtils.EditorGlobals.editor_run_gut_config_path):
+		if(file_path != 'res://.gutconfig.json' and GutUtils.EditorGlobals != null and file_path != GutUtils.EditorGlobals.editor_run_gut_config_path):
 			logger.error(str('Config File "', file_path, '" does not exist.'))
 			return -1
 		else:

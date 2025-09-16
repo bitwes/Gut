@@ -228,6 +228,7 @@ icon = ExtResource("4_xv2r3")
 
 [node name="About" type="Button" parent="layout/ControlBar2/ExtraButtons"]
 layout_mode = 2
+tooltip_text = "About"
 text = "A"
 
 [node name="RSplit" type="HSplitContainer" parent="layout"]

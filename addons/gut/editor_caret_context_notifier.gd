@@ -178,7 +178,8 @@ func is_test_script(script):
 		if(OS.is_stdout_verbose() or (!_scripts_that_have_been_warned_about.has(script.resource_path) and !_we_have_warned_enough)):
 			_scripts_that_have_been_warned_about.append(script.resource_path)
 			push_warning(str('[GUT] Treating ', script.resource_path, " as test script:  ",
-				"GUT was not able to retrieve information about this script.  This may ",
+				"GUT was not able to retrieve information about this script.  If this is ",
+				"a new script you can ignore this warning.  Otherwise, this may ",
 				"have to do with having VSCode open.  Restarting Godot sometimes helps.  See ",
 				"https://github.com/bitwes/Gut/issues/754"))
 			if(!OS.is_stdout_verbose() and _scripts_that_have_been_warned_about.size() >= _max_warnings):

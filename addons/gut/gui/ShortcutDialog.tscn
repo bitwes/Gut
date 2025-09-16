@@ -54,7 +54,7 @@ size_flags_horizontal = 3
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 bbcode_enabled = true
-text = "[i]The same as pressing the GUT button in the bottom bar.
+text = "[i]Show/hide the gut panel or move focus to/away from the GUT window.
 [/i]"
 fit_content = true
 scroll_active = false
