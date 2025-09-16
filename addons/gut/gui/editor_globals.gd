@@ -42,7 +42,9 @@ static var user_prefs = _user_prefs :
 	# editor.
 	get:
 		if(_user_prefs == null and Engine.is_editor_hint()):
-			_user_prefs = GutUserPreferences.new(EditorInterface.get_editor_settings())
+			# This is sometimes used when not in the editor.  Avoid parser error
+			# for EditorInterface.
+			_user_prefs = GutUserPreferences.new(GutUtils.get_editor_interface().get_editor_settings())
 		return _user_prefs
 static var gut_plugin = null
 

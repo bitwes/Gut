@@ -55,7 +55,7 @@ static var GutScene = load('res://addons/gut/GutScene.tscn')
 static var LazyLoader = load('res://addons/gut/lazy_loader.gd')
 static var VersionNumbers = load("res://addons/gut/version_numbers.gd")
 static var WarningsManager = load("res://addons/gut/warnings_manager.gd")
-static var EditorGlobals = null
+static var EditorGlobals = load("res://addons/gut/gui/editor_globals.gd")
 static var RunExternallyScene = load("res://addons/gut/gui/RunExternally.tscn")
 
 # --------------------------------
@@ -235,9 +235,20 @@ static func create_script_from_source(source, override_path=null):
 	return DynamicScript
 
 
-static func _init():
+# Get the EditorInterface instance without having to make a direct reference to
+# it.  This allows for testing to be done on editor scripts that require it
+# without having the parser error when you refer to it when not in the editor.
+static func get_editor_interface():
 	if(Engine.is_editor_hint()):
-		EditorGlobals = load("res://addons/gut/gui/editor_globals.gd")
+		var src = """
+		func get_it():
+			return EditorInterface
+		"""
+		var s = create_script_from_source(src).new()
+		return s.get_it()
+	else:
+		return null
+
 
 
 static func godot_version_string():
