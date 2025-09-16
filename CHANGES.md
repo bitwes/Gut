@@ -2,7 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+
 # 9.5.0
+Here's a quick video covering some new features:  https://www.youtube.com/watch?v=ovq_1sjIpOs
+
 ## Breaking Changes
 * Stubbing/Doubling/Spying on vararg methods has changed (due to engine changes).
     * You no longer need to stub the parameter count for vararg methods.
@@ -36,10 +39,6 @@ assert_called(my_double.rpc_id, [p1, p2, [vararg_val1, vararg_val2, vararg_val3]
 * All GUT dialogs remember their size.
 * Run tests externally through the editor.  This is basically the same thing as running from the command line, but kicked off through the editor.  This was introduced to allow you to run tests that had errors in them without invoking the debugger, but could have many other use cases.  See the run-externally options for more information about best use.
 * There's an About box now.  It has text, and links, and an icon...and absolutely nothing else.
-
-
-## Bug Fixes
-* Occassionaly the Run buttons wouldn't sync with the editor.
 
 
 

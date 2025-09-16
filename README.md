@@ -26,9 +26,10 @@ Documentation is hosted at https://gut.readthedocs.io/
 # Version Links
 There are only two versions of GUT in the Asset Library (one for Godot 3 and one for Godot 4).  GUT will not appear in the Asset Library if your current version of Godot is less than GUT's required version.  Here's the highest version of GUT per Godot version.
 
-|GUT|Required Godot<br>Version||||
+|GUT|Minimum Required <br>GodotVersion||||
 |-|-|-|-|-|
 |Main Branch |4.5 (or greater)| | |
+|[9.5.0](https://github.com/bitwes/Gut/releases/tag/v9.4.0)|4.5|[repo](https://github.com/bitwes/Gut/tree/v9.5.0)|[download](https://github.com/bitwes/Gut/archive/refs/tags/v9.5.0.zip)||
 |[9.4.0](https://github.com/bitwes/Gut/releases/tag/v9.4.0)|4.3|[repo](https://github.com/bitwes/Gut/tree/v9.4.0)|[download](https://github.com/bitwes/Gut/archive/refs/tags/v9.4.0.zip)||
 |[9.3.0](https://github.com/bitwes/Gut/releases/tag/v9.3.0)|4.2|[repo](https://github.com/bitwes/Gut/tree/v9.3.0)|[download](https://github.com/bitwes/Gut/archive/refs/tags/v9.3.0.zip)||
 |[9.1.1](https://github.com/bitwes/Gut/releases/tag/v9.1.1)|4.1|[repo](https://github.com/bitwes/Gut/tree/v9.1.1)|[download](https://github.com/bitwes/Gut/archive/refs/tags/v9.1.1.zip)||
