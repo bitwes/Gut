@@ -487,6 +487,7 @@ def format_text_block(
             # Cross-references to items in this or other class documentation pages.
             elif is_in_tagset(tag_state.name, RESERVED_CROSSLINK_TAGS):
                 link_target: str = tag_state.arguments
+                probably_a_godot_class = False
 
                 if link_target == "":
                     print_error(
@@ -602,15 +603,20 @@ def format_text_block(
                                     )
 
                         else:
-                            print_error(
-                                f'{state.current_class}.xml: Unresolved type reference "{target_class_name}" in method reference "{link_target}" in {context_name}.',
-                                state,
-                            )
+                            probably_a_godot_class = True
+                            # print_error(
+                            #     f'{tag_state.name}------->{state.current_class}.xml: Unresolved type reference "{target_class_name}" in method reference "{link_target}" in {context_name}.',
+                            #     state,
+                            # )
 
-                        repl_text = target_name
-                        if target_class_name != state.current_class:
-                            repl_text = f"{target_class_name}.{target_name}"
-                        tag_text = f":ref:`{repl_text}<class_{target_class_name}{ref_type}_{target_name}>`"
+                        if(target_class_name != state.current_class and probably_a_godot_class):
+                            tag_text = bitwes.make_type_link_for_part(target_class_name, target_name)
+                        else:
+                            repl_text = target_name
+                            if target_class_name != state.current_class:
+                                repl_text = f"{target_class_name}.{target_name}"
+                            tag_text = f":ref:`{repl_text}<class_{target_class_name}{ref_type}_{target_name}>`"
+
                         escape_pre = True
                         escape_post = True
 

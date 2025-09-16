@@ -30,7 +30,7 @@ class TestBasics:
 
 	func test_double_sets_stubber_for_doubled_class():
 		var d = autofree(_test.double(DoubleMe).new())
-		assert_eq(d.__gutdbl.stubber, _gut.get_stubber())
+		assert_eq(d.__gutdbl.stubber_ref.get_ref(), _gut.get_stubber())
 
 	func test_basic_double_and_stub():
 		var d = autofree(_test.double(DoubleMe).new())
@@ -97,11 +97,11 @@ class TestBasics:
 	func test_when_stub_passed_a_non_doubled_instance_it_generates_an_error():
 		var n = autofree(Node.new())
 		_test.stub(n, 'something').to_return(3)
-		assert_errored(_test, 1)
+		assert_tracked_gut_error(_test)
 
 	func test_when_stub_passed_singleton_it_generates_error():
 		_test.stub(Input, "is_action_just_pressed").to_return(true)
-		assert_errored(_test, 1)
+		assert_tracked_gut_error(_test)
 
 	func test_can_stub_scenes():
 		var dbl_scn = _test.double(DoubleMeScene).instantiate()
@@ -153,6 +153,10 @@ class TestTestsSmartDoubleMethod:
 	func before_all():
 		_test = Test.new()
 		_test.gut = gut
+		_test.set_logger(gut.logger)
+
+	func after_all():
+		_test.queue_free()
 
 	func after_each():
 		gut.get_stubber().clear()
@@ -218,7 +222,7 @@ class TestTestsSmartDoubleMethod:
 		var inst = autofree(Node2D.new())
 		var d = _test.double(inst)
 		assert_null(d, 'double is null')
-		assert_errored(_test, 1)
+		assert_tracked_gut_error(_test)
 
 
 
@@ -302,7 +306,7 @@ class TestPartialDoubleMethod:
 		var inst = autofree(Node2D.new())
 		var d = _test.partial_double(inst)
 		assert_null(d, 'double is null')
-		assert_errored(_test, 1)
+		assert_tracked_gut_error(_test)
 
 
 class TestOverridingParameters:
@@ -335,6 +339,7 @@ class TestOverridingParameters:
 	# Default parameters and override parameter count
 	func test_can_stub_default_values():
 		var TestClass = load(DEFAULT_PARAMS_PATH)
+
 		var s = _test.stub(TestClass, 'return_passed').to_call_super()
 		s.param_defaults(['1', '2'])
 
@@ -350,30 +355,14 @@ class TestOverridingParameters:
 		var ret_val = inst.rpc_id(1, 'foo', '3', '4', '5')
 		pass_test('we got here')
 
-	func test_vararg_methods_generate_warning_when_called_and_param_count_not_overridden():
-		_test.stub(Node, 'rpc_id').to_do_nothing()
-		var inst = _test.double(Node).new()
-		add_child_autofree(inst)
-
-		var ret_val = inst.rpc_id(1, 'foo', '3', '4', '5')
-		assert_warn(_test.gut, 1)
-
-	func test_vararg_methods_do_not_generate_warnings_when_param_count_overridden():
-		_test.stub(Node, 'rpc_id').to_do_nothing().param_count(5)
-		var inst = _test.double(Node).new()
-		add_child_autofree(inst)
-
-		var ret_val = inst.rpc_id(1, 'foo', '3', '4', '5')
-		assert_warn(_test.gut, 0)
-
 	func test_issue_246_rpc_id_varargs():
 		_test.stub(Node, 'rpc_id').to_do_nothing().param_count(5)
 
 		var inst =  _test.double(Node).new()
 		add_child_autofree(inst)
 
-		var ret_val = inst.rpc_id(1, 'foo', '3', '4', '5')
-		_test.assert_called(inst, 'rpc_id', [1, 'foo', '3', '4', '5'])
+		inst.rpc_id(1, 'foo', '3', '4', '5')
+		_test.assert_called(inst, 'rpc_id', [1, 'foo', ['3', '4', '5']])
 		assert_eq(_test.get_pass_count(), 1)
 
 	func test_issue_246_rpc_id_varargs2():
@@ -382,23 +371,7 @@ class TestOverridingParameters:
 		var inst = double(Node).new()
 		add_child_autofree(inst)
 		inst.rpc_id(1, 'foo', '3', '4', '5')
-		assert_called(inst, 'rpc_id', [1, 'foo', '3', '4', '5'])
-
-	func test_issue_246_rpc_id_varargs_with_defaults():
-		stub(Node, 'rpc_id').to_do_nothing().param_defaults([null, null, 'a', 'b', 'c'])
-
-		var inst = double(Node).new()
-		add_child_autofree(inst)
-		inst.rpc_id(1, 'foo', 'z')
-		assert_called(inst, 'rpc_id', [1, 'foo', 'z', 'b', 'c'])
-
-	func test_setting_less_parameters_does_not_affect_anything():
-		var TestClass = load(DEFAULT_PARAMS_PATH)
-		var s = _test.stub(TestClass, 'return_passed').param_count(0)
-
-		var inst =  _test.partial_double(DefaultParams).new()
-		var ret_val = inst.return_passed('a', 'b')
-		assert_eq(ret_val, 'ab')
+		assert_called(inst, 'rpc_id', [1, 'foo', ['3', '4', '5']])
 
 	func test_double_can_have_default_param_values_stubbed_using_class():
 		var InitParams = load(INIT_PARAMETERS)
@@ -428,12 +401,12 @@ class TestStub:
 	func test_stub_of_valid_stuff_is_fine():
 		var dbl = autofree(_test.double(DoubleMe).new())
 		_test.stub(dbl, 'get_value').to_return(9)
-		assert_errored(_test, 0)
+		assert_tracked_gut_error(_test, 0)
 
 	func test_stub_of_double_method_generates_error_when_method_does_not_exist():
 		var dbl = autofree(_test.double(DoubleMe).new())
 		_test.stub(dbl, 'foo').to_do_nothing()
-		assert_errored(_test, 1)
+		assert_tracked_gut_error(_test)
 
 	func test_can_stub_double_method_using_callable():
 		var d = autofree(_test.double(DoubleMe).new())
@@ -443,12 +416,12 @@ class TestStub:
 	func test_errors_on_p2_when_using_callable():
 		var d = autofree(_test.double(DoubleMe).new())
 		_test.stub(d.has_one_param, 'asdf').to_return(5)
-		assert_errored(_test, 1)
+		assert_tracked_gut_error(_test)
 
 	func test_errors_on_p3_when_using_callable():
 		var d = autofree(_test.double(DoubleMe).new())
 		_test.stub(d.has_one_param, null, 'asdf').to_return(5)
-		assert_errored(_test, 1)
+		assert_tracked_gut_error(_test)
 
 	func test_bound_parameters_are_not_spied_on():
 		var d = autofree(_test.double(DoubleMe).new())
@@ -472,6 +445,12 @@ class TestStub:
 		_test.assert_ne(result, this_var, "Why would this pass?")
 		_test.assert_eq(this_var, "some value", "Ohhh, well ok.")
 		assert_pass(_test, 3)
+
+	func test_get_error_messages_when_using_callables():
+		_test.ignore_method_when_doubling(DoubleMe, "has_one_param")
+		var d = autofree(_test.double(DoubleMe).new())
+		_test.stub(d.has_one_param).to_return(5)
+		assert_tracked_gut_error(_test)
 
 
 # class TestSingletonDoubling:
@@ -499,22 +478,22 @@ class TestStub:
 
 # 	func test_double_errors_if_not_passed_a_string():
 # 		var value = _test.double_singleton(Node2D)
-# 		assert_errored(_test)
+# 		assert_logger_errored(_test)
 # 		assert_null(value, "null should be returned")
 
 # 	func test_double_errors_if_class_name_does_not_exist():
 # 		var value = _test.double_singleton("asdf")
-# 		assert_errored(_test)
+# 		assert_logger_errored(_test)
 # 		assert_null(value, "null should be returned")
 
 # 	func test_partial_double_errors_if_not_passed_a_string():
 # 		var value = _test.partial_double_singleton(Node2D)
-# 		assert_errored(_test)
+# 		assert_logger_errored(_test)
 # 		assert_null(value, "null should be returned")
 
 # 	func test_partial_double_errors_if_class_name_does_not_exist():
 # 		var value = _test.partial_double_singleton("asdf")
-# 		assert_errored(_test)
+# 		assert_logger_errored(_test)
 # 		assert_null(value, "null should be returned")
 
 

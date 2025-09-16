@@ -16,10 +16,10 @@
    :caption: Test Scripts
    :name: sec-guttest
 
-   class_ref/class_guttest
    Creating-Tests
    Awaiting
    Inner-Test-Classes
+   Error-Tracking
    Parameterized-Tests
    Simulate
    Comparing-Things
@@ -44,15 +44,13 @@
    :caption: Other
    :name: sec-other
 
-   Contributing
-   GDScript-Warnings
    Export-Test-Results
    Hooks
    Memory-Management
    Mocking-Input
-   Orphans
    Running-On-Devices
-   Tutorials
+   GDScript-Warnings
+   Contributing
 
 
 .. toctree::
@@ -68,13 +66,16 @@
 
 
 
-Gut 9.4.0 (Godot 4.4)
+Gut 9.5.0 (Godot 4.5)
 =========
 GUT (Godot Unit Test) is a utility for writing tests for your Godot Engine game.  It allows you to write tests for your gdscripts in gdscript.
 
-Godot 3.x/4.x
---------------
-GUT 9 requires Godot 4.  GUT 7 requires Godot 3.4.
+
+GUT/Godot Versions
+----------------------
+There are only two versions of GUT in the Asset Library.  GUT 9 requires Godot 4.  GUT 7 requires Godot 3.4.  GUT will not appear in the Asset Library if your current version of Godot is less than GUT's required version.
+
+The Godot/GUT version list and downlaod links can be found in the repo README https://github.com/bitwes/Gut/blob/main/README.md
 
 
 Getting Started
@@ -99,6 +100,7 @@ Advanced Testing
 * :doc:`Coroutines and await in tests <Awaiting>`
 * :doc:`Pre/Post Run Hooks <Hooks>`
 * :doc:`Exporting Results <Export-Test-Results>`
+* :doc:`Error Tracking <Error-Tracking>`
 
 
 Editor GUI

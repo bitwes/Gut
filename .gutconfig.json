@@ -7,7 +7,7 @@
     "res://test/integration/"
   ],
   "should_exit": true,
-  "log_level": 1,
+  "log_level": 2,
   "hide_orphans": false,
 
   "should_exit_on_success": false,
@@ -17,5 +17,7 @@
   "inner_class": "",
   "disable_colors": false,
   "compact_mode": true,
-  "gut_on_top": true
+  "gut_on_top": true,
+
+  "post_run_script":"res://test/gut_post_run.gd"
 }

@@ -8,12 +8,12 @@ class TestProperties:
 	extends GutInternalTester
 	var _gut = null
 
-	func before_all():
-		GutUtils._test_mode = true
-
 	func before_each():
-		_gut = autofree(Gut.new())
+		# Can't use new_gut here because of default value checks
+		_gut = autofree(Gut.new(GutUtils.GutLogger.new()))
+		_gut.error_tracker = GutErrorTracker.new()
 		_gut._should_print_versions = false
+
 
 	var _backed_properties = ParameterFactory.named_parameters(
 		['property_name', 'default', 'new_value'],
@@ -32,7 +32,6 @@ class TestProperties:
 			['parameter_handler', null, GutUtils.ParameterHandler.new([])],
 			['post_run_script', '', 'res://something_else.gd'],
 			['pre_run_script', '', 'res://something.gd'],
-			['treat_error_as_failure', true, false],
 			['unit_test_name', '', 'test_something_cool'],
 		])
 
@@ -54,9 +53,6 @@ class TestProperties:
 		assert_property_with_backing_variable(_gut, 'add_children_to', _gut, self)
 
 	func test_logger_backed_property():
-		# This is hardcodedd to use the current value to check the default because of the way
-		# that GutUtils and logger works with GutUtils._test_mode = true.  Kinda breaks
-		# the one of the 8 things that this assert checks, but that's fine.
 		assert_property_with_backing_variable(_gut, 'logger', _gut._lgr, GutUtils.GutLogger.new(), '_lgr')
 
 	func test_setting_logger_sets_gut_for_logger():
@@ -82,11 +78,8 @@ class TestSimulate:
 
 	var _test_gut = null
 
-	func before_all():
-		GutUtils._test_mode = true
-
 	func before_each():
-		_test_gut = autofree(new_gut())
+		_test_gut = autofree(new_gut(verbose))
 
 	class WithoutProcess:
 		extends Node
@@ -329,20 +322,19 @@ class TestEverythingElse:
 
 	# Returns a new gut object, all setup for testing.
 	func get_a_gut():
-		var g = new_gut()
-		# Hides output.  remove this when things start failing.
-		var print_sub_tests = false
-		g.logger.disable_all_printers(!print_sub_tests)
-		g.logger.disable_formatting(!print_sub_tests)
-		# For checking warnings etc, this has to be ALL_ASSERTS
-		g.log_level = g.LOG_LEVEL_ALL_ASSERTS
+		var g = autofree(new_gut(verbose))
 		return g
+
+	func run_tests(which = gr.test_gut):
+		which.test_scripts()
+		var signal_fired = await wait_for_signal(which.end_run, 2)
+		if(signal_fired):
+			await wait_seconds(.1)
 
 	# ------------------------------
 	# Setup/Teardown
 	# ------------------------------
 	func before_all():
-		GutUtils._test_mode = true
 		starting_counts.setup_count = gut.get_test_count()
 		starting_counts.teardown_count = gut.get_test_count()
 		counts.prerun_setup_count += 1
@@ -366,13 +358,6 @@ class TestEverythingElse:
 		assert_true(true, 'POSTTEARDOWN RAN')
 		gut.directory_delete_files('user://')
 
-		gut.p("/*THESE SHOULD ALL PASS, IF NOT THEN SOMETHING IS BROKEN*/")
-		gut.p("/*These counts will be off if another script was run before this one.*/")
-		assert_eq(1, counts.prerun_setup_count, "Prerun setup should have been called once")
-		assert_eq(gut.get_test_count() - starting_counts.setup_count, counts.setup_count, "Setup should have been called once for each test")
-		# teardown for this test hasn't been run yet.
-		assert_eq(gut.get_test_count() - starting_counts.teardown_count, counts.teardown_count, "Teardown for all tests.")
-
 
 	# ------------------------------
 	# Doubler
@@ -381,14 +366,16 @@ class TestEverythingElse:
 		gr.test_gut.double_strategy = GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY
 		gr.test_gut.add_script('res://test/samples/test_before_after.gd')
 		gr.test_gut.get_doubler().set_strategy(GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
-		gr.test_gut.test_scripts()
+		await run_tests()
+
 		assert_eq(gr.test_gut.double_strategy, GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY)
 
 	func test_clears_ignored_methods_between_tests():
 		gr.test_gut.get_doubler().add_ignored_method('ignore_script', 'ignore_method')
 		gr.test_gut.add_script('res://test/samples/test_sample_one.gd')
 		gr.test_gut.unit_test_name = 'test_assert_eq_number_not_equal'
-		gr.test_gut.test_scripts()
+		await run_tests()
+
 		assert_eq(gr.test_gut.get_doubler().get_ignored_methods().size(), 0)
 		pause_before_teardown()
 
@@ -446,40 +433,45 @@ class TestEverythingElse:
 	func test_when_a_test_has_no_asserts_risky_count_and_no_warning():
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name =  'test_no_asserts'
-		gr.test_gut.test_scripts()
-		assert_warn(gr.test_gut, 0)
+		await run_tests()
+
+		assert_logger_warn(gr.test_gut, 0)
 		var risky_count = gr.test_gut.get_test_collector().scripts[0].get_risky_count()
 		assert_eq(risky_count, 1, 'Risky count')
 
 	func test_with_passing_assert_no_assert_warning_is_not_generated():
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name = 'test_passing_assert'
-		gr.test_gut.test_scripts()
-		assert_warn(gr.test_gut, 0)
+		await run_tests()
+
+		assert_logger_warn(gr.test_gut, 0)
 
 	func test_with_failing_assert_no_assert_warning_is_not_generated():
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name = 'test_failing_assert'
-		gr.test_gut.test_scripts()
-		assert_warn(gr.test_gut, 0)
+		await run_tests()
+
+		assert_logger_warn(gr.test_gut, 0)
 
 	func test_with_pass_test_call_no_assert_warning_is_not_generated():
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name = 'test_use_pass_test'
-		gr.test_gut.test_scripts()
-		assert_warn(gr.test_gut, 0)
+		await run_tests()
+		assert_logger_warn(gr.test_gut, 0)
 
 	func test_with_fail_test_call_no_assert_warning_is_not_generated():
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name = 'test_use_fail_test'
-		gr.test_gut.test_scripts()
-		assert_warn(gr.test_gut, 0)
+		await run_tests()
+
+		assert_logger_warn(gr.test_gut, 0)
 
 	func test_with_pending_call_no_assert_warning_is_no_generated():
 		gr.test_gut.add_script('res://test/resources/per_test_assert_tracking.gd')
 		gr.test_gut.unit_test_name = 'test_use_pending'
-		gr.test_gut.test_scripts()
-		assert_warn(gr.test_gut, 0)
+		await run_tests()
+
+		assert_logger_warn(gr.test_gut, 0)
 
 
 	# ------------------------------
@@ -490,18 +482,19 @@ class TestEverythingElse:
 	func test_setting_name_will_run_only_matching_tests():
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		gr.test_gut.unit_test_name = 'test_works'
-		gr.test_gut.test_scripts()
+		await run_tests()
+
 		assert_eq(gr.test_gut.get_test_count(), 1)
 
 	func test_setting_name_matches_partial():
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		gr.test_gut.unit_test_name = 'two'
-		gr.test_gut.test_scripts()
+		await run_tests()
+
 		assert_eq(gr.test_gut.get_test_count(), 1)
 
 	# These should all pass, just making sure there aren't any syntax errors.
 	func test_asserts_on_test_object():
-		pending('This really is not pending')
 		assert_eq(1, 1, 'text')
 		assert_ne(1, 2, 'text')
 		assert_almost_eq(5, 5, 0, 'text')
@@ -534,7 +527,8 @@ class TestEverythingElse:
 	func test_gut_clears_test_instances_between_runs():
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		gr.test_gut.test_scripts()
-		gr.test_gut.test_scripts()
+		await run_tests()
+
 		assert_eq(gr.test_gut._test_script_objects.size(), 1, 'The should only be one test script after a second run')
 		# There might not be an easy way to free this orphan.
 
@@ -544,7 +538,8 @@ class TestEverythingElse:
 	# ------------------------------
 	func test_when_moving_to_next_test_watched_signals_are_cleared():
 		gr.test_gut.add_script('res://test/unit/verify_signal_watches_are_cleared.gd')
-		gr.test_gut.test_scripts()
+		await run_tests()
+
 		assert_eq(gr.test_gut.get_pass_count(), 1, 'One test should have passed.')
 		assert_eq(gr.test_gut.get_fail_count(), 1, 'One failure for not watching anymore.')
 		assert_eq(gr.test_gut.get_test_count(), 2, 'should have ran two tests')
@@ -555,7 +550,8 @@ class TestEverythingElse:
 	func test_when_set_only_inner_class_tests_run():
 		gr.test_gut.inner_class_name = 'TestClass1'
 		gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/has_inner_class.gd')
-		gr.test_gut.test_scripts()
+		await run_tests()
+
 		# count should be 4, 2 from TestClass1 and 2 from TestExtendsTestClass1
 		# which extends TestClass1 so it gets its two tests as well.
 		assert_eq(gr.test_gut.get_summary().get_totals().tests, 4)
@@ -569,17 +565,20 @@ class TestEverythingElse:
 	# ------------------------------
 	func test_after_running_script_everything_checks_out():
 		gr.test_gut.add_script('res://test/samples/test_before_after.gd')
-		gr.test_gut.test_scripts()
+		gr.test_gut.run_tests()
+
 		var instance = gr.test_gut.get_current_script_object()
 		assert_eq(instance.counts.before_all, 1, 'before_all')
 		assert_eq(instance.counts.before_each, 3, 'before_each')
 		assert_eq(instance.counts.after_all, 1, 'after_all')
 		assert_eq(instance.counts.after_each, 3, 'after_each')
+		await wait_seconds(1)
 
 	func test_when_inner_class_skipped_none_of_the_before_after_are_called():
 		gr.test_gut.add_script('res://test/resources/parsing_and_loading_samples/inner_classes_check_before_after.gd')
 		gr.test_gut.inner_class_name = 'Inner1'
-		gr.test_gut.test_scripts()
+		gr.test_gut.run_tests()
+
 		var instances = gr.test_gut._test_script_objects
 
 		var inner1_inst = null
@@ -605,8 +604,9 @@ class TestEverythingElse:
 		assert_eq(inner2_inst.after_all_calls, 0, 'TestInner2 after_all calls')
 		assert_eq(inner2_inst.before_each_calls, 0, 'TestInner2 before_each_calls')
 		assert_eq(inner2_inst.after_each_calls, 0, 'TestInner2 after_each calls')
+		await wait_seconds(1)
 
-		if(is_passing()):
+		if(is_failing()):
 			gut.p('These sometimes fail due to the order tests are run.')
 
 	# ------------------------------
@@ -616,41 +616,46 @@ class TestEverythingElse:
 		var  PreRunScript = load('res://test/resources/pre_run_script.gd')
 		gr.test_gut.pre_run_script = 'res://test/resources/pre_run_script.gd'
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
-		gr.test_gut.test_scripts()
+		await run_tests()
+
 		assert_is(gr.test_gut.get_pre_run_script_instance(), PreRunScript)
 
 	func test_when_pre_hook_set_run_method_is_called():
 		var  PreRunScript = load('res://test/resources/pre_run_script.gd')
 		gr.test_gut.pre_run_script = 'res://test/resources/pre_run_script.gd'
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
-		gr.test_gut.test_scripts()
+		await run_tests()
+
 		assert_true(gr.test_gut.get_pre_run_script_instance().run_called)
 
 	func test_when_pre_hook_set_to_invalid_script_no_tests_are_ran():
 		gr.test_gut.pre_run_script = 'res://does_not_exist.gd'
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
-		gr.test_gut.test_scripts()
+		await run_tests()
+
 		assert_eq(gr.test_gut.get_test_count(), 0, 'test should not be run')
-		assert_errored(gr.test_gut, 2)
+		assert_tracked_gut_error(gr.test_gut, 2)
 
 	func test_pre_hook_sets_gut_instance():
 		gr.test_gut.pre_run_script = 'res://test/resources/pre_run_script.gd'
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
-		gr.test_gut.test_scripts()
+		await run_tests()
+
 		assert_eq(gr.test_gut.get_pre_run_script_instance().gut, gr.test_gut)
 
 	func test_pre_hook_does_not_accept_non_hook_scripts():
 		gr.test_gut.pre_run_script = 'res://test/resources/non_hook_script.gd'
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
-		gr.test_gut.test_scripts()
+		await run_tests()
+
 		assert_eq(gr.test_gut.get_test_count(), 0, 'test should not be run')
-		assert_errored(gr.test_gut, 2)
+		assert_tracked_gut_error(gr.test_gut, 2)
 
 	func test_post_hook_is_run_after_tests():
 		var PostRunScript = load('res://test/resources/post_run_script.gd')
 		gr.test_gut.post_run_script = 'res://test/resources/post_run_script.gd'
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
-		gr.test_gut.test_scripts()
+		await run_tests()
 		await wait_seconds(1)
 		assert_is(gr.test_gut._post_run_script_instance, PostRunScript, 'Instance is set')
 		assert_true(gr.test_gut._post_run_script_instance.run_called, 'run was called')
@@ -659,9 +664,10 @@ class TestEverythingElse:
 		watch_signals(gr.test_gut)
 		gr.test_gut.post_run_script = 'res://does_not_exist.gd'
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
-		gr.test_gut.test_scripts()
+		await run_tests()
+
 		assert_eq(gr.test_gut.get_test_count(), 0, 'test should not be run')
-		assert_errored(gr.test_gut, -1)
+		assert_tracked_gut_error(gr.test_gut, 2)
 
 	func test_awaiting_in_the_pre_hook_script():
 		var pre_run_script = load("res://test/resources/awaiting_pre_run_script.gd")
@@ -670,6 +676,7 @@ class TestEverythingElse:
 		gr.test_gut.test_scripts()
 		await wait_for_signal(gr.test_gut.start_run, 3, "It should take exactly 1 second.")
 		assert_true(gr.test_gut.get_pre_run_script_instance().awaited, "Pre-run script awaited.")
+		await wait_seconds(1)
 
 	func test_awaiting_in_the_post_hook_script():
 		var pre_run_script = load("res://test/resources/awaiting_post_run_script.gd")
@@ -678,6 +685,7 @@ class TestEverythingElse:
 		gr.test_gut.test_scripts()
 		await wait_for_signal(gr.test_gut.end_run, 3, "It should take exactly 1 second.")
 		assert_true(gr.test_gut.get_post_run_script_instance().awaited, "Post-run script awaited.")
+		await wait_seconds(.1)
 
 	# ------------------------------
 	# Parameterized Test Tests
@@ -695,53 +703,62 @@ class TestEverythingElse:
 	func test_can_run_tests_with_parameters():
 		gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 		gr.test_gut.unit_test_name = 'test_has_one_defaulted_parameter'
-		gr.test_gut.test_scripts()
+		await run_tests()
+
 		assert_eq(gr.test_gut.get_pass_count(), 1, 'pass count')
 		assert_eq(gr.test_gut.get_test_count(), 1, 'test count')
 
 	func test_too_many_parameters_generates_an_error():
 		gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 		gr.test_gut.unit_test_name = 'test_has_two_parameters'
-		gr.test_gut.test_scripts()
-		assert_errored(gr.test_gut, 1)
+		await run_tests()
+
+		assert_tracked_gut_error(gr.test_gut, 1)
 		assert_eq(gr.test_gut.get_test_count(), 0, 'test count')
 
 	func test_parameterized_tests_are_called_multiple_times():
 		gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 		gr.test_gut.unit_test_name = 'test_has_three_values_for_parameters'
-		gr.test_gut.test_scripts()
+		await run_tests()
+
 		assert_eq(gr.test_gut.get_pass_count(), 3)
 
 	func test_when_use_parameters_is_not_called_then_error_is_generated():
 		gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 		gr.test_gut.unit_test_name = 'test_does_not_use_use_parameters'
-		gr.test_gut.test_scripts()
-		assert_errored(gr.test_gut, 1)
-		assert_eq(gr.test_gut.get_fail_count(), 2)
+		await run_tests()
+
+		assert_tracked_gut_error(gr.test_gut)
+		assert_tracked_gut_error(gr.test_gut, 1)
+		assert_eq(gr.test_gut.get_fail_count(), 1)
 
 	# if you really think about this, it is a very very inception like test.
 	func test_parameterized_test_that_yield_are_called_correctly():
 		gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 		gr.test_gut.unit_test_name = 'test_three_values_and_a_yield'
-		gr.test_gut.test_scripts()
-		await wait_for_signal(gr.test_gut.end_run, 10)
+		await run_tests()
+
 		assert_eq(gr.test_gut.get_pass_count(), 3)
 
 	func test_parameterized_test_calls_before_each_before_each_test():
 		gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 		gr.test_gut.inner_class_name = 'TestWithBeforeEach'
-		gr.test_gut.test_scripts()
+		gr.test_gut.run_tests()
+
 		assert_eq(gr.test_gut.get_pass_count(), 3)
 		var obj = _get_test_script_object_of_type(gr.test_gut, load(TEST_WITH_PARAMETERS).TestWithBeforeEach)
 		assert_eq(obj.before_count, 3, 'test class:  before_count')
+		await wait_seconds(1)
 
 	func test_parameterized_test_calls_after_each_after_each_test():
 		gr.test_gut.add_script(TEST_WITH_PARAMETERS)
 		gr.test_gut.inner_class_name = 'TestWithAfterEach'
-		gr.test_gut.test_scripts()
+		gr.test_gut.run_tests()
+
 		assert_eq(gr.test_gut.get_pass_count(), 3)
 		var obj = _get_test_script_object_of_type(gr.test_gut, load(TEST_WITH_PARAMETERS).TestWithAfterEach)
 		assert_eq(obj.after_count, 3, 'test class:  after_count')
+		await wait_seconds(1)
 
 
 	# ------------------------------
@@ -750,81 +767,144 @@ class TestEverythingElse:
 	func test_passing_asserts_made_in_before_all_are_counted():
 		gr.test_gut.add_script('res://test/resources/has_asserts_in_beforeall_and_afterall.gd')
 		gr.test_gut.inner_class_name = 'TestPassingBeforeAllAssertNoOtherTests'
-		gr.test_gut.test_scripts()
+		await run_tests()
+
 		assert_eq(gr.test_gut.get_assert_count(), 1, 'assert count')
 		assert_eq(gr.test_gut.get_pass_count(), 1, 'pass count')
 
-	func test_passing_asserts_made_in_after_all_are_counted():
-		gr.test_gut.add_script('res://test/resources/has_asserts_in_beforeall_and_afterall.gd')
-		gr.test_gut.inner_class_name = 'TestPassingAfterAllAssertNoOtherTests'
-		gr.test_gut.test_scripts()
-		assert_eq(gr.test_gut.get_assert_count(), 1, 'assert count')
-		assert_eq(gr.test_gut.get_pass_count(), 1, 'pass count')
-
-	func test_failing_asserts_made_in_before_all_are_counted():
-		gr.test_gut.add_script('res://test/resources/has_asserts_in_beforeall_and_afterall.gd')
-		gr.test_gut.inner_class_name = 'TestFailingBeforeAllAssertNoOtherTests'
-		gr.test_gut.test_scripts()
-		assert_eq(gr.test_gut.get_assert_count(), 1, 'assert count')
-		assert_eq(gr.test_gut.get_fail_count(), 1, 'fail count')
 
 	func test_failing_asserts_made_in_after_all_are_counted():
 		gr.test_gut.add_script('res://test/resources/has_asserts_in_beforeall_and_afterall.gd')
 		gr.test_gut.inner_class_name = 'TestFailingAfterAllAssertNoOtherTests'
-		gr.test_gut.test_scripts()
+		await run_tests()
+
 		assert_eq(gr.test_gut.get_assert_count(), 1, 'assert count')
 		assert_eq(gr.test_gut.get_fail_count(), 1, 'fail count')
 
 	func test_before_all_after_all_printing():
 		gr.test_gut.add_script('res://test/resources/has_asserts_in_beforeall_and_afterall.gd')
 		gr.test_gut.inner_class_name = 'TestHasBeforeAllAfterAllAndSomeTests'
-		gr.test_gut.test_scripts()
+		await run_tests()
+
 		assert_eq(gr.test_gut.get_pass_count(), 4, 'pass count')
 		assert_eq(gr.test_gut.get_fail_count(), 4, 'fail count')
 		assert_eq(gr.test_gut.get_assert_count(), 8, 'assert count`')
 
 	func test_before_all_after_all_printing_all_classes_in_script():
 		gr.test_gut.add_script('res://test/resources/has_asserts_in_beforeall_and_afterall.gd')
-		gr.test_gut.test_scripts()
+		await run_tests()
+
 		assert_eq(gr.test_gut.get_pass_count(), 10, 'pass count')
 		assert_eq(gr.test_gut.get_fail_count(), 10, 'fail count')
 		assert_eq(gr.test_gut.get_assert_count(), 20, 'assert count`')
 
 
-
-
-class TestErrorsTreatedAsFailure:
+class TestReworkedEverythingElse:
 	extends GutInternalTester
 
-	var _test_gut = null
+	var _gut  = null
+
+	func before_all():
+		verbose = false
+		DynamicGutTest.should_print_source = verbose
+
 
 	func before_each():
-		_test_gut = add_child_autofree(new_gut())
+		_gut = add_child_autofree(new_gut(verbose))
 
-	func test_logger_calls__fail_for_error_when_error_occurs():
-		var logger = GutUtils.GutLogger.new()
-		var dgut = double(GutUtils.Gut).new()
-		logger.set_gut(dgut)
-		logger.error('this is an error')
-		assert_called(dgut, '_fail_for_error')
 
-	func test_gut_does_not_call__fail_when_flag_false():
-		var dgut = double(GutUtils.Gut).new()
-		stub(dgut, '_fail_for_error').to_call_super()
-		dgut._fail_for_error('error text')
-		assert_not_called(dgut, '_fail')
+	func test_passing_asserts_made_in_after_all_are_counted():
+		var src = """
+		func after_all():
+			assert_true(true)
 
-	func test_gut_calls__fail_when_flag_true():
-		var dgut = double(GutUtils.Gut).new()
-		dgut._current_test = 'something'
-		dgut.treat_error_as_failure = true
-		stub(dgut, '_fail_for_error').to_call_super()
-		dgut._fail_for_error('error text')
-		assert_called(dgut, '_fail')
+		func test_nothing():
+			assert_eq(1, 1)
+		"""
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(src)
+		var t = await s.run_tests_in_gut_await(_gut)
+		assert_eq(t.passing, 2, 'passing asserts')
 
-	func test_gut_does_not_call__fail_when_there_is_no_test_object():
-		var dgut = double(GutUtils.Gut).new()
-		dgut.treat_error_as_failure = true
-		stub(dgut, '_fail_for_error').to_call_super()
-		dgut._fail_for_error('error text')
-		assert_not_called(dgut, '_fail')
+
+	func test_failing_asserts_made_in_before_all_are_counted():
+		var src = """
+		func after_all():
+			assert_true(false)
+
+		func test_nothing():
+			assert_eq(1, 1)
+			pending()
+		"""
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(src)
+		var t = await s.run_tests_in_gut_await(_gut)
+		assert_eq(t.failing, 1, 'one failing')
+
+
+	func test_failing_asserts_made_in_before_all_are_in_the_summary():
+		var src = """
+		func before_all():
+			assert_true(false)
+
+		func test_nothing():
+			assert_eq(1, 1)
+		"""
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(src)
+		var t = await s.run_tests_in_gut_await(_gut)
+		_gut.get_summary().log_end_run()
+		assert_eq(t.failing, 1, 'one failing')
+		assert_has(_gut.get_logger().get_log_entries('failed'), "before_all/after_all assert failed")
+
+
+	func test_failing_asserts_made_in_after_all_are_in_the_summary():
+		var src = """
+		func after_all():
+			assert_true(false)
+
+		func test_nothing():
+			assert_eq(1, 1)
+		"""
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(src)
+		var t = await s.run_tests_in_gut_await(_gut)
+		_gut.get_summary().log_end_run()
+		assert_eq(t.failing, 1, 'one failing')
+		assert_has(_gut.get_logger().get_log_entries('failed'), "before_all/after_all assert failed")
+
+
+	func test_failing_asserts_made_in_before_each_cause_test_it_is_before_to_fail():
+		var src = """
+		func before_each():
+			assert_true(false, 'before_each_assert')
+
+		func test_nothing():
+			assert_eq(1, 1)
+
+		func test_something():
+			assert_eq(1, 1)
+		"""
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(src)
+		var t = await s.run_tests_in_gut_await(_gut)
+		assert_eq(t.failing, 2, 'failing asserts')
+		assert_eq(t.failing_tests, 2, 'failing tests')
+
+
+	func test_failing_asserts_made_in_after_each_cause_test_it_is_after_to_fail():
+		var src = """
+		func after_each():
+			assert_true(false, 'after_each assert')
+
+		func test_nothing():
+			assert_eq(1, 1)
+
+		func test_something():
+			assert_eq(1, 1)
+		"""
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(src)
+		var t = await s.run_tests_in_gut_await(_gut)
+		assert_eq(t.failing, 2, 'failing asserts')
+		assert_eq(t.failing_tests, 2, 'failing tests')

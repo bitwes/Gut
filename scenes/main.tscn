@@ -15,6 +15,7 @@ text = "Run Tests
 "
 
 [node name="GutControl" parent="." instance=ExtResource("2_f2w0u")]
+anchors_preset = -1
 offset_left = 11.0
 offset_top = 104.0
 offset_right = 349.0

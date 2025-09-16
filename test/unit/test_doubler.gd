@@ -63,7 +63,9 @@ class TestTheBasics:
 		_doubler.set_stubber(stubber)
 		_doubler.set_gut(gut)
 		_doubler.set_strategy(DOUBLE_STRATEGY.SCRIPT_ONLY)
-		_doubler.set_logger(GutUtils.GutLogger.new())
+		var lgr = GutUtils.GutLogger.new()
+		lgr.set_gut(gut)
+		_doubler.set_logger(lgr)
 		_doubler.print_source = false
 
 	func test_get_set_stubber():
@@ -97,8 +99,8 @@ class TestTheBasics:
 	func test_cannot_set_strategy_to_invalid_values():
 		var default = _doubler.get_strategy()
 		_doubler.set_strategy(-1)
+		assert_tracked_gut_error()
 		assert_eq(_doubler.get_strategy(), default, 'original value retained')
-		assert_errored(_doubler, 1)
 
 	func test_can_set_strategy_in_constructor():
 		var d = Doubler.new(GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
@@ -148,7 +150,7 @@ class TestDoublingScripts:
 
 	func test_doublecd_thing_has_gut_metadata():
 		var doubled = _doubler.double(DoubleMe).new()
-		assert_eq(doubled.__gutdbl.gut, gut)
+		assert_eq(doubled.__gutdbl.gut_ref.get_ref(), gut)
 
 	func test_keeps_extends():
 		var doubled = _doubler.double(DoubleExtendsNode2D).new()
@@ -267,7 +269,6 @@ class TestDoubleStrategyIncludeNative:
 
 	var doubler = null
 	var stubber = GutUtils.Stubber.new()
-
 
 	func before_each():
 		stubber.clear()
@@ -428,16 +429,18 @@ class TestDoubleInnerClasses:
 	func before_each():
 		doubler = Doubler.new()
 		doubler.set_stubber(GutUtils.Stubber.new())
-		doubler.set_logger(GutUtils.GutLogger.new())
+		var lgr = GutUtils.GutLogger.new()
+		lgr.set_gut(gut)
+		doubler.set_logger(lgr)
 
 	func test_when_inner_class_not_registered_it_generates_error():
-		var  Dbl = doubler.double(InnerClasses.InnerA)
-		assert_errored(doubler, 1)
+		doubler.double(InnerClasses.InnerA)
+		assert_tracked_gut_error()
 
 	func test_when_inner_class_registered_it_makes_a_double():
 		doubler.inner_class_registry.register(InnerClasses)
 		var  Dbl = doubler.double(InnerClasses.InnerA)
-		assert_errored(doubler, 0)
+		assert_tracked_gut_error(doubler, 0)
 		assert_not_null(Dbl, 'made a double')
 
 	func test_doubled_instance_returns_null_for_get_b1():
@@ -489,8 +492,8 @@ class TestDoubleInnerClasses:
 		assert_eq(inst.get_a(), 'a')
 
 	func test_partial_double_errors_if_inner_not_registered():
-		var inst = doubler.partial_double(InnerClasses.InnerA)
-		assert_errored(doubler, 1)
+		doubler.partial_double(InnerClasses.InnerA)
+		assert_tracked_gut_error()
 
 
 

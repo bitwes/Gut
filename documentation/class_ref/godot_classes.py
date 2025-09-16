@@ -617,6 +617,7 @@ def make_enum(t: str, is_bitfield: bool, state: State) -> str:
 
     # Don't fail for `Vector3.Axis`, as this enum is a special case which is expected not to be resolved.
     if f"{c}.{e}" != "Vector3.Axis":
-        lgr.print_error(f'{state.current_class}.xml: Unresolved enum "{t}".', state)
-
-    return t
+        return bitwes.make_type_link_for_part(c, e)
+        # lgr.print_error(f'{state.current_class}.xml: Unresolved enum "{t}".', state)
+    else:
+        return t

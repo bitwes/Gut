@@ -158,16 +158,18 @@ theme_override_font_sizes/font_size = 14
 text = "test_this_thing.gd"
 text_overrun_behavior = 3
 
-[node name="Spacer1" type="CenterContainer" parent="MainBox/HBoxContainer/VBoxContainer/ControlBox"]
-visible = false
+[node name="Buttons" type="VBoxContainer" parent="MainBox/HBoxContainer/VBoxContainer/ControlBox"]
 layout_mode = 2
-size_flags_horizontal = 10
 
-[node name="Continue" type="Button" parent="MainBox/HBoxContainer/VBoxContainer/ControlBox"]
+[node name="Continue" type="Button" parent="MainBox/HBoxContainer/VBoxContainer/ControlBox/Buttons"]
 layout_mode = 2
 size_flags_vertical = 4
 text = "Continue
 "
+
+[node name="WordWrap" type="CheckButton" parent="MainBox/HBoxContainer/VBoxContainer/ControlBox/Buttons"]
+layout_mode = 2
+text = "Word Wrap"
 
 [node name="S3" type="CenterContainer" parent="MainBox/HBoxContainer/VBoxContainer/ControlBox"]
 custom_minimum_size = Vector2(5, 0)

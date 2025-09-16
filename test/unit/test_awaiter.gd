@@ -1,4 +1,4 @@
-extends GutTest
+extends GutInternalTester
 
 var Awaiter = load('res://addons/gut/awaiter.gd')
 
@@ -26,7 +26,9 @@ class Counter:
 
 
 class Signaler:
+	@warning_ignore("unused_signal")
 	signal the_signal
+	@warning_ignore("unused_signal")
 	signal with_parameters(foo, bar)
 
 
@@ -55,6 +57,7 @@ func test_did_last_wait_timeout_is_false_by_default():
 func test_did_last_wait_timeout_is_readonly():
 	var a = add_child_autoqfree(Awaiter.new())
 	a.did_last_wait_timeout = true
+	assert_push_error(1, 'readonly')
 	assert_false(a.did_last_wait_timeout)
 
 func test_wait_started_emitted_when_waiting_seconds():
@@ -132,9 +135,15 @@ func test_signal_emitted_after_10_frames():
 	assert_signal_emitted(a, 'timeout')
 	assert_eq(c.physics_frames, 10, 'waited enough frames')
 
-func test_is_waiting_while_waiting_on_frames():
+func test_is_waiting_while_waiting_on_physics_frames():
 	var a = add_child_autoqfree(Awaiter.new())
 	a.wait_physics_frames(120)
+	await get_tree().create_timer(.1).timeout
+	assert_true(a.is_waiting())
+
+func test_is_waiting_while_waiting_on_process_frames():
+	var a = add_child_autoqfree(Awaiter.new())
+	a.wait_process_frames(120)
 	await get_tree().create_timer(.1).timeout
 	assert_true(a.is_waiting())
 
@@ -446,12 +455,11 @@ class TestWaitWhile:
 			else:
 				return some_var
 
-		some_var == 1
+		some_var = 1
 		a.wait_while(method, 1.1, .25)
 		await get_tree().create_timer(.5).timeout
+		assert_true(a.is_waiting(), 'should still be waiting')
 
 		some_var = 'hello world'
 		await get_tree().create_timer(.5).timeout
-		assert_false(a.is_waiting())
-
-
+		assert_false(a.is_waiting(), 'waiting should have ended')

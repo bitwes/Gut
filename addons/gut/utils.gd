@@ -33,6 +33,16 @@ const DOUBLE_TEMPLATES = {
 	SCRIPT = 'res://addons/gut/double_templates/script_template.txt',
 }
 
+const NOTHING := '__NOTHING__'
+const NO_TEST := 'NONE'
+const GUT_ERROR_TYPE = 999
+
+enum TREAT_AS {
+	NOTHING,
+	FAILURE,
+}
+
+
 ## This dictionary defaults to all the native classes that we cannot call new
 ## on.  It is further populated during a run so that we only have to create
 ## a new instance once to get the class name string.
@@ -46,6 +56,8 @@ static var LazyLoader = load('res://addons/gut/lazy_loader.gd')
 static var VersionNumbers = load("res://addons/gut/version_numbers.gd")
 static var WarningsManager = load("res://addons/gut/warnings_manager.gd")
 static var EditorGlobals = load("res://addons/gut/gui/editor_globals.gd")
+static var RunExternallyScene = load("res://addons/gut/gui/RunExternally.tscn")
+
 # --------------------------------
 # Lazy loaded scripts.  These scripts are lazy loaded so that they can be
 # declared, but will not load when this script is loaded.  This gives us a
@@ -91,6 +103,9 @@ static var Gut = LazyLoader.new('res://addons/gut/gut.gd'):
 static var GutConfig = LazyLoader.new('res://addons/gut/gut_config.gd'):
 	get: return GutConfig.get_loaded()
 	set(val): pass
+static var GutFonts = LazyLoader.new("res://addons/gut/gut_fonts.gd"):
+	get: return GutFonts.get_loaded()
+	set(val): pass
 static var HookScript = LazyLoader.new('res://addons/gut/hook_script.gd'):
 	get: return HookScript.get_loaded()
 	set(val): pass
@@ -114,6 +129,9 @@ static var MethodMaker = LazyLoader.new('res://addons/gut/method_maker.gd'):
 	set(val): pass
 static var OneToMany = LazyLoader.new('res://addons/gut/one_to_many.gd'):
 	get: return OneToMany.get_loaded()
+	set(val): pass
+static var OptionMaker = LazyLoader.new('res://addons/gut/gui/option_maker.gd'):
+	get: return OptionMaker.get_loaded()
 	set(val): pass
 static var OrphanCounter = LazyLoader.new('res://addons/gut/orphan_counter.gd'):
 	get: return OrphanCounter.get_loaded()
@@ -162,13 +180,14 @@ static var ThingCounter = LazyLoader.new('res://addons/gut/thing_counter.gd'):
 	set(val): pass
 # --------------------------------
 
-static var avail_fonts = ['AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default']
+static var gut_fonts = GutFonts.new()
+static var avail_fonts = gut_fonts.get_font_names()
 
 static var version_numbers = VersionNumbers.new(
 	# gut_versrion (source of truth)
 	'9.5.0',
-	# required_godot_ver4sion
-	'4.4.0'
+	# required_godot_version
+	'4.5'
 )
 
 
@@ -187,15 +206,17 @@ static var warnings_when_loading_test_scripts := { # WarningsManager dictionary
 # When running in test mode this will always return a new logger so that errors
 # are not caused by getting bad warn/error/etc counts.
 # ------------------------------------------------------------------------------
-static var _test_mode = false
 static var _lgr = null
 static func get_logger():
-	if(_test_mode):
-		return GutLogger.new()
-	else:
-		if(_lgr == null):
-			_lgr = GutLogger.new()
-		return _lgr
+	if(_lgr == null):
+		_lgr = GutLogger.new()
+	return _lgr
+
+static var _error_tracker = null
+static func get_error_tracker():
+	if(_error_tracker == null):
+		_error_tracker = GutErrorTracker.new()
+	return _error_tracker
 
 
 static var _dyn_gdscript = DynamicGdScript.new()
@@ -212,6 +233,22 @@ static func create_script_from_source(source, override_path=null):
 	WarningsManager.enable_warnings(are_warnings_enabled)
 
 	return DynamicScript
+
+
+# Get the EditorInterface instance without having to make a direct reference to
+# it.  This allows for testing to be done on editor scripts that require it
+# without having the parser error when you refer to it when not in the editor.
+static func get_editor_interface():
+	if(Engine.is_editor_hint()):
+		var src = """
+		func get_it():
+			return EditorInterface
+		"""
+		var s = create_script_from_source(src).new()
+		return s.get_it()
+	else:
+		return null
+
 
 
 static func godot_version_string():
@@ -325,6 +362,10 @@ static func print_properties(props, thing, print_all_meta=false):
 		if(print_all_meta):
 			print('  ', props[i])
 
+
+static func print_method_list(thing):
+	for entry in thing.get_method_list():
+		print("* ", entry.name)
 
 
 # ------------------------------------------------------------------------------
@@ -572,7 +613,20 @@ static func get_display_size():
 
 
 
+static func find_method_meta(methods, method_name):
+	var meta = null
+	var idx = 0
+	while (idx < methods.size() and meta == null):
+		var m = methods[idx]
+		if(m.name == method_name):
+			meta = m
+		idx += 1
 
+	return meta
+
+
+static func get_method_meta(object, method_name):
+	return find_method_meta(object.get_method_list(), method_name)
 
 # ##############################################################################
 #(G)odot (U)nit (T)est class

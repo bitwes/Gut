@@ -213,7 +213,7 @@ class TestSignalAsserts:
 	# With Parameters
 	func test__with_parameters_errors_when_parameters_are_not_an_array():
 		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, 1)
-		assert_errored(gr.test)
+		assert_logger_errored(gr.test)
 		assert_fail(gr.test)
 
 	func test__assert_signal_emitted_with_parameters__fails_when_object_not_watched():

@@ -7,7 +7,7 @@ class_name GutHookScript
 ## Creating a hook script requires that you:[br]
 ##  - Inherit [code skip-lint]GutHookScript[/code][br]
 ##  - Implement a [code skip-lint]run()[/code] method[br]
-##  - Configure the path in GUT (gutconfig aand/or editor) as the approparite hook (pre or post).[br]
+##  - Configure the path in GUT (gutconfig and/or editor) as the approparite hook (pre or post).[br]
 ##
 ## See [wiki]Hooks[/wiki]
 

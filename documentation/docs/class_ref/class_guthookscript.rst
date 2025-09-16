@@ -27,7 +27,7 @@ Creating a hook script requires that you:
 
 - Implement a ``run()`` method
 
-- Configure the path in GUT (gutconfig aand/or editor) as the approparite hook (pre or post).
+- Configure the path in GUT (gutconfig and/or editor) as the approparite hook (pre or post).
 
 See `Hooks <../Hooks.html>`__
 

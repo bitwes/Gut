@@ -19,49 +19,92 @@ The `-d` option tells Godot to run in debug mode which is helpful.  The `-s` opt
 When running from command line, `0` will be returned if all tests pass and `1` will be returned if any fail (`pending` doesn't affect the return value).
 
 ## Options
-_Output from the command line help (-gh)_
-```
----  Gut  ---
----------------------------------------------------------
-This is the command line interface for the unit testing tool Gut.  With this
-interface you can run one or more test scripts from the command line.  In order
-for the Gut options to not clash with any other godot options, each option
-starts with a "g".  Also, any option that requires a value will take the form
-of "-g<name>=<value>".  There cannot be any spaces between the option, the "=",
-or inside a specified value or godot will think you are trying to run a scene.
+_Output from the command line help via `-gh` option_
+```text
+The GUT CLI
+-----------
+The default behavior for GUT is to load options from a res://.gutconfig.json if
+it exists.  Any options specified on the command line will take precedence over
+options specified in the gutconfig file.  You can specify a different gutconfig
+file with the -gconfig option.
+
+To generate a .gutconfig.json file you can use -gprint_gutconfig_sample
+To see the effective values of a CLI command and a gutconfig use -gpo
+
+Values for options can be supplied using:
+    option=value    # no space around "="
+    option value    # a space between option and value w/o =
+
+Options whose values are lists/arrays can be specified multiple times:
+	-gdir=a,b
+	-gdir c,d
+	-gdir e
+	# results in -gdir equaling [a, b, c, d, e]
+
+To not use an empty value instead of a default value, specifiy the option with
+an immediate "=":
+	-gconfig=
+
+
+Usage
+-----------
+  <path to godot> -s addons/gut/gut_cmdln.gd [opts]
+
 
 Options
--------
-  -gtest                    Comma delimited list of full paths to test scripts to run.
-  -gdir                     Comma delimited list of directories to add tests from.
-  -gprefix                  Prefix used to find tests when specifying -gdir.  Default "test_".
-  -gsuffix                  Suffix used to find tests when specifying -gdir.  Default ".gd".
-  -ghide_orphans            Display orphan counts for tests and scripts.  Default "False".
-  -gmaximize                Maximizes test runner window to fit the viewport.
-  -gexit                    Exit after running tests.  If not specified you have to manually close the window.
-  -gexit_on_success         Only exit if all tests pass.
-  -glog                     Log level.  Default 1
-  -gignore_pause            Ignores any calls to gut.pause_before_teardown.
-  -gselect                  Select a script to run initially.  The first script that was loaded using -gtest or -gdir that contains the specified string will be executed.  You may run others by interacting with the GUI.
-  -gunit_test_name          Name of a test to run.  Any test that contains the specified text will be run, all others will be skipped.
-  -gh                       Print this help, then quit
-  -gconfig                  A config file that contains configuration information.  Default is res://.gutconfig.json
-  -ginner_class             Only run inner classes that contain this string
-  -gopacity                 Set opacity of test runner window. Use range 0 - 100. 0 = transparent, 100 = opaque.
-  -gpo                      Print option values from all sources and the value used, then quit.
-  -ginclude_subdirs         Include subdirectories of -gdir.
-  -gdouble_strategy         Default strategy to use when doubling.  Valid values are [partial, full].  Default "partial"
-  -gdisable_colors          Disable command line colors.
-  -gpre_run_script          pre-run hook script path
-  -gpost_run_script         post-run hook script path
-  -gprint_gutconfig_sample  Print out json that can be used to make a gutconfig file then quit.
-  -gfont_name               Valid values are:  [AnonymousPro, CourierPro, LobsterTwo, Default].  Default "CourierPrime"
-  -gfont_size               Font size, default "16"
-  -gbackground_color        Background color as an html color, default "ff262626"
-  -gfont_color              Font color as an html color, default "ffcccccc"
-  -gjunit_xml_file          Export results of run to this file in the Junit XML format.
-  -gjunit_xml_timestamp     Include a timestamp in the -gjunit_xml_file, default False
----------------------------------------------------------
+-----------
+
+Test Config:
+  -gdir                           List of directories to search for test scripts in.
+  -ginclude_subdirs               Flag to include all subdirectories specified with -gdir.
+  -gtest                          List of full paths to test scripts to run.
+  -gprefix                        Prefix used to find tests when specifying -gdir.  Default "test_".
+  -gsuffix                        Test script suffix, including .gd extension.  Default ".gd".
+  -gconfig                        The config file to load options from.  The default is res://.gutconfig.json.
+                                  Use "-gconfig=" to not use a config file.
+  -gpre_run_script                pre-run hook script path
+  -gpost_run_script               post-run hook script path
+  -gerrors_do_not_cause_failure   When an internal GUT error occurs tests will fail.  With this option
+                                  set, that does not happen.
+  -gdouble_strategy               Default strategy to use when doubling.  Valid values are [INCLUDE_NATIVE,
+                                  SCRIPT_ONLY].  Default "SCRIPT_ONLY"
+
+Run Options:
+  -gselect                        All scripts that contain the specified string in their filename will be ran
+  -ginner_class                   Only run inner classes that contain the specified string in their name.
+  -gunit_test_name                Any test that contains the specified text will be run, all others will be skipped.
+  -gexit                          Exit after running tests.  If not specified you have to manually close the window.
+  -gexit_on_success               Only exit if zero tests fail.
+  -gignore_pause                  Ignores any calls to pause_before_teardown.
+  -gno_error_tracking             Disable error tracking.
+  -gfailure_error_types           Error types that will cause tests to fail if the are encountered during
+                                  the execution of a test.  Default "["engine", "gut", "push_error"]"
+
+Display Settings:
+  -glog                           Log level [0-3].  Default 1
+  -ghide_orphans                  Display orphan counts for tests and scripts.  Default false.
+  -gmaximize                      Maximizes test runner window to fit the viewport.
+  -gcompact_mode                  The runner will be in compact mode.  This overrides -gmaximize.
+  -gopacity                       Set opacity of test runner window. Use range 0 - 100. 0 = transparent,
+                                  100 = opaque.
+  -gdisable_colors                Disable command line colors.
+  -gfont_name                     Valid values are:  ["AnonymousPro", "CourierPrime", "LobsterTwo", "Default"].
+                                  Default "CourierPrime"
+  -gfont_size                     Font size, default "16"
+  -gbackground_color              Background color as an html color, default "262626ff"
+  -gfont_color                    Font color as an html color, default "ccccccff"
+  -gpaint_after                   Delay before GUT will add a 1 frame pause to paint the screen/GUI.  default 0.1
+  -gwait_log_delay                Delay before GUT will print a message to indicate a test is awaiting
+                                  one of the wait_* methods.  Default 0.5
+
+Result Export:
+  -gjunit_xml_file                Export results of run to this file in the Junit XML format.
+  -gjunit_xml_timestamp           Include a timestamp in the -gjunit_xml_file, default false
+
+Help:
+  -gh                             Print this help.  You did this to see this, so you probably understand.
+  -gpo                            Print option values from all sources and the value used.
+  -gprint_gutconfig_sample        Print out json that can be used to make a gutconfig file.
 ```
 
 ## Examples

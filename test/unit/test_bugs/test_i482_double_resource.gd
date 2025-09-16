@@ -47,6 +47,3 @@ class TestScriptOnly:
 	func before_all():
 		ProjectSettings.set_setting(native_method_override, 1)
 		set_double_strategy(DOUBLE_STRATEGY.SCRIPT_ONLY)
-
-
-

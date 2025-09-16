@@ -5,19 +5,15 @@
 extends "res://addons/gut/test.gd"
 
 var _old_indent_string = ''
-var _orig_err_as_fail = false
 
 func before_all():
 	gut.p('[before all]')
 	_old_indent_string = gut.logger.get_indent_string()
-	_orig_err_as_fail = gut.treat_error_as_failure
-
-	gut.treat_error_as_failure = false
 
 func after_all():
 	gut.p('[after all]')
 	gut.logger.set_indent_string(_old_indent_string)
-	gut.treat_error_as_failure = _orig_err_as_fail
+
 
 func before_each():
 	gut.p('[before each]')
@@ -140,27 +136,28 @@ class TestBasicLoggerOutput:
 		_test_logger.log("hello\nthis\nshould\nline up")
 		assert_true(true)
 
+	func test_expected_error_output():
+		_test_logger.expected_error("hello world")
+		pass_test('pass')
+
+
 
 class TestLogLevels:
 	extends GutTest # this was on purpose
 
 	var _orig_log_level = -1
 	var _orig_indent_string = null
-	var _orig_err_as_fail = false
 
 	func before_all():
 		_orig_log_level = gut.log_level
 		_orig_indent_string = gut.logger.get_indent_string()
-		_orig_err_as_fail = gut.treat_error_as_failure
 
-		gut.treat_error_as_failure = false
 		gut.logger.set_indent_string('--->')
 
 
 	func after_all():
 		gut.log_level = _orig_log_level
 		gut.logger.set_indent_string(_orig_indent_string)
-		gut.treat_error_as_failure = _orig_err_as_fail
 
 	func test_log_types_at_levels_with_passing_test(level=use_parameters([-2, -1, 0, 1, 2, 3])):
 		gut.log_level = level

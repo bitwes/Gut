@@ -22,7 +22,7 @@ class TestBoth:
 
 	func test_spy_is_set_in_metadata():
 		var inst = autofree(_doubler.double(DoubleMe).new())
-		assert_eq(inst.__gutdbl.spy, _spy)
+		assert_eq(inst.__gutdbl.spy_ref.get_ref(), _spy)
 
 	func test_when_doubled_method_called_spy_sees_it():
 		var inst = autofree(_doubler.double(DoubleMe).new())

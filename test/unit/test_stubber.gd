@@ -20,6 +20,8 @@ var HasStubMetadata = load(HAS_STUB_METADATA_PATH)
 class HackedStubber:
 	extends 'res://addons/gut/stubber.gd'
 	var StubParams = load('res://addons/gut/stub_params.gd')
+	func _init():
+		set_logger(GutUtils.GutLogger.new())
 
 	func set_return(obj, method, value):
 		var sp = StubParams.new(obj, method)
@@ -150,9 +152,9 @@ func test_withStubParams_can_get_return_based_on_parameters():
 
 func test_withStubParams_can_get_return_based_on_complex_parameters():
 	var sp = StubParamsClass.new(DoubleMe, 'method').to_return(10)
-	sp.when_passed('a', 1, ['a', 1], sp)
+	sp.when_passed('a', 1, ['a', 1])
 	gr.stubber.add_stub(sp)
-	var with_params = gr.stubber.get_return(DoubleMe, 'method', ['a', 1, ['a', 1], sp])
+	var with_params = gr.stubber.get_return(DoubleMe, 'method', ['a', 1, ['a', 1]])
 	assert_eq(with_params, 10)
 
 func test_when_parameters_do_not_match_any_stub_then_info_generated():
@@ -222,46 +224,6 @@ func test_get_call_this_returns_method_on_match():
 	var inst = ToStub.new()
 	assert_eq(gr.stubber.get_call_this(inst, 'method'), call_this)
 
-# ----------------
-# Parameter Count
-# ----------------
-func test_get_parameter_count_returns_null_by_default():
-	assert_null(gr.stubber.get_parameter_count(DoubleMe, 'method'))
-
-func test_get_parameter_count_returns_stub_params_value():
-	var sp = StubParamsClass.new(DoubleMe, 'method')
-	sp.param_count(3)
-	gr.stubber.add_stub(sp)
-	assert_eq(gr.stubber.get_parameter_count(DoubleMe, 'method'), 3)
-
-func test_get_parameter_count_returns_null_when_param_count_not_set():
-	var sp = StubParamsClass.new(DoubleMe, 'method')
-	gr.stubber.add_stub(sp)
-	assert_null(gr.stubber.get_parameter_count(DoubleMe, 'method'))
-
-func test_get_parameter_count_finds_count_when_another_stub_exists():
-	var sp = StubParamsClass.new(DoubleMe, 'method')
-	sp.param_count(3)
-	gr.stubber.add_stub(sp)
-
-	var second_sp = StubParamsClass.new(DoubleMe, 'method')
-	second_sp.to_call_super()
-	gr.stubber.add_stub(second_sp)
-
-	assert_eq(gr.stubber.get_parameter_count(DoubleMe, 'method'), 3)
-
-func test_can_stub_parameter_count_for_gdnatives():
-	var sp = StubParamsClass.new(Node, 'rpc_id').param_count(5)
-	gr.stubber.add_stub(sp)
-	assert_eq(gr.stubber.get_parameter_count(Node, 'rpc_id'), 5)
-
-func test_can_get_parameter_count_from_instance_of_gdnatives():
-	var sp = StubParamsClass.new(Node, 'rpc_id').param_count(5)
-	gr.stubber.add_stub(sp)
-	var n = double(Node).new()
-	assert_eq(gr.stubber.get_parameter_count(n, 'rpc_id'), 5)
-
-
 
 # ----------------
 # Default Parameter Values
@@ -309,4 +271,3 @@ func test_draw_parameter_method_meta():
 	var meta = find_method_meta(ToStub.get_script_method_list(), 'default_value_method')
 	gr.stubber.stub_defaults_from_meta(ToStub, meta)
 	assert_eq(gr.stubber.get_default_value(ToStub, 'default_value_method', 0), 'a')
-

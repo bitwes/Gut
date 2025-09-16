@@ -32,12 +32,7 @@ class TestResultExporter:
 	var _test_gut = null
 
 	func get_a_gut():
-		var g = Gut.new()
-		g.log_level = g.LOG_LEVEL_ALL_ASSERTS
-		g.logger = GutUtils.GutLogger.new()
-		g.logger.disable_printer('terminal', true)
-		g.logger.disable_printer('gui', true)
-		g.logger.disable_printer('console', true)
+		var g = new_gut(verbose)
 		return g
 
 	func export_script(script_name):
@@ -229,3 +224,60 @@ class TestDiffTool:
 		var dd =  DiffTool.new(d1, d2)
 		gut.p(dd.summarize())
 		just_look_at_it('Visually check this')
+
+
+class TestParameterized:
+	extends GutTest
+
+	func test_invalid_parameters(p=[1, 2, 3, 4, 5]):
+		assert_eq(p, 99)
+
+
+class TestOutputWhenRunDirectly:
+	extends GutTest
+
+	var before_all_value = 'NOT_SET'
+	var before_each_value = 'NOT_SET'
+	var after_each_value = 'NOT_SET'
+	var after_all_value = 'NOT_SET'
+
+	var _timer = Timer.new()
+
+	func before_all():
+		gut.p('WATCH THESE TESTS')
+		add_child(_timer)
+		_timer.set_wait_time(3)
+		_timer.one_shot = true
+
+		_timer.start()
+		gut.p('before_all yield')
+		await _timer.timeout
+		before_all_value = 'set'
+
+	func before_each():
+		_timer.start()
+		gut.p('before_each yield')
+		await _timer.timeout
+		before_each_value = 'set'
+
+	func after_each():
+		_timer.start()
+		gut.p('after_each yield')
+		await _timer.timeout
+		after_each_value = 'set'
+
+	func after_all():
+		_timer.start()
+		gut.p('after_all yield')
+		await _timer.timeout
+		# must be queued free b/c after yield _timer is still emitting
+		# the timeout signal.  This results in a false positive message
+		# indicating there are still children in the test.
+		_timer.queue_free()
+
+	func test_one():
+		assert_eq(before_all_value, 'set', 'before all value')
+		assert_eq(before_each_value, 'set', 'before each value')
+		_timer.start()
+		gut.p('test_one yield')
+		await _timer.timeout

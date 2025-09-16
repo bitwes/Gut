@@ -64,7 +64,7 @@ func _print_all_formats():
 		_lgr.lograw(' ')
 	_lgr.log()
 
-	_lgr.lograw(_lgr.get_indent_text())
+	_lgr.lograw(_lgr.get_indent())
 	for key in _lgr.fmts:
 		_lgr.lograw(key, _lgr.fmts[key])
 		_lgr.lograw(' ')
@@ -72,12 +72,3 @@ func _print_all_formats():
 
 	for key in _lgr.fmts:
 		_lgr.log(key, _lgr.fmts[key])
-
-
-
-func on_yield_timer_timeout():
-	_lgr.yield_text(str('yielding ', _lgr._yield_calls))
-	if(_lgr._yield_calls > 5):
-		yield_timer.stop()
-		_lgr.end_yield()
-		_lgr.log('done')

@@ -70,6 +70,11 @@ class TestMiscTests:
 		await wait_physics_frames(10)
 		assert_freed(gr.test._awaiter, 'awaiter')
 
+	func test_setting_wait_log_delay_propigates_to_awaiter():
+		add_child_autofree(gr.test)
+		gr.test.wait_log_delay = 999
+		assert_eq(gr.test._awaiter.await_logger.wait_log_delay, 999.0)
+
 
 	# -------
 	# Spot check some type comparisons, these were all causing errors.  These
@@ -137,7 +142,7 @@ class TestAssertEq:
 
 	func test_warns_when_comparing_float_and_int():
 		gr.test.assert_eq(1.0, 1, 'Should pass and warn')
-		assert_warn(gr.test)
+		assert_logger_warn(gr.test)
 
 	var array_vals = [
 		[[1, 2, 3], ['1', '2', '3'], false],
@@ -738,7 +743,8 @@ class TestPending:
 		assert_eq(gr.test.get_pending_count(), 1, 'One test should have been marked as pending')
 
 	func test_pending_accepts_text():
-		pending("This is a pending test.  You should see this text in the results.")
+		gr.test.pending("This is a pending test.  You should see this text in the results.")
+		assert_eq(gr.test.get_pass_count(), 0)
 
 	func test_pending_does_not_increment_passed():
 		gr.test.pending()
@@ -834,9 +840,6 @@ class TestAccessorAsserts:
 # ------------------------------------------------------------------------------
 class TestAssertExports:
 	extends BaseTestClass
-
-	func should_skip_script():
-		return 'Not implemented in 4.0'
 
 	class NoProperty:
 		func _unused():
@@ -1252,7 +1255,7 @@ class TestReplaceNode:
 	func test_when_node_does_not_exist_error_is_generated():
 		var replacement = autofree(Node2D.new())
 		gr.test.replace_node(_arena, 'DoesNotExist', replacement)
-		assert_errored(gr.test)
+		assert_logger_errored(gr.test)
 
 	func test_replacement_works_with_dollar_sign_references():
 		var replacement = autofree(Node2D.new())
@@ -1289,12 +1292,17 @@ class TestReplaceNode:
 		var replacement = autofree(Node2D.new())
 		var old = autofree(Node2D.new())
 		gr.test.replace_node(_arena, old, replacement)
-		assert_errored(gr.test)
+		assert_engine_error("common_parent")
+		assert_logger_errored(gr.test)
 
 
 # ------------------------------------------------------------------------------
 class TestAssertIsFreed:
 	extends BaseTestClass
+
+	func after_all():
+		# wait for queue_free to kick in.
+		await wait_idle_frames(10)
 
 	func test_object_is_freed_should_pass():
 		var obj = Node.new()
@@ -1328,7 +1336,7 @@ class TestAssertIsFreed:
 		assert_pass(gr.test)
 
 	func test_assert_not_freed_title_is_optional():
-		var obj = Node.new()
+		var obj = autofree(Node.new())
 		gr.test.assert_not_freed(obj)
 		pass_test("we got here")
 
@@ -1372,22 +1380,26 @@ class TestMemoryMgmt:
 	var _gut = null
 
 	func before_each():
-		# verbose = true
+		verbose = false
 		_gut = add_child_autofree(new_gut(verbose))
+
 
 	func test_passes_when_no_orphans_introduced():
 		var d = DynamicGutTest.new()
 		d.add_source("""
-		func test_assert_no_orphans():
+		func test_assert_no_new_orphans():
 			assert_no_new_orphans()
 		""")
 		var results = d.run_test_in_gut(_gut)
 		assert_eq(results.passing, 1)
+		await wait_for_signal(_gut.end_run, 5)
+		await wait_seconds(.5)
+
 
 	func test_failing_orphan_assert_marks_test_as_failing():
 		var d = DynamicGutTest.new()
 		d.add_source("""
-		func test_assert_no_orphans():
+		func test_assert_no_new_orphans():
 			var n2d = Node2D.new()
 			assert_no_new_orphans('SHOULD FAIL')
 			assert_true(is_failing(), 'this test should be failing')
@@ -1395,6 +1407,8 @@ class TestMemoryMgmt:
 		""")
 		var results = d.run_test_in_gut(_gut)
 		assert_eq(results.failing, 1)
+		await wait_for_signal(_gut.end_run, 5)
+		await wait_seconds(.5)
 
 
 	func test_passes_when_orphans_released():
@@ -1455,58 +1469,59 @@ class TestTestStateChecking:
 		_gut.inner_class_name = inner_class
 		_gut.unit_test_name = name
 		_gut.test_scripts()
+		await wait_for_signal(_gut.end_run, 5)
 
 	func _assert_pass_fail_count(passing, failing):
 		assert_eq(_gut.get_pass_count(), passing, 'Pass count does not match')
 		assert_eq(_gut.get_fail_count(), failing, 'Failing count does not match')
 
 	func test_is_passing_returns_true_when_test_is_passing():
-		_run_test('TestIsPassing')
+		await _run_test('TestIsPassing')
 		_assert_pass_fail_count(2, 0)
 
 	func test_is_passing_returns_false_when_test_is_failing():
-		_run_test('TestIsPassing')
+		await _run_test('TestIsPassing')
 		_assert_pass_fail_count(1, 1)
 
 	func test_is_passing_false_by_default():
-		_run_test('TestIsPassing')
+		await _run_test('TestIsPassing')
 		_assert_pass_fail_count(1, 0)
 
 	func  test_is_passing_returns_true_before_test_fails():
-		_run_test('TestIsPassing')
+		await _run_test('TestIsPassing')
 		_assert_pass_fail_count(2, 1)
 
 	func test_is_failing_returns_true_when_failing():
-		_run_test('TestIsFailing')
+		await _run_test('TestIsFailing')
 		_assert_pass_fail_count(1, 1)
 
 	func test_is_failing_returns_false_when_passing():
-		_run_test('TestIsFailing')
+		await _run_test('TestIsFailing')
 		_assert_pass_fail_count(2, 0)
 
 	func test_is_failing_returns_false_by_default():
-		_run_test('TestIsFailing')
+		await _run_test('TestIsFailing')
 		_assert_pass_fail_count(1, 0)
 
 	func test_is_failing_returns_false_before_test_passes():
-		_run_test('TestIsFailing')
+		await _run_test('TestIsFailing')
 		_assert_pass_fail_count(2, 0)
 
 	func test_error_generated_when_using_is_passing_in_before_all():
-		_run_test('TestUseIsPassingInBeforeAll', 'test_nothing')
-		assert_errored(_gut, 1)
+		await _run_test('TestUseIsPassingInBeforeAll', 'test_nothing')
+		assert_logger_errored(_gut, 1)
 
 	func test_error_generated_when_using_is_passing_in_after_all():
-		_run_test('TestUseIsPassingInAfterAll', 'test_nothing')
-		assert_errored(_gut, 1)
+		await _run_test('TestUseIsPassingInAfterAll', 'test_nothing')
+		assert_logger_errored(_gut, 1)
 
 	func test_error_generated_when_using_is_failing_in_before_all():
-		_run_test('TestUseIsFailingInBeforeAll', 'test_nothing')
-		assert_errored(_gut, 1)
+		await _run_test('TestUseIsFailingInBeforeAll', 'test_nothing')
+		assert_logger_errored(_gut, 1)
 
 	func test_error_generated_when_using_is_failing_in_after_all():
-		_run_test('TestUseIsFailingInAfterAll', 'test_nothing')
-		assert_errored(_gut, 1)
+		await _run_test('TestUseIsFailingInAfterAll', 'test_nothing')
+		assert_logger_errored(_gut, 1)
 
 
 # ------------------------------------------------------------------------------
