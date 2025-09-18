@@ -416,7 +416,7 @@ func print_properties(props, thing):
 		elif(print_value == ''):
 			print_value = 'EMPTY'
 
-		lgr.p(prop_name, ' = ', print_value)
+		lgr.p('* ', prop_name, ' = ', print_value)
 		if(include_property_usage):
 			lgr.inc_indent()
 			_print_bit_mask('usage', props[i].usage, PROPERTY_USAGES)
@@ -432,7 +432,7 @@ func print_method_signature(meta):
 		args.append(arg.name)
 	s += ", ".join(args)
 	s += ")"
-	lgr.p(s)
+	lgr.p("* ", s)
 	if(include_method_flags):
 		lgr.inc_indent()
 		_print_bit_mask('flags', meta.flags, METHOD_FLAGS)
