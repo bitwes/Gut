@@ -210,57 +210,6 @@ var PROPERTY_USAGES = {
 # 	return to_return
 
 
-# func print_other_info(loaded, msg = '', indent=''):
-# 	print(indent, '--------------------- ', msg, ' ---------------------')
-# 	print(indent, loaded)
-
-# 	var base_script_path = 'NO base script'
-# 	if(loaded.has_method('get_base_script')):
-# 		if(loaded.get_base_script() != null):
-# 			base_script_path = str('"', loaded.get_base_script().get_path(), '"')
-# 		else:
-# 			base_script_path = 'Null base script'
-
-# 	print(indent, 'base_script path          ', base_script_path)
-# 	print(indent, 'class                     ', loaded.get_class())
-# 	print(indent, 'instance base type        ', loaded.get_instance_base_type())
-# 	print(indent, 'instance_id               ', loaded.get_instance_id())
-# 	print(indent, 'meta_list                 ', loaded.get_meta_list())
-# 	print(indent, 'name                      ', loaded.get_name())
-# 	print(indent, 'path                      ', loaded.get_path())
-# 	print(indent, 'resource local to scene   ', loaded.resource_local_to_scene)
-# 	print(indent, 'resource name             ', loaded.resource_name)
-# 	print(indent, 'resource path             ', loaded.resource_path)
-# 	print(indent, 'RID                       ', loaded.get_rid())
-# 	print(indent, 'script                    ', loaded.get_script())
-# 	print()
-# 	print(loaded.get_script_property_list())
-# 	print_properties(loaded.get_property_list(), loaded)
-
-# 	var const_map = loaded.new().get_script().get_script_constant_map()
-# 	# if(const_map.size() > 0):
-# 	print(indent, '--- Constants ---')
-
-# 	for key in const_map:
-# 		var thing = const_map[key]
-# 		print(indent, key, ' = ', thing)
-# 		if(typeof(thing) == TYPE_OBJECT):
-# 			print_other_info(thing, key, indent + '    ')
-# 			# print('  ', 'meta         ', thing.get_meta_list())
-# 			# print('  ', 'class        ', thing.get_class())
-# 			# print('  ', 'path         ', thing.get_path())
-# 			# var base_script = thing.get_base_script()
-# 			# print('  ', 'base script  ', base_script)
-# 			# if(base_script != null):
-# 			# 	print('  ', 'base id      ', base_script.get_instance_id())
-# 			# 	print('  ', 'base path    ', base_script.get_path() )
-# 			# print('  ', 'base type    ', thing.get_instance_base_type())
-# 			# print('  ', 'can instantiate ', thing.can_instantiate())
-# 			# print('  ', 'id           ', thing.get_instance_id())
-# 			# print('  ', 'is test      ', does_inherit_from_test(thing))
-
-
-
 # func print_inner_test_classes(loaded, from=null):
 # 	# print('path = ', loaded.get_path())
 # 	# if(loaded.get_base_script() != null):
@@ -365,10 +314,10 @@ var PROPERTY_USAGES = {
 
 
 
-# func print_class_db_class_list():
-# 	var list = ClassDB.get_class_list()
-# 	list.sort()
-# 	print("\n".join(list))
+func print_class_db_class_list():
+	var list = ClassDB.get_class_list()
+	list.sort()
+	print("\n".join(list))
 
 
 # func pp(dict, indent=''):
@@ -426,7 +375,7 @@ var include_method_flags = false
 var include_property_usage = false
 var include_meta = false
 var pretty_meta = false
-
+var lgr = load("res://addons/gut/logger.gd").new()
 
 func _print_meta(meta):
 	if(include_meta):
@@ -437,8 +386,6 @@ func _print_meta(meta):
 			lgr.p(meta)
 
 
-var lgr = load("res://addons/gut/logger.gd").new()
-
 func _print_bit_mask(mask_name, mask_value, flags):
 	lgr.p(mask_name, '(', mask_value, ')')
 	lgr.inc_indent()
@@ -447,6 +394,16 @@ func _print_bit_mask(mask_name, mask_value, flags):
 		if(mask_value & flag):
 			lgr.p('- ', key, ' ', flag)
 	lgr.dec_indent()
+
+
+func print_script_constants(loaded):
+	var const_map = loaded.get_script_constant_map()
+	for key in const_map:
+		var thing = const_map[key]
+		lgr.p(key, ' = ', thing)
+		if(typeof(thing) == TYPE_OBJECT):
+			pass
+
 
 
 func print_properties(props, thing):
@@ -501,26 +458,53 @@ func print_method_signatures(thing):
 		print_method_signatures(thing.get_script_method_list())
 
 
+func print_script_info(loaded):
+	lgr.p('to_string        ', loaded.to_string())
+	lgr.p('resource_name    ', loaded.resource_name)
+	lgr.p("resource_path    ", loaded.resource_path)
+	lgr.p('base_script      ', loaded.get_base_script())
+	lgr.p('global_name      ', loaded.get_global_name())
+	lgr.p('is_abstract      ', loaded.is_abstract())
+	lgr.p('is_tool          ', loaded.is_tool())
+	lgr.p('has_source_code  ', loaded.has_source_code())
+	lgr.p("is_built_in      ", loaded.is_built_in())
+	lgr.p('class            ', loaded.get_class())
+	lgr.p('script           ', loaded.get_script())
+
+
+
 func print_script(loaded, title =''):
 	if(title != ''):
 		lgr.p("---------------------")
 		lgr.p(title)
 		lgr.p("---------------------")
 
+	lgr.p("- General Info");lgr.inc_indent()
+	print_script_info(loaded)
+	lgr.dec_indent()
+
 	if(include_native):
 		lgr.p("Native Methods"); lgr.inc_indent()
 		print_method_signatures(loaded.get_method_list())
 		lgr.dec_indent()
-	lgr.p("Methods"); lgr.inc_indent()
+
+	lgr.p("- Methods"); lgr.inc_indent()
 	print_method_signatures(loaded.get_script_method_list())
 	lgr.dec_indent()
+
 	if(include_native):
-		lgr.p("Native Properties"); lgr.inc_indent()
+		lgr.p("- Native Properties"); lgr.inc_indent()
 		print_properties(loaded.get_property_list(), loaded)
 		lgr.dec_indent()
-	lgr.p("Properties");lgr.inc_indent()
+
+	lgr.p("- Properties");lgr.inc_indent()
 	print_properties(loaded.get_script_property_list(), loaded)
 	lgr.dec_indent()
+
+	lgr.p("- Constants");lgr.inc_indent()
+	print_script_constants(loaded)
+	lgr.dec_indent()
+
 
 
 func print_script_verbose(loaded):

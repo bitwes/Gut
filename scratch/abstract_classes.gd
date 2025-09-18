@@ -92,45 +92,27 @@ class ExtendsAbstractAndIsAbstract_IsNotAbstract:
 		pass
 
 
-
+const CONSTANT_VALUE = 7
 
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-func _print_some_stuff(thing):
-	print('is_abstract = ', thing.is_abstract())
-	print('has another_abstract_method = ', thing.has_method('another_abstract_method'))
-	print("can instantiate = ", thing.can_instantiate())
-	print('class = ', thing.get_class())
-
 
 func _init() -> void:
 	var inspector = ObjIns.new()
-	inspector.include_method_flags = true
+	# inspector.include_method_flags = true
 	# inspector.include_property_usage = true
 	# inspector.include_meta = true
 	# inspector.pretty_meta = true
 	# inspector.include_native = true
 
-	# inspector.print_script(AbstractClass, 'Abstract')
-	# _print_some_stuff(AbstractClass)
-
-	# inspector.print_script(ExtendsAbstractClass, 'Extends Abstract')
-	# _print_some_stuff(ExtendsAbstractClass)
-
-	inspector.print_script(ExtendsAbstractAndIsAbstract, 'ExtendsAbstractAndIsAbstract')
-	_print_some_stuff(ExtendsAbstractAndIsAbstract)
-
-	inspector.print_script(ExtendsAbstractAndIsAbstract_IsNotAbstract, 'ExtendsAbstractAndIsAbstract_IsNotAbstract')
-	_print_some_stuff(ExtendsAbstractAndIsAbstract_IsNotAbstract)
-
-	inspector.print_script(JustSomeClass, 'JustSomeClass')
-	_print_some_stuff(JustSomeClass)
-
-	inspector.print_script(JustAbstract, 'JustAbstract')
-	_print_some_stuff(JustAbstract)
-
-	inspector.print_script(ExtendsJustAbstract, 'ExtendsJustAbstract')
-	_print_some_stuff(ExtendsJustAbstract)
+	inspector.print_script(get_script(), "this script")
+	inspector.print_script(AbstractClass, 'Abstract')
+	inspector.print_script(ExtendsAbstractClass, 'ExtendsAbstractClass')
+	# inspector.print_script(ExtendsAbstractAndIsAbstract, 'ExtendsAbstractAndIsAbstract')
+	# inspector.print_script(ExtendsAbstractAndIsAbstract_IsNotAbstract, 'ExtendsAbstractAndIsAbstract_IsNotAbstract')
+	# inspector.print_script(JustSomeClass, 'JustSomeClass')
+	# inspector.print_script(JustAbstract, 'JustAbstract')
+	# inspector.print_script(ExtendsJustAbstract, 'ExtendsJustAbstract')
 
 	quit()
