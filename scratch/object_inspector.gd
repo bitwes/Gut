@@ -1,6 +1,7 @@
 # ##############################################################################
 # scratch/get_info.gd has grown into a monster.
-# This is my attempt to tame that monster.
+# This is my attempt to tame that monster into a re-usable thing so get_info.gd
+# doesn't keep getting bigger with each new thing I try to explore.
 # ##############################################################################
 class_name ObjectInspector
 
