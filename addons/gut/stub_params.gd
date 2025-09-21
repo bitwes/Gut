@@ -88,13 +88,8 @@ func _is_parent_method_abstract():
 	)
 
 	# Remove first item, because it is the child implementation.
-	method_list.remove_at(0)
-
-	method_list = method_list.filter(func(meta: Dictionary):
-		return (meta.flags & MethodFlags.METHOD_FLAG_VIRTUAL_REQUIRED) == 0
-	)
-
-	return method_list.is_empty()
+	var parent_method_flags = method_list[1].flags
+	return (parent_method_flags & MethodFlags.METHOD_FLAG_VIRTUAL_REQUIRED) != 0
 
 # -------------------------
 # Public
