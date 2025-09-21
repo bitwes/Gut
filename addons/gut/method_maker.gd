@@ -159,14 +159,17 @@ func _get_arg_text(arg_array):
 
 
 # creates a call to the function in meta in the super's class.
-func _get_super_call_text(method_name, args):
+func _get_super_call_text(meta, args):
+	if meta.flags & MethodFlags.METHOD_FLAG_VIRTUAL_REQUIRED != 0:
+		return 'assert(false, "Tried to call abstract super method. This should not happen and is a bug in GUT.")'
+
 	var params = ''
 	for i in range(args.size()):
 		params += args[i].p_name
 		if(i != args.size() -1):
 			params += ', '
 
-	return str('await super(', params, ')')
+	return str('return await super(', params, ')')
 
 
 func _get_spy_call_parameters_text(args):
@@ -237,10 +240,10 @@ func get_function_text(meta, override_size=null):
 		else:
 			var decleration = str('func ', meta.name, '(', method_params, '):')
 			text = _func_text.format({
-				"func_decleration":decleration,
-				"method_name":meta.name,
-				"param_array":param_array,
-				"super_call":_get_super_call_text(meta.name, args),
+				"func_decleration": decleration,
+				"method_name": meta.name,
+				"param_array": param_array,
+				"super_call": _get_super_call_text(meta, args),
 			})
 
 	return text

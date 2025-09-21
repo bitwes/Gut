@@ -2,29 +2,19 @@ extends "res://addons/gut/test.gd"
 
 
 class BaseTest:
-	extends GutTest
+	extends GutInternalTester
 	var Stubber = load('res://addons/gut/stubber.gd')
 	var Doubler = load('res://addons/gut/doubler.gd')
 	var StubParams = load('res://addons/gut/stub_params.gd')
 	var Wm = GutUtils.WarningsManager
 
 
-	const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
-	const DOUBLE_ME_SCENE_PATH = 'res://test/resources/doubler_test_objects/double_me_scene.tscn'
-	const DOUBLE_EXTENDS_NODE2D = 'res://test/resources/doubler_test_objects/double_extends_node2d.gd'
-	const DOUBLE_EXTENDS_WINDOW_DIALOG = 'res://test/resources/doubler_test_objects/double_extends_window_dialog.gd'
 	const TO_STUB_PATH = 'res://test/resources/stub_test_objects/to_stub.gd'
 	const DOUBLE_WITH_STATIC = 'res://test/resources/doubler_test_objects/has_static_method.gd'
 	const INIT_PARAMETERS = 'res://test/resources/stub_test_objects/init_parameters.gd'
-	const INNER_CLASSES_PATH = 'res://test/resources/doubler_test_objects/inner_classes.gd'
 	const DOUBLE_DEFAULT_PARAMETERS = 'res://test/resources/doubler_test_objects/double_default_parameters.gd'
 
-	var DoubleMe = Wm.load_script_ignoring_all_warnings(DOUBLE_ME_PATH)
-	var DoubleExtendsNode2D = Wm.load_script_ignoring_all_warnings(DOUBLE_EXTENDS_NODE2D)
-	var DoubleExtendsWindowDialog = Wm.load_script_ignoring_all_warnings(DOUBLE_EXTENDS_WINDOW_DIALOG)
 	var DoubleWithStatic = Wm.load_script_ignoring_all_warnings(DOUBLE_WITH_STATIC)
-	var DoubleMeScene = Wm.load_script_ignoring_all_warnings(DOUBLE_ME_SCENE_PATH)
-	var InnerClasses = Wm.load_script_ignoring_all_warnings(INNER_CLASSES_PATH)
 	var DoubleDefaultParameters = Wm.load_script_ignoring_all_warnings(DOUBLE_DEFAULT_PARAMETERS)
 	var InitParameters = Wm.load_script_ignoring_all_warnings(INIT_PARAMETERS)
 
@@ -115,6 +105,20 @@ class TestTheBasics:
 		gr.stubber.add_stub(params)
 		doubled.set_value(99)
 		assert_eq(doubled._value, 99)
+
+	func test_when_abstract_method_stubbed_to_call_super_then_error_is_logged():
+		# Arrange
+		var doubled = autofree(gr.doubler.double(DoubleAbstract).new())
+		var params = GutUtils.StubParams.new(doubled, 'abstract_method')
+		params.logger = GutLogger.new()
+
+		# Act
+		params.to_call_super()
+
+		# Assert
+		assert_false(params.call_super)
+		assert_eq(params.logger.get_errors()[0], "Cannot make stub call super because parent method is abstract.")
+
 
 	func test_when_super_awaits_the_method_awaits():
 		var doubled = add_child_autofree(gr.doubler.double(DoubleMe).new())
@@ -288,5 +292,3 @@ class TestMonkeyPatching:
 		var elapsed = Time.get_ticks_msec() - before
 
 		assert_almost_eq(elapsed, 1000, 300) # yea, 300 is what you need.
-
-

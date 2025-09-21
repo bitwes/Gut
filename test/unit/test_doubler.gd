@@ -186,7 +186,9 @@ class TestDoublingScripts:
 		var d = _doubler.double(DOUBLE_ME_PATH).new()
 		assert_does_not_have(d.__gutdbl_values.doubled_methods, '_input')
 
-
+	func test_can_double_abstract_class():
+		var d = _doubler.double(DoubleAbstract).new()
+		assert_has(d.__gutdbl_values.doubled_methods, 'abstract_method')
 
 
 
