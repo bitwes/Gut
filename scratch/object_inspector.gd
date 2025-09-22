@@ -6,6 +6,7 @@
 class_name ObjectInspector
 
 var _strutils = load('res://addons/gut/strutils.gd').new()
+var OneToMany = load('res://addons/gut/one_to_many.gd')
 
 const DEFAULT_ARGS = 'default_args'
 const NAME = 'name'
@@ -406,7 +407,6 @@ func print_script_constants(loaded):
 			pass
 
 
-
 func print_properties(props, thing):
 	for i in range(props.size()):
 		var prop_name = props[i].name
@@ -446,14 +446,15 @@ func print_method_signatures(thing):
 	if(typeof(thing) != TYPE_ARRAY):
 		meta = thing.get_method_list()
 
-	var methods = {}
+	var methods = OneToMany.new()
 	for entry in meta:
-		methods[entry.name] = entry
+		methods.add(entry.name, entry)
 
-	var sorted = methods.keys()
+	var sorted = methods.items.keys()
 	sorted.sort()
 	for key in sorted:
-		print_method_signature(methods[key])
+		for entry in methods.items[key]:
+			print_method_signature(entry)
 
 	if(typeof(thing) != TYPE_ARRAY):
 		print_method_signatures(thing.get_script_method_list())

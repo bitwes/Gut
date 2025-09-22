@@ -47,7 +47,7 @@ class AbstractClass:
 
 
 # ------------------------------------------------------------------------------
-class ExtendsAbstractClass:
+class Extends_Abstract:
 	extends AbstractClass
 
 	func abstract_method():
@@ -56,7 +56,7 @@ class ExtendsAbstractClass:
 
 # ------------------------------------------------------------------------------
 @abstract
-class ExtendsAbstractAndIsAbstract:
+class Extends_Abstract_IsAbstract:
 	extends AbstractClass
 
 	func abstract_method():
@@ -67,8 +67,8 @@ class ExtendsAbstractAndIsAbstract:
 
 
 # ------------------------------------------------------------------------------
-class ExtendsAbstractAndIsAbstract_IsNotAbstract:
-	extends ExtendsAbstractAndIsAbstract
+class Extends_AbstractAndIsAbstract_IsNotAbstract:
+	extends Extends_Abstract_IsAbstract
 
 	func abstract_method():
 		pass
@@ -78,6 +78,32 @@ class ExtendsAbstractAndIsAbstract_IsNotAbstract:
 
 
 const CONSTANT_VALUE = 7
+
+
+
+func evaluate_abstractness(klass):
+	print(klass)
+	if(typeof(klass) == TYPE_STRING):
+		klass = get_script().get_script_constant_map()[klass]
+
+	var counted = {}
+	for method in klass.get_script_method_list():
+		if(method.flags & METHOD_FLAG_VIRTUAL_REQUIRED):
+			counted[method.name] = counted.get_or_add(method.name, 0) + 1
+		else:
+			counted[method.name] = counted.get_or_add(method.name, 0) - 1
+
+	for key in counted:
+		if(counted[key] == 0):
+			print("* abstract ", key)
+		elif(counted[key] == 1):
+			print("* implemented ", key)
+		elif(counted[key] == -1):
+			print("* normal ", key)
+		else:
+			print("* WHAT IS THIS ", key, ' = ', counted[key])
+
+
 
 
 # ------------------------------------------------------------------------------
@@ -90,10 +116,18 @@ func _init() -> void:
 	# inspector.pretty_meta = true
 	# inspector.include_native = true
 
-	inspector.print_script(get_script(), "this script")
-	inspector.print_script(AbstractClass, 'Abstract')
-	inspector.print_script(ExtendsAbstractClass, 'ExtendsAbstractClass')
-	inspector.print_script(ExtendsAbstractAndIsAbstract, "ExtendsAbstractAndIsAbstract")
+
+	# evaluate_abstractness("JustSomeClass")
+	evaluate_abstractness("AbstractClass")
+	evaluate_abstractness("Extends_Abstract")
+	evaluate_abstractness("Extends_Abstract_IsAbstract")
+	evaluate_abstractness("Extends_AbstractAndIsAbstract_IsNotAbstract")
+
+	inspector.print_script(Extends_AbstractAndIsAbstract_IsNotAbstract, "Extends_AbstractAndIsAbstract_IsNotAbstract")
+
+	# inspector.print_script(get_script(), "this script")
+	# inspector.print_script(AbstractClass, 'Abstract')
+	# inspector.print_script(ExtendsAbstractClass, 'ExtendsAbstractClass')
 	# inspector.print_script(ExtendsAbstractAndIsAbstract, 'ExtendsAbstractAndIsAbstract')
 	# inspector.print_script(ExtendsAbstractAndIsAbstract_IsNotAbstract, 'ExtendsAbstractAndIsAbstract_IsNotAbstract')
 	# inspector.print_script(JustSomeClass, 'JustSomeClass')
