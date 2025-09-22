@@ -476,12 +476,21 @@ func print_script_info(loaded):
 	lgr.p('script           ', loaded.get_script())
 
 
+func print_native_class(which):
+	lgr.p("Native Methods"); lgr.inc_indent()
+	print_method_signatures(which.get_method_list())
+	lgr.dec_indent()
+
 
 func print_script(loaded, title =''):
 	if(title != ''):
 		lgr.p("---------------------")
 		lgr.p(title)
 		lgr.p("---------------------")
+
+	if(GutUtils.is_native_class(loaded)):
+		print_native_class(loaded)
+		return
 
 	lgr.p("- General Info");lgr.inc_indent()
 	print_script_info(loaded)

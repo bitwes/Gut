@@ -77,6 +77,12 @@ class Extends_AbstractAndIsAbstract_IsNotAbstract:
 		pass
 
 
+class Extends_BaseButton:
+	extends BaseButton
+
+	func normal_method():
+		pass
+
 const CONSTANT_VALUE = 7
 
 
@@ -122,19 +128,21 @@ func _init() -> void:
 	inspector.include_property_usage = true
 	# inspector.include_meta = true
 	# inspector.pretty_meta = true
-	# inspector.include_native = true
+	inspector.include_native = true
+	# evaluate_abstractness(Extends_BaseButton)
+	# inspector.print_script(Extends_BaseButton, "Extends_BaseButton")
 
 
 	# evaluate_abstractness("JustSomeClass")
-	evaluate_abstractness("AbstractClass")
-	evaluate_abstractness("Extends_Abstract")
-	evaluate_abstractness("Extends_Abstract_IsAbstract")
-	evaluate_abstractness("Extends_AbstractAndIsAbstract_IsNotAbstract")
+	# evaluate_abstractness("AbstractClass")
+	# evaluate_abstractness("Extends_Abstract")
+	# evaluate_abstractness("Extends_Abstract_IsAbstract")
+	# evaluate_abstractness("Extends_AbstractAndIsAbstract_IsNotAbstract")
 
-	inspector.print_script(Extends_AbstractAndIsAbstract_IsNotAbstract, "Extends_AbstractAndIsAbstract_IsNotAbstract")
+	# inspector.print_script(Extends_AbstractAndIsAbstract_IsNotAbstract, "Extends_AbstractAndIsAbstract_IsNotAbstract")
 
 	# inspector.print_script(get_script(), "this script")
-	# inspector.print_script(AbstractClass, 'Abstract')
+	inspector.print_script(AbstractClass, 'Abstract')
 	# inspector.print_script(ExtendsAbstractClass, 'ExtendsAbstractClass')
 	# inspector.print_script(ExtendsAbstractAndIsAbstract, 'ExtendsAbstractAndIsAbstract')
 	# inspector.print_script(ExtendsAbstractAndIsAbstract_IsNotAbstract, 'ExtendsAbstractAndIsAbstract_IsNotAbstract')
