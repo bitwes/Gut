@@ -78,29 +78,6 @@ func _get_method_meta():
 			_method_meta = found_meta
 	return _method_meta
 
-func _is_parent_method_abstract():
-	if typeof(stub_target) != TYPE_OBJECT:
-		return false
-
-	var method_list: Array
-	if stub_target.has_method('get_script_method_list'):
-		method_list = stub_target.get_script_method_list()
-	elif stub_target.has_method('get_script'):
-		method_list = stub_target.get_script().get_script_method_list()
-		
-	if method_list.is_empty():
-		return false
-
-	var stubbed_method_list: Array[Dictionary] = method_list.filter(func(meta: Dictionary):
-		return meta.name == stub_method
-	)
-
-	if stubbed_method_list.size() < 2:
-		return false
-
-	# Remove first item, because it is the child implementation.
-	var parent_method_flags = stubbed_method_list[1].flags
-	return (parent_method_flags & MethodFlags.METHOD_FLAG_VIRTUAL_REQUIRED) != 0
 
 # -------------------------
 # Public
@@ -119,10 +96,6 @@ func to_do_nothing():
 
 
 func to_call_super():
-	if _is_parent_method_abstract():
-		_lgr.error("Cannot make stub call super because parent method is abstract.")
-		return self
-
 	call_super = true
 	_is_call_override = true
 	return self

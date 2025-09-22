@@ -151,6 +151,7 @@ func test_to_call_super_sets_flag():
 	sp.to_call_super()
 	assert_false(sp.is_default_override_only())
 
+
 # ------------------------------------------------------------------------------
 # Stubbing complex parameter lists
 #

@@ -161,7 +161,8 @@ func _get_arg_text(arg_array):
 # creates a call to the function in meta in the super's class.
 func _get_super_call_text(meta, args):
 	if meta.flags & MethodFlags.METHOD_FLAG_VIRTUAL_REQUIRED != 0:
-		return 'assert(false, "Tried to call abstract super method. This should not happen and is a bug in GUT.")'
+		return '__gutdbl.gut_ref.get_ref().get_logger().error("Cannot call super() because method %s is abstract."); return null' \
+			% meta.name
 
 	var params = ''
 	for i in range(args.size()):

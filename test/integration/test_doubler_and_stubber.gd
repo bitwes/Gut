@@ -106,20 +106,6 @@ class TestTheBasics:
 		doubled.set_value(99)
 		assert_eq(doubled._value, 99)
 
-	func test_when_abstract_method_stubbed_to_call_super_then_error_is_logged():
-		# Arrange
-		var doubled = autofree(gr.doubler.double(DoubleAbstract).new())
-		var params = GutUtils.StubParams.new(doubled, 'abstract_method')
-		params.logger = GutLogger.new()
-
-		# Act
-		params.to_call_super()
-
-		# Assert
-		assert_false(params.call_super)
-		assert_eq(params.logger.get_errors()[0], "Cannot make stub call super because parent method is abstract.")
-
-
 	func test_when_super_awaits_the_method_awaits():
 		var doubled = add_child_autofree(gr.doubler.double(DoubleMe).new())
 		var params = GutUtils.StubParams.new(doubled.await_seconds).to_call_super()

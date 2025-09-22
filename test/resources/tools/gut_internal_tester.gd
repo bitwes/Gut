@@ -6,9 +6,6 @@ var verbose = false
 const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
 var DoubleMe = GutUtils.WarningsManager.load_script_ignoring_all_warnings(DOUBLE_ME_PATH)
 
-const DOUBLE_ABSTRACT_PATH = 'res://test/resources/doubler_test_objects/double_abstract.gd'
-var DoubleAbstract = GutUtils.WarningsManager.load_script_ignoring_all_warnings(DOUBLE_ABSTRACT_PATH)
-
 const DOUBLE_ME_SCENE_PATH = 'res://test/resources/doubler_test_objects/double_me_scene.tscn'
 var DoubleMeScene = GutUtils.WarningsManager.load_script_ignoring_all_warnings(DOUBLE_ME_SCENE_PATH)
 

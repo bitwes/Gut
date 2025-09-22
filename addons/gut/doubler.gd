@@ -207,8 +207,8 @@ func _get_inst_id_ref_str(inst):
 	return ref_str
 
 
-func _get_func_text(method_hash):
-	return _method_maker.get_function_text(method_hash) + "\n"
+func _get_func_text(method_meta):
+	return _method_maker.get_function_text(method_meta) + "\n"
 
 
 func _parse_script(obj):
