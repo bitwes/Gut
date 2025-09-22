@@ -21,6 +21,22 @@ class ExtendsAbstractClass:
 func before_all():
 	register_inner_classes(get_script())
 
+
+# Our implementaiton assumes that the order of get_script_method_list() is
+# from child to parents. The following test will show when future godot
+# versions change the behavior.
+func test_method_order_assumption():
+	var method_list = (ExtendsAbstractClass as Variant).get_script_method_list()
+
+	assert_eq(method_list[0].name, "abstract_method")
+	assert_eq(method_list[0].flags, 1)
+
+	assert_eq(method_list[1].name, "another_abstract_method")
+
+	assert_eq(method_list[2].name, "abstract_method")
+	assert_eq(method_list[2].flags, 129)
+
+
 func test_can_double_abstract():
 	var dbl = double(AbstractClass)
 	assert_not_null(dbl)
