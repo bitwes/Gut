@@ -87,21 +87,29 @@ func evaluate_abstractness(klass):
 		klass = get_script().get_script_constant_map()[klass]
 
 	var counted = {}
+	var abstract_methods = {}
 	for method in klass.get_script_method_list():
 		if(method.flags & METHOD_FLAG_VIRTUAL_REQUIRED):
-			counted[method.name] = counted.get_or_add(method.name, 0) + 1
-		else:
-			counted[method.name] = counted.get_or_add(method.name, 0) - 1
+			abstract_methods[method.name] = method
+
+		counted[method.name] = counted.get_or_add(method.name, 0) + 1
 
 	for key in counted:
-		if(counted[key] == 0):
-			print("* abstract ", key)
+		# Extends_AbstractAndIsAbstract_IsNotAbstract.abstract_method has a
+		# count of 3
+		if(counted[key] > 1):
+			if(abstract_methods.has(key)):
+				print("* [implemented] ", key , ' (', counted[key], ')')
+			else:
+				print("* [UNKNOWN] ", key)
 		elif(counted[key] == 1):
-			print("* implemented ", key)
-		elif(counted[key] == -1):
-			print("* normal ", key)
+			if(abstract_methods.has(key)):
+				print("* [abstract] ", key)
+			else:
+				print("* [normal] ", key)
 		else:
-			print("* WHAT IS THIS ", key, ' = ', counted[key])
+			print("[REALLY UNKOWN] ", key)
+			print("    count = ", counted[key])
 
 
 

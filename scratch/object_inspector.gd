@@ -445,8 +445,10 @@ func print_method_signatures(thing):
 	var meta = thing
 	if(typeof(thing) != TYPE_ARRAY):
 		meta = thing.get_method_list()
+		meta.append_array(thing.get_script_method_list())
 
 	var methods = OneToMany.new()
+	methods.ignore_many_dupes = false
 	for entry in meta:
 		methods.add(entry.name, entry)
 

@@ -58,3 +58,12 @@ func test_adding_an_existing_value_does_not_clear_out_all_values():
 	otm.add('two', 'two-1')
 	assert_true(otm.has('two', 'two-2'), 'has two/two-2')
 	print(otm.to_s())
+
+
+func test_ignore_many_dupes_allows_duplicates_of_the_many():
+	var otm = OneToMany.new()
+	otm.ignore_many_dupes = false
+	otm.add('one', 1)
+	otm.add('one', 1)
+	otm.add('one', 1)
+	assert_eq(otm.items['one'].size(), 3)
