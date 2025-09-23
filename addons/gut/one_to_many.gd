@@ -1,7 +1,9 @@
 # ------------------------------------------------------------------------------
 # This datastructure represents a simple one-to-many relationship.  It manages
 # a dictionary of value/array pairs.  It ignores duplicates of both the "one"
-# and the "many".  You
+# and the "many".  You can disable ignoring dupliates of the "many" via
+# ignore_many_dupes.  This setting is not retroactive and will only affect
+# new calls to add.
 # ------------------------------------------------------------------------------
 var items = {}
 var ignore_many_dupes = true

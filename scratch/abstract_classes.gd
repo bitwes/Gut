@@ -53,6 +53,15 @@ class Extends_Abstract:
 	func abstract_method():
 		pass
 
+@abstract
+class Extends_Abstract_DoesNotImplement:
+	extends AbstractClass
+
+	@abstract
+	func abstract_method()
+
+	func my_normal_method():
+		pass
 
 # ------------------------------------------------------------------------------
 @abstract
@@ -85,38 +94,46 @@ class Extends_BaseButton:
 
 const CONSTANT_VALUE = 7
 
+func parse_methods(klass):
+	var normal_methods = {}
+	var abstract_methods = {}
+	for method in klass.get_script_method_list():
+		if(method.flags & METHOD_FLAG_VIRTUAL_REQUIRED):
+			abstract_methods[method.name] = method
+		else:
+			normal_methods[method.name] = method
+
+	# Adds an "implmeted" field to the meta.  I don't think we need it, but this
+	# is one way you could tell.
+	for key in normal_methods:
+		if(abstract_methods.has(key)):
+			abstract_methods.erase(key)
+			normal_methods[key].implemented = true
+		else:
+			normal_methods[key].implemented = false
+
+	return {
+		"normal":normal_methods,
+		"abstract":abstract_methods
+	}
 
 
 func evaluate_abstractness(klass):
 	print(klass)
 	if(typeof(klass) == TYPE_STRING):
 		klass = get_script().get_script_constant_map()[klass]
+	print('  abstract = ', klass.is_abstract())
 
-	var counted = {}
-	var abstract_methods = {}
-	for method in klass.get_script_method_list():
-		if(method.flags & METHOD_FLAG_VIRTUAL_REQUIRED):
-			abstract_methods[method.name] = method
+	var results = parse_methods(klass)
 
-		counted[method.name] = counted.get_or_add(method.name, 0) + 1
+	for key in results.abstract:
+		print('  [abstract] ', key)
 
-	for key in counted:
-		# Extends_AbstractAndIsAbstract_IsNotAbstract.abstract_method has a
-		# count of 3
-		if(counted[key] > 1):
-			if(abstract_methods.has(key)):
-				print("* [implemented] ", key , ' (', counted[key], ')')
-			else:
-				print("* [UNKNOWN] ", key)
-		elif(counted[key] == 1):
-			if(abstract_methods.has(key)):
-				print("* [abstract] ", key)
-			else:
-				print("* [normal] ", key)
+	for key in results.normal:
+		if( results.normal[key].implemented):
+			print('  [implmeented]  ', key)
 		else:
-			print("[REALLY UNKOWN] ", key)
-			print("    count = ", counted[key])
-
+			print('  [normal]  ', key)
 
 
 
@@ -133,16 +150,17 @@ func _init() -> void:
 	# inspector.print_script(Extends_BaseButton, "Extends_BaseButton")
 
 
-	# evaluate_abstractness("JustSomeClass")
-	# evaluate_abstractness("AbstractClass")
-	# evaluate_abstractness("Extends_Abstract")
-	# evaluate_abstractness("Extends_Abstract_IsAbstract")
-	# evaluate_abstractness("Extends_AbstractAndIsAbstract_IsNotAbstract")
+	evaluate_abstractness("JustSomeClass")
+	evaluate_abstractness("AbstractClass")
+	evaluate_abstractness("Extends_Abstract")
+	evaluate_abstractness("Extends_Abstract_DoesNotImplement")
+	evaluate_abstractness("Extends_Abstract_IsAbstract")
+	evaluate_abstractness("Extends_AbstractAndIsAbstract_IsNotAbstract")
 
 	# inspector.print_script(Extends_AbstractAndIsAbstract_IsNotAbstract, "Extends_AbstractAndIsAbstract_IsNotAbstract")
 
 	# inspector.print_script(get_script(), "this script")
-	inspector.print_script(AbstractClass, 'Abstract')
+	# inspector.print_script(AbstractClass, 'Abstract')
 	# inspector.print_script(ExtendsAbstractClass, 'ExtendsAbstractClass')
 	# inspector.print_script(ExtendsAbstractAndIsAbstract, 'ExtendsAbstractAndIsAbstract')
 	# inspector.print_script(ExtendsAbstractAndIsAbstract_IsNotAbstract, 'ExtendsAbstractAndIsAbstract_IsNotAbstract')
