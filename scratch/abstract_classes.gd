@@ -2,16 +2,6 @@ class_name AbstractClassStandalone
 extends SceneTree
 
 
-"""-----------------------------------------------------------------------------
-After all this thinking, I think `stub_abstract_method` and detecting the
-parser error to provide more info is the right approach.  `stub_abstract` would
-add a stub that would not call super, could be stubbed to call super, and
-errors when being called for a non-abstract method.
-
-Also, the workaround of locally extending the abstact class and providing
-and implmentation for abstract methods should be added to the documentation.
------------------------------------------------------------------------------"""
-
 
 var ObjIns = load("res://scratch/object_inspector.gd")
 
