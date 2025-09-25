@@ -63,7 +63,7 @@ func test_can_stub_to_return_for_abstract_method_at_instance_level():
 
 func test_error_when_stubbing_to_call_super_at_script_level():
 	stub(AbstractClass, 'abstract_method').to_call_super()
-	pass_test("no errors")
+	assert_tracked_gut_error(gut, 0)
 
 
 func test_error_when_stubbing_to_call_super_at_instance_level():
