@@ -13,4 +13,3 @@ func has_one_param(one):
 
 func has_two_params_one_default(one, two=null):
 	pass
-
