@@ -76,8 +76,9 @@ func test_error_when_stubbing_to_call_super_at_instance_level():
 
 	# Assert
 	assert_null(result)
+	var current_test_errors = gut.error_tracker.get_current_test_errors()
+	assert_eq(current_test_errors[0].code, "Cannot call super() because method abstract_method is abstract.")
 	assert_tracked_gut_error()
-	assert_eq(get_logger().get_errors()[0], "Cannot call super() because method abstract_method is abstract.")
 
 
 func test_can_stub_implemented_abstract_to_call_super():
