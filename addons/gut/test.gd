@@ -100,6 +100,9 @@ var _strutils = GutUtils.Strutils.new()
 var _awaiter = null
 var _was_ready_called = false
 
+# Used to track execution time of a single test method.
+# Is set by GutMain before a method runs. Can be used in some assertions.
+var _test_began_at := 0.0
 
 # I haven't decided if we should be using _ready or not.  Right now gut.gd will
 # call this if _ready was not called (because it was overridden without a super
@@ -789,6 +792,11 @@ func compare_deep(v1, v2, max_differences=null):
 	if(max_differences != null):
 		result.max_differences = max_differences
 	return result
+
+
+## Returns the time that the test method has been running in seconds as a float.
+func get_elapsed_time() -> float:
+	return Time.get_unix_time_from_system() - self._test_began_at
 
 
 # ----------------
@@ -2122,6 +2130,47 @@ func assert_not_same(v1, v2, text=''):
 		_fail(disp)
 	else:
 		_pass(disp)
+
+
+## Assert that exactly [param expected] seconds have elapsed since test method began.
+func assert_elapsed_time_eq(expected: float, text: String = "") -> void:
+	var t := self.get_elapsed_time()
+	var disp := "Actual test runtime [%f] expected to equal [%f]: %s" % [t, expected, text]
+	if(t == expected):
+		_pass(disp)
+	else:
+		_fail(disp)
+
+
+## Assert that [param expected] +/- [param error_interval] seconds have elapsed since test method began.
+func assert_elapsed_time_almost_eq(expected: float, error_interval: float, text: String = "") -> void:
+	var t := self.get_elapsed_time()
+	var disp := "Actual test runtime [%f] expected to equal [%f] +/- [%f]: %s" % [t, expected, error_interval, text]
+	if(expected >= t - error_interval and expected <= t + error_interval):
+		_pass(disp)
+	else:
+		_fail(disp)
+
+
+## Assert that less than [param expected] seconds have elapsed since test method began.
+func assert_elapsed_time_lt(expected: float, text: String = "") -> void:
+	var t := self.get_elapsed_time()
+	var disp := "Actual test runtime [%f] expected to be < [%f]: %s" % [t, expected, text]
+	if(t < expected):
+		_pass(disp)
+	else:
+		_fail(disp)
+
+
+## Assert that greater than [param expected] seconds have elapsed since test method began.
+func assert_elapsed_time_gt(expected: float, text: String = "") -> void:
+	var t := self.get_elapsed_time()
+	var disp := "Actual test runtime [%f] expected to be > [%f]: %s" % [t, expected, text]
+	if(t > expected):
+		_pass(disp)
+	else:
+		_fail(disp)
+
 
 # ----------------
 #endregion

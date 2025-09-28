@@ -609,6 +609,7 @@ func _run_test(script_inst, test_name, param_index = -1):
 		test_id += str('[', param_index, ']')
 	error_tracker.start_test(test_id)
 
+	script_inst._test_began_at = Time.get_unix_time_from_system()
 	await script_inst.call(test_name)
 
 	if(error_tracker.should_test_fail_from_errors(test_id)):
