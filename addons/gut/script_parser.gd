@@ -167,6 +167,7 @@ class ParsedScript:
 		# the right "is_local" flag.
 		if(!is_native):
 			methods = thing.get_script_method_list()
+			methods.reverse()
 			for m in methods:
 				var parsed_method = ParsedMethod.new(m)
 				parsed_method.is_local = true
