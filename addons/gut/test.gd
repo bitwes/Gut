@@ -100,9 +100,10 @@ var _strutils = GutUtils.Strutils.new()
 var _awaiter = null
 var _was_ready_called = false
 
-# Used to track execution time of a single test method.
-# Is set by GutMain before a method runs. Can be used in some assertions.
-var _test_began_at := 0.0
+# Used to track time/physics/idle frames during test method execution
+var _time_began_tracking := 0.0
+var _elapsed_physics_frames := 0
+var _elapsed_idle_frames := 0
 
 # I haven't decided if we should be using _ready or not.  Right now gut.gd will
 # call this if _ready was not called (because it was overridden without a super
@@ -112,6 +113,11 @@ func _do_ready_stuff():
 	_awaiter = GutUtils.Awaiter.new()
 	_awaiter.await_logger.wait_log_delay = wait_log_delay
 	add_child(_awaiter)
+	
+	# Frame tracking happens on SceneTree.{process|physics}_frame
+	# so that tree order never makes a difference
+	get_tree().process_frame.connect(func (): _elapsed_idle_frames += 1)
+	get_tree().physics_frame.connect(func (): _elapsed_physics_frames += 1)
 	_was_ready_called = true
 
 
@@ -794,9 +800,29 @@ func compare_deep(v1, v2, max_differences=null):
 	return result
 
 
-## Returns the time that the test method has been running in seconds as a float.
-func get_elapsed_time() -> float:
-	return Time.get_unix_time_from_system() - self._test_began_at
+## Returns the number of seconds elapsed since test method began as a float.
+func get_elapsed_seconds() -> float:
+	return Time.get_unix_time_from_system() - _time_began_tracking
+
+
+## Returns the number of milliseconds elapsed since test method began as a float.
+func get_elapsed_mseconds() -> float:
+	return get_elapsed_seconds() * 1000
+
+
+## Returns the number of microseconds elapsed since test method began as a float.
+func get_elapsed_useconds() -> float:
+	return get_elapsed_seconds() * 1000000
+
+
+## Returns the number of idle frames elapsed since the test method began.
+func get_elapsed_idle_frames() -> int:
+	return _elapsed_idle_frames
+
+
+## Returns the number of physics frames elapsed since the test method began.
+func get_elapsed_physics_frames() -> int:
+	return _elapsed_physics_frames
 
 
 # ----------------
@@ -2130,46 +2156,6 @@ func assert_not_same(v1, v2, text=''):
 		_fail(disp)
 	else:
 		_pass(disp)
-
-
-## Assert that exactly [param expected] seconds have elapsed since test method began.
-func assert_elapsed_time_eq(expected: float, text: String = "") -> void:
-	var t := self.get_elapsed_time()
-	var disp := "Actual test runtime [%f] expected to equal [%f]: %s" % [t, expected, text]
-	if(t == expected):
-		_pass(disp)
-	else:
-		_fail(disp)
-
-
-## Assert that [param expected] +/- [param error_interval] seconds have elapsed since test method began.
-func assert_elapsed_time_almost_eq(expected: float, error_interval: float, text: String = "") -> void:
-	var t := self.get_elapsed_time()
-	var disp := "Actual test runtime [%f] expected to equal [%f] +/- [%f]: %s" % [t, expected, error_interval, text]
-	if(expected >= t - error_interval and expected <= t + error_interval):
-		_pass(disp)
-	else:
-		_fail(disp)
-
-
-## Assert that less than [param expected] seconds have elapsed since test method began.
-func assert_elapsed_time_lt(expected: float, text: String = "") -> void:
-	var t := self.get_elapsed_time()
-	var disp := "Actual test runtime [%f] expected to be < [%f]: %s" % [t, expected, text]
-	if(t < expected):
-		_pass(disp)
-	else:
-		_fail(disp)
-
-
-## Assert that greater than [param expected] seconds have elapsed since test method began.
-func assert_elapsed_time_gt(expected: float, text: String = "") -> void:
-	var t := self.get_elapsed_time()
-	var disp := "Actual test runtime [%f] expected to be > [%f]: %s" % [t, expected, text]
-	if(t > expected):
-		_pass(disp)
-	else:
-		_fail(disp)
 
 
 # ----------------
