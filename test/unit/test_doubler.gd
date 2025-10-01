@@ -187,6 +187,9 @@ class TestDoublingScripts:
 		assert_does_not_have(d.__gutdbl_values.doubled_methods, '_input')
 
 
+
+
+
 class TestAddingIgnoredMethods:
 	extends BaseTest
 	var _doubler = null
