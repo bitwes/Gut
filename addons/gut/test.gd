@@ -420,26 +420,26 @@ func _are_double_parameters_valid(thing, p2, p3):
 ##    func should_skip_script():
 ##        return EngineDebugger.is_active()
 ## [/codeblock]
-func should_skip_script():
+func should_skip_script() -> bool:
 	return false
 
 
 ## Virtual method.  Run once before anything else in the test script is run.
-func before_all():
+func before_all() -> void:
 	pass
 
 
 ## Virtual method.  Run before each test is executed
-func before_each():
+func before_each() -> void:
 	pass
 
 ## Virtual method.  Run after each test is executed.
-func after_each():
+func after_each() -> void:
 	pass
 
 
 ## Virtual method.  Run after all tests have been run.
-func after_all():
+func after_all() -> void:
 	pass
 
 # ----------------
@@ -447,7 +447,7 @@ func after_all():
 #region Misc Public
 # ----------------
 ## Mark the current test as pending.
-func pending(text=""):
+func pending(text: String = "") -> void:
 	_summary.pending += 1
 	if(gut):
 		_lgr.pending(text)
@@ -455,51 +455,51 @@ func pending(text=""):
 
 
 ## Returns true if the test is passing as of the time of this call.  False if not.
-func is_passing():
+func is_passing() -> bool:
 	if(gut.get_current_test_object() != null and
 		!['before_all', 'after_all'].has(gut.get_current_test_object().name)):
 		return gut.get_current_test_object().is_passing() and \
 			gut.get_current_test_object().assert_count > 0
 	else:
 		_lgr.error('No current test object found.  is_passing must be called inside a test.')
-		return null
+		return false
 
 
 ## Returns true if the test is failing as of the time of this call.  False if not.
-func is_failing():
+func is_failing() -> bool:
 	if(gut.get_current_test_object() != null and
 		!['before_all', 'after_all'].has(gut.get_current_test_object().name)):
 
 		return gut.get_current_test_object().is_failing()
 	else:
 		_lgr.error('No current test object found.  is_failing must be called inside a test.')
-		return null
+		return true
 
 
 ## Marks the test as passing.  Does not override any failing asserts or calls to
 ## fail_test.  Same as a passing assert.
-func pass_test(text):
+func pass_test(text: String) -> void:
 	_pass(text)
 
 
 ## Marks the test as failing.  Same as a failing assert.
-func fail_test(text):
+func fail_test(text: String) -> void:
 	_fail(text)
 
 ## @internal
-func clear_signal_watcher():
+func clear_signal_watcher() -> void:
 	_signal_watcher.clear()
 
 
 ## Returns the current double strategy.
-func get_double_strategy():
+func get_double_strategy() -> GutUtils.DOUBLE_STRATEGY:
 	return gut.get_doubler().get_strategy()
 
 
 ## Sets the double strategy for all tests in the script.  This should usually
 ## be done in [method before_all].  The double strtegy can be set per
 ## run/script/double.  See [wiki]Double-Strategy[/wiki]
-func set_double_strategy(double_strategy):
+func set_double_strategy(double_strategy: GutUtils.DOUBLE_STRATEGY) -> void:
 	gut.get_doubler().set_strategy(double_strategy)
 
 
@@ -512,7 +512,7 @@ func set_double_strategy(double_strategy):
 ## tell GUT to ignore calls to this method through the panel or
 ## the command line.  Setting this in your `.gutconfig.json` file is recommended
 ## for CI/CD Pipelines.
-func pause_before_teardown():
+func pause_before_teardown() -> void:
 	gut.pause_before_teardown()
 
 
@@ -538,7 +538,7 @@ func set_logger(logger):
 ## before `teardown` is called).  Under the covers, Gut will connect to all the
 ## signals an object has and it will track each time they fire.  You can then
 ## use the following asserts and methods to verify things are acting correct.
-func watch_signals(object):
+func watch_signals(object: Object) -> void:
 	_signal_watcher.watch_signals(object)
 
 
@@ -548,7 +548,7 @@ func watch_signals(object):
 ## watched, or if the object does not have the signal.
 ## [br][br]
 ## Accepts either the object and the signal name or the signal.
-func get_signal_emit_count(p1, p2=null):
+func get_signal_emit_count(p1, p2=null) -> int:
 	var sp = SignalAssertParameters.new(p1, p2)
 	return _signal_watcher.get_emit_count(sp.object, sp.signal_name)
 
@@ -634,7 +634,7 @@ func get_call_parameters(object, method_name_or_index = -1, idx=-1):
 ##
 ## Can be called with a Callable instead of an object, method_name, and
 ## parameters.  Bound arguments will be used to match call arguments.
-func get_call_count(object, method_name=null, parameters=null):
+func get_call_count(object, method_name=null, parameters=null) -> int:
 	var converted = _convert_spy_args(object, method_name, parameters)
 	return gut.get_spy().call_count(converted.object, converted.method_name, converted.arguments)
 
@@ -752,7 +752,7 @@ func run_x_times(x):
 ##    if(skip_if_godot_version_lt('3.5.0')):
 ##        return
 ## [/codeblock]
-func skip_if_godot_version_lt(expected):
+func skip_if_godot_version_lt(expected) -> bool:
 	var should_skip = !GutUtils.is_godot_version_gte(expected)
 	if(should_skip):
 		_pass(str('Skipping: ', GutUtils.godot_version_string(), ' is less than ', expected))
@@ -769,7 +769,7 @@ func skip_if_godot_version_lt(expected):
 ##     if(skip_if_godot_version_ne('3.4')):
 ##        return
 ## [/codeblock]
-func skip_if_godot_version_ne(expected):
+func skip_if_godot_version_ne(expected) -> bool:
 	var should_skip = !GutUtils.is_godot_version(expected)
 	if(should_skip):
 		_pass(str('Skipping: ', GutUtils.godot_version_string(), ' is not ', expected))
@@ -784,7 +784,7 @@ func register_inner_classes(base_script):
 
 ## Peforms a deep compare on both values, a CompareResult instnace is returned.
 ## The optional max_differences paramter sets the max_differences to be displayed.
-func compare_deep(v1, v2, max_differences=null):
+func compare_deep(v1: Variant, v2: Variant, max_differences=null):
 	var result = _compare.deep(v1, v2)
 	if(max_differences != null):
 		result.max_differences = max_differences
@@ -822,7 +822,7 @@ func compare_deep(v1, v2, max_differences=null):
 ##    assert_eq([1, 'two', 3], [1, 2, 3, 4])
 ##    assert_eq({'a':1}, {'a':1})
 ## [/codeblock]
-func assert_eq(got, expected, text=""):
+func assert_eq(got: Variant, expected: Variant, text: String = "") -> void:
 
 	if(_do_datatypes_match__fail_if_not(got, expected, text)):
 		var disp = "[" + _str(got) + "] expected to equal [" + _str(expected) + "]:  " + text
@@ -859,7 +859,7 @@ func assert_eq(got, expected, text=""):
 ##    assert_ne('one', 'one')
 ##    assert_ne('2', 2)
 ## [/codeblock]
-func assert_ne(got, not_expected, text=""):
+func assert_ne(got: Variant, not_expected: Variant, text: String = "") -> void:
 	if(_do_datatypes_match__fail_if_not(got, not_expected, text)):
 		var disp = "[" + _str(got) + "] expected to not equal [" + _str(not_expected) + "]:  " + text
 		var result = null
@@ -894,7 +894,7 @@ func assert_ne(got, not_expected, text=""):
 ##    assert_almost_eq(1, 3, 1, '1 outside range of 3 +/- 1')
 ##    assert_almost_eq(2.6, 3.0, .2, '2.6 outside range of 3 +/- .2')
 ## [/codeblock]
-func assert_almost_eq(got, expected, error_interval, text=''):
+func assert_almost_eq(got: Variant, expected: Variant, error_interval, text: String ='') -> void:
 	var disp = "[" + _str_precision(got, 20) + "] expected to equal [" + _str(expected) + "] +/- [" + str(error_interval) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, expected, text) and _do_datatypes_match__fail_if_not(got, error_interval, text)):
 		if not _is_almost_eq(got, expected, error_interval):
@@ -905,7 +905,7 @@ func assert_almost_eq(got, expected, error_interval, text=''):
 
 ## This is the inverse of [method assert_almost_eq].  This will pass if [param got] is
 ## outside the range of [param not_expected] +/- [param error_interval].
-func assert_almost_ne(got, not_expected, error_interval, text=''):
+func assert_almost_ne(got: Variant, not_expected: Variant, error_interval, text: String ='') -> void:
 	var disp = "[" + _str_precision(got, 20) + "] expected to not equal [" + _str(not_expected) + "] +/- [" + str(error_interval) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, not_expected, text) and _do_datatypes_match__fail_if_not(got, error_interval, text)):
 		if _is_almost_eq(got, not_expected, error_interval):
@@ -945,7 +945,7 @@ func _is_almost_eq(got, expected, error_interval) -> bool:
 ##    assert_gt(1.0, 1)
 ##    assert_gt(smaller, bigger)
 ## [/codeblock]
-func assert_gt(got, expected, text=""):
+func assert_gt(got: Variant, expected: Variant, text: String= "") -> void:
 	var disp = "[" + _str(got) + "] expected to be > than [" + _str(expected) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, expected, text)):
 		if(got > expected):
@@ -970,7 +970,7 @@ func assert_gt(got, expected, text=""):
 ##    assert_gte(0.9, 1.0)
 ##    assert_gte(smaller, bigger)
 ## [/codeblock]
-func assert_gte(got, expected, text=""):
+func assert_gte(got: Variant, expected: Variant, text: String = "") -> void:
 	var disp = "[" + _str(got) + "] expected to be >= than [" + _str(expected) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, expected, text)):
 		if(got >= expected):
@@ -992,7 +992,7 @@ func assert_gte(got, expected, text=""):
 ##    assert_lt('z', 'x')
 ##    assert_lt(-5, -5)
 ## [/codeblock]
-func assert_lt(got, expected, text=""):
+func assert_lt(got: Variant, expected: Variant, text: String = "") -> void:
 	var disp = "[" + _str(got) + "] expected to be < than [" + _str(expected) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, expected, text)):
 		if(got < expected):
@@ -1002,7 +1002,7 @@ func assert_lt(got, expected, text=""):
 
 
 ## Asserts got is less than or equal to expected
-func assert_lte(got, expected, text=""):
+func assert_lte(got: Variant, expected: Variant, text: String = "") -> void:
 	var disp = "[" + _str(got) + "] expected to be <= than [" + _str(expected) + "]:  " + text
 	if(_do_datatypes_match__fail_if_not(got, expected, text)):
 		if(got <= expected):
@@ -1013,7 +1013,7 @@ func assert_lte(got, expected, text=""):
 
 ## asserts that got is true.  Does not assert truthiness, only boolean values
 ## will pass.
-func assert_true(got, text=""):
+func assert_true(got: Variant, text: String = "") -> void:
 	if(typeof(got) == TYPE_BOOL):
 		if(got):
 			_pass(text)
@@ -1026,7 +1026,7 @@ func assert_true(got, text=""):
 
 ## Asserts that got is false.  Does not assert truthiness, only boolean values
 ## will pass.
-func assert_false(got, text=""):
+func assert_false(got: Variant, text: String = "") -> void:
 	if(typeof(got) == TYPE_BOOL):
 		if(got):
 			_fail(text)
@@ -1050,7 +1050,7 @@ func assert_false(got, text=""):
 ##    assert_between('a', 'b', 'c')
 ##    assert_between(1, 5, 10)
 ## [/codeblock]
-func assert_between(got, expect_low, expect_high, text=""):
+func assert_between(got: Variant, expect_low, expect_high, text: String = "") -> void:
 	var disp = "[" + _str_precision(got, 20) + "] expected to be between [" + _str(expect_low) + "] and [" + str(expect_high) + "]:  " + text
 
 	if(_do_datatypes_match__fail_if_not(got, expect_low, text) and _do_datatypes_match__fail_if_not(got, expect_high, text)):
@@ -1078,7 +1078,7 @@ func assert_between(got, expect_low, expect_high, text=""):
 ##    assert_not_between(5, 0, 10, 'Five shouldnt be between 0 and 10')
 ##    assert_not_between(0.25, -2.0, 4.0)
 ## [/codeblock]
-func assert_not_between(got, expect_low, expect_high, text=""):
+func assert_not_between(got: Variant, expect_low: Variant, expect_high: Variant, text: String = "") -> void:
 	var disp = "[" + _str_precision(got, 20) + "] expected not to be between [" + _str(expect_low) + "] and [" + str(expect_high) + "]:  " + text
 
 	if(_do_datatypes_match__fail_if_not(got, expect_low, text) and _do_datatypes_match__fail_if_not(got, expect_high, text)):
@@ -1111,7 +1111,7 @@ func assert_not_between(got, expect_low, expect_high, text=""):
 ##    assert_has(a_hash, 3) # FAIL
 ##    assert_has(a_hash, 'three') # FAIL
 ## [/codeblock]
-func assert_has(obj, element, text=""):
+func assert_has(obj: Variant, element: Variant, text: String = "") -> void:
 	var disp = str('Expected [', _str(obj), '] to contain value:  [', _str(element), ']:  ', text)
 	if(obj.has(element)):
 		_pass(disp)
@@ -1120,7 +1120,7 @@ func assert_has(obj, element, text=""):
 
 
 ## The inverse of assert_has.
-func assert_does_not_have(obj, element, text=""):
+func assert_does_not_have(obj: Variant, element: Variant, text: String = "") -> void:
 	var disp = str('Expected [', _str(obj), '] to NOT contain value:  [', _str(element), ']:  ', text)
 	if(obj.has(element)):
 		_fail(disp)
@@ -1145,7 +1145,7 @@ func assert_does_not_have(obj, element, text=""):
 ##        assert_file_exists('user://file_does_not.exist')
 ##        assert_file_exists('res://some_dir/another_dir/file_does_not.exist')
 ## [/codeblock]
-func assert_file_exists(file_path):
+func assert_file_exists(file_path: String) -> void:
 	var disp = 'expected [' + file_path + '] to exist.'
 	if(FileAccess.file_exists(file_path)):
 		_pass(disp)
@@ -1169,7 +1169,7 @@ func assert_file_exists(file_path):
 ##        # Failing
 ##        assert_file_does_not_exist('res://addons/gut/gut.gd')
 ## [/codeblock]
-func assert_file_does_not_exist(file_path):
+func assert_file_does_not_exist(file_path: String) -> void:
 	var disp = 'expected [' + file_path + '] to NOT exist'
 	if(!FileAccess.file_exists(file_path)):
 		_pass(disp)
@@ -1192,7 +1192,7 @@ func assert_file_does_not_exist(file_path):
 ##        # Failing
 ##        assert_file_empty('res://addons/gut/gut.gd')
 ## [/codeblock]
-func assert_file_empty(file_path):
+func assert_file_empty(file_path: String) -> void:
 	var disp = 'expected [' + file_path + '] to be empty'
 	if(FileAccess.file_exists(file_path) and gut.is_file_empty(file_path)):
 		_pass(disp)
@@ -1215,7 +1215,7 @@ func assert_file_empty(file_path):
 ##        # Failing
 ##        assert_file_not_empty('user://some_test_file') # FAIL
 ## [/codeblock]
-func assert_file_not_empty(file_path):
+func assert_file_not_empty(file_path: String) -> void:
 	var disp = 'expected [' + file_path + '] to contain data'
 	if(!gut.is_file_empty(file_path)):
 		_pass(disp)
@@ -1224,8 +1224,9 @@ func assert_file_not_empty(file_path):
 
 
 ## Asserts that the passed in object has a method named [param method].
-func assert_has_method(obj, method, text=''):
+func assert_has_method(obj: Object, method: StringName, text: String ='') -> void:
 	var disp = _str(obj) + ' should have method: ' + method
+	
 	if(text != ''):
 		disp = _str(obj) + ' ' + text
 	assert_true(obj.has_method(method), disp)
@@ -1297,7 +1298,7 @@ func _find_object_property(obj, property_name, property_usage=null):
 ##        assert_exports(obj, 'some_scene', TYPE_AABB)
 ##        assert_exports(obj, 'some_variable', TYPE_INT)
 ## [/codeblock]
-func assert_exports(obj, property_name, type):
+func assert_exports(obj: Object, property_name: String, type: int) -> void:
 	var disp = 'expected %s to have editor property [%s]' % [_str(obj), property_name]
 	var property = _find_object_property(obj, property_name, EDITOR_PROPERTY)
 	if property != null:
@@ -1369,7 +1370,7 @@ func _is_connected(signaler_obj, connect_to_obj, signal_name, method_name=""):
 ##     assert_connected(signaler, connector, 'other_signal')
 ##     assert_connected(signaler, foo, 'the_signal')
 ## [/codeblock]
-func assert_connected(p1, p2, p3=null, p4=""):
+func assert_connected(p1, p2, p3=null, p4="") -> void:
 	var sp := SignalAssertParameters.new(p1, p3)
 	var connect_to_obj = p2
 	var method_name = p4
@@ -1393,7 +1394,7 @@ func assert_connected(p1, p2, p3=null, p4=""):
 ## The inverse of [method assert_connected].  See [method assert_connected] for parameter syntax.
 ## [br]
 ## This will fail with specific messages if the target object is connected to the specified signal on the source object.
-func assert_not_connected(p1, p2, p3=null, p4=""):
+func assert_not_connected(p1, p2, p3=null, p4="") -> void:
 	var sp := SignalAssertParameters.new(p1, p3)
 	var connect_to_obj = p2
 	var method_name = p4
@@ -1450,7 +1451,7 @@ func assert_not_connected(p1, p2, p3=null, p4=""):
 ##     assert_signal_emitted(obj, 'other_signal')
 ##     assert_signal_emitted(obj.other_signal)
 ## [/codeblock]
-func assert_signal_emitted(p1, p2='', p3=""):
+func assert_signal_emitted(p1, p2='', p3="") -> void:
 	var sp := SignalAssertParameters.new(p1, p2, p3)
 	var disp = str('Expected object ', _str(sp.object), ' to have emitted signal [', sp.signal_name, ']:  ', sp.others[0])
 	if(_can_make_signal_assertions(sp.object, sp.signal_name)):
@@ -1491,7 +1492,7 @@ func assert_signal_emitted(p1, p2='', p3=""):
 ##        # Fails because the signal was emitted
 ##        assert_signal_not_emitted(obj, 'some_signal')
 ## [/codeblock]
-func assert_signal_not_emitted(p1, p2='', p3=''):
+func assert_signal_not_emitted(p1, p2='', p3='') -> void:
 	var sp := SignalAssertParameters.new(p1, p2, p3)
 	var disp = str('Expected object ', _str(sp.object), ' to NOT emit signal [', sp.signal_name, ']:  ', sp.others[0])
 	if(_can_make_signal_assertions(sp.object, sp.signal_name)):
@@ -1549,7 +1550,7 @@ func assert_signal_not_emitted(p1, p2='', p3=''):
 ##     # Fails because the parameters for the specified index do not match
 ##     assert_signal_emitted_with_parameters(obj, 'some_signal', [1, 2, 3], 1)
 ## [/codeblock]
-func assert_signal_emitted_with_parameters(p1, p2, p3=-1, p4=-1):
+func assert_signal_emitted_with_parameters(p1, p2, p3=-1, p4=-1) -> void:
 	var sp := SignalAssertParameters.new(p1, p2, p3, p4)
 	var parameters = sp.others[0]
 	var index = sp.others[1]
@@ -1617,7 +1618,7 @@ func assert_signal_emitted_with_parameters(p1, p2, p3=-1, p4=-1):
 ##     assert_signal_emit_count(obj_a, 'some_signal', 0)
 ##     assert_signal_emit_count(obj_b, 'other_signal', 283)
 ## [/codeblock]
-func assert_signal_emit_count(p1, p2, p3=0, p4=""):
+func assert_signal_emit_count(p1, p2, p3=0, p4="") -> void:
 	var sp := SignalAssertParameters.new(p1, p2, p3, p4)
 	var times = sp.others[0]
 	var text = sp.others[1]
@@ -1657,7 +1658,7 @@ func assert_signal_emit_count(p1, p2, p3=0, p4=""):
 ##        # and asserted that it fired though.
 ##        assert_has_signal(Node2D.new(), 'exit_tree')
 ## [/codeblock]
-func assert_has_signal(object, signal_name, text=""):
+func assert_has_signal(object: Object, signal_name: String, text: String = "") -> void:
 	var disp = str('Expected object ', _str(object), ' to have signal [', signal_name, ']:  ', text)
 	if(_signal_watcher.does_object_have_signal(object, signal_name)):
 		_pass(disp)
@@ -1689,7 +1690,7 @@ func assert_has_signal(object, signal_name, text=""):
 ##    assert_is('a', 'b')
 ##    assert_is([], Node)
 ## [/codeblock]
-func assert_is(object, a_class, text=''):
+func assert_is(object, a_class, text: String ='') -> void:
 	var disp  = ''#var disp = str('Expected [', _str(object), '] to be type of [', a_class, ']: ', text)
 	var bad_param_2 = 'Parameter 2 must be a Class (like Node2D or Label).  You passed '
 
@@ -1721,7 +1722,7 @@ func assert_is(object, a_class, text=''):
 ##    gr.test.assert_typeof('some string', TYPE_INT)
 ##    assert_fail(gr.test)
 ## [/codeblock]
-func assert_typeof(object, type, text=''):
+func assert_typeof(object: Variant, type: int, text: String ='') -> void:
 	var disp = str('Expected [typeof(', object, ') = ')
 	disp += _get_typeof_string(typeof(object))
 	disp += '] to equal ['
@@ -1734,7 +1735,7 @@ func assert_typeof(object, type, text=''):
 
 
 ## The inverse of [method assert_typeof]
-func assert_not_typeof(object, type, text=''):
+func assert_not_typeof(object: Variant, type: int, text: String = '') -> void:
 	var disp = str('Expected [typeof(', object, ') = ')
 	disp += _get_typeof_string(typeof(object))
 	disp += '] to not equal ['
@@ -1759,7 +1760,7 @@ func assert_not_typeof(object, type, text=''):
 ##    assert_string_contains('abc 123', 'BC')
 ##    assert_string_contains('abc 123', '012')
 ## [/codeblock]
-func assert_string_contains(text, search, match_case=true):
+func assert_string_contains(text: String, search: String, match_case: Variant = true) -> void:
 	const empty_search = 'Expected text and search strings to be non-empty. You passed %s and %s.'
 	const non_strings = 'Expected text and search to both be strings.  You passed %s and %s.'
 	var disp = 'Expected \'%s\' to contain \'%s\', match_case=%s' % [text, search, match_case]
@@ -1792,7 +1793,7 @@ func assert_string_contains(text, search, match_case=true):
 ##    assert_string_starts_with('abc 123', 'ABC')
 ##    assert_string_starts_with('abc 123', 'abc 1234')
 ## [/codeblock]
-func assert_string_starts_with(text, search, match_case=true):
+func assert_string_starts_with(text: String, search: String, match_case: bool =true) -> void:
 	var empty_search = 'Expected text and search strings to be non-empty. You passed \'%s\' and \'%s\'.'
 	var disp = 'Expected \'%s\' to start with \'%s\', match_case=%s' % [text, search, match_case]
 	if(text == '' or search == ''):
@@ -1821,7 +1822,7 @@ func assert_string_starts_with(text, search, match_case=true):
 ##    assert_string_ends_with('abc 123', 'C 123')
 ##    assert_string_ends_with('abc 123', 'nope')
 ## [/codeblock]
-func assert_string_ends_with(text, search, match_case=true):
+func assert_string_ends_with(text: String, search: String, match_case: bool = true) -> void:
 	var empty_search = 'Expected text and search strings to be non-empty. You passed \'%s\' and \'%s\'.'
 	var disp = 'Expected \'%s\' to end with \'%s\', match_case=%s' % [text, search, match_case]
 	var required_index = len(text) - len(search)
@@ -1858,7 +1859,7 @@ func assert_string_ends_with(text, search, match_case=true):
 ##    assert_called(my_double, 'foo', [1, 2, 3])
 ##    assert_called(my_double.foo.bind(1, 2, 3))
 ## [/codeblock]
-func assert_called(inst, method_name=null, parameters=null):
+func assert_called(inst, method_name=null, parameters=null) -> void:
 
 	if(_fail_if_parameters_not_array(parameters)):
 		return
@@ -1898,7 +1899,7 @@ func assert_called(inst, method_name=null, parameters=null):
 ##    assert_not_called(my_double, 'foo', [1, 2, 3])
 ##    assert_not_called(my_double.foo.bind(1, 2, 3))
 ## [/codeblock]
-func assert_not_called(inst, method_name=null, parameters=null):
+func assert_not_called(inst, method_name=null, parameters=null) -> void:
 
 	if(_fail_if_parameters_not_array(parameters)):
 		return
@@ -1933,7 +1934,7 @@ func assert_not_called(inst, method_name=null, parameters=null):
 ##    # assert foo, with parameters [1,2,3], was called on my_double 4 times.
 ##    assert_called_count(my_double.foo.bind(1, 2, 3), 4)
 ## [/codeblock]
-func assert_called_count(callable : Callable, expected_count : int):
+func assert_called_count(callable : Callable, expected_count : int) -> void:
 	var converted = _convert_spy_args(callable, null, null)
 	var count = gut.get_spy().call_count(converted.object, converted.method_name, converted.arguments)
 
@@ -1952,7 +1953,7 @@ func assert_called_count(callable : Callable, expected_count : int):
 
 
 ## Asserts the passed in value is null
-func assert_null(got, text=''):
+func assert_null(got: Variant, text: String = '') -> void:
 	var disp = str('Expected [', _str(got), '] to be NULL:  ', text)
 	if(got == null):
 		_pass(disp)
@@ -1961,7 +1962,7 @@ func assert_null(got, text=''):
 
 
 ## Asserts the passed in value is not null.
-func assert_not_null(got, text=''):
+func assert_not_null(got: Variant, text: String = '') -> void:
 	var disp = str('Expected [', _str(got), '] to be anything but NULL:  ', text)
 	if(got == null):
 		_fail(disp)
@@ -1980,7 +1981,7 @@ func assert_not_null(got, text=''):
 ##    obj.free()
 ##    test.assert_freed(obj, "New Node")
 ## [/codeblock]
-func assert_freed(obj, title='something'):
+func assert_freed(obj: Variant, title: String ='something') -> void:
 	var disp = title
 	if(is_instance_valid(obj)):
 		disp = _strutils.type2str(obj) + title
@@ -1988,7 +1989,7 @@ func assert_freed(obj, title='something'):
 
 
 ## The inverse of [method assert_freed]
-func assert_not_freed(obj, title='something'):
+func assert_not_freed(obj: Variant, title: String ='something') -> void:
 	var disp = title
 	if(is_instance_valid(obj)):
 		disp = _strutils.type2str(obj) + title
@@ -1998,7 +1999,7 @@ func assert_not_freed(obj, title='something'):
 ## This method will assert that no orphaned nodes have been introduced by the
 ## test when the assert is executed.  See the [wiki]Memory-Management[/wiki]
 ## page for more information.
-func assert_no_new_orphans(text=''):
+func assert_no_new_orphans(text: String = '') -> void:
 	var orphan_ids = gut.get_current_test_orphans()
 	var count = orphan_ids.size()
 	var msg = ''
@@ -2028,7 +2029,7 @@ func assert_readonly_property(obj, property_name, new_value, expected_value):
 ## asserts of assert_property.  Then this will set the value through the setter
 ## and check the backing variable value.  It will then reset throught the setter
 ## and set the backing variable and check the getter.
-func assert_property_with_backing_variable(obj, property_name, default_value, new_value, backed_by_name=null):
+func assert_property_with_backing_variable(obj, property_name, default_value, new_value, backed_by_name=null) -> void:
 	var setter_name = str('@', property_name, '_setter')
 	var getter_name = str('@', property_name, '_getter')
 	var backing_name = GutUtils.nvl(backed_by_name, str('_', property_name))
@@ -2088,7 +2089,7 @@ func assert_property(obj, property_name, default_value, new_value) -> void:
 ## Performs a deep comparison between two arrays or dictionaries and asserts
 ## they are equal.  If they are not equal then a formatted list of differences
 ## are displayed.  See [wiki]Comparing-Things[/wiki] for more information.
-func assert_eq_deep(v1, v2):
+func assert_eq_deep(v1: Variant, v2: Variant) -> void:
 	var result = compare_deep(v1, v2)
 	if(result.are_equal):
 		_pass(result.get_short_summary())
@@ -2098,7 +2099,7 @@ func assert_eq_deep(v1, v2):
 
 ## Performs a deep comparison of two arrays or dictionaries and asserts they
 ## are not equal.  See [wiki]Comparing-Things[/wiki] for more information.
-func assert_ne_deep(v1, v2):
+func assert_ne_deep(v1: Variant, v2: Variant) -> void:
 	var result = compare_deep(v1, v2)
 	if(!result.are_equal):
 		_pass(result.get_short_summary())
@@ -2107,7 +2108,7 @@ func assert_ne_deep(v1, v2):
 
 
 ## Assert v1 and v2 are the same using [code]is_same[/code].  See @GlobalScope.is_same.
-func assert_same(v1, v2, text=''):
+func assert_same(v1: Variant, v2: Variant, text: String = '') -> void:
 	var disp = "[" + _str(v1) + "] expected to be same as  [" + _str(v2) + "]:  " + text
 	if(is_same(v1, v2)):
 		_pass(disp)
@@ -2116,7 +2117,7 @@ func assert_same(v1, v2, text=''):
 
 
 ## Assert using v1 and v2 are not the same using [code]is_same[/code].  See @GlobalScope.is_same.
-func assert_not_same(v1, v2, text=''):
+func assert_not_same(v1: Variant, v2: Variant, text: String = '') -> void:
 	var disp = "[" + _str(v1) + "] expected to not be same as  [" + _str(v2) + "]:  " + text
 	if(is_same(v1, v2)):
 		_fail(disp)
@@ -2241,7 +2242,7 @@ func get_errors()->Array:
 ##     assert_engine_error('invalid operands')
 ## [/codeblock]
 ## See [wiki]Error-Tracking[/wiki].
-func assert_engine_error(count_or_text, msg=''):
+func assert_engine_error(count_or_text, msg: String ='') -> void:
 	var t = typeof(count_or_text)
 	if(t == TYPE_INT or t == TYPE_FLOAT):
 		_assert_error_count(count_or_text, "engine", msg)
@@ -2294,7 +2295,7 @@ func assert_push_error(count_or_text, msg=''):
 ## Use with await to wait an amount of time in seconds.  The optional message
 ## will be printed when the await starts.[br]
 ## See [wiki]Awaiting[/wiki]
-func wait_seconds(time, msg=''):
+func wait_seconds(time: float, msg: String='') -> Variant:
 	_awaiter.wait_seconds(time)
 	return _awaiter.timeout
 
@@ -2302,9 +2303,9 @@ func wait_seconds(time, msg=''):
 ## Use with await to wait for a signal to be emitted or a maximum amount of
 ## time.  Returns true if the signal was emitted, false if not.[br]
 ## See [wiki]Awaiting[/wiki]
-func wait_for_signal(sig : Signal, max_time, msg=''):
+func wait_for_signal(sig : Signal, max_time_seconds: float, msg: String='') -> bool:
 	watch_signals(sig.get_object())
-	_awaiter.wait_for_signal(sig, max_time, msg)
+	_awaiter.wait_for_signal(sig, max_time_seconds, msg)
 	await _awaiter.timeout
 	return !_awaiter.did_last_wait_timeout
 
@@ -2312,7 +2313,7 @@ func wait_for_signal(sig : Signal, max_time, msg=''):
 ## @deprecated
 ## Use wait_physics_frames or wait_process_frames
 ## See [wiki]Awaiting[/wiki].
-func wait_frames(frames : int, msg=''):
+func wait_frames(frames : int, msg: String=''):
 	_lgr.deprecated("wait_frames has been replaced with wait_physics_frames which is counted in _physics_process.  " +
 		"wait_process_frames has also been added which is counted in _process.")
 	return wait_physics_frames(frames, msg)
@@ -2327,7 +2328,7 @@ func wait_frames(frames : int, msg=''):
 ## await wait_physics_frames(10)
 ## [/codeblock]
 ## See [wiki]Awaiting[/wiki]
-func wait_physics_frames(x :int , msg=''):
+func wait_physics_frames(x :int , msg: String ='') -> Signal:
 	if(x <= 0):
 		var text = str('wait_physics_frames:  frames must be > 0, you passed  ', x, '.  1 frames waited.')
 		_lgr.error(text)
@@ -2338,7 +2339,7 @@ func wait_physics_frames(x :int , msg=''):
 
 
 ## Alias for [method GutTest.wait_process_frames]
-func wait_idle_frames(x : int, msg=''):
+func wait_idle_frames(x : int, msg: String ='') -> Signal:
 	return wait_process_frames(x, msg)
 
 
@@ -2353,7 +2354,7 @@ func wait_idle_frames(x : int, msg=''):
 ## await wait_idle_frames(10)
 ## [/codeblock]
 ## See [wiki]Awaiting[/wiki]
-func wait_process_frames(x : int, msg=''):
+func wait_process_frames(x : int, msg: String='') -> Signal:
 	if(x <= 0):
 		var text = str('wait_process_frames:  frames must be > 0, you passed  ', x, '.  1 frames waited.')
 		_lgr.error(text)
@@ -2389,7 +2390,7 @@ func wait_process_frames(x : int, msg=''):
 ##[/codeblock]
 ## See also [method wait_while][br]
 ## See [wiki]Awaiting[/wiki]
-func wait_until(callable, max_time, p3='', p4=''):
+func wait_until(callable, max_time_seconds, p3='', p4='') -> bool:
 	var time_between = 0.0
 	var message = p4
 	if(typeof(p3) != TYPE_STRING):
@@ -2397,7 +2398,7 @@ func wait_until(callable, max_time, p3='', p4=''):
 	else:
 		message = p3
 
-	_awaiter.wait_until(callable, max_time, time_between, message)
+	_awaiter.wait_until(callable, max_time_seconds, time_between, message)
 	await _awaiter.timeout
 	return !_awaiter.did_last_wait_timeout
 
@@ -2425,7 +2426,7 @@ func wait_until(callable, max_time, p3='', p4=''):
 ##
 ##[/codeblock]
 ## See [wiki]Awaiting[/wiki]
-func wait_while(callable, max_time, p3='', p4=''):
+func wait_while(callable, max_time, p3='', p4='') -> bool:
 	var time_between = 0.0
 	var message = p4
 	if(typeof(p3) != TYPE_STRING):
@@ -2444,7 +2445,7 @@ func wait_while(callable, max_time, p3='', p4=''):
 ## using wait_for_signal and wait_until if the timeout occurs before what
 ## is being waited on.  The wait_* methods return this value so you should be
 ## able to avoid calling this directly, but you can.
-func did_wait_timeout():
+func did_wait_timeout() -> bool:
 	return _awaiter.did_last_wait_timeout
 
 # ----------------
@@ -2459,31 +2460,31 @@ func get_summary():
 
 ## Returns the number of failing asserts in this script at the time this
 ## method was called.  Call in [method after_all] to get total count for script.
-func get_fail_count():
+func get_fail_count() -> int:
 	return _summary.failed
 
 
 ## Returns the number of passing asserts in this script at the time this method
 ## was called.  Call in [method after_all] to get total count for script.
-func get_pass_count():
+func get_pass_count() -> int:
 	return _summary.passed
 
 
 ## Returns the number of pending tests in this script at the time this method
 ## was called.  Call in [method after_all] to get total count for script.
-func get_pending_count():
+func get_pending_count() -> int:
 	return _summary.pending
 
 
 ## Returns the total number of asserts this script has made as of the time of
 ## this was called.  Call in [method after_all] to get total count for script.
-func get_assert_count():
+func get_assert_count() -> int:
 	return _summary.asserts
 
 
 # Convert the _summary dictionary into text
 ## @internal
-func get_summary_text():
+func get_summary_text() -> String:
 	var to_return = get_script().get_path() + "\n"
 	to_return += str('  ', _summary.passed, ' of ', _summary.asserts, ' passed.')
 	if(_summary.pending > 0):
@@ -2541,7 +2542,7 @@ func partial_double_singleton(singleton_name):
 ## [code]stub(my_double, 'method').to_call_super()[/code] or  creating a
 ## [method partial_double] works for any other known scenario.  You cannot stub
 ## or spy on methods passed to [code skip-lint]ignore_method_when_doubling[/code].
-func ignore_method_when_doubling(thing, method_name):
+func ignore_method_when_doubling(thing: Object, method_name: String) -> void:
 	if(typeof(thing) == TYPE_STRING):
 		_lgr.error('ignore_method_when_doubling no longer supports paths to scripts or scenes.  Load them and pass them instead.')
 		return
@@ -2554,7 +2555,7 @@ func ignore_method_when_doubling(thing, method_name):
 
 
 ## Stub something.  See [wiki]Stubbing[/wiki] for detailed information about stubbing.
-func stub(thing, p2=null, p3=null):
+func stub(thing: Variant, p2=null, p3=null) -> Variant:
 	var method_name = p2
 	var subpath = null
 
@@ -2594,7 +2595,7 @@ func stub(thing, p2=null, p3=null):
 ## Marks whatever is passed in to be freed after the test finishes.  It also
 ## returns what is passed in so you can save a line of code.
 ##   var thing = autofree(Thing.new())
-func autofree(thing):
+func autofree(thing: Variant) -> Variant:
 	gut.get_autofree().add_free(thing)
 	return thing
 
@@ -2602,7 +2603,7 @@ func autofree(thing):
 ## Works the same as autofree except queue_free will be called on the object
 ## instead.  This also imparts a brief pause after the test finishes so that
 ## the queued object has time to free.
-func autoqfree(thing):
+func autoqfree(thing: Variant) -> Variant:
 	gut.get_autofree().add_queue_free(thing)
 	return thing
 
