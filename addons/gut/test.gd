@@ -100,6 +100,10 @@ var _strutils = GutUtils.Strutils.new()
 var _awaiter = null
 var _was_ready_called = false
 
+# Used to track time/physics/idle frames during test method execution
+var _time_began_tracking := 0.0
+var _elapsed_physics_frames := 0
+var _elapsed_idle_frames := 0
 
 # I haven't decided if we should be using _ready or not.  Right now gut.gd will
 # call this if _ready was not called (because it was overridden without a super
@@ -109,6 +113,11 @@ func _do_ready_stuff():
 	_awaiter = GutUtils.Awaiter.new()
 	_awaiter.await_logger.wait_log_delay = wait_log_delay
 	add_child(_awaiter)
+	
+	# Frame tracking happens on SceneTree.{process|physics}_frame
+	# so that tree order never makes a difference
+	get_tree().process_frame.connect(func (): _elapsed_idle_frames += 1)
+	get_tree().physics_frame.connect(func (): _elapsed_physics_frames += 1)
 	_was_ready_called = true
 
 
@@ -789,6 +798,31 @@ func compare_deep(v1, v2, max_differences=null):
 	if(max_differences != null):
 		result.max_differences = max_differences
 	return result
+
+
+## Returns the number of seconds elapsed since test method began as a float.
+func get_elapsed_seconds() -> float:
+	return Time.get_unix_time_from_system() - _time_began_tracking
+
+
+## Returns the number of milliseconds elapsed since test method began as a float.
+func get_elapsed_mseconds() -> float:
+	return get_elapsed_seconds() * 1000
+
+
+## Returns the number of microseconds elapsed since test method began as a float.
+func get_elapsed_useconds() -> float:
+	return get_elapsed_seconds() * 1000000
+
+
+## Returns the number of idle frames elapsed since the test method began.
+func get_elapsed_idle_frames() -> int:
+	return _elapsed_idle_frames
+
+
+## Returns the number of physics frames elapsed since the test method began.
+func get_elapsed_physics_frames() -> int:
+	return _elapsed_physics_frames
 
 
 # ----------------
@@ -2122,6 +2156,7 @@ func assert_not_same(v1, v2, text=''):
 		_fail(disp)
 	else:
 		_pass(disp)
+
 
 # ----------------
 #endregion
