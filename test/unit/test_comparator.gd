@@ -190,4 +190,3 @@ class TestGodot4ArrayDictionary:
 	func test_simple_compares_dictionaries_by_value(p = use_parameters(_same_dicts)):
 		var result = _comparator.simple(p[0], p[1])
 		assert_true(result.are_equal, result.summary)
-
