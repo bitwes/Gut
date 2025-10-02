@@ -40,9 +40,13 @@ func  get_total_count():
 	return _total_count
 
 func get_short_summary():
-	var text = str(_strutils.truncate_string(str(_value_1), 50),
+	var gc = GutUtils.GutConfig.new()
+	gc.load_options(GutUtils.EditorGlobals.editor_run_gut_config_path)
+	var max_length = gc.options["max_console_output_length"]
+#	print(max_length)
+	var text = str(_strutils.truncate_string(str(_value_1), max_length),
 		' ', _compare.get_compare_symbol(are_equal), ' ',
-		_strutils.truncate_string(str(_value_2), 50))
+		_strutils.truncate_string(str(_value_2), max_length))
 	if(!are_equal):
 		text += str('  ', get_different_count(), ' of ', get_total_count(),
 			' ', _desc_things, ' do not match.')
