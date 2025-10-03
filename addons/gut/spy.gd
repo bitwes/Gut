@@ -42,7 +42,7 @@ func _get_params_as_string(params):
 	return to_return
 
 
-func add_call(variant, method_name, parameters=null):
+func add_call(variant, method_name, parameters=null) -> void:
 	if(!_calls.has(variant)):
 		_calls[variant] = {}
 
@@ -52,7 +52,7 @@ func add_call(variant, method_name, parameters=null):
 	_calls[variant][method_name].append(parameters)
 
 
-func was_called(variant, method_name, parameters=null):
+func was_called(variant, method_name, parameters=null) -> bool:
 	var to_return = false
 	if(_calls.has(variant) and _calls[variant].has(method_name)):
 		if(parameters):
@@ -62,7 +62,7 @@ func was_called(variant, method_name, parameters=null):
 	return to_return
 
 
-func get_call_parameters(variant, method_name, index=-1):
+func get_call_parameters(variant, method_name, index=-1) -> Variant:
 	var to_return = null
 	var get_index = -1
 
@@ -82,7 +82,7 @@ func get_call_parameters(variant, method_name, index=-1):
 	return to_return
 
 
-func call_count(instance, method_name, parameters=null):
+func call_count(instance, method_name, parameters=null) -> int:
 	var to_return = 0
 
 	if(was_called(instance, method_name)):
@@ -95,11 +95,11 @@ func call_count(instance, method_name, parameters=null):
 	return to_return
 
 
-func clear():
+func clear() -> void:
 	_calls = {}
 
 
-func get_call_list_as_string(instance):
+func get_call_list_as_string(instance) -> String:
 	var to_return = ''
 	if(_calls.has(instance)):
 		for method in _calls[instance]:
@@ -108,9 +108,9 @@ func get_call_list_as_string(instance):
 	return to_return
 
 
-func get_logger():
+func get_logger() -> Variant:
 	return _lgr
 
 
-func set_logger(logger):
+func set_logger(logger) -> void:
 	_lgr = logger
