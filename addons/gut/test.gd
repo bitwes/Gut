@@ -487,7 +487,7 @@ func fail_test(text) -> void:
 	_fail(text)
 
 ## @internal
-func clear_signal_watcher() -> void:
+func clear_signal_watcher():
 	_signal_watcher.clear()
 
 
@@ -521,7 +521,7 @@ func get_logger():
 	return _lgr
 
 ## @internal
-func set_logger(logger) -> void:
+func set_logger(logger):
 	_lgr = logger
 
 
@@ -2312,7 +2312,7 @@ func wait_for_signal(sig : Signal, max_time, msg='') -> bool:
 ## @deprecated
 ## Use wait_physics_frames or wait_process_frames
 ## See [wiki]Awaiting[/wiki].
-func wait_frames(frames : int, msg='') -> Signal:
+func wait_frames(frames : int, msg=''):
 	_lgr.deprecated("wait_frames has been replaced with wait_physics_frames which is counted in _physics_process.  " +
 		"wait_process_frames has also been added which is counted in _process.")
 	return wait_physics_frames(frames, msg)
