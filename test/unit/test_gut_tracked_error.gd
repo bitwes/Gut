@@ -48,6 +48,7 @@ func test_is_engine_error_false_by_default():
 func test_is_engine_error_when_it_has_correct_error_type_and_not_push():
 	var gte = GutTrackedError.new()
 	gte.function = 'some_function_somewhere'
+	gte.error_type = 0
 	assert_true(gte.is_engine_error())
 
 

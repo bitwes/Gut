@@ -137,6 +137,12 @@ func _setup_test_gut(g, print_sub_tests):
 	g._should_print_versions = false
 	g._should_print_summary = false
 	g.error_tracker = GutErrorTracker.new()
+	# Default is .5 which takes 180s
+	# .1 takes 145s
+	# .05 takes 139s
+	# Lower numbers could cause false positive orphans, but none were listed
+	# for a full run.
+	g._time_to_wait_for_final_queue_free = .05
 
 
 var new_gut_indent_string = "|   "

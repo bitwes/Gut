@@ -59,6 +59,8 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`is_push_error<class_GutTrackedError_method_is_push_error>`\ (\ )             |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------+
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`is_push_warning<class_GutTrackedError_method_is_push_warning>`\ (\ )         |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------+
    | `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_   | :ref:`to_s<class_GutTrackedError_method_to_s>`\ (\ )                               |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------+
 
@@ -219,6 +221,20 @@ Returns ``true`` if the error is a push_error.
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **is_engine_error**\ (\ ) :ref:`🔗<class_GutTrackedError_method_is_engine_error>`
 
 Returns ``true`` if the error is an engine error.  This includes all errors that pass through the `Logger <https://docs.godotengine.org/en/stable/classes/class_logger.html>`_ that do not originate from the ``push_error`` function.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTrackedError_method_is_push_warning:
+
+.. rst-class:: classref-method
+
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **is_push_warning**\ (\ ) :ref:`🔗<class_GutTrackedError_method_is_push_warning>`
+
+.. container:: contribute
+
+	No description
 
 .. rst-class:: classref-item-separator
 

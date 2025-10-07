@@ -32,8 +32,10 @@ var handled = false
 
 ## _to_string that is not _to_string.
 func to_s() -> String:
-	return str("CODE:", code, " TYPE:", error_type, " RATIONALE:", rationale, "\n",
+	return str("CODE:", code, "\nTYPE:", error_type, "\nRATIONALE:", rationale, "\n",
 		file, '->', function, '@', line, "\n",
+		"handled: ", handled, "\n",
+		"gut type: ", get_error_type_name(),"\n",
 		backtrace, "\n")
 
 
@@ -46,7 +48,7 @@ func is_push_error():
 ## all errors that pass through the [Logger] that do not originate from the
 ## [code]push_error[/code] function.
 func is_engine_error():
-	return error_type > 0 and error_type != GutUtils.GUT_ERROR_TYPE and !is_push_error() and !is_push_warning()
+	return error_type >= 0 and error_type != GutUtils.GUT_ERROR_TYPE and !is_push_error() and !is_push_warning()
 
 
 func is_push_warning():

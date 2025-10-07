@@ -220,4 +220,3 @@ func test_get_errors_for_test_contains_warnings():
 	push_warning("emergency evacuation protest")
 	var errors = _added_tracker.errors.items[GutUtils.NO_TEST]
 	assert_eq(errors.size(), 1)
-	print(errors[0].to_s())
