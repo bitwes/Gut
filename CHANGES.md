@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# 9.5.1
+
+## Breaking Changes
+* In practice, having `assert_push_error` and `assert_engine_error` do two things was a bit too crafty.  These have been changed to not accept a count, only text.  `assert_push_error_count` and `assert_engine_error_count` have been added.  I chose to fail when passed and int and not deprecate that use since this feature was just introduced.  I apologize for any inconvenience.
+
+## Features
+* Added `assert_push_warning` and `assert_push_warning_count`.  Calls to `push_warning` no longer cause tests to fail due to unexpected errors (#775).
+
 
 # 9.5.0
 Here's a quick video covering some new features:  https://www.youtube.com/watch?v=ovq_1sjIpOs
