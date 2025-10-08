@@ -1721,3 +1721,29 @@ class TestAssertSameAndAssertNotSame:
 	func test_assert_not_same_fails_when_values_are_not_the_same(p = use_parameters(_not_same_values)):
 		gr.test_with_gut.assert_not_same(p[0], p[1])
 		assert_pass(gr.test_with_gut)
+
+
+# ------------------------------------------------------------------------------
+class TestElapsedTimeAndFrames:
+	extends BaseTestClass
+
+	func test_get_elapsed_idle_frames():
+		assert_eq(get_elapsed_idle_frames(), 0)
+		await wait_idle_frames(42)
+		assert_eq(get_elapsed_idle_frames(), 42)
+
+
+	func test_get_elapsed_physics_frames():
+		assert_eq(get_elapsed_physics_frames(), 0)
+		await wait_physics_frames(42)
+		assert_eq(get_elapsed_physics_frames(), 42)
+
+
+	func test_get_elapsed_seconds():
+		assert_almost_eq(get_elapsed_seconds(), 0.0, 0.1)
+		assert_almost_eq(get_elapsed_mseconds(), 0.0, 100.0)
+		assert_almost_eq(get_elapsed_useconds(), 0.0, 100000.0)
+		await wait_seconds(1)
+		assert_almost_eq(get_elapsed_seconds(), 1.0, 0.1)
+		assert_almost_eq(get_elapsed_mseconds(), 1000.0, 100.0)
+		assert_almost_eq(get_elapsed_useconds(), 1000000.0, 100000.0)

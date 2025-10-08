@@ -610,6 +610,10 @@ func _run_test(script_inst, test_name, param_index = -1):
 		test_id += str('[', param_index, ']')
 	error_tracker.start_test(test_id)
 
+	# Reset the time and frame tracking stats of the test
+	script_inst._time_began_tracking = Time.get_unix_time_from_system()
+	script_inst._elapsed_physics_frames = 0
+	script_inst._elapsed_idle_frames = 0
 	await script_inst.call(test_name)
 
 	if(error_tracker.should_test_fail_from_errors(test_id)):
