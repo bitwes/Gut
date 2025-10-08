@@ -58,6 +58,7 @@ var default_options = {
 	wait_log_delay = .5,
 
 	gut_on_top = true,
+	max_console_output_length = 50
 }
 
 
