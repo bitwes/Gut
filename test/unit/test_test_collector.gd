@@ -84,7 +84,7 @@ class TestTestCollector:
 	# also checks that only local methods are found since there is some extra
 	# print methods.
 	func test_inner_tests_are_found_using_test_prefix():
-		gr.tc.set_test_prefix('print_s') # changed to print_s because print_errors
+		gr.tc.set_test_prefix('print_s') # changed to print_s because print_tracked_errors
 		                                 # was introduced to test.gd.  smells bad
 		gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')
 		for i in range(gr.tc.scripts.size()):

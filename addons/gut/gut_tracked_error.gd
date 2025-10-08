@@ -74,11 +74,11 @@ func get_error_type_name():
 	var to_return = "Unknown"
 
 	if(is_gut_error()):
-		to_return =  "GUT"
+		to_return =  &"GUT"
 	elif(is_push_error()):
-		to_return = "push_error"
+		to_return = &"push_error"
 	elif(is_push_warning()):
-		to_return = 'push_warning'
+		to_return = &'push_warning'
 	elif(is_engine_error()):
 		to_return = str("engine-", error_type)
 
