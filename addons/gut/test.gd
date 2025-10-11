@@ -102,8 +102,8 @@ var _was_ready_called = false
 
 # Used to track time/physics/idle frames during test method execution
 var _time_began_tracking := 0.0
-var _elapsed_physics_frames := 0
-var _elapsed_idle_frames := 0
+var _elapsed_physics_frames_start := 0
+var _elapsed_process_frames_start := 0
 
 # I haven't decided if we should be using _ready or not.  Right now gut.gd will
 # call this if _ready was not called (because it was overridden without a super
@@ -113,11 +113,6 @@ func _do_ready_stuff():
 	_awaiter = GutUtils.Awaiter.new()
 	_awaiter.await_logger.wait_log_delay = wait_log_delay
 	add_child(_awaiter)
-	
-	# Frame tracking happens on SceneTree.{process|physics}_frame
-	# so that tree order never makes a difference
-	get_tree().process_frame.connect(func (): _elapsed_idle_frames += 1)
-	get_tree().physics_frame.connect(func (): _elapsed_physics_frames += 1)
 	_was_ready_called = true
 
 
@@ -815,14 +810,19 @@ func get_elapsed_useconds() -> float:
 	return get_elapsed_seconds() * 1000000
 
 
-## Returns the number of idle frames elapsed since the test method began.
+## Alias for [method GutTest.wait_process_frames]
 func get_elapsed_idle_frames() -> int:
-	return _elapsed_idle_frames
+	return get_elapsed_process_frames()
+
+
+## Returns the number of process/idle frames elapsed since the test method began.
+func get_elapsed_process_frames() -> int:
+	return Engine.get_process_frames() - _elapsed_process_frames_start
 
 
 ## Returns the number of physics frames elapsed since the test method began.
 func get_elapsed_physics_frames() -> int:
-	return _elapsed_physics_frames
+	return Engine.get_physics_frames() - _elapsed_physics_frames_start
 
 
 # ----------------

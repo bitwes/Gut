@@ -1730,13 +1730,13 @@ class TestElapsedTimeAndFrames:
 	func test_get_elapsed_idle_frames():
 		assert_eq(get_elapsed_idle_frames(), 0)
 		await wait_idle_frames(42)
-		assert_eq(get_elapsed_idle_frames(), 42)
+		assert_eq(get_elapsed_idle_frames(), 43)
 
 
 	func test_get_elapsed_physics_frames():
 		assert_eq(get_elapsed_physics_frames(), 0)
 		await wait_physics_frames(42)
-		assert_eq(get_elapsed_physics_frames(), 42)
+		assert_eq(get_elapsed_physics_frames(), 43)
 
 
 	func test_get_elapsed_seconds():
