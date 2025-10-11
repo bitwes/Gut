@@ -610,7 +610,9 @@ func _run_test(script_inst, test_name, param_index = -1):
 	error_tracker.start_test(test_id)
 
 	# Reset the time and frame tracking stats of the test
-	script_inst._time_began_tracking = Time.get_unix_time_from_system()
+	script_inst._unixtime_began_tracking = Time.get_unix_time_from_system()
+	script_inst._elapsed_msec_start = Time.get_ticks_msec()
+	script_inst._elapsed_usec_start = Time.get_ticks_usec()
 	script_inst._elapsed_physics_frames_start = Engine.get_physics_frames()
 	script_inst._elapsed_process_frames_start = Engine.get_process_frames()
 	await script_inst.call(test_name)

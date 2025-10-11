@@ -1727,23 +1727,31 @@ class TestAssertSameAndAssertNotSame:
 class TestElapsedTimeAndFrames:
 	extends BaseTestClass
 
-	func test_get_elapsed_idle_frames():
-		assert_eq(get_elapsed_idle_frames(), 0)
-		await wait_idle_frames(42)
-		assert_eq(get_elapsed_idle_frames(), 43)
-
+	func test_get_elapsed_process_frames():
+		assert_eq(get_elapsed_process_frames(), 0)
+		await wait_process_frames(10)
+		assert_eq(get_elapsed_process_frames(), 11)
+		await wait_process_frames(10)
+		assert_eq(get_elapsed_process_frames(), 22)
 
 	func test_get_elapsed_physics_frames():
 		assert_eq(get_elapsed_physics_frames(), 0)
-		await wait_physics_frames(42)
-		assert_eq(get_elapsed_physics_frames(), 43)
+		await wait_physics_frames(10)
+		assert_eq(get_elapsed_physics_frames(), 11)
+		await wait_physics_frames(10)
+		assert_eq(get_elapsed_physics_frames(), 22)
 
-
-	func test_get_elapsed_seconds():
-		assert_almost_eq(get_elapsed_seconds(), 0.0, 0.1)
-		assert_almost_eq(get_elapsed_mseconds(), 0.0, 100.0)
-		assert_almost_eq(get_elapsed_useconds(), 0.0, 100000.0)
+	func test_get_elapsed_sec():
+		assert_almost_eq(get_elapsed_sec(), 0.0, 0.1)
 		await wait_seconds(1)
-		assert_almost_eq(get_elapsed_seconds(), 1.0, 0.1)
-		assert_almost_eq(get_elapsed_mseconds(), 1000.0, 100.0)
-		assert_almost_eq(get_elapsed_useconds(), 1000000.0, 100000.0)
+		assert_almost_eq(get_elapsed_sec(), 1.0, 0.1)
+
+	func test_get_elapsed_msec():
+		assert_almost_eq(get_elapsed_msec(), 0, 100)
+		await wait_seconds(1)
+		assert_almost_eq(get_elapsed_msec(), 1_000, 100)
+
+	func test_get_elapsed_usec():
+		assert_almost_eq(get_elapsed_usec(), 0, 100_000)
+		await wait_seconds(1)
+		assert_almost_eq(get_elapsed_usec(), 1_000_000, 100_000)

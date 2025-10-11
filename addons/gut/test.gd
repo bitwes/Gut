@@ -101,7 +101,9 @@ var _awaiter = null
 var _was_ready_called = false
 
 # Used to track time/physics/idle frames during test method execution
-var _time_began_tracking := 0.0
+var _unixtime_began_tracking := 0.0
+var _elapsed_msec_start := 0
+var _elapsed_usec_start := 0
 var _elapsed_physics_frames_start := 0
 var _elapsed_process_frames_start := 0
 
@@ -796,18 +798,18 @@ func compare_deep(v1, v2, max_differences=null):
 
 
 ## Returns the number of seconds elapsed since test method began as a float.
-func get_elapsed_seconds() -> float:
-	return Time.get_unix_time_from_system() - _time_began_tracking
+func get_elapsed_sec() -> float:
+	return Time.get_unix_time_from_system() - _unixtime_began_tracking
 
 
 ## Returns the number of milliseconds elapsed since test method began as a float.
-func get_elapsed_mseconds() -> float:
-	return get_elapsed_seconds() * 1000
+func get_elapsed_msec() -> int:
+	return Time.get_ticks_msec() - _elapsed_msec_start
 
 
 ## Returns the number of microseconds elapsed since test method began as a float.
-func get_elapsed_useconds() -> float:
-	return get_elapsed_seconds() * 1000000
+func get_elapsed_usec() -> int:
+	return Time.get_ticks_usec() - _elapsed_usec_start
 
 
 ## Alias for [method GutTest.wait_process_frames]
