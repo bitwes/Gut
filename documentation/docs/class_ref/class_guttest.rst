@@ -247,6 +247,8 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`replace_node<class_GutTest_method_replace_node>`\ (\ base_node, path_or_node, with_this\ )                                                                                                                                                                 |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | |void|                                                                         | :ref:`reset_start_times<class_GutTest_method_reset_start_times>`\ (\ )                                                                                                                                                                                           |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`set_double_strategy<class_GutTest_method_set_double_strategy>`\ (\ double_strategy\ )                                                                                                                                                                      |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`should_skip_script<class_GutTest_method_should_skip_script>`\ (\ )                                                                                                                                                                                         |
@@ -921,6 +923,18 @@ Registers all the inner classes in a script with the doubler.  This is required 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **compare_deep**\ (\ v1, v2, max_differences = null\ ) :ref:`🔗<class_GutTest_method_compare_deep>`
 
 Peforms a deep compare on both values, a CompareResult instnace is returned. The optional max_differences paramter sets the max_differences to be displayed.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_reset_start_times:
+
+.. rst-class:: classref-method
+
+|void| **reset_start_times**\ (\ ) :ref:`🔗<class_GutTest_method_reset_start_times>`
+
+Resets the time/frame tracking statistics for the current test method
 
 .. rst-class:: classref-item-separator
 
