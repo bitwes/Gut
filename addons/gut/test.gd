@@ -101,6 +101,7 @@ var _awaiter = null
 var _was_ready_called = false
 
 # Used to track time/physics/idle frames during test method execution
+# They are set all together in reset_start_times
 var _unixtime_began_tracking := 0.0
 var _elapsed_msec_start := 0
 var _elapsed_usec_start := 0
@@ -795,6 +796,15 @@ func compare_deep(v1, v2, max_differences=null):
 	if(max_differences != null):
 		result.max_differences = max_differences
 	return result
+
+
+## Resets the time/frame tracking statistics for the current test method
+func reset_start_times() -> void:
+	_unixtime_began_tracking = Time.get_unix_time_from_system()
+	_elapsed_msec_start = Time.get_ticks_msec()
+	_elapsed_usec_start = Time.get_ticks_usec()
+	_elapsed_physics_frames_start = Engine.get_physics_frames()
+	_elapsed_process_frames_start = Engine.get_process_frames()
 
 
 ## Returns the number of seconds elapsed since test method began as a float.
