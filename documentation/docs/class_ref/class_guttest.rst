@@ -213,6 +213,18 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_double_strategy<class_GutTest_method_get_double_strategy>`\ (\ )                                                                                                                                                                                       |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_         | :ref:`get_elapsed_idle_frames<class_GutTest_method_get_elapsed_idle_frames>`\ (\ )                                                                                                                                                                               |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_         | :ref:`get_elapsed_msec<class_GutTest_method_get_elapsed_msec>`\ (\ )                                                                                                                                                                                             |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_         | :ref:`get_elapsed_physics_frames<class_GutTest_method_get_elapsed_physics_frames>`\ (\ )                                                                                                                                                                         |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_         | :ref:`get_elapsed_process_frames<class_GutTest_method_get_elapsed_process_frames>`\ (\ )                                                                                                                                                                         |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `float <https://docs.godotengine.org/en/stable/classes/class_float.html>`_     | :ref:`get_elapsed_sec<class_GutTest_method_get_elapsed_sec>`\ (\ )                                                                                                                                                                                               |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_         | :ref:`get_elapsed_usec<class_GutTest_method_get_elapsed_usec>`\ (\ )                                                                                                                                                                                             |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Array <https://docs.godotengine.org/en/stable/classes/class_array.html>`_     | :ref:`get_errors<class_GutTest_method_get_errors>`\ (\ )                                                                                                                                                                                                         |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_fail_count<class_GutTest_method_get_fail_count>`\ (\ )                                                                                                                                                                                                 |
@@ -244,6 +256,8 @@ Methods
    | |void|                                                                         | :ref:`register_inner_classes<class_GutTest_method_register_inner_classes>`\ (\ base_script\ )                                                                                                                                                                    |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`replace_node<class_GutTest_method_replace_node>`\ (\ base_node, path_or_node, with_this\ )                                                                                                                                                                 |
+   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | |void|                                                                         | :ref:`reset_start_times<class_GutTest_method_reset_start_times>`\ (\ )                                                                                                                                                                                           |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`set_double_strategy<class_GutTest_method_set_double_strategy>`\ (\ double_strategy\ )                                                                                                                                                                      |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -919,6 +933,90 @@ Registers all the inner classes in a script with the doubler.  This is required 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **compare_deep**\ (\ v1, v2, max_differences = null\ ) :ref:`🔗<class_GutTest_method_compare_deep>`
 
 Peforms a deep compare on both values, a CompareResult instnace is returned. The optional max_differences paramter sets the max_differences to be displayed.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_reset_start_times:
+
+.. rst-class:: classref-method
+
+|void| **reset_start_times**\ (\ ) :ref:`🔗<class_GutTest_method_reset_start_times>`
+
+Resets the time/frame tracking statistics for the current test method
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_elapsed_sec:
+
+.. rst-class:: classref-method
+
+`float <https://docs.godotengine.org/en/stable/classes/class_float.html>`_ **get_elapsed_sec**\ (\ ) :ref:`🔗<class_GutTest_method_get_elapsed_sec>`
+
+Returns the number of seconds elapsed since test method began as a float.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_elapsed_msec:
+
+.. rst-class:: classref-method
+
+`int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_ **get_elapsed_msec**\ (\ ) :ref:`🔗<class_GutTest_method_get_elapsed_msec>`
+
+Returns the number of milliseconds elapsed since test method began as a float.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_elapsed_usec:
+
+.. rst-class:: classref-method
+
+`int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_ **get_elapsed_usec**\ (\ ) :ref:`🔗<class_GutTest_method_get_elapsed_usec>`
+
+Returns the number of microseconds elapsed since test method began as a float.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_elapsed_idle_frames:
+
+.. rst-class:: classref-method
+
+`int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_ **get_elapsed_idle_frames**\ (\ ) :ref:`🔗<class_GutTest_method_get_elapsed_idle_frames>`
+
+Alias for :ref:`wait_process_frames<class_GutTest_method_wait_process_frames>`
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_elapsed_process_frames:
+
+.. rst-class:: classref-method
+
+`int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_ **get_elapsed_process_frames**\ (\ ) :ref:`🔗<class_GutTest_method_get_elapsed_process_frames>`
+
+Returns the number of process/idle frames elapsed since the test method began.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_GutTest_method_get_elapsed_physics_frames:
+
+.. rst-class:: classref-method
+
+`int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_ **get_elapsed_physics_frames**\ (\ ) :ref:`🔗<class_GutTest_method_get_elapsed_physics_frames>`
+
+Returns the number of physics frames elapsed since the test method began.
 
 .. rst-class:: classref-item-separator
 

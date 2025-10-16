@@ -1721,3 +1721,37 @@ class TestAssertSameAndAssertNotSame:
 	func test_assert_not_same_fails_when_values_are_not_the_same(p = use_parameters(_not_same_values)):
 		gr.test_with_gut.assert_not_same(p[0], p[1])
 		assert_pass(gr.test_with_gut)
+
+
+# ------------------------------------------------------------------------------
+class TestElapsedTimeAndFrames:
+	extends BaseTestClass
+
+	func test_get_elapsed_process_frames():
+		assert_eq(get_elapsed_process_frames(), 0)
+		await wait_process_frames(10)
+		assert_eq(get_elapsed_process_frames(), 11)
+		await wait_process_frames(10)
+		assert_eq(get_elapsed_process_frames(), 22)
+
+	func test_get_elapsed_physics_frames():
+		assert_eq(get_elapsed_physics_frames(), 0)
+		await wait_physics_frames(10)
+		assert_eq(get_elapsed_physics_frames(), 11)
+		await wait_physics_frames(10)
+		assert_eq(get_elapsed_physics_frames(), 22)
+
+	func test_get_elapsed_sec():
+		assert_almost_eq(get_elapsed_sec(), 0.0, 0.1)
+		await wait_seconds(1)
+		assert_almost_eq(get_elapsed_sec(), 1.0, 0.1)
+
+	func test_get_elapsed_msec():
+		assert_almost_eq(get_elapsed_msec(), 0, 100)
+		await wait_seconds(1)
+		assert_almost_eq(get_elapsed_msec(), 1_000, 100)
+
+	func test_get_elapsed_usec():
+		assert_almost_eq(get_elapsed_usec(), 0, 100_000)
+		await wait_seconds(1)
+		assert_almost_eq(get_elapsed_usec(), 1_000_000, 100_000)

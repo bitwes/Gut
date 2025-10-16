@@ -610,6 +610,8 @@ func _run_test(script_inst, test_name, param_index = -1):
 		test_id += str('[', param_index, ']')
 	error_tracker.start_test(test_id)
 
+	# Reset the time and frame tracking stats of the test
+	script_inst.reset_start_times()
 	await script_inst.call(test_name)
 
 	if(error_tracker.should_test_fail_from_errors(test_id)):
