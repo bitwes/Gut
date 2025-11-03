@@ -260,6 +260,7 @@ var _cancel_import = false
 # when a test completes (due to calls to add_child_autoqfree)
 var _auto_queue_free_delay = .1
 
+var _time_to_wait_for_final_queue_free = .5
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 func _init(override_logger=null):
@@ -609,6 +610,8 @@ func _run_test(script_inst, test_name, param_index = -1):
 		test_id += str('[', param_index, ']')
 	error_tracker.start_test(test_id)
 
+	# Reset the time and frame tracking stats of the test
+	script_inst.reset_start_times()
 	await script_inst.call(test_name)
 
 	if(error_tracker.should_test_fail_from_errors(test_id)):
@@ -867,7 +870,7 @@ func _test_the_scripts(indexes=[]):
 	# appearing as orphans.  Maybe this could loop through the orpahns looking
 	# for entries that were not freed but are queued to be freed and wait unitl
 	# they are all gone.  ".5" is a lot easier.
-	await get_tree().create_timer(.5).timeout
+	await get_tree().create_timer(_time_to_wait_for_final_queue_free).timeout
 	_end_run()
 
 

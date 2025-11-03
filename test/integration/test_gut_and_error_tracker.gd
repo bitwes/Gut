@@ -136,12 +136,12 @@ class TestErrorAsserts:
 	"""
 
 # ---------------------
-# Push error count
+# assert_push_error_count
 # ---------------------
 	func test_asserting_one_push_error_prevents_failure():
 		var test_func = func(me):
 			push_error('error 1')
-			me.assert_push_error(1)
+			me.assert_push_error_count(1)
 
 		var s = autofree(DynamicGutTest.new())
 		s.add_lambda_test(test_func, 'test_something')
@@ -154,7 +154,7 @@ class TestErrorAsserts:
 		var test_func = func(me):
 			push_error('error 1')
 			push_error('error 2')
-			me.assert_push_error(2)
+			me.assert_push_error_count(2)
 
 		var s = autofree(DynamicGutTest.new())
 		s.add_lambda_test(test_func, 'test_something')
@@ -168,7 +168,7 @@ class TestErrorAsserts:
 			push_error('error 1')
 			push_error('error 2')
 			push_error('error 3')
-			me.assert_push_error(1)
+			me.assert_push_error_count(1)
 
 		var s = autofree(DynamicGutTest.new())
 		s.add_lambda_test(test_func, 'test_something')
@@ -177,8 +177,11 @@ class TestErrorAsserts:
 		# 2 failures, one for assert and one for the unexpected errors that
 		# were not handled by the assert
 		assert_eq(t.failing, 2)
+
+
+
 # ---------------------
-# Push error text
+# assert_push_error
 # ---------------------
 	func test_push_error_with_matching_text_prevents_failure():
 		var test_func = func(me):
@@ -229,13 +232,27 @@ class TestErrorAsserts:
 		assert_eq(t.passing, 2)
 		assert_eq(t.failing, 0)
 
+	func test_asserting_multiple_push_error_with_same_text():
+		var test_func = func(me):
+			push_error('distinct_error')
+			push_error('distinct_error')
+			me.assert_push_error("distinct_error")
+			me.assert_push_error("distinct_error")
+
+		var s = autofree(DynamicGutTest.new())
+		s.add_lambda_test(test_func, 'test_something')
+
+		var t = await s.run_tests_in_gut_await(_gut)
+		assert_eq(t.passing, 2)
+		assert_eq(t.failing, 0)
+
 # ---------------------
-# Engine error count
+# assert_engine_error_count
 # ---------------------
 	func test_asserting_engine_error_prevents_failure():
 		var test_func = func(me):
 			me.divide_them(1, 'b')
-			me.assert_engine_error(1)
+			me.assert_engine_error_count(1)
 
 		var s = autofree(DynamicGutTest.new())
 		s.add_source(_src_divide_them)
@@ -243,13 +260,14 @@ class TestErrorAsserts:
 
 		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.passing, 1)
+
 
 	func test_asserting_multiple_engine_error_prevents_failure():
 		var test_func = func(me):
 			me.divide_them(1, 'b')
 			me.divide_them(1, 'b')
 			me.divide_them(1, 'b')
-			me.assert_engine_error(3)
+			me.assert_engine_error_count(3)
 
 		var s = autofree(DynamicGutTest.new())
 		s.add_source(_src_divide_them)
@@ -258,12 +276,13 @@ class TestErrorAsserts:
 		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.passing, 1)
 
+
 	func test_asserting_non_matching_count_causes_two_failures():
 		var test_func = func(me):
 			me.divide_them(1, 'b')
 			me.divide_them(1, 'b')
 			me.divide_them(1, 'b')
-			me.assert_engine_error(2)
+			me.assert_engine_error_count(2)
 
 		var s = autofree(DynamicGutTest.new())
 		s.add_source(_src_divide_them)
@@ -290,6 +309,7 @@ class TestErrorAsserts:
 		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.passing, 1)
 
+
 	func test_engine_with_non_matching_text_fails():
 		var test_func = func(me):
 			me.divide_them(1, 'b')
@@ -301,6 +321,7 @@ class TestErrorAsserts:
 
 		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.failing, 2)
+
 
 	func test_engine_with_matching_text_only_consumes_one():
 		var test_func = func(me):
@@ -315,6 +336,7 @@ class TestErrorAsserts:
 		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.passing, 1)
 		assert_eq(t.failing, 1)
+
 
 	func test_engine_can_assert_multiple_different_texts():
 		var test_func = func(me):
@@ -331,6 +353,81 @@ class TestErrorAsserts:
 		assert_eq(t.passing, 2)
 		assert_eq(t.failing, 0)
 
+# ---------------------
+# assert_push_warning_count
+# ---------------------
+	func test_asserting_one_push_warning_when_none_causes_failure():
+		var test_func = func(me):
+			me.assert_push_warning_count(1)
+
+		var s = autofree(DynamicGutTest.new())
+		s.add_lambda_test(test_func, 'test_something')
+
+		var t = await s.run_tests_in_gut_await(_gut)
+		assert_eq(t.failing, 1)
+
+
+	func test_asserting_matching_push_warning_count_passes():
+		var test_func = func(me):
+			push_warning('warn 1')
+			me.assert_push_warning_count(1)
+
+		var s = autofree(DynamicGutTest.new())
+		s.add_lambda_test(test_func, 'test_something')
+
+		var t = await s.run_tests_in_gut_await(_gut)
+		assert_eq(t.passing, 1)
+
+
+	func test_asserting_two_push_warnings_passes():
+		var test_func = func(me):
+			push_warning('warn 1')
+			push_warning('warn 2')
+			me.assert_push_warning_count(2)
+
+		var s = autofree(DynamicGutTest.new())
+		s.add_lambda_test(test_func, 'test_something')
+
+		var t = await s.run_tests_in_gut_await(_gut)
+		assert_eq(t.passing, 1)
+
+
+# ---------------------
+# assert_push_warning
+# ---------------------
+	func test_asserting_push_warning_when_no_warnings_causes_failure():
+		var test_func = func(me):
+			me.assert_push_warning("nothing")
+
+		var s = autofree(DynamicGutTest.new())
+		s.add_lambda_test(test_func, 'test_something')
+		var t = await s.run_tests_in_gut_await(_gut)
+		assert_eq(t.failing, 1)
+
+
+	func test_asserting_push_warning_with_matching_text_passes():
+		var test_func = func(me):
+			push_warning("warn 1")
+			me.assert_push_warning("warn")
+
+		var s = autofree(DynamicGutTest.new())
+		s.add_lambda_test(test_func, 'test_something')
+		var t = await s.run_tests_in_gut_await(_gut)
+		assert_eq(t.passing, 1)
+
+
+	func test_asserting_non_matching_push_warning_causes_failure():
+		var test_func = func(me):
+			push_warning('warn 1')
+			push_warning('warn 2')
+			push_warning('warn 3')
+			me.assert_push_warning('hello')
+
+		var s = autofree(DynamicGutTest.new())
+		s.add_lambda_test(test_func, 'test_something')
+
+		var t = await s.run_tests_in_gut_await(_gut)
+		assert_eq(t.failing, 1)
 
 
 # ---------------------
@@ -341,8 +438,8 @@ class TestErrorAsserts:
 			me.divide_them(1, 'b')
 			me.divide_them(1, 'b')
 			push_error('push error 1')
-			me.assert_engine_error(2)
-			me.assert_push_error(1)
+			me.assert_engine_error_count(2)
+			me.assert_push_error_count(1)
 
 		var s = autofree(DynamicGutTest.new())
 		s.add_source(_src_divide_them)
@@ -377,7 +474,7 @@ class TestErrorAsserts:
 		var test_func = func(me):
 			me.divide_them(1, 'b')
 			me.divide_them(1, 'b')
-			push_error('pushe error 1')
+			push_error('push error 1')
 			var errs = me.get_errors()
 			me.assert_eq(errs.size(), 3)
 			for e in errs:
@@ -398,7 +495,7 @@ class TestErrorAsserts:
 		var params = [1, 2, 3, 4, 5]
 		func test_parameterized_and_errors(p=use_parameters(params)):
 			push_error(str("Error ", p))
-			assert_push_error(1)
+			assert_push_error_count(1)
 		"""
 
 		var s = autofree(DynamicGutTest.new())

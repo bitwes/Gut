@@ -129,14 +129,14 @@ class TestOptParse:
 		var opts = OptParse.new()
 		opts.add('-a', 'a', 'a')
 		opts.add('-a', 'a', 'a')
-		assert_push_error(1, 'option exists')
+		assert_push_error_count(1, 'option exists')
 		assert_eq(opts.options.options.size(), 1)
 
 	func test_cannot_add_duplicate_positional_option():
 		var opts = OptParse.new()
 		opts.add_positional('a', 'a', 'a')
 		opts.add_positional('a', 'a', 'a')
-		assert_push_error(1, 'option exists')
+		assert_push_error_count(1, 'option exists')
 		assert_eq(opts.options.positional.size(), 1)
 
 	func test_add_required_sets_required_flag():
@@ -153,7 +153,7 @@ class TestOptParse:
 		var opts = OptParse.new()
 		var first = opts.add('-a', 'a', 'a')
 		var result = opts.add_required('-a', 'a', 'a')
-		assert_push_error(1, 'option exists')
+		assert_push_error_count(1, 'option exists')
 		assert_null(result)
 		assert_false(first.required)
 
@@ -161,7 +161,7 @@ class TestOptParse:
 		var opts = OptParse.new()
 		var first = opts.add_positional('-a', 'a', 'a')
 		var result = opts.add_positional_required('-a', 'a', 'a')
-		assert_push_error(1, 'option exists')
+		assert_push_error_count(1, 'option exists')
 		assert_null(result)
 		assert_false(first.required)
 
@@ -447,14 +447,14 @@ class TestOptionAliases:
 	func test_aliases_collide_with_options():
 		op.add("--name", "default", "description")
 		assert_null(op.add(["--another", "--name"], "default", "description"))
-		assert_push_error(1, 'option exists')
+		assert_push_error_count(1, 'option exists')
 
 	func test_aliases_collide_with_aliases():
 		op.add(["--name", "--alias"], "default", "description")
 		assert_null(op.add(["--another", "--alias"], "default", "description"))
-		assert_push_error(1, 'option exists')
+		assert_push_error_count(1, 'option exists')
 
 	func test_options_collide_with_aliases():
 		op.add(["--name", "--alias"], "default", "description")
 		assert_null(op.add("--alias", "default", "description"))
-		assert_push_error(1, 'option exists')
+		assert_push_error_count(1, 'option exists')

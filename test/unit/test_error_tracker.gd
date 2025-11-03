@@ -209,3 +209,14 @@ func test_fail_text_can_exclude_gut_error():
 	assert_string_contains(error_text, 'Invalid operands')
 	assert_eq(error_text.find('gut error nope'), -1)
 	assert_string_contains(error_text, 'push nope')
+
+
+func test_should_fail_false_for_push_warning():
+	push_warning("Warning, live without warning")
+	assert_false(_added_tracker.should_test_fail_from_errors(GutUtils.NO_TEST))
+
+
+func test_get_errors_for_test_contains_warnings():
+	push_warning("emergency evacuation protest")
+	var errors = _added_tracker.errors.items[GutUtils.NO_TEST]
+	assert_eq(errors.size(), 1)
