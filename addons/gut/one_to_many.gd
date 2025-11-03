@@ -1,9 +1,12 @@
 # ------------------------------------------------------------------------------
 # This datastructure represents a simple one-to-many relationship.  It manages
 # a dictionary of value/array pairs.  It ignores duplicates of both the "one"
-# and the "many".
+# and the "many".  You can disable ignoring dupliates of the "many" via
+# ignore_many_dupes.  This setting is not retroactive and will only affect
+# new calls to add.
 # ------------------------------------------------------------------------------
 var items = {}
+var ignore_many_dupes = true
 
 # return the size of items or the size of an element in items if "one" was
 # specified.
@@ -19,7 +22,7 @@ func size(one=null):
 # Add an element to "one" if it does not already exist
 func add(one, many_item):
 	if(items.has(one)):
-		if(!items[one].has(many_item)):
+		if(!ignore_many_dupes or !items[one].has(many_item)):
 			items[one].append(many_item)
 	else:
 		items[one] = [many_item]
