@@ -61,6 +61,50 @@ var PROPERTY_USAGES = {
 }
 
 
+var VARIANT_TYPE = {
+	TYPE_NIL : 'TYPE_NIL',
+	TYPE_BOOL : 'TYPE_BOOL',
+	TYPE_INT : 'TYPE_INT',
+	TYPE_FLOAT : 'TYPE_FLOAT',
+	TYPE_STRING : 'TYPE_STRING',
+	TYPE_VECTOR2 : 'TYPE_VECTOR2',
+	TYPE_VECTOR2I : 'TYPE_VECTOR2I',
+	TYPE_RECT2 : 'TYPE_RECT2',
+	TYPE_RECT2I : 'TYPE_RECT2I',
+	TYPE_VECTOR3 : 'TYPE_VECTOR3',
+	TYPE_VECTOR3I : 'TYPE_VECTOR3I',
+	TYPE_TRANSFORM2D : 'TYPE_TRANSFORM2D',
+	TYPE_VECTOR4 : 'TYPE_VECTOR4',
+	TYPE_VECTOR4I : 'TYPE_VECTOR4I',
+	TYPE_PLANE : 'TYPE_PLANE',
+	TYPE_QUATERNION : 'TYPE_QUATERNION',
+	TYPE_AABB : 'TYPE_AABB',
+	TYPE_BASIS : 'TYPE_BASIS',
+	TYPE_TRANSFORM3D : 'TYPE_TRANSFORM3D',
+	TYPE_PROJECTION : 'TYPE_PROJECTION',
+	TYPE_COLOR : 'TYPE_COLOR',
+	TYPE_STRING_NAME : 'TYPE_STRING_NAME',
+	TYPE_NODE_PATH : 'TYPE_NODE_PATH',
+	TYPE_RID : 'TYPE_RID',
+	TYPE_OBJECT : 'TYPE_OBJECT',
+	TYPE_CALLABLE : 'TYPE_CALLABLE',
+	TYPE_SIGNAL : 'TYPE_SIGNAL',
+	TYPE_DICTIONARY : 'TYPE_DICTIONARY',
+	TYPE_ARRAY : 'TYPE_ARRAY',
+	TYPE_PACKED_BYTE_ARRAY : 'TYPE_PACKED_BYTE_ARRAY',
+	TYPE_PACKED_INT32_ARRAY : 'TYPE_PACKED_INT32_ARRAY',
+	TYPE_PACKED_INT64_ARRAY : 'TYPE_PACKED_INT64_ARRAY',
+	TYPE_PACKED_FLOAT32_ARRAY : 'TYPE_PACKED_FLOAT32_ARRAY',
+	TYPE_PACKED_FLOAT64_ARRAY : 'TYPE_PACKED_FLOAT64_ARRAY',
+	TYPE_PACKED_STRING_ARRAY : 'TYPE_PACKED_STRING_ARRAY',
+	TYPE_PACKED_VECTOR2_ARRAY : 'TYPE_PACKED_VECTOR2_ARRAY',
+	TYPE_PACKED_VECTOR3_ARRAY : 'TYPE_PACKED_VECTOR3_ARRAY',
+	TYPE_PACKED_COLOR_ARRAY : 'TYPE_PACKED_COLOR_ARRAY',
+	TYPE_PACKED_VECTOR4_ARRAY : 'TYPE_PACKED_VECTOR4_ARRAY',
+	TYPE_MAX : 'TYPE_MAX',
+}
+
+
 # func get_methods_by_flag(obj):
 # 	var methods_by_flags = {}
 # 	var methods = obj.get_method_list()
@@ -315,13 +359,6 @@ var PROPERTY_USAGES = {
 # 		print('  ', sig)
 
 
-
-func print_class_db_class_list():
-	var list = ClassDB.get_class_list()
-	list.sort()
-	print("\n".join(list))
-
-
 # func pp(dict, indent=''):
 # 	var text = json.stringify(dict, '  ')
 # 	text = _strutils.indent_text(text, 1, indent)
@@ -397,7 +434,17 @@ func _print_bit_mask(mask_name, mask_value, flags):
 	lgr.dec_indent()
 
 
+func print_class_db_class_list():
+	var list = ClassDB.get_class_list()
+	list.sort()
+	print("\n".join(list))
+
+
 func print_script_constants(loaded):
+	if(!loaded.has_method("get_script_constant_map")):
+		print(loaded, ' does not have get_script_constant_map')
+		return
+
 	var const_map = loaded.get_script_constant_map()
 	for key in const_map:
 		var thing = const_map[key]
@@ -430,8 +477,13 @@ func print_method_signature(meta):
 	var args = []
 	for arg in meta.args:
 		args.append(arg.name)
+	var return_text = ""
+	if(meta["return"]["type"] != TYPE_NIL):
+		return_text = str(" -> ", VARIANT_TYPE[meta["return"]["type"]])
+
 	s += ", ".join(args)
 	s += ")"
+	s += return_text
 	lgr.p("* ", s)
 	if(include_method_flags):
 		lgr.inc_indent()
@@ -459,19 +511,21 @@ func print_method_signatures(thing):
 			print_method_signature(entry)
 
 	if(typeof(thing) != TYPE_ARRAY):
-		print_method_signatures(thing.get_script_method_list())
+		if(thing.has_method('get_script_method_list')):
+			print_method_signatures(thing.get_script_method_list())
 
 
 func print_script_info(loaded):
 	lgr.p('to_string        ', loaded.to_string())
-	lgr.p('resource_name    ', loaded.resource_name)
-	lgr.p("resource_path    ", loaded.resource_path)
-	lgr.p('base_script      ', loaded.get_base_script())
-	lgr.p('global_name      ', loaded.get_global_name())
-	lgr.p('is_abstract      ', loaded.is_abstract())
-	lgr.p('is_tool          ', loaded.is_tool())
-	lgr.p('has_source_code  ', loaded.has_source_code())
-	lgr.p("is_built_in      ", loaded.is_built_in())
+	if(!is_singleton(loaded)):
+		lgr.p('resource_name    ', loaded.resource_name)
+		lgr.p("resource_path    ", loaded.resource_path)
+		lgr.p('base_script      ', loaded.get_base_script())
+		lgr.p('global_name      ', loaded.get_global_name())
+		lgr.p('is_abstract      ', loaded.is_abstract())
+		lgr.p('is_tool          ', loaded.is_tool())
+		lgr.p('has_source_code  ', loaded.has_source_code())
+		lgr.p("is_built_in      ", loaded.is_built_in())
 	lgr.p('class            ', loaded.get_class())
 	lgr.p('script           ', loaded.get_script())
 
@@ -519,7 +573,6 @@ func print_script(loaded, title =''):
 	lgr.dec_indent()
 
 
-
 func print_script_verbose(loaded):
 	lgr.p("Methods"); lgr.inc_indent()
 	GutUtils.pretty_print(loaded.get_script_method_list())
@@ -527,3 +580,49 @@ func print_script_verbose(loaded):
 	lgr.p("Properties");lgr.inc_indent()
 	GutUtils.pretty_print(loaded.get_script_property_list())
 	lgr.dec_indent()
+
+
+func is_singleton(thing):
+	# return true
+	# print(thing.has_method('get_base_script'))
+	# print(ClassDB.can_instantiate(thing.get_class()))
+	return thing.get_script() == null and !thing.has_method('get_base_script')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class ClassDBInspector:
+	extends ObjectInspector
+
+	func print_properties(props, thing):
+		for i in range(props.size()):
+			var prop_name = props[i].name
+			var prop_value = ClassDB.class_get_property(thing, props[i].name)
+			var print_value = str(prop_value)
+			if(print_value.length() > 100):
+				print_value = print_value.substr(0, 97) + '...'
+			elif(print_value == ''):
+				print_value = 'EMPTY'
+
+			lgr.p('* ', prop_name, ' = ', print_value)
+			if(include_property_usage):
+				lgr.inc_indent()
+				_print_bit_mask('usage', props[i].usage, PROPERTY_USAGES)
+				lgr.dec_indent()
+
+			_print_meta(props[i])
+
+
+	func print_method_signatures(sname):
+		super.print_method_signatures(ClassDB.class_get_method_list(sname))

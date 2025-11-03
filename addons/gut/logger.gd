@@ -283,6 +283,10 @@ func lograw(text, fmt=fmts.none):
 	return _output(text, fmt)
 
 
+func p(p1='', p2='', p3='', p4='', p5='', p6='', p7='', p8='', p9='', p10='', ):
+	self.log(str(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10))
+
+
 # Print the test name if we aren't skipping names of tests that pass (basically
 # what _less_test_names means))
 func log_test_name():

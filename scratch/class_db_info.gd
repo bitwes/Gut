@@ -13,6 +13,7 @@ func search_for_enum(name):
     if(!found):
         print('could not find enum ', name)
 
+
 func get_all_enums():
     var classes = ClassDB.get_class_list()
     var found = false
@@ -51,12 +52,12 @@ func get_all_properties():
 
     print(all_properties.to_s())
 
+
 func print_all_classes():
     var classes = ClassDB.get_class_list()
 
     for c in classes:
         print(c)
-
 
 
 func _init():
