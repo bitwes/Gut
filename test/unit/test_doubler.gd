@@ -515,3 +515,82 @@ class TestAutofree:
 		var doubled = partial_double(DoubleExtendsNode2D).new()
 		gut.get_autofree().free_all()
 		assert_no_new_orphans()
+
+
+
+class TestDoubleSingletons:
+	extends BaseTest
+
+	var doubler = null
+
+	func before_each():
+		doubler = Doubler.new()
+		doubler.set_stubber(GutUtils.Stubber.new())
+		var lgr = GutUtils.GutLogger.new()
+		lgr.set_gut(gut)
+		doubler.set_logger(lgr)
+
+
+	func test_can_make_a_double_of_OS():
+		var d = doubler.double_singleton(OS)
+		assert_not_null(d)
+
+	func test_doubles_are_ref_counted():
+		var d = doubler.double_singleton(Time)
+		var inst = d.new()
+		assert_is(inst, RefCounted)
+
+	func test_adds_gut_data():
+		var d = doubler.double_singleton(OS)
+		var inst = d.new()
+
+		assert_typeof(inst.__gutdbl_values, TYPE_DICTIONARY)
+		assert_has_method(inst, '__gutdbl_check_method__')
+		assert_not_null(inst.__gutdbl)
+		assert_has_method(inst, '__gutdbl_done')
+
+	func test_double_has_singleton_methods():
+		var d = doubler.double_singleton(OS)
+		var inst = d.new()
+
+		assert_has_method(inst, 'get_data_dir')
+
+
+	func test_double_has_enums():
+		var inst = doubler.double_singleton(Time).new()
+		assert_eq(inst.MONTH_JANUARY, 1)
+
+
+	func test_double_has_signal():
+		var inst = doubler.double_singleton(AudioServer).new()
+		assert_has_signal(inst, 'bus_layout_changed')
+
+	var _on_bus_renamed_bus_index = 999
+	var _on_bus_renamed_old_name = ''
+	var _on_bus_renamed_new_name = ''
+	func _on_bus_renamed(bus_index, old_name, new_name):
+		_on_bus_renamed_bus_index = bus_index
+		_on_bus_renamed_old_name = old_name
+		_on_bus_renamed_new_name = new_name
+
+	func test_can_connect_to_signal_with_parameters():
+		doubler.print_source = true
+		var inst = doubler.double_singleton(AudioServer).new()
+		inst.bus_renamed.connect(_on_bus_renamed)
+		assert_connected(inst.bus_renamed, self)
+		inst.bus_renamed.emit(-1, 'old', 'new')
+		assert_eq(_on_bus_renamed_bus_index, -1)
+		assert_eq(_on_bus_renamed_old_name, 'old')
+		assert_eq(_on_bus_renamed_new_name, 'new')
+
+	func test_singltons_contain_properties():
+		doubler.print_source = true
+		var inst = doubler.double_singleton(OS).new()
+		assert_true(inst.delta_smoothing)
+		assert_false(inst.low_processor_usage_mode)
+
+	func test_can_double_all_singletons(p = use_parameters(all_singletons)):
+		var D = doubler.double_singleton(p)
+		assert_not_null(D, 'singleton:  ' + p.get_class())
+		if(is_passing()):
+			assert_not_null(D.new())

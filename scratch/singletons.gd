@@ -7,6 +7,7 @@ extends SceneTree
 # -----------------------------------------------------------------------------
 
 var ObjectInspector = load("res://scratch/object_inspector.gd")
+# Created from @GlobalScope properties documentation
 var all_singletons = [
 	AudioServer,
 	CameraServer,
@@ -109,13 +110,19 @@ func _init() -> void:
 
 	# oi.include_method_flags = true
 
-	# print_singleton_info(Time)
+	print_singleton_info(Time)
 	# print_singleton_info(OS)
 	# print_singleton_info(AudioServer)
 	# for s in all_singletons:
-	#     print_singleton_info(s)
+	# 	if(GutUtils.is_instance(s)):
+	# 		print("yes")
+	# 	else:
+	# 		print("     NOPE ", s)
+		# print_singleton_info(s)
 	# print(EditorInterface)
-	print_singleton_info_classdb("EditorInterface", EditorInterface)
+	# print_singleton_info_classdb("EditorInterface", EditorInterface)
+
+
 	# print_singleton_info(ClassDB)
 	quit()
 

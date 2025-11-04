@@ -109,6 +109,7 @@ func _init():
 	_supported_defaults[TYPE_PACKED_FLOAT32_ARRAY] = 'PackedFloat32Array'
 	_supported_defaults[TYPE_PACKED_STRING_ARRAY] = 'PackedStringArray'
 
+
 # ###############
 # Private
 # ###############
@@ -256,3 +257,8 @@ func get_logger():
 
 func set_logger(logger):
 	_lgr = logger
+
+
+func get_arg_text(meta):
+	var parsed = _make_arg_array(meta)
+	return _get_arg_text(parsed[1])

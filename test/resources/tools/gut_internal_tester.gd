@@ -1,6 +1,48 @@
 class_name GutInternalTester
 extends GutTest
 
+# Created from @GlobalScope properties documentation
+var all_singletons = [
+	AudioServer,
+	CameraServer,
+	ClassDB,
+	DisplayServer,
+	# EditorInterface,
+	Engine,
+	EngineDebugger,
+	GDExtensionManager,
+	Geometry2D,
+	Geometry3D,
+	IP,
+	Input,
+	InputMap,
+	JavaClassWrapper,
+	JavaScriptBridge,
+	Marshalls,
+	NativeMenu,
+	NavigationMeshGenerator,
+	NavigationServer2D,
+	NavigationServer3D,
+	OS,
+	Performance,
+	PhysicsServer2D,
+	PhysicsServer2DManager,
+	PhysicsServer3D,
+	PhysicsServer3DManager,
+	ProjectSettings,
+	RenderingServer,
+	ResourceLoader,
+	ResourceSaver,
+	ResourceUID,
+	TextServerManager,
+	ThemeDB,
+	Time,
+	TranslationServer,
+	WorkerThreadPool,
+	XRServer
+]
+
+
 var verbose = false
 
 const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'

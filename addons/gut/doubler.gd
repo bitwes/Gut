@@ -3,6 +3,11 @@ extends RefCounted
 
 var _base_script_text = GutUtils.get_file_as_text('res://addons/gut/double_templates/script_template.txt')
 var _script_collector = GutUtils.ScriptCollector.new()
+
+var _singleton_parser = GutUtils.SingletonParser.new()
+var _singleton_script_text = GutUtils.get_file_as_text('res://addons/gut/double_templates/singleton_template.txt')
+
+
 # used by tests for debugging purposes.
 var print_source = false
 var inner_class_registry = GutUtils.InnerClassRegistry.new()
@@ -49,9 +54,12 @@ var _method_maker = GutUtils.MethodMaker.new()
 func get_method_maker():
 	return _method_maker
 
+var _singleton_method_maker = GutUtils.MethodMaker.new()
+
 var _ignored_methods = GutUtils.OneToMany.new()
 func get_ignored_methods():
 	return _ignored_methods
+
 
 # ###############
 # Private
@@ -59,6 +67,7 @@ func get_ignored_methods():
 func _init(strategy=GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY):
 	set_logger(GutUtils.get_logger())
 	_strategy = strategy
+	_singleton_method_maker._func_text = GutUtils.get_file_as_text('res://addons/gut/double_templates/singleton_function_template.txt')
 
 
 func _get_indented_line(indents, text):
@@ -114,6 +123,40 @@ func _get_base_script_text(parsed, override_path, partial, included_methods):
 	}
 
 	return _base_script_text.format(values)
+
+
+func _get_singleton_text(parsed):
+	var stubber_id = -1
+	if(_stubber != null):
+		stubber_id = _stubber.get_instance_id()
+
+	var spy_id = -1
+	if(_spy != null):
+		spy_id = _spy.get_instance_id()
+
+	var gut_id = -1
+	if(_gut != null):
+		gut_id = _gut.get_instance_id()
+
+	var values = {
+		# Top  sections
+		"extends":"extends RefCounted",
+		"constants":'',#obj_info.get_constants_text(),
+		"properties":'',#obj_info.get_properties_text(),
+
+		# metadata values
+		# "path":path,
+		# "subpath":GutUtils.nvl(parsed.subpath, ''),
+		"stubber_id":stubber_id,
+		"spy_id":spy_id,
+		"gut_id":gut_id,
+		"singleton_name":parsed.singleton_name,
+		"is_partial":false,
+		"doubled_methods":[],
+	}
+
+	var src = _singleton_script_text.format(values)
+	return src
 
 
 func _is_method_eligible_for_doubling(parsed_script, parsed_method):
@@ -246,6 +289,7 @@ func _partial_double(obj, strategy, override_path=null):
 func double(obj, strategy=_strategy):
 	return _double(obj, strategy)
 
+
 func partial_double(obj, strategy=_strategy):
 	return _partial_double(obj, strategy)
 
@@ -277,8 +321,51 @@ func partial_double_inner(parent, inner, strategy=_strategy):
 	return _create_double(parsed, strategy, null, true)
 
 
+func _get_signal_parameters(arg_meta):
+	var text = ""
+	for arg in arg_meta:
+		if(text.length() > 0):
+			text += ", "
+		text += arg.name
+	return text
+
+
+func double_singleton(obj):
+	var parsed = _singleton_parser.parse(obj)
+	var dbl_src = _get_singleton_text(parsed)
+
+	for key in parsed.enums:
+		dbl_src += str('const ', key, ' = ', parsed.enums[key], "\n")
+
+	for key in parsed.signals:
+		var arg_text = _get_signal_parameters(parsed.signals[key]['args'])
+		dbl_src += str("signal ", key, "(", arg_text, ")\n")
+
+	# This defaults values to what the singleton is currently set to.  This was
+	# easier than remembering how to turn the defaults in the meta into code.
+	# This might be the wrong choice.
+	for key in parsed.properties:
+		# AudioServer had a property in the meta named "Fallback values" and I
+		# don't know what it is, so I'm ignoring all properties with a space in
+		# the name.
+		if(key.find(" ") == -1):
+			dbl_src += str("var ", key, " = ", obj.get_class(), ".", key, "\n")
+
+	for key in parsed.methods_by_name:
+		dbl_src += _singleton_method_maker.get_function_text(parsed.methods_by_name[key]) + "\n"
+
+	if(print_source):
+		var to_print :String = GutUtils.add_line_numbers(dbl_src)
+		to_print = to_print.rstrip("\n")
+		_lgr.log(str(to_print))
+
+	var mock_class = GutUtils.create_script_from_source(dbl_src)
+	return mock_class
+
+
 func add_ignored_method(obj, method_name):
 	_ignored_methods.add(obj, method_name)
+
 
 
 

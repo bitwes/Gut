@@ -154,6 +154,9 @@ static var ScriptCollector = LazyLoader.new('res://addons/gut/script_parser.gd')
 static var SignalWatcher = LazyLoader.new('res://addons/gut/signal_watcher.gd'):
 	get: return SignalWatcher.get_loaded()
 	set(val): pass
+static var SingletonParser = LazyLoader.new('res://addons/gut/singleton_parser.gd'):
+	get: return SingletonParser.get_loaded()
+	set(val): pass
 static var Spy = LazyLoader.new('res://addons/gut/spy.gd'):
 	get: return Spy.get_loaded()
 	set(val): pass

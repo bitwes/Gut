@@ -1,0 +1,2 @@
+{func_decleration}
+	pass
