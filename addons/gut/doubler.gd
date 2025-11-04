@@ -352,15 +352,21 @@ func double_singleton(obj):
 			dbl_src += str("var ", key, " = ", obj.get_class(), ".", key, "\n")
 
 	for key in parsed.methods_by_name:
-		dbl_src += _singleton_method_maker.get_function_text(parsed.methods_by_name[key]) + "\n"
+		dbl_src += _singleton_method_maker.get_function_text(parsed.methods_by_name[key], obj) + "\n"
 
 	if(print_source):
 		var to_print :String = GutUtils.add_line_numbers(dbl_src)
 		to_print = to_print.rstrip("\n")
 		_lgr.log(str(to_print))
 
-	var mock_class = GutUtils.create_script_from_source(dbl_src)
-	return mock_class
+	var DblClass = GutUtils.create_script_from_source(dbl_src)
+	if(_stubber != null):
+		for key in parsed.methods_by_name:
+			var meta = parsed.methods_by_name[key]
+			if(meta != {} and !meta.flags & METHOD_FLAG_VARARG):
+				_stubber.stub_defaults_from_meta(obj, meta)
+
+	return DblClass
 
 
 func add_ignored_method(obj, method_name):

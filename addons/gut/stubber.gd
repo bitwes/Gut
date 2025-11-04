@@ -44,12 +44,17 @@ var _strutils = GutUtils.Strutils.new()
 func _find_matches(obj, method):
 	var matches = []
 	var last_not_null_parent = null
+	var singleton_class = null
+	if(GutUtils.is_double(obj) and obj.__gutdbl_values.from_singleton != ''):
+		singleton_class = _class_db_name_hash[obj.__gutdbl_values.from_singleton]
 
 	# Search for what is passed in first.  This could be a class or an instance.
 	# We want to find the instance before we find the class.  If we do not have
 	# an entry for the instance then see if we have an entry for the class.
 	if(returns.has(obj) and returns[obj].has(method)):
 		matches = returns[obj][method]
+	elif(singleton_class != null and returns.has(singleton_class) and returns[singleton_class].has(method)):
+		matches = returns[singleton_class][method]
 	elif(GutUtils.is_instance(obj)):
 		var parent = obj.get_script()
 		var found = false
@@ -67,6 +72,7 @@ func _find_matches(obj, method):
 			if(_class_db_name_hash.has(base_type)):
 				parent = _class_db_name_hash[base_type]
 				found = returns.has(parent)
+
 
 		if(found and returns[parent].has(method)):
 			matches = returns[parent][method]

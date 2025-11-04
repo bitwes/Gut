@@ -101,6 +101,10 @@ func to_call_super():
 	return self
 
 
+func to_use_singleton():
+	return to_call_super()
+
+
 func to_call(callable : Callable):
 	call_this = callable
 	_is_call_override = true
@@ -126,7 +130,7 @@ func param_count(_x):
 func param_defaults(values):
 	var meta = _get_method_meta()
 	if(meta != {} and meta.flags & METHOD_FLAG_VARARG):
-		_lgr.error("Cannot stub defaults for methods with varargs.")
+		_lgr.error("Cannot stub defaults for methods with varargs:  " + meta.name)
 	else:
 		parameter_defaults = values
 		_is_defaults_override = true

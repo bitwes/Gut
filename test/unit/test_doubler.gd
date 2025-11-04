@@ -574,7 +574,6 @@ class TestDoubleSingletons:
 		_on_bus_renamed_new_name = new_name
 
 	func test_can_connect_to_signal_with_parameters():
-		doubler.print_source = true
 		var inst = doubler.double_singleton(AudioServer).new()
 		inst.bus_renamed.connect(_on_bus_renamed)
 		assert_connected(inst.bus_renamed, self)
@@ -584,7 +583,6 @@ class TestDoubleSingletons:
 		assert_eq(_on_bus_renamed_new_name, 'new')
 
 	func test_singltons_contain_properties():
-		doubler.print_source = true
 		var inst = doubler.double_singleton(OS).new()
 		assert_true(inst.delta_smoothing)
 		assert_false(inst.low_processor_usage_mode)
