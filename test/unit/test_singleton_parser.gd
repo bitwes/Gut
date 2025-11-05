@@ -56,6 +56,6 @@ func test_parsed_singleton_has_signals():
 	assert_has(ps.signals, 'bus_layout_changed')
 
 
-func test_can_parse_all_singletons(p = use_parameters(all_singletons)):
+func test_can_parse_all_singletons(p = use_parameters(GutUtils.all_singletons)):
 	var ps = SingletonParser.ParsedScript.new(p)
 	assert_not_null(ps)

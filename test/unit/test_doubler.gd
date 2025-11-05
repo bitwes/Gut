@@ -587,7 +587,7 @@ class TestDoubleSingletons:
 		assert_true(inst.delta_smoothing)
 		assert_false(inst.low_processor_usage_mode)
 
-	func test_can_double_all_singletons(p = use_parameters(all_singletons)):
+	func test_can_double_all_singletons(p = use_parameters(GutUtils.all_singletons)):
 		var D = doubler.double_singleton(p)
 		assert_not_null(D, 'singleton:  ' + p.get_class())
 		if(is_passing()):

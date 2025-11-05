@@ -348,7 +348,8 @@ func _double_singleton(obj, is_partial):
 			dbl_src += str("var ", key, " = ", obj.get_class(), ".", key, "\n")
 
 	for key in parsed.methods_by_name:
-		dbl_src += _singleton_method_maker.get_function_text(parsed.methods_by_name[key], obj) + "\n"
+		if(!_ignored_methods.has(obj, key)):
+			dbl_src += _singleton_method_maker.get_function_text(parsed.methods_by_name[key], obj) + "\n"
 
 	if(print_source):
 		var to_print :String = GutUtils.add_line_numbers(dbl_src)

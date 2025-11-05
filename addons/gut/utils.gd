@@ -42,6 +42,55 @@ enum TREAT_AS {
 	FAILURE,
 }
 
+static var all_singletons = [
+	AudioServer,
+	CameraServer,
+	ClassDB,
+	DisplayServer,
+	# I don't think this can be doubled unless we are running in the editor.
+	# EditorInterface,
+	Engine,
+	EngineDebugger,
+	GDExtensionManager,
+	Geometry2D,
+	Geometry3D,
+	IP,
+	Input,
+	InputMap,
+	JavaClassWrapper,
+	JavaScriptBridge,
+	Marshalls,
+	NativeMenu,
+	NavigationMeshGenerator,
+	NavigationServer2D,
+	NavigationServer3D,
+	OS,
+	Performance,
+	PhysicsServer2D,
+	PhysicsServer2DManager,
+	PhysicsServer3D,
+	PhysicsServer3DManager,
+	ProjectSettings,
+	RenderingServer,
+	ResourceLoader,
+	ResourceSaver,
+	ResourceUID,
+	TextServerManager,
+	ThemeDB,
+	Time,
+	TranslationServer,
+	WorkerThreadPool,
+	XRServer
+]
+
+static var _singleton_names = []
+static var singleton_names = []:
+	get():
+		if(_singleton_names.size() == 0):
+			for entry in all_singletons:
+				_singleton_names.append(entry.get_class())
+		return _singleton_names
+	set(val): pass
 
 ## This dictionary defaults to all the native classes that we cannot call new
 ## on.  It is further populated during a run so that we only have to create
