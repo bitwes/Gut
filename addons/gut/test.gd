@@ -2620,7 +2620,8 @@ func partial_double(thing, double_strat=null, not_used_anymore=null):
 
 
 ## @internal
-func double_singleton(singleton_name):
+func double_singleton(klass):
+	return gut.get_doubler().double_singleton(klass)
 	return null
 	# var to_return = null
 	# if(_validate_singleton_name(singleton_name)):

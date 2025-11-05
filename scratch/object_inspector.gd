@@ -625,4 +625,4 @@ class ClassDBInspector:
 
 
 	func print_method_signatures(sname):
-		super.print_method_signatures(ClassDB.class_get_method_list(sname))
+		super.print_method_signatures(ClassDB.class_get_method_list(sname, true))

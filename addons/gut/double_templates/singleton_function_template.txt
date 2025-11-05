@@ -2,6 +2,7 @@
 	if(__gutdbl == null):
 		return
 
+	__gutdbl.spy_on('{method_name}', {param_array})
 	if(__gutdbl.is_stubbed_to_call_super('{method_name}', {param_array})):
 		{super_call}
 	else:

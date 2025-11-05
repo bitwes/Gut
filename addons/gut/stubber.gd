@@ -1,10 +1,8 @@
 
-static var _class_db_name_hash = {} :
-	get():
-		if(_class_db_name_hash == {}):
-			_class_db_name_hash = _make_crazy_dynamic_over_engineered_class_db_hash()
-		return _class_db_name_hash
+static var _class_db_name_hash = {}
 
+static func _static_init() -> void:
+	_class_db_name_hash = _make_crazy_dynamic_over_engineered_class_db_hash()
 
 # So, I couldn't figure out how to get to a reference for a GDNative Class
 # using a string.  ClassDB has all thier names...so I made a hash using those
@@ -13,11 +11,20 @@ static var _class_db_name_hash = {} :
 # but tons of fun.
 static func _make_crazy_dynamic_over_engineered_class_db_hash():
 	var text = "var all_the_classes: Dictionary = {\n"
+	# These don't actually exist, or can't be referenced in any way.  I could
+	# not find anything about them that I could use to exclude them more
+	# dynamically.
+	var black_list = [
+		"GDScriptNativeClass",
+		"SceneCacheInterface",
+		"SceneRPCInterface",
+		"SceneReplicationInterface",
+		"ThemeContext",
+	]
 	for classname in ClassDB.get_class_list():
-		if(ClassDB.can_instantiate(classname)):
+		if(!black_list.has(classname)):
 			text += str('"', classname, '": ', classname, ", \n")
-		else:
-			text += str('# ', classname, "\n")
+
 	text += "}"
 	var inst =  GutUtils.create_script_from_source(text).new()
 	return inst.all_the_classes
@@ -40,13 +47,21 @@ var returns = {}
 var _lgr = GutUtils.get_logger()
 var _strutils = GutUtils.Strutils.new()
 
+func _init() -> void:
+	var _ignore = _class_db_name_hash
 
 func _find_matches(obj, method):
 	var matches = []
 	var last_not_null_parent = null
 	var singleton_class = null
 	if(GutUtils.is_double(obj) and obj.__gutdbl_values.from_singleton != ''):
-		singleton_class = _class_db_name_hash[obj.__gutdbl_values.from_singleton]
+		# print(_class_db_name_hash)
+		var sname = obj.__gutdbl_values.from_singleton
+		if(_class_db_name_hash.has(sname)):
+			singleton_class = _class_db_name_hash[sname]
+		else:
+			push_error('"', sname, '" could not be found in _class_db_name_hash')
+			print(_class_db_name_hash)
 
 	# Search for what is passed in first.  This could be a class or an instance.
 	# We want to find the instance before we find the class.  If we do not have

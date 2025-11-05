@@ -592,3 +592,25 @@ class TestDoubleSingletons:
 		assert_not_null(D, 'singleton:  ' + p.get_class())
 		if(is_passing()):
 			assert_not_null(D.new())
+
+	func test_can_make_partial_double_of_singleton():
+		var D = doubler.partial_double_singleton(Time)
+		assert_not_null(D)
+
+	func test_partial_double_singletons_call_super():
+		var D = doubler.partial_double_singleton(Time)
+		var inst = D.new()
+		assert_not_null(inst.get_ticks_msec())
+
+	func test_singleton_doubles_have_doubled_methods_populated():
+		var inst = doubler.double_singleton(Performance).new()
+		assert_ne(inst.__gutdbl_values.doubled_methods.size(), 0)
+
+	func test_singleton_doubles_do_not_have_object_methods():
+		var inst = doubler.double_singleton(Performance).new()
+		assert_does_not_have(inst.__gutdbl_values.doubled_methods, 'get_property_list')
+
+	func test_singleton_doubles_have_singleton_methods():
+		var inst = doubler.double_singleton(Performance).new()
+		assert_has(inst.__gutdbl_values.doubled_methods, 'get_custom_monitor_names')
+

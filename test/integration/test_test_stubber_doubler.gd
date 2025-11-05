@@ -453,24 +453,24 @@ class TestStub:
 		assert_tracked_gut_error(_test)
 
 
-# class TestSingletonDoubling:
-# 	extends GutInternalTester
+class TestSingletonDoubling:
+	extends GutInternalTester
 
-# 	var _test_gut = null
-# 	var _test = null
+	var _test_gut = null
+	var _test = null
 
-# 	func before_each():
-# 		_test_gut = Gut.new()
-# 		_test_gut._should_print_versions = false
-# 		_test = Test.new()
-# 		_test.gut = _test_gut
+	func before_each():
+		_test_gut = Gut.new()
+		_test_gut._should_print_versions = false
+		_test = Test.new()
+		_test.gut = _test_gut
 
-# 		add_child_autofree(_test_gut)
-# 		add_child_autofree(_test)
+		add_child_autofree(_test_gut)
+		add_child_autofree(_test)
 
-# 	func test_double_gives_double():
-# 		var inst = _test.double_singleton("Input").new()
-# 		assert_eq(inst.__gut_metadata_.from_singleton, "Input")
+	func test_double_gives_double():
+		var inst = _test.double_singleton(Input).new()
+		assert_true(GutUtils.is_double(inst), "Input")
 
 # 	func test_partial_gives_partial_double():
 # 		var inst = _test.partial_double_singleton("Input").new()

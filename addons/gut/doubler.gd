@@ -108,8 +108,6 @@ func _get_base_script_text(parsed, override_path, partial, included_methods):
 	var values = {
 		# Top  sections
 		"extends":extends_text,
-		"constants":'',#obj_info.get_constants_text(),
-		"properties":'',#obj_info.get_properties_text(),
 
 		# metadata values
 		"path":path,
@@ -125,7 +123,7 @@ func _get_base_script_text(parsed, override_path, partial, included_methods):
 	return _base_script_text.format(values)
 
 
-func _get_singleton_text(parsed):
+func _get_singleton_text(parsed, included_methods, is_partial):
 	var stubber_id = -1
 	if(_stubber != null):
 		stubber_id = _stubber.get_instance_id()
@@ -141,18 +139,16 @@ func _get_singleton_text(parsed):
 	var values = {
 		# Top  sections
 		"extends":"extends RefCounted",
-		"constants":'',#obj_info.get_constants_text(),
-		"properties":'',#obj_info.get_properties_text(),
 
 		# metadata values
-		# "path":path,
-		# "subpath":GutUtils.nvl(parsed.subpath, ''),
+		"path":'',
+		"subpath":'',
 		"stubber_id":stubber_id,
 		"spy_id":spy_id,
 		"gut_id":gut_id,
 		"singleton_name":parsed.singleton_name,
-		"is_partial":false,
-		"doubled_methods":[],
+		"is_partial":is_partial,
+		"doubled_methods":included_methods,
 	}
 
 	var src = _singleton_script_text.format(values)
@@ -330,9 +326,9 @@ func _get_signal_parameters(arg_meta):
 	return text
 
 
-func double_singleton(obj):
+func _double_singleton(obj, is_partial):
 	var parsed = _singleton_parser.parse(obj)
-	var dbl_src = _get_singleton_text(parsed)
+	var dbl_src = _get_singleton_text(parsed, parsed.methods_by_name.keys(), is_partial)
 
 	for key in parsed.enums:
 		dbl_src += str('const ', key, ' = ', parsed.enums[key], "\n")
@@ -368,6 +364,12 @@ func double_singleton(obj):
 
 	return DblClass
 
+func double_singleton(obj):
+	return _double_singleton(obj, false)
+
+
+func partial_double_singleton(obj):
+	return _double_singleton(obj, true)
 
 func add_ignored_method(obj, method_name):
 	_ignored_methods.add(obj, method_name)
