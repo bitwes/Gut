@@ -187,9 +187,6 @@ class TestDoublingScripts:
 		assert_does_not_have(d.__gutdbl_values.doubled_methods, '_input')
 
 
-
-
-
 class TestAddingIgnoredMethods:
 	extends BaseTest
 	var _doubler = null
@@ -591,7 +588,7 @@ class TestDoubleSingletons:
 		var D = doubler.double_singleton(p)
 		assert_not_null(D, 'singleton:  ' + p.get_class())
 		if(is_passing()):
-			assert_not_null(D.new())
+			assert_not_null(D.new(), 'instance')
 
 	func test_can_make_partial_double_of_singleton():
 		var D = doubler.partial_double_singleton(Time)

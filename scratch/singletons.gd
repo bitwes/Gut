@@ -13,7 +13,7 @@ var all_singletons = [
 	CameraServer,
 	ClassDB,
 	DisplayServer,
-	EditorInterface,
+	# EditorInterface,
 	Engine,
 	EngineDebugger,
 	GDExtensionManager,
@@ -101,6 +101,58 @@ func print_singleton_info_classdb(sname, klass):
 	# print(ClassDB.class_get_property_list(sname))
 
 
+func find_singletons_with_constants():
+	for s in all_singletons:
+		var c_list = ClassDB.class_get_integer_constant_list(s.get_class())
+		if(c_list.size() > 0):
+			print(s.get_class())
+			print(" * ", "\n * ".join(c_list))
+
+
+func _print_array_bulleted(array, bullet = " * "):
+	print(bullet, str("\n", bullet).join(array))
+
+
+func find_all_singletons_with_constants_not_in_enums():
+	var results = {}
+	for s in all_singletons:
+		var sname = s.get_class()
+		var c_list = ClassDB.class_get_integer_constant_list(sname, true)
+
+		var enum_names = []
+		for e in ClassDB.class_get_enum_list(sname, true):
+			for n in ClassDB.class_get_enum_constants(sname, e):
+				enum_names.append(n)
+
+		var missing = []
+		var both = []
+		for c in c_list:
+			if(enum_names.find(c) == -1):
+				missing.append(c)
+			else:
+				both.append(c)
+				enum_names.erase(c)
+
+		if(enum_names.size() > 0 or missing.size() > 0):
+			print('-- ', sname, ' --')
+			if(enum_names.size() > 0):
+				_print_array_bulleted(enum_names, ' [E] ')
+
+			# if(both.size() > 0):
+			# 	_print_array_bulleted(both, '  B  ')
+
+			if(missing.size() > 0):
+				_print_array_bulleted(missing, ' [C] ')
+
+		results[s] = {
+			enum_only = enum_names,
+			enum_and_constant = both,
+			constant_only = missing
+		}
+	return results
+
+
+
 func _init() -> void:
 	var o = Object.new()
 	var o_methods = o.get_method_list()
@@ -110,7 +162,7 @@ func _init() -> void:
 
 	# oi.include_method_flags = true
 
-	print_singleton_info(Time)
+	# print_singleton_info(Time)
 	# print_singleton_info(OS)
 	# print_singleton_info(AudioServer)
 	# for s in all_singletons:
@@ -122,7 +174,8 @@ func _init() -> void:
 	# print(EditorInterface)
 	# print_singleton_info_classdb("EditorInterface", EditorInterface)
 
-
+	var results = find_all_singletons_with_constants_not_in_enums()
+	# GutUtils.pretty_print(results)
 	# print_singleton_info(ClassDB)
 	quit()
 

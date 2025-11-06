@@ -1,12 +1,12 @@
 extends RefCounted
 
 
-var _base_script_text = GutUtils.get_file_as_text('res://addons/gut/double_templates/script_template.txt')
+static var _base_script_text = GutUtils.get_file_as_text('res://addons/gut/double_templates/script_template.txt')
+static var _singleton_script_text = GutUtils.get_file_as_text('res://addons/gut/double_templates/singleton_template.txt')
+static var _double_data_text = GutUtils.get_file_as_text('res://addons/gut/double_templates/double_data_template.txt')
+
 var _script_collector = GutUtils.ScriptCollector.new()
-
 var _singleton_parser = GutUtils.SingletonParser.new()
-var _singleton_script_text = GutUtils.get_file_as_text('res://addons/gut/double_templates/singleton_template.txt')
-
 
 # used by tests for debugging purposes.
 var print_source = false
@@ -104,20 +104,21 @@ func _get_base_script_text(parsed, override_path, partial, included_methods):
 		gut_id = _gut.get_instance_id()
 
 	var extends_text  = parsed.get_extends_text()
-
-	var values = {
-		# Top  sections
-		"extends":extends_text,
-
-		# metadata values
+	var double_data_values = {
 		"path":path,
 		"subpath":GutUtils.nvl(parsed.subpath, ''),
 		"stubber_id":stubber_id,
 		"spy_id":spy_id,
 		"gut_id":gut_id,
-		"singleton_name":'',#GutUtils.nvl(obj_info.get_singleton_name(), ''),
+		"singleton_name":'',
 		"is_partial":partial,
 		"doubled_methods":included_methods,
+	}
+
+	var values = {
+		# Top  sections
+		"extends":extends_text,
+		"double_data":_double_data_text.format(double_data_values),
 	}
 
 	return _base_script_text.format(values)
@@ -136,11 +137,7 @@ func _get_singleton_text(parsed, included_methods, is_partial):
 	if(_gut != null):
 		gut_id = _gut.get_instance_id()
 
-	var values = {
-		# Top  sections
-		"extends":"extends RefCounted",
-
-		# metadata values
+	var double_data_values = {
 		"path":'',
 		"subpath":'',
 		"stubber_id":stubber_id,
@@ -149,6 +146,15 @@ func _get_singleton_text(parsed, included_methods, is_partial):
 		"singleton_name":parsed.singleton_name,
 		"is_partial":is_partial,
 		"doubled_methods":included_methods,
+
+	}
+
+	var values = {
+		"extends":"extends RefCounted",
+		"double_data":_double_data_text.format(double_data_values),
+		"signals":parsed.get_all_signal_text(),
+		"constants":parsed.get_all_constants_text(),
+		"properties":parsed.get_all_properties_text()
 	}
 
 	var src = _singleton_script_text.format(values)
@@ -202,7 +208,7 @@ func _create_double(parsed, strategy, override_path, partial):
 
 	var DblClass = _create_script_no_warnings(dbl_src)
 	if(_stubber != null):
-		_stub_method_default_values(DblClass, parsed, strategy)
+		_stub_method_default_values(parsed)
 
 	if(print_source):
 		_lgr.log(str("  path | ", DblClass.resource_path, "\n"))
@@ -210,7 +216,30 @@ func _create_double(parsed, strategy, override_path, partial):
 	return DblClass
 
 
-func _stub_method_default_values(which, parsed, strategy):
+func _create_singleton_double(obj, is_partial):
+	var parsed = _singleton_parser.parse(obj)
+	var dbl_src = _get_singleton_text(parsed, parsed.methods_by_name.keys(), is_partial)
+
+	for key in parsed.methods_by_name:
+		if(!_ignored_methods.has(obj, key)):
+			dbl_src += _singleton_method_maker.get_function_text(parsed.methods_by_name[key], obj) + "\n"
+
+	if(print_source):
+		var to_print :String = GutUtils.add_line_numbers(dbl_src)
+		to_print = to_print.rstrip("\n")
+		_lgr.log(str(to_print))
+
+	var DblClass = GutUtils.create_script_from_source(dbl_src)
+	if(_stubber != null):
+		for key in parsed.methods_by_name:
+			var meta = parsed.methods_by_name[key]
+			if(meta != {} and !meta.flags & METHOD_FLAG_VARARG):
+				_stubber.stub_defaults_from_meta(obj, meta)
+
+	return DblClass
+
+
+func _stub_method_default_values(parsed):
 	for method in parsed.get_local_methods():
 		if(method.is_eligible_for_doubling() and !_ignored_methods.has(parsed.resource, method.meta.name)):
 			_stubber.stub_defaults_from_meta(parsed.script_path, method.meta)
@@ -317,60 +346,13 @@ func partial_double_inner(parent, inner, strategy=_strategy):
 	return _create_double(parsed, strategy, null, true)
 
 
-func _get_signal_parameters(arg_meta):
-	var text = ""
-	for arg in arg_meta:
-		if(text.length() > 0):
-			text += ", "
-		text += arg.name
-	return text
-
-
-func _double_singleton(obj, is_partial):
-	var parsed = _singleton_parser.parse(obj)
-	var dbl_src = _get_singleton_text(parsed, parsed.methods_by_name.keys(), is_partial)
-
-	for key in parsed.enums:
-		dbl_src += str('const ', key, ' = ', parsed.enums[key], "\n")
-
-	for key in parsed.signals:
-		var arg_text = _get_signal_parameters(parsed.signals[key]['args'])
-		dbl_src += str("signal ", key, "(", arg_text, ")\n")
-
-	# This defaults values to what the singleton is currently set to.  This was
-	# easier than remembering how to turn the defaults in the meta into code.
-	# This might be the wrong choice.
-	for key in parsed.properties:
-		# AudioServer had a property in the meta named "Fallback values" and I
-		# don't know what it is, so I'm ignoring all properties with a space in
-		# the name.
-		if(key.find(" ") == -1):
-			dbl_src += str("var ", key, " = ", obj.get_class(), ".", key, "\n")
-
-	for key in parsed.methods_by_name:
-		if(!_ignored_methods.has(obj, key)):
-			dbl_src += _singleton_method_maker.get_function_text(parsed.methods_by_name[key], obj) + "\n"
-
-	if(print_source):
-		var to_print :String = GutUtils.add_line_numbers(dbl_src)
-		to_print = to_print.rstrip("\n")
-		_lgr.log(str(to_print))
-
-	var DblClass = GutUtils.create_script_from_source(dbl_src)
-	if(_stubber != null):
-		for key in parsed.methods_by_name:
-			var meta = parsed.methods_by_name[key]
-			if(meta != {} and !meta.flags & METHOD_FLAG_VARARG):
-				_stubber.stub_defaults_from_meta(obj, meta)
-
-	return DblClass
-
 func double_singleton(obj):
-	return _double_singleton(obj, false)
+	return _create_singleton_double(obj, false)
 
 
 func partial_double_singleton(obj):
-	return _double_singleton(obj, true)
+	return _create_singleton_double(obj, true)
+
 
 func add_ignored_method(obj, method_name):
 	_ignored_methods.add(obj, method_name)
@@ -406,3 +388,28 @@ func add_ignored_method(obj, method_name):
 # THE SOFTWARE.
 #
 # ##############################################################################
+
+
+
+
+# var __gutdbl_values = {
+# 	thepath = '{path}',
+# 	subpath = '{subpath}',
+# 	stubber = {stubber_id},
+# 	spy = {spy_id},
+# 	gut = {gut_id},
+# 	from_singleton = '{singleton_name}',
+# 	is_partial = {is_partial},
+# 	doubled_methods = {doubled_methods},
+# }
+# var __gutdbl = load('res://addons/gut/double_tools.gd').new(self)
+
+# # Here so other things can check for a method to know if this is a double.
+# func __gutdbl_check_method__():
+# 	pass
+
+# # Cleanup called by GUT after tests have finished.  Important for RefCounted
+# # objects.  Nodes are freed, and won't have this method called on them.
+# func __gutdbl_done():
+# 	__gutdbl = null
+# 	__gutdbl_values.clear()
