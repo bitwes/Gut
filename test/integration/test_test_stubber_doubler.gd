@@ -154,6 +154,35 @@ class TestSingletonDoubling:
 		assert_tracked_gut_error_text(_gut, 'Use partial_double_singleton')
 		assert_null(D)
 
+	func test_can_stub_double_based_on_parameters():
+		var dbl_time = _test.double_singleton(Time).new()
+		_test.stub(dbl_time.get_time_string_from_unix_time.bind(1))\
+			.to_return("one")
+		_test.stub(dbl_time.get_time_string_from_unix_time.bind(2))\
+			.to_return("two")
+
+		assert_eq(dbl_time.get_time_string_from_unix_time(1), "one")
+		assert_eq(dbl_time.get_time_string_from_unix_time(2), "two")
+		assert_null(dbl_time.get_time_string_from_unix_time(3))
+
+	func test_can_stub_methods_get_default_values():
+		var dbl_input = _test.double_singleton(Input).new()
+		_test.stub(dbl_input.is_action_just_pressed.bind("jump"))\
+			.to_return(true)
+		_test.assert_true(dbl_input.is_action_just_pressed("jump"))
+		_test.assert_called(dbl_input.is_action_just_pressed.bind("jump", false))
+		assert_pass(_test, 2)
+		print(_gut.get_stubber().to_s())
+
+	func test_can_stub_methods_with_default_values():
+		var dbl_input = _test.double_singleton(Input).new()
+		_test.stub(dbl_input.is_action_just_pressed.bind("jump", false))\
+			.to_return(true)
+		assert_true(dbl_input.is_action_just_pressed("jump", false))
+		_test.assert_called(dbl_input.is_action_just_pressed.bind("jump", false))
+		assert_pass(_test)
+
+
 
 
 
@@ -378,7 +407,7 @@ class TestOverridingParameters:
 		GutUtils.WarningsManager.enable_warnings(were_set)
 
 	func before_each():
-		_gut = new_gut(verbose)
+		_gut = new_gut(true)
 
 		_test = new_wired_test(_gut)
 
@@ -403,10 +432,11 @@ class TestOverridingParameters:
 		assert_eq(ret_val, '12')
 
 	func test_vararg_methods_get_extra_parameters_by_default():
+		# _gut.get_doubler().print_source = true
 		_test.stub(Node, 'rpc_id').to_do_nothing()
 		var inst =  _test.double(Node).new()
 		add_child_autofree(inst)
-
+		print(_gut.get_stubber().to_s())
 		var ret_val = inst.rpc_id(1, 'foo', '3', '4', '5')
 		pass_test('we got here')
 

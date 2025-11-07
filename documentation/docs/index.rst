@@ -36,6 +36,7 @@
    Double-Strategy
    Stubbing
    Spies
+   Doubling-Singletons
 
 
 .. toctree::

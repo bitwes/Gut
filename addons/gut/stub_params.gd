@@ -8,6 +8,8 @@ var _lgr = GutUtils.get_logger()
 var logger = _lgr :
 	get: return _lgr
 	set(val): _lgr = val
+var stubber = null
+
 
 var return_val = null
 var stub_target = null
@@ -60,6 +62,7 @@ func _init(target=null, method=null, _subpath=null):
 		_method_meta = method
 		_load_defaults_from_metadata(method)
 		is_script_default = true
+	# print("stub target = ", stub_target, ' from ', target)
 
 
 func _load_defaults_from_metadata(meta):
@@ -157,7 +160,11 @@ func to_s():
 	var base_string = str(stub_target, '.', stub_method)
 
 	if(parameter_defaults.size() > 0):
-		base_string += str(" defaults ", parameter_defaults)
+		if(is_script_default):
+			base_string += " SCRIPT DEFAULTS"
+		else:
+			base_string += " STUB DEFAULTS"
+		base_string += str(" ", parameter_defaults)
 
 	if(call_super):
 		base_string += " to call SUPER"

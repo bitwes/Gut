@@ -23,6 +23,9 @@ func default_int(p1=SOME_CONSTANT):
 func default_string(p1='s'):
 	pass
 
+func defaulted_second_parameter(p1, p2='p2'):
+	return str(p1, p2)
+
 func default_last_two_boolean(p1, p2=true, p3=false):
 	pass
 

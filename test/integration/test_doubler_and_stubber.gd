@@ -1,6 +1,5 @@
 extends "res://addons/gut/test.gd"
 
-
 class BaseTest:
 	extends GutTest
 	var Stubber = load('res://addons/gut/stubber.gd')
@@ -191,8 +190,13 @@ class TestInnerClasses:
 class TestDefaultParameters:
 	extends BaseTest
 
+
+
 	var doubler = null
 	var stubber = null
+
+	func before_all():
+		register_inner_classes(get_script())
 
 	func before_each():
 		doubler = Doubler.new(GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
@@ -221,6 +225,17 @@ class TestDefaultParameters:
 		var dbl = autofree(doubler.partial_double(DoubleDefaultParameters).new())
 		var result = dbl.return_passed('foo', 'bar')
 		assert_eq(result, 'foobar')
+
+	func test_default_parameters_for_double_when_stubbed():
+		var dbl = autofree(doubler.double(DoubleDefaultParameters, DOUBLE_STRATEGY.SCRIPT_ONLY).new())
+		var params = GutUtils.StubParams.new(
+			dbl.defaulted_second_parameter.bind("jump"))\
+			.to_return('hello')
+		stubber.add_stub(params)
+		assert_eq(stubber.get_default_value(dbl, 'defaulted_second_parameter', 0), null)
+		assert_eq(stubber.get_default_value(dbl, 'defaulted_second_parameter', 1), 'p2')
+		gut.p(stubber.to_s())
+
 
 
 class TestMonkeyPatching:
@@ -345,6 +360,25 @@ class TestSingletons:
 			.to_use_singleton()
 		stubber.add_stub(params)
 		assert_eq(dbl.get_date_dict_from_unix_time(10), Time.get_date_dict_from_unix_time(10))
+
+	func test_default_method_paramters_for_input_singleton():
+		var dbl = doubler.double_singleton(Input).new()
+		var method = 'is_action_just_pressed'
+		assert_eq(stubber.get_default_value(dbl, method, 0), null)
+		assert_eq(stubber.get_default_value(dbl, method, 1), false)
+		print(stubber.to_s())
+
+	func test_default_method_paramters_for_input_singleton_when_stubbed():
+		var dbl = doubler.double_singleton(Input).new()
+		var method = 'is_action_just_pressed'
+		var params = GutUtils.StubParams.new(
+			dbl.is_action_just_pressed.bind("jump"))\
+			.to_return(true)
+		stubber.add_stub(params)
+
+		assert_eq(stubber.get_default_value(dbl, method, 0), null)
+		assert_eq(stubber.get_default_value(dbl, method, 1), false)
+		print(stubber.to_s())
 
 
 

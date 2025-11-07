@@ -81,7 +81,11 @@ func _stub_to_call_super(parsed, method_name):
 	if(!parsed.get_method(method_name).is_eligible_for_doubling()):
 		return
 
-	var params = GutUtils.StubParams.new(parsed.script_path, method_name, parsed.subpath)
+	var params = null
+	if(parsed.is_native):
+		params = GutUtils.StubParams.new(parsed._native_class, method_name, parsed.subpath)
+	else:
+		params = GutUtils.StubParams.new(parsed.script_path, method_name, parsed.subpath)
 	params.to_call_super()
 	_stubber.add_stub(params)
 
@@ -216,13 +220,13 @@ func _create_double(parsed, strategy, override_path, partial):
 	return DblClass
 
 
-func _create_singleton_double(obj, is_partial):
-	var parsed = _singleton_parser.parse(obj)
+func _create_singleton_double(singleton, is_partial):
+	var parsed = _singleton_parser.parse(singleton)
 	var dbl_src = _get_singleton_text(parsed, parsed.methods_by_name.keys(), is_partial)
 
 	for key in parsed.methods_by_name:
-		if(!_ignored_methods.has(obj, key)):
-			dbl_src += _singleton_method_maker.get_function_text(parsed.methods_by_name[key], obj) + "\n"
+		if(!_ignored_methods.has(singleton, key)):
+			dbl_src += _singleton_method_maker.get_function_text(parsed.methods_by_name[key], singleton) + "\n"
 
 	if(print_source):
 		var to_print :String = GutUtils.add_line_numbers(dbl_src)
@@ -234,7 +238,7 @@ func _create_singleton_double(obj, is_partial):
 		for key in parsed.methods_by_name:
 			var meta = parsed.methods_by_name[key]
 			if(meta != {} and !meta.flags & METHOD_FLAG_VARARG):
-				_stubber.stub_defaults_from_meta(obj, meta)
+				_stubber.stub_defaults_from_meta(singleton, meta)
 
 	return DblClass
 
@@ -388,28 +392,3 @@ func add_ignored_method(obj, method_name):
 # THE SOFTWARE.
 #
 # ##############################################################################
-
-
-
-
-# var __gutdbl_values = {
-# 	thepath = '{path}',
-# 	subpath = '{subpath}',
-# 	stubber = {stubber_id},
-# 	spy = {spy_id},
-# 	gut = {gut_id},
-# 	from_singleton = '{singleton_name}',
-# 	is_partial = {is_partial},
-# 	doubled_methods = {doubled_methods},
-# }
-# var __gutdbl = load('res://addons/gut/double_tools.gd').new(self)
-
-# # Here so other things can check for a method to know if this is a double.
-# func __gutdbl_check_method__():
-# 	pass
-
-# # Cleanup called by GUT after tests have finished.  Important for RefCounted
-# # objects.  Nodes are freed, and won't have this method called on them.
-# func __gutdbl_done():
-# 	__gutdbl = null
-# 	__gutdbl_values.clear()

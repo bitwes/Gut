@@ -529,7 +529,8 @@ class TestDoubleSingletons:
 
 
 	func test_can_make_a_double_of_OS():
-		var d = doubler.double_singleton(OS)
+		doubler.print_source = true
+		var d = doubler.double_singleton(Input)
 		assert_not_null(d)
 
 	func test_doubles_are_ref_counted():

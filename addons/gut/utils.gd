@@ -218,6 +218,9 @@ static var Stubber = LazyLoader.new('res://addons/gut/stubber.gd'):
 static var StubParams = LazyLoader.new('res://addons/gut/stub_params.gd'):
 	get: return StubParams.get_loaded()
 	set(val): pass
+static var Stubs = LazyLoader.new('res://addons/gut/stubs.gd'):
+	get: return Stubs.get_loaded()
+	set(val): pass
 static var Summary = LazyLoader.new('res://addons/gut/summary.gd'):
 	get: return Summary.get_loaded()
 	set(val): pass
@@ -618,14 +621,6 @@ static func get_script_text(obj):
 	return obj.get_script().get_source_code()
 
 
-# func get_singleton_by_name(name):
-# 	var source = str("var singleton = ", name)
-# 	var script = GDScript.new()
-# 	script.set_source_code(source)
-# 	script.reload()
-# 	return script.new().singleton
-
-
 static func dec2bistr(decimal_value, max_bits = 31):
 	var binary_string = ""
 	var temp
@@ -675,6 +670,18 @@ static func find_method_meta(methods, method_name):
 
 static func get_method_meta(object, method_name):
 	return find_method_meta(object.get_method_list(), method_name)
+
+
+static func is_singleton(thing):
+	if(typeof(thing) != TYPE_OBJECT):
+		return false
+
+	return all_singletons.has(thing)
+
+
+static func is_singleton_double(thing):
+	return is_double(thing) and thing.__gutdbl_values.from_singleton != ''
+
 
 # ##############################################################################
 #(G)odot (U)nit (T)est class

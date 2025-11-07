@@ -310,7 +310,7 @@ func _convert_spy_args(inst, method_name, parameters):
 				"3rd parameter to assert_called not supported when using a Callable."
 		elif(method_name != null):
 			to_return.invalid_message =\
-				"2nd parameter to assert_called not supported when using a Callable."
+				"2nd parameter to assert_called not supported when using a Callable.  Bind parameter values to the callable instead."
 		else:
 			if(inst.get_bound_arguments_count() > 0):
 				to_return.arguments = inst.get_bound_arguments()
@@ -2607,7 +2607,8 @@ func partial_double(thing, double_strat=null, not_used_anymore=null):
 
 	return _smart_double(thing, double_strat, true)
 
-
+## Creates a psuedo-double of an Engine Singleton.  These doubles wrap around
+## the singleton, and do not
 func double_singleton(singleton):
 	if(GutUtils.all_singletons.has(singleton)):
 		return gut.get_doubler().double_singleton(singleton)

@@ -93,6 +93,7 @@ func test_can_get_return_value_using_an_instance_of_class():
 	var inst = ToStub.new()
 	var value = gr.stubber.get_return(inst, 'get_value')
 	assert_eq(value, 0)
+	print(gr.stubber.to_s())
 
 func test_instance_stub_takes_precedence_over_path_stub():
 	gr.stubber.set_return(TO_STUB_PATH, 'get_value', 0)
@@ -271,3 +272,11 @@ func test_draw_parameter_method_meta():
 	var meta = find_method_meta(ToStub.get_script_method_list(), 'default_value_method')
 	gr.stubber.stub_defaults_from_meta(ToStub, meta)
 	assert_eq(gr.stubber.get_default_value(ToStub, 'default_value_method', 0), 'a')
+
+
+func test_default_method_paramters_for_input_singleton():
+	var method = 'is_action_just_pressed'
+	var meta = find_method_meta(Input.get_method_list(), method)
+	gr.stubber.stub_defaults_from_meta(Input, meta)
+	assert_eq(gr.stubber.get_default_value(Input, method, 0), null)
+	assert_eq(gr.stubber.get_default_value(Input, method, 1), false)
