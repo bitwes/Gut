@@ -19,6 +19,8 @@ static func _make_crazy_dynamic_over_engineered_class_db_hash():
 		"SceneRPCInterface",
 		"SceneReplicationInterface",
 		"ThemeContext",
+		# found from running through editor
+		"ViewPanner",
 	]
 	for classname in ClassDB.get_class_list():
 		if(!black_list.has(classname)):
