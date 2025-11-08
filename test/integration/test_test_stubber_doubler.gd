@@ -165,7 +165,7 @@ class TestSingletonDoubling:
 		assert_eq(dbl_time.get_time_string_from_unix_time(2), "two")
 		assert_null(dbl_time.get_time_string_from_unix_time(3))
 
-	func test_can_stub_methods_get_default_values():
+	func test_do_not_have_to_specify_defaulted_vaules_for_stub_to_match():
 		var dbl_input = _test.double_singleton(Input).new()
 		_test.stub(dbl_input.is_action_just_pressed.bind("jump"))\
 			.to_return(true)

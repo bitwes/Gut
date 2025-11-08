@@ -62,6 +62,14 @@ func _init(target=null, method=null, _subpath=null):
 		_method_meta = method
 		_load_defaults_from_metadata(method)
 		is_script_default = true
+	elif(stub_target != null and stub_method != null and typeof(stub_target) != TYPE_STRING):
+		print(target, '::', stub_target)
+		if(!GutUtils.is_native_class(stub_target)):
+			var method_list = stub_target.get_method_list()
+			if(method_list != null):
+				var meta = GutUtils.find_method_meta(method_list, stub_method)
+				if(meta != null):
+					_method_meta = meta
 	# print("stub target = ", stub_target, ' from ', target)
 
 

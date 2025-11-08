@@ -30,20 +30,6 @@ static func _make_crazy_dynamic_over_engineered_class_db_hash():
 	return inst.all_the_classes
 
 
-# -------------
-# returns{} and parameters {} have the following structure
-# -------------
-# {
-# 	inst_id_or_path1:{
-# 		method_name1: [StubParams, StubParams],
-# 		method_name2: [StubParams, StubParams]
-# 	},
-# 	inst_id_or_path2:{
-# 		method_name1: [StubParams, StubParams],
-# 		method_name2: [StubParams, StubParams]
-# 	}
-# }
-# var returns = {}
 var parameter_stubs = GutUtils.Stubs.new()
 var action_stubs = GutUtils.Stubs.new()
 
@@ -55,93 +41,6 @@ var _stub_cache = []
 func _init() -> void:
 	var _ignore = _class_db_name_hash
 
-# func _find_matches(obj, method):
-# 	var matches = []
-# 	var last_not_null_parent = null
-# 	var singleton_class = null
-# 	if(GutUtils.is_double(obj) and obj.__gutdbl_values.from_singleton != ''):
-# 		# print(_class_db_name_hash)
-# 		var sname = obj.__gutdbl_values.from_singleton
-# 		if(_class_db_name_hash.has(sname)):
-# 			singleton_class = _class_db_name_hash[sname]
-# 		else:
-# 			push_error('"', sname, '" could not be found in _class_db_name_hash')
-# 			print(_class_db_name_hash)
-
-# 	# Search for what is passed in first.  This could be a class or an instance.
-# 	# We want to find the instance before we find the class.  If we do not have
-# 	# an entry for the instance then see if we have an entry for the class.
-# 	if(returns.has(obj) and returns[obj].has(method)):
-# 		matches = returns[obj][method]
-# 	elif(singleton_class != null and returns.has(singleton_class) and returns[singleton_class].has(method)):
-# 		matches = returns[singleton_class][method]
-# 	elif(GutUtils.is_instance(obj)):
-# 		var parent = obj.get_script()
-# 		var found = false
-# 		while(parent != null and !found):
-# 			found = returns.has(parent)
-
-# 			if(!found):
-# 				last_not_null_parent = parent
-# 				parent = parent.get_base_script()
-
-# 		# Could not find the script so check to see if a native class of this
-# 		# type was stubbed.
-# 		if(!found):
-# 			var base_type = last_not_null_parent.get_instance_base_type()
-# 			if(_class_db_name_hash.has(base_type)):
-# 				parent = _class_db_name_hash[base_type]
-# 				found = returns.has(parent)
-
-# 		if(found and returns[parent].has(method)):
-# 			matches = returns[parent][method]
-
-# 	return matches
-
-
-# func _find_matches_for_param_defaults(obj, method):
-# 	var matches = []
-# 	var last_not_null_parent = null
-# 	var singleton_class = null
-# 	if(GutUtils.is_double(obj) and obj.__gutdbl_values.from_singleton != ''):
-# 		var sname = obj.__gutdbl_values.from_singleton
-# 		if(_class_db_name_hash.has(sname)):
-# 			singleton_class = _class_db_name_hash[sname]
-# 		else:
-# 			push_error('"', sname, '" could not be found in _class_db_name_hash')
-# 			print(_class_db_name_hash)
-
-# 	# Search for what is passed in first.  This could be a class or an instance.
-# 	# We want to find the instance before we find the class.  If we do not have
-# 	# an entry for the instance then see if we have an entry for the class.
-# 	if(returns.has(obj) and returns[obj].has(method)):
-# 		matches.append_array(returns[obj][method])
-
-# 	if(singleton_class != null and returns.has(singleton_class) and returns[singleton_class].has(method)):
-# 		matches.append_array(returns[singleton_class][method])
-
-# 	if(GutUtils.is_instance(obj) and singleton_class != null):
-# 		var parent = obj.get_script()
-# 		var found = false
-# 		while(parent != null and !found):
-# 			found = returns.has(parent)
-
-# 			if(!found):
-# 				last_not_null_parent = parent
-# 				parent = parent.get_base_script()
-
-# 		# Could not find the script so check to see if a native class of this
-# 		# type was stubbed.
-# 		if(!found):
-# 			var base_type = last_not_null_parent.get_instance_base_type()
-# 			if(_class_db_name_hash.has(base_type)):
-# 				parent = _class_db_name_hash[base_type]
-# 				found = returns.has(parent)
-
-# 		if(found and returns[parent].has(method)):
-# 			matches.append_array(returns[parent][method])
-
-# 	return matches
 
 func _add_cache():
 	for stub_params in _stub_cache:
@@ -164,6 +63,8 @@ func _add_cache():
 # obj can be an instance, class, or a path.
 func _find_stub(obj, method, parameters=null, find_overloads=false):
 	_add_cache()
+
+	print("Searching for ", obj, '.', method, ' w/ ', parameters)
 	var to_return = null
 	var matches = action_stubs.get_all_stubs(obj, method)
 
@@ -174,11 +75,31 @@ func _find_stub(obj, method, parameters=null, find_overloads=false):
 	var null_match = null
 	var overload_match = null
 
+
 	for i in range(matches.size()):
 		var cur_stub = matches[i]
+		print("match ", i, ' = ', cur_stub)
+		print("    ", cur_stub._method_meta)
+		print("    ", cur_stub.parameters)
 
 		if(cur_stub.parameters == parameters):
+			print("!! found match:  ", cur_stub.parameters, '::', parameters)
 			param_match = cur_stub
+		elif(cur_stub._method_meta != {} and cur_stub.parameters != null and cur_stub.parameters.size() < cur_stub._method_meta.args.size()):
+			var params = cur_stub.parameters
+			var defaults = get_parameter_defaults(obj, method)
+			print("!! defaults = ", defaults)
+			if(params != null):
+				if(defaults != null):
+					for j in range(params.size() -1, defaults.size() - params.size()):
+						print(j, ':  ', defaults[j + 1])
+						params.append(defaults[j + 1])
+				else:
+					print("NO DEFAULTS for ", obj, '.', method)
+			print("!! params post addition = ", params)
+			if(params == cur_stub.parameters):
+				param_match = cur_stub
+
 
 		if(cur_stub.parameters == null and !cur_stub.is_default_override_only()):
 			null_match = cur_stub
@@ -212,16 +133,6 @@ func add_stub(stub_params):
 			return
 
 	_stub_cache.append(stub_params)
-	# stub_params._lgr = _lgr
-	# var key = stub_params.stub_target
-
-	# if(!returns.has(key)):
-	# 	returns[key] = {}
-
-	# if(!returns[key].has(stub_params.stub_method)):
-	# 	returns[key][stub_params.stub_method] = []
-
-	# returns[key][stub_params.stub_method].append(stub_params)
 
 
 # Gets a stubbed return value for the object and method passed in.  If the
@@ -240,8 +151,25 @@ func add_stub(stub_params):
 # method:  the method called
 # parameters:  optional array of parameter vales to find a return value for.
 func get_return(obj, method, parameters=null):
+	print("--- ", parameters, " ----")
+	_add_cache()
+
 	var stub_info = _find_stub(obj, method, parameters)
-	print("stub for ", method, ' = ', stub_info)
+	if(stub_info == null):
+		var params = parameters
+		var defaults = get_parameter_defaults(obj, method)
+		print("defaults = ", defaults)
+		if(params != null):
+			if(defaults != null and params.size() < defaults.size()):
+				for i in range(params.size() -1, defaults.size() - params.size()):
+					print(i, ':  ', defaults[i])
+					params.remove_at(params.size() -1)
+			else:
+				print("NO DEFAULTS for ", obj, '.', method)
+
+		stub_info = _find_stub(obj, method, params)
+
+	print("stub for ", method, ' w/ ', parameters, ' = ', stub_info)
 	if(stub_info != null):
 		return stub_info.return_val
 	else:
@@ -276,11 +204,12 @@ func get_call_this(obj, method, parameters=null):
 		return stub_info.call_this
 
 
-func get_default_value(obj, method, p_index):
-	_add_cache()
+func get_parameter_defaults(obj, method):
+	print("------------------------------")
 	var the_defaults = []
 	var script_defaults = []
 	var matches = parameter_stubs.get_all_stubs(obj, method)
+	print("matches = ", matches)
 
 	var i = matches.size() -1
 	# print('all matches = ', matches)
@@ -297,9 +226,17 @@ func get_default_value(obj, method, p_index):
 
 	if(the_defaults.is_empty() and !script_defaults.is_empty()):
 		the_defaults = script_defaults
+	print('the defaults = ', the_defaults)
+	print("---------------    ---------------")
+	return the_defaults
 
+
+
+func get_default_value(obj, method, p_index):
+	_add_cache()
+	var the_defaults = get_parameter_defaults(obj, method)
 	var to_return = null
-	if(the_defaults.size() > p_index):
+	if(the_defaults != null and the_defaults.size() > p_index):
 		to_return = the_defaults[p_index]
 	return to_return
 
@@ -321,18 +258,6 @@ func set_logger(logger):
 func to_s():
 	return str("Parameters:\n", parameter_stubs.to_s(),
 		"\nActions:\n" , action_stubs.to_s())
-	# var text = ''
-	# for thing in returns:
-	# 	text += str("-- ", thing, " --\n")
-	# 	for method in returns[thing]:
-	# 		text += str("\t", method, "\n")
-	# 		for i in range(returns[thing][method].size()):
-	# 			text += "\t\t" + returns[thing][method][i].to_s() + "\n"
-
-	# if(text == ''):
-	# 	text = 'Stubber is empty';
-
-	# return text
 
 
 func stub_defaults_from_meta(target, method_meta):

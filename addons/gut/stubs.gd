@@ -141,11 +141,15 @@ func _get_to_match_on(target):
 
 	while(trav != null and !done):
 		if(GutUtils.is_singleton_double(trav)):
+			# print("singleton double")
 			var sname = trav.__gutdbl_values.from_singleton
+			# print("sname = ", sname)
 			if(_class_db_name_hash.has(sname)):
 				trav = _class_db_name_hash[sname]
+				# print("pushing ", trav)
 				match_on.push_front(trav)
 			else:
+				# print("don't have it")
 				done = true
 		elif(GutUtils.is_instance(trav)):
 			trav = trav.get_script()
@@ -166,6 +170,7 @@ func _get_to_match_on(target):
 			# print(current, ' -> ', trav)
 			current = trav
 
+	# print("returning ", match_on)
 	return match_on
 
 

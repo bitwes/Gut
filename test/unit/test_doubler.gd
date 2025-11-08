@@ -315,17 +315,18 @@ class TestDoubleStrategyIncludeNative:
 
 
 	func test_doubled_builtins_call_super():
-		var inst = autofree(doubler.double(DoubleExtendsWindowDialog).new())
+		var inst = autofree(doubler.partial_double(DoubleExtendsWindowDialog).new())
 		# Make sure the function is in the doubled class definition
 		assert_source_contains(inst, 'func add_user_signal(p_signal')
 		# Make sure that when called it retains old functionality.
+		print(gut.get_stubber().to_s())
 		inst.add_user_signal('new_one', [])
 		inst.add_user_signal('new_two', ['a', 'b'])
 		assert_has_signal(inst, 'new_one')
 		assert_has_signal(inst, 'new_two')
 
 	func test_doubled_builtins_are_added_as_stubs_to_call_super():
-		var inst = autofree(doubler.double(DoubleExtendsWindowDialog).new())
+		var inst = autofree(doubler.partial_double(DoubleExtendsWindowDialog).new())
 		assert_true(doubler.get_stubber().should_call_super(inst, 'add_user_signal'))
 
 	func test_doubled_methods_includes_non_overloaded_methods():
