@@ -1,38 +1,5 @@
-static var _class_db_name_hash = {}
-
-static func _static_init() -> void:
-	_class_db_name_hash = _make_crazy_dynamic_over_engineered_class_db_hash()
-
-# So, I couldn't figure out how to get to a reference for a GDNative Class
-# using a string.  ClassDB has all thier names...so I made a hash using those
-# names and the classes.  Then I dynmaically make a script that has that as
-# the source and grab the hash out of it and return it.  Super Rube Golbergery,
-# but tons of fun.
-static func _make_crazy_dynamic_over_engineered_class_db_hash():
-	var text = "var all_the_classes: Dictionary = {\n"
-	# These don't actually exist, or can't be referenced in any way.  I could
-	# not find anything about them that I could use to exclude them more
-	# dynamically.
-	var black_list = [
-		"GDScriptNativeClass",
-		"SceneCacheInterface",
-		"SceneRPCInterface",
-		"SceneReplicationInterface",
-		"ThemeContext",
-		# found from running through editor
-		"ViewPanner",
-	]
-	for classname in ClassDB.get_class_list():
-		if(!black_list.has(classname)):
-			text += str('"', classname, '": ', classname, ", \n")
-
-	text += "}"
-	var inst =  GutUtils.create_script_from_source(text).new()
-	return inst.all_the_classes
-
-
-
-var _str = GutUtils.Strutils.new()
+var _class_db_name_hash = GutUtils.class_ref_by_name
+# var _str = GutUtils.Strutils.new()
 # -------------
 # {
 # 	object(script or instance):{

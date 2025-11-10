@@ -376,7 +376,3 @@ class TestSingletons:
 
 		assert_eq(stubber.get_default_value(dbl, method, 0), null)
 		assert_eq(stubber.get_default_value(dbl, method, 1), false)
-
-
-
-
