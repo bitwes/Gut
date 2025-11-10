@@ -175,7 +175,6 @@ func get_parameter_defaults(obj, method):
 	return the_defaults
 
 
-
 func get_default_value(obj, method, p_index):
 	_add_cache()
 	var the_defaults = get_parameter_defaults(obj, method)

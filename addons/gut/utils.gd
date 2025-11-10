@@ -86,16 +86,13 @@ static var all_singletons = [
 static var _singleton_names = []
 static var singleton_names = []:
 	get():
-		if(_singleton_names.size() == 0):
-			for entry in all_singletons:
-				_singleton_names.append(entry.get_class())
+		# if(_singleton_names.size() == 0):
+		# 	for entry in all_singletons:
+		# 		_singleton_names.append(entry.get_class())
 		return _singleton_names
 	set(val): pass
 
 static var class_ref_by_name = {}
-
-static func _static_init() -> void:
-	class_ref_by_name = _make_crazy_dynamic_over_engineered_class_db_hash()
 
 # So, I couldn't figure out how to get to a reference for a GDNative Class
 # using a string.  ClassDB has all thier names...so I made a hash using those
@@ -117,7 +114,7 @@ static func _make_crazy_dynamic_over_engineered_class_db_hash():
 		"ViewPanner",
 	]
 	for classname in ClassDB.get_class_list():
-		if(ClassDB.can_instantiate(classname) or all_singletons.has(classname)):
+		if(ClassDB.can_instantiate(classname) or _singleton_names.has(classname)):
 			text += str('"', classname, '": ', classname, ", \n")
 		#if(!black_list.has(classname)):
 			#text += str('"', classname, '": ', classname, ", \n")
@@ -125,7 +122,6 @@ static func _make_crazy_dynamic_over_engineered_class_db_hash():
 	text += "}"
 	var inst =  GutUtils.create_script_from_source(text).new()
 	return inst.all_the_classes
-
 
 
 ## This dictionary defaults to all the native classes that we cannot call new
@@ -311,6 +307,18 @@ static func get_error_tracker():
 
 
 static var _dyn_gdscript = DynamicGdScript.new()
+
+
+# ##############################################################################
+# Methods
+# ##############################################################################
+static func _static_init() -> void:
+	for entry in all_singletons:
+		_singleton_names.append(entry.get_class())
+
+	class_ref_by_name = _make_crazy_dynamic_over_engineered_class_db_hash()
+
+
 static func create_script_from_source(source, override_path=null):
 	var are_warnings_enabled = WarningsManager.are_warnings_enabled()
 	WarningsManager.enable_warnings(false)
