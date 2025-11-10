@@ -77,62 +77,12 @@ func add_stub(stub_params):
 func get_all_stubs(thing, method):
 	var obj = _normalize_stub_target(thing)
 	var match_on = _get_to_match_on(obj)
-	# print('searching for ', obj, '.', method)
-	# print("  in ", match_on)
 
 	var matches = []
 	for entry in match_on:
 		if(stubs.has(entry) and stubs[entry].has(method)):
 			matches.append_array(stubs[entry][method])
 	return matches
-
-
-	# var last_not_null_parent = null
-	# var singleton_class = null
-
-
-	# if(GutUtils.is_singleton_double(obj)):
-	# 	var sname = obj.__gutdbl_values.from_singleton
-	# 	if(_class_db_name_hash.has(sname)):
-	# 		singleton_class = _class_db_name_hash[sname]
-	# 	else:
-	# 		push_error('"', sname, '" could not be found in _class_db_name_hash')
-	# 		print(_class_db_name_hash)
-
-	# # Search for what is passed in first.  This could be a class or an instance.
-	# # We want to find the instance before we find the class.  If we do not have
-	# # an entry for the instance then see if we have an entry for the class.
-	# if(stubs.has(obj) and stubs[obj].has(method)):
-	# 	matches.append_array(stubs[obj][method])
-
-	# if(singleton_class != null and stubs.has(singleton_class) and stubs[singleton_class].has(method)):
-	# 	matches.append_array(stubs[singleton_class][method])
-
-	# if(!GutUtils.is_singleton(obj) and GutUtils.is_instance(obj) and singleton_class == null):
-	# 	var parent = obj.get_script()
-	# 	var found = false
-	# 	print('searching for parent starting at ', parent)
-	# 	while(parent != null and !found):
-	# 		print('  again ', parent)
-	# 		found = stubs.has(parent)
-
-	# 		if(!found):
-	# 			last_not_null_parent = parent
-	# 			parent = parent.get_base_script()
-
-	# 	# Could not find the script so check to see if a native class of this
-	# 	# type was stubbed.
-	# 	if(!found):
-	# 		var base_type = last_not_null_parent.get_instance_base_type()
-	# 		if(_class_db_name_hash.has(base_type)):
-	# 			parent = _class_db_name_hash[base_type]
-	# 			found = stubs.has(parent)
-
-	# 	if(found and stubs[parent].has(method)):
-	# 		matches.append_array(stubs[parent][method])
-
-	# print('matches = ', matches)
-	# return matches
 
 
 func _get_to_match_on(target):
@@ -143,15 +93,11 @@ func _get_to_match_on(target):
 
 	while(trav != null and !done):
 		if(GutUtils.is_singleton_double(trav)):
-			# print("singleton double")
 			var sname = trav.__gutdbl_values.from_singleton
-			# print("sname = ", sname)
 			if(_class_db_name_hash.has(sname)):
 				trav = _class_db_name_hash[sname]
-				# print("pushing ", trav)
 				match_on.push_front(trav)
 			else:
-				# print("don't have it")
 				done = true
 		elif(GutUtils.is_instance(trav)):
 			trav = trav.get_script()
@@ -169,10 +115,8 @@ func _get_to_match_on(target):
 		if(trav == null):
 			done = true
 		else:
-			# print(current, ' -> ', trav)
 			current = trav
 
-	# print("returning ", match_on)
 	return match_on
 
 

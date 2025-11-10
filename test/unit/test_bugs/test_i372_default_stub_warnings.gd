@@ -13,4 +13,3 @@ func test_for_warnings():
 	stub(inst, 'call_me').param_defaults([null, 'bar'])
 	assert_eq(inst.call_call_me('foo'), 'called with foo, bar')
 	assert_eq(gut.logger.get_warnings().size(), start_warn_count, 'no warnings')
-	print(gut.get_stubber().to_s())

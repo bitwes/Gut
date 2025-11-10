@@ -234,7 +234,6 @@ class TestDefaultParameters:
 		stubber.add_stub(params)
 		assert_eq(stubber.get_default_value(dbl, 'defaulted_second_parameter', 0), null)
 		assert_eq(stubber.get_default_value(dbl, 'defaulted_second_parameter', 1), 'p2')
-		gut.p(stubber.to_s())
 
 
 
@@ -366,7 +365,6 @@ class TestSingletons:
 		var method = 'is_action_just_pressed'
 		assert_eq(stubber.get_default_value(dbl, method, 0), null)
 		assert_eq(stubber.get_default_value(dbl, method, 1), false)
-		print(stubber.to_s())
 
 	func test_default_method_paramters_for_input_singleton_when_stubbed():
 		var dbl = doubler.double_singleton(Input).new()
@@ -378,7 +376,6 @@ class TestSingletons:
 
 		assert_eq(stubber.get_default_value(dbl, method, 0), null)
 		assert_eq(stubber.get_default_value(dbl, method, 1), false)
-		print(stubber.to_s())
 
 
 

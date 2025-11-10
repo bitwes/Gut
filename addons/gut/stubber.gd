@@ -1,43 +1,3 @@
-
-#static var _class_db_name_hash = {}
-
-#static func _static_init() -> void:
-	#_class_db_name_hash = _make_crazy_dynamic_over_engineered_class_db_hash()
-#
-## So, I couldn't figure out how to get to a reference for a GDNative Class
-## using a string.  ClassDB has all thier names...so I made a hash using those
-## names and the classes.  Then I dynmaically make a script that has that as
-## the source and grab the hash out of it and return it.  Super Rube Golbergery,
-## but tons of fun.
-#static func _make_crazy_dynamic_over_engineered_class_db_hash():
-	#var text = "var all_the_classes: Dictionary = {\n"
-	## These don't actually exist, or can't be referenced in any way.  I could
-	## not find anything about them that I could use to exclude them more
-	## dynamically.
-	#var black_list = [
-		#"GDScriptNativeClass",
-		#"SceneCacheInterface",
-		#"SceneRPCInterface",
-		#"SceneReplicationInterface",
-		#"ThemeContext",
-		## found from running through editor
-		#"ViewPanner",
-#
-	#]
-	#for classname in ClassDB.get_class_list():
-		#if(!black_list.has(classname)):
-			#text += str('"', classname, '": ', classname, ", \n")
-#
-	#text += "}"
-	#var DynClass =  GutUtils.create_script_from_source(text)
-	#if(typeof(DynClass) == TYPE_INT):
-		#print("could not make crazy overengineered thing")
-		#print(text)
-		#return {}
-	#var inst = DynClass.new()
-	#return inst.all_the_classes
-
-
 var parameter_stubs = GutUtils.Stubs.new()
 var action_stubs = GutUtils.Stubs.new()
 
@@ -52,11 +12,9 @@ func _add_cache():
 		stub_params.stubber = self
 
 		if(stub_params.is_defaults_override()):
-			# print("adding prameter default ", stub_params.to_s())
 			parameter_stubs.add_stub(stub_params)
 
 		if(!stub_params.is_default_override_only()):
-			# print('adding action ', stub_params.to_s())
 			action_stubs.add_stub(stub_params)
 	_stub_cache.clear()
 
@@ -68,7 +26,6 @@ func _add_cache():
 func _find_stub(obj, method, parameters=null, find_overloads=false):
 	_add_cache()
 
-	print("Searching for ", obj, '.', method, ' w/ ', parameters)
 	var to_return = null
 	var matches = action_stubs.get_all_stubs(obj, method)
 
@@ -82,25 +39,19 @@ func _find_stub(obj, method, parameters=null, find_overloads=false):
 
 	for i in range(matches.size()):
 		var cur_stub = matches[i]
-		print("match ", i, ' = ', cur_stub)
-		print("    ", cur_stub._method_meta)
-		print("    ", cur_stub.parameters)
 
 		if(cur_stub.parameters == parameters):
-			print("!! found match:  ", cur_stub.parameters, '::', parameters)
 			param_match = cur_stub
 		elif(cur_stub._method_meta != {} and cur_stub.parameters != null and cur_stub.parameters.size() < cur_stub._method_meta.args.size()):
 			var params = cur_stub.parameters
 			var defaults = get_parameter_defaults(obj, method)
-			print("!! defaults = ", defaults)
 			if(params != null):
 				if(defaults != null):
 					for j in range(params.size() -1, defaults.size() - params.size()):
-						print(j, ':  ', defaults[j + 1])
 						params.append(defaults[j + 1])
 				else:
-					print("NO DEFAULTS for ", obj, '.', method)
-			print("!! params post addition = ", params)
+					pass
+					# print("NO DEFAULTS for ", obj, '.', method)
 			if(params == cur_stub.parameters):
 				param_match = cur_stub
 
@@ -155,25 +106,22 @@ func add_stub(stub_params):
 # method:  the method called
 # parameters:  optional array of parameter vales to find a return value for.
 func get_return(obj, method, parameters=null):
-	print("--- ", parameters, " ----")
 	_add_cache()
 
 	var stub_info = _find_stub(obj, method, parameters)
 	if(stub_info == null):
 		var params = parameters
 		var defaults = get_parameter_defaults(obj, method)
-		print("defaults = ", defaults)
 		if(params != null):
 			if(defaults != null and params.size() < defaults.size()):
 				for i in range(params.size() -1, defaults.size() - params.size()):
-					print(i, ':  ', defaults[i])
 					params.remove_at(params.size() -1)
 			else:
-				print("NO DEFAULTS for ", obj, '.', method)
+				pass
+				# print("NO DEFAULTS for ", obj, '.', method)
 
 		stub_info = _find_stub(obj, method, params)
 
-	print("stub for ", method, ' w/ ', parameters, ' = ', stub_info)
 	if(stub_info != null):
 		return stub_info.return_val
 	else:
@@ -209,29 +157,21 @@ func get_call_this(obj, method, parameters=null):
 
 
 func get_parameter_defaults(obj, method):
-	print("------------------------------")
 	var the_defaults = []
 	var script_defaults = []
 	var matches = parameter_stubs.get_all_stubs(obj, method)
-	print("matches = ", matches)
 
 	var i = matches.size() -1
-	# print('all matches = ', matches)
 	while(i >= 0 and the_defaults.is_empty()):
-		# print(matches[i].to_s())
 		if(matches[i].is_defaults_override()):
 			if(matches[i].is_script_default):
-				# print(" * script default")
 				script_defaults = matches[i].parameter_defaults
 			else:
-				# print(" * stubbed default")
 				the_defaults = matches[i].parameter_defaults
 		i -= 1
 
 	if(the_defaults.is_empty() and !script_defaults.is_empty()):
 		the_defaults = script_defaults
-	print('the defaults = ', the_defaults)
-	print("---------------    ---------------")
 	return the_defaults
 
 
@@ -248,7 +188,6 @@ func get_default_value(obj, method, p_index):
 func clear():
 	parameter_stubs.clear()
 	action_stubs.clear()
-	# returns.clear()
 
 
 func get_logger():

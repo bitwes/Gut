@@ -333,19 +333,6 @@ static func is_install_valid(template_paths=DOUBLE_TEMPLATES, ver_nums=version_n
 
 
 # ------------------------------------------------------------------------------
-# Gets the root node without having to be in the tree and pushing out an error
-# if we don't have a main loop ready to go yet.
-# ------------------------------------------------------------------------------
-# static func get_root_node():
-# 	var main_loop = Engine.get_main_loop()
-# 	if(main_loop != null):
-# 		return main_loop.root
-# 	else:
-# 		push_error('No Main Loop Yet')
-# 		return null
-
-
-# ------------------------------------------------------------------------------
 # Gets the value from an enum.
 # - If passed an integer value as a string it will convert it to an int and
 # 	processes the int value.

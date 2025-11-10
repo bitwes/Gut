@@ -93,7 +93,6 @@ func test_can_get_return_value_using_an_instance_of_class():
 	var inst = ToStub.new()
 	var value = gr.stubber.get_return(inst, 'get_value')
 	assert_eq(value, 0)
-	print(gr.stubber.to_s())
 
 func test_instance_stub_takes_precedence_over_path_stub():
 	gr.stubber.set_return(TO_STUB_PATH, 'get_value', 0)

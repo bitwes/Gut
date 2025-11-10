@@ -172,7 +172,6 @@ class TestSingletonDoubling:
 		_test.assert_true(dbl_input.is_action_just_pressed("jump"))
 		_test.assert_called(dbl_input.is_action_just_pressed.bind("jump", false))
 		assert_pass(_test, 2)
-		print(_gut.get_stubber().to_s())
 
 	func test_can_stub_methods_with_default_values():
 		var dbl_input = _test.double_singleton(Input).new()
@@ -407,7 +406,7 @@ class TestOverridingParameters:
 		GutUtils.WarningsManager.enable_warnings(were_set)
 
 	func before_each():
-		_gut = new_gut(true)
+		_gut = new_gut(verbose)
 
 		_test = new_wired_test(_gut)
 
@@ -432,11 +431,9 @@ class TestOverridingParameters:
 		assert_eq(ret_val, '12')
 
 	func test_vararg_methods_get_extra_parameters_by_default():
-		# _gut.get_doubler().print_source = true
 		_test.stub(Node, 'rpc_id').to_do_nothing()
 		var inst =  _test.double(Node).new()
 		add_child_autofree(inst)
-		print(_gut.get_stubber().to_s())
 		var ret_val = inst.rpc_id(1, 'foo', '3', '4', '5')
 		pass_test('we got here')
 
