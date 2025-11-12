@@ -25,34 +25,7 @@ func _normalize_stub_target(target):
 	return to_return
 
 
-func clear():
-	stubs.clear()
-
-
-func add_stub(stub_params):
-	var key = _normalize_stub_target(stub_params.stub_target)
-
-	if(!stubs.has(key)):
-		stubs[key] = {}
-
-	if(!stubs[key].has(stub_params.stub_method)):
-		stubs[key][stub_params.stub_method] = []
-
-	stubs[key][stub_params.stub_method].append(stub_params)
-
-
-func get_all_stubs(thing, method):
-	var obj = _normalize_stub_target(thing)
-	var match_on = _get_to_match_on(obj)
-
-	var matches = []
-	for entry in match_on:
-		if(stubs.has(entry) and stubs[entry].has(method)):
-			matches.append_array(stubs[entry][method])
-	return matches
-
-
-func _get_to_match_on(target):
+func _get_entries_matching_target(target):
 	var match_on = [target]
 	var trav = target
 	var done = false
@@ -85,6 +58,33 @@ func _get_to_match_on(target):
 			current = trav
 
 	return match_on
+
+
+func clear():
+	stubs.clear()
+
+
+func add_stub(stub_params):
+	var key = _normalize_stub_target(stub_params.stub_target)
+
+	if(!stubs.has(key)):
+		stubs[key] = {}
+
+	if(!stubs[key].has(stub_params.stub_method)):
+		stubs[key][stub_params.stub_method] = []
+
+	stubs[key][stub_params.stub_method].append(stub_params)
+
+
+func get_all_stubs(thing, method):
+	var obj = _normalize_stub_target(thing)
+	var match_on = _get_entries_matching_target(obj)
+
+	var matches = []
+	for entry in match_on:
+		if(stubs.has(entry) and stubs[entry].has(method)):
+			matches.append_array(stubs[entry][method])
+	return matches
 
 
 func to_s():

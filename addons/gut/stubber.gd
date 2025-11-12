@@ -3,6 +3,10 @@ var action_stubs = GutUtils.Stubs.new()
 
 var _lgr = GutUtils.get_logger()
 var _strutils = GutUtils.Strutils.new()
+# Since StubParams can be chained, when add_params does not get the completely
+# configured instance.  All stubs are added to this cache first, then whenever
+# a retrieval is attempted the cache is flushed into parameter_stubs and
+# action_stubs.
 var _stub_cache = []
 
 
@@ -28,14 +32,12 @@ func _find_stub(obj, method, parameters=null, find_overloads=false):
 
 	var to_return = null
 	var matches = action_stubs.get_all_stubs(obj, method)
-
-	if(matches.size() == 0):
-		return null
-
 	var param_match = null
 	var null_match = null
 	var overload_match = null
 
+	if(matches.size() == 0):
+		return null
 
 	for i in range(matches.size()):
 		var cur_stub = matches[i]
@@ -54,7 +56,6 @@ func _find_stub(obj, method, parameters=null, find_overloads=false):
 					# print("NO DEFAULTS for ", obj, '.', method)
 			if(params == cur_stub.parameters):
 				param_match = cur_stub
-
 
 		if(cur_stub.parameters == null and !cur_stub.is_default_override_only()):
 			null_match = cur_stub
@@ -99,29 +100,14 @@ func add_stub(stub_params):
 # If it was stubbed with specific parameter values then it will try to match.
 # If the parameters do not match BUT there was also an empty parameter list stub
 # then it will return those.
-# If it cannot find anything that matches then null is returned.for
+# If it cannot find anything that matches then null is returned.
 #
 # Parameters
 # obj:  this should be an instance of a doubled object.
 # method:  the method called
 # parameters:  optional array of parameter vales to find a return value for.
 func get_return(obj, method, parameters=null):
-	_add_cache()
-
 	var stub_info = _find_stub(obj, method, parameters)
-	if(stub_info == null):
-		var params = parameters
-		var defaults = get_parameter_defaults(obj, method)
-		if(params != null):
-			if(defaults != null and params.size() < defaults.size()):
-				for i in range(params.size() -1, defaults.size() - params.size()):
-					params.remove_at(params.size() -1)
-			else:
-				pass
-				# print("NO DEFAULTS for ", obj, '.', method)
-
-		stub_info = _find_stub(obj, method, params)
-
 	if(stub_info != null):
 		return stub_info.return_val
 	else:
@@ -157,6 +143,7 @@ func get_call_this(obj, method, parameters=null):
 
 
 func get_parameter_defaults(obj, method):
+	_add_cache()
 	var the_defaults = []
 	var script_defaults = []
 	var matches = parameter_stubs.get_all_stubs(obj, method)
@@ -176,7 +163,6 @@ func get_parameter_defaults(obj, method):
 
 
 func get_default_value(obj, method, p_index):
-	_add_cache()
 	var the_defaults = get_parameter_defaults(obj, method)
 	var to_return = null
 	if(the_defaults != null and the_defaults.size() > p_index):

@@ -150,7 +150,6 @@ func _get_singleton_text(parsed, included_methods, is_partial):
 		"singleton_name":parsed.singleton_name,
 		"is_partial":is_partial,
 		"doubled_methods":included_methods,
-
 	}
 
 	var values = {
