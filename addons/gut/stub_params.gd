@@ -17,6 +17,7 @@ var parameters = null # the parameter values to match method call on.
 var stub_method = null
 var call_super = false
 var call_this = null
+var locked = false
 
 # Whether this is a stub for default parameter values as they are defined in
 # the script, and not an overridden default value.
@@ -88,10 +89,20 @@ func _get_method_meta():
 	return _method_meta
 
 
+func _error_if_locked():
+	if(locked):
+		push_error("Cannot change stub as it has been locked.")
+		return true
+	else:
+		return false
+
+
 # -------------------------
 # Public
 # -------------------------
 func to_return(val):
+	if(_error_if_locked()):
+		return
 	return_val = val
 	call_super = false
 	_is_return_override = true
@@ -105,6 +116,9 @@ func to_do_nothing():
 
 
 func to_call_super():
+	if(_error_if_locked()):
+		return
+
 	call_super = true
 	_is_call_override = true
 	return self
@@ -115,6 +129,9 @@ func to_use_singleton():
 
 
 func to_call(callable : Callable):
+	if(_error_if_locked()):
+		return
+
 	call_this = callable
 	_is_call_override = true
 	return self
@@ -137,6 +154,9 @@ func param_count(_x):
 
 
 func param_defaults(values):
+	if(_error_if_locked()):
+		return
+
 	var meta = _get_method_meta()
 	if(meta != {} and meta.flags & METHOD_FLAG_VARARG):
 		_lgr.error("Cannot stub defaults for methods with varargs:  " + meta.name)

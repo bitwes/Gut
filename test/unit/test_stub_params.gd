@@ -270,3 +270,33 @@ func test_stub_method_is_set_when_using_object_and_string():
 	print(input, '::', Input)
 	var sp = StubParamsClass.new(Input, 'is_action_just_pressed')
 	assert_ne(sp._method_meta, {})
+
+# ------------------------------------------------------------------------------
+# Locking
+# ------------------------------------------------------------------------------
+func test_after_locked_cannot_to_return():
+	var sp = StubParamsClass.new()
+	sp.locked = true
+	sp.to_return(7)
+	assert_push_error('locked')
+	assert_null(sp.return_val)
+
+func test_after_locked_cannot_to_do_nothing():
+	var sp = StubParamsClass.new()
+	sp.locked = true
+	sp.to_do_nothing()
+	assert_push_error('locked')
+
+func test_after_locked_cannot_to_call_super():
+	var sp = StubParamsClass.new()
+	sp.locked = true
+	sp.to_call_super()
+	assert_push_error('locked')
+	assert_false(sp.call_super)
+
+func test_after_locked_cannot_param_defaults():
+	var sp = StubParamsClass.new()
+	sp.locked = true
+	sp.param_defaults([1])
+	assert_push_error('locked')
+	assert_eq(sp.parameter_defaults, [])

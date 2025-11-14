@@ -105,19 +105,20 @@ static func _make_crazy_dynamic_over_engineered_class_db_hash():
 	# not find anything about them that I could use to exclude them more
 	# dynamically.
 	var black_list = [
-		"GDScriptNativeClass",
-		"SceneCacheInterface",
-		"SceneRPCInterface",
-		"SceneReplicationInterface",
-		"ThemeContext",
-		# found from running through editor
-		"ViewPanner",
+		# # "GDScriptNativeClass",
+		# # "SceneCacheInterface",
+		# # "SceneRPCInterface",
+		# # "SceneReplicationInterface",s
+		# # "ThemeContext",
+		# # # found from running through editor
+		# # "ViewPanner",
+		# "GDScriptLanguageProtocol",
+		# "GDScriptTextDocument",
+		# "GDScriptWorkspace"
 	]
 	for classname in ClassDB.get_class_list():
-		if(ClassDB.can_instantiate(classname) or _singleton_names.has(classname)):
+		if(!black_list.has(classname) and (ClassDB.can_instantiate(classname) or _singleton_names.has(classname))):
 			text += str('"', classname, '": ', classname, ", \n")
-		#if(!black_list.has(classname)):
-			#text += str('"', classname, '": ', classname, ", \n")
 
 	text += "}"
 	var inst =  GutUtils.create_script_from_source(text).new()
@@ -313,10 +314,11 @@ static var _dyn_gdscript = DynamicGdScript.new()
 # Methods
 # ##############################################################################
 static func _static_init() -> void:
-	for entry in all_singletons:
-		_singleton_names.append(entry.get_class())
+	if(!Engine.is_editor_hint()):
+		for entry in all_singletons:
+			_singleton_names.append(entry.get_class())
 
-	class_ref_by_name = _make_crazy_dynamic_over_engineered_class_db_hash()
+		class_ref_by_name = _make_crazy_dynamic_over_engineered_class_db_hash()
 
 
 static func create_script_from_source(source, override_path=null):

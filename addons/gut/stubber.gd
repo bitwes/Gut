@@ -6,7 +6,9 @@ var _strutils = GutUtils.Strutils.new()
 # Since StubParams can be chained, when add_params does not get the completely
 # configured instance.  All stubs are added to this cache first, then whenever
 # a retrieval is attempted the cache is flushed into parameter_stubs and
-# action_stubs.
+# action_stubs.  This was introduced because it was easier to keep parameter
+# defaults separate from action stubs.  The only way to do that though is to
+# parse the stubs after they have been added.
 var _stub_cache = []
 
 
@@ -20,6 +22,10 @@ func _add_cache():
 
 		if(!stub_params.is_default_override_only()):
 			action_stubs.add_stub(stub_params)
+
+		# lock the params so that any changes that would affect which bucket
+		# the params were put in can't be changed.
+		stub_params.locked = true
 	_stub_cache.clear()
 
 
@@ -27,7 +33,7 @@ func _add_cache():
 # passed in obj is.
 #
 # obj can be an instance, class, or a path.
-func _find_stub(obj, method, parameters=null, find_overloads=false):
+func _find_action_stub(obj, method, parameters=null, find_overloads=false):
 	_add_cache()
 
 	var to_return = null
@@ -107,7 +113,7 @@ func add_stub(stub_params):
 # method:  the method called
 # parameters:  optional array of parameter vales to find a return value for.
 func get_return(obj, method, parameters=null):
-	var stub_info = _find_stub(obj, method, parameters)
+	var stub_info = _find_action_stub(obj, method, parameters)
 	if(stub_info != null):
 		return stub_info.return_val
 	else:
@@ -116,7 +122,7 @@ func get_return(obj, method, parameters=null):
 
 
 func should_call_super(obj, method, parameters=null):
-	var stub_info = _find_stub(obj, method, parameters)
+	var stub_info = _find_action_stub(obj, method, parameters)
 
 	var is_partial = false
 	if(typeof(obj) != TYPE_STRING): # some stubber tests test with strings
@@ -136,7 +142,7 @@ func should_call_super(obj, method, parameters=null):
 
 
 func get_call_this(obj, method, parameters=null):
-	var stub_info = _find_stub(obj, method, parameters)
+	var stub_info = _find_action_stub(obj, method, parameters)
 
 	if(stub_info != null):
 		return stub_info.call_this
