@@ -86,9 +86,6 @@ static var all_singletons = [
 static var _singleton_names = []
 static var singleton_names = []:
 	get():
-		# if(_singleton_names.size() == 0):
-		# 	for entry in all_singletons:
-		# 		_singleton_names.append(entry.get_class())
 		return _singleton_names
 	set(val): pass
 
@@ -101,20 +98,7 @@ static var class_ref_by_name = {}
 # but tons of fun.
 static func _make_crazy_dynamic_over_engineered_class_db_hash():
 	var text = "var all_the_classes: Dictionary = {\n"
-	# These don't actually exist, or can't be referenced in any way.  I could
-	# not find anything about them that I could use to exclude them more
-	# dynamically.
 	var black_list = [
-		# # "GDScriptNativeClass",
-		# # "SceneCacheInterface",
-		# # "SceneRPCInterface",
-		# # "SceneReplicationInterface",s
-		# # "ThemeContext",
-		# # # found from running through editor
-		# # "ViewPanner",
-		# "GDScriptLanguageProtocol",
-		# "GDScriptTextDocument",
-		# "GDScriptWorkspace"
 	]
 	for classname in ClassDB.get_class_list():
 		if(!black_list.has(classname) and (ClassDB.can_instantiate(classname) or _singleton_names.has(classname))):
@@ -345,7 +329,6 @@ static func get_editor_interface():
 		return inst.get_it()
 	else:
 		return null
-
 
 
 static func godot_version_string():
