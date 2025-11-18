@@ -440,7 +440,7 @@ static func is_instance(obj):
 # Checks if the passed in is a GDScript
 # ------------------------------------------------------------------------------
 static func is_gdscript(obj):
-	return typeof(obj) == TYPE_OBJECT and str(obj).begins_with('<GDScript#')
+	return typeof(obj) == TYPE_OBJECT and str(obj).contains('<GDScript#')
 
 
 # ------------------------------------------------------------------------------
