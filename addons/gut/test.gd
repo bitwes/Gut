@@ -2607,8 +2607,23 @@ func partial_double(thing, double_strat=null, not_used_anymore=null):
 
 	return _smart_double(thing, double_strat, true)
 
+
 ## Creates a psuedo-double of an Engine Singleton.  These doubles wrap around
-## the singleton, and do not
+## the singleton, and do not inherit from them.  These doubles do not replace
+## the Engine Singleton instance.  You must use a local reference to the Engine
+## Singleton that the double can be injected into.
+## [codeblock]
+##     class_name UsesTime
+##     var t := Time
+## [/codeblock]
+## [codeblock]
+##     extends GutTest
+##     func test_something():
+##         var dbl_time = partial_double_singleton(Time).new()
+##         var inst = UsesTime.new()
+##         inst.t = dbl_time
+## [/codeblock]
+## More information can be found at [wiki]Doubling-Singletons[/wiki]
 func double_singleton(singleton):
 	if(GutUtils.all_singletons.has(singleton)):
 		return gut.get_doubler().double_singleton(singleton)
@@ -2618,7 +2633,11 @@ func double_singleton(singleton):
 		_lgr.error(msg)
 		return null
 
-
+## This creates a partial double of a singleton, where all methods are intially
+## stubbed to punch through to the Engine Singleton they wrap around.
+##
+## See [method double_singleton] and [wiki]Doubling-Singletons[/wiki] for
+## more information.
 func partial_double_singleton(singleton):
 	if(GutUtils.all_singletons.has(singleton)):
 		return gut.get_doubler().partial_double_singleton(singleton)

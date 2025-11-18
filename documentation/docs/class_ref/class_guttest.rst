@@ -2689,7 +2689,22 @@ Create a Partial Double of ``thing``.  ``thing`` should be a Class, script, or s
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **double_singleton**\ (\ singleton\ ) :ref:`🔗<class_GutTest_method_double_singleton>`
 
-Creates a psuedo-double of an Engine Singleton.
+Creates a psuedo-double of an Engine Singleton.  These doubles wrap around the singleton, and do not inherit from them.  These doubles do not replace the Engine Singleton instance.  You must use a local reference to the Engine Singleton that the double can be injected into.
+
+::
+
+        class_name UsesTime
+        var t := Time
+
+::
+
+        extends GutTest
+        func test_something():
+            var dbl_time = partial_double_singleton(Time).new()
+            var inst = UsesTime.new()
+            inst.t = dbl_time
+
+More information can be found at `Doubling-Singletons <../Doubling-Singletons.html>`__
 
 .. rst-class:: classref-item-separator
 
@@ -2701,9 +2716,7 @@ Creates a psuedo-double of an Engine Singleton.
 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **partial_double_singleton**\ (\ singleton\ ) :ref:`🔗<class_GutTest_method_partial_double_singleton>`
 
-.. container:: contribute
-
-	No description
+This creates a partial double of a singleton, where all methods are intially stubbed to punch through to the Engine Singleton they wrap around.  See :ref:`double_singleton<class_GutTest_method_double_singleton>` and `Doubling-Singletons <../Doubling-Singletons.html>`__ for more information.
 
 .. rst-class:: classref-item-separator
 

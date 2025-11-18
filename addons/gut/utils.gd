@@ -296,19 +296,20 @@ static func _create_class_dictionary():
 			text += str('"', classname, '": ', classname, ", \n")
 
 	text += "}"
-	var inst =  GutUtils.create_script_from_source(text).new()
+	var inst =  GutUtils.create_script_from_source(text, 'res://dynamically_generated/class_dictionary.gd').new()
 	return inst.all_the_classes
 
 
 
-
+# This must be static so that the scripts are counted.
+static var _dyn_gdscript = DynamicGdScript.new()
 # ##############################################################################
 # Public Methods
 # ##############################################################################
 static func create_script_from_source(source, override_path=null):
 	var are_warnings_enabled = WarningsManager.are_warnings_enabled()
 	WarningsManager.enable_warnings(false)
-	var _dyn_gdscript = DynamicGdScript.new()
+
 	var DynamicScript = _dyn_gdscript.create_script_from_source(source, override_path)
 	if(typeof(DynamicScript) == TYPE_INT):
 		var l = get_logger()

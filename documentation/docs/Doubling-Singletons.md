@@ -69,7 +69,8 @@ func end():
 extends GutTest
 
 # Fun fact, this test will fail if ran on any Monday.  I wrote this on a
-# Wednesday, so it passes.  This is a doozy of a flakey test.
+# Wednesday, so it passes.  This is a doozy of a flakey test.  Don't make
+# tests
 func test_calling_end_returns_elapsed_time_using_msecs():
 	var dbl_time = partial_double_singleton(Time).new()
 	var inst = UsesTime.new()
@@ -101,30 +102,41 @@ func test_on_mondays_elapsed_time_is_longer_because_time_moves_slower_on_mondays
 ```
 
 # Eligible Singletons
-These Engine Singletons were found to be doublable but have not been tested.
+I have verified that a double of these can be created and instantiated.  All the ways they could be used has not been explored.  Your mileage may vary.  Please open an issue if you encounter a problem when doubling any of these Engine Singletons.
 
-|
-[ARVRServer](https://docs.godotengine.org/en/stable/classes/class_arvrserver.html) |
-[AudioServer](https://docs.godotengine.org/en/stable/classes/class_audioserver.html) |
-[CameraServer](https://docs.godotengine.org/en/stable/classes/class_cameraserver.html) |
-[ClassDB](https://docs.godotengine.org/en/stable/classes/class_classdb.html) |
-[EditorNavigationMeshGenerator](https://docs.godotengine.org/en/stable/classes/class_editornavigationmeshgenerator.html) |
-[Engine](https://docs.godotengine.org/en/stable/classes/class_engine.html) |
-[Geometry](https://docs.godotengine.org/en/stable/classes/class_geometry.html) |
-[Input](https://docs.godotengine.org/en/stable/classes/class_input.html) |
-[InputMap](https://docs.godotengine.org/en/stable/classes/class_inputmap.html) |
-[IP](https://docs.godotengine.org/en/stable/classes/class_ip.html) |
-[JavaClassWrapper](https://docs.godotengine.org/en/stable/classes/class_javaclasswrapper.html) |
-[JavaScript](https://docs.godotengine.org/en/stable/classes/class_javascript.html) |
-[JSON](https://docs.godotengine.org/en/stable/classes/class_json.html) |
-[Marshall](https://docs.godotengine.org/en/stable/classes/class_marshalls.html) |
-[OS](https://docs.godotengine.org/en/stable/classes/class_os.html) |
-[Performance](https://docs.godotengine.org/en/stable/classes/class_performance.html) |
-[Physics2DServer](https://docs.godotengine.org/en/stable/classes/class_physics2dserver.html) |
-[PhysicsServer](https://docs.godotengine.org/en/stable/classes/class_physicsserver.html) |
-[ProjectSettings](https://docs.godotengine.org/en/stable/classes/class_projectsettings.html) |
-[ResourceLoader](https://docs.godotengine.org/en/stable/classes/class_resourceloader.html) |
-[ResourceSaver](https://docs.godotengine.org/en/stable/classes/class_resourcesaver.html) |
-[TranslationServer](https://docs.godotengine.org/en/stable/classes/class_translationserver.html) |
-[VisualScriptEditor](https://docs.godotengine.org/en/stable/classes/class_visualscripteditor.html) |
-[VisualServer](https://docs.godotengine.org/en/stable/classes/class_visualserver.html) |
+* [AudioServer](https://docs.godotengine.org/en/stable/classes/class_audioserver.html)
+* [CameraServer](https://docs.godotengine.org/en/stable/classes/class_cameraserver.html)
+* [ClassDB](https://docs.godotengine.org/en/stable/classes/class_classdb.html)
+* [DisplayServer](https://docs.godotengine.org/en/stable/classes/class_displayserver.html)
+* [Engine](https://docs.godotengine.org/en/stable/classes/class_engine.html)
+* [EngineDebugger](https://docs.godotengine.org/en/stable/classes/class_enginedebugger.html)
+* [GDExtensionManager](https://docs.godotengine.org/en/stable/classes/class_gdextensionmanager.html)
+* [Geometry2D](https://docs.godotengine.org/en/stable/classes/class_geometry2d.html)
+* [Geometry3D](https://docs.godotengine.org/en/stable/classes/class_geometry3d.html)
+* [GodotNavigationServer2D](https://docs.godotengine.org/en/stable/classes/class_godotnavigationserver2d.html)
+* [IP](https://docs.godotengine.org/en/stable/classes/class_ip.html)
+* [Input](https://docs.godotengine.org/en/stable/classes/class_input.html)
+* [InputMap](https://docs.godotengine.org/en/stable/classes/class_inputmap.html)
+* [JavaClassWrapper](https://docs.godotengine.org/en/stable/classes/class_javaclasswrapper.html)
+* [JavaScriptBridge](https://docs.godotengine.org/en/stable/classes/class_javascriptbridge.html)
+* [Marshalls](https://docs.godotengine.org/en/stable/classes/class_marshalls.html)
+* [NativeMenuMacOS](https://docs.godotengine.org/en/stable/classes/class_nativemenumacos.html)
+* [NavigationMeshGenerator](https://docs.godotengine.org/en/stable/classes/class_navigationmeshgenerator.html)
+* [NavigationServer3D](https://docs.godotengine.org/en/stable/classes/class_navigationserver3d.html)
+* [OS](https://docs.godotengine.org/en/stable/classes/class_os.html)
+* [Performance](https://docs.godotengine.org/en/stable/classes/class_performance.html)
+* [PhysicsServer2D](https://docs.godotengine.org/en/stable/classes/class_physicsserver2d.html)
+* [PhysicsServer2DManager](https://docs.godotengine.org/en/stable/classes/class_physicsserver2dmanager.html)
+* [PhysicsServer3D](https://docs.godotengine.org/en/stable/classes/class_physicsserver3d.html)
+* [PhysicsServer3DManager](https://docs.godotengine.org/en/stable/classes/class_physicsserver3dmanager.html)
+* [ProjectSettings](https://docs.godotengine.org/en/stable/classes/class_projectsettings.html)
+* [RenderingServer](https://docs.godotengine.org/en/stable/classes/class_renderingserver.html)
+* [ResourceLoader](https://docs.godotengine.org/en/stable/classes/class_resourceloader.html)
+* [ResourceSaver](https://docs.godotengine.org/en/stable/classes/class_resourcesaver.html)
+* [ResourceUID](https://docs.godotengine.org/en/stable/classes/class_resourceuid.html)
+* [TextServerManager](https://docs.godotengine.org/en/stable/classes/class_textservermanager.html)
+* [ThemeDB](https://docs.godotengine.org/en/stable/classes/class_themedb.html)
+* [Time](https://docs.godotengine.org/en/stable/classes/class_time.html)
+* [TranslationServer](https://docs.godotengine.org/en/stable/classes/class_translationserver.html)
+* [WorkerThreadPool](https://docs.godotengine.org/en/stable/classes/class_workerthreadpool.html)
+* [XRServer](https://docs.godotengine.org/en/stable/classes/class_xrserver.html)
