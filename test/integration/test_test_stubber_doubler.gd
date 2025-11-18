@@ -1,16 +1,13 @@
 extends GutInternalTester
 
-class BaseTest:
+
+
+class TestDoubleCreation:
 	extends GutInternalTester
+	const TEMP_FILES = 'user://test_doubler_temp_file'
 
 	var _gut = null
 	var _test = null
-
-
-
-class TestBasics:
-	extends BaseTest
-	const TEMP_FILES = 'user://test_doubler_temp_file'
 
 	func before_each():
 		_gut = new_gut(verbose)
@@ -110,11 +107,88 @@ class TestBasics:
 		assert_eq(dbl_scn.return_hello(), 'world')
 
 
+class TestSingletonDoubling:
+	extends GutInternalTester
+	var _gut = null
+	var _test = null
+
+	func before_each():
+		_gut = new_gut(verbose)
+		_test = new_wired_test(_gut)
+
+		add_child_autofree(_gut)
+		add_child_autofree(_test)
+
+	func test_double_singlton_creates_something_you_can_instantiate():
+		var D = _test.double_singleton(ResourceSaver)
+		var inst = D.new()
+		assert_not_null(inst)
+
+	func test_partial_double_singlton_creates_something_you_can_instantiate():
+		var D = _test.partial_double_singleton(NativeMenu)
+		var inst = D.new()
+		assert_not_null(inst)
+
+	func test_partial_double_singleton_returns_partial_double():
+		var D = _test.partial_double_singleton(NativeMenu)
+		var inst = D.new()
+		assert_true(inst.__gutdbl_values.is_partial)
+
+	func test_double_singleton_errors_when_not_in_whitelist():
+		var D = _test.double_singleton(GutTest)
+		assert_tracked_gut_error_text(_gut, "Use double")
+		assert_null(D)
+
+	func test_partial_double_singleton_errors_when_not_in_whitelist():
+		var D = _test.partial_double_singleton(GutTest)
+		assert_tracked_gut_error_text(_gut, "Use partial_double")
+		assert_null(D)
+
+	func test_double_errors_when_class_in_singleton_whitelist():
+		var D = _test.double(OS)
+		assert_tracked_gut_error_text(_gut, 'Use double_singleton')
+		assert_null(D)
+
+	func test_partial_double_errors_when_class_in_singleton_whitelist():
+		var D = _test.partial_double(Time)
+		assert_tracked_gut_error_text(_gut, 'Use partial_double_singleton')
+		assert_null(D)
+
+	func test_can_stub_double_based_on_parameters():
+		var dbl_time = _test.double_singleton(Time).new()
+		_test.stub(dbl_time.get_time_string_from_unix_time.bind(1))\
+			.to_return("one")
+		_test.stub(dbl_time.get_time_string_from_unix_time.bind(2))\
+			.to_return("two")
+
+		assert_eq(dbl_time.get_time_string_from_unix_time(1), "one")
+		assert_eq(dbl_time.get_time_string_from_unix_time(2), "two")
+		assert_null(dbl_time.get_time_string_from_unix_time(3))
+
+	func test_do_not_have_to_specify_defaulted_vaules_for_stub_to_match():
+		var dbl_input = _test.double_singleton(Input).new()
+		_test.stub(dbl_input.is_action_just_pressed.bind("jump"))\
+			.to_return(true)
+		_test.assert_true(dbl_input.is_action_just_pressed("jump"))
+		_test.assert_called(dbl_input.is_action_just_pressed.bind("jump", false))
+		assert_pass(_test, 2)
+
+	func test_can_stub_methods_with_default_values():
+		var dbl_input = _test.double_singleton(Input).new()
+		_test.stub(dbl_input.is_action_just_pressed.bind("jump", false))\
+			.to_return(true)
+		assert_true(dbl_input.is_action_just_pressed("jump", false))
+		_test.assert_called(dbl_input.is_action_just_pressed.bind("jump", false))
+		assert_pass(_test)
+
+
 
 
 
 class TestIgnoreMethodsWhenDoubling:
-	extends BaseTest
+	extends GutInternalTester
+	var _gut = null
+	var _test = null
 
 	func before_each():
 		_gut = new_gut(verbose)
@@ -145,10 +219,16 @@ class TestIgnoreMethodsWhenDoubling:
 		_test.assert_not_called(m_inst, 'return_hello')
 		assert_eq(_test.get_fail_count(), 1)
 
+	func test_when_ignoring_sigleton_methods_they_do_not_exist_in_doubles():
+		_test.ignore_method_when_doubling(Time, 'get_ticks_msec')
+		var inst = _test.double_singleton(Time).new()
+		assert_false(inst.has_method('get_ticks_msec'))
+
 
 class TestTestsSmartDoubleMethod:
-	extends BaseTest
-
+	extends GutInternalTester
+	var _gut = null
+	var _test = null
 
 	func before_all():
 		_test = Test.new()
@@ -225,9 +305,10 @@ class TestTestsSmartDoubleMethod:
 		assert_tracked_gut_error(_test)
 
 
-
 class TestPartialDoubleMethod:
-	extends BaseTest
+	extends GutInternalTester
+	var _gut = null
+	var _test = null
 
 	func before_all():
 		_gut = new_gut(verbose)
@@ -310,7 +391,9 @@ class TestPartialDoubleMethod:
 
 
 class TestOverridingParameters:
-	extends BaseTest
+	extends GutInternalTester
+	var _gut = null
+	var _test = null
 
 	const INIT_PARAMETERS = 'res://test/resources/stub_test_objects/init_parameters.gd'
 	const DEFAULT_PARAMS_PATH = 'res://test/resources/doubler_test_objects/double_default_parameters.gd'
@@ -351,7 +434,6 @@ class TestOverridingParameters:
 		_test.stub(Node, 'rpc_id').to_do_nothing()
 		var inst =  _test.double(Node).new()
 		add_child_autofree(inst)
-
 		var ret_val = inst.rpc_id(1, 'foo', '3', '4', '5')
 		pass_test('we got here')
 
@@ -381,8 +463,9 @@ class TestOverridingParameters:
 
 
 class TestStub:
-	extends BaseTest
-
+	extends GutInternalTester
+	var _gut = null
+	var _test = null
 
 	func before_each():
 		_gut = new_gut(verbose)
@@ -451,81 +534,3 @@ class TestStub:
 		var d = autofree(_test.double(DoubleMe).new())
 		_test.stub(d.has_one_param).to_return(5)
 		assert_tracked_gut_error(_test)
-
-
-# class TestSingletonDoubling:
-# 	extends GutInternalTester
-
-# 	var _test_gut = null
-# 	var _test = null
-
-# 	func before_each():
-# 		_test_gut = Gut.new()
-# 		_test_gut._should_print_versions = false
-# 		_test = Test.new()
-# 		_test.gut = _test_gut
-
-# 		add_child_autofree(_test_gut)
-# 		add_child_autofree(_test)
-
-# 	func test_double_gives_double():
-# 		var inst = _test.double_singleton("Input").new()
-# 		assert_eq(inst.__gut_metadata_.from_singleton, "Input")
-
-# 	func test_partial_gives_partial_double():
-# 		var inst = _test.partial_double_singleton("Input").new()
-# 		assert_true(inst.__gut_metadata_.is_partial)
-
-# 	func test_double_errors_if_not_passed_a_string():
-# 		var value = _test.double_singleton(Node2D)
-# 		assert_logger_errored(_test)
-# 		assert_null(value, "null should be returned")
-
-# 	func test_double_errors_if_class_name_does_not_exist():
-# 		var value = _test.double_singleton("asdf")
-# 		assert_logger_errored(_test)
-# 		assert_null(value, "null should be returned")
-
-# 	func test_partial_double_errors_if_not_passed_a_string():
-# 		var value = _test.partial_double_singleton(Node2D)
-# 		assert_logger_errored(_test)
-# 		assert_null(value, "null should be returned")
-
-# 	func test_partial_double_errors_if_class_name_does_not_exist():
-# 		var value = _test.partial_double_singleton("asdf")
-# 		assert_logger_errored(_test)
-# 		assert_null(value, "null should be returned")
-
-
-# 	func test_can_stub_is_action_just_pressed_on_Input():
-# 		var inst = _test.double_singleton("Input").new()
-# 		_test.stub(inst, 'is_action_just_pressed').to_return(true)
-# 		assert_true(inst.is_action_just_pressed('some_action'))
-
-# 	func test_can_stub_get_processor_count_on_OS():
-# 		var dbl_os = _test.partial_double_singleton('OS').new()
-# 		_test.stub(dbl_os, 'get_processor_count').to_return(99)
-# 		assert_eq(dbl_os.get_processor_count(), 99)
-
-
-# 	var eligible_singletons = [
-# 		"XRServer", "AudioServer", "CameraServer",
-# 		"Engine", "Geometry2D", "Input",
-# 		"InputMap", "IP", "JavaClassWrapper",
-# 		"JavaScript", "JSON", "Marshalls",
-# 		"OS", "Performance", "PhysicsServer2D",
-# 		"PhysicsServer3D",
-# 		"ProjectSettings", "ResourceLoader",
-# 		"ResourceSaver", "TranslationServer", "VisualScriptEditor",
-# 		"RenderingServer",
-# 		# these two were missed by print_instanced_ClassDB_classes but were in
-# 		# the global scope list.
-# 		"ClassDB", "NavigationMeshGenerator"
-# 	]
-# 	func test_all_doubler_supported_singletons_are_supported_by_double_singleton_method(singleton = use_parameters(eligible_singletons)):
-# 		# !! Keep eligible singletons in line with eligible_singletons in test_doubler
-# 		assert_not_null(double_singleton(singleton), singleton)
-
-# 	func test_all_doubler_supported_singles_are_supported_by_partial_double_singleton_method(singleton = use_parameters(eligible_singletons)):
-# 		# !! Keep eligible singletons in line with eligible_singletons in test_doubler
-# 		assert_not_null(partial_double_singleton(singleton), singleton)

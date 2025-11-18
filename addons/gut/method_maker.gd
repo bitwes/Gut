@@ -109,6 +109,7 @@ func _init():
 	_supported_defaults[TYPE_PACKED_FLOAT32_ARRAY] = 'PackedFloat32Array'
 	_supported_defaults[TYPE_PACKED_STRING_ARRAY] = 'PackedStringArray'
 
+
 # ###############
 # Private
 # ###############
@@ -159,7 +160,7 @@ func _get_arg_text(arg_array):
 
 
 # creates a call to the function in meta in the super's class.
-func _get_super_call_text(meta, args):
+func _get_super_call_text(meta, args, singleton):
 	if meta.flags & MethodFlags.METHOD_FLAG_VIRTUAL_REQUIRED != 0:
 		return '__gutdbl.gut_ref.get_ref().get_logger().error("Cannot call super() because method %s is abstract."); return null' \
 			% meta.name
@@ -169,8 +170,10 @@ func _get_super_call_text(meta, args):
 		params += args[i].p_name
 		if(i != args.size() -1):
 			params += ', '
-
-	return str('return await super(', params, ')')
+	if(singleton != null):
+		return str('return await ', singleton.get_class(), '.', meta.name, '(', params, ')')
+	else:
+		return str('return await super(', params, ')')
 
 
 func _get_spy_call_parameters_text(args):
@@ -216,7 +219,7 @@ func _get_init_text(meta, args, method_params, param_array):
 # types whose defaults are supported will have their values.  If a datatype
 # is not supported and the parameter has a default, a warning message will be
 # printed and the declaration will return null.
-func get_function_text(meta, override_size=null):
+func get_function_text(meta, singleton=null):
 	var method_params = ''
 	var text = null
 	var result = _make_arg_array(meta)
@@ -244,7 +247,7 @@ func get_function_text(meta, override_size=null):
 				"func_decleration": decleration,
 				"method_name": meta.name,
 				"param_array": param_array,
-				"super_call": _get_super_call_text(meta, args),
+				"super_call": _get_super_call_text(meta, args, singleton),
 			})
 
 	return text
@@ -256,3 +259,8 @@ func get_logger():
 
 func set_logger(logger):
 	_lgr = logger
+
+
+func get_arg_text(meta):
+	var parsed = _make_arg_array(meta)
+	return _get_arg_text(parsed[1])

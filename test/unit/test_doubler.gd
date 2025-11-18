@@ -187,9 +187,6 @@ class TestDoublingScripts:
 		assert_does_not_have(d.__gutdbl_values.doubled_methods, '_input')
 
 
-
-
-
 class TestAddingIgnoredMethods:
 	extends BaseTest
 	var _doubler = null
@@ -318,17 +315,18 @@ class TestDoubleStrategyIncludeNative:
 
 
 	func test_doubled_builtins_call_super():
-		var inst = autofree(doubler.double(DoubleExtendsWindowDialog).new())
+		var inst = autofree(doubler.partial_double(DoubleExtendsWindowDialog).new())
 		# Make sure the function is in the doubled class definition
 		assert_source_contains(inst, 'func add_user_signal(p_signal')
 		# Make sure that when called it retains old functionality.
+		print(gut.get_stubber().to_s())
 		inst.add_user_signal('new_one', [])
 		inst.add_user_signal('new_two', ['a', 'b'])
 		assert_has_signal(inst, 'new_one')
 		assert_has_signal(inst, 'new_two')
 
 	func test_doubled_builtins_are_added_as_stubs_to_call_super():
-		var inst = autofree(doubler.double(DoubleExtendsWindowDialog).new())
+		var inst = autofree(doubler.partial_double(DoubleExtendsWindowDialog).new())
 		assert_true(doubler.get_stubber().should_call_super(inst, 'add_user_signal'))
 
 	func test_doubled_methods_includes_non_overloaded_methods():
@@ -515,3 +513,102 @@ class TestAutofree:
 		var doubled = partial_double(DoubleExtendsNode2D).new()
 		gut.get_autofree().free_all()
 		assert_no_new_orphans()
+
+
+
+class TestDoubleSingletons:
+	extends BaseTest
+
+	var doubler = null
+
+	func before_each():
+		doubler = Doubler.new()
+		doubler.set_stubber(GutUtils.Stubber.new())
+		var lgr = GutUtils.GutLogger.new()
+		lgr.set_gut(gut)
+		doubler.set_logger(lgr)
+
+
+	func test_can_make_a_double_of_OS():
+		var d = doubler.double_singleton(Input)
+		assert_not_null(d)
+
+	func test_doubles_are_ref_counted():
+		var d = doubler.double_singleton(Time)
+		var inst = d.new()
+		assert_is(inst, RefCounted)
+
+	func test_adds_gut_data():
+		var d = doubler.double_singleton(OS)
+		var inst = d.new()
+
+		assert_typeof(inst.__gutdbl_values, TYPE_DICTIONARY)
+		assert_has_method(inst, '__gutdbl_check_method__')
+		assert_not_null(inst.__gutdbl)
+		assert_has_method(inst, '__gutdbl_done')
+
+	func test_double_has_singleton_methods():
+		var d = doubler.double_singleton(OS)
+		var inst = d.new()
+
+		assert_has_method(inst, 'get_data_dir')
+
+
+	func test_double_has_enums():
+		var inst = doubler.double_singleton(Time).new()
+		assert_eq(inst.MONTH_JANUARY, 1)
+
+
+	func test_double_has_signal():
+		var inst = doubler.double_singleton(AudioServer).new()
+		assert_has_signal(inst, 'bus_layout_changed')
+
+	var _on_bus_renamed_bus_index = 999
+	var _on_bus_renamed_old_name = ''
+	var _on_bus_renamed_new_name = ''
+	func _on_bus_renamed(bus_index, old_name, new_name):
+		_on_bus_renamed_bus_index = bus_index
+		_on_bus_renamed_old_name = old_name
+		_on_bus_renamed_new_name = new_name
+
+	func test_can_connect_to_signal_with_parameters():
+		var inst = doubler.double_singleton(AudioServer).new()
+		inst.bus_renamed.connect(_on_bus_renamed)
+		assert_connected(inst.bus_renamed, self)
+		inst.bus_renamed.emit(-1, 'old', 'new')
+		assert_eq(_on_bus_renamed_bus_index, -1)
+		assert_eq(_on_bus_renamed_old_name, 'old')
+		assert_eq(_on_bus_renamed_new_name, 'new')
+
+	func test_singltons_contain_properties():
+		var inst = doubler.double_singleton(OS).new()
+		assert_true(inst.delta_smoothing)
+		assert_false(inst.low_processor_usage_mode)
+
+	func test_can_double_all_singletons(p = use_parameters(GutUtils.all_singletons)):
+		var D = doubler.double_singleton(p)
+		assert_not_null(D, 'singleton:  ' + p.get_class())
+		if(is_passing()):
+			assert_not_null(D.new(), 'instance')
+
+	func test_can_make_partial_double_of_singleton():
+		var D = doubler.partial_double_singleton(Time)
+		assert_not_null(D)
+
+	func test_partial_double_singletons_call_super():
+		var D = doubler.partial_double_singleton(Time)
+		var inst = D.new()
+		assert_not_null(inst.get_ticks_msec())
+
+	func test_singleton_doubles_have_doubled_methods_populated():
+		var inst = doubler.double_singleton(Performance).new()
+		assert_ne(inst.__gutdbl_values.doubled_methods.size(), 0)
+
+	func test_singleton_doubles_do_not_have_object_methods():
+		var inst = doubler.double_singleton(Performance).new()
+		assert_does_not_have(inst.__gutdbl_values.doubled_methods, 'get_property_list')
+
+	func test_singleton_doubles_have_singleton_methods():
+		var inst = doubler.double_singleton(Performance).new()
+		assert_has(inst.__gutdbl_values.doubled_methods, 'get_custom_monitor_names')
+

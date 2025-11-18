@@ -67,4 +67,5 @@ func default_val(method_name, p_index):
 	if(stubber_ref.get_ref() == null):
 		return null
 	else:
-		return stubber_ref.get_ref().get_default_value(double_ref.get_ref(), method_name, p_index)
+		var result = stubber_ref.get_ref().get_default_value(double_ref.get_ref(), method_name, p_index)
+		return result

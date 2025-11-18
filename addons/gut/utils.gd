@@ -42,6 +42,50 @@ enum TREAT_AS {
 	FAILURE,
 }
 
+static var all_singletons = [
+	AudioServer,
+	CameraServer,
+	ClassDB,
+	DisplayServer,
+	# I don't think this can be doubled unless we are running in the editor.
+	# EditorInterface,
+	Engine,
+	EngineDebugger,
+	GDExtensionManager,
+	Geometry2D,
+	Geometry3D,
+	IP,
+	Input,
+	InputMap,
+	JavaClassWrapper,
+	JavaScriptBridge,
+	Marshalls,
+	NativeMenu,
+	NavigationMeshGenerator,
+	NavigationServer2D,
+	NavigationServer3D,
+	OS,
+	Performance,
+	PhysicsServer2D,
+	PhysicsServer2DManager,
+	PhysicsServer3D,
+	PhysicsServer3DManager,
+	ProjectSettings,
+	RenderingServer,
+	ResourceLoader,
+	ResourceSaver,
+	ResourceUID,
+	TextServerManager,
+	ThemeDB,
+	Time,
+	TranslationServer,
+	WorkerThreadPool,
+	XRServer
+]
+
+static var singleton_names = []
+static var class_ref_by_name = {}
+
 
 ## This dictionary defaults to all the native classes that we cannot call new
 ## on.  It is further populated during a run so that we only have to create
@@ -154,6 +198,9 @@ static var ScriptCollector = LazyLoader.new('res://addons/gut/script_parser.gd')
 static var SignalWatcher = LazyLoader.new('res://addons/gut/signal_watcher.gd'):
 	get: return SignalWatcher.get_loaded()
 	set(val): pass
+static var SingletonParser = LazyLoader.new('res://addons/gut/singleton_parser.gd'):
+	get: return SingletonParser.get_loaded()
+	set(val): pass
 static var Spy = LazyLoader.new('res://addons/gut/spy.gd'):
 	get: return Spy.get_loaded()
 	set(val): pass
@@ -165,6 +212,9 @@ static var Stubber = LazyLoader.new('res://addons/gut/stubber.gd'):
 	set(val): pass
 static var StubParams = LazyLoader.new('res://addons/gut/stub_params.gd'):
 	get: return StubParams.get_loaded()
+	set(val): pass
+static var Stubs = LazyLoader.new('res://addons/gut/stubs.gd'):
+	get: return Stubs.get_loaded()
 	set(val): pass
 static var Summary = LazyLoader.new('res://addons/gut/summary.gd'):
 	get: return Summary.get_loaded()
@@ -219,7 +269,43 @@ static func get_error_tracker():
 	return _error_tracker
 
 
+
+
+# ##############################################################################
+# Methods
+# ##############################################################################
+static func _static_init() -> void:
+	if(!Engine.is_editor_hint()):
+		for entry in all_singletons:
+			singleton_names.append(entry.get_class())
+
+		class_ref_by_name = _create_class_dictionary()
+
+
+# So, I couldn't figure out how to get to a reference for a GDNative Class
+# using a string.  ClassDB has all thier names...so I made a hash using those
+# names and the classes.  Then I dynmaically make a script that has that as
+# the source and grab the hash out of it and return it.  Super Rube Golbergery,
+# but tons of fun.
+static func _create_class_dictionary():
+	var text = "var all_the_classes: Dictionary = {\n"
+	var black_list = [
+	]
+	for classname in ClassDB.get_class_list():
+		if(!black_list.has(classname) and (ClassDB.can_instantiate(classname) or singleton_names.has(classname))):
+			text += str('"', classname, '": ', classname, ", \n")
+
+	text += "}"
+	var inst =  GutUtils.create_script_from_source(text, 'res://dynamically_generated/class_dictionary.gd').new()
+	return inst.all_the_classes
+
+
+
+# This must be static so that the scripts are counted.
 static var _dyn_gdscript = DynamicGdScript.new()
+# ##############################################################################
+# Public Methods
+# ##############################################################################
 static func create_script_from_source(source, override_path=null):
 	var are_warnings_enabled = WarningsManager.are_warnings_enabled()
 	WarningsManager.enable_warnings(false)
@@ -244,7 +330,6 @@ static func get_editor_interface():
 		return inst.get_it()
 	else:
 		return null
-
 
 
 static func godot_version_string():
@@ -275,19 +360,6 @@ static func make_install_check_text(template_paths=DOUBLE_TEMPLATES, ver_nums=ve
 
 static func is_install_valid(template_paths=DOUBLE_TEMPLATES, ver_nums=version_numbers):
 	return make_install_check_text(template_paths, ver_nums) == INSTALL_OK_TEXT
-
-
-# ------------------------------------------------------------------------------
-# Gets the root node without having to be in the tree and pushing out an error
-# if we don't have a main loop ready to go yet.
-# ------------------------------------------------------------------------------
-# static func get_root_node():
-# 	var main_loop = Engine.get_main_loop()
-# 	if(main_loop != null):
-# 		return main_loop.root
-# 	else:
-# 		push_error('No Main Loop Yet')
-# 		return null
 
 
 # ------------------------------------------------------------------------------
@@ -566,14 +638,6 @@ static func get_script_text(obj):
 	return obj.get_script().get_source_code()
 
 
-# func get_singleton_by_name(name):
-# 	var source = str("var singleton = ", name)
-# 	var script = GDScript.new()
-# 	script.set_source_code(source)
-# 	script.reload()
-# 	return script.new().singleton
-
-
 static func dec2bistr(decimal_value, max_bits = 31):
 	var binary_string = ""
 	var temp
@@ -608,7 +672,6 @@ static func get_display_size():
 	return Engine.get_main_loop().get_viewport().get_visible_rect()
 
 
-
 static func find_method_meta(methods, method_name):
 	var meta = null
 	var idx = 0
@@ -623,6 +686,18 @@ static func find_method_meta(methods, method_name):
 
 static func get_method_meta(object, method_name):
 	return find_method_meta(object.get_method_list(), method_name)
+
+
+static func is_singleton(thing):
+	if(typeof(thing) != TYPE_OBJECT):
+		return false
+
+	return all_singletons.has(thing)
+
+
+static func is_singleton_double(thing):
+	return is_double(thing) and thing.__gutdbl_values.from_singleton != ''
+
 
 # ##############################################################################
 #(G)odot (U)nit (T)est class

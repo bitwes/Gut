@@ -7,15 +7,15 @@ class TestBoth:
 	const INIT_PARAMETERS = 'res://test/resources/stub_test_objects/init_parameters.gd'
 	var InitParameters = load(INIT_PARAMETERS)
 
-	var Doubler = load('res://addons/gut/doubler.gd')
-
 	var _spy = null
 	var _doubler = null
 
 	func before_each():
-		_spy = Spy.new()
-		_doubler = Doubler.new()
+		_spy = GutUtils.Spy.new()
+		_doubler = GutUtils.Doubler.new()
 		_doubler.set_spy(_spy)
+		# var stubber = GutUtils.Stubber.new()
+		# _doubler.set_stubber(stubber)
 
 	func after_each():
 		_spy.clear()
@@ -56,13 +56,14 @@ class TestBoth:
 		assert_true(_spy.was_called(inst, 'set_position', [Vector2(20, 20)]))
 
 	func test_can_spy_on_singleton_doubles():
-		pending('No singleton doubling')
-		return
-
-		var inst  = _doubler.partial_double_singleton("Input").new()
+		var inst  = _doubler.double_singleton(Input).new()
 		inst.is_action_just_pressed("foobar")
 		assert_true(_spy.was_called(inst, "is_action_just_pressed"))
 
+	func test_can_spy_on_singleton_parameters():
+		var inst  = _doubler.double_singleton(OS).new()
+		inst.is_process_running(5)
+		assert_true(_spy.was_called(inst, 'is_process_running', [5]))
 
 	func test_can_spy_on_init():
 		var inst = _doubler.double(InitParameters).new('test_value')

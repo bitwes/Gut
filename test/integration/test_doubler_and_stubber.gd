@@ -1,6 +1,5 @@
 extends "res://addons/gut/test.gd"
 
-
 class BaseTest:
 	extends GutTest
 	var Stubber = load('res://addons/gut/stubber.gd')
@@ -191,8 +190,13 @@ class TestInnerClasses:
 class TestDefaultParameters:
 	extends BaseTest
 
+
+
 	var doubler = null
 	var stubber = null
+
+	func before_all():
+		register_inner_classes(get_script())
 
 	func before_each():
 		doubler = Doubler.new(GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
@@ -221,6 +225,16 @@ class TestDefaultParameters:
 		var dbl = autofree(doubler.partial_double(DoubleDefaultParameters).new())
 		var result = dbl.return_passed('foo', 'bar')
 		assert_eq(result, 'foobar')
+
+	func test_default_parameters_for_double_when_stubbed():
+		var dbl = autofree(doubler.double(DoubleDefaultParameters, DOUBLE_STRATEGY.SCRIPT_ONLY).new())
+		var params = GutUtils.StubParams.new(
+			dbl.defaulted_second_parameter.bind("jump"))\
+			.to_return('hello')
+		stubber.add_stub(params)
+		assert_eq(stubber.get_default_value(dbl, 'defaulted_second_parameter', 0), null)
+		assert_eq(stubber.get_default_value(dbl, 'defaulted_second_parameter', 1), 'p2')
+
 
 
 class TestMonkeyPatching:
@@ -290,3 +304,77 @@ class TestMonkeyPatching:
 		assert_almost_eq(elapsed, 1000, 300) # yea, 300 is what you need.
 
 
+class TestSingletons:
+	extends GutInternalTester
+
+	var doubler = null
+	var stubber = null
+
+	func before_each():
+		doubler = GutUtils.Doubler.new()
+		stubber = GutUtils.Stubber.new()
+		doubler.set_stubber(stubber)
+
+	func test_can_stub_singleton_method_via_class_to_return_value():
+		var params = GutUtils.StubParams.new(Time.get_ticks_msec).to_return(99)
+		stubber.add_stub(params)
+		var dbl = doubler.double_singleton(Time).new()
+		assert_eq(dbl.get_ticks_msec(), 99)
+
+	func test_can_stub_singleton_double_to_return_value():
+		var dbl = doubler.double_singleton(Time).new()
+		var params = GutUtils.StubParams.new(dbl.get_ticks_msec).to_return(10)
+		stubber.add_stub(params)
+		assert_eq(dbl.get_ticks_msec(), 10)
+
+	func test_can_stub_method_to_return_based_on_parameters():
+		var params = GutUtils.StubParams.new(OS.get_system_dir)\
+			.to_return("/asdf")\
+			.when_passed('foo', true)
+		stubber.add_stub(params)
+		var dbl = doubler.double_singleton(OS).new()
+		assert_eq(dbl.get_system_dir('bar', true), null)
+		assert_eq(dbl.get_system_dir('foo', true), '/asdf')
+
+	func test_can_stub_method_to_return_based_on_parameters_without_specifying_defaults():
+		var params = GutUtils.StubParams.new(OS.get_system_dir)\
+			.to_return("/asdf")\
+			.when_passed('foo', true)
+		stubber.add_stub(params)
+		var dbl = doubler.double_singleton(OS).new()
+		assert_eq(dbl.get_system_dir('bar'), null)
+		assert_eq(dbl.get_system_dir('foo'), '/asdf')
+
+	func test_can_stub_singleton_to_call_a_func():
+		var params = GutUtils.StubParams.new(OS.get_system_dir)\
+			.to_call(func(a, b): return '/hello')\
+			.when_passed('foo', true)
+		stubber.add_stub(params)
+		var dbl = doubler.double_singleton(OS).new()
+		assert_eq(dbl.get_system_dir('foo'), '/hello')
+
+	func test_can_stub_method_to_use_singleton_method():
+		var dbl = doubler.double_singleton(Time).new()
+		var params = GutUtils.StubParams.new(dbl.get_date_dict_from_unix_time)\
+			.to_use_singleton()
+		stubber.add_stub(params)
+		assert_eq(dbl.get_date_dict_from_unix_time(10), Time.get_date_dict_from_unix_time(10))
+
+	func test_default_method_paramters_for_input_singleton():
+		var dbl = doubler.double_singleton(Input).new()
+		var method = 'is_action_just_pressed'
+		assert_eq(stubber.get_default_value(dbl, method, 0), null)
+		assert_eq(stubber.get_default_value(dbl, method, 1), false)
+		# if(is_failing()):
+		# 	print(stubber.to_s())
+
+	func test_default_method_paramters_for_input_singleton_when_stubbed():
+		var dbl = doubler.double_singleton(Input).new()
+		var method = 'is_action_just_pressed'
+		var params = GutUtils.StubParams.new(
+			dbl.is_action_just_pressed.bind("jump"))\
+			.to_return(true)
+		stubber.add_stub(params)
+
+		assert_eq(stubber.get_default_value(dbl, method, 0), null)
+		assert_eq(stubber.get_default_value(dbl, method, 1), false)
