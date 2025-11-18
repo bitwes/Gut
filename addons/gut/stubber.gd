@@ -97,11 +97,7 @@ func add_stub(stub_params):
 	_stub_cache.append(stub_params)
 
 
-# Gets a stubbed return value for the object and method passed in.  If the
-# instance was stubbed it will use that, otherwise it will use the path and
-# subpath of the object to try to find a value.
-#
-# It will also use the optional list of parameter values to find a value.  If
+# It will use the optional list of parameter values to find a value.  If
 # the object was stubbed with no parameters than any parameters will match.
 # If it was stubbed with specific parameter values then it will try to match.
 # If the parameters do not match BUT there was also an empty parameter list stub
@@ -110,7 +106,7 @@ func add_stub(stub_params):
 #
 # Parameters
 # obj:  this should be an instance of a doubled object.
-# method:  the method called
+# method:  the method name
 # parameters:  optional array of parameter vales to find a return value for.
 func get_return(obj, method, parameters=null):
 	var stub_info = _find_action_stub(obj, method, parameters)

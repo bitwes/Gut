@@ -83,30 +83,8 @@ static var all_singletons = [
 	XRServer
 ]
 
-static var _singleton_names = []
-static var singleton_names = []:
-	get():
-		return _singleton_names
-	set(val): pass
-
+static var singleton_names = []
 static var class_ref_by_name = {}
-
-# So, I couldn't figure out how to get to a reference for a GDNative Class
-# using a string.  ClassDB has all thier names...so I made a hash using those
-# names and the classes.  Then I dynmaically make a script that has that as
-# the source and grab the hash out of it and return it.  Super Rube Golbergery,
-# but tons of fun.
-static func _make_crazy_dynamic_over_engineered_class_db_hash():
-	var text = "var all_the_classes: Dictionary = {\n"
-	var black_list = [
-	]
-	for classname in ClassDB.get_class_list():
-		if(!black_list.has(classname) and (ClassDB.can_instantiate(classname) or _singleton_names.has(classname))):
-			text += str('"', classname, '": ', classname, ", \n")
-
-	text += "}"
-	var inst =  GutUtils.create_script_from_source(text).new()
-	return inst.all_the_classes
 
 
 ## This dictionary defaults to all the native classes that we cannot call new
@@ -291,7 +269,6 @@ static func get_error_tracker():
 	return _error_tracker
 
 
-static var _dyn_gdscript = DynamicGdScript.new()
 
 
 # ##############################################################################
@@ -300,15 +277,38 @@ static var _dyn_gdscript = DynamicGdScript.new()
 static func _static_init() -> void:
 	if(!Engine.is_editor_hint()):
 		for entry in all_singletons:
-			_singleton_names.append(entry.get_class())
+			singleton_names.append(entry.get_class())
 
-		class_ref_by_name = _make_crazy_dynamic_over_engineered_class_db_hash()
+		class_ref_by_name = _create_class_dictionary()
 
 
+# So, I couldn't figure out how to get to a reference for a GDNative Class
+# using a string.  ClassDB has all thier names...so I made a hash using those
+# names and the classes.  Then I dynmaically make a script that has that as
+# the source and grab the hash out of it and return it.  Super Rube Golbergery,
+# but tons of fun.
+static func _create_class_dictionary():
+	var text = "var all_the_classes: Dictionary = {\n"
+	var black_list = [
+	]
+	for classname in ClassDB.get_class_list():
+		if(!black_list.has(classname) and (ClassDB.can_instantiate(classname) or singleton_names.has(classname))):
+			text += str('"', classname, '": ', classname, ", \n")
+
+	text += "}"
+	var inst =  GutUtils.create_script_from_source(text).new()
+	return inst.all_the_classes
+
+
+
+
+# ##############################################################################
+# Public Methods
+# ##############################################################################
 static func create_script_from_source(source, override_path=null):
 	var are_warnings_enabled = WarningsManager.are_warnings_enabled()
 	WarningsManager.enable_warnings(false)
-
+	var _dyn_gdscript = DynamicGdScript.new()
 	var DynamicScript = _dyn_gdscript.create_script_from_source(source, override_path)
 	if(typeof(DynamicScript) == TYPE_INT):
 		var l = get_logger()
@@ -669,7 +669,6 @@ static func add_line_numbers(contents):
 
 static func get_display_size():
 	return Engine.get_main_loop().get_viewport().get_visible_rect()
-
 
 
 static func find_method_meta(methods, method_name):
