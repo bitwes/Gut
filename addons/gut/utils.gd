@@ -42,48 +42,6 @@ enum TREAT_AS {
 	FAILURE,
 }
 
-static var all_singletons = [
-	AudioServer,
-	CameraServer,
-	ClassDB,
-	DisplayServer,
-	# I don't think this can be doubled unless we are running in the editor.
-	# EditorInterface,
-	Engine,
-	EngineDebugger,
-	GDExtensionManager,
-	Geometry2D,
-	Geometry3D,
-	IP,
-	Input,
-	InputMap,
-	JavaClassWrapper,
-	JavaScriptBridge,
-	Marshalls,
-	NativeMenu,
-	NavigationMeshGenerator,
-	NavigationServer2D,
-	NavigationServer3D,
-	OS,
-	Performance,
-	PhysicsServer2D,
-	PhysicsServer2DManager,
-	PhysicsServer3D,
-	PhysicsServer3DManager,
-	ProjectSettings,
-	RenderingServer,
-	ResourceLoader,
-	ResourceSaver,
-	ResourceUID,
-	TextServerManager,
-	ThemeDB,
-	Time,
-	TranslationServer,
-	WorkerThreadPool,
-	XRServer
-]
-
-static var singleton_names = []
 static var class_ref_by_name = {}
 
 
@@ -140,6 +98,9 @@ static var Doubler = LazyLoader.new('res://addons/gut/doubler.gd'):
 	set(val): pass
 static var DynamicGdScript = LazyLoader.new("res://addons/gut/dynamic_gdscript.gd") :
 	get: return DynamicGdScript.get_loaded()
+	set(val): pass
+static var GodotSingletons = LazyLoader.new('res://addons/gut/godot_singletons.gd') :
+	get: return GodotSingletons.get_loaded()
 	set(val): pass
 static var Gut = LazyLoader.new('res://addons/gut/gut.gd'):
 	get: return Gut.get_loaded()
@@ -276,13 +237,10 @@ static func get_error_tracker():
 # ##############################################################################
 static func _static_init() -> void:
 	if(!Engine.is_editor_hint()):
-		for entry in all_singletons:
-			singleton_names.append(entry.get_class())
-
 		class_ref_by_name = _create_class_dictionary()
 
 
-# So, I couldn't figure out how to get to a reference for a GDNative Class
+# So...I couldn't figure out how to get to a reference for a GDNative Class
 # using a string.  ClassDB has all thier names...so I made a hash using those
 # names and the classes.  Then I dynmaically make a script that has that as
 # the source and grab the hash out of it and return it.  Super Rube Golbergery,
@@ -292,7 +250,7 @@ static func _create_class_dictionary():
 	var black_list = [
 	]
 	for classname in ClassDB.get_class_list():
-		if(!black_list.has(classname) and (ClassDB.can_instantiate(classname) or singleton_names.has(classname))):
+		if(!black_list.has(classname) and (ClassDB.can_instantiate(classname) or GodotSingletons.names.has(classname))):
 			text += str('"', classname, '": ', classname, ", \n")
 
 	text += "}"
@@ -689,10 +647,14 @@ static func get_method_meta(object, method_name):
 
 
 static func is_singleton(thing):
-	if(typeof(thing) != TYPE_OBJECT):
+	if(typeof(thing) == TYPE_OBJECT):
+		return GodotSingletons.class_ref.has(thing)
+	elif(typeof(thing) == TYPE_STRING):
+		return GodotSingletons.names.has(thing)
+	else:
 		return false
 
-	return all_singletons.has(thing)
+
 
 
 static func is_singleton_double(thing):
