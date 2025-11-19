@@ -96,10 +96,20 @@ NavigationServer2D
 
 NavigationServer2D
 
+NavigationServer2DManager
+
+
+NavigationServer2DManager
+
 NavigationServer3D
 
 
 NavigationServer3D
+
+NavigationServer3DManager
+
+
+NavigationServer3DManager
 
 OS
 
