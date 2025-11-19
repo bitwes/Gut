@@ -42,7 +42,12 @@ enum TREAT_AS {
 	FAILURE,
 }
 
-static var class_ref_by_name = {}
+static var class_ref_by_name = {} :
+	get():
+		if(class_ref_by_name == {}):
+			class_ref_by_name = _create_class_dictionary()
+		return class_ref_by_name;
+
 
 
 ## This dictionary defaults to all the native classes that we cannot call new
@@ -235,16 +240,15 @@ static func get_error_tracker():
 # ##############################################################################
 # Methods
 # ##############################################################################
-static func _static_init() -> void:
-	if(!Engine.is_editor_hint()):
-		class_ref_by_name = _create_class_dictionary()
-
 
 # So...I couldn't figure out how to get to a reference for a GDNative Class
 # using a string.  ClassDB has all thier names...so I made a hash using those
 # names and the classes.  Then I dynmaically make a script that has that as
 # the source and grab the hash out of it and return it.  Super Rube Golbergery,
 # but tons of fun.
+#
+# This is lazy loaded into class_ref_by_name, it's only needed when finding
+# stubs.
 static func _create_class_dictionary():
 	var text = "var all_the_classes: Dictionary = {\n"
 	var black_list = [
