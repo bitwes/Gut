@@ -1,4 +1,3 @@
-var _class_db_name_hash = GutUtils.class_ref_by_name
 # var _str = GutUtils.Strutils.new()
 # -------------
 # {
@@ -33,12 +32,8 @@ func _get_entries_matching_target(target):
 
 	while(trav != null and !done):
 		if(GutUtils.is_singleton_double(trav)):
-			var sname = trav.__gutdbl_values.from_singleton
-			if(_class_db_name_hash.has(sname)):
-				trav = _class_db_name_hash[sname]
-				match_on.push_front(trav)
-			else:
-				done = true
+			trav = trav.__gutdbl.get_singleton()
+			match_on.push_front(trav)
 		elif(GutUtils.is_instance(trav)):
 			trav = trav.get_script()
 			match_on.push_front(trav)
@@ -48,7 +43,7 @@ func _get_entries_matching_target(target):
 				match_on.push_front(trav)
 			else:
 				var type_name = current.get_instance_base_type()
-				trav = _class_db_name_hash[type_name]
+				trav = GutUtils.class_ref_by_name[type_name]
 				match_on.push_front(trav)
 				done = true
 

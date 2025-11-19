@@ -4,7 +4,8 @@ var __gutdbl_values = {
 	stubber = {stubber_id},
 	spy = {spy_id},
 	gut = {gut_id},
-	from_singleton = '{singleton_name}',
+	singleton_name = '{singleton_name}',
+	singleton = {singleton_id},
 	is_partial = {is_partial},
 	doubled_methods = {doubled_methods},
 }

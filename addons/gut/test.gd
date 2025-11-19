@@ -2587,7 +2587,7 @@ func get_summary_text():
 ## Create a Double of [param thing].  [param thing] should be a Class, script,
 ## or scene.  See [wiki]Doubles[/wiki]
 func double(thing, double_strat=null, not_used_anymore=null):
-	if(GutUtils.all_singletons.has(thing)):
+	if(GutUtils.GodotSingletons.class_ref.has(thing)):
 		_lgr.error(str(thing, " is an Engine Singleton.  Use double_singleton to create a double of this instead."))
 		return null
 	elif(!_are_double_parameters_valid(thing, double_strat, not_used_anymore)):
@@ -2599,7 +2599,7 @@ func double(thing, double_strat=null, not_used_anymore=null):
 ## Create a Partial Double of [param thing].  [param thing] should be a Class,
 ## script, or scene.  See [wiki]Partial-Doubles[/wiki]
 func partial_double(thing, double_strat=null, not_used_anymore=null):
-	if(GutUtils.all_singletons.has(thing)):
+	if(GutUtils.GodotSingletons.class_ref.has(thing)):
 		_lgr.error(str(thing, " is an Engine Singleton.  Use partial_double_singleton to create a double of this instead."))
 		return null
 	elif(!_are_double_parameters_valid(thing, double_strat, not_used_anymore)):
@@ -2625,11 +2625,11 @@ func partial_double(thing, double_strat=null, not_used_anymore=null):
 ## [/codeblock]
 ## More information can be found at [wiki]Doubling-Singletons[/wiki]
 func double_singleton(singleton):
-	if(GutUtils.all_singletons.has(singleton)):
+	if(GutUtils.GodotSingletons.class_ref.has(singleton)):
 		return gut.get_doubler().double_singleton(singleton)
 	else:
 		var msg = str(singleton, " is not a known Engine Singleton.  Use double to create a double of this instead.  ",
-			"Known Singletons:  \n", "\n".join(GutUtils.singleton_names))
+			"Known Singletons:  \n", "\n".join(GutUtils.GodotSingletons.names))
 		_lgr.error(msg)
 		return null
 
@@ -2639,11 +2639,11 @@ func double_singleton(singleton):
 ## See [method double_singleton] and [wiki]Doubling-Singletons[/wiki] for
 ## more information.
 func partial_double_singleton(singleton):
-	if(GutUtils.all_singletons.has(singleton)):
+	if(GutUtils.GodotSingletons.class_ref.has(singleton)):
 		return gut.get_doubler().partial_double_singleton(singleton)
 	else:
 		var msg = str(singleton, " is not a known Engine Singleton.  Use partial_double to create a double of this instead.  ",
-			"Known Singletons:  \n", "\n".join(GutUtils.singleton_names))
+			"Known Singletons:  \n", "\n".join(GutUtils.GodotSingletons.names))
 		_lgr.error(msg)
 
 		return null

@@ -171,7 +171,7 @@ func _get_super_call_text(meta, args, singleton):
 		if(i != args.size() -1):
 			params += ', '
 	if(singleton != null):
-		return str('return await ', singleton.get_class(), '.', meta.name, '(', params, ')')
+		return str('return await __gutdbl.get_singleton().', meta.name, '(', params, ')')
 	else:
 		return str('return await super(', params, ')')
 

@@ -49,12 +49,9 @@ func set_strategy(strategy):
 	else:
 		_lgr.error(str('doubler.gd:  invalid double strategy ', strategy))
 
-
 var _method_maker = GutUtils.MethodMaker.new()
 func get_method_maker():
 	return _method_maker
-
-var _singleton_method_maker = GutUtils.MethodMaker.new()
 
 var _ignored_methods = GutUtils.OneToMany.new()
 func get_ignored_methods():
@@ -67,7 +64,6 @@ func get_ignored_methods():
 func _init(strategy=GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY):
 	set_logger(GutUtils.get_logger())
 	_strategy = strategy
-	_singleton_method_maker._func_text = GutUtils.get_file_as_text('res://addons/gut/double_templates/singleton_function_template.txt')
 
 
 func _get_indented_line(indents, text):
@@ -115,12 +111,12 @@ func _get_base_script_text(parsed, override_path, partial, included_methods):
 		"spy_id":spy_id,
 		"gut_id":gut_id,
 		"singleton_name":'',
+		"singleton_id":-1,
 		"is_partial":partial,
 		"doubled_methods":included_methods,
 	}
 
 	var values = {
-		# Top  sections
 		"extends":extends_text,
 		"double_data":_double_data_text.format(double_data_values),
 	}
@@ -148,6 +144,7 @@ func _get_singleton_text(parsed, included_methods, is_partial):
 		"spy_id":spy_id,
 		"gut_id":gut_id,
 		"singleton_name":parsed.singleton_name,
+		"singleton_id":parsed.singleton_id,
 		"is_partial":is_partial,
 		"doubled_methods":included_methods,
 	}
@@ -225,7 +222,7 @@ func _create_singleton_double(singleton, is_partial):
 
 	for key in parsed.methods_by_name:
 		if(!_ignored_methods.has(singleton, key)):
-			dbl_src += _singleton_method_maker.get_function_text(parsed.methods_by_name[key], singleton) + "\n"
+			dbl_src += _method_maker.get_function_text(parsed.methods_by_name[key], singleton) + "\n"
 
 	if(print_source):
 		var to_print :String = GutUtils.add_line_numbers(dbl_src)
