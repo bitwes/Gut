@@ -550,7 +550,7 @@ class TestDoubleSingletons:
 	func test_populates_gut_data_singleton_values():
 		var d = doubler.double_singleton(OS)
 		var inst = d.new()
-		assert_eq(inst.__gutdbl_values.from_singleton, "OS")
+		assert_eq(inst.__gutdbl_values.singleton_name, "OS")
 		assert_eq(inst.__gutdbl_values.singleton, OS.get_instance_id(), 'singleton instance id')
 
 

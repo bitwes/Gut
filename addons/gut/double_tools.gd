@@ -1,6 +1,6 @@
 var thepath = ''
 var subpath = ''
-var from_singleton = null
+var singleton_name = null
 var is_partial = null
 
 var double_ref : WeakRef = null
@@ -22,7 +22,7 @@ func _init(double = null):
 		spy_ref = weakref_from_id(values.spy)
 		gut_ref = weakref_from_id(values.gut)
 		singleton_ref = weakref_from_id(values.singleton)
-		from_singleton = values.from_singleton
+		singleton_name = values.singleton_name
 		is_partial = values.is_partial
 
 		if(gut_ref.get_ref() != null):
@@ -79,5 +79,5 @@ func get_singleton():
 	var to_return = singleton_ref.get_ref()
 	if(to_return == null):
 		push_error("Trying to get a singleton reference on a non-singleton double: ",
-			__gutdbl_values.from_singleton, "/", __gutdbl_values.singleton)
+			__gutdbl_values.singleton_name, "/", __gutdbl_values.singleton)
 	return to_return

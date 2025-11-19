@@ -658,7 +658,7 @@ static func is_singleton(thing):
 
 
 static func is_singleton_double(thing):
-	return is_double(thing) and thing.__gutdbl_values.from_singleton != ''
+	return is_double(thing) and thing.__gutdbl_values.singleton_name != ''
 
 
 # ##############################################################################

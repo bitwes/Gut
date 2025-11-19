@@ -9,7 +9,7 @@ var __gutdbl_values = {
 	stubber = -1,
 	spy = -1,
 	gut = -1,
-	from_singleton = '',
+	singleton_name = '',
 	singleton = -1,
 	is_partial = false,
 }
