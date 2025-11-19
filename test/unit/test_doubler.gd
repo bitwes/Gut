@@ -547,6 +547,13 @@ class TestDoubleSingletons:
 		assert_not_null(inst.__gutdbl)
 		assert_has_method(inst, '__gutdbl_done')
 
+	func test_populates_gut_data_singleton_values():
+		var d = doubler.double_singleton(OS)
+		var inst = d.new()
+		assert_eq(inst.__gutdbl_values.from_singleton, "OS")
+		assert_eq(inst.__gutdbl_values.singleton, OS.get_instance_id(), 'singleton instance id')
+
+
 	func test_double_has_singleton_methods():
 		var d = doubler.double_singleton(OS)
 		var inst = d.new()

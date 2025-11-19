@@ -115,12 +115,12 @@ func _get_base_script_text(parsed, override_path, partial, included_methods):
 		"spy_id":spy_id,
 		"gut_id":gut_id,
 		"singleton_name":'',
+		"singleton_id":-1,
 		"is_partial":partial,
 		"doubled_methods":included_methods,
 	}
 
 	var values = {
-		# Top  sections
 		"extends":extends_text,
 		"double_data":_double_data_text.format(double_data_values),
 	}
@@ -148,6 +148,7 @@ func _get_singleton_text(parsed, included_methods, is_partial):
 		"spy_id":spy_id,
 		"gut_id":gut_id,
 		"singleton_name":parsed.singleton_name,
+		"singleton_id":parsed.singleton_id,
 		"is_partial":is_partial,
 		"doubled_methods":included_methods,
 	}

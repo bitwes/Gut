@@ -9,6 +9,7 @@ var __gutdbl_values = {
 	spy = -1,
 	gut = -1,
 	from_singleton = '',
+	singleton = -1,
 	is_partial = false,
 }
 var __gutdbl = load('res://addons/gut/double_tools.gd').new(self)

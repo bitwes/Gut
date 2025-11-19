@@ -4,12 +4,14 @@ class ParsedSingleton:
 	var properties = {}
 	var signals = {}
 	var singleton_name = 'unknown'
+	var singleton_id = -1
 	var base_singleton = null
 
 	func _init(singleton):
 		base_singleton = singleton
 		var sname = singleton.get_class()
 		singleton_name = sname
+		singleton_id = singleton.get_instance_id()
 
 		for method in ClassDB.class_get_method_list(sname, true):
 			methods_by_name[method.name] = method
