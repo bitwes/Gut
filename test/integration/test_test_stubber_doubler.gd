@@ -163,7 +163,7 @@ class TestSingletonDoubling:
 
 		assert_eq(dbl_time.get_time_string_from_unix_time(1), "one")
 		assert_eq(dbl_time.get_time_string_from_unix_time(2), "two")
-		assert_null(dbl_time.get_time_string_from_unix_time(3))
+		assert_null(dbl_time.get_time_string_from_unix_time(3), 'nonstubbed value returns null')
 
 	func test_do_not_have_to_specify_defaulted_vaules_for_stub_to_match():
 		var dbl_input = _test.double_singleton(Input).new()
@@ -284,7 +284,6 @@ class TestTestsSmartDoubleMethod:
 		var inst = _test.double(InnerClasses.InnerA, DOUBLE_STRATEGY.SCRIPT_ONLY).new()
 		assert_does_not_have(inst.__gutdbl_values.doubled_methods, 'get_instance_id')
 
-
 	func test_when_passing_a_class_of_a_script_it_doubles_it():
 		var inst = _test.double(DoubleMe).new()
 		assert_eq(inst.__gutdbl.thepath, DOUBLE_ME_PATH)
@@ -293,10 +292,13 @@ class TestTestsSmartDoubleMethod:
 		var inst = _test.double(DoubleMeScene).instantiate()
 		assert_eq(inst.__gutdbl.thepath, DOUBLE_ME_SCENE_PATH)
 
-
 	func test_can_double_native_classes():
 		var inst = _test.double(Node2D).new()
 		assert_not_null(inst)
+
+	func test_doubled_natives_call_super_by_default():
+		var inst = _test.double(Node2D).new()
+		assert_not_null(inst.get_position())
 
 	func test_when_an_instance_is_passed_null_is_returned_and_an_error_is_generated():
 		var inst = autofree(Node2D.new())
@@ -331,13 +333,10 @@ class TestPartialDoubleMethod:
 		inst.set_value(10)
 		assert_eq(inst.get_value(), 10)
 
-	# TODO this test is tempramental.  It has something to do with the loading
-	# of the doubles I think.  Should be fixed.
 	func test_partial_double_scene():
 		var inst = _test.partial_double(DoubleMeScene).instantiate()
 		autofree(inst)
 		assert_eq(inst.return_hello(), 'hello', 'sometimes fails, should be fixed.')
-
 
 	func test_partial_double_inner():
 		_test.register_inner_classes(InnerClasses)
@@ -375,6 +374,18 @@ class TestPartialDoubleMethod:
 		_test.stub(inst, 'get_position').to_return(-1)
 		assert_eq(inst.get_position(), -1)
 
+	func test_can_stub_partial_doubled_native_class_to_do_nothing_before_creating_double():
+		_test.stub(Node2D, 'get_position').to_do_nothing()
+		var inst = _test.partial_double(Node2D).new()
+		autofree(inst)
+		assert_eq(inst.get_position(), null)
+
+	func test_can_stub_partial_doubled_native_class_to_do_nothing_after_creating_double():
+		var inst = _test.partial_double(Node2D).new()
+		_test.stub(Node2D, 'get_position').to_do_nothing()
+		autofree(inst)
+		assert_eq(inst.get_position(), null)
+
 	func test_can_spy_on_partial_doubled_native_class():
 		var pass_count = _test.get_pass_count()
 		var inst = autofree(_test.partial_double(Node2D).new())
@@ -382,12 +393,17 @@ class TestPartialDoubleMethod:
 		_test.assert_called(inst, 'set_position', [Vector2(100, 100)])
 		assert_eq(_test.get_pass_count(), pass_count + 1, 'tests have passed')
 
-
 	func test_when_an_instance_is_passed_null_is_returned_and_an_error_is_generated():
 		var inst = autofree(Node2D.new())
 		var d = _test.partial_double(inst)
 		assert_null(d, 'double is null')
 		assert_tracked_gut_error(_test)
+
+	func test_can_override_partial_double_stubs():
+		var inst = _test.partial_double(DoubleMe).new()
+		_test.stub(DoubleMe, 'get_value').to_do_nothing()
+		inst.set_value(10)
+		assert_null(inst.get_value())
 
 
 class TestOverridingParameters:
@@ -438,18 +454,15 @@ class TestOverridingParameters:
 		pass_test('we got here')
 
 	func test_issue_246_rpc_id_varargs():
-		_test.stub(Node, 'rpc_id').to_do_nothing().param_count(5)
-
 		var inst =  _test.double(Node).new()
+		_test.stub(Node, 'rpc_id').to_do_nothing()
 		add_child_autofree(inst)
-
 		inst.rpc_id(1, 'foo', '3', '4', '5')
 		_test.assert_called(inst, 'rpc_id', [1, 'foo', ['3', '4', '5']])
 		assert_eq(_test.get_pass_count(), 1)
 
 	func test_issue_246_rpc_id_varargs2():
-		stub(Node, 'rpc_id').to_do_nothing().param_count(5)
-
+		stub(Node, 'rpc_id').to_do_nothing()
 		var inst = double(Node).new()
 		add_child_autofree(inst)
 		inst.rpc_id(1, 'foo', '3', '4', '5')

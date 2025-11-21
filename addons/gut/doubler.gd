@@ -83,6 +83,7 @@ func _stub_to_call_super(parsed, method_name):
 	else:
 		params = GutUtils.StubParams.new(parsed.script_path, method_name, parsed.subpath)
 	params.to_call_super()
+	params.is_script_default  = true
 	_stubber.add_stub(params)
 
 
@@ -195,7 +196,7 @@ func _create_double(parsed, strategy, override_path, partial):
 		for method in parsed.get_super_methods():
 			if(_is_method_eligible_for_doubling(parsed, method)):
 				included_methods.append(method.meta.name)
-				# _stub_to_call_super(parsed, method.meta.name)
+				_stub_to_call_super(parsed, method.meta.name)
 				dbl_src += _get_func_text(method.meta)
 
 	var base_script = _get_base_script_text(parsed, override_path, partial, included_methods)
