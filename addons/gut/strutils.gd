@@ -122,8 +122,8 @@ func type2str(thing):
 			var double_path = _get_filename(thing.__gutdbl.thepath)
 			if(thing.__gutdbl.subpath != ''):
 				double_path += str('/', thing.__gutdbl.subpath)
-			elif(thing.__gutdbl.from_singleton != ''):
-				double_path = thing.__gutdbl.from_singleton + " Singleton"
+			elif(thing.__gutdbl.singleton_name != ''):
+				double_path = thing.__gutdbl.singleton_name + " Singleton"
 
 			var double_type = "double"
 			if(thing.__gutdbl.is_partial):

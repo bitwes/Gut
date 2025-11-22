@@ -69,6 +69,10 @@ class TestQuit:
 
 
 	func test_does_not_quit_when_gut_config_does_not_say_to():
+		if(GutUtils.is_headless()):
+			pending("cannot be tested when run headless.")
+			return
+
 		var gr = _create_runner()
 		add_child_autofree(gr)
 
@@ -138,6 +142,10 @@ class TestQuit:
 
 
 	func test_does_not_quit_when_exit_on_success_but_has_failing_tests():
+		if(GutUtils.is_headless()):
+			pending("cannot be tested when run headless.")
+			return
+
 		var gr = _create_runner()
 		gr.gut_config.options.should_exit_on_success = true
 		stub(gr.gut, 'get_fail_count').to_return(1)

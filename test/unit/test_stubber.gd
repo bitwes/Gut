@@ -61,6 +61,9 @@ func print_info(c):
 func before_each():
 	gr.stubber = HackedStubber.new()
 
+func after_each():
+	gr.stubber.clear()
+
 func test_has_logger():
 	assert_has_logger(gr.stubber)
 
@@ -224,6 +227,39 @@ func test_get_call_this_returns_method_on_match():
 	var inst = ToStub.new()
 	assert_eq(gr.stubber.get_call_this(inst, 'method'), call_this)
 
+func test_when_multiple_matches_of_same_type_found_the_lastest_is_used():
+	var sp = StubParamsClass.new(ToStub, 'method')
+	sp.to_return(1)
+	gr.stubber.add_stub(sp)
+
+	sp = StubParamsClass.new(ToStub, 'method')
+	sp.to_return(2)
+	gr.stubber.add_stub(sp)
+
+	sp = StubParamsClass.new(ToStub, 'method')
+	sp.to_return(3)
+	gr.stubber.add_stub(sp)
+
+	var inst = ToStub.new()
+	assert_eq(gr.stubber.get_return(inst, 'method'), 3)
+
+func test_when_multiple_matches_latest_is_used():
+	var sp = StubParamsClass.new(ToStub, 'method')
+	sp.to_return(1)
+	gr.stubber.add_stub(sp)
+
+	sp = StubParamsClass.new(ToStub, 'method')
+	sp.to_return(2)
+	gr.stubber.add_stub(sp)
+
+	sp = StubParamsClass.new(ToStub, 'method')
+	sp.to_call_super()
+	gr.stubber.add_stub(sp)
+
+	var inst = ToStub.new()
+	assert_null(gr.stubber.get_return(inst, 'method'), 'return value')
+	assert_true(gr.stubber.should_call_super(inst, 'method'), 'should call super')
+
 
 # ----------------
 # Default Parameter Values
@@ -271,3 +307,42 @@ func test_draw_parameter_method_meta():
 	var meta = find_method_meta(ToStub.get_script_method_list(), 'default_value_method')
 	gr.stubber.stub_defaults_from_meta(ToStub, meta)
 	assert_eq(gr.stubber.get_default_value(ToStub, 'default_value_method', 0), 'a')
+
+
+func test_default_method_paramters_for_input_singleton():
+	var method = 'is_action_just_pressed'
+	var meta = find_method_meta(Input.get_method_list(), method)
+	gr.stubber.stub_defaults_from_meta(Input, meta)
+	assert_eq(gr.stubber.get_default_value(Input, method, 0), null)
+	assert_eq(gr.stubber.get_default_value(Input, method, 1), false)
+
+
+func test_cache_added_when_getting_return():
+	var s = partial_double(Stubber).new()
+	var ref = RefCounted.new()
+	s.get_return(ref, 'one')
+	assert_called(s._add_cache)
+
+func test_cache_added_when_calling_should_call_super():
+	var s = partial_double(Stubber).new()
+	var ref = double(RefCounted).new()
+	s.should_call_super(ref, 'one')
+	assert_called(s._add_cache)
+
+func test_cache_added_when_calling_get_call_this():
+	var s = partial_double(Stubber).new()
+	var ref = double(RefCounted).new()
+	s.get_call_this(ref, 'one')
+	assert_called(s._add_cache)
+
+func test_cache_added_when_calling_get_parameter_defaults():
+	var s = partial_double(Stubber).new()
+	var ref = double(RefCounted).new()
+	s.get_parameter_defaults(ref, 'one')
+	assert_called(s._add_cache)
+
+func test_cache_added_when_calling_get_default_value():
+	var s = partial_double(Stubber).new()
+	var ref = double(RefCounted).new()
+	s.get_default_value(ref, 'get_reference_count', 0)
+	assert_called(s._add_cache)

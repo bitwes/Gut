@@ -15,9 +15,13 @@ var parameters = null # the parameter values to match method call on.
 var stub_method = null
 var call_super = false
 var call_this = null
+var locked = false
 
-# Whether this is a stub for default parameter values as they are defined in
-# the script, and not an overridden default value.
+# When this stub is a parameter stub, this indicates that these are the defaults
+# defined in the script
+# When this stub is an action stub, this indicates it is a default stub added
+# by the stubber.  This is currently used to stub native methods to call super
+# by default, but still be able to override that stub with any other stub.
 var is_script_default = false
 
 var parameter_count = -1 :
@@ -60,6 +64,13 @@ func _init(target=null, method=null, _subpath=null):
 		_method_meta = method
 		_load_defaults_from_metadata(method)
 		is_script_default = true
+	elif(stub_target != null and stub_method != null and typeof(stub_target) != TYPE_STRING):
+		if(!GutUtils.is_native_class(stub_target)):
+			var method_list = stub_target.get_method_list()
+			if(method_list != null):
+				var meta = GutUtils.find_method_meta(method_list, stub_method)
+				if(meta != null):
+					_method_meta = meta
 
 
 func _load_defaults_from_metadata(meta):
@@ -79,10 +90,20 @@ func _get_method_meta():
 	return _method_meta
 
 
+func _error_if_locked():
+	if(locked):
+		push_error("Cannot change stub as it has been locked.")
+		return true
+	else:
+		return false
+
+
 # -------------------------
 # Public
 # -------------------------
 func to_return(val):
+	if(_error_if_locked()):
+		return
 	return_val = val
 	call_super = false
 	_is_return_override = true
@@ -96,12 +117,22 @@ func to_do_nothing():
 
 
 func to_call_super():
+	if(_error_if_locked()):
+		return
+
 	call_super = true
 	_is_call_override = true
 	return self
 
 
+func to_use_singleton():
+	return to_call_super()
+
+
 func to_call(callable : Callable):
+	if(_error_if_locked()):
+		return
+
 	call_this = callable
 	_is_call_override = true
 	return self
@@ -124,9 +155,12 @@ func param_count(_x):
 
 
 func param_defaults(values):
+	if(_error_if_locked()):
+		return
+
 	var meta = _get_method_meta()
 	if(meta != {} and meta.flags & METHOD_FLAG_VARARG):
-		_lgr.error("Cannot stub defaults for methods with varargs.")
+		_lgr.error("Cannot stub defaults for methods with varargs:  " + meta.name)
 	else:
 		parameter_defaults = values
 		_is_defaults_override = true
@@ -153,7 +187,11 @@ func to_s():
 	var base_string = str(stub_target, '.', stub_method)
 
 	if(parameter_defaults.size() > 0):
-		base_string += str(" defaults ", parameter_defaults)
+		if(is_script_default):
+			base_string += " SCRIPT DEFAULTS"
+		else:
+			base_string += " STUB DEFAULTS"
+		base_string += str(" ", parameter_defaults)
 
 	if(call_super):
 		base_string += " to call SUPER"

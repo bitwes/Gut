@@ -1,6 +1,7 @@
 class_name GutInternalTester
 extends GutTest
 
+# Created from @GlobalScope properties documentation
 var verbose = false
 
 const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
@@ -181,6 +182,11 @@ func new_wired_test(gut_instance):
 # 	t.set_logger(logger)
 # 	return t
 # ----------------------------
+func _print_errors_if_failing(error_tracker):
+	if(is_failing()):
+		var errors = error_tracker.get_current_test_errors()
+		for err in errors:
+			gut.p(str(" - ", err.code))
 
 
 
@@ -209,6 +215,17 @@ func assert_tracked_gut_error(thing=gut, count=1):
 			err.handled = true
 			consumed_count += 1
 	assert_eq(consumed_count, count, "gut error was found.")
+	_print_errors_if_failing(_get_tracker_from(thing))
+
+func assert_tracked_gut_error_text(thing, text):
+	var consumed_count = 0
+	var errors = _get_tracker_from(thing).get_current_test_errors()
+	for err in errors:
+		if(err.is_gut_error() and err.code.find(text) != -1):
+			err.handled = true
+			consumed_count += 1
+	assert_eq(consumed_count, 1, "gut error with text. '" + text + "'")
+	_print_errors_if_failing(_get_tracker_from(thing))
 
 
 func assert_tracked_push_error(thing=gut, count=1):
@@ -219,6 +236,7 @@ func assert_tracked_push_error(thing=gut, count=1):
 			err.handled = true
 			consumed_count += 1
 	assert_eq(consumed_count, count, "push_error error was found.")
+	_print_errors_if_failing(_get_tracker_from(thing))
 
 
 func assert_tracked_engine_error(thing=gut, count=1):
@@ -229,6 +247,7 @@ func assert_tracked_engine_error(thing=gut, count=1):
 			err.handled = true
 			consumed_count += 1
 	assert_eq(consumed_count, count, "engine error was found.")
+	_print_errors_if_failing(_get_tracker_from(thing))
 
 
 func skip_if_debugger_active():

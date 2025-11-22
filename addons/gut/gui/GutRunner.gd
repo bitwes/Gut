@@ -97,7 +97,8 @@ func _write_results_for_gut_panel():
 
 func _handle_quit(should_exit, should_exit_on_success, override_exit_code=EXIT_OK):
 	var quitting_time = should_exit or \
-		(should_exit_on_success and gut.get_fail_count() == 0)
+		(should_exit_on_success and gut.get_fail_count() == 0) or \
+		GutUtils.is_headless()
 
 	if(!quitting_time):
 		if(should_exit_on_success):
@@ -184,11 +185,14 @@ func run_tests(show_gui=true):
 			_gut_layer.add_child(gut)
 		else:
 			add_child(gut)
-	
+
 	if(!gut.end_run.is_connected(_on_tests_finished)):
 		gut.end_run.connect(_on_tests_finished)
 
 	gut_config.apply_options(gut)
+	if GutUtils.is_headless():
+		gut._ignore_pause_before_teardown = true
+
 	var run_rest_of_scripts = gut_config.options.unit_test_name == ''
 	GutErrorTracker.register_logger(error_tracker)
 	gut.test_scripts(run_rest_of_scripts)

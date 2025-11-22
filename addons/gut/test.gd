@@ -310,7 +310,7 @@ func _convert_spy_args(inst, method_name, parameters):
 				"3rd parameter to assert_called not supported when using a Callable."
 		elif(method_name != null):
 			to_return.invalid_message =\
-				"2nd parameter to assert_called not supported when using a Callable."
+				"2nd parameter to assert_called not supported when using a Callable.  Bind parameter values to the callable instead."
 		else:
 			if(inst.get_bound_arguments_count() > 0):
 				to_return.arguments = inst.get_bound_arguments()
@@ -328,23 +328,6 @@ func _get_typeof_string(the_type):
 		to_return += str(the_type)
 	return to_return
 
-
-# Validates the singleton_name is a string and exists.  Errors when conditions
-# are not met.  Returns true/false if singleton_name is valid or not.
-func _validate_singleton_name(singleton_name):
-	var is_valid = true
-	if(typeof(singleton_name) != TYPE_STRING):
-		_lgr.error("double_singleton requires a Godot singleton name, you passed " + _str(singleton_name))
-		is_valid = false
-	# Sometimes they have underscores in front of them, sometimes they do not.
-	# The doubler is smart enought of ind the right thing, so this has to be
-	# that smart as well.
-	elif(!ClassDB.class_exists(singleton_name) and !ClassDB.class_exists('_' + singleton_name)):
-		var txt = str("The singleton [", singleton_name, "] could not be found.  ",
-					"Check the GlobalScope page for a list of singletons.")
-		_lgr.error(txt)
-		is_valid = false
-	return is_valid
 
 
 # Checks the object for 'get_' and 'set_' methods for the specified property.
@@ -2604,7 +2587,10 @@ func get_summary_text():
 ## Create a Double of [param thing].  [param thing] should be a Class, script,
 ## or scene.  See [wiki]Doubles[/wiki]
 func double(thing, double_strat=null, not_used_anymore=null):
-	if(!_are_double_parameters_valid(thing, double_strat, not_used_anymore)):
+	if(GutUtils.is_singleton(thing)):
+		_lgr.error(str(thing, " is an Engine Singleton.  Use double_singleton to create a double of this instead."))
+		return null
+	elif(!_are_double_parameters_valid(thing, double_strat, not_used_anymore)):
 		return null
 
 	return _smart_double(thing, double_strat, false)
@@ -2613,28 +2599,55 @@ func double(thing, double_strat=null, not_used_anymore=null):
 ## Create a Partial Double of [param thing].  [param thing] should be a Class,
 ## script, or scene.  See [wiki]Partial-Doubles[/wiki]
 func partial_double(thing, double_strat=null, not_used_anymore=null):
-	if(!_are_double_parameters_valid(thing, double_strat, not_used_anymore)):
+	if(GutUtils.is_singleton(thing)):
+		_lgr.error(str(thing, " is an Engine Singleton.  Use partial_double_singleton to create a double of this instead."))
+		return null
+	elif(!_are_double_parameters_valid(thing, double_strat, not_used_anymore)):
 		return null
 
 	return _smart_double(thing, double_strat, true)
 
 
-## @internal
-func double_singleton(singleton_name):
-	return null
-	# var to_return = null
-	# if(_validate_singleton_name(singleton_name)):
-	# 	to_return = gut.get_doubler().double_singleton(singleton_name)
-	# return to_return
+## Creates a psuedo-double of an Engine Singleton.  These doubles wrap around
+## the singleton, and do not inherit from them.  These doubles do not replace
+## the Engine Singleton instance.  You must use a local reference to the Engine
+## Singleton that the double can be injected into.
+## [codeblock]
+##     class_name UsesTime
+##     var t := Time
+## [/codeblock]
+## [codeblock]
+##     extends GutTest
+##     func test_something():
+##         var dbl_time = partial_double_singleton(Time).new()
+##         var inst = UsesTime.new()
+##         inst.t = dbl_time
+## [/codeblock]
+## More information can be found at [wiki]Doubling-Singletons[/wiki]
+func double_singleton(singleton):
+	if(GutUtils.GodotSingletons.class_ref.has(singleton)):
+		return gut.get_doubler().double_singleton(singleton)
+	else:
+		var msg = str(singleton, " is not a known Engine Singleton.  Use double to create a double of this instead.  ",
+			"Known Singletons:  \n", "\n".join(GutUtils.GodotSingletons.names))
+		_lgr.error(msg)
+		return null
 
+## This creates a partial double of a singleton, where all methods are intially
+## stubbed to punch through to the Engine Singleton they wrap around.
+##
+## See [method double_singleton] and [wiki]Doubling-Singletons[/wiki] for
+## more information.
+func partial_double_singleton(singleton):
+	if(GutUtils.GodotSingletons.class_ref.has(singleton)):
+		return gut.get_doubler().partial_double_singleton(singleton)
+	else:
+		var msg = str(singleton, " is not a known Engine Singleton.  Use partial_double to create a double of this instead.  ",
+			"Known Singletons:  \n", "\n".join(GutUtils.GodotSingletons.names))
+		_lgr.error(msg)
 
-## @internal
-func partial_double_singleton(singleton_name):
-	return null
-	# var to_return = null
-	# if(_validate_singleton_name(singleton_name)):
-	# 	to_return = gut.get_doubler().partial_double_singleton(singleton_name)
-	# return to_return
+		return null
+
 
 
 ## This was implemented to allow the doubling of classes with static methods.
