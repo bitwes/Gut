@@ -32,7 +32,9 @@ func _add_cache():
 # passed in obj is.
 #
 # obj can be an instance, class, or a path.
-func _find_stub(obj, method, parameters=null, find_overloads=false):
+func _find_action_stub(obj, method, parameters=null):
+	_add_cache()
+
 	var to_return = null
 	var matches = action_stubs.get_all_stubs(obj, method)
 	var param_match = null
@@ -44,10 +46,23 @@ func _find_stub(obj, method, parameters=null, find_overloads=false):
 
 	for i in range(matches.size()):
 		var cur_stub = matches[i]
-		if(cur_stub.parameters == parameters):
+		if(cur_stub.is_script_default):
+			default_match = cur_stub
+		elif(cur_stub.parameters == parameters):
 			param_match = cur_stub
-
-		if(cur_stub.parameters == null and !cur_stub.is_default_override_only()):
+		elif(cur_stub._method_meta != {} and cur_stub.parameters != null and cur_stub.parameters.size() < cur_stub._method_meta.args.size()):
+			var params = cur_stub.parameters
+			var defaults = get_parameter_defaults(obj, method)
+			if(params != null):
+				if(defaults != null):
+					for j in range(params.size() -1, defaults.size() - params.size()):
+						params.append(defaults[j + 1])
+				else:
+					pass
+					# print("NO DEFAULTS for ", obj, '.', method)
+			if(params == cur_stub.parameters):
+				param_match = cur_stub
+		elif(cur_stub.parameters == null and !cur_stub.is_default_override_only()):
 			null_match = cur_stub
 
 	if(default_match != null):
@@ -159,7 +174,11 @@ func get_default_value(obj, method, p_index):
 
 
 func clear():
-	returns.clear()
+	_stub_cache.clear()
+	if(parameter_stubs != null):
+		parameter_stubs.clear()
+	if(action_stubs != null):
+		action_stubs.clear()
 
 
 func get_logger():
