@@ -61,6 +61,7 @@ class TestTheBasics:
 
 		dt.handle_other_stubs('set_foo', [1])
 		assert_eq(call_this_was_called, 1)
+		stbr.clear()
 
 
 	func test_handle_other_stubs_returns_value():
@@ -78,3 +79,4 @@ class TestTheBasics:
 
 		var result = dt.handle_other_stubs('get_foo', [])
 		assert_eq(result, 'asdf')
+		stbr.clear()

@@ -61,6 +61,9 @@ func print_info(c):
 func before_each():
 	gr.stubber = HackedStubber.new()
 
+func after_each():
+	gr.stubber.clear()
+
 func test_has_logger():
 	assert_has_logger(gr.stubber)
 

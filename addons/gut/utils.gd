@@ -665,6 +665,9 @@ static func is_singleton_double(thing):
 	return is_double(thing) and thing.__gutdbl_values.singleton_name != ''
 
 
+
+static func is_headless():
+	return DisplayServer.get_name() == "headless"
 # ##############################################################################
 #(G)odot (U)nit (T)est class
 #

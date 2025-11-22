@@ -401,6 +401,7 @@ class TestPartialDoubleMethod:
 
 	func test_can_override_partial_double_stubs():
 		var inst = _test.partial_double(DoubleMe).new()
+		autofree(inst)
 		_test.stub(DoubleMe, 'get_value').to_do_nothing()
 		inst.set_value(10)
 		assert_null(inst.get_value())

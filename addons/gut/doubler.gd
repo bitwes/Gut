@@ -66,6 +66,11 @@ func _init(strategy=GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY):
 	_strategy = strategy
 
 
+func _notification(what: int) -> void:
+	if(what == NOTIFICATION_PREDELETE):
+		if(_stubber != null):
+			_stubber.clear()
+
 func _get_indented_line(indents, text):
 	var to_return = ''
 	for _i in range(indents):

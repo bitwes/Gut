@@ -3,7 +3,7 @@ var action_stubs = GutUtils.Stubs.new()
 
 var _lgr = GutUtils.get_logger()
 var _strutils = GutUtils.Strutils.new()
-# Since StubParams can be chained, when add_params does not get the completely
+# Since StubParams can be chained, add_params does not get the completely
 # configured instance.  All stubs are added to this cache first, then whenever
 # a retrieval is attempted the cache is flushed into parameter_stubs and
 # action_stubs.  This was introduced because it was easier to keep parameter
@@ -175,8 +175,11 @@ func get_default_value(obj, method, p_index):
 
 
 func clear():
-	parameter_stubs.clear()
-	action_stubs.clear()
+	_stub_cache.clear()
+	if(parameter_stubs != null):
+		parameter_stubs.clear()
+	if(action_stubs != null):
+		action_stubs.clear()
 
 
 func get_logger():
