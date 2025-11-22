@@ -1,4 +1,3 @@
-# var _str = GutUtils.Strutils.new()
 # -------------
 # {
 # 	object(script or instance):{

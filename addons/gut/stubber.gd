@@ -15,7 +15,6 @@ var _stub_cache = []
 func _add_cache():
 	for stub_params in _stub_cache:
 		stub_params.logger = _lgr
-		stub_params.stubber = self
 
 		if(stub_params.is_defaults_override()):
 			parameter_stubs.add_stub(stub_params)

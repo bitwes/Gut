@@ -2587,7 +2587,7 @@ func get_summary_text():
 ## Create a Double of [param thing].  [param thing] should be a Class, script,
 ## or scene.  See [wiki]Doubles[/wiki]
 func double(thing, double_strat=null, not_used_anymore=null):
-	if(GutUtils.GodotSingletons.class_ref.has(thing)):
+	if(GutUtils.is_singleton(thing)):
 		_lgr.error(str(thing, " is an Engine Singleton.  Use double_singleton to create a double of this instead."))
 		return null
 	elif(!_are_double_parameters_valid(thing, double_strat, not_used_anymore)):
@@ -2599,7 +2599,7 @@ func double(thing, double_strat=null, not_used_anymore=null):
 ## Create a Partial Double of [param thing].  [param thing] should be a Class,
 ## script, or scene.  See [wiki]Partial-Doubles[/wiki]
 func partial_double(thing, double_strat=null, not_used_anymore=null):
-	if(GutUtils.GodotSingletons.class_ref.has(thing)):
+	if(GutUtils.is_singleton(thing)):
 		_lgr.error(str(thing, " is an Engine Singleton.  Use partial_double_singleton to create a double of this instead."))
 		return null
 	elif(!_are_double_parameters_valid(thing, double_strat, not_used_anymore)):
