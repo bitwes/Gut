@@ -19,8 +19,11 @@ var call_super = false
 var call_this = null
 var locked = false
 
-# Whether this is a stub for default parameter values as they are defined in
-# the script, and not an overridden default value.
+# When this stub is a parameter stub, this indicates that these are the defaults
+# defined in the script
+# When this stub is an action stub, this indicates it is a default stub added
+# by the stubber.  This is currently used to stub native methods to call super
+# by default, but still be able to override that stub with any other stub.
 var is_script_default = false
 
 var parameter_count = -1 :

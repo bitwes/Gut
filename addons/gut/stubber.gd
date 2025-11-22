@@ -3,7 +3,7 @@ var action_stubs = GutUtils.Stubs.new()
 
 var _lgr = GutUtils.get_logger()
 var _strutils = GutUtils.Strutils.new()
-# Since StubParams can be chained, when add_params does not get the completely
+# Since StubParams can be chained, add_params does not get the completely
 # configured instance.  All stubs are added to this cache first, then whenever
 # a retrieval is attempted the cache is flushed into parameter_stubs and
 # action_stubs.  This was introduced because it was easier to keep parameter
@@ -15,7 +15,6 @@ var _stub_cache = []
 func _add_cache():
 	for stub_params in _stub_cache:
 		stub_params.logger = _lgr
-		stub_params.stubber = self
 
 		if(stub_params.is_defaults_override()):
 			parameter_stubs.add_stub(stub_params)
@@ -33,53 +32,40 @@ func _add_cache():
 # passed in obj is.
 #
 # obj can be an instance, class, or a path.
-func _find_action_stub(obj, method, parameters=null, find_overloads=false):
-	_add_cache()
-
+func _find_stub(obj, method, parameters=null, find_overloads=false):
 	var to_return = null
 	var matches = action_stubs.get_all_stubs(obj, method)
 	var param_match = null
 	var null_match = null
-	var overload_match = null
+	var default_match = null
 
 	if(matches.size() == 0):
 		return null
 
 	for i in range(matches.size()):
 		var cur_stub = matches[i]
-
 		if(cur_stub.parameters == parameters):
 			param_match = cur_stub
-		elif(cur_stub._method_meta != {} and cur_stub.parameters != null and cur_stub.parameters.size() < cur_stub._method_meta.args.size()):
-			var params = cur_stub.parameters
-			var defaults = get_parameter_defaults(obj, method)
-			if(params != null):
-				if(defaults != null):
-					for j in range(params.size() -1, defaults.size() - params.size()):
-						params.append(defaults[j + 1])
-				else:
-					pass
-					# print("NO DEFAULTS for ", obj, '.', method)
-			if(params == cur_stub.parameters):
-				param_match = cur_stub
 
 		if(cur_stub.parameters == null and !cur_stub.is_default_override_only()):
 			null_match = cur_stub
 
-		if(cur_stub.is_defaults_override):
-			if(overload_match == null || overload_match.is_script_default):
-				overload_match = cur_stub
+	if(default_match != null):
+		to_return = default_match
 
-	if(find_overloads and overload_match != null):
-		to_return = overload_match
 	# We have matching parameter values so return the stub value for that
-	elif(param_match != null):
+	if(param_match != null):
 		to_return = param_match
 	# We found a case where the parameters were not specified so return
 	# parameters for that.  Only do this if the null match is not *just*
 	# a paramerter override stub.
 	elif(null_match != null):
 		to_return = null_match
+
+	# if(to_return != null):
+	# 	print("  USING ", to_return, ' = ', to_return.to_s())
+	# else:
+	# 	print("  USING null")
 
 	return to_return
 
@@ -173,8 +159,7 @@ func get_default_value(obj, method, p_index):
 
 
 func clear():
-	parameter_stubs.clear()
-	action_stubs.clear()
+	returns.clear()
 
 
 func get_logger():

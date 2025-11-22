@@ -61,6 +61,9 @@ func print_info(c):
 func before_each():
 	gr.stubber = HackedStubber.new()
 
+func after_each():
+	gr.stubber.clear()
+
 func test_has_logger():
 	assert_has_logger(gr.stubber)
 
@@ -223,6 +226,39 @@ func test_get_call_this_returns_method_on_match():
 	gr.stubber.add_stub(sp)
 	var inst = ToStub.new()
 	assert_eq(gr.stubber.get_call_this(inst, 'method'), call_this)
+
+func test_when_multiple_matches_of_same_type_found_the_lastest_is_used():
+	var sp = StubParamsClass.new(ToStub, 'method')
+	sp.to_return(1)
+	gr.stubber.add_stub(sp)
+
+	sp = StubParamsClass.new(ToStub, 'method')
+	sp.to_return(2)
+	gr.stubber.add_stub(sp)
+
+	sp = StubParamsClass.new(ToStub, 'method')
+	sp.to_return(3)
+	gr.stubber.add_stub(sp)
+
+	var inst = ToStub.new()
+	assert_eq(gr.stubber.get_return(inst, 'method'), 3)
+
+func test_when_multiple_matches_latest_is_used():
+	var sp = StubParamsClass.new(ToStub, 'method')
+	sp.to_return(1)
+	gr.stubber.add_stub(sp)
+
+	sp = StubParamsClass.new(ToStub, 'method')
+	sp.to_return(2)
+	gr.stubber.add_stub(sp)
+
+	sp = StubParamsClass.new(ToStub, 'method')
+	sp.to_call_super()
+	gr.stubber.add_stub(sp)
+
+	var inst = ToStub.new()
+	assert_null(gr.stubber.get_return(inst, 'method'), 'return value')
+	assert_true(gr.stubber.should_call_super(inst, 'method'), 'should call super')
 
 
 # ----------------

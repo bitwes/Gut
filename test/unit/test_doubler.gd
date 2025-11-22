@@ -71,7 +71,7 @@ class TestTheBasics:
 	func test_get_set_stubber():
 		var dblr = Doubler.new()
 		var default_stubber = dblr.get_stubber()
-		assert_accessors(dblr, 'stubber', default_stubber, GDScript.new())
+		assert_accessors(dblr, 'stubber', default_stubber, GutUtils.Stubber.new())
 
 	func test_can_get_set_spy():
 		assert_accessors(Doubler.new(), 'spy', null, GDScript.new())
@@ -272,7 +272,6 @@ class TestDoubleStrategyIncludeNative:
 		doubler = Doubler.new(GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
 		doubler.set_stubber(stubber)
 		doubler.print_source = false
-
 
 	func test_built_in_overloading_ony_happens_on_full_strategy():
 		doubler.set_strategy(GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY)
@@ -527,7 +526,6 @@ class TestDoubleSingletons:
 		var lgr = GutUtils.GutLogger.new()
 		lgr.set_gut(gut)
 		doubler.set_logger(lgr)
-
 
 	func test_can_make_a_double_of_OS():
 		var d = doubler.double_singleton(Input)
