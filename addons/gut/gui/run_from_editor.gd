@@ -13,7 +13,11 @@ func _init() -> void:
 
 @warning_ignore("unsafe_method_access")
 func _ready() -> void:
+	_post_ready.call_deferred()
+
+
+func _post_ready():
 	var runner : Node = load("res://addons/gut/gui/GutRunner.tscn").instantiate()
-	add_child(runner)
+	get_tree().root.add_child(runner)
 	runner.run_from_editor()
 	GutLoader.restore_ignore_addons()
