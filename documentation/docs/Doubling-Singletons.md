@@ -28,7 +28,7 @@ func test_player_does_something_with_input():
         .when_passed("jump")
     ...
 ```
-# Differences to a normal Double
+## Differences to a normal Double
 Engine Singleton doubles are different from normal doubles in the following way:
 * Singleton doubles wrap around a an Engine Singleton, they do not extend it.
 * Properties are copied from the source Singleton when an instance of the double is created.  This means the intial values will change (on calls to `.new()`) if the Singleton's properties change.
@@ -44,7 +44,7 @@ assert_false(inst.has_method('get_ticks_msec'))
 ```
 
 
-# Example
+## Example
 
 This example has a class that uses the `Time` singleton.  We make a double of `Time` in the tests and "inject" it into the instance of `UsesTime` we are testing.  We then stub the double to return values that allow us to verify `UsesTime` is correctly using `Time`.
 ``` gdscript
@@ -101,7 +101,7 @@ func test_on_mondays_elapsed_time_is_longer_because_time_moves_slower_on_mondays
 	assert_eq(inst.end(), 20)
 ```
 
-# Eligible Singletons
+## Eligible Singletons
 I have verified that a double of these can be created and instantiated.  All the ways they could be used has not been explored.  Your mileage may vary.  Please open an issue if you encounter a problem when doubling any of these Engine Singletons.
 
 * [AudioServer](https://docs.godotengine.org/en/stable/classes/class_audioserver.html)
