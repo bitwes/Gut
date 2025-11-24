@@ -275,6 +275,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="ShortcutDialog" parent="." instance=ExtResource("7_srqj5")]
+size = Vector2i(1512, 1571)
 visible = false
 
 [node name="ShellOutOptions" parent="." instance=ExtResource("7_xv2r3")]
