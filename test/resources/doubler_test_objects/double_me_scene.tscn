@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://b585oqph4wtqm"]
+[gd_scene load_steps=2 format=3 uid="uid://8cnd7xm6f4m1"]
 
-[ext_resource type="Script" uid="uid://iwcc1sm1orfr" path="res://test/resources/doubler_test_objects/double_me_scene.gd" id="1"]
+[ext_resource type="Script" uid="uid://w3axo60f4xar" path="res://test/resources/doubler_test_objects/double_me_scene.gd" id="1"]
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource("1")

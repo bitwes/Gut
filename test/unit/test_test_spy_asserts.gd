@@ -83,7 +83,7 @@ class TestAssertCalled:
 		doubled.set_value(5)
 		gr.test_with_gut.assert_called(doubled, 'set_value', 5)
 		assert_fail(gr.test_with_gut)
-		assert_errored(gr.test_with_gut, 1)
+		assert_logger_errored(gr.test_with_gut, 1)
 
 	func test_fail_message_indicates_method_does_not_exist():
 		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())
@@ -338,7 +338,7 @@ class TestGetCallParameters:
 	func test_generates_error_if_you_do_not_pass_a_doubled_object():
 		var thing = autofree(Node2D.new())
 		var _p = gr.test_with_gut.get_call_parameters(thing, 'something')
-		assert_errored(gr.test_with_gut, 1)
+		assert_logger_errored(gr.test_with_gut, 1)
 
 	func test_accepts_callable_instead_of_object_and_method_name():
 		var doubled = autofree(gr.test_with_gut.double(DoubleMe).new())

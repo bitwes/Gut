@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://cop4kedl4jm5c"]
+[gd_scene load_steps=2 format=3 uid="uid://b3f8i5l6l0hfq"]
 
 [sub_resource type="Resource" id="Resource_ilpij"]
 metadata/__load_path__ = "res://test/resources/test_assert_setget_test_objects/control_child_mock.gd"

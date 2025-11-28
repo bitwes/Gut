@@ -31,6 +31,9 @@ static var editor_shortcuts_path = 'gut_editor_shortcuts.cfg' :
 	get: return temp_directory.path_join(editor_shortcuts_path)
 	set(v): pass
 
+static var run_externally_options_path = 'gut_editor_run_externally.cfg' :
+	get: return temp_directory.path_join(run_externally_options_path)
+	set(v): pass
 
 static var _user_prefs = null
 static var user_prefs = _user_prefs :
@@ -39,10 +42,27 @@ static var user_prefs = _user_prefs :
 	# editor.
 	get:
 		if(_user_prefs == null and Engine.is_editor_hint()):
-			_user_prefs = GutUserPreferences.new(EditorInterface.get_editor_settings())
+			# This is sometimes used when not in the editor.  Avoid parser error
+			# for EditorInterface.
+			_user_prefs = GutUserPreferences.new(GutUtils.get_editor_interface().get_editor_settings())
 		return _user_prefs
-
+static var gut_plugin = null
 
 static func create_temp_directory():
 	DirAccess.make_dir_recursive_absolute(temp_directory)
+
+
+static func is_being_edited_in_editor(which):
+	if(!Engine.is_editor_hint()):
+		return false
+
+	var trav = which
+	var is_scene_root = false
+	var editor_root = which.get_tree().edited_scene_root
+	while(trav != null and !is_scene_root):
+		is_scene_root = editor_root == trav
+		if(!is_scene_root):
+			trav = trav.get_parent()
+	return is_scene_root
+
 

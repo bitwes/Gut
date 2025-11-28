@@ -50,3 +50,11 @@ func test_has():
 	otm.add('two', 'two-2')
 	assert_true(otm.has('two', 'two-2'), 'has two/two-2')
 	assert_false(otm.has('not', 'in-there'), 'does not exist')
+
+func test_adding_an_existing_value_does_not_clear_out_all_values():
+	var otm = OneToMany.new()
+	otm.add('two', 'two-1')
+	otm.add('two', 'two-2')
+	otm.add('two', 'two-1')
+	assert_true(otm.has('two', 'two-2'), 'has two/two-2')
+	print(otm.to_s())

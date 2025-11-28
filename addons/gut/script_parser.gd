@@ -99,6 +99,7 @@ class ParsedScript:
 
 	var _native_methods = {}
 	var _native_class_name = ""
+	var _native_class = null
 
 
 
@@ -108,7 +109,9 @@ class ParsedScript:
 		if(GutUtils.is_native_class(to_load)):
 			_resource = to_load
 			_is_native = true
+			# TODO this could be done with ClassDB instead of making instance.
 			var inst = to_load.new()
+			_native_class = to_load
 			_native_class_name = inst.get_class()
 			_native_methods = inst.get_method_list()
 			if(!inst is RefCounted):
@@ -167,6 +170,7 @@ class ParsedScript:
 		# the right "is_local" flag.
 		if(!is_native):
 			methods = thing.get_script_method_list()
+			methods.reverse()
 			for m in methods:
 				var parsed_method = ParsedMethod.new(m)
 				parsed_method.is_local = true

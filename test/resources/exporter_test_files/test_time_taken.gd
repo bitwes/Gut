@@ -1,7 +1,7 @@
 extends 'res://addons/gut/test.gd'
 
 func more_accurate_wait_time(time_to_wait_msec : int)->void:
-	gut._lgr.yield_msg(str('-- Awaiting ', time_to_wait_msec / 1000.0, ' second(s) -- '))
+	gut.p(str('-- Awaiting ', time_to_wait_msec / 1000.0, ' second(s) -- '))
 	var start := Time.get_ticks_msec()
 	while (Time.get_ticks_msec() - start < time_to_wait_msec):
 		await get_tree().process_frame

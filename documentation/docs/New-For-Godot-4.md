@@ -3,7 +3,7 @@ These are changes to Godot that affect how GUT is used/implemented.  There is mo
 
 * `setget` has been replaced with a completely new syntax.  More info at [#380](https://github.com/bitwes/Gut/issues/380).  Examples of the new way and the new `assert_property` method below.
 * `connect` has been significantly altered.  The signal related asserts will likely change to use `Callable` parameters instead of strings.  It is possible to use strings, so this may remain in some form.  More info in [#383](https://github.com/bitwes/Gut/issues/383).
-* `yield` has been replaced with `await`.  `yield_to`, `yield_for`, and `yield_frames` have been deprecated, the new methods are `wait_seconds`, `wait_frames` and `wait_for_signal`.  There are examples below and more info at [#382](https://github.com/bitwes/Gut/issues/382).
+* `yield` has been replaced with `await`.  `yield_to`, `yield_for`, and `yield_frames` have been deprecated, the new methods are below.
 * Arrays are pass by reference now.
 * Dictionaries are compared by value now.
 * `File` and `Directory` have been replaced with `FileAccess` and `DirAccess`.
@@ -22,11 +22,11 @@ await yield_to(signaler, 'the_signal_name', 5, 'optional message')
 await yield_for(1.5, 'optional message')
 await yield_frames(30, 'optional message')
 ```
-* The replacement methods for the various `yield_` methods are `wait_seconds`, `wait_frames`, and `wait_for_signal`.
+* The replacement methods for the various `yield_` methods are `wait_seconds`, `wait_idle_frames`, `wait_physics_frames`, and `wait_for_signal`.
 ```gdscript
 await wait_for_signal(signaler.the_signal, 5, 'optional message') # wait for signal or 5 seconds
 await wait_seconds(1.5, 'optional message')
-await wait_frames(30, 'optional message')
+await wait_physics_frames(30, 'optional message')
 ```
 * Doubling no longer supports paths to a script or scene.  Load the script or scene first and pass that to `double`.  See the "Doubling Changes" section for more details.
 * Doubling Inner Classes now requires you to call `register_inner_classes` first.  See the "Doubling Changes" section for more details.

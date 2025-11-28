@@ -1,11 +1,12 @@
 [gd_scene load_steps=2 format=3 uid="uid://cgndmr3wi311q"]
 
-[ext_resource type="Script" uid="uid://domekv65mkqx6" path="res://scenes/TestGutGuiSettings.gd" id="1_5452u"]
+[ext_resource type="Script" uid="uid://nuh4mbmnf3p3" path="res://scenes/TestGutGuiSettings.gd" id="1_5452u"]
 
 [node name="TestGutGuiSettings" type="Node2D"]
 script = ExtResource("1_5452u")
 
 [node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = -1
 offset_left = 71.0
 offset_top = 22.0
 offset_right = 585.0
@@ -26,6 +27,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Controls" type="ColorRect" parent="."]
+anchors_preset = -1
 offset_left = 634.0
 offset_top = 4.0
 offset_right = 1001.0

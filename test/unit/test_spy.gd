@@ -62,16 +62,18 @@ class TestSpy:
 		_spy.clear()
 		assert_eq(_spy._calls.keys().size(), 0, 'post count')
 
-class TestAddingCallsWithParameters:
-	extends GutTest
 
-	var Spy = load('res://addons/gut/spy.gd')
+class TestAddingCallsWithParameters:
+	extends GutInternalTester
+
 	var Simple = load('res://test/resources/spy_test_objects/simple.gd')
 
 	var _spy = null
 
 	func before_each():
 		_spy = Spy.new()
+		_spy.set_logger(GutLogger.new())
+
 
 	func test_can_add_call_with_parameters():
 		_spy.add_call(Simple.new(), 'method1', [1])

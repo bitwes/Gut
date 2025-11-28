@@ -1,10 +1,10 @@
 # This script is used by test_test.gd/TestTestStateChecking.
 # Each of these tests are run by that test class and the
 # pass/fail count is checked.
-extends 'res://addons/gut/test.gd'
+extends GutTest
 
 class TestIsPassing:
-	extends 'res://addons/gut/test.gd'
+	extends GutTest
 
 	func test_is_passing_returns_true_when_test_is_passing():
 		assert_true(true, 'should pass')
@@ -23,7 +23,7 @@ class TestIsPassing:
 		assert_true(false, 'should fail')
 
 class TestIsFailing:
-	extends 'res://addons/gut/test.gd'
+	extends GutTest
 
 	func test_is_failing_returns_true_when_failing():
 		assert_false(true, 'should fail')
@@ -41,7 +41,7 @@ class TestIsFailing:
 		assert_true(true, 'should pass')
 
 class TestUseIsPassingInBeforeAll:
-	extends 'res://addons/gut/test.gd'
+	extends GutTest
 
 	func before_all():
 		var is_it = is_passing()
@@ -50,7 +50,7 @@ class TestUseIsPassingInBeforeAll:
 		pass_test('pass it')
 
 class TestUseIsPassingInAfterAll:
-	extends 'res://addons/gut/test.gd'
+	extends GutTest
 
 	func after_all():
 		var is_it = is_passing()
@@ -60,7 +60,7 @@ class TestUseIsPassingInAfterAll:
 
 
 class TestUseIsFailingInBeforeAll:
-	extends 'res://addons/gut/test.gd'
+	extends GutTest
 
 	func before_all():
 		var is_it = is_failing()
@@ -69,7 +69,7 @@ class TestUseIsFailingInBeforeAll:
 		pass_test('pass it')
 
 class TestUseIsFailingInAfterAll:
-	extends 'res://addons/gut/test.gd'
+	extends GutTest
 
 	func after_all():
 		var is_it = is_failing()

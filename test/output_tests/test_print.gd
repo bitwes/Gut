@@ -5,19 +5,15 @@
 extends "res://addons/gut/test.gd"
 
 var _old_indent_string = ''
-var _orig_err_as_fail = false
 
 func before_all():
 	gut.p('[before all]')
 	_old_indent_string = gut.logger.get_indent_string()
-	_orig_err_as_fail = gut.treat_error_as_failure
-
-	gut.treat_error_as_failure = false
 
 func after_all():
 	gut.p('[after all]')
 	gut.logger.set_indent_string(_old_indent_string)
-	gut.treat_error_as_failure = _orig_err_as_fail
+
 
 func before_each():
 	gut.p('[before each]')
@@ -83,7 +79,7 @@ class TestGuiOutput:
 
 	func before_each():
 		_gui = add_child_autofree(GutUtils.GutScene.instantiate())
-		_logger = GutUtils.Logger.new()
+		_logger = GutUtils.GutLogger.new()
 		_logger._printers.gui = GutUtils.Printers.GutGuiPrinter.new()
 		_logger.disable_printer('gui', false)
 		var printer = _logger.get_printer('gui')
@@ -92,7 +88,7 @@ class TestGuiOutput:
 
 	func test_embedded_bbcode():
 		_logger.log('[u]this should not be underlined')
-		await wait_frames(10)
+		await wait_physics_frames(10)
 		# assert_string_contains(_gui.get_textbox().text, '[u]this should')
 		pass_test('Check output, cannot get bbcode out of RTL')
 		pause_before_teardown()
@@ -118,7 +114,7 @@ class TestBasicLoggerOutput:
 
 	var _test_logger = null
 	func before_each():
-		_test_logger = GutUtils.Logger.new()
+		_test_logger = GutUtils.GutLogger.new()
 		_test_logger.set_gut(gut)
 		_test_logger.set_indent_string('|...')
 
@@ -140,27 +136,28 @@ class TestBasicLoggerOutput:
 		_test_logger.log("hello\nthis\nshould\nline up")
 		assert_true(true)
 
+	func test_expected_error_output():
+		_test_logger.expected_error("hello world")
+		pass_test('pass')
+
+
 
 class TestLogLevels:
 	extends GutTest # this was on purpose
 
 	var _orig_log_level = -1
 	var _orig_indent_string = null
-	var _orig_err_as_fail = false
 
 	func before_all():
 		_orig_log_level = gut.log_level
 		_orig_indent_string = gut.logger.get_indent_string()
-		_orig_err_as_fail = gut.treat_error_as_failure
 
-		gut.treat_error_as_failure = false
 		gut.logger.set_indent_string('--->')
 
 
 	func after_all():
 		gut.log_level = _orig_log_level
 		gut.logger.set_indent_string(_orig_indent_string)
-		gut.treat_error_as_failure = _orig_err_as_fail
 
 	func test_log_types_at_levels_with_passing_test(level=use_parameters([-2, -1, 0, 1, 2, 3])):
 		gut.log_level = level

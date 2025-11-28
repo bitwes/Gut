@@ -189,4 +189,3 @@ func test_clicking_things_with_button_as_receiver():
 	assert_signal_not_emitted(btn, 'button_down')
 	assert_signal_not_emitted(btn, 'button_up')
 	assert_signal_not_emitted(btn, 'gui_input')
-

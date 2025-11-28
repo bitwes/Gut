@@ -48,6 +48,12 @@ func test_add_queue_free():
 	assert_eq(af.get_queue_free_count(), 1)
 	n1.free()
 
+func test_add_queue_free_does_not_add_basic_types():
+	var af = AutoFree.new()
+	af.add_queue_free(1)
+	assert_eq(af.get_queue_free_count(), 0)
+
+
 func test_calling_free_all_queues_free():
 	var af = AutoFree.new()
 	var to_free1 = Node2D.new()
@@ -77,3 +83,28 @@ func test_watch_for_orphans():
 func test_watch_for_orphans2():
 	var n = autoqfree(Node.new())
 	pass_test('trying to make orphans')
+
+
+func test_has_instance_id_true_for_free():
+	var af = AutoFree.new()
+	var n = Node.new()
+	af.add_free(n)
+	assert_true(af.has_instance_id(n.get_instance_id()))
+	n.free()
+
+
+func test_has_instance_id_true_for_queue_free():
+	var af = AutoFree.new()
+	var n = Node.new()
+	af.add_queue_free(n)
+	assert_true(af.has_instance_id(n.get_instance_id()))
+	n.free()
+
+
+func test_has_false_after_free_all():
+	var af = AutoFree.new()
+	var n = Node.new()
+	var inst_id = n.get_instance_id()
+	af.add_free(n)
+	af.free_all()
+	assert_false(af.has_instance_id(inst_id))

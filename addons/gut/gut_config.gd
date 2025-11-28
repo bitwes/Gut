@@ -4,7 +4,16 @@
 # to a json file.  It is also responsible for applying these settings to GUT.
 #
 # ##############################################################################
-var valid_fonts = ['AnonymousPro', 'CourierPro', 'LobsterTwo', 'Default']
+const FAIL_ERROR_TYPE_ENGINE = &'engine'
+const FAIL_ERROR_TYPE_PUSH_ERROR = &'push_error'
+const FAIL_ERROR_TYPE_GUT = &'gut'
+
+
+
+var valid_fonts = GutUtils.gut_fonts.get_font_names()
+var _deprecated_values = {
+	"errors_do_not_cause_failure": "Use failure_error_types instead."
+}
 
 var default_options = {
 	background_color = Color(.15, .15, .15, 1).to_html(),
@@ -19,10 +28,8 @@ var default_options = {
 	# The GUI gut config expects the value to be the enum value and not a string
 	# when saved.
 	double_strategy = 'SCRIPT_ONLY',
-	# named differently than gut option so we can use it as a flag in the cli
-	errors_do_not_cause_failure = false,
 	font_color = Color(.8, .8, .8, 1).to_html(),
-	font_name = 'CourierPrime',
+	font_name = GutUtils.gut_fonts.DEFAULT_CUSTOM_FONT_NAME,
 	font_size = 16,
 	hide_orphans = false,
 	ignore_pause = false,
@@ -37,14 +44,18 @@ var default_options = {
 	pre_run_script = '',
 	prefix = 'test_',
 	selected = '',
-	should_exit = false,
 	should_exit_on_success = false,
+	should_exit = false,
 	should_maximize = false,
 	compact_mode = false,
 	show_help = false,
 	suffix = '.gd',
 	tests = [],
 	unit_test_name = '',
+
+	no_error_tracking = false,
+	failure_error_types = ["engine", "gut", "push_error"],
+	wait_log_delay = .5,
 
 	gut_on_top = true,
 }
@@ -93,6 +104,7 @@ func _load_options_from_config_file(file_path, into):
 
 	return 1
 
+
 func _load_dict_into(source, dest):
 	for key in dest:
 		if(source.has(key)):
@@ -106,6 +118,11 @@ func _load_dict_into(source, dest):
 # Apply all the options specified to tester.  This is where the rubber meets
 # the road.
 func _apply_options(opts, gut):
+	for entry in _deprecated_values.keys():
+		if(opts.has(entry)):
+			# Use gut.logger instead of our own for testing purposes.
+			logger.deprecated(str('Config value "', entry, '" is deprecated.  ', _deprecated_values[entry]))
+
 	gut.include_subdirectories = opts.include_subdirs
 
 	if(opts.inner_class != ''):
@@ -134,9 +151,22 @@ func _apply_options(opts, gut):
 	gut.junit_xml_file = opts.junit_xml_file
 	gut.junit_xml_timestamp = opts.junit_xml_timestamp
 	gut.paint_after = str(opts.paint_after).to_float()
-	gut.treat_error_as_failure = !opts.errors_do_not_cause_failure
+	gut.wait_log_delay = opts.wait_log_delay
+
+	# These error_tracker options default to true.  Don't trust this comment.
+	if(!opts.failure_error_types.has(FAIL_ERROR_TYPE_ENGINE)):
+		gut.error_tracker.treat_engine_errors_as = GutUtils.TREAT_AS.NOTHING
+
+	if(!opts.failure_error_types.has(FAIL_ERROR_TYPE_PUSH_ERROR)):
+		gut.error_tracker.treat_push_error_as = GutUtils.TREAT_AS.NOTHING
+
+	if(!opts.failure_error_types.has(FAIL_ERROR_TYPE_GUT)):
+		gut.error_tracker.treat_gut_errors_as = GutUtils.TREAT_AS.NOTHING
+
+	gut.error_tracker.register_loggers = !opts.no_error_tracking
 
 	return gut
+
 
 # --------------------------
 # Public

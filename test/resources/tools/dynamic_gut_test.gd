@@ -5,7 +5,7 @@ class_name DynamicGutTest
 # test scripts created in tests to test the tests closer to the tests that
 # test the test.
 # ------------------------------------------------------------------------------
-static var should_print_source = true
+static var should_print_source = false
 var source_entries = []
 var lambdas = []
 
@@ -55,8 +55,12 @@ func add_as_test_to_gut(which):
 		print_source()
 
 	which.get_test_collector().add_script(dyn.resource_path)
+	return dyn
 
 
+# This leaks SceneTreeTimers in some cases.  Not sure of all the cases, but
+# if you get leaked instances and don't want to figure it out, use
+# run_tests_in_gut_await instead.
 func run_test_in_gut(which):
 	add_as_test_to_gut(which)
 	which.run_tests()
@@ -64,6 +68,14 @@ func run_test_in_gut(which):
 	return s.get_totals(which)
 
 
+func run_tests_in_gut_await(which):
+	add_as_test_to_gut(which)
+	which.run_tests()
+	await which.end_run
+	await which.get_tree().create_timer(.1).timeout
+	var s = GutUtils.Summary.new()
+	return s.get_totals(which)
+
+
 func print_source():
 	print(GutUtils.add_line_numbers(make_source()))
-
