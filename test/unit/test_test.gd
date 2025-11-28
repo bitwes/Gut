@@ -60,15 +60,20 @@ class TestMiscTests:
 
 	func test_get_set_logger():
 		assert_ne(gr.test.get_logger(), null)
-		var dlog = double(Logger).new()
+		var dlog = double(GutLogger).new()
 		gr.test.set_logger(dlog)
 		assert_eq(gr.test.get_logger(), dlog)
 
 	func test_when_leaves_tree_awaiter_is_freed():
 		add_child(gr.test)
 		remove_child(gr.test)
-		await wait_frames(10)
+		await wait_physics_frames(10)
 		assert_freed(gr.test._awaiter, 'awaiter')
+
+	func test_setting_wait_log_delay_propigates_to_awaiter():
+		add_child_autofree(gr.test)
+		gr.test.wait_log_delay = 999
+		assert_eq(gr.test._awaiter.await_logger.wait_log_delay, 999.0)
 
 
 	# -------
@@ -137,7 +142,7 @@ class TestAssertEq:
 
 	func test_warns_when_comparing_float_and_int():
 		gr.test.assert_eq(1.0, 1, 'Should pass and warn')
-		assert_warn(gr.test)
+		assert_logger_warn(gr.test)
 
 	var array_vals = [
 		[[1, 2, 3], ['1', '2', '3'], false],
@@ -738,7 +743,8 @@ class TestPending:
 		assert_eq(gr.test.get_pending_count(), 1, 'One test should have been marked as pending')
 
 	func test_pending_accepts_text():
-		pending("This is a pending test.  You should see this text in the results.")
+		gr.test.pending("This is a pending test.  You should see this text in the results.")
+		assert_eq(gr.test.get_pass_count(), 0)
 
 	func test_pending_does_not_increment_passed():
 		gr.test.pending()
@@ -834,9 +840,6 @@ class TestAccessorAsserts:
 # ------------------------------------------------------------------------------
 class TestAssertExports:
 	extends BaseTestClass
-
-	func should_skip_script():
-		return 'Not implemented in 4.0'
 
 	class NoProperty:
 		func _unused():
@@ -969,214 +972,6 @@ class TestAssertFileNotEmpty:
 		gr.test_with_gut.assert_file_not_empty(path)
 		assert_fail(gr.test_with_gut)
 
-
-# ------------------------------------------------------------------------------
-class TestSignalAsserts:
-	extends BaseTestClass
-
-	# Constants for all the signals created in SignalObject so I don't get false
-	# pass/fail from typos
-	const SIGNALS = {
-		NO_PARAMETERS = 'no_parameters',
-		ONE_PARAMETER = 'one_parameter',
-		TWO_PARAMETERS = 'two_parameters',
-		SOME_SIGNAL = 'some_signal',
-		SCRIPT_SIGNAL = 'script_signal'
-	}
-
-	# ####################
-	# A class that can emit all the signals in SIGNALS
-	# ####################
-	class SignalObject:
-		signal script_signal
-		func _init():
-			add_user_signal(SIGNALS.NO_PARAMETERS)
-			add_user_signal(SIGNALS.ONE_PARAMETER, [
-				{'name':'something', 'type':TYPE_INT}
-			])
-			add_user_signal(SIGNALS.TWO_PARAMETERS, [
-				{'name':'num', 'type':TYPE_INT},
-				{'name':'letters', 'type':TYPE_STRING}
-			])
-			add_user_signal(SIGNALS.SOME_SIGNAL)
-
-	func before_each():
-		super.before_each()
-		gr.signal_object = SignalObject.new()
-
-	func after_each():
-		super.after_each()
-		gr.signal_object = null
-
-	func test_when_object_not_being_watched__assert_signal_emitted__fails():
-		gr.test.assert_signal_emitted(gr.signal_object, SIGNALS.SOME_SIGNAL)
-		assert_fail(gr.test)
-
-	func test_when_signal_emitted__assert_signal_emitted__passes():
-		gr.test.watch_signals(gr.signal_object)
-		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
-		gr.test.assert_signal_emitted(gr.signal_object, SIGNALS.SOME_SIGNAL)
-		assert_pass(gr.test)
-
-	func test_when_signal_not_emitted__assert_signal_emitted__fails():
-		gr.test.watch_signals(gr.signal_object)
-		gr.test.assert_signal_emitted(gr.signal_object, SIGNALS.SOME_SIGNAL)
-		assert_fail(gr.test)
-
-	func test_when_object_does_not_have_signal__assert_signal_emitted__fails():
-		gr.test.watch_signals(gr.signal_object)
-		gr.test.assert_signal_emitted(gr.signal_object, 'signal_does_not_exist')
-		assert_fail(gr.test, 1, 'Only the failure that it does not have signal should fire.')
-
-	func test_when_signal_emitted__assert_signal_not_emitted__fails():
-		gr.test.watch_signals(gr.signal_object)
-		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
-		gr.test.assert_signal_not_emitted(gr.signal_object, SIGNALS.SOME_SIGNAL)
-		assert_fail(gr.test)
-
-	func test_when_signal_not_emitted__assert_signal_not_emitted__fails():
-		gr.test.watch_signals(gr.signal_object)
-		gr.test.assert_signal_not_emitted(gr.signal_object, SIGNALS.SOME_SIGNAL)
-		assert_pass(gr.test)
-
-	func test_when_object_does_not_have_signal__assert_signal_not_emitted__fails():
-		gr.test.watch_signals(gr.signal_object)
-		gr.test.assert_signal_not_emitted(gr.signal_object, 'signal_does_not_exist')
-		assert_fail(gr.test, 1, 'Only the failure that it does not have signal should fire.')
-
-	func test_when_signal_emitted_once__assert_signal_emit_count__passes_with_1():
-		gr.test.watch_signals(gr.signal_object)
-		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
-		gr.test.assert_signal_emit_count(gr.signal_object, SIGNALS.SOME_SIGNAL, 1)
-		assert_pass(gr.test)
-
-	func test_when_signal_emitted_twice__assert_signal_emit_count__fails_with_1():
-		gr.test.watch_signals(gr.signal_object)
-		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
-		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
-		gr.test.assert_signal_emit_count(gr.signal_object, SIGNALS.SOME_SIGNAL, 1)
-		assert_fail(gr.test)
-
-	func test_when_object_does_not_have_signal__assert_signal_emit_count__fails():
-		gr.test.watch_signals(gr.signal_object)
-		gr.test.assert_signal_emit_count(gr.signal_object, 'signal_does_not_exist', 0)
-		assert_fail(gr.test)
-
-	func test__assert_has_signal__passes_when_it_has_the_signal():
-		gr.test.assert_has_signal(gr.signal_object, SIGNALS.NO_PARAMETERS)
-		assert_pass(gr.test)
-
-	func test__assert_has_signal__fails_when_it_does_not_have_the_signal():
-		gr.test.assert_has_signal(gr.signal_object, 'signal does not exist')
-		assert_fail(gr.test)
-
-	func test_can_get_signal_emit_counts():
-		gr.test.watch_signals(gr.signal_object)
-		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
-		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
-		assert_eq(gr.test.get_signal_emit_count(gr.signal_object, SIGNALS.SOME_SIGNAL), 2)
-
-
-	# ------------------
-	# With Parameters
-	func test__with_parameters_errors_when_parameters_are_not_an_array():
-		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, 1)
-		assert_errored(gr.test)
-		assert_fail(gr.test)
-
-	func test__assert_signal_emitted_with_parameters__fails_when_object_not_watched():
-		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [])
-		assert_fail(gr.test)
-
-	func test__assert_signal_emitted_with_parameters__passes_when_parameters_match():
-		gr.test.watch_signals(gr.signal_object)
-		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1)
-		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1])
-		assert_pass(gr.test)
-
-
-	func test__assert_signal_emitted_with_parameters__passes_when_all_parameters_match():
-		gr.test.watch_signals(gr.signal_object)
-		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1, 2, 3)
-		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1, 2, 3])
-		assert_pass(gr.test)
-
-	func test__assert_signal_emitted_with_parameters__fails_when_signal_not_emitted():
-		gr.test.watch_signals(gr.signal_object)
-		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [2])
-		assert_fail(gr.test)
-
-	func test__assert_signal_emitted_with_parameters__fails_when_parameters_dont_match():
-		gr.test.watch_signals(gr.signal_object)
-		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1)
-		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [2])
-		assert_fail(gr.test)
-
-	func test__assert_signal_emitted_with_parameters__fails_when_not_all_parameters_match():
-		gr.test.watch_signals(gr.signal_object)
-		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1, 2, 3)
-		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1, 0, 3])
-		assert_fail(gr.test)
-
-	func test__assert_signal_emitted_with_parameters__can_check_multiple_emission():
-		gr.test.watch_signals(gr.signal_object)
-		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1)
-		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 2)
-		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1], 0)
-		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [2], 1)
-		assert_pass(gr.test, 2)
-
-	func test_when_signal_emit_with_parameters_fails_because_signal_was_not_emitted_then_signals_are_listed():
-		gr.test.watch_signals(gr.signal_object)
-		gr.signal_object.emit_signal(SIGNALS.NO_PARAMETERS)
-		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
-		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SCRIPT_SIGNAL, [0])
-		var text = gr.test._fail_pass_text[0]
-		assert_string_contains(text, SIGNALS.NO_PARAMETERS)
-		assert_string_contains(text, SIGNALS.SOME_SIGNAL)
-
-	func test_issue_152():
-		gr.test.watch_signals(gr.signal_object)
-		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1.0, 2, 3.0)
-		gr.test.assert_signal_emitted_with_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, [1, 2.0, 3])
-		assert_fail(gr.test)
-
-	func test__get_signal_emit_count__returns_neg_1_when_not_watched():
-		assert_eq(gr.test.get_signal_emit_count(gr.signal_object, SIGNALS.SOME_SIGNAL), -1)
-
-	func test_can_get_signal_parameters():
-		gr.test.watch_signals(gr.signal_object)
-		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL, 1, 2, 3)
-		assert_eq(gr.test.get_signal_parameters(gr.signal_object, SIGNALS.SOME_SIGNAL, 0), [1, 2, 3])
-
-	func test__assert_signal_emitted__passes_with_script_signals():
-		gr.test.watch_signals(gr.signal_object)
-		gr.signal_object.emit_signal(SIGNALS.SCRIPT_SIGNAL)
-		gr.test.assert_signal_emitted(gr.signal_object, SIGNALS.SCRIPT_SIGNAL)
-		assert_pass(gr.test)
-
-	func test__assert_has_signal__works_with_script_signals():
-		gr.test.assert_has_signal(gr.signal_object, SIGNALS.SCRIPT_SIGNAL)
-		assert_pass(gr.test)
-
-	func test_when_signal_emitted_fails_emitted_signals_are_listed():
-		gr.test.watch_signals(gr.signal_object)
-		gr.signal_object.emit_signal(SIGNALS.NO_PARAMETERS)
-		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
-		gr.test.assert_signal_emitted(gr.signal_object, SIGNALS.SCRIPT_SIGNAL)
-		var text = gr.test._fail_pass_text[0]
-		assert_string_contains(text, SIGNALS.NO_PARAMETERS)
-		assert_string_contains(text, SIGNALS.SOME_SIGNAL)
-
-	func test_when_signal_count_fails_then_emitted_signals_are_listed():
-		gr.test.watch_signals(gr.signal_object)
-		gr.signal_object.emit_signal(SIGNALS.NO_PARAMETERS)
-		gr.signal_object.emit_signal(SIGNALS.SCRIPT_SIGNAL)
-		gr.signal_object.emit_signal(SIGNALS.SOME_SIGNAL)
-		gr.test.assert_signal_emit_count(gr.signal_object, SIGNALS.SCRIPT_SIGNAL, 2)
-		var text = gr.test._fail_pass_text[0]
-		assert_string_contains(text, SIGNALS.NO_PARAMETERS)
-		assert_string_contains(text, SIGNALS.SOME_SIGNAL)
 
 
 # ------------------------------------------------------------------------------
@@ -1448,7 +1243,7 @@ class TestReplaceNode:
 	func after_each():
 		# Things get queue_free in these tests and show up as orphans when they
 		# actually aren't, so wait for them to free.
-		await wait_frames(10)
+		await wait_physics_frames(10)
 		super.after_each()
 
 	func test_can_replace_node():
@@ -1460,7 +1255,7 @@ class TestReplaceNode:
 	func test_when_node_does_not_exist_error_is_generated():
 		var replacement = autofree(Node2D.new())
 		gr.test.replace_node(_arena, 'DoesNotExist', replacement)
-		assert_errored(gr.test)
+		assert_logger_errored(gr.test)
 
 	func test_replacement_works_with_dollar_sign_references():
 		var replacement = autofree(Node2D.new())
@@ -1477,7 +1272,7 @@ class TestReplaceNode:
 		var old = _arena.get_sword()
 		gr.test.replace_node(_arena, 'Player1/Sword', replacement)
 		# object is freed using queue_free, so we have to wait for it to go away
-		await wait_frames(20)
+		await wait_physics_frames(20)
 		assert_true(GutUtils.is_freed(old))
 
 	func test_replaced_node_retains_groups():
@@ -1497,12 +1292,17 @@ class TestReplaceNode:
 		var replacement = autofree(Node2D.new())
 		var old = autofree(Node2D.new())
 		gr.test.replace_node(_arena, old, replacement)
-		assert_errored(gr.test)
+		assert_engine_error("common_parent")
+		assert_logger_errored(gr.test)
 
 
 # ------------------------------------------------------------------------------
 class TestAssertIsFreed:
 	extends BaseTestClass
+
+	func after_all():
+		# wait for queue_free to kick in.
+		await wait_idle_frames(10)
 
 	func test_object_is_freed_should_pass():
 		var obj = Node.new()
@@ -1536,76 +1336,11 @@ class TestAssertIsFreed:
 		assert_pass(gr.test)
 
 	func test_assert_not_freed_title_is_optional():
-		var obj = Node.new()
+		var obj = autofree(Node.new())
 		gr.test.assert_not_freed(obj)
 		pass_test("we got here")
 
 
-# ------------------------------------------------------------------------------
-class TestConnectionAsserts:
-	extends BaseTestClass
-
-	const SIGNAL_NAME = 'test_signal'
-	const METHOD_NAME = 'test_signal_connector'
-
-	class Signaler:
-		signal test_signal
-
-	class ConnectTo:
-		func test_signal_connector():
-			pass
-
-	func test_when_target_connected_to_source_connected_passes_with_method_name():
-		var s = Signaler.new()
-		var c = ConnectTo.new()
-		s.connect(SIGNAL_NAME,Callable(c,METHOD_NAME))
-		gr.test.assert_connected(s, c, SIGNAL_NAME, METHOD_NAME)
-		assert_pass(gr.test)
-
-	func test_when_target_connected_to_source_connected_passes_without_method_name():
-		var s = Signaler.new()
-		var c = ConnectTo.new()
-		s.connect(SIGNAL_NAME,Callable(c,METHOD_NAME))
-		gr.test.assert_connected(s, c, SIGNAL_NAME)
-		assert_pass(gr.test)
-
-	func test_when_target_not_connected_to_source_connected_fails_with_method_name():
-		var s = Signaler.new()
-		var c = ConnectTo.new()
-		gr.test.assert_connected(s, c, SIGNAL_NAME, METHOD_NAME)
-		assert_fail(gr.test)
-
-	func test_when_target_not_connected_to_source_connected_fails_without_method_name():
-		var s = Signaler.new()
-		var c = ConnectTo.new()
-		gr.test.assert_connected(s, c, SIGNAL_NAME)
-		assert_fail(gr.test)
-
-	func test_when_target_connected_to_source_not_connected_fails_with_method_name():
-		var s = Signaler.new()
-		var c = ConnectTo.new()
-		s.connect(SIGNAL_NAME,Callable(c,METHOD_NAME))
-		gr.test.assert_not_connected(s, c, SIGNAL_NAME, METHOD_NAME)
-		assert_fail(gr.test)
-
-	func test_when_target_connected_to_source_not_connected_fails_without_method_name():
-		var s = Signaler.new()
-		var c = ConnectTo.new()
-		s.connect(SIGNAL_NAME,Callable(c,METHOD_NAME))
-		gr.test.assert_not_connected(s, c, SIGNAL_NAME)
-		assert_fail(gr.test)
-
-	func test_when_target_not_connected_to_source_not_connected_passes_with_method_name():
-		var s = Signaler.new()
-		var c = ConnectTo.new()
-		gr.test.assert_not_connected(s, c, SIGNAL_NAME, METHOD_NAME)
-		assert_pass(gr.test)
-
-	func test_when_target_not_connected_to_source_not_connected_passes_without_method_name():
-		var s = Signaler.new()
-		var c = ConnectTo.new()
-		gr.test.assert_not_connected(s, c, SIGNAL_NAME)
-		assert_pass(gr.test)
 
 
 # ------------------------------------------------------------------------------
@@ -1645,22 +1380,26 @@ class TestMemoryMgmt:
 	var _gut = null
 
 	func before_each():
-		# verbose = true
+		verbose = false
 		_gut = add_child_autofree(new_gut(verbose))
+
 
 	func test_passes_when_no_orphans_introduced():
 		var d = DynamicGutTest.new()
 		d.add_source("""
-		func test_assert_no_orphans():
+		func test_assert_no_new_orphans():
 			assert_no_new_orphans()
 		""")
 		var results = d.run_test_in_gut(_gut)
 		assert_eq(results.passing, 1)
+		await wait_for_signal(_gut.end_run, 5)
+		await wait_seconds(.5)
+
 
 	func test_failing_orphan_assert_marks_test_as_failing():
 		var d = DynamicGutTest.new()
 		d.add_source("""
-		func test_assert_no_orphans():
+		func test_assert_no_new_orphans():
 			var n2d = Node2D.new()
 			assert_no_new_orphans('SHOULD FAIL')
 			assert_true(is_failing(), 'this test should be failing')
@@ -1668,6 +1407,8 @@ class TestMemoryMgmt:
 		""")
 		var results = d.run_test_in_gut(_gut)
 		assert_eq(results.failing, 1)
+		await wait_for_signal(_gut.end_run, 5)
+		await wait_seconds(.5)
 
 
 	func test_passes_when_orphans_released():
@@ -1697,7 +1438,7 @@ class TestMemoryMgmt:
 		assert_eq(n.get_parent(), self, 'added as child')
 		gut.get_autofree().free_all()
 		assert_not_freed(n, 'node') # should not be freed until we wait
-		await wait_frames(10)
+		await wait_physics_frames(10)
 		assert_freed(n, 'node')
 		assert_no_new_orphans()
 
@@ -1728,58 +1469,59 @@ class TestTestStateChecking:
 		_gut.inner_class_name = inner_class
 		_gut.unit_test_name = name
 		_gut.test_scripts()
+		await wait_for_signal(_gut.end_run, 5)
 
 	func _assert_pass_fail_count(passing, failing):
 		assert_eq(_gut.get_pass_count(), passing, 'Pass count does not match')
 		assert_eq(_gut.get_fail_count(), failing, 'Failing count does not match')
 
 	func test_is_passing_returns_true_when_test_is_passing():
-		_run_test('TestIsPassing')
+		await _run_test('TestIsPassing')
 		_assert_pass_fail_count(2, 0)
 
 	func test_is_passing_returns_false_when_test_is_failing():
-		_run_test('TestIsPassing')
+		await _run_test('TestIsPassing')
 		_assert_pass_fail_count(1, 1)
 
 	func test_is_passing_false_by_default():
-		_run_test('TestIsPassing')
+		await _run_test('TestIsPassing')
 		_assert_pass_fail_count(1, 0)
 
 	func  test_is_passing_returns_true_before_test_fails():
-		_run_test('TestIsPassing')
+		await _run_test('TestIsPassing')
 		_assert_pass_fail_count(2, 1)
 
 	func test_is_failing_returns_true_when_failing():
-		_run_test('TestIsFailing')
+		await _run_test('TestIsFailing')
 		_assert_pass_fail_count(1, 1)
 
 	func test_is_failing_returns_false_when_passing():
-		_run_test('TestIsFailing')
+		await _run_test('TestIsFailing')
 		_assert_pass_fail_count(2, 0)
 
 	func test_is_failing_returns_false_by_default():
-		_run_test('TestIsFailing')
+		await _run_test('TestIsFailing')
 		_assert_pass_fail_count(1, 0)
 
 	func test_is_failing_returns_false_before_test_passes():
-		_run_test('TestIsFailing')
+		await _run_test('TestIsFailing')
 		_assert_pass_fail_count(2, 0)
 
 	func test_error_generated_when_using_is_passing_in_before_all():
-		_run_test('TestUseIsPassingInBeforeAll', 'test_nothing')
-		assert_errored(_gut, 1)
+		await _run_test('TestUseIsPassingInBeforeAll', 'test_nothing')
+		assert_logger_errored(_gut, 1)
 
 	func test_error_generated_when_using_is_passing_in_after_all():
-		_run_test('TestUseIsPassingInAfterAll', 'test_nothing')
-		assert_errored(_gut, 1)
+		await _run_test('TestUseIsPassingInAfterAll', 'test_nothing')
+		assert_logger_errored(_gut, 1)
 
 	func test_error_generated_when_using_is_failing_in_before_all():
-		_run_test('TestUseIsFailingInBeforeAll', 'test_nothing')
-		assert_errored(_gut, 1)
+		await _run_test('TestUseIsFailingInBeforeAll', 'test_nothing')
+		assert_logger_errored(_gut, 1)
 
 	func test_error_generated_when_using_is_failing_in_after_all():
-		_run_test('TestUseIsFailingInAfterAll', 'test_nothing')
-		assert_errored(_gut, 1)
+		await _run_test('TestUseIsFailingInAfterAll', 'test_nothing')
+		assert_logger_errored(_gut, 1)
 
 
 # ------------------------------------------------------------------------------
@@ -1979,3 +1721,37 @@ class TestAssertSameAndAssertNotSame:
 	func test_assert_not_same_fails_when_values_are_not_the_same(p = use_parameters(_not_same_values)):
 		gr.test_with_gut.assert_not_same(p[0], p[1])
 		assert_pass(gr.test_with_gut)
+
+
+# ------------------------------------------------------------------------------
+class TestElapsedTimeAndFrames:
+	extends BaseTestClass
+
+	func test_get_elapsed_process_frames():
+		assert_eq(get_elapsed_process_frames(), 0)
+		await wait_process_frames(10)
+		assert_eq(get_elapsed_process_frames(), 11)
+		await wait_process_frames(10)
+		assert_eq(get_elapsed_process_frames(), 22)
+
+	func test_get_elapsed_physics_frames():
+		assert_eq(get_elapsed_physics_frames(), 0)
+		await wait_physics_frames(10)
+		assert_eq(get_elapsed_physics_frames(), 11)
+		await wait_physics_frames(10)
+		assert_eq(get_elapsed_physics_frames(), 22)
+
+	func test_get_elapsed_sec():
+		assert_almost_eq(get_elapsed_sec(), 0.0, 0.1)
+		await wait_seconds(1)
+		assert_almost_eq(get_elapsed_sec(), 1.0, 0.1)
+
+	func test_get_elapsed_msec():
+		assert_almost_eq(get_elapsed_msec(), 0, 100)
+		await wait_seconds(1)
+		assert_almost_eq(get_elapsed_msec(), 1_000, 100)
+
+	func test_get_elapsed_usec():
+		assert_almost_eq(get_elapsed_usec(), 0, 100_000)
+		await wait_seconds(1)
+		assert_almost_eq(get_elapsed_usec(), 1_000_000, 100_000)

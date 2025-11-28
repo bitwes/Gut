@@ -1,5 +1,9 @@
 extends GutTest
 
+func should_skip_script():
+	if DisplayServer.get_name() == "headless":
+		return "Skip Input tests when running headless"
+
 
 class PrintEventsButton:
 	extends Button
@@ -42,11 +46,6 @@ class PrintEventsButton:
 func before_all():
 	register_inner_classes(load('res://test/unit/test_illustrate_input_and_button_event_issue.gd'))
 
-func test_something():
-	var btn = autofree(PrintEventsButton.new())
-	btn.print_has_method('_input')
-	btn._input(InputEventMouseButton.new())
-
 
 func illustrate(btn):
 	var button_down = InputEventMouseButton.new()
@@ -82,7 +81,7 @@ func test_illustrate():
 
 	# If we use get_tree().root when calling illustrate, then all the signal
 	# asserts in other tests will fail and I have no idea why.
-	await wait_frames(10)
+	await wait_physics_frames(10)
 	await illustrate(btn)
 	assert_called(btn, '_on_button_up')
 	assert_signal_emitted(btn, 'button_down')

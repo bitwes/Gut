@@ -1,7 +1,7 @@
 extends GutInternalTester
 
 func _new_logger():
-	var to_return = Logger.new()
+	var to_return = GutLogger.new()
 	to_return.disable_all_printers(true)
 	return to_return
 
@@ -45,7 +45,7 @@ func test_clear_clears_all_buffers():
 	assert_eq(l.get_deprecated().size(), 0, 'deprecated')
 
 func test_get_set_gut():
-	assert_accessors(_new_logger(), 'gut', null, autofree(Gut.new()))
+	assert_accessors(_new_logger(), 'gut', null, autofree(new_gut()))
 
 func test_can_get_count_using_type():
 	var l = _new_logger()

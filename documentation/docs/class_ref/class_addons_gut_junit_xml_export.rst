@@ -10,14 +10,14 @@ addons/gut/junit_xml_export.gd
 
 **Inherits:** `RefCounted <https://docs.godotengine.org/en/stable/classes/class_refcounted.html>`_
 
-Creates an export of a test run in the JUnit XML format.
+Exposes functionality to export results of a test run in JUnit XML format.
 
 .. rst-class:: classref-introduction-group
 
 Description
 -----------
 
-More words needed?
+This class exposes two methods for exporting GUT test results to XML. One returns a string representing the XML, and the other writes it to a file.
 
 .. rst-class:: classref-reftable-group
 
@@ -27,11 +27,11 @@ Methods
 .. table::
    :widths: auto
 
-   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_results_xml<class_addons/gut/junit_xml_export.gd_method_get_results_xml>`\ (\ gut\ ) |
-   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------+
-   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`write_file<class_addons/gut/junit_xml_export.gd_method_write_file>`\ (\ gut, path\ )     |
-   +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------+
+   +------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_ | :ref:`get_results_xml<class_addons/gut/junit_xml_export.gd_method_get_results_xml>`\ (\ gut\: :ref:`GutMain<class_GutMain>`\ )                                                                            |
+   +------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_       | :ref:`write_file<class_addons/gut/junit_xml_export.gd_method_write_file>`\ (\ gut\: :ref:`GutMain<class_GutMain>`, path\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_\ ) |
+   +------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 .. rst-class:: classref-section-separator
 
@@ -46,9 +46,9 @@ Method Descriptions
 
 .. rst-class:: classref-method
 
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **get_results_xml**\ (\ gut\ ) :ref:`🔗<class_addons/gut/junit_xml_export.gd_method_get_results_xml>`
+`String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_ **get_results_xml**\ (\ gut\: :ref:`GutMain<class_GutMain>`\ ) :ref:`🔗<class_addons/gut/junit_xml_export.gd_method_get_results_xml>`
 
-Takes in an instance of GutMain and returns a string of XML representing the results of the run.
+Takes in an instance of :ref:`GutMain<class_GutMain>` and returns a string of XML representing the results of the run.
 
 .. rst-class:: classref-item-separator
 
@@ -58,9 +58,9 @@ Takes in an instance of GutMain and returns a string of XML representing the res
 
 .. rst-class:: classref-method
 
-`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **write_file**\ (\ gut, path\ ) :ref:`🔗<class_addons/gut/junit_xml_export.gd_method_write_file>`
+`int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_ **write_file**\ (\ gut\: :ref:`GutMain<class_GutMain>`, path\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_\ ) :ref:`🔗<class_addons/gut/junit_xml_export.gd_method_write_file>`
 
-Takes in an instance of GutMain and writes the XML file to the specified path
+Takes in an instance of GutMain and writes test results to an XML file specified by ``path``. Return value is an error code forwarded from the call to FileAccess.open to write to ``path``.
 
 .. |virtual| replace:: :abbr:`virtual (This method should typically be overridden by the user to have any effect.)`
 .. |const| replace:: :abbr:`const (This method has no side effects. It doesn't modify any of the instance's member variables.)`

@@ -85,7 +85,7 @@ class TestType2Str:
 
 	func test_vector2():
 		var v2 = Vector2(20, 30)
-		assert_eq(strutils.type2str(v2), 'VECTOR2(20, 30)')
+		assert_eq(strutils.type2str(v2), 'VECTOR2(20.0, 30.0)')
 
 	func test_null():
 		assert_eq(strutils.type2str(null), str(null))
@@ -96,7 +96,7 @@ class TestType2Str:
 
 	func test_color():
 		var c  = Color(.1, .2, .3)
-		assert_eq(strutils.type2str(c), 'COLOR(0.1, 0.2, 0.3, 1)')
+		assert_eq(strutils.type2str(c), 'COLOR(0.1, 0.2, 0.3, 1.0)')
 
 	func test_loaded_scene():
 		assert_eq(strutils.type2str(DoubleMeScene), str(DoubleMeScene) + '(double_me_scene.tscn)')

@@ -33,12 +33,38 @@ const DOUBLE_TEMPLATES = {
 	SCRIPT = 'res://addons/gut/double_templates/script_template.txt',
 }
 
+const NOTHING := '__NOTHING__'
+const NO_TEST := 'NONE'
+const GUT_ERROR_TYPE = 999
+
+enum TREAT_AS {
+	NOTHING,
+	FAILURE,
+}
+
+static var class_ref_by_name = {} :
+	get():
+		if(class_ref_by_name == {}):
+			class_ref_by_name = _create_class_dictionary()
+		return class_ref_by_name;
+
+
+
+## This dictionary defaults to all the native classes that we cannot call new
+## on.  It is further populated during a run so that we only have to create
+## a new instance once to get the class name string.
+static var gdscript_native_class_names_by_type = {
+	Tween:"Tween"
+}
+
 
 static var GutScene = load('res://addons/gut/GutScene.tscn')
 static var LazyLoader = load('res://addons/gut/lazy_loader.gd')
 static var VersionNumbers = load("res://addons/gut/version_numbers.gd")
 static var WarningsManager = load("res://addons/gut/warnings_manager.gd")
 static var EditorGlobals = load("res://addons/gut/gui/editor_globals.gd")
+static var RunExternallyScene = load("res://addons/gut/gui/RunExternally.tscn")
+
 # --------------------------------
 # Lazy loaded scripts.  These scripts are lazy loaded so that they can be
 # declared, but will not load when this script is loaded.  This gives us a
@@ -78,11 +104,17 @@ static var Doubler = LazyLoader.new('res://addons/gut/doubler.gd'):
 static var DynamicGdScript = LazyLoader.new("res://addons/gut/dynamic_gdscript.gd") :
 	get: return DynamicGdScript.get_loaded()
 	set(val): pass
+static var GodotSingletons = LazyLoader.new('res://addons/gut/godot_singletons.gd') :
+	get: return GodotSingletons.get_loaded()
+	set(val): pass
 static var Gut = LazyLoader.new('res://addons/gut/gut.gd'):
 	get: return Gut.get_loaded()
 	set(val): pass
 static var GutConfig = LazyLoader.new('res://addons/gut/gut_config.gd'):
 	get: return GutConfig.get_loaded()
+	set(val): pass
+static var GutFonts = LazyLoader.new("res://addons/gut/gut_fonts.gd"):
+	get: return GutFonts.get_loaded()
 	set(val): pass
 static var HookScript = LazyLoader.new('res://addons/gut/hook_script.gd'):
 	get: return HookScript.get_loaded()
@@ -99,14 +131,17 @@ static var InputSender = LazyLoader.new("res://addons/gut/input_sender.gd"):
 static var JunitXmlExport = LazyLoader.new('res://addons/gut/junit_xml_export.gd'):
 	get: return JunitXmlExport.get_loaded()
 	set(val): pass
-static var Logger = LazyLoader.new('res://addons/gut/logger.gd') : # everything should use get_logger
-	get: return Logger.get_loaded()
+static var GutLogger = LazyLoader.new('res://addons/gut/logger.gd') : # everything should use get_logger
+	get: return GutLogger.get_loaded()
 	set(val): pass
 static var MethodMaker = LazyLoader.new('res://addons/gut/method_maker.gd'):
 	get: return MethodMaker.get_loaded()
 	set(val): pass
 static var OneToMany = LazyLoader.new('res://addons/gut/one_to_many.gd'):
 	get: return OneToMany.get_loaded()
+	set(val): pass
+static var OptionMaker = LazyLoader.new('res://addons/gut/gui/option_maker.gd'):
+	get: return OptionMaker.get_loaded()
 	set(val): pass
 static var OrphanCounter = LazyLoader.new('res://addons/gut/orphan_counter.gd'):
 	get: return OrphanCounter.get_loaded()
@@ -129,6 +164,9 @@ static var ScriptCollector = LazyLoader.new('res://addons/gut/script_parser.gd')
 static var SignalWatcher = LazyLoader.new('res://addons/gut/signal_watcher.gd'):
 	get: return SignalWatcher.get_loaded()
 	set(val): pass
+static var SingletonParser = LazyLoader.new('res://addons/gut/singleton_parser.gd'):
+	get: return SingletonParser.get_loaded()
+	set(val): pass
 static var Spy = LazyLoader.new('res://addons/gut/spy.gd'):
 	get: return Spy.get_loaded()
 	set(val): pass
@@ -140,6 +178,9 @@ static var Stubber = LazyLoader.new('res://addons/gut/stubber.gd'):
 	set(val): pass
 static var StubParams = LazyLoader.new('res://addons/gut/stub_params.gd'):
 	get: return StubParams.get_loaded()
+	set(val): pass
+static var Stubs = LazyLoader.new('res://addons/gut/stubs.gd'):
+	get: return Stubs.get_loaded()
 	set(val): pass
 static var Summary = LazyLoader.new('res://addons/gut/summary.gd'):
 	get: return Summary.get_loaded()
@@ -155,13 +196,14 @@ static var ThingCounter = LazyLoader.new('res://addons/gut/thing_counter.gd'):
 	set(val): pass
 # --------------------------------
 
-static var avail_fonts = ['AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default']
+static var gut_fonts = GutFonts.new()
+static var avail_fonts = gut_fonts.get_font_names()
 
 static var version_numbers = VersionNumbers.new(
 	# gut_versrion (source of truth)
-	'9.3.1',
+	'9.5.1',
 	# required_godot_version
-	'4.2.0'
+	'4.5'
 )
 
 
@@ -180,18 +222,52 @@ static var warnings_when_loading_test_scripts := { # WarningsManager dictionary
 # When running in test mode this will always return a new logger so that errors
 # are not caused by getting bad warn/error/etc counts.
 # ------------------------------------------------------------------------------
-static var _test_mode = false
 static var _lgr = null
 static func get_logger():
-	if(_test_mode):
-		return Logger.new()
-	else:
-		if(_lgr == null):
-			_lgr = Logger.new()
-		return _lgr
+	if(_lgr == null):
+		_lgr = GutLogger.new()
+	return _lgr
+
+static var _error_tracker = null
+static func get_error_tracker():
+	if(_error_tracker == null):
+		_error_tracker = GutErrorTracker.new()
+	return _error_tracker
 
 
+
+
+# ##############################################################################
+# Methods
+# ##############################################################################
+
+# So...I couldn't figure out how to get to a reference for a GDNative Class
+# using a string.  ClassDB has all thier names...so I made a hash using those
+# names and the classes.  Then I dynmaically make a script that has that as
+# the source and grab the hash out of it and return it.  Super Rube Golbergery,
+# but tons of fun.
+#
+# This is lazy loaded into class_ref_by_name, it's only needed when finding
+# stubs.
+static func _create_class_dictionary():
+	var text = "var all_the_classes: Dictionary = {\n"
+	var black_list = [
+	]
+	for classname in ClassDB.get_class_list():
+		if(!black_list.has(classname) and (ClassDB.can_instantiate(classname) or GodotSingletons.names.has(classname))):
+			text += str('"', classname, '": ', classname, ", \n")
+
+	text += "}"
+	var inst =  GutUtils.create_script_from_source(text, 'res://dynamically_generated/class_dictionary.gd').new()
+	return inst.all_the_classes
+
+
+
+# This must be static so that the scripts are counted.
 static var _dyn_gdscript = DynamicGdScript.new()
+# ##############################################################################
+# Public Methods
+# ##############################################################################
 static func create_script_from_source(source, override_path=null):
 	var are_warnings_enabled = WarningsManager.are_warnings_enabled()
 	WarningsManager.enable_warnings(false)
@@ -205,6 +281,17 @@ static func create_script_from_source(source, override_path=null):
 	WarningsManager.enable_warnings(are_warnings_enabled)
 
 	return DynamicScript
+
+
+# Get the EditorInterface instance without having to make a direct reference to
+# it.  This allows for testing to be done on editor scripts that require it
+# without having the parser error when you refer to it when not in the editor.
+static func get_editor_interface():
+	if(Engine.is_editor_hint()):
+		var inst = load("res://addons/gut/get_editor_interface.gd").new()
+		return inst.get_it()
+	else:
+		return null
 
 
 static func godot_version_string():
@@ -235,19 +322,6 @@ static func make_install_check_text(template_paths=DOUBLE_TEMPLATES, ver_nums=ve
 
 static func is_install_valid(template_paths=DOUBLE_TEMPLATES, ver_nums=version_numbers):
 	return make_install_check_text(template_paths, ver_nums) == INSTALL_OK_TEXT
-
-
-# ------------------------------------------------------------------------------
-# Gets the root node without having to be in the tree and pushing out an error
-# if we don't have a main loop ready to go yet.
-# ------------------------------------------------------------------------------
-# static func get_root_node():
-# 	var main_loop = Engine.get_main_loop()
-# 	if(main_loop != null):
-# 		return main_loop.root
-# 	else:
-# 		push_error('No Main Loop Yet')
-# 		return null
 
 
 # ------------------------------------------------------------------------------
@@ -318,6 +392,10 @@ static func print_properties(props, thing, print_all_meta=false):
 		if(print_all_meta):
 			print('  ', props[i])
 
+
+static func print_method_list(thing):
+	for entry in thing.get_method_list():
+		print("* ", entry.name)
 
 
 # ------------------------------------------------------------------------------
@@ -433,10 +511,14 @@ static func is_null_or_empty(text):
 static func get_native_class_name(thing):
 	var to_return = null
 	if(is_native_class(thing)):
-		var newone = thing.new()
-		to_return = newone.get_class()
-		if(!newone is RefCounted):
-			newone.free()
+		if(gdscript_native_class_names_by_type.has(thing)):
+			to_return = gdscript_native_class_names_by_type[thing]
+		else:
+			var newone = thing.new()
+			to_return = newone.get_class()
+			if(!newone is RefCounted):
+				newone.free()
+			gdscript_native_class_names_by_type[thing] = to_return
 	return to_return
 
 
@@ -518,14 +600,6 @@ static func get_script_text(obj):
 	return obj.get_script().get_source_code()
 
 
-# func get_singleton_by_name(name):
-# 	var source = str("var singleton = ", name)
-# 	var script = GDScript.new()
-# 	script.set_source_code(source)
-# 	script.reload()
-# 	return script.new().singleton
-
-
 static func dec2bistr(decimal_value, max_bits = 31):
 	var binary_string = ""
 	var temp
@@ -560,9 +634,40 @@ static func get_display_size():
 	return Engine.get_main_loop().get_viewport().get_visible_rect()
 
 
+static func find_method_meta(methods, method_name):
+	var meta = null
+	var idx = 0
+	while (idx < methods.size() and meta == null):
+		var m = methods[idx]
+		if(m.name == method_name):
+			meta = m
+		idx += 1
+
+	return meta
+
+
+static func get_method_meta(object, method_name):
+	return find_method_meta(object.get_method_list(), method_name)
+
+
+static func is_singleton(thing):
+	if(typeof(thing) == TYPE_OBJECT):
+		return GodotSingletons.class_ref.has(thing)
+	elif(typeof(thing) == TYPE_STRING):
+		return GodotSingletons.names.has(thing)
+	else:
+		return false
 
 
 
+
+static func is_singleton_double(thing):
+	return is_double(thing) and thing.__gutdbl_values.singleton_name != ''
+
+
+
+static func is_headless():
+	return DisplayServer.get_name() == "headless"
 # ##############################################################################
 #(G)odot (U)nit (T)est class
 #
@@ -591,4 +696,3 @@ static func get_display_size():
 # THE SOFTWARE.
 #
 # ##############################################################################
-

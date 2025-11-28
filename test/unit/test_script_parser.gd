@@ -182,7 +182,6 @@ class TestParsedScript:
 	func test_extends_text_uses_class_name_for_natives():
 		var parsed = ParsedScript.new(Node2D)
 		assert_eq(parsed.get_extends_text(), 'extends Node2D')
-		parsed.unreference()
 		parsed = null
 
 	func test_extends_text_adds_inner_classes_to_end():
@@ -194,7 +193,6 @@ class TestParsedScript:
 	func test_parsing_native_does_not_generate_orphans():
 		var parsed = ParsedScript.new(Node2D)
 		await get_tree().process_frame # avoids error godot:69411
-		parsed.unreference()
 		parsed = null
 		assert_no_new_orphans()
 

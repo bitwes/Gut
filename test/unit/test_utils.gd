@@ -112,8 +112,8 @@ func test_make_install_check_text_contains_info_about_invalid_version():
 	var text = GutUtils.make_install_check_text(GutUtils.DOUBLE_TEMPLATES, ver_nums)
 	assert_string_contains(text, 'requires Godot ', false)
 
-func test_make_install_check_text_contains_text_about_no_configured_directories():
-	pending()
+#func test_make_install_check_text_contains_text_about_no_configured_directories():
+	#pending()
 
 
 class TestGetSceneScript:
@@ -253,8 +253,3 @@ class TestGetEnumValue:
 	func test_does_not_round_floats():
 		var val = GutUtils.get_enum_value(2.9, TEST1, 9999)
 		assert_eq(val, 2)
-
-
-
-
-

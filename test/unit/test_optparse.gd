@@ -1,7 +1,8 @@
 extends GutTest
 
+
 class BaseTest:
-	extends GutTest
+	extends GutInternalTester
 
 	var OptParse = load('res://addons/gut/cli/optparse.gd')
 
@@ -48,6 +49,14 @@ class TestOption:
 		assert_eq(lines[0], "h   line one")
 		assert_eq(lines[1], "    line two")
 		assert_eq(lines[2], "    line three")
+
+	func test_to_s_contains_aliases():
+		var o = OptParse.Option.new("name", 'default', "description")
+		o.aliases.assign(["alias1", "alias2"])
+		var desc = o.to_s(4)
+		var lines = desc.split("\n")
+		assert_eq(lines[0], "name description")
+		assert_eq(lines[1], "     aliases: alias1, alias2")
 
 	func test_required_false_by_default():
 		var o = OptParse.Option.new('name', 'default')
@@ -111,16 +120,23 @@ class TestOptParse:
 		opts.parse(['-s', 'res://something.gd'])
 		assert_eq(opts.options.script_option.value, 'res://something.gd')
 
+	func test_when_long_script_option_specified_it_is_set():
+		var opts = OptParse.new()
+		opts.parse(['--script', 'res://something.gd'])
+		assert_eq(opts.options.script_option.value, 'res://something.gd')
+
 	func test_cannot_add_duplicate_options():
 		var opts = OptParse.new()
 		opts.add('-a', 'a', 'a')
 		opts.add('-a', 'a', 'a')
+		assert_push_error_count(1, 'option exists')
 		assert_eq(opts.options.options.size(), 1)
 
 	func test_cannot_add_duplicate_positional_option():
 		var opts = OptParse.new()
 		opts.add_positional('a', 'a', 'a')
 		opts.add_positional('a', 'a', 'a')
+		assert_push_error_count(1, 'option exists')
 		assert_eq(opts.options.positional.size(), 1)
 
 	func test_add_required_sets_required_flag():
@@ -137,6 +153,7 @@ class TestOptParse:
 		var opts = OptParse.new()
 		var first = opts.add('-a', 'a', 'a')
 		var result = opts.add_required('-a', 'a', 'a')
+		assert_push_error_count(1, 'option exists')
 		assert_null(result)
 		assert_false(first.required)
 
@@ -144,6 +161,7 @@ class TestOptParse:
 		var opts = OptParse.new()
 		var first = opts.add_positional('-a', 'a', 'a')
 		var result = opts.add_positional_required('-a', 'a', 'a')
+		assert_push_error_count(1, 'option exists')
 		assert_null(result)
 		assert_false(first.required)
 
@@ -235,9 +253,6 @@ class TestOptParse:
 		assert_eq(opts.unused, ['a,b,c,d', '--bar', '--asdf'])
 
 
-
-
-
 class TestBooleanValues:
 	extends BaseTest
 
@@ -272,7 +287,6 @@ class TestBooleanValues:
 		assert_true(op.get_value('--foo'))
 
 
-
 class TestArrayParameters:
 	extends BaseTest
 
@@ -300,8 +314,6 @@ class TestArrayParameters:
 		op.parse(['--foo=a,b'])
 		assert_eq(option.value, ['a', 'b'])
 		assert_true(option.has_been_set())
-
-
 
 
 class TestPositionalArguments:
@@ -390,7 +402,7 @@ class TestValuesDictionary:
 	func test_values_contains_positional_arguments_default_value():
 		var op = OptParse.new()
 		op.add_positional("first", 'asdf', 'the first one')
-		op.parse()
+		op.parse([])
 		assert_eq(op.values.first, 'asdf')
 
 	func test_values_contains_positional_arguments_value():
@@ -398,3 +410,51 @@ class TestValuesDictionary:
 		op.add_positional("first", 'asdf', 'the first one')
 		op.parse(['foo'])
 		assert_eq(op.values.first, 'foo')
+
+
+class TestOptionAliases:
+	extends BaseTest
+
+	var op
+
+	func before_each():
+		op = OptParse.new()
+
+	func test_options_add_with_alias():
+		var opt = OptParse.Option.new("name", "default")
+		var opts = OptParse.Options.new()
+		opts.add(opt, ["alias1", "alias2"])
+		assert_eq(opts.get_by_name("alias1"), opt)
+		assert_eq(opts.get_by_name("alias2"), opt)
+		assert_has(opt.aliases, "alias1")
+		assert_has(opt.aliases, "alias2")
+
+	func test_arguments_by_alias():
+		op.add(["--name", "--alias"], "default", "description")
+		op.parse(['--alias=value'])
+		assert_eq(op.get_value_or_null("--name"), "value")
+
+	func test_alias_doesnt_change_normal_function():
+		op.add(["--name", "--alias"], "default", "description")
+		op.parse(['--name=value'])
+		assert_eq(op.get_value_or_null("--name"), "value")
+
+	func test_argument_accessible_by_alias():
+		op.add(["--name", "--alias"], "default", "description")
+		op.parse(['--name=value'])
+		assert_eq(op.get_value_or_null("--alias"), "value")
+
+	func test_aliases_collide_with_options():
+		op.add("--name", "default", "description")
+		assert_null(op.add(["--another", "--name"], "default", "description"))
+		assert_push_error_count(1, 'option exists')
+
+	func test_aliases_collide_with_aliases():
+		op.add(["--name", "--alias"], "default", "description")
+		assert_null(op.add(["--another", "--alias"], "default", "description"))
+		assert_push_error_count(1, 'option exists')
+
+	func test_options_collide_with_aliases():
+		op.add(["--name", "--alias"], "default", "description")
+		assert_null(op.add("--alias", "default", "description"))
+		assert_push_error_count(1, 'option exists')

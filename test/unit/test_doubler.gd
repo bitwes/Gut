@@ -63,13 +63,15 @@ class TestTheBasics:
 		_doubler.set_stubber(stubber)
 		_doubler.set_gut(gut)
 		_doubler.set_strategy(DOUBLE_STRATEGY.SCRIPT_ONLY)
-		_doubler.set_logger(GutUtils.Logger.new())
+		var lgr = GutUtils.GutLogger.new()
+		lgr.set_gut(gut)
+		_doubler.set_logger(lgr)
 		_doubler.print_source = false
 
 	func test_get_set_stubber():
 		var dblr = Doubler.new()
 		var default_stubber = dblr.get_stubber()
-		assert_accessors(dblr, 'stubber', default_stubber, GDScript.new())
+		assert_accessors(dblr, 'stubber', default_stubber, GutUtils.Stubber.new())
 
 	func test_can_get_set_spy():
 		assert_accessors(Doubler.new(), 'spy', null, GDScript.new())
@@ -97,8 +99,8 @@ class TestTheBasics:
 	func test_cannot_set_strategy_to_invalid_values():
 		var default = _doubler.get_strategy()
 		_doubler.set_strategy(-1)
+		assert_tracked_gut_error()
 		assert_eq(_doubler.get_strategy(), default, 'original value retained')
-		assert_errored(_doubler, 1)
 
 	func test_can_set_strategy_in_constructor():
 		var d = Doubler.new(GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
@@ -148,7 +150,7 @@ class TestDoublingScripts:
 
 	func test_doublecd_thing_has_gut_metadata():
 		var doubled = _doubler.double(DoubleMe).new()
-		assert_eq(doubled.__gutdbl.gut, gut)
+		assert_eq(doubled.__gutdbl.gut_ref.get_ref(), gut)
 
 	func test_keeps_extends():
 		var doubled = _doubler.double(DoubleExtendsNode2D).new()
@@ -183,9 +185,6 @@ class TestDoublingScripts:
 	func test_doubled_methods_does_not_included_non_overloaded_methods():
 		var d = _doubler.double(DOUBLE_ME_PATH).new()
 		assert_does_not_have(d.__gutdbl_values.doubled_methods, '_input')
-
-
-
 
 
 class TestAddingIgnoredMethods:
@@ -268,13 +267,11 @@ class TestDoubleStrategyIncludeNative:
 	var doubler = null
 	var stubber = GutUtils.Stubber.new()
 
-
 	func before_each():
 		stubber.clear()
 		doubler = Doubler.new(GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
 		doubler.set_stubber(stubber)
 		doubler.print_source = false
-
 
 	func test_built_in_overloading_ony_happens_on_full_strategy():
 		doubler.set_strategy(GutUtils.DOUBLE_STRATEGY.SCRIPT_ONLY)
@@ -317,7 +314,7 @@ class TestDoubleStrategyIncludeNative:
 
 
 	func test_doubled_builtins_call_super():
-		var inst = autofree(doubler.double(DoubleExtendsWindowDialog).new())
+		var inst = autofree(doubler.partial_double(DoubleExtendsWindowDialog).new())
 		# Make sure the function is in the doubled class definition
 		assert_source_contains(inst, 'func add_user_signal(p_signal')
 		# Make sure that when called it retains old functionality.
@@ -327,7 +324,7 @@ class TestDoubleStrategyIncludeNative:
 		assert_has_signal(inst, 'new_two')
 
 	func test_doubled_builtins_are_added_as_stubs_to_call_super():
-		var inst = autofree(doubler.double(DoubleExtendsWindowDialog).new())
+		var inst = autofree(doubler.partial_double(DoubleExtendsWindowDialog).new())
 		assert_true(doubler.get_stubber().should_call_super(inst, 'add_user_signal'))
 
 	func test_doubled_methods_includes_non_overloaded_methods():
@@ -428,16 +425,18 @@ class TestDoubleInnerClasses:
 	func before_each():
 		doubler = Doubler.new()
 		doubler.set_stubber(GutUtils.Stubber.new())
-		doubler.set_logger(GutUtils.Logger.new())
+		var lgr = GutUtils.GutLogger.new()
+		lgr.set_gut(gut)
+		doubler.set_logger(lgr)
 
 	func test_when_inner_class_not_registered_it_generates_error():
-		var  Dbl = doubler.double(InnerClasses.InnerA)
-		assert_errored(doubler, 1)
+		doubler.double(InnerClasses.InnerA)
+		assert_tracked_gut_error()
 
 	func test_when_inner_class_registered_it_makes_a_double():
 		doubler.inner_class_registry.register(InnerClasses)
 		var  Dbl = doubler.double(InnerClasses.InnerA)
-		assert_errored(doubler, 0)
+		assert_tracked_gut_error(doubler, 0)
 		assert_not_null(Dbl, 'made a double')
 
 	func test_doubled_instance_returns_null_for_get_b1():
@@ -489,8 +488,8 @@ class TestDoubleInnerClasses:
 		assert_eq(inst.get_a(), 'a')
 
 	func test_partial_double_errors_if_inner_not_registered():
-		var inst = doubler.partial_double(InnerClasses.InnerA)
-		assert_errored(doubler, 1)
+		doubler.partial_double(InnerClasses.InnerA)
+		assert_tracked_gut_error()
 
 
 
@@ -512,3 +511,108 @@ class TestAutofree:
 		var doubled = partial_double(DoubleExtendsNode2D).new()
 		gut.get_autofree().free_all()
 		assert_no_new_orphans()
+
+
+
+class TestDoubleSingletons:
+	extends BaseTest
+
+	var doubler = null
+
+	func before_each():
+		doubler = Doubler.new()
+		doubler.set_stubber(GutUtils.Stubber.new())
+		var lgr = GutUtils.GutLogger.new()
+		lgr.set_gut(gut)
+		doubler.set_logger(lgr)
+
+	func test_can_make_a_double_of_OS():
+		var d = doubler.double_singleton(Input)
+		assert_not_null(d)
+
+	func test_doubles_are_ref_counted():
+		var d = doubler.double_singleton(Time)
+		var inst = d.new()
+		assert_is(inst, RefCounted)
+
+	func test_adds_gut_data():
+		var d = doubler.double_singleton(OS)
+		var inst = d.new()
+
+		assert_typeof(inst.__gutdbl_values, TYPE_DICTIONARY)
+		assert_has_method(inst, '__gutdbl_check_method__')
+		assert_not_null(inst.__gutdbl)
+		assert_has_method(inst, '__gutdbl_done')
+
+	func test_populates_gut_data_singleton_values():
+		var d = doubler.double_singleton(OS)
+		var inst = d.new()
+		assert_eq(inst.__gutdbl_values.singleton_name, "OS")
+		assert_eq(inst.__gutdbl_values.singleton, OS.get_instance_id(), 'singleton instance id')
+
+
+	func test_double_has_singleton_methods():
+		var d = doubler.double_singleton(OS)
+		var inst = d.new()
+
+		assert_has_method(inst, 'get_data_dir')
+
+
+	func test_double_has_enums():
+		var inst = doubler.double_singleton(Time).new()
+		assert_eq(inst.MONTH_JANUARY, 1)
+
+
+	func test_double_has_signal():
+		var inst = doubler.double_singleton(AudioServer).new()
+		assert_has_signal(inst, 'bus_layout_changed')
+
+	var _on_bus_renamed_bus_index = 999
+	var _on_bus_renamed_old_name = ''
+	var _on_bus_renamed_new_name = ''
+	func _on_bus_renamed(bus_index, old_name, new_name):
+		_on_bus_renamed_bus_index = bus_index
+		_on_bus_renamed_old_name = old_name
+		_on_bus_renamed_new_name = new_name
+
+	func test_can_connect_to_signal_with_parameters():
+		var inst = doubler.double_singleton(AudioServer).new()
+		inst.bus_renamed.connect(_on_bus_renamed)
+		assert_connected(inst.bus_renamed, self)
+		inst.bus_renamed.emit(-1, 'old', 'new')
+		assert_eq(_on_bus_renamed_bus_index, -1)
+		assert_eq(_on_bus_renamed_old_name, 'old')
+		assert_eq(_on_bus_renamed_new_name, 'new')
+
+	func test_singltons_contain_properties():
+		var inst = doubler.double_singleton(OS).new()
+		assert_true(inst.delta_smoothing)
+		assert_false(inst.low_processor_usage_mode)
+
+	func test_can_double_all_singletons(p = use_parameters(GutUtils.GodotSingletons.class_ref)):
+		var D = doubler.double_singleton(p)
+		assert_not_null(D, 'singleton:  ' + p.get_class())
+		if(is_passing()):
+			assert_not_null(D.new(), 'instance')
+
+	func test_can_make_partial_double_of_singleton():
+		var D = doubler.partial_double_singleton(Time)
+		assert_not_null(D)
+
+	func test_partial_double_singletons_call_super():
+		var D = doubler.partial_double_singleton(Time)
+		var inst = D.new()
+		assert_not_null(inst.get_ticks_msec())
+
+	func test_singleton_doubles_have_doubled_methods_populated():
+		var inst = doubler.double_singleton(Performance).new()
+		assert_ne(inst.__gutdbl_values.doubled_methods.size(), 0)
+
+	func test_singleton_doubles_do_not_have_object_methods():
+		var inst = doubler.double_singleton(Performance).new()
+		assert_does_not_have(inst.__gutdbl_values.doubled_methods, 'get_property_list')
+
+	func test_singleton_doubles_have_singleton_methods():
+		var inst = doubler.double_singleton(Performance).new()
+		assert_has(inst.__gutdbl_values.doubled_methods, 'get_custom_monitor_names')
+

@@ -10,6 +10,7 @@ class TestTestCollector:
 	}
 	func before_each():
 		gr.tc = TestCollector.new()
+		gr.tc.set_logger(GutLogger.new())
 
 	func test_has_logger():
 		assert_has_logger(gr.tc)
@@ -72,7 +73,7 @@ class TestTestCollector:
 		gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')
 		assert_false(gr.tc.has_script(SCRIPTS_ROOT + 'has_inner_class.gd.DoesNotExtend')
 			, 'should not have DoesNotExtend')
-		assert_warn(gr.tc)
+		assert_logger_warn(gr.tc)
 
 	func test_inner_classes_have_tests():
 		gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')
@@ -83,7 +84,8 @@ class TestTestCollector:
 	# also checks that only local methods are found since there is some extra
 	# print methods.
 	func test_inner_tests_are_found_using_test_prefix():
-		gr.tc.set_test_prefix('print_')
+		gr.tc.set_test_prefix('print_s') # changed to print_s because print_tracked_errors
+										 # was introduced to test.gd.  smells bad
 		gr.tc.add_script(SCRIPTS_ROOT + 'has_inner_class.gd')
 		for i in range(gr.tc.scripts.size()):
 			if(gr.tc.scripts[i].inner_class_name == 'TestClass1'):
@@ -144,7 +146,7 @@ class TestExportImport:
 		GutUtils.write_file(path, export_file_text)
 
 	func _run_test_collector(tc):
-		var test_gut = Gut.new()
+		var test_gut = new_gut()
 		add_child(test_gut)
 		test_gut._test_collector = tc
 		test_gut._test_the_scripts()
@@ -244,4 +246,3 @@ class TestExportImport:
 		# This is 2 for some reason.  it is only 1 in the other test.  One of
 		# them is wrong but everything else checks out ok.
 		assert_eq(totals.scripts, 2, 'script count')
-

@@ -1,14 +1,15 @@
-extends 'res://addons/gut/test.gd'
+extends GutInternalTester
 
 
 class TestArrayCompareResultInterace:
-	extends 'res://addons/gut/test.gd'
+	extends GutInternalTester
 
 	var DiffTool = GutUtils.DiffTool
 
 	func test_cannot_set_summary():
 		var ad = DiffTool.new([], [])
 		ad.summary = 'the summary'
+		assert_push_error('cannot set summary')
 		assert_ne(ad.summary,  'the summary')
 
 	func test_summary_prop_returns_summarize():
@@ -18,6 +19,7 @@ class TestArrayCompareResultInterace:
 	func test_cannot_set_are_equal():
 		var ad = DiffTool.new([], [])
 		ad.are_equal = 'asdf'
+		assert_push_error('cannot set are_equal')
 		assert_eq(ad.are_equal, true)
 
 	func test_are_equal_prop_returns_result_of_diff():
@@ -53,7 +55,7 @@ class TestArrayCompareResultInterace:
 
 
 class TestArrayDiff:
-	extends 'res://addons/gut/test.gd'
+	extends GutInternalTester
 
 	var DiffTool = GutUtils.DiffTool
 
@@ -139,7 +141,7 @@ class TestArrayDiff:
 
 
 class TestArrayDeepDiff:
-	extends 'res://addons/gut/test.gd'
+	extends GutInternalTester
 
 	var DiffTool = GutUtils.DiffTool
 
@@ -175,13 +177,14 @@ class TestArrayDeepDiff:
 
 
 class TestDictionaryCompareResultInterace:
-	extends 'res://addons/gut/test.gd'
+	extends GutInternalTester
 
 	var DiffTool = GutUtils.DiffTool
 
 	func test_cannot_set_summary():
 		var diff = DiffTool.new({},{}, GutUtils.DIFF.DEEP)
 		diff.summary = 'the summary'
+		assert_push_error('cannot set summary')
 		assert_ne(diff.summary,  'the summary')
 
 	func test_summary_prop_returns_summarize():
@@ -191,6 +194,7 @@ class TestDictionaryCompareResultInterace:
 	func test_cannot_set_are_equal():
 		var diff = DiffTool.new({},{}, GutUtils.DIFF.DEEP)
 		diff.are_equal = 'asdf'
+		assert_push_error('cannot set are_equal')
 		assert_eq(diff.are_equal, true)
 
 	func test_are_equal_prop_returns_result_of_diff():
@@ -221,7 +225,7 @@ class TestDictionaryCompareResultInterace:
 
 
 class TestDictionaryDiff:
-	extends 'res://addons/gut/test.gd'
+	extends GutInternalTester
 
 	var DiffTool = GutUtils.DiffTool
 
@@ -318,5 +322,3 @@ class TestDictionaryDiff:
 		diff.max_differences = 10
 		assert_lt(diff.summary.split("\n").size(), 50, diff.summary)
 		assert_false(diff.are_equal)
-
-

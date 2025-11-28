@@ -7,7 +7,7 @@ class TestLogging:
 	var _gut = null
 
 	func before_each():
-		_gut = Gut.new()
+		_gut = new_gut(verbose)
 		_gut._should_print_versions = false
 		_gut.log_level = 0
 		add_child_autofree(_gut)
@@ -54,8 +54,8 @@ class TestMemoryMgmt:
 	func test_GutTest_with_waits():
 		var t = GutTest.new()
 		add_child(t)
-		await wait_frames(10)
+		await wait_physics_frames(10)
 		t.free()
-		await wait_frames(10)
+		await wait_physics_frames(10)
 		assert_no_new_orphans()
 
