@@ -35,7 +35,6 @@ func _init() -> void:
 	var cli : Node = load('res://addons/gut/cli/gut_cli.gd').new()
 	get_root().add_child(cli)
 
-	Loader.restore_ignore_addons()
 	cli.main()
 
 

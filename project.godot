@@ -21,7 +21,6 @@ global="*res://scripts/global.gd"
 
 [debug]
 
-gdscript/warnings/exclude_addons=false
 gdscript/warnings/redundant_await=0
 
 [display]
