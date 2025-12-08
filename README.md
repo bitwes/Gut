@@ -3,8 +3,6 @@
 
 If you'd like to support me you can [buy me a coffee](https://buymeacoffee.com/bitwes).
 
-If you'd like to support me you can [buy me a coffee](https://buymeacoffee.com/bitwes).
-
 # GUT
 GUT (Godot Unit Test) is a unit testing framework for the [Godot Engine](https://godotengine.org/).  It allows you to write tests for your gdscript in gdscript.
 
