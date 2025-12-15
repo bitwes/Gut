@@ -2307,7 +2307,7 @@ func assert_engine_error(text, msg=''):
 ## [codeblock]
 ## func test_with_push_error():
 ##     push_error("This is an error")
-##     assert_push_error(1, 'This test should have caused a push_error)
+##     assert_push_error(1, 'This test should have caused a push_error')
 ## [/codeblock]
 ## See [wiki]Error-Tracking[/wiki].
 func assert_push_error_count(count : int, msg:=''):
