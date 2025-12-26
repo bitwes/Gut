@@ -1348,17 +1348,64 @@ func _can_make_signal_assertions(object, signal_name):
 	return !(_fail_if_not_watching(object) or _fail_if_does_not_have_signal(object, signal_name))
 
 
-# Check if an object is connected to a signal on another object. Returns True
-# if it is and false otherwise
-func _is_connected(signaler_obj, connect_to_obj, signal_name, method_name=""):
-	if(method_name != ""):
-		return signaler_obj.is_connected(signal_name,Callable(connect_to_obj,method_name))
+# Check if an object has any methods which are connected to the given signal.
+# If so, returns true, otherwise, returns false.
+func _is_connected_to_any(
+	signal_ref: Signal,
+	callback_parent: Object,
+):
+	var connections = signal_ref.get_object().get_signal_connection_list(signal_ref.get_name())
+	for conn in connections:
+		if(conn['callable'].get_object() == callback_parent):
+			return true
+	return false
+
+
+# Helper function to parse parameters of assert_[not_]connected
+# Attempts to parse parameters as each of the four signatures
+# of assert_[not_]connected and return whether or not the signal/methods(s)
+# specified by the parameters are actually connected.
+# returns [connected, signal_name, method_name, signal_object_name, method_object_name],
+# where connected is true if the objects are actually connected and false otherwise.
+# The remaining parameters are strings used to display test information.
+func _get_connection_info(p1, p2, p3, p4):
+	var signal_name: String = ""
+	var method_name: String = ""
+	var signal_object_name: String = ""
+	var method_object_name: String = ""
+	var connected: bool = false
+
+	if (p1 is Signal and p2 is Callable and p3 == null and p4 == null):
+		signal_name = p1.get_name()
+		method_name = p2.get_method()
+		signal_object_name = _str(p1.get_object())
+		method_object_name = _str(p2.get_object())
+		connected = p1.is_connected(p2)
+	elif (p1 is Signal and p2 is Object and p3 == null and p4 == null):
+		signal_name = p1.get_name()
+		signal_object_name = _str(p1.get_object())
+		method_object_name = _str(p2)
+		connected = _is_connected_to_any(p1, p2)
+	elif (p1 is Object and p2 is Object and p3 is String and p4 == null):
+		signal_name = p3
+		signal_object_name = _str(p1)
+		method_object_name = _str(p2)
+		if (p1.has_signal(p3)):
+			connected = _is_connected_to_any(Signal(p1, p3), p2)
+		else:
+			connected = false
+	elif (p1 is Object and p2 is Object and p3 is String and p4 is String):
+		signal_name = p3
+		method_name = p4
+		signal_object_name = _str(p1)
+		method_object_name = _str(p2)
+		if (p1.has_signal(p3) and p2.has_method(p4)):
+			connected = Signal(p1, p3).is_connected(Callable(p2, p4))
+		else:
+			connected = false
 	else:
-		var connections = signaler_obj.get_signal_connection_list(signal_name)
-		for conn in connections:
-			if(conn['signal'].get_name() == signal_name and conn['callable'].get_object() == connect_to_obj):
-				return true
-		return false
+		push_error("Signal connection assertion called with bad signature. Read Docstring for correct signature.")
+	return [connected, signal_name, method_name, signal_object_name, method_object_name]
 
 
 ## Asserts that `signaler_obj` is connected to `connect_to_obj` on signal `signal_name`.  The method that is connected is optional.  If `method_name` is supplied then this will pass only if the signal is connected to the  method.  If it is not provided then any connection to the signal will cause a pass.
@@ -1376,7 +1423,7 @@ func _is_connected(signaler_obj, connect_to_obj, signal_name, method_name=""):
 ## class Connector:
 ##     func connect_this():
 ##         pass
-##     func  other_method():
+##     func other_method():
 ##         pass
 ##
 ## func test_assert_connected():
@@ -1398,22 +1445,23 @@ func _is_connected(signaler_obj, connect_to_obj, signal_name, method_name=""):
 ##     assert_connected(signaler, connector, 'other_signal')
 ##     assert_connected(signaler, foo, 'the_signal')
 ## [/codeblock]
-func assert_connected(p1, p2, p3=null, p4=""):
-	var sp := SignalAssertParameters.new(p1, p3)
-	var connect_to_obj = p2
-	var method_name = p4
+func assert_connected(p1, p2, p3=null, p4=null):
+	var conn_result = _get_connection_info(p1, p2, p3, p4)
+	var connected = conn_result[0]
+	var signal_name = conn_result[1]
+	var method_name = conn_result[2]
+	var signal_object_name = conn_result[3]
+	var method_object_name = conn_result[4]
 
-	if(connect_to_obj is  Callable):
-		method_name = connect_to_obj.get_method()
-		connect_to_obj = connect_to_obj.get_object()
-
-	var method_disp = ''
+	var method_disp = ""
 	if (method_name != ""):
 		method_disp = str(' using method: [', method_name, '] ')
-	var disp = str('Expected object ', _str(sp.object),\
-		' to be connected to signal: [', sp.signal_name, '] on ',\
-		_str(connect_to_obj), method_disp)
-	if(_is_connected(sp.object, connect_to_obj, sp.signal_name, method_name)):
+	else:
+		method_disp = str(" using method: [", p3, "] ")
+	var disp = str('Expected object ', signal_object_name,\
+		' to be connected to signal: [', signal_name, '] on ',\
+		method_object_name, method_disp)
+	if (connected):
 		_pass(disp)
 	else:
 		_fail(disp)
@@ -1422,22 +1470,23 @@ func assert_connected(p1, p2, p3=null, p4=""):
 ## The inverse of [method assert_connected].  See [method assert_connected] for parameter syntax.
 ## [br]
 ## This will fail with specific messages if the target object is connected to the specified signal on the source object.
-func assert_not_connected(p1, p2, p3=null, p4=""):
-	var sp := SignalAssertParameters.new(p1, p3)
-	var connect_to_obj = p2
-	var method_name = p4
+func assert_not_connected(p1, p2, p3=null, p4=null):
+	var conn_result = _get_connection_info(p1, p2, p3, p4)
+	var connected = conn_result[0]
+	var signal_name = conn_result[1]
+	var method_name = conn_result[2]
+	var signal_object_name = conn_result[3]
+	var method_object_name = conn_result[4]
 
-	if(connect_to_obj is  Callable):
-		method_name = connect_to_obj.get_method()
-		connect_to_obj = connect_to_obj.get_object()
-
-	var method_disp = ''
+	var method_disp = ""
 	if (method_name != ""):
 		method_disp = str(' using method: [', method_name, '] ')
-	var disp = str('Expected object ', _str(sp.object),\
-		' to not be connected to signal: [', sp.signal_name, '] on ',\
-		_str(sp.object), method_disp)
-	if(_is_connected(sp.object, connect_to_obj, sp.signal_name, method_name)):
+	else:
+		method_disp = str(" using method: [", p3, "] ")
+	var disp = str('Expected object ', signal_object_name,\
+		' to be not connected to signal: [', signal_name, '] on ',\
+		method_object_name, method_disp)
+	if (connected):
 		_fail(disp)
 	else:
 		_pass(disp)
