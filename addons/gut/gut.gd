@@ -613,6 +613,7 @@ func _run_test(script_inst, test_name, param_index = -1):
 	# Reset the time and frame tracking stats of the test
 	script_inst.reset_start_times()
 	await script_inst.call(test_name)
+	script_inst.reset_time_scale()
 
 	if(error_tracker.should_test_fail_from_errors(test_id)):
 		script_inst._fail(str("Unexpected Errors:\n", error_tracker.get_fail_text_for_errors(test_id)))

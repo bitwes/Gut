@@ -108,6 +108,11 @@ var _elapsed_usec_start := 0
 var _elapsed_physics_frames_start := 0
 var _elapsed_process_frames_start := 0
 
+# Records engine time scale when test was started so it can be reset after.
+# Value of 0.0 means the time scale has not been changed by the user,
+# any other value is the original engine time scale before test began.
+var _previous_engine_time_scale := 0.0
+
 # I haven't decided if we should be using _ready or not.  Right now gut.gd will
 # call this if _ready was not called (because it was overridden without a super
 # call).  Maybe gut.gd should just call _do_ready_stuff (after we rename it to
@@ -818,6 +823,22 @@ func get_elapsed_process_frames() -> int:
 ## Returns the number of physics frames elapsed since the test method began.
 func get_elapsed_physics_frames() -> int:
 	return Engine.get_physics_frames() - _elapsed_physics_frames_start
+
+
+## Changes the [member Engine.time_scale] only for the remaining duration of this test method.
+## To change for all methods in the test instance, call in [method before_each].
+func set_time_scale(time_scale: float) -> void:
+	if (self._previous_engine_time_scale == 0.0):
+		self._previous_engine_time_scale = Engine.get_time_scale()
+	Engine.set_time_scale(time_scale)
+
+
+## Resets [member Engine.time_scale] to its value before this test was started.
+## [member Engine.time_scale] must have been modified exclusively via [method set_time_scale].
+func reset_time_scale() -> void:
+	if (self._previous_engine_time_scale != 0.0):
+		Engine.set_time_scale(self._previous_engine_time_scale)
+		self._previous_engine_time_scale = 0.0
 
 
 # ----------------

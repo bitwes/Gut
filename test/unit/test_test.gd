@@ -1755,3 +1755,53 @@ class TestElapsedTimeAndFrames:
 		assert_almost_eq(get_elapsed_usec(), 0, 100_000)
 		await wait_seconds(1)
 		assert_almost_eq(get_elapsed_usec(), 1_000_000, 100_000)
+
+
+# ------------------------------------------------------------------------------
+class TestTimeScale:
+	extends BaseTestClass
+
+	func test_speedup():
+		set_time_scale(5.0)
+		await wait_seconds(5)
+		assert_almost_eq(get_elapsed_sec(), 1.0, 0.2)
+
+	func test_reset():
+		var old_scale = Engine.get_time_scale()
+		set_time_scale(5.0)
+		reset_time_scale()
+		assert_eq(old_scale, Engine.get_time_scale())
+
+	func test_multiple_changes():
+		var old_scale = Engine.get_time_scale()
+		Engine.set_time_scale(2.0)
+
+		set_time_scale(5.0)
+		await wait_seconds(5)
+		assert_almost_eq(get_elapsed_sec(), 1.0, 0.2)
+
+		set_time_scale(0.5)
+		await wait_seconds(1)
+		assert_almost_eq(get_elapsed_sec(), 3.0, 0.5)
+
+		reset_time_scale()
+		assert_eq(Engine.get_time_scale(), 2.0)
+
+		Engine.set_time_scale(old_scale)
+
+
+# ------------------------------------------------------------------------------
+class TestTimeScaleBeforeAll:
+	extends BaseTestClass
+
+	func before_each():
+		super.before_each()
+		set_time_scale(5.0)
+
+	func test_1():
+		await wait_seconds(5)
+		assert_almost_eq(get_elapsed_sec(), 1.0, 0.2)
+
+	func test_2():
+		await wait_seconds(5)
+		assert_almost_eq(get_elapsed_sec(), 1.0, 0.2)
