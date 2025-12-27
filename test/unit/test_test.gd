@@ -1791,7 +1791,7 @@ class TestTimeScale:
 
 
 # ------------------------------------------------------------------------------
-class TestTimeScaleBeforeAll:
+class TestTimeScaleBeforeEach:
 	extends BaseTestClass
 
 	func before_each():
