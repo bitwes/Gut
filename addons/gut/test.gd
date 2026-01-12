@@ -1361,51 +1361,55 @@ func _is_connected_to_any(
 	return false
 
 
-# Helper function to parse parameters of assert_[not_]connected
-# Attempts to parse parameters as each of the four signatures
-# of assert_[not_]connected and return whether or not the signal/methods(s)
-# specified by the parameters are actually connected.
-# returns [connected, signal_name, method_name, signal_object_name, method_object_name],
-# where connected is true if the objects are actually connected and false otherwise.
-# The remaining parameters are strings used to display test information.
-func _get_connection_info(p1, p2, p3, p4):
+# Helper return type of _get_connection_info.
+# connected is true if the objects are actually connected and false otherwise.
+# The remaining parameters are used to display test information.
+class _ConnectionInfo:
+	var connected: bool = false
 	var signal_name: String = ""
 	var method_name: String = ""
 	var signal_object_name: String = ""
 	var method_object_name: String = ""
-	var connected: bool = false
+
+
+# Helper function to parse parameters of assert_[not_]connected
+# Attempts to parse parameters as each of the four signatures
+# of assert_[not_]connected and return whether or not the signal/methods(s)
+# specified by the parameters are actually connected.
+func _get_connection_info(p1, p2, p3, p4) -> _ConnectionInfo:
+	var con_info = _ConnectionInfo.new()
 
 	if (p1 is Signal and p2 is Callable and p3 == null and p4 == null):
-		signal_name = p1.get_name()
-		method_name = p2.get_method()
-		signal_object_name = _str(p1.get_object())
-		method_object_name = _str(p2.get_object())
-		connected = p1.is_connected(p2)
+		con_info.signal_name = p1.get_name()
+		con_info.method_name = p2.get_method()
+		con_info.signal_object_name = _str(p1.get_object())
+		con_info.method_object_name = _str(p2.get_object())
+		con_info.connected = p1.is_connected(p2)
 	elif (p1 is Signal and p2 is Object and p3 == null and p4 == null):
-		signal_name = p1.get_name()
-		signal_object_name = _str(p1.get_object())
-		method_object_name = _str(p2)
-		connected = _is_connected_to_any(p1, p2)
+		con_info.signal_name = p1.get_name()
+		con_info.signal_object_name = _str(p1.get_object())
+		con_info.method_object_name = _str(p2)
+		con_info.connected = _is_connected_to_any(p1, p2)
 	elif (p1 is Object and p2 is Object and p3 is String and p4 == null):
-		signal_name = p3
-		signal_object_name = _str(p1)
-		method_object_name = _str(p2)
+		con_info.signal_name = p3
+		con_info.signal_object_name = _str(p1)
+		con_info.method_object_name = _str(p2)
 		if (p1.has_signal(p3)):
-			connected = _is_connected_to_any(Signal(p1, p3), p2)
+			con_info.connected = _is_connected_to_any(Signal(p1, p3), p2)
 		else:
-			connected = false
+			con_info.connected = false
 	elif (p1 is Object and p2 is Object and p3 is String and p4 is String):
-		signal_name = p3
-		method_name = p4
-		signal_object_name = _str(p1)
-		method_object_name = _str(p2)
+		con_info.signal_name = p3
+		con_info.method_name = p4
+		con_info.signal_object_name = _str(p1)
+		con_info.method_object_name = _str(p2)
 		if (p1.has_signal(p3) and p2.has_method(p4)):
-			connected = Signal(p1, p3).is_connected(Callable(p2, p4))
+			con_info.connected = Signal(p1, p3).is_connected(Callable(p2, p4))
 		else:
-			connected = false
+			con_info.connected = false
 	else:
 		push_error("Signal connection assertion called with bad signature. Read Docstring for correct signature.")
-	return [connected, signal_name, method_name, signal_object_name, method_object_name]
+	return con_info
 
 
 ## Asserts that `signaler_obj` is connected to `connect_to_obj` on signal `signal_name`.  The method that is connected is optional.  If `method_name` is supplied then this will pass only if the signal is connected to the  method.  If it is not provided then any connection to the signal will cause a pass.
@@ -1447,11 +1451,11 @@ func _get_connection_info(p1, p2, p3, p4):
 ## [/codeblock]
 func assert_connected(p1, p2, p3=null, p4=null):
 	var conn_result = _get_connection_info(p1, p2, p3, p4)
-	var connected = conn_result[0]
-	var signal_name = conn_result[1]
-	var method_name = conn_result[2]
-	var signal_object_name = conn_result[3]
-	var method_object_name = conn_result[4]
+	var connected = conn_result.connected
+	var signal_name = conn_result.signal_name
+	var method_name = conn_result.method_name
+	var signal_object_name = conn_result.signal_object_name
+	var method_object_name = conn_result.method_object_name
 
 	var method_disp = ""
 	if (method_name != ""):
@@ -1472,11 +1476,11 @@ func assert_connected(p1, p2, p3=null, p4=null):
 ## This will fail with specific messages if the target object is connected to the specified signal on the source object.
 func assert_not_connected(p1, p2, p3=null, p4=null):
 	var conn_result = _get_connection_info(p1, p2, p3, p4)
-	var connected = conn_result[0]
-	var signal_name = conn_result[1]
-	var method_name = conn_result[2]
-	var signal_object_name = conn_result[3]
-	var method_object_name = conn_result[4]
+	var connected = conn_result.connected
+	var signal_name = conn_result.signal_name
+	var method_name = conn_result.method_name
+	var signal_object_name = conn_result.signal_object_name
+	var method_object_name = conn_result.method_object_name
 
 	var method_disp = ""
 	if (method_name != ""):
