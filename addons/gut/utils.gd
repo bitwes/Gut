@@ -201,9 +201,9 @@ static var avail_fonts = gut_fonts.get_font_names()
 
 static var version_numbers = VersionNumbers.new(
 	# gut_versrion (source of truth)
-	'9.5.0',
+	'9.6.0',
 	# required_godot_version
-	'4.5'
+	'4.6'
 )
 
 

@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# 9.6.0
+Compatibility changes for Godot 4.6.
+
+
 # 9.5.1
 
 ## Breaking Changes

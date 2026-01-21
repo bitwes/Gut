@@ -12,7 +12,7 @@ var _menu_mgr = null
 var _gut_button = null
 var _gut_window = null
 var _dock_mode = 'none'
-var _gut_dock : EditorDock = null
+var _gut_dock = null
 
 
 func _init():
