@@ -37,7 +37,7 @@ func test_something_else():
 All test scripts must extend the test class.
 * `extends GutTest`
 
-Each test script has optional setup and teardown methods that you can provide an implementation for.  These are called by Gut at various stages of execution.  They take no parameters.
+Each test script has optional setup and teardown methods that you can provide an implementation for.  These are called by Gut at various stages of execution.  They take no parameters.  For hooks that are run before/after _every_ test, not just a single test script, see [Hooks](Hooks.md#per-script-hooks).
  * `before_each()`:  Runs before each test.
  * `after_each()`:  Runs after each test.
  * `before_all()`:  Runs once before any test starts running.

@@ -17,7 +17,7 @@ The GUT brains.
 Description
 -----------
 
-Most of this class is for internal use only.  Features that can be used are have descriptions and can be accessed through the :ref:`GutTest.gut<class_GutTest_property_gut>` variable in your test scripts (extends :ref:`GutTest<class_GutTest>`). The wiki page for this class contains only the usable features. 
+Most of this class is for internal use only.  Features that can be used have descriptions and can be accessed through the :ref:`GutTest.gut<class_GutTest_property_gut>` variable in your test scripts (extends :ref:`GutTest<class_GutTest>`). The wiki page for this class contains only the usable features. 
 
 
 
@@ -60,6 +60,47 @@ Methods
    +--------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_test_script_count<class_GutMain_method_get_test_script_count>`\ (\ ) |
    +--------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
+
+.. rst-class:: classref-section-separator
+
+----
+
+.. rst-class:: classref-descriptions-group
+
+Signals
+-------
+
+.. _class_GutMain_signal_start_script:
+
+.. rst-class:: classref-signal
+
+**start_script**\ (\ test_script_obj\ ) :ref:`🔗<class_GutMain_signal_start_script>`
+
+Emitted before every test script is run. Emitted before :ref:`GutTest.before_all<class_GutTest_method_before_all>` hook on test is run.
+
+.. _class_GutMain_signal_end_script:
+
+.. rst-class:: classref-signal
+
+**end_script**\ (\ ) :ref:`🔗<class_GutMain_signal_end_script>`
+
+Emitted after every test script is run. Emitted after :ref:`GutTest.after_all<class_GutTest_method_after_all>` hook on test is run.
+
+.. _class_GutMain_signal_start_test:
+
+.. rst-class:: classref-signal
+
+**start_test**\ (\ test_name\ ) :ref:`🔗<class_GutMain_signal_start_test>`
+
+Emitted before every test method is run. Emitted after :ref:`GutTest.before_each<class_GutTest_method_before_each>` hook on test is run.
+
+.. _class_GutMain_signal_end_test:
+
+.. rst-class:: classref-signal
+
+**end_test**\ (\ ) :ref:`🔗<class_GutMain_signal_end_test>`
+
+Emitted after every test method is run. Emitted after :ref:`GutTest.after_each<class_GutTest_method_after_each>` hook on test is run.
 
 .. rst-class:: classref-section-separator
 

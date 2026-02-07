@@ -908,3 +908,51 @@ class TestReworkedEverythingElse:
 		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.failing, 2, 'failing asserts')
 		assert_eq(t.failing_tests, 2, 'failing tests')
+
+
+class TestGutHookOrder:
+	extends GutInternalTester
+
+	var _gut  = null
+
+	func before_each():
+		_gut = add_child_autofree(new_gut(verbose))
+
+	func test_signal_order():
+		var events: Array[String] = []
+		_gut.set_meta("test_signal_order", events)
+
+		_gut.start_script.connect(func(_x): events.append("signal start_script"))
+		_gut.start_test.connect(func(_x): events.append("signal start_test"))
+		_gut.end_test.connect(func(): events.append("signal end_test"))
+		_gut.end_script.connect(func(): events.append("signal end_script"))
+
+		var src = """
+		func before_all():
+			gut.get_meta("test_signal_order").append("hook before_all")
+
+		func before_each():
+			gut.get_meta("test_signal_order").append("hook before_each")
+
+		func after_all():
+			gut.get_meta("test_signal_order").append("hook after_all")
+
+		func after_each():
+			gut.get_meta("test_signal_order").append("hook after_each")
+
+		func test_nothing():
+			pass_test("")
+		"""
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(src)
+		await s.run_tests_in_gut_await(_gut)
+		assert_eq(_gut.get_meta("test_signal_order"), [
+			"signal start_script",
+			"hook before_all",
+			"hook before_each",
+			"signal start_test",
+			"hook after_each",
+			"signal end_test",
+			"hook after_all",
+			"signal end_script",
+		])

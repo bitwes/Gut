@@ -69,6 +69,26 @@ The post-run hook could be useful in writing files used by CICD pipelines to ver
 
 
 
+## Per-Script Hooks
+GUT does not expose "global" function hooks that can be run before each test script or method -- while [GutTest](Creating-Tests.md#details) exposes hooks to run code before/after each test method/class, these must be set on every GutTest instance you want the behavior for.
+
+However, GutMain _does_ expose <a href="class_ref/class_gutmain.html#signals">signals</a> that have the same effect on a global level, being emitted at the beginning/end of all test scripts/methods.  By connecting custom functions to these signals during the [Pre-Run Hook](#pre-run-hook), you can call custom code in hooks across every GutTest instance while defining it only once.  Following is an example of how you would write a pre-run hook script to set up a global setup function.
+
+```gdscript
+extends GutHookScript
+
+func run():
+    gut.start_test.connect(_on_test_started)
+
+func _on_test_started(test_name):
+    # setup logic run before every test in every test script goes here
+```
+
+It may be important to note the order in which the normal GutTest hooks are run and the GutMain signals are emitted. The order is described in the documentation of the signals linked above.
+
+
+
+
 ## Summary Info
 GUT tracks the results of all the scripts and tests that are run.  There is a Summary object that you can access via the `gut` variable.  Using this information you can take actions in the post-run hook.
 
