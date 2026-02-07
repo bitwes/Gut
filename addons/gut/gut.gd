@@ -2,7 +2,7 @@ extends 'res://addons/gut/gut_to_move.gd'
 class_name GutMain
 ## The GUT brains.
 ##
-## Most of this class is for internal use only.  Features that can be used are
+## Most of this class is for internal use only.  Features that can be used
 ## have descriptions and can be accessed through the [member GutTest.gut] variable
 ## in your test scripts (extends [GutTest]).
 ## The wiki page for this class contains only the usable features.
@@ -30,9 +30,13 @@ signal end_pause_before_teardown
 
 signal start_run
 signal end_run
+## Emitted before every test script is run. Emitted before [method GutTest.before_all] hook on test is run.
 signal start_script(test_script_obj)
+## Emitted after every test script is run. Emitted after [method GutTest.after_all] hook on test is run.
 signal end_script
+## Emitted before every test method is run. Emitted after [method GutTest.before_each] hook on test is run.
 signal start_test(test_name)
+## Emitted after every test method is run. Emitted after [method GutTest.after_each] hook on test is run.
 signal end_test
 
 
