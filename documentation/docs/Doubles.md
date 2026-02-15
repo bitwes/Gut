@@ -61,6 +61,20 @@ func before_all():
 func test_foo():
     var dbl = double(SomeScript.InnerClass).new()
 ```
+
+If you reuse doubles of the same classes across several tests, it may be easier to register them once in a [Pre-Run Hook](Hooks.md#pre-run-hook) so that you don't have to register them in every test you write.  This can be achieved by calling `register_inner_classes` during your pre-run hook like so:
+
+```gdscript
+extends GutHookScript
+
+# Given that SomeScript contains the class InnerClass that
+# you wish to double:
+var SomeScript = load('res://some_script.gd')
+
+func run():
+    register_inner_classes(SomeScript)
+```
+
 This approach was used to make tests cleaner and less susceptible to typos.  If Godot adds meta data to inner classes that point back to the source script, then `register_inner_classes` can be removed later and no other changes will need to be made.
 
 

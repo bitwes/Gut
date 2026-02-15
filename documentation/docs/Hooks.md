@@ -29,6 +29,7 @@ The following features are available to scripts that inherit from [GutHookScript
 * `abort()` - abort the test run.
 * `set_exit_code(code)` - Set the code to be returned when the command line finishes.
 * The `JunitXmlExport` class can be used to create an export object to export results.  See [Export-Test-Results](Export-Test-Results)
+* `register_inner_classes` - Register inner classes for doubling.  See [Doubling Inner Classes](Doubles.md#doubling-inner-classes).
 
 ### Access GUT instance
 Each Hook script can access the GUT instance via the `gut` variable.  Useful for getting to summary info or manipulating the GUT instance for reasons I can't think of (which is probably a bad idea but who am I to judge).
@@ -54,6 +55,7 @@ The post-run hook can access the pre-run hook instance via `gut.get_pre_run_scri
 * set flags you've implemented to prevent actions from occurring during tests
   * flags to prevent files from being saved like user stats (my personal catalyst for all these features)
   * logging levels for your application
+* register inner classes for doubling to avoid doing it in each individual test
 * other things I haven't thought of.
 
 
