@@ -18,6 +18,9 @@ Compatibility changes for Godot 4.6.
 * Added the ability to double Godot Singletons (`Input`, `Time`, `OS`, etc.).  See https://gut.readthedocs.io/en/latest/Doubling-Singletons.html for more information.
 * When running headless, GUT will automatically ignore all calls to `pause_before_teardown` and will exit when tests are finished (in case your forget to specify `-gignore_pause` and `-gexit`).
 
+## Bug Fixes
+* #780 Using `SceneTree.change_scene_to_file` or the other change scene methods in a test no longer break things when running from the editor.
+
 # 9.5.0
 Here's a quick video covering some new features:  https://www.youtube.com/watch?v=ovq_1sjIpOs
 

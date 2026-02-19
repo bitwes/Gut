@@ -43,11 +43,11 @@ Many times, reference counted objects cannot be freed due to a cyclical referenc
 Godot does not yet supply any information about these leaked objects, so GUT cannot display any information about them.  Using the `--verbose` flag is the best way to debug these.
 
 
-# GUT Memory Management Features
+## GUT Memory Management Features
 Since GUT cannot know if an orphan was created on purpose or not, it will tell you about all the orphans it finds, as soon as it finds them.  GUT provides some methods to make it easier to free objects you create in your tests so GUT is more likely to report an actual orphan and not some test object.
 
 
-## Autofree Methods
+### Autofree Methods
 GUT detects when an orphan is created and will log the orphans it finds in each test and at the end of the run.  `GutTest` provides the following methods to ease freeing Nodes you create in your tests.  Each of these methods return what is passed in, so you can save a line or two of code.
 
 Henceforth these will be referred to as an "Autofree" method.
@@ -77,7 +77,7 @@ Calling `autofree` with one of these objects, or manually freeing them yourself 
 All children of tests are also freed after the test runs, though a warning is printed out if a test has any children.
 
 
-## Quick Example:
+### Quick Example:
 This test generates an orphan
 ```gdscript
 func test_something():
