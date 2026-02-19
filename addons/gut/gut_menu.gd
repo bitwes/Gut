@@ -52,8 +52,9 @@ func add_menu(display_text, sig_to_emit, tooltip=''):
 
 
 func make_menu():
-	add_menu("Toggle Windowed", toggle_windowed, 
-		'Toggle GUT in the dock or a floating window')
+	# No known way to "make floating" via code with new EditorDock.
+	# add_menu("Toggle Windowed", toggle_windowed,
+	# 	'Toggle GUT in the dock or a floating window')
 	add_menu("Show/Hide GUT", show_gut, '')
 
 	sub_menu.add_separator('Run')
@@ -99,5 +100,5 @@ func apply_gut_shortcuts(shortcut_dialog):
 		shortcut_dialog.scbtn_run_at_cursor.get_input_event())
 	set_shortcut("rerun",
 		shortcut_dialog.scbtn_rerun.get_input_event())
-	set_shortcut("toggle_windowed",
-		shortcut_dialog.scbtn_windowed.get_input_event())
+	# set_shortcut("toggle_windowed",
+	# 	shortcut_dialog.scbtn_windowed.get_input_event())

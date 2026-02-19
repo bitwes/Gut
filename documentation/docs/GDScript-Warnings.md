@@ -1,12 +1,17 @@
 # GDScript Warnings
 
-GUT has a bit of legacy code in it.  I'm pretty proud that GUT has existed long enough to have legacy code, but that means GUT development hasn't benefited from all the warnings that Godot has introduced over the years.  GUT also has to do some things that you shouldn't normally do.  If you are not developing an addon, we recommend that "exclude addons" remain enabled (it is enabled by default).  Excluding addons will cut down on the noise generated from GUT.
+GUT has a bit of legacy code in it.  I'm pretty proud that GUT has existed long enough to have legacy code, but that means GUT development hasn't benefited from all the warnings that Godot has introduced over the years.  GUT also has to do some things that you shouldn't normally do.
+
+Godot introduced a `directory_rules` setting in Project Settings->Debug->GDScript (requires "Advance Settings" to be enabled to edit).  This allows you to define which directories should be included/excluded when applying your warning settings.  By default `res://addons` is excluded.  Godot recommends you leave this setting and then add any directories in the addons directory that you want included.
+
+![GDScript Warnings](_static/images/WarningsSettings.png)
 
 GUT does some warning management when executing tests.  This alleviates clashes between your project's warnings and the warnings that GUT triggers.
-* When a run starts, prior to loading most of the scripts in GUT, the exclude addons option is enabled and remains enabled for the duration of the run.
+* When a run starts, prior to loading most of the scripts in GUT, `res://addons/gut` is added to `directory_rules` as "Exclude".  This only affects the Project Settings while running tests, and is not saved.
 * Before each test script is loaded, all warnings are disabled.  They are re-enabled after the script is loaded.
+* All warnings are disabled when creating doubles of objects.
 
-If these changes to warnings are hiding warnings in your own scripts during the run, you can create a standalone script that you can run to generate all warnings for your code using something like this:
+If you are concerned that these GUT is hiding warnings in your own scripts during a test run, you can create a standalone script to generate all warnings for your code using something like this:
 
 ```gdscript
 # ------------------------------------------------------------------------------

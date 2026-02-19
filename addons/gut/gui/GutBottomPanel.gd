@@ -255,10 +255,8 @@ func _apply_shortcuts():
 	# are weird.
 	# make_floating_btn.shortcut = \
 	# 	_ctrls.shortcut_dialog.scbtn_windowed.get_shortcut()
-
-
-	if(_panel_button != null):
-		_panel_button.shortcut = _ctrls.shortcut_dialog.scbtn_panel.get_shortcut()
+	if(get_parent() is EditorDock):
+		get_parent().dock_shortcut = _ctrls.shortcut_dialog.scbtn_panel.get_shortcut()
 
 
 func _run_all():
@@ -348,6 +346,15 @@ func _on_show_gut() -> void:
 
 func _on_about_pressed() -> void:
 	show_about()
+
+
+func _on_horiz_layout_pressed() -> void:
+	results_horiz_layout()
+
+
+func _on_vert_layout_pressed() -> void:
+	results_vert_layout()
+
 
 # ---------------
 # Public
@@ -500,10 +507,7 @@ func show_about():
 
 
 func show_me():
-	if(owner is Window):
-		owner.grab_focus()
-	else:
-		_gut_plugin.make_bottom_panel_item_visible(self)
+	get_parent().make_visible()
 
 
 func show_hide():
@@ -541,3 +545,12 @@ func results_horiz_layout():
 		results_text.reparent(results_h_split)
 		results_v_split.visible = false
 		results_h_split.visible = true
+
+
+func show_layout_buttons(should):
+	%HorizLayout.visible = should
+	%VertLayout.visible = should
+
+
+func get_panel_shortcut():
+	_ctrls.shortcut_dialog.scbtn_panel.get_shortcut()

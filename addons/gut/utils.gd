@@ -201,9 +201,9 @@ static var avail_fonts = gut_fonts.get_font_names()
 
 static var version_numbers = VersionNumbers.new(
 	# gut_versrion (source of truth)
-	'9.5.1',
+	'9.6.0',
 	# required_godot_version
-	'4.5'
+	'4.6'
 )
 
 
@@ -474,7 +474,7 @@ static func is_instance(obj):
 # Checks if the passed in is a GDScript
 # ------------------------------------------------------------------------------
 static func is_gdscript(obj):
-	return typeof(obj) == TYPE_OBJECT and str(obj).begins_with('<GDScript#')
+	return typeof(obj) == TYPE_OBJECT and str(obj).contains('<GDScript#')
 
 
 # ------------------------------------------------------------------------------

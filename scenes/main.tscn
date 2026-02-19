@@ -1,12 +1,12 @@
-[gd_scene load_steps=3 format=3 uid="uid://cme7ha7tcw3y8"]
+[gd_scene format=3 uid="uid://cme7ha7tcw3y8"]
 
 [ext_resource type="Script" uid="uid://c6wm4h7xfrlor" path="res://scripts/main.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://4jb53yqktyfg" path="res://addons/gut/gui/GutControl.tscn" id="2_f2w0u"]
 
-[node name="main" type="Node2D"]
+[node name="main" type="Node2D" unique_id=702701755]
 script = ExtResource("1")
 
-[node name="RunTestsButton" type="Button" parent="."]
+[node name="RunTestsButton" type="Button" parent="." unique_id=1193447907]
 offset_left = 11.0
 offset_top = 19.0
 offset_right = 194.0
@@ -14,7 +14,7 @@ offset_bottom = 94.0
 text = "Run Tests
 "
 
-[node name="GutControl" parent="." instance=ExtResource("2_f2w0u")]
+[node name="GutControl" parent="." unique_id=1396051957 instance=ExtResource("2_f2w0u")]
 anchors_preset = -1
 offset_left = 11.0
 offset_top = 104.0

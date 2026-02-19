@@ -20,4 +20,3 @@ func _post_ready():
 	var runner : Node = load("res://addons/gut/gui/GutRunner.tscn").instantiate()
 	get_tree().root.add_child(runner)
 	runner.run_from_editor()
-	GutLoader.restore_ignore_addons()

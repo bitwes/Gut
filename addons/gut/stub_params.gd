@@ -9,6 +9,7 @@ var logger = _lgr :
 	get: return _lgr
 	set(val): _lgr = val
 
+
 var return_val = null
 var stub_target = null
 var parameters = null # the parameter values to match method call on.
