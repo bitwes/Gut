@@ -8,7 +8,7 @@ var _lgr = GutUtils.get_logger()
 var logger = _lgr :
 	get: return _lgr
 	set(val): _lgr = val
-var stubber = null
+# var stubber = null
 
 
 var return_val = null

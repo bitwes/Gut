@@ -318,7 +318,6 @@ class TestDoubleStrategyIncludeNative:
 		# Make sure the function is in the doubled class definition
 		assert_source_contains(inst, 'func add_user_signal(p_signal')
 		# Make sure that when called it retains old functionality.
-		print(gut.get_stubber().to_s())
 		inst.add_user_signal('new_one', [])
 		inst.add_user_signal('new_two', ['a', 'b'])
 		assert_has_signal(inst, 'new_one')
