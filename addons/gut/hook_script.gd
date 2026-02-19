@@ -32,6 +32,11 @@ var _should_abort =  false
 func run():
 	gut.logger.error("Run method not overloaded.  Create a 'run()' method in your hook script to run your code.")
 
+## Register inner classes from one or more scripts for doubling.
+## `scripts` may be either a script or an array of scripts.
+## Only worth calling from pre-run hook, not post-run.
+func register_inner_classes(script: Script):
+	gut.get_doubler().inner_class_registry.register(script)
 
 ## Set the exit code when running from the command line.  If not set then the
 ## default exit code will be returned (0 when no tests fail, 1 when any tests
