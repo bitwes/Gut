@@ -414,14 +414,14 @@ class TestConnectionAsserts:
 		gr.test.assert_not_connected(s, c, SIGNAL_NAME)
 		assert_pass(gr.test)
 
-	func test_assert_conneccted_accepts_objects_instead_of_names():
+	func test_assert_connected_accepts_objects_instead_of_names():
 		var s = Signaler.new()
 		var c = ConnectTo.new()
 		s.test_signal.connect(c.test_signal_connector)
 		gr.test.assert_connected(s.test_signal, c)
 		assert_pass(gr.test)
 
-	func test_assert_conneccted_works_with_callable():
+	func test_assert_connected_works_with_callable():
 		var s = Signaler.new()
 		var c = ConnectTo.new()
 		s.test_signal.connect(c.test_signal_connector)
@@ -435,10 +435,25 @@ class TestConnectionAsserts:
 		gr.test.assert_not_connected(s.test_signal, c)
 		assert_fail(gr.test)
 
-	func test_assert_not_conneccted_works_with_callable():
+	func test_assert_not_connected_works_with_callable():
 		var s = Signaler.new()
 		var c = ConnectTo.new()
 		s.test_signal.connect(c.test_signal_connector)
 		gr.test.assert_not_connected(s.test_signal, c.test_signal_connector)
 		assert_fail(gr.test)
 
+	func test_assert_connected_works_with_anonymous_function():
+		var s = Signaler.new()
+		var f = func():
+			pass
+		s.test_signal.connect(f)
+		gr.test.assert_connected(s.test_signal, f)
+		assert_pass(gr.test)
+
+	func test_assert_not_connected_works_with_anonymous_function():
+		var s = Signaler.new()
+		var f = func():
+			pass
+		s.test_signal.connect(f)
+		gr.test.assert_not_connected(s.test_signal, f)
+		assert_fail(gr.test)
