@@ -62,7 +62,7 @@ func test_foo():
     var dbl = double(SomeScript.InnerClass).new()
 ```
 
-If you reuse doubles of the same classes across several tests, it may be easier to register them once in a [Pre-Run Hook](Hooks.md#pre-run-hook) so that you don't have to register them in every test you write.  This can be achieved by calling `register_inner_classes` during your pre-run hook like so:
+If you reuse doubles of the same inner classes across several tests, it may be easier to register them once in a [Pre-Run Hook](Hooks.md#pre-run-hook) so that you don't have to register them in every test you write.  This can be achieved by calling `register_inner_classes` during your pre-run hook like so:
 
 ```gdscript
 extends GutHookScript

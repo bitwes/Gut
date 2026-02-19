@@ -35,12 +35,8 @@ func run():
 ## Register inner classes from one or more scripts for doubling.
 ## `scripts` may be either a script or an array of scripts.
 ## Only worth calling from pre-run hook, not post-run.
-func register_inner_classes(script):
-	if (script is Array):
-		for s in script:
-			gut.get_doubler().inner_class_registry.register(s)
-	else:
-		gut.get_doubler().inner_class_registry.register(script)
+func register_inner_classes(script: Script):
+	gut.get_doubler().inner_class_registry.register(script)
 
 ## Set the exit code when running from the command line.  If not set then the
 ## default exit code will be returned (0 when no tests fail, 1 when any tests
