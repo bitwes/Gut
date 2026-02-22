@@ -642,6 +642,23 @@ class TestEverythingElse:
 		await run_tests()
 
 		assert_eq(gr.test_gut.get_pre_run_script_instance().gut, gr.test_gut)
+		
+	func test_pre_hook_accesses_global_lifecycle_signals():
+		gr.test_gut.pre_run_script = 'res://test/resources/pre_run_script_lifecycle_hooks.gd'
+		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
+		await run_tests()
+		
+		var retrieved_data = gr.test_gut.get_meta('pre_run_script_lifecycle_hooks_data')
+		assert_eq(retrieved_data[0], "test run started")
+		assert_eq(retrieved_data[1], "res://test/samples/test_sample_all_passed.gd loaded from collected script")
+		assert_eq(retrieved_data[2], "starting test test_works")
+		assert_eq(retrieved_data[3], "test_works passed")
+		assert_eq(retrieved_data[4], "starting test test_two")
+		assert_eq(retrieved_data[5], "test_two passed")
+		assert_eq(retrieved_data[6], "starting test test_3")
+		assert_eq(retrieved_data[7], "test_3 passed")
+		assert_eq(retrieved_data[8], "res://test/samples/test_sample_all_passed.gd passed")
+		assert_eq(retrieved_data[9], "test run ended")
 
 	func test_pre_hook_does_not_accept_non_hook_scripts():
 		gr.test_gut.pre_run_script = 'res://test/resources/non_hook_script.gd'

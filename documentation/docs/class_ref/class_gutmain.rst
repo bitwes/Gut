@@ -76,7 +76,7 @@ Signals
 
 **start_script**\ (\ test_script_obj\ ) :ref:`🔗<class_GutMain_signal_start_script>`
 
-Emitted before every test script is run. Emitted before :ref:`GutTest.before_all<class_GutTest_method_before_all>` hook on test is run.
+Emitted before every test script is run. Emitted before :ref:`GutTest.before_all<class_GutTest_method_before_all>` hook on test is run. test_script_obj is an instance of addons/gut/collected_script.gd.
 
 .. _class_GutMain_signal_end_script:
 
@@ -92,7 +92,7 @@ Emitted after every test script is run. Emitted after :ref:`GutTest.after_all<cl
 
 **start_test**\ (\ test_name\ ) :ref:`🔗<class_GutMain_signal_start_test>`
 
-Emitted before every test method is run. Emitted after :ref:`GutTest.before_each<class_GutTest_method_before_each>` hook on test is run.
+Emitted before every test method is run. Emitted after :ref:`GutTest.before_each<class_GutTest_method_before_each>` hook on test is run. test_name is the string name of the current test about to be started.
 
 .. _class_GutMain_signal_end_test:
 
