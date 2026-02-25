@@ -42,6 +42,7 @@ var sample_parsed_data = {
 func test_can_make_one():
 	var ud = UpdateDetector.new()
 	assert_not_null(ud)
+	ud.free()
 
 
 var _vdata = ParameterFactory.named_parameters([
@@ -64,7 +65,7 @@ var _vdata = ParameterFactory.named_parameters([
 	["999999", "0.0.0"]
 ])
 func test_get_recommented_gut_version_from_sample_data(data=use_parameters(_vdata)):
-	var ud = UpdateDetector.new()
+	var ud = autofree(UpdateDetector.new())
 	ud.parse_version_data(sample_parsed_data)
 	var v = ud.get_gut_version_for_godot_version(data.godot_version)
 	assert_eq(v, data.expected_gut_version, str('rec version for ', data.godot_version))
@@ -77,14 +78,14 @@ var _valid_data = ParameterFactory.named_parameters([
 	["11.0", "2.0", false]
 ])
 func test_is_gut_version_valid_for_godot_version(data=use_parameters(_valid_data)):
-	var ud = UpdateDetector.new()
+	var ud = autofree(UpdateDetector.new())
 	ud.parse_version_data(sample_parsed_data)
 	var is_it = ud.is_gut_version_valid(data.gut_version, data.godot_version)
 	assert_eq(is_it, data.expected, str(data.gut_version, ' valid for ', data.godot_version))
 
 
 func test_parse_data_returns_dictionary():
-	var ud = UpdateDetector.new()
+	var ud = autofree(UpdateDetector.new())
 	var data = """{
 		"branches":{},
 		"releases":{
@@ -100,7 +101,7 @@ func test_parse_data_returns_dictionary():
 
 
 func test_missing_godot_min_listed_as_issue():
-	var ud = UpdateDetector.new()
+	var ud = autofree(UpdateDetector.new())
 	var data = """{
 		"branches":{},
 		"releases":{
@@ -114,7 +115,7 @@ func test_missing_godot_min_listed_as_issue():
 
 
 func test_missing_godot_max_listed_as_issue():
-	var ud = UpdateDetector.new()
+	var ud = autofree(UpdateDetector.new())
 	var data = """{
 		"branches":{},
 		"releases":{
@@ -128,26 +129,26 @@ func test_missing_godot_max_listed_as_issue():
 
 
 func test_missing_releases_listed_as_issue():
-	var ud = UpdateDetector.new()
+	var ud = autofree(UpdateDetector.new())
 	var data = "{\"branches\":{},}"
 	ud.parse_version_data(data)
 	assert_eq(ud.data_issues.size(), 1)
 
 
 func test_when_gut_version_not_found():
-	var ud = UpdateDetector.new()
+	var ud = autofree(UpdateDetector.new())
 	ud.parse_version_data(sample_parsed_data)
 	assert_eq(ud.get_gut_version_for_godot_version("3.6.7"), "13.2.0")
 
 
 func test_when_godot_version_not_found_branches_is_checked():
-	var ud = UpdateDetector.new()
+	var ud = autofree(UpdateDetector.new())
 	ud.parse_version_data(sample_parsed_data)
 	assert_eq(ud.get_gut_version_for_godot_version("8.0.0"), "main")
 
 
 func test_missing_branches_entry_is_an_issue():
-	var ud = UpdateDetector.new()
+	var ud = autofree(UpdateDetector.new())
 	var data = """{
 		"releases":{
 			"99.0":{
@@ -161,7 +162,7 @@ func test_missing_branches_entry_is_an_issue():
 
 
 func test_branches_missing_godot_min_is_an_issue():
-	var ud = UpdateDetector.new()
+	var ud = autofree(UpdateDetector.new())
 	var data = """{
 		"releases":{},
 		"branches":{
@@ -176,7 +177,7 @@ func test_branches_missing_godot_min_is_an_issue():
 
 
 func test_branches_missing_godot_max_is_an_issue():
-	var ud = UpdateDetector.new()
+	var ud = autofree(UpdateDetector.new())
 	var data = """{
 		"releases":{},
 		"branches":{
