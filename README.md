@@ -14,7 +14,7 @@ If you'd like to support GUT development you can [buy me a coffee](https://buyme
 
 
 # Wiki
-Documentation is hosted at https://gut.readthedocs.io/, you can find release specific links below.
+Documentation is hosted at https://gut.readthedocs.io/, you can find release-specific links below.
 
 
 # Version Links

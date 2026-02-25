@@ -83,11 +83,28 @@ class TestVerNumTools:
 			['1.2.3', '2.0.0', false],
 			['1.2.1', '1.2.3', false],
 			['1.2.3', '1.3.0', false],
+			['3.6',   '3.6.1', false],
 		])
 	func test_is_version_gte(params = use_parameters(ivg_values)):
 		assert_eq(Vnt.is_version_gte(params.v, params.r), params.expected,
 			str(params.v, ' >= ', params.r, ' = ', params.expected))
 
+	var ivl_values = ParameterFactory.named_parameters(
+		['v', 'r', 'expected'],
+		[
+			['1.2.3', '1.2.3', true],
+			['1.0.0', '2.0.0', true],
+			['1.0.0', '1.1.0', true],
+			['1.0.0', '1.0.1', true],
+			['3.6',   '3.6.1', true],
+
+			['2.0.0', '1.0.0', false],
+			['1.1.0', '1.0.0', false],
+			['1.0.1', '1.0.0', false],
+		])
+	func test_is_version_lte(params = use_parameters(ivl_values)):
+		assert_eq(Vnt.is_version_lte(params.v, params.r), params.expected,
+			str(params.v, ' <= ', params.r, ' = ', params.expected))
 
 	var ive_values = ParameterFactory.named_parameters(
 		['v', 'r', 'expected'],

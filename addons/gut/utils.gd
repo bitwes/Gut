@@ -194,6 +194,9 @@ static var TestCollector = LazyLoader.new('res://addons/gut/test_collector.gd'):
 static var ThingCounter = LazyLoader.new('res://addons/gut/thing_counter.gd'):
 	get: return ThingCounter.get_loaded()
 	set(val): pass
+static var UpdateDetector = LazyLoader.new('res://addons/gut/update_detector.gd'):
+	get: return UpdateDetector.get_loaded()
+	set(val): pass
 # --------------------------------
 
 static var gut_fonts = GutFonts.new()

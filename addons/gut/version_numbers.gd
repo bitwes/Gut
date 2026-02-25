@@ -51,6 +51,24 @@ class VerNumTools:
 		# still null means each index was the same.
 		return GutUtils.nvl(is_ok, true)
 
+	static func is_version_lte(version, required):
+		var is_lt = null
+		var v = make_version_array(version)
+		var r = make_version_array(required)
+
+		var idx = 0
+
+		while(is_lt == null and idx < v.size() and idx < r.size()):
+			if(v[idx] < r[idx]):
+				is_lt = true
+			elif(v[idx] > r[idx]):
+				is_lt = false
+
+			idx += 1
+
+		# still null means each index was the same.
+		return GutUtils.nvl(is_lt, true)
+
 
 	static func is_version_eq(version, expected):
 		var version_array = make_version_array(version)
