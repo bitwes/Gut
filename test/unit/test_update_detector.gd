@@ -4,6 +4,7 @@ extends GutTest
 var UpdateDetector = GutUtils.UpdateDetector
 
 var sample_parsed_data = {
+	"asset_library":"99.0",
 	"branches":{
 		"main":{
 			"godot_min":"8.0.0",
@@ -87,6 +88,7 @@ func test_is_gut_version_valid_for_godot_version(data=use_parameters(_valid_data
 func test_parse_data_returns_dictionary():
 	var ud = autofree(UpdateDetector.new())
 	var data = """{
+		"asset_library":"x.x",
 		"branches":{},
 		"releases":{
 			"99.0":{
@@ -103,6 +105,7 @@ func test_parse_data_returns_dictionary():
 func test_missing_godot_min_listed_as_issue():
 	var ud = autofree(UpdateDetector.new())
 	var data = """{
+		"asset_library":"x.x",
 		"branches":{},
 		"releases":{
 			"99.0":{
@@ -117,6 +120,7 @@ func test_missing_godot_min_listed_as_issue():
 func test_missing_godot_max_listed_as_issue():
 	var ud = autofree(UpdateDetector.new())
 	var data = """{
+		"asset_library":"x.x",
 		"branches":{},
 		"releases":{
 			"99.0":{
@@ -130,7 +134,11 @@ func test_missing_godot_max_listed_as_issue():
 
 func test_missing_releases_listed_as_issue():
 	var ud = autofree(UpdateDetector.new())
-	var data = "{\"branches\":{},}"
+	var data = """{
+		"asset_library":"x.x",
+		"branches":{}
+	}"""
+
 	ud.parse_version_data(data)
 	assert_eq(ud.data_issues.size(), 1)
 
@@ -150,6 +158,7 @@ func test_when_godot_version_not_found_branches_is_checked():
 func test_missing_branches_entry_is_an_issue():
 	var ud = autofree(UpdateDetector.new())
 	var data = """{
+		"asset_library":"x.x",
 		"releases":{
 			"99.0":{
 				"godot_min":"9.0.0",
@@ -164,6 +173,7 @@ func test_missing_branches_entry_is_an_issue():
 func test_branches_missing_godot_min_is_an_issue():
 	var ud = autofree(UpdateDetector.new())
 	var data = """{
+		"asset_library":"x.x",
 		"releases":{},
 		"branches":{
 			"some_branch":{
@@ -175,10 +185,10 @@ func test_branches_missing_godot_min_is_an_issue():
 	assert_eq(ud.data_issues.size(), 1)
 
 
-
 func test_branches_missing_godot_max_is_an_issue():
 	var ud = autofree(UpdateDetector.new())
 	var data = """{
+		"asset_library":"x.x",
 		"releases":{},
 		"branches":{
 			"some_branch":{
@@ -193,3 +203,33 @@ func test_when_gut_version_not_found_is_valid_returns_false():
 	var ud = autofree(UpdateDetector.new())
 	ud.parse_file(ud.LOCAL_FILE_PATH)
 	assert_false(ud.is_gut_version_valid('23432.124231.123234', GutUtils.godot_version_string()))
+
+
+func test_when_asset_library_entry_is_missing_it_is_an_issue():
+	var ud = autofree(UpdateDetector.new())
+	var data = """{
+		"releases":{},
+		"branches":{}
+	}"""
+	ud.parse_version_data(data)
+	assert_eq(ud.data_issues.size(), 1)
+
+
+func test_is_in_asset_library_returns_true_for_gut_version_in_entry():
+	var ud = autofree(UpdateDetector.new())
+	ud.parse_version_data(sample_parsed_data)
+	assert_true(ud.is_in_asset_library("99.0"))
+
+
+func test_is_in_asset_library_returns_false_for_gut_version_not_in_entry():
+	var ud = autofree(UpdateDetector.new())
+	ud.parse_version_data(sample_parsed_data)
+	assert_false(ud.is_in_asset_library("22.0"))
+
+
+func test_if_asset_library_is_missing_is_in_asset_library_returns_false():
+	var ud = autofree(UpdateDetector.new())
+	var data = sample_parsed_data.duplicate()
+	data.erase("asset_library")
+	ud.parse_version_data(data)
+	assert_false(ud.is_in_asset_library("99.0"))

@@ -91,16 +91,18 @@ func _version_info():
 	var rec_ver_link = _color_link(str("[url=https://github.com/bitwes/Gut/releases/tag/v", rec_ver, "]", rec_ver, "[/url]"))
 	if(update_detector.is_gut_version_valid(gutv, godotv)):
 		if(rec_ver != gutv):
-			version_info = str('Version ', rec_ver_link, ' is now available')
+			version_info = str('Version ', rec_ver_link, ' is now available!')
 	else:
 		if(rec_ver.find(".") != -1):
-			version_info = str('[b]', "INVALID VERSION\n",
+			version_info = str('[b]',
 				'This version of GUT is not compatible Godot ', godotv, 
 				'.  Consider changing to GUT ', rec_ver_link, '[/b]')	
 		else:
 			version_info = str("GUT does not have a release for this version of Godot yet, but it does have ", 
 			"the branch '", rec_ver, "'.\n",
 			"Check the readme for install links:  [url]https://github.com/bitwes/Gut[/url].")
+	if(update_detector.is_in_asset_library(rec_ver)):
+		version_info += str("\nYou can update to ", rec_ver, " through the Asset Library.")
 	return version_info
 
 

@@ -1,4 +1,5 @@
 {
+    "asset_library":"9.6.0",
     "branches":{
         "main":{
             "godot_min":"4.6",

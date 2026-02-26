@@ -64,6 +64,10 @@ func parse_version_data(data):
 	elif(typeof(data) == TYPE_DICTIONARY):
 		parsed_data = data
 
+	if(!parsed_data.has('asset_library')):
+		data_issues.append("asset_library entry missing")
+
+
 	if(parsed_data.has('releases')):
 		for key in parsed_data.releases:
 			var entry = parsed_data.releases[key]
@@ -125,6 +129,12 @@ func is_gut_version_valid(gut_v, godot_v):
 	if(parsed_data.releases.has(gut_v)):
 		var entry = parsed_data.releases[gut_v]
 		return Vnt.is_version_gte(godot_v, entry.godot_min) and Vnt.is_version_lte(godot_v, entry.godot_max)
+	else:
+		return false
+
+func is_in_asset_library(gut_v):
+	if(parsed_data.has('asset_library')):
+		return parsed_data.asset_library == gut_v
 	else:
 		return false
 
