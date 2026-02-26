@@ -41,16 +41,14 @@ func _http_request_completed(result, response_code, headers, body):
 	json.parse(body_text)
 	var response = json.get_data()
 
-	parsed_data = {}
-	data_issues.clear()
-	if(response_code != 200):
+	if(response_code == 200):
+		_write_remote_file(response)
+		parse_version_data(response)
+	else:
 		var msg = ''
 		if(response != null and response.has('message')):
 			msg = response.message
 		push_error("Response code:  ", response_code, " (", msg, ")")
-	else:
-		_write_remote_file(response)
-		parse_version_data(response)
 
 	download_completed.emit()
 
@@ -88,7 +86,7 @@ func parse_version_data(data):
 
 
 func parse_file(path):
-	var text = GutUtils.get_file_as_text('res://addons/gut/versions.json')
+	var text = GutUtils.get_file_as_text(path)
 	parse_version_data(text)
 
 
@@ -129,7 +127,11 @@ func is_gut_version_valid(gut_v, godot_v):
 
 
 func check_for_update(force=false):
-	pass
+	if(FileAccess.file_exists(REMOTE_FILE_PATH)):
+		parse_file(REMOTE_FILE_PATH)
+	else:
+		parse_file(LOCAL_FILE_PATH)
+
 	"""
 	* if parsed data is empty
 		* if remote file dne, download it
@@ -140,16 +142,3 @@ func check_for_update(force=false):
 	* return true if recommended version does not equal current, false if they
 	  are the same
 	"""
-
-# func get_update_string(json_string, gut_v, godot_v):
-# 	var to_return = "No updates available"
-
-# 	var parsed = parse_version_data(json_string)
-# 	if(parsed.issues.size() == 0):
-# 		var rec_ver = get_recommended_gut_version(parsed.data, godot_v)
-# 		var is_valid_for_godot = is_gut_version_valid_for_godot_version(parsed.data, gut_v, godot_v)
-# 	else:
-# 		to_return = str("Data has issues:  ", parsed.issues)
-
-# 	return to_return
-

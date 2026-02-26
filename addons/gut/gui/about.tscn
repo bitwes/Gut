@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://dqbkylpsatcqm"]
+[gd_scene format=3 uid="uid://dqbkylpsatcqm"]
 
 [ext_resource type="Script" uid="uid://g7qu8ihdt3pd" path="res://addons/gut/gui/about.gd" id="1_bg86c"]
 [ext_resource type="PackedScene" uid="uid://bjkn8mhx2fmt1" path="res://addons/gut/gui/GutLogo.tscn" id="3_kpic4"]
@@ -8,7 +8,7 @@ bg_color = Color(0, 0, 0, 0.49803922)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kpic4"]
 
-[node name="About" type="AcceptDialog"]
+[node name="About" type="AcceptDialog" unique_id=1150745302]
 oversampling_override = 1.0
 title = "About GUT"
 position = Vector2i(0, 36)
@@ -17,22 +17,22 @@ visible = true
 min_size = Vector2i(800, 800)
 script = ExtResource("1_bg86c")
 
-[node name="HBox" type="HBoxContainer" parent="."]
+[node name="HBox" type="HBoxContainer" parent="." unique_id=1875890740]
 offset_left = 8.0
 offset_top = 8.0
 offset_right = 1492.0
 offset_bottom = 751.0
 alignment = 1
 
-[node name="MakeRoomForLogo" type="CenterContainer" parent="HBox"]
+[node name="MakeRoomForLogo" type="CenterContainer" parent="HBox" unique_id=1274652102]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 
-[node name="Scroll" type="ScrollContainer" parent="HBox"]
+[node name="Scroll" type="ScrollContainer" parent="HBox" unique_id=1684204946]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="RichTextLabel" type="RichTextLabel" parent="HBox/Scroll"]
+[node name="RichTextLabel" type="RichTextLabel" parent="HBox/Scroll" unique_id=1217183710]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -41,7 +41,7 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_kpic4")
 bbcode_enabled = true
 fit_content = true
 
-[node name="Logo" parent="." instance=ExtResource("3_kpic4")]
+[node name="Logo" parent="." unique_id=2097718136 instance=ExtResource("3_kpic4")]
 modulate = Color(0.74509805, 0.74509805, 0.74509805, 1)
 position = Vector2(151, 265)
 scale = Vector2(0.8, 0.8)

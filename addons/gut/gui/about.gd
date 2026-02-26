@@ -2,10 +2,12 @@
 extends AcceptDialog
 
 var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
-
+var update_detector = null
 var _bbcode = \
 """
 [center]GUT {gut_version}[/center]
+[center]{version_info}[/center]
+
 
 [center][b]GUT Links[/b]
 {gut_link_table}[/center]
@@ -33,17 +35,35 @@ var _vscode_links = [
 ]
 
 var _donate_link = "https://buymeacoffee.com/bitwes"
-
+var _update_button = null
 @onready var _logo = $Logo
+@onready var rtl = $HBox/Scroll/RichTextLabel
 
 
 func _ready():
 	if(get_parent() is SubViewport):
 		return
 
+	update_detector = GutUtils.UpdateDetector.new()
+	add_child(update_detector)
+	update_detector.check_for_update()
+	
 	_vert_center_logo()
-	$Logo.disabled = true
-	$HBox/Scroll/RichTextLabel.text = _make_text()
+	_logo.disabled = true
+	rtl.text = _make_text()
+
+	_update_button = add_button("Check for update")
+	_update_button.pressed.connect(_on_update_button_pressed)
+
+
+func _on_update_button_pressed():
+	rtl.text = "[center]Checking for update[/center]"
+	_update_button.disabled = true
+	var err = update_detector.fetch_remote_file()
+	if(err == OK):
+		await update_detector.download_completed
+	rtl.text = _make_text()
+	_update_button.disabled = false
 
 
 func _color_link(link_text):
@@ -62,15 +82,40 @@ func _link_table(entries):
 	return str('[table=2]', text, '[/table]')
 
 
+func _version_info():
+	var gutv = GutUtils.version_numbers.gut_version
+	var godotv = GutUtils.godot_version_string()
+	var version_info = '[i]You are on the current version.[/i]'
+
+	var rec_ver = update_detector.get_gut_version_for_godot_version(godotv)
+	var rec_ver_link = _color_link(str("[url=https://github.com/bitwes/Gut/releases/tag/v", rec_ver, "]", rec_ver, "[/url]"))
+	if(update_detector.is_gut_version_valid(gutv, godotv)):
+		if(rec_ver != gutv):
+			version_info = str('Version ', rec_ver_link, ' is now available')
+	else:
+		if(rec_ver.find(".") != -1):
+			version_info = str('[b]', "INVALID VERSION\n",
+				'This version of GUT is not compatible Godot ', godotv, 
+				'.  Consider changing to GUT ', rec_ver_link, '[/b]')	
+		else:
+			version_info = str("GUT does not have a release for this version of Godot yet, but it does have ", 
+			"the branch '", rec_ver, "'.\n",
+			"Check the readme for install links:  [url]https://github.com/bitwes/Gut[/url].")
+	return version_info
+
+
 func _make_text():
 	var gut_link_table = _link_table(_gut_links)
 	var vscode_link_table = _link_table(_vscode_links)
+	var gutv = GutUtils.version_numbers.gut_version
+	var version_info = _version_info()
 
 	var text = _bbcode.format({
 		"gut_link_table":gut_link_table,
 		"vscode_link_table":vscode_link_table,
 		"donate_link":_color_link(str('[url]', _donate_link, '[/url]')),
-		"gut_version":GutUtils.version_numbers.gut_version,
+		"gut_version":gutv,
+		"version_info":version_info,
 	})
 	return text
 
