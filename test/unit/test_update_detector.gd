@@ -188,3 +188,8 @@ func test_branches_missing_godot_max_is_an_issue():
 	}"""
 	ud.parse_version_data(data)
 	assert_eq(ud.data_issues.size(), 1)
+
+func test_when_gut_version_not_found_is_valid_returns_false():
+	var ud = autofree(UpdateDetector.new())
+	ud.parse_file(ud.LOCAL_FILE_PATH)
+	assert_false(ud.is_gut_version_valid('23432.124231.123234', GutUtils.godot_version_string()))
