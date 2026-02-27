@@ -178,6 +178,8 @@ var _scripts_that_have_been_warned_about = []
 var _we_have_warned_enough = false
 var _max_warnings = 5
 func is_test_script(script):
+	if script is not Script:
+		return false
 	var base = script.get_base_script()
 	if(base == null and script.get_script_method_list().size() == 0 and _could_be_test_script(script)):
 		if(OS.is_stdout_verbose() or (!_scripts_that_have_been_warned_about.has(script.resource_path) and !_we_have_warned_enough)):
