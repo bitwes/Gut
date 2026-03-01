@@ -1,5 +1,28 @@
 extends Node
-
+## -----------------------------------------------------------------------------
+## Checks to see if there is a better version of GUT available for a version of
+## Godot.  The data used to validate the GUT version includes lower and upper
+## Godot versions
+##
+## There are 3 places where version information is located.
+##	* LOCAL_FILE_PATH:  This is the version information that is packed with this
+##	  release of GUT.  It serves as a fallback if remote data is not available.
+##	  This is most useful in detecting that GUT is being used with an earlier
+##	  release of Godot and remote data is not available.
+##	* REMOTE_FILE_URL:  This is where the the version information exists outside
+##	  of the local copy of GUT.  This data will be downlaoded to REMOTE_FILE_PATH
+##	  whenever remote data is fetched.
+##	* REMOTE_FILE_PATH: This is where REMOTE_FILE_URL is downloaded to.  When
+##	  the file is downloaded, timetamp information is added to the data so that
+##	  we can avoid downloading the file too often.  This file is used whenever
+##	  it exists.  If it does not exist and we don't fetch it, LOCAL_FILE_PATH
+##	  will be used.
+##
+## REMOTE_FILE_URL Location
+## Currently this file points to a file on the main branch.  This is the same
+## file that will be shipped with each version of GUT.  This allows the file to
+## be updated and still be shipped with each version of GUT.
+## -----------------------------------------------------------------------------
 var Vnt = load("res://addons/gut/version_numbers.gd").VerNumTools
 
 
@@ -13,7 +36,7 @@ var _http_request : HTTPRequest
 
 var data_issues = []
 var parsed_data = {}
-
+var min_fetch_wait = 60 * 60 # 1 hour
 
 signal download_completed()
 
@@ -30,11 +53,15 @@ func _setup_http_request(request):
 
 
 func _write_remote_file(data):
+	data.fetch_timestamp = Time.get_unix_time_from_system()
 	GutUtils.write_file(REMOTE_FILE_PATH, JSON.stringify(data))
 
 
-func _url_formatter(url, link_text):
-	return str(link_text, ':  ', url)
+func _url_formatter(url, link_text=null):
+	if(link_text == null):
+		return url
+	else:
+		return str(link_text, ':  ', url)
 
 
 #------------
@@ -57,7 +84,7 @@ func _http_request_completed(result, response_code, headers, body):
 	if(response_code == 200):
 		parse_version_data(response)
 		if(data_issues.size() == 0):
-			_write_remote_file(response)
+			_write_remote_file(response.duplicate(true))
 		else:
 			push_error("Invalid version data:  ", data_issues)
 			parsed_data = {}
@@ -110,8 +137,11 @@ func parse_version_data(data):
 
 
 func parse_file(path):
-	var text = GutUtils.get_file_as_text(path)
-	parse_version_data(text)
+	if(FileAccess.file_exists(path)):
+		var text = GutUtils.get_file_as_text(path)
+		parse_version_data(text)
+	else:
+		parsed_data = {}
 
 
 func fetch_remote_file():
@@ -165,21 +195,18 @@ func check_for_update(force=false):
 	else:
 		parse_file(LOCAL_FILE_PATH)
 
-	"""
-	* if parsed data is empty
-		* if remote file dne, download it
-		* parse remote file
-		* If it's been long enough, or force is true, download remote file again
-			* parse that file
-
-	* return true if recommended version does not equal current, false if they
-	  are the same
-	"""
-
 
 func check_for_update_with_fetch():
-	fetch_remote_file()
-	await download_completed
+	parse_file(REMOTE_FILE_PATH)
+	var time_since_last_fetch = 60 * 60 * 24 * 10_000 # ten thousand days
+
+	if(parsed_data.has("fetch_timestamp")):
+		time_since_last_fetch = Time.get_unix_time_from_system() - parsed_data.fetch_timestamp
+
+	if(time_since_last_fetch > min_fetch_wait):
+		fetch_remote_file()
+		await download_completed
+
 	check_for_update()
 
 
@@ -198,7 +225,7 @@ func get_update_string(url_formatter:Callable=_url_formatter):
 		if(rec_ver.find(".") == -1):
 			version_info = str("GUT does not have a release for this version of Godot yet, but it does have ",
 			"the branch '", rec_ver, "'.\n",
-			"Check the readme for install links/instructions:  ", url_formatter.call('https://github.com/bitwes/Gut', 'https://github.com/bitwes/Gut'))
+			"Check the readme for install links/instructions:  ", url_formatter.call('https://github.com/bitwes/Gut'))
 		else:
 			version_info = str(
 				'This version of GUT may not be compatible with Godot ', godot_v,

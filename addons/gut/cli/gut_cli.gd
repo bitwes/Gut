@@ -238,6 +238,7 @@ func _run_tests(opt_resolver):
 	else:
 		runner.run_tests()
 
+
 var update_detector = null
 func _check_for_update():
 	print(str("Checking for update for GUT ", GutUtils.version_numbers.gut_version))
@@ -245,7 +246,6 @@ func _check_for_update():
 	add_child(update_detector)
 	await update_detector.check_for_update_with_fetch()
 	print(update_detector.get_update_string())
-
 
 
 # parse options and run Gut

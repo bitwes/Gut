@@ -47,7 +47,7 @@ func _ready():
 	update_detector = GutUtils.UpdateDetector.new()
 	add_child(update_detector)
 	update_detector.check_for_update()
-	
+
 	_vert_center_logo()
 	_logo.disabled = true
 	rtl.text = _make_text()
@@ -82,30 +82,16 @@ func _link_table(entries):
 	return str('[table=2]', text, '[/table]')
 
 
+func url_bbcode(url, link_text=null):
+	if(link_text == null):
+		link_text = url
+	var text = str("[url=", url, "]", link_text, "[/url]")
+	return _color_link(text)
+
+
+
 func _version_info():
-	var gut_v = GutUtils.version_numbers.gut_version
-	var godot_v = GutUtils.godot_version_string()
-	var version_info = '[i]You are on the current version.[/i]'
-
-	var rec_ver = update_detector.get_gut_version_for_godot_version(godot_v)
-	var rec_ver_link = _color_link(str("[url=https://github.com/bitwes/Gut/releases/tag/v", rec_ver, "]", rec_ver, "[/url]"))
-
-	if(update_detector.is_gut_version_valid(gut_v, godot_v)):
-		if(rec_ver != gut_v):
-			version_info = str('Version ', rec_ver_link, ' is now available!')
-	else:
-		if(rec_ver.find(".") == -1):
-			version_info = str("GUT does not have a release for this version of Godot yet, but it does have ", 
-			"the branch '", rec_ver, "'.\n",
-			"Check the readme for install links/instructions:  [url]https://github.com/bitwes/Gut[/url].")
-		else:
-			version_info = str('[b]',
-				'This version of GUT may not be compatible with Godot ', godot_v, 
-				'.  Consider changing to GUT ', rec_ver_link, '[/b]')	
-
-	if(rec_ver != gut_v and update_detector.is_in_asset_library(rec_ver)):
-		version_info += str("\nYou can update to ", rec_ver, " through the Asset Library.")
-	return version_info
+	return update_detector.get_update_string(url_bbcode)
 
 
 func _make_text():
