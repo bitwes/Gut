@@ -3,7 +3,7 @@ extends GutTest
 
 var UpdateDetector = GutUtils.UpdateDetector
 
-var sample_parsed_data = {
+var _sample_parsed_data = {
 	"asset_library":"99.0",
 	"branches":{
 		"main":{
@@ -39,6 +39,9 @@ var sample_parsed_data = {
 	}
 }
 
+func get_sample_data():
+	return _sample_parsed_data.duplicate(true)
+
 
 func test_can_make_one():
 	var ud = UpdateDetector.new()
@@ -67,7 +70,7 @@ var _vdata = ParameterFactory.named_parameters([
 ])
 func test_get_recommented_gut_version_from_sample_data(data=use_parameters(_vdata)):
 	var ud = autofree(UpdateDetector.new())
-	ud.parse_version_data(sample_parsed_data)
+	ud.parse_version_data(get_sample_data())
 	var v = ud.get_gut_version_for_godot_version(data.godot_version)
 	assert_eq(v, data.expected_gut_version, str('rec version for ', data.godot_version))
 
@@ -80,7 +83,7 @@ var _valid_data = ParameterFactory.named_parameters([
 ])
 func test_is_gut_version_valid_for_godot_version(data=use_parameters(_valid_data)):
 	var ud = autofree(UpdateDetector.new())
-	ud.parse_version_data(sample_parsed_data)
+	ud.parse_version_data(get_sample_data())
 	var is_it = ud.is_gut_version_valid(data.gut_version, data.godot_version)
 	assert_eq(is_it, data.expected, str(data.gut_version, ' valid for ', data.godot_version))
 
@@ -147,13 +150,13 @@ func test_missing_releases_listed_as_issue():
 
 func test_when_gut_version_not_found():
 	var ud = autofree(UpdateDetector.new())
-	ud.parse_version_data(sample_parsed_data)
+	ud.parse_version_data(get_sample_data())
 	assert_eq(ud.get_gut_version_for_godot_version("3.6.7"), "13.2.0")
 
 
 func test_when_godot_version_not_found_branches_is_checked():
 	var ud = autofree(UpdateDetector.new())
-	ud.parse_version_data(sample_parsed_data)
+	ud.parse_version_data(get_sample_data())
 	assert_eq(ud.get_gut_version_for_godot_version("8.0.0"), "main")
 
 
@@ -219,19 +222,19 @@ func test_when_asset_library_entry_is_missing_it_is_an_issue():
 
 func test_is_in_asset_library_returns_true_for_gut_version_in_entry():
 	var ud = autofree(UpdateDetector.new())
-	ud.parse_version_data(sample_parsed_data)
+	ud.parse_version_data(get_sample_data())
 	assert_true(ud.is_in_asset_library("99.0"))
 
 
 func test_is_in_asset_library_returns_false_for_gut_version_not_in_entry():
 	var ud = autofree(UpdateDetector.new())
-	ud.parse_version_data(sample_parsed_data)
+	ud.parse_version_data(get_sample_data())
 	assert_false(ud.is_in_asset_library("22.0"))
 
 
 func test_if_asset_library_is_missing_is_in_asset_library_returns_false():
 	var ud = autofree(UpdateDetector.new())
-	var data = sample_parsed_data.duplicate()
+	var data = get_sample_data().duplicate()
 	data.erase("asset_library")
 	ud.parse_version_data(data)
 	assert_false(ud.is_in_asset_library("99.0"))
@@ -241,7 +244,7 @@ func test_if_asset_library_is_missing_is_in_asset_library_returns_false():
 class TestFetch:
 	extends GutTest
 
-	var sample_parsed_data = {
+	var _sample_parsed_data = {
 		"asset_library":"99.0",
 		"branches":{
 			"main":{
@@ -261,6 +264,9 @@ class TestFetch:
 		}
 	}
 
+	func get_sample_data():
+		return _sample_parsed_data.duplicate(true)
+
 
 	var UpdateDetector = GutUtils.UpdateDetector
 
@@ -278,7 +284,7 @@ class TestFetch:
 
 		return to_return
 
-	func _data_as_pba(data=sample_parsed_data):
+	func _data_as_pba(data=get_sample_data()):
 		return JSON.stringify(data).to_utf8_buffer()
 
 
@@ -301,13 +307,13 @@ class TestFetch:
 		var ud = _create_update_detector()
 		stub(ud.fetch_remote_file).to_do_nothing()
 		ud._http_request.request_completed.emit('result', 200, '',
-			JSON.stringify(sample_parsed_data).to_utf8_buffer())
-		assert_eq(ud.parsed_data, sample_parsed_data)
+			JSON.stringify(get_sample_data()).to_utf8_buffer())
+		assert_eq(ud.parsed_data, get_sample_data())
 
 
 	func test_when_there_issues_with_the_data_the_file_is_not_written():
 		var ud = _create_update_detector()
-		var data = sample_parsed_data.duplicate()
+		var data = get_sample_data()
 		data.erase('asset_library')
 		data = JSON.stringify(data).to_utf8_buffer()
 
@@ -316,12 +322,35 @@ class TestFetch:
 		assert_push_error("nvalid version data")
 
 
-	func test_when_there_issues_with_the_data_parsed_data_is_empty():
+	func test_when_there_are_issues_with_the_data_parsed_data_is_empty():
 		var ud = _create_update_detector()
-		var data = sample_parsed_data.duplicate()
+		var data = get_sample_data()
 		data.erase('asset_library')
 		data = JSON.stringify(data).to_utf8_buffer()
 
 		ud._http_request.request_completed.emit('result', 200, '', data)
 		assert_eq(ud.parsed_data, {})
 		assert_push_error("nvalid version data")
+
+
+	func test_when_json_is_invalid_it_is_an_issue():
+		var ud = _create_update_detector()
+		var data = get_sample_data()
+		data.erase('asset_library')
+		data = "{invalid json}".to_utf8_buffer()
+
+		ud._http_request.request_completed.emit('result', 200, '', data)
+		assert_push_error("Invalid JSON")
+
+
+	func test_when_json_is_invalid_dowanlod_signal_emitted():
+		var ud = _create_update_detector()
+		watch_signals(ud)
+		var data = get_sample_data()
+		data.erase('asset_library')
+		data = "{invalid json}".to_utf8_buffer()
+
+		ud._http_request.request_completed.emit('result', 200, '', data)
+		assert_signal_emitted(ud.download_completed)
+		assert_push_error("Invalid JSON")
+

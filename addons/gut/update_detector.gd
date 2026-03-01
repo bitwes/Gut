@@ -33,6 +33,10 @@ func _write_remote_file(data):
 	GutUtils.write_file(REMOTE_FILE_PATH, JSON.stringify(data))
 
 
+func _url_formatter(url, link_text):
+	return str(link_text, ':  ', url)
+
+
 #------------
 # Events
 #------------
@@ -42,7 +46,12 @@ func _http_request_completed(result, response_code, headers, body):
 	# print("---------\n", result, "\n--\n", response_code, "\n--\n", headers, "\n--\n", body_text, "\n----------")
 
 	var json = JSON.new()
-	json.parse(body_text)
+	var err = json.parse(body_text)
+	if(err != OK):
+		push_error("Invalid JSON: ", json.get_error_message(), '.  ', body_text)
+		download_completed.emit()
+		return
+
 	var response = json.get_data()
 
 	if(response_code == 200):
@@ -106,7 +115,6 @@ func parse_file(path):
 
 
 func fetch_remote_file():
-	# Perform a GET request. The URL below returns JSON as of writing.
 	var headers : PackedStringArray = [
 		"Accept: application/vnd.github.raw",
 		"X-GitHub-Api-Version: 2022-11-28"
@@ -167,3 +175,35 @@ func check_for_update(force=false):
 	* return true if recommended version does not equal current, false if they
 	  are the same
 	"""
+
+
+func check_for_update_with_fetch():
+	fetch_remote_file()
+	await download_completed
+	check_for_update()
+
+
+func get_update_string(url_formatter:Callable=_url_formatter):
+	var gut_v = GutUtils.version_numbers.gut_version
+	var godot_v = GutUtils.godot_version_string()
+	var version_info = 'You are on the current version.'
+
+	var rec_ver = get_gut_version_for_godot_version(godot_v)
+	var rec_ver_link = url_formatter.call(str("https://github.com/bitwes/Gut/releases/tag/v", rec_ver), str("GUT ",rec_ver))
+
+	if(is_gut_version_valid(gut_v, godot_v)):
+		if(rec_ver != gut_v):
+			version_info = str('Version ', rec_ver_link, ' is now available!')
+	else:
+		if(rec_ver.find(".") == -1):
+			version_info = str("GUT does not have a release for this version of Godot yet, but it does have ",
+			"the branch '", rec_ver, "'.\n",
+			"Check the readme for install links/instructions:  ", url_formatter.call('https://github.com/bitwes/Gut', 'https://github.com/bitwes/Gut'))
+		else:
+			version_info = str(
+				'This version of GUT may not be compatible with Godot ', godot_v,
+				'.  Consider changing to ', rec_ver_link)
+
+	if(rec_ver != gut_v and is_in_asset_library(rec_ver)):
+		version_info += str("\nYou can update to ", rec_ver, " through the Asset Library.")
+	return version_info
