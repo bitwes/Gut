@@ -19,7 +19,11 @@ signal download_completed()
 
 
 func _ready() -> void:
-	_http_request = HTTPRequest.new()
+	_setup_http_request(HTTPRequest.new())
+
+
+func _setup_http_request(request):
+	_http_request = request
 	add_child(_http_request)
 	_http_request.timeout = 3.0
 	_http_request.request_completed.connect(self._http_request_completed)
@@ -42,13 +46,18 @@ func _http_request_completed(result, response_code, headers, body):
 	var response = json.get_data()
 
 	if(response_code == 200):
-		_write_remote_file(response)
 		parse_version_data(response)
+		if(data_issues.size() == 0):
+			_write_remote_file(response)
+		else:
+			push_error("Invalid version data:  ", data_issues)
+			parsed_data = {}
+			data_issues.clear()
 	else:
 		var msg = ''
 		if(response != null and response.has('message')):
 			msg = response.message
-		push_error("Response code:  ", response_code, " (", msg, ")")
+		push_error("Could not get version info, response code:  ", response_code, " (", msg, ")")
 
 	download_completed.emit()
 
@@ -66,7 +75,6 @@ func parse_version_data(data):
 
 	if(!parsed_data.has('asset_library')):
 		data_issues.append("asset_library entry missing")
-
 
 	if(parsed_data.has('releases')):
 		for key in parsed_data.releases:
@@ -87,6 +95,9 @@ func parse_version_data(data):
 				data_issues.append(str(key, ' missing godot_max'))
 	else:
 		data_issues.append('missing branches entry')
+
+	# if(data_issues.size() > 0):
+	# 	data_issues.append(str("the data:  ", data))
 
 
 func parse_file(path):
@@ -131,6 +142,7 @@ func is_gut_version_valid(gut_v, godot_v):
 		return Vnt.is_version_gte(godot_v, entry.godot_min) and Vnt.is_version_lte(godot_v, entry.godot_max)
 	else:
 		return false
+
 
 func is_in_asset_library(gut_v):
 	if(parsed_data.has('asset_library')):

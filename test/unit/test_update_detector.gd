@@ -115,6 +115,8 @@ func test_missing_godot_min_listed_as_issue():
 	}"""
 	ud.parse_version_data(data)
 	assert_eq(ud.data_issues.size(), 1)
+	if(is_failing()):
+		gut.p(str("Issues\n", ud.data_issues))
 
 
 func test_missing_godot_max_listed_as_issue():
@@ -233,3 +235,93 @@ func test_if_asset_library_is_missing_is_in_asset_library_returns_false():
 	data.erase("asset_library")
 	ud.parse_version_data(data)
 	assert_false(ud.is_in_asset_library("99.0"))
+
+
+
+class TestFetch:
+	extends GutTest
+
+	var sample_parsed_data = {
+		"asset_library":"99.0",
+		"branches":{
+			"main":{
+				"godot_min":"8.0.0",
+				"godot_max":"8.999"
+			}
+		},
+		"releases":{
+			"99.0":{
+				"godot_min":"9.0.0",
+				"godot_max":"9999"
+			},
+			"13.2.0":{
+				"godot_min":"3.6.5",
+				"godot_max":"3.999",
+			},
+		}
+	}
+
+
+	var UpdateDetector = GutUtils.UpdateDetector
+
+	func before_each():
+		gut.file_delete(UpdateDetector.REMOTE_FILE_PATH)
+
+
+	func _create_update_detector():
+		var to_return = partial_double(UpdateDetector).new()
+		var d_http_request = partial_double(HTTPRequest).new()
+
+		add_child_autofree(to_return)
+		to_return._http_request.free()
+		to_return._setup_http_request(d_http_request)
+
+		return to_return
+
+	func _data_as_pba(data=sample_parsed_data):
+		return JSON.stringify(data).to_utf8_buffer()
+
+
+	func test_when_rc_200_returned_file_not_written():
+		var ud = _create_update_detector()
+		stub(ud.fetch_remote_file).to_do_nothing()
+		ud._http_request.request_completed.emit('result', 200, '', _data_as_pba())
+		assert_file_exists(ud.REMOTE_FILE_PATH)
+
+
+	func test_when_rc_200_not_returned_file_not_written():
+		var ud = _create_update_detector()
+		stub(ud.fetch_remote_file).to_do_nothing()
+		ud._http_request.request_completed.emit('result', 300, '', _data_as_pba())
+		assert_file_does_not_exist(ud.REMOTE_FILE_PATH)
+		assert_push_error("Response code")
+
+
+	func test_when_rc_200_data_is_parsed():
+		var ud = _create_update_detector()
+		stub(ud.fetch_remote_file).to_do_nothing()
+		ud._http_request.request_completed.emit('result', 200, '',
+			JSON.stringify(sample_parsed_data).to_utf8_buffer())
+		assert_eq(ud.parsed_data, sample_parsed_data)
+
+
+	func test_when_there_issues_with_the_data_the_file_is_not_written():
+		var ud = _create_update_detector()
+		var data = sample_parsed_data.duplicate()
+		data.erase('asset_library')
+		data = JSON.stringify(data).to_utf8_buffer()
+
+		ud._http_request.request_completed.emit('result', 200, '', data)
+		assert_file_does_not_exist(ud.REMOTE_FILE_PATH)
+		assert_push_error("nvalid version data")
+
+
+	func test_when_there_issues_with_the_data_parsed_data_is_empty():
+		var ud = _create_update_detector()
+		var data = sample_parsed_data.duplicate()
+		data.erase('asset_library')
+		data = JSON.stringify(data).to_utf8_buffer()
+
+		ud._http_request.request_completed.emit('result', 200, '', data)
+		assert_eq(ud.parsed_data, {})
+		assert_push_error("nvalid version data")
