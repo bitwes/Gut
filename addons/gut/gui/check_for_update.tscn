@@ -3,6 +3,15 @@
 [ext_resource type="Script" uid="uid://bomsutomy3pdy" path="res://addons/gut/gui/check_for_update.gd" id="1_70x43"]
 [ext_resource type="FontFile" uid="uid://bnh0lslf4yh87" path="res://addons/gut/fonts/CourierPrime-Regular.ttf" id="2_lsin2"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lsin2"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+bg_color = Color(0.09239707, 0.09239706, 0.09239706, 0.49803922)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+
 [node name="CheckForUpdate" type="Control" unique_id=381385621]
 layout_mode = 3
 anchors_preset = 15
@@ -10,23 +19,21 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 3
 script = ExtResource("1_70x43")
 
-[node name="ScrollContainer" type="ScrollContainer" parent="." unique_id=308576284]
+[node name="Output" type="RichTextLabel" parent="." unique_id=1256208807]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-size_flags_vertical = 3
-
-[node name="Output" type="RichTextLabel" parent="ScrollContainer" unique_id=1256208807]
-layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 focus_mode = 2
 theme_override_fonts/mono_font = ExtResource("2_lsin2")
+theme_override_styles/normal = SubResource("StyleBoxFlat_lsin2")
 bbcode_enabled = true
 text = "this is a bunch of text that you can see
 
@@ -53,5 +60,6 @@ text = "this is a bunch of text that you can see
 down here too"
 selection_enabled = true
 
-[connection signal="gui_input" from="ScrollContainer/Output" to="." method="_on_output_gui_input"]
-[connection signal="meta_clicked" from="ScrollContainer/Output" to="." method="_on_output_meta_clicked"]
+[connection signal="gui_input" from="Output" to="." method="_on_output_gui_input"]
+[connection signal="meta_clicked" from="Output" to="." method="_on_output_meta_clicked"]
+[connection signal="resized" from="Output" to="." method="_on_output_resized"]

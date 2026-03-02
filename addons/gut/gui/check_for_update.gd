@@ -1,12 +1,21 @@
+@tool
 extends Control
 
+static var fetch_count = 0
+static var max_fetches = 2
+
 var update_detector = null
-@onready var rtl = $ScrollContainer/Output
+@onready var rtl = $Output
 var _log_entries = []
-var _verbose = false
+var _verbose = false :
+	set(val):
+		if(!_verbose and val):
+			verbose_enabled.emit()
+		_verbose = val
 var _mouse_down_duration = 0.0
 var _mouse_down = false
 
+signal verbose_enabled
 
 func _ready():
 	update_detector = GutUtils.UpdateDetector.new()
@@ -24,6 +33,7 @@ func _process(delta: float) -> void:
 		if(_mouse_down_duration >= 2.0):
 			_verbose = true
 			rtl.append_text("\nVERBOSE ENABLED\n")
+			rtl.append_text(_get_check_for_update_link())
 
 
 # ----------------
@@ -44,13 +54,17 @@ func _log_file(path):
 
 
 func _get_check_for_update_link():
-	return _url_bbcode("_check_for_update", "Check for Update", "ORANGE")
+	if(_verbose or update_detector.fetch_limit_wait_time() <= 0.0):
+		return str("[center]", _url_bbcode("_check_for_update", "Check for Update", "ORANGE"), "[/center]")
+	else:
+		return ''
 
 
 func _check_for_update(use_fetch, force=false):
 	_log_entries.clear()
 	rtl.text = ""
 	if(use_fetch):
+		fetch_count += 1
 		rtl.text = "Checking..."
 		_log("fetching remote file " + update_detector.REMOTE_FILE_URL)
 		update_detector.check_for_update_with_fetch(force)
@@ -62,10 +76,14 @@ func _check_for_update(use_fetch, force=false):
 func _populate_text():
 	var txt = ""
 	if(update_detector.parsed_data != {}):
-		txt = update_detector.get_update_string(_url_bbcode)
+		txt = str("[center]", update_detector.get_update_string(_url_bbcode), "[/center]")
 	if(_verbose):
 		txt = txt + "\n\n" + "\n".join(_log_entries)
 	rtl.text = txt + "\n" + _get_check_for_update_link()
+	_post_populate.call_deferred()
+	
+func _post_populate():
+	custom_minimum_size.y = min(rtl.get_content_height() + 30, 400)
 
 
 func _url_bbcode(url, link_text=null, color_name="ROYAL_BLUE"):
@@ -109,3 +127,8 @@ func _on_output_gui_input(event: InputEvent) -> void:
 		else:
 			_mouse_down = false
 			_mouse_down_duration
+
+
+func _on_output_resized() -> void:
+	if(rtl != null):
+		custom_minimum_size.y = rtl.get_visible_content_rect().size.y + 20

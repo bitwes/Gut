@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://dqbkylpsatcqm"]
 
 [ext_resource type="Script" uid="uid://g7qu8ihdt3pd" path="res://addons/gut/gui/about.gd" id="1_bg86c"]
+[ext_resource type="PackedScene" uid="uid://c5om15m2e70qp" path="res://addons/gut/gui/check_for_update.tscn" id="2_kpic4"]
 [ext_resource type="PackedScene" uid="uid://bjkn8mhx2fmt1" path="res://addons/gut/gui/GutLogo.tscn" id="3_kpic4"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q8rky"]
@@ -28,11 +29,21 @@ alignment = 1
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 
-[node name="Scroll" type="ScrollContainer" parent="HBox" unique_id=1684204946]
+[node name="VBoxContainer" type="VBoxContainer" parent="HBox" unique_id=1594624944]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 0
 
-[node name="RichTextLabel" type="RichTextLabel" parent="HBox/Scroll" unique_id=1217183710]
+[node name="CheckForUpdate" parent="HBox/VBoxContainer" unique_id=381385621 instance=ExtResource("2_kpic4")]
+custom_minimum_size = Vector2(0, 53)
+layout_mode = 2
+
+[node name="Scroll" type="ScrollContainer" parent="HBox/VBoxContainer" unique_id=1684204946]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="RichTextLabel" type="RichTextLabel" parent="HBox/VBoxContainer/Scroll" unique_id=1217183710]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -50,7 +61,8 @@ disabled = true
 
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
-[connection signal="meta_clicked" from="HBox/Scroll/RichTextLabel" to="." method="_on_rich_text_label_meta_clicked"]
-[connection signal="meta_hover_ended" from="HBox/Scroll/RichTextLabel" to="." method="_on_rich_text_label_meta_hover_ended"]
-[connection signal="meta_hover_started" from="HBox/Scroll/RichTextLabel" to="." method="_on_rich_text_label_meta_hover_started"]
+[connection signal="verbose_enabled" from="HBox/VBoxContainer/CheckForUpdate" to="." method="_on_check_for_update_verbose_enabled"]
+[connection signal="meta_clicked" from="HBox/VBoxContainer/Scroll/RichTextLabel" to="." method="_on_rich_text_label_meta_clicked"]
+[connection signal="meta_hover_ended" from="HBox/VBoxContainer/Scroll/RichTextLabel" to="." method="_on_rich_text_label_meta_hover_ended"]
+[connection signal="meta_hover_started" from="HBox/VBoxContainer/Scroll/RichTextLabel" to="." method="_on_rich_text_label_meta_hover_started"]
 [connection signal="pressed" from="Logo" to="." method="_on_logo_pressed"]

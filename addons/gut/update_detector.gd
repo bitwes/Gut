@@ -26,7 +26,7 @@ extends Node
 var Vnt = load("res://addons/gut/version_numbers.gd").VerNumTools
 
 
-const REMOTE_FILE_URL = "https://api.gith     ub.com/repos/bitwes/gut/contents/addons/gut/versions.json?ref=update_detection"
+const REMOTE_FILE_URL = "https://api.github.com/repos/bitwes/gut/contents/addons/gut/versions.json?ref=update_detection"
 const LOCAL_FILE_PATH = "res://addons/gut/versions.json"
 const REMOTE_FILE_PATH = "user://gut_temp_directory/versions.json"
 
@@ -220,7 +220,7 @@ func check_for_update_with_fetch(force=false):
 func get_update_string(url_formatter:Callable=_url_formatter):
 	var gut_v = GutUtils.version_numbers.gut_version
 	var godot_v = GutUtils.godot_version_string()
-	var version_info = 'You are on the current version.'
+	var version_info = str("GUT ", gut_v, " is the lastest version for Godot ", godot_v)
 
 	var rec_ver = get_gut_version_for_godot_version(godot_v)
 	var rec_ver_link = url_formatter.call(str("https://github.com/bitwes/Gut/releases/tag/v", rec_ver), str("GUT ",rec_ver))
@@ -251,3 +251,12 @@ func get_summary_string():
 		"Godot:  ", godot_v, "\n",
 		"Valid:  ", is_gut_version_valid(gut_v, godot_v), "\n",
 		"Latest:  ", get_gut_version_for_godot_version(godot_v))
+
+
+func fetch_limit_wait_time():
+	var remaining = -1
+	if(parsed_data.has("fetch_timestamp")):
+		var time_since_last_fetch = Time.get_unix_time_from_system() - parsed_data.fetch_timestamp
+		return max(min_fetch_wait - time_since_last_fetch, 0.0)
+	else:
+		return -1
