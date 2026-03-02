@@ -2,7 +2,7 @@
 extends Control
 
 static var fetch_count = 0
-static var max_fetches = 2
+static var max_fetches = 5
 
 var update_detector = null
 @onready var rtl = $Output
@@ -14,6 +14,7 @@ var _verbose = false :
 		_verbose = val
 var _mouse_down_duration = 0.0
 var _mouse_down = false
+var _mouse_down_time_to_show_verbose := 4.0
 
 signal verbose_enabled
 
@@ -28,9 +29,9 @@ func _ready():
 
 
 func _process(delta: float) -> void:
-	if(_mouse_down_duration < 2.0 and _mouse_down):
+	if(_mouse_down_duration < _mouse_down_time_to_show_verbose and _mouse_down):
 		_mouse_down_duration += delta
-		if(_mouse_down_duration >= 2.0):
+		if(_mouse_down_duration >= _mouse_down_time_to_show_verbose):
 			_verbose = true
 			rtl.append_text("\nVERBOSE ENABLED\n")
 			rtl.append_text(_get_check_for_update_link())
@@ -126,9 +127,14 @@ func _on_output_gui_input(event: InputEvent) -> void:
 			_mouse_down = true
 		else:
 			_mouse_down = false
-			_mouse_down_duration
+			_mouse_down_duration = 0.0
 
 
 func _on_output_resized() -> void:
 	if(rtl != null):
 		custom_minimum_size.y = rtl.get_visible_content_rect().size.y + 20
+
+
+func _on_mouse_exited() -> void:
+	_mouse_down = false
+	_mouse_down = 0.0

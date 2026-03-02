@@ -154,7 +154,7 @@ an immediate "=":
 	opts.add('-gh', false, 'Print this help.  You did this to see this, so you probably understand.')
 	opts.add('-gpo', false, 'Print option values from all sources and the value used.')
 	opts.add('-gprint_gutconfig_sample', false, 'Print out json that can be used to make a gutconfig file.')
-	opts.add("-gupdate", false, "Check for update")
+	opts.add("-gcheck_update", false, "Check for update")
 
 	# run as in editor, for shelling out purposes through Editor.
 	var o = opts.add('-graie', false, 'do not use')
@@ -290,7 +290,7 @@ func main():
 		elif(cli_opts.get_value('-gprint_gutconfig_sample')):
 			_print_gutconfigs(opt_resolver.get_resolved_values())
 			get_tree().quit(0)
-		elif(cli_opts.get_value('-gupdate')):
+		elif(cli_opts.get_value('-gcheck_update')):
 			await _check_for_update()
 			get_tree().quit(0)
 		else:

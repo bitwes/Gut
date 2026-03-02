@@ -13,6 +13,7 @@ corner_radius_top_left = 20
 corner_radius_top_right = 20
 
 [node name="CheckForUpdate" type="Control" unique_id=381385621]
+custom_minimum_size = Vector2(0, 53)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -35,29 +36,8 @@ focus_mode = 2
 theme_override_fonts/mono_font = ExtResource("2_lsin2")
 theme_override_styles/normal = SubResource("StyleBoxFlat_lsin2")
 bbcode_enabled = true
-text = "this is a bunch of text that you can see
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-down here too"
+text = "[center]GUT 9.6.0 is the lastest version for Godot 4.6.1[/center]
+"
 selection_enabled = true
 
 [connection signal="gui_input" from="Output" to="." method="_on_output_gui_input"]
