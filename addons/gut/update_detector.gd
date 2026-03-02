@@ -179,7 +179,11 @@ func get_gut_version_for_godot_version(godot_v):
 	return to_return
 
 
-func is_gut_version_valid(gut_v, godot_v):
+func is_gut_version_valid(gut_v =null, godot_v=null):
+	if(gut_v == null):
+		gut_v =  GutUtils.version_numbers.gut_version
+		godot_v =  GutUtils.version_numbers.make_godot_version_string()
+
 	if(parsed_data.releases.has(gut_v)):
 		var entry = parsed_data.releases[gut_v]
 		return Vnt.is_version_gte(godot_v, entry.godot_min) and Vnt.is_version_lte(godot_v, entry.godot_max)

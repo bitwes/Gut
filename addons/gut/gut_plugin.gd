@@ -6,6 +6,7 @@ var MenuManager = load("res://addons/gut/gut_menu.gd")
 var BottomPanelScene = preload('res://addons/gut/gui/GutBottomPanel.tscn')
 var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
 var GutDock = load('res://addons/gut/gui/gut_dock.gd')
+var UpdateRequiredDialog = load('res://addons/gut/gui/update_required.tscn')
 
 var _bottom_panel : Control = null
 var _menu_mgr = null
@@ -13,6 +14,7 @@ var _gut_button = null
 var _gut_window = null
 var _dock_mode = 'none'
 var _gut_dock = null
+var _update_required = null
 
 
 func _init():
@@ -20,8 +22,31 @@ func _init():
 		return
 
 
+func _should_continue_loading_gut():
+	var to_return = true
+
+	_update_required = UpdateRequiredDialog.instantiate()
+	get_tree().root.add_child(_update_required)
+	_update_required.hide()
+
+	if(!_update_required.should_show()):
+		_update_required.popup_centered()
+		await(_update_required.closed)
+
+		if(!_update_required.should_continue):
+			to_return = false
+
+	_update_required.queue_free()
+	return to_return
+
+
 func _enter_tree():
 	if(!_version_conversion()):
+		return
+
+	var should_continue = await _should_continue_loading_gut()
+	if(!should_continue):
+		print("GUT loading canceled.  Restart editor to try loading again.")
 		return
 
 	_bottom_panel = BottomPanelScene.instantiate()
@@ -52,7 +77,6 @@ func _enter_tree():
 	add_tool_submenu_item("GUT", _menu_mgr.sub_menu)
 
 	GutEditorGlobals.gut_plugin = self
-
 
 
 func _version_conversion():
