@@ -26,7 +26,7 @@ extends Node
 var Vnt = load("res://addons/gut/version_numbers.gd").VerNumTools
 
 
-const REMOTE_FILE_URL = "https://api.github.com/repos/bitwes/gut/contents/addons/gut/versions.json?ref=update_detection"
+const REMOTE_FILE_URL = "https://api.gith     ub.com/repos/bitwes/gut/contents/addons/gut/versions.json?ref=update_detection"
 const LOCAL_FILE_PATH = "res://addons/gut/versions.json"
 const REMOTE_FILE_PATH = "user://gut_temp_directory/versions.json"
 
@@ -39,6 +39,7 @@ var parsed_data = {}
 var min_fetch_wait = 60 * 60 # 1 hour
 
 signal download_completed()
+signal updated()
 
 
 func _ready() -> void:
@@ -72,16 +73,15 @@ func _http_request_completed(result, response_code, headers, body):
 	var body_text = body.get_string_from_utf8()
 	# print("---------\n", result, "\n--\n", response_code, "\n--\n", headers, "\n--\n", body_text, "\n----------")
 
-	var json = JSON.new()
-	var err = json.parse(body_text)
-	if(err != OK):
-		push_error("Invalid JSON: ", json.get_error_message(), '.  ', body_text)
-		download_completed.emit()
-		return
-
-	var response = json.get_data()
-
 	if(response_code == 200):
+		var json = JSON.new()
+		var err = json.parse(body_text)
+		if(err != OK):
+			push_error("Invalid JSON: ", json.get_error_message(), '.  ', body_text)
+			download_completed.emit()
+			return
+		var response = json.get_data()
+
 		parse_version_data(response)
 		if(data_issues.size() == 0):
 			_write_remote_file(response.duplicate(true))
@@ -90,10 +90,16 @@ func _http_request_completed(result, response_code, headers, body):
 			parsed_data = {}
 			data_issues.clear()
 	else:
+		var json = JSON.new()
+		var err = json.parse(body_text)
+		var response = {}
+		if(err == OK):
+			response = json.get_data()
+
 		var msg = ''
 		if(response != null and response.has('message')):
-			msg = response.message
-		push_error("Could not get version info, response code:  ", response_code, " (", msg, ")")
+			msg = str(" (", response.message, ")")
+		push_error("Could not get version info, response code:  ", response_code, msg)
 
 	download_completed.emit()
 
@@ -132,9 +138,6 @@ func parse_version_data(data):
 	else:
 		data_issues.append('missing branches entry')
 
-	# if(data_issues.size() > 0):
-	# 	data_issues.append(str("the data:  ", data))
-
 
 func parse_file(path):
 	if(FileAccess.file_exists(path)):
@@ -151,7 +154,9 @@ func fetch_remote_file():
 	]
 	var error = _http_request.request(REMOTE_FILE_URL, headers)
 	if error != OK:
-		push_error("An error occurred requesting version data:  ", error, ".")
+		var errtxt = str("An error occurred requesting version data:  ", error, ".")
+		data_issues.append(errtxt)
+		push_error(errtxt)
 	return error
 
 
@@ -189,21 +194,23 @@ func is_in_asset_library(gut_v):
 		return false
 
 
-func check_for_update(force=false):
+func check_for_update():
 	if(FileAccess.file_exists(REMOTE_FILE_PATH)):
 		parse_file(REMOTE_FILE_PATH)
 	else:
 		parse_file(LOCAL_FILE_PATH)
 
+	updated.emit.call_deferred()
 
-func check_for_update_with_fetch():
+
+func check_for_update_with_fetch(force=false):
 	parse_file(REMOTE_FILE_PATH)
 	var time_since_last_fetch = 60 * 60 * 24 * 10_000 # ten thousand days
 
 	if(parsed_data.has("fetch_timestamp")):
 		time_since_last_fetch = Time.get_unix_time_from_system() - parsed_data.fetch_timestamp
 
-	if(time_since_last_fetch > min_fetch_wait):
+	if(force or time_since_last_fetch > min_fetch_wait):
 		fetch_remote_file()
 		await download_completed
 
@@ -234,3 +241,13 @@ func get_update_string(url_formatter:Callable=_url_formatter):
 	if(rec_ver != gut_v and is_in_asset_library(rec_ver)):
 		version_info += str("\nYou can update to ", rec_ver, " through the Asset Library.")
 	return version_info
+
+
+func get_summary_string():
+	var gut_v = GutUtils.version_numbers.gut_version
+	var godot_v = GutUtils.godot_version_string()
+
+	return str("GUT:  ", gut_v, "\n",
+		"Godot:  ", godot_v, "\n",
+		"Valid:  ", is_gut_version_valid(gut_v, godot_v), "\n",
+		"Latest:  ", get_gut_version_for_godot_version(godot_v))

@@ -442,3 +442,27 @@ class TestCheckForUpdateWithFetch:
 
 		ud.check_for_update_with_fetch()
 		assert_called(ud.fetch_remote_file)
+
+
+	func test_check_for_update_with_fetch_emits_updated_upon_completion():
+		var ud = _create_update_detector()
+		stub(ud.fetch_remote_file).to_call(func():
+			ud.download_completed.emit.call_deferred())
+		ud.check_for_update_with_fetch()
+		await wait_for_signal(ud.updated, 2)
+		assert_signal_emitted(ud.updated)
+
+
+	func test_check_for_update_with_fetch_can_be_forced_to_fetch():
+		var ud = _create_update_detector()
+		stub(ud.fetch_remote_file).to_do_nothing()
+		ud.min_fetch_wait = 60 * 60 * 24 * 10_000 # ten thousand days
+
+		var fake_last_fetch = get_sample_data()
+		fake_last_fetch.fetch_timestamp = Time.get_unix_time_from_system()
+		GutUtils.write_file(ud.REMOTE_FILE_PATH, JSON.stringify(fake_last_fetch))
+
+		ud.check_for_update_with_fetch(true)
+		assert_called(ud.fetch_remote_file)
+
+
