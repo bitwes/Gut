@@ -12,7 +12,7 @@ ok_button_text = "Continue"
 script = ExtResource("1_rmy01")
 
 [node name="CheckForUpdate" parent="." unique_id=381385621 instance=ExtResource("1_t2kyp")]
-custom_minimum_size = Vector2(0, 53)
+custom_minimum_size = Vector2(0, 99)
 offset_left = 8.0
 offset_top = 8.0
 offset_right = -8.0

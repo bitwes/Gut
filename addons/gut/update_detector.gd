@@ -264,3 +264,14 @@ func fetch_limit_wait_time():
 		return max(min_fetch_wait - time_since_last_fetch, 0.0)
 	else:
 		return -1
+
+
+func get_days_since_last_fetch():
+	var to_return = 99
+	if(parsed_data.has("fetch_timestamp")):
+		var time_since_last_fetch = Time.get_unix_time_from_system() - parsed_data.fetch_timestamp
+		to_return = time_since_last_fetch / (60.0 * 60.0 * 24.0)
+	return to_return
+
+
+

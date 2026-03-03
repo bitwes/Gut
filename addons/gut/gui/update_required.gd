@@ -9,6 +9,8 @@ signal closed
 func _ready():
 	update_detector = $CheckForUpdate.update_detector
 	add_cancel_button("Cancel Loading GUT")
+	if(update_detector.get_days_since_last_fetch() >= 7):
+		$CheckForUpdate.check_for_update(true, true)
 	
 	
 func should_show():

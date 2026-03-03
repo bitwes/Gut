@@ -24,7 +24,7 @@ func _ready():
 	update_detector.updated.connect(_on_update_detector_updated)
 	update_detector.download_completed.connect(_on_update_detector_download)
 	
-	_check_for_update(false, false)
+	check_for_update(false, false)
 	_populate_text()
 
 
@@ -61,7 +61,7 @@ func _get_check_for_update_link():
 		return ''
 
 
-func _check_for_update(use_fetch, force=false):
+func check_for_update(use_fetch, force=false):
 	_log_entries.clear()
 	rtl.text = ""
 	if(use_fetch):
@@ -82,6 +82,7 @@ func _populate_text():
 		txt = txt + "\n\n" + "\n".join(_log_entries)
 	rtl.text = txt + "\n" + _get_check_for_update_link()
 	_post_populate.call_deferred()
+	
 	
 func _post_populate():
 	custom_minimum_size.y = min(rtl.get_content_height() + 30, 400)
@@ -107,7 +108,7 @@ func _on_update_detector_updated():
 
 
 func _on_btn_check_button_up() -> void:
-	_check_for_update(true, true)
+	check_for_update(true, true)
 	
 	
 func _on_update_detector_download():
@@ -116,7 +117,7 @@ func _on_update_detector_download():
 
 func _on_output_meta_clicked(meta: Variant) -> void:
 	if(meta == "_check_for_update"):
-		_check_for_update(true, true)
+		check_for_update(true, true)
 	else:
 		OS.shell_open(str(meta))
 
