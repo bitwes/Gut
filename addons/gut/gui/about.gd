@@ -5,15 +5,14 @@ var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
 
 var _bbcode = \
 """
-[center]You can support GUT development at
-{donate_link}
-
 [center][b]GUT Links[/b]
 {gut_link_table}[/center]
 
 [center][b]VSCode Extension Links[/b]
 {vscode_link_table}[/center]
 
+[center]You can support GUT development at:
+{donate_link}
 
 Thanks for using GUT!
 [/center]
@@ -41,8 +40,7 @@ func _ready():
 		return
 	elif(get_parent() == get_tree().root):
 		size = Vector2(100, 100)
-
-
+	title = str("GUT ", GutUtils.version_numbers.gut_version)
 	_vert_center_logo()
 	_logo.disabled = true
 	rtl.text = _make_text()

@@ -166,14 +166,13 @@ func get_gut_version_for_godot_version(godot_v):
 	for key in parsed_data.releases:
 		var entry = parsed_data.releases[key]
 		if(Vnt.is_version_gte(godot_v, entry.godot_min) and Vnt.is_version_lte(godot_v, entry.godot_max)):
-			return key
-			to_return = key
+			if(Vnt.is_version_gte(key, to_return)):
+				to_return = key
 
 	if(to_return == "0.0.0" and parsed_data.has('branches')):
 		for key in parsed_data.branches:
 			var entry = parsed_data.branches[key]
 			if(Vnt.is_version_gte(godot_v, entry.godot_min) and Vnt.is_version_lte(godot_v, entry.godot_max)):
-				return key
 				to_return = key
 
 	return to_return
@@ -231,7 +230,7 @@ func get_update_string(url_formatter:Callable=_url_formatter):
 
 	if(is_gut_version_valid(gut_v, godot_v)):
 		if(rec_ver != gut_v):
-			version_info = str('Version ', rec_ver_link, ' is now available!')
+			version_info = str(rec_ver_link, ' is now available!')
 	else:
 		if(rec_ver.find(".") == -1):
 			version_info = str("GUT does not have a release for this version of Godot yet, but it does have ",
@@ -272,6 +271,3 @@ func get_days_since_last_fetch():
 		var time_since_last_fetch = Time.get_unix_time_from_system() - parsed_data.fetch_timestamp
 		to_return = time_since_last_fetch / (60.0 * 60.0 * 24.0)
 	return to_return
-
-
-

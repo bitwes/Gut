@@ -7,6 +7,7 @@ var BottomPanelScene = preload('res://addons/gut/gui/GutBottomPanel.tscn')
 var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
 var GutDock = load('res://addons/gut/gui/gut_dock.gd')
 var UpdateRequiredDialog = load('res://addons/gut/gui/update_required.tscn')
+var CheckForUpdateControl = load("res://addons/gut/gui/check_for_update.tscn")
 
 var _bottom_panel : Control = null
 var _menu_mgr = null
@@ -15,6 +16,7 @@ var _gut_window = null
 var _dock_mode = 'none'
 var _gut_dock = null
 var _update_required = null
+var _check_for_update = null
 
 
 func _init():
@@ -22,21 +24,28 @@ func _init():
 		return
 
 
+# This checks the Remote file or Local file.  This will not download the
+# remote file.  I don't want to delay startup for any reason.  Downloading
+# the remote file ocassionally is handled elsewhere.
 func _should_continue_loading_gut():
+	_check_for_update = CheckForUpdateControl.instantiate()
 	var to_return = true
 
 	_update_required = UpdateRequiredDialog.instantiate()
 	get_tree().root.add_child(_update_required)
 	_update_required.hide()
+	_update_required.set_check_for_update_control(_check_for_update)
 
-	if(!_update_required.should_show()):
+	if(!_check_for_update.update_detector.is_gut_version_valid()):
 		_update_required.popup_centered()
 		await(_update_required.closed)
 
 		if(!_update_required.should_continue):
 			to_return = false
 
+	_update_required.remove_child(_check_for_update)
 	_update_required.queue_free()
+
 	return to_return
 
 
@@ -66,6 +75,14 @@ func _enter_tree():
 	# made it angry (don't remember how) until I added it back in.
 	await get_tree().create_timer(1).timeout
 	# ---
+
+	# Kick off a download fo the remote versions file if it's been more than
+	# some number of days since we've downloaded it.
+	_check_for_update.visible = false
+	_bottom_panel.add_child(_check_for_update)
+	var days_since = _check_for_update.update_detector.get_days_since_last_fetch()
+	if(days_since >= 2):
+		_check_for_update.update_detector.check_for_update_with_fetch(true)
 
 	_bottom_panel.set_interface(get_editor_interface())
 	_bottom_panel.set_plugin(self)
@@ -105,7 +122,7 @@ func gut_as_panel():
 
 
 func toggle_windowed():
-	push_warning("You have to right click the GUT tab and choos 'floating'.  I cannot do this from a menu anymore.")
+	push_warning("You have to right click the GUT tab and choose 'floating'.  I cannot do this from a menu anymore.")
 
 
 func _exit_tree():
@@ -118,6 +135,8 @@ func _exit_tree():
 	remove_dock(_gut_dock)
 	_gut_dock.queue_free()
 	remove_tool_menu_item("GUT") # made by _menu_mgr
+
+	_check_for_update.queue_free()
 
 
 func show_output_panel():

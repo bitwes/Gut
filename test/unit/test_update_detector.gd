@@ -240,6 +240,27 @@ func test_if_asset_library_is_missing_is_in_asset_library_returns_false():
 	assert_false(ud.is_in_asset_library("99.0"))
 
 
+func test_if_later_version_comes_after_current_verions_it_still_finds_later_version():
+	var data = {
+	"asset_library":"99.0",
+	"branches":{},
+    "releases":{
+        "9.6.0": {
+            "godot_max": "999",
+            "godot_min": "4.6"
+        },
+        "9.6.1": {
+            "godot_max": "999",
+            "godot_min": "4.6"
+        }
+
+	}}
+	var ud = autofree(UpdateDetector.new())
+	ud.parse_version_data(data)
+	assert_eq(ud.get_gut_version_for_godot_version('4.6'), '9.6.1')
+
+
+
 class TestFetch:
 	extends GutTest
 
