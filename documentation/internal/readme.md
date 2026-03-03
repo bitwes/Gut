@@ -1,0 +1,1 @@
+This directory holds documentation about the inner workings of GUT systems.  Most of this is notes to myself.  This documentation is not to be published.

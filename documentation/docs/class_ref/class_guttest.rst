@@ -93,7 +93,7 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_called_count<class_GutTest_method_assert_called_count>`\ (\ callable\: `Callable <https://docs.godotengine.org/en/stable/classes/class_callable.html>`_, expected_count\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_\ ) |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_connected<class_GutTest_method_assert_connected>`\ (\ p1, p2, p3 = null, p4 = ""\ )                                                                                                                                                                 |
+   | |void|                                                                         | :ref:`assert_connected<class_GutTest_method_assert_connected>`\ (\ p1, p2, p3 = null, p4 = null\ )                                                                                                                                                               |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_does_not_have<class_GutTest_method_assert_does_not_have>`\ (\ obj, element, text = ""\ )                                                                                                                                                            |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -145,7 +145,7 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_not_called<class_GutTest_method_assert_not_called>`\ (\ inst, method_name = null, parameters = null\ )                                                                                                                                              |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_not_connected<class_GutTest_method_assert_not_connected>`\ (\ p1, p2, p3 = null, p4 = ""\ )                                                                                                                                                         |
+   | |void|                                                                         | :ref:`assert_not_connected<class_GutTest_method_assert_not_connected>`\ (\ p1, p2, p3 = null, p4 = null\ )                                                                                                                                                       |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_not_freed<class_GutTest_method_assert_not_freed>`\ (\ obj, title = "something"\ )                                                                                                                                                                   |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -1516,7 +1516,7 @@ Asserts that ``obj`` exports a property with the name ``property_name`` and a ty
 
 .. rst-class:: classref-method
 
-|void| **assert_connected**\ (\ p1, p2, p3 = null, p4 = ""\ ) :ref:`🔗<class_GutTest_method_assert_connected>`
+|void| **assert_connected**\ (\ p1, p2, p3 = null, p4 = null\ ) :ref:`🔗<class_GutTest_method_assert_connected>`
 
 Asserts that `signaler_obj` is connected to `connect_to_obj` on signal `signal_name`.  The method that is connected is optional.  If `method_name` is supplied then this will pass only if the signal is connected to the  method.  If it is not provided then any connection to the signal will cause a pass. 
 
@@ -1542,7 +1542,7 @@ Asserts that `signaler_obj` is connected to `connect_to_obj` on signal `signal_n
     class Connector:
         func connect_this():
             pass
-        func  other_method():
+        func other_method():
             pass
     
     func test_assert_connected():
@@ -1572,7 +1572,7 @@ Asserts that `signaler_obj` is connected to `connect_to_obj` on signal `signal_n
 
 .. rst-class:: classref-method
 
-|void| **assert_not_connected**\ (\ p1, p2, p3 = null, p4 = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_connected>`
+|void| **assert_not_connected**\ (\ p1, p2, p3 = null, p4 = null\ ) :ref:`🔗<class_GutTest_method_assert_not_connected>`
 
 The inverse of :ref:`assert_connected<class_GutTest_method_assert_connected>`.  See :ref:`assert_connected<class_GutTest_method_assert_connected>` for parameter syntax. 
 
@@ -2319,7 +2319,7 @@ Asserts that a number of push_errors were generated by the test.
 
     func test_with_push_error():
         push_error("This is an error")
-        assert_push_error(1, 'This test should have caused a push_error)
+        assert_push_error(1, 'This test should have caused a push_error')
 
 See `Error-Tracking <../Error-Tracking.html>`__.
 
