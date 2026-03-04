@@ -26,7 +26,7 @@ extends Node
 var Vnt = load("res://addons/gut/version_numbers.gd").VerNumTools
 
 
-const REMOTE_FILE_URL = "https://api.github.com/repos/bitwes/gut/contents/addons/gut/versions.json?ref=update_detection"
+const REMOTE_FILE_URL = "https://api.github.com/repos/bitwes/gut/contents/addons/gut/versions.json"
 const LOCAL_FILE_PATH = "res://addons/gut/versions.json"
 const REMOTE_FILE_PATH = "user://gut_temp_directory/versions.json"
 

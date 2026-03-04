@@ -5,6 +5,18 @@ Need to update the url to point to main branch before merging.
 
 # Check for Update
 
+## When are checks performed
+Checks using the files on the filesystem are performed:
+* When the Editor is launched to see if the current version is valid for the version of Godot being used.
+* When the About box is shown.  This will display if an update is available as well.
+* At the end of a run, a check is performed to display if an update is available.
+
+## Downloading Remote File
+The remote file will be downloaded when:
+* Godot is launched and the local copy of the remote file is some number of days old (2 as of the writing of this).  This is done after the invalid check is performed on startup.
+* The about box will display a link to "check for update" if the local copy of the remote file is more than some number of hours old (currently 1 hr as defined by `update_detector.min_fetch_wait`).  This link will download the remote file, parse it, and display the results.
+* From the command line, the `-gcheck_update` will download the remote file and parse the results.
+
 ## Functionanlity
 
 ### `res://addons/gut/update_detector.gd`
@@ -28,13 +40,6 @@ This file is shipped with GUT and serves as a backup if the remote file cannot b
 This is downloaded from the main branch's `addons/gut/versions.json`.  This allows the file to be updated externally.
 
 
-
-
-## Downloading Remote File
-The remote file will be downloaded when:
-* Godot is launched and the local copy of the remote file is some number of days old (2 as of the writing of this).  This is done after the invalid check is performed on startup.
-* The about box will display a link to "check for update" if the local copy of the remote file is more than some number of hours old (currently 1 hr as defined by `update_detector.min_fetch_wait`).  This link will download the remote file, parse it, and display the results.
-* From the command line, the `-gcheck_update` will download the remote file and parse the results.
 
 
 ## Sample Data
