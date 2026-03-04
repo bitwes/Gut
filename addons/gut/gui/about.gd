@@ -78,7 +78,6 @@ func _make_text():
 		"gut_link_table":gut_link_table,
 		"vscode_link_table":vscode_link_table,
 		"donate_link":_color_link(str('[url]', _donate_link, '[/url]')),
-		"gut_version":gutv,
 	})
 	return text
 

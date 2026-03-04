@@ -1,8 +1,3 @@
-# TODO
-
-Need to update the url to point to main branch before merging.
-
-
 # Check for Update
 
 ## When are checks performed

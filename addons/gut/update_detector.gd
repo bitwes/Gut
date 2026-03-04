@@ -71,13 +71,12 @@ func _url_formatter(url, link_text=null):
 # Called when the HTTP request is completed.
 func _http_request_completed(result, response_code, headers, body):
 	var body_text = body.get_string_from_utf8()
-	# print("---------\n", result, "\n--\n", response_code, "\n--\n", headers, "\n--\n", body_text, "\n----------")
 
 	if(response_code == 200):
 		var json = JSON.new()
 		var err = json.parse(body_text)
 		if(err != OK):
-			push_error("Invalid JSON: ", json.get_error_message(), '.  ', body_text)
+			push_error("[GUT] Invalid JSON: ", json.get_error_message(), '.  ', body_text)
 			download_completed.emit()
 			return
 		var response = json.get_data()
@@ -86,7 +85,7 @@ func _http_request_completed(result, response_code, headers, body):
 		if(data_issues.size() == 0):
 			_write_remote_file(response.duplicate(true))
 		else:
-			push_error("Invalid version data:  ", data_issues)
+			push_error("[GUT] Invalid version data:  ", data_issues)
 			parsed_data = {}
 			data_issues.clear()
 	else:
@@ -99,7 +98,7 @@ func _http_request_completed(result, response_code, headers, body):
 		var msg = ''
 		if(response != null and response.has('message')):
 			msg = str(" (", response.message, ")")
-		push_error("Could not get version info, response code:  ", response_code, msg)
+		push_error("[GUT] Could not get version info, response code:  ", response_code, msg)
 
 	download_completed.emit()
 
@@ -154,7 +153,7 @@ func fetch_remote_file():
 	]
 	var error = _http_request.request(REMOTE_FILE_URL, headers)
 	if error != OK:
-		var errtxt = str("An error occurred requesting version data:  ", error, ".")
+		var errtxt = str("[GUT] An error occurred requesting version data:  ", error, ".")
 		data_issues.append(errtxt)
 		push_error(errtxt)
 	return error

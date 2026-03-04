@@ -33,7 +33,6 @@ func _should_continue_loading_gut():
 
 	_update_required = UpdateRequiredDialog.instantiate()
 	get_tree().root.add_child(_update_required)
-	#_update_required.hide()
 	_update_required.set_check_for_update_control(_check_for_update)
 
 	if(!_check_for_update.update_detector.is_gut_version_valid()):
