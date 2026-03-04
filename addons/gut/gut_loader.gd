@@ -21,6 +21,12 @@
 #	godot -s addons/gut/cli/change_project_warnings.gd ++ -h
 #
 # This script should conform to, or ignore, the strictest warning settings.
+#
+#
+# TODO:  It appears that this is only loaded when running from the editor via
+#        "In Editor" mode.  I could not see any indicator that this was being
+#        loaded via the other editor run modes nor via the command line.
+#        This might not be needed any longer.
 # ------------------------------------------------------------------------------
 const WARNING_PATH : String = 'debug/gdscript/warnings/'
 
