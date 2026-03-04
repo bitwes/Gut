@@ -33,7 +33,7 @@ func _should_continue_loading_gut():
 
 	_update_required = UpdateRequiredDialog.instantiate()
 	get_tree().root.add_child(_update_required)
-	_update_required.hide()
+	#_update_required.hide()
 	_update_required.set_check_for_update_control(_check_for_update)
 
 	if(!_check_for_update.update_detector.is_gut_version_valid()):
@@ -76,7 +76,7 @@ func _enter_tree():
 	await get_tree().create_timer(1).timeout
 	# ---
 
-	# Kick off a download fo the remote versions file if it's been more than
+	# Kick off a download of the remote versions file if it's been more than
 	# some number of days since we've downloaded it.
 	_check_for_update.visible = false
 	_bottom_panel.add_child(_check_for_update)
