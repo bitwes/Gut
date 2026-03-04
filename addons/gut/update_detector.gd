@@ -160,8 +160,10 @@ func fetch_remote_file():
 	return error
 
 
-func get_gut_version_for_godot_version(godot_v):
+func get_gut_version_for_godot_version(godot_v=null):
 	var to_return = "0.0.0"
+	if(godot_v == null):
+		godot_v = GutUtils.version_numbers.make_godot_version_string()
 
 	for key in parsed_data.releases:
 		var entry = parsed_data.releases[key]

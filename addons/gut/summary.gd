@@ -192,6 +192,15 @@ func get_totals(gut=_gut):
 	return totals
 
 
+func log_version_update(gut):
+	var ud = GutUtils.UpdateDetector.new()
+	ud.check_for_update()
+	var recommended = ud.get_gut_version_for_godot_version()
+	if(recommended != GutUtils.version_numbers.gut_version):
+		gut.get_logger().log(ud.get_update_string())
+	ud.free()
+	
+
 func log_end_run(gut=_gut):
 	var totals = get_totals(gut)
 	if(totals.tests == 0):
@@ -207,4 +216,5 @@ func log_end_run(gut=_gut):
 
 	_log_what_was_run(gut)
 	log_the_final_line(totals, gut)
+	log_version_update(gut)
 	lgr.log("")
