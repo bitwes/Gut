@@ -203,10 +203,7 @@ static var gut_fonts = GutFonts.new()
 static var avail_fonts = gut_fonts.get_font_names()
 
 static var version_numbers = VersionNumbers.new(
-	# gut_versrion (source of truth)
-	'9.6.0',
-	# required_godot_version
-	'4.6'
+	'9.6.0' # gut_versrion (source of truth)
 )
 
 
@@ -317,14 +314,9 @@ static func make_install_check_text(template_paths=DOUBLE_TEMPLATES, ver_nums=ve
 		!FileAccess.file_exists(template_paths.SCRIPT)):
 
 		text = 'One or more GUT template files are missing.  If this is an exported project, you must include *.txt files in the export to run GUT.  If it is not an exported project then reinstall GUT.'
-	elif(!ver_nums.is_godot_version_valid()):
-		text = ver_nums.get_bad_version_text()
 
 	return text
 
-
-static func is_install_valid(template_paths=DOUBLE_TEMPLATES, ver_nums=version_numbers):
-	return make_install_check_text(template_paths, ver_nums) == INSTALL_OK_TEXT
 
 
 # ------------------------------------------------------------------------------

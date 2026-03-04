@@ -9,15 +9,10 @@ func test_can_make_one():
 func test_default_version_values():
 	var vn = VersionNumbers.new()
 	assert_eq(vn.gut_version, '0.0.0', 'gut version')
-	assert_eq(vn.required_godot_version, '0.0.0', 'required gut version')
 
 func test_init_sets_gut_version_from_string():
 	var vn = VersionNumbers.new('1.2.3')
 	assert_eq(vn.gut_version, '1.2.3')
-
-func test_init_sets_required_godot_version_from_string():
-	var vn = VersionNumbers.new('1.2.3', '4.5.6')
-	assert_eq(vn.required_godot_version, '4.5.6')
 
 
 
