@@ -76,14 +76,15 @@ class TestVerNumTools:
 			['1.2.5', '1.0.10', true],
 			['3.3.0', '3.2.3', true],
 			['4.0.0', '3.2.0', true],
-			['4.5.6', '1', true],
-			['4.5.6', '4', true],
+			['4.5.6', '1',     true],
+			['4.5.6', '4',     true],
 
 			['3.0.0', '3.0.1', false],
 			['1.2.3', '2.0.0', false],
 			['1.2.1', '1.2.3', false],
 			['1.2.3', '1.3.0', false],
 			['3.6',   '3.6.1', false],
+			['3',     '3.6',   false]
 		])
 	func test_is_version_gte(params = use_parameters(ivg_values)):
 		assert_eq(Vnt.is_version_gte(params.v, params.r), params.expected,
@@ -110,14 +111,16 @@ class TestVerNumTools:
 		['v', 'r', 'expected'],
 		[
 			['1.2.3', '1.2.3', true],
-			['1.2.3', '1.2', true],
-			['1.2.3', '1', true],
+			['1.2.0', '1.2', true],
+			['1.0.0', '1', true],
 
 			['1.2.4', '1.2.3', false],
 			['1.3.3', '1.2.3', false],
 			['2.2.3', '1.2.3', false],
 
-			['1.2.3', '1.2.3.4', false]
+			['1.2.3', '1.2.3.4', false],
+			['1.2.3', '1.2', false],
+			['1.2',   '1', false]
 		])
 	func test_is_version_eq(params = use_parameters(ive_values)):
 		assert_eq(Vnt.is_version_eq(params.v, params.r), params.expected,

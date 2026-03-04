@@ -12,7 +12,7 @@ class VerNumTools:
 		return parts
 
 
-	static func make_version_array(v):
+	static func make_version_array(v, min_spots=3):
 		var to_return = []
 		if(typeof(v) == TYPE_STRING):
 			to_return = _make_version_array_from_string(v)
@@ -20,6 +20,11 @@ class VerNumTools:
 			return [v.major, v.minor, v.patch]
 		elif(typeof(v) == TYPE_ARRAY):
 			to_return = v
+
+		if(to_return.size() < min_spots):
+			for i in range(min_spots - to_return.size()):
+				to_return.append(0)
+
 		return to_return
 
 
