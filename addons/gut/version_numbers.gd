@@ -12,7 +12,7 @@ class VerNumTools:
 		return parts
 
 
-	static func make_version_array(v):
+	static func make_version_array(v, min_spots=3):
 		var to_return = []
 		if(typeof(v) == TYPE_STRING):
 			to_return = _make_version_array_from_string(v)
@@ -20,6 +20,11 @@ class VerNumTools:
 			return [v.major, v.minor, v.patch]
 		elif(typeof(v) == TYPE_ARRAY):
 			to_return = v
+
+		if(to_return.size() < min_spots):
+			for i in range(min_spots - to_return.size()):
+				to_return.append(0)
+
 		return to_return
 
 
@@ -50,6 +55,24 @@ class VerNumTools:
 
 		# still null means each index was the same.
 		return GutUtils.nvl(is_ok, true)
+
+	static func is_version_lte(version, required):
+		var is_lt = null
+		var v = make_version_array(version)
+		var r = make_version_array(required)
+
+		var idx = 0
+
+		while(is_lt == null and idx < v.size() and idx < r.size()):
+			if(v[idx] < r[idx]):
+				is_lt = true
+			elif(v[idx] > r[idx]):
+				is_lt = false
+
+			idx += 1
+
+		# still null means each index was the same.
+		return GutUtils.nvl(is_lt, true)
 
 
 	static func is_version_eq(version, expected):
@@ -84,11 +107,10 @@ class VerNumTools:
 #
 # ##############################################################################
 var gut_version = '0.0.0'
-var required_godot_version = '0.0.0'
 
-func _init(gut_v = gut_version, required_godot_v = required_godot_version):
+func _init(gut_v = gut_version):
 	gut_version = gut_v
-	required_godot_version = required_godot_v
+
 
 
 # ------------------------------------------------------------------------------
@@ -99,23 +121,6 @@ func get_version_text():
 	var gut_version_info =  str('GUT version:  ', gut_version)
 	var godot_version_info  = str('Godot version:  ', v_info.major,  '.',  v_info.minor,  '.',  v_info.patch)
 	return godot_version_info + "\n" + gut_version_info
-
-
-# ------------------------------------------------------------------------------
-# Returns a nice string for erroring out when we have a bad Godot version.
-# ------------------------------------------------------------------------------
-func get_bad_version_text():
-	var info = Engine.get_version_info()
-	var gd_version = str(info.major, '.', info.minor, '.', info.patch)
-	return 'GUT ' + gut_version + ' requires Godot ' + required_godot_version + \
-		' or greater.  Godot version is ' + gd_version
-
-
-# ------------------------------------------------------------------------------
-# Checks the Godot version against required_godot_version.
-# ------------------------------------------------------------------------------
-func is_godot_version_valid():
-	return VerNumTools.is_version_gte(Engine.get_version_info(), required_godot_version)
 
 
 func make_godot_version_string():

@@ -154,6 +154,7 @@ an immediate "=":
 	opts.add('-gh', false, 'Print this help.  You did this to see this, so you probably understand.')
 	opts.add('-gpo', false, 'Print option values from all sources and the value used.')
 	opts.add('-gprint_gutconfig_sample', false, 'Print out json that can be used to make a gutconfig file.')
+	opts.add("-gcheck_update", false, "Check for update")
 
 	# run as in editor, for shelling out purposes through Editor.
 	var o = opts.add('-graie', false, 'do not use')
@@ -238,6 +239,15 @@ func _run_tests(opt_resolver):
 		runner.run_tests()
 
 
+var update_detector = null
+func _check_for_update():
+	print(str("Checking for update for GUT ", GutUtils.version_numbers.gut_version))
+	update_detector = GutUtils.UpdateDetector.new()
+	add_child(update_detector)
+	await update_detector.check_for_update_with_fetch()
+	print(update_detector.get_update_string())
+
+
 # parse options and run Gut
 func main():
 	var opt_resolver = OptionResolver.new()
@@ -279,6 +289,9 @@ func main():
 			get_tree().quit(0)
 		elif(cli_opts.get_value('-gprint_gutconfig_sample')):
 			_print_gutconfigs(opt_resolver.get_resolved_values())
+			get_tree().quit(0)
+		elif(cli_opts.get_value('-gcheck_update')):
+			await _check_for_update()
 			get_tree().quit(0)
 		else:
 			_run_tests(opt_resolver)

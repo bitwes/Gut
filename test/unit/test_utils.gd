@@ -67,28 +67,6 @@ func test_is_inner_class_false_for_base_scripts():
 func test_is_inner_class_false_for_non_objs():
 	assert_false(GutUtils.is_inner_class('foo'))
 
-func test_is_install_valid_true_by_default():
-	assert_true(GutUtils.is_install_valid())
-
-func test_is_install_valid_false_if_function_template_missing():
-	var template_paths = GutUtils.DOUBLE_TEMPLATES.duplicate()
-	template_paths.FUNCTION = 'res://does_not_exist.txt'
-	assert_false(GutUtils.is_install_valid(template_paths))
-
-func test_is_install_valid_false_if_init_template_missing():
-	var template_paths = GutUtils.DOUBLE_TEMPLATES.duplicate()
-	template_paths.INIT = 'res://does_not_exist.txt'
-	assert_false(GutUtils.is_install_valid(template_paths))
-
-func test_is_install_valid_false_if_script_template_missing():
-	var template_paths = GutUtils.DOUBLE_TEMPLATES.duplicate()
-	template_paths.SCRIPT = 'res://does_not_exist.txt'
-	assert_false(GutUtils.is_install_valid(template_paths))
-
-func test_is_install_valid_false_when_godot_version_too_low():
-	var ver_nums = GutUtils.VersionNumbers.new('50.50.50', '50.50.50')
-	assert_false(GutUtils.is_install_valid(GutUtils.DOUBLE_TEMPLATES, ver_nums))
-
 func test_make_install_check_text_contains_missing_tempalte_text_when_function_template_missing():
 	var template_paths = GutUtils.DOUBLE_TEMPLATES.duplicate()
 	template_paths.FUNCTION = 'res://does_not_exist.txt'
@@ -106,11 +84,6 @@ func test_make_install_check_text_contains_missing_tempalte_text_when_script_tem
 	template_paths.SCRIPT = 'res://does_not_exist.txt'
 	var text = GutUtils.make_install_check_text(template_paths)
 	assert_string_contains(text, 'template files are missing', false)
-
-func test_make_install_check_text_contains_info_about_invalid_version():
-	var ver_nums = GutUtils.VersionNumbers.new('50.50.50', '50.50.50')
-	var text = GutUtils.make_install_check_text(GutUtils.DOUBLE_TEMPLATES, ver_nums)
-	assert_string_contains(text, 'requires Godot ', false)
 
 #func test_make_install_check_text_contains_text_about_no_configured_directories():
 	#pending()

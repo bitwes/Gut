@@ -5,15 +5,13 @@ var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
 
 var _bbcode = \
 """
-[center]GUT {gut_version}[/center]
-
 [center][b]GUT Links[/b]
 {gut_link_table}[/center]
 
 [center][b]VSCode Extension Links[/b]
 {vscode_link_table}[/center]
 
-[center]You can support GUT development at
+[center]You can support GUT development at:
 {donate_link}
 
 Thanks for using GUT!
@@ -33,17 +31,19 @@ var _vscode_links = [
 ]
 
 var _donate_link = "https://buymeacoffee.com/bitwes"
-
 @onready var _logo = $Logo
-
+@onready var rtl = $HBox/VBoxContainer/Scroll/RichTextLabel
+@onready var check_for_update = $HBox/VBoxContainer/CheckForUpdate
 
 func _ready():
 	if(get_parent() is SubViewport):
 		return
-
+	elif(get_parent() == get_tree().root):
+		size = Vector2(100, 100)
+	title = str("GUT ", GutUtils.version_numbers.gut_version)
 	_vert_center_logo()
-	$Logo.disabled = true
-	$HBox/Scroll/RichTextLabel.text = _make_text()
+	_logo.disabled = true
+	rtl.text = _make_text()
 
 
 func _color_link(link_text):
@@ -62,6 +62,13 @@ func _link_table(entries):
 	return str('[table=2]', text, '[/table]')
 
 
+func url_bbcode(url, link_text=null):
+	if(link_text == null):
+		link_text = url
+	var text = str("[url=", url, "]", link_text, "[/url]")
+	return _color_link(text)
+
+
 func _make_text():
 	var gut_link_table = _link_table(_gut_links)
 	var vscode_link_table = _link_table(_vscode_links)
@@ -70,7 +77,6 @@ func _make_text():
 		"gut_link_table":gut_link_table,
 		"vscode_link_table":vscode_link_table,
 		"donate_link":_color_link(str('[url]', _donate_link, '[/url]')),
-		"gut_version":GutUtils.version_numbers.gut_version,
 	})
 	return text
 
@@ -123,3 +129,8 @@ func _on_rich_text_label_meta_hover_ended(meta: Variant) -> void:
 
 func _on_logo_pressed() -> void:
 	_logo.disabled = !_logo.disabled
+
+
+func _on_check_for_update_verbose_enabled() -> void:
+	check_for_update.size_flags_vertical = check_for_update.SIZE_EXPAND_FILL
+	check_for_update.z_index = 100

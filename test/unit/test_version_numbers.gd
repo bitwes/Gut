@@ -9,15 +9,10 @@ func test_can_make_one():
 func test_default_version_values():
 	var vn = VersionNumbers.new()
 	assert_eq(vn.gut_version, '0.0.0', 'gut version')
-	assert_eq(vn.required_godot_version, '0.0.0', 'required gut version')
 
 func test_init_sets_gut_version_from_string():
 	var vn = VersionNumbers.new('1.2.3')
 	assert_eq(vn.gut_version, '1.2.3')
-
-func test_init_sets_required_godot_version_from_string():
-	var vn = VersionNumbers.new('1.2.3', '4.5.6')
-	assert_eq(vn.required_godot_version, '4.5.6')
 
 
 
@@ -76,31 +71,51 @@ class TestVerNumTools:
 			['1.2.5', '1.0.10', true],
 			['3.3.0', '3.2.3', true],
 			['4.0.0', '3.2.0', true],
-			['4.5.6', '1', true],
-			['4.5.6', '4', true],
+			['4.5.6', '1',     true],
+			['4.5.6', '4',     true],
 
 			['3.0.0', '3.0.1', false],
 			['1.2.3', '2.0.0', false],
 			['1.2.1', '1.2.3', false],
 			['1.2.3', '1.3.0', false],
+			['3.6',   '3.6.1', false],
+			['3',     '3.6',   false]
 		])
 	func test_is_version_gte(params = use_parameters(ivg_values)):
 		assert_eq(Vnt.is_version_gte(params.v, params.r), params.expected,
 			str(params.v, ' >= ', params.r, ' = ', params.expected))
 
+	var ivl_values = ParameterFactory.named_parameters(
+		['v', 'r', 'expected'],
+		[
+			['1.2.3', '1.2.3', true],
+			['1.0.0', '2.0.0', true],
+			['1.0.0', '1.1.0', true],
+			['1.0.0', '1.0.1', true],
+			['3.6',   '3.6.1', true],
+
+			['2.0.0', '1.0.0', false],
+			['1.1.0', '1.0.0', false],
+			['1.0.1', '1.0.0', false],
+		])
+	func test_is_version_lte(params = use_parameters(ivl_values)):
+		assert_eq(Vnt.is_version_lte(params.v, params.r), params.expected,
+			str(params.v, ' <= ', params.r, ' = ', params.expected))
 
 	var ive_values = ParameterFactory.named_parameters(
 		['v', 'r', 'expected'],
 		[
 			['1.2.3', '1.2.3', true],
-			['1.2.3', '1.2', true],
-			['1.2.3', '1', true],
+			['1.2.0', '1.2', true],
+			['1.0.0', '1', true],
 
 			['1.2.4', '1.2.3', false],
 			['1.3.3', '1.2.3', false],
 			['2.2.3', '1.2.3', false],
 
-			['1.2.3', '1.2.3.4', false]
+			['1.2.3', '1.2.3.4', false],
+			['1.2.3', '1.2', false],
+			['1.2',   '1', false]
 		])
 	func test_is_version_eq(params = use_parameters(ive_values)):
 		assert_eq(Vnt.is_version_eq(params.v, params.r), params.expected,

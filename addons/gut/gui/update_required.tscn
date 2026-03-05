@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://sduiv3grt5h4"]
+
+[ext_resource type="Script" uid="uid://bpj4k0w6ft550" path="res://addons/gut/gui/update_required.gd" id="1_rmy01"]
+
+[node name="UpdateRequired" type="AcceptDialog" unique_id=125541884]
+oversampling_override = 1.0
+title = "Invalid GUT Version"
+position = Vector2i(0, 36)
+size = Vector2i(600, 300)
+visible = true
+exclusive = false
+ok_button_text = "Continue"
+script = ExtResource("1_rmy01")
+
+[connection signal="canceled" from="." to="." method="_on_canceled"]
+[connection signal="close_requested" from="." to="." method="_on_close_requested"]
+[connection signal="confirmed" from="." to="." method="_on_confirmed"]
