@@ -3,13 +3,13 @@
     "branches":{
         "main":{
             "godot_min":"4.6",
-            "godot_max":"9999"
+            "godot_max":"4.6.999"
         }
     },
     "releases":{
         "9.6.0":{
             "godot_min":"4.6",
-            "godot_max":"999"
+            "godot_max":"4.6.999"
         },
         "9.5.0":{
             "godot_min":"4.5",

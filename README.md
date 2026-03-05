@@ -24,8 +24,8 @@ You can download/clone earlier versions of GUT using the links below.
 
 |GUT Version|Valid Godot Version|||||
 |-|-|-|-|-|-|
-|Main Branch |4.6+| |[download](https://github.com/bitwes/Gut/archive/refs/heads/main.zip) | | [wiki](https://gut.readthedocs.io/en/latest/)|
-|[9.6.0](https://github.com/bitwes/Gut/releases/tag/v9.6.0)|4.6+|[repo](https://github.com/bitwes/Gut/tree/v9.6.0)|[download](https://github.com/bitwes/Gut/archive/refs/tags/v9.6.0.zip)|[Asset Library](https://godotengine.org/asset-library/asset/1709)|[wiki](https://gut.readthedocs.io/en/v9.6.0)|
+|Main Branch |4.6.x| |[download](https://github.com/bitwes/Gut/archive/refs/heads/main.zip) | | [wiki](https://gut.readthedocs.io/en/latest/)|
+|[9.6.0](https://github.com/bitwes/Gut/releases/tag/v9.6.0)|4.6.x|[repo](https://github.com/bitwes/Gut/tree/v9.6.0)|[download](https://github.com/bitwes/Gut/archive/refs/tags/v9.6.0.zip)|[Asset Library](https://godotengine.org/asset-library/asset/1709)|[wiki](https://gut.readthedocs.io/en/v9.6.0)|
 |[9.5.0](https://github.com/bitwes/Gut/releases/tag/v9.5.0)|4.5.x|[repo](https://github.com/bitwes/Gut/tree/v9.5.0)|[download](https://github.com/bitwes/Gut/archive/refs/tags/v9.5.0.zip)||[wiki](https://gut.readthedocs.io/en/v9.5.0/)|
 |[9.4.0](https://github.com/bitwes/Gut/releases/tag/v9.4.0)|4.3.x - 4.4.x|[repo](https://github.com/bitwes/Gut/tree/v9.4.0)|[download](https://github.com/bitwes/Gut/archive/refs/tags/v9.4.0.zip)||[wiki](https://gut.readthedocs.io/en/v9.4.0/)|
 |[9.3.0](https://github.com/bitwes/Gut/releases/tag/v9.3.0)|4.2.x|[repo](https://github.com/bitwes/Gut/tree/v9.3.0)|[download](https://github.com/bitwes/Gut/archive/refs/tags/v9.3.0.zip)||[wiki](https://gut.readthedocs.io/en/9.3.1/)|
