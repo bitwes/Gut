@@ -72,7 +72,6 @@ func url_bbcode(url, link_text=null):
 func _make_text():
 	var gut_link_table = _link_table(_gut_links)
 	var vscode_link_table = _link_table(_vscode_links)
-	var gutv = GutUtils.version_numbers.gut_version
 
 	var text = _bbcode.format({
 		"gut_link_table":gut_link_table,
