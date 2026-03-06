@@ -80,7 +80,7 @@ func _enter_tree():
 	_check_for_update.visible = false
 	_bottom_panel.add_child(_check_for_update)
 	var days_since = _check_for_update.update_detector.get_days_since_last_fetch()
-	if(days_since >= 2):
+	if(days_since >= 1):
 		_check_for_update.update_detector.check_for_update_with_fetch(true)
 
 	_bottom_panel.set_interface(get_editor_interface())
@@ -128,11 +128,13 @@ func _exit_tree():
 	remove_tool_menu_item("GUT")
 	_menu_mgr = null
 	GutEditorGlobals.user_prefs.save_it()
+	
+	if(_bottom_panel != null):
+		_bottom_panel.menu_manager = null
 
-	_bottom_panel.menu_manager = null
-
-	remove_dock(_gut_dock)
-	_gut_dock.queue_free()
+	if(_gut_dock != null):
+		remove_dock(_gut_dock)
+		_gut_dock.queue_free()
 	remove_tool_menu_item("GUT") # made by _menu_mgr
 
 	_check_for_update.queue_free()
