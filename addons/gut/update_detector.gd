@@ -238,9 +238,11 @@ func get_update_string(url_formatter:Callable=_url_formatter):
 			"the branch '", rec_ver, "'.\n",
 			"Check the readme for install links/instructions:  ", url_formatter.call('https://github.com/bitwes/Gut'))
 		else:
-			version_info = str(
-				'This version of GUT may not be compatible with Godot ', godot_v,
-				'.  Consider changing to ', rec_ver_link)
+			version_info = str('This version of GUT may not be compatible with Godot ', godot_v, '.  ')
+			if(rec_ver == '0.0.0'):
+				version_info += str("No release or branch exists for this version of Godot yet.  Check back soon.")
+			else:
+				version_info += str('Consider changing to ', rec_ver_link)
 
 	if(rec_ver != gut_v and is_in_asset_library(rec_ver)):
 		version_info += str("\nYou can update to ", rec_ver, " through the Asset Library.")
