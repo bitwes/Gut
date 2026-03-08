@@ -54,7 +54,8 @@ static var class_ref_by_name = {} :
 ## on.  It is further populated during a run so that we only have to create
 ## a new instance once to get the class name string.
 static var gdscript_native_class_names_by_type = {
-	Tween:"Tween"
+	Tween:"Tween",
+	CanvasItem:"CanvasItem",
 }
 
 
