@@ -76,7 +76,7 @@ GUT/Godot Versions
 ----------------------
 There are only two versions of GUT in the Asset Library.  GUT 9 requires Godot 4.  GUT 7 requires Godot 3.4.  GUT will not appear in the Asset Library if your current version of Godot is less than GUT's required version.
 
-The Godot/GUT version list and downlaod links can be found in the repo README https://github.com/bitwes/Gut/blob/main/README.md
+The Godot/GUT version list and download links can be found in the repo README https://github.com/bitwes/Gut/blob/main/README.md
 
 
 Getting Started

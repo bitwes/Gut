@@ -2,7 +2,7 @@
 Documentation is hosted at https://gut.readthedocs.io.
 
 The wiki is generated from three types of files:
-* RST:  This wiki site index (`index.rst`) is the only RST file that manually created.  All other RST files are generated from code comments.
+* RST:  The wiki site index (`index.rst`) is the only manually created RST file.  All other RST files are generated from code comments.
 * Markdown:  The standalone pages of the wiki are all made in Markdown.
 * Documentation Comments:  A modified version of Godot's code is used to generate RST files for GUT scripts and `class_names`.
 
