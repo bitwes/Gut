@@ -16,7 +16,8 @@
 [sub_resource type="ButtonGroup" id="ButtonGroup_bskl7"]
 
 [node name="GutBottomPanel" type="Control" unique_id=1136630421]
-custom_minimum_size = Vector2(250, 250)
+clip_contents = true
+custom_minimum_size = Vector2(250, 0)
 layout_mode = 3
 anchor_left = -0.0025866
 anchor_top = -0.00176575
@@ -48,7 +49,7 @@ custom_minimum_size = Vector2(1, 2.08165e-12)
 layout_mode = 2
 
 [node name="RunAtCursor" parent="layout/ControlBar" unique_id=1603612118 instance=ExtResource("3")]
-custom_minimum_size = Vector2(237, 0)
+custom_minimum_size = Vector2(488, 0)
 layout_mode = 2
 
 [node name="CenterContainer2" type="CenterContainer" parent="layout/ControlBar" unique_id=269691286]
@@ -270,7 +271,7 @@ size_flags_vertical = 3
 
 [node name="RunResults" parent="layout/RSplit/CResults/HSplitResults" unique_id=1277406275 instance=ExtResource("5")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(255, 255)
+custom_minimum_size = Vector2(255, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -303,6 +304,7 @@ visible = false
 size = Vector2i(1300, 1336)
 visible = false
 
+[connection signal="resized" from="." to="." method="_on_resized"]
 [connection signal="pressed" from="layout/ControlBar/RunAll" to="." method="_on_RunAll_pressed"]
 [connection signal="run_tests" from="layout/ControlBar/RunAtCursor" to="." method="_on_RunAtCursor_run_tests"]
 [connection signal="pressed" from="layout/ControlBar/MakeFloating" to="." method="_on_to_window_pressed"]

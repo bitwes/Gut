@@ -48,6 +48,7 @@ var menu_manager = null :
 	settings_button = %ExtraButtons/Settings,
 	shortcut_dialog = $ShortcutDialog,
 	shortcuts_button = %ExtraButtons/Shortcuts,
+	sub_panels_split = $layout/RSplit,
 
 	results = {
 		bar = $layout/ControlBar2,
@@ -355,6 +356,12 @@ func _on_horiz_layout_pressed() -> void:
 func _on_vert_layout_pressed() -> void:
 	results_vert_layout()
 
+
+func _on_resized() -> void:
+	# This wouldn't work in ready or defrred after ready.  the split's y position
+	# was alwasy 0.  This also adapts to Editor font size changes.
+	custom_minimum_size.y = _ctrls.sub_panels_split.position.y
+	
 
 # ---------------
 # Public
