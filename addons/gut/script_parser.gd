@@ -3,6 +3,7 @@
 const BLACKLIST = [
 	'get_script',
 	'has_method',
+	'_to_string',
 ]
 
 
