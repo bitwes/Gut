@@ -259,6 +259,9 @@ func _get_bad_method_message(inst, method_name, what_you_cant_do):
 		to_return = str("You cannot ", what_you_cant_do, " [", method_name, "] because the method does not exist.  ",
 			"This can happen if the method is virtual and not overloaded (i.e. _ready) ",
 			"or you have mistyped the name of the method.")
+	elif(GutUtils.ScriptCollector.BLACKLIST.has(method_name)):
+		to_return = str("Method '", method_name, "' cannot be stubbed because it ",
+			"is excluded by GUT when creating doubles.")
 	elif(!inst.__gutdbl_values.doubled_methods.has(method_name)):
 		to_return = str("You cannot ", what_you_cant_do, " [", method_name, "] because ",
 			_str(inst), ' does not overload it or it was ignored with ',
