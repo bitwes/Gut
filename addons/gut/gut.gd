@@ -30,7 +30,8 @@ signal end_pause_before_teardown
 
 signal start_run
 signal end_run
-## Emitted before every test script is run. Emitted before [method GutTest.before_all] hook on test is run.
+## Emitted before every test script instance is created.
+## Emitted before [method GutTest.before_all] hook on test is run.
 ## test_script_obj is an instance of addons/gut/collected_script.gd.
 signal start_script(test_script_obj)
 ## Emitted after every test script is run. Emitted after [method GutTest.after_all] hook on test is run.

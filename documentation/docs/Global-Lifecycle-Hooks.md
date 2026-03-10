@@ -2,10 +2,9 @@
 
 ## Disclaimer
 
-This page describes workarounds for missing features in GUT
-that are not planned to be long term solutions.
-Eventually this same functionality will be available
-through a more formally supported system.
+This page describes how to use existing signals to perform logic at various stages of test execution.
+Eventually, a more formal mechanism will be implemented.
+See [Issue 762](https://github.com/bitwes/Gut/issues/762) for more details.
 
 ## Overview
 
@@ -14,10 +13,28 @@ GUT does not expose "global" function hooks that can be run before each test scr
 to run code before/after each test method/class,
 these must be set on every GutTest instance you want the behavior for.
 
-However, GutMain _does_ expose <a href="class_ref/class_gutmain.html#signals">signals</a>
-that have the same effect on a global level,
-being emitted at the beginning/end of all test scripts/methods.
-By connecting custom functions to these signals during the [Pre-Run Hook](Hooks.md#pre-run-hook),
+The gut instance accessible in a [Pre-Run Hook](Hooks.md#pre-run-hook)
+has the following signals that can be connected to.
+These signals were not intended to be used for this purpose,
+but it's what we have until a more formal solution exists.
+
+```
+signal start_run
+signal end_run
+## Emitted before every test script instance is created.
+## Emitted before [method GutTest.before_all] hook on test is run.
+## test_script_obj is an instance of addons/gut/collected_script.gd.
+signal start_script(test_script_obj)
+## Emitted after every test script is run. Emitted after [method GutTest.after_all] hook on test is run.
+signal end_script
+## Emitted before every test method is run. Emitted after [method GutTest.before_each] hook on test is run.
+## test_name is the string name of the current test about to be started.
+signal start_test(test_name)
+## Emitted after every test method is run. Emitted after [method GutTest.after_each] hook on test is run.
+signal end_test
+```
+
+By connecting custom functions to these signals during the Pre-Run Hook,
 you can call custom code in hooks across every GutTest instance while defining it only once.
 Following is an example of how you would write a pre-run hook script to set up a global setup function.
 
@@ -127,8 +144,8 @@ func _on_run_ended():
 The `start_script` signal contains an object `test_script_obj` which is an instance of
 the [collected_script.gd](https://github.com/bitwes/Gut/blob/main/addons/gut/collected_script.gd) class,
 which may be found at `addons/gut/collected_script.gd`.
-This class is not intended for public consumption,
-so use this value at your own risk.
+This is NOT the instance of the test script that is actually being run.
+This class is not intended for public consumption, so use this value at your own risk.
 
 ## Improvements
 

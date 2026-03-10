@@ -76,7 +76,7 @@ Signals
 
 **start_script**\ (\ test_script_obj\ ) :ref:`🔗<class_GutMain_signal_start_script>`
 
-Emitted before every test script is run. Emitted before :ref:`GutTest.before_all<class_GutTest_method_before_all>` hook on test is run. test_script_obj is an instance of addons/gut/collected_script.gd.
+Emitted before every test script instance is created. Emitted before :ref:`GutTest.before_all<class_GutTest_method_before_all>` hook on test is run. test_script_obj is an instance of addons/gut/collected_script.gd.
 
 .. _class_GutMain_signal_end_script:
 
