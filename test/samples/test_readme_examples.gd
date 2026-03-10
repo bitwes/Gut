@@ -543,7 +543,7 @@ func test_assert_is():
 func test_assert_called():
 	var DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_extends_node2d.gd'
 
-	var doubled = double(DOUBLE_ME_PATH).new()
+	var doubled = double(load(DOUBLE_ME_PATH)).new()
 	doubled.set_value(4)
 	doubled.set_value(5)
 	doubled.has_two_params_one_default('a')
@@ -574,7 +574,7 @@ func test_assert_called():
 func test_assert_call_count():
 	var DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_extends_node2d.gd'
 
-	var doubled = double(DOUBLE_ME_PATH).new()
+	var doubled = double(load(DOUBLE_ME_PATH)).new()
 	doubled.set_value(4)
 	doubled.set_value(5)
 	doubled.has_two_params_one_default('a')
@@ -602,7 +602,7 @@ func test_assert_call_count():
 func test_get_call_parameters():
 	var DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_extends_node2d.gd'
 
-	var doubled = double(DOUBLE_ME_PATH).new()
+	var doubled = double(load(DOUBLE_ME_PATH)).new()
 	doubled.set_value(5)
 	doubled.has_two_params_one_default('a')
 	doubled.has_two_params_one_default('x', 'y')
@@ -768,5 +768,3 @@ func test_assert_setget():
 
 	# assert_setget(HealthBar, 'label') # FAIL => setter or getter has to be specified
 	# assert_setget(HealthBar, 'label', true) # FAIL => setter does not exist
-
-
