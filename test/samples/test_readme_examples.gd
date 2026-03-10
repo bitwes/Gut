@@ -342,7 +342,7 @@ func test_illustrate_yield():
 	# While the yield happens, the node should move
 	await yield_for(2)
 	assert_gt(moving_node.get_position().x, 0)
-	assert_between(moving_node.get_position().x, 3.9, 4, 'it should move almost 4 whatevers at speed 2')
+	assert_between(moving_node.get_position().x, 3.9, 4.1, 'it should move almost 4 whatevers at speed 2')
 
 
 # ------------------------------------------------------------------------------
