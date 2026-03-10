@@ -13,7 +13,7 @@ GUT does not expose "global" function hooks that can be run before each test scr
 to run code before/after each test method/class,
 these must be set on every GutTest instance you want the behavior for.
 
-The gut instance accessible in a [Pre-Run Hook](Hooks.md#pre-run-hook)
+However, the gut instance accessible in a [Pre-Run Hook](Hooks.md#pre-run-hook)
 has the following signals that can be connected to.
 These signals were not intended to be used for this purpose,
 but it's what we have until a more formal solution exists.
