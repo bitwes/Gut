@@ -46,6 +46,9 @@ func assert_total_fail_pass(totals, fail_count, pass_count):
 	assert_eq(totals.passing, pass_count, 'Expected pass count')
 
 
+# --------------------------
+# Test related counts
+# --------------------------
 func test_orphans_made_in_test_cause_failure():
 	var src = """
 	func test_the_test():
@@ -57,6 +60,52 @@ func test_orphans_made_in_test_cause_failure():
 	_free_orphans()
 
 
+func test_script_level_orphans_do_not_appear_as_test_orphans():
+	var src = """
+	var n = make_node('script_level')
+
+	func test_the_test():
+		assert_no_new_orphans()
+	"""
+	var t = await _run_test_script_source(src, _gut)
+	assert_total_fail_pass(t, 0, 1)
+	assert_total_orphans_recorded(_gut, 1)
+	_free_orphans()
+
+
+func test_orphans_are_not_counted_twice_in_a_test():
+	var src = """
+	func test_the_test():
+		make_node('made_an_orphan')
+		assert_no_new_orphans()
+		assert_no_new_orphans()
+	"""
+	var t = await _run_test_script_source(src, _gut)
+	assert_total_fail_pass(t, 1, 1)
+	assert_total_orphans_recorded(_gut, 1)
+	_free_orphans()
+
+
+func test_orphans_no_orphans_then_orphans_again_in_a_test():
+	var src = """
+	func test_the_test():
+		make_node('made_an_orphan')
+		assert_no_new_orphans()
+
+		assert_no_new_orphans()
+
+		make_node('made_an_orphan')
+		assert_no_new_orphans()
+	"""
+	var t = await _run_test_script_source(src, _gut)
+	assert_total_fail_pass(t, 2, 1)
+	assert_total_orphans_recorded(_gut, 2)
+	_free_orphans()
+
+
+# --------------------------
+# after_all
+# --------------------------
 func test_checking_for_orphans_in_after_all_is_ok():
 	var src = """
 	func after_all():
@@ -83,9 +132,21 @@ func test_orphans_made_after_test_found_in_after_all():
 	_free_orphans()
 
 
-# Orphans are "counted" at the end of a test to generate output, so they will
-# not appear in after_all as uncounted.
-func test_non_asserted_orphans_not_found_in_after_all():
+func test_orphans_made_in_after_all_are_found_in_after_all():
+	var src = """
+	func after_all():
+		make_node('made_in_after_all')
+		assert_no_new_orphans()
+
+	func test_the_test():
+		pass_test('this is passing')
+	"""
+	var t = await _run_test_script_source(src, _gut)
+	assert_total_fail_pass(t, 1, 1)
+	_free_orphans()
+
+
+func test_non_asserted_orphans_are_found_in_after_all():
 	var src = """
 	func after_all():
 		assert_no_new_orphans()
@@ -95,11 +156,103 @@ func test_non_asserted_orphans_not_found_in_after_all():
 		pass_test('this is passing')
 	"""
 	var t = await _run_test_script_source(src, _gut)
-	assert_total_fail_pass(t, 0, 2)
+	assert_total_fail_pass(t, 1, 1)
 	assert_total_orphans_recorded(_gut, 1)
 	_free_orphans()
 
 
+func test_asserted_orphans_are_found_in_after_all():
+	var src = """
+	func after_all():
+		assert_no_new_orphans()
+
+	func test_the_test():
+		make_node('test_the_test')
+		assert_no_new_orphans()
+	"""
+	var t = await _run_test_script_source(src, _gut)
+	assert_total_fail_pass(t, 2, 0)
+	assert_total_orphans_recorded(_gut, 1)
+	_free_orphans()
+
+
+func test_orphans_made_in_after_each_are_found_in_after_all():
+	var src = """
+	func after_all():
+		assert_no_new_orphans()
+
+	func after_each():
+		make_node('test_the_test')
+
+	func test_the_test():
+		make_node('test_the_test')
+		pass_test('this is passing')
+	"""
+	var t = await _run_test_script_source(src, _gut)
+	assert_total_fail_pass(t, 1, 1)
+	assert_total_orphans_recorded(_gut, 2)
+	_free_orphans()
+
+
+func test_script_level_orphans_found_in_after_all():
+	var src = """
+	var n = make_node('script_level')
+
+	func after_all():
+		assert_no_new_orphans('after_all')
+		gut.get_orphan_counter().log_all()
+
+	func test_the_test():
+		pass_test('this is passing')
+	"""
+	var t = await _run_test_script_source(src, _gut)
+	assert_total_fail_pass(t, 1, 1)
+	assert_total_orphans_recorded(_gut, 1)
+	_free_orphans()
+
+
+func test_orphans_no_orphans_then_orphans_again_in_a_test_then_after_all():
+	var src = """
+	func after_all():
+		assert_no_new_orphans()
+
+	func test_the_test():
+		make_node('made_an_orphan')
+		assert_no_new_orphans()
+
+		assert_no_new_orphans()
+
+		make_node('made_an_orphan')
+		assert_no_new_orphans()
+	"""
+	var t = await _run_test_script_source(src, _gut)
+	assert_total_fail_pass(t, 3, 1)
+	assert_total_orphans_recorded(_gut, 2)
+	_free_orphans()
+
+
+func test_freed_orphans_do_not_cause_failure_in_after_all():
+	var src = """
+	var n = null
+	func after_all():
+		assert_no_new_orphans()
+
+	func after_each():
+		n.free()
+
+	func test_the_test():
+		n = make_node('made_an_orphan')
+		assert_no_new_orphans()
+	"""
+	var t = await _run_test_script_source(src, _gut)
+	assert_total_fail_pass(t, 1, 1)
+	assert_total_orphans_recorded(_gut, 0)
+	_free_orphans()
+
+
+# --------------------------
+# after_each
+# --------------------------
 func test_non_asserted_orphans_are_found_in_after_each():
 	var src = """
 	func after_each():
@@ -115,22 +268,22 @@ func test_non_asserted_orphans_are_found_in_after_each():
 	_free_orphans()
 
 
-# I thought it would work the other way, but it works this way, so here is a
-# test that just verifies how it works.  IDK if it SHOULD work the other way
-# or not.
-func test_orphans_made_in_after_each_are_not_found_in_after_all():
+# --------------------------
+# before_all
+# --------------------------
+func test_script_level_orphans_found_in_before_all():
 	var src = """
-	func after_all():
+	var n = make_node('script_level')
+
+	func before_all():
 		assert_no_new_orphans()
 
-	func after_each():
-		make_node('test_the_test')
-
 	func test_the_test():
-		make_node('test_the_test')
 		pass_test('this is passing')
 	"""
 	var t = await _run_test_script_source(src, _gut)
-	assert_total_fail_pass(t, 0, 2)
-	assert_total_orphans_recorded(_gut, 2)
+	assert_total_fail_pass(t, 1, 1)
+	assert_total_orphans_recorded(_gut, 1)
 	_free_orphans()
+
+
