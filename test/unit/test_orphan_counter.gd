@@ -55,4 +55,3 @@ class TestOrphanIds:
 		oc.record_orphans('group', 'subgroup')
 		var result = oc.get_orphan_ids("group")
 		assert_eq(result.size(), 2)
-
