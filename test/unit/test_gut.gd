@@ -621,7 +621,6 @@ class TestEverythingElse:
 		assert_is(gr.test_gut.get_pre_run_script_instance(), PreRunScript)
 
 	func test_when_pre_hook_set_run_method_is_called():
-		var  PreRunScript = load('res://test/resources/pre_run_script.gd')
 		gr.test_gut.pre_run_script = 'res://test/resources/pre_run_script.gd'
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		await run_tests()
@@ -679,7 +678,6 @@ class TestEverythingElse:
 		await wait_seconds(1)
 
 	func test_awaiting_in_the_post_hook_script():
-		var pre_run_script = load("res://test/resources/awaiting_post_run_script.gd")
 		gr.test_gut.post_run_script = "res://test/resources/awaiting_post_run_script.gd"
 		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
 		gr.test_gut.test_scripts()
@@ -691,7 +689,7 @@ class TestEverythingElse:
 	# Parameterized Test Tests
 	# ------------------------------
 	const TEST_WITH_PARAMETERS = 'res://test/resources/parsing_and_loading_samples/test_with_parameters.gd'
-	func _get_test_script_object_of_type(the_gut, the_type):
+	func _get_test_script_object_of_type(_the_gut, the_type):
 		var objs = gr.test_gut._test_script_objects
 		var obj = null
 		for i in range(objs.size()):
