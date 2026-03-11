@@ -123,7 +123,7 @@ Virtual method that will be called by GUT after instantiating this script. This 
 
 |void| **register_inner_classes**\ (\ script\: `Script <https://docs.godotengine.org/en/stable/classes/class_script.html>`_\ ) :ref:`🔗<class_GutHookScript_method_register_inner_classes>`
 
-Register inner classes from one or more scripts for doubling. `scripts` may be either a script or an array of scripts. Only worth calling from pre-run hook, not post-run.
+Register inner classes from one or more scripts for doubling. Only worth calling from pre-run hook, not post-run.
 
 .. rst-class:: classref-item-separator
 
