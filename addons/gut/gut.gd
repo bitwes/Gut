@@ -650,6 +650,18 @@ func get_current_test_orphans():
 	return _orphan_counter.get_orphan_ids(sname, tname)
 
 
+
+	var to_return = 0
+	if(get_current_test_object().collected_script != null):
+		var sname = get_current_test_object().collected_script.get_ref().get_filename_and_inner()
+		var tname = get_current_test_object().name
+		to_return = _orphan_counter.record_orphans(sname, tname)
+	else:
+		to_return = _orphan_counter.record_orphans(null)
+
+	return to_return
+
+
 # ------------------------------------------------------------------------------
 # Calls before_all on the passed in test script and takes care of settings so all
 # logger output appears indented and with a proper heading

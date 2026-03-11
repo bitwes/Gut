@@ -183,3 +183,58 @@ class TestWithAsserts:
 
 	func test_risky():
 		var n = new_node("test_risky")
+		
+
+	func test_two_asserts():
+		var n = new_node("two_asserts")
+		assert_no_new_orphans('assert 1')
+		assert_no_new_orphans('assert 2')
+
+
+class TestAfterAll:
+	extends GutTest
+	
+	func new_node(node_name):
+		var n = Node.new()
+		n.name = node_name
+		return n
+
+
+	func after_all():
+		#var n = new_node("made_in_after_all")
+		assert_no_new_orphans('no orphans found in after_all')
+		
+		
+	func after_each():
+		var n = new_node("made_in_after_each")
+		#pass_test('passing')
+		#assert_no_new_orphans('no orphans found in after_each')
+
+		
+	func test_makes_two_orphans():
+		var n1 = new_node('n1')
+		var n2 = new_node('n2')
+		#pass_test('passing')
+		#assert_no_new_orphans()
+
+
+class TestAfterAllComplex:
+	extends GutTest
+	
+	func new_node(node_name):
+		var n = Node.new()
+		n.name = node_name
+		return n
+
+
+	func after_all():
+		await wait_idle_frames(10)
+		assert_no_new_orphans('no orphans found in after_all')
+
+	func after_each():
+		await wait_idle_frames(10)
+		assert_no_new_orphans('no orphans found in after_each')
+
+	func test_delayed_orphan():
+		new_node.call_deferred('made_deferred')
+		pass_test('passing')
