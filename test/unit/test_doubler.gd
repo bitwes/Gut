@@ -128,7 +128,7 @@ class TestDoublingScripts:
 
 	func test_doubling_methods_have_parameters_1():
 		var inst = _doubler.double(DoubleMe).new()
-		assert_source_contains(inst, 'has_one_param(p_one=', 'first parameter for one param method is defined')
+		assert_source_contains(inst, 'has_one_param(p__one=', 'first parameter for one param method is defined')
 
 	# Don't see a way to see which have defaults and which do not, so we default
 	# everything.
@@ -136,8 +136,8 @@ class TestDoublingScripts:
 		var inst = _doubler.double(DoubleMe).new()
 		assert_source_contains(inst,
 			'has_two_params_one_default(' +
-			'p_one=__gutdbl.default_val("has_two_params_one_default",0), '+
-			'p_two=__gutdbl.default_val("has_two_params_one_default",1))')
+			'p__one=__gutdbl.default_val("has_two_params_one_default",0), '+
+			'p__two=__gutdbl.default_val("has_two_params_one_default",1))')
 		# assert_true(text.match('*has_two_params_one_default(p_arg0=__gut_default_val("has_two_params_one_default",0), p_arg1=__gut_default_val("has_two_params_one_default",1))*'))
 
 	func test_doubled_thing_includes_stubber_metadata():
@@ -503,12 +503,12 @@ class TestAutofree:
 			a = value
 
 	func test_doubles_are_autofreed():
-		var doubled = double(DoubleExtendsNode2D).new()
+		var _doubled = double(DoubleExtendsNode2D).new()
 		gut.get_autofree().free_all()
 		assert_no_new_orphans()
 
 	func test_partial_doubles_are_autofreed():
-		var doubled = partial_double(DoubleExtendsNode2D).new()
+		var _doubled = partial_double(DoubleExtendsNode2D).new()
 		gut.get_autofree().free_all()
 		assert_no_new_orphans()
 
