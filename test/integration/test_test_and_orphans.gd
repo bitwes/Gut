@@ -9,7 +9,7 @@ func make_node(node_name):
 """
 
 func before_all():
-	verbose = true
+	verbose = false
 
 
 func before_each():
