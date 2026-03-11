@@ -651,10 +651,18 @@ func _run_test(script_inst, test_name, param_index = -1):
 
 
 func get_current_test_orphans():
-	var sname = get_current_test_object().collected_script.get_ref().get_filename_and_inner()
-	var tname = get_current_test_object().name
-	_orphan_counter.record_orphans(sname, tname)
-	return _orphan_counter.get_orphan_ids(sname, tname)
+	var to_return = []
+	var ct = get_current_test_object()
+	if(ct.collected_script != null):
+		var sname = ct.collected_script.get_ref().get_filename_and_inner()
+		if(ct.name == &'after_all' or ct.name == &'before_all'):
+			_orphan_counter.record_orphans(sname)
+			to_return = _orphan_counter.get_orphan_ids(sname)
+			to_return.append_array(_orphan_counter.get_orphan_ids(ct.collected_script.get_ref().get_full_name()))
+		else:
+			to_return = _orphan_counter.record_orphans(sname, ct.name)
+
+	return to_return
 
 
 # ------------------------------------------------------------------------------
@@ -670,6 +678,7 @@ func _call_before_all(test_script, collected_script):
 
 	collected_script.setup_teardown_tests.append(before_all_test_obj)
 	_current_test = before_all_test_obj
+	_current_test.collected_script = weakref(collected_script)
 
 	_lgr.inc_indent()
 	await test_script.before_all()
@@ -695,6 +704,7 @@ func _call_after_all(test_script, collected_script):
 
 	collected_script.setup_teardown_tests.append(after_all_test_obj)
 	_current_test = after_all_test_obj
+	_current_test.collected_script = weakref(collected_script)
 
 	_lgr.inc_indent()
 	await test_script.after_all()
