@@ -644,18 +644,12 @@ func _run_test(script_inst, test_name, param_index = -1):
 
 
 func get_current_test_orphans():
-	var sname = get_current_test_object().collected_script.get_ref().get_filename_and_inner()
-	var tname = get_current_test_object().name
-	_orphan_counter.record_orphans(sname, tname)
-	return _orphan_counter.get_orphan_ids(sname, tname)
-
-
-
 	var to_return = 0
 	if(get_current_test_object().collected_script != null):
 		var sname = get_current_test_object().collected_script.get_ref().get_filename_and_inner()
 		var tname = get_current_test_object().name
-		to_return = _orphan_counter.record_orphans(sname, tname)
+		_orphan_counter.record_orphans(sname, tname)
+		to_return = _orphan_counter.get_orphan_ids(sname, tname)
 	else:
 		to_return = _orphan_counter.record_orphans(null)
 
