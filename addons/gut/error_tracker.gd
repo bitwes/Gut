@@ -75,6 +75,36 @@ func _is_error_failable(error : GutTrackedError):
 			is_it = treat_engine_errors_as == GutUtils.TREAT_AS.FAILURE
 	return is_it
 
+
+# Returns the line number in the test script where the error occurred.  This
+# is only usable for engine and push errors.
+func _get_line_number_in_test(test_id, error):
+	if(error.is_gut_error()):
+		return -1
+
+	# This is bad.  It has to know too much.  gut.gd is making up the test_id.
+	# This script just expects it to be unique.  Now this is desconstructing
+	# it.  test_id construction should be moved into this class.
+	var parts = test_id.split(":")
+	if(parts.size() != 2):
+		return -1
+	var test_name = test_id.split(":")[1]
+
+	# There might be some assumptions being made here that could return
+	# misleading line numbers.  Maybe.
+	var to_return = -1
+	var i = 0
+	while(i < error.backtrace.size() and to_return == -1):
+		var bt = error.backtrace[i]
+		var y = 0
+		while(y < bt.get_frame_count() and to_return == -1):
+			if(bt.get_frame_function(y) == test_name):
+				to_return = bt.get_frame_line(y)
+			y += 1
+		i += 1
+	return to_return
+
+
 # ----------------
 #endregion
 #region Godot's Logger Overrides
@@ -87,6 +117,7 @@ func _log_error(function: String, file: String, line: int,
 		add_error(function, file, line,
 			code, rationale, editor_notify,
 			error_type, script_backtraces)
+
 
 # Godot's Logger virtual method for any output?
 # func _log_message(message: String, error: bool) -> void:
@@ -113,8 +144,8 @@ func get_current_test_errors():
 	return errors.items.get(_current_test_id, [])
 
 
-# This should look through all the errors for a test and see if a failure
-# should happen based off of flags.
+# This looks through all the errors for a test and returns if it should fail
+# based off of flags.
 func should_test_fail_from_errors(test_id = _current_test_id):
 	var to_return = false
 	if(errors.items.has(test_id)):
@@ -135,15 +166,24 @@ func get_errors_for_test(test_id=_current_test_id):
 	return to_return
 
 
-# Returns emtpy string or text for errors that occurred during the test that
-# should cause failure based on this class' flags.
+# Returns empty string or text for errors that occurred during the test that
+# should cause failure based on this class' flags.  It might be better to put
+# most of this logic int gut_tracked_error.
 func get_fail_text_for_errors(test_id=_current_test_id) -> String:
 	var error_texts = []
 
 	if(errors.items.has(test_id)):
 		for error in errors.items[test_id]:
 			if(_is_error_failable(error)):
-				error_texts.append(str('<', error.get_error_type_name(), '>', error.code))
+				var msg = str('<', error.get_error_type_name(), '>', error.rationale if error.rationale else error.code)
+				if error.file and error.file != GutUtils.NO_TEST and error.line >= 0:
+					if(error.is_engine_error()):
+						msg += str('\n    at: ', error.function, ' (', error.file, ':', error.line, ')')
+
+				var test_line_number = _get_line_number_in_test(test_id, error)
+				if(test_line_number != -1):
+					msg += str('\n    at line: ', test_line_number)
+				error_texts.append(msg)
 
 	var to_return = ""
 	for i in error_texts.size():
