@@ -19,6 +19,7 @@ config/icon="res://icon.png"
 
 global="*res://scripts/global.gd"
 Options="uid://blr8nb3vvr0sk"
+ThisSpecialName="*uid://blr8nb3vvr0sk"
 
 [debug]
 

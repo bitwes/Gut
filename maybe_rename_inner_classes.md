@@ -1,4 +1,6 @@
 
+
+
 From `res://addons/gut`
 ```
 grep -r 'class\s*[a-zA-z]*:'
@@ -49,3 +51,23 @@ grep -r 'class\s*[a-zA-z]*:'
 ./test.gd:                      class SignalAssertParameters:
 ./test.gd:                      class _ConnectionInfo:
 ```
+
+```
+grp '^class_name '
+```
+```
+./input_factory.gd:             class_name GutInputFactory
+./utils.gd:                     class_name GutUtils
+./strutils.gd:                  class_name GutStringUtils
+./gut.gd:                       class_name GutMain
+./hook_script.gd:               class_name GutHookScript
+./input_sender.gd:              class_name GutInputSender
+./test.gd:                      class_name GutTest
+./gut_tracked_error.gd:         class_name GutTrackedError
+./error_tracker.gd:             class_name GutErrorTracker
+```
+
+# Reasoning
+All uses of `class_name` in GUT do have a `Gut` prefix.  These names have a global context and should avoid clashes as much as possible.  They can clash with othe `class_name`, Autoloads, and are visible in many places.
+
+Inner class names will only clash with Autoloads.
