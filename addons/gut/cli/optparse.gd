@@ -221,7 +221,7 @@ class OptParseOption:
 #-------------------------------------------------------------------------------
 # A struct for organizing options by a heading
 #-------------------------------------------------------------------------------
-class OptionHeading:
+class OptParseOptionHeading:
 	var options = []
 	var display = 'default'
 
@@ -235,7 +235,7 @@ class OptionHeading:
 class OptParseOptions:
 	var options = []
 	var positional = []
-	var default_heading = OptionHeading.new()
+	var default_heading = OptParseOptionHeading.new()
 	var script_option = OptParseOption.new('-s', '?', 'script option provided by Godot')
 
 	var _options_by_name = {"--script": script_option, "-s": script_option}
@@ -244,7 +244,7 @@ class OptParseOptions:
 
 
 	func add_heading(display):
-		var heading = OptionHeading.new()
+		var heading = OptParseOptionHeading.new()
 		heading.display = display
 		_cur_heading = heading
 		_options_by_heading.append(heading)

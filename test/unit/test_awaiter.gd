@@ -390,6 +390,13 @@ class TestWaitWhile:
 	extends GutTest
 	var Awaiter = load('res://addons/gut/awaiter.gd')
 
+	func before_all():
+		Engine.set_time_scale(5.0)
+
+	func after_all():
+		Engine.set_time_scale(1.0)
+
+
 	func test_wait_while_emits_wait_started():
 		var a = add_child_autoqfree(Awaiter.new())
 		watch_signals(a)

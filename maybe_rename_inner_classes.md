@@ -1,49 +1,48 @@
-From `res://addons/gut`
+eFrom `res://addons/gut`
 ```
 grep -r 'class\s*[a-zA-z]*:'
 ```
 
-# Likely to clash with singletons
-```
-./printers.gd:                  class Printer:
-./cli/optparse.gd:              class Option:
-./cli/optparse.gd:              class Options:
-```
+## Likely to clash
 
-# Less likely
-```
-./awaiter.gd:                   class AwaitLogger:
-./cli/gut_cli.gd:               class OptionResolver:
-./cli/optparse.gd:              class OptionHeading:
-./gui/gut_logo.gd:              class Eyeball:
-./gui/gut_user_preferences.gd:  class GutEditorPref:
-./gui/OutputText.gd:            class TextEditSearcher:
-./gui/panel_controls.gd:        class BaseGutPanelControl:
-./gui/panel_controls.gd:        class BooleanControl:
-./gui/panel_controls.gd:        class ColorControl:
-./gui/panel_controls.gd:        class DirectoryControl:
-./gui/panel_controls.gd:        class FileDialogSuperPlus:
-./gui/panel_controls.gd:        class FloatControl:
-./gui/panel_controls.gd:        class MultiLineStringControl:
-./gui/panel_controls.gd:        class NumberControl:
-./gui/panel_controls.gd:        class SaveLoadControl:
-./gui/panel_controls.gd:        class SelectControl:
-./gui/panel_controls.gd:        class StringControl:
-./input_sender.gd:              class InputQueueItem:
-./input_sender.gd:              class MouseDraw:
-./method_maker.gd:              class CallParameters:
-./orphan_counter.gd:            class Orphanage:
-./printers.gd:                  class ConsolePrinter:
-./printers.gd:                  class GutGuiPrinter:
-./printers.gd:                  class TerminalPrinter:
-./script_parser.gd:             class ParsedMethod:
-./script_parser.gd:             class ParsedScript:
-./singleton_parser.gd:          class ParsedSingleton:
-./test.gd:                      class _ConnectionInfo:
-./test.gd:                      class SignalAssertParameters:
-./version_conversion.gd:        class ConfigurationUpdater:
-./version_numbers.gd:           class VerNumTools:
-```
+- [x] `./printers.gd:                  class Printer:`
+- [x] `./cli/optparse.gd:              class Option:`
+- [x] `./cli/optparse.gd:              class Options:`
+
+
+## Less likely
+- [ ] `./awaiter.gd:                   class AwaitLogger:`
+- [ ] `./cli/gut_cli.gd:               class OptionResolver:`
+- [x] `./cli/optparse.gd:              class OptionHeading:`
+- [x] `./gui/gut_logo.gd:              class Eyeball:`
+- [x] ~~`./gui/gut_user_preferences.gd:  class GutEditorPref:`~~
+- [ ] `./gui/OutputText.gd:            class TextEditSearcher:`
+- [x] `./gui/panel_controls.gd:        class BaseGutPanelControl:`
+- [x] `./gui/panel_controls.gd:        class BooleanControl:`
+- [x] `./gui/panel_controls.gd:        class ColorControl:`
+- [x] `./gui/panel_controls.gd:        class DirectoryControl:`
+- [x] `./gui/panel_controls.gd:        class FileDialogSuperPlus:`
+- [x] `./gui/panel_controls.gd:        class FloatControl:`
+- [x] `./gui/panel_controls.gd:        class MultiLineStringControl:`
+- [x] `./gui/panel_controls.gd:        class NumberControl:`
+- [x] `./gui/panel_controls.gd:        class SaveLoadControl:`
+- [x] `./gui/panel_controls.gd:        class SelectControl:`
+- [x] `./gui/panel_controls.gd:        class StringControl:`
+- [ ] `./input_sender.gd:              class InputQueueItem:`
+- [ ] `./input_sender.gd:              class MouseDraw:`
+- [ ] `./method_maker.gd:              class CallParameters:`
+- [ ] `./orphan_counter.gd:            class Orphanage:`
+- [x] `./printers.gd:                  class ConsolePrinter:`
+- [x] ~~`./printers.gd:                  class GutGuiPrinter:`~~
+- [x] `./printers.gd:                  class TerminalPrinter:`
+- [ ] `./script_parser.gd:             class ParsedMethod:`
+- [ ] `./script_parser.gd:             class ParsedScript:`
+- [ ] `./singleton_parser.gd:          class ParsedSingleton:`
+- [ ] `./test.gd:                      class _ConnectionInfo:`
+- [ ] `./test.gd:                      class SignalAssertParameters:`
+- [ ] `./version_conversion.gd:        class ConfigurationUpdater:`
+- [ ] `./version_numbers.gd:           class VerNumTools:`
+
 
 # Unlikely
 ```

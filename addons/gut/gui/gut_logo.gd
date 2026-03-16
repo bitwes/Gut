@@ -1,7 +1,7 @@
 @tool
 extends Node2D
 
-class Eyeball:
+class GutEyeball:
 	extends Node2D
 
 	var _should_draw_laser = false
@@ -139,8 +139,8 @@ var GutEditorGlobals = load('res://addons/gut/gui/editor_globals.gd')
 
 @onready var _reset_timer = $ResetTimer
 @onready var _face_button = $FaceButton
-@onready var left_eye : Eyeball = Eyeball.new($BaseLogo/LeftEye)
-@onready var right_eye : Eyeball = Eyeball.new($BaseLogo/RightEye)
+@onready var left_eye : GutEyeball = GutEyeball.new($BaseLogo/LeftEye)
+@onready var right_eye : GutEyeball = GutEyeball.new($BaseLogo/RightEye)
 
 var _no_shine = load("res://addons/gut/images/GutIconV2_no_shine.png")
 var _normal = load("res://addons/gut/images/GutIconV2_base.png")
