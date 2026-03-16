@@ -642,6 +642,23 @@ class TestEverythingElse:
 		await run_tests()
 
 		assert_eq(gr.test_gut.get_pre_run_script_instance().gut, gr.test_gut)
+		
+	func test_pre_hook_accesses_global_lifecycle_signals():
+		gr.test_gut.pre_run_script = 'res://test/resources/pre_run_script_lifecycle_hooks.gd'
+		gr.test_gut.add_script(SAMPLES_DIR + 'test_sample_all_passed.gd')
+		await run_tests()
+		
+		var retrieved_data = gr.test_gut.get_meta('pre_run_script_lifecycle_hooks_data')
+		assert_eq(retrieved_data[0], "test run started")
+		assert_eq(retrieved_data[1], "res://test/samples/test_sample_all_passed.gd loaded from collected script")
+		assert_eq(retrieved_data[2], "starting test test_works")
+		assert_eq(retrieved_data[3], "test_works passed")
+		assert_eq(retrieved_data[4], "starting test test_two")
+		assert_eq(retrieved_data[5], "test_two passed")
+		assert_eq(retrieved_data[6], "starting test test_3")
+		assert_eq(retrieved_data[7], "test_3 passed")
+		assert_eq(retrieved_data[8], "res://test/samples/test_sample_all_passed.gd passed")
+		assert_eq(retrieved_data[9], "test run ended")
 
 	func test_pre_hook_does_not_accept_non_hook_scripts():
 		gr.test_gut.pre_run_script = 'res://test/resources/non_hook_script.gd'
@@ -908,3 +925,51 @@ class TestReworkedEverythingElse:
 		var t = await s.run_tests_in_gut_await(_gut)
 		assert_eq(t.failing, 2, 'failing asserts')
 		assert_eq(t.failing_tests, 2, 'failing tests')
+
+
+class TestGutHookOrder:
+	extends GutInternalTester
+
+	var _gut  = null
+
+	func before_each():
+		_gut = add_child_autofree(new_gut(verbose))
+
+	func test_signal_order():
+		var events: Array[String] = []
+		_gut.set_meta("test_signal_order", events)
+
+		_gut.start_script.connect(func(_x): events.append("signal start_script"))
+		_gut.start_test.connect(func(_x): events.append("signal start_test"))
+		_gut.end_test.connect(func(): events.append("signal end_test"))
+		_gut.end_script.connect(func(): events.append("signal end_script"))
+
+		var src = """
+		func before_all():
+			gut.get_meta("test_signal_order").append("hook before_all")
+
+		func before_each():
+			gut.get_meta("test_signal_order").append("hook before_each")
+
+		func after_all():
+			gut.get_meta("test_signal_order").append("hook after_all")
+
+		func after_each():
+			gut.get_meta("test_signal_order").append("hook after_each")
+
+		func test_nothing():
+			pass_test("")
+		"""
+		var s = autofree(DynamicGutTest.new())
+		s.add_source(src)
+		await s.run_tests_in_gut_await(_gut)
+		assert_eq(_gut.get_meta("test_signal_order"), [
+			"signal start_script",
+			"hook before_all",
+			"hook before_each",
+			"signal start_test",
+			"hook after_each",
+			"signal end_test",
+			"hook after_all",
+			"signal end_script",
+		])

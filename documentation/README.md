@@ -24,7 +24,9 @@ Any links to non GUT classes created in doc comments (like `[Node2D]`) will link
 
 ## Markdown
 Linking to wiki pages in Markdown requires the title be used.  As with doc comments, you must prefix GUT class links with `class_`.
-* `[Creating Tests](Creating-Tests)` links to the Creating Tests wiki page.
+* `[Creating Tests](Creating-Tests)` or `[Creating Tests](Creating-Tests.md)` links to the Creating Tests wiki page.
+* `[Test Details](Creating-Tests.md#details)` links to the Details heading in the Creating Tests wiki page.
+* `[Header A](#header-a)` links to the Header A header on the same wiki page as the link is in.
 * `[GutTest][class_GutTest]` links to the class reference page for `GutTest`.
 * You must use `<a>` tags to link to anchors in class ref pages:  `<a href="class_ref/class_guttest.html#class-guttest-method-assert-called">assert_called</a>`
 
@@ -38,13 +40,13 @@ This is the Sphinx configuration file.
 `documentation/docs/index.rst`<br>
 The Home page and also responsible for generating the Table of Contents for the site.  If you add a new page, it must be added to one of the `.. toctree::` entries.
 
-`documentation/docs`  <br>
+`documentation/docs`<br>
 The directory for all the wiki pages.  All wiki pages are markdown.
 
 `documentation/_static/css`<br>
 The CSS goes in here.
 
-`documentation/_static/images` <br>
+`documentation/_static/images`<br>
 Put any wiki related images in here.
 
 
