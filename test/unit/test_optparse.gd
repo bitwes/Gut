@@ -11,39 +11,39 @@ class TestOption:
 	extends BaseTest
 
 	func test_can_make_one():
-		var o = OptParse.Option.new('name', 'default')
+		var o = OptParse.OptParseOption.new('name', 'default')
 		assert_not_null(o)
 
 	func test_init_sets_values():
-		var o = OptParse.Option.new('name', 'default', 'description')
+		var o = OptParse.OptParseOption.new('name', 'default', 'description')
 		assert_eq(o.option_name, 'name')
 		assert_eq(o.default, 'default')
 		assert_eq(o.description, 'description')
 
 	func test_has_been_set_false_by_default():
-		var o = OptParse.Option.new('name', 'default')
+		var o = OptParse.OptParseOption.new('name', 'default')
 		assert_false(o.has_been_set())
 
 	func test_has_been_set_true_after_setting_value():
-		var o = OptParse.Option.new('name', 'default')
+		var o = OptParse.OptParseOption.new('name', 'default')
 		o.value = 'value'
 		assert_true(o.has_been_set())
 
 	func test_value_returns_default_when_value_not_set():
-		var o = OptParse.Option.new('name', 'default')
+		var o = OptParse.OptParseOption.new('name', 'default')
 		assert_eq(o.value, 'default')
 
 	func test_value_returned_when_value_has_been_set():
-		var o = OptParse.Option.new('name', 'default')
+		var o = OptParse.OptParseOption.new('name', 'default')
 		o.value = 'value'
 		assert_eq(o.value, 'value')
 
 	func test_to_s_replaces_default_with_default_value():
-		var o = OptParse.Option.new('name', 'foobar', 'put default here [default]')
+		var o = OptParse.OptParseOption.new('name', 'foobar', 'put default here [default]')
 		assert_string_ends_with(o.to_s(), 'put default here foobar')
 
 	func test_to_s_indents_multiple_lines():
-		var o = OptParse.Option.new("h", 'default', "line one\nline two\nline three")
+		var o = OptParse.OptParseOption.new("h", 'default', "line one\nline two\nline three")
 		var desc = o.to_s(3)
 		var lines = desc.split("\n")
 		assert_eq(lines[0], "h   line one")
@@ -51,7 +51,7 @@ class TestOption:
 		assert_eq(lines[2], "    line three")
 
 	func test_to_s_contains_aliases():
-		var o = OptParse.Option.new("name", 'default', "description")
+		var o = OptParse.OptParseOption.new("name", 'default', "description")
 		o.aliases.assign(["alias1", "alias2"])
 		var desc = o.to_s(4)
 		var lines = desc.split("\n")
@@ -59,11 +59,11 @@ class TestOption:
 		assert_eq(lines[1], "     aliases: alias1, alias2")
 
 	func test_required_false_by_default():
-		var o = OptParse.Option.new('name', 'default')
+		var o = OptParse.OptParseOption.new('name', 'default')
 		assert_false(o.required)
 
 	func test_setting_value_to_an_array_makes_has_been_set_true():
-		var o = OptParse.Option.new("name", [])
+		var o = OptParse.OptParseOption.new("name", [])
 		o.value = [1, 2, 3]
 		assert_true(o.has_been_set())
 
@@ -421,8 +421,8 @@ class TestOptionAliases:
 		op = OptParse.new()
 
 	func test_options_add_with_alias():
-		var opt = OptParse.Option.new("name", "default")
-		var opts = OptParse.Options.new()
+		var opt = OptParse.OptParseOption.new("name", "default")
+		var opts = OptParse.OptParseOptions.new()
 		opts.add(opt, ["alias1", "alias2"])
 		assert_eq(opts.get_by_name("alias1"), opt)
 		assert_eq(opts.get_by_name("alias2"), opt)

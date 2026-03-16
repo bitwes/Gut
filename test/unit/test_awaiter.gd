@@ -43,7 +43,12 @@ class PredicateMethods:
 		times_called += 1
 		return times_called != x
 
+func before_all():
+	Engine.set_time_scale(5.0)
 
+
+func after_all():
+	Engine.set_time_scale(1.0)
 
 
 func test_is_not_paused_by_default():
@@ -285,6 +290,13 @@ func test_wait_for_signal_did_last_time_out_false_when_does_not_timeout():
 class TestWaitUntil:
 	extends GutTest
 	var Awaiter = load('res://addons/gut/awaiter.gd')
+
+	func before_all():
+		Engine.set_time_scale(5.0)
+
+
+	func after_all():
+		Engine.set_time_scale(1.0)
 
 	func test_wait_until_emits_wait_started():
 		var a = add_child_autoqfree(Awaiter.new())
