@@ -52,7 +52,7 @@ class BaseGutPanelControl:
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-class NumberControl:
+class GpcNumber:
 	extends BaseGutPanelControl
 
 	var value_ctrl = SpinBox.new()
@@ -80,8 +80,8 @@ class NumberControl:
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-class FloatControl:
-	extends NumberControl
+class GpcFloat:
+	extends GpcNumber
 
 	func _init(title, val, step, v_min, v_max, hint=""):
 		super._init(title, val, v_min, v_max, hint)
@@ -91,7 +91,7 @@ class FloatControl:
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-class StringControl:
+class GpcString:
 	extends BaseGutPanelControl
 
 	var value_ctrl = LineEdit.new()
@@ -120,7 +120,7 @@ class StringControl:
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-class MultiLineStringControl:
+class GpcMultiLineString:
 	extends BaseGutPanelControl
 
 	var value_ctrl = TextEdit.new()
@@ -150,7 +150,7 @@ class MultiLineStringControl:
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-class BooleanControl:
+class GpcBoolean:
 	extends BaseGutPanelControl
 
 	var value_ctrl = CheckBox.new()
@@ -176,7 +176,7 @@ class BooleanControl:
 # value is "selected" and is gettable and settable
 # text is the text value of the selected item, it is gettable only
 # ------------------------------------------------------------------------------
-class SelectControl:
+class GpcSelect:
 	extends BaseGutPanelControl
 
 	var value_ctrl = OptionButton.new()
@@ -210,7 +210,7 @@ class SelectControl:
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-class ColorControl:
+class GpcColor:
 	extends BaseGutPanelControl
 
 	var value_ctrl = ColorPickerButton.new()
@@ -230,7 +230,7 @@ class ColorControl:
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-class DirectoryControl:
+class GpcDirectory:
 	extends BaseGutPanelControl
 
 	var value_ctrl := LineEdit.new()
@@ -300,7 +300,7 @@ class DirectoryControl:
 # Features:
 # 	Buttons to pick res://, user://, or anywhere on the OS.
 # ------------------------------------------------------------------------------
-class FileDialogSuperPlus:
+class GpcFileDialogSuperPlus:
 	extends FileDialog
 
 	var show_diretory_types = true :
@@ -371,14 +371,14 @@ class FileDialogSuperPlus:
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-class SaveLoadControl:
+class GpcSaveLoad:
 	extends BaseGutPanelControl
 
 	var btn_load = Button.new()
 	var btn_save = Button.new()
 
-	var dlg_load := FileDialogSuperPlus.new()
-	var dlg_save := FileDialogSuperPlus.new()
+	var dlg_load := GpcFileDialogSuperPlus.new()
+	var dlg_save := GpcFileDialogSuperPlus.new()
 
 	signal save_path_chosen(path)
 	signal load_path_chosen(path)

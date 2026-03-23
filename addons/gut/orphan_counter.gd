@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
 # It keeps track of the orphans...so this is best name it could ever have.
 # ------------------------------------------------------------------------------
-class Orphanage:
+class GutOrphanage:
 	const UNGROUPED = "Outside Tests"
 	const SUBGROUP_SEP = '->'
 
@@ -82,7 +82,7 @@ class Orphanage:
 # ------------------------------------------------------------------------------
 var _strutils = GutStringUtils.new()
 
-var orphanage : Orphanage = Orphanage.new()
+var orphanage : GutOrphanage = GutOrphanage.new()
 var logger = GutUtils.get_logger()
 var autofree = GutUtils.AutoFree.new()
 
