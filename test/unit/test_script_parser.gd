@@ -28,19 +28,19 @@ class TestScriptParser:
 	func test_parse_returns_script_parser():
 		var collector = ScriptParser.new()
 		var result = collector.parse(DoubleMe)
-		assert_is(result, ScriptParser.ParsedScript)
+		assert_is(result, ScriptParser.GutParsedScript)
 
 	func test_parse_returns_cached_version_on_2nd_parse():
 		var collector = ScriptParser.new()
 		collector.parse(DoubleMe)
 		var result = collector.parse(DoubleMe)
-		assert_is(result, ScriptParser.ParsedScript)
+		assert_is(result, ScriptParser.GutParsedScript)
 
 	func test_can_get_instance_parse_result_from_gdscript():
 		var collector = ScriptParser.new()
 		collector.parse(autofree(DoubleMe.new()))
 		var result = collector.parse(DoubleMe)
-		assert_is(result, ScriptParser.ParsedScript)
+		assert_is(result, ScriptParser.GutParsedScript)
 		assert_eq(collector.scripts.size(), 1)
 
 	func test_parsing_more_adds_more_scripts():
@@ -86,7 +86,7 @@ class TestParsedScript:
 	var DoubleMe = load(DOUBLE_ME_PATH)
 	var InnerClasses = load(INNER_CLASSES_PATH)
 
-	var ParsedScript = load('res://addons/gut/script_parser.gd').ParsedScript
+	var ParsedScript = load('res://addons/gut/script_parser.gd').GutParsedScript
 
 	class ClassWithInner:
 		class InnerClass:

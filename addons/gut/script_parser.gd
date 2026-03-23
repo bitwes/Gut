@@ -73,7 +73,7 @@ class GutParsedMethod:
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-class ParsedScript:
+class GutParsedScript:
 	# All methods indexed by name.
 	var _methods_by_name = {}
 
@@ -313,7 +313,7 @@ func parse(thing, inner_thing=null):
 				inner = instance_from_id(_get_instance_id(inner_thing))
 
 			if(obj is Resource or GutUtils.is_native_class(obj)):
-				parsed = ParsedScript.new(obj, inner)
+				parsed = GutParsedScript.new(obj, inner)
 				scripts[key] = parsed
 
 	return parsed
