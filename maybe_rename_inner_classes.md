@@ -30,14 +30,14 @@ grep -r 'class\s*[a-zA-z]*:'
 - [x] `./gui/panel_controls.gd:        class StringControl:`
 - [x] `./input_sender.gd:              class InputQueueItem:`
 - [x] `./input_sender.gd:              class MouseDraw:`
-- [ ] `./method_maker.gd:              class CallParameters:`
-- [ ] `./orphan_counter.gd:            class Orphanage:`
+- [x] `./method_maker.gd:              class CallParameters:`
+- [x] `./orphan_counter.gd:            class Orphanage:`
 - [x] `./printers.gd:                  class ConsolePrinter:`
 - [x] ~~`./printers.gd:                  class GutGuiPrinter:`~~
 - [x] `./printers.gd:                  class TerminalPrinter:`
-- [ ] `./script_parser.gd:             class ParsedMethod:`
-- [ ] `./script_parser.gd:             class ParsedScript:`
-- [ ] `./singleton_parser.gd:          class ParsedSingleton:`
+- [x] `./script_parser.gd:             class ParsedMethod:`
+- [x] `./script_parser.gd:             class ParsedScript:`
+- [x] `./singleton_parser.gd:          class ParsedSingleton:`
 - [ ] `./test.gd:                      class _ConnectionInfo:`
 - [ ] `./test.gd:                      class SignalAssertParameters:`
 - [x] `./version_conversion.gd:        class ConfigurationUpdater:`
