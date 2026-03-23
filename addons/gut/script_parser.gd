@@ -8,12 +8,12 @@ const BLACKLIST = [
 
 
 # ------------------------------------------------------------------------------
-# Combins the meta for the method with additional information.
+# Combines the meta for the method with additional information.
 # * flag for whether the method is local
 # * adds a 'default' property to all parameters that can be easily checked per
 #   parameter
 # ------------------------------------------------------------------------------
-class ParsedMethod:
+class GutParsedMethod:
 	const NO_DEFAULT = '__no__default__'
 
 	var _meta = {}
@@ -158,7 +158,7 @@ class ParsedScript:
 			methods = _get_native_methods(base_type)
 
 		for m in methods:
-			var parsed = ParsedMethod.new(m)
+			var parsed = GutParsedMethod.new(m)
 			_methods_by_name[m.name] = parsed
 			# _init must always be included so that we can initialize
 			# double_tools
@@ -173,7 +173,7 @@ class ParsedScript:
 			methods = thing.get_script_method_list()
 			methods.reverse()
 			for m in methods:
-				var parsed_method = ParsedMethod.new(m)
+				var parsed_method = GutParsedMethod.new(m)
 				parsed_method.is_local = true
 				_methods_by_name[m.name] = parsed_method
 

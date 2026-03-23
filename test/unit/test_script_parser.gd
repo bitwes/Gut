@@ -226,18 +226,18 @@ class TestParsedMethod:
 	}
 
 	func test_can_make_one():
-		var pm = ScriptParser.ParsedMethod.new(_empty_meta)
+		var pm = ScriptParser.GutParsedMethod.new(_empty_meta)
 		assert_not_null(pm)
 
 	func test_is_eligible_for_doubling_by_default():
-		var pm = ScriptParser.ParsedMethod.new(_empty_meta)
+		var pm = ScriptParser.GutParsedMethod.new(_empty_meta)
 		assert_true(pm.is_eligible_for_doubling())
 
 	var flag_arr = [METHOD_FLAG_STATIC, METHOD_FLAG_VIRTUAL, METHOD_FLAG_OBJECT_CORE]
 	func test_when_has_bad_flag_it_is_not_eligible_for_doubling(p = use_parameters(flag_arr)):
 		var meta = _empty_meta.duplicate()
 		meta.flags = meta.flags | p
-		var pm = ScriptParser.ParsedMethod.new(meta)
+		var pm = ScriptParser.GutParsedMethod.new(meta)
 		assert_false(pm.is_eligible_for_doubling())
 
 	var flag_arr2 = [METHOD_FLAG_EDITOR, METHOD_FLAG_NORMAL, METHOD_FLAGS_DEFAULT, METHOD_FLAG_VARARG,
@@ -245,13 +245,13 @@ class TestParsedMethod:
 	func test_when_has_ok_flag_it_is_eligible_for_doubling(p = use_parameters(flag_arr2)):
 		var meta = _empty_meta.duplicate()
 		meta.flags = meta.flags | p
-		var pm = ScriptParser.ParsedMethod.new(meta)
+		var pm = ScriptParser.GutParsedMethod.new(meta)
 		assert_true(pm.is_eligible_for_doubling())
 
 	func test_when_method_black_listed_it_is_not_eligible_for_doubling():
 		var meta = _empty_meta.duplicate()
 		meta.name = ScriptParser.BLACKLIST[0]
-		var pm = ScriptParser.ParsedMethod.new(meta)
+		var pm = ScriptParser.GutParsedMethod.new(meta)
 		assert_false(pm.is_eligible_for_doubling())
 
 
