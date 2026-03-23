@@ -15,7 +15,7 @@ var GutRunner = load('res://addons/gut/gui/GutRunner.tscn')
 # hash with null values for the other types of values.  Lower precedented hashes
 # will punch through null values of higher precedented hashes.
 # ------------------------------------------------------------------------------
-class OptionResolver:
+class GutCliOptionResolver:
 	var base_opts = {}
 	var cmd_opts = {}
 	var config_opts = {}
@@ -250,7 +250,7 @@ func _check_for_update():
 
 # parse options and run Gut
 func main():
-	var opt_resolver = OptionResolver.new()
+	var opt_resolver = GutCliOptionResolver.new()
 	opt_resolver.set_base_opts(_gut_config.default_options)
 
 	var cli_opts = setup_options(_gut_config.default_options, _gut_config.valid_fonts)

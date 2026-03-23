@@ -11,8 +11,8 @@ grep -r 'class\s*[a-zA-z]*:'
 
 
 ## Less likely
-- [ ] `./awaiter.gd:                   class AwaitLogger:`
-- [ ] `./cli/gut_cli.gd:               class OptionResolver:`
+- [x] `./awaiter.gd:                   class AwaitLogger:`
+- [x] `./cli/gut_cli.gd:               class OptionResolver:`
 - [x] `./cli/optparse.gd:              class OptionHeading:`
 - [x] `./gui/gut_logo.gd:              class Eyeball:`
 - [x] ~~`./gui/gut_user_preferences.gd:  class GutEditorPref:`~~
@@ -28,8 +28,8 @@ grep -r 'class\s*[a-zA-z]*:'
 - [x] `./gui/panel_controls.gd:        class SaveLoadControl:`
 - [x] `./gui/panel_controls.gd:        class SelectControl:`
 - [x] `./gui/panel_controls.gd:        class StringControl:`
-- [ ] `./input_sender.gd:              class InputQueueItem:`
-- [ ] `./input_sender.gd:              class MouseDraw:`
+- [x] `./input_sender.gd:              class InputQueueItem:`
+- [x] `./input_sender.gd:              class MouseDraw:`
 - [ ] `./method_maker.gd:              class CallParameters:`
 - [ ] `./orphan_counter.gd:            class Orphanage:`
 - [x] `./printers.gd:                  class ConsolePrinter:`
@@ -40,7 +40,7 @@ grep -r 'class\s*[a-zA-z]*:'
 - [ ] `./singleton_parser.gd:          class ParsedSingleton:`
 - [ ] `./test.gd:                      class _ConnectionInfo:`
 - [ ] `./test.gd:                      class SignalAssertParameters:`
-- [ ] `./version_conversion.gd:        class ConfigurationUpdater:`
+- [x] `./version_conversion.gd:        class ConfigurationUpdater:`
 - [ ] `./version_numbers.gd:           class VerNumTools:`
 
 
