@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://dls5r5f6157nq"]
+[gd_scene format=3 uid="uid://dls5r5f6157nq"]
 
 [ext_resource type="Script" uid="uid://dehdhn78qv5tr" path="res://addons/gut/gui/ResultsTree.gd" id="1_b4uub"]
 
-[node name="ResultsTree" type="Tree"]
+[node name="ResultsTree" type="Tree" unique_id=1240770657]
 offset_right = 1082.0
 offset_bottom = 544.0
 size_flags_horizontal = 3
@@ -11,7 +11,7 @@ columns = 2
 hide_root = true
 script = ExtResource("1_b4uub")
 
-[node name="TextOverlay" type="Label" parent="."]
+[node name="TextOverlay" type="Label" parent="." unique_id=1487654929]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -20,7 +20,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ResultsTree" type="VBoxContainer" parent="."]
+[node name="ResultsTree" type="VBoxContainer" parent="." unique_id=87055617]
 custom_minimum_size = Vector2(10, 10)
 layout_mode = 1
 anchors_preset = 15

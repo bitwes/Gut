@@ -8,10 +8,14 @@ class BaseTest:
 
 	func make_meta(fname, params = [], flags = 65):
 		var to_return = {
-			name = fname,
-			args = params,
-			default_args = [],
-			flags = flags
+			"name" : fname,
+			"args" : params,
+			"default_args": [],
+			"flags": flags,
+			"return" :{
+				"type":0,
+				"usage":0
+			}
 		}
 		return to_return
 
@@ -55,6 +59,7 @@ class TestSuperCall:
 
 	func test_super_call_works_with_no_parameters():
 		var meta = make_meta('dummy')
+		meta.return.type = TYPE_BOOL
 		var text = _mm.get_function_text(meta)
 		assert_string_contains(text, 'return await super()')
 
@@ -65,6 +70,7 @@ class TestSuperCall:
 			make_param('value3', TYPE_STRING)
 		]
 		var meta = make_meta('dummy', params)
+		meta.return.type = TYPE_COLOR
 		var text = _mm.get_function_text(meta)
 		assert_string_contains(text, 'return await super(p_value1, p_value2, p_value3)')
 
@@ -93,3 +99,44 @@ class TestVarargMethods:
 
 		assert_string_contains(func_def, ", ...args: Array")
 		assert_string_contains(func_def, "__gutdbl.spy_on('rpc_id', [p_peer_id, p_method, args])")
+
+
+class TestReturnTypes:
+	extends BaseTest
+
+	func test_void_return_type_does_not_include_return_super():
+		var mm = MethodMaker.new()
+
+		var meta = make_meta('fake_method')
+		meta.return.type = 0
+		meta.usage = 6
+
+		var func_def = mm.get_function_text(meta)
+		print(func_def)
+
+		assert_eq(func_def.find("return await super"), -1)
+
+
+	func test_void_return_type_does_not_include_return_stub_call():
+		var mm = MethodMaker.new()
+
+		var meta = make_meta('fake_method')
+		meta.return.type = 0
+		meta.usage = 6
+
+		var func_def = mm.get_function_text(meta)
+		print(func_def)
+
+		assert_eq(func_def.find("return await __gut"), -1)
+
+	func test_something():
+		var mm = MethodMaker.new()
+		var s = autofree(DoubleMeScene.instantiate())
+		var meta = find_method_meta(s.get_method_list(), 'get_instance_shader_parameter')
+		var func_def = mm.get_function_text(meta)
+		assert_string_contains(func_def, "return await __gut")
+
+
+	func test_class_name_from_metadata_used_as_return_type():
+		pending()
+

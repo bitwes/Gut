@@ -22,6 +22,7 @@ class ParsedMethod:
 
 	var is_local = false
 	var _parameters = []
+	var return_type_text = 'void'
 
 	func _init(metadata):
 		_meta = metadata
@@ -35,6 +36,10 @@ class ParsedMethod:
 			else:
 				arg['default'] = NO_DEFAULT
 			_parameters.append(arg)
+
+
+
+
 
 
 	func is_eligible_for_doubling():

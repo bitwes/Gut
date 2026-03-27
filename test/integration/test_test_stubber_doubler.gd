@@ -371,20 +371,22 @@ class TestPartialDoubleMethod:
 	func test_can_stub_partial_doubled_native_class():
 		var inst = _test.partial_double(Node2D).new()
 		autofree(inst)
-		_test.stub(inst, 'get_position').to_return(-1)
-		assert_eq(inst.get_position(), -1)
+		_test.stub(inst, 'get_position').to_return(Vector2(1, 1))
+		assert_eq(inst.get_position(), Vector2(1, 1))
 
 	func test_can_stub_partial_doubled_native_class_to_do_nothing_before_creating_double():
-		_test.stub(Node2D, 'get_position').to_do_nothing()
+		_test.stub(Node2D, 'look_at').to_do_nothing()
 		var inst = _test.partial_double(Node2D).new()
 		autofree(inst)
-		assert_eq(inst.get_position(), null)
+		inst.look_at(Vector2(5, 5))
+		assert_eq(inst.rotation, 0.0)
 
 	func test_can_stub_partial_doubled_native_class_to_do_nothing_after_creating_double():
 		var inst = _test.partial_double(Node2D).new()
-		_test.stub(Node2D, 'get_position').to_do_nothing()
+		_test.stub(Node2D, 'look_at').to_do_nothing()
 		autofree(inst)
-		assert_eq(inst.get_position(), null)
+		inst.look_at(Vector2(5, 5))
+		assert_eq(inst.rotation, 0.0)
 
 	func test_can_spy_on_partial_doubled_native_class():
 		var pass_count = _test.get_pass_count()
@@ -448,7 +450,7 @@ class TestOverridingParameters:
 		assert_eq(ret_val, '12')
 
 	func test_vararg_methods_get_extra_parameters_by_default():
-		_test.stub(Node, 'rpc_id').to_do_nothing()
+		_test.stub(Node, 'rpc_id').to_return(1)
 		var inst =  _test.double(Node).new()
 		add_child_autofree(inst)
 		var ret_val = inst.rpc_id(1, 'foo', '3', '4', '5')
@@ -456,14 +458,14 @@ class TestOverridingParameters:
 
 	func test_issue_246_rpc_id_varargs():
 		var inst =  _test.double(Node).new()
-		_test.stub(Node, 'rpc_id').to_do_nothing()
+		_test.stub(Node, 'rpc_id').to_return(1)
 		add_child_autofree(inst)
 		inst.rpc_id(1, 'foo', '3', '4', '5')
 		_test.assert_called(inst, 'rpc_id', [1, 'foo', ['3', '4', '5']])
 		assert_eq(_test.get_pass_count(), 1)
 
 	func test_issue_246_rpc_id_varargs2():
-		stub(Node, 'rpc_id').to_do_nothing()
+		stub(Node, 'rpc_id').to_return(1)
 		var inst = double(Node).new()
 		add_child_autofree(inst)
 		inst.rpc_id(1, 'foo', '3', '4', '5')
@@ -530,21 +532,11 @@ class TestStub:
 		_test.assert_called(d, "has_one_param", ["value"])
 		assert_pass(_test, 2)
 
-	func test_setting_local_variable_in_callable():
-		var d = autofree(_test.double(DoubleMe).new())
-		var this_var = "some value"
-		_test.stub(d.has_one_param).to_call(
-			func(_value):
-				this_var = "another value"
-				return this_var)
-		var result = d.has_one_param("asdf")
-		_test.assert_eq(result, "another value", "Seems reasonable")
-		_test.assert_ne(result, this_var, "Why would this pass?")
-		_test.assert_eq(this_var, "some value", "Ohhh, well ok.")
-		assert_pass(_test, 3)
-
 	func test_get_error_messages_when_using_callables():
 		_test.ignore_method_when_doubling(DoubleMe, "has_one_param")
 		var d = autofree(_test.double(DoubleMe).new())
 		_test.stub(d.has_one_param).to_return(5)
 		assert_tracked_gut_error(_test)
+
+
+

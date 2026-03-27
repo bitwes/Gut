@@ -161,19 +161,28 @@ func _get_arg_text(arg_array):
 
 # creates a call to the function in meta in the super's class.
 func _get_super_call_text(meta, args, singleton):
+	var return_it = ''
+	if(_get_return_type(meta) != 'void'):
+		return_it = 'return '
+
 	if meta.flags & MethodFlags.METHOD_FLAG_VIRTUAL_REQUIRED != 0:
-		return '__gutdbl.gut_ref.get_ref().get_logger().error("Cannot call super() because method %s is abstract."); return null' \
-			% meta.name
+		if(return_it != ''):
+			return_it = '; return null'
+		return '__gutdbl.gut_ref.get_ref().get_logger().error(' + \
+			'"Cannot call super() because method %s is abstract.")%s' \
+			% [meta.name, return_it]
 
 	var params = ''
 	for i in range(args.size()):
 		params += args[i].p_name
 		if(i != args.size() -1):
 			params += ', '
+
+
 	if(singleton != null):
-		return str('return await __gutdbl.get_singleton().', meta.name, '(', params, ')')
+		return str(return_it, 'await __gutdbl.get_singleton().', meta.name, '(', params, ')')
 	else:
-		return str('return await super(', params, ')')
+		return str(return_it, 'await super(', params, ')')
 
 
 func _get_spy_call_parameters_text(args):
@@ -215,6 +224,20 @@ func _get_init_text(meta, args, method_params, param_array):
 	return text
 
 
+func _get_return_type(meta):
+	var r_meta = meta["return"]
+	var return_keyword = GutConstants.TYPE_KEYWORDS[r_meta.type]
+	if(r_meta.type != 0):
+		return_keyword = return_keyword
+	elif(r_meta.usage & PROPERTY_USAGE_NIL_IS_VARIANT != 0):
+		return_keyword = 'Variant'
+	else:
+		return_keyword = 'void'
+	# print(meta.name, ':  ', return_keyword, '::', r_meta.type, '::', r_meta.usage, '::', r_meta.class_name)
+	return return_keyword
+
+
+
 # Creates a delceration for a function based off of function metadata.  All
 # types whose defaults are supported will have their values.  If a datatype
 # is not supported and the parameter has a default, a warning message will be
@@ -238,17 +261,24 @@ func get_function_text(meta, singleton=null):
 	if(param_array == 'null'):
 		param_array = '[]'
 
+
 	if(method_params != null):
 		if(meta.name == '_init'):
 			text =  _get_init_text(meta, args, method_params, param_array)
 		else:
+			var return_it = ''
+			if(_get_return_type(meta) != 'void'):
+				return_it = 'return '
+
 			var decleration = str('func ', meta.name, '(', method_params, '):')
 			text = _func_text.format({
 				"func_decleration": decleration,
 				"method_name": meta.name,
 				"param_array": param_array,
 				"super_call": _get_super_call_text(meta, args, singleton),
+				"return_it": return_it
 			})
+
 
 	return text
 

@@ -71,3 +71,36 @@ func uses_await_response():
 
 func default_is_value(val = _value):
 	return val
+
+
+func return_number_plus_one(num : int) -> int :
+	return num + 1
+
+
+func return_string_plus_a(s : String) -> String:
+	var new_s : String = str(s, "a")
+	return new_s
+
+
+func void_return()->void:
+	pass
+
+
+func inferred_void_return():
+	pass
+
+
+func inferred_variant_return():
+	return
+
+
+func explicit_int_return() -> int:
+	return 7
+
+
+func inferred_int_return():
+	return 8
+
+
+func two_params_variant_return(p1, p2):
+	return

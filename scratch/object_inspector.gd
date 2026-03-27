@@ -478,13 +478,23 @@ func print_method_signature(meta):
 	for arg in meta.args:
 		args.append(arg.name)
 	var return_text = ""
-	if(meta["return"]["type"] != TYPE_NIL):
-		return_text = str(" -> ", VARIANT_TYPE[meta["return"]["type"]])
+	var r_meta = meta["return"]
+	var return_keyword = GutConstants.TYPE_KEYWORDS[r_meta.type]
+
+	if(meta["return"]["class_name"] != ''):
+		return_text = " -> " + meta["return"]["class_name"]
+	elif(meta["return"]["type"] != TYPE_NIL):
+		return_text = str(" -> ", return_keyword)
+	elif(meta["return"]["usage"] == PROPERTY_USAGES.PROPERTY_USAGE_NIL_IS_VARIANT):
+		return_text = str(" -> Variant")
+	else:
+		return_text = str(" -> void")
 
 	s += ", ".join(args)
 	s += ")"
 	s += return_text
 	lgr.p("* ", s)
+
 	if(include_method_flags):
 		lgr.inc_indent()
 		_print_bit_mask('flags', meta.flags, METHOD_FLAGS)
