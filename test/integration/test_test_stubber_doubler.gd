@@ -1,6 +1,31 @@
 extends GutInternalTester
 
 
+class OverrideToString:
+	extends Node
+
+	func _to_string() -> String:
+		return "this has been overriden"
+
+	func foo():
+		pass
+
+
+func before_all():
+	register_inner_classes(get_script())
+
+func test_doubling_class_that_overrides_to_string_does_not_error():
+	var obj = double(OverrideToString).new()
+	obj.foo()
+	assert_engine_error_count(0)
+
+func test_error_generated_when_attempting_to_stub_blacklisted_method():
+	var obj = double(OverrideToString).new()
+	stub(obj._to_string).to_return('hello')
+	assert_tracked_gut_error()
+
+
+
 
 class TestDoubleCreation:
 	extends GutInternalTester
@@ -482,6 +507,7 @@ class TestStub:
 	extends GutInternalTester
 	var _gut = null
 	var _test = null
+
 
 	func before_each():
 		_gut = new_gut(verbose)

@@ -2,7 +2,7 @@ extends 'res://addons/gut/gut_to_move.gd'
 class_name GutMain
 ## The GUT brains.
 ##
-## Most of this class is for internal use only.  Features that can be used are
+## Most of this class is for internal use only.  Features that can be used
 ## have descriptions and can be accessed through the [member GutTest.gut] variable
 ## in your test scripts (extends [GutTest]).
 ## The wiki page for this class contains only the usable features.
@@ -30,9 +30,16 @@ signal end_pause_before_teardown
 
 signal start_run
 signal end_run
+## Emitted before every test script instance is created.
+## Emitted before [method GutTest.before_all] hook on test is run.
+## test_script_obj is an instance of addons/gut/collected_script.gd.
 signal start_script(test_script_obj)
+## Emitted after every test script is run. Emitted after [method GutTest.after_all] hook on test is run.
 signal end_script
+## Emitted before every test method is run. Emitted after [method GutTest.before_each] hook on test is run.
+## test_name is the string name of the current test about to be started.
 signal start_test(test_name)
+## Emitted after every test method is run. Emitted after [method GutTest.after_each] hook on test is run.
 signal end_test
 
 
@@ -644,10 +651,18 @@ func _run_test(script_inst, test_name, param_index = -1):
 
 
 func get_current_test_orphans():
-	var sname = get_current_test_object().collected_script.get_ref().get_filename_and_inner()
-	var tname = get_current_test_object().name
-	_orphan_counter.record_orphans(sname, tname)
-	return _orphan_counter.get_orphan_ids(sname, tname)
+	var to_return = []
+	var ct = get_current_test_object()
+	if(ct.collected_script != null):
+		var sname = ct.collected_script.get_ref().get_filename_and_inner()
+		if(ct.name == &'after_all' or ct.name == &'before_all'):
+			_orphan_counter.record_orphans(sname)
+			to_return = _orphan_counter.get_orphan_ids(sname)
+			to_return.append_array(_orphan_counter.get_orphan_ids(ct.collected_script.get_ref().get_full_name()))
+		else:
+			to_return = _orphan_counter.record_orphans(sname, ct.name)
+
+	return to_return
 
 
 # ------------------------------------------------------------------------------
@@ -663,6 +678,7 @@ func _call_before_all(test_script, collected_script):
 
 	collected_script.setup_teardown_tests.append(before_all_test_obj)
 	_current_test = before_all_test_obj
+	_current_test.collected_script = weakref(collected_script)
 
 	_lgr.inc_indent()
 	await test_script.before_all()
@@ -688,6 +704,7 @@ func _call_after_all(test_script, collected_script):
 
 	collected_script.setup_teardown_tests.append(after_all_test_obj)
 	_current_test = after_all_test_obj
+	_current_test.collected_script = weakref(collected_script)
 
 	_lgr.inc_indent()
 	await test_script.after_all()

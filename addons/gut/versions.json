@@ -4,6 +4,10 @@
         "main":{
             "godot_min":"4.6",
             "godot_max":"4.6.999"
+        },
+        "godot_4_7":{
+            "godot_min":"4.7",
+            "godot_max":"4.7"
         }
     },
     "releases":{

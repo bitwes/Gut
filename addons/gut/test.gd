@@ -259,6 +259,9 @@ func _get_bad_method_message(inst, method_name, what_you_cant_do):
 		to_return = str("You cannot ", what_you_cant_do, " [", method_name, "] because the method does not exist.  ",
 			"This can happen if the method is virtual and not overloaded (i.e. _ready) ",
 			"or you have mistyped the name of the method.")
+	elif(GutUtils.ScriptCollector.BLACKLIST.has(method_name)):
+		to_return = str("Method '", method_name, "' cannot be stubbed because it ",
+			"is excluded by GUT when creating doubles.")
 	elif(!inst.__gutdbl_values.doubled_methods.has(method_name)):
 		to_return = str("You cannot ", what_you_cant_do, " [", method_name, "] because ",
 			_str(inst), ' does not overload it or it was ignored with ',
@@ -2086,9 +2089,7 @@ func assert_no_new_orphans(text=''):
 	var msg = ''
 	if(text != ''):
 		msg = ':  ' + text
-	# Note that get_counter will return -1 if the counter does not exist.  This
-	# can happen with a misplaced assert_no_new_orphans.  Checking for > 0
-	# ensures this will not cause some weird failure.
+
 	if(count > 0):
 		msg += str("\n", _strutils.indent_text(gut.get_orphan_counter().get_orphan_list_text(orphan_ids), 1, '    '))
 		_fail(str('Expected no orphans, but found ', count, msg))
