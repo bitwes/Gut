@@ -204,7 +204,7 @@ static var gut_fonts = GutFonts.new()
 static var avail_fonts = gut_fonts.get_font_names()
 
 static var version_numbers = VersionNumbers.new(
-	'9.6.0' # gut_versrion (source of truth)
+	'9.7.0' # gut_versrion (source of truth)
 )
 
 
