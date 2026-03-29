@@ -20,11 +20,24 @@ func test_cannot_double_something_when_it_has_invalid_stubs():
 	pending("The runtime errors are confusing, so this would cut down on that.")
 
 
-func test_warn_when_methods_that_have_return_types_are_not_stubbed():
-	pending("This could be at the time of doubling or when the method is called.  " + \
-		"Something needs to happen to make the runtime error clearer.")
+# func test_warn_when_methods_that_have_return_types_are_not_stubbed():
+# 	pending("This could be at the time of doubling or when the method is called.  " + \
+# 		"Something needs to happen to make the runtime error clearer.")
 
 
+func test_warn_when_non_stubbed_method_is_called():
+	pending("Warning should include what is being returned.  " + \
+		"Right now, it's always null, but if other defaults are implemented then " +\
+		"the value is included in the message.")
+
+
+func test_stubbing_to_do_nothing_prevents_non_stubbed_warning_when_method_is_called():
+	pending()
+
+
+var default_values = [1]
+func test_default_values_are_returned_by_default(vals = use_parameters(default_values)):
+	pending(str(vals))
 
 
 class TestReturnTypes:

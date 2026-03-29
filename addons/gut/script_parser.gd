@@ -8,12 +8,10 @@ const BLACKLIST = [
 
 
 # ------------------------------------------------------------------------------
-# Combins the meta for the method with additional information.
-# * flag for whether the method is local
-# * adds a 'default' property to all parameters that can be easily checked per
-#   parameter
+# Combines the meta for the method with additional information.
 # ------------------------------------------------------------------------------
 class ParsedMethod:
+
 	const NO_DEFAULT = '__no__default__'
 
 	var _meta = {}
@@ -22,7 +20,7 @@ class ParsedMethod:
 		set(val): return;
 
 	var is_local = false
-	var _parameters = []
+	var args = []
 	var return_type_text = 'void'
 
 	func _init(metadata):
@@ -36,11 +34,21 @@ class ParsedMethod:
 				arg['default'] = _meta.default_args[start_default - i]
 			else:
 				arg['default'] = NO_DEFAULT
-			_parameters.append(arg)
+			args.append(arg)
 
+		return_type_text = _get_return_type(metadata)
 
-
-
+	func _get_return_type(meta):
+		var r_meta = meta["return"]
+		var return_keyword = GutConstants.TYPE_KEYWORDS[r_meta.type]
+		if(r_meta.type != 0):
+			return_keyword = return_keyword
+		elif(r_meta.usage & PROPERTY_USAGE_NIL_IS_VARIANT != 0):
+			return_keyword = 'Variant'
+		else:
+			return_keyword = 'void'
+		# print(meta.name, ':  ', return_keyword, '::', r_meta.type, '::', r_meta.usage, '::', r_meta.class_name)
+		return return_keyword
 
 
 	func is_eligible_for_doubling():
@@ -280,9 +288,12 @@ class ParsedScript:
 		return text
 
 
+
+
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 var scripts = {}
+
 
 func _get_instance_id(thing):
 	var inst_id = null

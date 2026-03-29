@@ -222,7 +222,12 @@ class TestParsedMethod:
 		"args":[],
 		"default_args": [],
 		"flags":0,
-		"name":"empty"
+		"name":"empty",
+		"return":{
+			"name":'',
+			"type":0,
+			"usage":0
+		}
 	}
 
 	func test_can_make_one():

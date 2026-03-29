@@ -195,14 +195,14 @@ func _create_double(parsed, strategy, override_path, partial):
 	for method in parsed.get_local_methods():
 		if(_is_method_eligible_for_doubling(parsed, method)):
 			included_methods.append(method.meta.name)
-			dbl_src += _get_func_text(method.meta)
+			dbl_src += _method_maker.get_function_text(method)
 
 	if(strategy == GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE):
 		for method in parsed.get_super_methods():
 			if(_is_method_eligible_for_doubling(parsed, method)):
 				included_methods.append(method.meta.name)
 				_stub_to_call_super(parsed, method.meta.name)
-				dbl_src += _get_func_text(method.meta)
+				dbl_src += _method_maker.get_function_text(method)
 
 	var base_script = _get_base_script_text(parsed, override_path, partial, included_methods)
 	dbl_src = base_script + "\n\n" + dbl_src
@@ -228,6 +228,7 @@ func _create_singleton_double(singleton, is_partial):
 
 	for key in parsed.methods_by_name:
 		if(!_ignored_methods.has(singleton, key)):
+			# var pm = GutUtils.ScriptCollector.ParsedMethod.new(parsed.methods_by_name[key])
 			dbl_src += _method_maker.get_function_text(parsed.methods_by_name[key], singleton) + "\n"
 
 	if(print_source):
@@ -238,7 +239,7 @@ func _create_singleton_double(singleton, is_partial):
 	var DblClass = GutUtils.create_script_from_source(dbl_src)
 	if(_stubber != null):
 		for key in parsed.methods_by_name:
-			var meta = parsed.methods_by_name[key]
+			var meta = parsed.methods_by_name[key].meta
 			if(meta != {} and !meta.flags & METHOD_FLAG_VARARG):
 				_stubber.stub_defaults_from_meta(singleton, meta)
 
@@ -279,10 +280,6 @@ func _get_inst_id_ref_str(inst):
 	if(inst):
 		ref_str = str('instance_from_id(', inst.get_instance_id(),')')
 	return ref_str
-
-
-func _get_func_text(method_hash):
-	return _method_maker.get_function_text(method_hash) + "\n"
 
 
 func _parse_script(obj):
