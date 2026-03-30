@@ -12,7 +12,7 @@ var _strutils = GutUtils.Strutils.new()
 var _stub_cache = []
 
 
-func _add_cache():
+func _flush_cache():
 	for stub_params in _stub_cache:
 		stub_params.logger = _lgr
 
@@ -33,7 +33,7 @@ func _add_cache():
 #
 # obj can be an instance, class, or a path.
 func _find_action_stub(obj, method, parameters=null):
-	_add_cache()
+	_flush_cache()
 
 	var to_return = null
 	var matches = action_stubs.get_all_stubs(obj, method)
@@ -114,9 +114,13 @@ func get_return(obj, method, parameters=null):
 	if(stub_info != null):
 		return stub_info.return_val
 	else:
-		_lgr.info(str('Call to [', method, '] was not stubbed for the supplied parameters ', parameters, '.  Null was returned.'))
-		return null
-
+		var default = parameter_stubs.get_default_stub(obj, method)
+		var to_return = null
+		if(default != null):
+			var default_return = default.return_val
+			to_return = default_return
+		_lgr.info(str('Call to [', method, '] was not stubbed for the supplied parameters ', parameters, '.  [', to_return, '] was returned.'))
+		return to_return
 
 func should_call_super(obj, method, parameters=null):
 	var stub_info = _find_action_stub(obj, method, parameters)
@@ -146,7 +150,7 @@ func get_call_this(obj, method, parameters=null):
 
 
 func get_parameter_defaults(obj, method):
-	_add_cache()
+	_flush_cache()
 	var the_defaults = []
 	var script_defaults = []
 	var matches = parameter_stubs.get_all_stubs(obj, method)

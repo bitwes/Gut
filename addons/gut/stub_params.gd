@@ -10,7 +10,13 @@ var logger = _lgr :
 	set(val): _lgr = val
 
 
-var return_val = null
+var return_val = GutConstants.NOT_SET :
+	get():
+		if(GutConstants.is_not_set(return_val)):
+			return null
+		else:
+			return return_val
+var return_type = TYPE_NIL
 var stub_target = null
 var parameters = null # the parameter values to match method call on.
 var stub_method = null
@@ -81,6 +87,8 @@ func _load_defaults_from_metadata(meta):
 		values.push_front(null)
 
 	param_defaults(values)
+	return_type = meta.return.type
+	return_val = GutConstants.get_default_return_value(meta.return.type)
 
 
 func _get_method_meta():

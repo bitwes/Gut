@@ -1,5 +1,8 @@
 extends GutInternalTester
 
+func before_all():
+	register_inner_classes(get_script())
+
 # SEE test_method_maker.gd.TestReturnTypes
 
 # SEE test_abstract_class_doubling
@@ -38,6 +41,24 @@ func test_stubbing_to_do_nothing_prevents_non_stubbed_warning_when_method_is_cal
 var default_values = [1]
 func test_default_values_are_returned_by_default(vals = use_parameters(default_values)):
 	pending(str(vals))
+
+
+class SomeDoubleStuff:
+	func int_return()->int:
+		return 10
+
+
+func test_can_call_method_that_has_an_int_return():
+	var dbl = double(DoubleMe).new()
+	assert_eq(dbl.explicit_int_return(), 0)
+
+func test_can_call_method_that_has_a_string_return():
+	var dbl = double(DoubleMe).new()
+	assert_eq(dbl.return_string_plus_a('a'), '')
+
+func test_call_method_that_has_an_int_return_for_an_inner_class():
+	var dbl = double(SomeDoubleStuff).new()
+	assert_eq(dbl.explicit_int_return(), 0)
 
 
 class TestReturnTypes:

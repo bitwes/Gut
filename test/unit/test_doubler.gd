@@ -210,7 +210,6 @@ class TestAddingIgnoredMethods:
 		assert_source_not_contains(c.new(), 'has_one_param')
 
 	func test_when_ignored_methods_are_a_super_method_they_are_not_present_in_double_code():
-		_doubler.print_source = true
 		_doubler.add_ignored_method(DoubleMe, 'is_connected')
 		var c = _doubler.double(DoubleMe, GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
 		assert_source_not_contains(c.new(), 'is_connected')

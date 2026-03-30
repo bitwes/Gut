@@ -135,6 +135,8 @@ class ExtendsExample:
 ### Solution
 I think this will require default return values for all return types.  I'm not sure if they need to be changeable by the user.  Should `int` be 0?  Probably, but maybe it should be max or min int value.  Should `Vector2` be (0, 0)?  Maybe.  If you need a specific value, you should stub instead, which is what you'd have to do if it returned `null`.  It's just that before, you would get an error about `null`, and now you'll get a valid value which could be misleading.
 
+The logger could possibly add additional information when a return type error occurs and the script is a double.  This information should all be in the error code and stack trace.
+
 
 
 # Implementation

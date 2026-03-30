@@ -321,28 +321,28 @@ func test_cache_added_when_getting_return():
 	var s = partial_double(Stubber).new()
 	var ref = RefCounted.new()
 	s.get_return(ref, 'one')
-	assert_called(s._add_cache)
+	assert_called(s._flush_cache)
 
 func test_cache_added_when_calling_should_call_super():
 	var s = partial_double(Stubber).new()
 	var ref = double(RefCounted).new()
 	s.should_call_super(ref, 'one')
-	assert_called(s._add_cache)
+	assert_called(s._flush_cache)
 
 func test_cache_added_when_calling_get_call_this():
 	var s = partial_double(Stubber).new()
 	var ref = double(RefCounted).new()
 	s.get_call_this(ref, 'one')
-	assert_called(s._add_cache)
+	assert_called(s._flush_cache)
 
 func test_cache_added_when_calling_get_parameter_defaults():
 	var s = partial_double(Stubber).new()
 	var ref = double(RefCounted).new()
 	s.get_parameter_defaults(ref, 'one')
-	assert_called(s._add_cache)
+	assert_called(s._flush_cache)
 
 func test_cache_added_when_calling_get_default_value():
 	var s = partial_double(Stubber).new()
 	var ref = double(RefCounted).new()
 	s.get_default_value(ref, 'get_reference_count', 0)
-	assert_called(s._add_cache)
+	assert_called(s._flush_cache)

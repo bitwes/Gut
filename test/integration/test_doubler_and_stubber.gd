@@ -336,7 +336,7 @@ class TestSingletons:
 			.when_passed('foo', true)
 		stubber.add_stub(params)
 		var dbl = doubler.double_singleton(OS).new()
-		assert_eq(dbl.get_system_dir('bar', true), null)
+		assert_eq(dbl.get_system_dir('bar', true), "")
 		assert_eq(dbl.get_system_dir('foo', true), '/asdf')
 
 	func test_can_stub_method_to_return_based_on_parameters_without_specifying_defaults():
@@ -345,7 +345,7 @@ class TestSingletons:
 			.when_passed('foo', true)
 		stubber.add_stub(params)
 		var dbl = doubler.double_singleton(OS).new()
-		assert_eq(dbl.get_system_dir('bar'), null)
+		assert_eq(dbl.get_system_dir('bar'), "")
 		assert_eq(dbl.get_system_dir('foo'), '/asdf')
 
 	func test_can_stub_singleton_to_call_a_func():

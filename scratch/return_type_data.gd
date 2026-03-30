@@ -7,23 +7,6 @@ var ObjectInspector = load("res://scratch/object_inspector.gd")
 
 var insp = ObjectInspector.new()
 
-@abstract
-class AbstractClass:
-	@abstract
-	func abstract_method() -> int
-
-	func returns_int() -> int:
-		return 7
-
-	func returns_gut_test() -> GutTest:
-		return GutTest.new()
-
-
-class ExtendsAbstract:
-	extends AbstractClass
-
-	func abstract_method() -> int:
-		return 10
 
 
 class DifferentReturnTypes:
@@ -60,6 +43,13 @@ class Example:
 	func inferred_void():
 		pass
 
+class Base:
+	func foo():
+		pass
+
+	func bar() -> void:
+		pass
+
 
 func print_methods(klass):
 
@@ -69,8 +59,35 @@ func print_methods(klass):
 		GutUtils.pretty_print(method)
 
 
+@abstract
+class AbstractClass:
+	@abstract
+	func abstract_method() -> int
+
+
+class ExtendsAbstract:
+	extends AbstractClass
+
+	func abstract_method() -> int:
+		return 10
+
+
+class ReturnTypeDefaults:
+	func packed_byte_array()->PackedByteArray:
+		return PackedByteArray()
+
+	func packed_int32_array() -> PackedInt32Array:
+		return PackedInt32Array()
+
 
 func _init() -> void:
+	# print("AbstractClass")
+	# for method in (AbstractClass as Variant).get_script_method_list():
+	# 	print(JSON.stringify(method, "    "))
+
+	# print("\nExtendsAbstract")
+	# for method in (ExtendsAbstract as Variant).get_script_method_list():
+	# 	print(JSON.stringify(method, "    "))
 
 	# print_methods(AbstractClass)
 	# print("\n____________________________________________________________\n")
@@ -82,6 +99,11 @@ func _init() -> void:
 	# 	insp.print_method_signature(method)
 	# 	GutUtils.pretty_print(method)
 
-	print_methods(ExtendsAbstract)
+	# print_methods(Base)
 	# print(inst.no_return())
+
+	var inst = ReturnTypeDefaults.new()
+	for method in (ReturnTypeDefaults as Variant).get_script_method_list():
+		print('calling ', method.name)
+		inst.call(method.name)
 	quit()

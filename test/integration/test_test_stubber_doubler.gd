@@ -188,7 +188,7 @@ class TestSingletonDoubling:
 
 		assert_eq(dbl_time.get_time_string_from_unix_time(1), "one")
 		assert_eq(dbl_time.get_time_string_from_unix_time(2), "two")
-		assert_null(dbl_time.get_time_string_from_unix_time(3), 'nonstubbed value returns null')
+		assert_eq(dbl_time.get_time_string_from_unix_time(3), "", 'nonstubbed value returns null')
 
 	func test_do_not_have_to_specify_defaulted_vaules_for_stub_to_match():
 		var dbl_input = _test.double_singleton(Input).new()
