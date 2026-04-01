@@ -4,7 +4,6 @@ const DOUBLE_ME_PATH = 'res://test/resources/doubler_test_objects/double_me.gd'
 var DoubleMe = GutUtils.WarningsManager.load_script_ignoring_all_warnings(DOUBLE_ME_PATH)
 var ObjectInspector = load("res://scratch/object_inspector.gd")
 
-
 var insp = ObjectInspector.new()
 
 
@@ -50,6 +49,10 @@ class Base:
 	func bar() -> void:
 		pass
 
+class ExtendsBase:
+	extends Base
+	func foo():
+		return "hello"
 
 func print_methods(klass):
 
@@ -106,4 +109,9 @@ func _init() -> void:
 	for method in (ReturnTypeDefaults as Variant).get_script_method_list():
 		print('calling ', method.name)
 		inst.call(method.name)
+	var d = GutUtils.Doubler.new()
+	d.print_source = true
+	d.inner_class_registry.register(get_script())
+	d.double(Base)
+	d.double(ExtendsBase)
 	quit()
