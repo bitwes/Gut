@@ -1,4 +1,4 @@
-class CallParameters:
+class MethodMakerCallParameters:
 	var p_name = null
 	var default = null
 	var vararg = false
@@ -132,10 +132,10 @@ func _make_arg_array(method_meta):
 	for i in range(method_meta.args.size()):
 		var pname = method_meta.args[i].name
 		var dflt_text = _make_stub_default(method_meta.name, i)
-		to_return.append(CallParameters.new(PARAM_PREFIX + pname, dflt_text))
+		to_return.append(MethodMakerCallParameters.new(PARAM_PREFIX + pname, dflt_text))
 
 	if(method_meta.flags & METHOD_FLAG_VARARG):
-		var cp = CallParameters.new("args", "")
+		var cp = MethodMakerCallParameters.new("args", "")
 		cp.vararg = true
 		to_return.append(cp)
 

@@ -145,7 +145,7 @@ func _add_other_ctrls():
 	var fname = GutUtils.gut_fonts.DEFAULT_CUSTOM_FONT_NAME
 	if(_user_prefs != null):
 		fname = _user_prefs.output_font_name.value
-	_font_name_pctrl = PanelControls.SelectControl.new('Font', fname, GutUtils.avail_fonts,
+	_font_name_pctrl = PanelControls.GpcSelect.new('Font', fname, GutUtils.avail_fonts,
 		"The font, you know, for the text below.  Change it, see what it does.")
 	_font_name_pctrl.changed.connect(_on_font_name_changed)
 	_font_name_pctrl.label.size_flags_horizontal = SIZE_SHRINK_BEGIN
@@ -155,7 +155,7 @@ func _add_other_ctrls():
 	var fsize = 30
 	if(_user_prefs != null):
 		fsize = _user_prefs.output_font_size.value
-	_font_size_pctrl = PanelControls.NumberControl.new('Font Size', fsize , 5, 100,
+	_font_size_pctrl = PanelControls.GpcNumber.new('Font Size', fsize , 5, 100,
 		"The size of 'The Font'.")
 	_font_size_pctrl.changed.connect(_on_font_size_changed)
 	_font_size_pctrl.label.size_flags_horizontal = SIZE_SHRINK_BEGIN
