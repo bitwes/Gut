@@ -615,4 +615,3 @@ class TestDoubleSingletons:
 	func test_singleton_doubles_have_singleton_methods():
 		var inst = doubler.double_singleton(Performance).new()
 		assert_has(inst.__gutdbl_values.doubled_methods, 'get_custom_monitor_names')
-

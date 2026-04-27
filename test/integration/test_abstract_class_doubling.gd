@@ -43,9 +43,8 @@ func test_method_order_assumption():
 
 
 func test_can_double_abstract():
-	pending("Cannot double abstract classes in 4.7.  Return type not included in meta.")
-	# var dbl = double(AbstractClass)
-	# assert_not_null(dbl)
+	var dbl = double(AbstractClass)
+	assert_not_null(dbl)
 
 func test_can_double_abstract_with_void_return():
 	var dbl = double(AbstractNoReturn)
@@ -53,25 +52,22 @@ func test_can_double_abstract_with_void_return():
 
 
 func test_can_stub_to_return_for_abstract_method_at_sctipt_level():
-	pending("Cannot double abstract classes in 4.7.  Return type not included in meta.")
-	# stub(AbstractClass, 'abstract_method').to_return('a')
-	# var inst = double(AbstractClass).new()
-	# assert_eq(inst.abstract_method(), 'a')
+	stub(AbstractClass, 'abstract_method').to_return('a')
+	var inst = double(AbstractClass).new()
+	assert_eq(inst.abstract_method(), 'a')
 
 
 func test_can_stub_to_return_for_abstract_method_at_double_level():
-	pending("Cannot double abstract classes in 4.7.  Return type not included in meta.")
-	# var Dbl = double(AbstractClass)
-	# stub(Dbl, 'abstract_method').to_return(9)
-	# var inst = Dbl.new()
-	# assert_eq(inst.abstract_method(), 9)
+	var Dbl = double(AbstractClass)
+	stub(Dbl, 'abstract_method').to_return(9)
+	var inst = Dbl.new()
+	assert_eq(inst.abstract_method(), 9)
 
 
 func test_can_stub_to_return_for_abstract_method_at_instance_level():
-	pending("Cannot double abstract classes in 4.7.  Return type not included in meta.")
-	# var inst = double(AbstractClass).new()
-	# stub(inst.abstract_method).to_return(7)
-	# assert_eq(inst.abstract_method(), 7)
+	var inst = double(AbstractClass).new()
+	stub(inst.abstract_method).to_return(7)
+	assert_eq(inst.abstract_method(), 7)
 
 
 func test_error_when_stubbing_to_call_super_at_script_level():
@@ -80,16 +76,15 @@ func test_error_when_stubbing_to_call_super_at_script_level():
 
 
 func test_error_when_stubbing_to_call_super_at_instance_level():
-	pending("Cannot double abstract classes in 4.7.  Return type not included in meta.")
-	# var doubled = autofree(double(AbstractClass).new())
-	# stub(doubled.abstract_method).to_call_super()
+	var doubled = autofree(double(AbstractClass).new())
+	stub(doubled.abstract_method).to_call_super()
 
-	# var result = doubled.abstract_method()
+	var result = doubled.abstract_method()
 
-	# assert_null(result)
-	# var current_test_errors = gut.error_tracker.get_current_test_errors()
-	# assert_eq(current_test_errors[0].code, "Cannot call super() because method abstract_method is abstract.")
-	# assert_tracked_gut_error()
+	assert_null(result)
+	var current_test_errors = gut.error_tracker.get_current_test_errors()
+	assert_eq(current_test_errors[0].code, "Cannot call super() because method abstract_method is abstract.")
+	assert_tracked_gut_error()
 
 
 func test_can_stub_implemented_abstract_to_call_super():
