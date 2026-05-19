@@ -122,6 +122,7 @@ func get_return(obj, method, parameters=null):
 		_lgr.info(str('Call to [', method, '] was not stubbed for the supplied parameters ', parameters, '.  [', to_return, '] was returned.'))
 		return to_return
 
+
 func should_call_super(obj, method, parameters=null):
 	var stub_info = _find_action_stub(obj, method, parameters)
 
@@ -194,8 +195,8 @@ func set_logger(logger):
 
 
 func to_s():
-	return str("Parameters:\n", parameter_stubs.to_s(),
-		"\nActions:\n" , action_stubs.to_s())
+	return str("Parameter Stubs:\n", parameter_stubs.to_s(),
+		"\nAction Stubs:\n" , action_stubs.to_s())
 
 
 func stub_defaults_from_meta(target, method_meta):

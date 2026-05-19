@@ -2,6 +2,7 @@ extends GutInternalTester
 
 func before_all():
 	register_inner_classes(get_script())
+	register_inner_classes(InnerClasses)
 
 # SEE test_method_maker.gd.TestReturnTypes
 
@@ -52,13 +53,19 @@ func test_can_call_method_that_has_an_int_return():
 	var dbl = double(DoubleMe).new()
 	assert_eq(dbl.explicit_int_return(), 0)
 
+
 func test_can_call_method_that_has_a_string_return():
 	var dbl = double(DoubleMe).new()
 	assert_eq(dbl.return_string_plus_a('a'), '')
 
-func test_call_method_that_has_an_int_return_for_an_inner_class():
+func test_call_method_that_has_an_int_return_for_an_inner_class_in_this_script():
 	var dbl = double(SomeDoubleStuff).new()
-	assert_eq(dbl.explicit_int_return(), 0)
+	assert_eq(dbl.int_return(), 0)
+
+
+func test_call_method_that_has_an_int_return_for_an_external_inner_class():
+	var dbl = double(InnerClasses.InnerA).new()
+	assert_eq(dbl.int_return(), 0)
 
 
 class TestReturnTypes:
@@ -89,4 +96,3 @@ class TestReturnTypes:
 		# message should indicate that you must use to_return with a Vector2
 		# value
 		assert_tracked_gut_error(_gut, 1)
-

@@ -249,7 +249,7 @@ func _create_singleton_double(singleton, is_partial):
 func _stub_method_default_values(parsed):
 	for method in parsed.get_local_methods():
 		if(method.is_eligible_for_doubling() and !_ignored_methods.has(parsed.resource, method.meta.name)):
-			_stubber.stub_defaults_from_meta(parsed.script_path, method.meta)
+			_stubber.stub_defaults_from_meta(parsed.resource, method.meta)
 
 
 func _double_scene_and_script(scene, strategy, partial):

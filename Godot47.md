@@ -1,6 +1,9 @@
 # 4.7 Issues
 
 ## Doubling abstract classes issue
+__I think this has been resolved in 4.7beta1 or a little__
+
+
 Abstract methods do not include a return type in the metadata, only implemented abstract methods have a return type.
 
 Given
