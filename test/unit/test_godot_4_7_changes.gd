@@ -1,5 +1,10 @@
 extends GutInternalTester
 
+class SomeDoubleStuff:
+	func int_return()->int:
+		return 10
+
+
 func before_all():
 	register_inner_classes(get_script())
 	register_inner_classes(InnerClasses)
@@ -44,9 +49,6 @@ func test_default_values_are_returned_by_default(vals = use_parameters(default_v
 	pending(str(vals))
 
 
-class SomeDoubleStuff:
-	func int_return()->int:
-		return 10
 
 
 func test_can_call_method_that_has_an_int_return():
@@ -86,6 +88,28 @@ class TestReturnTypes:
 	func after_each():
 		_gut.free()
 		_test.free()
+
+
+	func test_can_call_all_methods_in_all_return_types():
+		# gut.get_doubler().print_source = true
+		var Dbl = double(TestResourceAllReturnTypes)
+		var dbl = Dbl.new()
+		# print('get_script = ', dbl.get_script())
+		# print("******************** ", dbl.return_int())
+		# GutUtils.pretty_print(Dbl.get_script_method_list())
+		# GutUtils.pretty_print(dbl.__gutdbl_values)
+		# for entry in Dbl.get_script_method_list():
+		# 	var method_name = entry.name
+		# 	var result = dbl.call(method_name)
+		# 	print("called ", method_name, " got ", result)
+		# GutUtils.pretty_print(dbl.__gutdbl_values)
+		for method_name in dbl.__gutdbl_values.doubled_methods:
+			var result = dbl.call(method_name)
+			print("called ", StringName(method_name), " got ", result)
+			assert_eq(result, GutConstants.get_default_return_value(typeof(result)),
+				str(method_name, ' default return value'))
+
+		assert_engine_error_count(0)
 
 
 	func test_using_to_do_nothing_not_allowed_with_methods_that_have_return_type():

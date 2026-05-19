@@ -1,5 +1,30 @@
 # 4.7 Issues
 
+## The super weird issue
+```gdscript
+	func test_can_call_all_methods_in_all_return_types():
+		gut.get_doubler().print_source = true
+		var Dbl = double(TestResourceAllReturnTypes)
+		var dbl = Dbl.new()
+		# print('get_script = ', dbl.get_script())
+		# print("******************** ", dbl.return_int())
+		# GutUtils.pretty_print(Dbl.get_script_method_list())
+		GutUtils.pretty_print(dbl.__gutdbl_values)
+		for entry in Dbl.get_script_method_list():
+			var method_name = entry.name
+			var result = dbl.call(method_name)
+			print("called ", method_name, " got ", result)
+
+		GutUtils.pretty_print(dbl.__gutdbl_values)
+		for method_name in dbl.__gutdbl_values.doubled_methods:
+			var result = dbl.call(method_name)
+			print("called ", StringName(method_name), " got ", result)
+```
+
+* First loop calls base object methods and clears dbl.__gutdbl_values
+* If you comment out the first loop, the second loop runs and calls the methods on the double.
+
+
 ## Doubling abstract classes issue
 __I think this has been resolved in 4.7beta1 or a little__
 
