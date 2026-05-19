@@ -91,21 +91,18 @@ class TestReturnTypes:
 
 
 	func test_can_call_all_methods_in_all_return_types():
-		# gut.get_doubler().print_source = true
+		# Signals return values cause doubled methods to hang because they
+		# all have await in them.  The methods end up awaiting the returned
+		# signal and nothing ever ends.
+		ignore_method_when_doubling(TestResourceAllReturnTypes, 'return_signal')
+
 		var Dbl = double(TestResourceAllReturnTypes)
 		var dbl = Dbl.new()
-		# print('get_script = ', dbl.get_script())
-		# print("******************** ", dbl.return_int())
-		# GutUtils.pretty_print(Dbl.get_script_method_list())
-		# GutUtils.pretty_print(dbl.__gutdbl_values)
-		# for entry in Dbl.get_script_method_list():
-		# 	var method_name = entry.name
-		# 	var result = dbl.call(method_name)
-		# 	print("called ", method_name, " got ", result)
-		# GutUtils.pretty_print(dbl.__gutdbl_values)
+
+		# Don't use get_*method_list or it will include the __gutdbl_done and
+		# mess things up when it gets called.
 		for method_name in dbl.__gutdbl_values.doubled_methods:
 			var result = dbl.call(method_name)
-			print("called ", StringName(method_name), " got ", result)
 			assert_eq(result, GutConstants.get_default_return_value(typeof(result)),
 				str(method_name, ' default return value'))
 

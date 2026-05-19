@@ -69,7 +69,7 @@ static var DEFAULT_RETURNS = {
 	TYPE_NODE_PATH : NodePath(),
 	TYPE_RID : RID(),
 	TYPE_OBJECT : null,
-	TYPE_CALLABLE : null,
+	TYPE_CALLABLE : Callable(),
 	TYPE_SIGNAL : null,
 	TYPE_DICTIONARY : {},
 	TYPE_ARRAY : [],
