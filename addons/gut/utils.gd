@@ -42,11 +42,8 @@ enum TREAT_AS {
 	FAILURE,
 }
 
-static var class_ref_by_name = {} :
-	get():
-		if(class_ref_by_name == {}):
-			class_ref_by_name = _create_class_dictionary()
-		return class_ref_by_name;
+static var class_ref_by_name := {}
+static var class_ref_by_class := {}
 
 
 
@@ -217,6 +214,10 @@ static var warnings_when_loading_test_scripts := { # WarningsManager dictionary
 }
 
 
+
+static func _static_init() -> void:
+	_create_class_dictionaries()
+
 # ------------------------------------------------------------------------------
 # Everything should get a logger through this.
 #
@@ -250,7 +251,7 @@ static func get_error_tracker():
 #
 # This is lazy loaded into class_ref_by_name, it's only needed when finding
 # stubs.
-static func _create_class_dictionary():
+static func _create_class_dictionaries():
 	var text = "var all_the_classes: Dictionary = {\n"
 	var black_list = [
 		"IPUnix",
@@ -263,7 +264,11 @@ static func _create_class_dictionary():
 
 	text += "}"
 	var inst =  GutUtils.create_script_from_source(text, 'res://dynamically_generated/class_dictionary.gd').new()
-	return inst.all_the_classes
+
+	class_ref_by_name = inst.all_the_classes
+	for key in inst.all_the_classes:
+		class_ref_by_class[inst.all_the_classes[key]] = key
+
 
 
 
@@ -646,7 +651,12 @@ static func find_method_meta(methods, method_name):
 
 
 static func get_method_meta(object, method_name):
-	return find_method_meta(object.get_method_list(), method_name)
+	if(object is GDScript):
+		return find_method_meta(object.get_script_method_list(), method_name)
+	elif(is_native_class(object)):
+		return find_method_meta(ClassDB.class_get_method_list(class_ref_by_class[object]), method_name)
+	else:
+		return find_method_meta(object.get_method_list(), method_name)
 
 
 static func is_singleton(thing):

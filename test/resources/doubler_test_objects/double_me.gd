@@ -105,3 +105,7 @@ func inferred_int_return():
 
 func two_params_variant_return(p1, p2):
 	return
+
+
+func explict_variant_return() -> Variant:
+	return 0

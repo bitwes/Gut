@@ -332,10 +332,24 @@ var spot_check_params = ParameterFactory.named_parameters(
 	[
 		['explicit_int_return', 1, true],
 		['explicit_int_return', 'adsf', false],
+		['explicit_int_return', null, false],
 
 		['inferred_int_return', 8, true],
-		['inferred_int_return', 'asdf', false],
-		['inferred_int_return', null, false],
+		['inferred_int_return', 'asdf', true],
+		['inferred_int_return', null, true],
+
+		['inferred_variant_return', 8, true],
+		['inferred_variant_return', 'asdf', true],
+		['inferred_variant_return', null, true],
+
+		['return_string_plus_a', 8, false],
+		['return_string_plus_a', 'asdf', true],
+		['return_string_plus_a', null, false],
+
+		['explict_variant_return', 8, true],
+		['explict_variant_return', GutTest, true],
+		['explict_variant_return', null, true],
+
 	]
 )
 func test_spot_checking_return_types_on_an_instance(p = use_parameters(spot_check_params)):
@@ -347,3 +361,5 @@ func test_spot_checking_return_types_on_an_instance(p = use_parameters(spot_chec
 	assert_eq(result, p.valid, str(p.method, ' able to return ', p.value, ' should be ', p.valid))
 	if(!p.valid):
 		assert_tracked_gut_error(self, 1)
+
+

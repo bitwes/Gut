@@ -17,6 +17,7 @@ func before_all():
 
 # SEE test_abstract_class_doubling
 
+
 func test_no_error_when_stub_to_return_on_methods_with_inferred_void_return_type():
 	stub(DoubleMe, 'inferred_void_return').to_return(7)
 	assert_engine_error_count(0)
@@ -69,6 +70,9 @@ func test_default_values_are_returned_by_default(vals = use_parameters(default_v
 	pending(str(vals))
 
 
+func test_can_call_method_that_has_an_inferred_int_return():
+	var dbl = double(DoubleMe).new()
+	assert_eq(dbl.inferred_int_return(), null)
 
 
 func test_can_call_method_that_has_an_int_return():
@@ -88,6 +92,44 @@ func test_call_method_that_has_an_int_return_for_an_inner_class_in_this_script()
 func test_call_method_that_has_an_int_return_for_an_external_inner_class():
 	var dbl = double(InnerClasses.InnerA).new()
 	assert_eq(dbl.int_return(), 0)
+
+
+var spot_check_params = ParameterFactory.named_parameters(
+	['method', 'value', 'valid'],
+	[
+		['explicit_int_return', 1, true],
+		['explicit_int_return', 'adsf', false],
+		['explicit_int_return', null, false],
+
+		['inferred_int_return', 8, true],
+		['inferred_int_return', 'asdf', true],
+		['inferred_int_return', null, true],
+
+		['inferred_variant_return', 8, true],
+		['inferred_variant_return', 'asdf', true],
+		['inferred_variant_return', null, true],
+
+		['return_string_plus_a', 8, false],
+		['return_string_plus_a', 'asdf', true],
+		['return_string_plus_a', null, false],
+
+		['explict_variant_return', 8, true],
+		['explict_variant_return', GutTest, true],
+		['explict_variant_return', null, true],
+	]
+)
+func test_using_double_me_stubs(p = use_parameters(spot_check_params)):
+	var dbl = double(DoubleMe).new()
+	var c = Callable(dbl, p.method)
+	stub(c).to_return(p.value)
+
+	dbl.call(p.method)
+	if(p.valid):
+		assert_engine_error_count(0)
+	else:
+		assert_tracked_gut_error(self, 1)
+		assert_engine_error("Trying to return a value")
+
 
 
 class TestReturnTypes:

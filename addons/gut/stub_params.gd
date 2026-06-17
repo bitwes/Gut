@@ -115,11 +115,14 @@ func _error_if_locked():
 # -------------------------
 func validate() -> bool:
 	var meta = _get_method_meta()
-	GutUtils.pretty_print(meta)
-	if(!GutConstants.is_not_set(return_val) and meta.return.type != typeof(return_val)):
-		_lgr.error(str("Method ", stub_method, " cannot return ", return_val))
-		return false
+	# GutUtils.pretty_print(meta)
+	if(stub_method != '_init' and meta != {} and meta.return.type != 0 and \
+		!GutConstants.is_not_set(return_val) and \
+		meta.return.type != typeof(return_val)):
+			_lgr.error(str("StubParams:  Method ", stub_method, " cannot return ", return_val))
+			return false
 	return true
+
 
 func to_return(val):
 	if(_error_if_locked()):

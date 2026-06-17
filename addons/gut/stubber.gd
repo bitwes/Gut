@@ -22,6 +22,8 @@ func _flush_cache():
 		if(!stub_params.is_default_override_only()):
 			action_stubs.add_stub(stub_params)
 
+		if(!stub_params.is_script_default):
+			stub_params.validate()
 		# lock the params so that any changes that would affect which bucket
 		# the params were put in can't be changed.
 		stub_params.locked = true
