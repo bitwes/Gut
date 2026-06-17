@@ -253,6 +253,9 @@ static func get_error_tracker():
 static func _create_class_dictionary():
 	var text = "var all_the_classes: Dictionary = {\n"
 	var black_list = [
+		"IPUnix",
+		"GodotNavigationServer2D",
+		"NativeMenuMacOS",
 	]
 	for classname in ClassDB.get_class_list():
 		if(!black_list.has(classname) and (ClassDB.can_instantiate(classname) or GodotSingletons.names.has(classname))):

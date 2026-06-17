@@ -12,6 +12,8 @@ const GODOT_SINGLETONS_PATH = "res://addons/gut/godot_singletons.gd"
 var blacklist = [
 	# I don't think this can be doubled unless we are running in the editor.
 	"EditorInterface",
+	# This one generated an error
+	"GDScriptLanguageProtocol",
 ]
 
 var name_replacements = {
