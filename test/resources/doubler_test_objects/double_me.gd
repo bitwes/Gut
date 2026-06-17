@@ -1,3 +1,4 @@
+class_name TestResourceDoubleMe
 extends Node
 
 var _value = 0

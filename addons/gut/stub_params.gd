@@ -72,12 +72,15 @@ func _init(target=null, method=null, _subpath=null):
 		_load_defaults_from_metadata(method)
 		is_script_default = true
 	elif(stub_target != null and stub_method != null and typeof(stub_target) != TYPE_STRING):
-		if(!GutUtils.is_native_class(stub_target)):
-			var method_list = stub_target.get_method_list()
-			if(method_list != null):
-				var meta = GutUtils.find_method_meta(method_list, stub_method)
-				if(meta != null):
-					_method_meta = meta
+		var method_list = null
+		if(typeof(stub_target) == TYPE_OBJECT and stub_target is GDScript):
+			method_list = stub_target.get_script_method_list()
+		elif(!GutUtils.is_native_class(stub_target)):
+			method_list = stub_target.get_method_list()
+		if(method_list != null):
+			var meta = GutUtils.find_method_meta(method_list, stub_method)
+			if(meta != null):
+				_method_meta = meta
 
 
 func _load_defaults_from_metadata(meta):
@@ -110,6 +113,14 @@ func _error_if_locked():
 # -------------------------
 # Public
 # -------------------------
+func validate() -> bool:
+	var meta = _get_method_meta()
+	GutUtils.pretty_print(meta)
+	if(!GutConstants.is_not_set(return_val) and meta.return.type != typeof(return_val)):
+		_lgr.error(str("Method ", stub_method, " cannot return ", return_val))
+		return false
+	return true
+
 func to_return(val):
 	if(_error_if_locked()):
 		return

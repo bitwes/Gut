@@ -300,3 +300,50 @@ func test_after_locked_cannot_param_defaults():
 	sp.param_defaults([1])
 	assert_push_error('locked')
 	assert_eq(sp.parameter_defaults, [])
+
+
+
+
+
+# ------------------------------------------------------------------------------
+# Return type validation
+# ------------------------------------------------------------------------------
+func test_error_when_stubbing_a_method_on_an_instance_to_return_a_different_invalid_data_type():
+	var n = autofree(DoubleMe.new())
+	var sp = GutUtils.StubParams.new(n.explicit_int_return)
+	sp.to_return('asdf')
+
+	var result = sp.validate()
+	assert_false(result)
+	assert_tracked_gut_error(self, 1)
+
+func test_error_when_stubbing_a_method_on_a_script_to_return_a_different_invalid_data_type():
+	var sp = GutUtils.StubParams.new(DoubleMe, 'explicit_int_return')
+	sp.to_return('asdf')
+
+	var result = sp.validate()
+	assert_false(result)
+	assert_tracked_gut_error(self, 1)
+
+
+
+var spot_check_params = ParameterFactory.named_parameters(
+	['method', 'value', 'valid'],
+	[
+		['explicit_int_return', 1, true],
+		['explicit_int_return', 'adsf', false],
+
+		['inferred_int_return', 8, true],
+		['inferred_int_return', 'asdf', false],
+		['inferred_int_return', null, false],
+	]
+)
+func test_spot_checking_return_types_on_an_instance(p = use_parameters(spot_check_params)):
+	var n = autofree(TestResourceDoubleMe.new())
+	var sp = GutUtils.StubParams.new(n, p.method)
+	sp.to_return(p.value)
+
+	var result = sp.validate()
+	assert_eq(result, p.valid, str(p.method, ' able to return ', p.value, ' should be ', p.valid))
+	if(!p.valid):
+		assert_tracked_gut_error(self, 1)

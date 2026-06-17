@@ -5,6 +5,10 @@ class SomeDoubleStuff:
 		return 10
 
 
+class ReturnTypes:
+	func inferred_void():
+		pass
+
 func before_all():
 	register_inner_classes(get_script())
 	register_inner_classes(InnerClasses)
@@ -13,12 +17,28 @@ func before_all():
 
 # SEE test_abstract_class_doubling
 
-func test_error_when_stub_to_return_on_methods_with_inferred_void_return_type():
-	pending()
+func test_no_error_when_stub_to_return_on_methods_with_inferred_void_return_type():
+	stub(DoubleMe, 'inferred_void_return').to_return(7)
+	assert_engine_error_count(0)
+	assert_tracked_gut_error(self, 0)
 
 
-func test_error_when_stubbing_a_method_to_return_a_different_invalid_data_type():
-	pending()
+func test_error_when_stubbing_a_method_on_an_instance_to_return_a_different_invalid_data_type():
+	var n = autofree(DoubleMe.new())
+	var sp = GutUtils.StubParams.new(n.explicit_int_return)
+	sp.to_return('asdf')
+
+	var result = sp.validate()
+	assert_false(result)
+	assert_tracked_gut_error(self, 1)
+
+func test_error_when_stubbing_a_method_on_a_script_to_return_a_different_invalid_data_type():
+	var sp = GutUtils.StubParams.new(DoubleMe, 'explicit_int_return')
+	sp.to_return('asdf')
+
+	var result = sp.validate()
+	assert_false(result)
+	assert_tracked_gut_error(self, 1)
 
 
 func test_error_when_stubbing_to_return_null_when_return_type_cannot_be_null():
