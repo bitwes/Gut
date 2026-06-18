@@ -29,7 +29,6 @@ class BaseTest:
 
 
 
-
 class TestTheBasics:
 	extends BaseTest
 
@@ -193,8 +192,6 @@ class TestInnerClasses:
 class TestDefaultParameters:
 	extends BaseTest
 
-
-
 	var doubler = null
 	var stubber = null
 
@@ -237,6 +234,18 @@ class TestDefaultParameters:
 		stubber.add_stub(params)
 		assert_eq(stubber.get_default_value(dbl, 'defaulted_second_parameter', 0), null)
 		assert_eq(stubber.get_default_value(dbl, 'defaulted_second_parameter', 1), 'p2')
+
+
+class TestReturnTypes:
+	extends GutInternalTester
+
+	var doubler = null
+	var stubber = null
+
+	func before_each():
+		doubler = GutUtils.Doubler.new(GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
+		stubber = GutUtils.Stubber.new()
+		doubler.set_stubber(stubber)
 
 
 

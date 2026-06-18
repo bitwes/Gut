@@ -188,3 +188,75 @@ The logger could possibly add additional information when a return type error oc
 			* `RefCounted` ?
 			* `Node` ?
 	* could `GutDoubleReturnDefaults` be `GutDoubleDefaults` and be used when creating new instances of things elsewhere?
+
+
+
+
+# Changes
+Godot 4.7 introduced more restrictive type checking for return values.  In prior releases Doubles could return `null` regardless of the declared return type of the function.  Doubles have been adjusted to return a default value for each `TYPE_` constant.  This may cause false postives/negatives in existing and new tests if you do not take this into account.
+
+When a method is stubbed to return an invalid value GUT will generate an error but execution will continue.  This will result in an engine error as well.
+
+Gut Error Example:
+```
+[GUT ERROR]:  Method [explicit_int_return] was stubbed to return invalid value [adsf].
+```
+Engine Error Example:
+```
+SCRIPT ERROR: Trying to return a value of type "String" from a function whose return type is "int".
+```
+
+
+## Methods with explict return types
+These values are defined in `res://addons/gut/gut_constants.gd`.  There is no formal way to adjust these values yet, but you can if you really want to.  I would suggest doing this in a pre-run hook.
+```gdscript
+extends GutHookScript
+
+func run():
+    GutConstants.DEFAULT_RETURNS[TYPE_INT] = -99
+```
+The current values are:
+```
+static var DEFAULT_RETURNS = {
+	TYPE_NIL : null,
+	TYPE_BOOL : false,
+	TYPE_INT : 0,
+	TYPE_FLOAT : 0.0,
+	TYPE_STRING : '',
+	TYPE_VECTOR2 : Vector2.ZERO,
+	TYPE_VECTOR2I : Vector2i.ZERO,
+	TYPE_RECT2 : Rect2(0, 0, 0, 0),
+	TYPE_RECT2I : Rect2i(0, 0, 0, 0),
+	TYPE_VECTOR3 : Vector3.ZERO,
+	TYPE_VECTOR3I : Vector3i.ZERO,
+	TYPE_TRANSFORM2D : Transform2D.IDENTITY,
+	TYPE_VECTOR4 : Vector4.ZERO,
+	TYPE_VECTOR4I : Vector4i.ZERO,
+	TYPE_PLANE : Plane.PLANE_XY,
+	TYPE_QUATERNION : Quaternion.IDENTITY,
+	TYPE_AABB : AABB(),
+	TYPE_BASIS : Basis.IDENTITY,
+	TYPE_TRANSFORM3D : Transform3D.IDENTITY,
+	TYPE_PROJECTION : Projection.IDENTITY,
+	TYPE_COLOR : Color.WHITE,
+	TYPE_STRING_NAME : &'',
+	TYPE_NODE_PATH : NodePath(),
+	TYPE_RID : RID(),
+	TYPE_OBJECT : null,
+	TYPE_CALLABLE : Callable(),
+	TYPE_SIGNAL : null,
+	TYPE_DICTIONARY : {},
+	TYPE_ARRAY : [],
+	TYPE_PACKED_BYTE_ARRAY : PackedByteArray(),
+	TYPE_PACKED_INT32_ARRAY : PackedInt32Array(),
+	TYPE_PACKED_INT64_ARRAY : PackedInt64Array(),
+	TYPE_PACKED_FLOAT32_ARRAY : PackedFloat32Array(),
+	TYPE_PACKED_FLOAT64_ARRAY : PackedFloat64Array(),
+	TYPE_PACKED_STRING_ARRAY : PackedStringArray(),
+	TYPE_PACKED_VECTOR2_ARRAY : PackedVector2Array(),
+	TYPE_PACKED_VECTOR3_ARRAY : PackedVector3Array(),
+	TYPE_PACKED_COLOR_ARRAY : PackedColorArray(),
+	TYPE_PACKED_VECTOR4_ARRAY : PackedVector4Array(),
+	# TYPE_MAX : 'TYPE_MAX',
+}
+```

@@ -7,7 +7,7 @@
     "res://test/integration/"
   ],
   "should_exit": true,
-  "log_level": 3,
+  "log_level": 1,
   "hide_orphans": false,
 
   "should_exit_on_success": false,

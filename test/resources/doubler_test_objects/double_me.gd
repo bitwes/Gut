@@ -1,4 +1,3 @@
-class_name TestResourceDoubleMe
 extends Node
 
 var _value = 0
@@ -87,6 +86,8 @@ func void_return()->void:
 	pass
 
 
+# I believe inferred void was changed to inferred variant somewhere between
+# 4.7.beta3 and 4.7.rc3.
 func inferred_void_return():
 	pass
 

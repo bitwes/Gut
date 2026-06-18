@@ -44,7 +44,7 @@ static var class_ref = [
 	WorkerThreadPool,
 	XRServer
 ]
-static var names = []
+static var names := []
 static func _static_init():
 	for entry in class_ref:
 		names.append(entry.get_class())

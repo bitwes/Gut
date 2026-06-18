@@ -109,17 +109,26 @@ func _error_if_locked():
 	else:
 		return false
 
+func _is_return_value_valid(val):
+	var is_valid = true
+	var meta = _get_method_meta()
+	if((meta.return.type != 0 or (meta.return.type == 0 and !(meta.return.usage && PROPERTY_USAGE_NIL_IS_VARIANT))) and \
+		meta.return.type != typeof(return_val)):
+			is_valid = false
+	return is_valid
 
 # -------------------------
 # Public
 # -------------------------
 func validate() -> bool:
 	var meta = _get_method_meta()
-	# GutUtils.pretty_print(meta)
-	if(stub_method != '_init' and meta != {} and meta.return.type != 0 and \
-		!GutConstants.is_not_set(return_val) and \
-		meta.return.type != typeof(return_val)):
-			_lgr.error(str("StubParams:  Method ", stub_method, " cannot return ", return_val))
+	# if(meta == {}):
+	# 	_lgr.error(str("The method ", stub_method, " could not found."))
+	# 	return false
+
+	if(stub_method != '_init' and meta != {} and call_this == null):
+		if(!_is_return_value_valid(return_val)):
+			_lgr.error(str("Method [", stub_method, "] was stubbed to return invalid value [", return_val, "]."))
 			return false
 	return true
 
@@ -135,7 +144,9 @@ func to_return(val):
 
 
 func to_do_nothing():
-	to_return(null)
+	var meta = _get_method_meta()
+	if(meta != {}):
+		to_return(GutConstants.get_default_return_value(meta.return.type))
 	return self
 
 

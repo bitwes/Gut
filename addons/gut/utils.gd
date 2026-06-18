@@ -2,8 +2,6 @@
 class_name GutUtils
 extends Object
 
-const GUT_METADATA = '__gutdbl'
-
 # Note, these cannot change since places are checking for TYPE_INT to determine
 # how to process parameters.
 enum DOUBLE_STRATEGY{
@@ -15,6 +13,13 @@ enum DIFF {
 	DEEP,
 	SIMPLE
 }
+
+enum TREAT_AS {
+	NOTHING,
+	FAILURE,
+}
+
+const GUT_METADATA = '__gutdbl'
 
 const TEST_STATUSES = {
 	NO_ASSERTS = 'no asserts',
@@ -37,14 +42,19 @@ const NOTHING := '__NOTHING__'
 const NO_TEST := 'NONE'
 const GUT_ERROR_TYPE = 999
 
-enum TREAT_AS {
-	NOTHING,
-	FAILURE,
-}
 
-static var class_ref_by_name := {}
-static var class_ref_by_class := {}
-
+static var _class_ref_by_name := {}
+static var class_ref_by_name := {} :
+	get():
+		if(_class_ref_by_class == {}):
+			_create_class_dictionaries()
+		return _class_ref_by_name
+static var _class_ref_by_class := {}
+static var class_ref_by_class := {} :
+	get():
+		if(_class_ref_by_class == {}):
+			_create_class_dictionaries()
+		return _class_ref_by_class
 
 
 ## This dictionary defaults to all the native classes that we cannot call new
@@ -214,10 +224,6 @@ static var warnings_when_loading_test_scripts := { # WarningsManager dictionary
 }
 
 
-
-static func _static_init() -> void:
-	_create_class_dictionaries()
-
 # ------------------------------------------------------------------------------
 # Everything should get a logger through this.
 #
@@ -259,15 +265,16 @@ static func _create_class_dictionaries():
 		"NativeMenuMacOS",
 	]
 	for classname in ClassDB.get_class_list():
-		if(!black_list.has(classname) and (ClassDB.can_instantiate(classname) or GodotSingletons.names.has(classname))):
+		if(!black_list.has(classname) and (ClassDB.can_instantiate(classname) or \
+		 	GodotSingletons.names.has(classname))):
 			text += str('"', classname, '": ', classname, ", \n")
 
 	text += "}"
 	var inst =  GutUtils.create_script_from_source(text, 'res://dynamically_generated/class_dictionary.gd').new()
 
-	class_ref_by_name = inst.all_the_classes
+	_class_ref_by_name = inst.all_the_classes
 	for key in inst.all_the_classes:
-		class_ref_by_class[inst.all_the_classes[key]] = key
+		_class_ref_by_class[inst.all_the_classes[key]] = key
 
 
 

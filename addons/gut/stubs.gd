@@ -15,7 +15,7 @@ func _normalize_stub_target(target):
 	var to_return = null
 	if(typeof(target) == TYPE_OBJECT or GutUtils.is_native_class(target)):
 		to_return = target
-	if(typeof(target) == TYPE_STRING):
+	elif(typeof(target) == TYPE_STRING):
 		if(FileAccess.file_exists(target)):
 			to_return = load(target)
 		else:

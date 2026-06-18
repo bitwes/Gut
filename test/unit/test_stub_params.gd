@@ -70,7 +70,7 @@ func test_to_call_super_returns_self():
 	assert_eq(val, gr.stub_params)
 
 func test_to_do_nothing_returns_self():
-	var sp = StubParamsClass.new('thing', 'method')
+	var sp = StubParamsClass.new(StubParamsClass, 'to_return')
 	assert_eq(sp.to_do_nothing(), sp)
 
 func test_turns_paths_into_classes():
@@ -140,7 +140,7 @@ func test_order_of_calls_with_to_return_does_not_matter():
 	assert_false(sp.is_default_override_only())
 
 func test_to_do_nothing_sets_flag():
-	var sp = StubParamsClass.new()
+	var sp = StubParamsClass.new(StubParamsClass, 'to_return')
 	sp.param_count(10)
 	sp.to_do_nothing()
 	assert_false(sp.is_default_override_only())
@@ -239,7 +239,7 @@ func test_to_return_sets_return_override_flag():
 	assert_true(sp.is_return_override())
 
 func test_to_do_nothing_sets_return_override_flag():
-	var sp = StubParamsClass.new()
+	var sp = StubParamsClass.new(StubParamsClass, 'to_return')
 	sp.to_do_nothing()
 	assert_true(sp.is_return_override())
 
@@ -282,7 +282,7 @@ func test_after_locked_cannot_to_return():
 	assert_null(sp.return_val)
 
 func test_after_locked_cannot_to_do_nothing():
-	var sp = StubParamsClass.new()
+	var sp = StubParamsClass.new(StubParamsClass, 'to_return')
 	sp.locked = true
 	sp.to_do_nothing()
 	assert_push_error('locked')
@@ -325,7 +325,11 @@ func test_error_when_stubbing_a_method_on_a_script_to_return_a_different_invalid
 	assert_false(result)
 	assert_tracked_gut_error(self, 1)
 
+func test_can_stub_explicit_return_to_call_function():
+	var sp = GutUtils.StubParams.new(DoubleMe, 'explicit_int_return')
+	sp.to_call(func(): return 8)
 
+	assert_true(sp.validate(), 'should be valid')
 
 var spot_check_params = ParameterFactory.named_parameters(
 	['method', 'value', 'valid'],
@@ -350,10 +354,15 @@ var spot_check_params = ParameterFactory.named_parameters(
 		['explict_variant_return', GutTest, true],
 		['explict_variant_return', null, true],
 
+		['void_return', 8, false],
+		['void_return', null, true],
+
+		['inferred_void_return', 8, true],
+		['inferred_void_return', null, true],
 	]
 )
 func test_spot_checking_return_types_on_an_instance(p = use_parameters(spot_check_params)):
-	var n = autofree(TestResourceDoubleMe.new())
+	var n = autofree(DoubleMe.new())
 	var sp = GutUtils.StubParams.new(n, p.method)
 	sp.to_return(p.value)
 

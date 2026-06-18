@@ -105,7 +105,6 @@ static func _static_init() -> void:
 			TYPE_KEYWORDS[key] = n.to_pascal_case()
 
 
-
 static func is_not_set(val):
 	return typeof(val) == TYPE_STRING_NAME and val == NOT_SET
 

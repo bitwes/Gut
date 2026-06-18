@@ -22,7 +22,7 @@ class BaseTest:
 	func assert_source_contains(thing, look_for, text=''):
 		var source = get_source(thing)
 		var msg = str('Expected source for ', str(thing), ' to contain "', look_for, '":  ', text)
-		if(source == null || source.find(look_for) == -1):
+		if(source == null or source.find(look_for) == -1):
 			fail_test(msg)
 			if(print_source_when_failing):
 				var header = str('------ Source for ', _strutils.type2str(thing), ' ------')
@@ -35,7 +35,7 @@ class BaseTest:
 	func assert_source_not_contains(thing, look_for, text=''):
 		var source = get_source(thing)
 		var msg = str('Expected source for ', _strutils.type2str(thing), ' to not contain "', look_for, '":  ', text)
-		if(source == null || source.find(look_for) == -1):
+		if(source == null or source.find(look_for) == -1):
 			pass_test(msg)
 		else:
 			fail_test(msg)

@@ -24,14 +24,19 @@ func test_no_error_when_stub_to_return_on_methods_with_inferred_void_return_type
 	assert_tracked_gut_error(self, 0)
 
 
-func test_error_when_stubbing_a_method_on_an_instance_to_return_a_different_invalid_data_type():
-	var n = autofree(DoubleMe.new())
-	var sp = GutUtils.StubParams.new(n.explicit_int_return)
-	sp.to_return('asdf')
+func test_what_you_got():
+	var methods = [
+		'inferred_void_return', 'inferred_variant_return', 'void_return'
+	]
 
-	var result = sp.validate()
-	assert_false(result)
-	assert_tracked_gut_error(self, 1)
+	for m in methods:
+		var sp = GutUtils.StubParams.new(DoubleMe, m)
+		print('--- ', m, ' ---')
+		print('return type ', sp.return_type)
+		print('return_val ', sp.return_val)
+		print(sp._method_meta.return.usage && PROPERTY_USAGE_NIL_IS_VARIANT)
+		GutUtils.pretty_print(sp._method_meta)
+
 
 func test_error_when_stubbing_a_method_on_a_script_to_return_a_different_invalid_data_type():
 	var sp = GutUtils.StubParams.new(DoubleMe, 'explicit_int_return')
@@ -42,32 +47,29 @@ func test_error_when_stubbing_a_method_on_a_script_to_return_a_different_invalid
 	assert_tracked_gut_error(self, 1)
 
 
-func test_error_when_stubbing_to_return_null_when_return_type_cannot_be_null():
-	pending("int, String, etc..maybe only Object and Variant can be null?  IDK.")
-
-
+# This isn't that helpful since it only matters when stubbing at the class level
 func test_cannot_double_something_when_it_has_invalid_stubs():
 	pending("The runtime errors are confusing, so this would cut down on that.")
-
-
-# func test_warn_when_methods_that_have_return_types_are_not_stubbed():
-# 	pending("This could be at the time of doubling or when the method is called.  " + \
-# 		"Something needs to happen to make the runtime error clearer.")
-
-
-func test_warn_when_non_stubbed_method_is_called():
-	pending("Warning should include what is being returned.  " + \
-		"Right now, it's always null, but if other defaults are implemented then " +\
-		"the value is included in the message.")
 
 
 func test_stubbing_to_do_nothing_prevents_non_stubbed_warning_when_method_is_called():
 	pending()
 
 
-var default_values = [1]
-func test_default_values_are_returned_by_default(vals = use_parameters(default_values)):
-	pending(str(vals))
+func test_what_should_happen_when_you_stub_to_do_nothing_on_something_that_has_an_explicit_return():
+	var dbl = partial_double(DoubleMe).new()
+	stub(dbl.explicit_int_return).to_do_nothing()
+	var result = dbl.explicit_int_return()
+	assert_eq(result, GutConstants.get_default_return_value(TYPE_INT))
+
+
+var default_values = [
+	['explicit_int_return']
+]
+func test_default_values_are_returned_by_default(p = use_parameters(default_values)):
+	var dbl = double(DoubleMe).new()
+	var result = dbl.call(p[0])
+	assert_eq(result, GutConstants.DEFAULT_RETURNS[typeof(result)])
 
 
 func test_can_call_method_that_has_an_inferred_int_return():
@@ -95,7 +97,7 @@ func test_call_method_that_has_an_int_return_for_an_external_inner_class():
 
 
 var spot_check_params = ParameterFactory.named_parameters(
-	['method', 'value', 'valid'],
+	['method', 'value', 'valid', 'special'],
 	[
 		['explicit_int_return', 1, true],
 		['explicit_int_return', 'adsf', false],
@@ -105,31 +107,65 @@ var spot_check_params = ParameterFactory.named_parameters(
 		['inferred_int_return', 'asdf', true],
 		['inferred_int_return', null, true],
 
-		['inferred_variant_return', 8, true],
-		['inferred_variant_return', 'asdf', true],
-		['inferred_variant_return', null, true],
-
 		['return_string_plus_a', 8, false],
 		['return_string_plus_a', 'asdf', true],
 		['return_string_plus_a', null, false],
 
+		['inferred_variant_return', 8, true],
+		['inferred_variant_return', 'asdf', true],
+		['inferred_variant_return', null, true],
+
 		['explict_variant_return', 8, true],
 		['explict_variant_return', GutTest, true],
 		['explict_variant_return', null, true],
+
+		# It looks like you can return values from explicit void methods but
+		# null will always be returned and an error is not generated.  Probably
+		# some compromise that had to be made for non-typed code.  The parser
+		# can catch it, but it appears it cannot in the case of a generated
+		# double.
+		['void_return', 8, true, 		'special'],
+		['void_return', null, true],
+
+		['inferred_void_return', 8, true],
+		['inferred_void_return', null, true],
 	]
 )
 func test_using_double_me_stubs(p = use_parameters(spot_check_params)):
 	var dbl = double(DoubleMe).new()
 	var c = Callable(dbl, p.method)
 	stub(c).to_return(p.value)
+	var result = dbl.call(p.method)
 
-	dbl.call(p.method)
-	if(p.valid):
-		assert_engine_error_count(0)
+	if(p.special != null):
+		# In the case of explicit void return, no parser or script error is
+		# generated, but null is returned instead of any value.  We also expect
+		# StubParams to have generated an error.
+		if(p.method == 'void_return'):
+			assert_tracked_gut_error(self, 1)
+			assert_null(result)
 	else:
-		assert_tracked_gut_error(self, 1)
-		assert_engine_error("Trying to return a value")
+		if(p.valid):
+			assert_engine_error_count(0)
+			assert_eq(result, p.value, 'Expected value was returned')
+		else:
+			assert_tracked_gut_error(self, 1)
+			assert_engine_error("Trying to return a value")
 
+
+func test_stubbing_to_call_with_valid_return_is_fine():
+	var dbl = double(DoubleMe).new()
+	stub(dbl.explicit_int_return).to_call(func(): return -10)
+
+	assert_eq(dbl.explicit_int_return(), -10)
+
+
+func test_stubbing_to_call_with_invalid_return_causes_engine_error():
+	var dbl = double(DoubleMe).new()
+	stub(dbl.explicit_int_return).to_call(func(): return 'asdf')
+
+	assert_ne(dbl.explicit_int_return(), -10)
+	assert_engine_error("Trying to return a value ")
 
 
 class TestReturnTypes:
@@ -146,6 +182,7 @@ class TestReturnTypes:
 
 		add_child(_gut)
 		add_child(_test)
+
 
 	func after_each():
 		_gut.free()
@@ -169,13 +206,3 @@ class TestReturnTypes:
 				str(method_name, ' default return value'))
 
 		assert_engine_error_count(0)
-
-
-	func test_using_to_do_nothing_not_allowed_with_methods_that_have_return_type():
-		var inst = _test.partial_double(Node2D).new()
-		_test.stub(Node2D, 'get_position').to_do_nothing()
-		autofree(inst)
-		# Should get an error when stubbing get_position to_do_nothing.  Error
-		# message should indicate that you must use to_return with a Vector2
-		# value
-		assert_tracked_gut_error(_gut, 1)
