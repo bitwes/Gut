@@ -569,6 +569,9 @@ class TestStub:
 class TestReturnTypes:
 	extends GutInternalTester
 
+	func should_skip_script():
+		return EngineDebugger.is_active()
+
 	var _gut = null
 	var _test = null
 
