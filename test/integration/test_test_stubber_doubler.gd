@@ -566,3 +566,105 @@ class TestStub:
 
 
 
+class TestReturnTypes:
+	extends GutInternalTester
+
+	var _gut = null
+	var _test = null
+
+
+	func before_each():
+		_gut = new_gut(verbose)
+
+		_test = new_wired_test(_gut)
+		_test.ignore_method_when_doubling(DoubleMe, '_notification')
+
+		add_child_autofree(_gut)
+		add_child_autofree(_test)
+
+
+	func after_each():
+		_gut.get_stubber().clear()
+
+
+	func test_stubbing_to_do_nothing_stubs_return_value_based_on_return_type():
+		var dbl = autofree(_test.partial_double(DoubleMe).new())
+		_test.stub(dbl.explicit_int_return).to_do_nothing()
+		var result = dbl.explicit_int_return()
+		assert_eq(result, GutConstants.get_default_return_value(TYPE_INT))
+
+
+	var spot_check_params = ParameterFactory.named_parameters(
+		['method', 'value', 'valid', 'special'],
+		[
+			['explicit_int_return', 1, true],
+			['explicit_int_return', 'adsf', false],
+			['explicit_int_return', null, false],
+
+			['inferred_int_return', 8, true],
+			['inferred_int_return', 'asdf', true],
+			['inferred_int_return', null, true],
+
+			['return_string_plus_a', 8, false],
+			['return_string_plus_a', 'asdf', true],
+			['return_string_plus_a', null, false],
+
+			['inferred_variant_return', 8, true],
+			['inferred_variant_return', 'asdf', true],
+			['inferred_variant_return', null, true],
+
+			['explict_variant_return', 8, true],
+			['explict_variant_return', GutTest, true],
+			['explict_variant_return', null, true],
+
+			# It looks like you can return values from explicit void methods but
+			# null will always be returned and an error is not generated.  Probably
+			# some compromise that had to be made for non-typed code.  The parser
+			# can catch it, but it appears it cannot in the case of a generated
+			# double.
+			['void_return', 8, true, 		'special'],
+			['void_return', null, true],
+
+			['inferred_void_return', 8, true],
+			['inferred_void_return', null, true],
+		]
+	)
+	func test_using_double_me_stubs(p = use_parameters(spot_check_params)):
+		var dbl = autofree(_test.double(DoubleMe).new())
+		var c = Callable(dbl, p.method)
+		_test.stub(c).to_return(p.value)
+		var result = dbl.call(p.method)
+
+		if(p.special != null):
+			# In the case of explicit void return, no parser or script error is
+			# generated, but null is returned instead of any value.  We also expect
+			# StubParams to have generated an error.
+			if(p.method == 'void_return'):
+				assert_tracked_gut_error(_test, 1)
+				assert_null(result)
+		else:
+			if(p.valid):
+				assert_engine_error_count(0)
+				assert_eq(result, p.value, 'Expected value was returned')
+			else:
+				assert_tracked_gut_error(_test, 1)
+				assert_engine_error("Trying to return a value")
+
+
+	func test_can_call_all_methods_in_all_return_types():
+		# Signals return values cause doubled methods to hang because they
+		# all have await in them.  The methods end up awaiting the returned
+		# signal and nothing ever ends.
+		_test.ignore_method_when_doubling(TestResourceAllReturnTypes, 'return_signal')
+
+		var Dbl = _test.double(TestResourceAllReturnTypes)
+		var dbl = autofree(Dbl.new())
+
+		# Don't use get_*method_list or it will include the __gutdbl_done and
+		# mess things up when it gets called.
+		for method_name in dbl.__gutdbl_values.doubled_methods:
+			var result = dbl.call(method_name)
+			assert_eq(result, GutConstants.get_default_return_value(typeof(result)),
+				str(method_name, ' default return value'))
+
+		assert_engine_error_count(0)
