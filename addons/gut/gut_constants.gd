@@ -86,6 +86,9 @@ static var DEFAULT_RETURNS = {
 	# TYPE_MAX : 'TYPE_MAX',
 }
 
+# Seeded with any type constant where the constant tname can't be converted to
+# a string using pascal case and/or the values need manual conversion.  The
+# rest are added in _static_init.
 static var TYPE_KEYWORDS = {
 	TYPE_NIL : 'null',
 	TYPE_BOOL : 'bool',

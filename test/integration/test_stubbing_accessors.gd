@@ -30,7 +30,6 @@ var stubber = null
 
 func before_each():
 	doubler = Doubler.new()
-	# doubler.print_source = true
 	doubler.inner_class_registry.register(self.get_script())
 	stubber = GutUtils.Stubber.new()
 	doubler.set_stubber(stubber)

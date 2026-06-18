@@ -175,7 +175,6 @@ func get_function_text(parsed_method, singleton=null):
 				"func_decleration": decleration,
 				"method_name": meta.name,
 				"param_array": param_array,
-				# "super_call": _get_super_call_text(meta, args, singleton),
 				"super_call": _get_super_call_text(parsed_method, singleton),
 				"return_it": return_it
 			})

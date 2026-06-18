@@ -41,13 +41,14 @@ class ParsedMethod:
 	func _get_return_type(meta):
 		var r_meta = meta["return"]
 		var return_keyword = GutConstants.TYPE_KEYWORDS[r_meta.type]
+
 		if(r_meta.type != 0):
 			return_keyword = return_keyword
 		elif(r_meta.usage & PROPERTY_USAGE_NIL_IS_VARIANT != 0):
 			return_keyword = 'Variant'
 		else:
 			return_keyword = 'void'
-		# print(meta.name, ':  ', return_keyword, '::', r_meta.type, '::', r_meta.usage, '::', r_meta.class_name)
+
 		return return_keyword
 
 

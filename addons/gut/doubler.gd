@@ -228,7 +228,6 @@ func _create_singleton_double(singleton, is_partial):
 
 	for key in parsed.methods_by_name:
 		if(!_ignored_methods.has(singleton, key)):
-			# var pm = GutUtils.ScriptCollector.ParsedMethod.new(parsed.methods_by_name[key])
 			dbl_src += _method_maker.get_function_text(parsed.methods_by_name[key], singleton) + "\n"
 
 	if(print_source):

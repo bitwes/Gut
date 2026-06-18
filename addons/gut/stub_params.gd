@@ -122,15 +122,14 @@ func _is_return_value_valid(val):
 # -------------------------
 func validate() -> bool:
 	var meta = _get_method_meta()
-	# if(meta == {}):
-	# 	_lgr.error(str("The method ", stub_method, " could not found."))
-	# 	return false
+	var to_return = true
 
 	if(stub_method != '_init' and meta != {} and call_this == null):
 		if(!_is_return_value_valid(return_val)):
 			_lgr.error(str("Method [", stub_method, "] was stubbed to return invalid value [", return_val, "]."))
-			return false
-	return true
+			to_return = false
+
+	return to_return
 
 
 func to_return(val):

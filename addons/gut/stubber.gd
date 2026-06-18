@@ -79,11 +79,6 @@ func _find_action_stub(obj, method, parameters=null):
 	elif(null_match != null):
 		to_return = null_match
 
-	# if(to_return != null):
-	# 	print("  USING ", to_return, ' = ', to_return.to_s())
-	# else:
-	# 	print("  USING null")
-
 	return to_return
 
 
