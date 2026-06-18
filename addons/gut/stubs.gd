@@ -15,7 +15,7 @@ func _normalize_stub_target(target):
 	var to_return = null
 	if(typeof(target) == TYPE_OBJECT or GutUtils.is_native_class(target)):
 		to_return = target
-	if(typeof(target) == TYPE_STRING):
+	elif(typeof(target) == TYPE_STRING):
 		if(FileAccess.file_exists(target)):
 			to_return = load(target)
 		else:
@@ -80,6 +80,18 @@ func get_all_stubs(thing, method):
 			matches.append_array(stubs[entry][method])
 	return matches
 
+
+func get_default_stub(thing, method):
+	var obj = _normalize_stub_target(thing)
+	var match_on = _get_entries_matching_target(obj)
+	var to_return = null
+	for entry in match_on:
+		if(stubs.has(entry) and stubs[entry].has(method)):
+			var method_stubs = stubs[entry][method]
+			for stub in method_stubs:
+				if(stub.is_script_default):
+					to_return = stub
+	return to_return
 
 func to_s():
 	var text = ''

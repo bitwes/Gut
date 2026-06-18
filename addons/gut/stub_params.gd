@@ -10,7 +10,13 @@ var logger = _lgr :
 	set(val): _lgr = val
 
 
-var return_val = null
+var return_val = GutConstants.NOT_SET :
+	get():
+		if(GutConstants.is_not_set(return_val)):
+			return null
+		else:
+			return return_val
+var return_type = TYPE_NIL
 var stub_target = null
 var parameters = null # the parameter values to match method call on.
 var stub_method = null
@@ -66,12 +72,15 @@ func _init(target=null, method=null, _subpath=null):
 		_load_defaults_from_metadata(method)
 		is_script_default = true
 	elif(stub_target != null and stub_method != null and typeof(stub_target) != TYPE_STRING):
-		if(!GutUtils.is_native_class(stub_target)):
-			var method_list = stub_target.get_method_list()
-			if(method_list != null):
-				var meta = GutUtils.find_method_meta(method_list, stub_method)
-				if(meta != null):
-					_method_meta = meta
+		var method_list = null
+		if(typeof(stub_target) == TYPE_OBJECT and stub_target is GDScript):
+			method_list = stub_target.get_script_method_list()
+		elif(!GutUtils.is_native_class(stub_target)):
+			method_list = stub_target.get_method_list()
+		if(method_list != null):
+			var meta = GutUtils.find_method_meta(method_list, stub_method)
+			if(meta != null):
+				_method_meta = meta
 
 
 func _load_defaults_from_metadata(meta):
@@ -81,6 +90,8 @@ func _load_defaults_from_metadata(meta):
 		values.push_front(null)
 
 	param_defaults(values)
+	return_type = meta.return.type
+	return_val = GutConstants.get_default_return_value(meta.return.type)
 
 
 func _get_method_meta():
@@ -98,10 +109,29 @@ func _error_if_locked():
 	else:
 		return false
 
+func _is_return_value_valid(val):
+	var is_valid = true
+	var meta = _get_method_meta()
+	if((meta.return.type != 0 or (meta.return.type == 0 and !(meta.return.usage && PROPERTY_USAGE_NIL_IS_VARIANT))) and \
+		meta.return.type != typeof(return_val)):
+			is_valid = false
+	return is_valid
 
 # -------------------------
 # Public
 # -------------------------
+func validate() -> bool:
+	var meta = _get_method_meta()
+	var to_return = true
+
+	if(stub_method != '_init' and meta != {} and call_this == null):
+		if(!_is_return_value_valid(return_val)):
+			_lgr.error(str("Method [", stub_method, "] was stubbed to return invalid value [", return_val, "]."))
+			to_return = false
+
+	return to_return
+
+
 func to_return(val):
 	if(_error_if_locked()):
 		return
@@ -113,7 +143,9 @@ func to_return(val):
 
 
 func to_do_nothing():
-	to_return(null)
+	var meta = _get_method_meta()
+	if(meta != {}):
+		to_return(GutConstants.get_default_return_value(meta.return.type))
 	return self
 
 

@@ -29,8 +29,7 @@ var stubber = null
 
 
 func before_each():
-	doubler = Doubler.new(GutUtils.DOUBLE_STRATEGY.INCLUDE_NATIVE)
-	# doubler.print_source = true
+	doubler = Doubler.new()
 	doubler.inner_class_registry.register(self.get_script())
 	stubber = GutUtils.Stubber.new()
 	doubler.set_stubber(stubber)

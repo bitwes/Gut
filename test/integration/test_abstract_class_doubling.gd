@@ -4,7 +4,12 @@ extends GutInternalTester
 @abstract
 class AbstractClass:
 
-	@abstract func abstract_method()
+	@abstract func abstract_method() -> Variant
+
+
+@abstract
+class AbstractNoReturn:
+	@abstract func abstract_method() -> void
 
 
 @abstract
@@ -41,6 +46,10 @@ func test_can_double_abstract():
 	var dbl = double(AbstractClass)
 	assert_not_null(dbl)
 
+func test_can_double_abstract_with_void_return():
+	var dbl = double(AbstractNoReturn)
+	assert_not_null(dbl)
+
 
 func test_can_stub_to_return_for_abstract_method_at_sctipt_level():
 	stub(AbstractClass, 'abstract_method').to_return('a')
@@ -67,14 +76,11 @@ func test_error_when_stubbing_to_call_super_at_script_level():
 
 
 func test_error_when_stubbing_to_call_super_at_instance_level():
-	# Arrange
 	var doubled = autofree(double(AbstractClass).new())
 	stub(doubled.abstract_method).to_call_super()
 
-	# Act
 	var result = doubled.abstract_method()
 
-	# Assert
 	assert_null(result)
 	var current_test_errors = gut.error_tracker.get_current_test_errors()
 	assert_eq(current_test_errors[0].code, "Cannot call super() because method abstract_method is abstract.")

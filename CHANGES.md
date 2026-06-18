@@ -2,6 +2,28 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+
+# 9.7.0
+
+## Breaking Changes
+Godot 4.7 introduced more restrictive type checking for return values.  In prior releases Doubles could return `null` regardless of the declared return type of the function.  Doubles have been adjusted to return a default value for each `TYPE_` constant.  This may cause false postives/negatives in existing and new tests if you do not take this into account.
+
+When a method is stubbed to return an invalid value GUT will generate an error but execution will continue.  This will result in an engine error as well.
+
+When a method is stubbed to return an invalid value GUT will generate an error but execution will continue.  This will result in an engine error as well.
+
+Gut Error Example:
+```
+[GUT ERROR]:  Method [explicit_int_return] was stubbed to return invalid value [adsf].
+```
+Engine Error Example:
+```
+SCRIPT ERROR: Trying to return a value of type "String" from a function whose return type is "int".
+
+`stub(...).to_do_nothing()` now stubs the method to return the default value for the return type of the function instead of `null`.
+
+
+
 # 9.6.0
 
 ## Breaking Changes

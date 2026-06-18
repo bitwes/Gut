@@ -1,4 +1,5 @@
 class ParsedSingleton:
+
 	var methods_by_name = {}
 	var enums = {}
 	var properties = {}
@@ -14,7 +15,8 @@ class ParsedSingleton:
 		singleton_id = singleton.get_instance_id()
 
 		for method in ClassDB.class_get_method_list(sname, true):
-			methods_by_name[method.name] = method
+			var pm = GutUtils.ScriptCollector.ParsedMethod.new(method)
+			methods_by_name[method.name] = pm
 
 		for e in ClassDB.class_get_enum_list(sname, true):
 			for c in ClassDB.class_get_enum_constants(sname, e):

@@ -14,6 +14,9 @@ class InnerA:
 	func get_a():
 		return 'a'
 
+	func int_return() -> int:
+		return 100
+
 
 # Needed another class with same method as an inner class to test
 # stubbing.

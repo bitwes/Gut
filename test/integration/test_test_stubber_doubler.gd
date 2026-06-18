@@ -188,7 +188,7 @@ class TestSingletonDoubling:
 
 		assert_eq(dbl_time.get_time_string_from_unix_time(1), "one")
 		assert_eq(dbl_time.get_time_string_from_unix_time(2), "two")
-		assert_null(dbl_time.get_time_string_from_unix_time(3), 'nonstubbed value returns null')
+		assert_eq(dbl_time.get_time_string_from_unix_time(3), "", 'nonstubbed value returns null')
 
 	func test_do_not_have_to_specify_defaulted_vaules_for_stub_to_match():
 		var dbl_input = _test.double_singleton(Input).new()
@@ -396,20 +396,22 @@ class TestPartialDoubleMethod:
 	func test_can_stub_partial_doubled_native_class():
 		var inst = _test.partial_double(Node2D).new()
 		autofree(inst)
-		_test.stub(inst, 'get_position').to_return(-1)
-		assert_eq(inst.get_position(), -1)
+		_test.stub(inst, 'get_position').to_return(Vector2(1, 1))
+		assert_eq(inst.get_position(), Vector2(1, 1))
 
 	func test_can_stub_partial_doubled_native_class_to_do_nothing_before_creating_double():
-		_test.stub(Node2D, 'get_position').to_do_nothing()
+		_test.stub(Node2D, 'look_at').to_do_nothing()
 		var inst = _test.partial_double(Node2D).new()
 		autofree(inst)
-		assert_eq(inst.get_position(), null)
+		inst.look_at(Vector2(5, 5))
+		assert_eq(inst.rotation, 0.0)
 
 	func test_can_stub_partial_doubled_native_class_to_do_nothing_after_creating_double():
 		var inst = _test.partial_double(Node2D).new()
-		_test.stub(Node2D, 'get_position').to_do_nothing()
+		_test.stub(Node2D, 'look_at').to_do_nothing()
 		autofree(inst)
-		assert_eq(inst.get_position(), null)
+		inst.look_at(Vector2(5, 5))
+		assert_eq(inst.rotation, 0.0)
 
 	func test_can_spy_on_partial_doubled_native_class():
 		var pass_count = _test.get_pass_count()
@@ -473,7 +475,7 @@ class TestOverridingParameters:
 		assert_eq(ret_val, '12')
 
 	func test_vararg_methods_get_extra_parameters_by_default():
-		_test.stub(Node, 'rpc_id').to_do_nothing()
+		_test.stub(Node, 'rpc_id').to_return(1)
 		var inst =  _test.double(Node).new()
 		add_child_autofree(inst)
 		var ret_val = inst.rpc_id(1, 'foo', '3', '4', '5')
@@ -481,14 +483,14 @@ class TestOverridingParameters:
 
 	func test_issue_246_rpc_id_varargs():
 		var inst =  _test.double(Node).new()
-		_test.stub(Node, 'rpc_id').to_do_nothing()
+		_test.stub(Node, 'rpc_id').to_return(1)
 		add_child_autofree(inst)
 		inst.rpc_id(1, 'foo', '3', '4', '5')
 		_test.assert_called(inst, 'rpc_id', [1, 'foo', ['3', '4', '5']])
 		assert_eq(_test.get_pass_count(), 1)
 
 	func test_issue_246_rpc_id_varargs2():
-		stub(Node, 'rpc_id').to_do_nothing()
+		stub(Node, 'rpc_id').to_return(1)
 		var inst = double(Node).new()
 		add_child_autofree(inst)
 		inst.rpc_id(1, 'foo', '3', '4', '5')
@@ -556,21 +558,116 @@ class TestStub:
 		_test.assert_called(d, "has_one_param", ["value"])
 		assert_pass(_test, 2)
 
-	func test_setting_local_variable_in_callable():
-		var d = autofree(_test.double(DoubleMe).new())
-		var this_var = "some value"
-		_test.stub(d.has_one_param).to_call(
-			func(_value):
-				this_var = "another value"
-				return this_var)
-		var result = d.has_one_param("asdf")
-		_test.assert_eq(result, "another value", "Seems reasonable")
-		_test.assert_ne(result, this_var, "Why would this pass?")
-		_test.assert_eq(this_var, "some value", "Ohhh, well ok.")
-		assert_pass(_test, 3)
-
 	func test_get_error_messages_when_using_callables():
 		_test.ignore_method_when_doubling(DoubleMe, "has_one_param")
 		var d = autofree(_test.double(DoubleMe).new())
 		_test.stub(d.has_one_param).to_return(5)
 		assert_tracked_gut_error(_test)
+
+
+
+class TestReturnTypes:
+	extends GutInternalTester
+
+	func should_skip_script():
+		return EngineDebugger.is_active()
+
+	var _gut = null
+	var _test = null
+
+
+	func before_each():
+		_gut = new_gut(verbose)
+
+		_test = new_wired_test(_gut)
+		_test.ignore_method_when_doubling(DoubleMe, '_notification')
+
+		add_child_autofree(_gut)
+		add_child_autofree(_test)
+
+
+	func after_each():
+		_gut.get_stubber().clear()
+
+
+	func test_stubbing_to_do_nothing_stubs_return_value_based_on_return_type():
+		var dbl = autofree(_test.partial_double(DoubleMe).new())
+		_test.stub(dbl.explicit_int_return).to_do_nothing()
+		var result = dbl.explicit_int_return()
+		assert_eq(result, GutConstants.get_default_return_value(TYPE_INT))
+
+
+	var spot_check_params = ParameterFactory.named_parameters(
+		['method', 'value', 'valid', 'special'],
+		[
+			['explicit_int_return', 1, true],
+			['explicit_int_return', 'adsf', false],
+			['explicit_int_return', null, false],
+
+			['inferred_int_return', 8, true],
+			['inferred_int_return', 'asdf', true],
+			['inferred_int_return', null, true],
+
+			['return_string_plus_a', 8, false],
+			['return_string_plus_a', 'asdf', true],
+			['return_string_plus_a', null, false],
+
+			['inferred_variant_return', 8, true],
+			['inferred_variant_return', 'asdf', true],
+			['inferred_variant_return', null, true],
+
+			['explict_variant_return', 8, true],
+			['explict_variant_return', GutTest, true],
+			['explict_variant_return', null, true],
+
+			# It looks like you can return values from explicit void methods but
+			# null will always be returned and an error is not generated.  Probably
+			# some compromise that had to be made for non-typed code.  The parser
+			# can catch it, but it appears it cannot in the case of a generated
+			# double.
+			['void_return', 8, true, 		'special'],
+			['void_return', null, true],
+
+			['inferred_void_return', 8, true],
+			['inferred_void_return', null, true],
+		]
+	)
+	func test_using_double_me_stubs(p = use_parameters(spot_check_params)):
+		var dbl = autofree(_test.double(DoubleMe).new())
+		var c = Callable(dbl, p.method)
+		_test.stub(c).to_return(p.value)
+		var result = dbl.call(p.method)
+
+		if(p.special != null):
+			# In the case of explicit void return, no parser or script error is
+			# generated, but null is returned instead of any value.  We also expect
+			# StubParams to have generated an error.
+			if(p.method == 'void_return'):
+				assert_tracked_gut_error(_test, 1)
+				assert_null(result)
+		else:
+			if(p.valid):
+				assert_engine_error_count(0)
+				assert_eq(result, p.value, 'Expected value was returned')
+			else:
+				assert_tracked_gut_error(_test, 1)
+				assert_engine_error("Trying to return a value")
+
+
+	func test_can_call_all_methods_in_all_return_types():
+		# Signals return values cause doubled methods to hang because they
+		# all have await in them.  The methods end up awaiting the returned
+		# signal and nothing ever ends.
+		_test.ignore_method_when_doubling(TestResourceAllReturnTypes, 'return_signal')
+
+		var Dbl = _test.double(TestResourceAllReturnTypes)
+		var dbl = autofree(Dbl.new())
+
+		# Don't use get_*method_list or it will include the __gutdbl_done and
+		# mess things up when it gets called.
+		for method_name in dbl.__gutdbl_values.doubled_methods:
+			var result = dbl.call(method_name)
+			assert_eq(result, GutConstants.get_default_return_value(typeof(result)),
+				str(method_name, ' default return value'))
+
+		assert_engine_error_count(0)

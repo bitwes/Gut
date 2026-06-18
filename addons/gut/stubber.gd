@@ -12,7 +12,7 @@ var _strutils = GutUtils.Strutils.new()
 var _stub_cache = []
 
 
-func _add_cache():
+func _flush_cache():
 	for stub_params in _stub_cache:
 		stub_params.logger = _lgr
 
@@ -22,6 +22,8 @@ func _add_cache():
 		if(!stub_params.is_default_override_only()):
 			action_stubs.add_stub(stub_params)
 
+		if(!stub_params.is_script_default):
+			stub_params.validate()
 		# lock the params so that any changes that would affect which bucket
 		# the params were put in can't be changed.
 		stub_params.locked = true
@@ -33,7 +35,7 @@ func _add_cache():
 #
 # obj can be an instance, class, or a path.
 func _find_action_stub(obj, method, parameters=null):
-	_add_cache()
+	_flush_cache()
 
 	var to_return = null
 	var matches = action_stubs.get_all_stubs(obj, method)
@@ -77,11 +79,6 @@ func _find_action_stub(obj, method, parameters=null):
 	elif(null_match != null):
 		to_return = null_match
 
-	# if(to_return != null):
-	# 	print("  USING ", to_return, ' = ', to_return.to_s())
-	# else:
-	# 	print("  USING null")
-
 	return to_return
 
 
@@ -114,8 +111,13 @@ func get_return(obj, method, parameters=null):
 	if(stub_info != null):
 		return stub_info.return_val
 	else:
-		_lgr.info(str('Call to [', method, '] was not stubbed for the supplied parameters ', parameters, '.  Null was returned.'))
-		return null
+		var default = parameter_stubs.get_default_stub(obj, method)
+		var to_return = null
+		if(default != null):
+			var default_return = default.return_val
+			to_return = default_return
+		_lgr.info(str('Call to [', method, '] was not stubbed for the supplied parameters ', parameters, '.  [', to_return, '] was returned.'))
+		return to_return
 
 
 func should_call_super(obj, method, parameters=null):
@@ -146,7 +148,7 @@ func get_call_this(obj, method, parameters=null):
 
 
 func get_parameter_defaults(obj, method):
-	_add_cache()
+	_flush_cache()
 	var the_defaults = []
 	var script_defaults = []
 	var matches = parameter_stubs.get_all_stubs(obj, method)
@@ -190,8 +192,8 @@ func set_logger(logger):
 
 
 func to_s():
-	return str("Parameters:\n", parameter_stubs.to_s(),
-		"\nActions:\n" , action_stubs.to_s())
+	return str("Parameter Stubs:\n", parameter_stubs.to_s(),
+		"\nAction Stubs:\n" , action_stubs.to_s())
 
 
 func stub_defaults_from_meta(target, method_meta):

@@ -75,11 +75,16 @@ func _print_call_class_db_method(method_name, on_class):
 func print_whats_up_with_these_guys():
 	var oi = ObjectInspector.ClassDBInspector.new()
 	var these_guys = [
-		"GDScriptNativeClass",
-		"SceneCacheInterface",
-		"SceneRPCInterface",
-		"SceneReplicationInterface",
-		"ThemeContext",
+		# "GDScriptNativeClass",
+		# "SceneCacheInterface",
+		# "SceneRPCInterface",
+		# "SceneReplicationInterface",
+		# "ThemeContext",
+		# -- -- --
+		"IPUnix",
+		"GodotNavigationServer2D",
+		"NativeMenuMacOS",
+		"Input"
 
 		# "ViewPanner", # only exists when launching from editor.
 
@@ -134,10 +139,10 @@ func _init():
 	# get_all_enums()
 	# get_all_int_constants()
 	# get_all_properties()
-	# print_all_classes()
+	print_all_classes()
 
-	print_whats_up_with_these_guys()
-	can_we_find_the_bad_guys()
+	# print_whats_up_with_these_guys()
+	# can_we_find_the_bad_guys()
 	# print_disabled_classes()
 	# print_low_method_classes()
 

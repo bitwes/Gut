@@ -1,6 +1,11 @@
 # Copy the Properties section from class_@globalscope.html and paste it in here.
 # Then run create_singleton_list.gd to generate documentation and code for
 # all listed singletons.
+AccessibilityServer
+
+
+AccessibilityServer
+
 AudioServer
 
 
@@ -40,6 +45,11 @@ GDExtensionManager
 
 
 GDExtensionManager
+
+GDScriptLanguageProtocol
+
+
+GDScriptLanguageProtocol
 
 Geometry2D
 
