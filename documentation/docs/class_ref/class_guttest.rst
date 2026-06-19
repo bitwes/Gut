@@ -12,8 +12,6 @@ GutTest
 
 This is the base class for your GUT test scripts.
 
-
-
 GUT Wiki:  `https://gut.readthedocs.io <https://gut.readthedocs.io>`__ 
 
 Simple Example
@@ -77,125 +75,125 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`add_child_autoqfree<class_GutTest_method_add_child_autoqfree>`\ (\ node, legible_unique_name = false\ )                                                                                                                                                    |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`after_all<class_GutTest_method_after_all>`\ (\ )                                                                                                                                                                                                           |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`after_all<class_GutTest_method_after_all>`\ (\ )                                                                                                                                                                                                           |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`after_each<class_GutTest_method_after_each>`\ (\ )                                                                                                                                                                                                         |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`after_each<class_GutTest_method_after_each>`\ (\ )                                                                                                                                                                                                         |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_accessors<class_GutTest_method_assert_accessors>`\ (\ obj, property, default, set_to\ )                                                                                                                                                             |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_accessors<class_GutTest_method_assert_accessors>`\ (\ obj, property, default, set_to\ )                                                                                                                                                             |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_almost_eq<class_GutTest_method_assert_almost_eq>`\ (\ got, expected, error_interval, text = ""\ )                                                                                                                                                   |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_almost_eq<class_GutTest_method_assert_almost_eq>`\ (\ got, expected, error_interval, text = ""\ )                                                                                                                                                   |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_almost_ne<class_GutTest_method_assert_almost_ne>`\ (\ got, not_expected, error_interval, text = ""\ )                                                                                                                                               |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_almost_ne<class_GutTest_method_assert_almost_ne>`\ (\ got, not_expected, error_interval, text = ""\ )                                                                                                                                               |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_between<class_GutTest_method_assert_between>`\ (\ got, expect_low, expect_high, text = ""\ )                                                                                                                                                        |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_between<class_GutTest_method_assert_between>`\ (\ got, expect_low, expect_high, text = ""\ )                                                                                                                                                        |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_called<class_GutTest_method_assert_called>`\ (\ inst, method_name = null, parameters = null\ )                                                                                                                                                      |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_called<class_GutTest_method_assert_called>`\ (\ inst, method_name = null, parameters = null\ )                                                                                                                                                      |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_called_count<class_GutTest_method_assert_called_count>`\ (\ callable\: `Callable <https://docs.godotengine.org/en/stable/classes/class_callable.html>`_, expected_count\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_\ ) |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_called_count<class_GutTest_method_assert_called_count>`\ (\ callable\: `Callable <https://docs.godotengine.org/en/stable/classes/class_callable.html>`_, expected_count\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_\ ) |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_connected<class_GutTest_method_assert_connected>`\ (\ p1, p2, p3 = null, p4 = null\ )                                                                                                                                                               |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_connected<class_GutTest_method_assert_connected>`\ (\ p1, p2, p3 = null, p4 = null\ )                                                                                                                                                               |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_does_not_have<class_GutTest_method_assert_does_not_have>`\ (\ obj, element, text = ""\ )                                                                                                                                                            |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_does_not_have<class_GutTest_method_assert_does_not_have>`\ (\ obj, element, text = ""\ )                                                                                                                                                            |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_engine_error<class_GutTest_method_assert_engine_error>`\ (\ text, msg = ""\ )                                                                                                                                                                       |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_engine_error<class_GutTest_method_assert_engine_error>`\ (\ text, msg = ""\ )                                                                                                                                                                       |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_engine_error_count<class_GutTest_method_assert_engine_error_count>`\ (\ count\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_, msg\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_ = ""\ )  |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_engine_error_count<class_GutTest_method_assert_engine_error_count>`\ (\ count\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_, msg\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_ = ""\ )  |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_eq<class_GutTest_method_assert_eq>`\ (\ got, expected, text = ""\ )                                                                                                                                                                                 |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_eq<class_GutTest_method_assert_eq>`\ (\ got, expected, text = ""\ )                                                                                                                                                                                 |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_eq_deep<class_GutTest_method_assert_eq_deep>`\ (\ v1, v2\ )                                                                                                                                                                                         |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_eq_deep<class_GutTest_method_assert_eq_deep>`\ (\ v1, v2\ )                                                                                                                                                                                         |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_exports<class_GutTest_method_assert_exports>`\ (\ obj, property_name, type\ )                                                                                                                                                                       |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_exports<class_GutTest_method_assert_exports>`\ (\ obj, property_name, type\ )                                                                                                                                                                       |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_false<class_GutTest_method_assert_false>`\ (\ got, text = ""\ )                                                                                                                                                                                     |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_false<class_GutTest_method_assert_false>`\ (\ got, text = ""\ )                                                                                                                                                                                     |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_file_does_not_exist<class_GutTest_method_assert_file_does_not_exist>`\ (\ file_path\ )                                                                                                                                                              |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_file_does_not_exist<class_GutTest_method_assert_file_does_not_exist>`\ (\ file_path\ )                                                                                                                                                              |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_file_empty<class_GutTest_method_assert_file_empty>`\ (\ file_path\ )                                                                                                                                                                                |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_file_empty<class_GutTest_method_assert_file_empty>`\ (\ file_path\ )                                                                                                                                                                                |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_file_exists<class_GutTest_method_assert_file_exists>`\ (\ file_path\ )                                                                                                                                                                              |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_file_exists<class_GutTest_method_assert_file_exists>`\ (\ file_path\ )                                                                                                                                                                              |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_file_not_empty<class_GutTest_method_assert_file_not_empty>`\ (\ file_path\ )                                                                                                                                                                        |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_file_not_empty<class_GutTest_method_assert_file_not_empty>`\ (\ file_path\ )                                                                                                                                                                        |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_freed<class_GutTest_method_assert_freed>`\ (\ obj, title = "something"\ )                                                                                                                                                                           |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_freed<class_GutTest_method_assert_freed>`\ (\ obj, title = "something"\ )                                                                                                                                                                           |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_gt<class_GutTest_method_assert_gt>`\ (\ got, expected, text = ""\ )                                                                                                                                                                                 |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_gt<class_GutTest_method_assert_gt>`\ (\ got, expected, text = ""\ )                                                                                                                                                                                 |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_gte<class_GutTest_method_assert_gte>`\ (\ got, expected, text = ""\ )                                                                                                                                                                               |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_gte<class_GutTest_method_assert_gte>`\ (\ got, expected, text = ""\ )                                                                                                                                                                               |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_has<class_GutTest_method_assert_has>`\ (\ obj, element, text = ""\ )                                                                                                                                                                                |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_has<class_GutTest_method_assert_has>`\ (\ obj, element, text = ""\ )                                                                                                                                                                                |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_has_method<class_GutTest_method_assert_has_method>`\ (\ obj, method, text = ""\ )                                                                                                                                                                   |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_has_method<class_GutTest_method_assert_has_method>`\ (\ obj, method, text = ""\ )                                                                                                                                                                   |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_has_signal<class_GutTest_method_assert_has_signal>`\ (\ object, signal_name, text = ""\ )                                                                                                                                                           |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_has_signal<class_GutTest_method_assert_has_signal>`\ (\ object, signal_name, text = ""\ )                                                                                                                                                           |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_is<class_GutTest_method_assert_is>`\ (\ object, a_class, text = ""\ )                                                                                                                                                                               |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_is<class_GutTest_method_assert_is>`\ (\ object, a_class, text = ""\ )                                                                                                                                                                               |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_lt<class_GutTest_method_assert_lt>`\ (\ got, expected, text = ""\ )                                                                                                                                                                                 |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_lt<class_GutTest_method_assert_lt>`\ (\ got, expected, text = ""\ )                                                                                                                                                                                 |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_lte<class_GutTest_method_assert_lte>`\ (\ got, expected, text = ""\ )                                                                                                                                                                               |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_lte<class_GutTest_method_assert_lte>`\ (\ got, expected, text = ""\ )                                                                                                                                                                               |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_ne<class_GutTest_method_assert_ne>`\ (\ got, not_expected, text = ""\ )                                                                                                                                                                             |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_ne<class_GutTest_method_assert_ne>`\ (\ got, not_expected, text = ""\ )                                                                                                                                                                             |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_ne_deep<class_GutTest_method_assert_ne_deep>`\ (\ v1, v2\ )                                                                                                                                                                                         |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_ne_deep<class_GutTest_method_assert_ne_deep>`\ (\ v1, v2\ )                                                                                                                                                                                         |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_no_new_orphans<class_GutTest_method_assert_no_new_orphans>`\ (\ text = ""\ )                                                                                                                                                                        |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_no_new_orphans<class_GutTest_method_assert_no_new_orphans>`\ (\ text = ""\ )                                                                                                                                                                        |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_not_between<class_GutTest_method_assert_not_between>`\ (\ got, expect_low, expect_high, text = ""\ )                                                                                                                                                |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_not_between<class_GutTest_method_assert_not_between>`\ (\ got, expect_low, expect_high, text = ""\ )                                                                                                                                                |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_not_called<class_GutTest_method_assert_not_called>`\ (\ inst, method_name = null, parameters = null\ )                                                                                                                                              |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_not_called<class_GutTest_method_assert_not_called>`\ (\ inst, method_name = null, parameters = null\ )                                                                                                                                              |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_not_connected<class_GutTest_method_assert_not_connected>`\ (\ p1, p2, p3 = null, p4 = null\ )                                                                                                                                                       |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_not_connected<class_GutTest_method_assert_not_connected>`\ (\ p1, p2, p3 = null, p4 = null\ )                                                                                                                                                       |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_not_freed<class_GutTest_method_assert_not_freed>`\ (\ obj, title = "something"\ )                                                                                                                                                                   |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_not_freed<class_GutTest_method_assert_not_freed>`\ (\ obj, title = "something"\ )                                                                                                                                                                   |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_not_null<class_GutTest_method_assert_not_null>`\ (\ got, text = ""\ )                                                                                                                                                                               |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_not_null<class_GutTest_method_assert_not_null>`\ (\ got, text = ""\ )                                                                                                                                                                               |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_not_same<class_GutTest_method_assert_not_same>`\ (\ v1, v2, text = ""\ )                                                                                                                                                                            |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_not_same<class_GutTest_method_assert_not_same>`\ (\ v1, v2, text = ""\ )                                                                                                                                                                            |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_not_typeof<class_GutTest_method_assert_not_typeof>`\ (\ object, type, text = ""\ )                                                                                                                                                                  |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_not_typeof<class_GutTest_method_assert_not_typeof>`\ (\ object, type, text = ""\ )                                                                                                                                                                  |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_null<class_GutTest_method_assert_null>`\ (\ got, text = ""\ )                                                                                                                                                                                       |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_null<class_GutTest_method_assert_null>`\ (\ got, text = ""\ )                                                                                                                                                                                       |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`assert_property<class_GutTest_method_assert_property>`\ (\ obj, property_name, default_value, new_value\ )                                                                                                                                                 |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_property_with_backing_variable<class_GutTest_method_assert_property_with_backing_variable>`\ (\ obj, property_name, default_value, new_value, backed_by_name = null\ )                                                                              |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_property_with_backing_variable<class_GutTest_method_assert_property_with_backing_variable>`\ (\ obj, property_name, default_value, new_value, backed_by_name = null\ )                                                                              |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_push_error<class_GutTest_method_assert_push_error>`\ (\ text, msg = ""\ )                                                                                                                                                                           |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_push_error<class_GutTest_method_assert_push_error>`\ (\ text, msg = ""\ )                                                                                                                                                                           |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_push_error_count<class_GutTest_method_assert_push_error_count>`\ (\ count\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_, msg\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_ = ""\ )      |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_push_error_count<class_GutTest_method_assert_push_error_count>`\ (\ count\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_, msg\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_ = ""\ )      |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_push_warning<class_GutTest_method_assert_push_warning>`\ (\ text\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_, msg\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_ = ""\ )         |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_push_warning<class_GutTest_method_assert_push_warning>`\ (\ text\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_, msg\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_ = ""\ )         |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_push_warning_count<class_GutTest_method_assert_push_warning_count>`\ (\ count\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_, msg\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_ = ""\ )  |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_push_warning_count<class_GutTest_method_assert_push_warning_count>`\ (\ count\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_, msg\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_ = ""\ )  |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_same<class_GutTest_method_assert_same>`\ (\ v1, v2, text = ""\ )                                                                                                                                                                                    |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_same<class_GutTest_method_assert_same>`\ (\ v1, v2, text = ""\ )                                                                                                                                                                                    |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_signal_emit_count<class_GutTest_method_assert_signal_emit_count>`\ (\ p1, p2, p3 = 0, p4 = ""\ )                                                                                                                                                    |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_signal_emit_count<class_GutTest_method_assert_signal_emit_count>`\ (\ p1, p2, p3 = 0, p4 = ""\ )                                                                                                                                                    |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_signal_emitted<class_GutTest_method_assert_signal_emitted>`\ (\ p1, p2 = "", p3 = ""\ )                                                                                                                                                             |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_signal_emitted<class_GutTest_method_assert_signal_emitted>`\ (\ p1, p2 = "", p3 = ""\ )                                                                                                                                                             |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_signal_emitted_with_parameters<class_GutTest_method_assert_signal_emitted_with_parameters>`\ (\ p1, p2, p3 = -1, p4 = -1\ )                                                                                                                         |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_signal_emitted_with_parameters<class_GutTest_method_assert_signal_emitted_with_parameters>`\ (\ p1, p2, p3 = -1, p4 = -1\ )                                                                                                                         |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_signal_not_emitted<class_GutTest_method_assert_signal_not_emitted>`\ (\ p1, p2 = "", p3 = ""\ )                                                                                                                                                     |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_signal_not_emitted<class_GutTest_method_assert_signal_not_emitted>`\ (\ p1, p2 = "", p3 = ""\ )                                                                                                                                                     |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_string_contains<class_GutTest_method_assert_string_contains>`\ (\ text, search, match_case = true\ )                                                                                                                                                |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_string_contains<class_GutTest_method_assert_string_contains>`\ (\ text, search, match_case = true\ )                                                                                                                                                |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_string_ends_with<class_GutTest_method_assert_string_ends_with>`\ (\ text, search, match_case = true\ )                                                                                                                                              |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_string_ends_with<class_GutTest_method_assert_string_ends_with>`\ (\ text, search, match_case = true\ )                                                                                                                                              |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_string_starts_with<class_GutTest_method_assert_string_starts_with>`\ (\ text, search, match_case = true\ )                                                                                                                                          |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_string_starts_with<class_GutTest_method_assert_string_starts_with>`\ (\ text, search, match_case = true\ )                                                                                                                                          |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_true<class_GutTest_method_assert_true>`\ (\ got, text = ""\ )                                                                                                                                                                                       |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_true<class_GutTest_method_assert_true>`\ (\ got, text = ""\ )                                                                                                                                                                                       |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`assert_typeof<class_GutTest_method_assert_typeof>`\ (\ object, type, text = ""\ )                                                                                                                                                                          |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_typeof<class_GutTest_method_assert_typeof>`\ (\ object, type, text = ""\ )                                                                                                                                                                          |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`autofree<class_GutTest_method_autofree>`\ (\ thing\ )                                                                                                                                                                                                      |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`autoqfree<class_GutTest_method_autoqfree>`\ (\ thing\ )                                                                                                                                                                                                    |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`before_all<class_GutTest_method_before_all>`\ (\ )                                                                                                                                                                                                         |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`before_all<class_GutTest_method_before_all>`\ (\ )                                                                                                                                                                                                         |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`before_each<class_GutTest_method_before_each>`\ (\ )                                                                                                                                                                                                       |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`before_each<class_GutTest_method_before_each>`\ (\ )                                                                                                                                                                                                       |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`compare_deep<class_GutTest_method_compare_deep>`\ (\ v1, v2, max_differences = null\ )                                                                                                                                                                     |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -205,7 +203,7 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`double_singleton<class_GutTest_method_double_singleton>`\ (\ singleton\ )                                                                                                                                                                                  |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`fail_test<class_GutTest_method_fail_test>`\ (\ text\ )                                                                                                                                                                                                     |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`fail_test<class_GutTest_method_fail_test>`\ (\ text\ )                                                                                                                                                                                                     |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_assert_count<class_GutTest_method_get_assert_count>`\ (\ )                                                                                                                                                                                             |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -239,7 +237,7 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_signal_parameters<class_GutTest_method_get_signal_parameters>`\ (\ p1, p2 = null, p3 = -1\ )                                                                                                                                                           |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`ignore_method_when_doubling<class_GutTest_method_ignore_method_when_doubling>`\ (\ thing, method_name\ )                                                                                                                                                   |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`ignore_method_when_doubling<class_GutTest_method_ignore_method_when_doubling>`\ (\ thing, method_name\ )                                                                                                                                                   |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`is_failing<class_GutTest_method_is_failing>`\ (\ )                                                                                                                                                                                                         |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -249,25 +247,25 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`partial_double_singleton<class_GutTest_method_partial_double_singleton>`\ (\ singleton\ )                                                                                                                                                                  |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`pass_test<class_GutTest_method_pass_test>`\ (\ text\ )                                                                                                                                                                                                     |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`pass_test<class_GutTest_method_pass_test>`\ (\ text\ )                                                                                                                                                                                                     |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`pause_before_teardown<class_GutTest_method_pause_before_teardown>`\ (\ )                                                                                                                                                                                   |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`pause_before_teardown<class_GutTest_method_pause_before_teardown>`\ (\ )                                                                                                                                                                                   |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`pending<class_GutTest_method_pending>`\ (\ text = ""\ )                                                                                                                                                                                                    |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`pending<class_GutTest_method_pending>`\ (\ text = ""\ )                                                                                                                                                                                                    |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`print_tracked_errors<class_GutTest_method_print_tracked_errors>`\ (\ )                                                                                                                                                                                     |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`print_tracked_errors<class_GutTest_method_print_tracked_errors>`\ (\ )                                                                                                                                                                                     |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`register_inner_classes<class_GutTest_method_register_inner_classes>`\ (\ base_script\ )                                                                                                                                                                    |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`register_inner_classes<class_GutTest_method_register_inner_classes>`\ (\ base_script\ )                                                                                                                                                                    |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`replace_node<class_GutTest_method_replace_node>`\ (\ base_node, path_or_node, with_this\ )                                                                                                                                                                 |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`replace_node<class_GutTest_method_replace_node>`\ (\ base_node, path_or_node, with_this\ )                                                                                                                                                                 |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | |void|                                                                         | :ref:`reset_start_times<class_GutTest_method_reset_start_times>`\ (\ )                                                                                                                                                                                           |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`set_double_strategy<class_GutTest_method_set_double_strategy>`\ (\ double_strategy\ )                                                                                                                                                                      |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`set_double_strategy<class_GutTest_method_set_double_strategy>`\ (\ double_strategy\ )                                                                                                                                                                      |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`should_skip_script<class_GutTest_method_should_skip_script>`\ (\ )                                                                                                                                                                                         |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`simulate<class_GutTest_method_simulate>`\ (\ obj, times, delta, check_is_processing\: `bool <https://docs.godotengine.org/en/stable/classes/class_bool.html>`_ = false\ )                                                                                  |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`simulate<class_GutTest_method_simulate>`\ (\ obj, times, delta, check_is_processing\: `bool <https://docs.godotengine.org/en/stable/classes/class_bool.html>`_ = false\ )                                                                                  |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`skip_if_godot_version_lt<class_GutTest_method_skip_if_godot_version_lt>`\ (\ expected\ )                                                                                                                                                                   |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -291,16 +289,16 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait_while<class_GutTest_method_wait_while>`\ (\ callable, max_time, p3 = "", p4 = ""\ )                                                                                                                                                                   |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`watch_signals<class_GutTest_method_watch_signals>`\ (\ object\ )                                                                                                                                                                                           |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`watch_signals<class_GutTest_method_watch_signals>`\ (\ object\ )                                                                                                                                                                                           |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 .. table::
    :widths: auto
 
    +------------+--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | Deprecated | |void|                                                                         | :ref:`assert_call_count<class_GutTest_method_assert_call_count>`\ (\ inst, method_name, expected_count, parameters = null\ )                          |
+   | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_call_count<class_GutTest_method_assert_call_count>`\ (\ inst, method_name, expected_count, parameters = null\ )                          |
    +------------+--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | Deprecated | |void|                                                                         | :ref:`assert_setget<class_GutTest_method_assert_setget>`\ (\ instance, name_property, const_or_setter = null, getter = "__not_set__"\ )               |
+   | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`assert_setget<class_GutTest_method_assert_setget>`\ (\ instance, name_property, const_or_setter = null, getter = "__not_set__"\ )               |
    +------------+--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+
    | Deprecated | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`double_inner<class_GutTest_method_double_inner>`\ (\ path, subpath, strategy = null\ )                                                          |
    +------------+--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -321,7 +319,7 @@ Methods
    :widths: auto
 
    +--------------+--------------------------------------------------------------------------------+------------------------------------------------------------------------------+
-   | Internal Use | |void|                                                                         | :ref:`clear_signal_watcher<class_GutTest_method_clear_signal_watcher>`\ (\ ) |
+   | Internal Use | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`clear_signal_watcher<class_GutTest_method_clear_signal_watcher>`\ (\ ) |
    +--------------+--------------------------------------------------------------------------------+------------------------------------------------------------------------------+
    | Internal Use | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_logger<class_GutTest_method_get_logger>`\ (\ )                     |
    +--------------+--------------------------------------------------------------------------------+------------------------------------------------------------------------------+
@@ -331,7 +329,7 @@ Methods
    +--------------+--------------------------------------------------------------------------------+------------------------------------------------------------------------------+
    | Internal Use | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`run_x_times<class_GutTest_method_run_x_times>`\ (\ x\ )                |
    +--------------+--------------------------------------------------------------------------------+------------------------------------------------------------------------------+
-   | Internal Use | |void|                                                                         | :ref:`set_logger<class_GutTest_method_set_logger>`\ (\ logger\ )             |
+   | Internal Use | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`set_logger<class_GutTest_method_set_logger>`\ (\ logger\ )             |
    +--------------+--------------------------------------------------------------------------------+------------------------------------------------------------------------------+
 
 .. rst-class:: classref-section-separator
@@ -527,7 +525,7 @@ Virtual Method.  This is run after the script has been prepped for execution, bu
 
 .. rst-class:: classref-method
 
-|void| **before_all**\ (\ ) :ref:`🔗<class_GutTest_method_before_all>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **before_all**\ (\ ) :ref:`🔗<class_GutTest_method_before_all>`
 
 Virtual method.  Run once before anything else in the test script is run.
 
@@ -539,7 +537,7 @@ Virtual method.  Run once before anything else in the test script is run.
 
 .. rst-class:: classref-method
 
-|void| **before_each**\ (\ ) :ref:`🔗<class_GutTest_method_before_each>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **before_each**\ (\ ) :ref:`🔗<class_GutTest_method_before_each>`
 
 Virtual method.  Run before each test is executed
 
@@ -551,7 +549,7 @@ Virtual method.  Run before each test is executed
 
 .. rst-class:: classref-method
 
-|void| **after_each**\ (\ ) :ref:`🔗<class_GutTest_method_after_each>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **after_each**\ (\ ) :ref:`🔗<class_GutTest_method_after_each>`
 
 Virtual method.  Run after each test is executed.
 
@@ -563,7 +561,7 @@ Virtual method.  Run after each test is executed.
 
 .. rst-class:: classref-method
 
-|void| **after_all**\ (\ ) :ref:`🔗<class_GutTest_method_after_all>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **after_all**\ (\ ) :ref:`🔗<class_GutTest_method_after_all>`
 
 Virtual method.  Run after all tests have been run.
 
@@ -575,7 +573,7 @@ Virtual method.  Run after all tests have been run.
 
 .. rst-class:: classref-method
 
-|void| **pending**\ (\ text = ""\ ) :ref:`🔗<class_GutTest_method_pending>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **pending**\ (\ text = ""\ ) :ref:`🔗<class_GutTest_method_pending>`
 
 Mark the current test as pending.
 
@@ -611,7 +609,7 @@ Returns true if the test is failing as of the time of this call.  False if not.
 
 .. rst-class:: classref-method
 
-|void| **pass_test**\ (\ text\ ) :ref:`🔗<class_GutTest_method_pass_test>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **pass_test**\ (\ text\ ) :ref:`🔗<class_GutTest_method_pass_test>`
 
 Marks the test as passing.  Does not override any failing asserts or calls to fail_test.  Same as a passing assert.
 
@@ -623,7 +621,7 @@ Marks the test as passing.  Does not override any failing asserts or calls to fa
 
 .. rst-class:: classref-method
 
-|void| **fail_test**\ (\ text\ ) :ref:`🔗<class_GutTest_method_fail_test>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **fail_test**\ (\ text\ ) :ref:`🔗<class_GutTest_method_fail_test>`
 
 Marks the test as failing.  Same as a failing assert.
 
@@ -635,7 +633,7 @@ Marks the test as failing.  Same as a failing assert.
 
 .. rst-class:: classref-method
 
-|void| **clear_signal_watcher**\ (\ ) :ref:`🔗<class_GutTest_method_clear_signal_watcher>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **clear_signal_watcher**\ (\ ) :ref:`🔗<class_GutTest_method_clear_signal_watcher>`
 
 **Internal use only.**
 
@@ -659,7 +657,7 @@ Returns the current double strategy.
 
 .. rst-class:: classref-method
 
-|void| **set_double_strategy**\ (\ double_strategy\ ) :ref:`🔗<class_GutTest_method_set_double_strategy>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **set_double_strategy**\ (\ double_strategy\ ) :ref:`🔗<class_GutTest_method_set_double_strategy>`
 
 Sets the double strategy for all tests in the script.  This should usually be done in :ref:`before_all<class_GutTest_method_before_all>`.  The double strtegy can be set per run/script/double.  See `Double-Strategy <../Double-Strategy.html>`__
 
@@ -671,7 +669,7 @@ Sets the double strategy for all tests in the script.  This should usually be do
 
 .. rst-class:: classref-method
 
-|void| **pause_before_teardown**\ (\ ) :ref:`🔗<class_GutTest_method_pause_before_teardown>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **pause_before_teardown**\ (\ ) :ref:`🔗<class_GutTest_method_pause_before_teardown>`
 
 This method will cause Gut to pause before it moves on to the next test. This is useful for debugging, for instance if you want to investigate the screen or anything else after a test has finished executing. 
 
@@ -697,7 +695,7 @@ Sometimes you get lazy, and you don't remove calls to ``pause_before_teardown`` 
 
 .. rst-class:: classref-method
 
-|void| **set_logger**\ (\ logger\ ) :ref:`🔗<class_GutTest_method_set_logger>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **set_logger**\ (\ logger\ ) :ref:`🔗<class_GutTest_method_set_logger>`
 
 **Internal use only.**
 
@@ -709,7 +707,7 @@ Sometimes you get lazy, and you don't remove calls to ``pause_before_teardown`` 
 
 .. rst-class:: classref-method
 
-|void| **watch_signals**\ (\ object\ ) :ref:`🔗<class_GutTest_method_watch_signals>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **watch_signals**\ (\ object\ ) :ref:`🔗<class_GutTest_method_watch_signals>`
 
 This must be called in order to make assertions based on signals being emitted.  \__Right now, this only supports signals that are emitted with 9 or less parameters.\_\_  This can be extended but nine seemed like enough for now. The Godot documentation suggests that the limit is four but in my testing I found you can pass more. 
 
@@ -727,8 +725,6 @@ This must be called in each test in which you want to make signal based assertio
 
 This will return the number of times a signal was fired.  This gives you the freedom to make more complicated assertions if the spirit moves you. This will return -1 if the signal was not fired or the object was not being watched, or if the object does not have the signal. 
 
-
-
 Accepts either the object and the signal name or the signal.
 
 .. rst-class:: classref-item-separator
@@ -743,15 +739,11 @@ Accepts either the object and the signal name or the signal.
 
 If you need to inspect the parameters in order to make more complicate assertions, then this will give you access to the parameters of any watched signal.  This works the same way that ``assert_signal_emitted_with_parameters`` does.  It takes an object, signal name, and an optional index.  If the index is not specified then the parameters from the most recent emission will be returned.  If the object is not being watched, the signal was not fired, or the object does not have the signal then `null` will be returned.  
 
-
-
 \ **Signatures:**\ 
 
 - get_signal_parameters(``p1``:Signal, ``p2``:parameter-index (optional))
 
 - get_signal_parameters(``p1``:object, ``p2``:signal name, ``p3``:parameter-index (optional)) 
-
-
 
 \ **Examples:**\ 
 
@@ -818,7 +810,7 @@ Returns the call count for a method with optional paramter matching.  Can be cal
 
 .. rst-class:: classref-method
 
-|void| **simulate**\ (\ obj, times, delta, check_is_processing\: `bool <https://docs.godotengine.org/en/stable/classes/class_bool.html>`_ = false\ ) :ref:`🔗<class_GutTest_method_simulate>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **simulate**\ (\ obj, times, delta, check_is_processing\: `bool <https://docs.godotengine.org/en/stable/classes/class_bool.html>`_ = false\ ) :ref:`🔗<class_GutTest_method_simulate>`
 
 Simulate a number of frames by calling '_process' and '_physics_process' (if the methods exist) on an object and all of its descendents. The specified frame time, 'delta', will be passed to each simulated call.  NOTE: Objects can disable their processing methods using 'set_process(false)' and 'set_physics_process(false)'. This is reflected in the 'Object' methods 'is_processing()' and 'is_physics_processing()', respectively. To make 'simulate' respect this status, for example if you are testing an object which toggles processing, pass 'check_is_processing' as 'true'.
 
@@ -830,7 +822,7 @@ Simulate a number of frames by calling '_process' and '_physics_process' (if the
 
 .. rst-class:: classref-method
 
-|void| **replace_node**\ (\ base_node, path_or_node, with_this\ ) :ref:`🔗<class_GutTest_method_replace_node>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **replace_node**\ (\ base_node, path_or_node, with_this\ ) :ref:`🔗<class_GutTest_method_replace_node>`
 
 .. container:: contribute
 
@@ -847,8 +839,6 @@ Simulate a number of frames by calling '_process' and '_physics_process' (if the
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **use_parameters**\ (\ params\ ) :ref:`🔗<class_GutTest_method_use_parameters>`
 
 Use this as the default value for the first parameter to a test to create a parameterized test.  See also the ParameterFactory and Parameterized Tests. 
-
-
 
 \ **Example**\ 
 
@@ -880,8 +870,6 @@ Use this as the default value for the first parameter to a test to create a para
 
 Checks the passed in version string (x.x.x) against the engine version to see if the engine version is less than the expected version.  If it is then the test is mareked as passed (for a lack of anything better to do).  The result of the check is returned. 
 
-
-
 \ **Example**\ 
 
 ::
@@ -901,8 +889,6 @@ Checks the passed in version string (x.x.x) against the engine version to see if
 
 Checks if the passed in version matches the engine version.  The passed in version can contain just the major, major.minor or major.minor.path.  If the version is not the same then the test is marked as passed.  The result of the check is returned. 
 
-
-
 \ **Example**\ 
 
 ::
@@ -918,7 +904,7 @@ Checks if the passed in version matches the engine version.  The passed in versi
 
 .. rst-class:: classref-method
 
-|void| **register_inner_classes**\ (\ base_script\ ) :ref:`🔗<class_GutTest_method_register_inner_classes>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **register_inner_classes**\ (\ base_script\ ) :ref:`🔗<class_GutTest_method_register_inner_classes>`
 
 Registers all the inner classes in a script with the doubler.  This is required before you can double any inner class.
 
@@ -1026,7 +1012,7 @@ Returns the number of physics frames elapsed since the test method began.
 
 .. rst-class:: classref-method
 
-|void| **assert_eq**\ (\ got, expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_eq>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_eq**\ (\ got, expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_eq>`
 
 Asserts that the expected value equals the value got. assert got == expected and prints optional text.  See `Comparing-Things <../Comparing-Things.html>`__ for information about comparing dictionaries and arrays. 
 
@@ -1062,7 +1048,7 @@ See also: :ref:`assert_ne<class_GutTest_method_assert_ne>`, :ref:`assert_same<cl
 
 .. rst-class:: classref-method
 
-|void| **assert_ne**\ (\ got, not_expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_ne>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_ne**\ (\ got, not_expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_ne>`
 
 asserts got != expected and prints optional text.  See `Comparing-Things <../Comparing-Things.html>`__ for information about comparing dictionaries and arrays. 
 
@@ -1091,7 +1077,7 @@ See also: :ref:`assert_eq<class_GutTest_method_assert_eq>`, :ref:`assert_same<cl
 
 .. rst-class:: classref-method
 
-|void| **assert_almost_eq**\ (\ got, expected, error_interval, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_almost_eq>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_almost_eq**\ (\ got, expected, error_interval, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_almost_eq>`
 
 Asserts that ``got`` is within the range of ``expected`` +/- ``error_interval``. The upper and lower bounds are included in the check.  Verified to work with integers, floats, and Vector2.  Should work with anything that can be added/subtracted. 
 
@@ -1117,7 +1103,7 @@ Asserts that ``got`` is within the range of ``expected`` +/- ``error_interval``.
 
 .. rst-class:: classref-method
 
-|void| **assert_almost_ne**\ (\ got, not_expected, error_interval, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_almost_ne>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_almost_ne**\ (\ got, not_expected, error_interval, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_almost_ne>`
 
 This is the inverse of :ref:`assert_almost_eq<class_GutTest_method_assert_almost_eq>`.  This will pass if ``got`` is outside the range of ``not_expected`` +/- ``error_interval``.
 
@@ -1129,7 +1115,7 @@ This is the inverse of :ref:`assert_almost_eq<class_GutTest_method_assert_almost
 
 .. rst-class:: classref-method
 
-|void| **assert_gt**\ (\ got, expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_gt>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_gt**\ (\ got, expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_gt>`
 
 assserts got > expected
 
@@ -1157,7 +1143,7 @@ assserts got > expected
 
 .. rst-class:: classref-method
 
-|void| **assert_gte**\ (\ got, expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_gte>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_gte**\ (\ got, expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_gte>`
 
 Asserts got is greater than or equal to expected.
 
@@ -1185,7 +1171,7 @@ Asserts got is greater than or equal to expected.
 
 .. rst-class:: classref-method
 
-|void| **assert_lt**\ (\ got, expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_lt>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_lt**\ (\ got, expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_lt>`
 
 Asserts ``got`` is less than ``expected``\ 
 
@@ -1211,7 +1197,7 @@ Asserts ``got`` is less than ``expected``\
 
 .. rst-class:: classref-method
 
-|void| **assert_lte**\ (\ got, expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_lte>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_lte**\ (\ got, expected, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_lte>`
 
 Asserts got is less than or equal to expected
 
@@ -1223,7 +1209,7 @@ Asserts got is less than or equal to expected
 
 .. rst-class:: classref-method
 
-|void| **assert_true**\ (\ got, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_true>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_true**\ (\ got, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_true>`
 
 asserts that got is true.  Does not assert truthiness, only boolean values will pass.
 
@@ -1235,7 +1221,7 @@ asserts that got is true.  Does not assert truthiness, only boolean values will 
 
 .. rst-class:: classref-method
 
-|void| **assert_false**\ (\ got, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_false>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_false**\ (\ got, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_false>`
 
 Asserts that got is false.  Does not assert truthiness, only boolean values will pass.
 
@@ -1247,7 +1233,7 @@ Asserts that got is false.  Does not assert truthiness, only boolean values will
 
 .. rst-class:: classref-method
 
-|void| **assert_between**\ (\ got, expect_low, expect_high, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_between>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_between**\ (\ got, expect_low, expect_high, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_between>`
 
 Asserts value is between (inclusive) the two expected values.
 
@@ -1273,7 +1259,7 @@ got >= expect_low and <= expect_high
 
 .. rst-class:: classref-method
 
-|void| **assert_not_between**\ (\ got, expect_low, expect_high, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_between>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_not_between**\ (\ got, expect_low, expect_high, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_between>`
 
 Asserts value is not between (exclusive) the two expected values.
 
@@ -1300,7 +1286,7 @@ asserts that got <= expect_low or got >=  expect_high.
 
 .. rst-class:: classref-method
 
-|void| **assert_has**\ (\ obj, element, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_has>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_has**\ (\ obj, element, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_has>`
 
 Uses the 'has' method of the object passed in to determine if it contains the passed in element.
 
@@ -1330,7 +1316,7 @@ Uses the 'has' method of the object passed in to determine if it contains the pa
 
 .. rst-class:: classref-method
 
-|void| **assert_does_not_have**\ (\ obj, element, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_does_not_have>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_does_not_have**\ (\ obj, element, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_does_not_have>`
 
 The inverse of assert_has.
 
@@ -1342,7 +1328,7 @@ The inverse of assert_has.
 
 .. rst-class:: classref-method
 
-|void| **assert_file_exists**\ (\ file_path\ ) :ref:`🔗<class_GutTest_method_assert_file_exists>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_file_exists**\ (\ file_path\ ) :ref:`🔗<class_GutTest_method_assert_file_exists>`
 
 asserts a file exists at the specified path
 
@@ -1371,7 +1357,7 @@ asserts a file exists at the specified path
 
 .. rst-class:: classref-method
 
-|void| **assert_file_does_not_exist**\ (\ file_path\ ) :ref:`🔗<class_GutTest_method_assert_file_does_not_exist>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_file_does_not_exist**\ (\ file_path\ ) :ref:`🔗<class_GutTest_method_assert_file_does_not_exist>`
 
 asserts a file does not exist at the specified path
 
@@ -1399,7 +1385,7 @@ asserts a file does not exist at the specified path
 
 .. rst-class:: classref-method
 
-|void| **assert_file_empty**\ (\ file_path\ ) :ref:`🔗<class_GutTest_method_assert_file_empty>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_file_empty**\ (\ file_path\ ) :ref:`🔗<class_GutTest_method_assert_file_empty>`
 
 asserts the specified file is empty
 
@@ -1426,7 +1412,7 @@ asserts the specified file is empty
 
 .. rst-class:: classref-method
 
-|void| **assert_file_not_empty**\ (\ file_path\ ) :ref:`🔗<class_GutTest_method_assert_file_not_empty>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_file_not_empty**\ (\ file_path\ ) :ref:`🔗<class_GutTest_method_assert_file_not_empty>`
 
 Asserts the specified file is not empty
 
@@ -1453,7 +1439,7 @@ Asserts the specified file is not empty
 
 .. rst-class:: classref-method
 
-|void| **assert_has_method**\ (\ obj, method, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_has_method>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_has_method**\ (\ obj, method, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_has_method>`
 
 Asserts that the passed in object has a method named ``method``.
 
@@ -1465,7 +1451,7 @@ Asserts that the passed in object has a method named ``method``.
 
 .. rst-class:: classref-method
 
-|void| **assert_accessors**\ (\ obj, property, default, set_to\ ) :ref:`🔗<class_GutTest_method_assert_accessors>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_accessors**\ (\ obj, property, default, set_to\ ) :ref:`🔗<class_GutTest_method_assert_accessors>`
 
 This is meant to make testing public get/set methods for a member variable.  This was originally created for early Godot 3.x setter and getter methods.  See :ref:`assert_property<class_GutTest_method_assert_property>` for verifying Godot 4.x accessors.  This makes multiple assertions to verify: 
 
@@ -1485,7 +1471,7 @@ This is meant to make testing public get/set methods for a member variable.  Thi
 
 .. rst-class:: classref-method
 
-|void| **assert_exports**\ (\ obj, property_name, type\ ) :ref:`🔗<class_GutTest_method_assert_exports>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_exports**\ (\ obj, property_name, type\ ) :ref:`🔗<class_GutTest_method_assert_exports>`
 
 Asserts that ``obj`` exports a property with the name ``property_name`` and a type of ``type``.  The ``type`` must be one of the various Godot built-in ``TYPE_`` constants.
 
@@ -1516,11 +1502,9 @@ Asserts that ``obj`` exports a property with the name ``property_name`` and a ty
 
 .. rst-class:: classref-method
 
-|void| **assert_connected**\ (\ p1, p2, p3 = null, p4 = null\ ) :ref:`🔗<class_GutTest_method_assert_connected>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_connected**\ (\ p1, p2, p3 = null, p4 = null\ ) :ref:`🔗<class_GutTest_method_assert_connected>`
 
 Asserts that `signaler_obj` is connected to `connect_to_obj` on signal `signal_name`.  The method that is connected is optional.  If `method_name` is supplied then this will pass only if the signal is connected to the  method.  If it is not provided then any connection to the signal will cause a pass. 
-
-
 
 \ **Signatures:**\ 
 
@@ -1529,8 +1513,6 @@ Asserts that `signaler_obj` is connected to `connect_to_obj` on signal `signal_n
 - assert_connected(``p1``:Signal, ``p2``:connected-method)
 
 - assert_connected(``p1``:object, ``p2``:connected-object, ``p3``:signal-name, ``p4``: connected-method-name <optional>) 
-
-
 
 \ **Examples:**\ 
 
@@ -1572,7 +1554,7 @@ Asserts that `signaler_obj` is connected to `connect_to_obj` on signal `signal_n
 
 .. rst-class:: classref-method
 
-|void| **assert_not_connected**\ (\ p1, p2, p3 = null, p4 = null\ ) :ref:`🔗<class_GutTest_method_assert_not_connected>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_not_connected**\ (\ p1, p2, p3 = null, p4 = null\ ) :ref:`🔗<class_GutTest_method_assert_not_connected>`
 
 The inverse of :ref:`assert_connected<class_GutTest_method_assert_connected>`.  See :ref:`assert_connected<class_GutTest_method_assert_connected>` for parameter syntax. 
 
@@ -1586,19 +1568,15 @@ This will fail with specific messages if the target object is connected to the s
 
 .. rst-class:: classref-method
 
-|void| **assert_signal_emitted**\ (\ p1, p2 = "", p3 = ""\ ) :ref:`🔗<class_GutTest_method_assert_signal_emitted>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_signal_emitted**\ (\ p1, p2 = "", p3 = ""\ ) :ref:`🔗<class_GutTest_method_assert_signal_emitted>`
 
 Assert that the specified object emitted the named signal.  You must call :ref:`watch_signals<class_GutTest_method_watch_signals>` and pass it the object that you are making assertions about. This will fail if the object is not being watched or if the object does not have the specified signal.  Since this will fail if the signal does not exist, you can often skip using :ref:`assert_has_signal<class_GutTest_method_assert_has_signal>`. 
-
-
 
 \ **Signatures:**\ 
 
 - assert_signal_emitted(``p1``:Signal, ``p2``: text <optional>)
 
 - assert_signal_emitted(``p1``:object, ``p2``:signal-name, ``p3``: text <optional>) 
-
-
 
 \ **Examples:**\ 
 
@@ -1636,19 +1614,15 @@ Assert that the specified object emitted the named signal.  You must call :ref:`
 
 .. rst-class:: classref-method
 
-|void| **assert_signal_not_emitted**\ (\ p1, p2 = "", p3 = ""\ ) :ref:`🔗<class_GutTest_method_assert_signal_not_emitted>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_signal_not_emitted**\ (\ p1, p2 = "", p3 = ""\ ) :ref:`🔗<class_GutTest_method_assert_signal_not_emitted>`
 
 This works opposite of `assert_signal_emitted`.  This will fail if the object is not being watched or if the object does not have the signal. 
-
-
 
 \ **Signatures:**\ 
 
 - assert_signal_not_emitted(``p1``:Signal, ``p2``: text <optional>)
 
 - assert_signal_not_emitted(``p1``:object, ``p2``:signal-name, ``p3``: text <optional>) 
-
-
 
 \ **Examples:**\ 
 
@@ -1684,21 +1658,17 @@ This works opposite of `assert_signal_emitted`.  This will fail if the object is
 
 .. rst-class:: classref-method
 
-|void| **assert_signal_emitted_with_parameters**\ (\ p1, p2, p3 = -1, p4 = -1\ ) :ref:`🔗<class_GutTest_method_assert_signal_emitted_with_parameters>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_signal_emitted_with_parameters**\ (\ p1, p2, p3 = -1, p4 = -1\ ) :ref:`🔗<class_GutTest_method_assert_signal_emitted_with_parameters>`
 
 Asserts that a signal was fired with the specified parameters.  The expected parameters should be passed in as an array.  An optional index can be passed when a signal has fired more than once.  The default is to retrieve the most recent emission of the signal. 
 
 This will fail with specific messages if the object is not being watched or the object does not have the specified signal 
-
-
 
 \ **Signatures:**\ 
 
 - assert_signal_emitted_with_parameters(``p1``:Signal, ``p2``:expected-parameters, ``p3``: index <optional>)
 
 - assert_signal_emitted_with_parameters(``p1``:object, ``p2``:signal-name, ``p3``:expected-parameters, ``p4``: index <optional>) 
-
-
 
 \ **Examples:**\ 
 
@@ -1746,19 +1716,15 @@ This will fail with specific messages if the object is not being watched or the 
 
 .. rst-class:: classref-method
 
-|void| **assert_signal_emit_count**\ (\ p1, p2, p3 = 0, p4 = ""\ ) :ref:`🔗<class_GutTest_method_assert_signal_emit_count>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_signal_emit_count**\ (\ p1, p2, p3 = 0, p4 = ""\ ) :ref:`🔗<class_GutTest_method_assert_signal_emit_count>`
 
 Asserts that a signal fired a specific number of times. 
-
-
 
 \ **Signatures:**\ 
 
 - assert_signal_emit_count(``p1``:Signal, ``p2``:expected-count, ``p3``: text <optional>)
 
 - assert_signal_emit_count(``p1``:object, ``p2``:signal-name, ``p3``:expected-count, ``p4``: text <optional>) 
-
-
 
 \ **Examples:**\ 
 
@@ -1808,7 +1774,7 @@ Asserts that a signal fired a specific number of times.
 
 .. rst-class:: classref-method
 
-|void| **assert_has_signal**\ (\ object, signal_name, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_has_signal>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_has_signal**\ (\ object, signal_name, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_has_signal>`
 
 Asserts the passed in object has a signal with the specified name.  It should be noted that all the asserts that verify a signal was/wasn't emitted will first check that the object has the signal being asserted against.  If it does not, a specific failure message will be given.  This means you can usually skip the step of specifically verifying that the object has a signal and move on to making sure it emits the signal correctly.
 
@@ -1841,7 +1807,7 @@ Asserts the passed in object has a signal with the specified name.  It should be
 
 .. rst-class:: classref-method
 
-|void| **assert_is**\ (\ object, a_class, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_is>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_is**\ (\ object, a_class, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_is>`
 
 Asserts that ``object`` extends ``a_class``.  object must be an instance of an object.  It cannot be any of the built in classes like Array or Int or Float. ``a_class`` must be a class, it can be loaded via load, a GDNative class such as Node or Label or anything else.
 
@@ -1874,7 +1840,7 @@ Asserts that ``object`` extends ``a_class``.  object must be an instance of an o
 
 .. rst-class:: classref-method
 
-|void| **assert_typeof**\ (\ object, type, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_typeof>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_typeof**\ (\ object, type, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_typeof>`
 
 Asserts that ``object`` is the the ``type`` specified.  ``type`` should be one of the Godot ``TYPE_`` constants.
 
@@ -1897,7 +1863,7 @@ Asserts that ``object`` is the the ``type`` specified.  ``type`` should be one o
 
 .. rst-class:: classref-method
 
-|void| **assert_not_typeof**\ (\ object, type, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_typeof>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_not_typeof**\ (\ object, type, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_typeof>`
 
 The inverse of :ref:`assert_typeof<class_GutTest_method_assert_typeof>`
 
@@ -1909,7 +1875,7 @@ The inverse of :ref:`assert_typeof<class_GutTest_method_assert_typeof>`
 
 .. rst-class:: classref-method
 
-|void| **assert_string_contains**\ (\ text, search, match_case = true\ ) :ref:`🔗<class_GutTest_method_assert_string_contains>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_string_contains**\ (\ text, search, match_case = true\ ) :ref:`🔗<class_GutTest_method_assert_string_contains>`
 
 Assert that `text` contains `search`.  Can perform case insensitive search by passing false for `match_case`.
 
@@ -1933,7 +1899,7 @@ Assert that `text` contains `search`.  Can perform case insensitive search by pa
 
 .. rst-class:: classref-method
 
-|void| **assert_string_starts_with**\ (\ text, search, match_case = true\ ) :ref:`🔗<class_GutTest_method_assert_string_starts_with>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_string_starts_with**\ (\ text, search, match_case = true\ ) :ref:`🔗<class_GutTest_method_assert_string_starts_with>`
 
 Assert that text starts with search.  Can perform case insensitive check by passing false for match_case
 
@@ -1957,7 +1923,7 @@ Assert that text starts with search.  Can perform case insensitive check by pass
 
 .. rst-class:: classref-method
 
-|void| **assert_string_ends_with**\ (\ text, search, match_case = true\ ) :ref:`🔗<class_GutTest_method_assert_string_ends_with>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_string_ends_with**\ (\ text, search, match_case = true\ ) :ref:`🔗<class_GutTest_method_assert_string_ends_with>`
 
 Assert that ``text`` ends with ``search``.  Can perform case insensitive check by passing false for ``match_case``\ 
 
@@ -1981,13 +1947,11 @@ Assert that ``text`` ends with ``search``.  Can perform case insensitive check b
 
 .. rst-class:: classref-method
 
-|void| **assert_called**\ (\ inst, method_name = null, parameters = null\ ) :ref:`🔗<class_GutTest_method_assert_called>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_called**\ (\ inst, method_name = null, parameters = null\ ) :ref:`🔗<class_GutTest_method_assert_called>`
 
 Assert that a method was called on an instance of a doubled class.  If parameters are supplied then the params passed in when called must match.  Can be called with a Callabe instead of specifying the object, method_name, and parameters.  The Callable's object must be a double.  Bound arguments will be used to match calls based on values passed to the method. 
 
 See also: `Doubles <../Doubles.html>`__, `Spies <../Spies.html>`__ 
-
-
 
 \ **Examples**\ 
 
@@ -2008,13 +1972,11 @@ See also: `Doubles <../Doubles.html>`__, `Spies <../Spies.html>`__
 
 .. rst-class:: classref-method
 
-|void| **assert_not_called**\ (\ inst, method_name = null, parameters = null\ ) :ref:`🔗<class_GutTest_method_assert_not_called>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_not_called**\ (\ inst, method_name = null, parameters = null\ ) :ref:`🔗<class_GutTest_method_assert_not_called>`
 
 Assert that a method was not called on an instance of a doubled class.  If parameters are specified then this will only fail if it finds a call that was sent matching parameters.  Can be called with a Callabe instead of specifying the object, method_name, and parameters.  The Callable's object must be a double.  Bound arguments will be used to match calls based on values passed to the method. 
 
 See also: `Doubles <../Doubles.html>`__, `Spies <../Spies.html>`__ 
-
-
 
 \ **Examples**\ 
 
@@ -2033,13 +1995,11 @@ See also: `Doubles <../Doubles.html>`__, `Spies <../Spies.html>`__
 
 .. rst-class:: classref-method
 
-|void| **assert_called_count**\ (\ callable\: `Callable <https://docs.godotengine.org/en/stable/classes/class_callable.html>`_, expected_count\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_\ ) :ref:`🔗<class_GutTest_method_assert_called_count>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_called_count**\ (\ callable\: `Callable <https://docs.godotengine.org/en/stable/classes/class_callable.html>`_, expected_count\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_\ ) :ref:`🔗<class_GutTest_method_assert_called_count>`
 
 Asserts the the method of a double was called an expected number of times. If any arguments are bound to the callable then only calls with matching arguments will be counted. 
 
 See also: `Doubles <../Doubles.html>`__, `Spies <../Spies.html>`__ 
-
-
 
 \ **Examples**\ 
 
@@ -2058,7 +2018,7 @@ See also: `Doubles <../Doubles.html>`__, `Spies <../Spies.html>`__
 
 .. rst-class:: classref-method
 
-|void| **assert_null**\ (\ got, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_null>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_null**\ (\ got, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_null>`
 
 Asserts the passed in value is null
 
@@ -2070,7 +2030,7 @@ Asserts the passed in value is null
 
 .. rst-class:: classref-method
 
-|void| **assert_not_null**\ (\ got, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_null>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_not_null**\ (\ got, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_null>`
 
 Asserts the passed in value is not null.
 
@@ -2082,7 +2042,7 @@ Asserts the passed in value is not null.
 
 .. rst-class:: classref-method
 
-|void| **assert_freed**\ (\ obj, title = "something"\ ) :ref:`🔗<class_GutTest_method_assert_freed>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_freed**\ (\ obj, title = "something"\ ) :ref:`🔗<class_GutTest_method_assert_freed>`
 
 Asserts that the passed in object has been freed.  This assertion requires that  you pass in some text in the form of a title since, if the object is freed, we won't have anything to convert to a string to put in the output statement. 
 
@@ -2102,7 +2062,7 @@ Asserts that the passed in object has been freed.  This assertion requires that 
 
 .. rst-class:: classref-method
 
-|void| **assert_not_freed**\ (\ obj, title = "something"\ ) :ref:`🔗<class_GutTest_method_assert_not_freed>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_not_freed**\ (\ obj, title = "something"\ ) :ref:`🔗<class_GutTest_method_assert_not_freed>`
 
 The inverse of :ref:`assert_freed<class_GutTest_method_assert_freed>`
 
@@ -2114,7 +2074,7 @@ The inverse of :ref:`assert_freed<class_GutTest_method_assert_freed>`
 
 .. rst-class:: classref-method
 
-|void| **assert_no_new_orphans**\ (\ text = ""\ ) :ref:`🔗<class_GutTest_method_assert_no_new_orphans>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_no_new_orphans**\ (\ text = ""\ ) :ref:`🔗<class_GutTest_method_assert_no_new_orphans>`
 
 This method will assert that no orphaned nodes have been introduced by the test when the assert is executed.  See the `Memory-Management <../Memory-Management.html>`__ page for more information.
 
@@ -2126,7 +2086,7 @@ This method will assert that no orphaned nodes have been introduced by the test 
 
 .. rst-class:: classref-method
 
-|void| **assert_property_with_backing_variable**\ (\ obj, property_name, default_value, new_value, backed_by_name = null\ ) :ref:`🔗<class_GutTest_method_assert_property_with_backing_variable>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_property_with_backing_variable**\ (\ obj, property_name, default_value, new_value, backed_by_name = null\ ) :ref:`🔗<class_GutTest_method_assert_property_with_backing_variable>`
 
 Assumes backing varible with be \_<property_name>.  This will perform all the asserts of assert_property.  Then this will set the value through the setter and check the backing variable value.  It will then reset throught the setter and set the backing variable and check the getter.
 
@@ -2150,7 +2110,7 @@ This will verify that the method has a setter and getter for the property. It wi
 
 .. rst-class:: classref-method
 
-|void| **assert_eq_deep**\ (\ v1, v2\ ) :ref:`🔗<class_GutTest_method_assert_eq_deep>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_eq_deep**\ (\ v1, v2\ ) :ref:`🔗<class_GutTest_method_assert_eq_deep>`
 
 Performs a deep comparison between two arrays or dictionaries and asserts they are equal.  If they are not equal then a formatted list of differences are displayed.  See `Comparing-Things <../Comparing-Things.html>`__ for more information.
 
@@ -2162,7 +2122,7 @@ Performs a deep comparison between two arrays or dictionaries and asserts they a
 
 .. rst-class:: classref-method
 
-|void| **assert_ne_deep**\ (\ v1, v2\ ) :ref:`🔗<class_GutTest_method_assert_ne_deep>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_ne_deep**\ (\ v1, v2\ ) :ref:`🔗<class_GutTest_method_assert_ne_deep>`
 
 Performs a deep comparison of two arrays or dictionaries and asserts they are not equal.  See `Comparing-Things <../Comparing-Things.html>`__ for more information.
 
@@ -2174,7 +2134,7 @@ Performs a deep comparison of two arrays or dictionaries and asserts they are no
 
 .. rst-class:: classref-method
 
-|void| **assert_same**\ (\ v1, v2, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_same>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_same**\ (\ v1, v2, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_same>`
 
 Assert v1 and v2 are the same using ``is_same``.  See @GlobalScope.is_same.
 
@@ -2186,7 +2146,7 @@ Assert v1 and v2 are the same using ``is_same``.  See @GlobalScope.is_same.
 
 .. rst-class:: classref-method
 
-|void| **assert_not_same**\ (\ v1, v2, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_same>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_not_same**\ (\ v1, v2, text = ""\ ) :ref:`🔗<class_GutTest_method_assert_not_same>`
 
 Assert using v1 and v2 are not the same using ``is_same``.  See @GlobalScope.is_same.
 
@@ -2202,11 +2162,7 @@ Assert using v1 and v2 are not the same using ``is_same``.  See @GlobalScope.is_
 
 Get all the errors generated by the test up to this point.  Each error is an instance of :ref:`GutTrackedError<class_GutTrackedError>`. Setting the :ref:`GutTrackedError.handled<class_GutTrackedError_property_handled>` ``handled`` property of an element in the array will prevent it from causing a test to fail. 
 
-
-
 This method allows you to inspect the details of any errors that occurred and decide if it's the error you are expecting or not. 
-
-
 
 
 
@@ -2237,11 +2193,9 @@ See :ref:`GutTrackedError<class_GutTrackedError>`, `Error-Tracking <../Error-Tra
 
 .. rst-class:: classref-method
 
-|void| **assert_engine_error_count**\ (\ count\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_, msg\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_ = ""\ ) :ref:`🔗<class_GutTest_method_assert_engine_error_count>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_engine_error_count**\ (\ count\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_, msg\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_ = ""\ ) :ref:`🔗<class_GutTest_method_assert_engine_error_count>`
 
 Asserts that a number of engine errors were generated by the test. 
-
-
 
 \ **Note:**  Each error can only be asserted against once.
 
@@ -2273,11 +2227,9 @@ See `Error-Tracking <../Error-Tracking.html>`__.
 
 .. rst-class:: classref-method
 
-|void| **assert_engine_error**\ (\ text, msg = ""\ ) :ref:`🔗<class_GutTest_method_assert_engine_error>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_engine_error**\ (\ text, msg = ""\ ) :ref:`🔗<class_GutTest_method_assert_engine_error>`
 
 Asserts that a single engine error containing ``text`` (case insensitive) was generated by the test.  If the expected error is found then this assert will pass and the test will not fail from that engine error. 
-
-
 
 \ **Note:**  Each error can only be asserted against once.
 
@@ -2307,11 +2259,9 @@ See `Error-Tracking <../Error-Tracking.html>`__.
 
 .. rst-class:: classref-method
 
-|void| **assert_push_error_count**\ (\ count\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_, msg\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_ = ""\ ) :ref:`🔗<class_GutTest_method_assert_push_error_count>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_push_error_count**\ (\ count\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_, msg\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_ = ""\ ) :ref:`🔗<class_GutTest_method_assert_push_error_count>`
 
 Asserts that a number of push_errors were generated by the test. 
-
-
 
 \ **Note:**  Each error can only be asserted against once.
 
@@ -2331,11 +2281,9 @@ See `Error-Tracking <../Error-Tracking.html>`__.
 
 .. rst-class:: classref-method
 
-|void| **assert_push_error**\ (\ text, msg = ""\ ) :ref:`🔗<class_GutTest_method_assert_push_error>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_push_error**\ (\ text, msg = ""\ ) :ref:`🔗<class_GutTest_method_assert_push_error>`
 
 Asserts that a single push error containing ``text`` (case insensitive) was generated by the test.  If the expected error is found then this assert will pass and the test will not fail from that push_error. 
-
-
 
 \ **Note:**  Each error can only be asserted against once.
 
@@ -2362,11 +2310,9 @@ See `Error-Tracking <../Error-Tracking.html>`__.
 
 .. rst-class:: classref-method
 
-|void| **assert_push_warning_count**\ (\ count\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_, msg\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_ = ""\ ) :ref:`🔗<class_GutTest_method_assert_push_warning_count>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_push_warning_count**\ (\ count\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_, msg\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_ = ""\ ) :ref:`🔗<class_GutTest_method_assert_push_warning_count>`
 
 Asserts that a number of push_warning were generated by the test. 
-
-
 
 \ **Note:**  Each warning can only be asserted against once.
 
@@ -2383,11 +2329,9 @@ See `Error-Tracking <../Error-Tracking.html>`__.
 
 .. rst-class:: classref-method
 
-|void| **assert_push_warning**\ (\ text\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_, msg\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_ = ""\ ) :ref:`🔗<class_GutTest_method_assert_push_warning>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_push_warning**\ (\ text\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_, msg\: `String <https://docs.godotengine.org/en/stable/classes/class_string.html>`_ = ""\ ) :ref:`🔗<class_GutTest_method_assert_push_warning>`
 
 Asserts that a single push warning containing ``text`` (case insensitive) was generated byt the test. 
-
-
 
 \ **Note:**  Each warning can only be asserted against once.
 
@@ -2404,7 +2348,7 @@ See `Error-Tracking <../Error-Tracking.html>`__.
 
 .. rst-class:: classref-method
 
-|void| **print_tracked_errors**\ (\ ) :ref:`🔗<class_GutTest_method_print_tracked_errors>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **print_tracked_errors**\ (\ ) :ref:`🔗<class_GutTest_method_print_tracked_errors>`
 
 Prints all detected engine errors, push_error, and push_warning that were generated by the test.
 
@@ -2726,7 +2670,7 @@ This creates a partial double of a singleton, where all methods are intially stu
 
 .. rst-class:: classref-method
 
-|void| **ignore_method_when_doubling**\ (\ thing, method_name\ ) :ref:`🔗<class_GutTest_method_ignore_method_when_doubling>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **ignore_method_when_doubling**\ (\ thing, method_name\ ) :ref:`🔗<class_GutTest_method_ignore_method_when_doubling>`
 
 This was implemented to allow the doubling of classes with static methods. There might be other valid use cases for this method, but you should always try stubbing before using this method.  Using ``stub(my_double, 'method').to_call_super()`` or  creating a :ref:`partial_double<class_GutTest_method_partial_double>` works for any other known scenario.  You cannot stub or spy on methods passed to ``ignore_method_when_doubling``.
 
@@ -2870,7 +2814,7 @@ The same as autoqfree but it also adds the object as a child of the test.
 
 .. rst-class:: classref-method
 
-|void| **assert_call_count**\ (\ inst, method_name, expected_count, parameters = null\ ) :ref:`🔗<class_GutTest_method_assert_call_count>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_call_count**\ (\ inst, method_name, expected_count, parameters = null\ ) :ref:`🔗<class_GutTest_method_assert_call_count>`
 
 **Deprecated:** Use :ref:`assert_called_count<class_GutTest_method_assert_called_count>` instead.
 
@@ -2882,7 +2826,7 @@ The same as autoqfree but it also adds the object as a child of the test.
 
 .. rst-class:: classref-method
 
-|void| **assert_setget**\ (\ instance, name_property, const_or_setter = null, getter = "__not_set__"\ ) :ref:`🔗<class_GutTest_method_assert_setget>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **assert_setget**\ (\ instance, name_property, const_or_setter = null, getter = "__not_set__"\ ) :ref:`🔗<class_GutTest_method_assert_setget>`
 
 **Deprecated:** no longer supported.
 

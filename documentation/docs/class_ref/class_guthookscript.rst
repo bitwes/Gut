@@ -19,8 +19,6 @@ Description
 
 GUT Wiki:  `https://gut.readthedocs.io <https://gut.readthedocs.io>`__ 
 
-
-
 Creating a hook script requires that you:
 
 - Inherit ``GutHookScript``\ 
@@ -54,15 +52,15 @@ Methods
    :widths: auto
 
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`abort<class_GutHookScript_method_abort>`\ (\ )                                                                                                                          |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`abort<class_GutHookScript_method_abort>`\ (\ )                                                                                                                          |
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_exit_code<class_GutHookScript_method_get_exit_code>`\ (\ )                                                                                                          |
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`register_inner_classes<class_GutHookScript_method_register_inner_classes>`\ (\ script\: `Script <https://docs.godotengine.org/en/stable/classes/class_script.html>`_\ ) |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`register_inner_classes<class_GutHookScript_method_register_inner_classes>`\ (\ script\: `Script <https://docs.godotengine.org/en/stable/classes/class_script.html>`_\ ) |
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`run<class_GutHookScript_method_run>`\ (\ )                                                                                                                              |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`run<class_GutHookScript_method_run>`\ (\ )                                                                                                                              |
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`set_exit_code<class_GutHookScript_method_set_exit_code>`\ (\ code\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_\ )                           |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`set_exit_code<class_GutHookScript_method_set_exit_code>`\ (\ code\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_\ )                           |
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`should_abort<class_GutHookScript_method_should_abort>`\ (\ )                                                                                                            |
    +--------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -109,7 +107,7 @@ Method Descriptions
 
 .. rst-class:: classref-method
 
-|void| **run**\ (\ ) :ref:`🔗<class_GutHookScript_method_run>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **run**\ (\ ) :ref:`🔗<class_GutHookScript_method_run>`
 
 Virtual method that will be called by GUT after instantiating this script. This is where you put all of your logic.
 
@@ -121,7 +119,7 @@ Virtual method that will be called by GUT after instantiating this script. This 
 
 .. rst-class:: classref-method
 
-|void| **register_inner_classes**\ (\ script\: `Script <https://docs.godotengine.org/en/stable/classes/class_script.html>`_\ ) :ref:`🔗<class_GutHookScript_method_register_inner_classes>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **register_inner_classes**\ (\ script\: `Script <https://docs.godotengine.org/en/stable/classes/class_script.html>`_\ ) :ref:`🔗<class_GutHookScript_method_register_inner_classes>`
 
 Register inner classes from one or more scripts for doubling. Only worth calling from pre-run hook, not post-run.
 
@@ -133,7 +131,7 @@ Register inner classes from one or more scripts for doubling. Only worth calling
 
 .. rst-class:: classref-method
 
-|void| **set_exit_code**\ (\ code\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_\ ) :ref:`🔗<class_GutHookScript_method_set_exit_code>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **set_exit_code**\ (\ code\: `int <https://docs.godotengine.org/en/stable/classes/class_int.html>`_\ ) :ref:`🔗<class_GutHookScript_method_set_exit_code>`
 
 Set the exit code when running from the command line.  If not set then the default exit code will be returned (0 when no tests fail, 1 when any tests fail).
 
@@ -157,7 +155,7 @@ Returns the exit code set with ``set_exit_code``
 
 .. rst-class:: classref-method
 
-|void| **abort**\ (\ ) :ref:`🔗<class_GutHookScript_method_abort>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **abort**\ (\ ) :ref:`🔗<class_GutHookScript_method_abort>`
 
 Usable by pre-run script to cause the run to end AFTER the run() method finishes.  GUT will quit and post-run script will not be ran.
 

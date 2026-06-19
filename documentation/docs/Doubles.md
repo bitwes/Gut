@@ -1,7 +1,7 @@
 # Doubles
 If you aren't sure what a Double is, check out [Test Double on Wikipedia](https://en.wikipedia.org/wiki/Test_double).
 
-You create a Double by calling the `double` method which in your `GutTest` script.  The `double` method accepts a loaded script or scene and returns a class based on the loaded script or scene passed to it.  The returned class/scene wraps the source and the methods defined will not execute the code defined in them.  These doubles can then be [stubbed](Stubbing) and [spied on](Spies) in tests.  You can also create [Partial Doubles](Partial-Doubles) which retain their functionality by default.
+You create a Double by calling the `double` method in your `GutTest` script.  The `double` method accepts a loaded script or loaded scene and returns a class based on the loaded script or scene passed to it.  The returned class/scene wraps the source and the methods defined will not execute the code defined in them.  These doubles can then be [stubbed](Stubbing) and [spied on](Spies) in tests.  You can also create [Partial Doubles](Partial-Doubles) which retain their functionality by default.
 
 Using your double, you can:
 * Stub methods to return different values.
@@ -17,24 +17,105 @@ __Warning:__   Native Godot methods are not included in doubles by default.  Nat
 <hr>
 
 ## Characteristics of a Double
+You can double Scripts, Inner Classes, and Packed Scenes.  Once you have a double, you can then call `new` or `instantiate` on it to create instances of a doubled object.
+
 * The double inherits (`extends`) the source.
 * Contains all class level variables defined in the source.
 * Contains all signals defined in the source.
 * Methods defined in the source (and any user defined super class):
   * Do nothing (unless stubbed).
-  * Will return `null` (unless stubbed).
+  * Return a default value based on the declared return type of function.  See the list of values below.
   * __All__ parameters are defaulted to `null`, even if they did not have a default value originally.  You can stub parameter defaults (see [Stubbing](Stubbing)).
+
+### Important Caveats
+* Any static methods you add to your scripts must be ignored before doubling using `ignore_method_when_doubling`.  More information about this below.
+* If your `_init` method has required parameters you must [stub](Stubbing) default values before trying to `double` the object.  This must be done at the object level, prior to calling `double` or `partial_double`
+```gdscript
+stub(MyClass, '_init').param_defaults(['param_1_default', 'param_2_default', ...])
+var dbl = double(MyClass).new()
+```
 * Inner Classes of the source are not doubled and will retain their functionality.
 * You can double Inner Classes, but it requires an extra step.  See the Inner Class section below.
-* If your `_init` method has required parameters you must [stub](Stubbing) default values before trying to `double` the object.
-* Any static methods you add to your scripts must be ignored before doubling using `ignore_method_when_doubling`.  More information about this below.
-* You can double Scripts, Inner Classes, and Packed Scenes.  Once you have a double, you can then call `new` or `instantiate` on it to create instances of a doubled object.
-* All instances of Doubles and Partial Doubles are freed when a test finishes.  This means you do not have to free them manually and you should not be created in `before_all` or referenced in `after_all`.
+* All instances of Doubles and Partial Doubles are freed when a test finishes.  This means you do not have to free them manually.
+* Do not create double instances in `before_all` or reference them in `after_all`.
 
+
+## Default return values
+Starting in Godot 4.7, methods with a declared return type can no longer return `null`.  To this end, GUT now has default values that will be returned from an unstubbed method in a double.  Stubbing a method `to_do_nothing` on a Parial Double will also result in these defaults being returned.
+
+If a method has no declared return type or a `void` return type, then the doubled version will return `null`.
+
+If a method is stubbed to return an invalid value GUT will generate an error but execution will continue.  This will result in an engine error as well.
+
+Gut Error Example:
+```
+[GUT ERROR]:  Method [explicit_int_return] was stubbed to return invalid value [adsf].
+```
+Engine Error Example:
+```
+SCRIPT ERROR: Trying to return a value of type "String" from a function whose return type is "int".
+```
+Default Values:
+```
+TYPE_AABB           : AABB(),
+TYPE_ARRAY          : [],
+TYPE_BASIS          : Basis.IDENTITY,
+TYPE_BOOL           : false,
+TYPE_CALLABLE       : Callable(),
+TYPE_COLOR          : Color.WHITE,
+TYPE_DICTIONARY     : {},
+TYPE_FLOAT          : 0.0,
+TYPE_INT            : 0,
+TYPE_NODE_PATH      : NodePath(),
+TYPE_OBJECT         : null,
+TYPE_PACKED_BYTE_ARRAY      : PackedByteArray(),
+TYPE_PACKED_COLOR_ARRAY     : PackedColorArray(),
+TYPE_PACKED_FLOAT32_ARRAY   : PackedFloat32Array(),
+TYPE_PACKED_FLOAT64_ARRAY   : PackedFloat64Array(),
+TYPE_PACKED_INT32_ARRAY     : PackedInt32Array(),
+TYPE_PACKED_INT64_ARRAY     : PackedInt64Array(),
+TYPE_PACKED_STRING_ARRAY    : PackedStringArray(),
+TYPE_PACKED_VECTOR2_ARRAY   : PackedVector2Array(),
+TYPE_PACKED_VECTOR3_ARRAY   : PackedVector3Array(),
+TYPE_PACKED_VECTOR4_ARRAY   : PackedVector4Array(),
+TYPE_PLANE          : Plane.PLANE_XY,
+TYPE_PROJECTION     : Projection.IDENTITY,
+TYPE_QUATERNION     : Quaternion.IDENTITY,
+TYPE_RECT2          : Rect2(0, 0, 0, 0),
+TYPE_RECT2I         : Rect2i(0, 0, 0, 0),
+TYPE_RID            : RID(),
+TYPE_SIGNAL         : null,
+TYPE_STRING         : '',
+TYPE_STRING_NAME    : &'',
+TYPE_TRANSFORM2D    : Transform2D.IDENTITY,
+TYPE_TRANSFORM3D    : Transform3D.IDENTITY,
+TYPE_VECTOR2        : Vector2.ZERO,
+TYPE_VECTOR2I       : Vector2i.ZERO,
+TYPE_VECTOR3        : Vector3.ZERO,
+TYPE_VECTOR3I       : Vector3i.ZERO,
+TYPE_VECTOR4        : Vector4.ZERO,
+TYPE_VECTOR4I       : Vector4i.ZERO,
+```
+These values are not currently designed to be changed, but it is possible if you really really want to.  You should do this in a pre-run-hook and avoid chagning these values more than once.  It is more maintainable (currently) to stub methods instead of altering these values.  This is a new feature for Godot 4.7, please provide feedback at https://github.com/bitwes/Gut/issues.
+```gdscript
+# ---
+# IF YOU FIND YOURSELF DOING THIS, PLEASE OPEN AN ISSUE ON GITHUB
+# https://github.com/bitwes/Gut/issues
+# ----
+extends GutHookScript
+
+func run():
+    GutConstants.DEFAULT_RETURNS[TYPE_INT] = -99
+```
 
 ## Doubling a Script
-To double a script just give it a path or an already loaded script.
+To double a script just give it class name or a loaded script.
 ``` gdscript
+# If your script has a class_name clause, just use that.
+var doubled_script = double(MyClassWithClassName).new()
+
+
+# Other wise you can do the following:
 var MyScript = load('res://my_script.gd')
 
 # Load the doubled object.
@@ -44,6 +125,7 @@ var DoubledMyScript = double(MyScript)
 var doubled_script = DoubledMyScript.new()
 # or
 var doubled_script = double(MyScript).new()
+
 ```
 
 

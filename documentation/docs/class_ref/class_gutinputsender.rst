@@ -17,15 +17,9 @@ The GutInputSender class.  It sends input to places.
 Description
 -----------
 
-
-
-
-
 GUT Wiki:  `https://gut.readthedocs.io <https://gut.readthedocs.io>`__\ 
 
 See `Mocking-Input <../Mocking-Input.html>`__ for examples. 
-
-
 
 This class can be used to send ``InputEvent*`` events to various objects.  It also allows you to script out a series of inputs and play them back in real time.  You could use it to:
 
@@ -37,15 +31,9 @@ This class can be used to send ``InputEvent*`` events to various objects.  It al
 
 
 
-
-
 And much much more. 
 
-
-
 As of 9.3.1 you can use ``GutInputSender`` instead of ``InputSender``.  It's the same thing, but ``GutInputSender`` is a ``class_name`` so you may have less warnings and auto-complete will work. 
-
-
 
 \ **Warning**\ 
 
@@ -80,9 +68,9 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`action_up<class_GutInputSender_method_action_up>`\ (\ which, strength = 1.0\ )                                                                       |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`add_receiver<class_GutInputSender_method_add_receiver>`\ (\ obj\ )                                                                                   |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`add_receiver<class_GutInputSender_method_add_receiver>`\ (\ obj\ )                                                                                   |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`clear<class_GutInputSender_method_clear>`\ (\ )                                                                                                      |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`clear<class_GutInputSender_method_clear>`\ (\ )                                                                                                      |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`get_auto_flush_input<class_GutInputSender_method_get_auto_flush_input>`\ (\ )                                                                        |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -130,7 +118,7 @@ Methods
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`send_event<class_GutInputSender_method_send_event>`\ (\ event\ )                                                                                     |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | |void|                                                                         | :ref:`set_auto_flush_input<class_GutInputSender_method_set_auto_flush_input>`\ (\ val\ )                                                                   |
+   | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`set_auto_flush_input<class_GutInputSender_method_set_auto_flush_input>`\ (\ val\ )                                                                   |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ | :ref:`wait<class_GutInputSender_method_wait>`\ (\ t\ )                                                                                                     |
    +--------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -227,7 +215,7 @@ Accepts a single optional receiver.
 
 .. rst-class:: classref-method
 
-|void| **add_receiver**\ (\ obj\ ) :ref:`🔗<class_GutInputSender_method_add_receiver>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **add_receiver**\ (\ obj\ ) :ref:`🔗<class_GutInputSender_method_add_receiver>`
 
 Add an object to receive input events.
 
@@ -317,7 +305,7 @@ Get the value of :ref:`set_auto_flush_input<class_GutInputSender_method_set_auto
 
 .. rst-class:: classref-method
 
-|void| **set_auto_flush_input**\ (\ val\ ) :ref:`🔗<class_GutInputSender_method_set_auto_flush_input>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **set_auto_flush_input**\ (\ val\ ) :ref:`🔗<class_GutInputSender_method_set_auto_flush_input>`
 
 Enable/Disable auto flushing of input.  When enabled the **GutInputSender** will call ``Input.flush_buffered_events`` after each event is sent. See the "use_accumulated_input" section in `Mocking-Input <../Mocking-Input.html>`__ for more information.
 
@@ -341,11 +329,9 @@ Adds a delay between the last input queue item added and any queue item added ne
 
 .. rst-class:: classref-method
 
-|void| **clear**\ (\ ) :ref:`🔗<class_GutInputSender_method_clear>`
+`Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **clear**\ (\ ) :ref:`🔗<class_GutInputSender_method_clear>`
 
 Clears the input queue and any state such as the last event sent and any pressed actions/buttons.  Does not clear the list of receivers. 
-
-
 
 This should be done between each test when the **GutInputSender** is a class level variable so that state does not leak between tests.
 
@@ -541,8 +527,6 @@ Create your own event and use this to send it to all receivers.
 
 Releases all `InputEventKey <https://docs.godotengine.org/en/stable/classes/class_inputeventkey.html>`_, `InputEventAction <https://docs.godotengine.org/en/stable/classes/class_inputeventaction.html>`_, and `InputEventMouseButton <https://docs.godotengine.org/en/stable/classes/class_inputeventmousebutton.html>`_ events that have passed through this instance.  These events could have been generated via the various ``_down`` methods or passed to :ref:`send_event<class_GutInputSender_method_send_event>`. 
 
-
-
 This will send the "release" event (``pressed = false``) to all receivers.  This should be done between each test when using `Input` as a receiver.
 
 .. rst-class:: classref-item-separator
@@ -580,8 +564,6 @@ Same as :ref:`wait<class_GutInputSender_method_wait>` but only accepts a number 
 `Variant <https://docs.godotengine.org/en/stable/classes/class_variant.html>`_ **hold_for**\ (\ duration\ ) :ref:`🔗<class_GutInputSender_method_hold_for>`
 
 This is a special :ref:`wait<class_GutInputSender_method_wait>` that will emit the previous input queue item with ``pressed = false`` after a delay.  If you pass a number then it will wait that many seconds.  You can also use the `"4f"` format to wait a specific number of frames. 
-
-
 
 For example ``sender.action_down('jump').hold_for("10f")`` will cause two `InputEventAction <https://docs.godotengine.org/en/stable/classes/class_inputeventaction.html>`_ instances to be sent.  The "jump-down" event from :ref:`action_down<class_GutInputSender_method_action_down>` and then a "jump-up" event after 10 frames.
 
