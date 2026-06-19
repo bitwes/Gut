@@ -1,269 +1,334 @@
 extends GutTest
 
 
-var UpdateDetector = GutUtils.UpdateDetector
-
-var _sample_parsed_data = {
-	"asset_library":"99.0",
-	"branches":{
-		"main":{
-			"godot_min":"8.0.0",
-			"godot_max":"8.999"
-		}
-	},
-    "releases":{
-		"99.0":{
-			"godot_min":"9.0.0",
-			"godot_max":"9999"
+class Helper:
+	static var _sample_parsed_data = {
+		"asset_library":"99.0",
+		"branches":{
+			"main":{
+				"godot_min":"8.0.0",
+				"godot_max":"8.999"
+			}
 		},
-		"13.2.0":{
-			"godot_min":"3.6.5",
-			"godot_max":"3.999",
-		},
-		"13.1.0":{
-			"godot_min":"3.6.0",
-			"godot_max":"3.999",
-		},
-		"13.0.0":{
-			"godot_min":"3.0.0",
-			"godot_max":"3.5.0",
-		},
-		"12.0":{
-			"godot_min":"2.0",
-			"godot_max":"2.999"
-		},
-		"11.0":{
-			"godot_min":"1.0",
-			"godot_max":"1.999"
-		}
-	}
-}
-
-func get_sample_data():
-	return _sample_parsed_data.duplicate(true)
-
-
-func test_can_make_one():
-	var ud = UpdateDetector.new()
-	assert_not_null(ud)
-	ud.free()
-
-
-var _vdata = ParameterFactory.named_parameters([
-	'godot_version', 'expected_gut_version'
-],[
-	["1.0", "11.0"],
-	["2.0", "12.0"],
-	["3.0.0", "13.0.0"],
-	["3.4.1", "13.0.0"],
-	["3.6.0", "13.1.0"],
-	["3.6.4", "13.1.0"],
-	["3.6.5", "13.2.0"],
-	["3.6.7", "13.2.0"],
-
-	["9", "99.0"],
-	["99", "99.0"],
-	["999", "99.0"],
-
-	["0.0.1", "0.0.0"],
-	["999999", "0.0.0"]
-])
-func test_get_recommented_gut_version_from_sample_data(data=use_parameters(_vdata)):
-	var ud = autofree(UpdateDetector.new())
-	ud.parse_version_data(get_sample_data())
-	var v = ud.get_gut_version_for_godot_version(data.godot_version)
-	assert_eq(v, data.expected_gut_version, str('rec version for ', data.godot_version))
-
-
-var _valid_data = ParameterFactory.named_parameters([
-	'gut_version', 'godot_version', 'expected'
-],[
-	["11.0", "1.0.0", true],
-	["11.0", "2.0", false]
-])
-func test_is_gut_version_valid_for_godot_version(data=use_parameters(_valid_data)):
-	var ud = autofree(UpdateDetector.new())
-	ud.parse_version_data(get_sample_data())
-	var is_it = ud.is_gut_version_valid(data.gut_version, data.godot_version)
-	assert_eq(is_it, data.expected, str(data.gut_version, ' valid for ', data.godot_version))
-
-
-func test_parse_data_returns_dictionary():
-	var ud = autofree(UpdateDetector.new())
-	var data = """{
-		"asset_library":"x.x",
-		"branches":{},
 		"releases":{
 			"99.0":{
-				"godot_min":"9.0.0",
+				"godot_min":"99.0.0",
 				"godot_max":"9999"
 			},
+			"13.2.0":{
+				"godot_min":"3.6.5",
+				"godot_max":"3.999",
+			},
+			"13.1.0":{
+				"godot_min":"3.6.0",
+				"godot_max":"3.999",
+			},
+			"13.0.0":{
+				"godot_min":"3.0.0",
+				"godot_max":"3.5.0",
+			},
+			"12.0":{
+				"godot_min":"2.0",
+				"godot_max":"2.999"
+			},
+			"11.0":{
+				"godot_min":"1.0",
+				"godot_max":"1.999"
+			}
 		}
-	}"""
+	}
 
-	ud.parse_version_data(data)
-	assert_typeof(ud.parsed_data, TYPE_DICTIONARY)
+	static func get_sample_data():
+		return _sample_parsed_data.duplicate(true)
 
 
-func test_missing_godot_min_listed_as_issue():
-	var ud = autofree(UpdateDetector.new())
-	var data = """{
-		"asset_library":"x.x",
+class TestUpdateDetectorClass:
+	extends GutTest
+	var UpdateDetector = GutUtils.UpdateDetector
+
+	func test_when_local_version_indicates_valid_remote_invalid_is_ignored():
+		var ud = autofree(UpdateDetector.new())
+
+		var local_data = Helper.get_sample_data()
+		local_data.releases["20.0.0"] = {
+					"godot_min":"8.0.0",
+					"godot_max":"8.999",
+				}
+
+		ud.local_data.parse_data(local_data)
+		ud.remote_data.parse_data(Helper.get_sample_data())
+
+		assert_true(ud.is_gut_version_valid('20.0.0', '8.0.0'))
+
+
+	func test_latest_is_not_a_branch_when_local_has_a_version_and_remote_has_branch():
+		var ud = autofree(UpdateDetector.new())
+
+		var local_data = Helper.get_sample_data()
+		local_data.releases["20.0.0"] = {
+					"godot_min":"9.0.0",
+					"godot_max":"9.999",
+				}
+		var remote_data = Helper.get_sample_data()
+		remote_data.branches["godot_9"] = {
+					"godot_min":"9.0.0",
+					"godot_max":"9.999",
+				}
+
+		ud.local_data.parse_data(local_data)
+		ud.remote_data.parse_data(remote_data)
+		print('local version = ', ud.local_data.get_gut_version_for_godot_version("8.0.0"))
+		print('remote version = ', ud.remote_data.get_gut_version_for_godot_version("8.0.0"))
+		assert_eq(ud.get_gut_version_for_godot_version("9.0.0"), "20.0.0")
+
+
+	func test_latest_is_branch_when_remote_and_local_have_same_branch():
+		var ud = autofree(UpdateDetector.new())
+
+		var local_data = Helper.get_sample_data()
+		local_data.branches["godot_9"] = {
+					"godot_min":"9.0.0",
+					"godot_max":"9.999",
+				}
+		var remote_data = Helper.get_sample_data()
+		remote_data.branches["godot_9"] = {
+					"godot_min":"9.0.0",
+					"godot_max":"9.999",
+				}
+
+		ud.local_data.parse_data(local_data)
+		ud.remote_data.parse_data(remote_data)
+		assert_eq(ud.get_gut_version_for_godot_version("9.0.1"), "godot_9")
+
+
+	func test_latest_is_branch_when_local_does_not_have_version_and_remote_has_branch():
+		var ud = autofree(UpdateDetector.new())
+
+		var local_data = Helper.get_sample_data()
+		var remote_data = Helper.get_sample_data()
+		remote_data.branches["godot_9"] = {
+					"godot_min":"9.0.0",
+					"godot_max":"9.999",
+				}
+
+		ud.local_data.parse_data(local_data)
+		ud.remote_data.parse_data(remote_data)
+		assert_eq(ud.get_gut_version_for_godot_version("9.0.1"), "godot_9")
+
+
+
+
+class TestVersionData:
+	extends GutTest
+	# var _sample_parsed_data = Helper._sample_parsed_data
+
+	var UpdateDetector = GutUtils.UpdateDetector
+	var VersionData = UpdateDetector.VersionData
+
+
+
+	func test_can_make_one():
+		var ud = UpdateDetector.new()
+		assert_not_null(ud)
+		ud.free()
+
+
+	var _vdata = ParameterFactory.named_parameters([
+		'godot_version', 'expected_gut_version'
+	],[
+		["1.0", "11.0"],
+		["2.0", "12.0"],
+		["3.0.0", "13.0.0"],
+		["3.4.1", "13.0.0"],
+		["3.6.0", "13.1.0"],
+		["3.6.4", "13.1.0"],
+		["3.6.5", "13.2.0"],
+		["3.6.7", "13.2.0"],
+
+		["99", "99.0"],
+		["999", "99.0"],
+
+		["0.0.1", "0.0.0"],
+		["999999", "0.0.0"]
+	])
+	func test_get_recommented_gut_version_from_sample_data(data=use_parameters(_vdata)):
+		var vd = VersionData.new()
+		vd.parse_data(Helper.get_sample_data())
+		var v = vd.get_gut_version_for_godot_version(data.godot_version)
+		assert_eq(v, data.expected_gut_version, str('rec version for ', data.godot_version))
+
+
+	var _valid_data = ParameterFactory.named_parameters([
+		'gut_version', 'godot_version', 'expected'
+	],[
+		["11.0", "1.0.0", true],
+		["11.0", "2.0", false]
+	])
+	func test_is_gut_version_valid_for_godot_version(data=use_parameters(_valid_data)):
+		var vd = VersionData.new()
+		vd.parse_data(Helper.get_sample_data())
+		var is_it = vd.is_gut_version_valid(data.gut_version, data.godot_version)
+		assert_eq(is_it, data.expected, str(data.gut_version, ' valid for ', data.godot_version))
+
+
+	func test_missing_godot_min_listed_as_issue():
+		var vd = VersionData.new()
+		var data = """{
+			"asset_library":"x.x",
+			"branches":{},
+			"releases":{
+				"99.0":{
+					"godot_max":"9999"
+				}
+			}
+		}"""
+		vd.parse_data(data)
+		assert_eq(vd.data_issues.size(), 1)
+		if(is_failing()):
+			gut.p(str("Issues\n", vd.data_issues))
+
+
+	func test_missing_godot_max_listed_as_issue():
+		var vd = VersionData.new()
+		var data = """{
+			"asset_library":"x.x",
+			"branches":{},
+			"releases":{
+				"99.0":{
+					"godot_min":"9.0.0",
+				}
+			}
+		}"""
+		vd.parse_data(data)
+		assert_eq(vd.data_issues.size(), 1)
+
+
+	func test_missing_releases_listed_as_issue():
+		var vd = VersionData.new()
+		var data = """{
+			"asset_library":"x.x",
+			"branches":{}
+		}"""
+
+		vd.parse_data(data)
+		assert_eq(vd.data_issues.size(), 1)
+
+
+	func test_when_gut_version_not_found():
+		var vd = VersionData.new()
+		vd.parse_data(Helper.get_sample_data())
+		assert_eq(vd.get_gut_version_for_godot_version("3.6.7"), "13.2.0")
+
+
+	func test_when_godot_version_not_found_branches_is_checked():
+		var vd = VersionData.new()
+		vd.parse_data(Helper.get_sample_data())
+		assert_eq(vd.get_gut_version_for_godot_version("8.0.0"), "main")
+
+
+	func test_missing_branches_entry_is_an_issue():
+		var vd = VersionData.new()
+		var data = """{
+			"asset_library":"x.x",
+			"releases":{
+				"99.0":{
+					"godot_min":"9.0.0",
+					"godot_max":"9999"
+				}
+			}
+		}"""
+		vd.parse_data(data)
+		assert_eq(vd.data_issues.size(), 1)
+
+
+	func test_branches_missing_godot_min_is_an_issue():
+		var vd = VersionData.new()
+		var data = """{
+			"asset_library":"x.x",
+			"releases":{},
+			"branches":{
+				"some_branch":{
+					"godot_max":"9999"
+				}
+			}
+		}"""
+		vd.parse_data(data)
+		assert_eq(vd.data_issues.size(), 1)
+
+
+	func test_branches_missing_godot_max_is_an_issue():
+		var vd = VersionData.new()
+		var data = """{
+			"asset_library":"x.x",
+			"releases":{},
+			"branches":{
+				"some_branch":{
+					"godot_min":"9.0.0",
+				}
+			}
+		}"""
+		vd.parse_data(data)
+		assert_eq(vd.data_issues.size(), 1)
+
+	func test_when_gut_version_not_found_is_valid_returns_false():
+		var vd = VersionData.new()
+		vd.parse_file(UpdateDetector.LOCAL_FILE_PATH)
+		assert_false(vd.is_gut_version_valid('23432.124231.123234', GutUtils.godot_version_string()))
+
+
+	func test_when_asset_library_entry_is_missing_it_is_an_issue():
+		var vd = VersionData.new()
+		var data = """{
+			"releases":{},
+			"branches":{}
+		}"""
+		vd.parse_data(data)
+		assert_eq(vd.data_issues.size(), 1)
+
+
+	# func test_is_in_asset_library_returns_true_for_gut_version_in_entry():
+	# 	var vd = VersionData.new()
+	# 	vd.parse_data(Helper.get_sample_data())
+	# 	assert_true(vd.is_in_asset_library("99.0"))
+
+
+	# func test_is_in_asset_library_returns_false_for_gut_version_not_in_entry():
+	# 	var vd = VersionData.new()
+	# 	vd.parse_data(Helper.get_sample_data())
+	# 	assert_false(vd.is_in_asset_library("22.0"))
+
+
+	# func test_if_asset_library_is_missing_is_in_asset_library_returns_false():
+	# 	var vd = VersionData.new()
+	# 	var data = Helper.get_sample_data()
+	# 	data.erase("asset_library")
+	# 	vd.parse_data(data)
+	# 	assert_false(vd.is_in_asset_library("99.0"))
+
+
+	func test_if_later_version_comes_after_current_verions_it_still_finds_later_version():
+		var data = {
+		"asset_library":"99.0",
 		"branches":{},
 		"releases":{
-			"99.0":{
-				"godot_max":"9999"
+			"9.6.0": {
+				"godot_max": "999",
+				"godot_min": "4.6"
+			},
+			"9.6.1": {
+				"godot_max": "999",
+				"godot_min": "4.6"
 			}
-		}
-	}"""
-	ud.parse_version_data(data)
-	assert_eq(ud.data_issues.size(), 1)
-	if(is_failing()):
-		gut.p(str("Issues\n", ud.data_issues))
-
-
-func test_missing_godot_max_listed_as_issue():
-	var ud = autofree(UpdateDetector.new())
-	var data = """{
-		"asset_library":"x.x",
-		"branches":{},
-		"releases":{
-			"99.0":{
-				"godot_min":"9.0.0",
-			}
-		}
-	}"""
-	ud.parse_version_data(data)
-	assert_eq(ud.data_issues.size(), 1)
-
-
-func test_missing_releases_listed_as_issue():
-	var ud = autofree(UpdateDetector.new())
-	var data = """{
-		"asset_library":"x.x",
-		"branches":{}
-	}"""
-
-	ud.parse_version_data(data)
-	assert_eq(ud.data_issues.size(), 1)
-
-
-func test_when_gut_version_not_found():
-	var ud = autofree(UpdateDetector.new())
-	ud.parse_version_data(get_sample_data())
-	assert_eq(ud.get_gut_version_for_godot_version("3.6.7"), "13.2.0")
-
-
-func test_when_godot_version_not_found_branches_is_checked():
-	var ud = autofree(UpdateDetector.new())
-	ud.parse_version_data(get_sample_data())
-	assert_eq(ud.get_gut_version_for_godot_version("8.0.0"), "main")
-
-
-func test_missing_branches_entry_is_an_issue():
-	var ud = autofree(UpdateDetector.new())
-	var data = """{
-		"asset_library":"x.x",
-		"releases":{
-			"99.0":{
-				"godot_min":"9.0.0",
-				"godot_max":"9999"
-			}
-		}
-	}"""
-	ud.parse_version_data(data)
-	assert_eq(ud.data_issues.size(), 1)
-
-
-func test_branches_missing_godot_min_is_an_issue():
-	var ud = autofree(UpdateDetector.new())
-	var data = """{
-		"asset_library":"x.x",
-		"releases":{},
-		"branches":{
-			"some_branch":{
-				"godot_max":"9999"
-			}
-		}
-	}"""
-	ud.parse_version_data(data)
-	assert_eq(ud.data_issues.size(), 1)
-
-
-func test_branches_missing_godot_max_is_an_issue():
-	var ud = autofree(UpdateDetector.new())
-	var data = """{
-		"asset_library":"x.x",
-		"releases":{},
-		"branches":{
-			"some_branch":{
-				"godot_min":"9.0.0",
-			}
-		}
-	}"""
-	ud.parse_version_data(data)
-	assert_eq(ud.data_issues.size(), 1)
-
-func test_when_gut_version_not_found_is_valid_returns_false():
-	var ud = autofree(UpdateDetector.new())
-	ud.parse_file(ud.LOCAL_FILE_PATH)
-	assert_false(ud.is_gut_version_valid('23432.124231.123234', GutUtils.godot_version_string()))
-
-
-func test_when_asset_library_entry_is_missing_it_is_an_issue():
-	var ud = autofree(UpdateDetector.new())
-	var data = """{
-		"releases":{},
-		"branches":{}
-	}"""
-	ud.parse_version_data(data)
-	assert_eq(ud.data_issues.size(), 1)
-
-
-func test_is_in_asset_library_returns_true_for_gut_version_in_entry():
-	var ud = autofree(UpdateDetector.new())
-	ud.parse_version_data(get_sample_data())
-	assert_true(ud.is_in_asset_library("99.0"))
-
-
-func test_is_in_asset_library_returns_false_for_gut_version_not_in_entry():
-	var ud = autofree(UpdateDetector.new())
-	ud.parse_version_data(get_sample_data())
-	assert_false(ud.is_in_asset_library("22.0"))
-
-
-func test_if_asset_library_is_missing_is_in_asset_library_returns_false():
-	var ud = autofree(UpdateDetector.new())
-	var data = get_sample_data().duplicate()
-	data.erase("asset_library")
-	ud.parse_version_data(data)
-	assert_false(ud.is_in_asset_library("99.0"))
-
-
-func test_if_later_version_comes_after_current_verions_it_still_finds_later_version():
-	var data = {
-	"asset_library":"99.0",
-	"branches":{},
-    "releases":{
-        "9.6.0": {
-            "godot_max": "999",
-            "godot_min": "4.6"
-        },
-        "9.6.1": {
-            "godot_max": "999",
-            "godot_min": "4.6"
-        }
-
-	}}
-	var ud = autofree(UpdateDetector.new())
-	ud.parse_version_data(data)
-	assert_eq(ud.get_gut_version_for_godot_version('4.6'), '9.6.1')
-
+		}}
+		var vd = VersionData.new()
+		vd.parse_data(data)
+		assert_eq(vd.get_gut_version_for_godot_version('4.6'), '9.6.1')
 
 
 class TestFetch:
 	extends GutTest
 
+	var UpdateDetector = GutUtils.UpdateDetector
 	var _sample_parsed_data = {
 		"asset_library":"99.0",
 		"branches":{
@@ -287,8 +352,6 @@ class TestFetch:
 	func get_sample_data():
 		return _sample_parsed_data.duplicate(true)
 
-
-	var UpdateDetector = GutUtils.UpdateDetector
 
 	func before_each():
 		gut.file_delete(UpdateDetector.REMOTE_FILE_PATH)
@@ -328,7 +391,7 @@ class TestFetch:
 		stub(ud.fetch_remote_file).to_do_nothing()
 		ud._http_request.request_completed.emit('result', 200, '',
 			JSON.stringify(get_sample_data()).to_utf8_buffer())
-		assert_eq(ud.parsed_data, get_sample_data())
+		assert_eq(ud.remote_data._data, get_sample_data())
 
 
 	func test_when_there_issues_with_the_data_the_file_is_not_written():
@@ -349,7 +412,8 @@ class TestFetch:
 		data = JSON.stringify(data).to_utf8_buffer()
 
 		ud._http_request.request_completed.emit('result', 200, '', data)
-		assert_eq(ud.parsed_data, {})
+		assert_true(ud.remote_data.is_empty())
+		# assert_eq(ud.parsed_data, {})
 		assert_push_error("nvalid version data")
 
 
@@ -386,8 +450,6 @@ class TestFetch:
 		assert_has(json, 'fetch_timestamp')
 
 
-
-
 class TestCheckForUpdateWithFetch:
 	extends GutTest
 
@@ -411,12 +473,14 @@ class TestCheckForUpdateWithFetch:
 			},
 		}
 	}
+	var UpdateDetector = GutUtils.UpdateDetector
 
 	func before_each():
 		gut.file_delete(UpdateDetector.REMOTE_FILE_PATH)
 
 	func get_sample_data():
 		return _sample_parsed_data.duplicate(true)
+
 
 	func _create_update_detector():
 		var to_return = partial_double(UpdateDetector).new()
@@ -428,8 +492,6 @@ class TestCheckForUpdateWithFetch:
 
 		return to_return
 
-
-	var UpdateDetector = GutUtils.UpdateDetector
 
 	func test_it_fetches_data_by_default():
 		var ud = _create_update_detector()
@@ -485,5 +547,3 @@ class TestCheckForUpdateWithFetch:
 
 		ud.check_for_update_with_fetch(true)
 		assert_called(ud.fetch_remote_file)
-
-
