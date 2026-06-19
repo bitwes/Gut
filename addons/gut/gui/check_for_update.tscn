@@ -36,7 +36,7 @@ focus_mode = 2
 theme_override_fonts/mono_font = ExtResource("2_lsin2")
 theme_override_styles/normal = SubResource("StyleBoxFlat_lsin2")
 bbcode_enabled = true
-text = "[center]GUT 9.6.0 is the lastest version for Godot 4.6.1[/center]
+text = "[center][color=ROYAL_BLUE][url=https://github.com/bitwes/Gut/releases/tag/v0.0.0]GUT 0.0.0[/url][/color] is now available![/center]
 "
 selection_enabled = true
 

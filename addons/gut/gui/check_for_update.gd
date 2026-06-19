@@ -18,14 +18,21 @@ var _mouse_down_time_to_show_verbose := 4.0
 
 signal verbose_enabled
 
+func _debug_ready():
+	_verbose = true
+
 func _ready():
 	update_detector = GutUtils.UpdateDetector.new()
 	add_child(update_detector)
 	update_detector.updated.connect(_on_update_detector_updated)
 	update_detector.download_completed.connect(_on_update_detector_download)
-	
+
 	check_for_update(false, false)
+	_log(update_detector.get_summary_string())
 	_populate_text()
+
+	if(get_parent() == get_tree().root):
+		_debug_ready()
 
 
 func _process(delta: float) -> void:
@@ -64,6 +71,7 @@ func _get_check_for_update_link():
 func check_for_update(use_fetch, force=false):
 	_log_entries.clear()
 	rtl.text = ""
+	update_detector.check_for_update()
 	if(use_fetch):
 		fetch_count += 1
 		rtl.text = "Checking..."
@@ -76,14 +84,14 @@ func check_for_update(use_fetch, force=false):
 
 func _populate_text():
 	var txt = ""
-	if(update_detector.parsed_data != {}):
+	if(!update_detector.is_empty()):
 		txt = str("[center]", update_detector.get_update_string(_url_bbcode), "[/center]")
 	if(_verbose):
 		txt = txt + "\n\n" + "\n".join(_log_entries)
 	rtl.text = txt + "\n" + _get_check_for_update_link()
 	_post_populate.call_deferred()
-	
-	
+
+
 func _post_populate():
 	custom_minimum_size.y = min(rtl.get_content_height() + 30, 400)
 
@@ -101,16 +109,19 @@ func _url_bbcode(url, link_text=null, color_name="ROYAL_BLUE"):
 func _on_update_detector_updated():
 	_log_file(update_detector.REMOTE_FILE_PATH)
 	_log_file(update_detector.LOCAL_FILE_PATH)
-	_log(str("parsed:\n[code]", JSON.stringify(update_detector.parsed_data, "  "), "[/code]"))
-	_log(str("Issues:\n", update_detector.data_issues))
+	_log(str("Local:\n[code]", JSON.stringify(update_detector.local_data.get_data(), "  "), "[/code]"))
+	_log(str("Local Issues:\n", update_detector.local_data.data_issues))
+	_log(str("Remote:\n[code]", JSON.stringify(update_detector.remote_data.get_data(), "  "), "[/code]"))
+	_log(str("Remote Issues:\n", update_detector.remote_data.data_issues))
+
 	_log(update_detector.get_summary_string())
 	_populate_text()
 
 
 func _on_btn_check_button_up() -> void:
 	check_for_update(true, true)
-	
-	
+
+
 func _on_update_detector_download():
 	_log("Download completed")
 
