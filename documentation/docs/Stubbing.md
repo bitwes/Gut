@@ -73,13 +73,12 @@ This stubs the method to do nothing and return a specific value when called.
 
 
 ### to_do_nothing()
-This is the same as `to_return(null)` but has a nice explicit name that is easy to read.  This is mostly used with Partial Doubles to make them not "call super".
+This causes the method to have the default behavior defined in a normal Double.  It will cause the method to skip the existing implementation and return a default value based on the return type of the function.  See the list of default values on the [Doubles][Doubles] page.
 ```gdscript
 var inst = partial_double(MyScript).new()
-stub(inst._set).to_do_nothing()
+stub(inst.returns_some_object).to_do_nothing()
 
-inst.some_property = 9
-assert_ne(inst.some_property, 9)
+assert_null(inst.returns_some_object())
 ```
 
 ### to_call_super()
@@ -169,10 +168,6 @@ var DoubleThis = load('res://scripts/double_this.gd')
 var Doubled = double(DoubleThis)
 var inst = Doubled.new()
 
-# These two are equivalent, and stub returns_seven for any doubles of
-# DoubleThis to return 500.
-stub('res://scripts/double_this.gd', 'returns_seven').to_return(500)
-# or
 stub(DoubleThis, 'returns_seven').to_return(500)
 assert_eq(inst.returns_seven(), 500)
 

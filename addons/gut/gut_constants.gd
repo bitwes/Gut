@@ -45,7 +45,8 @@ const TYPE_STRINGS = {
 
 # Values should not be referenced outside of this script.
 # Use get_default_return_value.  The functions look weird, but they are here
-# so that each call to a doubled method returns a unique instance of things.
+# so that each call to a doubled method returns a unique instance of things for
+# anything that would be passed by reference.
 static var _default_returns = {
 	TYPE_NIL : null,
 	TYPE_BOOL : false,

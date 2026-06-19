@@ -96,6 +96,8 @@ TYPE_VECTOR3I       : Vector3i.ZERO,
 TYPE_VECTOR4        : Vector4.ZERO,
 TYPE_VECTOR4I       : Vector4i.ZERO,
 ```
+This is a new feature for Godot 4.7, and as of now these values cannot be changed (easily) by the end user.  Please open an issue on Github if this something you'd like to be able to do.
+
 
 ## Doubling a Script
 To double a script just give it class name or a loaded script.

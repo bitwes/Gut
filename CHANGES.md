@@ -24,6 +24,9 @@ SCRIPT ERROR: Trying to return a value of type "String" from a function whose re
 `stub(...).to_do_nothing()` now stubs the method to return the default value for the return type of the function.
 
 
+## Features
+* Compatibility changes for Godot 4.7.
+
 
 # 9.6.0
 
