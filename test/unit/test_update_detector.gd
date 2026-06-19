@@ -253,17 +253,28 @@ func test_if_later_version_comes_after_current_verions_it_still_finds_later_vers
             "godot_max": "999",
             "godot_min": "4.6"
         }
-
 	}}
 	var ud = autofree(UpdateDetector.new())
 	ud.parse_version_data(data)
 	assert_eq(ud.get_gut_version_for_godot_version('4.6'), '9.6.1')
 
 
+func test_when_local_version_indicates_valid_remote_invalid_is_ignored():
+	var local_data = get_sample_data()
+	local_data.releases["20.0.0"] = {
+				"godot_min":"8.0.0",
+				"godot_max":"8.999",
+			}
+	var ud = autofree(UpdateDetector.new())
+	ud.local_data.parse_data(local_data)
+	ud.remote_data.parse_data(get_sample_data())
+
+	assert_true(ud.is_gut_version_valid('20.0.0', '8.0.0'))
 
 class TestFetch:
 	extends GutTest
 
+	var UpdateDetector = GutUtils.UpdateDetector
 	var _sample_parsed_data = {
 		"asset_library":"99.0",
 		"branches":{
@@ -287,8 +298,6 @@ class TestFetch:
 	func get_sample_data():
 		return _sample_parsed_data.duplicate(true)
 
-
-	var UpdateDetector = GutUtils.UpdateDetector
 
 	func before_each():
 		gut.file_delete(UpdateDetector.REMOTE_FILE_PATH)
@@ -411,12 +420,14 @@ class TestCheckForUpdateWithFetch:
 			},
 		}
 	}
+	var UpdateDetector = GutUtils.UpdateDetector
 
 	func before_each():
 		gut.file_delete(UpdateDetector.REMOTE_FILE_PATH)
 
 	func get_sample_data():
 		return _sample_parsed_data.duplicate(true)
+
 
 	func _create_update_detector():
 		var to_return = partial_double(UpdateDetector).new()
@@ -428,8 +439,6 @@ class TestCheckForUpdateWithFetch:
 
 		return to_return
 
-
-	var UpdateDetector = GutUtils.UpdateDetector
 
 	func test_it_fetches_data_by_default():
 		var ud = _create_update_detector()

@@ -30,9 +30,86 @@ const REMOTE_FILE_URL = "https://api.github.com/repos/bitwes/gut/contents/addons
 const LOCAL_FILE_PATH = "res://addons/gut/versions.json"
 const REMOTE_FILE_PATH = "user://gut_temp_directory/versions.json"
 
+class VersionData:
+	var _data := {}
+	var data_issues = []
+
+	var Vnt = load("res://addons/gut/version_numbers.gd").VerNumTools
+
+	func is_gut_version_valid(gut_v, godot_v):
+		if(_data.releases.has(gut_v)):
+			var entry = _data.releases[gut_v]
+			return Vnt.is_version_gte(godot_v, entry.godot_min) and Vnt.is_version_lte(godot_v, entry.godot_max)
+		else:
+			return false
+
+	func parse_data(new_data):
+		data_issues.clear()
+		_data = {}
+		if(typeof(new_data) == TYPE_STRING):
+			_data = JSON.parse_string(new_data)
+		elif(typeof(new_data) == TYPE_DICTIONARY):
+			_data = new_data
+
+		if(!_data.has('asset_library')):
+			data_issues.append("asset_library entry missing")
+
+		if(_data.has('releases')):
+			for key in _data.releases:
+				var entry = _data.releases[key]
+				if(!entry.has('godot_min')):
+					data_issues.append(str(key, ' missing godot_min'))
+				if(!entry.has('godot_max')):
+					data_issues.append(str(key, ' missing godot_max'))
+		else:
+			data_issues.append('missing releases entry')
+
+		if(_data.has('branches')):
+			for key in _data.branches:
+				var entry = _data.branches[key]
+				if(!entry.has('godot_min')):
+					data_issues.append(str(key, ' missing godot_min'))
+				if(!entry.has('godot_max')):
+					data_issues.append(str(key, ' missing godot_max'))
+		else:
+			data_issues.append('missing branches entry')
+
+
+	func parse_file(path):
+		if(FileAccess.file_exists(path)):
+			var text = GutUtils.get_file_as_text(path)
+			parse_data(text)
+		else:
+			_data = {}
+
+
+	func get_gut_version_for_godot_version(godot_v=null):
+		var to_return = "0.0.0"
+		if(godot_v == null):
+			godot_v = GutUtils.version_numbers.make_godot_version_string()
+
+		for key in _data.releases:
+			var entry = _data.releases[key]
+			if(Vnt.is_version_gte(godot_v, entry.godot_min) and Vnt.is_version_lte(godot_v, entry.godot_max)):
+				if(Vnt.is_version_gte(key, to_return)):
+					to_return = key
+
+		if(to_return == "0.0.0" and _data.has('branches')):
+			for key in _data.branches:
+				var entry = _data.branches[key]
+				if(Vnt.is_version_gte(godot_v, entry.godot_min) and Vnt.is_version_lte(godot_v, entry.godot_max)):
+					to_return = key
+
+		return to_return
+
+	func is_empty():
+		return _data.is_empty()
+
 
 var _http_request : HTTPRequest
 
+var local_data : VersionData = VersionData.new()
+var remote_data : VersionData = VersionData.new()
 
 var data_issues = []
 var parsed_data = {}
@@ -178,17 +255,25 @@ func get_gut_version_for_godot_version(godot_v=null):
 
 	return to_return
 
+func _is_gut_version_valid_in_data(gut_v, godot_v, data):
+
+	if(data.releases.has(gut_v)):
+		var entry = data.releases[gut_v]
+		return Vnt.is_version_gte(godot_v, entry.godot_min) and Vnt.is_version_lte(godot_v, entry.godot_max)
+	else:
+		return false
+
 
 func is_gut_version_valid(gut_v =null, godot_v=null):
 	if(gut_v == null):
 		gut_v =  GutUtils.version_numbers.gut_version
 		godot_v =  GutUtils.version_numbers.make_godot_version_string()
 
-	if(parsed_data.releases.has(gut_v)):
-		var entry = parsed_data.releases[gut_v]
-		return Vnt.is_version_gte(godot_v, entry.godot_min) and Vnt.is_version_lte(godot_v, entry.godot_max)
+	if(!local_data.is_empty() and !remote_data.is_empty()):
+		return local_data.is_gut_version_valid(gut_v, godot_v) or \
+			remote_data.is_gut_version_valid(gut_v, godot_v)
 	else:
-		return false
+		return _is_gut_version_valid_in_data(gut_v, godot_v, parsed_data)
 
 
 func is_in_asset_library(gut_v):
