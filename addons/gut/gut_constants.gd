@@ -43,7 +43,10 @@ const TYPE_STRINGS = {
 	TYPE_MAX : 'TYPE_MAX',
 }
 
-static var DEFAULT_RETURNS = {
+# Values should not be referenced outside of this script.
+# Use get_default_return_value.  The functions look weird, but they are here
+# so that each call to a doubled method returns a unique instance of things.
+static var _default_returns = {
 	TYPE_NIL : null,
 	TYPE_BOOL : false,
 	TYPE_INT : 0,
@@ -51,8 +54,8 @@ static var DEFAULT_RETURNS = {
 	TYPE_STRING : '',
 	TYPE_VECTOR2 : Vector2.ZERO,
 	TYPE_VECTOR2I : Vector2i.ZERO,
-	TYPE_RECT2 : Rect2(0, 0, 0, 0),
-	TYPE_RECT2I : Rect2i(0, 0, 0, 0),
+	TYPE_RECT2 : func(): return Rect2(0, 0, 0, 0),
+	TYPE_RECT2I : func(): return Rect2i(0, 0, 0, 0),
 	TYPE_VECTOR3 : Vector3.ZERO,
 	TYPE_VECTOR3I : Vector3i.ZERO,
 	TYPE_TRANSFORM2D : Transform2D.IDENTITY,
@@ -60,33 +63,33 @@ static var DEFAULT_RETURNS = {
 	TYPE_VECTOR4I : Vector4i.ZERO,
 	TYPE_PLANE : Plane.PLANE_XY,
 	TYPE_QUATERNION : Quaternion.IDENTITY,
-	TYPE_AABB : AABB(),
+	TYPE_AABB : func(): return AABB(),
 	TYPE_BASIS : Basis.IDENTITY,
 	TYPE_TRANSFORM3D : Transform3D.IDENTITY,
 	TYPE_PROJECTION : Projection.IDENTITY,
 	TYPE_COLOR : Color.WHITE,
 	TYPE_STRING_NAME : &'',
-	TYPE_NODE_PATH : NodePath(),
-	TYPE_RID : RID(),
+	TYPE_NODE_PATH : func(): return NodePath(),
+	TYPE_RID : func(): return RID(),
 	TYPE_OBJECT : null,
-	TYPE_CALLABLE : Callable(),
+	TYPE_CALLABLE : func(): return Callable(),
 	TYPE_SIGNAL : null,
-	TYPE_DICTIONARY : {},
-	TYPE_ARRAY : [],
-	TYPE_PACKED_BYTE_ARRAY : PackedByteArray(),
-	TYPE_PACKED_INT32_ARRAY : PackedInt32Array(),
-	TYPE_PACKED_INT64_ARRAY : PackedInt64Array(),
-	TYPE_PACKED_FLOAT32_ARRAY : PackedFloat32Array(),
-	TYPE_PACKED_FLOAT64_ARRAY : PackedFloat64Array(),
-	TYPE_PACKED_STRING_ARRAY : PackedStringArray(),
-	TYPE_PACKED_VECTOR2_ARRAY : PackedVector2Array(),
-	TYPE_PACKED_VECTOR3_ARRAY : PackedVector3Array(),
-	TYPE_PACKED_COLOR_ARRAY : PackedColorArray(),
-	TYPE_PACKED_VECTOR4_ARRAY : PackedVector4Array(),
+	TYPE_DICTIONARY : func(): return {},
+	TYPE_ARRAY : func(): return [],
+	TYPE_PACKED_BYTE_ARRAY : func(): return PackedByteArray(),
+	TYPE_PACKED_INT32_ARRAY : func(): return PackedInt32Array(),
+	TYPE_PACKED_INT64_ARRAY : func(): return PackedInt64Array(),
+	TYPE_PACKED_FLOAT32_ARRAY : func(): return PackedFloat32Array(),
+	TYPE_PACKED_FLOAT64_ARRAY : func(): return PackedFloat64Array(),
+	TYPE_PACKED_STRING_ARRAY : func(): return PackedStringArray(),
+	TYPE_PACKED_VECTOR2_ARRAY : func(): return PackedVector2Array(),
+	TYPE_PACKED_VECTOR3_ARRAY : func(): return PackedVector3Array(),
+	TYPE_PACKED_COLOR_ARRAY : func(): return PackedColorArray(),
+	TYPE_PACKED_VECTOR4_ARRAY : func(): return PackedVector4Array(),
 	# TYPE_MAX : 'TYPE_MAX',
 }
 
-# Seeded with any type constant where the constant tname can't be converted to
+# Seeded with any type constant where the constant name can't be converted to
 # a string using pascal case and/or the values need manual conversion.  The
 # rest are added in _static_init.
 static var TYPE_KEYWORDS = {
@@ -112,11 +115,15 @@ static func is_not_set(val):
 	return typeof(val) == TYPE_STRING_NAME and val == NOT_SET
 
 
-static func get_default_return_value(type):
+static func get_default_return_value(type=null):
+	if(type == null or typeof(type) != TYPE_INT):
+		return null
 	var to_return = null
 	if(is_not_set(type)):
 		to_return = null
-	elif(DEFAULT_RETURNS.has(type)):
-		to_return = DEFAULT_RETURNS[type]
+	elif(_default_returns.has(type)):
+		to_return = _default_returns[type]
+		if(to_return is Callable):
+			to_return = to_return.call()
 
 	return to_return

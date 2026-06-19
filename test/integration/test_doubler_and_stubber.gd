@@ -1,4 +1,8 @@
-extends "res://addons/gut/test.gd"
+extends GutTest
+
+func before_all():
+	register_inner_classes(get_script())
+
 
 class BaseTest:
 	extends GutTest

@@ -114,8 +114,10 @@ func get_return(obj, method, parameters=null):
 		var default = parameter_stubs.get_default_stub(obj, method)
 		var to_return = null
 		if(default != null):
-			var default_return = default.return_val
-			to_return = default_return
+			# This ensures that the values are unique and that any changes made
+			# to them in a test are not propigated to future calls of the same
+			# method.
+			to_return = GutConstants.get_default_return_value(default.return_type)
 		_lgr.info(str('Call to [', method, '] was not stubbed for the supplied parameters ', parameters, '.  [', to_return, '] was returned.'))
 		return to_return
 

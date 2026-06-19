@@ -96,17 +96,6 @@ TYPE_VECTOR3I       : Vector3i.ZERO,
 TYPE_VECTOR4        : Vector4.ZERO,
 TYPE_VECTOR4I       : Vector4i.ZERO,
 ```
-These values are not currently designed to be changed, but it is possible if you really really want to.  You should do this in a pre-run-hook and avoid chagning these values more than once.  It is more maintainable (currently) to stub methods instead of altering these values.  This is a new feature for Godot 4.7, please provide feedback at https://github.com/bitwes/Gut/issues.
-```gdscript
-# ---
-# IF YOU FIND YOURSELF DOING THIS, PLEASE OPEN AN ISSUE ON GITHUB
-# https://github.com/bitwes/Gut/issues
-# ----
-extends GutHookScript
-
-func run():
-    GutConstants.DEFAULT_RETURNS[TYPE_INT] = -99
-```
 
 ## Doubling a Script
 To double a script just give it class name or a loaded script.
