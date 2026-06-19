@@ -59,8 +59,8 @@ func _get_stack_data(current_test_name):
 			stackTrace.remove_at(0)
 
 	return {
-		"test_entry" = test_entry,
-		"full_stack" = stackTrace
+		"test_entry": test_entry,
+		"full_stack": stackTrace
 	}
 
 
