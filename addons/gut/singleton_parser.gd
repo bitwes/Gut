@@ -1,5 +1,4 @@
-class ParsedSingleton:
-
+class GutParsedSingleton:
 	var methods_by_name = {}
 	var enums = {}
 	var properties = {}
@@ -84,6 +83,6 @@ var singletons = {}
 
 func parse(singleton):
 	if(!singletons.has(singleton)):
-		singletons[singleton] = ParsedSingleton.new(singleton)
+		singletons[singleton] = GutParsedSingleton.new(singleton)
 
 	return singletons[singleton]
