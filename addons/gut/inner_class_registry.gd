@@ -59,6 +59,12 @@ func get_base_resource(inner_class):
 	if(_registry.has(inner_class)):
 		return _registry[inner_class].base_resource
 
+func get_full_path(inner_class):
+	if(_registry.has(inner_class)):
+		var entry = _registry[inner_class]
+		return str(entry.base_path.get_file(), entry.subpath.replace('.', '/'))
+	else:
+		return "/Unregistered-Inner-Class"
 
 func to_s():
 	var text = ""

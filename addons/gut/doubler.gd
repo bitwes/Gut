@@ -10,7 +10,7 @@ var _singleton_parser = GutUtils.SingletonParser.new()
 
 # used by tests for debugging purposes.
 var print_source = false
-var inner_class_registry = GutUtils.InnerClassRegistry.new()
+var inner_class_registry = GutUtils.inner_class_registry
 
 # ###############
 # Properties
