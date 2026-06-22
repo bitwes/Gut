@@ -71,7 +71,6 @@ class TestType2Str:
 
 	func test_script():
 		assert_eq(strutils.type2str(self), str(self, '(test_strutils.gd/TestType2Str)'))
-		print(GutUtils.inner_class_registry.to_s())
 
 	func test_script_2():
 		var dm = autofree(DoubleMe.new())

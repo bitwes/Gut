@@ -64,7 +64,7 @@ func get_full_path(inner_class):
 		var entry = _registry[inner_class]
 		return str(entry.base_path.get_file(), entry.subpath.replace('.', '/'))
 	else:
-		return "Unknown Inner-Class"
+		return "/Unregistered-Inner-Class"
 
 func to_s():
 	var text = ""
