@@ -5,7 +5,7 @@ class BaseTest:
 	extends GutInternalTester
 
 	var MethodMaker = GutUtils.MethodMaker
-	var ParsedMethod = GutUtils.ScriptCollector.ParsedMethod
+	var ParsedMethod = GutUtils.ScriptCollector.GutParsedMethod
 
 	func make_meta(fname, params = [], flags = 65):
 		var to_return = {
