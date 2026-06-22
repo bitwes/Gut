@@ -18,10 +18,13 @@ config/icon="res://icon.png"
 [autoload]
 
 global="*res://scripts/global.gd"
+Options="uid://blr8nb3vvr0sk"
+ThisSpecialName="uid://blr8nb3vvr0sk"
 
 [debug]
 
 gdscript/warnings/redundant_await=0
+gdscript/warnings/missing_await=1
 
 [display]
 

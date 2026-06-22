@@ -44,8 +44,6 @@ class PredicateMethods:
 		return times_called != x
 
 
-
-
 func test_is_not_paused_by_default():
 	var a = add_child_autofree(Awaiter.new())
 	assert_false(a.is_waiting())
@@ -286,6 +284,7 @@ class TestWaitUntil:
 	extends GutTest
 	var Awaiter = load('res://addons/gut/awaiter.gd')
 
+
 	func test_wait_until_emits_wait_started():
 		var a = add_child_autoqfree(Awaiter.new())
 		watch_signals(a)
@@ -377,6 +376,7 @@ class TestWaitUntil:
 class TestWaitWhile:
 	extends GutTest
 	var Awaiter = load('res://addons/gut/awaiter.gd')
+
 
 	func test_wait_while_emits_wait_started():
 		var a = add_child_autoqfree(Awaiter.new())

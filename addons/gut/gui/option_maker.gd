@@ -27,48 +27,48 @@ func add_ctrl(key, ctrl):
 
 
 func add_number(key, value, disp_text, v_min, v_max, hint=''):
-	var ctrl = PanelControls.NumberControl.new(disp_text, value, v_min, v_max, hint)
+	var ctrl = PanelControls.GpcNumber.new(disp_text, value, v_min, v_max, hint)
 	add_ctrl(key, ctrl)
 	return ctrl
 
 
 func add_float(key, value, disp_text, step, v_min, v_max, hint=''):
-	var ctrl = PanelControls.FloatControl.new(disp_text, value, step, v_min, v_max, hint)
+	var ctrl = PanelControls.GpcFloat.new(disp_text, value, step, v_min, v_max, hint)
 	add_ctrl(key, ctrl)
 	return ctrl
 
 
 func add_select(key, value, values, disp_text, hint=''):
-	var ctrl = PanelControls.SelectControl.new(disp_text, value, values, hint)
+	var ctrl = PanelControls.GpcSelect.new(disp_text, value, values, hint)
 	add_ctrl(key, ctrl)
 	return ctrl
 
 
 func add_value(key, value, disp_text, hint=''):
-	var ctrl = PanelControls.StringControl.new(disp_text, value, hint)
+	var ctrl = PanelControls.GpcString.new(disp_text, value, hint)
 	add_ctrl(key, ctrl)
 	return ctrl
 
 func add_multiline_text(key, value, disp_text, hint=''):
-	var ctrl = PanelControls.MultiLineStringControl.new(disp_text, value, hint)
+	var ctrl = PanelControls.GpcMultiLineString.new(disp_text, value, hint)
 	add_ctrl(key, ctrl)
 	return ctrl
 
 func add_boolean(key, value, disp_text, hint=''):
-	var ctrl = PanelControls.BooleanControl.new(disp_text, value, hint)
+	var ctrl = PanelControls.GpcBoolean.new(disp_text, value, hint)
 	add_ctrl(key, ctrl)
 	return ctrl
 
 
 func add_directory(key, value, disp_text, hint=''):
-	var ctrl = PanelControls.DirectoryControl.new(disp_text, value, hint)
+	var ctrl = PanelControls.GpcDirectory.new(disp_text, value, hint)
 	add_ctrl(key, ctrl)
 	ctrl.dialog.title = disp_text
 	return ctrl
 
 
 func add_file(key, value, disp_text, hint=''):
-	var ctrl = PanelControls.DirectoryControl.new(disp_text, value, hint)
+	var ctrl = PanelControls.GpcDirectory.new(disp_text, value, hint)
 	add_ctrl(key, ctrl)
 	ctrl.dialog.file_mode = ctrl.dialog.FILE_MODE_OPEN_FILE
 	ctrl.dialog.title = disp_text
@@ -76,7 +76,7 @@ func add_file(key, value, disp_text, hint=''):
 
 
 func add_save_file_anywhere(key, value, disp_text, hint=''):
-	var ctrl = PanelControls.DirectoryControl.new(disp_text, value, hint)
+	var ctrl = PanelControls.GpcDirectory.new(disp_text, value, hint)
 	add_ctrl(key, ctrl)
 	ctrl.dialog.file_mode = ctrl.dialog.FILE_MODE_SAVE_FILE
 	ctrl.dialog.access = ctrl.dialog.ACCESS_FILESYSTEM
@@ -85,7 +85,7 @@ func add_save_file_anywhere(key, value, disp_text, hint=''):
 
 
 func add_color(key, value, disp_text, hint=''):
-	var ctrl = PanelControls.ColorControl.new(disp_text, value, hint)
+	var ctrl = PanelControls.GpcColor.new(disp_text, value, hint)
 	add_ctrl(key, ctrl)
 	return ctrl
 
