@@ -1,5 +1,6 @@
 extends GutInternalTester
 
+
 class TestType2Str:
 	extends GutInternalTester
 
@@ -118,13 +119,13 @@ class TestType2Str:
 		var d = partial_double(DoubleMe).new()
 		assert_string_contains(strutils.type2str(d), "partial-double")
 
-	# # func test_singleton_double_includes_singleton_name():
-	# # 	var d = double_singleton("Input").new()
-	# # 	assert_string_contains(strutils.type2str(d), "double of Input")
+	func test_singleton_double_includes_singleton_name():
+		var d = double_singleton(Input).new()
+		assert_string_contains(strutils.type2str(d), "double of Input")
 
-	# # func test_singleton_double_includes_word_singleton():
-	# # 	var d = double_singleton("Input").new()
-	# # 	assert_string_contains(strutils.type2str(d), "Singleton")
+	func test_singleton_double_includes_word_singleton():
+		var d = double_singleton(Input).new()
+		assert_string_contains(strutils.type2str(d), "Singleton")
 
 	func test_assert_null():
 		assert_eq(strutils.type2str(null), str(null))

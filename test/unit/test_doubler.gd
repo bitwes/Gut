@@ -425,6 +425,7 @@ class TestDoubleInnerClasses:
 	func before_each():
 		doubler = Doubler.new()
 		doubler.set_stubber(GutUtils.Stubber.new())
+		doubler.inner_class_registry = GutUtils.InnerClassRegistry.new()
 		var lgr = GutUtils.GutLogger.new()
 		lgr.set_gut(gut)
 		doubler.set_logger(lgr)
