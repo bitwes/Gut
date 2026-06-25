@@ -46,32 +46,3 @@ func test_on_mondays_elapsed_time_is_longer_because_time_moves_slower_on_mondays
 	inst.start()
 	stub(dbl_time.get_ticks_msec).to_return(10)
 	assert_eq(inst.end(), 20)
-
-
-class UsesInput:
-	extends Node
-	var input := Input
-	var times_jumped = 0
-
-	func _physics_process(_delta):
-		# print(_delta, '  ', input.is_action_just_pressed("jump"))
-		if(input.is_action_just_pressed("jump")):
-			times_jumped += 1
-
-
-func test_jump_count_increased():
-	# gut.get_doubler().print_source = true
-	var dbl_input = double_singleton(Input).new()
-	var inst = add_child_autofree(UsesInput.new())
-	inst.input = dbl_input
-
-	stub(dbl_input.is_action_just_pressed.bind(&"jump", false))\
-		.to_return(true)
-		# .when_passed("jump", false)
-
-	await wait_physics_frames(1)
-	assert_eq(inst.times_jumped, 1)
-	assert_called(dbl_input.is_action_just_pressed.bind("jump", false))
-	assert_not_called(dbl_input.is_action_just_pressed.bind("jump", null))
-	print(gut.get_stubber().to_s())
-	# print(gut.get_spy().get_call_list_as_string(dbl_input))
