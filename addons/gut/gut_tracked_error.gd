@@ -5,7 +5,7 @@ class_name GutTrackedError
 ## for GUT errors.
 
 ## This will be an [code]Array[ScriptBacktrace][/code] for engine/push errors.
-## This will the result of [code]get_stack[/code] for GUT errors.
+## This will be the result of [code]get_stack[/code] for GUT errors.
 var backtrace = []
 ## Usually the description
 var code = GutUtils.NO_TEST
@@ -85,8 +85,10 @@ func get_error_type_name():
 	return to_return
 
 
-# this might not work in other languages, and feels falkey, but might be
-# useful at some point.
+# This might not work in other languages? Do they change words like "Assertion
+# failed" when translating Godot?  It feels flakey even if they don't, but might
+# be useful at some point, or at least I know I thought about this already and
+# didn't do it.
 # func is_assert():
 # 	return error_type == Logger.ERROR_TYPE_SCRIPT and \
 # 		(code.find("Assertion failed.") == 0 or \

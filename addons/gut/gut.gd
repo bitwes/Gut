@@ -918,8 +918,10 @@ func get_call_count_text():
 func _fail(text=''):
 	if(_current_test != null):
 		var line_number = _extract_line_number(_current_test)
-		var line_text = '  at line ' + str(line_number)
-		p(line_text, LOG_LEVEL_FAIL_ONLY)
+		var line_text = ''
+		if(line_number != -1):
+			line_text = '  at line ' + str(line_number)
+			p(line_text, LOG_LEVEL_FAIL_ONLY)
 		# format for summary
 		line_text =  "\n    " + line_text
 		var call_count_text = get_call_count_text()
@@ -935,11 +937,11 @@ func _pending(text=''):
 
 
 # ------------------------------------------------------------------------------
-# Extracts the line number from curren stacktrace by matching the test case name
+# Extracts the line number from current stacktrace by matching the test case name
 # ------------------------------------------------------------------------------
 func _extract_line_number(current_test):
 	var line_number = -1
-	# if stack trace available than extraxt the test case line number
+	# if stack trace available than extract the test case line number
 	var stackTrace = get_stack()
 	if(stackTrace!=null):
 		for index in stackTrace.size():
