@@ -68,3 +68,14 @@ func test_does_not_contain_a_ref_to_external_classes():
 	reg.register(CyclicRefA)
 	var result = reg.get_base_path(CyclicRefA.b_ref)
 	assert_null(result)
+
+func test_get_full_path_value_when_class_registered():
+	var reg = GutUtils.InnerClassRegistry.new()
+	reg.register(InnerClasses)
+	var result = reg.get_full_path(InnerClasses.InnerB.InnerB1)
+	assert_eq(result, "inner_classes.gd/InnerB/InnerB1")
+
+func test_get_full_path_value_when_class_not_registered():
+	var reg = GutUtils.InnerClassRegistry.new()
+	var result = reg.get_full_path(InnerClasses.InnerB)
+	assert_eq(result, "/Unregistered-Inner-Class")

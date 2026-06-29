@@ -68,8 +68,8 @@ var _last_yield_text = ''
 
 
 func _init():
-	_printers.terminal = GutUtils.Printers.TerminalPrinter.new()
-	_printers.console = GutUtils.Printers.ConsolePrinter.new()
+	_printers.terminal = GutUtils.Printers.GutTerminalPrinter.new()
+	_printers.console = GutUtils.Printers.GutConsolePrinter.new()
 	# There were some problems in the timing of disabling this at the right
 	# time in gut_cmdln so it is disabled by default.  This is enabled
 	# by plugin_control.gd based on settings.

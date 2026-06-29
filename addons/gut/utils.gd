@@ -235,7 +235,7 @@ static func get_error_tracker():
 		_error_tracker = GutErrorTracker.new()
 	return _error_tracker
 
-
+static var inner_class_registry = InnerClassRegistry.new()
 
 
 # ##############################################################################

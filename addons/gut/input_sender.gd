@@ -40,7 +40,7 @@ class_name GutInputSender
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-class InputQueueItem:
+class InputSenderQueueItem:
 	extends Node
 
 	var events = []
@@ -86,7 +86,7 @@ class InputQueueItem:
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-class MouseDraw:
+class InputSenderMouseDraw:
 	extends Node2D
 
 	var down_color = Color(1, 1, 1, .25)
@@ -214,7 +214,7 @@ func _init(r=null):
 	_tree_items_parent = Node.new()
 	Engine.get_main_loop().root.add_child(_tree_items_parent)
 
-	_mouse_draw = MouseDraw.new()
+	_mouse_draw = InputSenderMouseDraw.new()
 	_tree_items_parent.add_child(_mouse_draw)
 	_mouse_draw.disabled = false
 
@@ -572,14 +572,14 @@ func release_all():
 
 ## Same as [method wait] but only accepts a number of frames to wait.
 func wait_frames(num_frames):
-	var item = InputQueueItem.new(0, num_frames)
+	var item = InputSenderQueueItem.new(0, num_frames)
 	_add_queue_item(item)
 	return self
 
 
 ## Same as [method wait] but only accepts a number of seconds to wait.
 func wait_secs(num_secs):
-	var item = InputQueueItem.new(num_secs, 0)
+	var item = InputSenderQueueItem.new(num_secs, 0)
 	_add_queue_item(item)
 	return self
 
