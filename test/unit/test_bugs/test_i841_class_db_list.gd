@@ -19,7 +19,12 @@ extends GutTest
 #		https://github.com/godotengine/godot/pull/119936
 #		https://github.com/bitwes/Gut/issues/841
 func test_classdb_has_been_cleaned_up_so_we_can_remove_the_whitelist():
-	assert_true(ClassDB.class_exists("IPUnix"))
+	# Issue originally found with IPUnix on Mac, another issue reported with
+	# IPWindows.  This should cover things enough (FLW).
+	var class_name_to_check = "IPUnix"
+	if(OS.get_name() == "Windows"):
+		class_name_to_check = "IPWindows"
+	assert_true(ClassDB.class_exists(class_name_to_check))
 
 
 
