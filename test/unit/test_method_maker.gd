@@ -15,7 +15,8 @@ class BaseTest:
 			"flags": flags,
 			"return" :{
 				"type":0,
-				"usage":0
+				"usage":0,
+				"class_name":''
 			}
 		}
 		return to_return
@@ -122,7 +123,6 @@ class TestReturnTypes:
 		var parsed = ParsedMethod.new(meta)
 
 		var func_def = mm.get_function_text(parsed)
-		print(func_def)
 
 		assert_eq(func_def.find("return await super"), -1)
 
@@ -135,7 +135,6 @@ class TestReturnTypes:
 		meta.usage = 6
 		var parsed = ParsedMethod.new(meta)
 		var func_def = mm.get_function_text(parsed)
-		print(func_def)
 
 		assert_eq(func_def.find("return await __gut"), -1)
 
@@ -149,5 +148,17 @@ class TestReturnTypes:
 
 
 	func test_class_name_from_metadata_used_as_return_type():
-		pending()
+		var mm = MethodMaker.new()
+
+		var meta = make_meta('fake_method')
+		meta.return.type = 0
+		meta.usage = 6
+		meta["class_name"] = 'HelloWorld'
+		var parsed = ParsedMethod.new(meta)
+
+		var func_def = mm.get_function_text(parsed)
+		# print(func_def)
+
+		assert_eq(func_def.find("HelloWorld"), -1)
+
 

@@ -45,7 +45,8 @@ class GutParsedMethod:
 		var return_keyword = GutConstants.TYPE_KEYWORDS[r_meta.type]
 
 		if(r_meta.type != 0):
-			return_keyword = return_keyword
+			if(r_meta[&"class_name"] != ""):
+				return_keyword = r_meta[&"class_name"]
 		elif(r_meta.usage & PROPERTY_USAGE_NIL_IS_VARIANT != 0):
 			return_keyword = 'Variant'
 		else:

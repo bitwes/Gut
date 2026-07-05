@@ -94,10 +94,14 @@ static var _default_returns = {
 # a string using pascal case and/or the values need manual conversion.  The
 # rest are added in _static_init.
 static var TYPE_KEYWORDS = {
-	TYPE_NIL : 'null',
+	TYPE_AABB: 'AABB',
 	TYPE_BOOL : 'bool',
-	TYPE_INT : 'int',
 	TYPE_FLOAT : 'float',
+	TYPE_INT : 'int',
+	TYPE_NIL : 'null',
+	TYPE_RID : 'RID',
+	TYPE_TRANSFORM2D: 'Transform2D',
+	TYPE_TRANSFORM3D: 'Transform3D',
 }
 
 
@@ -108,7 +112,7 @@ static func _static_init() -> void:
 	for key in TYPE_STRINGS:
 		if(!TYPE_KEYWORDS.has(key)):
 			var n : String = TYPE_STRINGS[key].to_lower()
-			n = n.lstrip("type_")
+			n = n.trim_prefix("type_")
 			TYPE_KEYWORDS[key] = n.to_pascal_case()
 
 

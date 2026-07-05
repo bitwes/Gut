@@ -147,7 +147,6 @@ func _get_init_text(meta, args, method_params, param_array):
 # ###############
 
 
-
 # Creates a delceration for a function based off of function metadata.  All
 # types whose defaults are supported will have their values.  If a datatype
 # is not supported and the parameter has a default, a warning message will be
@@ -166,11 +165,23 @@ func get_function_text(parsed_method, singleton=null):
 		if(meta.name == '_init'):
 			text =  _get_init_text(meta, args, method_params, param_array)
 		else:
+			var decleration = str('func ', meta.name, '(', method_params, ')')
 			var return_it = ''
+			var return_type_clause = ":"
 			if(parsed_method.return_type_text != 'void'):
 				return_it = 'return '
+				# There are some issues with native method return types that
+				# have not been sorted out, so skip them.  Also, anything we
+				# get at this point that is Variant, RefCounted, or Object
+				# causes signature mismatch errors, so exclude the return type
+				# for those as well.
+				if(parsed_method.is_local and \
+						parsed_method.return_type_text != 'Variant' and \
+						parsed_method.return_type_text != 'RefCounted' and \
+						parsed_method.return_type_text != 'Object'):
+					return_type_clause = str(" -> ", parsed_method.return_type_text, ':')
+			decleration += return_type_clause
 
-			var decleration = str('func ', meta.name, '(', method_params, '):')
 			text = _func_template.format({
 				"func_decleration": decleration,
 				"method_name": meta.name,
