@@ -249,6 +249,8 @@ static var inner_class_registry = InnerClassRegistry.new()
 # Methods
 # ##############################################################################
 
+
+# ----------
 # So...I couldn't figure out how to get to a reference for a GDNative Class
 # using a string.  ClassDB has all thier names...so I made a hash using those
 # names and the classes.  Then I dynmaically make a script that has that as
@@ -257,16 +259,22 @@ static var inner_class_registry = InnerClassRegistry.new()
 #
 # This is lazy loaded into class_ref_by_name, it's only needed when finding
 # stubs.
+#
+# class_list.cfg was created to address the following issues:
+#		https://github.com/godotengine/godot/issues/120370
+#		https://github.com/godotengine/godot/pull/119936
+#		https://github.com/bitwes/Gut/issues/841
+#	The config file was created by getting the names of all files in
+#	godot-engine doc/classes from the Godot 4.7 tag.
 static func _create_class_dictionaries():
+	var cfg = ConfigFile.new()
+	cfg.load("res://addons/gut/class_list.cfg")
+	var class_names = cfg.get_value("classes", "list", [])
+
 	var text = "var all_the_classes: Dictionary = {\n"
-	var black_list = [
-		"IPUnix",
-		"GodotNavigationServer2D",
-		"NativeMenuMacOS",
-	]
-	for classname in ClassDB.get_class_list():
-		if(!black_list.has(classname) and (ClassDB.can_instantiate(classname) or \
-		 	GodotSingletons.names.has(classname))):
+	for classname in class_names:
+		if((ClassDB.class_exists(classname) and ClassDB.can_instantiate(classname)) or \
+		 	GodotSingletons.names.has(classname)):
 			text += str('"', classname, '": ', classname, ", \n")
 
 	text += "}"
@@ -275,8 +283,6 @@ static func _create_class_dictionaries():
 	_class_ref_by_name = inst.all_the_classes
 	for key in inst.all_the_classes:
 		_class_ref_by_class[inst.all_the_classes[key]] = key
-
-
 
 
 # This must be static so that the scripts are counted.
