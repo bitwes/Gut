@@ -1,10 +1,10 @@
 # -------------
 # {
-# 	object(script or instance):{
+# 	object(script or instance) or StringName(native class name):{
 # 		method_name1: [StubParams, StubParams],
 # 		method_name2: [StubParams, StubParams]
 # 	},
-# 	object(script or instance):{
+# 	object(script or instance) or StringName(native class name):{
 # 		method_name1: [StubParams, StubParams],
 # 		method_name2: [StubParams, StubParams]
 # 	}
@@ -13,7 +13,9 @@ var stubs = {}
 
 func _normalize_stub_target(target):
 	var to_return = null
-	if(typeof(target) == TYPE_OBJECT or GutUtils.is_native_class(target)):
+	if(GutUtils.is_native_class(target)):
+		to_return = GutUtils.strutils.type2str(target)
+	elif(typeof(target) == TYPE_OBJECT):
 		to_return = target
 	elif(typeof(target) == TYPE_STRING):
 		if(FileAccess.file_exists(target)):
@@ -42,8 +44,8 @@ func _get_entries_matching_target(target):
 				match_on.push_front(trav)
 			else:
 				var type_name = current.get_instance_base_type()
-				trav = GutUtils.class_ref_by_name[type_name]
-				match_on.push_front(trav)
+				match_on.push_front(type_name)
+				trav = null
 				done = true
 
 		if(trav == null):

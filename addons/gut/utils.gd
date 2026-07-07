@@ -43,20 +43,6 @@ const NO_TEST := 'NONE'
 const GUT_ERROR_TYPE = 999
 
 
-static var _class_ref_by_name := {}
-static var class_ref_by_name := {} :
-	get():
-		if(_class_ref_by_class == {}):
-			_create_class_dictionaries()
-		return _class_ref_by_name
-static var _class_ref_by_class := {}
-static var class_ref_by_class := {} :
-	get():
-		if(_class_ref_by_class == {}):
-			_create_class_dictionaries()
-		return _class_ref_by_class
-
-
 ## This dictionary defaults to all the native classes that we cannot call new
 ## on.  It is further populated during a run so that we only have to create
 ## a new instance once to get the class name string.
@@ -209,6 +195,7 @@ static var UpdateDetector = LazyLoader.new('res://addons/gut/update_detector.gd'
 
 static var gut_fonts = GutFonts.new()
 static var avail_fonts = gut_fonts.get_font_names()
+static var strutils = Strutils.new()
 
 static var version_numbers = VersionNumbers.new(
 	'9.7.0' # gut_versrion (source of truth)
@@ -248,41 +235,6 @@ static var inner_class_registry = InnerClassRegistry.new()
 # ##############################################################################
 # Methods
 # ##############################################################################
-
-
-# ----------
-# So...I couldn't figure out how to get to a reference for a GDNative Class
-# using a string.  ClassDB has all thier names...so I made a hash using those
-# names and the classes.  Then I dynmaically make a script that has that as
-# the source and grab the hash out of it and return it.  Super Rube Golbergery,
-# but tons of fun.
-#
-# This is lazy loaded into class_ref_by_name, it's only needed when finding
-# stubs.
-#
-# class_list.cfg was created to address the following issues:
-#		https://github.com/godotengine/godot/issues/120370
-#		https://github.com/godotengine/godot/pull/119936
-#		https://github.com/bitwes/Gut/issues/841
-#	The config file was created by getting the names of all files in
-#	godot-engine doc/classes from the Godot 4.7 tag.
-static func _create_class_dictionaries():
-	var cfg = ConfigFile.new()
-	cfg.load("res://addons/gut/class_list.cfg")
-	var class_names = cfg.get_value("classes", "list", [])
-
-	var text = "var all_the_classes: Dictionary = {\n"
-	for classname in class_names:
-		if((ClassDB.class_exists(classname) and ClassDB.can_instantiate(classname)) or \
-		 	GodotSingletons.names.has(classname)):
-			text += str('"', classname, '": ', classname, ", \n")
-
-	text += "}"
-	var inst =  GutUtils.create_script_from_source(text, 'res://dynamically_generated/class_dictionary.gd').new()
-
-	_class_ref_by_name = inst.all_the_classes
-	for key in inst.all_the_classes:
-		_class_ref_by_class[inst.all_the_classes[key]] = key
 
 
 # This must be static so that the scripts are counted.
@@ -667,7 +619,7 @@ static func get_method_meta(object, method_name):
 	if(object is GDScript):
 		return find_method_meta(object.get_script_method_list(), method_name)
 	elif(is_native_class(object)):
-		return find_method_meta(ClassDB.class_get_method_list(class_ref_by_class[object]), method_name)
+		return find_method_meta(ClassDB.class_get_method_list(strutils.type2str(object)), method_name)
 	else:
 		return find_method_meta(object.get_method_list(), method_name)
 
