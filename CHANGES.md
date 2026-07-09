@@ -2,6 +2,21 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+
+
+# 9.6.1
+
+## Features
+* [805](https://github.com/bitwes/Gut/issues/805) Renamed internal classes to make clashes with autoloads and user classes far less likely.
+
+## Bug Fixes
+* [802](https://github.com/bitwes/Gut/issues/802) The GUT Panel no longer overlaps with the Editor's center panel tabs when it is at its minimum size.
+* [824](https://github.com/bitwes/Gut/issues/824) Fixed using `assert_no_new_orphans` in `after_all`.
+* Various changes to the "Check for update" system.
+
+
+
+
 # 9.6.0
 
 ## Breaking Changes
