@@ -228,6 +228,5 @@ func test_unresolved_return_is_ignored():
 		'modules/gdscript/gdscript_byte_codegen.cpp',
 		-1,
 		'Compiler bug: Unresolved return.', '',
-
 		false, 0, [])
 	assert_true(err.handled)
