@@ -220,3 +220,13 @@ func test_get_errors_for_test_contains_warnings():
 	push_warning("emergency evacuation protest")
 	var errors = _added_tracker.errors.items[GutUtils.NO_TEST]
 	assert_eq(errors.size(), 1)
+
+
+func test_unresolved_return_is_ignored():
+	var err = _added_tracker.add_error(
+		'write_return',
+		'modules/gdscript/gdscript_byte_codegen.cpp',
+		-1,
+		'Compiler bug: Unresolved return.', '',
+		false, 0, [])
+	assert_true(err.handled)
