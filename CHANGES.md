@@ -3,6 +3,16 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 
+# 9.7.1
+
+## Bug Fixes
+* [841](https://github.com/bitwes/Gut/issues/841) Invalid classes in class list was causing doubles to have parsing errors on some operating systems.
+* [842](https://github.com/bitwes/Gut/issues/842) Ignore "Compiler bug: Unresolved return" errors which can occur when doubles are being generated.  The error still appears in the log but GUT will no longer fail tests when it occurs.
+* Ported changes from 9.6.1
+
+
+
+
 # 9.7.0
 
 ## Breaking Changes
@@ -26,6 +36,8 @@ SCRIPT ERROR: Trying to return a value of type "String" from a function whose re
 
 ## Features
 * Compatibility changes for Godot 4.7.
+
+
 
 
 # 9.6.0
