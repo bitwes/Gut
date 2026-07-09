@@ -75,6 +75,17 @@ func _is_error_failable(error : GutTrackedError):
 			is_it = treat_engine_errors_as == GutUtils.TREAT_AS.FAILURE
 	return is_it
 
+
+# Marks any errors that GUT should not fail a test for based on internal,
+# non-alterable rules.  This is idealogically differnet than _is_error_failable.
+func _auto_handle_error(err : GutTrackedError):
+	# Issue 842, when the source has an await and a declared return type this
+	# error can occur when doubling.  It does not appear to affect anything.
+	if(err.file == 'modules/gdscript/gdscript_byte_codegen.cpp' and err.function == 'write_return'):
+		err.handled = true
+		print("[GUT]  \"Unresolved return\" has been ignored.  See https://github.com/bitwes/Gut/issues/842 for details.")
+
+
 # ----------------
 #endregion
 #region Godot's Logger Overrides
@@ -186,7 +197,10 @@ func add_error(function: String, file: String, line: int,
 		err.line = line
 
 		errors.add(_current_test_id, err)
+		_auto_handle_error(err)
 
 		_mutex.unlock()
 
 		return err
+
+
