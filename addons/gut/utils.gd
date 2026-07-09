@@ -198,7 +198,7 @@ static var avail_fonts = gut_fonts.get_font_names()
 static var strutils = Strutils.new()
 
 static var version_numbers = VersionNumbers.new(
-	'9.7.0' # gut_versrion (source of truth)
+	'9.7.1' # gut_versrion (source of truth)
 )
 
 
