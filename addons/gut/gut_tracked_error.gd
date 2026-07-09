@@ -36,6 +36,8 @@ func to_s() -> String:
 		file, '->', function, '@', line, "\n",
 		"handled: ", handled, "\n",
 		"gut type: ", get_error_type_name(),"\n",
+		"error_type: ", error_type, "\n",
+		"editor_notify:", editor_notify, "\n",
 		backtrace, "\n")
 
 
