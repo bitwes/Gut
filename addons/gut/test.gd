@@ -201,6 +201,16 @@ func _do_datatypes_match__fail_if_not(got, expected, text):
 	return did_pass
 
 
+# Checks if the input is not null. If it is, a fail occurs. Otherwise, TRUE is
+# returned.
+func _fail_if_null(got, input_name, text):
+	if(got == null):
+		_fail(str(input_name, ' cannot be NULL.'))
+		return false
+	
+	return true
+
+
 # Create a string that lists all the methods that were called on an spied
 # instance.
 func _get_desc_of_calls_to_instance(inst):
@@ -928,7 +938,10 @@ func assert_ne(got, not_expected, text=""):
 ## [/codeblock]
 func assert_almost_eq(got, expected, error_interval, text=''):
 	var disp = "[" + _str_precision(got, 20) + "] expected to equal [" + _str(expected) + "] +/- [" + str(error_interval) + "]:  " + text
-	if(_do_datatypes_match__fail_if_not(got, expected, text) and _do_datatypes_match__fail_if_not(got, error_interval, text)):
+	if(
+		_fail_if_null(got, '[Got]', text) and _fail_if_null(expected, '[Expected]', text) and _fail_if_null(error_interval, '[Error Interval]', text) and
+		_do_datatypes_match__fail_if_not(got, expected, text) and _do_datatypes_match__fail_if_not(got, error_interval, text)
+	):
 		if not _is_almost_eq(got, expected, error_interval):
 			_fail(disp)
 		else:
@@ -939,7 +952,10 @@ func assert_almost_eq(got, expected, error_interval, text=''):
 ## outside the range of [param not_expected] +/- [param error_interval].
 func assert_almost_ne(got, not_expected, error_interval, text=''):
 	var disp = "[" + _str_precision(got, 20) + "] expected to not equal [" + _str(not_expected) + "] +/- [" + str(error_interval) + "]:  " + text
-	if(_do_datatypes_match__fail_if_not(got, not_expected, text) and _do_datatypes_match__fail_if_not(got, error_interval, text)):
+	if(
+		_fail_if_null(got, '[Got]', text) and _fail_if_null(not_expected, '[Not Expected]', text) and _fail_if_null(error_interval, '[Error Interval]', text) and
+		_do_datatypes_match__fail_if_not(got, not_expected, text) and _do_datatypes_match__fail_if_not(got, error_interval, text)
+	):
 		if _is_almost_eq(got, not_expected, error_interval):
 			_fail(disp)
 		else:
@@ -961,7 +977,7 @@ func _is_almost_eq(got, expected, error_interval) -> bool:
 
 	return(result)
 
-## assserts got > expected
+## asserts got > expected
 ## [codeblock]
 ##    var bigger = 5
 ##    var smaller = 0
