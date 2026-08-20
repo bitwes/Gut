@@ -107,6 +107,19 @@ These ignored methods are cleared after each test is ran to avoid any unexpected
 There's more info and examples on this method on the [[Methods|Asserts-and-Methods]] page.
 
 
+## Doubling Methods that Return Signals
+GUT cannot wrap a method declared with a `Signal` return type.  Generated wrappers must await calls to the original method because Godot does not identify coroutines in method metadata.  Awaiting a returned `Signal` waits for that signal to emit and can stall the test run.  GUT reports an error and leaves the method out of the double instead.
+
+Use `ignore_method_when_doubling` to explicitly accept that the original method will remain available but cannot be stubbed or spied on:
+
+```gdscript
+func before_each():
+    ignore_method_when_doubling(MyClass, 'get_my_signal')
+```
+
+GUT can only detect this situation when the method has a declared `Signal` return type.  An untyped method that returns a `Signal` must be ignored manually as shown above.
+
+
 ## Doubled method default parameters
 GUT stubs all parameters in doubled user methods to be `null`.  This is because Godot only provides defaults for built-in methods.  When using Partial Doubles or stubbing a method `to_call_super`, `null` can get passed around when you wouldn't expect it causing errors such as `Invalid operands 'int' and 'Nil'`.  See the "Stubbing Method Parameter Defaults" in [Stubbing](Stubbing) for a way to stub method default values.
 

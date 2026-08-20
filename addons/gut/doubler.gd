@@ -167,10 +167,27 @@ func _get_singleton_text(parsed, included_methods, is_partial):
 	return src
 
 
+func _method_returns_signal(parsed_method):
+	var return_meta = parsed_method.meta.get('return', {})
+	return typeof(return_meta) == TYPE_DICTIONARY and \
+		return_meta.get('type', TYPE_NIL) == TYPE_SIGNAL
+
+
 func _is_method_eligible_for_doubling(parsed_script, parsed_method):
-	return !parsed_method.is_accessor() and \
-		parsed_method.is_eligible_for_doubling() and \
-		!_ignored_methods.has(parsed_script.resource, parsed_method.meta.name)
+	var method_name = parsed_method.meta.name
+	if(parsed_method.is_accessor() or \
+		!parsed_method.is_eligible_for_doubling() or \
+		_ignored_methods.has(parsed_script.resource, method_name)):
+		return false
+
+	if(_method_returns_signal(parsed_method)):
+		_lgr.error(str(
+			"Cannot double method '", method_name,
+			"' because it returns a Signal.  Call ignore_method_when_doubling on ",
+			"this method before creating the double."))
+		return false
+
+	return true
 
 
 # Disable the native_method_override setting so that doubles do not generate
@@ -247,7 +264,8 @@ func _create_singleton_double(singleton, is_partial):
 
 func _stub_method_default_values(parsed):
 	for method in parsed.get_local_methods():
-		if(method.is_eligible_for_doubling() and !_ignored_methods.has(parsed.resource, method.meta.name)):
+		if(method.is_eligible_for_doubling() and \
+			!_ignored_methods.has(parsed.resource, method.meta.name)):
 			_stubber.stub_defaults_from_meta(parsed.script_path, method.meta)
 
 
