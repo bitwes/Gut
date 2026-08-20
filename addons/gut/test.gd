@@ -977,7 +977,7 @@ func _is_almost_eq(got, expected, error_interval) -> bool:
 
 	return(result)
 
-## assserts got > expected
+## asserts got > expected
 ## [codeblock]
 ##    var bigger = 5
 ##    var smaller = 0

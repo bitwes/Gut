@@ -342,6 +342,32 @@ class TestAssertAlmostEq:
 		assert_fail_msg_contains(gr.test, '03450')
 		assert_fail_msg_contains(gr.test, '03210')
 
+	var datatype_data = [
+		[Vector3(1, 2, 3), 2.0, 3.0],
+		[1.0, Vector3(1, 2, 3), 3.0],
+		[1, 2, Vector3(1, 2, 3)],
+		[Vector3(1, 2, 3), Vector3(1, 2, 3), Vector2(1, 2)],
+	]
+	func test_datatype_checks(params = use_parameters(datatype_data)):
+		gr.test.assert_almost_eq(params[0], params[1], params[2])
+		assert_engine_error_count(0)
+		assert_fail(gr.test)
+		assert_fail_msg_contains(gr.test, "Cannot compare")
+
+	var null_data = [
+		[1, 2, null],
+		[1, null, 3],
+		[null, 2, 3],
+		[1, null, null],
+		[null, 2, null],
+		[null, null, 3],
+		[null, null, null],
+	]
+	func test_null_checks(params = use_parameters(null_data)):
+		gr.test.assert_almost_eq(params[0], params[1], params[2])
+		assert_engine_error_count(0)
+		assert_fail(gr.test)
+		assert_fail_msg_contains(gr.test, "cannot be NULL")
 
 # ------------------------------------------------------------------------------
 class TestAssertAlmostNe:
@@ -415,6 +441,33 @@ class TestAssertAlmostNe:
 		gr.test.assert_almost_ne(.500000000012300000, .5, .001)
 		assert_fail(gr.test)
 		assert_fail_msg_contains(gr.test, '01230')
+
+	var datatype_data = [
+		[Vector3(1, 2, 3), 2.0, 3.0],
+		[1.0, Vector3(1, 2, 3), 3.0],
+		[1, 2, Vector3(1, 2, 3)],
+		[Vector3(1, 2, 3), Vector3(1, 2, 3), Vector2(1, 2)],
+	]
+	func test_datatype_checks(params = use_parameters(datatype_data)):
+		gr.test.assert_almost_ne(params[0], params[1], params[2])
+		assert_engine_error_count(0)
+		assert_fail(gr.test)
+		assert_fail_msg_contains(gr.test, "Cannot compare")
+
+	var null_data = [
+		[1, 2, null],
+		[1, null, 3],
+		[null, 2, 3],
+		[1, null, null],
+		[null, 2, null],
+		[null, null, 3],
+		[null, null, null],
+	]
+	func test_null_checks(params = use_parameters(null_data)):
+		gr.test.assert_almost_ne(params[0], params[1], params[2])
+		assert_engine_error_count(0)
+		assert_fail(gr.test)
+		assert_fail_msg_contains(gr.test, "cannot be NULL")
 
 # ------------------------------------------------------------------------------
 class TestAssertGt:
