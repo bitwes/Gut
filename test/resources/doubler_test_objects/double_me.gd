@@ -19,16 +19,16 @@ func get_value():
 func set_value(val):
 	_value = val
 
-func has_one_param(one):
+func has_one_param(_one):
 	pass
 
-func has_two_params_one_default(one, two=null):
+func has_two_params_one_default(_one, _two=null):
 	pass
 
 func get_position():
 	return get_position()
 
-func has_string_and_array_defaults(string_param = "asdf", array_param = [1]):
+func has_string_and_array_defaults(_string_param = "asdf", _array_param = [1]):
 	pass
 
 func this_just_does_an_await():
@@ -46,7 +46,7 @@ func does_something_then_calls_coroutine_then_does_something_else():
 	print('something else')
 	return 10
 
-func might_await(should, some_default=3):
+func might_await(should, _some_default=3):
 	if(should):
 		print('awaiting')
 		await this_is_a_coroutine()
@@ -58,7 +58,7 @@ func might_await(should, some_default=3):
 func await_seconds(s):
 	await get_tree().create_timer(s).timeout
 
-func might_await_no_return(some_default=3):
+func might_await_no_return(_some_default=3):
 	if(should_might_await_await):
 		print('awaiting')
 		await this_is_a_coroutine()
@@ -66,7 +66,7 @@ func might_await_no_return(some_default=3):
 		print('not awaiting')
 
 func uses_await_response():
-	var foo = await this_is_a_coroutine()
+	var _foo = await this_is_a_coroutine()
 
 
 func default_is_value(val = _value):
