@@ -53,7 +53,7 @@ func simple(v1, v2, missing_string=''):
 	elif(GutUtils.are_datatypes_same(v1, v2)):
 		result.are_equal = v1 == v2
 
-		if(typeof(v1) == TYPE_DICTIONARY or typeof(v1) == TYPE_ARRAY):
+		if(v2 != null and (typeof(v1) == TYPE_DICTIONARY or typeof(v1) == TYPE_ARRAY)):
 			var sub_result = GutUtils.DiffTool.new(v1, v2, GutUtils.DIFF.DEEP)
 			result.summary = sub_result.get_short_summary()
 			if(!sub_result.are_equal):
@@ -72,7 +72,7 @@ func simple(v1, v2, missing_string=''):
 func shallow(v1, v2):
 	var result =  null
 	if(GutUtils.are_datatypes_same(v1, v2)):
-		if(typeof(v1) in [TYPE_ARRAY, TYPE_DICTIONARY]):
+		if(v2 != null and typeof(v1) in [TYPE_ARRAY, TYPE_DICTIONARY]):
 			result = GutUtils.DiffTool.new(v1, v2, GutUtils.DIFF.DEEP)
 		else:
 			result = simple(v1, v2)
@@ -86,7 +86,7 @@ func deep(v1, v2):
 	var result =  null
 
 	if(GutUtils.are_datatypes_same(v1, v2)):
-		if(typeof(v1) in [TYPE_ARRAY, TYPE_DICTIONARY]):
+		if(v2 != null and typeof(v1) in [TYPE_ARRAY, TYPE_DICTIONARY]):
 			result = GutUtils.DiffTool.new(v1, v2, GutUtils.DIFF.DEEP)
 		else:
 			result = simple(v1, v2)

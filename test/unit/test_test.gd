@@ -1567,6 +1567,24 @@ class TestCompareDeepShallow:
 		gr.test.assert_ne_deep({'a':1}, {'a':1})
 		assert_fail(gr.test)
 
+	var _null_container_pairs = [
+		[[], null], [[1], null], [{}, null], [{'a':1}, null],
+		[null, []], [null, [1]], [null, {}], [null, {'a':1}]
+	]
+
+	func test_compare_deep_with_null_container(p=use_parameters(_null_container_pairs)):
+		var result = gr.test.compare_deep(p[0], p[1])
+		assert_false(result.are_equal)
+		assert_string_contains(result.summary, '<null>')
+
+	func test_assert_eq_deep_fails_with_null_container(p=use_parameters(_null_container_pairs)):
+		gr.test.assert_eq_deep(p[0], p[1])
+		assert_fail(gr.test)
+
+	func test_assert_ne_deep_passes_with_null_container(p=use_parameters(_null_container_pairs)):
+		gr.test.assert_ne_deep(p[0], p[1])
+		assert_pass(gr.test)
+
 	func test_assert_shallow_fails_due_to_removed():
 		gr.test.assert_eq_shallow({'a':1}, {'a':1})
 		assert_fail(gr.test)

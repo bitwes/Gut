@@ -191,3 +191,53 @@ class TestGodot4ArrayDictionary:
 		var result = _comparator.simple(p[0], p[1])
 		assert_true(result.are_equal, result.summary)
 
+
+
+class TestNullComparisons:
+	extends GutTest
+
+	var _logger_error_count = 0
+
+	func before_each():
+		_logger_error_count = GutUtils.get_logger().get_errors().size()
+
+	func after_each():
+		assert_eq(GutUtils.get_logger().get_errors().size(), _logger_error_count)
+		assert_engine_error_count(0)
+		assert_push_error_count(0)
+
+	var _null_pairs = [
+		[[], null], [[1], null], [{}, null], [{'a':1}, null],
+		[null, []], [null, [1]], [null, {}], [null, {'a':1}],
+		[[[]], [null]], [[null], [[]]],
+		[[{}], [null]], [[null], [{}]],
+		[{'a':[]}, {'a':null}], [{'a':null}, {'a':[]}],
+		[{'a':{}}, {'a':null}], [{'a':null}, {'a':{}}]
+	]
+
+	func test_simple_compare_with_null(p=use_parameters(_null_pairs)):
+		var result = GutUtils.Comparator.new().simple(p[0], p[1])
+		assert_false(result.are_equal)
+		assert_string_contains(result.summary, '<null>')
+		assert_lt(result.summary.length(), 500)
+
+	func test_deep_compare_with_null(p=use_parameters(_null_pairs)):
+		var result = GutUtils.Comparator.new().deep(p[0], p[1])
+		assert_false(result.are_equal)
+		assert_string_contains(result.summary, '<null>')
+		assert_lt(result.summary.length(), 500)
+
+	func test_shallow_compare_with_null(p=use_parameters(_null_pairs)):
+		var result = GutUtils.Comparator.new().shallow(p[0], p[1])
+		assert_false(result.are_equal)
+		assert_string_contains(result.summary, '<null>')
+		assert_lt(result.summary.length(), 500)
+
+	var _equal_null_pairs = [
+		[null, null], [[null], [null]], [{'a':null}, {'a':null}]
+	]
+	func test_nulls_are_equal(p=use_parameters(_equal_null_pairs)):
+		for method in ['simple', 'deep', 'shallow']:
+			var result = GutUtils.Comparator.new().call(method, p[0], p[1])
+			assert_true(result.are_equal, result.summary)
+			assert_string_contains(result.summary, '==')
