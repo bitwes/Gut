@@ -47,6 +47,10 @@ func _has_modifier(event):
 		event.meta_pressed or event.shift_pressed
 
 
+func _is_unmodified_function_key(event):
+	return !_has_modifier(event) and event.keycode >= KEY_F1 and event.keycode <= KEY_F35
+
+
 func _is_modifier(keycode):
 	return _modifier_keys.has(keycode)
 
@@ -76,7 +80,7 @@ func _edit_mode(should):
 func _unhandled_key_input(event):
 	if(event is InputEventKey):
 		if(event.pressed):
-			if(_has_modifier(event) and !_is_modifier(event.get_keycode_with_modifiers())):
+			if(_is_unmodified_function_key(event) or (_has_modifier(event) and !_is_modifier(event.get_keycode_with_modifiers()))):
 				_source_event = event
 				_key_disp = OS.get_keycode_string(event.get_keycode_with_modifiers())
 			else:
@@ -112,7 +116,7 @@ func to_s():
 
 
 func is_valid():
-	return _has_modifier(_source_event) and !_is_shift_only_modifier()
+	return _is_unmodified_function_key(_source_event) or (_has_modifier(_source_event) and !_is_shift_only_modifier())
 
 
 func get_shortcut():
