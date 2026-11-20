@@ -117,7 +117,10 @@ func is_valid():
 
 func get_shortcut():
 	var to_return = Shortcut.new()
-	to_return.events.append(_source_event)
+	# A blank InputEventKey still counts as a valid event, and the editor then
+	# shows it as "(unset)" (for example in the GUT dock tab tooltip).
+	if(is_valid()):
+		to_return.events.append(_source_event)
 	return to_return
 
 func get_input_event():
